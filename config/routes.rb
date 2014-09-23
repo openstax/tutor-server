@@ -11,18 +11,18 @@ Rails.application.routes.draw do
     get 'privacy'
     get 'share'
     get 'status'
-    get 'tou'
+    get 'terms'
   end
 
   mount OpenStax::Accounts::Engine, at: "/accounts"
-  mount FinePrint::Engine => "/terms"
+  mount FinePrint::Engine => "/fine_print"
 
   use_doorkeeper
 
   apipie
 
   scope module: 'apipie' do
-    get 'api', to: 'apipies#index'
+    get 'api', action: 'index'
   end
 
   api :v1, :default => true do
