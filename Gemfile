@@ -48,11 +48,11 @@ gem 'whenever'
 # OpenStax Accounts integration
 gem 'openstax_accounts', '~> 3.1.0'
 
-# Access control for API's
-gem 'doorkeeper'
-
 # Respond_with and respond_to methods
 gem 'responders', '~> 2.0'
+
+# Access control for API's
+gem 'doorkeeper'
 
 # API versioning and documentation
 gem 'openstax_api'
@@ -86,17 +86,8 @@ gem 'ejs'
 # Embedded CoffeeScript templates
 gem 'eco'
 
-# Object tagging
-gem 'acts-as-taggable-on'
-
 # Object cloning
 gem 'deep_cloneable'
-
-# Object comments
-gem 'commontator'
-
-# Comment voting
-gem 'acts_as_votable'
 
 # Real time application monitoring
 gem 'newrelic_rpm'

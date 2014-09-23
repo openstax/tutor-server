@@ -4,7 +4,7 @@ class User < ActiveRecord::Base
   has_many :groups_as_member, through: :account
   has_many :groups_as_owner, through: :account
 
-  # has_one :administrator, dependent: :destroy, inverse_of: :user
+  has_one :administrator, dependent: :destroy, inverse_of: :user
 
   validates :account, presence: true, uniqueness: true
 

@@ -39,9 +39,6 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.1)
       tzinfo (~> 1.1)
-    acts-as-taggable-on (3.4.1)
-      activerecord (>= 3.2, < 5)
-    acts_as_votable (0.10.0)
     apipie-rails (0.2.6)
       json
     arel (6.0.0.beta1)
@@ -100,9 +97,6 @@ GEM
     coffee-script-source (1.8.0)
     colorize (0.7.3)
     columnize (0.8.9)
-    commontator (4.8.0)
-      jquery-rails
-      rails (>= 3.1)
     compass (1.0.1)
       chunky_png (~> 1.2)
       compass-core (~> 1.0.1)
@@ -412,8 +406,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  acts-as-taggable-on
-  acts_as_votable
   apipie-rails
   autoprefixer-rails
   bootstrap-sass (~> 3.2.0)
@@ -425,7 +417,6 @@ DEPENDENCIES
   codeclimate-test-reporter
   coffee-rails (~> 4.0.0)
   coffee-rails-source-maps
-  commontator
   compass-rails
   coveralls
   deep_cloneable

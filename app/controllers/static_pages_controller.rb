@@ -2,8 +2,6 @@ class StaticPagesController < ApplicationController
   
   respond_to :html
 
-  layout :resolve_layout
-
   skip_interceptor :authenticate_user!
   fine_print_skip :general_terms_of_use, :privacy_policy
 
@@ -47,12 +45,6 @@ class StaticPagesController < ApplicationController
 
   # GET /tou
   def tou
-  end
-
-  protected
-
-  def resolve_layout
-    'home' == action_name ? 'application_home_page' : 'application_body_only'
   end
 
 end

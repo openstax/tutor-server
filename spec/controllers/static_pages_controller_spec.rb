@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe StaticPageController, :type => :controller do
+RSpec.describe StaticPagesController, :type => :controller do
 
   describe "GET home" do
     it "returns http success" do
@@ -16,16 +16,9 @@ RSpec.describe StaticPageController, :type => :controller do
     end
   end
 
-  describe "GET api" do
+  describe "GET tou" do
     it "returns http success" do
-      get :api
-      expect(response).to have_http_status(:success)
-    end
-  end
-
-  describe "GET terms" do
-    it "returns http success" do
-      get :terms
+      get :tou
       expect(response).to have_http_status(:success)
     end
   end

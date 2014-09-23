@@ -8,8 +8,6 @@ class ApplicationController < ActionController::Base
 
   include Lev::HandleWith
 
-  layout 'application_body_only'
-
   interceptor :authenticate_user!
 
   fine_print_require :general_terms_of_use, :privacy_policy
