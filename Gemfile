@@ -80,12 +80,6 @@ gem 'carrierwave'
 # Image editing
 gem 'mini_magick'
 
-# Embedded JavaScript templates
-gem 'ejs'
-
-# Embedded CoffeeScript templates
-gem 'eco'
-
 # Object cloning
 gem 'deep_cloneable'
 
