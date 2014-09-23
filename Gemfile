@@ -15,6 +15,9 @@ gem 'turbolinks'
 
 gem 'rails-html-sanitizer', '~> 1.0'
 
+gem 'openstax_utilities', '~> 3.0.0'
+gem 'openstax_accounts', '~> 3.1.0'
+
 gem 'squeel'
 gem 'lev'
 

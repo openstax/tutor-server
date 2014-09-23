@@ -8,6 +8,8 @@
 </head>
 <body>
 
+<%= link_to 'Sign in!', with_interceptor { openstax_accounts.login_path } %>
+
 <%= yield %>
 
 </body>
