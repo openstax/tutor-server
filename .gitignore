@@ -40,6 +40,9 @@ Berksfile.lock
 # Ignore brakeman reports
 brakeman.html
 
+# Ignore coveralls reports
+coverage/*
+
 # Ignore ERD diagrams and source maps
 erd*.pdf
 public/assets/source_maps/
