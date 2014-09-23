@@ -136,9 +136,6 @@ group :development, :test do
   # CoffeeScript source maps
   gem 'coffee-rails-source-maps'
 
-  # Capistrano integration
-  gem 'capistrano-rails'
-
   # Code Climate integration
   gem "codeclimate-test-reporter", require: false
 
