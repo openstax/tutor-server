@@ -15,12 +15,12 @@
 /log/*.log
 /tmp/**/*
 
+# Ignore files containing keys and passwords
+config/secrets.yml
+config/deploy_settings.yml
+
 # Ignore OS X's Desktop Service Store files
 *.DS_Store
-
-config/developer_settings.yml
-config/secret_settings.yml
-config/deploy_settings.yml
 
 # Ignore editor temp files
 *~
@@ -32,16 +32,20 @@ rspec.failures
 # Ignore uploaded files
 public/uploads/**/*
 
+# Ignore vagrant and berkshelf files
 .vagrant*
-brakeman.html
-
-notes
-
+.vagrant_setup.json
 Berksfile.lock
 
-.vagrant_setup.json
+# Ignore brakeman reports
+brakeman.html
 
-# Ignore ERD diagrams
+# Ignore coveralls reports
+coverage/*
+
+# Ignore ERD diagrams and source maps
 erd*.pdf
-
 public/assets/source_maps/
+
+# Ignore misc files
+notes
