@@ -2,7 +2,7 @@
 
 FactoryGirl.define do
   factory :course_manager do
-    course_id 1
-    user_id 1
+    course
+    user
   end
 end

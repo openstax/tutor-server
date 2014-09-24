@@ -1,14 +1,19 @@
-# Read about factories at https://github.com/thoughtbot/factory_girl
-
 FactoryGirl.define do
   factory :klass do
-    course_id 1
-    starts_at "2014-09-23 12:58:26"
-    ends_at "2014-09-23 12:58:26"
-    visible_at "2014-09-23 12:58:26"
-    invisible_at "2014-09-23 12:58:26"
-    time_zone "MyString"
-    approved_emails "MyText"
+    ignore do 
+      starting_time Time.now
+      start_to_end 3.months
+      visible_to_start 7.days
+      end_to_invisible 7.days
+    end
+
+    course
+    starts_at { starting_time }
+    ends_at { starting_time + start_to_end }
+    visible_at { starting_time - visible_to_start }
+    invisible_at { ends_at + end_to_invisible }
+    time_zone "CST"
+    approved_emails ""
     allow_student_custom_identifier false
   end
 end

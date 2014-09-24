@@ -1,14 +1,24 @@
-# Read about factories at https://github.com/thoughtbot/factory_girl
-
 FactoryGirl.define do
   factory :student do
-    klass_id 1
-    section_id 1
-    user_id 1
-    level 1
+    klass
+    section
+    user
+    level "graded"
     has_dropped false
-    student_custom_identifier "MyString"
-    educator_custom_identifier "MyString"
-    random_education_identifier "MyString"
+    student_custom_identifier { SecureRandom.hex(6) }
+    educator_custom_identifier { SecureRandom.hex(6) }
+    random_education_identifier { SecureRandom.hex(6) }
+
+    trait :graded do
+      level "graded"
+    end
+
+    trait :auditing do
+      level "auditing"
+    end
+
+    trait :dropped do
+      has_dropped true 
+    end
   end
 end

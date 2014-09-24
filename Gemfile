@@ -30,9 +30,6 @@ gem 'therubyracer', platforms: :ruby
 # jQuery library
 gem 'jquery-rails'
 
-# jQuery UI library
-gem 'jquery-ui-rails'
-
 # Automatically ajaxify links
 gem 'turbolinks'
 

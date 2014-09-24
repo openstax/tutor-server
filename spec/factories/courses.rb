@@ -1,10 +1,14 @@
-# Read about factories at https://github.com/thoughtbot/factory_girl
-
 FactoryGirl.define do
+  sequence :course_number do |n| "#{n}" end
+  
   factory :course do
-    name "MyString"
-    short_name "MyString"
-    description "MyText"
-    school_id 1
+    ignore do
+      course_number { generate(:course_number) }
+    end
+
+    name { "Course #{course_number}" }
+    short_name { "C#{course_number}" }
+    description Faker::Lorem.paragraph
+    school
   end
 end
