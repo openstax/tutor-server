@@ -32,7 +32,7 @@ Rails.application.routes.draw do
   end
   
   namespace 'admin' do
-    get '/', to: 'console#index'
+    get '/', controller: 'console', action: 'index'
 
     resources :administrators, only: [:index, :create, :destroy]
 

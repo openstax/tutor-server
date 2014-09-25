@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140923201845) do
+ActiveRecord::Schema.define(version: 20140926012719) do
 
   create_table "administrators", force: true do |t|
     t.integer  "user_id",    null: false
@@ -30,7 +30,6 @@ ActiveRecord::Schema.define(version: 20140923201845) do
 
   add_index "course_managers", ["course_id"], name: "index_course_managers_on_course_id"
   add_index "course_managers", ["user_id", "course_id"], name: "index_course_managers_on_user_id_and_course_id", unique: true
-  add_index "course_managers", ["user_id"], name: "index_course_managers_on_user_id"
 
   create_table "courses", force: true do |t|
     t.string   "name"
@@ -41,7 +40,11 @@ ActiveRecord::Schema.define(version: 20140923201845) do
     t.datetime "updated_at",  null: false
   end
 
+  add_index "courses", ["name", "school_id"], name: "index_courses_on_name_and_school_id", unique: true
+  add_index "courses", ["name"], name: "index_courses_on_name"
   add_index "courses", ["school_id"], name: "index_courses_on_school_id"
+  add_index "courses", ["short_name", "school_id"], name: "index_courses_on_short_name_and_school_id", unique: true
+  add_index "courses", ["short_name"], name: "index_courses_on_short_name"
 
   create_table "educators", force: true do |t|
     t.integer  "klass_id",   null: false
@@ -52,7 +55,6 @@ ActiveRecord::Schema.define(version: 20140923201845) do
 
   add_index "educators", ["klass_id"], name: "index_educators_on_klass_id"
   add_index "educators", ["user_id", "klass_id"], name: "index_educators_on_user_id_and_klass_id", unique: true
-  add_index "educators", ["user_id"], name: "index_educators_on_user_id"
 
   create_table "fine_print_contracts", force: true do |t|
     t.string   "name",       null: false
@@ -205,7 +207,6 @@ ActiveRecord::Schema.define(version: 20140923201845) do
 
   add_index "school_managers", ["school_id"], name: "index_school_managers_on_school_id"
   add_index "school_managers", ["user_id", "school_id"], name: "index_school_managers_on_user_id_and_school_id", unique: true
-  add_index "school_managers", ["user_id"], name: "index_school_managers_on_user_id"
 
   create_table "schools", force: true do |t|
     t.string   "name"
@@ -222,6 +223,7 @@ ActiveRecord::Schema.define(version: 20140923201845) do
   end
 
   add_index "sections", ["klass_id"], name: "index_sections_on_klass_id"
+  add_index "sections", ["name", "klass_id"], name: "index_sections_on_name_and_klass_id", unique: true
 
   create_table "students", force: true do |t|
     t.integer  "klass_id",                    null: false
@@ -238,12 +240,12 @@ ActiveRecord::Schema.define(version: 20140923201845) do
 
   add_index "students", ["educator_custom_identifier"], name: "index_students_on_educator_custom_identifier"
   add_index "students", ["klass_id"], name: "index_students_on_klass_id"
+  add_index "students", ["level"], name: "index_students_on_level"
   add_index "students", ["random_education_identifier"], name: "index_students_on_random_education_identifier", unique: true
   add_index "students", ["section_id"], name: "index_students_on_section_id"
   add_index "students", ["student_custom_identifier"], name: "index_students_on_student_custom_identifier"
   add_index "students", ["user_id", "klass_id"], name: "index_students_on_user_id_and_klass_id", unique: true
   add_index "students", ["user_id", "section_id"], name: "index_students_on_user_id_and_section_id", unique: true
-  add_index "students", ["user_id"], name: "index_students_on_user_id"
 
   create_table "users", force: true do |t|
     t.integer  "account_id",          null: false

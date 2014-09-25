@@ -306,6 +306,8 @@ GEM
       sprockets (~> 2.12)
       sprockets-rails (>= 2.0, < 4.0)
     sexp_processor (4.4.4)
+    shoulda-matchers (2.7.0)
+      activesupport (>= 3.0.0)
     simplecov (0.9.1)
       docile (~> 1.1.0)
       multi_json (~> 1.0)
@@ -420,6 +422,7 @@ DEPENDENCIES
   roar-rails
   rspec-rails
   sass-rails (~> 5.0.0.beta1)
+  shoulda-matchers
   spring
   sqlite3
   squeel

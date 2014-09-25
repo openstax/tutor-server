@@ -1,7 +1,7 @@
 FactoryGirl.define do
   factory :school do
     sequence(:name) { |n| "OSU #{n}" }
-    default_time_zone "CST"
+    default_time_zone { ActiveSupport::TimeZone.us_zones.map(&:to_s).first }
 
     ignore do
       courses_count 0

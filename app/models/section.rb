@@ -3,4 +3,5 @@ class Section < ActiveRecord::Base
   has_many :students, dependent: :nullify
 
   validates :klass, presence: true
+  validates :name, presence: true, uniqueness: { scope: :klass_id }
 end

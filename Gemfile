@@ -140,6 +140,10 @@ group :development, :test do
   gem 'coveralls', require: false
 end
 
+group :test do
+  gem 'shoulda-matchers', require: false
+end
+
 group :production do
   # Unicorn production server
   gem 'unicorn'

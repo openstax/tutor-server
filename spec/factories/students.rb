@@ -20,5 +20,11 @@ FactoryGirl.define do
     trait :dropped do
       has_dropped true 
     end
+
+    after(:build) do |student|
+      # section and klass need to agree
+      student.section.klass = student.klass
+    end
+
   end
 end
