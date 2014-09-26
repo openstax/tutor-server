@@ -41,10 +41,8 @@ ActiveRecord::Schema.define(version: 20140926012719) do
   end
 
   add_index "courses", ["name", "school_id"], name: "index_courses_on_name_and_school_id", unique: true
-  add_index "courses", ["name"], name: "index_courses_on_name"
   add_index "courses", ["school_id"], name: "index_courses_on_school_id"
   add_index "courses", ["short_name", "school_id"], name: "index_courses_on_short_name_and_school_id", unique: true
-  add_index "courses", ["short_name"], name: "index_courses_on_short_name"
 
   create_table "educators", force: true do |t|
     t.integer  "klass_id",   null: false
