@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140724184800) do
+ActiveRecord::Schema.define(version: 20140926012719) do
 
   create_table "administrators", force: true do |t|
     t.integer  "user_id",    null: false
@@ -20,6 +20,39 @@ ActiveRecord::Schema.define(version: 20140724184800) do
   end
 
   add_index "administrators", ["user_id"], name: "index_administrators_on_user_id", unique: true
+
+  create_table "course_managers", force: true do |t|
+    t.integer  "course_id",  null: false
+    t.integer  "user_id",    null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "course_managers", ["course_id"], name: "index_course_managers_on_course_id"
+  add_index "course_managers", ["user_id", "course_id"], name: "index_course_managers_on_user_id_and_course_id", unique: true
+
+  create_table "courses", force: true do |t|
+    t.string   "name"
+    t.string   "short_name"
+    t.text     "description"
+    t.integer  "school_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "courses", ["name", "school_id"], name: "index_courses_on_name_and_school_id", unique: true
+  add_index "courses", ["school_id"], name: "index_courses_on_school_id"
+  add_index "courses", ["short_name", "school_id"], name: "index_courses_on_short_name_and_school_id", unique: true
+
+  create_table "educators", force: true do |t|
+    t.integer  "klass_id",   null: false
+    t.integer  "user_id",    null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "educators", ["klass_id"], name: "index_educators_on_klass_id"
+  add_index "educators", ["user_id", "klass_id"], name: "index_educators_on_user_id_and_klass_id", unique: true
 
   create_table "fine_print_contracts", force: true do |t|
     t.string   "name",       null: false
@@ -42,6 +75,25 @@ ActiveRecord::Schema.define(version: 20140724184800) do
 
   add_index "fine_print_signatures", ["contract_id"], name: "index_fine_print_signatures_on_contract_id"
   add_index "fine_print_signatures", ["user_id", "user_type", "contract_id"], name: "index_fine_print_signatures_on_u_id_and_u_type_and_c_id", unique: true
+
+  create_table "klasses", force: true do |t|
+    t.integer  "course_id",                       null: false
+    t.datetime "starts_at"
+    t.datetime "ends_at"
+    t.datetime "visible_at"
+    t.datetime "invisible_at"
+    t.string   "time_zone"
+    t.text     "approved_emails"
+    t.boolean  "allow_student_custom_identifier"
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
+  end
+
+  add_index "klasses", ["course_id"], name: "index_klasses_on_course_id"
+  add_index "klasses", ["ends_at"], name: "index_klasses_on_ends_at"
+  add_index "klasses", ["invisible_at"], name: "index_klasses_on_invisible_at"
+  add_index "klasses", ["starts_at"], name: "index_klasses_on_starts_at"
+  add_index "klasses", ["visible_at"], name: "index_klasses_on_visible_at"
 
   create_table "oauth_access_grants", force: true do |t|
     t.integer  "resource_owner_id", null: false
@@ -143,6 +195,55 @@ ActiveRecord::Schema.define(version: 20140724184800) do
 
   add_index "openstax_accounts_groups", ["is_public"], name: "index_openstax_accounts_groups_on_is_public"
   add_index "openstax_accounts_groups", ["openstax_uid"], name: "index_openstax_accounts_groups_on_openstax_uid", unique: true
+
+  create_table "school_managers", force: true do |t|
+    t.integer  "school_id",  null: false
+    t.integer  "user_id",    null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "school_managers", ["school_id"], name: "index_school_managers_on_school_id"
+  add_index "school_managers", ["user_id", "school_id"], name: "index_school_managers_on_user_id_and_school_id", unique: true
+
+  create_table "schools", force: true do |t|
+    t.string   "name"
+    t.string   "default_time_zone"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+  end
+
+  create_table "sections", force: true do |t|
+    t.integer  "klass_id",   null: false
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "sections", ["klass_id"], name: "index_sections_on_klass_id"
+  add_index "sections", ["name", "klass_id"], name: "index_sections_on_name_and_klass_id", unique: true
+
+  create_table "students", force: true do |t|
+    t.integer  "klass_id",                    null: false
+    t.integer  "section_id"
+    t.integer  "user_id",                     null: false
+    t.integer  "level"
+    t.boolean  "has_dropped"
+    t.string   "student_custom_identifier"
+    t.string   "educator_custom_identifier"
+    t.string   "random_education_identifier", null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+  end
+
+  add_index "students", ["educator_custom_identifier"], name: "index_students_on_educator_custom_identifier"
+  add_index "students", ["klass_id"], name: "index_students_on_klass_id"
+  add_index "students", ["level"], name: "index_students_on_level"
+  add_index "students", ["random_education_identifier"], name: "index_students_on_random_education_identifier", unique: true
+  add_index "students", ["section_id"], name: "index_students_on_section_id"
+  add_index "students", ["student_custom_identifier"], name: "index_students_on_student_custom_identifier"
+  add_index "students", ["user_id", "klass_id"], name: "index_students_on_user_id_and_klass_id", unique: true
+  add_index "students", ["user_id", "section_id"], name: "index_students_on_user_id_and_section_id", unique: true
 
   create_table "users", force: true do |t|
     t.integer  "account_id",          null: false

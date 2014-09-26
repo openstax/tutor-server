@@ -30,9 +30,6 @@ gem 'therubyracer', platforms: :ruby
 # jQuery library
 gem 'jquery-rails'
 
-# jQuery UI library
-gem 'jquery-ui-rails'
-
 # Automatically ajaxify links
 gem 'turbolinks'
 
@@ -141,6 +138,10 @@ group :development, :test do
 
   # Coveralls integration
   gem 'coveralls', require: false
+end
+
+group :test do
+  gem 'shoulda-matchers', require: false
 end
 
 group :production do

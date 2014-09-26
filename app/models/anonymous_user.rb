@@ -1,5 +1,4 @@
 class AnonymousUser < User
-
   include Singleton
 
   before_save { false }
@@ -15,5 +14,4 @@ class AnonymousUser < User
   def is_anonymous?
     true
   end
-
 end

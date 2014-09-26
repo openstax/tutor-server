@@ -5,6 +5,10 @@ class User < ActiveRecord::Base
   has_many :groups_as_owner, through: :account
 
   has_one :administrator, dependent: :destroy, inverse_of: :user
+  has_many :course_managers, dependent: :destroy
+  has_many :school_managers, dependent: :destroy
+  has_many :educators, dependent: :destroy
+  has_many :students, dependent: :destroy
 
   validates :account, presence: true, uniqueness: true
 
