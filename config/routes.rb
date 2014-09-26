@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
 
-  root 'static_pages#home'
+  root 'webview#home'
+
+  get '/dashboard', to: 'webview#index'
 
   scope module: 'static_pages' do
     get 'about'
@@ -20,10 +22,6 @@ Rails.application.routes.draw do
   use_doorkeeper
 
   apipie
-
-  scope module: 'apipie' do
-    get 'api', action: 'index'
-  end
 
   api :v1, :default => true do
 
@@ -58,5 +56,7 @@ Rails.application.routes.draw do
   end
 
   resource :user, only: [:show, :update, :destroy]
+
+  match '/*other', via: [:get, :post, :put, :patch, :delete], to: 'webview#index'
 
 end
