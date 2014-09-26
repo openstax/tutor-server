@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
 
-  root 'webview#index'
+  root 'webview#home'
+
+  get '/dashboard', to: 'webview#index'
 
   scope module: 'static_pages' do
     get 'about'

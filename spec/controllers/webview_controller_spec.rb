@@ -6,6 +6,20 @@ RSpec.describe WebviewController, :type => :controller do
   let!(:new_user)        { FactoryGirl.create(:user) }
   let!(:registered_user) { FactoryGirl.create(:user, :agreed_to_terms) }
 
+  describe 'GET home' do
+    it 'renders a static page for anonymous' do
+      get :home
+      expect(response).to have_http_status(:success)
+    end
+
+    it 'redirects logged in users to the dashboard' do
+      controller.sign_in new_user
+      get :home
+      expect(response).to have_http_status(:found)
+      expect(response).to redirect_to(dashboard_path)
+    end
+  end
+
   describe 'GET index' do
     it 'requires a user' do
       get :index
