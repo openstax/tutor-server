@@ -52,7 +52,7 @@ gem 'responders', '~> 2.0'
 gem 'doorkeeper'
 
 # API versioning and documentation
-gem 'openstax_api'
+gem 'openstax_api', '~> 2.3.1'
 gem 'apipie-rails'
 gem 'maruku'
 gem 'representable'
@@ -65,7 +65,7 @@ gem 'lev'
 gem 'squeel'
 
 # Contract management
-gem 'fine_print'
+gem 'fine_print', '~> 2.0.3'
 
 # Keyword search
 gem "keyword_search"
