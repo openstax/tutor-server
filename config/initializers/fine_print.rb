@@ -38,8 +38,14 @@ FinePrint.configure do |config|
   # The `fine_print_return` method can be used to return from a redirect made here.
   # Default: lambda { |user, contract_ids| redirect_to(
   #   fine_print.new_contract_signature_path(:contract_id => contract_ids.first)) }
-  config.must_sign_proc = lambda { |user, contract_ids| redirect_to(
-    fine_print.new_contract_signature_path(:contract_id => contract_ids.first)) }
+  config.must_sign_proc = lambda { |user, contract_ids|
+    respond_to do |format|
+      format.html { redirect_to(fine_print.new_contract_signature_path(
+                      :contract_id => contract_ids.first)) }
+      format.json {
+        response.headers['WWW-Authenticate'] = "Terms contract_ids=#{contract_ids.to_s}"
+        head(:unauthorized) }
+    end }
 
 end
 
