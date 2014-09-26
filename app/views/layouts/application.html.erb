@@ -8,7 +8,11 @@
 </head>
 <body>
 
-<%= link_to 'Sign in!', with_interceptor { openstax_accounts.login_path } %>
+<% if current_user.is_anonymous? %>
+  <%= link_to 'Sign in!', with_interceptor { openstax_accounts.login_path } %>
+<% else %>
+  <%= link_to 'Sign out!', openstax_accounts.logout_path, method: :delete %>
+<% end %>
 
 <%= yield %>
 
