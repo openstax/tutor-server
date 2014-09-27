@@ -41,10 +41,9 @@ FinePrint.configure do |config|
   config.must_sign_proc = lambda { |user, contract_ids|
     respond_to do |format|
       format.html { redirect_to(fine_print.new_contract_signature_path(
-                      :contract_id => contract_ids.first)) }
-      format.json {
-        response.headers['WWW-Authenticate'] = "Terms contract_ids=#{contract_ids.to_s}"
-        head(:unauthorized) }
+                      contract_id: contract_ids.first)) }
+      format.json { render status: :unauthorized,
+                           json: {'errors' => [{'message' => 'You must accept the terms of use and privacy policy to continue', 'term_ids' => contract_ids}]} }
     end }
 
 end
