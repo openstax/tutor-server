@@ -38,8 +38,15 @@ FinePrint.configure do |config|
   # The `fine_print_return` method can be used to return from a redirect made here.
   # Default: lambda { |user, contract_ids| redirect_to(
   #   fine_print.new_contract_signature_path(:contract_id => contract_ids.first)) }
-  config.must_sign_proc = lambda { |user, contract_ids| redirect_to(
-    fine_print.new_contract_signature_path(:contract_id => contract_ids.first)) }
+  config.must_sign_proc = lambda { |user, contract_ids|
+    respond_to do |format|
+      format.html { redirect_to(fine_print.new_contract_signature_path(
+                      contract_id: contract_ids.first)) }
+      format.json { render status: :unauthorized,
+                           json: {'errors' => [{'status' => 401,
+                                                'message' => 'You must accept the terms of use and privacy policy to continue',
+                                                'term_ids' => contract_ids}]} }
+    end }
 
 end
 
