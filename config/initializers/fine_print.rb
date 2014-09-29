@@ -54,7 +54,7 @@ FinePrint.configure do |config|
                       contract_id: contract_ids.first)) }
       format.json { render status: :unauthorized,
                            json: {'errors' => [{'status' => 401,
-                                                'message' => 'You must accept the terms of use and privacy policy to continue',
+                                                'message' => 'You must accept the user agreements to continue',
                                                 'data' => {'term_ids' => contract_ids}}]} }
     end }
 
