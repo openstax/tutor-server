@@ -3,6 +3,7 @@
 FinePrint.configure do |config|
 
   # Engine Configuration
+  # Must be set in an initializer
 
   # Proc called with a controller as self.
   # Returns the current user.
@@ -27,7 +28,16 @@ FinePrint.configure do |config|
   config.can_sign_proc = lambda { |user| !user.is_anonymous? || \
                                          redirect_to(openstax_accounts.login_path) }
 
+  # Layout to be used for FinePrint's controllers
+  # Default: 'application'
+  config.layout = 'application'
+
+  # Array of custom helpers for FinePrint's controllers
+  # Default: [] (no custom helpers)
+  config.helpers = [::ApplicationHelper, OpenStax::Utilities::OsuHelper]
+
   # Controller Configuration
+  # Can be set either in an initializer or passed as options to `fine_print_require`
 
   # Proc called with a user and an array of contract ids as arguments and a controller as self.
   # This proc is called when a user tries to access a resource protected by FinePrint,
@@ -44,14 +54,8 @@ FinePrint.configure do |config|
                       contract_id: contract_ids.first)) }
       format.json { render status: :unauthorized,
                            json: {'errors' => [{'status' => 401,
-                                                'message' => 'You must accept the terms of use and privacy policy to continue',
-                                                'term_ids' => contract_ids}]} }
+                                                'message' => 'You must accept the user agreements to continue',
+                                                'data' => {'term_ids' => contract_ids}}]} }
     end }
 
-end
-
-FinePrint::ApplicationController.class_exec do
-  helper ::ApplicationHelper, OpenStax::Utilities::OsuHelper
-
-  #layout "layouts/application_body_only"
 end
