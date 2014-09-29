@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140926213212) do
+ActiveRecord::Schema.define(version: 20140927175527) do
 
   create_table "administrators", force: true do |t|
     t.integer  "user_id",    null: false
@@ -195,6 +195,22 @@ ActiveRecord::Schema.define(version: 20140926213212) do
 
   add_index "openstax_accounts_groups", ["is_public"], name: "index_openstax_accounts_groups_on_is_public"
   add_index "openstax_accounts_groups", ["openstax_uid"], name: "index_openstax_accounts_groups_on_openstax_uid", unique: true
+
+  create_table "readings", force: true do |t|
+    t.integer  "resource_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "readings", ["resource_id"], name: "index_readings_on_resource_id"
+
+  create_table "resources", force: true do |t|
+    t.string   "url"
+    t.boolean  "url_is_permalink"
+    t.text     "content"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+  end
 
   create_table "school_managers", force: true do |t|
     t.integer  "school_id",  null: false
