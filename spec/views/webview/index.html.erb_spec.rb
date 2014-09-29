@@ -8,6 +8,6 @@ RSpec.describe "webview/index", :type => :view do
     render
 
     expect(rendered).to include("<script type='text/javascript' defer>var path = '#{@path}', name = '#{@name}';</script>")
-    expect(rendered).to include("<script type='text/javascript' src='//openstax.github.io/tutor-js/dist/tutor.js' defer></script>")
+    expect(rendered).to include("<script type='text/javascript' src='//openstax.github.io/tutor-js/bundle.js' defer></script>")
   end
 end
