@@ -132,7 +132,7 @@ GEM
       multipart-post (>= 1.2, < 3)
     fastercsv (1.5.5)
     ffi (1.9.5)
-    fine_print (2.0.3)
+    fine_print (2.1.1)
       action_interceptor (>= 0.4.1)
       jquery-rails
       rails (>= 3.1)
@@ -399,7 +399,7 @@ DEPENDENCIES
   exception_notification
   factory_girl_rails
   faker
-  fine_print (~> 2.0.3)
+  fine_print (~> 2.1.1)
   jquery-rails
   keyword_search
   lev

@@ -14,6 +14,12 @@
   <%= link_to 'Sign out!', openstax_accounts.logout_path, method: :delete %>
 <% end %>
 
+<% flash.each do |name, msg| %>
+  <% if msg.is_a?(String) %>
+    <%= content_tag :div, msg, :class => "flash_#{name}" %>
+  <% end %>
+<% end %>
+
 <%= yield %>
 
 </body>
