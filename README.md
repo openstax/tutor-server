@@ -2,5 +2,15 @@
 [![Build Status](https://travis-ci.org/openstax/tutor.png?branch=master)](https://travis-ci.org/openstax/tutor)
 [![Coverage Status](https://img.shields.io/coveralls/openstax/tutor.svg)](https://coveralls.io/r/openstax/tutor)
 
-OpenStax Tutor 3.0 Backend Server
-=====
+# OpenStax Tutor 3.0 Backend Server
+
+
+## Development
+
+```
+bundle install --without production
+rake db:migrate
+rake db:seed
+rails generate secrets
+rails server
+```
