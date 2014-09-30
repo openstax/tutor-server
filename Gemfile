@@ -51,8 +51,11 @@ gem 'responders', '~> 2.0'
 # Access control for API's
 gem 'doorkeeper'
 
+# Datetime parsing
+gem 'chronic'
+
 # API versioning and documentation
-gem 'openstax_api', '~> 2.3.1'
+gem 'openstax_api', '~> 2.5.0'
 gem 'apipie-rails'
 gem 'maruku'
 gem 'representable'

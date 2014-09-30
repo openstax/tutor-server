@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140926012719) do
+ActiveRecord::Schema.define(version: 20140927175527) do
 
   create_table "administrators", force: true do |t|
     t.integer  "user_id",    null: false
@@ -196,6 +196,22 @@ ActiveRecord::Schema.define(version: 20140926012719) do
   add_index "openstax_accounts_groups", ["is_public"], name: "index_openstax_accounts_groups_on_is_public"
   add_index "openstax_accounts_groups", ["openstax_uid"], name: "index_openstax_accounts_groups_on_openstax_uid", unique: true
 
+  create_table "readings", force: true do |t|
+    t.integer  "resource_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "readings", ["resource_id"], name: "index_readings_on_resource_id"
+
+  create_table "resources", force: true do |t|
+    t.string   "url"
+    t.boolean  "url_is_permalink"
+    t.text     "content"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+  end
+
   create_table "school_managers", force: true do |t|
     t.integer  "school_id",  null: false
     t.integer  "user_id",    null: false
@@ -244,6 +260,44 @@ ActiveRecord::Schema.define(version: 20140926012719) do
   add_index "students", ["student_custom_identifier"], name: "index_students_on_student_custom_identifier"
   add_index "students", ["user_id", "klass_id"], name: "index_students_on_user_id_and_klass_id", unique: true
   add_index "students", ["user_id", "section_id"], name: "index_students_on_user_id_and_section_id", unique: true
+
+  create_table "task_plans", force: true do |t|
+    t.integer  "owner_id",     null: false
+    t.string   "owner_type",   null: false
+    t.datetime "assign_after"
+    t.datetime "opens_at"
+    t.datetime "due_at"
+    t.boolean  "is_shared",    null: false
+    t.integer  "details_id",   null: false
+    t.string   "details_type", null: false
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
+
+  add_index "task_plans", ["assign_after"], name: "index_task_plans_on_assign_after"
+  add_index "task_plans", ["details_id", "details_type"], name: "index_task_plans_on_details_id_and_details_type", unique: true
+  add_index "task_plans", ["owner_id", "owner_type"], name: "index_task_plans_on_owner_id_and_owner_type"
+
+  create_table "tasks", force: true do |t|
+    t.integer  "taskable_id",   null: false
+    t.string   "taskable_type", null: false
+    t.integer  "user_id",       null: false
+    t.integer  "task_plan_id"
+    t.datetime "opens_at"
+    t.datetime "due_at"
+    t.boolean  "is_shared"
+    t.integer  "details_id",    null: false
+    t.string   "details_type",  null: false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+  end
+
+  add_index "tasks", ["details_id", "details_type"], name: "index_tasks_on_details_id_and_details_type"
+  add_index "tasks", ["due_at"], name: "index_tasks_on_due_at"
+  add_index "tasks", ["opens_at"], name: "index_tasks_on_opens_at"
+  add_index "tasks", ["task_plan_id"], name: "index_tasks_on_task_plan_id"
+  add_index "tasks", ["taskable_id", "taskable_type"], name: "index_tasks_on_taskable_id_and_taskable_type"
+  add_index "tasks", ["user_id"], name: "index_tasks_on_user_id"
 
   create_table "users", force: true do |t|
     t.integer  "account_id",          null: false

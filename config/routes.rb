@@ -25,7 +25,9 @@ Rails.application.routes.draw do
 
   api :v1, :default => true do
 
-    resources :users, only: [:index]
+    resources :users, only: [:index] do
+      get 'tasks', controller: 'tasks', action: 'user', on: :collection
+    end
 
   end
   
