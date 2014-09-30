@@ -8,7 +8,7 @@ class UserAccessPolicy
     when :read, :update, :destroy
       requestor.is_human? && !requestor.is_anonymous?
     when :read_tasks
-      requestor == user
+      requestor.is_human? && requestor == user
     else
       false
     end

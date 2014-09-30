@@ -34,7 +34,11 @@ protected
     page = options[:page]
     per_page = options[:per_page]
 
-    relation = relation.limit(per_page).offset(per_page*page) if page.present? && per_page.present?
+    if page.present? && per_page.present?
+      relation = relation.limit(per_page).offset(per_page*page)
+    else
+      page = per_page = nil
+    end
 
     #
     # Ordering
@@ -77,11 +81,13 @@ protected
 
     # Translate to routine outputs
 
+    num_matching_items = relation.except(:offset, :limit, :order).count
+
     outputs[:relation] = relation
-    outputs[:per_page] = per_page
-    outputs[:page] = page
+    outputs[:per_page] = per_page || num_matching_items
+    outputs[:page] = page || 0
     outputs[:order_by] = order_bys.join(', ') # convert back to one string
-    outputs[:num_matching_items] = relation.except(:offset, :limit, :order).count
+    outputs[:num_matching_items] = num_matching_items
   end
 
 end
