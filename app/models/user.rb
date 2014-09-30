@@ -1,6 +1,6 @@
 class User < ActiveRecord::Base
 
-  belongs_to :account, class_name: "OpenStax::Accounts::Account"
+  belongs_to :account, class_name: "OpenStax::Accounts::Account", autosave: true
   has_many :groups_as_member, through: :account
   has_many :groups_as_owner, through: :account
 
