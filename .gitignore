@@ -49,3 +49,6 @@ public/assets/source_maps/
 
 # Ignore misc files
 notes
+
+# Ignore generated doc
+doc

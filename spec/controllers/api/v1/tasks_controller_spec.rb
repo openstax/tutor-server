@@ -14,12 +14,8 @@ describe Api::V1::TasksController, :type => :controller, :api => true, :version 
       api_get :user, user_1_token
       expect(response.code).to eq('200')
       expect(response.body).to eq({
-        query: "user_id:#{user_1.id}",
-        num_matching_items: 0,
-        page: 0,
-        per_page: 0,
-        order_by: "id ASC",
-        tasks: []
+        total_count: 0,
+        items: []
       }.to_json)
     end
 
