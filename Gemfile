@@ -68,7 +68,7 @@ gem 'lev'
 gem 'squeel'
 
 # Contract management
-gem 'fine_print', '~> 2.0.3'
+gem 'fine_print', '~> 2.1.1'
 
 # Keyword search
 gem "keyword_search"
