@@ -4,11 +4,11 @@ FactoryGirl.define do
     deleted_at nil
 
     ignore do
-      username { SecureRandom.hex.to_s }
-      first_name { SecureRandom.hex.to_s }
-      last_name { SecureRandom.hex.to_s }
-      full_name { SecureRandom.hex.to_s }
-      title nil
+      username   { SecureRandom.hex.to_s }
+      first_name { Faker::Name.first_name }
+      last_name  { Faker::Name.last_name }
+      full_name  { "#{first_name} #{last_name}" }
+      title      { Faker::Name.title }
     end
 
     after(:build) do |user, evaluator|

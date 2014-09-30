@@ -30,6 +30,8 @@ Rails.application.routes.draw do
       get 'tasks', on: :collection
     end
 
+    resource :user, only: [:show, :update, :destroy]
+
   end
   
   namespace 'admin' do
