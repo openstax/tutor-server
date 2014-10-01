@@ -26,7 +26,7 @@ class Api::V1::TasksController < Api::V1::ApiController
     standard_read(Task, params[:id])
   end
 
-  api :GET, '/users/tasks', 'Gets all tasks assigned to the User making the request'
+  api :GET, '/user/tasks', 'Gets all tasks assigned to the User making the request'
   description <<-EOS 
     #{json_schema(Api::V1::TaskSearchRepresenter, include: :readable)}            
   EOS
