@@ -14,7 +14,7 @@ module Api::V1
 
     collection :items,
                class: Task,
-               decorator: Api::V1::TaskRepresenter,
+               decorator: Api::V1::TaskRepresenter::SubRepresenterFinder.new,
                getter: lambda {|*| tasks},
                readable: true,
                writeable: false,

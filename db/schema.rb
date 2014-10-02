@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140927175527) do
+ActiveRecord::Schema.define(version: 20141001211102) do
 
   create_table "administrators", force: true do |t|
     t.integer  "user_id",    null: false
@@ -20,6 +20,15 @@ ActiveRecord::Schema.define(version: 20140927175527) do
   end
 
   add_index "administrators", ["user_id"], name: "index_administrators_on_user_id", unique: true
+
+  create_table "assigned_tasks", force: true do |t|
+    t.string   "assignee_type"
+    t.integer  "assignee_id"
+    t.integer  "user_id"
+    t.integer  "task_id"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+  end
 
   create_table "course_managers", force: true do |t|
     t.integer  "course_id",  null: false
@@ -279,25 +288,22 @@ ActiveRecord::Schema.define(version: 20140927175527) do
   add_index "task_plans", ["owner_id", "owner_type"], name: "index_task_plans_on_owner_id_and_owner_type"
 
   create_table "tasks", force: true do |t|
-    t.integer  "taskable_id",   null: false
-    t.string   "taskable_type", null: false
-    t.integer  "user_id",       null: false
     t.integer  "task_plan_id"
     t.datetime "opens_at"
     t.datetime "due_at"
     t.boolean  "is_shared"
-    t.integer  "details_id",    null: false
-    t.string   "details_type",  null: false
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.integer  "details_id",           null: false
+    t.string   "details_type",         null: false
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+    t.string   "title",                null: false
+    t.integer  "assigned_tasks_count", null: false
   end
 
   add_index "tasks", ["details_id", "details_type"], name: "index_tasks_on_details_id_and_details_type"
   add_index "tasks", ["due_at"], name: "index_tasks_on_due_at"
   add_index "tasks", ["opens_at"], name: "index_tasks_on_opens_at"
   add_index "tasks", ["task_plan_id"], name: "index_tasks_on_task_plan_id"
-  add_index "tasks", ["taskable_id", "taskable_type"], name: "index_tasks_on_taskable_id_and_taskable_type"
-  add_index "tasks", ["user_id"], name: "index_tasks_on_user_id"
 
   create_table "users", force: true do |t|
     t.integer  "account_id",          null: false
