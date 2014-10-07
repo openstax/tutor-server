@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Api::V1::TasksController, :type => :controller, :api => true, :version => :v1 do
+describe Api::V1::UsersController, :type => :controller, :api => true, :version => :v1 do
 
   let!(:application)     { FactoryGirl.create :doorkeeper_application }
   let!(:user_1)          { FactoryGirl.create :user }
@@ -8,5 +8,15 @@ describe Api::V1::TasksController, :type => :controller, :api => true, :version 
                                               application: application, 
                                               resource_owner_id: user_1.id }
 
-  pending "add some examples to #{__FILE__}"
+  describe "tasks" do
+    it "should let a user retrieve their non-existent tasks" do
+      api_get :tasks, user_1_token
+      expect(response.code).to eq('200')
+      expect(response.body).to eq({
+        total_count: 0,
+        items: []
+      }.to_json)
+    end
+  end
+
 end                                                

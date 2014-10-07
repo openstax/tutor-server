@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141001211102) do
+ActiveRecord::Schema.define(version: 20141006165505) do
 
   create_table "administrators", force: true do |t|
     t.integer  "user_id",    null: false
@@ -215,10 +215,10 @@ ActiveRecord::Schema.define(version: 20141001211102) do
 
   create_table "resources", force: true do |t|
     t.string   "url"
-    t.boolean  "url_is_permalink"
+    t.boolean  "immutable"
     t.text     "content"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "school_managers", force: true do |t|
@@ -292,12 +292,12 @@ ActiveRecord::Schema.define(version: 20141001211102) do
     t.datetime "opens_at"
     t.datetime "due_at"
     t.boolean  "is_shared"
-    t.integer  "details_id",           null: false
-    t.string   "details_type",         null: false
-    t.datetime "created_at",           null: false
-    t.datetime "updated_at",           null: false
-    t.string   "title",                null: false
-    t.integer  "assigned_tasks_count", null: false
+    t.integer  "details_id",                       null: false
+    t.string   "details_type",                     null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+    t.string   "title",                            null: false
+    t.integer  "assigned_tasks_count", default: 0, null: false
   end
 
   add_index "tasks", ["details_id", "details_type"], name: "index_tasks_on_details_id_and_details_type"
