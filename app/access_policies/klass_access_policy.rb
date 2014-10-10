@@ -3,9 +3,11 @@ class KlassAccessPolicy
 
   def self.action_allowed?(action, requestor, klass)
     case action
+    when :index # Anyone (non-anonymous)
+      !requestor.is_anonymous? && requestor.is_human?
     when :read # Anyone (non-anonymous) as long as the class is visible,
                # otherwise educators, course managers and school managers
-      !requestor.is_anonymous? && \
+      !requestor.is_anonymous? && requestor.is_human? && \
       (klass.visible_at < Time.now && klass.invisible_at > Time.now) || \
       (requestor.educators.where(klass_id: klass.id).exists? || \
        requestor.course_managers.where(course_id: klass.course_id).exists? || \

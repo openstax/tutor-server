@@ -14,6 +14,17 @@ module Api::V1
 
     let!(:params)         { {course_id: course.id, school_id: course.school_id} }
 
+    context "GET index" do
+      it "lists the classes in the given course" do
+        klass.save!
+        api_get :index, user_token, parameters: params
+        expect(response).to have_http_status(:ok)
+        expected_outputs = Lev::Outputs.new(items: [klass])
+        expect(response.body).to eq(
+          Api::V1::KlassSearchRepresenter.new(expected_outputs).to_json)
+      end
+    end
+
     context "GET show" do
       it "returns the klass that matches the given ID" do
         klass.save!

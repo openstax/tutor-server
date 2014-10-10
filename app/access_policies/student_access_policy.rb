@@ -3,6 +3,8 @@ class StudentAccessPolicy
 
   def self.action_allowed?(action, requestor, student)
     case action
+    when :index # Anyone (non-anonymous) - further filtering is done by `read`
+      !requestor.is_anonymous? && requestor.is_human?
     when :read, :destroy # The user himself, educators, course managers and school managers
       !requestor.is_anonymous? && requestor.is_human? && \
       (requestor.id == student.user_id || \

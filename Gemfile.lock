@@ -1,3 +1,10 @@
+GIT
+  remote: https://github.com/rails/arel.git
+  revision: 1ee24112e8b42879f02fcee995e222dcabb2cb64
+  ref: 1ee24112e8b42879f02fcee995e222dcabb2cb64
+  specs:
+    arel (6.0.0.beta1.20140817224534)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -41,7 +48,6 @@ GEM
       tzinfo (~> 1.1)
     apipie-rails (0.2.6)
       json
-    arel (6.0.0.beta1)
     autoprefixer-rails (3.1.2.20141016)
       execjs
     binding_of_caller (0.7.3.pre1)
@@ -388,6 +394,7 @@ PLATFORMS
 
 DEPENDENCIES
   apipie-rails
+  arel!
   autoprefixer-rails
   bootstrap-sass (~> 3.2.0)
   brakeman

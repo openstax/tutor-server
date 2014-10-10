@@ -6,6 +6,11 @@ source 'https://rubygems.org'
 # Rails framework
 gem 'rails', '4.2.0.beta1'
 
+# Arel bug when comparing dates: https://github.com/activerecord-hackery/squeel/issues/331
+# Remove when new version of ARel is released
+gem 'arel', git: 'https://github.com/rails/arel.git',
+            ref: '1ee24112e8b42879f02fcee995e222dcabb2cb64'
+
 # Bootstrap front-end framework
 gem 'bootstrap-sass', '~> 3.2.0'
 

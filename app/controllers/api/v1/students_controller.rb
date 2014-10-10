@@ -25,7 +25,7 @@ module Api::V1
       #{json_schema(Api::V1::StudentSearchRepresenter, include: :readable)}        
     EOS
     def index
-      standard_index(@klass.students)
+      standard_index(@klass.students, Api::V1::StudentSearchRepresenter)
     end
 
     ########

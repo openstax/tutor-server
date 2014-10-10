@@ -1,7 +1,7 @@
 module Api::V1
   class KlassesController < Api::V1::ApiController
 
-    before_filter :get_course, only: :create
+    before_filter :get_course, only: [:index, :create]
     before_filter :get_klass, only: [:show, :update, :destroy]
 
     resource_description do
@@ -10,6 +10,23 @@ module Api::V1
       description <<-EOS
         Read about or manage classes that use OpenStax Tutor.
       EOS
+    end
+
+    #########
+    # index #
+    #########
+
+    api :GET,
+        '/schools/:school_id/courses/:course_id/classes',
+        'Returns a list of classes in a given course'
+    description <<-EOS
+      Returns a list of classes in a given course.
+
+      #{json_schema(Api::V1::KlassSearchRepresenter, include: :readable)}        
+    EOS
+    def index
+      standard_index(@course.klasses.visible_for(current_api_user),
+                     Api::V1::KlassSearchRepresenter)
     end
 
     ########
