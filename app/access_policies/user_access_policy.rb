@@ -5,7 +5,7 @@ class UserAccessPolicy
     case action
     when :index # Anyone (non-anonymous)
       !requestor.is_anonymous?
-    when :read, :update, :destroy, :read_tasks # The user himself
+    when :read, :update, :destroy # The user himself
       !requestor.is_anonymous? && requestor == user
     else
       false

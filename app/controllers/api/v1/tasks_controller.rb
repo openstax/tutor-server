@@ -1,5 +1,7 @@
 class Api::V1::TasksController < Api::V1::ApiController
 
+  before_filter :get_task, only: [:show]
+
   resource_description do
     api_versions "v1"
     short_description 'Represents a task assigned to a user or role'
@@ -23,7 +25,21 @@ class Api::V1::TasksController < Api::V1::ApiController
   #   #{json_schema(Api::V1::TaskRepresenter, include: :readable)}            
   # EOS
   def show
-    standard_read(Task, params[:id])
+    standard_read(@task)
+  end
+
+  api :GET, '/user/tasks', 'Gets all tasks assigned to the User making the request'
+  description <<-EOS 
+    #{json_schema(Api::V1::TaskSearchRepresenter, include: :readable)}            
+  EOS
+  def user
+    standard_index(current_human_user.tasks, Api::V1::TaskSearchRepresenter)
+  end
+
+  protected
+
+  def get_task
+    @task = Task.find(params[:id])
   end
 
 end
