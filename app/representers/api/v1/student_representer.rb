@@ -12,6 +12,14 @@ module Api::V1
                description: "The associated user"
              }
 
+    property :user_id,
+             type: Integer,
+             readable: false,
+             writeable: true,
+             schema_info: {
+               description: "The associated user's ID"
+             }
+
     property :klass_id,
              as: :class_id,
              type: Integer,
@@ -47,8 +55,8 @@ module Api::V1
 
     property :student_custom_identifier,
              type: String,
-             readable: true,
-             writeable: true,
+             readable: false,
+             writeable: false,
              schema_info: {
                description: "A custom identifier set by the student"
              }

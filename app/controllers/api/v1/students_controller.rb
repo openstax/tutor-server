@@ -55,7 +55,7 @@ module Api::V1
 
       #{json_schema(Api::V1::StudentRepresenter, include: :writeable)}        
     EOS
-    def show
+    def create
       standard_nested_create(Student.new, :klass, @klass)
     end
 
@@ -68,10 +68,11 @@ module Api::V1
         'Updates attributes of the given student'
     description <<-EOS
       Updates attributes of the given student.
+      The associated user cannot be changed during an update.
 
       #{json_schema(Api::V1::StudentRepresenter, include: :writeable)}        
     EOS
-    def show
+    def update
       standard_update(@student)
     end
 
