@@ -6,21 +6,24 @@ class KlassAccessPolicy
     when :index # Anyone (non-anonymous)
       !requestor.is_anonymous? && requestor.is_human?
     when :read # Anyone (non-anonymous) as long as the class is visible,
-               # otherwise educators, course managers and school managers
+               # otherwise educators, course managers, school managers and administrators
       !requestor.is_anonymous? && requestor.is_human? && \
       ((klass.visible_at < Time.now && klass.invisible_at > Time.now) || \
        (requestor.educators.where(klass_id: klass.id).exists? || \
         requestor.course_managers.where(course_id: klass.course_id).exists? || \
-        requestor.school_managers.where(school_id: klass.course.school_id).exists?))
-    when :create, :destroy # Course managers and school managers
+        requestor.school_managers.where(school_id: klass.course.school_id).exists? || \
+        !!requestor.administrator))
+    when :create, :destroy # Course managers, school managers and administrators
       !requestor.is_anonymous? && requestor.is_human? && \
       (requestor.course_managers.where(course_id: klass.course_id).exists? || \
-       requestor.school_managers.where(school_id: klass.course.school_id).exists?)
-    when :update # Educators, course managers and school managers
+       requestor.school_managers.where(school_id: klass.course.school_id).exists? || \
+       !!requestor.administrator)
+    when :update # Educators, course managers, school managers and administrators
       !requestor.is_anonymous? && requestor.is_human? && \
       (requestor.educators.where(klass_id: klass.id).exists? || \
        requestor.course_managers.where(course_id: klass.course_id).exists? || \
-       requestor.school_managers.where(school_id: klass.course.school_id).exists?)
+       requestor.school_managers.where(school_id: klass.course.school_id).exists? || \
+       !!requestor.administrator)
     else
       false
     end

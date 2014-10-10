@@ -9,6 +9,7 @@ RSpec.describe KlassAccessPolicy do
   let!(:educator)       { FactoryGirl.create(:educator, klass: klass) }
   let!(:course_manager) { FactoryGirl.create(:course_manager, course: klass.course) }
   let!(:school_manager) { FactoryGirl.create(:school_manager, school: klass.school) }
+  let!(:administrator)  { FactoryGirl.create(:administrator) }
 
   context 'index' do
     it 'cannot be accessed by anonymous users or applications' do
@@ -51,7 +52,7 @@ RSpec.describe KlassAccessPolicy do
         expect(KlassAccessPolicy.action_allowed?(:read, student.user, klass)).to eq false
       end
 
-      it 'can be accessed by educators, course managers and school managers' do
+      it 'can be accessed by educators, course managers, school managers and administrators' do
         expect(KlassAccessPolicy.action_allowed?(
           :read, educator.user, klass)).to eq true
 
@@ -60,6 +61,9 @@ RSpec.describe KlassAccessPolicy do
 
         expect(KlassAccessPolicy.action_allowed?(
           :read, school_manager.user, klass)).to eq true
+
+        expect(KlassAccessPolicy.action_allowed?(
+          :read, administrator.user, klass)).to eq true
       end
     end
   end
@@ -82,7 +86,7 @@ RSpec.describe KlassAccessPolicy do
       expect(KlassAccessPolicy.action_allowed?(:destroy, educator.user, klass)).to eq false
     end
 
-    it 'can be accessed by course managers and school managers' do
+    it 'can be accessed by course managers, school managers and administrators' do
       expect(KlassAccessPolicy.action_allowed?(
         :create, course_manager.user, klass)).to eq true
       expect(KlassAccessPolicy.action_allowed?(
@@ -92,6 +96,11 @@ RSpec.describe KlassAccessPolicy do
         :create, school_manager.user, klass)).to eq true
       expect(KlassAccessPolicy.action_allowed?(
         :destroy, school_manager.user, klass)).to eq true
+
+      expect(KlassAccessPolicy.action_allowed?(
+        :create, administrator.user, klass)).to eq true
+      expect(KlassAccessPolicy.action_allowed?(
+        :destroy, administrator.user, klass)).to eq true
     end
   end
 
@@ -106,7 +115,7 @@ RSpec.describe KlassAccessPolicy do
       expect(KlassAccessPolicy.action_allowed?(:update, student.user, klass)).to eq false
     end
 
-    it 'can be accessed by educators, course managers and school managers' do
+    it 'can be accessed by educators, course managers, school managers and administrators' do
       expect(KlassAccessPolicy.action_allowed?(
         :update, educator.user, klass)).to eq true
 
@@ -115,6 +124,9 @@ RSpec.describe KlassAccessPolicy do
 
       expect(KlassAccessPolicy.action_allowed?(
         :update, school_manager.user, klass)).to eq true
+
+      expect(KlassAccessPolicy.action_allowed?(
+        :update, administrator.user, klass)).to eq true
     end
   end
 end

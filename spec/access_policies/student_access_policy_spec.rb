@@ -9,6 +9,7 @@ RSpec.describe StudentAccessPolicy do
   let!(:educator)       { FactoryGirl.create(:educator, klass: klass) }
   let!(:course_manager) { FactoryGirl.create(:course_manager, course: klass.course) }
   let!(:school_manager) { FactoryGirl.create(:school_manager, school: klass.school) }
+  let!(:administrator)  { FactoryGirl.create(:administrator) }
 
   context 'index' do
     it 'cannot be accessed by anonymous users or applications' do
@@ -34,7 +35,7 @@ RSpec.describe StudentAccessPolicy do
       expect(StudentAccessPolicy.action_allowed?(:destroy, user, student)).to eq false
     end
 
-    it 'can be accessed by the student himself, educators, course managers and school managers' do
+    it 'can be accessed by the student himself, educators, course managers, school managers and administrators' do
       expect(StudentAccessPolicy.action_allowed?(
         :read, student.user, student)).to eq true
       expect(StudentAccessPolicy.action_allowed?(
@@ -54,6 +55,11 @@ RSpec.describe StudentAccessPolicy do
         :read, school_manager.user, student)).to eq true
       expect(StudentAccessPolicy.action_allowed?(
         :destroy, school_manager.user, student)).to eq true
+
+      expect(StudentAccessPolicy.action_allowed?(
+        :read, administrator.user, student)).to eq true
+      expect(StudentAccessPolicy.action_allowed?(
+        :destroy, administrator.user, student)).to eq true
     end
   end
 
@@ -80,7 +86,7 @@ RSpec.describe StudentAccessPolicy do
         :update, student.user, student)).to eq false
     end
 
-    it 'can be accessed by educators, course managers and school managers' do
+    it 'can be accessed by educators, course managers, school managers and administrators' do
       expect(StudentAccessPolicy.action_allowed?(
         :create, educator.user, student)).to eq true
       expect(StudentAccessPolicy.action_allowed?(
@@ -95,6 +101,11 @@ RSpec.describe StudentAccessPolicy do
         :create, school_manager.user, student)).to eq true
       expect(StudentAccessPolicy.action_allowed?(
         :update, school_manager.user, student)).to eq true
+
+      expect(StudentAccessPolicy.action_allowed?(
+        :create, administrator.user, student)).to eq true
+      expect(StudentAccessPolicy.action_allowed?(
+        :update, administrator.user, student)).to eq true
     end
   end
 end
