@@ -8,10 +8,10 @@ class KlassAccessPolicy
     when :read # Anyone (non-anonymous) as long as the class is visible,
                # otherwise educators, course managers and school managers
       !requestor.is_anonymous? && requestor.is_human? && \
-      (klass.visible_at < Time.now && klass.invisible_at > Time.now) || \
-      (requestor.educators.where(klass_id: klass.id).exists? || \
-       requestor.course_managers.where(course_id: klass.course_id).exists? || \
-       requestor.school_managers.where(school_id: klass.course.school_id).exists?)
+      ((klass.visible_at < Time.now && klass.invisible_at > Time.now) || \
+       (requestor.educators.where(klass_id: klass.id).exists? || \
+        requestor.course_managers.where(course_id: klass.course_id).exists? || \
+        requestor.school_managers.where(school_id: klass.course.school_id).exists?))
     when :create, :destroy # Course managers and school managers
       !requestor.is_anonymous? && requestor.is_human? && \
       (requestor.course_managers.where(course_id: klass.course_id).exists? || \

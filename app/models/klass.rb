@@ -14,7 +14,14 @@ class Klass < ActiveRecord::Base
     user = user.human_user if user.is_a?(OpenStax::Api::ApiUser)
     next all if user.is_a?(User) && user.administrator
     current_time = Time.now
-    where{(visible_at.lt current_time) & (invisible_at.gt current_time)}
+    where{(visible_at.lt current_time) & \
+      ((invisible_at.eq nil) | (invisible_at.gt current_time))}
   }
+
+  def is_visible?
+    return false if visible_at.nil? || visible_at > Time.now
+    return true if invisible_at.nil? || invisible_at > Time.now
+    false
+  end
 
 end
