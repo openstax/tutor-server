@@ -1,5 +1,7 @@
 class Klass < ActiveRecord::Base
   belongs_to :course
+  has_one :school, through: :course
+
   has_many :sections, dependent: :destroy
   has_many :educators, dependent: :destroy
   has_many :students, dependent: :destroy

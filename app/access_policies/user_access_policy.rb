@@ -3,12 +3,10 @@ class UserAccessPolicy
 
   def self.action_allowed?(action, requestor, user)
     case action
-    when :index
-      !requestor.is_human? || !requestor.is_anonymous?
-    when :read, :update, :destroy
-      requestor.is_human? && !requestor.is_anonymous?
-    when :read_tasks
-      requestor.is_human? && requestor == user
+    when :index # Anyone (non-anonymous)
+      !requestor.is_anonymous?
+    when :read, :update, :destroy, :read_tasks # The user himself
+      !requestor.is_anonymous? && requestor == user
     else
       false
     end

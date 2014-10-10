@@ -2,6 +2,8 @@ class Student < ActiveRecord::Base
   belongs_to :user
   belongs_to :klass
   belongs_to :section
+  has_one :course, through: :klass
+  has_one :school, through: :course
 
   enum level: { graded: 0, auditing: 1 }
   
