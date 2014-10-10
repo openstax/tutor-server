@@ -1,3 +1,4 @@
+OSU::AccessPolicy.register(Course, CourseAccessPolicy)
 OSU::AccessPolicy.register(Klass, KlassAccessPolicy)
 OSU::AccessPolicy.register(Student, StudentAccessPolicy)
 OSU::AccessPolicy.register(Task, TaskAccessPolicy)

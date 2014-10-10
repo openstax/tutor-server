@@ -38,8 +38,8 @@ module Api::V1
 
       #{json_schema(Api::V1::KlassRepresenter, include: :writeable)}        
     EOS
-    def show
-      standard_nested_create(@course, Klass.new)
+    def create
+      standard_nested_create(Klass.new, :course, @course)
     end
 
     ##########
@@ -53,7 +53,7 @@ module Api::V1
 
       #{json_schema(Api::V1::KlassRepresenter, include: :writeable)}        
     EOS
-    def show
+    def update
       standard_update(@klass)
     end
 

@@ -26,11 +26,17 @@ Rails.application.routes.draw do
   api :v1, :default => true do
 
     resources :users, only: [:index]
-    resource :user, only: [] do
+    resource :user, only: [:show, :update, :destroy] do
       get 'tasks', on: :collection
     end
 
-    resource :user, only: [:show, :update, :destroy]
+    resources :schools, only: [] do
+      resources :courses, only: [] do
+        resources :klasses do
+          resources :students
+        end
+      end
+    end
 
   end
   

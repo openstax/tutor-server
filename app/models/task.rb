@@ -1,5 +1,8 @@
 class Task < ActiveRecord::Base
   has_many :assigned_tasks, dependent: :destroy
+
+  belongs_to :user
+  belongs_to :taskable, polymorphic: true
   belongs_to :details, polymorphic: true, dependent: :destroy
   belongs_to :task_plan
 
