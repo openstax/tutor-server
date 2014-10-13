@@ -8,6 +8,8 @@ protected
 
   def exec(query, options={})
 
+    options[:eager_load_tasks] = true unless options.has_key?(:eager_load_tasks)
+
     tasks = Task.all
     
     KeywordSearch.search(query) do |with|
@@ -22,7 +24,8 @@ protected
 
     end
 
-    # TODO include detailed tasks in the query -- just always tack on ".includes(:details)"??
+    # We normally need the details associated with these tasks, so eager load them.
+    tasks = tasks.includes(:details) if options[:eager_load_tasks]
 
     run(OrganizeSearchResults, tasks, 
                                page: options[:page],

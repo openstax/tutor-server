@@ -3,10 +3,9 @@ class AssignTask
 
 protected
 
-  def exec(task, options={})
+  def exec(task:, assignee:)
 
     individual_assignees = []
-    assignee = options[:assignee]
 
     # If the "task" passed in is a detailed task (like "Reading"), get the
     # generic Task above it.
@@ -16,7 +15,7 @@ protected
     when Student
       individual_assignees.push(assignee: assignee, user_id: assignee.user_id)
     when User
-      individual_assignees.push(assignee: nil, user_id: assignee.id)
+      individual_assignees.push(assignee: assignee, user_id: assignee.id)
     # when TaskPlanAssignee
     #   break it down (once this class is implemented)
     else
