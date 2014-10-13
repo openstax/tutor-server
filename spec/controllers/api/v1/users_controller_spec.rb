@@ -41,7 +41,7 @@ module Api::V1
 
       it "returns no results if the maximum number of results is exceeded" do
         api_get :index, admin_token, parameters: {q: ''}
-        expect(response).to have_http_status(:success)
+        expect(response).to have_http_status(:ok)
 
         expected_response = {
           num_matching_users: @users_count,
@@ -56,7 +56,7 @@ module Api::V1
 
       it "returns single results" do
         api_get :index, application_token, parameters: {q: 'first_name:jOhN last_name:dOe'}
-        expect(response).to have_http_status(:success)
+        expect(response).to have_http_status(:ok)
 
         expected_response = {
           num_matching_users: 1,
@@ -80,7 +80,7 @@ module Api::V1
 
       it "returns multiple results" do
         api_get :index, user_token, parameters: {q: 'last_name:DoE'}
-        expect(response).to have_http_status(:success)
+        expect(response).to have_http_status(:ok)
 
         expected_response = {
           num_matching_users: 2,
@@ -113,7 +113,7 @@ module Api::V1
       it "sorts by multiple fields in different directions" do
         api_get :index, user_token, parameters: {q: 'username:doe',
                                                  order_by: "first_name DESC, last_name"}
-        expect(response).to have_http_status(:success)
+        expect(response).to have_http_status(:ok)
 
         expected_response = {
           num_matching_users: 2,
@@ -147,7 +147,7 @@ module Api::V1
     context "GET user" do
       it "returns the current User's info" do
         api_get :show, user_token
-        expect(response).to have_http_status(:success)
+        expect(response).to have_http_status(:ok)
 
         expected_response = {
           id: user.id,
@@ -163,7 +163,7 @@ module Api::V1
 
       it "ignores id parameters" do
         api_get :show, user_token, parameters: {id: admin.id, user_id: admin.id}
-        expect(response).to have_http_status(:success)
+        expect(response).to have_http_status(:ok)
         
         expected_response = {
           id: user.id,
@@ -181,7 +181,7 @@ module Api::V1
     context "PATCH user" do
       it "updates the current User's profile" do
         api_put :update, user_token, raw_post_data: {first_name: "Jerry", last_name: "Mouse"}
-        expect(response).to have_http_status(:success)
+        expect(response).to have_http_status(:no_content)
         user.reload
         expect(user.first_name).to eq 'Jerry'
         expect(user.last_name).to eq 'Mouse'
@@ -189,7 +189,7 @@ module Api::V1
 
       it "ignores id parameters" do
         api_put :update, user_token, raw_post_data: {first_name: "Jerry", last_name: "Mouse"}, parameters: {id: admin.id, user_id: admin.id}
-        expect(response).to have_http_status(:success)
+        expect(response).to have_http_status(:no_content)
         user.reload
         admin.reload
         expect(user.first_name).to eq 'Jerry'
@@ -202,14 +202,14 @@ module Api::V1
     context "DELETE user" do
       it "deactivates the current User's account" do
         api_delete :destroy, user_token
-        expect(response).to have_http_status(:success)
+        expect(response).to have_http_status(:no_content)
         user.reload
         expect(user.is_deleted?).to eq true
       end
 
       it "ignores id parameters" do
         api_delete :destroy, user_token, parameters: {id: admin.id, user_id: admin.id}
-        expect(response).to have_http_status(:success)
+        expect(response).to have_http_status(:no_content)
         user.reload
         admin.reload
         expect(user.is_deleted?).to eq true
@@ -219,8 +219,8 @@ module Api::V1
 
     context "GET tasks" do
       it "should let a user retrieve their non-existent tasks" do
-        api_get :tasks, user_1_token
-        expect(response.code).to eq('200')
+        api_get :tasks, user_token
+        expect(response).to have_http_status(:ok)
         expect(response.body).to eq({
           total_count: 0,
           items: []
