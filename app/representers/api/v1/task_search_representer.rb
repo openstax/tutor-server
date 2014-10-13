@@ -14,8 +14,8 @@ module Api::V1
 
     collection :items,
                class: Task,
-               decorator: Api::V1::TaskRepresenter,
-               getter: lambda {|*| tasks},
+               decorator: Api::V1::TaskRepresenterMapper.new,
+               getter: lambda {|*| tasks.collect{|t| t.details}},
                readable: true,
                writeable: false,
                schema_info: {

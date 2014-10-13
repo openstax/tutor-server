@@ -19,21 +19,11 @@ class Api::V1::TasksController < Api::V1::ApiController
   ###############################################################
 
   api :GET, '/tasks/:id', 'Gets the specified Task'
-  description <<-EOS
-    #{json_schema(Api::V1::TaskRepresenter, include: :readable)}            
-  EOS
+  # description <<-EOS
+  #   #{json_schema(Api::V1::TaskRepresenter, include: :readable)}            
+  # EOS
   def show
     standard_read(Task, params[:id])
-  end
-
-  api :GET, '/user/tasks', 'Gets all tasks assigned to the User making the request'
-  description <<-EOS 
-    #{json_schema(Api::V1::TaskSearchRepresenter, include: :readable)}            
-  EOS
-  def user
-    OSU::AccessPolicy.require_action_allowed!(:read_tasks, current_api_user, current_human_user)
-    outputs = SearchTasks.call("user_id:#{current_human_user.id}").outputs
-    respond_with outputs, represent_with: Api::V1::TaskSearchRepresenter
   end
 
 end

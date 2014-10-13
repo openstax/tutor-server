@@ -1,15 +1,24 @@
 module Api::V1
-  class ReadingRepresenter < DetailedTaskRepresenter
-    include Roar::Representer::JSON
+  class ReadingRepresenter < Roar::Decorator
+    include Api::V1::TaskProperties
 
-    property :resource,
-             class: Resource,
-             decorator: ResourceRepresenter,
+    property :url,
+             type: String,
              writeable: false,
+             readable: true,
              schema_info: {
-               required: true,
-               description: "The Resource content/URL for this Reading"
-             }             
+               required: false,
+               description: "The URL where the reading material can be found"
+             }
+
+    property :content,
+             type: String,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               required: false,
+               description: "The reading content as HTML"
+             }
                           
   end
 end
