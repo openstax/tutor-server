@@ -1,5 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe AssignedTask, :type => :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it { is_expected.to belong_to(:assignee) }
+  it { is_expected.to belong_to(:task).counter_cache(true) }
+  it { is_expected.to belong_to(:user) }
 end
+

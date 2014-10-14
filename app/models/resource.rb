@@ -1,6 +1,4 @@
 class Resource < ActiveRecord::Base
-  
-
   CONTAINERS = [:readings, :interactives]
 
   CONTAINERS.each do |container|
@@ -17,5 +15,4 @@ class Resource < ActiveRecord::Base
   def delete
     delete
   end
-
 end

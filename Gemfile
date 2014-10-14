@@ -89,6 +89,9 @@ gem 'newrelic_rpm'
 # YAML database backups
 gem 'yaml_db'
 
+# Date validations
+gem 'validates_timeliness'
+
 group :development, :test do
   # Thin development server
   gem 'thin'
