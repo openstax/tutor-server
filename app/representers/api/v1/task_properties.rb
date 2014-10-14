@@ -25,6 +25,7 @@ module Api::V1
              type: Integer,
              writeable: false,
              readable: true,
+             render_nil: true,
              schema_info: {
                required: false,
                description: "The ID of the TaskPlan used to generate this Task"
