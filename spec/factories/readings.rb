@@ -1,7 +1,9 @@
-# Read about factories at https://github.com/thoughtbot/factory_girl
-
 FactoryGirl.define do
   factory :reading do
-    resource nil
+    resource
+
+    after(:build) do |reading|
+      reading.task ||= FactoryGirl.build(:task, details: reading)
+    end
   end
 end

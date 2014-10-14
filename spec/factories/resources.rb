@@ -1,9 +1,13 @@
-# Read about factories at https://github.com/thoughtbot/factory_girl
-
 FactoryGirl.define do
+  sequence :url do |n| "http://www.#{n}.com" end
+
   factory :resource do
-    url "MyString"
-    url_is_permalink false
-    content "MyText"
+    ignore do
+      a_url { generate(:url) }
+    end
+
+    url { "#{a_url}" }
+    is_immutable false
+    content { "Content from #{a_url}" }
   end
 end

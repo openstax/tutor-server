@@ -6,6 +6,7 @@ module Api::V1
              type: String,
              writeable: false,
              readable: true,
+             as: :content_url,
              schema_info: {
                required: false,
                description: "The URL where the reading material can be found"
@@ -15,6 +16,7 @@ module Api::V1
              type: String,
              writeable: false,
              readable: true,
+             as: :content_html,
              schema_info: {
                required: false,
                description: "The reading content as HTML"

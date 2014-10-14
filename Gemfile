@@ -37,7 +37,7 @@ gem 'turbolinks'
 gem 'rails-html-sanitizer', '~> 1.0'
 
 # Utilities for OpenStax websites
-gem 'openstax_utilities', '~> 3.0.0'
+gem 'openstax_utilities', '~> 4.1.0'
 
 # Cron job scheduling
 gem 'whenever'
@@ -55,7 +55,7 @@ gem 'doorkeeper'
 gem 'chronic'
 
 # API versioning and documentation
-gem 'openstax_api', path: '/Users/jps/dev/openstax/openstax_api' #'~> 2.5.0'
+gem 'openstax_api', '~> 3.1.1'
 gem 'apipie-rails'
 gem 'maruku'
 gem 'representable'
@@ -88,6 +88,9 @@ gem 'newrelic_rpm'
 
 # YAML database backups
 gem 'yaml_db'
+
+# Date validations
+gem 'validates_timeliness'
 
 group :development, :test do
   # Thin development server

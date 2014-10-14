@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141006165505) do
+ActiveRecord::Schema.define(version: 20141013201609) do
 
   create_table "administrators", force: true do |t|
     t.integer  "user_id",    null: false
@@ -84,6 +84,14 @@ ActiveRecord::Schema.define(version: 20141006165505) do
 
   add_index "fine_print_signatures", ["contract_id"], name: "index_fine_print_signatures_on_contract_id"
   add_index "fine_print_signatures", ["user_id", "user_type", "contract_id"], name: "index_fine_print_signatures_on_u_id_and_u_type_and_c_id", unique: true
+
+  create_table "interactives", force: true do |t|
+    t.integer  "resource_id", null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "interactives", ["resource_id"], name: "index_interactives_on_resource_id"
 
   create_table "klasses", force: true do |t|
     t.integer  "course_id",                       null: false
@@ -206,7 +214,7 @@ ActiveRecord::Schema.define(version: 20141006165505) do
   add_index "openstax_accounts_groups", ["openstax_uid"], name: "index_openstax_accounts_groups_on_openstax_uid", unique: true
 
   create_table "readings", force: true do |t|
-    t.integer  "resource_id"
+    t.integer  "resource_id", null: false
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
   end
@@ -215,10 +223,10 @@ ActiveRecord::Schema.define(version: 20141006165505) do
 
   create_table "resources", force: true do |t|
     t.string   "url"
-    t.boolean  "immutable"
+    t.boolean  "is_immutable"
     t.text     "content"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
   end
 
   create_table "school_managers", force: true do |t|
