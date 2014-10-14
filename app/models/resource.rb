@@ -13,6 +13,6 @@ class Resource < ActiveRecord::Base
   end
 
   def delete
-    delete
+    destroy
   end
 end
