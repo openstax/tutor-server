@@ -3,7 +3,7 @@ module Api::V1
 
     include Roar::Representer::JSON
 
-    property :id, 
+    property :id,
              type: Integer,
              writeable: false,
              readable: true,
@@ -23,7 +23,7 @@ module Api::V1
                enum: ['reading']
              }
 
-    property :task_plan_id, 
+    property :task_plan_id,
              type: Integer,
              writeable: false,
              readable: true,
