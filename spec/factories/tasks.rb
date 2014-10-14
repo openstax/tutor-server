@@ -2,12 +2,16 @@
 
 FactoryGirl.define do
   factory :task do
-    taskable nil
-    user_id 1
-    task_plan_id 1
-    opens_at "2014-09-26 14:32:12"
-    due_at "2014-09-26 14:32:12"
+    ignore do 
+      opens_at_time Time.now
+      duration 1.week
+    end
+
+    task_plan nil
+    opens_at { opens_at_time }
+    due_at { opens_at_time + duration }
     is_shared false
-    details nil
+    details { |details| details.association(:reading) }
+    title "A task"
   end
 end

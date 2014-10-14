@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :reading do
+  factory :interactive do
     resource
   end
 end

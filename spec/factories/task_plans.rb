@@ -9,6 +9,6 @@ FactoryGirl.define do
     due_at "2014-09-26 09:52:59"
     is_ready false
     is_shared false
-    details ""
+    details { |details| details.association(:reading_plan) }
   end
 end
