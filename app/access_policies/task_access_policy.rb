@@ -4,7 +4,7 @@ class TaskAccessPolicy
     when :index
       requestor.is_human? && !requestor.is_anonymous?
     when :read
-      requestor.is_human? && !requestor.is_anonymous? && requestor.id == task.user_id
+      requestor.is_human? && !requestor.is_anonymous? && task.users.include?(requestor)
     when :create, :update, :destroy
       false
     else

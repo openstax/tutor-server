@@ -15,7 +15,7 @@ module Api::V1
              type: String,
              writeable: false,
              readable: true,
-             getter: lambda { |*| type.downcase },
+             getter: lambda { |*| details_type.downcase },
              schema_info: {
                required: true,
                description: "The type of this Task",
@@ -37,6 +37,8 @@ module Api::V1
              writeable: true,
              readable: true,
              schema_info: {
+               type: "string",
+               format: "date-time",
                required: true,
                description: "When the task is available to be worked"
              }
@@ -46,6 +48,8 @@ module Api::V1
              writeable: true,
              readable: true,
              schema_info: {
+               type: "string",
+               format: "date-time",
                required: true,
                description: "When the task is due (nil means not due)"
              }
