@@ -1,6 +1,8 @@
 module Api::V1
   class UsersController < OpenStax::Api::V1::ApiController
 
+    before_filter :get_user, only: [:show, :update, :destroy, :tasks]
+
     resource_description do
       api_versions "v1"
       short_description 'A human user of OpenStax Exercises.'
@@ -96,7 +98,7 @@ module Api::V1
       #{json_schema(Api::V1::UserRepresenter, include: :readable)}
     EOS
     def show
-      respond_with current_human_user
+      standard_read(@user)
     end
 
     ##########
@@ -110,14 +112,7 @@ module Api::V1
       #{json_schema(Api::V1::UserRepresenter, include: :writeable)}
     EOS
     def update
-      @user = current_human_user
-      consume!(@user)
-
-      if @user.save
-        head :no_content
-      else
-        render json: @user.errors, status: :unprocessable_entity
-      end
+      standard_update(@user)
     end
 
     ###########
@@ -129,13 +124,7 @@ module Api::V1
       Disables the current user's account.
     EOS
     def destroy
-      @user = current_human_user
-
-      if @user.destroy
-        head :no_content
-      else
-        render json: @user.errors, status: :unprocessable_entity
-      end
+      standard_destroy(@user)
     end
 
     #########
@@ -147,9 +136,13 @@ module Api::V1
       #{json_schema(Api::V1::TaskSearchRepresenter, include: :readable)}
     EOS
     def tasks
-      OSU::AccessPolicy.require_action_allowed!(:read_tasks, current_api_user, current_human_user)
-      outputs = SearchTasks.call("user_id:#{current_human_user.id}").outputs
-      respond_with outputs, represent_with: Api::V1::TaskSearchRepresenter
+      standard_index(@user.tasks, Api::V1::TaskSearchRepresenter)
+    end
+
+    protected
+
+    def get_user
+      @user = current_human_user
     end
   end
 end

@@ -10,7 +10,8 @@ class User < ActiveRecord::Base
   has_many :educators, dependent: :destroy
   has_many :students, dependent: :destroy
 
-  has_many :tasks, dependent: :destroy
+  has_many :assigned_tasks, dependent: :destroy
+  has_many :tasks, through: :assigned_tasks
 
   validates :account, presence: true, uniqueness: true
 

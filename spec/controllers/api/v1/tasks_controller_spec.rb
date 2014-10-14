@@ -9,17 +9,6 @@ module Api::V1
                                                 application: application, 
                                                 resource_owner_id: user_1.id }
 
-    context "GET user" do
-      it "should let a user retrieve their non-existent tasks" do
-        api_get :user, user_1_token
-        expect(response.code).to eq('200')
-        expect(response.body).to eq({
-          total_count: 0,
-          items: []
-        }.to_json)
-      end
-    end
-
     pending "add some examples to #{__FILE__}"
   end
 end

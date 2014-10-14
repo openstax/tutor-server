@@ -9,9 +9,8 @@ module Api::V1
 
     collection :items,
                inherit: true,
-               class: Task,
-               decorator: Api::V1::TaskRepresenterMapper.new,
-               getter: lambda {|*| tasks.collect{|t| t.details}},
+               class: TaskModelMapper.new,
+               decorator: TaskRepresenterMapper.new,
                schema_info: {
                  description: "The tasks matching the query or a subset thereof when paginating"
                }

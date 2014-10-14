@@ -1,12 +1,12 @@
 module Api::V1
-  module TaskProperties
-    
+  class AbstractTaskRepresenter < Roar::Decorator
+
     include Roar::Representer::JSON
 
     property :id, 
              type: Integer,
              writeable: false,
-             getter: lambda {|*| task.id },
+             readable: true,
              schema_info: {
                required: true
              }
@@ -15,10 +15,11 @@ module Api::V1
              type: String,
              writeable: false,
              readable: true,
-             getter: lambda {|*| type.downcase },
+             getter: lambda { |*| type.downcase },
              schema_info: {
                required: true,
-               description: "The type of this Task, one of: #{Api::V1::TaskRepresenterMapper.models.collect{|klass| "'" + klass.name.downcase + "'"}.join(',')}"
+               description: "The type of this Task",
+               enum: ['reading']
              }
 
     property :task_plan_id, 
@@ -56,9 +57,6 @@ module Api::V1
                required: true,
                description: "Whether or not the detailed task is shared ('turn in one assignment')"
              }
-
-
-
 
   end
 end

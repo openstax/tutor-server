@@ -21,9 +21,12 @@ class Api::V1::TasksController < Api::V1::ApiController
   ###############################################################
 
   api :GET, '/tasks/:id', 'Gets the specified Task'
-  # description <<-EOS
-  #   #{json_schema(Api::V1::TaskRepresenter, include: :readable)}            
-  # EOS
+  description <<-EOS
+    Gets the task with the specified ID.
+    May contain more fields depending on the task type.
+
+    #{json_schema(Api::V1::AbstractTaskRepresenter, include: :readable)}            
+  EOS
   def show
     standard_read(@task)
   end

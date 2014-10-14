@@ -14,9 +14,8 @@ module Api::V1
       if args[2].is_a?(Hash) && args[2][:all_sub_representers]
         self.class.representers
       else
-        representer = self.class.map[args[1].class].call
-        raise NotYetImplemented if representer.nil?
-        representer
+        klass = args[1].is_a?(Class) ? args[1] : args[1].class
+        self.class.map[klass]
       end
     end
 

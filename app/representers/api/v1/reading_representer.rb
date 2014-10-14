@@ -1,6 +1,5 @@
 module Api::V1
-  class ReadingRepresenter < Roar::Decorator
-    include Api::V1::TaskProperties
+  class ReadingRepresenter < AbstractTaskRepresenter
 
     property :url,
              type: String,
@@ -21,6 +20,6 @@ module Api::V1
                required: false,
                description: "The reading content as HTML"
              }
-                          
+
   end
 end
