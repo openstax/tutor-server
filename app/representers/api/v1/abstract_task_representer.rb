@@ -7,6 +7,7 @@ module Api::V1
              type: Integer,
              writeable: false,
              readable: true,
+             getter: lambda {|*| self.is_a?(Task) ? id : task.id },
              schema_info: {
                required: true
              }
