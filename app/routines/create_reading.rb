@@ -9,6 +9,7 @@ protected
 
   def exec(options={})
     run(GetOrCreateResource, options.slice(:url, :content))
+    transfer_errors_from(outputs[:resource], {type: :verbatim}, true)
 
     outputs[:reading] = Reading.create(resource: outputs[:resource])
     transfer_errors_from(outputs[:reading], {type: :verbatim}, true)
