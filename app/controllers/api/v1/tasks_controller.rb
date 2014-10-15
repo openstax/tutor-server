@@ -23,12 +23,14 @@ class Api::V1::TasksController < Api::V1::ApiController
   api :GET, '/tasks/:id', 'Gets the specified Task'
   description <<-EOS
     Gets the task with the specified ID.
-    May contain more fields depending on the task type.
+    Tasks contain at least the fields below, although they
+    may contain more fields depending on the task type.
 
     #{json_schema(Api::V1::AbstractTaskRepresenter, include: :readable)}            
   EOS
+  # TODO: Figure out how to print a schema that covers all task types
   def show
-    standard_read(@task)
+    standard_read(@task, TaskRepresenterMapper.new.call(self, @task))
   end
 
   protected

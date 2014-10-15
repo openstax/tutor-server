@@ -36,6 +36,8 @@ Rails.application.routes.draw do
       end
     end
 
+    resources :tasks, only: [:show]
+
   end
   
   namespace 'admin' do
