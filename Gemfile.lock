@@ -421,7 +421,7 @@ DEPENDENCIES
   newrelic_rpm
   nifty-generators
   openstax_accounts (~> 3.1.1)
-  openstax_api (~> 3.1.1)
+  openstax_api (~> 3.1.2)
   openstax_utilities (~> 4.1.0)
   pg
   quiet_assets

@@ -19,8 +19,9 @@ module Api::V1
              getter: lambda { |*| details_type.downcase },
              schema_info: {
                required: true,
-               description: "The type of this Task",
-               enum: ['reading']
+               description: lambda { |*| "The type of this Task, one of: #{Api::V1::TaskRepresenterMapper.models.collect{|klass| "'#{klass.name.downcase}'"}.join(',')}" },
+               enum: lambda { |*| TaskRepresenterMapper.models
+                                    .collect{ |klass| klass.name.downcase }}
              }
 
     property :task_plan_id,
