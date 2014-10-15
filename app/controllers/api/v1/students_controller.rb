@@ -17,7 +17,7 @@ module Api::V1
     #########
 
     api :GET,
-        '/schools/:school_id/courses/:course_id/classes/:class_id/students',
+        '/courses/:course_id/classes/:class_id/students',
         'Returns a list of students in a given class'
     description <<-EOS
       Returns a list of students in a given class.
@@ -33,7 +33,7 @@ module Api::V1
     ########
 
     api :GET,
-        '/schools/:school_id/courses/:course_id/classes/:class_id/students/:student_id',
+        '/courses/:course_id/classes/:class_id/students/:student_id',
         'Returns information about the given student'
     description <<-EOS
       Returns information about the given student.
@@ -48,7 +48,7 @@ module Api::V1
     # create #
     ##########
 
-    api :POST, '/schools/:school_id/courses/:course_id/classes/:class_id/students',
+    api :POST, '/courses/:course_id/classes/:class_id/students',
                'Adds a new student to the given class'
     description <<-EOS
       Adds a new student to the given class.
@@ -64,7 +64,7 @@ module Api::V1
     ##########
 
     api :PATCH,
-        '/schools/:school_id/courses/:course_id/classes/:class_id/students/:student_id',
+        '/courses/:course_id/classes/:class_id/students/:student_id',
         'Updates attributes of the given student'
     description <<-EOS
       Updates attributes of the given student.
@@ -81,7 +81,7 @@ module Api::V1
     ###########
 
     api :DELETE,
-        '/schools/:school_id/courses/:course_id/classes/:class_id/students/:student_id',
+        '/courses/:course_id/classes/:class_id/students/:student_id',
         'Removes the given student from the given class'
     description <<-EOS
       Removes the given student from the given class.      

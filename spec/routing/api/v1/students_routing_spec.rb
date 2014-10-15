@@ -5,33 +5,33 @@ module Api::V1
     describe "routing" do
 
       it "routes to #index" do
-        expect(get("/api/schools/1/courses/1/klasses/1/students")).to(
-          route_to("api/v1/students#index", format: "json", school_id: "1",
-                                            course_id: "1", klass_id: "1"))
+        expect(get("/api/courses/1/klasses/1/students")).to(
+          route_to("api/v1/students#index", format: "json", course_id: "1",
+                                            klass_id: "1"))
       end
 
       it "routes to #show" do
-        expect(get("/api/schools/1/courses/1/klasses/1/students/1")).to(
-          route_to("api/v1/students#show", format: "json", school_id: "1",
-                                           course_id: "1", klass_id: "1", id: "1"))
+        expect(get("/api/courses/1/klasses/1/students/1")).to(
+          route_to("api/v1/students#show", format: "json", course_id: "1",
+                                           klass_id: "1", id: "1"))
       end
 
       it "routes to #create" do
-        expect(post("/api/schools/1/courses/1/klasses/1/students")).to(
-          route_to("api/v1/students#create", format: "json", school_id: "1",
-                                             course_id: "1", klass_id: "1"))
+        expect(post("/api/courses/1/klasses/1/students")).to(
+          route_to("api/v1/students#create", format: "json", course_id: "1",
+                                             klass_id: "1"))
       end
 
       it "routes to #update" do
-        expect(put("/api/schools/1/courses/1/klasses/1/students/1")).to(
-          route_to("api/v1/students#update", format: "json", school_id: "1",
-                                             course_id: "1", klass_id: "1", id: "1"))
+        expect(put("/api/courses/1/klasses/1/students/1")).to(
+          route_to("api/v1/students#update", format: "json", course_id: "1",
+                                             klass_id: "1", id: "1"))
       end
 
       it "routes to #destroy" do
-        expect(delete("/api/schools/1/courses/1/klasses/1/students/1")).to(
-          route_to("api/v1/students#destroy", format: "json", school_id: "1",
-                                              course_id: "1", klass_id: "1", id: "1"))
+        expect(delete("/api/courses/1/klasses/1/students/1")).to(
+          route_to("api/v1/students#destroy", format: "json", course_id: "1",
+                                              klass_id: "1", id: "1"))
       end
 
     end

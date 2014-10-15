@@ -30,11 +30,9 @@ Rails.application.routes.draw do
       get 'tasks', on: :collection
     end
 
-    resources :schools, only: [] do
-      resources :courses, only: [] do
-        resources :klasses do
-          resources :students
-        end
+    resources :courses, only: [] do
+      resources :klasses do
+        resources :students
       end
     end
 

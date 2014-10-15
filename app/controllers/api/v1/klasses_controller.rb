@@ -17,7 +17,7 @@ module Api::V1
     #########
 
     api :GET,
-        '/schools/:school_id/courses/:course_id/classes',
+        '/courses/:course_id/classes',
         'Returns a list of classes in a given course'
     description <<-EOS
       Returns a list of classes in a given course.
@@ -33,7 +33,7 @@ module Api::V1
     # show #
     ########
 
-    api :GET, '/schools/:school_id/courses/:course_id/classes/:class_id',
+    api :GET, '/courses/:course_id/classes/:class_id',
               'Returns information about the given class'
     description <<-EOS
       Returns information about the given class.
@@ -48,7 +48,7 @@ module Api::V1
     # create #
     ##########
 
-    api :POST, '/schools/:school_id/courses/:course_id/classes',
+    api :POST, '/courses/:course_id/classes',
                'Creates a class for the given course'
     description <<-EOS
       Creates a class for the given course.
@@ -63,7 +63,7 @@ module Api::V1
     # update #
     ##########
 
-    api :PATCH, '/schools/:school_id/courses/:course_id/classes/:class_id',
+    api :PATCH, '/courses/:course_id/classes/:class_id',
                 'Updates attributes of the given class'
     description <<-EOS
       Updates attributes of the given class.
@@ -78,7 +78,7 @@ module Api::V1
     # destroy #
     ###########
 
-    api :DELETE, '/schools/:school_id/courses/:course_id/classes/:class_id',
+    api :DELETE, '/courses/:course_id/classes/:class_id',
                  'Deletes the given class'
     description <<-EOS
       Deletes the given class.      
