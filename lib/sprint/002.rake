@@ -6,7 +6,7 @@ namespace :sprint do
     result = Sprint002.call(args.username)
 
     if result.errors.none?
-      puts "Created a user with username '#{args.username}' with one reading task"
+      puts "Created a user with username '#{args.username}' with one reading and one interactive task"
     else
       result.errors.each{|error| puts "Error: " + Lev::ErrorTranslator.translate(error)}
     end
