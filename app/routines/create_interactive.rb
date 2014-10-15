@@ -7,7 +7,7 @@ class CreateInteractive
 
 protected
 
-  def exec(options={}); debugger
+  def exec(options={})
     run(GetOrCreateResource, options.slice(:url))
     transfer_errors_from(outputs[:resource], {type: :verbatim}, true)
 
