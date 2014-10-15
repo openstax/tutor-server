@@ -14,9 +14,9 @@ module Api::V1
       if args[2].is_a?(Hash) && args[2][:all_sub_representers]
         self.class.representers
       else
-        return args[1] if args[1].is_a?(Class)
-        klass = args[1].is_a?(Task) ? args[1].details_type.classify.constantize : \
-                                      args[1].class
+        klass = args[1].is_a?(Class) ? args[1] : \
+                  (args[1].is_a?(Task) ? \
+                    args[1].details_type.classify.constantize : args[1].class)
         self.class.map[klass]
       end
     end

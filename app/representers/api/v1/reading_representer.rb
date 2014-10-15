@@ -1,5 +1,7 @@
 module Api::V1
-  class ReadingRepresenter < AbstractTaskRepresenter
+  class ReadingRepresenter < Roar::Decorator
+
+    include TaskProperties
 
     property :url,
              type: String,

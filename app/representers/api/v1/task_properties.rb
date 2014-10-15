@@ -1,5 +1,5 @@
 module Api::V1
-  class AbstractTaskRepresenter < Roar::Decorator
+  module TaskProperties
 
     include Roar::Representer::JSON
 
@@ -19,7 +19,10 @@ module Api::V1
              getter: lambda { |*| details_type.downcase },
              schema_info: {
                required: true,
-               description: lambda { |*| "The type of this Task, one of: #{Api::V1::TaskRepresenterMapper.models.collect{|klass| "'#{klass.name.downcase}'"}.join(',')}" },
+               description: lambda { |*| "The type of this Task, one of: #{
+                 Api::V1::TaskRepresenterMapper.models
+                   .collect{|klass| "'#{klass.name.downcase}'"}.join(',')
+               }" },
                enum: lambda { |*| TaskRepresenterMapper.models
                                     .collect{ |klass| klass.name.downcase }}
              }
