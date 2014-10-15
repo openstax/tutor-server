@@ -3,7 +3,12 @@ namespace :sprint do
   task :'002', [:username] => [:environment] do |t, args|
     require 'sprint/sprint_002'
     args.with_defaults(username: SecureRandom.hex(4))
-    Sprint002.call(args.username)
-    puts "Created a user with username '#{args.username}' with one reading task"
+    result = Sprint002.call(args.username)
+
+    if result.errors.none?
+      puts "Created a user with username '#{args.username}' with one reading task"
+    else
+      result.errors.each{|error| puts "Error: " + Lev::ErrorTranslator.translate(error)}
+    end
   end
 end
