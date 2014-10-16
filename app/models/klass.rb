@@ -20,8 +20,7 @@ class Klass < ActiveRecord::Base
 
   def is_visible?
     return false if visible_at.nil? || visible_at > Time.now
-    return true if invisible_at.nil? || invisible_at > Time.now
-    false
+    invisible_at.nil? || invisible_at > Time.now
   end
 
 end
