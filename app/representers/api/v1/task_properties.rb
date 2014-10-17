@@ -1,12 +1,13 @@
 module Api::V1
   module TaskProperties
-    
+
     include Roar::Representer::JSON
 
-    property :id, 
+    property :id,
              type: Integer,
              writeable: false,
-             getter: lambda {|*| task.id },
+             readable: true,
+             getter: lambda {|*| self.is_a?(Task) ? id : task.id },
              schema_info: {
                required: true
              }
@@ -15,13 +16,18 @@ module Api::V1
              type: String,
              writeable: false,
              readable: true,
-             getter: lambda {|*| type.downcase },
+             getter: lambda { |*| details_type.downcase },
              schema_info: {
                required: true,
-               description: "The type of this Task, one of: #{Api::V1::TaskRepresenterMapper.models.collect{|klass| "'" + klass.name.downcase + "'"}.join(',')}"
+               description: lambda { |*| "The type of this Task, one of: #{
+                 Api::V1::TaskRepresenterMapper.models
+                   .collect{|klass| "'#{klass.name.downcase}'"}.join(',')
+               }" },
+               enum: lambda { |*| TaskRepresenterMapper.models
+                                    .collect{ |klass| klass.name.downcase }}
              }
 
-    property :task_plan_id, 
+    property :task_plan_id,
              type: Integer,
              writeable: false,
              readable: true,
@@ -36,6 +42,8 @@ module Api::V1
              writeable: true,
              readable: true,
              schema_info: {
+               type: "string",
+               format: "date-time",
                required: true,
                description: "When the task is available to be worked"
              }
@@ -45,6 +53,8 @@ module Api::V1
              writeable: true,
              readable: true,
              schema_info: {
+               type: "string",
+               format: "date-time",
                required: true,
                description: "When the task is due (nil means not due)"
              }
@@ -56,9 +66,6 @@ module Api::V1
                required: true,
                description: "Whether or not the detailed task is shared ('turn in one assignment')"
              }
-
-
-
 
   end
 end

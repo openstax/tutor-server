@@ -53,7 +53,8 @@ FinePrint.configure do |config|
       format.html { redirect_to(fine_print.new_contract_signature_path(
                       contract_id: contract_ids.first)) }
       format.json { render status: :unauthorized,
-                           json: {'errors' => [{'status' => 401,
+                           json: {'status' => 401,
+                                  'errors' => [{'status' => 401,
                                                 'message' => 'You must accept the user agreements to continue',
                                                 'data' => {'term_ids' => contract_ids}}]} }
     end }

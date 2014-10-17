@@ -19,9 +19,9 @@ RSpec.describe UserAccessPolicy do
 
   context 'show, update and destroy' do
     it 'cannot be accessed by anonymous users or applications' do
-      expect(UserAccessPolicy.action_allowed?(:read, anon, User)).to eq false
-      expect(UserAccessPolicy.action_allowed?(:update, anon, User)).to eq false
-      expect(UserAccessPolicy.action_allowed?(:destroy, anon, User)).to eq false
+      expect(UserAccessPolicy.action_allowed?(:read, anon, user)).to eq false
+      expect(UserAccessPolicy.action_allowed?(:update, anon, user)).to eq false
+      expect(UserAccessPolicy.action_allowed?(:destroy, anon, user)).to eq false
 
       expect(UserAccessPolicy.action_allowed?(:read, application, user)).to eq false
       expect(UserAccessPolicy.action_allowed?(:update, application, user)).to eq false

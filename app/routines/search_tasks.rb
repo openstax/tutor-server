@@ -1,41 +1,43 @@
 class SearchTasks
+
   lev_routine transaction: :no_transaction
 
-  uses_routine OrganizeSearchResults,
-               translations: { outputs: {type: :verbatim} }
+  uses_routine OpenStax::Utilities::SearchAndOrganizeRelation,
+               as: :search,
+               errors_are_fatal: false,
+               translations: {outputs: {type: :verbatim}}
 
-protected
+  protected
 
-  def exec(query, options={})
+  SEARCH_PROC = lambda { |with|
+    with.default_keyword :id
 
-    options[:eager_load_tasks] = true unless options.has_key?(:eager_load_tasks)
-
-    tasks = Task.all
-    
-    KeywordSearch.search(query) do |with|
-
-      with.keyword :user_id do |user_ids|
-        tasks = tasks.joins{assigned_tasks}.where{assigned_tasks.user_id.in my{user_ids}}
+    with.keyword :user_id do |ids|
+      ids.each do |i|
+        sanitized_ids = to_number_array(i)
+        next @items = @items.none if sanitized_ids.empty?
+        @items = @items.includes(:assigned_tasks).joins(:assigned_tasks)
+                       .where{assigned_tasks.user_id.in sanitized_ids}
       end
-
-      with.keyword :id do |ids|
-        tasks = tasks.where{id.in ids}
-      end
-
     end
 
-    # We normally need the details associated with these tasks, so eager load them.
-    tasks = tasks.includes(:details) if options[:eager_load_tasks]
+    with.keyword :id do |ids|
+      ids.each do |i|
+        sanitized_ids = to_number_array(i)
+        next @items = @items.none if sanitized_ids.empty?
+        @items = @items.where{id.in sanitized_ids}
+      end
+    end
+  }
 
-    run(OrganizeSearchResults, tasks, 
-                               page: options[:page],
-                               per_page: options[:per_page],
-                               order_by: options[:order_by],
-                               sortable_fields: ['due_at', 'opens_at', 'created_at', 'id'], 
-                               default_sort_field: 'id')
+  SORTABLE_FIELDS = [:due_at, :opens_at, :created_at, :id]
 
-    outputs[:tasks] = outputs[:relation]
-    outputs[:query] = query
+  def exec(params:, **options)
+    options[:eager_load_tasks] = true unless options.has_key?(:eager_load_tasks)
+    relation = options[:eager_load_tasks] ? Task.preload(:details) : Task.unscoped
+
+    run(:search, relation: relation, search_proc: SEARCH_PROC,
+                 sortable_fields: SORTABLE_FIELDS, params: params)
   end
 
 end

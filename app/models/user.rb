@@ -1,6 +1,6 @@
 class User < ActiveRecord::Base
 
-  belongs_to :account, class_name: "OpenStax::Accounts::Account"
+  belongs_to :account, class_name: "OpenStax::Accounts::Account", autosave: true
   has_many :groups_as_member, through: :account
   has_many :groups_as_owner, through: :account
 
@@ -9,6 +9,9 @@ class User < ActiveRecord::Base
   has_many :school_managers, dependent: :destroy
   has_many :educators, dependent: :destroy
   has_many :students, dependent: :destroy
+
+  has_many :assigned_tasks, dependent: :destroy
+  has_many :tasks, through: :assigned_tasks
 
   validates :account, presence: true, uniqueness: true
 

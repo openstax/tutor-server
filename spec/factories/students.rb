@@ -1,7 +1,7 @@
 FactoryGirl.define do
   factory :student do
-    klass
-    section
+    klass nil
+    section nil
     user
     level "graded"
     has_dropped false
@@ -23,7 +23,7 @@ FactoryGirl.define do
 
     after(:build) do |student|
       # section and klass need to agree
-      student.section.klass = student.klass
+      student.klass ||= student.section.try(:klass) || FactoryGirl.build(:klass)
     end
 
   end
