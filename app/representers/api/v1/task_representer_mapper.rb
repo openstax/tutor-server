@@ -7,7 +7,7 @@ module Api::V1
     end
 
     def self.representers
-      map.values.collect{|v| v.call}
+      map.values
     end
 
     def call(context, ioc, *args)
