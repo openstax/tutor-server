@@ -1,4 +1,14 @@
 GIT
+  remote: https://github.com/Dantemss/openstax_utilities.git
+  revision: af9a9c4cc932f7b2a671f8d4362108a053956d96
+  ref: af9a9c4cc932f7b2a671f8d4362108a053956d96
+  specs:
+    openstax_utilities (4.1.1.alpha)
+      keyword_search
+      lev
+      rails (>= 3.1)
+
+GIT
   remote: https://github.com/rails/arel.git
   revision: 1ee24112e8b42879f02fcee995e222dcabb2cb64
   ref: 1ee24112e8b42879f02fcee995e222dcabb2cb64
@@ -219,10 +229,6 @@ GEM
       representable (>= 1.8)
       roar (>= 0.12.1)
       roar-rails (>= 0.1.2)
-    openstax_utilities (4.1.0)
-      keyword_search
-      lev
-      rails (>= 3.1)
     pager (1.0.1)
     pg (0.17.1)
     polyamorous (1.1.0)
@@ -422,7 +428,7 @@ DEPENDENCIES
   nifty-generators
   openstax_accounts (~> 3.1.1)
   openstax_api (~> 3.1.2)
-  openstax_utilities (~> 4.1.0)
+  openstax_utilities!
   pg
   quiet_assets
   railroady
