@@ -1,25 +1,19 @@
 module Api::V1
-  class TaskSearchRepresenter < Roar::Decorator
-
-    include Roar::Representer::JSON
+  class TaskSearchRepresenter < OpenStax::Api::V1::AbstractSearchRepresenter
 
     property :total_count,
-             type: Integer,
-             getter: lambda {|*| num_matching_items},
-             readable: true,
-             writeable: false,
+             inherit: true,
              schema_info: {
                description: "The number of tasks that match the query, can be more than the number returned"
              }
 
     collection :items,
-               class: Task,
-               decorator: Api::V1::TaskRepresenterMapper.new,
-               getter: lambda {|*| tasks.collect{|t| t.details}},
-               readable: true,
-               writeable: false,
+               inherit: true,
+               class: TaskModelMapper.new,
+               decorator: TaskRepresenterMapper.new,
                schema_info: {
                  description: "The tasks matching the query or a subset thereof when paginating"
                }
+
   end
 end

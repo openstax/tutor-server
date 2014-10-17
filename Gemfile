@@ -6,6 +6,11 @@ source 'https://rubygems.org'
 # Rails framework
 gem 'rails', '4.2.0.beta1'
 
+# Arel bug when comparing dates: https://github.com/activerecord-hackery/squeel/issues/331
+# Remove when new version of ARel is released
+gem 'arel', git: 'https://github.com/rails/arel.git',
+            ref: '1ee24112e8b42879f02fcee995e222dcabb2cb64'
+
 # Bootstrap front-end framework
 gem 'bootstrap-sass', '~> 3.2.0'
 
@@ -37,7 +42,8 @@ gem 'turbolinks'
 gem 'rails-html-sanitizer', '~> 1.0'
 
 # Utilities for OpenStax websites
-gem 'openstax_utilities', '~> 4.1.0'
+gem 'openstax_utilities', git: 'https://github.com/Dantemss/openstax_utilities.git',
+                          ref: 'af9a9c4cc932f7b2a671f8d4362108a053956d96'
 
 # Cron job scheduling
 gem 'whenever'
@@ -55,7 +61,7 @@ gem 'doorkeeper'
 gem 'chronic'
 
 # API versioning and documentation
-gem 'openstax_api', '~> 3.1.1'
+gem 'openstax_api', '~> 3.1.2'
 gem 'apipie-rails'
 gem 'maruku'
 gem 'representable'
