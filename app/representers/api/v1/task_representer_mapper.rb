@@ -10,13 +10,14 @@ module Api::V1
       map.values.collect{|v| v.call}
     end
 
-    def call(*args)
-      if args[2].is_a?(Hash) && args[2][:all_sub_representers]
+    def call(context, ioc, *args)
+      if args[0].is_a?(Hash) && args[0][:all_sub_representers]
         self.class.representers
       else
-        klass = args[1].is_a?(Class) ? args[1] : \
-                  (args[1].is_a?(Task) ? \
-                    args[1].details_type.classify.constantize : args[1].class)
+        klass = ioc.is_a?(Class) ? ioc : \
+                  (ioc.is_a?(Task) ? \
+                    ioc.details_type.classify.constantize : \
+                    ioc.class)
         self.class.map[klass]
       end
     end
@@ -25,8 +26,8 @@ protected
 
     def self.map
       @@map ||= {
-        Reading => ->(*) {Api::V1::ReadingRepresenter},
-        Interactive => ->(*) {Api::V1::InteractiveRepresenter}
+        Reading => Api::V1::ReadingRepresenter,
+        Interactive => Api::V1::InteractiveRepresenter
       }
     end
 
