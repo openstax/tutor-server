@@ -10,8 +10,6 @@ class Task < ActiveRecord::Base
   validates :title, presence: true
   validates :opens_at, presence: true
   validates :due_at, timeliness: { on_or_after: :opens_at }, allow_nil: true
-  validates :closes_at, timeliness: { on_or_after: :due_at },
-                        allow_nil: true, if: :due_at
 
   def is_shared
     taskings.size > 1

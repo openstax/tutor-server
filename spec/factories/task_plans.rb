@@ -3,15 +3,16 @@
 FactoryGirl.define do
   factory :task_plan do
     ignore do
-      num_tasking_plans 1
+      duration 1.week
+      num_tasking_plans 0
     end
 
     association :owner, factory: :klass
-    assistant "manual"
+    assistant
     configuration "{}"
-    assign_after { Time.now }
-    assigned_at nil
-    is_ready true
+    opens_at { Time.now }
+    due_at { opens_at + duration }
+    invisible_until_open true
 
     after(:build) do |task_plan, evaluator|
       evaluator.num_tasking_plans.times do

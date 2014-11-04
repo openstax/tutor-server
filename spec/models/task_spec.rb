@@ -19,33 +19,6 @@ RSpec.describe Task, :type => :model do
     expect(task).to_not be_valid
   end
 
-  it "requires non-nil closes_at to be after opens_at" do
-    task = FactoryGirl.build(:task, closes_at: nil)
-    expect(task).to be_valid
-
-    task = FactoryGirl.build(:task, closes_at: Time.now - 1.week)
-    expect(task).to_not be_valid
-  end
-
-  it "requires non-nil closes_at to be after non-nil due_at" do
-    task = FactoryGirl.build(:task, due_at: nil, closes_at: nil)
-    expect(task).to be_valid
-
-    task = FactoryGirl.build(:task, due_at: nil, closes_at: Time.now + 2.weeks)
-    expect(task).to be_valid
-
-    task = FactoryGirl.build(:task, due_at: Time.now + 1.week, closes_at: nil)
-    expect(task).to be_valid
-
-    task = FactoryGirl.build(:task, due_at: Time.now + 1.week,
-                                    closes_at: Time.now + 2.weeks)
-    expect(task).to be_valid
-
-    task = FactoryGirl.build(:task, due_at: Time.now + 2.weeks,
-                                    closes_at: Time.now + 1.week)
-    expect(task).not_to be_valid
-  end
-
   it "reports is_shared correctly" do
     at1 = FactoryGirl.create(:tasking)
     at1.reload
