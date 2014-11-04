@@ -3,7 +3,7 @@ FactoryGirl.define do
     resource
 
     after(:build) do |reading|
-      reading.task ||= FactoryGirl.build(:task, details: reading)
+      reading.task_step ||= FactoryGirl.build(:task_step, details: reading)
     end
   end
 end

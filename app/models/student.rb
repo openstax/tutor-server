@@ -3,6 +3,9 @@ class Student < ActiveRecord::Base
   belongs_to :klass
   belongs_to :section
 
+  has_many :task_plan_assignees, dependent: :destroy
+  has_many :assigned_tasks, dependent: :destroy
+
   enum level: { graded: 0, auditing: 1 }
   
   validates :user, 

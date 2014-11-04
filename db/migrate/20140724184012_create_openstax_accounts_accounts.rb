@@ -10,7 +10,7 @@ class CreateOpenStaxAccountsAccounts < ActiveRecord::Migration
       t.string  :full_name
       t.string  :title
 
-      t.timestamps
+      t.timestamps null: false
     end
 
     add_index :openstax_accounts_accounts, :openstax_uid, :unique => true

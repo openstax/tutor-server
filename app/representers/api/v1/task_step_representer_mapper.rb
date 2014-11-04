@@ -1,5 +1,5 @@
 module Api::V1
-  class TaskRepresenterMapper
+  class TaskStepRepresenterMapper
     include Uber::Callable
 
     def self.models 

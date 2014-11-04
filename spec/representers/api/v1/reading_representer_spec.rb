@@ -5,12 +5,10 @@ RSpec.describe Api::V1::ReadingRepresenter, :type => :representer do
     reading = FactoryGirl.create(:reading)
     json = Api::V1::ReadingRepresenter.new(reading).to_json
     expect(json).to eq({
-      id: reading.task.id,
-      type: "reading",
-      task_plan_id: nil,
-      opens_at: reading.opens_at,
-      due_at: reading.due_at,
-      is_shared: reading.is_shared,
+      id: reading.task_step.id,
+      type: reading.task_step.details_type.downcase,
+      task_id: reading.task_step.task_id,
+      number: reading.task_step.number,
       content_url: reading.url, 
       content_html: reading.content
     }.to_json)

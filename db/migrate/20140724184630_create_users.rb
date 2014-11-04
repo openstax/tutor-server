@@ -5,7 +5,7 @@ class CreateUsers < ActiveRecord::Migration
       t.string :exchange_identifier
       t.datetime :deleted_at
 
-      t.timestamps
+      t.timestamps null: false
     end
 
     add_index :users, :account_id, unique: true
