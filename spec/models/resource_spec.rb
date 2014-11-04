@@ -4,6 +4,8 @@ RSpec.describe Resource, :type => :model do
   it { is_expected.to have_many(:readings) }
   it { is_expected.to have_many(:interactives) }
 
+  it { is_expected.to validate_uniqueness_of(:url) }
+
   it "is only really destroyed when no one holds a reference" do
     reading1 = FactoryGirl.create(:reading)
 
