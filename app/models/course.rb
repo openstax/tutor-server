@@ -3,6 +3,8 @@ class Course < ActiveRecord::Base
   has_many :klasses, dependent: :destroy
   has_many :course_managers, dependent: :destroy
 
+  has_many :tasking_plans, as: :target, dependent: :destroy
+
   validates :name, presence: true,
                    uniqueness: { scope: :school_id }
   validates :short_name, presence: true,

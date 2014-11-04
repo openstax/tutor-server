@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141103184649) do
+ActiveRecord::Schema.define(version: 20141104185224) do
 
   create_table "administrators", force: true do |t|
     t.integer  "user_id",    null: false
@@ -20,6 +20,18 @@ ActiveRecord::Schema.define(version: 20141103184649) do
   end
 
   add_index "administrators", ["user_id"], name: "index_administrators_on_user_id", unique: true
+
+  create_table "assistants", force: true do |t|
+    t.integer  "study_id"
+    t.string   "code_class_name", null: false
+    t.text     "settings"
+    t.text     "data"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  add_index "assistants", ["code_class_name"], name: "index_assistants_on_code_class_name"
+  add_index "assistants", ["study_id"], name: "index_assistants_on_study_id"
 
   create_table "course_managers", force: true do |t|
     t.integer  "course_id",  null: false
@@ -272,20 +284,20 @@ ActiveRecord::Schema.define(version: 20141103184649) do
   add_index "students", ["user_id", "section_id"], name: "index_students_on_user_id_and_section_id", unique: true
 
   create_table "task_plans", force: true do |t|
-    t.integer  "owner_id",      null: false
-    t.string   "owner_type",    null: false
-    t.string   "assistant",     null: false
-    t.text     "configuration", null: false
-    t.datetime "assign_after",  null: false
-    t.datetime "assigned_at"
-    t.boolean  "is_ready"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.integer  "assistant_id",                        null: false
+    t.integer  "owner_id",                            null: false
+    t.string   "owner_type",                          null: false
+    t.text     "configuration",                       null: false
+    t.datetime "opens_at",                            null: false
+    t.datetime "due_at"
+    t.boolean  "invisible_until_open", default: true, null: false
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
   end
 
-  add_index "task_plans", ["assign_after", "is_ready"], name: "index_task_plans_on_assign_after_and_is_ready"
-  add_index "task_plans", ["assigned_at"], name: "index_task_plans_on_assigned_at"
-  add_index "task_plans", ["assistant"], name: "index_task_plans_on_assistant"
+  add_index "task_plans", ["assistant_id"], name: "index_task_plans_on_assistant_id"
+  add_index "task_plans", ["due_at", "opens_at"], name: "index_task_plans_on_due_at_and_opens_at"
+  add_index "task_plans", ["opens_at", "invisible_until_open"], name: "index_task_plans_on_opens_at_and_invisible_until_open"
   add_index "task_plans", ["owner_id", "owner_type"], name: "index_task_plans_on_owner_id_and_owner_type"
 
   create_table "task_steps", force: true do |t|
@@ -330,13 +342,11 @@ ActiveRecord::Schema.define(version: 20141103184649) do
     t.string   "title",                      null: false
     t.datetime "opens_at",                   null: false
     t.datetime "due_at"
-    t.datetime "closes_at"
     t.integer  "taskings_count", default: 0, null: false
     t.datetime "created_at",                 null: false
     t.datetime "updated_at",                 null: false
   end
 
-  add_index "tasks", ["closes_at", "opens_at"], name: "index_tasks_on_closes_at_and_opens_at"
   add_index "tasks", ["due_at", "opens_at"], name: "index_tasks_on_due_at_and_opens_at"
   add_index "tasks", ["opens_at"], name: "index_tasks_on_opens_at"
   add_index "tasks", ["task_plan_id"], name: "index_tasks_on_task_plan_id"

@@ -8,7 +8,8 @@ protected
 
   def exec(query, options={})
 
-    options[:eager_load_tasks] = true unless options.has_key?(:eager_load_tasks)
+    options[:eager_load_task_steps] = true \
+      unless options.has_key?(:eager_load_task_steps)
 
     tasks = Task.all
     
@@ -25,7 +26,8 @@ protected
     end
 
     # We normally need the details associated with these tasks, so eager load them.
-    tasks = tasks.includes(:task_steps => :details) if options[:eager_load_tasks]
+    tasks = tasks.includes(:task_steps => :details) \
+      if options[:eager_load_task_steps]
 
     run(OrganizeSearchResults, tasks, 
                                page: options[:page],

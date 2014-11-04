@@ -4,6 +4,9 @@ RSpec.describe Student, :type => :model do
   it { is_expected.to belong_to(:klass) }
   it { is_expected.to belong_to(:section) }
 
+  it { is_expected.to have_many(:taskings).dependent(:destroy) }
+  it { is_expected.to have_many(:tasking_plans).dependent(:destroy) }
+
   it { is_expected.to validate_presence_of(:user) }
   it { is_expected.to validate_presence_of(:klass) }
   it { is_expected.to validate_presence_of(:random_education_identifier) }

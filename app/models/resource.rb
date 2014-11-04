@@ -5,6 +5,8 @@ class Resource < ActiveRecord::Base
     has_many container
   end
 
+  validates :url, uniqueness: true
+
   def destroy
     # Resources are shared between many objects, so only delete
     # if none of those exist.

@@ -5,7 +5,6 @@ class CreateTasks < ActiveRecord::Migration
       t.string :title, null: false
       t.datetime :opens_at, null: false
       t.datetime :due_at
-      t.datetime :closes_at
       t.integer :taskings_count, null: false, default: 0
 
       t.timestamps null: false
@@ -13,7 +12,6 @@ class CreateTasks < ActiveRecord::Migration
 
     add_index :tasks, :task_plan_id
     add_index :tasks, :title
-    add_index :tasks, [:closes_at, :opens_at]
     add_index :tasks, [:due_at, :opens_at]
     add_index :tasks, :opens_at
   end
