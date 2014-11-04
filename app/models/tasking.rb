@@ -1,18 +1,18 @@
 class Tasking < ActiveRecord::Base
-  belongs_to :assignee, polymorphic: true
+  belongs_to :taskee, polymorphic: true
   belongs_to :task, counter_cache: true
   belongs_to :user
 
-  validates :assignee, presence: true
+  validates :taskee, presence: true
   validates :task, presence: true,
-                   uniqueness: { scope: [:assignee_type, :assignee_id] }
+                   uniqueness: { scope: [:taskee_type, :taskee_id] }
   validates :user, presence: true, uniqueness: { scope: :task_id }
 
-  validate :user_matches_assignee
+  validate :user_matches_taskee
 
-  def user_matches_assignee
-    return true if assignee == user || assignee.user == user
-    errors.add(:user, 'does not agree with assignee')
+  def user_matches_taskee
+    return true if taskee == user || taskee.user == user
+    errors.add(:user, 'does not agree with taskee')
     false
   end
 end

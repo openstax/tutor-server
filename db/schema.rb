@@ -312,8 +312,8 @@ ActiveRecord::Schema.define(version: 20141103184649) do
   add_index "tasking_plans", ["task_plan_id"], name: "index_tasking_plans_on_task_plan_id"
 
   create_table "taskings", force: true do |t|
-    t.integer  "assignee_id",    null: false
-    t.string   "assignee_type",  null: false
+    t.integer  "taskee_id",      null: false
+    t.string   "taskee_type",    null: false
     t.integer  "task_id",        null: false
     t.integer  "user_id",        null: false
     t.integer  "grade_override"
@@ -321,8 +321,8 @@ ActiveRecord::Schema.define(version: 20141103184649) do
     t.datetime "updated_at",     null: false
   end
 
-  add_index "taskings", ["assignee_id", "assignee_type", "task_id"], name: "index_taskings_on_assignee_id_and_assignee_type_and_task_id", unique: true
   add_index "taskings", ["task_id", "user_id"], name: "index_taskings_on_task_id_and_user_id", unique: true
+  add_index "taskings", ["taskee_id", "taskee_type", "task_id"], name: "index_taskings_on_taskee_id_and_taskee_type_and_task_id", unique: true
   add_index "taskings", ["user_id"], name: "index_taskings_on_user_id"
 
   create_table "tasks", force: true do |t|
