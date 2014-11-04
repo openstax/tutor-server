@@ -15,7 +15,7 @@ protected
     KeywordSearch.search(query) do |with|
 
       with.keyword :user_id do |user_ids|
-        tasks = tasks.joins{assigned_tasks}.where{assigned_tasks.user_id.in my{user_ids}}
+        tasks = tasks.joins{taskings}.where{taskings.user_id.in my{user_ids}}
       end
 
       with.keyword :id do |ids|
@@ -25,7 +25,7 @@ protected
     end
 
     # We normally need the details associated with these tasks, so eager load them.
-    tasks = tasks.includes(:details) if options[:eager_load_tasks]
+    tasks = tasks.includes(:task_steps => :details) if options[:eager_load_tasks]
 
     run(OrganizeSearchResults, tasks, 
                                page: options[:page],

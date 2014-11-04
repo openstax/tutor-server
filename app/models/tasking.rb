@@ -1,7 +1,12 @@
-class AssignedTask < ActiveRecord::Base
+class Tasking < ActiveRecord::Base
   belongs_to :assignee, polymorphic: true
   belongs_to :task, counter_cache: true
   belongs_to :user
+
+  validates :assignee, presence: true
+  validates :task, presence: true,
+                   uniqueness: { scope: [:assignee_type, :assignee_id] }
+  validates :user, presence: true, uniqueness: { scope: :task_id }
 
   validate :user_matches_assignee
 

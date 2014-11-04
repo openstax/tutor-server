@@ -3,7 +3,7 @@ class CreateAdministrators < ActiveRecord::Migration
     create_table :administrators do |t|
       t.references :user, null: false
 
-      t.timestamps
+      t.timestamps null: false
     end
 
     add_index :administrators, :user_id, unique: true

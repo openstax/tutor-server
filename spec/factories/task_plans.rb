@@ -2,13 +2,22 @@
 
 FactoryGirl.define do
   factory :task_plan do
-    owner ""
-    number ""
-    visible_at "2014-09-26 09:52:59"
-    opens_at "2014-09-26 09:52:59"
-    due_at "2014-09-26 09:52:59"
-    is_ready false
-    is_shared false
-    details { |details| details.association(:reading_plan) }
+    ignore do
+      num_tasking_plans 1
+    end
+
+    association :owner, factory: :klass
+    assistant "manual"
+    configuration "{}"
+    assign_after { Time.now }
+    assigned_at nil
+    is_ready true
+
+    after(:build) do |task_plan, evaluator|
+      evaluator.num_tasking_plans.times do
+        task_plan.tasking_plans << FactoryGirl.build(:tasking_plan,
+                                                     task_plan: task_plan)
+      end
+    end
   end
 end

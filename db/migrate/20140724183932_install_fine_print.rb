@@ -7,7 +7,7 @@ class InstallFinePrint < ActiveRecord::Migration
       t.string :title, :null => false
       t.text :content, :null => false
 
-      t.timestamps
+      t.timestamps null: false
     end
 
     add_index :fine_print_contracts, [:name, :version], :unique => true

@@ -1,6 +1,7 @@
 class Reading < ActiveRecord::Base
+  has_one_task_step
+
   belongs_to :resource, dependent: :destroy
-  has_one_task
 
   validates :resource, presence: true
 

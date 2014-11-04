@@ -3,19 +3,19 @@ module Api::V1
 
     include Roar::Representer::JSON
 
-    property :total_count,
+    property :num_matching_items,
+             as: :total_count,
              type: Integer,
-             getter: lambda {|*| num_matching_items},
              readable: true,
              writeable: false,
              schema_info: {
                description: "The number of tasks that match the query, can be more than the number returned"
              }
 
-    collection :items,
+    collection :tasks,
+               as: :items,
                class: Task,
-               decorator: Api::V1::TaskRepresenterMapper.new,
-               getter: lambda {|*| tasks.collect{|t| t.details}},
+               decorator: TaskRepresenter,
                readable: true,
                writeable: false,
                schema_info: {

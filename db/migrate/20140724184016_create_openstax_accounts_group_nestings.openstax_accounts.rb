@@ -5,7 +5,7 @@ class CreateOpenStaxAccountsGroupNestings < ActiveRecord::Migration
       t.references :member_group, null: false
       t.references :container_group, null: false
 
-      t.timestamps
+      t.timestamps null: false
     end
 
     add_index :openstax_accounts_group_nestings, :member_group_id, unique: true

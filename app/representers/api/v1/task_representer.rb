@@ -1,6 +1,6 @@
 module Api::V1
-  module TaskProperties
-    
+  class TaskRepresenter < Roar::Decorator
+
     include Roar::Representer::JSON
 
     property :id, 
@@ -9,16 +9,6 @@ module Api::V1
              getter: lambda {|*| task.id },
              schema_info: {
                required: true
-             }
-
-    property :type,
-             type: String,
-             writeable: false,
-             readable: true,
-             getter: lambda {|*| type.downcase },
-             schema_info: {
-               required: true,
-               description: "The type of this Task, one of: #{Api::V1::TaskRepresenterMapper.models.collect{|klass| "'" + klass.name.downcase + "'"}.join(',')}"
              }
 
     property :task_plan_id, 
@@ -49,15 +39,32 @@ module Api::V1
                description: "When the task is due (nil means not due)"
              }
 
+    property :closes_at,
+             type: DateTime,
+             writeable: true,
+             readable: true,
+             schema_info: {
+               required: true,
+               description: "When the task becomes unavailable to be worked"
+             }
+
     property :is_shared,
              writeable: false,
              readable: true,
              schema_info: {
                required: true,
-               description: "Whether or not the detailed task is shared ('turn in one assignment')"
+               description: "Whether or not the task is shared ('turn in one assignment')"
              }
 
-
+    collection :task_steps,
+               writeable: false,
+               readable: true,
+               class: TaskStep,
+               decorator: Api::V1::TaskStepRepresenterMapper.new,
+               schema_info: {
+                 required: true,
+                 description: "The steps which this Task is composed of"
+               }
 
 
   end

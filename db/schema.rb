@@ -11,24 +11,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141013201609) do
+ActiveRecord::Schema.define(version: 20141103184649) do
 
   create_table "administrators", force: true do |t|
     t.integer  "user_id",    null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   add_index "administrators", ["user_id"], name: "index_administrators_on_user_id", unique: true
-
-  create_table "assigned_tasks", force: true do |t|
-    t.string   "assignee_type"
-    t.integer  "assignee_id"
-    t.integer  "user_id"
-    t.integer  "task_id"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
-  end
 
   create_table "course_managers", force: true do |t|
     t.integer  "course_id",  null: false
@@ -68,8 +59,8 @@ ActiveRecord::Schema.define(version: 20141013201609) do
     t.integer  "version"
     t.string   "title",      null: false
     t.text     "content",    null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   add_index "fine_print_contracts", ["name", "version"], name: "index_fine_print_contracts_on_name_and_version", unique: true
@@ -159,8 +150,8 @@ ActiveRecord::Schema.define(version: 20141013201609) do
     t.string   "last_name"
     t.string   "full_name"
     t.string   "title"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
   end
 
   add_index "openstax_accounts_accounts", ["access_token"], name: "index_openstax_accounts_accounts_on_access_token", unique: true
@@ -173,8 +164,8 @@ ActiveRecord::Schema.define(version: 20141013201609) do
   create_table "openstax_accounts_group_members", force: true do |t|
     t.integer  "group_id",   null: false
     t.integer  "user_id",    null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   add_index "openstax_accounts_group_members", ["group_id", "user_id"], name: "index_openstax_accounts_group_members_on_group_id_and_user_id", unique: true
@@ -183,8 +174,8 @@ ActiveRecord::Schema.define(version: 20141013201609) do
   create_table "openstax_accounts_group_nestings", force: true do |t|
     t.integer  "member_group_id",    null: false
     t.integer  "container_group_id", null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
   end
 
   add_index "openstax_accounts_group_nestings", ["container_group_id"], name: "index_openstax_accounts_group_nestings_on_container_group_id"
@@ -193,8 +184,8 @@ ActiveRecord::Schema.define(version: 20141013201609) do
   create_table "openstax_accounts_group_owners", force: true do |t|
     t.integer  "group_id",   null: false
     t.integer  "user_id",    null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   add_index "openstax_accounts_group_owners", ["group_id", "user_id"], name: "index_openstax_accounts_group_owners_on_group_id_and_user_id", unique: true
@@ -206,15 +197,15 @@ ActiveRecord::Schema.define(version: 20141013201609) do
     t.string   "name"
     t.text     "cached_subtree_group_ids"
     t.text     "cached_supertree_group_ids"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                                 null: false
+    t.datetime "updated_at",                                 null: false
   end
 
   add_index "openstax_accounts_groups", ["is_public"], name: "index_openstax_accounts_groups_on_is_public"
   add_index "openstax_accounts_groups", ["openstax_uid"], name: "index_openstax_accounts_groups_on_openstax_uid", unique: true
 
   create_table "readings", force: true do |t|
-    t.integer  "resource_id", null: false
+    t.integer  "resource_id"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
   end
@@ -228,6 +219,8 @@ ActiveRecord::Schema.define(version: 20141013201609) do
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
   end
+
+  add_index "resources", ["url"], name: "index_resources_on_url", unique: true
 
   create_table "school_managers", force: true do |t|
     t.integer  "school_id",  null: false
@@ -279,46 +272,82 @@ ActiveRecord::Schema.define(version: 20141013201609) do
   add_index "students", ["user_id", "section_id"], name: "index_students_on_user_id_and_section_id", unique: true
 
   create_table "task_plans", force: true do |t|
-    t.integer  "owner_id",     null: false
-    t.string   "owner_type",   null: false
-    t.datetime "assign_after"
-    t.datetime "opens_at"
-    t.datetime "due_at"
-    t.boolean  "is_shared",    null: false
+    t.integer  "owner_id",      null: false
+    t.string   "owner_type",    null: false
+    t.string   "assistant",     null: false
+    t.text     "configuration", null: false
+    t.datetime "assign_after",  null: false
+    t.datetime "assigned_at"
+    t.boolean  "is_ready"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+  end
+
+  add_index "task_plans", ["assign_after", "is_ready"], name: "index_task_plans_on_assign_after_and_is_ready"
+  add_index "task_plans", ["assigned_at"], name: "index_task_plans_on_assigned_at"
+  add_index "task_plans", ["assistant"], name: "index_task_plans_on_assistant"
+  add_index "task_plans", ["owner_id", "owner_type"], name: "index_task_plans_on_owner_id_and_owner_type"
+
+  create_table "task_steps", force: true do |t|
     t.integer  "details_id",   null: false
     t.string   "details_type", null: false
+    t.integer  "task_id",      null: false
+    t.integer  "number",       null: false
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
   end
 
-  add_index "task_plans", ["assign_after"], name: "index_task_plans_on_assign_after"
-  add_index "task_plans", ["details_id", "details_type"], name: "index_task_plans_on_details_id_and_details_type", unique: true
-  add_index "task_plans", ["owner_id", "owner_type"], name: "index_task_plans_on_owner_id_and_owner_type"
+  add_index "task_steps", ["details_id", "details_type"], name: "index_task_steps_on_details_id_and_details_type", unique: true
+  add_index "task_steps", ["task_id", "number"], name: "index_task_steps_on_task_id_and_number", unique: true
 
-  create_table "tasks", force: true do |t|
-    t.integer  "task_plan_id"
-    t.datetime "opens_at"
-    t.datetime "due_at"
-    t.boolean  "is_shared"
-    t.integer  "details_id",                       null: false
-    t.string   "details_type",                     null: false
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
-    t.string   "title",                            null: false
-    t.integer  "assigned_tasks_count", default: 0, null: false
+  create_table "tasking_plans", force: true do |t|
+    t.integer  "target_id",    null: false
+    t.string   "target_type",  null: false
+    t.integer  "task_plan_id", null: false
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
   end
 
-  add_index "tasks", ["details_id", "details_type"], name: "index_tasks_on_details_id_and_details_type"
-  add_index "tasks", ["due_at"], name: "index_tasks_on_due_at"
+  add_index "tasking_plans", ["target_id", "target_type", "task_plan_id"], name: "index_tasking_plans_on_t_id_and_t_type_and_t_p_id", unique: true
+  add_index "tasking_plans", ["task_plan_id"], name: "index_tasking_plans_on_task_plan_id"
+
+  create_table "taskings", force: true do |t|
+    t.integer  "assignee_id",    null: false
+    t.string   "assignee_type",  null: false
+    t.integer  "task_id",        null: false
+    t.integer  "user_id",        null: false
+    t.integer  "grade_override"
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+  end
+
+  add_index "taskings", ["assignee_id", "assignee_type", "task_id"], name: "index_taskings_on_assignee_id_and_assignee_type_and_task_id", unique: true
+  add_index "taskings", ["task_id", "user_id"], name: "index_taskings_on_task_id_and_user_id", unique: true
+  add_index "taskings", ["user_id"], name: "index_taskings_on_user_id"
+
+  create_table "tasks", force: true do |t|
+    t.integer  "task_plan_id",               null: false
+    t.string   "title",                      null: false
+    t.datetime "opens_at",                   null: false
+    t.datetime "due_at"
+    t.datetime "closes_at"
+    t.integer  "taskings_count", default: 0, null: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
+  end
+
+  add_index "tasks", ["closes_at", "opens_at"], name: "index_tasks_on_closes_at_and_opens_at"
+  add_index "tasks", ["due_at", "opens_at"], name: "index_tasks_on_due_at_and_opens_at"
   add_index "tasks", ["opens_at"], name: "index_tasks_on_opens_at"
   add_index "tasks", ["task_plan_id"], name: "index_tasks_on_task_plan_id"
+  add_index "tasks", ["title"], name: "index_tasks_on_title"
 
   create_table "users", force: true do |t|
     t.integer  "account_id",          null: false
     t.string   "exchange_identifier"
     t.datetime "deleted_at"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
   end
 
   add_index "users", ["account_id"], name: "index_users_on_account_id", unique: true

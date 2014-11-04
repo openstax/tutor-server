@@ -1,7 +1,7 @@
 FactoryGirl.define do
-  factory :assigned_task do
+  factory :tasking do
     association :assignee, factory: :student
-    user_id { assignee.user_id }
     task
+    user { assignee.user }
   end
 end
