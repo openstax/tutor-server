@@ -4,6 +4,10 @@ class Klass < ActiveRecord::Base
   has_many :educators, dependent: :destroy
   has_many :students, dependent: :destroy
 
+  has_one :school, through: :course
+  has_many :course_managers, through: :course
+  has_many :school_managers, through: :school
+
   has_many :tasking_plans, as: :target, dependent: :destroy
   has_many :task_plans, as: :owner, dependent: :destroy
 
