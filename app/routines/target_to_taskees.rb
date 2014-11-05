@@ -37,7 +37,7 @@ class TargetToTaskees
       []
     end
 
-    split_into_groups(taskees, group_size)
+    outputs[:taskee_groups] = split_into_groups(taskees, group_size)
   end
 
 end

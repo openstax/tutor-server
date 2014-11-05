@@ -7,7 +7,7 @@ module AssistantModules
     end
 
     def create_tasks_for(target)
-      taskee_groups = TargetToTaskees.call(target).outputs[:taskees]
+      taskee_groups = TargetToTaskees.call(target).outputs[:taskee_groups]
       Task.transaction do
         taskee_groups.each do |taskee_group|
           task = Task.new
