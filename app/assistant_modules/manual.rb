@@ -1,5 +1,3 @@
-require 'json-schema'
-
 module AssistantModules
   class Manual
     def self.schema
