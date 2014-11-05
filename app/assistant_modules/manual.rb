@@ -1,5 +1,5 @@
 module AssistantModules
-  class Manual
+  class Manual < Base
     def self.schema
       RepresentableSchemaPrinter.json(Api::V1::TaskRepresenter)
     end
