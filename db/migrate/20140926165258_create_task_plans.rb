@@ -3,6 +3,7 @@ class CreateTaskPlans < ActiveRecord::Migration
     create_table :task_plans do |t|
       t.references :assistant, null: false
       t.references :owner, polymorphic: true, null: false
+      t.string :title
       t.text :configuration, null: false
       t.datetime :opens_at, null: false
       t.datetime :due_at

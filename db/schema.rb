@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141104185224) do
+ActiveRecord::Schema.define(version: 20141106215633) do
 
   create_table "administrators", force: true do |t|
     t.integer  "user_id",    null: false
@@ -65,6 +65,26 @@ ActiveRecord::Schema.define(version: 20141104185224) do
 
   add_index "educators", ["klass_id"], name: "index_educators_on_klass_id"
   add_index "educators", ["user_id", "klass_id"], name: "index_educators_on_user_id_and_klass_id", unique: true
+
+  create_table "exercise_definition_topics", force: true do |t|
+    t.integer  "exercise_definition_id"
+    t.integer  "topic_id"
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
+
+  add_index "exercise_definition_topics", ["exercise_definition_id"], name: "index_exercise_definition_topics_on_exercise_definition_id"
+  add_index "exercise_definition_topics", ["topic_id", "exercise_definition_id"], name: "index_ed_topics_on_topic_id_and_ed_id", unique: true
+
+  create_table "exercise_definitions", force: true do |t|
+    t.integer  "klass_id"
+    t.string   "url"
+    t.text     "content"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "exercise_definitions", ["klass_id", "url"], name: "index_exercise_definitions_on_klass_id_and_url", unique: true
 
   create_table "fine_print_contracts", force: true do |t|
     t.string   "name",       null: false
@@ -287,6 +307,7 @@ ActiveRecord::Schema.define(version: 20141104185224) do
     t.integer  "assistant_id",                        null: false
     t.integer  "owner_id",                            null: false
     t.string   "owner_type",                          null: false
+    t.string   "title"
     t.text     "configuration",                       null: false
     t.datetime "opens_at",                            null: false
     t.datetime "due_at"
@@ -351,6 +372,15 @@ ActiveRecord::Schema.define(version: 20141104185224) do
   add_index "tasks", ["opens_at"], name: "index_tasks_on_opens_at"
   add_index "tasks", ["task_plan_id"], name: "index_tasks_on_task_plan_id"
   add_index "tasks", ["title"], name: "index_tasks_on_title"
+
+  create_table "topics", force: true do |t|
+    t.integer  "klass_id"
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "topics", ["klass_id", "name"], name: "index_topics_on_klass_id_and_name", unique: true
 
   create_table "users", force: true do |t|
     t.integer  "account_id",          null: false

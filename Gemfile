@@ -92,6 +92,9 @@ gem 'yaml_db'
 # Date validations
 gem 'validates_timeliness'
 
+# JSON schema validation
+gem 'json-schema'
+
 group :development, :test do
   # Thin development server
   gem 'thin'
