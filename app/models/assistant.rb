@@ -17,7 +17,9 @@ class Assistant < ActiveRecord::Base
   end
 
   def new_task_plan(type)
-    worker.new_task_plan(type)
+    worker.new_task_plan(type).tap do |task_plan|
+      task_plan.assistant = self
+    end
   end
 
   def create_and_distribute_tasks(task_plan)

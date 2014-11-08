@@ -18,7 +18,7 @@ module Sprint003
       #
       # Create a new Assistant record pointing to a Sprint003Assistant code
       # 
-debugger
+
       assistant = ::Assistant.create(code_class_name: "Sprint003::Assistant")
 
       ###########################################################################
@@ -28,8 +28,13 @@ debugger
 
       # Simulate the UI requesting a blank task plan
 
-      study_task_plan = assistant.new_task_plan(:study)
+      study_task_plan = assistant.new_task_plan(:study).tap do |task_plan|
+        task_plan.owner = assistant # no where else to hang it for this sprint
+        task_plan.opens_at = Time.now
+      end
+
       study_task_plan.save
+      transfer_errors_from(study_task_plan, {verbatim: true}, true)
 
       # Simulate UI submitting settings and selecting a taskee
 
@@ -48,6 +53,7 @@ debugger
       study_task_plan.tasking_plans << TaskingPlan.new(target: user)
       
       study_task_plan.save
+      transfer_errors_from(study_task_plan, {verbatim: true}, true)
 
       assistant.create_and_distribute_tasks(study_task_plan)
 

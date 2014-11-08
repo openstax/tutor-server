@@ -408,6 +408,7 @@ DEPENDENCIES
   factory_girl_rails
   faker
   fine_print (~> 2.1.1)
+  hashie
   jquery-rails
   json-schema
   keyword_search

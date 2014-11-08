@@ -308,6 +308,7 @@ ActiveRecord::Schema.define(version: 20141106215633) do
     t.integer  "owner_id",                            null: false
     t.string   "owner_type",                          null: false
     t.string   "title"
+    t.string   "type",                                null: false
     t.text     "configuration",                       null: false
     t.datetime "opens_at",                            null: false
     t.datetime "due_at"
@@ -326,6 +327,7 @@ ActiveRecord::Schema.define(version: 20141106215633) do
     t.string   "details_type", null: false
     t.integer  "task_id",      null: false
     t.integer  "number",       null: false
+    t.string   "title",        null: false
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
   end

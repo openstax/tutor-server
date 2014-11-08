@@ -5,6 +5,7 @@ class TaskStep < ActiveRecord::Base
   validates :details, presence: true
   validates :details_id, uniqueness: { scope: :details_type }
   validates :task, presence: true
+  validates :title, presence: true
   validates :number, presence: true, uniqueness: { scope: :task_id },
                      numericality: true
 

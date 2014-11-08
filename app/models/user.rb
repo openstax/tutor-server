@@ -48,4 +48,7 @@ class User < ActiveRecord::Base
     update_column(:deleted_at, nil)
   end
 
+  # So users can be treated like roles
+  alias_method :user_id, :id
+
 end

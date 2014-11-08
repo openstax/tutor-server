@@ -10,8 +10,18 @@ class TaskPlan < ActiveRecord::Base
 
   validates :owner, presence: true
   validates :assistant, presence: true
-  validates :configuration, presence: true
+  validates :type, presence: true
   validates :opens_at, presence: true
   validates :due_at, timeliness: { on_or_after: :opens_at }, allow_nil: true
+
+  # A TaskPlan cannot validate its configuration -- only the Assistant or its
+  # delegate can do that
+
+  # Allow use of 'type' column without STI
+  self.inheritance_column = nil
+
+  def configuration
+    Hashie::Mash.new(read_attribute(:configuration))
+  end
 
 end

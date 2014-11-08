@@ -95,6 +95,9 @@ gem 'validates_timeliness'
 # JSON schema validation
 gem 'json-schema'
 
+# Cooler hashes
+gem 'hashie'
+
 group :development, :test do
   # Thin development server
   gem 'thin'
