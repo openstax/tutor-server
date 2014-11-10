@@ -8,10 +8,15 @@ module Sprint003
 
     def task_taskees(task_plan, taskees)
       taskees.each do |taskee|
+        # branching based on cohort membership would happen somewhere around here
         task = build_task(task_plan)
         task.save
         TaskATask.call(task: task, taskee: taskee)  # TODO can this live in base?
       end
+    end
+
+    def validate_task_plan(task_plan)
+      []
     end
 
     def build_task(task_plan)

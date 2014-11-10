@@ -6,7 +6,6 @@ module Api::V1
     property :id, 
              type: Integer,
              writeable: false,
-             getter: lambda { |*| task_step.id },
              schema_info: {
                required: true
              }
@@ -15,31 +14,43 @@ module Api::V1
              type: String,
              writeable: false,
              readable: true,
-             getter: lambda { |*| task_step.details_type.downcase },
+             getter: lambda { |*| details_type.downcase },
              schema_info: {
                required: true,
                description: "The type of this TaskStep, one of: #{Api::V1::TaskStepRepresenterMapper.models.collect{|klass| "'" + klass.name.downcase + "'"}.join(',')}"
              }
 
-    property :task_id, 
-             type: Integer,
+    property :title,
+             type: String,
              writeable: false,
              readable: true,
-             getter: lambda { |*| task_step.task_id },
              schema_info: {
                required: true,
-               description: "The ID of the Task this step belongs to"
+               description: "The title of this step"
              }
 
-    property :number, 
-             type: Integer,
-             writeable: true,
-             readable: true,
-             getter: lambda { |*| task_step.number },
-             schema_info: {
-               required: true,
-               description: "The step number for this TaskStep"
-             }
+
+    # NOT NEEDED WHEN IN COLLECTION
+    # property :task_id, 
+    #          type: Integer,
+    #          writeable: false,
+    #          readable: true,
+    #          getter: lambda { |*| task_id },
+    #          schema_info: {
+    #            required: true,
+    #            description: "The ID of the Task this step belongs to"
+    #          }
+
+    # IMPLIED WHEN IN AN ARRAY, NOT NEEDED WHEN ON ITS OWN
+    # property :number, 
+    #          type: Integer,
+    #          writeable: true,
+    #          readable: true,
+    #          getter: lambda { |*| number },
+    #          schema_info: {
+    #            required: true,
+    #            description: "The step number for this TaskStep"
+    #          }
 
   end
 end

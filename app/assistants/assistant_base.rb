@@ -46,6 +46,8 @@ class AssistantBase
   end
 
   def create_and_distribute_tasks(task_plan)
+    # TODO this method should destroy existing tasks for this plan or should modify them.
+
     # How can we make Assistants more routine-ish
     taskees = GetTaskeesFromTaskPlan.call(task_plan).outputs[:taskees]
 

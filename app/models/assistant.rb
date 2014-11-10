@@ -10,8 +10,10 @@ class Assistant < ActiveRecord::Base
   validates :code_class_name, presence: true
   validate :code_class_existence
 
+  #
   # Delegate all real work to the actual implementation (the "worker")
-
+  #
+  
   def get_task_plan_types
     worker.get_task_plan_types
   end
@@ -20,6 +22,10 @@ class Assistant < ActiveRecord::Base
     worker.new_task_plan(type).tap do |task_plan|
       task_plan.assistant = self
     end
+  end
+
+  def validate_task_plan(task_plan)
+    worker.validate_task_plan(task_plan)
   end
 
   def create_and_distribute_tasks(task_plan)

@@ -1,4 +1,4 @@
-Time::DATE_FORMATS[:w3cz] = lambda { |time| time.utc.strftime("%Y-%m-%dT%H:%M:%SZ") }
+Time::DATE_FORMATS[:w3cz] = lambda { |time| time.utc.strftime("%Y-%m-%dT%H:%M:%S.%LZ") }
 
 module DateTimeUtilities
   def self.to_api_s(time)

@@ -14,7 +14,8 @@ module Api::V1
       if args[2].is_a?(Hash) && args[2][:all_sub_representers]
         self.class.representers
       else
-        representer = self.class.map[args[1].class].call
+        detailed_step_class = args[1].is_a?(TaskStep) ? args[1].details.class : args[1].class
+        representer = self.class.map[detailed_step_class].call
         raise NotYetImplemented if representer.nil?
         representer
       end

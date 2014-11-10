@@ -6,7 +6,13 @@ module Api::V1
     property :id, 
              type: Integer,
              writeable: false,
-             getter: lambda {|*| task.id },
+             schema_info: {
+               required: true
+             }
+
+    property :title,
+             type: String,
+             writeable: false,
              schema_info: {
                required: true
              }
@@ -39,15 +45,6 @@ module Api::V1
                description: "When the task is due (nil means not due)"
              }
 
-    property :closes_at,
-             type: DateTime,
-             writeable: true,
-             readable: true,
-             schema_info: {
-               required: true,
-               description: "When the task becomes unavailable to be worked"
-             }
-
     property :is_shared,
              writeable: false,
              readable: true,
@@ -57,15 +54,16 @@ module Api::V1
              }
 
     collection :task_steps,
+               as: :steps,
                writeable: false,
                readable: true,
                class: TaskStep,
                decorator: Api::V1::TaskStepRepresenterMapper.new,
+               exclude: [:task_id],
                schema_info: {
                  required: true,
                  description: "The steps which this Task is composed of"
                }
-
 
   end
 end
