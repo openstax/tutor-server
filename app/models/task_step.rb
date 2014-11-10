@@ -14,7 +14,10 @@ class TaskStep < ActiveRecord::Base
   protected
 
   def assign_next_number
-    return if task.nil?
-    self.number ||= (task.task_steps.maximum(:number) || -1) + 1
+    self.number ||= (peers.maximum(:number) || -1) + 1
+  end
+
+  def peers
+    TaskStep.where(task_id: task_id)
   end
 end

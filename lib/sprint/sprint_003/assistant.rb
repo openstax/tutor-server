@@ -9,8 +9,7 @@ module Sprint003
     def task_taskees(task_plan, taskees)
       taskees.each do |taskee|
         # branching based on cohort membership would happen somewhere around here
-        task = build_task(task_plan)
-        task.save
+        task = create_task(task_plan)
         TaskATask.call(task: task, taskee: taskee)  # TODO can this live in base?
       end
     end
@@ -19,30 +18,39 @@ module Sprint003
       []
     end
 
-    def build_task(task_plan)
-      send("build_#{task_plan.type}_task", task_plan)
+    def create_task(task_plan)
+      send("create_#{task_plan.type}_task", task_plan)
     end
 
-    def build_base_task(task_plan)    # TODO can this live in base?
-      Task.new(title: task_plan.title, 
-               opens_at: task_plan.opens_at, 
-               due_at: task_plan.due_at,
-               task_plan: task_plan)
+    def create_base_task(task_plan)    # TODO can this live in base?
+      Task.create(title: task_plan.title, 
+                  opens_at: task_plan.opens_at, 
+                  due_at: task_plan.due_at,
+                  task_plan: task_plan)
     end
 
-    def build_study_task(task_plan)
-      task = build_base_task(task_plan)
+    def create_study_task(task_plan)
+      task = create_base_task(task_plan)
       # TODO need a step somewhere to validate task_plan.configuration against plan schema
       task_plan.configuration.steps.each do |step_config|
-        step = send("build_#{step_config.type}_step", step_config)
-        task.task_steps << step
-      end
+        debugger
+        task_step = send("create_#{step_config.type}_step", task, step_config)
+        debugger
+      end; debugger
 
       task
     end
 
-    def build_reading_step(config)
-      CreateReading.call(config.slice(:url)).outputs[:task_step]
+    def create_homework_task(task_plan)
+      create_base_task(task_plan)
+    end
+
+    def create_reading_step(task, config)
+      CreateReading.call(task, config.slice(:url)).outputs[:task_step]
+    end
+
+    def create_interactive_step(task, config)
+      CreateInteractive.call(task, config.slice(:url)).outputs[:task_step]
     end
 
   end
