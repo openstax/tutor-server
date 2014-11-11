@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141106215633) do
+ActiveRecord::Schema.define(version: 20141110212240) do
 
   create_table "administrators", force: true do |t|
     t.integer  "user_id",    null: false
@@ -85,6 +85,14 @@ ActiveRecord::Schema.define(version: 20141106215633) do
   end
 
   add_index "exercise_definitions", ["klass_id", "url"], name: "index_exercise_definitions_on_klass_id_and_url", unique: true
+
+  create_table "exercises", force: true do |t|
+    t.integer  "resource_id", null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "exercises", ["resource_id"], name: "index_exercises_on_resource_id"
 
   create_table "fine_print_contracts", force: true do |t|
     t.string   "name",       null: false

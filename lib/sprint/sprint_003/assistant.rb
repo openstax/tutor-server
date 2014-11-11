@@ -33,16 +33,47 @@ module Sprint003
       task = create_base_task(task_plan)
       # TODO need a step somewhere to validate task_plan.configuration against plan schema
       task_plan.configuration.steps.each do |step_config|
-        debugger
         task_step = send("create_#{step_config.type}_step", task, step_config)
-        debugger
-      end; debugger
+      end
 
       task
     end
 
     def create_homework_task(task_plan)
-      create_base_task(task_plan)
+      task = create_base_task(task_plan)
+      number = 0
+      task_plan.configuration.manual_exercises.each do |ex_id|
+        ed = ExerciseDefinition.find(ex_id)
+        exercise_step = CreateExercise.call(task, "##{number += 1}", url: ed.url, content: ed.content)
+      end
+
+      if task_plan.configuration.spaced_exercises?
+        task_plan.configuration.spaced_exercises.tap do |se|
+          topic = GetOrCreateTopic.call(topic: se.topic, klass: task_plan.owner).outputs.topic
+          eds = topic.exercise_definitions
+
+          se.num_exercises.times do |ii|
+            ed = eds[eds.length-ii-1]
+            exercise_step = CreateExercise.call(task, "##{number += 1}", url: ed.url, content: ed.content)
+          end
+        end
+      end
+      debugger
+
+      if task_plan.configuration.personalized_exercises?
+        task_plan.configuration.personalized_exercises.tap do |pe|
+          topic = GetOrCreateTopic.call(topic: pe.topic, klass: task_plan.owner).outputs.topic
+          allowed_exercise_definitions = topic.exercise_definitions
+
+          eds = BigLearn.projection_next_questions(allowed_exercise_definitions: allowed_exercise_definitions, learner: '12345', count: pe.num_exercises)
+
+          eds.each do |ed|
+            exercise_step = CreateExercise.call(task, "##{number += 1}", url: ed.url, content: ed.content)
+          end
+        end
+      end
+
+      task
     end
 
     def create_reading_step(task, config)
@@ -51,6 +82,10 @@ module Sprint003
 
     def create_interactive_step(task, config)
       CreateInteractive.call(task, config.slice(:url)).outputs[:task_step]
+    end
+
+    def create_exercise_step(task, title, config)
+
     end
 
   end

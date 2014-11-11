@@ -56,7 +56,7 @@ module Sprint003
         exercise_definitions.push ExerciseDefinition.create(
           klass: klass,
           url: exercise_url,
-          content: {
+          content: ({
             background: "This is a #{topic_name} exercise from: #{exercise_url}. Einstein makes a 10 kg spaceship",
             parts:[
               {
@@ -79,7 +79,7 @@ module Sprint003
                 ]
               }
             ]
-          }
+          }).to_json
         )
         
         TagExerciseDefinitionWithTopic.call(exercise_definition: exercise_definitions.last, topic: topic_name)
@@ -106,11 +106,8 @@ module Sprint003
       hw1_task_plan.title = "Homework 1"
       hw1_task_plan.opens_at = opens_at
       hw1_task_plan.configuration = {
-        exercises: [
-          {
-            type: "manual",
-            exercise_definition_id: exercise_definitions.first.id
-          }
+        manual_exercises: [
+          exercise_definitions.first.id
         ]
       }
 
@@ -192,22 +189,18 @@ module Sprint003
 
       hw2_task_plan.title = "Homework 2"
       hw2_task_plan.opens_at = opens_at
-      hw2_task_plan.configuration = {   # this could be simpler -- just list of manual exercises, then spaced config, then personalized config
-        exercises: [
-          {
-            type: "manual",
-            exercise_definition_id: exercise_definitions.last.id
-          },
-          {
-            type: "from_topic",
-            topic: "topic_a",
-            count: 1
-          },
-          {
-            type: "personalized",
-            count: 1
-          }
-        ]
+      hw2_task_plan.configuration = {
+        manual_exercises: [
+          exercise_definitions.last.id
+        ],
+        spaced_exercises: {
+          topic: "topic_a",
+          num_exercises: 1
+        },
+        personalized_exercises: {
+          topic: "topic_b",
+          num_exercises: 1
+        }
       }
 
       # Assistant should use a SpacedPracticeOnAnyWorkedProblem block

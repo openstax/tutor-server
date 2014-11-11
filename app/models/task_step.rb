@@ -9,6 +9,7 @@ class TaskStep < ActiveRecord::Base
   validates :number, presence: true, uniqueness: { scope: :task_id },
                      numericality: true
 
+  # TODO ponder integration of acts_as_numberable
   before_validation :assign_next_number
 
   protected
