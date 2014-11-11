@@ -58,7 +58,6 @@ module Sprint003
           end
         end
       end
-      debugger
 
       if task_plan.configuration.personalized_exercises?
         task_plan.configuration.personalized_exercises.tap do |pe|

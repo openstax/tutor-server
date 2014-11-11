@@ -57,25 +57,20 @@ module Sprint003
           klass: klass,
           url: exercise_url,
           content: ({
-            background: "This is a #{topic_name} exercise from: #{exercise_url}. Einstein makes a 10 kg spaceship",
-            parts:[
+            stimulus: "This is a #{topic_name} exercise from: #{exercise_url}. Einstein makes a 10 kg spaceship",
+            questions: [
               {
-                background: "The spaceship moves at <span data-math='\\dfrac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}'></span> 1 m/s",
-                questions:[
-                  {
-                    id: "123",
-                    format: "short-answer",
-                    stem: "What is the rest mass in kg?"
-                  },
-                  {
-                    id: "234",
-                    format: "multiple-choice",
-                    stem: "What is the force if it slams into a wall?",
-                    answers:[
-                      {id: "id1", value: "10", content: "10 N"},
-                      {id: "id2", value: "1", content: "1 N"}
-                    ]
-                  }
+                id: "123",
+                format: "short-answer",
+                stem: "What is the rest mass in kg?"
+              },
+              {
+                id: "234",
+                format: "multiple-choice",
+                stem: "What is the force if it slams into a wall?",
+                answers:[
+                  {id: "id1", value: "10", content: "10 N"},
+                  {id: "id2", value: "1", content: "1 N"}
                 ]
               }
             ]

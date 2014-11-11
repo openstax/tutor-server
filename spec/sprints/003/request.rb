@@ -17,7 +17,7 @@ RSpec.describe "Sprint 3 API", type: :request, :api => true, :version => :v1 do
         {'HTTP_AUTHORIZATION' => "Bearer #{jimmy_token.token}", 
          'HTTP_ACCEPT' => "application/vnd.tutor.openstax.v1"}
 
-    expect(response.code).to eq('200'); debugger
+    expect(response.code).to eq('200')
     expect(response.body).to eq({
       total_count: 1,
       items: [
