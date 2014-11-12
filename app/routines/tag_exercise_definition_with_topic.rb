@@ -7,11 +7,9 @@ class TagExerciseDefinitionWithTopic
   protected
 
   def exec(exercise_definition:, topic:)
-    topic = run(GetOrCreateTopic, topic: topic, klass: exercise_definition.klass).outputs.topic
-
-    edt_attributes = {topic_id: topic.id, exercise_definition_id: exercise_definition.id}
-    return if ExerciseDefinitionTopic.where(edt_attributes).any?
-    ExerciseDefinitionTopic.create(edt_attributes)
+    run(GetOrCreateTopic, topic: topic, klass: exercise_definition.klass)
+    attributes = {topic_id: outputs[:topic].id, exercise_definition_id: exercise_definition.id}
+    ExerciseDefinitionTopic.create(attributes) unless ExerciseDefinitionTopic.where(attributes).any?
   end
 
 end

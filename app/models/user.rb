@@ -50,5 +50,6 @@ class User < ActiveRecord::Base
 
   # So users can be treated like roles
   alias_method :user_id, :id
+  def user; self; end
 
 end

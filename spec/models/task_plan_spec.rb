@@ -9,14 +9,13 @@ RSpec.describe TaskPlan, :type => :model do
 
   it { is_expected.to validate_presence_of(:owner) }
   it { is_expected.to validate_presence_of(:assistant) }
-  it { is_expected.to validate_presence_of(:configuration) }
   it { is_expected.to validate_presence_of(:opens_at) }
 
   it "requires non-nil due_at to be after opens_at" do
     task_plan = FactoryGirl.build(:task_plan, due_at: nil)
     expect(task_plan).to be_valid
 
-    task_plan = FactoryGirl.build(:task_plan, due_at: Time.now - 1.week)
+    task_plan = FactoryGirl.build(:task_plan, opens_at: Time.now, due_at: Time.now - 1.week)
     expect(task_plan).to_not be_valid
   end
 end

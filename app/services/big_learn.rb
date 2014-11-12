@@ -1,10 +1,10 @@
-
-
 module BigLearn
-  
 
   mattr_accessor :use_stubs
   self.use_stubs = false
+
+  # TODO ponder how to make this call (and other 3rd party calls) in the background in a standard 
+  # TaskStep-friendly way
 
   def self.projection_next_questions(allowed_exercise_definitions:, learner:, count:, difficulty: 0.5)
     if use_stubs
@@ -22,7 +22,5 @@ module BigLearn
       allowed_exercise_definitions.select{|ed| ids.include?(/(\d+)$/.match(ed.url)[0]) }
     end
   end
-
-
 
 end

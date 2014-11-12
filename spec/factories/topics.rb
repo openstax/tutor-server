@@ -1,8 +1,8 @@
-# Read about factories at https://github.com/thoughtbot/factory_girl
-
 FactoryGirl.define do
+  sequence :topic_name do |n| "Topic #{n}" end
+  
   factory :topic do
-    klass_id 1
-    name "MyString"
+    klass
+    name { generate(:topic_name) }
   end
 end

@@ -13,23 +13,16 @@ class Assistant < ActiveRecord::Base
   #
   # Delegate all real work to the actual implementation (the "worker")
   #
-  
-  def get_task_plan_types
-    worker.get_task_plan_types
-  end
 
+  delegate :get_task_plan_types,
+           :validate_task_plan,
+           :create_and_distribute_tasks,
+           to: :worker
+  
   def new_task_plan(type)
     worker.new_task_plan(type).tap do |task_plan|
       task_plan.assistant = self
     end
-  end
-
-  def validate_task_plan(task_plan)
-    worker.validate_task_plan(task_plan)
-  end
-
-  def create_and_distribute_tasks(task_plan)
-    worker.create_and_distribute_tasks(task_plan)
   end
 
   protected

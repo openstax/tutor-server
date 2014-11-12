@@ -8,8 +8,8 @@ class GetOrCreateTopic
     if topic.is_a?(Topic)
       outputs[:topic] = topic
     else
-      topic_name = topic.to_s
-      outputs[:topic] = Topic.where(name: topic_name).first || Topic.create(name: topic_name, klass: klass)
+      attributes = {name: topic.to_s, klass_id: klass.id}
+      outputs[:topic] = Topic.where(attributes).first || Topic.create(attributes)
       transfer_errors_from(outputs[:topic], {verbatim: true}, true)
     end
   end
