@@ -18,7 +18,6 @@ module Api::V1
              getter: lambda {|*| ::JSON.parse(details.content)},
              writeable: false,
              readable: true,
-             as: :content_json,
              schema_info: {
                required: false,
                description: "The exercise content as JSON"
