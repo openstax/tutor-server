@@ -98,6 +98,9 @@ gem 'json-schema'
 # Cooler hashes
 gem 'hashie'
 
+# For calling JSON APIs
+gem 'httparty'
+
 group :development, :test do
   # Thin development server
   gem 'thin'

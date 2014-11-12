@@ -62,12 +62,12 @@ module Sprint003
       if task_plan.configuration.personalized_exercises?
         task_plan.configuration.personalized_exercises.tap do |pe|
           topic = GetOrCreateTopic.call(topic: pe.topic, klass: task_plan.owner).outputs.topic
-          allowed_exercise_definitions = topic.exercise_definitions
+          allowed_exercise_definitions = topic.exercise_definitions.reject{|ed| Exercise.joins(:resource).where{resource.url == ed.url}.any?}
 
           eds = BigLearn.projection_next_questions(allowed_exercise_definitions: allowed_exercise_definitions, learner: '12345', count: pe.num_exercises)
 
-          eds.each do |ed|
-            exercise_step = CreateExercise.call(task, "##{number += 1}", url: ed.url, content: ed.content)
+          eds.each do |edef|
+            exercise_step = CreateExercise.call(task, "##{number += 1}", url: edef.url, content: edef.content)
           end
         end
       end
