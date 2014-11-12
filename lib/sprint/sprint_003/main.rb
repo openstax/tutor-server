@@ -49,6 +49,7 @@ module Sprint003
       )
 
       exercise_definitions = []
+      uid = 0
 
       exercise_urls.each_with_index do |exercise_url, ii|
         topic_name = (ii < exercise_urls.length / 2) ? "topic_a" : "topic_b"
@@ -60,17 +61,17 @@ module Sprint003
             stimulus: "This is a #{topic_name} exercise from: #{exercise_url}. Einstein makes a 10 kg spaceship",
             questions: [
               {
-                id: "123",
+                id: "#{uid+=1}",
                 format: "short-answer",
                 stem: "What is the rest mass in kg?"
               },
               {
-                id: "234",
+                id: "#{uid+=1}",
                 format: "multiple-choice",
                 stem: "What is the force if it slams into a wall?",
                 answers:[
-                  {id: "id1", value: "10", content: "10 N"},
-                  {id: "id2", value: "1", content: "1 N"}
+                  {id: "#{uid+=1}", value: "10", content: "10 N"},
+                  {id: "#{uid+=1}", value: "1", content: "1 N"}
                 ]
               }
             ]
