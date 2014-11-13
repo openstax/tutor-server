@@ -6,9 +6,14 @@ RSpec.describe TaskStep, :type => :model do
 
   it { is_expected.to validate_presence_of(:details) }
   it { is_expected.to validate_presence_of(:task) }
-  it { is_expected.to validate_presence_of(:number) }
 
   it { is_expected.to validate_numericality_of(:number) }
+
+  it "automatically sets the number" do
+    task_step = TaskStep.new
+    task_step.valid?
+    expect(task_step.number).to_not be_nil
+  end
 
   it "requires details to be unique" do
     task_step = FactoryGirl.create(:task_step)
