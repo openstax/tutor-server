@@ -37,7 +37,13 @@ class Assistant < ActiveRecord::Base
   end
 
   def code_class_existence
-    !!code_class rescue errors.add(:code_class_name, " doesn't exist"); false
+    begin
+      code_class 
+      true
+    rescue 
+      errors.add(:code_class_name, " doesn't exist")
+      false
+    end
   end
 
   def code_class

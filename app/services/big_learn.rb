@@ -15,6 +15,8 @@ module BigLearn
              "questionCount=#{count}&",
              "learner=#{learner}&",
              "desiredDifficulty=#{difficulty}"].join("")
+
+      # If this sticks around as a manual construction of a query, use Hash.to_query or cousin
       
       response = HTTParty.get(url)
 

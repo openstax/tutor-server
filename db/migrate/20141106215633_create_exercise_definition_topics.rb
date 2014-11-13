@@ -1,8 +1,8 @@
 class CreateExerciseDefinitionTopics < ActiveRecord::Migration
   def change
     create_table :exercise_definition_topics do |t|
-      t.references :exercise_definition
-      t.references :topic
+      t.references :exercise_definition, null: false
+      t.references :topic, null: false
 
       t.timestamps null: false
     end

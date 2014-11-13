@@ -10,7 +10,7 @@ module Sprint003
       taskees.each do |taskee|
         # branching based on cohort membership would happen somewhere around here
         task = create_task(task_plan)
-        TaskATask.call(task: task, taskee: taskee)  # TODO can this live in base?
+        CreateTasking.call(task: task, taskee: taskee)  # TODO can this live in base?
       end
     end
 
@@ -81,10 +81,6 @@ module Sprint003
 
     def create_interactive_step(task, config)
       CreateInteractive.call(task, config.slice(:url)).outputs[:task_step]
-    end
-
-    def create_exercise_step(task, title, config)
-
     end
 
   end

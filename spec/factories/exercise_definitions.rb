@@ -7,7 +7,7 @@ FactoryGirl.define do
     url { generate(:exercise_url) }
     content {
       {
-        stimulus: "This is fake exercise #{url}",
+        stimulus: "This is fake exercise #{url}.  <span data-math='\\dfrac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}'></span>",
         questions: [
           {
             id: "#{generate(:exercise_component_id)}",

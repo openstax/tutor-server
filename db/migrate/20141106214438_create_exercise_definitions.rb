@@ -1,7 +1,7 @@
 class CreateExerciseDefinitions < ActiveRecord::Migration
   def change
     create_table :exercise_definitions do |t|
-      t.references :klass
+      t.references :klass, null: false
       t.string :url
       t.text :content
 

@@ -58,7 +58,7 @@ module Sprint003
           klass: klass,
           url: exercise_url,
           content: ({
-            stimulus: "This is a #{topic_name} exercise from: #{exercise_url}. Einstein makes a 10 kg spaceship",
+            stimulus: "This is a #{topic_name} exercise from: #{exercise_url}. Einstein makes a 10 kg spaceship.  <span data-math='\\dfrac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}'></span>",
             questions: [
               {
                 id: "#{uid+=1}",

@@ -1,14 +1,18 @@
 require 'json-schema'
 
+#
+# Any subclass of AssistantBase must:
+#
+#   1. implement a `task_taskees(task_plan, taskees)` method
+#
+
 class AssistantBase
-  attr_reader :config, :errors
+  attr_reader :settings, :errors, :data
 
   class_attribute :schema
-  class_attribute :data
   class_attribute :task_plan_types
 
   self.schema = {}
-  self.data = {}
   self.task_plan_types = {}
 
   def self.configure(schema:)
@@ -31,7 +35,8 @@ class AssistantBase
                                              settings,
                                              insert_defaults: true)
     return unless @errors.empty?
-    @config = config
+    @settings = settings
+    @data = data
   end
 
   def get_task_plan_types
@@ -54,5 +59,9 @@ class AssistantBase
     # Concrete Assistants need to override this to create Tasks from the provided 
     # TaskPlan and assign to the taskees
     task_taskees(task_plan, taskees)
+  end
+
+  def task_taskees(task_plan, taskees)
+    raise AbstractMethodCalled
   end
 end
