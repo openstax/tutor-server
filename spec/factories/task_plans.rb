@@ -1,5 +1,3 @@
-# Read about factories at https://github.com/thoughtbot/factory_girl
-
 FactoryGirl.define do
   factory :task_plan do
     ignore do
@@ -9,10 +7,11 @@ FactoryGirl.define do
 
     association :owner, factory: :klass
     assistant
-    configuration "{}"
+    configuration {{}}
     opens_at { Time.now }
     due_at { opens_at + duration }
     invisible_until_open true
+    type "study"
 
     after(:build) do |task_plan, evaluator|
       evaluator.num_tasking_plans.times do

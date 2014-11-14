@@ -1,5 +1,3 @@
-# Read about factories at https://github.com/thoughtbot/factory_girl
-
 FactoryGirl.define do
   factory :task_step do
     ignore do
@@ -9,6 +7,7 @@ FactoryGirl.define do
     task
     details nil
     number nil
+    title { Faker::Lorem.words(3) }
 
     after(:build) do |task_step, evaluator|
       task_step.details ||= FactoryGirl.build(evaluator.details_type,

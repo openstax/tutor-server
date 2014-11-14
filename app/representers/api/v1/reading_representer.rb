@@ -5,6 +5,7 @@ module Api::V1
 
     property :url,
              type: String,
+             getter: lambda {|*| details.url},
              writeable: false,
              readable: true,
              as: :content_url,
@@ -15,6 +16,7 @@ module Api::V1
 
     property :content,
              type: String,
+             getter: lambda {|*| details.content},
              writeable: false,
              readable: true,
              as: :content_html,

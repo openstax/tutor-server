@@ -1,9 +1,10 @@
 module Api::V1
   class InteractiveRepresenter < Roar::Decorator
-    include Api::V1::TaskProperties
+    include Api::V1::TaskStepProperties
 
     property :url,
              type: String,
+             getter: lambda {|*| details.url},
              writeable: false,
              readable: true,
              as: :content_url,
@@ -14,6 +15,7 @@ module Api::V1
 
     property :content,
              type: String,
+             getter: lambda {|*| details.content},
              writeable: false,
              readable: true,
              as: :content_html,
