@@ -2,7 +2,8 @@ class TagExerciseDefinitionWithTopic
 
   lev_routine
 
-  uses_routine GetOrCreateTopic
+  uses_routine GetOrCreateTopic,
+               translations: { outputs: {type: :verbatim} }
 
   protected
 

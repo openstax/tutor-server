@@ -67,8 +67,8 @@ ActiveRecord::Schema.define(version: 20141110212240) do
   add_index "educators", ["user_id", "klass_id"], name: "index_educators_on_user_id_and_klass_id", unique: true
 
   create_table "exercise_definition_topics", force: true do |t|
-    t.integer  "exercise_definition_id"
-    t.integer  "topic_id"
+    t.integer  "exercise_definition_id", null: false
+    t.integer  "topic_id",               null: false
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
   end
@@ -77,7 +77,7 @@ ActiveRecord::Schema.define(version: 20141110212240) do
   add_index "exercise_definition_topics", ["topic_id", "exercise_definition_id"], name: "index_ed_topics_on_topic_id_and_ed_id", unique: true
 
   create_table "exercise_definitions", force: true do |t|
-    t.integer  "klass_id"
+    t.integer  "klass_id",   null: false
     t.string   "url"
     t.text     "content"
     t.datetime "created_at", null: false
@@ -384,8 +384,8 @@ ActiveRecord::Schema.define(version: 20141110212240) do
   add_index "tasks", ["title"], name: "index_tasks_on_title"
 
   create_table "topics", force: true do |t|
-    t.integer  "klass_id"
-    t.string   "name"
+    t.integer  "klass_id",   null: false
+    t.string   "name",       null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
