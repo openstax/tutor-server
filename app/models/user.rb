@@ -11,6 +11,7 @@ class User < ActiveRecord::Base
   has_many :students, dependent: :destroy
 
   validates :account, presence: true, uniqueness: true
+  validates :exchange_identifier, presence: true
 
   delegate :username, :first_name, :last_name, :full_name, :title,
            :name, :casual_name, :first_name=, :last_name=, :full_name=,

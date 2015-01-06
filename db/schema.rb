@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141110212240) do
+ActiveRecord::Schema.define(version: 20150106202716) do
 
   create_table "administrators", force: true do |t|
     t.integer  "user_id",    null: false
@@ -394,7 +394,7 @@ ActiveRecord::Schema.define(version: 20141110212240) do
 
   create_table "users", force: true do |t|
     t.integer  "account_id",          null: false
-    t.string   "exchange_identifier"
+    t.string   "exchange_identifier", null: false
     t.datetime "deleted_at"
     t.datetime "created_at",          null: false
     t.datetime "updated_at",          null: false
