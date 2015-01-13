@@ -33,11 +33,10 @@ describe CreateUser do
     end
   end
 
-  context "when account is not passed in" do
-    it "raises an exception" do
-      expect {
-        outcome = CreateUser.call()
-      }.to raise_error
+  context "when account is nil" do
+    it "returns an outcome with errors" do
+      outcome = CreateUser.call(nil)
+      expect(outcome.errors).to_not be_empty
     end
   end
 
@@ -49,14 +48,18 @@ describe CreateUser do
       OpenStax::Exchange.reset!
     end
 
-    it "does not create a new User" do
+    it "raises an exception" do
       expect {
         CreateUser.call(account)
-      }.to change{User.count}.by 0
+      }.to raise_error(StandardError)
     end
-    it "returns an outcome with errors" do
-      outcome = CreateUser.call(account)
-      expect(outcome.errors).to_not be_empty
+    it "does not create a new User" do
+      expect {
+        begin
+          CreateUser.call(account)
+        rescue
+        end
+      }.to change{User.count}.by 0
     end
   end
 end

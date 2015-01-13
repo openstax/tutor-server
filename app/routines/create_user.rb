@@ -13,8 +13,5 @@ class CreateUser
     end
 
     transfer_errors_from(outputs[:user], {type: :verbatim})
-  rescue StandardError => error
-    fatal_error(code: :exception_raised, data: error)
   end
-
 end
