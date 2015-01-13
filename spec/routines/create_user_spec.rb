@@ -4,17 +4,13 @@ describe CreateUser do
   let!(:account) { FactoryGirl.create(:openstax_accounts_account) }
 
   before(:each) do
-    OpenStax::Exchange.configure do |config|
-      config.client_platform_id     = '123'
-      config.client_platform_secret = 'abc'
-      config.client_server_url      = 'https://exchange.openstax.org'
-      config.client_api_version     = 'v1'
-    end
-
     OpenStax::Exchange::FakeClient.configure do |config|
-      config.registered_platforms   = { '123' => 'abc'}
-      config.server_url             = 'https://exchange.openstax.org'
-      config.supported_api_versions = ['v1']
+      config.registered_platforms   = {
+        OpenStax::Exchange.configuration.client_platform_id =>
+        OpenStax::Exchange.configuration.client_platform_secret
+      }
+      config.server_url             = OpenStax::Exchange.configuration.client_server_url
+      config.supported_api_versions = [OpenStax::Exchange.configuration.client_api_version]
     end
 
     OpenStax::Exchange.use_fake_client
