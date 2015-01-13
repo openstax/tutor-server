@@ -1,3 +1,10 @@
+GIT
+  remote: https://github.com/openstax/exchange-ruby.git
+  revision: 415ef89f7aab25d69e1fa61c448ab3793ca2db80
+  specs:
+    openstax_exchange (0.0.1)
+      oauth2 (>= 0.5.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -423,6 +430,7 @@ DEPENDENCIES
   nifty-generators
   openstax_accounts (~> 3.1.1)
   openstax_api (~> 3.1.1)
+  openstax_exchange!
   openstax_utilities (~> 4.1.0)
   pg
   quiet_assets
