@@ -46,7 +46,7 @@ gem 'whenever'
 gem 'openstax_accounts', '~> 3.1.1'
 
 # OpenStax Exchange integration
-gem 'openstax_exchange', git: 'https://github.com/openstax/exchange-ruby.git'
+gem 'openstax_exchange'
 
 # Respond_with and respond_to methods
 gem 'responders', '~> 2.0'
