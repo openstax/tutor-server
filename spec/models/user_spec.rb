@@ -11,6 +11,7 @@ RSpec.describe User, :type => :model do
   it { is_expected.to have_many(:students).dependent(:destroy) }
 
   it { is_expected.to validate_presence_of(:account) }
+  it { is_expected.to validate_presence_of(:exchange_identifier) }
 
   it 'must enforce that one account is only used by one user' do
     user1 = FactoryGirl.create(:user)
