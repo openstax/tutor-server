@@ -27,6 +27,7 @@ Rails.application.routes.draw do
 
     resources :users, only: [:index]
     resource :user, only: [] do
+      get 'user', on: :collection
       get 'tasks', on: :collection
     end
 
