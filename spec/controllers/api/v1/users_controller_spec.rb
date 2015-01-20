@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Api::V1::UsersController, :type => :controller, :api => true, :version => :v1 do
+describe Api::V1::UsersController, :api => true, :version => :v1 do
 
   let!(:application)     { FactoryGirl.create :doorkeeper_application }
   let!(:user_1)          { FactoryGirl.create :user }
@@ -8,22 +8,27 @@ describe Api::V1::UsersController, :type => :controller, :api => true, :version 
                                               application: application,
                                               resource_owner_id: user_1.id }
 
-  describe "user" do
+  describe "#show", type: :request do
     context "caller has an authorization token" do
-      it "should return a success (200) code" do
-        api_get :user, user_1_token
-        expect(response.code).to eq('500')
+      it "should return an ok (200) code" do
+        get '/api/user',
+            {format: 'json'},
+            {'HTTP_AUTHORIZATION' => "Bearer #{user_1_token.token}",
+             'HTTP_ACCEPT' => "application/vnd.tutor.openstax.v1"}
+        expect(response.code).to eq('200')
       end
     end
     context "caller does not have an authorization token" do
       it "should return a forbidden (403) code" do
-        api_get :user, nil
+        get '/api/user',
+            {format: 'json'},
+            {'HTTP_ACCEPT' => "application/vnd.tutor.openstax.v1"}
         expect(response.code).to eq('403')
       end
     end
   end
 
-  describe "tasks" do
+  describe "tasks", :type => :controller do
     it "should let a user retrieve their non-existent tasks" do
       api_get :tasks, user_1_token
       expect(response.code).to eq('200')
