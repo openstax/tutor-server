@@ -17,7 +17,14 @@ class Api::V1::UsersController < Api::V1::ApiController
     ##         standard_real(current_human_user)
     ##       once error/exception handling mechasmism
     ##       have been updated.
-    head (current_human_user.is_anonymous? ? :forbidden : :ok)
+    status = if current_human_user.nil?
+               :forbidden
+             elsif current_human_user.is_anonymous?
+               :forbidden
+             else
+               :ok
+             end
+    head status
   end
 
   api :GET, '/user/tasks', 'Gets all tasks assigned to the User making the request'
