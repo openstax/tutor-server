@@ -7,6 +7,7 @@ FactoryGirl.define do
     end
 
     task_plan
+    task_type "reading"
     title "A task"
     opens_at { Time.now }
     due_at { opens_at + duration }

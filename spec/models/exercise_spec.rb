@@ -1,13 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe Exercise, :type => :model do
-  it { is_expected.to belong_to(:resource).dependent(:destroy) }
   it { is_expected.to have_one(:task_step).dependent(:destroy) }
-  it { is_expected.to validate_presence_of(:resource) }
 
-  it "should delegate url and content to its resource" do
-    reading = FactoryGirl.create(:reading)
-    expect(reading.url).to eq reading.resource.url
-    expect(reading.content).to eq reading.resource.content
+  it "should delegate url and content to its task_step" do
+    exercise = FactoryGirl.create(:exercise)
+    expect(exercise.url).to eq exercise.task_step.url
+    expect(exercise.content).to eq exercise.task_step.content
   end
 end

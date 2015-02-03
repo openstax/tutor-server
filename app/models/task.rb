@@ -2,9 +2,8 @@ class Task < ActiveRecord::Base
 
   belongs_to :task_plan
 
-  has_many :task_steps, dependent: :destroy
+  has_many :task_steps, dependent: :destroy, autosave: true, inverse_of: :task
   has_many :taskings, dependent: :destroy
-  has_many :users, through: :taskings
 
   validates :task_plan, presence: true
   validates :title, presence: true

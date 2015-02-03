@@ -4,8 +4,9 @@ FactoryGirl.define do
       details_type :reading
     end
 
-    task
     details nil
+    resource
+    task
     number nil
     title { Faker::Lorem.words(3) }
 

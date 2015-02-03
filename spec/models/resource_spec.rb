@@ -1,18 +1,18 @@
 require 'rails_helper'
 
 RSpec.describe Resource, :type => :model do
-  it { is_expected.to have_many(:readings) }
-  it { is_expected.to have_many(:interactives) }
+  it { is_expected.to have_many(:task_steps) }
 
   it { is_expected.to validate_uniqueness_of(:url) }
 
   it "is only really destroyed when no one holds a reference" do
     reading1 = FactoryGirl.create(:reading)
 
-    resource = reading1.resource
+    resource = reading1.task_step.resource
     resource_id = resource.id
 
-    reading2 = FactoryGirl.create(:reading, resource: resource)
+    task_step = FactoryGirl.create(:task_step, resource: resource)
+    reading2 = FactoryGirl.create(:reading, task_step: task_step)
     reading1.destroy
 
     # The resource is not yet destroyed

@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :reading do
-    resource
+    task_step nil
 
     after(:build) do |reading|
       reading.task_step ||= FactoryGirl.build(:task_step, details: reading)

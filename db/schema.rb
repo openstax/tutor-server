@@ -87,12 +87,9 @@ ActiveRecord::Schema.define(version: 20141110212240) do
   add_index "exercise_definitions", ["klass_id", "url"], name: "index_exercise_definitions_on_klass_id_and_url", unique: true
 
   create_table "exercises", force: true do |t|
-    t.integer  "resource_id", null: false
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
-
-  add_index "exercises", ["resource_id"], name: "index_exercises_on_resource_id"
 
   create_table "fine_print_contracts", force: true do |t|
     t.string   "name",       null: false
@@ -117,12 +114,9 @@ ActiveRecord::Schema.define(version: 20141110212240) do
   add_index "fine_print_signatures", ["user_id", "user_type", "contract_id"], name: "index_fine_print_signatures_on_u_id_and_u_type_and_c_id", unique: true
 
   create_table "interactives", force: true do |t|
-    t.integer  "resource_id", null: false
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
-
-  add_index "interactives", ["resource_id"], name: "index_interactives_on_resource_id"
 
   create_table "klasses", force: true do |t|
     t.integer  "course_id",                       null: false
@@ -245,12 +239,9 @@ ActiveRecord::Schema.define(version: 20141110212240) do
   add_index "openstax_accounts_groups", ["openstax_uid"], name: "index_openstax_accounts_groups_on_openstax_uid", unique: true
 
   create_table "readings", force: true do |t|
-    t.integer  "resource_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
-
-  add_index "readings", ["resource_id"], name: "index_readings_on_resource_id"
 
   create_table "resources", force: true do |t|
     t.string   "url"
@@ -333,6 +324,7 @@ ActiveRecord::Schema.define(version: 20141110212240) do
   create_table "task_steps", force: true do |t|
     t.integer  "details_id",   null: false
     t.string   "details_type", null: false
+    t.integer  "resource_id",  null: false
     t.integer  "task_id",      null: false
     t.integer  "number",       null: false
     t.string   "title",        null: false
@@ -341,7 +333,9 @@ ActiveRecord::Schema.define(version: 20141110212240) do
   end
 
   add_index "task_steps", ["details_id", "details_type"], name: "index_task_steps_on_details_id_and_details_type", unique: true
+  add_index "task_steps", ["resource_id"], name: "index_task_steps_on_resource_id"
   add_index "task_steps", ["task_id", "number"], name: "index_task_steps_on_task_id_and_number", unique: true
+  add_index "task_steps", ["title"], name: "index_task_steps_on_title"
 
   create_table "tasking_plans", force: true do |t|
     t.integer  "target_id",    null: false
@@ -370,6 +364,7 @@ ActiveRecord::Schema.define(version: 20141110212240) do
 
   create_table "tasks", force: true do |t|
     t.integer  "task_plan_id",               null: false
+    t.string   "task_type",                  null: false
     t.string   "title",                      null: false
     t.datetime "opens_at",                   null: false
     t.datetime "due_at"
@@ -381,6 +376,7 @@ ActiveRecord::Schema.define(version: 20141110212240) do
   add_index "tasks", ["due_at", "opens_at"], name: "index_tasks_on_due_at_and_opens_at"
   add_index "tasks", ["opens_at"], name: "index_tasks_on_opens_at"
   add_index "tasks", ["task_plan_id"], name: "index_tasks_on_task_plan_id"
+  add_index "tasks", ["task_type"], name: "index_tasks_on_task_type"
   add_index "tasks", ["title"], name: "index_tasks_on_title"
 
   create_table "topics", force: true do |t|

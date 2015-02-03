@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :interactive do
-    resource
+    task_step nil
 
     after(:build) do |interactive|
       interactive.task_step ||= FactoryGirl.build(:task_step,
