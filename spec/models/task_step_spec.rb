@@ -2,11 +2,9 @@ require 'rails_helper'
 
 RSpec.describe TaskStep, :type => :model do
   it { is_expected.to belong_to(:details) }
-  it { is_expected.to belong_to(:resource).dependent(:destroy) }
   it { is_expected.to belong_to(:task) }
 
   it { is_expected.to validate_presence_of(:details) }
-  it { is_expected.to validate_presence_of(:resource) }
   it { is_expected.to validate_presence_of(:task) }
 
   it { is_expected.to validate_numericality_of(:number) }
@@ -48,11 +46,5 @@ RSpec.describe TaskStep, :type => :model do
 
     expect(task_step_1.number).to be < task_step_2.number
     expect(task_step_2.number).to be < task_step_3.number
-  end
-
-  it "should delegate url and content to its resource" do
-    task_step = FactoryGirl.create(:task_step)
-    expect(task_step.url).to eq task_step.resource.url
-    expect(task_step.content).to eq task_step.resource.content
   end
 end

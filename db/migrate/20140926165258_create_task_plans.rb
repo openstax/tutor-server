@@ -8,14 +8,12 @@ class CreateTaskPlans < ActiveRecord::Migration
       t.text :configuration, null: false
       t.datetime :opens_at, null: false
       t.datetime :due_at
-      t.boolean :invisible_until_open, null: false, default: true
 
       t.timestamps null: false
     end
 
-    add_index :task_plans, :assistant_id
     add_index :task_plans, [:owner_id, :owner_type]
     add_index :task_plans, [:due_at, :opens_at]
-    add_index :task_plans, [:opens_at, :invisible_until_open]
+    add_index :task_plans, :assistant_id
   end
 end

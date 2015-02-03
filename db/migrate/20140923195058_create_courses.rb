@@ -10,5 +10,7 @@ class CreateCourses < ActiveRecord::Migration
     end
 
     add_index :courses, :school_id
+    add_index :courses, [:name, :school_id], unique: true
+    add_index :courses, [:short_name, :school_id], unique: true
   end
 end

@@ -7,8 +7,7 @@ class CreateCourseManagers < ActiveRecord::Migration
       t.timestamps null: false
     end
 
-    add_index :course_managers, :course_id
-    add_index :course_managers, :user_id
     add_index :course_managers, [:user_id, :course_id], unique: true
+    add_index :course_managers, :course_id
   end
 end

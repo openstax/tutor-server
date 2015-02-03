@@ -1,9 +1,9 @@
 class CreateUsers < ActiveRecord::Migration
   def change
     create_table :users do |t|
-      t.references  :account, null: false
-      t.string      :exchange_identifier, null: false
-      t.datetime    :deleted_at
+      t.references :account, null: false
+      t.string     :exchange_identifier, null: false
+      t.datetime   :deleted_at
 
       t.timestamps null: false
     end

@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe BelongsToResource do
-  [:reading, :exercise, :interactive].each do |resource_class|
-    subject(:rclass) { FactoryGirl.create resource_class }
+  [:reading, :exercise, :interactive].each do |klass_name|
+    subject(:r) { FactoryGirl.create klass_name }
 
     it { is_expected.to belong_to(:resource).dependent(:destroy) }
 
@@ -10,9 +10,9 @@ RSpec.describe BelongsToResource do
 
     it { is_expected.to validate_uniqueness_of(:resource) }
 
-    it "causes #{resource_class} to delegate methods to its resource" do
-      expect(rclass.url).to eq rclass.resource.url
-      expect(rclass.content).to eq rclass.resource.content
+    it "causes #{klass_name} to delegate methods to its resource" do
+      expect(r.url).to eq r.resource.url
+      expect(r.content).to eq r.resource.content
     end
   end
 end

@@ -11,8 +11,7 @@ module HasOneTaskStep
 
         validates :task_step, presence: true
 
-        delegate :url, :content, :completed_at, :completed?, :complete,
-                 to: :task_step
+        delegate :completed_at, :completed?, :complete, to: :task_step
       end
     end
   end

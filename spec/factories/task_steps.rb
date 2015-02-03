@@ -5,10 +5,11 @@ FactoryGirl.define do
     end
 
     details nil
-    resource
     task
     number nil
     title { Faker::Lorem.words(3) }
+    url { Faker::Internet.url }
+    content { Faker::Lorem.paragraphs }
 
     after(:build) do |task_step, evaluator|
       task_step.details ||= \

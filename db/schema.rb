@@ -148,10 +148,8 @@ ActiveRecord::Schema.define(version: 20150203210333) do
   end
 
   add_index "klasses", ["course_id"], name: "index_klasses_on_course_id"
-  add_index "klasses", ["ends_at"], name: "index_klasses_on_ends_at"
-  add_index "klasses", ["invisible_at"], name: "index_klasses_on_invisible_at"
-  add_index "klasses", ["starts_at"], name: "index_klasses_on_starts_at"
-  add_index "klasses", ["visible_at"], name: "index_klasses_on_visible_at"
+  add_index "klasses", ["ends_at", "starts_at"], name: "index_klasses_on_ends_at_and_starts_at"
+  add_index "klasses", ["invisible_at", "visible_at"], name: "index_klasses_on_invisible_at_and_visible_at"
 
   create_table "oauth_access_grants", force: true do |t|
     t.integer  "resource_owner_id", null: false
@@ -268,7 +266,7 @@ ActiveRecord::Schema.define(version: 20150203210333) do
   add_index "readings", ["resource_id"], name: "index_readings_on_resource_id", unique: true
 
   create_table "resources", force: true do |t|
-    t.string   "url"
+    t.string   "url",          null: false
     t.boolean  "is_immutable"
     t.text     "content"
     t.datetime "created_at",   null: false
@@ -327,41 +325,37 @@ ActiveRecord::Schema.define(version: 20150203210333) do
   add_index "students", ["user_id", "section_id"], name: "index_students_on_user_id_and_section_id", unique: true
 
   create_table "task_plans", force: true do |t|
-    t.integer  "assistant_id",                        null: false
-    t.integer  "owner_id",                            null: false
-    t.string   "owner_type",                          null: false
+    t.integer  "assistant_id",  null: false
+    t.integer  "owner_id",      null: false
+    t.string   "owner_type",    null: false
     t.string   "title"
-    t.string   "type",                                null: false
-    t.text     "configuration",                       null: false
-    t.datetime "opens_at",                            null: false
+    t.string   "type",          null: false
+    t.text     "configuration", null: false
+    t.datetime "opens_at",      null: false
     t.datetime "due_at"
-    t.boolean  "invisible_until_open", default: true, null: false
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
   end
 
   add_index "task_plans", ["assistant_id"], name: "index_task_plans_on_assistant_id"
   add_index "task_plans", ["due_at", "opens_at"], name: "index_task_plans_on_due_at_and_opens_at"
-  add_index "task_plans", ["opens_at", "invisible_until_open"], name: "index_task_plans_on_opens_at_and_invisible_until_open"
   add_index "task_plans", ["owner_id", "owner_type"], name: "index_task_plans_on_owner_id_and_owner_type"
 
   create_table "task_steps", force: true do |t|
     t.integer  "details_id",   null: false
     t.string   "details_type", null: false
-    t.integer  "resource_id",  null: false
     t.integer  "task_id",      null: false
     t.integer  "number",       null: false
     t.string   "title",        null: false
+    t.string   "url",          null: false
+    t.text     "content",      null: false
     t.datetime "completed_at"
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
   end
 
-  add_index "task_steps", ["completed_at"], name: "index_task_steps_on_completed_at"
   add_index "task_steps", ["details_id", "details_type"], name: "index_task_steps_on_details_id_and_details_type", unique: true
-  add_index "task_steps", ["resource_id"], name: "index_task_steps_on_resource_id"
   add_index "task_steps", ["task_id", "number"], name: "index_task_steps_on_task_id_and_number", unique: true
-  add_index "task_steps", ["title"], name: "index_task_steps_on_title"
 
   create_table "tasking_plans", force: true do |t|
     t.integer  "target_id",    null: false
@@ -400,10 +394,8 @@ ActiveRecord::Schema.define(version: 20150203210333) do
   end
 
   add_index "tasks", ["due_at", "opens_at"], name: "index_tasks_on_due_at_and_opens_at"
-  add_index "tasks", ["opens_at"], name: "index_tasks_on_opens_at"
   add_index "tasks", ["task_plan_id"], name: "index_tasks_on_task_plan_id"
   add_index "tasks", ["task_type"], name: "index_tasks_on_task_type"
-  add_index "tasks", ["title"], name: "index_tasks_on_title"
 
   create_table "topics", force: true do |t|
     t.integer  "klass_id",   null: false

@@ -13,10 +13,8 @@ class CreateKlasses < ActiveRecord::Migration
       t.timestamps null: false
     end
 
+    add_index :klasses, [:ends_at, :starts_at]
+    add_index :klasses, [:invisible_at, :visible_at]
     add_index :klasses, :course_id
-    add_index :klasses, :starts_at
-    add_index :klasses, :ends_at
-    add_index :klasses, :visible_at
-    add_index :klasses, :invisible_at
   end
 end
