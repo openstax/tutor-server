@@ -15,6 +15,14 @@ class TaskStep < ActiveRecord::Base
 
   delegate :url, :content, to: :resource
 
+  def complete
+    self.completed_at ||= Time.now
+  end
+
+  def completed?
+    !self.completed_at.nil?
+  end
+
   protected
 
   def assign_next_number

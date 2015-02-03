@@ -9,7 +9,8 @@ module HasOneTaskStep
       class_eval do
         has_one :task_step, as: :details, dependent: :destroy
 
-        delegate :url, :content, to: :task_step
+        delegate :url, :content, :completed_at, :completed?, :complete,
+                 to: :task_step
       end
     end
   end

@@ -328,10 +328,12 @@ ActiveRecord::Schema.define(version: 20141110212240) do
     t.integer  "task_id",      null: false
     t.integer  "number",       null: false
     t.string   "title",        null: false
+    t.datetime "completed_at"
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
   end
 
+  add_index "task_steps", ["completed_at"], name: "index_task_steps_on_completed_at"
   add_index "task_steps", ["details_id", "details_type"], name: "index_task_steps_on_details_id_and_details_type", unique: true
   add_index "task_steps", ["resource_id"], name: "index_task_steps_on_resource_id"
   add_index "task_steps", ["task_id", "number"], name: "index_task_steps_on_task_id_and_number", unique: true

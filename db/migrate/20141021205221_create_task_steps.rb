@@ -6,6 +6,7 @@ class CreateTaskSteps < ActiveRecord::Migration
       t.references :task, null: false
       t.integer :number, null: false
       t.string :title, null: false
+      t.datetime :completed_at
 
       t.timestamps null: false
     end
@@ -14,5 +15,6 @@ class CreateTaskSteps < ActiveRecord::Migration
     add_index :task_steps, [:task_id, :number], unique: true
     add_index :task_steps, :resource_id
     add_index :task_steps, :title
+    add_index :task_steps, :completed_at
   end
 end
