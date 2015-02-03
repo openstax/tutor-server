@@ -6,6 +6,8 @@ RSpec.describe HasOneTaskStep do
 
     it { is_expected.to have_one(:task_step).dependent(:destroy) }
 
+    it { is_expected.to validate_presence_of(:task_step) }
+
     it "causes #{step_class} to delegate methods to its task_step" do
       expect(step.url).to eq step.task_step.url
       expect(step.content).to eq step.task_step.content

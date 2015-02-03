@@ -9,6 +9,8 @@ module BelongsToResource
       class_eval do
         belongs_to :resource, dependent: :destroy
 
+        validates :resource, presence: true, uniqueness: true
+
         delegate :url, :content, to: :resource
       end
     end

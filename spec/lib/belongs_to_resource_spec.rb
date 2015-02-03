@@ -6,6 +6,10 @@ RSpec.describe BelongsToResource do
 
     it { is_expected.to belong_to(:resource).dependent(:destroy) }
 
+    it { is_expected.to validate_presence_of(:resource) }
+
+    it { is_expected.to validate_uniqueness_of(:resource) }
+
     it "causes #{resource_class} to delegate methods to its resource" do
       expect(rclass.url).to eq rclass.resource.url
       expect(rclass.content).to eq rclass.resource.content
