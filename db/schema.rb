@@ -86,7 +86,7 @@ ActiveRecord::Schema.define(version: 20141110212240) do
 
   add_index "exercise_definitions", ["klass_id", "url"], name: "index_exercise_definitions_on_klass_id_and_url", unique: true
 
-  create_table "exercises", force: true do |t|
+  create_table "exercise_steps", force: true do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -113,7 +113,7 @@ ActiveRecord::Schema.define(version: 20141110212240) do
   add_index "fine_print_signatures", ["contract_id"], name: "index_fine_print_signatures_on_contract_id"
   add_index "fine_print_signatures", ["user_id", "user_type", "contract_id"], name: "index_fine_print_signatures_on_u_id_and_u_type_and_c_id", unique: true
 
-  create_table "interactives", force: true do |t|
+  create_table "interactive_steps", force: true do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -238,7 +238,7 @@ ActiveRecord::Schema.define(version: 20141110212240) do
   add_index "openstax_accounts_groups", ["is_public"], name: "index_openstax_accounts_groups_on_is_public"
   add_index "openstax_accounts_groups", ["openstax_uid"], name: "index_openstax_accounts_groups_on_openstax_uid", unique: true
 
-  create_table "readings", force: true do |t|
+  create_table "reading_steps", force: true do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

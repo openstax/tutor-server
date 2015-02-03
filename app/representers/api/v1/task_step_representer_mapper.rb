@@ -25,9 +25,9 @@ protected
 
     def self.map
       @@map ||= {
-        Reading => ->(*) {Api::V1::ReadingRepresenter},
-        Interactive => ->(*) {Api::V1::InteractiveRepresenter},
-        Exercise => ->(*) {Api::V1::ExerciseRepresenter}
+        ReadingStep => ->(*) {Api::V1::ReadingStepRepresenter},
+        ExerciseStep => ->(*) {Api::V1::ExerciseStepRepresenter},
+        InteractiveStep => ->(*) {Api::V1::InteractiveStepRepresenter}
       }
     end
 
