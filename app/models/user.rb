@@ -5,6 +5,7 @@ class User < ActiveRecord::Base
   has_many :groups_as_owner, through: :account
 
   has_one :administrator, dependent: :destroy, inverse_of: :user
+
   has_many :course_managers, dependent: :destroy
   has_many :school_managers, dependent: :destroy
   has_many :educators, dependent: :destroy
@@ -50,6 +51,7 @@ class User < ActiveRecord::Base
   end
 
   # So users can be treated like roles
+  # Dante: not a huge fan of this... is it REALLY needed?
   alias_method :user_id, :id
   def user; self; end
 

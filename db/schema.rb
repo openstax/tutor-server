@@ -66,30 +66,20 @@ ActiveRecord::Schema.define(version: 20150203210333) do
   add_index "educators", ["klass_id"], name: "index_educators_on_klass_id"
   add_index "educators", ["user_id", "klass_id"], name: "index_educators_on_user_id_and_klass_id", unique: true
 
-  create_table "exercise_definition_topics", force: true do |t|
-    t.integer  "exercise_definition_id", null: false
-    t.integer  "topic_id",               null: false
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
-  end
-
-  add_index "exercise_definition_topics", ["exercise_definition_id"], name: "index_exercise_definition_topics_on_exercise_definition_id"
-  add_index "exercise_definition_topics", ["topic_id", "exercise_definition_id"], name: "index_ed_topics_on_topic_id_and_ed_id", unique: true
-
-  create_table "exercise_definitions", force: true do |t|
-    t.integer  "klass_id",   null: false
-    t.string   "url"
-    t.text     "content"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "exercise_definitions", ["klass_id", "url"], name: "index_exercise_definitions_on_klass_id_and_url", unique: true
-
   create_table "exercise_steps", force: true do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  create_table "exercise_topics", force: true do |t|
+    t.integer  "exercise_id", null: false
+    t.integer  "topic_id",    null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "exercise_topics", ["exercise_id", "topic_id"], name: "index_exercise_topics_on_exercise_id_and_topic_id", unique: true
+  add_index "exercise_topics", ["topic_id"], name: "index_exercise_topics_on_topic_id"
 
   create_table "exercises", force: true do |t|
     t.integer  "resource_id", null: false
