@@ -1,7 +1,7 @@
 FactoryGirl.define do
   factory :task_step do
-    step_type :reading
     task
+    step_type :reading
     title { Faker::Lorem.words(3) }
     url { Faker::Internet.url }
     content { Faker::Lorem.paragraphs }

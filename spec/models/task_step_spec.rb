@@ -1,11 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe TaskStep, :type => :model do
-  it { is_expected.to belong_to(:step) }
   it { is_expected.to belong_to(:task) }
+  it { is_expected.to belong_to(:step) }
 
-  it { is_expected.to validate_presence_of(:step) }
   it { is_expected.to validate_presence_of(:task) }
+  it { is_expected.to validate_presence_of(:step) }
 
   it { is_expected.to validate_numericality_of(:number) }
 
