@@ -58,7 +58,7 @@ module Api::V1
                writeable: false,
                readable: true,
                class: TaskStep,
-               decorator: Api::V1::TaskStepRepresenterMapper.new,
+               decorator: Api::V1::TaskStep::RepresenterMapper.new,
                schema_info: {
                  required: true,
                  description: "The steps which this Task is composed of"

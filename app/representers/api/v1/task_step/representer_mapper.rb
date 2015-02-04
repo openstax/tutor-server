@@ -1,5 +1,5 @@
 module Api::V1
-  class TaskStepRepresenterMapper
+  class TaskStep::RepresenterMapper
     include Uber::Callable
 
     def self.models 
@@ -26,9 +26,9 @@ protected
 
     def self.map
       @@map ||= {
-        ReadingStep => ->(*) {Api::V1::ReadingStepRepresenter},
-        ExerciseStep => ->(*) {Api::V1::ExerciseStepRepresenter},
-        InteractiveStep => ->(*) {Api::V1::InteractiveStepRepresenter}
+        TaskStep::Reading     => ->(*) { ReadingRepresenter },
+        TaskStep::Exercise    => ->(*) { ExerciseRepresenter },
+        TaskStep::Interactive => ->(*) { InteractiveRepresenter }
       }
     end
 

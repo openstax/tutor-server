@@ -66,11 +66,6 @@ ActiveRecord::Schema.define(version: 20150203210333) do
   add_index "educators", ["klass_id"], name: "index_educators_on_klass_id"
   add_index "educators", ["user_id", "klass_id"], name: "index_educators_on_user_id_and_klass_id", unique: true
 
-  create_table "exercise_steps", force: true do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "exercise_topics", force: true do |t|
     t.integer  "exercise_id", null: false
     t.integer  "topic_id",    null: false
@@ -110,11 +105,6 @@ ActiveRecord::Schema.define(version: 20150203210333) do
 
   add_index "fine_print_signatures", ["contract_id"], name: "index_fine_print_signatures_on_contract_id"
   add_index "fine_print_signatures", ["user_id", "user_type", "contract_id"], name: "index_fine_print_signatures_on_u_id_and_u_type_and_c_id", unique: true
-
-  create_table "interactive_steps", force: true do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
 
   create_table "interactives", force: true do |t|
     t.integer  "resource_id", null: false
@@ -242,11 +232,6 @@ ActiveRecord::Schema.define(version: 20150203210333) do
   add_index "openstax_accounts_groups", ["is_public"], name: "index_openstax_accounts_groups_on_is_public"
   add_index "openstax_accounts_groups", ["openstax_uid"], name: "index_openstax_accounts_groups_on_openstax_uid", unique: true
 
-  create_table "reading_steps", force: true do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "readings", force: true do |t|
     t.integer  "resource_id", null: false
     t.datetime "created_at",  null: false
@@ -330,6 +315,21 @@ ActiveRecord::Schema.define(version: 20150203210333) do
   add_index "task_plans", ["assistant_id"], name: "index_task_plans_on_assistant_id"
   add_index "task_plans", ["due_at", "opens_at"], name: "index_task_plans_on_due_at_and_opens_at"
   add_index "task_plans", ["owner_id", "owner_type"], name: "index_task_plans_on_owner_id_and_owner_type"
+
+  create_table "task_step_exercises", force: true do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "task_step_interactives", force: true do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "task_step_readings", force: true do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "task_steps", force: true do |t|
     t.integer  "task_id",      null: false

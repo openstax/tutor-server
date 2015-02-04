@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe HasOneTaskStep do
   [:reading, :exercise, :interactive].each do |step_class|
-    subject(:step) { FactoryGirl.create "#{step_class}_step".to_sym }
+    subject(:step) { FactoryGirl.create "task_step_#{step_class}".to_sym }
 
     it { is_expected.to have_one(:task_step).dependent(:destroy) }
 

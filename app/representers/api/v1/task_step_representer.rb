@@ -1,5 +1,5 @@
 module Api::V1
-  module TaskStepProperties
+  class TaskStepRepresenter < Roar::Decorator
 
     include Roar::Representer::JSON
 
@@ -17,7 +17,7 @@ module Api::V1
              getter: lambda { |*| step_type.downcase },
              schema_info: {
                required: true,
-               description: "The type of this TaskStep, one of: #{Api::V1::TaskStepRepresenterMapper.models.collect{|klass| "'" + klass.name.downcase + "'"}.join(',')}"
+               description: "The type of this TaskStep, one of: #{Api::V1::TaskStep::RepresenterMapper.models.collect{|klass| "'" + klass.name.downcase + "'"}.join(',')}"
              }
 
     property :title,
