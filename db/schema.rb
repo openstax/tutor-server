@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150204215749) do
+ActiveRecord::Schema.define(version: 20150204222247) do
 
   create_table "administrators", force: true do |t|
     t.integer  "user_id",    null: false
@@ -66,18 +66,29 @@ ActiveRecord::Schema.define(version: 20150204215749) do
   add_index "educators", ["klass_id"], name: "index_educators_on_klass_id"
   add_index "educators", ["user_id", "klass_id"], name: "index_educators_on_user_id_and_klass_id", unique: true
 
-  create_table "exercise_steps", force: true do |t|
-    t.integer  "task_step_exercise_id", null: false
-    t.integer  "step_id",               null: false
-    t.string   "step_type",             null: false
-    t.integer  "number",                null: false
-    t.datetime "completed_at"
-    t.datetime "created_at",            null: false
-    t.datetime "updated_at",            null: false
+  create_table "exercise_step_free_responses", force: true do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
+  create_table "exercise_step_multiple_choices", force: true do |t|
+    t.integer  "answer_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "exercise_steps", force: true do |t|
+    t.integer  "exercise_id",  null: false
+    t.integer  "step_id",      null: false
+    t.string   "step_type",    null: false
+    t.integer  "number",       null: false
+    t.datetime "completed_at"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
+
+  add_index "exercise_steps", ["exercise_id", "number"], name: "index_exercise_steps_on_exercise_id_and_number", unique: true
   add_index "exercise_steps", ["step_id", "step_type"], name: "index_exercise_steps_on_step_id_and_step_type", unique: true
-  add_index "exercise_steps", ["task_step_exercise_id", "number"], name: "index_exercise_steps_on_task_step_exercise_id_and_number", unique: true
 
   create_table "exercise_topics", force: true do |t|
     t.integer  "exercise_id", null: false

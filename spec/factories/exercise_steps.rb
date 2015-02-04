@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :exercise_step do
-    task_step_exercise
+    association :exercise, factory: :task_step_exercise
     step_type :multiple_choice
 
     after(:build) do |exercise_step, evaluator|

@@ -1,13 +1,13 @@
 class ExerciseStep < ActiveRecord::Base
-  belongs_to :task_step_exercise, class_name: 'TaskStep::Exercise',
-                                  inverse_of: :exercise_steps
+  belongs_to :exercise, class_name: 'TaskStep::Exercise',
+                        inverse_of: :exercise_steps
   belongs_to :step, polymorphic: true, dependent: :destroy
 
   validates :step, presence: true
   validates :step_id, uniqueness: { scope: :step_type }
-  validates :task_step_exercise, presence: true
+  validates :exercise, presence: true
   validates :number, presence: true,
-                     uniqueness: { scope: :task_step_exercise_id },
+                     uniqueness: { scope: :exercise_id },
                      numericality: true
 
   before_validation :assign_next_number
@@ -28,6 +28,6 @@ class ExerciseStep < ActiveRecord::Base
   end
 
   def peers
-    task_step_exercise.try(:exercise_steps) || []
+    exercise.try(:exercise_steps) || []
   end
 end
