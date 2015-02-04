@@ -14,7 +14,7 @@ module Api::V1
              type: String,
              writeable: false,
              readable: true,
-             getter: lambda { |*| details_type.downcase },
+             getter: lambda { |*| step_type.downcase },
              schema_info: {
                required: true,
                description: "The type of this TaskStep, one of: #{Api::V1::TaskStepRepresenterMapper.models.collect{|klass| "'" + klass.name.downcase + "'"}.join(',')}"

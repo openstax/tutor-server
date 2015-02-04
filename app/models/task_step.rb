@@ -1,9 +1,9 @@
 class TaskStep < ActiveRecord::Base
-  belongs_to :details, polymorphic: true, dependent: :destroy
   belongs_to :task, inverse_of: :task_steps
+  belongs_to :step, polymorphic: true, dependent: :destroy
 
-  validates :details, presence: true
-  validates :details_id, uniqueness: { scope: :details_type }
+  validates :step, presence: true
+  validates :step_id, uniqueness: { scope: :step_type }
   validates :task, presence: true
   validates :number, presence: true,
                      uniqueness: { scope: :task_id },

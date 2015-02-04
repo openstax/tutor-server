@@ -14,9 +14,9 @@ FactoryGirl.define do
 
     after(:build) do |task, evaluator|
       evaluator.step_types.each_with_index do |type, i|
-        step = FactoryGirl.build(:task_step, task: task, number: i)
-        step.details = FactoryGirl.build(type, task_step: step)
-        task.task_steps << step
+        task_step = FactoryGirl.build(:task_step, task: task, number: i)
+        task_step.step = FactoryGirl.build(type, task_step: task_step)
+        task.task_steps << task_step
       end
 
       evaluator.num_taskings.times do

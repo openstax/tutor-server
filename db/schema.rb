@@ -332,9 +332,9 @@ ActiveRecord::Schema.define(version: 20150203210333) do
   add_index "task_plans", ["owner_id", "owner_type"], name: "index_task_plans_on_owner_id_and_owner_type"
 
   create_table "task_steps", force: true do |t|
-    t.integer  "details_id",   null: false
-    t.string   "details_type", null: false
     t.integer  "task_id",      null: false
+    t.integer  "step_id",      null: false
+    t.string   "step_type",    null: false
     t.integer  "number",       null: false
     t.string   "title",        null: false
     t.string   "url",          null: false
@@ -344,7 +344,7 @@ ActiveRecord::Schema.define(version: 20150203210333) do
     t.datetime "updated_at",   null: false
   end
 
-  add_index "task_steps", ["details_id", "details_type"], name: "index_task_steps_on_details_id_and_details_type", unique: true
+  add_index "task_steps", ["step_id", "step_type"], name: "index_task_steps_on_step_id_and_step_type", unique: true
   add_index "task_steps", ["task_id", "number"], name: "index_task_steps_on_task_id_and_number", unique: true
 
   create_table "tasking_plans", force: true do |t|

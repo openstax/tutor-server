@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe TaskStep, :type => :model do
-  it { is_expected.to belong_to(:details) }
+  it { is_expected.to belong_to(:step) }
   it { is_expected.to belong_to(:task) }
 
-  it { is_expected.to validate_presence_of(:details) }
+  it { is_expected.to validate_presence_of(:step) }
   it { is_expected.to validate_presence_of(:task) }
 
   it { is_expected.to validate_numericality_of(:number) }
@@ -15,12 +15,12 @@ RSpec.describe TaskStep, :type => :model do
     expect(task_step.number).to_not be_nil
   end
 
-  it "requires details to be unique" do
+  it "requires step to be unique" do
     task_step = FactoryGirl.create(:task_step)
     expect(task_step).to be_valid
 
     expect(FactoryGirl.build(:task_step,
-                             details: task_step.details)).to_not be_valid
+                             step: task_step.step)).to_not be_valid
   end
 
   it "requires number to be unique for each task" do

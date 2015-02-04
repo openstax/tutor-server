@@ -3,7 +3,7 @@ FactoryGirl.define do
     task_step nil
 
     after(:build) do |rs|
-      rs.task_step ||= FactoryGirl.build(:task_step, details: rs)
+      rs.task_step ||= FactoryGirl.build(:task_step, step: rs)
     end
   end
 end
