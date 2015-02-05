@@ -4,13 +4,13 @@
 source 'https://rubygems.org'
 
 # Rails framework
-gem 'rails', '4.2.0.beta1'
+gem 'rails', '4.2.0'
 
 # Bootstrap front-end framework
 gem 'bootstrap-sass', '~> 3.2.0'
 
 # SCSS stylesheets
-gem 'sass-rails', '~> 5.0.0.beta1'
+gem 'sass-rails', '~> 5.0.0'
 
 # Compass stylesheets
 gem 'compass-rails'
@@ -43,8 +43,8 @@ gem 'openstax_utilities', '~> 4.1.0'
 gem 'whenever'
 
 # OpenStax Accounts integration
-gem 'openstax_accounts', '~> 3.1.1'
-
+gem 'openstax_accounts', git: 'https://github.com/Dantemss/accounts-rails.git',
+                         ref: '54c41b6053c6b44e53939c9d0c75c20d3ed2e00f'
 # OpenStax Exchange integration
 gem 'openstax_exchange'
 
@@ -52,7 +52,7 @@ gem 'openstax_exchange'
 gem 'responders', '~> 2.0'
 
 # Access control for API's
-gem 'doorkeeper'
+gem 'doorkeeper', '< 2.0'
 
 # Datetime parsing
 gem 'chronic'
@@ -63,6 +63,7 @@ gem 'apipie-rails'
 gem 'maruku'
 gem 'representable'
 gem 'roar-rails'
+gem 'roar', '< 1.0'
 
 # Lev framework
 gem 'lev'
@@ -71,7 +72,7 @@ gem 'lev'
 gem 'squeel'
 
 # Contract management
-gem 'fine_print', '~> 2.1.1'
+gem 'fine_print', '~> 2.2.1'
 
 # Keyword search
 gem "keyword_search"
@@ -104,6 +105,9 @@ gem 'hashie'
 # For calling JSON APIs
 gem 'httparty'
 
+# Ordered models
+gem 'sortability'
+
 group :development, :test do
   # Thin development server
   gem 'thin'
@@ -115,7 +119,7 @@ group :development, :test do
   gem 'byebug'
 
   # Access an IRB console on exceptions page and /console in development
-  gem 'web-console', '~> 2.0.0.beta2'
+  gem 'web-console', '~> 2.0.0'
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'

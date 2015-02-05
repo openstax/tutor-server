@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :task_plan do
-    ignore do
+    transient do
       duration 1.week
       num_tasking_plans 0
     end

@@ -48,11 +48,10 @@ describe CreateUser do
       OpenStax::Exchange.reset!
     end
 
-    it "raises an exception" do
-      expect {
-        CreateUser.call(account)
-      }.to raise_error(StandardError)
+    it "returns an error" do
+      expect(CreateUser.call(account).errors).not_to be_empty
     end
+
     it "does not create a new User" do
       expect {
         begin

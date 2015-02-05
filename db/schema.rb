@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150204233802) do
+ActiveRecord::Schema.define(version: 20150205193034) do
 
   create_table "administrators", force: true do |t|
     t.integer  "user_id",    null: false
@@ -32,6 +32,50 @@ ActiveRecord::Schema.define(version: 20150204233802) do
 
   add_index "assistants", ["code_class_name"], name: "index_assistants_on_code_class_name"
   add_index "assistants", ["study_id"], name: "index_assistants_on_study_id"
+
+  create_table "book_exercises", force: true do |t|
+    t.integer  "book_id",     null: false
+    t.integer  "exercise_id", null: false
+    t.integer  "number",      null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "book_exercises", ["book_id", "number"], name: "index_book_exercises_on_book_id_and_number", unique: true
+  add_index "book_exercises", ["exercise_id", "book_id"], name: "index_book_exercises_on_exercise_id_and_book_id", unique: true
+
+  create_table "book_interactives", force: true do |t|
+    t.integer  "book_id",        null: false
+    t.integer  "interactive_id", null: false
+    t.integer  "number",         null: false
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+  end
+
+  add_index "book_interactives", ["book_id", "number"], name: "index_book_interactives_on_book_id_and_number", unique: true
+  add_index "book_interactives", ["interactive_id", "book_id"], name: "index_book_interactives_on_interactive_id_and_book_id", unique: true
+
+  create_table "book_readings", force: true do |t|
+    t.integer  "book_id",    null: false
+    t.integer  "reading_id", null: false
+    t.integer  "number",     null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "book_readings", ["book_id", "number"], name: "index_book_readings_on_book_id_and_number", unique: true
+  add_index "book_readings", ["reading_id", "book_id"], name: "index_book_readings_on_reading_id_and_book_id", unique: true
+
+  create_table "book_videos", force: true do |t|
+    t.integer  "book_id"
+    t.integer  "video_id"
+    t.integer  "number"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "book_videos", ["book_id"], name: "index_book_videos_on_book_id"
+  add_index "book_videos", ["video_id"], name: "index_book_videos_on_video_id"
 
   create_table "books", force: true do |t|
     t.integer  "resource_id", null: false
@@ -442,5 +486,13 @@ ActiveRecord::Schema.define(version: 20150204233802) do
   add_index "users", ["account_id"], name: "index_users_on_account_id", unique: true
   add_index "users", ["deleted_at"], name: "index_users_on_deleted_at"
   add_index "users", ["exchange_identifier"], name: "index_users_on_exchange_identifier", unique: true
+
+  create_table "videos", force: true do |t|
+    t.integer  "resource_id", null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "videos", ["resource_id"], name: "index_videos_on_resource_id", unique: true
 
 end
