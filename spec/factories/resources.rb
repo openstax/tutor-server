@@ -1,13 +1,7 @@
 FactoryGirl.define do
-  sequence :url do |n| "http://www.#{n}.com" end
-
   factory :resource do
-    ignore do
-      a_url { generate(:url) }
-    end
-
-    url { "#{a_url}" }
-    is_immutable false
-    content { "Content from #{a_url}" }
+    title { Faker::Lorem.words(3) }
+    version { SecureRandom.hex }
+    url { Faker::Internet.url }
   end
 end

@@ -11,7 +11,7 @@ module BelongsToResource
 
         validates :resource, presence: true, uniqueness: true
 
-        delegate :url, :content, to: :resource
+        delegate :title, :version, :url, :content, to: :resource
       end
     end
   end

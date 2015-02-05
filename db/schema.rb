@@ -34,15 +34,12 @@ ActiveRecord::Schema.define(version: 20150204233802) do
   add_index "assistants", ["study_id"], name: "index_assistants_on_study_id"
 
   create_table "books", force: true do |t|
-    t.string   "url",        null: false
-    t.string   "title",      null: false
-    t.string   "edition",    null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "resource_id", null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
   end
 
-  add_index "books", ["title", "edition"], name: "index_books_on_title_and_edition", unique: true
-  add_index "books", ["url"], name: "index_books_on_url", unique: true
+  add_index "books", ["resource_id"], name: "index_books_on_resource_id", unique: true
 
   create_table "course_managers", force: true do |t|
     t.integer  "course_id",  null: false
@@ -276,13 +273,16 @@ ActiveRecord::Schema.define(version: 20150204233802) do
   add_index "readings", ["resource_id"], name: "index_readings_on_resource_id", unique: true
 
   create_table "resources", force: true do |t|
-    t.string   "url",          null: false
-    t.boolean  "is_immutable"
-    t.text     "content"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.string   "title",                          null: false
+    t.string   "version",          default: "1", null: false
+    t.string   "url",                            null: false
+    t.text     "cached_content"
+    t.datetime "cache_expires_at"
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
   end
 
+  add_index "resources", ["title", "version"], name: "index_resources_on_title_and_version", unique: true
   add_index "resources", ["url"], name: "index_resources_on_url", unique: true
 
   create_table "school_managers", force: true do |t|
