@@ -40,10 +40,10 @@ class ImportPage
 
   # Imports and saves a CNX page as a Resource
   # Returns the Resource object and the JSON hash used to create it
-  # Also returns a Reading object unless the :no_reading option is set
+  # Also returns a Page object if the :chapter option is set
   def exec(id, options = {})
     url = "#{CNX_ARCHIVE_URL}/#{id}"
-    hash = JSON.parse(get_json(url)).merge(options.except(:no_reading))
+    hash = JSON.parse(get_json(url)).merge(options.except(:chapter))
     outputs[:hash] = hash
 
     outputs[:resource] = Resource.create(
@@ -53,10 +53,12 @@ class ImportPage
       cached_content: convert(hash['content'] || '')
     )
     transfer_errors_from outputs[:resource], scope: :resource
-    return if options[:no_reading]
 
-    outputs[:reading] = Reading.create(resource: outputs[:resource])
-    transfer_errors_from outputs[:reading], scope: :reading
+    return unless options[:chapter]
+
+    outputs[:page] = Page.create(resource: outputs[:resource],
+                                 chapter: options[:chapter])
+    transfer_errors_from outputs[:page], scope: :page
   end
 
 end

@@ -3,43 +3,45 @@ require 'rails_helper'
 RSpec.describe ImportPage, :type => :routine do
   CNX_ID = 'd6555a80-80d8-4829-9346-07ea9391f391@5'
 
-  context 'without :no_reading option' do
+  let!(:chapter) { FactoryGirl.create :chapter }
+
+  context 'with the :chapter option' do
     it 'creates a new Resource' do
       result = nil
       expect {
-        result = ImportPage.call(CNX_ID)
+        result = ImportPage.call(CNX_ID, chapter: chapter)
       }.to change{ Resource.count }.by(1)
       expect(result.errors).to be_empty
       expect(result.outputs[:resource]).to be_persisted
     end
 
-    it 'creates a new Reading' do
+    it 'creates a new Page' do
       result = nil
       expect {
-        result = ImportPage.call(CNX_ID)
-      }.to change{ Reading.count }.by(1)
+        result = ImportPage.call(CNX_ID, chapter: chapter)
+      }.to change{ Page.count }.by(1)
       expect(result.errors).to be_empty
-      expect(result.outputs[:reading]).to be_persisted
+      expect(result.outputs[:page]).to be_persisted
     end
   end
 
-  context 'with :no_reading option' do
+  context 'without the :chapter option' do
     it 'creates a new Resource' do
       result = nil
       expect {
-        result = ImportPage.call(CNX_ID, no_reading: true)
+        result = ImportPage.call(CNX_ID)
       }.to change{ Resource.count }.by(1)
       expect(result.errors).to be_empty
       expect(result.outputs[:resource]).to be_persisted
     end
 
-    it 'does not create a new Reading' do
+    it 'does not create a new Page' do
       result = nil
       expect {
-        result = ImportPage.call(CNX_ID, no_reading: true)
-      }.not_to change{ Reading.count }
+        result = ImportPage.call(CNX_ID)
+      }.not_to change{ Page.count }
       expect(result.errors).to be_empty
-      expect(result.outputs[:reading]).to be_nil
+      expect(result.outputs[:page]).to be_nil
     end
   end
 

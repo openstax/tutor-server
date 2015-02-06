@@ -11,5 +11,8 @@ class CreateExerciseSteps < ActiveRecord::Migration
 
     add_index :exercise_steps, [:step_id, :step_type], unique: true
     add_index :exercise_steps, [:exercise_id, :number], unique: true
+
+    add_foreign_key :exercise_steps, :exercises, on_update: :cascade,
+                                                 on_delete: :cascade
   end
 end

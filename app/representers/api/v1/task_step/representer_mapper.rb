@@ -22,13 +22,13 @@ module Api::V1
       end
     end
 
-protected
+    protected
 
     def self.map
       @@map ||= {
-        TaskStep::Reading     => ->(*) { ReadingRepresenter },
-        TaskStep::Exercise    => ->(*) { ExerciseRepresenter },
-        TaskStep::Interactive => ->(*) { InteractiveRepresenter }
+        ::TaskStep::Reading     => ->(*) { ReadingRepresenter },
+        ::TaskStep::Exercise    => ->(*) { ExerciseRepresenter },
+        ::TaskStep::Interactive => ->(*) { InteractiveRepresenter }
       }
     end
 

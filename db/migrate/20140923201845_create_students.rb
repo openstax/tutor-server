@@ -21,5 +21,12 @@ class CreateStudents < ActiveRecord::Migration
     add_index :students, :student_custom_identifier
     add_index :students, :educator_custom_identifier
     add_index :students, :level
+
+    add_foreign_key :students, :klasses, on_update: :cascade,
+                                         on_delete: :cascade
+    add_foreign_key :students, :sections, on_update: :cascade,
+                                          on_delete: :cascade
+    add_foreign_key :students, :users, on_update: :cascade,
+                                       on_delete: :cascade
   end
 end

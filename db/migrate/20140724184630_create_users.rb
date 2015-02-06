@@ -11,5 +11,9 @@ class CreateUsers < ActiveRecord::Migration
     add_index :users, :account_id, unique: true
     add_index :users, :exchange_identifier, unique: true
     add_index :users, :deleted_at
+
+    add_foreign_key :users, :openstax_accounts_accounts, column: :account_id,
+                                                         on_update: :restrict,
+                                                         on_delete: :restrict
   end
 end

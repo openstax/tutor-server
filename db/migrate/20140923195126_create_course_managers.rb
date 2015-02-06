@@ -9,5 +9,10 @@ class CreateCourseManagers < ActiveRecord::Migration
 
     add_index :course_managers, [:user_id, :course_id], unique: true
     add_index :course_managers, :course_id
+
+    add_foreign_key :course_managers, :courses, on_update: :cascade,
+                                                on_delete: :cascade
+    add_foreign_key :course_managers, :users, on_update: :cascade,
+                                              on_delete: :cascade
   end
 end

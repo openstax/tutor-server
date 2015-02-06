@@ -1,7 +1,7 @@
 class Resource < ActiveRecord::Base
 
   has_one :book, dependent: :destroy
-  has_one :reading, dependent: :destroy
+  has_one :page, dependent: :destroy
   has_one :exercise, dependent: :destroy
   has_one :interactive, dependent: :destroy
 
@@ -12,4 +12,5 @@ class Resource < ActiveRecord::Base
   def content
     cached_content # TODO: caching
   end
+
 end

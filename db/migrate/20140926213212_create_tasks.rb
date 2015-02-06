@@ -14,5 +14,8 @@ class CreateTasks < ActiveRecord::Migration
     add_index :tasks, :task_plan_id
     add_index :tasks, :task_type
     add_index :tasks, [:due_at, :opens_at]
+
+    add_foreign_key :tasks, :task_plans, on_update: :cascade,
+                                         on_delete: :cascade
   end
 end

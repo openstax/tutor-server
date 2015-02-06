@@ -11,5 +11,8 @@ class CreateTaskingPlans < ActiveRecord::Migration
               [:target_id, :target_type, :task_plan_id], unique: true,
               name: 'index_tasking_plans_on_t_id_and_t_type_and_t_p_id'
     add_index :tasking_plans, :task_plan_id
+
+    add_foreign_key :tasking_plans, :task_plans, on_update: :cascade,
+                                                 on_delete: :cascade
   end
 end

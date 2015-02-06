@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150205193034) do
+ActiveRecord::Schema.define(version: 20150206225331) do
 
   create_table "administrators", force: :cascade do |t|
     t.integer  "user_id",    null: false
@@ -33,50 +33,6 @@ ActiveRecord::Schema.define(version: 20150205193034) do
   add_index "assistants", ["code_class_name"], name: "index_assistants_on_code_class_name"
   add_index "assistants", ["study_id"], name: "index_assistants_on_study_id"
 
-  create_table "book_exercises", force: :cascade do |t|
-    t.integer  "book_id",     null: false
-    t.integer  "exercise_id", null: false
-    t.integer  "number",      null: false
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
-  end
-
-  add_index "book_exercises", ["book_id", "number"], name: "index_book_exercises_on_book_id_and_number", unique: true
-  add_index "book_exercises", ["exercise_id", "book_id"], name: "index_book_exercises_on_exercise_id_and_book_id", unique: true
-
-  create_table "book_interactives", force: :cascade do |t|
-    t.integer  "book_id",        null: false
-    t.integer  "interactive_id", null: false
-    t.integer  "number",         null: false
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
-  end
-
-  add_index "book_interactives", ["book_id", "number"], name: "index_book_interactives_on_book_id_and_number", unique: true
-  add_index "book_interactives", ["interactive_id", "book_id"], name: "index_book_interactives_on_interactive_id_and_book_id", unique: true
-
-  create_table "book_readings", force: :cascade do |t|
-    t.integer  "book_id",    null: false
-    t.integer  "reading_id", null: false
-    t.integer  "number",     null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "book_readings", ["book_id", "number"], name: "index_book_readings_on_book_id_and_number", unique: true
-  add_index "book_readings", ["reading_id", "book_id"], name: "index_book_readings_on_reading_id_and_book_id", unique: true
-
-  create_table "book_videos", force: :cascade do |t|
-    t.integer  "book_id"
-    t.integer  "video_id"
-    t.integer  "number"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "book_videos", ["book_id"], name: "index_book_videos_on_book_id"
-  add_index "book_videos", ["video_id"], name: "index_book_videos_on_video_id"
-
   create_table "books", force: :cascade do |t|
     t.integer  "resource_id", null: false
     t.datetime "created_at",  null: false
@@ -84,6 +40,17 @@ ActiveRecord::Schema.define(version: 20150205193034) do
   end
 
   add_index "books", ["resource_id"], name: "index_books_on_resource_id", unique: true
+
+  create_table "chapters", force: :cascade do |t|
+    t.integer  "book_id",    null: false
+    t.integer  "number",     null: false
+    t.string   "title",      null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "chapters", ["book_id", "number"], name: "index_chapters_on_book_id_and_number", unique: true
+  add_index "chapters", ["title", "book_id"], name: "index_chapters_on_title_and_book_id", unique: true
 
   create_table "course_managers", force: :cascade do |t|
     t.integer  "course_id",  null: false
@@ -96,17 +63,16 @@ ActiveRecord::Schema.define(version: 20150205193034) do
   add_index "course_managers", ["user_id", "course_id"], name: "index_course_managers_on_user_id_and_course_id", unique: true
 
   create_table "courses", force: :cascade do |t|
-    t.string   "name"
-    t.string   "short_name"
-    t.text     "description"
     t.integer  "school_id"
+    t.string   "name",        null: false
+    t.string   "short_name",  null: false
+    t.text     "description", null: false
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
   end
 
   add_index "courses", ["name", "school_id"], name: "index_courses_on_name_and_school_id", unique: true
-  add_index "courses", ["school_id"], name: "index_courses_on_school_id"
-  add_index "courses", ["short_name", "school_id"], name: "index_courses_on_short_name_and_school_id", unique: true
+  add_index "courses", ["school_id", "short_name"], name: "index_courses_on_school_id_and_short_name", unique: true
 
   create_table "educators", force: :cascade do |t|
     t.integer  "klass_id",   null: false
@@ -308,13 +274,38 @@ ActiveRecord::Schema.define(version: 20150205193034) do
   add_index "openstax_accounts_groups", ["is_public"], name: "index_openstax_accounts_groups_on_is_public"
   add_index "openstax_accounts_groups", ["openstax_uid"], name: "index_openstax_accounts_groups_on_openstax_uid", unique: true
 
-  create_table "readings", force: :cascade do |t|
-    t.integer  "resource_id", null: false
+  create_table "page_exercises", force: :cascade do |t|
+    t.integer  "page_id",     null: false
+    t.integer  "exercise_id", null: false
+    t.integer  "number",      null: false
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
   end
 
-  add_index "readings", ["resource_id"], name: "index_readings_on_resource_id", unique: true
+  add_index "page_exercises", ["exercise_id", "page_id"], name: "index_page_exercises_on_exercise_id_and_page_id", unique: true
+  add_index "page_exercises", ["page_id", "number"], name: "index_page_exercises_on_page_id_and_number", unique: true
+
+  create_table "page_interactives", force: :cascade do |t|
+    t.integer  "page_id",        null: false
+    t.integer  "interactive_id", null: false
+    t.integer  "number",         null: false
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+  end
+
+  add_index "page_interactives", ["interactive_id", "page_id"], name: "index_page_interactives_on_interactive_id_and_page_id", unique: true
+  add_index "page_interactives", ["page_id", "number"], name: "index_page_interactives_on_page_id_and_number", unique: true
+
+  create_table "pages", force: :cascade do |t|
+    t.integer  "resource_id", null: false
+    t.integer  "chapter_id",  null: false
+    t.integer  "number",      null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "pages", ["chapter_id", "number"], name: "index_pages_on_chapter_id_and_number", unique: true
+  add_index "pages", ["resource_id", "chapter_id"], name: "index_pages_on_resource_id_and_chapter_id", unique: true
 
   create_table "resources", force: :cascade do |t|
     t.string   "title",                          null: false
@@ -340,11 +331,13 @@ ActiveRecord::Schema.define(version: 20150205193034) do
   add_index "school_managers", ["user_id", "school_id"], name: "index_school_managers_on_user_id_and_school_id", unique: true
 
   create_table "schools", force: :cascade do |t|
-    t.string   "name"
+    t.string   "name",              null: false
     t.string   "default_time_zone"
     t.datetime "created_at",        null: false
     t.datetime "updated_at",        null: false
   end
+
+  add_index "schools", ["name"], name: "index_schools_on_name", unique: true
 
   create_table "sections", force: :cascade do |t|
     t.integer  "klass_id",   null: false
@@ -438,13 +431,12 @@ ActiveRecord::Schema.define(version: 20150205193034) do
   add_index "tasking_plans", ["task_plan_id"], name: "index_tasking_plans_on_task_plan_id"
 
   create_table "taskings", force: :cascade do |t|
-    t.integer  "taskee_id",      null: false
-    t.string   "taskee_type",    null: false
-    t.integer  "task_id",        null: false
-    t.integer  "user_id",        null: false
-    t.integer  "grade_override"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
+    t.integer  "taskee_id",   null: false
+    t.string   "taskee_type", null: false
+    t.integer  "task_id",     null: false
+    t.integer  "user_id",     null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
   end
 
   add_index "taskings", ["task_id", "user_id"], name: "index_taskings_on_task_id_and_user_id", unique: true
@@ -486,13 +478,5 @@ ActiveRecord::Schema.define(version: 20150205193034) do
   add_index "users", ["account_id"], name: "index_users_on_account_id", unique: true
   add_index "users", ["deleted_at"], name: "index_users_on_deleted_at"
   add_index "users", ["exchange_identifier"], name: "index_users_on_exchange_identifier", unique: true
-
-  create_table "videos", force: :cascade do |t|
-    t.integer  "resource_id", null: false
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
-  end
-
-  add_index "videos", ["resource_id"], name: "index_videos_on_resource_id", unique: true
 
 end

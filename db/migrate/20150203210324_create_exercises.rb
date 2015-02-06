@@ -7,5 +7,8 @@ class CreateExercises < ActiveRecord::Migration
     end
 
     add_index :exercises, :resource_id, unique: true
+
+    add_foreign_key :exercises, :resources, on_update: :cascade,
+                                            on_delete: :cascade
   end
 end

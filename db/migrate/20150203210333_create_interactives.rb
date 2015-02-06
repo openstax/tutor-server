@@ -7,5 +7,8 @@ class CreateInteractives < ActiveRecord::Migration
     end
 
     add_index :interactives, :resource_id, unique: true
+
+    add_foreign_key :interactives, :resources, on_update: :cascade,
+                                               on_delete: :cascade
   end
 end

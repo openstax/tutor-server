@@ -1,5 +1,6 @@
 FactoryGirl.define do
-  factory :reading do
+  factory :page do
     resource
+    chapter
   end
 end

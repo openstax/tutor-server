@@ -14,9 +14,8 @@ class ImportBook
       else
         reading = run(:import,
                       item['id'],
-                      options.merge(title: item['title'])).outputs[:reading]
-
-        book.book_readings << BookReading.new(book: book, reading: reading)
+                      options.merge(chapter: nil,
+                                    title: item['title'])).outputs[:reading]
       end
     end
   end
@@ -24,7 +23,7 @@ class ImportBook
   # Imports and saves a CNX book as a Book
   # Returns the Book object, Resource object and collection JSON as a hash
   def exec(id, options = {})
-    out = run(:import, id, options.merge(no_reading: true)).outputs
+    out = run(:import, id, options).outputs
     outputs[:resource] = out[:resource]
     outputs[:hash] = out[:hash]
 

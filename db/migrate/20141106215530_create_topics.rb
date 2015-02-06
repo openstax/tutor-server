@@ -8,5 +8,8 @@ class CreateTopics < ActiveRecord::Migration
     end
 
     add_index :topics, [:klass_id, :name], unique: true
+
+    add_foreign_key :topics, :klasses, on_update: :cascade,
+                                       on_delete: :cascade
   end
 end

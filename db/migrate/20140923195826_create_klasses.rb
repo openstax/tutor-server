@@ -16,5 +16,8 @@ class CreateKlasses < ActiveRecord::Migration
     add_index :klasses, [:ends_at, :starts_at]
     add_index :klasses, [:invisible_at, :visible_at]
     add_index :klasses, :course_id
+
+    add_foreign_key :klasses, :courses, on_update: :cascade,
+                                        on_delete: :cascade
   end
 end
