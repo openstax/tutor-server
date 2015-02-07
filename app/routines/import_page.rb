@@ -32,9 +32,13 @@ class ImportPage
     "#{TUTOR_ATTACHMENTS_URL}/#{filename}"
   end
 
-  # Downloads images to Tutor and converts CNX links to Tutor links
+  # Changes relative URL's in the content to be absolute
+  # Finds and creates LO's as Topic objects
+  # Finds and creates embedded exercises as Exercise objects
+  # Adds Exercises to Topics according to their LO tags
+  # Returns the processed content
   def convert(content)
-    # TODO
+    # TODO (use Nokogiri)
     content
   end
 
