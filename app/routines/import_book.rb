@@ -6,16 +6,22 @@ class ImportBook
 
   protected
 
-  # Recursively imports items in a CNX collection
+  # Recursively imports items in a CNX collection into the given book
   def import_collection(book, collection, options = {})
+    # Flatten out the tree
+    chapter = Chapter.new(book: book, title: collection['title'])
+
     collection['contents'].each do |item|
       if item['id'] == 'subcol'
+        # Don't save chapters that only contain subchapters
         import_collection(book, item, options)
       else
-        reading = run(:import,
-                      item['id'],
-                      options.merge(chapter: nil,
-                                    title: item['title'])).outputs[:reading]
+        # Only save collections 1 level above leaves of the book tree
+        chapter.save unless chapter.persisted?
+
+        run(:import,
+            item['id'],
+            options.merge(chapter: chapter, title: item['title']))
       end
     end
   end
