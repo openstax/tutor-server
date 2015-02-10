@@ -34,23 +34,17 @@ ActiveRecord::Schema.define(version: 20150205192810) do
   add_index "assistants", ["study_id"], name: "index_assistants_on_study_id"
 
   create_table "books", force: :cascade do |t|
-    t.integer  "resource_id", null: false
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.integer  "parent_book_id"
+    t.integer  "number",         null: false
+    t.string   "title",          null: false
+    t.string   "cnx_id",         null: false
+    t.string   "version",        null: false
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
   end
 
-  add_index "books", ["resource_id"], name: "index_books_on_resource_id", unique: true
-
-  create_table "chapters", force: :cascade do |t|
-    t.integer  "book_id",    null: false
-    t.integer  "number",     null: false
-    t.string   "title",      null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "chapters", ["book_id", "number"], name: "index_chapters_on_book_id_and_number", unique: true
-  add_index "chapters", ["title", "book_id"], name: "index_chapters_on_title_and_book_id", unique: true
+  add_index "books", ["cnx_id", "version"], name: "index_books_on_cnx_id_and_version", unique: true
+  add_index "books", ["parent_book_id", "number"], name: "index_books_on_parent_book_id_and_number", unique: true
 
   create_table "course_managers", force: :cascade do |t|
     t.integer  "course_id",  null: false
@@ -120,11 +114,13 @@ ActiveRecord::Schema.define(version: 20150205192810) do
 
   create_table "exercises", force: :cascade do |t|
     t.integer  "resource_id", null: false
+    t.string   "title"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
   end
 
   add_index "exercises", ["resource_id"], name: "index_exercises_on_resource_id", unique: true
+  add_index "exercises", ["title"], name: "index_exercises_on_title"
 
   create_table "fine_print_contracts", force: :cascade do |t|
     t.string   "name",       null: false
@@ -160,11 +156,13 @@ ActiveRecord::Schema.define(version: 20150205192810) do
 
   create_table "interactives", force: :cascade do |t|
     t.integer  "resource_id", null: false
+    t.string   "title"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
   end
 
   add_index "interactives", ["resource_id"], name: "index_interactives_on_resource_id", unique: true
+  add_index "interactives", ["title"], name: "index_interactives_on_title"
 
   create_table "klasses", force: :cascade do |t|
     t.integer  "course_id",                       null: false
@@ -297,26 +295,29 @@ ActiveRecord::Schema.define(version: 20150205192810) do
 
   create_table "pages", force: :cascade do |t|
     t.integer  "resource_id", null: false
-    t.integer  "chapter_id",  null: false
+    t.integer  "book_id"
     t.integer  "number",      null: false
+    t.string   "title",       null: false
+    t.string   "cnx_id",      null: false
+    t.string   "version",     null: false
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
   end
 
-  add_index "pages", ["chapter_id", "number"], name: "index_pages_on_chapter_id_and_number", unique: true
-  add_index "pages", ["resource_id", "chapter_id"], name: "index_pages_on_resource_id_and_chapter_id", unique: true
+  add_index "pages", ["book_id", "number"], name: "index_pages_on_book_id_and_number", unique: true
+  add_index "pages", ["resource_id", "book_id"], name: "index_pages_on_resource_id_and_book_id", unique: true
 
   create_table "resources", force: :cascade do |t|
-    t.string   "title",                          null: false
-    t.string   "version",          default: "1", null: false
-    t.string   "url",                            null: false
+    t.string   "url",              null: false
     t.text     "cached_content"
     t.datetime "cache_expires_at"
-    t.datetime "created_at",                     null: false
-    t.datetime "updated_at",                     null: false
+    t.datetime "cached_at"
+    t.string   "etag"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
   end
 
-  add_index "resources", ["title", "version"], name: "index_resources_on_title_and_version", unique: true
+  add_index "resources", ["cache_expires_at"], name: "index_resources_on_cache_expires_at"
   add_index "resources", ["url"], name: "index_resources_on_url", unique: true
 
   create_table "school_managers", force: :cascade do |t|

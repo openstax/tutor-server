@@ -5,63 +5,42 @@ RSpec.describe ImportPage, :type => :routine do
   # - Absolute URL's
   # - Relative URL's
   # - Topic (LO)-tagged sections and problems
-  STUB_FILE = 'spec/fixtures/m50577/index.cnxml.html'
+  fixture_file = 'spec/fixtures/m50577/index.cnxml.html'
 
-  let!(:chapter) { FactoryGirl.create :chapter }
+  let!(:book) { FactoryGirl.create :book }
 
   before(:each) do
     hash = {
-      url: STUB_FILE,
       title: 'Dummy',
+      id: 'dummy',
       version: '1.0',
-      content: open(STUB_FILE) { |f| f.read }
+      content: open(fixture_file) { |f| f.read }
     }
 
-    allow_any_instance_of(ImportPage).to receive(:open).and_return(hash.to_json)
+    allow_any_instance_of(GetCnxJson).to(
+      receive(:open).and_return(hash.to_json))
   end
 
-  context 'with the :chapter option' do
-    it 'creates a new Resource' do
-      result = nil
-      expect {
-        result = ImportPage.call('dummy', chapter: chapter)
-      }.to change{ Resource.count }.by(1)
-      expect(result.errors).to be_empty
-      expect(result.outputs[:resource]).to be_persisted
-    end
-
-    it 'creates a new Page' do
-      result = nil
-      expect {
-        result = ImportPage.call('dummy', chapter: chapter)
-      }.to change{ Page.count }.by(1)
-      expect(result.errors).to be_empty
-      expect(result.outputs[:page]).to be_persisted
-    end
+  it 'creates a new Resource' do
+    result = nil
+    expect {
+      result = ImportPage.call('dummy', book)
+    }.to change{ Resource.count }.by(1)
+    expect(result.errors).to be_empty
+    expect(result.outputs[:resource]).to be_persisted
   end
 
-  context 'without the :chapter option' do
-    it 'creates a new Resource' do
-      result = nil
-      expect {
-        result = ImportPage.call('dummy')
-      }.to change{ Resource.count }.by(1)
-      expect(result.errors).to be_empty
-      expect(result.outputs[:resource]).to be_persisted
-    end
-
-    it 'does not create a new Page' do
-      result = nil
-      expect {
-        result = ImportPage.call('dummy')
-      }.not_to change{ Page.count }
-      expect(result.errors).to be_empty
-      expect(result.outputs[:page]).to be_nil
-    end
+  it 'creates a new Page' do
+    result = nil
+    expect {
+      result = ImportPage.call('dummy', book)
+    }.to change{ Page.count }.by(1)
+    expect(result.errors).to be_empty
+    expect(result.outputs[:page]).to be_persisted
   end
 
   it 'converts relative links into absolute links' do
-    page = ImportPage.call('dummy', chapter: chapter).outputs[:page]
+    page = ImportPage.call('dummy', book).outputs[:page]
     doc = Nokogiri::HTML(page.content)
 
     doc.css("*[src]").each do |tag|
@@ -73,7 +52,7 @@ RSpec.describe ImportPage, :type => :routine do
   it 'finds LO tags in the content' do
     pts = nil
     expect {
-      pts = ImportPage.call('dummy', chapter: chapter).outputs[:page_topics]
+      pts = ImportPage.call('dummy', book).outputs[:page_topics]
     }.to change{ Topic.count }.by(3)
 
     topics = Topic.all.to_a

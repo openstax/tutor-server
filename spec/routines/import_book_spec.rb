@@ -1,12 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe ImportBook, :type => :routine do
-  CNX_BOOK_ID = '031da8d3-b525-429c-80cf-6c8ed997733a'
+  cnx_book_id = '031da8d3-b525-429c-80cf-6c8ed997733a'
 
   it 'creates a new Book with Chapters and Pages and sets their titles' do
     result = nil
     expect {
-      result = ImportBook.call(CNX_BOOK_ID)
+      result = ImportBook.call(cnx_book_id)
     }.to change{ Book.count }.by(1)
     expect(result.errors).to be_empty
 

@@ -4,20 +4,15 @@ class ImportPage
   TUTOR_ATTACHMENTS_URL = "#{TUTOR_HOST}/attachments"
   TUTOR_ATTACHMENTS_PATH = 'public/attachments'
 
-  CNX_ARCHIVE_URL_BASE = 'http://archive.cnx.org'
-  CNX_ARCHIVE_URL = "#{CNX_ARCHIVE_URL_BASE}/contents"
-
   LO_XPATH = "//*[contains(concat(' ', normalize-space(@class)), ' ost-') and contains(substring-before(substring-after(concat(normalize-space(@class), ' '), 'ost-'), ' '), '-lo')]/@class"
   LO_REGEX = /(ost-[\w-]+-lo[\d]+)/
 
   lev_routine
 
-  protected
+  uses_routine GetCnxJson, as: :get,
+                           translations: { outputs: { type: :verbatim } }
 
-  # Gets the contents of the given URL as JSON
-  def get_json(url)
-    open(url, 'ACCEPT' => 'text/json') { |f| return f.read }
-  end
+  protected
 
   # Creates or erases a file, then writes the content to it
   def write(filename, content)
@@ -68,27 +63,26 @@ class ImportPage
     end
   end
 
-  # Imports and saves a CNX page as a Resource
-  # Returns the Resource object and the JSON hash used to create it
-  # Also returns a Page object if the :chapter option is set
-  def exec(id, options = {})
-    url = "#{CNX_ARCHIVE_URL}/#{id}"
-    hash = JSON.parse(get_json(url)).merge(options.except(:chapter))
-    outputs[:hash] = hash
-    doc = Nokogiri::HTML(hash['content']) || ''
+  # Imports and saves a CNX page as a Page into the given Book
+  # Returns the Resource object, a Page object and
+  # the JSON hash used to create them
+  def exec(id, book, options = {})
+    run(:get, id, options)
+    hash = outputs[:hash]
+    url = outputs[:url]
+    doc = Nokogiri::HTML(hash['content'] || '')
 
     outputs[:resource] = Resource.create(
-      title: hash['title'],
-      version: hash['version'],
-      url: "#{CNX_ARCHIVE_URL}/#{hash['id']}@#{hash['version']}",
+      url: url,
       cached_content: convert(doc, url)
     )
     transfer_errors_from outputs[:resource], scope: :resource
 
-    return unless options[:chapter]
-
     outputs[:page] = Page.create(resource: outputs[:resource],
-                                 chapter: options[:chapter])
+                                 book: book,
+                                 title: hash['title'] || '',
+                                 cnx_id: hash['id'] || '',
+                                 version: hash['version'] || '')
     transfer_errors_from outputs[:page], scope: :page
 
     outputs[:page_topics] = extract_topics(doc, outputs[:page])
