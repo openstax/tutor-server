@@ -7,6 +7,9 @@ class ImportPage
   CNX_ARCHIVE_URL_BASE = 'http://archive.cnx.org'
   CNX_ARCHIVE_URL = "#{CNX_ARCHIVE_URL_BASE}/contents"
 
+  LO_XPATH = "//*[contains(concat(' ', normalize-space(@class)), ' ost-') and contains(substring-before(substring-after(concat(normalize-space(@class), ' '), 'ost-'), ' '), '-lo')]/@class"
+  LO_REGEX = /(ost-[\w-]+-lo[\d]+)/
+
   lev_routine
 
   protected
@@ -33,13 +36,36 @@ class ImportPage
   end
 
   # Changes relative URL's in the content to be absolute
-  # Finds and creates LO's as Topic objects
-  # Finds and creates embedded exercises as Exercise objects
-  # Adds Exercises to Topics according to their LO tags
   # Returns the processed content
-  def convert(content)
-    # TODO (use Nokogiri)
-    content
+  def convert(doc, base_url)
+    # In the future (when books are readable in Tutor),
+    # do the opposite (make absolute links into relative links)
+    # and make sure all files are properly served
+    doc.css("*[src]").each do |tag|
+      uri = URI.parse(URI.escape(tag.attributes["src"].value))
+      next if uri.absolute?
+
+      tag.attributes["src"].value = URI.unescape(URI.join(base_url, uri).to_s)
+    end
+
+    doc.to_s
+  end
+
+  # Finds LO's that appear in the content body using a matcher
+  # Finds or creates a Topic for each LO
+  # Returns the array of PageTopics created
+  def extract_topics(doc, page)
+    los = doc.xpath(LO_XPATH).collect do |node|
+      LO_REGEX.match(node.value).try(:[], 0)
+    end.compact.uniq
+
+    los.collect do |lo|
+      topic = Topic.find_or_create_by(name: lo)
+      transfer_errors_from(topic, scope: :topic)
+      pt = PageTopic.find_or_create_by(page: page, topic: topic)
+      transfer_errors_from(pt, scope: :page_topic)
+      pt
+    end
   end
 
   # Imports and saves a CNX page as a Resource
@@ -49,12 +75,13 @@ class ImportPage
     url = "#{CNX_ARCHIVE_URL}/#{id}"
     hash = JSON.parse(get_json(url)).merge(options.except(:chapter))
     outputs[:hash] = hash
+    doc = Nokogiri::HTML(hash['content']) || ''
 
     outputs[:resource] = Resource.create(
       title: hash['title'],
       version: hash['version'],
       url: "#{CNX_ARCHIVE_URL}/#{hash['id']}@#{hash['version']}",
-      cached_content: convert(hash['content'] || '')
+      cached_content: convert(doc, url)
     )
     transfer_errors_from outputs[:resource], scope: :resource
 
@@ -63,6 +90,8 @@ class ImportPage
     outputs[:page] = Page.create(resource: outputs[:resource],
                                  chapter: options[:chapter])
     transfer_errors_from outputs[:page], scope: :page
+
+    outputs[:page_topics] = extract_topics(doc, outputs[:page])
   end
 
 end

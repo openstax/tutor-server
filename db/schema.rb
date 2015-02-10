@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150206225331) do
+ActiveRecord::Schema.define(version: 20150205192810) do
 
   create_table "administrators", force: :cascade do |t|
     t.integer  "user_id",    null: false
@@ -148,6 +148,16 @@ ActiveRecord::Schema.define(version: 20150206225331) do
   add_index "fine_print_signatures", ["contract_id"], name: "index_fine_print_signatures_on_contract_id"
   add_index "fine_print_signatures", ["user_id", "user_type", "contract_id"], name: "index_fine_print_signatures_on_u_id_and_u_type_and_c_id", unique: true
 
+  create_table "interactive_topics", force: :cascade do |t|
+    t.integer  "interactive_id", null: false
+    t.integer  "topic_id",       null: false
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+  end
+
+  add_index "interactive_topics", ["interactive_id", "topic_id"], name: "index_interactive_topics_on_interactive_id_and_topic_id", unique: true
+  add_index "interactive_topics", ["topic_id"], name: "index_interactive_topics_on_topic_id"
+
   create_table "interactives", force: :cascade do |t|
     t.integer  "resource_id", null: false
     t.datetime "created_at",  null: false
@@ -274,27 +284,16 @@ ActiveRecord::Schema.define(version: 20150206225331) do
   add_index "openstax_accounts_groups", ["is_public"], name: "index_openstax_accounts_groups_on_is_public"
   add_index "openstax_accounts_groups", ["openstax_uid"], name: "index_openstax_accounts_groups_on_openstax_uid", unique: true
 
-  create_table "page_exercises", force: :cascade do |t|
-    t.integer  "page_id",     null: false
-    t.integer  "exercise_id", null: false
-    t.integer  "number",      null: false
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+  create_table "page_topics", force: :cascade do |t|
+    t.integer  "page_id",    null: false
+    t.integer  "topic_id",   null: false
+    t.integer  "number",     null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  add_index "page_exercises", ["exercise_id", "page_id"], name: "index_page_exercises_on_exercise_id_and_page_id", unique: true
-  add_index "page_exercises", ["page_id", "number"], name: "index_page_exercises_on_page_id_and_number", unique: true
-
-  create_table "page_interactives", force: :cascade do |t|
-    t.integer  "page_id",        null: false
-    t.integer  "interactive_id", null: false
-    t.integer  "number",         null: false
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
-  end
-
-  add_index "page_interactives", ["interactive_id", "page_id"], name: "index_page_interactives_on_interactive_id_and_page_id", unique: true
-  add_index "page_interactives", ["page_id", "number"], name: "index_page_interactives_on_page_id_and_number", unique: true
+  add_index "page_topics", ["page_id", "number"], name: "index_page_topics_on_page_id_and_number", unique: true
+  add_index "page_topics", ["topic_id", "page_id"], name: "index_page_topics_on_topic_id_and_page_id", unique: true
 
   create_table "pages", force: :cascade do |t|
     t.integer  "resource_id", null: false
@@ -459,13 +458,12 @@ ActiveRecord::Schema.define(version: 20150206225331) do
   add_index "tasks", ["task_type"], name: "index_tasks_on_task_type"
 
   create_table "topics", force: :cascade do |t|
-    t.integer  "klass_id",   null: false
     t.string   "name",       null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  add_index "topics", ["klass_id", "name"], name: "index_topics_on_klass_id_and_name", unique: true
+  add_index "topics", ["name"], name: "index_topics_on_name", unique: true
 
   create_table "users", force: :cascade do |t|
     t.integer  "account_id",          null: false

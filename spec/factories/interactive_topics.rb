@@ -1,6 +1,6 @@
 FactoryGirl.define do
-  factory :page_interactive do
-    page
+  factory :interactive_topic do
     interactive
+    topic
   end
 end

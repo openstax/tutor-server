@@ -1,6 +1,6 @@
 FactoryGirl.define do
-  factory :page_exercise do
+  factory :page_topic do
     page
-    exercise
+    topic
   end
 end
