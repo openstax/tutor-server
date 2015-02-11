@@ -4,8 +4,8 @@ class ImportPage
   TUTOR_ATTACHMENTS_URL = "#{TUTOR_HOST}/attachments"
   TUTOR_ATTACHMENTS_PATH = 'public/attachments'
 
-  LO_XPATH = "//*[contains(concat(' ', normalize-space(@class)), ' ost-') and contains(substring-before(substring-after(concat(normalize-space(@class), ' '), 'ost-'), ' '), '-lo')]/@class"
-  LO_REGEX = /(ost-[\w-]+-lo[\d]+)/
+  LO_XPATH = "//*[contains(concat(' ', normalize-space(@class)), ' ost') and contains(substring-before(substring-after(concat(normalize-space(@class), ' '), 'ost'), ' '), '-lo')]/@class"
+  LO_REGEX = /(ost[\w-]+-lo[\d]+)/
 
   lev_routine
 
