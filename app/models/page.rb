@@ -7,6 +7,4 @@ class Page < ActiveRecord::Base
 
   validates :resource, presence: true
   validates :title, presence: true
-  validates :cnx_id, presence: true
-  validates :version, presence: true, uniqueness: { scope: :cnx_id }
 end

@@ -34,17 +34,16 @@ ActiveRecord::Schema.define(version: 20150205192810) do
   add_index "assistants", ["study_id"], name: "index_assistants_on_study_id"
 
   create_table "books", force: :cascade do |t|
+    t.integer  "resource_id"
     t.integer  "parent_book_id"
     t.integer  "number",         null: false
     t.string   "title",          null: false
-    t.string   "cnx_id",         null: false
-    t.string   "version",        null: false
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
   end
 
-  add_index "books", ["cnx_id", "version"], name: "index_books_on_cnx_id_and_version", unique: true
   add_index "books", ["parent_book_id", "number"], name: "index_books_on_parent_book_id_and_number", unique: true
+  add_index "books", ["resource_id"], name: "index_books_on_resource_id", unique: true
 
   create_table "course_managers", force: :cascade do |t|
     t.integer  "course_id",  null: false
@@ -298,14 +297,12 @@ ActiveRecord::Schema.define(version: 20150205192810) do
     t.integer  "book_id"
     t.integer  "number",      null: false
     t.string   "title",       null: false
-    t.string   "cnx_id",      null: false
-    t.string   "version",     null: false
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
   end
 
   add_index "pages", ["book_id", "number"], name: "index_pages_on_book_id_and_number", unique: true
-  add_index "pages", ["resource_id", "book_id"], name: "index_pages_on_resource_id_and_book_id", unique: true
+  add_index "pages", ["resource_id"], name: "index_pages_on_resource_id", unique: true
 
   create_table "resources", force: :cascade do |t|
     t.string   "url",              null: false

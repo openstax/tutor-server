@@ -10,10 +10,4 @@ RSpec.describe Book, :type => :model do
   it { is_expected.to have_many(:pages).dependent(:destroy) }
 
   it { is_expected.to validate_presence_of(:title) }
-
-  it { is_expected.to validate_presence_of(:cnx_id) }
-
-  it { is_expected.to validate_presence_of(:version) }
-
-  it { is_expected.to validate_uniqueness_of(:version).scoped_to(:cnx_id) }
 end

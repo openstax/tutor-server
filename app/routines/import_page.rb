@@ -9,8 +9,8 @@ class ImportPage
 
   lev_routine
 
-  uses_routine GetCnxJson, as: :get,
-                           translations: { outputs: { type: :verbatim } }
+  uses_routine ImportCnxResource,
+               as: :cnx_import, translations: { outputs: { type: :verbatim } }
 
   protected
 
@@ -28,22 +28,6 @@ class ImportPage
     destination = "#{TUTOR_ATTACHMENTS_PATH}/#{filename}"
     write(destination, http_get(url))
     "#{TUTOR_ATTACHMENTS_URL}/#{filename}"
-  end
-
-  # Changes relative URL's in the content to be absolute
-  # Returns the processed content
-  def convert(doc, base_url)
-    # In the future (when books are readable in Tutor),
-    # do the opposite (make absolute links into relative links)
-    # and make sure all files are properly served
-    doc.css("*[src]").each do |tag|
-      uri = URI.parse(URI.escape(tag.attributes["src"].value))
-      next if uri.absolute?
-
-      tag.attributes["src"].value = URI.unescape(URI.join(base_url, uri).to_s)
-    end
-
-    doc.to_s
   end
 
   # Finds LO's that appear in the content body using a matcher
@@ -67,25 +51,16 @@ class ImportPage
   # Returns the Resource object, a Page object and
   # the JSON hash used to create them
   def exec(id, book, options = {})
-    run(:get, id, options)
+    run(:cnx_import, id, options)
     hash = outputs[:hash]
-    url = outputs[:url]
-    doc = Nokogiri::HTML(hash['content'] || '')
-
-    outputs[:resource] = Resource.create(
-      url: url,
-      cached_content: convert(doc, url)
-    )
-    transfer_errors_from outputs[:resource], scope: :resource
 
     outputs[:page] = Page.create(resource: outputs[:resource],
                                  book: book,
-                                 title: hash['title'] || '',
-                                 cnx_id: hash['id'] || '',
-                                 version: hash['version'] || '')
-    transfer_errors_from outputs[:page], scope: :page
+                                 title: hash['title'] || '')
+    book.pages << outputs[:page] unless book.nil?
+    transfer_errors_from outputs[:page], type: :verbatim
 
-    outputs[:page_topics] = extract_topics(doc, outputs[:page])
+    outputs[:page_topics] = extract_topics(outputs[:doc], outputs[:page])
   end
 
 end

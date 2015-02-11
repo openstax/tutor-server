@@ -5,13 +5,14 @@ module BelongsToResource
   end
   
   module ClassMethods
-    def belongs_to_resource
+    def belongs_to_resource(options = {})
       class_eval do
         belongs_to :resource, dependent: :destroy
 
-        validates :resource, presence: true, uniqueness: true
+        validates :resource, presence: true unless options[:allow_nil]
+        validates :resource, uniqueness: true, allow_nil: options[:allow_nil]
 
-        delegate :url, :content, to: :resource
+        delegate :url, :content, to: :resource, allow_nil: options[:allow_nil]
       end
     end
   end

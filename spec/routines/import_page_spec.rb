@@ -17,7 +17,7 @@ RSpec.describe ImportPage, :type => :routine do
       content: open(fixture_file) { |f| f.read }
     }
 
-    allow_any_instance_of(GetCnxJson).to(
+    allow_any_instance_of(ImportCnxResource).to(
       receive(:open).and_return(hash.to_json))
   end
 
