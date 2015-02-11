@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :task_plan do
-    ignore do
+    transient do
       duration 1.week
       num_tasking_plans 0
     end
@@ -10,7 +10,6 @@ FactoryGirl.define do
     configuration {{}}
     opens_at { Time.now }
     due_at { opens_at + duration }
-    invisible_until_open true
     type "study"
 
     after(:build) do |task_plan, evaluator|

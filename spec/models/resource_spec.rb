@@ -1,26 +1,19 @@
 require 'rails_helper'
 
 RSpec.describe Resource, :type => :model do
-  it { is_expected.to have_many(:readings) }
-  it { is_expected.to have_many(:interactives) }
+  subject { FactoryGirl.create :resource }
+
+  it { is_expected.to have_one(:page).dependent(:destroy) }
+  it { is_expected.to have_one(:exercise).dependent(:destroy) }
+  it { is_expected.to have_one(:interactive).dependent(:destroy) }
+
+  it { is_expected.to validate_presence_of(:url) }
 
   it { is_expected.to validate_uniqueness_of(:url) }
 
-  it "is only really destroyed when no one holds a reference" do
-    reading1 = FactoryGirl.create(:reading)
+  xit 'returns cached content if available' do
+  end
 
-    resource = reading1.resource
-    resource_id = resource.id
-
-    reading2 = FactoryGirl.create(:reading, resource: resource)
-    reading1.destroy
-
-    # The resource is not yet destroyed
-    expect(Resource.where(id: resource_id).one?).to be_truthy
-
-    reading2.destroy
-
-    # Now the resource is destroyed
-    expect(Resource.where(id: resource_id).one?).to be_falsy
+  xit 'retrieves and caches content if not cached or expired' do
   end
 end

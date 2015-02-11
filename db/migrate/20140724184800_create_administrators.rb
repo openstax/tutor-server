@@ -7,5 +7,8 @@ class CreateAdministrators < ActiveRecord::Migration
     end
 
     add_index :administrators, :user_id, unique: true
+
+    add_foreign_key :administrators, :users, on_update: :cascade,
+                                             on_delete: :cascade
   end
 end

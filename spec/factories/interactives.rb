@@ -1,10 +1,6 @@
 FactoryGirl.define do
   factory :interactive do
     resource
-
-    after(:build) do |interactive|
-      interactive.task_step ||= FactoryGirl.build(:task_step,
-                                                  details: interactive)
-    end
+    title { Faker::Lorem.words(3) }
   end
 end

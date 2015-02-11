@@ -1,7 +1,6 @@
 class Topic < ActiveRecord::Base
-  belongs_to :klass
-  has_many :exercise_definition_topics, dependent: :destroy
-  has_many :exercise_definitions, through: :exercise_definition_topics
+  has_many :exercise_topics, dependent: :destroy
+  has_many :interactive_topics, dependent: :destroy
 
-  validates :klass, presence: true
+  validates :name, presence: true
 end

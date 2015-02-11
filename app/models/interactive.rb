@@ -1,9 +1,5 @@
 class Interactive < ActiveRecord::Base
-  has_one_task_step
+  belongs_to_resource
 
-  belongs_to :resource, dependent: :destroy
-
-  validates :resource, presence: true
-
-  delegate :url, :content, to: :resource
+  has_many :interactive_topics, dependent: :destroy
 end

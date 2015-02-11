@@ -1,9 +1,8 @@
 FactoryGirl.define do
   factory :user do
     exchange_identifier { SecureRandom.hex.to_s }
-    deleted_at nil
 
-    ignore do
+    transient do
       username { SecureRandom.hex.to_s }
       first_name { SecureRandom.hex.to_s }
       last_name { SecureRandom.hex.to_s }

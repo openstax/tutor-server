@@ -1,20 +1,13 @@
 class Resource < ActiveRecord::Base
-  CONTAINERS = [:readings, :interactives]
 
-  CONTAINERS.each do |container|
-    has_many container
+  has_one :page, dependent: :destroy
+  has_one :exercise, dependent: :destroy
+  has_one :interactive, dependent: :destroy
+
+  validates :url, presence: true, uniqueness: true
+
+  def content
+    cached_content # TODO: caching
   end
 
-  validates :url, uniqueness: true
-
-  def destroy
-    # Resources are shared between many objects, so only delete
-    # if none of those exist.
-    return if CONTAINERS.any?{|container| self.send(container).any?}
-    super
-  end
-
-  def delete
-    destroy
-  end
 end

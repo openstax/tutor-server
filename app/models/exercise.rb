@@ -1,8 +1,5 @@
 class Exercise < ActiveRecord::Base
-  has_one_task_step
-  belongs_to :resource, dependent: :destroy
+  belongs_to_resource
 
-  validates :resource, presence: true
-
-  delegate :url, :content, to: :resource
+  has_many :exercise_topics, dependent: :destroy
 end

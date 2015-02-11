@@ -2,7 +2,7 @@ FactoryGirl.define do
   sequence :course_number do |n| "#{n}" end
   
   factory :course do
-    ignore do
+    transient do
       course_number { generate(:course_number) }
     end
 

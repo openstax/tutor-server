@@ -3,7 +3,7 @@ FactoryGirl.define do
     sequence(:name) { |n| "OSU #{n}" }
     default_time_zone { ActiveSupport::TimeZone.us_zones.map(&:to_s).first }
 
-    ignore do
+    transient do
       courses_count 0
       school_managers_count 0
     end

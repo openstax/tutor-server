@@ -1,17 +1,14 @@
 FactoryGirl.define do
   factory :task_step do
-    ignore do
-      details_type :reading
-    end
-
     task
-    details nil
-    number nil
+    tasked_type :tasked_reading
     title { Faker::Lorem.words(3) }
+    url { Faker::Internet.url }
+    content { Faker::Lorem.paragraphs }
 
     after(:build) do |task_step, evaluator|
-      task_step.details ||= FactoryGirl.build(evaluator.details_type,
-                                              task_step: task_step)
+      task_step.tasked ||= \
+        FactoryGirl.build(evaluator.tasked_type, task_step: task_step)
     end
   end
 end

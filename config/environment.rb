@@ -1,9 +1,10 @@
 # Load the Rails application.
 require File.expand_path('../application', __FILE__)
 
-require 'delegate_access_control_to'
 require 'date_time_utilities'
-require 'has_one_task_step'
+require 'belongs_to_resource'
+require 'acts_as_tasked'
+require 'acts_as_subtasked'
 
 SITE_NAME = "OpenStax Tutor"
 COPYRIGHT_HOLDER = "Rice University"

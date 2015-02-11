@@ -1,9 +1,6 @@
 FactoryGirl.define do
   factory :exercise do
     resource
-
-    after(:build) do |exercise|
-      exercise.task_step ||= FactoryGirl.build(:task_step, details: exercise)
-    end
+    title { Faker::Lorem.words(3) }
   end
 end
