@@ -1,5 +1,6 @@
 module Api::V1
-  class TaskStep::RepresenterMapper
+  class TaskedRepresenterMapper
+
     include Uber::Callable
 
     def self.models 
@@ -14,9 +15,9 @@ module Api::V1
       if args[2].is_a?(Hash) && args[2][:all_sub_representers]
         self.class.representers
       else
-        step_class = args[1].is_a?(TaskStep) ? args[1].step.class :
-                                               args[1].class
-        representer = self.class.map[step_class].call
+        tasked_class = args[1].is_a?(TaskStep) ? args[1].tasked.class :
+                                                 args[1].class
+        representer = self.class.map[tasked_class].call
         raise NotYetImplemented if representer.nil?
         representer
       end
@@ -26,9 +27,9 @@ module Api::V1
 
     def self.map
       @@map ||= {
-        ::TaskStep::Reading     => ->(*) { ReadingRepresenter },
-        ::TaskStep::Exercise    => ->(*) { ExerciseRepresenter },
-        ::TaskStep::Interactive => ->(*) { InteractiveRepresenter }
+        TaskedReading     => ->(*) { TaskedReadingRepresenter },
+        TaskedExercise    => ->(*) { TaskedExerciseRepresenter },
+        TaskedInteractive => ->(*) { TaskedInteractiveRepresenter }
       }
     end
 

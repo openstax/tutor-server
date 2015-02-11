@@ -1,13 +1,13 @@
-module HasOneTaskStep
+module ActsAsTasked
 
   def self.included(base)
     base.extend(ClassMethods)
   end
   
   module ClassMethods
-    def has_one_task_step
+    def acts_as_tasked
       class_eval do
-        has_one :task_step, as: :step, dependent: :destroy
+        has_one :task_step, as: :tasked, dependent: :destroy
 
         validates :task_step, presence: true
 
@@ -18,4 +18,4 @@ module HasOneTaskStep
 
 end
 
-ActiveRecord::Base.send :include, HasOneTaskStep
+ActiveRecord::Base.send :include, ActsAsTasked

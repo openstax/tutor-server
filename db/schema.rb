@@ -77,29 +77,18 @@ ActiveRecord::Schema.define(version: 20150205192810) do
   add_index "educators", ["klass_id"], name: "index_educators_on_klass_id"
   add_index "educators", ["user_id", "klass_id"], name: "index_educators_on_user_id_and_klass_id", unique: true
 
-  create_table "exercise_step_free_responses", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "exercise_step_multiple_choices", force: :cascade do |t|
-    t.integer  "answer_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "exercise_steps", force: :cascade do |t|
-    t.integer  "exercise_id",  null: false
-    t.integer  "step_id",      null: false
-    t.string   "step_type",    null: false
-    t.integer  "number",       null: false
+  create_table "exercise_substeps", force: :cascade do |t|
+    t.integer  "tasked_exercise_id", null: false
+    t.integer  "subtasked_id",       null: false
+    t.string   "subtasked_type",     null: false
+    t.integer  "number",             null: false
     t.datetime "completed_at"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
   end
 
-  add_index "exercise_steps", ["exercise_id", "number"], name: "index_exercise_steps_on_exercise_id_and_number", unique: true
-  add_index "exercise_steps", ["step_id", "step_type"], name: "index_exercise_steps_on_step_id_and_step_type", unique: true
+  add_index "exercise_substeps", ["subtasked_id", "subtasked_type"], name: "index_exercise_substeps_on_subtasked_id_and_subtasked_type", unique: true
+  add_index "exercise_substeps", ["tasked_exercise_id", "number"], name: "index_exercise_substeps_on_tasked_exercise_id_and_number", unique: true
 
   create_table "exercise_topics", force: :cascade do |t|
     t.integer  "exercise_id", null: false
@@ -143,6 +132,11 @@ ActiveRecord::Schema.define(version: 20150205192810) do
   add_index "fine_print_signatures", ["contract_id"], name: "index_fine_print_signatures_on_contract_id"
   add_index "fine_print_signatures", ["user_id", "user_type", "contract_id"], name: "index_fine_print_signatures_on_u_id_and_u_type_and_c_id", unique: true
 
+  create_table "free_responses", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "interactive_topics", force: :cascade do |t|
     t.integer  "interactive_id", null: false
     t.integer  "topic_id",       null: false
@@ -179,6 +173,12 @@ ActiveRecord::Schema.define(version: 20150205192810) do
   add_index "klasses", ["course_id"], name: "index_klasses_on_course_id"
   add_index "klasses", ["ends_at", "starts_at"], name: "index_klasses_on_ends_at_and_starts_at"
   add_index "klasses", ["invisible_at", "visible_at"], name: "index_klasses_on_invisible_at_and_visible_at"
+
+  create_table "multiple_choices", force: :cascade do |t|
+    t.integer  "answer_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "oauth_access_grants", force: :cascade do |t|
     t.integer  "resource_owner_id", null: false
@@ -385,25 +385,10 @@ ActiveRecord::Schema.define(version: 20150205192810) do
   add_index "task_plans", ["due_at", "opens_at"], name: "index_task_plans_on_due_at_and_opens_at"
   add_index "task_plans", ["owner_id", "owner_type"], name: "index_task_plans_on_owner_id_and_owner_type"
 
-  create_table "task_step_exercises", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "task_step_interactives", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "task_step_readings", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "task_steps", force: :cascade do |t|
     t.integer  "task_id",      null: false
-    t.integer  "step_id",      null: false
-    t.string   "step_type",    null: false
+    t.integer  "tasked_id",    null: false
+    t.string   "tasked_type",  null: false
     t.integer  "number",       null: false
     t.string   "title",        null: false
     t.string   "url",          null: false
@@ -413,8 +398,23 @@ ActiveRecord::Schema.define(version: 20150205192810) do
     t.datetime "updated_at",   null: false
   end
 
-  add_index "task_steps", ["step_id", "step_type"], name: "index_task_steps_on_step_id_and_step_type", unique: true
   add_index "task_steps", ["task_id", "number"], name: "index_task_steps_on_task_id_and_number", unique: true
+  add_index "task_steps", ["tasked_id", "tasked_type"], name: "index_task_steps_on_tasked_id_and_tasked_type", unique: true
+
+  create_table "tasked_exercises", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "tasked_interactives", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "tasked_readings", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "tasking_plans", force: :cascade do |t|
     t.integer  "target_id",    null: false

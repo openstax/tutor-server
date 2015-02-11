@@ -3,8 +3,8 @@ require File.expand_path('../application', __FILE__)
 
 require 'date_time_utilities'
 require 'belongs_to_resource'
-require 'has_one_task_step'
-require 'has_one_exercise_step'
+require 'acts_as_tasked'
+require 'acts_as_subtasked'
 
 SITE_NAME = "OpenStax Tutor"
 COPYRIGHT_HOLDER = "Rice University"

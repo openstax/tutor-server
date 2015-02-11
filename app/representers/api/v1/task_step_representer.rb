@@ -14,10 +14,10 @@ module Api::V1
              type: String,
              writeable: false,
              readable: true,
-             getter: lambda { |*| step_type.downcase },
+             getter: lambda { |*| tasked_type.downcase },
              schema_info: {
                required: true,
-               description: "The type of this TaskStep, one of: #{Api::V1::TaskStep::RepresenterMapper.models.collect{|klass| "'" + klass.name.downcase + "'"}.join(',')}"
+               description: "The type of this TaskStep, one of: #{Api::V1::TaskedRepresenterMapper.models.collect{|klass| "'" + klass.name.downcase + "'"}.join(',')}"
              }
 
     property :title,
@@ -26,7 +26,7 @@ module Api::V1
              readable: true,
              schema_info: {
                required: true,
-               description: "The title of this step"
+               description: "The title of this TaskStep"
              }
 
     property :url,

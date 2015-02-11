@@ -1,10 +1,11 @@
 class TaskStep < ActiveRecord::Base
   sortable_belongs_to :task, on: :number, inverse_of: :task_steps
-  belongs_to :step, polymorphic: true, dependent: :destroy
+  belongs_to :tasked, polymorphic: true, dependent: :destroy
 
   validates :task, presence: true
-  validates :step, presence: true
-  validates :step_id, uniqueness: { scope: :step_type }
+  validates :tasked, presence: true
+  validates :tasked_id, uniqueness: { scope: :tasked_type }
+  validates :title, presence: true
 
   def complete
     self.completed_at ||= Time.now
