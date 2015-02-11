@@ -12,6 +12,8 @@ class ImportPage
   uses_routine ImportCnxResource,
                as: :cnx_import, translations: { outputs: { type: :verbatim } }
 
+  uses_routine TagObjectWithTopics, as: :tag
+
   protected
 
   # Creates or erases a file, then writes the content to it
@@ -38,13 +40,7 @@ class ImportPage
       LO_REGEX.match(node.value).try(:[], 0)
     end.compact.uniq
 
-    los.collect do |lo|
-      topic = Topic.find_or_create_by(name: lo)
-      transfer_errors_from(topic, scope: :topic)
-      pt = PageTopic.find_or_create_by(page: page, topic: topic)
-      transfer_errors_from(pt, scope: :page_topic)
-      pt
-    end
+    run(:tag, page, los).outputs[:tags]
   end
 
   # Imports and saves a CNX page as a Page into the given Book

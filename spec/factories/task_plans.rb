@@ -10,7 +10,7 @@ FactoryGirl.define do
     configuration {{}}
     opens_at { Time.now }
     due_at { opens_at + duration }
-    type "study"
+    type "reading"
 
     after(:build) do |task_plan, evaluator|
       evaluator.num_tasking_plans.times do
