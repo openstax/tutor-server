@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe ImportBook, :type => :routine, :speed => :slow do
+RSpec.describe Import::Book, :type => :routine, :speed => :slow do
   cnx_book_id = '031da8d3-b525-429c-80cf-6c8ed997733a'
 
   # Recursively tests the given book and its children
@@ -23,7 +23,7 @@ RSpec.describe ImportBook, :type => :routine, :speed => :slow do
   it 'creates a new Book structure and Pages and sets their attributes' do
     result = nil
     expect {
-      result = ImportBook.call(cnx_book_id)
+      result = Import::Book.call(cnx_book_id)
     }.to change{ Book.count }.by(35)
     expect(result.errors).to be_empty
 

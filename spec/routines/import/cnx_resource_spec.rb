@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe ImportCnxResource, :type => :routine do
+RSpec.describe Import::CnxResource, :type => :routine do
   cnx_book_id = '031da8d3-b525-429c-80cf-6c8ed997733a'
 
   fixture_file = 'spec/fixtures/m50577/index.cnxml.html'
@@ -13,10 +13,10 @@ RSpec.describe ImportCnxResource, :type => :routine do
       content: open(fixture_file) { |f| f.read }
     }
 
-    allow_any_instance_of(ImportCnxResource).to(
+    allow_any_instance_of(Import::CnxResource).to(
       receive(:open).and_return(hash.to_json))
 
-    result = ImportCnxResource.call('dummy')
+    result = Import::CnxResource.call('dummy')
     expect(result.errors).to be_empty
     out = result.outputs
     expect(out[:hash]).to eq JSON.parse(hash.to_json)
@@ -25,7 +25,7 @@ RSpec.describe ImportCnxResource, :type => :routine do
   end
 
   it 'returns the hash for a real web request' do
-    result = ImportCnxResource.call(cnx_book_id)
+    result = Import::CnxResource.call(cnx_book_id)
     expect(result.errors).to be_empty
     out = result.outputs
     expect(out[:hash]).not_to be_blank

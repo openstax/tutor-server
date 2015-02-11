@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe ImportPage, :type => :routine do
+RSpec.describe Import::Page, :type => :routine do
   # The module specified here should ideally contain:
   # - Absolute URL's
   # - Relative URL's
@@ -17,14 +17,14 @@ RSpec.describe ImportPage, :type => :routine do
       content: open(fixture_file) { |f| f.read }
     }
 
-    allow_any_instance_of(ImportCnxResource).to(
+    allow_any_instance_of(Import::CnxResource).to(
       receive(:open).and_return(hash.to_json))
   end
 
   it 'creates a new Resource' do
     result = nil
     expect {
-      result = ImportPage.call('dummy', book)
+      result = Import::Page.call('dummy', book)
     }.to change{ Resource.count }.by(1)
     expect(result.errors).to be_empty
     expect(result.outputs[:resource]).to be_persisted
@@ -33,14 +33,14 @@ RSpec.describe ImportPage, :type => :routine do
   it 'creates a new Page' do
     result = nil
     expect {
-      result = ImportPage.call('dummy', book)
+      result = Import::Page.call('dummy', book)
     }.to change{ Page.count }.by(1)
     expect(result.errors).to be_empty
     expect(result.outputs[:page]).to be_persisted
   end
 
   it 'converts relative links into absolute links' do
-    page = ImportPage.call('dummy', book).outputs[:page]
+    page = Import::Page.call('dummy', book).outputs[:page]
     doc = Nokogiri::HTML(page.content)
 
     doc.css("*[src]").each do |tag|
@@ -52,7 +52,7 @@ RSpec.describe ImportPage, :type => :routine do
   it 'finds LO tags in the content' do
     pts = nil
     expect {
-      pts = ImportPage.call('dummy', book).outputs[:page_topics]
+      pts = Import::Page.call('dummy', book).outputs[:page_topics]
     }.to change{ Topic.count }.by(3)
 
     topics = Topic.all.to_a
