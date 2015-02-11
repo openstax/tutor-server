@@ -51,7 +51,6 @@ class User < ActiveRecord::Base
   end
 
   # So users can be treated like roles
-  # Dante: not a huge fan of this... is it REALLY needed?
   alias_method :user_id, :id
   def user; self; end
 
