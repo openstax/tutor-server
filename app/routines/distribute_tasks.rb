@@ -1,6 +1,6 @@
 require 'json-schema'
 
-class CreateAndDistributeTasks
+class DistributeTasks
 
   lev_routine
 
