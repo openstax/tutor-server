@@ -54,12 +54,16 @@ class OpenStax::Exercises::V1::FakeClient
     )
   end
 
-  attr_reader :exercises_array
-
-  def initialize
+  def reset!
     @exercises_array = []
     @uid = 0
     @exercise_number = 0
+  end
+
+  attr_reader :exercises_array
+
+  def initialize
+    reset!
   end
 
   private
