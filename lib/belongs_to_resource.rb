@@ -12,7 +12,8 @@ module BelongsToResource
         validates :resource, presence: true unless options[:allow_nil]
         validates :resource, uniqueness: true, allow_nil: options[:allow_nil]
 
-        delegate :url, :content, to: :resource, allow_nil: options[:allow_nil]
+        delegate :url, :content, :topics, to: :resource,
+                 allow_nil: options[:allow_nil]
       end
     end
   end

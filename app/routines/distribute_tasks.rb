@@ -8,17 +8,6 @@ class DistributeTasks
 
   protected
 
-  def get_settings(obj, assistant)
-    case obj
-    when Klass
-      obj.klass_assistants.active.where(assistant: assistant).pluck(:settings)
-    when Study
-      obj.study_assistants.active.where(assistant: assistant).pluck(:settings)
-    else
-      {}
-    end
-  end
-
   def validate_json(schema, object, options = {})
     options[:insert_defaults] = true if options[:insert_defaults].nil?
 
@@ -34,30 +23,28 @@ class DistributeTasks
 
     owner = task_plan.owner
     assistant = task_plan.assistant
+    course_assistant = owner.is_a?(Klass) ? \
+                         assistant.course_assistants.where(klass: owner) : nil
+    interventions = [] # TODO: course_assistant.try(:interventions) || []
+    data = course_assistant.try(:data) || {}
     taskees = run(:get_taskees, task_plan).outputs[:taskees]
 
-    # Get owner (Course) and study settings
-    owner_settings = get_settings(owner)
-
-    # Tasker (Teacher) settings
-    tasker_settings = task_plan.settings
-
-    # Get Study settings
-    study_settings = owner.is_a?(Klass) ? get_settings(owner.study) : {}
-
-    # Tasker settings override owner settings
-    # Study settings override all others
-    # UI disables overriden controls
-    settings = owner_settings.merge(tasker_settings).merge(study_settings)
-
-    # Validate the given settings against the schema
-    err = validate_json(schema, settings)
+    # Validate the given settings against the assistant's schema
+    # Settings already include intervention settings
+    err = validate_json(assistant.schema, task_plan.settings)
 
     fatal_error(code: :invalid_settings,
                 message: 'Invalid settings') unless err.empty?
 
-    # Call the appropriate assistant code
-    assistant.task_taskees(task_plan, taskees, settings)
+    # Call the assistant code to create and distribute Tasks
+    tasks = assistant.distribute_tasks(task_plan: task_plan, taskees: taskees,                                 settings: settings, data: data)
+
+    # Apply the intervention(s)
+    interventions.each do |intervention|
+      tasks.each do |task|
+        intervention.modify_task(task)
+      end
+    end
   end
 
 end

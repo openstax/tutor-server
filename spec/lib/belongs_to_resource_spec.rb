@@ -14,6 +14,7 @@ RSpec.describe BelongsToResource do
       it "causes #{klass_name} to delegate methods to its resource" do
         expect(r.url).to eq r.resource.url
         expect(r.content).to eq r.resource.content
+        expect(r.topics).to eq r.resource.topics
       end
     end
   end
@@ -30,6 +31,7 @@ RSpec.describe BelongsToResource do
     it "causes book to delegate methods to its resource" do
       expect(book.url).to eq book.resource.url
       expect(book.content).to eq book.resource.content
+      expect(book.topics).to eq book.resource.topics
     end
   end
 end

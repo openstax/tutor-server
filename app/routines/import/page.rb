@@ -13,7 +13,7 @@ module Import
     uses_routine Import::CnxResource,
                  as: :cnx_import, translations: { outputs: { type: :verbatim } }
 
-    uses_routine TagObjectWithTopics, as: :tag
+    uses_routine TagResourceWithTopics, as: :tag
 
     protected
 
@@ -41,7 +41,7 @@ module Import
         LO_REGEX.match(node.value).try(:[], 0)
       end.compact.uniq
 
-      run(:tag, page, los).outputs[:tags]
+      run(:tag, page.resource, los).outputs[:tags]
     end
 
     # Imports and saves a CNX page as a Page into the given Book
@@ -52,12 +52,13 @@ module Import
       hash = outputs[:hash]
 
       outputs[:page] = ::Page.create(resource: outputs[:resource],
-                                   book: book,
-                                   title: hash['title'] || '')
+                                     book: book,
+                                     title: hash['title'] || '')
       book.pages << outputs[:page] unless book.nil?
       transfer_errors_from outputs[:page], type: :verbatim
 
-      outputs[:page_topics] = extract_topics(outputs[:doc], outputs[:page])
+      outputs[:resource_topics] = extract_topics(outputs[:doc], outputs[:page])
+      outputs[:topics] = outputs[:resource_topics].collect{|rt| rt.topic}
     end
 
   end

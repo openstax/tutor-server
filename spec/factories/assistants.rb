@@ -2,9 +2,8 @@ class EmptyClass; end
 
 FactoryGirl.define do
   factory :assistant do
-    study nil
-    code_class_name "EmptyClass"
-    settings nil
-    data nil
+    name { Faker::Name.name }
+    code_class_name "Dummy"
+    task_plan_type "dummy"
   end
 end

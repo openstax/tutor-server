@@ -50,18 +50,19 @@ RSpec.describe Import::Page, :type => :routine do
   end
 
   it 'finds LO tags in the content' do
-    pts = nil
+    tags = nil
     expect {
-      pts = Import::Page.call('dummy', book).outputs[:page_topics]
+      tags = Import::Page.call('dummy', book).outputs[:topics]
     }.to change{ Topic.count }.by(3)
 
     topics = Topic.all.to_a
     expect(topics[-3].name).to eq 'ost-apphys-ch5-s1-lo1'
     expect(topics[-2].name).to eq 'ost-apphys-ch5-s1-lo2'
     expect(topics[-1].name).to eq 'ost-apphys-ch5-s1-lo3'
-    expect(pts).not_to be_empty
-    expect(pts).to eq Page.last.page_topics
-    expect(pts.collect{ |pt| pt.topic }).to(
-      eq [topics[-3], topics[-2], topics[-1]])
+    expect(tags).not_to be_empty
+    expect(tags).to eq Page.last.topics
+    expect(tags.collect{|t| t.name}).to eq ['ost-apphys-ch5-s1-lo1',
+                                            'ost-apphys-ch5-s1-lo2',
+                                            'ost-apphys-ch5-s1-lo3']
   end
 end

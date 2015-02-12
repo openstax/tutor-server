@@ -3,16 +3,22 @@ FactoryGirl.define do
     transient do
       duration 1.week
       num_tasking_plans 0
+      assistant_code_class_name "Dummy"
     end
 
     association :owner, factory: :klass
-    assistant
-    configuration {{}}
+    settings { {} }
     opens_at { Time.now }
     due_at { opens_at + duration }
     type "reading"
 
     after(:build) do |task_plan, evaluator|
+      code_class_name_hash = {
+        code_class_name: evaluator.assistant_code_class_name
+      }
+      task_plan.assistant ||= Assistant.find_by(code_class_name_hash) || \
+                              FactoryGirl.build(:assistant, code_class_name_hash)
+
       evaluator.num_tasking_plans.times do
         task_plan.tasking_plans << FactoryGirl.build(:tasking_plan,
                                                      task_plan: task_plan)
