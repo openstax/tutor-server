@@ -2,7 +2,7 @@ module Assistants
   class IReading
 
     def self.schema
-      {
+      '{
         "type": "object",
         "required": [
           "page_id"
@@ -12,8 +12,8 @@ module Assistants
             "type": "integer"
           }
         },
-        "additionalProperties": false,
-      }
+        "additionalProperties": false
+      }'
     end
 
     def self.distribute_tasks(task_plan:, taskees:, settings:, data:)

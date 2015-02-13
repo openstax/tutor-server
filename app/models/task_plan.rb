@@ -9,7 +9,7 @@ class TaskPlan < ActiveRecord::Base
   has_many :tasking_plans, dependent: :destroy
   has_many :tasks, dependent: :destroy
 
-  serialize :configuration
+  serialize :settings
 
   validates :assistant, presence: true
   validates :owner, presence: true
@@ -19,8 +19,8 @@ class TaskPlan < ActiveRecord::Base
 
   # A TaskPlan cannot validate its configuration -- only the Assistant or its
   # delegate can do that
-  def configuration
-    Hashie::Mash.new(read_attribute(:configuration))
+  def settings
+    Hashie::Mash.new(read_attribute(:settings))
   end
 
 end
