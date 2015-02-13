@@ -5,7 +5,13 @@ module Import
     TUTOR_ATTACHMENTS_URL = "#{TUTOR_HOST}/attachments"
     TUTOR_ATTACHMENTS_PATH = 'public/attachments'
 
-    LO_XPATH = "//*[contains(concat(' ', normalize-space(@class)), ' ost') and contains(substring-before(substring-after(concat(normalize-space(@class), ' '), 'ost'), ' '), '-lo')]/@class"
+    # This XPath currently tests for a section
+    # with a class that starts with ost and a class that ends with -lo(number)
+    # It does not require the 2 classes to be the same
+    LO_XPATH = "/html/body/section[contains(concat(' ', @class), ' ost') and string(number(substring-before(substring-after(concat(@class, ' '), '-lo'), ' '))) != 'NaN']/@class"
+
+    # This Regex finds the LO within the class string
+    # and ensures it is properly formatted
     LO_REGEX = /(ost[\w-]+-lo[\d]+)/
 
     lev_routine
