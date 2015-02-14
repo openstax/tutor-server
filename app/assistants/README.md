@@ -2,14 +2,13 @@
 
 Assistant Classes must:
 
-  1. Implement the `distribute_tasks(task_plan:, taskees:, settings:, data:)`
+  1. Implement the `distribute_tasks(task_plan:, taskees:)`
      singleton method which:
-       - Receives as inputs the TaskPlan being assigned, the taskees (targets),
-         the settings from the Course/Teacher/Study and the previously
-         stored assistant data
+       - Receives as inputs the TaskPlan being assigned and
+         the taskees (targets)
        - Creates Task objects and assigns them to the taskees based on
          the settings and the data
-       - Returns the new data hash to be stored in the assistant's storage
+       - Returns the assigned Tasks
 
   2. Implement the `schema` singleton method which:
        - Receives no arguments
@@ -25,7 +24,7 @@ module Assistants
       {}
     end
 
-    def self.distribute_tasks(task_plan:, taskees:, settings:, data:)
+    def self.distribute_tasks(task_plan:, taskees:)
       raise NotImplementedError
     end
 

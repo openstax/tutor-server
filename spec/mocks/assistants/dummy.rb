@@ -4,7 +4,7 @@ module Assistants
       "{}"
     end
 
-    def self.distribute_tasks(task_plan:, taskees:, settings:, data:)
+    def self.distribute_tasks(task_plan:, taskees:)
     end
   end
 end

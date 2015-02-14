@@ -34,26 +34,17 @@ class IReadingAssistant
       "properties": {
         "page_id": {
           "type": "integer"
-        },
-        "title": {
-          "type": "string"
-        },
-        "opens_at": {
-          "type": "string"
-        },
-        "due_at": {
-          "type": "string"
         }
       },
       "additionalProperties": false
     }'
   end
 
-  def self.distribute_tasks(task_plan:, taskees:, settings:, data:)
-    page = Page.find(settings[:page_id])
-    title = settings[:title] || 'iReading'
-    opens_at = DateTime.parse(settings[:opens_at]) rescue Time.now + 1.week
-    due_at = DateTime.parse(settings[:due_at]) rescue Time.now + 2.weeks
+  def self.distribute_tasks(task_plan:, taskees:)
+    page = Page.find(task_plan.settings[:page_id])
+    title = task_plan.title || 'iReading'
+    opens_at = task_plan.opens_at
+    due_at = task_plan.due_at || (task_plan.opens_at + 1.week)
 
     doc = Nokogiri::HTML(page.content || '')
 
@@ -101,7 +92,8 @@ class IReadingAssistant
         # Split the remaining content
         split_content = remaining_content.split(exercise.content)
         reading_content = split_content.first
-        remaining_content = split_content.last
+        remaining_content = split_content.length > 1 ? \
+                              split_content.last : nil
 
         # Create reading step
         unless reading_content.blank?
@@ -128,13 +120,16 @@ class IReadingAssistant
       end
     end
 
-    # Assign tasks to taskees
-    taskees.each do |taskee|
+    # Assign Tasks to taskees and return the Task array
+    taskees.collect do |taskee|
       task = Task.new(task_plan: task_plan,
                       task_type: 'reading',
                       title: title,
                       opens_at: opens_at,
                       due_at: due_at)
+
+      # No group tasks yet
+      task.taskings << Tasking.new(task: task, taskee: taskee, user: taskee)
 
       task_step_attributes.each do |attributes|
         step = TaskStep.new(attributes.except(:tasked_class)
@@ -144,6 +139,7 @@ class IReadingAssistant
       end
 
       task.save!
+      task
     end
   end
 

@@ -23,29 +23,20 @@ class DistributeTasks
 
     owner = task_plan.owner
     assistant = task_plan.assistant
-    settings = task_plan.settings
     klass_assistant = owner.is_a?(Klass) ? \
                         assistant.klass_assistants.where(klass: owner) : nil
-    interventions = [] # TODO: klass_assistant.try(:interventions) || []
     data = klass_assistant.try(:data) || {}
     taskees = run(:get_taskees, task_plan).outputs[:taskees]
 
     # Validate the given settings against the assistant's schema
     # Intervention settings already included when the task_plan was saved
-    err = validate_json(assistant.schema, settings)
+    err = validate_json(assistant.schema, task_plan.settings)
 
     fatal_error(code: :invalid_settings,
                 message: 'Invalid settings') unless err.empty?
 
     # Call the assistant code to create and distribute Tasks
-    tasks = assistant.distribute_tasks(task_plan: task_plan, taskees: taskees,                                 settings: settings, data: data)
-
-    # Apply the intervention(s)
-    interventions.each do |intervention|
-      tasks.each do |task|
-        intervention.modify_task(task)
-      end
-    end
+    tasks = assistant.distribute_tasks(task_plan: task_plan, taskees: taskees)
   end
 
 end

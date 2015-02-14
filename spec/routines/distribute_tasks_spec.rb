@@ -30,7 +30,7 @@ RSpec.describe DistributeTasks, :type => :routine do
     task_plan = FactoryGirl.create(:tasking_plan, target: user).task_plan
 
     expect(Assistants::Dummy).to receive(:distribute_tasks).with(
-      task_plan: task_plan, taskees: [user], settings: {}, data: {}
+      task_plan: task_plan, taskees: [user]
     )
     DistributeTasks.call(task_plan)
   end
