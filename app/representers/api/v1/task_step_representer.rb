@@ -3,6 +3,11 @@ module Api::V1
 
     include Roar::Representer::JSON
 
+    # helper to convert "TaskedFooBar" to "foo_bar", e.g. "TaskedReading" -> "reading"
+    def self.external_tasked_type_string(klass_name)
+      klass_name.gsub("Tasked","").underscore.downcase
+    end
+
     property :id, 
              type: Integer,
              writeable: false,
@@ -14,10 +19,13 @@ module Api::V1
              type: String,
              writeable: false,
              readable: true,
-             getter: lambda { |*| tasked_type.downcase },
+             getter: lambda { |*| TaskStepRepresenter.external_tasked_type_string(tasked_type) },
              schema_info: {
                required: true,
-               description: "The type of this TaskStep, one of: #{Api::V1::TaskedRepresenterMapper.models.collect{|klass| "'" + klass.name.downcase + "'"}.join(',')}"
+               description: "The type of this TaskStep, one of: #{
+                            TaskedRepresenterMapper.models.collect{ |klass| 
+                              "'" + external_tasked_type_string(klass.name) + "'"
+                            }.join(',')}"
              }
 
     property :title,
@@ -29,24 +37,13 @@ module Api::V1
                description: "The title of this TaskStep"
              }
 
-    property :url,
-             type: String,
+    property :is_completed,
              writeable: false,
              readable: true,
-             as: :content_url,
+             getter: lambda {|*| completed?},
              schema_info: {
-               required: false,
-               description: "The URL for the associated Resource"
-             }
-
-    property :content,
-             type: String,
-             writeable: false,
-             readable: true,
-             as: :content_html,
-             schema_info: {
-               required: false,
-               description: "The Resource content as HTML"
+               required: true,
+               description: "Whether or not this step is complete"
              }
 
   end

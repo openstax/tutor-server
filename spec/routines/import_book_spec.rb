@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe ImportBook, :type => :routine do
+RSpec.describe ImportBook, :type => :routine, :speed => :slow do
   cnx_book_id = '031da8d3-b525-429c-80cf-6c8ed997733a'
 
   # Recursively tests the given book and its children

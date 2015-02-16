@@ -7,8 +7,9 @@ RSpec.describe Api::V1::TaskedReadingRepresenter, :type => :representer do
 
     expect(json).to eq({
       id: task_step.id,
-      type: task_step.tasked_type.downcase,
+      type: "reading",
       title: task_step.title,
+      is_completed: false,
       content_url: task_step.url, 
       content_html: task_step.content
     }.to_json)
