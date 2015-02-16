@@ -23,7 +23,7 @@ class Api::V1::TasksController < Api::V1::ApiController
   #   #{json_schema(Api::V1::TaskRepresenter, include: :readable)}            
   # EOS
   def show
-    standard_read(Task, params[:id])
+    standard_read(Task.find(params[:id]))
   end
 
 end

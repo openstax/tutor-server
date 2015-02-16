@@ -2,7 +2,7 @@ class TaskAccessPolicy
   def self.action_allowed?(action, requestor, task)
     case action
     when :read
-      requestor.is_human? && requestor.id == task.user_id
+      requestor.is_human? && task.taskings.where(user_id: requestor.id).any?
     when :create, :update, :destroy
       false
     else

@@ -58,3 +58,10 @@ RSpec.configure do |config|
   # https://relishapp.com/rspec/rspec-rails/docs
   config.infer_spec_type_from_file_location!
 end
+
+class ActionController::TestResponse
+  # Convenience method to get interpret the body as JSON and convert to a hash
+  def body_as_hash
+    @body_as_hash_cache ||= JSON.parse(body, symbolize_names: true)
+  end
+end
