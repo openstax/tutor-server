@@ -32,17 +32,22 @@ module Import
       json = open(url, 'ACCEPT' => 'text/json') { |f| f.read }
       hash = JSON.parse(json).merge(options)
       outputs[:hash] = hash
-
-      doc = Nokogiri::HTML(hash['content'] || '')
-      outputs[:doc] = doc
-
       cnx_id = hash['id'] || id
       version = "@#{hash['version']}" unless hash['version'].blank?
       url = "#{CNX_ARCHIVE_URL}/#{cnx_id}#{version}"
       outputs[:url] = url
 
+      if options[:book]
+        content = hash['tree'].try(:[], 'contents').try(:to_json) || ''
+        outputs[:doc] = nil
+      else
+        doc = Nokogiri::HTML(hash['content'] || '')
+        outputs[:doc] = doc
+        content = convert(doc, url)
+      end
+
       resource = Resource.find_or_initialize_by(url: url)
-      resource.cached_content = convert(doc, url)
+      resource.cached_content = content
       resource.save
       outputs[:resource] = resource
 

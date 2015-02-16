@@ -10,4 +10,7 @@ RSpec.describe Assistant, :type => :model do
 
   it { is_expected.to validate_uniqueness_of(:name) }
   it { is_expected.to validate_uniqueness_of(:code_class_name) }
+
+  xit 'validates the presence of the code class' do
+  end
 end

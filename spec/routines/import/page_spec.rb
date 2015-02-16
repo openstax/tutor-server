@@ -28,6 +28,7 @@ RSpec.describe Import::Page, :type => :routine do
     }.to change{ Resource.count }.by(1)
     expect(result.errors).to be_empty
     expect(result.outputs[:resource]).to be_persisted
+    expect(result.outputs[:resource].content).not_to be_blank
   end
 
   it 'creates a new Page' do

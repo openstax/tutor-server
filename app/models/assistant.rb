@@ -14,22 +14,18 @@ class Assistant < ActiveRecord::Base
 
   protected
 
-  def namespaced_code_class_name
-    "Assistants::#{code_class_name}"
-  end
-
   def code_class_existence
     begin
       code_class 
       true
     rescue NameError => e
-      errors.add("#{namespaced_code_class_name} does not exist")
+      errors.add("#{code_class_name} does not exist")
       false
     end
   end
 
   def code_class
-    @code_class ||= Kernel.const_get(namespaced_code_class_name)
+    @code_class ||= Kernel.const_get(code_class_name)
   end
 
 end

@@ -3,7 +3,7 @@ FactoryGirl.define do
     transient do
       duration 1.week
       num_tasking_plans 0
-      assistant_code_class_name "Dummy"
+      assistant_code_class_name "DummyAssistant"
     end
 
     association :owner, factory: :klass

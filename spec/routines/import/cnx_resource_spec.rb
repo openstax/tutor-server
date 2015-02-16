@@ -1,6 +1,7 @@
 require 'rails_helper'
+require 'vcr_helper'
 
-RSpec.describe Import::CnxResource, :type => :routine do
+RSpec.describe Import::CnxResource, :type => :routine, vcr: VCR_OPTS do
   cnx_book_id = '031da8d3-b525-429c-80cf-6c8ed997733a'
 
   fixture_file = 'spec/fixtures/m50577/index.cnxml.html'

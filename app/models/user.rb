@@ -11,6 +11,8 @@ class User < ActiveRecord::Base
   has_many :educators, dependent: :destroy
   has_many :students, dependent: :destroy
 
+  has_many :taskings, dependent: :destroy
+
   validates :account, presence: true, uniqueness: true
   validates :exchange_identifier, presence: true
 

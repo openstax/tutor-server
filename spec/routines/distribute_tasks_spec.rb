@@ -6,7 +6,7 @@ RSpec.describe DistributeTasks, :type => :routine do
 
     expect(DistributeTasks.call(task_plan).errors).to be_empty
 
-    allow(Assistants::Dummy).to receive(:schema).and_return(
+    allow(DummyAssistant).to receive(:schema).and_return(
       '{
         "type": "object",
         "required": [
@@ -29,7 +29,7 @@ RSpec.describe DistributeTasks, :type => :routine do
     user = FactoryGirl.create :user
     task_plan = FactoryGirl.create(:tasking_plan, target: user).task_plan
 
-    expect(Assistants::Dummy).to receive(:distribute_tasks).with(
+    expect(DummyAssistant).to receive(:distribute_tasks).with(
       task_plan: task_plan, taskees: [user]
     )
     DistributeTasks.call(task_plan)

@@ -1,7 +1,12 @@
 require 'rails_helper'
+require 'vcr_helper'
 
-RSpec.describe Import::Book, :type => :routine, :speed => :slow do
+RSpec.describe Import::Book, :type => :routine,
+                             :vcr => VCR_OPTS,
+                             :speed => :slow do
   cnx_book_id = '031da8d3-b525-429c-80cf-6c8ed997733a'
+
+  fixture_file = "spec/fixtures/#{cnx_book_id}/tree/contents.json"
 
   # Recursively tests the given book and its children
   def test_book(book)
@@ -27,6 +32,9 @@ RSpec.describe Import::Book, :type => :routine, :speed => :slow do
     }.to change{ Book.count }.by(35)
     expect(result.errors).to be_empty
 
-    test_book(result.outputs[:book])
+    book = result.outputs[:book]
+    toc = open(fixture_file) { |f| f.read }
+    expect(JSON.parse(book.content)).to eq JSON.parse(toc)
+    test_book(book)
   end
 end
