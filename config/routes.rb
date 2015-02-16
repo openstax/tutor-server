@@ -26,8 +26,15 @@ Rails.application.routes.draw do
   api :v1, :default => true do
 
     resources :users, only: [:index]
+
     resource :user, only: [:show] do
       get 'tasks', on: :collection
+    end
+
+    resources :tasks, only: [:show] do
+      resources :steps, controller: :task_steps, only: [:show, :update] do
+        put 'completed'
+      end
     end
 
   end

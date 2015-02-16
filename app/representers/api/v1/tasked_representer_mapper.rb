@@ -11,15 +11,19 @@ module Api::V1
       map.values.collect{|v| v.call}
     end
 
-    def call(*args)
+    def self.representer_for(task_step_or_tasked)
+      tasked_class = task_step_or_tasked.is_a?(TaskStep) ? 
+                       task_step_or_tasked.tasked.class :
+                       task_step_or_tasked.class
+      representer = map[tasked_class].call
+      representer || (raise NotYetImplemented)
+    end
+
+    def call(*args); debugger
       if args[2].is_a?(Hash) && args[2][:all_sub_representers]
         self.class.representers
       else
-        tasked_class = args[1].is_a?(TaskStep) ? args[1].tasked.class :
-                                                 args[1].class
-        representer = self.class.map[tasked_class].call
-        raise NotYetImplemented if representer.nil?
-        representer
+        self.class.representer_for(args[1])
       end
     end
 
