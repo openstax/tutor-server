@@ -19,7 +19,7 @@ module Api::V1
       representer || (raise NotYetImplemented)
     end
 
-    def call(*args); debugger
+    def call(*args)
       if args[2].is_a?(Hash) && args[2][:all_sub_representers]
         self.class.representers
       else

@@ -8,8 +8,13 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
                                               application: application,
                                               resource_owner_id: user_1.id }
 
-  # let!(:userless_token)  { FactoryGirl.create :doorkeeper_access_token,
-  #                                             application: application }
+  let!(:user_2)          { FactoryGirl.create :user }
+  let!(:user_2_token)    { FactoryGirl.create :doorkeeper_access_token,
+                                              application: application,
+                                              resource_owner_id: user_2.id }
+
+  let!(:userless_token)  { FactoryGirl.create :doorkeeper_access_token,
+                                              application: application }
 
   let!(:task_step)       { FactoryGirl.create :task_step, title: 'title', url: 'url', content: 'content' }
   let!(:tasking)         { FactoryGirl.create :tasking, taskee: user_1, task: task_step.task }                                            
@@ -30,46 +35,40 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
   end
 
   describe "#completed" do
-    it "should allow marking completion of reading steps" do
-      tasked_reading = FactoryGirl.create(:tasked_reading)
-      tasking = FactoryGirl.create(:tasking, taskee: user_1, task: tasked_reading.task_step.task)
-
-      api_put :completed, user_1_token, parameters: {task_id: task_step.task.id, id: task_step.id}
+    it "should allow marking completion of reading steps by the owner" do
+      tasked = create_tasked(:tasked_reading, user_1)
+      api_put :completed, user_1_token, parameters: {task_id: tasked.task_step.task.id, id: tasked.task_step.id}
       expect(response.code).to eq '200'
-      expect(tasked_reading.completed_at).not_to be_nil
+      expect(tasked.task_step(true).completed?).to be_truthy
+    end
+
+    it "should not allow marking completion of reading steps by random user" do
+      tasked = create_tasked(:tasked_reading, user_1)
+      expect{
+        api_put :completed, user_2_token, parameters: {task_id: tasked.task_step.task.id, id: tasked.task_step.id}  
+      }.to raise_error
+      expect(tasked.task_step(true).completed?).to be_falsy
+    end
+
+    it "should allow marking completion of interactive steps" do
+      tasked = create_tasked(:tasked_interactive, user_1)
+      api_put :completed, user_1_token, parameters: {task_id: tasked.task_step.task.id, id: tasked.task_step.id}
+      expect(response.code).to eq '200'
+      expect(tasked.task_step(true).completed?).to be_truthy
+    end
+
+    it "should allow marking completion of exercise steps" do
+      tasked = create_tasked(:tasked_exercise, user_1)
+      api_put :completed, user_1_token, parameters: {task_id: tasked.task_step.task.id, id: tasked.task_step.id}
+      expect(response.code).to eq '200'
+      expect(tasked.task_step(true).completed?).to be_truthy
     end
   end
 
-  # describe "#show" do
-  #   context "caller has an authorization token" do
-  #     it "should return an ok (200) code" do
-  #       api_get :show, user_1_token
-  #       expect(response.code).to eq('200')
-  #     end
-  #   end
-  #   context "caller does not have an authorization token" do
-  #     it "should return a forbidden (403) code" do
-  #       api_get :show, nil
-  #       expect(response.code).to eq('403')
-  #     end
-  #   end
-  #   context "caller has an application/client credentials authorization token" do
-  #     it "should return a forbidden (403) code" do
-  #       api_get :show, userless_token
-  #       expect(response.code).to eq('403')
-  #     end
-  #   end
-  # end
-
-  # describe "tasks" do
-  #   it "should let a user retrieve their non-existent tasks" do
-  #     api_get :tasks, user_1_token
-  #     expect(response.code).to eq('200')
-  #     expect(response.body).to eq({
-  #       total_count: 0,
-  #       items: []
-  #     }.to_json)
-  #   end
-  # end
+  def create_tasked(type, owner)
+    tasked = FactoryGirl.create(type)
+    tasking = FactoryGirl.create(:tasking, taskee: owner, task: tasked.task_step.task)
+    tasked
+  end
 
 end
