@@ -37,5 +37,14 @@ module Api::V1
                description: "The title of this TaskStep"
              }
 
+    property :is_completed,
+             writeable: false,
+             readable: true,
+             getter: lambda {|*| completed_at.present?},
+             schema_info: {
+               required: true,
+               description: "Whether or not this step is complete"
+             }
+
   end
 end

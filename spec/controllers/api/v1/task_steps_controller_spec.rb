@@ -22,9 +22,21 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
         id: task_step.id,
         type: 'reading',
         title: 'title',
+        is_completed: false,
         content_url: 'url',
         content_html: 'content'
       }.to_json)
+    end
+  end
+
+  describe "#completed" do
+    it "should allow marking completion of reading steps" do
+      tasked_reading = FactoryGirl.create(:tasked_reading)
+      tasking = FactoryGirl.create(:tasking, taskee: user_1, task: tasked_reading.task_step.task)
+
+      api_put :completed, user_1_token, parameters: {task_id: task_step.task.id, id: task_step.id}
+      expect(response.code).to eq '200'
+      expect(tasked_reading.completed_at).not_to be_nil
     end
   end
 
