@@ -13,7 +13,7 @@ module Api::V1
              type: String,
              if: lambda {|*| false}
 
-    property :feedback_html
+    property :feedback_html,
              type: String,
              if: lambda {|*| false}
 

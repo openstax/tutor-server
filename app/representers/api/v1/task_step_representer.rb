@@ -40,7 +40,7 @@ module Api::V1
     property :is_completed,
              writeable: false,
              readable: true,
-             getter: lambda {|*| completed_at.present?},
+             getter: lambda {|*| completed?},
              schema_info: {
                required: true,
                description: "Whether or not this step is complete"
