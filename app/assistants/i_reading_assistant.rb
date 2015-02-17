@@ -166,7 +166,7 @@ class IReadingAssistant
           step = TaskStep.new(task: task,
                               title: ex['title'] || 'Exercise',
                               url: ex['url'] || page.url,
-                              content: ex.to_json)
+                              content: ex[:content]) # TODO: stringify keys
           step.tasked = TaskedExercise.new(task_step: step)
           task.task_steps << step
         end
