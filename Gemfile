@@ -37,7 +37,7 @@ gem 'turbolinks'
 gem 'rails-html-sanitizer', '~> 1.0'
 
 # Utilities for OpenStax websites
-gem 'openstax_utilities', '~> 4.1.0'
+gem 'openstax_utilities', '~> 4.2.0'
 
 # Cron job scheduling
 gem 'whenever'

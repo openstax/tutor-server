@@ -161,7 +161,7 @@ GEM
       jquery-rails
       rails (>= 3.1)
       squeel
-    globalid (0.3.1)
+    globalid (0.3.3)
       activesupport (>= 4.1.0)
     haml (4.0.6)
       tilt
@@ -233,7 +233,7 @@ GEM
       roar-rails (>= 0.1.2)
     openstax_exchange (0.0.1)
       oauth2 (>= 0.5.0)
-    openstax_utilities (4.1.0)
+    openstax_utilities (4.2.0)
       keyword_search
       lev
       rails (>= 3.1)
@@ -442,7 +442,7 @@ DEPENDENCIES
   openstax_accounts!
   openstax_api (~> 3.1.1)
   openstax_exchange
-  openstax_utilities (~> 4.1.0)
+  openstax_utilities (~> 4.2.0)
   pg
   quiet_assets
   railroady
