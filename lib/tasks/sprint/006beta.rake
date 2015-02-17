@@ -1,6 +1,7 @@
 namespace :sprint do
   desc 'Set up a user with a reading task with fake reading and exercise content'
-  task :'006beta', [:username] => [:environment] do |t, args|
+  task :'006beta', [:username] => :environment do |t, args|
+    require_relative 'sprint_006/beta.rb'
     args.with_defaults(username: SecureRandom.hex(4))
     result = Sprint006::Beta.call(username_or_user: args.username)
 

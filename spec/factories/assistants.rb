@@ -1,4 +1,4 @@
-class EmptyClass; end
+require_relative '../mocks/assistants/dummy_assistant'
 
 FactoryGirl.define do
   factory :assistant do

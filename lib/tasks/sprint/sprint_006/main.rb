@@ -1,5 +1,4 @@
 require 'webmock'
-#WebMock.allow_net_connect!
 
 module Sprint006
   class Main
@@ -26,14 +25,6 @@ module Sprint006
     protected
 
     def exec(username_or_user:, opens_at: Time.now)
-
-      OpenStax::Exchange.use_fake_client
-
-      OpenStax::Exchange::FakeClient.configure do |config|
-        config.registered_platforms   = {'123' => 'abc'}
-        config.server_url             = 'https://exchange.openstax.org'
-        config.supported_api_versions = ['v1']
-      end
 
       if username_or_user.is_a? String
         run(:create_account, username: username_or_user)
