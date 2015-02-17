@@ -112,14 +112,14 @@ class IReadingAssistant
         version = SecureRandom.hex
         OpenStax::Exercises::V1.fake_client.add_exercise(number: number,
                                                          version: version)
-        ex = OpenStax::Exercises::V1.exercises(number: number,
-                                               version: version).first
-        ex_title = 'Exercise'
+        ex = JSON.parse(
+          OpenStax::Exercises::V1.exercises(number: number, version: version)
+        ).first
 
         task_step_attributes << { tasked_class: TaskedExercise,
-                                  title: ex_title,
+                                  title: ex['title'] || 'Exercise',
                                   url: page.url,
-                                  content: ex }
+                                  content: ex.to_json }
       end
 
       # Create reading step after all exercises
@@ -150,11 +150,12 @@ class IReadingAssistant
       SPACED_PRACTICE_MAP.each do |k_ago, number|
         number.times do
           #ex = IReadingSpacedPracticeSlotFiller.call(taskee, k_ago)
-          #ex_title = 'Exercise'
-          #task_step_attributes << { tasked_class: TaskedExercise,
-          #                          title: ex_title,
-          #                          url: page.url,
-          #                          content: ex }
+          #step = TaskStep.new(task: task,
+          #                    tasked: TaskedExercise.new,
+          #                    title: ex['title'] || 'Exercise',
+          #                    url: ex['url'] || page.url,
+          #                    content: ex.to_json)
+          #task.task_steps << step
         end
       end
 
