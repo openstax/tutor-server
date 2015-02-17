@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'tasks/sprint/sprint_006/beta'
 
 RSpec.describe "Sprint006::Beta", :type => :request do
 

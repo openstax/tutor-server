@@ -58,7 +58,7 @@ module Api::V1
                writeable: false,
                readable: true,
                # render and decorate the Tasked's, not the TaskSteps
-               render_filter: -> (values, *) { values.collect{|v| v.tasked} }, 
+               getter: -> (*) { task_steps.collect{|ts| ts.tasked} }, 
                decorator: Api::V1::TaskedRepresenterMapper.new,
                schema_info: {
                  required: true,

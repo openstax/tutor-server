@@ -4,4 +4,5 @@ OpenStax::Exchange.configure do |config|
   config.client_server_url      = 'https://exchange.openstax.org'
   config.client_api_version     = 'v1'
 end
+
 OpenStax::Exchange.reset!
