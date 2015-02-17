@@ -82,4 +82,5 @@ Rails.application.config.to_prepare do
   #Doorkeeper::AuthorizedApplicationsController.layout "application_body_only"
 end
 
-OSU::AccessPolicy.register(Doorkeeper::Application, Doorkeeper::ApplicationAccessPolicy)
+OSU::AccessPolicy.register(Doorkeeper::Application,
+                           Doorkeeper::ApplicationAccessPolicy)

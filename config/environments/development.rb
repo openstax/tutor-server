@@ -38,5 +38,17 @@ Rails.application.configure do
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+
+  # Don't error out when trying to connect to external sites
+  WebMock.allow_net_connect!
+
+  # Don't try to connect to Exchange
+  OpenStax::Exchange.use_fake_client
+
+  OpenStax::Exchange::FakeClient.configure do |config|
+    config.registered_platforms   = {'123' => 'abc'}
+    config.server_url             = 'https://exchange.openstax.org'
+    config.supported_api_versions = ['v1']
+  end
 end
 

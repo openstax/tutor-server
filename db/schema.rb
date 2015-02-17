@@ -22,16 +22,15 @@ ActiveRecord::Schema.define(version: 20150216233357) do
   add_index "administrators", ["user_id"], name: "index_administrators_on_user_id", unique: true
 
   create_table "assistants", force: :cascade do |t|
-    t.integer  "study_id"
+    t.string   "name",            null: false
     t.string   "code_class_name", null: false
-    t.text     "settings"
-    t.text     "data"
+    t.string   "task_plan_type",  null: false
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
   end
 
-  add_index "assistants", ["code_class_name"], name: "index_assistants_on_code_class_name"
-  add_index "assistants", ["study_id"], name: "index_assistants_on_study_id"
+  add_index "assistants", ["code_class_name"], name: "index_assistants_on_code_class_name", unique: true
+  add_index "assistants", ["name"], name: "index_assistants_on_name", unique: true
 
   create_table "books", force: :cascade do |t|
     t.integer  "resource_id"
@@ -90,16 +89,6 @@ ActiveRecord::Schema.define(version: 20150216233357) do
   add_index "exercise_substeps", ["subtasked_id", "subtasked_type"], name: "index_exercise_substeps_on_subtasked_id_and_subtasked_type", unique: true
   add_index "exercise_substeps", ["tasked_exercise_id", "number"], name: "index_exercise_substeps_on_tasked_exercise_id_and_number", unique: true
 
-  create_table "exercise_topics", force: :cascade do |t|
-    t.integer  "exercise_id", null: false
-    t.integer  "topic_id",    null: false
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
-  end
-
-  add_index "exercise_topics", ["exercise_id", "topic_id"], name: "index_exercise_topics_on_exercise_id_and_topic_id", unique: true
-  add_index "exercise_topics", ["topic_id"], name: "index_exercise_topics_on_topic_id"
-
   create_table "exercises", force: :cascade do |t|
     t.integer  "resource_id", null: false
     t.string   "title"
@@ -137,16 +126,6 @@ ActiveRecord::Schema.define(version: 20150216233357) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "interactive_topics", force: :cascade do |t|
-    t.integer  "interactive_id", null: false
-    t.integer  "topic_id",       null: false
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
-  end
-
-  add_index "interactive_topics", ["interactive_id", "topic_id"], name: "index_interactive_topics_on_interactive_id_and_topic_id", unique: true
-  add_index "interactive_topics", ["topic_id"], name: "index_interactive_topics_on_topic_id"
-
   create_table "interactives", force: :cascade do |t|
     t.integer  "resource_id", null: false
     t.string   "title"
@@ -156,6 +135,18 @@ ActiveRecord::Schema.define(version: 20150216233357) do
 
   add_index "interactives", ["resource_id"], name: "index_interactives_on_resource_id", unique: true
   add_index "interactives", ["title"], name: "index_interactives_on_title"
+
+  create_table "klass_assistants", force: :cascade do |t|
+    t.integer  "klass_id",     null: false
+    t.integer  "assistant_id", null: false
+    t.text     "settings"
+    t.text     "data"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
+
+  add_index "klass_assistants", ["assistant_id"], name: "index_klass_assistants_on_assistant_id"
+  add_index "klass_assistants", ["klass_id", "assistant_id"], name: "index_klass_assistants_on_klass_id_and_assistant_id", unique: true
 
   create_table "klasses", force: :cascade do |t|
     t.integer  "course_id",                       null: false
@@ -281,17 +272,6 @@ ActiveRecord::Schema.define(version: 20150216233357) do
   add_index "openstax_accounts_groups", ["is_public"], name: "index_openstax_accounts_groups_on_is_public"
   add_index "openstax_accounts_groups", ["openstax_uid"], name: "index_openstax_accounts_groups_on_openstax_uid", unique: true
 
-  create_table "page_topics", force: :cascade do |t|
-    t.integer  "page_id",    null: false
-    t.integer  "topic_id",   null: false
-    t.integer  "number",     null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "page_topics", ["page_id", "number"], name: "index_page_topics_on_page_id_and_number", unique: true
-  add_index "page_topics", ["topic_id", "page_id"], name: "index_page_topics_on_topic_id_and_page_id", unique: true
-
   create_table "pages", force: :cascade do |t|
     t.integer  "resource_id", null: false
     t.integer  "book_id"
@@ -303,6 +283,17 @@ ActiveRecord::Schema.define(version: 20150216233357) do
 
   add_index "pages", ["book_id", "number"], name: "index_pages_on_book_id_and_number", unique: true
   add_index "pages", ["resource_id"], name: "index_pages_on_resource_id", unique: true
+
+  create_table "resource_topics", force: :cascade do |t|
+    t.integer  "resource_id", null: false
+    t.integer  "topic_id",    null: false
+    t.integer  "number",      null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "resource_topics", ["resource_id", "number"], name: "index_resource_topics_on_resource_id_and_number", unique: true
+  add_index "resource_topics", ["topic_id", "resource_id"], name: "index_resource_topics_on_topic_id_and_resource_id", unique: true
 
   create_table "resources", force: :cascade do |t|
     t.string   "url",              null: false
@@ -369,16 +360,16 @@ ActiveRecord::Schema.define(version: 20150216233357) do
   add_index "students", ["user_id", "section_id"], name: "index_students_on_user_id_and_section_id", unique: true
 
   create_table "task_plans", force: :cascade do |t|
-    t.integer  "assistant_id",  null: false
-    t.integer  "owner_id",      null: false
-    t.string   "owner_type",    null: false
+    t.integer  "assistant_id", null: false
+    t.integer  "owner_id",     null: false
+    t.string   "owner_type",   null: false
     t.string   "title"
-    t.string   "type",          null: false
-    t.text     "configuration", null: false
-    t.datetime "opens_at",      null: false
+    t.string   "type",         null: false
+    t.text     "settings",     null: false
+    t.datetime "opens_at",     null: false
     t.datetime "due_at"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
   end
 
   add_index "task_plans", ["assistant_id"], name: "index_task_plans_on_assistant_id"

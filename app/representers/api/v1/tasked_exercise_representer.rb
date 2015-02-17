@@ -7,25 +7,23 @@ module Api::V1
              type: Integer,
              writeable: false,
              readable: true,
-             skip_render: -> (*) { !task_step.completed? }
+             if: -> (*) { task_step.completed? }
 
     property :answer_id,
              type: Integer,
              writeable: true,
-             readable: true,
-             skip_render: -> (*) { answer_id.blank? }
+             readable: true
 
     property :free_response,
              type: String,
              writeable: true,
-             readable: true,
-             skip_render: -> (*) { free_response.blank? }
+             readable: true
 
     property :feedback_html,
              type: String,
              writeable: false,
              readable: true,
-             skip_render: -> (*) { !task_step.completed? }
+             if: -> (*) { task_step.completed? }
 
     property :content,
              type: String,

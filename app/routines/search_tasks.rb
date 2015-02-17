@@ -1,10 +1,11 @@
 class SearchTasks
   lev_routine transaction: :no_transaction
 
+  # TODO: Convert to use new shared (OSU) search routines
   uses_routine OrganizeSearchResults,
                translations: { outputs: {type: :verbatim} }
 
-protected
+  protected
 
   def exec(query, options={})
 

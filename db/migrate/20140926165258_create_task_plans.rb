@@ -5,7 +5,7 @@ class CreateTaskPlans < ActiveRecord::Migration
       t.references :owner, polymorphic: true, null: false
       t.string :title
       t.string :type, null: false
-      t.text :configuration, null: false
+      t.text :settings, null: false
       t.datetime :opens_at, null: false
       t.datetime :due_at
 
