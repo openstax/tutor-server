@@ -27,7 +27,7 @@ class OpenStax::Exercises::V1::FakeClient
       end
     end
 
-    (result || []).collect{|exercise| exercise[:content]}
+    (result || []).collect{|exercise| exercise[:content]}.to_json
   end
 
   #
@@ -80,7 +80,7 @@ class OpenStax::Exercises::V1::FakeClient
           ]
         }
       ]
-    } 
+    }
   end
 
   private
