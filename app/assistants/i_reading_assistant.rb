@@ -44,6 +44,9 @@ class IReadingAssistant
   end
 
   def self.distribute_tasks(task_plan:, taskees:)
+    # Remove this (move it to tests) once we implement the real client
+    OpenStax::Exercises::V1.use_fake_client
+
     page = Page.find(task_plan.settings[:page_id])
     title = task_plan.title || 'iReading'
     opens_at = task_plan.opens_at
@@ -88,17 +91,13 @@ class IReadingAssistant
 
       # Split content on Exercises and create TaskSteps
       exercises.each do |exercise|
-        # Get title
-        exercise_title = exercise.at_xpath(TITLE_XPATH).try(:content) || \
-                         'Exercise'
-
         # Split the remaining content
         split_content = remaining_content.split(exercise.content)
         reading_content = split_content.first
         remaining_content = split_content.length > 1 ? \
                               split_content.last : nil
 
-        # Create reading step
+        # Create reading step before current exercise
         unless reading_content.blank?
           task_step_attributes << { tasked_class: TaskedReading,
                                     title: reading_title,
@@ -107,14 +106,23 @@ class IReadingAssistant
         end
 
         # Create exercise step
-        # TODO: Get title, url, content from OpenStax Exercises
+        # TODO: Get info from OpenStax Exercises using ID from CNX
+        # For now, use the fake client with random number/version
+        number = SecureRandom.hex
+        version = SecureRandom.hex
+        OpenStax::Exercises::V1.fake_client.add_exercise(number: number,
+                                                         version: version)
+        ex = OpenStax::Exercises::V1.exercises(number: number,
+                                               version: version).first
+        ex_title = 'Exercise'
+
         task_step_attributes << { tasked_class: TaskedExercise,
-                                  title: exercise_title,
+                                  title: ex_title,
                                   url: page.url,
-                                  content: exercise.content }
+                                  content: ex }
       end
 
-      # Record after-exercise content
+      # Create reading step after all exercises
       unless remaining_content.blank?
         task_step_attributes << { tasked_class: TaskedReading,
                                   title: reading_title,
@@ -141,7 +149,12 @@ class IReadingAssistant
       # Spaced practice
       SPACED_PRACTICE_MAP.each do |k_ago, number|
         number.times do
-          #exercise_id = IReadingSpacedPracticeSlotFiller.call(taskee, k_ago)
+          #ex = IReadingSpacedPracticeSlotFiller.call(taskee, k_ago)
+          #ex_title = 'Exercise'
+          #task_step_attributes << { tasked_class: TaskedExercise,
+          #                          title: ex_title,
+          #                          url: page.url,
+          #                          content: ex }
         end
       end
 
