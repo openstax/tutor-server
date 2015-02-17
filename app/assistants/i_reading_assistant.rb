@@ -1,5 +1,8 @@
 class IReadingAssistant
 
+  # Array of arrays [Events ago, number of spaced practice questions]
+  SPACED_PRACTICE_MAP = [[1, 3]]
+
   # Save as Key Terms and then remove this node
   KEY_TERMS_XPATH = "/html/body/section[contains(concat(' ', @class, ' '), ' key-terms ')]"
 
@@ -128,15 +131,22 @@ class IReadingAssistant
                       opens_at: opens_at,
                       due_at: due_at)
 
-      # No group tasks yet
-      task.taskings << Tasking.new(task: task, taskee: taskee, user: taskee)
-
       task_step_attributes.each do |attributes|
         step = TaskStep.new(attributes.except(:tasked_class)
                                       .merge(task: task))
         step.tasked = attributes[:tasked_class].new(task_step: step)
         task.task_steps << step
       end
+
+      # Spaced practice
+      SPACED_PRACTICE_MAP.each do |k_ago, number|
+        number.times do
+          #exercise_id = IReadingSpacedPracticeSlotFiller.call(taskee, k_ago)
+        end
+      end
+
+      # No group tasks for this assistant
+      task.taskings << Tasking.new(task: task, taskee: taskee, user: taskee)
 
       task.save!
       task
