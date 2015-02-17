@@ -66,17 +66,10 @@ class OpenStax::Exercises::V1::FakeClient
     reset!
   end
 
-  private
-
   def new_exercise_hash(exercise_number = next_exercise_number)
     {
       stimulus: "This is fake exercise #{exercise_number}.  <span data-math='\\dfrac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}'></span>",
       questions: [
-        {
-          id: "#{next_uid}",
-          format: "short-answer",
-          stem: "What is the answer to this question?"
-        },
         {
           id: "#{next_uid}",
           format: "multiple-choice",
@@ -89,6 +82,8 @@ class OpenStax::Exercises::V1::FakeClient
       ]
     } 
   end
+
+  private
 
   def next_uid
     @uid += 1

@@ -5,7 +5,7 @@ module Api::V1
 
     property :correct_answer_id,
              type: Integer,
-             skip_render: -> (*) { task_step.completed? }
+             skip_render: -> (*) { !task_step.completed? }
 
     property :answer_id,
              type: Integer,
@@ -23,7 +23,7 @@ module Api::V1
              type: String,
              writeable: false,
              readable: true,
-             skip_render: -> (*) { task_step.completed? }
+             skip_render: -> (*) { !task_step.completed? }
 
     property :content,
              type: String,

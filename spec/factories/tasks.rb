@@ -3,7 +3,8 @@ FactoryGirl.define do
     transient do
       duration 1.week
       step_types []
-      num_taskings 0
+      tasked_to []
+      num_random_taskings 0
     end
 
     task_plan
@@ -14,13 +15,16 @@ FactoryGirl.define do
 
     after(:build) do |task, evaluator|
       evaluator.step_types.each_with_index do |type, i|
-        task_step = FactoryGirl.build(:task_step, task: task)
-        task_step.tasked = FactoryGirl.build(type, task_step: task_step)
-        task.task_steps << task_step
+        tasked = FactoryGirl.build(type, skip_task: true)
+        task.task_steps << tasked.task_step
       end
 
-      evaluator.num_taskings.times do
+      evaluator.num_random_taskings.times do
         task.taskings << FactoryGirl.build(:tasking, task: task)
+      end
+
+      [evaluator.tasked_to].flatten.each do |taskee|
+        task.taskings << FactoryGirl.build(:tasking, task: task, taskee: taskee)
       end
     end
   end

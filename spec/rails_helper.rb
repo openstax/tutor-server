@@ -59,9 +59,11 @@ RSpec.configure do |config|
   config.infer_spec_type_from_file_location!
 end
 
-class ActionController::TestResponse
-  # Convenience method to get interpret the body as JSON and convert to a hash
+# Adds a convenience method to get interpret the body as JSON and convert to a hash;
+# works for both request and controller specs
+class ActionDispatch::TestResponse
   def body_as_hash
     @body_as_hash_cache ||= JSON.parse(body, symbolize_names: true)
   end
 end
+

@@ -1,5 +1,5 @@
 module Sprint006
-  class Main
+  class Beta
 
     OpenStax::Exchange.configure do |config|
       config.client_platform_id     = '123'
@@ -17,7 +17,6 @@ module Sprint006
     end
 
     OpenStax::Exchange.reset!
-
 
     lev_routine
 
@@ -40,6 +39,11 @@ module Sprint006
       # Do all the sprint 6 setup, e.g. importing books, adding fake exercises
       # to OpenStax::Exercises::V1.fake_client matching the tags from the books
       # call the assistant to create an ireading, etc etc.
+
+      task = FactoryGirl.create(
+               :task, 
+               step_types: [:tasked_reading, :tasked_exercise, :tasked_exercise, :tasked_reading],
+               tasked_to: user)
 
     end
 

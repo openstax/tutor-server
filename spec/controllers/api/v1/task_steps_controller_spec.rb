@@ -91,6 +91,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
 
   end
 
+  # TODO: could replace with FactoryGirl calls like in TaskedExercise factory examples
   def create_tasked(type, owner)
     tasked = FactoryGirl.create(type)
     tasking = FactoryGirl.create(:tasking, taskee: owner, task: tasked.task_step.task)
