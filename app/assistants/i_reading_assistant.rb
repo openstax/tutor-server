@@ -160,13 +160,15 @@ class IReadingAssistant
       #       right before the user gets the question
       SPACED_PRACTICE_MAP.each do |k_ago, number|
         number.times do
-          #ex = IReadingSpacedPracticeSlotFiller.call(taskee, k_ago)
-          #step = TaskStep.new(task: task,
-          #                    tasked: TaskedExercise.new,
-          #                    title: ex['title'] || 'Exercise',
-          #                    url: ex['url'] || page.url,
-          #                    content: ex.to_json)
-          #task.task_steps << step
+          ex = FillIReadingSpacedPracticeSlot.call()#taskee, k_ago)
+                                             .outputs[:exercise_hash]
+
+          step = TaskStep.new(task: task,
+                              title: ex['title'] || 'Exercise',
+                              url: ex['url'] || page.url,
+                              content: ex.to_json)
+          step.tasked = TaskedExercise.new(task_step: step)
+          task.task_steps << step
         end
       end
 
