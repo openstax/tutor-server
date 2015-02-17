@@ -25,7 +25,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
     it "should work on the happy path" do
       api_get :show, user_1_token, parameters: {task_id: task_step.task.id, id: task_step.id}
       expect(response.code).to eq '200'
-      # debugger
+
       expect(response.body).to eq({
         id: task_step.id,
         type: 'reading',
