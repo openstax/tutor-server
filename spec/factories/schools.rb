@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :school do
-    sequence(:name) { |n| "OSU #{n}" }
+    sequence(:name) { |n| "OSU #{School.count+1}" }
     default_time_zone { ActiveSupport::TimeZone.us_zones.map(&:to_s).first }
 
     transient do

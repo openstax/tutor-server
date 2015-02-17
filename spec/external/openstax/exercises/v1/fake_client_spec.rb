@@ -19,16 +19,11 @@ RSpec.describe OpenStax::Exercises::V1::FakeClient do
         questions: [
           {
             id: "1",
-            format: "short-answer",
-            stem: "What is the answer to this question?"
-          },
-          {
-            id: "2",
             format: "multiple-choice",
             stem: "Select the answer that makes the most sense.",
             answers:[
-              {id: "3", content: "10 N"},
-              {id: "4", content: "1 N"}
+              {id: "2", content: "10 N"},
+              {id: "3", content: "1 N"}
             ]
           }
         ]
@@ -50,17 +45,12 @@ RSpec.describe OpenStax::Exercises::V1::FakeClient do
         stimulus: "This is fake exercise 2.  <span data-math='\\dfrac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}'></span>",
         questions: [
           {
-            id: "5",
-            format: "short-answer",
-            stem: "What is the answer to this question?"
-          },
-          {
-            id: "6",
+            id: "4",
             format: "multiple-choice",
             stem: "Select the answer that makes the most sense.",
             answers:[
-              {id: "7", content: "10 N"},
-              {id: "8", content: "1 N"}
+              {id: "5", content: "10 N"},
+              {id: "6", content: "1 N"}
             ]
           }
         ]

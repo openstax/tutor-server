@@ -1,5 +1,7 @@
 module Api::V1
-  class TaskedInteractiveRepresenter < Api::V1::TaskStepRepresenter
+  class TaskedInteractiveRepresenter < Roar::Decorator
+
+    include TaskStepProperties
 
   end
 end

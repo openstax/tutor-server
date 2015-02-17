@@ -1,7 +1,7 @@
 GIT
   remote: https://github.com/Dantemss/accounts-rails.git
-  revision: 54c41b6053c6b44e53939c9d0c75c20d3ed2e00f
-  ref: 54c41b6053c6b44e53939c9d0c75c20d3ed2e00f
+  revision: 7bc7f951badfa450f357ba4f69e777e4a97d5212
+  ref: 7bc7f951badfa450f357ba4f69e777e4a97d5212
   specs:
     openstax_accounts (3.1.2.alpha)
       action_interceptor (>= 0.3)
@@ -13,7 +13,7 @@ GIT
       openstax_api (>= 3.1.0)
       openstax_utilities (>= 4.1.0)
       rails (>= 4.1)
-      roar (>= 0.8)
+      roar (>= 0.8, < 1.0)
       squeel (>= 0.5.0)
 
 GEM

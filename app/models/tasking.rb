@@ -15,4 +15,5 @@ class Tasking < ActiveRecord::Base
     errors.add(:user, 'does not agree with taskee')
     false
   end
+
 end

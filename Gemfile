@@ -44,7 +44,7 @@ gem 'whenever'
 
 # OpenStax Accounts integration
 gem 'openstax_accounts', git: 'https://github.com/Dantemss/accounts-rails.git',
-                         ref: '54c41b6053c6b44e53939c9d0c75c20d3ed2e00f'
+                         ref: '7bc7f951badfa450f357ba4f69e777e4a97d5212'
 # OpenStax Exchange integration
 gem 'openstax_exchange'
 

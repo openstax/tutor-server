@@ -1,29 +1,38 @@
 module Api::V1
-  class TaskedExerciseRepresenter < Api::V1::TaskStepRepresenter
+  class TaskedExerciseRepresenter < Roar::Decorator
+
+    include TaskStepProperties
 
     property :correct_answer_id,
              type: Integer,
-             if: lambda {|*| false}
+             skip_render: -> (*) { !task_step.completed? }
 
     property :answer_id,
              type: Integer,
-             if: lambda {|*| false}
+             writeable: true,
+             readable: true,
+             skip_render: -> (*) { answer_id.blank? }
 
     property :free_response,
              type: String,
-             if: lambda {|*| false}
+             writeable: true,
+             readable: true,
+             skip_render: -> (*) { free_response.blank? }
 
     property :feedback_html,
              type: String,
-             if: lambda {|*| false}
+             writeable: false,
+             readable: true,
+             skip_render: -> (*) { !task_step.completed? }
 
     property :content,
              type: String,
              writeable: false,
              readable: true,
+             getter: -> (*) { task_step.content },
              schema_info: {
                required: false,
-               description: "The Resource content as HTML"
+               description: "The exercise content as JSON"
              }
   end
 end

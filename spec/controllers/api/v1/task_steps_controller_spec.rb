@@ -17,12 +17,15 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
                                               application: application }
 
   let!(:task_step)       { FactoryGirl.create :task_step, title: 'title', url: 'url', content: 'content' }
-  let!(:tasking)         { FactoryGirl.create :tasking, taskee: user_1, task: task_step.task }                                            
+  let!(:tasking)         { FactoryGirl.create :tasking, taskee: user_1, task: task_step.task }         
+
+  let!(:tasked_exercise) { FactoryGirl.create :tasked_exercise }                                   
 
   describe "#show" do
     it "should work on the happy path" do
       api_get :show, user_1_token, parameters: {task_id: task_step.task.id, id: task_step.id}
       expect(response.code).to eq '200'
+
       expect(response.body).to eq({
         id: task_step.id,
         type: 'reading',
@@ -65,6 +68,30 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
     end
   end
 
+  describe "PATCH update" do
+   
+    let!(:tasked) { create_tasked(:tasked_exercise, user_1) }
+    let!(:id_parameters) { { task_id: tasked.task_step.task.id, id: tasked.task_step.id } }
+
+    it "updates the free response of an exercise" do
+      api_put :update, user_1_token, parameters: id_parameters, 
+              raw_post_data: { free_response: "Ipsum lorem" }
+
+      expect(response).to have_http_status(:success)
+      expect(tasked.reload.free_response).to eq "Ipsum lorem"
+    end
+
+    it "updates the selected answer of an exercise" do
+      api_put :update, user_1_token, parameters: id_parameters, 
+              raw_post_data: { answer_id: "id37" }
+
+      expect(response).to have_http_status(:success)
+      expect(tasked.reload.answer_id).to eq "id37"
+    end
+
+  end
+
+  # TODO: could replace with FactoryGirl calls like in TaskedExercise factory examples
   def create_tasked(type, owner)
     tasked = FactoryGirl.create(type)
     tasking = FactoryGirl.create(:tasking, taskee: owner, task: tasked.task_step.task)
