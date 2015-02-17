@@ -1,5 +1,6 @@
 class Klass < ActiveRecord::Base
   belongs_to :course
+
   has_many :sections, dependent: :destroy
   has_many :educators, dependent: :destroy
   has_many :students, dependent: :destroy
@@ -9,6 +10,8 @@ class Klass < ActiveRecord::Base
 
   has_many :topics, dependent: :destroy
   has_many :exercise_definitions, dependent: :destroy
+
+  has_many :klass_assistants, dependent: :destroy
 
   validates :course, presence: true
   validates :time_zone, allow_nil: true,

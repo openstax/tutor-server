@@ -8,6 +8,7 @@ RSpec.describe Klass, :type => :model do
   it { is_expected.to have_many(:students).dependent(:destroy) }
   it { is_expected.to have_many(:tasking_plans).dependent(:destroy) }
   it { is_expected.to have_many(:task_plans).dependent(:destroy) }
+  it { is_expected.to have_many(:klass_assistants).dependent(:destroy) }
 
   it { is_expected.to validate_presence_of(:course) }
   it { is_expected.to validate_inclusion_of(:time_zone).in_array(ActiveSupport::TimeZone.all.map(&:to_s)).allow_nil }

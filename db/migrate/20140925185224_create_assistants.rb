@@ -1,15 +1,14 @@
 class CreateAssistants < ActiveRecord::Migration
   def change
     create_table :assistants do |t|
-      t.references :study
+      t.string :name, null: false
       t.string :code_class_name, null: false
-      t.text :settings
-      t.text :data
+      t.string :task_plan_type, null: false
 
       t.timestamps null: false
     end
 
-    add_index :assistants, :study_id
-    add_index :assistants, :code_class_name
+    add_index :assistants, :name, unique: true
+    add_index :assistants, :code_class_name, unique: true
   end
 end
