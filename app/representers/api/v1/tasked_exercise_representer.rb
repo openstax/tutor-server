@@ -5,6 +5,8 @@ module Api::V1
 
     property :correct_answer_id,
              type: Integer,
+             writeable: false,
+             readable: true,
              if: -> (*) { task_step.completed? }
 
     property :answer_id,
@@ -27,7 +29,7 @@ module Api::V1
              type: String,
              writeable: false,
              readable: true,
-             getter: -> (*) { task_step.content },
+             getter: -> (*) { ::JSON.parse(task_step.content) },
              schema_info: {
                required: false,
                description: "The exercise content as JSON"
