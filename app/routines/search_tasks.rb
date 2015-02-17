@@ -26,7 +26,7 @@ protected
     end
 
     # We normally need the details associated with these tasks, so eager load them.
-    tasks = tasks.includes(:task_steps => :details) \
+    tasks = tasks.includes(:task_steps => :tasked) \
       if options[:eager_load_task_steps]
 
     run(OrganizeSearchResults, tasks, 
