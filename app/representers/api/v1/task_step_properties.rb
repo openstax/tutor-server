@@ -1,16 +1,21 @@
 module Api::V1
-  class TaskStepRepresenter < Roar::Decorator
+  module TaskStepProperties
 
     include Roar::Representer::JSON
 
-    # helper to convert "TaskedFooBar" to "foo_bar", e.g. "TaskedReading" -> "reading"
-    def self.external_tasked_type_string(klass_name)
-      klass_name.gsub("Tasked","").underscore.downcase
-    end
+    # These properties will be included in specific Tasked steps; therefore 
+    # their getters will be called from that context and so must call up to
+    # the "task_step" to access data in the TaskStep "base" class.  
+    #
+    # Using included properties instead of decorator inheritance makes it easier
+    # to render and parse json -- there is no confusion about which level to use
+    # it is always just the Tasked level and properties that access "base" class
+    # values always reach up to it.
 
     property :id, 
              type: Integer,
              writeable: false,
+             getter: -> (*) { task_step.id },
              schema_info: {
                required: true
              }
@@ -19,12 +24,12 @@ module Api::V1
              type: String,
              writeable: false,
              readable: true,
-             getter: lambda { |*| TaskStepRepresenter.external_tasked_type_string(tasked_type) },
+             getter: lambda { |*| self.class.name.gsub("Tasked","").underscore.downcase },
              schema_info: {
                required: true,
                description: "The type of this TaskStep, one of: #{
                             TaskedRepresenterMapper.models.collect{ |klass| 
-                              "'" + external_tasked_type_string(klass.name) + "'"
+                              "'" + klass.name.gsub("Tasked","").underscore.downcase + "'"
                             }.join(',')}"
              }
 
@@ -32,6 +37,7 @@ module Api::V1
              type: String,
              writeable: false,
              readable: true,
+             getter: -> (*) { task_step.title },
              schema_info: {
                required: true,
                description: "The title of this TaskStep"
@@ -40,11 +46,12 @@ module Api::V1
     property :is_completed,
              writeable: false,
              readable: true,
-             getter: lambda {|*| completed?},
+             getter: lambda {|*| task_step.completed?},
              schema_info: {
                required: true,
                description: "Whether or not this step is complete"
              }
+
 
   end
 end

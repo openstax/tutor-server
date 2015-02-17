@@ -4,7 +4,7 @@ class TaskStepAccessPolicy
     when :read
       requestor.is_human? && step_tasked_to_requestor?(task_step, requestor)
     when :create, :update, :destroy
-      false
+      requestor.is_human? && step_tasked_to_requestor?(task_step, requestor)
     when :mark_completed
       requestor.is_human? && step_tasked_to_requestor?(task_step, requestor)
     else

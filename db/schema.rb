@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150205192810) do
+ActiveRecord::Schema.define(version: 20150216233357) do
 
   create_table "administrators", force: :cascade do |t|
     t.integer  "user_id",    null: false
@@ -402,8 +402,12 @@ ActiveRecord::Schema.define(version: 20150205192810) do
   add_index "task_steps", ["tasked_id", "tasked_type"], name: "index_task_steps_on_tasked_id_and_tasked_type", unique: true
 
   create_table "tasked_exercises", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+    t.text     "feedback_html"
+    t.string   "correct_answer_id"
+    t.string   "answer_id"
+    t.text     "free_response"
   end
 
   create_table "tasked_interactives", force: :cascade do |t|

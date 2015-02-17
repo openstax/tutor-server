@@ -15,11 +15,17 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
   api :GET, '/tasks/:task_id/steps/:step_id', 'Gets the specified TaskStep'
   def show
     task_step = TaskStep.find(params[:id])
-    standard_read(task_step, Api::V1::TaskedRepresenterMapper.representer_for(task_step))
+    standard_read(task_step.tasked)
   end
 
+  api :PUT, '/tasks/:task_id/steps/:step_id', 'Updates the specified TaskStep'
   def update
-    raise NotYetImplemented
+    task_step = TaskStep.find(params[:id])
+    tasked = task_step.tasked
+    standard_update(tasked)
+
+    # TODO make a modified version of standard_update that returns the updated JSON
+    # instead of the default PUT result of No Content 204. 
   end
 
   api :GET, '/tasks/:task_id/steps/:step_id/completed', 'Marks the specified TaskStep as completed (if applicable)'
