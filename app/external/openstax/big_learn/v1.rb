@@ -1,4 +1,4 @@
-module BigLearn
+module OpenStax::BigLearn::V1
 
   mattr_accessor :use_stubs
   self.use_stubs = false

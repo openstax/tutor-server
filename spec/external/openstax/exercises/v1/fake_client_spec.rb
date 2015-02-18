@@ -80,6 +80,3 @@ RSpec.describe OpenStax::Exercises::V1::FakeClient do
   end
 
 end
-
-
-
