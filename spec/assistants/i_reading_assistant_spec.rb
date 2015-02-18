@@ -25,7 +25,7 @@ RSpec.describe IReadingAssistant, :type => :assistant do
     tasks.each do |task|
       expect(task.taskings.length).to eq 1
       task_steps = task.task_steps
-      expect(task_steps.length).to eq 12
+      expect(task_steps.length).to eq 15
 
       task_steps.each_with_index do |task_step, i|
         expect(task_step.content).not_to include('snap-lab')
@@ -41,6 +41,7 @@ RSpec.describe IReadingAssistant, :type => :assistant do
         eq ['TaskedReading', 'TaskedExercise', 'TaskedReading',
             'TaskedReading', 'TaskedExercise', 'TaskedExercise',
             'TaskedExercise', 'TaskedReading', 'TaskedExercise',
+            'TaskedExercise', 'TaskedExercise', 'TaskedExercise',
             'TaskedExercise', 'TaskedExercise', 'TaskedExercise']
       )
 
@@ -48,6 +49,7 @@ RSpec.describe IReadingAssistant, :type => :assistant do
         eq ['Defining motion', 'Exercise', 'Displacement ',
             'Distance', 'Exercise', 'Exercise',
             'Exercise', 'Vectors and Scalars', 'Exercise',
+            'Exercise', 'Exercise', 'Exercise',
             'Exercise', 'Exercise', 'Exercise']
       )
     end

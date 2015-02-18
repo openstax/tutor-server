@@ -112,7 +112,7 @@ class IReadingAssistant
         version = SecureRandom.hex
         OpenStax::Exercises::V1.fake_client.add_exercise(number: number,
                                                          version: version)
-        # TODO: abstract this
+        # TODO: abstract this parsing
         ex = JSON.parse(
           OpenStax::Exercises::V1.exercises(number: number, version: version)
         ).first
@@ -160,13 +160,20 @@ class IReadingAssistant
       #       right before the user gets the question
       SPACED_PRACTICE_MAP.each do |k_ago, number|
         number.times do
-          #ex = IReadingSpacedPracticeSlotFiller.call(taskee, k_ago)
-          #step = TaskStep.new(task: task,
-          #                    tasked: TaskedExercise.new,
-          #                    title: ex['title'] || 'Exercise',
-          #                    url: ex['url'] || page.url,
-          #                    content: ex.to_json)
-          #task.task_steps << step
+          # TODO: abstract this parsing
+          ex = FillIReadingSpacedPracticeSlot.call()#taskee, k_ago)
+                                             .outputs[:exercise_hash]
+
+          step = TaskStep.new(task: task,
+                              title: ex['title'] || 'Exercise',
+                              url: ex['url'] || page.url,
+                              content: ex[:content]) # TODO: stringify keys
+          step.tasked = TaskedExercise.new(task_step: step)
+          step.tasked.correct_answer_id = \
+            ex[:content][:questions].first[:answers].first[:id] || ''
+          # TODO: set feedback after user picks an answer (not here)
+          step.tasked.feedback_html = 'Spaced practice feedback here lorem ipsum dolor sit amet consectetur adipisci elit'
+          task.task_steps << step
         end
       end
 
