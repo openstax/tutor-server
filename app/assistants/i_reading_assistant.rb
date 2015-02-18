@@ -139,14 +139,23 @@ class IReadingAssistant
                       opens_at: opens_at,
                       due_at: due_at)
 
+      # TODO: abstract this
       task_step_attributes.each do |attributes|
         step = TaskStep.new(attributes.except(:tasked_class)
                                       .merge(task: task))
         step.tasked = attributes[:tasked_class].new(task_step: step)
+        if attributes[:tasked_class] == TaskedExercise
+          # TODO: extract correct_answer_id from Exercise
+          # TODO: set feedback after user picks an answer (not here)
+          step.tasked.feedback_html = 'Normal question feedback here lorem ipsum dolor sit amet consectetur adipisci elit'
+          step.tasked.correct_answer_id = '42'
+        end
         task.task_steps << step
       end
 
       # Spaced practice
+      # TODO: Make a SpacedPracticeStep that does this
+      #       right before the user gets the question
       SPACED_PRACTICE_MAP.each do |k_ago, number|
         number.times do
           #ex = IReadingSpacedPracticeSlotFiller.call(taskee, k_ago)
