@@ -43,6 +43,64 @@ class IReadingAssistant
     }'
   end
 
+  # Recursively removes a node and its empty parents
+  def self.recursive_compact(node, stop_node)
+    return if node == stop_node
+
+    # Get parent
+    parent = node.parent
+
+    # Remove current node
+    node.remove
+
+    # Remove parent if empty
+    recursive_compact(parent, stop_node) if parent.content.blank?
+  end
+
+  # Recursively removes all siblings before a node and its parents
+  # Returns the stop_node
+  def self.remove_before(node, stop_node)
+    # Stopping condition
+    return if node == stop_node
+
+    # Get parent
+    parent = node.parent
+
+    # Get siblings
+    siblings = parent.children
+
+    # Get node's index
+    index = siblings.index(node)
+
+    # Remove siblings before node
+    parent.children = siblings.slice(index..-1)
+
+    # Remove nodes after the parent
+    remove_before(parent, stop_node)
+  end
+
+  # Recursively removes all siblings after a node and its parents
+  # Returns the stop_node
+  def self.remove_after(node, stop_node)
+    # Stopping condition
+    return if node == stop_node
+
+    # Get parent
+    parent = node.parent
+
+    # Get siblings
+    siblings = parent.children
+
+    # Get node's index
+    index = siblings.index(node)
+
+    # Remove siblings after node
+    parent.children = siblings.slice(0..index)
+
+    # Remove nodes after the parent
+    remove_after(parent, stop_node)
+  end
+
   def self.distribute_tasks(task_plan:, taskees:)
     # Remove this (move it to tests) once we implement the real client
     OpenStax::Exercises::V1.use_fake_client
@@ -83,26 +141,32 @@ class IReadingAssistant
       # Get title
       reading_title = reading.at_xpath(TITLE_XPATH).try(:content) || 'Reading'
 
-      # Initialize Content
-      remaining_content = reading.content
+      # Initialize current_reading
+      current_reading = reading
 
-      # Extract Exercises
-      exercises = reading.xpath(EXERCISE_XPATH)
+      # Extract one Exercise
+      exercise = current_reading.at_xpath(EXERCISE_XPATH)
 
       # Split content on Exercises and create TaskSteps
-      exercises.each do |exercise|
-        # Split the remaining content
-        split_content = remaining_content.split(exercise.content)
-        reading_content = split_content.first
-        remaining_content = split_content.length > 1 ? \
-                              split_content.last : nil
+      while !exercise.nil? do
+        # Copy the reading content
+        next_reading = current_reading.dup
+        exercise_copy = next_reading.at_xpath(EXERCISE_XPATH)
+
+        # Split the reading content
+        remove_after(exercise, current_reading)
+        remove_before(exercise_copy, next_reading)
+
+        # Remove the exercises and any empty parents
+        recursive_compact(exercise, current_reading)
+        recursive_compact(exercise_copy, next_reading)
 
         # Create reading step before current exercise
-        unless reading_content.blank?
+        unless current_reading.content.blank?
           task_step_attributes << { tasked_class: TaskedReading,
                                     title: reading_title,
                                     url: page.url,
-                                    content: reading_content }
+                                    content: current_reading.to_html }
         end
 
         # Create exercise step
@@ -124,14 +188,17 @@ class IReadingAssistant
           content: ex.to_json,
           correct_answer_id: ex['questions'].first['answers'].first['id']
         }
+
+        current_reading = next_reading
+        exercise = current_reading.at_xpath(EXERCISE_XPATH)
       end
 
       # Create reading step after all exercises
-      unless remaining_content.blank?
+      unless current_reading.content.blank?
         task_step_attributes << { tasked_class: TaskedReading,
                                   title: reading_title,
                                   url: page.url,
-                                  content: remaining_content }
+                                  content: current_reading.to_html }
       end
     end
 
