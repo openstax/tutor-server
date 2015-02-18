@@ -1,6 +1,5 @@
 OSU::AccessPolicy.register(User, UserAccessPolicy)
 OSU::AccessPolicy.register(Task, TaskAccessPolicy)
-OSU::AccessPolicy.register(TaskStep, TaskStepAccessPolicy)
 OSU::AccessPolicy.register(TaskedExercise, TaskedAccessPolicy)
 OSU::AccessPolicy.register(TaskedReading, TaskedAccessPolicy)
 OSU::AccessPolicy.register(TaskedInteractive, TaskedAccessPolicy)
