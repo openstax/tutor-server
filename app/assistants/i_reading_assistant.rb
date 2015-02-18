@@ -43,7 +43,68 @@ class IReadingAssistant
     }'
   end
 
+  # Recursively removes a node and its empty parents
+  def self.recursive_compact(node, stop_node)
+    return if node == stop_node
+
+    # Get parent
+    parent = node.parent
+
+    # Remove current node
+    node.remove
+
+    # Remove parent if empty
+    recursive_compact(parent, stop_node) if parent.content.blank?
+  end
+
+  # Recursively removes all siblings before a node and its parents
+  # Returns the stop_node
+  def self.remove_before(node, stop_node)
+    # Stopping condition
+    return if node == stop_node
+
+    # Get parent
+    parent = node.parent
+
+    # Get siblings
+    siblings = parent.children
+
+    # Get node's index
+    index = siblings.index(node)
+
+    # Remove siblings before node
+    parent.children = siblings.slice(index..-1)
+
+    # Remove nodes after the parent
+    remove_before(parent, stop_node)
+  end
+
+  # Recursively removes all siblings after a node and its parents
+  # Returns the stop_node
+  def self.remove_after(node, stop_node)
+    # Stopping condition
+    return if node == stop_node
+
+    # Get parent
+    parent = node.parent
+
+    # Get siblings
+    siblings = parent.children
+
+    # Get node's index
+    index = siblings.index(node)
+
+    # Remove siblings after node
+    parent.children = siblings.slice(0..index)
+
+    # Remove nodes after the parent
+    remove_after(parent, stop_node)
+  end
+
   def self.distribute_tasks(task_plan:, taskees:)
+    # Remove this (move it to tests) once we implement the real client
+    OpenStax::Exercises::V1.use_fake_client
+
     page = Page.find(task_plan.settings[:page_id])
     title = task_plan.title || 'iReading'
     opens_at = task_plan.opens_at
@@ -80,46 +141,64 @@ class IReadingAssistant
       # Get title
       reading_title = reading.at_xpath(TITLE_XPATH).try(:content) || 'Reading'
 
-      # Initialize Content
-      remaining_content = reading.content
+      # Initialize current_reading
+      current_reading = reading
 
-      # Extract Exercises
-      exercises = reading.xpath(EXERCISE_XPATH)
+      # Extract one Exercise
+      exercise = current_reading.at_xpath(EXERCISE_XPATH)
 
       # Split content on Exercises and create TaskSteps
-      exercises.each do |exercise|
-        # Get title
-        exercise_title = exercise.at_xpath(TITLE_XPATH).try(:content) || \
-                         'Exercise'
+      while !exercise.nil? do
+        # Copy the reading content
+        next_reading = current_reading.dup
+        exercise_copy = next_reading.at_xpath(EXERCISE_XPATH)
 
-        # Split the remaining content
-        split_content = remaining_content.split(exercise.content)
-        reading_content = split_content.first
-        remaining_content = split_content.length > 1 ? \
-                              split_content.last : nil
+        # Split the reading content
+        remove_after(exercise, current_reading)
+        remove_before(exercise_copy, next_reading)
 
-        # Create reading step
-        unless reading_content.blank?
+        # Remove the exercises and any empty parents
+        recursive_compact(exercise, current_reading)
+        recursive_compact(exercise_copy, next_reading)
+
+        # Create reading step before current exercise
+        unless current_reading.content.blank?
           task_step_attributes << { tasked_class: TaskedReading,
                                     title: reading_title,
                                     url: page.url,
-                                    content: reading_content }
+                                    content: current_reading.to_html }
         end
 
         # Create exercise step
-        # TODO: Get title, url, content from OpenStax Exercises
-        task_step_attributes << { tasked_class: TaskedExercise,
-                                  title: exercise_title,
-                                  url: page.url,
-                                  content: exercise.content }
+        # TODO: Get info from OpenStax Exercises using ID from CNX
+        # For now, use the fake client with random number/version
+        number = SecureRandom.hex
+        version = SecureRandom.hex
+        OpenStax::Exercises::V1.fake_client.add_exercise(number: number,
+                                                         version: version)
+        # TODO: abstract this parsing
+        ex = JSON.parse(
+          OpenStax::Exercises::V1.exercises(number: number, version: version)
+        ).first
+
+        task_step_attributes << {
+          tasked_class: TaskedExercise,
+          title: ex['title'] || 'Exercise',
+          url: page.url,
+          content: ex.to_json,
+          correct_answer_id: ex['questions'].first['answers'].first['id']
+        }
+
+        current_reading = next_reading
+        exercise = current_reading.at_xpath(EXERCISE_XPATH)
       end
 
-      # Record after-exercise content
-      unless remaining_content.blank?
+      # Create reading step after all exercises
+      unless current_reading.content.blank?
         task_step_attributes << { tasked_class: TaskedReading,
                                   title: reading_title,
                                   url: page.url,
-                                  content: remaining_content }
+                                  content: current_reading.to_html }
       end
     end
 
@@ -132,16 +211,36 @@ class IReadingAssistant
                       due_at: due_at)
 
       task_step_attributes.each do |attributes|
-        step = TaskStep.new(attributes.except(:tasked_class)
+        step = TaskStep.new(attributes.except(:tasked_class, :correct_answer_id)
                                       .merge(task: task))
         step.tasked = attributes[:tasked_class].new(task_step: step)
+        if attributes[:tasked_class] == TaskedExercise
+          step.tasked.correct_answer_id = attributes[:correct_answer_id] || ''
+          # TODO: set feedback after user picks an answer (not here)
+          step.tasked.feedback_html = 'Normal question feedback here lorem ipsum dolor sit amet consectetur adipisci elit'
+        end
         task.task_steps << step
       end
 
       # Spaced practice
+      # TODO: Make a SpacedPracticeStep that does this
+      #       right before the user gets the question
       SPACED_PRACTICE_MAP.each do |k_ago, number|
         number.times do
-          #exercise_id = IReadingSpacedPracticeSlotFiller.call(taskee, k_ago)
+          # TODO: abstract this parsing
+          ex = FillIReadingSpacedPracticeSlot.call()#taskee, k_ago)
+                                             .outputs[:exercise_hash]
+
+          step = TaskStep.new(task: task,
+                              title: ex['title'] || 'Exercise',
+                              url: ex['url'] || page.url,
+                              content: ex[:content]) # TODO: stringify keys
+          step.tasked = TaskedExercise.new(task_step: step)
+          step.tasked.correct_answer_id = \
+            ex[:content][:questions].first[:answers].first[:id] || ''
+          # TODO: set feedback after user picks an answer (not here)
+          step.tasked.feedback_html = 'Spaced practice feedback here lorem ipsum dolor sit amet consectetur adipisci elit'
+          task.task_steps << step
         end
       end
 

@@ -14,7 +14,7 @@ class CreateBooks < ActiveRecord::Migration
 
     add_foreign_key :books, :resources, on_update: :cascade,
                                         on_delete: :cascade
-    add_foreign_key :books, :books, foreign_key: :parent_book_id,
+    add_foreign_key :books, :books, column: :parent_book_id,
                                     on_update: :cascade,
                                     on_delete: :cascade
   end

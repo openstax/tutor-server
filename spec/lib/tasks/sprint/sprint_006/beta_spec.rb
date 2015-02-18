@@ -46,6 +46,3 @@ RSpec.describe "Sprint006::Beta", :type => :request do
   end
 
 end
-
-
-

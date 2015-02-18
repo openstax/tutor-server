@@ -27,7 +27,7 @@ RSpec.describe OpenStax::Exercises::V1::FakeClient do
             ]
           }
         ]
-      }]
+      }].to_json
     )
   end
 
@@ -36,9 +36,9 @@ RSpec.describe OpenStax::Exercises::V1::FakeClient do
     fake_client.add_exercise(tags: ["franky"])
     fake_client.add_exercise(tags: ["billy"])
 
-    expect(fake_client.exercises(tag: "billy").count).to eq 2
-    expect(fake_client.exercises(tag: "franky").count).to eq 1
-    expect(fake_client.exercises(tag: "tommy").count).to eq 0
+    expect(JSON.parse(fake_client.exercises(tag: "billy")).count).to eq 2
+    expect(JSON.parse(fake_client.exercises(tag: "franky")).count).to eq 1
+    expect(JSON.parse(fake_client.exercises(tag: "tommy")).count).to eq 0
 
     expect(fake_client.exercises(tag: "franky")).to eq(
       [{
@@ -54,10 +54,11 @@ RSpec.describe OpenStax::Exercises::V1::FakeClient do
             ]
           }
         ]
-      }]
+      }].to_json
     )
 
-    expect(fake_client.exercises(tag: "billy", number: 1).count).to eq 1
+    expect(JSON.parse(fake_client.exercises(tag: "billy", number: 1)).count)
+      .to eq 1
   end
 
   it 'allows searching of exercises by version' do
@@ -65,7 +66,7 @@ RSpec.describe OpenStax::Exercises::V1::FakeClient do
     fake_client.add_exercise
     fake_client.add_exercise
 
-    expect(fake_client.exercises(version: 1).count).to eq 3
+    expect(JSON.parse(fake_client.exercises(version: 1)).count).to eq 3
   end
 
   it 'allows searching of exercises by version and id' do
@@ -73,12 +74,9 @@ RSpec.describe OpenStax::Exercises::V1::FakeClient do
     fake_client.add_exercise
     fake_client.add_exercise
 
-    expect(fake_client.exercises(id: "e1v1").count).to eq 1
-    expect(fake_client.exercises(id: "e2v1").count).to eq 1
-    expect(fake_client.exercises(id: "e4v1").count).to eq 0
+    expect(JSON.parse(fake_client.exercises(id: "e1v1")).count).to eq 1
+    expect(JSON.parse(fake_client.exercises(id: "e2v1")).count).to eq 1
+    expect(JSON.parse(fake_client.exercises(id: "e4v1")).count).to eq 0
   end
 
 end
-
-
-

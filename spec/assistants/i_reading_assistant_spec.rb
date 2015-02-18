@@ -25,10 +25,12 @@ RSpec.describe IReadingAssistant, :type => :assistant do
     tasks.each do |task|
       expect(task.taskings.length).to eq 1
       task_steps = task.task_steps
-      expect(task_steps.length).to eq 12
+      expect(task_steps.length).to eq 15
 
       task_steps.each_with_index do |task_step, i|
         expect(task_step.content).not_to include('snap-lab')
+        expect(page.content).not_to include(task_step.content) \
+          if task_step.tasked_type == 'TaskedExercise'
 
         task_steps.except(task_step).each do |other_step|
           expect(task_step.content).not_to include(other_step.content)
@@ -39,22 +41,16 @@ RSpec.describe IReadingAssistant, :type => :assistant do
         eq ['TaskedReading', 'TaskedExercise', 'TaskedReading',
             'TaskedReading', 'TaskedExercise', 'TaskedExercise',
             'TaskedExercise', 'TaskedReading', 'TaskedExercise',
+            'TaskedExercise', 'TaskedExercise', 'TaskedExercise',
             'TaskedExercise', 'TaskedExercise', 'TaskedExercise']
       )
 
       expect(task_steps.collect{|ts| ts.title}).to(
-        eq ['Defining motion',
-            'Looking at motion from two frames of reference',
-            'Displacement ',
-            'Distance',
-            'Calculating distance and displacement',
-            'PRACTICE PROBLEMS PLACEHOLDER',
-            'EXTRA-PRACTICE/HOMEWORK PLACEHOLDER',
-            'Vectors and Scalars',
-            'The Walking Man',
-            'Introduction to vectors and scalars',
-            'FORMATIVE ASSESSMENT PLACEHOLDER',
-            'Galilean and Newtonian Relativity']
+        eq ['Defining motion', 'Exercise', 'Displacement ',
+            'Distance', 'Exercise', 'Exercise',
+            'Exercise', 'Vectors and Scalars', 'Exercise',
+            'Exercise', 'Exercise', 'Exercise',
+            'Exercise', 'Exercise', 'Exercise']
       )
     end
 
