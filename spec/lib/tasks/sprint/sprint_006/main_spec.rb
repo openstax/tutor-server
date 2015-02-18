@@ -14,6 +14,3 @@ RSpec.describe Sprint006, :type => :routine do
   end
 
 end
-
-
-

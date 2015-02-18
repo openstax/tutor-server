@@ -14,6 +14,3 @@ RSpec.describe "Sprint 6 API", type: :request, :api => true, :version => :v1 do
   end
 
 end
-
-
-
