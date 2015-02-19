@@ -8,10 +8,18 @@ module Api::V1
              writeable: false,
              readable: true,
              as: :content_url,
-             getter: -> (*) { task_step.url },
              schema_info: {
                required: false,
-               description: "The URL for the associated Resource"
+               description: "The source URL for this Reading"
+             }
+
+    property :title,
+             type: String,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               required: true,
+               description: "The title of this Reading"
              }
 
     property :content,
@@ -19,10 +27,9 @@ module Api::V1
              writeable: false,
              readable: true,
              as: :content_html,
-             getter: -> (*) { task_step.content },
              schema_info: {
                required: false,
-               description: "The Resource content as HTML"
+               description: "The Reading content as HTML"
              }
 
   end

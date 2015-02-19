@@ -20,27 +20,30 @@ FactoryGirl.define do
     end
 
     task_step nil
+    url { Faker::Internet.url }
 
     after(:build) do |tasked_exercise, evaluator|
-      exercise_hash = OpenStax::Exercises::V1.fake_client.new_exercise_hash(generate :exercise_number)
+      if tasked_exercise.content.nil?
+        exercise_hash = OpenStax::Exercises::V1.fake_client.new_exercise_hash(
+          generate :exercise_number
+        )
+        tasked_exercise.content = exercise_hash.to_json
+      end
 
-      options = {
-        tasked: tasked_exercise,
-        content: exercise_hash.to_json,
-      }
+      options = { tasked: tasked_exercise }
 
       tasked_exercise.correct_answer_id = exercise_hash[:questions][0][:answers][0][:id]
       tasked_exercise.feedback_html = evaluator.feedback_html
 
       options[:task] = nil if evaluator.skip_task
 
-      tasked_exercise.task_step ||= 
-        FactoryGirl.build(:task_step, options)
+      tasked_exercise.task_step ||= FactoryGirl.build(:task_step, options)
     end
 
     trait :with_tasking do
       after(:build) do |tasked, evaluator|
-        FactoryGirl.create(:tasking, taskee: evaluator.tasked_to, task: tasked.task_step.task)
+        FactoryGirl.create(:tasking, taskee: evaluator.tasked_to,
+                                     task: tasked.task_step.task)
       end
     end
 

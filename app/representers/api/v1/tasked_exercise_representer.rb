@@ -3,6 +3,35 @@ module Api::V1
 
     include TaskStepProperties
 
+    property :url,
+             type: String,
+             writeable: false,
+             readable: true,
+             as: :content_url,
+             schema_info: {
+               required: false,
+               description: "The source URL for this Exercise"
+             }
+
+    property :title,
+             type: String,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               required: true,
+               description: "The title of this Exercise"
+             }
+
+    property :content,
+             type: String,
+             writeable: false,
+             readable: true,
+             as: :content_json,
+             schema_info: {
+               required: false,
+               description: "The Exercise content as JSON"
+             }
+
     property :correct_answer_id,
              type: Integer,
              writeable: false,
@@ -25,14 +54,5 @@ module Api::V1
              readable: true,
              if: -> (*) { task_step.completed? }
 
-    property :content,
-             type: String,
-             writeable: false,
-             readable: true,
-             getter: -> (*) { ::JSON.parse(task_step.content) },
-             schema_info: {
-               required: false,
-               description: "The exercise content as JSON"
-             }
   end
 end
