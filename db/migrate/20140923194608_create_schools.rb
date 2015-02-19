@@ -5,8 +5,8 @@ class CreateSchools < ActiveRecord::Migration
       t.string :default_time_zone
 
       t.timestamps null: false
-    end
 
-    add_index :schools, :name, unique: true
+      t.index :name, unique: true
+    end
   end
 end

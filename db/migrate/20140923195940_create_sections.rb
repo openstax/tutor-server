@@ -5,10 +5,10 @@ class CreateSections < ActiveRecord::Migration
       t.string :name
 
       t.timestamps null: false
-    end
 
-    add_index :sections, [:name, :klass_id], unique: true
-    add_index :sections, :klass_id
+      t.index [:name, :klass_id], unique: true
+      t.index :klass_id
+    end
 
     add_foreign_key :sections, :klasses, on_update: :cascade,
                                          on_delete: :cascade

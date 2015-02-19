@@ -21,8 +21,8 @@ RSpec.describe Import::CnxResource, :type => :routine, vcr: VCR_OPTS do
     expect(result.errors).to be_empty
     out = result.outputs
     expect(out[:hash]).to eq JSON.parse(hash.to_json)
-    expect(out[:resource]).to be_persisted
-    expect(out[:resource].content).not_to be_blank
+    expect(out[:url]).not_to be_blank
+    expect(out[:content]).not_to be_blank
   end
 
   it 'returns the hash for a real web request' do
@@ -30,7 +30,7 @@ RSpec.describe Import::CnxResource, :type => :routine, vcr: VCR_OPTS do
     expect(result.errors).to be_empty
     out = result.outputs
     expect(out[:hash]).not_to be_blank
-    expect(out[:resource]).to be_persisted
-    expect(out[:resource].content).not_to be_blank
+    expect(out[:url]).not_to be_blank
+    expect(out[:content]).not_to be_blank
   end
 end

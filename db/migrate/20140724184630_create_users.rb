@@ -6,11 +6,11 @@ class CreateUsers < ActiveRecord::Migration
       t.datetime   :deleted_at
 
       t.timestamps null: false
-    end
 
-    add_index :users, :account_id, unique: true
-    add_index :users, :exchange_identifier, unique: true
-    add_index :users, :deleted_at
+      t.index :account_id, unique: true
+      t.index :exchange_identifier, unique: true
+      t.index :deleted_at
+    end
 
     add_foreign_key :users, :openstax_accounts_accounts, column: :account_id,
                                                          on_update: :restrict,

@@ -6,11 +6,11 @@ class CreateTaskings < ActiveRecord::Migration
       t.references :user, null: false
 
       t.timestamps null: false
-    end
 
-    add_index :taskings, [:taskee_id, :taskee_type, :task_id], unique: true
-    add_index :taskings, [:task_id, :user_id], unique: true
-    add_index :taskings, :user_id
+      t.index [:taskee_id, :taskee_type, :task_id], unique: true
+      t.index [:task_id, :user_id], unique: true
+      t.index :user_id
+    end
 
     add_foreign_key :taskings, :tasks, on_update: :cascade,
                                        on_delete: :cascade

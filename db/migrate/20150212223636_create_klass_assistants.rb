@@ -7,10 +7,10 @@ class CreateKlassAssistants < ActiveRecord::Migration
       t.text :data
 
       t.timestamps null: false
-    end
 
-    add_index :klass_assistants, [:klass_id, :assistant_id], unique: true
-    add_index :klass_assistants, :assistant_id
+      t.index [:klass_id, :assistant_id], unique: true
+      t.index :assistant_id
+    end
 
     add_foreign_key :klass_assistants, :klasses
     add_foreign_key :klass_assistants, :assistants

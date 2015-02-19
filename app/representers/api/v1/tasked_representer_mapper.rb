@@ -32,8 +32,7 @@ module Api::V1
     def self.map
       @@map ||= {
         TaskedReading     => ->(*) { TaskedReadingRepresenter },
-        TaskedExercise    => ->(*) { TaskedExerciseRepresenter },
-        TaskedInteractive => ->(*) { TaskedInteractiveRepresenter }
+        TaskedExercise    => ->(*) { TaskedExerciseRepresenter }
       }
     end
 

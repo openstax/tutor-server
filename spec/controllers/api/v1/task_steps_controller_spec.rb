@@ -53,13 +53,6 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
       expect(tasked.task_step(true).completed?).to be_falsy
     end
 
-    it "should allow marking completion of interactive steps" do
-      tasked = create_tasked(:tasked_interactive, user_1)
-      api_put :completed, user_1_token, parameters: {task_id: tasked.task_step.task.id, id: tasked.task_step.id}
-      expect(response.code).to eq '200'
-      expect(tasked.task_step(true).completed?).to be_truthy
-    end
-
     it "should allow marking completion of exercise steps" do
       tasked = create_tasked(:tasked_exercise, user_1)
       api_put :completed, user_1_token, parameters: {task_id: tasked.task_step.task.id, id: tasked.task_step.id}

@@ -36,7 +36,8 @@ module Import
       run(:cnx_import, id, options.merge(book: true))
 
       outputs[:book] = import_collection(nil, outputs[:hash]['tree'], options)
-      outputs[:book].resource = outputs[:resource]
+      outputs[:book].url = outputs[:url]
+      outputs[:book].content = outputs[:content]
       outputs[:book].save
 
       transfer_errors_from outputs[:book], type: :verbatim

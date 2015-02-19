@@ -1,5 +1,5 @@
 class Book < ActiveRecord::Base
-  belongs_to_resource allow_nil: true
+  acts_as_resource allow_nil: true
 
   sortable_belongs_to :parent_book, on: :number,
                                     class_name: 'Book',

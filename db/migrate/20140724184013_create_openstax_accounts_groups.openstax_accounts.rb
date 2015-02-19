@@ -9,9 +9,8 @@ class CreateOpenStaxAccountsGroups < ActiveRecord::Migration
       t.text :cached_supertree_group_ids
 
       t.timestamps null: false
-    end
 
-    add_index :openstax_accounts_groups, :openstax_uid, :unique => true
-    add_index :openstax_accounts_groups, :is_public
+      t.index :openstax_uid, :unique => true
+    end
   end
 end

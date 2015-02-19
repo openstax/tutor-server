@@ -5,10 +5,10 @@ class CreateSchoolManagers < ActiveRecord::Migration
       t.references :user, null: false
 
       t.timestamps null: false
-    end
 
-    add_index :school_managers, [:user_id, :school_id], unique: true
-    add_index :school_managers, :school_id
+      t.index [:user_id, :school_id], unique: true
+      t.index :school_id
+    end
 
     add_foreign_key :school_managers, :schools, on_update: :cascade,
                                                 on_delete: :cascade

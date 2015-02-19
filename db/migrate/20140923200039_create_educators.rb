@@ -5,10 +5,10 @@ class CreateEducators < ActiveRecord::Migration
       t.references :user, null: false
 
       t.timestamps null: false
-    end
 
-    add_index :educators, [:user_id, :klass_id], unique: true
-    add_index :educators, :klass_id
+      t.index [:user_id, :klass_id], unique: true
+      t.index :klass_id
+    end
 
     add_foreign_key :educators, :klasses, on_update: :cascade,
                                           on_delete: :cascade

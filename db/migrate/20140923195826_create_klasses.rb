@@ -11,11 +11,11 @@ class CreateKlasses < ActiveRecord::Migration
       t.boolean :allow_student_custom_identifier
 
       t.timestamps null: false
-    end
 
-    add_index :klasses, [:ends_at, :starts_at]
-    add_index :klasses, [:invisible_at, :visible_at]
-    add_index :klasses, :course_id
+      t.index [:ends_at, :starts_at]
+      t.index [:invisible_at, :visible_at]
+      t.index :course_id
+    end
 
     add_foreign_key :klasses, :courses, on_update: :cascade,
                                         on_delete: :cascade

@@ -4,9 +4,9 @@ class CreateAdministrators < ActiveRecord::Migration
       t.references :user, null: false
 
       t.timestamps null: false
-    end
 
-    add_index :administrators, :user_id, unique: true
+      t.index :user_id, unique: true
+    end
 
     add_foreign_key :administrators, :users, on_update: :cascade,
                                              on_delete: :cascade

@@ -17,9 +17,12 @@ module Import
     lev_routine
 
     uses_routine Import::CnxResource,
-                 as: :cnx_import, translations: { outputs: { type: :verbatim } }
+                 as: :cnx_import,
+                 translations: { outputs: { type: :verbatim } }
 
-    uses_routine TagResourceWithTopics, as: :tag
+    uses_routine TagResourceWithTopics,
+                 as: :tag,
+                 translations: { outputs: { type: :verbatim } }
 
     protected
 
@@ -39,17 +42,6 @@ module Import
       "#{TUTOR_ATTACHMENTS_URL}/#{filename}"
     end
 
-    # Finds LO's that appear in the content body using a matcher
-    # Finds or creates a Topic for each LO
-    # Returns the array of PageTopics created
-    def extract_topics(doc, page)
-      los = doc.xpath(LO_XPATH).collect do |node|
-        LO_REGEX.match(node.value).try(:[], 0)
-      end.compact.uniq
-
-      run(:tag, page.resource, los).outputs[:tags]
-    end
-
     # Imports and saves a CNX page as a Page into the given Book
     # Returns the Resource object, a Page object and
     # the JSON hash used to create them
@@ -57,14 +49,18 @@ module Import
       run(:cnx_import, id, options)
       hash = outputs[:hash]
 
-      outputs[:page] = ::Page.create(resource: outputs[:resource],
+      outputs[:page] = ::Page.create(url: outputs[:url],
+                                     content: outputs[:content],
                                      book: book,
                                      title: hash['title'] || '')
       book.pages << outputs[:page] unless book.nil?
       transfer_errors_from outputs[:page], type: :verbatim
 
-      outputs[:resource_topics] = extract_topics(outputs[:doc], outputs[:page])
-      outputs[:topics] = outputs[:resource_topics].collect{|rt| rt.topic}
+      los = outputs[:doc].xpath(LO_XPATH).collect do |node|
+        LO_REGEX.match(node.value).try(:[], 0)
+      end.compact.uniq
+
+      run(:tag, outputs[:page], los)
     end
 
   end

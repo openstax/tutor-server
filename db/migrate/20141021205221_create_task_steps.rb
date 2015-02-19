@@ -10,10 +10,10 @@ class CreateTaskSteps < ActiveRecord::Migration
       t.datetime :completed_at
 
       t.timestamps null: false
-    end
 
-    add_index :task_steps, [:tasked_id, :tasked_type], unique: true
-    add_index :task_steps, [:task_id, :number], unique: true
+      t.index [:tasked_id, :tasked_type], unique: true
+      t.index [:task_id, :number], unique: true
+    end
 
     add_foreign_key :task_steps, :tasks, on_update: :cascade,
                                          on_delete: :cascade

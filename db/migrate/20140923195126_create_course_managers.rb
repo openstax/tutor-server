@@ -5,10 +5,10 @@ class CreateCourseManagers < ActiveRecord::Migration
       t.references :user, null: false
 
       t.timestamps null: false
-    end
 
-    add_index :course_managers, [:user_id, :course_id], unique: true
-    add_index :course_managers, :course_id
+      t.index [:user_id, :course_id], unique: true
+      t.index :course_id
+    end
 
     add_foreign_key :course_managers, :courses, on_update: :cascade,
                                                 on_delete: :cascade

@@ -8,21 +8,20 @@ class InstallFinePrint < ActiveRecord::Migration
       t.text :content, :null => false
 
       t.timestamps null: false
-    end
 
-    add_index :fine_print_contracts, [:name, :version], :unique => true
+      t.index [:name, :version], :unique => true
+    end
 
     create_table :fine_print_signatures do |t|
       t.belongs_to :contract, :null => false
       t.belongs_to :user, :polymorphic => true, :null => false
-
-      t.timestamps
-    end
-
-    add_index :fine_print_signatures, :contract_id
-    add_index :fine_print_signatures,
-              [:user_id, :user_type, :contract_id],
+      t.index [:user_id, :user_type, :contract_id],
               :name => 'index_fine_print_signatures_on_u_id_and_u_type_and_c_id',
               :unique => true
+
+      t.timestamps null: false
+
+      t.index :contract_id
+    end
   end
 end
