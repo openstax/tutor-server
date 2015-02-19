@@ -1,14 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe Student, :type => :model do
-  it { is_expected.to belong_to(:klass) }
+  it { is_expected.to belong_to(:course) }
   it { is_expected.to belong_to(:section) }
 
   it { is_expected.to have_many(:taskings).dependent(:destroy) }
   it { is_expected.to have_many(:tasking_plans).dependent(:destroy) }
 
   it { is_expected.to validate_presence_of(:user) }
-  it { is_expected.to validate_presence_of(:klass) }
+  it { is_expected.to validate_presence_of(:course) }
   it { is_expected.to validate_presence_of(:random_education_identifier) }
   
   it 'must enforce that one student is only in one section once' do
@@ -21,18 +21,16 @@ RSpec.describe Student, :type => :model do
     expect(student2).to_not be_valid
   end
 
-  it 'must enforce that one student is only in one klass once' do
+  it 'must enforce that no student is in a course more than once' do
     student1 = FactoryGirl.create(:student)
     student2 = FactoryGirl.create(:student)
-    student2.klass = student1.klass
+    student2.course = student1.course
     expect(student2).to_not be_valid
   end
 
-  it 'must have a section that matches the klass' do
-    section = FactoryGirl.create(:section)
-    other_klass = FactoryGirl.create(:klass)
-
+  it 'must have a section that matches the course' do
     student = FactoryGirl.create(:student)
+    expect(student).to be_persisted
     student.section = FactoryGirl.create(:section)
     expect(student).to_not be_valid
   end

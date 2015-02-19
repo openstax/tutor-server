@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :section do
-    klass
+    course
     sequence(:name) {|n| "Section #{n}" }
   end
 end

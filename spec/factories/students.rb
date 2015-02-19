@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :student do
-    klass
+    course nil
     section
     user
     level "graded"
@@ -22,8 +22,9 @@ FactoryGirl.define do
     end
 
     after(:build) do |student|
-      # section and klass need to agree
-      student.section.klass = student.klass
+      # Section and course need to agree
+      student.course ||= student.section.course
+      student.section.course = student.course
     end
 
   end

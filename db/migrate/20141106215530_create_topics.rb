@@ -4,8 +4,8 @@ class CreateTopics < ActiveRecord::Migration
       t.string :name, null: false
 
       t.timestamps null: false
-    end
 
-    add_index :topics, :name, unique: true
+      t.index :name, unique: true
+    end
   end
 end

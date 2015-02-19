@@ -1,9 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe ActsAsTasked do
-  [:tasked_reading,
-   :tasked_exercise,
-   :tasked_interactive].each do |tasked_class|
+  [:tasked_reading, :tasked_exercise].each do |tasked_class|
     subject(:tasked) { FactoryGirl.create tasked_class }
 
     it { is_expected.to have_one(:task_step).dependent(:destroy) }

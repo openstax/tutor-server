@@ -7,11 +7,10 @@ class CreateExerciseSubsteps < ActiveRecord::Migration
       t.datetime :completed_at
 
       t.timestamps null: false
-    end
 
-    add_index :exercise_substeps, [:subtasked_id, :subtasked_type],
-              unique: true
-    add_index :exercise_substeps, [:tasked_exercise_id, :number], unique: true
+      t.index [:subtasked_id, :subtasked_type], unique: true
+      t.index [:tasked_exercise_id, :number], unique: true
+    end
 
     add_foreign_key :exercise_substeps, :tasked_exercises,
                     on_update: :cascade,  on_delete: :cascade

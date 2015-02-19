@@ -6,7 +6,7 @@ FactoryGirl.define do
       assistant_code_class_name "DummyAssistant"
     end
 
-    association :owner, factory: :klass
+    association :owner, factory: :course
     settings { {} }
     opens_at { Time.now }
     due_at { opens_at + duration }

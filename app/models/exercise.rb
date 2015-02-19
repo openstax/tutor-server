@@ -1,5 +1,5 @@
 class Exercise < ActiveRecord::Base
-  belongs_to_resource
+  acts_as_resource
 
   has_many :exercise_topics, dependent: :destroy
 end

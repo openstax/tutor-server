@@ -4,17 +4,21 @@ class TagResourceWithTopics
 
   protected
 
-  def exec(resource, topics)
+  def exec(resource, topics, options = {})
+    resource_class_name = resource.class.name
+    tag_class = options[:tag_class] || \
+                "#{resource_class_name}Topic".constantize
+    resource_field = resource_class_name.underscore.to_sym
+
     outputs[:topics] = []
     outputs[:tags] = []
-
     topics.each do |t|
       topic = t.is_a?(Topic) ? t : Topic.find_or_create_by(name: t.to_s)
       outputs[:topics] << topic
       transfer_errors_from(topic, scope: :topics)
 
-      tag = ResourceTopic.find_or_create_by(topic: topic,
-                                            resource: resource)
+      tag = tag_class.find_or_create_by(topic: topic,
+                                        resource_field => resource)
       outputs[:tags] << tag
       transfer_errors_from(tag, scope: :tags)
     end

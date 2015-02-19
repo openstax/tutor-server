@@ -1,7 +1,7 @@
 RSpec.describe Assistant, :type => :model do
   subject { FactoryGirl.create :assistant }
 
-  it { is_expected.to have_many(:klass_assistants).dependent(:destroy) }
+  it { is_expected.to have_many(:course_assistants).dependent(:destroy) }
   it { is_expected.to have_many(:task_plans).dependent(:destroy) }
 
   it { is_expected.to validate_presence_of(:name) }

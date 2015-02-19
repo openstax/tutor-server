@@ -10,11 +10,11 @@ class CreateTaskPlans < ActiveRecord::Migration
       t.datetime :due_at
 
       t.timestamps null: false
-    end
 
-    add_index :task_plans, [:owner_id, :owner_type]
-    add_index :task_plans, [:due_at, :opens_at]
-    add_index :task_plans, :assistant_id
+      t.index [:owner_id, :owner_type]
+      t.index [:due_at, :opens_at]
+      t.index :assistant_id
+    end
 
     add_foreign_key :task_plans, :assistants, on_update: :cascade,
                                               on_delete: :cascade

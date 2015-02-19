@@ -14,11 +14,11 @@ class Task < ActiveRecord::Base
     taskings.size > 1
   end
 
-  def klass
+  def course
     owner = task_plan.owner
     case owner
     when Educator
-      owner.klass
+      owner.course
     else
       nil
     end

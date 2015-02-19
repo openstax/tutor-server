@@ -1,6 +1,6 @@
 class Assistant < ActiveRecord::Base
 
-  has_many :klass_assistants, dependent: :destroy
+  has_many :course_assistants, dependent: :destroy
 
   has_many :task_plans, dependent: :destroy
 

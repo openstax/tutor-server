@@ -6,9 +6,9 @@ class CreateAssistants < ActiveRecord::Migration
       t.string :task_plan_type, null: false
 
       t.timestamps null: false
-    end
 
-    add_index :assistants, :name, unique: true
-    add_index :assistants, :code_class_name, unique: true
+      t.index :name, unique: true
+      t.index :code_class_name, unique: true
+    end
   end
 end

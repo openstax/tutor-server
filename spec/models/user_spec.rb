@@ -5,8 +5,6 @@ RSpec.describe User, :type => :model do
   it { is_expected.to have_many(:groups_as_member) }
   it { is_expected.to have_many(:groups_as_owner) }
   it { is_expected.to have_one(:administrator).dependent(:destroy) }
-  it { is_expected.to have_many(:course_managers).dependent(:destroy) }
-  it { is_expected.to have_many(:school_managers).dependent(:destroy) }
   it { is_expected.to have_many(:educators).dependent(:destroy) }
   it { is_expected.to have_many(:students).dependent(:destroy) }
 

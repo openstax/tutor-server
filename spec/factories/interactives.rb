@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :interactive do
-    resource
+    url { Faker::Internet.url }
     title { Faker::Lorem.words(3) }
   end
 end

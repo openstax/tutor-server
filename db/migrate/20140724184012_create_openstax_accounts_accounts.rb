@@ -11,13 +11,13 @@ class CreateOpenStaxAccountsAccounts < ActiveRecord::Migration
       t.string  :title
 
       t.timestamps null: false
-    end
 
-    add_index :openstax_accounts_accounts, :openstax_uid, :unique => true
-    add_index :openstax_accounts_accounts, :username, :unique => true
-    add_index :openstax_accounts_accounts, :access_token, :unique => true
-    add_index :openstax_accounts_accounts, :first_name
-    add_index :openstax_accounts_accounts, :last_name
-    add_index :openstax_accounts_accounts, :full_name
+      t.index :openstax_uid, :unique => true
+      t.index :username, :unique => true
+      t.index :access_token, :unique => true
+      t.index :first_name
+      t.index :last_name
+      t.index :full_name
+    end
   end
 end

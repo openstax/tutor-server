@@ -9,11 +9,11 @@ class CreateTasks < ActiveRecord::Migration
       t.integer :taskings_count, null: false, default: 0
 
       t.timestamps null: false
-    end
 
-    add_index :tasks, :task_plan_id
-    add_index :tasks, :task_type
-    add_index :tasks, [:due_at, :opens_at]
+      t.index :task_plan_id
+      t.index :task_type
+      t.index [:due_at, :opens_at]
+    end
 
     add_foreign_key :tasks, :task_plans, on_update: :cascade,
                                          on_delete: :cascade

@@ -1,6 +1,6 @@
 FactoryGirl.define do
-  factory :resource_topic do
-    resource
+  factory :exercise_topic do
+    exercise
     topic
   end
 end

@@ -1,14 +1,22 @@
 FactoryGirl.define do
-  sequence :course_number do |n| "#{n}" end
-  
   factory :course do
-    transient do
-      course_number { generate(:course_number) }
+    transient do 
+      starting_time Time.now
+      start_to_end 3.months
+      visible_to_start 7.days
+      end_to_invisible 7.days
     end
 
-    name { "Course #{course_number}" }
-    short_name { "C#{course_number}" }
-    description Faker::Lorem.paragraph
-    school
+    school 'Tutor'
+    name { "Course #{SecureRandom.hex}" }
+    short_name { "tc#{SecureRandom.hex}" }
+    description ''
+    approved_emails ''
+    allow_student_custom_identifier false
+    starts_at { starting_time }
+    ends_at { starting_time + start_to_end }
+    visible_at { starting_time - visible_to_start }
+    invisible_at { ends_at + end_to_invisible }
+    time_zone { ActiveSupport::TimeZone.us_zones.map(&:to_s).first }
   end
 end

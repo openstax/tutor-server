@@ -6,9 +6,9 @@ class CreateOpenStaxAccountsGroupOwners < ActiveRecord::Migration
       t.references :user, null: false
 
       t.timestamps null: false
-    end
 
-    add_index :openstax_accounts_group_owners, [:group_id, :user_id], unique: true
-    add_index :openstax_accounts_group_owners, :user_id
+      t.index [:group_id, :user_id], unique: true
+      t.index :user_id
+    end
   end
 end

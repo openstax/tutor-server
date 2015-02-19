@@ -1,16 +1,13 @@
 class CreateExercises < ActiveRecord::Migration
   def change
     create_table :exercises do |t|
-      t.references :resource, null: false
+      t.resource
       t.string :title
 
       t.timestamps null: false
+
+      t.resource_index
+      t.index :title
     end
-
-    add_index :exercises, :resource_id, unique: true
-    add_index :exercises, :title
-
-    add_foreign_key :exercises, :resources, on_update: :cascade,
-                                            on_delete: :cascade
   end
 end
