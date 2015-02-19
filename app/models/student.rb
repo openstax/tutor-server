@@ -1,6 +1,6 @@
 class Student < ActiveRecord::Base
   belongs_to :user
-  belongs_to :klass
+  belongs_to :course
   belongs_to :section
 
   has_many :tasking_plans, as: :target, dependent: :destroy
@@ -11,7 +11,7 @@ class Student < ActiveRecord::Base
   validates :user, 
             presence: true
 
-  validates :klass, 
+  validates :course, 
             presence: true,
             uniqueness: { scope: :user_id }
   
@@ -23,11 +23,11 @@ class Student < ActiveRecord::Base
             presence: true,
             uniqueness: true
 
-  validate :section_is_in_klass
+  validate :section_is_in_course
 
-  def section_is_in_klass
-    return if section.nil? || section.klass_id == klass_id
-    errors.add(:section, 'does not agree with class')
+  def section_is_in_course
+    return if section.nil? || section.course_id == course_id
+    errors.add(:section, 'does not agree with course')
     false
   end
 

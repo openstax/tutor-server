@@ -1,7 +1,7 @@
 class CreateStudents < ActiveRecord::Migration
   def change
     create_table :students do |t|
-      t.references :klass, null: false
+      t.references :course, null: false
       t.references :section, null: true
       t.references :user, null: false
       t.integer :level
@@ -12,9 +12,9 @@ class CreateStudents < ActiveRecord::Migration
 
       t.timestamps null: false
 
-      t.index [:user_id, :klass_id], unique: true
+      t.index [:user_id, :course_id], unique: true
       t.index [:user_id, :section_id], unique: true
-      t.index :klass_id
+      t.index :course_id
       t.index :section_id
       t.index :random_education_identifier, unique: true
       t.index :student_custom_identifier
@@ -24,7 +24,7 @@ class CreateStudents < ActiveRecord::Migration
 
 
 
-    add_foreign_key :students, :klasses, on_update: :cascade,
+    add_foreign_key :students, :courses, on_update: :cascade,
                                          on_delete: :cascade
     add_foreign_key :students, :sections, on_update: :cascade,
                                           on_delete: :cascade

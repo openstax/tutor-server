@@ -29,7 +29,8 @@ module Api::V1
                required: true,
                description: "The type of this TaskStep, one of: #{
                             TaskedRepresenterMapper.models.collect{ |klass| 
-                              "'" + klass.name.gsub("Tasked","").underscore.downcase + "'"
+                              "'" + klass.name.gsub("Tasked","")
+                                         .underscore.downcase + "'"
                             }.join(',')}"
              }
 

@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :educator do
-    klass
+    course
     user
   end
 end

@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe ActsAsResource do
-  [:page, :exercise].each do |klass_name|
-    context klass_name do
-      subject(:r) { FactoryGirl.create klass_name }
+  [:page, :exercise].each do |class_name|
+    context class_name do
+      subject(:r) { FactoryGirl.create class_name }
 
       it { is_expected.to validate_presence_of(:url) }
 

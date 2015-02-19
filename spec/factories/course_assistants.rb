@@ -1,6 +1,6 @@
 FactoryGirl.define do
-  factory :klass_assistant do
-    klass
+  factory :course_assistant do
+    course
     assistant
   end
 end

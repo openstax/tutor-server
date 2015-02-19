@@ -23,9 +23,9 @@ class DistributeTasks
 
     owner = task_plan.owner
     assistant = task_plan.assistant
-    klass_assistant = owner.is_a?(Klass) ? \
-                        assistant.klass_assistants.where(klass: owner) : nil
-    data = klass_assistant.try(:data) || {}
+    course_assistant = owner.is_a?(Course) ? \
+                         assistant.course_assistants.where(course: owner) : nil
+    data = course_assistant.try(:data) || {}
     taskees = run(:get_taskees, task_plan).outputs[:taskees]
 
     # Validate the given settings against the assistant's schema

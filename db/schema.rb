@@ -45,37 +45,48 @@ ActiveRecord::Schema.define(version: 20150218225408) do
   add_index "books", ["parent_book_id", "number"], name: "index_books_on_parent_book_id_and_number", unique: true
   add_index "books", ["url"], name: "index_books_on_url", unique: true
 
-  create_table "course_managers", force: :cascade do |t|
+  create_table "course_assistants", force: :cascade do |t|
+    t.integer  "course_id",    null: false
+    t.integer  "assistant_id", null: false
+    t.text     "settings"
+    t.text     "data"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
+
+  add_index "course_assistants", ["assistant_id"], name: "index_course_assistants_on_assistant_id"
+  add_index "course_assistants", ["course_id", "assistant_id"], name: "index_course_assistants_on_course_id_and_assistant_id", unique: true
+
+  create_table "courses", force: :cascade do |t|
+    t.string   "school",                          null: false
+    t.string   "name",                            null: false
+    t.string   "short_name",                      null: false
+    t.string   "time_zone",                       null: false
+    t.text     "description",                     null: false
+    t.text     "approved_emails",                 null: false
+    t.boolean  "allow_student_custom_identifier", null: false
+    t.datetime "starts_at"
+    t.datetime "ends_at"
+    t.datetime "visible_at"
+    t.datetime "invisible_at"
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
+  end
+
+  add_index "courses", ["ends_at", "starts_at"], name: "index_courses_on_ends_at_and_starts_at"
+  add_index "courses", ["invisible_at", "visible_at"], name: "index_courses_on_invisible_at_and_visible_at"
+  add_index "courses", ["school", "name"], name: "index_courses_on_school_and_name", unique: true
+  add_index "courses", ["short_name", "school"], name: "index_courses_on_short_name_and_school", unique: true
+
+  create_table "educators", force: :cascade do |t|
     t.integer  "course_id",  null: false
     t.integer  "user_id",    null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  add_index "course_managers", ["course_id"], name: "index_course_managers_on_course_id"
-  add_index "course_managers", ["user_id", "course_id"], name: "index_course_managers_on_user_id_and_course_id", unique: true
-
-  create_table "courses", force: :cascade do |t|
-    t.integer  "school_id"
-    t.string   "name",        null: false
-    t.string   "short_name",  null: false
-    t.text     "description", null: false
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
-  end
-
-  add_index "courses", ["name", "school_id"], name: "index_courses_on_name_and_school_id", unique: true
-  add_index "courses", ["school_id", "short_name"], name: "index_courses_on_school_id_and_short_name", unique: true
-
-  create_table "educators", force: :cascade do |t|
-    t.integer  "klass_id",   null: false
-    t.integer  "user_id",    null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "educators", ["klass_id"], name: "index_educators_on_klass_id"
-  add_index "educators", ["user_id", "klass_id"], name: "index_educators_on_user_id_and_klass_id", unique: true
+  add_index "educators", ["course_id"], name: "index_educators_on_course_id"
+  add_index "educators", ["user_id", "course_id"], name: "index_educators_on_user_id_and_course_id", unique: true
 
   create_table "exercise_substeps", force: :cascade do |t|
     t.integer  "tasked_exercise_id", null: false
@@ -138,35 +149,6 @@ ActiveRecord::Schema.define(version: 20150218225408) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
-
-  create_table "klass_assistants", force: :cascade do |t|
-    t.integer  "klass_id",     null: false
-    t.integer  "assistant_id", null: false
-    t.text     "settings"
-    t.text     "data"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
-  end
-
-  add_index "klass_assistants", ["assistant_id"], name: "index_klass_assistants_on_assistant_id"
-  add_index "klass_assistants", ["klass_id", "assistant_id"], name: "index_klass_assistants_on_klass_id_and_assistant_id", unique: true
-
-  create_table "klasses", force: :cascade do |t|
-    t.integer  "course_id",                       null: false
-    t.datetime "starts_at"
-    t.datetime "ends_at"
-    t.datetime "visible_at"
-    t.datetime "invisible_at"
-    t.string   "time_zone"
-    t.text     "approved_emails"
-    t.boolean  "allow_student_custom_identifier"
-    t.datetime "created_at",                      null: false
-    t.datetime "updated_at",                      null: false
-  end
-
-  add_index "klasses", ["course_id"], name: "index_klasses_on_course_id"
-  add_index "klasses", ["ends_at", "starts_at"], name: "index_klasses_on_ends_at_and_starts_at"
-  add_index "klasses", ["invisible_at", "visible_at"], name: "index_klasses_on_invisible_at_and_visible_at"
 
   create_table "multiple_choices", force: :cascade do |t|
     t.integer  "answer_id"
@@ -298,37 +280,18 @@ ActiveRecord::Schema.define(version: 20150218225408) do
   add_index "pages", ["book_id", "number"], name: "index_pages_on_book_id_and_number", unique: true
   add_index "pages", ["url"], name: "index_pages_on_url", unique: true
 
-  create_table "school_managers", force: :cascade do |t|
-    t.integer  "school_id",  null: false
-    t.integer  "user_id",    null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "school_managers", ["school_id"], name: "index_school_managers_on_school_id"
-  add_index "school_managers", ["user_id", "school_id"], name: "index_school_managers_on_user_id_and_school_id", unique: true
-
-  create_table "schools", force: :cascade do |t|
-    t.string   "name",              null: false
-    t.string   "default_time_zone"
-    t.datetime "created_at",        null: false
-    t.datetime "updated_at",        null: false
-  end
-
-  add_index "schools", ["name"], name: "index_schools_on_name", unique: true
-
   create_table "sections", force: :cascade do |t|
-    t.integer  "klass_id",   null: false
+    t.integer  "course_id",  null: false
     t.string   "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  add_index "sections", ["klass_id"], name: "index_sections_on_klass_id"
-  add_index "sections", ["name", "klass_id"], name: "index_sections_on_name_and_klass_id", unique: true
+  add_index "sections", ["course_id"], name: "index_sections_on_course_id"
+  add_index "sections", ["name", "course_id"], name: "index_sections_on_name_and_course_id", unique: true
 
   create_table "students", force: :cascade do |t|
-    t.integer  "klass_id",                    null: false
+    t.integer  "course_id",                   null: false
     t.integer  "section_id"
     t.integer  "user_id",                     null: false
     t.integer  "level"
@@ -340,13 +303,13 @@ ActiveRecord::Schema.define(version: 20150218225408) do
     t.datetime "updated_at",                  null: false
   end
 
+  add_index "students", ["course_id"], name: "index_students_on_course_id"
   add_index "students", ["educator_custom_identifier"], name: "index_students_on_educator_custom_identifier"
-  add_index "students", ["klass_id"], name: "index_students_on_klass_id"
   add_index "students", ["level"], name: "index_students_on_level"
   add_index "students", ["random_education_identifier"], name: "index_students_on_random_education_identifier", unique: true
   add_index "students", ["section_id"], name: "index_students_on_section_id"
   add_index "students", ["student_custom_identifier"], name: "index_students_on_student_custom_identifier"
-  add_index "students", ["user_id", "klass_id"], name: "index_students_on_user_id_and_klass_id", unique: true
+  add_index "students", ["user_id", "course_id"], name: "index_students_on_user_id_and_course_id", unique: true
   add_index "students", ["user_id", "section_id"], name: "index_students_on_user_id_and_section_id", unique: true
 
   create_table "task_plans", force: :cascade do |t|
