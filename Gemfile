@@ -179,6 +179,9 @@ group :production do
   # PostgreSQL production database
   gem 'pg'
 
+  # AWS SES
+  gem 'aws-ses', '~> 0.6.0', :require => 'aws/ses'
+
   # Notify developers of Exceptions in production
   gem 'exception_notification'
 end
