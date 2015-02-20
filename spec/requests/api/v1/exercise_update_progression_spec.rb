@@ -17,25 +17,17 @@ RSpec.describe "Exercise update progression", type: :request, :api => true, :ver
 
   it "only shows feedback and correct answer id after complete" do
 
-    request(:get, step_route_base, user_1_token)
+    api_get(step_route_base, user_1_token)
 
     expect(response.body_as_hash).not_to have_key(:feedback_html)
     expect(response.body_as_hash).not_to have_key(:correct_answer_id)
 
     # Mark it as complete and then get it again (PUT returns No Content)
-    request(:put, "#{step_route_base}/completed", user_1_token)
-    request(:get, step_route_base, user_1_token)
+    api_put("#{step_route_base}/completed", user_1_token)
+    api_get(step_route_base, user_1_token)
 
     expect(response.body_as_hash).to include(feedback_html: 'Some feedback')
     expect(response.body_as_hash).to include(correct_answer_id: a_string_matching(/[A-z0-9]+/))
-  end
-
-  def request(type, route, token=nil)
-    http_header = {}
-    http_header['HTTP_AUTHORIZATION'] = "Bearer #{token.token}" if token.present?
-    http_header['HTTP_ACCEPT'] = "application/vnd.tutor.openstax.v1"
-
-    send(type, route, {format: :json}, http_header)
   end
 
 end
