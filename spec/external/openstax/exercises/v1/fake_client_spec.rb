@@ -15,15 +15,17 @@ RSpec.describe OpenStax::Exercises::V1::FakeClient do
 
     expect(fake_client.exercises(number: 42)).to eq(
       [{
-        stimulus_html: "This is fake exercise 42.  <span data-math='\\dfrac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}'></span>",
+        stimulus_html: "This is fake exercise 42. <span data-math='\\dfrac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}'></span>",
         questions: [
           {
             id: "1",
             format: "multiple-choice",
-            stem_html: "Select the answer that makes the most sense.",
+            stem_html: "Select 10 N.",
             answers:[
-              {id: "2", content_html: "10 N"},
-              {id: "3", content_html: "1 N"}
+              { id: "2", content_html: "10 N",
+                correctness: 1.0, feedback_html: 'Right!' },
+              { id: "3", content_html: "1 N",
+                correctness: 0.0, feedback_html: 'Wrong!' }
             ]
           }
         ]
@@ -42,15 +44,17 @@ RSpec.describe OpenStax::Exercises::V1::FakeClient do
 
     expect(fake_client.exercises(tag: "franky")).to eq(
       [{
-        stimulus_html: "This is fake exercise 2.  <span data-math='\\dfrac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}'></span>",
+        stimulus_html: "This is fake exercise 2. <span data-math='\\dfrac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}'></span>",
         questions: [
           {
             id: "4",
             format: "multiple-choice",
-            stem_html: "Select the answer that makes the most sense.",
+            stem_html: "Select 10 N.",
             answers:[
-              {id: "5", content_html: "10 N"},
-              {id: "6", content_html: "1 N"}
+              { id: "5", content_html: "10 N",
+                correctness: 1.0, feedback_html: 'Right!' },
+              { id: "6", content_html: "1 N",
+                correctness: 0.0, feedback_html: 'Wrong!' }
             ]
           }
         ]

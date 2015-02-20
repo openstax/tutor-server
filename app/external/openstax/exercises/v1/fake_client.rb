@@ -68,15 +68,17 @@ class OpenStax::Exercises::V1::FakeClient
 
   def new_exercise_hash(exercise_number = next_exercise_number)
     {
-      stimulus_html: "This is fake exercise #{exercise_number}.  <span data-math='\\dfrac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}'></span>",
+      stimulus_html: "This is fake exercise #{exercise_number}. <span data-math='\\dfrac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}'></span>",
       questions: [
         {
           id: "#{next_uid}",
           format: "multiple-choice",
-          stem_html: "Select the answer that makes the most sense.",
+          stem_html: "Select 10 N.",
           answers:[
-            {id: "#{next_uid}", content_html: "10 N"},
-            {id: "#{next_uid}", content_html: "1 N"}
+            { id: "#{next_uid}", content_html: "10 N",
+              correctness: 1.0, feedback_html: "Right!" },
+            { id: "#{next_uid}", content_html: "1 N",
+              correctness: 0.0, feedback_html: "Wrong!" }
           ]
         }
       ]
