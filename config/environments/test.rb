@@ -36,4 +36,8 @@ Rails.application.configure do
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+
+  # Don't try to connect to Exchange
+  OpenStax::Exchange.use_fake_client
+  OpenStax::Exchange.reset!
 end
