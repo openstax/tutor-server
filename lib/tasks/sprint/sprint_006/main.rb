@@ -33,6 +33,8 @@ module Sprint006
         config.supported_api_versions = ['v1']
       end
 
+      OpenStax::Exchange.reset!
+
       if username_or_user.is_a? String
         run(:create_account, username: username_or_user)
         user = UserMapper.account_to_user(outputs[:account])
