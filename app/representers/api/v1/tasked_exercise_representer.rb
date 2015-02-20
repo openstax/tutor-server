@@ -26,10 +26,10 @@ module Api::V1
              type: String,
              writeable: false,
              readable: true,
-             as: :content_json,
+             getter: -> (*) { ::JSON.parse(content) },
              schema_info: {
                required: false,
-               description: "The Exercise content as JSON"
+               description: "The Exercise's content"
              }
 
     property :correct_answer_id,
