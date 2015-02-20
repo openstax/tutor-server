@@ -19,7 +19,6 @@ FactoryGirl.define do
     end
 
     task_step nil
-    url { Faker::Internet.url }
 
     after(:build) do |tasked_exercise, evaluator|
       if tasked_exercise.content.nil?

@@ -7,7 +7,16 @@ class TaskedExercise < ActiveRecord::Base
   delegate :answers, :correct_answer_id, :feedback_map, to: :wrapper
 
   def wrapper
-    @wrapper ||= OpenStax::Exercises::V1::Exercise.new(url, content)
+    @wrapper ||= OpenStax::Exercises::V1::Exercise.new(content)
+  end
+
+  def url
+    u = super
+    return u unless u.nil?
+    u = wrapper.url
+    self.url = u
+    save if persisted?
+    u
   end
 
   def title

@@ -15,6 +15,7 @@ RSpec.describe OpenStax::Exercises::V1::FakeClient do
 
     expect(fake_client.exercises(number: 42)).to eq(
       [{
+        uid: "42",
         stimulus_html: "This is fake exercise 42. <span data-math='\\dfrac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}'></span>",
         questions: [
           {
@@ -44,6 +45,7 @@ RSpec.describe OpenStax::Exercises::V1::FakeClient do
 
     expect(fake_client.exercises(tag: "franky")).to eq(
       [{
+        uid: "2",
         stimulus_html: "This is fake exercise 2. <span data-math='\\dfrac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}'></span>",
         questions: [
           {

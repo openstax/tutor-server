@@ -1,14 +1,24 @@
 class OpenStax::Exercises::V1::Exercise
 
-  attr_reader :url, :content
+  BASE_URL = 'http://exercises.openstax.org/exercises'
 
-  def initialize(url, content)
-    @url = url
+  attr_reader :content
+
+  def initialize(content)
     @content = content || '{}'
   end
 
   def content_hash
     @content_hash ||= JSON.parse(content)
+  end
+
+  def uid
+    @uid ||= content_hash['uid']
+  end
+  alias_method :id, :uid
+
+  def url
+    @url ||= "#{BASE_URL}/#{uid}"
   end
 
   def title

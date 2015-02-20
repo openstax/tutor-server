@@ -8,11 +8,12 @@ class OpenStax::Exercises::V1::FakeClient
     arrayify(options, :number)
     arrayify(options, :version)
     arrayify(options, :id)
+    arrayify(options, :uid)
     arrayify(options, :tag)
 
     match_sets = []
-
-    match_sets.push( @exercises_array.select{|ee| options[:id].include?(ee[:id])}           ) if options[:id]
+    uids = (options[:id] || []) + (options[:uid] || [])
+    match_sets.push( @exercises_array.select{|ee| uids.include?(ee[:uid])}           ) if !uids.blank?
     match_sets.push( @exercises_array.select{|ee| (options[:tag] & ee[:tags]).any?}         ) if options[:tag]
     match_sets.push( @exercises_array.select{|ee| options[:number].include?(ee[:number])}   ) if options[:number]
     match_sets.push( @exercises_array.select{|ee| options[:version].include?(ee[:version])} ) if options[:version] 
@@ -41,7 +42,8 @@ class OpenStax::Exercises::V1::FakeClient
     options[:content] ||= new_exercise_hash(options[:number])
     options[:tags] ||= []
     options[:version] ||= 1
-    options[:id] ||= "e#{options[:number]}v#{options[:version]}"
+    options[:uid] ||= options[:id] || \
+                      "e#{options[:number]}v#{options[:version]}"
 
     @exercises_array.push(
       {
@@ -49,7 +51,7 @@ class OpenStax::Exercises::V1::FakeClient
         tags: options[:tags],
         number: options[:number],
         version: options[:version],
-        id: options[:id]
+        uid: options[:uid]
       }
     )
   end
@@ -68,6 +70,7 @@ class OpenStax::Exercises::V1::FakeClient
 
   def new_exercise_hash(exercise_number = next_exercise_number)
     {
+      uid: exercise_number.to_s,
       stimulus_html: "This is fake exercise #{exercise_number}. <span data-math='\\dfrac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}'></span>",
       questions: [
         {

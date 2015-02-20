@@ -43,8 +43,7 @@ gem 'openstax_utilities', '~> 4.2.0'
 gem 'whenever'
 
 # OpenStax Accounts integration
-gem 'openstax_accounts', git: 'https://github.com/Dantemss/accounts-rails.git',
-                         ref: '7bc7f951badfa450f357ba4f69e777e4a97d5212'
+gem 'openstax_accounts', '~> 4.0.0'
 # OpenStax Exchange integration
 gem 'openstax_exchange'
 
