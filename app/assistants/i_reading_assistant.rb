@@ -185,8 +185,7 @@ class IReadingAssistant
           tasked_class: TaskedExercise,
           title: ex['title'],
           url: page.url,
-          content: ex.to_json,
-          correct_answer_id: ex['questions'].first['answers'].first['id']
+          content: ex.to_json
         }
 
         current_reading = next_reading
@@ -216,11 +215,6 @@ class IReadingAssistant
         step.tasked = attributes[:tasked_class].new(
           attributes.slice(:url, :title, :content).merge(task_step: step)
         )
-        if attributes[:tasked_class] == TaskedExercise
-          step.tasked.correct_answer_id = attributes[:correct_answer_id] || ''
-          # TODO: set feedback after user picks an answer (not here)
-          step.tasked.feedback_html = 'Normal question feedback here lorem ipsum dolor sit amet consectetur adipisci elit'
-        end
         task.task_steps << step
       end
 
@@ -239,10 +233,6 @@ class IReadingAssistant
                                            title: content['title'],
                                            url: page.url,
                                            content: content.to_json)
-          step.tasked.correct_answer_id = \
-            ex[:content][:questions].first[:answers].first[:id] || ''
-          # TODO: set feedback after user picks an answer (not here)
-          step.tasked.feedback_html = 'Spaced practice feedback here lorem ipsum dolor sit amet consectetur adipisci elit'
           task.task_steps << step
         end
       end

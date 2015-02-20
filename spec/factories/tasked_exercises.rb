@@ -16,7 +16,6 @@ FactoryGirl.define do
     transient do
       tasked_to { FactoryGirl.build(:user) }
       skip_task false
-      feedback_html 'Good job!'
     end
 
     task_step nil
@@ -31,10 +30,6 @@ FactoryGirl.define do
       end
 
       options = { tasked: tasked_exercise }
-
-      tasked_exercise.correct_answer_id = exercise_hash[:questions][0][:answers][0][:id]
-      tasked_exercise.feedback_html = evaluator.feedback_html
-
       options[:task] = nil if evaluator.skip_task
 
       tasked_exercise.task_step ||= FactoryGirl.build(:task_step, options)

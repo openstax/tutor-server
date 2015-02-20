@@ -59,7 +59,6 @@ gem 'chronic'
 
 # API versioning and documentation
 gem 'openstax_api', '~> 4.0.1'
-
 gem 'apipie-rails'
 gem 'maruku'
 gem 'representable'
