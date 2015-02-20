@@ -334,9 +334,6 @@ ActiveRecord::Schema.define(version: 20150218225408) do
     t.integer  "tasked_id",    null: false
     t.string   "tasked_type",  null: false
     t.integer  "number",       null: false
-    t.string   "title",        null: false
-    t.string   "url",          null: false
-    t.text     "content",      null: false
     t.datetime "completed_at"
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
@@ -346,6 +343,9 @@ ActiveRecord::Schema.define(version: 20150218225408) do
   add_index "task_steps", ["tasked_id", "tasked_type"], name: "index_task_steps_on_tasked_id_and_tasked_type", unique: true
 
   create_table "tasked_exercises", force: :cascade do |t|
+    t.string   "url",               null: false
+    t.text     "content",           null: false
+    t.string   "title"
     t.text     "free_response"
     t.string   "answer_id"
     t.string   "correct_answer_id"
@@ -355,6 +355,9 @@ ActiveRecord::Schema.define(version: 20150218225408) do
   end
 
   create_table "tasked_readings", force: :cascade do |t|
+    t.string   "url",        null: false
+    t.text     "content",    null: false
+    t.string   "title",      null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

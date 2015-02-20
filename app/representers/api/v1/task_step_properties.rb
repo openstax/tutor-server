@@ -34,16 +34,6 @@ module Api::V1
                             }.join(',')}"
              }
 
-    property :title,
-             type: String,
-             writeable: false,
-             readable: true,
-             getter: -> (*) { task_step.title },
-             schema_info: {
-               required: true,
-               description: "The title of this TaskStep"
-             }
-
     property :is_completed,
              writeable: false,
              readable: true,

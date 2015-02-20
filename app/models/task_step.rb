@@ -5,8 +5,6 @@ class TaskStep < ActiveRecord::Base
   validates :task, presence: true
   validates :tasked, presence: true
   validates :tasked_id, uniqueness: { scope: :tasked_type }
-  validates :title, presence: true
-  validates :content, presence: true
 
   def complete
     self.completed_at ||= Time.now

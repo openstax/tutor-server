@@ -5,6 +5,9 @@ FactoryGirl.define do
     end
 
     task_step nil
+    url { Faker::Internet.url }
+    title { Faker::Lorem.sentence(3) }
+    content { Faker::Lorem.paragraph }
 
     after(:build) do |tasked_reading, evaluator|
       options = { tasked: tasked_reading }

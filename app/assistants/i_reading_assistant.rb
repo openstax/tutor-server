@@ -183,7 +183,7 @@ class IReadingAssistant
 
         task_step_attributes << {
           tasked_class: TaskedExercise,
-          title: ex['title'] || 'Exercise',
+          title: ex['title'],
           url: page.url,
           content: ex.to_json,
           correct_answer_id: ex['questions'].first['answers'].first['id']
@@ -211,9 +211,11 @@ class IReadingAssistant
                       due_at: due_at)
 
       task_step_attributes.each do |attributes|
-        step = TaskStep.new(attributes.except(:tasked_class, :correct_answer_id)
+        step = TaskStep.new(attributes.slice(:opens_at, :due_at)
                                       .merge(task: task))
-        step.tasked = attributes[:tasked_class].new(task_step: step)
+        step.tasked = attributes[:tasked_class].new(
+          attributes.slice(:url, :title, :content).merge(task_step: step)
+        )
         if attributes[:tasked_class] == TaskedExercise
           step.tasked.correct_answer_id = attributes[:correct_answer_id] || ''
           # TODO: set feedback after user picks an answer (not here)
@@ -231,11 +233,12 @@ class IReadingAssistant
           ex = FillIReadingSpacedPracticeSlot.call()#taskee, k_ago)
                                              .outputs[:exercise_hash]
 
-          step = TaskStep.new(task: task,
-                              title: ex['title'] || 'Exercise',
-                              url: ex['url'] || page.url,
-                              content: ex[:content]) # TODO: stringify keys
-          step.tasked = TaskedExercise.new(task_step: step)
+          step = TaskStep.new(task: task)
+          content = ex[:content].stringify_keys
+          step.tasked = TaskedExercise.new(task_step: step,
+                                           title: content['title'],
+                                           url: page.url,
+                                           content: content.to_json)
           step.tasked.correct_answer_id = \
             ex[:content][:questions].first[:answers].first[:id] || ''
           # TODO: set feedback after user picks an answer (not here)

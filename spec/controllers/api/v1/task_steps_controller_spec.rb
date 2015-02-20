@@ -26,14 +26,14 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
       api_get :show, user_1_token, parameters: {task_id: task_step.task.id, id: task_step.id}
       expect(response.code).to eq '200'
 
-      expect(response.body).to eq({
+      expect(JSON.parse(response.body)).to eq({
         id: task_step.id,
         type: 'reading',
         title: 'title',
         is_completed: false,
         content_url: 'url',
         content_html: 'content'
-      }.to_json)
+      }.stringify_keys)
     end
   end
 
