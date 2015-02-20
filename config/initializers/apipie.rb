@@ -28,7 +28,7 @@ Apipie.configure do |config|
       </tr>
       <tr>
         <td><code>'Accept'</code></td>
-        <td><code>'application/vnd.openstax.tutor.v1+json'</code></td>
+        <td><code>'application/vnd.openstax.v1'</code></td>
         <td>v1</td>
       </tr>
     </table>
