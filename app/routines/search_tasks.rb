@@ -1,44 +1,47 @@
 class SearchTasks
+
   lev_routine transaction: :no_transaction
 
-  # TODO: Convert to use new shared (OSU) search routines
-  uses_routine OrganizeSearchResults,
-               translations: { outputs: {type: :verbatim} }
+  uses_routine OSU::SearchAndOrganizeRelation,
+               as: :search,
+               translations: { outputs: { type: :verbatim } }
+
+  SORTABLE_FIELDS = {
+    'due_at' => :due_at,
+    'opens_at' => :opens_at,
+    'created_at' => :created_at,
+    'id' => :id
+  }
 
   protected
 
-  def exec(query, options={})
+  def exec(params, options = {})
+    options[:eager_load_tasks] = true unless options.has_key?(:eager_load_tasks)
+    relation = options[:eager_load_tasks] ? \
+                 Task.includes(:task_steps) : Task.unscoped
 
-    options[:eager_load_task_steps] = true \
-      unless options.has_key?(:eager_load_task_steps)
+    run(:search, relation: relation,
+                 sortable_fields: SORTABLE_FIELDS,
+                 params: params) do |with|
+      with.default_keyword :id
 
-    tasks = Task.all
-    
-    KeywordSearch.search(query) do |with|
-
-      with.keyword :user_id do |user_ids|
-        tasks = tasks.joins{taskings}.where{taskings.user_id.in my{user_ids}}
+      with.keyword :user_id do |ids|
+        ids.each do |i|
+          sanitized_ids = to_number_array(i)
+          next @items = @items.none if sanitized_ids.empty?
+          @items = @items.includes(:taskings).joins(:taskings)
+                         .where{taskings.user_id.in sanitized_ids}
+        end
       end
 
       with.keyword :id do |ids|
-        tasks = tasks.where{id.in ids}
+        ids.each do |i|
+          sanitized_ids = to_number_array(i)
+          next @items = @items.none if sanitized_ids.empty?
+          @items = @items.where{id.in sanitized_ids}
+        end
       end
-
     end
-
-    # We normally need the details associated with these tasks, so eager load them.
-    tasks = tasks.includes(:task_steps => :tasked) \
-      if options[:eager_load_task_steps]
-
-    run(OrganizeSearchResults, tasks, 
-                               page: options[:page],
-                               per_page: options[:per_page],
-                               order_by: options[:order_by],
-                               sortable_fields: ['due_at', 'opens_at', 'created_at', 'id'], 
-                               default_sort_field: 'id')
-
-    outputs[:tasks] = outputs[:relation]
-    outputs[:query] = query
   end
 
 end
