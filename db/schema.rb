@@ -93,6 +93,11 @@ ActiveRecord::Schema.define(version: 20150218225408) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "entity_ss_users", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "exercise_substeps", force: :cascade do |t|
     t.integer  "tasked_exercise_id", null: false
     t.integer  "subtasked_id",       null: false
