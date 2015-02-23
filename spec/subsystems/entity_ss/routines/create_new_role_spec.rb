@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe EntitySs::CreateNewRole do
-  it "returns a newly created role" do
+  it "returns a newly created role entity" do
     result = nil
 
     expect {
