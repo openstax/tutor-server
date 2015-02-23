@@ -179,7 +179,7 @@ class IReadingAssistant
 
         ex = OpenStax::Exercises::V1.exercises(
                number: number, version: version
-             ).first
+             )['items'].first
 
         task_step_attributes << {
           tasked_class: TaskedExercise,
