@@ -33,7 +33,7 @@ class Api::V1::UsersController < Api::V1::ApiController
   EOS
   def tasks
     OSU::AccessPolicy.require_action_allowed!(:read_tasks, current_api_user, current_human_user)
-    outputs = SearchTasks.call("user_id:#{current_human_user.id}").outputs
+    outputs = SearchTasks.call(q: "user_id:#{current_human_user.id}").outputs
     respond_with outputs, represent_with: Api::V1::TaskSearchRepresenter
   end
 
