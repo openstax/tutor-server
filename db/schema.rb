@@ -88,6 +88,11 @@ ActiveRecord::Schema.define(version: 20150218225408) do
   add_index "educators", ["course_id"], name: "index_educators_on_course_id"
   add_index "educators", ["user_id", "course_id"], name: "index_educators_on_user_id_and_course_id", unique: true
 
+  create_table "entity_ss_courses", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "entity_ss_roles", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
