@@ -7,7 +7,12 @@ module OpenStax::Exercises::V1
   # GET /api/exercises
   # options can have :tag, :id, :number, :version keys
   def self.exercises(options={})
-    client.exercises(options)
+    exercises_json = client.exercises(options)
+    exercises_hash = JSON.parse(exercises_json)
+    exercises_hash['items'] = exercises_hash['items'].collect{|e|
+      OpenStax::Exercises::V1::Exercise.new(e.to_json)
+    }
+    exercises_hash
   end
 
   #

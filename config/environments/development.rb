@@ -44,11 +44,6 @@ Rails.application.configure do
 
   # Don't try to connect to Exchange
   OpenStax::Exchange.use_fake_client
-
-  OpenStax::Exchange::FakeClient.configure do |config|
-    config.registered_platforms   = {'123' => 'abc'}
-    config.server_url             = 'https://exchange.openstax.org'
-    config.supported_api_versions = ['v1']
-  end
+  OpenStax::Exchange.reset!
 end
 

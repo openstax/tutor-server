@@ -88,19 +88,6 @@ ActiveRecord::Schema.define(version: 20150218225408) do
   add_index "educators", ["course_id"], name: "index_educators_on_course_id"
   add_index "educators", ["user_id", "course_id"], name: "index_educators_on_user_id_and_course_id", unique: true
 
-  create_table "exercise_substeps", force: :cascade do |t|
-    t.integer  "tasked_exercise_id", null: false
-    t.integer  "subtasked_id",       null: false
-    t.string   "subtasked_type",     null: false
-    t.integer  "number",             null: false
-    t.datetime "completed_at"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
-  end
-
-  add_index "exercise_substeps", ["subtasked_id", "subtasked_type"], name: "index_exercise_substeps_on_subtasked_id_and_subtasked_type", unique: true
-  add_index "exercise_substeps", ["tasked_exercise_id", "number"], name: "index_exercise_substeps_on_tasked_exercise_id_and_number", unique: true
-
   create_table "exercise_topics", force: :cascade do |t|
     t.integer  "exercise_id", null: false
     t.integer  "topic_id",    null: false
@@ -144,17 +131,6 @@ ActiveRecord::Schema.define(version: 20150218225408) do
 
   add_index "fine_print_signatures", ["contract_id"], name: "index_fine_print_signatures_on_contract_id"
   add_index "fine_print_signatures", ["user_id", "user_type", "contract_id"], name: "index_fine_print_signatures_on_u_id_and_u_type_and_c_id", unique: true
-
-  create_table "free_responses", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "multiple_choices", force: :cascade do |t|
-    t.integer  "answer_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
 
   create_table "oauth_access_grants", force: :cascade do |t|
     t.integer  "resource_owner_id", null: false
@@ -343,15 +319,13 @@ ActiveRecord::Schema.define(version: 20150218225408) do
   add_index "task_steps", ["tasked_id", "tasked_type"], name: "index_task_steps_on_tasked_id_and_tasked_type", unique: true
 
   create_table "tasked_exercises", force: :cascade do |t|
-    t.string   "url",               null: false
-    t.text     "content",           null: false
+    t.string   "url",           null: false
+    t.text     "content",       null: false
     t.string   "title"
     t.text     "free_response"
     t.string   "answer_id"
-    t.string   "correct_answer_id"
-    t.text     "feedback_html"
-    t.datetime "created_at",        null: false
-    t.datetime "updated_at",        null: false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
   end
 
   create_table "tasked_readings", force: :cascade do |t|
