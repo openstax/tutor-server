@@ -50,15 +50,17 @@ RSpec.describe Content::ImportPage, :type => :routine do
     }.to change{ Content::Topic.count }.by(3)
 
     topics = Content::Topic.all.to_a
-    expect(topics[-3].name).to eq 'ost-apphys-ch5-s1-lo1'
-    expect(topics[-2].name).to eq 'ost-apphys-ch5-s1-lo2'
-    expect(topics[-1].name).to eq 'ost-apphys-ch5-s1-lo3'
+    expect(topics[-3].name).to eq 'ost-topic-apphys-ch5-s1-lo1'
+    expect(topics[-2].name).to eq 'ost-topic-apphys-ch5-s1-lo2'
+    expect(topics[-1].name).to eq 'ost-topic-apphys-ch5-s1-lo3'
 
     tagged_topics = result.outputs[:topics]
     expect(tagged_topics).not_to be_empty
     expect(tagged_topics).to eq Content::Page.last.page_topics.collect{|pt| pt.topic}
-    expect(tagged_topics.collect{|t| t.name}).to eq ['ost-apphys-ch5-s1-lo1',
-                                                     'ost-apphys-ch5-s1-lo2',
-                                                     'ost-apphys-ch5-s1-lo3']
+    expect(tagged_topics.collect{|t| t.name}).to eq [
+      'ost-topic-apphys-ch5-s1-lo1',
+      'ost-topic-apphys-ch5-s1-lo2',
+      'ost-topic-apphys-ch5-s1-lo3'
+    ]
   end
 end
