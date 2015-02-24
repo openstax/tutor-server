@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150218225408) do
+ActiveRecord::Schema.define(version: 20150224212654) do
 
   create_table "administrators", force: :cascade do |t|
     t.integer  "user_id",    null: false
@@ -40,6 +40,7 @@ ActiveRecord::Schema.define(version: 20150218225408) do
     t.string   "title",          null: false
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
+    t.string   "path"
   end
 
   add_index "content_books", ["parent_book_id", "number"], name: "index_content_books_on_parent_book_id_and_number", unique: true
