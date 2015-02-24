@@ -26,7 +26,7 @@ describe Domain::UserIsCourseTeacher do
       ## Perform test
       result = Domain::UserIsCourseTeacher.call(user: target_user, course: target_course)
       expect(result.errors).to be_empty
-      expect(result.outputs.is_course_teacher).to be_falsey
+      expect(result.outputs.user_is_course_teacher).to be_falsey
     end
   end
   context "when the user is not a teacher for the given course" do
@@ -41,7 +41,7 @@ describe Domain::UserIsCourseTeacher do
       ## Perform test
       result = Domain::UserIsCourseTeacher.call(user: target_user, course: target_course)
       expect(result.errors).to be_empty
-      expect(result.outputs.is_course_teacher).to be_truthy
+      expect(result.outputs.user_is_course_teacher).to be_truthy
     end
   end
 end

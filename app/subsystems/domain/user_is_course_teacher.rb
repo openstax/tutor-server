@@ -9,6 +9,6 @@ class Domain::UserIsCourseTeacher
   def exec(user:, course:)
     roles = run(RoleSs::GetUserRoles, user).outputs.roles
     result = run(CourseSs::IsCourseTeacher,roles: roles, course: course)
-    outputs[:is_course_teacher] = result.outputs.is_course_teacher
+    outputs[:user_is_course_teacher] = result.outputs.is_course_teacher
   end
 end
