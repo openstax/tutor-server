@@ -1,5 +1,19 @@
 class OpenStax::Exercises::V1::FakeClient
 
+  include Singleton
+
+  attr_reader :exercises_array
+
+  def reset!
+    @exercises_array = []
+    @uid = 0
+    @exercise_number = 0
+  end
+
+  def initialize
+    reset!
+  end
+
   #
   # Api wrappers
   #
@@ -37,39 +51,6 @@ class OpenStax::Exercises::V1::FakeClient
   # Methods to help fake the fake content
   #
 
-  def add_exercise(options={})
-    exercise_number = next_exercise_number
-
-    options[:number] ||= exercise_number
-    options[:content] ||= new_exercise_hash(options)
-    options[:tags] ||= []
-    options[:version] ||= 1
-    options[:uid] ||= options[:uid] || options[:id] || \
-                      "#{options[:number]}@#{options[:version]}"
-
-    @exercises_array.push(
-      {
-        content: options[:content],
-        number: options[:number],
-        version: options[:version],
-        tags: options[:tags],
-        uid: options[:uid]
-      }
-    )
-  end
-
-  def reset!
-    @exercises_array = []
-    @uid = 0
-    @exercise_number = 0
-  end
-
-  attr_reader :exercises_array
-
-  def initialize
-    reset!
-  end
-
   def new_exercise_hash(options = {})
     options[:number] ||= next_exercise_number
     options[:version] ||= 1
@@ -92,6 +73,27 @@ class OpenStax::Exercises::V1::FakeClient
         }
       ]
     }
+  end
+
+  def add_exercise(options={})
+    exercise_number = next_exercise_number
+
+    options[:number] ||= exercise_number
+    options[:content] ||= new_exercise_hash(options)
+    options[:tags] ||= []
+    options[:version] ||= 1
+    options[:uid] ||= options[:uid] || options[:id] || \
+                      "#{options[:number]}@#{options[:version]}"
+
+    @exercises_array.push(
+      {
+        content: options[:content],
+        number: options[:number],
+        version: options[:version],
+        tags: options[:tags],
+        uid: options[:uid]
+      }
+    )
   end
 
   private
