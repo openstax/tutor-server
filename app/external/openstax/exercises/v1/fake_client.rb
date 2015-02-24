@@ -41,18 +41,18 @@ class OpenStax::Exercises::V1::FakeClient
     exercise_number = next_exercise_number
 
     options[:number] ||= exercise_number
-    options[:content] ||= new_exercise_hash(options[:number])
+    options[:content] ||= new_exercise_hash(options)
     options[:tags] ||= []
     options[:version] ||= 1
-    options[:uid] ||= options[:id] || \
-                      "e#{options[:number]}v#{options[:version]}"
+    options[:uid] ||= options[:uid] || options[:id] || \
+                      "#{options[:number]}@#{options[:version]}"
 
     @exercises_array.push(
       {
         content: options[:content],
-        tags: options[:tags],
         number: options[:number],
         version: options[:version],
+        tags: options[:tags],
         uid: options[:uid]
       }
     )
@@ -70,10 +70,14 @@ class OpenStax::Exercises::V1::FakeClient
     reset!
   end
 
-  def new_exercise_hash(exercise_number = next_exercise_number)
+  def new_exercise_hash(options = {})
+    options[:number] ||= next_exercise_number
+    options[:version] ||= 1
+    options[:tags] ||= []
     {
-      uid: exercise_number.to_s,
-      stimulus_html: "This is fake exercise #{exercise_number}. <span data-math='\\dfrac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}'></span>",
+      uid: "#{options[:number].to_s}@#{options[:version].to_s}",
+      tags: options[:tags] || [],
+      stimulus_html: "This is fake exercise #{options[:number]}. <span data-math='\\dfrac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}'></span>",
       questions: [
         {
           id: "#{next_uid}",

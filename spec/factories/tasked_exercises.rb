@@ -8,10 +8,6 @@
 #      FactoryGirl.create(:tasked_exercise, :with_tasking, tasked_to: a_user)
 
 FactoryGirl.define do
-  sequence :exercise_number do |n| 
-    "fake_#{n}"
-  end
-
   factory :tasked_exercise do
     transient do
       tasked_to { FactoryGirl.build(:user) }
@@ -22,9 +18,7 @@ FactoryGirl.define do
 
     after(:build) do |tasked_exercise, evaluator|
       if tasked_exercise.content.nil?
-        exercise_hash = OpenStax::Exercises::V1.fake_client.new_exercise_hash(
-          generate :exercise_number
-        )
+        exercise_hash = OpenStax::Exercises::V1.fake_client.new_exercise_hash
         tasked_exercise.content = exercise_hash.to_json
       end
 
