@@ -1,32 +1,27 @@
-require 'spec_helper'
-require './app/access_policies/task_access_policy'
+require 'rails_helper'
 
 RSpec.describe TaskAccessPolicy do
-  let(:requestor) { double(:requestor, id: 1) }
-  let(:task) { double(:task) }
+  let(:requestor) { FactoryGirl.create(:user) }
+  let(:task) { FactoryGirl.create(:task) }
 
-  subject(:action_allowed) { TaskAccessPolicy.action_allowed?(action, requestor, task) }
+  subject(:action_allowed) do
+    TaskAccessPolicy.action_allowed?(action, requestor, task)
+  end
 
   context 'when the action is :read' do
     let(:action) { :read }
 
-    before do
-      taskings = double(:taskings)
-      allow(task).to receive(:taskings) { taskings }
-      allow(taskings).to receive(:where) { filtered_taskings }
-    end
-
     context 'and the requestor is human' do
-      before { allow(requestor).to receive(:is_human?) { true } }
+      # already true for User
 
       context 'and the requestor has taskings in the task' do
-        let(:filtered_taskings) { [double(:tasking)] }
+        before { allow(task).to receive(:any_tasks?).with(requestor) { true } }
 
         it { should be true }
       end
 
       context 'and the requestor has no taskings in the task' do
-        let(:filtered_taskings) { [] }
+        before { allow(task).to receive(:any_tasks?).with(requestor) { false } }
 
         it { should be false }
       end
