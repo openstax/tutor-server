@@ -37,4 +37,17 @@ RSpec.describe Content::Api::ImportBook, :type => :routine,
     expect(JSON.parse(book.content)).to eq JSON.parse(toc)
     test_book(book)
   end
+
+  it 'adds a path signifier according to subcol structure' do
+    bio_book_id = '185cbf87-c72e-48f5-b51e-f14f21b5eabd'
+    book = Import::Book.call(bio_book_id).outputs[:book]
+
+    book.child_books.each_with_index do |child_book, i|
+      expect(child_book.path).to eq("#{i + 1}")
+
+      child_book.child_books.each_with_index do |sub_child_book, idx|
+        expect(sub_child_book.path).to eq("#{i + 1}.#{idx + 1}")
+      end
+    end
+  end
 end
