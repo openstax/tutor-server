@@ -11,11 +11,8 @@ module ActsAsTasked
 
         validates :task_step, presence: true
 
-        delegate :completed_at, :completed?, :complete, to: :task_step
-
-        define_method(:any_tasks?) do |taskee|
-          task_step.task.any_tasks?(taskee)
-        end
+        delegate :completed_at, :completed?, :complete, :tasked_to?,
+          to: :task_step
       end
     end
   end

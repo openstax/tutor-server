@@ -16,13 +16,13 @@ RSpec.describe TaskedAccessPolicy do
         before { allow(requestor).to receive(:is_human?) { true } }
 
         context 'and the tasked has tasks for the requestor' do
-          before { allow(tasked).to receive(:any_tasks?).with(requestor) { true } }
+          before { allow(tasked).to receive(:tasked_to?).with(requestor) { true } }
 
           it { should be true }
         end
 
         context 'and the tasked has no tasks for the requestor' do
-          before { allow(tasked).to receive(:any_tasks?).with(requestor) { false } }
+          before { allow(tasked).to receive(:tasked_to?).with(requestor) { false } }
 
           it { should be false }
         end

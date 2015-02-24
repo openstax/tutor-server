@@ -15,13 +15,13 @@ RSpec.describe TaskAccessPolicy do
       # already true for User
 
       context 'and the requestor has taskings in the task' do
-        before { allow(task).to receive(:any_tasks?).with(requestor) { true } }
+        before { allow(task).to receive(:tasked_to?).with(requestor) { true } }
 
         it { should be true }
       end
 
       context 'and the requestor has no taskings in the task' do
-        before { allow(task).to receive(:any_tasks?).with(requestor) { false } }
+        before { allow(task).to receive(:tasked_to?).with(requestor) { false } }
 
         it { should be false }
       end
