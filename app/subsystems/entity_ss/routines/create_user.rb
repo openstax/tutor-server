@@ -1,4 +1,4 @@
-class EntitySs::CreateNewUser
+class EntitySs::CreateUser
   lev_routine
 
   protected

@@ -1,4 +1,4 @@
-class EntitySs::CreateNewRole
+class EntitySs::CreateRole
   lev_routine
 
   protected

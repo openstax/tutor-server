@@ -3,8 +3,8 @@ require 'rails_helper'
 describe CourseSs::AddTeacher do
   context "when adding a new teacher role to a course" do
     it "succeeds" do
-      role   = EntitySs::CreateNewRole.call.outputs.role
-      course = EntitySs::CreateNewCourse.call.outputs.course
+      role   = EntitySs::CreateRole.call.outputs.role
+      course = EntitySs::CreateCourse.call.outputs.course
 
       result = nil
       expect {
@@ -15,8 +15,8 @@ describe CourseSs::AddTeacher do
   end
   context "when adding a existing teacher role to a course" do
     it "fails" do
-      role   = EntitySs::CreateNewRole.call.outputs.role
-      course = EntitySs::CreateNewCourse.call.outputs.course
+      role   = EntitySs::CreateRole.call.outputs.role
+      course = EntitySs::CreateCourse.call.outputs.course
 
       result = nil
       expect {

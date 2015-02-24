@@ -3,8 +3,8 @@ require 'rails_helper'
 describe RoleSs::AddUserRole do
   context "when adding a new user role" do
     it "succeeds" do
-      role = EntitySs::CreateNewRole.call.outputs.role
-      user = EntitySs::CreateNewUser.call.outputs.user
+      role = EntitySs::CreateRole.call.outputs.role
+      user = EntitySs::CreateUser.call.outputs.user
 
       result = nil
       expect {
@@ -15,8 +15,8 @@ describe RoleSs::AddUserRole do
   end
   context "when adding a existing user role" do
     it "fails" do
-      role   = EntitySs::CreateNewRole.call.outputs.role
-      user = EntitySs::CreateNewUser.call.outputs.user
+      role   = EntitySs::CreateRole.call.outputs.role
+      user = EntitySs::CreateUser.call.outputs.user
 
       result = nil
       expect {

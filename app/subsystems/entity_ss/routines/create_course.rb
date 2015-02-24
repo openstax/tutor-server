@@ -1,4 +1,4 @@
-class EntitySs::CreateNewCourse
+class EntitySs::CreateCourse
   lev_routine
 
   protected
