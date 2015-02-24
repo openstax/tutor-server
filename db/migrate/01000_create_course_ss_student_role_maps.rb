@@ -5,7 +5,7 @@ class CreateCourseSsStudentRoleMaps < ActiveRecord::Migration
       t.integer :entity_ss_role_id,   null: false
       t.timestamps null: false
 
-      t.index [:entity_ss_course_id, :entity_ss_role_id], unique: true, name: 'entity_ss_course_id_role_id_uniqueness'
+      t.index [:entity_ss_course_id, :entity_ss_role_id], unique: true, name: 'course_ss_student_map_course_id_role_id_uniqueness'
     end
   end
 end
