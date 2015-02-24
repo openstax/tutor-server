@@ -57,6 +57,15 @@ ActiveRecord::Schema.define(version: 20150218225408) do
   add_index "course_assistants", ["assistant_id"], name: "index_course_assistants_on_assistant_id"
   add_index "course_assistants", ["course_id", "assistant_id"], name: "index_course_assistants_on_course_id_and_assistant_id", unique: true
 
+  create_table "course_ss_student_role_maps", force: :cascade do |t|
+    t.integer  "entity_ss_course_id", null: false
+    t.integer  "entity_ss_role_id",   null: false
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
+  end
+
+  add_index "course_ss_student_role_maps", ["entity_ss_course_id", "entity_ss_role_id"], name: "entity_ss_course_id_role_id_uniqueness", unique: true
+
   create_table "courses", force: :cascade do |t|
     t.string   "school",                          null: false
     t.string   "name",                            null: false
