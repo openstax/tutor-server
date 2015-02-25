@@ -45,8 +45,12 @@ RSpec.describe Content::Api::ImportBook, :type => :routine,
     book.child_books.each_with_index do |unit, i|
       expect(unit.path).to eq("#{i + 1}")
 
-      unit.child_books.each_with_index do |section, idx|
-        expect(section.path).to eq("#{i + 1}.#{idx + 1}")
+      unit.child_books.each_with_index do |chapter, idx|
+        expect(chapter.path).to eq("#{i + 1}.#{idx + 1}")
+
+        chapter.pages.each_with_index do |page, pidx|
+          expect(page.path).to eq("#{i + 1}.#{idx + 1}.#{pidx + 1}")
+        end
       end
     end
   end
