@@ -11,5 +11,3 @@ COPYRIGHT_HOLDER = "Rice University"
 
 # Initialize the Rails application.
 Rails.application.initialize!
-
-require File.expand_path('../../app/subsystems/load_subsystems', __FILE__)
