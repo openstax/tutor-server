@@ -9,7 +9,7 @@ describe RoleSs::AddUserRole do
       result = nil
       expect {
         result = RoleSs::AddUserRole.call(user: user, role: role)
-      }.to change{RoleSs::UserRoleMap.count}.by(1)
+      }.to change{RoleSs::User.count}.by(1)
       expect(result.errors).to be_empty
     end
   end
@@ -21,12 +21,12 @@ describe RoleSs::AddUserRole do
       result = nil
       expect {
         result = RoleSs::AddUserRole.call(user: user, role: role)
-      }.to change{RoleSs::UserRoleMap.count}.by(1)
+      }.to change{RoleSs::User.count}.by(1)
       expect(result.errors).to be_empty
 
       expect {
         result = RoleSs::AddUserRole.call(user: user, role: role)
-      }.to_not change{RoleSs::UserRoleMap.count}
+      }.to_not change{RoleSs::User.count}
       expect(result.errors).to_not be_empty
     end
   end

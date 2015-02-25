@@ -313,14 +313,14 @@ ActiveRecord::Schema.define(version: 20150218225408) do
   add_index "pages", ["book_id", "number"], name: "index_pages_on_book_id_and_number", unique: true
   add_index "pages", ["url"], name: "index_pages_on_url", unique: true
 
-  create_table "role_ss_user_role_maps", force: :cascade do |t|
+  create_table "role_ss_users", force: :cascade do |t|
     t.integer  "entity_ss_user_id", null: false
     t.integer  "entity_ss_role_id", null: false
     t.datetime "created_at",        null: false
     t.datetime "updated_at",        null: false
   end
 
-  add_index "role_ss_user_role_maps", ["entity_ss_user_id", "entity_ss_role_id"], name: "role_ss_user_map_user_id_role_id_uniqueness", unique: true
+  add_index "role_ss_users", ["entity_ss_user_id", "entity_ss_role_id"], name: "role_ss_users_user_role_uniqueness", unique: true
 
   create_table "sections", force: :cascade do |t|
     t.integer  "course_id",  null: false
