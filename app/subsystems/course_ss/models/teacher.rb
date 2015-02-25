@@ -1,4 +1,4 @@
-class CourseSs::StudentRoleMap < ActiveRecord::Base
+class CourseSs::Teacher < ActiveRecord::Base
   ## using class_name as bug workaround, see: https://github.com/rails/rails/issues/15811
   belongs_to :entity_ss_role,   class_name: "::EntitySs::Role"
   belongs_to :entity_ss_course, class_name: "::EntitySs::Course"

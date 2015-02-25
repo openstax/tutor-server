@@ -9,7 +9,7 @@ describe CourseSs::AddTeacher do
       result = nil
       expect {
         result = CourseSs::AddTeacher.call(course: course, role: role)
-      }.to change{CourseSs::TeacherRoleMap.count}.by(1)
+      }.to change{CourseSs::Teacher.count}.by(1)
       expect(result.errors).to be_empty
     end
   end
@@ -21,12 +21,12 @@ describe CourseSs::AddTeacher do
       result = nil
       expect {
         result = CourseSs::AddTeacher.call(course: course, role: role)
-      }.to change{CourseSs::TeacherRoleMap.count}.by(1)
+      }.to change{CourseSs::Teacher.count}.by(1)
       expect(result.errors).to be_empty
 
       expect {
         result = CourseSs::AddTeacher.call(course: course, role: role)
-      }.to_not change{CourseSs::TeacherRoleMap.count}
+      }.to_not change{CourseSs::Teacher.count}
       expect(result.errors).to_not be_empty
     end
   end

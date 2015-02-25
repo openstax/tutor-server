@@ -14,7 +14,7 @@ class CourseSs::IsCourseTeacher
     roles = [role] unless role == :missing
     role_ids = roles.collect{|r| r.id}
 
-    outputs[:is_course_teacher] = CourseSs::TeacherRoleMap.where{entity_ss_course_id == course.id}.where{entity_ss_role_id >> role_ids}.any?
+    outputs[:is_course_teacher] = CourseSs::Teacher.where{entity_ss_course_id == course.id}.where{entity_ss_role_id >> role_ids}.any?
   end
 
   def role_param_combo_is_valid(role, roles)
