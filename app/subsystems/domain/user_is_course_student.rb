@@ -1,14 +1,20 @@
 class Domain::UserIsCourseStudent
   lev_routine
 
-  uses_routine Role::GetUserRoles, translations: {type: :verbatim}
-  uses_routine CourseMembership::IsCourseStudent, translations: {type: :verbatim}
+  uses_routine Role::GetUserRoles, translations: {outputs: {type: :verbatim}}
+  uses_routine CourseMembership::IsCourseStudent,
+               translations: {
+                outputs: {
+                  map: {
+                    is_course_student: :user_is_course_student
+                    }
+                  }
+                }
 
   protected
 
   def exec(user:, course:)
-    roles = run(Role::GetUserRoles, user).outputs.roles
-    result = run(CourseMembership::IsCourseStudent,roles: roles, course: course)
-    outputs[:user_is_course_student] = result.outputs.is_course_student
+    run(Role::GetUserRoles, user)
+    run(CourseMembership::IsCourseStudent,roles: outputs.roles, course: course)
   end
 end

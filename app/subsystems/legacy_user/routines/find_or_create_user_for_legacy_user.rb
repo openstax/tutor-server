@@ -1,7 +1,7 @@
 class LegacyUser::FindOrCreateUserForLegacyUser
   lev_routine
 
-  uses_routine Entity::CreateUser, translations: {type: :verbatim}
+  uses_routine Entity::CreateUser
 
   protected
 

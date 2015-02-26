@@ -1,14 +1,13 @@
 class Role::CreateUserRole
   lev_routine
 
-  uses_routine Entity::CreateRole, translations: {type: :verbatim}
-  uses_routine Role::AddUserRole, translations: {type: :verbatim}
+  uses_routine Entity::CreateRole, translations: {outputs: {type: :verbatim}}
+  uses_routine Role::AddUserRole
 
   protected
 
   def exec(user)
-    role = run(Entity::CreateRole).outputs.role
-    run(Role::AddUserRole, user: user, role: role)
-    outputs[:role] = role
+    run(Entity::CreateRole)
+    run(Role::AddUserRole, user: user, role: outputs.role)
   end
 end
