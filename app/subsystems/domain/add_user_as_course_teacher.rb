@@ -4,10 +4,10 @@ class Domain::AddUserAsCourseTeacher
   uses_routine Domain::UserIsCourseTeacher,
                translations: {type: :verbatim}
 
-  uses_routine RoleSs::CreateUserRole,
+  uses_routine Role::CreateUserRole,
                translations: {type: :verbatim}
 
-  uses_routine CourseSs::AddTeacher,
+  uses_routine CourseMembership::AddTeacher,
                translations: {type: :verbatim}
 
   protected
@@ -17,11 +17,11 @@ class Domain::AddUserAsCourseTeacher
     fatal_error(code: :could_not_determine_if_user_is_course_teacher, offending_inputs: [user, course]) if result.errors.any?
     fatal_error(code: :user_is_already_teacher_of_course, offending_inputs: [user, course]) if result.outputs.user_is_course_teacher
 
-    result = run(RoleSs::CreateUserRole, user)
+    result = run(Role::CreateUserRole, user)
     fatal_error(code: :could_not_add_teacher_role, offending_inputs: [user, course]) if result.errors.any?
     role = result.outputs.role
 
-    result = run(CourseSs::AddTeacher, course: course, role: role)
+    result = run(CourseMembership::AddTeacher, course: course, role: role)
     fatal_error(code: :could_not_add_teacher_role, offending_inputs: [user, course]) if result.errors.any?
 
     outputs[:role] = role

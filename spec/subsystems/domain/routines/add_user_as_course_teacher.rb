@@ -3,8 +3,8 @@ require 'rails_helper'
 describe Domain::AddUserAsCourseTeacher do
   context "when the given user is not a teacher in the given course" do
     it "returns the user's new teacher role" do
-      user   = EntitySs::CreateUser.call.outputs.user
-      course = EntitySs::CreateCourse.call.outputs.course
+      user   = Entity::CreateUser.call.outputs.user
+      course = Entity::CreateCourse.call.outputs.course
 
       result = Domain::AddUserAsCourseTeacher.call(user: user, course: course)
       expect(result.errors).to be_empty
@@ -13,8 +13,8 @@ describe Domain::AddUserAsCourseTeacher do
   end
   context "when the given user is a teacher in the given course" do
     it "has errors" do
-      user   = EntitySs::CreateUser.call.outputs.user
-      course = EntitySs::CreateCourse.call.outputs.course
+      user   = Entity::CreateUser.call.outputs.user
+      course = Entity::CreateCourse.call.outputs.course
 
       result = Domain::AddUserAsCourseTeacher.call(user: user, course: course)
       expect(result.errors).to be_empty

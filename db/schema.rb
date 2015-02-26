@@ -57,23 +57,23 @@ ActiveRecord::Schema.define(version: 20150218225408) do
   add_index "course_assistants", ["assistant_id"], name: "index_course_assistants_on_assistant_id"
   add_index "course_assistants", ["course_id", "assistant_id"], name: "index_course_assistants_on_course_id_and_assistant_id", unique: true
 
-  create_table "course_ss_students", force: :cascade do |t|
-    t.integer  "entity_ss_course_id", null: false
-    t.integer  "entity_ss_role_id",   null: false
-    t.datetime "created_at",          null: false
-    t.datetime "updated_at",          null: false
+  create_table "course_membership_students", force: :cascade do |t|
+    t.integer  "entity_course_id", null: false
+    t.integer  "entity_role_id",   null: false
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
   end
 
-  add_index "course_ss_students", ["entity_ss_course_id", "entity_ss_role_id"], name: "course_ss_student_course_role_uniqueness", unique: true
+  add_index "course_membership_students", ["entity_course_id", "entity_role_id"], name: "course_membership_student_course_role_uniq", unique: true
 
-  create_table "course_ss_teachers", force: :cascade do |t|
-    t.integer  "entity_ss_course_id", null: false
-    t.integer  "entity_ss_role_id",   null: false
-    t.datetime "created_at",          null: false
-    t.datetime "updated_at",          null: false
+  create_table "course_membership_teachers", force: :cascade do |t|
+    t.integer  "entity_course_id", null: false
+    t.integer  "entity_role_id",   null: false
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
   end
 
-  add_index "course_ss_teachers", ["entity_ss_course_id", "entity_ss_role_id"], name: "course_ss_teacher_course_role_uniqueness", unique: true
+  add_index "course_membership_teachers", ["entity_course_id", "entity_role_id"], name: "course_membership_teacher_course_role_uniq", unique: true
 
   create_table "courses", force: :cascade do |t|
     t.string   "school",                          null: false
@@ -106,17 +106,17 @@ ActiveRecord::Schema.define(version: 20150218225408) do
   add_index "educators", ["course_id"], name: "index_educators_on_course_id"
   add_index "educators", ["user_id", "course_id"], name: "index_educators_on_user_id_and_course_id", unique: true
 
-  create_table "entity_ss_courses", force: :cascade do |t|
+  create_table "entity_courses", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "entity_ss_roles", force: :cascade do |t|
+  create_table "entity_roles", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "entity_ss_users", force: :cascade do |t|
+  create_table "entity_users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -313,14 +313,14 @@ ActiveRecord::Schema.define(version: 20150218225408) do
   add_index "pages", ["book_id", "number"], name: "index_pages_on_book_id_and_number", unique: true
   add_index "pages", ["url"], name: "index_pages_on_url", unique: true
 
-  create_table "role_ss_users", force: :cascade do |t|
-    t.integer  "entity_ss_user_id", null: false
-    t.integer  "entity_ss_role_id", null: false
-    t.datetime "created_at",        null: false
-    t.datetime "updated_at",        null: false
+  create_table "role_users", force: :cascade do |t|
+    t.integer  "entity_user_id", null: false
+    t.integer  "entity_role_id", null: false
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
   end
 
-  add_index "role_ss_users", ["entity_ss_user_id", "entity_ss_role_id"], name: "role_ss_users_user_role_uniqueness", unique: true
+  add_index "role_users", ["entity_user_id", "entity_role_id"], name: "role_users_user_role_uniq", unique: true
 
   create_table "sections", force: :cascade do |t|
     t.integer  "course_id",  null: false
