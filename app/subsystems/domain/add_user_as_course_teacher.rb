@@ -22,7 +22,7 @@ class Domain::AddUserAsCourseTeacher
     role = result.outputs.role
 
     result = run(CourseMembership::AddTeacher, course: course, role: role)
-    fatal_error(code: :could_not_add_teacher_role, offending_inputs: [user, course]) if result.errors.any?
+    fatal_error(code: :could_not_add_teacher, offending_inputs: [user, course]) if result.errors.any?
 
     outputs[:role] = role
   end
