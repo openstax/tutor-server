@@ -1,17 +1,10 @@
 class Domain::AddUserAsCourseStudent
   lev_routine
 
-  uses_routine Domain::UserIsCourseTeacher,
-               translations: {type: :verbatim}
-
-  uses_routine Domain::UserIsCourseStudent,
-               translations: {type: :verbatim}
-
-  uses_routine Role::CreateUserRole,
-               translations: {type: :verbatim}
-
-  uses_routine CourseMembership::AddStudent,
-               translations: {type: :verbatim}
+  uses_routine Domain::UserIsCourseTeacher
+  uses_routine Domain::UserIsCourseStudent
+  uses_routine Role::CreateUserRole, translations: {outputs: {type: :verbatim}}
+  uses_routine CourseMembership::AddStudent
 
   protected
 
@@ -27,11 +20,8 @@ class Domain::AddUserAsCourseStudent
 
     result = run(Role::CreateUserRole, user)
     fatal_error(code: :could_not_add_student_role, offending_inputs: [user, course]) if result.errors.any?
-    role = result.outputs.role
 
-    result = run(CourseMembership::AddStudent, course: course, role: role)
+    result = run(CourseMembership::AddStudent, course: course, role: outputs.role)
     fatal_error(code: :could_not_add_student, offending_inputs: [user, course]) if result.errors.any?
-
-    outputs[:role] = role
   end
 end

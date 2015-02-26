@@ -1,14 +1,9 @@
 class Domain::AddUserAsCourseTeacher
   lev_routine
 
-  uses_routine Domain::UserIsCourseTeacher,
-               translations: {type: :verbatim}
-
-  uses_routine Role::CreateUserRole,
-               translations: {type: :verbatim}
-
-  uses_routine CourseMembership::AddTeacher,
-               translations: {type: :verbatim}
+  uses_routine Domain::UserIsCourseTeacher
+  uses_routine Role::CreateUserRole, translations: {outputs: {type: :verbatim}}
+  uses_routine CourseMembership::AddTeacher
 
   protected
 
@@ -19,11 +14,8 @@ class Domain::AddUserAsCourseTeacher
 
     result = run(Role::CreateUserRole, user)
     fatal_error(code: :could_not_add_teacher_role, offending_inputs: [user, course]) if result.errors.any?
-    role = result.outputs.role
 
-    result = run(CourseMembership::AddTeacher, course: course, role: role)
+    result = run(CourseMembership::AddTeacher, course: course, role: outputs.role)
     fatal_error(code: :could_not_add_teacher, offending_inputs: [user, course]) if result.errors.any?
-
-    outputs[:role] = role
   end
 end
