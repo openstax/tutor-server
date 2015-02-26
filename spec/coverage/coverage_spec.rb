@@ -10,6 +10,10 @@ RSpec.describe 'Coverage' do
     'lib/markdown_wrapper.rb' # Move to OSU
   ]
 
+  SUBSYSTEM_PATHS = Dir["app/subsystems/**/*.rb"].collect{|f| f.gsub('app/', '')}
+
+  IGNORED_PATHS += SUBSYSTEM_PATHS
+
   it 'has specs for all rb files in app and lib' do
     rb_files = Dir[
       "{#{TESTABLE_FOLDERS.collect{ |tf| tf.to_s }.join(',')}}/**/*.rb"
