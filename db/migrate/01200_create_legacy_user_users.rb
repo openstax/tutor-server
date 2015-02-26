@@ -8,7 +8,6 @@ class CreateLegacyUserUsers < ActiveRecord::Migration
       t.index :user_id, unique: true
     end
 
-    add_foreign_key :legacy_user_users, :users
     add_foreign_key :legacy_user_users, :entity_users
   end
 end
