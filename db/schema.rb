@@ -183,6 +183,15 @@ ActiveRecord::Schema.define(version: 20150218225408) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "legacy_user_users", force: :cascade do |t|
+    t.integer  "user_id",        null: false
+    t.integer  "entity_user_id", null: false
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+  end
+
+  add_index "legacy_user_users", ["user_id"], name: "index_legacy_user_users_on_user_id", unique: true
+
   create_table "multiple_choices", force: :cascade do |t|
     t.integer  "answer_id"
     t.datetime "created_at", null: false
