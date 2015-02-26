@@ -42,14 +42,14 @@ describe CourseMembership::IsCourseTeacher do
     end
 
     context "when a single role is given" do
-      it "returns false" do
+      it "returns true" do
         result = CourseMembership::IsCourseTeacher.call(course: target_course, role: target_teacher_role)
         expect(result.errors).to be_empty
         expect(result.outputs.is_course_teacher).to be_truthy
       end
     end
     context "multiple roles are given" do
-      it "returns false" do
+      it "returns true" do
         other_role1 = Entity::CreateRole.call.outputs.role
         other_role2 = Entity::CreateRole.call.outputs.role
         roles = [target_teacher_role, other_role1, other_role2]
