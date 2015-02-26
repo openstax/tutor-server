@@ -3,6 +3,6 @@ class Role::User < ActiveRecord::Base
   belongs_to :entity_user, class_name: "::Entity::User"
   belongs_to :entity_role, class_name: "::Entity::Role"
 
-  validates_presence_of :entity_user_id
-  validates_presence_of :entity_role_id
+  validates :entity_user_id, presence: true
+  validates :entity_role_id, presence: true
 end
