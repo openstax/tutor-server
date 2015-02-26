@@ -3,6 +3,6 @@ class CourseMembership::Student < ActiveRecord::Base
   belongs_to :entity_role,   class_name: "::Entity::Role"
   belongs_to :entity_course, class_name: "::Entity::Course"
 
-  validates :entity_role_id,   presence: true
+  validates :entity_role_id,   presence: true, uniqueness: {scope: :entity_course}
   validates :entity_course_id, presence: true
 end
