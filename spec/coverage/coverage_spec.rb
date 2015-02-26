@@ -3,12 +3,14 @@ require 'rails_helper'
 RSpec.describe 'Coverage' do
   TESTABLE_FOLDERS = [:app, :lib]
 
+  SUBSYSTEM_PATHS = Dir["app/subsystems/**/*.rb"].collect{|f| f.gsub('app/', '')}
+
   IGNORED_PATHS = [
     'helpers/application_helper.rb', # Empty
     'lib/generators/secrets/secrets_generator.rb', # Add secrets.yml to repo and remove
     'lib/lev/delegator.rb', # Move to lev
     'lib/markdown_wrapper.rb' # Move to OSU
-  ]
+  ] + SUBSYSTEM_PATHS
 
   it 'has specs for all rb files in app and lib' do
     rb_files = Dir[

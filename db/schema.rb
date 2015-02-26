@@ -57,6 +57,24 @@ ActiveRecord::Schema.define(version: 20150218225408) do
   add_index "course_assistants", ["assistant_id"], name: "index_course_assistants_on_assistant_id"
   add_index "course_assistants", ["course_id", "assistant_id"], name: "index_course_assistants_on_course_id_and_assistant_id", unique: true
 
+  create_table "course_membership_students", force: :cascade do |t|
+    t.integer  "entity_course_id", null: false
+    t.integer  "entity_role_id",   null: false
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+  end
+
+  add_index "course_membership_students", ["entity_course_id", "entity_role_id"], name: "course_membership_student_course_role_uniq", unique: true
+
+  create_table "course_membership_teachers", force: :cascade do |t|
+    t.integer  "entity_course_id", null: false
+    t.integer  "entity_role_id",   null: false
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+  end
+
+  add_index "course_membership_teachers", ["entity_course_id", "entity_role_id"], name: "course_membership_teacher_course_role_uniq", unique: true
+
   create_table "courses", force: :cascade do |t|
     t.string   "school",                          null: false
     t.string   "name",                            null: false
@@ -87,6 +105,21 @@ ActiveRecord::Schema.define(version: 20150218225408) do
 
   add_index "educators", ["course_id"], name: "index_educators_on_course_id"
   add_index "educators", ["user_id", "course_id"], name: "index_educators_on_user_id_and_course_id", unique: true
+
+  create_table "entity_courses", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "entity_roles", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "entity_users", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "exercise_topics", force: :cascade do |t|
     t.integer  "exercise_id", null: false
@@ -131,6 +164,15 @@ ActiveRecord::Schema.define(version: 20150218225408) do
 
   add_index "fine_print_signatures", ["contract_id"], name: "index_fine_print_signatures_on_contract_id"
   add_index "fine_print_signatures", ["user_id", "user_type", "contract_id"], name: "index_fine_print_signatures_on_u_id_and_u_type_and_c_id", unique: true
+
+  create_table "legacy_user_users", force: :cascade do |t|
+    t.integer  "user_id",        null: false
+    t.integer  "entity_user_id", null: false
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+  end
+
+  add_index "legacy_user_users", ["user_id"], name: "index_legacy_user_users_on_user_id", unique: true
 
   create_table "oauth_access_grants", force: :cascade do |t|
     t.integer  "resource_owner_id", null: false
@@ -255,6 +297,15 @@ ActiveRecord::Schema.define(version: 20150218225408) do
 
   add_index "pages", ["book_id", "number"], name: "index_pages_on_book_id_and_number", unique: true
   add_index "pages", ["url"], name: "index_pages_on_url", unique: true
+
+  create_table "role_users", force: :cascade do |t|
+    t.integer  "entity_user_id", null: false
+    t.integer  "entity_role_id", null: false
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+  end
+
+  add_index "role_users", ["entity_user_id", "entity_role_id"], name: "role_users_user_role_uniq", unique: true
 
   create_table "sections", force: :cascade do |t|
     t.integer  "course_id",  null: false
