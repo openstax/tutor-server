@@ -20,7 +20,7 @@ RSpec.describe WebviewController, :type => :controller do
     end
   end
 
-  describe 'GET index' do
+  describe 'GET *anything' do
     it 'requires a user' do
       get :index
       expect(response).to redirect_to(controller.send(:with_interceptor) {

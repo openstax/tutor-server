@@ -6,8 +6,6 @@ class CreateTaskedExercises < ActiveRecord::Migration
       t.string :title
       t.text :free_response
       t.string :answer_id
-      t.string :correct_answer_id
-      t.text :feedback_html
 
       t.timestamps null: false
     end

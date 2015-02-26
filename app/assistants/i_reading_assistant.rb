@@ -176,17 +176,16 @@ class IReadingAssistant
         version = SecureRandom.hex
         OpenStax::Exercises::V1.fake_client.add_exercise(number: number,
                                                          version: version)
-        # TODO: abstract this parsing
-        ex = JSON.parse(
-          OpenStax::Exercises::V1.exercises(number: number, version: version)
-        ).first
+
+        ex = OpenStax::Exercises::V1.exercises(
+               number: number, version: version
+             )['items'].first
 
         task_step_attributes << {
           tasked_class: TaskedExercise,
-          title: ex['title'],
-          url: page.url,
-          content: ex.to_json,
-          correct_answer_id: ex['questions'].first['answers'].first['id']
+          title: ex.title,
+          url: ex.url,
+          content: ex.content
         }
 
         current_reading = next_reading
@@ -216,11 +215,6 @@ class IReadingAssistant
         step.tasked = attributes[:tasked_class].new(
           attributes.slice(:url, :title, :content).merge(task_step: step)
         )
-        if attributes[:tasked_class] == TaskedExercise
-          step.tasked.correct_answer_id = attributes[:correct_answer_id] || ''
-          # TODO: set feedback after user picks an answer (not here)
-          step.tasked.feedback_html = 'Normal question feedback here lorem ipsum dolor sit amet consectetur adipisci elit'
-        end
         task.task_steps << step
       end
 
@@ -229,20 +223,14 @@ class IReadingAssistant
       #       right before the user gets the question
       SPACED_PRACTICE_MAP.each do |k_ago, number|
         number.times do
-          # TODO: abstract this parsing
-          ex = FillIReadingSpacedPracticeSlot.call()#taskee, k_ago)
-                                             .outputs[:exercise_hash]
+          ex = FillIReadingSpacedPracticeSlot.call(taskee, k_ago)
+                                             .outputs[:exercise]
 
           step = TaskStep.new(task: task)
-          content = ex[:content].stringify_keys
           step.tasked = TaskedExercise.new(task_step: step,
-                                           title: content['title'],
-                                           url: page.url,
-                                           content: content.to_json)
-          step.tasked.correct_answer_id = \
-            ex[:content][:questions].first[:answers].first[:id] || ''
-          # TODO: set feedback after user picks an answer (not here)
-          step.tasked.feedback_html = 'Spaced practice feedback here lorem ipsum dolor sit amet consectetur adipisci elit'
+                                           title: ex.title,
+                                           url: ex.url,
+                                           content: ex.content)
           task.task_steps << step
         end
       end

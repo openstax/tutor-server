@@ -5,7 +5,6 @@ RSpec.describe 'Coverage' do
 
   IGNORED_PATHS = [
     'helpers/application_helper.rb', # Empty
-    'routines/organize_search_results.rb', # Change Search: use OSU and remove
     'lib/generators/secrets/secrets_generator.rb', # Add secrets.yml to repo and remove
     'lib/lev/delegator.rb', # Move to lev
     'lib/markdown_wrapper.rb' # Move to OSU

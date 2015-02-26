@@ -11,15 +11,6 @@ module Sprint006
 
     def exec(username_or_user:, opens_at: Time.now)
 
-      # Don't try to connect to Exchange
-      OpenStax::Exchange.use_fake_client
-
-      OpenStax::Exchange::FakeClient.configure do |config|
-        config.registered_platforms   = {'123' => 'abc'}
-        config.server_url             = 'https://exchange.openstax.org'
-        config.supported_api_versions = ['v1']
-      end
-
       if username_or_user.is_a? String
         run(:create_account, username: username_or_user)
         user = UserMapper.account_to_user(outputs[:account])
