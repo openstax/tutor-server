@@ -15,7 +15,7 @@ describe CourseMembership::IsCourseTeacher do
 
     context "when a single role is given" do
       it "returns false" do
-        result = CourseMembership::IsCourseTeacher.call(course: target_course, role: target_teacher_role)
+        result = CourseMembership::IsCourseTeacher.call(course: target_course, roles: target_teacher_role)
         expect(result.errors).to be_empty
         expect(result.outputs.is_course_teacher).to be_falsey
       end
@@ -43,7 +43,7 @@ describe CourseMembership::IsCourseTeacher do
 
     context "when a single role is given" do
       it "returns true" do
-        result = CourseMembership::IsCourseTeacher.call(course: target_course, role: target_teacher_role)
+        result = CourseMembership::IsCourseTeacher.call(course: target_course, roles: target_teacher_role)
         expect(result.errors).to be_empty
         expect(result.outputs.is_course_teacher).to be_truthy
       end
@@ -57,27 +57,6 @@ describe CourseMembership::IsCourseTeacher do
         result = CourseMembership::IsCourseTeacher.call(course: target_course, roles: roles)
         expect(result.errors).to be_empty
         expect(result.outputs.is_course_teacher).to be_truthy
-      end
-    end
-  end
-
-  context "invalid usage" do
-    let(:course) { double(Entity::Course) }
-    let(:role)   { double(Entity::Role) }
-    let(:roles)  { [] }
-
-    context "when both role: and roles: are given" do
-      it "has errors" do
-        result = CourseMembership::IsCourseTeacher.call(course: course, role: role, roles: roles)
-        expect(result.errors).to_not be_empty
-        expect(result.errors.detect{|e| e.code == :invalid_usage}).to_not be_nil
-      end
-    end
-    context "when neither role: nor roles: is given" do
-      it "has errors" do
-        result = CourseMembership::IsCourseTeacher.call(course: course)
-        expect(result.errors).to_not be_empty
-        expect(result.errors.detect{|e| e.code == :invalid_usage}).to_not be_nil
       end
     end
   end
