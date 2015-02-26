@@ -7,5 +7,8 @@ class CreateCourseMembershipStudents < ActiveRecord::Migration
 
       t.index [:entity_course_id, :entity_role_id], unique: true, name: 'course_membership_student_course_role_uniq'
     end
+
+     add_foreign_key :course_membership_students, :entity_courses
+     add_foreign_key :course_membership_students, :entity_roles
   end
 end

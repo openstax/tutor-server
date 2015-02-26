@@ -7,5 +7,8 @@ class CreateRoleUsers < ActiveRecord::Migration
 
       t.index [:entity_user_id, :entity_role_id], unique: true, name: 'role_users_user_role_uniq'
     end
+
+     add_foreign_key :role_users, :entity_users
+     add_foreign_key :role_users, :entity_roles
   end
 end
