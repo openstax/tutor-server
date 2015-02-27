@@ -58,19 +58,50 @@ ActiveRecord::Base.define_singleton_method(:belongs_to) do |association_name, op
   belongs_to_original(association_name, options)
 end
 
-#
-# Load the subsystems
-#
+##
+## LOAD SUBSYSTEMS
+##
 
-subsystems.each do |subsystem|
-  Dir[File.join(Rails.root, "app/subsystems/#{subsystem.name}/*/**/*.rb")].each do |rb_file|
+##
+## Remove .../app/subsystems from the eager load paths (which are used by autoload) to
+## prevent confusion between rails file/symbol naming conventions.
+##
+
+Rails.application.config.eager_load_paths -= %W(#{Rails.application.config.root}/app/subsystems)
+
+##
+## Setup all the autoload symbol mappings for all subsystems.  This is done _before_ the
+## requiring down below so that dependencies can be found.
+##
+
+Dir[File.join(Rails.root, "app/subsystems/*/")].sort.each do |ss_root_dir|
+  module_name = File.split(ss_root_dir).last
+  a_module = module_name.camelcase.constantize
+
+  ## make ActiveRecord happy
+  a_module.define_singleton_method(:table_name_prefix) do
+    "#{module_name.underscore}_"
+  end
+
+  ## create a symbol --> file mapping for the normal ruby autoload
+  Dir[File.join(Rails.root, "app/subsystems/#{module_name}/*/**/*.rb")].each do |rb_file|
     path   = rb_file.gsub('.rb', '')
     symbol = File.split(path).last.camelize.to_sym
-    subsystem.module.autoload symbol, path 
-  end
-  
-  subsystem.module.define_singleton_method(:table_name_prefix) do
-    "#{subsystem.name.underscore}_"
+    a_module.autoload symbol, path
   end
 end
+
+##
+## Require the files here and how to avoid confusion caused by rails trying
+## to autoload them later.
+##
+
+Dir[File.join(Rails.root, "app/subsystems/*/")].sort.each do |ss_root_dir|
+  module_name = File.split(ss_root_dir).last
+  Dir[File.join(Rails.root, "app/subsystems/#{module_name}/*/**/*.rb")].sort.each do |rb_file|
+    path   = rb_file.gsub('.rb', '')
+    require path
+  end
+end
+
 
