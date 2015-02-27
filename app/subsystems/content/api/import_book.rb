@@ -1,6 +1,3 @@
-# require_relative '../routines/import_cnx_resource'
-# require_relative '../routines/import_page'
-
 class Content::Api::ImportBook
 
   lev_routine

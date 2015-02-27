@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Content::ActsAsResource do
+RSpec.describe ActsAsResource do
   [:content_page, :content_exercise].each do |class_name|
     context class_name do
       subject(:r) { FactoryGirl.create class_name }

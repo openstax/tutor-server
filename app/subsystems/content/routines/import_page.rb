@@ -1,5 +1,3 @@
-# require_relative './tag_resource_with_topics'
-
 class Content::ImportPage
 
   TUTOR_HOST = 'http://localhost:3001'
@@ -58,7 +56,7 @@ class Content::ImportPage
                       content: outputs[:content],
                       book: book,
                       title: hash['title'])
-    
+
     book.pages << outputs[:page] unless book.nil?
     transfer_errors_from outputs[:page], type: :verbatim
 

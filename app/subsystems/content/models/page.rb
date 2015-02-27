@@ -1,5 +1,3 @@
-require_relative '../lib/acts_as_resource'
-
 class Content::Page < ActiveRecord::Base
   acts_as_resource
 
