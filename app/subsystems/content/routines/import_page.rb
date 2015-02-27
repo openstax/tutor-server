@@ -48,18 +48,18 @@ class Content::ImportPage
   # Imports and saves a CNX page as a Page into the given Book
   # Returns the Resource object, a Page object and
   # the JSON hash used to create them
-  def exec(id, book, options = {})
+  def exec(id:, book_part:, options: {})
     run(:cnx_import, id, options)
     hash = outputs[:hash]
 
     run(:create_page, url: outputs[:url],
                       content: outputs[:content],
-                      book: book,
+                      book_part: book_part,
                       title: hash['title'])
 
     transfer_errors_from(outputs[:page], {type: :verbatim}, true)
 
-    book.pages << outputs[:page] unless book.nil?
+    book_part.pages << outputs[:page] unless book_part.nil?
 
     los = outputs[:doc].xpath(LO_XPATH).collect do |node|
       LO_REGEX.match(node.value).try(:[], 0)

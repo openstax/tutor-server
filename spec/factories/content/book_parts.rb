@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :content_book, class: '::Content::Book' do
+  factory :content_book_part, class: '::Content::BookPart' do
     title { Faker::Lorem.words(3) }
   end
 end
