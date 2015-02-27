@@ -166,6 +166,8 @@ end
 
 group :test do
   gem 'shoulda-matchers', require: false
+  gem 'capybara-webkit'
+  gem 'launchy'
 end
 
 group :production do

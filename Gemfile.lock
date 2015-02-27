@@ -72,6 +72,15 @@ GEM
       columnize (~> 0.8)
       debugger-linecache (~> 1.2)
       slop (~> 3.6)
+    capybara (2.4.4)
+      mime-types (>= 1.16)
+      nokogiri (>= 1.3.3)
+      rack (>= 1.0.0)
+      rack-test (>= 0.5.4)
+      xpath (~> 2.0)
+    capybara-webkit (1.4.1)
+      capybara (>= 2.3.0, < 2.5.0)
+      json
     carrierwave (0.10.0)
       activemodel (>= 3.2.0)
       activesupport (>= 3.2.0)
@@ -171,6 +180,8 @@ GEM
     jwt (1.3.0)
     keyword_search (1.5.0)
     kgio (2.9.3)
+    launchy (2.4.3)
+      addressable (~> 2.3)
     lev (4.0.0)
       actionpack (>= 3.0)
       active_attr
@@ -409,6 +420,8 @@ GEM
     whenever (0.9.4)
       chronic (>= 0.6.3)
     xml-simple (1.1.4)
+    xpath (2.0.0)
+      nokogiri (~> 1.3)
     yaml_db (0.3.0)
       rails (>= 3.0, < 4.3)
       rake (>= 0.8.7)
@@ -423,6 +436,7 @@ DEPENDENCIES
   bootstrap-sass (~> 3.2.0)
   brakeman
   byebug
+  capybara-webkit
   carrierwave
   cheat
   chronic
@@ -442,6 +456,7 @@ DEPENDENCIES
   jquery-rails
   json-schema
   keyword_search
+  launchy
   lev
   maruku
   mini_magick
