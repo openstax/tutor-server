@@ -7,7 +7,9 @@ class Subsystem
   attr_reader :name, :module
 end
 
+#
 # Identify the subsystems
+#
 
 subsystem_directories = Dir[File.join(Rails.root, "app/subsystems/*/")].sort
 
@@ -16,7 +18,9 @@ subsystems = subsystem_directories.collect do |dir|
   Subsystem.new(name, name.camelize.constantize)
 end
 
+#
 # Extend has_many and belongs_to to be subsystem aware
+#
 
 ActiveRecord::Base.define_singleton_method(:set_options_for_subsystem_association) do |association_type, association_name, options|
   subsystem_option = options.delete(:subsystem)
@@ -24,6 +28,9 @@ ActiveRecord::Base.define_singleton_method(:set_options_for_subsystem_associatio
   return if [:none, :ignore].include?(subsystem_option)
 
   module_name = self.name.deconstantize.underscore
+
+  # ****** Temporary control to limit to only the Content subsystem ******
+  return if module_name != "content"
   
   if subsystems.any?{|subsystem| subsystem.name == module_name}
     subsystem_option ||= module_name.to_sym
@@ -51,7 +58,9 @@ ActiveRecord::Base.define_singleton_method(:belongs_to) do |association_name, op
   belongs_to_original(association_name, options)
 end
 
+#
 # Load the subsystems
+#
 
 subsystems.each do |subsystem|
   Dir[File.join(Rails.root, "app/subsystems/#{subsystem.name}/*/**/*.rb")].each do |rb_file|

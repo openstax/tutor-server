@@ -7,12 +7,11 @@ RSpec.describe IReadingAssistant, :type => :assistant do
   # - Topic (LO)-tagged sections and problems
   fixture_file = 'spec/fixtures/m50577/index.cnxml.html'
 
-  let!(:page) {
-    FactoryGirl.create :page, url: 'http://dum.my/contents/m50577',
-                              content: open(fixture_file) { |f| f.read }
-  }
+  let!(:page) { Content::CreatePage.call(url: 'http://dum.my/contents/m50577', 
+                                         content: File.read(fixture_file),
+                                         title: 'Dummy Page').outputs.page } 
   let!(:task_plan) { FactoryGirl.create :task_plan,
-                                        settings: { page_id: Page.last.id } }
+                                        settings: { page_id: page.id } }
   let!(:taskees) { 3.times.collect{ FactoryGirl.create :user } }
   let!(:data) { {} }
 

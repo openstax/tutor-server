@@ -29,7 +29,7 @@ RSpec.describe Content::Api::ImportBook, :type => :routine,
     result = nil
     expect {
       result = Content::Api::ImportBook.call(cnx_book_id)
-    }.to change{ Book.count }.by(35)
+    }.to change{ Content::Book.count }.by(35)
     expect(result.errors).to be_empty
 
     book = result.outputs[:book]

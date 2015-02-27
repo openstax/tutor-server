@@ -17,7 +17,7 @@ RSpec.describe Content::ImportPage, :type => :routine do
       content: open(fixture_file) { |f| f.read }
     }
 
-    allow_any_instance_of(Import::CnxResource).to(
+    allow_any_instance_of(Content::ImportCnxResource).to(
       receive(:open).and_return(hash.to_json))
   end
 
@@ -25,7 +25,7 @@ RSpec.describe Content::ImportPage, :type => :routine do
     result = nil
     expect {
       result = Content::ImportPage.call('dummy', book)
-    }.to change{ Page.count }.by(1)
+    }.to change{ Content::Page.count }.by(1)
     expect(result.errors).to be_empty
 
     expect(result.outputs[:page]).to be_persisted
@@ -47,16 +47,16 @@ RSpec.describe Content::ImportPage, :type => :routine do
     result = nil
     expect {
       result = Content::ImportPage.call('dummy', book)
-    }.to change{ Topic.count }.by(3)
+    }.to change{ Content::Topic.count }.by(3)
 
-    topics = Topic.all.to_a
+    topics = Content::Topic.all.to_a
     expect(topics[-3].name).to eq 'ost-apphys-ch5-s1-lo1'
     expect(topics[-2].name).to eq 'ost-apphys-ch5-s1-lo2'
     expect(topics[-1].name).to eq 'ost-apphys-ch5-s1-lo3'
 
     tagged_topics = result.outputs[:topics]
     expect(tagged_topics).not_to be_empty
-    expect(tagged_topics).to eq Page.last.page_topics.collect{|pt| pt.topic}
+    expect(tagged_topics).to eq Content::Page.last.page_topics.collect{|pt| pt.topic}
     expect(tagged_topics.collect{|t| t.name}).to eq ['ost-apphys-ch5-s1-lo1',
                                                      'ost-apphys-ch5-s1-lo2',
                                                      'ost-apphys-ch5-s1-lo3']

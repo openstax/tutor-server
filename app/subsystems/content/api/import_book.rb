@@ -15,7 +15,7 @@ class Content::Api::ImportBook
 
   # Recursively imports items in a CNX collection into the given book
   def import_collection(parent_book, hash, options = {})
-    book = Content::Book.create(content_parent_book: parent_book,
+    book = Content::Book.create(parent_book: parent_book,
                                 title: hash['title'] || '')
 
     parent_book.child_books << book unless parent_book.nil?

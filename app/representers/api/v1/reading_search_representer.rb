@@ -1,11 +1,9 @@
 module Api::V1
-  class ReadingSearchRepresenter
+  class ReadingSearchRepresenter < Roar::Decorator
 
-    collection :items, decorator:
+    include Roar::Representer::JSON
 
-    collection :items, inherit: true,
-                       class: Task,
-                       decorator: TaskRepresenter
+    collection :items
 
   end
 end

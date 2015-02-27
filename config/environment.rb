@@ -2,7 +2,7 @@
 require File.expand_path('../application', __FILE__)
 
 require 'date_time_utilities'
-require 'acts_as_resource'
+# require 'acts_as_resource'
 require 'acts_as_tasked'
 
 SITE_NAME = "OpenStax Tutor"

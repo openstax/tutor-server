@@ -25,6 +25,10 @@ class Content::ImportPage
                as: :tag,
                translations: { outputs: { type: :verbatim } }
 
+  uses_routine Content::CreatePage,
+               as: :create_page,
+               translations: { outputs: { type: :verbatim } }
+
   protected
 
   # Creates or erases a file, then writes the content to it
@@ -50,10 +54,11 @@ class Content::ImportPage
     run(:cnx_import, id, options)
     hash = outputs[:hash]
 
-    outputs[:page] = ::Page.create(url: outputs[:url],
-                                   content: outputs[:content],
-                                   book: book,
-                                   title: hash['title'] || '')
+    run(:create_page, url: outputs[:url],
+                      content: outputs[:content],
+                      book: book,
+                      title: hash['title'])
+    
     book.pages << outputs[:page] unless book.nil?
     transfer_errors_from outputs[:page], type: :verbatim
 
