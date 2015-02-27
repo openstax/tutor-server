@@ -37,6 +37,10 @@ Rails.application.routes.draw do
       end
     end
 
+    resources :courses, only: [] do
+      get 'readings', on: :member
+    end
+
   end
   
   namespace 'admin' do

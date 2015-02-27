@@ -105,7 +105,8 @@ class IReadingAssistant
     # Remove this (move it to tests) once we implement the real client
     OpenStax::Exercises::V1.use_fake_client
 
-    page = Page.find(task_plan.settings[:page_id])
+    page = Content::GetPage.call(page_id: task_plan.settings[:page_id]).outputs.page
+
     title = task_plan.title || 'iReading'
     opens_at = task_plan.opens_at
     due_at = task_plan.due_at || (task_plan.opens_at + 1.week)

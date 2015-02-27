@@ -120,9 +120,6 @@ group :development, :test do
   # Access an IRB console on exceptions page and /console in development
   gem 'web-console', '~> 2.0.0'
 
-  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-  gem 'spring'
-
   # Mute asset pipeline log messages
   gem 'quiet_assets'
 

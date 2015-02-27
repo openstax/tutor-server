@@ -1,0 +1,908 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: http://archive.cnx.org/contents/031da8d3-b525-429c-80cf-6c8ed997733a
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - text/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 302
+      message: Found
+    headers:
+      Access-Control-Allow-Headers:
+      - origin,dnt,accept-encoding,accept-language,keep-alive,user-agent,x-requested-with,if-modified-since,cache-control,content-type
+      Access-Control-Allow-Methods:
+      - GET, OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Type:
+      - text/plain
+      Location:
+      - "/contents/031da8d3-b525-429c-80cf-6c8ed997733a@8.33"
+      Server:
+      - waitress
+      X-Varnish-Action:
+      - FETCH (pass - status > 300, not content)
+      Content-Length:
+      - '0'
+      Accept-Ranges:
+      - bytes
+      Date:
+      - Thu, 26 Feb 2015 02:13:15 GMT
+      X-Varnish:
+      - '783519697'
+      Via:
+      - 1.1 varnish
+      Connection:
+      - keep-alive
+      X-Cache:
+      - MISS
+      X-Varnish-Age:
+      - '0'
+      Age:
+      - '0'
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Thu, 26 Feb 2015 02:13:15 GMT
+- request:
+    method: get
+    uri: http://archive.cnx.org/contents/031da8d3-b525-429c-80cf-6c8ed997733a@8.33
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - text/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Access-Control-Allow-Headers:
+      - origin,dnt,accept-encoding,accept-language,keep-alive,user-agent,x-requested-with,if-modified-since,cache-control,content-type
+      Access-Control-Allow-Methods:
+      - GET, OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Type:
+      - application/json
+      Server:
+      - waitress
+      X-Varnish-Action:
+      - FETCH (override - archive contents)
+      X-Factor-Ttl:
+      - 'ttl: 604800.000'
+      Content-Length:
+      - '66426'
+      Accept-Ranges:
+      - bytes
+      Date:
+      - Thu, 26 Feb 2015 02:13:15 GMT
+      X-Varnish:
+      - 783519702 782087291
+      Via:
+      - 1.1 varnish
+      Connection:
+      - keep-alive
+      X-Cache:
+      - HIT
+      X-Varnish-Age:
+      - '125530'
+      Age:
+      - '0'
+    body:
+      encoding: UTF-8
+      string: '{"googleAnalytics": "UA-30227798-1", "version": "8.33", "submitlog":
+        "changed chapter title", "abstract": "<div xmlns=\"http://www.w3.org/1999/xhtml\"
+        xmlns:md=\"http://cnx.rice.edu/mdml\" xmlns:c=\"http://cnx.rice.edu/cnxml\"
+        xmlns:html=\"http://www.w3.org/1999/xhtml\" xmlns:qml=\"http://cnx.rice.edu/qml/1.0\"
+        xmlns:data=\"http://dev.w3.org/html5/spec/#custom\" xmlns:bib=\"http://bibtexml.sf.net/\"
+        xmlns:mod=\"http://cnx.rice.edu/#moduleIds\">This introductory, algebra-based,
+        two-semester college physics book is grounded with real-world examples, illustrations,
+        and explanations to help students grasp key, fundamental physics concepts.
+        This online, fully editable and customizable title includes learning objectives,
+        concept questions, links to labs and simulations, and ample practice opportunities
+        to solve traditional physics application problems.</div>", "revised": "2015-02-03T15:05:50Z",
+        "roles": null, "keywords": ["ac circuits", "atomic physics", "bioelectricity",
+        "biological and medical applications", "circuits", "college physics", "collisions",
+        "dc instruments", "drag", "elasticity", "electric charge and electric field",
+        "electric current", "electric potential", "electrical technologies", "electromagnetic
+        induction", "electromagnetic waves", "energy", "fluid dynamics", "fluid statics",
+        "forces", "friction", "frontiers of physics", "gas laws", "geometric optics",
+        "heat and transfer methods", "kinematics", "kinetic theory", "linear momentum",
+        "magnetism", "medical applications of nuclear physics", "Newton\u2019s Laws
+        of Motion", "Ohm\u2019s Law", "oscillatory motion and waves", "particle physics",
+        "physics", "physics of hearing", "quantum physics", "radioactivity and nuclear
+        physics", "resistance", "rotational motion and angular momentum", "special
+        relativity", "statics and torque", "temperature", "thermodynamics", "uniform
+        circular motion and gravitation", "vision and optical instruments", "wave
+        optics", "work"], "id": "031da8d3-b525-429c-80cf-6c8ed997733a", "title": "College
+        Physics", "mediaType": "application/vnd.org.cnx.collection", "subjects": ["Mathematics
+        and Statistics", "Science and Technology"], "legacy_id": "col11406", "parentId":
+        null, "stateid": 1, "parentTitle": null, "maintainers": [{"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}, {"website": "http://openstaxcollege.org", "surname": "OpenStax
+        College", "suffix": "", "firstname": "", "title": "", "othername": "", "email":
+        "info@openstaxcollege.org", "fullname": "OpenStax College", "id": "OpenStaxCollege"}],
+        "authors": [{"website": "http://openstaxcollege.org", "surname": "OpenStax
+        College", "suffix": "", "firstname": "", "title": "", "othername": "", "email":
+        "info@openstaxcollege.org", "fullname": "OpenStax College", "id": "OpenStaxCollege"}],
+        "parentVersion": "", "legacy_version": "1.8", "licensors": [{"website": "http://rice.edu",
+        "surname": "University", "suffix": "", "firstname": "Rice", "title": "", "othername":
+        "", "email": "daniel@openstaxcollege.org", "fullname": "Rice University",
+        "id": "OSCRiceUniversity"}], "license": {"url": "http://creativecommons.org/licenses/by/4.0/",
+        "code": "by", "version": "4.0", "name": "Creative Commons Attribution License"},
+        "language": "en", "created": "2012-01-23T19:03:30Z", "tree": {"id": "031da8d3-b525-429c-80cf-6c8ed997733a@8.33",
+        "contents": [{"id": "a4579e90-f894-4438-88c3-14772d3da9ff@9", "title": "Preface"},
+        {"id": "subcol", "contents": [{"id": "1d1fd537-77fb-4eac-8a8a-60bbaa747b6d@3",
+        "title": "Introduction to Science and the Realm of Physics, Physical Quantities,
+        and Units"}, {"id": "39256206-03b0-4396-abb6-75e6ee5e3c7b@4", "title": "Physics:
+        An Introduction"}, {"id": "102e9604-daa7-4a09-9f9e-232251d1a4ee@7", "title":
+        "Physical Quantities and Units"}, {"id": "4bba6a1c-a0e6-45c0-988c-0d5c23425670@7",
+        "title": "Accuracy, Precision, and Significant Figures"}, {"id": "eb75b532-91ca-4c3d-b803-db329981914a@5",
+        "title": "Approximation"}], "title": "Introduction: The Nature of Science
+        and Physics"}, {"id": "subcol", "contents": [{"id": "e12329e4-8d6c-49cf-aa45-6a05b26ebcba@2",
+        "title": "Introduction to One-Dimensional Kinematics"}, {"id": "fc7dc488-f4ec-498c-b261-3b75eaa70aaa@4",
+        "title": "Displacement"}, {"id": "823f4a1e-3d10-44b6-a22e-8608f72c6eca@2",
+        "title": "Vectors, Scalars, and Coordinate Systems"}, {"id": "15a9679c-0422-4712-9a6e-71bad4472a0c@4",
+        "title": "Time, Velocity, and Speed"}, {"id": "6023b87d-5a28-4910-9e51-ee7fd11c98e1@4",
+        "title": "Acceleration"}, {"id": "ea2bb23c-4fce-4e9d-a46b-3754125da988@9",
+        "title": "Motion Equations for Constant Acceleration in One Dimension"}, {"id":
+        "68db177b-ab5c-48b9-8bcc-721e140fed8b@2", "title": "Problem-Solving Basics
+        for One-Dimensional Kinematics"}, {"id": "9e486db8-120e-4507-b265-e5248007faba@5",
+        "title": "Falling Objects"}, {"id": "ef1e90b2-9c2d-4d35-9faa-d1055b8d89db@5",
+        "title": "Graphical Analysis of One-Dimensional Motion"}], "title": "Kinematics"},
+        {"id": "subcol", "contents": [{"id": "f309a0f9-63fb-46ca-9585-d1e1dc96a142@3",
+        "title": "Introduction to Two-Dimensional Kinematics"}, {"id": "21d0e217-d50f-4901-af75-905e738eb4c4@4",
+        "title": "Kinematics in Two Dimensions: An Introduction"}, {"id": "4bd8bbec-bda2-412b-96f8-cc0b7ff5e794@7",
+        "title": "Vector Addition and Subtraction: Graphical Methods"}, {"id": "b9739bfd-dc9d-4f0a-b037-dc22884d30f3@10",
+        "title": "Vector Addition and Subtraction: Analytical Methods"}, {"id": "69062f44-56d2-4111-88ff-f599727c4ed1@12",
+        "title": "Projectile Motion"}, {"id": "b64da007-2df2-4425-8f4b-e4d42ed423d9@11",
+        "title": "Addition of Velocities"}], "title": "Two-Dimensional Kinematics"},
+        {"id": "subcol", "contents": [{"id": "02f52a02-2484-4ccb-bbd4-3c94edaa8e09@4",
+        "title": "Introduction to Dynamics: Newton\u2019s Laws of Motion"}, {"id":
+        "de43ae15-d1fa-4265-98f6-9820ff31a270@3", "title": "Development of Force Concept"},
+        {"id": "e4084c4d-df8b-43d3-af14-c2ea68d59f92@2", "title": "Newton\u2019s First
+        Law of Motion: Inertia"}, {"id": "8afa5bc0-8fb5-4d10-bddc-e626afef65ee@8",
+        "title": "Newton\u2019s Second Law of Motion: Concept of a System"}, {"id":
+        "d5510a8b-a06e-4634-a63f-2ec97b293af6@5", "title": "Newton\u2019s Third Law
+        of Motion: Symmetry in Forces"}, {"id": "5a51b5c5-1756-4d6c-b9be-84a9627ef003@8",
+        "title": "Normal, Tension, and Other Examples of Forces"}, {"id": "994814cc-52e2-4398-9a96-eae02025519e@8",
+        "title": "Problem-Solving Strategies"}, {"id": "c372561e-08e8-41a1-ba72-9b4c00394c2d@8",
+        "title": "Further Applications of Newton\u2019s Laws of Motion"}, {"id": "c874ccd3-6c58-4104-918e-bded4f2c9ea4@6",
+        "title": "Extended Topic: The Four Basic Forces\u2014An Introduction"}], "title":
+        "Dynamics: Force and Newton''s Laws of Motion"}, {"id": "subcol", "contents":
+        [{"id": "97233c88-7891-40c2-a908-a0dc22501b8c@2", "title": "Introduction:
+        Further Applications of Newton\u2019s Laws"}, {"id": "7bf5b534-4196-4484-a777-a2f636a4cc11@7",
+        "title": "Friction"}, {"id": "be308439-f9b1-40e7-b0a6-1631cbc7feaa@9", "title":
+        "Drag Forces"}, {"id": "f11ae42f-9666-4f36-93d9-0093f94df061@10", "title":
+        "Elasticity: Stress and Strain"}], "title": "Further Applications of Newton''s
+        Laws: Friction, Drag, and Elasticity"}, {"id": "subcol", "contents": [{"id":
+        "3ef5dfb6-0a8d-433e-9c8f-b8c860a3903b@2", "title": "Introduction to Uniform
+        Circular Motion and Gravitation"}, {"id": "44216d83-fe7e-461d-a5f4-9f3e2ffa284b@7",
+        "title": "Rotation Angle and Angular Velocity"}, {"id": "96c50bd3-3f5f-42f6-8812-f3494e0f0888@8",
+        "title": "Centripetal Acceleration"}, {"id": "584a0fe8-56d0-497c-8f3d-8b0e3f0359a1@9",
+        "title": "Centripetal Force"}, {"id": "86cc09b6-80c6-43ad-b80f-187571f45107@3",
+        "title": "Fictitious Forces and Non-inertial Frames: The Coriolis Force"},
+        {"id": "df3cd28b-1aba-4abc-84d7-54224fbd2a78@5", "title": "Newton\u2019s Universal
+        Law of Gravitation"}, {"id": "4a4407ed-0969-4018-806f-6ea728d6efb4@5", "title":
+        "Satellites and Kepler\u2019s Laws: An Argument for Simplicity"}], "title":
+        "Uniform Circular Motion and Gravitation"}, {"id": "subcol", "contents": [{"id":
+        "643b6e4a-de21-4a14-a677-b0d4c5ddb2d5@2", "title": "Introduction to Work,
+        Energy, and Energy Resources"}, {"id": "364a282d-6278-46df-83c1-1df19d673b51@5",
+        "title": "Work: The Scientific Definition"}, {"id": "3fffbab5-5b0d-4622-be83-eb65111f9c3e@5",
+        "title": "Kinetic Energy and the Work-Energy Theorem"}, {"id": "453c581f-c03a-4594-b17f-28f97fa6d39e@7",
+        "title": "Gravitational Potential Energy"}, {"id": "32fa5f4a-677f-455a-b767-8711ee4bf7a8@4",
+        "title": "Conservative Forces and Potential Energy"}, {"id": "092ffa28-a19e-4bd7-939a-1dfef1ee2a1a@6",
+        "title": "Nonconservative Forces"}, {"id": "c5adb012-fbab-41a7-b5b2-4644984097fc@5",
+        "title": "Conservation of Energy"}, {"id": "c82515ee-02ef-4e15-9b4f-52e67617359c@4",
+        "title": "Power"}, {"id": "6c62826b-e33c-446f-b8d0-10a4b6156549@5", "title":
+        "Work, Energy, and Power in Humans"}, {"id": "a4b7e0ec-bded-45de-8016-416aaaa8286b@5",
+        "title": "World Energy Use"}], "title": "Work, Energy, and Energy Resources"},
+        {"id": "subcol", "contents": [{"id": "672979a1-f4a5-41bc-9d93-c5d34df0587f@2",
+        "title": "Introduction to Linear Momentum and Collisions"}, {"id": "93d34b53-54fb-4056-b8a5-ce22ec22321f@3",
+        "title": "Linear Momentum and Force"}, {"id": "0b3a0e16-bd31-4349-af57-dcdacbfab7ce@6",
+        "title": "Impulse"}, {"id": "007123e0-9db4-48bf-bd90-8976ff53a920@3", "title":
+        "Conservation of Momentum"}, {"id": "e9d1f538-7368-4465-ab33-94ba72cd1872@3",
+        "title": "Elastic Collisions in One Dimension"}, {"id": "9f4cace5-1963-43b0-bfca-2ab221ed2c7a@8",
+        "title": "Inelastic Collisions in One Dimension"}, {"id": "ca0b6bf0-e249-45a5-aa43-3088b4f66739@6",
+        "title": "Collisions of Point Masses in Two Dimensions"}, {"id": "5ea664f4-f320-4873-93c7-0dc838e9c9ae@5",
+        "title": "Introduction to Rocket Propulsion"}], "title": "Linear Momentum
+        and Collisions"}, {"id": "subcol", "contents": [{"id": "569c75a0-d2d5-4f12-a075-6ac5736617e9@4",
+        "title": "Introduction to Statics and Torque"}, {"id": "ee1ff255-2c04-4a6d-aa23-6d981b02ea48@5",
+        "title": "The First Condition for Equilibrium"}, {"id": "11aac25a-551d-4c47-8524-1a98414470b3@4",
+        "title": "The Second Condition for Equilibrium"}, {"id": "be842fb1-f9fc-48db-919b-b197c7a6ee8c@6",
+        "title": "Stability"}, {"id": "d3c30b71-3b67-41b1-9e1e-5accd05f159d@5", "title":
+        "Applications of Statics, Including Problem-Solving Strategies"}, {"id": "bdb0d66d-b9f2-4143-80f8-f07a066bb6ff@3",
+        "title": "Simple Machines"}, {"id": "d703853c-6382-4035-8d6a-dcbca00a15ca@6",
+        "title": "Forces and Torques in Muscles and Joints"}], "title": "Statics and
+        Torque"}, {"id": "subcol", "contents": [{"id": "898b2582-fe06-477a-922c-3060f72613a4@4",
+        "title": "Introduction to Rotational Motion and Angular Momentum"}, {"id":
+        "094852a0-7f89-4a97-b8ea-5659133fd740@4", "title": "Angular Acceleration"},
+        {"id": "1f067ea8-6cbe-463b-b672-8cd39ccfb360@4", "title": "Kinematics of Rotational
+        Motion"}, {"id": "db59f656-e708-4094-a742-1e5560fe97c9@6", "title": "Dynamics
+        of Rotational Motion: Rotational Inertia"}, {"id": "b328b5a2-79ea-4faa-9674-8d62df2f288e@8",
+        "title": "Rotational Kinetic Energy: Work and Energy Revisited"}, {"id": "7de5be93-09e1-4ab6-8282-bec00a3e9f3d@5",
+        "title": "Angular Momentum and Its Conservation"}, {"id": "9b497f46-c979-43cd-a431-be855ec76d47@5",
+        "title": "Collisions of Extended Bodies in Two Dimensions"}, {"id": "041effb0-5b88-46e0-895e-4b9f804607df@2",
+        "title": "Gyroscopic Effects: Vector Aspects of Angular Momentum"}], "title":
+        "Rotational Motion and Angular Momentum"}, {"id": "subcol", "contents": [{"id":
+        "8399aec7-5977-427c-83f6-59b0c2bae7e2@3", "title": "Introduction to Fluid
+        Statics"}, {"id": "bb9825e1-092e-4c11-b5c8-265d4317ae34@4", "title": "What
+        Is a Fluid?"}, {"id": "f137588f-b7a9-44cd-8df1-1818df41d568@3", "title": "Density"},
+        {"id": "f713bda9-67f7-49c9-9d9d-ca2e34a202a5@4", "title": "Pressure"}, {"id":
+        "5f0b0e0e-e825-4aeb-9c8e-1f64a6942233@3", "title": "Variation of Pressure
+        with Depth in a Fluid"}, {"id": "e980d635-5f4c-4857-9b29-c51ee0760909@3",
+        "title": "Pascal\u2019s Principle"}, {"id": "a08ff613-3d40-4b34-8416-782febd89317@6",
+        "title": "Gauge Pressure, Absolute Pressure, and Pressure Measurement"}, {"id":
+        "81e232b0-5245-4d19-b28d-31c1cf1624e0@8", "title": "Archimedes\u2019 Principle"},
+        {"id": "eef12ab9-588f-4922-9314-ac1cb25831f5@5", "title": "Cohesion and Adhesion
+        in Liquids: Surface Tension and Capillary Action"}, {"id": "156f6f78-a4e7-454d-a032-9b14f4223cd9@5",
+        "title": "Pressures in the Body"}], "title": "Fluid Statics"}, {"id": "subcol",
+        "contents": [{"id": "637c23e8-51d3-4a3f-bd5f-5b7de7efca23@3", "title": "Introduction
+        to Fluid Dynamics and Its Biological and Medical Applications"}, {"id": "83d270f5-baa0-4bf9-a22a-539025b29180@4",
+        "title": "Flow Rate and Its Relation to Velocity"}, {"id": "0c8ac66c-a41b-4861-8fc6-e9633182091f@6",
+        "title": "Bernoulli\u2019s Equation"}, {"id": "fcfe29e0-3fcf-4f9a-a269-51b8bb710f2f@4",
+        "title": "The Most General Applications of Bernoulli\u2019s Equation"}, {"id":
+        "a4293fc2-4de2-4506-b890-a7abdeb70c16@5", "title": "Viscosity and Laminar
+        Flow; Poiseuille\u2019s Law"}, {"id": "6e2ab67b-2c38-4d06-8ec7-648e083b628e@7",
+        "title": "The Onset of Turbulence"}, {"id": "1351c941-c9c6-416a-be45-12c6a072301e@5",
+        "title": "Motion of an Object in a Viscous Fluid"}, {"id": "d1dec991-380c-4534-a394-14e5a7729872@3",
+        "title": "Molecular Transport Phenomena: Diffusion, Osmosis, and Related Processes"}],
+        "title": "Fluid Dynamics and Its Biological and Medical Applications"}, {"id":
+        "subcol", "contents": [{"id": "605b7de4-3c51-4624-96f2-c512950af889@2", "title":
+        "Introduction to Temperature, Kinetic Theory, and the Gas Laws"}, {"id": "da8bb426-0db2-44a0-8a48-a62c2acf4482@3",
+        "title": "Temperature"}, {"id": "0b6d0d23-e96f-4f34-8051-643361f8c7c7@4",
+        "title": "Thermal Expansion of Solids and Liquids"}, {"id": "8f4cb076-9f5f-4a21-966e-079d768f7a98@5",
+        "title": "The Ideal Gas Law"}, {"id": "bb091009-f21f-47a2-954b-3b79871974b3@4",
+        "title": "Kinetic Theory: Atomic and Molecular Explanation of Pressure and
+        Temperature"}, {"id": "a12ace0a-4c9f-4297-bc76-1c3b77d4d9ce@4", "title": "Phase
+        Changes"}, {"id": "030347e9-f128-486f-a779-019ac474ff90@5", "title": "Humidity,
+        Evaporation, and Boiling"}], "title": "Temperature, Kinetic Theory, and the
+        Gas Laws"}, {"id": "subcol", "contents": [{"id": "7892cddd-833e-42b8-bcaa-a1e94fb9eb9c@3",
+        "title": "Introduction to Heat and Heat Transfer Methods"}, {"id": "5175e6a6-f84b-4955-9840-c9f07e8e7436@4",
+        "title": "Heat"}, {"id": "5c0d1577-c0dc-43c0-9c49-aca8e01227ff@5", "title":
+        "Temperature Change and Heat Capacity"}, {"id": "5f2b5aef-4948-488f-8ff9-839478a6d6cf@8",
+        "title": "Phase Change and Latent Heat"}, {"id": "43516708-07b1-48f9-8314-7460d6ce7bbb@3",
+        "title": "Heat Transfer Methods"}, {"id": "a7beda43-2f3a-4d12-adfe-2e19c20b5e14@7",
+        "title": "Conduction"}, {"id": "abc2bcc9-2003-4d36-971a-05781d15e99c@6", "title":
+        "Convection"}, {"id": "949ae786-a308-4f86-be47-32358239ac40@6", "title": "Radiation"}],
+        "title": "Heat and Heat Transfer Methods"}, {"id": "subcol", "contents": [{"id":
+        "d26dc35b-f794-427e-b39d-f4b5496fd118@3", "title": "Introduction to Thermodynamics"},
+        {"id": "fb11b483-b85f-4cda-bec7-4dfd136dba60@7", "title": "The First Law of
+        Thermodynamics"}, {"id": "c54309db-5b78-4a77-9e4f-61adc778cb50@5", "title":
+        "The First Law of Thermodynamics and Some Simple Processes"}, {"id": "fd148e61-8909-46dc-be6f-4beeec06fec1@4",
+        "title": "Introduction to the Second Law of Thermodynamics: Heat Engines and
+        Their Efficiency"}, {"id": "2f8e92ba-f6a4-4fae-9228-64fd959894d8@4", "title":
+        "Carnot\u2019s Perfect Heat Engine: The Second Law of Thermodynamics Restated"},
+        {"id": "2f328efd-976e-4d46-9a43-abbcb8f8bbb1@3", "title": "Applications of
+        Thermodynamics: Heat Pumps and Refrigerators"}, {"id": "15a50194-9cf1-4848-8d68-dcce5788433e@6",
+        "title": "Entropy and the Second Law of Thermodynamics: Disorder and the Unavailability
+        of Energy"}, {"id": "d9b9681a-d5d8-4640-91bd-68268ccebf33@4", "title": "Statistical
+        Interpretation of Entropy and the Second Law of Thermodynamics: The Underlying
+        Explanation"}], "title": "Thermodynamics"}, {"id": "subcol", "contents": [{"id":
+        "231db772-48dc-4a7c-bf35-eee3868eef69@3", "title": "Introduction to Oscillatory
+        Motion and Waves"}, {"id": "a7c21260-3cf9-49cc-91f7-b631fa0c5d42@5", "title":
+        "Hooke\u2019s Law: Stress and Strain Revisited"}, {"id": "33575669-8638-45a8-b8cf-17b64b35e071@3",
+        "title": "Period and Frequency in Oscillations"}, {"id": "2a1ffd48-03ba-45d0-94bc-8afc38ebad19@7",
+        "title": "Simple Harmonic Motion: A Special Periodic Motion"}, {"id": "1b81c792-239f-4107-9e94-37233e6f7e92@5",
+        "title": "The Simple Pendulum"}, {"id": "85b8cd63-e27c-456e-a04f-2312e3966efc@6",
+        "title": "Energy and the Simple Harmonic Oscillator"}, {"id": "cd0534f2-ecfb-4784-8db6-c93aad2f8e36@5",
+        "title": "Uniform Circular Motion and Simple Harmonic Motion"}, {"id": "667fb406-3de7-4ecd-93f5-aedd38351567@4",
+        "title": "Damped Harmonic Motion"}, {"id": "51dcd05d-d69a-4107-8193-f3e95cd96ef1@5",
+        "title": "Forced Oscillations and Resonance"}, {"id": "ea610ab5-6698-4f16-b4f1-6a210247701f@5",
+        "title": "Waves"}, {"id": "f1b5b000-de07-4a0e-9078-4620a3bc7c34@5", "title":
+        "Superposition and Interference"}, {"id": "c1cfa73e-8b38-431c-af6e-ecba8c1fee70@7",
+        "title": "Energy in Waves: Intensity"}], "title": "Oscillatory Motion and
+        Waves"}, {"id": "subcol", "contents": [{"id": "3778fbe9-8bcf-473c-a614-549073cf27e2@3",
+        "title": "Introduction to the Physics of Hearing"}, {"id": "9d20f102-8c97-4cd1-a16e-b7d5dce1a076@3",
+        "title": "Sound"}, {"id": "c840334f-0189-48ae-80db-a9afafa72b73@4", "title":
+        "Speed of Sound, Frequency, and Wavelength"}, {"id": "6205f327-1b6e-4bbe-a4b2-f6d0b5df29d5@3",
+        "title": "Sound Intensity and Sound Level"}, {"id": "37891e98-ce8b-4a6a-8e5e-d9889126d53a@2",
+        "title": "Doppler Effect and Sonic Booms"}, {"id": "e4c1bfff-3e91-4254-a5f7-0e4582a0541f@4",
+        "title": "Sound Interference and Resonance: Standing Waves in Air Columns"},
+        {"id": "cef0ea3c-00aa-4755-a6e5-92ffec01dc60@3", "title": "Hearing"}, {"id":
+        "1cd25156-7b13-4767-a14d-71ad2ce0352d@6", "title": "Ultrasound"}], "title":
+        "Physics of Hearing"}, {"id": "subcol", "contents": [{"id": "99b463e0-bd31-4f32-afc6-fdb3d363db69@3",
+        "title": "Introduction to Electric Charge and Electric Field"}, {"id": "bb7dc37b-5a71-4f4d-b83f-524e0f1b3c74@5",
+        "title": "Static Electricity and Charge: Conservation of Charge"}, {"id":
+        "f2f59eb2-3373-4243-85f7-03c5e71a4258@4", "title": "Conductors and Insulators"},
+        {"id": "e3e62326-ebb7-4810-a202-e4e690745b76@6", "title": "Coulomb\u2019s
+        Law"}, {"id": "db918015-7645-42cf-8bf7-64d09ad7b838@6", "title": "Electric
+        Field: Concept of a Field Revisited"}, {"id": "6f4d1b30-1c7e-440d-bcb4-26f1ffebe4d3@7",
+        "title": "Electric Field Lines: Multiple Charges"}, {"id": "27262a1a-c710-4f5e-8d84-d2d962a23f8b@2",
+        "title": "Electric Forces in Biology"}, {"id": "6bcb560d-d0eb-4c91-9ac0-5ef46b68fd05@4",
+        "title": "Conductors and Electric Fields in Static Equilibrium"}, {"id": "56ae5355-400b-4330-8552-980b0744e2ca@6",
+        "title": "Applications of Electrostatics"}], "title": "Electric Charge and
+        Electric Field"}, {"id": "subcol", "contents": [{"id": "55277b9b-6c63-4439-8fef-464beaaa82b6@4",
+        "title": "Introduction to Electric Potential and Electric Energy"}, {"id":
+        "650c4bb3-d190-44fd-9f2f-445a783abdec@4", "title": "Electric Potential Energy:
+        Potential Difference"}, {"id": "c793cc2b-c0ab-4089-a452-677700c3f9ac@3", "title":
+        "Electric Potential in a Uniform Electric Field"}, {"id": "2853d33b-313d-47bf-8658-12eecf8cf548@5",
+        "title": "Electrical Potential Due to a Point Charge"}, {"id": "038b3dc5-0d7f-451b-aac0-94d4bd413b45@3",
+        "title": "Equipotential Lines"}, {"id": "56d8ca48-ab11-477d-b800-31b812b036b2@4",
+        "title": "Capacitors and Dielectrics"}, {"id": "f090675d-b0b4-4194-a4f0-084980010b4a@4",
+        "title": "Capacitors in Series and Parallel"}, {"id": "7429b93d-106e-417e-b01f-a68c04312d93@3",
+        "title": "Energy Stored in Capacitors"}], "title": "Electric Potential and
+        Electric Field"}, {"id": "subcol", "contents": [{"id": "127f63f7-d67f-4710-8625-2b1d4128ef6b@2",
+        "title": "Introduction to Electric Current, Resistance, and Ohm''s Law"},
+        {"id": "ddcb78bf-7739-4aea-abd2-ab6c07a16bf4@4", "title": "Current"}, {"id":
+        "c8b9a2f8-cb8f-484f-b53c-72459218c189@4", "title": "Ohm\u2019s Law: Resistance
+        and Simple Circuits"}, {"id": "a5e2058d-3bf0-4538-9e0d-d72e24a9acfd@7", "title":
+        "Resistance and Resistivity"}, {"id": "449b1cf7-592e-4625-8269-280bfa10d7ec@6",
+        "title": "Electric Power and Energy"}, {"id": "202dd999-9170-4370-9c0c-61055833077d@5",
+        "title": "Alternating Current versus Direct Current"}, {"id": "3facf881-302a-49af-bab8-60c569ecf7e5@4",
+        "title": "Electric Hazards and the Human Body"}, {"id": "41f56aa9-90a8-4c05-95d7-2608497844bf@3",
+        "title": "Nerve Conduction\u2013Electrocardiograms"}], "title": "Electric
+        Current, Resistance, and Ohm''s Law"}, {"id": "subcol", "contents": [{"id":
+        "13be2a59-3a4f-412d-90f0-78c9642ba82f@5", "title": "Introduction to Circuits
+        and DC Instruments"}, {"id": "14ba80ad-f75c-4bdf-900e-b8c8ef4e4057@5", "title":
+        "Resistors in Series and Parallel"}, {"id": "70fce0a0-0b57-44f4-9e0f-41e9cb5d862c@3",
+        "title": "Electromotive Force: Terminal Voltage"}, {"id": "b4ee3784-8339-4649-8341-5a9b2f3d1624@5",
+        "title": "Kirchhoff\u2019s Rules"}, {"id": "43b351e5-230d-4ad8-b8df-1b3b02cf82cc@6",
+        "title": "DC Voltmeters and Ammeters"}, {"id": "38b4afc9-d018-45b5-8873-1e9e0b1cd617@2",
+        "title": "Null Measurements"}, {"id": "bfd0e211-1e81-491b-a2e4-98942d2966f8@5",
+        "title": "DC Circuits Containing Resistors and Capacitors"}], "title": "Circuits
+        and DC Instruments"}, {"id": "subcol", "contents": [{"id": "508b24ec-17c7-417d-9899-57dcab9d9dd4@2",
+        "title": "Introduction to Magnetism"}, {"id": "7e9db09b-5b26-42c7-b575-e54edb48ad24@3",
+        "title": "Magnets"}, {"id": "51c5169a-7d39-4279-9baa-625410c2546f@4", "title":
+        "Ferromagnets and Electromagnets"}, {"id": "38646924-2ca2-4da3-bfb7-1085797f79db@2",
+        "title": "Magnetic Fields and Magnetic Field Lines"}, {"id": "59d52989-6db1-42f9-83f9-6d9b29c901e7@4",
+        "title": "Magnetic Field Strength: Force on a Moving Charge in a Magnetic
+        Field"}, {"id": "a66a7a2a-4d91-4887-8c5f-3757971a23b5@2", "title": "Force
+        on a Moving Charge in a Magnetic Field: Examples and Applications"}, {"id":
+        "f048f400-4388-4969-b72b-c861f572e72f@3", "title": "The Hall Effect"}, {"id":
+        "dc790996-7361-4ce2-be86-fc5b26b1a101@4", "title": "Magnetic Force on a Current-Carrying
+        Conductor"}, {"id": "b37764d1-3493-40de-a222-13f8b9e78b67@2", "title": "Torque
+        on a Current Loop: Motors and Meters"}, {"id": "cd08d0d3-2757-47cb-b34b-d92f87e5992c@3",
+        "title": "Magnetic Fields Produced by Currents: Ampere\u2019s Law"}, {"id":
+        "af9c25bf-4412-44c4-aadd-39450a5aa757@4", "title": "Magnetic Force between
+        Two Parallel Conductors"}, {"id": "c41454d9-4210-45be-8ead-afaf3f5d80a8@4",
+        "title": "More Applications of Magnetism"}], "title": "Magnetism"}, {"id":
+        "subcol", "contents": [{"id": "09415ac7-8715-4fb9-8983-27690fd615de@4", "title":
+        "Introduction to Electromagnetic Induction, AC Circuits and Electrical Technologies"},
+        {"id": "b1e5d043-94b4-4741-a738-e5bf547b76de@3", "title": "Induced Emf and
+        Magnetic Flux"}, {"id": "c0672c45-1220-426e-b160-c859b879567d@4", "title":
+        "Faraday\u2019s Law of Induction: Lenz\u2019s Law"}, {"id": "bc843b81-d15d-4aa2-91ca-8ce8ea28df93@3",
+        "title": "Motional Emf"}, {"id": "ff88cc31-4de8-4613-8001-0a421db11b04@2",
+        "title": "Eddy Currents and Magnetic Damping"}, {"id": "b60e7984-6740-4a1e-b202-f1ba0f263486@5",
+        "title": "Electric Generators"}, {"id": "e9e988ab-6940-444d-8879-b3cb9d3820eb@5",
+        "title": "Back Emf"}, {"id": "fe7dcf9b-c537-4574-b596-6ce8d33f240b@5", "title":
+        "Transformers"}, {"id": "8f205833-26b8-4eb4-98bb-936aad728cc6@2", "title":
+        "Electrical Safety: Systems and Devices"}, {"id": "1520de70-3393-4fca-986e-e82658a6334b@4",
+        "title": "Inductance"}, {"id": "786bafa0-52bf-499c-ad3f-5d44ef584e22@5", "title":
+        "RL Circuits"}, {"id": "663b7dc1-df6f-4a85-bae8-10d20a358d01@4", "title":
+        "Reactance, Inductive and Capacitive"}, {"id": "6bf1c4dd-f641-41b2-ac66-29e159880c03@5",
+        "title": "RLC Series AC Circuits"}], "title": "Electromagnetic Induction,
+        AC Circuits, and Electrical Technologies"}, {"id": "subcol", "contents": [{"id":
+        "d9d3ba1a-a729-44ce-8b7e-4a50ce471502@3", "title": "Introduction to Electromagnetic
+        Waves"}, {"id": "0cf8d36f-d850-4354-af24-bd2b7c7281dc@2", "title": "Maxwell\u2019s
+        Equations: Electromagnetic Waves Predicted and Observed"}, {"id": "47f5c05f-e68c-4218-9f5b-89e0b11d1e2d@5",
+        "title": "Production of Electromagnetic Waves"}, {"id": "f7dc8fa8-2f73-4018-9bbc-3c1c496d71bf@6",
+        "title": "The Electromagnetic Spectrum"}, {"id": "1f423843-0a03-4075-ba33-23fe18eaaaf4@4",
+        "title": "Energy in Electromagnetic Waves"}], "title": "Electromagnetic Waves"},
+        {"id": "subcol", "contents": [{"id": "8ad22f4d-28b8-4d6b-9aa7-720e13c4fed0@2",
+        "title": "Introduction to Geometric Optics"}, {"id": "9ce5a3da-7400-44fe-86f2-1f75041dd48e@3",
+        "title": "The Ray Aspect of Light"}, {"id": "60b4727b-829e-4ea7-9238-9140b6a1b20c@4",
+        "title": "The Law of Reflection"}, {"id": "18eef263-8513-4954-bcc8-07aa263f0a50@7",
+        "title": "The Law of Refraction"}, {"id": "00b1a523-3d56-49c4-bee1-dbb68cd25660@5",
+        "title": "Total Internal Reflection"}, {"id": "c221d1fc-6368-440d-9d75-00f45fc0570d@5",
+        "title": "Dispersion: The Rainbow and Prisms"}, {"id": "d977ddf6-69bf-46fd-8be6-5c41df45b092@5",
+        "title": "Image Formation by Lenses"}, {"id": "7254e46e-21b9-4466-81fe-a80923efa461@4",
+        "title": "Image Formation by Mirrors"}], "title": "Geometric Optics"}, {"id":
+        "subcol", "contents": [{"id": "2662e4ad-86a8-41ad-a12b-bd4768f38548@2", "title":
+        "Introduction to Vision and Optical Instruments"}, {"id": "79d158aa-b426-4f73-b83a-f7d155c83478@3",
+        "title": "Physics of the Eye"}, {"id": "2933fb66-6072-4b03-9cb6-7f2cad674638@2",
+        "title": "Vision Correction"}, {"id": "d42c807d-a9fa-4e3d-83d0-0f7c745b51a0@4",
+        "title": "Color and Color Vision"}, {"id": "12b130cc-ca92-47de-8d58-ac28ba04b4fd@3",
+        "title": "Microscopes"}, {"id": "7083e2a6-93f2-4abd-8418-f363ebf0c224@3",
+        "title": "Telescopes"}, {"id": "699b651c-1400-46f0-9852-2cb4bb571693@2", "title":
+        "Aberrations"}], "title": "Vision and Optical Instruments"}, {"id": "subcol",
+        "contents": [{"id": "1784b047-aa08-44f1-8680-09c3e38b41e0@3", "title": "Introduction
+        to Wave Optics"}, {"id": "d5bdc652-56a8-4d6d-9836-1b9474cff734@2", "title":
+        "The Wave Aspect of Light: Interference"}, {"id": "95ca62ae-7363-4fab-9700-81d2e2e82fda@3",
+        "title": "Huygens''s Principle: Diffraction"}, {"id": "c53f413f-75b6-44bd-b723-599d49a505fc@4",
+        "title": "Young\u2019s Double Slit Experiment"}, {"id": "86bcf046-c6db-4096-a9de-2e16ea076c84@3",
+        "title": "Multiple Slit Diffraction"}, {"id": "aac8ebd2-2db5-4b82-a4b2-4f2005643abe@3",
+        "title": "Single Slit Diffraction"}, {"id": "f403618a-c8e1-4b20-8737-6164df697aea@5",
+        "title": "Limits of Resolution: The Rayleigh Criterion"}, {"id": "6cd5c4f3-f154-4617-912b-c12f47dd6429@5",
+        "title": "Thin Film Interference"}, {"id": "0119fe7d-4d1a-42de-b580-aa46659f8228@4",
+        "title": "Polarization"}, {"id": "0cc2b3c8-487e-49ea-925f-ff51cb2a0591@2",
+        "title": "*Extended Topic* Microscopy Enhanced by the Wave Characteristics
+        of Light"}], "title": "Wave Optics"}, {"id": "subcol", "contents": [{"id":
+        "7372d4a4-085a-4018-8588-9801e44b636f@4", "title": "Introduction to Special
+        Relativity"}, {"id": "2617ad9f-6e56-4ebc-aba7-2236e3b07e46@3", "title": "Einstein\u2019s
+        Postulates"}, {"id": "d6555a80-80d8-4829-9346-07ea9391f391@5", "title": "Simultaneity
+        And Time Dilation"}, {"id": "f2cf4758-0fdd-4c2c-ad7a-8814148ac022@3", "title":
+        "Length Contraction"}, {"id": "e3a41220-af3f-40c6-b8ba-1a5d1bcbed92@6", "title":
+        "Relativistic Addition of Velocities"}, {"id": "cb474108-fe67-4904-bdbe-441b271ec10f@4",
+        "title": "Relativistic Momentum"}, {"id": "95b46f76-3199-4411-94ca-5318fff41746@7",
+        "title": "Relativistic Energy"}], "title": "Special Relativity"}, {"id": "subcol",
+        "contents": [{"id": "bd763c05-8260-4a8d-9aa1-5d96f49556e4@2", "title": "Introduction
+        to Quantum Physics"}, {"id": "c6ec1066-70a2-4971-b7ef-cd091877b264@4", "title":
+        "Quantization of Energy"}, {"id": "c7deb632-6222-4c11-8ee8-45758b396ed3@5",
+        "title": "The Photoelectric Effect"}, {"id": "4df393d0-d550-4c64-bd52-bce4f056d547@7",
+        "title": "Photon Energies and the Electromagnetic Spectrum"}, {"id": "8a9207a8-c006-4ef7-b399-2960a5dcc23b@4",
+        "title": "Photon Momentum"}, {"id": "0147c115-52e7-43ac-8117-2f285e76152b@3",
+        "title": "The Particle-Wave Duality"}, {"id": "96938a46-e4f4-473e-825a-61e8ccb53e09@5",
+        "title": "The Wave Nature of Matter"}, {"id": "d45b204f-4b3a-4c7a-9018-d091e9270579@5",
+        "title": "Probability: The Heisenberg Uncertainty Principle"}, {"id": "3b84d6ab-1291-4e6a-8510-7772c0de699e@6",
+        "title": "The Particle-Wave Duality Reviewed"}], "title": "Introduction to
+        Quantum Physics"}, {"id": "subcol", "contents": [{"id": "05208266-2374-4008-9060-7ddddbe877f2@2",
+        "title": "Introduction to Atomic Physics"}, {"id": "c0a608b1-2575-457f-8284-f5dea528053d@2",
+        "title": "Discovery of the Atom"}, {"id": "7ecc38ba-f855-43c4-bad7-50c40b70556d@6",
+        "title": "Discovery of the Parts of the Atom: Electrons and Nuclei"}, {"id":
+        "9a2ad24a-bdd0-4aa8-a99c-36ba54ec0f1f@6", "title": "Bohr\u2019s Theory of
+        the Hydrogen Atom"}, {"id": "f7e016a3-3482-45f8-8b0e-857808864cfe@3", "title":
+        "X Rays: Atomic Origins and Applications"}, {"id": "cfa19c4a-a833-400b-aaa8-a74479d13886@2",
+        "title": "Applications of Atomic Excitations and De-Excitations"}, {"id":
+        "aedd88f0-3f74-4137-b2f1-67af8b4d7832@3", "title": "The Wave Nature of Matter
+        Causes Quantization"}, {"id": "fea9523c-93cd-487c-bb4c-b2b367f5c279@2", "title":
+        "Patterns in Spectra Reveal More Quantization"}, {"id": "c1f0576f-1366-45d2-8f18-a54b8b35c1c5@10",
+        "title": "Quantum Numbers and Rules"}, {"id": "506a4bfc-5522-4aa6-9b9c-0e7e2325dda0@7",
+        "title": "The Pauli Exclusion Principle"}], "title": "Atomic Physics"}, {"id":
+        "subcol", "contents": [{"id": "a60eedfa-ccaa-4fef-b09f-36e7ad3eaa17@2", "title":
+        "Introduction to Radioactivity and Nuclear Physics"}, {"id": "7e35ad50-726e-4379-9152-c03fa312f746@7",
+        "title": "Nuclear Radioactivity"}, {"id": "030f371f-df0f-44f0-b7bf-1a8c8733ae0c@4",
+        "title": "Radiation Detection and Detectors"}, {"id": "00a834ca-b894-44cd-893c-efcb52b58f72@3",
+        "title": "Substructure of the Nucleus"}, {"id": "986a3705-7b56-4f11-9d04-25d028307f7a@6",
+        "title": "Nuclear Decay and Conservation Laws"}, {"id": "074d2048-3b8a-4014-bf01-e0c56e219447@6",
+        "title": "Half-Life and Activity"}, {"id": "e12b60f5-72df-401e-a1b1-7f13fd61eee0@5",
+        "title": "Binding Energy"}, {"id": "f2f779e5-499b-4104-b62c-0ba44b60f13e@5",
+        "title": "Tunneling"}], "title": "Radioactivity and Nuclear Physics"}, {"id":
+        "subcol", "contents": [{"id": "a469ece3-5c5f-46bd-a983-8a99ef997d9b@3", "title":
+        "Introduction to Applications of Nuclear Physics"}, {"id": "82b2eff0-81a1-4672-b7ef-6f8bcc7c679b@5",
+        "title": "Medical Imaging and Diagnostics"}, {"id": "1c813e42-c4bd-406c-900e-82faf8875592@4",
+        "title": "Biological Effects of Ionizing Radiation"}, {"id": "96ed6849-22bb-4178-a008-6c09bd197dc6@5",
+        "title": "Therapeutic Uses of Ionizing Radiation"}, {"id": "ce99e7d4-0d3e-41dc-b7db-558908cdace5@3",
+        "title": "Food Irradiation"}, {"id": "6254177f-ecab-4cc5-8c45-d7de363ceef8@6",
+        "title": "Fusion"}, {"id": "2c978a5d-0aa0-4a0e-b27f-675c2f726e51@8", "title":
+        "Fission"}, {"id": "97ac95af-81a6-44e4-8905-44f6de003165@5", "title": "Nuclear
+        Weapons"}], "title": "Medical Applications of Nuclear Physics"}, {"id": "subcol",
+        "contents": [{"id": "43a84abb-7daf-467e-ae21-b1b74baab670@4", "title": "Introduction
+        to Particle Physics"}, {"id": "838d9f2b-d65b-44a7-b2d1-7897af0bc74f@3", "title":
+        "The Yukawa Particle and the Heisenberg Uncertainty Principle Revisited"},
+        {"id": "250aa14a-6759-48e1-8f7e-1b85911dd18e@5", "title": "The Four Basic
+        Forces"}, {"id": "6b2a5350-490f-4468-93d4-e201a6ba4c4a@4", "title": "Accelerators
+        Create Matter from Energy"}, {"id": "b83fad6e-cef4-424c-a84f-7004bedc527b@5",
+        "title": "Particles, Patterns, and Conservation Laws"}, {"id": "76529201-fc01-415e-be4d-f735e826206c@6",
+        "title": "Quarks: Is That All There Is?"}, {"id": "31294629-8e8b-4eb1-9780-3d48345b9d88@7",
+        "title": "GUTs: The Unification of Forces"}], "title": "Particle Physics"},
+        {"id": "subcol", "contents": [{"id": "31413c24-436b-4e72-861c-0dfca1f6f1e0@4",
+        "title": "Introduction to Frontiers of Physics"}, {"id": "170e24c0-f6a0-428a-b8a3-ac313e996e19@8",
+        "title": "Cosmology and Particle Physics"}, {"id": "e4078a6e-89d4-472a-bb01-8e299d7ba0aa@6",
+        "title": "General Relativity and Quantum Gravity"}, {"id": "8490a079-d21f-4e21-88f1-2a3f5211e372@3",
+        "title": "Superstrings"}, {"id": "5669781b-773d-4868-bea5-5c3b06ea91af@5",
+        "title": "Dark Matter and Closure"}, {"id": "e1447443-fcb6-4b55-b3fc-2bde086ff569@2",
+        "title": "Complexity and Chaos"}, {"id": "48360edb-736c-4f9f-9a40-1beef1ddd2c1@5",
+        "title": "High-temperature Superconductors"}, {"id": "ce83ccca-dae7-461b-a20f-b853471543b8@3",
+        "title": "Some Questions We Know to Ask"}], "title": "Frontiers of Physics"},
+        {"id": "aaf30a54-a356-4c5f-8c0d-2f55e4d20556@3", "title": "Atomic Masses"},
+        {"id": "666f5335-e742-451e-b7ff-245efeff8bd9@2", "title": "Selected Radioactive
+        Isotopes"}, {"id": "72343285-683e-46d9-a6c2-5de097e36ff9@5", "title": "Useful
+        Information"}, {"id": "f9d7e0fb-7dc8-471a-b4d8-976fce44baa0@4", "title": "Glossary
+        of Key Symbols and Notation"}], "title": "College Physics"}, "doctype": "",
+        "buyLink": "http://www.amazon.com/College-Physics-Peter-Urone/dp/1938168003",
+        "submitter": {"website": "http://openstaxcollege.org", "surname": "Physics",
+        "suffix": "", "firstname": "College", "title": "", "othername": "", "email":
+        "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer", "id": "cnxcap"},
+        "parentAuthors": [], "history": [{"changes": "changed chapter title", "version":
+        "8.33", "revised": "2015-02-03T15:05:50Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "changed chapter title", "version": "8.32",
+        "revised": "2014-12-10T22:41:36Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "changed chapter title", "version": "8.31",
+        "revised": "2014-12-10T21:03:02Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "changed chapter title", "version": "8.30",
+        "revised": "2014-12-10T20:47:23Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "changed chapter title", "version": "8.29",
+        "revised": "2014-11-19T19:33:17Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "changed chapter title", "version": "8.28",
+        "revised": "2014-11-10T23:02:38Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "changed chapter title", "version": "8.27",
+        "revised": "2014-11-10T22:37:24Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "changed chapter title", "version": "8.26",
+        "revised": "2014-11-10T22:29:38Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "changed chapter title", "version": "8.25",
+        "revised": "2014-11-10T22:22:48Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "changed chapter title", "version": "8.24",
+        "revised": "2014-11-10T22:18:07Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "changed chapter title", "version": "8.23",
+        "revised": "2014-11-10T21:49:23Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "changed chapter title", "version": "8.22",
+        "revised": "2014-11-10T21:45:29Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "changed chapter title", "version": "8.21",
+        "revised": "2014-11-10T21:38:04Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "changed chapter title", "version": "8.20",
+        "revised": "2014-10-28T17:55:41Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "changed chapter title", "version": "8.19",
+        "revised": "2014-10-28T17:38:26Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "changed chapter title", "version": "8.18",
+        "revised": "2014-10-28T16:59:35Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "changed chapter title", "version": "8.17",
+        "revised": "2014-10-28T16:44:17Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "changed chapter title", "version": "8.16",
+        "revised": "2014-10-28T16:35:36Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "changed chapter title", "version": "8.15",
+        "revised": "2014-10-28T16:25:09Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "changed chapter title", "version": "8.14",
+        "revised": "2014-10-28T16:06:23Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "changed chapter title", "version": "8.13",
+        "revised": "2014-10-28T15:56:37Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "changed chapter title", "version": "8.12",
+        "revised": "2014-10-28T15:18:40Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "changed chapter title", "version": "8.11",
+        "revised": "2014-10-27T20:40:11Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "changed chapter title", "version": "8.10",
+        "revised": "2014-10-27T20:24:40Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "changed chapter title", "version": "8.9", "revised":
+        "2014-09-17T14:21:18Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "changed chapter title", "version": "8.8", "revised":
+        "2014-08-18T21:12:59Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "changed chapter title", "version": "8.7", "revised":
+        "2014-08-04T14:44:05Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "changed chapter title", "version": "8.6", "revised":
+        "2014-07-30T19:50:30Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "changed chapter title", "version": "8.5", "revised":
+        "2014-07-15T16:02:31Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "changed chapter title", "version": "8.4", "revised":
+        "2014-07-15T15:51:28Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "changed chapter title", "version": "8.3", "revised":
+        "2014-07-14T21:52:48Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "changed chapter title", "version": "8.2", "revised":
+        "2014-07-09T19:38:34Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "changed chapter title", "version": "8.1", "revised":
+        "2014-03-07T15:53:45Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.61", "revised":
+        "2014-02-24T21:03:34Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.60", "revised":
+        "2014-02-24T20:41:34Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.59", "revised":
+        "2014-02-20T16:58:59Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.58", "revised":
+        "2014-02-20T16:52:32Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.57", "revised":
+        "2014-02-20T15:54:56Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.56", "revised":
+        "2014-02-20T15:35:35Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.55", "revised":
+        "2014-02-20T15:18:52Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.54", "revised":
+        "2014-02-20T15:07:43Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.53", "revised":
+        "2014-02-20T14:44:56Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.52", "revised":
+        "2014-02-19T22:42:20Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.51", "revised":
+        "2014-02-19T22:35:52Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.50", "revised":
+        "2014-02-19T21:37:21Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.49", "revised":
+        "2014-02-19T21:15:04Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.48", "revised":
+        "2014-02-19T19:45:00Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.47", "revised":
+        "2014-02-19T18:59:02Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.46", "revised":
+        "2014-02-19T17:54:21Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.45", "revised":
+        "2014-02-19T17:40:50Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.44", "revised":
+        "2014-02-19T17:36:24Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.43", "revised":
+        "2014-02-19T17:24:45Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.42", "revised":
+        "2014-02-19T16:46:20Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.41", "revised":
+        "2014-02-19T16:37:23Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.40", "revised":
+        "2014-02-19T16:30:27Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.39", "revised":
+        "2014-02-19T15:26:05Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.38", "revised":
+        "2014-02-18T21:18:01Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.37", "revised":
+        "2014-02-18T20:49:38Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.36", "revised":
+        "2014-02-18T20:31:41Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.35", "revised":
+        "2014-02-18T20:26:41Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.34", "revised":
+        "2014-02-18T20:12:24Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.33", "revised":
+        "2014-02-18T18:59:10Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.32", "revised":
+        "2014-02-18T18:23:23Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.31", "revised":
+        "2013-10-21T20:53:09Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.30", "revised":
+        "2013-09-12T21:08:13Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.29", "revised":
+        "2013-09-11T17:05:54Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.28", "revised":
+        "2013-09-09T21:08:52Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.27", "revised":
+        "2013-09-06T21:06:51Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.26", "revised":
+        "2013-08-30T16:39:57Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.25", "revised":
+        "2013-08-28T21:51:58Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.24", "revised":
+        "2013-08-16T21:04:51Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.23", "revised":
+        "2013-08-15T20:49:52Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.22", "revised":
+        "2013-08-14T16:38:12Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.21", "revised":
+        "2013-06-13T15:03:33Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.20", "revised":
+        "2013-05-16T20:28:18Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.19", "revised":
+        "2013-02-12T16:40:31Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.18", "revised":
+        "2012-11-05T16:34:31Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.17", "revised":
+        "2012-10-15T20:34:15Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.16", "revised":
+        "2012-10-08T21:03:56Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.15", "revised":
+        "2012-10-03T21:03:46Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.14", "revised":
+        "2012-09-04T21:24:03Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.13", "revised":
+        "2012-07-31T21:22:29Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.12", "revised":
+        "2012-07-26T19:53:10Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.11", "revised":
+        "2012-07-24T21:31:52Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.10", "revised":
+        "2012-07-23T16:06:06Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.9", "revised":
+        "2012-07-19T20:10:17Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.8", "revised":
+        "2012-07-17T14:41:13Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.7", "revised":
+        "2012-07-11T00:36:26Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.6", "revised":
+        "2012-07-06T02:59:37Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.5", "revised":
+        "2012-06-25T19:52:57Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.4", "revised":
+        "2012-06-21T22:04:10Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.3", "revised":
+        "2012-06-20T21:41:57Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.2", "revised":
+        "2012-06-13T21:27:29Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "structure update", "version": "7.1", "revised":
+        "2012-06-12T21:12:05Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "restructured appendix items", "version": "6.1",
+        "revised": "2012-05-15T05:26:11Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "added preface", "version": "5.1", "revised":
+        "2012-03-30T22:07:10Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "updated metadata and roles", "version": "4.1",
+        "revised": "2012-03-29T15:31:53Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "Added proper module.", "version": "3.1", "revised":
+        "2012-01-26T18:05:27Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "removed module by incorrect author.", "version":
+        "2.1", "revised": "2012-01-26T15:29:18Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}, {"changes": "Initial Publication", "version": "1.1", "revised":
+        "2012-01-26T15:06:36Z", "publisher": {"website": "http://openstaxcollege.org",
+        "surname": "Physics", "suffix": "", "firstname": "College", "title": "", "othername":
+        "", "email": "info@openstaxcollege.org", "fullname": "OSC Physics Maintainer",
+        "id": "cnxcap"}}]}'
+    http_version: 
+  recorded_at: Thu, 26 Feb 2015 02:13:15 GMT
+recorded_with: VCR 2.9.3

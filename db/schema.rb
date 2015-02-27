@@ -32,7 +32,7 @@ ActiveRecord::Schema.define(version: 20150218225408) do
   add_index "assistants", ["code_class_name"], name: "index_assistants_on_code_class_name", unique: true
   add_index "assistants", ["name"], name: "index_assistants_on_name", unique: true
 
-  create_table "books", force: :cascade do |t|
+  create_table "content_books", force: :cascade do |t|
     t.string   "url"
     t.text     "content"
     t.integer  "parent_book_id"
@@ -42,8 +42,62 @@ ActiveRecord::Schema.define(version: 20150218225408) do
     t.datetime "updated_at",     null: false
   end
 
-  add_index "books", ["parent_book_id", "number"], name: "index_books_on_parent_book_id_and_number", unique: true
-  add_index "books", ["url"], name: "index_books_on_url", unique: true
+  add_index "content_books", ["parent_book_id", "number"], name: "index_content_books_on_parent_book_id_and_number", unique: true
+  add_index "content_books", ["url"], name: "index_content_books_on_url", unique: true
+
+  create_table "content_exercise_topics", force: :cascade do |t|
+    t.integer  "content_exercise_id", null: false
+    t.integer  "content_topic_id",    null: false
+    t.integer  "number",              null: false
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
+  end
+
+  add_index "content_exercise_topics", ["content_exercise_id", "number"], name: "content_exercise_ce_number_unique", unique: true
+  add_index "content_exercise_topics", ["content_topic_id", "content_exercise_id"], name: "content_exercise_topic_ce_unique", unique: true
+
+  create_table "content_exercises", force: :cascade do |t|
+    t.string   "url"
+    t.text     "content"
+    t.string   "title"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "content_exercises", ["title"], name: "index_content_exercises_on_title"
+  add_index "content_exercises", ["url"], name: "index_content_exercises_on_url", unique: true
+
+  create_table "content_page_topics", force: :cascade do |t|
+    t.integer  "content_page_id",  null: false
+    t.integer  "content_topic_id", null: false
+    t.integer  "number",           null: false
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+  end
+
+  add_index "content_page_topics", ["content_page_id", "number"], name: "index_content_page_topics_on_content_page_id_and_number", unique: true
+  add_index "content_page_topics", ["content_topic_id", "content_page_id"], name: "content_topic_page_ids_unique", unique: true
+
+  create_table "content_pages", force: :cascade do |t|
+    t.string   "url"
+    t.text     "content"
+    t.integer  "content_book_id"
+    t.integer  "number",          null: false
+    t.string   "title",           null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  add_index "content_pages", ["content_book_id", "number"], name: "index_content_pages_on_content_book_id_and_number", unique: true
+  add_index "content_pages", ["url"], name: "index_content_pages_on_url", unique: true
+
+  create_table "content_topics", force: :cascade do |t|
+    t.string   "name",       null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "content_topics", ["name"], name: "index_content_topics_on_name", unique: true
 
   create_table "course_assistants", force: :cascade do |t|
     t.integer  "course_id",    null: false
@@ -120,28 +174,6 @@ ActiveRecord::Schema.define(version: 20150218225408) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
-
-  create_table "exercise_topics", force: :cascade do |t|
-    t.integer  "exercise_id", null: false
-    t.integer  "topic_id",    null: false
-    t.integer  "number",      null: false
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
-  end
-
-  add_index "exercise_topics", ["exercise_id", "number"], name: "index_exercise_topics_on_exercise_id_and_number", unique: true
-  add_index "exercise_topics", ["topic_id", "exercise_id"], name: "index_exercise_topics_on_topic_id_and_exercise_id", unique: true
-
-  create_table "exercises", force: :cascade do |t|
-    t.string   "url"
-    t.text     "content"
-    t.string   "title"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "exercises", ["title"], name: "index_exercises_on_title"
-  add_index "exercises", ["url"], name: "index_exercises_on_url", unique: true
 
   create_table "fine_print_contracts", force: :cascade do |t|
     t.string   "name",       null: false
@@ -274,30 +306,6 @@ ActiveRecord::Schema.define(version: 20150218225408) do
 
   add_index "openstax_accounts_groups", ["openstax_uid"], name: "index_openstax_accounts_groups_on_openstax_uid", unique: true
 
-  create_table "page_topics", force: :cascade do |t|
-    t.integer  "page_id",    null: false
-    t.integer  "topic_id",   null: false
-    t.integer  "number",     null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "page_topics", ["page_id", "number"], name: "index_page_topics_on_page_id_and_number", unique: true
-  add_index "page_topics", ["topic_id", "page_id"], name: "index_page_topics_on_topic_id_and_page_id", unique: true
-
-  create_table "pages", force: :cascade do |t|
-    t.string   "url"
-    t.text     "content"
-    t.integer  "book_id"
-    t.integer  "number",     null: false
-    t.string   "title",      null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "pages", ["book_id", "number"], name: "index_pages_on_book_id_and_number", unique: true
-  add_index "pages", ["url"], name: "index_pages_on_url", unique: true
-
   create_table "role_users", force: :cascade do |t|
     t.integer  "entity_user_id", null: false
     t.integer  "entity_role_id", null: false
@@ -425,14 +433,6 @@ ActiveRecord::Schema.define(version: 20150218225408) do
   add_index "tasks", ["due_at", "opens_at"], name: "index_tasks_on_due_at_and_opens_at"
   add_index "tasks", ["task_plan_id"], name: "index_tasks_on_task_plan_id"
   add_index "tasks", ["task_type"], name: "index_tasks_on_task_type"
-
-  create_table "topics", force: :cascade do |t|
-    t.string   "name",       null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "topics", ["name"], name: "index_topics_on_name", unique: true
 
   create_table "users", force: :cascade do |t|
     t.integer  "account_id",          null: false
