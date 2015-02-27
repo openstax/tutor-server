@@ -1,10 +1,10 @@
 class Content::ExerciseTopic < ActiveRecord::Base
-  sortable_belongs_to :content_exercise, on: :number, 
-                                         inverse_of: :content_exercise_topics, 
-                                         class_name: "::Content::Exercise"
-  belongs_to :content_topic, class_name: "::Content::Topic"
+  sortable_belongs_to :exercise, on: :number, 
+                                         inverse_of: :exercise_topics
 
-  validates :content_exercise, presence: true
-  validates :content_topic, presence: true, 
+  belongs_to :topic
+
+  validates :exercise, presence: true
+  validates :topic, presence: true, 
                             uniqueness: { scope: :content_exercise_id }
 end

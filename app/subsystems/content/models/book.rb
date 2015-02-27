@@ -3,16 +3,16 @@ class Content::Book < ActiveRecord::Base
 
   sortable_belongs_to :parent_book, on: :number,
                                     class_name: '::Content::Book',
-                                    inverse_of: :child_books
+                                    inverse_of: :child_books,
+                                    foreign_key: "parent_book_id"
 
   has_many :child_books, class_name: '::Content::Book',
                          foreign_key: :parent_book_id,
                          dependent: :destroy,
                          inverse_of: :parent_book
 
-  has_many :content_pages, dependent: :destroy, 
-                           inverse_of: :book,
-                           class_name: '::Content::Page'
+  has_many :pages, dependent: :destroy, 
+                   inverse_of: :book
 
   validates :title, presence: true
 end

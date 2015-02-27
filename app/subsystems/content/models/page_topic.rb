@@ -1,7 +1,11 @@
 class Content::PageTopic < ActiveRecord::Base
-  sortable_belongs_to :content_page, on: :number, inverse_of: :page_topics, class_name: '::Content::Page'
-  belongs_to :content_topic, class_name: '::Content::Topic'
+  sortable_belongs_to :page, on: :number, inverse_of: :page_topics #, class_name: '::Content::Page'  
 
-  validates :content_page, presence: true
-  validates :content_topic, presence: true, uniqueness: { scope: :content_page_id }
+  # belongs_to :page, inverse_of: :page_topics #, class_name: '::Content::Page'  
+
+  # debugger
+  belongs_to :topic #, class_name: '::Content::Topic'
+
+  validates :page, presence: true
+  validates :topic, presence: true, uniqueness: { scope: :content_page_id }
 end
