@@ -74,20 +74,17 @@ Rails.application.config.eager_load_paths -= %W(#{Rails.application.config.root}
 ## requiring down below so that dependencies can be found.
 ##
 
-Dir[File.join(Rails.root, "app/subsystems/*/")].sort.each do |ss_root_dir|
-  module_name = File.split(ss_root_dir).last
-  a_module = module_name.camelcase.constantize
-
+subsystems.each do |ss|
   ## make ActiveRecord happy
-  a_module.define_singleton_method(:table_name_prefix) do
-    "#{module_name.underscore}_"
+  ss.module.define_singleton_method(:table_name_prefix) do
+    "#{ss.name.underscore}_"
   end
 
   ## create a symbol --> file mapping for the normal ruby autoload
-  Dir[File.join(Rails.root, "app/subsystems/#{module_name}/*/**/*.rb")].each do |rb_file|
+  Dir[File.join(Rails.root, "app/subsystems/#{ss.name}/**/*.rb")].sort.each do |rb_file|
     path   = rb_file.gsub('.rb', '')
     symbol = File.split(path).last.camelize.to_sym
-    a_module.autoload symbol, path
+    ss.module.autoload symbol, path
   end
 end
 
@@ -96,12 +93,7 @@ end
 ## to autoload them later.
 ##
 
-Dir[File.join(Rails.root, "app/subsystems/*/")].sort.each do |ss_root_dir|
-  module_name = File.split(ss_root_dir).last
-  Dir[File.join(Rails.root, "app/subsystems/#{module_name}/*/**/*.rb")].sort.each do |rb_file|
-    path   = rb_file.gsub('.rb', '')
-    require path
-  end
+Dir[File.join(Rails.root, "app/subsystems/**/*.rb")].sort.each do |rb_file|
+  path   = rb_file.gsub('.rb', '')
+  require path
 end
-
-
