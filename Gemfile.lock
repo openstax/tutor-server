@@ -345,7 +345,6 @@ GEM
     sortability (0.0.3)
       rails
       squeel
-    spring (1.3.2)
     sprockets (2.12.3)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -467,7 +466,6 @@ DEPENDENCIES
   sass-rails (~> 5.0.0)
   shoulda-matchers
   sortability
-  spring
   sqlite3
   squeel
   therubyracer
