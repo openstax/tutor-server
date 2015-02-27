@@ -26,6 +26,7 @@ class OpenStax::Exercises::V1::Exercise
   end
 
   def answers
+    #TODO: handle multiple questions in 1 Exercise
     @answers ||= content_hash['questions'].first['answers']
   end
 
