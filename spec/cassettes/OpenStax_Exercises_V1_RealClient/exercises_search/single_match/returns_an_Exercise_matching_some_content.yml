@@ -1,0 +1,51 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: http://localhost:3000/api/exercises?q=content:aDiPiScInG%20eLiT
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      Content-Type:
+      - application/json; charset=utf-8
+      Etag:
+      - W/"03f294f6f8b1d7a6bd99e3fc81ea8c21"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Set-Cookie:
+      - _exercises_session=SXFaVERYd3RXUk5sSzYvSVBKOXQxaWtTYlRmYUpwdit6QTRRV2ZHTTFUcnNDZ0ptU1hySVRwM2RUSDJrb004Y0E1cUp0UEVYOC9FWlpQL1hST0Z2cnc9PS0taWV6d0o2dXNnYXY4cWVRZnN4L1krdz09--96fee96ed2e383c1222dde10219ff8b160134c6c;
+        path=/; HttpOnly
+      X-Request-Id:
+      - 584ce19e-cd55-42bc-9516-144b61372ec8
+      X-Runtime:
+      - '0.091843'
+      Connection:
+      - close
+      Server:
+      - thin
+    body:
+      encoding: UTF-8
+      string: '{"total_count":1,"items":[{"uid":"11@1","number":11,"version":1,"published_at":"2015-02-27T00:07:37.490Z","editors":[],"authors":[],"copyright_holders":[],"derived_from":[],"attachments":[],"tags":["tag1","tag2"],"title":"Lorem
+        ipsum","stimulus_html":"","questions":[{"stimulus_html":"","stem_html":"Consectetur
+        adipiscing elit","answers":[{"content_html":"Sed do eiusmod tempor"}],"hints":[],"formats":[],"combo_choices":[]}]}]}'
+    http_version: 
+  recorded_at: Fri, 27 Feb 2015 01:14:40 GMT
+recorded_with: VCR 2.9.3

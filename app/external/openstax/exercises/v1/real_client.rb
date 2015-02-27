@@ -1,8 +1,9 @@
 require 'oauth2'
 
 class OpenStax::Exercises::V1::RealClient
+  NON_QUERY_PARAMS = ['order_by', 'page', 'per_page', 'ob', 'p', 'pp']
+
   def initialize(exercises_configuration)
-    debugger
     @client_id   = exercises_configuration.client_id
     @secret      = exercises_configuration.secret
     @server_url  = exercises_configuration.server_url
@@ -19,11 +20,13 @@ class OpenStax::Exercises::V1::RealClient
     (@oauth_token || @oauth_client).request(*args)
   end
 
-  def exercises(query_hash, options = {})
-    query = query_hash.collect{|k,v| "#{k}:#{v.join(',')}"}.join(' ')
+  def exercises(params = {}, options = {})
+    params = params.stringify_keys
+    query_hash = params.except(*NON_QUERY_PARAMS)
+    query = query_hash.collect{|k,v| "#{k}:#{[v].flatten.join(',')}"}.join(' ')
     uri = URI(@server_url)
     uri.path = "/api/exercises"
-    uri.query = {q: query}.to_query
+    uri.query = {q: query}.merge(params.slice(*NON_QUERY_PARAMS)).to_query
 
     request(:get, uri, with_accept_header(options)).body
   end

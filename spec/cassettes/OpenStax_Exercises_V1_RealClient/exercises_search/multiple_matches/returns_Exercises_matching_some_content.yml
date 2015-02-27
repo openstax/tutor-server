@@ -1,0 +1,53 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: http://localhost:3000/api/exercises?q=content:AdIpIsCi
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      Content-Type:
+      - application/json; charset=utf-8
+      Etag:
+      - W/"26df235a48f36dea3f0ddd5d85ecb38d"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Set-Cookie:
+      - _exercises_session=RDREQWxFZm9IOWhCdzFQUGtpK3VodHJZclpRN1ZDSDVLSUV3YXFkUUdvaFRTa3pkWTFrcWF3ajF4ZUxxdnJQRDJZdG5URUg5YnYzY3hkOGdTNGd6MGc9PS0tQ0dJN1Bld2kwRngrYkFDOTlsVWhSQT09--4bda2707a9ee0ded8dcc7640076ecff3a4b024bb;
+        path=/; HttpOnly
+      X-Request-Id:
+      - 3825b0d2-5c62-4e9a-a795-07245020dea9
+      X-Runtime:
+      - '0.127324'
+      Connection:
+      - close
+      Server:
+      - thin
+    body:
+      encoding: UTF-8
+      string: '{"total_count":2,"items":[{"uid":"11@1","number":11,"version":1,"published_at":"2015-02-27T00:07:37.490Z","editors":[],"authors":[],"copyright_holders":[],"derived_from":[],"attachments":[],"tags":["tag1","tag2"],"title":"Lorem
+        ipsum","stimulus_html":"","questions":[{"stimulus_html":"","stem_html":"Consectetur
+        adipiscing elit","answers":[{"content_html":"Sed do eiusmod tempor"}],"hints":[],"formats":[],"combo_choices":[]}]},{"uid":"12@1","number":12,"version":1,"published_at":"2015-02-27T00:07:37.501Z","editors":[],"authors":[],"copyright_holders":[],"derived_from":[],"attachments":[],"tags":["tag2","tag3"],"title":"Dolorem
+        ipsum","stimulus_html":"","questions":[{"stimulus_html":"","stem_html":"Consectetur
+        adipisci velit","answers":[{"content_html":"Sed quia non numquam"}],"hints":[],"formats":[],"combo_choices":[]}]}]}'
+    http_version: 
+  recorded_at: Fri, 27 Feb 2015 01:14:41 GMT
+recorded_with: VCR 2.9.3

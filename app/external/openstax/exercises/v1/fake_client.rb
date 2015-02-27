@@ -18,19 +18,19 @@ class OpenStax::Exercises::V1::FakeClient
   # Api wrappers
   #
 
-  def exercises(options={})
-    arrayify(options, :number)
-    arrayify(options, :version)
-    arrayify(options, :id)
-    arrayify(options, :uid)
-    arrayify(options, :tag)
+  def exercises(params = {}, options={})
+    arrayify(params, :number)
+    arrayify(params, :version)
+    arrayify(params, :id)
+    arrayify(params, :uid)
+    arrayify(params, :tag)
 
     match_sets = []
-    uids = (options[:id] || []) + (options[:uid] || [])
+    uids = (params[:id] || []) + (params[:uid] || [])
     match_sets.push( @exercises_array.select{|ee| uids.include?(ee[:uid])}           ) if !uids.blank?
-    match_sets.push( @exercises_array.select{|ee| (options[:tag] & ee[:tags]).any?}         ) if options[:tag]
-    match_sets.push( @exercises_array.select{|ee| options[:number].include?(ee[:number])}   ) if options[:number]
-    match_sets.push( @exercises_array.select{|ee| options[:version].include?(ee[:version])} ) if options[:version] 
+    match_sets.push( @exercises_array.select{|ee| (params[:tag] & ee[:tags]).any?}         ) if params[:tag]
+    match_sets.push( @exercises_array.select{|ee| params[:number].include?(ee[:number])}   ) if params[:number]
+    match_sets.push( @exercises_array.select{|ee| params[:version].include?(ee[:version])} ) if params[:version] 
 
     result = nil
 
