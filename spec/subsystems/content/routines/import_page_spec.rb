@@ -88,10 +88,10 @@ RSpec.describe Content::ImportPage, :type => :routine do
 
     result = nil
     expect {
-      result = Import::Page.call('dummy', book)
-    }.to change{ Exercise.count }.by(6)
+      result = Content::ImportPage.call('dummy', book)
+    }.to change{ Content::Exercise.count }.by(6)
 
-    exercises = Exercise.all.to_a
+    exercises = Content::Exercise.all.to_a
     expect(exercises[-6].exercise_topics.collect{|et| et.topic.name})
       .to eq ['ost-topic-apphys-ch5-s1-lo1']
     expect(exercises[-5].exercise_topics.collect{|et| et.topic.name})

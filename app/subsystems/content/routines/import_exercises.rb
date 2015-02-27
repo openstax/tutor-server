@@ -1,8 +1,8 @@
-class Import::Exercises
+class Content::ImportExercises
 
   lev_routine
 
-  uses_routine TagResourceWithTopics,
+  uses_routine Content::TagResourceWithTopics,
                as: :tag,
                translations: { outputs: { type: :verbatim } }
 
@@ -13,7 +13,7 @@ class Import::Exercises
   def exec(query_hash)
     outputs[:exercises] = []
     OpenStax::Exercises::V1.exercises(query_hash)['items'].each do |wrapper|
-      exercise = Exercise.find_or_initialize_by(url: wrapper.url)
+      exercise = Content::Exercise.find_or_initialize_by(url: wrapper.url)
       exercise.title = wrapper.title
       exercise.content = wrapper.content
       exercise.save

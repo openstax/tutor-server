@@ -4,14 +4,13 @@ class Content::ImportPage
   TUTOR_ATTACHMENTS_URL = "#{TUTOR_HOST}/attachments"
   TUTOR_ATTACHMENTS_PATH = 'public/attachments'
 
-  # This XPath currently tests for a section
-  # with a class that starts with ost and a class that ends with -lo(number)
-  # It does not require the 2 classes to be the same
-  LO_XPATH = "/html/body/section[contains(concat(' ', @class), ' ost') and string(number(substring-before(substring-after(concat(@class, ' '), '-lo'), ' '))) != 'NaN']/@class"
+  # This XPath currently tests for a node
+  # with a class that starts with ost-topic
+  LO_XPATH = "//*[contains(concat(' ', @class), ' ost-topic-')]/@class"
 
   # This Regex finds the LO within the class string
   # and ensures it is properly formatted
-  LO_REGEX = /(ost[\w-]+-lo[\d]+)/
+  LO_REGEX = /(ost-topic-[\w-]+-lo[\d]+)/
 
   lev_routine
 
@@ -19,12 +18,16 @@ class Content::ImportPage
                as: :cnx_import,
                translations: { outputs: { type: :verbatim } }
 
+  uses_routine Content::CreatePage,
+               as: :create_page,
+               translations: { outputs: { type: :verbatim } }
+
   uses_routine Content::TagResourceWithTopics,
                as: :tag,
                translations: { outputs: { type: :verbatim } }
 
-  uses_routine Content::CreatePage,
-               as: :create_page,
+  uses_routine Content::ImportExercises,
+               as: :import_exercises,
                translations: { outputs: { type: :verbatim } }
 
   protected
@@ -55,16 +58,20 @@ class Content::ImportPage
     run(:create_page, url: outputs[:url],
                       content: outputs[:content],
                       book: book,
-                      title: hash['title'])
-
+                      title: hash['title'] || '')
     book.pages << outputs[:page] unless book.nil?
     transfer_errors_from outputs[:page], type: :verbatim
 
+    # Extract LO's
     los = outputs[:doc].xpath(LO_XPATH).collect do |node|
       LO_REGEX.match(node.value).try(:[], 0)
     end.compact.uniq
 
+    # Tag Page with LO's
     run(:tag, outputs[:page], los)
+
+    # Get Exercises from OSE that match the LO's
+    run(:import_exercises, tag: los)
   end
 
 end
