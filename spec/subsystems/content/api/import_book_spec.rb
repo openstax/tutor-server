@@ -27,14 +27,16 @@ RSpec.describe Content::Api::ImportBook, :type => :routine,
 
   it 'creates a new Book structure and Pages and sets their attributes' do
     result = nil
-    expect {
-      result = Content::Api::ImportBook.call(cnx_book_id)
+    expect { 
+      result = Content::Api::ImportBook.call(cnx_book_id); 
     }.to change{ Content::Book.count }.by(35)
     expect(result.errors).to be_empty
 
-    book = result.outputs[:book]
     toc = open(fixture_file) { |f| f.read }
-    expect(JSON.parse(book.content)).to eq JSON.parse(toc)
-    test_book(book)
+
+    content_book = result.outputs.content_book
+
+    expect(JSON.parse(content_book.content)).to eq JSON.parse(toc)
+    test_book(content_book)
   end
 end
