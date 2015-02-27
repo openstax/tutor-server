@@ -6,6 +6,10 @@ class Content::Book < ActiveRecord::Base
                                     inverse_of: :child_books,
                                     foreign_key: "parent_book_id"
 
+  belongs_to :entity_book, class_name: '::Entity::Book', 
+                           foreign_key: 'entity_book_id'
+
+
   has_many :child_books, class_name: '::Content::Book',
                          foreign_key: :parent_book_id,
                          dependent: :destroy,

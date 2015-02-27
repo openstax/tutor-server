@@ -34,12 +34,19 @@ class Content::Api::ImportBook
   def exec(id, options = {})
     run(:cnx_import, id, options.merge(book: true))
 
-    outputs[:book] = import_collection(nil, outputs[:hash]['tree'], options)
-    outputs[:book].url = outputs[:url]
-    outputs[:book].content = outputs[:content]
-    outputs[:book].save
+    content_book = import_collection(nil, outputs[:hash]['tree'], options)
+    content_book.url = outputs[:url]
+    content_book.content = outputs[:content]
 
-    transfer_errors_from outputs[:book], type: :verbatim
+    entity_book = Entity::CreateBook.call.outputs.book
+    content_book.entity_book = entity_book
+
+    content_book.save
+
+    transfer_errors_from(content_book, {type: :verbatim}, true)
+
+    outputs[:book] = entity_book
+    outputs[:content_book] = content_book if Rails.env.test?
   end
 
 end

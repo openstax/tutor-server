@@ -59,6 +59,8 @@ class Content::ImportPage
                       content: outputs[:content],
                       book: book,
                       title: hash['title'] || '')
+    transfer_errors_from(outputs[:page], {type: :verbatim}, true)
+
     book.pages << outputs[:page] unless book.nil?
     transfer_errors_from outputs[:page], {type: :verbatim}, true
 
