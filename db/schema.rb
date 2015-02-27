@@ -32,20 +32,20 @@ ActiveRecord::Schema.define(version: 20150218225408) do
   add_index "assistants", ["code_class_name"], name: "index_assistants_on_code_class_name", unique: true
   add_index "assistants", ["name"], name: "index_assistants_on_name", unique: true
 
-  create_table "content_books", force: :cascade do |t|
+  create_table "content_book_parts", force: :cascade do |t|
     t.string   "url"
     t.text     "content"
-    t.integer  "parent_book_id"
+    t.integer  "parent_book_part_id"
     t.integer  "entity_book_id"
-    t.integer  "number",         null: false
-    t.string   "title",          null: false
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
+    t.integer  "number",              null: false
+    t.string   "title",               null: false
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
   end
 
-  add_index "content_books", ["entity_book_id"], name: "index_content_books_on_entity_book_id"
-  add_index "content_books", ["parent_book_id", "number"], name: "index_content_books_on_parent_book_id_and_number", unique: true
-  add_index "content_books", ["url"], name: "index_content_books_on_url", unique: true
+  add_index "content_book_parts", ["entity_book_id"], name: "index_content_book_parts_on_entity_book_id"
+  add_index "content_book_parts", ["parent_book_part_id", "number"], name: "index_content_book_parts_on_parent_book_part_id_and_number", unique: true
+  add_index "content_book_parts", ["url"], name: "index_content_book_parts_on_url", unique: true
 
   create_table "content_exercise_topics", force: :cascade do |t|
     t.integer  "content_exercise_id", null: false
@@ -83,15 +83,15 @@ ActiveRecord::Schema.define(version: 20150218225408) do
   create_table "content_pages", force: :cascade do |t|
     t.string   "url"
     t.text     "content"
-    t.integer  "content_book_id"
+    t.integer  "content_book_part_id"
     t.integer  "entity_book_id"
-    t.integer  "number",          null: false
-    t.string   "title",           null: false
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.integer  "number",               null: false
+    t.string   "title",                null: false
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
   end
 
-  add_index "content_pages", ["content_book_id", "number"], name: "index_content_pages_on_content_book_id_and_number", unique: true
+  add_index "content_pages", ["content_book_part_id", "number"], name: "index_content_pages_on_content_book_part_id_and_number", unique: true
   add_index "content_pages", ["entity_book_id"], name: "index_content_pages_on_entity_book_id"
   add_index "content_pages", ["url"], name: "index_content_pages_on_url", unique: true
 

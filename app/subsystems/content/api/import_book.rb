@@ -11,22 +11,22 @@ class Content::Api::ImportBook
   protected
 
   # Recursively imports items in a CNX collection into the given book
-  def import_collection(parent_book, hash, options = {})
-    book = Content::Book.create(parent_book: parent_book,
-                                title: hash['title'] || '')
+  def import_collection(parent_book_part:, hash:, options: {})
+    book_part = Content::BookPart.create(parent_book_part: parent_book_part,
+                                         title: hash['title'] || '')
 
-    parent_book.child_books << book unless parent_book.nil?
+    parent_book_part.child_book_parts << book_part unless parent_book_part.nil?
 
     hash['contents'].each do |item|
       if item['id'] == 'subcol'
-        import_collection(book, item, options)
+        import_collection(parent_book_part: book_part, hash: item, options: options)
       else
-        run(:page_import, item['id'], book, 
-                          options.merge(title: item['title']))
+        run(:page_import, id: item['id'], book_part: book_part, 
+                          options: options.merge(title: item['title']))
       end
     end
 
-    book
+    book_part
   end
 
   # Imports and saves a CNX book as a Book
@@ -34,19 +34,21 @@ class Content::Api::ImportBook
   def exec(id, options = {})
     run(:cnx_import, id, options.merge(book: true))
 
-    content_book = import_collection(nil, outputs[:hash]['tree'], options)
-    content_book.url = outputs[:url]
-    content_book.content = outputs[:content]
+    content_book_part = import_collection(parent_book_part: nil, 
+                                          hash: outputs[:hash]['tree'], 
+                                          options: options)
+    content_book_part.url = outputs[:url]
+    content_book_part.content = outputs[:content]
 
-    entity_book = Entity::CreateBook.call.outputs.book
-    content_book.entity_book = entity_book
+    book = Entity::CreateBook.call.outputs.book
+    content_book_part.book = book
 
-    content_book.save
+    content_book_part.save
 
-    transfer_errors_from(content_book, {type: :verbatim}, true)
+    transfer_errors_from(content_book_part, {type: :verbatim}, true)
 
-    outputs[:book] = entity_book
-    outputs[:content_book] = content_book if Rails.env.test?
+    outputs[:book] = book
+    outputs[:content_book_part] = content_book_part if Rails.env.test?
   end
 
 end

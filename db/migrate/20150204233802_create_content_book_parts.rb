@@ -1,8 +1,8 @@
-class CreateContentBooks < ActiveRecord::Migration
+class CreateContentBookParts < ActiveRecord::Migration
   def change
-    create_table :content_books do |t|
+    create_table :content_book_parts do |t|
       t.resource allow_nil: true
-      t.references :parent_book
+      t.references :parent_book_part
       t.references :entity_book
       t.integer :number, null: false
       t.string :title, null: false
@@ -10,11 +10,11 @@ class CreateContentBooks < ActiveRecord::Migration
       t.timestamps null: false
 
       t.resource_index
-      t.index [:parent_book_id, :number], unique: true
+      t.index [:parent_book_part_id, :number], unique: true
       t.index :entity_book_id
     end
 
-    add_foreign_key :content_books, :content_books, column: :parent_book_id,
+    add_foreign_key :content_books, :content_books, column: :parent_book_part_id,
                                                     on_update: :cascade,
                                                     on_delete: :cascade
 
