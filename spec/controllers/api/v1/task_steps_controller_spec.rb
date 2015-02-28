@@ -75,11 +75,22 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
     end
 
     it "updates the selected answer of an exercise" do
+      tasked.free_response = "Ipsum lorem"
+      tasked.save!
+
       api_put :update, user_1_token, parameters: id_parameters, 
-              raw_post_data: { answer_id: "id37" }
+              raw_post_data: { answer_id: tasked.answers.first['id'] }
 
       expect(response).to have_http_status(:success)
-      expect(tasked.reload.answer_id).to eq "id37"
+      expect(tasked.reload.answer_id).to eq tasked.answers.first['id']
+    end
+
+    it "does not update the answer if the free response is not set" do
+      api_put :update, user_1_token, parameters: id_parameters, 
+              raw_post_data: { answer_id: tasked.answers.first['id'] }
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(tasked.reload.answer_id).to be_nil
     end
 
   end

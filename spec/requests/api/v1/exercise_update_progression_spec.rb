@@ -13,17 +13,28 @@ RSpec.describe "Exercise update progression", type: :request, :api => true, :ver
 
   let!(:step_route_base) { "/api/tasks/#{tasked.task_step.task.id}/steps/#{tasked.task_step.id}" }
 
-  it "only shows feedback and correct answer id after complete" do
+  it "only shows feedback and correct answer id after completed" do
 
     api_get(step_route_base, user_1_token)
 
     expect(response.body_as_hash).not_to have_key(:feedback_html)
     expect(response.body_as_hash).not_to have_key(:correct_answer_id)
 
-    # TODO: This "completed" route is odd.
-    #       An Exercise should be "complete" when it is answered?
+    tasked.free_response = 'abcdefg'
+    tasked.save!
+
+    api_get(step_route_base, user_1_token)
+
+    expect(response.body_as_hash).not_to have_key(:feedback_html)
+    expect(response.body_as_hash).not_to have_key(:correct_answer_id)
+
     tasked.answer_id = tasked.correct_answer_id
     tasked.save!
+
+    api_get(step_route_base, user_1_token)
+
+    expect(response.body_as_hash).not_to have_key(:feedback_html)
+    expect(response.body_as_hash).not_to have_key(:correct_answer_id)
 
     # Mark it as complete and then get it again (PUT returns No Content)
     api_put("#{step_route_base}/completed", user_1_token)
@@ -33,6 +44,42 @@ RSpec.describe "Exercise update progression", type: :request, :api => true, :ver
     expect(response.body_as_hash).to include(
       correct_answer_id: tasked.correct_answer_id
     )
+  end
+
+  it "does not allow the answer to be changed after completed" do
+    api_put("#{step_route_base}", user_1_token,
+            raw_post_data: {free_response: 'abcdef'}.to_json)
+    expect(response).to have_http_status(:success)
+
+    tasked.reload
+    expect(tasked.free_response).to eq 'abcdef'
+
+    api_put("#{step_route_base}", user_1_token,
+            raw_post_data: {answer_id: tasked.answers.last['id']}.to_json)
+    expect(response).to have_http_status(:success)
+
+    tasked.reload
+    expect(tasked.answer_id).to eq tasked.answers.last['id']
+
+    # Mark it as complete and then get it again (PUT returns No Content)
+    api_put("#{step_route_base}/completed", user_1_token)
+
+    tasked.reload
+    expect(tasked.completed?).to eq true
+
+    api_put("#{step_route_base}", user_1_token,
+            raw_post_data: {free_response: 'I changed my mind!'}.to_json)
+    expect(response).to have_http_status(:unprocessable_entity)
+
+    tasked.reload
+    expect(tasked.free_response).to eq 'abcdef'
+
+    api_put("#{step_route_base}", user_1_token,
+            raw_post_data: {answer_id: tasked.answers.first['id']}.to_json)
+    expect(response).to have_http_status(:unprocessable_entity)
+
+    tasked.reload
+    expect(tasked.answer_id).to eq tasked.answers.last['id']
   end
 
 end

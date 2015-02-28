@@ -29,4 +29,47 @@ RSpec.describe TaskedExercise, :type => :model do
     tasked_exercise.title = nil
     expect(tasked_exercise.title).to eq hash['title']
   end
+
+  it 'can return feedback depending on the selected answer' do
+    tasked_exercise.answer_id = tasked_exercise.answer_ids.first
+    expect(tasked_exercise.feedback_html).to(
+      eq tasked_exercise.answers.first['feedback_html']
+    )
+
+    tasked_exercise.answer_id = tasked_exercise.answer_ids.last
+    expect(tasked_exercise.feedback_html).to(
+      eq tasked_exercise.answers.last['feedback_html']
+    )
+  end
+
+  it 'does not accept a multiple choice answer before a free response' do
+    tasked_exercise.answer_id = tasked_exercise.answer_ids.first
+    expect(tasked_exercise).not_to be_valid
+    expect(tasked_exercise.errors).to include :free_response
+
+    tasked_exercise.free_response = 'abc'
+    expect(tasked_exercise).to be_valid
+  end
+
+  it 'does not accept a multiple choice answer that is not listed' do
+    tasked_exercise.free_response = 'abc'
+    tasked_exercise.answer_id = SecureRandom.hex
+    expect(tasked_exercise).not_to be_valid
+    expect(tasked_exercise.errors).to include :answer_id
+
+    tasked_exercise.answer_id = tasked_exercise.answer_ids.last
+    expect(tasked_exercise).to be_valid
+  end
+
+  it 'cannot be updated after it is completed' do
+    tasked_exercise.free_response = 'abc'
+    tasked_exercise.answer_id = tasked_exercise.answer_ids.first
+    tasked_exercise.save!
+
+    tasked_exercise.task_step.complete
+    tasked_exercise.task_step.save!
+
+    expect(tasked_exercise).not_to be_valid
+    expect(tasked_exercise.reload).not_to be_valid
+  end
 end
