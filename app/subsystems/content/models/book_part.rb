@@ -17,4 +17,8 @@ class Content::BookPart < ActiveRecord::Base
                    inverse_of: :book_part
 
   validates :title, presence: true
+
+  def self.root_for(book_id:)
+    where(entity_book_id: book_id).where(parent_book_part_id: nil).first
+  end
 end
