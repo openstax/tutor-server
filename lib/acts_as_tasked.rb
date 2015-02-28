@@ -3,7 +3,7 @@ module ActsAsTasked
   def self.included(base)
     base.extend(ClassMethods)
   end
-  
+
   module ClassMethods
     def acts_as_tasked
       class_eval do
@@ -11,7 +11,8 @@ module ActsAsTasked
 
         validates :task_step, presence: true
 
-        delegate :completed_at, :completed?, :complete, to: :task_step
+        delegate :completed_at, :completed?, :complete, :tasked_to?,
+          to: :task_step
       end
     end
   end

@@ -24,4 +24,7 @@ class Task < ActiveRecord::Base
     end
   end
 
+  def tasked_to?(taskee)
+    taskings.where(taskee: taskee).any?
+  end
 end

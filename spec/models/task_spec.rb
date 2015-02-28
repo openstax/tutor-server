@@ -27,4 +27,15 @@ RSpec.describe Task, :type => :model do
     at1.reload
     expect(at1.task.is_shared).to be_truthy
   end
+
+  it 'reports tasked_to? for a taskee' do
+    user = FactoryGirl.create(:user)
+    tasking = FactoryGirl.build(:tasking, taskee: user)
+    task = FactoryGirl.create(:task, taskings: [tasking])
+
+    expect(task).to be_tasked_to(user)
+
+    task.taskings.clear
+    expect(task).not_to be_tasked_to(user)
+  end
 end
