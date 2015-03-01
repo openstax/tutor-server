@@ -115,6 +115,16 @@ ActiveRecord::Schema.define(version: 20150218225408) do
   add_index "course_assistants", ["assistant_id"], name: "index_course_assistants_on_assistant_id"
   add_index "course_assistants", ["course_id", "assistant_id"], name: "index_course_assistants_on_course_id_and_assistant_id", unique: true
 
+  create_table "course_content_course_books", force: :cascade do |t|
+    t.integer  "entity_course_id", null: false
+    t.integer  "entity_book_id",   null: false
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+  end
+
+  add_index "course_content_course_books", ["entity_book_id"], name: "index_course_content_course_books_on_entity_book_id"
+  add_index "course_content_course_books", ["entity_course_id"], name: "index_course_content_course_books_on_entity_course_id"
+
   create_table "course_membership_students", force: :cascade do |t|
     t.integer  "entity_course_id", null: false
     t.integer  "entity_role_id",   null: false
