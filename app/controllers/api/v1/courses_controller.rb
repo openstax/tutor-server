@@ -12,7 +12,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   description <<-EOS 
     #{json_schema(Api::V1::ReadingSearchRepresenter, include: :readable)}
   EOS
-  def search_readings
+  def readings
     raise NotYetImplemented
   end
 
