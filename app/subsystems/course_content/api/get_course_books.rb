@@ -4,9 +4,9 @@ class CourseContent::Api::GetCourseBooks
   protected
 
   def exec(course:)
-    # CourseBook.where(course)
-    debugger
-    debugger
-    # CourseContent::CourseBooks.where()
+    book_ids = CourseContent::CourseBook.where(course: course.id)
+                                        .select(:entity_book_id)
+                                        .collect{|cb| cb.entity_book_id}
+    outputs[:books] = Entity::Book.find(book_ids)
   end
 end
