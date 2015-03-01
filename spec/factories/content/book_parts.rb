@@ -19,5 +19,27 @@ FactoryGirl.define do
         FactoryGirl.create(:content_page, title: page[:title], book_part: book_part)
       end
     end
+
+    trait :standard_contents_1 do
+      contents {{
+        title: 'unit 1',
+        book_parts: [
+          {
+            title: 'chapter 1',
+            pages: [
+              { title: 'first page' },
+              { title: 'second page' }
+            ]
+          },
+          {
+            title: 'chapter 2',
+            pages: [
+              { title: 'third page' }
+            ]
+          }
+        ]
+      }}
+    end
   end
 end
+

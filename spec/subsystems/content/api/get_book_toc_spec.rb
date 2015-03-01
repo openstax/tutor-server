@@ -2,35 +2,12 @@ require 'rails_helper'
 
 RSpec.describe Content::Api::GetBookToc, :type => :routine do
 
-  let!(:book) { FactoryGirl.create :entity_book }
-  let!(:root_book_part) { 
-    FactoryGirl.create(
-      :content_book_part, 
-      book: book,
-      contents: {
-        title: 'unit 1',
-        book_parts: [
-          {
-            title: 'chapter 1',
-            pages: [
-              { title: 'first page' },
-              { title: 'second page' }
-            ]
-          },
-          {
-            title: 'chapter 2',
-            pages: [
-              { title: 'third page' }
-            ]
-          }
-        ]
-      }
-    )
-  }
+  let!(:root_book_part) { FactoryGirl.create(:content_book_part, :standard_contents_1) }
 
   it "gets the book toc for a 3 level book" do
     result = nil
-    expect(result = Content::Api::GetBookToc.call(book_id: book.id)).to_not have_routine_errors
+    expect(result = Content::Api::GetBookToc.call(book_id: root_book_part.book.id))
+                      .to_not have_routine_errors
 
     toc = result.outputs.toc.to_hash
 

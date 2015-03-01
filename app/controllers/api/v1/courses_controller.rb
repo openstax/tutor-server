@@ -13,6 +13,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     #{json_schema(Api::V1::ReadingSearchRepresenter, include: :readable)}
   EOS
   def readings
+    books = CourseContent::Api::GetCourseBooks.call(course: Entity::Course.find(params[:id])).outputs.books
     raise NotYetImplemented
   end
 
