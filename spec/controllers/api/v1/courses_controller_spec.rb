@@ -24,12 +24,45 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
       CourseContent::Api::AddBookToCourse.call(course: course, book: root_book_part.book)
     
       api_get :readings, user_1_token, parameters: {id: course.id}
-      # expect(response.code).to eq '200'
-      # expect(response.body_as_hash).to include(id: task_1.id)
-      # expect(response.body_as_hash).to include(title: 'A Task Title')
-      # expect(response.body_as_hash).to have_key(:steps)
-      # expect(response.body_as_hash[:steps][0]).to include(type: 'reading')
-      # expect(response.body_as_hash[:steps][1]).to include(type: 'exercise')
+
+      expect(response).to have_http_status(:success)
+      expect(response.body_as_hash).to eq({
+        id: 1,
+        title: 'unit 1',
+        type: 'part',
+        children: [
+          {
+            id: 2, 
+            title: 'chapter 1',
+            type: 'part',
+            children: [
+              {
+                id: 1,
+                title: 'first page',
+                type: 'page'
+              },
+              {
+                id: 2,
+                title: 'second page',
+                type: 'page'
+              }
+            ]
+          },
+          {
+            id: 3,
+            title: 'chapter 2',
+            type: 'part',
+            children: [
+              {
+                id: 3, 
+                title: 'third page',
+                type: 'page'
+              }
+            ]
+          }
+        ]      
+      })
+
     end
   end
 
