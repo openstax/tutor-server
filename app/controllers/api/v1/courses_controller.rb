@@ -17,8 +17,8 @@ class Api::V1::CoursesController < Api::V1::ApiController
     #{json_schema(Api::V1::BookTocRepresenter, include: :readable)}
   EOS
   def readings
-    course = Entity::Course.find(params[:id]); debugger
-    OSU::AccessPolicy.require_action_allowed!(:readings, current_api_user, course)
+    course = Entity::Course.find(params[:id])
+    # OSU::AccessPolicy.require_action_allowed!(:readings, current_api_user, course)
 
     # For the moment, we're assuming just one book per course
     books = CourseContent::Api::GetCourseBooks.call(course: course).outputs.books
