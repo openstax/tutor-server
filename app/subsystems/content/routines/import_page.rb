@@ -60,7 +60,7 @@ class Content::ImportPage
                       book: book,
                       title: hash['title'] || '')
     book.pages << outputs[:page] unless book.nil?
-    transfer_errors_from outputs[:page], type: :verbatim
+    transfer_errors_from outputs[:page], {type: :verbatim}, true
 
     # Extract LO's
     los = outputs[:doc].xpath(LO_XPATH).collect do |node|

@@ -17,7 +17,7 @@ class Content::ImportExercises
       exercise.title = wrapper.title
       exercise.content = wrapper.content
       exercise.save
-      transfer_errors_from(exercise, {type: :verbatim})
+      transfer_errors_from(exercise, {type: :verbatim}, true)
 
       run(:tag, exercise, wrapper.tags)
 
