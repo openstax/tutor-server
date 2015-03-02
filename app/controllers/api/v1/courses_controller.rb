@@ -13,15 +13,18 @@ class Api::V1::CoursesController < Api::V1::ApiController
     Returns a hierarchical listing of a course's readings.  A course is currently limited to
     only one book.  Inside each book there can be units or chapters (parts), and eventually
     parts (normally chapters) contain pages that have no children.
-    
+
     #{json_schema(Api::V1::BookTocRepresenter, include: :readable)}
   EOS
   def readings
+    course = Entity::Course.find(params[:id]); debugger
+    OSU::AccessPolicy.require_action_allowed!(:readings, current_api_user, course)
+
     # For the moment, we're assuming just one book per course
-    books = CourseContent::Api::GetCourseBooks.call(course: Entity::Course.find(params[:id])).outputs.books
+    books = CourseContent::Api::GetCourseBooks.call(course: course).outputs.books
     raise NotYetImplemented if books.count > 1
+    
     toc = Content::Api::GetBookToc.call(book_id: books.first.id).outputs.toc
     respond_with toc, represent_with: Api::V1::BookTocRepresenter
   end
-
 end
