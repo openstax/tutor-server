@@ -88,7 +88,7 @@ RSpec.describe Content::ImportPage, :type => :routine do
 
     result = nil
     expect {
-      result = Content::ImportPage.call('dummy', book)
+      result = Content::ImportPage.call(id: 'dummy', book_part: book_part)
     }.to change{ Content::Exercise.count }.by(6)
 
     exercises = Content::Exercise.all.to_a
