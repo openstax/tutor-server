@@ -1,22 +1,36 @@
 class OpenStax::Exercises::V1::FakeClient
 
+  include Singleton
+
+  attr_reader :exercises_array
+
+  def reset!
+    @exercises_array = []
+    @uid = 0
+    @exercise_number = 0
+  end
+
+  def initialize
+    reset!
+  end
+
   #
   # Api wrappers
   #
 
-  def exercises(options={})
-    arrayify(options, :number)
-    arrayify(options, :version)
-    arrayify(options, :id)
-    arrayify(options, :uid)
-    arrayify(options, :tag)
+  def exercises(params = {}, options={})
+    arrayify(params, :number)
+    arrayify(params, :version)
+    arrayify(params, :id)
+    arrayify(params, :uid)
+    arrayify(params, :tag)
 
     match_sets = []
-    uids = (options[:id] || []) + (options[:uid] || [])
+    uids = (params[:id] || []) + (params[:uid] || [])
     match_sets.push( @exercises_array.select{|ee| uids.include?(ee[:uid])}           ) if !uids.blank?
-    match_sets.push( @exercises_array.select{|ee| (options[:tag] & ee[:tags]).any?}         ) if options[:tag]
-    match_sets.push( @exercises_array.select{|ee| options[:number].include?(ee[:number])}   ) if options[:number]
-    match_sets.push( @exercises_array.select{|ee| options[:version].include?(ee[:version])} ) if options[:version] 
+    match_sets.push( @exercises_array.select{|ee| (params[:tag] & ee[:tags]).any?}         ) if params[:tag]
+    match_sets.push( @exercises_array.select{|ee| params[:number].include?(ee[:number])}   ) if params[:number]
+    match_sets.push( @exercises_array.select{|ee| params[:version].include?(ee[:version])} ) if params[:version] 
 
     result = nil
 
@@ -37,43 +51,14 @@ class OpenStax::Exercises::V1::FakeClient
   # Methods to help fake the fake content
   #
 
-  def add_exercise(options={})
-    exercise_number = next_exercise_number
-
-    options[:number] ||= exercise_number
-    options[:content] ||= new_exercise_hash(options[:number])
-    options[:tags] ||= []
+  def new_exercise_hash(options = {})
+    options[:number] ||= next_exercise_number
     options[:version] ||= 1
-    options[:uid] ||= options[:id] || \
-                      "e#{options[:number]}v#{options[:version]}"
-
-    @exercises_array.push(
-      {
-        content: options[:content],
-        tags: options[:tags],
-        number: options[:number],
-        version: options[:version],
-        uid: options[:uid]
-      }
-    )
-  end
-
-  def reset!
-    @exercises_array = []
-    @uid = 0
-    @exercise_number = 0
-  end
-
-  attr_reader :exercises_array
-
-  def initialize
-    reset!
-  end
-
-  def new_exercise_hash(exercise_number = next_exercise_number)
+    options[:tags] ||= []
     {
-      uid: exercise_number.to_s,
-      stimulus_html: "This is fake exercise #{exercise_number}. <span data-math='\\dfrac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}'></span>",
+      uid: "#{options[:number].to_s}@#{options[:version].to_s}",
+      tags: options[:tags] || [],
+      stimulus_html: "This is fake exercise #{options[:number]}. <span data-math='\\dfrac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}'></span>",
       questions: [
         {
           id: "#{next_uid}",
@@ -88,6 +73,27 @@ class OpenStax::Exercises::V1::FakeClient
         }
       ]
     }
+  end
+
+  def add_exercise(options={})
+    exercise_number = next_exercise_number
+
+    options[:number] ||= exercise_number
+    options[:content] ||= new_exercise_hash(options)
+    options[:tags] ||= []
+    options[:version] ||= 1
+    options[:uid] ||= options[:uid] || options[:id] || \
+                      "#{options[:number]}@#{options[:version]}"
+
+    @exercises_array.push(
+      {
+        content: options[:content],
+        number: options[:number],
+        version: options[:version],
+        tags: options[:tags],
+        uid: options[:uid]
+      }
+    )
   end
 
   private

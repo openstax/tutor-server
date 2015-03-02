@@ -25,9 +25,17 @@ class OpenStax::Exercises::V1::Exercise
     @title ||= content_hash['title']
   end
 
+  def tags
+    @tags ||= content_hash['tags']
+  end
+
+  def questions
+    @questions ||= content_hash['questions']
+  end
+
   def answers
     #TODO: handle multiple questions in 1 Exercise
-    @answers ||= content_hash['questions'].first['answers']
+    @answers ||= questions.first['answers']
   end
 
   def correct_answer_id

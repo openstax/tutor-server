@@ -50,15 +50,61 @@ RSpec.describe Content::ImportPage, :type => :routine do
     }.to change{ Content::Topic.count }.by(3)
 
     topics = Content::Topic.all.to_a
-    expect(topics[-3].name).to eq 'ost-apphys-ch5-s1-lo1'
-    expect(topics[-2].name).to eq 'ost-apphys-ch5-s1-lo2'
-    expect(topics[-1].name).to eq 'ost-apphys-ch5-s1-lo3'
+    expect(topics[-3].name).to eq 'ost-topic-apphys-ch5-s1-lo1'
+    expect(topics[-2].name).to eq 'ost-topic-apphys-ch5-s1-lo2'
+    expect(topics[-1].name).to eq 'ost-topic-apphys-ch5-s1-lo3'
 
     tagged_topics = result.outputs[:topics]
     expect(tagged_topics).not_to be_empty
     expect(tagged_topics).to eq Content::Page.last.page_topics.collect{|pt| pt.topic}
-    expect(tagged_topics.collect{|t| t.name}).to eq ['ost-apphys-ch5-s1-lo1',
-                                                     'ost-apphys-ch5-s1-lo2',
-                                                     'ost-apphys-ch5-s1-lo3']
+    expect(tagged_topics.collect{|t| t.name}).to eq [
+      'ost-topic-apphys-ch5-s1-lo1',
+      'ost-topic-apphys-ch5-s1-lo2',
+      'ost-topic-apphys-ch5-s1-lo3'
+    ]
+  end
+
+  it 'gets exercises with LO tags from the content' do
+    OpenStax::Exercises::V1.fake_client.reset!
+
+    OpenStax::Exercises::V1.fake_client.add_exercise(
+      tags: ['ost-topic-apphys-ch5-s1-lo1']
+    )
+    OpenStax::Exercises::V1.fake_client.add_exercise(
+      tags: ['ost-topic-apphys-ch5-s1-lo2']
+    )
+    OpenStax::Exercises::V1.fake_client.add_exercise(
+      tags: ['ost-topic-apphys-ch5-s1-lo3']
+    )
+    OpenStax::Exercises::V1.fake_client.add_exercise(
+      tags: ['ost-topic-apphys-ch5-s1-lo1', 'ost-topic-apphys-ch5-s1-lo2']
+    )
+    OpenStax::Exercises::V1.fake_client.add_exercise(
+      tags: ['ost-topic-apphys-ch5-s1-lo2', 'ost-topic-apphys-ch5-s1-lo3']
+    )
+    OpenStax::Exercises::V1.fake_client.add_exercise(
+      tags: ['ost-topic-apphys-ch5-s1-lo1', 'ost-topic-apphys-ch5-s1-lo3']
+    )
+
+    result = nil
+    expect {
+      result = Content::ImportPage.call('dummy', book)
+    }.to change{ Content::Exercise.count }.by(6)
+
+    exercises = Content::Exercise.all.to_a
+    expect(exercises[-6].exercise_topics.collect{|et| et.topic.name})
+      .to eq ['ost-topic-apphys-ch5-s1-lo1']
+    expect(exercises[-5].exercise_topics.collect{|et| et.topic.name})
+      .to eq ['ost-topic-apphys-ch5-s1-lo2']
+    expect(exercises[-4].exercise_topics.collect{|et| et.topic.name})
+      .to eq ['ost-topic-apphys-ch5-s1-lo3']
+    expect(exercises[-3].exercise_topics.collect{|et| et.topic.name})
+      .to eq ['ost-topic-apphys-ch5-s1-lo1', 'ost-topic-apphys-ch5-s1-lo2']
+    expect(exercises[-2].exercise_topics.collect{|et| et.topic.name})
+      .to eq ['ost-topic-apphys-ch5-s1-lo2', 'ost-topic-apphys-ch5-s1-lo3']
+    expect(exercises[-1].exercise_topics.collect{|et| et.topic.name})
+      .to eq ['ost-topic-apphys-ch5-s1-lo1', 'ost-topic-apphys-ch5-s1-lo3']
+
+    OpenStax::Exercises::V1.fake_client.reset!
   end
 end

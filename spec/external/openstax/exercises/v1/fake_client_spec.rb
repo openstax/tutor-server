@@ -17,7 +17,8 @@ RSpec.describe OpenStax::Exercises::V1::FakeClient do
       {
         total_count: 1,
         items: [{
-          uid: "42",
+          uid: "42@1",
+          tags: [],
           stimulus_html: "This is fake exercise 42. <span data-math='\\dfrac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}'></span>",
           questions: [
             {
@@ -60,7 +61,8 @@ RSpec.describe OpenStax::Exercises::V1::FakeClient do
       {
         total_count: 1,
         items: [{
-          uid: "2",
+          uid: "2@1",
+          tags: ["franky"],
           stimulus_html: "This is fake exercise 2. <span data-math='\\dfrac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}'></span>",
           questions: [
             {
@@ -103,17 +105,17 @@ RSpec.describe OpenStax::Exercises::V1::FakeClient do
     fake_client.add_exercise
     fake_client.add_exercise
 
-    expect(JSON.parse(fake_client.exercises(id: "e1v1"))['total_count'])
+    expect(JSON.parse(fake_client.exercises(id: "1@1"))['total_count'])
       .to eq 1
-    expect(JSON.parse(fake_client.exercises(id: "e1v1"))['items'].count)
+    expect(JSON.parse(fake_client.exercises(id: "1@1"))['items'].count)
       .to eq 1
-    expect(JSON.parse(fake_client.exercises(id: "e2v1"))['total_count'])
+    expect(JSON.parse(fake_client.exercises(id: "2@1"))['total_count'])
       .to eq 1
-    expect(JSON.parse(fake_client.exercises(id: "e2v1"))['items'].count)
+    expect(JSON.parse(fake_client.exercises(id: "2@1"))['items'].count)
       .to eq 1
-    expect(JSON.parse(fake_client.exercises(id: "e4v1"))['total_count'])
+    expect(JSON.parse(fake_client.exercises(id: "4@1"))['total_count'])
       .to eq 0
-    expect(JSON.parse(fake_client.exercises(id: "e4v1"))['items'].count)
+    expect(JSON.parse(fake_client.exercises(id: "4@1"))['items'].count)
       .to eq 0
   end
 

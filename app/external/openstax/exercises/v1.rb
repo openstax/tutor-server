@@ -19,28 +19,36 @@ module OpenStax::Exercises::V1
   # Configuration
   #
 
-  # accessor for the fake client, which has some extra fake methods on it
+  def self.configure
+    yield configuration
+  end
+
+  def self.configuration
+    @configuration ||= Configuration.new
+  end
+
+  # Accessor for the fake client, which has some extra fake methods on it
   def self.fake_client
-    @fake_client
+    FakeClient.instance
+  end
+
+  def self.use_real_client
+    @use_fake_client = false
   end
 
   def self.use_fake_client
-    @client = @fake_client
-  end
-
-  # The real client is used by default, so this only exists in case you said
-  # use_fake_client but wanted to switch
-  def self.use_real_client
-    @client = @real_client
+    @use_fake_client = true
   end
 
   private
 
-  @fake_client = FakeClient.new
-  @real_client = RealClient.new
-
   def self.client
-    @client ||= @real_client
+    begin
+      @client ||= @use_fake_client ? fake_client : \
+                                     RealClient.new(configuration)
+    rescue StandardError => error
+      raise ClientError.new("initialization failure", error)
+    end
   end
 
 end
