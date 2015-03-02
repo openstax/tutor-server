@@ -58,6 +58,7 @@ class Content::ImportPage
     run(:create_page, url: outputs[:url],
                       content: outputs[:content],
                       book: book,
+                      path: options[:page_path],
                       title: hash['title'] || '')
     book.pages << outputs[:page] unless book.nil?
     transfer_errors_from outputs[:page], {type: :verbatim}, true
