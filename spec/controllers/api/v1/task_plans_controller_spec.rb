@@ -19,8 +19,11 @@ describe Api::V1::TaskPlansController, :type => :controller,
     u
   }
 
-  let!(:task_plan)    { FactoryGirl.build :task_plan, owner: course,
-                                                      assistant: assistant }
+  let!(:page) { FactoryGirl.create :content_page }
+  let!(:task_plan)    { FactoryGirl.build :task_plan,
+                                          owner: course,
+                                          assistant: assistant,
+                                          settings: { page_ids: [page.id] } }
   let!(:tasking_plan) {
     tp = FactoryGirl.build :tasking_plan, task_plan: task_plan, target: user
     task_plan.tasking_plans << tp
@@ -128,7 +131,7 @@ describe Api::V1::TaskPlansController, :type => :controller,
       controller.sign_in legacy_teacher
       expect { api_post :publish, nil, parameters: {course_id: course.id,
                                                     id: task_plan.id} }
-        .to change{ Tasking.count }.by(1)
+        .to change{ Task.count }.by(1)
       expect(response).to have_http_status(:success)
       expect(response.body).to(
         eq(Api::V1::TaskPlanRepresenter.new(task_plan).to_json))
