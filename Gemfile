@@ -114,8 +114,9 @@ group :development, :test do
   # SQLite3 development database
   gem 'sqlite3'
 
-  # Call 'debugger' anywhere in the code to stop execution and get a debugger console
-  gem 'byebug'
+  # Call 'binding.pry' anywhere in the code to stop execution and get a debugger console
+  gem 'pry-nav'
+  gem 'pry-rails'
 
   # Access an IRB console on exceptions page and /console in development
   gem 'web-console', '~> 2.0.0'
