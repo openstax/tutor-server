@@ -11,17 +11,19 @@ class Content::Api::ImportBook
   protected
 
   # Recursively imports items in a CNX collection into the given book
-  def import_collection(parent_book_part:, hash:, options: {})
+  def import_collection(parent_book_part:, hash:, path:, options: {})
     book_part = Content::BookPart.create(parent_book_part: parent_book_part,
-                                         title: hash['title'] || '')
+                                         title: hash['title'] || '',
+                                         path: path)
 
     parent_book_part.child_book_parts << book_part unless parent_book_part.nil?
 
-    hash['contents'].each do |item|
+    hash['contents'].each_with_index do |item, ii|
+      item_path = "#{path.nil? ? '' : path + '.'}#{ii+1}"
       if item['id'] == 'subcol'
-        import_collection(parent_book_part: book_part, hash: item, options: options)
+        import_collection(parent_book_part: book_part, hash: item, path: item_path, options: options)
       else
-        run(:page_import, id: item['id'], book_part: book_part, 
+        run(:page_import, id: item['id'], book_part: book_part, path: item_path,
                           options: options.merge(title: item['title']))
       end
     end
@@ -36,6 +38,7 @@ class Content::Api::ImportBook
 
     content_book_part = import_collection(parent_book_part: nil, 
                                           hash: outputs[:hash]['tree'], 
+                                          path: nil,
                                           options: options)
     content_book_part.url = outputs[:url]
     content_book_part.content = outputs[:content]
