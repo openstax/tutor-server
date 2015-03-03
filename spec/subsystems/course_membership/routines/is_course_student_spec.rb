@@ -10,7 +10,7 @@ describe CourseMembership::IsCourseStudent do
 
     before(:each) do
       CourseMembership::AddStudent.call(course: other_course,  role: target_student_role)
-      CourseMembership::AddStudent.call(course: target_course, rols: other_student_role)
+      CourseMembership::AddStudent.call(course: target_course, role: other_student_role)
     end
 
     context "when a single role is given" do
