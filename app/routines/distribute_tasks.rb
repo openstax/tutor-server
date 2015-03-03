@@ -17,7 +17,7 @@ class DistributeTasks
   def exec(task_plan)
     # Delete pre-existing assignments
     unless task_plan.tasks.empty?
-      task_plan.tasks.delete_all # Delete using the foreign key cascade
+      task_plan.tasks.destroy_all
       task_plan.reload
     end
 
