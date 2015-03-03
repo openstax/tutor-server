@@ -145,16 +145,6 @@ ActiveRecord::Schema.define(version: 20150218225408) do
 
   add_index "course_membership_teachers", ["entity_course_id", "entity_role_id"], name: "course_membership_teacher_course_role_uniq", unique: true
 
-  create_table "course_profile_profiles", force: :cascade do |t|
-    t.integer  "entity_course_id", null: false
-    t.string   "name",             null: false
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
-  end
-
-  add_index "course_profile_profiles", ["entity_course_id"], name: "index_course_profile_profiles_on_entity_course_id", unique: true
-  add_index "course_profile_profiles", ["name"], name: "index_course_profile_profiles_on_name"
-
   create_table "courses", force: :cascade do |t|
     t.string   "school",                          null: false
     t.string   "name",                            null: false
