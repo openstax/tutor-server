@@ -1,4 +1,4 @@
-class Admin::BaseController < ActionController::Base
+class Admin::BaseController < ApplicationController
   before_filter :authenticate_admin!
 
   def authenticate_admin!
