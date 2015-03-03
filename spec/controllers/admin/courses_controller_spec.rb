@@ -6,27 +6,28 @@ RSpec.describe Admin::CoursesController do
   before { controller.sign_in(admin) }
 
   describe 'GET #index' do
-    it 'assigns all Entity::Courses to @courses' do
-      Domain::CreateCourse.call
+    it 'assigns all Domain::ListCourses output to @courses' do
+      Domain::CreateCourse.call(name: 'Hello World')
       get :index
-      expect(assigns[:courses]).to eq([Entity::Course.last])
+      expect(assigns[:courses].count).to eq(1)
+      expect(assigns[:courses].first.name).to eq('Hello World')
     end
   end
 
   describe 'POST #create' do
-    it 'creates a blank course' do
-      expect {
-        post :create
-      }.to change { Entity::Course.count }.by(1)
+    before do
+      post :create, course: { name: 'Hello World' }
+    end
+
+    it 'creates a blank course profile' do
+      expect(CourseProfile::Profile.count).to eq(1)
     end
 
     it 'sets a flash notice' do
-      post :create
       expect(flash[:notice]).to eq('The course has been created.')
     end
 
     it 'redirects to /admin/courses' do
-      post :create
       expect(response).to redirect_to(admin_courses_path)
     end
   end

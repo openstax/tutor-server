@@ -5,6 +5,6 @@ class Domain::CreateCourse
 
   def exec(name: 'Unnamed')
     run(Entity::CreateCourse)
-    # TODO for JoeSMak (soon) running some CourseProfile routine to create profile and set the name
+    run(CourseProfile::CreateCourseProfile, name: name, course: outputs.course)
   end
 end

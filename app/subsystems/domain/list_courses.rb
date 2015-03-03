@@ -2,7 +2,7 @@ class Domain::ListCourses
   lev_routine
 
   uses_routine CourseProfile::Api::GetAllProfiles,
-               translations: { outputs: { type: :verbatim } },
+               translations: { outputs: { map: { profiles: :courses } } },
                as: :get_profiles
 
   protected

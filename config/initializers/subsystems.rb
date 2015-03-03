@@ -30,8 +30,8 @@ ActiveRecord::Base.define_singleton_method(:set_options_for_subsystem_associatio
   module_name = self.name.deconstantize.underscore
 
   # ****** Temporary control to limit to only the Content and CourseContent subsystem ******
-  return if !%w(content course_content).include?(module_name)
-  
+  return if !%w(content course_content course_profile).include?(module_name)
+
   if subsystems.any?{|subsystem| subsystem.name == module_name}
     subsystem_option ||= module_name.to_sym
     options[:class_name] ||= "::#{subsystem_option.to_s.camelize}::#{association_name.to_s.camelize.singularize}"
@@ -40,7 +40,7 @@ ActiveRecord::Base.define_singleton_method(:set_options_for_subsystem_associatio
       options[:foreign_key] ||= "#{subsystem_option.to_s}_#{association_name.to_s.underscore}_id"
     elsif :has_many == association_type
       class_name = self.name.demodulize.underscore
-      options[:foreign_key] ||= "#{subsystem_option.to_s}_#{class_name}_id"    
+      options[:foreign_key] ||= "#{subsystem_option.to_s}_#{class_name}_id"
     end
   end
 end
@@ -49,7 +49,7 @@ ActiveRecord::Base.singleton_class.send(:alias_method, :has_many_original, :has_
 ActiveRecord::Base.singleton_class.send(:alias_method, :belongs_to_original, :belongs_to)
 
 ActiveRecord::Base.define_singleton_method(:has_many) do |association_name, options={}|
-  set_options_for_subsystem_association(:has_many, association_name, options)  
+  set_options_for_subsystem_association(:has_many, association_name, options)
   has_many_original(association_name, options)
 end
 

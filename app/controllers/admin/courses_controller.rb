@@ -4,15 +4,10 @@ class Admin::CoursesController < Admin::BaseController
   end
 
   def create
-
-    Domain::CreateCourse.call(name: params[:course][:name])
-
-    # OR
-
     handle_with(Admin::CoursesCreate,
                 complete: -> (*) {
                   flash[:notice] = 'The course has been created.'
                   redirect_to admin_courses_path
-                })    
+                })
   end
 end

@@ -15,7 +15,6 @@ class Admin::CoursesCreate
   end
 
   def handle
-    # course_params.name exists 
     run(Domain::CreateCourse, name: course_params.name)
   end
 end
