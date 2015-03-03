@@ -4,9 +4,29 @@ class Content::Api::GetBookToc
 
   protected
 
-  def exec(entity_book_id:)
-    book = Content::Book.find(entity_book_id: entity_book_id)
-    
+  def exec(book_id:)
+    root_book_part = Content::BookPart.root_for(book_id: book_id)
+    # Quick and dirty implementation (cache this stuff later)
+    outputs[:toc] = book_part_toc(root_book_part)
+  end
+
+  def book_part_toc(book_part)
+    toc = {}
+
+    toc[:id] = book_part.id
+    toc[:title] = book_part.title
+    toc[:type] = 'part'
+    toc[:children] = []
+
+    book_part.child_book_parts.each do |child_book_part|
+      toc[:children].append(book_part_toc(child_book_part))
+    end
+
+    book_part.pages.each do |page|
+      toc[:children].append({id: page.id, title: page.title, type: 'page'})
+    end
+
+    outputs[:toc] = toc
   end
 
 end

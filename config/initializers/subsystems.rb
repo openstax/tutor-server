@@ -29,8 +29,8 @@ ActiveRecord::Base.define_singleton_method(:set_options_for_subsystem_associatio
 
   module_name = self.name.deconstantize.underscore
 
-  # ****** Temporary control to limit to only the Content subsystem ******
-  return if module_name != "content"
+  # ****** Temporary control to limit to only the Content and CourseContent subsystem ******
+  return if !%w(content course_content).include?(module_name)
   
   if subsystems.any?{|subsystem| subsystem.name == module_name}
     subsystem_option ||= module_name.to_sym

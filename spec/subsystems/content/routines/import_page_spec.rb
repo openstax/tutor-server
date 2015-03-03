@@ -7,7 +7,7 @@ RSpec.describe Content::ImportPage, :type => :routine do
   # - Topic (LO)-tagged sections and problems
   fixture_file = 'spec/fixtures/m50577/index.cnxml.html'
 
-  let!(:book) { FactoryGirl.create :content_book }
+  let!(:book_part) { FactoryGirl.create :content_book_part }
 
   before(:each) do
     hash = {
@@ -24,7 +24,7 @@ RSpec.describe Content::ImportPage, :type => :routine do
   it 'creates a new Page' do
     result = nil
     expect {
-      result = Content::ImportPage.call('dummy', book)
+      result = Content::ImportPage.call(id: 'dummy', book_part: book_part)
     }.to change{ Content::Page.count }.by(1)
     expect(result.errors).to be_empty
 
@@ -34,7 +34,7 @@ RSpec.describe Content::ImportPage, :type => :routine do
   end
 
   it 'converts relative links into absolute links' do
-    page = Content::ImportPage.call('dummy', book).outputs[:page]
+    page = Content::ImportPage.call(id: 'dummy', book_part: book_part).outputs[:page]
     doc = Nokogiri::HTML(page.content)
 
     doc.css("*[src]").each do |tag|
@@ -46,7 +46,7 @@ RSpec.describe Content::ImportPage, :type => :routine do
   it 'finds LO tags in the content' do
     result = nil
     expect {
-      result = Content::ImportPage.call('dummy', book)
+      result = Content::ImportPage.call(id: 'dummy', book_part: book_part)
     }.to change{ Content::Topic.count }.by(3)
 
     topics = Content::Topic.all.to_a
@@ -88,7 +88,7 @@ RSpec.describe Content::ImportPage, :type => :routine do
 
     result = nil
     expect {
-      result = Content::ImportPage.call('dummy', book)
+      result = Content::ImportPage.call(id: 'dummy', book_part: book_part)
     }.to change{ Content::Exercise.count }.by(6)
 
     exercises = Content::Exercise.all.to_a

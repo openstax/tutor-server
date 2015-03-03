@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150225164908) do
+ActiveRecord::Schema.define(version: 20150218225408) do
 
   create_table "administrators", force: :cascade do |t|
     t.integer  "user_id",    null: false
@@ -32,19 +32,21 @@ ActiveRecord::Schema.define(version: 20150225164908) do
   add_index "assistants", ["code_class_name"], name: "index_assistants_on_code_class_name", unique: true
   add_index "assistants", ["name"], name: "index_assistants_on_name", unique: true
 
-  create_table "content_books", force: :cascade do |t|
+  create_table "content_book_parts", force: :cascade do |t|
     t.string   "url"
     t.text     "content"
-    t.integer  "parent_book_id"
-    t.integer  "number",         null: false
-    t.string   "title",          null: false
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
+    t.integer  "parent_book_part_id"
+    t.integer  "entity_book_id"
+    t.integer  "number",              null: false
+    t.string   "title",               null: false
     t.string   "path"
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
   end
 
-  add_index "content_books", ["parent_book_id", "number"], name: "index_content_books_on_parent_book_id_and_number", unique: true
-  add_index "content_books", ["url"], name: "index_content_books_on_url", unique: true
+  add_index "content_book_parts", ["entity_book_id"], name: "index_content_book_parts_on_entity_book_id"
+  add_index "content_book_parts", ["parent_book_part_id", "number"], name: "index_content_book_parts_on_parent_book_part_id_and_number", unique: true
+  add_index "content_book_parts", ["url"], name: "index_content_book_parts_on_url", unique: true
 
   create_table "content_exercise_topics", force: :cascade do |t|
     t.integer  "content_exercise_id", null: false
@@ -82,15 +84,17 @@ ActiveRecord::Schema.define(version: 20150225164908) do
   create_table "content_pages", force: :cascade do |t|
     t.string   "url"
     t.text     "content"
-    t.integer  "content_book_id"
-    t.integer  "number",          null: false
-    t.string   "title",           null: false
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.integer  "content_book_part_id"
+    t.integer  "entity_book_id"
+    t.integer  "number",               null: false
+    t.string   "title",                null: false
     t.string   "path"
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
   end
 
-  add_index "content_pages", ["content_book_id", "number"], name: "index_content_pages_on_content_book_id_and_number", unique: true
+  add_index "content_pages", ["content_book_part_id", "number"], name: "index_content_pages_on_content_book_part_id_and_number", unique: true
+  add_index "content_pages", ["entity_book_id"], name: "index_content_pages_on_entity_book_id"
   add_index "content_pages", ["url"], name: "index_content_pages_on_url", unique: true
 
   create_table "content_topics", force: :cascade do |t|
@@ -112,6 +116,16 @@ ActiveRecord::Schema.define(version: 20150225164908) do
 
   add_index "course_assistants", ["assistant_id"], name: "index_course_assistants_on_assistant_id"
   add_index "course_assistants", ["course_id", "assistant_id"], name: "index_course_assistants_on_course_id_and_assistant_id", unique: true
+
+  create_table "course_content_course_books", force: :cascade do |t|
+    t.integer  "entity_course_id", null: false
+    t.integer  "entity_book_id",   null: false
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+  end
+
+  add_index "course_content_course_books", ["entity_book_id"], name: "index_course_content_course_books_on_entity_book_id"
+  add_index "course_content_course_books", ["entity_course_id", "entity_book_id"], name: "[\"course_books_course_id_on_book_id_unique\"]", unique: true
 
   create_table "course_membership_students", force: :cascade do |t|
     t.integer  "entity_course_id", null: false
@@ -161,6 +175,11 @@ ActiveRecord::Schema.define(version: 20150225164908) do
 
   add_index "educators", ["course_id"], name: "index_educators_on_course_id"
   add_index "educators", ["user_id", "course_id"], name: "index_educators_on_user_id_and_course_id", unique: true
+
+  create_table "entity_books", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "entity_courses", force: :cascade do |t|
     t.datetime "created_at", null: false

@@ -3,12 +3,13 @@ class Content::CreatePage
 
   protected
 
-  def exec(url:, content:, book:nil, path:'', title:)
+  def exec(url:, content:, book:nil, book_part: nil, path:'', title:)
     page = Content::Page.create(url: url,
                                 content: content,
-                                book: book,
+                                title: title,
                                 path: path,
-                                title: title)
+                                book_part: book_part,
+                                book: book)
 
     transfer_errors_from(page, {type: :verbatim}, true)
 

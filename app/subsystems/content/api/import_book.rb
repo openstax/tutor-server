@@ -9,61 +9,50 @@ class Content::Api::ImportBook
   uses_routine Content::ImportPage, as: :page_import
 
   protected
+
+  # Recursively imports items in a CNX collection into the given book
+  def import_collection(parent_book_part:, hash:, path:, options: {})
+    book_part = Content::BookPart.create(parent_book_part: parent_book_part,
+                                         title: hash['title'] || '',
+                                         path: path)
+
+    parent_book_part.child_book_parts << book_part unless parent_book_part.nil?
+
+    hash['contents'].each_with_index do |item, ii|
+      item_path = "#{path.nil? ? '' : path + '.'}#{ii+1}"
+      if item['id'] == 'subcol'
+        import_collection(parent_book_part: book_part, hash: item, path: item_path, options: options)
+      else
+        run(:page_import, id: item['id'], book_part: book_part, path: item_path,
+                          options: options.merge(title: item['title']))
+      end
+    end
+
+    book_part
+  end
+
   # Imports and saves a CNX book as a Book
   # Returns the Book object, Resource object and collection JSON as a hash
   def exec(id, options = {})
-    @options = options
-    run(:cnx_import, id, @options.merge(book: true))
+    run(:cnx_import, id, options.merge(book: true))
 
-    outputs[:book] = import_book_tree(outputs[:hash]['tree'])
-    outputs[:book].url = outputs[:url]
-    outputs[:book].content = outputs[:content]
-    outputs[:book].save
+    content_book_part = import_collection(parent_book_part: nil, 
+                                          hash: outputs[:hash]['tree'], 
+                                          path: nil,
+                                          options: options)
+    content_book_part.url = outputs[:url]
+    content_book_part.content = outputs[:content]
 
-    transfer_errors_from(outputs[:book], type: :verbatim)
-  end
+    book = Entity::CreateBook.call.outputs.book
+    content_book_part.book = book
 
-  private
-  def import_book_tree(book_tree, parent = nil)
-    collection = store_collection(book_tree['title'] || '', parent)
-    import_children(collection, book_tree['contents'])
-    collection
-  end
+    content_book_part.save
 
-  def store_collection(title, parent)
-    if parent.present?
-      parent.child_books.create(title: title, path: @options[:collection_path])
-    else
-      Content::Book.create(title: title)
-    end
-  end
+    transfer_errors_from(content_book_part, {type: :verbatim}, true)
 
-  def import_children(parent, children)
-    collection_index, page_index = 0, 0
-
-    children.each do |child|
-      if child['id'] == 'subcol' # sub-collection
-        import_sub_collection(parent, child, collection_index += 1)
-      else
-        import_page(parent, child, page_index += 1)
-      end
-    end
-  end
-
-  def import_sub_collection(parent, sub_collection, index)
-    @options[:collection_path] = construct_path(parent, index)
-    import_book_tree(sub_collection, parent)
-  end
-
-  def import_page(parent, page, index)
-    @options[:page_path] = construct_path(parent, index)
-    @options[:title] = page['title']
-    run(:page_import, page['id'], parent, @options)
-  end
-
-  def construct_path(parent, index)
-    return index if parent.nil?
-    [parent.path, index].reject(&:blank?).join('.')
+    outputs[:book] = book
+    outputs[:content_book_part] = content_book_part if Rails.env.test?
   end
 
 end
+
