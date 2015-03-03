@@ -43,9 +43,10 @@ describe Api::V1::TaskPlansController, :type => :controller,
     end
 
     it 'does not allow an anonymous user to view the task_plan' do
-      expect { api_get :show, nil, parameters: {course_id: course.id,
-                                                id: task_plan.id} }
-        .to raise_error(SecurityTransgression)
+      expect {
+        api_get :show, nil, parameters: {course_id: course.id,
+                                         id:        task_plan.id}
+      }.to raise_error(SecurityTransgression)
     end
   end
 
