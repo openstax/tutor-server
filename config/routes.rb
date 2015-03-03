@@ -39,6 +39,11 @@ Rails.application.routes.draw do
 
     resources :courses, only: [] do
       get 'readings', on: :member
+      get 'plans', on: :member
+    end
+
+    resources :task_plans, path: '/plans', except: :index do
+      post 'publish', on: :member
     end
 
   end

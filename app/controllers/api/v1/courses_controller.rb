@@ -27,4 +27,17 @@ class Api::V1::CoursesController < Api::V1::ApiController
     toc = Content::Api::GetBookToc.call(book_id: books.first.id).outputs.toc
     respond_with toc, represent_with: Api::V1::BookTocRepresenter
   end
+
+  api :POST, '/courses/:course_id/plans', 'Returns a course\'s plans'
+  description <<-EOS
+    #{json_schema(Api::V1::TaskPlanRepresenter, include: :writeable)}
+  EOS
+  def plans
+    course = Entity::Course.find(params[:id])
+    # OSU::AccessPolicy.require_action_allowed!(:task_plans, current_api_user, course)
+
+    task_plans = CourseContent::Api::GetCourseTaskPlans.call(course: course).outputs.books
+    respond_with task_plans, represent_with: Api::V1::TaskPlanSearchRepresenter
+  end
+
 end
