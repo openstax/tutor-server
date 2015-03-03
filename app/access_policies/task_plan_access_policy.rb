@@ -12,11 +12,18 @@ class TaskPlanAccessPolicy
         ).outputs.user
         user == task_plan.owner
       when Entity::Course
-        user = LegacyUser::FindOrCreateUserForLegacyUser.call(
-                 requestor
-               ).outputs.user
-        Domain::UserIsCourseTeacher.call(user: user, course: task_plan.owner)
-                                   .outputs.user_is_course_teacher
+        ## Treat failure to positively identify the user
+        ## as a course teacher as a denial of access.
+        ## (This happens when the user is anonymous.)
+        begin
+          user = LegacyUser::FindOrCreateUserForLegacyUser.call(
+                   requestor
+                 ).outputs.user
+          Domain::UserIsCourseTeacher.call(user: user, course: task_plan.owner)
+                                     .outputs.user_is_course_teacher
+        rescue
+          false
+        end
       else
         false
       end
