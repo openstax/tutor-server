@@ -53,7 +53,7 @@ Rails.application.routes.draw do
 
     resources :administrators, only: [:index, :create, :destroy]
 
-    resources :courses, only: [:index, :create]
+    resources :courses, only: [:index, :new, :create]
 
     resource :cron, only: [:update]
 

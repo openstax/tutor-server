@@ -1,5 +1,18 @@
-<%= form_tag admin_courses_path do %>
-  <%= submit_tag 'Add Course' %>
-<% end %>
+<%= link_to 'Add Course', new_admin_course_path %>
 
-<%= render @courses %>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @courses.each do |course| %>
+      <tr>
+        <td>
+          <%= course.name %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

@@ -1,9 +1,6 @@
-<%= lev_form_for :course, 
-                 url: admin_courses_path, 
-                 html: {} do |f| %>
-
+<%= lev_form_for :course, url: admin_courses_path do |f| %>
+  <%= f.label :name %>
   <%= f.text_field :name %>
 
-  <%= f.submit 'Submit', class: 'btn btn-primary' %>
-
+  <%= f.submit 'Save', class: 'btn btn-primary' %>
 <% end %>
