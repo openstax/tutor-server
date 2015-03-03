@@ -5,10 +5,11 @@ describe Api::V1::TaskPlansController, :type => :controller,
                                        :version => :v1 do
 
   let!(:course)      { Domain::CreateCourse.call.outputs.course }
-  let!(:assistant)   { FactoryGirl.create :assistant }
+  let!(:assistant)   { FactoryGirl.create :assistant,
+                         code_class_name: "IReadingAssistant" }
   let!(:legacy_user) { FactoryGirl.create :user }
   let!(:user)        {
-    LegacyUser::FindOrCreateUserForLegacyUser.call(legacy_user)
+    LegacyUser::FindOrCreateUserForLegacyUser.call(legacy_user).outputs.user
   }
   let!(:legacy_teacher) { FactoryGirl.create :user }
   let!(:teacher)        {
@@ -18,7 +19,13 @@ describe Api::V1::TaskPlansController, :type => :controller,
     u
   }
 
-  let!(:task_plan) { FactoryGirl.build :task_plan, owner: course }
+  let!(:task_plan)    { FactoryGirl.build :task_plan, owner: course,
+                                                      assistant: assistant }
+  let!(:tasking_plan) {
+    tp = FactoryGirl.build :tasking_plan, task_plan: task_plan, target: user
+    task_plan.tasking_plans << tp
+    tp
+  }
 
   context 'show' do
     before(:each) do
@@ -119,8 +126,9 @@ describe Api::V1::TaskPlansController, :type => :controller,
 
     it 'allows a teacher to publish a task_plan for their course' do
       controller.sign_in legacy_teacher
-      api_post :publish, nil, parameters: {course_id: course.id,
-                                           id: task_plan.id}
+      expect { api_post :publish, nil, parameters: {course_id: course.id,
+                                                    id: task_plan.id} }
+        .to change{ Tasking.count }.by(1)
       expect(response).to have_http_status(:success)
       expect(response.body).to(
         eq(Api::V1::TaskPlanRepresenter.new(task_plan).to_json))

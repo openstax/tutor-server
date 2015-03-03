@@ -105,6 +105,7 @@ class IReadingAssistant
   end
 
   def self.distribute_tasks(task_plan:, taskees:)
+    puts taskees
     # Remove this (move it to tests) once we implement the real client
     OpenStax::Exercises::V1.use_fake_client
 

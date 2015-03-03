@@ -19,12 +19,12 @@ module Api::V1
              writeable: true
 
     property :opens_at,
-             type: DateTime,
+             type: String,
              readable: true,
              writeable: true
 
     property :due_at,
-             type: DateTime,
+             type: String,
              readable: true,
              writeable: true
 
