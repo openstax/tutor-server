@@ -5,7 +5,7 @@ class CreateCourseContentCourseBooks < ActiveRecord::Migration
       t.integer :entity_book_id, null: false
       t.timestamps null: false
 
-      t.index :entity_course_id
+      t.index [:entity_course_id, :entity_book_id], unique: true, name: ['course_books_course_id_on_book_id_unique']
       t.index :entity_book_id
     end
 

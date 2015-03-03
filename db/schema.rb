@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150225164908) do
+ActiveRecord::Schema.define(version: 20150218225408) do
 
   create_table "administrators", force: :cascade do |t|
     t.integer  "user_id",    null: false
@@ -39,9 +39,9 @@ ActiveRecord::Schema.define(version: 20150225164908) do
     t.integer  "entity_book_id"
     t.integer  "number",              null: false
     t.string   "title",               null: false
+    t.string   "path"
     t.datetime "created_at",          null: false
     t.datetime "updated_at",          null: false
-    t.string   "path"
   end
 
   add_index "content_book_parts", ["entity_book_id"], name: "index_content_book_parts_on_entity_book_id"
@@ -88,9 +88,9 @@ ActiveRecord::Schema.define(version: 20150225164908) do
     t.integer  "entity_book_id"
     t.integer  "number",               null: false
     t.string   "title",                null: false
+    t.string   "path"
     t.datetime "created_at",           null: false
     t.datetime "updated_at",           null: false
-    t.string   "path"
   end
 
   add_index "content_pages", ["content_book_part_id", "number"], name: "index_content_pages_on_content_book_part_id_and_number", unique: true
@@ -125,7 +125,7 @@ ActiveRecord::Schema.define(version: 20150225164908) do
   end
 
   add_index "course_content_course_books", ["entity_book_id"], name: "index_course_content_course_books_on_entity_book_id"
-  add_index "course_content_course_books", ["entity_course_id"], name: "index_course_content_course_books_on_entity_course_id"
+  add_index "course_content_course_books", ["entity_course_id", "entity_book_id"], name: "[\"course_books_course_id_on_book_id_unique\"]", unique: true
 
   create_table "course_membership_students", force: :cascade do |t|
     t.integer  "entity_course_id", null: false
