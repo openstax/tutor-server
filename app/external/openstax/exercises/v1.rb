@@ -29,23 +29,26 @@ module OpenStax::Exercises::V1
 
   # Accessor for the fake client, which has some extra fake methods on it
   def self.fake_client
-    FakeClient.instance
+    @fake_client ||= FakeClient.instance
+  end
+
+  def self.real_client
+    @real_client ||= RealClient.new(configuration)
   end
 
   def self.use_real_client
-    @use_fake_client = false
+    @client = real_client
   end
 
   def self.use_fake_client
-    @use_fake_client = true
+    @client = fake_client
   end
 
   private
 
   def self.client
     begin
-      @client ||= @use_fake_client ? fake_client : \
-                                     RealClient.new(configuration)
+      @client ||= real_client
     rescue StandardError => error
       raise ClientError.new("initialization failure", error)
     end
