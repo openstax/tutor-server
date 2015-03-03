@@ -15,4 +15,4 @@ rails generate secrets
 rails server
 ```
 
-Some of our specs are slow(er).  To exclude them in a run, use `rspec --tag ~speed:slow`
+Some of our specs are slow(er).  To exclude them in a run, use `rspec --tag ~speed:slow`.
