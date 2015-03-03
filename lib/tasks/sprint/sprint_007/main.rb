@@ -87,10 +87,10 @@ module Sprint007
       user = LegacyUser::FindOrCreateUserForLegacyUser.call(legacy_user).outputs.user
       Domain::AddUserAsCourseTeacher.call(course: course, user: user)
 
-      puts <<-TOKEN
-        Added user #{legacy_user.account.username} as a teacher of course #{course.id}.
-        There are readings available at /api/courses/#{course.id}/readings.
-      TOKEN
+      FactoryGirl.create(:assistant, code_class_name: "IReadingAssistant")
+
+      outputs[:legacy_user] = legacy_user
+      outputs[:course] = course
     end
 
   end

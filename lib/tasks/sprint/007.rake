@@ -6,7 +6,11 @@ namespace :sprint do
     result = Sprint007::Main.call(username_or_user: args.username)
 
     if result.errors.none?
-      puts "Success!"
+      puts <<-TOKEN
+        Added user #{result.outputs.legacy_user.account.username} as a teacher of course #{result.outputs.course.id}.
+        There are readings available at /api/courses/#{result.outputs.course.id}/readings.
+      TOKEN
+
     else
       result.errors.each{|error| puts "Error: " + Lev::ErrorTranslator.translate(error)}
     end
