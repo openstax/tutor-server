@@ -79,4 +79,7 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+
+  # Don't try to connect to Exercises
+  OpenStax::Exercises::V1.use_fake_client
 end
