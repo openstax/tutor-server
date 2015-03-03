@@ -40,4 +40,7 @@ Rails.application.configure do
   # Don't try to connect to Exchange
   OpenStax::Exchange.use_fake_client
   OpenStax::Exchange.reset!
+
+  # Don't try to connect to Exercises
+  OpenStax::Exercises::V1.use_fake_client
 end
