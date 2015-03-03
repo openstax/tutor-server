@@ -11,7 +11,7 @@ RSpec.describe IReadingAssistant, :type => :assistant do
                                          content: File.read(fixture_file),
                                          title: 'Dummy Page').outputs.page } 
   let!(:task_plan) { FactoryGirl.create :task_plan,
-                                        settings: { page_id: page.id } }
+                                        settings: { page_ids: [page.id] } }
   let!(:taskees) { 3.times.collect{ FactoryGirl.create :user } }
   let!(:data) { {} }
 
