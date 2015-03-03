@@ -15,7 +15,7 @@ describe Role::AddUserRole do
   end
   context "when adding a existing user role" do
     it "fails" do
-      role   = Entity::CreateRole.call.outputs.role
+      role = Entity::CreateRole.call.outputs.role
       user = Entity::CreateUser.call.outputs.user
 
       result = nil
@@ -26,8 +26,7 @@ describe Role::AddUserRole do
 
       expect {
         result = Role::AddUserRole.call(user: user, role: role)
-      }.to_not change{Role::User.count}
-      expect(result.errors).to_not be_empty
+      }.to raise_error
     end
   end
 end

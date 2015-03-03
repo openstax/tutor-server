@@ -171,7 +171,7 @@ GEM
     jwt (1.3.0)
     keyword_search (1.5.0)
     kgio (2.9.3)
-    lev (3.0.0)
+    lev (4.0.0)
       actionpack (>= 3.0)
       active_attr
       activemodel (>= 3.0)
