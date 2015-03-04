@@ -36,8 +36,8 @@ class Api::V1::CoursesController < Api::V1::ApiController
     course = Entity::Course.find(params[:id])
     # OSU::AccessPolicy.require_action_allowed!(:task_plans, current_api_user, course)
 
-    task_plans = CourseContent::Api::GetCourseTaskPlans.call(course: course).outputs.books
-    respond_with task_plans, represent_with: Api::V1::TaskPlanSearchRepresenter
+    out = GetCourseTaskPlans.call(course: course).outputs
+    respond_with out, represent_with: Api::V1::TaskPlanSearchRepresenter
   end
 
 end

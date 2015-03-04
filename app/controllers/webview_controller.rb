@@ -12,8 +12,6 @@ class WebviewController < ApplicationController
   end
 
   def index
-    @name = current_user.casual_name
-    @path = request.fullpath
   end
 
   protected

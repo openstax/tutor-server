@@ -112,8 +112,9 @@ class IReadingAssistant
     opens_at = task_plan.opens_at
     due_at = task_plan.due_at || (task_plan.opens_at + 1.week)
     task_step_attributes = []
+    settings = JSON.parse(task_plan.settings)
 
-    task_plan.settings[:page_ids].each do |page_id|
+    settings['page_ids'].each do |page_id|
       page = Content::GetPage.call(page_id: page_id).outputs.page
       doc = Nokogiri::HTML(page.content || '')
 
