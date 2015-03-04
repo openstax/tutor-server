@@ -3,7 +3,8 @@ class Domain::CreateCourse
 
   uses_routine Entity::CreateCourse, translations: {outputs: {type: :verbatim}}
 
-  def exec
+  def exec(name: 'Unnamed')
     run(Entity::CreateCourse)
+    run(CourseProfile::CreateCourseProfile, name: name, course: outputs.course)
   end
 end

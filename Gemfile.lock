@@ -68,10 +68,15 @@ GEM
       sass (~> 3.0)
       terminal-table (~> 1.4)
     builder (3.2.2)
-    byebug (3.5.1)
-      columnize (~> 0.8)
-      debugger-linecache (~> 1.2)
-      slop (~> 3.6)
+    capybara (2.4.4)
+      mime-types (>= 1.16)
+      nokogiri (>= 1.3.3)
+      rack (>= 1.0.0)
+      rack-test (>= 0.5.4)
+      xpath (~> 2.0)
+    capybara-webkit (1.4.1)
+      capybara (>= 2.3.0, < 2.5.0)
+      json
     carrierwave (0.10.0)
       activemodel (>= 3.2.0)
       activesupport (>= 3.2.0)
@@ -84,6 +89,7 @@ GEM
     chunky_png (1.3.4)
     codeclimate-test-reporter (0.4.7)
       simplecov (>= 0.7.1, < 1.0.0)
+    coderay (1.1.0)
     coffee-rails (4.0.1)
       coffee-script (>= 2.2.0)
       railties (>= 4.0.0, < 5.0)
@@ -93,7 +99,6 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.9.1)
-    columnize (0.9.0)
     compass (1.0.3)
       chunky_png (~> 1.2)
       compass-core (~> 1.0.2)
@@ -120,7 +125,6 @@ GEM
       safe_yaml (~> 1.0.0)
     daemons (1.1.9)
     debug_inspector (0.0.2)
-    debugger-linecache (1.2.0)
     deep_cloneable (2.0.2)
       activerecord (>= 3.1.0, < 5.0.0)
     diff-lcs (1.2.5)
@@ -171,6 +175,8 @@ GEM
     jwt (1.3.0)
     keyword_search (1.5.0)
     kgio (2.9.3)
+    launchy (2.4.3)
+      addressable (~> 2.3)
     lev (4.0.0)
       actionpack (>= 3.0)
       active_attr
@@ -185,6 +191,7 @@ GEM
     mail (2.6.3)
       mime-types (>= 1.16, < 3)
     maruku (0.7.2)
+    method_source (0.8.2)
     mime-types (2.4.3)
     mini_magick (4.1.0)
     mini_portile (0.6.2)
@@ -243,6 +250,14 @@ GEM
     pg (0.18.1)
     polyamorous (1.1.0)
       activerecord (>= 3.0)
+    pry (0.10.1)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
+    pry-nav (0.2.4)
+      pry (>= 0.9.10, < 0.11.0)
+    pry-rails (0.3.3)
+      pry (>= 0.9.10)
     quiet_assets (1.1.0)
       railties (>= 3.1, < 5.0)
     rack (1.6.0)
@@ -409,6 +424,8 @@ GEM
     whenever (0.9.4)
       chronic (>= 0.6.3)
     xml-simple (1.1.4)
+    xpath (2.0.0)
+      nokogiri (~> 1.3)
     yaml_db (0.3.0)
       rails (>= 3.0, < 4.3)
       rake (>= 0.8.7)
@@ -422,7 +439,7 @@ DEPENDENCIES
   aws-ses (~> 0.6.0)
   bootstrap-sass (~> 3.2.0)
   brakeman
-  byebug
+  capybara-webkit
   carrierwave
   cheat
   chronic
@@ -442,6 +459,7 @@ DEPENDENCIES
   jquery-rails
   json-schema
   keyword_search
+  launchy
   lev
   maruku
   mini_magick
@@ -452,6 +470,8 @@ DEPENDENCIES
   openstax_exchange
   openstax_utilities (~> 4.2.0)
   pg
+  pry-nav
+  pry-rails
   quiet_assets
   railroady
   rails (= 4.2.0)

@@ -47,11 +47,13 @@ Rails.application.routes.draw do
     end
 
   end
-  
+
   namespace 'admin' do
     get '/', controller: 'console', action: 'index'
 
     resources :administrators, only: [:index, :create, :destroy]
+
+    resources :courses, only: [:index, :new, :create]
 
     resource :cron, only: [:update]
 
