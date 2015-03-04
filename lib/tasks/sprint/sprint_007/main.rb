@@ -32,11 +32,11 @@ module Sprint007
         title: "College Physics",
         tree: {
           id: "fake-cp-tree-id",
-          title: 'Chapter 1',
+          title: 'College Physics',
           contents: [
             {
               id: "subcol",
-              title: 'Other chapter 1',
+              title: 'Chapter 1',
               contents: [
                 {
                   id: "fake-cp-page1-id",
