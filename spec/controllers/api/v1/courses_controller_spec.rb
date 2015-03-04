@@ -26,13 +26,13 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
       api_get :readings, user_1_token, parameters: {id: course.id}
 
       expect(response).to have_http_status(:success)
-      expect(response.body_as_hash).to eq({
-        id: 1,
+      expect(response.body_as_hash).to eq([{
+        id: 2,
         title: 'unit 1',
         type: 'part',
         children: [
           {
-            id: 2, 
+            id: 3, 
             title: 'chapter 1',
             type: 'part',
             children: [
@@ -49,7 +49,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
             ]
           },
           {
-            id: 3,
+            id: 4,
             title: 'chapter 2',
             type: 'part',
             children: [
@@ -61,7 +61,22 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
             ]
           }
         ]      
-      })
+      }])
+
+    end
+  end
+
+  describe "#plans" do
+    it "should work on the happy path" do
+      task_plan = FactoryGirl.create(:task_plan, owner: course)
+    
+      api_get :plans, user_1_token, parameters: {id: course.id}
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to(
+        eq({ total_count: 1,
+             items: [Api::V1::TaskPlanRepresenter.new(task_plan)] }.to_json)
+      )
 
     end
   end

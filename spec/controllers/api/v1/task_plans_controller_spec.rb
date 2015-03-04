@@ -23,7 +23,8 @@ describe Api::V1::TaskPlansController, :type => :controller,
   let!(:task_plan)    { FactoryGirl.build :task_plan,
                                           owner: course,
                                           assistant: assistant,
-                                          settings: { page_ids: [page.id] } }
+                                          settings: { page_ids: [page.id] }
+                                                      .to_json }
   let!(:tasking_plan) {
     tp = FactoryGirl.build :tasking_plan, task_plan: task_plan, target: user
     task_plan.tasking_plans << tp

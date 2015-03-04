@@ -7,7 +7,8 @@ class Content::Api::GetBookToc
   def exec(book_id:)
     root_book_part = Content::BookPart.root_for(book_id: book_id)
     # Quick and dirty implementation (cache this stuff later)
-    outputs[:toc] = book_part_toc(root_book_part)
+    toc = book_part_toc(root_book_part)
+    outputs[:toc] = toc[:children]
   end
 
   def book_part_toc(book_part)
