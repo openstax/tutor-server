@@ -9,8 +9,6 @@ class TaskPlan < ActiveRecord::Base
   has_many :tasking_plans, dependent: :destroy
   has_many :tasks, dependent: :destroy
 
-  serialize :settings
-
   validates :assistant, presence: true
   validates :owner, presence: true
   validates :type, presence: true
