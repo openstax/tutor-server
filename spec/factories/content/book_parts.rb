@@ -22,22 +22,28 @@ FactoryGirl.define do
 
     trait :standard_contents_1 do
       contents {{
-        title: 'unit 1',
+        title: 'root',
         book_parts: [
           {
-            title: 'chapter 1',
-            pages: [
-              { title: 'first page' },
-              { title: 'second page' }
-            ]
-          },
-          {
-            title: 'chapter 2',
-            pages: [
-              { title: 'third page' }
+            title: 'unit 1',
+            book_parts: [
+              {
+                title: 'chapter 1',
+                pages: [
+                  { title: 'first page' },
+                  { title: 'second page' }
+                ]
+              },
+              {
+                title: 'chapter 2',
+                pages: [
+                  { title: 'third page' }
+                ]
+              }
             ]
           }
         ]
+
       }}
     end
   end

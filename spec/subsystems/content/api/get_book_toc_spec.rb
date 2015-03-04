@@ -9,16 +9,16 @@ RSpec.describe Content::Api::GetBookToc, :type => :routine do
     expect(result = Content::Api::GetBookToc.call(book_id: root_book_part.book.id))
                       .to_not have_routine_errors
 
-    toc = result.outputs.toc.to_hash
+    toc = result.outputs.toc
 
     expect(toc).to eq(
-      {
-        id: 1,
+      [{
+        id: 2,
         title: 'unit 1',
         type: 'part',
         children: [
           { 
-            id: 2,
+            id: 3,
             title: 'chapter 1', 
             type: 'part',
             children: [
@@ -27,7 +27,7 @@ RSpec.describe Content::Api::GetBookToc, :type => :routine do
             ]
           }.stringify_keys,
           {
-            id: 3,
+            id: 4,
             title: 'chapter 2',
             type: 'part',
             children: [
@@ -35,7 +35,7 @@ RSpec.describe Content::Api::GetBookToc, :type => :routine do
             ]
           }.stringify_keys
         ] 
-      }.stringify_keys
+      }.stringify_keys]
     )
   end
 
