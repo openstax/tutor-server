@@ -29,7 +29,7 @@ module Api::V1
              writeable: true
 
     property :settings,
-             type: String,
+             type: Object,
              readable: true,
              writeable: true
 
