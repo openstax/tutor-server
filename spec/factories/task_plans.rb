@@ -7,7 +7,7 @@ FactoryGirl.define do
     end
 
     association :owner, factory: :course
-    settings { {} }
+    settings { {}.to_json }
     opens_at { Time.now }
     due_at { opens_at + duration }
     type "reading"
