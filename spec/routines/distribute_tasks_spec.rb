@@ -10,11 +10,14 @@ RSpec.describe DistributeTasks, :type => :routine do
       '{
         "type": "object",
         "required": [
-          "page_id"
+          "page_ids"
         ],
         "properties": {
-          "page_id": {
-            "type": "integer"
+          "page_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
           }
         },
         "additionalProperties": false

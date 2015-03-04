@@ -32,11 +32,14 @@ class IReadingAssistant
     '{
       "type": "object",
       "required": [
-        "page_id"
+        "page_ids"
       ],
       "properties": {
-        "page_id": {
-          "type": "integer"
+        "page_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
         }
       },
       "additionalProperties": false
@@ -105,100 +108,101 @@ class IReadingAssistant
     # Remove this (move it to tests) once we implement the real client
     OpenStax::Exercises::V1.use_fake_client
 
-    page = Content::GetPage.call(page_id: task_plan.settings[:page_id]).outputs.page
-
     title = task_plan.title || 'iReading'
     opens_at = task_plan.opens_at
     due_at = task_plan.due_at || (task_plan.opens_at + 1.week)
-
-    doc = Nokogiri::HTML(page.content || '')
-
-    # Extract Key Terms
-    key_terms = doc.at_xpath(KEY_TERMS_XPATH)
-    # TODO: Save Key Terms
-    key_terms.try(:remove)
-
-    # Extract Summary
-    summary = doc.at_xpath(SUMMARY_XPATH)
-    # TODO: Save Summary
-    summary.try(:remove)
-
-    # Extract Key Equations
-    key_equations = doc.at_xpath(KEY_EQUATIONS_XPATH)
-    # TODO: Save Key Equations
-    key_equations.try(:remove)
-
-    # Extract Glossary
-    glossary = doc.at_xpath(GLOSSARY_XPATH)
-    # TODO: Save Glossary
-    glossary.try(:remove)
-
-    # Extract Readings
-    readings = doc.xpath(READING_XPATH)
-
-    # Record TaskStep attributes
     task_step_attributes = []
-    readings.collect do |reading|
-      # Get title
-      reading_title = reading.at_xpath(TITLE_XPATH).try(:content) || 'Reading'
 
-      # Initialize current_reading
-      current_reading = reading
+    task_plan.settings[:page_ids].each do |page_id|
+      page = Content::GetPage.call(page_id: page_id).outputs.page
+      doc = Nokogiri::HTML(page.content || '')
 
-      # Extract one Exercise
-      exercise = current_reading.at_xpath(EXERCISE_XPATH)
+      # Extract Key Terms
+      key_terms = doc.at_xpath(KEY_TERMS_XPATH)
+      # TODO: Save Key Terms
+      key_terms.try(:remove)
 
-      # Split content on Exercises and create TaskSteps
-      while !exercise.nil? do
-        # Copy the reading content
-        next_reading = current_reading.dup
-        exercise_copy = next_reading.at_xpath(EXERCISE_XPATH)
+      # Extract Summary
+      summary = doc.at_xpath(SUMMARY_XPATH)
+      # TODO: Save Summary
+      summary.try(:remove)
 
-        # Split the reading content
-        remove_after(exercise, current_reading)
-        remove_before(exercise_copy, next_reading)
+      # Extract Key Equations
+      key_equations = doc.at_xpath(KEY_EQUATIONS_XPATH)
+      # TODO: Save Key Equations
+      key_equations.try(:remove)
 
-        # Remove the exercises and any empty parents
-        recursive_compact(exercise, current_reading)
-        recursive_compact(exercise_copy, next_reading)
+      # Extract Glossary
+      glossary = doc.at_xpath(GLOSSARY_XPATH)
+      # TODO: Save Glossary
+      glossary.try(:remove)
 
-        # Create reading step before current exercise
+      # Extract Readings
+      readings = doc.xpath(READING_XPATH)
+
+      # Record TaskStep attributes
+      readings.collect do |reading|
+        # Get title
+        reading_title = reading.at_xpath(TITLE_XPATH).try(:content) || 'Reading'
+
+        # Initialize current_reading
+        current_reading = reading
+
+        # Extract one Exercise
+        exercise = current_reading.at_xpath(EXERCISE_XPATH)
+
+        # Split content on Exercises and create TaskSteps
+        while !exercise.nil? do
+          # Copy the reading content
+          next_reading = current_reading.dup
+          exercise_copy = next_reading.at_xpath(EXERCISE_XPATH)
+
+          # Split the reading content
+          remove_after(exercise, current_reading)
+          remove_before(exercise_copy, next_reading)
+
+          # Remove the exercises and any empty parents
+          recursive_compact(exercise, current_reading)
+          recursive_compact(exercise_copy, next_reading)
+
+          # Create reading step before current exercise
+          unless current_reading.content.blank?
+            task_step_attributes << { tasked_class: TaskedReading,
+                                      title: reading_title,
+                                      url: page.url,
+                                      content: current_reading.to_html }
+          end
+
+          # Create exercise step
+          # TODO: Get info from OpenStax Exercises using ID from CNX
+          # For now, use the fake client with random number/version
+          number = SecureRandom.hex
+          version = SecureRandom.hex
+          OpenStax::Exercises::V1.fake_client.add_exercise(number: number,
+                                                           version: version)
+
+          ex = OpenStax::Exercises::V1.exercises(
+                 number: number, version: version
+               )['items'].first
+
+          task_step_attributes << {
+            tasked_class: TaskedExercise,
+            title: ex.title,
+            url: ex.url,
+            content: ex.content
+          }
+
+          current_reading = next_reading
+          exercise = current_reading.at_xpath(EXERCISE_XPATH)
+        end
+
+        # Create reading step after all exercises
         unless current_reading.content.blank?
           task_step_attributes << { tasked_class: TaskedReading,
                                     title: reading_title,
                                     url: page.url,
                                     content: current_reading.to_html }
         end
-
-        # Create exercise step
-        # TODO: Get info from OpenStax Exercises using ID from CNX
-        # For now, use the fake client with random number/version
-        number = SecureRandom.hex
-        version = SecureRandom.hex
-        OpenStax::Exercises::V1.fake_client.add_exercise(number: number,
-                                                         version: version)
-
-        ex = OpenStax::Exercises::V1.exercises(
-               number: number, version: version
-             )['items'].first
-
-        task_step_attributes << {
-          tasked_class: TaskedExercise,
-          title: ex.title,
-          url: ex.url,
-          content: ex.content
-        }
-
-        current_reading = next_reading
-        exercise = current_reading.at_xpath(EXERCISE_XPATH)
-      end
-
-      # Create reading step after all exercises
-      unless current_reading.content.blank?
-        task_step_attributes << { tasked_class: TaskedReading,
-                                  title: reading_title,
-                                  url: page.url,
-                                  content: current_reading.to_html }
       end
     end
 
