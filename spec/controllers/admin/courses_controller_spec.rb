@@ -31,4 +31,33 @@ RSpec.describe Admin::CoursesController do
       expect(response).to redirect_to(admin_courses_path)
     end
   end
+
+  context 'disallowing baddies' do
+    it 'disallows unauthenticated visitors' do
+      allow(controller).to receive(:current_account) { nil }
+      allow(controller).to receive(:current_user) { nil }
+
+      get :index
+      expect(response).not_to be_success
+
+      get :new
+      expect(response).not_to be_success
+
+      post :create
+      expect(response).not_to be_success
+
+      put :update, id: 1
+      expect(response).not_to be_success
+    end
+
+    it 'disallows non-admin authenticated visitors' do
+      non_admin = FactoryGirl.create(:user)
+      controller.sign_in(non_admin)
+
+      expect { get :index }.to raise_error(SecurityTransgression)
+      expect { get :new }.to raise_error(SecurityTransgression)
+      expect { post :create }.to raise_error(SecurityTransgression)
+      expect { put :update, id: 1 }.to raise_error(SecurityTransgression)
+    end
+  end
 end
