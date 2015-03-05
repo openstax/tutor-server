@@ -175,6 +175,9 @@ group :production do
   # Unicorn production server
   gem 'unicorn'
 
+  # Unicorn worker killer
+  gem 'unicorn-worker-killer'
+
   # PostgreSQL production database
   gem 'pg'
 
