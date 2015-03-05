@@ -52,7 +52,7 @@ Rails.application.routes.draw do
 
     resources :administrators, only: [:index, :create, :destroy]
 
-    resources :courses, only: [:index, :new, :create]
+    resources :courses, except: :destroy
 
     resource :cron, only: [:update]
 
