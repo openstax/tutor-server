@@ -1,2 +1,2 @@
-<script type='text/javascript' src='http://localhost:8000/dist/tutor.js' defer></script>
-<link rel='stylesheet' href='http://localhost:8000/dist/tutor.css' />
+<script type='text/javascript' src='<%= Rails.application.secrets[:openstax_tutor_js_url]  %>' defer></script>
+<link rel='stylesheet' href='<%= Rails.application.secrets[:openstax_tutor_css_url] %>' />
