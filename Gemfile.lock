@@ -186,6 +186,10 @@ GEM
       transaction_isolation
       transaction_retry
     libv8 (3.16.14.7)
+    lograge (0.3.1)
+      actionpack (>= 3)
+      activesupport (>= 3)
+      railties (>= 3)
     loofah (2.0.1)
       nokogiri (>= 1.5.9)
     mail (2.6.3)
@@ -461,6 +465,7 @@ DEPENDENCIES
   keyword_search
   launchy
   lev
+  lograge
   maruku
   mini_magick
   newrelic_rpm
