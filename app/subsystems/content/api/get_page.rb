@@ -1,4 +1,4 @@
-class Content::GetPage
+class Content::Api::GetPage
 
   lev_routine
 
