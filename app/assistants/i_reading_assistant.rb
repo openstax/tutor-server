@@ -114,7 +114,7 @@ class IReadingAssistant
     task_step_attributes = []
 
     task_plan.settings['page_ids'].each do |page_id|
-      page = Content::GetPage.call(page_id: page_id).outputs.page
+      page = Content::Api::GetPage.call(page_id: page_id).outputs.page
       doc = Nokogiri::HTML(page.content || '')
 
       # Extract Key Terms
