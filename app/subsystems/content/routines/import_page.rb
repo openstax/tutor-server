@@ -6,11 +6,11 @@ class Content::ImportPage
 
   # This XPath currently tests for a node
   # with a class that starts with ost-topic
-  LO_XPATH = "//*[contains(concat(' ', @class), ' ost-topic-')]/@class"
+  LO_XPATH = "//*[contains(concat(' ', @class), ' ost-tag-lo-')]/@class"
 
   # This Regex finds the LO within the class string
   # and ensures it is properly formatted
-  LO_REGEX = /(ost-topic-[\w-]+-lo[\d]+)/
+  LO_REGEX = /(ost-tag-lo-[\w-]+)/
 
   lev_routine
 
