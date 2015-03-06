@@ -179,8 +179,6 @@ class IReadingAssistant
           # Create exercise step by tag
           tag_link = exercise.at_xpath(EXERCISE_TAG_XPATH).try(:value)
           tag = EXERCISE_TAG_REGEX.match(tag_link).try(:[], 1)
-          # Hack to fix tags in imported content
-          tag = tag.split('ex').join('ex-')
           ex = OpenStax::Exercises::V1.exercises(tag: tag)['items'].first
 
           unless ex.nil?
