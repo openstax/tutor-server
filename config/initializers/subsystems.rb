@@ -1,12 +1,9 @@
-class Subsystem
-  def initialize(name, the_module)
-    @name = name
-    @module = the_module
-  end
+require 'tutor/subsystems'
 
-  attr_reader :name, :module
-end
+# Extend all ActiveRecord associations to accept the :subsystem option
+ActiveRecord::Base.send(:include, Tutor::SubSystems::AssociationExtensions)
 
+<<<<<<< HEAD
 #
 # Identify the subsystems
 #
@@ -99,3 +96,10 @@ Dir[File.join(Rails.root, "app/subsystems/**/*.rb")].sort.each do |rb_file|
   path   = rb_file.gsub('.rb', '')
   require path
 end
+=======
+# Initialize SubSystems
+Tutor::SubSystems.configure(
+  path: Rails.root.join("app/subsystems"),
+  limit_to: %w(content course_content course_profile entity tasks role course_membership)
+)
+>>>>>>> Subsystems association extensions and autoloading
