@@ -15,23 +15,16 @@ RSpec.describe Content::Api::GetBookToc, :type => :routine, :vcr => VCR_OPTS do
       it "gets the book toc" do
         result = Content::Api::GetBookToc.call(book_id: book.id)
         expect(result).to_not have_routine_errors
-        toc = result.outputs.toc.to_hash
 
-        expect(toc).to eq(
-          { "id"=>1,
-            "title"=>"Updated Tutor HS Physics Content - legacy",
-            "type"=>"part",
-            "children"=> [
-              {"id"=>2,
-               "title"=>"Forces and Newton's Laws of Motion",
-               "type"=>"part",
-               "children"=> [
-                 {"id"=>1, "title"=>"Introduction", "type"=>"page"},
-                 {"id"=>2, "title"=>"Force", "type"=>"page"}
-                ]
-              }
-            ]
-          }
+        expect(result.outputs.toc).to eq(
+          [{ "id"=>2,
+             "title"=>"Forces and Newton's Laws of Motion",
+             "type"=>"part",
+             "children"=> [
+               {"id"=>1, "title"=>"Introduction", "type"=>"page"},
+               {"id"=>2, "title"=>"Force", "type"=>"page"}
+             ]
+          }]
         )
       end
     end
