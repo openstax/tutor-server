@@ -10,7 +10,7 @@ class Content::ImportPage
 
   # This Regex finds the LO within the class string
   # and ensures it is properly formatted
-  LO_REGEX = /(ost-tag-lo-[\w-]+)/
+  LO_REGEX = /ost-tag-lo-([\w-]+-lo[\d]+)/
 
   lev_routine
 
@@ -23,12 +23,12 @@ class Content::ImportPage
                translations: { outputs: { type: :verbatim } }
 
   uses_routine Content::TagResourceWithTopics,
-               as: :tag,
+               as: :add_lo,
                translations: { outputs: { type: :verbatim } }
 
   uses_routine Content::ImportExercises,
                as: :import_exercises,
-               translations: { outputs: { type: :verbatim } }
+               translations: { outputs: { scope: :exercises } }
 
   protected
 
@@ -67,11 +67,11 @@ class Content::ImportPage
 
     # Extract LO's
     los = outputs[:doc].xpath(LO_XPATH).collect do |node|
-      LO_REGEX.match(node.value).try(:[], 0)
+      LO_REGEX.match(node.value).try(:[], 1)
     end.compact.uniq
 
     # Tag Page with LO's
-    run(:tag, outputs[:page], los)
+    run(:add_lo, outputs[:page], los)
 
     # Get Exercises from OSE that match the LO's
     run(:import_exercises, tag: los)

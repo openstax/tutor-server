@@ -23,9 +23,10 @@ RSpec.describe DistributeTasks, :type => :routine do
         "additionalProperties": false
       }'
     )
-    expect(DistributeTasks.call(task_plan).errors.first.code).to(
-      eq :invalid_settings
-    )
+
+    result = DistributeTasks.call(task_plan)
+    expect(result.errors.first.code).to eq :invalid_settings
+    expect(result.outputs.tasks).to be_blank
   end
 
   it "calls the distribute_tasks method on the task_plan's assistant" do
@@ -35,6 +36,8 @@ RSpec.describe DistributeTasks, :type => :routine do
     expect(DummyAssistant).to receive(:distribute_tasks).with(
       task_plan: task_plan, taskees: [user]
     )
-    DistributeTasks.call(task_plan)
+
+    result = DistributeTasks.call(task_plan)
+    expect(result.errors).to be_empty
   end
 end

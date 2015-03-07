@@ -1,60 +1,104 @@
 require 'rails_helper'
+require 'vcr_helper'
 
-RSpec.describe IReadingAssistant, :type => :assistant do
-  # The module specified here should ideally contain:
-  # - Absolute URL's
-  # - Relative URL's
-  # - Topic (LO)-tagged sections and problems
-  fixture_file = 'spec/fixtures/m50577/index.cnxml.html'
+RSpec.describe IReadingAssistant, :type => :assistant, :vcr => VCR_OPTS do
 
-  let!(:page) { Content::CreatePage.call(url: 'http://dum.my/contents/m50577', 
-                                         content: File.read(fixture_file),
-                                         title: 'Dummy Page').outputs.page } 
-  let!(:task_plan) { FactoryGirl.create :task_plan,
-                                        settings: { page_ids: [page.id] } }
-  let!(:taskees) { 3.times.collect{ FactoryGirl.create :user } }
-  let!(:data) { {} }
+  let!(:assistant) { FactoryGirl.create :assistant,
+                                        code_class_name: 'IReadingAssistant' }
 
-  it 'splits a CNX module into many different steps and assigns them' do
-    tasks = IReadingAssistant.distribute_tasks(task_plan: task_plan,
-                                               taskees: taskees)
-    expect(tasks.length).to eq 3
+  # Store version differences in this hash
+  cnx_page_infos = {
+    stable: { id: '092bbf0d-0729-42ce-87a6-fd96fd87a083@4' },
+    latest: { id: '092bbf0d-0729-42ce-87a6-fd96fd87a083' }
+  }
 
-    tasks.each do |task|
-      expect(task.taskings.length).to eq 1
-      task_steps = task.task_steps
-      expect(task_steps.length).to eq 15
+  cnx_page_infos.each do |name, info|
 
-      task_steps.each_with_index do |task_step, i|
-        expect(task_step.tasked.content).not_to include('snap-lab')
-        expect(page.content).not_to include(task_step.tasked.content) \
-          if task_step.tasked_type == 'TaskedExercise'
+    context "for the #{name.to_s} version" do
+      let!(:book) { FactoryGirl.create :content_book_part }
+      let!(:page) { Content::ImportPage.call(id: info[:id],
+                                             book_part: book).outputs.page } 
+      let!(:task_plan) {
+        FactoryGirl.create :task_plan, assistant: assistant,
+                                       settings: { page_ids: [page.id] }
+      }
+      let!(:taskees) { 3.times.collect{ FactoryGirl.create(:user) } }
+      let!(:tasking_plans) { taskees.collect{ |t|
+        task_plan.tasking_plans << FactoryGirl.create(
+          :tasking_plan, task_plan: task_plan, target: t
+        )
+      } }
 
-        task_steps.except(task_step).each do |other_step|
-          expect(task_step.tasked.content).not_to(
-            include(other_step.tasked.content)
+      it 'splits a CNX module into many different steps and assigns them' do
+        tasks = DistributeTasks.call(task_plan).outputs.tasks
+        expect(tasks.length).to eq 3
+
+        tasks.each do |task|
+          expect(task.taskings.length).to eq 1
+          task_steps = task.task_steps
+          expect(task_steps.length).to eq 28
+
+          task_steps.each_with_index do |task_step, i|
+            expect(task_step.tasked.content).not_to include('snap-lab')
+            expect(page.content).not_to include(task_step.tasked.content) \
+              if task_step.tasked_type == 'TaskedExercise'
+
+            task_steps.except(task_step).each do |other_step|
+              expect(task_step.tasked.content).not_to(
+                include(other_step.tasked.content)
+              )
+            end
+          end
+
+          expect(task_steps.collect{|ts| ts.tasked_type}).to(
+            eq ['TaskedReading', 'TaskedReading', 'TaskedExercise',
+                'TaskedReading', 'TaskedReading', 'TaskedReading',
+                'TaskedExercise', 'TaskedExercise', 'TaskedExercise',
+                'TaskedExercise', 'TaskedReading', 'TaskedExercise',
+                'TaskedExercise', 'TaskedReading', 'TaskedExercise',
+                'TaskedExercise', 'TaskedReading', 'TaskedExercise',
+                'TaskedExercise', 'TaskedReading', 'TaskedExercise',
+                'TaskedExercise', 'TaskedReading', 'TaskedExercise',
+                'TaskedExercise', 'TaskedExercise', 'TaskedExercise',
+                'TaskedExercise']
+          )
+
+          expect(task_steps.collect{|ts| ts.tasked.title}).to(
+            eq ["Section Learning Objectives",
+                "Defining Force and Dynamics\n",
+                nil,
+                "Defining Force and Dynamics\n",
+                "Free-body Diagrams and Examples of Forces",
+                "Check Your Understanding",
+                nil,
+                nil,
+                nil,
+                nil,
+                "Concept Items",
+                nil,
+                nil,
+                "Critical Thinking Items",
+                nil,
+                nil,
+                "Test Prep Multiple Choice",
+                nil,
+                nil,
+                "Test Prep Short Answer",
+                nil,
+                nil,
+                "Test Prep Extended Response",
+                nil,
+                nil,
+                nil,
+                nil,
+                nil]
           )
         end
+
+        expect(tasks.collect{|t| t.taskings.first.taskee}).to eq taskees
+        expect(tasks.collect{|t| t.taskings.first.user}).to eq taskees
       end
-
-      expect(task_steps.collect{|ts| ts.tasked_type}).to(
-        eq ['TaskedReading', 'TaskedExercise', 'TaskedReading',
-            'TaskedReading', 'TaskedExercise', 'TaskedExercise',
-            'TaskedExercise', 'TaskedReading', 'TaskedExercise',
-            'TaskedExercise', 'TaskedExercise', 'TaskedExercise',
-            'TaskedExercise', 'TaskedExercise', 'TaskedExercise']
-      )
-
-      expect(task_steps.collect{|ts| ts.tasked.title}).to(
-        eq ['Defining motion', nil,                   'Displacement ',
-            'Distance',        nil,                   nil,
-            nil,               'Vectors and Scalars', nil,
-            nil,               nil,                   nil,
-            nil,               nil,                   nil]
-      )
     end
-
-    expect(tasks.collect{|t| t.taskings.first.taskee}).to eq taskees
-    expect(tasks.collect{|t| t.taskings.first.user}).to eq taskees
   end
+
 end

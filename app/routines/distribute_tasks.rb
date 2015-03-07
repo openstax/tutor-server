@@ -36,7 +36,8 @@ class DistributeTasks
                 message: 'Invalid settings') unless err.empty?
 
     # Call the assistant code to create and distribute Tasks
-    tasks = assistant.distribute_tasks(task_plan: task_plan, taskees: taskees)
+    outputs[:tasks] = assistant.distribute_tasks(task_plan: task_plan,
+                                                 taskees: taskees)
   end
 
 end

@@ -2,7 +2,44 @@
 http_interactions:
 - request:
     method: get
-    uri: http://localhost:3000/api/exercises?q=content:aDiPiScInG%20eLiT
+    uri: http://exercises-dev1.openstax.org/api/exercises?q=content:WhAt%20Is%20KiNeMaTiCs?
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 301
+      message: Moved Permanently
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:33:41 GMT
+      Content-Type:
+      - text/html
+      Content-Length:
+      - '193'
+      Connection:
+      - keep-alive
+      Location:
+      - https://exercises-dev1.openstax.org/api/exercises?q=content%3AWhAt+Is+KiNeMaTiCs%3F
+    body:
+      encoding: UTF-8
+      string: "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n<body
+        bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
+        (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:33:30 GMT
+- request:
+    method: get
+    uri: https://exercises-dev1.openstax.org/api/exercises?q=content:WhAt%20Is%20KiNeMaTiCs?
     body:
       encoding: US-ASCII
       string: ''
@@ -18,34 +55,50 @@ http_interactions:
       code: 200
       message: OK
     headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:33:42 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
       X-Frame-Options:
       - SAMEORIGIN
       X-Xss-Protection:
       - 1; mode=block
       X-Content-Type-Options:
       - nosniff
-      Content-Type:
-      - application/json; charset=utf-8
       Etag:
-      - W/"03f294f6f8b1d7a6bd99e3fc81ea8c21"
+      - W/"07c079c13e65fdafd07a81e15234aef6"
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=SXFaVERYd3RXUk5sSzYvSVBKOXQxaWtTYlRmYUpwdit6QTRRV2ZHTTFUcnNDZ0ptU1hySVRwM2RUSDJrb004Y0E1cUp0UEVYOC9FWlpQL1hST0Z2cnc9PS0taWV6d0o2dXNnYXY4cWVRZnN4L1krdz09--96fee96ed2e383c1222dde10219ff8b160134c6c;
+      - _exercises_session=cmhJOVgyUDRRSTNTL0pJODVLc2VRTExLM2w4Wms2SWszVFZvSWJmVnJrdGZlVDV6RmloUDBaVXBjeFBGZ0xoWFFlYkdTUXdFTEhDOGZ4U25XSG9PeWc9PS0tQURlTHdndW1aU0hJQnZOOUE2UkJmdz09--c857f33efb8113779f73e52e43aace55dfc6c19f;
         path=/; HttpOnly
       X-Request-Id:
-      - 584ce19e-cd55-42bc-9516-144b61372ec8
+      - d3ac33e0-37c2-40c7-9739-e6c0e5961b59
       X-Runtime:
-      - '0.091843'
-      Connection:
-      - close
-      Server:
-      - thin
+      - '0.055217'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains
     body:
       encoding: UTF-8
-      string: '{"total_count":1,"items":[{"uid":"11@1","number":11,"version":1,"published_at":"2015-02-27T00:07:37.490Z","editors":[],"authors":[],"copyright_holders":[],"derived_from":[],"attachments":[],"tags":["tag1","tag2"],"title":"Lorem
-        ipsum","stimulus_html":"","questions":[{"stimulus_html":"","stem_html":"Consectetur
-        adipiscing elit","answers":[{"content_html":"Sed do eiusmod tempor"}],"hints":[],"formats":[],"combo_choices":[]}]}]}'
+      string: '{"total_count":1,"items":[{"uid":"2@1","number":2,"version":1,"published_at":"2015-03-07T00:11:21.610Z","editors":[],"authors":[{"user_id":2}],"copyright_holders":[{"user_id":3}],"derived_from":[],"attachments":[],"tags":["k12phys-ch04-s01-lo01","k12phys-ch04-ex002","practice-concepts","inbook-yes","dok-1","time-short","display-free-response","display-rec-sensitive"],"stimulus_html":"","questions":[{"stimulus_html":"","stem_html":"<p>What
+        is kinematics?</p>\n","answers":[{"content_html":"<p>Kinematics is the study
+        of motion</p>\n","correctness":"1.0","feedback_html":"<p>Correct! Motion of
+        a body is studied under kinematics</p>\n"},{"content_html":"<p>Kinematics
+        is the study of cause of motion</p>\n","correctness":"0.0","feedback_html":"<p>Do
+        you think cause of motion is studied under kinematics? What about the study
+        of force and its effect on a body. Is that kinematics?</p>\n"},{"content_html":"<p>Kinematics
+        is the study of dimensions</p>\n","correctness":"0.0","feedback_html":"<p>Is
+        it correct to say that dimensional analysis is done in kinematics?</p>\n"},{"content_html":"<p>Kinematics
+        is the study of atomic structure</p>\n","correctness":"0.0","feedback_html":"<p>Are
+        you sure that the study of atomic structures is a part of kinematics?</p>\n"}],"hints":[],"formats":["multiple-choice","free-response"],"combo_choices":[]}]}]}'
     http_version: 
-  recorded_at: Fri, 27 Feb 2015 01:14:40 GMT
+  recorded_at: Sat, 07 Mar 2015 00:33:31 GMT
 recorded_with: VCR 2.9.3

@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'tasks/sprint/sprint_007/main'
 
-RSpec.describe Sprint007::Main, :type => :request, version: :v1 do
+RSpec.describe Sprint007::Main, :type => :request, version: :v1, vcr: VCR_OPTS do
 
   let!(:application)     { FactoryGirl.create :doorkeeper_application }
   let!(:jimmy)           { FactoryGirl.create :user }

@@ -1,0 +1,3149 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: http://archive.cnx.org/contents/092bbf0d-0729-42ce-87a6-fd96fd87a083@4
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - text/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Access-Control-Allow-Headers:
+      - origin,dnt,accept-encoding,accept-language,keep-alive,user-agent,x-requested-with,if-modified-since,cache-control,content-type
+      Access-Control-Allow-Methods:
+      - GET, OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Type:
+      - application/json
+      Server:
+      - waitress
+      X-Varnish-Action:
+      - FETCH (override - archive contents)
+      X-Factor-Ttl:
+      - 'ttl: 604800.000'
+      Content-Length:
+      - '25546'
+      Accept-Ranges:
+      - bytes
+      Date:
+      - Sat, 07 Mar 2015 00:33:21 GMT
+      X-Varnish:
+      - 164181254 164022790
+      Via:
+      - 1.1 varnish
+      Connection:
+      - keep-alive
+      X-Cache:
+      - HIT
+      X-Varnish-Age:
+      - '23084'
+      Age:
+      - '0'
+    body:
+      encoding: UTF-8
+      string: '{"googleAnalytics": null, "version": "4", "submitlog": "updated to
+        ost-tag-lo-k12phys tag and added <label>Grasp Check</label>", "abstract":
+        null, "revised": "2015-03-06T17:46:23Z", "roles": null, "keywords": [], "id":
+        "092bbf0d-0729-42ce-87a6-fd96fd87a083", "title": "Force", "mediaType": "application/vnd.org.cnx.module",
+        "content": "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head xmlns:c=\"http://cnx.rice.edu/cnxml\"
+        xmlns:md=\"http://cnx.rice.edu/mdml\"><title>Force</title><meta name=\"created-time\"
+        content=\"2015/03/05 14:29:22 -0600\"/><meta name=\"revised-time\" content=\"2015/03/06
+        11:46:23.098 US/Central\"/><meta name=\"author\" content=\"AlinaManager\"/><meta
+        name=\"acl-list\" content=\"AlinaManager\"/><meta name=\"licensor\" content=\"AlinaManager\"/><meta
+        name=\"license\" content=\"http://creativecommons.org/licenses/by/4.0/\"/><meta
+        name=\"subject\" content=\"Mathematics and Statistics\"/></head>\n\n<body
+        xmlns:c=\"http://cnx.rice.edu/cnxml\" xmlns:md=\"http://cnx.rice.edu/mdml\"
+        xmlns:qml=\"http://cnx.rice.edu/qml/1.0\" xmlns:mod=\"http://cnx.rice.edu/#moduleIds\"
+        xmlns:bib=\"http://bibtexml.sf.net/\" xmlns:data=\"http://dev.w3.org/html5/spec/#custom\"><div
+        data-type=\"document-title\">Force</div>\n  <section data-depth=\"1\" id=\"fs-idp57791360\"
+        class=\"learning-objectives\"><h1 data-type=\"title\">Section Learning Objectives</h1><p
+        id=\"eip-110\">By the end of this section, you will be able to:</p><ul id=\"eip-idp30262832\"><li
+        class=\"ost-tag-lo-k12phys-ch04-s01-lo01 ost-tag-teks-112-39-c-4c ost-learning-objective-def\">
+        Differentiate between force, net\nforce and dynamics</li><li class=\"ost-tag-lo-k12phys-ch04-s01-lo02
+        ost-tag-teks-112-39-c-4e ost-learning-objective-def\">Draw a free-body diagram</li><li>Learn
+        Newton&#8217;s 1st law: Fnet =0 3</li></ul></section><div data-type=\"note\"
+        id=\"eip-568\" class=\"os-teacher\"><p id=\"eip-idm2236496\">The Learning
+        Objectives in this section will help your students master the following TEKS:
+        (4) Science concepts. The student knows and applies the laws governing motion
+        in a variety of situations. The student is expected to: </p><ul id=\"fs-idm29263984\"><li>(C)
+        <span class=\"ost-tag-teks-112-39-c-4c ost-teks-def\">analyze and describe
+        accelerated motion in two dimensions using equations, including projectile
+        and circular examples</span></li><li> (E) <span class=\"ost-tag-teks-112-39-c-4e
+        ost-teks-def\">develop and interpret free-body diagrams.</span></li></ul><p
+        id=\"eip-idm2196896\"><span class=\"level-below\">[BL]</span> <span class=\"level-on\">[OL]</span>
+        Point out that objects at rest tend to stay at rest. A ball, for example,
+        moves only when pushed or pulled. The action of pushing or pulling is the
+        application of force. Force applied to an object changes its motion.\n<span
+        class=\"level-above\">[AL]</span> Start a discussion about force and motion.
+        Ask students what would happen if more than one force is applied to an object.
+        Take a heavy object such as a desk for demonstration. Ask one student to push
+        it from one side. Explain how force and motion work. Now ask a second student
+        to push it in the opposite direction. Ask students why no motion occurs even
+        though the first student applies the same amount of force. Introduce the concept
+        of adding forces.</p></div><table id=\"eip-838\" summary=\"--\" class=\"key-terms
+        ost-reading-discard\"><caption><span data-type=\"title\">Key Terms</span></caption><tbody>\n  <tr>\n    <td>dynamics</td>\n    <td>external
+        force</td>\n    <td>force</td>\n  </tr>\n  <tr>\n    <td>free body diagram</td>\n    <td>net
+        external force</td>\n    <td>net force</td>\n  </tr>\n</tbody></table><section
+        data-depth=\"1\" id=\"eip-963\" class=\"ost-tag-lo-k12phys-ch04-s01-lo01\"><h1
+        data-type=\"title\">Defining Force and <em data-effect=\"italics\">Dynamics</em></h1><div
+        data-type=\"note\" id=\"eip-752\" class=\"os-teacher\"><p id=\"eip-idm59057616\"><span
+        class=\"level-on\">[OL]</span> Explain that the word dynamics comes from a
+        Greek word meaning power. Also point out that the word &#8220;dynamics&#8221;
+        is singular, like the word &#8220;physics.&#8221; <span class=\"level-below\">[BL]</span>
+        <span class=\"level-on\">[OL]</span> You may want to introduce the terms system,
+        external force, and internal force. <span class=\"level-above\">[AL]</span>
+        Explain that both magnitude and direction must be considered when talking
+        about forces.</p><div data-type=\"note\" id=\"fs-idm58745200\" class=\"teacher-demonstration\"
+        data-label=\"Demonstration\">Demonstrate by using physical objects how different
+        forces acting together can add if they act in the same direction or cancel
+        if they act in opposite directions. Explain the terms \"acting on\" and \"being
+        acted on.\"<figure id=\"eip-idm38910720\"><figcaption/><span data-type=\"media\"
+        id=\"eip-idm8621056\" data-alt=\"Alt text\"><img src=\"/resources/4fd8ef6e594ffd1be3f2871c02b80868/OST_PhysicsTestContent_01_01_01.jpg\"
+        data-media-type=\"image/jpeg\" alt=\"Alt text\"/></span></figure></div></div><p
+        id=\"eip-305\"><span data-type=\"term\">Force</span> is the cause of motion,
+        and motion draws our attention. Motion itself can be beautiful, such as a
+        dolphin jumping out of the water, the flight of a bird, or the orbit of a
+        satellite. The study of motion is called kinematics, but kinematics only describes
+        the way objects move&#8212;their velocity and their acceleration. <span data-type=\"term\">Dynamics</span>
+        considers the forces that affect the motion of moving objects and systems.
+        Newton&#8217;s laws of motion are the foundation of dynamics. These laws describe
+        the way that objects speed up, slow down, stay in motion, and interact with
+        other objects. They are also universal laws in that they apply everywhere
+        on Earth as well as in space.</p><p id=\"eip-832\">A force pushes or pulls
+        an object. The object being moved by a force could be an inanimate object
+        such as a table, or an animate object such as a person. The pushing or pulling
+        may be done by a person, or even the gravitational pull of the earth. Forces
+        have different magnitudes and directions; this means that some forces are
+        stronger than others and can point in different directions. For example, a
+        cannon exerts a strong force on the cannonball that is launched into the air.
+        In contrast, a mosquito landing on your arm exerts only a small force on your
+        arm. </p><p id=\"eip-860\">When multiple forces act on an object, the forces
+        combine. Adding together all of the forces acting on an object gives the total,
+        or <span data-type=\"term\">net force</span>. An <span data-type=\"term\">external
+        force</span> is a force that acts on an object inside of the system from outside
+        of the system. This is different than an internal force, which acts between
+        objects that are both within the system. The <span data-type=\"term\">net
+        external force</span> combines these two definitions; it is the total combined
+        external force. We go into more detail about net force, external force, and
+        net external force in the coming sections. In mathematical terms, two forces
+        acting in opposite directions have opposite signs (positive or negative).
+        By convention, the negative sign is assigned to movement to the left or downward.
+        If two forces pushing in opposite directions are added together, the larger
+        force will be somewhat canceled out by the smaller force pushing in the opposite
+        direction. It is important to be consistent with your chosen coordinate system
+        within a problem; for example, if negative values are assigned to the downward
+        direction for velocity, then distance, force and acceleration should also
+        be designated as negative in the downward direction.</p><div data-type=\"note\"
+        id=\"eip-534\" class=\"ost-assessed-feature work-in-physics ost-tag-lo-k12phys-ch04-s01-lo01\"
+        data-label=\"Work in Physics\"><div data-type=\"title\">Mars Probe Explosion</div><figure
+        id=\"eip-idm3298752\"><figcaption/><span data-type=\"media\" id=\"eip-idp4400944\"
+        data-alt=\"Alt text\"><img src=\"/resources/d27504f8b3a0659c323dca1fa180a761/OST_PhysicsTestContent_01_01_02.jpg\"
+        data-media-type=\"image/jpeg\" alt=\"Alt text\" width=\"350\"/></span></figure>\n  <p
+        id=\"eip-idp1609152\">Physicists make calculations all the time, but they
+        do not always get the right answers. In 1998, NASA, The National Aeronautics
+        and Space Administration (<a href=\"http://www.theguardian.com/technology/blog/2011/jul/13/technology-links-newsbucket\">http://www.theguardian.com/technology/blog/2011/jul/13/technology-links-newsbucket</a>),
+        launched the Mars Climate Orbiter (<a href=\"#eip-idm3298752\" class=\"autogenerated-content\">[link]</a>),
+        a $125 million dollar satellite designed to monitor the Martian atmosphere.
+        It was supposed to orbit the planet and take readings from a safe distance.
+        The American scientists made calculations in English units (feet, inches,
+        pounds . . .) and forgot to convert their answers to the standard Metric SI
+        units. This was a very costly mistake. Instead of orbiting the planet as planned,
+        the Mars Climate Orbiter ended up flying into the Martian atmosphere.  The
+        probe disintegrated. It was one of the biggest embarrassments in NASA&#8217;s
+        history. (<a href=\"/contents/9f74369f-1856-4a4e-be75-212989cb15bb@6#fs-idp30390784\"
+        class=\"autogenerated-content\">[link]</a>) shows the different ways the scientists
+        tried to figure out the formula. They used <math xmlns=\"http://www.w3.org/1998/Math/MathML\"
+        display=\"inline\"><semantics><mrow><mtext>MATH</mtext></mrow><annotation-xml
+        encoding=\"MathML-Content\"><mtext>MATH</mtext></annotation-xml></semantics></math>
+        and <math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><semantics><mrow><mtext>MATH</mtext></mrow><annotation-xml
+        encoding=\"MathML-Content\"><mtext>MATH</mtext></annotation-xml></semantics></math></p><p
+        id=\"eip-idp20916176\">Here&#8217;s list of some of the years of satellite
+        launches:</p><ul id=\"eip-idp8178432\"><li>1969<ol id=\"eip-idm9881952\" data-number-style=\"lower-alpha\"><li>January</li><li>September</li><li>November</li></ol></li><li>1970</li><li>1985</li><li>2012</li></ul><div
+        data-type=\"exercise\" id=\"fs-idp67407840\" class=\"os-exercise grasp-check\"
+        data-label=\"Grasp Check\"><div data-type=\"problem\" id=\"eip-idp37795152\"><p
+        id=\"eip-idp38162784\"><a href=\"#ost/api/ex/k12phys-ch04-ex001\" class=\"autogenerated-content\">[link]</a></p></div></div><div
+        data-type=\"note\" id=\"eip-367\" class=\"os-teacher\"><p id=\"eip-idm61955584\">The
+        text feature describes a real-life miscalculation made by astronomers at NASA.
+        In this case, the Mars Climate Orbiter&#8217;s orbit needed to be calculated
+        precisely because its machinery was only designed to withstand a certain amount
+        of atmospheric pressure. The orbiter had to be close enough to the planet
+        to take measurements and far enough away that it could remain structurally
+        sound. One way to teach this concept would be to pick an orbital distance
+        from Mars and have the students calculate the distance of the path and the
+        height from the surface both in SI units and in English units. Ask why failure
+        to convert might be a problem.</p><div data-type=\"list\" id=\"eip-idm4050496\"><div
+        data-type=\"title\">English vs. SI</div><ol data-number-style=\"lower-alpha\"><li>How
+        do English units and SI units differ?</li><li>Which unit is more common?</li></ol></div><p
+        id=\"eip-idm45200304\">It was a problem because the scientists provided measurements
+        in English units, but the programmers were working in SI units. The conversion
+        error caused the probe to orbit too close to Mars, leading to its destruction.</p></div>\n</div></section><section
+        data-depth=\"1\" id=\"eip-822\" class=\"ost-tag-lo-k12phys-ch04-s01-lo02\"><h1
+        data-type=\"title\">Free-body Diagrams and Examples of Forces</h1><div data-type=\"note\"
+        id=\"eip-150\" class=\"os-teacher\"><p id=\"eip-idm40821888\"><span class=\"level-below\">[BL]</span>
+        Review vectors and how they are represented. Review vector addition. <span
+        class=\"level-above\">[AL]</span> Ask students to give everyday examples of
+        situations where multiple forces act together. Draw free-body diagrams for
+        some of these situations.</p></div><p id=\"eip-177\">For our first example
+        of force, consider an object hanging from a rope. This gives us the opportunity
+        to introduce a useful tool known as a <span data-type=\"term\">free-body diagram</span>.
+        A free-body diagram represents the object being acted upon (or free body)
+        as a single point. Only the forces acting on the body (that is, external forces)
+        are shown and are represented by vectors (which are drawn as arrows). These
+        forces are the only ones shown because only external forces acting on the
+        body affect its motion. We can ignore any internal forces within the body
+        because they cancel each other out, as Newton&#8217;s third law will show.
+        Free-body diagrams are very useful for analyzing forces acting on an object.\n</p><p
+        id=\"eip-824\">Here are some things included in a free-body diagram:</p><ol
+        id=\"eip-idp76729056\" data-number-style=\"lower-alpha\"><li>Forces<ul id=\"eip-idp82357024\"><li>Internal</li><li>External</li><li>Net</li></ul></li><li>Vectors</li><li>Arrows
+        <a href=\"http://www.pa.uky.edu/~kwng/phy211/oldexam/Spring99EvenFinal/Final.htm\">http://www.pa.uky.edu/~kwng/phy211/oldexam/Spring99EvenFinal/Final.htm</a></li><li>Equation</li></ol><figure
+        id=\"eip-idp140653750160320\" class=\"ost-tag-lo-k12phys-ch04-s01-lo02\"><figcaption>An
+        object of mass m held up by the force of tension.</figcaption><span data-type=\"media\"
+        id=\"eip-idp140653750160736\" data-alt=\"Alt text\"><img src=\"/resources/5debf839c1a9d12d8aceb9081e8ef0dc/OST_PhysicsTestContent_01_01_03.jpg\"
+        data-media-type=\"image/jpeg\" alt=\"Alt text\"/></span></figure><p id=\"eip-262\"><a
+        href=\"#eip-idp140653750160320\" class=\"autogenerated-content\">[link]</a>
+        shows the force of tension acting in the upward direction, opposite the force
+        of gravity. These forces are indicated in the free-body diagram by an arrow
+        pointing up, representing tension, and another arrow pointing down, representing
+        gravity. In a free-body diagram, the lengths of the arrows show the relative
+        magnitude (or strength) of the forces. Since forces are vectors, they add
+        just like other vectors. Notice that the two arrows have equal lengths in
+        <a href=\"#eip-idp140653750160320\" class=\"autogenerated-content\">[link]</a>,
+        which means that the forces of tension and weight are of equal magnitude.
+        Since these forces of equal magnitude act in opposite directions, they are
+        perfectly balanced, so they add together to give a net force of zero.</p><p
+        id=\"eip-287\">Not all forces are as noticeable as when you push or pull on
+        something. Some forces act without physical contact, such as the pull of a
+        magnet in the case of magnetic force or the gravitational pull of the earth
+        in the case of gravitational force.</p><p id=\"eip-217\">In the next three
+        sections on Newton&#8217;s laws of motion, we will learn about three specific
+        types of forces&#8212;friction, the normal force, and the gravitational force.
+        To analyze situations involving forces, we will create free-body diagrams
+        to organize the framework of the mathematics for each individual situation.</p><div
+        data-type=\"note\" id=\"eip-774\" class=\"tip tips-for-success\" data-label=\"Tips
+        for Success\">\nCorrectly drawing and labeling a free-body diagram is an important
+        first step for solving a problem. It will help you visualize the problem and
+        correctly apply the mathematics to solve the problem.</div></section><section
+        data-depth=\"1\" id=\"eip-366\" class=\"summary ost-reading-discard\"><h1
+        data-type=\"title\">Section Summary</h1><ul id=\"eip-idp956816\"><li>Dynamics
+        is the study of how forces affect the motion of objects such as:<ul id=\"eip-idm2200992\"
+        data-bullet-style=\"open-circle\"><li>Pushes</li><li>Pulls</li></ul></li><li>Force
+        is a push or pull that can be defined in terms of various <em data-effect=\"italics\">standards</em>.
+        It is a vector and so has both magnitude and direction.</li><li>External forces
+        are any forces from outside of a body that act on the body. A free-body diagram
+        is a drawing of all external forces acting on a body.</li></ul>\n</section><section
+        data-depth=\"1\" id=\"eip-687\" class=\"ost-reading-discard key-equations\"><h1
+        data-type=\"title\">Key Equations</h1><div data-type=\"equation\" id=\"eip-idp16003984\"><math
+        xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><semantics><mrow><msub><mi>F</mi><mtext>net</mtext></msub><mo>=</mo><mn>0</mn><mtext>(or</mtext><mo>&#8721;</mo><mi>F</mi><mo>=</mo><mn>0</mn></mrow><annotation-xml
+        encoding=\"MathML-Content\"><msub><mi>F</mi><mtext>net</mtext></msub><mo>=</mo><mn>0</mn><mtext>(or</mtext><mo>&#8721;</mo><mi>F</mi><mo>=</mo><mn>0</mn></annotation-xml></semantics></math></div><div
+        data-type=\"equation\" id=\"eip-idp40529056\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"
+        display=\"block\"><semantics><mrow><mtext>a</mtext><mo>&#8733;</mo><mfrac><mn>1</mn><mi>m</mi></mfrac></mrow><annotation-xml
+        encoding=\"MathML-Content\"><mtext>a</mtext><mo>&#8733;</mo><mfrac><mn>1</mn><mi>m</mi></mfrac></annotation-xml></semantics></math></div></section><section
+        data-depth=\"1\" id=\"fs-idp80411216\" class=\"practice-concepts ost-reading-discard\"><h1
+        data-type=\"title\">Check Your Understanding</h1><div data-type=\"exercise\"
+        id=\"fs-idp108077920\" class=\"os-exercise\"><div data-type=\"problem\" id=\"eip-idp9870800\"><p
+        id=\"eip-idm47809472\"><a href=\"#ost/api/ex/k12phys-ch04-ex002\" class=\"autogenerated-content\">[link]</a></p></div></div><div
+        data-type=\"exercise\" id=\"fs-idp1312672\" class=\"os-exercise\"><div data-type=\"problem\"
+        id=\"fs-idm12370224\"><p id=\"fs-idm25299168\"><a href=\"#ost/api/ex/k12phys-ch04-ex003\"
+        class=\"autogenerated-content\">[link]</a></p></div></div><div data-type=\"exercise\"
+        id=\"fs-idp69346528\" class=\"os-exercise\"><div data-type=\"problem\" id=\"fs-idp64139984\"><p
+        id=\"fs-idp110205744\"><a href=\"#ost/api/ex/k12phys-ch04-ex004\" class=\"autogenerated-content\">[link]</a></p></div></div><div
+        data-type=\"exercise\" id=\"fs-idp49122304\" class=\"os-exercise\"><div data-type=\"problem\"
+        id=\"fs-idp3590800\"><p id=\"fs-idp83013648\"><a href=\"#ost/api/ex/k12phys-ch04-ex005\"
+        class=\"autogenerated-content\">[link]</a></p></div></div></section><section
+        data-depth=\"1\" id=\"eip-4\" class=\"ost-reading-discard chapter-review concept\"><h1
+        data-type=\"title\">Concept Items</h1><div data-type=\"exercise\" id=\"fs-idm13660032\"
+        class=\"os-exercise\"><div data-type=\"problem\" id=\"eip-idp12573008\"><p
+        id=\"eip-idm2150752\"><a href=\"#ost/api/ex/k12phys-ch04-ex013\" class=\"autogenerated-content\">[link]</a></p></div>\n</div><div
+        data-type=\"exercise\" id=\"fs-idm21677456\" class=\"os-exercise\"><div data-type=\"problem\"
+        id=\"fs-idp4583664\"><p id=\"fs-idp38536176\"><a href=\"#ost/api/ex/k12phys-ch04-ex014\"
+        class=\"autogenerated-content\">[link]</a></p></div></div></section><section
+        data-depth=\"1\" id=\"fs-idm35519920\" class=\"ost-reading-discard chapter-review
+        critical-thinking\"><h1 data-type=\"title\">Critical Thinking Items</h1><div
+        data-type=\"exercise\" id=\"fs-idm2211008\" class=\"os-exerise\"><div data-type=\"problem\"
+        id=\"fs-idm52422080\"><p id=\"fs-idm54435568\"><a href=\"#ost/api/ex/k12phys-ch04-ex019\"
+        class=\"autogenerated-content\">[link]</a></p></div></div><div data-type=\"exercise\"
+        id=\"fs-idm19939584\" class=\"os-exercise\"><div data-type=\"problem\" id=\"fs-idm14249952\"><p
+        id=\"fs-idm22368288\"><a href=\"#ost/api/ex/k12phys-ch04-ex020\" class=\"autogenerated-content\">[link]</a></p></div></div></section><section
+        data-depth=\"1\" id=\"fs-idp3448064\" class=\"ost-reading-discard test-prep
+        multiple-choice\"><h1 data-type=\"title\">Test Prep Multiple Choice</h1><div
+        data-type=\"exercise\" id=\"fs-idp41337120\" class=\"os-exercise\"><div data-type=\"problem\"
+        id=\"fs-idm12913392\"><p id=\"fs-idp20125792\"><a href=\"#ost/api/ex/k12phys-ch04-ex025\"
+        class=\"autogenerated-content\">[link]</a></p></div></div><div data-type=\"exercise\"
+        id=\"fs-idp38903648\" class=\"os-teacher\"><div data-type=\"problem\" id=\"fs-idp53572736\"><p
+        id=\"fs-idm7549184\"><a href=\"#ost/api/ex/k12phys-ch04-ex026\" class=\"autogenerated-content\">[link]</a></p></div></div></section><section
+        data-depth=\"1\" id=\"fs-idp76781504\" class=\"ost-reading-discard test-prep
+        short-answer\"><h1 data-type=\"title\">Test Prep Short Answer</h1><div data-type=\"exercise\"
+        id=\"fs-idp2886592\" class=\"os-exercise\"><div data-type=\"problem\" id=\"fs-idp79808912\"><p
+        id=\"fs-idm20563376\"><a href=\"#ost/api/ex/k12phys-ch04-ex027\" class=\"autogenerated-content\">[link]</a></p></div></div><div
+        data-type=\"exercise\" id=\"fs-idm55848240\" class=\"os-exercise\"><div data-type=\"problem\"
+        id=\"fs-idm20025600\"><p id=\"fs-idm11454800\"><a href=\"#ost/api/ex/k12phys-ch04-ex028\"
+        class=\"autogenerated-content\">[link]</a></p></div></div></section><section
+        data-depth=\"1\" id=\"fs-idp68768336\" class=\"ost-reading-discard test-prep
+        extended-response\"><h1 data-type=\"title\">Test Prep Extended Response</h1><div
+        data-type=\"exercise\" id=\"fs-idm73371088\" class=\"os-exercise\"><div data-type=\"problem\"
+        id=\"fs-idp89965840\"><p id=\"fs-idp82365712\"><a href=\"#ost/api/ex/k12phys-ch04-ex031\"
+        class=\"autogenerated-content\">[link]</a></p></div></div><div data-type=\"exercise\"
+        id=\"fs-idp1057760\" class=\"os-exercise\"><div data-type=\"problem\" id=\"fs-idm43120784\"><p
+        id=\"fs-idp1975632\"><a href=\"#ost/api/ex/k12phys-ch04-ex032\" class=\"autogenerated-content\">[link]</a></p></div></div></section><div
+        data-type=\"glossary\"><h2>Glossary</h2><div data-type=\"definition\" id=\"fs-idp58635552\"><span
+        data-type=\"term\">dynamics</span><div data-type=\"meaning\" id=\"fs-idp72961424\">the
+        study of how forces affect the motion of objects and systems</div></div><div
+        data-type=\"definition\" id=\"fs-idp72838384\"><span data-type=\"term\">external
+        force</span><div data-type=\"meaning\" id=\"fs-idp18928624\">a force acting
+        on an object or system that originates outside of the object or system</div></div><div
+        data-type=\"definition\" id=\"fs-idp70052112\"><span data-type=\"term\">force</span><div
+        data-type=\"meaning\" id=\"fs-idp45464192\">a push or pull on an object with
+        a specific magnitude and direction; can be represented by vectors; can be
+        expressed as a multiple of a standard force</div></div><div data-type=\"definition\"
+        id=\"fs-idp11321744\"><span data-type=\"term\">free-body diagram</span><div
+        data-type=\"meaning\" id=\"fs-idp72312848\">a diagram showing all external
+        forces acting on a body</div></div><div data-type=\"definition\" id=\"fs-idp30189824\"><span
+        data-type=\"term\">net external force</span><div data-type=\"meaning\" id=\"fs-idp68308160\">the
+        sum of all external forces acting on an object or <em data-effect=\"italics\">system</em></div></div><div
+        data-type=\"definition\" id=\"fs-idp42033536\"><span data-type=\"term\">net
+        force</span><div data-type=\"meaning\" id=\"fs-idp12657072\">the sum of all
+        forces acting on an object or system</div></div></div></body>\n\n</html>",
+        "subjects": ["Mathematics and Statistics"], "legacy_id": "m53215", "parentId":
+        null, "stateid": 1, "parentTitle": null, "maintainers": [{"website": "", "surname":
+        "Slavik", "suffix": "", "firstname": "Alina", "title": "", "othername": "",
+        "email": "alinams@rice.edu", "fullname": "Alina Slavik", "id": "AlinaManager"}],
+        "authors": [{"website": "", "surname": "Slavik", "suffix": "", "firstname":
+        "Alina", "title": "", "othername": "", "email": "alinams@rice.edu", "fullname":
+        "Alina Slavik", "id": "AlinaManager"}], "parentVersion": "", "legacy_version":
+        "1.4", "licensors": [{"website": "", "surname": "Slavik", "suffix": "", "firstname":
+        "Alina", "title": "", "othername": "", "email": "alinams@rice.edu", "fullname":
+        "Alina Slavik", "id": "AlinaManager"}], "license": {"url": "http://creativecommons.org/licenses/by/4.0/",
+        "code": "by", "version": "4.0", "name": "Creative Commons Attribution License"},
+        "language": "en", "created": "2015-03-05T20:29:22Z", "doctype": "", "buyLink":
+        null, "submitter": {"website": "", "surname": "Slavik", "suffix": "", "firstname":
+        "Alina", "title": "", "othername": "", "email": "alinams@rice.edu", "fullname":
+        "Alina Slavik", "id": "AlinaManager"}, "parentAuthors": [], "history": [{"changes":
+        "updated to ost-tag-lo-k12phys tag and added <label>Grasp Check</label>",
+        "version": "4", "revised": "2015-03-06T17:46:23Z", "publisher": {"website":
+        "", "surname": "Slavik", "suffix": "", "firstname": "Alina", "title": "",
+        "othername": "", "email": "alinams@rice.edu", "fullname": "Alina Slavik",
+        "id": "AlinaManager"}}, {"changes": "imported updated zip from staging3",
+        "version": "3", "revised": "2015-03-05T21:07:36Z", "publisher": {"website":
+        "", "surname": "Slavik", "suffix": "", "firstname": "Alina", "title": "",
+        "othername": "", "email": "alinams@rice.edu", "fullname": "Alina Slavik",
+        "id": "AlinaManager"}}, {"changes": "imported updated zip from staging3",
+        "version": "2", "revised": "2015-03-05T21:03:51Z", "publisher": {"website":
+        "", "surname": "Slavik", "suffix": "", "firstname": "Alina", "title": "",
+        "othername": "", "email": "alinams@rice.edu", "fullname": "Alina Slavik",
+        "id": "AlinaManager"}}, {"changes": "imported module", "version": "1", "revised":
+        "2015-03-05T20:34:27Z", "publisher": {"website": "", "surname": "Slavik",
+        "suffix": "", "firstname": "Alina", "title": "", "othername": "", "email":
+        "alinams@rice.edu", "fullname": "Alina Slavik", "id": "AlinaManager"}}]}'
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:33:12 GMT
+- request:
+    method: get
+    uri: http://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-s01-lo01,k12phys-ch04-s01-lo02
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 301
+      message: Moved Permanently
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:33:24 GMT
+      Content-Type:
+      - text/html
+      Content-Length:
+      - '193'
+      Connection:
+      - keep-alive
+      Location:
+      - https://exercises-dev1.openstax.org/api/exercises?q=tag%3Ak12phys-ch04-s01-lo01%2Ck12phys-ch04-s01-lo02
+    body:
+      encoding: UTF-8
+      string: "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n<body
+        bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
+        (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:33:13 GMT
+- request:
+    method: get
+    uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-s01-lo01,k12phys-ch04-s01-lo02
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:33:25 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      Etag:
+      - W/"184186a39e98c05035484409d16b2752"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Set-Cookie:
+      - _exercises_session=ejZBRm0xUXlsd0hJNjQ1T2c3L1NlSnBTN3FBRmgxQWgrV3piK09GQkVEdE5xWW53Vzl3MFhtODh0Wit6TGMrUjgzejl5SUpZNGlvK0htbW9XbEhVcXc9PS0tYytoaENxUndRSFhDVXJvbGNZSmYxZz09--a0ae8af863983b1ff5eaa840714295b00db15ccc;
+        path=/; HttpOnly
+      X-Request-Id:
+      - b73d01f6-4fd5-426e-8ffe-b770d610a1cd
+      X-Runtime:
+      - '0.843519'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJ0b3RhbF9jb3VudCI6MzIsIml0ZW1zIjpbeyJ1aWQiOiIxQDEiLCJudW1i
+        ZXIiOjEsInZlcnNpb24iOjEsInB1Ymxpc2hlZF9hdCI6IjIwMTUtMDMtMDdU
+        MDA6MTE6MjEuNTc5WiIsImVkaXRvcnMiOltdLCJhdXRob3JzIjpbeyJ1c2Vy
+        X2lkIjoyfV0sImNvcHlyaWdodF9ob2xkZXJzIjpbeyJ1c2VyX2lkIjozfV0s
+        ImRlcml2ZWRfZnJvbSI6W10sImF0dGFjaG1lbnRzIjpbXSwidGFncyI6WyJr
+        MTJwaHlzLWNoMDQtczAxLWxvMDEiLCJrMTJwaHlzLWNoMDQtZXgwMDEiLCJw
+        cmFjdGljZS1jb25jZXB0cyIsImluYm9vay15ZXMiLCJkb2stMSIsInRpbWUt
+        c2hvcnQiLCJkaXNwbGF5LWZyZWUtcmVzcG9uc2UiLCJkaXNwbGF5LXJlYy1z
+        ZW5zaXRpdmUiXSwic3RpbXVsdXNfaHRtbCI6IiIsInF1ZXN0aW9ucyI6W3si
+        c3RpbXVsdXNfaHRtbCI6IiIsInN0ZW1faHRtbCI6IjxwPldoeSB3YXMgdGhl
+        IHNjaWVudGlzdHPigJkgZmFpbHVyZSB0byBjb252ZXJ0IGZyb20gRW5nbGlz
+        aCB1bml0dHMgdG8gU0kgdW5pdHMgYSBwcm9ibGVtPyBVc2UgPHNwYW4gZGF0
+        YS1tYXRoPVwiRl9cXHRleHR7bmV0fSA9IDBcIj5NYXRoPC9zcGFuPiB0byBo
+        ZWxwIHlvdSBhbnN3ZXIgdGhlIHF1ZXN0aW9uLjwvcD5cbiIsImFuc3dlcnMi
+        Olt7ImNvbnRlbnRfaHRtbCI6IjxwPktpbmVtYXRpY3MgaXMgdGhlIHN0dWR5
+        IG9mIGF0b21pYyBzdHJ1Y3R1cmU8L3A+XG4iLCJjb3JyZWN0bmVzcyI6IjAu
+        MCIsImZlZWRiYWNrX2h0bWwiOiI8cD5BcmUgeW91IHN1cmUgdGhhdCB0aGUg
+        c3R1ZHkgb2YgYXRvbWljIHN0cnVjdHVyZXMgaXMgYSBwYXJ0IG9mIGtpbmVt
+        YXRpY3M/PC9wPlxuIn0seyJjb250ZW50X2h0bWwiOiI8cD5LaW5lbWF0aWNz
+        IGlzIHRoZSBzdHVkeSBvZiBkaW1lbnNpb25zPC9wPlxuIiwiY29ycmVjdG5l
+        c3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiPHA+SXMgaXQgY29ycmVjdCB0
+        byBzYXkgdGhhdCBkaW1lbnNpb25hbCBhbmFseXNpcyBpcyBkb25lIGluIGtp
+        bmVtYXRpY3M/PC9wPlxuIn0seyJjb250ZW50X2h0bWwiOiI8cD5LaW5lbWF0
+        aWNzIGlzIHRoZSBzdHVkeSBvZiBjYXVzZSBvZiBtb3Rpb248L3A+XG4iLCJj
+        b3JyZWN0bmVzcyI6IjAuMCIsImZlZWRiYWNrX2h0bWwiOiI8cD5EbyB5b3Ug
+        dGhpbmsgY2F1c2Ugb2YgbW90aW9uIGlzIHN0dWRpZWQgdW5kZXIga2luZW1h
+        dGljcz8gV2hhdCBhYm91dCB0aGUgc3R1ZHkgb2YgZm9yY2UgYW5kIGl0cyBl
+        ZmZlY3Qgb24gYSBib2R5LiBJcyB0aGF0IGtpbmVtYXRpY3M/PC9wPlxuIn0s
+        eyJjb250ZW50X2h0bWwiOiI8cD5LaW5lbWF0aWNzIGlzIHRoZSBzdHVkeSBv
+        ZiBtb3Rpb248L3A+XG4iLCJjb3JyZWN0bmVzcyI6IjEuMCIsImZlZWRiYWNr
+        X2h0bWwiOiI8cD5Db3JyZWN0ISBNb3Rpb24gb2YgYSBib2R5IGlzIHN0dWRp
+        ZWQgdW5kZXIga2luZW1hdGljczwvcD5cbiJ9XSwiaGludHMiOltdLCJmb3Jt
+        YXRzIjpbIm11bHRpcGxlLWNob2ljZSIsImZyZWUtcmVzcG9uc2UiXSwiY29t
+        Ym9fY2hvaWNlcyI6W119XX0seyJ1aWQiOiIyQDEiLCJudW1iZXIiOjIsInZl
+        cnNpb24iOjEsInB1Ymxpc2hlZF9hdCI6IjIwMTUtMDMtMDdUMDA6MTE6MjEu
+        NjEwWiIsImVkaXRvcnMiOltdLCJhdXRob3JzIjpbeyJ1c2VyX2lkIjoyfV0s
+        ImNvcHlyaWdodF9ob2xkZXJzIjpbeyJ1c2VyX2lkIjozfV0sImRlcml2ZWRf
+        ZnJvbSI6W10sImF0dGFjaG1lbnRzIjpbXSwidGFncyI6WyJrMTJwaHlzLWNo
+        MDQtczAxLWxvMDEiLCJrMTJwaHlzLWNoMDQtZXgwMDIiLCJwcmFjdGljZS1j
+        b25jZXB0cyIsImluYm9vay15ZXMiLCJkb2stMSIsInRpbWUtc2hvcnQiLCJk
+        aXNwbGF5LWZyZWUtcmVzcG9uc2UiLCJkaXNwbGF5LXJlYy1zZW5zaXRpdmUi
+        XSwic3RpbXVsdXNfaHRtbCI6IiIsInF1ZXN0aW9ucyI6W3sic3RpbXVsdXNf
+        aHRtbCI6IiIsInN0ZW1faHRtbCI6IjxwPldoYXQgaXMga2luZW1hdGljcz88
+        L3A+XG4iLCJhbnN3ZXJzIjpbeyJjb250ZW50X2h0bWwiOiI8cD5LaW5lbWF0
+        aWNzIGlzIHRoZSBzdHVkeSBvZiBhdG9taWMgc3RydWN0dXJlPC9wPlxuIiwi
+        Y29ycmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiPHA+QXJlIHlv
+        dSBzdXJlIHRoYXQgdGhlIHN0dWR5IG9mIGF0b21pYyBzdHJ1Y3R1cmVzIGlz
+        IGEgcGFydCBvZiBraW5lbWF0aWNzPzwvcD5cbiJ9LHsiY29udGVudF9odG1s
+        IjoiPHA+S2luZW1hdGljcyBpcyB0aGUgc3R1ZHkgb2YgZGltZW5zaW9uczwv
+        cD5cbiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6Ijxw
+        PklzIGl0IGNvcnJlY3QgdG8gc2F5IHRoYXQgZGltZW5zaW9uYWwgYW5hbHlz
+        aXMgaXMgZG9uZSBpbiBraW5lbWF0aWNzPzwvcD5cbiJ9LHsiY29udGVudF9o
+        dG1sIjoiPHA+S2luZW1hdGljcyBpcyB0aGUgc3R1ZHkgb2YgY2F1c2Ugb2Yg
+        bW90aW9uPC9wPlxuIiwiY29ycmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19o
+        dG1sIjoiPHA+RG8geW91IHRoaW5rIGNhdXNlIG9mIG1vdGlvbiBpcyBzdHVk
+        aWVkIHVuZGVyIGtpbmVtYXRpY3M/IFdoYXQgYWJvdXQgdGhlIHN0dWR5IG9m
+        IGZvcmNlIGFuZCBpdHMgZWZmZWN0IG9uIGEgYm9keS4gSXMgdGhhdCBraW5l
+        bWF0aWNzPzwvcD5cbiJ9LHsiY29udGVudF9odG1sIjoiPHA+S2luZW1hdGlj
+        cyBpcyB0aGUgc3R1ZHkgb2YgbW90aW9uPC9wPlxuIiwiY29ycmVjdG5lc3Mi
+        OiIxLjAiLCJmZWVkYmFja19odG1sIjoiPHA+Q29ycmVjdCEgTW90aW9uIG9m
+        IGEgYm9keSBpcyBzdHVkaWVkIHVuZGVyIGtpbmVtYXRpY3M8L3A+XG4ifV0s
+        ImhpbnRzIjpbXSwiZm9ybWF0cyI6WyJtdWx0aXBsZS1jaG9pY2UiLCJmcmVl
+        LXJlc3BvbnNlIl0sImNvbWJvX2Nob2ljZXMiOltdfV19LHsidWlkIjoiM0Ax
+        IiwibnVtYmVyIjozLCJ2ZXJzaW9uIjoxLCJwdWJsaXNoZWRfYXQiOiIyMDE1
+        LTAzLTA3VDAwOjExOjIxLjYxOFoiLCJlZGl0b3JzIjpbXSwiYXV0aG9ycyI6
+        W3sidXNlcl9pZCI6Mn1dLCJjb3B5cmlnaHRfaG9sZGVycyI6W3sidXNlcl9p
+        ZCI6M31dLCJkZXJpdmVkX2Zyb20iOltdLCJhdHRhY2htZW50cyI6W10sInRh
+        Z3MiOlsiazEycGh5cy1jaDA0LXMwMS1sbzAxIiwiazEycGh5cy1jaDA0LWV4
+        MDAzIiwicHJhY3RpY2UtY29uY2VwdHMiLCJpbmJvb2steWVzIiwiZG9rLTIi
+        LCJ0aW1lLXNob3J0IiwiZGlzcGxheS1mcmVlLXJlc3BvbnNlIiwiZGlzcGxh
+        eS1yZWMtc2Vuc2l0aXZlIl0sInN0aW11bHVzX2h0bWwiOiIiLCJxdWVzdGlv
+        bnMiOlt7InN0aW11bHVzX2h0bWwiOiIiLCJzdGVtX2h0bWwiOiI8cD5EbyB0
+        d28gYm9kaWVzIGhhdmUgdG8gYmUgaW4gY29udGFjdCB0byBleGVydCBmb3Jj
+        ZSBvbiBvbmUgYW5vdGhlcj8gRXhwbGFpbiB3aXRoIGV4YW1wbGVzLjwvcD5c
+        biIsImFuc3dlcnMiOlt7ImNvbnRlbnRfaHRtbCI6IjxwPlllcywgZ3Jhdml0
+        YXRpb25hbCBmb3JjZSBpcyBhIGNvbnRhY3QgZm9yY2UgYW5kIHJlcXVpcmVz
+        IHBoeXNpY2FsIGNvbnRhY3QgdG8gZXhlcnQgZm9yY2UuPC9wPlxuIiwiY29y
+        cmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiPHA+QXJlIHlvdSBz
+        dXJlIHRoYXQgZ3Jhdml0YXRpb25hbCBmb3JjZSBpcyBhIGNvbnRhY3QgZm9y
+        Y2U/IENhbiB5b3UgZGlmZmVyZW50aWF0ZSBiZXR3ZWVuIGZpZWxkIGFuZCBj
+        b250YWN0IGZvcmNlcz88L3A+XG4ifSx7ImNvbnRlbnRfaHRtbCI6IjxwPlll
+        cywgZ3Jhdml0YXRpb25hbCBmb3JjZSBpcyBhIGZpZWxkIGZvcmNlIGFuZCBy
+        ZXF1aXJlcyBwaHlzaWNhbCBjb250YWN0IHRvIGV4ZXJ0IGZvcmNlLjwvcD5c
+        biIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IjxwPkl0
+        IGlzIGNvcnJlY3QgdGhhdCB0aGUgZ3Jhdml0YXRpb25hbCBmb3JjZSBpcyBh
+        IGZpZWxkIGZvcmNlIGJ1dCBkbyB5b3UgdGhpbmsgZmllbGQgZm9yY2VzIHJl
+        cXVpcmUgcGh5c2ljYWwgY29udGFjdCB0byBleGVydCBmb3JjZT88L3A+XG4i
+        fSx7ImNvbnRlbnRfaHRtbCI6IjxwPk5vLCBncmF2aXRhdGlvbmFsIGZvcmNl
+        IGlzIGEgY29udGFjdCBmb3JjZSBhbmQgZG9lcyBub3QgcmVxdWlyZSBwaHlz
+        aWNhbCBjb250YWN0IHRvIGV4ZXJ0IGZvcmNlLjwvcD5cbiIsImNvcnJlY3Ru
+        ZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IjxwPkRvIHlvdSB0aGluayBn
+        cmF2aXRhdGlvbmFsIGZvcmNlIGlzIGEgY29udGFjdCBmb3JjZT8gQWxzbywg
+        Y2FuIHRoZSBjb250YWN0IGZvcmNlIGFjdCB3aXRob3V0IHBoeXNpY2FsIGNv
+        bnRhY3Q/PC9wPlxuIn0seyJjb250ZW50X2h0bWwiOiI8cD5ObywgZ3Jhdml0
+        YXRpb25hbCBmb3JjZSBpcyBhIGZpZWxkIGZvcmNlIGFuZCBkb2VzIG5vdCBy
+        ZXF1aXJlcyBwaHlzaWNhbCBjb250YWN0IHRvIGV4ZXJ0IGZvcmNlLjwvcD5c
+        biIsImNvcnJlY3RuZXNzIjoiMS4wIiwiZmVlZGJhY2tfaHRtbCI6IjxwPkNv
+        cnJlY3QhIEdyYXZpdGF0aW9uYWwgZm9yY2UgY2FuIGV4aXN0IGJldHdlZW4g
+        dHdvIG9iamVjdHMgYXMgaXQgaXMgYSBmaWVsZCBmb3JjZSBhbmQgZG9lcyBu
+        b3QgcmVxdWlyZSBwaHlzaWNhbCBjb250YWN0LjwvcD5cbiJ9XSwiaGludHMi
+        OltdLCJmb3JtYXRzIjpbIm11bHRpcGxlLWNob2ljZSIsImZyZWUtcmVzcG9u
+        c2UiXSwiY29tYm9fY2hvaWNlcyI6W119XX0seyJ1aWQiOiI0QDEiLCJudW1i
+        ZXIiOjQsInZlcnNpb24iOjEsInB1Ymxpc2hlZF9hdCI6IjIwMTUtMDMtMDdU
+        MDA6MTE6MjEuNjI2WiIsImVkaXRvcnMiOltdLCJhdXRob3JzIjpbeyJ1c2Vy
+        X2lkIjoyfV0sImNvcHlyaWdodF9ob2xkZXJzIjpbeyJ1c2VyX2lkIjozfV0s
+        ImRlcml2ZWRfZnJvbSI6W10sImF0dGFjaG1lbnRzIjpbXSwidGFncyI6WyJr
+        MTJwaHlzLWNoMDQtczAxLWxvMDEiLCJrMTJwaHlzLWNoMDQtZXgwMDQiLCJw
+        cmFjdGljZS1jb25jZXB0cyIsImluYm9vay15ZXMiLCJkb2stMSIsInRpbWUt
+        c2hvcnQiLCJkaXNwbGF5LWZyZWUtcmVzcG9uc2UiLCJkaXNwbGF5LXJlYy1z
+        ZW5zaXRpdmUiXSwic3RpbXVsdXNfaHRtbCI6IiIsInF1ZXN0aW9ucyI6W3si
+        c3RpbXVsdXNfaHRtbCI6IiIsInN0ZW1faHRtbCI6IjxwPldoYXQga2luZCBv
+        ZiBhIHBoeXNpY2FsIHF1YW50aXR5IGlzIGZvcmNlPzwvcD5cbiIsImFuc3dl
+        cnMiOlt7ImNvbnRlbnRfaHRtbCI6IjxwPkZvcmNlIGlzIG5laXRoZXIgc2Nh
+        bGFyIG5vciB2ZWN0b3I8L3A+XG4iLCJjb3JyZWN0bmVzcyI6IjAuMCIsImZl
+        ZWRiYWNrX2h0bWwiOiI8cD5BcmUgeW91IHN1cmUgdGhhdCB0aGVyZSBpcyBh
+        bnkgcGh5c2ljYWwgcXVhbnRpdHkgd2hpY2ggY2FuIG5laXRoZXIgYmUgc2Nh
+        bGFyIG5vciB2ZWN0b3I/PC9wPlxuIn0seyJjb250ZW50X2h0bWwiOiI8cD5G
+        b3JjZSBpcyBib3RoIHZlY3RvciBhbmQgc2NhbGFyPC9wPlxuIiwiY29ycmVj
+        dG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiPHA+Q2FuIGEgcGh5c2lj
+        YWwgcXVhbnRpdHkgYmUgdmVjdG9yIGFzIHdlbGwgYXMgc2NhbGFyPyBDYW4g
+        eW91IGRpZmZlcmVudGlhdGUgYmV0d2VlbiB0aGUgdHdvIHF1YW50aXRpZXM/
+        PC9wPlxuIn0seyJjb250ZW50X2h0bWwiOiI8cD5Gb3JjZSBpcyBhIHZlY3Rv
+        ciBxdWFudGl0eTwvcD5cbiIsImNvcnJlY3RuZXNzIjoiMS4wIiwiZmVlZGJh
+        Y2tfaHRtbCI6IjxwPkNvcnJlY3QhIEZvcmNlIGlzIGEgdmVjdG9yIHF1YW50
+        aXR5IGFzIGl0IGhhcyBtYWduaXR1ZGUgYXMgd2VsbCBhcyBkaXJlY3Rpb24u
+        PC9wPlxuIn0seyJjb250ZW50X2h0bWwiOiI8cD5Gb3JjZSBpcyBhIHNjYWxh
+        ciBxdWFudGl0eTwvcD5cbiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJh
+        Y2tfaHRtbCI6IjxwPkRvIHlvdSB0aGluayBmb3JjZSBpcyBxdWFudGl0eSB3
+        aGljaCBoYXMgbWFnbml0dWRlIG9ubHk/PC9wPlxuIn1dLCJoaW50cyI6W10s
+        ImZvcm1hdHMiOlsibXVsdGlwbGUtY2hvaWNlIiwiZnJlZS1yZXNwb25zZSJd
+        LCJjb21ib19jaG9pY2VzIjpbXX1dfSx7InVpZCI6IjVAMSIsIm51bWJlciI6
+        NSwidmVyc2lvbiI6MSwicHVibGlzaGVkX2F0IjoiMjAxNS0wMy0wN1QwMDox
+        MToyMS42MzNaIiwiZWRpdG9ycyI6W10sImF1dGhvcnMiOlt7InVzZXJfaWQi
+        OjJ9XSwiY29weXJpZ2h0X2hvbGRlcnMiOlt7InVzZXJfaWQiOjN9XSwiZGVy
+        aXZlZF9mcm9tIjpbXSwiYXR0YWNobWVudHMiOltdLCJ0YWdzIjpbImsxMnBo
+        eXMtY2gwNC1zMDEtbG8wMSIsImsxMnBoeXMtY2gwNC1leDAwNSIsInByYWN0
+        aWNlLWNvbmNlcHRzIiwidHV0b3Itb25seSIsImRvay0xIiwidGltZS1zaG9y
+        dCIsImRpc3BsYXktZnJlZS1yZXNwb25zZSIsImRpc3BsYXktcmVjLXNlbnNp
+        dGl2ZSJdLCJzdGltdWx1c19odG1sIjoiIiwicXVlc3Rpb25zIjpbeyJzdGlt
+        dWx1c19odG1sIjoiIiwic3RlbV9odG1sIjoiPHA+V2hhdCBwaHlzaWNhbCBx
+        dWFudGl0eSBjYXVzZXMgbW90aW9uPzwvcD5cbiIsImFuc3dlcnMiOlt7ImNv
+        bnRlbnRfaHRtbCI6IjxwPkZvcmNlPC9wPlxuIiwiY29ycmVjdG5lc3MiOiIx
+        LjAiLCJmZWVkYmFja19odG1sIjoiPHA+Q29ycmVjdCEgRm9yY2UgaXMgYSBw
+        aHlzaWNhbCBxdWFudGl0eSB3aGljaCBicmluZ3MgY2hhbmdlIGluIG1vdGlv
+        bi48L3A+XG4ifSx7ImNvbnRlbnRfaHRtbCI6IjxwPk1vbWVudHVtPC9wPlxu
+        IiwiY29ycmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiPHA+TW9t
+        ZW50dW0gaXMgYSBxdWFudGl0eSB3aGljaCBpcyBhIHByb2R1Y3Qgb2YgbWFz
+        cyBhbmQgdmVsb2NpdHkuIERvIHlvdSB0aGluayBhbnkgb2YgdGhlIHF1YW50
+        aXRpZXMgZGVmaW5pbmcgbW9tZW50dW0gcmVwcmVzZW50cyBhIGNhdXNlPzwv
+        cD5cbiJ9LHsiY29udGVudF9odG1sIjoiPHA+QWNjZWxlcmF0aW9uPC9wPlxu
+        IiwiY29ycmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiPHA+SXQg
+        aXMgY29ycmVjdCB0aGF0IGFjY2VsZXJhdGlvbiBicmluZ3MgY2hhbmdlIGlu
+        IG1vdGlvbiBidXQgaXMgaXQgYSBjYXVzZT88L3A+XG4ifSx7ImNvbnRlbnRf
+        aHRtbCI6IjxwPlZlbG9jaXR5PC9wPlxuIiwiY29ycmVjdG5lc3MiOiIwLjAi
+        LCJmZWVkYmFja19odG1sIjoiPHA+QXJlIHlvdSBzdXJlIHRoYXQgdmVsb2Np
+        dHkgY2F1c2VzIHRoZSBtb3Rpb24/IElzIGl0IGEgY2F1c2Ugb3IgYW4gZWZm
+        ZWN0PzwvcD5cbiJ9XSwiaGludHMiOltdLCJmb3JtYXRzIjpbIm11bHRpcGxl
+        LWNob2ljZSIsImZyZWUtcmVzcG9uc2UiXSwiY29tYm9fY2hvaWNlcyI6W119
+        XX0seyJ1aWQiOiI2QDEiLCJudW1iZXIiOjYsInZlcnNpb24iOjEsInB1Ymxp
+        c2hlZF9hdCI6IjIwMTUtMDMtMDdUMDA6MTE6MjEuNjQxWiIsImVkaXRvcnMi
+        OltdLCJhdXRob3JzIjpbeyJ1c2VyX2lkIjoyfV0sImNvcHlyaWdodF9ob2xk
+        ZXJzIjpbeyJ1c2VyX2lkIjozfV0sImRlcml2ZWRfZnJvbSI6W10sImF0dGFj
+        aG1lbnRzIjpbXSwidGFncyI6WyJrMTJwaHlzLWNoMDQtczAxLWxvMDEiLCJr
+        MTJwaHlzLWNoMDQtZXgwMDYiLCJwcmFjdGljZS1jb25jZXB0cyIsInR1dG9y
+        LW9ubHkiLCJkb2stMSIsInRpbWUtc2hvcnQiLCJkaXNwbGF5LWZyZWUtcmVz
+        cG9uc2UiLCJkaXNwbGF5LXJlYy1zZW5zaXRpdmUiXSwic3RpbXVsdXNfaHRt
+        bCI6IiIsInF1ZXN0aW9ucyI6W3sic3RpbXVsdXNfaHRtbCI6IiIsInN0ZW1f
+        aHRtbCI6IjxwPlRoZSB0b3RhbCBjb21iaW5lZCBmb3JjZSBhY3Rpbmcgb24g
+        YW4gb2JqZWN0IGlzIGNhbGxlZCBuZXQgZXh0ZXJuYWwgZm9yY2UuPC9wPlxu
+        IiwiYW5zd2VycyI6W3siY29udGVudF9odG1sIjoiPHA+MDwvcD5cbiIsImNv
+        cnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IjxwPkRvIHlvdSB0
+        aGluayB0aGUgbmV0IGV4dGVybmFsIGZvcmNlIGFjdGluZyBvbiBhbiBvYmpl
+        Y3QgaXMgb3RoZXIgdGhhbiB0aGUgdG90YWwgY29tYmluZWQgZm9yY2UgYWN0
+        aW5nIG9uIHRoZSBvYmplY3Q/IENhbiB5b3UgcmVjYWxsIHRoZSBkZWZpbml0
+        aW9uIG9mIG5ldCBleHRlcm5hbCBmb3JjZT88L3A+XG4ifSx7ImNvbnRlbnRf
+        aHRtbCI6IjxwPjE8L3A+XG4iLCJjb3JyZWN0bmVzcyI6IjEuMCIsImZlZWRi
+        YWNrX2h0bWwiOiI8cD5Db3JyZWN0ISBOZXQgZXh0ZXJuYWwgZm9yY2UgaXMg
+        dGhlIHRvdGFsIGNvbWJpbmVkIGZvcmNlIGFjdGluZyBvbiBhbiBvYmplY3Qu
+        IFRoaXMgZG9lcyBub3QgaW5jbHVkZSBpbnRlcm5hbCBmb3JjZXMgYWN0aW5n
+        IGluc2lkZSB0aGUgb2JqZWN0LjwvcD5cbiJ9XSwiaGludHMiOltdLCJmb3Jt
+        YXRzIjpbIm11bHRpcGxlLWNob2ljZSIsImZyZWUtcmVzcG9uc2UiXSwiY29t
+        Ym9fY2hvaWNlcyI6W119XX0seyJ1aWQiOiI3QDEiLCJudW1iZXIiOjcsInZl
+        cnNpb24iOjEsInB1Ymxpc2hlZF9hdCI6IjIwMTUtMDMtMDdUMDA6MTE6MjEu
+        NjQ4WiIsImVkaXRvcnMiOltdLCJhdXRob3JzIjpbeyJ1c2VyX2lkIjoyfV0s
+        ImNvcHlyaWdodF9ob2xkZXJzIjpbeyJ1c2VyX2lkIjozfV0sImRlcml2ZWRf
+        ZnJvbSI6W10sImF0dGFjaG1lbnRzIjpbXSwidGFncyI6WyJrMTJwaHlzLWNo
+        MDQtczAxLWxvMDEiLCJrMTJwaHlzLWNoMDQtZXgwMDciLCJwcmFjdGljZS1j
+        b25jZXB0cyIsInR1dG9yLW9ubHkiLCJkb2stMiIsInRpbWUtc2hvcnQiLCJk
+        aXNwbGF5LWZyZWUtcmVzcG9uc2UiLCJkaXNwbGF5LXJlYy1zZW5zaXRpdmUi
+        XSwic3RpbXVsdXNfaHRtbCI6IiIsInF1ZXN0aW9ucyI6W3sic3RpbXVsdXNf
+        aHRtbCI6IiIsInN0ZW1faHRtbCI6IjxwPldoYXQgZG9lcyBpdCBtZWFuIHdo
+        ZW4gZm9yY2UgaXMgc2FpZCB0byBiZSBhIHZlY3RvciBxdWFudGl0eT88L3A+
+        XG4iLCJhbnN3ZXJzIjpbeyJjb250ZW50X2h0bWwiOiI8cD5Gb3JjZSBoYXMg
+        bmVpdGhlciBtYWduaXR1ZGUgbm9yIGRpcmVjdGlvbjwvcD5cbiIsImNvcnJl
+        Y3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IjxwPklzIGl0IGNvcnJl
+        Y3QgdG8gc2F5IHRoYXQgYSBwaHlzaWNhbCBxdWFudGl0eSBjYW4gbmVpdGhl
+        ciBoYXZlIG1hZ25pdHVkZSBub3IgZGlyZWN0aW9uPzwvcD5cbiJ9LHsiY29u
+        dGVudF9odG1sIjoiPHA+Rm9yY2UgaGFzIG1hZ25pdHVkZSBhcyB3ZWxsIGFz
+        IGRpcmVjdGlvbjwvcD5cbiIsImNvcnJlY3RuZXNzIjoiMS4wIiwiZmVlZGJh
+        Y2tfaHRtbCI6IjxwPkNvcnJlY3QhIEZvcmNlIGlzIGEgcGh5c2ljYWwgcXVh
+        bnRpdHkgd2hpY2ggaGFzIG1hZ25pdHVkZSBhcyB3ZWxsIGFzIGRpcmVjdGlv
+        biwgdGhhdCBpcywgYSB2ZWN0b3IgcXVhbnRpdHk8L3A+XG4ifSx7ImNvbnRl
+        bnRfaHRtbCI6IjxwPkZvcmNlIGhhcyBkaXJlY3Rpb24gb25seTwvcD5cbiIs
+        ImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IjxwPkFyZSB5
+        b3Ugc3VyZSB0aGF0IGZvcmNlIGhhcyBkaXJlY3Rpb24gb25seT8gVHJ5IGFu
+        ZCByZWNhbGwgZGVmaW5pdGlvbiBvZiB2ZWN0b3IgcXVhbnRpdGllcy48L3A+
+        XG4ifSx7ImNvbnRlbnRfaHRtbCI6IjxwPkZvcmNlIGhhcyBtYWduaXR1ZGUg
+        b25seTwvcD5cbiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRt
+        bCI6IjxwPkRvIHlvdSB0aGluayB2ZWN0b3IgcXVhbnRpdGllcyBoYXZlIG1h
+        Z25pdHVkZSBvbmx5PyBDYW4geW91IHJlY2FsbCBkZWZpbml0aW9uIG9mIHZl
+        Y3RvciBhbmQgc2NhbGFyIHF1YW50aXRpZXM/PC9wPlxuIn1dLCJoaW50cyI6
+        W10sImZvcm1hdHMiOlsibXVsdGlwbGUtY2hvaWNlIiwiZnJlZS1yZXNwb25z
+        ZSJdLCJjb21ib19jaG9pY2VzIjpbXX1dfSx7InVpZCI6IjhAMSIsIm51bWJl
+        ciI6OCwidmVyc2lvbiI6MSwicHVibGlzaGVkX2F0IjoiMjAxNS0wMy0wN1Qw
+        MDoxMToyMS42NTVaIiwiZWRpdG9ycyI6W10sImF1dGhvcnMiOlt7InVzZXJf
+        aWQiOjJ9XSwiY29weXJpZ2h0X2hvbGRlcnMiOlt7InVzZXJfaWQiOjN9XSwi
+        ZGVyaXZlZF9mcm9tIjpbXSwiYXR0YWNobWVudHMiOltdLCJ0YWdzIjpbImsx
+        MnBoeXMtY2gwNC1zMDEtbG8wMSIsImsxMnBoeXMtY2gwNC1leDAwOCIsInBy
+        YWN0aWNlLWNvbmNlcHRzIiwidHV0b3Itb25seSIsImRvay0yIiwidGltZS1z
+        aG9ydCIsImRpc3BsYXktZnJlZS1yZXNwb25zZSIsImRpc3BsYXktcmVjLXNl
+        bnNpdGl2ZSJdLCJzdGltdWx1c19odG1sIjoiIiwicXVlc3Rpb25zIjpbeyJz
+        dGltdWx1c19odG1sIjoiIiwic3RlbV9odG1sIjoiPHA+QSBjYW5ub24gc2hv
+        b3RpbmcgYSBjYW5ub25iYWxsIGlzIGFuIGV4YW1wbGUgb2Ygd2VhayBmb3Jj
+        ZSB3aGlsZSBhIGZlYXRoZXIgZmFsbGluZyBvbiBmbG9vciBpcyBhbiBleGFt
+        cGxlIG9mIHN0cm9uZyBmb3JjZS48L3A+XG4iLCJhbnN3ZXJzIjpbeyJjb250
+        ZW50X2h0bWwiOiI8cD4wPC9wPlxuIiwiY29ycmVjdG5lc3MiOiIxLjAiLCJm
+        ZWVkYmFja19odG1sIjoiPHA+Q29ycmVjdCEgQSBjYW5ub24gYXBwbGllcyBh
+        IHN0cm9uZyBmb3JjZSAoaW1wdWxzaXZlIGZvcmNlKSB0byBzaG9vdCBhIGNh
+        bm5vbmJhbGwgYW5kIGEgZmVhdGhlciBmYWxsaW5nIG9uIHRoZSBmbG9vciBh
+        cHBsaWVzIGEgd2VhayBmb3JjZSBvbiB0aGUgZmxvb3IuPC9wPlxuIn0seyJj
+        b250ZW50X2h0bWwiOiI8cD4xPC9wPlxuIiwiY29ycmVjdG5lc3MiOiIwLjAi
+        LCJmZWVkYmFja19odG1sIjoiPHA+RG8geW91IHRoaW5rIGEgY2Fubm9uIGFw
+        cGxpZXMgYSB3ZWFrIGZvcmNlIHRvIHNob290IGEgY2Fubm9uYmFsbD8gV2ls
+        bCB5b3UgZ2V0IGEgbG9uZyB0cmFqZWN0b3J5IGlmIGEgY2Fubm9uIHNob290
+        cyBhIGNhbm5vbmJhbGw/IEFsc28sIHdoYXQgYWJvdXQgYSBmYWxsaW5nIGZl
+        YXRoZXI/PC9wPlxuIn1dLCJoaW50cyI6W10sImZvcm1hdHMiOlsibXVsdGlw
+        bGUtY2hvaWNlIiwiZnJlZS1yZXNwb25zZSJdLCJjb21ib19jaG9pY2VzIjpb
+        XX1dfSx7InVpZCI6IjlAMSIsIm51bWJlciI6OSwidmVyc2lvbiI6MSwicHVi
+        bGlzaGVkX2F0IjoiMjAxNS0wMy0wN1QwMDoxMToyMS42NjNaIiwiZWRpdG9y
+        cyI6W10sImF1dGhvcnMiOlt7InVzZXJfaWQiOjJ9XSwiY29weXJpZ2h0X2hv
+        bGRlcnMiOlt7InVzZXJfaWQiOjN9XSwiZGVyaXZlZF9mcm9tIjpbXSwiYXR0
+        YWNobWVudHMiOltdLCJ0YWdzIjpbImsxMnBoeXMtY2gwNC1zMDEtbG8wMSIs
+        ImsxMnBoeXMtY2gwNC1leDAwOSIsImNoYXB0ZXItcmV2aWV3LXByb2JsZW0i
+        LCJpbmJvb2steWVzIiwiZG9rLTIiLCJ0aW1lLXNob3J0IiwiZGlzcGxheS1m
+        cmVlLXJlc3BvbnNlIiwiZGlzcGxheS1yZWMtc2Vuc2l0aXZlIl0sInN0aW11
+        bHVzX2h0bWwiOiIiLCJxdWVzdGlvbnMiOlt7InN0aW11bHVzX2h0bWwiOiIi
+        LCJzdGVtX2h0bWwiOiI8cD5UcnVlIG9yIEZhbHNlOiBEeW5hbWljcyBpcyBi
+        cmFuY2ggb2YgbWVjaGFuaWNzIHdoaWNoIGRlc2NyaWJlcyB0aGUgbW90aW9u
+        IG9mIGJvZGllcyB3aXRob3V0IGNvbnNpZGVyYXRpb24gb2YgdGhlIGNhdXNl
+        IG9mIG1vdGlvbi48L3A+XG4iLCJhbnN3ZXJzIjpbeyJjb250ZW50X2h0bWwi
+        OiI8cD4wPC9wPlxuIiwiY29ycmVjdG5lc3MiOiIxLjAiLCJmZWVkYmFja19o
+        dG1sIjoiPHA+Q29ycmVjdCEgRHluYW1pY3MgaXMgdGhlIGJyYW5jaCBvZiBt
+        ZWNoYW5pY3MgY29uY2VybmVkIHdpdGggbW90aW9uIG9mIGJvZGllcyB1bmRl
+        ciB0aGUgYWN0aW9uIG9mIGZvcmNlLiBGb3JjZXMgYXJlIHRoZSBwcmltYXJ5
+        IGNhdXNlIGZvciBicmluZ2luZyBjaGFuZ2UgaW4gbW90aW9uIG9yIHRoZXkg
+        aGF2ZSB0ZW5kZW5jeSB0byBicmluZyBhYm91dCBjaGFuZ2UgaW4gbW90aW9u
+        IG9mIGFuIG9iamVjdC48L3A+XG4ifSx7ImNvbnRlbnRfaHRtbCI6IjxwPjE8
+        L3A+XG4iLCJjb3JyZWN0bmVzcyI6IjAuMCIsImZlZWRiYWNrX2h0bWwiOiI8
+        cD5EbyB5b3UgdGhpbmsgaW4gZHluYW1pY3MgeW91IHdpbGwgb25seSBjb25z
+        aWRlciBtb3Rpb24gb2YgYm9kaWVzIGFuZCBub3QgdGhlIGNhdXNlPyBDYW4g
+        eW91IGRpZmZlcmVudGlhdGUgYmV0d2VlbiBraW5lbWF0aWNzIGFuZCBkeW5h
+        bWljcz88L3A+XG4ifV0sImhpbnRzIjpbXSwiZm9ybWF0cyI6WyJtdWx0aXBs
+        ZS1jaG9pY2UiLCJmcmVlLXJlc3BvbnNlIl0sImNvbWJvX2Nob2ljZXMiOltd
+        fV19LHsidWlkIjoiMTBAMSIsIm51bWJlciI6MTAsInZlcnNpb24iOjEsInB1
+        Ymxpc2hlZF9hdCI6IjIwMTUtMDMtMDdUMDA6MTE6MjEuNjcwWiIsImVkaXRv
+        cnMiOltdLCJhdXRob3JzIjpbeyJ1c2VyX2lkIjoyfV0sImNvcHlyaWdodF9o
+        b2xkZXJzIjpbeyJ1c2VyX2lkIjozfV0sImRlcml2ZWRfZnJvbSI6W10sImF0
+        dGFjaG1lbnRzIjpbXSwidGFncyI6WyJrMTJwaHlzLWNoMDQtczAxLWxvMDEi
+        LCJrMTJwaHlzLWNoMDQtZXgwMTAiLCJjaGFwdGVyLXJldmlldy1wcm9ibGVt
+        IiwidHV0b3Itb25seSIsImRvay0yIiwidGltZS1zaG9ydCIsImRpc3BsYXkt
+        ZnJlZS1yZXNwb25zZSIsImRpc3BsYXktcmVjLXNlbnNpdGl2ZSJdLCJzdGlt
+        dWx1c19odG1sIjoiIiwicXVlc3Rpb25zIjpbeyJzdGltdWx1c19odG1sIjoi
+        Iiwic3RlbV9odG1sIjoiPHA+TmV3dG9u4oCZcyBsYXdzIGRlc2NyaWJlcyBt
+        b3Rpb24gYW5kIGhvdyBmb3JjZXMgYWZmZWN0IG1vdGlvbiBvZiBhIHN5c3Rl
+        bTwvcD5cbiIsImFuc3dlcnMiOlt7ImNvbnRlbnRfaHRtbCI6IjxwPjA8L3A+
+        XG4iLCJjb3JyZWN0bmVzcyI6IjAuMCIsImZlZWRiYWNrX2h0bWwiOiI8cD5E
+        byB5b3UgdGhpbmsgTmV3dG9u4oCZcyBsYXdzIGRvIG5vdCBkZXNjcmliZSBt
+        b3Rpb24gb2YgYSBib2R5IGFuZCBmb3JjZXMgYWZmZWN0aW5nIGl0cyBtb3Rp
+        b24/IENhbiB5b3UgcmVjYWxsIGFsbCB0aGUgTmV3dG9u4oCZcyBsYXdzIG9m
+        IG1vdGlvbj88L3A+XG4ifSx7ImNvbnRlbnRfaHRtbCI6IjxwPjE8L3A+XG4i
+        LCJjb3JyZWN0bmVzcyI6IjEuMCIsImZlZWRiYWNrX2h0bWwiOiI8cD5Db3Jy
+        ZWN0ISBOZXd0b27igJlzIGxhd3MgZGVzY3JpYmUgbW90aW9uIG9mIGEgc3lz
+        dGVtIG9yIGFuIG9iamVjdCBhbmQgaG93IGZvcmNlcyBhY3Rpbmcgb24gdGhl
+        bSBhZmZlY3QgdGhlaXIgbW90aW9uLjwvcD5cbiJ9XSwiaGludHMiOltdLCJm
+        b3JtYXRzIjpbIm11bHRpcGxlLWNob2ljZSIsImZyZWUtcmVzcG9uc2UiXSwi
+        Y29tYm9fY2hvaWNlcyI6W119XX0seyJ1aWQiOiIxMUAxIiwibnVtYmVyIjox
+        MSwidmVyc2lvbiI6MSwicHVibGlzaGVkX2F0IjoiMjAxNS0wMy0wN1QwMDox
+        MToyMS42OTVaIiwiZWRpdG9ycyI6W10sImF1dGhvcnMiOlt7InVzZXJfaWQi
+        OjJ9XSwiY29weXJpZ2h0X2hvbGRlcnMiOlt7InVzZXJfaWQiOjN9XSwiZGVy
+        aXZlZF9mcm9tIjpbXSwiYXR0YWNobWVudHMiOltdLCJ0YWdzIjpbImsxMnBo
+        eXMtY2gwNC1zMDEtbG8wMSIsImsxMnBoeXMtY2gwNC1leDAxMSIsImNoYXB0
+        ZXItcmV2aWV3LXByb2JsZW0iLCJ0dXRvci1vbmx5IiwiZG9rLTIiLCJ0aW1l
+        LXNob3J0IiwiZGlzcGxheS1mcmVlLXJlc3BvbnNlIiwiZGlzcGxheS1yZWMt
+        c2Vuc2l0aXZlIl0sInN0aW11bHVzX2h0bWwiOiIiLCJxdWVzdGlvbnMiOlt7
+        InN0aW11bHVzX2h0bWwiOiIiLCJzdGVtX2h0bWwiOiI8cD5XaGVyZSBjYW4g
+        TmV3dG9u4oCZcyBMYXdzIGJlIGFwcGxpZWQgdG8/PC9wPlxuIiwiYW5zd2Vy
+        cyI6W3siY29udGVudF9odG1sIjoiPHA+TmV3dG9u4oCZcyBsYXdzIGFyZSBu
+        b3QgdW5pdmVyc2FsIGFuZCBjYW4gYmUgYXBwbGllZCB0byBhbGwgdGhlIG9i
+        amVjdHMgaW4gdGhlIHVuaXZlcnNlPC9wPlxuIiwiY29ycmVjdG5lc3MiOiIw
+        LjAiLCJmZWVkYmFja19odG1sIjoiPHA+SXQgaXMgY29ycmVjdCB0aGF0IE5l
+        d3RvbuKAmXMgbGF3cyBhcmUgYXBwbGljYWJsZSB0byBhbGwgdGhlIG9iamVj
+        dHMgaW4gdGhlIHVuaXZlcnNlIGJ1dCBkbyB5b3UgdGhpbmsgYmVpbmcgYXBw
+        bGljYWJsZSBldmVyeXdoZXJlIGluIHRoZSB1bml2ZXJzZSBpdCBpcyBub3Qg
+        4oCcdW5pdmVyc2Fs4oCdPzwvcD5cbiJ9LHsiY29udGVudF9odG1sIjoiPHA+
+        TmV3dG9u4oCZcyBsYXdzIGFyZSBub3QgdW5pdmVyc2FsIGFuZCBhcmUgbm90
+        IGFwcGxpY2FibGUgdG8gYWxsIHRoZSBvYmplY3RzIGluIHRoZSB1bml2ZXJz
+        ZTwvcD5cbiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6
+        IjxwPkFyZSB5b3Ugc3VyZSB0aGF0IE5ld3RvbuKAmXMgbGF3cyBhcmUgbm90
+        IHVuaXZlcnNhbCBhbmQgYXBwbGljYWJsZSBvbmx5IHRvIHNvbWUgcG9ydGlv
+        bnMgb2YgdGhlIHVuaXZlcnNlPzwvcD5cbiJ9LHsiY29udGVudF9odG1sIjoi
+        PHA+TmV3dG9u4oCZcyBsYXdzIGFyZSB1bml2ZXJzYWwgYW5kIGNhbiBiZSBh
+        cHBsaWVkIHRvIGFsbCB0aGUgb2JqZWN0cyBpbiB0aGUgdW5pdmVyc2U8L3A+
+        XG4iLCJjb3JyZWN0bmVzcyI6IjEuMCIsImZlZWRiYWNrX2h0bWwiOiI8cD5D
+        b3JyZWN0ISBOZXd0b27igJlzIGxhd3MgYXJlIHVuaXZlcnNhbCBhbmQgY2Fu
+        IGJlIGFwcGxpZWQgdG8gYWxsIHRoZSBvYmplY3RzIGluIHRoZSB1bml2ZXJz
+        ZTwvcD5cbiJ9LHsiY29udGVudF9odG1sIjoiPHA+TmV3dG9u4oCZcyBsYXdz
+        IGFyZSB1bml2ZXJzYWwgYW5kIGFyZSBub3QgYXBwbGljYWJsZSB0byBhbGwg
+        dGhlIG9iamVjdHMgaW4gdGhlIHVuaXZlcnNlPC9wPlxuIiwiY29ycmVjdG5l
+        c3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiPHA+SXQgaXMgY29ycmVjdCB0
+        aGF0IE5ld3RvbuKAmXMgbGF3cyBhcmUgdW5pdmVyc2FsIGJ1dCBkbyB5b3Ug
+        dGhpbmsgdW5pdmVyc2FsIGxhd3MgYXJlIG5vdCBhcHBsaWNhYmxlIHRvIGFs
+        bCB0aGUgb2JqZWN0cyBpbiB0aGUgdW5pdmVyc2U/IENhbiB5b3UgcmVjYWxs
+        IGRlZmluaXRpb24gb2YgdW5pdmVyc2FsIGxhd3M/PC9wPlxuIn1dLCJoaW50
+        cyI6W10sImZvcm1hdHMiOlsibXVsdGlwbGUtY2hvaWNlIiwiZnJlZS1yZXNw
+        b25zZSJdLCJjb21ib19jaG9pY2VzIjpbXX1dfSx7InVpZCI6IjEyQDEiLCJu
+        dW1iZXIiOjEyLCJ2ZXJzaW9uIjoxLCJwdWJsaXNoZWRfYXQiOiIyMDE1LTAz
+        LTA3VDAwOjExOjIxLjcwM1oiLCJlZGl0b3JzIjpbXSwiYXV0aG9ycyI6W3si
+        dXNlcl9pZCI6Mn1dLCJjb3B5cmlnaHRfaG9sZGVycyI6W3sidXNlcl9pZCI6
+        M31dLCJkZXJpdmVkX2Zyb20iOltdLCJhdHRhY2htZW50cyI6W10sInRhZ3Mi
+        OlsiazEycGh5cy1jaDA0LXMwMS1sbzAxIiwiazEycGh5cy1jaDA0LWV4MDEy
+        IiwiY2hhcHRlci1yZXZpZXctY29uY2VwdCIsImluYm9vay15ZXMiLCJkb2st
+        MyIsInRpbWUtbWVkaXVtIiwiZGlzcGxheS1mcmVlLXJlc3BvbnNlIiwiZGlz
+        cGxheS1yZWMtc2Vuc2l0aXZlIl0sInN0aW11bHVzX2h0bWwiOiIiLCJxdWVz
+        dGlvbnMiOlt7InN0aW11bHVzX2h0bWwiOiIiLCJzdGVtX2h0bWwiOiI8cD5G
+        b3JjZSBBIGlzIGFjdGluZyB0byB0aGUgbGVmdCBvbiBhbiBvYmplY3QuIEZv
+        cmNlIEIgaXMgYWN0aW5nIHRvIHRoZSByaWdodCBvbiB0aGUgc2FtZSBvYmpl
+        Y3QuIElmIHRoZXNlIGFyZSB0aGUgb25seSB0d28gZm9yY2VzIGFjdGluZyBv
+        biB0aGUgYm9keSBhbmQgaWYgRm9yY2UgQiBpcyBncmVhdGVyIHRoYW4gRm9y
+        Y2UgQSwgaW4gd2hpY2ggZGlyZWN0aW9uIHdpbGwgdGhlIG9iamVjdCBtb3Zl
+        PzwvcD5cbiIsImFuc3dlcnMiOlt7ImNvbnRlbnRfaHRtbCI6IjxwPlN0YW5k
+        cyBzdGlsbDwvcD5cbiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tf
+        aHRtbCI6IjxwPklzIGl0IGNvcnJlY3QgdG8gc2F5IHRoYXQgd2hlbiB0d28g
+        dW5lcXVhbCBmb3JjZXMgYXJlIGFjdGluZyBvbiBhbiBvYmplY3QgdGhlIG9i
+        amVjdCB3aWxsIG5vdCBkZW1vbnN0cmF0ZSBtb3Rpb24/PC9wPlxuIn0seyJj
+        b250ZW50X2h0bWwiOiI8cD5Nb3ZlcyB1cDwvcD5cbiIsImNvcnJlY3RuZXNz
+        IjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IjxwPkFyZSB5b3Ugc3VyZSB0aGF0
+        IHRoZSBuZXQgZm9yY2UgaXMgaW4gdGhlIHVwd2FyZCBkaXJlY3Rpb24/IEFs
+        c28sIGhhdmUgeW91IGNvbnNpZGVyZWQgbGluZSBvZiBhY3Rpb24gb2YgdGhl
+        IHR3byBnaXZlbiBmb3JjZXM/PC9wPlxuIn0seyJjb250ZW50X2h0bWwiOiI8
+        cD5Nb3ZlIHRvIHRoZSBsZWZ0PC9wPlxuIiwiY29ycmVjdG5lc3MiOiIwLjAi
+        LCJmZWVkYmFja19odG1sIjoiPHA+RG8geW91IHRoaW5rIHRoZSBuZXQgZm9y
+        Y2UgaXMgaW4gdGhlIGxlZnQgZGlyZWN0aW9uPzwvcD5cbiJ9LHsiY29udGVu
+        dF9odG1sIjoiPHA+TW92ZSB0byB0aGUgcmlnaHQ8L3A+XG4iLCJjb3JyZWN0
+        bmVzcyI6IjEuMCIsImZlZWRiYWNrX2h0bWwiOiI8cD5Db3JyZWN0ISBUaGUg
+        b2JqZWN0IHdpbGwgbW92ZSB0byB0aGUgcmlnaHQgYXMgdGhlIGZvcmNlIEIg
+        aXMgZ3JlYXRlciB0aGFuIGZvcmNlIEEuIFRoZSBuZXQgZm9yY2UgaXMgaW4g
+        dGhlIHJpZ2h0IGRpcmVjdGlvbi48L3A+XG4ifV0sImhpbnRzIjpbXSwiZm9y
+        bWF0cyI6WyJtdWx0aXBsZS1jaG9pY2UiLCJmcmVlLXJlc3BvbnNlIl0sImNv
+        bWJvX2Nob2ljZXMiOltdfV19LHsidWlkIjoiMTNAMSIsIm51bWJlciI6MTMs
+        InZlcnNpb24iOjEsInB1Ymxpc2hlZF9hdCI6IjIwMTUtMDMtMDdUMDA6MTE6
+        MjEuNzEwWiIsImVkaXRvcnMiOltdLCJhdXRob3JzIjpbeyJ1c2VyX2lkIjoy
+        fV0sImNvcHlyaWdodF9ob2xkZXJzIjpbeyJ1c2VyX2lkIjozfV0sImRlcml2
+        ZWRfZnJvbSI6W10sImF0dGFjaG1lbnRzIjpbXSwidGFncyI6WyJrMTJwaHlz
+        LWNoMDQtczAxLWxvMDEiLCJrMTJwaHlzLWNoMDQtZXgwMTMiLCJjaGFwdGVy
+        LXJldmlldy1jb25jZXB0IiwidHV0b3Itb25seSIsImRvay0zIiwidGltZS1z
+        aG9ydCIsImRpc3BsYXktZnJlZS1yZXNwb25zZSIsImRpc3BsYXktcmVjLXNl
+        bnNpdGl2ZSJdLCJzdGltdWx1c19odG1sIjoiIiwicXVlc3Rpb25zIjpbeyJz
+        dGltdWx1c19odG1sIjoiIiwic3RlbV9odG1sIjoiPHA+QW4gb2JqZWN0IGlz
+        IGF0IHJlc3QsIGFuZCB0d28gZm9yY2VzIFggYW5kIFkgYXJlIGFjdGluZyBv
+        biBpdC4gRm9yY2UgWCBoYXMgbWFnbml0dWRlIHggYW5kIGFjdHMgZG93bndh
+        cmQuIFdoYXQgY291bGQgYmUgdGhlIG1hZ25pdHVkZSBhbmQgZGlyZWN0aW9u
+        IG9mIFk/PC9wPlxuIiwiYW5zd2VycyI6W3siY29udGVudF9odG1sIjoiPHA+
+        SW4gZG93bndhcmQgZGlyZWN0aW9uIHdpdGggbWFnbml0dWRlIDJ4PC9wPlxu
+        IiwiY29ycmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiPHA+SGF2
+        ZSB5b3UgY29uc2lkZXJlZCB0aGUgZmFjdCB0aGF0IHRoZSBvYmplY3QgaXMg
+        YXQgcmVzdCB1bmRlciB0aGUgYWN0aW9uIG9mIHR3byBvcHBvc2l0ZSBmb3Jj
+        ZXM/PC9wPlxuIn0seyJjb250ZW50X2h0bWwiOiI8cD5JbiBkb3dud2FyZCBk
+        aXJlY3Rpb24gd2l0aCBtYWduaXR1ZGUgeDwvcD5cbiIsImNvcnJlY3RuZXNz
+        IjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IjxwPkFyZSB5b3Ugc3VyZSB0aGF0
+        IGZvcmNlIFkgd2lsbCBhY3QgaW4gdGhlIGRvd253YXJkIGRpcmVjdGlvbj8g
+        Q2FuIHlvdSB0aGluayB3aGF0IHdpbGwgaGFwcGVuIHRvIHRoZSBuZXQgZm9y
+        Y2Ugb24gdGhlIG9iamVjdCB3aGVuIGJvdGggZm9yY2UgdmVjdG9ycyBhY3Qg
+        aW4gdGhlIHNhbWUgZGlyZWN0aW9uPzwvcD5cbiJ9LHsiY29udGVudF9odG1s
+        IjoiPHA+SW4gdXB3YXJkIGRpcmVjdGlvbiB3aXRoIG1hZ25pdHVkZSAyeDwv
+        cD5cbiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6Ijxw
+        PkRvIHlvdSB0aGluayB0aGUgb2JqZWN0IGlzIG1vdmluZyBpbiB0aGUgdXB3
+        YXJkIGRpcmVjdGlvbj8gQ2FuIHlvdSB0aGluayBvZiB0aGUgbmV0IGZvcmNl
+        IGFjdGluZz88L3A+XG4ifSx7ImNvbnRlbnRfaHRtbCI6IjxwPkluIHVwd2Fy
+        ZCBkaXJlY3Rpb24gd2l0aCBtYWduaXR1ZGUgeDwvcD5cbiIsImNvcnJlY3Ru
+        ZXNzIjoiMS4wIiwiZmVlZGJhY2tfaHRtbCI6IjxwPkNvcnJlY3QhIEl0IGlz
+        IGdpdmVuIHRoYXQgb2JqZWN0IGlzIGF0IHJlc3QgdW5kZXIgdGhlIGFjdGlv
+        biBvZiB0d28gb3Bwb3NpdGUgZm9yY2VzOyB0aGVyZWZvcmUsIHRoZSB0d28g
+        Zm9yY2VzIG11c3QgYmFsYW5jZSBlYWNoIG90aGVyIG91dC4gVGh1cyBmb3Jj
+        ZSBZIG11c3QgYWN0IGluIHRoZSB1cHdhcmQgZGlyZWN0aW9uIHdpdGggYSBt
+        YWduaXR1ZGUgeDwvcD5cbiJ9XSwiaGludHMiOltdLCJmb3JtYXRzIjpbIm11
+        bHRpcGxlLWNob2ljZSIsImZyZWUtcmVzcG9uc2UiXSwiY29tYm9fY2hvaWNl
+        cyI6W119XX0seyJ1aWQiOiIxNEAxIiwibnVtYmVyIjoxNCwidmVyc2lvbiI6
+        MSwicHVibGlzaGVkX2F0IjoiMjAxNS0wMy0wN1QwMDoxMToyMS43MThaIiwi
+        ZWRpdG9ycyI6W10sImF1dGhvcnMiOlt7InVzZXJfaWQiOjJ9XSwiY29weXJp
+        Z2h0X2hvbGRlcnMiOlt7InVzZXJfaWQiOjN9XSwiZGVyaXZlZF9mcm9tIjpb
+        XSwiYXR0YWNobWVudHMiOltdLCJ0YWdzIjpbImsxMnBoeXMtY2gwNC1zMDEt
+        bG8wMSIsImsxMnBoeXMtY2gwNC1leDAxNCIsImNoYXB0ZXItcmV2aWV3LWNv
+        bmNlcHQiLCJ0dXRvci1vbmx5IiwiZG9rLTQiLCJ0aW1lLXNob3J0IiwiZGlz
+        cGxheS1mcmVlLXJlc3BvbnNlIiwiZGlzcGxheS1yZWMtc2Vuc2l0aXZlIl0s
+        InN0aW11bHVzX2h0bWwiOiIiLCJxdWVzdGlvbnMiOlt7InN0aW11bHVzX2h0
+        bWwiOiIiLCJzdGVtX2h0bWwiOiI8cD5Gb3JjZXMgQSwgQiwgYW5kIEMgd2l0
+        aCBtYWduaXR1ZGVzIGEsIGIsIGFuZCBjLCByZXNwZWN0aXZlbHksIGFjdCBv
+        biB0aGUgc2FtZSBvYmplY3QuIEZvcmNlIEEgYWN0cyB0byB0aGUgcmlnaHQs
+        IGZvcmNlIEIgYWN0cyB0byB0aGUgbGVmdCwgYW5kIGZvcmNlIEMgYWN0cyBw
+        ZXJwZW5kaWN1bGFybHkgZG93bndhcmQuIFdoYXQgaXMgYSBuZWNlc3Nhcnkg
+        Y29uZGl0aW9uIGZvciB0aGUgYm9keSB0byBtb3ZlIHBlcnBlbmRpY3VsYXJs
+        eSBkb3dud2FyZD88L3A+XG4iLCJhbnN3ZXJzIjpbeyJjb250ZW50X2h0bWwi
+        OiI8cD5Gb3JjZSBBIG11c3QgYmUgZXF1YWwgdG8gZm9yY2UgQzwvcD5cbiIs
+        ImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IjxwPkhhdmUg
+        eW91IGNvbnNpZGVyZWQgZm9yY2UgQyBpbiB5b3VyIGNhbGN1bGF0aW9uPzwv
+        cD5cbiJ9LHsiY29udGVudF9odG1sIjoiPHA+Rm9yY2UgQSBtdXN0IGJlIGdy
+        ZWF0ZXIgdGhhbiBmb3JjZSBDPC9wPlxuIiwiY29ycmVjdG5lc3MiOiIwLjAi
+        LCJmZWVkYmFja19odG1sIjoiPHA+QXJlIHlvdSBzdXJlIHRoYXQgdGhpcyBp
+        cyB0aGUgc3VmZmljaWVudCBjb25kaXRpb24/IFdoYXQgYWJvdXQgZm9yY2Ug
+        Qj88L3A+XG4ifSx7ImNvbnRlbnRfaHRtbCI6IjxwPkZvcmNlIEEgbXVzdCBi
+        ZSBlcXVhbCB0byBmb3JjZSBCPC9wPlxuIiwiY29ycmVjdG5lc3MiOiIxLjAi
+        LCJmZWVkYmFja19odG1sIjoiPHA+Q29ycmVjdCEgV2hlbiBmb3JjZXMgQSBh
+        bmQgQiBhcmUgZXF1YWwsIHRoZSBuZXQgZm9yY2UgYWN0aW5nIG9uIHRoZSBv
+        YmplY3QgaXMgaW4gdGhlIGRvd253YXJkIGRpcmVjdGlvbiBhbmQgaXMgcGVy
+        cGVuZGljdWxhciB0byB0aGUgbGluZSBvZiBhY3Rpb24gb2YgZm9yY2VzIEEg
+        YW5kIEIuPC9wPlxuIn0seyJjb250ZW50X2h0bWwiOiI8cD5Gb3JjZSBBIG11
+        c3QgYmUgZ3JlYXRlciB0aGFuIGZvcmNlIEI8L3A+XG4iLCJjb3JyZWN0bmVz
+        cyI6IjAuMCIsImZlZWRiYWNrX2h0bWwiOiI8cD5EbyB5b3UgdGhpbmsgaWYg
+        Zm9yY2UgQSBpcyBncmVhdGVyIHRoYW4gZm9yY2UgQiwgdGhlIG9iamVjdCB3
+        aWxsIG1vdmUgZG93bndhcmRzLCBwZXJwZW5kaWN1bGFybHk/IENhbiB5b3Ug
+        ZmluZCB0aGUgZGlyZWN0aW9uIG9mIHRoZSBuZXQgZm9yY2UgYWN0aW5nIG9u
+        IHRoZSBvYmplY3Q/PC9wPlxuIn1dLCJoaW50cyI6W10sImZvcm1hdHMiOlsi
+        bXVsdGlwbGUtY2hvaWNlIiwiZnJlZS1yZXNwb25zZSJdLCJjb21ib19jaG9p
+        Y2VzIjpbXX1dfSx7InVpZCI6IjE1QDEiLCJudW1iZXIiOjE1LCJ2ZXJzaW9u
+        IjoxLCJwdWJsaXNoZWRfYXQiOiIyMDE1LTAzLTA3VDAwOjExOjIxLjcyN1oi
+        LCJlZGl0b3JzIjpbXSwiYXV0aG9ycyI6W3sidXNlcl9pZCI6Mn1dLCJjb3B5
+        cmlnaHRfaG9sZGVycyI6W3sidXNlcl9pZCI6M31dLCJkZXJpdmVkX2Zyb20i
+        OltdLCJhdHRhY2htZW50cyI6W10sInRhZ3MiOlsiazEycGh5cy1jaDA0LXMw
+        MS1sbzAxIiwiazEycGh5cy1jaDA0LWV4MDE1IiwidGVzdC1wcmVwLW11bHRp
+        cGxlLWNob2ljZSIsImluYm9vay15ZXMiLCJkb2stMSIsInRpbWUtc2hvcnQi
+        LCJkaXNwbGF5LWZyZWUtcmVzcG9uc2UiLCJkaXNwbGF5LXJlYy1zZW5zaXRp
+        dmUiXSwic3RpbXVsdXNfaHRtbCI6IiIsInF1ZXN0aW9ucyI6W3sic3RpbXVs
+        dXNfaHRtbCI6IiIsInN0ZW1faHRtbCI6IjxwPldoaWNoIG9mIHRoZXNlIGlz
+        IGEgcGh5c2ljYWwgcXVhbnRpdHkgdGhhdCBpcyBkZXNjcmliZWQgYnkgZHlu
+        YW1pY3MgYnV0IG5vdCBieSBraW5lbWF0aWNzPzwvcD5cbiIsImFuc3dlcnMi
+        Olt7ImNvbnRlbnRfaHRtbCI6IjxwPmZvcmNlPC9wPlxuIiwiY29ycmVjdG5l
+        c3MiOiIxLjAifSx7ImNvbnRlbnRfaHRtbCI6IjxwPmFjY2VsZXJhdGlvbjwv
+        cD5cbiIsImNvcnJlY3RuZXNzIjoiMC4wIn0seyJjb250ZW50X2h0bWwiOiI8
+        cD52ZWxvY2l0eTwvcD5cbiIsImNvcnJlY3RuZXNzIjoiMC4wIn1dLCJoaW50
+        cyI6W10sImZvcm1hdHMiOlsibXVsdGlwbGUtY2hvaWNlIiwiZnJlZS1yZXNw
+        b25zZSJdLCJjb21ib19jaG9pY2VzIjpbXX1dfSx7InVpZCI6IjE2QDEiLCJu
+        dW1iZXIiOjE2LCJ2ZXJzaW9uIjoxLCJwdWJsaXNoZWRfYXQiOiIyMDE1LTAz
+        LTA3VDAwOjExOjIxLjczNVoiLCJlZGl0b3JzIjpbXSwiYXV0aG9ycyI6W3si
+        dXNlcl9pZCI6Mn1dLCJjb3B5cmlnaHRfaG9sZGVycyI6W3sidXNlcl9pZCI6
+        M31dLCJkZXJpdmVkX2Zyb20iOltdLCJhdHRhY2htZW50cyI6W10sInRhZ3Mi
+        OlsiazEycGh5cy1jaDA0LXMwMS1sbzAxIiwiazEycGh5cy1jaDA0LWV4MDE2
+        IiwidGVzdC1wcmVwLXNob3J0LWFuc3dlciIsImluYm9vay15ZXMiLCJkb2st
+        MiIsInRpbWUtc2hvcnQiLCJkaXNwbGF5LWZyZWUtcmVzcG9uc2UiLCJkaXNw
+        bGF5LXJlYy1zZW5zaXRpdmUiXSwic3RpbXVsdXNfaHRtbCI6IiIsInF1ZXN0
+        aW9ucyI6W3sic3RpbXVsdXNfaHRtbCI6IiIsInN0ZW1faHRtbCI6IjxwPkV4
+        dGVybmFsIGZvcmNlIGlzIGRlZmluZWQgYXMgYSBmb3JjZSB0aGF0IGFjdHMg
+        b24gdGhlIG9iamVjdCBvZiBpbnRlcmVzdCByYXRoZXIgdGhhbiBiZWluZyBh
+        Y3RlZCBvbiBieSB0aGUgb2JqZWN0PC9wPlxuIiwiYW5zd2VycyI6W3siY29u
+        dGVudF9odG1sIjoiPHA+MDwvcD5cbiIsImNvcnJlY3RuZXNzIjoiMC4wIiwi
+        ZmVlZGJhY2tfaHRtbCI6IjxwPkRvIHlvdSB0aGluayBleHRlcm5hbCBmb3Jj
+        ZXMgaW5jbHVkZSB0aG9zZSBmb3JjZXMgYWxzbyB3aGljaCBhcmUgb3JpZ2lu
+        YXRpbmcgZnJvbSBpbnNpZGUgdGhlIHN5c3RlbT8gQ2FuIHlvdSBkaWZmZXJl
+        bnRpYXRlIGJldHdlZW4gZXh0ZXJuYWwgYW5kIGludGVybmFsIGZvcmNlcz88
+        L3A+XG4ifSx7ImNvbnRlbnRfaHRtbCI6IjxwPjE8L3A+XG4iLCJjb3JyZWN0
+        bmVzcyI6IjEuMCIsImZlZWRiYWNrX2h0bWwiOiI8cD5Db3JyZWN0ISBFeHRl
+        cm5hbCBmb3JjZSBpcyBhIGZvcmNlIHRoYXQgYWN0cyBvbiB0aGUgb2JqZWN0
+        IG9mIGludGVyZXN0IHJhdGhlciB0aGFuIGJlaW5nIGFjdGVkIG9uIGJ5IHRo
+        ZSBvYmplY3QuIFRoZSBleHRlcm5hbCBmb3JjZXMgZG8gbm90IGluY2x1ZGUg
+        Zm9yY2VzIG9yaWdpbmF0aW5nZiByb20gaW5zaWRlIHRoZSBzeXN0ZW0uPC9w
+        PlxuIn1dLCJoaW50cyI6W10sImZvcm1hdHMiOlsibXVsdGlwbGUtY2hvaWNl
+        IiwiZnJlZS1yZXNwb25zZSJdLCJjb21ib19jaG9pY2VzIjpbXX1dfSx7InVp
+        ZCI6IjE3QDEiLCJudW1iZXIiOjE3LCJ2ZXJzaW9uIjoxLCJwdWJsaXNoZWRf
+        YXQiOiIyMDE1LTAzLTA3VDAwOjExOjIxLjc0M1oiLCJlZGl0b3JzIjpbXSwi
+        YXV0aG9ycyI6W3sidXNlcl9pZCI6Mn1dLCJjb3B5cmlnaHRfaG9sZGVycyI6
+        W3sidXNlcl9pZCI6M31dLCJkZXJpdmVkX2Zyb20iOltdLCJhdHRhY2htZW50
+        cyI6W10sInRhZ3MiOlsiazEycGh5cy1jaDA0LXMwMS1sbzAxIiwiazEycGh5
+        cy1jaDA0LWV4MDE3IiwidGVzdC1wcmVwLXNob3J0LWFuc3dlciIsImluYm9v
+        ay15ZXMiLCJkb2stMiIsInRpbWUtc2hvcnQiLCJkaXNwbGF5LWZyZWUtcmVz
+        cG9uc2UiLCJkaXNwbGF5LXJlYy1zZW5zaXRpdmUiXSwic3RpbXVsdXNfaHRt
+        bCI6IiIsInF1ZXN0aW9ucyI6W3sic3RpbXVsdXNfaHRtbCI6IiIsInN0ZW1f
+        aHRtbCI6IjxwPkJ5IGNvbnZlbnRpb24sIHdoaWNoIHNpZ24gaXMgYXNzaWdu
+        ZWQgdG8gYW4gb2JqZWN0IG1vdmluZyBkb3dud2FyZD88L3A+XG4iLCJhbnN3
+        ZXJzIjpbeyJjb250ZW50X2h0bWwiOiI8cD5ObyBzaWduIGlzIGFzc2lnbmVk
+        PC9wPlxuIiwiY29ycmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoi
+        PHA+Q2FuIGEgdmVjdG9yIHF1YW50aXR5IGhhdmUgbm8gc2lnbiBmb3IgaXRz
+        IGRpcmVjdGlvbj88L3A+XG4ifSx7ImNvbnRlbnRfaHRtbCI6IjxwPkNhbiBi
+        ZSBlaXRoZXIgcG9zaXRpdmUgb3IgbmVnYXRpdmU8L3A+XG4iLCJjb3JyZWN0
+        bmVzcyI6IjAuMCIsImZlZWRiYWNrX2h0bWwiOiI8cD5EbyB5b3UgdGhpbmsg
+        aXQgaXMgdHJ1ZSBhcyBwZXIgdGhlIGNvbnZlbnRpb24/PC9wPlxuIn0seyJj
+        b250ZW50X2h0bWwiOiI8cD5OZWdhdGl2ZSBzaWduPC9wPlxuIiwiY29ycmVj
+        dG5lc3MiOiIxLjAiLCJmZWVkYmFja19odG1sIjoiPHA+Q29ycmVjdCEgTmVn
+        YXRpdmUgc2lnbiBpcyBhc3NpZ25lZCB0byBhbiBvYmplY3QgbW92aW5nIGRv
+        d253YXJkLjwvcD5cbiJ9LHsiY29udGVudF9odG1sIjoiPHA+UG9zaXRpdmUg
+        c2lnbjwvcD5cbiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRt
+        bCI6IjxwPkFyZSB5b3Ugc3VyZSB0aGF0IHBvc2l0aXZlIHNpZ24gaXMgYXNz
+        aWduZWQgdG8gYW4gb2JqZWN0IG1vdmluZyBkb3dud2FyZD8gVHJ5IGFuZCB0
+        aGluayBpZiB0aGlzIGlzIHRydWUgYXMgcGVyIHRoZSBjb252ZW50aW9uLjwv
+        cD5cbiJ9XSwiaGludHMiOltdLCJmb3JtYXRzIjpbIm11bHRpcGxlLWNob2lj
+        ZSIsImZyZWUtcmVzcG9uc2UiXSwiY29tYm9fY2hvaWNlcyI6W119XX0seyJ1
+        aWQiOiIxOEAxIiwibnVtYmVyIjoxOCwidmVyc2lvbiI6MSwicHVibGlzaGVk
+        X2F0IjoiMjAxNS0wMy0wN1QwMDoxMToyMS43NTFaIiwiZWRpdG9ycyI6W10s
+        ImF1dGhvcnMiOlt7InVzZXJfaWQiOjJ9XSwiY29weXJpZ2h0X2hvbGRlcnMi
+        Olt7InVzZXJfaWQiOjN9XSwiZGVyaXZlZF9mcm9tIjpbXSwiYXR0YWNobWVu
+        dHMiOltdLCJ0YWdzIjpbImsxMnBoeXMtY2gwNC1zMDEtbG8wMiIsImsxMnBo
+        eXMtY2gwNC1leDAxOCIsImNoYXB0ZXItcmV2aWV3LWNvbmNlcHQiLCJ0dXRv
+        ci1vbmx5IiwiZG9rLTQiLCJ0aW1lLW1lZGl1bSIsImRpc3BsYXktZnJlZS1y
+        ZXNwb25zZSIsImRpc3BsYXktcmVjLXNlbnNpdGl2ZSJdLCJzdGltdWx1c19o
+        dG1sIjoiIiwicXVlc3Rpb25zIjpbeyJzdGltdWx1c19odG1sIjoiIiwic3Rl
+        bV9odG1sIjoiPHA+VHdvIHBlb3BsZSBwdXNoIGF0IGEgYm94IHdpdGggZm9y
+        Y2VzIG9mIGVxdWFsIHN0cmVuZ3Ro4oCUb25lIHRvIHRoZSB3ZXN0IGFuZCB0
+        aGUgb3RoZXIgdG8gdGhlIG5vcnRoLiBJbiB3aGljaCBkaXJlY3Rpb24gbXVz
+        dCB5b3UgYXBwbHkgZm9yY2UgbmVlZCB0byBzdG9wIHRoZSBib3ggZnJvbSBt
+        b3Zpbmc/PC9wPlxuIiwiYW5zd2VycyI6W3siY29udGVudF9odG1sIjoiPHA+
+        U291dGgtRWFzdDwvcD5cbiIsImNvcnJlY3RuZXNzIjoiMS4wIiwiZmVlZGJh
+        Y2tfaHRtbCI6IjxwPkNvcnJlY3QhIFRoZSBuZXQgZm9yY2UgYWN0aW5nIG9u
+        IHRoZSBib3ggaXMgaW4gdGhlIE5vcnRoLVdlc3QgZGlyZWN0aW9uLCB0aGVy
+        ZWZvcmUsIGEgZm9yY2UgaW4gU291dGgtRWFzdCBkaXJlY3Rpb24gd2lsbCBj
+        YW5jZWwgaXQgb3V0LjwvcD5cbiJ9LHsiY29udGVudF9odG1sIjoiPHA+U291
+        dGg8L3A+XG4iLCJjb3JyZWN0bmVzcyI6IjAuMCIsImZlZWRiYWNrX2h0bWwi
+        OiI8cD5ZZXMsIGZvcmNlIGFsb25nIHRoZSBzb3V0aCBkaXJlY3Rpb24gd2ls
+        bCBiYWxhbmNlIHRoZSBmb3JjZSBhbG9uZyB0aGUgbm9ydGggZGlyZWN0aW9u
+        IGJ1dCB3aGF0IGFib3V0IGJhbGFuY2luZyB0aGUgZm9yY2UgYWN0aW5nIGlu
+        IHRoZSB3ZXN0IGRpcmVjdGlvbj8gSGF2ZSB5b3UgY29uc2lkZXJlZCB0aGUg
+        ZGlyZWN0aW9uIG9mIG5ldCBmb3JjZSBjb3JyZWN0bHk/PC9wPlxuIn0seyJj
+        b250ZW50X2h0bWwiOiI8cD5Ob3J0aC1FYXN0PC9wPlxuIiwiY29ycmVjdG5l
+        c3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiPHA+SGF2ZSB5b3UgY29uc2lk
+        ZXJlZCB0aGUgZGlyZWN0aW9uIG9mIG5ldCBmb3JjZSBhY3Rpbmcgb24gdGhl
+        IGJveD8gRG8geW91IHRoaW5rIGZvcmNlIGFsb25nIE5vcnRoLUVhc3QgZGly
+        ZWN0aW9uIHdpbGwgY2FuY2VsIHRoZSBuZXQgZm9yY2UgYWN0aW5nIG9uIHRo
+        ZSBib3g/PC9wPlxuIn0seyJjb250ZW50X2h0bWwiOiI8cD5Ob3J0aDwvcD5c
+        biIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IjxwPkRv
+        IHlvdSB0aGluayBhcHBseWluZyBmb3JjZSBpbiB0aGUgbm9ydGggZGlyZWN0
+        aW9uIHdpbGwgc3RvcCB0aGUgYm94PyBBbHNvLCBkbyB5b3UgdGhpbmsgaXQg
+        d2lsbCBjYW5jZWwgdGhlIGZvcmNlIGFjdGluZyBvbiB0aGUgYm94PzwvcD5c
+        biJ9XSwiaGludHMiOltdLCJmb3JtYXRzIjpbIm11bHRpcGxlLWNob2ljZSIs
+        ImZyZWUtcmVzcG9uc2UiXSwiY29tYm9fY2hvaWNlcyI6W119XX0seyJ1aWQi
+        OiIxOUAxIiwibnVtYmVyIjoxOSwidmVyc2lvbiI6MSwicHVibGlzaGVkX2F0
+        IjoiMjAxNS0wMy0wN1QwMDoxMToyMS43NThaIiwiZWRpdG9ycyI6W10sImF1
+        dGhvcnMiOlt7InVzZXJfaWQiOjJ9XSwiY29weXJpZ2h0X2hvbGRlcnMiOlt7
+        InVzZXJfaWQiOjN9XSwiZGVyaXZlZF9mcm9tIjpbXSwiYXR0YWNobWVudHMi
+        OltdLCJ0YWdzIjpbImsxMnBoeXMtY2gwNC1zMDEtbG8wMiIsImsxMnBoeXMt
+        Y2gwNC1leDAxOSIsInByYWN0aWNlLWNvbmNlcHRzIiwidHV0b3Itb25seSIs
+        ImRvay0xIiwidGltZS1zaG9ydCIsImRpc3BsYXktZnJlZS1yZXNwb25zZSIs
+        ImRpc3BsYXktcmVjLXNlbnNpdGl2ZSJdLCJzdGltdWx1c19odG1sIjoiIiwi
+        cXVlc3Rpb25zIjpbeyJzdGltdWx1c19odG1sIjoiIiwic3RlbV9odG1sIjoi
+        PHA+SG93IGRvZXMgYSBmcmVlLWJvZHkgZGlhZ3JhbSByZXByZXNlbnQgb2Jq
+        ZWN0cyBiZWluZyBhY3RlZCB1cG9uIGJ5IGZvcmNlPzwvcD5cbiIsImFuc3dl
+        cnMiOlt7ImNvbnRlbnRfaHRtbCI6IjxwPkFzIGl0IGlzPC9wPlxuIiwiY29y
+        cmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiPHA+T24gdGhlIHBp
+        Y3R1cmUgb2YgYW55IG9iamVjdCx3b3VsZCBpdCBiZSBwb3NzaWJsZSBmb3Ig
+        eW91IHRvIGxvY2F0ZSBhIHNpbmdsZSBwb2ludCB3aGVyZSBhbGwgdGhlIGV4
+        dGVybmFsIGZvcmNlcyBhY3Q/PC9wPlxuIn0seyJjb250ZW50X2h0bWwiOiI8
+        cD5BcyBhIHVuaXQgY2lyY2xlPC9wPlxuIiwiY29ycmVjdG5lc3MiOiIwLjAi
+        LCJmZWVkYmFja19odG1sIjoiPHA+SXMgaXQgY29ycmVjdCB0byBzYXkgdGhh
+        dCBhIHVuaXQgY2lyY2xlIGlzIHRoZSBjb3JyZWN0IHJlcHJlc2VudGF0aW9u
+        IGZvciBhbGwgb2JqZWN0cz88L3A+XG4ifSx7ImNvbnRlbnRfaHRtbCI6Ijxw
+        PkFzIGEgc3F1YXJlIGJveDwvcD5cbiIsImNvcnJlY3RuZXNzIjoiMC4wIiwi
+        ZmVlZGJhY2tfaHRtbCI6IjxwPkFyZSB5b3Ugc3VyZSB0aGF0IHdlIHJlcHJl
+        c2VudCBvYmplY3QgYXMgYSBzcXVhcmUgYm94PyBEbyB5b3UgdGhpbmsgdGhl
+        cmUgaXMgYSBzaW5nbGUgcG9pbnQgaW4gYSBzcXVhcmUgYm94IHdoZXJlIGFs
+        bCB0aGUgZm9yY2VzIGFjdD88L3A+XG4ifSx7ImNvbnRlbnRfaHRtbCI6Ijxw
+        PkFzIGEgc2luZ2xlIHBvaW50PC9wPlxuIiwiY29ycmVjdG5lc3MiOiIxLjAi
+        LCJmZWVkYmFja19odG1sIjoiPHA+Q29ycmVjdCEgT2JqZWN0IGlzIHJlcHJl
+        c2VudGVkIGFzIGEgc2luZ2xlIHBvaW50IGluIGEgZnJlZS1ib2R5IGRpYWdy
+        YW0uIEl0IGlzIGEgc2luZ2xlIHBvaW50IHdoZXJlIGFsbCB0aGUgZXh0ZXJu
+        YWwgZm9yY2VzIGFjdC48L3A+XG4ifV0sImhpbnRzIjpbXSwiZm9ybWF0cyI6
+        WyJtdWx0aXBsZS1jaG9pY2UiLCJmcmVlLXJlc3BvbnNlIl0sImNvbWJvX2No
+        b2ljZXMiOltdfV19LHsidWlkIjoiMjBAMSIsIm51bWJlciI6MjAsInZlcnNp
+        b24iOjEsInB1Ymxpc2hlZF9hdCI6IjIwMTUtMDMtMDdUMDA6MTE6MjEuNzY2
+        WiIsImVkaXRvcnMiOltdLCJhdXRob3JzIjpbeyJ1c2VyX2lkIjoyfV0sImNv
+        cHlyaWdodF9ob2xkZXJzIjpbeyJ1c2VyX2lkIjozfV0sImRlcml2ZWRfZnJv
+        bSI6W10sImF0dGFjaG1lbnRzIjpbXSwidGFncyI6WyJrMTJwaHlzLWNoMDQt
+        czAxLWxvMDIiLCJrMTJwaHlzLWNoMDQtZXgwMjAiLCJwcmFjdGljZS1jb25j
+        ZXB0cyIsInR1dG9yLW9ubHkiLCJkb2stMSIsInRpbWUtc2hvcnQiLCJkaXNw
+        bGF5LWZyZWUtcmVzcG9uc2UiLCJkaXNwbGF5LXJlYy1zZW5zaXRpdmUiXSwi
+        c3RpbXVsdXNfaHRtbCI6IiIsInF1ZXN0aW9ucyI6W3sic3RpbXVsdXNfaHRt
+        bCI6IiIsInN0ZW1faHRtbCI6IjxwPkhvdyBkb2VzIGEgZnJlZS1ib2R5IGRp
+        YWdyYW0gcmVwcmVzZW50IGZvcmNlcyBhY3Rpbmcgb24gYW4gb2JqZWN0Pzwv
+        cD5cbiIsImFuc3dlcnMiOlt7ImNvbnRlbnRfaHRtbCI6IjxwPkFzIGEgc3Ry
+        YWlnaHQgbGluZSBwb2ludGluZyBpbiB0aGUgZGlyZWN0aW9uIHBlcnBlbmRp
+        Y3VsYXIgdG8gdGhlIGRpcmVjdGlvbiBpbiB3aGljaCB0aGUgZm9yY2UgaXMg
+        YXBwbGllZDwvcD5cbiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tf
+        aHRtbCI6IjxwPklzIGl0IGNvcnJlY3QgdG8gc2F5IHRoYXQgYSBwZXJwZW5k
+        aWN1bGFyIGxpbmUgd2l0aG91dCBhbiBhcnJvdyBpcyBhIGNvcnJlY3QgcmVw
+        cmVzZW50YXRpb24gb2YgZm9yY2VzPyBBbHNvLCBkbyB5b3UgdGhpbmsgdGhl
+        IGxpbmUgd2lsbCBiZSBwZXJwZW5kaWN1bGFyIHRvIHRoZSBkaXJlY3Rpb24g
+        aW4gd2hpY2ggZm9yY2UgYWN0cz88L3A+XG4ifSx7ImNvbnRlbnRfaHRtbCI6
+        IjxwPkFzIGFuIGFycm93IHBvaW50aW5nIGluIHRoZSBkaXJlY3Rpb24gcGVy
+        cGVuZGljdWxhciB0byB0aGUgZGlyZWN0aW9uIGluIHdoaWNoIHRoZSBmb3Jj
+        ZSBpcyBhcHBsaWVkPC9wPlxuIiwiY29ycmVjdG5lc3MiOiIwLjAiLCJmZWVk
+        YmFja19odG1sIjoiPHA+QXJlIHlvdSBzdXJlIHRoYXQgaXQgd2lsbCBnaXZl
+        IHRoZSBjb3JyZWN0IGluZm9ybWF0aW9uIGFib3V0IHRoZSBkaXJlY3Rpb24g
+        b2YgdGhlIGZvcmNlIGFjdGluZyBvbiBhbiBvYmplY3Q/PC9wPlxuIn0seyJj
+        b250ZW50X2h0bWwiOiI8cD5BcyBhIHN0cmFpZ2h0IGxpbmUgcG9pbnRpbmcg
+        aW4gdGhlIGRpcmVjdGlvbiBpbiB3aGljaCB0aGUgZm9yY2UgaXMgYXBwbGll
+        ZDwvcD5cbiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6
+        IjxwPkRvIHlvdSB0aGluayB5b3UgY2FuIHVuZGVyc3RhbmQgYWJvdXQgdGhl
+        IGRpcmVjdGlvbiBvZiBmb3JjZSBpZiBpdCBpcyByZXByZXNlbnRlZCBhcyBh
+        IHN0cmFpZ2h0IGxpbmU/PC9wPlxuIn0seyJjb250ZW50X2h0bWwiOiI8cD5B
+        cyBhbiBhcnJvdyBwb2ludGluZyBpbiB0aGUgZGlyZWN0aW9uIGluIHdoaWNo
+        IHRoZSBmb3JjZSBpcyBhcHBsaWVkPC9wPlxuIiwiY29ycmVjdG5lc3MiOiIx
+        LjAiLCJmZWVkYmFja19odG1sIjoiPHA+Q29ycmVjdCEgSW4gYSBmcmVlLWJv
+        ZHkgZGlhZ3JhbSBmb3JjZXMgYXJlIHJlcHJlc2VudGVkIGFzIGFycm93cyBw
+        b2ludGluZyBpbiB0aGUgZGlyZWN0aW9uIGluIHdoaWNoIHRoZSBmb3JjZSBp
+        cyBhcHBsaWVkLjwvcD5cbiJ9XSwiaGludHMiOltdLCJmb3JtYXRzIjpbIm11
+        bHRpcGxlLWNob2ljZSIsImZyZWUtcmVzcG9uc2UiXSwiY29tYm9fY2hvaWNl
+        cyI6W119XX0seyJ1aWQiOiIyMUAxIiwibnVtYmVyIjoyMSwidmVyc2lvbiI6
+        MSwicHVibGlzaGVkX2F0IjoiMjAxNS0wMy0wN1QwMDoxMToyMS43NzRaIiwi
+        ZWRpdG9ycyI6W10sImF1dGhvcnMiOlt7InVzZXJfaWQiOjJ9XSwiY29weXJp
+        Z2h0X2hvbGRlcnMiOlt7InVzZXJfaWQiOjN9XSwiZGVyaXZlZF9mcm9tIjpb
+        XSwiYXR0YWNobWVudHMiOltdLCJ0YWdzIjpbImsxMnBoeXMtY2gwNC1zMDEt
+        bG8wMiIsImsxMnBoeXMtY2gwNC1leDAyMSIsInByYWN0aWNlLWNvbmNlcHRz
+        IiwidHV0b3Itb25seSIsImRvay0yIiwidGltZS1zaG9ydCIsImRpc3BsYXkt
+        ZnJlZS1yZXNwb25zZSIsImRpc3BsYXktcmVjLXNlbnNpdGl2ZSJdLCJzdGlt
+        dWx1c19odG1sIjoiIiwicXVlc3Rpb25zIjpbeyJzdGltdWx1c19odG1sIjoi
+        Iiwic3RlbV9odG1sIjoiPHA+V2hpY2ggZm9yY2VzIGFyZSBjb25zaWRlcmVk
+        IGluIGEgZnJlZS1ib2R5IGRpYWdyYW0/PC9wPlxuIiwiYW5zd2VycyI6W3si
+        Y29udGVudF9odG1sIjoiPHA+TmVpdGhlciBpbnRlcm5hbCBub3IgZXh0ZXJu
+        YWwgZm9yY2VzPC9wPlxuIiwiY29ycmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFj
+        a19odG1sIjoiPHA+RG8geW91IHRoaW5rIGZyZWUtYm9keSBkaWFncmFtIGRv
+        ZXMgbm90IHJlcHJlc2VudCBmb3JjZXMgYWN0aW5nIG9uIHRoZSBib2R5Pzwv
+        cD5cbiJ9LHsiY29udGVudF9odG1sIjoiPHA+Qm90aCBpbnRlcm5hbCBhbmQg
+        ZXh0ZXJuYWwgZm9yY2VzPC9wPlxuIiwiY29ycmVjdG5lc3MiOiIwLjAiLCJm
+        ZWVkYmFja19odG1sIjoiPHA+QXJlIHlvdSBzdXJlIHRoYXQgYm90aCB0aGUg
+        aW50ZXJuYWwgYW5kIGV4dGVybmFsIGZvcmNlcyBhcmUgc2hvd24gaW4gdGhl
+        IGZyZWUtYm9keSBkaWFncmFtPyBDYW4geW91IHRoaW5rIG9mIHRoZSBmb3Jj
+        ZXMgdGhhdCBlaXRoZXIgYnJpbmcgYWJvdXQgY2hhbmdlIGluIG1vdGlvbiBv
+        ciBoYXZlIHRlbmRlbmN5IHRvIGJyaW5nIGFib3V0IGNoYW5nZSBpbiBtb3Rp
+        b24gb2YgYW4gb2JqZWN0PzwvcD5cbiJ9LHsiY29udGVudF9odG1sIjoiPHA+
+        RXh0ZXJuYWwgZm9yY2VzPC9wPlxuIiwiY29ycmVjdG5lc3MiOiIxLjAiLCJm
+        ZWVkYmFja19odG1sIjoiPHA+Q29ycmVjdCEgRnJlZS1ib2R5IGRpYWdyYW1z
+        IGFyZSB1c2VkIHRvIGFuYWx5emUgdGhlIGV4dGVybmFsIGZvcmNlcyBhY3Rp
+        bmcgb24gYSBzeXN0ZW0uPC9wPlxuIn0seyJjb250ZW50X2h0bWwiOiI8cD5J
+        bnRlcm5hbCBmb3JjZXM8L3A+XG4iLCJjb3JyZWN0bmVzcyI6IjAuMCIsImZl
+        ZWRiYWNrX2h0bWwiOiI8cD5JcyBpdCBjb3JyZWN0IHRvIHNheSB0aGF0IGlu
+        dGVybmFsIGZvcmNlcyB3aWxsIGJyaW5nIGNoYW5nZSBpbiB0aGUgbW90aW9u
+        IG9mIGFuIG9iamVjdD8gQ2FuIHlvdSB0aGluayBvZiB0aGUgcHVycG9zZSBv
+        ZiBhIGZyZWUtYm9keSBkaWFncmFtPzwvcD5cbiJ9XSwiaGludHMiOltdLCJm
+        b3JtYXRzIjpbIm11bHRpcGxlLWNob2ljZSIsImZyZWUtcmVzcG9uc2UiXSwi
+        Y29tYm9fY2hvaWNlcyI6W119XX0seyJ1aWQiOiIyMkAxIiwibnVtYmVyIjoy
+        MiwidmVyc2lvbiI6MSwicHVibGlzaGVkX2F0IjoiMjAxNS0wMy0wN1QwMDox
+        MToyMS43ODFaIiwiZWRpdG9ycyI6W10sImF1dGhvcnMiOlt7InVzZXJfaWQi
+        OjJ9XSwiY29weXJpZ2h0X2hvbGRlcnMiOlt7InVzZXJfaWQiOjN9XSwiZGVy
+        aXZlZF9mcm9tIjpbXSwiYXR0YWNobWVudHMiOltdLCJ0YWdzIjpbImsxMnBo
+        eXMtY2gwNC1zMDEtbG8wMiIsImsxMnBoeXMtY2gwNC1leDAyMiIsInByYWN0
+        aWNlLWNvbmNlcHRzIiwidHV0b3Itb25seSIsImRvay0yIiwidGltZS1zaG9y
+        dCIsImRpc3BsYXktZnJlZS1yZXNwb25zZSIsImRpc3BsYXktcmVjLXNlbnNp
+        dGl2ZSJdLCJzdGltdWx1c19odG1sIjoiIiwicXVlc3Rpb25zIjpbeyJzdGlt
+        dWx1c19odG1sIjoiIiwic3RlbV9odG1sIjoiPHA+SW4gYSBmcmVlLWJvZHkg
+        ZGlhZ3JhbSwgbWFnbml0dWRlIG9mIHRoZSBmb3JjZSBpcyBpbmRpY2F0ZWQg
+        YnkgdGhlIGxlbmd0aCBvZiB0aGUgYXJyb3cgcmVwcmVzZW50aW5nIGl0Ljwv
+        cD5cbiIsImFuc3dlcnMiOlt7ImNvbnRlbnRfaHRtbCI6IjxwPjA8L3A+XG4i
+        LCJjb3JyZWN0bmVzcyI6IjAuMCIsImZlZWRiYWNrX2h0bWwiOiI8cD5BcmUg
+        eW91IHN1cmUgdGhhdCBsZW5ndGggb2YgdGhlIGFycm93IGRvZXMgbm90IHJl
+        cHJlc2VudCBtYWduaXR1ZGUgb2YgdGhlIGZvcmNlIHZlY3Rvcj8gQ2FuIHlv
+        dSB0aGluayB3aGF0IHRoZSBsZW5ndGggb2YgYSB2ZWN0b3IgcmVwcmVzZW50
+        cz88L3A+XG4ifSx7ImNvbnRlbnRfaHRtbCI6IjxwPjE8L3A+XG4iLCJjb3Jy
+        ZWN0bmVzcyI6IjEuMCIsImZlZWRiYWNrX2h0bWwiOiI8cD5Db3JyZWN0ISBJ
+        biBhIGZyZWUtYm9keSBkaWFncmFtLCB0aGUgbWFnbml0dWRlIG9mIHRoZSBm
+        b3JjZSBpcyBpbmRpY2F0ZWQgYnkgdGhlIGxlbmd0aCBvZiB0aGUgYXJyb3cg
+        cmVwcmVzZW50aW5nIGl0LiBUaGUgbGVuZ3RoIG9mIHRoZSBhcnJvdyBpcyBt
+        YWduaXR1ZGUgb2YgdGhlIGZvcmNlIHZlY3Rvci48L3A+XG4ifV0sImhpbnRz
+        IjpbXSwiZm9ybWF0cyI6WyJtdWx0aXBsZS1jaG9pY2UiLCJmcmVlLXJlc3Bv
+        bnNlIl0sImNvbWJvX2Nob2ljZXMiOltdfV19LHsidWlkIjoiMjNAMSIsIm51
+        bWJlciI6MjMsInZlcnNpb24iOjEsInB1Ymxpc2hlZF9hdCI6IjIwMTUtMDMt
+        MDdUMDA6MTE6MjEuNzg5WiIsImVkaXRvcnMiOltdLCJhdXRob3JzIjpbeyJ1
+        c2VyX2lkIjoyfV0sImNvcHlyaWdodF9ob2xkZXJzIjpbeyJ1c2VyX2lkIjoz
+        fV0sImRlcml2ZWRfZnJvbSI6W10sImF0dGFjaG1lbnRzIjpbXSwidGFncyI6
+        WyJrMTJwaHlzLWNoMDQtczAxLWxvMDIiLCJrMTJwaHlzLWNoMDQtZXgwMjMi
+        LCJjaGFwdGVyLXJldmlldy1wcm9ibGVtIiwiaW5ib29rLXllcyIsImRvay0y
+        IiwidGltZS1zaG9ydCIsImRpc3BsYXktZnJlZS1yZXNwb25zZSIsImRpc3Bs
+        YXktcmVjLXNlbnNpdGl2ZSJdLCJzdGltdWx1c19odG1sIjoiIiwicXVlc3Rp
+        b25zIjpbeyJzdGltdWx1c19odG1sIjoiIiwic3RlbV9odG1sIjoiPHA+SWYg
+        dHdvIGZvcmNlcyBhcmUgYWN0aW5nIHBlcnBlbmRpY3VsYXJseSB0byBlYWNo
+        IG90aGVyLCBob3cgaXMgdGhlIHJlc3VsdGFudCBmb3JjZSB2ZWN0b3Igc2hv
+        d24gaW4gYSBmcmVlIGJvZHkgZGlhZ3JhbT88L3A+XG4iLCJhbnN3ZXJzIjpb
+        eyJjb250ZW50X2h0bWwiOiI8cD5UaGUgZm9yY2UgdmVjdG9ycyBhcmUgcGxh
+        Y2VkIGhlYWQgdG8gdGFpbCBwZXJwZW5kaWN1bGFyIHRvIGVhY2ggb3RoZXIg
+        YW5kIHRoZSByZXN1bHRhbnQgdmVjdG9yIGZvcm1zIHRoZSBoeXBvdGVudXNl
+        IG9mIHRoZSB0cmlhbmdsZTwvcD5cbiIsImNvcnJlY3RuZXNzIjoiMS4wIiwi
+        ZmVlZGJhY2tfaHRtbCI6IjxwPkNvcnJlY3QhIEZvciB0d28gZm9yY2UgdmVj
+        dG9ycywgdGhlIGZvcmNlIHZlY3RvcnMgYXJlIHBsYWNlZCBoZWFkIHRvIHRh
+        aWwgcGVycGVuZGljdWxhciB0byBlYWNoIG90aGVyIGFuZCB0aGUgcmVzdWx0
+        YW50IHZlY3RvciBmb3JtcyB0aGUgaHlwb3RlbnVzZSBvZiB0aGUgdHJpYW5n
+        bGU8L3A+XG4ifSx7ImNvbnRlbnRfaHRtbCI6IjxwPlRoZSBmb3JjZSB2ZWN0
+        b3JzIGFyZSBwbGFjZWQgaGVhZCB0byBoZWFkIHBlcnBlbmRpY3VsYXIgdG8g
+        ZWFjaCBvdGhlciBhbmQgdGhlIHJlc3VsdGFudCB2ZWN0b3IgZm9ybXMgdGhl
+        IGh5cG90ZW51c2Ugb2YgdGhlIHRyaWFuZ2xlPC9wPlxuIiwiY29ycmVjdG5l
+        c3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiPHA+WWVzLCB0aGUgdHdvIGdp
+        dmVuIHZlY3RvcnMgYXJlIHBlcnBlbmRpY3VsYXIgdG8gZWFjaCBvdGhlciBi
+        dXQgd2hhdCBhYm91dCBmaW5kaW5nIHRoZSByZXN1bHRhbnQgdmVjdG9yPyBE
+        byB5b3UgdGhpbmsgdGhlIHJlc3VsdGFudCB2ZWN0b3Igb2YgdHdvIHZlY3Rv
+        cnMgaXMgb2J0YWluZWQgYnkgcHV0dGluZyB0aGVtIGhlYWQgdG8gaGVhZD88
+        L3A+XG4ifSx7ImNvbnRlbnRfaHRtbCI6IjxwPlRoZSBmb3JjZSB2ZWN0b3Jz
+        IGFyZSBwbGFjZWQgaGVhZCB0byB0YWlsIGluIHRoZSBzYW1lIGxpbmUgYW5k
+        IHJlc3VsdGFudCB2ZWN0b3IgaXMgcmVwcmVzZW50ZWQgYXMgYSB2ZWN0b3Ig
+        YWxvbmcgdGhlIHNhbWUgbGluZTwvcD5cbiIsImNvcnJlY3RuZXNzIjoiMC4w
+        IiwiZmVlZGJhY2tfaHRtbCI6IjxwPkl0IGlzIGNvcnJlY3QgdGhhdCByZXN1
+        bHRhbnQgdmVjdG9yIG9mIHR3byB2ZWN0b3JzIGlzIG9idGFpbmVkIGJ5IHBs
+        YWNpbmcgdGhlbSBoZWFkIHRvIHRhaWwgYnV0IHdoYXQgYWJvdXQgdGhlIGFu
+        Z2xlIGJldHdlZW4gdGhlbT8gRG8geW91IHRoaW5rIHRoZSB0d28gZ2l2ZW4g
+        dmVjdG9ycyBhcmUgaW4gdGhlIHNhbWUgbGluZT88L3A+XG4ifSx7ImNvbnRl
+        bnRfaHRtbCI6IjxwPlRoZSBmb3JjZSB2ZWN0b3JzIGFyZSBwbGFjZWQgaGVh
+        ZCB0byBoZWFkIGluIHRoZSBzYW1lIGxpbmUgYW5kIHJlc3VsdGFudCB2ZWN0
+        b3IgaXMgaW4gZGlyZWN0aW9uIG9mIHRoZSBsb25nZXIgdmVjdG9yPC9wPlxu
+        IiwiY29ycmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiPHA+RG8g
+        eW91IHRoaW5rIHJlc3VsdGFudCB2ZWN0b3Igb2YgdHdvIHZlY3RvcnMgaXMg
+        b2J0YWluZWQgYnkgcHV0dGluZyB0d28gdmVjdG9ycyBoZWFkIHRvIGhlYWQ/
+        IEFsc28sIGRvIHlvdSB0aGluayB0aGUgZm9yY2VzIHdpbGwgYmUgaW4gdGhl
+        IHNhbWUgbGluZT88L3A+XG4ifV0sImhpbnRzIjpbXSwiZm9ybWF0cyI6WyJt
+        dWx0aXBsZS1jaG9pY2UiLCJmcmVlLXJlc3BvbnNlIl0sImNvbWJvX2Nob2lj
+        ZXMiOltdfV19LHsidWlkIjoiMjRAMSIsIm51bWJlciI6MjQsInZlcnNpb24i
+        OjEsInB1Ymxpc2hlZF9hdCI6IjIwMTUtMDMtMDdUMDA6MTE6MjEuNzk2WiIs
+        ImVkaXRvcnMiOltdLCJhdXRob3JzIjpbeyJ1c2VyX2lkIjoyfV0sImNvcHly
+        aWdodF9ob2xkZXJzIjpbeyJ1c2VyX2lkIjozfV0sImRlcml2ZWRfZnJvbSI6
+        W10sImF0dGFjaG1lbnRzIjpbXSwidGFncyI6WyJrMTJwaHlzLWNoMDQtczAx
+        LWxvMDIiLCJrMTJwaHlzLWNoMDQtZXgwMjQiLCJjaGFwdGVyLXJldmlldy1w
+        cm9ibGVtIiwidHV0b3Itb25seSIsImRvay0yIiwidGltZS1tZWRpdW0iLCJk
+        aXNwbGF5LWZyZWUtcmVzcG9uc2UiLCJkaXNwbGF5LXJlYy1zZW5zaXRpdmUi
+        XSwic3RpbXVsdXNfaHRtbCI6IiIsInF1ZXN0aW9ucyI6W3sic3RpbXVsdXNf
+        aHRtbCI6IiIsInN0ZW1faHRtbCI6IjxwPk9uZSBwZXJzb24gaXMgcHVzaGVk
+        IHRvIHRoZSByaWdodCBieSBzZWNvbmQgcGVyc29uIHdpdGggYSBmb3JjZSBv
+        ZiAxMCB1bml0cyBhbmQgdG8gdGhlIGxlZnQgYnkgYSB0aGlyZCBwZXJzb24g
+        d2l0aCBhIGZvcmNlIG9mIDEyIHVuaXRzLiBEcmF3IGEgZnJlZSBib2R5IGRp
+        YWdyYW0gdG8gcmVwcmVzZW50IHRoaXMuPC9wPlxuIiwiYW5zd2VycyI6W3si
+        Y29udGVudF9odG1sIjoiPHA+VHdvIGZvcmNlIHZlY3RvcnMgYWN0aW5nIGF0
+        IGEgcG9pbnQsIG9uZSBwb2ludGluZyB0b3dhcmRzIGxlZnQgd2l0aCBsZW5n
+        dGggMTAgdW5pdHMgYW5kIG90aGVyIHBvaW50aW5nIHRvd2FyZHMgcmlnaHQg
+        d2l0aCBsZW5ndGggMTIgdW5pdHM8L3A+XG4iLCJjb3JyZWN0bmVzcyI6IjAu
+        MCIsImZlZWRiYWNrX2h0bWwiOiI8cD5BcmUgeW91IHN1cmUgdGhhdCB5b3Ug
+        aGF2ZSB0YWtlbiB0aGUgZGlyZWN0aW9uIG9mIGJvdGggdGhlIGZvcmNlIHZl
+        Y3RvcnMgY29ycmVjdGx5PzwvcD5cbiJ9LHsiY29udGVudF9odG1sIjoiPHA+
+        VHdvIGZvcmNlIHZlY3RvcnMgYWN0aW5nIGF0IGEgcG9pbnQsIG9uZSBwb2lu
+        dGluZyB0b3dhcmRzIGxlZnQgd2l0aCBsZW5ndGggMTIgdW5pdHMgYW5kIG90
+        aGVyIHBvaW50aW5nIHRvd2FyZHMgcmlnaHQgd2l0aCBsZW5ndGggMTAgdW5p
+        dHM8L3A+XG4iLCJjb3JyZWN0bmVzcyI6IjEuMCIsImZlZWRiYWNrX2h0bWwi
+        OiI8cD5Db3JyZWN0ISBUaGUgZnJlZS1ib2R5IGRpYWdyYW0gb2YgdGhlIHR3
+        byBnaXZlbiBmb3JjZSB2ZWN0b3JzIGhhcyBvbmUgZm9yY2UgcG9pbnRpbmcg
+        dG93YXJkcyBsZWZ0IHdpdGggbGVuZ3RoIDEyIHVuaXRzIGFuZCB0aGUgb3Ro
+        ZXIgZm9yY2UgcG9pbnRpbmcgdG93YXJkcyByaWdodCB3aXRoIGxlbmd0aCAx
+        MCB1bml0czwvcD5cbiJ9LHsiY29udGVudF9odG1sIjoiPHA+VHdvIGZvcmNl
+        IHZlY3RvcnMgYWN0aW5nIGF0IGEgcG9pbnQsIGJvdGggcG9pbnRpbmcgdG93
+        YXJkcyBsZWZ0IHdpdGggbGVuZ3RocyAxMCB1bml0cyBhbmQgMTIgdW5pdHM8
+        L3A+XG4iLCJjb3JyZWN0bmVzcyI6IjAuMCIsImZlZWRiYWNrX2h0bWwiOiI8
+        cD5ZZXMsIGZvcmNlIHZlY3RvciBvZiBsZW5ndGggMTIgdW5pdHMgaXMgcG9p
+        bnRpbmcgaW4gdGhlIGxlZnQgZGlyZWN0aW9uIGJ1dCB3aGF0IGFib3V0IHRo
+        ZSBvdGhlciBmb3JjZSB2ZWN0b3I/IERvIHlvdSB0aGluayBpdCBpcyBwb2lu
+        dGluZyBpbiB0aGUgbGVmdCBkaXJlY3Rpb24/PC9wPlxuIn0seyJjb250ZW50
+        X2h0bWwiOiI8cD5Ud28gZm9yY2UgdmVjdG9ycyBhY3RpbmcgYXQgYSBwb2lu
+        dCwgYm90aCBwb2ludGluZyB0b3dhcmRzIHJpZ2h0IHdpdGggbGVuZ3RocyAx
+        MCB1bml0cyBhbmQgMTIgdW5pdHM8L3A+XG4iLCJjb3JyZWN0bmVzcyI6IjAu
+        MCIsImZlZWRiYWNrX2h0bWwiOiI8cD5JdCBpcyBjb3JyZWN0IHRoYXQgZm9y
+        Y2UgdmVjdG9yIG9mIGxlbmd0aCAxMCB1bml0cyBpcyBwb2ludGluZyBpbiBy
+        aWdodCBkaXJlY3Rpb24gYnV0IHdoYXQgYWJvdXQgdGhlIG90aGVyIGZvcmNl
+        IHZlY3Rvcj8gRG8geW91IHRoaW5rIGl0IGlzIHBvaW50aW5nIGluIHRoZSBy
+        aWdodCBkaXJlY3Rpb24/PC9wPlxuIn1dLCJoaW50cyI6W10sImZvcm1hdHMi
+        OlsibXVsdGlwbGUtY2hvaWNlIiwiZnJlZS1yZXNwb25zZSJdLCJjb21ib19j
+        aG9pY2VzIjpbXX1dfSx7InVpZCI6IjI1QDEiLCJudW1iZXIiOjI1LCJ2ZXJz
+        aW9uIjoxLCJwdWJsaXNoZWRfYXQiOiIyMDE1LTAzLTA3VDAwOjExOjIxLjgw
+        M1oiLCJlZGl0b3JzIjpbXSwiYXV0aG9ycyI6W3sidXNlcl9pZCI6Mn1dLCJj
+        b3B5cmlnaHRfaG9sZGVycyI6W3sidXNlcl9pZCI6M31dLCJkZXJpdmVkX2Zy
+        b20iOltdLCJhdHRhY2htZW50cyI6W10sInRhZ3MiOlsiazEycGh5cy1jaDA0
+        LXMwMS1sbzAyIiwiazEycGh5cy1jaDA0LWV4MDI1IiwiY2hhcHRlci1yZXZp
+        ZXctcHJvYmxlbSIsInR1dG9yLW9ubHkiLCJkb2stMiIsInRpbWUtbWVkaXVt
+        IiwiZGlzcGxheS1mcmVlLXJlc3BvbnNlIiwiZGlzcGxheS1yZWMtc2Vuc2l0
+        aXZlIl0sInN0aW11bHVzX2h0bWwiOiIiLCJxdWVzdGlvbnMiOlt7InN0aW11
+        bHVzX2h0bWwiOiIiLCJzdGVtX2h0bWwiOiI8cD5BIHBlcnNvbiB0cmllcyB0
+        byBsaWZ0IGEgYm94IHBsYWNlZCBvbiB0aGUgZmxvb3IgYnkgZXhlcnRpbmcg
+        YSBmb3JjZSBvZiA1IHVuaXRzIG9uIGl0LiBUaGUgc2FtZSBib3ggaXMgcHVs
+        bGVkIGRvd253YXJkcyBieSBhIGdyYXZpdGF0aW9uYWwgZm9yY2Ugb2YgNyB1
+        bml0cy4gRHJhdyBhIGZyZWUgYm9keSBkaWFncmFtIHRvIHJlcHJlc2VudCB0
+        aGlzLjwvcD5cbiIsImFuc3dlcnMiOlt7ImNvbnRlbnRfaHRtbCI6IjxwPlR3
+        byBmb3JjZSB2ZWN0b3JzIGFjdGluZyBhdCBhIHBvaW50LCBvbmUgcG9pbnRp
+        bmcgZG93biB3aXRoIGxlbmd0aCA1IHVuaXRzIGFuZCBvdGhlciBwb2ludGlu
+        ZyB1cCB3aXRoIGxlbmd0aCA3IHVuaXRzPC9wPlxuIiwiY29ycmVjdG5lc3Mi
+        OiIwLjAiLCJmZWVkYmFja19odG1sIjoiPHA+QXJlIHlvdSBzdXJlIHRoYXQg
+        eW91IGhhdmUgdGFrZW4gZGlyZWN0aW9uIG9mIGJvdGggdGhlIGZvcmNlIHZl
+        Y3RvcnMgY29ycmVjdGx5PyBBbHNvLCBkbyB5b3UgdGhpbmsgdGhlIGdyYXZp
+        dGF0aW9uYWwgZm9yY2UgYWN0cyBpbiB0aGUgdXB3YXJkIGRpcmVjdGlvbj88
+        L3A+XG4ifSx7ImNvbnRlbnRfaHRtbCI6IjxwPlR3byBmb3JjZSB2ZWN0b3Jz
+        IGFjdGluZyBhdCBhIHBvaW50LCBvbmUgcG9pbnRpbmcgdXAgd2l0aCBsZW5n
+        dGggNSB1bml0cyBhbmQgb3RoZXIgcG9pbnRpbmcgZG93biB3aXRoIGxlbmd0
+        aCA3IHVuaXRzPC9wPlxuIiwiY29ycmVjdG5lc3MiOiIxLjAiLCJmZWVkYmFj
+        a19odG1sIjoiPHA+Q29ycmVjdCEgSW4gYSBmcmVlLWJvZHkgZGlhZ3JhbSwg
+        dGhlIHR3byBmb3JjZSB2ZWN0b3JzIGFyZSByZXByZXNlbnRlZCBhcyBvbmUg
+        cG9pbnRpbmcgdXAgYW5kIHRoZSBvdGhlciBkb3duLiBUaGUgZm9yY2UgdmVj
+        dG9yIG9mIGxlbmd0aCA1IHVuaXRzIHBvaW50cyBpbiB0aGUgdXB3YXJkIGRp
+        cmVjdGlvbiB3aGlsZSB0aGUgZm9yY2UgdmVjdG9yIG9mIGxlbmd0aCA3IHVu
+        aXRzIHBvaW50cyBpbiB0aGUgZG93bndhcmQgZGlyZWN0aW9uLjwvcD5cbiJ9
+        LHsiY29udGVudF9odG1sIjoiPHA+VHdvIGZvcmNlIHZlY3RvcnMgYWN0aW5n
+        IGF0IGEgcG9pbnQsIGJvdGggcG9pbnRpbmcgZG93biB3aXRoIGxlbmd0aCA1
+        IHVuaXRzIGFuZCA3IHVuaXRzPC9wPlxuIiwiY29ycmVjdG5lc3MiOiIwLjAi
+        LCJmZWVkYmFja19odG1sIjoiPHA+WWVzLCB0aGUgZm9yY2UgdmVjdG9yIG9m
+        IGxlbmd0aCA3IHVuaXRzIGlzIHBvaW50aW5nIGRvd24gYnV0IHdoYXQgYWJv
+        dXQgdGhlIG90aGVyIGZvcmNlIHZlY3Rvcj8gRG8geW91IHRoaW5rIGl0IGlz
+        IHBvaW50aW5nIGRvd24/PC9wPlxuIn0seyJjb250ZW50X2h0bWwiOiI8cD5U
+        d28gZm9yY2UgdmVjdG9ycyBhY3RpbmcgYXQgYSBwb2ludCwgYm90aCBwb2lu
+        dGluZyB1cCB3aXRoIGxlbmd0aHMgNSB1bml0cyBhbmQgNyB1bml0czwvcD5c
+        biIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IjxwPkl0
+        IGlzIGNvcnJlY3QgdGhhdCBmb3JjZSB2ZWN0b3Igb2YgbGVuZ3RoIDUgdW5p
+        dHMgaXMgcG9pbnRpbmcgdXAgYnV0IHdoYXQgYWJvdXQgdGhlIG90aGVyIGZv
+        cmNlIHZlY3Rvcj8gRG8geW91IHRoaW5rIGl0IGlzIHBvaW50aW5nIHVwPyBB
+        bHNvLCBkbyB5b3UgdGhpbmsgdGhlIGdyYXZpdGF0aW9uYWwgZm9yY2UgYWN0
+        cyBpbiB0aGUgdXB3YXJkIGRpcmVjdGlvbj88L3A+XG4ifV0sImhpbnRzIjpb
+        XSwiZm9ybWF0cyI6WyJtdWx0aXBsZS1jaG9pY2UiLCJmcmVlLXJlc3BvbnNl
+        Il0sImNvbWJvX2Nob2ljZXMiOltdfV19LHsidWlkIjoiMjZAMSIsIm51bWJl
+        ciI6MjYsInZlcnNpb24iOjEsInB1Ymxpc2hlZF9hdCI6IjIwMTUtMDMtMDdU
+        MDA6MTE6MjEuODExWiIsImVkaXRvcnMiOltdLCJhdXRob3JzIjpbeyJ1c2Vy
+        X2lkIjoyfV0sImNvcHlyaWdodF9ob2xkZXJzIjpbeyJ1c2VyX2lkIjozfV0s
+        ImRlcml2ZWRfZnJvbSI6W10sImF0dGFjaG1lbnRzIjpbXSwidGFncyI6WyJr
+        MTJwaHlzLWNoMDQtczAxLWxvMDIiLCJrMTJwaHlzLWNoMDQtZXgwMjYiLCJj
+        aGFwdGVyLXJldmlldy1jb25jZXB0IiwiaW5ib29rLXllcyIsImRvay0zIiwi
+        dGltZS1tZWRpdW0iLCJkaXNwbGF5LWZyZWUtcmVzcG9uc2UiLCJkaXNwbGF5
+        LXJlYy1zZW5zaXRpdmUiXSwic3RpbXVsdXNfaHRtbCI6IiIsInF1ZXN0aW9u
+        cyI6W3sic3RpbXVsdXNfaHRtbCI6IiIsInN0ZW1faHRtbCI6IjxwPkRlc2Ny
+        aWJlIHR3byBkaWZmZXJlbnQgd2F5cyB0byBvYnRhaW4gdGhlIG5ldCBmb3Jj
+        ZSBvZiB0d28gcGVycGVuZGljdWxhciBmb3JjZXMgaW4gYSBmcmVlIGJvZHkg
+        ZGlhZ3JhbS48L3A+XG4iLCJhbnN3ZXJzIjpbeyJjb250ZW50X2h0bWwiOiI8
+        cD5Gb3JjZSB2ZWN0b3JzIG1heSBiZSBwbGFjZWQgdGFpbCB0byBoZWFkIGFu
+        ZCB0aGUgcmVzdWx0YW50IHZlY3RvciB3aWxsIGJlIHRoZSBoeXBvdGVudXNl
+        IG9mIHRoZSB0cmlhbmdsZS5UaGUgdmVjdG9ycyBtYXkgYmUgcGxhY2VkIHRh
+        aWwgdG8gdGFpbCwgZm9ybWluZyBhIHJlY3RhbmdsZSB3aXRoIHRoZSBuZXQg
+        Zm9yY2UgYmVpbmcgdGhlIGRpYWdvbmFsIG9mIHRoZSByZWN0YW5nbGU8L3A+
+        XG4iLCJjb3JyZWN0bmVzcyI6IjAuMCIsImZlZWRiYWNrX2h0bWwiOiI8cD5I
+        YXZlIHlvdSBjb25zaWRlcmVkIHRoZSB0cmlhbmd1bGFyIGxhdyBvZiB2ZWN0
+        b3IgYWRkaXRpb24gY29ycmVjdGx5PzwvcD5cbiJ9LHsiY29udGVudF9odG1s
+        IjoiPHA+Rm9yY2UgdmVjdG9ycyBtYXkgYmUgcGxhY2VkIGhlYWQgdG8gdGFp
+        bCBhbmQgdGhlIHJlc3VsdGFudCB2ZWN0b3Igd2lsbCBiZSB0aGUgaHlwb3Rl
+        bnVzZSBvZiB0aGUgdHJpYW5nbGUuVGhlIHZlY3RvcnMgbWF5IGV2ZW4gYmUg
+        cGxhY2VkIHRhaWwgdG8gdGFpbCwgZm9ybWluZyBhIHJlY3RhbmdsZSB3aXRo
+        IHRoZSBuZXQgZm9yY2UgYmVpbmcgdGhlIGRpYWdvbmFsIG9mIHRoZSByZWN0
+        YW5nbGU8L3A+XG4iLCJjb3JyZWN0bmVzcyI6IjEuMCIsImZlZWRiYWNrX2h0
+        bWwiOiI8cD5Db3JyZWN0ISBGb3JjZSB2ZWN0b3JzIG1heSBiZSBwbGFjZWQg
+        aGVhZCB0byB0YWlsIGFuZCB0aGUgcmVzdWx0YW50IHZlY3RvciB3aWxsIGJl
+        IHRoZSBoeXBvdGVudXNlIG9mIHRoZSB0cmlhbmdsZS4gVGhlIHZlY3RvcnMg
+        bWF5IGJlIHBsYWNlZCB0YWlsIHRvIHRhaWwsIGZvcm1pbmcgYSByZWN0YW5n
+        bGUgYW5kIHRoZSBuZXQgZm9yY2UgYmVpbmcgdGhlIGRpYWdvbmFsIG9mIHRo
+        ZSByZWN0YW5nbGU8L3A+XG4ifSx7ImNvbnRlbnRfaHRtbCI6IjxwPkZvcmNl
+        IHZlY3RvcnMgbWF5IGJlIHBsYWNlZCBoZWFkIHRvIGhlYWQgYW5kIHRoZSBy
+        ZXN1bHRhbnQgdmVjdG9yIHdpbGwgYmUgdGhlIGh5cG90ZW51c2Ugb2YgdGhl
+        IHRyaWFuZ2xlLlRoZSB2ZWN0b3JzIG1heSBldmVuIGJlIHBsYWNlZCBoZWFk
+        IHRvIGhlYWQsIGZvcm1pbmcgYSByZWN0YW5nbGUgd2l0aCB0aGUgbmV0IGZv
+        cmNlIGJlaW5nIHRoZSBkaWFnb25hbCBvZiB0aGUgcmVjdGFuZ2xlPC9wPlxu
+        IiwiY29ycmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiPHA+SXQg
+        aXMgY29ycmVjdCB0aGF0IGh5cG90ZW51c2Ugd2lsbCByZXByZXNlbnQgdGhl
+        IHJlc3VsdGFudCB2ZWN0b3IgaW4gYSB0cmlhbmdsZSwgYnV0IHdoYXQgYWJv
+        dXQgZGlyZWN0aW9uIG9mIHRoZSB0d28gdmVjdG9ycz8gRG8geW91IHRoaW5r
+        IHRoZXkgd2lsbCBiZSBwbGFjZWQgaGVhZCB0byBoZWFkIHRvIGZvcm0gYSB0
+        cmlhbmdsZT8gQ2FuIHlvdSByZWNhbGwgdGhlIHRyaWFuZ2xlIGxhdyBvZiB2
+        ZWN0b3IgYWRkaXRpb24/IEFsc28sIGhhdmUgeW91IGNvbnNpZGVyZWQgdGhl
+        IHJlY3Rhbmd1bGFyIGxhdyBvZiB2ZWN0b3IgYWRkaXRpb24gY29ycmVjdGx5
+        PzwvcD5cbiJ9LHsiY29udGVudF9odG1sIjoiPHA+Rm9yY2UgdmVjdG9ycyBt
+        YXkgYmUgcGxhY2VkIHRhaWwgdG8gdGFpbCBhbmQgdGhlIHJlc3VsdGFudCB2
+        ZWN0b3Igd2lsbCBiZSB0aGUgaHlwb3RlbnVzZSBvZiB0aGUgdHJpYW5nbGUu
+        VGhlIHZlY3RvcnMgbWF5IGV2ZW4gYmUgcGxhY2VkIGhlYWQgdG8gaGVhZCwg
+        Zm9ybWluZyBhIHJlY3RhbmdsZSB3aXRoIHRoZSBuZXQgZm9yY2UgYmVpbmcg
+        dGhlIGRpYWdvbmFsIG9mIHRoZSByZWN0YW5nbGU8L3A+XG4iLCJjb3JyZWN0
+        bmVzcyI6IjAuMCIsImZlZWRiYWNrX2h0bWwiOiI8cD5EbyB5b3UgdGhpbmsg
+        eW91IHdpbGwgcHV0IHR3byB2ZWN0b3JzIHRhaWwgdG8gdGFpbCB0byBmb3Jt
+        IGEgdHJpYW5nbGU/IENhbiB5b3UgcmVjYWxsIHRyaWFuZ2xlIGxhdyBvZiB2
+        ZWN0b3IgYWRkaXRpb24/IEFsc28sIHdoYXQgYWJvdXQgcmVjdGFuZ3VsYXIg
+        bGF3IG9mIHZlY3RvciBhZGRpdGlvbj88L3A+XG4ifV0sImhpbnRzIjpbXSwi
+        Zm9ybWF0cyI6WyJtdWx0aXBsZS1jaG9pY2UiLCJmcmVlLXJlc3BvbnNlIl0s
+        ImNvbWJvX2Nob2ljZXMiOltdfV19LHsidWlkIjoiMjdAMSIsIm51bWJlciI6
+        MjcsInZlcnNpb24iOjEsInB1Ymxpc2hlZF9hdCI6IjIwMTUtMDMtMDdUMDA6
+        MTE6MjEuODE4WiIsImVkaXRvcnMiOltdLCJhdXRob3JzIjpbeyJ1c2VyX2lk
+        IjoyfV0sImNvcHlyaWdodF9ob2xkZXJzIjpbeyJ1c2VyX2lkIjozfV0sImRl
+        cml2ZWRfZnJvbSI6W10sImF0dGFjaG1lbnRzIjpbXSwidGFncyI6WyJrMTJw
+        aHlzLWNoMDQtczAxLWxvMDIiLCJrMTJwaHlzLWNoMDQtZXgwMjciLCJjaGFw
+        dGVyLXJldmlldy1jb25jZXB0IiwidHV0b3Itb25seSIsImRvay0zIiwidGlt
+        ZS1tZWRpdW0iLCJkaXNwbGF5LWZyZWUtcmVzcG9uc2UiLCJkaXNwbGF5LXJl
+        Yy1zZW5zaXRpdmUiXSwic3RpbXVsdXNfaHRtbCI6IiIsInF1ZXN0aW9ucyI6
+        W3sic3RpbXVsdXNfaHRtbCI6IiIsInN0ZW1faHRtbCI6IjxwPklmIGEgZm9y
+        Y2UgcHVzaGVzIGEgYm9keSB0byB0aGUgZWFzdCBhbmQgYW5vdGhlciBmb3Jj
+        ZSBvZiBlcXVhbCBzdHJlbmd0aCBwdXNoZXMgaXQgdG8gdGhlIG5vcnRoLCBp
+        biB3aGF0IGRpcmVjdGlvbiB3aWxsIHRoZSBib2R5IG1vdmU/PC9wPlxuIiwi
+        YW5zd2VycyI6W3siY29udGVudF9odG1sIjoiPHA+V2lsbCByZW1haW4gYXQg
+        cmVzdDwvcD5cbiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRt
+        bCI6IjxwPkFyZSB5b3Ugc3VyZSBib3RoIGZvcmNlcyBjYW5jZWwgZWFjaCBv
+        dGhlciBvdXQ/IFRyeSBkcmF3aW5nIGEgZnJlZS1ib2R5IGRpYWdyYW0gdG8g
+        ZmluZCB0aGUgZGlyZWN0aW9uIG9mIHRoZSBuZXQgZm9yY2U/PC9wPlxuIn0s
+        eyJjb250ZW50X2h0bWwiOiI8cD5Ob3J0aC1FYXN0PC9wPlxuIiwiY29ycmVj
+        dG5lc3MiOiIxLjAiLCJmZWVkYmFja19odG1sIjoiPHA+Q29ycmVjdCEgVGhl
+        IGRpcmVjdGlvbiBvZiB0aGUgcmVzdWx0YW50IGZvcmNlIGlzIG5vcnRoLWVh
+        c3QgYW5kIHRoZSBvYmplY3Qgd2lsbCBtb3ZlIGluIHRoZSBkaXJlY3Rpb24g
+        b2YgdGhlIG5ldCBmb3JjZS48L3A+XG4ifSx7ImNvbnRlbnRfaHRtbCI6Ijxw
+        PkVhc3Q8L3A+XG4iLCJjb3JyZWN0bmVzcyI6IjAuMCIsImZlZWRiYWNrX2h0
+        bWwiOiI8cD5EbyB5b3UgdGhpbmsgdGhhdCB0aGUgZGlyZWN0aW9uIG9mIHRo
+        ZSBuZXQgZm9yY2UgaXMgZWFzdD8gSGF2ZSB5b3UgY29uc2lkZXJlZCB0aGUg
+        Zm9yY2UgYWN0aW5nIGluIHRoZSBub3J0aCBkaXJlY3Rpb24/PC9wPlxuIn0s
+        eyJjb250ZW50X2h0bWwiOiI8cD5Ob3J0aDwvcD5cbiIsImNvcnJlY3RuZXNz
+        IjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IjxwPkhhdmUgeW91IGNvbnNpZGVy
+        ZWQgdGhlIGZvcmNlIGFjdGluZyBpbiB0aGUgZWFzdCBkaXJlY3Rpb24/IENh
+        biB5b3UgZmluZCB0aGUgZGlyZWN0aW9uIG9mIHRoZSBuZXQgZm9yY2U/PC9w
+        PlxuIn1dLCJoaW50cyI6W10sImZvcm1hdHMiOlsibXVsdGlwbGUtY2hvaWNl
+        IiwiZnJlZS1yZXNwb25zZSJdLCJjb21ib19jaG9pY2VzIjpbXX1dfSx7InVp
+        ZCI6IjI4QDEiLCJudW1iZXIiOjI4LCJ2ZXJzaW9uIjoxLCJwdWJsaXNoZWRf
+        YXQiOiIyMDE1LTAzLTA3VDAwOjExOjIxLjgyNVoiLCJlZGl0b3JzIjpbXSwi
+        YXV0aG9ycyI6W3sidXNlcl9pZCI6Mn1dLCJjb3B5cmlnaHRfaG9sZGVycyI6
+        W3sidXNlcl9pZCI6M31dLCJkZXJpdmVkX2Zyb20iOltdLCJhdHRhY2htZW50
+        cyI6W10sInRhZ3MiOlsiazEycGh5cy1jaDA0LXMwMS1sbzAyIiwiazEycGh5
+        cy1jaDA0LWV4MDI4IiwidGVzdC1wcmVwLW11bHRpcGxlLWNob2ljZSIsImlu
+        Ym9vay15ZXMiLCJkb2stMSIsInRpbWUtc2hvcnQiLCJkaXNwbGF5LWZyZWUt
+        cmVzcG9uc2UiLCJkaXNwbGF5LXJlYy1zZW5zaXRpdmUiXSwic3RpbXVsdXNf
+        aHRtbCI6IiIsInF1ZXN0aW9ucyI6W3sic3RpbXVsdXNfaHRtbCI6IiIsInN0
+        ZW1faHRtbCI6IjxwPldoaWNoIG9mIHRoZXNlIGlzIHVzZWQgdG8gcmVwcmVz
+        ZW50IGEgZnJlZS1ib2R5IGluIGEgZnJlZSBib2R5IGRpYWdyYW0/PC9wPlxu
+        IiwiYW5zd2VycyI6W3siY29udGVudF9odG1sIjoiPHA+dmVjdG9yPC9wPlxu
+        IiwiY29ycmVjdG5lc3MiOiIwLjAifSx7ImNvbnRlbnRfaHRtbCI6IjxwPmxp
+        bmU8L3A+XG4iLCJjb3JyZWN0bmVzcyI6IjAuMCJ9LHsiY29udGVudF9odG1s
+        IjoiPHA+cG9pbnQ8L3A+XG4iLCJjb3JyZWN0bmVzcyI6IjEuMCJ9XSwiaGlu
+        dHMiOltdLCJmb3JtYXRzIjpbIm11bHRpcGxlLWNob2ljZSIsImZyZWUtcmVz
+        cG9uc2UiXSwiY29tYm9fY2hvaWNlcyI6W119XX0seyJ1aWQiOiIyOUAxIiwi
+        bnVtYmVyIjoyOSwidmVyc2lvbiI6MSwicHVibGlzaGVkX2F0IjoiMjAxNS0w
+        My0wN1QwMDoxMToyMS44MzJaIiwiZWRpdG9ycyI6W10sImF1dGhvcnMiOlt7
+        InVzZXJfaWQiOjJ9XSwiY29weXJpZ2h0X2hvbGRlcnMiOlt7InVzZXJfaWQi
+        OjN9XSwiZGVyaXZlZF9mcm9tIjpbXSwiYXR0YWNobWVudHMiOltdLCJ0YWdz
+        IjpbImsxMnBoeXMtY2gwNC1zMDEtbG8wMiIsImsxMnBoeXMtY2gwNC1leDAy
+        OSIsInRlc3QtcHJlcC1zaG9ydC1hbnN3ZXIiLCJpbmJvb2steWVzIiwiZG9r
+        LTIiLCJ0aW1lLW1lZGl1bSIsImRpc3BsYXktZnJlZS1yZXNwb25zZSIsImRp
+        c3BsYXktcmVjLXNlbnNpdGl2ZSJdLCJzdGltdWx1c19odG1sIjoiIiwicXVl
+        c3Rpb25zIjpbeyJzdGltdWx1c19odG1sIjoiIiwic3RlbV9odG1sIjoiPHA+
+        QSBib2R5IGlzIHB1c2hlZCBkb3dud2FyZCBieSBhIGZvcmNlIG9mIDUgdW5p
+        dHMgYW5kIHVwd2FyZHMgYnkgYSBmb3JjZSBvZiAyIHVuaXRzLiBEcmF3IGEg
+        ZnJlZSBib2R5IGRpYWdyYW0gdG8gcmVwcmVzZW50IHRoaXMuPC9wPlxuIiwi
+        YW5zd2VycyI6W3siY29udGVudF9odG1sIjoiPHA+VHdvIGZvcmNlIHZlY3Rv
+        cnMgYWN0aW5nIGF0IGEgcG9pbnQsIG9uZSBwb2ludGluZyBkb3duIHdpdGgg
+        bGVuZ3RoIDUgdW5pdHMgYW5kIG90aGVyIHBvaW50aW5nIHVwIHdpdGggbGVu
+        Z3RoIDIgdW5pdHM8L3A+XG4iLCJjb3JyZWN0bmVzcyI6IjEuMCIsImZlZWRi
+        YWNrX2h0bWwiOiI8cD5Db3JyZWN0ISBJbiBhIGZyZWUtYm9keSBkaWFncmFt
+        LCB0aGUgdHdvIGZvcmNlIHZlY3RvcnMgYXJlIHJlcHJlc2VudGVkIHdpdGgg
+        b25lIHBvaW50aW5nIHVwIGFuZCB0aGUgb3RoZXIgcG9pbnRpbmcgZG93bi4g
+        VGhlIGZvcmNlIHZlY3RvciBvZiBsZW5ndGggNSB1bml0cyBwb2ludHMgdXB3
+        YXJkIHdoaWxlIHRoZSBmb3JjZSB2ZWN0b3Igb2YgbGVuZ3RoIDcgdW5pdHMg
+        cG9pbnRzIGRvd253YXJkLjwvcD5cbiJ9LHsiY29udGVudF9odG1sIjoiPHA+
+        VHdvIGZvcmNlIHZlY3RvcnMgYWN0aW5nIGF0IGEgcG9pbnQsIG9uZSBwb2lu
+        dGluZyB1cCB3aXRoIGxlbmd0aCA1IHVuaXRzIGFuZCBvdGhlciBwb2ludGlu
+        ZyBkb3duIHdpdGggbGVuZ3RoIDIgdW5pdHM8L3A+XG4iLCJjb3JyZWN0bmVz
+        cyI6IjAuMCIsImZlZWRiYWNrX2h0bWwiOiI8cD5BcmUgeW91IHN1cmUgdGhh
+        dCB5b3UgaGF2ZSB0YWtlbiBkaXJlY3Rpb24gb2YgYm90aCBmb3JjZSB2ZWN0
+        b3JzIGNvcnJlY3RseT88L3A+XG4ifSx7ImNvbnRlbnRfaHRtbCI6IjxwPlR3
+        byBmb3JjZSB2ZWN0b3JzIGFjdGluZyBhdCBhIHBvaW50LCBib3RoIHBvaW50
+        aW5nIGRvd24gd2l0aCBsZW5ndGggNSB1bml0cyBhbmQgMiB1bml0czwvcD5c
+        biIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IjxwPlll
+        cywgZm9yY2UgdmVjdG9yIG9mIGxlbmd0aCA1IHVuaXRzIGlzIHBvaW50aW5n
+        IGRvd24gYnV0IHdoYXQgYWJvdXQgdGhlIG90aGVyIGZvcmNlIHZlY3Rvcj8g
+        RG8geW91IHRoaW5rIGl0IGlzIHBvaW50aW5nIGRvd24/PC9wPlxuIn0seyJj
+        b250ZW50X2h0bWwiOiI8cD5Ud28gZm9yY2UgdmVjdG9ycyBhY3RpbmcgYXQg
+        YSBwb2ludCwgYm90aCBwb2ludGluZyB1cCB3aXRoIGxlbmd0aHMgNSB1bml0
+        cyBhbmQgMiB1bml0czwvcD5cbiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVl
+        ZGJhY2tfaHRtbCI6IjxwPkl0IGlzIGNvcnJlY3QgdGhhdCBhIGZvcmNlIHZl
+        Y3RvciBvZiBsZW5ndGggMiB1bml0cyBpcyBwb2ludGluZyB1cCBidXQgd2hh
+        dCBhYm91dCB0aGUgb3RoZXIgZm9yY2UgdmVjdG9yPyBEbyB5b3UgdGhpbmsg
+        aXQgaXMgcG9pbnRpbmcgdXA/QWxzbywgZG8geW91IHRoaW5rIGdyYXZpdGF0
+        aW9uYWwgZm9yY2UgYWN0cyBpbiB0aGUgdXB3YXJkIGRpcmVjdGlvbj88L3A+
+        XG4ifV0sImhpbnRzIjpbXSwiZm9ybWF0cyI6WyJtdWx0aXBsZS1jaG9pY2Ui
+        LCJmcmVlLXJlc3BvbnNlIl0sImNvbWJvX2Nob2ljZXMiOltdfV19LHsidWlk
+        IjoiMzBAMSIsIm51bWJlciI6MzAsInZlcnNpb24iOjEsInB1Ymxpc2hlZF9h
+        dCI6IjIwMTUtMDMtMDdUMDA6MTE6MjEuODM5WiIsImVkaXRvcnMiOltdLCJh
+        dXRob3JzIjpbeyJ1c2VyX2lkIjoyfV0sImNvcHlyaWdodF9ob2xkZXJzIjpb
+        eyJ1c2VyX2lkIjozfV0sImRlcml2ZWRfZnJvbSI6W10sImF0dGFjaG1lbnRz
+        IjpbXSwidGFncyI6WyJrMTJwaHlzLWNoMDQtczAxLWxvMDIiLCJrMTJwaHlz
+        LWNoMDQtZXgwMzAiLCJ0ZXN0LXByZXAtc2hvcnQtYW5zd2VyIiwiaW5ib29r
+        LXllcyIsImRvay0yIiwidGltZS1tZWRpdW0iLCJkaXNwbGF5LWZyZWUtcmVz
+        cG9uc2UiLCJkaXNwbGF5LXJlYy1zZW5zaXRpdmUiXSwic3RpbXVsdXNfaHRt
+        bCI6IiIsInF1ZXN0aW9ucyI6W3sic3RpbXVsdXNfaHRtbCI6IiIsInN0ZW1f
+        aHRtbCI6IjxwPkEgYm9keSBpcyBwdXNoZWQgZWFzdHdhcmQgYnkgYSBmb3Jj
+        ZSBvZiBmb3VyIHVuaXRzIGFuZCBzb3V0aHdhcmQgd2l0aCBhIGZvcmNlIG9m
+        IHRocmVlIHVuaXRzLiBEcmF3IGEgZnJlZSBib2R5IGRpYWdyYW0gdG8gcmVw
+        cmVzZW50IHRoaXMuPC9wPlxuIiwiYW5zd2VycyI6W3siY29udGVudF9odG1s
+        IjoiPHA+VHdvIGZvcmNlIHZlY3RvcnMgYWN0aW5nIG9uIGEgcG9pbnQsIG9u
+        ZSBwb2ludGluZyB0byByaWdodCB3aXRoIGxlbmd0aCA0IHVuaXRzIGFuZCBv
+        dGhlciBwb2ludGluZyB1cCB3aXRoIGxlbmd0aCAzIHVuaXRzPC9wPlxuIiwi
+        Y29ycmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiPHA+WWVzLCBv
+        bmUgb2YgdGhlIGZvcmNlIHZlY3RvcnMgaXMgcG9pbnRpbmcgcmlnaHQsIGJ1
+        dCB3aGF0IGFib3V0IHRoZSBvdGhlciBmb3JjZSB2ZWN0b3I/IERvIHlvdSB0
+        aGluayBpdCBpcyBwb2ludGluZyBpbiB0aGUgdXB3YXJkIGRpcmVjdGlvbj88
+        L3A+XG4ifSx7ImNvbnRlbnRfaHRtbCI6IjxwPlR3byBmb3JjZSB2ZWN0b3Jz
+        IGFjdGluZyBvbiBhIHBvaW50LCBvbmUgcG9pbnRpbmcgdG8gcmlnaHQgd2l0
+        aCBsZW5ndGggNCB1bml0cyBhbmQgb3RoZXIgcG9pbnRpbmcgZG93biB3aXRo
+        IGxlbmd0aCAzIHVuaXRzPC9wPlxuIiwiY29ycmVjdG5lc3MiOiIxLjAiLCJm
+        ZWVkYmFja19odG1sIjoiPHA+Q29ycmVjdCEgSW4gdGhlIGZyZWUtYm9keSBk
+        aWFncmFtIG9mIHRoZSBzeXN0ZW0sIHRoZSB0d28gZm9yY2UgdmVjdG9ycyBh
+        cmUgYWN0aW5nIGF0IGEgc2luZ2xlIHBvaW50LCBvbmUgcG9pbnRpbmcgdG8g
+        dGhlIHJpZ2h0LCB3aGlsZSB0aGUgb3RoZXIgcG9pbnRpbmcgZG93bndhcmQ8
+        L3A+XG4ifSx7ImNvbnRlbnRfaHRtbCI6IjxwPlR3byBmb3JjZSB2ZWN0b3Jz
+        IGFjdGluZyBvbiBhIHBvaW50LCBvbmUgcG9pbnRpbmcgdG8gbGVmdCB3aXRo
+        IGxlbmd0aCA0IHVuaXRzIGFuZCBvdGhlciBwb2ludGluZyB1cCB3aXRoIGxl
+        bmd0aCAzIHVuaXRzPC9wPlxuIiwiY29ycmVjdG5lc3MiOiIwLjAiLCJmZWVk
+        YmFja19odG1sIjoiPHA+QXJlIHlvdSBzdXJlIHlvdSBoYXZlIHRha2VuIGRp
+        cmVjdGlvbiBvZiBib3RoIHZlY3RvcnMgY29ycmVjdGx5PzwvcD5cbiJ9LHsi
+        Y29udGVudF9odG1sIjoiPHA+VHdvIGZvcmNlIHZlY3RvcnMgYWN0aW5nIG9u
+        IGEgcG9pbnQsIG9uZSBwb2ludGluZyB0byBsZWZ0IHdpdGggbGVuZ3RoIDQg
+        dW5pdHMgYW5kIG90aGVyIHBvaW50aW5nIGRvd24gd2l0aCBsZW5ndGggMyB1
+        bml0czwvcD5cbiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRt
+        bCI6IjxwPkl0IGlzIGNvcnJlY3QgdGhhdCBmb3JjZSB2ZWN0b3Igb2YgbGVu
+        Z3RoIDMgdW5pdHMgaXMgcG9pbnRpbmcgZG93bndhcmQgYnV0IHdoYXQgYWJv
+        dXQgb3RoZXIgZm9yY2UgdmVjdG9yPyBJcyBpdCBwb2ludGluZyBsZWZ0Pzwv
+        cD5cbiJ9XSwiaGludHMiOltdLCJmb3JtYXRzIjpbIm11bHRpcGxlLWNob2lj
+        ZSIsImZyZWUtcmVzcG9uc2UiXSwiY29tYm9fY2hvaWNlcyI6W119XX0seyJ1
+        aWQiOiIzMUAxIiwibnVtYmVyIjozMSwidmVyc2lvbiI6MSwicHVibGlzaGVk
+        X2F0IjoiMjAxNS0wMy0wN1QwMDoxMToyMS44NDZaIiwiZWRpdG9ycyI6W10s
+        ImF1dGhvcnMiOlt7InVzZXJfaWQiOjJ9XSwiY29weXJpZ2h0X2hvbGRlcnMi
+        Olt7InVzZXJfaWQiOjN9XSwiZGVyaXZlZF9mcm9tIjpbXSwiYXR0YWNobWVu
+        dHMiOltdLCJ0YWdzIjpbImsxMnBoeXMtY2gwNC1zMDEtbG8wMiIsImsxMnBo
+        eXMtY2gwNC1leDAzMSIsInRlc3QtcHJlcC1leHRlbmRlZC1yZXNwb25zZSIs
+        ImluYm9vay15ZXMiLCJkb2stMyIsInRpbWUtbWVkaXVtIiwiZGlzcGxheS1m
+        cmVlLXJlc3BvbnNlIiwiZGlzcGxheS1yZWMtc2Vuc2l0aXZlIl0sInN0aW11
+        bHVzX2h0bWwiOiIiLCJxdWVzdGlvbnMiOlt7InN0aW11bHVzX2h0bWwiOiIi
+        LCJzdGVtX2h0bWwiOiI8cD5bRmlndXJlIDA0XzA0OiBTcHJpbmcgU2NhbGUu
+        IEZyb20gQ05YIENvbGxlZ2UgUGh5c2ljc10gSW4gdGhlIGZpZ3VyZSBnaXZl
+        biwgd2hhdCBpcyA8c3BhbiBkYXRhLW1hdGg9XCJGX1xcdGV4dHtyZXN0b3Jl
+        fVwiPk1hdGg8L3NwYW4+PyBXaGF0IGlzIGl0cyBtYWduaXR1ZGU/PC9wPlxu
+        IiwiYW5zd2VycyI6W3siY29udGVudF9odG1sIjoiPHA+PHNwYW4gZGF0YS1t
+        YXRoPVwiRl9cXHRleHR7cmVzdG9yZX1cIj5NYXRoPC9zcGFuPiBpcyB0aGUg
+        Zm9yY2UgZXhlcnRlZCBieSB0aGUgc3ByaW5nIG9uIHRoZSBoYW5kLiBJdCBp
+        cyBlcXVhbCB0byA2IHVuaXRzIGFuZCBwdWxscyB0byB0aGUgcmlnaHQuPC9w
+        PlxuIiwiY29ycmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiPHA+
+        SXQgaXMgY29ycmVjdCB0aGF0IDxzcGFuIGRhdGEtbWF0aD1cIkZfXFx0ZXh0
+        e3Jlc3RvcmV9XCI+TWF0aDwvc3Bhbj4gaXMgdGhlIGZvcmNlIGV4ZXJ0ZWQg
+        Ynkgc3ByaW5nIG9uIHRoZSBoYW5kIGJ1dCB3aGF0IGFib3V0IGl0cyBkaXJl
+        Y3Rpb24/IEhhdmUgeW91IHRha2VuIGRpcmVjdGlvbiBjb3JyZWN0bHk/PC9w
+        PlxuIn0seyJjb250ZW50X2h0bWwiOiI8cD48c3BhbiBkYXRhLW1hdGg9XCJG
+        X1xcdGV4dHtyZXN0b3JlfVwiPk1hdGg8L3NwYW4+IGlzIHRoZSBmb3JjZSBl
+        eGVydGVkIGJ5IHRoZSBoYW5kIG9uIHRoZSBzcHJpbmcuIEl0IGlzIGVxdWFs
+        IHRvIDYgdW5pdHMgYW5kIHB1bGxzIHRvIHRoZSBsZWZ0LjwvcD5cbiIsImNv
+        cnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IjxwPkFyZSB5b3Ug
+        c3VyZSB0aGF0IDxzcGFuIGRhdGEtbWF0aD1cIkZfXFx0ZXh0e3Jlc3RvcmV9
+        XCI+TWF0aDwvc3Bhbj4gaXMgZm9yY2UgZXhlcnRlZCBieSBoYW5kIG9uIHRo
+        ZSBzcHJpbmc/IFdoYXQgZG8geW91IHVuZGVyc3RhbmQgYnkgdGhlIHRlcm0g
+        cmVzdG9yZT88L3A+XG4ifSx7ImNvbnRlbnRfaHRtbCI6IjxwPjxzcGFuIGRh
+        dGEtbWF0aD1cIkZfXFx0ZXh0e3Jlc3RvcmV9XCI+TWF0aDwvc3Bhbj4gaXMg
+        dGhlIGZvcmNlIGV4ZXJ0ZWQgYnkgdGhlIHNwcmluZyBvbiB0aGUgaGFuZC4g
+        SXQgaXMgZXF1YWwgdG8gNiB1bml0cyBhbmQgcHVsbHMgdG8gdGhlIGxlZnQu
+        PC9wPlxuIiwiY29ycmVjdG5lc3MiOiIxLjAiLCJmZWVkYmFja19odG1sIjoi
+        PHA+Q29ycmVjdCEgPHNwYW4gZGF0YS1tYXRoPVwiRl9cXHRleHR7cmVzdG9y
+        ZX1cIj5NYXRoPC9zcGFuPiBpcyB0aGUgZm9yY2UgZXhlcnRlZCBieSB0aGUg
+        c3ByaW5nIG9uIHRoZSBoYW5kLiBJdCBpcyBlcXVhbCB0byA2IHVuaXRzIGFu
+        ZCBwdWxscyB0byB0aGUgbGVmdC48L3A+XG4ifSx7ImNvbnRlbnRfaHRtbCI6
+        IjxwPjxzcGFuIGRhdGEtbWF0aD1cIkZfXFx0ZXh0e3Jlc3RvcmV9XCI+TWF0
+        aDwvc3Bhbj4gaXMgdGhlIGZvcmNlIGV4ZXJ0ZWQgYnkgdGhlIGhhbmQgb24g
+        dGhlIHNwcmluZy4gSXQgaXMgZXF1YWwgdG8gNiB1bml0cyBhbmQgcHVsbHMg
+        dG8gdGhlIHJpZ2h0LjwvcD5cbiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVl
+        ZGJhY2tfaHRtbCI6IjxwPkRvIHlvdSB0aGluayA8c3BhbiBkYXRhLW1hdGg9
+        XCJGX1xcdGV4dHtyZXN0b3JlfVwiPk1hdGg8L3NwYW4+IGlzIHRoZSBmb3Jj
+        ZSBleGVydGVkIGJ5IHRoZSBoYW5kIG9uIHRoZSBzcHJpbmc/IEFsc28sIGhh
+        dmUgeW91IGNvbnNpZGVyZWQgZGlyZWN0aW9uIG9mIDxzcGFuIGRhdGEtbWF0
+        aD1cIkZfXFx0ZXh0e3Jlc3RvcmV9XCI+TWF0aDwvc3Bhbj4gY29ycmVjdGx5
+        PzwvcD5cbiJ9XSwiaGludHMiOltdLCJmb3JtYXRzIjpbIm11bHRpcGxlLWNo
+        b2ljZSIsImZyZWUtcmVzcG9uc2UiXSwiY29tYm9fY2hvaWNlcyI6W119XX0s
+        eyJ1aWQiOiIxMjhAMSIsIm51bWJlciI6MTI4LCJ2ZXJzaW9uIjoxLCJwdWJs
+        aXNoZWRfYXQiOiIyMDE1LTAzLTA3VDAwOjExOjIyLjYxOFoiLCJlZGl0b3Jz
+        IjpbXSwiYXV0aG9ycyI6W3sidXNlcl9pZCI6Mn1dLCJjb3B5cmlnaHRfaG9s
+        ZGVycyI6W3sidXNlcl9pZCI6M31dLCJkZXJpdmVkX2Zyb20iOltdLCJhdHRh
+        Y2htZW50cyI6W10sInRhZ3MiOlsiazEycGh5cy1jaDA0LXMwMS1sbzAyIiwi
+        azEycGh5cy1jaDA0LWV4MTI4IiwicHJhY3RpY2UtY29uY2VwdHMiLCJpbmJv
+        b2steWVzIiwiZG9rLTIiLCJ0aW1lLXNob3J0IiwiZGlzcGxheS1mcmVlLXJl
+        c3BvbnNlIiwiZGlzcGxheS1yZWMtc2Vuc2l0aXZlIl0sInN0aW11bHVzX2h0
+        bWwiOiIiLCJxdWVzdGlvbnMiOlt7InN0aW11bHVzX2h0bWwiOiIiLCJzdGVt
+        X2h0bWwiOiI8cD5XaGljaCBmb3JjZXMgYXJlIHJlcHJlc2VudGVkIGluIGEg
+        ZnJlZS1ib2R5IGRpYWdyYW0/PC9wPlxuIiwiYW5zd2VycyI6W3siY29udGVu
+        dF9odG1sIjoiPHA+QSBib2R5IHdpdGhvdXQgYW55IGZvcmNlIGlzIHNob3du
+        IGluIGEgZnJlZS1ib2R5IGRpYWdyYW08L3A+XG4iLCJjb3JyZWN0bmVzcyI6
+        IjAuMCIsImZlZWRiYWNrX2h0bWwiOiI8cD5IYXZlIHlvdSBnb3QgdGhlIGNv
+        bmNlcHQgb2YgZnJlZS1ib2R5IGRpYWdyYW0gY29ycmVjdGx5PzwvcD5cbiJ9
+        LHsiY29udGVudF9odG1sIjoiPHA+SW50ZXJuYWwgYW5kIGV4dGVybmFsIGZv
+        cmNlcyBib3RoIGFyZSByZXByZXNlbnRlZCBpbiBhIGZyZWUtYm9keSBkaWFn
+        cmFtPC9wPlxuIiwiY29ycmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1s
+        IjoiPHA+RG8geW91IHRoaW5rIHlvdSB3aWxsIGluY2x1ZGUgaW50ZXJuYWwg
+        Zm9yY2VzIGluIGEgZnJlZS1ib2R5IGRpYWdyYW0/PC9wPlxuIn0seyJjb250
+        ZW50X2h0bWwiOiI8cD5FeHRlcm5hbCBmb3JjZXMgYXJlIHJlcHJlc2VudGVk
+        IGluIGEgZnJlZS1ib2R5IGRpYWdyYW0uPC9wPlxuIiwiY29ycmVjdG5lc3Mi
+        OiIxLjAiLCJmZWVkYmFja19odG1sIjoiPHA+Q29ycmVjdCEgRXh0ZXJuYWwg
+        Zm9yY2VzIGFyZSByZXByZXNlbnRlZCBpbiBhIGZyZWUtYm9keSBkaWFncmFt
+        LiBUaGUgY29tYmluZWQgbmV0IGZvcmNlIGlzIHJlc3BvbnNpYmxlIGZvciBj
+        aGFuZ2UgaW4gdGhlIG1vdGlvbiBvZiBhbiBvYmplY3QuPC9wPlxuIn0seyJj
+        b250ZW50X2h0bWwiOiI8cD5JbnRlcm5hbCBmb3JjZXMgYXJlIHJlcHJlc2Vu
+        dGVkIGluIGEgZnJlZS1ib2R5IGRpYWdyYW0uPC9wPlxuIiwiY29ycmVjdG5l
+        c3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiPHA+QXJlIHlvdSBzdXJlIHRo
+        YXQgaW50ZXJuYWwgZm9yY2VzIGFyZSByZXByZXNlbnRlZCBpbiBhIGZyZWUt
+        Ym9keSBkaWFncmFtPyBEbyB5b3UgdGhpbmsgdGhhdCBpbnRlcm5hbCBmb3Jj
+        ZXMgY2FuIGJyaW5nIGluIGNoYW5nZSBpbiBtb3Rpb24gb2YgYW4gb2JqZWN0
+        PzwvcD5cbiJ9XSwiaGludHMiOltdLCJmb3JtYXRzIjpbIm11bHRpcGxlLWNo
+        b2ljZSIsImZyZWUtcmVzcG9uc2UiXSwiY29tYm9fY2hvaWNlcyI6W119XX1d
+        fQ==
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:33:14 GMT
+- request:
+    method: get
+    uri: http://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex001
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 301
+      message: Moved Permanently
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:52:30 GMT
+      Content-Type:
+      - text/html
+      Content-Length:
+      - '193'
+      Connection:
+      - keep-alive
+      Location:
+      - https://exercises-dev1.openstax.org/api/exercises?q=tag%3Ak12phys-ch04-ex001
+    body:
+      encoding: UTF-8
+      string: "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n<body
+        bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
+        (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:52:18 GMT
+- request:
+    method: get
+    uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex001
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:52:30 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      Etag:
+      - W/"261e2e99beae0c5ed58dfb00dcc47a69"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Set-Cookie:
+      - _exercises_session=OXFlUTA2QkQ5SVdGNld0b2FCdWg4dTRnZHdTUERvcjBUSXNSanM5Sk1wMVcwR2d3dkpXK3R5anR5N0VkMjhpS3hDejBKdU9OTzJmNTR4MXZWZTRHTmc9PS0tVWRtQ092cUhXN2Z0elB1RGQ4Ujludz09--2dd76e6676a92e1b1c6af86a412a3552348bb620;
+        path=/; HttpOnly
+      X-Request-Id:
+      - fdc17da9-8b8f-459b-90e9-067eb9900a81
+      X-Runtime:
+      - '0.041053'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJ0b3RhbF9jb3VudCI6MSwiaXRlbXMiOlt7InVpZCI6IjFAMSIsIm51bWJl
+        ciI6MSwidmVyc2lvbiI6MSwicHVibGlzaGVkX2F0IjoiMjAxNS0wMy0wN1Qw
+        MDoxMToyMS41NzlaIiwiZWRpdG9ycyI6W10sImF1dGhvcnMiOlt7InVzZXJf
+        aWQiOjJ9XSwiY29weXJpZ2h0X2hvbGRlcnMiOlt7InVzZXJfaWQiOjN9XSwi
+        ZGVyaXZlZF9mcm9tIjpbXSwiYXR0YWNobWVudHMiOltdLCJ0YWdzIjpbImsx
+        MnBoeXMtY2gwNC1zMDEtbG8wMSIsImsxMnBoeXMtY2gwNC1leDAwMSIsInBy
+        YWN0aWNlLWNvbmNlcHRzIiwiaW5ib29rLXllcyIsImRvay0xIiwidGltZS1z
+        aG9ydCIsImRpc3BsYXktZnJlZS1yZXNwb25zZSIsImRpc3BsYXktcmVjLXNl
+        bnNpdGl2ZSJdLCJzdGltdWx1c19odG1sIjoiIiwicXVlc3Rpb25zIjpbeyJz
+        dGltdWx1c19odG1sIjoiIiwic3RlbV9odG1sIjoiPHA+V2h5IHdhcyB0aGUg
+        c2NpZW50aXN0c+KAmSBmYWlsdXJlIHRvIGNvbnZlcnQgZnJvbSBFbmdsaXNo
+        IHVuaXR0cyB0byBTSSB1bml0cyBhIHByb2JsZW0/IFVzZSA8c3BhbiBkYXRh
+        LW1hdGg9XCJGX1xcdGV4dHtuZXR9ID0gMFwiPk1hdGg8L3NwYW4+IHRvIGhl
+        bHAgeW91IGFuc3dlciB0aGUgcXVlc3Rpb24uPC9wPlxuIiwiYW5zd2VycyI6
+        W3siY29udGVudF9odG1sIjoiPHA+S2luZW1hdGljcyBpcyB0aGUgc3R1ZHkg
+        b2YgYXRvbWljIHN0cnVjdHVyZTwvcD5cbiIsImNvcnJlY3RuZXNzIjoiMC4w
+        IiwiZmVlZGJhY2tfaHRtbCI6IjxwPkFyZSB5b3Ugc3VyZSB0aGF0IHRoZSBz
+        dHVkeSBvZiBhdG9taWMgc3RydWN0dXJlcyBpcyBhIHBhcnQgb2Yga2luZW1h
+        dGljcz88L3A+XG4ifSx7ImNvbnRlbnRfaHRtbCI6IjxwPktpbmVtYXRpY3Mg
+        aXMgdGhlIHN0dWR5IG9mIGRpbWVuc2lvbnM8L3A+XG4iLCJjb3JyZWN0bmVz
+        cyI6IjAuMCIsImZlZWRiYWNrX2h0bWwiOiI8cD5JcyBpdCBjb3JyZWN0IHRv
+        IHNheSB0aGF0IGRpbWVuc2lvbmFsIGFuYWx5c2lzIGlzIGRvbmUgaW4ga2lu
+        ZW1hdGljcz88L3A+XG4ifSx7ImNvbnRlbnRfaHRtbCI6IjxwPktpbmVtYXRp
+        Y3MgaXMgdGhlIHN0dWR5IG9mIGNhdXNlIG9mIG1vdGlvbjwvcD5cbiIsImNv
+        cnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IjxwPkRvIHlvdSB0
+        aGluayBjYXVzZSBvZiBtb3Rpb24gaXMgc3R1ZGllZCB1bmRlciBraW5lbWF0
+        aWNzPyBXaGF0IGFib3V0IHRoZSBzdHVkeSBvZiBmb3JjZSBhbmQgaXRzIGVm
+        ZmVjdCBvbiBhIGJvZHkuIElzIHRoYXQga2luZW1hdGljcz88L3A+XG4ifSx7
+        ImNvbnRlbnRfaHRtbCI6IjxwPktpbmVtYXRpY3MgaXMgdGhlIHN0dWR5IG9m
+        IG1vdGlvbjwvcD5cbiIsImNvcnJlY3RuZXNzIjoiMS4wIiwiZmVlZGJhY2tf
+        aHRtbCI6IjxwPkNvcnJlY3QhIE1vdGlvbiBvZiBhIGJvZHkgaXMgc3R1ZGll
+        ZCB1bmRlciBraW5lbWF0aWNzPC9wPlxuIn1dLCJoaW50cyI6W10sImZvcm1h
+        dHMiOlsibXVsdGlwbGUtY2hvaWNlIiwiZnJlZS1yZXNwb25zZSJdLCJjb21i
+        b19jaG9pY2VzIjpbXX1dfV19
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:52:18 GMT
+- request:
+    method: get
+    uri: http://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex002
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 301
+      message: Moved Permanently
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:52:30 GMT
+      Content-Type:
+      - text/html
+      Content-Length:
+      - '193'
+      Connection:
+      - keep-alive
+      Location:
+      - https://exercises-dev1.openstax.org/api/exercises?q=tag%3Ak12phys-ch04-ex002
+    body:
+      encoding: UTF-8
+      string: "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n<body
+        bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
+        (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:52:18 GMT
+- request:
+    method: get
+    uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex002
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:52:31 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      Etag:
+      - W/"f9e95a120812708836b28f4e733c825f"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Set-Cookie:
+      - _exercises_session=Y2FzQzNVaVRoM2paUExzdVgzVVpEeHBxQlk5YmhvZ2RwVHRCeXp1U0RpNmI0U2ppdm85cEkySEd0T2tpZjl1SS9TVXA1eWdaZExSd1FKYmphWVFhZHc9PS0teUJkOEYrM3BWR0E2VGF0MTZYQ1hYZz09--d8778c154b22cbbdc2a13d07b5b4291e965d2439;
+        path=/; HttpOnly
+      X-Request-Id:
+      - 08ac7e73-e813-4aab-ae40-275440eb955d
+      X-Runtime:
+      - '0.041718'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains
+    body:
+      encoding: UTF-8
+      string: '{"total_count":1,"items":[{"uid":"2@1","number":2,"version":1,"published_at":"2015-03-07T00:11:21.610Z","editors":[],"authors":[{"user_id":2}],"copyright_holders":[{"user_id":3}],"derived_from":[],"attachments":[],"tags":["k12phys-ch04-s01-lo01","k12phys-ch04-ex002","practice-concepts","inbook-yes","dok-1","time-short","display-free-response","display-rec-sensitive"],"stimulus_html":"","questions":[{"stimulus_html":"","stem_html":"<p>What
+        is kinematics?</p>\n","answers":[{"content_html":"<p>Kinematics is the study
+        of atomic structure</p>\n","correctness":"0.0","feedback_html":"<p>Are you
+        sure that the study of atomic structures is a part of kinematics?</p>\n"},{"content_html":"<p>Kinematics
+        is the study of dimensions</p>\n","correctness":"0.0","feedback_html":"<p>Is
+        it correct to say that dimensional analysis is done in kinematics?</p>\n"},{"content_html":"<p>Kinematics
+        is the study of cause of motion</p>\n","correctness":"0.0","feedback_html":"<p>Do
+        you think cause of motion is studied under kinematics? What about the study
+        of force and its effect on a body. Is that kinematics?</p>\n"},{"content_html":"<p>Kinematics
+        is the study of motion</p>\n","correctness":"1.0","feedback_html":"<p>Correct!
+        Motion of a body is studied under kinematics</p>\n"}],"hints":[],"formats":["multiple-choice","free-response"],"combo_choices":[]}]}]}'
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:52:19 GMT
+- request:
+    method: get
+    uri: http://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex003
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 301
+      message: Moved Permanently
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:52:31 GMT
+      Content-Type:
+      - text/html
+      Content-Length:
+      - '193'
+      Connection:
+      - keep-alive
+      Location:
+      - https://exercises-dev1.openstax.org/api/exercises?q=tag%3Ak12phys-ch04-ex003
+    body:
+      encoding: UTF-8
+      string: "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n<body
+        bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
+        (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:52:19 GMT
+- request:
+    method: get
+    uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex003
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:52:31 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      Etag:
+      - W/"c87c54fb67ff32cdcc3caa1aa2d9ebac"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Set-Cookie:
+      - _exercises_session=SlIzc2YxeFVvYXlHYllLcW9CRE94Y1M3aTk0T3BKbDhENkdaSm51YXRTWDlNV2JTOUF4SHpMMUZvQjUxZHNlb0ZmM3Z3OGVrblFISlpZVXFtakNXcWc9PS0taFloVWlRV3EzdlNTbE41NmRFK2R1Zz09--d42c006584c7ec847a75a1f73147c14d7c4697b6;
+        path=/; HttpOnly
+      X-Request-Id:
+      - 61e3dd7e-c921-488f-910c-7af6c8f543d3
+      X-Runtime:
+      - '0.042733'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains
+    body:
+      encoding: UTF-8
+      string: '{"total_count":1,"items":[{"uid":"3@1","number":3,"version":1,"published_at":"2015-03-07T00:11:21.618Z","editors":[],"authors":[{"user_id":2}],"copyright_holders":[{"user_id":3}],"derived_from":[],"attachments":[],"tags":["k12phys-ch04-s01-lo01","k12phys-ch04-ex003","practice-concepts","inbook-yes","dok-2","time-short","display-free-response","display-rec-sensitive"],"stimulus_html":"","questions":[{"stimulus_html":"","stem_html":"<p>Do
+        two bodies have to be in contact to exert force on one another? Explain with
+        examples.</p>\n","answers":[{"content_html":"<p>Yes, gravitational force is
+        a contact force and requires physical contact to exert force.</p>\n","correctness":"0.0","feedback_html":"<p>Are
+        you sure that gravitational force is a contact force? Can you differentiate
+        between field and contact forces?</p>\n"},{"content_html":"<p>Yes, gravitational
+        force is a field force and requires physical contact to exert force.</p>\n","correctness":"0.0","feedback_html":"<p>It
+        is correct that the gravitational force is a field force but do you think
+        field forces require physical contact to exert force?</p>\n"},{"content_html":"<p>No,
+        gravitational force is a contact force and does not require physical contact
+        to exert force.</p>\n","correctness":"0.0","feedback_html":"<p>Do you think
+        gravitational force is a contact force? Also, can the contact force act without
+        physical contact?</p>\n"},{"content_html":"<p>No, gravitational force is a
+        field force and does not requires physical contact to exert force.</p>\n","correctness":"1.0","feedback_html":"<p>Correct!
+        Gravitational force can exist between two objects as it is a field force and
+        does not require physical contact.</p>\n"}],"hints":[],"formats":["multiple-choice","free-response"],"combo_choices":[]}]}]}'
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:52:19 GMT
+- request:
+    method: get
+    uri: http://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex004
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 301
+      message: Moved Permanently
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:52:31 GMT
+      Content-Type:
+      - text/html
+      Content-Length:
+      - '193'
+      Connection:
+      - keep-alive
+      Location:
+      - https://exercises-dev1.openstax.org/api/exercises?q=tag%3Ak12phys-ch04-ex004
+    body:
+      encoding: UTF-8
+      string: "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n<body
+        bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
+        (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:52:19 GMT
+- request:
+    method: get
+    uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex004
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:52:32 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      Etag:
+      - W/"b5bf7a0e608976d65404f11e74af6c40"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Set-Cookie:
+      - _exercises_session=clYxVFpjY3JlVDlsSGQ3d0Nwd3hwMVhBNkpQR2ZWZHhtUGVtZG80YnU0TUIzajRhaW10eFdhVHNTWnhGNnl6ZHRXWkx0Yjl2MzBtMkhXVVpsVmowRmc9PS0tNjhXaWtobGJSQ25aWkxMU2RUWXllUT09--519bbceb949a8bf44702087dfde1dbde778d2eda;
+        path=/; HttpOnly
+      X-Request-Id:
+      - 75d9973f-450f-47cb-8391-6cfb1a28f748
+      X-Runtime:
+      - '0.040591'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains
+    body:
+      encoding: UTF-8
+      string: '{"total_count":1,"items":[{"uid":"4@1","number":4,"version":1,"published_at":"2015-03-07T00:11:21.626Z","editors":[],"authors":[{"user_id":2}],"copyright_holders":[{"user_id":3}],"derived_from":[],"attachments":[],"tags":["k12phys-ch04-s01-lo01","k12phys-ch04-ex004","practice-concepts","inbook-yes","dok-1","time-short","display-free-response","display-rec-sensitive"],"stimulus_html":"","questions":[{"stimulus_html":"","stem_html":"<p>What
+        kind of a physical quantity is force?</p>\n","answers":[{"content_html":"<p>Force
+        is neither scalar nor vector</p>\n","correctness":"0.0","feedback_html":"<p>Are
+        you sure that there is any physical quantity which can neither be scalar nor
+        vector?</p>\n"},{"content_html":"<p>Force is both vector and scalar</p>\n","correctness":"0.0","feedback_html":"<p>Can
+        a physical quantity be vector as well as scalar? Can you differentiate between
+        the two quantities?</p>\n"},{"content_html":"<p>Force is a vector quantity</p>\n","correctness":"1.0","feedback_html":"<p>Correct!
+        Force is a vector quantity as it has magnitude as well as direction.</p>\n"},{"content_html":"<p>Force
+        is a scalar quantity</p>\n","correctness":"0.0","feedback_html":"<p>Do you
+        think force is quantity which has magnitude only?</p>\n"}],"hints":[],"formats":["multiple-choice","free-response"],"combo_choices":[]}]}]}'
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:52:20 GMT
+- request:
+    method: get
+    uri: http://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex005
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 301
+      message: Moved Permanently
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:52:32 GMT
+      Content-Type:
+      - text/html
+      Content-Length:
+      - '193'
+      Connection:
+      - keep-alive
+      Location:
+      - https://exercises-dev1.openstax.org/api/exercises?q=tag%3Ak12phys-ch04-ex005
+    body:
+      encoding: UTF-8
+      string: "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n<body
+        bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
+        (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:52:20 GMT
+- request:
+    method: get
+    uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex005
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:52:32 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      Etag:
+      - W/"a9d3c756b6f7169ea433c895e8409403"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Set-Cookie:
+      - _exercises_session=ZEZaeWdHcUlGekx0OUR6N1c3RFJ5Q25NckdkMFJTUEo1RzhCY244clBMVGRsN3dFM09mcG9XTndRVlFsaDAyMzdleXNDdmthVTZuZlNVYWtFVFNQYUE9PS0tTThTQkNYUDhndzlHRXQxTzhoQ3g4QT09--e5b8b548a6829ca64ba2ff3920b7945c518e5544;
+        path=/; HttpOnly
+      X-Request-Id:
+      - 4a7fc25e-8301-42e0-9dd0-3f273b84df93
+      X-Runtime:
+      - '0.041734'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains
+    body:
+      encoding: UTF-8
+      string: '{"total_count":1,"items":[{"uid":"5@1","number":5,"version":1,"published_at":"2015-03-07T00:11:21.633Z","editors":[],"authors":[{"user_id":2}],"copyright_holders":[{"user_id":3}],"derived_from":[],"attachments":[],"tags":["k12phys-ch04-s01-lo01","k12phys-ch04-ex005","practice-concepts","tutor-only","dok-1","time-short","display-free-response","display-rec-sensitive"],"stimulus_html":"","questions":[{"stimulus_html":"","stem_html":"<p>What
+        physical quantity causes motion?</p>\n","answers":[{"content_html":"<p>Force</p>\n","correctness":"1.0","feedback_html":"<p>Correct!
+        Force is a physical quantity which brings change in motion.</p>\n"},{"content_html":"<p>Momentum</p>\n","correctness":"0.0","feedback_html":"<p>Momentum
+        is a quantity which is a product of mass and velocity. Do you think any of
+        the quantities defining momentum represents a cause?</p>\n"},{"content_html":"<p>Acceleration</p>\n","correctness":"0.0","feedback_html":"<p>It
+        is correct that acceleration brings change in motion but is it a cause?</p>\n"},{"content_html":"<p>Velocity</p>\n","correctness":"0.0","feedback_html":"<p>Are
+        you sure that velocity causes the motion? Is it a cause or an effect?</p>\n"}],"hints":[],"formats":["multiple-choice","free-response"],"combo_choices":[]}]}]}'
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:52:20 GMT
+- request:
+    method: get
+    uri: http://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex013
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 301
+      message: Moved Permanently
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:52:32 GMT
+      Content-Type:
+      - text/html
+      Content-Length:
+      - '193'
+      Connection:
+      - keep-alive
+      Location:
+      - https://exercises-dev1.openstax.org/api/exercises?q=tag%3Ak12phys-ch04-ex013
+    body:
+      encoding: UTF-8
+      string: "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n<body
+        bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
+        (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:52:20 GMT
+- request:
+    method: get
+    uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex013
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:52:33 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      Etag:
+      - W/"00606a0aaa97d3f7eece27ed34b72c8c"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Set-Cookie:
+      - _exercises_session=ZUtxNDkxUGs1WWxzSXNTVVY1eFRZRnkyWFNObm9QN3RvaFgySXdhaWhMckRUWTIxL3hncDRZbXhEWUpaZ2paV2lGdTV4WFp2Y1pJRnEyalJyNmd5anc9PS0tNGJ3ZFp5QzhHWjFxaEllaWsvdzdwZz09--1b0625f3f8cdf4ecba7973172853d997b7eb8604;
+        path=/; HttpOnly
+      X-Request-Id:
+      - 538250b5-4fa3-4efe-ace5-807c37146191
+      X-Runtime:
+      - '0.044589'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains
+    body:
+      encoding: UTF-8
+      string: '{"total_count":1,"items":[{"uid":"13@1","number":13,"version":1,"published_at":"2015-03-07T00:11:21.710Z","editors":[],"authors":[{"user_id":2}],"copyright_holders":[{"user_id":3}],"derived_from":[],"attachments":[],"tags":["k12phys-ch04-s01-lo01","k12phys-ch04-ex013","chapter-review-concept","tutor-only","dok-3","time-short","display-free-response","display-rec-sensitive"],"stimulus_html":"","questions":[{"stimulus_html":"","stem_html":"<p>An
+        object is at rest, and two forces X and Y are acting on it. Force X has magnitude
+        x and acts downward. What could be the magnitude and direction of Y?</p>\n","answers":[{"content_html":"<p>In
+        downward direction with magnitude 2x</p>\n","correctness":"0.0","feedback_html":"<p>Have
+        you considered the fact that the object is at rest under the action of two
+        opposite forces?</p>\n"},{"content_html":"<p>In downward direction with magnitude
+        x</p>\n","correctness":"0.0","feedback_html":"<p>Are you sure that force Y
+        will act in the downward direction? Can you think what will happen to the
+        net force on the object when both force vectors act in the same direction?</p>\n"},{"content_html":"<p>In
+        upward direction with magnitude 2x</p>\n","correctness":"0.0","feedback_html":"<p>Do
+        you think the object is moving in the upward direction? Can you think of the
+        net force acting?</p>\n"},{"content_html":"<p>In upward direction with magnitude
+        x</p>\n","correctness":"1.0","feedback_html":"<p>Correct! It is given that
+        object is at rest under the action of two opposite forces; therefore, the
+        two forces must balance each other out. Thus force Y must act in the upward
+        direction with a magnitude x</p>\n"}],"hints":[],"formats":["multiple-choice","free-response"],"combo_choices":[]}]}]}'
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:52:21 GMT
+- request:
+    method: get
+    uri: http://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex014
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 301
+      message: Moved Permanently
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:52:33 GMT
+      Content-Type:
+      - text/html
+      Content-Length:
+      - '193'
+      Connection:
+      - keep-alive
+      Location:
+      - https://exercises-dev1.openstax.org/api/exercises?q=tag%3Ak12phys-ch04-ex014
+    body:
+      encoding: UTF-8
+      string: "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n<body
+        bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
+        (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:52:21 GMT
+- request:
+    method: get
+    uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex014
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:52:33 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      Etag:
+      - W/"9933965478ff36638d767d5c9e641fbd"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Set-Cookie:
+      - _exercises_session=aGFpNUpEYkV4RnpjQmREeHVSZFc2SXZNMXFHdlhvOGIyWUhhOStESGxGc3BBbll6Rk14aDRHcHJWNFNPdXgvSi9xeENFSy8zVUVuU0lFd0krTkR0ckE9PS0tcVc0NVQ3bE1OK0pnVzNXQWJFSHh2QT09--25edac6ebdeb922892614ebb1cec0640d3b6c18e;
+        path=/; HttpOnly
+      X-Request-Id:
+      - 7d612b22-a19f-452e-801b-d0775485be5e
+      X-Runtime:
+      - '0.043987'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains
+    body:
+      encoding: UTF-8
+      string: '{"total_count":1,"items":[{"uid":"14@1","number":14,"version":1,"published_at":"2015-03-07T00:11:21.718Z","editors":[],"authors":[{"user_id":2}],"copyright_holders":[{"user_id":3}],"derived_from":[],"attachments":[],"tags":["k12phys-ch04-s01-lo01","k12phys-ch04-ex014","chapter-review-concept","tutor-only","dok-4","time-short","display-free-response","display-rec-sensitive"],"stimulus_html":"","questions":[{"stimulus_html":"","stem_html":"<p>Forces
+        A, B, and C with magnitudes a, b, and c, respectively, act on the same object.
+        Force A acts to the right, force B acts to the left, and force C acts perpendicularly
+        downward. What is a necessary condition for the body to move perpendicularly
+        downward?</p>\n","answers":[{"content_html":"<p>Force A must be equal to force
+        C</p>\n","correctness":"0.0","feedback_html":"<p>Have you considered force
+        C in your calculation?</p>\n"},{"content_html":"<p>Force A must be greater
+        than force C</p>\n","correctness":"0.0","feedback_html":"<p>Are you sure that
+        this is the sufficient condition? What about force B?</p>\n"},{"content_html":"<p>Force
+        A must be equal to force B</p>\n","correctness":"1.0","feedback_html":"<p>Correct!
+        When forces A and B are equal, the net force acting on the object is in the
+        downward direction and is perpendicular to the line of action of forces A
+        and B.</p>\n"},{"content_html":"<p>Force A must be greater than force B</p>\n","correctness":"0.0","feedback_html":"<p>Do
+        you think if force A is greater than force B, the object will move downwards,
+        perpendicularly? Can you find the direction of the net force acting on the
+        object?</p>\n"}],"hints":[],"formats":["multiple-choice","free-response"],"combo_choices":[]}]}]}'
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:52:21 GMT
+- request:
+    method: get
+    uri: http://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex019
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 301
+      message: Moved Permanently
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:52:33 GMT
+      Content-Type:
+      - text/html
+      Content-Length:
+      - '193'
+      Connection:
+      - keep-alive
+      Location:
+      - https://exercises-dev1.openstax.org/api/exercises?q=tag%3Ak12phys-ch04-ex019
+    body:
+      encoding: UTF-8
+      string: "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n<body
+        bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
+        (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:52:21 GMT
+- request:
+    method: get
+    uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex019
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:52:34 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      Etag:
+      - W/"54b04e9804e12ba2544ed408d4a531d8"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Set-Cookie:
+      - _exercises_session=R0d4dURhTFdLeWNwSnVBYXJ0S3cvYm9keEYyaWkxdFhmajBFd01CU3Jld2FHZnlLNGMrc2lnMS9zVnRrc2tRWmgydkJjM3FKWjhvYjJPZGtLaWdIOXc9PS0tT0lQTjFPMm5PSDJ6Y2pTZmlMNmdsdz09--68a1d6028752f79c508372cdea78c2bd5bf5fb69;
+        path=/; HttpOnly
+      X-Request-Id:
+      - 4cfab7c4-84df-4993-8014-46edf0c81744
+      X-Runtime:
+      - '0.042262'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains
+    body:
+      encoding: UTF-8
+      string: '{"total_count":1,"items":[{"uid":"19@1","number":19,"version":1,"published_at":"2015-03-07T00:11:21.758Z","editors":[],"authors":[{"user_id":2}],"copyright_holders":[{"user_id":3}],"derived_from":[],"attachments":[],"tags":["k12phys-ch04-s01-lo02","k12phys-ch04-ex019","practice-concepts","tutor-only","dok-1","time-short","display-free-response","display-rec-sensitive"],"stimulus_html":"","questions":[{"stimulus_html":"","stem_html":"<p>How
+        does a free-body diagram represent objects being acted upon by force?</p>\n","answers":[{"content_html":"<p>As
+        it is</p>\n","correctness":"0.0","feedback_html":"<p>On the picture of any
+        object,would it be possible for you to locate a single point where all the
+        external forces act?</p>\n"},{"content_html":"<p>As a unit circle</p>\n","correctness":"0.0","feedback_html":"<p>Is
+        it correct to say that a unit circle is the correct representation for all
+        objects?</p>\n"},{"content_html":"<p>As a square box</p>\n","correctness":"0.0","feedback_html":"<p>Are
+        you sure that we represent object as a square box? Do you think there is a
+        single point in a square box where all the forces act?</p>\n"},{"content_html":"<p>As
+        a single point</p>\n","correctness":"1.0","feedback_html":"<p>Correct! Object
+        is represented as a single point in a free-body diagram. It is a single point
+        where all the external forces act.</p>\n"}],"hints":[],"formats":["multiple-choice","free-response"],"combo_choices":[]}]}]}'
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:52:22 GMT
+- request:
+    method: get
+    uri: http://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex020
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 301
+      message: Moved Permanently
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:52:34 GMT
+      Content-Type:
+      - text/html
+      Content-Length:
+      - '193'
+      Connection:
+      - keep-alive
+      Location:
+      - https://exercises-dev1.openstax.org/api/exercises?q=tag%3Ak12phys-ch04-ex020
+    body:
+      encoding: UTF-8
+      string: "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n<body
+        bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
+        (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:52:22 GMT
+- request:
+    method: get
+    uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex020
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:52:34 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      Etag:
+      - W/"24fdfdd440a671f289c16fdf68c0e78e"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Set-Cookie:
+      - _exercises_session=L0NwUDNPa3pZdERhTDcwdWh0aGkrZ0VpTG5IZjlzRm5TQ2U1eDlMQUl6ZGxsR1VpY3RmOEIvZjhFcWxRVU9uc21ES1VUR0xOQzZzWmxPQmpURTNHS1E9PS0tYWhEVlJZOWdMSEVGOExTVXhJVFhwQT09--a6929d9e959a4249dcc73d77624f42cc3d7cb878;
+        path=/; HttpOnly
+      X-Request-Id:
+      - 00a283b7-f171-4de2-8d03-710467926826
+      X-Runtime:
+      - '0.041826'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains
+    body:
+      encoding: UTF-8
+      string: '{"total_count":1,"items":[{"uid":"20@1","number":20,"version":1,"published_at":"2015-03-07T00:11:21.766Z","editors":[],"authors":[{"user_id":2}],"copyright_holders":[{"user_id":3}],"derived_from":[],"attachments":[],"tags":["k12phys-ch04-s01-lo02","k12phys-ch04-ex020","practice-concepts","tutor-only","dok-1","time-short","display-free-response","display-rec-sensitive"],"stimulus_html":"","questions":[{"stimulus_html":"","stem_html":"<p>How
+        does a free-body diagram represent forces acting on an object?</p>\n","answers":[{"content_html":"<p>As
+        a straight line pointing in the direction perpendicular to the direction in
+        which the force is applied</p>\n","correctness":"0.0","feedback_html":"<p>Is
+        it correct to say that a perpendicular line without an arrow is a correct
+        representation of forces? Also, do you think the line will be perpendicular
+        to the direction in which force acts?</p>\n"},{"content_html":"<p>As an arrow
+        pointing in the direction perpendicular to the direction in which the force
+        is applied</p>\n","correctness":"0.0","feedback_html":"<p>Are you sure that
+        it will give the correct information about the direction of the force acting
+        on an object?</p>\n"},{"content_html":"<p>As a straight line pointing in the
+        direction in which the force is applied</p>\n","correctness":"0.0","feedback_html":"<p>Do
+        you think you can understand about the direction of force if it is represented
+        as a straight line?</p>\n"},{"content_html":"<p>As an arrow pointing in the
+        direction in which the force is applied</p>\n","correctness":"1.0","feedback_html":"<p>Correct!
+        In a free-body diagram forces are represented as arrows pointing in the direction
+        in which the force is applied.</p>\n"}],"hints":[],"formats":["multiple-choice","free-response"],"combo_choices":[]}]}]}'
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:52:22 GMT
+- request:
+    method: get
+    uri: http://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex025
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 301
+      message: Moved Permanently
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:52:34 GMT
+      Content-Type:
+      - text/html
+      Content-Length:
+      - '193'
+      Connection:
+      - keep-alive
+      Location:
+      - https://exercises-dev1.openstax.org/api/exercises?q=tag%3Ak12phys-ch04-ex025
+    body:
+      encoding: UTF-8
+      string: "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n<body
+        bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
+        (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:52:22 GMT
+- request:
+    method: get
+    uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex025
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:52:35 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      Etag:
+      - W/"e3285be467898ab87399f4662bc086ab"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Set-Cookie:
+      - _exercises_session=NzVPa2d5V2l4cng5T3BVV0E1dlRMdTZjVXYwbm4vYmxUQ3VhUVZ2QjhBYnpUU3RTN1hvL1M2Vm4ySndSU0ZZQk5Iay9mbk5ZL0Q0VGRBV3lsK1dneUE9PS0tMEdpN05IM1p2dE5ZR3F2bWFEWnExUT09--f088ed310c7404763065c848c119d15d5fc6f359;
+        path=/; HttpOnly
+      X-Request-Id:
+      - e5ccaa25-d268-4c14-94f1-7c6fe51529d1
+      X-Runtime:
+      - '0.065649'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains
+    body:
+      encoding: UTF-8
+      string: '{"total_count":1,"items":[{"uid":"25@1","number":25,"version":1,"published_at":"2015-03-07T00:11:21.803Z","editors":[],"authors":[{"user_id":2}],"copyright_holders":[{"user_id":3}],"derived_from":[],"attachments":[],"tags":["k12phys-ch04-s01-lo02","k12phys-ch04-ex025","chapter-review-problem","tutor-only","dok-2","time-medium","display-free-response","display-rec-sensitive"],"stimulus_html":"","questions":[{"stimulus_html":"","stem_html":"<p>A
+        person tries to lift a box placed on the floor by exerting a force of 5 units
+        on it. The same box is pulled downwards by a gravitational force of 7 units.
+        Draw a free body diagram to represent this.</p>\n","answers":[{"content_html":"<p>Two
+        force vectors acting at a point, one pointing down with length 5 units and
+        other pointing up with length 7 units</p>\n","correctness":"0.0","feedback_html":"<p>Are
+        you sure that you have taken direction of both the force vectors correctly?
+        Also, do you think the gravitational force acts in the upward direction?</p>\n"},{"content_html":"<p>Two
+        force vectors acting at a point, one pointing up with length 5 units and other
+        pointing down with length 7 units</p>\n","correctness":"1.0","feedback_html":"<p>Correct!
+        In a free-body diagram, the two force vectors are represented as one pointing
+        up and the other down. The force vector of length 5 units points in the upward
+        direction while the force vector of length 7 units points in the downward
+        direction.</p>\n"},{"content_html":"<p>Two force vectors acting at a point,
+        both pointing down with length 5 units and 7 units</p>\n","correctness":"0.0","feedback_html":"<p>Yes,
+        the force vector of length 7 units is pointing down but what about the other
+        force vector? Do you think it is pointing down?</p>\n"},{"content_html":"<p>Two
+        force vectors acting at a point, both pointing up with lengths 5 units and
+        7 units</p>\n","correctness":"0.0","feedback_html":"<p>It is correct that
+        force vector of length 5 units is pointing up but what about the other force
+        vector? Do you think it is pointing up? Also, do you think the gravitational
+        force acts in the upward direction?</p>\n"}],"hints":[],"formats":["multiple-choice","free-response"],"combo_choices":[]}]}]}'
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:52:23 GMT
+- request:
+    method: get
+    uri: http://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex026
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 301
+      message: Moved Permanently
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:52:35 GMT
+      Content-Type:
+      - text/html
+      Content-Length:
+      - '193'
+      Connection:
+      - keep-alive
+      Location:
+      - https://exercises-dev1.openstax.org/api/exercises?q=tag%3Ak12phys-ch04-ex026
+    body:
+      encoding: UTF-8
+      string: "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n<body
+        bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
+        (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:52:23 GMT
+- request:
+    method: get
+    uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex026
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:52:35 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      Etag:
+      - W/"384af4fe1fd119c06e77c33e6eefc68d"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Set-Cookie:
+      - _exercises_session=alFpZG5YVThUUnJxREE0OHJ0dldSU0QwRDE5b29PcCt2ejJvbm9qRjVCVTFZOUFkUy9kMjEzNzhJRHFva0hsL2ZHYUViTDh3VVlGdjQ4ZjYxU3BHQUE9PS0tQVZRMmVkV0dtSW11OUduRmhMTTdHZz09--5478e2e13c530d4ae1fcacde1a33879fa7c9b721;
+        path=/; HttpOnly
+      X-Request-Id:
+      - 6516eacd-b791-4145-949a-bdaf49aa35e6
+      X-Runtime:
+      - '0.043503'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains
+    body:
+      encoding: UTF-8
+      string: '{"total_count":1,"items":[{"uid":"26@1","number":26,"version":1,"published_at":"2015-03-07T00:11:21.811Z","editors":[],"authors":[{"user_id":2}],"copyright_holders":[{"user_id":3}],"derived_from":[],"attachments":[],"tags":["k12phys-ch04-s01-lo02","k12phys-ch04-ex026","chapter-review-concept","inbook-yes","dok-3","time-medium","display-free-response","display-rec-sensitive"],"stimulus_html":"","questions":[{"stimulus_html":"","stem_html":"<p>Describe
+        two different ways to obtain the net force of two perpendicular forces in
+        a free body diagram.</p>\n","answers":[{"content_html":"<p>Force vectors may
+        be placed tail to head and the resultant vector will be the hypotenuse of
+        the triangle.The vectors may be placed tail to tail, forming a rectangle with
+        the net force being the diagonal of the rectangle</p>\n","correctness":"0.0","feedback_html":"<p>Have
+        you considered the triangular law of vector addition correctly?</p>\n"},{"content_html":"<p>Force
+        vectors may be placed head to tail and the resultant vector will be the hypotenuse
+        of the triangle.The vectors may even be placed tail to tail, forming a rectangle
+        with the net force being the diagonal of the rectangle</p>\n","correctness":"1.0","feedback_html":"<p>Correct!
+        Force vectors may be placed head to tail and the resultant vector will be
+        the hypotenuse of the triangle. The vectors may be placed tail to tail, forming
+        a rectangle and the net force being the diagonal of the rectangle</p>\n"},{"content_html":"<p>Force
+        vectors may be placed head to head and the resultant vector will be the hypotenuse
+        of the triangle.The vectors may even be placed head to head, forming a rectangle
+        with the net force being the diagonal of the rectangle</p>\n","correctness":"0.0","feedback_html":"<p>It
+        is correct that hypotenuse will represent the resultant vector in a triangle,
+        but what about direction of the two vectors? Do you think they will be placed
+        head to head to form a triangle? Can you recall the triangle law of vector
+        addition? Also, have you considered the rectangular law of vector addition
+        correctly?</p>\n"},{"content_html":"<p>Force vectors may be placed tail to
+        tail and the resultant vector will be the hypotenuse of the triangle.The vectors
+        may even be placed head to head, forming a rectangle with the net force being
+        the diagonal of the rectangle</p>\n","correctness":"0.0","feedback_html":"<p>Do
+        you think you will put two vectors tail to tail to form a triangle? Can you
+        recall triangle law of vector addition? Also, what about rectangular law of
+        vector addition?</p>\n"}],"hints":[],"formats":["multiple-choice","free-response"],"combo_choices":[]}]}]}'
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:52:23 GMT
+- request:
+    method: get
+    uri: http://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex027
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 301
+      message: Moved Permanently
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:52:35 GMT
+      Content-Type:
+      - text/html
+      Content-Length:
+      - '193'
+      Connection:
+      - keep-alive
+      Location:
+      - https://exercises-dev1.openstax.org/api/exercises?q=tag%3Ak12phys-ch04-ex027
+    body:
+      encoding: UTF-8
+      string: "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n<body
+        bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
+        (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:52:23 GMT
+- request:
+    method: get
+    uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex027
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:52:36 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      Etag:
+      - W/"c257a93fedb18764fa21294dc1f59c07"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Set-Cookie:
+      - _exercises_session=TEhPNkJYUngxanZLTHh5ZitDODl2VU5xODdSRjVtYkx6bUdrcWVyM1dJN3pKbGV0STNuZlpYUm16cGdzbGVEdlB2MW53TlR3cTFyd2RpWEE2WHRrTmc9PS0taFZGZmpZWjZHais0dWJyeURONDN3UT09--4c5a9cdd8619408930992b84278a830f06772c41;
+        path=/; HttpOnly
+      X-Request-Id:
+      - 049e46bf-013b-4cc7-bed3-76e99bfb1c17
+      X-Runtime:
+      - '0.041360'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains
+    body:
+      encoding: UTF-8
+      string: '{"total_count":1,"items":[{"uid":"27@1","number":27,"version":1,"published_at":"2015-03-07T00:11:21.818Z","editors":[],"authors":[{"user_id":2}],"copyright_holders":[{"user_id":3}],"derived_from":[],"attachments":[],"tags":["k12phys-ch04-s01-lo02","k12phys-ch04-ex027","chapter-review-concept","tutor-only","dok-3","time-medium","display-free-response","display-rec-sensitive"],"stimulus_html":"","questions":[{"stimulus_html":"","stem_html":"<p>If
+        a force pushes a body to the east and another force of equal strength pushes
+        it to the north, in what direction will the body move?</p>\n","answers":[{"content_html":"<p>Will
+        remain at rest</p>\n","correctness":"0.0","feedback_html":"<p>Are you sure
+        both forces cancel each other out? Try drawing a free-body diagram to find
+        the direction of the net force?</p>\n"},{"content_html":"<p>North-East</p>\n","correctness":"1.0","feedback_html":"<p>Correct!
+        The direction of the resultant force is north-east and the object will move
+        in the direction of the net force.</p>\n"},{"content_html":"<p>East</p>\n","correctness":"0.0","feedback_html":"<p>Do
+        you think that the direction of the net force is east? Have you considered
+        the force acting in the north direction?</p>\n"},{"content_html":"<p>North</p>\n","correctness":"0.0","feedback_html":"<p>Have
+        you considered the force acting in the east direction? Can you find the direction
+        of the net force?</p>\n"}],"hints":[],"formats":["multiple-choice","free-response"],"combo_choices":[]}]}]}'
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:52:24 GMT
+- request:
+    method: get
+    uri: http://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex028
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 301
+      message: Moved Permanently
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:52:36 GMT
+      Content-Type:
+      - text/html
+      Content-Length:
+      - '193'
+      Connection:
+      - keep-alive
+      Location:
+      - https://exercises-dev1.openstax.org/api/exercises?q=tag%3Ak12phys-ch04-ex028
+    body:
+      encoding: UTF-8
+      string: "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n<body
+        bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
+        (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:52:24 GMT
+- request:
+    method: get
+    uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex028
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:52:36 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      Etag:
+      - W/"5eda3eebfdd5ccdf9ca6b6d6f3ef6d7d"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Set-Cookie:
+      - _exercises_session=dkh1K0lYMUhXUHpOcFc5UVF0RGozUjZjUFNGeUNqS1FFOXlubVREOUFtdjRaZCtscSswaXhONWxObmdlSkx1NTFNYWluam43bzVDWldIK0N2VG1xTFE9PS0tcTZVTXlTaE1FaDVhYzM4bjVVWWlIQT09--74f6b2395fa3a91387cb78c9b3bd04cf71c8c697;
+        path=/; HttpOnly
+      X-Request-Id:
+      - eda94445-8e65-483a-bfb0-f571e6c5c265
+      X-Runtime:
+      - '0.039573'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains
+    body:
+      encoding: UTF-8
+      string: '{"total_count":1,"items":[{"uid":"28@1","number":28,"version":1,"published_at":"2015-03-07T00:11:21.825Z","editors":[],"authors":[{"user_id":2}],"copyright_holders":[{"user_id":3}],"derived_from":[],"attachments":[],"tags":["k12phys-ch04-s01-lo02","k12phys-ch04-ex028","test-prep-multiple-choice","inbook-yes","dok-1","time-short","display-free-response","display-rec-sensitive"],"stimulus_html":"","questions":[{"stimulus_html":"","stem_html":"<p>Which
+        of these is used to represent a free-body in a free body diagram?</p>\n","answers":[{"content_html":"<p>vector</p>\n","correctness":"0.0"},{"content_html":"<p>line</p>\n","correctness":"0.0"},{"content_html":"<p>point</p>\n","correctness":"1.0"}],"hints":[],"formats":["multiple-choice","free-response"],"combo_choices":[]}]}]}'
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:52:24 GMT
+- request:
+    method: get
+    uri: http://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex031
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 301
+      message: Moved Permanently
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:52:36 GMT
+      Content-Type:
+      - text/html
+      Content-Length:
+      - '193'
+      Connection:
+      - keep-alive
+      Location:
+      - https://exercises-dev1.openstax.org/api/exercises?q=tag%3Ak12phys-ch04-ex031
+    body:
+      encoding: UTF-8
+      string: "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n<body
+        bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
+        (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:52:25 GMT
+- request:
+    method: get
+    uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex031
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:52:37 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      Etag:
+      - W/"cda67a0dea22d1bbf3ed961488d27f60"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Set-Cookie:
+      - _exercises_session=TUVNOWhBSnR2cVc3cHhOaVFZNldrVDFxRE5YU1dNYnJrNk5PdHZNczZHZWhrU2ovSHlaN2RtUWNTTUZYRVJTMXhiR1VIZlR2eDVuQ1RnRlVFMU5pU1E9PS0tenBkaWZtcWhoa2IzeWdqL2thRTd2UT09--bbed1879a3dd3e7f3e30e361b5e47daf3a35efcb;
+        path=/; HttpOnly
+      X-Request-Id:
+      - 6c9deea2-0811-47b2-99cb-d821dc7866e0
+      X-Runtime:
+      - '0.060534'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains
+    body:
+      encoding: UTF-8
+      string: '{"total_count":1,"items":[{"uid":"31@1","number":31,"version":1,"published_at":"2015-03-07T00:11:21.846Z","editors":[],"authors":[{"user_id":2}],"copyright_holders":[{"user_id":3}],"derived_from":[],"attachments":[],"tags":["k12phys-ch04-s01-lo02","k12phys-ch04-ex031","test-prep-extended-response","inbook-yes","dok-3","time-medium","display-free-response","display-rec-sensitive"],"stimulus_html":"","questions":[{"stimulus_html":"","stem_html":"<p>[Figure
+        04_04: Spring Scale. From CNX College Physics] In the figure given, what is
+        <span data-math=\"F_\\text{restore}\">Math</span>? What is its magnitude?</p>\n","answers":[{"content_html":"<p><span
+        data-math=\"F_\\text{restore}\">Math</span> is the force exerted by the spring
+        on the hand. It is equal to 6 units and pulls to the right.</p>\n","correctness":"0.0","feedback_html":"<p>It
+        is correct that <span data-math=\"F_\\text{restore}\">Math</span> is the force
+        exerted by spring on the hand but what about its direction? Have you taken
+        direction correctly?</p>\n"},{"content_html":"<p><span data-math=\"F_\\text{restore}\">Math</span>
+        is the force exerted by the hand on the spring. It is equal to 6 units and
+        pulls to the left.</p>\n","correctness":"0.0","feedback_html":"<p>Are you
+        sure that <span data-math=\"F_\\text{restore}\">Math</span> is force exerted
+        by hand on the spring? What do you understand by the term restore?</p>\n"},{"content_html":"<p><span
+        data-math=\"F_\\text{restore}\">Math</span> is the force exerted by the spring
+        on the hand. It is equal to 6 units and pulls to the left.</p>\n","correctness":"1.0","feedback_html":"<p>Correct!
+        <span data-math=\"F_\\text{restore}\">Math</span> is the force exerted by
+        the spring on the hand. It is equal to 6 units and pulls to the left.</p>\n"},{"content_html":"<p><span
+        data-math=\"F_\\text{restore}\">Math</span> is the force exerted by the hand
+        on the spring. It is equal to 6 units and pulls to the right.</p>\n","correctness":"0.0","feedback_html":"<p>Do
+        you think <span data-math=\"F_\\text{restore}\">Math</span> is the force exerted
+        by the hand on the spring? Also, have you considered direction of <span data-math=\"F_\\text{restore}\">Math</span>
+        correctly?</p>\n"}],"hints":[],"formats":["multiple-choice","free-response"],"combo_choices":[]}]}]}'
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:52:25 GMT
+- request:
+    method: get
+    uri: http://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex032
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 301
+      message: Moved Permanently
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:52:37 GMT
+      Content-Type:
+      - text/html
+      Content-Length:
+      - '193'
+      Connection:
+      - keep-alive
+      Location:
+      - https://exercises-dev1.openstax.org/api/exercises?q=tag%3Ak12phys-ch04-ex032
+    body:
+      encoding: UTF-8
+      string: "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n<body
+        bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
+        (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:52:25 GMT
+- request:
+    method: get
+    uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex032
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Sat, 07 Mar 2015 00:52:37 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      Etag:
+      - W/"6e4707d13884b1ec8e1606f68cc26777"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Set-Cookie:
+      - _exercises_session=UGpSV0VFM29TWE85QU0zNWVmWERhcFVqVG9CMWE0VUtrMi9nazVFeSthOSt3QllKcEhZY0p4UVExQ1VQbDlsUW9XeE96RXBzOUo3YmNnZzNyNEVwVUE9PS0tM0EycFBBUlJzc05ZNS94Y3djV3ZPdz09--5bac1796bd604ab624e41e1c132f4ab81f14f271;
+        path=/; HttpOnly
+      X-Request-Id:
+      - fdfc8768-73d4-4a9c-87d9-368c698aa9cc
+      X-Runtime:
+      - '0.041164'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJ0b3RhbF9jb3VudCI6MSwiaXRlbXMiOlt7InVpZCI6IjMyQDEiLCJudW1i
+        ZXIiOjMyLCJ2ZXJzaW9uIjoxLCJwdWJsaXNoZWRfYXQiOiIyMDE1LTAzLTA3
+        VDAwOjExOjIxLjg1NFoiLCJlZGl0b3JzIjpbXSwiYXV0aG9ycyI6W3sidXNl
+        cl9pZCI6Mn1dLCJjb3B5cmlnaHRfaG9sZGVycyI6W3sidXNlcl9pZCI6M31d
+        LCJkZXJpdmVkX2Zyb20iOltdLCJhdHRhY2htZW50cyI6W10sInRhZ3MiOlsi
+        azEycGh5cy1jaDA0LXMwMi1sbzAxIiwiazEycGh5cy1jaDA0LWV4MDMyIiwi
+        cHJhY3RpY2UtY29uY2VwdHMiLCJpbmJvb2steWVzIiwiZG9rLTEiLCJ0aW1l
+        LXNob3J0IiwiZGlzcGxheS1mcmVlLXJlc3BvbnNlIiwiZGlzcGxheS1yZWMt
+        c2Vuc2l0aXZlIl0sInN0aW11bHVzX2h0bWwiOiIiLCJxdWVzdGlvbnMiOlt7
+        InN0aW11bHVzX2h0bWwiOiIiLCJzdGVtX2h0bWwiOiI8cD5XaGF0IGRvZXMg
+        TmV3dG9u4oCZcyBGaXJzdCBMYXcgc3RhdGU/PC9wPlxuIiwiYW5zd2VycyI6
+        W3siY29udGVudF9odG1sIjoiPHA+VGhlIHJhdGUgb2YgY2hhbmdlIG9mIG1v
+        bWVudHVtIG9mIGEgYm9keSBpcyBpbnZlcnNlbHkgcHJvcG9ydGlvbmFsIHRv
+        IHRoZSBleHRlcm5hbCBmb3JjZSBhcHBsaWVkIG9uIHRoZSBib2R5PC9wPlxu
+        IiwiY29ycmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiPHA+QXJl
+        IHlvdSBzdXJlIHRoYXQgcmF0ZSBvZiBjaGFuZ2Ugb2YgbW9tZW50dW0gb2Yg
+        YSBib2R5IGlzIGludmVyc2VseSBwcm9wb3J0aW9uYWwgdG8gdGhlIGV4dGVy
+        bmFsIGZvcmNlIGFwcGxpZWQgb24gdGhlIGJvZHk/PC9wPlxuIn0seyJjb250
+        ZW50X2h0bWwiOiI8cD5UaGUgcmF0ZSBvZiBjaGFuZ2Ugb2YgbW9tZW50dW0g
+        b2YgYSBib2R5IGlzIGRpcmVjdGx5IHByb3BvcnRpb25hbCB0byB0aGUgZXh0
+        ZXJuYWwgZm9yY2UgYXBwbGllZCBvbiB0aGUgYm9keTwvcD5cbiIsImNvcnJl
+        Y3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IjxwPklzbuKAmXQgaXQg
+        dGhlIHNlY29uZCBsYXcgb2YgbW90aW9uPyBDYW4geW91IHJlY2FsbCBhbGwg
+        dGhlIHRocmVlIGxhd3Mgb2YgbW90aW9uIGdpdmVuIGJ5IE5ld3Rvbj88L3A+
+        XG4ifSx7ImNvbnRlbnRfaHRtbCI6IjxwPkEgYm9keSBhdCByZXN0IHRlbmRz
+        IHRvIHJlbWFpbiBhdCByZXN0LCBhbmQgYSBib2R5IGluIG1vdGlvbiB0ZW5k
+        cyB0byByZW1haW4gaW4gbW90aW9uIGF0IGEgY29uc3RhbnQgdmVsb2NpdHkg
+        dW5sZXNzIGFjdGVkIHVwb24gYnkgYSBuZXQgZXh0ZXJuYWwgZm9yY2U8L3A+
+        XG4iLCJjb3JyZWN0bmVzcyI6IjEuMCIsImZlZWRiYWNrX2h0bWwiOiI8cD5D
+        b3JyZWN0ISBOZXd0b27igJlzIGZpcnN0IGxhdyBzdGF0ZXMgdGhhdCBhIGJv
+        ZHkgYXQgcmVzdCB0ZW5kcyB0byByZW1haW4gYXQgcmVzdCwgYW5kIGEgYm9k
+        eSBpbiBtb3Rpb24gdGVuZHMgdG8gcmVtYWluIGluIG1vdGlvbiBhdCBhIGNv
+        bnN0YW50IHZlbG9jaXR5IHVubGVzcyBhY3RlZCB1cG9uIGJ5IGEgbmV0IGV4
+        dGVybmFsIGZvcmNlLjwvcD5cbiJ9LHsiY29udGVudF9odG1sIjoiPHA+QSBi
+        b2R5IGF0IHJlc3QgdGVuZHMgdG8gcmVtYWluIGF0IHJlc3QsIGFuZCBhIGJv
+        ZHkgaW4gbW90aW9uIHRlbmRzIHRvIHJlbWFpbiBpbiBtb3Rpb24gYXQgYSBj
+        b25zdGFudCBhY2NlbGVyYXRpb24gdW5sZXNzIGFjdGVkIHVwb24gYnkgYSBu
+        ZXQgZXh0ZXJuYWwgZm9yY2U8L3A+XG4iLCJjb3JyZWN0bmVzcyI6IjAuMCIs
+        ImZlZWRiYWNrX2h0bWwiOiI8cD5EbyB5b3UgdGhpbmsgYWNjZWxlcmF0ZWQg
+        bW90aW9uIGlzIGRpZmZlcmVudCBmcm9tIHRoZSBtb3Rpb24gd2hlcmUgYSBu
+        ZXQgZXh0ZXJuYWwgZm9yY2UgaXMgYWN0aW5nIG9uIHRoZSBvYmplY3Q/PC9w
+        PlxuIn1dLCJoaW50cyI6W10sImZvcm1hdHMiOlsibXVsdGlwbGUtY2hvaWNl
+        IiwiZnJlZS1yZXNwb25zZSJdLCJjb21ib19jaG9pY2VzIjpbXX1dfV19
+    http_version: 
+  recorded_at: Sat, 07 Mar 2015 00:52:25 GMT
+recorded_with: VCR 2.9.3
