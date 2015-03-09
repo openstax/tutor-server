@@ -32,7 +32,7 @@ describe LegacyUser::GetAllUserProfiles do
     let!(:legacy_user2) { FactoryGirl.create(:user, full_name: full_name2) }
     let (:entity_user2) { LegacyUser::FindOrCreateUserForLegacyUser.call(legacy_user2).outputs.user }
 
-    it "returns an array containing that user profile" do
+    it "returns an array containing those user's profiles" do
       result = LegacyUser::GetAllUserProfiles.call
       expect(result.errors).to be_empty
       expect(result.outputs.profiles.size).to eq(2)
