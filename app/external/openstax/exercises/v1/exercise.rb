@@ -39,8 +39,10 @@ class OpenStax::Exercises::V1::Exercise
   end
 
   def correct_answer_id
-    @correct_answer_id ||= answers.select{|a| a['correctness'] >= 1}
-                                  .first['id']
+    @correct_answer_id ||= answers.select do |a|
+      correctness = Float(a['correctness']) rescue 0
+      correctness >= 1
+    end.first['id']
   end
 
   def feedback_map
