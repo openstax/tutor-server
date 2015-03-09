@@ -11,9 +11,9 @@ RSpec.describe OpenStax::Exercises::V1::Exercise do
     expect(exercise.content).to eq content
     expect(exercise.url).to eq "http://exercises.openstax.org/exercises/#{hash[:uid]}"
     expect(exercise.title).to eq title
-    expect(exercise.answers.length).to eq 2
-    expect(exercise.correct_answer_id).to eq exercise.answers.first['id']
-    expect(exercise.feedback_html(exercise.answers.first['id'])).to eq 'Right!'
-    expect(exercise.feedback_html(exercise.answers.last['id'])).to eq 'Wrong!'
+    expect(exercise.answers[0].length).to eq 2
+    expect(exercise.correct_answer_ids[0]).to eq exercise.answers[0][0]['id']
+    expect(exercise.feedback_html(exercise.answers[0][0]['id'])).to eq 'Right!'
+    expect(exercise.feedback_html(exercise.answers[0][1]['id'])).to eq 'Wrong!'
   end
 end

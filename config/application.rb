@@ -22,5 +22,9 @@ module Tutor
 
     # For not swallowing errors in after_commit/after_rollback callbacks.
     config.active_record.raise_in_transactional_callbacks = true
+
+    # Temporary fix until we update openstax_api
+    # to include this for JSON responses
+    ActiveSupport.escape_html_entities_in_json = false
   end
 end

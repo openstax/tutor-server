@@ -3,11 +3,10 @@ require 'rails_helper'
 RSpec.describe TaskedExercise, :type => :model do
   it { is_expected.to validate_presence_of(:content) }
 
-  it { is_expected.to delegate_method(:title).to(:wrapper) }
   it { is_expected.to delegate_method(:answers).to(:wrapper) }
-  it { is_expected.to delegate_method(:correct_answer_id).to(:wrapper) }
-  it { is_expected.to delegate_method(:feedback_map).to(:wrapper) }
-  it { is_expected.to delegate_method(:feedback_html).to(:wrapper) }
+  it { is_expected.to delegate_method(:correct_answer_ids).to(:wrapper) }
+  it { is_expected.to delegate_method(:content_without_correctness)
+                        .to(:wrapper) }
 
   let!(:hash) { OpenStax::Exercises::V1.fake_client.new_exercise_hash }
   let!(:tasked_exercise) { FactoryGirl.create(:tasked_exercise,
@@ -33,12 +32,12 @@ RSpec.describe TaskedExercise, :type => :model do
   it 'can return feedback depending on the selected answer' do
     tasked_exercise.answer_id = tasked_exercise.answer_ids.first
     expect(tasked_exercise.feedback_html).to(
-      eq tasked_exercise.answers.first['feedback_html']
+      eq tasked_exercise.answers[0][0]['feedback_html']
     )
 
     tasked_exercise.answer_id = tasked_exercise.answer_ids.last
     expect(tasked_exercise.feedback_html).to(
-      eq tasked_exercise.answers.last['feedback_html']
+      eq tasked_exercise.answers[0][1]['feedback_html']
     )
   end
 

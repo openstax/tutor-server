@@ -55,11 +55,11 @@ RSpec.describe "Exercise update progression", type: :request, :api => true, :ver
     expect(tasked.free_response).to eq 'abcdef'
 
     api_put("#{step_route_base}", user_1_token,
-            raw_post_data: {answer_id: tasked.answers.last['id']}.to_json)
+            raw_post_data: {answer_id: tasked.answers[0][1]['id']}.to_json)
     expect(response).to have_http_status(:success)
 
     tasked.reload
-    expect(tasked.answer_id).to eq tasked.answers.last['id']
+    expect(tasked.answer_id).to eq tasked.answers[0][1]['id']
 
     # Mark it as complete and then get it again (PUT returns No Content)
     api_put("#{step_route_base}/completed", user_1_token)
@@ -75,11 +75,11 @@ RSpec.describe "Exercise update progression", type: :request, :api => true, :ver
     expect(tasked.free_response).to eq 'abcdef'
 
     api_put("#{step_route_base}", user_1_token,
-            raw_post_data: {answer_id: tasked.answers.first['id']}.to_json)
+            raw_post_data: {answer_id: tasked.answers[0][0]['id']}.to_json)
     expect(response).to have_http_status(:unprocessable_entity)
 
     tasked.reload
-    expect(tasked.answer_id).to eq tasked.answers.last['id']
+    expect(tasked.answer_id).to eq tasked.answers[0][1]['id']
   end
 
 end

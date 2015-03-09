@@ -5,7 +5,8 @@ class TaskedExercise < ActiveRecord::Base
   validates :content, presence: true
   validate :valid_state, :valid_answer, :not_completed
 
-  delegate :answers, :correct_answer_id, :feedback_map, to: :wrapper
+  delegate :answers, :correct_answer_ids, :content_without_correctness,
+           to: :wrapper
 
   def wrapper
     @wrapper ||= OpenStax::Exercises::V1::Exercise.new(content)
@@ -29,12 +30,19 @@ class TaskedExercise < ActiveRecord::Base
     t
   end
 
-  def answer_ids
-    answers.collect{|a| a['id']}
-  end
-
   def feedback_html
     wrapper.feedback_html(answer_id)
+  end
+
+  # Assume only 1 question for now
+  def correct_answer_id
+    correct_answer_ids.first
+  end
+
+  def answer_ids
+    answers.collect do |q|
+      q.collect{|a| a['id'].to_s}
+    end.first
   end
 
   protected
@@ -51,7 +59,7 @@ class TaskedExercise < ActiveRecord::Base
 
   def valid_answer
     # Multiple choice answer must be listed in the exercise
-    return if answer_id.blank? || answer_ids.include?(answer_id)
+    return if answer_id.blank? || answer_ids.include?(answer_id.to_s)
 
     errors.add(:answer_id, 'is not a valid answer id for this problem')
     false

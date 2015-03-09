@@ -9,12 +9,20 @@ RSpec.describe Api::V1::TaskedExerciseRepresenter, :type => :representer do
   let(:representation) { Api::V1::TaskedExerciseRepresenter.new(tasked_exercise).as_json }
 
   it "represents a tasked exercise" do
+    content = exercise_content.deep_stringify_keys
+    content['questions'].each do |q|
+      q['answers'].each do |a|
+        a.delete('correctness')
+        a.delete('feedback_html')
+      end
+    end
+
     expect(representation).to include(
       "id"           => tasked_exercise.id,
       "type"         => "exercise",
       "is_completed" => false,
       "content_url"  => tasked_exercise.url,
-      "content"      => exercise_content.deep_stringify_keys
+      "content"      => content
     )
   end
 
