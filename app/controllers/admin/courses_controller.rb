@@ -28,7 +28,8 @@ class Admin::CoursesController < Admin::BaseController
 
   private
   def course_params
-    { id: params[:id], course: params.require(:course).permit(:name) }
+    { id: params[:id], course: params.require(:course)
+                                     .permit(:name, teacher_ids: []) }
   end
 
   def get_users
