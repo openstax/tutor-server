@@ -1,4 +1,6 @@
 class Admin::CoursesController < Admin::BaseController
+  before_action :get_users, only: [:new, :edit]
+
   def index
     @courses = Domain::ListCourses.call.outputs.courses
   end
@@ -27,5 +29,9 @@ class Admin::CoursesController < Admin::BaseController
   private
   def course_params
     { id: params[:id], course: params.require(:course).permit(:name) }
+  end
+
+  def get_users
+    @users = Domain::GetAllUserProfiles.call.outputs.profiles
   end
 end

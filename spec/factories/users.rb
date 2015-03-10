@@ -19,6 +19,10 @@ FactoryGirl.define do
                                        title: evaluator.title)
     end
 
+    after(:create) do |user|
+      LegacyUser::FindOrCreateUserForLegacyUser.call(user)
+    end
+
     trait :administrator do
       after(:build) do |user|
         user.administrator = FactoryGirl.build(:administrator, user: user)
