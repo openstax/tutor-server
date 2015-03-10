@@ -22,7 +22,14 @@ module Tutor::SubSystems
       # Add the subsystem's path to the autoload search paths
       # This will allow objects who's namespace matches the directory tree to autoload
       # i.e. course_profile/api/get_all_profiles.rb => CourseProfile::Api::GetAllProfiles
-      Rails.application.config.autoload_paths += [path.relative_path_from(Rails.root)]
+      Rails.application.config.paths.add name, eager_load: true
+
+      namespace.send :extend, ActiveSupport::Autoload
+      namespace.eager_autoload do
+        Pathname.glob( path.join("models/*.rb") ) do | path |
+          require path
+        end
+      end
 
       # routines and models are namespaced directly under the module,
       # setup explicit autoload mappings in order to support them

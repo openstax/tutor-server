@@ -23,7 +23,9 @@ module Tutor
       # Initialize with empty definitions.
       # This way it doesn't blow up if "configure" isn't called
       def initialize
-        @systems = @limit_to = []
+        @path     = Rails.root.join("app/subsystems")
+        @limit_to = []
+        @systems  = []
       end
 
       # Root directory to search for subsystems
@@ -31,7 +33,7 @@ module Tutor
       # if limit_to is nil (the default), it will default to all directories under root
       def configure(path:nil, limit_to:[])
         @path = path
-        paths = Pathname.glob( path.join("*") )
+        @limit_to = limit_to
 
         ## Removes the subsystems path from the Rail's loading conventions
         # Each namespace will re-establish it's mappings later when it's created
@@ -39,10 +41,10 @@ module Tutor
         Rails.application.config.eager_load_paths -= [ path.to_s ]
 
         # Setup a Namespace for each directory found under our root path
+        paths = Pathname.glob( path.join("*") )
         @systems = paths.each_with_object([]) do |subpath, collection|
           collection << SubSystems::Namespace.new(subpath.basename.to_s) if subpath.directory?
         end
-        @limit_to = limit_to.present? ? limit_to : @systems.map(&:name)
       end
 
       def each(&block)
@@ -51,7 +53,7 @@ module Tutor
       # returns true if the subsystem name is included in the list of valid subsystems
       # either by use of limit_to or by detecting a directory with that name
       def valid_name?(name)
-        @limit_to.include?(name)
+        @limit_to.empty? || @limit_to.include?(name)
       end
 
     end
