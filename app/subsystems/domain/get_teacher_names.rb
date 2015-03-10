@@ -5,14 +5,16 @@ class Domain::GetTeacherNames
     translations: { outputs: { type: :verbatim } },
     as: :get_teacher_users
 
+  uses_routine LegacyUser::GetUserFullNames,
+    translations: { outputs: { map: {full_names: :teacher_names} } },
+    as: :get_full_names
+
   protected
 
   def exec(course_id)
     course = Entity::Course.find(course_id)
     run(:get_teacher_users, course)
-    user_maps = LegacyUser::User.where(entity_user_id: outputs.teachers.map(&:id))
-    outputs[:teacher_names] = user_maps.map { |user_map|
-      user_map.user.account.full_name
-    }.sort
+    run(:get_full_names, outputs[:teachers])
+    outputs[:teacher_names] = outputs[:teacher_names].sort
   end
 end
