@@ -1,36 +1,20 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Content::ImportCnxResource, :type => :routine, vcr: VCR_OPTS do
-  cnx_book_id = '031da8d3-b525-429c-80cf-6c8ed997733a'
+RSpec.describe Content::ImportCnxResource, :type => :routine, :vcr => VCR_OPTS do
 
-  fixture_file = 'spec/fixtures/m50577/index.cnxml.html'
+  cnx_ids = { book: '7db9aa72-f815-4c3b-9cb6-d50cf5318b58',
+              page: '092bbf0d-0729-42ce-87a6-fd96fd87a083' }
 
-  it 'returns the hash for the fixture file' do
-    hash = {
-      title: 'Dummy',
-      id: 'dummy',
-      version: '1.0',
-      content: open(fixture_file) { |f| f.read }
-    }
-
-    allow_any_instance_of(Content::ImportCnxResource).to(
-      receive(:open).and_return(hash.to_json))
-
-    result = Content::ImportCnxResource.call('dummy')
-    expect(result.errors).to be_empty
-    out = result.outputs
-    expect(out[:hash]).to eq JSON.parse(hash.to_json)
-    expect(out[:url]).not_to be_blank
-    expect(out[:content]).not_to be_blank
+  cnx_ids.each do |name, cnx_id|
+    it "returns the hash for a CNX #{name.to_s} request" do
+      result = Content::ImportCnxResource.call(cnx_id)
+      expect(result.errors).to be_empty
+      out = result.outputs
+      expect(out[:hash]).not_to be_blank
+      expect(out[:url]).not_to be_blank
+      expect(out[:content]).not_to be_blank
+    end
   end
 
-  it 'returns the hash for a real web request' do
-    result = Content::ImportCnxResource.call(cnx_book_id)
-    expect(result.errors).to be_empty
-    out = result.outputs
-    expect(out[:hash]).not_to be_blank
-    expect(out[:url]).not_to be_blank
-    expect(out[:content]).not_to be_blank
-  end
 end

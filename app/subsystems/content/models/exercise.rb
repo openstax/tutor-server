@@ -3,5 +3,5 @@ class Content::Exercise < ActiveRecord::Base
 
   has_many :exercise_topics, dependent: :destroy,
                              inverse_of: :exercise
-            
+
 end

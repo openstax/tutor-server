@@ -79,15 +79,15 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
       tasked.save!
 
       api_put :update, user_1_token, parameters: id_parameters, 
-              raw_post_data: { answer_id: tasked.answers.first['id'] }
+              raw_post_data: { answer_id: tasked.answers[0][0]['id'] }
 
       expect(response).to have_http_status(:success)
-      expect(tasked.reload.answer_id).to eq tasked.answers.first['id']
+      expect(tasked.reload.answer_id).to eq tasked.answers[0][0]['id']
     end
 
     it "does not update the answer if the free response is not set" do
       api_put :update, user_1_token, parameters: id_parameters, 
-              raw_post_data: { answer_id: tasked.answers.first['id'] }
+              raw_post_data: { answer_id: tasked.answers[0][0]['id'] }
 
       expect(response).to have_http_status(:unprocessable_entity)
       expect(tasked.reload.answer_id).to be_nil

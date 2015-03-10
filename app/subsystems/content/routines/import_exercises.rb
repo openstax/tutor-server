@@ -1,9 +1,12 @@
 class Content::ImportExercises
 
+  # This Regex finds the LO's within the exercise tags
+  LO_REGEX = /([\w-]+-lo[\d]+)/
+
   lev_routine
 
   uses_routine Content::TagResourceWithTopics,
-               as: :tag,
+               as: :add_lo,
                translations: { outputs: { type: :verbatim } }
 
   protected
@@ -19,7 +22,8 @@ class Content::ImportExercises
       exercise.save
       transfer_errors_from(exercise, {type: :verbatim}, true)
 
-      run(:tag, exercise, wrapper.tags)
+      los = wrapper.tags.collect{|t| LO_REGEX.match(t).try(:[], 1)}.compact.uniq
+      run(:add_lo, exercise, los)
 
       outputs[:exercises] << exercise
     end

@@ -1,42 +1,33 @@
 require 'rails_helper'
+require 'vcr_helper'
 
-RSpec.describe Content::Api::GetBookToc, :type => :routine do
+RSpec.describe Content::Api::GetBookToc, :type => :routine, :vcr => VCR_OPTS do
 
-  let!(:root_book_part) { FactoryGirl.create(:content_book_part, :standard_contents_1) }
+  cnx_book_infos = { stable: { id: '7db9aa72-f815-4c3b-9cb6-d50cf5318b58@1.4' },
+                     latest: { id: '7db9aa72-f815-4c3b-9cb6-d50cf5318b58' } }
 
-  it "gets the book toc for a 3 level book" do
-    result = nil
-    expect(result = Content::Api::GetBookToc.call(book_id: root_book_part.book.id))
-                      .to_not have_routine_errors
+  cnx_book_infos.each do |name, info|
+    context "for the #{name.to_s} version" do
+      let!(:book)        {
+        Content::Api::ImportBook.call(info[:id]).outputs.book
+      }
 
-    toc = result.outputs.toc
+      it "gets the book toc" do
+        result = Content::Api::GetBookToc.call(book_id: book.id)
+        expect(result).to_not have_routine_errors
 
-    expect(toc).to eq(
-      [{
-        id: 2,
-        title: 'unit 1',
-        type: 'part',
-        children: [
-          { 
-            id: 3,
-            title: 'chapter 1', 
-            type: 'part',
-            children: [
-              { id: 1, title: 'first page', type: 'page' }.stringify_keys,
-              { id: 2, title: 'second page', type: 'page' }.stringify_keys
-            ]
-          }.stringify_keys,
-          {
-            id: 4,
-            title: 'chapter 2',
-            type: 'part',
-            children: [
-              { id: 3, title: 'third page', type: 'page' }.stringify_keys
-            ]
-          }.stringify_keys
-        ] 
-      }.stringify_keys]
-    )
+        expect(result.outputs.toc).to eq(
+          [{ "id"=>2,
+             "title"=>"Forces and Newton's Laws of Motion",
+             "type"=>"part",
+             "children"=> [
+               {"id"=>1, "title"=>"Introduction", "type"=>"page"},
+               {"id"=>2, "title"=>"Force", "type"=>"page"}
+             ]
+          }]
+        )
+      end
+    end
   end
 
 end

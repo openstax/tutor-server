@@ -25,6 +25,12 @@ class IReadingAssistant
   # replace with actual Exercises and create TaskedExercises
   EXERCISE_XPATH = ".//div[@data-type='exercise']"
 
+  # Find the tag to search exercises by from this XPath
+  EXERCISE_TAG_XPATH = ".//a[contains(@href, '#ost/api/ex/')]/@href"
+
+  # Extract the tag from the above XPath using this regex
+  EXERCISE_TAG_REGEX = /\A#ost\/api\/ex\/([\w-]+)\z/
+
   # Used to get TaskStep titles
   TITLE_XPATH = "./h1[@data-type='title'] | ./div[@data-type='title']"
 
@@ -105,9 +111,6 @@ class IReadingAssistant
   end
 
   def self.distribute_tasks(task_plan:, taskees:)
-    # Remove this (move it to tests) once we implement the real client
-    OpenStax::Exercises::V1.use_fake_client
-
     title = task_plan.title || 'iReading'
     opens_at = task_plan.opens_at
     due_at = task_plan.due_at || (task_plan.opens_at + 1.week)
@@ -173,24 +176,19 @@ class IReadingAssistant
                                       content: current_reading.to_html }
           end
 
-          # Create exercise step
-          # TODO: Get info from OpenStax Exercises using ID from CNX
-          # For now, use the fake client with random number/version
-          number = SecureRandom.hex
-          version = SecureRandom.hex
-          OpenStax::Exercises::V1.fake_client.add_exercise(number: number,
-                                                           version: version)
+          # Create exercise step by tag
+          tag_link = exercise.at_xpath(EXERCISE_TAG_XPATH).try(:value)
+          tag = EXERCISE_TAG_REGEX.match(tag_link).try(:[], 1)
+          ex = OpenStax::Exercises::V1.exercises(tag: tag)['items'].first
 
-          ex = OpenStax::Exercises::V1.exercises(
-                 number: number, version: version
-               )['items'].first
-
-          task_step_attributes << {
-            tasked_class: TaskedExercise,
-            title: ex.title,
-            url: ex.url,
-            content: ex.content
-          }
+          unless ex.nil?
+            task_step_attributes << {
+              tasked_class: TaskedExercise,
+              title: ex.title,
+              url: ex.url,
+              content: ex.content
+            }
+          end
 
           current_reading = next_reading
           exercise = current_reading.at_xpath(EXERCISE_XPATH)
