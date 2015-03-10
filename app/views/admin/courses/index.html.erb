@@ -4,18 +4,16 @@
   <thead>
     <tr>
       <th>Name</th>
+      <th>Teacher(s)</th>
       <th>Actions</th>
     </tr>
   </thead>
   <tbody>
     <% @courses.each do |course| %>
       <tr>
-        <td>
-          <%= course.name %>
-        </td>
-        <td>
-          <%= link_to 'edit', edit_admin_course_path(course.course_id) %>
-        </td>
+        <td><%= course.name %></td>
+        <td><%= course.teacher_names.to_sentence %></td>
+        <td><%= link_to 'edit', edit_admin_course_path(course.course_id) %></td>
       </tr>
     <% end %>
   </tbody>
