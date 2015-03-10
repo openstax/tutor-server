@@ -58,7 +58,7 @@ RSpec.describe Content::ImportPage, :type => :routine, :vcr => VCR_OPTS do
         result = nil
         expect {
           result = Content::ImportPage.call(id: info[:id], book_part: book_part)
-        }.to change{ Content::Exercise.count }.by(32)
+        }.to change{ Content::Exercise.count }.by(31)
 
         exercises = Content::Exercise.all.to_a
       end

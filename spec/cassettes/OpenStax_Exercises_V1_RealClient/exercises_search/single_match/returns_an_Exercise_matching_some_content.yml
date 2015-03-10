@@ -21,7 +21,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Sat, 07 Mar 2015 00:33:41 GMT
+      - Tue, 10 Mar 2015 22:40:31 GMT
       Content-Type:
       - text/html
       Content-Length:
@@ -36,7 +36,7 @@ http_interactions:
         bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
         (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
     http_version: 
-  recorded_at: Sat, 07 Mar 2015 00:33:30 GMT
+  recorded_at: Tue, 10 Mar 2015 22:40:17 GMT
 - request:
     method: get
     uri: https://exercises-dev1.openstax.org/api/exercises?q=content:WhAt%20Is%20KiNeMaTiCs?
@@ -58,7 +58,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Sat, 07 Mar 2015 00:33:42 GMT
+      - Tue, 10 Mar 2015 22:40:31 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -74,31 +74,31 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Etag:
-      - W/"07c079c13e65fdafd07a81e15234aef6"
+      - W/"bf2c7ac26e2897c791614ee3b8dbe8e2"
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=cmhJOVgyUDRRSTNTL0pJODVLc2VRTExLM2w4Wms2SWszVFZvSWJmVnJrdGZlVDV6RmloUDBaVXBjeFBGZ0xoWFFlYkdTUXdFTEhDOGZ4U25XSG9PeWc9PS0tQURlTHdndW1aU0hJQnZOOUE2UkJmdz09--c857f33efb8113779f73e52e43aace55dfc6c19f;
+      - _exercises_session=cWloWjE0SC9kVmtLT29OK2psM3h4VFJyZytDQ00rTGVZREJVdFV6R3VNd0EwTEVXQmxyYzVCcjdEV291VVNRNEdMNWlNdzdETExlY3RmUHZsNGxSMkE9PS0tbnJqZlhCMCtkVmY1SXdHMElQcWlBQT09--87cf2297a584857a8e589ca190d1493a5e29ef95;
         path=/; HttpOnly
       X-Request-Id:
-      - d3ac33e0-37c2-40c7-9739-e6c0e5961b59
+      - 9c8679b0-b4d8-4c4e-8d01-10f27682c2dc
       X-Runtime:
-      - '0.055217'
+      - '0.083022'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
       encoding: UTF-8
-      string: '{"total_count":1,"items":[{"uid":"2@1","number":2,"version":1,"published_at":"2015-03-07T00:11:21.610Z","editors":[],"authors":[{"user_id":2}],"copyright_holders":[{"user_id":3}],"derived_from":[],"attachments":[],"tags":["k12phys-ch04-s01-lo01","k12phys-ch04-ex002","practice-concepts","inbook-yes","dok-1","time-short","display-free-response","display-rec-sensitive"],"stimulus_html":"","questions":[{"stimulus_html":"","stem_html":"<p>What
-        is kinematics?</p>\n","answers":[{"content_html":"<p>Kinematics is the study
-        of motion</p>\n","correctness":"1.0","feedback_html":"<p>Correct! Motion of
-        a body is studied under kinematics</p>\n"},{"content_html":"<p>Kinematics
-        is the study of cause of motion</p>\n","correctness":"0.0","feedback_html":"<p>Do
-        you think cause of motion is studied under kinematics? What about the study
-        of force and its effect on a body. Is that kinematics?</p>\n"},{"content_html":"<p>Kinematics
-        is the study of dimensions</p>\n","correctness":"0.0","feedback_html":"<p>Is
-        it correct to say that dimensional analysis is done in kinematics?</p>\n"},{"content_html":"<p>Kinematics
-        is the study of atomic structure</p>\n","correctness":"0.0","feedback_html":"<p>Are
-        you sure that the study of atomic structures is a part of kinematics?</p>\n"}],"hints":[],"formats":["multiple-choice","free-response"],"combo_choices":[]}]}]}'
+      string: '{"total_count":1,"items":[{"uid":"1@1","number":1,"version":1,"published_at":"2015-03-10T19:49:17.810Z","editors":[],"authors":[{"user_id":1}],"copyright_holders":[{"user_id":2}],"derived_from":[],"attachments":[],"tags":["k12phys-ch04-s01-lo01","k12phys-ch04-ex001","practice-concepts","inbook-yes","dok1","time-short","display-free-response","display-rec-sensitive"],"stimulus_html":"","questions":[{"id":79,"stimulus_html":"","stem_html":"What
+        is kinematics?","answers":[{"id":283,"content_html":"Kinematics is the study
+        of motion","correctness":"1.0","feedback_html":"Correct! Motion of a body
+        is studied under kinematics"},{"id":284,"content_html":"Kinematics is the
+        study of cause of motion","correctness":"0.0","feedback_html":"Do you think
+        cause of motion is studied under kinematics? What about the study of force
+        and its effect on a body. Is that kinematics?"},{"id":285,"content_html":"Kinematics
+        is the study of dimensions","correctness":"0.0","feedback_html":"Is it correct
+        to say that dimensional analysis is done in kinematics?"},{"id":286,"content_html":"Kinematics
+        is the study of atomic structure","correctness":"0.0","feedback_html":"Are
+        you sure that the study of atomic structures is a part of kinematics?"}],"hints":[],"formats":["multiple-choice","free-response"],"combo_choices":[]}]}]}'
     http_version: 
-  recorded_at: Sat, 07 Mar 2015 00:33:31 GMT
+  recorded_at: Tue, 10 Mar 2015 22:40:18 GMT
 recorded_with: VCR 2.9.3
