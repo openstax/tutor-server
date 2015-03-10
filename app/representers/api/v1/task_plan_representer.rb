@@ -33,5 +33,12 @@ module Api::V1
              readable: true,
              writeable: true
 
+    property :stats,
+             extend: TaskStatsRepresenter,
+             getter: ->(args){ args[:stats] },
+             type: Object,
+             readable: true,
+             writable: false
+
   end
 end

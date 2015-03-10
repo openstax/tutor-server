@@ -45,6 +45,7 @@ Rails.application.routes.draw do
       end
     end
 
+    get '/plans/:id' => 'task_plans#retrieve'
   end
 
   namespace 'admin' do
