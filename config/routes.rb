@@ -71,7 +71,7 @@ Rails.application.routes.draw do
 
     resources :licenses
 
-    resources :users, only: [:index] do
+    resources :users, except: :destroy do
       member do
         put 'become'
         patch 'delete'
