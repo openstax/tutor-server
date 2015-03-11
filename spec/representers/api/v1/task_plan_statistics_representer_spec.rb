@@ -18,6 +18,7 @@ RSpec.describe Api::V1::TaskPlanRepresenter, :type => :representer do
         "partially_complete_count" => a_value_between(0,100),
         "current_pages"            => a_collection_including(
           a_hash_including(
+            "student_count"   => a_value_between(0,100),
             "correct_count"   => a_value_between(0,100),
             "incorrect_count" => a_value_between(0,100),
             "page" => a_hash_including(
@@ -29,6 +30,7 @@ RSpec.describe Api::V1::TaskPlanRepresenter, :type => :representer do
         ),
         "spaced_pages" => a_collection_including(
           a_hash_including(
+            "student_count"   => a_value_between(0,100),
             "correct_count"   => a_value_between(0,100),
             "incorrect_count" => a_value_between(0,100),
             "page" => a_hash_including(
@@ -37,6 +39,7 @@ RSpec.describe Api::V1::TaskPlanRepresenter, :type => :representer do
               "title"  => be_a_kind_of(String)
             ),
             "previous_attempt" => a_hash_including(
+              "student_count"   => a_value_between(0,100),
               "correct_count"   => a_value_between(0,100),
               "incorrect_count" => a_value_between(0,100),
               "page" => a_hash_including(

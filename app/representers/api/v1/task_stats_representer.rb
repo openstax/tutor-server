@@ -26,6 +26,11 @@ module Api::V1
           writeable: false
       end
 
+      property :student_count,
+        type: Integer,
+        writeable: false,
+        readable: true
+
       property :correct_count,
         type: Integer,
         writeable: false,

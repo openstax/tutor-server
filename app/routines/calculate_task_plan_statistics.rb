@@ -12,7 +12,8 @@ class CalculateTaskPlanStatistics
         title: Faker::Company.bs
       },
       correct_count: rand(10)+min,
-      incorrect_count: rand(4)
+      incorrect_count: rand(4),
+      student_count: rand(14)+min
     }
     if include_previous
       stat[:previous_attempt] = generate_page_data
