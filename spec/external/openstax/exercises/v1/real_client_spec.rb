@@ -39,8 +39,8 @@ RSpec.describe OpenStax::Exercises::V1::RealClient, :vcr => VCR_OPTS do
       it "returns Exercises matching a tag" do
         results = JSON.parse(client.exercises(tag: 'k12phys-ch04-s01-lo01'))
 
-        expect(results['total_count']).to eq 17
-        expect(results['items'].length).to eq 17
+        expect(results['total_count']).to eq 16
+        expect(results['items'].length).to eq 16
       end
     end
 

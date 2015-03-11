@@ -37,9 +37,9 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Sat, 07 Mar 2015 00:36:28 GMT
+      - Tue, 10 Mar 2015 22:41:46 GMT
       X-Varnish:
-      - '164182235'
+      - '166790521'
       Via:
       - 1.1 varnish
       Connection:
@@ -54,7 +54,7 @@ http_interactions:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Sat, 07 Mar 2015 00:36:18 GMT
+  recorded_at: Tue, 10 Mar 2015 22:41:32 GMT
 - request:
     method: get
     uri: http://archive.cnx.org/contents/7db9aa72-f815-4c3b-9cb6-d50cf5318b58@1.4
@@ -92,9 +92,9 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Sat, 07 Mar 2015 00:36:28 GMT
+      - Tue, 10 Mar 2015 22:41:46 GMT
       X-Varnish:
-      - 164182236 164022701
+      - 166790522 164022701
       Via:
       - 1.1 varnish
       Connection:
@@ -102,7 +102,7 @@ http_interactions:
       X-Cache:
       - HIT
       X-Varnish-Age:
-      - '23285'
+      - '362004'
       Age:
       - '0'
     body:
@@ -147,5 +147,5 @@ http_interactions:
         "Alina", "title": "", "othername": "", "email": "alinams@rice.edu", "fullname":
         "Alina Slavik", "id": "AlinaManager"}}]}'
     http_version: 
-  recorded_at: Sat, 07 Mar 2015 00:36:18 GMT
+  recorded_at: Tue, 10 Mar 2015 22:41:32 GMT
 recorded_with: VCR 2.9.3

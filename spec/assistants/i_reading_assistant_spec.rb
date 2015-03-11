@@ -36,7 +36,7 @@ RSpec.describe IReadingAssistant, :type => :assistant, :vcr => VCR_OPTS do
         tasks.each do |task|
           expect(task.taskings.length).to eq 1
           task_steps = task.task_steps
-          expect(task_steps.length).to eq 28
+          expect(task_steps.length).to eq 8
 
           task_steps.each_with_index do |task_step, i|
             expect(task_step.tasked.content).not_to include('snap-lab')
@@ -51,47 +51,16 @@ RSpec.describe IReadingAssistant, :type => :assistant, :vcr => VCR_OPTS do
           end
 
           expect(task_steps.collect{|ts| ts.tasked_type}).to(
-            eq ['TaskedReading', 'TaskedReading', 'TaskedExercise',
-                'TaskedReading', 'TaskedReading', 'TaskedReading',
-                'TaskedExercise', 'TaskedExercise', 'TaskedExercise',
-                'TaskedExercise', 'TaskedReading', 'TaskedExercise',
-                'TaskedExercise', 'TaskedReading', 'TaskedExercise',
-                'TaskedExercise', 'TaskedReading', 'TaskedExercise',
-                'TaskedExercise', 'TaskedReading', 'TaskedExercise',
-                'TaskedExercise', 'TaskedReading', 'TaskedExercise',
-                'TaskedExercise', 'TaskedExercise', 'TaskedExercise',
-                'TaskedExercise']
+            eq ['TaskedReading',  'TaskedReading',  'TaskedExercise',
+                'TaskedReading',  'TaskedExercise', 'TaskedExercise',
+                'TaskedExercise', 'TaskedExercise']
           )
 
           expect(task_steps.collect{|ts| ts.tasked.title}).to(
-            eq ["Section Learning Objectives",
-                "Defining Force and Dynamics\n",
-                nil,
-                "Defining Force and Dynamics\n",
-                "Free-body Diagrams and Examples of Forces",
-                "Check Your Understanding",
-                nil,
-                nil,
-                nil,
-                nil,
-                "Concept Items",
-                nil,
-                nil,
-                "Critical Thinking Items",
-                nil,
-                nil,
-                "Test Prep Multiple Choice",
-                nil,
-                nil,
-                "Test Prep Short Answer",
-                nil,
-                nil,
-                "Test Prep Extended Response",
-                nil,
-                nil,
-                nil,
-                nil,
-                nil]
+            eq ["Section Learning Objectives", "Mars Probe Explosion",
+                nil, "Free-body Diagrams and Examples of Forces",
+                nil, nil,
+                nil, nil]
           )
         end
 
