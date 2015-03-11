@@ -179,17 +179,4 @@ describe Api::V1::TaskPlansController, :type => :controller,
     end
   end
 
-  context 'retrieve' do
-    before(:each) do
-      task_plan.save!
-    end
-    it 'includes stats with task_plan' do
-      controller.sign_in legacy_teacher
-      api_get :retrieve, nil, parameters: {id: task_plan.id}
-      body = JSON.parse(response.body)
-      expect(body['stats']).to_not be_nil
-    end
-
-  end
-
 end
