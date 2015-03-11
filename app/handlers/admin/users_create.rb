@@ -21,6 +21,5 @@ class Admin::UsersCreate
 
   def handle
     run(:create_account, user_params)
-    UserMapper.account_to_user(outputs.account)
   end
 end
