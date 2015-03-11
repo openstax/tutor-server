@@ -8,7 +8,7 @@ RSpec.describe Api::V1::TaskPlanRepresenter, :type => :representer do
   let(:statistics){
     CalculateTaskPlanStatistics.call(plan:task_plan).outputs[:statistics]
   }
-  let(:representation) { Api::V1::TaskStatsRepresenter.new(statistics).as_json }
+  let(:representation) { Api::V1::TaskStatisticsRepresenter.new(statistics).as_json }
 
   it "represents a tasked exercise's stats" do
     expect(representation).to include(
