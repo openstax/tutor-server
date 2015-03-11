@@ -1,4 +1,4 @@
-# Copyright 2011-2014 Rice University. Licensed under the Affero General Public 
+# Copyright 2011-2014 Rice University. Licensed under the Affero General Public
 # License version 3 or later.  See the COPYRIGHT file for details.
 
 source 'https://rubygems.org'
@@ -108,6 +108,9 @@ gem 'httparty'
 gem 'sortability'
 
 group :development, :test do
+  # Allows 'ap' alternative to 'pp'
+  gem 'awesome_print'
+
   # Thin development server
   gem 'thin'
 
@@ -115,6 +118,7 @@ group :development, :test do
   gem 'sqlite3'
 
   # Call 'binding.pry' anywhere in the code to stop execution and get a debugger console
+  gem 'pry' # needed when debugging without 'rails_helper'
   gem 'pry-nav'
   gem 'pry-rails'
 
