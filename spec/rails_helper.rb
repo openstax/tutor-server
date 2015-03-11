@@ -3,7 +3,7 @@ ENV["RAILS_ENV"] ||= 'test'
 # Generates the secrets.yml file if not present
 unless File.exists?('config/secrets.yml')
   require 'rails/generators'
-  Rails::Generators.invoke('secrets') 
+  Rails::Generators.invoke('secrets')
 end
 
 require 'spec_helper'
@@ -36,6 +36,7 @@ ActiveRecord::Migration.maintain_test_schema!
 
 RSpec.configure do |config|
   config.include SigninHelper
+
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
 
@@ -68,17 +69,17 @@ class ActionDispatch::TestResponse
   end
 end
 
-RSpec::Matchers.define :have_routine_errors do 
+RSpec::Matchers.define :have_routine_errors do
   include RSpec::Matchers::Composable
 
   match do |actual|
     actual.errors.any?
   end
-  
+
   failure_message do |actual|
     "expected that #{actual} would have errors"
   end
-  
+
   failure_message_when_negated do |actual|
     "expected that #{actual} would not have errors"
   end

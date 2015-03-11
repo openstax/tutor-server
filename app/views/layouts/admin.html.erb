@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Tutor</title>
+    <title>OpenStax Tutor : Administration</title>
     <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
     <%= csrf_meta_tags %>
   </head>
   <body>
-    <%= render 'layouts/authentication' %>
+    <%= render 'layouts/admin/header' %>
     <%= render 'layouts/flash_messages' %>
     <%= yield %>
   </body>

@@ -1,0 +1,8 @@
+<% method ||= :post %>
+
+<%= lev_form_for :course, url: url, method: method do |f| %>
+  <%= f.label :name %>
+  <%= f.text_field :name %>
+
+  <%= f.submit 'Save', class: 'btn btn-primary' %>
+<% end %>
