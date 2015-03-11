@@ -4,7 +4,6 @@ class Admin::UsersCreate
   paramify :user do
     attribute :username, type: String
     attribute :password, type: String
-    attribute :entity_user_id, type: Integer
     validates :username, presence: true
     validates :password, presence: true
   end
