@@ -85,7 +85,6 @@ ActiveRecord::Schema.define(version: 20150218225408) do
     t.string   "url"
     t.text     "content"
     t.integer  "content_book_part_id"
-    t.integer  "entity_book_id"
     t.integer  "number",               null: false
     t.string   "title",                null: false
     t.string   "path"
@@ -94,7 +93,6 @@ ActiveRecord::Schema.define(version: 20150218225408) do
   end
 
   add_index "content_pages", ["content_book_part_id", "number"], name: "index_content_pages_on_content_book_part_id_and_number", unique: true
-  add_index "content_pages", ["entity_book_id"], name: "index_content_pages_on_entity_book_id"
   add_index "content_pages", ["url"], name: "index_content_pages_on_url", unique: true
 
   create_table "content_topics", force: :cascade do |t|
@@ -422,7 +420,7 @@ ActiveRecord::Schema.define(version: 20150218225408) do
   create_table "tasked_readings", force: :cascade do |t|
     t.string   "url",        null: false
     t.text     "content",    null: false
-    t.string   "title",      null: false
+    t.string   "title"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

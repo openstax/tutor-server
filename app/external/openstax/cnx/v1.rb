@@ -1,15 +1,19 @@
-puts "======= #{__FILE__}:#{__LINE__} ======="
-
-require_relative 'page/v1/page'
-require_relative 'book_part/v1/book_part'
-require_relative 'book/v1/book'
-
 require 'open-uri'
 
 module OpenStax::Cnx::V1
-  def self.fetch(id)
-    url_base ='http://archive.cnx.org/contents/'
-    url      = "#{url_base}#{id}"
-    hash     = JSON.parse open(url, 'ACCEPT' => 'text/json').read
+
+  ARCHIVE_URL_BASE ='http://archive.cnx.org/contents/'
+
+  def self.url_for(id)
+    URI::join(ARCHIVE_URL_BASE, id).to_s
   end
+
+  def self.fetch(id)
+    JSON.parse open(url_for(id), 'ACCEPT' => 'text/json').read
+  end
+
+  def self.book(options = {})
+    OpenStax::Cnx::V1::Book.new(options)
+  end
+
 end

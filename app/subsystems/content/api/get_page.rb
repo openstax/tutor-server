@@ -4,8 +4,8 @@ class Content::Api::GetPage
 
   protected
 
-  def exec(page_id:)
-    page = Content::Page.find(page_id)
+  def exec(id:)
+    page = Content::Page.find(id)
     outputs[:page] = {
       url: page.url,
       content: page.content

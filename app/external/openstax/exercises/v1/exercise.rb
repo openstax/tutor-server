@@ -2,6 +2,9 @@ class OpenStax::Exercises::V1::Exercise
 
   BASE_URL = 'http://exercises.openstax.org/exercises'
 
+  # This Regex finds the LO's within the exercise tags
+  LO_REGEX = /([\w-]+-lo[\d]+)/
+
   attr_reader :content
 
   def initialize(content)
@@ -27,6 +30,10 @@ class OpenStax::Exercises::V1::Exercise
 
   def tags
     @tags ||= content_hash['tags']
+  end
+
+  def los
+    @los ||= tags.collect{|t| LO_REGEX.match(t).try(:[], 1)}.compact.uniq
   end
 
   def questions

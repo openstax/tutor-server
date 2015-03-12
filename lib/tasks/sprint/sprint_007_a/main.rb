@@ -9,7 +9,7 @@ module Sprint007A
       teacher = FactoryGirl.create :user, username: 'teacher'
       student = FactoryGirl.create :user, username: 'student'
 
-      book = Domain::ImportBook.call(cnx_id: '7db9aa72-f815-4c3b-9cb6-d50cf5318b58').outputs.book
+      book = Domain::FetchAndImportBook.call(id: '7db9aa72-f815-4c3b-9cb6-d50cf5318b58').outputs.book
       course = Domain::CreateCourse.call.outputs.course
       Domain::AddBookToCourse.call(book: book, course: course)
       Domain::AddUserAsCourseTeacher.call(course: course, user: teacher)

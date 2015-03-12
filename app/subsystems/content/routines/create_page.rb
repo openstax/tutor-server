@@ -1,18 +1,18 @@
 class Content::CreatePage
+
   lev_routine
 
   protected
 
-  def exec(url:, content:, book:nil, book_part: nil, path:'', title:)
+  def exec(url:, title:, content:, book_part:, path:)
     page = Content::Page.create(url: url,
-                                content: content,
                                 title: title,
-                                path: path,
+                                content: content,
                                 book_part: book_part,
-                                book: book)
-
+                                path: path)
     transfer_errors_from(page, {type: :verbatim}, true)
 
     outputs[:page] = page
   end
+
 end
