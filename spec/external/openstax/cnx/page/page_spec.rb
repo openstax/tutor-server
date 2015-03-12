@@ -1,97 +1,24 @@
-require 'spec_helper'
-require 'open-uri'
+require 'rails_helper'
 
-def fetch_cnx_item(id)
-  url_base ='http://archive.cnx.org/contents/'
-  url      = "#{url_base}#{id}"
-  hash     = JSON.parse open(url, 'ACCEPT' => 'text/json').read
-end
+# module OpenStax
+#   module Cnx
+#     module V1
+#       class ReadingFragment
+#       end
 
-module OpenStax
-  module Cnx
+#       class ExerciseFragment
+#       end
 
-    class ReadingFragment
-    end
+#       class VideoFragment
+#       end
 
-    class ExerciseFragment
-    end
+#       class SimulationFragment
+#       end
+#     end
+#   end
+# end
 
-    class VideoFragment
-    end
-
-    class SimulationFragment
-    end
-
-    class Page
-      # def initialize(title:, fragments:, los:)
-      def initialize(id:, title:, content:)
-        @id      = id
-        @title   = title
-        @content = content
-      end
-
-      def to_s(indent: 0)
-        "#{' '*indent}PAGE #{@title} // #{@id}\n"
-      end
-
-      def self.from_contents_hash(hash)
-        page_hash = fetch_cnx_item(hash['id'])
-        content = page_hash.fetch('content') { raise "ill-formed Page (id=#{id})" }
-        Page.new(id: hash['id'], title: hash['title'], content: content)
-      end
-    end
-
-    class BookPart
-      def initialize(title:, parts:)
-        @title = title
-        @parts = parts
-      end
-
-      def to_s(indent: 0)
-        s = "#{' '*indent}PART #{@title}\n"
-        s << @parts.collect{|part| part.to_s(indent: indent+2)}.join('')
-      end
-
-      def self.from_contents_array(title:, array:)
-        # puts "BookPart.from_contents_array(#{title})"
-        parts = array.collect do |hash|
-          if hash['id'] == 'subcol'
-            BookPart.from_contents_array(title: hash['title'], array: hash['contents'])
-          else
-            Page.from_contents_hash(hash)
-          end
-        end
-
-        BookPart.new(title: title, parts: parts)
-      end
-    end
-
-    class Book
-      def initialize(root_book_part:)
-        @root_book_part = root_book_part
-      end
-
-      def to_s(indent: 0)
-        @root_book_part.to_s(indent: indent)
-      end
-
-      def self.fetch(id)
-        # puts "Book.fetch(#{id}) called"
-        hash     = fetch_cnx_item(id)
-        title    = hash.fetch('title')    {|key| raise "Book id=#{id} is missing #{key}"}
-        tree     = hash.fetch('tree')     {|key| raise "Book id=#{id} is missing #{key}"}
-        id       = tree.fetch('id')       {|key| raise "Book id=#{id} is missing tree #{key}"}
-        contents = tree.fetch('contents') {|key| raise "Book id=#{id} is missing tree #{key}"}
-
-        book_part = BookPart.from_contents_array(title: title, array: contents)
-        Book.new(root_book_part: book_part)
-      end
-    end
-
-  end
-end
-
-describe OpenStax::Cnx::Page do
+describe OpenStax::Cnx::V1::Page do
   context "some context" do
     let!(:bio_book_id)          { '185cbf87-c72e-48f5-b51e-f14f21b5eabd@9.80' }
     let!(:concepts_bio_book_id) { 'b3c1e1d2-839c-42b0-a314-e119a8aafbdd@8.53' }
@@ -105,10 +32,12 @@ describe OpenStax::Cnx::Page do
                        statistics_book_id, us_history_book_id, macro_econ_book_id]}
 
     it "wraps the json" do
+      binding.pry
       [test_book_id].each do |book_id|
         puts "="*40
-        puts OpenStax::Cnx::Book.fetch(book_id).to_s
+        puts OpenStax::Cnx::V1::Book.fetch(book_id).to_s
       end
     end
+
   end
 end
