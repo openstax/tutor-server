@@ -27,8 +27,8 @@ module OpenStax::Cnx::V1
     # Video fragment
     VIDEO_CSS = '.ost-video'
 
-    # Find a node with a class that starts with ost-topic
-    LO_XPATH = ".//*[contains(concat(' ', @class), ' ost-tag-lo-')]/@class"
+    # Find a node with a class that starts with ost-tag-lo-
+    LO_CSS = '[class^="ost-tag-lo-"]'
 
     # Find the LO within the class string and ensure it is properly formatted
     LO_REGEX = /ost-tag-lo-([\w-]+-lo[\d]+)/
@@ -104,8 +104,8 @@ module OpenStax::Cnx::V1
     end
 
     def los
-      @los ||= root.xpath(LO_XPATH).collect do |node|
-        LO_REGEX.match(node.value).try(:[], 1)
+      @los ||= root.css(LO_CSS).collect do |node|
+        LO_REGEX.match(node.attributes['class']).try(:[], 1)
       end.compact.uniq
     end
 

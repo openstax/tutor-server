@@ -2,7 +2,7 @@ module OpenStax::Cnx::V1::Fragment
   class Text
 
     # Used to get the title
-    TITLE_CSS = "*[data-type='title']"
+    TITLE_CSS = "[data-type='title']"
 
     # For fragments missing a proper title
     DEFAULT_TITLE = nil
