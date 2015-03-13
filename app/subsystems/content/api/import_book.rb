@@ -15,12 +15,10 @@ class Content::Api::ImportBook
   # Imports and saves a Cnx::Book as an Entity::Book
   # Returns the Book object, Resource object and collection JSON as a hash
   def exec(cnx_book:)
-    run(:import_book_part, cnx_book_part: cnx_book.root_book_part)
-
     run(:create_book)
 
-    outputs[:book_part].book = outputs[:book]
-    outputs[:book_part].save
+    run(:import_book_part, cnx_book_part: cnx_book.root_book_part,
+                           book: outputs[:book])
     transfer_errors_from(outputs[:book_part], {type: :verbatim}, true)
   end
 

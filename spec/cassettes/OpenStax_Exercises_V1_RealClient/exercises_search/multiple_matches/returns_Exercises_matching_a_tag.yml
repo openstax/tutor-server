@@ -21,7 +21,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Tue, 10 Mar 2015 22:40:35 GMT
+      - Fri, 13 Mar 2015 21:02:05 GMT
       Content-Type:
       - text/html
       Content-Length:
@@ -36,7 +36,7 @@ http_interactions:
         bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
         (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
     http_version: 
-  recorded_at: Tue, 10 Mar 2015 22:40:21 GMT
+  recorded_at: Fri, 13 Mar 2015 21:02:11 GMT
 - request:
     method: get
     uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-s01-lo01
@@ -58,7 +58,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Tue, 10 Mar 2015 22:40:35 GMT
+      - Fri, 13 Mar 2015 21:02:06 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -78,12 +78,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=cXNBQW5HR3RCTXJGM05EK1hIekZXTzcyTkxMRndXb1dRcjBuaDlWbXZpN0xON1BLM0dvSWRJZ2lNWVBZR0pCeU5YVW9SZUp0cmFLYVJwTHk3RG1Senc9PS0tNWdaNUVpM2l2ME1UekJSTlRJekxkZz09--b415f102e352af2ddfee3f3493210f7e8cbb2c9b;
+      - _exercises_session=bUVQcVV0MVhveldGb2o5T1V5M0NQYUtpQkVlYTM3SGcwUnFac1A5U2o3R0QxZ0o5bjlWZUZyQkZ6WDhiT09ZMHZZT2pHTURaMWZjT05EaTFST3prZFE9PS0tRjB4TVM0Mmdra2VSN2Vmdjc5d2g0QT09--0b4469d7372366ce02531a3f87b10dea70e3e91d;
         path=/; HttpOnly
       X-Request-Id:
-      - 2b0d8b1b-c659-4fc0-a5c6-ce67d5235207
+      - ed759482-c4a1-47d0-a464-b1f9179c89b2
       X-Runtime:
-      - '0.427322'
+      - '0.435678'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -551,5 +551,5 @@ http_interactions:
         aG9pY2UiLCJmcmVlLXJlc3BvbnNlIl0sImNvbWJvX2Nob2ljZXMiOltdfV19
         XX0=
     http_version: 
-  recorded_at: Tue, 10 Mar 2015 22:40:22 GMT
+  recorded_at: Fri, 13 Mar 2015 21:02:12 GMT
 recorded_with: VCR 2.9.3

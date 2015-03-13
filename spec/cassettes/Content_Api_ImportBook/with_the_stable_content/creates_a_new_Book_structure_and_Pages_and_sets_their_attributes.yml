@@ -37,9 +37,9 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Tue, 10 Mar 2015 22:41:21 GMT
+      - Fri, 13 Mar 2015 21:02:51 GMT
       X-Varnish:
-      - 166790305 164022701
+      - 168849753 168819807
       Via:
       - 1.1 varnish
       Connection:
@@ -47,7 +47,7 @@ http_interactions:
       X-Cache:
       - HIT
       X-Varnish-Age:
-      - '361979'
+      - '4469'
       Age:
       - '0'
     body:
@@ -92,7 +92,7 @@ http_interactions:
         "Alina", "title": "", "othername": "", "email": "alinams@rice.edu", "fullname":
         "Alina Slavik", "id": "AlinaManager"}}]}'
     http_version: 
-  recorded_at: Tue, 10 Mar 2015 22:41:07 GMT
+  recorded_at: Fri, 13 Mar 2015 21:02:59 GMT
 - request:
     method: get
     uri: http://archive.cnx.org/contents/1491e74e-ed39-446f-a602-e7ab881af101@1
@@ -130,9 +130,9 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Tue, 10 Mar 2015 22:41:21 GMT
+      - Fri, 13 Mar 2015 21:02:51 GMT
       X-Varnish:
-      - 166790306 163383360
+      - 168849754 168266078
       Via:
       - 1.1 varnish
       Connection:
@@ -140,7 +140,7 @@ http_interactions:
       X-Cache:
       - HIT
       X-Varnish-Age:
-      - '434735'
+      - '83117'
       Age:
       - '0'
     body:
@@ -206,7 +206,7 @@ http_interactions:
         "", "othername": "", "email": "alinams@rice.edu", "fullname": "Alina Slavik",
         "id": "AlinaManager"}}]}'
     http_version: 
-  recorded_at: Tue, 10 Mar 2015 22:41:07 GMT
+  recorded_at: Fri, 13 Mar 2015 21:02:59 GMT
 - request:
     method: get
     uri: 'http://exercises-dev1.openstax.org/api/exercises?q=tag:'
@@ -228,7 +228,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Tue, 10 Mar 2015 22:41:21 GMT
+      - Fri, 13 Mar 2015 21:02:53 GMT
       Content-Type:
       - text/html
       Content-Length:
@@ -243,7 +243,7 @@ http_interactions:
         bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
         (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
     http_version: 
-  recorded_at: Tue, 10 Mar 2015 22:41:07 GMT
+  recorded_at: Fri, 13 Mar 2015 21:02:59 GMT
 - request:
     method: get
     uri: 'https://exercises-dev1.openstax.org/api/exercises?q=tag:'
@@ -265,7 +265,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Tue, 10 Mar 2015 22:41:25 GMT
+      - Fri, 13 Mar 2015 21:02:57 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -281,22 +281,22 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Etag:
-      - W/"0791eec1992a2bc5073cf4d65650d5fc"
+      - W/"bfbcef6e77939e2433b8983b18ec3cd7"
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=TzhwQ1dML3gwVUFadXg0L2FQVERraVh6akY1OUtxYVdGT1lmeVdOY1IvT2JDYmpLQ3lObFdmRU9seXAzMmI2SE02eksyMDVxUnFvZ1U3VHpwajlsZnc9PS0ta0NFM21nUWpPRFpQQ25MUTlqOGZuZz09--89d3cd4b115d4ceeee3e010921259095e8659dba;
+      - _exercises_session=NURDMFlIY2pnWFNSUFNpNEN4UFlES2s4VmwyWllpRjZsOUpNRm9EcnYwYTBIYXVIYWs4akVBTWcrZytsMi9heExqeEN4dXNtN2RYVUxxZHVmVFhyU2c9PS0tbDVDWGNZTkpyNEc3WjdVN0srMGpIUT09--1c07591c880e4ee7dc0b581f9bfe5460828028ad;
         path=/; HttpOnly
       X-Request-Id:
-      - 05518a64-89fa-48da-b380-8d0c30333a52
+      - 17de0c9a-9f17-41f8-b4b5-4f65ed5b248b
       X-Runtime:
-      - '3.350352'
+      - '3.441113'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
       encoding: ASCII-8BIT
       string: !binary |-
-        eyJ0b3RhbF9jb3VudCI6MTI4LCJpdGVtcyI6W3sidWlkIjoiMUAxIiwibnVt
+        eyJ0b3RhbF9jb3VudCI6MTI5LCJpdGVtcyI6W3sidWlkIjoiMUAxIiwibnVt
         YmVyIjoxLCJ2ZXJzaW9uIjoxLCJwdWJsaXNoZWRfYXQiOiIyMDE1LTAzLTEw
         VDE5OjQ5OjE3LjgxMFoiLCJlZGl0b3JzIjpbXSwiYXV0aG9ycyI6W3sidXNl
         cl9pZCI6MX1dLCJjb3B5cmlnaHRfaG9sZGVycyI6W3sidXNlcl9pZCI6Mn1d
@@ -4653,9 +4653,49 @@ http_interactions:
         aWx5IG1vdmUgaW4gdGhlIGRpcmVjdGlvbiBvZiB0aGUgc3Ryb25nZXIgZm9y
         Y2UgYXMgdGhleSBtaWdodCBiZSBhY3RpbmcgYXQgYW4gYW5nbGUuIn1dLCJo
         aW50cyI6W10sImZvcm1hdHMiOlsibXVsdGlwbGUtY2hvaWNlIiwiZnJlZS1y
-        ZXNwb25zZSJdLCJjb21ib19jaG9pY2VzIjpbXX1dfV19
+        ZXNwb25zZSJdLCJjb21ib19jaG9pY2VzIjpbXX1dfSx7InVpZCI6IjEyOUAx
+        IiwibnVtYmVyIjoxMjksInZlcnNpb24iOjEsInB1Ymxpc2hlZF9hdCI6IjIw
+        MTUtMDMtMTNUMTQ6NTk6NDAuMjQ2WiIsImVkaXRvcnMiOltdLCJhdXRob3Jz
+        IjpbXSwiY29weXJpZ2h0X2hvbGRlcnMiOltdLCJkZXJpdmVkX2Zyb20iOltd
+        LCJhdHRhY2htZW50cyI6W10sInRhZ3MiOlsib3N0LWZha2UtbWF0aCJdLCJz
+        dGltdWx1c19odG1sIjoiIiwicXVlc3Rpb25zIjpbeyJpZCI6MjA3LCJzdGlt
+        dWx1c19odG1sIjoiPHNwYW4gZGF0YS1tYXRoPVwifHx4fHxfcCA9IHtcXEJp
+        Z2dcXHt9e3tcXEJpZ2cofVxcc3VtX3tpPTF9Xk4gfHhfaXxecHtcXEJpZ2cp
+        fV5cXGZyYWN7MX17cH19XFwhLFxcO1xcO3AgXFxpbiB7XFxiaWdbfTEsXFxp
+        bmZ0eSk7XCI+TWF0aDwvc3Bhbj5cbjxzcGFuIGRhdGEtbWF0aD1cIlxcO1xc
+        O1xcO1xcO1xcO1xcO1xcO1xcO1xcO1xcO1xcO1xcO1xcO1xcO1xcO1xcO1xc
+        O1xcO1xcO3tcXHRleHR7bWF4fV97XFxsZWZ0W2k9MSwyLFxcbGRvdHMsTlxc
+        cmlnaHRdfVxcO3t8eF9pfH1cXCwsXFw7XFw7cCA9IFxcaW5mdHkufVwiPk1h
+        dGg8L3NwYW4+XG48c3BhbiBkYXRhLW1hdGg9XCJcXGZyYWN7XFxiaW5vbXtc
+        XCxOXFwsfXtLfX17XFxiaW5vbXtcXCxOXFwsfXtcXGZyYWN7S317Mn19fSA9
+        IFxcZnJhY3tcXGxlZnQoXFxmcmFje0t9ezJ9XFxyaWdodClcXGxlZnQoTiAt
+        IFxcZnJhY3tLfXsyfVxccmlnaHQpIX17SyEoTiAtIEspIX0gPSBcXHByb2Rf
+        e2k9MX1ee1xcZnJhY3tLfXsyfX0gXFxmcmFje04gLSBLICsgaX17XFxmcmFj
+        e0t9ezJ9ICsgaX0gXFxnZXEgXFxsZWZ0KFxcZnJhY3tOfXtLfSAtIFxcZnJh
+        Y3sxfXsyfVxccmlnaHQpXlxcZnJhY3tLfXsyfVwiPk1hdGg8L3NwYW4+XG48
+        c3BhbiBkYXRhLW1hdGg9XCJcXHRleHR7Vm9sfVxcbGVmdChCXk1cXGxlZnQo
+        XFxzcXJ0e1xcZnJhY3szS317Mn19ICsgXFxzcXJ0e1xcZnJhY3tLfXsxNn19
+        XFxyaWdodClcXHJpZ2h0KSBcXGdlcSBcXGJpZ3xYXFxiaWd8IFxcY2RvdCBc
+        XHRleHR7Vm9sfVxcbGVmdChCXk1cXGxlZnQoXFxzcXJ0e1xcZnJhY3tLfXsx
+        Nn19XFxyaWdodClcXHJpZ2h0KVwiPk1hdGg8L3NwYW4+XG48c3BhbiBkYXRh
+        LW1hdGg9XCJcXGxlZnQoXFxzcXJ0e1xcZnJhY3szS317Mn19ICsgXFxzcXJ0
+        e1xcZnJhY3tLfXsxNn19XFxyaWdodCleTSBcXGdlcSBcXGJpZ3xYXFxiaWd8
+        IFxcY2RvdCBcXGxlZnQoXFxzcXJ0e1xcZnJhY3tLfXsxNn19XFxyaWdodCle
+        TVxcLFwiPk1hdGg8L3NwYW4+XG48c3BhbiBkYXRhLW1hdGg9XCJcXGxlZnQo
+        XFxzcXJ0ezI0fSArIDFcXHJpZ2h0KV5NIFxcZ2VxIFxcYmlnfFhcXGJpZ3xc
+        XDtcXDtcXDtcXDtcXDtcXDtcXDtcXCxcIj5NYXRoPC9zcGFuPlxuPHNwYW4g
+        ZGF0YS1tYXRoPVwiXFw7XFw7XFw7XFw7XFw7XFw7XFw7XFw7XFw7XFw7XFw7
+        XFw7XFw7XFw7XFw7XFw7XFw7XFw7XFw7XFw7XFw7XFw7XFw7XFw7TSBcXGdl
+        cSBcXGZyYWN7XFx0ZXh0e2xvZ31cXCx8WHx9e1xcdGV4dHtsb2d9XFwsXFxs
+        ZWZ0KFxcc3FydHsyNH0gKyAxXFxyaWdodCl9XCI+TWF0aDwvc3Bhbj4iLCJz
+        dGVtX2h0bWwiOiJQaWNrIFwiUmlnaHRcIiIsImFuc3dlcnMiOlt7ImlkIjo3
+        NDksImNvbnRlbnRfaHRtbCI6Ildyb25nIiwiY29ycmVjdG5lc3MiOiIwLjAi
+        LCJmZWVkYmFja19odG1sIjoiTm9wZSJ9LHsiaWQiOjc0OCwiY29udGVudF9o
+        dG1sIjoiUmlnaHQiLCJjb3JyZWN0bmVzcyI6IjEuMCIsImZlZWRiYWNrX2h0
+        bWwiOiJHb29kIGpvYiEifV0sImhpbnRzIjpbXSwiZm9ybWF0cyI6W10sImNv
+        bWJvX2Nob2ljZXMiOltdfV19XX0=
     http_version: 
-  recorded_at: Tue, 10 Mar 2015 22:41:11 GMT
+  recorded_at: Fri, 13 Mar 2015 21:03:03 GMT
 - request:
     method: get
     uri: http://archive.cnx.org/contents/092bbf0d-0729-42ce-87a6-fd96fd87a083@4
@@ -4693,9 +4733,9 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Tue, 10 Mar 2015 22:41:27 GMT
+      - Fri, 13 Mar 2015 21:02:58 GMT
       X-Varnish:
-      - 166790363 164022790
+      - 168849801 168781301
       Via:
       - 1.1 varnish
       Connection:
@@ -4703,7 +4743,7 @@ http_interactions:
       X-Cache:
       - HIT
       X-Varnish-Age:
-      - '361970'
+      - '9776'
       Age:
       - '0'
     body:
@@ -5002,7 +5042,7 @@ http_interactions:
         "suffix": "", "firstname": "Alina", "title": "", "othername": "", "email":
         "alinams@rice.edu", "fullname": "Alina Slavik", "id": "AlinaManager"}}]}'
     http_version: 
-  recorded_at: Tue, 10 Mar 2015 22:41:14 GMT
+  recorded_at: Fri, 13 Mar 2015 21:03:06 GMT
 - request:
     method: get
     uri: http://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-s01-lo01,k12phys-ch04-s01-lo02
@@ -5024,7 +5064,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Tue, 10 Mar 2015 22:41:27 GMT
+      - Fri, 13 Mar 2015 21:03:01 GMT
       Content-Type:
       - text/html
       Content-Length:
@@ -5039,7 +5079,7 @@ http_interactions:
         bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
         (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
     http_version: 
-  recorded_at: Tue, 10 Mar 2015 22:41:14 GMT
+  recorded_at: Fri, 13 Mar 2015 21:03:07 GMT
 - request:
     method: get
     uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-s01-lo01,k12phys-ch04-s01-lo02
@@ -5061,7 +5101,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Tue, 10 Mar 2015 22:41:29 GMT
+      - Fri, 13 Mar 2015 21:03:02 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -5081,12 +5121,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=ekJYbVFRQ3dmRTlWM0RhOFBXRk5IanplYkJPaFNoc3BBQU5hR3VmMFZzeUI4bWZwYzY4aWJmSGNhOWtpZFg0OURYS1lRZVFFTUloM0hOMUlwNko3c3c9PS0tMldLc2xBKzNydmFmdXlxQ1pPT2dVUT09--59c85f83febcdebed7a893bd3a3dd10c86d1b0ed;
+      - _exercises_session=MTVWUmd6Q05IWVhEMHNnMXViQkwwZDZkVitWMkgvMHBGVnZKZnNkOXdyblJ3SnF1VGdaby9VamFIUWo1N1MwSnE1SXA4RmhaazRqR09HWWJ5MzdPcXc9PS0tNWEweER2N2RubEduMFQyR0Fwa3BVQT09--fea70c0f90c787ee702d93db8a0065ea80b2c308;
         path=/; HttpOnly
       X-Request-Id:
-      - 556a1021-18bd-4f97-b00c-711334ced9e9
+      - 6f29b566-55d4-41ac-93c0-ae3e9168336c
       X-Runtime:
-      - '0.828566'
+      - '0.809362'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -6127,5 +6167,5 @@ http_interactions:
         PyJ9XSwiaGludHMiOltdLCJmb3JtYXRzIjpbIm11bHRpcGxlLWNob2ljZSIs
         ImZyZWUtcmVzcG9uc2UiXSwiY29tYm9fY2hvaWNlcyI6W119XX1dfQ==
     http_version: 
-  recorded_at: Tue, 10 Mar 2015 22:41:15 GMT
+  recorded_at: Fri, 13 Mar 2015 21:03:08 GMT
 recorded_with: VCR 2.9.3

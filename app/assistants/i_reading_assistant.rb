@@ -48,6 +48,9 @@ class IReadingAssistant
 
           step.tasked = case fragment
           when OpenStax::Cnx::V1::Fragment::Exercise
+            raise "Embed tag not found for Exercise in Page #{page.id}" \
+              if fragment.embed_tag.blank?
+
             # TODO: Exercises are cached locally during book import,
             # so this search can be local, but
             # need to store short code tags in Tutor separately from the JSON

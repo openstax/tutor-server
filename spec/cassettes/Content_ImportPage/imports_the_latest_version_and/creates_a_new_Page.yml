@@ -37,9 +37,9 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Tue, 10 Mar 2015 22:41:58 GMT
+      - Fri, 13 Mar 2015 21:03:45 GMT
       X-Varnish:
-      - 166790579 164022790
+      - 168850043 168781301
       Via:
       - 1.1 varnish
       Connection:
@@ -47,7 +47,7 @@ http_interactions:
       X-Cache:
       - HIT
       X-Varnish-Age:
-      - '362000'
+      - '9823'
       Age:
       - '0'
     body:
@@ -346,7 +346,7 @@ http_interactions:
         "suffix": "", "firstname": "Alina", "title": "", "othername": "", "email":
         "alinams@rice.edu", "fullname": "Alina Slavik", "id": "AlinaManager"}}]}'
     http_version: 
-  recorded_at: Tue, 10 Mar 2015 22:41:44 GMT
+  recorded_at: Fri, 13 Mar 2015 21:03:53 GMT
 - request:
     method: get
     uri: http://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-s01-lo01,k12phys-ch04-s01-lo02
@@ -368,7 +368,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Tue, 10 Mar 2015 22:41:58 GMT
+      - Fri, 13 Mar 2015 21:03:47 GMT
       Content-Type:
       - text/html
       Content-Length:
@@ -383,7 +383,7 @@ http_interactions:
         bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
         (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
     http_version: 
-  recorded_at: Tue, 10 Mar 2015 22:41:45 GMT
+  recorded_at: Fri, 13 Mar 2015 21:03:53 GMT
 - request:
     method: get
     uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-s01-lo01,k12phys-ch04-s01-lo02
@@ -405,7 +405,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Tue, 10 Mar 2015 22:41:59 GMT
+      - Fri, 13 Mar 2015 21:03:49 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -425,12 +425,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=OUdNVHBVc3M5cmNBK3ZwdXJLSUVSTjJ0ZE5rVXdlUkRaMGRqa05kSWJ3S294ZGdXeGJzS0E0N1N5djl0UHIwMDBOYWpCVnRvM0c0SzVVeTRVNzYwV0E9PS0tOENDMjRWSlFJQi9yVi93TlVJZTk4UT09--8eccf2ee1f75b82b28985991799df1e52c275f1b;
+      - _exercises_session=elNMUE9ZS3lPanF6b1JXbUlqNVVDVFR1ZWlaT2NEU2ovRXpQQWl5N1IwakpJYWgrTGhCS1VvdENqYytUQlRhTGpSY04wbkZXZjBFQlFnWFNQd2IyZFE9PS0tZFlxNXFnelo4a0kxRzVERTVsbUV5QT09--88492f797a4ba8be8ceb4ba5065f48def2b46ee8;
         path=/; HttpOnly
       X-Request-Id:
-      - 714c5d0f-5cf1-408f-b5cc-0da6ce2386e9
+      - 6fe6f715-5280-44f5-b9d1-6d503b4f2632
       X-Runtime:
-      - '0.827383'
+      - '0.818547'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -1471,5 +1471,5 @@ http_interactions:
         PyJ9XSwiaGludHMiOltdLCJmb3JtYXRzIjpbIm11bHRpcGxlLWNob2ljZSIs
         ImZyZWUtcmVzcG9uc2UiXSwiY29tYm9fY2hvaWNlcyI6W119XX1dfQ==
     http_version: 
-  recorded_at: Tue, 10 Mar 2015 22:41:46 GMT
+  recorded_at: Fri, 13 Mar 2015 21:03:55 GMT
 recorded_with: VCR 2.9.3

@@ -18,7 +18,7 @@ module OpenStax::Cnx::V1::Fragment
       return @title unless @title.nil?
 
       @title = node.css(TITLE_CSS).collect{|n| n.try(:content).try(:strip)}
-                                  .compact.uniq.join(', ')
+                                  .compact.uniq.join('; ')
       @title = DEFAULT_TITLE if @title.blank?
       @title
     end

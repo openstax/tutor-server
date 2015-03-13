@@ -24,13 +24,16 @@ module OpenStax::Cnx::V1
     end
 
     def parts
-      @parts ||= contents.each_with_index.collect do |hash, idx|
-        next_path = path.blank? ? "#{idx.to_s}" : "#{path}.#{idx.to_s}"
+      path_prefix = path.blank? ? "" : "#{path}."
+      book_part_index = 0
+      page_index = 0
 
+      @parts ||= contents.collect do |hash|
         if hash['id'] == 'subcol'
-          BookPart.new(hash: hash, path: next_path)
+          BookPart.new(hash: hash,
+                       path: "#{path_prefix}#{book_part_index += 1}")
         else
-          Page.new(hash: hash, path: next_path)
+          Page.new(hash: hash, path: "#{path_prefix}#{page_index += 1}")
         end
       end
     end

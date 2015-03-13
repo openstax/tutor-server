@@ -35,12 +35,13 @@ module OpenStax::Cnx::V1
     LO_REGEX = /ost-tag-lo-([\w-]+-lo[\d]+)/
 
     def initialize(hash: {}, path: nil, id: nil, url: nil, title: nil,
-                   content: nil, los: nil, fragments: nil)
+                   full_hash: nil, content: nil, los: nil, fragments: nil)
       @hash      = hash
       @path      = path
       @id        = id
       @url       = url
       @title     = title
+      @full_hash = full_hash
       @content   = content
       @los       = los
       @fragments = fragments
@@ -84,7 +85,7 @@ module OpenStax::Cnx::V1
       # In the future (when books are readable in Tutor),
       # do the opposite (make absolute links into relative links)
       # and make sure all files are properly served
-      doc.css("*[src]").each do |tag|
+      doc.css("[src]").each do |tag|
         uri = URI.parse(URI.escape(tag.attributes["src"].value))
         next if uri.absolute?
 
@@ -93,7 +94,7 @@ module OpenStax::Cnx::V1
         )
       end
 
-      doc.to_s
+      doc.to_html
     end
 
     def root

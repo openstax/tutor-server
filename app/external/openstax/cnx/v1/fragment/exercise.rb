@@ -10,7 +10,7 @@ module OpenStax::Cnx::V1::Fragment
     # CSS to find the exercise embed code attribute
     EMBED_CODE_CSS = 'a[href^="#ost/api/ex/"]'
 
-    # Regex to extract the appropriate tag code from the embed code
+    # Regex to extract the appropriate tag from the embed code
     EMBED_TAG_REGEX = /\A#ost\/api\/ex\/([\w-]+)\z/
 
     def initialize(node:, title: nil, short_code: nil)
@@ -22,7 +22,8 @@ module OpenStax::Cnx::V1::Fragment
     attr_reader :node
 
     def title
-      @title ||= node.at_css(TITLE_CSS).try(:content) || DEFAULT_TITLE
+      @title ||= node.at_css(TITLE_CSS).try(:content).try(:strip) || \
+                 DEFAULT_TITLE
     end
 
     def embed_code

@@ -33,7 +33,7 @@ module OpenStax::Cnx::V1
     end
 
     def to_s(indent: 0)
-      s = "#{id}\n"
+      s = "BOOK #{id}\n"
       s << root_book_part.to_s(indent: indent)
     end
 

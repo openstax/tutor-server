@@ -10,8 +10,9 @@ class Content::ImportBookPart
 
   # Imports and saves a Cnx::BookPart as a Content::BookPart
   # Returns the Content::BookPart object
-  def exec(cnx_book_part:, parent_book_part: nil)
-    book_part = Content::BookPart.create(parent_book_part: parent_book_part,
+  def exec(cnx_book_part:, parent_book_part: nil, book: nil)
+    book_part = Content::BookPart.create(book: book,
+                                         parent_book_part: parent_book_part,
                                          title: cnx_book_part.title,
                                          path: cnx_book_part.path)
 
@@ -27,7 +28,7 @@ class Content::ImportBookPart
                    book_part: book_part).outputs.page
         book_part.pages << page
       else
-        raise "Unknown class #{item.class}"
+        raise "Unknown class #{part.class}"
       end
     end
 
