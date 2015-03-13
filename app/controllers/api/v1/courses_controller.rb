@@ -28,9 +28,9 @@ class Api::V1::CoursesController < Api::V1::ApiController
     respond_with toc, represent_with: Api::V1::BookTocRepresenter
   end
 
-  api :POST, '/courses/:course_id/plans', 'Returns a course\'s plans'
+  api :GET, '/courses/:course_id/plans', 'Returns a course\'s plans'
   description <<-EOS
-    #{json_schema(Api::V1::TaskPlanRepresenter, include: :writeable)}
+    #{json_schema(Api::V1::TaskPlanSearchRepresenter, include: :writeable)}
   EOS
   def plans
     course = Entity::Course.find(params[:id])
