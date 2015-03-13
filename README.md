@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/openstax/tutor-server.png?branch=master)](https://travis-ci.org/openstax/tutor-server)
 [![Coverage Status](https://img.shields.io/coveralls/openstax/tutor-server.svg)](https://coveralls.io/r/openstax/tutor-server)
 
-# OpenStax Tutor 3.0 Backend Server
+# OpenStax Tutor Backend Server
 
 
 ## Development
