@@ -12,21 +12,22 @@
 #   - rbx-19mode
 # uncomment this line if your project needs to run something other than `rake`:
 # script: bundle exec rspec spec
-
+sudo: false
 language: ruby
 rvm:
   - "2.1.2"
-env:
-  - DB=mysql
+cache: bundler
+bundler_args: --without-production --retry=6
+addons:
+ postgresql: 9.3
 script:
   - RAILS_ENV=test bundle exec rake --trace db:migrate spec
 branches:
   only:
     - master
 before_script:
-  - gem install mysql2
-  - mysql -e 'create database ost_test'
+ - gem install pg
+ - psql -c 'create database travis_ci_test;' -U postgres
 before_install:
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
-
