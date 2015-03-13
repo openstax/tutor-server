@@ -31,10 +31,7 @@ class IReadingAssistant
 
     page_ids = task_plan.settings['page_ids']
     cnx_pages = page_ids.collect do |page_id|
-      page = Content::Api::GetPage.call(id: page_id).outputs.page
-      page_hash = { id: '', url: page.url, hash: {},
-                    title: page.title, content: page.content }
-      OpenStax::Cnx::V1::Page.new(page_hash)
+      Content::Api::GetPage.call(id: page_id).outputs.page
     end
 
     # Assign Tasks to taskees and return the Task array
