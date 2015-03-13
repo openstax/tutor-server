@@ -5,19 +5,21 @@ RSpec.describe IReadingAssistant, :type => :assistant, :vcr => VCR_OPTS do
 
   let!(:assistant) { FactoryGirl.create :assistant,
                                         code_class_name: 'IReadingAssistant' }
+  let!(:book_part) { FactoryGirl.create :content_book_part }
 
   # Store version differences in this hash
-  cnx_page_infos = {
-    stable: { id: '092bbf0d-0729-42ce-87a6-fd96fd87a083@4' },
-    latest: { id: '092bbf0d-0729-42ce-87a6-fd96fd87a083' }
-  }
+  cnx_page_infos = HashWithIndifferentAccess.new(
+    stable: { id: '092bbf0d-0729-42ce-87a6-fd96fd87a083@4', title: 'Force' },
+    latest: { id: '092bbf0d-0729-42ce-87a6-fd96fd87a083', title: 'Force' }
+  )
 
-  cnx_page_infos.each do |name, info|
+  cnx_page_infos.each do |name, hash|
 
     context "for the #{name.to_s} version" do
-      let!(:book) { FactoryGirl.create :content_book_part }
-      let!(:page) { Content::ImportPage.call(id: info[:id],
-                                             book_part: book).outputs.page } 
+      let!(:cnx_page) { OpenStax::Cnx::V1::Page.new(hash: hash) }
+      let!(:page)     { Content::ImportPage.call(cnx_page: cnx_page,
+                                                 book_part: book_part)
+                                           .outputs.page }
       let!(:task_plan) {
         FactoryGirl.create :task_plan, assistant: assistant,
                                        settings: { page_ids: [page.id] }
@@ -57,10 +59,14 @@ RSpec.describe IReadingAssistant, :type => :assistant, :vcr => VCR_OPTS do
           )
 
           expect(task_steps.collect{|ts| ts.tasked.title}).to(
-            eq ["Section Learning Objectives", "Mars Probe Explosion",
-                nil, "Free-body Diagrams and Examples of Forces",
-                nil, nil,
-                nil, nil]
+            eq ["Section Learning Objectives; Defining Force and Dynamics",
+                "Mars Probe Explosion",
+                nil,
+                "Free-body Diagrams and Examples of Forces",
+                nil,
+                nil,
+                nil,
+                nil]
           )
         end
 

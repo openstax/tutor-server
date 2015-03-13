@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe OpenStax::Exercises::V1::FakeClient do
+RSpec.describe OpenStax::Exercises::V1::FakeClient, :type => :external do
 
   let(:fake_client) {OpenStax::Exercises::V1.fake_client}
   before(:each) {fake_client.reset!}

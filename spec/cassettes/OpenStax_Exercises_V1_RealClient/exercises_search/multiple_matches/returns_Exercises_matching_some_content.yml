@@ -21,7 +21,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Tue, 10 Mar 2015 22:40:32 GMT
+      - Fri, 13 Mar 2015 21:02:02 GMT
       Content-Type:
       - text/html
       Content-Length:
@@ -36,7 +36,7 @@ http_interactions:
         bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
         (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
     http_version: 
-  recorded_at: Tue, 10 Mar 2015 22:40:18 GMT
+  recorded_at: Fri, 13 Mar 2015 21:02:07 GMT
 - request:
     method: get
     uri: https://exercises-dev1.openstax.org/api/exercises?q=content:FoRcE
@@ -58,7 +58,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Tue, 10 Mar 2015 22:40:34 GMT
+      - Fri, 13 Mar 2015 21:02:05 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -78,12 +78,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=T0txNllJcVRoZEh6bXp3ZkU5MzVHY3RkWU02KzdUNW1UY1RYU0xUN0h6dm9WbGxERVF0bGp6S2ZVTVh0UjVadlZyNUg2SlJXMW9yMm15ZDJaYXBpVUE9PS0tcWNyVE9hTnNWVWM1d0RjbkllUFJyQT09--4fcd1fcbd77d45ca341e1a5c3f38b308a772a21d;
+      - _exercises_session=N2l6ODRuQzFxYVpwcmZGTUxHYzNURTRZSWJPY2hDVnBQRzJCR3hzN05UU2pwenZYelBoUWVGaERpQkQwbzlhWUdBanVEZFA3WUY4T1F0VVIza0R4amc9PS0tbjVnd1pabStBRFVSZWZPVWc5dHp4Zz09--5b58948b3120a612cdb36066958a309e59797a7f;
         path=/; HttpOnly
       X-Request-Id:
-      - 925e203d-2a47-40a7-8260-48f4c98cd696
+      - 0ed097a9-6f04-4325-b97e-dba696471f43
       X-Runtime:
-      - '2.144590'
+      - '2.983066'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -3113,5 +3113,5 @@ http_interactions:
         dGlwbGUtY2hvaWNlIiwiZnJlZS1yZXNwb25zZSJdLCJjb21ib19jaG9pY2Vz
         IjpbXX1dfV19
     http_version: 
-  recorded_at: Tue, 10 Mar 2015 22:40:21 GMT
+  recorded_at: Fri, 13 Mar 2015 21:02:11 GMT
 recorded_with: VCR 2.9.3

@@ -4,12 +4,11 @@ class Content::Api::GetPage
 
   protected
 
-  def exec(page_id:)
-    page = Content::Page.find(page_id)
-    outputs[:page] = {
-      url: page.url,
-      content: page.content
-    }
+  def exec(id:)
+    page = Content::Page.find(id)
+    page_hash = { id: '', url: page.url, hash: {},
+                  title: page.title, content: page.content }
+    outputs[:page] = OpenStax::Cnx::V1::Page.new(page_hash)
   end
 
 end

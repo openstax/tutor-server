@@ -21,7 +21,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Tue, 10 Mar 2015 22:40:31 GMT
+      - Fri, 13 Mar 2015 21:02:01 GMT
       Content-Type:
       - text/html
       Content-Length:
@@ -36,7 +36,7 @@ http_interactions:
         bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
         (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
     http_version: 
-  recorded_at: Tue, 10 Mar 2015 22:40:18 GMT
+  recorded_at: Fri, 13 Mar 2015 21:02:07 GMT
 - request:
     method: get
     uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex002
@@ -58,7 +58,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Tue, 10 Mar 2015 22:40:32 GMT
+      - Fri, 13 Mar 2015 21:02:01 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -78,12 +78,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=dGRkUDIzOWhOREZkdFZYUmkzT2Q3bjl2OW9Lb21UTE0yUU1aWklCaER2bE1DMzVvZ00vRkZYeTh3VW4xcVdTazJURjhTS092RU5kcC94bXd0UXR5VFE9PS0td2hSNmpualdhS1dVLzdMQXpQUmJ0dz09--026f2f47f9b6e0b2861a1cb244e3d7e92ee8b44c;
+      - _exercises_session=TDlyZVU3YWFmanVlc0cvZ04wWnpTUmNKbFY5ZzRKdXQwc0FwVmFzcXpBYTlqSXh5ZkNHdTNNOWNNQ0JRNHI1ak1JVHZrT0xqZ3pDMnJMU0gyZVNsUkE9PS0tNmRKTkJ0czV5ZHlYQTl6WlIydzIxUT09--5c18c20a0da01fe56fc1f65b5eb80432f70876cb;
         path=/; HttpOnly
       X-Request-Id:
-      - 295a3f5c-b5b8-4e8a-93f7-8cb860461728
+      - 5ef2c411-b800-4935-8e97-27040226bc57
       X-Runtime:
-      - '0.043527'
+      - '0.045466'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -105,5 +105,5 @@ http_interactions:
         Gravitational force can exist between two objects as it is a field force and
         does not require physical contact."}],"hints":[],"formats":["multiple-choice","free-response"],"combo_choices":[]}]}]}'
     http_version: 
-  recorded_at: Tue, 10 Mar 2015 22:40:18 GMT
+  recorded_at: Fri, 13 Mar 2015 21:02:07 GMT
 recorded_with: VCR 2.9.3

@@ -37,9 +37,9 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Tue, 10 Mar 2015 22:41:49 GMT
+      - Fri, 13 Mar 2015 21:03:35 GMT
       X-Varnish:
-      - '166790548'
+      - '168850003'
       Via:
       - 1.1 varnish
       Connection:
@@ -54,7 +54,7 @@ http_interactions:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Tue, 10 Mar 2015 22:41:36 GMT
+  recorded_at: Fri, 13 Mar 2015 21:03:44 GMT
 - request:
     method: get
     uri: http://archive.cnx.org/contents/092bbf0d-0729-42ce-87a6-fd96fd87a083@4
@@ -92,9 +92,9 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Tue, 10 Mar 2015 22:41:49 GMT
+      - Fri, 13 Mar 2015 21:03:35 GMT
       X-Varnish:
-      - 166790549 164022790
+      - 168850004 168781301
       Via:
       - 1.1 varnish
       Connection:
@@ -102,7 +102,7 @@ http_interactions:
       X-Cache:
       - HIT
       X-Varnish-Age:
-      - '361992'
+      - '9813'
       Age:
       - '0'
     body:
@@ -401,7 +401,7 @@ http_interactions:
         "suffix": "", "firstname": "Alina", "title": "", "othername": "", "email":
         "alinams@rice.edu", "fullname": "Alina Slavik", "id": "AlinaManager"}}]}'
     http_version: 
-  recorded_at: Tue, 10 Mar 2015 22:41:36 GMT
+  recorded_at: Fri, 13 Mar 2015 21:03:44 GMT
 - request:
     method: get
     uri: http://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-s01-lo01,k12phys-ch04-s01-lo02
@@ -423,7 +423,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Tue, 10 Mar 2015 22:41:50 GMT
+      - Fri, 13 Mar 2015 21:03:38 GMT
       Content-Type:
       - text/html
       Content-Length:
@@ -438,7 +438,7 @@ http_interactions:
         bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
         (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
     http_version: 
-  recorded_at: Tue, 10 Mar 2015 22:41:36 GMT
+  recorded_at: Fri, 13 Mar 2015 21:03:44 GMT
 - request:
     method: get
     uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-s01-lo01,k12phys-ch04-s01-lo02
@@ -460,7 +460,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Tue, 10 Mar 2015 22:41:51 GMT
+      - Fri, 13 Mar 2015 21:03:39 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -480,12 +480,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=RGk0OXlOVlA4a21walNpeTNpdURVdmNiRVVmRzZia1htQVlVSFJWZjdMQVV0Z2x5RS9ya0EwQkFnZDdBTlFHZXltcmdVckNJazhjUjBCK20zV29iVmc9PS0tNWN1MGdxYXZrbnRPcmxmdlpGVzMvQT09--8a73230b7aa905188f3188b7557d6dcb8aeadf62;
+      - _exercises_session=K2JqNFBqUm5STkRBK0ZPSFpZeVoxUHdhMThIQVB5UDdZOTlPWm9kVWtSbHVjMFFDWjk5RmpMUU0wSnhYa25YYU9zTGk2NzRrUDNjc3lhWEo2OWdKb1E9PS0tRmxnZkU2bHQ3d21MZUIwSGZ5WHFrQT09--1192e5b68fc440d3d8b00c098b304f57cf63fc9e;
         path=/; HttpOnly
       X-Request-Id:
-      - 5095ce6c-5bb4-4067-8a55-e15be0edc3b5
+      - a477f0c2-af40-4204-bcad-992517ace67f
       X-Runtime:
-      - '0.806358'
+      - '0.822255'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -1526,5 +1526,5 @@ http_interactions:
         PyJ9XSwiaGludHMiOltdLCJmb3JtYXRzIjpbIm11bHRpcGxlLWNob2ljZSIs
         ImZyZWUtcmVzcG9uc2UiXSwiY29tYm9fY2hvaWNlcyI6W119XX1dfQ==
     http_version: 
-  recorded_at: Tue, 10 Mar 2015 22:41:37 GMT
+  recorded_at: Fri, 13 Mar 2015 21:03:45 GMT
 recorded_with: VCR 2.9.3

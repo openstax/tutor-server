@@ -3,5 +3,4 @@ class TaskedReading < ActiveRecord::Base
 
   validates :url, presence: true
   validates :content, presence: true
-  validates :title, presence: true
 end

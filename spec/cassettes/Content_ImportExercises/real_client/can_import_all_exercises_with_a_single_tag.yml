@@ -21,7 +21,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Tue, 10 Mar 2015 22:41:46 GMT
+      - Fri, 13 Mar 2015 21:03:34 GMT
       Content-Type:
       - text/html
       Content-Length:
@@ -36,7 +36,7 @@ http_interactions:
         bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
         (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
     http_version: 
-  recorded_at: Tue, 10 Mar 2015 22:41:33 GMT
+  recorded_at: Fri, 13 Mar 2015 21:03:40 GMT
 - request:
     method: get
     uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-s01-lo02
@@ -58,7 +58,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Tue, 10 Mar 2015 22:41:47 GMT
+      - Fri, 13 Mar 2015 21:03:35 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -78,12 +78,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=a1JkMDMwNTFOY3pHSFUwREI2SDBCVlRKQUMrTUJHSUxZM1I3VEk3a3BGWGRpRXBtZlV3dlFqdnNGQ3NWemhsNzFSVmFYd25kMUpvQ1pkL2p2K1VyaFE9PS0tbzNleHpsUGJtc3hlYktSL1hWVktydz09--9a4c12b238a335a18b7882acd853c81c8e187b32;
+      - _exercises_session=RVZYRzlUQ2hCQXNCNlBTekVJN3lDV2FJQ0VKQ3lHTGFya0Y2bG9KTHdNSnJkdGIza3FINkdRY0VnT0pONlhrczZXbDRhTVE0NnBzQnVHSlgzY1J0Q0E9PS0td1BUZTlMMWpZTjRRTXF2MFZGWFRJUT09--2914aae9c05705dec3aad59bd17dfac128c2ebec;
         path=/; HttpOnly
       X-Request-Id:
-      - 1eba31e7-372d-43cc-904e-5df87b3477f5
+      - 7eef0ded-6c75-4a31-a8eb-9bb4ad1fa569
       X-Runtime:
-      - '0.403348'
+      - '0.391586'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -665,5 +665,5 @@ http_interactions:
         cm1hdHMiOlsibXVsdGlwbGUtY2hvaWNlIiwiZnJlZS1yZXNwb25zZSJdLCJj
         b21ib19jaG9pY2VzIjpbXX1dfV19
     http_version: 
-  recorded_at: Tue, 10 Mar 2015 22:41:33 GMT
+  recorded_at: Fri, 13 Mar 2015 21:03:41 GMT
 recorded_with: VCR 2.9.3

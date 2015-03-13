@@ -3,5 +3,6 @@ FactoryGirl.define do
     url { Faker::Internet.url }
     association :book_part, factory: :content_book_part
     title { Faker::Lorem.words(3) }
+    content { Faker::Lorem.paragraphs(2) }
   end
 end

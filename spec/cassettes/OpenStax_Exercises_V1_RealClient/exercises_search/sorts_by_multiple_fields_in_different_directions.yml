@@ -21,7 +21,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Tue, 10 Mar 2015 22:40:28 GMT
+      - Fri, 13 Mar 2015 21:01:58 GMT
       Content-Type:
       - text/html
       Content-Length:
@@ -36,7 +36,7 @@ http_interactions:
         bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
         (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
     http_version: 
-  recorded_at: Tue, 10 Mar 2015 22:40:14 GMT
+  recorded_at: Fri, 13 Mar 2015 21:02:04 GMT
 - request:
     method: get
     uri: https://exercises-dev1.openstax.org/api/exercises?order_by=number%20DESC,%20version%20ASC&q=content:fOrCe
@@ -58,7 +58,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Tue, 10 Mar 2015 22:40:30 GMT
+      - Fri, 13 Mar 2015 21:02:00 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -78,12 +78,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=UFV2TFFleXVLMG82ZDVNNDZZWjdRU3Z2NFYvQVlrRTRwc0RqL3c3YlZoZ3g0a3RtYitIOTkvbzJFTG1mL0tIQko1S1FWZkZnU3A4UVc5OXVkdU1zOGc9PS0tbXpCamFQOEJ5NmN1eHNadDlyUDJQZz09--7a5c6881d9a581774acdf616ed7153d13b950456;
+      - _exercises_session=aE5rRlk0UmsxQWpzVjllUU91YjBUeFVZOGw5eUpUSHVuN2lmOHhQZ3dkV2FQYkJLZ3cwMysxU1pFYW5tYllPOFBBaXhMbTFRajRyV040a0RoUUpEcVE9PS0tcGVQVHF6M05YUG1lRVRlV0x6M2taZz09--8385a1ff50bc62ecf8b6ecdf1e3f5ffb9e106cef;
         path=/; HttpOnly
       X-Request-Id:
-      - 0efe7da7-3577-4d6f-bdba-11389ac7d03a
+      - 80a68964-31f9-4b2f-af60-ede60a63fd76
       X-Runtime:
-      - '2.098900'
+      - '2.096609'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -3113,5 +3113,5 @@ http_interactions:
         dGlwbGUtY2hvaWNlIiwiZnJlZS1yZXNwb25zZSJdLCJjb21ib19jaG9pY2Vz
         IjpbXX1dfV19
     http_version: 
-  recorded_at: Tue, 10 Mar 2015 22:40:17 GMT
+  recorded_at: Fri, 13 Mar 2015 21:02:06 GMT
 recorded_with: VCR 2.9.3

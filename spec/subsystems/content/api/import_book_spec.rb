@@ -9,6 +9,10 @@ RSpec.describe Content::Api::ImportBook, :type => :routine, :vcr => VCR_OPTS do
     latest: { id: '7db9aa72-f815-4c3b-9cb6-d50cf5318b58' }
   }
 
+  cnx_books = HashWithIndifferentAccess[cnx_book_infos.collect do |name, info|
+    [name, OpenStax::Cnx::V1::Book.new(info)]
+  end ]
+
   # Recursively tests the given book and its children
   def test_book_part(book_part)
     expect(book_part).to be_persisted
@@ -26,24 +30,24 @@ RSpec.describe Content::Api::ImportBook, :type => :routine, :vcr => VCR_OPTS do
     end
   end
 
-  cnx_book_infos.each do |name, info|
-    context "for the #{name.to_s} version" do
+  cnx_books.each do |name, book|
+    context "with the #{name.to_s} content" do
       it 'creates a new Book structure and Pages and sets their attributes' do
         result = nil
         expect { 
-          result = Content::Api::ImportBook.call(info[:id]); 
+          result = Content::Api::ImportBook.call(cnx_book: book); 
         }.to change{ Content::BookPart.count }.by(2)
         expect(result.errors).to be_empty
 
-        content_book_part = result.outputs.content_book_part
+        book_part = result.outputs.book_part
 
         # TODO: Cache TOC and check it here
-        test_book_part(content_book_part)
+        test_book_part(book_part)
       end
 
       it 'adds a path signifier according to subcol structure' do
-        book_import = Content::Api::ImportBook.call(info[:id])
-        root_book_part = book_import.outputs.content_book_part
+        book_import = Content::Api::ImportBook.call(cnx_book: book)
+        root_book_part = book_import.outputs.book_part
 
         root_book_part.child_book_parts.each_with_index do |chapter, i|
           expect(chapter.path).to eq("#{i + 1}")

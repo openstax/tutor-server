@@ -48,6 +48,7 @@ GEM
     autoprefixer-rails (5.1.7)
       execjs
       json
+    awesome_print (1.6.1)
     aws-ses (0.6.0)
       builder
       mail (> 2.2.5)
@@ -444,6 +445,7 @@ PLATFORMS
 DEPENDENCIES
   apipie-rails
   autoprefixer-rails
+  awesome_print
   aws-ses (~> 0.6.0)
   bootstrap-sass (~> 3.2.0)
   brakeman
@@ -479,6 +481,7 @@ DEPENDENCIES
   openstax_exchange
   openstax_utilities (~> 4.2.0)
   pg
+  pry
   pry-nav
   pry-rails
   quiet_assets

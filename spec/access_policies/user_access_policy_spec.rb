@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe UserAccessPolicy do
+RSpec.describe UserAccessPolicy, :type => :access_policy do
   let!(:anon)        { AnonymousUser.instance }
   let!(:user)        { FactoryGirl.create(:user) }
   let!(:application) { FactoryGirl.create(:doorkeeper_application) }

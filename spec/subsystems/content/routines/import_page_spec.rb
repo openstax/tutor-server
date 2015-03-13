@@ -5,32 +5,35 @@ RSpec.describe Content::ImportPage, :type => :routine, :vcr => VCR_OPTS do
 
   let!(:book_part) { FactoryGirl.create :content_book_part }
 
-  # Store version differences in this hash
   cnx_page_infos = {
-    stable: { id: '092bbf0d-0729-42ce-87a6-fd96fd87a083' },
-    latest: { id: '092bbf0d-0729-42ce-87a6-fd96fd87a083@4' }
+    stable: { id: '092bbf0d-0729-42ce-87a6-fd96fd87a083', title: 'Force' },
+    latest: { id: '092bbf0d-0729-42ce-87a6-fd96fd87a083@4', title: 'Force' }
   }
 
-  cnx_page_infos.each do |name, info|
+  cnx_pages = HashWithIndifferentAccess[cnx_page_infos.collect do |name, info|
+    [name, OpenStax::Cnx::V1::Page.new(info)]
+  end ]
+
+  cnx_pages.each do |name, cnx_page|
     context "imports the #{name.to_s} version and" do
       it 'creates a new Page' do
         result = nil
         expect {
-          result = Content::ImportPage.call(id: info[:id], book_part: book_part)
+          result = Content::ImportPage.call(cnx_page: cnx_page,
+                                            book_part: book_part)
         }.to change{ Content::Page.count }.by(1)
         expect(result.errors).to be_empty
 
         expect(result.outputs[:page]).to be_persisted
-        expect(result.outputs[:url]).not_to be_blank
-        expect(result.outputs[:content]).not_to be_blank
       end
 
       it 'converts relative links into absolute links' do
-        page = Content::ImportPage.call(id: info[:id], book_part: book_part).outputs[:page]
+        page = Content::ImportPage.call(cnx_page: cnx_page,
+                                        book_part: book_part).outputs[:page]
         doc = Nokogiri::HTML(page.content)
 
-        doc.css("*[src]").each do |tag|
-          uri = URI.parse(URI.escape(tag.attributes["src"].value))
+        doc.css('[src]').each do |tag|
+          uri = URI.parse(URI.escape(tag.attributes['src'].value))
           expect(uri.absolute?).to eq true
         end
       end
@@ -38,7 +41,8 @@ RSpec.describe Content::ImportPage, :type => :routine, :vcr => VCR_OPTS do
       it 'finds LO tags in the content' do
         result = nil
         expect {
-          result = Content::ImportPage.call(id: info[:id], book_part: book_part)
+          result = Content::ImportPage.call(cnx_page: cnx_page,
+                                            book_part: book_part)
         }.to change{ Content::Topic.count }.by(2)
 
         topics = Content::Topic.all.to_a
@@ -57,7 +61,8 @@ RSpec.describe Content::ImportPage, :type => :routine, :vcr => VCR_OPTS do
       it 'gets exercises with LO tags from the content' do
         result = nil
         expect {
-          result = Content::ImportPage.call(id: info[:id], book_part: book_part)
+          result = Content::ImportPage.call(cnx_page: cnx_page,
+                                            book_part: book_part)
         }.to change{ Content::Exercise.count }.by(31)
 
         exercises = Content::Exercise.all.to_a
