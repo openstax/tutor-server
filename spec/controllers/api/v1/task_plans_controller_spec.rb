@@ -9,11 +9,11 @@ describe Api::V1::TaskPlansController, :type => :controller,
                          code_class_name: "IReadingAssistant" }
   let!(:legacy_user) { FactoryGirl.create :user }
   let!(:user)        {
-    LegacyUser::FindOrCreateUserForLegacyUser.call(legacy_user).outputs.user
+    UserProfile::FindOrCreate.call(legacy_user).outputs.user
   }
   let!(:legacy_teacher) { FactoryGirl.create :user }
   let!(:teacher)        {
-    u = LegacyUser::FindOrCreateUserForLegacyUser.call(legacy_teacher)
+    u = UserProfile::FindOrCreate.call(legacy_teacher)
                                                  .outputs.user
     Domain::AddUserAsCourseTeacher.call(course: course, user: u)
     legacy_teacher

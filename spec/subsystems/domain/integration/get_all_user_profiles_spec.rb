@@ -4,10 +4,10 @@ describe Domain::GetAllUserProfiles do
   context "when there are multiple users in the system" do
     let (:full_name1)   { 'Full Name 1' }
     let!(:legacy_user1) { FactoryGirl.create(:user, full_name: full_name1) }
-    let (:entity_user1) { LegacyUser::FindOrCreateUserForLegacyUser.call(legacy_user1).outputs.user }
+    let (:entity_user1) { UserProfile::FindOrCreate.call(legacy_user1).outputs.user }
     let (:full_name2)   { 'Full Name 2' }
     let!(:legacy_user2) { FactoryGirl.create(:user, full_name: full_name2) }
-    let (:entity_user2) { LegacyUser::FindOrCreateUserForLegacyUser.call(legacy_user2).outputs.user }
+    let (:entity_user2) { UserProfile::FindOrCreate.call(legacy_user2).outputs.user }
 
     it "returns an array containing those user's profiles" do
       result = Domain::GetAllUserProfiles.call

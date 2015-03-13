@@ -11,8 +11,8 @@ class GetTaskeesFromTaskPlan
         tasking_plan.target
       when Entity::User
         # Yeah I know... let's just get rid of LegacyUser asap?
-        LegacyUser::User.where(entity_user_id: tasking_plan.target.id)
-                        .first.user
+        UserProfile::User.where(entity_user_id: tasking_plan.target.id)
+                         .first.user
       else
         raise NotYetImplemented
       end

@@ -20,7 +20,7 @@ FactoryGirl.define do
     end
 
     after(:create) do |user|
-      LegacyUser::FindOrCreateUserForLegacyUser.call(user)
+      UserProfile::FindOrCreate.call(user)
     end
 
     trait :administrator do

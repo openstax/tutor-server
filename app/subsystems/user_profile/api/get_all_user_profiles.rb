@@ -1,7 +1,7 @@
-class LegacyUser::GetAllUserProfiles
+class UserProfile::GetAllUserProfiles
   lev_routine
 
-  uses_routine LegacyUser::FindOrCreateUserForLegacyUser,
+  uses_routine UserProfile::FindOrCreate,
     translations: { outputs: { type: :verbatim } },
     as: :find_or_create_user
 
