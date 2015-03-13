@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe OpenStax::Exercises::V1::Exercise do
+RSpec.describe OpenStax::Exercises::V1::Exercise, :type => :external do
   let!(:title) { 'Some Title' }
   let!(:hash) { OpenStax::Exercises::V1.fake_client.new_exercise_hash
                                                    .merge(title: title) }

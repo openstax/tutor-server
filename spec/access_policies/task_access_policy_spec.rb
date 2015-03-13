@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe TaskAccessPolicy do
+RSpec.describe TaskAccessPolicy, :type => :access_policy do
   let(:requestor) { FactoryGirl.create(:user) }
   let(:task) { FactoryGirl.create(:task) }
 

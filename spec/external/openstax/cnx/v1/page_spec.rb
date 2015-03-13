@@ -1,7 +1,8 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-describe OpenStax::Cnx::V1::Page, :vcr => VCR_OPTS do
+RSpec.describe OpenStax::Cnx::V1::Page, :type => :external,
+                                        :vcr => VCR_OPTS do
 
   cnx_page_infos = HashWithIndifferentAccess.new(
     stable: [{ id: '1491e74e-ed39-446f-a602-e7ab881af101@1',

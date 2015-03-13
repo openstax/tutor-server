@@ -1,5 +1,5 @@
 require 'rails_helper'
 
-RSpec.describe OpenStax::BigLearn::V1, :type => :external do
+RSpec.describe Api::V1::BookPartTocRepresenter, :type => :representer do
   pending "add some examples to (or delete) #{__FILE__}"
 end

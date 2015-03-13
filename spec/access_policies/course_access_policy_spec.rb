@@ -1,5 +1,5 @@
 require 'rails_helper'
 
-RSpec.describe OpenStax::BigLearn::V1, :type => :external do
+RSpec.describe CourseAccessPolicy, :type => :access_policy do
   pending "add some examples to (or delete) #{__FILE__}"
 end

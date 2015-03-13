@@ -1,5 +1,5 @@
 require 'rails_helper'
 
-RSpec.describe OpenStax::BigLearn::V1, :type => :external do
+RSpec.describe Admin::CoursesCreate, :type => :handler do
   pending "add some examples to (or delete) #{__FILE__}"
 end
