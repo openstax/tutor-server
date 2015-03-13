@@ -2,7 +2,7 @@ module OpenStax::Cnx::V1::Fragment
   class Text
 
     # Used to get the title
-    TITLE_CSS = "[data-type='title']"
+    TITLE_CSS = '[data-type="title"]'
 
     # For fragments missing a proper title
     DEFAULT_TITLE = nil
@@ -12,21 +12,23 @@ module OpenStax::Cnx::V1::Fragment
       @title = title
     end
 
+    attr_reader :node
+
     def title
       return @title unless @title.nil?
 
-      @title = @node.css(TITLE_CSS).collect{|n| n.try(:content)}
-                                   .compact.join(', ')
+      @title = node.css(TITLE_CSS).collect{|n| n.try(:content).try(:strip)}
+                                  .compact.uniq.join(', ')
       @title = DEFAULT_TITLE if @title.blank?
       @title
     end
 
     def to_html
-      @node.to_html
+      node.to_html
     end
 
     def to_s(indent: 0)
-      s = "#{' '*indent}TEXT #{title} // #{@id}\n"
+      s = "#{' '*indent}TEXT #{title}\n"
     end
 
   end

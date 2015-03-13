@@ -9,9 +9,6 @@ module OpenStax::Cnx::V1
     # Remove completely
     DISCARD_CSS = '.ost-reading-discard, .os-teacher'
 
-    # Split fragments on these
-    SPLIT_CSS = '.ost-assessed-feature, .ost-feature, .os-exercise, .ost-interactive, .ost-video'
-
     # Just a page break
     ASSESSED_FEATURE_CSS = '.ost-assessed-feature'
 
@@ -26,6 +23,10 @@ module OpenStax::Cnx::V1
 
     # Video fragment
     VIDEO_CSS = '.ost-video'
+
+    # Split fragments on these
+    SPLIT_CSS = [ASSESSED_FEATURE_CSS, FEATURE_CSS, EXERCISE_CSS,
+                 INTERACTIVE_CSS, VIDEO_CSS].join(', ')
 
     # Find a node with a class that starts with ost-tag-lo-
     LO_CSS = '[class^="ost-tag-lo-"]'
@@ -125,16 +126,14 @@ module OpenStax::Cnx::V1
         splitting_fragments = []
         # Figure out what we just split on, testing in priority order
         if split.matches?(ASSESSED_FEATURE_CSS)
-          # Assessed Feature
+          # Assessed Feature = Text + Exercise
           exercise = split.at_css(EXERCISE_CSS)
           recursive_compact(exercise, split)
 
-          # Could potentially create a Feature or AssessedFeature fragment
-          # if necessary to combine these 2
           splitting_fragments << Fragment::Text.new(node: split)
           splitting_fragments << Fragment::Exercise.new(node: exercise)
         elsif split.matches?(FEATURE_CSS)
-          # Feature
+          # Text Feature
           splitting_fragments << Fragment::Text.new(node: split)
         elsif split.matches?(EXERCISE_CSS)
           # Exercise
@@ -181,8 +180,8 @@ module OpenStax::Cnx::V1
     end
 
     def to_s(indent: 0)
-      s = "#{' '*indent}PAGE #{title} // #{@id}\n"
-      s << @fragments.collect{|f| f.to_s(indent: indent+2)}.join('')
+      s = "#{' '*indent}PAGE #{title} // #{id}\n"
+      s << fragments.collect{|f| f.to_s(indent: indent+2)}.join('')
     end
 
   end

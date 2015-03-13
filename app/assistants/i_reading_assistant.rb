@@ -52,7 +52,7 @@ class IReadingAssistant
             # so this search can be local, but
             # need to store short code tags in Tutor separately from the JSON
             exercise = OpenStax::Exercises::V1.exercises(
-              tag: fragment.short_code
+              tag: fragment.embed_tag
             )['items'].first
 
             TaskedExercise.new(task_step: step, url: exercise.url,

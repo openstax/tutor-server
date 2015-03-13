@@ -2,16 +2,16 @@ module OpenStax::Cnx::V1::Fragment
   class Exercise
 
     # Used to get the title
-    TITLE_CSS = "[data-type='title']"
+    TITLE_CSS = '[data-type="title"]'
 
     # For fragments missing a proper title
     DEFAULT_TITLE = nil
 
-    # CSS to find the exercise short code attribute
-    SHORT_CODE_CSS = 'a[href~=\#ost\/api\/ex\/]'
+    # CSS to find the exercise embed code attribute
+    EMBED_CODE_CSS = 'a[href^="#ost/api/ex/"]'
 
-    # Regex to extract the appropriate short code from the above attribute
-    SHORT_CODE_REGEX = /\A#ost\/api\/ex\/([\w-]+)\z/
+    # Regex to extract the appropriate tag code from the embed code
+    EMBED_TAG_REGEX = /\A#ost\/api\/ex\/([\w-]+)\z/
 
     def initialize(node:, title: nil, short_code: nil)
       @node       = node
@@ -19,19 +19,23 @@ module OpenStax::Cnx::V1::Fragment
       @short_code = short_code
     end
 
+    attr_reader :node
+
     def title
-      @title ||= @node.at_css(TITLE_CSS).try(:content) || DEFAULT_TITLE
+      @title ||= node.at_css(TITLE_CSS).try(:content) || DEFAULT_TITLE
     end
 
-    def short_code
-      return @short_code unless @short_code.nil?
+    def embed_code
+      @embed_code ||= node.at_css(EMBED_CODE_CSS).try(:attributes)
+                                                 .try(:[], 'href')
+    end
 
-      link = @node.at_css(SHORT_CODE_CSS).try(:value)
-      @short_code ||= SHORT_CODE_REGEX.match(link).try(:[], 1)
+    def embed_tag
+      @short_code ||= EMBED_TAG_REGEX.match(embed_code).try(:[], 1)
     end
 
     def to_s(indent: 0)
-      s = "#{' '*indent}EXERCISE #{title} // #{@id}\n"
+      s = "#{' '*indent}EXERCISE #{title} // #{embed_tag}\n"
     end
 
   end
