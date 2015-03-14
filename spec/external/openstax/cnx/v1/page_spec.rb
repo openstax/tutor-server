@@ -1,8 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe OpenStax::Cnx::V1::Page, :type => :external,
-                                        :vcr => VCR_OPTS do
+RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, :vcr => VCR_OPTS do
 
   cnx_page_infos = HashWithIndifferentAccess.new(
     stable: [{ id: '1491e74e-ed39-446f-a602-e7ab881af101@1',
@@ -67,7 +66,7 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external,
 
   cnx_page_infos.each do |name, infos|
     context "with #{name.to_s} content" do
-      it "provides info about the content" do
+      it "provides info about the page for the given hash" do
         infos.each do |hash|
           page = OpenStax::Cnx::V1::Page.new(hash: hash.except(:expected))
           expect(page.id).to eq hash[:id]

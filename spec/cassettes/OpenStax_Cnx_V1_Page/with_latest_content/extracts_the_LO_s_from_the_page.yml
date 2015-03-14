@@ -37,9 +37,9 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Fri, 13 Mar 2015 21:01:55 GMT
+      - Fri, 13 Mar 2015 23:27:48 GMT
       X-Varnish:
-      - '168849364'
+      - '168897257'
       Via:
       - 1.1 varnish
       Connection:
@@ -54,7 +54,7 @@ http_interactions:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Fri, 13 Mar 2015 21:02:03 GMT
+  recorded_at: Fri, 13 Mar 2015 23:28:00 GMT
 - request:
     method: get
     uri: http://archive.cnx.org/contents/1491e74e-ed39-446f-a602-e7ab881af101@1
@@ -92,9 +92,9 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Fri, 13 Mar 2015 21:01:55 GMT
+      - Fri, 13 Mar 2015 23:27:48 GMT
       X-Varnish:
-      - 168849365 168266078
+      - 168897258 168266078
       Via:
       - 1.1 varnish
       Connection:
@@ -102,7 +102,7 @@ http_interactions:
       X-Cache:
       - HIT
       X-Varnish-Age:
-      - '83061'
+      - '91814'
       Age:
       - '0'
     body:
@@ -168,7 +168,7 @@ http_interactions:
         "", "othername": "", "email": "alinams@rice.edu", "fullname": "Alina Slavik",
         "id": "AlinaManager"}}]}'
     http_version: 
-  recorded_at: Fri, 13 Mar 2015 21:02:03 GMT
+  recorded_at: Fri, 13 Mar 2015 23:28:00 GMT
 - request:
     method: get
     uri: http://archive.cnx.org/contents/092bbf0d-0729-42ce-87a6-fd96fd87a083
@@ -206,9 +206,9 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Fri, 13 Mar 2015 21:01:55 GMT
+      - Fri, 13 Mar 2015 23:27:48 GMT
       X-Varnish:
-      - '168849366'
+      - '168897259'
       Via:
       - 1.1 varnish
       Connection:
@@ -223,7 +223,7 @@ http_interactions:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Fri, 13 Mar 2015 21:02:03 GMT
+  recorded_at: Fri, 13 Mar 2015 23:28:00 GMT
 - request:
     method: get
     uri: http://archive.cnx.org/contents/092bbf0d-0729-42ce-87a6-fd96fd87a083@4
@@ -261,9 +261,9 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Fri, 13 Mar 2015 21:01:55 GMT
+      - Fri, 13 Mar 2015 23:27:48 GMT
       X-Varnish:
-      - 168849367 168781301
+      - 168897261 168781301
       Via:
       - 1.1 varnish
       Connection:
@@ -271,7 +271,7 @@ http_interactions:
       X-Cache:
       - HIT
       X-Varnish-Age:
-      - '9713'
+      - '18465'
       Age:
       - '0'
     body:
@@ -570,7 +570,7 @@ http_interactions:
         "suffix": "", "firstname": "Alina", "title": "", "othername": "", "email":
         "alinams@rice.edu", "fullname": "Alina Slavik", "id": "AlinaManager"}}]}'
     http_version: 
-  recorded_at: Fri, 13 Mar 2015 21:02:03 GMT
+  recorded_at: Fri, 13 Mar 2015 23:28:00 GMT
 - request:
     method: get
     uri: http://archive.cnx.org/contents/61445f78-00e2-45ae-8e2c-461b17d9b4fd
@@ -608,9 +608,9 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Fri, 13 Mar 2015 21:01:55 GMT
+      - Fri, 13 Mar 2015 23:27:48 GMT
       X-Varnish:
-      - '168849368'
+      - '168897262'
       Via:
       - 1.1 varnish
       Connection:
@@ -625,7 +625,7 @@ http_interactions:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Fri, 13 Mar 2015 21:02:03 GMT
+  recorded_at: Fri, 13 Mar 2015 23:28:00 GMT
 - request:
     method: get
     uri: http://archive.cnx.org/contents/61445f78-00e2-45ae-8e2c-461b17d9b4fd@3
@@ -663,9 +663,9 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Fri, 13 Mar 2015 21:01:55 GMT
+      - Fri, 13 Mar 2015 23:27:48 GMT
       X-Varnish:
-      - 168849369 168209699
+      - 168897264 168209699
       Via:
       - 1.1 varnish
       Connection:
@@ -673,7 +673,7 @@ http_interactions:
       X-Cache:
       - HIT
       X-Varnish-Age:
-      - '89389'
+      - '98142'
       Age:
       - '0'
     body:
@@ -1113,5 +1113,5 @@ http_interactions:
         "Alina", "title": "", "othername": "", "email": "alinams@rice.edu", "fullname":
         "Alina Slavik", "id": "AlinaManager"}}]}'
     http_version: 
-  recorded_at: Fri, 13 Mar 2015 21:02:03 GMT
+  recorded_at: Fri, 13 Mar 2015 23:28:00 GMT
 recorded_with: VCR 2.9.3

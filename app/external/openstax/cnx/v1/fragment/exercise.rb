@@ -27,8 +27,7 @@ module OpenStax::Cnx::V1::Fragment
     end
 
     def embed_code
-      @embed_code ||= node.at_css(EMBED_CODE_CSS).try(:attributes)
-                                                 .try(:[], 'href')
+      @embed_code ||= node.at_css(EMBED_CODE_CSS).try(:[], 'href')
     end
 
     def embed_tag
