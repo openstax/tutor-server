@@ -45,6 +45,7 @@ Rails.application.routes.draw do
       end
     end
 
+    resources :plans, only: [:show]
   end
 
   namespace 'admin' do

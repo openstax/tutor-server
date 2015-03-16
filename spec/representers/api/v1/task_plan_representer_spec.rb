@@ -1,5 +1,19 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::TaskPlanRepresenter, :type => :representer do
-  pending "add some examples to (or delete) #{__FILE__}"
+
+  let(:task_plan) {
+    FactoryGirl.create(:task_plan)
+  }
+  let(:representation) { Api::V1::TaskPlanRepresenter.new(task_plan).as_json }
+
+  it "represents a task plan" do
+    expect(representation).to include(
+      "id" => task_plan.id,
+      "type" => task_plan.type,
+    )
+    expect(representation["stats"]).to be_nil
+  end
+
+
 end
