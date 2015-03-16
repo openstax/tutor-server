@@ -11,7 +11,7 @@ RSpec.describe "Exercise update progression", type: :request, :api => true, :ver
   let!(:tasked) { FactoryGirl.create(:tasked_exercise, 
                                      :with_tasking, tasked_to: user_1) }
 
-  let!(:step_route_base) { "/api/tasks/#{tasked.task_step.task.id}/steps/#{tasked.task_step.id}" }
+  let!(:step_route_base) { "/api/steps/#{tasked.task_step.id}" }
 
   it "only shows feedback and correct answer id after completed" do
 
