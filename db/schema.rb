@@ -96,9 +96,10 @@ ActiveRecord::Schema.define(version: 20150313193101) do
   add_index "content_pages", ["url"], name: "index_content_pages_on_url", unique: true
 
   create_table "content_topics", force: :cascade do |t|
-    t.string   "name",       null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string   "name",        null: false
+    t.text     "description"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
   end
 
   add_index "content_topics", ["name"], name: "index_content_topics_on_name", unique: true
