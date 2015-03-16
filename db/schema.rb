@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150313184855) do
+ActiveRecord::Schema.define(version: 20150313193101) do
 
   create_table "administrators", force: :cascade do |t|
     t.integer  "user_id",    null: false
@@ -454,16 +454,8 @@ ActiveRecord::Schema.define(version: 20150313184855) do
   add_index "tasks", ["task_plan_id"], name: "index_tasks_on_task_plan_id"
   add_index "tasks", ["task_type"], name: "index_tasks_on_task_type"
 
-  create_table "user_profile_users", force: :cascade do |t|
-    t.integer  "user_id",        null: false
-    t.integer  "entity_user_id", null: false
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
-  end
-
-  add_index "user_profile_users", ["user_id"], name: "index_user_profile_users_on_user_id", unique: true
-
-  create_table "users", force: :cascade do |t|
+  create_table "user_profile_profiles", force: :cascade do |t|
+    t.integer  "entity_user_id",      null: false
     t.integer  "account_id",          null: false
     t.string   "exchange_identifier", null: false
     t.datetime "deleted_at"
@@ -471,8 +463,8 @@ ActiveRecord::Schema.define(version: 20150313184855) do
     t.datetime "updated_at",          null: false
   end
 
-  add_index "users", ["account_id"], name: "index_users_on_account_id", unique: true
-  add_index "users", ["deleted_at"], name: "index_users_on_deleted_at"
-  add_index "users", ["exchange_identifier"], name: "index_users_on_exchange_identifier", unique: true
+  add_index "user_profile_profiles", ["account_id"], name: "index_user_profile_profiles_on_account_id", unique: true
+  add_index "user_profile_profiles", ["deleted_at"], name: "index_user_profile_profiles_on_deleted_at"
+  add_index "user_profile_profiles", ["exchange_identifier"], name: "index_user_profile_profiles_on_exchange_identifier", unique: true
 
 end
