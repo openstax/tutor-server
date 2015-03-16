@@ -1,8 +1,15 @@
 class TaskedExercise < ActiveRecord::Base
   acts_as_tasked
 
+  belongs_to :recovery_tasked_exercise, class_name: name,
+                                        dependent: :destroy
+  belongs_to :refresh_tasked, polymorphic: true, dependent: :destroy
+
   validates :url, presence: true
   validates :content, presence: true
+  validates :recovery_tasked_exercise_id, uniqueness: { allow_nil: true }
+  validates :refresh_tasked_id, uniqueness: { scope: :refresh_tasked_type,
+                                              allow_nil: true }
   validate :valid_state, :valid_answer, :not_completed
 
   delegate :answers, :correct_answer_ids, :content_without_correctness,

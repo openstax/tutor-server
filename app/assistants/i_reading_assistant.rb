@@ -58,8 +58,20 @@ class IReadingAssistant
               tag: fragment.embed_tag
             )['items'].first
 
-            TaskedExercise.new(task_step: step, url: exercise.url,
-                               title: exercise.title, content: exercise.content)
+            recovery = TaskedExercise.new(url: 'http://dum.my/',
+                                          title: nil,
+                                          content: 'Recover this!')
+
+            refresh = TaskedReading.new(url: page.url,
+                                        title: 'Refresh',
+                                        content: 'Refreshing your memory, please wait...')
+
+            TaskedExercise.new(task_step: step,
+                               url: exercise.url,
+                               title: exercise.title,
+                               content: exercise.content,
+                               recovery_tasked_exercise: recovery,
+                               refresh_tasked: refresh)
           when OpenStax::Cnx::V1::Fragment::Video
             raise "Video url not found for Video in Page #{page.id}" \
               if fragment.url.blank?
@@ -67,8 +79,10 @@ class IReadingAssistant
             TaskedVideo.new(task_step: step, url: fragment.url,
                             title: fragment.title, content: fragment.to_html)
           else
-            TaskedReading.new(task_step: step, url: page.url,
-                              title: fragment.title, content: fragment.to_html)
+            TaskedReading.new(task_step: step,
+                              url: page.url,
+                              title: fragment.title,
+                              content: fragment.to_html)
           end
 
           task.task_steps << step
