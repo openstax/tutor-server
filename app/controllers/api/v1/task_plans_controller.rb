@@ -88,7 +88,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   # update
   ###############################################################
 
-  api :PUT, '/courses/:course_id/plans/:id', 'Updates the specified TaskPlan'
+  api :PUT, '/plans/:id', 'Updates the specified TaskPlan'
   description <<-EOS
     #{json_schema(Api::V1::TaskPlanRepresenter, include: :writeable)}
   EOS
@@ -100,8 +100,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   # publish
   ###############################################################
 
-  api :POST, '/courses/:course_id/plans/:id/publish',
-               'Publishes the specified TaskPlan'
+  api :POST, '/plans/:id/publish', 'Publishes the specified TaskPlan'
   description <<-EOS
     #{json_schema(Api::V1::TaskPlanRepresenter, include: :writeable)}
   EOS
@@ -118,8 +117,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   # destroy
   ###############################################################
 
-  api :DELETE, '/courses/:course_id/plans/:id',
-               'Deletes the specified TaskPlan'
+  api :DELETE, '/plans/:id', 'Deletes the specified TaskPlan'
   description <<-EOS
     #{json_schema(Api::V1::TaskPlanRepresenter, include: :writeable)}
   EOS
@@ -127,5 +125,4 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     standard_destroy(TaskPlan.find(params[:id]))
   end
 
-  
 end
