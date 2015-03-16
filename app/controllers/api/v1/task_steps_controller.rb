@@ -12,13 +12,13 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
   # show
   ###############################################################
 
-  api :GET, '/tasks/:task_id/steps/:step_id', 'Gets the specified TaskStep'
+  api :GET, '/steps/:step_id', 'Gets the specified TaskStep'
   def show
     task_step = TaskStep.find(params[:id])
     standard_read(task_step.tasked)
   end
 
-  api :PUT, '/tasks/:task_id/steps/:step_id', 'Updates the specified TaskStep'
+  api :PUT, '/steps/:step_id', 'Updates the specified TaskStep'
   def update
     task_step = TaskStep.find(params[:id])
     tasked = task_step.tasked
@@ -28,7 +28,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     # instead of the default PUT result of No Content 204. 
   end
 
-  api :GET, '/tasks/:task_id/steps/:step_id/completed', 'Marks the specified TaskStep as completed (if applicable)'
+  api :GET, '/steps/:step_id/completed', 'Marks the specified TaskStep as completed (if applicable)'
   def completed
     task_step = TaskStep.find(params[:id])
     OSU::AccessPolicy.require_action_allowed!(:mark_completed, current_api_user, task_step.tasked)
