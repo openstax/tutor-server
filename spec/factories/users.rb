@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :user do
+  factory :user, class: 'UserProfile::Profile' do
     exchange_identifier { SecureRandom.hex.to_s }
 
     transient do

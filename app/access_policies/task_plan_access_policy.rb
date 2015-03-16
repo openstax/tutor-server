@@ -4,7 +4,7 @@ class TaskPlanAccessPolicy
     when :read, :create, :update, :publish, :destroy, :stats
       return false unless requestor.is_human?
       case task_plan.owner
-      when User
+      when UserProfile::Profile
         task_plan.owner == requestor
       when Entity::User
         user = UserProfile::FindOrCreate.call(requestor).outputs.user

@@ -1,5 +1,5 @@
 class Student < ActiveRecord::Base
-  belongs_to :user
+  belongs_to :user, class_name: 'UserProfile::Profile'
   belongs_to :course
   belongs_to :section
 
@@ -7,19 +7,19 @@ class Student < ActiveRecord::Base
   has_many :taskings, as: :taskee, dependent: :destroy
 
   enum level: { graded: 0, auditing: 1 }
-  
-  validates :user, 
+
+  validates :user,
             presence: true
 
-  validates :course, 
+  validates :course,
             presence: true,
             uniqueness: { scope: :user_id }
-  
-  validates :section, 
+
+  validates :section,
             allow_nil: true,
             uniqueness: { scope: :user_id }
 
-  validates :random_education_identifier, 
+  validates :random_education_identifier,
             presence: true,
             uniqueness: true
 
