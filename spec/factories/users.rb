@@ -17,10 +17,7 @@ FactoryGirl.define do
                                        last_name: evaluator.last_name,
                                        full_name: evaluator.full_name,
                                        title: evaluator.title)
-    end
-
-    after(:create) do |user|
-      UserProfile::FindOrCreate.call(user)
+      user.entity_user = Entity::User.new
     end
 
     trait :administrator do

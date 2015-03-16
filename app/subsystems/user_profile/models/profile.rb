@@ -21,7 +21,7 @@ class UserProfile::Profile < ActiveRecord::Base
            :title=, to: :account
 
   def self.anonymous
-    AnonymousUser.instance
+    ::AnonymousUser.instance
   end
 
   def is_human?

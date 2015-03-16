@@ -14,8 +14,8 @@ class TaskPlanAccessPolicy
         ## as a course teacher as a denial of access.
         ## (This happens when the user is anonymous.)
         begin
-          user = UserProfile::FindOrCreate.call(requestor).outputs.user
-          Domain::UserIsCourseTeacher.call(user: user, course: task_plan.owner)
+          Domain::UserIsCourseTeacher.call(user: requestor.entity_user,
+                                           course: task_plan.owner)
                                      .outputs.user_is_course_teacher
         rescue
           false
