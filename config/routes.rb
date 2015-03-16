@@ -40,6 +40,7 @@ Rails.application.routes.draw do
     resources :courses, only: [] do
       get 'readings', on: :member
       get 'plans', on: :member
+      get 'tasks', on: :member
       resources :task_plans, path: '/plans', shallow: true, except: [:index, :edit] do
         post 'publish', on: :member
       end
