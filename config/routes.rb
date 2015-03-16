@@ -44,8 +44,6 @@ Rails.application.routes.draw do
         post 'publish', on: :member
       end
     end
-
-    resources :plans, only: [:show]
   end
 
   namespace 'admin' do
