@@ -1,6 +1,6 @@
 module Api::V1
 
-  class TaskStatisticsRepresenter < Roar::Decorator
+  class IReadingStatsRepresenter < Roar::Decorator
 
     include Roar::Representer::JSON
 
@@ -8,12 +8,12 @@ module Api::V1
       type: Object,
       readable: true,
       writeable: false,
-      decorator: TaskPeriodStatisticsRepresenter
+      decorator: IReadingPeriodStatsRepresenter
 
     collection :periods,
       readable: true,
       writable: false,
-      decorator: TaskPeriodStatisticsRepresenter
+      decorator: IReadingPeriodStatsRepresenter
 
   end
 end

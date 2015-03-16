@@ -1,7 +1,7 @@
 module Api::V1
 
   # Represents course and periods
-  class TaskPeriodStatisticsRepresenter < Roar::Decorator
+  class IReadingPeriodStatsRepresenter < Roar::Decorator
     include Roar::Representer::JSON
 
     property :total_count,

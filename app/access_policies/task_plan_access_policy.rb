@@ -1,7 +1,7 @@
 class TaskPlanAccessPolicy
   def self.action_allowed?(action, requestor, task_plan)
     case action
-    when :read, :create, :update, :publish, :destroy
+    when :read, :create, :update, :publish, :destroy, :stats
       return false unless requestor.is_human?
       case task_plan.owner
       when User

@@ -1,14 +1,14 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::TaskPlanRepresenter, :type => :representer do
+RSpec.describe Api::V1::IReadingStatsRepresenter, :type => :representer do
 
   let(:task_plan) {
     FactoryGirl.create(:task_plan)
   }
   let(:statistics){
-    CalculateTaskPlanStatistics.call(plan:task_plan).outputs[:statistics]
+    CalculateIReadingStats.call(plan:task_plan).outputs[:statistics]
   }
-  let(:representation) { Api::V1::TaskStatisticsRepresenter.new(statistics).as_json }
+  let(:representation) { Api::V1::IReadingStatsRepresenter.new(statistics).as_json }
 
   it "represents a tasked exercise's stats" do
     expect(representation).to include(

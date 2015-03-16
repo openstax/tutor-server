@@ -34,7 +34,7 @@ module Api::V1
              writeable: true
 
     property :stats,
-             extend: TaskStatisticsRepresenter,
+             extend: IReadingStatsRepresenter,
              getter: ->(args){ args[:stats] },
              type: Object,
              readable: true,
