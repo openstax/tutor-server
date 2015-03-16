@@ -32,7 +32,7 @@ Rails.application.routes.draw do
     end
 
     resources :tasks, only: [:show] do
-      resources :steps, controller: :task_steps, only: [:show, :update] do
+      resources :steps, controller: :task_steps, shallow: true, only: [:show, :update] do
         put 'completed', on: :member
       end
     end
@@ -40,7 +40,7 @@ Rails.application.routes.draw do
     resources :courses, only: [] do
       get 'readings', on: :member
       get 'plans', on: :member
-      resources :task_plans, path: '/plans', except: :index do
+      resources :task_plans, path: '/plans', shallow: true, except: [:index, :edit] do
         post 'publish', on: :member
       end
     end
