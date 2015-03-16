@@ -16,19 +16,51 @@ describe Api::V1::TaskPlansController, :type => :controller,
     u = LegacyUser::FindOrCreateUserForLegacyUser.call(legacy_teacher)
                                                  .outputs.user
     Domain::AddUserAsCourseTeacher.call(course: course, user: u)
-    u
+    legacy_teacher
   }
 
   let!(:page) { FactoryGirl.create :content_page }
-  let!(:task_plan)    { FactoryGirl.build :task_plan,
-                                          owner: course,
-                                          assistant: assistant,
-                                          settings: { page_ids: [page.id] } }
+  let!(:task_plan)    { FactoryGirl.create :task_plan,
+                                            owner: course,
+                                            assistant: assistant,
+                                            settings: { page_ids: [page.id] } }
   let!(:tasking_plan) {
     tp = FactoryGirl.build :tasking_plan, task_plan: task_plan, target: user
     task_plan.tasking_plans << tp
     tp
   }
+
+  let(:unaffiliated_teacher) {
+    u = FactoryGirl.create :user
+    LegacyUser::FindOrCreateUserForLegacyUser.call(u).outputs.user
+    u
+  }
+
+  context 'stats' do
+
+    it 'cannot be requested by unrelated teachers' do
+      controller.sign_in unaffiliated_teacher
+      expect {
+        api_get :show, nil, parameters: {id: task_plan.id}
+      }.to raise_error(SecurityTransgression)
+    end
+
+    it "can be requested by the course's teacher" do
+      controller.sign_in teacher
+      expect {
+        api_get :show, nil, parameters: {id: task_plan.id}
+      }.to_not raise_error
+    end
+
+    it 'includes stats with task_plan' do
+      controller.sign_in teacher
+      api_get :show, nil, parameters: {id: task_plan.id}
+      body = JSON.parse(response.body)
+      # Since the stats currently use dummy data it's difficult to check their values.
+      # The representer spec does validate the json so we'll rely on it and just check presense
+      expect(body['stats']).to be_a(Hash)
+    end
+  end
 
   context 'show' do
     before(:each) do
@@ -41,7 +73,8 @@ describe Api::V1::TaskPlansController, :type => :controller,
                                        id: task_plan.id}
       expect(response).to have_http_status(:success)
 
-      expect(response.body).to(
+      # Ignore the stats for this test
+      expect(response.body_as_hash.except(:stats).to_json).to(
         eq(Api::V1::TaskPlanRepresenter.new(task_plan).to_json))
     end
 
