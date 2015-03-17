@@ -57,7 +57,9 @@ gem 'doorkeeper', '< 2.0'
 gem 'chronic'
 
 # API versioning and documentation
-gem 'openstax_api', path: '../openstax_api'
+gem 'openstax_api', '~> 5.0.0',
+                    git: 'https://github.com/Dantemss/openstax_api.git',
+                    ref: 'b3184081856cb6c4f0081b4cb3a68005e74f2155'
 gem 'apipie-rails'
 gem 'maruku'
 gem 'representable'

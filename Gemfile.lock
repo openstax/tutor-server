@@ -1,5 +1,7 @@
-PATH
-  remote: ../openstax_api
+GIT
+  remote: https://github.com/Dantemss/openstax_api.git
+  revision: b3184081856cb6c4f0081b4cb3a68005e74f2155
+  ref: b3184081856cb6c4f0081b4cb3a68005e74f2155
   specs:
     openstax_api (5.0.0)
       doorkeeper (>= 0.5, < 2.0)
@@ -481,7 +483,7 @@ DEPENDENCIES
   newrelic_rpm
   nifty-generators
   openstax_accounts (~> 4.0.0)
-  openstax_api!
+  openstax_api (~> 5.0.0)!
   openstax_exchange
   openstax_utilities (~> 4.2.0)
   pg
