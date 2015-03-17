@@ -33,7 +33,10 @@ Rails.application.routes.draw do
 
     resources :tasks, only: [:show] do
       resources :steps, controller: :task_steps, shallow: true, only: [:show, :update] do
-        put 'completed', on: :member
+        member do
+          put 'completed'
+          put 'recovery'
+        end
       end
     end
 

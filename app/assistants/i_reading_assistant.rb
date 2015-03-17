@@ -62,16 +62,11 @@ class IReadingAssistant
                                           title: nil,
                                           content: 'Recover this!')
 
-            refresh = TaskedReading.new(url: page.url,
-                                        title: 'Refresh',
-                                        content: 'Refreshing your memory, please wait...')
-
             TaskedExercise.new(task_step: step,
                                url: exercise.url,
                                title: exercise.title,
                                content: exercise.content,
-                               recovery_tasked_exercise: recovery,
-                               refresh_tasked: refresh)
+                               recovery_tasked_exercise: recovery)
           when OpenStax::Cnx::V1::Fragment::Video
             raise "Video url not found for Video in Page #{page.id}" \
               if fragment.url.blank?

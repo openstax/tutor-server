@@ -57,7 +57,7 @@ gem 'doorkeeper', '< 2.0'
 gem 'chronic'
 
 # API versioning and documentation
-gem 'openstax_api', '~> 4.0.1'
+gem 'openstax_api', path: '../openstax_api'
 gem 'apipie-rails'
 gem 'maruku'
 gem 'representable'

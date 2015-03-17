@@ -11,6 +11,10 @@ module ActsAsTasked
 
         delegate :completed_at, :completed?, :complete, :tasked_to?,
           to: :task_step, allow_nil: true
+
+        def has_recovery?
+          false
+        end
       end
     end
   end

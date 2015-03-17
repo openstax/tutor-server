@@ -1,3 +1,17 @@
+PATH
+  remote: ../openstax_api
+  specs:
+    openstax_api (5.0.0)
+      doorkeeper (>= 0.5, < 2.0)
+      exception_notification (>= 4.0)
+      lev (>= 1.0.0)
+      openstax_utilities (>= 4.2.0)
+      rails (>= 3.1)
+      representable (>= 1.8)
+      responders
+      roar (>= 0.12.1, < 1.0)
+      roar-rails (>= 0.1.2)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -236,16 +250,6 @@ GEM
       rails (>= 4.1)
       roar (>= 0.8, < 1.0)
       squeel (>= 0.5.0)
-    openstax_api (4.0.1)
-      doorkeeper (>= 0.5, < 2.0)
-      exception_notification (>= 4.0)
-      lev (>= 1.0.0)
-      openstax_utilities (>= 4.2.0)
-      rails (>= 3.1)
-      representable (>= 1.8)
-      responders
-      roar (>= 0.12.1, < 1.0)
-      roar-rails (>= 0.1.2)
     openstax_exchange (0.0.2)
       oauth2 (>= 0.5.0)
     openstax_utilities (4.2.0)
@@ -477,7 +481,7 @@ DEPENDENCIES
   newrelic_rpm
   nifty-generators
   openstax_accounts (~> 4.0.0)
-  openstax_api (~> 4.0.1)
+  openstax_api!
   openstax_exchange
   openstax_utilities (~> 4.2.0)
   pg

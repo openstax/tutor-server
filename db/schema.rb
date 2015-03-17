@@ -400,8 +400,6 @@ ActiveRecord::Schema.define(version: 20150319213309) do
 
   create_table "tasked_exercises", force: :cascade do |t|
     t.integer  "recovery_tasked_exercise_id"
-    t.integer  "refresh_tasked_id"
-    t.string   "refresh_tasked_type"
     t.string   "url",                         null: false
     t.text     "content",                     null: false
     t.string   "title"
@@ -412,7 +410,6 @@ ActiveRecord::Schema.define(version: 20150319213309) do
   end
 
   add_index "tasked_exercises", ["recovery_tasked_exercise_id"], name: "index_tasked_exercises_on_recovery_tasked_exercise_id", unique: true
-  add_index "tasked_exercises", ["refresh_tasked_id", "refresh_tasked_type"], name: "index_tasked_exercises_on_r_t_id_and_r_t_type", unique: true
 
   create_table "tasked_readings", force: :cascade do |t|
     t.string   "url",        null: false

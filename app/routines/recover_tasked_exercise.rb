@@ -1,15 +1,17 @@
-# Move to task (do iReading) subsystem
+# Move to whatever subsystem handles the user doing homework (iReadings)
 
-class TryAnother
+class RecoverTaskedExercise
 
   lev_routine
 
   protected
 
   def exec(tasked_exercise:)
-    recovery_exercise = tasked_exercise.recovery_tasked_exercise
-    fatal_error(:missing_recovery_exercise) if recovery_exercise.nil?
+    fatal_error(:missing_recovery_exercise) \
+      unless tasked_exercise.has_recovery?
 
+    recovery_exercise = tasked_exercise.recovery_tasked_exercise
+    outputs[:recovery_exercise] = recovery_exercise
     task_step = tasked_exercise.task_step
     task = task_step.task
     outputs[:task] = task
