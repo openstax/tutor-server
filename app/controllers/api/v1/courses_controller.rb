@@ -40,4 +40,20 @@ class Api::V1::CoursesController < Api::V1::ApiController
     respond_with out, represent_with: Api::V1::TaskPlanSearchRepresenter
   end
 
+  api :GET, '/courses/:course_id/tasks', 'Gets all course tasks assigned to the role holder making the request'
+  description <<-EOS 
+    As a temporary patch to make this route available, this route currently returns exactly the same
+    thing as /api/user/tasks.  Once the backend does more work to make routes role-aware, we'll update
+    this endpoint to actually do what the description says.
+    #{json_schema(Api::V1::TaskSearchRepresenter, include: :readable)}
+  EOS
+  def tasks
+    # TODO actually make this URL role-aware and return the tasks for the role 
+    # in the specified course; for now this is just returning what /api/user/tasks 
+    # returns and is ignore 
+    OSU::AccessPolicy.require_action_allowed!(:read_tasks, current_api_user, current_human_user)
+    outputs = SearchTasks.call(q: "user_id:#{current_human_user.id}").outputs
+    respond_with outputs, represent_with: Api::V1::TaskSearchRepresenter
+  end
+
 end

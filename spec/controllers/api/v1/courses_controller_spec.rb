@@ -81,4 +81,19 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
     end
   end
 
+  describe "tasks" do
+    it "temporarily mirrors /api/user/tasks" do
+      api_get :tasks, user_1_token, parameters: {id: course.id}
+      expect(response.code).to eq('200')
+      expect(response.body).to eq({
+        total_count: 0,
+        items: []
+      }.to_json)
+    end
+
+    it "returns tasks for a role holder in a certain course" do
+      skip "skipped until implement the real /api/courses/123/tasks endpoint with role awareness"
+    end
+  end
+
 end
