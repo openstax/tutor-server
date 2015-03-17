@@ -43,7 +43,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     end
   end
 
-  api :PUT, '/tasks/:task_id/steps/:step_id/recovery',
+  api :PUT, '/steps/:step_id/recovery',
             'Requests an exercise similar to the given one for credit recovery'
   def recovery
     tasked = TaskStep.find(params[:id]).tasked
