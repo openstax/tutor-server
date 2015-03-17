@@ -7,6 +7,20 @@
 
 ## Development
 
+Capybara-webkit depends on Qt.  If you don't have Qt installed, you can install
+it using `apt-get` on Debian or Ubuntu:
+
+```
+sudo apt-get install qt5-default libqt5webkit5-dev
+```
+
+or `homebrew` on OS X:
+
+```
+brew update
+brew install qt
+```
+
 ```
 bundle install --without production
 rake db:migrate
