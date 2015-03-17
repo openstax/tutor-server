@@ -60,7 +60,7 @@ class IReadingAssistant
 
             recovery = TaskedExercise.new(url: 'http://dum.my/',
                                           title: nil,
-                                          content: 'Recover this!')
+                                          content: exercise.content)
 
             TaskedExercise.new(task_step: step,
                                url: exercise.url,
