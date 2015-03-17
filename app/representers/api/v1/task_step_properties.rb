@@ -35,6 +35,7 @@ module Api::V1
              }
 
     property :is_completed,
+             type: 'boolean',
              writeable: false,
              readable: true,
              getter: lambda {|*| task_step.completed?},
