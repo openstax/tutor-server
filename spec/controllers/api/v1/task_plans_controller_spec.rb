@@ -11,10 +11,10 @@ describe Api::V1::TaskPlansController, :type => :controller,
   let!(:teacher) { FactoryGirl.create :user }
 
   let!(:page) { FactoryGirl.create :content_page }
-  let!(:task_plan) { FactoryGirl.build :task_plan,
-                                       owner: course,
-                                       assistant: assistant,
-                                       settings: { page_ids: [page.id] } }
+  let!(:task_plan) { FactoryGirl.create(:task_plan,
+                                        owner: course,
+                                        assistant: assistant,
+                                        settings: { page_ids: [page.id] }) }
   let!(:tasking_plan) {
     tp = FactoryGirl.build :tasking_plan, task_plan: task_plan, target: user
     task_plan.tasking_plans << tp
