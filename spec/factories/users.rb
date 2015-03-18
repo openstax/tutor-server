@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :user do
+  factory :user, class: 'UserProfile::Profile' do
     exchange_identifier { SecureRandom.hex.to_s }
 
     transient do
@@ -17,10 +17,7 @@ FactoryGirl.define do
                                        last_name: evaluator.last_name,
                                        full_name: evaluator.full_name,
                                        title: evaluator.title)
-    end
-
-    after(:create) do |user|
-      LegacyUser::FindOrCreateUserForLegacyUser.call(user)
+      user.entity_user = Entity::User.new
     end
 
     trait :administrator do

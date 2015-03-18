@@ -4,37 +4,28 @@ describe Api::V1::TaskPlansController, :type => :controller,
                                        :api => true,
                                        :version => :v1 do
 
-  let!(:course)      { Domain::CreateCourse.call.outputs.course }
-  let!(:assistant)   { FactoryGirl.create :assistant,
-                         code_class_name: "IReadingAssistant" }
-  let!(:legacy_user) { FactoryGirl.create :user }
-  let!(:user)        {
-    LegacyUser::FindOrCreateUserForLegacyUser.call(legacy_user).outputs.user
-  }
-  let!(:legacy_teacher) { FactoryGirl.create :user }
-  let!(:teacher)        {
-    u = LegacyUser::FindOrCreateUserForLegacyUser.call(legacy_teacher)
-                                                 .outputs.user
-    Domain::AddUserAsCourseTeacher.call(course: course, user: u)
-    legacy_teacher
-  }
+  let!(:course) { Domain::CreateCourse.call.outputs.course }
+  let!(:assistant) { FactoryGirl.create :assistant,
+                                        code_class_name: "IReadingAssistant" }
+  let!(:user) { FactoryGirl.create :user }
+  let!(:teacher) { FactoryGirl.create :user }
 
   let!(:page) { FactoryGirl.create :content_page }
-  let!(:task_plan)    { FactoryGirl.create :task_plan,
-                                            owner: course,
-                                            assistant: assistant,
-                                            settings: { page_ids: [page.id] } }
+  let!(:task_plan) { FactoryGirl.create(:task_plan,
+                                        owner: course,
+                                        assistant: assistant,
+                                        settings: { page_ids: [page.id] }) }
   let!(:tasking_plan) {
     tp = FactoryGirl.build :tasking_plan, task_plan: task_plan, target: user
     task_plan.tasking_plans << tp
     tp
   }
 
-  let(:unaffiliated_teacher) {
-    u = FactoryGirl.create :user
-    LegacyUser::FindOrCreateUserForLegacyUser.call(u).outputs.user
-    u
-  }
+  let(:unaffiliated_teacher) { FactoryGirl.create :user }
+
+  before do
+    Domain::AddUserAsCourseTeacher.call(course: course, user: teacher)
+  end
 
   context 'stats' do
 
@@ -67,10 +58,10 @@ describe Api::V1::TaskPlansController, :type => :controller,
       task_plan.save!
     end
 
-    it 'allows a teacher to view their course\'s task_plan' do
-      controller.sign_in legacy_teacher
-      api_get :show, nil, parameters: {course_id: course.id,
-                                       id: task_plan.id}
+    it "allows a teacher to view their course's task_plan" do
+      controller.sign_in teacher
+      api_get :show, nil, parameters: { course_id: course.id,
+                                        id: task_plan.id }
       expect(response).to have_http_status(:success)
 
       # Ignore the stats for this test
@@ -79,7 +70,7 @@ describe Api::V1::TaskPlansController, :type => :controller,
     end
 
     it 'does not allow an unauthorized user to view the task_plan' do
-      controller.sign_in legacy_user
+      controller.sign_in user
       expect { api_get :show, nil, parameters: {course_id: course.id,
                                                 id: task_plan.id} }
         .to raise_error(SecurityTransgression)
@@ -95,7 +86,7 @@ describe Api::V1::TaskPlansController, :type => :controller,
 
   context 'create' do
     it 'allows a teacher to create a task_plan for their course' do
-      controller.sign_in legacy_teacher
+      controller.sign_in teacher
       expect { api_post :create, nil, parameters: {course_id: course.id},
                         raw_post_data: Api::V1::TaskPlanRepresenter
                                          .new(task_plan).to_json }
@@ -107,7 +98,7 @@ describe Api::V1::TaskPlansController, :type => :controller,
     end
 
     it 'does not allow an unauthorized user to create a task_plan' do
-      controller.sign_in legacy_user
+      controller.sign_in user
       expect { api_post :create, nil, parameters: {course_id: course.id},
                raw_post_data: Api::V1::TaskPlanRepresenter.new(task_plan)
                                                           .to_json }
@@ -128,7 +119,7 @@ describe Api::V1::TaskPlansController, :type => :controller,
     end
 
     it 'allows a teacher to update a task_plan for their course' do
-      controller.sign_in legacy_teacher
+      controller.sign_in teacher
       api_put :update, nil, parameters: {course_id: course.id,
                                          id: task_plan.id},
               raw_post_data: Api::V1::TaskPlanRepresenter.new(task_plan)
@@ -138,7 +129,7 @@ describe Api::V1::TaskPlansController, :type => :controller,
     end
 
     it 'does not allow an unauthorized user to update a task_plan' do
-      controller.sign_in legacy_user
+      controller.sign_in user
       expect { api_put :update, nil, parameters: {course_id: course.id,
                                                   id: task_plan.id},
                raw_post_data: Api::V1::TaskPlanRepresenter.new(task_plan)
@@ -161,7 +152,7 @@ describe Api::V1::TaskPlansController, :type => :controller,
     end
 
     it 'allows a teacher to publish a task_plan for their course' do
-      controller.sign_in legacy_teacher
+      controller.sign_in teacher
       expect { api_post :publish, nil, parameters: {course_id: course.id,
                                                     id: task_plan.id} }
         .to change{ Task.count }.by(1)
@@ -171,7 +162,7 @@ describe Api::V1::TaskPlansController, :type => :controller,
     end
 
     it 'does not allow an unauthorized user to publish a task_plan' do
-      controller.sign_in legacy_user
+      controller.sign_in user
       expect { api_post :publish, nil, parameters: {course_id: course.id,
                                                     id: task_plan.id} }
         .to raise_error(SecurityTransgression)
@@ -190,7 +181,7 @@ describe Api::V1::TaskPlansController, :type => :controller,
     end
 
     it 'allows a teacher to destroy a task_plan for their course' do
-      controller.sign_in legacy_teacher
+      controller.sign_in teacher
       expect{ api_delete :destroy, nil, parameters: {course_id: course.id,
                                                      id: task_plan.id} }
         .to change{ TaskPlan.count }.by(-1)
@@ -199,7 +190,7 @@ describe Api::V1::TaskPlansController, :type => :controller,
     end
 
     it 'does not allow an unauthorized user to destroy a task_plan' do
-      controller.sign_in legacy_user
+      controller.sign_in user
       expect { api_delete :destroy, nil, parameters: {course_id: course.id,
                                                       id: task_plan.id} }
         .to raise_error(SecurityTransgression)

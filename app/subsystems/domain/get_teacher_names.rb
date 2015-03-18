@@ -5,7 +5,7 @@ class Domain::GetTeacherNames
     translations: { outputs: { type: :verbatim } },
     as: :get_teacher_users
 
-  uses_routine LegacyUser::GetUserFullNames,
+  uses_routine UserProfile::GetUserFullNames,
     translations: { outputs: { map: {full_names: :teacher_names} } },
     as: :get_full_names
 

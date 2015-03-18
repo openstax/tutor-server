@@ -1,7 +1,7 @@
 class Domain::GetAllUserProfiles
   lev_routine
 
-  uses_routine LegacyUser::GetAllUserProfiles,
+  uses_routine UserProfile::GetAllUserProfiles,
     translations: { outputs: { type: :verbatim } },
     as: :get_all_user_profiles
 

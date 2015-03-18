@@ -17,9 +17,9 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
                                               application: application }
 
   let!(:task_step)       { FactoryGirl.create :task_step, title: 'title', url: 'url', content: 'content' }
-  let!(:tasking)         { FactoryGirl.create :tasking, taskee: user_1, task: task_step.task }         
+  let!(:tasking)         { FactoryGirl.create :tasking, taskee: user_1, task: task_step.task }
 
-  let!(:tasked_exercise) { FactoryGirl.create :tasked_exercise }                                   
+  let!(:tasked_exercise) { FactoryGirl.create :tasked_exercise }
 
   describe "#show" do
     it "should work on the happy path" do
@@ -48,7 +48,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
     it "should not allow marking completion of reading steps by random user" do
       tasked = create_tasked(:tasked_reading, user_1)
       expect{
-        api_put :completed, user_2_token, parameters: {task_id: tasked.task_step.task.id, id: tasked.task_step.id}  
+        api_put :completed, user_2_token, parameters: {task_id: tasked.task_step.task.id, id: tasked.task_step.id}
       }.to raise_error
       expect(tasked.task_step(true).completed?).to be_falsy
     end
@@ -62,12 +62,12 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
   end
 
   describe "PATCH update" do
-   
+
     let!(:tasked) { create_tasked(:tasked_exercise, user_1) }
     let!(:id_parameters) { { task_id: tasked.task_step.task.id, id: tasked.task_step.id } }
 
     it "updates the free response of an exercise" do
-      api_put :update, user_1_token, parameters: id_parameters, 
+      api_put :update, user_1_token, parameters: id_parameters,
               raw_post_data: { free_response: "Ipsum lorem" }
 
       expect(response).to have_http_status(:success)
@@ -78,7 +78,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
       tasked.free_response = "Ipsum lorem"
       tasked.save!
 
-      api_put :update, user_1_token, parameters: id_parameters, 
+      api_put :update, user_1_token, parameters: id_parameters,
               raw_post_data: { answer_id: tasked.answers[0][0]['id'] }
 
       expect(response).to have_http_status(:success)
@@ -86,7 +86,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
     end
 
     it "does not update the answer if the free response is not set" do
-      api_put :update, user_1_token, parameters: id_parameters, 
+      api_put :update, user_1_token, parameters: id_parameters,
               raw_post_data: { answer_id: tasked.answers[0][0]['id'] }
 
       expect(response).to have_http_status(:unprocessable_entity)

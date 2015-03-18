@@ -1,4 +1,4 @@
-class AnonymousUser < User
+class UserProfile::AnonymousUser < UserProfile::Profile
   include Singleton
 
   before_save { false }

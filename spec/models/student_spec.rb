@@ -10,10 +10,10 @@ RSpec.describe Student, :type => :model do
   it { is_expected.to validate_presence_of(:user) }
   it { is_expected.to validate_presence_of(:course) }
   it { is_expected.to validate_presence_of(:random_education_identifier) }
-  
+
   it 'must enforce that one student is only in one section once' do
     # should-matcher uniqueness validations don't work on associations http://goo.gl/EcC1LQ
-    # it { is_expected.to validate_uniqueness_of(:section).scoped_to(:user_id).allow_nil } 
+    # it { is_expected.to validate_uniqueness_of(:section).scoped_to(:user_id).allow_nil }
 
     student1 = FactoryGirl.create(:student)
     student2 = FactoryGirl.create(:student)
