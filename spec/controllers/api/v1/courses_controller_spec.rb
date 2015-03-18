@@ -1,11 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :version => :v1  do
-  
+
   let!(:application)     { FactoryGirl.create :doorkeeper_application }
   let!(:user_1)          { FactoryGirl.create :user }
-  let!(:user_1_token)    { FactoryGirl.create :doorkeeper_access_token, 
-                                              application: application, 
+  let!(:user_1_token)    { FactoryGirl.create :doorkeeper_access_token,
+                                              application: application,
                                               resource_owner_id: user_1.id }
 
   let!(:user_2)          { FactoryGirl.create :user }
@@ -22,7 +22,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
     it "should work on the happy path" do
       root_book_part = FactoryGirl.create(:content_book_part, :standard_contents_1)
       CourseContent::Api::AddBookToCourse.call(course: course, book: root_book_part.book)
-    
+
       api_get :readings, user_1_token, parameters: {id: course.id}
 
       expect(response).to have_http_status(:success)
@@ -32,7 +32,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
         type: 'part',
         children: [
           {
-            id: 3, 
+            id: 3,
             title: 'chapter 1',
             type: 'part',
             children: [
@@ -54,13 +54,13 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
             type: 'part',
             children: [
               {
-                id: 3, 
+                id: 3,
                 title: 'third page',
                 type: 'page'
               }
             ]
           }
-        ]      
+        ]
       }])
 
     end
@@ -69,7 +69,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
   describe "#plans" do
     it "should work on the happy path" do
       task_plan = FactoryGirl.create(:task_plan, owner: course)
-    
+
       api_get :plans, user_1_token, parameters: {id: course.id}
 
       expect(response).to have_http_status(:success)
@@ -89,6 +89,27 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
         total_count: 0,
         items: []
       }.to_json)
+    end
+
+    it "returns tasks for a role holder in a certain course" do
+      skip "skipped until implement the real /api/courses/123/tasks endpoint with role awareness"
+    end
+  end
+
+  describe "index" do
+    it "returns the roles of the courses the user is a part of" do
+      assigned_course = Domain::CreateCourse.call.outputs.profile
+      Domain::AddUserAsCourseTeacher.call(course: assigned_course, user: user_1)
+
+      api_get :index, user_1_token
+      expect(response.code).to eq('200')
+      expect(response.body).to include([{
+        name: assigned_course.name,
+        roles: [{
+          type: 'teacher',
+          url: "/api/v1/teachers/#{user_1.id}/dashboard"
+        }]
+      }].to_json)
     end
 
     it "returns tasks for a role holder in a certain course" do

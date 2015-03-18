@@ -40,7 +40,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :courses, only: [] do
+    resources :courses, only: [:index] do
       get 'readings', on: :member
       get 'plans', on: :member
       get 'tasks', on: :member
