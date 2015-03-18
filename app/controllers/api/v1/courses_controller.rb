@@ -78,4 +78,20 @@ class Api::V1::CoursesController < Api::V1::ApiController
     respond_with outputs, represent_with: Api::V1::CourseEventsRepresenter
   end
 
+  def practice
+    request.post? ? practice_post : practice_get
+  end
+
+  api :POST, '/courses/:course_id/practice(/role/:role_id)', 'Starts a new practice widget'
+  def practice_post
+    Domain::ResetPracticeWidget.call(role: role, page_ids: [])
+    practice_get
+  end
+
+  api :GET, '/courses/:course_id/practice(/role/:role_id)', 'Gets the most recent practice widget'
+  def practice_get
+    raise NotYetImplemented
+    OSU::AccessPolicy.require_action_allowed!(:practice, current_api_user, student)
+  end
+
 end
