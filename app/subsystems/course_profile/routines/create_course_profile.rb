@@ -3,6 +3,6 @@ class CourseProfile::CreateCourseProfile
 
   protected
   def exec(attrs = {})
-    CourseProfile::Profile.create(attrs)
+    outputs[:profile] = CourseProfile::Profile.create(attrs)
   end
 end
