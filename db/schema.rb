@@ -393,6 +393,7 @@ ActiveRecord::Schema.define(version: 20150313193101) do
     t.datetime "completed_at"
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
+    t.integer  "page_id"
   end
 
   add_index "task_steps", ["task_id", "number"], name: "index_task_steps_on_task_id_and_number", unique: true

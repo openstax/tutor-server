@@ -44,7 +44,7 @@ class IReadingAssistant
 
       cnx_pages.each do |page|
         page.fragments.each do |fragment|
-          step = TaskStep.new(task: task)
+          step = TaskStep.new(task: task, page_id: page.id)
 
           step.tasked = case fragment
           when OpenStax::Cnx::V1::Fragment::Exercise
