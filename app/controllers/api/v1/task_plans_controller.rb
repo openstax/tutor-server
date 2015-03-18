@@ -61,7 +61,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   def show
     plan = TaskPlan.find(params[:id])
     OSU::AccessPolicy.require_action_allowed!(:stats, current_api_user, plan)
-    stats = CalculateIReadingStats.call(plan:plan).outputs.statistics
+    stats = CalculateIReadingStats.call(plan:plan).outputs.stats
     render json: Api::V1::TaskPlanRepresenter.new(plan).to_hash(stats: stats)
   end
 
