@@ -22,7 +22,10 @@ class RecoverTaskedExercise
     tasked_exercise.recovery_tasked_exercise = nil
     task.task_steps << recovery_step
     recovery_step.save!
-
     transfer_errors_from(recovery_step, type: :verbatim)
+
+    tasked_exercise.recovery_tasked_exercise = nil
+    tasked_exercise.save!(validate: false)
+    transfer_errors_from(tasked_exercise, type: :verbatim)
   end
 end

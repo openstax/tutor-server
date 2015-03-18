@@ -24,6 +24,34 @@ class IReadingAssistant
     }'
   end
 
+  def self.tasked_reading(reading_fragment:, page:, step: nil)
+    TaskedReading.new(task_step: step,
+                      url: page.url,
+                      title: reading_fragment.title,
+                      content: reading_fragment.to_html)
+  end
+
+  def self.tasked_exercise(exercise_fragment:, recovery_fragment: nil, step: nil)
+    raise "Embed tag not found for Exercise in Page #{page.id}" \
+      if exercise_fragment.embed_tag.blank?
+
+    # TODO: Exercises are cached locally during book import,
+    # so this search can be local, but
+    # need to store short code tags in Tutor separately from the JSON
+    exercise = OpenStax::Exercises::V1.exercises(
+      tag: exercise_fragment.embed_tag
+    )['items'].first
+
+    recovery = recovery_fragment.nil? ? \
+                 nil : tasked_exercise(exercise_fragment: recovery_fragment)
+
+    TaskedExercise.new(task_step: step,
+                       url: exercise.url,
+                       title: exercise.title,
+                       content: exercise.content,
+                       recovery_tasked_exercise: recovery)
+  end
+
   def self.distribute_tasks(task_plan:, taskees:)
     title = task_plan.title || 'iReading'
     opens_at = task_plan.opens_at
@@ -47,26 +75,13 @@ class IReadingAssistant
           step = TaskStep.new(task: task)
 
           step.tasked = case fragment
+          when OpenStax::Cnx::V1::Fragment::ExerciseChoice
+            exercises = fragment.exercise_fragments
+            tasked_exercise(exercise_fragment: exercises.first,
+                            recovery_fragment: exercises.last,
+                            step: step)
           when OpenStax::Cnx::V1::Fragment::Exercise
-            raise "Embed tag not found for Exercise in Page #{page.id}" \
-              if fragment.embed_tag.blank?
-
-            # TODO: Exercises are cached locally during book import,
-            # so this search can be local, but
-            # need to store short code tags in Tutor separately from the JSON
-            exercise = OpenStax::Exercises::V1.exercises(
-              tag: fragment.embed_tag
-            )['items'].first
-
-            recovery = TaskedExercise.new(url: 'http://dum.my/',
-                                          title: nil,
-                                          content: exercise.content)
-
-            TaskedExercise.new(task_step: step,
-                               url: exercise.url,
-                               title: exercise.title,
-                               content: exercise.content,
-                               recovery_tasked_exercise: recovery)
+            tasked_exercise(exercise_fragment: fragment, step: step)
           when OpenStax::Cnx::V1::Fragment::Video
             raise "Video url not found for Video in Page #{page.id}" \
               if fragment.url.blank?
@@ -74,10 +89,7 @@ class IReadingAssistant
             TaskedVideo.new(task_step: step, url: fragment.url,
                             title: fragment.title, content: fragment.to_html)
           else
-            TaskedReading.new(task_step: step,
-                              url: page.url,
-                              title: fragment.title,
-                              content: fragment.to_html)
+            tasked_reading(reading_fragment: fragment, page: page, step: step)
           end
 
           task.task_steps << step
