@@ -30,7 +30,7 @@ ActiveRecord::Base.define_singleton_method(:set_options_for_subsystem_associatio
   module_name = self.name.deconstantize.underscore
 
   # ****** Temporary control to limit to only the Content and CourseContent subsystem ******
-  return if !%w(content course_content course_profile).include?(module_name)
+  return if !%w(content course_content course_profile entity tasks role course_membership).include?(module_name)
 
   if subsystems.any?{|subsystem| subsystem.name == module_name}
     subsystem_option ||= module_name.to_sym
@@ -40,7 +40,7 @@ ActiveRecord::Base.define_singleton_method(:set_options_for_subsystem_associatio
       options[:foreign_key] ||= "#{subsystem_option.to_s}_#{association_name.to_s.underscore}_id"
     elsif :has_many == association_type
       class_name = self.name.demodulize.underscore
-      options[:foreign_key] ||= "#{subsystem_option.to_s}_#{class_name}_id"
+      options[:foreign_key] ||= "#{self.name.underscore.gsub('/','_')}_id"
     end
   end
 end

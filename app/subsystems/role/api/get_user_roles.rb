@@ -4,8 +4,8 @@ class Role::GetUserRoles
   protected
 
   def exec(user)
-    ss_maps  = Role::User.includes(:entity_role).where{entity_user_id == user.id}
-    roles = ss_maps.collect{|ss_map| ss_map.entity_role}
+    ss_maps  = Role::User.includes(:role).where{entity_user_id == user.id}
+    roles = ss_maps.collect{|ss_map| ss_map.role}
     outputs[:roles] = roles
   end
 end

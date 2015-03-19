@@ -5,6 +5,6 @@ class CourseMembership::GetTeachers
 
   def exec(course)
     ss_maps = CourseMembership::Teacher.where{entity_course_id == course.id}
-    outputs[:teachers] = ss_maps.collect{|ss_map| ss_map.entity_role}
+    outputs[:teachers] = ss_maps.collect{|ss_map| ss_map.role}
   end
 end
