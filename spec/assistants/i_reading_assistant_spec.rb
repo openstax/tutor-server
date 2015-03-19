@@ -76,4 +76,38 @@ RSpec.describe IReadingAssistant, :type => :assistant, :vcr => VCR_OPTS do
     end
   end
 
+  context "\"Newton's First Law of Motion: Inertia\"" do
+    let!(:cnx_page_hash) { { 'id' => '61445f78-00e2-45ae-8e2c-461b17d9b4fd',
+                             'title' => "Newton's First Law of Motion: Inertia" } }
+    let!(:cnx_page) { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash) }
+    let!(:page) { Content::ImportPage.call(cnx_page: cnx_page,
+                                           book_part: book_part)
+                                     .outputs.page }
+    let!(:task_plan) {
+      FactoryGirl.create :task_plan, assistant: assistant,
+                                     settings: { page_ids: [page.id] }
+    }
+    let!(:taskees) { 3.times.collect{ FactoryGirl.create(:user) } }
+    let!(:tasking_plans) { taskees.collect{ |t|
+      task_plan.tasking_plans << FactoryGirl.create(
+        :tasking_plan, task_plan: task_plan, target: t
+      )
+    } }
+
+    it 'is split into different task steps' do
+      tasks = DistributeTasks.call(task_plan).outputs.tasks
+      tasks.each do |task|
+        expect(task.taskings.length).to eq 1
+        task_steps = task.task_steps
+        expect(task_steps.length).to eq 10
+        expect(task_steps.collect { |ts| ts.tasked_type }).to eq(
+          ['TaskedReading', 'TaskedVideo', 'TaskedExercise',
+           'TaskedReading', 'TaskedExercise',
+           'TaskedReading', 'TaskedExercise', 'TaskedExercise',
+           'TaskedExercise', 'TaskedExercise']
+        )
+      end
+    end
+  end
+
 end

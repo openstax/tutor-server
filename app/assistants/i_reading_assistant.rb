@@ -60,6 +60,13 @@ class IReadingAssistant
 
             TaskedExercise.new(task_step: step, url: exercise.url,
                                title: exercise.title, content: exercise.content)
+          when OpenStax::Cnx::V1::Fragment::Video
+            raise "Video url not found for Video in Page #{page.id}" \
+              if fragment.url.blank?
+
+            TaskedVideo.new(task_step: step, url: page.url,
+                            title: fragment.title, content: fragment.to_html,
+                            video_url: fragment.url)
           else
             TaskedReading.new(task_step: step, url: page.url,
                               title: fragment.title, content: fragment.to_html)
