@@ -164,4 +164,19 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
     end
   end
 
+  # let!(:student_user)       { FactoryGirl.create :user }
+  # let!(:student_user_token) { FactoryGirl.create :doorkeeper_access_token, 
+  #                                                application: application, 
+  #                                                resource_owner_id: student_user.id }
+
+
+  describe "practice_post" do
+    xit "works" do
+      Domain::AddUserAsCourseStudent.call(course: course, user: user_1)
+
+      api_post :practice, user_1_token, parameters: {id: course.id, role_id: Entity::Role.last.id}
+
+    end
+  end
+
 end

@@ -203,6 +203,11 @@ ActiveRecord::Schema.define(version: 20150320133010) do
 
   add_index "entity_roles", ["role_type"], name: "index_entity_roles_on_role_type"
 
+  create_table "entity_tasks", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "entity_users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -468,6 +473,16 @@ ActiveRecord::Schema.define(version: 20150320133010) do
   add_index "tasks", ["due_at", "opens_at"], name: "index_tasks_on_due_at_and_opens_at"
   add_index "tasks", ["task_plan_id"], name: "index_tasks_on_task_plan_id"
   add_index "tasks", ["task_type"], name: "index_tasks_on_task_type"
+
+  create_table "tasks_taskings", force: :cascade do |t|
+    t.integer  "entity_role_id", null: false
+    t.integer  "entity_task_id", null: false
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+  end
+
+  add_index "tasks_taskings", ["entity_role_id", "entity_task_id"], name: "[\"tasks_taskings_role_id_on_task_id_unique\"]", unique: true
+  add_index "tasks_taskings", ["entity_task_id"], name: "index_tasks_taskings_on_entity_task_id"
 
   create_table "user_profile_profiles", force: :cascade do |t|
     t.integer  "entity_user_id",      null: false

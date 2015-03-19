@@ -121,6 +121,7 @@ group :development, :test do
   gem 'pry' # needed when debugging without 'rails_helper'
   gem 'pry-nav'
   gem 'pry-rails'
+  gem 'pry-stack_explorer'
 
   # Access an IRB console on exceptions page and /console in development
   gem 'web-console', '~> 2.0.0'
