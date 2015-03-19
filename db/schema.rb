@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150319110230) do
+ActiveRecord::Schema.define(version: 20150319213309) do
 
   create_table "administrators", force: :cascade do |t|
     t.integer  "user_id",    null: false
@@ -420,7 +420,6 @@ ActiveRecord::Schema.define(version: 20150319110230) do
     t.string   "url",        null: false
     t.text     "content",    null: false
     t.string   "title"
-    t.string   "video_url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

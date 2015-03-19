@@ -5,7 +5,13 @@ module OpenStax::Cnx::V1::Fragment
     VIDEO_LINK_CSS = '.os-embed'
 
     def url
-      @url ||= node.at_css(VIDEO_LINK_CSS).try(:attr, :href)
+      video = node.at_css(VIDEO_LINK_CSS)
+      @url ||= case
+      when video.try(:name) == 'a'
+        video.attr(:href)
+      when video.try(:attr, :'data-type') == 'media'
+        video.try(:xpath, 'iframe/@src')
+      end
     end
 
   end

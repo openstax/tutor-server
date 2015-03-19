@@ -64,9 +64,8 @@ class IReadingAssistant
             raise "Video url not found for Video in Page #{page.id}" \
               if fragment.url.blank?
 
-            TaskedVideo.new(task_step: step, url: page.url,
-                            title: fragment.title, content: fragment.to_html,
-                            video_url: fragment.url)
+            TaskedVideo.new(task_step: step, url: fragment.url,
+                            title: fragment.title, content: fragment.to_html)
           else
             TaskedReading.new(task_step: step, url: page.url,
                               title: fragment.title, content: fragment.to_html)

@@ -12,7 +12,6 @@ RSpec.describe Api::V1::TaskedVideoRepresenter, :type => :representer do
       is_completed: false,
       content_url: task_step.tasked.url,
       content_html: task_step.tasked.content,
-      video_url: task_step.tasked.video_url
     }.stringify_keys)
   end
 end
