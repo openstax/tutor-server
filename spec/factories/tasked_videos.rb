@@ -8,7 +8,6 @@ FactoryGirl.define do
     url { Faker::Internet.url }
     title { Faker::Lorem.sentence(3) }
     content { Faker::Lorem.paragraph }
-    video_url { Faker::Internet.url }
 
     after(:build) do |tasked_video, evaluator|
       options = { tasked: tasked_video }
