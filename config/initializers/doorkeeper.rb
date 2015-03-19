@@ -6,7 +6,7 @@ Doorkeeper.configure do
   # This block will be called to check whether the resource owner is authenticated or not.
   resource_owner_authenticator do
     next current_user unless current_user.is_anonymous?
-    with_interceptor &ActionInterceptor.interceptors[:authenticate_user!]
+    authenticate_user!
   end
 
   # If you want to restrict access to the web interface for adding oauth authorized applications, you need to declare the block below.
