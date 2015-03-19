@@ -129,14 +129,15 @@ module OpenStax::Cnx::V1
         if split.matches?(ASSESSED_FEATURE_CSS)
           # Assessed Feature = Video + Exercise or Text + Exercise
           exercise = split.at_css(EXERCISE_CSS)
-          recursive_compact(exercise, split)
+          Rails.logger.warn { "An assessed feature should have an exercise but doesn't: #{url}" } if exercise.nil?
+          recursive_compact(exercise, split) unless exercise.nil?
 
           if split.matches?(VIDEO_CSS)
             splitting_fragments << Fragment::Video.new(node: split)
           else
             splitting_fragments << Fragment::Text.new(node: split)
           end
-          splitting_fragments << Fragment::Exercise.new(node: exercise)
+          splitting_fragments << Fragment::Exercise.new(node: exercise) unless exercise.nil?
         elsif split.matches?(FEATURE_CSS)
           # Text Feature
           splitting_fragments << Fragment::Text.new(node: split)
