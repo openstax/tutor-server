@@ -127,11 +127,15 @@ module OpenStax::Cnx::V1
         splitting_fragments = []
         # Figure out what we just split on, testing in priority order
         if split.matches?(ASSESSED_FEATURE_CSS)
-          # Assessed Feature = Text + Exercise
+          # Assessed Feature = Video + Exercise or Text + Exercise
           exercise = split.at_css(EXERCISE_CSS)
           recursive_compact(exercise, split)
 
-          splitting_fragments << Fragment::Text.new(node: split)
+          if split.matches?(VIDEO_CSS)
+            splitting_fragments << Fragment::Video.new(node: split)
+          else
+            splitting_fragments << Fragment::Text.new(node: split)
+          end
           splitting_fragments << Fragment::Exercise.new(node: exercise)
         elsif split.matches?(FEATURE_CSS)
           # Text Feature
@@ -141,9 +145,6 @@ module OpenStax::Cnx::V1
           splitting_fragments << Fragment::Exercise.new(node: split)
         elsif split.matches?(INTERACTIVE_CSS)
           # Interactive
-          splitting_fragments << Fragment::Text.new(node: split) # Placeholder
-        elsif split.matches?(VIDEO_CSS)
-          # Video
           splitting_fragments << Fragment::Text.new(node: split) # Placeholder
         end
 
