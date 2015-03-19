@@ -7,6 +7,9 @@ class Domain::ListCourses
   uses_routine Domain::GetTeacherNames,
                translations: { outputs: { type: :verbatim } },
                as: :get_teacher_names
+  uses_routine Domain::GetCourseRoles,
+               translations: { outputs: { type: :verbatim } },
+               as: :get_course_roles
 
   protected
 
@@ -31,7 +34,8 @@ class Domain::ListCourses
 
   def set_roles_on_courses(user)
     outputs.courses.each do |c|
-      c.roles = [Role::User.new(type: 'teacher', url: "/api/v1/teachers/#{user.id}/dashboard")]
+      course = Entity::Course.find(c.course_id)
+      c.roles = run(:get_course_roles, course: course, user: user).outputs.roles
     end
   end
 

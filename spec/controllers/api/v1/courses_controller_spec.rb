@@ -98,18 +98,32 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
 
   describe "index" do
     it "returns the roles of the courses the user is a part of" do
-      assigned_course = Domain::CreateCourse.call.outputs.profile
-      Domain::AddUserAsCourseTeacher.call(course: assigned_course, user: user_1)
+      teaching_course = Domain::CreateCourse.call.outputs.profile
+      taking_course = Domain::CreateCourse.call.outputs.profile
+      Domain::AddUserAsCourseTeacher.call(course: teaching_course.course,
+                                          user: user_1)
+      Domain::AddUserAsCourseStudent.call(course: taking_course.course,
+                                          user: user_1)
 
       api_get :index, user_1_token
+
       expect(response.code).to eq('200')
-      expect(response.body).to include([{
-        name: assigned_course.name,
+
+      expect(response.body).to include({
+        name: teaching_course.name,
         roles: [{
           type: 'teacher',
           url: "/api/v1/teachers/#{user_1.id}/dashboard"
         }]
-      }].to_json)
+      }.to_json)
+
+      expect(response.body).to include({
+        name: taking_course.name,
+        roles: [{
+          type: 'student',
+          url: "/api/v1/students/#{user_1.id}/dashboard"
+        }]
+      }.to_json)
     end
 
     it "returns tasks for a role holder in a certain course" do
