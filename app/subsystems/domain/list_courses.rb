@@ -7,7 +7,7 @@ class Domain::ListCourses
   uses_routine Domain::GetTeacherNames,
                translations: { outputs: { type: :verbatim } },
                as: :get_teacher_names
-  uses_routine Domain::GetCourseRoles,
+  uses_routine Domain::GetUserCourseRoles,
                translations: { outputs: { type: :verbatim } },
                as: :get_course_roles
 
