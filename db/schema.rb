@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150319213309) do
+ActiveRecord::Schema.define(version: 20150320133010) do
 
   create_table "administrators", force: :cascade do |t|
     t.integer  "user_id",    null: false
@@ -196,9 +196,12 @@ ActiveRecord::Schema.define(version: 20150319213309) do
   end
 
   create_table "entity_roles", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+    t.integer  "role_type",  default: 0, null: false
   end
+
+  add_index "entity_roles", ["role_type"], name: "index_entity_roles_on_role_type"
 
   create_table "entity_users", force: :cascade do |t|
     t.datetime "created_at", null: false

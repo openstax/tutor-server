@@ -3,9 +3,9 @@ class Entity::CreateRole
 
   protected
 
-  def exec
-    role = Entity::Role.create
-    transfer_errors_from(role, {type: :verbatim}, true)
+  def exec(role_type = :unassigned)
+    role = Entity::Role.create(role_type: role_type)
+    transfer_errors_from(role, { type: :verbatim }, true)
     outputs[:role] = role
   end
 end

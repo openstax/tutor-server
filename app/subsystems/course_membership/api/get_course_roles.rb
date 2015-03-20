@@ -15,9 +15,11 @@ class CourseMembership::Api::GetCourseRoles
     roles = types.collect do |type|
       case type
       when :student
-        Entity::Role.joins{students}.where{students.entity_course_id == course.id}.all
+        Entity::Role.joins { students }
+                    .where { students.entity_course_id == course.id }
       when :teacher
-        Entity::Role.joins{teachers}.where{teachers.entity_course_id == course.id}.all
+        Entity::Role.joins { teachers }
+                    .where { teachers.entity_course_id == course.id }
       end
     end
 

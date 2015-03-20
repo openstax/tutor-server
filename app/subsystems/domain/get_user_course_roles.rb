@@ -23,7 +23,7 @@ class Domain::GetUserCourseRoles
     run(:get_course_roles, course: course, types: types)
 
     # Intersect the results from above
-    outputs[:roles] = outputs["[:get_user_roles, :roles]"] & 
+    outputs[:roles] = outputs["[:get_user_roles, :roles]"] &
                       outputs["[:get_course_roles, :roles]"]
   end
 end

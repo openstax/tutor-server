@@ -6,7 +6,7 @@ class CourseProfile::Api::GetAllProfiles
   def exec
     outputs[:profiles] = CourseProfile::Profile.all.collect do |profile|
       {
-        course_id: profile.entity_course_id,
+        id: profile.entity_course_id,
         name: profile.name
       }
     end
