@@ -6,10 +6,6 @@ module Api::V1
 
     property :type, readable: true, schema_info: { required: true }
 
-    property :course_id
-
-    property :course_url, readable: true, getter: ->(*) do
-      "/api/v1/courses/#{course_id}/role/#{id}"
-    end
+    property :course_id, readable: true
   end
 end

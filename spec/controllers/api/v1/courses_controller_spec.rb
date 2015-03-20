@@ -120,8 +120,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
           roles: [{
             id: teacher.id,
             type: 'teacher',
-            course_id: teaching.course.id,
-            course_url: "/api/v1/courses/#{teaching.course.id}/role/#{teacher.id}"
+            course_id: teaching.course.id
           }]
         }.to_json)
       end
@@ -141,8 +140,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
           roles: [{
             id: student.id,
             type: 'student',
-            course_id: taking.course.id,
-            course_url: "/api/v1/courses/#{taking.course.id}/role/#{student.id}"
+            course_id: taking.course.id
           }]
         }.to_json)
       end
@@ -163,13 +161,11 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
           roles: [{
             id: student.id,
             type: 'student',
-            course_id: both.course.id,
-            course_url: "/api/v1/courses/#{both.course.id}/role/#{student.id}"
+            course_id: both.course.id
           }, {
             id: teacher.id,
             type: 'teacher',
-            course_id: both.course.id,
-            course_url: "/api/v1/courses/#{both.course.id}/role/#{teacher.id}"
+            course_id: both.course.id
           }]
         }.to_json)
       end
