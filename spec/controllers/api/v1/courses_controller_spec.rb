@@ -97,34 +97,74 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
   end
 
   describe "index" do
-    let(:teaching) { Domain::CreateCourse.call.outputs.profile }
-    let(:taking) { Domain::CreateCourse.call.outputs.profile }
     let(:roles) { Role::GetUserRoles.call(user_1).outputs.roles }
+    let(:teacher) { roles.select(&:teacher?).first }
+    let(:student) { roles.select(&:student?).first }
 
-    before do
-      Domain::AddUserAsCourseTeacher.call(course: teaching.course,
-                                          user: user_1)
-      Domain::AddUserAsCourseStudent.call(course: taking.course,
-                                          user: user_1)
+    it 'returns successfully' do
+      api_get :index, user_1_token
+      expect(response.code).to eq('200')
     end
 
-    it "returns the roles of the courses the user is a part of" do
-      teacher = roles.select(&:teacher?).first
-      student = roles.select(&:student?).first
+    context 'user is a teacher' do
+      let(:teaching) { Domain::CreateCourse.call.outputs.profile }
 
-      api_get :index, user_1_token
+      before do
+        Domain::AddUserAsCourseTeacher.call(course: teaching.course, user: user_1)
+      end
 
-      expect(response.code).to eq('200')
-      expect(response.body).to include({
-        name: teaching.name, roles: [{
-          type: 'teacher',
-          url: "/api/v1/teachers/#{teacher.id}/dashboard"
-        }] }.to_json)
-      expect(response.body).to include({
-        name: taking.name, roles: [{
-          type: 'student',
-          url: "/api/v1/students/#{student.id}/dashboard"
-        }] }.to_json)
+      it 'returns the teacher roles with the course' do
+        api_get :index, user_1_token
+        expect(response.body).to include({
+          name: teaching.name,
+          roles: [{
+            type: 'teacher',
+            url: "/api/v1/teachers/#{teacher.id}/dashboard"
+          }]
+        }.to_json)
+      end
+    end
+
+    context 'user is a student' do
+      let(:taking) { Domain::CreateCourse.call.outputs.profile }
+
+      before do
+        Domain::AddUserAsCourseStudent.call(course: taking.course, user: user_1)
+      end
+
+      it 'returns the student roles with the course' do
+        api_get :index, user_1_token
+        expect(response.body).to include({
+          name: taking.name,
+          roles: [{
+            type: 'student',
+            url: "/api/v1/students/#{student.id}/dashboard"
+          }]
+        }.to_json)
+      end
+    end
+
+    context 'user is both a teacher and student' do
+      let(:both) { Domain::CreateCourse.call.outputs.profile }
+
+      before do
+        Domain::AddUserAsCourseStudent.call(course: both.course, user: user_1)
+        Domain::AddUserAsCourseTeacher.call(course: both.course, user: user_1)
+      end
+
+      it 'returns both roles with the course' do
+        api_get :index, user_1_token
+        expect(response.body).to include({
+          name: both.name,
+          roles: [{
+            type: 'student',
+            url: "/api/v1/students/#{student.id}/dashboard"
+          }, {
+            type: 'teacher',
+            url: "/api/v1/teachers/#{teacher.id}/dashboard"
+          }]
+        }.to_json)
+      end
     end
 
     it "returns tasks for a role holder in a certain course" do
