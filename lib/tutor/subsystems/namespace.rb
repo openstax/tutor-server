@@ -12,32 +12,29 @@ module Tutor::SubSystems
       configure_module_settings
     end
 
+    def require_all
+      each_file{| path | require path }
+    end
+
     private
 
+    def each_file
+      Pathname.glob( path.join("**/*.rb") ){ |path| yield path }
+    end
+
     def configure_module_settings
+
       namespace.define_singleton_method(:table_name_prefix) do
         "#{name.underscore}_"
       end
 
-      # Add the subsystem's path to the autoload search paths
-      # This will allow objects who's namespace matches the directory tree to autoload
-      # i.e. course_profile/api/get_all_profiles.rb => CourseProfile::Api::GetAllProfiles
-      Rails.application.config.paths.add name, eager_load: true
-
-      namespace.send :extend, ActiveSupport::Autoload
-      namespace.eager_autoload do
-        Pathname.glob( path.join("models/*.rb") ) do | path |
-          require path
-        end
-      end
-
       # routines and models are namespaced directly under the module,
       # setup explicit autoload mappings in order to support them
-      Pathname.glob( path.join("{routines,models}/*.rb") ) do | path |
+      each_file do | path |
         symbol = path.basename('.rb').to_s.camelize.to_sym
         namespace.autoload symbol, path.to_s
       end
-
     end
+
   end
 end

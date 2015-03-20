@@ -33,6 +33,7 @@ module Tutor::SubSystems
         return if ['none','ignore'].include?(subsystem_name)
 
         my_subsystem_name = self.name.deconstantize.underscore
+
         return unless Tutor::SubSystems.valid_name?(my_subsystem_name)
 
         # if the :subsystem wasn't specified, default to the current model's subsystem
@@ -50,4 +51,5 @@ module Tutor::SubSystems
 
     end
   end
+
 end

@@ -2,6 +2,7 @@ require_relative 'subsystems/association_extensions'
 require_relative 'subsystems/namespace'
 require 'singleton'
 require 'forwardable'
+
 module Tutor
 
   module SubSystems
@@ -25,7 +26,7 @@ module Tutor
       def initialize
         @path     = Rails.root.join("app/subsystems")
         @limit_to = []
-        @systems  = []
+        @systems  = {}
       end
 
       # Root directory to search for subsystems
@@ -42,18 +43,21 @@ module Tutor
 
         # Setup a Namespace for each directory found under our root path
         paths = Pathname.glob( path.join("*") )
-        @systems = paths.each_with_object([]) do |subpath, collection|
-          collection << SubSystems::Namespace.new(subpath.basename.to_s) if subpath.directory?
+        @systems = paths.each_with_object({}) do |subpath, systems|
+          name = subpath.basename.to_s
+          systems[name] = SubSystems::Namespace.new(name) if subpath.directory?
         end
+        @systems.each{|_,ss| ss.require_all }
       end
 
       def each(&block)
         @systems.each(&block)
       end
+
       # returns true if the subsystem name is included in the list of valid subsystems
       # either by use of limit_to or by detecting a directory with that name
       def valid_name?(name)
-        @limit_to.empty? || @limit_to.include?(name)
+        name.present? && ( @limit_to.empty? || @limit_to.include?(name) )
       end
 
     end
@@ -61,3 +65,9 @@ module Tutor
   end
 
 end
+
+
+# Call this here so that subystems are configured
+# even if the rails initializers are not ran.
+# Looking at you rails-erd
+Tutor::SubSystems::Definitions.instance()
