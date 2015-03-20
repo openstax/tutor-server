@@ -118,8 +118,9 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
         expect(response.body).to include({
           name: teaching.name,
           roles: [{
+            id: teacher.id,
             type: 'teacher',
-            url: "/api/v1/teachers/#{teacher.id}/dashboard"
+            course_url: "/api/courses/#{teaching.course.id}/role/#{teacher.id}"
           }]
         }.to_json)
       end
@@ -137,8 +138,9 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
         expect(response.body).to include({
           name: taking.name,
           roles: [{
+            id: student.id,
             type: 'student',
-            url: "/api/v1/students/#{student.id}/dashboard"
+            course_url: "/api/courses/#{taking.course.id}/role/#{student.id}"
           }]
         }.to_json)
       end
@@ -157,11 +159,13 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
         expect(response.body).to include({
           name: both.name,
           roles: [{
+            id: student.id,
             type: 'student',
-            url: "/api/v1/students/#{student.id}/dashboard"
+            course_url: "/api/courses/#{both.course.id}/role/#{student.id}"
           }, {
+            id: teacher.id,
             type: 'teacher',
-            url: "/api/v1/teachers/#{teacher.id}/dashboard"
+            course_url: "/api/courses/#{both.course.id}/role/#{teacher.id}"
           }]
         }.to_json)
       end

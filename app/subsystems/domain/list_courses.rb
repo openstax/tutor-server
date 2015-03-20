@@ -43,8 +43,9 @@ class Domain::ListCourses
       roles = get_roles(course, user)
       course.roles = roles.collect do |role|
         {
+          id: role.id,
           type: role.role_type,
-          url: "/api/v1/#{role.role_type.pluralize}/#{role.id}/dashboard"
+          course_url: "/api/courses/#{course.course_id}/role/#{role.id}"
         }
       end
     end
