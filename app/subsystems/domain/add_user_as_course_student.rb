@@ -16,7 +16,7 @@ class Domain::AddUserAsCourseStudent
         if result.outputs.user_is_course_student
     end
 
-    run(Role::CreateUserRole, user)
+    run(Role::CreateUserRole, user, :student)
     run(CourseMembership::AddStudent, course: course, role: outputs.role)
   end
 end
