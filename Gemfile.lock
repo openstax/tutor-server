@@ -225,7 +225,7 @@ GEM
       multi_json (~> 1.3)
       oauth2 (~> 1.0)
       omniauth (~> 1.2)
-    openstax_accounts (4.1.0)
+    openstax_accounts (4.1.1)
       action_interceptor (>= 1.0)
       keyword_search (>= 1.0.0)
       lev (>= 2.2.1)
@@ -477,7 +477,7 @@ DEPENDENCIES
   mini_magick
   newrelic_rpm
   nifty-generators
-  openstax_accounts (~> 4.1.0)
+  openstax_accounts (~> 4.1.1)
   openstax_api (~> 5.0.0)
   openstax_exchange
   openstax_utilities (~> 4.2.0)
