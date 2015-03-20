@@ -45,7 +45,7 @@ class Domain::ListCourses
         {
           id: role.id,
           type: role.role_type,
-          course_url: "/api/courses/#{course.course_id}/role/#{role.id}"
+          course_id: course.course_id
         }
       end
     end

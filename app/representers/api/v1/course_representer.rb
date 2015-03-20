@@ -12,7 +12,7 @@ module Api::V1
              }
 
     collection :roles,
-      extend: Api::V1::RoleRepresenter,
+      extend: Api::V1::CourseRoleRepresenter,
       readable: true,
       writable: false,
       schema_info: {
