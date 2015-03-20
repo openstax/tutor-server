@@ -48,14 +48,16 @@ end
 ActiveRecord::Base.singleton_class.send(:alias_method, :has_many_original, :has_many)
 ActiveRecord::Base.singleton_class.send(:alias_method, :belongs_to_original, :belongs_to)
 
-ActiveRecord::Base.define_singleton_method(:has_many) do |association_name, options={}|
-  set_options_for_subsystem_association(:has_many, association_name, options)
-  has_many_original(association_name, options)
+ActiveRecord::Base.define_singleton_method(:has_many) do |name, scope = nil, options = {}, &extension|
+  opts = scope.is_a?(Hash) ? scope : options
+  set_options_for_subsystem_association(:has_many, name, opts)
+  has_many_original(name, scope, options, &extension)
 end
 
-ActiveRecord::Base.define_singleton_method(:belongs_to) do |association_name, options={}|
-  set_options_for_subsystem_association(:belongs_to, association_name, options)
-  belongs_to_original(association_name, options)
+ActiveRecord::Base.define_singleton_method(:belongs_to) do |name, scope = nil, options = {}|
+  opts = scope.is_a?(Hash) ? scope : options
+  set_options_for_subsystem_association(:belongs_to, name, opts)
+  belongs_to_original(name, scope, options)
 end
 
 ##

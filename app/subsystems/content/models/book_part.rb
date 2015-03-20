@@ -8,13 +8,15 @@ class Content::BookPart < ActiveRecord::Base
                                          inverse_of: :child_book_parts,
                                          foreign_key: "parent_book_part_id"
 
-  has_many :child_book_parts, class_name: '::Content::BookPart',
-                              foreign_key: 'parent_book_part_id',
-                              dependent: :destroy,
-                              inverse_of: :parent_book_part
+  sortable_has_many :child_book_parts, on: :number,
+                                       class_name: '::Content::BookPart',
+                                       foreign_key: 'parent_book_part_id',
+                                       dependent: :destroy,
+                                       inverse_of: :parent_book_part
 
-  has_many :pages, dependent: :destroy, 
-                   inverse_of: :book_part
+  sortable_has_many :pages, on: :number,
+                            dependent: :destroy,
+                            inverse_of: :book_part
 
   validates :title, presence: true
 

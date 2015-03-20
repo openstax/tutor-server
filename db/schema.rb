@@ -399,14 +399,17 @@ ActiveRecord::Schema.define(version: 20150319213309) do
   add_index "task_steps", ["tasked_id", "tasked_type"], name: "index_task_steps_on_tasked_id_and_tasked_type", unique: true
 
   create_table "tasked_exercises", force: :cascade do |t|
-    t.string   "url",           null: false
-    t.text     "content",       null: false
+    t.integer  "recovery_tasked_exercise_id"
+    t.string   "url",                         null: false
+    t.text     "content",                     null: false
     t.string   "title"
     t.text     "free_response"
     t.string   "answer_id"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
   end
+
+  add_index "tasked_exercises", ["recovery_tasked_exercise_id"], name: "index_tasked_exercises_on_recovery_tasked_exercise_id", unique: true
 
   create_table "tasked_readings", force: :cascade do |t|
     t.string   "url",        null: false

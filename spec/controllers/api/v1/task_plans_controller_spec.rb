@@ -66,7 +66,8 @@ describe Api::V1::TaskPlansController, :type => :controller,
 
       # Ignore the stats for this test
       expect(response.body_as_hash.except(:stats).to_json).to(
-        eq(Api::V1::TaskPlanRepresenter.new(task_plan).to_json))
+        eq(Api::V1::TaskPlanRepresenter.new(task_plan).to_json)
+      )
     end
 
     it 'does not allow an unauthorized user to view the task_plan' do
@@ -94,7 +95,8 @@ describe Api::V1::TaskPlansController, :type => :controller,
       expect(response).to have_http_status(:success)
 
       expect(response.body).to(
-        eq(Api::V1::TaskPlanRepresenter.new(TaskPlan.last).to_json))
+        eq(Api::V1::TaskPlanRepresenter.new(TaskPlan.last).to_json)
+      )
     end
 
     it 'does not allow an unauthorized user to create a task_plan' do
@@ -125,7 +127,9 @@ describe Api::V1::TaskPlansController, :type => :controller,
               raw_post_data: Api::V1::TaskPlanRepresenter.new(task_plan)
                                                          .to_json
       expect(response).to have_http_status(:success)
-      expect(response.body).to be_blank
+      expect(response.body).to(
+        eq(Api::V1::TaskPlanRepresenter.new(task_plan).to_json)
+      )
     end
 
     it 'does not allow an unauthorized user to update a task_plan' do
@@ -158,7 +162,8 @@ describe Api::V1::TaskPlansController, :type => :controller,
         .to change{ Task.count }.by(1)
       expect(response).to have_http_status(:success)
       expect(response.body).to(
-        eq(Api::V1::TaskPlanRepresenter.new(task_plan).to_json))
+        eq(Api::V1::TaskPlanRepresenter.new(task_plan).to_json)
+      )
     end
 
     it 'does not allow an unauthorized user to publish a task_plan' do

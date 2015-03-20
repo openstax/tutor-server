@@ -15,6 +15,9 @@ module OpenStax::Cnx::V1
     # Just a page break
     FEATURE_CSS = '.ost-feature'
 
+    # Exercise choice fragment
+    EXERCISE_CHOICE_CSS = '.ost-exercise-choice'
+
     # Exercise fragment
     EXERCISE_CSS = '.os-exercise'
 
@@ -25,8 +28,8 @@ module OpenStax::Cnx::V1
     VIDEO_CSS = '.ost-video'
 
     # Split fragments on these
-    SPLIT_CSS = [ASSESSED_FEATURE_CSS, FEATURE_CSS, EXERCISE_CSS,
-                 INTERACTIVE_CSS, VIDEO_CSS].join(', ')
+    SPLIT_CSS = [ASSESSED_FEATURE_CSS, FEATURE_CSS, EXERCISE_CHOICE_CSS,
+                 EXERCISE_CSS, INTERACTIVE_CSS, VIDEO_CSS].join(', ')
 
     # Find a node with a class that starts with ost-tag-lo-
     LO_CSS = '[class^="ost-tag-lo-"]'
@@ -141,6 +144,9 @@ module OpenStax::Cnx::V1
         elsif split.matches?(FEATURE_CSS)
           # Text Feature
           splitting_fragments << Fragment::Text.new(node: split)
+        elsif split.matches?(EXERCISE_CHOICE_CSS)
+          # Exercise choice
+          splitting_fragments << Fragment::ExerciseChoice.new(node: split)
         elsif split.matches?(EXERCISE_CSS)
           # Exercise
           splitting_fragments << Fragment::Exercise.new(node: split)

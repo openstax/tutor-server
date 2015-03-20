@@ -23,22 +23,41 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     task_step = TaskStep.find(params[:id])
     tasked = task_step.tasked
     standard_update(tasked)
-
-    # TODO make a modified version of standard_update that returns the updated JSON
-    # instead of the default PUT result of No Content 204.
   end
 
-  api :GET, '/steps/:step_id/completed', 'Marks the specified TaskStep as completed (if applicable)'
+  api :PUT, '/steps/:step_id/completed',
+            'Marks the specified TaskStep as completed (if applicable)'
   def completed
     task_step = TaskStep.find(params[:id])
-    OSU::AccessPolicy.require_action_allowed!(:mark_completed, current_api_user, task_step.tasked)
+    tasked = task_step.tasked
+    OSU::AccessPolicy.require_action_allowed!(:mark_completed,
+                                              current_api_user,
+                                              tasked)
 
     result = MarkTaskStepCompleted.call(task_step: task_step)
 
     if result.errors.any?
       render_api_errors(result.errors)
     else
-      head :ok
+      respond_with tasked.reload, responder: ResponderWithPutContent
+    end
+  end
+
+  api :PUT, '/steps/:step_id/recovery',
+            'Requests an exercise similar to the given one for credit recovery'
+  def recovery
+    tasked = TaskStep.find(params[:id]).tasked
+    OSU::AccessPolicy.require_action_allowed!(:recover,
+                                              current_api_user,
+                                              tasked)
+
+    result = RecoverTaskedExercise.call(tasked_exercise: tasked)
+
+    if result.errors.any?
+      render_api_errors(result.errors)
+    else
+      respond_with result.outputs.recovery_exercise,
+                   responder: ResponderWithPutContent
     end
   end
 

@@ -16,61 +16,51 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
   let!(:userless_token)  { FactoryGirl.create :doorkeeper_access_token,
                                               application: application }
 
-  let!(:task_step)       { FactoryGirl.create :task_step, title: 'title', url: 'url', content: 'content' }
-  let!(:tasking)         { FactoryGirl.create :tasking, taskee: user_1, task: task_step.task }
-
-  let!(:tasked_exercise) { FactoryGirl.create :tasked_exercise }
+  let!(:task_step)       { FactoryGirl.create :task_step, title: 'title',
+                                              url: 'url', content: 'content' }
+  let!(:task)            { task_step.task.reload }
+  let!(:tasking)         { FactoryGirl.create :tasking, taskee: user_1,
+                                                        task: task }
+  let!(:tasked_exercise) {
+    te = FactoryGirl.create :tasked_exercise, skip_task: true
+    te.task_step.task = task
+    te.task_step.save!
+    te
+  }
 
   describe "#show" do
     it "should work on the happy path" do
-      api_get :show, user_1_token, parameters: {task_id: task_step.task.id, id: task_step.id}
-      expect(response.code).to eq '200'
+      api_get :show, user_1_token, parameters: { task_id: task_step.task.id,
+                                                 id: task_step.id }
+      expect(response).to have_http_status(:success)
 
-      expect(JSON.parse(response.body)).to eq({
+      expect(response.body_as_hash).to eq({
         id: task_step.id,
         type: 'reading',
         title: 'title',
         is_completed: false,
         content_url: 'url',
         content_html: 'content'
-      }.stringify_keys)
-    end
-  end
-
-  describe "#completed" do
-    it "should allow marking completion of reading steps by the owner" do
-      tasked = create_tasked(:tasked_reading, user_1)
-      api_put :completed, user_1_token, parameters: {task_id: tasked.task_step.task.id, id: tasked.task_step.id}
-      expect(response.code).to eq '200'
-      expect(tasked.task_step(true).completed?).to be_truthy
-    end
-
-    it "should not allow marking completion of reading steps by random user" do
-      tasked = create_tasked(:tasked_reading, user_1)
-      expect{
-        api_put :completed, user_2_token, parameters: {task_id: tasked.task_step.task.id, id: tasked.task_step.id}
-      }.to raise_error
-      expect(tasked.task_step(true).completed?).to be_falsy
-    end
-
-    it "should allow marking completion of exercise steps" do
-      tasked = create_tasked(:tasked_exercise, user_1)
-      api_put :completed, user_1_token, parameters: {task_id: tasked.task_step.task.id, id: tasked.task_step.id}
-      expect(response.code).to eq '200'
-      expect(tasked.task_step(true).completed?).to be_truthy
+      })
     end
   end
 
   describe "PATCH update" do
 
     let!(:tasked) { create_tasked(:tasked_exercise, user_1) }
-    let!(:id_parameters) { { task_id: tasked.task_step.task.id, id: tasked.task_step.id } }
+    let!(:id_parameters) { { task_id: tasked.task_step.task.id,
+                             id: tasked.task_step.id } }
 
     it "updates the free response of an exercise" do
       api_put :update, user_1_token, parameters: id_parameters,
               raw_post_data: { free_response: "Ipsum lorem" }
 
       expect(response).to have_http_status(:success)
+
+      expect(response.body).to(
+        eq(Api::V1::TaskedExerciseRepresenter.new(tasked.reload).to_json)
+      )
+
       expect(tasked.reload.free_response).to eq "Ipsum lorem"
     end
 
@@ -82,6 +72,11 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
               raw_post_data: { answer_id: tasked.answers[0][0]['id'] }
 
       expect(response).to have_http_status(:success)
+
+      expect(response.body).to(
+        eq(Api::V1::TaskedExerciseRepresenter.new(tasked.reload).to_json)
+      )
+
       expect(tasked.reload.answer_id).to eq tasked.answers[0][0]['id']
     end
 
@@ -93,6 +88,102 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
       expect(tasked.reload.answer_id).to be_nil
     end
 
+  end
+
+  describe "#recovery" do
+    it "should allow owner to recover exercises with recovery steps" do
+      recovery = FactoryGirl.create :tasked_exercise
+      recovery.task_step.delete
+      tasked_exercise.recovery_tasked_exercise = recovery
+      tasked_exercise.save!
+
+      expect {
+        api_put :recovery, user_1_token, parameters: {
+          task_id: tasked_exercise.task_step.task.id,
+          id: tasked_exercise.task_step.id
+        }
+      }.to change{tasked_exercise.task_step.task.reload.task_steps.count}
+      expect(response).to have_http_status(:success)
+
+      expect(response.body).to eq(Api::V1::TaskedExerciseRepresenter.new(
+        recovery.reload
+      ).to_json)
+
+      expect(recovery.task_step.task).to eq(task)
+      expect(recovery.task_step.number).to(
+        eq(tasked_exercise.task_step.number + 1)
+      )
+    end
+
+    it "should not allow random user to recover exercises" do
+      recovery = FactoryGirl.create :tasked_exercise
+      recovery.task_step.delete
+      tasked_exercise.recovery_tasked_exercise = recovery
+      tasked_exercise.save!
+      step_count = tasked_exercise.task_step.task.task_steps.count
+
+      expect{
+        api_put :recovery, user_2_token, parameters: {
+          task_id: tasked_exercise.task_step.task.id,
+          id: tasked_exercise.task_step.id
+        } 
+      }.to raise_error
+
+      expect(tasked_exercise.task_step.task.reload.task_steps.count).to(
+        eq step_count
+      )
+    end
+
+    it "should not allow owner to recover taskeds without recovery steps" do
+      tasked = create_tasked(:tasked_reading, user_1)
+
+      step_count = tasked_exercise.task_step.task.task_steps.count
+
+      expect{
+        api_put :recovery, user_1_token, parameters: {
+          task_id: tasked_exercise.task_step.task.id,
+          id: tasked_exercise.task_step.id
+        } 
+      }.to raise_error
+
+      expect(tasked_exercise.task_step.task.reload.task_steps.count).to(
+        eq step_count
+      )
+    end
+  end
+
+  describe "#completed" do
+    it "should allow marking completion of reading steps by the owner" do
+      tasked = create_tasked(:tasked_reading, user_1)
+      api_put :completed, user_1_token, parameters: {task_id: tasked.task_step.task.id, id: tasked.task_step.id}
+      expect(response).to have_http_status(:success)
+
+      expect(response.body).to eq(Api::V1::TaskedReadingRepresenter.new(
+        tasked.reload
+      ).to_json)
+
+      expect(tasked.task_step(true).completed?).to be_truthy
+    end
+
+    it "should not allow marking completion of reading steps by random user" do
+      tasked = create_tasked(:tasked_reading, user_1)
+      expect{
+        api_put :completed, user_2_token, parameters: {task_id: tasked.task_step.task.id, id: tasked.task_step.id}  
+      }.to raise_error
+      expect(tasked.task_step(true).completed?).to be_falsy
+    end
+
+    it "should allow marking completion of exercise steps" do
+      tasked = create_tasked(:tasked_exercise, user_1).reload
+      api_put :completed, user_1_token, parameters: {task_id: tasked.task_step.task.id, id: tasked.task_step.id}
+      expect(response).to have_http_status(:success)
+
+      expect(response.body).to eq(Api::V1::TaskedExerciseRepresenter.new(
+        tasked.reload
+      ).to_json)
+
+      expect(tasked.task_step(true).completed?).to be_truthy
+    end
   end
 
   # TODO: could replace with FactoryGirl calls like in TaskedExercise factory examples

@@ -1,7 +1,8 @@
 class Content::Exercise < ActiveRecord::Base
   acts_as_resource
 
-  has_many :exercise_topics, dependent: :destroy,
-                             inverse_of: :exercise
+  sortable_has_many :exercise_topics, on: :number,
+                                      dependent: :destroy,
+                                      inverse_of: :exercise
 
 end

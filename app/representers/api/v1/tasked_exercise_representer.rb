@@ -66,5 +66,15 @@ module Api::V1
                description: "The feedback given to the student"
              }
 
+    property :has_recovery?,
+             as: :has_recovery,
+             type: 'boolean',
+             writeable: false,
+             readable: true,
+             if: -> (*) { task_step.completed? },
+             schema_info: {
+               description: "Whether or not a recovery exercise is available"
+             }
+
   end
 end
