@@ -328,6 +328,8 @@ GEM
       test_xml (>= 0.1.6)
       uber
     rspec-core (3.2.2)
+    rspec-collection_matchers (1.1.2)
+      rspec-expectations (>= 2.99.0.beta1)
       rspec-support (~> 3.2.0)
     rspec-expectations (3.2.0)
       diff-lcs (>= 1.2.0, < 2.0)
@@ -499,6 +501,7 @@ DEPENDENCIES
   responders (~> 2.0)
   roar (< 1.0)
   roar-rails
+  rspec-collection_matchers
   rspec-rails
   sass-rails (~> 5.0.0)
   shoulda-matchers

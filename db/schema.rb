@@ -460,7 +460,7 @@ ActiveRecord::Schema.define(version: 20150320133010) do
   add_index "taskings", ["user_id"], name: "index_taskings_on_user_id"
 
   create_table "tasks", force: :cascade do |t|
-    t.integer  "task_plan_id",               null: false
+    t.integer  "task_plan_id"
     t.string   "task_type",                  null: false
     t.string   "title",                      null: false
     t.datetime "opens_at",                   null: false
@@ -473,6 +473,16 @@ ActiveRecord::Schema.define(version: 20150320133010) do
   add_index "tasks", ["due_at", "opens_at"], name: "index_tasks_on_due_at_and_opens_at"
   add_index "tasks", ["task_plan_id"], name: "index_tasks_on_task_plan_id"
   add_index "tasks", ["task_type"], name: "index_tasks_on_task_type"
+
+  create_table "tasks_legacy_task_maps", force: :cascade do |t|
+    t.integer  "entity_task_id", null: false
+    t.integer  "task_id",        null: false
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+  end
+
+  add_index "tasks_legacy_task_maps", ["entity_task_id", "task_id"], name: "index_tasks_legacy_task_maps_on_entity_task_id_and_task_id", unique: true
+  add_index "tasks_legacy_task_maps", ["task_id"], name: "index_tasks_legacy_task_maps_on_task_id", unique: true
 
   create_table "tasks_taskings", force: :cascade do |t|
     t.integer  "entity_role_id", null: false

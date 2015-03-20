@@ -87,7 +87,21 @@ class Api::V1::CoursesController < Api::V1::ApiController
   api :POST, '/courses/:course_id/practice(/role/:role_id)', 'Starts a new practice widget'
   description 'TBD'
   def practice_post
-    # TODO move this code into a handler
+    result = Domain::ResetPracticeWidget.call(role: get_practice_role, page_ids: [])
+    respond_with result.outputs.task, represent_with: Api::V1::TaskRepresenter
+  end
+
+  api :GET, '/courses/:course_id/practice(/role/:role_id)', 'Gets the most recent practice widget'
+  def practice_get
+    task = Domain::GetPracticeWidget.call(role: get_practice_role).outputs.task
+    task.nil? ?
+      head(:not_found) :
+      respond_with(task, represent_with: Api::V1::TaskRepresenter)
+  end
+
+  protected
+
+  def get_practice_role
     potential_roles = Domain::GetUserCourseRoles.call(course: Entity::Course.find(params[:id]), 
                                                       user: current_human_user.entity_user,
                                                       types: [:student]).outputs.roles
@@ -104,14 +118,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
       practice_role = potential_roles.first
     end
 
-    Domain::ResetPracticeWidget.call(role: practice_role, page_ids: [])
-    practice_get
-  end
-
-  api :GET, '/courses/:course_id/practice(/role/:role_id)', 'Gets the most recent practice widget'
-  def practice_get
-    raise NotYetImplemented
-    OSU::AccessPolicy.require_action_allowed!(:practice, current_api_user, student)
+    practice_role
   end
 
 

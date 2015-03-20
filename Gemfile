@@ -132,6 +132,8 @@ group :development, :test do
   # Use RSpec for tests
   gem 'rspec-rails'
 
+  gem 'rspec-collection_matchers'
+
   # Fixture replacement
   gem 'factory_girl_rails'
 

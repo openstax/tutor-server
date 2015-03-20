@@ -164,18 +164,43 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
     end
   end
 
-  # let!(:student_user)       { FactoryGirl.create :user }
-  # let!(:student_user_token) { FactoryGirl.create :doorkeeper_access_token, 
-  #                                                application: application, 
-  #                                                resource_owner_id: student_user.id }
-
-
   describe "practice_post" do
-    xit "works" do
+    it "works" do
       Domain::AddUserAsCourseStudent.call(course: course, user: user_1)
 
-      api_post :practice, user_1_token, parameters: {id: course.id, role_id: Entity::Role.last.id}
+      expect {
+        api_post :practice, user_1_token, parameters: {id: course.id, role_id: Entity::Role.last.id}
+      }.to change{ Task.count }.by(1)
+      
+      expect(response).to have_http_status(:success)
 
+      expect(response.body_as_hash).to include(id: be_kind_of(Integer),
+                                               title: "Practice",
+                                               opens_at: be_kind_of(String),
+                                               steps: have(5).items)
+    end
+  end
+
+  describe "practice_get" do
+    it "returns nothing when practice widget not yet set" do
+      Domain::AddUserAsCourseStudent.call(course: course, user: user_1)
+      api_get :practice, user_1_token, parameters: {id: course.id, role_id: Entity::Role.last.id}
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "returns a practice widget" do
+      Domain::AddUserAsCourseStudent.call(course: course, user: user_1)
+      Domain::ResetPracticeWidget.call(role: Entity::Role.last, page_ids: [])
+      Domain::ResetPracticeWidget.call(role: Entity::Role.last, page_ids: [])
+
+      api_get :practice, user_1_token, parameters: {id: course.id, role_id: Entity::Role.last.id}
+
+      expect(response).to have_http_status(:success)
+
+      expect(response.body_as_hash).to include(id: be_kind_of(Integer),
+                                               title: "Practice",
+                                               opens_at: be_kind_of(String),
+                                               steps: have(5).items)      
     end
   end
 
