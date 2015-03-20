@@ -116,12 +116,9 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
       it 'returns the teacher roles with the course' do
         api_get :index, user_1_token
         expect(response.body).to include({
+          id: teaching.course.id,
           name: teaching.name,
-          roles: [{
-            id: teacher.id,
-            type: 'teacher',
-            course_id: teaching.course.id
-          }]
+          roles: [{ id: teacher.id, type: 'teacher' }]
         }.to_json)
       end
     end
@@ -136,12 +133,9 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
       it 'returns the student roles with the course' do
         api_get :index, user_1_token
         expect(response.body).to include({
+          id: taking.course.id,
           name: taking.name,
-          roles: [{
-            id: student.id,
-            type: 'student',
-            course_id: taking.course.id
-          }]
+          roles: [{ id: student.id, type: 'student' }]
         }.to_json)
       end
     end
@@ -157,16 +151,10 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
       it 'returns both roles with the course' do
         api_get :index, user_1_token
         expect(response.body).to include({
+          id: both.course.id,
           name: both.name,
-          roles: [{
-            id: student.id,
-            type: 'student',
-            course_id: both.course.id
-          }, {
-            id: teacher.id,
-            type: 'teacher',
-            course_id: both.course.id
-          }]
+          roles: [{ id: student.id, type: 'student', },
+                  { id: teacher.id, type: 'teacher', }]
         }.to_json)
       end
     end

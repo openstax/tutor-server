@@ -33,7 +33,7 @@ class Domain::ListCourses
 
   def set_teacher_names_on_courses
     outputs.courses.each do |course|
-      routine = run(:get_teacher_names, course.course_id)
+      routine = run(:get_teacher_names, course.id)
       course.teacher_names = routine.outputs.teacher_names
     end
   end
@@ -42,17 +42,13 @@ class Domain::ListCourses
     outputs.courses.each do |course|
       roles = get_roles(course, user)
       course.roles = roles.collect do |role|
-        {
-          id: role.id,
-          type: role.role_type,
-          course_id: course.course_id
-        }
+        { id: role.id, type: role.role_type }
       end
     end
   end
 
   def get_roles(course, user)
-    entity_course = Entity::Course.find(course.course_id)
+    entity_course = Entity::Course.find(course.id)
     run(:get_course_roles, course: entity_course, user: user).outputs.roles
   end
 

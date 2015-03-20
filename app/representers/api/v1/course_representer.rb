@@ -3,21 +3,12 @@ module Api::V1
 
     include Roar::Representer::JSON
 
-    property :name,
-             type: String,
-             writeable: false,
-             readable: true,
-             schema_info: {
-               required: true
-             }
+    property :id, readable: true, schema_info: { required: true }
 
-    collection :roles,
-      extend: Api::V1::CourseRoleRepresenter,
-      readable: true,
-      writable: false,
-      schema_info: {
-        required: false
-      }
+    property :name, readable: true, schema_info: { required: true }
+
+    collection :roles, extend: Api::V1::RoleRepresenter,
+      readable: true, schema_info: { required: false }
 
   end
 end

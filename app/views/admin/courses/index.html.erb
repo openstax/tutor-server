@@ -13,7 +13,7 @@
       <tr>
         <td><%= course.name %></td>
         <td><%= course.teacher_names.to_sentence %></td>
-        <td><%= link_to 'edit', edit_admin_course_path(course.course_id) %></td>
+        <td><%= link_to 'edit', edit_admin_course_path(course.id) %></td>
       </tr>
     <% end %>
   </tbody>
