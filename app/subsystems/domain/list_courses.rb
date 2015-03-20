@@ -33,10 +33,20 @@ class Domain::ListCourses
   end
 
   def set_roles_on_courses(user)
-    outputs.courses.each do |c|
-      course = Entity::Course.find(c.course_id)
-      c.roles = run(:get_course_roles, course: course, user: user).outputs.roles
+    outputs.courses.each do |course|
+      roles = get_roles(course, user)
+      course.roles = roles.collect do |role|
+        {
+          type: role.role_type,
+          url: "/api/v1/#{role.role_type.pluralize}/#{role.id}/dashboard"
+        }
+      end
     end
+  end
+
+  def get_roles(course, user)
+    entity_course = Entity::Course.find(course.course_id)
+    run(:get_course_roles, course: entity_course, user: user).outputs.roles
   end
 
 end
