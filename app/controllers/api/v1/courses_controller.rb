@@ -15,7 +15,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     #{json_schema(Api::V1::CoursesRepresenter, include: :readable)}
   EOS
   def index
-    courses = Domain::ListCourses.call(user: current_human_user, options: { with: :roles })
+    courses = Domain::ListCourses.call(user: current_human_user, with: :roles)
                                  .outputs.courses
     respond_with courses, represent_with: Api::V1::CoursesRepresenter
   end

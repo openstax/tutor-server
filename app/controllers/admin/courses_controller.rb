@@ -2,7 +2,7 @@ class Admin::CoursesController < Admin::BaseController
   before_action :get_users, only: [:new, :edit]
 
   def index
-    @courses = Domain::ListCourses.call(options: { with: :teacher_names })
+    @courses = Domain::ListCourses.call(with: :teacher_names)
                                   .outputs.courses
   end
 

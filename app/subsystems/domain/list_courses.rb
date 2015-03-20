@@ -13,17 +13,23 @@ class Domain::ListCourses
 
   protected
 
-  def exec(user: nil, options: {})
+  def exec(user: nil, with: [])
     run(:get_profiles)
-    case options[:with]
-    when :teacher_names
-      set_teacher_names_on_courses
-    when :roles
-      set_roles_on_courses(user)
-    end
+    run_with_options(user, with)
   end
 
   private
+
+  def run_with_options(user, with)
+    [with].flatten.each do |option|
+      case option
+      when :teacher_names
+        set_teacher_names_on_courses
+      when :roles
+        set_roles_on_courses(user)
+      end
+    end
+  end
 
   def set_teacher_names_on_courses
     outputs.courses.each do |course|
