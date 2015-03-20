@@ -4,7 +4,8 @@ class WebviewController < ApplicationController
 
   layout :resolve_layout
 
-  skip_interceptor :authenticate_user!, only: :home
+  skip_before_filter :authenticate_user!, only: :home
+
   fine_print_skip :general_terms_of_use, :privacy_policy, only: :home
 
   def home
