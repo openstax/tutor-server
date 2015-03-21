@@ -65,7 +65,7 @@ gem 'roar-rails'
 gem 'roar', '< 1.0'
 
 # Lev framework
-gem 'lev'
+gem 'lev', git: 'https://github.com/lml/lev.git', ref: '264819012e'
 
 # Ruby dsl for SQL queries
 gem 'squeel'

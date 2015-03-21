@@ -16,13 +16,13 @@ RSpec.describe TaskedAccessPolicy, :type => :access_policy do
         before { allow(requestor).to receive(:is_human?) { true } }
 
         context 'and the tasked has tasks for the requestor' do
-          before { allow(tasked).to receive(:tasked_to?).with(requestor) { true } }
+          before { allow(Domain::DoesTaskingExist).to receive(:[]) { true } }
 
           it { should be true }
         end
 
         context 'and the tasked has no tasks for the requestor' do
-          before { allow(tasked).to receive(:tasked_to?).with(requestor) { false } }
+          before { allow(Domain::DoesTaskingExist).to receive(:[]) { false } }
 
           it { should be false }
         end
@@ -40,5 +40,16 @@ RSpec.describe TaskedAccessPolicy, :type => :access_policy do
     let(:action) { :unknown_fooey }
 
     it { should be false }
+  end
+
+  context 'when the tasking is in the tasks subsystem' do
+    it 'allows access for the taskee' do
+      role = Role::CreateUserRole[requestor]
+      Tasks::Api::CreateTasking.call(task: tasked.task_step.task, role: role)
+
+      [:read, :create, :update, :destroy, :mark_completed].each do |allowed_action|
+        expect(TaskedAccessPolicy.action_allowed?(allowed_action, requestor, tasked)).to be_truthy
+      end
+    end
   end
 end

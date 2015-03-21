@@ -1,5 +1,5 @@
 class Domain::ResetPracticeWidget
-  lev_routine
+  lev_routine express_output: :task
 
   uses_routine Domain::GetPracticeWidget
   uses_routine Tasks::Api::CreateTasking
@@ -11,7 +11,7 @@ class Domain::ResetPracticeWidget
     # Get the existing practice widget and remove incomplete exercises from it
     # so they can be used in later practice
 
-    # existing_practice_task = run(Domain::GetPracticeWidget, role: role).outputs.task
+    existing_practice_task = run(Domain::GetPracticeWidget, role: role).outputs.task
     # TODO actually do the step removal
     
     # Create the new practice widget task.
