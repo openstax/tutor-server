@@ -8,6 +8,7 @@ RSpec.describe TaskStep, :type => :model do
 
   it { is_expected.to validate_presence_of(:task) }
   it { is_expected.to validate_presence_of(:tasked) }
+  it { is_expected.to validate_presence_of(:group_name) }
 
   it "requires tasked to be unique" do
     expect(task_step).to be_valid

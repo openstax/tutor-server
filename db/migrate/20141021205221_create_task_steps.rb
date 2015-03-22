@@ -5,6 +5,7 @@ class CreateTaskSteps < ActiveRecord::Migration
       t.references :tasked, polymorphic: true, null: false
       t.integer :number, null: false
       t.datetime :completed_at
+      t.string :group_name, null: false
 
       t.timestamps null: false
 

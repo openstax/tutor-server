@@ -107,7 +107,7 @@ class IReadingAssistant
           end
 
           next if step.tasked.nil?
-
+          step.mark_as_core
           task.task_steps << step
         end
       end
@@ -125,6 +125,7 @@ class IReadingAssistant
                                            title: ex.title,
                                            url: ex.url,
                                            content: ex.content)
+          step.mark_as_spaced_practice
           task.task_steps << step
         end
       end

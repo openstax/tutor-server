@@ -10,9 +10,10 @@ FactoryGirl.define do
     end
 
     after(:build) do |task_step, evaluator|
+      task_step.mark_as_core
+
       options = { task_step: task_step, url: evaluator.url,
                   content: evaluator.content, title: evaluator.title }
-
       task_step.tasked ||= \
         FactoryGirl.build(evaluator.tasked_type, options.compact)
     end

@@ -5,14 +5,31 @@ class TaskStep < ActiveRecord::Base
   validates :task, presence: true
   validates :tasked, presence: true
   validates :tasked_id, uniqueness: { scope: :tasked_type }
+  validates :group_name, presence: true
 
   delegate :tasked_to?, to: :task
 
-  def complete
-    self.completed_at ||= Time.now
+  def complete(completion_time: Time.now)
+    self.completed_at ||= completion_time
   end
 
   def completed?
     !self.completed_at.nil?
+  end
+
+  def is_core?
+    self.group_name == 'core'
+  end
+
+  def mark_as_core
+    self.group_name = 'core'
+  end
+
+  def is_spaced_practice?
+    self.group_name == 'spaced_practice'
+  end
+
+  def mark_as_spaced_practice
+    self.group_name = 'spaced_practice'
   end
 end

@@ -394,6 +394,7 @@ ActiveRecord::Schema.define(version: 20150320133010) do
     t.string   "tasked_type",  null: false
     t.integer  "number",       null: false
     t.datetime "completed_at"
+    t.string   "group_name",   null: false
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
   end
