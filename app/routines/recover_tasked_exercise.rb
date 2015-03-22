@@ -16,7 +16,11 @@ class RecoverTaskedExercise
     task = task_step.task
     outputs[:task] = task
 
-    recovery_step = TaskStep.new(task: task, number: task_step.number + 1)
+    recovery_step = TaskStep.new(
+      task: task,
+      number: task_step.number + 1,
+      group_name: tasked_exercise.task_step.group_name
+    )
     outputs[:recovery_step] = recovery_step
     recovery_step.tasked = recovery_exercise
     tasked_exercise.recovery_tasked_exercise = nil
