@@ -9,7 +9,10 @@ RSpec.describe Api::V1::CourseEventsRepresenter, :type => :representer do
     plan = FactoryGirl.create( :task_plan, owner: course)
     task = FactoryGirl.create(:tasking, taskee: user).task
 
-    output = GetCourseEvents.call(course: course, user: user).outputs
+    role = Entity::CreateRole.call.outputs.role
+    Role::AddUserRole.call(user:user,role:role)
+    CourseMembership::AddTeacher.call(course: course, role: role)
+    output = GetUserCourseEvents.call(course: course, user: user).outputs
     representation = Api::V1::CourseEventsRepresenter.new(output).as_json
 
     expect(representation).to include(

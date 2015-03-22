@@ -74,9 +74,6 @@ class Api::V1::CoursesController < Api::V1::ApiController
   EOS
   def events
     course = Entity::Course.find(params[:id])
-
-    OSU::AccessPolicy.require_action_allowed!(:task_plans, current_api_user, course)
-
     outputs = GetCourseEvents.call(user: current_human_user, course: course).outputs
     respond_with outputs, represent_with: Api::V1::CourseEventsRepresenter
   end
