@@ -31,8 +31,20 @@ class Task < ActiveRecord::Base
     taskings.where(taskee: taskee).any?
   end
 
-  def completed?
-    self.task_steps.all?{|ts| ts.completed? }
+  def core_task_steps
+    task_steps.select{|ts| ts.is_core?}
   end
 
+  def core_task_steps_completed?
+    core_task_steps.all?{|ts| ts.completed?}
+  end
+
+  def completed?
+    task_steps.all?{|ts| ts.completed?}
+  end
+
+  def completed_at
+    return nil if !completed?
+    task_steps.collect{|ts| ts.completed_at}.max
+  end
 end
