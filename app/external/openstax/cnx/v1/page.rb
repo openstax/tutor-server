@@ -188,9 +188,13 @@ module OpenStax::Cnx::V1
       @fragments
     end
 
-    def to_s(indent: 0)
-      s = "#{' '*indent}PAGE #{title} // #{id}\n"
-      s << fragments.collect{|f| f.to_s(indent: indent+2)}.join('')
+    def visit(visitor:, depth: 0)
+      visitor.pre_order_visit(elem: self, depth: depth)
+      visitor.visit(elem: self, depth: depth)
+      fragments.each do |fragment|
+        fragment.visit(visitor: visitor, depth: depth+1)
+      end
+      visitor.post_order_visit(elem: self, depth: depth)
     end
 
   end
