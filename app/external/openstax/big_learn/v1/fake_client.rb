@@ -10,8 +10,8 @@ class OpenStax::BigLearn::V1::FakeClient
     # Iterate through the tags, storing each in the store, overwriting any
     # with the same name.
 
-    tags.each do |tag|
-      store['tags'][tag.name] = tag.types
+    [tags].flatten.each do |tag|
+      store['tags'][tag.text] = tag.types
     end
 
     save!
@@ -21,7 +21,7 @@ class OpenStax::BigLearn::V1::FakeClient
     # Iterate through the exercises, storing each in the store, overwriting
     # any with the same ID
 
-    exercises.each do |exercise|
+    [exercises].flatten.each do |exercise|
       store['exercises'][exercise.uid] = exercise.tags
     end
     
@@ -33,20 +33,45 @@ class OpenStax::BigLearn::V1::FakeClient
     raise NotYetImplemented
   end
 
-  # Normally a method like this would be protected, but since this class is for
-  # fake code only, we'll leave it exposed for testing and other convenience
-  def store
-    @fake_store ||= FakeStore.where(name: 'openstax_biglearn_v1')
-    (@fake_store.store ||= {}).tap do |s|
-      s['exercises'] ||= {}
-      s['tags'] ||= {}
-    end
+  #
+  # Debugging methods
+  #
+
+  def store_tags_copy
+    store['tags'].clone
+  end
+
+  def store_exercises_copy
+    store['exercises'].clone
+  end
+
+  def reload!
+    store(true)
   end
 
   protected
 
+  def store(reload=false)
+    # We need to load the store from the DB if
+    # (1) we haven't yet done so
+    # (2) someone wants us to load it
+    # (3) We have loaded it but it is no longer in the DB (which can happen in tests)
+
+    if @fake_store.nil? || 
+       reload ||  
+       ::FakeStore.where(name: 'openstax_biglearn_v1').none?
+       
+      @fake_store = ::FakeStore.find_or_create_by(name: 'openstax_biglearn_v1')
+    end
+
+    (@fake_store.data ||= {}).tap do |data|
+      data['exercises'] ||= {}
+      data['tags'] ||= {}
+    end
+  end
+
   def save!
     @fake_store.save! if @fake_store.present?
   end
-  
+
 end

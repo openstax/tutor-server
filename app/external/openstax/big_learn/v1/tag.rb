@@ -2,7 +2,7 @@ class OpenStax::BigLearn::V1::Tag
 
   TAG_TYPES = %w(topic aggregate filter)
 
-  attr_reader :text, :type
+  attr_reader :text, :types
 
   def initialize(text, *types)
     if types.empty?

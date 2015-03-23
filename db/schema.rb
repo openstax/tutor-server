@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150320133010) do
+ActiveRecord::Schema.define(version: 20150321164408) do
 
   create_table "administrators", force: :cascade do |t|
     t.integer  "user_id",    null: false
@@ -212,6 +212,15 @@ ActiveRecord::Schema.define(version: 20150320133010) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  create_table "fake_stores", force: :cascade do |t|
+    t.text     "data"
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "fake_stores", ["name"], name: "index_fake_stores_on_name", unique: true
 
   create_table "fine_print_contracts", force: :cascade do |t|
     t.string   "name",       null: false

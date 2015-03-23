@@ -2,7 +2,7 @@ class OpenStax::BigLearn::V1::Exercise
 
   TAG_TYPES = %w(topic aggregate filter)
 
-  attr_reader :text, :type
+  attr_reader :uid, :tags
 
   def initialize(uid, *tags)
     if tags.empty?
@@ -11,7 +11,7 @@ class OpenStax::BigLearn::V1::Exercise
 
     tags = tags.collect{|tag| tag.to_s}
 
-    @text = text
+    @uid = uid
     @tags = tags
   end
 
