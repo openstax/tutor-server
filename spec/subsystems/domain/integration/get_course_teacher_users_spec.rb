@@ -5,7 +5,7 @@ describe Domain::GetCourseTeacherUsers do
   context "when a course has no teachers" do
     let(:target_course) { Domain::CreateCourse.call.outputs.course }
     let(:other_course)  { Domain::CreateCourse.call.outputs.course }
-    let(:other_user)    { Domain::CreateUser.call.outputs.user }
+    let(:other_user)    { Entity::CreateUser.call.outputs.user }
 
     before(:each) do
       result = Domain::AddUserAsCourseTeacher.call(course: other_course, user: other_user)
@@ -22,8 +22,8 @@ describe Domain::GetCourseTeacherUsers do
   context "when a course has one teacher" do
     let(:target_course) { Domain::CreateCourse.call.outputs.course }
     let(:other_course)  { Domain::CreateCourse.call.outputs.course }
-    let(:target_user)   { Domain::CreateUser.call.outputs.user }
-    let(:other_user)    { Domain::CreateUser.call.outputs.user }
+    let(:target_user)   { Entity::CreateUser.call.outputs.user }
+    let(:other_user)    { Entity::CreateUser.call.outputs.user }
 
     before(:each) do
       result = Domain::AddUserAsCourseTeacher.call(course: other_course, user: other_user)
@@ -43,9 +43,9 @@ describe Domain::GetCourseTeacherUsers do
   context "when a course has multiple teachers" do
     let(:target_course) { Domain::CreateCourse.call.outputs.course }
     let(:other_course)  { Domain::CreateCourse.call.outputs.course }
-    let(:target_user1)  { Domain::CreateUser.call.outputs.user }
-    let(:target_user2)  { Domain::CreateUser.call.outputs.user }
-    let(:other_user)    { Domain::CreateUser.call.outputs.user }
+    let(:target_user1)  { Entity::CreateUser.call.outputs.user }
+    let(:target_user2)  { Entity::CreateUser.call.outputs.user }
+    let(:other_user)    { Entity::CreateUser.call.outputs.user }
 
     before(:each) do
       result = Domain::AddUserAsCourseTeacher.call(course: other_course, user: other_user)
