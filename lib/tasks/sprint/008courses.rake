@@ -10,6 +10,7 @@ namespace :sprint do
       puts "Added 'student' as a student to 'Being Taken'"
       puts "Added 'teacher' as a teacher to 'Being Taught'"
       puts "Added 'both' as a teacher and student to 'Both'"
+      puts "Added task plans and tasks for users"
     else
       result.errors.each { |e| puts "Error: " + Lev::ErrorTranslator.translate(e) }
     end
