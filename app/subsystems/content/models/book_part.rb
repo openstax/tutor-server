@@ -23,4 +23,27 @@ class Content::BookPart < ActiveRecord::Base
   def self.root_for(book_id:)
     where(entity_book_id: book_id).where(parent_book_part_id: nil).first
   end
+
+  def visit(visitors)
+    child_book_part_includes = []
+    page_includes = []
+
+    visitors.each do |visitor|
+      visitor.visit(self)
+      child_book_part_includes.push(visitor.book_part_includes)
+      page_includes.push(visitor.page_includes)
+    end
+
+    visitors.each{|visitor| visitor.descend}
+
+    pages.includes(page_includes.uniq).each do |page|
+      page.visit(visitors)
+    end
+
+    child_book_parts.includes(child_book_part_includes.uniq).each do |child_book_part|
+      child_book_part.visit(visitors)
+    end
+
+    visitors.each{|visitor| visitor.ascend}
+  end
 end
