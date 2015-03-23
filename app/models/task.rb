@@ -30,4 +30,9 @@ class Task < ActiveRecord::Base
   def tasked_to?(taskee)
     taskings.where(taskee: taskee).any?
   end
+
+  def completed?
+    self.task_steps.all?{|ts| ts.completed? }
+  end
+
 end

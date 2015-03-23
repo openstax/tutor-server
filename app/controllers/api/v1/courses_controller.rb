@@ -68,4 +68,14 @@ class Api::V1::CoursesController < Api::V1::ApiController
     respond_with outputs, represent_with: Api::V1::TaskSearchRepresenter
   end
 
+  api :GET, '/courses/:course_id/events', 'Gets all events for a given course'
+  description <<-EOS
+    #{json_schema(Api::V1::CourseEventsRepresenter, include: :readable)}
+  EOS
+  def events
+    course = Entity::Course.find(params[:id])
+    outputs = GetCourseEvents.call(user: current_human_user, course: course).outputs
+    respond_with outputs, represent_with: Api::V1::CourseEventsRepresenter
+  end
+
 end
