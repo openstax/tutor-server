@@ -1,9 +1,7 @@
 class Content::TocVisitor < Content::BookVisitor
 
   def initialize
-    @toc = {}
-    @stack = [@toc]
-    @last_children = nil
+    @level_stack = []
   end
 
   def visit(item)
@@ -18,17 +16,13 @@ class Content::TocVisitor < Content::BookVisitor
       children: []
     }
 
-    if top_of_stack == @toc
-      top_of_stack.merge!(data)
-    else
-      top_of_stack.push(data)
-    end
+    current_level.push(data)
 
-    @last_children = data[:children]
+    @one_level_down = data[:children]
   end
 
   def visit_page(page)
-    top_of_stack.push({
+    current_level.push({
       id: page.id, 
       title: page.title, 
       type: 'page'
@@ -36,19 +30,19 @@ class Content::TocVisitor < Content::BookVisitor
   end
 
   def descend
-    @stack.push(@last_children)
+    @level_stack.push(@one_level_down)
   end
 
   def ascend
-    @stack.pop
+    @level_stack.pop
   end
 
-  def top_of_stack
-    @stack.last
+  def current_level
+    @level_stack.last || @level_stack
   end
 
   def output
-    @toc
+    current_level[:children]
   end
 
 end
