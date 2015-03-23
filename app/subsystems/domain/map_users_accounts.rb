@@ -6,7 +6,7 @@ module Domain::MapUsersAccounts
     user = UserProfile::Profile.where(account_id: account.id).first
     return user if user.present?
 
-    outcome = UserProfile::FindOrCreate.call(ccount_id: account.id)
+    outcome = UserProfile::CreateProfile.call(ccount_id: account.id)
     raise outcome.errors.first.message unless outcome.errors.none?
 
     outcome.outputs.user
