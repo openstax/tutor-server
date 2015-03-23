@@ -24,6 +24,10 @@ class IReadingAssistant
     }'
   end
 
+  def self.logger
+    Rails.logger
+  end
+
   def self.tasked_reading(reading_fragment:, page:, step: nil)
     TaskedReading.new(task_step: step,
                       url: page.url,
@@ -32,8 +36,10 @@ class IReadingAssistant
   end
 
   def self.tasked_exercise(exercise_fragment:, recovery_fragment: nil, step: nil)
-    raise "Embed tag not found for Exercise in Page #{page.id}" \
-      if exercise_fragment.embed_tag.blank?
+    if exercise_fragment.embed_tag.blank?
+      logger.warn "Exercise without embed tag found while creating iReading"
+      return nil
+    end
 
     # TODO: Exercises are cached locally during book import,
     # so this search can be local, but
@@ -50,6 +56,18 @@ class IReadingAssistant
                        title: exercise.title,
                        content: exercise.content,
                        recovery_tasked_exercise: recovery)
+  end
+
+  def self.tasked_video(video_fragment:, step: nil)
+    if video_fragment.url.blank?
+      logger.warn "Video without embed tag found while creating iReading"
+      return nil
+    end
+
+    TaskedVideo.new(task_step: step,
+                    url: video_fragment.url,
+                    title: video_fragment.title,
+                    content: video_fragment.to_html)
   end
 
   def self.distribute_tasks(task_plan:, taskees:)
@@ -83,14 +101,12 @@ class IReadingAssistant
           when OpenStax::Cnx::V1::Fragment::Exercise
             tasked_exercise(exercise_fragment: fragment, step: step)
           when OpenStax::Cnx::V1::Fragment::Video
-            raise "Video url not found for Video in Page #{page.id}" \
-              if fragment.url.blank?
-
-            TaskedVideo.new(task_step: step, url: fragment.url,
-                            title: fragment.title, content: fragment.to_html)
+            tasked_video(video_fragment: fragment, step: step)
           else
             tasked_reading(reading_fragment: fragment, page: page, step: step)
           end
+
+          next if step.tasked.nil?
 
           task.task_steps << step
         end
