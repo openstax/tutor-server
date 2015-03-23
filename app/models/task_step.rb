@@ -9,6 +9,12 @@ class TaskStep < ActiveRecord::Base
 
   delegate :tasked_to?, to: :task
 
+  after_initialize :init
+
+  def init
+    mark_as_core unless self.group_name
+  end
+
   def complete(completion_time: Time.now)
     self.completed_at ||= completion_time
   end
