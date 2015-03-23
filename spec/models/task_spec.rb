@@ -61,7 +61,7 @@ RSpec.describe Task, :type => :model do
     task = FactoryGirl.build(:task)
     start_time = Time.now
     expect(task.started?).to be_falsy
-    task.start(started_at: start_time)
+    task.start(start_time: start_time)
     expect(task.started?).to be_truthy
     expect(task.started_at).to eq(start_time)
   end

@@ -31,8 +31,8 @@ class Task < ActiveRecord::Base
     taskings.where(taskee: taskee).any?
   end
 
-  def start(started_at: Time.now)
-    self.started_at = started_at
+  def start(start_time: Time.now)
+    self.started_at = start_time
   end
 
   def started?
