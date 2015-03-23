@@ -31,6 +31,14 @@ class Task < ActiveRecord::Base
     taskings.where(taskee: taskee).any?
   end
 
+  def start(started_at: Time.now)
+    self.started_at = started_at
+  end
+
+  def started?
+    !self.started_at.nil?
+  end
+
   def core_task_steps
     task_steps.select{|ts| ts.is_core?}
   end

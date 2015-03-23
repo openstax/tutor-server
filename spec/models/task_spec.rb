@@ -57,6 +57,15 @@ RSpec.describe Task, :type => :model do
     expect(core_steps).to include(core_step3)
   end
 
+  it 'can be started' do
+    task = FactoryGirl.build(:task)
+    start_time = Time.now
+    expect(task.started?).to be_falsy
+    task.start(started_at: start_time)
+    expect(task.started?).to be_truthy
+    expect(task.started_at).to eq(start_time)
+  end
+
   it 'can determine if it is completed' do
     core_step1            = instance_double('TaskStep', :completed? => true)
     core_step2            = instance_double('TaskStep', :completed? => true)

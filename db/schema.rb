@@ -461,6 +461,7 @@ ActiveRecord::Schema.define(version: 20150320133010) do
     t.string   "title",                      null: false
     t.datetime "opens_at",                   null: false
     t.datetime "due_at"
+    t.datetime "started_at"
     t.integer  "taskings_count", default: 0, null: false
     t.datetime "created_at",                 null: false
     t.datetime "updated_at",                 null: false
