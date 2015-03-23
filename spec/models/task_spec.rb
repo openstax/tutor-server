@@ -135,4 +135,34 @@ RSpec.describe Task, :type => :model do
 
     expect(task.core_task_steps_completed?).to be_falsy
   end
+
+  it 'has a default Spaced Practice Algorithm' do
+    spa = nil
+    expect{
+      spa = Task.new.spaced_practice_algorithm
+    }.to_not raise_error
+    expect(spa).to_not be_nil
+    expect(spa).to respond_to(:call)
+  end
+
+  it 'can invoke its Spaced Practice Algorithm' do
+    ## NOTE: Because of the serializion of the SPA inside Task, using regular
+    ##       test doubles doesn't work.
+    class DummySpa
+      def initialize(task:)
+        @task_object_id = task.object_id
+      end
+
+      def call(task:)
+        raise "failure (#{task.object_id} != #{@task_object_id})" unless task.object_id == @task_object_id
+        raise "success"
+      end
+    end
+
+    task = Task.new
+    task.spaced_practice_algorithm = DummySpa.new(task: task)
+    expect{
+      task.add_spaced_practice_exercises
+    }.to raise_error("success")
+  end
 end

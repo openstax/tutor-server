@@ -456,15 +456,16 @@ ActiveRecord::Schema.define(version: 20150320133010) do
   add_index "taskings", ["user_id"], name: "index_taskings_on_user_id"
 
   create_table "tasks", force: :cascade do |t|
-    t.integer  "task_plan_id",               null: false
-    t.string   "task_type",                  null: false
-    t.string   "title",                      null: false
-    t.datetime "opens_at",                   null: false
+    t.integer  "task_plan_id",                          null: false
+    t.string   "task_type",                             null: false
+    t.string   "title",                                 null: false
+    t.datetime "opens_at",                              null: false
     t.datetime "due_at"
     t.datetime "started_at"
-    t.integer  "taskings_count", default: 0, null: false
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
+    t.integer  "taskings_count",            default: 0, null: false
+    t.text     "spaced_practice_algorithm",             null: false
+    t.datetime "created_at",                            null: false
+    t.datetime "updated_at",                            null: false
   end
 
   add_index "tasks", ["due_at", "opens_at"], name: "index_tasks_on_due_at_and_opens_at"
