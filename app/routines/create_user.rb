@@ -7,7 +7,7 @@ class CreateUser
   protected
 
   def exec(account)
-    outputs[:user] = User.create do |user|
+    outputs[:user] = UserProfile::Profile.create do |user|
       user.entity_user = Entity::CreateUser.call.outputs.user
       user.account = account
       user.exchange_identifier = OpenStax::Exchange.create_identifier

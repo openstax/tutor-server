@@ -21,7 +21,7 @@ describe CreateUser do
     it "creates a new User" do
       expect {
         CreateUser.call(account)
-      }.to change{User.count}.by 1
+      }.to change{UserProfile::Profile.count}.by 1
     end
     it "initializes the User's exchange_identifier" do
       outcome = CreateUser.call(account)
@@ -60,7 +60,7 @@ describe CreateUser do
           CreateUser.call(account)
         rescue
         end
-      }.to change{User.count}.by 0
+      }.to change{UserProfile::Profile.count}.by 0
     end
   end
 end
