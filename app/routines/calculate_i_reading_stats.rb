@@ -61,17 +61,19 @@ class CalculateIReadingStats
   end
 
   def generate_course_stat_data
+    tasks = @plan.tasks.to_a
     {
 
-      total_count: @plan.tasks.count,
+      total_count: tasks.count,
 
-      complete_count: @plan.tasks.select{|task|
+      complete_count: tasks.count{|task|
         task.task_steps.all?{| ts | ts.completed? }
-      }.length,
+      },
 
-      partially_complete_count: @plan.tasks.select{|task|
-        task.task_steps.any?{| ts | ts.completed? }
-      }.length,
+      partially_complete_count: tasks.count{|task|
+        task.task_steps.any?{| ts | ts.completed? } &&
+          !task.task_steps.all?{| ts | ts.completed? }
+      },
 
       current_pages: task_plan_pages.map{|page|
         generate_page_stats(page)
