@@ -14,8 +14,8 @@ class OpenStax::BigLearn::V1::RealClient
     raise NotYetImplemented
   end
 
-  def get_projection_exercises(user:, topic_tags:, filter_tags:, 
-                               count:, difficulty:, allow_repetitions:)
+  def get_projection_exercises(user:, tag_search:, count:, 
+                               difficulty:, allow_repetitions:)
     raise NotYetImplemented
   end
 

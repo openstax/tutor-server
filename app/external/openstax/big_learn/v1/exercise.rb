@@ -1,7 +1,5 @@
 class OpenStax::BigLearn::V1::Exercise
 
-  TAG_TYPES = %w(topic aggregate filter)
-
   attr_reader :uid, :tags
 
   def initialize(uid, *tags)

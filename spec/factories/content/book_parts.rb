@@ -16,7 +16,8 @@ FactoryGirl.define do
       end
 
       (evaluator.contents[:pages] || {}).each do |page|
-        FactoryGirl.create(:content_page, title: page[:title], book_part: book_part)
+        the_page = FactoryGirl.create(:content_page, title: page[:title], book_part: book_part)
+        Content::TagResourceWithTopics[the_page, page[:topics]]
       end
     end
 
@@ -30,14 +31,23 @@ FactoryGirl.define do
               {
                 title: 'chapter 1',
                 pages: [
-                  { title: 'first page' },
-                  { title: 'second page' }
+                  { 
+                    title: 'first page',
+                    topics: ['ost-tag-lo-topic1-lo1', 'ost-tag-lo-topic2-lo2']
+                  },
+                  { 
+                    title: 'second page',
+                    topics: ['ost-tag-lo-topic2-lo2', 'ost-tag-lo-topic3-lo3']
+                  }
                 ]
               },
               {
                 title: 'chapter 2',
                 pages: [
-                  { title: 'third page' }
+                  { 
+                    title: 'third page',
+                    topics: ['ost-tag-lo-topic4-lo4']
+                  }
                 ]
               }
             ]

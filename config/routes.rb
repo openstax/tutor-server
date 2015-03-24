@@ -46,10 +46,10 @@ Rails.application.routes.draw do
         get 'plans'
         get 'tasks'
         get 'events'
+        post 'practice(/role/:role_id)', action: :practice
+        get 'practice(/role/:role_id)', action: :practice
       end
-      post 'practice(/role/:role_id)', on: :member, action: :practice
-      get 'practice(/role/:role_id)', on: :member, action: :practice
-      
+
       resources :task_plans, path: '/plans', shallow: true, except: [:index, :edit] do
         post 'publish', on: :member
       end

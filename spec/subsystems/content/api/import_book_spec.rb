@@ -32,6 +32,10 @@ RSpec.describe Content::Api::ImportBook, :type => :routine, :vcr => VCR_OPTS do
 
   cnx_books.each do |name, book|
     context "with the #{name.to_s} content" do
+
+      before(:each)          { OpenStax::BigLearn::V1.use_fake_client }
+      let!(:biglearn_client) { OpenStax::BigLearn::V1.fake_client }
+
       it 'creates a new Book structure and Pages and sets their attributes' do
         result = nil
         expect { 
@@ -43,6 +47,9 @@ RSpec.describe Content::Api::ImportBook, :type => :routine, :vcr => VCR_OPTS do
 
         # TODO: Cache TOC and check it here
         test_book_part(book_part)
+        
+        expect(biglearn_client.store_tags_copy).to_not be_empty
+        expect(biglearn_client.store_exercises_copy).to_not be_empty
       end
 
       it 'adds a path signifier according to subcol structure' do
