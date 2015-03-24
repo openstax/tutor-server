@@ -30,10 +30,18 @@ RSpec.describe Sprint008::Main, type: :request, :api => true, :version => :v1 do
     api_get(route, student_token)
     print_response(outputs[:student], route, response)
 
+    route = "/api/courses/#{outputs[:course1].id}/events"
+    api_get(route, teacher_token)
+    print_response(outputs[:teacher], route, response)
+
     route = "/api/courses/#{outputs[:course1].id}/practice"
     api_get(route, student_token)
     print_response(outputs[:student], route, response)    
 
+    first_task_plan = TaskPlan.where(owner: outputs.course1).first
+    route = "/api/plans/#{first_task_plan.id}"
+    api_get(route, teacher_token)
+    print_response(outputs[:teacher], route, response)
   end
 
   def token_for(user)

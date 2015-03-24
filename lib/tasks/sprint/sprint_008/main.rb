@@ -43,6 +43,10 @@ module Sprint008
       tp.tasking_plans << FactoryGirl.create(:tasking_plan, target: student,
                                                             task_plan: tp)
       DistributeTasks.call(tp)
+      # mark all it's steps as complete
+      tp.reload.tasks.each{ |task|
+        task.task_steps.each{ |ts| MarkTaskStepCompleted.call(task_step: ts) }
+      }
 
       tp = FactoryGirl.create :task_plan, assistant: a,
                                           owner: course1,
@@ -50,6 +54,10 @@ module Sprint008
       tp.tasking_plans << FactoryGirl.create(:tasking_plan, target: student,
                                                             task_plan: tp)
       DistributeTasks.call(tp)
+      # mark the first three steps as complete, so it shows as partial
+      tp.reload.tasks.each{ |task|
+        task.task_steps[0..2].each{ |ts| MarkTaskStepCompleted.call(task_step: ts) }
+      }
 
       tp = FactoryGirl.create :task_plan, assistant: a,
                                           owner: course1,
