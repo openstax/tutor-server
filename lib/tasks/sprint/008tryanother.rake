@@ -1,7 +1,7 @@
 namespace :sprint do
   desc 'Sprint 8'
-  task :'008', [:username] => :environment do |t, args|
-    require_relative 'sprint_008/main.rb'
+  task :'008tryanother', [:username] => :environment do |t, args|
+    require_relative 'sprint_008/try_another.rb'
     result = Sprint008::TryAnother.call
 
     if result.errors.none?
