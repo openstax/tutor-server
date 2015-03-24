@@ -57,7 +57,7 @@ module Sprint008
       DistributeTasks.call(tp)
 
       # Set up a practice widget
-      Domain::ResetPracticeWidget.call(role: student_role, page_ids: [])
+      Domain::ResetPracticeWidget.call(role: student_role, condition: :fake)
 
       # Set up a task plan that will have activity for the stats
       stats_tp = FactoryGirl.create :task_plan, assistant: a,

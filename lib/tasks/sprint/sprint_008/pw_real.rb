@@ -14,7 +14,7 @@ module Sprint008
       book = Domain::FetchAndImportBook[id: '7db9aa72-f815-4c3b-9cb6-d50cf5318b58']
       Domain::AddBookToCourse[book: book, course: course]
 
-      Domain::ResetPracticeWidget[role: student_role, page_ids: []]
+      Domain::ResetPracticeWidget[role: student_role, condition: :fake]
     end
 
   end

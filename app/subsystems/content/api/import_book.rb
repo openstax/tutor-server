@@ -38,8 +38,9 @@ class Content::Api::ImportBook
     biglearn_topics = []
 
     exercise_data.values.each do |ed|
+      tags = ed['topics'] + ed['tags']
       biglearn_exercises.push(
-        OpenStax::BigLearn::V1::Exercise.new(ed['uid'], *ed['topics'])
+        OpenStax::BigLearn::V1::Exercise.new(ed['uid'], *tags)
       )
 
       biglearn_topics.push(*ed['topics'])

@@ -23,6 +23,7 @@ class Content::ExerciseVisitor < Content::BookVisitor
         entry['id']   = page_exercise.id
         entry['url']  = wrapper.url
         entry['topics'] = ((entry['topics'] || []) + exercise_topic_names).uniq
+        entry['tags'] = (((entry['tags'] || []) + wrapper.tags) - entry['topics']).uniq
       end
     end 
   end
