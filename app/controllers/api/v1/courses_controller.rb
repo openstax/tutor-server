@@ -74,7 +74,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   EOS
   def events
     course = Entity::Course.find(params[:id])
-    outputs = GetCourseEvents.call(user: current_human_user, course: course).outputs
+    outputs = GetUserCourseEvents.call(user: current_human_user, course: course).outputs
     respond_with outputs, represent_with: Api::V1::CourseEventsRepresenter
   end
 
