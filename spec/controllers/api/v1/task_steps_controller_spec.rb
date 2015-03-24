@@ -28,6 +28,8 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
     te
   }
 
+  let!(:course)          { Entity::Course.create }
+
   describe "#show" do
     it "should work on the happy path" do
       api_get :show, user_1_token, parameters: { task_id: task_step.task.id,
@@ -185,6 +187,21 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
       expect(tasked.task_step(true).completed?).to be_truthy
     end
   end
+
+  describe "practice task update step" do
+    it "allows updating of a step (needed to test access to legacy and SS taskings)" do    
+      Domain::AddUserAsCourseStudent[course: course, user: user_1]
+      task = Domain::ResetPracticeWidget[role: Entity::Role.last, page_ids: []]
+
+      step = task.task_steps.first
+    
+      api_put :update, user_1_token, parameters: { id: step.id },
+              raw_post_data: { free_response: "Ipsum lorem" }
+
+      expect(response).to have_http_status(:success)
+    end
+  end
+
 
   # TODO: could replace with FactoryGirl calls like in TaskedExercise factory examples
   def create_tasked(type, owner)

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150320133010) do
+ActiveRecord::Schema.define(version: 20150321164408) do
 
   create_table "administrators", force: :cascade do |t|
     t.integer  "user_id",    null: false
@@ -203,10 +203,24 @@ ActiveRecord::Schema.define(version: 20150320133010) do
 
   add_index "entity_roles", ["role_type"], name: "index_entity_roles_on_role_type"
 
+  create_table "entity_tasks", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "entity_users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  create_table "fake_stores", force: :cascade do |t|
+    t.text     "data"
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "fake_stores", ["name"], name: "index_fake_stores_on_name", unique: true
 
   create_table "fine_print_contracts", force: :cascade do |t|
     t.string   "name",       null: false
@@ -455,7 +469,7 @@ ActiveRecord::Schema.define(version: 20150320133010) do
   add_index "taskings", ["user_id"], name: "index_taskings_on_user_id"
 
   create_table "tasks", force: :cascade do |t|
-    t.integer  "task_plan_id",               null: false
+    t.integer  "task_plan_id"
     t.string   "task_type",                  null: false
     t.string   "title",                      null: false
     t.datetime "opens_at",                   null: false
@@ -468,6 +482,26 @@ ActiveRecord::Schema.define(version: 20150320133010) do
   add_index "tasks", ["due_at", "opens_at"], name: "index_tasks_on_due_at_and_opens_at"
   add_index "tasks", ["task_plan_id"], name: "index_tasks_on_task_plan_id"
   add_index "tasks", ["task_type"], name: "index_tasks_on_task_type"
+
+  create_table "tasks_legacy_task_maps", force: :cascade do |t|
+    t.integer  "entity_task_id", null: false
+    t.integer  "task_id",        null: false
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+  end
+
+  add_index "tasks_legacy_task_maps", ["entity_task_id", "task_id"], name: "index_tasks_legacy_task_maps_on_entity_task_id_and_task_id", unique: true
+  add_index "tasks_legacy_task_maps", ["task_id"], name: "index_tasks_legacy_task_maps_on_task_id", unique: true
+
+  create_table "tasks_taskings", force: :cascade do |t|
+    t.integer  "entity_role_id", null: false
+    t.integer  "entity_task_id", null: false
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+  end
+
+  add_index "tasks_taskings", ["entity_role_id", "entity_task_id"], name: "[\"tasks_taskings_role_id_on_task_id_unique\"]", unique: true
+  add_index "tasks_taskings", ["entity_task_id"], name: "index_tasks_taskings_on_entity_task_id"
 
   create_table "user_profile_profiles", force: :cascade do |t|
     t.integer  "entity_user_id",      null: false

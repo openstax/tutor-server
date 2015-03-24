@@ -65,7 +65,7 @@ gem 'roar-rails'
 gem 'roar', '< 1.0'
 
 # Lev framework
-gem 'lev'
+gem 'lev', git: 'https://github.com/lml/lev.git', ref: '264819012e'
 
 # Ruby dsl for SQL queries
 gem 'squeel'
@@ -121,6 +121,7 @@ group :development, :test do
   gem 'pry' # needed when debugging without 'rails_helper'
   gem 'pry-nav'
   gem 'pry-rails'
+  gem 'pry-stack_explorer'
 
   # Access an IRB console on exceptions page and /console in development
   gem 'web-console', '~> 2.0.0'
@@ -130,6 +131,8 @@ group :development, :test do
 
   # Use RSpec for tests
   gem 'rspec-rails'
+
+  gem 'rspec-collection_matchers'
 
   # Fixture replacement
   gem 'factory_girl_rails'

@@ -78,4 +78,48 @@ class Api::V1::CoursesController < Api::V1::ApiController
     respond_with outputs, represent_with: Api::V1::CourseEventsRepresenter
   end
 
+  api :GET, '/courses/:course_id/practice', 'TODO get rid of this documentation'
+  description 'TODO somehow get rid of this API documentation, not desired'
+  def practice
+    request.post? ? practice_post : practice_get
+  end
+
+  api :POST, '/courses/:course_id/practice(/role/:role_id)', 'Starts a new practice widget'
+  description 'TBD'
+  def practice_post
+    result = Domain::ResetPracticeWidget.call(role: get_practice_role, page_ids: [])
+    respond_with result.outputs.task, represent_with: Api::V1::TaskRepresenter
+  end
+
+  api :GET, '/courses/:course_id/practice(/role/:role_id)', 'Gets the most recent practice widget'
+  def practice_get
+    task = Domain::GetPracticeWidget.call(role: get_practice_role).outputs.task
+    task.nil? ?
+      head(:not_found) :
+      respond_with(task, represent_with: Api::V1::TaskRepresenter)
+  end
+
+  protected
+
+  def get_practice_role
+    potential_roles = Domain::GetUserCourseRoles.call(course: Entity::Course.find(params[:id]), 
+                                                      user: current_human_user.entity_user,
+                                                      types: [:student]).outputs.roles
+
+    raise(SecurityTransgression, "The caller is not a student in this course") if potential_roles.empty?
+
+    practice_role = nil
+
+    if params[:role_id]
+      practice_role = Entity::Role.find(params[:role_id])
+      raise(SecurityTransgression, "The caller does not have the specified role") unless potential_roles.include?(practice_role)
+    else
+      raise(IllegalState, "The role must be specified because there is more than one student role available") if potential_roles.size > 1
+      practice_role = potential_roles.first
+    end
+
+    practice_role
+  end
+
+
 end

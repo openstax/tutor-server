@@ -1,5 +1,5 @@
 class Role::CreateUserRole
-  lev_routine
+  lev_routine express_output: :role
 
   uses_routine Entity::CreateRole, translations: {outputs: {type: :verbatim}}
   uses_routine Role::AddUserRole

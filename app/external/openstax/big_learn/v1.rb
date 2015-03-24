@@ -1,27 +1,59 @@
 module OpenStax::BigLearn::V1
 
-  mattr_accessor :use_stubs
-  self.use_stubs = false
+  #
+  # API Wrappers
+  #
 
-  # TODO ponder how to make this call (and other 3rd party calls) in the background in a standard 
-  # TaskStep-friendly way
+  def self.add_tags(tags)
+    client.add_tags(tags)
+  end
 
-  def self.projection_next_questions(allowed_exercise_definitions:, learner:, count:, difficulty: 0.5)
-    if use_stubs
-      allowed_exercise_definitions.shuffle[0..count-1]
-    else
-      url = ['http://api1.biglearn.openstax.org/projections/next_questions?',
-             allowed_exercise_definitions.collect{|ed| "question=#{/(\d+)$/.match(ed.url)[0]}&"},
-             "questionCount=#{count}&",
-             "learner=#{learner}&",
-             "desiredDifficulty=#{difficulty}"].join("")
+  def self.add_exercises(exercises)
+    client.add_exercises(exercises)
+  end
 
-      # If this sticks around as a manual construction of a query, use Hash.to_query or cousin
-      
-      response = HTTParty.get(url)
+  def self.get_projection_exercises(user:, topic_tags:, filter_tags: [], 
+                                    count: 1, difficulty: 0.5, allow_repetitions: true)
+    client.get_projection_exercises(user: user, topic_tags: topic_tags, filter_tags: filter_tags, 
+                                    count: count, difficulty: difficulty, allow_repetitions: allow_repetitions)
+  end
 
-      ids = response.parsed_response["questionTopics"].collect{|qt| qt["question"]}
-      allowed_exercise_definitions.select{|ed| ids.include?(/(\d+)$/.match(ed.url)[0]) }
+  #
+  # Configuration
+  #
+
+  def self.configure
+    yield configuration
+  end
+
+  def self.configuration
+    @configuration ||= Configuration.new
+  end
+
+  # Accessor for the fake client, which has some extra fake methods on it
+  def self.fake_client
+    @fake_client ||= FakeClient.instance
+  end
+
+  def self.real_client
+    @real_client ||= RealClient.new(configuration)
+  end
+
+  def self.use_real_client
+    @client = real_client
+  end
+
+  def self.use_fake_client
+    @client = fake_client
+  end
+
+  private
+
+  def self.client
+    begin
+      @client ||= real_client
+    rescue StandardError => error
+      raise ClientError.new("initialization failure", error)
     end
   end
 

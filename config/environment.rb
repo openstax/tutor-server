@@ -5,6 +5,7 @@ require 'date_time_utilities'
 require 'acts_as_resource'
 require 'acts_as_tasked'
 require 'html_tree_operations'
+require 'fake_store'
 
 SITE_NAME = "OpenStax Tutor"
 COPYRIGHT_HOLDER = "Rice University"

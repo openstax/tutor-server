@@ -1,3 +1,17 @@
+GIT
+  remote: https://github.com/lml/lev.git
+  revision: 264819012ead5162a8d1ae84c373007126c4d6bd
+  ref: 264819012e
+  specs:
+    lev (4.0.0)
+      actionpack (>= 3.0)
+      active_attr
+      activemodel (>= 3.0)
+      activerecord (>= 3.0)
+      hashie
+      transaction_isolation
+      transaction_retry
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -180,14 +194,6 @@ GEM
     kgio (2.9.3)
     launchy (2.4.3)
       addressable (~> 2.3)
-    lev (4.0.0)
-      actionpack (>= 3.0)
-      active_attr
-      activemodel (>= 3.0)
-      activerecord (>= 3.0)
-      hashie
-      transaction_isolation
-      transaction_retry
     libv8 (3.16.14.7)
     lograge (0.3.1)
       actionpack (>= 3)
@@ -265,6 +271,9 @@ GEM
       pry (>= 0.9.10, < 0.11.0)
     pry-rails (0.3.3)
       pry (>= 0.9.10)
+    pry-stack_explorer (0.4.9.2)
+      binding_of_caller (>= 0.7)
+      pry (>= 0.9.11)
     quiet_assets (1.1.0)
       railties (>= 3.1, < 5.0)
     rack (1.6.0)
@@ -325,6 +334,8 @@ GEM
       test_xml (>= 0.1.6)
       uber
     rspec-core (3.2.2)
+    rspec-collection_matchers (1.1.2)
+      rspec-expectations (>= 2.99.0.beta1)
       rspec-support (~> 3.2.0)
     rspec-expectations (3.2.0)
       diff-lcs (>= 1.2.0, < 2.0)
@@ -471,7 +482,7 @@ DEPENDENCIES
   json-schema
   keyword_search
   launchy
-  lev
+  lev!
   lograge
   maruku
   mini_magick
@@ -485,6 +496,7 @@ DEPENDENCIES
   pry
   pry-nav
   pry-rails
+  pry-stack_explorer
   quiet_assets
   railroady
   rails (= 4.2.0)
@@ -495,6 +507,7 @@ DEPENDENCIES
   responders (~> 2.0)
   roar (< 1.0)
   roar-rails
+  rspec-collection_matchers
   rspec-rails
   sass-rails (~> 5.0.0)
   shoulda-matchers

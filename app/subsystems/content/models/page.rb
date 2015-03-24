@@ -6,4 +6,5 @@ class Content::Page < ActiveRecord::Base
   sortable_has_many :page_topics, on: :number, dependent: :destroy
 
   validates :title, presence: true
+  
 end
