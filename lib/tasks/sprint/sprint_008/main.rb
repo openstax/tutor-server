@@ -43,34 +43,12 @@ module Sprint008
       tp.tasking_plans << FactoryGirl.create(:tasking_plan, target: student,
                                                             task_plan: tp)
       DistributeTasks.call(tp)
-      # mark all it's steps as complete
-      tp.reload.tasks.each{ |task|
-        task.task_steps.each{ |ts|
-          if ts.tasked_type == "TaskedExercise" && 0==ts.id%2
-            ts.tasked.answer_id = ts.tasked.correct_answer_id
-            ts.tasked.free_response = Faker::Company.bs
-            ts.tasked.save!
-          end
-          MarkTaskStepCompleted.call(task_step: ts) }
-      }
-
       tp = FactoryGirl.create :task_plan, assistant: a,
                                           owner: course1,
                                           settings: { page_ids: [3] }
       tp.tasking_plans << FactoryGirl.create(:tasking_plan, target: student,
                                                             task_plan: tp)
       DistributeTasks.call(tp)
-      # mark the first three steps as complete, so it shows as partial
-      tp.reload.tasks.each{ |task|
-        task.task_steps[0..2].each{ |ts|
-          if ts.tasked_type == "TaskedExercise"
-            ts.tasked.answer_id = ts.tasked.correct_answer_id
-            ts.tasked.free_response = Faker::Company.bs
-            ts.tasked.save!
-          end
-          MarkTaskStepCompleted.call(task_step: ts) }
-      }
-
       tp = FactoryGirl.create :task_plan, assistant: a,
                                           owner: course1,
                                           settings: { page_ids: [4] }
@@ -79,8 +57,29 @@ module Sprint008
       DistributeTasks.call(tp)
 
       # Set up a practice widget
-
       Domain::ResetPracticeWidget.call(role: student_role, page_ids: [])
+
+      # Set up a task plan that will have activity for the stats
+      stats_tp = FactoryGirl.create :task_plan, assistant: a,
+                                          owner: course1,
+                                          settings: { page_ids: [1,2,3] }
+
+      0.upto(30).each do |i|
+        user = FactoryGirl.create :user, username: "student_#{i}"
+        stats_tp.tasking_plans << FactoryGirl.create(:tasking_plan,target: user, task_plan: stats_tp)
+      end
+      DistributeTasks.call(stats_tp)
+      # mark some steps as complete and correct
+      stats_tp.reload.tasks.each_with_index{ |task,index|
+        task.task_steps.each{ |ts|
+          next unless 0==index%2 # only mark 1/2 complete
+          if ts.tasked_type == "TaskedExercise" && 1 != rand(0..4) # and 3/4 of those correct
+            ts.tasked.answer_id = ts.tasked.correct_answer_id
+            ts.tasked.free_response = Faker::Company.bs
+            ts.tasked.save!
+          end
+          MarkTaskStepCompleted.call(task_step: ts) }
+      }
 
       # Outputs
 
@@ -89,7 +88,7 @@ module Sprint008
       outputs[:teacher_and_student] = teacher_and_student
       outputs[:course1] = course1
       outputs[:course2] = course2
-
+      outputs[:stats_task_plan] = stats_tp
     end
 
   end
