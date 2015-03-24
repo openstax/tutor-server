@@ -56,5 +56,24 @@ describe CalculateIReadingStats do
 
   end
 
+  context "after tasks are marked as correct" do
+
+    it "records them" do
+      first_task = task_plan.tasks.first
+      first_task.task_steps.each{ |ts|
+        if ts.tasked_type == "TaskedExercise"
+          ts.tasked.answer_id = ts.tasked.correct_answer_id
+          ts.tasked.free_response = 'a sentence explaining all the things'
+          ts.tasked.save!
+        end
+        MarkTaskStepCompleted.call(task_step: ts)
+      }
+      stats = CalculateIReadingStats.call(plan: task_plan.reload).outputs.stats
+      page = stats.course.current_pages.first
+      expect(page['page']['title']).to eq('Force')
+      expect(page['student_count']).to eq(8)
+    end
+
+  end
 
 end
