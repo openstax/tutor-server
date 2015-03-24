@@ -7,7 +7,7 @@ RSpec.describe Sprint008::PwReal, type: :request,
                                   speed: :slow do 
                                   # vcr: VCR_OPTS 
 
-  it "doesn't catch on fire" do
+  xit "doesn't catch on fire" do
     expect(Sprint008::PwReal.call.errors).to be_empty
   end
 
