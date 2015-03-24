@@ -6,10 +6,6 @@ class OpenStax::BigLearn::V1::RealClient
   #   response = HTTParty.get(url)
   #   ids = response.parsed_response["questionTopics"].collect{|qt| qt["question"]}
 
-  def add_tags(tags)
-    raise NotYetImplemented
-  end
-
   def add_exercises(exercises)
     raise NotYetImplemented
   end

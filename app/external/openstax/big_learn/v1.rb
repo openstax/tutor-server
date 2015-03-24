@@ -4,10 +4,6 @@ module OpenStax::BigLearn::V1
   # API Wrappers
   #
 
-  def self.add_tags(tags)
-    client.add_tags(tags)
-  end
-
   def self.add_exercises(exercises)
     client.add_exercises(exercises)
   end
