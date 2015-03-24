@@ -48,6 +48,8 @@ module Sprint008
         task.task_steps.each{ |ts|
           if ts.tasked_type == "TaskedExercise" && 0==ts.id%2
             ts.tasked.answer_id = ts.tasked.correct_answer_id
+            ts.tasked.free_response = Faker::Company.bs
+            ts.tasked.save!
           end
           MarkTaskStepCompleted.call(task_step: ts) }
       }
@@ -63,6 +65,8 @@ module Sprint008
         task.task_steps[0..2].each{ |ts|
           if ts.tasked_type == "TaskedExercise"
             ts.tasked.answer_id = ts.tasked.correct_answer_id
+            ts.tasked.free_response = Faker::Company.bs
+            ts.tasked.save!
           end
           MarkTaskStepCompleted.call(task_step: ts) }
       }
