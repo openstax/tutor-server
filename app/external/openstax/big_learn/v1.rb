@@ -12,9 +12,17 @@ module OpenStax::BigLearn::V1
     client.add_exercises(exercises)
   end
 
-  def self.get_projection_exercises(user:, topic_tags:, filter_tags: [], 
+  # Returns recommended exercises
+  #
+  # tag_search: a hash describing a boolean search on tags;
+  #             exercises that match this search are candidates
+  #             to be returned.
+  #   Ex:
+  #     { _and: [ { _or: ['a', 'b', 'c'] }, 'd']  }
+  #
+  def self.get_projection_exercises(user:, tag_search: {}, 
                                     count: 1, difficulty: 0.5, allow_repetitions: true)
-    client.get_projection_exercises(user: user, topic_tags: topic_tags, filter_tags: filter_tags, 
+    client.get_projection_exercises(user: user, tag_search: tag_search, 
                                     count: count, difficulty: difficulty, allow_repetitions: allow_repetitions)
   end
 
@@ -51,7 +59,7 @@ module OpenStax::BigLearn::V1
 
   def self.client
     begin
-      @client ||= real_client
+      @client ||= fake_client
     rescue StandardError => error
       raise ClientError.new("initialization failure", error)
     end

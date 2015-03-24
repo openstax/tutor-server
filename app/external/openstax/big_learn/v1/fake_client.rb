@@ -10,8 +10,8 @@ class OpenStax::BigLearn::V1::FakeClient
     # Iterate through the tags, storing each in the store, overwriting any
     # with the same name.
 
-    store['tags'] = ( (store['tags'] || []) + 
-                      [tags.collect{|t| t.text}].flatten ).uniq
+    tag_names = [tags].flatten.collect{|t| t.text}
+    store['tags'] = ((store['tags'] || []) + tag_names ).uniq
     save!
   end
 
@@ -26,9 +26,41 @@ class OpenStax::BigLearn::V1::FakeClient
     save!
   end
 
-  def get_projection_exercises(user:, topic_tags:, filter_tags:, 
-                               count:, difficulty:, allow_repetitions:)
-    raise NotYetImplemented
+  def get_projection_exercises(user:, tag_search:, count:, 
+                               difficulty:, allow_repetitions:)
+    # Get the matches (no SPARFA obviously :)
+    matches = store_exercises_copy.select do |exercise|
+      tags_match_condition?(exercise.tags, tag_search)
+    end
+
+    # Limit the results to the desired number
+    results = matches.first(count)
+
+    # If we didn't get as many as requested and repetitions are allowed,
+    # pad the results, repeat the matches until we have enough, making
+    # sure to clip at the desired count in case we go over.
+    while (allow_repetitions && results.length < count)
+      results.push(*matches)
+    end
+    results = results.first(count)
+  end
+
+  # Example conditions: { _and: [ { _or: ['a', 'b', 'c'] }, 'd']  }
+  def tags_match_condition?(tags, condition)
+    case condition
+    when Hash
+      if condition.size != 1 then raise IllegalArgument, "too many hash condition" end
+      case condition.first[0]
+      when :_and
+        condition.first[1].all?{|c| tags_match_condition?(tags, c)}
+      when :_or
+        condition.first[1].any?{|c| tags_match_condition?(tags, c)}
+      else raise NotYetImplemented, "Unknown boolean symbol #{condition.first[0]}"
+      end
+    when String
+      tags.include?(condition)
+    else raise IllegalArgument
+    end
   end
 
   #
