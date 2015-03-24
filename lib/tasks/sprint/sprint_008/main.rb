@@ -45,7 +45,11 @@ module Sprint008
       DistributeTasks.call(tp)
       # mark all it's steps as complete
       tp.reload.tasks.each{ |task|
-        task.task_steps.each{ |ts| MarkTaskStepCompleted.call(task_step: ts) }
+        task.task_steps.each{ |ts|
+          if ts.tasked_type == "TaskedExercise" && 0==ts.id%2
+            ts.tasked.answer_id = ts.tasked.correct_answer_id
+          end
+          MarkTaskStepCompleted.call(task_step: ts) }
       }
 
       tp = FactoryGirl.create :task_plan, assistant: a,
@@ -56,7 +60,11 @@ module Sprint008
       DistributeTasks.call(tp)
       # mark the first three steps as complete, so it shows as partial
       tp.reload.tasks.each{ |task|
-        task.task_steps[0..2].each{ |ts| MarkTaskStepCompleted.call(task_step: ts) }
+        task.task_steps[0..2].each{ |ts|
+          if ts.tasked_type == "TaskedExercise"
+            ts.tasked.answer_id = ts.tasked.correct_answer_id
+          end
+          MarkTaskStepCompleted.call(task_step: ts) }
       }
 
       tp = FactoryGirl.create :task_plan, assistant: a,
