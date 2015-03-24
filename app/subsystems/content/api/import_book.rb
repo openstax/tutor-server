@@ -42,14 +42,13 @@ class Content::Api::ImportBook
         OpenStax::BigLearn::V1::Exercise.new(ed['uid'], *ed['topics'])
       )
 
-      ed['topics'].each do |topic|
-        biglearn_topics.push(
-          OpenStax::BigLearn::V1::Tag.new(topic)
-        )  
-      end
+      biglearn_topics.push(*ed['topics'])
     end
 
-    OpenStax::BigLearn::V1.add_tags(biglearn_topics.uniq)
+    biglearn_topics = 
+      biglearn_topics.uniq.collect{|blt| OpenStax::BigLearn::V1::Tag.new(blt)}
+
+    OpenStax::BigLearn::V1.add_tags(biglearn_topics)
     OpenStax::BigLearn::V1.add_exercises(biglearn_exercises)
   end
 
