@@ -19,6 +19,7 @@ class Content::ExerciseVisitor < Content::BookVisitor
         page_exercise.exercise_topics.collect{|et| et.topic.name}
 
       (@exercises[wrapper.uid] ||= {}).tap do |entry|
+        entry['uid']  = wrapper.uid
         entry['id']   = page_exercise.id
         entry['url']  = wrapper.url
         entry['topics'] = ((entry['topics'] || []) + exercise_topic_names).uniq

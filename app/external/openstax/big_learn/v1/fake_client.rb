@@ -10,10 +10,8 @@ class OpenStax::BigLearn::V1::FakeClient
     # Iterate through the tags, storing each in the store, overwriting any
     # with the same name.
 
-    [tags].flatten.each do |tag|
-      store['tags'][tag.text] = tag.types
-    end
-
+    store['tags'] = ( (store['tags'] || []) + 
+                      [tags.collect{|t| t.text}].flatten ).uniq
     save!
   end
 
@@ -64,10 +62,12 @@ class OpenStax::BigLearn::V1::FakeClient
       @fake_store = ::FakeStore.find_or_create_by(name: 'openstax_biglearn_v1')
     end
 
-    (@fake_store.data ||= {}).tap do |data|
-      data['exercises'] ||= {}
-      data['tags'] ||= {}
-    end
+    @fake_store.data ||= {}
+
+    @fake_store.data['exercises'] ||= {}
+    @fake_store.data['tags'] ||= []
+
+    @fake_store.data
   end
 
   def save!

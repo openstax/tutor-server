@@ -35,6 +35,12 @@ class Content::Api::VisitBook
     visitor_names.each do |name|
       outputs[name] = outputs[name].output
     end
+
+    # If there is just one visitor, enable express output
+
+    if visitor_names.count == 1
+      outputs[:visit_book] = outputs[visitor_names.first]
+    end
   end
 
   # Instead of dirtying up the BookPart and Page classes, put the 
