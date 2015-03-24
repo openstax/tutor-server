@@ -4,42 +4,93 @@ class CalculateIReadingStats
 
   protected
 
-  def generate_page_data( min:10, include_previous: false )
-    stat = {
-      page: {
-        id: rand(1000)+100,
-        number: "#{rand(5)+1}.#{rand(5)+1}",
-        title: Faker::Company.bs
-      },
-      correct_count: rand(10)+min,
-      incorrect_count: rand(4),
-      student_count: rand(14)+min
-    }
-    if include_previous
-      stat[:previous_attempt] = generate_page_data
+  def completed_exercises_for_page_id(page_id)
+    @plan.tasks.inject([]) do |collection,task|
+      collection + task.task_steps.find_all{|ts|
+        ts.tasked_type == "TaskedExercise" && ts.page_id == page_id
+      }
     end
-    stat
   end
 
-  def generate_period_stat_data(min:10)
+  def page_stats_for_steps(steps)
+    user_ids = steps.each_with_object([]){ |step, collection|
+      step.task.taskings.each{|tasking| collection << tasking.user_id }
+    }.uniq
+    completed = steps.select {|ts| ts.completed? }
+    stats = {
+      student_count: user_ids.length,
+      correct_count: completed.count{|step| step.tasked.correct_answer_id == step.tasked.answer_id }
+    }
+    stats[:incorrect_count] = completed.length - stats[:correct_count]
+    stats
+  end
+
+
+  def generate_page_stats(page, include_previous=false)
+    stats = {
+      page: {
+        id:     page.id,
+        number: page.number,
+        title:  page.title
+      }
+    }
+    # find all the exercise task steps for the page number
+    steps = completed_exercises_for_page_id(page.id)
+    stats.merge page_stats_for_steps(steps)
+  end
+
+  def task_plan_pages
+    if @plan.settings && @plan.settings['page_ids']
+      Content::Api::GetPagesAttributes.call(page_ids: @plan.settings['page_ids']).outputs.pages
+    else
+      []
+    end
+  end
+
+  def generate_spaced_practice_stats
+    # spaced excercises do not have pages
+    stats = {
+      page: {
+        id:     0000,
+        number: 0000,
+        title:  ""
+      }
+    }
+    steps = completed_exercises_for_page_id(nil)
+    [ stats.merge(page_stats_for_steps(steps)) ]
+  end
+
+  def generate_course_stat_data
     {
-     total_count: rand(20)+min,
-     complete_count: rand(15)+min,
-     partially_complete_count: rand(4)+min,
-     current_pages: 0.upto(rand(2)+2).map{ generate_page_data(min:min) },
-     spaced_pages:  0.upto(rand(1)+1).map{ generate_page_data(min:min, include_previous:true) }
+
+      total_count: @plan.tasks.count,
+
+      complete_count: @plan.tasks.select{|task|
+        task.task_steps.all?{| ts | ts.completed? }
+      }.length,
+
+      partially_complete_count: @plan.tasks.select{|task|
+        task.task_steps.any?{| ts | ts.completed? }
+      }.length,
+
+      current_pages: task_plan_pages.map{|page|
+        generate_page_stats(page)
+      },
+
+      spaced_pages: generate_spaced_practice_stats
+
     }
   end
 
   def exec(plan:nil)
-    outputs[:statistics] = Hashie::Mash.new({
-      course: generate_period_stat_data(min:20),
-      periods: 0.upto(rand(3)+2).map do {
-        id: rand(1000)+100,
-        title: Faker::Company.bs
-      }.merge( generate_period_stat_data(min:10) )
-      end
-    })
+    @plan = plan
+
+    outputs[:stats] = Hashie::Mash.new(
+      {
+        course: generate_course_stat_data,
+        periods: [] # Awaiting implementation of periods subsystem
+      }
+    )
   end
 
 end

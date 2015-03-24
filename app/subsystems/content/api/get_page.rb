@@ -6,7 +6,7 @@ class Content::Api::GetPage
 
   def exec(id:)
     page = Content::Page.find(id)
-    page_hash = { id: '', url: page.url, hash: {},
+    page_hash = { id: id, url: page.url, hash: {},
                   title: page.title, content: page.content }
     outputs[:page] = OpenStax::Cnx::V1::Page.new(page_hash)
   end
