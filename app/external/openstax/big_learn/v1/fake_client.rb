@@ -29,8 +29,8 @@ class OpenStax::BigLearn::V1::FakeClient
   def get_projection_exercises(user:, tag_search:, count:, 
                                difficulty:, allow_repetitions:)
     # Get the matches (no SPARFA obviously :)
-    matches = store_exercises_copy.select do |exercise|
-      tags_match_condition?(exercise.tags, tag_search)
+    matches = store_exercises_copy.select do |uid, tags|
+      tags_match_condition?(tags, tag_search)
     end
 
     # Limit the results to the desired number
@@ -42,7 +42,7 @@ class OpenStax::BigLearn::V1::FakeClient
     while (allow_repetitions && results.length < count)
       results.push(*matches)
     end
-    results = results.first(count)
+    results = results.first(count).collect{|r| r[0]}
   end
 
   # Example conditions: { _and: [ { _or: ['a', 'b', 'c'] }, 'd']  }

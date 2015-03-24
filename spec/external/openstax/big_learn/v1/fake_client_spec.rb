@@ -63,5 +63,37 @@ module OpenStax::BigLearn
       end
     end
 
+    context "get_projection_exercises" do 
+      V1::fake_client.add_exercises(V1::Exercise.new('e1', 'lo1', 'concept'))
+      V1::fake_client.add_exercises(V1::Exercise.new('e2', 'lo1', 'homework'))
+      V1::fake_client.add_exercises(V1::Exercise.new('e3', 'lo2', 'concept'))
+      V1::fake_client.add_exercises(V1::Exercise.new('e4', 'lo2', 'concept'))
+      V1::fake_client.add_exercises(V1::Exercise.new('e5', 'lo3', 'concept'))
+
+      it "works when allow_repetitions is false" do
+        exercises = V1::fake_client.get_projection_exercises(
+          user: nil, 
+          tag_search: { _and: [ { _or: ['lo1', 'lo2'] }, 'concept'] },
+          count: 5, 
+          difficulty: 0.5, 
+          allow_repetitions: false
+        )
+
+        expect(exercises).to eq(%w(e1 e3 e4))
+      end
+
+      it "works when allow_repetitions is true" do
+        exercises = V1::fake_client.get_projection_exercises(
+          user: nil, 
+          tag_search: { _and: [ { _or: ['lo1', 'lo2'] }, 'concept'] },
+          count: 5, 
+          difficulty: 0.5, 
+          allow_repetitions: true
+        )
+
+        expect(exercises).to eq(%w(e1 e3 e4 e1 e3))
+      end
+    end
+
   end
 end
