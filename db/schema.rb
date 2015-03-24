@@ -11,19 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-<<<<<<< HEAD
-ActiveRecord::Schema.define(version: 20150321164408) do
-
-  create_table "administrators", force: :cascade do |t|
-    t.integer  "user_id",    null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "administrators", ["user_id"], name: "index_administrators_on_user_id", unique: true
-=======
 ActiveRecord::Schema.define(version: 20150323164738) do
->>>>>>> Remove User, move Administrator into UserProfile subsystem, change calls to User
 
   create_table "assistants", force: :cascade do |t|
     t.string   "name",            null: false
@@ -489,7 +477,6 @@ ActiveRecord::Schema.define(version: 20150323164738) do
   add_index "tasks", ["task_plan_id"], name: "index_tasks_on_task_plan_id"
   add_index "tasks", ["task_type"], name: "index_tasks_on_task_type"
 
-<<<<<<< HEAD
   create_table "tasks_legacy_task_maps", force: :cascade do |t|
     t.integer  "entity_task_id", null: false
     t.integer  "task_id",        null: false
@@ -509,7 +496,7 @@ ActiveRecord::Schema.define(version: 20150323164738) do
 
   add_index "tasks_taskings", ["entity_role_id", "entity_task_id"], name: "[\"tasks_taskings_role_id_on_task_id_unique\"]", unique: true
   add_index "tasks_taskings", ["entity_task_id"], name: "index_tasks_taskings_on_entity_task_id"
-=======
+
   create_table "user_profile_administrators", force: :cascade do |t|
     t.integer  "user_id",    null: false
     t.datetime "created_at", null: false
@@ -517,7 +504,6 @@ ActiveRecord::Schema.define(version: 20150323164738) do
   end
 
   add_index "user_profile_administrators", ["user_id"], name: "index_user_profile_administrators_on_user_id", unique: true
->>>>>>> Remove User, move Administrator into UserProfile subsystem, change calls to User
 
   create_table "user_profile_profiles", force: :cascade do |t|
     t.integer  "entity_user_id",      null: false
