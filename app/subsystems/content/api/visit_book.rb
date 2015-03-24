@@ -6,6 +6,8 @@ class Content::Api::VisitBook
 
   def exec(book:, visitor_names:)
 
+    visitor_names = [visitor_names].flatten
+
     # Map the visitor name to an actual visitor class
     
     visitors = visitor_names.collect do |name|
@@ -13,7 +15,7 @@ class Content::Api::VisitBook
       when 'toc'
         outputs[:toc] = Content::TocVisitor.new
       when 'exercises'
-        raise NotYetImplemented
+        outputs[:exercises] = Content::ExerciseVisitor.new
       end
     end
 
@@ -47,7 +49,7 @@ class Content::Api::VisitBook
     page_includes = []
 
     visitors.each do |visitor|
-      visitor.visit(book_part)
+      visitor.visit_book_part(book_part)
 
       child_book_part_includes.push(visitor.book_part_includes)
       page_includes.push(visitor.page_includes)
@@ -73,7 +75,7 @@ class Content::Api::VisitBook
 
   def visit_page(page, visitors)
     visitors.each do |visitor|
-      visitor.visit(page)
+      visitor.visit_page(page)
     end
   end
 

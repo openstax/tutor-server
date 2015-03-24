@@ -333,10 +333,10 @@ GEM
       roar (>= 0.11.13)
       test_xml (>= 0.1.6)
       uber
-    rspec-core (3.2.2)
     rspec-collection_matchers (1.1.2)
       rspec-expectations (>= 2.99.0.beta1)
       rspec-support (~> 3.2.0)
+    rspec-core (3.2.2)
     rspec-expectations (3.2.0)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.2.0)

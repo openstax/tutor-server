@@ -24,6 +24,8 @@ class Domain::ImportBook
     content_book_part.book = outputs[:book]
     content_book_part.save
     transfer_errors_from(content_book_part, {type: :verbatim}, true)
+
+    
   end
 
 end
