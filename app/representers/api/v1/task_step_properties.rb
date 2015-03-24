@@ -1,7 +1,7 @@
 module Api::V1
   module TaskStepProperties
 
-    include Roar::Representer::JSON
+    include Roar::JSON
 
     # These properties will be included in specific Tasked steps; therefore
     # their getters will be called from that context and so must call up to

@@ -56,7 +56,7 @@ GEM
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
     addressable (2.3.7)
-    apipie-rails (0.3.2)
+    apipie-rails (0.3.3)
       json
     arel (6.0.0)
     autoprefixer-rails (5.1.7.1)
@@ -130,7 +130,7 @@ GEM
       compass (~> 1.0.0)
       sass-rails (<= 5.0.1)
       sprockets (< 2.13)
-    coveralls (0.7.11)
+    coveralls (0.7.12)
       multi_json (~> 1.10)
       rest-client (>= 1.6.8, < 2)
       simplecov (~> 0.9.1)
@@ -145,8 +145,10 @@ GEM
     diff-lcs (1.2.5)
     diffy (3.0.7)
     docile (1.1.5)
-    doorkeeper (1.4.2)
-      railties (>= 3.1)
+    domain_name (0.5.23)
+      unf (>= 0.0.5, < 1.0.0)
+    doorkeeper (2.1.3)
+      railties (>= 3.2)
     erubis (2.7.0)
     eventmachine (1.0.7)
     exception_notification (4.0.1)
@@ -164,7 +166,7 @@ GEM
       multipart-post (>= 1.2, < 3)
     fastercsv (1.5.5)
     ffi (1.9.8)
-    fine_print (2.3.0)
+    fine_print (2.3.1)
       action_interceptor (>= 1.0)
       jquery-rails
       rails (>= 3.1)
@@ -178,6 +180,8 @@ GEM
     hashie (3.4.0)
     highline (1.6.21)
     hike (1.2.3)
+    http-cookie (1.0.2)
+      domain_name (~> 0.5)
     httparty (0.13.3)
       json (~> 1.8)
       multi_xml (>= 0.5.2)
@@ -213,7 +217,7 @@ GEM
     multi_xml (0.5.5)
     multipart-post (2.0.0)
     netrc (0.10.3)
-    newrelic_rpm (3.11.0.283)
+    newrelic_rpm (3.11.1.284)
     nifty-generators (0.4.6)
     nokogiri (1.6.6.2)
       mini_portile (~> 0.6.0)
@@ -231,7 +235,7 @@ GEM
       multi_json (~> 1.3)
       oauth2 (~> 1.0)
       omniauth (~> 1.2)
-    openstax_accounts (4.1.1)
+    openstax_accounts (5.0.0)
       action_interceptor (>= 1.0)
       keyword_search (>= 1.0.0)
       lev (>= 2.2.1)
@@ -241,18 +245,19 @@ GEM
       openstax_api (>= 3.1.0)
       openstax_utilities (>= 4.1.0)
       rails (>= 4.1)
-      roar (>= 0.8, < 1.0)
+      representable (>= 2.0)
+      roar (>= 1.0)
       squeel (>= 0.5.0)
-    openstax_api (5.0.1)
-      doorkeeper (>= 0.5, < 2.0)
+    openstax_api (5.1.1)
+      doorkeeper (>= 2.0)
       exception_notification (>= 4.0)
       lev (>= 1.0.0)
       openstax_utilities (>= 4.2.0)
       rails (>= 3.1)
-      representable (>= 1.8)
+      representable (>= 2.0)
       responders
-      roar (>= 0.12.1, < 1.0)
-      roar-rails (>= 0.1.2)
+      roar (>= 1.0)
+      roar-rails (>= 1.0)
     openstax_exchange (0.0.2)
       oauth2 (>= 0.5.0)
     openstax_utilities (4.2.0)
@@ -316,27 +321,29 @@ GEM
       ffi (>= 0.5.0)
     ref (1.0.5)
     remotipart (1.2.1)
-    representable (1.8.5)
+    representable (2.1.5)
       multi_json
       nokogiri
-      uber
+      uber (~> 0.0.7)
     responders (2.1.0)
       railties (>= 4.2.0, < 5)
-    rest-client (1.7.3)
+    rest-client (1.8.0)
+      http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 3.0)
       netrc (~> 0.7)
-    roar (0.12.9)
-      representable (>= 1.6.0, < 2.0.0)
-    roar-rails (0.1.6)
+    roar (1.0.1)
+      representable (>= 2.0.1, <= 3.0.0)
+    roar-rails (1.0.1)
       actionpack
       railties (>= 3.0.0)
-      roar (>= 0.11.13)
+      responders
+      roar (>= 1.0.0, <= 1.1.0)
       test_xml (>= 0.1.6)
-      uber
+      uber (>= 0.0.5)
     rspec-collection_matchers (1.1.2)
       rspec-expectations (>= 2.99.0.beta1)
-      rspec-support (~> 3.2.0)
     rspec-core (3.2.2)
+      rspec-support (~> 3.2.0)
     rspec-expectations (3.2.0)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.2.0)
@@ -424,6 +431,9 @@ GEM
     uglifier (2.7.1)
       execjs (>= 0.3.0)
       json (>= 1.8.0)
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.6)
     unicorn (4.8.3)
       kgio (~> 2.6)
       rack
@@ -471,7 +481,6 @@ DEPENDENCIES
   compass-rails
   coveralls
   deep_cloneable
-  doorkeeper (< 2.0)
   exception_notification
   factory_girl_rails
   faker
@@ -488,8 +497,8 @@ DEPENDENCIES
   mini_magick
   newrelic_rpm
   nifty-generators
-  openstax_accounts (~> 4.1.1)
-  openstax_api (~> 5.0.1)
+  openstax_accounts (~> 5.0.0)
+  openstax_api (~> 5.1.1)
   openstax_exchange
   openstax_utilities (~> 4.2.0)
   pg
@@ -503,10 +512,6 @@ DEPENDENCIES
   rails-erd
   rails-html-sanitizer (~> 1.0)
   remotipart
-  representable
-  responders (~> 2.0)
-  roar (< 1.0)
-  roar-rails
   rspec-collection_matchers
   rspec-rails
   sass-rails (~> 5.0.0)

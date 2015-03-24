@@ -2,8 +2,9 @@ module Api::V1
 
   class CourseEventsRepresenter < OpenStax::Api::V1::AbstractSearchRepresenter
 
-    class CommonElements < Representable::Decorator
-      include Representable::JSON
+    class CommonElements < Roar::Decorator
+      include Roar::JSON
+
       property :id,
                type: Integer,
                readable: true

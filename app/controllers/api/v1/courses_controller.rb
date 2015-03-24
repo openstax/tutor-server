@@ -88,7 +88,8 @@ class Api::V1::CoursesController < Api::V1::ApiController
   description 'TBD'
   def practice_post
     result = Domain::ResetPracticeWidget.call(role: get_practice_role, condition: :fake)
-    respond_with result.outputs.task, represent_with: Api::V1::TaskRepresenter
+    respond_with result.outputs.task, represent_with: Api::V1::TaskRepresenter,
+                                      location: [:api, result.outputs.task]
   end
 
   api :GET, '/courses/:course_id/practice(/role/:role_id)', 'Gets the most recent practice widget'
@@ -120,6 +121,5 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
     practice_role
   end
-
 
 end

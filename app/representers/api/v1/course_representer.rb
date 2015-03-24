@@ -1,7 +1,7 @@
 module Api::V1
   class CourseRepresenter < Roar::Decorator
 
-    include Roar::Representer::JSON
+    include Roar::JSON
 
     property :id, readable: true, schema_info: { required: true }
 
