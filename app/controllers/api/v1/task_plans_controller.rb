@@ -77,11 +77,8 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     # TODO: Routine to get the course by ID
     # TODO: Figure out the course assistant from the type
     course = Entity::Course.find(params[:course_id])
-    assistant = Assistant.last
-    standard_create(TaskPlan.new) do |task_plan|
-      task_plan.owner = course
-      task_plan.assistant = assistant
-    end
+    tp = BuildTaskPlan.call(course: course).outputs.task_plan
+    standard_create(tp)
   end
 
   ###############################################################
