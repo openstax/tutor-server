@@ -48,7 +48,6 @@ RSpec.describe Content::Api::ImportBook, :type => :routine, :vcr => VCR_OPTS do
         # TODO: Cache TOC and check it here
         test_book_part(book_part)
         
-        expect(biglearn_client.store_tags_copy).to_not be_empty
         expect(biglearn_client.store_exercises_copy).to_not be_empty
       end
 

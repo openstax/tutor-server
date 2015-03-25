@@ -4,10 +4,6 @@ module OpenStax::BigLearn::V1
   # API Wrappers
   #
 
-  def self.add_tags(tags)
-    client.add_tags(tags)
-  end
-
   def self.add_exercises(exercises)
     client.add_exercises(exercises)
   end
@@ -44,7 +40,7 @@ module OpenStax::BigLearn::V1
   end
 
   def self.real_client
-    @real_client ||= RealClient.new(configuration)
+    @real_client ||= RealClient.instance
   end
 
   def self.use_real_client

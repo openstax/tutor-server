@@ -190,8 +190,8 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
 
     it "returns a practice widget" do
       Domain::AddUserAsCourseStudent.call(course: course, user: user_1)
-      Domain::ResetPracticeWidget.call(role: Entity::Role.last, page_ids: [])
-      Domain::ResetPracticeWidget.call(role: Entity::Role.last, page_ids: [])
+      Domain::ResetPracticeWidget.call(role: Entity::Role.last, condition: :fake)
+      Domain::ResetPracticeWidget.call(role: Entity::Role.last, condition: :fake)
 
       api_get :practice, user_1_token, parameters: {id: course.id, role_id: Entity::Role.last.id}
 

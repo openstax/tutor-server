@@ -1,5 +1,5 @@
 class Domain::GetPracticeWidget
-  lev_routine
+  lev_routine express_output: :task
 
   uses_routine Tasks::Api::GetPracticeTask,
                translations: { outputs: { type: :verbatim } }

@@ -34,21 +34,11 @@ class Content::Api::ImportBook
       Content::Api::VisitBook[book: outputs[:book], 
                               visitor_names: :exercises]
 
-    biglearn_exercises = []
-    biglearn_topics = []
-
-    exercise_data.values.each do |ed|
-      biglearn_exercises.push(
-        OpenStax::BigLearn::V1::Exercise.new(ed['uid'], *ed['topics'])
-      )
-
-      biglearn_topics.push(*ed['topics'])
+    biglearn_exercises = exercise_data.values.collect do |ed|
+      tags = ed['topics'] + ed['tags']
+      OpenStax::BigLearn::V1::Exercise.new(ed['uid'], *tags)
     end
 
-    biglearn_topics = 
-      biglearn_topics.uniq.collect{|blt| OpenStax::BigLearn::V1::Tag.new(blt)}
-
-    OpenStax::BigLearn::V1.add_tags(biglearn_topics)
     OpenStax::BigLearn::V1.add_exercises(biglearn_exercises)
   end
 

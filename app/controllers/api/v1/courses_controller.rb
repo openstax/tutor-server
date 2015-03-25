@@ -87,7 +87,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   api :POST, '/courses/:course_id/practice(/role/:role_id)', 'Starts a new practice widget'
   description 'TBD'
   def practice_post
-    result = Domain::ResetPracticeWidget.call(role: get_practice_role, page_ids: [])
+    result = Domain::ResetPracticeWidget.call(role: get_practice_role, condition: :fake)
     respond_with result.outputs.task, represent_with: Api::V1::TaskRepresenter
   end
 
