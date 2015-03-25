@@ -1,5 +1,5 @@
 class Domain::CreateCourse
-  lev_routine
+  lev_routine express_output: :course
 
   uses_routine Entity::CreateCourse,
     translations: { outputs: { type: :verbatim } },

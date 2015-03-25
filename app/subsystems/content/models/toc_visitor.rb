@@ -4,10 +4,6 @@ class Content::TocVisitor < Content::BookVisitor
     @level_stack = []
   end
 
-  def visit(item)
-    item.is_a?(Content::BookPart) ? visit_book_part(item) : visit_page(item)
-  end
-
   def visit_book_part(book_part)
     data = {
       id: book_part.id,

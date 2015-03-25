@@ -6,7 +6,7 @@ class Tasks::Api::GetPracticeTask
   def exec(role:)
     outputs[:task] = Tasks::LegacyTaskMap.joins{task}
                                          .joins{task.taskings}
-                                         .where{task.taskings.entity_role_id == 1}
+                                         .where{task.taskings.entity_role_id == role.id}
                                          .order{created_at}
                                          .last
                                          .try(:legacy_task)

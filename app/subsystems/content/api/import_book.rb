@@ -20,6 +20,36 @@ class Content::Api::ImportBook
     run(:import_book_part, cnx_book_part: cnx_book.root_book_part,
                            book: outputs[:book])
     transfer_errors_from(outputs[:book_part], {type: :verbatim}, true)
+
+    #
+    # Send exercise and tag info to BigLearn
+    #
+    # First, build up local lists of the exercises and tags, then
+    # send those lists all at once to one call each in the BL API.
+    #
+    # TODO this code below should probably be in Domain
+    #
+
+    exercise_data = 
+      Content::Api::VisitBook[book: outputs[:book], 
+                              visitor_names: :exercises]
+
+    biglearn_exercises = []
+    biglearn_topics = []
+
+    exercise_data.values.each do |ed|
+      biglearn_exercises.push(
+        OpenStax::BigLearn::V1::Exercise.new(ed['uid'], *ed['topics'])
+      )
+
+      biglearn_topics.push(*ed['topics'])
+    end
+
+    biglearn_topics = 
+      biglearn_topics.uniq.collect{|blt| OpenStax::BigLearn::V1::Tag.new(blt)}
+
+    OpenStax::BigLearn::V1.add_tags(biglearn_topics)
+    OpenStax::BigLearn::V1.add_exercises(biglearn_exercises)
   end
 
 end

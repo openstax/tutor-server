@@ -11,10 +11,17 @@ class GetTaskeesFromTaskPlan
         tasking_plan.target
       when Entity::User
         UserProfile::Profile.find_by(entity_user_id: tasking_plan.target.id)
+      when Entity::Course
+        roles = CourseMembership::Api::GetCourseRoles.call(
+          course: tasking_plan.target, types: :student
+        ).outputs.roles
+        users = Role::GetUsersForRoles.call(roles).outputs.users
+        # Hack (change to return Entity::User later)
+        UserProfile::Profile.where(entity_user_id: users.collect{|u| u.id})
       else
         raise NotYetImplemented
       end
-    end
+    end.flatten.uniq
   end
 
 end

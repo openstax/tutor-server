@@ -8,7 +8,7 @@ class Tasks::Api::CreateTasking
     if task.is_a? ::Task
       legacy_task = task
       task = Entity::Task.create!
-      Tasks::LegacyTaskMap.create!(task: task, legacy_task: legacy_task)
+      ltm = Tasks::LegacyTaskMap.create!(task: task, legacy_task: legacy_task)
     end
 
     outputs[:tasking] = Tasks::Tasking.create!(role: role, task: task)

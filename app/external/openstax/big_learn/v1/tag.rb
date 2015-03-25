@@ -1,22 +1,26 @@
 class OpenStax::BigLearn::V1::Tag
 
-  TAG_TYPES = %w(topic aggregate filter)
+  ###
+  ### tag types are on their way out (probably)
+  ###
 
-  attr_reader :text, :types
+  # TAG_TYPES = %w(topic aggregate filter)
 
-  def initialize(text, *types)
-    if types.empty?
-      raise IllegalArgument, 'Must specify at least one tag'
-    end
+  attr_reader :text #, :types
 
-    types = types.collect{|type| type.to_s}
+  def initialize(text) #, *types)
+    # if types.empty?
+    #   raise IllegalArgument, 'Must specify at least one tag'
+    # end
 
-    if (types & TAG_TYPES).length != types.length
-      raise IllegalArgument, 'invalid or duplicate tag type'
-    end
+    # types = types.collect{|type| type.to_s}
+
+    # if (types & TAG_TYPES).length != types.length
+    #   raise IllegalArgument, 'invalid or duplicate tag type'
+    # end
 
     @text = text
-    @types = types
+    # @types = types
   end
 
 end
