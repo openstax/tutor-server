@@ -43,7 +43,7 @@ gem 'openstax_utilities', '~> 4.2.0'
 gem 'whenever'
 
 # OpenStax Accounts integration
-gem 'openstax_accounts', '~> 5.0.0'
+gem 'openstax_accounts', '~> 5.0.1'
 # OpenStax Exchange integration
 gem 'openstax_exchange'
 
@@ -62,7 +62,7 @@ gem 'lev', git: 'https://github.com/lml/lev.git', ref: '264819012e'
 gem 'squeel'
 
 # Contract management
-gem 'fine_print', '~> 2.3.0'
+gem 'fine_print', '~> 3.0.0'
 
 # Keyword search
 gem "keyword_search"

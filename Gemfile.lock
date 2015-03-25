@@ -166,7 +166,7 @@ GEM
       multipart-post (>= 1.2, < 3)
     fastercsv (1.5.5)
     ffi (1.9.8)
-    fine_print (2.3.1)
+    fine_print (3.0.0)
       action_interceptor (>= 1.0)
       jquery-rails
       rails (>= 3.1)
@@ -235,7 +235,7 @@ GEM
       multi_json (~> 1.3)
       oauth2 (~> 1.0)
       omniauth (~> 1.2)
-    openstax_accounts (5.0.0)
+    openstax_accounts (5.0.1)
       action_interceptor (>= 1.0)
       keyword_search (>= 1.0.0)
       lev (>= 2.2.1)
@@ -484,7 +484,7 @@ DEPENDENCIES
   exception_notification
   factory_girl_rails
   faker
-  fine_print (~> 2.3.0)
+  fine_print (~> 3.0.0)
   hashie
   httparty
   jquery-rails
@@ -497,7 +497,7 @@ DEPENDENCIES
   mini_magick
   newrelic_rpm
   nifty-generators
-  openstax_accounts (~> 5.0.0)
+  openstax_accounts (~> 5.0.1)
   openstax_api (~> 5.1.1)
   openstax_exchange
   openstax_utilities (~> 4.2.0)
