@@ -4,6 +4,6 @@ class Content::ExerciseTopic < ActiveRecord::Base
   belongs_to :topic
 
   validates :exercise, presence: true
-  validates :topic, presence: true, 
+  validates :topic, presence: true,
                     uniqueness: { scope: :content_exercise_id }
 end

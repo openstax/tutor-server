@@ -21,14 +21,14 @@ class OpenStax::BigLearn::V1::RealClient
       })
     end
 
-    result = HTTParty.post(ADD_EXERCISES_URL, 
+    result = HTTParty.post(ADD_EXERCISES_URL,
                            body: payload.to_json,
                            headers: { 'Content-Type' => 'application/json' })
 
     handle_result(result)
   end
 
-  def get_projection_exercises(user:, tag_search:, count:, 
+  def get_projection_exercises(user:, tag_search:, count:,
                                difficulty:, allow_repetitions:)
     query = {
       learner_id: 123,

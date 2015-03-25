@@ -25,5 +25,5 @@ RSpec.describe CourseContent::Api::AddBookToCourse, :type => :routine do
       .to change{CourseContent::CourseBook.count}.by (0)
     expect(result).to have_routine_errors
   end
- 
+
 end

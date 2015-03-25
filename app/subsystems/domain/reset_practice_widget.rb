@@ -13,7 +13,7 @@ class Domain::ResetPracticeWidget
 
     existing_practice_task = run(Domain::GetPracticeWidget, role: role).outputs.task
     # TODO actually do the step removal
-    
+
     # Gather 5 exercises
 
     exercises = condition == :fake ?
@@ -29,9 +29,9 @@ class Domain::ResetPracticeWidget
     exercises.each do |exercise|
       step = TaskStep.new(task: task)
 
-      step.tasked = TaskedExercise.new(task_step: step, 
+      step.tasked = TaskedExercise.new(task_step: step,
                                        url: exercise.url,
-                                       title: exercise.title, 
+                                       title: exercise.title,
                                        content: exercise.content)
 
       task.task_steps << step
@@ -50,7 +50,7 @@ class Domain::ResetPracticeWidget
   end
 
   def get_fake_exercises(count:)
-    count.times.collect do      
+    count.times.collect do
       exercise_content = OpenStax::Exercises::V1.fake_client.new_exercise_hash
       exercise = OpenStax::Exercises::V1::Exercise.new(exercise_content.to_json)
     end
@@ -60,12 +60,12 @@ class Domain::ResetPracticeWidget
     condition = tagify_condition(condition)
 
     exercise_uids = OpenStax::BigLearn::V1.get_projection_exercises(
-      user: user , tag_search: condition, count: 5, 
+      user: user , tag_search: condition, count: 5,
       difficulty: 0.5, allow_repetitions: true
     )
 
     urls = exercise_uids.collect{|uid| "http://exercises.openstax.org/exercises/#{uid}"}
-    
+
     Content::Exercise.where{url.in urls}.all.collect do |content_exercise|
       OpenStax::Exercises::V1::Exercise.new(content_exercise.content)
     end

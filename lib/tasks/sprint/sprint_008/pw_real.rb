@@ -19,7 +19,7 @@ module Sprint008
       book = Domain::FetchAndImportBook[id: outputs[:book_id]]
       Domain::AddBookToCourse[book: book, course: course]
 
-      condition = { 
+      condition = {
         _and: [
           {
             _or: [
@@ -27,10 +27,10 @@ module Sprint008
               'practice-problem',
               'test-prep-multiple-choice'
             ]
-          }, 
-          { 
+          },
+          {
             _or: [
-              'k12phys-ch04-s01-lo01', 
+              'k12phys-ch04-s01-lo01',
               'k12phys-ch04-s01-lo02'
             ]
           }
@@ -38,7 +38,7 @@ module Sprint008
       }
 
       outputs[:task] = Domain::ResetPracticeWidget[
-        role: student_role, 
+        role: student_role,
         condition: condition
       ]
 

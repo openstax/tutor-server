@@ -18,5 +18,5 @@ RSpec.describe FillIReadingSpacedPracticeSlot, :type => :routine do
     exercise2 = FillIReadingSpacedPracticeSlot.call(user, 1).outputs.exercise
     expect(exercise1.id).to_not eq(exercise2.id)
   end
-  
+
 end

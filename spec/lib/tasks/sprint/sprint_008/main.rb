@@ -12,7 +12,7 @@ RSpec.describe Sprint008::Main, type: :request, :api => true, :version => :v1 do
 
     teacher_token             = token_for(outputs[:teacher])
     student_token             = token_for(outputs[:student])
-    teacher_and_student_token = token_for(outputs[:teacher_and_student])             
+    teacher_and_student_token = token_for(outputs[:teacher_and_student])
 
     route = '/api/courses'
     api_get(route, teacher_token)
@@ -36,7 +36,7 @@ RSpec.describe Sprint008::Main, type: :request, :api => true, :version => :v1 do
 
     route = "/api/courses/#{outputs[:course1].id}/practice"
     api_get(route, student_token)
-    print_response(outputs[:student], route, response)    
+    print_response(outputs[:student], route, response)
 
     stats_task_plan           = outputs[:stats_task_plan]
     route = "/api/plans/#{stats_task_plan.id}"

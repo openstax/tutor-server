@@ -18,7 +18,7 @@ FactoryGirl.define do
     end
 
     trait :dropped do
-      has_dropped true 
+      has_dropped true
     end
 
     after(:build) do |student|

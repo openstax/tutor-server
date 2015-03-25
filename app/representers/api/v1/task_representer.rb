@@ -3,7 +3,7 @@ module Api::V1
 
     include Roar::Representer::JSON
 
-    property :id, 
+    property :id,
              type: Integer,
              writeable: false,
              schema_info: {
@@ -17,7 +17,7 @@ module Api::V1
                required: true
              }
 
-    property :task_plan_id, 
+    property :task_plan_id,
              type: Integer,
              writeable: false,
              readable: true,
@@ -58,7 +58,7 @@ module Api::V1
                writeable: false,
                readable: true,
                # render and decorate the Tasked's, not the TaskSteps
-               getter: -> (*) { task_steps.collect{|ts| ts.tasked} }, 
+               getter: -> (*) { task_steps.collect{|ts| ts.tasked} },
                decorator: Api::V1::TaskedRepresenterMapper.new,
                schema_info: {
                  required: true,

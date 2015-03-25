@@ -9,7 +9,7 @@ class Content::Api::VisitBook
     visitor_names = [visitor_names].flatten
 
     # Map the visitor name to an actual visitor class
-    
+
     visitors = visitor_names.collect do |name|
       case name.to_s
       when 'toc'
@@ -31,7 +31,7 @@ class Content::Api::VisitBook
     # We've temporarily stored the visitor objects in the outputs
     # structure for convenience.  Now iterate back through them
     # replace them with their visited output.
-    
+
     visitor_names.each do |name|
       outputs[name] = outputs[name].output
     end
@@ -43,12 +43,12 @@ class Content::Api::VisitBook
     end
   end
 
-  # Instead of dirtying up the BookPart and Page classes, put the 
+  # Instead of dirtying up the BookPart and Page classes, put the
   # visitation methods here.
 
   def visit_book_part(book_part, visitors)
 
-    # Let visitors define what should be included in queries of pages and 
+    # Let visitors define what should be included in queries of pages and
     # book parts (to be more efficient in our querying)
 
     child_book_part_includes = []
