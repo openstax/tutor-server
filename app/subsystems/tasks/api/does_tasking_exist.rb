@@ -8,7 +8,7 @@ class Tasks::Api::DoesTaskingExist
 
     role_ids = roles.collect{|r| r.id}
 
-    outputs[:does_tasking_exist] = 
+    outputs[:does_tasking_exist] =
       Entity::Task.joins{taskings}
                   .joins{legacy_task_maps}
                   .where{legacy_task_maps.task_id == my{task.id}}

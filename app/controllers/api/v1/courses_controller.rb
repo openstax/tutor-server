@@ -102,7 +102,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   protected
 
   def get_practice_role
-    potential_roles = Domain::GetUserCourseRoles.call(course: Entity::Course.find(params[:id]), 
+    potential_roles = Domain::GetUserCourseRoles.call(course: Entity::Course.find(params[:id]),
                                                       user: current_human_user.entity_user,
                                                       types: [:student]).outputs.roles
 

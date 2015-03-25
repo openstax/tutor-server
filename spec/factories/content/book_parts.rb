@@ -9,8 +9,8 @@ FactoryGirl.define do
 
     after(:create) do |book_part, evaluator|
       (evaluator.contents[:book_parts] || {}).each do |child_book_part|
-        FactoryGirl.create(:content_book_part, 
-                            contents: child_book_part, 
+        FactoryGirl.create(:content_book_part,
+                            contents: child_book_part,
                                             book: book_part.book,
                                             parent_book_part: book_part)
       end
@@ -31,11 +31,11 @@ FactoryGirl.define do
               {
                 title: 'chapter 1',
                 pages: [
-                  { 
+                  {
                     title: 'first page',
                     topics: ['ost-tag-lo-topic1-lo1', 'ost-tag-lo-topic2-lo2']
                   },
-                  { 
+                  {
                     title: 'second page',
                     topics: ['ost-tag-lo-topic2-lo2', 'ost-tag-lo-topic3-lo3']
                   }
@@ -44,7 +44,7 @@ FactoryGirl.define do
               {
                 title: 'chapter 2',
                 pages: [
-                  { 
+                  {
                     title: 'third page',
                     topics: ['ost-tag-lo-topic4-lo4']
                   }

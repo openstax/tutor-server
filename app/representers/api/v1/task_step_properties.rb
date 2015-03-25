@@ -3,16 +3,16 @@ module Api::V1
 
     include Roar::Representer::JSON
 
-    # These properties will be included in specific Tasked steps; therefore 
+    # These properties will be included in specific Tasked steps; therefore
     # their getters will be called from that context and so must call up to
-    # the "task_step" to access data in the TaskStep "base" class.  
+    # the "task_step" to access data in the TaskStep "base" class.
     #
     # Using included properties instead of decorator inheritance makes it easier
     # to render and parse json -- there is no confusion about which level to use
     # it is always just the Tasked level and properties that access "base" class
     # values always reach up to it.
 
-    property :id, 
+    property :id,
              type: Integer,
              writeable: false,
              getter: -> (*) { task_step.id },
@@ -28,7 +28,7 @@ module Api::V1
              schema_info: {
                required: true,
                description: "The type of this TaskStep, one of: #{
-                            TaskedRepresenterMapper.models.collect{ |klass| 
+                            TaskedRepresenterMapper.models.collect{ |klass|
                               "'" + klass.name.gsub("Tasked","")
                                          .underscore.downcase + "'"
                             }.join(',')}"

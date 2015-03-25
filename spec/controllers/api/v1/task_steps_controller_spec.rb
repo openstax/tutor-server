@@ -128,7 +128,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
         api_put :recovery, user_2_token, parameters: {
           task_id: tasked_exercise.task_step.task.id,
           id: tasked_exercise.task_step.id
-        } 
+        }
       }.to raise_error
 
       expect(tasked_exercise.task_step.task.reload.task_steps.count).to(
@@ -145,7 +145,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
         api_put :recovery, user_1_token, parameters: {
           task_id: tasked_exercise.task_step.task.id,
           id: tasked_exercise.task_step.id
-        } 
+        }
       }.to raise_error
 
       expect(tasked_exercise.task_step.task.reload.task_steps.count).to(
@@ -170,7 +170,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
     it "should not allow marking completion of reading steps by random user" do
       tasked = create_tasked(:tasked_reading, user_1)
       expect{
-        api_put :completed, user_2_token, parameters: {task_id: tasked.task_step.task.id, id: tasked.task_step.id}  
+        api_put :completed, user_2_token, parameters: {task_id: tasked.task_step.task.id, id: tasked.task_step.id}
       }.to raise_error
       expect(tasked.task_step(true).completed?).to be_falsy
     end
@@ -189,12 +189,12 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
   end
 
   describe "practice task update step" do
-    it "allows updating of a step (needed to test access to legacy and SS taskings)" do    
+    it "allows updating of a step (needed to test access to legacy and SS taskings)" do
       Domain::AddUserAsCourseStudent[course: course, user: user_1]
       task = Domain::ResetPracticeWidget[role: Entity::Role.last, condition: :fake]
 
       step = task.task_steps.first
-    
+
       api_put :update, user_1_token, parameters: { id: step.id },
               raw_post_data: { free_response: "Ipsum lorem" }
 

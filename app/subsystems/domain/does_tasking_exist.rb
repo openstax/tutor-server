@@ -27,7 +27,7 @@ class Domain::DoesTaskingExist
       outputs[:does_tasking_exist] = true
       return
     end
-      
+
     # Next check the subsystem tasking
 
     run(Role::GetUserRoles, user.entity_user)

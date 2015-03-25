@@ -8,7 +8,7 @@ RSpec.describe "Exercise update progression", type: :request, :api => true, :ver
                                               application: application,
                                               resource_owner_id: user_1.id }
 
-  let!(:tasked) { FactoryGirl.create(:tasked_exercise, 
+  let!(:tasked) { FactoryGirl.create(:tasked_exercise,
                                      :with_tasking, tasked_to: user_1) }
 
   let!(:step_route_base) { "/api/steps/#{tasked.task_step.id}" }

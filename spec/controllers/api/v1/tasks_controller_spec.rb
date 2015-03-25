@@ -4,8 +4,8 @@ describe Api::V1::TasksController, :type => :controller, :api => true, :version 
 
   let!(:application)     { FactoryGirl.create :doorkeeper_application }
   let!(:user_1)          { FactoryGirl.create :user }
-  let!(:user_1_token)    { FactoryGirl.create :doorkeeper_access_token, 
-                                              application: application, 
+  let!(:user_1_token)    { FactoryGirl.create :doorkeeper_access_token,
+                                              application: application,
                                               resource_owner_id: user_1.id }
 
   let!(:user_2)          { FactoryGirl.create :user }

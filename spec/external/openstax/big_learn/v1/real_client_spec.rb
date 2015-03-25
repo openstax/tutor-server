@@ -4,7 +4,7 @@ module OpenStax::BigLearn
   RSpec.describe V1::RealClient, :type => :external do
 
     it 'stringifies tag searches' do
-      tag_search = { 
+      tag_search = {
         _and: [
           {
             _or: [
@@ -12,10 +12,10 @@ module OpenStax::BigLearn
               'practice-problem',
               'test-prep-multiple-choice'
             ]
-          }, 
-          { 
+          },
+          {
             _or: [
-              'k12phys-ch04-s01-lo01', 
+              'k12phys-ch04-s01-lo01',
               'k12phys-ch04-s01-lo02'
             ]
           }
@@ -28,7 +28,7 @@ module OpenStax::BigLearn
     end
 
     it 'calls projection questions well' do
-      tag_search = { 
+      tag_search = {
         _and: [
           {
             _or: [
@@ -36,10 +36,10 @@ module OpenStax::BigLearn
               'practice-problem',
               'test-prep-multiple-choice'
             ]
-          }, 
-          { 
+          },
+          {
             _or: [
-              'k12phys-ch04-s01-lo01', 
+              'k12phys-ch04-s01-lo01',
               'k12phys-ch04-s01-lo02'
             ]
           }
@@ -47,7 +47,7 @@ module OpenStax::BigLearn
       }
 
       V1.real_client.get_projection_exercises(
-        user: nil , tag_search: tag_search, count: 5, 
+        user: nil , tag_search: tag_search, count: 5,
         difficulty: 0.5, allow_repetitions: true
       )
     end

@@ -12,7 +12,7 @@ RSpec.describe Content::Api::VisitBook, :type => :routine do
   let!(:root_book_part) { FactoryGirl.create(:content_book_part, :standard_contents_1) }
 
   it "should get the TOC with the TOC option" do
-    
+
     toc = Content::Api::VisitBook[book: root_book_part.book, visitor_names: :toc]
 
     expect(toc).to eq([{
@@ -21,7 +21,7 @@ RSpec.describe Content::Api::VisitBook, :type => :routine do
       'type' => 'part',
       'children' => [
         {
-          'id' => 3, 
+          'id' => 3,
           'title' => 'chapter 1',
           'type' => 'part',
           'children' => [
@@ -43,13 +43,13 @@ RSpec.describe Content::Api::VisitBook, :type => :routine do
           'type' => 'part',
           'children' => [
             {
-              'id' => 3, 
+              'id' => 3,
               'title' => 'third page',
               'type' => 'page'
             }
           ]
         }
-      ]      
+      ]
     }])
   end
 
@@ -58,12 +58,12 @@ RSpec.describe Content::Api::VisitBook, :type => :routine do
     OpenStax::Exercises::V1.fake_client.add_exercise(uid: 1, tags: ['ost-tag-lo-topic1-lo1','concept'])
     OpenStax::Exercises::V1.fake_client.add_exercise(uid: 2, tags: ['ost-tag-lo-topic2-lo2','homework'])
     OpenStax::Exercises::V1.fake_client.add_exercise(uid: 3, tags: ['ost-tag-lo-topic3-lo3','concept'])
-      
+
     Content::ImportExercises.call(tag: 'ost-tag-lo-topic1-lo1')
     Content::ImportExercises.call(tag: 'ost-tag-lo-topic2-lo2')
     Content::ImportExercises.call(tag: 'ost-tag-lo-topic3-lo3')
 
-    exercises = Content::Api::VisitBook[book: root_book_part.book, 
+    exercises = Content::Api::VisitBook[book: root_book_part.book,
                                         visitor_names: :exercises]
 
     expect(exercises).to include({
@@ -94,4 +94,3 @@ RSpec.describe Content::Api::VisitBook, :type => :routine do
 
 end
 
-      

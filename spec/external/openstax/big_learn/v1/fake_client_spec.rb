@@ -49,12 +49,12 @@ module OpenStax::BigLearn
 
       scenarios.each do |scenario|
         expect(V1::fake_client.tags_match_condition?(
-                                 scenario[:tags], 
+                                 scenario[:tags],
                                  scenario[:condition])).to eq scenario[:succeeds]
       end
     end
 
-    context "get_projection_exercises" do 
+    context "get_projection_exercises" do
       V1::fake_client.add_exercises(V1::Exercise.new('e1', 'lo1', 'concept'))
       V1::fake_client.add_exercises(V1::Exercise.new('e2', 'lo1', 'homework'))
       V1::fake_client.add_exercises(V1::Exercise.new('e3', 'lo2', 'concept'))
@@ -63,10 +63,10 @@ module OpenStax::BigLearn
 
       it "works when allow_repetitions is false" do
         exercises = V1::fake_client.get_projection_exercises(
-          user: nil, 
+          user: nil,
           tag_search: { _and: [ { _or: ['lo1', 'lo2'] }, 'concept'] },
-          count: 5, 
-          difficulty: 0.5, 
+          count: 5,
+          difficulty: 0.5,
           allow_repetitions: false
         )
 
@@ -75,10 +75,10 @@ module OpenStax::BigLearn
 
       it "works when allow_repetitions is true" do
         exercises = V1::fake_client.get_projection_exercises(
-          user: nil, 
+          user: nil,
           tag_search: { _and: [ { _or: ['lo1', 'lo2'] }, 'concept'] },
-          count: 5, 
-          difficulty: 0.5, 
+          count: 5,
+          difficulty: 0.5,
           allow_repetitions: true
         )
 

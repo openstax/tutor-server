@@ -21,7 +21,7 @@ RSpec.describe User, :type => :model do
   [:username, :first_name, :last_name, :full_name, :title, :name, :casual_name].each do |method|
     it { is_expected.to delegate_method(method).to(:account) }
   end
-  
+
   [:first_name=, :last_name=, :full_name=, :title=].each do |method|
     it { is_expected.to delegate_method(method).to(:account).with_arguments('foo') }
   end

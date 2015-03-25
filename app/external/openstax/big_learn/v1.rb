@@ -16,9 +16,9 @@ module OpenStax::BigLearn::V1
   #   Ex:
   #     { _and: [ { _or: ['a', 'b', 'c'] }, 'd']  }
   #
-  def self.get_projection_exercises(user:, tag_search: {}, 
+  def self.get_projection_exercises(user:, tag_search: {},
                                     count: 1, difficulty: 0.5, allow_repetitions: true)
-    client.get_projection_exercises(user: user, tag_search: tag_search, 
+    client.get_projection_exercises(user: user, tag_search: tag_search,
                                     count: count, difficulty: difficulty, allow_repetitions: allow_repetitions)
   end
 

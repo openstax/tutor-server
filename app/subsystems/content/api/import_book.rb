@@ -30,8 +30,8 @@ class Content::Api::ImportBook
     # TODO this code below should probably be in Domain
     #
 
-    exercise_data = 
-      Content::Api::VisitBook[book: outputs[:book], 
+    exercise_data =
+      Content::Api::VisitBook[book: outputs[:book],
                               visitor_names: :exercises]
 
     biglearn_exercises = exercise_data.values.collect do |ed|

@@ -171,7 +171,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
       expect {
         api_post :practice, user_1_token, parameters: {id: course.id, role_id: Entity::Role.last.id}
       }.to change{ Task.count }.by(1)
-      
+
       expect(response).to have_http_status(:success)
 
       expect(response.body_as_hash).to include(id: be_kind_of(Integer),
@@ -200,7 +200,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
       expect(response.body_as_hash).to include(id: be_kind_of(Integer),
                                                title: "Practice",
                                                opens_at: be_kind_of(String),
-                                               steps: have(5).items)      
+                                               steps: have(5).items)
     end
   end
 

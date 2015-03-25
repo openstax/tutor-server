@@ -30,7 +30,7 @@ class OpenStax::Exercises::V1::FakeClient
     match_sets.push( @exercises_array.select{|ee| uids.include?(ee[:uid])}           ) if !uids.blank?
     match_sets.push( @exercises_array.select{|ee| (params[:tag] & ee[:tags]).any?}         ) if params[:tag]
     match_sets.push( @exercises_array.select{|ee| params[:number].include?(ee[:number])}   ) if params[:number]
-    match_sets.push( @exercises_array.select{|ee| params[:version].include?(ee[:version])} ) if params[:version] 
+    match_sets.push( @exercises_array.select{|ee| params[:version].include?(ee[:version])} ) if params[:version]
 
     result = nil
 

@@ -38,8 +38,8 @@ RSpec.describe Content::Api::ImportBook, :type => :routine, :vcr => VCR_OPTS do
 
       it 'creates a new Book structure and Pages and sets their attributes' do
         result = nil
-        expect { 
-          result = Content::Api::ImportBook.call(cnx_book: book); 
+        expect {
+          result = Content::Api::ImportBook.call(cnx_book: book);
         }.to change{ Content::BookPart.count }.by(2)
         expect(result.errors).to be_empty
 
@@ -47,7 +47,7 @@ RSpec.describe Content::Api::ImportBook, :type => :routine, :vcr => VCR_OPTS do
 
         # TODO: Cache TOC and check it here
         test_book_part(book_part)
-        
+
         expect(biglearn_client.store_exercises_copy).to_not be_empty
       end
 

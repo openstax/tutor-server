@@ -2,10 +2,10 @@ require 'rails_helper'
 # require 'vcr_helper'
 require 'tasks/sprint/sprint_008/pw_real'
 
-RSpec.describe Sprint008::PwReal, type: :request, 
+RSpec.describe Sprint008::PwReal, type: :request,
                                   version: :v1,
-                                  speed: :slow do 
-                                  # vcr: VCR_OPTS 
+                                  speed: :slow do
+                                  # vcr: VCR_OPTS
 
   it "doesn't catch on fire" do
     result = Sprint008::PwReal.call
