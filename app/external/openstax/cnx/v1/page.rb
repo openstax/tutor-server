@@ -130,13 +130,15 @@ module OpenStax::Cnx::V1
         splitting_fragments = []
         # Figure out what we just split on, testing in priority order
         if split.matches?(ASSESSED_FEATURE_CSS)
-          # Assessed Feature = Video + Exercise or Text + Exercise
+          # Assessed Feature = Video + Exercise or Interactive + Exercise or Text + Exercise
           exercise = split.at_css(EXERCISE_CSS)
           Rails.logger.warn { "An assessed feature should have an exercise but doesn't: #{url}" } if exercise.nil?
           recursive_compact(exercise, split) unless exercise.nil?
 
           if split.matches?(VIDEO_CSS)
             splitting_fragments << Fragment::Video.new(node: split)
+          elsif split.matches?(INTERACTIVE_CSS)
+            splitting_fragments << Fragment::Interactive.new(node: split)
           else
             splitting_fragments << Fragment::Text.new(node: split)
           end
@@ -150,9 +152,6 @@ module OpenStax::Cnx::V1
         elsif split.matches?(EXERCISE_CSS)
           # Exercise
           splitting_fragments << Fragment::Exercise.new(node: split)
-        elsif split.matches?(INTERACTIVE_CSS)
-          # Interactive
-          splitting_fragments << Fragment::Text.new(node: split) # Placeholder
         end
 
         # Copy the reading content and find the split in the copy

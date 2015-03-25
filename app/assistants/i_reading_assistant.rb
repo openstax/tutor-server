@@ -38,7 +38,7 @@ class IReadingAssistant
   def self.tasked_exercise(exercise_fragment:, recovery_fragment: nil, step: nil)
     if exercise_fragment.embed_tag.blank?
       logger.warn "Exercise without embed tag found while creating iReading"
-      return nil
+      return
     end
 
     # Search local (cached) Exercises for one matching the embed tag
@@ -58,13 +58,25 @@ class IReadingAssistant
   def self.tasked_video(video_fragment:, step: nil)
     if video_fragment.url.blank?
       logger.warn "Video without embed tag found while creating iReading"
-      return nil
+      return
     end
 
     TaskedVideo.new(task_step: step,
                     url: video_fragment.url,
                     title: video_fragment.title,
                     content: video_fragment.to_html)
+  end
+
+  def self.tasked_interactive(interactive_fragment:, step: nil)
+    if interactive_fragment.url.blank?
+      logger.warn('Interactive without iframe found while creating iReading')
+      return
+    end
+
+    TaskedInteractive.new(task_step: step,
+                          url: interactive_fragment.url,
+                          title: interactive_fragment.title,
+                          content: interactive_fragment.to_html)
   end
 
   def self.distribute_tasks(task_plan:, taskees:)
@@ -99,6 +111,8 @@ class IReadingAssistant
             tasked_exercise(exercise_fragment: fragment, step: step)
           when OpenStax::Cnx::V1::Fragment::Video
             tasked_video(video_fragment: fragment, step: step)
+          when OpenStax::Cnx::V1::Fragment::Interactive
+            tasked_interactive(interactive_fragment: fragment, step: step)
           else
             tasked_reading(reading_fragment: fragment, page: page, step: step)
           end

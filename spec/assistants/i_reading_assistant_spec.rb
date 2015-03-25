@@ -100,7 +100,7 @@ RSpec.describe IReadingAssistant, :type => :assistant, :vcr => VCR_OPTS do
         expect(task_steps.length).to eq 11
         expect(task_steps.collect { |ts| ts.tasked_type }).to eq(
           ['TaskedReading',  'TaskedVideo',    'TaskedExercise',
-           'TaskedReading',  'TaskedReading',  'TaskedExercise',
+           'TaskedInteractive',  'TaskedReading',  'TaskedExercise',
            'TaskedReading',  'TaskedExercise', 'TaskedExercise',
            'TaskedExercise', 'TaskedExercise']
         )

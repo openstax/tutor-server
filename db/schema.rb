@@ -430,6 +430,14 @@ ActiveRecord::Schema.define(version: 20150326125339) do
 
   add_index "tasked_exercises", ["recovery_tasked_exercise_id"], name: "index_tasked_exercises_on_recovery_tasked_exercise_id", unique: true
 
+  create_table "tasked_interactives", force: :cascade do |t|
+    t.string   "url",        null: false
+    t.text     "content",    null: false
+    t.string   "title"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "tasked_readings", force: :cascade do |t|
     t.string   "url",        null: false
     t.text     "content",    null: false
