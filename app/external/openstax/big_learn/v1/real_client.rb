@@ -32,9 +32,9 @@ class OpenStax::BigLearn::V1::RealClient
                                difficulty:, allow_repetitions:)
     query = {
       learner_id: 123,
-      # number_of_questions: count,
-      tag_query: stringify_tag_search(tag_search) #,
-      # allow_repetition: allow_repetitions
+      number_of_questions: count,
+      tag_query: stringify_tag_search(tag_search),
+      allow_repetition: allow_repetitions ? 'true' : 'false'
     }
 
     result = HTTParty.get(PROJECTION_EXERCISES_URL, query: query)

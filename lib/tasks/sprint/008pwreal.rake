@@ -6,14 +6,18 @@ namespace :sprint do
     outputs = result.outputs
 
     if result.errors.none?
-      tags = outputs.task.task_steps.collect{ |ts| 
-              OpenStax::Exercises::V1::Exercise.new(ts.tasked.content).tags
-             }
+      exercises = outputs.task.task_steps.collect{ |ts| 
+        OpenStax::Exercises::V1::Exercise.new(ts.tasked.content)
+      }
 
       puts "For book #{outputs.book_id} and course #{outputs.course.id}, created a practice " + 
-           "widget searching for recommended problems in BigLearn matching #{OpenStax::BigLearn::V1.real_client.stringify_tag_search(outputs.condition)}.  " + 
-           "The practice widget has #{outputs.task.task_steps.count} exercises with " +
-           "these tags: #{tags.inspect}"
+           "widget searching for recommended problems in BigLearn matching\n\n#{OpenStax::BigLearn::V1.real_client.stringify_tag_search(outputs.condition)}\n\n" + 
+           "The practice widget has #{outputs.task.task_steps.count} exercises:\n\n"
+
+      exercises.each_with_index do |ex, ii|
+        puts "(##{ii}) UID = #{ex.uid} TAGS = #{ex.tags.join(', ')}\n"
+      end
+
     else
       result.errors.each{|error| puts "Error: " + Lev::ErrorTranslator.translate(error)}
     end
