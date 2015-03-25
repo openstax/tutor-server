@@ -18,7 +18,7 @@ class Domain::ResetPracticeWidget
 
     exercises = condition == :fake ?
       get_fake_exercises(count: 5) :
-      get_biglearn_exercises(count: 5, user: role.user, condition: condition)
+      get_biglearn_exercises(count: 5, user: Role::GetUsersForRoles[role], condition: condition)
 
     # Create the new practice widget task, and put the exercises into steps
 
@@ -67,7 +67,7 @@ class Domain::ResetPracticeWidget
     urls = exercise_uids.collect{|uid| "http://exercises.openstax.org/exercises/#{uid}"}
     
     Content::Exercise.where{url.in urls}.all.collect do |content_exercise|
-      OpenStax::Exercises::V1::Exercise.new(content_exercise.content.to_json)
+      OpenStax::Exercises::V1::Exercise.new(content_exercise.content)
     end
   end
 

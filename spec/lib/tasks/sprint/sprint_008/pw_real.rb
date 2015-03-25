@@ -7,8 +7,11 @@ RSpec.describe Sprint008::PwReal, type: :request,
                                   speed: :slow do 
                                   # vcr: VCR_OPTS 
 
-  xit "doesn't catch on fire" do
-    expect(Sprint008::PwReal.call.errors).to be_empty
+  it "doesn't catch on fire" do
+    result = Sprint008::PwReal.call
+
+    expect(result.outputs.task).to be_an_instance_of(Task)
+    expect(result.outputs.task.task_steps.first.tasked).to be_an_instance_of(TaskedExercise)
   end
 
 end
