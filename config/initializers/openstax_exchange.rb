@@ -1,19 +1,21 @@
+secrets = Rails.application.secrets['openstax']['exchange']
+
 OpenStax::Exchange.configure do |config|
-  config.client_platform_id     = Rails.application.secrets[:application_openstax_exchange_id]
-  config.client_platform_secret = Rails.application.secrets[:application_openstax_exchange_secret]
-  config.client_server_url      = Rails.application.secrets[:openstax_exchange_url]
-  config.client_api_version     = Rails.application.secrets[:opentax_exchange_api_version]
+  config.client_platform_id     = secrets['client_id']
+  config.client_platform_secret = secrets['secret']
+  config.client_server_url      = secrets['url']
+  config.client_api_version     = 'v1'
 end
 
 OpenStax::Exchange::FakeClient.configure do |config|
-  config.registered_platforms   = {
-    Rails.application.secrets[:application_openstax_exchange_id] => \
-      Rails.application.secrets[:application_openstax_exchange_secret]
-  }
+  config.registered_platforms   = { secrets['client_id'] => secrets['secret'] }
 
-  config.server_url             = \
-    Rails.application.secrets[:openstax_exchange_url]
+  config.server_url             = secrets['url']
   config.supported_api_versions = ['v1']
 end
+
+# By default, stub unless in the production environment
+stub = secrets['stub'].nil? ? !Rails.env.production? : secrets['stub']
+stub ? OpenStax::Exchange.use_fake_client : OpenStax::Exchange.use_real_client
 
 OpenStax::Exchange.reset!

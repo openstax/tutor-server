@@ -25,6 +25,5 @@ brew install qt
 bundle install --without production
 rake db:migrate
 rake db:seed
-rails generate secrets
 rails server
 ```
