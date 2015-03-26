@@ -60,6 +60,11 @@ RSpec.describe Content::ImportExercises, :type => :routine, :vcr => VCR_OPTS do
         result = Content::ImportExercises.call(tag: tags)
       }.to change{ Content::Tag.count }.by(2)
 
+      tags = Content::Tag.all.to_a
+      tags[-2..-1].each do |tag|
+        expect(tag).to be_lo
+      end
+
       exercises = Content::Exercise.all.to_a
       expect(exercises[-3].exercise_tags.collect{|et| et.tag.name})
         .to eq ['k12phys-ch04-s01-lo01']
@@ -119,6 +124,12 @@ RSpec.describe Content::ImportExercises, :type => :routine, :vcr => VCR_OPTS do
 
         exercise.exercise_tags.collect{|et| et.tag.name}.each do |tag|
           expect(wrapper.tags).to include tag
+        end
+
+        exercise.exercise_tags.joins(:tag).where(tag: {
+          tag_type: Content::Tag.tag_types[:lo]
+        }).collect{|et| et.tag.name}.each do |lo|
+          expect(wrapper.los).to include lo
         end
       end
     end
