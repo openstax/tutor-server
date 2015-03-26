@@ -1,7 +1,7 @@
 module Api::V1
   class BookPartTocRepresenter < Roar::Decorator
 
-    include Roar::Representer::JSON
+    include Roar::JSON
 
     property :id,
              type: Integer,

@@ -2,7 +2,7 @@ module Api::V1
 
   class IReadingStatsRepresenter < Roar::Decorator
 
-    include Roar::Representer::JSON
+    include Roar::JSON
 
     property :course,
       type: Object,

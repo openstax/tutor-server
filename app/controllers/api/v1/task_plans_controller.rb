@@ -107,7 +107,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
                                               current_api_user,
                                               task_plan)
     DistributeTasks.call(task_plan)
-    respond_with task_plan
+    respond_with task_plan, location: [:api, task_plan]
   end
 
   ###############################################################

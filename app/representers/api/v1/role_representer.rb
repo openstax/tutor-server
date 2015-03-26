@@ -1,6 +1,6 @@
 module Api::V1
   class RoleRepresenter < Roar::Decorator
-    include Roar::Representer::JSON
+    include Roar::JSON
 
     property :id, readable: true, schema_info: { required: true }
 
