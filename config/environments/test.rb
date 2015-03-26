@@ -39,11 +39,4 @@ Rails.application.configure do
 
   # Don't error out when trying to connect to external sites
   WebMock.allow_net_connect!
-
-  # Don't try to connect to Exchange
-  OpenStax::Exchange.use_fake_client
-  OpenStax::Exchange.reset!
-
-  # Don't try to connect to Exercises
-  OpenStax::Exercises::V1.use_fake_client
 end

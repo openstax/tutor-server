@@ -2,9 +2,9 @@
 <html>
 <head>
   <title>OpenStax Tutor</title>
-  <link rel='stylesheet' href='<%= Rails.application.secrets[:openstax_tutor_css_url] %>' />
+  <link rel='stylesheet' href='<%= Rails.application.secrets[:css_url] %>' />
   <script src="//cdn.mathjax.org/mathjax/2.5-latest/MathJax.js?config=MML_HTMLorMML"></script>
-  <script type='text/javascript' src='<%= Rails.application.secrets[:openstax_tutor_js_url] %>' defer></script>
+  <script type='text/javascript' src='<%= Rails.application.secrets[:js_url] %>' defer></script>
 </head>
 <body>
   <%= yield %>
