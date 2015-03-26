@@ -51,13 +51,12 @@ ActiveRecord::Schema.define(version: 20150321164408) do
   create_table "content_exercise_tags", force: :cascade do |t|
     t.integer  "content_exercise_id", null: false
     t.integer  "content_tag_id",      null: false
-    t.integer  "number",              null: false
     t.datetime "created_at",          null: false
     t.datetime "updated_at",          null: false
   end
 
-  add_index "content_exercise_tags", ["content_exercise_id", "number"], name: "index_content_exercise_tags_on_content_exercise_id_and_number", unique: true
-  add_index "content_exercise_tags", ["content_tag_id", "content_exercise_id"], name: "index_content_exercise_tags_on_c_t_id_and_c_e_id", unique: true
+  add_index "content_exercise_tags", ["content_exercise_id", "content_tag_id"], name: "index_content_exercise_tags_on_c_e_id_and_c_t_id", unique: true
+  add_index "content_exercise_tags", ["content_tag_id"], name: "index_content_exercise_tags_on_content_tag_id"
 
   create_table "content_exercises", force: :cascade do |t|
     t.string   "url"
@@ -73,13 +72,12 @@ ActiveRecord::Schema.define(version: 20150321164408) do
   create_table "content_page_tags", force: :cascade do |t|
     t.integer  "content_page_id", null: false
     t.integer  "content_tag_id",  null: false
-    t.integer  "number",          null: false
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
   end
 
-  add_index "content_page_tags", ["content_page_id", "number"], name: "index_content_page_tags_on_content_page_id_and_number", unique: true
-  add_index "content_page_tags", ["content_tag_id", "content_page_id"], name: "index_content_page_tags_on_content_tag_id_and_content_page_id", unique: true
+  add_index "content_page_tags", ["content_page_id", "content_tag_id"], name: "index_content_page_tags_on_content_page_id_and_content_tag_id", unique: true
+  add_index "content_page_tags", ["content_tag_id"], name: "index_content_page_tags_on_content_tag_id"
 
   create_table "content_pages", force: :cascade do |t|
     t.string   "url"

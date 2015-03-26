@@ -10,6 +10,7 @@ class Content::TagResource
                       "#{resource_class_name}Tag".constantize
     resource_field = resource_class_name.underscore.split('/').last.to_sym
     tag_type = options[:tag_type] || 0
+    outputs[:tag_type] = tag_type
 
     outputs[:tags] = []
     outputs[:taggings] = []
@@ -22,7 +23,6 @@ class Content::TagResource
       end
 
       outputs[:tags] << tag
-      outputs[:tag_type] = tag_type
       transfer_errors_from(tag, scope: :tags)
 
       tagging = tagging_class.find_or_create_by(tag: tag,

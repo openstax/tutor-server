@@ -1,5 +1,5 @@
 class Content::PageTag < ActiveRecord::Base
-  sortable_belongs_to :page, on: :number, inverse_of: :page_tags
+  belongs_to :page
   belongs_to :tag
 
   validates :page, presence: true

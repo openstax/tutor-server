@@ -1,5 +1,5 @@
 class Content::ExerciseTag < ActiveRecord::Base
-  sortable_belongs_to :exercise, on: :number, inverse_of: :exercise_tags
+  belongs_to :exercise
   belongs_to :tag
 
   validates :exercise, presence: true
