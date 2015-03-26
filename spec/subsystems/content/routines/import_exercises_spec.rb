@@ -31,9 +31,9 @@ RSpec.describe Content::ImportExercises, :type => :routine, :vcr => VCR_OPTS do
       }.to change{ Content::Exercise.count }.by(2)
 
       exercises = Content::Exercise.all.to_a
-      expect(exercises[-2].exercise_topics.collect{|et| et.topic.name})
+      expect(exercises[-2].exercise_tags.collect{|et| et.tag.name})
         .to eq ['k12phys-ch04-s01-lo02']
-      expect(exercises[-1].exercise_topics.collect{|et| et.topic.name})
+      expect(exercises[-1].exercise_tags.collect{|et| et.tag.name})
         .to eq ['k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02']
     end
 
@@ -47,11 +47,11 @@ RSpec.describe Content::ImportExercises, :type => :routine, :vcr => VCR_OPTS do
       }.to change{ Content::Exercise.count }.by(3)
 
       exercises = Content::Exercise.all.to_a
-      expect(exercises[-3].exercise_topics.collect{|et| et.topic.name})
+      expect(exercises[-3].exercise_tags.collect{|et| et.tag.name})
         .to eq ['k12phys-ch04-s01-lo01']
-      expect(exercises[-2].exercise_topics.collect{|et| et.topic.name})
+      expect(exercises[-2].exercise_tags.collect{|et| et.tag.name})
         .to eq ['k12phys-ch04-s01-lo02']
-      expect(exercises[-1].exercise_topics.collect{|et| et.topic.name})
+      expect(exercises[-1].exercise_tags.collect{|et| et.tag.name})
         .to eq ['k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02']
     end
   end
@@ -73,7 +73,7 @@ RSpec.describe Content::ImportExercises, :type => :routine, :vcr => VCR_OPTS do
 
       exercises = Content::Exercise.all.to_a
       exercises[-15..-1].each do |exercise|
-        expect(exercise.exercise_topics.collect{|et| et.topic.name})
+        expect(exercise.exercise_tags.collect{|et| et.tag.name})
         .to include 'k12phys-ch04-s01-lo02'
       end
     end
@@ -85,9 +85,9 @@ RSpec.describe Content::ImportExercises, :type => :routine, :vcr => VCR_OPTS do
 
       exercises = Content::Exercise.all.to_a
       exercises[-31..-1].each do |exercise|
-        exercise.exercise_topics.each do |et|
-          expect(tags).to include et.topic.name
-        end
+        expect(exercise.exercise_tags.collect{|et| et.tag.name} & tags).not_to(
+          be_empty
+        )
       end
     end
   end

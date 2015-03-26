@@ -5,25 +5,24 @@ class Content::ExerciseVisitor < Content::BookVisitor
   end
 
   def visit_page(page)
-    page_topics = page.page_topics.collect{|pt| pt.topic}.flatten
-    page_topic_ids = page_topics.collect{|t| t.id}
+    page_tags = page.page_tags.collect{|pt| pt.tag}.flatten
+    page_tag_ids = page_tags.collect{|t| t.id}
 
     page_exercises =
-      Content::Exercise.joins{exercise_topics.topic}
-                       .where{exercise_topics.content_topic_id.in page_topic_ids}
+      Content::Exercise.joins{exercise_tags.tag}
+                       .where{exercise_tags.content_tag_id.in page_tag_ids}
 
     page_exercises.each do |page_exercise|
       wrapper = OpenStax::Exercises::V1::Exercise.new(page_exercise.content)
 
-      exercise_topic_names =
-        page_exercise.exercise_topics.collect{|et| et.topic.name}
+      exercise_lo_names = wrapper.los
 
       (@exercises[wrapper.uid] ||= {}).tap do |entry|
         entry['uid']  = wrapper.uid
         entry['id']   = page_exercise.id
         entry['url']  = wrapper.url
-        entry['topics'] = ((entry['topics'] || []) + exercise_topic_names).uniq
-        entry['tags'] = (((entry['tags'] || []) + wrapper.tags) - entry['topics']).uniq
+        entry['los'] = ((entry['los'] || []) + exercise_lo_names).uniq
+        entry['tags'] = (((entry['tags'] || []) + wrapper.tags) - entry['los']).uniq
       end
     end
   end

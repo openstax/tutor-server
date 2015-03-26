@@ -43,16 +43,18 @@ RSpec.describe Content::ImportPage, :type => :routine, :vcr => VCR_OPTS do
         expect {
           result = Content::ImportPage.call(cnx_page: cnx_page,
                                             book_part: book_part)
-        }.to change{ Content::Topic.count }.by(2)
+        }.to change{ Content::Tag.lo.count }.by(2)
 
-        topics = Content::Topic.all.to_a
-        expect(topics[-2].name).to eq 'k12phys-ch04-s01-lo01'
-        expect(topics[-1].name).to eq 'k12phys-ch04-s01-lo02'
+        tags = Content::Tag.lo.to_a
+        expect(tags[-2].name).to eq 'k12phys-ch04-s01-lo01'
+        expect(tags[-1].name).to eq 'k12phys-ch04-s01-lo02'
 
-        tagged_topics = result.outputs[:topics]
-        expect(tagged_topics).not_to be_empty
-        expect(tagged_topics).to eq Content::Page.last.page_topics.collect{|pt| pt.topic}
-        expect(tagged_topics.collect{|t| t.name}).to eq [
+        tagged_tags = result.outputs[:tags]
+        expect(tagged_tags).not_to be_empty
+        expect(tagged_tags).to(
+          eq Content::Page.last.page_tags.collect{|pt| pt.tag}
+        )
+        expect(tagged_tags.collect{|t| t.name}).to eq [
           'k12phys-ch04-s01-lo01',
           'k12phys-ch04-s01-lo02'
         ]

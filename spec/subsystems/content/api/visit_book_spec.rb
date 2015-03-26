@@ -71,21 +71,21 @@ RSpec.describe Content::Api::VisitBook, :type => :routine do
         'uid' => '1@1',
         'id' => 1,
         'url' => a_kind_of(String),
-        'topics' => ['ost-tag-lo-topic1-lo1'],
+        'los' => ['ost-tag-lo-topic1-lo1'],
         'tags' => ['concept']
       },
       '2@1' => {
         'uid' => '2@1',
         'id' => 2,
         'url' => a_kind_of(String),
-        'topics' => ['ost-tag-lo-topic2-lo2'],
+        'los' => ['ost-tag-lo-topic2-lo2'],
         'tags' => ['homework']
       },
       '3@1' => {
         'uid' => '3@1',
         'id' => 3,
         'url' => a_kind_of(String),
-        'topics' => ['ost-tag-lo-topic3-lo3'],
+        'los' => ['ost-tag-lo-topic3-lo3'],
         'tags' => ['concept']
       }
     })

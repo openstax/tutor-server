@@ -6,8 +6,8 @@ class Content::ImportPage
                as: :create_page,
                translations: { outputs: { type: :verbatim } }
 
-  uses_routine Content::TagResourceWithTopics,
-               as: :add_lo,
+  uses_routine Content::TagResource,
+               as: :tag,
                translations: { outputs: { type: :verbatim } }
 
   uses_routine Content::ImportExercises,
@@ -29,7 +29,7 @@ class Content::ImportPage
     transfer_errors_from outputs[:page], {type: :verbatim}, true
 
     # Tag Page with LO's
-    run(:add_lo, outputs[:page], cnx_page.los)
+    run(:tag, outputs[:page], cnx_page.los, tag_type: :lo)
 
     # Get Exercises from OSE that match the LO's
     run(:import_exercises, tag: cnx_page.los)

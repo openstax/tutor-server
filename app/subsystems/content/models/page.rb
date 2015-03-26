@@ -3,7 +3,7 @@ class Content::Page < ActiveRecord::Base
 
   sortable_belongs_to :book_part, on: :number, inverse_of: :pages
 
-  sortable_has_many :page_topics, on: :number, dependent: :destroy
+  sortable_has_many :page_tags, on: :number, dependent: :destroy
 
   validates :title, presence: true
 

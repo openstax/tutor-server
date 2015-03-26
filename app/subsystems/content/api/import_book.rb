@@ -35,7 +35,7 @@ class Content::Api::ImportBook
                               visitor_names: :exercises]
 
     biglearn_exercises = exercise_data.values.collect do |ed|
-      tags = ed['topics'] + ed['tags']
+      tags = ed['los'] + ed['tags']
       OpenStax::BigLearn::V1::Exercise.new(ed['uid'], *tags)
     end
 
