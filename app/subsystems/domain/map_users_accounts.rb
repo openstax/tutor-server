@@ -23,10 +23,10 @@ module Domain::MapUsersAccounts
     def create_profile
       create_profile = UserProfile::CreateProfile.call(account_id: @account.id,
                                                        exchange_identifier: identifier)
-      if create_profile.errors.none?
-        create_profile.outputs.profile
+      if error = create_profile.errors.first
+        raise error.message
       else
-        raise create_profile.errors.first.message
+        create_profile.outputs.profile
       end
     end
 
