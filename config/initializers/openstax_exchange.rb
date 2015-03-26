@@ -1,4 +1,4 @@
-secrets = Rails.application.secrets['openstax']['accounts']
+secrets = Rails.application.secrets['openstax']['exchange']
 
 OpenStax::Exchange.configure do |config|
   config.client_platform_id     = secrets['client_id']
