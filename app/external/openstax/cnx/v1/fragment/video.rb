@@ -1,8 +1,34 @@
 module OpenStax::Cnx::V1::Fragment
-  class Video < Text
+  class Video
+
+    # Used to get the title
+    TITLE_CSS = '[data-type="title"]'
+
+    # For fragments missing a proper title
+    DEFAULT_TITLE = nil
 
     # CSS to find the video object
     VIDEO_OBJECT_CSS = '.os-embed'
+
+    attr_reader :node
+
+    def initialize(node:, title: nil)
+      @node = node
+      @title = title
+    end
+
+    def title
+      return @title unless @title.nil?
+
+      @title = node.css(TITLE_CSS).collect{|n| n.try(:content).try(:strip)}
+                                  .compact.uniq.join('; ')
+      @title = DEFAULT_TITLE if @title.blank?
+      @title
+    end
+
+    def to_s(indent: 0)
+      s = "#{' ' * indent}VIDEO #{title}\n"
+    end
 
     def video(node = node)
       @video ||= node.at_css(VIDEO_OBJECT_CSS)
