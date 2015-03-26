@@ -31,20 +31,34 @@ RSpec.describe Content::ImportExercises, :type => :routine, :vcr => VCR_OPTS do
       }.to change{ Content::Exercise.count }.by(2)
 
       exercises = Content::Exercise.all.to_a
-      expect(exercises[-2].exercise_tags.collect{|et| et.tag.name})
-        .to eq ['k12phys-ch04-s01-lo02']
-      expect(exercises[-1].exercise_tags.collect{|et| et.tag.name})
-        .to eq ['k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02']
+      exercises[-2..-1].each do |exercise|
+        expect(exercise.exercise_tags.collect{|et| et.tag.name}).to(
+          include 'k12phys-ch04-s01-lo02'
+        )
+      end
     end
 
     it 'can import all exercises with a set of tags' do
       result = nil
+      tags = [ 'k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02' ]
       expect {
-        result = Content::ImportExercises.call(tag: [
-          'k12phys-ch04-s01-lo01',
-          'k12phys-ch04-s01-lo02'
-        ])
+        result = Content::ImportExercises.call(tag: tags)
       }.to change{ Content::Exercise.count }.by(3)
+
+      exercises = Content::Exercise.all.to_a
+      exercises[-3..-1].each do |exercise|
+        expect(exercise.exercise_tags.collect{|et| et.tag.name} & tags).not_to(
+          be_empty
+        )
+      end
+    end
+
+    it 'assigns all available tags to the imported exercises' do
+      result = nil
+      tags = [ 'k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02' ]
+      expect {
+        result = Content::ImportExercises.call(tag: tags)
+      }.to change{ Content::Tag.count }.by(2)
 
       exercises = Content::Exercise.all.to_a
       expect(exercises[-3].exercise_tags.collect{|et| et.tag.name})
@@ -73,8 +87,9 @@ RSpec.describe Content::ImportExercises, :type => :routine, :vcr => VCR_OPTS do
 
       exercises = Content::Exercise.all.to_a
       exercises[-15..-1].each do |exercise|
-        expect(exercise.exercise_tags.collect{|et| et.tag.name})
-        .to include 'k12phys-ch04-s01-lo02'
+        expect(exercise.exercise_tags.collect{|et| et.tag.name}).to(
+          include 'k12phys-ch04-s01-lo02'
+        )
       end
     end
 
@@ -88,6 +103,23 @@ RSpec.describe Content::ImportExercises, :type => :routine, :vcr => VCR_OPTS do
         expect(exercise.exercise_tags.collect{|et| et.tag.name} & tags).not_to(
           be_empty
         )
+      end
+    end
+
+    it 'assigns all available tags to the imported exercises' do
+      result = nil
+      tags = ['k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02']
+      expect {
+        result = Content::ImportExercises.call(tag: tags)
+      }.to change{ Content::Tag.count }.by(49)
+
+      exercises = Content::Exercise.all.to_a
+      exercises[-31..-1].each do |exercise|
+        wrapper = OpenStax::Exercises::V1::Exercise.new(exercise.content)
+
+        exercise.exercise_tags.collect{|et| et.tag.name}.each do |tag|
+          expect(wrapper.tags).to include tag
+        end
       end
     end
   end
