@@ -36,7 +36,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     books = CourseContent::Api::GetCourseBooks.call(course: course).outputs.books
     raise NotYetImplemented if books.count > 1
 
-    toc = Content::Api::GetBookToc.call(book_id: books.first.id).outputs.toc
+    toc = Content::Api::VisitBook[book: books.first, visitor_names: :toc]
     respond_with toc, represent_with: Api::V1::BookTocRepresenter
   end
 
