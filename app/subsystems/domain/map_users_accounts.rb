@@ -3,17 +3,19 @@ module Domain::MapUsersAccounts
   def self.account_to_user(account)
     return UserProfile::Profile.anonymous if account.is_anonymous?
 
-    user = UserProfile::Profile.where(account_id: account.id).first
-    return user if user.present?
+    profile = UserProfile::Profile.where(account_id: account.id).first
+    return profile if profile.present?
 
-    outcome = UserProfile::CreateProfile.call(account_id: account.id)
+    identifier = OpenStax::Exchange.create_identifier
+    outcome = UserProfile::CreateProfile.call(account_id: account.id,
+                                              exchange_identifier: identifier)
     raise outcome.errors.first.message unless outcome.errors.none?
 
-    outcome.outputs.user
+    outcome.outputs.profile
   end
 
-  def self.user_to_account(user)
-    user.account
+  def self.user_to_account(profile)
+    profile.account
   end
 
 end
