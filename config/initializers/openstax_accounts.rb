@@ -1,4 +1,4 @@
-require 'user_mapper'
+require './app/subsystems/domain/map_users_accounts'
 
 secrets = Rails.application.secrets['openstax']['accounts']
 
@@ -11,7 +11,7 @@ OpenStax::Accounts.configure do |config|
   config.openstax_accounts_url = secrets['url']
   config.enable_stubbing = stub
   config.logout_via = :delete
-  config.account_user_mapper = UserMapper
+  config.account_user_mapper = Domain::MapUsersAccounts
 end
 
 OpenStax::Accounts::ApplicationController.class_exec do

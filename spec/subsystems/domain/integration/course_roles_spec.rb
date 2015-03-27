@@ -3,7 +3,7 @@ require 'rails_helper'
 describe "domain: course roles" do
 
   context "adding teachers to courses" do
-    let(:target_user)   { Domain::CreateUser.call.outputs.user }
+    let(:target_user)   { Entity::CreateUser.call.outputs.user }
     let(:target_course) { Domain::CreateCourse.call.outputs.course }
     context "when a user is not a teacher of a course" do
       it "the user can be made a course teacher" do
@@ -30,8 +30,8 @@ describe "domain: course roles" do
       end
     end
     context "courses with multiple teachers" do
-      let(:target_user1)  { Domain::CreateUser.call.outputs.user }
-      let(:target_user2)  { Domain::CreateUser.call.outputs.user }
+      let(:target_user1)  { Entity::CreateUser.call.outputs.user }
+      let(:target_user2)  { Entity::CreateUser.call.outputs.user }
       let(:target_course) { Domain::CreateCourse.call.outputs.course }
       it "are allowed" do
         result = Domain::AddUserAsCourseTeacher.call(user: target_user1, course: target_course)
@@ -52,7 +52,7 @@ describe "domain: course roles" do
   end
 
   context "adding students to courses" do
-    let(:target_user)   { Domain::CreateUser.call.outputs.user }
+    let(:target_user)   { Entity::CreateUser.call.outputs.user }
     let(:target_course) { Domain::CreateCourse.call.outputs.course }
     context "when a user is not a teacher of a course" do
       context "and the user is not a student in the course" do

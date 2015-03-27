@@ -2,9 +2,7 @@ class CourseAccessPolicy
   def self.action_allowed?(action, requestor, course)
     case action
     when :readings
-      requestor.is_human? # &&
-      # Domain::UserIsCourseTeacher.call(user: requestor.human_user,
-      #                                  course: course)
+      requestor.is_human?
     else
       false
     end

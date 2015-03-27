@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :administrator do
-    user
+  factory :administrator, class: 'UserProfile::Models::Administrator' do
+    profile
   end
 end

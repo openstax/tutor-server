@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :user, class: 'UserProfile::Models::Profile' do
+  factory :user, aliases: [:profile], class: 'UserProfile::Models::Profile' do
     exchange_identifier { SecureRandom.hex.to_s }
 
     transient do
@@ -23,7 +23,7 @@ FactoryGirl.define do
 
     trait :administrator do
       after(:build) do |user|
-        user.administrator = FactoryGirl.build(:administrator, user: user)
+        user.administrator = FactoryGirl.build(:administrator, profile: user)
       end
     end
 

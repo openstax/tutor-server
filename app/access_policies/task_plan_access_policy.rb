@@ -2,24 +2,11 @@ class TaskPlanAccessPolicy
   def self.action_allowed?(action, requestor, task_plan)
     case action
     when :read, :create, :update, :publish, :destroy, :stats
-      return false unless requestor.is_human?
-      case task_plan.owner
-      when UserProfile::Models::Profile
-        task_plan.owner == requestor
-      when Entity::Models::User
-        user = UserProfile::FindOrCreate.call(requestor).outputs.user
-        user == task_plan.owner
-      when Entity::Models::Course
-        ## Treat failure to positively identify the user
-        ## as a course teacher as a denial of access.
-        ## (This happens when the user is anonymous.)
-        begin
-          Domain::UserIsCourseTeacher.call(user: requestor.entity_user,
-                                           course: task_plan.owner)
-                                     .outputs.user_is_course_teacher
-        rescue
-          false
-        end
+      if task_plan.owner.is_a?(Entity::Models::Course)
+        Domain::UserIsCourseTeacher[user: requestor.entity_user,
+                                    course: task_plan.owner] rescue false
+      elsif requestor.is_human?
+        requestor_is_task_plan_owner?(requestor, task_plan.owner)
       else
         false
       end
@@ -27,4 +14,10 @@ class TaskPlanAccessPolicy
       false
     end
   end
+
+  private
+  def self.requestor_is_task_plan_owner?(requestor, owner)
+    requestor == owner || requestor.entity_user == owner
+  end
+
 end
