@@ -1,7 +1,7 @@
 class Domain::CreateUserProfile
   lev_routine
 
-  uses_routine UserProfile::Api::CreateProfile,
+  uses_routine UserProfile::CreateProfile,
     as: :create_user_profile
 
   protected

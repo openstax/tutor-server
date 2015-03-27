@@ -21,8 +21,8 @@ module Domain::MapUsersAccounts
     end
 
     def create_profile
-      create_profile = UserProfile::Api::CreateProfile.call(account_id: @account.id,
-                                                            exchange_identifier: identifier)
+      create_profile = UserProfile::CreateProfile.call(account_id: @account.id,
+                                                       exchange_identifier: identifier)
       if error = create_profile.errors.first
         raise error.message
       else

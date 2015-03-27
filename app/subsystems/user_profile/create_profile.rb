@@ -1,4 +1,4 @@
-class UserProfile::Api::CreateProfile
+class UserProfile::CreateProfile
   lev_routine
 
   uses_routine Entity::CreateUser, translations: { outputs: { type: :verbatim } }
