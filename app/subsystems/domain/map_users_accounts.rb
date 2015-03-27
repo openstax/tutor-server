@@ -13,16 +13,16 @@ module Domain::MapUsersAccounts
     private
 
     def anonymous_profile
-      UserProfile::Profile.anonymous if @account.is_anonymous?
+      UserProfile::Models::Profile.anonymous if @account.is_anonymous?
     end
 
     def find_profile
-      UserProfile::Profile.find_by(account_id: @account.id)
+      UserProfile::Models::Profile.find_by(account_id: @account.id)
     end
 
     def create_profile
-      create_profile = UserProfile::CreateProfile.call(account_id: @account.id,
-                                                       exchange_identifier: identifier)
+      create_profile = UserProfile::Api::CreateProfile.call(account_id: @account.id,
+                                                            exchange_identifier: identifier)
       if error = create_profile.errors.first
         raise error.message
       else

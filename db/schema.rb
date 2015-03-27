@@ -13,6 +13,14 @@
 
 ActiveRecord::Schema.define(version: 20150326125339) do
 
+  create_table "administrators", force: :cascade do |t|
+    t.integer  "profile_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "administrators", ["profile_id"], name: "index_administrators_on_profile_id", unique: true
+
   create_table "assistants", force: :cascade do |t|
     t.string   "name",            null: false
     t.string   "code_class_name", null: false
@@ -496,14 +504,6 @@ ActiveRecord::Schema.define(version: 20150326125339) do
 
   add_index "tasks_taskings", ["entity_role_id", "entity_task_id"], name: "[\"tasks_taskings_role_id_on_task_id_unique\"]", unique: true
   add_index "tasks_taskings", ["entity_task_id"], name: "index_tasks_taskings_on_entity_task_id"
-
-  create_table "user_profile_administrators", force: :cascade do |t|
-    t.integer  "profile_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "user_profile_administrators", ["profile_id"], name: "index_user_profile_administrators_on_profile_id", unique: true
 
   create_table "user_profile_profiles", force: :cascade do |t|
     t.integer  "entity_user_id",      null: false

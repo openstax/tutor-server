@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe UserProfile::Administrator, :type => :model do
+RSpec.describe UserProfile::Models::Administrator, :type => :model do
 
   it { is_expected.to belong_to(:profile) }
 

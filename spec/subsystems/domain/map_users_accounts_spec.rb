@@ -8,7 +8,7 @@ RSpec.describe Domain::MapUsersAccounts do
       let(:account) { double(:account, is_anonymous?: true) }
 
       it 'returns an anonymous instance' do
-        expect(profile).to be_a(UserProfile::AnonymousUser)
+        expect(profile).to be_a(UserProfile::Models::AnonymousUser)
       end
     end
 
@@ -25,7 +25,7 @@ RSpec.describe Domain::MapUsersAccounts do
       let(:account) { double(:account, id: 2, is_anonymous?: false) }
 
       it 'returns the created profile for the account' do
-        expect(profile).to be_a(UserProfile::Profile)
+        expect(profile).to be_a(UserProfile::Models::Profile)
         expect(profile.account_id).to eq(2)
       end
 

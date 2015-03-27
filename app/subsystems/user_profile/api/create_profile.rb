@@ -1,4 +1,4 @@
-class UserProfile::CreateProfile
+class UserProfile::Api::CreateProfile
   lev_routine
 
   uses_routine Entity::CreateUser, translations: { outputs: { type: :verbatim } }
@@ -8,7 +8,7 @@ class UserProfile::CreateProfile
   def exec(attributes)
     run(:entity_create_user) unless attributes[:entity_user_id]
     attributes = default_attributes.merge(attributes)
-    outputs[:profile] = UserProfile::Profile.create(attributes)
+    outputs[:profile] = UserProfile::Models::Profile.create(attributes)
   end
 
   private

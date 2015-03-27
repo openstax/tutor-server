@@ -6,7 +6,7 @@ class UserProfile::Models::Profile < Tutor::SubSystems::BaseModel
   has_many :groups_as_owner, through: :account
 
   has_one :administrator, dependent: :destroy, inverse_of: :profile,
-    class_name: 'UserProfile::Administrator'
+    class_name: 'UserProfile::Models::Administrator'
 
   has_many :educators, dependent: :destroy, foreign_key: :user_id
   has_many :students, dependent: :destroy, foreign_key: :user_id

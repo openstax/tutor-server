@@ -1,4 +1,4 @@
-class UserProfile::Administrator < ActiveRecord::Base
+class UserProfile::Models::Administrator < ActiveRecord::Base
   belongs_to :profile, inverse_of: :administrator, foreign_key: :profile_id,
     class_name: 'UserProfile::Models::Profile'
 

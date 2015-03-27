@@ -10,7 +10,7 @@ module Sprint008
       OpenStax::BigLearn::V1.use_real_client
 
       user = FactoryGirl.create :user, username: 'student'
-      course = Entity::Course.create!
+      course = Entity::Models::Course.create!
       Domain::AddUserAsCourseStudent[course: course, user: user]
       student_role = Entity::Role.last
 

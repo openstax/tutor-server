@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe UserProfile::Profile, :type => :model do
+RSpec.describe UserProfile::Models::Profile, :type => :model do
   it { is_expected.to belong_to(:account) }
   it { is_expected.to have_many(:groups_as_member) }
   it { is_expected.to have_many(:groups_as_owner) }
