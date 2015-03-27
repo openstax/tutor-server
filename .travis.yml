@@ -28,6 +28,9 @@ branches:
 before_script:
   - gem install pg
   - psql -c 'create database travis_ci_test;' -U postgres
+  - export OXT_DB_USER=postgres
+  - export OXT_DB_PASS=
+  - export OXT_TEST_DB=travis_ci_test
 before_install:
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"

@@ -15,11 +15,11 @@ class CreateContentBookParts < ActiveRecord::Migration
       t.index :entity_book_id
     end
 
-    add_foreign_key :content_books, :content_books, column: :parent_book_part_id,
+    add_foreign_key :content_book_parts, :content_book_parts, column: :parent_book_part_id,
                                                     on_update: :cascade,
                                                     on_delete: :cascade
 
-    add_foreign_key :content_books, :entity_books, on_update: :cascade,
+    add_foreign_key :content_book_parts, :entity_books, on_update: :cascade,
                                                    on_delete: :cascade
   end
 end

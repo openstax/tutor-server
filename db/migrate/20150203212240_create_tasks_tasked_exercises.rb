@@ -13,5 +13,6 @@ class CreateTasksTaskedExercises < ActiveRecord::Migration
 
       t.index :content_exercise_id
     end
+
   end
 end
