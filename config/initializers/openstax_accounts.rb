@@ -12,7 +12,6 @@ OpenStax::Accounts.configure do |config|
   config.enable_stubbing = stub
   config.logout_via = :delete
   config.account_user_mapper = Domain::MapUsersAccounts
-  config.enable_stubbing = true
 end
 
 OpenStax::Accounts::ApplicationController.class_exec do
