@@ -1,5 +1,5 @@
 class Educator < ActiveRecord::Base
-  belongs_to :user, class_name: 'UserProfile::Profile'
+  belongs_to :user, class_name: 'UserProfile::Models::Profile'
   belongs_to :course
 
   has_many :tasking_plans, as: :target, dependent: :destroy

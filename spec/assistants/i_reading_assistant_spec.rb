@@ -11,9 +11,9 @@ RSpec.describe IReadingAssistant, :type => :assistant, :vcr => VCR_OPTS do
     let!(:cnx_page_hash) { { 'id' => '092bbf0d-0729-42ce-87a6-fd96fd87a083@11',
                              'title' => 'Force' } }
     let!(:cnx_page) { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash) }
-    let!(:page)     { Content::ImportPage.call(cnx_page: cnx_page,
-                                               book_part: book_part)
-                                         .outputs.page }
+    let!(:page)     { Content::Routines::ImportPage.call(cnx_page: cnx_page,
+                                                         book_part: book_part)
+                                                   .outputs.page }
     let!(:task_plan) {
       FactoryGirl.create :task_plan, assistant: assistant,
                                      settings: { page_ids: [page.id] }
@@ -78,7 +78,7 @@ RSpec.describe IReadingAssistant, :type => :assistant, :vcr => VCR_OPTS do
       'title' => "Newton's First Law of Motion: Inertia"
     } }
     let!(:cnx_page) { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash) }
-    let!(:page) { Content::ImportPage.call(cnx_page: cnx_page,
+    let!(:page) { Content::Routines::ImportPage.call(cnx_page: cnx_page,
                                            book_part: book_part)
                                      .outputs.page }
     let!(:task_plan) {

@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :content_book_part, class: '::Content::BookPart' do
+  factory :content_book_part, class: '::Content::Models::BookPart' do
     transient do
       contents {{}}
     end
@@ -17,7 +17,7 @@ FactoryGirl.define do
 
       (evaluator.contents[:pages] || {}).each do |page|
         the_page = FactoryGirl.create(:content_page, title: page[:title], book_part: book_part)
-        Content::TagResource[the_page, page[:los]]
+        Content::Routines::TagResource[the_page, page[:los]]
       end
     end
 
@@ -58,4 +58,3 @@ FactoryGirl.define do
     end
   end
 end
-

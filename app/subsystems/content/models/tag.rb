@@ -1,4 +1,4 @@
-class Content::Tag < ActiveRecord::Base
+class Content::Models::Tag < Tutor::SubSystems::BaseModel
   has_many :page_tags, dependent: :destroy
   has_many :exercise_tags, dependent: :destroy
 

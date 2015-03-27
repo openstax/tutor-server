@@ -1,4 +1,4 @@
-class Content::PageTag < ActiveRecord::Base
+class Content::Models::PageTag < Tutor::SubSystems::BaseModel
   belongs_to :page
   belongs_to :tag
 

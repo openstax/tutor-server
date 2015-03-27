@@ -1,2 +1,3 @@
-class Entity::Book < ActiveRecord::Base
+class Entity::Models::Book < Tutor::SubSystems::BaseModel
+
 end

@@ -1,7 +1,8 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Content::ImportExercises, :type => :routine, :vcr => VCR_OPTS do
+RSpec.describe Content::Routines::ImportExercises, :type => :routine,
+                                                   :vcr => VCR_OPTS do
 
   context 'fake client' do
     before(:all) do
@@ -27,10 +28,10 @@ RSpec.describe Content::ImportExercises, :type => :routine, :vcr => VCR_OPTS do
     it 'can import all exercises with a single tag' do
       result = nil
       expect {
-        result = Content::ImportExercises.call(tag: 'k12phys-ch04-s01-lo02')
-      }.to change{ Content::Exercise.count }.by(2)
+        result = Content::Routines::ImportExercises.call(tag: 'k12phys-ch04-s01-lo02')
+      }.to change{ Content::Models::Exercise.count }.by(2)
 
-      exercises = Content::Exercise.all.to_a
+      exercises = Content::Models::Exercise.all.to_a
       exercises[-2..-1].each do |exercise|
         expect(exercise.exercise_tags.collect{|et| et.tag.name}).to(
           include 'k12phys-ch04-s01-lo02'
@@ -42,10 +43,10 @@ RSpec.describe Content::ImportExercises, :type => :routine, :vcr => VCR_OPTS do
       result = nil
       tags = [ 'k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02' ]
       expect {
-        result = Content::ImportExercises.call(tag: tags)
-      }.to change{ Content::Exercise.count }.by(3)
+        result = Content::Routines::ImportExercises.call(tag: tags)
+      }.to change{ Content::Models::Exercise.count }.by(3)
 
-      exercises = Content::Exercise.all.to_a
+      exercises = Content::Models::Exercise.all.to_a
       exercises[-3..-1].each do |exercise|
         expect(exercise.exercise_tags.collect{|et| et.tag.name} & tags).not_to(
           be_empty
@@ -57,15 +58,15 @@ RSpec.describe Content::ImportExercises, :type => :routine, :vcr => VCR_OPTS do
       result = nil
       tags = [ 'k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02' ]
       expect {
-        result = Content::ImportExercises.call(tag: tags)
-      }.to change{ Content::Tag.count }.by(2)
+        result = Content::Routines::ImportExercises.call(tag: tags)
+      }.to change{ Content::Models::Tag.count }.by(2)
 
-      tags = Content::Tag.all.to_a
+      tags = Content::Models::Tag.all.to_a
       tags[-2..-1].each do |tag|
         expect(tag).to be_lo
       end
 
-      exercises = Content::Exercise.all.to_a
+      exercises = Content::Models::Exercise.all.to_a
       expect(exercises[-3].exercise_tags.collect{|et| et.tag.name})
         .to eq ['k12phys-ch04-s01-lo01']
       expect(exercises[-2].exercise_tags.collect{|et| et.tag.name})
@@ -87,10 +88,10 @@ RSpec.describe Content::ImportExercises, :type => :routine, :vcr => VCR_OPTS do
     it 'can import all exercises with a single tag' do
       result = nil
       expect {
-        result = Content::ImportExercises.call(tag: 'k12phys-ch04-s01-lo02')
-      }.to change{ Content::Exercise.count }.by(15)
+        result = Content::Routines::ImportExercises.call(tag: 'k12phys-ch04-s01-lo02')
+      }.to change{ Content::Models::Exercise.count }.by(15)
 
-      exercises = Content::Exercise.all.to_a
+      exercises = Content::Models::Exercise.all.to_a
       exercises[-15..-1].each do |exercise|
         expect(exercise.exercise_tags.collect{|et| et.tag.name}).to(
           include 'k12phys-ch04-s01-lo02'
@@ -100,10 +101,10 @@ RSpec.describe Content::ImportExercises, :type => :routine, :vcr => VCR_OPTS do
 
     it 'can import all exercises with a set of tags' do
       tags = ['k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02']
-      expect { Content::ImportExercises.call(tag: tags) }
-        .to change{ Content::Exercise.count }.by(31)
+      expect { Content::Routines::ImportExercises.call(tag: tags) }
+        .to change{ Content::Models::Exercise.count }.by(31)
 
-      exercises = Content::Exercise.all.to_a
+      exercises = Content::Models::Exercise.all.to_a
       exercises[-31..-1].each do |exercise|
         expect(exercise.exercise_tags.collect{|et| et.tag.name} & tags).not_to(
           be_empty
@@ -115,10 +116,10 @@ RSpec.describe Content::ImportExercises, :type => :routine, :vcr => VCR_OPTS do
       result = nil
       tags = ['k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02']
       expect {
-        result = Content::ImportExercises.call(tag: tags)
-      }.to change{ Content::Tag.count }.by(49)
+        result = Content::Routines::ImportExercises.call(tag: tags)
+      }.to change{ Content::Models::Tag.count }.by(49)
 
-      exercises = Content::Exercise.all.to_a
+      exercises = Content::Models::Exercise.all.to_a
       exercises[-31..-1].each do |exercise|
         wrapper = OpenStax::Exercises::V1::Exercise.new(exercise.content)
 
@@ -127,7 +128,7 @@ RSpec.describe Content::ImportExercises, :type => :routine, :vcr => VCR_OPTS do
         end
 
         exercise.exercise_tags.joins(:tag).where(tag: {
-          tag_type: Content::Tag.tag_types[:lo]
+          tag_type: Content::Models::Tag.tag_types[:lo]
         }).collect{|et| et.tag.name}.each do |lo|
           expect(wrapper.los).to include lo
         end

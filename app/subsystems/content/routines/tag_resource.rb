@@ -1,4 +1,4 @@
-class Content::TagResource
+class Content::Routines::TagResource
 
   lev_routine
 
@@ -15,8 +15,8 @@ class Content::TagResource
     outputs[:tags] = []
     outputs[:taggings] = []
     tags.each do |t|
-      tag = t.is_a?(Content::Tag) ? \
-            t : Content::Tag.find_or_initialize_by(name: t.to_s)
+      tag = t.is_a?(Content::Models::Tag) ? \
+            t : Content::Models::Tag.find_or_initialize_by(name: t.to_s)
       unless tag.persisted?
         tag.tag_type = tag_type
         tag.save!

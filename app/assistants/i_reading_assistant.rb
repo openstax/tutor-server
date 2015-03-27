@@ -42,7 +42,7 @@ class IReadingAssistant
     end
 
     # Search local (cached) Exercises for one matching the embed tag
-    exercises = Content::Api::SearchLocalExercises.call(
+    exercises = Content::SearchLocalExercises.call(
       tag: exercise_fragment.embed_tag
     ).outputs.items
     exercise = exercises.first
@@ -76,7 +76,7 @@ class IReadingAssistant
 
     page_ids = task_plan.settings['page_ids']
     cnx_pages = page_ids.collect do |page_id|
-      Content::Api::GetPage.call(id: page_id).outputs.page
+      Content::GetPage.call(id: page_id).outputs.page
     end
 
     # Assign Tasks to taskees and return the Task array

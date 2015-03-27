@@ -1,6 +1,5 @@
-class UserProfile::AnonymousUser < UserProfile::Profile
+class UserProfile::Models::AnonymousUser < UserProfile::Models::Profile
   include Singleton
-
   before_save { false }
 
   def account

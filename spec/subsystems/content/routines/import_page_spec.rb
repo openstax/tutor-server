@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Content::ImportPage, :type => :routine, :vcr => VCR_OPTS do
+RSpec.describe Content::Routines::ImportPage, :type => :routine, :vcr => VCR_OPTS do
 
   let!(:book_part) { FactoryGirl.create :content_book_part }
 
@@ -19,16 +19,16 @@ RSpec.describe Content::ImportPage, :type => :routine, :vcr => VCR_OPTS do
       it 'creates a new Page' do
         result = nil
         expect {
-          result = Content::ImportPage.call(cnx_page: cnx_page,
+          result = Content::Routines::ImportPage.call(cnx_page: cnx_page,
                                             book_part: book_part)
-        }.to change{ Content::Page.count }.by(1)
+        }.to change{ Content::Models::Page.count }.by(1)
         expect(result.errors).to be_empty
 
         expect(result.outputs[:page]).to be_persisted
       end
 
       it 'converts relative links into absolute links' do
-        page = Content::ImportPage.call(cnx_page: cnx_page,
+        page = Content::Routines::ImportPage.call(cnx_page: cnx_page,
                                         book_part: book_part).outputs[:page]
         doc = Nokogiri::HTML(page.content)
 
@@ -41,18 +41,18 @@ RSpec.describe Content::ImportPage, :type => :routine, :vcr => VCR_OPTS do
       it 'finds LO tags in the content' do
         result = nil
         expect {
-          result = Content::ImportPage.call(cnx_page: cnx_page,
+          result = Content::Routines::ImportPage.call(cnx_page: cnx_page,
                                             book_part: book_part)
-        }.to change{ Content::Tag.lo.count }.by(2)
+        }.to change{ Content::Models::Tag.lo.count }.by(2)
 
-        tags = Content::Tag.lo.to_a
+        tags = Content::Models::Tag.lo.to_a
         expect(tags[-2].name).to eq 'k12phys-ch04-s01-lo01'
         expect(tags[-1].name).to eq 'k12phys-ch04-s01-lo02'
 
         tagged_tags = result.outputs[:tags]
         expect(tagged_tags).not_to be_empty
         expect(tagged_tags).to(
-          eq Content::Page.last.page_tags.collect{|pt| pt.tag}
+          eq Content::Models::Page.last.page_tags.collect{|pt| pt.tag}
         )
         expect(tagged_tags.collect{|t| t.name}).to eq [
           'k12phys-ch04-s01-lo01',
@@ -63,11 +63,11 @@ RSpec.describe Content::ImportPage, :type => :routine, :vcr => VCR_OPTS do
       it 'gets exercises with LO tags from the content' do
         result = nil
         expect {
-          result = Content::ImportPage.call(cnx_page: cnx_page,
+          result = Content::Routines::ImportPage.call(cnx_page: cnx_page,
                                             book_part: book_part)
-        }.to change{ Content::Exercise.count }.by(31)
+        }.to change{ Content::Models::Exercise.count }.by(31)
 
-        exercises = Content::Exercise.all.to_a
+        exercises = Content::Models::Exercise.all.to_a
       end
     end
   end

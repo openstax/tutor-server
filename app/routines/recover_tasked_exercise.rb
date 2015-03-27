@@ -7,7 +7,7 @@ class RecoverTaskedExercise
   protected
 
   def exec(tasked_exercise:)
-    fatal_error(:missing_recovery_exercise) \
+    fatal_error(code: :missing_recovery_exercise) \
       unless tasked_exercise.has_recovery?
 
     recovery_exercise = tasked_exercise.recovery_tasked_exercise

@@ -29,6 +29,7 @@ class SearchTasks
         ids.each do |i|
           sanitized_ids = to_number_array(i)
           next @items = @items.none if sanitized_ids.empty?
+
           @items = @items.includes(:taskings).joins(:taskings)
                          .where{taskings.user_id.in sanitized_ids}
         end

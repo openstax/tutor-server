@@ -1,4 +1,4 @@
-class Tasks::Tasking < ActiveRecord::Base
+class Tasks::Models::Tasking < Tutor::SubSystems::BaseModel
   belongs_to :role, subsystem: :entity
   belongs_to :task, subsystem: :entity
 

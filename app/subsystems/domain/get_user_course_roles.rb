@@ -13,7 +13,7 @@ class Domain::GetUserCourseRoles
   uses_routine Role::GetUserRoles,
                as: :get_user_roles
 
-  uses_routine CourseMembership::Api::GetCourseRoles,
+  uses_routine CourseMembership::GetCourseRoles,
                as: :get_course_roles
 
   protected

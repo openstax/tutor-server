@@ -1,4 +1,4 @@
-class Content::ExerciseTag < ActiveRecord::Base
+class Content::Models::ExerciseTag < Tutor::SubSystems::BaseModel
   belongs_to :exercise
   belongs_to :tag
 
