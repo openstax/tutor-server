@@ -1,4 +1,4 @@
-class Content::TagResourceWithTopics
+class Content::Routines::TagResourceWithTopics
 
   lev_routine
 
@@ -13,7 +13,7 @@ class Content::TagResourceWithTopics
     outputs[:topics] = []
     outputs[:tags] = []
     topics.each do |t|
-      topic = t.is_a?(Content::Topic) ? t : Content::Topic.find_or_create_by(name: t.to_s)
+      topic = t.is_a?(Content::Models::Topic) ? t : Content::Models::Topic.find_or_create_by(name: t.to_s)
       outputs[:topics] << topic
       transfer_errors_from(topic, scope: :topics)
 

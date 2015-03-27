@@ -1,2 +1,2 @@
-class Entity::User < ActiveRecord::Base
+class Entity::Models::User < Tutor::SubSystems::BaseModel
 end

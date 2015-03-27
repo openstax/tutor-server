@@ -1,5 +1,5 @@
 class Student < ActiveRecord::Base
-  belongs_to :user, class_name: 'UserProfile::Profile'
+  belongs_to :user, class_name: 'UserProfile::Models::Profile'
   belongs_to :course
   belongs_to :section
 

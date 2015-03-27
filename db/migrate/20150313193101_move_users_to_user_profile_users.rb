@@ -28,7 +28,7 @@ class MoveUsersToUserProfileUsers < ActiveRecord::Migration
       Domain::CreateUserProfile.call(attrs)
     end
 
-    UserProfile::User.find_each do |up_user|
+    UserProfile::Models::User.find_each do |up_user|
       Domain::CreateUserProfile.call(entity_user_id: up_user.entity_user_id,
                                      created_at: up_user.created_at,
                                      updated_at: up_user.updated_at)

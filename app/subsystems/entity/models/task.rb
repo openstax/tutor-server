@@ -1,2 +1,2 @@
-class Entity::Task < ActiveRecord::Base
+class Entity::Models::Task < Tutor::SubSystems::BaseModel
 end

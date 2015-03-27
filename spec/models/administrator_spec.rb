@@ -11,7 +11,7 @@ RSpec.describe Administrator, :type => :model do
 
   it { is_expected.to validate_uniqueness_of(:user) }
 
-  let!(:anon)        { UserProfile::AnonymousUser.instance }
+  let!(:anon)        { UserProfile::Models::AnonymousUser.instance }
   let!(:user)        { FactoryGirl.create(:user) }
   let!(:admin1) { FactoryGirl.create(:administrator) }
 
@@ -27,6 +27,3 @@ RSpec.describe Administrator, :type => :model do
     expect(Administrator.create(user: user)).to be_valid
   end
 end
-
-
-

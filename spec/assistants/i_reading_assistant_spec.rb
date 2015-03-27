@@ -17,7 +17,7 @@ RSpec.describe IReadingAssistant, :type => :assistant, :vcr => VCR_OPTS do
 
     context "for the #{name.to_s} version" do
       let!(:cnx_page) { OpenStax::Cnx::V1::Page.new(hash: hash) }
-      let!(:page)     { Content::ImportPage.call(cnx_page: cnx_page,
+      let!(:page)     { Content::Routines::ImportPage.call(cnx_page: cnx_page,
                                                  book_part: book_part)
                                            .outputs.page }
       let!(:task_plan) {
@@ -80,7 +80,7 @@ RSpec.describe IReadingAssistant, :type => :assistant, :vcr => VCR_OPTS do
     let!(:cnx_page_hash) { { 'id' => '61445f78-00e2-45ae-8e2c-461b17d9b4fd',
                              'title' => "Newton's First Law of Motion: Inertia" } }
     let!(:cnx_page) { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash) }
-    let!(:page) { Content::ImportPage.call(cnx_page: cnx_page,
+    let!(:page) { Content::Routines::ImportPage.call(cnx_page: cnx_page,
                                            book_part: book_part)
                                      .outputs.page }
     let!(:task_plan) {

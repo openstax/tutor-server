@@ -1,4 +1,4 @@
-class Content::ExerciseTopic < ActiveRecord::Base
+class Content::Models::ExerciseTopic < Tutor::SubSystems::BaseModel
   sortable_belongs_to :exercise, on: :number, inverse_of: :exercise_topics
 
   belongs_to :topic

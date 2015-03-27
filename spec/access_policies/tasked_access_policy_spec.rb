@@ -45,7 +45,7 @@ RSpec.describe TaskedAccessPolicy, :type => :access_policy do
   context 'when the tasking is in the tasks subsystem' do
     it 'allows access for the taskee' do
       role = Role::CreateUserRole[requestor]
-      Tasks::Api::CreateTasking.call(task: tasked.task_step.task, role: role)
+      Tasks::CreateTasking.call(task: tasked.task_step.task, role: role)
 
       [:read, :create, :update, :destroy, :mark_completed].each do |allowed_action|
         expect(TaskedAccessPolicy.action_allowed?(allowed_action, requestor, tasked)).to be_truthy

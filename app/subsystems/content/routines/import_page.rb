@@ -1,24 +1,24 @@
-class Content::ImportPage
+class Content::Routines::ImportPage
 
   lev_routine
 
-  uses_routine Content::CreatePage,
+  uses_routine Content::Routines::CreatePage,
                as: :create_page,
                translations: { outputs: { type: :verbatim } }
 
-  uses_routine Content::TagResourceWithTopics,
+  uses_routine Content::Routines::TagResourceWithTopics,
                as: :add_lo,
                translations: { outputs: { type: :verbatim } }
 
-  uses_routine Content::ImportExercises,
+  uses_routine Content::Routines::ImportExercises,
                as: :import_exercises,
                translations: { outputs: { scope: :exercises } }
 
   protected
 
-  # Imports and saves a Cnx::Page as a Content::Page
-  # into the given Content::BookPart
-  # Returns the Content::Page object
+  # Imports and saves a Cnx::Page as a Content::Models::Page
+  # into the given Content::Models::BookPart
+  # Returns the Content::Models::Page object
   def exec(cnx_page:, book_part:)
     run(:create_page, url: cnx_page.url,
                       title: cnx_page.title,

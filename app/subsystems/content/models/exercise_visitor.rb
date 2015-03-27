@@ -1,4 +1,4 @@
-class Content::ExerciseVisitor < Content::BookVisitor
+class Content::Models::ExerciseVisitor < Content::Models::BookVisitor
 
   def initialize
     @exercises = {}
@@ -9,7 +9,7 @@ class Content::ExerciseVisitor < Content::BookVisitor
     page_topic_ids = page_topics.collect{|t| t.id}
 
     page_exercises =
-      Content::Exercise.joins{exercise_topics.topic}
+      Content::Models::Exercise.joins{exercise_topics.topic}
                        .where{exercise_topics.content_topic_id.in page_topic_ids}
 
     page_exercises.each do |page_exercise|

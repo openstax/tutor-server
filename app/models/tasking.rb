@@ -1,7 +1,7 @@
 class Tasking < ActiveRecord::Base
   belongs_to :taskee, polymorphic: true
   belongs_to :task, counter_cache: true
-  belongs_to :user, class_name: 'UserProfile::Profile'
+  belongs_to :user, class_name: 'UserProfile::Models::Profile'
 
   validates :taskee, presence: true
   validates :task, presence: true,
