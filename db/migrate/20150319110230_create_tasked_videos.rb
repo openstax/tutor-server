@@ -4,7 +4,6 @@ class CreateTaskedVideos < ActiveRecord::Migration
       t.string :url, null: false
       t.text :content, null: false
       t.string :title
-      t.string :video_url
 
       t.timestamps null: false
     end
