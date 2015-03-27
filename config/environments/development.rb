@@ -4,10 +4,7 @@ Rails.application.configure do
   # In the development environment your application's code is reloaded on
   # every request. This slows down response time but is perfect for development
   # since you don't have to restart the web server when you make code changes.
-  #
-  # Class reloading is disabled by setting cache_classes=true
-  # This is so the the subsystems do not unload when they're modified
-  config.cache_classes = true
+  config.cache_classes = false
 
   # Do not eager load code on boot.
   config.eager_load = false
@@ -45,3 +42,4 @@ Rails.application.configure do
   # Don't error out when trying to connect to external sites
   WebMock.allow_net_connect!
 end
+
