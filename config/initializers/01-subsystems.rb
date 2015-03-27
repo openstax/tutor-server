@@ -1,12 +1,6 @@
 require 'tutor/subsystems'
 
-# Include extensions into ActiveRecord::Base so they're available to all models
-ActiveRecord::Base.send(:include, Tutor::SubSystems::AssociationExtensions)
-
-#======================
-# Initialize SubSystems
-#======================
-Tutor::SubSystems.configure(
-  path: Rails.root.join("app/subsystems"),
-  limit_to: %w(content course_content course_profile entity tasks role course_membership)
-)
+# Only these namespaces have been configured and should be extended
+# Once they are all configured, we can remove this line entirely,
+# but will still need to require the subsystems on rails boot, before any models are loaded
+Tutor::SubSystems.valid_namespaces = %w(content course_content course_profile entity tasks role course_membership)

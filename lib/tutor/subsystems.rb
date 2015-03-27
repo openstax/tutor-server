@@ -1,73 +1,15 @@
 require_relative 'subsystems/association_extensions'
-require_relative 'subsystems/namespace'
-require 'singleton'
-require 'forwardable'
+require_relative 'subsystems/base_model'
 
 module Tutor
 
   module SubSystems
-
-    # Attach a few methods from the Definitions singleton to the SubSystems module
-    # This way they can be called in a more natural fasion directly
-    class << self
-      extend Forwardable
-      def_delegators :"Tutor::SubSystems::Definitions.instance", :configure, :valid_name?, :path
-    end
-
-    # Record information about all the subsystems that are defined
-    # Contains a list of each namespace that's defined as a subsystem
-    class Definitions
-      include Singleton
-      include Enumerable
-
-      attr_reader :path
-      # Initialize with empty definitions.
-      # This way it doesn't blow up if "configure" isn't called
-      def initialize
-        @path     = Rails.root.join("app/subsystems")
-        @limit_to = []
-        @systems  = {}
-      end
-
-      # Root directory to search for subsystems
-      # limit_to will restrict operations on only those subsystems.
-      # if limit_to is nil (the default), it will default to all directories under root
-      def configure(path:nil, limit_to:[])
-        @path = path
-        @limit_to = limit_to
-
-        ## Removes the subsystems path from the Rail's loading conventions
-        # Each namespace will re-establish it's mappings later when it's created
-        Rails.application.config.autoload_paths   -= [ path.to_s ]
-        Rails.application.config.eager_load_paths -= [ path.to_s ]
-
-        # Setup a Namespace for each directory found under our root path
-        paths = Pathname.glob( path.join("*") )
-        @systems = paths.each_with_object({}) do |subpath, systems|
-          name = subpath.basename.to_s
-          systems[name] = SubSystems::Namespace.new(name) if subpath.directory?
-        end
-        @systems.each{|_,ss| ss.require_all }
-      end
-
-      def each(&block)
-        @systems.each(&block)
-      end
-
-      # returns true if the subsystem name is included in the list of valid subsystems
-      # either by use of limit_to or by detecting a directory with that name
-      def valid_name?(name)
-        name.present? && ( @limit_to.empty? || @limit_to.include?(name) )
-      end
-
+    mattr_accessor :valid_namespaces
+    # called by the association_extensions to determine if a namespace should be extended
+    def self.valid_name?(name)
+      name.present? && (valid_namespaces.empty? || valid_namespaces.include?(name))
     end
 
   end
 
 end
-
-
-# Call this here so that subystems are configured
-# even if the rails initializers are not ran.
-# Looking at you rails-erd
-Tutor::SubSystems::Definitions.instance()

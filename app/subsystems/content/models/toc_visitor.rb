@@ -1,4 +1,4 @@
-class Content::TocVisitor < Content::BookVisitor
+class Content::Models::TocVisitor < Content::Models::BookVisitor
 
   def initialize
     @level_stack = []

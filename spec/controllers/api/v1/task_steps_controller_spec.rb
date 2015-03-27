@@ -28,7 +28,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
     te
   }
 
-  let!(:course)          { Entity::Course.create }
+  let!(:course)          { Entity::Models::Course.create }
 
   describe "#show" do
     it "should work on the happy path" do
@@ -191,7 +191,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
   describe "practice task update step" do
     it "allows updating of a step (needed to test access to legacy and SS taskings)" do
       Domain::AddUserAsCourseStudent[course: course, user: user_1]
-      task = Domain::ResetPracticeWidget[role: Entity::Role.last, condition: :fake]
+      task = Domain::ResetPracticeWidget[role: Entity::Models::Role.last, condition: :fake]
 
       step = task.task_steps.first
 

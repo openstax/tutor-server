@@ -41,7 +41,7 @@ class CalculateIReadingStats
 
   def task_plan_pages
     if @plan.settings && @plan.settings['page_ids']
-      Content::Api::GetPagesAttributes.call(page_ids: @plan.settings['page_ids']).outputs.pages
+      Content::GetPagesAttributes.call(page_ids: @plan.settings['page_ids']).outputs.pages
     else
       []
     end

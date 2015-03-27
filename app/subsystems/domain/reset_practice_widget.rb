@@ -2,7 +2,7 @@ class Domain::ResetPracticeWidget
   lev_routine express_output: :task
 
   uses_routine Domain::GetPracticeWidget
-  uses_routine Tasks::Api::CreateTasking
+  uses_routine Tasks::CreateTasking
 
   protected
 
@@ -41,7 +41,7 @@ class Domain::ResetPracticeWidget
 
     # Assign it to role inside the Task subsystem (might not have much in there now)
 
-    run(Tasks::Api::CreateTasking, role: role, task: task)
+    run(Tasks::CreateTasking, role: role, task: task)
 
     # return the Task
 

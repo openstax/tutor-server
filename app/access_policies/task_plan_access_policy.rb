@@ -4,12 +4,12 @@ class TaskPlanAccessPolicy
     when :read, :create, :update, :publish, :destroy, :stats
       return false unless requestor.is_human?
       case task_plan.owner
-      when UserProfile::Profile
+      when UserProfile::Models::Profile
         task_plan.owner == requestor
-      when Entity::User
+      when Entity::Models::User
         user = UserProfile::FindOrCreate.call(requestor).outputs.user
         user == task_plan.owner
-      when Entity::Course
+      when Entity::Models::Course
         ## Treat failure to positively identify the user
         ## as a course teacher as a denial of access.
         ## (This happens when the user is anonymous.)

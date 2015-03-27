@@ -32,14 +32,16 @@ module Tutor::SubSystems
         subsystem_name = options.delete(:subsystem).to_s
         return if ['none','ignore'].include?(subsystem_name)
 
-        my_subsystem_name = self.name.deconstantize.underscore
+        # Find the string before the first ::, thats the subsystem module
+        my_subsystem_name = self.name.to_s[/(\w+?)::/,1].underscore
 
+        # Only extend subsystem's that are listed as valid.
         return unless Tutor::SubSystems.valid_name?(my_subsystem_name)
 
-        # if the :subsystem wasn't specified, default to the current model's subsystem
+        # If the :subsystem wasn't specified, default to the current model's subsystem
         subsystem_name = my_subsystem_name if subsystem_name.blank?
 
-        options[:class_name] ||= "::#{subsystem_name.camelize}::#{association_name.to_s.camelize.singularize}"
+        options[:class_name] ||= "::#{subsystem_name.camelize}::Models::#{association_name.to_s.camelize.singularize}"
         if is_belongs_to
           options[:foreign_key] ||= "#{subsystem_name}_#{association_name.to_s.underscore}_id"
         else

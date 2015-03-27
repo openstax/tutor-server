@@ -9,6 +9,7 @@ RSpec.describe Admin::CoursesController do
     it 'assigns all Domain::ListCourses output to @courses' do
       Domain::CreateCourse.call(name: 'Hello World')
       get :index
+
       expect(assigns[:courses].count).to eq(1)
       expect(assigns[:courses].first.name).to eq('Hello World')
     end
@@ -20,7 +21,7 @@ RSpec.describe Admin::CoursesController do
     end
 
     it 'creates a blank course profile' do
-      expect(CourseProfile::Profile.count).to eq(1)
+      expect(CourseProfile::Models::Profile.count).to eq(1)
     end
 
     it 'sets a flash notice' do
