@@ -1,11 +1,11 @@
-class Content::Api::ImportExercises
+class Content::Routines::ImportExercises
 
   # This Regex finds the LO's within the exercise tags
   LO_REGEX = /ost-tag-lo-([\w-]+-lo[\d]+)/
 
   lev_routine
 
-  uses_routine Content::Api::TagResourceWithTopics,
+  uses_routine Content::Routines::TagResourceWithTopics,
                as: :add_lo,
                translations: { outputs: { type: :verbatim } }
 

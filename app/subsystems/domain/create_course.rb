@@ -4,7 +4,7 @@ class Domain::CreateCourse
   uses_routine Entity::CreateCourse,
     translations: { outputs: { type: :verbatim } },
     as: :create_entity_course
-  uses_routine CourseProfile::Api::CreateCourseProfile,
+  uses_routine CourseProfile::Routines::CreateCourseProfile,
     translations: { outputs: { type: :verbatim } },
     as: :create_course_profile
 

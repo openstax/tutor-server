@@ -12,7 +12,7 @@ FactoryGirl.define do
         hash: {'id' => '092bbf0d-0729-42ce-87a6-fd96fd87a083', 'title' => 'Force'}
       )
       book_part = FactoryGirl.create :content_book_part
-      page      = Content::Api::ImportPage.call(cnx_page: cnx_page, book_part: book_part).outputs.page
+      page      = Content::Routines::ImportPage.call(cnx_page: cnx_page, book_part: book_part).outputs.page
       { page_ids: [page.id] }
     end
 

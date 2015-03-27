@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Content::Api::ImportPage, :type => :routine, :vcr => VCR_OPTS do
+RSpec.describe Content::Routines::ImportPage, :type => :routine, :vcr => VCR_OPTS do
 
   let!(:book_part) { FactoryGirl.create :content_book_part }
 
@@ -19,7 +19,7 @@ RSpec.describe Content::Api::ImportPage, :type => :routine, :vcr => VCR_OPTS do
       it 'creates a new Page' do
         result = nil
         expect {
-          result = Content::Api::ImportPage.call(cnx_page: cnx_page,
+          result = Content::Routines::ImportPage.call(cnx_page: cnx_page,
                                             book_part: book_part)
         }.to change{ Content::Models::Page.count }.by(1)
         expect(result.errors).to be_empty
@@ -28,7 +28,7 @@ RSpec.describe Content::Api::ImportPage, :type => :routine, :vcr => VCR_OPTS do
       end
 
       it 'converts relative links into absolute links' do
-        page = Content::Api::ImportPage.call(cnx_page: cnx_page,
+        page = Content::Routines::ImportPage.call(cnx_page: cnx_page,
                                         book_part: book_part).outputs[:page]
         doc = Nokogiri::HTML(page.content)
 
@@ -41,7 +41,7 @@ RSpec.describe Content::Api::ImportPage, :type => :routine, :vcr => VCR_OPTS do
       it 'finds LO tags in the content' do
         result = nil
         expect {
-          result = Content::Api::ImportPage.call(cnx_page: cnx_page,
+          result = Content::Routines::ImportPage.call(cnx_page: cnx_page,
                                             book_part: book_part)
         }.to change{ Content::Models::Topic.count }.by(2)
 
@@ -61,7 +61,7 @@ RSpec.describe Content::Api::ImportPage, :type => :routine, :vcr => VCR_OPTS do
       it 'gets exercises with LO tags from the content' do
         result = nil
         expect {
-          result = Content::Api::ImportPage.call(cnx_page: cnx_page,
+          result = Content::Routines::ImportPage.call(cnx_page: cnx_page,
                                             book_part: book_part)
         }.to change{ Content::Models::Exercise.count }.by(31)
 

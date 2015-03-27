@@ -6,7 +6,7 @@ class Content::ImportBook
                as: :create_book,
                translations: { outputs: { type: :verbatim } }
 
-  uses_routine Content::Api::ImportBookPart,
+  uses_routine Content::Routines::ImportBookPart,
                as: :import_book_part,
                translations: { outputs: { type: :verbatim } }
 

@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Content::Api::ImportExercises, :type => :routine, :vcr => VCR_OPTS do
+RSpec.describe Content::Routines::ImportExercises, :type => :routine, :vcr => VCR_OPTS do
 
   context 'fake client' do
     before(:all) do
@@ -27,7 +27,7 @@ RSpec.describe Content::Api::ImportExercises, :type => :routine, :vcr => VCR_OPT
     it 'can import all exercises with a single tag' do
       result = nil
       expect {
-        result = Content::Api::ImportExercises.call(tag: 'k12phys-ch04-s01-lo02')
+        result = Content::Routines::ImportExercises.call(tag: 'k12phys-ch04-s01-lo02')
       }.to change{ Content::Models::Exercise.count }.by(2)
 
       exercises = Content::Models::Exercise.all.to_a
@@ -40,7 +40,7 @@ RSpec.describe Content::Api::ImportExercises, :type => :routine, :vcr => VCR_OPT
     it 'can import all exercises with a set of tags' do
       result = nil
       expect {
-        result = Content::Api::ImportExercises.call(tag: [
+        result = Content::Routines::ImportExercises.call(tag: [
           'k12phys-ch04-s01-lo01',
           'k12phys-ch04-s01-lo02'
         ])
@@ -68,7 +68,7 @@ RSpec.describe Content::Api::ImportExercises, :type => :routine, :vcr => VCR_OPT
     it 'can import all exercises with a single tag' do
       result = nil
       expect {
-        result = Content::Api::ImportExercises.call(tag: 'k12phys-ch04-s01-lo02')
+        result = Content::Routines::ImportExercises.call(tag: 'k12phys-ch04-s01-lo02')
       }.to change{ Content::Models::Exercise.count }.by(15)
 
       exercises = Content::Models::Exercise.all.to_a
@@ -80,7 +80,7 @@ RSpec.describe Content::Api::ImportExercises, :type => :routine, :vcr => VCR_OPT
 
     it 'can import all exercises with a set of tags' do
       tags = ['k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02']
-      expect { Content::Api::ImportExercises.call(tag: tags) }
+      expect { Content::Routines::ImportExercises.call(tag: tags) }
         .to change{ Content::Models::Exercise.count }.by(31)
 
       exercises = Content::Models::Exercise.all.to_a

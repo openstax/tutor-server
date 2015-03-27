@@ -1,4 +1,4 @@
-class Content::Api::CreatePage
+class Content::Routines::CreatePage
 
   lev_routine
 

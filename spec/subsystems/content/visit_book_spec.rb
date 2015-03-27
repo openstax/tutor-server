@@ -59,9 +59,9 @@ RSpec.describe Content::VisitBook, :type => :routine do
     OpenStax::Exercises::V1.fake_client.add_exercise(uid: 2, tags: ['ost-tag-lo-topic2-lo2','homework'])
     OpenStax::Exercises::V1.fake_client.add_exercise(uid: 3, tags: ['ost-tag-lo-topic3-lo3','concept'])
 
-    Content::Api::ImportExercises.call(tag: 'ost-tag-lo-topic1-lo1')
-    Content::Api::ImportExercises.call(tag: 'ost-tag-lo-topic2-lo2')
-    Content::Api::ImportExercises.call(tag: 'ost-tag-lo-topic3-lo3')
+    Content::Routines::ImportExercises.call(tag: 'ost-tag-lo-topic1-lo1')
+    Content::Routines::ImportExercises.call(tag: 'ost-tag-lo-topic2-lo2')
+    Content::Routines::ImportExercises.call(tag: 'ost-tag-lo-topic3-lo3')
 
     exercises = Content::VisitBook[book: root_book_part.book,
                                    visitor_names: :exercises]

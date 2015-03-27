@@ -1,4 +1,4 @@
-class Content::Api::TagResourceWithTopics
+class Content::Routines::TagResourceWithTopics
 
   lev_routine
 

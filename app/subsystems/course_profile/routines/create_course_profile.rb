@@ -1,4 +1,4 @@
-class CourseProfile::Api::CreateCourseProfile
+class CourseProfile::Routines::CreateCourseProfile
   lev_routine
 
   protected

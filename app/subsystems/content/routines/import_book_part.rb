@@ -1,10 +1,10 @@
-class Content::Api::ImportBookPart
+class Content::Routines::ImportBookPart
 
   lev_routine
 
-  uses_routine Content::Api::ImportBookPart, as: :import_book_part
+  uses_routine Content::Routines::ImportBookPart, as: :import_book_part
 
-  uses_routine Content::Api::ImportPage, as: :import_page
+  uses_routine Content::Routines::ImportPage, as: :import_page
 
   protected
 

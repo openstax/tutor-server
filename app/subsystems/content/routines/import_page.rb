@@ -1,16 +1,16 @@
-class Content::Api::ImportPage
+class Content::Routines::ImportPage
 
   lev_routine
 
-  uses_routine Content::Api::CreatePage,
+  uses_routine Content::Routines::CreatePage,
                as: :create_page,
                translations: { outputs: { type: :verbatim } }
 
-  uses_routine Content::Api::TagResourceWithTopics,
+  uses_routine Content::Routines::TagResourceWithTopics,
                as: :add_lo,
                translations: { outputs: { type: :verbatim } }
 
-  uses_routine Content::Api::ImportExercises,
+  uses_routine Content::Routines::ImportExercises,
                as: :import_exercises,
                translations: { outputs: { scope: :exercises } }
 
