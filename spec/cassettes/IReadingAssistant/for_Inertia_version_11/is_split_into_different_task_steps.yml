@@ -27,7 +27,7 @@ http_interactions:
       Content-Type:
       - text/plain
       Location:
-      - "/contents/61445f78-00e2-45ae-8e2c-461b17d9b4fd@4"
+      - "/contents/61445f78-00e2-45ae-8e2c-461b17d9b4fd@11"
       Server:
       - waitress
       X-Varnish-Action:
@@ -37,9 +37,9 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Thu, 19 Mar 2015 14:13:34 GMT
+      - Fri, 27 Mar 2015 00:58:31 GMT
       X-Varnish:
-      - '173000177'
+      - '177871128'
       Via:
       - 1.1 varnish
       Connection:
@@ -54,10 +54,10 @@ http_interactions:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Thu, 19 Mar 2015 14:13:30 GMT
+  recorded_at: Fri, 27 Mar 2015 00:58:46 GMT
 - request:
     method: get
-    uri: http://archive.cnx.org/contents/61445f78-00e2-45ae-8e2c-461b17d9b4fd@4
+    uri: http://archive.cnx.org/contents/61445f78-00e2-45ae-8e2c-461b17d9b4fd@11
     body:
       encoding: US-ASCII
       string: ''
@@ -88,13 +88,13 @@ http_interactions:
       X-Factor-Ttl:
       - 'ttl: 604800.000'
       Content-Length:
-      - '38216'
+      - '41284'
       Accept-Ranges:
       - bytes
       Date:
-      - Thu, 19 Mar 2015 14:13:35 GMT
+      - Fri, 27 Mar 2015 00:58:31 GMT
       X-Varnish:
-      - 173000179 170915691
+      - 177871129 177861965
       Via:
       - 1.1 varnish
       Connection:
@@ -102,19 +102,19 @@ http_interactions:
       X-Cache:
       - HIT
       X-Varnish-Age:
-      - '231038'
+      - '1060'
       Age:
       - '0'
     body:
       encoding: UTF-8
-      string: '{"googleAnalytics": null, "version": "4", "submitlog": "imported from
-        staging3", "abstract": null, "revised": "2015-03-16T16:00:23Z", "roles": null,
-        "keywords": [], "id": "61445f78-00e2-45ae-8e2c-461b17d9b4fd", "title": "Newton''s
-        First Law of Motion: Inertia", "mediaType": "application/vnd.org.cnx.module",
+      string: '{"googleAnalytics": null, "version": "11", "submitlog": "put sim back
+        in ost-interactive note, section", "abstract": null, "revised": "2015-03-26T16:26:49Z",
+        "roles": null, "keywords": [], "id": "61445f78-00e2-45ae-8e2c-461b17d9b4fd",
+        "title": "Newton''s First Law of Motion: Inertia", "mediaType": "application/vnd.org.cnx.module",
         "content": "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head xmlns:c=\"http://cnx.rice.edu/cnxml\"
         xmlns:md=\"http://cnx.rice.edu/mdml\"><title>Newton''s First Law of Motion:
-        Inertia</title><meta name=\"created-time\" content=\"2015/03/11 13:32:11 -0500\"/><meta
-        name=\"revised-time\" content=\"2015/03/16 11:00:23.682 GMT-5\"/><meta name=\"author\"
+        Inertia</title><meta name=\"created-time\" content=\"2015/03/11 08:32:11 -0500\"/><meta
+        name=\"revised-time\" content=\"2015/03/26 11:26:49.873 GMT-5\"/><meta name=\"author\"
         content=\"AlinaManager\"/><meta name=\"acl-list\" content=\"AlinaManager\"/><meta
         name=\"licensor\" content=\"AlinaManager\"/><meta name=\"license\" content=\"http://creativecommons.org/licenses/by/4.0/\"/><meta
         name=\"subject\" content=\"Mathematics and Statistics\"/></head>\n\n<body
@@ -346,14 +346,24 @@ http_interactions:
         in magnitude and direction depending on how much force you apply. Try increasing
         or decreasing the friction force to see how this affects the motion.</p>\n<div
         data-type=\"media\" id=\"fs-idp5640912\" class=\"os-embed\" data-alt=\" \">
-        <iframe width=\"960\" height=\"785\" src=\"http://archive.cnx.org/specials/e2ca52af-8c6b-450e-ac2f-9300b38e8739/moving-man/\"/></div>\n\n  <div
-        data-type=\"exercise\" id=\"fs-idm56919408\" class=\"os-exercise grasp-check\"><div
-        data-type=\"problem\" id=\"fs-idm68103760\"><p id=\"fs-idm17001808\"><a href=\"#ost/api/ex/k12phys-ch04-ex034\"
+        <iframe width=\"760\" height=\"600\" src=\"https://phet.colorado.edu/sims/html/graphing-lines/latest/graphing-lines_en.html\"/></div>\n</div><div
+        data-type=\"note\" id=\"eip-416\" data-label=\"\"><div data-type=\"media\"
+        id=\"eip-id1165825400229\" class=\"os-embed\" data-alt=\" \"> <iframe width=\"760\"
+        height=\"1000\" src=\"http://connexions.github.io/simulations/moving-man/\"/></div>\n</div>\n\n\n<div
+        data-type=\"note\" id=\"fs-id1171911690647\" data-label=\"\"><div data-type=\"title\">Virtual
+        Physics smaller</div><div data-type=\"media\" id=\"fs-id1171910094518\" class=\"os-embed\"
+        data-alt=\" \"> <iframe width=\"600\" height=\"600\" src=\"https://phet.colorado.edu/sims/html/graphing-lines/latest/graphing-lines_en.html\"/></div>\n</div><div
+        data-type=\"note\" id=\"fs-id1171904556588\" data-label=\"\"><div data-type=\"title\">smaller</div><div
+        data-type=\"media\" id=\"fs-id1171907668538\" class=\"os-embed\" data-alt=\"
+        \"> <iframe width=\"600\" height=\"1000\" src=\"http://connexions.github.io/simulations/moving-man/\"/></div>\n</div>\n\n<div
+        data-type=\"note\" id=\"fs-id1167243825861\">\n\n  <div data-type=\"exercise\"
+        id=\"fs-idm56919408\" class=\"os-exercise grasp-check\">\n<div data-type=\"problem\"
+        id=\"fs-idm68103760\"><p id=\"fs-idm17001808\"><a href=\"#ost/api/ex/k12phys-ch04-ex034\"
         class=\"autogenerated-content\">[link]</a>\n<div data-type=\"note\" id=\"fs-idm79914448\"
         class=\"os-teacher\" data-label=\"Teacher Edition\">\n  <p id=\"fs-idm91425440\"><span
         data-type=\"term\">[Grasp Check]</span>\nAnswer: After the person stops pushing
         the box, no force is applied to the right, but the friction force remains,
-        which acts to the left. Therefore, the net force acts to the left.</p>\n\n</div>\n\n  </p></div></div></div></section>\n<section
+        which acts to the left. Therefore, the net force acts to the left.</p>\n\n</div>\n\n\n  </p></div></div></div></section>\n<section
         data-depth=\"1\" id=\"eip-305\" class=\"summary ost-reading-discard\"><h1
         data-type=\"title\">Section Summary</h1><p id=\"eip-idm44169728\"><span data-type=\"list\"
         data-list-type=\"bulleted\" id=\"eip-idm85549552\"><span data-type=\"item\">Newton&#8217;s
@@ -529,32 +539,58 @@ http_interactions:
         "Alina Slavik", "id": "AlinaManager"}], "authors": [{"website": "", "surname":
         "Slavik", "suffix": "", "firstname": "Alina", "title": "", "othername": "",
         "email": "alinams@rice.edu", "fullname": "Alina Slavik", "id": "AlinaManager"}],
-        "parentVersion": "", "legacy_version": "1.4", "licensors": [{"website": "",
+        "parentVersion": "", "legacy_version": "1.11", "licensors": [{"website": "",
         "surname": "Slavik", "suffix": "", "firstname": "Alina", "title": "", "othername":
         "", "email": "alinams@rice.edu", "fullname": "Alina Slavik", "id": "AlinaManager"}],
         "license": {"url": "http://creativecommons.org/licenses/by/4.0/", "code":
         "by", "version": "4.0", "name": "Creative Commons Attribution License"}, "language":
-        "en", "created": "2015-03-11T18:32:11Z", "doctype": "", "buyLink": null, "submitter":
+        "en", "created": "2015-03-11T13:32:11Z", "doctype": "", "buyLink": null, "submitter":
         {"website": "", "surname": "Slavik", "suffix": "", "firstname": "Alina", "title":
         "", "othername": "", "email": "alinams@rice.edu", "fullname": "Alina Slavik",
-        "id": "AlinaManager"}, "parentAuthors": [], "history": [{"changes": "imported
-        from staging3", "version": "4", "revised": "2015-03-16T16:00:23Z", "publisher":
-        {"website": "", "surname": "Slavik", "suffix": "", "firstname": "Alina", "title":
-        "", "othername": "", "email": "alinams@rice.edu", "fullname": "Alina Slavik",
-        "id": "AlinaManager"}}, {"changes": "switched sim link; added width and height
-        attribute", "version": "3", "revised": "2015-03-11T21:28:30Z", "publisher":
-        {"website": "", "surname": "Slavik", "suffix": "", "firstname": "Alina", "title":
-        "", "othername": "", "email": "alinams@rice.edu", "fullname": "Alina Slavik",
-        "id": "AlinaManager"}}, {"changes": "retitled module", "version": "2", "revised":
-        "2015-03-11T18:40:21Z", "publisher": {"website": "", "surname": "Slavik",
-        "suffix": "", "firstname": "Alina", "title": "", "othername": "", "email":
-        "alinams@rice.edu", "fullname": "Alina Slavik", "id": "AlinaManager"}}, {"changes":
-        "imported module", "version": "1", "revised": "2015-03-11T18:36:37Z", "publisher":
-        {"website": "", "surname": "Slavik", "suffix": "", "firstname": "Alina", "title":
-        "", "othername": "", "email": "alinams@rice.edu", "fullname": "Alina Slavik",
-        "id": "AlinaManager"}}]}'
+        "id": "AlinaManager"}, "parentAuthors": [], "history": [{"changes": "put sim
+        back in ost-interactive note, section", "version": "11", "revised": "2015-03-26T16:26:49Z",
+        "publisher": {"website": "", "surname": "Slavik", "suffix": "", "firstname":
+        "Alina", "title": "", "othername": "", "email": "alinams@rice.edu", "fullname":
+        "Alina Slavik", "id": "AlinaManager"}}, {"changes": "added examples of smaller
+        size constraints", "version": "10", "revised": "2015-03-23T16:39:55Z", "publisher":
+        {"website": "", "surname": "Stickney", "suffix": "", "firstname": "Ryan",
+        "title": "", "othername": "", "email": "sanura@mac.com", "fullname": "Ryan
+        Stickney", "id": "sanura"}}, {"changes": "dded cnx demo note and changed size
+        constraints", "version": "9", "revised": "2015-03-23T16:34:46Z", "publisher":
+        {"website": "", "surname": "Stickney", "suffix": "", "firstname": "Ryan",
+        "title": "", "othername": "", "email": "sanura@mac.com", "fullname": "Ryan
+        Stickney", "id": "sanura"}}, {"changes": "changed height, embedded in note",
+        "version": "8", "revised": "2015-03-23T16:28:14Z", "publisher": {"website":
+        "", "surname": "Stickney", "suffix": "", "firstname": "Ryan", "title": "",
+        "othername": "", "email": "sanura@mac.com", "fullname": "Ryan Stickney", "id":
+        "sanura"}}, {"changes": "revised interactive source", "version": "7", "revised":
+        "2015-03-23T16:21:55Z", "publisher": {"website": "", "surname": "Stickney",
+        "suffix": "", "firstname": "Ryan", "title": "", "othername": "", "email":
+        "sanura@mac.com", "fullname": "Ryan Stickney", "id": "sanura"}}, {"changes":
+        "pulled sim out of <section>", "version": "6", "revised": "2015-03-20T19:43:13Z",
+        "publisher": {"website": "", "surname": "Slavik", "suffix": "", "firstname":
+        "Alina", "title": "", "othername": "", "email": "alinams@rice.edu", "fullname":
+        "Alina Slavik", "id": "AlinaManager"}}, {"changes": "removed sim from note",
+        "version": "5", "revised": "2015-03-20T16:01:59Z", "publisher": {"website":
+        "", "surname": "Slavik", "suffix": "", "firstname": "Alina", "title": "",
+        "othername": "", "email": "alinams@rice.edu", "fullname": "Alina Slavik",
+        "id": "AlinaManager"}}, {"changes": "imported from staging3", "version": "4",
+        "revised": "2015-03-16T16:00:23Z", "publisher": {"website": "", "surname":
+        "Slavik", "suffix": "", "firstname": "Alina", "title": "", "othername": "",
+        "email": "alinams@rice.edu", "fullname": "Alina Slavik", "id": "AlinaManager"}},
+        {"changes": "switched sim link; added width and height attribute", "version":
+        "3", "revised": "2015-03-11T21:28:30Z", "publisher": {"website": "", "surname":
+        "Slavik", "suffix": "", "firstname": "Alina", "title": "", "othername": "",
+        "email": "alinams@rice.edu", "fullname": "Alina Slavik", "id": "AlinaManager"}},
+        {"changes": "retitled module", "version": "2", "revised": "2015-03-11T18:40:21Z",
+        "publisher": {"website": "", "surname": "Slavik", "suffix": "", "firstname":
+        "Alina", "title": "", "othername": "", "email": "alinams@rice.edu", "fullname":
+        "Alina Slavik", "id": "AlinaManager"}}, {"changes": "imported module", "version":
+        "1", "revised": "2015-03-11T18:36:37Z", "publisher": {"website": "", "surname":
+        "Slavik", "suffix": "", "firstname": "Alina", "title": "", "othername": "",
+        "email": "alinams@rice.edu", "fullname": "Alina Slavik", "id": "AlinaManager"}}]}'
     http_version: 
-  recorded_at: Thu, 19 Mar 2015 14:13:31 GMT
+  recorded_at: Fri, 27 Mar 2015 00:58:46 GMT
 - request:
     method: get
     uri: http://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-s02-lo01,k12phys-ch04-s02-lo02
@@ -576,7 +612,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Thu, 19 Mar 2015 14:13:42 GMT
+      - Fri, 27 Mar 2015 00:58:43 GMT
       Content-Type:
       - text/html
       Content-Length:
@@ -591,7 +627,7 @@ http_interactions:
         bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
         (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
     http_version: 
-  recorded_at: Thu, 19 Mar 2015 14:13:32 GMT
+  recorded_at: Fri, 27 Mar 2015 00:58:46 GMT
 - request:
     method: get
     uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-s02-lo01,k12phys-ch04-s02-lo02
@@ -613,7 +649,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Thu, 19 Mar 2015 14:13:44 GMT
+      - Fri, 27 Mar 2015 00:58:45 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -633,12 +669,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=VXBHM3J1MlNKVDFnclRSOWZuTERMTmpKcHhuWlVHekNPdFFNR3J3Y1dpRnRxWStSdURGZkdUVkExM3VsNHpFdjcxMTRRVFpRSzI3N0hFWU5tTndzcUE9PS0taWhVaDNETzVIQ0g4aDdTMGpDbDdKZz09--25b4d372cb927a97eb367310e91740d361bd67cc;
+      - _exercises_session=bGpPZnhqdy9lVTVqVGhkenNBTHRUQUl2eEcyWGpUOFRYY216L0VJNVRVSmJkTzNVci9TZXVDZWQ1T2gySGpmYU44eXVyQUo0NjBOV0RZL1ZVY2t6WEE9PS0tWkhTWjRsTmJNcy8ycWNvSnRUeG8rQT09--51448943078890f6a0d191e0eb92a999ba95d7af;
         path=/; HttpOnly
       X-Request-Id:
-      - 19a6b528-5bca-4749-8ede-b6e2b615b433
+      - d640d1f5-eaf9-402c-ab86-9075a88c57e9
       X-Runtime:
-      - '0.818269'
+      - '0.947022'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -1757,707 +1793,5 @@ http_interactions:
         dHMiOlsibXVsdGlwbGUtY2hvaWNlIiwiZnJlZS1yZXNwb25zZSJdLCJjb21i
         b19jaG9pY2VzIjpbXX1dfV19
     http_version: 
-  recorded_at: Thu, 19 Mar 2015 14:13:34 GMT
-- request:
-    method: get
-    uri: http://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex033
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Faraday v0.9.1
-      Accept:
-      - application/vnd.openstax.v1
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-  response:
-    status:
-      code: 301
-      message: Moved Permanently
-    headers:
-      Server:
-      - nginx/1.4.6 (Ubuntu)
-      Date:
-      - Thu, 19 Mar 2015 14:13:46 GMT
-      Content-Type:
-      - text/html
-      Content-Length:
-      - '193'
-      Connection:
-      - keep-alive
-      Location:
-      - https://exercises-dev1.openstax.org/api/exercises?q=tag%3Ak12phys-ch04-ex033
-    body:
-      encoding: UTF-8
-      string: "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n<body
-        bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
-        (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
-    http_version: 
-  recorded_at: Thu, 19 Mar 2015 14:13:35 GMT
-- request:
-    method: get
-    uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex033
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Faraday v0.9.1
-      Accept:
-      - application/vnd.openstax.v1
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Server:
-      - nginx/1.4.6 (Ubuntu)
-      Date:
-      - Thu, 19 Mar 2015 14:13:47 GMT
-      Content-Type:
-      - application/json; charset=utf-8
-      Transfer-Encoding:
-      - chunked
-      Connection:
-      - keep-alive
-      Status:
-      - 200 OK
-      X-Frame-Options:
-      - SAMEORIGIN
-      X-Xss-Protection:
-      - 1; mode=block
-      X-Content-Type-Options:
-      - nosniff
-      Etag:
-      - W/"e44a72e37cd0e7c819b33498c7344771"
-      Cache-Control:
-      - max-age=0, private, must-revalidate
-      Set-Cookie:
-      - _exercises_session=WnJ5cHQ5MmtiNG40dlNwVlNoaWxKMDVoa0hqaEhicTNubVhsYWMyN0lCb0V4S1NLUWJtVHovWmVDREY2YU1pNVdMdUhvV2NjS1NxM21mSG1IUG1DeVE9PS0tUkQvRGVCLzNDUExmNW90cTIrWG5TUT09--4440038f3621cf56b88fa7298143dd49e2aa3d21;
-        path=/; HttpOnly
-      X-Request-Id:
-      - 5d3bdc1c-7590-4c70-a836-3657c0c91888
-      X-Runtime:
-      - '0.065554'
-      Strict-Transport-Security:
-      - max-age=31536000; includeSubdomains
-    body:
-      encoding: ASCII-8BIT
-      string: !binary |-
-        eyJ0b3RhbF9jb3VudCI6MSwiaXRlbXMiOlt7InVpZCI6IjMzQDEiLCJudW1i
-        ZXIiOjMzLCJ2ZXJzaW9uIjoxLCJwdWJsaXNoZWRfYXQiOiIyMDE1LTAzLTEw
-        VDE5OjQ5OjE4LjM0N1oiLCJlZGl0b3JzIjpbXSwiYXV0aG9ycyI6W3sidXNl
-        cl9pZCI6MX1dLCJjb3B5cmlnaHRfaG9sZGVycyI6W3sidXNlcl9pZCI6Mn1d
-        LCJkZXJpdmVkX2Zyb20iOltdLCJhdHRhY2htZW50cyI6W10sInRhZ3MiOlsi
-        azEycGh5cy1jaDA0LXMwMi1sbzAxIiwiazEycGh5cy1jaDA0LWV4MDMzIiwi
-        cHJhY3RpY2UtY29uY2VwdHMiLCJ0dXRvci1vbmx5IiwiZG9rMSIsInRpbWUt
-        c2hvcnQiLCJkaXNwbGF5LWZyZWUtcmVzcG9uc2UiLCJkaXNwbGF5LXJlYy1z
-        ZW5zaXRpdmUiXSwic3RpbXVsdXNfaHRtbCI6IiIsInF1ZXN0aW9ucyI6W3si
-        aWQiOjExMSwic3RpbXVsdXNfaHRtbCI6IiIsInN0ZW1faHRtbCI6IkhvdyBk
-        byB5b3UgZXhwcmVzcyBtYXRoZW1hdGljYWxseSB0aGF0IG5vIGV4dGVybmFs
-        IGZvcmNlIGlzIGFjdGluZyBvbiBhIGJvZHk/IiwiYW5zd2VycyI6W3siaWQi
-        OjQwMCwiY29udGVudF9odG1sIjoiPHNwYW4gZGF0YS1tYXRoPVwiRl9cXHRl
-        eHR7bmV0fSA9IFxcaW5mdHlcIj5NYXRoPC9zcGFuPiIsImNvcnJlY3RuZXNz
-        IjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IkFyZSB5b3Ugc3VyZSB0aGF0IDxz
-        cGFuIGRhdGEtbWF0aD1cIkZfXFx0ZXh0e25ldH0gPSBcXGluZnR5XCI+TWF0
-        aDwvc3Bhbj4gZXhwcmVzc2VzIG1hdGhlbWF0aWNhbGx5IHRoYXQgbm8gZXh0
-        ZXJuYWwgZm9yY2UgaXMgYWN0aW5nIG9uIGEgYm9keT8ifSx7ImlkIjozOTks
-        ImNvbnRlbnRfaHRtbCI6IjxzcGFuIGRhdGEtbWF0aD1cIkZfXFx0ZXh0e25l
-        dH0gPSAxXCI+TWF0aDwvc3Bhbj4iLCJjb3JyZWN0bmVzcyI6IjAuMCIsImZl
-        ZWRiYWNrX2h0bWwiOiJJcyBpdCBjb3JyZWN0IHRvIHNheSB0aGF0IDxzcGFu
-        IGRhdGEtbWF0aD1cIlxcdGV4dHtGfV9cXHRleHR7bmV0fSA9IDFcIj5NYXRo
-        PC9zcGFuPiByZXByZXNlbnRzIG5vIGV4dGVybmFsIGZvcmNlIGlzIGFjdGlu
-        ZyBvbiBhIGJvZHk/IERvZXNu4oCZdCBpdCB0ZWxsIHRoYXQgYSB1bml0IGZv
-        cmNlIGlzIGFjdGluZyBpbiB0aGUgcG9zaXRpdmUgZGlyZWN0aW9uPyJ9LHsi
-        aWQiOjM5OCwiY29udGVudF9odG1sIjoiPHNwYW4gZGF0YS1tYXRoPVwiRl9c
-        XHRleHR7bmV0fSA9IDBcIj5NYXRoPC9zcGFuPiIsImNvcnJlY3RuZXNzIjoi
-        MS4wIiwiZmVlZGJhY2tfaHRtbCI6IkNvcnJlY3QhIDxzcGFuIGRhdGEtbWF0
-        aD1cIkZfXFx0ZXh0e25ldH0gPSAwXCI+TWF0aDwvc3Bhbj4gbWF0aGVtYXRp
-        Y2FsbHkgbWVhbnMgdGhhdCBubyBleHRlcm5hbCBmb3JjZSBpcyBhY3Rpbmcg
-        b24gYSBib2R5LiJ9LHsiaWQiOjM5NywiY29udGVudF9odG1sIjoiPHNwYW4g
-        ZGF0YS1tYXRoPVwiRl9cXHRleHR7bmV0fSA9IHstMX1cIj5NYXRoPC9zcGFu
-        PiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IkRvIHlv
-        dSB0aGluayA8c3BhbiBkYXRhLW1hdGg9XCJGX1xcdGV4dHtuZXR9ID0gey0x
-        fVwiPk1hdGg8L3NwYW4+IG1lYW5zIHRoYXQgbm8gZXh0ZXJuYWwgZm9yY2Ug
-        aXMgYWN0aW5nIG9uIGEgYm9keT8gRG9lc27igJl0IGl0IHRlbGwgdGhhdCBh
-        IHVuaXQgZm9yY2UgaXMgYWN0aW5nIGluIHRoZSBuZWdhdGl2ZSBkaXJlY3Rp
-        b24/In1dLCJoaW50cyI6W10sImZvcm1hdHMiOlsibXVsdGlwbGUtY2hvaWNl
-        IiwiZnJlZS1yZXNwb25zZSJdLCJjb21ib19jaG9pY2VzIjpbXX1dfV19
-    http_version: 
-  recorded_at: Thu, 19 Mar 2015 14:13:36 GMT
-- request:
-    method: get
-    uri: http://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex034
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Faraday v0.9.1
-      Accept:
-      - application/vnd.openstax.v1
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-  response:
-    status:
-      code: 301
-      message: Moved Permanently
-    headers:
-      Server:
-      - nginx/1.4.6 (Ubuntu)
-      Date:
-      - Thu, 19 Mar 2015 14:13:47 GMT
-      Content-Type:
-      - text/html
-      Content-Length:
-      - '193'
-      Connection:
-      - keep-alive
-      Location:
-      - https://exercises-dev1.openstax.org/api/exercises?q=tag%3Ak12phys-ch04-ex034
-    body:
-      encoding: UTF-8
-      string: "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n<body
-        bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
-        (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
-    http_version: 
-  recorded_at: Thu, 19 Mar 2015 14:13:37 GMT
-- request:
-    method: get
-    uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex034
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Faraday v0.9.1
-      Accept:
-      - application/vnd.openstax.v1
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Server:
-      - nginx/1.4.6 (Ubuntu)
-      Date:
-      - Thu, 19 Mar 2015 14:13:48 GMT
-      Content-Type:
-      - application/json; charset=utf-8
-      Transfer-Encoding:
-      - chunked
-      Connection:
-      - keep-alive
-      Status:
-      - 200 OK
-      X-Frame-Options:
-      - SAMEORIGIN
-      X-Xss-Protection:
-      - 1; mode=block
-      X-Content-Type-Options:
-      - nosniff
-      Etag:
-      - W/"1edc9876248d860d4b4caef904652123"
-      Cache-Control:
-      - max-age=0, private, must-revalidate
-      Set-Cookie:
-      - _exercises_session=dUpJRmFUcW9WdVNLZUNIVzRLUGN6SlhWZC9aeGVDbHgrTGJKNWVYb0FDVklmSmlBekNuaTdGc09RN2FMbmhWZUNrOUc2djNxeElwMmwwRXNtMDg1SkE9PS0tc29JdTBaTC9LZFdCdUVPNlpocVBnUT09--b4fb42bdff90640cc75e503a0c573a68b86f963c;
-        path=/; HttpOnly
-      X-Request-Id:
-      - 964ae7f1-944b-4566-88b3-ce479fe3cded
-      X-Runtime:
-      - '0.042914'
-      Strict-Transport-Security:
-      - max-age=31536000; includeSubdomains
-    body:
-      encoding: UTF-8
-      string: '{"total_count":1,"items":[{"uid":"34@1","number":34,"version":1,"published_at":"2015-03-10T19:49:18.363Z","editors":[],"authors":[{"user_id":1}],"copyright_holders":[{"user_id":2}],"derived_from":[],"attachments":[],"tags":["k12phys-ch04-s02-lo01","k12phys-ch04-ex034","practice-concepts","tutor-only","dok1","time-short","display-free-response","display-rec-sensitive"],"stimulus_html":"","questions":[{"id":112,"stimulus_html":"","stem_html":"What
-        is friction?","answers":[{"id":404,"content_html":"Friction is an external
-        force that accelerates motion of the body","correctness":"0.0","feedback_html":"Yes,
-        friction is an external force but do you think it accelerates motion of the
-        body? Can you think how a body comes to rest?"},{"id":403,"content_html":"Friction
-        is an external force that decelerates motion of the body","correctness":"1.0","feedback_html":"Correct!
-        Friction is an external force that opposes the motion of the body."},{"id":402,"content_html":"Friction
-        is an internal force that accelerates motion of the body","correctness":"0.0","feedback_html":"Are
-        you sure that friction is an internal force that accelerates motion of the
-        body? Have you got the definition correctly?"},{"id":401,"content_html":"Friction
-        is an internal force that decelerates motion of the body","correctness":"0.0","feedback_html":"It
-        is correct that friction decelerates motion of the body but do you think it
-        is an internal force? Can you differentiate between internal and external
-        forces?"}],"hints":[],"formats":["multiple-choice","free-response"],"combo_choices":[]}]}]}'
-    http_version: 
-  recorded_at: Thu, 19 Mar 2015 14:13:38 GMT
-- request:
-    method: get
-    uri: http://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex033
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Faraday v0.9.1
-      Accept:
-      - application/vnd.openstax.v1
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-  response:
-    status:
-      code: 301
-      message: Moved Permanently
-    headers:
-      Server:
-      - nginx/1.4.6 (Ubuntu)
-      Date:
-      - Thu, 19 Mar 2015 14:13:49 GMT
-      Content-Type:
-      - text/html
-      Content-Length:
-      - '193'
-      Connection:
-      - keep-alive
-      Location:
-      - https://exercises-dev1.openstax.org/api/exercises?q=tag%3Ak12phys-ch04-ex033
-    body:
-      encoding: UTF-8
-      string: "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n<body
-        bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
-        (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
-    http_version: 
-  recorded_at: Thu, 19 Mar 2015 14:13:39 GMT
-- request:
-    method: get
-    uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex033
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Faraday v0.9.1
-      Accept:
-      - application/vnd.openstax.v1
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Server:
-      - nginx/1.4.6 (Ubuntu)
-      Date:
-      - Thu, 19 Mar 2015 14:13:50 GMT
-      Content-Type:
-      - application/json; charset=utf-8
-      Transfer-Encoding:
-      - chunked
-      Connection:
-      - keep-alive
-      Status:
-      - 200 OK
-      X-Frame-Options:
-      - SAMEORIGIN
-      X-Xss-Protection:
-      - 1; mode=block
-      X-Content-Type-Options:
-      - nosniff
-      Etag:
-      - W/"e44a72e37cd0e7c819b33498c7344771"
-      Cache-Control:
-      - max-age=0, private, must-revalidate
-      Set-Cookie:
-      - _exercises_session=M0pCZHhzSWc4aWZ6cEk4QzRLM2lFbysyK1Y5aEptRlRKZjU4QnA2SUkvcnRaam4xNGNFR0ovNTVTNk5sQUdsdFVSdzlWM1Z2YktKYUhQUU5UbmpYWFE9PS0ta2tPeWlkcjZiQ2Q5dmp1dkFPQW5Wdz09--45c37685541873b48520c899e8736c2871bd94a4;
-        path=/; HttpOnly
-      X-Request-Id:
-      - 7ec20796-8d00-4f87-8172-8f1353ed6211
-      X-Runtime:
-      - '0.044491'
-      Strict-Transport-Security:
-      - max-age=31536000; includeSubdomains
-    body:
-      encoding: ASCII-8BIT
-      string: !binary |-
-        eyJ0b3RhbF9jb3VudCI6MSwiaXRlbXMiOlt7InVpZCI6IjMzQDEiLCJudW1i
-        ZXIiOjMzLCJ2ZXJzaW9uIjoxLCJwdWJsaXNoZWRfYXQiOiIyMDE1LTAzLTEw
-        VDE5OjQ5OjE4LjM0N1oiLCJlZGl0b3JzIjpbXSwiYXV0aG9ycyI6W3sidXNl
-        cl9pZCI6MX1dLCJjb3B5cmlnaHRfaG9sZGVycyI6W3sidXNlcl9pZCI6Mn1d
-        LCJkZXJpdmVkX2Zyb20iOltdLCJhdHRhY2htZW50cyI6W10sInRhZ3MiOlsi
-        azEycGh5cy1jaDA0LXMwMi1sbzAxIiwiazEycGh5cy1jaDA0LWV4MDMzIiwi
-        cHJhY3RpY2UtY29uY2VwdHMiLCJ0dXRvci1vbmx5IiwiZG9rMSIsInRpbWUt
-        c2hvcnQiLCJkaXNwbGF5LWZyZWUtcmVzcG9uc2UiLCJkaXNwbGF5LXJlYy1z
-        ZW5zaXRpdmUiXSwic3RpbXVsdXNfaHRtbCI6IiIsInF1ZXN0aW9ucyI6W3si
-        aWQiOjExMSwic3RpbXVsdXNfaHRtbCI6IiIsInN0ZW1faHRtbCI6IkhvdyBk
-        byB5b3UgZXhwcmVzcyBtYXRoZW1hdGljYWxseSB0aGF0IG5vIGV4dGVybmFs
-        IGZvcmNlIGlzIGFjdGluZyBvbiBhIGJvZHk/IiwiYW5zd2VycyI6W3siaWQi
-        OjQwMCwiY29udGVudF9odG1sIjoiPHNwYW4gZGF0YS1tYXRoPVwiRl9cXHRl
-        eHR7bmV0fSA9IFxcaW5mdHlcIj5NYXRoPC9zcGFuPiIsImNvcnJlY3RuZXNz
-        IjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IkFyZSB5b3Ugc3VyZSB0aGF0IDxz
-        cGFuIGRhdGEtbWF0aD1cIkZfXFx0ZXh0e25ldH0gPSBcXGluZnR5XCI+TWF0
-        aDwvc3Bhbj4gZXhwcmVzc2VzIG1hdGhlbWF0aWNhbGx5IHRoYXQgbm8gZXh0
-        ZXJuYWwgZm9yY2UgaXMgYWN0aW5nIG9uIGEgYm9keT8ifSx7ImlkIjozOTks
-        ImNvbnRlbnRfaHRtbCI6IjxzcGFuIGRhdGEtbWF0aD1cIkZfXFx0ZXh0e25l
-        dH0gPSAxXCI+TWF0aDwvc3Bhbj4iLCJjb3JyZWN0bmVzcyI6IjAuMCIsImZl
-        ZWRiYWNrX2h0bWwiOiJJcyBpdCBjb3JyZWN0IHRvIHNheSB0aGF0IDxzcGFu
-        IGRhdGEtbWF0aD1cIlxcdGV4dHtGfV9cXHRleHR7bmV0fSA9IDFcIj5NYXRo
-        PC9zcGFuPiByZXByZXNlbnRzIG5vIGV4dGVybmFsIGZvcmNlIGlzIGFjdGlu
-        ZyBvbiBhIGJvZHk/IERvZXNu4oCZdCBpdCB0ZWxsIHRoYXQgYSB1bml0IGZv
-        cmNlIGlzIGFjdGluZyBpbiB0aGUgcG9zaXRpdmUgZGlyZWN0aW9uPyJ9LHsi
-        aWQiOjM5OCwiY29udGVudF9odG1sIjoiPHNwYW4gZGF0YS1tYXRoPVwiRl9c
-        XHRleHR7bmV0fSA9IDBcIj5NYXRoPC9zcGFuPiIsImNvcnJlY3RuZXNzIjoi
-        MS4wIiwiZmVlZGJhY2tfaHRtbCI6IkNvcnJlY3QhIDxzcGFuIGRhdGEtbWF0
-        aD1cIkZfXFx0ZXh0e25ldH0gPSAwXCI+TWF0aDwvc3Bhbj4gbWF0aGVtYXRp
-        Y2FsbHkgbWVhbnMgdGhhdCBubyBleHRlcm5hbCBmb3JjZSBpcyBhY3Rpbmcg
-        b24gYSBib2R5LiJ9LHsiaWQiOjM5NywiY29udGVudF9odG1sIjoiPHNwYW4g
-        ZGF0YS1tYXRoPVwiRl9cXHRleHR7bmV0fSA9IHstMX1cIj5NYXRoPC9zcGFu
-        PiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IkRvIHlv
-        dSB0aGluayA8c3BhbiBkYXRhLW1hdGg9XCJGX1xcdGV4dHtuZXR9ID0gey0x
-        fVwiPk1hdGg8L3NwYW4+IG1lYW5zIHRoYXQgbm8gZXh0ZXJuYWwgZm9yY2Ug
-        aXMgYWN0aW5nIG9uIGEgYm9keT8gRG9lc27igJl0IGl0IHRlbGwgdGhhdCBh
-        IHVuaXQgZm9yY2UgaXMgYWN0aW5nIGluIHRoZSBuZWdhdGl2ZSBkaXJlY3Rp
-        b24/In1dLCJoaW50cyI6W10sImZvcm1hdHMiOlsibXVsdGlwbGUtY2hvaWNl
-        IiwiZnJlZS1yZXNwb25zZSJdLCJjb21ib19jaG9pY2VzIjpbXX1dfV19
-    http_version: 
-  recorded_at: Thu, 19 Mar 2015 14:13:40 GMT
-- request:
-    method: get
-    uri: http://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex034
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Faraday v0.9.1
-      Accept:
-      - application/vnd.openstax.v1
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-  response:
-    status:
-      code: 301
-      message: Moved Permanently
-    headers:
-      Server:
-      - nginx/1.4.6 (Ubuntu)
-      Date:
-      - Thu, 19 Mar 2015 14:13:50 GMT
-      Content-Type:
-      - text/html
-      Content-Length:
-      - '193'
-      Connection:
-      - keep-alive
-      Location:
-      - https://exercises-dev1.openstax.org/api/exercises?q=tag%3Ak12phys-ch04-ex034
-    body:
-      encoding: UTF-8
-      string: "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n<body
-        bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
-        (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
-    http_version: 
-  recorded_at: Thu, 19 Mar 2015 14:13:40 GMT
-- request:
-    method: get
-    uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex034
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Faraday v0.9.1
-      Accept:
-      - application/vnd.openstax.v1
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Server:
-      - nginx/1.4.6 (Ubuntu)
-      Date:
-      - Thu, 19 Mar 2015 14:13:51 GMT
-      Content-Type:
-      - application/json; charset=utf-8
-      Transfer-Encoding:
-      - chunked
-      Connection:
-      - keep-alive
-      Status:
-      - 200 OK
-      X-Frame-Options:
-      - SAMEORIGIN
-      X-Xss-Protection:
-      - 1; mode=block
-      X-Content-Type-Options:
-      - nosniff
-      Etag:
-      - W/"1edc9876248d860d4b4caef904652123"
-      Cache-Control:
-      - max-age=0, private, must-revalidate
-      Set-Cookie:
-      - _exercises_session=MUxLSFRFdWJGcEZsWW82V3JTd3JFdFZGN0Y5NVFlRGlXTXlSZ2liNm83TTJIYUxSZFdZNVlhQ1laMkl1TjRPZXNqc09MYzA5d0VSVHBzNWNieFVLY0E9PS0tRGJmdkFZUUhVVGpnNmJ6ODVuR1BzQT09--d0f5b6c4d1742623c54a2ef6f3f70dfabd84ebf6;
-        path=/; HttpOnly
-      X-Request-Id:
-      - 9867445b-ce30-4201-ae0e-279dd5d9c103
-      X-Runtime:
-      - '0.042441'
-      Strict-Transport-Security:
-      - max-age=31536000; includeSubdomains
-    body:
-      encoding: UTF-8
-      string: '{"total_count":1,"items":[{"uid":"34@1","number":34,"version":1,"published_at":"2015-03-10T19:49:18.363Z","editors":[],"authors":[{"user_id":1}],"copyright_holders":[{"user_id":2}],"derived_from":[],"attachments":[],"tags":["k12phys-ch04-s02-lo01","k12phys-ch04-ex034","practice-concepts","tutor-only","dok1","time-short","display-free-response","display-rec-sensitive"],"stimulus_html":"","questions":[{"id":112,"stimulus_html":"","stem_html":"What
-        is friction?","answers":[{"id":404,"content_html":"Friction is an external
-        force that accelerates motion of the body","correctness":"0.0","feedback_html":"Yes,
-        friction is an external force but do you think it accelerates motion of the
-        body? Can you think how a body comes to rest?"},{"id":403,"content_html":"Friction
-        is an external force that decelerates motion of the body","correctness":"1.0","feedback_html":"Correct!
-        Friction is an external force that opposes the motion of the body."},{"id":402,"content_html":"Friction
-        is an internal force that accelerates motion of the body","correctness":"0.0","feedback_html":"Are
-        you sure that friction is an internal force that accelerates motion of the
-        body? Have you got the definition correctly?"},{"id":401,"content_html":"Friction
-        is an internal force that decelerates motion of the body","correctness":"0.0","feedback_html":"It
-        is correct that friction decelerates motion of the body but do you think it
-        is an internal force? Can you differentiate between internal and external
-        forces?"}],"hints":[],"formats":["multiple-choice","free-response"],"combo_choices":[]}]}]}'
-    http_version: 
-  recorded_at: Thu, 19 Mar 2015 14:13:41 GMT
-- request:
-    method: get
-    uri: http://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex033
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Faraday v0.9.1
-      Accept:
-      - application/vnd.openstax.v1
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-  response:
-    status:
-      code: 301
-      message: Moved Permanently
-    headers:
-      Server:
-      - nginx/1.4.6 (Ubuntu)
-      Date:
-      - Thu, 19 Mar 2015 14:13:52 GMT
-      Content-Type:
-      - text/html
-      Content-Length:
-      - '193'
-      Connection:
-      - keep-alive
-      Location:
-      - https://exercises-dev1.openstax.org/api/exercises?q=tag%3Ak12phys-ch04-ex033
-    body:
-      encoding: UTF-8
-      string: "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n<body
-        bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
-        (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
-    http_version: 
-  recorded_at: Thu, 19 Mar 2015 14:13:41 GMT
-- request:
-    method: get
-    uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex033
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Faraday v0.9.1
-      Accept:
-      - application/vnd.openstax.v1
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Server:
-      - nginx/1.4.6 (Ubuntu)
-      Date:
-      - Thu, 19 Mar 2015 14:13:53 GMT
-      Content-Type:
-      - application/json; charset=utf-8
-      Transfer-Encoding:
-      - chunked
-      Connection:
-      - keep-alive
-      Status:
-      - 200 OK
-      X-Frame-Options:
-      - SAMEORIGIN
-      X-Xss-Protection:
-      - 1; mode=block
-      X-Content-Type-Options:
-      - nosniff
-      Etag:
-      - W/"e44a72e37cd0e7c819b33498c7344771"
-      Cache-Control:
-      - max-age=0, private, must-revalidate
-      Set-Cookie:
-      - _exercises_session=S3B4NVJZTlNBUE5OSDh5ZlpJQUhXZG5EL2FzckhUVkhnSXU1L0w2Zkx6cExoOWhEKytzUy80Um9Kak1vNmwrTHhxNk4xUFppdEhYWXFCbUQrYXEwM2c9PS0tWlRiY29YWnp2Y21jQU5mb3locjhGUT09--25dbc40c85223556f617bebfdddf1af70397eb23;
-        path=/; HttpOnly
-      X-Request-Id:
-      - 811f63c6-eccc-41d9-b3d4-d0f920b6f2fc
-      X-Runtime:
-      - '0.044163'
-      Strict-Transport-Security:
-      - max-age=31536000; includeSubdomains
-    body:
-      encoding: ASCII-8BIT
-      string: !binary |-
-        eyJ0b3RhbF9jb3VudCI6MSwiaXRlbXMiOlt7InVpZCI6IjMzQDEiLCJudW1i
-        ZXIiOjMzLCJ2ZXJzaW9uIjoxLCJwdWJsaXNoZWRfYXQiOiIyMDE1LTAzLTEw
-        VDE5OjQ5OjE4LjM0N1oiLCJlZGl0b3JzIjpbXSwiYXV0aG9ycyI6W3sidXNl
-        cl9pZCI6MX1dLCJjb3B5cmlnaHRfaG9sZGVycyI6W3sidXNlcl9pZCI6Mn1d
-        LCJkZXJpdmVkX2Zyb20iOltdLCJhdHRhY2htZW50cyI6W10sInRhZ3MiOlsi
-        azEycGh5cy1jaDA0LXMwMi1sbzAxIiwiazEycGh5cy1jaDA0LWV4MDMzIiwi
-        cHJhY3RpY2UtY29uY2VwdHMiLCJ0dXRvci1vbmx5IiwiZG9rMSIsInRpbWUt
-        c2hvcnQiLCJkaXNwbGF5LWZyZWUtcmVzcG9uc2UiLCJkaXNwbGF5LXJlYy1z
-        ZW5zaXRpdmUiXSwic3RpbXVsdXNfaHRtbCI6IiIsInF1ZXN0aW9ucyI6W3si
-        aWQiOjExMSwic3RpbXVsdXNfaHRtbCI6IiIsInN0ZW1faHRtbCI6IkhvdyBk
-        byB5b3UgZXhwcmVzcyBtYXRoZW1hdGljYWxseSB0aGF0IG5vIGV4dGVybmFs
-        IGZvcmNlIGlzIGFjdGluZyBvbiBhIGJvZHk/IiwiYW5zd2VycyI6W3siaWQi
-        OjQwMCwiY29udGVudF9odG1sIjoiPHNwYW4gZGF0YS1tYXRoPVwiRl9cXHRl
-        eHR7bmV0fSA9IFxcaW5mdHlcIj5NYXRoPC9zcGFuPiIsImNvcnJlY3RuZXNz
-        IjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IkFyZSB5b3Ugc3VyZSB0aGF0IDxz
-        cGFuIGRhdGEtbWF0aD1cIkZfXFx0ZXh0e25ldH0gPSBcXGluZnR5XCI+TWF0
-        aDwvc3Bhbj4gZXhwcmVzc2VzIG1hdGhlbWF0aWNhbGx5IHRoYXQgbm8gZXh0
-        ZXJuYWwgZm9yY2UgaXMgYWN0aW5nIG9uIGEgYm9keT8ifSx7ImlkIjozOTks
-        ImNvbnRlbnRfaHRtbCI6IjxzcGFuIGRhdGEtbWF0aD1cIkZfXFx0ZXh0e25l
-        dH0gPSAxXCI+TWF0aDwvc3Bhbj4iLCJjb3JyZWN0bmVzcyI6IjAuMCIsImZl
-        ZWRiYWNrX2h0bWwiOiJJcyBpdCBjb3JyZWN0IHRvIHNheSB0aGF0IDxzcGFu
-        IGRhdGEtbWF0aD1cIlxcdGV4dHtGfV9cXHRleHR7bmV0fSA9IDFcIj5NYXRo
-        PC9zcGFuPiByZXByZXNlbnRzIG5vIGV4dGVybmFsIGZvcmNlIGlzIGFjdGlu
-        ZyBvbiBhIGJvZHk/IERvZXNu4oCZdCBpdCB0ZWxsIHRoYXQgYSB1bml0IGZv
-        cmNlIGlzIGFjdGluZyBpbiB0aGUgcG9zaXRpdmUgZGlyZWN0aW9uPyJ9LHsi
-        aWQiOjM5OCwiY29udGVudF9odG1sIjoiPHNwYW4gZGF0YS1tYXRoPVwiRl9c
-        XHRleHR7bmV0fSA9IDBcIj5NYXRoPC9zcGFuPiIsImNvcnJlY3RuZXNzIjoi
-        MS4wIiwiZmVlZGJhY2tfaHRtbCI6IkNvcnJlY3QhIDxzcGFuIGRhdGEtbWF0
-        aD1cIkZfXFx0ZXh0e25ldH0gPSAwXCI+TWF0aDwvc3Bhbj4gbWF0aGVtYXRp
-        Y2FsbHkgbWVhbnMgdGhhdCBubyBleHRlcm5hbCBmb3JjZSBpcyBhY3Rpbmcg
-        b24gYSBib2R5LiJ9LHsiaWQiOjM5NywiY29udGVudF9odG1sIjoiPHNwYW4g
-        ZGF0YS1tYXRoPVwiRl9cXHRleHR7bmV0fSA9IHstMX1cIj5NYXRoPC9zcGFu
-        PiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IkRvIHlv
-        dSB0aGluayA8c3BhbiBkYXRhLW1hdGg9XCJGX1xcdGV4dHtuZXR9ID0gey0x
-        fVwiPk1hdGg8L3NwYW4+IG1lYW5zIHRoYXQgbm8gZXh0ZXJuYWwgZm9yY2Ug
-        aXMgYWN0aW5nIG9uIGEgYm9keT8gRG9lc27igJl0IGl0IHRlbGwgdGhhdCBh
-        IHVuaXQgZm9yY2UgaXMgYWN0aW5nIGluIHRoZSBuZWdhdGl2ZSBkaXJlY3Rp
-        b24/In1dLCJoaW50cyI6W10sImZvcm1hdHMiOlsibXVsdGlwbGUtY2hvaWNl
-        IiwiZnJlZS1yZXNwb25zZSJdLCJjb21ib19jaG9pY2VzIjpbXX1dfV19
-    http_version: 
-  recorded_at: Thu, 19 Mar 2015 14:13:42 GMT
-- request:
-    method: get
-    uri: http://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex034
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Faraday v0.9.1
-      Accept:
-      - application/vnd.openstax.v1
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-  response:
-    status:
-      code: 301
-      message: Moved Permanently
-    headers:
-      Server:
-      - nginx/1.4.6 (Ubuntu)
-      Date:
-      - Thu, 19 Mar 2015 14:13:53 GMT
-      Content-Type:
-      - text/html
-      Content-Length:
-      - '193'
-      Connection:
-      - keep-alive
-      Location:
-      - https://exercises-dev1.openstax.org/api/exercises?q=tag%3Ak12phys-ch04-ex034
-    body:
-      encoding: UTF-8
-      string: "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n<body
-        bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
-        (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
-    http_version: 
-  recorded_at: Thu, 19 Mar 2015 14:13:43 GMT
-- request:
-    method: get
-    uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex034
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Faraday v0.9.1
-      Accept:
-      - application/vnd.openstax.v1
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Server:
-      - nginx/1.4.6 (Ubuntu)
-      Date:
-      - Thu, 19 Mar 2015 14:13:54 GMT
-      Content-Type:
-      - application/json; charset=utf-8
-      Transfer-Encoding:
-      - chunked
-      Connection:
-      - keep-alive
-      Status:
-      - 200 OK
-      X-Frame-Options:
-      - SAMEORIGIN
-      X-Xss-Protection:
-      - 1; mode=block
-      X-Content-Type-Options:
-      - nosniff
-      Etag:
-      - W/"1edc9876248d860d4b4caef904652123"
-      Cache-Control:
-      - max-age=0, private, must-revalidate
-      Set-Cookie:
-      - _exercises_session=cExnVHBMNWlZMTZqRFlla0RhL3lUZ3pxdmlScDkvRVl2d08xemVEdmttMlJnZ1pmK205VTlmbnd3MGN0akd2Q0puVWVYbm5FOTczZDJqc0pHbkpaNmc9PS0tR1daOHdRSU1WbUlmdDk0QTMxb1RTdz09--e703f91cecc141dc00eeabab3d3a5677dc775be6;
-        path=/; HttpOnly
-      X-Request-Id:
-      - b4101c40-e5d1-4217-82a2-4a912f84a6bd
-      X-Runtime:
-      - '0.047009'
-      Strict-Transport-Security:
-      - max-age=31536000; includeSubdomains
-    body:
-      encoding: UTF-8
-      string: '{"total_count":1,"items":[{"uid":"34@1","number":34,"version":1,"published_at":"2015-03-10T19:49:18.363Z","editors":[],"authors":[{"user_id":1}],"copyright_holders":[{"user_id":2}],"derived_from":[],"attachments":[],"tags":["k12phys-ch04-s02-lo01","k12phys-ch04-ex034","practice-concepts","tutor-only","dok1","time-short","display-free-response","display-rec-sensitive"],"stimulus_html":"","questions":[{"id":112,"stimulus_html":"","stem_html":"What
-        is friction?","answers":[{"id":404,"content_html":"Friction is an external
-        force that accelerates motion of the body","correctness":"0.0","feedback_html":"Yes,
-        friction is an external force but do you think it accelerates motion of the
-        body? Can you think how a body comes to rest?"},{"id":403,"content_html":"Friction
-        is an external force that decelerates motion of the body","correctness":"1.0","feedback_html":"Correct!
-        Friction is an external force that opposes the motion of the body."},{"id":402,"content_html":"Friction
-        is an internal force that accelerates motion of the body","correctness":"0.0","feedback_html":"Are
-        you sure that friction is an internal force that accelerates motion of the
-        body? Have you got the definition correctly?"},{"id":401,"content_html":"Friction
-        is an internal force that decelerates motion of the body","correctness":"0.0","feedback_html":"It
-        is correct that friction decelerates motion of the body but do you think it
-        is an internal force? Can you differentiate between internal and external
-        forces?"}],"hints":[],"formats":["multiple-choice","free-response"],"combo_choices":[]}]}]}'
-    http_version: 
-  recorded_at: Thu, 19 Mar 2015 14:13:44 GMT
+  recorded_at: Fri, 27 Mar 2015 00:58:47 GMT
 recorded_with: VCR 2.9.3

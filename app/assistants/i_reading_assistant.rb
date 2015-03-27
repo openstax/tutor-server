@@ -41,12 +41,11 @@ class IReadingAssistant
       return nil
     end
 
-    # TODO: Exercises are cached locally during book import,
-    # so this search can be local, but
-    # need to store short code tags in Tutor separately from the JSON
-    exercise = OpenStax::Exercises::V1.exercises(
+    # Search local (cached) Exercises for one matching the embed tag
+    exercises = Content::Api::SearchLocalExercises.call(
       tag: exercise_fragment.embed_tag
-    )['items'].first
+    ).outputs.items
+    exercise = exercises.first
 
     recovery = recovery_fragment.nil? ? \
                  nil : tasked_exercise(exercise_fragment: recovery_fragment)
