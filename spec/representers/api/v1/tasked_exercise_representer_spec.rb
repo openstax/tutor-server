@@ -18,7 +18,7 @@ RSpec.describe Api::V1::TaskedExerciseRepresenter, :type => :representer do
     end
 
     expect(representation).to include(
-      "id"           => tasked_exercise.id,
+      "id"           => tasked_exercise.task_step.id,
       "type"         => "exercise",
       "is_completed" => false,
       "content_url"  => tasked_exercise.url,

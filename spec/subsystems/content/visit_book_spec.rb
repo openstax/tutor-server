@@ -13,25 +13,25 @@ RSpec.describe Content::VisitBook, :type => :routine do
 
   it "should get the TOC with the TOC option" do
     toc = Content::VisitBook[book: root_book_part.book, visitor_names: :toc]
-
+    ftoc = toc.first
     expect(toc).to eq([{
-      'id' => 2,
+      'id' => ftoc.id,
       'title' => 'unit 1',
       'type' => 'part',
       'children' => [
         {
-          'id' => 3,
+          'id' => ftoc.children[0].id,
           'title' => 'chapter 1',
           'type' => 'part',
           'children' => [
             {
-              'id' => 1,
+              'id' => ftoc.children[0].children[0].id,
               'title' => 'first page',
               'type' => 'page',
               'path' => '1.1'
             },
             {
-              'id' => 2,
+              'id' => ftoc.children[0].children[1].id,
               'title' => 'second page',
               'type' => 'page',
               'path' => '1.2'
@@ -39,12 +39,12 @@ RSpec.describe Content::VisitBook, :type => :routine do
           ]
         },
         {
-          'id' => 4,
+          'id' => ftoc.children[1].id,
           'title' => 'chapter 2',
           'type' => 'part',
           'children' => [
             {
-              'id' => 3,
+              'id' => ftoc.children[1].children[0].id,
               'title' => 'third page',
               'type' => 'page',
               'path' => '1.3'
@@ -71,21 +71,21 @@ RSpec.describe Content::VisitBook, :type => :routine do
     expect(exercises).to include({
       '1@1' => {
         'uid' => '1@1',
-        'id' => 1,
+        'id' => exercises['1@1']['id'],
         'url' => a_kind_of(String),
         'los' => ['ost-tag-lo-topic1-lo1'],
         'tags' => ['concept']
       },
       '2@1' => {
         'uid' => '2@1',
-        'id' => 2,
+        'id' => exercises['2@1']['id'],
         'url' => a_kind_of(String),
         'los' => ['ost-tag-lo-topic2-lo2'],
         'tags' => ['homework']
       },
       '3@1' => {
         'uid' => '3@1',
-        'id' => 3,
+        'id' => exercises['3@1']['id'],
         'url' => a_kind_of(String),
         'los' => ['ost-tag-lo-topic3-lo3'],
         'tags' => ['concept']

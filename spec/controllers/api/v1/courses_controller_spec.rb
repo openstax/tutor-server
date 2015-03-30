@@ -24,39 +24,39 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
     it "should work on the happy path" do
       root_book_part = FactoryGirl.create(:content_book_part, :standard_contents_1)
       CourseContent::AddBookToCourse.call(course: course, book: root_book_part.book)
+      toc = Content::VisitBook[book: root_book_part.book, visitor_names: :toc].first
 
       api_get :readings, user_1_token, parameters: {id: course.id}
-
       expect(response).to have_http_status(:success)
       expect(response.body_as_hash).to eq([{
-        id: 2,
+        id: toc.id,
         title: 'unit 1',
         type: 'part',
         children: [
           {
-            id: 3,
+            id: toc.children[0].id,
             title: 'chapter 1',
             type: 'part',
             children: [
               {
-                id: 1,
+                id: toc.children[0].children[0].id,
                 title: 'first page',
                 type: 'page'
               },
               {
-                id: 2,
+                id: toc.children[0].children[1].id,
                 title: 'second page',
                 type: 'page'
               }
             ]
           },
           {
-            id: 4,
+            id: toc.children[1].id,
             title: 'chapter 2',
             type: 'part',
             children: [
               {
-                id: 3,
+                id: toc.children[1].children[0].id,
                 title: 'third page',
                 type: 'page'
               }
@@ -323,14 +323,23 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
   describe "practice_get" do
     it "returns nothing when practice widget not yet set" do
       Domain::AddUserAsCourseStudent.call(course: course, user: user_1.entity_user)
+<<<<<<< HEAD
       api_get :practice, user_1_token, parameters: {id: course.id, role_id: Entity::Role.last.id}
+=======
+      api_get :practice, user_1_token, parameters: {id: course.id, role_id: Entity::Models::Role.last.id}
+>>>>>>> Don't assume record ID's start with 1
       expect(response).to have_http_status(:not_found)
     end
 
     it "returns a practice widget" do
       Domain::AddUserAsCourseStudent.call(course: course, user: user_1.entity_user)
+<<<<<<< HEAD
       Domain::ResetPracticeWidget.call(role: Entity::Role.last, condition: :fake)
       Domain::ResetPracticeWidget.call(role: Entity::Role.last, condition: :fake)
+=======
+      Domain::ResetPracticeWidget.call(role: Entity::Models::Role.last, condition: :fake)
+      Domain::ResetPracticeWidget.call(role: Entity::Models::Role.last, condition: :fake)
+>>>>>>> Don't assume record ID's start with 1
 
       api_get :practice, user_1_token, parameters: {id: course.id, role_id: Entity::Role.last.id}
 
