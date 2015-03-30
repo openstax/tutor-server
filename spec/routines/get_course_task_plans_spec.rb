@@ -2,9 +2,9 @@ require 'rails_helper'
 
 RSpec.describe GetCourseTaskPlans, :type => :routine do
   let!(:course)      { Domain::CreateCourse.call.outputs.course }
-  let!(:task_plan_1) { FactoryGirl.create :task_plan, owner: course }
-  let!(:task_plan_2) { FactoryGirl.create :task_plan, owner: course }
-  let!(:task_plan_3) { FactoryGirl.create :task_plan, owner: course }
+  let!(:task_plan_1) { FactoryGirl.create :tasks_task_plan, owner: course }
+  let!(:task_plan_2) { FactoryGirl.create :tasks_task_plan, owner: course }
+  let!(:task_plan_3) { FactoryGirl.create :tasks_task_plan, owner: course }
 
   it 'gets all task_plans in a course' do
     out = GetCourseTaskPlans.call(course: course).outputs

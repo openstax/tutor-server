@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe DistributeTasks, :type => :routine do
   it 'validates the task_plan settings against the assistant schema' do
-    task_plan = FactoryGirl.create :task_plan
+    task_plan = FactoryGirl.create :tasks_task_plan
 
     expect(DistributeTasks.call(task_plan).errors).to be_empty
 

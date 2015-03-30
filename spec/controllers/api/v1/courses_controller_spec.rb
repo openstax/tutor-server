@@ -68,7 +68,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
 
   describe "#plans" do
     it "should work on the happy path" do
-      task_plan = FactoryGirl.create(:task_plan, owner: course)
+      task_plan = FactoryGirl.create(:tasks_task_plan, owner: course)
 
       api_get :plans, user_1_token, parameters: {id: course.id}
 

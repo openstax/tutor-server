@@ -37,19 +37,19 @@ module Sprint008
       # Set up three reading tasks (will include try another)
 
       a = FactoryGirl.create :assistant, code_class_name: "IReadingAssistant"
-      tp = FactoryGirl.create :task_plan, assistant: a,
+      tp = FactoryGirl.create :tasks_task_plan, assistant: a,
                                           owner: course1,
                                           settings: { page_ids: [1, 2] }
       tp.tasking_plans << FactoryGirl.create(:tasking_plan, target: student,
                                                             task_plan: tp)
       DistributeTasks.call(tp)
-      tp = FactoryGirl.create :task_plan, assistant: a,
+      tp = FactoryGirl.create :tasks_task_plan, assistant: a,
                                           owner: course1,
                                           settings: { page_ids: [3] }
       tp.tasking_plans << FactoryGirl.create(:tasking_plan, target: student,
                                                             task_plan: tp)
       DistributeTasks.call(tp)
-      tp = FactoryGirl.create :task_plan, assistant: a,
+      tp = FactoryGirl.create :tasks_task_plan, assistant: a,
                                           owner: course1,
                                           settings: { page_ids: [4] }
       tp.tasking_plans << FactoryGirl.create(:tasking_plan, target: student,
@@ -60,7 +60,7 @@ module Sprint008
       Domain::ResetPracticeWidget.call(role: student_role, condition: :fake)
 
       # Set up a task plan that will have activity for the stats
-      stats_tp = FactoryGirl.create :task_plan, assistant: a,
+      stats_tp = FactoryGirl.create :tasks_task_plan, assistant: a,
                                           owner: course1,
                                           settings: { page_ids: [1,2,3] }
 

@@ -6,7 +6,7 @@ RSpec.describe Api::V1::CourseEventsRepresenter, :type => :representer do
   let(:user)   { FactoryGirl.create(:user) }
 
   it 'gets all events for a course' do
-    plan = FactoryGirl.create( :task_plan, owner: course)
+    plan = FactoryGirl.create( :tasks_task_plan, owner: course)
     task = FactoryGirl.create(:tasking, taskee: user).task
 
     role = Entity::CreateRole.call.outputs.role
