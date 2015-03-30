@@ -2,4 +2,5 @@
   <%= link_to 'Sign in!', openstax_accounts.login_path %>
 <% else %>
   <%= link_to 'Sign out!', openstax_accounts.logout_path, method: :delete %>
+  (signed in as <%= current_user.username %>)
 <% end %>

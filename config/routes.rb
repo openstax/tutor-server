@@ -73,7 +73,7 @@ Rails.application.routes.draw do
 
     resources :users, except: :destroy do
       member do
-        put 'become'
+        post 'become'
         patch 'delete'
         patch 'undelete'
       end
