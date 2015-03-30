@@ -7,4 +7,6 @@ class Tasks::Models::CourseAssistant < Tutor::SubSystems::BaseModel
 
   validates :course, presence: true
   validates :assistant, presence: true, uniqueness: { scope: :entity_course_id }
+  validates :task_plan_type, presence: true,
+                             uniqueness: { scope: :entity_course_id }
 end

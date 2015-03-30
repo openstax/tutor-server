@@ -5,8 +5,16 @@ describe Api::V1::TaskPlansController, :type => :controller,
                                        :version => :v1 do
 
   let!(:course) { Domain::CreateCourse.call.outputs.course }
-  let!(:assistant) { FactoryGirl.create :tasks_assistant,
-                                        code_class_name: "Tasks::Assistants::IReadingAssistant" }
+
+  let!(:assistant) { FactoryGirl.create(
+    :tasks_assistant, code_class_name: "Tasks::Assistants::IReadingAssistant"
+  ) }
+
+  let!(:course_assistant) { FactoryGirl.create :tasks_course_assistant,
+                                               course: course,
+                                               assistant: assistant,
+                                               task_plan_type: 'test' }
+
   let!(:user) { FactoryGirl.create :user }
   let!(:teacher) { FactoryGirl.create :user }
 
@@ -88,10 +96,23 @@ describe Api::V1::TaskPlansController, :type => :controller,
   context 'create' do
     it 'allows a teacher to create a task_plan for their course' do
       controller.sign_in teacher
+<<<<<<< HEAD
       expect { api_post :create, nil, parameters: {course_id: course.id},
                         raw_post_data: Api::V1::TaskPlanRepresenter
                                          .new(task_plan).to_json }
         .to change{ Tasks::Models::TaskPlan.count }.by(1)
+=======
+      expect {
+        api_post :create,
+                 nil,
+                 parameters: {
+                   course_id: course.id,
+                   task_plan_type: 'test'
+                 },
+                 raw_post_data: Api::V1::TaskPlanRepresenter
+                                  .new(task_plan).to_json
+      }.to change{ TaskPlan.count }.by(1)
+>>>>>>> Added homework API (modified iReading API) and specs
       expect(response).to have_http_status(:success)
 
       expect(response.body).to(
@@ -101,17 +122,42 @@ describe Api::V1::TaskPlansController, :type => :controller,
 
     it 'does not allow an unauthorized user to create a task_plan' do
       controller.sign_in user
-      expect { api_post :create, nil, parameters: {course_id: course.id},
-               raw_post_data: Api::V1::TaskPlanRepresenter.new(task_plan)
-                                                          .to_json }
-        .to raise_error(SecurityTransgression)
+      expect {
+        api_post :create,
+                 nil,
+                 parameters: {
+                   course_id: course.id,
+                   task_plan_type: 'test'
+                 },
+                 raw_post_data: Api::V1::TaskPlanRepresenter
+                                  .new(task_plan).to_json
+      }.to raise_error(SecurityTransgression)
     end
 
     it 'does not allow an anonymous user to create a task_plan' do
-      expect { api_post :create, nil, parameters: {course_id: course.id},
-               raw_post_data: Api::V1::TaskPlanRepresenter.new(task_plan)
-                                                          .to_json }
-        .to raise_error(SecurityTransgression)
+      expect {
+        api_post :create,
+                 nil,
+                 parameters: {
+                   course_id: course.id,
+                   task_plan_type: 'test'
+                 },
+                 raw_post_data: Api::V1::TaskPlanRepresenter
+                                  .new(task_plan).to_json
+      }.to raise_error(SecurityTransgression)
+    end
+
+    it 'fails with 422 Unprocessable Entity if no Assistant found' do
+      controller.sign_in teacher
+      result = nil
+      expect {
+        result = api_post :create,
+                          nil,
+                          parameters: {course_id: course.id},
+                          raw_post_data: Api::V1::TaskPlanRepresenter
+                                           .new(task_plan).to_json
+      }.not_to change{ TaskPlan.count }
+      expect(response).to have_http_status(:unprocessable_entity)
     end
   end
 

@@ -21,6 +21,19 @@ ActiveRecord::Schema.define(version: 20150406200833) do
 
   add_index "administrators", ["profile_id"], name: "index_administrators_on_profile_id", unique: true
 
+<<<<<<< HEAD
+=======
+  create_table "assistants", force: :cascade do |t|
+    t.string   "name",            null: false
+    t.string   "code_class_name", null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  add_index "assistants", ["code_class_name"], name: "index_assistants_on_code_class_name", unique: true
+  add_index "assistants", ["name"], name: "index_assistants_on_name", unique: true
+
+>>>>>>> Added homework API (modified iReading API) and specs
   create_table "content_book_parts", force: :cascade do |t|
     t.string   "url"
     t.text     "content"
@@ -86,12 +99,33 @@ ActiveRecord::Schema.define(version: 20150406200833) do
     t.string   "name",                    null: false
     t.integer  "tag_type",    default: 0, null: false
     t.text     "description"
+<<<<<<< HEAD
     t.datetime "created_at",              null: false
     t.datetime "updated_at",              null: false
   end
 
   add_index "content_tags", ["name"], name: "index_content_tags_on_name", unique: true
   add_index "content_tags", ["tag_type"], name: "index_content_tags_on_tag_type"
+=======
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "content_topics", ["name"], name: "index_content_topics_on_name", unique: true
+
+  create_table "course_assistants", force: :cascade do |t|
+    t.integer  "entity_course_id", null: false
+    t.integer  "assistant_id",     null: false
+    t.string   "task_plan_type",   null: false
+    t.text     "settings"
+    t.text     "data"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+  end
+
+  add_index "course_assistants", ["assistant_id", "entity_course_id"], name: "index_course_assistants_on_assistant_id_and_entity_course_id"
+  add_index "course_assistants", ["entity_course_id", "task_plan_type"], name: "index_course_assistants_on_entity_course_id_and_task_plan_type", unique: true
+>>>>>>> Added homework API (modified iReading API) and specs
 
   create_table "course_content_course_books", force: :cascade do |t|
     t.integer  "entity_course_id", null: false
