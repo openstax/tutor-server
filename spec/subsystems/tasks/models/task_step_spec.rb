@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe TaskStep, :type => :model do
+RSpec.describe Tasks::Models::TaskStep, :type => :model do
   subject(:task_step) { FactoryGirl.create :task_step }
 
   it { is_expected.to belong_to(:task) }

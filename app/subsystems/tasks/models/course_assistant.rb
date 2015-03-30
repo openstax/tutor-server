@@ -1,10 +1,10 @@
 class Tasks::Models::CourseAssistant < Tutor::SubSystems::BaseModel
-  belongs_to :course
+  belongs_to :course, subsystem: :entity
   belongs_to :assistant
 
   serialize :settings
   serialize :data
 
   validates :course, presence: true
-  validates :assistant, presence: true, uniqueness: { scope: :course_id }
+  validates :assistant, presence: true, uniqueness: { scope: :entity_course_id }
 end

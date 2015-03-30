@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe TaskingPlan, :type => :model do
+RSpec.describe Tasks::Models::TaskingPlan, :type => :model do
   it { is_expected.to belong_to(:target) }
   it { is_expected.to belong_to(:task_plan) }
 

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe TaskPlan, :type => :model do
+RSpec.describe Tasks::Models::TaskPlan, :type => :model do
   it { is_expected.to belong_to(:assistant) }
   it { is_expected.to belong_to(:owner) }
 

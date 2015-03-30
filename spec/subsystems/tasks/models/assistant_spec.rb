@@ -1,4 +1,6 @@
-RSpec.describe Assistant, :type => :model do
+require 'rails_helper'
+
+RSpec.describe Tasks::Models::Assistant, :type => :model do
   subject { FactoryGirl.create :assistant }
 
   it { is_expected.to have_many(:course_assistants).dependent(:destroy) }

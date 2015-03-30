@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :tasked_reading do
+  factory :tasks_tasked_video, class_name: '::Tasks::Models::TaskedVideo' do
     transient do
       skip_task false
     end
@@ -9,11 +9,11 @@ FactoryGirl.define do
     title { Faker::Lorem.sentence(3) }
     content { Faker::Lorem.paragraph }
 
-    after(:build) do |tasked_reading, evaluator|
-      options = { tasked: tasked_reading }
+    after(:build) do |tasked_video, evaluator|
+      options = { tasked: tasked_video }
       options[:task] = nil if evaluator.skip_task
 
-      tasked_reading.task_step ||= FactoryGirl.build(:task_step, options)
+      tasked_video.task_step ||= FactoryGirl.build(:tasks_task_step, options)
     end
   end
 end

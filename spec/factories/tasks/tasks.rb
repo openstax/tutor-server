@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :task do
+  factory :tasks_task do
     transient do
       duration 1.week
       step_types []
@@ -20,11 +20,11 @@ FactoryGirl.define do
       end
 
       evaluator.num_random_taskings.times do
-        task.taskings << FactoryGirl.build(:tasking, task: task)
+        task.taskings << FactoryGirl.build(:tasks_tasking, task: task)
       end
 
       [evaluator.tasked_to].flatten.each do |taskee|
-        task.taskings << FactoryGirl.build(:tasking, task: task, taskee: taskee)
+        task.taskings << FactoryGirl.build(:tasks_tasking, task: task, taskee: taskee)
       end
     end
   end

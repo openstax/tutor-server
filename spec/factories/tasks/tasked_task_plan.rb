@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :tasked_task_plan, parent: :task_plan do
+  factory :tasked_task_plan, parent: :tasks_task_plan do
 
     transient do
       number_of_students 10

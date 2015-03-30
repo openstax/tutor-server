@@ -1,4 +1,4 @@
-class IReadingAssistant
+class Tasks::Assistants::IReadingAssistant
 
   # Array of arrays [Events ago, number of spaced practice questions]
   # This has to change, but for now add 4 questions to simulate what

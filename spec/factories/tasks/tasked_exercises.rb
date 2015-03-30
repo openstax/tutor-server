@@ -8,7 +8,7 @@
 #      FactoryGirl.create(:tasked_exercise, :with_tasking, tasked_to: a_user)
 
 FactoryGirl.define do
-  factory :tasked_exercise do
+  factory :tasks_tasked_exercise, class_name: '::Tasks::Models::TaskedExercise' do
     transient do
       tasked_to { FactoryGirl.build(:user) }
       skip_task false
@@ -25,13 +25,13 @@ FactoryGirl.define do
       options = { tasked: tasked_exercise }
       options[:task] = nil if evaluator.skip_task
 
-      tasked_exercise.task_step ||= FactoryGirl.build(:task_step, options)
+      tasked_exercise.task_step ||= FactoryGirl.build(:tasks_task_step, options)
     end
 
     trait :with_tasking do
       after(:build) do |tasked, evaluator|
-        FactoryGirl.create(:tasking, taskee: evaluator.tasked_to,
-                                     task: tasked.task_step.task)
+        FactoryGirl.create(:tasks_tasking, taskee: evaluator.tasked_to,
+                                           task: tasked.task_step.task)
       end
     end
 

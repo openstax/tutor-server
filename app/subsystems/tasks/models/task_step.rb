@@ -6,8 +6,6 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   validates :tasked, presence: true
   validates :tasked_id, uniqueness: { scope: :tasked_type }
 
-  delegate :tasked_to?, to: :task
-
   def complete
     self.completed_at ||= Time.now
   end

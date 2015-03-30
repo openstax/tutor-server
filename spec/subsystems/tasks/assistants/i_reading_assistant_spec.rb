@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe IReadingAssistant, :type => :assistant, :vcr => VCR_OPTS do
+RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr => VCR_OPTS do
 
   let!(:assistant) { FactoryGirl.create :assistant,
                                         code_class_name: 'IReadingAssistant' }

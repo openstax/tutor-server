@@ -1,0 +1,19 @@
+FactoryGirl.define do
+  factory :tasks_tasked_reading, class_name: '::Tasks::Models::TaskedReading' do
+    transient do
+      skip_task false
+    end
+
+    task_step nil
+    url { Faker::Internet.url }
+    title { Faker::Lorem.sentence(3) }
+    content { Faker::Lorem.paragraph }
+
+    after(:build) do |tasked_reading, evaluator|
+      options = { tasked: tasked_reading }
+      options[:tasks_task] = nil if evaluator.skip_task
+
+      tasked_reading.task_step ||= FactoryGirl.build(:task_step, options)
+    end
+  end
+end

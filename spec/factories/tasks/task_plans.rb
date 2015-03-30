@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :task_plan do
+  factory :tasks_task_plan, class_name: '::Tasks::Models::TaskPlan' do
     transient do
       duration 1.week
       num_tasking_plans 0
@@ -17,10 +17,10 @@ FactoryGirl.define do
         code_class_name: evaluator.assistant_code_class_name
       }
       task_plan.assistant ||= Assistant.find_by(code_class_name_hash) || \
-                              FactoryGirl.build(:assistant, code_class_name_hash)
+                              FactoryGirl.build(:tasks_assistant, code_class_name_hash)
 
       evaluator.num_tasking_plans.times do
-        task_plan.tasking_plans << FactoryGirl.build(:tasking_plan,
+        task_plan.tasking_plans << FactoryGirl.build(:tasks_tasking_plan,
                                                      task_plan: task_plan)
       end
     end

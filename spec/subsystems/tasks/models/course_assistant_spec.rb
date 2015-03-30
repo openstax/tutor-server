@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe CourseAssistant, type: :model do
+RSpec.describe Tasks::Models::CourseAssistant, type: :model do
   subject { FactoryGirl.create :course_assistant }
 
   it { is_expected.to belong_to(:course) }
