@@ -5,23 +5,18 @@ class Content::Models::ExerciseVisitor < Content::Models::BookVisitor
   end
 
   def visit_page(page)
-    page_tags = page.page_tags.collect{|pt| pt.tag}.flatten
-    page_tag_ids = page_tags.collect{|t| t.id}
-
-    page_exercises =
-      Content::Models::Exercise.joins{exercise_tags.tag}
-                       .where{exercise_tags.content_tag_id.in page_tag_ids}
+    page_exercises = Content::Models::Exercise
+      .joins{exercise_tags.tag.page_tags}
+      .where{exercise_tags.tag.page_tags.content_page_id == my{page.id}}
 
     page_exercises.each do |page_exercise|
       wrapper = OpenStax::Exercises::V1::Exercise.new(page_exercise.content)
-
-      exercise_lo_names = wrapper.los
 
       (@exercises[wrapper.uid] ||= {}).tap do |entry|
         entry['uid']  = wrapper.uid
         entry['id']   = page_exercise.id
         entry['url']  = wrapper.url
-        entry['los'] = ((entry['los'] || []) + exercise_lo_names).uniq
+        entry['los']  = ((entry['los'] || []) + wrapper.los).uniq
         entry['tags'] = (((entry['tags'] || []) + wrapper.tags) - entry['los']).uniq
       end
     end

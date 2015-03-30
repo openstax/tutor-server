@@ -42,9 +42,7 @@ class IReadingAssistant
     end
 
     # Search local (cached) Exercises for one matching the embed tag
-    exercises = Content::SearchLocalExercises.call(
-      tag: exercise_fragment.embed_tag
-    ).outputs.items
+    exercises = Content::SearchLocalExercises[tag: exercise_fragment.embed_tag]
     exercise = exercises.first
 
     recovery = recovery_fragment.nil? ? \

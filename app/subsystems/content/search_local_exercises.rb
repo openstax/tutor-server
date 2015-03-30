@@ -1,6 +1,6 @@
 class Content::SearchLocalExercises
 
-  lev_routine
+  lev_routine express_output: :items
 
   uses_routine OSU::SearchAndOrganizeRelation,
                as: :search,
