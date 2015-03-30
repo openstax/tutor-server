@@ -1,4 +1,4 @@
 FactoryGirl.define do
-  factory :entity_course, class: '::Entity::Models::Course' do
+  factory :entity_course, class: '::Entity::Course' do
   end
 end

@@ -6,7 +6,7 @@ class Tasks::DoesTaskingExist
   def exec(task_component:, roles:)
 
     task = case task_component
-    when Entity::Models::Task
+    when Entity::Task
       task_component
     when Tasks::Models::Task
       task_component.entity_task

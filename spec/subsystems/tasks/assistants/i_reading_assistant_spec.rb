@@ -21,7 +21,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
       FactoryGirl.create :tasks_task_plan, assistant: assistant,
                                            settings: { page_ids: [page.id] }
     }
-    let!(:taskees) { 3.times.collect{ Entity::Models::User.create } }
+    let!(:taskees) { 3.times.collect{ Entity::User.create } }
     let!(:tasking_plans) { taskees.collect{ |t|
       task_plan.tasking_plans << FactoryGirl.create(
         :tasks_tasking_plan, task_plan: task_plan, target: t

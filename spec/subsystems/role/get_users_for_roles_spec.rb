@@ -2,8 +2,8 @@ require 'rails_helper'
 
 describe Role::GetUsersForRoles do
   context "when there are no users for the given roles" do
-    let(:role1) { Entity::CreateRole.call.outputs.role }
-    let(:role2) { Entity::CreateRole.call.outputs.role }
+    let(:role1) { Entity::Role.create! }
+    let(:role2) { Entity::Role.create! }
     let(:roles) { [role1, role2] }
 
     it "returns an empty array" do
@@ -14,12 +14,12 @@ describe Role::GetUsersForRoles do
   end
 
   context "when there is one user for the given roles" do
-    let(:target_user)  { Entity::CreateUser.call.outputs.user }
-    let(:other_user)   { Entity::CreateUser.call.outputs.user }
-    let(:target_role1) { Entity::CreateRole.call.outputs.role }
-    let(:target_role2) { Entity::CreateRole.call.outputs.role }
-    let(:other_role)   { Entity::CreateRole.call.outputs.role }
-    let(:dummy_role)   { Entity::CreateRole.call.outputs.role }
+    let(:target_user)  { Entity::User.create! }
+    let(:other_user)   { Entity::User.create! }
+    let(:target_role1) { Entity::Role.create! }
+    let(:target_role2) { Entity::Role.create! }
+    let(:other_role)   { Entity::Role.create! }
+    let(:dummy_role)   { Entity::Role.create! }
     let(:roles)        { [target_role1, dummy_role, target_role2] }
 
     before(:each) do
@@ -37,13 +37,13 @@ describe Role::GetUsersForRoles do
   end
 
   context "when there are multiple users for the given roles" do
-    let(:target_user1) { Entity::CreateUser.call.outputs.user }
-    let(:target_user2) { Entity::CreateUser.call.outputs.user }
-    let(:other_user)   { Entity::CreateUser.call.outputs.user }
-    let(:target_role1) { Entity::CreateRole.call.outputs.role }
-    let(:target_role2) { Entity::CreateRole.call.outputs.role }
-    let(:other_role)   { Entity::CreateRole.call.outputs.role }
-    let(:dummy_role)   { Entity::CreateRole.call.outputs.role }
+    let(:target_user1) { Entity::User.create! }
+    let(:target_user2) { Entity::User.create! }
+    let(:other_user)   { Entity::User.create! }
+    let(:target_role1) { Entity::Role.create! }
+    let(:target_role2) { Entity::Role.create! }
+    let(:other_role)   { Entity::Role.create! }
+    let(:dummy_role)   { Entity::Role.create! }
     let(:roles)        { [target_role1, dummy_role, target_role2] }
 
     before(:each) do

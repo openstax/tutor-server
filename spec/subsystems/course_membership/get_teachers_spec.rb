@@ -2,9 +2,9 @@ require 'rails_helper'
 
 describe CourseMembership::GetTeachers do
   context "when there are no teachers for the given course" do
-    let(:target_course) { Entity::CreateCourse.call.outputs.course }
-    let(:other_course)  { Entity::CreateCourse.call.outputs.course }
-    let(:other_role)    { Entity::CreateRole.call.outputs.role }
+    let(:target_course) { Entity::Course.create! }
+    let(:other_course)  { Entity::Course.create! }
+    let(:other_role)    { Entity::Role.create! }
 
     before(:each) do
       CourseMembership::AddTeacher.call(course: other_course, role: other_role)
@@ -18,10 +18,10 @@ describe CourseMembership::GetTeachers do
   end
 
   context "when there is one teacher for the given course" do
-    let(:target_course) { Entity::CreateCourse.call.outputs.course }
-    let(:target_role)   { Entity::CreateRole.call.outputs.role }
-    let(:other_course)  { Entity::CreateCourse.call.outputs.course }
-    let(:other_role)    { Entity::CreateRole.call.outputs.role }
+    let(:target_course) { Entity::Course.create! }
+    let(:target_role)   { Entity::Role.create! }
+    let(:other_course)  { Entity::Course.create! }
+    let(:other_role)    { Entity::Role.create! }
 
     before(:each) do
       CourseMembership::AddTeacher.call(course: target_course, role: target_role)
@@ -37,11 +37,11 @@ describe CourseMembership::GetTeachers do
   end
 
   context "when there are multiple teachers for the given course" do
-    let(:target_course) { Entity::CreateCourse.call.outputs.course }
-    let(:target_role1)  { Entity::CreateRole.call.outputs.role }
-    let(:target_role2)  { Entity::CreateRole.call.outputs.role }
-    let(:other_course)  { Entity::CreateCourse.call.outputs.course }
-    let(:other_role)    { Entity::CreateRole.call.outputs.role }
+    let(:target_course) { Entity::Course.create! }
+    let(:target_role1)  { Entity::Role.create! }
+    let(:target_role2)  { Entity::Role.create! }
+    let(:other_course)  { Entity::Course.create! }
+    let(:other_role)    { Entity::Role.create! }
 
     before(:each) do
       CourseMembership::AddTeacher.call(course: target_course, role: target_role1)

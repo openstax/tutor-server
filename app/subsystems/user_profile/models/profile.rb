@@ -1,7 +1,7 @@
 class UserProfile::Models::Profile < Tutor::SubSystems::BaseModel
 
   belongs_to :account, class_name: "OpenStax::Accounts::Account"
-  belongs_to :entity_user, class_name: "::Entity::Models::User"
+  belongs_to :entity_user, class_name: "::Entity::User"
   has_many :groups_as_member, through: :account
   has_many :groups_as_owner, through: :account
 

@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe BuildTaskPlan, :type => :routine do
-  let!(:course) { Entity::Models::Course.new }
+  let!(:course) { Entity::Course.new }
 
   it 'initializes but does not save a TaskPlan object' do
     task_plan = BuildTaskPlan.call(course: course).outputs.task_plan

@@ -12,7 +12,7 @@ class Domain::GetTeacherNames
   protected
 
   def exec(course_id)
-    course = Entity::Models::Course.find(course_id)
+    course = Entity::Course.find(course_id)
     run(:get_teacher_users, course)
     run(:get_full_names, outputs[:teachers])
     outputs[:teacher_names] = outputs[:teacher_names].sort

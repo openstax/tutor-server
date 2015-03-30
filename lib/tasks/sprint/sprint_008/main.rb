@@ -31,7 +31,7 @@ module Sprint008
       # Add the students to the courses
 
       Domain::AddUserAsCourseStudent[course: course1, user: student.entity_user]
-      student_role = Entity::Models::Role.last
+      student_role = Entity::Role.last
       Domain::AddUserAsCourseStudent[course: course2, user: teacher_and_student.entity_user]
 
       # Set up three reading tasks (will include try another)

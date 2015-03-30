@@ -5,7 +5,7 @@ RSpec.describe GetUserCourseEvents, :type => :routine do
   let(:user)   { FactoryGirl.create(:user).entity_user }
 
   it 'gets all events for a course' do
-    role = Entity::CreateRole.call.outputs.role
+    role = Entity::Role.create!
     Role::AddUserRole.call(user: user, role: role)
 
     3.times{ FactoryGirl.create :tasks_task_plan, owner: course }
