@@ -1,6 +1,6 @@
 class Content::GetExercise
 
-  lev_routine
+  lev_routine express_output: :exercise
 
   protected
 
