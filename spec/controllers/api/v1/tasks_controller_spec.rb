@@ -16,8 +16,8 @@ describe Api::V1::TasksController, :type => :controller, :api => true, :version 
   let!(:userless_token)  { FactoryGirl.create :doorkeeper_access_token,
                                               application: application }
 
-  let!(:task_1)            { FactoryGirl.create :task, title: 'A Task Title', step_types: [:tasked_reading, :tasked_exercise] }
-  let!(:tasking_1)         { FactoryGirl.create :tasking, taskee: user_1, task: task_1 }
+  let!(:task_1)            { FactoryGirl.create :tasks_task, title: 'A Task Title', step_types: [:tasked_reading, :tasked_exercise] }
+  let!(:tasking_1)         { FactoryGirl.create :tasks_tasking, taskee: user_1, task: task_1 }
 
   describe "#show" do
     it "should work on the happy path" do

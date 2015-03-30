@@ -10,27 +10,27 @@ RSpec.describe Tasks::Models::Task, :type => :model do
   it { is_expected.to validate_presence_of(:opens_at) }
 
   it "requires non-nil due_at to be after opens_at" do
-    task = FactoryGirl.build(:task, due_at: nil)
+    task = FactoryGirl.build(:tasks_task, due_at: nil)
     expect(task).to be_valid
 
-    task = FactoryGirl.build(:task, due_at: Time.now - 1.week)
+    task = FactoryGirl.build(:tasks_task, due_at: Time.now - 1.week)
     expect(task).to_not be_valid
   end
 
   it "reports is_shared correctly" do
-    at1 = FactoryGirl.create(:tasking)
+    at1 = FactoryGirl.create(:tasks_tasking)
     at1.reload
     expect(at1.task.is_shared).to be_falsy
 
-    at2 = FactoryGirl.create(:tasking, task: at1.task)
+    at2 = FactoryGirl.create(:tasks_tasking, task: at1.task)
     at1.reload
     expect(at1.task.is_shared).to be_truthy
   end
 
   it 'reports tasked_to? for a taskee' do
     user = FactoryGirl.create(:user)
-    tasking = FactoryGirl.build(:tasking, taskee: user)
-    task = FactoryGirl.create(:task, taskings: [tasking])
+    tasking = FactoryGirl.build(:tasks_tasking, taskee: user)
+    task = FactoryGirl.create(:tasks_task, taskings: [tasking])
 
     expect(task).to be_tasked_to(user)
 

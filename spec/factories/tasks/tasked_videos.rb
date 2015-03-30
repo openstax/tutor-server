@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :tasks_tasked_video, class_name: '::Tasks::Models::TaskedVideo' do
+  factory :tasks_tasked_video, class: '::Tasks::Models::TaskedVideo' do
     transient do
       skip_task false
     end

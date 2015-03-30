@@ -5,7 +5,7 @@ describe Api::V1::TaskPlansController, :type => :controller,
                                        :version => :v1 do
 
   let!(:course) { Domain::CreateCourse.call.outputs.course }
-  let!(:assistant) { FactoryGirl.create :assistant,
+  let!(:assistant) { FactoryGirl.create :tasks_assistant,
                                         code_class_name: "IReadingAssistant" }
   let!(:user) { FactoryGirl.create :user }
   let!(:teacher) { FactoryGirl.create :user }
@@ -16,7 +16,7 @@ describe Api::V1::TaskPlansController, :type => :controller,
                                         assistant: assistant,
                                         settings: { page_ids: [page.id] }) }
   let!(:tasking_plan) {
-    tp = FactoryGirl.build :tasking_plan, task_plan: task_plan, target: user
+    tp = FactoryGirl.build :tasks_tasking_plan, task_plan: task_plan, target: user
     task_plan.tasking_plans << tp
     tp
   }

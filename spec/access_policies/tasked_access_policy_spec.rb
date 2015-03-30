@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe TaskedAccessPolicy, :type => :access_policy do
   let(:requestor) { FactoryGirl.create(:user) }
-  let(:tasked) { FactoryGirl.create(:tasked_exercise) }
+  let(:tasked) { FactoryGirl.create(:tasks_tasked_exercise) }
 
   subject(:action_allowed) do
     TaskedAccessPolicy.action_allowed?(action, requestor, tasked)

@@ -6,7 +6,7 @@ RSpec.describe GetUserCourseEvents, :type => :routine do
 
   it 'gets all events for a course' do
     3.times{ FactoryGirl.create :tasks_task_plan, owner: course }
-    3.times{ FactoryGirl.create(:tasking, taskee: user) }
+    3.times{ FactoryGirl.create(:tasks_tasking, taskee: user) }
     role = Entity::CreateRole.call.outputs.role
     Role::AddUserRole.call(user:user,role:role)
     CourseMembership::AddTeacher.call(course: course, role: role)

@@ -3,7 +3,7 @@ require 'vcr_helper'
 
 RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr => VCR_OPTS do
 
-  let!(:assistant) { FactoryGirl.create :assistant,
+  let!(:assistant) { FactoryGirl.create :tasks_assistant,
                                         code_class_name: 'IReadingAssistant' }
   let!(:book_part) { FactoryGirl.create :content_book_part }
 
@@ -21,7 +21,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
     let!(:taskees) { 3.times.collect{ FactoryGirl.create(:user) } }
     let!(:tasking_plans) { taskees.collect{ |t|
       task_plan.tasking_plans << FactoryGirl.create(
-        :tasking_plan, task_plan: task_plan, target: t
+        :tasks_tasking_plan, task_plan: task_plan, target: t
       )
     } }
 
@@ -88,7 +88,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
     let!(:taskees) { 3.times.collect{ FactoryGirl.create(:user) } }
     let!(:tasking_plans) { taskees.collect{ |t|
       task_plan.tasking_plans << FactoryGirl.create(
-        :tasking_plan, task_plan: task_plan, target: t
+        :tasks_tasking_plan, task_plan: task_plan, target: t
       )
     } }
 

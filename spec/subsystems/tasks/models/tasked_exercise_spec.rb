@@ -12,7 +12,7 @@ RSpec.describe Tasks::Models::TaskedExercise, :type => :model do
                         .to(:wrapper) }
 
   let!(:hash) { OpenStax::Exercises::V1.fake_client.new_exercise_hash }
-  let!(:tasked_exercise) { FactoryGirl.create(:tasked_exercise,
+  let!(:tasked_exercise) { FactoryGirl.create(:tasks_tasked_exercise,
                                               content: hash.to_json) }
 
   it 'can return its wrapper' do

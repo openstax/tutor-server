@@ -6,12 +6,12 @@ RSpec.describe Api::V1::TaskSearchRepresenter, :type => :representer do
 
     let(:user)    { FactoryGirl.create(:user) }
     let(:outputs) { SearchTasks.call(q: "user_id:#{user.id}").outputs   }
-    let(:default_task)   { FactoryGirl.create(:task) }
+    let(:default_task)   { FactoryGirl.create(:tasks_task) }
     let(:representation) { Api::V1::TaskSearchRepresenter.new(outputs).as_json }
 
     it "represents a generates a JSON representation of their tasks" do
       task_count = rand(5..10)
-      task_count.times{ FactoryGirl.create(:tasking, taskee: user) }
+      task_count.times{ FactoryGirl.create(:tasks_tasking, taskee: user) }
 
       expect(representation).to include(
         "total_count" => task_count,

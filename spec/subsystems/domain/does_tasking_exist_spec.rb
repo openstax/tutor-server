@@ -3,8 +3,8 @@ require 'rails_helper'
 RSpec.describe Domain::DoesTaskingExist, :type => :routine do
   let(:nontaskee) { FactoryGirl.create(:user) }
   let(:taskee)    { FactoryGirl.create(:user) }
-  let(:tasked)    { FactoryGirl.create(:tasked_exercise) }
-  let!(:tasking)  { FactoryGirl.create(:tasking, taskee: taskee, task: tasked.task_step.task) }
+  let(:tasked)    { FactoryGirl.create(:tasks_tasked_exercise) }
+  let!(:tasking)  { FactoryGirl.create(:tasks_tasking, taskee: taskee, task: tasked.task_step.task) }
 
   it "returns true for a tasked and the taskee" do
     expect(Domain::DoesTaskingExist[task_component: tasked, user: taskee]).to be_truthy

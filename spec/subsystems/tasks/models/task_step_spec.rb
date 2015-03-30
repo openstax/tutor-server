@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Tasks::Models::TaskStep, :type => :model do
-  subject(:task_step) { FactoryGirl.create :task_step }
+  subject(:task_step) { FactoryGirl.create :tasks_task_step }
 
   it { is_expected.to belong_to(:task) }
   it { is_expected.to belong_to(:tasked) }
@@ -12,7 +12,7 @@ RSpec.describe Tasks::Models::TaskStep, :type => :model do
   it "requires tasked to be unique" do
     expect(task_step).to be_valid
 
-    expect(FactoryGirl.build(:task_step,
+    expect(FactoryGirl.build(:tasks_task_step,
                              tasked: task_step.tasked)).not_to be_valid
   end
 end

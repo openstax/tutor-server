@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :tasks_task_plan, class_name: '::Tasks::Models::TaskPlan' do
+  factory :tasks_task_plan, class: '::Tasks::Models::TaskPlan' do
     transient do
       duration 1.week
       num_tasking_plans 0

@@ -14,20 +14,20 @@ RSpec.describe Tasks::Models::Tasking, :type => :model do
   # it { is_expected.to validate_presence_of(:user) }
 
   # it "requires taskee and user to be unique for the task" do
-  #   tasking = FactoryGirl.create(:tasking)
+  #   tasking = FactoryGirl.create(:tasks_tasking)
   #   expect(tasking).to be_valid
 
-  #   expect(FactoryGirl.build(:tasking, task: tasking.task,
+  #   expect(FactoryGirl.build(:tasks_tasking, task: tasking.task,
   #                            taskee: tasking.taskee)).to_not be_valid
 
-  #   expect(FactoryGirl.build(:tasking, task: tasking.task,
+  #   expect(FactoryGirl.build(:tasks_tasking, task: tasking.task,
   #                            user: tasking.user)).to_not be_valid
   # end
 
   # it "requires user to match taskee" do
-  #   expect(FactoryGirl.build(:tasking)).to be_valid
+  #   expect(FactoryGirl.build(:tasks_tasking)).to be_valid
 
-  #   expect(FactoryGirl.build(:tasking,
+  #   expect(FactoryGirl.build(:tasks_tasking,
   #                            user: FactoryGirl.create(:user))).to_not be_valid
   # end
 end

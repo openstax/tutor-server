@@ -16,13 +16,13 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
   let!(:userless_token)  { FactoryGirl.create :doorkeeper_access_token,
                                               application: application }
 
-  let!(:task_step)       { FactoryGirl.create :task_step, title: 'title',
+  let!(:task_step)       { FactoryGirl.create :tasks_task_step, title: 'title',
                                               url: 'url', content: 'content' }
   let!(:task)            { task_step.task.reload }
-  let!(:tasking)         { FactoryGirl.create :tasking, taskee: user_1,
+  let!(:tasking)         { FactoryGirl.create :tasks_tasking, taskee: user_1,
                                                         task: task }
   let!(:tasked_exercise) {
-    te = FactoryGirl.create :tasked_exercise, skip_task: true
+    te = FactoryGirl.create :tasks_tasked_exercise, skip_task: true
     te.task_step.task = task
     te.task_step.save!
     te
@@ -94,7 +94,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
 
   describe "#recovery" do
     it "should allow owner to recover exercises with recovery steps" do
-      recovery = FactoryGirl.create :tasked_exercise
+      recovery = FactoryGirl.create :tasks_tasked_exercise
       recovery.task_step.delete
       tasked_exercise.recovery_tasked_exercise = recovery
       tasked_exercise.save!
@@ -118,7 +118,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
     end
 
     it "should not allow random user to recover exercises" do
-      recovery = FactoryGirl.create :tasked_exercise
+      recovery = FactoryGirl.create :tasks_tasked_exercise
       recovery.task_step.delete
       tasked_exercise.recovery_tasked_exercise = recovery
       tasked_exercise.save!
@@ -206,7 +206,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
   # TODO: could replace with FactoryGirl calls like in TaskedExercise factory examples
   def create_tasked(type, owner)
     tasked = FactoryGirl.create(type)
-    tasking = FactoryGirl.create(:tasking, taskee: owner, task: tasked.task_step.task)
+    tasking = FactoryGirl.create(:tasks_tasking, taskee: owner, task: tasked.task_step.task)
     tasked
   end
 

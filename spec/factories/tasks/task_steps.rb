@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :tasks_task_step, class_name: '::Tasks::Models::TaskStep' do
+  factory :tasks_task_step, class: '::Tasks::Models::TaskStep' do
     task
     tasked_type :tasks_tasked_reading
 

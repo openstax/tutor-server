@@ -2,15 +2,15 @@ require 'rails_helper'
 
 describe SearchTasks do
 
-  let!(:task_1) { FactoryGirl.create(:tasking).task.reload }
+  let!(:task_1) { FactoryGirl.create(:tasks_tasking).task.reload }
 
-  let!(:task_2) { FactoryGirl.create(:tasking).task.reload }
+  let!(:task_2) { FactoryGirl.create(:tasks_tasking).task.reload }
 
-  let!(:task_3) { FactoryGirl.create(:tasking).task.reload }
+  let!(:task_3) { FactoryGirl.create(:tasks_tasking).task.reload }
 
   before(:each) do
     100.times do
-      FactoryGirl.create(:task)
+      FactoryGirl.create(:tasks_task)
     end
   end
 

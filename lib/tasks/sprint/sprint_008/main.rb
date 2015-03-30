@@ -36,23 +36,23 @@ module Sprint008
 
       # Set up three reading tasks (will include try another)
 
-      a = FactoryGirl.create :assistant, code_class_name: "IReadingAssistant"
+      a = FactoryGirl.create :tasks_assistant, code_class_name: "IReadingAssistant"
       tp = FactoryGirl.create :tasks_task_plan, assistant: a,
                                           owner: course1,
                                           settings: { page_ids: [1, 2] }
-      tp.tasking_plans << FactoryGirl.create(:tasking_plan, target: student,
+      tp.tasking_plans << FactoryGirl.create(:tasks_tasking_plan, target: student,
                                                             task_plan: tp)
       DistributeTasks.call(tp)
       tp = FactoryGirl.create :tasks_task_plan, assistant: a,
                                           owner: course1,
                                           settings: { page_ids: [3] }
-      tp.tasking_plans << FactoryGirl.create(:tasking_plan, target: student,
+      tp.tasking_plans << FactoryGirl.create(:tasks_tasking_plan, target: student,
                                                             task_plan: tp)
       DistributeTasks.call(tp)
       tp = FactoryGirl.create :tasks_task_plan, assistant: a,
                                           owner: course1,
                                           settings: { page_ids: [4] }
-      tp.tasking_plans << FactoryGirl.create(:tasking_plan, target: student,
+      tp.tasking_plans << FactoryGirl.create(:tasks_tasking_plan, target: student,
                                                             task_plan: tp)
       DistributeTasks.call(tp)
 
@@ -66,7 +66,7 @@ module Sprint008
 
       0.upto(30).each do |i|
         user = FactoryGirl.create :user, username: "student_#{i}"
-        stats_tp.tasking_plans << FactoryGirl.create(:tasking_plan,target: user, task_plan: stats_tp)
+        stats_tp.tasking_plans << FactoryGirl.create(:tasks_tasking_plan,target: user, task_plan: stats_tp)
       end
       DistributeTasks.call(stats_tp)
       # mark some steps as complete and correct

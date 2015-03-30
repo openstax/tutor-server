@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :tasks_task do
+  factory :tasks_task, class: '::Tasks::Models::Task' do
     transient do
       duration 1.week
       step_types []
