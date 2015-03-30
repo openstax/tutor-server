@@ -31,7 +31,8 @@ RSpec.describe Content::Routines::ImportExercises, :type => :routine,
         result = Content::Routines::ImportExercises.call(tag: 'k12phys-ch04-s01-lo02')
       }.to change{ Content::Models::Exercise.count }.by(2)
 
-      exercises = Content::Models::Exercise.all.to_a
+
+      exercises = Content::Models::Exercise.all.order(:id).to_a
       exercises[-2..-1].each do |exercise|
         expect(exercise.exercise_tags.collect{|et| et.tag.name}).to(
           include 'k12phys-ch04-s01-lo02'
@@ -46,7 +47,7 @@ RSpec.describe Content::Routines::ImportExercises, :type => :routine,
         result = Content::Routines::ImportExercises.call(tag: tags)
       }.to change{ Content::Models::Exercise.count }.by(3)
 
-      exercises = Content::Models::Exercise.all.to_a
+      exercises = Content::Models::Exercise.all.order(:id).to_a
       exercises[-3..-1].each do |exercise|
         expect(exercise.exercise_tags.collect{|et| et.tag.name} & tags).not_to(
           be_empty
@@ -91,7 +92,7 @@ RSpec.describe Content::Routines::ImportExercises, :type => :routine,
         result = Content::Routines::ImportExercises.call(tag: 'k12phys-ch04-s01-lo02')
       }.to change{ Content::Models::Exercise.count }.by(15)
 
-      exercises = Content::Models::Exercise.all.to_a
+      exercises = Content::Models::Exercise.all.order(:id).to_a
       exercises[-15..-1].each do |exercise|
         expect(exercise.exercise_tags.collect{|et| et.tag.name}).to(
           include 'k12phys-ch04-s01-lo02'
@@ -104,7 +105,7 @@ RSpec.describe Content::Routines::ImportExercises, :type => :routine,
       expect { Content::Routines::ImportExercises.call(tag: tags) }
         .to change{ Content::Models::Exercise.count }.by(31)
 
-      exercises = Content::Models::Exercise.all.to_a
+      exercises = Content::Models::Exercise.all.order(:id).to_a
       exercises[-31..-1].each do |exercise|
         expect(exercise.exercise_tags.collect{|et| et.tag.name} & tags).not_to(
           be_empty

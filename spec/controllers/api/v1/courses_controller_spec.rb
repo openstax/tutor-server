@@ -323,23 +323,15 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
   describe "practice_get" do
     it "returns nothing when practice widget not yet set" do
       Domain::AddUserAsCourseStudent.call(course: course, user: user_1.entity_user)
-<<<<<<< HEAD
       api_get :practice, user_1_token, parameters: {id: course.id, role_id: Entity::Role.last.id}
-=======
-      api_get :practice, user_1_token, parameters: {id: course.id, role_id: Entity::Models::Role.last.id}
->>>>>>> Don't assume record ID's start with 1
+
       expect(response).to have_http_status(:not_found)
     end
 
     it "returns a practice widget" do
       Domain::AddUserAsCourseStudent.call(course: course, user: user_1.entity_user)
-<<<<<<< HEAD
       Domain::ResetPracticeWidget.call(role: Entity::Role.last, condition: :fake)
       Domain::ResetPracticeWidget.call(role: Entity::Role.last, condition: :fake)
-=======
-      Domain::ResetPracticeWidget.call(role: Entity::Models::Role.last, condition: :fake)
-      Domain::ResetPracticeWidget.call(role: Entity::Models::Role.last, condition: :fake)
->>>>>>> Don't assume record ID's start with 1
 
       api_get :practice, user_1_token, parameters: {id: course.id, role_id: Entity::Role.last.id}
 
