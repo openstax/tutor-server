@@ -1,4 +1,4 @@
-class Task < ActiveRecord::Base
+class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   belongs_to :task_plan
 

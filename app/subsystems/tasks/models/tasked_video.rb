@@ -1,4 +1,4 @@
-class TaskedVideo < ActiveRecord::Base
+class Tasks::Models::TaskedVideo < Tutor::SubSystems::BaseModel
   acts_as_tasked
 
   validates :url, presence: true

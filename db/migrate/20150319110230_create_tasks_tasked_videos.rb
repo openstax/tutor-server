@@ -1,6 +1,6 @@
-class CreateTaskedVideos < ActiveRecord::Migration
+class CreateTasksTaskedVideos < ActiveRecord::Migration
   def change
-    create_table :tasked_videos do |t|
+    create_table :tasks_tasked_videos do |t|
       t.string :url, null: false
       t.text :content, null: false
       t.string :title

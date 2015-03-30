@@ -1,4 +1,4 @@
-class TaskPlan < ActiveRecord::Base
+class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
 
   # Allow use of 'type' column without STI
   self.inheritance_column = nil

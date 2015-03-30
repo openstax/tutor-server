@@ -1,4 +1,4 @@
-class TaskingPlan < ActiveRecord::Base
+class Tasks::Models::TaskingPlan < Tutor::SubSystems::BaseModel
   belongs_to :task_plan
   belongs_to :target, polymorphic: true
 

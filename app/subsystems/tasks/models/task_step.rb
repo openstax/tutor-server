@@ -1,4 +1,4 @@
-class TaskStep < ActiveRecord::Base
+class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   sortable_belongs_to :task, on: :number, inverse_of: :task_steps
   belongs_to :tasked, polymorphic: true, dependent: :destroy
 

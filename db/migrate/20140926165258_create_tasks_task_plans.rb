@@ -1,7 +1,7 @@
-class CreateTaskPlans < ActiveRecord::Migration
+class CreateTasksTaskPlans < ActiveRecord::Migration
   def change
-    create_table :task_plans do |t|
-      t.references :assistant, null: false
+    create_table :tasks_task_plans do |t|
+      t.references :tasks_assistant, null: false
       t.references :owner, polymorphic: true, null: false
       t.string :title
       t.string :type, null: false
@@ -13,10 +13,10 @@ class CreateTaskPlans < ActiveRecord::Migration
 
       t.index [:owner_id, :owner_type]
       t.index [:due_at, :opens_at]
-      t.index :assistant_id
+      t.index :tasks_assistant_id
     end
 
-    add_foreign_key :task_plans, :assistants, on_update: :cascade,
-                                              on_delete: :cascade
+    add_foreign_key :tasks_task_plans, :tasks_assistants, 
+                    on_update: :cascade, on_delete: :cascade
   end
 end

@@ -1,4 +1,4 @@
-class CourseAssistant < ActiveRecord::Base
+class Tasks::Models::CourseAssistant < Tutor::SubSystems::BaseModel
   belongs_to :course
   belongs_to :assistant
 

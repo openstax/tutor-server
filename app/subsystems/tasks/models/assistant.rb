@@ -1,4 +1,4 @@
-class Assistant < ActiveRecord::Base
+class Tasks::Models::Assistant < Tutor::SubSystems::BaseModel
 
   has_many :course_assistants, dependent: :destroy
 

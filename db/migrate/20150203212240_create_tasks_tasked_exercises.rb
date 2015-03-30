@@ -1,6 +1,6 @@
-class CreateTaskedExercises < ActiveRecord::Migration
+class CreateTasksTaskedExercises < ActiveRecord::Migration
   def change
-    create_table :tasked_exercises do |t|
+    create_table :tasks_tasked_exercises do |t|
       t.references :recovery_tasked_exercise
       t.string :url, null: false
       t.text :content, null: false

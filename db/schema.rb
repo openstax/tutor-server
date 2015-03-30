@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150326125339) do
+ActiveRecord::Schema.define(version: 20150325170729) do
 
   create_table "administrators", force: :cascade do |t|
     t.integer  "profile_id", null: false
@@ -20,17 +20,6 @@ ActiveRecord::Schema.define(version: 20150326125339) do
   end
 
   add_index "administrators", ["profile_id"], name: "index_administrators_on_profile_id", unique: true
-
-  create_table "assistants", force: :cascade do |t|
-    t.string   "name",            null: false
-    t.string   "code_class_name", null: false
-    t.string   "task_plan_type",  null: false
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
-  end
-
-  add_index "assistants", ["code_class_name"], name: "index_assistants_on_code_class_name", unique: true
-  add_index "assistants", ["name"], name: "index_assistants_on_name", unique: true
 
   create_table "content_book_parts", force: :cascade do |t|
     t.string   "url"
@@ -103,18 +92,6 @@ ActiveRecord::Schema.define(version: 20150326125339) do
 
   add_index "content_tags", ["name"], name: "index_content_tags_on_name", unique: true
   add_index "content_tags", ["tag_type"], name: "index_content_tags_on_tag_type"
-
-  create_table "course_assistants", force: :cascade do |t|
-    t.integer  "course_id",    null: false
-    t.integer  "assistant_id", null: false
-    t.text     "settings"
-    t.text     "data"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
-  end
-
-  add_index "course_assistants", ["assistant_id"], name: "index_course_assistants_on_assistant_id"
-  add_index "course_assistants", ["course_id", "assistant_id"], name: "index_course_assistants_on_course_id_and_assistant_id", unique: true
 
   create_table "course_content_course_books", force: :cascade do |t|
     t.integer  "entity_course_id", null: false
@@ -196,9 +173,9 @@ ActiveRecord::Schema.define(version: 20150326125339) do
   end
 
   create_table "entity_roles", force: :cascade do |t|
+    t.integer  "role_type",  default: 0, null: false
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
-    t.integer  "role_type",  default: 0, null: false
   end
 
   add_index "entity_roles", ["role_type"], name: "index_entity_roles_on_role_type"
@@ -386,38 +363,69 @@ ActiveRecord::Schema.define(version: 20150326125339) do
   add_index "students", ["user_id", "course_id"], name: "index_students_on_user_id_and_course_id", unique: true
   add_index "students", ["user_id", "section_id"], name: "index_students_on_user_id_and_section_id", unique: true
 
-  create_table "task_plans", force: :cascade do |t|
-    t.integer  "assistant_id", null: false
-    t.integer  "owner_id",     null: false
-    t.string   "owner_type",   null: false
+  create_table "tasked_interactives", force: :cascade do |t|
+    t.string   "url",        null: false
+    t.text     "content",    null: false
     t.string   "title"
-    t.string   "type",         null: false
-    t.text     "settings",     null: false
-    t.datetime "opens_at",     null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "tasks_assistants", force: :cascade do |t|
+    t.string   "name",            null: false
+    t.string   "code_class_name", null: false
+    t.string   "task_plan_type",  null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  add_index "tasks_assistants", ["code_class_name"], name: "index_tasks_assistants_on_code_class_name", unique: true
+  add_index "tasks_assistants", ["name"], name: "index_tasks_assistants_on_name", unique: true
+
+  create_table "tasks_course_assistants", force: :cascade do |t|
+    t.integer  "entity_course_id",   null: false
+    t.integer  "tasks_assistant_id", null: false
+    t.text     "settings"
+    t.text     "data"
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
+  end
+
+  add_index "tasks_course_assistants", ["entity_course_id", "tasks_assistant_id"], name: "tasks_course_assistant_course_on_assistant_unique", unique: true
+  add_index "tasks_course_assistants", ["tasks_assistant_id"], name: "index_tasks_course_assistants_on_tasks_assistant_id"
+
+  create_table "tasks_task_plans", force: :cascade do |t|
+    t.integer  "tasks_assistant_id", null: false
+    t.integer  "owner_id",           null: false
+    t.string   "owner_type",         null: false
+    t.string   "title"
+    t.string   "type",               null: false
+    t.text     "settings",           null: false
+    t.datetime "opens_at",           null: false
     t.datetime "due_at"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
   end
 
-  add_index "task_plans", ["assistant_id"], name: "index_task_plans_on_assistant_id"
-  add_index "task_plans", ["due_at", "opens_at"], name: "index_task_plans_on_due_at_and_opens_at"
-  add_index "task_plans", ["owner_id", "owner_type"], name: "index_task_plans_on_owner_id_and_owner_type"
+  add_index "tasks_task_plans", ["due_at", "opens_at"], name: "index_tasks_task_plans_on_due_at_and_opens_at"
+  add_index "tasks_task_plans", ["owner_id", "owner_type"], name: "index_tasks_task_plans_on_owner_id_and_owner_type"
+  add_index "tasks_task_plans", ["tasks_assistant_id"], name: "index_tasks_task_plans_on_tasks_assistant_id"
 
-  create_table "task_steps", force: :cascade do |t|
-    t.integer  "task_id",      null: false
-    t.integer  "tasked_id",    null: false
-    t.string   "tasked_type",  null: false
-    t.integer  "number",       null: false
+  create_table "tasks_task_steps", force: :cascade do |t|
+    t.integer  "tasks_task_id", null: false
+    t.integer  "tasked_id",     null: false
+    t.string   "tasked_type",   null: false
+    t.integer  "number",        null: false
     t.datetime "completed_at"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
     t.integer  "page_id"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
   end
 
-  add_index "task_steps", ["task_id", "number"], name: "index_task_steps_on_task_id_and_number", unique: true
-  add_index "task_steps", ["tasked_id", "tasked_type"], name: "index_task_steps_on_tasked_id_and_tasked_type", unique: true
+  add_index "tasks_task_steps", ["tasked_id", "tasked_type"], name: "index_tasks_task_steps_on_tasked_id_and_tasked_type", unique: true
+  add_index "tasks_task_steps", ["tasks_task_id", "number"], name: "index_tasks_task_steps_on_tasks_task_id_and_number", unique: true
 
-  create_table "tasked_exercises", force: :cascade do |t|
+  create_table "tasks_tasked_exercises", force: :cascade do |t|
     t.integer  "recovery_tasked_exercise_id"
     t.string   "url",                         null: false
     t.text     "content",                     null: false
@@ -428,9 +436,9 @@ ActiveRecord::Schema.define(version: 20150326125339) do
     t.datetime "updated_at",                  null: false
   end
 
-  add_index "tasked_exercises", ["recovery_tasked_exercise_id"], name: "index_tasked_exercises_on_recovery_tasked_exercise_id", unique: true
+  add_index "tasks_tasked_exercises", ["recovery_tasked_exercise_id"], name: "index_tasks_tasked_exercises_on_recovery_tasked_exercise_id", unique: true
 
-  create_table "tasked_interactives", force: :cascade do |t|
+  create_table "tasks_tasked_readings", force: :cascade do |t|
     t.string   "url",        null: false
     t.text     "content",    null: false
     t.string   "title"
@@ -438,7 +446,7 @@ ActiveRecord::Schema.define(version: 20150326125339) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "tasked_readings", force: :cascade do |t|
+  create_table "tasks_tasked_videos", force: :cascade do |t|
     t.string   "url",        null: false
     t.text     "content",    null: false
     t.string   "title"
@@ -446,62 +454,16 @@ ActiveRecord::Schema.define(version: 20150326125339) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "tasked_videos", force: :cascade do |t|
-    t.string   "url",        null: false
-    t.text     "content",    null: false
-    t.string   "title"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+  create_table "tasks_tasking_plans", force: :cascade do |t|
+    t.integer  "target_id",          null: false
+    t.string   "target_type",        null: false
+    t.integer  "tasks_task_plan_id", null: false
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
   end
 
-  create_table "tasking_plans", force: :cascade do |t|
-    t.integer  "target_id",    null: false
-    t.string   "target_type",  null: false
-    t.integer  "task_plan_id", null: false
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
-  end
-
-  add_index "tasking_plans", ["target_id", "target_type", "task_plan_id"], name: "index_tasking_plans_on_t_id_and_t_type_and_t_p_id", unique: true
-  add_index "tasking_plans", ["task_plan_id"], name: "index_tasking_plans_on_task_plan_id"
-
-  create_table "taskings", force: :cascade do |t|
-    t.integer  "taskee_id",   null: false
-    t.string   "taskee_type", null: false
-    t.integer  "task_id",     null: false
-    t.integer  "user_id",     null: false
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
-  end
-
-  add_index "taskings", ["task_id", "user_id"], name: "index_taskings_on_task_id_and_user_id", unique: true
-  add_index "taskings", ["taskee_id", "taskee_type", "task_id"], name: "index_taskings_on_taskee_id_and_taskee_type_and_task_id", unique: true
-  add_index "taskings", ["user_id"], name: "index_taskings_on_user_id"
-
-  create_table "tasks", force: :cascade do |t|
-    t.integer  "task_plan_id"
-    t.string   "task_type",                  null: false
-    t.string   "title",                      null: false
-    t.datetime "opens_at",                   null: false
-    t.datetime "due_at"
-    t.integer  "taskings_count", default: 0, null: false
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
-  end
-
-  add_index "tasks", ["due_at", "opens_at"], name: "index_tasks_on_due_at_and_opens_at"
-  add_index "tasks", ["task_plan_id"], name: "index_tasks_on_task_plan_id"
-  add_index "tasks", ["task_type"], name: "index_tasks_on_task_type"
-
-  create_table "tasks_legacy_task_maps", force: :cascade do |t|
-    t.integer  "entity_task_id", null: false
-    t.integer  "task_id",        null: false
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
-  end
-
-  add_index "tasks_legacy_task_maps", ["entity_task_id", "task_id"], name: "index_tasks_legacy_task_maps_on_entity_task_id_and_task_id", unique: true
-  add_index "tasks_legacy_task_maps", ["task_id"], name: "index_tasks_legacy_task_maps_on_task_id", unique: true
+  add_index "tasks_tasking_plans", ["target_id", "target_type", "tasks_task_plan_id"], name: "index_tasking_plans_on_t_id_and_t_type_and_t_p_id", unique: true
+  add_index "tasks_tasking_plans", ["tasks_task_plan_id"], name: "index_tasks_tasking_plans_on_tasks_task_plan_id"
 
   create_table "tasks_taskings", force: :cascade do |t|
     t.integer  "entity_role_id", null: false
@@ -512,6 +474,21 @@ ActiveRecord::Schema.define(version: 20150326125339) do
 
   add_index "tasks_taskings", ["entity_role_id", "entity_task_id"], name: "[\"tasks_taskings_role_id_on_task_id_unique\"]", unique: true
   add_index "tasks_taskings", ["entity_task_id"], name: "index_tasks_taskings_on_entity_task_id"
+
+  create_table "tasks_tasks", force: :cascade do |t|
+    t.integer  "tasks_task_plan_id"
+    t.string   "task_type",                        null: false
+    t.string   "title",                            null: false
+    t.datetime "opens_at",                         null: false
+    t.datetime "due_at"
+    t.integer  "tasks_taskings_count", default: 0, null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+  end
+
+  add_index "tasks_tasks", ["due_at", "opens_at"], name: "index_tasks_tasks_on_due_at_and_opens_at"
+  add_index "tasks_tasks", ["task_type"], name: "index_tasks_tasks_on_task_type"
+  add_index "tasks_tasks", ["tasks_task_plan_id"], name: "index_tasks_tasks_on_tasks_task_plan_id"
 
   create_table "user_profile_profiles", force: :cascade do |t|
     t.integer  "entity_user_id",      null: false
