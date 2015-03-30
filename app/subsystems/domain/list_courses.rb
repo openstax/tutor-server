@@ -21,6 +21,9 @@ class Domain::ListCourses
   private
 
   def run_with_options(user, with)
+    if user.is_a?(UserProfile::Models::Profile)
+      user = user.entity_user
+    end
     [with].flatten.each do |option|
       case option
       when :teacher_names
