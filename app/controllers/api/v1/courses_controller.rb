@@ -15,7 +15,8 @@ class Api::V1::CoursesController < Api::V1::ApiController
     #{json_schema(Api::V1::CoursesRepresenter, include: :readable)}
   EOS
   def index
-    courses = Domain::ListCourses.call(user: current_human_user.entity_user, with: :roles)
+    courses = Domain::ListCourses.call(user: current_human_user.entity_user,
+                                       with: :roles)
                                  .outputs.courses
     respond_with courses, represent_with: Api::V1::CoursesRepresenter
   end
@@ -30,7 +31,6 @@ class Api::V1::CoursesController < Api::V1::ApiController
   EOS
   def readings
     course = Entity::Course.find(params[:id])
-    # OSU::AccessPolicy.require_action_allowed!(:readings, current_api_user, course)
 
     # For the moment, we're assuming just one book per course
     books = CourseContent::GetCourseBooks.call(course: course).outputs.books
@@ -38,6 +38,30 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
     toc = Content::VisitBook[book: books.first, visitor_names: :toc]
     respond_with toc, represent_with: Api::V1::BookTocRepresenter
+  end
+
+  api :GET, '/courses/:course_id/exercises',
+            'Returns a course\'s exercises, optionally filtered by tag'
+  description <<-EOS
+    Returns a list of a course's assignable exercises.
+    This means all exercises related to LO's present in the course's book.
+    Inside each book there can be units or chapters (parts), and eventually
+    parts (normally chapters) contain pages that have no children.
+
+    #{}#json_schema(Api::V1::ExerciseSearchRepresenter, include: :readable)}
+  EOS
+  def exercises
+    course = Entity::Models::Course.find(params[:id])
+    OSU::AccessPolicy.require_action_allowed!(:exercises,
+                                              current_api_user,
+                                              course)
+
+    # For the moment, we're assuming just one book per course
+    books = CourseContent::GetCourseBooks.call(course: course).outputs.books
+    raise NotYetImplemented if books.count > 1
+
+    exercises = nil
+    respond_with exercises#, represent_with: Api::V1::ExerciseSearchRepresenter
   end
 
   api :GET, '/courses/:course_id/plans', 'Returns a course\'s plans'

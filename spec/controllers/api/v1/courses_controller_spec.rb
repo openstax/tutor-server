@@ -66,6 +66,19 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
     end
   end
 
+  describe "#exercises" do
+    xit "should work on the happy path" do
+      root_book_part = FactoryGirl.create(:content_book_part,
+                                          :standard_contents_1)
+      CourseContent::AddBookToCourse.call(course: course, book: root_book_part.book)
+
+      api_get :exercises, user_1_token, parameters: {id: course.id}
+
+      expect(response).to have_http_status(:success)
+      expect(response.body_as_hash).to eq()
+    end
+  end
+
   describe "#plans" do
     it "should work on the happy path" do
       task_plan = FactoryGirl.create(:tasks_task_plan, owner: course)
