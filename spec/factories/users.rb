@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :user, class: 'UserProfile::Profile' do
+  factory :user, aliases: [:profile], class: 'UserProfile::Models::Profile' do
     exchange_identifier { SecureRandom.hex.to_s }
 
     transient do
@@ -7,6 +7,7 @@ FactoryGirl.define do
       first_name { SecureRandom.hex.to_s }
       last_name { SecureRandom.hex.to_s }
       full_name { SecureRandom.hex.to_s }
+      skip_terms_agreement { false }
       title nil
     end
 
@@ -17,17 +18,17 @@ FactoryGirl.define do
                                        last_name: evaluator.last_name,
                                        full_name: evaluator.full_name,
                                        title: evaluator.title)
-      user.entity_user = Entity::User.new
+      user.entity_user = Entity::Models::User.new
     end
 
     trait :administrator do
       after(:build) do |user|
-        user.administrator = FactoryGirl.build(:administrator, user: user)
+        user.administrator = FactoryGirl.build(:administrator, profile: user)
       end
     end
 
-    trait :agreed_to_terms do
-      after(:create) do |user|
+    after(:create) do |user, evaluator|
+      unless evaluator.skip_terms_agreement
         FinePrint::Contract.all.each do |contract|
           FinePrint.sign_contract(user, contract)
         end

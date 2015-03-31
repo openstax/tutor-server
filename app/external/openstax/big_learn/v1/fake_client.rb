@@ -6,15 +6,6 @@ class OpenStax::BigLearn::V1::FakeClient
   # API methods
   #
 
-  def add_tags(tags)
-    # Iterate through the tags, storing each in the store, overwriting any
-    # with the same name.
-
-    tag_names = [tags].flatten.collect{|t| t.text}
-    store['tags'] = ((store['tags'] || []) + tag_names ).uniq
-    save!
-  end
-
   def add_exercises(exercises)
     # Iterate through the exercises, storing each in the store, overwriting
     # any with the same ID
@@ -22,11 +13,11 @@ class OpenStax::BigLearn::V1::FakeClient
     [exercises].flatten.each do |exercise|
       store['exercises'][exercise.uid] = exercise.tags
     end
-    
+
     save!
   end
 
-  def get_projection_exercises(user:, tag_search:, count:, 
+  def get_projection_exercises(user:, tag_search:, count:,
                                difficulty:, allow_repetitions:)
     # Get the matches (no SPARFA obviously :)
     matches = store_exercises_copy.select do |uid, tags|
@@ -67,10 +58,6 @@ class OpenStax::BigLearn::V1::FakeClient
   # Debugging methods
   #
 
-  def store_tags_copy
-    store['tags'].clone
-  end
-
   def store_exercises_copy
     store['exercises'].clone
   end
@@ -87,17 +74,16 @@ class OpenStax::BigLearn::V1::FakeClient
     # (2) someone wants us to load it
     # (3) We have loaded it but it is no longer in the DB (which can happen in tests)
 
-    if @fake_store.nil? || 
-       reload ||  
+    if @fake_store.nil? ||
+       reload ||
        ::FakeStore.where(name: 'openstax_biglearn_v1').none?
-       
+
       @fake_store = ::FakeStore.find_or_create_by(name: 'openstax_biglearn_v1')
     end
 
     @fake_store.data ||= {}
 
     @fake_store.data['exercises'] ||= {}
-    @fake_store.data['tags'] ||= []
 
     @fake_store.data
   end

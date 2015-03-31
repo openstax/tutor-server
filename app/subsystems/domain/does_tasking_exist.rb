@@ -3,14 +3,14 @@ class Domain::DoesTaskingExist
 
   uses_routine Role::GetUserRoles,
                translations: { outputs: { type: :verbatim } }
-  uses_routine Tasks::Api::DoesTaskingExist,
+  uses_routine Tasks::DoesTaskingExist,
                translations: { outputs: { type: :verbatim } }
 
   protected
 
   def exec(task_component:, user:)
-    raise NotYetImplemented if task_component.is_a?(Entity::Task)
-    raise NotYetImplemented if task_component.is_a?(Entity::User)
+    raise NotYetImplemented if task_component.is_a?(Entity::Models::Task)
+    raise NotYetImplemented if task_component.is_a?(Entity::Models::User)
 
     task = case task_component
     when Task
@@ -27,11 +27,11 @@ class Domain::DoesTaskingExist
       outputs[:does_tasking_exist] = true
       return
     end
-      
+
     # Next check the subsystem tasking
 
     run(Role::GetUserRoles, user.entity_user)
-    run(Tasks::Api::DoesTaskingExist, task: task, roles: outputs.roles)
+    run(Tasks::DoesTaskingExist, task: task, roles: outputs.roles)
   end
 
 end

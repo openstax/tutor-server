@@ -1,7 +1,7 @@
 class Domain::GetCourse
   lev_routine
 
-  uses_routine CourseProfile::Api::GetProfile,
+  uses_routine CourseProfile::GetProfile,
     translations: { outputs: { map: { profile: :course } } },
     as: :get_profile
 

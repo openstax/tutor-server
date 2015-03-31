@@ -16,7 +16,7 @@ class Assistant < ActiveRecord::Base
 
   def code_class_existence
     begin
-      code_class 
+      code_class
       true
     rescue NameError => e
       errors.add("#{code_class_name} does not exist")

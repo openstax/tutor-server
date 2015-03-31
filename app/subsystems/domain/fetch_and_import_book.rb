@@ -2,7 +2,7 @@ class Domain::FetchAndImportBook
 
   lev_routine express_output: :book
 
-  uses_routine Content::Api::ImportBook, as: :import_book,
+  uses_routine Content::ImportBook, as: :import_book,
                translations: { outputs: { type: :verbatim } }
 
   protected

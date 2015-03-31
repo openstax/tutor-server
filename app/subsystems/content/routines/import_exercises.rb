@@ -1,11 +1,11 @@
-class Content::ImportExercises
+class Content::Routines::ImportExercises
 
   # This Regex finds the LO's within the exercise tags
   LO_REGEX = /ost-tag-lo-([\w-]+-lo[\d]+)/
 
   lev_routine
 
-  uses_routine Content::TagResourceWithTopics,
+  uses_routine Content::Routines::TagResourceWithTopics,
                as: :add_lo,
                translations: { outputs: { type: :verbatim } }
 
@@ -16,7 +16,7 @@ class Content::ImportExercises
   def exec(query_hash)
     outputs[:exercises] = []
     OpenStax::Exercises::V1.exercises(query_hash)['items'].each do |wrapper|
-      exercise = Content::Exercise.find_or_initialize_by(url: wrapper.url)
+      exercise = Content::Models::Exercise.find_or_initialize_by(url: wrapper.url)
       exercise.title = wrapper.title
       exercise.content = wrapper.content
       exercise.save

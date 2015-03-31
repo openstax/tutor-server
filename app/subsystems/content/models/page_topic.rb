@@ -1,4 +1,4 @@
-class Content::PageTopic < ActiveRecord::Base
+class Content::Models::PageTopic < Tutor::SubSystems::BaseModel
   sortable_belongs_to :page, on: :number, inverse_of: :page_topics
   belongs_to :topic
 

@@ -29,14 +29,14 @@ class Api::V1::CoursesController < Api::V1::ApiController
     #{json_schema(Api::V1::BookTocRepresenter, include: :readable)}
   EOS
   def readings
-    course = Entity::Course.find(params[:id])
+    course = Entity::Models::Course.find(params[:id])
     # OSU::AccessPolicy.require_action_allowed!(:readings, current_api_user, course)
 
     # For the moment, we're assuming just one book per course
-    books = CourseContent::Api::GetCourseBooks.call(course: course).outputs.books
+    books = CourseContent::GetCourseBooks.call(course: course).outputs.books
     raise NotYetImplemented if books.count > 1
 
-    toc = Content::Api::GetBookToc.call(book_id: books.first.id).outputs.toc
+    toc = Content::VisitBook[book: books.first, visitor_names: :toc]
     respond_with toc, represent_with: Api::V1::BookTocRepresenter
   end
 
@@ -45,7 +45,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     #{json_schema(Api::V1::TaskPlanSearchRepresenter, include: :writeable)}
   EOS
   def plans
-    course = Entity::Course.find(params[:id])
+    course = Entity::Models::Course.find(params[:id])
     # OSU::AccessPolicy.require_action_allowed!(:task_plans, current_api_user, course)
 
     out = GetCourseTaskPlans.call(course: course).outputs
@@ -73,7 +73,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     #{json_schema(Api::V1::CourseEventsRepresenter, include: :readable)}
   EOS
   def events
-    course = Entity::Course.find(params[:id])
+    course = Entity::Models::Course.find(params[:id])
     outputs = GetUserCourseEvents.call(user: current_human_user, course: course).outputs
     respond_with outputs, represent_with: Api::V1::CourseEventsRepresenter
   end
@@ -87,8 +87,9 @@ class Api::V1::CoursesController < Api::V1::ApiController
   api :POST, '/courses/:course_id/practice(/role/:role_id)', 'Starts a new practice widget'
   description 'TBD'
   def practice_post
-    result = Domain::ResetPracticeWidget.call(role: get_practice_role, page_ids: [])
-    respond_with result.outputs.task, represent_with: Api::V1::TaskRepresenter
+    result = Domain::ResetPracticeWidget.call(role: get_practice_role, condition: :fake)
+    respond_with result.outputs.task, represent_with: Api::V1::TaskRepresenter,
+                                      location: [:api, result.outputs.task]
   end
 
   api :GET, '/courses/:course_id/practice(/role/:role_id)', 'Gets the most recent practice widget'
@@ -102,7 +103,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   protected
 
   def get_practice_role
-    potential_roles = Domain::GetUserCourseRoles.call(course: Entity::Course.find(params[:id]), 
+    potential_roles = Domain::GetUserCourseRoles.call(course: Entity::Models::Course.find(params[:id]),
                                                       user: current_human_user.entity_user,
                                                       types: [:student]).outputs.roles
 
@@ -111,7 +112,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     practice_role = nil
 
     if params[:role_id]
-      practice_role = Entity::Role.find(params[:role_id])
+      practice_role = Entity::Models::Role.find(params[:role_id])
       raise(SecurityTransgression, "The caller does not have the specified role") unless potential_roles.include?(practice_role)
     else
       raise(IllegalState, "The role must be specified because there is more than one student role available") if potential_roles.size > 1
@@ -120,6 +121,5 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
     practice_role
   end
-
 
 end

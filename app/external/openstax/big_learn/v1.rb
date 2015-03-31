@@ -4,10 +4,6 @@ module OpenStax::BigLearn::V1
   # API Wrappers
   #
 
-  def self.add_tags(tags)
-    client.add_tags(tags)
-  end
-
   def self.add_exercises(exercises)
     client.add_exercises(exercises)
   end
@@ -20,9 +16,9 @@ module OpenStax::BigLearn::V1
   #   Ex:
   #     { _and: [ { _or: ['a', 'b', 'c'] }, 'd']  }
   #
-  def self.get_projection_exercises(user:, tag_search: {}, 
+  def self.get_projection_exercises(user:, tag_search: {},
                                     count: 1, difficulty: 0.5, allow_repetitions: true)
-    client.get_projection_exercises(user: user, tag_search: tag_search, 
+    client.get_projection_exercises(user: user, tag_search: tag_search,
                                     count: count, difficulty: difficulty, allow_repetitions: allow_repetitions)
   end
 
@@ -44,7 +40,7 @@ module OpenStax::BigLearn::V1
   end
 
   def self.real_client
-    @real_client ||= RealClient.new(configuration)
+    @real_client ||= RealClient.instance
   end
 
   def self.use_real_client

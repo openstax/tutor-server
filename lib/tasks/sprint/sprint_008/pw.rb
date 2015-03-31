@@ -10,7 +10,7 @@ module Sprint008
       outputs[:course] = Entity::CreateCourse.call.outputs.course
       Domain::AddUserAsCourseStudent.call(course: outputs[:course], user: user)
       outputs[:role] = Entity::Role.last
-      Domain::ResetPracticeWidget.call(role: outputs[:role], page_ids: [])
+      Domain::ResetPracticeWidget.call(role: outputs[:role], condition: :fake)
     end
 
   end

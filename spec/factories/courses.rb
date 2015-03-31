@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :course do
-    transient do 
+    transient do
       starting_time Time.now
       start_to_end 3.months
       visible_to_start 7.days

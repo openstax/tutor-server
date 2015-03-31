@@ -1,12 +1,12 @@
-class UserProfile::Profile < ActiveRecord::Base
+class UserProfile::Models::Profile < Tutor::SubSystems::BaseModel
 
   belongs_to :account, class_name: "OpenStax::Accounts::Account"
-  belongs_to :entity_user, class_name: "::Entity::User"
+  belongs_to :entity_user, class_name: "::Entity::Models::User"
   has_many :groups_as_member, through: :account
   has_many :groups_as_owner, through: :account
 
-  has_one :administrator, dependent: :destroy, inverse_of: :user,
-    foreign_key: :user_id
+  has_one :administrator, dependent: :destroy, inverse_of: :profile,
+    class_name: 'UserProfile::Models::Administrator'
 
   has_many :educators, dependent: :destroy, foreign_key: :user_id
   has_many :students, dependent: :destroy, foreign_key: :user_id
@@ -21,7 +21,7 @@ class UserProfile::Profile < ActiveRecord::Base
            :title=, to: :account
 
   def self.anonymous
-    UserProfile::AnonymousUser.instance
+    UserProfile::Models::AnonymousUser.instance
   end
 
   def is_human?

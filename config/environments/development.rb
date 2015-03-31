@@ -27,7 +27,7 @@ Rails.application.configure do
   # number of complex assets.
   config.assets.debug = true
 
-  # Asset digests allow you to set far-future HTTP expiration dates on all assets, 
+  # Asset digests allow you to set far-future HTTP expiration dates on all assets,
   # yet still be able to expire them through the digest params.
   config.assets.digest = true
 
@@ -41,12 +41,5 @@ Rails.application.configure do
 
   # Don't error out when trying to connect to external sites
   WebMock.allow_net_connect!
-
-  # Don't try to connect to Exchange
-  OpenStax::Exchange.use_fake_client
-  OpenStax::Exchange.reset!
-
-  # Don't try to connect to Exercises
-  OpenStax::Exercises::V1.use_fake_client
 end
 

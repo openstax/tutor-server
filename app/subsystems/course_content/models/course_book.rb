@@ -1,4 +1,5 @@
-class CourseContent::CourseBook < ActiveRecord::Base
+class CourseContent::Models::CourseBook < Tutor::SubSystems::BaseModel
+
   belongs_to :course, subsystem: :entity
   belongs_to :book, subsystem: :entity
 

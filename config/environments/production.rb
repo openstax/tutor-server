@@ -29,7 +29,7 @@ Rails.application.configure do
   # Do not fallback to assets pipeline if a precompiled asset is missed.
   config.assets.compile = false
 
-  # Asset digests allow you to set far-future HTTP expiration dates on all assets, 
+  # Asset digests allow you to set far-future HTTP expiration dates on all assets,
   # yet still be able to expire them through the digest params.
   config.assets.digest = true
 
@@ -63,9 +63,8 @@ Rails.application.configure do
 
   config.action_mailer.delivery_method = :ses
   config.action_mailer.default_url_options = {
-                                              :protocol => 'https',
-                                              :host => Rails.application.secrets.mail_site_url
-                                             }
+    :protocol => 'https', :host => Rails.application.secrets.mail_site_url
+  }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
@@ -85,18 +84,6 @@ Rails.application.configure do
   end
   config.lograge.ignore_actions = ["static_pages#status"]
 
-
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
-
-  if Rails.application.secrets[:fake_exchange]
-    # Don't try to connect to Exchange
-    OpenStax::Exchange.use_fake_client
-    OpenStax::Exchange.reset!
-  end
-
-  if Rails.application.secrets[:fake_exercises]
-    # Don't try to connect to Exercises
-    OpenStax::Exercises::V1.use_fake_client
-  end
 end

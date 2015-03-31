@@ -10,7 +10,7 @@ RSpec.describe Api::V1::TaskedReadingRepresenter, :type => :representer do
       type: "reading",
       title: task_step.tasked.title,
       is_completed: false,
-      content_url: task_step.tasked.url, 
+      content_url: task_step.tasked.url,
       content_html: task_step.tasked.content
     }.stringify_keys)
   end

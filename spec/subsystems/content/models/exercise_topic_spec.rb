@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Content::ExerciseTopic, :type => :model do
+RSpec.describe Content::Models::ExerciseTopic, :type => :model do
   it { is_expected.to belong_to(:exercise) }
   it { is_expected.to belong_to(:topic) }
 

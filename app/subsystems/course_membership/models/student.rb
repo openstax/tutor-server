@@ -1,4 +1,4 @@
-class CourseMembership::Student < ActiveRecord::Base
+class CourseMembership::Models::Student < Tutor::SubSystems::BaseModel
   belongs_to :role, subsystem: :entity
   belongs_to :course, subsystem: :entity
 

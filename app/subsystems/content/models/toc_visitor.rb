@@ -1,4 +1,4 @@
-class Content::TocVisitor < Content::BookVisitor
+class Content::Models::TocVisitor < Content::Models::BookVisitor
 
   def initialize
     @level_stack = []
@@ -19,8 +19,8 @@ class Content::TocVisitor < Content::BookVisitor
 
   def visit_page(page)
     current_level.push({
-      id: page.id, 
-      title: page.title, 
+      id: page.id,
+      title: page.title,
       type: 'page'
     })
   end

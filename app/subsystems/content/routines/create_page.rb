@@ -1,11 +1,11 @@
-class Content::CreatePage
+class Content::Routines::CreatePage
 
   lev_routine
 
   protected
 
   def exec(url:, title:, content:, book_part:, path:)
-    page = Content::Page.create(url: url,
+    page = Content::Models::Page.create(url: url,
                                 title: title,
                                 content: content,
                                 book_part: book_part,

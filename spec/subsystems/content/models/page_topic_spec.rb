@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Content::PageTopic, :type => :model do
+RSpec.describe Content::Models::PageTopic, :type => :model do
   subject { FactoryGirl.create :content_page_topic }
 
   it { is_expected.to belong_to(:page) }
