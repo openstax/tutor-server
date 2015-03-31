@@ -59,15 +59,14 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     if result.errors.any?
       render_api_errors(result.errors)
     else
-      respond_with result.outputs.recovery_exercise,
-                   responder: ResponderWithPutContent,
-                   represent_with: Api::V1::TaskedRepresenterMapper.representer_for(tasked)
+      respond_with result.outputs.recovery_step.tasked,
+                   responder: ResponderWithPutContent
     end
   end
 
   api :PUT, '/steps/:step_id/refresh',
             'Requests an exercise similar to the given one for credit recovery'
-  def recovery
+  def refresh
     tasked = TaskStep.find(params[:id]).tasked
     OSU::AccessPolicy.require_action_allowed!(:refresh, current_api_user, tasked)
 
@@ -76,8 +75,8 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     if result.errors.any?
       render_api_errors(result.errors)
     else
-      respond_with result.outputs.slice(:refresh_step, :recovery_step),
-                   responder: ResponderWithPutContent
+      render json: result.outputs.slice(:refresh_step, :recovery_step).to_json,
+             responder: ResponderWithPutContent
     end
   end
 

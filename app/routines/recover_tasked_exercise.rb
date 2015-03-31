@@ -26,8 +26,7 @@ class RecoverTaskedExercise
       task_step: recovery_step,
       url: recovery_exercise.url,
       title: recovery_exercise.title,
-      content: recovery_exercise.content,
-      has_recovery: has_recovery
+      content: recovery_exercise.content
     )
     task.task_steps << recovery_step
     recovery_step.save!

@@ -16,7 +16,7 @@ class RefreshTaskedExercise
     recovery_step = outputs[:recovery_step]
 
     # Hack for Sprint 9; Replace with final version before alpha
-    while step.taked_type != 'TaskedReading' do
+    while step.tasked_type != 'TaskedReading' do
       step = step.previous_by_number
       return if step.nil?
     end
