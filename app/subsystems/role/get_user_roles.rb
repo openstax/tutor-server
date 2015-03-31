@@ -6,7 +6,7 @@ class Role::GetUserRoles
   def exec(users_or_user_ids, role_types=:any)
     users_or_user_ids = [users_or_user_ids].flatten
 
-    user_ids = users_or_user_ids.first.is_a?(Integer) ? 
+    user_ids = users_or_user_ids.first.is_a?(Integer) ?
                  users_or_user_ids :
                  users_or_user_ids.collect{|u| u.id}
 
@@ -14,7 +14,7 @@ class Role::GetUserRoles
     roles = ss_maps.collect{|ss_map| ss_map.role}
 
     if role_types != :any
-      role_types = [role_types].flatten
+      role_types = [role_types].flatten.collect{|rt| rt.to_s}
       roles = roles.select{|role| role_types.include?(role.role_type)}
     end
 

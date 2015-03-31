@@ -4,10 +4,10 @@ RSpec.describe UserProfile::Models::Administrator, :type => :model do
 
   it { is_expected.to belong_to(:profile) }
 
-  it { is_expected.to have_many(:taskings)
-                      .dependent(:destroy).class_name('::Tasking') }
-  it { is_expected.to have_many(:tasking_plans)
-                      .dependent(:destroy).class_name('::TaskingPlan') }
+  # it { is_expected.to have_many(:taskings)
+  #                     .dependent(:destroy).class_name('::Tasking') }
+  # it { is_expected.to have_many(:tasking_plans)
+  #                     .dependent(:destroy).class_name('::TaskingPlan') }
 
   it { is_expected.to validate_presence_of(:profile) }
 

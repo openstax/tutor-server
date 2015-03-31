@@ -8,6 +8,6 @@ RSpec.describe BuildTaskPlan, :type => :routine do
 
     expect(task_plan).not_to be_persisted
     expect(task_plan.tasking_plans.first.target).to eq(course)
-    expect(task_plan.assistant).to eq(Assistant.last) # Placeholder
+    expect(task_plan.assistant).to eq(Tasks::Models::Assistant.last) # Placeholder
   end
 end

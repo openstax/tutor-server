@@ -1,6 +1,10 @@
 require 'rails_helper'
 
-describe SearchTasks do
+#
+# SearchTasks IS DEPRECATED
+#
+
+xdescribe SearchTasks do
 
   let!(:task_1) { FactoryGirl.create(:tasks_tasking).task.reload }
 

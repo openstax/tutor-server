@@ -8,10 +8,10 @@ class UserProfile::Models::Profile < Tutor::SubSystems::BaseModel
   has_one :administrator, dependent: :destroy, inverse_of: :profile,
     class_name: 'UserProfile::Models::Administrator'
 
-  has_many :educators, dependent: :destroy, foreign_key: :user_id
-  has_many :students, dependent: :destroy, foreign_key: :user_id
+  # has_many :educators, dependent: :destroy, foreign_key: :user_id
+  # has_many :students, dependent: :destroy, foreign_key: :user_id
 
-  has_many :taskings, dependent: :destroy, foreign_key: :user_id
+  # has_many :taskings, dependent: :destroy, foreign_key: :user_id
 
   validates :account, :entity_user, presence: true, uniqueness: true
   validates :exchange_identifier, presence: true

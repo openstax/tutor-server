@@ -18,23 +18,12 @@ RSpec.describe Tasks::Models::Task, :type => :model do
   end
 
   it "reports is_shared correctly" do
-    at1 = FactoryGirl.create(:tasks_tasking)
-    at1.reload
-    expect(at1.task.is_shared).to be_falsy
+    task1 = FactoryGirl.create(:tasks_task)
+    FactoryGirl.create(:tasks_tasking, task: task1.entity_task)
+    expect(task1.is_shared).to be_falsy
 
-    at2 = FactoryGirl.create(:tasks_tasking, task: at1.task)
-    at1.reload
-    expect(at1.task.is_shared).to be_truthy
+    FactoryGirl.create(:tasks_tasking, task: task1.entity_task)
+    expect(task1.is_shared).to be_truthy
   end
 
-  it 'reports tasked_to? for a taskee' do
-    user = FactoryGirl.create(:user)
-    tasking = FactoryGirl.build(:tasks_tasking, taskee: user)
-    task = FactoryGirl.create(:tasks_task, taskings: [tasking])
-
-    expect(task).to be_tasked_to(user)
-
-    task.taskings.clear
-    expect(task).not_to be_tasked_to(user)
-  end
 end

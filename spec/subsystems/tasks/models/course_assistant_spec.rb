@@ -10,6 +10,6 @@ RSpec.describe Tasks::Models::CourseAssistant, type: :model do
   it { is_expected.to validate_presence_of(:assistant) }
 
   it {
-    is_expected.to validate_uniqueness_of(:assistant).scoped_to(:course_id)
+    is_expected.to validate_uniqueness_of(:assistant).scoped_to(:entity_course_id)
   }
 end

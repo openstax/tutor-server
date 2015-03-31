@@ -3,8 +3,11 @@ require 'vcr_helper'
 
 RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr => VCR_OPTS do
 
-  let!(:assistant) { FactoryGirl.create :tasks_assistant,
-                                        code_class_name: 'Tasks::Assistants::IReadingAssistant' }
+  before(:each)    { OpenStax::Exercises::V1.use_real_client }
+
+  let!(:assistant) { FactoryGirl.create(
+    :tasks_assistant, code_class_name: 'Tasks::Assistants::IReadingAssistant'
+  }
   let!(:book_part) { FactoryGirl.create :content_book_part }
 
   context "for Force version 11" do
@@ -37,16 +40,16 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
         task_steps.each_with_index do |task_step, i|
           expect(task_step.tasked.content).not_to include('snap-lab')
           expect(page.content).not_to include(task_step.tasked.content) \
-            if task_step.tasked_type == 'TaskedExercise'
+            if task_step.tasked_type.demodulize == 'TaskedExercise'
 
-          task_steps.except(task_step).each do |other_step|
+          (task_steps - [task_step]).each do |other_step|
             expect(task_step.tasked.content).not_to(
               include(other_step.tasked.content)
             )
           end
         end
 
-        expect(task_steps.collect{|ts| ts.tasked_type}).to(
+        expect(task_steps.collect{|ts| ts.tasked_type.demodulize}).to(
           eq ['TaskedReading',  'TaskedVideo',    'TaskedReading',
               'TaskedReading',  'TaskedExercise', 'TaskedReading',
               'TaskedExercise', 'TaskedExercise', 'TaskedExercise',
@@ -99,10 +102,15 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
         task_steps = task.task_steps
         expect(task_steps.length).to eq 11
         expect(task_steps.collect { |ts| ts.tasked_type }).to eq(
+<<<<<<< HEAD
           ['TaskedReading',  'TaskedVideo',    'TaskedExercise',
            'TaskedInteractive',  'TaskedReading',  'TaskedExercise',
            'TaskedReading',  'TaskedExercise', 'TaskedExercise',
            'TaskedExercise', 'TaskedExercise']
+=======
+          %w(Reading Video Exercise Reading Exercise
+             Reading Exercise Exercise Exercise Exercise).collect{|type| "Tasks::Models::Tasked#{type}"}
+>>>>>>> fixed all the specs from moving the Task** models into their own SS
         )
       end
     end
