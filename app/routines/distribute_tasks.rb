@@ -38,6 +38,7 @@ class DistributeTasks
     # Call the assistant code to create and distribute Tasks
     outputs[:tasks] = assistant.distribute_tasks(task_plan: task_plan,
                                                  taskees: taskees)
+    task_plan.update_attributes(published_at: Time.now)
   end
 
 end

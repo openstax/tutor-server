@@ -395,6 +395,7 @@ ActiveRecord::Schema.define(version: 20150325170729) do
     t.text     "settings",           null: false
     t.datetime "opens_at",           null: false
     t.datetime "due_at"
+    t.datetime "published_at"
     t.datetime "created_at",         null: false
     t.datetime "updated_at",         null: false
   end
