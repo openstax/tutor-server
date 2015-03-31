@@ -3,7 +3,7 @@ class TaskAccessPolicy
     case action
     when :read
       requestor.is_human? && 
-      Domain::DoesTaskingExist[task_component: tasked, user: requestor]
+      Domain::DoesTaskingExist[task_component: task, user: requestor]
     else
       false
     end

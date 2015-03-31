@@ -1,5 +1,31 @@
 class Api::V1::TaskPlansController < Api::V1::ApiController
 
+  ###############################################################
+  # ----- temporary code to fix location: error -------
+  ###############################################################
+
+  def standard_create(model, represent_with=nil)
+    model.class.transaction do
+      consume!(model, represent_with: represent_with)
+      yield model if block_given?
+      OSU::AccessPolicy.require_action_allowed!(:create,
+                                                current_api_user,
+                                                model)
+
+      if model.save
+        respond_with model, represent_with: represent_with,
+                            status: :created,
+                            location: nil
+      else
+        render_api_errors(model.errors)
+      end
+    end
+  end
+
+  ###############################################################
+  # ----- END temporary code -------
+  ###############################################################
+
   resource_description do
     api_versions "v1"
     short_description 'Represents a plan for a Task'
@@ -7,6 +33,8 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
       TaskPlans store information that assistants can use to generate Tasks.
     EOS
   end
+
+  # TODO fix up the use of Tasks::Models throughout
 
   ###############################################################
   # show
@@ -59,7 +87,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     #{json_schema(Api::V1::TaskPlanRepresenter, include: :readable)}
   EOS
   def show
-    plan = TaskPlan.find(params[:id])
+    plan = Tasks::Models::TaskPlan.find(params[:id])
     OSU::AccessPolicy.require_action_allowed!(:stats, current_api_user, plan)
     stats = CalculateIReadingStats.call(plan:plan).outputs.stats
     render json: Api::V1::TaskPlanRepresenter.new(plan).to_hash(stats: stats)
@@ -78,7 +106,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     # TODO: Figure out the course assistant from the type
     course = Entity::Models::Course.find(params[:course_id])
     tp = BuildTaskPlan.call(course: course).outputs.task_plan
-    standard_create(tp)
+    standard_create(tp, Api::V1::TaskPlanRepresenter)
   end
 
   ###############################################################
@@ -90,7 +118,8 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     #{json_schema(Api::V1::TaskPlanRepresenter, include: :writeable)}
   EOS
   def update
-    standard_update(TaskPlan.find(params[:id]))
+    task_plan = Tasks::Models::TaskPlan.find(params[:id])
+    standard_update(task_plan, Api::V1::TaskPlanRepresenter)
   end
 
   ###############################################################
@@ -102,12 +131,12 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     #{json_schema(Api::V1::TaskPlanRepresenter, include: :writeable)}
   EOS
   def publish
-    task_plan = TaskPlan.find(params[:id])
+    task_plan = Tasks::Models::TaskPlan.find(params[:id])
     OSU::AccessPolicy.require_action_allowed!(:publish,
                                               current_api_user,
                                               task_plan)
     DistributeTasks.call(task_plan)
-    respond_with task_plan, location: [:api, task_plan]
+    respond_with task_plan, represent_with: Api::V1::TaskPlanRepresenter, location: nil
   end
 
   ###############################################################
@@ -119,7 +148,8 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     #{json_schema(Api::V1::TaskPlanRepresenter, include: :writeable)}
   EOS
   def destroy
-    standard_destroy(TaskPlan.find(params[:id]))
+    task_plan = Tasks::Models::TaskPlan.find(params[:id])
+    standard_destroy(task_plan)
   end
 
 end

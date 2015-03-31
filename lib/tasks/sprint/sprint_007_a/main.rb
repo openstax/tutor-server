@@ -16,7 +16,7 @@ module Sprint007A
       Domain::AddBookToCourse.call(book: book, course: course)
       Domain::AddUserAsCourseTeacher.call(course: course, user: teacher)
 
-      a = FactoryGirl.create :tasks_assistant, code_class_name: "IReadingAssistant"
+      a = FactoryGirl.create :tasks_assistant, code_class_name: "Tasks::Assistants::IReadingAssistant"
       tp = FactoryGirl.create :tasks_task_plan, assistant: a,
                                           settings: { page_ids: [1, 2] }
       tp.tasking_plans << FactoryGirl.create(:tasks_tasking_plan, target: student,

@@ -12,7 +12,7 @@ module Api::V1
     end
 
     def self.representer_for(task_step_or_tasked)
-      tasked_class = task_step_or_tasked.is_a?(TaskStep) ?
+      tasked_class = task_step_or_tasked.is_a?(Tasks::Models::TaskStep) ?
                        task_step_or_tasked.tasked.class :
                        task_step_or_tasked.class
       representer = map[tasked_class].call

@@ -29,10 +29,10 @@ class Tasks::Assistants::IReadingAssistant
   end
 
   def self.tasked_reading(reading_fragment:, page:, step: nil)
-    TaskedReading.new(task_step: step,
-                      url: page.url,
-                      title: reading_fragment.title,
-                      content: reading_fragment.to_html)
+    Tasks::Models::TaskedReading.new(task_step: step,
+                                     url: page.url,
+                                     title: reading_fragment.title,
+                                     content: reading_fragment.to_html)
   end
 
   def self.tasked_exercise(exercise_fragment:, recovery_fragment: nil, step: nil)
@@ -48,11 +48,11 @@ class Tasks::Assistants::IReadingAssistant
     recovery = recovery_fragment.nil? ? \
                  nil : tasked_exercise(exercise_fragment: recovery_fragment)
 
-    TaskedExercise.new(task_step: step,
-                       url: exercise.url,
-                       title: exercise.title,
-                       content: exercise.content,
-                       recovery_tasked_exercise: recovery)
+    Tasks::Models::TaskedExercise.new(task_step: step,
+                                      url: exercise.url,
+                                      title: exercise.title,
+                                      content: exercise.content,
+                                      recovery_tasked_exercise: recovery)
   end
 
   def self.tasked_video(video_fragment:, step: nil)
@@ -61,10 +61,10 @@ class Tasks::Assistants::IReadingAssistant
       return
     end
 
-    TaskedVideo.new(task_step: step,
-                    url: video_fragment.url,
-                    title: video_fragment.title,
-                    content: video_fragment.to_html)
+    Tasks::Models::TaskedVideo.new(task_step: step,
+                                   url: video_fragment.url,
+                                   title: video_fragment.title,
+                                   content: video_fragment.to_html)
   end
 
   def self.tasked_interactive(interactive_fragment:, step: nil)
@@ -91,15 +91,15 @@ class Tasks::Assistants::IReadingAssistant
 
     # Assign Tasks to taskees and return the Task array
     taskees.collect do |taskee|
-      task = Task.new(task_plan: task_plan,
-                      task_type: 'reading',
-                      title: title,
-                      opens_at: opens_at,
-                      due_at: due_at)
+      task = Tasks::CreateTask[task_plan: task_plan,
+                               task_type: 'reading',
+                               title: title,
+                               opens_at: opens_at,
+                               due_at: due_at]
 
       cnx_pages.each do |page|
         page.fragments.each do |fragment|
-          step = TaskStep.new(task: task, page_id: page.id)
+          step = Tasks::Models::TaskStep.new(task: task, page_id: page.id)
 
           step.tasked = case fragment
           when OpenStax::Cnx::V1::Fragment::ExerciseChoice
@@ -131,8 +131,9 @@ class Tasks::Assistants::IReadingAssistant
           ex = FillIReadingSpacedPracticeSlot.call(taskee, k_ago)
                                              .outputs[:exercise]
 
-          step = TaskStep.new(task: task)
-          step.tasked = TaskedExercise.new(task_step: step,
+          step = Tasks::Models::TaskStep.new(task: task)
+          step.tasked = Tasks::Models::TaskedExercise.new(
+                                           task_step: step,
                                            title: ex.title,
                                            url: ex.url,
                                            content: ex.content)
@@ -141,7 +142,7 @@ class Tasks::Assistants::IReadingAssistant
       end
 
       # No group tasks for this assistant
-      task.taskings << Tasking.new(task: task, taskee: taskee, user: taskee)
+      task.entity_task.taskings << Tasks::Models::Tasking.new(task: task.entity_task, role: taskee)
 
       task.save!
       task

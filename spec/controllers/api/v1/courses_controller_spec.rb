@@ -170,7 +170,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
 
       expect {
         api_post :practice, user_1_token, parameters: {id: course.id, role_id: Entity::Models::Role.last.id}
-      }.to change{ Task.count }.by(1)
+      }.to change{ Tasks::Models::Task.count }.by(1)
 
       expect(response).to have_http_status(:success)
 

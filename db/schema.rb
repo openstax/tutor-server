@@ -477,6 +477,7 @@ ActiveRecord::Schema.define(version: 20150325170729) do
 
   create_table "tasks_tasks", force: :cascade do |t|
     t.integer  "tasks_task_plan_id"
+    t.integer  "entity_task_id"
     t.string   "task_type",                        null: false
     t.string   "title",                            null: false
     t.datetime "opens_at",                         null: false
@@ -487,6 +488,7 @@ ActiveRecord::Schema.define(version: 20150325170729) do
   end
 
   add_index "tasks_tasks", ["due_at", "opens_at"], name: "index_tasks_tasks_on_due_at_and_opens_at"
+  add_index "tasks_tasks", ["entity_task_id"], name: "index_tasks_tasks_on_entity_task_id"
   add_index "tasks_tasks", ["task_type"], name: "index_tasks_tasks_on_task_type"
   add_index "tasks_tasks", ["tasks_task_plan_id"], name: "index_tasks_tasks_on_tasks_task_plan_id"
 

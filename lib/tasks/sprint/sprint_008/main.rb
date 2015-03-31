@@ -36,7 +36,7 @@ module Sprint008
 
       # Set up three reading tasks (will include try another)
 
-      a = FactoryGirl.create :tasks_assistant, code_class_name: "IReadingAssistant"
+      a = FactoryGirl.create :tasks_assistant, code_class_name: "Tasks::Assistants::IReadingAssistant"
       tp = FactoryGirl.create :tasks_task_plan, assistant: a,
                                           owner: course1,
                                           settings: { page_ids: [1, 2] }

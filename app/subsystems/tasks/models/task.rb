@@ -1,12 +1,17 @@
+require_relative 'entity_extensions'
+
 class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   belongs_to :task_plan
+  belongs_to :entity_task, class_name: 'Entity::Models::Task',
+                           dependent: :destroy,
+                           foreign_key: 'entity_task_id'
 
   sortable_has_many :task_steps, on: :number,
                                  dependent: :destroy,
                                  autosave: true,
                                  inverse_of: :task
-  has_many :taskings, dependent: :destroy
+  has_many :taskings, dependent: :destroy, through: :entity_task
 
   validates :title, presence: true
   validates :opens_at, presence: true
@@ -14,10 +19,6 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   def is_shared
     taskings.size > 1
-  end
-
-  def tasked_to?(taskee)
-    taskings.where(taskee: taskee).any?
   end
 
   def completed?

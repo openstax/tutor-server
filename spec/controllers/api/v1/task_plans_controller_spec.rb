@@ -6,7 +6,7 @@ describe Api::V1::TaskPlansController, :type => :controller,
 
   let!(:course) { Domain::CreateCourse.call.outputs.course }
   let!(:assistant) { FactoryGirl.create :tasks_assistant,
-                                        code_class_name: "IReadingAssistant" }
+                                        code_class_name: "Tasks::Assistants::IReadingAssistant" }
   let!(:user) { FactoryGirl.create :user }
   let!(:teacher) { FactoryGirl.create :user }
 
@@ -91,11 +91,11 @@ describe Api::V1::TaskPlansController, :type => :controller,
       expect { api_post :create, nil, parameters: {course_id: course.id},
                         raw_post_data: Api::V1::TaskPlanRepresenter
                                          .new(task_plan).to_json }
-        .to change{ TaskPlan.count }.by(1)
+        .to change{ Tasks::Models::TaskPlan.count }.by(1)
       expect(response).to have_http_status(:success)
 
       expect(response.body).to(
-        eq(Api::V1::TaskPlanRepresenter.new(TaskPlan.last).to_json)
+        eq(Api::V1::TaskPlanRepresenter.new(Tasks::Models::TaskPlan.last).to_json)
       )
     end
 
@@ -159,7 +159,7 @@ describe Api::V1::TaskPlansController, :type => :controller,
       controller.sign_in teacher
       expect { api_post :publish, nil, parameters: {course_id: course.id,
                                                     id: task_plan.id} }
-        .to change{ Task.count }.by(1)
+        .to change{ Tasks::Models::Task.count }.by(1)
       expect(response).to have_http_status(:success)
       expect(response.body).to(
         eq(Api::V1::TaskPlanRepresenter.new(task_plan).to_json)
@@ -189,7 +189,7 @@ describe Api::V1::TaskPlansController, :type => :controller,
       controller.sign_in teacher
       expect{ api_delete :destroy, nil, parameters: {course_id: course.id,
                                                      id: task_plan.id} }
-        .to change{ TaskPlan.count }.by(-1)
+        .to change{ Tasks::Models::TaskPlan.count }.by(-1)
       expect(response).to have_http_status(:success)
       expect(response.body).to be_blank
     end

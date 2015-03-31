@@ -4,7 +4,7 @@ require 'vcr_helper'
 RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr => VCR_OPTS do
 
   let!(:assistant) { FactoryGirl.create :tasks_assistant,
-                                        code_class_name: 'IReadingAssistant' }
+                                        code_class_name: 'Tasks::Assistants::IReadingAssistant' }
   let!(:book_part) { FactoryGirl.create :content_book_part }
 
   context "for Force version 11" do

@@ -53,5 +53,9 @@ describe Role::GetUserRoles do
       expect(result.outputs.roles).to include(target_role1)
       expect(result.outputs.roles).to include(target_role2)
     end
+
+    it "returns limited types when requested" do
+      pending "implement me #{__FILE__}"
+    end
   end
 end

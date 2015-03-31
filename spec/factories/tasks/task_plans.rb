@@ -6,7 +6,7 @@ FactoryGirl.define do
       assistant_code_class_name "DummyAssistant"
     end
 
-    association :owner, factory: :course
+    association :owner, factory: :entity_course
     settings { {}.to_json }
     opens_at { Time.now }
     due_at { opens_at + duration }
@@ -16,7 +16,7 @@ FactoryGirl.define do
       code_class_name_hash = {
         code_class_name: evaluator.assistant_code_class_name
       }
-      task_plan.assistant ||= Assistant.find_by(code_class_name_hash) || \
+      task_plan.assistant ||= Tasks::Models::Assistant.find_by(code_class_name_hash) || \
                               FactoryGirl.build(:tasks_assistant, code_class_name_hash)
 
       evaluator.num_tasking_plans.times do
