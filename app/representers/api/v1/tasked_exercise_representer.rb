@@ -66,8 +66,7 @@ module Api::V1
                description: "The feedback given to the student"
              }
 
-    property :has_recovery?,
-             as: :has_recovery,
+    property :has_recovery,
              type: 'boolean',
              writeable: false,
              readable: true,

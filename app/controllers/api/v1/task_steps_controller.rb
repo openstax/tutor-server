@@ -65,4 +65,20 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     end
   end
 
+  api :PUT, '/steps/:step_id/refresh',
+            'Requests an exercise similar to the given one for credit recovery'
+  def recovery
+    tasked = TaskStep.find(params[:id]).tasked
+    OSU::AccessPolicy.require_action_allowed!(:refresh, current_api_user, tasked)
+
+    result = RefreshTaskedExercise.call(tasked_exercise: tasked)
+
+    if result.errors.any?
+      render_api_errors(result.errors)
+    else
+      respond_with result.outputs.slice(:refresh_step, :recovery_step),
+                   responder: ResponderWithPutContent
+    end
+  end
+
 end

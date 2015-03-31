@@ -95,9 +95,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
 
   describe "#recovery" do
     it "should allow owner to recover exercises with recovery steps" do
-      recovery = FactoryGirl.create :tasks_tasked_exercise
-      recovery.task_step.delete
-      tasked_exercise.recovery_tasked_exercise = recovery
+      tasked_exercise.has_recovery = true
       tasked_exercise.save!
 
       expect {
@@ -108,9 +106,9 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
       }.to change{tasked_exercise.task_step.task.reload.task_steps.count}
       expect(response).to have_http_status(:success)
 
-      expect(response.body).to eq(Api::V1::TaskedExerciseRepresenter.new(
-        recovery.reload
-      ).to_json)
+      recovery = TaskedExercise.new
+      Api::V1::TaskedExerciseRepresenter.new(recovery).from_json(response.body)
+      expect(recovery.los & tasked_exercise.los).not_to be_empty
 
       expect(recovery.task_step.task).to eq(task)
       expect(recovery.task_step.number).to(
@@ -119,9 +117,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
     end
 
     it "should not allow random user to recover exercises" do
-      recovery = FactoryGirl.create :tasks_tasked_exercise
-      recovery.task_step.delete
-      tasked_exercise.recovery_tasked_exercise = recovery
+      tasked_exercise.has_recovery = true
       tasked_exercise.save!
       step_count = tasked_exercise.task_step.task.task_steps.count
 
@@ -130,6 +126,10 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
           id: tasked_exercise.task_step.id
         }
       }.to raise_error SecurityTransgression
+
+      expect(tasked_exercise.task_step.task.reload.task_steps.count).to(
+        eq step_count
+      )
     end
 
     it "should not allow owner to recover taskeds without recovery steps" do
@@ -137,7 +137,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
         api_put :recovery, user_1_token, parameters: {
           id: tasked_exercise.task_step.id
         }
-      }.to change{tasked_exercise.task_step.task.reload.task_steps.count}.by(0)
+      }.not_to change{tasked_exercise.task_step.task.reload.task_steps.count}
 
       expect(response).to have_http_status(:unprocessable_entity)
     end
