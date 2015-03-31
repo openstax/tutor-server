@@ -11,7 +11,7 @@ FactoryGirl.define do
 
     after(:build) do |tasked_reading, evaluator|
       options = { tasked: tasked_reading }
-      options[:tasks_task] = nil if evaluator.skip_task
+      options[:task] = nil if evaluator.skip_task
 
       tasked_reading.task_step ||= FactoryGirl.build(:tasks_task_step, options)
     end
