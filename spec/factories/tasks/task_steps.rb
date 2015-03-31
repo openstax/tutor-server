@@ -10,7 +10,7 @@ FactoryGirl.define do
     end
 
     after(:build) do |task_step, evaluator|
-      options = { tasks_task_step: task_step, url: evaluator.url,
+      options = { task_step: task_step, url: evaluator.url,
                   content: evaluator.content, title: evaluator.title }
 
       task_step.tasked ||= \

@@ -2,7 +2,8 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
   acts_as_tasked
 
   belongs_to :recovery_tasked_exercise, class_name: name,
-                                        dependent: :destroy
+                                        dependent: :destroy,
+                                        subsystem: :ignore
 
   validates :url, presence: true
   validates :content, presence: true
