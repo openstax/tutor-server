@@ -22,7 +22,8 @@ describe Api::V1::TaskPlansController, :type => :controller,
   let!(:task_plan) { FactoryGirl.create(:tasks_task_plan,
                                         owner: course,
                                         assistant: assistant,
-                                        settings: { page_ids: [page.id] }) }
+                                        settings: { page_ids: [page.id] },
+                                        type: 'test') }
   let!(:tasking_plan) {
     tp = FactoryGirl.build :tasks_tasking_plan, task_plan: task_plan, target: user
     task_plan.tasking_plans << tp
@@ -106,8 +107,7 @@ describe Api::V1::TaskPlansController, :type => :controller,
         api_post :create,
                  nil,
                  parameters: {
-                   course_id: course.id,
-                   task_plan_type: 'test'
+                   course_id: course.id
                  },
                  raw_post_data: Api::V1::TaskPlanRepresenter
                                   .new(task_plan).to_json
@@ -126,8 +126,7 @@ describe Api::V1::TaskPlansController, :type => :controller,
         api_post :create,
                  nil,
                  parameters: {
-                   course_id: course.id,
-                   task_plan_type: 'test'
+                   course_id: course.id
                  },
                  raw_post_data: Api::V1::TaskPlanRepresenter
                                   .new(task_plan).to_json
@@ -139,8 +138,7 @@ describe Api::V1::TaskPlansController, :type => :controller,
         api_post :create,
                  nil,
                  parameters: {
-                   course_id: course.id,
-                   task_plan_type: 'test'
+                   course_id: course.id
                  },
                  raw_post_data: Api::V1::TaskPlanRepresenter
                                   .new(task_plan).to_json
@@ -155,7 +153,8 @@ describe Api::V1::TaskPlansController, :type => :controller,
                           nil,
                           parameters: {course_id: course.id},
                           raw_post_data: Api::V1::TaskPlanRepresenter
-                                           .new(task_plan).to_json
+                                           .new(task_plan).to_hash
+                                           .except('type').to_json
       }.not_to change{ TaskPlan.count }
       expect(response).to have_http_status(:unprocessable_entity)
     end

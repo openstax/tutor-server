@@ -4,10 +4,10 @@ class BuildTaskPlan
 
   protected
 
-  def exec(course:, assistant:)
+  def exec(course:, assistant: nil)
     tp = Tasks::Models::TaskPlan.new(owner: course, assistant: assistant)
-    tp.tasking_plans << TTasks::Models::TaskingPlan.new(task_plan: tp,
-                                                        target: course)
+    tp.tasking_plans << Tasks::Models::TaskingPlan.new(task_plan: tp,
+                                                       target: course)
     outputs[:task_plan] = tp
     transfer_errors_from tp, type: :verbatim
   end

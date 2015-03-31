@@ -77,11 +77,11 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   EOS
   def create
     course = Entity::Models::Course.find(params[:course_id])
-    assistant = Domain::GetAssistant[course: course,
-                                     task_plan_type: params[:task_plan_type]]
-    return head :unprocessable_entity if assistant.nil?
-    tp = BuildTaskPlan[course: course, assistant: assistant]
-    standard_create(tp, Api::V1::TaskPlanRepresenter)
+    plan = BuildTaskPlan[course: course]
+    standard_create(plan) do |tp|
+      tp.assistant = Domain::GetAssistant[course: course, task_plan: tp]
+      return head :unprocessable_entity if tp.assistant.nil?
+    end
   end
 
   ###############################################################

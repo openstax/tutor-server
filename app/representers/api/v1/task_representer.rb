@@ -6,13 +6,25 @@ module Api::V1
     property :id,
              type: Integer,
              writeable: false,
+             readable: true,
              schema_info: {
                required: true
+             }
+
+    property :task_type,
+             as: :type,
+             type: String,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               required: true,
+               description: "The type of this Task"
              }
 
     property :title,
              type: String,
              writeable: false,
+             readable: true,
              schema_info: {
                required: true
              }
