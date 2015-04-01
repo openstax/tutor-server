@@ -5,7 +5,7 @@ RSpec.describe Domain::DoesTaskingExist, :type => :routine do
   let(:taskee)    { FactoryGirl.create(:user) }
   let(:tasked)    { FactoryGirl.create(:tasks_tasked_exercise) }
   let!(:tasking)  { FactoryGirl.create(:tasks_tasking,
-                                       role: Role::GetDefaultUserRole[taskee],
+                                       role: Role::GetDefaultUserRole[taskee.entity_user],
                                        task: tasked.task_step.task.entity_task) }
 
   it "returns true for a tasked and the taskee" do

@@ -101,16 +101,11 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
         expect(task.taskings.length).to eq 1
         task_steps = task.task_steps
         expect(task_steps.length).to eq 11
-        expect(task_steps.collect { |ts| ts.tasked_type }).to eq(
-<<<<<<< HEAD
-          ['TaskedReading',  'TaskedVideo',    'TaskedExercise',
-           'TaskedInteractive',  'TaskedReading',  'TaskedExercise',
-           'TaskedReading',  'TaskedExercise', 'TaskedExercise',
-           'TaskedExercise', 'TaskedExercise']
-=======
-          %w(Reading Video Exercise Reading Exercise
-             Reading Exercise Exercise Exercise Exercise).collect{|type| "Tasks::Models::Tasked#{type}"}
->>>>>>> fixed all the specs from moving the Task** models into their own SS
+        expect(task_steps.collect { |ts| ts.tasked_type.demodulize }).to eq(
+          ['TaskedReading',     'TaskedVideo',    'TaskedExercise',
+           'TaskedInteractive', 'TaskedReading',  'TaskedExercise',
+           'TaskedReading',     'TaskedExercise', 'TaskedExercise',
+           'TaskedExercise',    'TaskedExercise']
         )
       end
     end

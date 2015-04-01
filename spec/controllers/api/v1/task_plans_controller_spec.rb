@@ -24,7 +24,7 @@ describe Api::V1::TaskPlansController, :type => :controller,
   let(:unaffiliated_teacher) { FactoryGirl.create :user }
 
   before do
-    Domain::AddUserAsCourseTeacher.call(course: course, user: teacher)
+    Domain::AddUserAsCourseTeacher.call(course: course, user: teacher.entity_user)
   end
 
   context 'stats' do

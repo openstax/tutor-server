@@ -7,7 +7,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
   let!(:user_1_token)    { FactoryGirl.create :doorkeeper_access_token,
                                               application: application,
                                               resource_owner_id: user_1.id }
-  let!(:user_1_role)     { Role::GetDefaultUserRole[user_1] }                                              
+  let!(:user_1_role)     { Role::GetDefaultUserRole[user_1.entity_user] }
 
   let!(:user_2)          { FactoryGirl.create :user }
   let!(:user_2_token)    { FactoryGirl.create :doorkeeper_access_token,
@@ -133,8 +133,6 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
     end
 
     it "should not allow owner to recover taskeds without recovery steps" do
-      # tasked = create_tasked(:tasked_reading, user_1_role)
-
       expect{
         api_put :recovery, user_1_token, parameters: {
           id: tasked_exercise.task_step.id
@@ -181,7 +179,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
 
   describe "practice task update step" do
     it "allows updating of a step (needed to test access to legacy and SS taskings)" do
-      Domain::AddUserAsCourseStudent[course: course, user: user_1]
+      Domain::AddUserAsCourseStudent[course: course, user: user_1.entity_user]
       task = Domain::ResetPracticeWidget[role: Entity::Models::Role.last, condition: :fake]
 
       step = task.task.task_steps.first

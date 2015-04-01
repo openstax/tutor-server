@@ -14,7 +14,7 @@ module Sprint007A
              ).outputs.book
       course = Domain::CreateCourse.call.outputs.course
       Domain::AddBookToCourse.call(book: book, course: course)
-      Domain::AddUserAsCourseTeacher.call(course: course, user: teacher)
+      Domain::AddUserAsCourseTeacher.call(course: course, user: teacher.entity_user)
 
       a = FactoryGirl.create :tasks_assistant, code_class_name: "Tasks::Assistants::IReadingAssistant"
       tp = FactoryGirl.create :tasks_task_plan, assistant: a,

@@ -34,7 +34,7 @@ RSpec.describe DistributeTasks, :type => :routine do
     task_plan = FactoryGirl.create(:tasks_tasking_plan, target: user).task_plan
 
     expect(DummyAssistant).to receive(:distribute_tasks).with(
-      task_plan: task_plan, taskees: [Role::GetDefaultUserRole[user]]
+      task_plan: task_plan, taskees: [Role::GetDefaultUserRole[user.entity_user]]
     )
 
     result = DistributeTasks.call(task_plan)

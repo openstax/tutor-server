@@ -1,3 +1,3 @@
 class Entity::Models::Role < Tutor::SubSystems::BaseModel
-  enum role_type: [:unassigned, :teacher, :student, :default]
+  enum role_type: [:unassigned, :default, :teacher, :student]
 end

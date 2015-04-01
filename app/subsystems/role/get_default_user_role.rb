@@ -8,8 +8,8 @@ class Role::GetDefaultUserRole
   protected
 
   def exec(user)
-    run(Role::GetUserRoles, user, :default)
-    existing_default_roles = outputs['[:role_get_user_roles, :roles]']
+    existing_default_roles =
+      run(Role::GetUserRoles, user, :default).outputs.roles
 
     if existing_default_roles.empty?
       run(Role::CreateUserRole, user, :default)

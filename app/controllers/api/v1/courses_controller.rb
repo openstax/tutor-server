@@ -15,7 +15,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     #{json_schema(Api::V1::CoursesRepresenter, include: :readable)}
   EOS
   def index
-    courses = Domain::ListCourses.call(user: current_human_user, with: :roles)
+    courses = Domain::ListCourses.call(user: current_human_user.entity_user, with: :roles)
                                  .outputs.courses
     respond_with courses, represent_with: Api::V1::CoursesRepresenter
   end
@@ -54,21 +54,14 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
   api :GET, '/courses/:course_id/tasks', 'Gets all course tasks assigned to the role holder making the request'
   description <<-EOS
-    As a temporary patch to make this route available, this route currently returns exactly the same
-    thing as /api/user/tasks.  Once the backend does more work to make routes role-aware, we'll update
-    this endpoint to actually do what the description says.
     #{json_schema(Api::V1::TaskSearchRepresenter, include: :readable)}
   EOS
   def tasks
-    # TODO actually make this URL role-aware and return the tasks for the role
-    # in the specified course; for now this is just returning what /api/user/tasks
-    # returns and is ignore
+    # No authorization is necessary because if the user isn't authorized, they'll just get
+    # back an empty list of tasks
     course = Entity::Models::Course.find(params[:id])
-    # OSU::AccessPolicy.require_action_allowed!(:read_tasks, current_api_user, course)
-    tasks = Domain::GetCourseUserTasks[course: course, user: current_human_user]
-
+    tasks = Domain::GetCourseUserTasks[course: course, user: current_human_user.entity_user]
     output = Hashie::Mash.new({'items' => tasks})
-    # outputs = SearchTasks.call(q: "user_id:#{current_human_user.id}").outputs
     respond_with output, represent_with: Api::V1::TaskSearchRepresenter
   end
 
@@ -78,7 +71,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   EOS
   def events
     course = Entity::Models::Course.find(params[:id])
-    outputs = GetUserCourseEvents.call(user: current_human_user, course: course).outputs
+    outputs = GetUserCourseEvents.call(user: current_human_user.entity_user, course: course).outputs
     respond_with outputs, represent_with: Api::V1::CourseEventsRepresenter
   end
 

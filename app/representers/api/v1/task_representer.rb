@@ -17,16 +17,6 @@ module Api::V1
                required: true
              }
 
-    # property :task_plan_id,
-    #          type: Integer,
-    #          writeable: false,
-    #          readable: true,
-    #          render_nil: true,
-    #          schema_info: {
-    #            required: false,
-    #            description: "The ID of the TaskPlan used to generate this Task"
-    #          }
-
     property :opens_at,
              type: DateTime,
              writeable: true,

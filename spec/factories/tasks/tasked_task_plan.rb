@@ -19,7 +19,7 @@ FactoryGirl.define do
     after(:create) do |task_plan,evaluator|
       taskees = evaluator.number_of_students.times.collect{
         user = FactoryGirl.create :user
-        Role::GetDefaultUserRole[user]
+        Role::GetDefaultUserRole[user.entity_user]
       }
       Tasks::Assistants::IReadingAssistant.distribute_tasks(task_plan: task_plan, taskees: taskees)
     end

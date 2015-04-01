@@ -1,31 +1,5 @@
 class Api::V1::TaskPlansController < Api::V1::ApiController
 
-  ###############################################################
-  # ----- temporary code to fix location: error -------
-  ###############################################################
-
-  def standard_create(model, represent_with=nil)
-    model.class.transaction do
-      consume!(model, represent_with: represent_with)
-      yield model if block_given?
-      OSU::AccessPolicy.require_action_allowed!(:create,
-                                                current_api_user,
-                                                model)
-
-      if model.save
-        respond_with model, represent_with: represent_with,
-                            status: :created,
-                            location: nil
-      else
-        render_api_errors(model.errors)
-      end
-    end
-  end
-
-  ###############################################################
-  # ----- END temporary code -------
-  ###############################################################
-
   resource_description do
     api_versions "v1"
     short_description 'Represents a plan for a Task'
