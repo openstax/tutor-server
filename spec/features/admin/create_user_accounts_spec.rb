@@ -2,7 +2,7 @@ require 'rails_helper'
 
 OpenStax::Accounts.instance_eval do
   def create_temp_user(attrs)
-    FactoryGirl.create(:openstax_accounts_account, username: attrs[:username])
+    FactoryGirl.create(:profile, username: attrs[:username])
   end
 end
 

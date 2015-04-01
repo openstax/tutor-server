@@ -3,7 +3,7 @@ class UserProfile::ListProfiles
 
   protected
   def exec
-    outputs[:profiles] = OpenStax::Accounts::Account.all
+    outputs[:profiles] = UserProfile::Models::Profile.all
   end
 end
 
