@@ -4,6 +4,8 @@ RSpec.describe RefreshTaskedExercise, :type => :routine do
 
   let!(:lo)              { FactoryGirl.create :content_tag,
                                               name: 'ost-tag-lo-test-lo01' }
+  let!(:pp)              { FactoryGirl.create :content_tag,
+                                              name: 'practice-problem' }
 
   let!(:tasked_reading)  { FactoryGirl.create(:tasked_reading) }
   let!(:task)            { tasked_reading.task_step.task }
@@ -30,10 +32,15 @@ RSpec.describe RefreshTaskedExercise, :type => :routine do
   let!(:recovery_exercise) { FactoryGirl.create(
     :content_exercise,
     content: OpenStax::Exercises::V1.fake_client
-                                    .new_exercise_hash(tags: [lo.name]).to_json
+                                    .new_exercise_hash(
+                                      tags: [lo.name, pp.name]
+                                    ).to_json
   ) }
-  let!(:recovery_tagging)   { FactoryGirl.create(
+  let!(:recovery_tagging_1)   { FactoryGirl.create(
     :content_exercise_tag, exercise: recovery_exercise, tag: lo
+  ) }
+  let!(:recovery_tagging_2)   { FactoryGirl.create(
+    :content_exercise_tag, exercise: recovery_exercise, tag: pp
   ) }
 
   it "cannot be called on taskeds without a recovery step" do

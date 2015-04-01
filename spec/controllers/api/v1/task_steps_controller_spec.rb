@@ -40,6 +40,8 @@ describe Api::V1::TaskStepsController, :type => :controller,
 
   let!(:lo)              { FactoryGirl.create :content_tag,
                                               name: 'ost-tag-lo-test-lo01' }
+  let!(:pp)              { FactoryGirl.create :content_tag,
+                                              name: 'practice-problem' }
 
   let!(:tasked_exercise_with_recovery) {
     te = FactoryGirl.build(
@@ -57,11 +59,15 @@ describe Api::V1::TaskStepsController, :type => :controller,
   let!(:recovery_exercise) { FactoryGirl.create(
     :content_exercise,
     content: OpenStax::Exercises::V1.fake_client
-                                    .new_exercise_hash(tags: [lo.name])
-                                    .to_json
+                                    .new_exercise_hash(
+                                      tags: [lo.name, pp.name]
+                                    ).to_json
   ) }
-  let!(:recovery_tagging)   { FactoryGirl.create(
+  let!(:recovery_tagging_1)   { FactoryGirl.create(
     :content_exercise_tag, exercise: recovery_exercise, tag: lo
+  ) }
+  let!(:recovery_tagging_2)   { FactoryGirl.create(
+    :content_exercise_tag, exercise: recovery_exercise, tag: pp
   ) }
 
   describe "#show" do

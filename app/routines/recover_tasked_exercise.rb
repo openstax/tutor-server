@@ -10,9 +10,17 @@ class RecoverTaskedExercise
     fatal_error(code: :recovery_not_available) \
       unless tasked_exercise.has_recovery?
 
+    pp_tag = Content::Models::Tag.find_by(name: 'practice-problem')
     lo = tasked_exercise.wrapper.los.shuffle.first
-    recovery_exercise = Content::Models::Tag.find_by(name: lo).exercise_tags
-                                            .order_by_rand.first.exercise
+    recovery_exercise = pp_tag.exercise_tags
+                              .preload(exercise: {exercise_tags: :tag})
+                              .joins(exercise: {exercise_tags: :tag})
+                              .where(exercise: {
+                                       exercise_tags: {
+                                         tag: { name: lo }
+                                       }
+                                    })
+                              .order_by_rand.first.exercise
     outputs[:recovery_exercise] = recovery_exercise
 
     task_step = tasked_exercise.task_step
