@@ -75,8 +75,12 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     if result.errors.any?
       render_api_errors(result.errors)
     else
-      render json: result.outputs.slice(:refresh_step, :recovery_step).to_json,
-             responder: ResponderWithPutContent
+      json_response = {}
+      json_response[:refresh_step] = result.outputs.refresh_step
+      tasked = result.outputs.recovery_step.tasked
+      representer = Api::V1::TaskedExerciseRepresenter.new(tasked)
+      json_response[:recovery_step] = representer
+      render json: json_response, responder: ResponderWithPutContent
     end
   end
 

@@ -21,6 +21,6 @@ class RefreshTaskedExercise
       return if step.nil?
     end
 
-    outputs[:refresh_step] = { url: step.url }
+    outputs[:refresh_step] = { url: step.tasked.url }
   end
 end

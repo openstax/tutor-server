@@ -19,11 +19,16 @@ describe Api::V1::TaskStepsController, :type => :controller,
   let!(:userless_token)  { FactoryGirl.create :doorkeeper_access_token,
                                               application: application }
 
-  let!(:task_step)       { FactoryGirl.create :tasks_task_step, title: 'title',
-                                              url: 'url', content: 'content' }
+  let!(:task_step)       { FactoryGirl.create :tasks_task_step,
+                                              title: 'title',
+                                              url: 'http://u.rl',
+                                              content: 'content' }
+
   let!(:task)            { task_step.task.reload }
+
   let!(:tasking)         { FactoryGirl.create :tasks_tasking, role: user_1_role,
                                                         task: task.entity_task }
+
   let!(:tasked_exercise) {
     te = FactoryGirl.build :tasks_tasked_exercise
     te.task_step.task = task
@@ -31,10 +36,11 @@ describe Api::V1::TaskStepsController, :type => :controller,
     te
   }
 
-  let!(:course) { Entity::Course.create }
+  let!(:course)          { Entity::Course.create }
 
   let!(:lo)              { FactoryGirl.create :content_tag,
                                               name: 'ost-tag-lo-test-lo01' }
+
   let!(:tasked_exercise_with_recovery) {
     te = FactoryGirl.build(
       :tasked_exercise,
@@ -47,10 +53,12 @@ describe Api::V1::TaskStepsController, :type => :controller,
     te.save!
     te
   }
+
   let!(:recovery_exercise) { FactoryGirl.create(
     :content_exercise,
     content: OpenStax::Exercises::V1.fake_client
-                                    .new_exercise_hash(tags: [lo.name]).to_json
+                                    .new_exercise_hash(tags: [lo.name])
+                                    .to_json
   ) }
   let!(:recovery_tagging)   { FactoryGirl.create(
     :content_exercise_tag, exercise: recovery_exercise, tag: lo
@@ -67,7 +75,7 @@ describe Api::V1::TaskStepsController, :type => :controller,
         type: 'reading',
         title: 'title',
         is_completed: false,
-        content_url: 'url',
+        content_url: 'http://u.rl',
         content_html: 'content'
       })
     end
@@ -129,9 +137,12 @@ describe Api::V1::TaskStepsController, :type => :controller,
                                                .reload.task_steps.count}
       expect(response).to have_http_status(:success)
 
-      expect(response).not_to be_blank
-
       recovery_step = tasked_exercise_with_recovery.task_step.next_by_number
+
+      expect(response.body).to(
+        eq Api::V1::TaskedExerciseRepresenter.new(recovery_step.tasked).to_json
+      )
+
       expect(recovery_step.tasked.wrapper.los & \
              tasked_exercise_with_recovery.wrapper.los).not_to be_empty
       expect(recovery_step.task).to eq(task)
@@ -164,6 +175,65 @@ describe Api::V1::TaskStepsController, :type => :controller,
       }.not_to change{tasked_exercise.task_step.task.reload.task_steps.count}
 
       expect(response).to have_http_status(:unprocessable_entity)
+    end
+  end
+
+  describe "#refresh" do
+    it "should allow owner to refresh exercises with recovery steps" do
+      expect {
+        api_put :refresh, user_1_token, parameters: {
+          task_id: tasked_exercise_with_recovery.task_step.task.id,
+          id: tasked_exercise_with_recovery.task_step.id
+        }
+      }.to change{tasked_exercise_with_recovery.task_step.task
+                                               .reload.task_steps.count}
+      expect(response).to have_http_status(:success)
+
+      hash = JSON.parse(response.body)
+      expect(hash['refresh_step']['url']).to eq task_step.tasked.url
+
+      recovery_step = tasked_exercise_with_recovery.task_step.next_by_number
+
+      expect(hash['recovery_step']).to eq JSON.parse(
+        Api::V1::TaskedExerciseRepresenter.new(recovery_step.tasked).to_json
+      )
+
+      expect(recovery_step.tasked.wrapper.los & \
+             tasked_exercise_with_recovery.wrapper.los).not_to be_empty
+      expect(recovery_step.task).to eq(task)
+      expect(recovery_step.number).to(
+        eq(tasked_exercise_with_recovery.task_step.number + 1)
+      )
+    end
+
+    it "should not allow random user to refresh exercises" do
+      tasked_exercise.has_recovery = true
+      tasked_exercise.save!
+      step_count = tasked_exercise.task_step.task.task_steps.count
+
+      expect{
+        api_put :refresh, user_2_token, parameters: {
+          task_id: tasked_exercise.task_step.task.id,
+          id: tasked_exercise.task_step.id
+        }
+      }.to raise_error(SecurityTransgression)
+
+      expect(tasked_exercise.task_step.task.reload.task_steps.count).to(
+        eq step_count
+      )
+    end
+
+    it "should not allow owner to refresh taskeds without recovery steps" do
+      tasked = create_tasked(:tasked_reading, user_1)
+
+      step_count = tasked_exercise.task_step.task.task_steps.count
+
+      expect{
+        api_put :refresh, user_1_token, parameters: {
+          task_id: tasked_exercise.task_step.task.id,
+          id: tasked_exercise.task_step.id
+        }
+      }.not_to change{tasked_exercise.task_step.task.reload.task_steps.count}
     end
   end
 
