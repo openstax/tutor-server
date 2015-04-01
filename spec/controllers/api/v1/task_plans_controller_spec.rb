@@ -5,18 +5,18 @@ describe Api::V1::TaskPlansController, :type => :controller,
                                        :version => :v1 do
 
   let!(:course) { Domain::CreateCourse.call.outputs.course }
-  let!(:assistant) { FactoryGirl.create :assistant,
-                                        code_class_name: "IReadingAssistant" }
+  let!(:assistant) { FactoryGirl.create :tasks_assistant,
+                                        code_class_name: "Tasks::Assistants::IReadingAssistant" }
   let!(:user) { FactoryGirl.create :user }
   let!(:teacher) { FactoryGirl.create :user }
 
   let!(:page) { FactoryGirl.create :content_page }
-  let!(:task_plan) { FactoryGirl.create(:task_plan,
+  let!(:task_plan) { FactoryGirl.create(:tasks_task_plan,
                                         owner: course,
                                         assistant: assistant,
                                         settings: { page_ids: [page.id] }) }
   let!(:tasking_plan) {
-    tp = FactoryGirl.build :tasking_plan, task_plan: task_plan, target: user
+    tp = FactoryGirl.build :tasks_tasking_plan, task_plan: task_plan, target: user
     task_plan.tasking_plans << tp
     tp
   }
@@ -24,7 +24,7 @@ describe Api::V1::TaskPlansController, :type => :controller,
   let(:unaffiliated_teacher) { FactoryGirl.create :user }
 
   before do
-    Domain::AddUserAsCourseTeacher.call(course: course, user: teacher)
+    Domain::AddUserAsCourseTeacher.call(course: course, user: teacher.entity_user)
   end
 
   context 'stats' do
@@ -91,11 +91,11 @@ describe Api::V1::TaskPlansController, :type => :controller,
       expect { api_post :create, nil, parameters: {course_id: course.id},
                         raw_post_data: Api::V1::TaskPlanRepresenter
                                          .new(task_plan).to_json }
-        .to change{ TaskPlan.count }.by(1)
+        .to change{ Tasks::Models::TaskPlan.count }.by(1)
       expect(response).to have_http_status(:success)
 
       expect(response.body).to(
-        eq(Api::V1::TaskPlanRepresenter.new(TaskPlan.last).to_json)
+        eq(Api::V1::TaskPlanRepresenter.new(Tasks::Models::TaskPlan.last).to_json)
       )
     end
 
@@ -159,7 +159,7 @@ describe Api::V1::TaskPlansController, :type => :controller,
       controller.sign_in teacher
       expect { api_post :publish, nil, parameters: {course_id: course.id,
                                                     id: task_plan.id} }
-        .to change{ Task.count }.by(1)
+        .to change{ Tasks::Models::Task.count }.by(1)
       expect(response).to have_http_status(:success)
       expect(response.body).to(
         eq(Api::V1::TaskPlanRepresenter.new(task_plan).to_json)
@@ -189,7 +189,7 @@ describe Api::V1::TaskPlansController, :type => :controller,
       controller.sign_in teacher
       expect{ api_delete :destroy, nil, parameters: {course_id: course.id,
                                                      id: task_plan.id} }
-        .to change{ TaskPlan.count }.by(-1)
+        .to change{ Tasks::Models::TaskPlan.count }.by(-1)
       expect(response).to have_http_status(:success)
       expect(response.body).to be_blank
     end

@@ -5,7 +5,7 @@ class GetCourseTaskPlans
   protected
 
   def exec(course:)
-    task_plans = TaskPlan.where(owner: course).to_a
+    task_plans = Tasks::Models::TaskPlan.where(owner: course).to_a
     outputs[:total_count] = task_plans.count
     outputs[:items] = task_plans
   end

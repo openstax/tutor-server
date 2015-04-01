@@ -3,7 +3,9 @@ require 'rails_helper'
 RSpec.describe OpenStax::Exercises::V1::Exercise, :type => :external do
   let!(:title) { 'Some Title' }
   let!(:hash) { OpenStax::Exercises::V1.fake_client.new_exercise_hash
-                                                   .merge(title: title) }
+                                        .merge(title: title,
+                                               tags: ['i-am-lo01',
+                                                      'generic-tag']) }
   let!(:content) { hash.to_json }
 
   it 'returns attributes from the exercise JSON' do
@@ -15,5 +17,7 @@ RSpec.describe OpenStax::Exercises::V1::Exercise, :type => :external do
     expect(exercise.correct_answer_ids[0]).to eq exercise.answers[0][0]['id']
     expect(exercise.feedback_html(exercise.answers[0][0]['id'])).to eq 'Right!'
     expect(exercise.feedback_html(exercise.answers[0][1]['id'])).to eq 'Wrong!'
+    expect(exercise.tags).to eq ['i-am-lo01', 'generic-tag']
+    expect(exercise.los).to eq ['i-am-lo01']
   end
 end

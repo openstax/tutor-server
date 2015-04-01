@@ -4,13 +4,7 @@ class Tasks::CreateTasking
   protected
 
   def exec(role:, task:)
-    # Temporarily handle legacy tasks
-    if task.is_a? ::Task
-      legacy_task = task
-      task = Entity::Models::Task.create!
-      ltm = Tasks::Models::LegacyTaskMap.create!(task: task, legacy_task: legacy_task)
-    end
-
-    outputs[:tasking] = Tasks::Models::Tasking.create!(role: role, task: task)
+    entity_task = task.is_a?(Entity::Models::Task) ? task : task.entity_task
+    outputs[:tasking] = Tasks::Models::Tasking.create!(role: role, task: entity_task)
   end
 end

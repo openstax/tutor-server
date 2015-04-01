@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe TaskAccessPolicy, :type => :access_policy do
   let(:requestor) { FactoryGirl.create(:user) }
-  let(:task) { FactoryGirl.create(:task) }
+  let(:task) { FactoryGirl.create(:tasks_task) }
 
   subject(:action_allowed) do
     TaskAccessPolicy.action_allowed?(action, requestor, task)
@@ -15,13 +15,13 @@ RSpec.describe TaskAccessPolicy, :type => :access_policy do
       # already true for User
 
       context 'and the requestor has taskings in the task' do
-        before { allow(task).to receive(:tasked_to?).with(requestor) { true } }
+        before { allow(Domain::DoesTaskingExist).to receive(:[]) { true } }
 
         it { should be true }
       end
 
       context 'and the requestor has no taskings in the task' do
-        before { allow(task).to receive(:tasked_to?).with(requestor) { false } }
+        before { allow(Domain::DoesTaskingExist).to receive(:[]) { false } }
 
         it { should be false }
       end

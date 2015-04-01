@@ -21,7 +21,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 13 Mar 2015 21:03:36 GMT
+      - Fri, 27 Mar 2015 20:15:02 GMT
       Content-Type:
       - text/html
       Content-Length:
@@ -36,7 +36,7 @@ http_interactions:
         bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
         (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
     http_version: 
-  recorded_at: Fri, 13 Mar 2015 21:03:42 GMT
+  recorded_at: Fri, 27 Mar 2015 20:14:57 GMT
 - request:
     method: get
     uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-s01-lo01,k12phys-ch04-s01-lo02
@@ -58,7 +58,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 13 Mar 2015 21:03:37 GMT
+      - Fri, 27 Mar 2015 20:15:04 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -78,12 +78,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=T01XcW5YNjByNUd1bkhWakNvOHA2TzVacE5ySHpmbzNWNGVwTm5za2UvVjNMbmVZdjBsYVlaZEw5ZlBtWklxKy9Zd2xUQnFVanppMk15Rnpzb0JXb2c9PS0tQTdrZUs1MFNrZFVUUENiSUtHMFkrZz09--82a3598e1d9b8c8f77866231a85feff48d7e4e31;
+      - _exercises_session=WjJWK0h6WndIandKVUQ1NDJOTzRWVFJvdHl2cEJqWE5KaWtjTVVkT2liRW1heDRkQXlDTWpWSHBzTjh6WWFvSnpORjZrNUJ6MVhzc3F6NnBwMUdSa0E9PS0tbDNmTVErY3VadGQvaTJhbXZTYzQvZz09--20be702902d9eb5589acf44b3c5b4a42cded4c5e;
         path=/; HttpOnly
       X-Request-Id:
-      - a2a55947-2eaf-4c79-8b8f-d553df2eda68
+      - c3f46d89-9c7e-4b13-98e8-42e49be060f5
       X-Runtime:
-      - '0.812604'
+      - '0.848425'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -1124,5 +1124,5 @@ http_interactions:
         PyJ9XSwiaGludHMiOltdLCJmb3JtYXRzIjpbIm11bHRpcGxlLWNob2ljZSIs
         ImZyZWUtcmVzcG9uc2UiXSwiY29tYm9fY2hvaWNlcyI6W119XX1dfQ==
     http_version: 
-  recorded_at: Fri, 13 Mar 2015 21:03:43 GMT
+  recorded_at: Fri, 27 Mar 2015 20:14:58 GMT
 recorded_with: VCR 2.9.3

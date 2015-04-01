@@ -9,7 +9,8 @@ describe Api::V1::UsersController, :type => :controller, :api => true, :version 
                                               resource_owner_id: user_1.id }
 
   let!(:userless_token)  { FactoryGirl.create :doorkeeper_access_token,
-                                              application: application }
+                                              application: application,
+                                              resource_owner_id: nil }
 
   describe "#show" do
     context "caller has an authorization token" do
@@ -29,17 +30,6 @@ describe Api::V1::UsersController, :type => :controller, :api => true, :version 
         api_get :show, userless_token
         expect(response.code).to eq('403')
       end
-    end
-  end
-
-  describe "tasks" do
-    it "should let a user retrieve their non-existent tasks" do
-      api_get :tasks, user_1_token
-      expect(response.code).to eq('200')
-      expect(response.body).to eq({
-        total_count: 0,
-        items: []
-      }.to_json)
     end
   end
 

@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe DistributeTasks, :type => :routine do
   it 'validates the task_plan settings against the assistant schema' do
-    task_plan = FactoryGirl.create :task_plan
+    task_plan = FactoryGirl.create :tasks_task_plan
 
     expect(DistributeTasks.call(task_plan).errors).to be_empty
 
@@ -31,10 +31,10 @@ RSpec.describe DistributeTasks, :type => :routine do
 
   it "calls the distribute_tasks method on the task_plan's assistant" do
     user = FactoryGirl.create :user
-    task_plan = FactoryGirl.create(:tasking_plan, target: user).task_plan
+    task_plan = FactoryGirl.create(:tasks_tasking_plan, target: user).task_plan
 
     expect(DummyAssistant).to receive(:distribute_tasks).with(
-      task_plan: task_plan, taskees: [user]
+      task_plan: task_plan, taskees: [Role::GetDefaultUserRole[user.entity_user]]
     )
 
     result = DistributeTasks.call(task_plan)

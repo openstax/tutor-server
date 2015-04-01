@@ -2,12 +2,12 @@ require 'rails_helper'
 
 RSpec.describe RecoverTaskedExercise, :type => :routine do
 
-  let!(:tasked_reading)  { FactoryGirl.create(:tasked_reading) }
-  let!(:tasked_exercise) { FactoryGirl.create(:tasked_exercise) }
-  let!(:recovery)        { FactoryGirl.create(:tasked_exercise,
+  let!(:tasked_reading)  { FactoryGirl.create(:tasks_tasked_reading) }
+  let!(:tasked_exercise) { FactoryGirl.create(:tasks_tasked_exercise) }
+  let!(:recovery)        { FactoryGirl.create(:tasks_tasked_exercise,
                                               task_step: nil) }
   let!(:tasked_exercise_with_recovery) {
-    FactoryGirl.create(:tasked_exercise, recovery_tasked_exercise: recovery)
+    FactoryGirl.create(:tasks_tasked_exercise, recovery_tasked_exercise: recovery)
   }
 
   it "cannot be called on taskeds without a recovery step" do

@@ -24,12 +24,12 @@ module Api::V1
              type: String,
              writeable: false,
              readable: true,
-             getter: lambda { |*| self.class.name.gsub("Tasked","").underscore.downcase },
+             getter: lambda { |*| self.class.name.demodulize.remove("Tasked").underscore.downcase },
              schema_info: {
                required: true,
                description: "The type of this TaskStep, one of: #{
                             TaskedRepresenterMapper.models.collect{ |klass|
-                              "'" + klass.name.gsub("Tasked","")
+                              "'" + klass.name.demodulize.remove("Tasked")
                                          .underscore.downcase + "'"
                             }.join(',')}"
              }

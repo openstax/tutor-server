@@ -50,7 +50,10 @@ module Api::V1
 
     collection :plans, readable: true, decorator: PlanElements
 
-    collection :tasks, readable: true, decorator: TaskElements
+    collection :tasks,
+               readable: true,
+               getter: -> (*) { tasks.collect{|t| t.task} },
+               decorator: TaskElements
 
   end
 end

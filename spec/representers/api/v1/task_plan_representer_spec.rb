@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Api::V1::TaskPlanRepresenter, :type => :representer do
 
   let(:task_plan) {
-    FactoryGirl.create(:task_plan)
+    FactoryGirl.create(:tasks_task_plan)
   }
   let(:representation) { Api::V1::TaskPlanRepresenter.new(task_plan).as_json }
 

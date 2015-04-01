@@ -8,6 +8,8 @@ describe Api::V1::TasksController, :type => :controller, :api => true, :version 
                                               application: application,
                                               resource_owner_id: user_1.id }
 
+  let!(:user_1_role)     { Role::GetDefaultUserRole[user_1.entity_user] }
+
   let!(:user_2)          { FactoryGirl.create :user }
   let!(:user_2_token)    { FactoryGirl.create :doorkeeper_access_token,
                                               application: application,
@@ -16,8 +18,10 @@ describe Api::V1::TasksController, :type => :controller, :api => true, :version 
   let!(:userless_token)  { FactoryGirl.create :doorkeeper_access_token,
                                               application: application }
 
-  let!(:task_1)            { FactoryGirl.create :task, title: 'A Task Title', step_types: [:tasked_reading, :tasked_exercise] }
-  let!(:tasking_1)         { FactoryGirl.create :tasking, taskee: user_1, task: task_1 }
+  let!(:task_1)          { FactoryGirl.create :tasks_task, title: 'A Task Title',
+                                              step_types: [:tasks_tasked_reading,
+                                                           :tasks_tasked_exercise] }
+  let!(:tasking_1)         { FactoryGirl.create :tasks_tasking, role: user_1_role, task: task_1.entity_task }
 
   describe "#show" do
     it "should work on the happy path" do

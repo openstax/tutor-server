@@ -3,7 +3,7 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
 
   sortable_belongs_to :book_part, on: :number, inverse_of: :pages
 
-  sortable_has_many :page_topics, on: :number, dependent: :destroy
+  has_many :page_tags, dependent: :destroy
 
   validates :title, presence: true
 

@@ -30,6 +30,10 @@ module Tutor::SubSystems
         # If it's a Hash, then It's considered the options and the options argument is ignored.
         options = scope if scope.is_a?(Hash)
         subsystem_name = options.delete(:subsystem).to_s
+
+        # Don't try to do subsystem stuff when the association is polymorphic and SS name unset
+        return if subsystem_name.blank? && (options[:polymorphic] || options[:as])
+
         return if ['none','ignore'].include?(subsystem_name)
 
         # Find the string before the first ::, thats the subsystem module

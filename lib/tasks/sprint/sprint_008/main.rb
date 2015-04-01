@@ -25,34 +25,34 @@ module Sprint008
 
       # Add the teachers to their courses
 
-      Domain::AddUserAsCourseTeacher[course: course1, user: teacher]
-      Domain::AddUserAsCourseTeacher[course: course2, user: teacher_and_student]
+      Domain::AddUserAsCourseTeacher[course: course1, user: teacher.entity_user]
+      Domain::AddUserAsCourseTeacher[course: course2, user: teacher_and_student.entity_user]
 
       # Add the students to the courses
 
-      Domain::AddUserAsCourseStudent[course: course1, user: student]
-      student_role = Entity::Role.last
-      Domain::AddUserAsCourseStudent[course: course2, user: teacher_and_student]
+      Domain::AddUserAsCourseStudent[course: course1, user: student.entity_user]
+      student_role = Entity::Models::Role.last
+      Domain::AddUserAsCourseStudent[course: course2, user: teacher_and_student.entity_user]
 
       # Set up three reading tasks (will include try another)
 
-      a = FactoryGirl.create :assistant, code_class_name: "IReadingAssistant"
-      tp = FactoryGirl.create :task_plan, assistant: a,
+      a = FactoryGirl.create :tasks_assistant, code_class_name: "Tasks::Assistants::IReadingAssistant"
+      tp = FactoryGirl.create :tasks_task_plan, assistant: a,
                                           owner: course1,
                                           settings: { page_ids: [1, 2] }
-      tp.tasking_plans << FactoryGirl.create(:tasking_plan, target: student,
+      tp.tasking_plans << FactoryGirl.create(:tasks_tasking_plan, target: student,
                                                             task_plan: tp)
       DistributeTasks.call(tp)
-      tp = FactoryGirl.create :task_plan, assistant: a,
+      tp = FactoryGirl.create :tasks_task_plan, assistant: a,
                                           owner: course1,
                                           settings: { page_ids: [3] }
-      tp.tasking_plans << FactoryGirl.create(:tasking_plan, target: student,
+      tp.tasking_plans << FactoryGirl.create(:tasks_tasking_plan, target: student,
                                                             task_plan: tp)
       DistributeTasks.call(tp)
-      tp = FactoryGirl.create :task_plan, assistant: a,
+      tp = FactoryGirl.create :tasks_task_plan, assistant: a,
                                           owner: course1,
                                           settings: { page_ids: [4] }
-      tp.tasking_plans << FactoryGirl.create(:tasking_plan, target: student,
+      tp.tasking_plans << FactoryGirl.create(:tasks_tasking_plan, target: student,
                                                             task_plan: tp)
       DistributeTasks.call(tp)
 
@@ -60,20 +60,20 @@ module Sprint008
       Domain::ResetPracticeWidget.call(role: student_role, condition: :fake)
 
       # Set up a task plan that will have activity for the stats
-      stats_tp = FactoryGirl.create :task_plan, assistant: a,
+      stats_tp = FactoryGirl.create :tasks_task_plan, assistant: a,
                                           owner: course1,
                                           settings: { page_ids: [1,2,3] }
 
       0.upto(30).each do |i|
         user = FactoryGirl.create :user, username: "student_#{i}"
-        stats_tp.tasking_plans << FactoryGirl.create(:tasking_plan,target: user, task_plan: stats_tp)
+        stats_tp.tasking_plans << FactoryGirl.create(:tasks_tasking_plan,target: user, task_plan: stats_tp)
       end
       DistributeTasks.call(stats_tp)
       # mark some steps as complete and correct
       stats_tp.reload.tasks.each_with_index{ |task,index|
         task.task_steps.each{ |ts|
           next unless 0==index%2 # only mark 1/2 complete
-          if ts.tasked_type == "TaskedExercise" && 1 != rand(0..4) # and 3/4 of those correct
+          if ts.tasked_type == "Tasks::Models::TaskedExercise" && 1 != rand(0..4) # and 3/4 of those correct
             ts.tasked.answer_id = ts.tasked.correct_answer_id
             ts.tasked.free_response = Faker::Company.bs
             ts.tasked.save!
