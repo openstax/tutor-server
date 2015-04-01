@@ -3,11 +3,6 @@ require 'rails_helper'
 RSpec.describe Api::V1::TaskedRepresenterMapper do
   let(:mapper) { Api::V1::TaskedRepresenterMapper }
 
-  before :all do
-    # Load all the source code
-    Rails.application.eager_load!
-  end
-
   describe '.models' do
     it 'returns all tasked models' do
       # Get all the Tasked.* classes
