@@ -6,9 +6,6 @@ class Course < ActiveRecord::Base
   has_many :tasking_plans, as: :target, dependent: :destroy
   has_many :task_plans, as: :owner, dependent: :destroy
 
-  has_many :topics, dependent: :destroy
-  has_many :exercise_definitions, dependent: :destroy
-
   has_many :course_assistants, dependent: :destroy
 
   validates :school, presence: true

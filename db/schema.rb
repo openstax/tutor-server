@@ -48,16 +48,15 @@ ActiveRecord::Schema.define(version: 20150326125339) do
   add_index "content_book_parts", ["parent_book_part_id", "number"], name: "index_content_book_parts_on_parent_book_part_id_and_number", unique: true
   add_index "content_book_parts", ["url"], name: "index_content_book_parts_on_url", unique: true
 
-  create_table "content_exercise_topics", force: :cascade do |t|
+  create_table "content_exercise_tags", force: :cascade do |t|
     t.integer  "content_exercise_id", null: false
-    t.integer  "content_topic_id",    null: false
-    t.integer  "number",              null: false
+    t.integer  "content_tag_id",      null: false
     t.datetime "created_at",          null: false
     t.datetime "updated_at",          null: false
   end
 
-  add_index "content_exercise_topics", ["content_exercise_id", "number"], name: "content_exercise_ce_number_unique", unique: true
-  add_index "content_exercise_topics", ["content_topic_id", "content_exercise_id"], name: "content_exercise_topic_ce_unique", unique: true
+  add_index "content_exercise_tags", ["content_exercise_id", "content_tag_id"], name: "index_content_exercise_tags_on_c_e_id_and_c_t_id", unique: true
+  add_index "content_exercise_tags", ["content_tag_id"], name: "index_content_exercise_tags_on_content_tag_id"
 
   create_table "content_exercises", force: :cascade do |t|
     t.string   "url"
@@ -70,16 +69,15 @@ ActiveRecord::Schema.define(version: 20150326125339) do
   add_index "content_exercises", ["title"], name: "index_content_exercises_on_title"
   add_index "content_exercises", ["url"], name: "index_content_exercises_on_url", unique: true
 
-  create_table "content_page_topics", force: :cascade do |t|
-    t.integer  "content_page_id",  null: false
-    t.integer  "content_topic_id", null: false
-    t.integer  "number",           null: false
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+  create_table "content_page_tags", force: :cascade do |t|
+    t.integer  "content_page_id", null: false
+    t.integer  "content_tag_id",  null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
   end
 
-  add_index "content_page_topics", ["content_page_id", "number"], name: "index_content_page_topics_on_content_page_id_and_number", unique: true
-  add_index "content_page_topics", ["content_topic_id", "content_page_id"], name: "content_topic_page_ids_unique", unique: true
+  add_index "content_page_tags", ["content_page_id", "content_tag_id"], name: "index_content_page_tags_on_content_page_id_and_content_tag_id", unique: true
+  add_index "content_page_tags", ["content_tag_id"], name: "index_content_page_tags_on_content_tag_id"
 
   create_table "content_pages", force: :cascade do |t|
     t.string   "url"
@@ -95,14 +93,16 @@ ActiveRecord::Schema.define(version: 20150326125339) do
   add_index "content_pages", ["content_book_part_id", "number"], name: "index_content_pages_on_content_book_part_id_and_number", unique: true
   add_index "content_pages", ["url"], name: "index_content_pages_on_url", unique: true
 
-  create_table "content_topics", force: :cascade do |t|
-    t.string   "name",        null: false
+  create_table "content_tags", force: :cascade do |t|
+    t.string   "name",                    null: false
+    t.integer  "tag_type",    default: 0, null: false
     t.text     "description"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
   end
 
-  add_index "content_topics", ["name"], name: "index_content_topics_on_name", unique: true
+  add_index "content_tags", ["name"], name: "index_content_tags_on_name", unique: true
+  add_index "content_tags", ["tag_type"], name: "index_content_tags_on_tag_type"
 
   create_table "course_assistants", force: :cascade do |t|
     t.integer  "course_id",    null: false
@@ -215,7 +215,7 @@ ActiveRecord::Schema.define(version: 20150326125339) do
 
   create_table "fake_stores", force: :cascade do |t|
     t.text     "data"
-    t.string   "name"
+    t.string   "name",       null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
