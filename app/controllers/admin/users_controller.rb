@@ -1,6 +1,6 @@
 class Admin::UsersController < Admin::BaseController
   def index
-    @users = Domain::ListUsers.call.outputs.users
+    @users = Domain::ListUsers[]
   end
 
   def create
