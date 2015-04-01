@@ -33,7 +33,8 @@ module Api::V1
       @@map ||= {
         TaskedReading     => ->(*) { TaskedReadingRepresenter },
         TaskedExercise    => ->(*) { TaskedExerciseRepresenter },
-        TaskedVideo       => ->(*) { TaskedVideoRepresenter }
+        TaskedVideo       => ->(*) { TaskedVideoRepresenter },
+        TaskedInteractive => ->(*) { TaskedInteractiveRepresenter }
       }
     end
 
