@@ -77,7 +77,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
 
   context "for Inertia version 11" do
     let!(:cnx_page_hash) { {
-      'id' => '61445f78-00e2-45ae-8e2c-461b17d9b4fd',
+      'id' => '61445f78-00e2-45ae-8e2c-461b17d9b4fd@11',
       'title' => "Newton's First Law of Motion: Inertia"
     } }
     let!(:cnx_page) { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash) }

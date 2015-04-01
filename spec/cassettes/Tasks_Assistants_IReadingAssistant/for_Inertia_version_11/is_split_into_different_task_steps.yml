@@ -2,62 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: http://archive.cnx.org/contents/61445f78-00e2-45ae-8e2c-461b17d9b4fd
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      Accept:
-      - text/json
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      User-Agent:
-      - Ruby
-  response:
-    status:
-      code: 302
-      message: Found
-    headers:
-      Access-Control-Allow-Headers:
-      - origin,dnt,accept-encoding,accept-language,keep-alive,user-agent,x-requested-with,if-modified-since,cache-control,content-type
-      Access-Control-Allow-Methods:
-      - GET, OPTIONS
-      Access-Control-Allow-Origin:
-      - "*"
-      Content-Type:
-      - text/plain
-      Location:
-      - "/contents/61445f78-00e2-45ae-8e2c-461b17d9b4fd@16"
-      Server:
-      - waitress
-      X-Varnish-Action:
-      - FETCH (pass - status > 300, not content)
-      Content-Length:
-      - '0'
-      Accept-Ranges:
-      - bytes
-      Date:
-      - Wed, 01 Apr 2015 15:42:33 GMT
-      X-Varnish:
-      - '181345755'
-      Via:
-      - 1.1 varnish
-      Connection:
-      - keep-alive
-      X-Cache:
-      - MISS
-      X-Varnish-Age:
-      - '0'
-      Age:
-      - '0'
-    body:
-      encoding: UTF-8
-      string: ''
-    http_version: 
-  recorded_at: Wed, 01 Apr 2015 15:42:33 GMT
-- request:
-    method: get
-    uri: http://archive.cnx.org/contents/61445f78-00e2-45ae-8e2c-461b17d9b4fd@16
+    uri: http://archive.cnx.org/contents/61445f78-00e2-45ae-8e2c-461b17d9b4fd@11
     body:
       encoding: US-ASCII
       string: ''
@@ -88,13 +33,13 @@ http_interactions:
       X-Factor-Ttl:
       - 'ttl: 604800.000'
       Content-Length:
-      - '41966'
+      - '41284'
       Accept-Ranges:
       - bytes
       Date:
-      - Wed, 01 Apr 2015 15:42:33 GMT
+      - Wed, 01 Apr 2015 20:04:41 GMT
       X-Varnish:
-      - '181345762'
+      - '181476626'
       Via:
       - 1.1 varnish
       Connection:
@@ -107,16 +52,16 @@ http_interactions:
       - '0'
     body:
       encoding: UTF-8
-      string: '{"googleAnalytics": null, "version": "16", "submitlog": "Removed a
-        Teacher Edition answer; removed grasp check title.", "abstract": null, "revised":
-        "2015-04-01T14:53:26Z", "roles": null, "keywords": [], "id": "61445f78-00e2-45ae-8e2c-461b17d9b4fd",
+      string: '{"googleAnalytics": null, "version": "11", "submitlog": "put sim back
+        in ost-interactive note, section", "abstract": null, "revised": "2015-03-26T16:26:49Z",
+        "roles": null, "keywords": [], "id": "61445f78-00e2-45ae-8e2c-461b17d9b4fd",
         "title": "Newton''s First Law of Motion: Inertia", "mediaType": "application/vnd.org.cnx.module",
         "content": "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head xmlns:c=\"http://cnx.rice.edu/cnxml\"
         xmlns:md=\"http://cnx.rice.edu/mdml\"><title>Newton''s First Law of Motion:
         Inertia</title><meta name=\"created-time\" content=\"2015/03/11 08:32:11 -0500\"/><meta
-        name=\"revised-time\" content=\"2015/04/01 09:53:26.328 GMT-5\"/><meta name=\"author\"
-        content=\"AlinaManager\"/><meta name=\"licensor\" content=\"AlinaManager\"/><meta
-        name=\"license\" content=\"http://creativecommons.org/licenses/by/4.0/\"/><meta
+        name=\"revised-time\" content=\"2015/03/26 11:26:49.873 GMT-5\"/><meta name=\"author\"
+        content=\"AlinaManager\"/><meta name=\"acl-list\" content=\"AlinaManager\"/><meta
+        name=\"licensor\" content=\"AlinaManager\"/><meta name=\"license\" content=\"http://creativecommons.org/licenses/by/4.0/\"/><meta
         name=\"subject\" content=\"Mathematics and Statistics\"/></head>\n\n<body
         xmlns:c=\"http://cnx.rice.edu/cnxml\" xmlns:md=\"http://cnx.rice.edu/mdml\"
         xmlns:qml=\"http://cnx.rice.edu/qml/1.0\" xmlns:mod=\"http://cnx.rice.edu/#moduleIds\"
@@ -306,10 +251,10 @@ http_interactions:
         an object, so mass is usually not determined this way. Instead, the mass of
         an object is determined by comparing it with the standard kilogram. Mass is
         therefore expressed in kilograms.</p>\n\n<div data-type=\"note\" id=\"eip-idm961296\"
-        class=\"tips-for-success\" data-label=\"Tips for Success\">In everyday language,
-        people often use the terms weight and mass interchangeably&#8212;but this
-        is not correct. Weight is actually a force (we cover this in more detail in
-        section three).</div>\n\n<div data-type=\"note\" id=\"eip-231\" class=\"ost-assessed-feature
+        class=\"tip tips-for-success\" data-label=\"Tips for Success\">In everyday
+        language, people often use the terms weight and mass interchangeably&#8212;but
+        this is not correct. Weight is actually a force (we cover this in more detail
+        in section three).</div>\n\n<div data-type=\"note\" id=\"eip-231\" class=\"ost-assessed-feature
         ost-video ost-tag-lo-k12phys-ch04-s02-lo02 watch-physics\" data-label=\"Watch
         Physics\"><div data-type=\"title\">Newton&#8217;s first law of motion</div>
         \n<p id=\"eip-idp1646512\">This <a href=\"https://www.khanacademy.org/science/physics/forces-newtons-laws/newtons-laws-of-motion/v/newton-s-1st-law-of-motion\"
@@ -325,14 +270,11 @@ http_interactions:
         acting against an object.</li></ol></li></ol>\n\n <div data-type=\"exercise\"
         id=\"eip-idp413824\" class=\"os-exercise grasp-check\"><div data-type=\"problem\"
         id=\"eip-idm76540272\">\n    <p id=\"eip-idm99866096\"><a href=\"#ost/api/ex/k12phys-ch04-ex033\"
-        class=\"autogenerated-content\">[link]</a>\n    Before we understood that
-        objects have a tendency to maintain their velocity in a straight line unless
-        acted on by a net force, people thought that objects have a tendency to stop
-        on their own. This misunderstanding happened because a specific type of force
-        wasn&#8217;t yet discovered. What was that force?</p></div></div></div>\n\n<div
-        data-type=\"note\" id=\"fs-idm38320288\" class=\"ost-assessed-feature ost-interactive
-        virtual-physics ost-tag-lo-k12phys-ch04-s02-lo02\" data-label=\"Virtual Physics\"><div
-        data-type=\"title\">Forces and Motion: Basics</div>\n\n<p id=\"fs-idp34383024\">In
+        class=\"autogenerated-content\">[link]</a>\n    </p></div></div><div data-type=\"note\"
+        id=\"eip-837\" class=\"os-teacher\" data-label=\"Teacher Edition\">Answer:
+        Friction</div></div>\n\n<div data-type=\"note\" id=\"fs-idm38320288\" class=\"ost-assessed-feature
+        ost-interactive virtual-physics ost-tag-lo-k12phys-ch04-s02-lo02\" data-label=\"Virtual
+        Physics\"><div data-type=\"title\">Forces and Motion: Basics</div>\n\n<p id=\"fs-idp34383024\">In
         this simulation, you will first explore net force by placing blue people on
         the left side of a tug of war rope and red people on the right side of the
         rope (by clicking people and dragging them with your mouse). Experiment with
@@ -347,15 +289,26 @@ http_interactions:
         to the left to apply force to the left. The force will continue to be applied
         as long as you hold the button down. See the arrow representing friction change
         in magnitude and direction depending on how much force you apply. Try increasing
-        or decreasing the friction force to see how this affects the motion.</p>\n</div>\n\n\n<div
+        or decreasing the friction force to see how this affects the motion.</p>\n<div
+        data-type=\"media\" id=\"fs-idp5640912\" class=\"os-embed\" data-alt=\" \">
+        <iframe width=\"760\" height=\"600\" src=\"https://phet.colorado.edu/sims/html/graphing-lines/latest/graphing-lines_en.html\"/></div>\n</div><div
+        data-type=\"note\" id=\"eip-416\" data-label=\"\"><div data-type=\"media\"
+        id=\"eip-id1165825400229\" class=\"os-embed\" data-alt=\" \"> <iframe width=\"760\"
+        height=\"1000\" src=\"http://connexions.github.io/simulations/moving-man/\"/></div>\n</div>\n\n\n<div
+        data-type=\"note\" id=\"fs-id1171911690647\" data-label=\"\"><div data-type=\"title\">Virtual
+        Physics smaller</div><div data-type=\"media\" id=\"fs-id1171910094518\" class=\"os-embed\"
+        data-alt=\" \"> <iframe width=\"600\" height=\"600\" src=\"https://phet.colorado.edu/sims/html/graphing-lines/latest/graphing-lines_en.html\"/></div>\n</div><div
+        data-type=\"note\" id=\"fs-id1171904556588\" data-label=\"\"><div data-type=\"title\">smaller</div><div
+        data-type=\"media\" id=\"fs-id1171907668538\" class=\"os-embed\" data-alt=\"
+        \"> <iframe width=\"600\" height=\"1000\" src=\"http://connexions.github.io/simulations/moving-man/\"/></div>\n</div>\n\n<div
         data-type=\"note\" id=\"fs-id1167243825861\">\n\n  <div data-type=\"exercise\"
         id=\"fs-idm56919408\" class=\"os-exercise grasp-check\">\n<div data-type=\"problem\"
         id=\"fs-idm68103760\"><p id=\"fs-idm17001808\"><a href=\"#ost/api/ex/k12phys-ch04-ex034\"
         class=\"autogenerated-content\">[link]</a>\n<div data-type=\"note\" id=\"fs-idm79914448\"
-        class=\"os-teacher\" data-label=\"Teacher Edition\">\n  <p id=\"fs-idm91425440\">Answer:
-        After the person stops pushing the box, no force is applied to the right,
-        but the friction force remains, which acts to the left. Therefore, the net
-        force acts to the left.</p></div>\n\n\n  </p></div></div></div></section>\n<section
+        class=\"os-teacher\" data-label=\"Teacher Edition\">\n  <p id=\"fs-idm91425440\"><span
+        data-type=\"term\">[Grasp Check]</span>\nAnswer: After the person stops pushing
+        the box, no force is applied to the right, but the friction force remains,
+        which acts to the left. Therefore, the net force acts to the left.</p>\n\n</div>\n\n\n  </p></div></div></div></section>\n<section
         data-depth=\"1\" id=\"eip-305\" class=\"summary ost-reading-discard\"><h1
         data-type=\"title\">Section Summary</h1><p id=\"eip-idm44169728\"><span data-type=\"list\"
         data-list-type=\"bulleted\" id=\"eip-idm85549552\"><span data-type=\"item\">Newton&#8217;s
@@ -424,7 +377,7 @@ http_interactions:
         it is derived from an object&#8217;s weight. Since the force of gravity is
         almost constant on earth, the mass of an object is often given as the object&#8217;s
         weight.</p>\n</div>\n\n\n\n<section data-depth=\"1\" id=\"fs-idm56025888\"
-        class=\"ost-reading-discard ost-chapter-review concept\"><h1 data-type=\"title\">Concept
+        class=\"ost-reading-discard chapter-review concept\"><h1 data-type=\"title\">Concept
         Items</h1><div data-type=\"exercise\" id=\"fs-idm65070096\" class=\"os-exercise
         ost-tag-lo-k12phys-ch04-s02-lo01 ost-tag-dok-2 ost-tag-blooms-3 ost-tag-time-short\"><div
         data-type=\"problem\" id=\"fs-idp2435696\">\n      <p id=\"fs-idm60009600\"><a
@@ -433,7 +386,7 @@ http_interactions:
         ost-tag-dok-2 ost-tag-blooms-3 ost-tag-time-short\">\n    <div data-type=\"problem\"
         id=\"fs-idm46629456\">\n      <p id=\"fs-idm27882848\"><a href=\"#ost/api/ex/k12phys-ch04-ex048\"
         class=\"autogenerated-content\">[link]</a>\n    </p></div>\n  </div>\n</section>\n\n\n\n<section
-        data-depth=\"1\" id=\"fs-idp15971072\" class=\"ost-reading-discard ost-chapter-review
+        data-depth=\"1\" id=\"fs-idp15971072\" class=\"ost-reading-discard chapter-review
         critical-thinking\"><h1 data-type=\"title\">Critical Thinking Items</h1><div
         data-type=\"exercise\" id=\"fs-idp69697408\" class=\"os-exercise ost-tag-lo-k12phys-ch04-s02-lo01
         ost-tag-dok-3 ost-tag-blooms-5 ost-tag-time-med\">\n    <div data-type=\"problem\"
@@ -448,11 +401,11 @@ http_interactions:
         will include a component of friction which will act in the direction opposite
         to F1 and F2 and cancel part of these forces.</p>\n<p id=\"fs-idm10442672\">2.
         Yes</p>\n</div>\n\n<section data-depth=\"1\" id=\"fs-idp5033136\" class=\"ost-reading-discard
-        ost-test-prep multiple-choice\"><h1 data-type=\"title\">Test Prep Multiple
-        Choice</h1><div data-type=\"exercise\" id=\"fs-idp2931856\" class=\"os-exercise
-        ost-tag-lo-k12phys-ch04-s02-lo01 ost-tag-dok-1 ost-tag-blooms-1 ost-tag-time-short\">\n    <div
-        data-type=\"problem\" id=\"fs-idm2415664\">\n      <p id=\"fs-idm1515712\"><a
-        href=\"#ost/api/ex/k12phys-ch04-ex059\" class=\"autogenerated-content\">[link]</a>\n    </p></div>\n  </div>\n  <div
+        test-prep multiple-choice\"><h1 data-type=\"title\">Test Prep Multiple Choice</h1><div
+        data-type=\"exercise\" id=\"fs-idp2931856\" class=\"os-exercise ost-tag-lo-k12phys-ch04-s02-lo01
+        ost-tag-dok-1 ost-tag-blooms-1 ost-tag-time-short\">\n    <div data-type=\"problem\"
+        id=\"fs-idm2415664\">\n      <p id=\"fs-idm1515712\"><a href=\"#ost/api/ex/k12phys-ch04-ex059\"
+        class=\"autogenerated-content\">[link]</a>\n    </p></div>\n  </div>\n  <div
         data-type=\"exercise\" id=\"fs-idm84911568\" class=\"os-exercise ost-tag-lo-k12phys-ch04-s02-lo02
         ost-tag-dok-1 ost-tag-blooms-1 ost-tag-time-short\">\n    <div data-type=\"problem\"
         id=\"fs-idm24438496\">\n      <p id=\"fs-idm95346960\"><a href=\"#ost/api/ex/k12phys-ch04-ex060\"
@@ -460,7 +413,7 @@ http_interactions:
         data-type=\"note\" id=\"fs-idm15918336\" class=\"os-teacher\" data-label=\"Teacher
         Edition\">\n  <p id=\"fs-idp42241296\">1. a) external </p>\n<p id=\"fs-idp63672752\">2.
         b) law of inertia </p>\n</div>\n\n<section data-depth=\"1\" id=\"fs-idm53317184\"
-        class=\"ost-reading-discard ost-test-prep short-answer\"><h1 data-type=\"title\">Test
+        class=\"ost-reading-discard test-prep short-answer\"><h1 data-type=\"title\">Test
         Prep Short Answer</h1><div data-type=\"exercise\" id=\"fs-idm70263744\" class=\"os-exercise
         ost-tag-lo-k12phys-ch04-s02-lo01 ost-tag-dok-2 ost-tag-blooms-3 ost-tag-time-short\">\n    <div
         data-type=\"problem\" id=\"fs-idm36001280\">\n      <p id=\"fs-idm58066816\"><a
@@ -486,7 +439,7 @@ http_interactions:
         the second.</p>\n<p id=\"fs-idp24341232\">3. You could give each box a push
         by applying the same amount of force. Whichever box accelerates faster is
         lighter and so must be the empty box.</p>\n<p id=\"fs-idp23864352\">4. Yes</p>\n</div>\n</section>\n\n<section
-        data-depth=\"1\" id=\"fs-idm72523760\" class=\"ost-reading-discard ost-test-prep
+        data-depth=\"1\" id=\"fs-idm72523760\" class=\"ost-reading-discard test-prep
         extended-response\"><h1 data-type=\"title\">Test Prep Extended Response</h1><div
         data-type=\"exercise\" id=\"fs-idm96811744\" class=\"os-exercise ost-tag-lo-k12phys-ch04-s02-lo01
         ost-tag-dok-3 ost-tag-blooms-5 ost-tag-time-med\">\n    <div data-type=\"problem\"
@@ -528,83 +481,61 @@ http_interactions:
         and Statistics"], "legacy_id": "m53227", "parentId": null, "stateid": 1, "parentTitle":
         null, "maintainers": [{"website": "", "surname": "Slavik", "suffix": "", "firstname":
         "Alina", "title": "", "othername": "", "email": "alinams@rice.edu", "fullname":
-        "Alina Slavik", "id": "AlinaManager"}, {"website": "", "surname": "Tang",
-        "suffix": "", "firstname": "Tom", "title": "", "othername": "", "email": "tangzhiyuan1995@gmail.com",
-        "fullname": "Tom Tang", "id": "TomTang"}, {"website": "", "surname": "Liu",
-        "suffix": "", "firstname": "Julia", "title": "", "othername": "", "email":
-        "julia.liu.93@gmail.com", "fullname": "Julia Liu", "id": "julialiu"}], "authors":
-        [{"website": "", "surname": "Slavik", "suffix": "", "firstname": "Alina",
-        "title": "", "othername": "", "email": "alinams@rice.edu", "fullname": "Alina
-        Slavik", "id": "AlinaManager"}], "parentVersion": "", "legacy_version": "1.16",
-        "licensors": [{"website": "", "surname": "Slavik", "suffix": "", "firstname":
+        "Alina Slavik", "id": "AlinaManager"}], "authors": [{"website": "", "surname":
+        "Slavik", "suffix": "", "firstname": "Alina", "title": "", "othername": "",
+        "email": "alinams@rice.edu", "fullname": "Alina Slavik", "id": "AlinaManager"}],
+        "parentVersion": "", "legacy_version": "1.11", "licensors": [{"website": "",
+        "surname": "Slavik", "suffix": "", "firstname": "Alina", "title": "", "othername":
+        "", "email": "alinams@rice.edu", "fullname": "Alina Slavik", "id": "AlinaManager"}],
+        "license": {"url": "http://creativecommons.org/licenses/by/4.0/", "code":
+        "by", "version": "4.0", "name": "Creative Commons Attribution License"}, "language":
+        "en", "created": "2015-03-11T13:32:11Z", "doctype": "", "buyLink": null, "submitter":
+        {"website": "", "surname": "Slavik", "suffix": "", "firstname": "Alina", "title":
+        "", "othername": "", "email": "alinams@rice.edu", "fullname": "Alina Slavik",
+        "id": "AlinaManager"}, "parentAuthors": [], "history": [{"changes": "put sim
+        back in ost-interactive note, section", "version": "11", "revised": "2015-03-26T16:26:49Z",
+        "publisher": {"website": "", "surname": "Slavik", "suffix": "", "firstname":
         "Alina", "title": "", "othername": "", "email": "alinams@rice.edu", "fullname":
-        "Alina Slavik", "id": "AlinaManager"}], "license": {"url": "http://creativecommons.org/licenses/by/4.0/",
-        "code": "by", "version": "4.0", "name": "Creative Commons Attribution License"},
-        "language": "en", "created": "2015-03-11T13:32:11Z", "doctype": "", "buyLink":
-        null, "submitter": {"website": "", "surname": "Liu", "suffix": "", "firstname":
-        "Julia", "title": "", "othername": "", "email": "julia.liu.93@gmail.com",
-        "fullname": "Julia Liu", "id": "julialiu"}, "parentAuthors": [], "history":
-        [{"changes": "Removed a Teacher Edition answer; removed grasp check title.",
-        "version": "16", "revised": "2015-04-01T14:53:26Z", "publisher": {"website":
-        "", "surname": "Liu", "suffix": "", "firstname": "Julia", "title": "", "othername":
-        "", "email": "julia.liu.93@gmail.com", "fullname": "Julia Liu", "id": "julialiu"}},
-        {"changes": "Updated tags.", "version": "15", "revised": "2015-03-31T14:44:11Z",
-        "publisher": {"website": "", "surname": "Liu", "suffix": "", "firstname":
-        "Julia", "title": "", "othername": "", "email": "julia.liu.93@gmail.com",
-        "fullname": "Julia Liu", "id": "julialiu"}}, {"changes": "Updated tags. Deleted
-        pieces of test content so module matches robust content.", "version": "14",
-        "revised": "2015-03-31T13:29:24Z", "publisher": null}, {"changes": "changed
-        roles", "version": "13", "revised": "2015-03-30T14:53:48Z", "publisher": {"website":
-        "", "surname": "Slavik", "suffix": "", "firstname": "Alina", "title": "",
-        "othername": "", "email": "alinams@rice.edu", "fullname": "Alina Slavik",
-        "id": "AlinaManager"}}, {"changes": "added figure around media", "version":
-        "12", "revised": "2015-03-27T20:32:36Z", "publisher": {"website": "", "surname":
-        "Slavik", "suffix": "", "firstname": "Alina", "title": "", "othername": "",
-        "email": "alinams@rice.edu", "fullname": "Alina Slavik", "id": "AlinaManager"}},
-        {"changes": "put sim back in ost-interactive note, section", "version": "11",
-        "revised": "2015-03-26T16:26:49Z", "publisher": {"website": "", "surname":
-        "Slavik", "suffix": "", "firstname": "Alina", "title": "", "othername": "",
-        "email": "alinams@rice.edu", "fullname": "Alina Slavik", "id": "AlinaManager"}},
-        {"changes": "added examples of smaller size constraints", "version": "10",
-        "revised": "2015-03-23T16:39:55Z", "publisher": {"website": "", "surname":
-        "Stickney", "suffix": "", "firstname": "Ryan", "title": "", "othername": "",
-        "email": "sanura@mac.com", "fullname": "Ryan Stickney", "id": "sanura"}},
-        {"changes": "dded cnx demo note and changed size constraints", "version":
-        "9", "revised": "2015-03-23T16:34:46Z", "publisher": {"website": "", "surname":
-        "Stickney", "suffix": "", "firstname": "Ryan", "title": "", "othername": "",
-        "email": "sanura@mac.com", "fullname": "Ryan Stickney", "id": "sanura"}},
-        {"changes": "changed height, embedded in note", "version": "8", "revised":
-        "2015-03-23T16:28:14Z", "publisher": {"website": "", "surname": "Stickney",
+        "Alina Slavik", "id": "AlinaManager"}}, {"changes": "added examples of smaller
+        size constraints", "version": "10", "revised": "2015-03-23T16:39:55Z", "publisher":
+        {"website": "", "surname": "Stickney", "suffix": "", "firstname": "Ryan",
+        "title": "", "othername": "", "email": "sanura@mac.com", "fullname": "Ryan
+        Stickney", "id": "sanura"}}, {"changes": "dded cnx demo note and changed size
+        constraints", "version": "9", "revised": "2015-03-23T16:34:46Z", "publisher":
+        {"website": "", "surname": "Stickney", "suffix": "", "firstname": "Ryan",
+        "title": "", "othername": "", "email": "sanura@mac.com", "fullname": "Ryan
+        Stickney", "id": "sanura"}}, {"changes": "changed height, embedded in note",
+        "version": "8", "revised": "2015-03-23T16:28:14Z", "publisher": {"website":
+        "", "surname": "Stickney", "suffix": "", "firstname": "Ryan", "title": "",
+        "othername": "", "email": "sanura@mac.com", "fullname": "Ryan Stickney", "id":
+        "sanura"}}, {"changes": "revised interactive source", "version": "7", "revised":
+        "2015-03-23T16:21:55Z", "publisher": {"website": "", "surname": "Stickney",
         "suffix": "", "firstname": "Ryan", "title": "", "othername": "", "email":
         "sanura@mac.com", "fullname": "Ryan Stickney", "id": "sanura"}}, {"changes":
-        "revised interactive source", "version": "7", "revised": "2015-03-23T16:21:55Z",
-        "publisher": {"website": "", "surname": "Stickney", "suffix": "", "firstname":
-        "Ryan", "title": "", "othername": "", "email": "sanura@mac.com", "fullname":
-        "Ryan Stickney", "id": "sanura"}}, {"changes": "pulled sim out of <section>",
-        "version": "6", "revised": "2015-03-20T19:43:13Z", "publisher": {"website":
+        "pulled sim out of <section>", "version": "6", "revised": "2015-03-20T19:43:13Z",
+        "publisher": {"website": "", "surname": "Slavik", "suffix": "", "firstname":
+        "Alina", "title": "", "othername": "", "email": "alinams@rice.edu", "fullname":
+        "Alina Slavik", "id": "AlinaManager"}}, {"changes": "removed sim from note",
+        "version": "5", "revised": "2015-03-20T16:01:59Z", "publisher": {"website":
         "", "surname": "Slavik", "suffix": "", "firstname": "Alina", "title": "",
         "othername": "", "email": "alinams@rice.edu", "fullname": "Alina Slavik",
-        "id": "AlinaManager"}}, {"changes": "removed sim from note", "version": "5",
-        "revised": "2015-03-20T16:01:59Z", "publisher": {"website": "", "surname":
+        "id": "AlinaManager"}}, {"changes": "imported from staging3", "version": "4",
+        "revised": "2015-03-16T16:00:23Z", "publisher": {"website": "", "surname":
         "Slavik", "suffix": "", "firstname": "Alina", "title": "", "othername": "",
         "email": "alinams@rice.edu", "fullname": "Alina Slavik", "id": "AlinaManager"}},
-        {"changes": "imported from staging3", "version": "4", "revised": "2015-03-16T16:00:23Z",
-        "publisher": {"website": "", "surname": "Slavik", "suffix": "", "firstname":
-        "Alina", "title": "", "othername": "", "email": "alinams@rice.edu", "fullname":
-        "Alina Slavik", "id": "AlinaManager"}}, {"changes": "switched sim link; added
-        width and height attribute", "version": "3", "revised": "2015-03-11T21:28:30Z",
-        "publisher": {"website": "", "surname": "Slavik", "suffix": "", "firstname":
-        "Alina", "title": "", "othername": "", "email": "alinams@rice.edu", "fullname":
-        "Alina Slavik", "id": "AlinaManager"}}, {"changes": "retitled module", "version":
-        "2", "revised": "2015-03-11T18:40:21Z", "publisher": {"website": "", "surname":
+        {"changes": "switched sim link; added width and height attribute", "version":
+        "3", "revised": "2015-03-11T21:28:30Z", "publisher": {"website": "", "surname":
         "Slavik", "suffix": "", "firstname": "Alina", "title": "", "othername": "",
         "email": "alinams@rice.edu", "fullname": "Alina Slavik", "id": "AlinaManager"}},
-        {"changes": "imported module", "version": "1", "revised": "2015-03-11T18:36:37Z",
+        {"changes": "retitled module", "version": "2", "revised": "2015-03-11T18:40:21Z",
         "publisher": {"website": "", "surname": "Slavik", "suffix": "", "firstname":
         "Alina", "title": "", "othername": "", "email": "alinams@rice.edu", "fullname":
-        "Alina Slavik", "id": "AlinaManager"}}]}'
+        "Alina Slavik", "id": "AlinaManager"}}, {"changes": "imported module", "version":
+        "1", "revised": "2015-03-11T18:36:37Z", "publisher": {"website": "", "surname":
+        "Slavik", "suffix": "", "firstname": "Alina", "title": "", "othername": "",
+        "email": "alinams@rice.edu", "fullname": "Alina Slavik", "id": "AlinaManager"}}]}'
     http_version: 
-  recorded_at: Wed, 01 Apr 2015 15:42:33 GMT
+  recorded_at: Wed, 01 Apr 2015 20:04:41 GMT
 - request:
     method: get
     uri: http://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-s02-lo01,k12phys-ch04-s02-lo02
@@ -626,7 +557,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Wed, 01 Apr 2015 15:42:49 GMT
+      - Wed, 01 Apr 2015 20:04:58 GMT
       Content-Type:
       - text/html
       Content-Length:
@@ -641,7 +572,7 @@ http_interactions:
         bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
         (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
     http_version: 
-  recorded_at: Wed, 01 Apr 2015 15:42:34 GMT
+  recorded_at: Wed, 01 Apr 2015 20:04:42 GMT
 - request:
     method: get
     uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-s02-lo01,k12phys-ch04-s02-lo02
@@ -663,7 +594,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Wed, 01 Apr 2015 15:42:51 GMT
+      - Wed, 01 Apr 2015 20:05:00 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -683,12 +614,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=bWMwaWhCalpHb3JuL1lJTExpSE0xd2w4WE9JOFZsL1VJWko0a3lCRjBWVXRrVkdPMjF3aWJySlNjOE1CNHlTSEVucGo2NWx2RHdUMGtOSkpERlgzbUE9PS0tNnNwb2V0a3VJSmNoeWpLbFRsZ0Q3Zz09--402d77b9fae7a06f916c764d64c4d384f428a864;
+      - _exercises_session=Y1krUlVKQTQrMndUeFJmall3TmswNFg3OFFOVEoyN3lWa09CcjF5L2N0SW9LTzNaWGMvY1ZMZVQ2RXdwUXVyQUZ3RW53QXFWRGQ1TnhwNFAvblRqTlE9PS0tOTk5Ui9YQ2dET2pteFM1QnRWSFpYdz09--d359600779620221858331e917e6df6cc9070eaa;
         path=/; HttpOnly
       X-Request-Id:
-      - ee2de362-edf5-47b4-bebd-ed775463cc5e
+      - 486ad6b0-68e0-4b53-9c4c-8356d50efec6
       X-Runtime:
-      - '0.919797'
+      - '0.915606'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -1807,5 +1738,5 @@ http_interactions:
         dHMiOlsibXVsdGlwbGUtY2hvaWNlIiwiZnJlZS1yZXNwb25zZSJdLCJjb21i
         b19jaG9pY2VzIjpbXX1dfV19
     http_version: 
-  recorded_at: Wed, 01 Apr 2015 15:42:35 GMT
+  recorded_at: Wed, 01 Apr 2015 20:04:45 GMT
 recorded_with: VCR 2.9.3

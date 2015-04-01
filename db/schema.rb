@@ -363,14 +363,6 @@ ActiveRecord::Schema.define(version: 20150325170729) do
   add_index "students", ["user_id", "course_id"], name: "index_students_on_user_id_and_course_id", unique: true
   add_index "students", ["user_id", "section_id"], name: "index_students_on_user_id_and_section_id", unique: true
 
-  create_table "tasked_interactives", force: :cascade do |t|
-    t.string   "url",        null: false
-    t.text     "content",    null: false
-    t.string   "title"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "tasks_assistants", force: :cascade do |t|
     t.string   "name",            null: false
     t.string   "code_class_name", null: false
@@ -437,6 +429,14 @@ ActiveRecord::Schema.define(version: 20150325170729) do
   end
 
   add_index "tasks_tasked_exercises", ["recovery_tasked_exercise_id"], name: "index_tasks_tasked_exercises_on_recovery_tasked_exercise_id", unique: true
+
+  create_table "tasks_tasked_interactives", force: :cascade do |t|
+    t.string   "url",        null: false
+    t.text     "content",    null: false
+    t.string   "title"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "tasks_tasked_readings", force: :cascade do |t|
     t.string   "url",        null: false

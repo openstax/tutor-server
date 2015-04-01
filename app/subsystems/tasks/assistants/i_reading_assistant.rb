@@ -73,10 +73,10 @@ class Tasks::Assistants::IReadingAssistant
       return
     end
 
-    TaskedInteractive.new(task_step: step,
-                          url: interactive_fragment.url,
-                          title: interactive_fragment.title,
-                          content: interactive_fragment.to_html)
+    Tasks::Models::TaskedInteractive.new(task_step: step,
+                                         url: interactive_fragment.url,
+                                         title: interactive_fragment.title,
+                                         content: interactive_fragment.to_html)
   end
 
   def self.distribute_tasks(task_plan:, taskees:)
