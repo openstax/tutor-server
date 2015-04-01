@@ -12,10 +12,8 @@ class Admin::UsersController < Admin::BaseController
   end
 
   def become
-    handle_with(Domain::GetAccount,
-                complete: -> (*) {
-                  sign_in(@handler_result.outputs[:account])
-                  redirect_to root_path
-                })
+    account = Domain::GetAccount[params[:id]]
+    sign_in(account)
+    redirect_to root_path
   end
 end
