@@ -7,7 +7,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
 
   let!(:assistant) { FactoryGirl.create(
     :tasks_assistant, code_class_name: 'Tasks::Assistants::IReadingAssistant'
-  }
+  ) }
   let!(:book_part) { FactoryGirl.create :content_book_part }
 
   context "for Force version 11" do
@@ -21,7 +21,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
       FactoryGirl.create :tasks_task_plan, assistant: assistant,
                                            settings: { page_ids: [page.id] }
     }
-    let!(:taskees) { 3.times.collect{ FactoryGirl.create(:user) } }
+    let!(:taskees) { 3.times.collect{ Entity::Models::User.create } }
     let!(:tasking_plans) { taskees.collect{ |t|
       task_plan.tasking_plans << FactoryGirl.create(
         :tasks_tasking_plan, task_plan: task_plan, target: t
@@ -70,8 +70,8 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
         )
       end
 
-      expect(tasks.collect{|t| t.taskings.first.taskee}).to eq taskees
-      expect(tasks.collect{|t| t.taskings.first.user}).to eq taskees
+      expected_roles = taskees.collect{ |t| Role::GetDefaultUserRole[t] }
+      expect(tasks.collect{|t| t.taskings.first.role}).to eq expected_roles
     end
   end
 

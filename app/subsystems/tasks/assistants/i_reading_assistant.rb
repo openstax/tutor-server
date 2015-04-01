@@ -142,7 +142,9 @@ class Tasks::Assistants::IReadingAssistant
       end
 
       # No group tasks for this assistant
-      task.entity_task.taskings << Tasks::Models::Tasking.new(task: task.entity_task, role: taskee)
+      task.entity_task.taskings << Tasks::Models::Tasking.new(
+        task: task.entity_task, role: taskee
+      )
 
       task.save!
       task
