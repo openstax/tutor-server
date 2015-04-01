@@ -25,14 +25,14 @@ module Sprint008
 
       # Add the teachers to their courses
 
-      Domain::AddUserAsCourseTeacher[course: course1, user: teacher]
-      Domain::AddUserAsCourseTeacher[course: course2, user: teacher_and_student]
+      Domain::AddUserAsCourseTeacher[course: course1, user: teacher.entity_user]
+      Domain::AddUserAsCourseTeacher[course: course2, user: teacher_and_student.entity_user]
 
       # Add the students to the courses
 
-      Domain::AddUserAsCourseStudent[course: course1, user: student]
-      student_role = Entity::Role.last
-      Domain::AddUserAsCourseStudent[course: course2, user: teacher_and_student]
+      Domain::AddUserAsCourseStudent[course: course1, user: student.entity_user]
+      student_role = Entity::Models::Role.last
+      Domain::AddUserAsCourseStudent[course: course2, user: teacher_and_student.entity_user]
 
       # Set up three reading tasks (will include try another)
 
@@ -73,7 +73,7 @@ module Sprint008
       stats_tp.reload.tasks.each_with_index{ |task,index|
         task.task_steps.each{ |ts|
           next unless 0==index%2 # only mark 1/2 complete
-          if ts.tasked_type == "TaskedExercise" && 1 != rand(0..4) # and 3/4 of those correct
+          if ts.tasked_type == "Tasks::Models::TaskedExercise" && 1 != rand(0..4) # and 3/4 of those correct
             ts.tasked.answer_id = ts.tasked.correct_answer_id
             ts.tasked.free_response = Faker::Company.bs
             ts.tasked.save!

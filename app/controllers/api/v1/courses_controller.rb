@@ -61,7 +61,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     # back an empty list of tasks
     course = Entity::Models::Course.find(params[:id])
     tasks = Domain::GetCourseUserTasks[course: course, user: current_human_user.entity_user]
-    output = Hashie::Mash.new({'items' => tasks})
+    output = Hashie::Mash.new({'items' => tasks.collect{|t| t.task}})
     respond_with output, represent_with: Api::V1::TaskSearchRepresenter
   end
 
