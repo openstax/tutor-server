@@ -27,7 +27,7 @@ http_interactions:
       Content-Type:
       - text/plain
       Location:
-      - "/contents/61445f78-00e2-45ae-8e2c-461b17d9b4fd@4"
+      - "/contents/61445f78-00e2-45ae-8e2c-461b17d9b4fd@10"
       Server:
       - waitress
       X-Varnish-Action:
@@ -37,9 +37,9 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Thu, 19 Mar 2015 10:32:42 GMT
+      - Wed, 25 Mar 2015 13:03:29 GMT
       X-Varnish:
-      - '172894880'
+      - '176722662'
       Via:
       - 1.1 varnish
       Connection:
@@ -54,10 +54,10 @@ http_interactions:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Thu, 19 Mar 2015 10:32:39 GMT
+  recorded_at: Wed, 25 Mar 2015 13:03:26 GMT
 - request:
     method: get
-    uri: http://archive.cnx.org/contents/61445f78-00e2-45ae-8e2c-461b17d9b4fd@4
+    uri: http://archive.cnx.org/contents/61445f78-00e2-45ae-8e2c-461b17d9b4fd@10
     body:
       encoding: US-ASCII
       string: ''
@@ -88,13 +88,13 @@ http_interactions:
       X-Factor-Ttl:
       - 'ttl: 604800.000'
       Content-Length:
-      - '38216'
+      - '41149'
       Accept-Ranges:
       - bytes
       Date:
-      - Thu, 19 Mar 2015 10:32:43 GMT
+      - Wed, 25 Mar 2015 13:03:29 GMT
       X-Varnish:
-      - 172894882 170915691
+      - 176722666 175329303
       Via:
       - 1.1 varnish
       Connection:
@@ -102,19 +102,19 @@ http_interactions:
       X-Cache:
       - HIT
       X-Varnish-Age:
-      - '217786'
+      - '159719'
       Age:
       - '0'
     body:
       encoding: UTF-8
-      string: '{"googleAnalytics": null, "version": "4", "submitlog": "imported from
-        staging3", "abstract": null, "revised": "2015-03-16T16:00:23Z", "roles": null,
-        "keywords": [], "id": "61445f78-00e2-45ae-8e2c-461b17d9b4fd", "title": "Newton''s
-        First Law of Motion: Inertia", "mediaType": "application/vnd.org.cnx.module",
+      string: '{"googleAnalytics": null, "version": "10", "submitlog": "added examples
+        of smaller size constraints", "abstract": null, "revised": "2015-03-23T16:39:55Z",
+        "roles": null, "keywords": [], "id": "61445f78-00e2-45ae-8e2c-461b17d9b4fd",
+        "title": "Newton''s First Law of Motion: Inertia", "mediaType": "application/vnd.org.cnx.module",
         "content": "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head xmlns:c=\"http://cnx.rice.edu/cnxml\"
         xmlns:md=\"http://cnx.rice.edu/mdml\"><title>Newton''s First Law of Motion:
-        Inertia</title><meta name=\"created-time\" content=\"2015/03/11 13:32:11 -0500\"/><meta
-        name=\"revised-time\" content=\"2015/03/16 11:00:23.682 GMT-5\"/><meta name=\"author\"
+        Inertia</title><meta name=\"created-time\" content=\"2015/03/11 13:32:11 +0000\"/><meta
+        name=\"revised-time\" content=\"2015/03/23 11:39:55.491 GMT-5\"/><meta name=\"author\"
         content=\"AlinaManager\"/><meta name=\"acl-list\" content=\"AlinaManager\"/><meta
         name=\"licensor\" content=\"AlinaManager\"/><meta name=\"license\" content=\"http://creativecommons.org/licenses/by/4.0/\"/><meta
         name=\"subject\" content=\"Mathematics and Statistics\"/></head>\n\n<body
@@ -344,16 +344,27 @@ http_interactions:
         to the left to apply force to the left. The force will continue to be applied
         as long as you hold the button down. See the arrow representing friction change
         in magnitude and direction depending on how much force you apply. Try increasing
-        or decreasing the friction force to see how this affects the motion.</p>\n<div
-        data-type=\"media\" id=\"fs-idp5640912\" class=\"os-embed\" data-alt=\" \">
-        <iframe width=\"960\" height=\"785\" src=\"http://archive.cnx.org/specials/e2ca52af-8c6b-450e-ac2f-9300b38e8739/moving-man/\"/></div>\n\n  <div
-        data-type=\"exercise\" id=\"fs-idm56919408\" class=\"os-exercise grasp-check\"><div
+        or decreasing the friction force to see how this affects the motion.</p></div>\n\n</section>\n<div
+        data-type=\"note\" id=\"fs-id1164977171798\" data-label=\"\"><div data-type=\"title\">Virtual
+        Physics</div><div data-type=\"media\" id=\"fs-idp5640912\" class=\"os-embed\"
+        data-alt=\" \"> <iframe width=\"760\" height=\"600\" src=\"https://phet.colorado.edu/sims/html/graphing-lines/latest/graphing-lines_en.html\"/></div>\n</div><div
+        data-type=\"note\" id=\"eip-416\" data-label=\"\"><div data-type=\"media\"
+        id=\"eip-id1165825400229\" class=\"os-embed\" data-alt=\" \"> <iframe width=\"760\"
+        height=\"1000\" src=\"http://connexions.github.io/simulations/moving-man/\"/></div>\n</div>\n\n\n<div
+        data-type=\"note\" id=\"fs-id1171911690647\" data-label=\"\"><div data-type=\"title\">Virtual
+        Physics smaller</div><div data-type=\"media\" id=\"fs-id1171910094518\" class=\"os-embed\"
+        data-alt=\" \"> <iframe width=\"600\" height=\"600\" src=\"https://phet.colorado.edu/sims/html/graphing-lines/latest/graphing-lines_en.html\"/></div>\n</div><div
+        data-type=\"note\" id=\"fs-id1171904556588\" data-label=\"\"><div data-type=\"title\">smaller</div><div
+        data-type=\"media\" id=\"fs-id1171907668538\" class=\"os-embed\" data-alt=\"
+        \"> <iframe width=\"600\" height=\"1000\" src=\"http://connexions.github.io/simulations/moving-man/\"/></div>\n</div><section
+        data-depth=\"1\" id=\"fs-id1164995569480\">\n\n<div data-type=\"note\" id=\"fs-id1167243825861\">\n\n  <div
+        data-type=\"exercise\" id=\"fs-idm56919408\" class=\"os-exercise grasp-check\">\n<div
         data-type=\"problem\" id=\"fs-idm68103760\"><p id=\"fs-idm17001808\"><a href=\"#ost/api/ex/k12phys-ch04-ex034\"
         class=\"autogenerated-content\">[link]</a>\n<div data-type=\"note\" id=\"fs-idm79914448\"
         class=\"os-teacher\" data-label=\"Teacher Edition\">\n  <p id=\"fs-idm91425440\"><span
         data-type=\"term\">[Grasp Check]</span>\nAnswer: After the person stops pushing
         the box, no force is applied to the right, but the friction force remains,
-        which acts to the left. Therefore, the net force acts to the left.</p>\n\n</div>\n\n  </p></div></div></div></section>\n<section
+        which acts to the left. Therefore, the net force acts to the left.</p>\n\n</div>\n\n\n  </p></div></div></div></section>\n<section
         data-depth=\"1\" id=\"eip-305\" class=\"summary ost-reading-discard\"><h1
         data-type=\"title\">Section Summary</h1><p id=\"eip-idm44169728\"><span data-type=\"list\"
         data-list-type=\"bulleted\" id=\"eip-idm85549552\"><span data-type=\"item\">Newton&#8217;s
@@ -529,30 +540,52 @@ http_interactions:
         "Alina Slavik", "id": "AlinaManager"}], "authors": [{"website": "", "surname":
         "Slavik", "suffix": "", "firstname": "Alina", "title": "", "othername": "",
         "email": "alinams@rice.edu", "fullname": "Alina Slavik", "id": "AlinaManager"}],
-        "parentVersion": "", "legacy_version": "1.4", "licensors": [{"website": "",
+        "parentVersion": "", "legacy_version": "1.10", "licensors": [{"website": "",
         "surname": "Slavik", "suffix": "", "firstname": "Alina", "title": "", "othername":
         "", "email": "alinams@rice.edu", "fullname": "Alina Slavik", "id": "AlinaManager"}],
         "license": {"url": "http://creativecommons.org/licenses/by/4.0/", "code":
         "by", "version": "4.0", "name": "Creative Commons Attribution License"}, "language":
-        "en", "created": "2015-03-11T18:32:11Z", "doctype": "", "buyLink": null, "submitter":
-        {"website": "", "surname": "Slavik", "suffix": "", "firstname": "Alina", "title":
-        "", "othername": "", "email": "alinams@rice.edu", "fullname": "Alina Slavik",
-        "id": "AlinaManager"}, "parentAuthors": [], "history": [{"changes": "imported
-        from staging3", "version": "4", "revised": "2015-03-16T16:00:23Z", "publisher":
-        {"website": "", "surname": "Slavik", "suffix": "", "firstname": "Alina", "title":
-        "", "othername": "", "email": "alinams@rice.edu", "fullname": "Alina Slavik",
-        "id": "AlinaManager"}}, {"changes": "switched sim link; added width and height
-        attribute", "version": "3", "revised": "2015-03-11T21:28:30Z", "publisher":
-        {"website": "", "surname": "Slavik", "suffix": "", "firstname": "Alina", "title":
-        "", "othername": "", "email": "alinams@rice.edu", "fullname": "Alina Slavik",
-        "id": "AlinaManager"}}, {"changes": "retitled module", "version": "2", "revised":
-        "2015-03-11T18:40:21Z", "publisher": {"website": "", "surname": "Slavik",
-        "suffix": "", "firstname": "Alina", "title": "", "othername": "", "email":
-        "alinams@rice.edu", "fullname": "Alina Slavik", "id": "AlinaManager"}}, {"changes":
-        "imported module", "version": "1", "revised": "2015-03-11T18:36:37Z", "publisher":
-        {"website": "", "surname": "Slavik", "suffix": "", "firstname": "Alina", "title":
-        "", "othername": "", "email": "alinams@rice.edu", "fullname": "Alina Slavik",
-        "id": "AlinaManager"}}]}'
+        "en", "created": "2015-03-11T13:32:11Z", "doctype": "", "buyLink": null, "submitter":
+        {"website": "", "surname": "Stickney", "suffix": "", "firstname": "Ryan",
+        "title": "", "othername": "", "email": "sanura@mac.com", "fullname": "Ryan
+        Stickney", "id": "sanura"}, "parentAuthors": [], "history": [{"changes": "added
+        examples of smaller size constraints", "version": "10", "revised": "2015-03-23T16:39:55Z",
+        "publisher": {"website": "", "surname": "Stickney", "suffix": "", "firstname":
+        "Ryan", "title": "", "othername": "", "email": "sanura@mac.com", "fullname":
+        "Ryan Stickney", "id": "sanura"}}, {"changes": "dded cnx demo note and changed
+        size constraints", "version": "9", "revised": "2015-03-23T16:34:46Z", "publisher":
+        {"website": "", "surname": "Stickney", "suffix": "", "firstname": "Ryan",
+        "title": "", "othername": "", "email": "sanura@mac.com", "fullname": "Ryan
+        Stickney", "id": "sanura"}}, {"changes": "changed height, embedded in note",
+        "version": "8", "revised": "2015-03-23T16:28:14Z", "publisher": {"website":
+        "", "surname": "Stickney", "suffix": "", "firstname": "Ryan", "title": "",
+        "othername": "", "email": "sanura@mac.com", "fullname": "Ryan Stickney", "id":
+        "sanura"}}, {"changes": "revised interactive source", "version": "7", "revised":
+        "2015-03-23T16:21:55Z", "publisher": {"website": "", "surname": "Stickney",
+        "suffix": "", "firstname": "Ryan", "title": "", "othername": "", "email":
+        "sanura@mac.com", "fullname": "Ryan Stickney", "id": "sanura"}}, {"changes":
+        "pulled sim out of <section>", "version": "6", "revised": "2015-03-20T19:43:13Z",
+        "publisher": {"website": "", "surname": "Slavik", "suffix": "", "firstname":
+        "Alina", "title": "", "othername": "", "email": "alinams@rice.edu", "fullname":
+        "Alina Slavik", "id": "AlinaManager"}}, {"changes": "removed sim from note",
+        "version": "5", "revised": "2015-03-20T16:01:59Z", "publisher": {"website":
+        "", "surname": "Slavik", "suffix": "", "firstname": "Alina", "title": "",
+        "othername": "", "email": "alinams@rice.edu", "fullname": "Alina Slavik",
+        "id": "AlinaManager"}}, {"changes": "imported from staging3", "version": "4",
+        "revised": "2015-03-16T16:00:23Z", "publisher": {"website": "", "surname":
+        "Slavik", "suffix": "", "firstname": "Alina", "title": "", "othername": "",
+        "email": "alinams@rice.edu", "fullname": "Alina Slavik", "id": "AlinaManager"}},
+        {"changes": "switched sim link; added width and height attribute", "version":
+        "3", "revised": "2015-03-11T21:28:30Z", "publisher": {"website": "", "surname":
+        "Slavik", "suffix": "", "firstname": "Alina", "title": "", "othername": "",
+        "email": "alinams@rice.edu", "fullname": "Alina Slavik", "id": "AlinaManager"}},
+        {"changes": "retitled module", "version": "2", "revised": "2015-03-11T18:40:21Z",
+        "publisher": {"website": "", "surname": "Slavik", "suffix": "", "firstname":
+        "Alina", "title": "", "othername": "", "email": "alinams@rice.edu", "fullname":
+        "Alina Slavik", "id": "AlinaManager"}}, {"changes": "imported module", "version":
+        "1", "revised": "2015-03-11T18:36:37Z", "publisher": {"website": "", "surname":
+        "Slavik", "suffix": "", "firstname": "Alina", "title": "", "othername": "",
+        "email": "alinams@rice.edu", "fullname": "Alina Slavik", "id": "AlinaManager"}}]}'
     http_version: 
-  recorded_at: Thu, 19 Mar 2015 10:32:39 GMT
+  recorded_at: Wed, 25 Mar 2015 13:03:27 GMT
 recorded_with: VCR 2.9.3
