@@ -7,18 +7,18 @@ class CalculateIReadingStats
   def completed_exercises_for_page_id(page_id)
     @plan.tasks.inject([]) do |collection,task|
       collection + task.task_steps.find_all{|ts|
-        ts.tasked_type == "TaskedExercise" && ts.page_id == page_id
+        ts.tasked_type.ends_with?("TaskedExercise") && ts.page_id == page_id
       }
     end
   end
 
   def page_stats_for_steps(steps)
-    user_ids = steps.each_with_object([]){ |step, collection|
-      step.task.taskings.each{|tasking| collection << tasking.user_id }
+    role_ids = steps.each_with_object([]){ |step, collection|
+      step.task.taskings.each{|tasking| collection << tasking.entity_role_id }
     }.uniq
     completed = steps.select {|ts| ts.completed? }
     stats = {
-      student_count: user_ids.length,
+      student_count: role_ids.length,
       correct_count: completed.count{|step| step.tasked.correct_answer_id == step.tasked.answer_id }
     }
     stats[:incorrect_count] = completed.length - stats[:correct_count]

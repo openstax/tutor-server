@@ -14,21 +14,22 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
 
   api :GET, '/steps/:step_id', 'Gets the specified TaskStep'
   def show
-    task_step = TaskStep.find(params[:id])
-    standard_read(task_step.tasked)
+    task_step = Tasks::Models::TaskStep.find(params[:id])
+    tasked = task_step.tasked
+    standard_read(tasked, Api::V1::TaskedRepresenterMapper.representer_for(tasked))
   end
 
   api :PUT, '/steps/:step_id', 'Updates the specified TaskStep'
   def update
-    task_step = TaskStep.find(params[:id])
+    task_step = Tasks::Models::TaskStep.find(params[:id])
     tasked = task_step.tasked
-    standard_update(tasked)
+    standard_update(tasked, Api::V1::TaskedRepresenterMapper.representer_for(tasked))
   end
 
   api :PUT, '/steps/:step_id/completed',
             'Marks the specified TaskStep as completed (if applicable)'
   def completed
-    task_step = TaskStep.find(params[:id])
+    task_step = Tasks::Models::TaskStep.find(params[:id])
     tasked = task_step.tasked
     OSU::AccessPolicy.require_action_allowed!(:mark_completed,
                                               current_api_user,
@@ -39,14 +40,16 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     if result.errors.any?
       render_api_errors(result.errors)
     else
-      respond_with tasked.reload, responder: ResponderWithPutContent
+      respond_with tasked.reload, 
+                   responder: ResponderWithPutContent,
+                   represent_with: Api::V1::TaskedRepresenterMapper.representer_for(tasked)
     end
   end
 
   api :PUT, '/steps/:step_id/recovery',
             'Requests an exercise similar to the given one for credit recovery'
   def recovery
-    tasked = TaskStep.find(params[:id]).tasked
+    tasked = Tasks::Models::TaskStep.find(params[:id]).tasked
     OSU::AccessPolicy.require_action_allowed!(:recover,
                                               current_api_user,
                                               tasked)
@@ -57,7 +60,8 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
       render_api_errors(result.errors)
     else
       respond_with result.outputs.recovery_exercise,
-                   responder: ResponderWithPutContent
+                   responder: ResponderWithPutContent,
+                   represent_with: Api::V1::TaskedRepresenterMapper.representer_for(tasked)
     end
   end
 

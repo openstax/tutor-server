@@ -9,8 +9,8 @@ module ActsAsTasked
       class_eval do
         has_one :task_step, as: :tasked, dependent: :destroy
 
-        delegate :completed_at, :completed?, :complete, :tasked_to?,
-          to: :task_step, allow_nil: true
+        delegate :completed_at, :completed?, :complete,
+                 to: :task_step, allow_nil: true
 
         def has_recovery?
           false

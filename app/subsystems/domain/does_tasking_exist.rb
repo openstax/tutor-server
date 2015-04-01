@@ -9,29 +9,8 @@ class Domain::DoesTaskingExist
   protected
 
   def exec(task_component:, user:)
-    raise NotYetImplemented if task_component.is_a?(Entity::Models::Task)
-    raise NotYetImplemented if task_component.is_a?(Entity::Models::User)
-
-    task = case task_component
-    when Task
-      task_component
-    when TaskStep
-      task_component.task
-    else
-      task_component.task_step.task
-    end
-
-    # First check the legacy tasking
-
-    if task.tasked_to?(user)
-      outputs[:does_tasking_exist] = true
-      return
-    end
-
-    # Next check the subsystem tasking
-
     run(Role::GetUserRoles, user.entity_user)
-    run(Tasks::DoesTaskingExist, task: task, roles: outputs.roles)
+    run(Tasks::DoesTaskingExist, task_component: task_component, roles: outputs.roles)
   end
 
 end

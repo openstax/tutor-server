@@ -5,8 +5,6 @@ RSpec.describe UserProfile::Models::Profile, :type => :model do
   it { is_expected.to have_many(:groups_as_member) }
   it { is_expected.to have_many(:groups_as_owner) }
   it { is_expected.to have_one(:administrator).dependent(:destroy) }
-  it { is_expected.to have_many(:educators).dependent(:destroy) }
-  it { is_expected.to have_many(:students).dependent(:destroy) }
 
   it { is_expected.to validate_presence_of(:account) }
   it { is_expected.to validate_presence_of(:exchange_identifier) }

@@ -22,14 +22,16 @@ class Domain::ResetPracticeWidget
 
     # Create the new practice widget task, and put the exercises into steps
 
-    task = Task.new(task_type: 'practice',
-                    title: 'Practice',
-                    opens_at: Time.now)
+    # TODO move this whole routine into Tasks, use run(...) here
+
+    task = Tasks::CreateTask[task_type: 'practice',
+                                   title: 'Practice',
+                                   opens_at: Time.now]
 
     exercises.each do |exercise|
-      step = TaskStep.new(task: task)
+      step = Tasks::Models::TaskStep.new(task: task)
 
-      step.tasked = TaskedExercise.new(task_step: step,
+      step.tasked = Tasks::Models::TaskedExercise.new(task_step: step,
                                        url: exercise.url,
                                        title: exercise.title,
                                        content: exercise.content)
@@ -41,12 +43,11 @@ class Domain::ResetPracticeWidget
 
     # Assign it to role inside the Task subsystem (might not have much in there now)
 
-    run(Tasks::CreateTasking, role: role, task: task)
+    run(Tasks::CreateTasking, role: role, task: task.entity_task)
 
     # return the Task
 
-    outputs[:task] = task
-
+    outputs[:task] = task.entity_task
   end
 
   def get_fake_exercises(count:)

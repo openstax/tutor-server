@@ -33,7 +33,7 @@ describe CalculateIReadingStats do
     it "records partial/complete status" do
 
       first_task = task_plan.tasks.first
-      step = first_task.task_steps.where(tasked_type:"TaskedReading").first
+      step = first_task.task_steps.where(tasked_type:"Tasks::Models::TaskedReading").first
       MarkTaskStepCompleted.call(task_step: step)
 
       stats = CalculateIReadingStats.call(plan: task_plan).outputs.stats
@@ -61,7 +61,7 @@ describe CalculateIReadingStats do
     it "records them" do
       first_task = task_plan.tasks.first
       first_task.task_steps.each{ |ts|
-        if ts.tasked_type == "TaskedExercise"
+        if ts.tasked_type == "Tasks::Models::TaskedExercise"
           ts.tasked.answer_id = ts.tasked.correct_answer_id
           ts.tasked.free_response = 'a sentence explaining all the things'
           ts.tasked.save!
