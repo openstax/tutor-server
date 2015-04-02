@@ -88,4 +88,9 @@ RSpec.describe Tasks::Models::Task, :type => :model do
     expect(task.core_task_steps_completed?).to be_falsy
   end
 
+  it 'handles TaskStep completion' do
+    task = Tasks::Models::Task.new
+    expect(task).to respond_to(:handle_task_step_completion)
+  end
+
 end

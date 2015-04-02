@@ -36,4 +36,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   def core_task_steps_completed?
     self.core_task_steps.all?{|ts| ts.completed?}
   end
+
+  def handle_task_step_completion!(task_step:)
+  end
 end
