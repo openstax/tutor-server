@@ -2,8 +2,8 @@ require 'rails_helper'
 
 describe Domain::AddUserAsCourseStudent do
   context "when the given user is not a teacher of the course" do
-    let(:user)   { Entity::CreateUser.call.outputs.user }
-    let(:course) { Entity::CreateCourse.call.outputs.course }
+    let(:user)   { Entity::User.create! }
+    let(:course) { Entity::Course.create! }
 
     context "and not already a student of the course" do
       it "succeeds and returns the user's new student role" do
@@ -25,8 +25,8 @@ describe Domain::AddUserAsCourseStudent do
     end
   end
   context "when the given user is a teacher in the given course" do
-    let(:user)   { Entity::CreateUser.call.outputs.user }
-    let(:course) { Entity::CreateCourse.call.outputs.course }
+    let(:user)   { Entity::User.create! }
+    let(:course) { Entity::Course.create! }
     before(:each) do
       result = Domain::AddUserAsCourseTeacher.call(user: user, course: course)
       expect(result.errors).to be_empty

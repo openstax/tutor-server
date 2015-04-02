@@ -9,9 +9,9 @@ class GetTaskeesFromTaskPlan
       case tasking_plan.target
       when UserProfile::Models::Profile
         Role::GetDefaultUserRole[tasking_plan.target.entity_user]
-      when Entity::Models::User
+      when Entity::User
         Role::GetDefaultUserRole[tasking_plan.target]
-      when Entity::Models::Course
+      when Entity::Course
         roles = CourseMembership::GetCourseRoles.call(
           course: tasking_plan.target, types: :student
         ).outputs.roles

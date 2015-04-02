@@ -16,7 +16,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
   let!(:userless_token)  { FactoryGirl.create :doorkeeper_access_token,
                                               application: application }
 
-  let!(:course) { Entity::CreateCourse.call.outputs.course }
+  let!(:course) { Entity::Course.create! }
 
   describe "#readings" do
     it "should work on the happy path" do
@@ -169,7 +169,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
       Domain::AddUserAsCourseStudent.call(course: course, user: user_1.entity_user)
 
       expect {
-        api_post :practice, user_1_token, parameters: {id: course.id, role_id: Entity::Models::Role.last.id}
+        api_post :practice, user_1_token, parameters: {id: course.id, role_id: Entity::Role.last.id}
       }.to change{ Tasks::Models::Task.count }.by(1)
 
       expect(response).to have_http_status(:success)
@@ -184,16 +184,16 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
   describe "practice_get" do
     it "returns nothing when practice widget not yet set" do
       Domain::AddUserAsCourseStudent.call(course: course, user: user_1.entity_user)
-      api_get :practice, user_1_token, parameters: {id: course.id, role_id: Entity::Models::Role.last.id}
+      api_get :practice, user_1_token, parameters: {id: course.id, role_id: Entity::Role.last.id}
       expect(response).to have_http_status(:not_found)
     end
 
     it "returns a practice widget" do
       Domain::AddUserAsCourseStudent.call(course: course, user: user_1.entity_user)
-      Domain::ResetPracticeWidget.call(role: Entity::Models::Role.last, condition: :fake)
-      Domain::ResetPracticeWidget.call(role: Entity::Models::Role.last, condition: :fake)
+      Domain::ResetPracticeWidget.call(role: Entity::Role.last, condition: :fake)
+      Domain::ResetPracticeWidget.call(role: Entity::Role.last, condition: :fake)
 
-      api_get :practice, user_1_token, parameters: {id: course.id, role_id: Entity::Models::Role.last.id}
+      api_get :practice, user_1_token, parameters: {id: course.id, role_id: Entity::Role.last.id}
 
       expect(response).to have_http_status(:success)
 

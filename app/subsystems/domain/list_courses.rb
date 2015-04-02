@@ -48,7 +48,7 @@ class Domain::ListCourses
   end
 
   def get_roles(course, user)
-    entity_course = Entity::Models::Course.find(course.id)
+    entity_course = Entity::Course.find(course.id)
     run(:get_course_roles, course: entity_course, user: user).outputs.roles
   end
 

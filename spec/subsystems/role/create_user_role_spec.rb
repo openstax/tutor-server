@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe Role::CreateUserRole do
   it "creates and returns a new role for the given user" do
-    user = Entity::CreateUser.call.outputs.user
+    user = Entity::User.create!
 
     result = nil
     expect {

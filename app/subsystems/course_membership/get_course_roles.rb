@@ -17,10 +17,10 @@ class CourseMembership::GetCourseRoles
     roles = types.collect do |type|
       case type
       when :student
-        Entity::Models::Role.joins { students }
+        Entity::Role.joins { students }
                     .where { students.entity_course_id == course.id }
       when :teacher
-        Entity::Models::Role.joins { teachers }
+        Entity::Role.joins { teachers }
                     .where { teachers.entity_course_id == course.id }
       end
     end

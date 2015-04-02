@@ -7,6 +7,6 @@ class CourseContent::GetCourseBooks
     book_ids = CourseContent::Models::CourseBook.where(course: course.id)
                                         .select(:entity_book_id)
                                         .collect{|cb| cb.entity_book_id}
-    outputs[:books] = Entity::Models::Book.find(book_ids)
+    outputs[:books] = Entity::Book.find(book_ids)
   end
 end

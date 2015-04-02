@@ -8,8 +8,8 @@ class Domain::UpdateCourse
 
   def exec(id, course_params)
     course_params.delete(:teacher_ids).reject(&:blank?).each do |user_id|
-      user = Entity::Models::User.find(user_id)
-      course = Entity::Models::Course.find(id)
+      user = Entity::User.find(user_id)
+      course = Entity::Course.find(id)
       run(:assign_teacher, course: course, user: user)
     end
 
