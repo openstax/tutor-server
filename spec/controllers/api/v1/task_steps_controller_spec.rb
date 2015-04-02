@@ -5,13 +5,13 @@ describe Api::V1::TaskStepsController, :type => :controller,
                                        :version => :v1 do
 
   let!(:application)     { FactoryGirl.create :doorkeeper_application }
-  let!(:user_1)          { FactoryGirl.create :user }
+  let!(:user_1)          { FactoryGirl.create :user_profile }
   let!(:user_1_token)    { FactoryGirl.create :doorkeeper_access_token,
                                               application: application,
                                               resource_owner_id: user_1.id }
   let!(:user_1_role)     { Role::GetDefaultUserRole[user_1.entity_user] }
 
-  let!(:user_2)          { FactoryGirl.create :user }
+  let!(:user_2)          { FactoryGirl.create :user_profile }
   let!(:user_2_token)    { FactoryGirl.create :doorkeeper_access_token,
                                               application: application,
                                               resource_owner_id: user_2.id }

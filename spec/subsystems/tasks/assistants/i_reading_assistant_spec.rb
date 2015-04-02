@@ -160,11 +160,10 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
         book_part: book_part
       ).outputs.page
     }
-
-    let!(:task_plan) {
-      FactoryGirl.create(:tasks_task_plan,
-        assistant: assistant,
-        settings: { page_ids: [page.id] }
+    let!(:taskees) { 3.times.collect{ FactoryGirl.create(:user_profile) } }
+    let!(:tasking_plans) { taskees.collect{ |t|
+      task_plan.tasking_plans << FactoryGirl.create(
+        :tasks_tasking_plan, task_plan: task_plan, target: t
       )
     }
 

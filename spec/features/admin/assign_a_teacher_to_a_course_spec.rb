@@ -4,11 +4,11 @@ RSpec.feature 'Administration' do
   before do
     Domain::CreateCourse.call
 
-    FactoryGirl.create(:user, full_name: 'Teacher')
-    FactoryGirl.create(:user, full_name: 'Other Teacher')
-    FactoryGirl.create(:user, full_name: 'Not a Teacher')
+    FactoryGirl.create(:user_profile, full_name: 'Teacher')
+    FactoryGirl.create(:user_profile, full_name: 'Other Teacher')
+    FactoryGirl.create(:user_profile, full_name: 'Not a Teacher')
 
-    admin = FactoryGirl.create(:user, :administrator)
+    admin = FactoryGirl.create(:user_profile, :administrator)
     stub_current_user(admin)
   end
 

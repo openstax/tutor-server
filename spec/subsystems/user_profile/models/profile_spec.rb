@@ -10,8 +10,8 @@ RSpec.describe UserProfile::Models::Profile, :type => :model do
   it { is_expected.to validate_presence_of(:exchange_identifier) }
 
   it 'must enforce that one account is only used by one user' do
-    user1 = FactoryGirl.create(:user)
-    user2 = FactoryGirl.create(:user)
+    user1 = FactoryGirl.create(:user_profile)
+    user2 = FactoryGirl.create(:user_profile)
     user2.account = user1.account
     expect(user2).to_not be_valid
   end
@@ -29,7 +29,7 @@ RSpec.describe UserProfile::Models::Profile, :type => :model do
   it 'doesn\'t start deleted' do expect(described_class.new.is_deleted?).to be_falsy end
 
   it 'still exists after deletion' do
-    user1 = FactoryGirl.create(:user)
+    user1 = FactoryGirl.create(:user_profile)
     id = user1.id
     user1.delete
     expect(described_class.where(id: id).one?).to be_truthy
@@ -37,7 +37,7 @@ RSpec.describe UserProfile::Models::Profile, :type => :model do
   end
 
   it 'still exists after destroy' do
-    user1 = FactoryGirl.create(:user)
+    user1 = FactoryGirl.create(:user_profile)
     id = user1.id
     user1.destroy
     expect(described_class.where(id: id).one?).to be_truthy
@@ -45,7 +45,7 @@ RSpec.describe UserProfile::Models::Profile, :type => :model do
   end
 
   it 'can be undeleted' do
-    user1 = FactoryGirl.create(:user)
+    user1 = FactoryGirl.create(:user_profile)
     id = user1.id
     user1.destroy
     expect(user1.is_deleted?).to be_truthy
@@ -53,4 +53,3 @@ RSpec.describe UserProfile::Models::Profile, :type => :model do
     expect(user1.is_deleted?).to be_falsy
   end
 end
-

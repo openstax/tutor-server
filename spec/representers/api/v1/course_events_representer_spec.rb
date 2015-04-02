@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Api::V1::CourseEventsRepresenter, :type => :representer do
 
   let(:course) { Domain::CreateCourse.call.outputs.course }
-  let(:user)   { FactoryGirl.create(:user).entity_user }
+  let(:user)   { FactoryGirl.create(:user_profile).entity_user }
 
   it 'gets all events for a course' do
     plan = FactoryGirl.create(:tasks_task_plan, owner: course)

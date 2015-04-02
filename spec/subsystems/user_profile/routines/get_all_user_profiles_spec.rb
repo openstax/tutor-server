@@ -11,7 +11,7 @@ describe UserProfile::GetAllUserProfiles do
 
   context "when there is one user in the system" do
     it "returns an array containing that user profile" do
-      user = FactoryGirl.create(:user, full_name: 'Hello World')
+      user = FactoryGirl.create(:user_profile, full_name: 'Hello World')
 
       result = UserProfile::GetAllUserProfiles.call
       expect(result.errors).to be_empty
@@ -24,8 +24,8 @@ describe UserProfile::GetAllUserProfiles do
 
   context "when there are multiple users in the system" do
     it "returns an array containing those user's profiles" do
-      user1 = FactoryGirl.create(:user, full_name: 'User1')
-      user2 = FactoryGirl.create(:user, full_name: 'User2')
+      user1 = FactoryGirl.create(:user_profile, full_name: 'User1')
+      user2 = FactoryGirl.create(:user_profile, full_name: 'User2')
 
       result = UserProfile::GetAllUserProfiles.call
       expect(result.errors).to be_empty

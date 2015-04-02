@@ -5,18 +5,10 @@ describe Api::V1::TaskPlansController, :type => :controller,
                                        :version => :v1 do
 
   let!(:course) { Domain::CreateCourse.call.outputs.course }
-
-  let!(:assistant) { FactoryGirl.create(
-    :tasks_assistant, code_class_name: "Tasks::Assistants::IReadingAssistant"
-  ) }
-
-  let!(:course_assistant) { FactoryGirl.create :tasks_course_assistant,
-                                               course: course,
-                                               assistant: assistant,
-                                               tasks_task_plan_type: 'test' }
-
-  let!(:user) { FactoryGirl.create :user }
-  let!(:teacher) { FactoryGirl.create :user }
+  let!(:assistant) { FactoryGirl.create :tasks_assistant,
+                                        code_class_name: "Tasks::Assistants::IReadingAssistant" }
+  let!(:user) { FactoryGirl.create :user_profile }
+  let!(:teacher) { FactoryGirl.create :user_profile }
 
   let!(:page) { FactoryGirl.create :content_page }
   let!(:task_plan) { FactoryGirl.create(:tasks_task_plan,
@@ -30,7 +22,7 @@ describe Api::V1::TaskPlansController, :type => :controller,
     tp
   }
 
-  let(:unaffiliated_teacher) { FactoryGirl.create :user }
+  let(:unaffiliated_teacher) { FactoryGirl.create :user_profile }
 
   before do
     Domain::AddUserAsCourseTeacher.call(course: course, user: teacher.entity_user)

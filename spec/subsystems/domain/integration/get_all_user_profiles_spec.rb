@@ -3,8 +3,8 @@ require 'rails_helper'
 describe Domain::GetAllUserProfiles do
   context "when there are multiple users in the system" do
     it "returns an array containing those user's profiles" do
-      user1 = FactoryGirl.create(:user, full_name: 'User1')
-      user2 = FactoryGirl.create(:user, full_name: 'User2')
+      user1 = FactoryGirl.create(:user_profile, full_name: 'User1')
+      user2 = FactoryGirl.create(:user_profile, full_name: 'User2')
       result = Domain::GetAllUserProfiles.call
 
       expect(result.errors).to be_empty

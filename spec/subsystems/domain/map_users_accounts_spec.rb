@@ -37,7 +37,7 @@ RSpec.describe Domain::MapUsersAccounts do
 
   describe '.user_to_account' do
     it 'returns the associated profile account' do
-      user = FactoryGirl.create(:user)
+      user = FactoryGirl.create(:user_profile)
       expected = user.account
 
       result = Domain::MapUsersAccounts.user_to_account(user)

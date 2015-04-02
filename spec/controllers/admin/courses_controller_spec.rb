@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Admin::CoursesController do
-  let(:admin) { FactoryGirl.create(:user, :administrator) }
+  let(:admin) { FactoryGirl.create(:user_profile, :administrator) }
 
   before { controller.sign_in(admin) }
 
@@ -52,7 +52,7 @@ RSpec.describe Admin::CoursesController do
     end
 
     it 'disallows non-admin authenticated visitors' do
-      non_admin = FactoryGirl.create(:user)
+      non_admin = FactoryGirl.create(:user_profile)
       controller.sign_in(non_admin)
 
       expect { get :index }.to raise_error(SecurityTransgression)
