@@ -405,14 +405,15 @@ ActiveRecord::Schema.define(version: 20150325170729) do
   add_index "tasks_task_plans", ["tasks_assistant_id"], name: "index_tasks_task_plans_on_tasks_assistant_id"
 
   create_table "tasks_task_steps", force: :cascade do |t|
-    t.integer  "tasks_task_id", null: false
-    t.integer  "tasked_id",     null: false
-    t.string   "tasked_type",   null: false
-    t.integer  "number",        null: false
+    t.integer  "tasks_task_id",             null: false
+    t.integer  "tasked_id",                 null: false
+    t.string   "tasked_type",               null: false
+    t.integer  "number",                    null: false
     t.datetime "completed_at"
     t.integer  "page_id"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.integer  "group_type",    default: 0, null: false
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
   end
 
   add_index "tasks_task_steps", ["tasked_id", "tasked_type"], name: "index_tasks_task_steps_on_tasked_id_and_tasked_type", unique: true

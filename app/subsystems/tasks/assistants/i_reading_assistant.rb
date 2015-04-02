@@ -106,6 +106,7 @@ class Tasks::Assistants::IReadingAssistant
           end
 
         next if step.tasked.nil?
+        step.core_group!
 
         task.task_steps << step
       end
@@ -136,6 +137,8 @@ class Tasks::Assistants::IReadingAssistant
           url:       ex.url,
           content:   ex.content
         )
+
+        step.spaced_practice_group!
 
         task.task_steps << step
       end

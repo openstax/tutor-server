@@ -33,7 +33,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
       ]
     }
 
-    let!(:spaced_practice_exercise_step_gold_data) {
+    let!(:spaced_practice_step_gold_data) {
       [
         { klass: Tasks::Models::TaskedExercise,
           title: nil},
@@ -47,7 +47,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
     }
 
     let!(:task_step_gold_data) {
-      core_step_gold_data + spaced_practice_exercise_step_gold_data
+      core_step_gold_data + spaced_practice_step_gold_data
     }
 
     let!(:cnx_page) { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash) }
@@ -85,6 +85,10 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
 
       tasks.each do |task|
         expect(task.taskings.length).to eq 1
+
+        expect(task.core_task_steps.count).to eq(core_step_gold_data.count)
+        expect(task.spaced_practice_task_steps.count).to eq(spaced_practice_step_gold_data.count)
+
         task_steps = task.task_steps
         expect(task_steps.count).to eq(task_step_gold_data.count)
 
@@ -130,7 +134,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
       ]
     }
 
-    let!(:spaced_practice_exercise_step_gold_data) {
+    let!(:spaced_practice_step_gold_data) {
       [
         { klass: Tasks::Models::TaskedExercise },
         { klass: Tasks::Models::TaskedExercise },
@@ -140,7 +144,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
     }
 
     let!(:task_step_gold_data) {
-      core_step_gold_data + spaced_practice_exercise_step_gold_data
+      core_step_gold_data + spaced_practice_step_gold_data
     }
 
     let!(:cnx_page) { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash) }

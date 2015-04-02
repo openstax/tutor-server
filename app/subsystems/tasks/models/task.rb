@@ -25,4 +25,11 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     self.task_steps.all?{|ts| ts.completed? }
   end
 
+  def core_task_steps
+    self.task_steps.select{|ts| ts.core_group?}
+  end
+
+  def spaced_practice_task_steps
+    self.task_steps.select{|ts| ts.spaced_practice_group?}
+  end
 end
