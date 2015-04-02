@@ -98,9 +98,6 @@ gem 'httparty'
 # Ordered models
 gem 'sortability'
 
-# Pull random records from database
-gem 'randumb'
-
 group :development, :test do
   # Allows 'ap' alternative to 'pp'
   gem 'awesome_print'

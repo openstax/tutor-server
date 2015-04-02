@@ -316,10 +316,6 @@ GEM
       thor (>= 0.18.1, < 2.0)
     raindrops (0.13.0)
     rake (10.4.2)
-    randumb (0.5.0)
-      activerecord (>= 3.0.0)
-      activesupport (>= 3.0.0)
-      rake
     rb-fsevent (0.9.4)
     rb-inotify (0.9.5)
       ffi (>= 0.5.0)
@@ -515,7 +511,6 @@ DEPENDENCIES
   rails (= 4.2.0)
   rails-erd
   rails-html-sanitizer (~> 1.0)
-  randumb
   remotipart
   rspec-collection_matchers
   rspec-rails

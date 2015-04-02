@@ -24,7 +24,7 @@ RSpec.describe Content::Routines::SearchExercises, :type => :routine,
     exercises = Content::Routines::SearchExercises.call(tag: lo).outputs.items
     expect(exercises.length).to eq 16
     exercises.each do |exercise|
-      tags = exercise.exercise_tags.collect{|et| et.tag}
+      tags = exercise.exercise_tags.collect{|et| et.tag.name}
       expect(tags).to include(lo)
       wrapper = OpenStax::Exercises::V1::Exercise.new(
         content: exercise.content
