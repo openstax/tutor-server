@@ -25,4 +25,17 @@ RSpec.describe MarkTaskStepCompleted, :type => :routine do
     expect(tasked_exercise.task_step.completed_at).not_to be_nil
   end
 
+  it 'instructs the associated Task to handle completion-related activities' do
+    task = Tasks::Models::Task.new
+    task_step = Tasks::Models::TaskStep.new
+    expect(task_step).to receive(:complete)
+    expect(task_step).to receive(:save)
+    expect(task_step).to receive(:task).and_return(task)
+    expect(task).to receive(:handle_task_step_completion!).with(hash_including(task_step: task_step))
+
+    result = MarkTaskStepCompleted.call(task_step: task_step)
+
+    expect(result.errors).to be_empty
+  end
+
 end
