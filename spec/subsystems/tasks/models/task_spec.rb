@@ -62,4 +62,30 @@ RSpec.describe Tasks::Models::Task, :type => :model do
     end
   end
 
+  it 'determines if its core task steps are completed' do
+    core_step1            = instance_double('TaskStep', :core_group? => true,  :completed? => true)
+    core_step2            = instance_double('TaskStep', :core_group? => true,  :completed? => true)
+    core_step3            = instance_double('TaskStep', :core_group? => true,  :completed? => true)
+    spaced_practice_step1 = instance_double('TaskStep', :core_group? => false, :completed? => false)
+    spaced_practice_step2 = instance_double('TaskStep', :core_group? => false, :completed? => false)
+    task_steps = [core_step1, core_step2, core_step3, spaced_practice_step1, spaced_practice_step2]
+    task = Tasks::Models::Task.new
+    allow(task).to receive(:task_steps).and_return(task_steps)
+
+    expect(task.core_task_steps_completed?).to be_truthy
+  end
+
+  it 'determines if its core task steps are not completed' do
+    core_step1            = instance_double('TaskStep', :core_group? => true,  :completed? => true)
+    core_step2            = instance_double('TaskStep', :core_group? => true,  :completed? => true)
+    core_step3            = instance_double('TaskStep', :core_group? => true,  :completed? => false)
+    spaced_practice_step1 = instance_double('TaskStep', :core_group? => false, :completed? => false)
+    spaced_practice_step2 = instance_double('TaskStep', :core_group? => false, :completed? => false)
+    task_steps = [core_step1, core_step2, core_step3, spaced_practice_step1, spaced_practice_step2]
+    task = Tasks::Models::Task.new
+    allow(task).to receive(:task_steps).and_return(task_steps)
+
+    expect(task.core_task_steps_completed?).to be_falsy
+  end
+
 end
