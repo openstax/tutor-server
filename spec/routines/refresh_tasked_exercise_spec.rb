@@ -7,17 +7,17 @@ RSpec.describe RefreshTaskedExercise, :type => :routine do
   let!(:pp)              { FactoryGirl.create :content_tag,
                                               name: 'practice-problem' }
 
-  let!(:tasked_reading)  { FactoryGirl.create(:tasked_reading) }
+  let!(:tasked_reading)  { FactoryGirl.create(:tasks_tasked_reading) }
   let!(:task)            { tasked_reading.task_step.task }
   let!(:tasked_exercise) {
-    te = FactoryGirl.build(:tasked_exercise)
+    te = FactoryGirl.build(:tasks_tasked_exercise)
     te.task_step.task = task
     te.save!
     te
   }
   let!(:tasked_exercise_with_recovery) {
     te = FactoryGirl.build(
-      :tasked_exercise,
+      :tasks_tasked_exercise,
       has_recovery: true,
       content: OpenStax::Exercises::V1.fake_client
                                       .new_exercise_hash(tags: [lo.name])
@@ -27,7 +27,7 @@ RSpec.describe RefreshTaskedExercise, :type => :routine do
     te.save!
     te
   }
-  let!(:next_step)  { FactoryGirl.create(:task_step, task: task) }
+  let!(:next_step)  { FactoryGirl.create(:tasks_task_step, task: task) }
 
   let!(:recovery_exercise) { FactoryGirl.create(
     :content_exercise,

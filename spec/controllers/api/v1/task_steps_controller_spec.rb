@@ -45,7 +45,7 @@ describe Api::V1::TaskStepsController, :type => :controller,
 
   let!(:tasked_exercise_with_recovery) {
     te = FactoryGirl.build(
-      :tasked_exercise,
+      :tasks_tasked_exercise,
       has_recovery: true,
       content: OpenStax::Exercises::V1.fake_client
                                       .new_exercise_hash(tags: [lo.name])
@@ -230,7 +230,7 @@ describe Api::V1::TaskStepsController, :type => :controller,
     end
 
     it "should not allow owner to refresh taskeds without recovery steps" do
-      tasked = create_tasked(:tasked_reading, user_1)
+      tasked = create_tasked(:tasked_reading, user_1_role)
 
       step_count = tasked_exercise.task_step.task.task_steps.count
 
@@ -297,7 +297,9 @@ describe Api::V1::TaskStepsController, :type => :controller,
     # Make sure the type has the tasks_ prefix
     type = type.to_s.starts_with?("tasks_") ? type : "tasks_#{type}".to_sym
     tasked = FactoryGirl.create(type)
-    tasking = FactoryGirl.create(:tasks_tasking, role: owner, task: tasked.task_step.task.entity_task)
+    tasking = FactoryGirl.create(:tasks_tasking,
+                                 role: owner,
+                                 task: tasked.task_step.task.entity_task)
     tasked
   end
 
