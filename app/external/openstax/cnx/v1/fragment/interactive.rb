@@ -42,10 +42,6 @@ module OpenStax::Cnx::V1::Fragment
       @url ||= interactive.try(:xpath, 'iframe/@src').to_s
     end
 
-    def to_s(indent: 0)
-      s = "#{' '*indent}INTERACTIVE #{title}\n"
-    end
-
     def visit(visitor:, depth: 0)
       visitor.pre_order_visit(elem: self, depth: depth)
       visitor.in_order_visit(elem: self, depth: depth)
