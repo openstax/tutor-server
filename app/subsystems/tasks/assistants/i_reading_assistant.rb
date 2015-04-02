@@ -42,14 +42,14 @@ class Tasks::Assistants::IReadingAssistant
     end
 
     # Search local (cached) Exercises for one matching the embed tag
-    exercises = Content::SearchLocalExercises[tag: exercise_fragment.embed_tag]
+    exercises = Content::Routines::SearchExercises[
+                  tag: exercise_fragment.embed_tag
+                ]
     exercise = exercises.first
 
-    Tasks::Models::TaskedExercise.new(task_step: step,
-                                      url: exercise.url,
-                                      title: exercise.title,
-                                      content: exercise.content,
-                                      has_recovery: has_recovery)
+    Domain::TaskExercise[exercise: exercises.first,
+                         has_recovery: has_recovery,
+                         task_step: step]
   end
 
   def self.tasked_video(video_fragment:, step: nil)
@@ -129,11 +129,7 @@ class Tasks::Assistants::IReadingAssistant
                                              .outputs[:exercise]
 
           step = Tasks::Models::TaskStep.new(task: task)
-          step.tasked = Tasks::Models::TaskedExercise.new(
-                                           task_step: step,
-                                           title: ex.title,
-                                           url: ex.url,
-                                           content: ex.content)
+          step.tasked = Domain::TaskExercise[exercise: ex, task_step: step]
           task.task_steps << step
         end
       end

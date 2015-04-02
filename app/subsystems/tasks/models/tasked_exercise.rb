@@ -1,6 +1,8 @@
 class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
   acts_as_tasked
 
+  belongs_to :exercise, subsystem: :content, foreign_key: :exercise_id
+
   validates :url, presence: true
   validates :content, presence: true
   validate :valid_state, :valid_answer, :not_completed

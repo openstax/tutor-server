@@ -1,8 +1,8 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Content::SearchLocalExercises, :type => :routine,
-                                              :vcr => VCR_OPTS do
+RSpec.describe Content::Routines::SearchExercises, :type => :routine,
+                                                   :vcr => VCR_OPTS do
 
   let!(:book_part) { FactoryGirl.create :content_book_part }
 
@@ -16,24 +16,27 @@ RSpec.describe Content::SearchLocalExercises, :type => :routine,
                                        book_part: book_part)
 
     url = Content::Models::Exercise.first.url
-    exercises = Content::SearchLocalExercises.call(url: url).outputs.items
+    exercises = Content::Routines::SearchExercises.call(url: url).outputs.items
     expect(exercises.length).to eq 1
     expect(exercises.first.url).to eq url
 
     lo = 'k12phys-ch04-s01-lo01'
-    exercises = Content::SearchLocalExercises.call(tag: lo).outputs.items
+    exercises = Content::Routines::SearchExercises.call(tag: lo).outputs.items
     expect(exercises.length).to eq 16
     exercises.each do |exercise|
-      expect(exercise.tags).to include(lo)
-      expect(exercise.los).to include(lo)
+      tags = exercise.exercise_tags.collect{|et| et.tag}
+      expect(tags).to include(lo)
+      wrapper = OpenStax::Exercises::V1::Exercise.new(
+        content: exercise.content
+      )
+      expect(wrapper.los).to include(lo)
     end
 
     embed_tag = 'k12phys-ch04-ex021'
-    exercises = Content::SearchLocalExercises.call(tag: embed_tag).outputs
-                                                                  .items
+    exercises = Content::Routines::SearchExercises.call(tag: embed_tag).outputs
+                                                                       .items
     expect(exercises.length).to eq 1
     expect(exercises.first.tags).to include embed_tag
-    expect(exercises.first.los).not_to include embed_tag
   end
 
 end
