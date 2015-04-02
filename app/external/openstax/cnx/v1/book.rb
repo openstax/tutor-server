@@ -37,5 +37,12 @@ module OpenStax::Cnx::V1
       s << root_book_part.to_s(indent: indent)
     end
 
+    def visit(visitor:, depth: 0)
+      visitor.pre_order_visit_book(book: self, depth: depth)
+      visitor.in_order_visit_book(book: self, depth: depth)
+      root_book_part.visit(visitor: visitor, depth: depth+1)
+      visitor.post_order_visit_book(book: self, depth: depth)
+    end
+
   end
 end

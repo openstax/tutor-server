@@ -46,5 +46,11 @@ module OpenStax::Cnx::V1::Fragment
       s = "#{' '*indent}INTERACTIVE #{title}\n"
     end
 
+    def visit(visitor:, depth: 0)
+      visitor.pre_order_visit(elem: self, depth: depth)
+      visitor.in_order_visit(elem: self, depth: depth)
+      visitor.post_order_visit(elem: self, depth: depth)
+    end
+
   end
 end
