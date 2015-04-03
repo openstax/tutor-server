@@ -20,6 +20,16 @@ module Api::V1
                required: true
              }
 
+    property :task_id,
+             type: Integer,
+             writeable: false,
+             readable: true,
+             getter: lambda {|*| task_step.tasks_task_id },
+             schema_info: {
+                 required: true,
+                 description: "The id of the Task"
+             }
+
     property :type,
              type: String,
              writeable: false,
@@ -43,7 +53,6 @@ module Api::V1
                required: true,
                description: "Whether or not this step is complete"
              }
-
 
   end
 end
