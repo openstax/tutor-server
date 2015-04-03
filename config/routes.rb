@@ -51,6 +51,7 @@ Rails.application.routes.draw do
         get 'dashboard(/role/:role_id)', action: :dashboard
         post 'practice(/role/:role_id)', action: :practice
         get 'practice(/role/:role_id)', action: :practice
+        get 'stats(/role/:role_id)', action: :stats
       end
 
       resources :task_plans, path: '/plans', shallow: true, except: [:index, :edit] do
