@@ -35,24 +35,23 @@ class Tasks::Assistants::IReadingAssistant
                                      content: reading_fragment.to_html)
   end
 
-  def self.tasked_exercise(exercise_fragment:, recovery_fragment: nil, step: nil)
+  def self.tasked_exercise(exercise_fragment:,
+                           can_be_recovered: false,
+                           step: nil)
     if exercise_fragment.embed_tag.blank?
       logger.warn "Exercise without embed tag found while creating iReading"
       return
     end
 
     # Search local (cached) Exercises for one matching the embed tag
-    exercises = Content::SearchLocalExercises[tag: exercise_fragment.embed_tag]
+    exercises = Content::Routines::SearchExercises[
+                  tag: exercise_fragment.embed_tag
+                ]
     exercise = exercises.first
 
-    recovery = recovery_fragment.nil? ? \
-                 nil : tasked_exercise(exercise_fragment: recovery_fragment)
-
-    Tasks::Models::TaskedExercise.new(task_step: step,
-                                      url: exercise.url,
-                                      title: exercise.title,
-                                      content: exercise.content,
-                                      recovery_tasked_exercise: recovery)
+    Domain::TaskExercise[exercise: exercises.first,
+                         can_be_recovered: can_be_recovered,
+                         task_step: step]
   end
 
   def self.tasked_video(video_fragment:, step: nil)
@@ -104,8 +103,8 @@ class Tasks::Assistants::IReadingAssistant
           step.tasked = case fragment
           when OpenStax::Cnx::V1::Fragment::ExerciseChoice
             exercises = fragment.exercise_fragments
-            tasked_exercise(exercise_fragment: exercises.first,
-                            recovery_fragment: exercises.last,
+            tasked_exercise(exercise_fragment: exercises.sample,
+                            can_be_recovered: true,
                             step: step)
           when OpenStax::Cnx::V1::Fragment::Exercise
             tasked_exercise(exercise_fragment: fragment, step: step)
@@ -132,11 +131,7 @@ class Tasks::Assistants::IReadingAssistant
                                              .outputs[:exercise]
 
           step = Tasks::Models::TaskStep.new(task: task)
-          step.tasked = Tasks::Models::TaskedExercise.new(
-                                           task_step: step,
-                                           title: ex.title,
-                                           url: ex.url,
-                                           content: ex.content)
+          step.tasked = Domain::TaskExercise[exercise: ex, task_step: step]
           task.task_steps << step
         end
       end

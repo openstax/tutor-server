@@ -1,24 +1,22 @@
 class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
   acts_as_tasked
 
-  belongs_to :recovery_tasked_exercise, class_name: name,
-                                        dependent: :destroy,
-                                        subsystem: :ignore
+  belongs_to :exercise, subsystem: :content
+  protected :exercise
 
   validates :url, presence: true
   validates :content, presence: true
-  validates :recovery_tasked_exercise_id, uniqueness: { allow_nil: true }
   validate :valid_state, :valid_answer, :not_completed
 
   delegate :answers, :correct_answer_ids, :content_without_correctness,
            to: :wrapper
 
-  def has_recovery?
-    !recovery_tasked_exercise.nil?
-  end
-
   def wrapper
     @wrapper ||= OpenStax::Exercises::V1::Exercise.new(content)
+  end
+
+  def can_be_recovered?
+    can_be_recovered
   end
 
   def url

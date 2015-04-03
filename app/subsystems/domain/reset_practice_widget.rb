@@ -31,10 +31,7 @@ class Domain::ResetPracticeWidget
     exercises.each do |exercise|
       step = Tasks::Models::TaskStep.new(task: task)
 
-      step.tasked = Tasks::Models::TaskedExercise.new(task_step: step,
-                                       url: exercise.url,
-                                       title: exercise.title,
-                                       content: exercise.content)
+      step.tasked = Domain::TaskExercise[exercise: exercise, task_step: step]
 
       task.task_steps << step
     end

@@ -15,6 +15,7 @@ FactoryGirl.define do
     end
 
     task_step nil
+    association :exercise, factory: :content_exercise
 
     after(:build) do |tasked_exercise, evaluator|
       if tasked_exercise.content.nil?

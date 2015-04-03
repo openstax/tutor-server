@@ -1,7 +1,8 @@
 class CreateTasksTaskedExercises < ActiveRecord::Migration
   def change
     create_table :tasks_tasked_exercises do |t|
-      t.references :recovery_tasked_exercise
+      t.references :content_exercise
+      t.boolean :can_be_recovered, null: false, default: false
       t.string :url, null: false
       t.text :content, null: false
       t.string :title
@@ -10,11 +11,7 @@ class CreateTasksTaskedExercises < ActiveRecord::Migration
 
       t.timestamps null: false
 
-      t.index :recovery_tasked_exercise_id, unique: true
+      t.index :content_exercise_id
     end
-
-    add_foreign_key :tasked_exercises, :tasked_exercises,
-                    column: :recovery_tasked_exercise_id,
-                    on_update: :cascade, on_delete: :nullify
   end
 end
