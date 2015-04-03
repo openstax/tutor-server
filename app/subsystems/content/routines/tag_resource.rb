@@ -14,7 +14,7 @@ class Content::Routines::TagResource
 
     outputs[:tags] = []
     outputs[:taggings] = []
-    tags.each do |t|
+    [tags].flatten.compact.each do |t|
       tag = t.is_a?(Content::Models::Tag) ? \
             t : Content::Models::Tag.find_or_initialize_by(name: t.to_s)
       unless tag.persisted?

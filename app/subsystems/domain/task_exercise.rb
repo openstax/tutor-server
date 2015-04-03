@@ -13,6 +13,7 @@ class Domain::TaskExercise
       content: exercise.content,
       has_recovery: has_recovery
     )
+    task_step.tasked = outputs[:tasked_exercise] unless task_step.nil?
   end
 
 end

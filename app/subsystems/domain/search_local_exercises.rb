@@ -41,7 +41,7 @@ class Domain::SearchLocalExercises
         task_step: {
           task: {
             taskings: {
-              entity_role_id: roles.collect{|r| r.id}
+              entity_role_id: [roles].flatten.compact.collect{|r| r.id}
             }
           }
         }
