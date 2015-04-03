@@ -69,7 +69,10 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
   end
 
   api :PUT, '/steps/:step_id/refresh',
-            'Requests an exercise similar to the given one for credit recovery'
+            "Requests another resource to refresh the student's memory, as well as an exercise similar to the given one for credit recovery"
+  description <<-EOS
+    #{json_schema(Api::V1::RefreshRepresenter, include: :readable)}
+  EOS
   def refresh
     tasked = Tasks::Models::TaskStep.find(params[:id]).tasked
     OSU::AccessPolicy.require_action_allowed!(:refresh, current_api_user, tasked)
@@ -79,12 +82,8 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     if result.errors.any?
       render_api_errors(result.errors)
     else
-      json_response = {}
-      json_response[:refresh_step] = result.outputs.refresh_step
-      tasked = result.outputs.recovery_step.tasked
-      representer = Api::V1::TaskedExerciseRepresenter.new(tasked)
-      json_response[:recovery_step] = representer
-      render json: json_response, responder: ResponderWithPutContent
+      respond_with result.outputs, represent_with: Api::V1::RefreshRepresenter,
+                                   responder: ResponderWithPutContent
     end
   end
 
