@@ -31,7 +31,9 @@ class Content::Routines::SearchExercises
       # http://stackoverflow.com/a/2000642
       relation = relation.joins(exercise_tags: :tag)
                          .where(exercise_tags: {tag: {name: tags}})
-                         .group(:id).having{count(`*`).eq my{tags.size}}
+                         .group(:id).having{ count(
+                             distinct(exercise_tags.tag.id)
+                         ).eq my{tags.size} }
     end
 
     run(:order, options.merge(relation: relation,
