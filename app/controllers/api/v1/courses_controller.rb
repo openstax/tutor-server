@@ -111,6 +111,15 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
   api nil, nil, nil
   description nil
+  def stats
+    course = Entity::Course.find(params[:id])
+    course_stats = Domain::GetUserCourseStats[user: current_human_user.entity_user,
+                                              course: course]
+    respond_with course_stats, represent_with: Api::V1::CourseStatsRepresenter
+  end
+
+  api nil, nil, nil
+  description nil
   def practice
     request.post? ? practice_post : practice_get
   end
