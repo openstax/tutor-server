@@ -1,11 +1,8 @@
 module Tutor::SubSystems
-
   module AssociationExtensions
-
     extend ActiveSupport::Concern
 
     module ClassMethods
-
       def belongs_to(name, scope = nil, options = {})
         set_subsystem_options(name, scope, options, true)
         super
@@ -45,17 +42,22 @@ module Tutor::SubSystems
         # If the :subsystem wasn't specified, default to the current model's subsystem
         subsystem_name = my_subsystem_name if subsystem_name.blank?
 
-        options[:class_name] ||= "::#{subsystem_name.camelize}::Models::#{association_name.to_s.camelize.singularize}"
+        model_name = association_name.to_s.camelize.singularize
+
+        if subsystem_name == 'entity'
+          options[:class_name] ||= "::#{subsystem_name.camelize}::#{model_name}"
+        else
+          options[:class_name] ||= "::#{subsystem_name.camelize}::Models::#{model_name}"
+        end
+
         if is_belongs_to
           options[:foreign_key] ||= "#{subsystem_name}_#{association_name.to_s.underscore}_id"
         else
-          class_name = self.name.demodulize.underscore
-          options[:foreign_key] ||= "#{subsystem_name}_#{class_name}_id"
+          klass_name = self.name.demodulize.underscore
+          options[:foreign_key] ||= "#{subsystem_name}_#{klass_name}_id"
         end
         options
       end
-
     end
   end
-
 end

@@ -8,10 +8,6 @@ class Domain::ImportBook
 
   lev_routine
 
-  uses_routine Entity::CreateBook,
-               as: :create_book,
-               translations: { outputs: { type: :verbatim } }
-
   uses_routine Content::Routines::ImportBookPart,
                as: :import_book_part,
                translations: { outputs: { type: :verbatim } }
@@ -26,7 +22,7 @@ class Domain::ImportBook
     content_book_part.url = outputs[:url]
     content_book_part.content = outputs[:content]
 
-    run(:create_book)
+    outputs[:book] = Entity::Book.create!
     content_book_part.book = outputs[:book]
     content_book_part.save
     transfer_errors_from(content_book_part, {type: :verbatim}, true)

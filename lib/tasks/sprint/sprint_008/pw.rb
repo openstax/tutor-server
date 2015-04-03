@@ -7,7 +7,7 @@ module Sprint008
 
     def exec
       user = FactoryGirl.create :user, username: 'student'
-      outputs[:course] = Entity::CreateCourse.call.outputs.course
+      outputs[:course] = Entity::Course.create!
       Domain::AddUserAsCourseStudent.call(course: outputs[:course], user: user)
       outputs[:role] = Entity::Role.last
       Domain::ResetPracticeWidget.call(role: outputs[:role], condition: :fake)

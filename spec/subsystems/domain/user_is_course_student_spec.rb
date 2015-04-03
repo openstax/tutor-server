@@ -4,13 +4,13 @@ describe Domain::UserIsCourseStudent do
 
   context "when the user is not a student for the given course" do
     it "returns false" do
-      target_user         = Entity::CreateUser.call.outputs.user
-      target_student_role = Entity::CreateRole.call.outputs.role
-      target_teacher_role = Entity::CreateRole.call.outputs.role
-      other_user          = Entity::CreateUser.call.outputs.user
-      other_student_role  = Entity::CreateRole.call.outputs.role
-      target_course       = Entity::CreateCourse.call.outputs.course
-      other_course        = Entity::CreateCourse.call.outputs.course
+      target_user         = Entity::User.create!
+      target_student_role = Entity::Role.create!
+      target_teacher_role = Entity::Role.create!
+      other_user          = Entity::User.create!
+      other_student_role  = Entity::Role.create!
+      target_course       = Entity::Course.create!
+      other_course        = Entity::Course.create!
 
       Role::AddUserRole.call(user: target_user, role: target_student_role)
       Role::AddUserRole.call(user: target_user, role: target_teacher_role)
@@ -32,9 +32,9 @@ describe Domain::UserIsCourseStudent do
   context "when the user is a student for the given course" do
     it "returns true" do
       ## Make the target user a student for the target course
-      target_user         = Entity::CreateUser.call.outputs.user
-      target_student_role = Entity::CreateRole.call.outputs.role
-      target_course       = Entity::CreateCourse.call.outputs.course
+      target_user         = Entity::User.create!
+      target_student_role = Entity::Role.create!
+      target_course       = Entity::Course.create!
 
       Role::AddUserRole.call(user: target_user, role: target_student_role)
       CourseMembership::AddStudent.call(course: target_course, role: target_student_role)

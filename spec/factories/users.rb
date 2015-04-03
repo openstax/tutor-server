@@ -18,7 +18,7 @@ FactoryGirl.define do
                                        last_name: evaluator.last_name,
                                        full_name: evaluator.full_name,
                                        title: evaluator.title)
-      user.entity_user = Entity::Models::User.new
+      user.entity_user = Entity::User.new
     end
 
     trait :administrator do
