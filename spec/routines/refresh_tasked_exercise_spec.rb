@@ -18,7 +18,7 @@ RSpec.describe RefreshTaskedExercise, :type => :routine do
   let!(:tasked_exercise_with_recovery) {
     te = FactoryGirl.build(
       :tasks_tasked_exercise,
-      has_recovery: true,
+      can_be_recovered: true,
       content: OpenStax::Exercises::V1.fake_client
                                       .new_exercise_hash(tags: [lo.name])
                                       .to_json

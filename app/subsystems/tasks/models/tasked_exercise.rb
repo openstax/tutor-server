@@ -14,8 +14,8 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     @wrapper ||= OpenStax::Exercises::V1::Exercise.new(content)
   end
 
-  def has_recovery?
-    has_recovery
+  def can_be_recovered?
+    can_be_recovered
   end
 
   def url

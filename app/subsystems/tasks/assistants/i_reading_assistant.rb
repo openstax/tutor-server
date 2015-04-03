@@ -35,7 +35,9 @@ class Tasks::Assistants::IReadingAssistant
                                      content: reading_fragment.to_html)
   end
 
-  def self.tasked_exercise(exercise_fragment:, has_recovery: false, step: nil)
+  def self.tasked_exercise(exercise_fragment:,
+                           can_be_recovered: false,
+                           step: nil)
     if exercise_fragment.embed_tag.blank?
       logger.warn "Exercise without embed tag found while creating iReading"
       return
@@ -48,7 +50,7 @@ class Tasks::Assistants::IReadingAssistant
     exercise = exercises.first
 
     Domain::TaskExercise[exercise: exercises.first,
-                         has_recovery: has_recovery,
+                         can_be_recovered: can_be_recovered,
                          task_step: step]
   end
 

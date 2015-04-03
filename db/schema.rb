@@ -419,14 +419,14 @@ ActiveRecord::Schema.define(version: 20150325170729) do
 
   create_table "tasks_tasked_exercises", force: :cascade do |t|
     t.integer  "exercise_id"
-    t.boolean  "has_recovery",  default: false, null: false
-    t.string   "url",                           null: false
-    t.text     "content",                       null: false
+    t.boolean  "can_be_recovered", default: false, null: false
+    t.string   "url",                              null: false
+    t.text     "content",                          null: false
     t.string   "title"
     t.text     "free_response"
     t.string   "answer_id"
-    t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
   end
 
   add_index "tasks_tasked_exercises", ["exercise_id"], name: "index_tasks_tasked_exercises_on_exercise_id"

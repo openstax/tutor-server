@@ -46,7 +46,7 @@ describe Api::V1::TaskStepsController, :type => :controller,
   let!(:tasked_exercise_with_recovery) {
     te = FactoryGirl.build(
       :tasks_tasked_exercise,
-      has_recovery: true,
+      can_be_recovered: true,
       content: OpenStax::Exercises::V1.fake_client
                                       .new_exercise_hash(tags: [lo.name])
                                       .to_json
@@ -158,13 +158,11 @@ describe Api::V1::TaskStepsController, :type => :controller,
     end
 
     it "should not allow random user to recover exercises" do
-      tasked_exercise.has_recovery = true
-      tasked_exercise.save!
-      step_count = tasked_exercise.task_step.task.task_steps.count
+      step_count = tasked_exercise_with_recovery.task_step.task.task_steps.count
 
       expect{
         api_put :recovery, user_2_token, parameters: {
-          id: tasked_exercise.task_step.id
+          id: tasked_exercise_with_recovery.task_step.id
         }
       }.to raise_error SecurityTransgression
 
@@ -188,7 +186,6 @@ describe Api::V1::TaskStepsController, :type => :controller,
     it "should allow owner to refresh exercises with recovery steps" do
       expect {
         api_put :refresh, user_1_token, parameters: {
-          task_id: tasked_exercise_with_recovery.task_step.task.id,
           id: tasked_exercise_with_recovery.task_step.id
         }
       }.to change{tasked_exercise_with_recovery.task_step.task
@@ -213,18 +210,16 @@ describe Api::V1::TaskStepsController, :type => :controller,
     end
 
     it "should not allow random user to refresh exercises" do
-      tasked_exercise.has_recovery = true
-      tasked_exercise.save!
-      step_count = tasked_exercise.task_step.task.task_steps.count
+      step_count = tasked_exercise_with_recovery.task_step.task.task_steps.count
 
       expect{
         api_put :refresh, user_2_token, parameters: {
-          task_id: tasked_exercise.task_step.task.id,
-          id: tasked_exercise.task_step.id
+          id: tasked_exercise_with_recovery.task_step.id
         }
       }.to raise_error(SecurityTransgression)
 
-      expect(tasked_exercise.task_step.task.reload.task_steps.count).to(
+      expect(tasked_exercise_with_recovery.task_step.task
+                                          .reload.task_steps.count).to(
         eq step_count
       )
     end
@@ -236,7 +231,6 @@ describe Api::V1::TaskStepsController, :type => :controller,
 
       expect{
         api_put :refresh, user_1_token, parameters: {
-          task_id: tasked_exercise.task_step.task.id,
           id: tasked_exercise.task_step.id
         }
       }.not_to change{tasked_exercise.task_step.task.reload.task_steps.count}

@@ -6,11 +6,11 @@ RSpec.describe Domain::TaskExercise do
 
   it 'builds but does not save a TaskedExercise for the given exercise and task_step' do
     tasked_exercise = Domain::TaskExercise[exercise: exercise,
-                                           has_recovery: true,
+                                           can_be_recovered: true,
                                            task_step: task_step]
     expect(tasked_exercise).to be_a(Tasks::Models::TaskedExercise)
     expect(tasked_exercise).not_to be_persisted
-    expect(tasked_exercise.has_recovery).to eq true
+    expect(tasked_exercise.can_be_recovered).to eq true
     expect(tasked_exercise.task_step).to eq task_step
     expect(tasked_exercise.exercise).to eq exercise
     expect(tasked_exercise.url).to eq exercise.url

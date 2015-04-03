@@ -9,7 +9,7 @@ class RecoverTaskedExercise
 
   def exec(tasked_exercise:)
     fatal_error(code: :recovery_not_available) \
-      unless tasked_exercise.has_recovery?
+      unless tasked_exercise.can_be_recovered?
 
     recovery_exercise = get_recovery_exercise_for(
       tasked_exercise: tasked_exercise
@@ -23,7 +23,7 @@ class RecoverTaskedExercise
                                            exercise: recovery_exercise)
     transfer_errors_from(recovery_step, type: :verbatim)
 
-    tasked_exercise.update_attribute(:has_recovery, false)
+    tasked_exercise.update_attribute(:can_be_recovered, false)
 
     outputs[:recovery_exercise] = recovery_exercise
     outputs[:recovery_step] = recovery_step
