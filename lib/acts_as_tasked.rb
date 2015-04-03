@@ -7,7 +7,7 @@ module ActsAsTasked
   module ClassMethods
     def acts_as_tasked
       class_eval do
-        has_one :task_step, as: :tasked, dependent: :destroy
+        has_one :task_step, as: :tasked
 
         delegate :completed_at, :completed?, :complete,
                  to: :task_step, allow_nil: true
