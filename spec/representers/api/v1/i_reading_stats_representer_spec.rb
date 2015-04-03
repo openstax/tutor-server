@@ -36,7 +36,7 @@ RSpec.describe Api::V1::IReadingStatsRepresenter, :type => :representer do
         ),
         "spaced_pages" => a_collection_containing_exactly(
           a_hash_including(
-            "student_count"   => 2,
+            "student_count"   => 0, ## newly created Tasks can have TaskedPlaceholders
             "correct_count"   => 0,
             "incorrect_count" => 0,
             "page" => a_hash_including(
