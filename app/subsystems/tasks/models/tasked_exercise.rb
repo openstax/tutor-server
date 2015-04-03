@@ -1,7 +1,8 @@
 class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
   acts_as_tasked
 
-  belongs_to :exercise, subsystem: :content, foreign_key: :exercise_id
+  belongs_to :exercise, subsystem: :content
+  protected :exercise
 
   validates :url, presence: true
   validates :content, presence: true

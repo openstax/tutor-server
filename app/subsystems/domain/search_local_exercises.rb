@@ -26,7 +26,7 @@ class Domain::SearchLocalExercises
     end
 
     # TODO: use wrapper
-    outputs[:items] = relation.to_a
+    outputs[:items] = relation.readonly!.to_a
 
   end
 

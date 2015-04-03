@@ -3,5 +3,8 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
 
   has_many :exercise_tags, dependent: :destroy
 
-  has_many :tasked_exercises, subsystem: :tasks, dependent: :destroy, foreign_key: :exercise_id
+  has_many :tasked_exercises, subsystem: :tasks,
+                              dependent: :destroy,
+                              foreign_key: :content_exercise_id
+  protected :tasked_exercises
 end
