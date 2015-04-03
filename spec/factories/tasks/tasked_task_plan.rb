@@ -13,9 +13,8 @@ FactoryGirl.define do
     end
 
     settings do
-      cnx_page  = OpenStax::Cnx::V1::Page.new(
-        hash: {'id' => '092bbf0d-0729-42ce-87a6-fd96fd87a083',
-               'title' => 'Force'}
+      cnx_page = OpenStax::Cnx::V1::Page.new(
+        hash: {'id' => '092bbf0d-0729-42ce-87a6-fd96fd87a083', 'title' => 'Force'}
       )
       book_part = FactoryGirl.create :content_book_part
       page      = Content::Routines::ImportPage.call(cnx_page: cnx_page, book_part: book_part)
