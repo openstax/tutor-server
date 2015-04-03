@@ -8,6 +8,7 @@ class CreateTasksTasks < ActiveRecord::Migration
       t.datetime :opens_at, null: false
       t.datetime :due_at
       t.integer :tasks_taskings_count, null: false, default: 0
+      t.text :spaced_practice_algorithm, null: false
 
       t.timestamps null: false
 
@@ -17,9 +18,9 @@ class CreateTasksTasks < ActiveRecord::Migration
       t.index [:due_at, :opens_at]
     end
 
-    add_foreign_key :tasks_tasks, :tasks_task_plans, 
+    add_foreign_key :tasks_tasks, :tasks_task_plans,
                     on_update: :cascade, on_delete: :cascade
-    add_foreign_key :tasks_tasks, :entity_tasks, 
+    add_foreign_key :tasks_tasks, :entity_tasks,
                     on_update: :cascade, on_delete: :cascade
   end
 end

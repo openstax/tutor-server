@@ -36,13 +36,13 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
 
     let!(:spaced_practice_step_gold_data) {
       [
-        { klass: Tasks::Models::TaskedExercise,
+        { klass: Tasks::Models::TaskedPlaceholder,
           title: nil},
-        { klass: Tasks::Models::TaskedExercise,
+        { klass: Tasks::Models::TaskedPlaceholder,
           title: nil},
-        { klass: Tasks::Models::TaskedExercise,
+        { klass: Tasks::Models::TaskedPlaceholder,
           title: nil},
-        { klass: Tasks::Models::TaskedExercise,
+        { klass: Tasks::Models::TaskedPlaceholder,
           title: nil}
       ]
     }
@@ -93,12 +93,17 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
         task_steps = task.task_steps
         expect(task_steps.count).to eq(task_step_gold_data.count)
 
-        task_steps.each do |task_step|
-          expect(task_step.tasked.content).not_to include('snap-lab')
-          expect(page.content).not_to include(task_step.tasked.content) \
-            if task_step.tasked_type.demodulize == 'TaskedExercise'
+        non_placeholder_task_steps = task_steps.reject{|ts| ts.tasked_type.demodulize == 'TaskedPlaceholder'}
 
-          (task_steps - [task_step]).each do |other_step|
+        non_placeholder_task_steps.each do |task_step|
+          expect(task_step.tasked.content).not_to include('snap-lab')
+
+          if task_step.tasked_type.demodulize == 'TaskedExercise'
+            expect(page.content).not_to include(task_step.tasked.content)
+          end
+
+          other_task_steps = non_placeholder_task_steps.reject{|ts| ts == task_step}
+          other_task_steps.each do |other_step|
             expect(task_step.tasked.content).not_to(
               include(other_step.tasked.content)
             )
@@ -137,10 +142,10 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
 
     let!(:spaced_practice_step_gold_data) {
       [
-        { klass: Tasks::Models::TaskedExercise },
-        { klass: Tasks::Models::TaskedExercise },
-        { klass: Tasks::Models::TaskedExercise },
-        { klass: Tasks::Models::TaskedExercise }
+        { klass: Tasks::Models::TaskedPlaceholder },
+        { klass: Tasks::Models::TaskedPlaceholder },
+        { klass: Tasks::Models::TaskedPlaceholder },
+        { klass: Tasks::Models::TaskedPlaceholder }
       ]
     }
 
