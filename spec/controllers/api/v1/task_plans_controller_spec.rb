@@ -13,7 +13,7 @@ describe Api::V1::TaskPlansController, :type => :controller,
   let!(:course_assistant) { FactoryGirl.create :tasks_course_assistant,
                                                course: course,
                                                assistant: assistant,
-                                               task_plan_type: 'test' }
+                                               tasks_task_plan_type: 'test' }
 
   let!(:user) { FactoryGirl.create :user }
   let!(:teacher) { FactoryGirl.create :user }
@@ -97,22 +97,12 @@ describe Api::V1::TaskPlansController, :type => :controller,
   context 'create' do
     it 'allows a teacher to create a task_plan for their course' do
       controller.sign_in teacher
-<<<<<<< HEAD
-      expect { api_post :create, nil, parameters: {course_id: course.id},
+      expect { api_post :create,
+                        nil,
+                        parameters: { course_id: course.id },
                         raw_post_data: Api::V1::TaskPlanRepresenter
                                          .new(task_plan).to_json }
         .to change{ Tasks::Models::TaskPlan.count }.by(1)
-=======
-      expect {
-        api_post :create,
-                 nil,
-                 parameters: {
-                   course_id: course.id
-                 },
-                 raw_post_data: Api::V1::TaskPlanRepresenter
-                                  .new(task_plan).to_json
-      }.to change{ TaskPlan.count }.by(1)
->>>>>>> Added homework API (modified iReading API) and specs
       expect(response).to have_http_status(:success)
 
       expect(response.body).to(
@@ -155,7 +145,7 @@ describe Api::V1::TaskPlansController, :type => :controller,
                           raw_post_data: Api::V1::TaskPlanRepresenter
                                            .new(task_plan).to_hash
                                            .except('type').to_json
-      }.not_to change{ TaskPlan.count }
+      }.not_to change{ Tasks::Models::TaskPlan.count }
       expect(response).to have_http_status(:unprocessable_entity)
     end
   end

@@ -1,4 +1,4 @@
-class HomeworkAssistant
+class Tasks::Assistants::HomeworkAssistant
 
   # Array of arrays [Events ago, number of spaced practice questions]
   # This has to change, but for now add 4 questions to simulate what
@@ -25,12 +25,9 @@ class HomeworkAssistant
   end
 
   def self.add_exercise_step(task:, exercise:)
-    step = TaskStep.new(task: task)
+    step = Tasks::Models::TaskStep.new(task: task)
 
-    step.tasked = TaskedExercise.new(task_step: step,
-                                     url: exercise.url,
-                                     title: exercise.title,
-                                     content: exercise.content)
+    Domain::TaskExercise[task_step: step, exercise: exercise]
 
     task.task_steps << step
   end
@@ -47,11 +44,11 @@ class HomeworkAssistant
 
     # Assign Tasks to taskees and return the Task array
     taskees.collect do |taskee|
-      task = Task.new(task_plan: task_plan,
-                      task_type: 'homework',
-                      title: title,
-                      opens_at: opens_at,
-                      due_at: due_at)
+      task = Tasks::CreateTask[task_plan: task_plan,
+                               task_type: 'homework',
+                               title: title,
+                               opens_at: opens_at,
+                               due_at: due_at]
 
       exercises.each do |exercise|
         add_exercise_step(task: task, exercise: exercise)
@@ -70,7 +67,9 @@ class HomeworkAssistant
       end
 
       # No group tasks for this assistant
-      task.taskings << Tasking.new(task: task, taskee: taskee, user: taskee)
+      task.entity_task.taskings << Tasks::Models::Tasking.new(
+        task: task.entity_task, role: taskee
+      )
 
       task.save!
 

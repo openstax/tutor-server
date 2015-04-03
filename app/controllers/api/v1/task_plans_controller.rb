@@ -76,10 +76,10 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     #{json_schema(Api::V1::TaskPlanRepresenter, include: :writeable)}
   EOS
   def create
-    course = Entity::Models::Course.find(params[:course_id])
+    course = Entity::Course.find(params[:course_id])
     plan = BuildTaskPlan[course: course]
-    standard_create(plan) do |tp|
-      tp.assistant = Domain::GetAssistant[course: course, task_plan: tp]
+    standard_create(plan, Api::V1::TaskPlanRepresenter) do |tp|
+      tp.assistant = Tasks::GetAssistant[course: course, task_plan: tp]
       return head :unprocessable_entity if tp.assistant.nil?
     end
   end

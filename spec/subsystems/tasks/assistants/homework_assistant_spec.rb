@@ -1,10 +1,12 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe HomeworkAssistant, :type => :assistant, :vcr => VCR_OPTS do
+RSpec.describe Tasks::Assistants::HomeworkAssistant, :type => :assistant,
+                                                     :vcr => VCR_OPTS do
 
-  let!(:assistant) { FactoryGirl.create :assistant,
-                                        code_class_name: 'HomeworkAssistant' }
+  let!(:assistant) { FactoryGirl.create(
+    :tasks_assistant, code_class_name: 'Tasks::Assistants::HomeworkAssistant'
+  ) }
 
   let!(:exercises) {
     Content::Routines::ImportExercises.call(tag: 'k12phys-ch04-s01-lo01')
@@ -15,14 +17,14 @@ RSpec.describe HomeworkAssistant, :type => :assistant, :vcr => VCR_OPTS do
   let!(:tutor_exercise_count) { 4 } # Adjust if spaced practice changes
 
   let!(:task_plan) {
-    FactoryGirl.create :task_plan, assistant: assistant,
-                                   settings: { exercise_ids: exercise_ids }
+    FactoryGirl.create :tasks_task_plan, assistant: assistant,
+                                         settings: { exercise_ids: exercise_ids }
   }
 
-  let!(:taskees) { 3.times.collect{ FactoryGirl.create(:user) } }
+  let!(:taskees) { 3.times.collect{ Entity::User.create } }
   let!(:tasking_plans) { taskees.collect { |t|
     task_plan.tasking_plans << FactoryGirl.create(
-      :tasking_plan, task_plan: task_plan, target: t
+      :tasks_tasking_plan, task_plan: task_plan, target: t
     )
   } }
 
@@ -40,12 +42,12 @@ RSpec.describe HomeworkAssistant, :type => :assistant, :vcr => VCR_OPTS do
       task_steps[0..exercise_ids.length-1].each_with_index do |task_step, i|
         exercise = exercises[i+1]
         tasked = task_step.tasked
-        expect(tasked).to be_a(TaskedExercise)
+        expect(tasked).to be_a(Tasks::Models::TaskedExercise)
         expect(tasked.url).to eq(exercise.url)
         expect(tasked.title).to eq(exercise.title)
         expect(tasked.content).to eq(exercise.content)
 
-        task_steps.except(task_step).each do |other_step|
+        (task_steps - [task_step]).each do |other_step|
           expect(tasked.content).not_to(
             include(other_step.tasked.content)
           )
@@ -53,8 +55,8 @@ RSpec.describe HomeworkAssistant, :type => :assistant, :vcr => VCR_OPTS do
       end
     end
 
-    expect(tasks.collect{|t| t.taskings.first.taskee}).to eq taskees
-    expect(tasks.collect{|t| t.taskings.first.user}).to eq taskees
+    expected_roles = taskees.collect{ |t| Role::GetDefaultUserRole[t] }
+    expect(tasks.collect{|t| t.taskings.first.role}).to eq expected_roles
   end
 
   xit 'assigns the exercises chosen by tutor' do
