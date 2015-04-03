@@ -24,7 +24,7 @@ module Api::V1
              type: Integer,
              writeable: false,
              readable: true,
-             getter: lambda {|*| task_step.task_id },
+             getter: lambda {|*| task_step.tasks_task_id },
              schema_info: {
                  required: true,
                  description: "The id of the Task"

@@ -39,7 +39,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
 
       expect(response.body_as_hash).to eq({
         id: task_step.id,
-        task_id: task_step.task_id,
+        task_id: task_step.tasks_task_id,
         type: 'reading',
         title: 'title',
         is_completed: false,
