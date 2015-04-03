@@ -41,7 +41,7 @@ RSpec.describe DistributeTasks, :type => :routine do
   end
 
   it "sets the published_at field when it distributes" do
-      task_plan = FactoryGirl.create :task_plan
+      task_plan = FactoryGirl.create :tasks_task_plan
       DistributeTasks.call(task_plan)
       expect(task_plan.reload.published_at).to be_within(1.second).of(Time.now)
   end
