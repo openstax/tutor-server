@@ -25,6 +25,7 @@ class Domain::SearchLocalExercises
       relation = relation.where{id.not_in used.select(:id)}
     end
 
+    # TODO: use wrapper
     outputs[:items] = relation.to_a
 
   end

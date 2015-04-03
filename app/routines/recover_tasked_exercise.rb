@@ -73,7 +73,7 @@ class RecoverTaskedExercise
         relation: ex_relation,
         tag: required_tag_names + [lo]
       ).outputs.items.shuffle.first
-binding.pry
+
       return exercise unless exercise.nil?
     end
 

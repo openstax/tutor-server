@@ -20,6 +20,12 @@ RSpec.describe Domain::SearchLocalExercises, :type => :routine,
   let!(:test_tag)   { FactoryGirl.create :content_tag, name: 'test-tag' }
 
   it 'can search imported exercises' do
+    OpenStax::Exercises::V1.configure do |config|
+      config.server_url = 'http://exercises-dev1.openstax.org'
+    end
+
+    OpenStax::Exercises::V1.use_real_client
+
     Content::Routines::ImportPage.call(cnx_page: cnx_page,
                                        book_part: book_part)
 
