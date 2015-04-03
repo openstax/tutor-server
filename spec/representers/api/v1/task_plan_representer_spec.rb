@@ -10,10 +10,17 @@ RSpec.describe Api::V1::TaskPlanRepresenter, :type => :representer do
   it "represents a task plan" do
     expect(representation).to include(
       "id" => task_plan.id,
-      "type" => task_plan.type,
+      "type" => task_plan.type
     )
     expect(representation["stats"]).to be_nil
   end
 
+  it "includes published_at when published" do
+      task_plan.update_attributes(published_at: Time.now)
+      representation = Api::V1::TaskPlanRepresenter.new(task_plan).as_json
+      expect(representation).to include(
+        "published_at" => DateTimeUtilities.to_api_s(task_plan.published_at)
+      )
+  end
 
 end

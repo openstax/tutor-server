@@ -23,6 +23,11 @@ module Api::V1
              readable: true,
              writeable: true
 
+    property :published_at,
+             type: String,
+             readable: true,
+             writeable: true
+
     property :due_at,
              type: String,
              readable: true,

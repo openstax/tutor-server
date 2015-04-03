@@ -8,7 +8,7 @@ class CreateTasksTaskPlans < ActiveRecord::Migration
       t.text :settings, null: false
       t.datetime :opens_at, null: false
       t.datetime :due_at
-
+      t.datetime :published_at
       t.timestamps null: false
 
       t.index [:owner_id, :owner_type]
