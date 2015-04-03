@@ -31,7 +31,7 @@ RSpec.describe MarkTaskStepCompleted, :type => :routine do
     expect(task_step).to receive(:complete)
     expect(task_step).to receive(:save)
     expect(task_step).to receive(:task).and_return(task)
-    expect(task).to receive(:handle_task_step_completion!).with(hash_including(task_step: task_step))
+    expect(task).to receive(:handle_task_step_completion!)
 
     result = MarkTaskStepCompleted.call(task_step: task_step)
 

@@ -116,32 +116,17 @@ class Tasks::Assistants::IReadingAssistant
   end
 
   def self.add_spaced_practice_exercise_steps!(task: task, taskee: taskee)
-    # Array of arrays [Events ago, number of spaced practice questions]
-    # This has to change, but for now add 4 questions to simulate what
-    # Kathi's algorithm would give us for a reading with 2 LO's
-    # (the sample content)
-    spaced_practice = [[1, 4]]
+    slot_map = [ [0,1], [1,3] ]
+    task.spaced_practice_algorithm = SpacedPracticeAlgorithmDefault.new#(slot_map: slot_map)
 
-    # Spaced practice
-    # TODO: Make a SpacedPracticeStep that does this
-    #       right before the user gets the question
-    spaced_practice.each do |k_ago, number|
-      number.times do
-        ex = FillIReadingSpacedPracticeSlot.call(taskee, k_ago)
-                                           .outputs[:exercise]
+    max_num_spaced_practice_steps = slot_map.reduce(0) {|result, pair| result += pair.last}
+    max_num_spaced_practice_steps.times do
+      step = Tasks::Models::TaskStep.new(task: task)
+      step.tasked = Tasks::Models::TaskedPlaceholder.new
 
-        step = Tasks::Models::TaskStep.new(task: task)
-        step.tasked = Tasks::Models::TaskedExercise.new(
-          task_step: step,
-          title:     ex.title,
-          url:       ex.url,
-          content:   ex.content
-        )
+      step.spaced_practice_group!
 
-        step.spaced_practice_group!
-
-        task.task_steps << step
-      end
+      task.task_steps << step
     end
 
     task.save!

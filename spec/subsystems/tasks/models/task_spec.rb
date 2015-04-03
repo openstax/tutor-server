@@ -89,8 +89,21 @@ RSpec.describe Tasks::Models::Task, :type => :model do
   end
 
   it 'handles TaskStep completion' do
+    spa = instance_double('SpacedPracticeAlgorithmDefault')
+    expect(spa).to receive(:call)
     task = Tasks::Models::Task.new
-    expect(task).to respond_to(:handle_task_step_completion)
+    expect(task).to receive(:spaced_practice_algorithm).and_return(spa)
+
+    task.handle_task_step_completion!
+  end
+
+  it 'has a default Spaced Practice Algorithm' do
+    spa = nil
+    expect{
+      spa = Tasks::Models::Task.new.spaced_practice_algorithm
+    }.to_not raise_error
+    expect(spa).to_not be_nil
+    expect(spa).to respond_to(:call)
   end
 
 end
