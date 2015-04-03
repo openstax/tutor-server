@@ -104,7 +104,7 @@ class Tasks::Assistants::IReadingAssistant
           when OpenStax::Cnx::V1::Fragment::ExerciseChoice
             exercises = fragment.exercise_fragments
             tasked_exercise(exercise_fragment: exercises.sample,
-                            has_recovery: true,
+                            can_be_recovered: true,
                             step: step)
           when OpenStax::Cnx::V1::Fragment::Exercise
             tasked_exercise(exercise_fragment: fragment, step: step)
