@@ -36,6 +36,7 @@ Rails.application.routes.draw do
         member do
           put 'completed'
           put 'recovery'
+          put 'refresh'
         end
       end
     end

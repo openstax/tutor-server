@@ -4,8 +4,6 @@ RSpec.describe DistributeTasks, :type => :routine do
   it 'validates the task_plan settings against the assistant schema' do
     task_plan = FactoryGirl.create :tasks_task_plan
 
-    expect(DistributeTasks.call(task_plan).errors).to be_empty
-
     allow(DummyAssistant).to receive(:schema).and_return(
       '{
         "type": "object",
@@ -26,6 +24,7 @@ RSpec.describe DistributeTasks, :type => :routine do
 
     result = DistributeTasks.call(task_plan)
     expect(result.errors.first.code).to eq :invalid_settings
+    expect(task_plan.published_at).to be_nil
     expect(result.outputs.tasks).to be_blank
   end
 
@@ -40,4 +39,11 @@ RSpec.describe DistributeTasks, :type => :routine do
     result = DistributeTasks.call(task_plan)
     expect(result.errors).to be_empty
   end
+
+  it "sets the published_at field when it distributes" do
+      task_plan = FactoryGirl.create :tasks_task_plan
+      DistributeTasks.call(task_plan)
+      expect(task_plan.reload.published_at).to be_within(1.second).of(Time.now)
+  end
+
 end

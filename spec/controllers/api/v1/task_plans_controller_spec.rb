@@ -161,6 +161,9 @@ describe Api::V1::TaskPlansController, :type => :controller,
                                                     id: task_plan.id} }
         .to change{ Tasks::Models::Task.count }.by(1)
       expect(response).to have_http_status(:success)
+      # need to reload the task_plan since publishing it will set the
+      # publish_at date and change the representation
+      expect(task_plan.reload.published_at).to be_within(1.second).of(Time.now)
       expect(response.body).to(
         eq(Api::V1::TaskPlanRepresenter.new(task_plan).to_json)
       )

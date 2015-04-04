@@ -1,9 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe Tasks::Models::TaskedExercise, :type => :model do
-  it { is_expected.to belong_to(:recovery_tasked_exercise)
-                        .dependent(:destroy) }
-
   it { is_expected.to validate_presence_of(:content) }
 
   it { is_expected.to delegate_method(:answers).to(:wrapper) }
