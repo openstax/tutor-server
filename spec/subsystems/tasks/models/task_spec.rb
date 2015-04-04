@@ -111,7 +111,8 @@ RSpec.describe Tasks::Models::Task, :type => :model do
       task_type: 'reading',
       title:     'Some Title',
       opens_at:  Time.now,
-      due_at:    Time.now + 1.week
+      due_at:    Time.now + 1.week,
+      spaced_practice_algorithm: SpacedPracticeAlgorithmIReading.new
     )
 
     task_step1 = Tasks::Models::TaskStep.new(task: task, page_id: 3)
