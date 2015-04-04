@@ -4,8 +4,8 @@ class MarkTaskStepCompleted
 
   protected
 
-  def exec(task_step:)
-    task_step.complete
+  def exec(task_step:, completion_time: Time.now)
+    task_step.complete(completion_time: completion_time)
     task_step.save
     transfer_errors_from(task_step, {type: :verbatim}, true)
 
