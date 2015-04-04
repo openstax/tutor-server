@@ -1,1 +1,2 @@
-require 'spaced_practice_algorithm_default'
+require 'spaced_practice_algorithm_do_nothing'
+require 'spaced_practice_algorithm_i_reading'

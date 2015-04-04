@@ -117,7 +117,7 @@ class Tasks::Assistants::IReadingAssistant
 
   def self.add_spaced_practice_exercise_steps!(task: task, taskee: taskee)
     slot_map = [ [0,1], [1,3] ]
-    task.spaced_practice_algorithm = SpacedPracticeAlgorithmDefault.new#(slot_map: slot_map)
+    task.spaced_practice_algorithm = SpacedPracticeAlgorithmIReading.new#(slot_map: slot_map)
 
     max_num_spaced_practice_steps = slot_map.reduce(0) {|result, pair| result += pair.last}
     max_num_spaced_practice_steps.times do

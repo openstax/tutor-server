@@ -1,4 +1,4 @@
-class SpacedPracticeAlgorithmDefault
+class SpacedPracticeAlgorithmIReading
   def call(event:, task:)
     return unless task.core_task_steps_completed?
 

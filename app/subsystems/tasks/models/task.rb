@@ -21,7 +21,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   after_initialize :init
 
   def init
-    self.spaced_practice_algorithm ||= SpacedPracticeAlgorithmDefault.new
+    self.spaced_practice_algorithm ||= SpacedPracticeAlgorithmDoNothing.new
   end
 
   def is_shared
