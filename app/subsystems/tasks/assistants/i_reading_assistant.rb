@@ -160,25 +160,6 @@ class Tasks::Assistants::IReadingAssistant
                   tag: exercise_fragment.embed_tag
                 ]
     exercise = exercises.first
-
-    Domain::TaskExercise[exercise: exercises.first,
-                         can_be_recovered: can_be_recovered,
-                         task_step: step]
-  end
-
-  def self.tasked_exercise(exercise_fragment:,
-                           can_be_recovered: false,
-                           step: nil)
-    if exercise_fragment.embed_tag.blank?
-      logger.warn "Exercise without embed tag found while creating iReading"
-      return
-    end
-    
-    # Search local (cached) Exercises for one matching the embed tag
-    exercises = Content::Routines::SearchExercises[
-                  tag: exercise_fragment.embed_tag
-                ]
-    exercise = exercises.first
     Domain::TaskExercise[exercise: exercises.first,
                          can_be_recovered: can_be_recovered,
                          task_step: step]
