@@ -28,6 +28,10 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     taskings.size > 1
   end
 
+  def past_due?(current_time: Time.now)
+    current_time > due_at
+  end
+
   def completed?
     self.task_steps.all?{|ts| ts.completed? }
   end
@@ -42,6 +46,11 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   def core_task_steps_completed?
     self.core_task_steps.all?{|ts| ts.completed?}
+  end
+
+  def core_task_steps_completed_at
+    return nil unless self.core_task_steps_completed?
+    self.core_task_steps.collect{|ts| ts.completed_at}.max
   end
 
   def spaced_practice_algorithm

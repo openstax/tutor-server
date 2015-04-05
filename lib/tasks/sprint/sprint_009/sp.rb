@@ -29,58 +29,104 @@ module Sprint009
       end
 
       ## create taskees
-      taskee1 = Entity::User.create
-      taskee2 = Entity::User.create
-      taskee3 = Entity::User.create
-      taskees = [taskee1, taskee2, taskee3]
+      taskee_role1 = Entity::Role.create
+      taskee_role2 = Entity::Role.create
+      taskee_role3 = Entity::Role.create
+      taskee_roles = [taskee_role1, taskee_role2, taskee_role3]
 
       ## create the assistant
       assistant = FactoryGirl.create(:tasks_assistant,
         code_class_name: 'Tasks::Assistants::IReadingAssistant'
       )
 
-      ## create the tasks
-      reading1_tasks = create_tasks(page_id: page_data[1].id, taskees: taskees, assistant: assistant)
-      reading2_tasks = create_tasks(page_id: page_data[2].id, taskees: taskees, assistant: assistant)
-      reading3_tasks = create_tasks(page_id: page_data[3].id, taskees: taskees, assistant: assistant)
-      reading4_tasks = create_tasks(page_id: page_data[4].id, taskees: taskees, assistant: assistant)
-
-      ## create taskee histories
+      ## assignment data
       base_time = Time.now
+      task_dates = [
+        {opens_at: base_time +  1.day,  due_at: base_time +  8.days},
+        {opens_at: base_time +  4.days, due_at: base_time + 11.days},
+        {opens_at: base_time +  7.days, due_at: base_time + 14.days},
+        {opens_at: base_time + 10.days, due_at: base_time + 17.days}
+      ]
+
+      ## task = reading_task_groups[assignment_index][taskee_index]
+      reading_task_groups = page_data[1..4].each_with_index.collect do |page_data, ii|
+        tasks = create_tasks(
+          page_id:   page_data.id,
+          taskees:   taskee_roles,
+          assistant: assistant,
+          opens_at:  task_dates[ii][:opens_at],
+          due_at:    task_dates[ii][:due_at]
+        )
+        tasks
+      end
+
+      ##
+      ## create taskee histories
+      ##
 
       # taskee1: in order
-      reading1_tasks[0].core_task_steps.each_with_index do |task_step, ii|
-        MarkTaskStepCompleted.call(task_step: task_step, completion_time: base_time + ii.minutes)
+      reading_task_groups[0][0].core_task_steps.each_with_index do |task_step, ii|
+        MarkTaskStepCompleted.call(task_step: task_step, completion_time: task_dates[0][:opens_at]+(10+ii).minutes)
       end
-      reading2_tasks[0].core_task_steps.each_with_index do |task_step, ii|
-        MarkTaskStepCompleted.call(task_step: task_step, completion_time: base_time + ii.minutes)
+      reading_task_groups[1][0].core_task_steps.each_with_index do |task_step, ii|
+        MarkTaskStepCompleted.call(task_step: task_step, completion_time: task_dates[1][:opens_at]+(10+ii).minutes)
       end
-      reading3_tasks[0].core_task_steps.each_with_index do |task_step, ii|
-        MarkTaskStepCompleted.call(task_step: task_step, completion_time: base_time + ii.minutes)
+      reading_task_groups[2][0].core_task_steps.each_with_index do |task_step, ii|
+        MarkTaskStepCompleted.call(task_step: task_step, completion_time: task_dates[2][:opens_at]+(10+ii).minutes)
       end
-      reading4_tasks[0].core_task_steps.each_with_index do |task_step, ii|
-        MarkTaskStepCompleted.call(task_step: task_step, completion_time: base_time + ii.minutes)
+      reading_task_groups[3][0].core_task_steps.each_with_index do |task_step, ii|
+        MarkTaskStepCompleted.call(task_step: task_step, completion_time: task_dates[3][:opens_at]+(10+ii).minutes)
       end
 
       # taskee2: out of order
-      reading2_tasks[1].core_task_steps.each_with_index do |task_step, ii|
-        MarkTaskStepCompleted.call(task_step: task_step, completion_time: base_time + ii.minutes)
+      reading_task_groups[0][1].core_task_steps.each_with_index do |task_step, ii|
+        MarkTaskStepCompleted.call(task_step: task_step, completion_time: task_dates[1][:opens_at]+(10+ii).minutes)
       end
-      reading1_tasks[1].core_task_steps.each_with_index do |task_step, ii|
-        MarkTaskStepCompleted.call(task_step: task_step, completion_time: base_time + ii.minutes)
+      reading_task_groups[1][1].core_task_steps.each_with_index do |task_step, ii|
+        MarkTaskStepCompleted.call(task_step: task_step, completion_time: task_dates[0][:opens_at]+(10+ii).minutes)
       end
-      reading4_tasks[1].core_task_steps.each_with_index do |task_step, ii|
-        MarkTaskStepCompleted.call(task_step: task_step, completion_time: base_time + ii.minutes)
+      reading_task_groups[2][1].core_task_steps.each_with_index do |task_step, ii|
+        MarkTaskStepCompleted.call(task_step: task_step, completion_time: task_dates[3][:opens_at]+(10+ii).minutes)
       end
-      reading3_tasks[1].core_task_steps.each_with_index do |task_step, ii|
-        MarkTaskStepCompleted.call(task_step: task_step, completion_time: base_time + ii.minutes)
+      reading_task_groups[3][1].core_task_steps.each_with_index do |task_step, ii|
+        MarkTaskStepCompleted.call(task_step: task_step, completion_time: task_dates[2][:opens_at]+(10+ii).minutes)
       end
+
+      ireading_event_history1 = get_ireading_task_history(taskee: taskee_role1)
+      ap ireading_event_history1
+
+      ireading_event_history2 = get_ireading_task_history(taskee: taskee_role2)
+      ap ireading_event_history2
+
+      ireading_event_history3 = get_ireading_task_history(taskee: taskee_role3, current_time: base_time+13.days)
+      ap ireading_event_history3
     end
 
-    def create_tasks(page_id:, taskees:, assistant:)
+    def get_ireading_task_history(taskee:, current_time: Time.now)
+      tasks = Tasks::Models::Task.joins{taskings}
+                                 .where{taskings.entity_role_id == taskee.id}
+
+      ireading_tasks = tasks.select{|task| task.task_type == "reading"}
+
+      completed_ireading_tasks = ireading_tasks.select do |task|
+        task.core_task_steps_completed? || task.past_due?(current_time: current_time)
+      end
+
+      sorted_tasks = completed_ireading_tasks.sort_by do |task|
+        times = [task.due_at]
+        times << task.core_task_steps_completed_at if task.core_task_steps_completed?
+        times.min
+      end
+
+      sorted_tasks
+    end
+
+    def create_tasks(page_id:, taskees:, assistant:, opens_at: Time.now, due_at: opens_at+1.week)
       ## create TaskPlans for each Page with LOs
       task_plan = FactoryGirl.create(:tasks_task_plan,
         assistant: assistant,
+        opens_at: opens_at,
+        due_at:   due_at,
         settings: { page_ids: [page_id] }
       )
 
