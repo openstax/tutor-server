@@ -38,9 +38,13 @@ module OpenStax::Cnx::V1
       end
     end
 
-    def to_s(indent: 0)
-      s = "#{' '*indent}PART #{title}\n"
-      s << parts.collect{|part| part.to_s(indent: indent+2)}.join('')
+    def visit(visitor:, depth: 0)
+      visitor.pre_order_visit(elem: self, depth: depth)
+      visitor.in_order_visit(elem: self, depth: depth)
+      parts.each do |part|
+        part.visit(visitor: visitor, depth: depth+1)
+      end
+      visitor.post_order_visit(elem: self, depth: depth)
     end
 
   end

@@ -16,6 +16,8 @@ class Content::VisitBook
         outputs[:toc] = Content::Models::TocVisitor.new
       when 'exercises'
         outputs[:exercises] = Content::Models::ExerciseVisitor.new
+      when 'page_data'
+        outputs[:page_data] = Content::Models::PageDataVisitor.new
       end
     end
 

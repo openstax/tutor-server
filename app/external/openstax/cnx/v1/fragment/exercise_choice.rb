@@ -29,9 +29,13 @@ module OpenStax::Cnx::V1::Fragment
       end
     end
 
-    def to_s(indent: 0)
-      s = "#{' '*indent}EXERCISE CHOICE #{title}\n"
-      s << exercise_fragments.collect{|ex| ex.to_s(indent: indent+2)}.join('')
+    def visit(visitor:, depth: 0)
+      visitor.pre_order_visit(elem: self, depth: depth)
+      visitor.in_order_visit(elem: self, depth: depth)
+      exercise_fragments.each do |exercise_fragment|
+        exercise_fragment.visit(visitor: visitor, depth: depth+1)
+      end
+      visitor.post_order_visit(elem: self, depth: depth)
     end
 
   end

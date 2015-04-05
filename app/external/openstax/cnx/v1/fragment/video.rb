@@ -26,8 +26,10 @@ module OpenStax::Cnx::V1::Fragment
       @title
     end
 
-    def to_s(indent: 0)
-      s = "#{' ' * indent}VIDEO #{title}\n"
+    def visit(visitor:, depth: 0)
+      visitor.pre_order_visit(elem: self, depth: depth)
+      visitor.in_order_visit(elem: self, depth: depth)
+      visitor.post_order_visit(elem: self, depth: depth)
     end
 
     def video(node = node)
