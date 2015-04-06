@@ -15,16 +15,39 @@ class Domain::GetUserCourseStats
 
   protected
   def exec(user:, course:)
-    run(:get_course_profile, course.id)
-    run(:get_course_books, course: course)
     compile_course_stats
   end
 
   private
   def compile_course_stats
     outputs[:course_stats] = {
-      title: outputs.profile.name,
-      topics: collect_book_parts
+      title: 'Physics',
+      fields: [
+        { id: 123,
+          title: 'Kinematics',
+          number: '5',
+          questions_answered_count: 48,
+          current_level: 0.5,
+          page_ids: [ 234, 345 ],
+          practice_count: 12
+        },
+        { id: 456,
+          title: 'Other Physics',
+          number: '5.1',
+          questions_answered_count: 38,
+          current_level: 0.4,
+          page_ids: [ 231, 897 ],
+          practice_count: 8
+        },
+        { id: 789,
+          title: 'Excellent Topics',
+          number: '5.2',
+          questions_answered_count: 42,
+          current_level: 0.8,
+          page_ids: [ 28, 89 ],
+          practice_count: 15
+        }
+      ]
     }
   end
 
