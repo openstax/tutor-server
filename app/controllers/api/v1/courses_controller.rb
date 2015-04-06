@@ -100,23 +100,16 @@ class Api::V1::CoursesController < Api::V1::ApiController
   protected
 
   def get_practice_role
-    potential_roles = Domain::GetUserCourseRoles.call(course: Entity::Course.find(params[:id]),
-                                                      user: current_human_user.entity_user,
-                                                      types: [:student]).outputs.roles
-
-    raise(SecurityTransgression, "The caller is not a student in this course") if potential_roles.empty?
-
-    practice_role = nil
-
-    if params[:role_id]
-      practice_role = Entity::Role.find(params[:role_id])
-      raise(SecurityTransgression, "The caller does not have the specified role") unless potential_roles.include?(practice_role)
-    else
-      raise(IllegalState, "The role must be specified because there is more than one student role available") if potential_roles.size > 1
-      practice_role = potential_roles.first
+    role = params.has_key?(:role_id) ? Entity::Role.find(params[:role_id]) : nil
+    result = Domain::ChooseCourseRole.call(user: current_human_user.entity_user,
+                                           course: Entity::Course.find(params[:id]),
+                                           role_type: :student,
+                                           role: role
+                                          )
+    if result.errors.any?
+      raise(IllegalState, result.errors.map(&:message).to_sentence)
     end
-
-    practice_role
+    result.outputs.role
   end
 
 end
