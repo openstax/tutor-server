@@ -58,10 +58,10 @@ module Sprint009
       ## assignment data
       base_time = Time.now
       task_dates = [
-        {opens_at: base_time +  1.day,  due_at: base_time +  8.days},
-        {opens_at: base_time +  4.days, due_at: base_time + 11.days},
-        {opens_at: base_time +  7.days, due_at: base_time + 14.days},
-        {opens_at: base_time + 10.days, due_at: base_time + 17.days}
+        {opens_at: base_time - 25.days, due_at: base_time - 15.days},
+        {opens_at: base_time - 20.days, due_at: base_time - 10.days},
+        {opens_at: base_time -  5.days, due_at: base_time +  5.days},
+        {opens_at: base_time + 10.days, due_at: base_time + 20.days}
       ]
 
       ## task = reading_task_groups[assignment_index][taskee_index]
