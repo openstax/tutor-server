@@ -5,9 +5,13 @@ class Domain::GetUserCourseStats
     translations: { outputs: { type: :verbatim } },
     as: :get_course_profile
 
-  uses_routine Domain::GetCourseBooks,
+  uses_routine CourseContent::GetCourseBooks,
     translations: { outputs: { type: :verbatim } },
     as: :get_course_books
+
+  uses_routine Content::VisitBook,
+    translations: { outputs: { type: :verbatim } },
+    as: :get_book_toc
 
   protected
   def exec(user:, course:)
