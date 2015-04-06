@@ -23,7 +23,7 @@ RSpec.describe OpenStax::Exercises::V1::FakeClient, :type => :external do
           questions: [
             {
               id: "1",
-              format: "multiple-choice",
+              formats: ["multiple-choice", "free-response"],
               stem_html: "Select 10 N.",
               answers:[
                 { id: "2", content_html: "10 N",
@@ -67,7 +67,7 @@ RSpec.describe OpenStax::Exercises::V1::FakeClient, :type => :external do
           questions: [
             {
               id: "4",
-              format: "multiple-choice",
+              formats: ["multiple-choice", "free-response"],
               stem_html: "Select 10 N.",
               answers:[
                 { id: "5", content_html: "10 N",
