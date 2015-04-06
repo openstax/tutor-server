@@ -12,6 +12,6 @@ class Domain::GetCourseBooks
   protected
   def exec(course:)
     run(:get_course_books, course: course)
-    run(:get_book_parts, course_books: outputs.course_books)
+    run(:get_book_parts, books: outputs.books)
   end
 end
