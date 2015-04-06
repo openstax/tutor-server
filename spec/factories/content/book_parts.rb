@@ -18,6 +18,7 @@ FactoryGirl.define do
       (evaluator.contents[:pages] || {}).each do |page|
         the_page = FactoryGirl.create(:content_page,
                                       title: page[:title],
+                                      path: page[:path],
                                       book_part: book_part)
         Content::Routines::TagResource[the_page, page[:los]]
       end
