@@ -41,27 +41,24 @@ class Api::V1::CoursesController < Api::V1::ApiController
   end
 
   api :GET, '/courses/:course_id/exercises',
-            'Returns a course\'s exercises, optionally filtered by tag'
+            "Returns a course\'s exercises, filtered by the page_ids param"
   description <<-EOS
-    Returns a list of a course's assignable exercises.
-    This means all exercises related to LO's present in the course's book.
-    Inside each book there can be units or chapters (parts), and eventually
-    parts (normally chapters) contain pages that have no children.
+    Returns a list of exercises tagged with LO's matching the given pages.
+    If no page_ids are specified, returns an empty array.
 
-    #{}#json_schema(Api::V1::ExerciseSearchRepresenter, include: :readable)}
+    #{json_schema(Api::V1::ExerciseSearchRepresenter, include: :readable)}
   EOS
   def exercises
-    course = Entity::Models::Course.find(params[:id])
+    course = Entity::Course.find(params[:id])
     OSU::AccessPolicy.require_action_allowed!(:exercises,
                                               current_api_user,
                                               course)
 
-    # For the moment, we're assuming just one book per course
-    books = CourseContent::GetCourseBooks.call(course: course).outputs.books
-    raise NotYetImplemented if books.count > 1
+    los = Content::GetPageLos[page_ids: params[:page_ids]]
+    outputs = Domain::SearchLocalExercises.call(tag: los, match_count: 1)
+                                          .outputs
 
-    exercises = nil
-    respond_with exercises#, represent_with: Api::V1::ExerciseSearchRepresenter
+    respond_with outputs, represent_with: Api::V1::ExerciseSearchRepresenter
   end
 
   api :GET, '/courses/:course_id/plans', 'Returns a course\'s plans'
