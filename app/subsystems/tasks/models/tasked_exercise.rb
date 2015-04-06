@@ -62,8 +62,10 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
 
   # Eventually this will be enforced by the exercise substeps
   def valid_state
-    # Can't answer multiple choice before free response
-    return if !free_response.blank? || answer_id.blank?
+    json_hash = JSON.parse(self.content)
+    formats = json_hash['questions'].first['formats']
+    # Can't answer multiple choice before free response if question formats includes 'free-response'
+    return if !free_response.blank? || answer_id.blank? || (formats.is_a?(Array) && !formats.include?('free-response'))
 
     errors.add(:free_response,
                'must not be blank before entering a multiple choice answer')
