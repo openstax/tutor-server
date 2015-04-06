@@ -28,7 +28,8 @@ class Domain::GetUserCourseStats
     outputs.book_parts.collect do |book_part|
       { id: book_part.id,
         title: book_part.title,
-        number: book_part.path }
+        number: book_part.path,
+        page_ids: book_part.page_ids }
     end
   end
 end
