@@ -22,7 +22,7 @@ class Domain::GetUserCourseStats
   def compile_course_stats
     outputs[:course_stats] = {
       title: 'Physics',
-      fields: [
+      topics: [
         { id: 123,
           title: 'Kinematics',
           number: '5',
