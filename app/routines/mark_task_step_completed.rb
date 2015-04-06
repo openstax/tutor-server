@@ -9,6 +9,11 @@ class MarkTaskStepCompleted
     task_step.save
     transfer_errors_from(task_step, {type: :verbatim}, true)
 
+    if task_step.tasked
+      task_step.tasked.try(:handle_task_step_completion!)
+      transfer_errors_from(task_step.tasked, {type: :verbatim}, true)
+    end
+
     task = task_step.task
     task.handle_task_step_completion!
     transfer_errors_from(task, {type: :verbatim}, true)

@@ -38,4 +38,10 @@ RSpec.describe MarkTaskStepCompleted, :type => :routine do
     expect(result.errors).to be_empty
   end
 
+  it 'instructs the associated Tasked to handle completion-related activities' do
+    expect(tasked_exercise).to receive(:handle_task_step_completion!)
+    result = MarkTaskStepCompleted.call(task_step: tasked_exercise.task_step)
+    expect(result.errors).to be_empty
+  end
+
 end

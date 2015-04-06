@@ -1,6 +1,6 @@
 class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   sortable_belongs_to :task, on: :number, inverse_of: :task_steps
-  belongs_to :tasked, polymorphic: true, dependent: :destroy
+  belongs_to :tasked, polymorphic: true, dependent: :destroy, inverse_of: :task_step
 
   enum group_type: [:default_group, :core_group, :spaced_practice_group]
 
