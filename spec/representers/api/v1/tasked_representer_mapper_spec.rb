@@ -10,7 +10,6 @@ RSpec.describe Api::V1::TaskedRepresenterMapper do
         'app/subsystems/tasks/models/tasked*.rb'
       ].collect{ |f| f.remove('app/subsystems/tasks/models/')
                       .remove('.rb').classify }
-      expected_tasked_models.delete? 'TaskedPlaceholder' ## TaskedPlaceholder has no representer
 
       # Get all the models in the mapper
       registered_tasked_models = Set.new(mapper.models.collect { |model|
