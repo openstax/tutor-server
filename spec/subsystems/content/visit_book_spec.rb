@@ -12,7 +12,6 @@ RSpec.describe Content::VisitBook, :type => :routine do
   let!(:root_book_part) { FactoryGirl.create(:content_book_part, :standard_contents_1) }
 
   it "should get the TOC with the TOC option" do
-
     toc = Content::VisitBook[book: root_book_part.book, visitor_names: :toc]
 
     expect(toc).to eq([{
