@@ -69,6 +69,10 @@ module OpenStax::Cnx::V1
       }
     end
 
+    def path
+      @path ||= hash.fetch('path') { |_| '' }
+    end
+
     def full_hash
       @full_hash ||= OpenStax::Cnx::V1.fetch(id)
     end

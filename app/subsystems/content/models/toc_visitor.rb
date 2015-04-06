@@ -21,7 +21,8 @@ class Content::Models::TocVisitor < Content::Models::BookVisitor
     current_level.push({
       id: page.id,
       title: page.title,
-      type: 'page'
+      type: 'page',
+      path: page.path
     })
   end
 

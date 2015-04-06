@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150402221032) do
+ActiveRecord::Schema.define(version: 20150406200833) do
 
   create_table "administrators", force: :cascade do |t|
     t.integer  "profile_id", null: false
@@ -452,6 +452,7 @@ ActiveRecord::Schema.define(version: 20150402221032) do
     t.string   "title"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string   "path"
   end
 
   create_table "tasks_tasked_videos", force: :cascade do |t|

@@ -5,32 +5,40 @@ class Content::Models::PageDataVisitor < Content::Models::BookVisitor
   end
 
   def visit_page(page)
-    page_id      = page.id
-    page_tags    = page.page_tags.collect{|page_tag| {type: page_tag.tag.tag_type, name: page_tag.tag.name}}
-    page_los     = page_tags.select{|tag| tag[:type] == 'lo'}.collect{|tag| tag[:name]}
-    page_title   = page.title
-    page_url     = page.url
-    page_version = get_version(page_url)
-
-    page_info = {
-      id:      page.id,
-      tags:    page_tags,
-      los:     page_los,
-      title:   page_title,
-      url:     page_url,
-      version: page_version
+    @page_data << {
+      id: page.id,
+      tags: get_page_tags(page),
+      los: get_page_los(page),
+      title: page.title,
+      path: page.path,
+      url: page.url,
+      version: get_page_version(page)
     }
-
-    @page_data << page_info
   end
 
   def output
     @page_data
   end
 
-  protected
+  private
+  def get_page_path(page)
+    page.page_tags.collect do |page_tag|
+      { type: page_tag.tag.tag_type, name: page_tag.tag.name }
+    end
+  end
 
-  def get_version(url)
-    url.gsub(%r{.*/}, '')
+  def get_page_los(page)
+    tags = get_page_tags(page)
+    tags.select { |tag| tag[:type] == 'lo' }.collect { |tag| tag[:name] }
+  end
+
+  def get_page_tags(page)
+    page.page_tags.collect do |page_tag|
+      { type: page_tag.tag.tag_type, name: page_tag.tag.name }
+    end
+  end
+
+  def get_page_version(page)
+    page.url.gsub(%r{.*/}, '')
   end
 end

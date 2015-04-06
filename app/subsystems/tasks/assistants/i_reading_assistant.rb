@@ -136,6 +136,7 @@ class Tasks::Assistants::IReadingAssistant
   def self.tasked_reading(reading_fragment:, page:, step: nil)
     Tasks::Models::TaskedReading.new(task_step: step,
                                      url: page.url,
+                                     path: page.path,
                                      title: reading_fragment.title,
                                      content: reading_fragment.to_html)
   end

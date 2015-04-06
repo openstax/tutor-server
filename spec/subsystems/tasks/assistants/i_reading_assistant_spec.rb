@@ -14,7 +14,8 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
 
   context "for Force version 11" do
     let!(:cnx_page_hash) { { 'id' => '092bbf0d-0729-42ce-87a6-fd96fd87a083@11',
-                             'title' => 'Force' } }
+                             'title' => 'Force',
+                             'path' => '8.6' } }
 
     let!(:core_step_gold_data) {
       [
@@ -101,6 +102,10 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
             expect(page.content).not_to include(task_step.tasked.content)
           end
 
+          if task_step.tasked_type.demodulize == 'TaskedReading'
+            expect(task_step.tasked.path).to eq('8.6')
+          end
+
           other_task_steps = non_placeholder_task_steps.reject{|ts| ts == task_step}
           other_task_steps.each do |other_step|
             expect(task_step.tasked.content).not_to(
@@ -124,7 +129,8 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
   context "for Inertia version 11" do
     let!(:cnx_page_hash) { {
       'id' => '61445f78-00e2-45ae-8e2c-461b17d9b4fd@11',
-      'title' => "Newton's First Law of Motion: Inertia"
+      'title' => "Newton's First Law of Motion: Inertia",
+      'path' => 'anything'
     } }
 
     let!(:core_step_gold_data) {
