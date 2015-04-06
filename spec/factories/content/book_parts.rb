@@ -10,13 +10,15 @@ FactoryGirl.define do
     after(:create) do |book_part, evaluator|
       (evaluator.contents[:book_parts] || {}).each do |child_book_part|
         FactoryGirl.create(:content_book_part,
-                            contents: child_book_part,
-                                            book: book_part.book,
-                                            parent_book_part: book_part)
+                           contents: child_book_part,
+                           book: book_part.book,
+                           parent_book_part: book_part)
       end
 
       (evaluator.contents[:pages] || {}).each do |page|
-        the_page = FactoryGirl.create(:content_page, title: page[:title], book_part: book_part)
+        the_page = FactoryGirl.create(:content_page,
+                                      title: page[:title],
+                                      book_part: book_part)
         Content::Routines::TagResource[the_page, page[:los]]
       end
     end
@@ -33,11 +35,13 @@ FactoryGirl.define do
                 pages: [
                   {
                     title: 'first page',
-                    los: ['ost-tag-lo-topic1-lo1', 'ost-tag-lo-topic2-lo2']
+                    los: ['ost-tag-lo-topic1-lo1', 'ost-tag-lo-topic2-lo2'],
+                    path: '1.1'
                   },
                   {
                     title: 'second page',
-                    los: ['ost-tag-lo-topic2-lo2', 'ost-tag-lo-topic3-lo3']
+                    los: ['ost-tag-lo-topic2-lo2', 'ost-tag-lo-topic3-lo3'],
+                    path: '1.2'
                   }
                 ]
               },
@@ -46,7 +50,8 @@ FactoryGirl.define do
                 pages: [
                   {
                     title: 'third page',
-                    los: ['ost-tag-lo-topic4-lo4']
+                    los: ['ost-tag-lo-topic4-lo4'],
+                    path: '1.3'
                   }
                 ]
               }
