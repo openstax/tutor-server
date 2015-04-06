@@ -62,7 +62,7 @@ class OpenStax::Exercises::V1::FakeClient
       questions: [
         {
           id: "#{next_uid}",
-          format: "multiple-choice",
+          formats: ["multiple-choice", "free-response"],
           stem_html: "Select 10 N.",
           answers:[
             { id: "#{next_uid}", content_html: "10 N",
