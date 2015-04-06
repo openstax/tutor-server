@@ -52,6 +52,12 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     end.first
   end
 
+  def inject_debug_content(debug_content:)
+    json_hash = JSON.parse(self.content)
+    json_hash['questions'].first['stem_html'] = debug_content + json_hash['questions'].first['stem_html']
+    self.content = json_hash.to_json
+  end
+
   protected
 
   # Eventually this will be enforced by the exercise substeps
