@@ -9,13 +9,31 @@ module Sprint009
       OpenStax::BigLearn::V1.use_fake_client
       OpenStax::Exercises::V1.use_real_client
 
+      puts "===== CREATING USERS ====="
+      student1 = FactoryGirl.create :user, username: 'in_order'
+      student2 = FactoryGirl.create :user, username: 'out_of_order'
+      student3 = FactoryGirl.create :user, username: 'skipped'
+
+      puts "===== CREATING COURSE ====="
+      physics_course = Domain::CreateCourse[name: 'Physics']
+
+      puts "===== ASSIGNING USERS TO COURSE ROLES ====="
+      Domain::AddUserAsCourseStudent.call(course: physics_course, user: student1.entity_user)
+      student_role1 = Entity::Role.last
+      Domain::AddUserAsCourseStudent.call(course: physics_course, user: student2.entity_user)
+      student_role2 = Entity::Role.last
+      Domain::AddUserAsCourseStudent.call(course: physics_course, user: student3.entity_user)
+      student_role3 = Entity::Role.last
+
       ## Retrieve a book from CNX
+      puts "===== FETCHING CNX BOOK ====="
       cnx_book = OpenStax::Cnx::V1::Book.new(id: '7db9aa72-f815-4c3b-9cb6-d50cf5318b58@4.57')
       visitor = OpenStax::Cnx::V1::BookToStringVisitor.new
       cnx_book.visit(visitor: visitor)
       puts visitor.to_s
 
       ## Import the book (which imports the associated exercises)
+      puts "===== IMPORTING BOOK ====="
       content_book = Content::ImportBook.call(cnx_book: cnx_book).outputs.book
 
       ## Retrieve the page info
@@ -28,11 +46,9 @@ module Sprint009
         puts "  version: #{page_data.version}"
       end
 
-      ## create taskees
-      taskee_role1 = Entity::Role.create
-      taskee_role2 = Entity::Role.create
-      taskee_role3 = Entity::Role.create
-      taskee_roles = [taskee_role1, taskee_role2, taskee_role3]
+      puts "===== DISTRIBUTING ASSIGNMENTS ====="
+      taskee_roles = [student_role1, student_role2, student_role3]
+      puts "taskee_roles: #{taskee_roles.inspect}"
 
       ## create the assistant
       assistant = FactoryGirl.create(:tasks_assistant,
@@ -64,6 +80,8 @@ module Sprint009
       ## create taskee histories
       ##
 
+      puts "===== CREATING USER HISTORIES ====="
+
       # taskee1: in order
       reading_task_groups[0][0].core_task_steps.each_with_index do |task_step, ii|
         MarkTaskStepCompleted.call(task_step: task_step, completion_time: task_dates[0][:opens_at]+(10+ii).minutes)
@@ -93,6 +111,8 @@ module Sprint009
       end
 
     end
+
+    private
 
     def create_tasks(page_id:, taskees:, assistant:, opens_at: Time.now, due_at: opens_at+1.week)
       ## create TaskPlans for each Page with LOs
