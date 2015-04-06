@@ -18,7 +18,8 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, :type => :assistant,
 
   let!(:task_plan) {
     FactoryGirl.create :tasks_task_plan, assistant: assistant,
-                                         settings: { exercise_ids: exercise_ids }
+                                         settings: { exercise_ids: exercise_ids,
+                                                     description: "Hello!" }
   }
 
   let!(:taskees) { 3.times.collect{ Entity::User.create } }
@@ -28,12 +29,13 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, :type => :assistant,
     )
   } }
 
-  it 'assigns the exercises chosen by the teacher' do
+  it 'assigns the exercises chosen by the teacher and sets the description' do
     tasks = DistributeTasks.call(task_plan).outputs.tasks
     expect(tasks.length).to eq 3
 
     tasks.each do |task|
       expect(task.taskings.length).to eq 1
+      expect(task.description).to eq "Hello!"
       task_steps = task.task_steps
       expect(task_steps.length).to(
         eq exercise_ids.length + tutor_exercise_count
@@ -59,6 +61,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, :type => :assistant,
     expect(tasks.collect{|t| t.taskings.first.role}).to eq expected_roles
   end
 
+  # TODO (spaced practice etc)
   xit 'assigns the exercises chosen by tutor' do
   end
 

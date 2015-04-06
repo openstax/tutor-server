@@ -29,22 +29,25 @@ module Api::V1
                required: true
              }
 
+    property :description,
+             type: String,
+             writeable: false,
+             readable: true
+
     property :opens_at,
              type: DateTime,
-             writeable: true,
+             writeable: false,
              readable: true,
              schema_info: {
-               required: true,
-               description: "When the task is available to be worked"
+               description: "When the task is available to be worked (nil means available immediately)"
              }
 
     property :due_at,
              type: DateTime,
-             writeable: true,
+             writeable: false,
              readable: true,
              schema_info: {
-               required: true,
-               description: "When the task is due (nil means not due)"
+               description: "When the task is due (nil means always open)"
              }
 
     property :is_shared,

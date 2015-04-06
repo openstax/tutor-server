@@ -14,7 +14,6 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   has_many :taskings, dependent: :destroy, through: :entity_task
 
   validates :title, presence: true
-  validates :opens_at, presence: true
   validates :due_at, timeliness: { on_or_after: :opens_at }, allow_nil: true
   validates :spaced_practice_algorithm, presence: true
 

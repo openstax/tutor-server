@@ -489,8 +489,9 @@ ActiveRecord::Schema.define(version: 20150406200833) do
     t.integer  "entity_task_id"
     t.string   "task_type",                             null: false
     t.string   "title",                                 null: false
-    t.datetime "opens_at",                              null: false
+    t.datetime "opens_at"
     t.datetime "due_at"
+    t.text     "description"
     t.integer  "tasks_taskings_count",      default: 0, null: false
     t.text     "spaced_practice_algorithm",             null: false
     t.datetime "created_at",                            null: false

@@ -15,6 +15,9 @@ class Tasks::Assistants::HomeworkAssistant
           "items": {
             "type": "integer"
           }
+        },
+        "description": {
+          "type": "string"
         }
       },
       "additionalProperties": false
@@ -35,6 +38,7 @@ class Tasks::Assistants::HomeworkAssistant
     due_at = task_plan.due_at || (task_plan.opens_at + 1.week)
 
     exercise_ids = task_plan.settings['exercise_ids']
+    description = task_plan.settings['description']
     exercises = exercise_ids.collect do |exercise_id|
       Content::GetExercise.call(id: exercise_id).outputs.exercise
     end
@@ -44,6 +48,7 @@ class Tasks::Assistants::HomeworkAssistant
       task = Tasks::CreateTask[task_plan: task_plan,
                                task_type: 'homework',
                                title: title,
+                               description: description,
                                opens_at: opens_at,
                                due_at: due_at]
 

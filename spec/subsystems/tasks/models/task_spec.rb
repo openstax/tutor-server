@@ -7,7 +7,6 @@ RSpec.describe Tasks::Models::Task, :type => :model do
   it { is_expected.to have_many(:taskings).dependent(:destroy) }
 
   it { is_expected.to validate_presence_of(:title) }
-  it { is_expected.to validate_presence_of(:opens_at) }
 
   it "requires non-nil due_at to be after opens_at" do
     task = FactoryGirl.build(:tasks_task, due_at: nil)
