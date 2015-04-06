@@ -38,7 +38,7 @@ class Domain::ChooseCourseRole
     if roles_for_user(course, user).include?(role)
       outputs[:role] = role
     else
-      fatal_error(code: :invalid_role)
+      fatal_error(code: :invalid_role, message:"Invalid role for user in course")
     end
   end
 
@@ -46,7 +46,7 @@ class Domain::ChooseCourseRole
   # of possible roles for the user
   def validate_role_listing(roles)
     if roles.none?
-      fatal_error(code: :invalid_user)
+      fatal_error(code: :invalid_user, message:"The user does not have the specified role" )
     elsif roles.one?
       outputs[:role] = roles.first
     else
@@ -54,7 +54,7 @@ class Domain::ChooseCourseRole
       if teacher_role
         outputs[:role] = teacher_role
       else
-        fatal_error(code: :multiple_roles)
+        fatal_error(code: :multiple_roles, message:"The role must be specified because there is more than one student role available" )
       end
     end
   end
