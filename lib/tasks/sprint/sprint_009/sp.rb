@@ -79,46 +79,19 @@ module Sprint009
       end
 
       # taskee2: out of order
-      reading_task_groups[0][1].core_task_steps.each_with_index do |task_step, ii|
-        MarkTaskStepCompleted.call(task_step: task_step, completion_time: task_dates[1][:opens_at]+(10+ii).minutes)
-      end
       reading_task_groups[1][1].core_task_steps.each_with_index do |task_step, ii|
         MarkTaskStepCompleted.call(task_step: task_step, completion_time: task_dates[0][:opens_at]+(10+ii).minutes)
       end
-      reading_task_groups[2][1].core_task_steps.each_with_index do |task_step, ii|
-        MarkTaskStepCompleted.call(task_step: task_step, completion_time: task_dates[3][:opens_at]+(10+ii).minutes)
+      reading_task_groups[0][1].core_task_steps.each_with_index do |task_step, ii|
+        MarkTaskStepCompleted.call(task_step: task_step, completion_time: task_dates[1][:opens_at]+(10+ii).minutes)
       end
       reading_task_groups[3][1].core_task_steps.each_with_index do |task_step, ii|
         MarkTaskStepCompleted.call(task_step: task_step, completion_time: task_dates[2][:opens_at]+(10+ii).minutes)
       end
-
-      ireading_event_history1 = get_ireading_task_history(taskee: taskee_role1)
-      ap ireading_event_history1
-
-      ireading_event_history2 = get_ireading_task_history(taskee: taskee_role2)
-      ap ireading_event_history2
-
-      ireading_event_history3 = get_ireading_task_history(taskee: taskee_role3, current_time: base_time+13.days)
-      ap ireading_event_history3
-    end
-
-    def get_ireading_task_history(taskee:, current_time: Time.now)
-      tasks = Tasks::Models::Task.joins{taskings}
-                                 .where{taskings.entity_role_id == taskee.id}
-
-      ireading_tasks = tasks.select{|task| task.task_type == "reading"}
-
-      completed_ireading_tasks = ireading_tasks.select do |task|
-        task.core_task_steps_completed? || task.past_due?(current_time: current_time)
+      reading_task_groups[2][1].core_task_steps.each_with_index do |task_step, ii|
+        MarkTaskStepCompleted.call(task_step: task_step, completion_time: task_dates[3][:opens_at]+(10+ii).minutes)
       end
 
-      sorted_tasks = completed_ireading_tasks.sort_by do |task|
-        times = [task.due_at]
-        times << task.core_task_steps_completed_at if task.core_task_steps_completed?
-        times.min
-      end
-
-      sorted_tasks
     end
 
     def create_tasks(page_id:, taskees:, assistant:, opens_at: Time.now, due_at: opens_at+1.week)
