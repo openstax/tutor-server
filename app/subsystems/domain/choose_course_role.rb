@@ -13,7 +13,7 @@
 #     If one is a :teacher, return it
 #     Otherwise fail with fatal_error code: multiple_roles
 #
-class Domain::GetCourseUserRole
+class Domain::ChooseCourseRole
 
   lev_routine express_output: :role
 

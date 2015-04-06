@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Domain::GetCourseUserRole do
+describe Domain::ChooseCourseRole do
 
   let(:teacher){ Entity::CreateUser.call.outputs.user }
   let(:student){ Entity::CreateUser.call.outputs.user }
