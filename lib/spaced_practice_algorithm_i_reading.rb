@@ -2,7 +2,7 @@ class SpacedPracticeAlgorithmIReading
   ## k_ago_map is an array of two-element arrays.  Each two-element
   ## array has the form [k_ago, num_k_ago_exercises].  For example:
   ##   k_ago_map: [[1,2], [5,2]]
-  def initialize(k_ago_map:)
+  def initialize(k_ago_map: [])
     @k_ago_map = k_ago_map
   end
 
@@ -75,7 +75,19 @@ class SpacedPracticeAlgorithmIReading
     end
 
     placeholder_task_steps.each do |task_step|
-      puts "need to fill placeholder"
+      puts "filling placeholder with fake exercise"
+      exercise_hash = OpenStax::Exercises::V1.fake_client.new_exercise_hash
+      exercise = OpenStax::Exercises::V1::Exercise.new(exercise_hash.to_json)
+
+      task_step.tasked.destroy!
+      task_step.tasked = Tasks::Models::TaskedExercise.new(
+        task_step: task_step,
+        title:     exercise.title,
+        url:       exercise.url,
+        content:   exercise.content
+      )
+      task_step.tasked.save!
+      task_step.save!
     end
   end
 
