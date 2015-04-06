@@ -1,9 +1,6 @@
 class Tasks::Assistants::HomeworkAssistant
 
-  # Array of arrays [Events ago, number of spaced practice questions]
-  # This has to change, but for now add 4 questions to simulate what
-  # Kathi's algorithm would give us for a reading with 2 LO's
-  # (the sample content)
+  # Fake spaced practice for Sprint 9
   SPACED_PRACTICE_MAP = [[1, 4]]
 
   def self.schema
@@ -54,9 +51,7 @@ class Tasks::Assistants::HomeworkAssistant
         add_exercise_step(task: task, exercise: exercise)
       end
 
-      # Spaced practice
-      # TODO: Make a SpacedPracticeStep that does this
-      #       right before the user gets the question
+      # Fake Spaced practice
       SPACED_PRACTICE_MAP.each do |k_ago, number|
         number.times do
           exercise = FillIReadingSpacedPracticeSlot.call(taskee, k_ago)
