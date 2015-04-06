@@ -87,5 +87,4 @@ class Content::VisitBook
       visit_book_part(child_book_part, visitors)
     end
   end
-
 end

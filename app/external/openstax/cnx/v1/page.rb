@@ -70,9 +70,7 @@ module OpenStax::Cnx::V1
     end
 
     def path
-      @path ||= hash.fetch('path') { |key|
-        raise "Page id=#{id} is missing #{key}"
-      }
+      @path ||= hash.fetch('path') { |_| '' }
     end
 
     def full_hash
