@@ -27,7 +27,7 @@ describe Domain::ChooseCourseRole do
   context "when a role is provided" do
 
     context "and the user has it" do
-      subject { Domain::ChooseCourseRole.call(user: student, course: course, role: student_role) }
+      subject { Domain::ChooseCourseRole.call(user: student, course: course, role_id: student_role.id) }
       it "returns the user's role" do
         expect(subject.outputs.role).to eq(student_role)
       end
@@ -35,7 +35,7 @@ describe Domain::ChooseCourseRole do
 
     context "and the user lacks it" do
       subject(:result) {
-        Domain::ChooseCourseRole.call(user: student, course: course, role: teacher_role)
+        Domain::ChooseCourseRole.call(user: student, course: course, role_id: teacher_role.id)
       }
 
       describe "errors" do
@@ -97,7 +97,7 @@ describe Domain::ChooseCourseRole do
           Role::AddUserRole[user: teacher, role: role]
           CourseMembership::Models::Student.create(entity_course_id: course.id, entity_role_id: role.id)
           Domain::ChooseCourseRole.call(
-            user: teacher, course: course, role_type: role_type
+            user: teacher, course: course, allowed_role_type: role_type
           ).outputs.role
         }
 

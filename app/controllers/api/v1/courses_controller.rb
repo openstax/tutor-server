@@ -100,11 +100,10 @@ class Api::V1::CoursesController < Api::V1::ApiController
   protected
 
   def get_practice_role
-    role = params.has_key?(:role_id) ? Entity::Role.find(params[:role_id]) : nil
     result = Domain::ChooseCourseRole.call(user: current_human_user.entity_user,
                                            course: Entity::Course.find(params[:id]),
-                                           role_type: :student,
-                                           role: role
+                                           allowed_role_type: :student,
+                                           role_id: params[:role_id]
                                           )
     if result.errors.any?
       raise(IllegalState, result.errors.map(&:message).to_sentence)

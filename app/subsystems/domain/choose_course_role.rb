@@ -1,9 +1,9 @@
-# If role provided:
+# If role_id provided:
 #   make sure it belongs to user; fatal :invalid_role if not
 #
-# If role is not provided
+# If role_id is not specified:
 #   Get the users set of roles for the given course, restricted to
-#   role_type unless that is set to :any (the default)
+#   allowed_role_type unless that is set to :any (the default)
 #
 #   If there are no roles, fail with :invalid_user
 #
@@ -21,11 +21,13 @@ class Domain::ChooseCourseRole
 
   protected
 
-  def exec(user:, course:, role: nil, role_type: :any)
-    if role
+  def exec(user:, course:, allowed_role_type: :any, role_id: nil)
+    if role_id
+      role = Entity::Role.find(role_id)
+      fatal_error(code: :invalid_role, message:"Role not found") unless role
       validate_role_membership(course, user, role)
     else
-      roles = roles_for_user(course, user, limit: role_type.to_s)
+      roles = roles_for_user(course, user, allowed_role_type: allowed_role_type.to_s)
       validate_role_listing(roles)
     end
   end
@@ -59,10 +61,10 @@ class Domain::ChooseCourseRole
     end
   end
 
-  def roles_for_user(course, user, limit: "any")
+  def roles_for_user(course, user, allowed_role_type: "any")
     roles = run(Domain::GetUserCourseRoles, course:course, user:user).outputs.roles
-    return ("any" == limit) ? roles :
-             roles.select{ |r| r.role_type == limit }
+    return ("any" == allowed_role_type) ? roles :
+             roles.select{ |r| r.role_type == allowed_role_type }
   end
 
 end
