@@ -7,43 +7,43 @@ class SpacedPracticeAlgorithmIReading
   end
 
   def call(event:, task:, current_time: Time.now)
-    puts "=== SPA INVOKED ==="
+    #puts "=== SPA INVOKED ==="
 
     return if task.taskings.none?
     taskee_role = task.taskings.first.role
 
-    puts "event:       #{event}"
-    puts "task:        #{task.inspect}"
-    puts "taskee_role: #{taskee_role.inspect}"
-    puts "@k_ago_map:  #{@k_ago_map.inspect}"
+    #puts "event:       #{event}"
+    #puts "task:        #{task.inspect}"
+    #puts "taskee_role: #{taskee_role.inspect}"
+    #puts "@k_ago_map:  #{@k_ago_map.inspect}"
 
     return unless task.core_task_steps_completed?
 
-    puts "core tasks completed"
+    #puts "core tasks completed"
 
     placeholder_task_steps = task.spaced_practice_task_steps.select{|ts| ts.placeholder?}
     return if placeholder_task_steps.none?
 
-    puts "placeholder steps detected"
+    #puts "placeholder steps detected"
 
-    puts "=== POPULATING SPEs ==="
+    #puts "=== POPULATING SPEs ==="
 
     ireading_event_history = get_ireading_task_history(taskee: taskee_role, current_time: current_time)
     maps = create_spaced_practice_exercise_pool_maps(tasks: ireading_event_history)
 
-    puts "map data:"
+    #puts "map data:"
     maps.each_with_index do |map, ii|
-      puts "  content_exercises: #{maps[ii][:content_exercises].collect{|ex| ex.id}.sort}"
-      puts "  taskee_exercises:  #{maps[ii][:taskee_exercises].collect{|ex| ex.id}.sort}"
+      #puts "  content_exercises: #{maps[ii][:content_exercises].collect{|ex| ex.id}.sort}"
+      #puts "  taskee_exercises:  #{maps[ii][:taskee_exercises].collect{|ex| ex.id}.sort}"
     end
     all_taskee_exercises = maps.collect{|map| map[:taskee_exercises]}.flatten.compact.uniq
-    puts "all_taskee_exercises: #{all_taskee_exercises.collect{|ex| ex.id}.sort}"
+    #puts "all_taskee_exercises: #{all_taskee_exercises.collect{|ex| ex.id}.sort}"
 
     @k_ago_map.each do |k_ago, num_k_ago_exercises|
       break if k_ago >= maps.count
 
       candidate_exercises = (maps[k_ago][:content_exercises] - all_taskee_exercises).sort_by{|ex| ex.id}.take(10)
-      puts "candidate_exercises: #{candidate_exercises.collect{|ex| ex.id}.sort}"
+      #puts "candidate_exercises: #{candidate_exercises.collect{|ex| ex.id}.sort}"
 
       num_k_ago_exercises.times do
         task_step = placeholder_task_steps.shift
@@ -53,9 +53,9 @@ class SpacedPracticeAlgorithmIReading
         candidate_exercises.delete(chosen_exercise)
         all_taskee_exercises.push(chosen_exercise)
 
-        puts "  chosen_exercise:      #{chosen_exercise.inspect}"
-        puts "  candidate_exercises:  #{candidate_exercises.collect{|ex| ex.id}.sort}"
-        puts "  all_taskee_exercises: #{all_taskee_exercises.collect{|ex| ex.id}.sort}"
+        #puts "  chosen_exercise:      #{chosen_exercise.inspect}"
+        #puts "  candidate_exercises:  #{candidate_exercises.collect{|ex| ex.id}.sort}"
+        #puts "  all_taskee_exercises: #{all_taskee_exercises.collect{|ex| ex.id}.sort}"
 
         exercise = OpenStax::Exercises::V1::Exercise.new(chosen_exercise.content)
 
@@ -67,6 +67,7 @@ class SpacedPracticeAlgorithmIReading
           content:   exercise.content,
           exercise:  chosen_exercise
         )
+        task_step.tasked.inject_debug_content(debug_content: 'SPE<br>')
         task_step.tasked.save!
         task_step.save!
       end
@@ -75,7 +76,7 @@ class SpacedPracticeAlgorithmIReading
     end
 
     placeholder_task_steps.each do |task_step|
-      puts "filling placeholder with fake exercise"
+      #puts "filling placeholder with fake exercise"
       exercise_hash = OpenStax::Exercises::V1.fake_client.new_exercise_hash
       exercise = OpenStax::Exercises::V1::Exercise.new(exercise_hash.to_json)
 
@@ -86,6 +87,7 @@ class SpacedPracticeAlgorithmIReading
         url:       exercise.url,
         content:   exercise.content
       )
+      task_step.tasked.inject_debug_content(debug_content: 'FAKE PLACEHOLDER EXERCISE<br>')
       task_step.tasked.save!
       task_step.save!
     end
