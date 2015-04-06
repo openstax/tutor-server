@@ -14,8 +14,12 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   has_many :taskings, dependent: :destroy, through: :entity_task
 
   validates :title, presence: true
-  validates :due_at, timeliness: { on_or_after: :opens_at }, allow_nil: true
+  validates :due_at, timeliness: { on_or_after: :opens_at },
+                     allow_nil: true,
+                     if: :opens_at
   validates :spaced_practice_algorithm, presence: true
+
+  validate :opens_at_or_due_at
 
   after_initialize :init
 
@@ -66,6 +70,14 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   def handle_task_step_completion!
     spaced_practice_algorithm.call(event: :task_step_completion, task: self)
+  end
+
+  protected
+
+  def opens_at_or_due_at
+    return unless opens_at.blank? && due_at.blank?
+    errors.add(:base, 'needs either the opens_at date or due_at date')
+    false
   end
 
 end
