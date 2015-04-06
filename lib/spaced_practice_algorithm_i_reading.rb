@@ -1,13 +1,21 @@
 class SpacedPracticeAlgorithmIReading
+  ## k_ago_map is an array of two-element arrays.  Each two-element
+  ## array has the form [k_ago, num_k_ago_exercises].  For example:
+  ##   k_ago_map: [[1,2], [5,2]]
+  def initialize(k_ago_map:)
+    @k_ago_map = k_ago_map
+  end
+
   def call(event:, task:, current_time: Time.now)
     puts "=== SPA INVOKED ==="
 
     return if task.taskings.none?
     taskee_role = task.taskings.first.role
 
-    puts "event:  #{event}"
-    puts "task:   #{task.inspect}"
+    puts "event:       #{event}"
+    puts "task:        #{task.inspect}"
     puts "taskee_role: #{taskee_role.inspect}"
+    puts "@k_ago_map:  #{@k_ago_map.inspect}"
 
     return unless task.core_task_steps_completed?
 
@@ -28,29 +36,46 @@ class SpacedPracticeAlgorithmIReading
       puts "  content_exercises: #{maps[ii][:content_exercises].collect{|ex| ex.id}.sort}"
       puts "  taskee_exercises:  #{maps[ii][:taskee_exercises].collect{|ex| ex.id}.sort}"
     end
+    all_taskee_exercises = maps.collect{|map| map[:taskee_exercises]}.flatten.compact.uniq
+    puts "all_taskee_exercises: #{all_taskee_exercises.collect{|ex| ex.id}.sort}"
 
-    candidate_exercises = (maps[0][:content_exercises] - maps[0][:taskee_exercises]).sort_by{|ex| ex.id}.take(10)
-    puts "candidate_exercises: #{candidate_exercises.collect{|ex| ex.id}.sort}"
+    @k_ago_map.each do |k_ago, num_k_ago_exercises|
+      break if k_ago >= maps.count
+
+      candidate_exercises = (maps[k_ago][:content_exercises] - all_taskee_exercises).sort_by{|ex| ex.id}.take(10)
+      puts "candidate_exercises: #{candidate_exercises.collect{|ex| ex.id}.sort}"
+
+      num_k_ago_exercises.times do
+        task_step = placeholder_task_steps.shift
+        break if task_step.nil?
+
+        chosen_exercise = candidate_exercises.sample
+        candidate_exercises.delete(chosen_exercise)
+        all_taskee_exercises.push(chosen_exercise)
+
+        puts "  chosen_exercise:      #{chosen_exercise.inspect}"
+        puts "  candidate_exercises:  #{candidate_exercises.collect{|ex| ex.id}.sort}"
+        puts "  all_taskee_exercises: #{all_taskee_exercises.collect{|ex| ex.id}.sort}"
+
+        exercise = OpenStax::Exercises::V1::Exercise.new(chosen_exercise.content)
+
+        task_step.tasked.destroy!
+        task_step.tasked = Tasks::Models::TaskedExercise.new(
+          task_step: task_step,
+          title:     exercise.title,
+          url:       exercise.url,
+          content:   exercise.content,
+          exercise:  chosen_exercise
+        )
+        task_step.tasked.save!
+        task_step.save!
+      end
+
+      break if placeholder_task_steps.count == 0
+    end
 
     placeholder_task_steps.each do |task_step|
-      chosen_exercise = candidate_exercises.sample
-      candidate_exercises.delete(chosen_exercise)
-
-      puts "  chosen_exercise:     #{chosen_exercise.inspect}"
-      puts "  candidate_exercises: #{candidate_exercises.collect{|ex| ex.id}.sort}"
-
-      exercise = OpenStax::Exercises::V1::Exercise.new(chosen_exercise.content)
-
-      task_step.tasked.destroy!
-      task_step.tasked = Tasks::Models::TaskedExercise.new(
-        task_step: task_step,
-        title:     exercise.title,
-        url:       exercise.url,
-        content:   exercise.content,
-        exercise:  chosen_exercise
-      )
-      task_step.tasked.save!
-      task_step.save!
+      puts "need to fill placeholder"
     end
   end
 
@@ -70,7 +95,7 @@ class SpacedPracticeAlgorithmIReading
       times = [task.due_at]
       times << task.core_task_steps_completed_at if task.core_task_steps_completed?
       times.min
-    end
+    end.reverse
 
     sorted_tasks
   end
