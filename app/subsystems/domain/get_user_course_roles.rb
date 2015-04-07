@@ -8,7 +8,7 @@
 #     or more of `:student`, `:teacher`, `:any`
 #
 class Domain::GetUserCourseRoles
-  lev_routine
+  lev_routine express_output: :roles
 
   uses_routine Role::GetUserRoles,
                as: :get_user_roles

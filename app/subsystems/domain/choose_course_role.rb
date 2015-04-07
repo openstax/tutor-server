@@ -27,7 +27,7 @@ class Domain::ChooseCourseRole
       fatal_error(code: :invalid_role, message:"Role not found") unless role
       validate_role_membership(course, user, role)
     else
-      roles = roles_for_user(course, user, allowed_role_type: allowed_role_type.to_s)
+      roles = Domain::GetUserCourseRoles[course:course, user:user, types:allowed_role_type]
       validate_role_listing(roles)
     end
   end
@@ -37,7 +37,7 @@ class Domain::ChooseCourseRole
   # the simplest case where we were given a role.
   # Verify the user has it on the course and return
   def validate_role_membership(course, user, role)
-    if roles_for_user(course, user).include?(role)
+    if Domain::GetUserCourseRoles[course:course, user:user].include?(role)
       outputs[:role] = role
     else
       fatal_error(code: :invalid_role, message:"Invalid role for user in course")
@@ -61,10 +61,5 @@ class Domain::ChooseCourseRole
     end
   end
 
-  def roles_for_user(course, user, allowed_role_type: "any")
-    roles = run(Domain::GetUserCourseRoles, course:course, user:user).outputs.roles
-    return ("any" == allowed_role_type) ? roles :
-             roles.select{ |r| r.role_type == allowed_role_type }
-  end
 
 end
