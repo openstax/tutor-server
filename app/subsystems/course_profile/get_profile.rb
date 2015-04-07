@@ -1,5 +1,5 @@
 class CourseProfile::GetProfile
-  lev_routine
+  lev_routine express_output: :profile
 
   protected
 

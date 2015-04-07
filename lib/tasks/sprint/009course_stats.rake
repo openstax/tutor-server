@@ -2,7 +2,7 @@ namespace :sprint do
   desc 'Sprint 9 Course Stats'
   task :'009course_stats' => :environment do |tt, args|
     require_relative 'sprint_009/course_stats.rb'
-    course = {}
+    course = Entity::Course.find(ENV['COURSE_ID'])
     result = Sprint009::CourseStats.call(course: course)
 
     if result.errors.none?
