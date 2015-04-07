@@ -1,6 +1,8 @@
 require 'rails_helper'
+require 'vcr_helper'
 
-RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :version => :v1  do
+RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
+                                           :version => :v1, :vcr => VCR_OPTS  do
 
   let!(:application)     { FactoryGirl.create :doorkeeper_application }
   let!(:user_1)          { FactoryGirl.create :user }
@@ -63,6 +65,43 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
         ]
       }])
 
+    end
+  end
+
+  describe "#exercises" do
+    let!(:book) { Domain::FetchAndImportBook[
+      id: '7db9aa72-f815-4c3b-9cb6-d50cf5318b58'
+    ] }
+
+    before(:each) do
+      CourseContent::AddBookToCourse.call(course: course, book: book)
+      Domain::AddUserAsCourseTeacher.call(course: course,
+                                          user: user_1.entity_user)
+    end
+
+    it "should return an empty result if no page_ids specified" do
+      api_get :exercises, user_1_token, parameters: {id: course.id}
+
+      expect(response).to have_http_status(:success)
+      expect(response.body_as_hash).to eq({total_count: 0, items: []})
+    end
+
+    it "should work on the happy path" do
+      api_get :exercises, user_1_token, parameters: {id: course.id,
+                                                     page_ids: [2, 3]}
+
+      expect(response).to have_http_status(:success)
+      hash = response.body_as_hash
+      expect(hash[:total_count]).to eq(63)
+      page_los = Content::GetPageLos[page_ids: [2, 3]]
+      hash[:items].each do |item|
+        wrapper = OpenStax::Exercises::V1::Exercise.new(item[:content])
+        item_los = wrapper.los
+        expect(item_los).not_to be_empty
+        item_los.each do |item_lo|
+          expect(page_los).to include(item_lo)
+        end
+      end
     end
   end
 

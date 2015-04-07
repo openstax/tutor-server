@@ -2,27 +2,44 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::TaskSearchRepresenter, :type => :representer do
 
-  it "represents a generates a JSON representation of their tasks" do
-    task_count = rand(5..10)
-    tasks = task_count.times.collect{ FactoryGirl.create(:tasks_task) }
+  context "a user" do
 
-    outputs = Hashie::Mash.new({
-      items: tasks
-    })
+    let!(:user)           { FactoryGirl.create(:user).entity_user }
+    let!(:course)         { FactoryGirl.create(:entity_course) }
+    let!(:role)           { Domain::AddUserAsCourseStudent.call(user: user,
+                                                               course: course)
+                                                         .outputs.role }
+    let!(:default_task)   { FactoryGirl.create(:tasks_task) }
+    let!(:task_count)     { rand(5..10) }
+    let!(:tasks)          { task_count.times.collect {
+      FactoryGirl.create(:tasks_task)
+    } }
+    let!(:taskings)       { tasks.collect { |t| FactoryGirl.create(
+      :tasks_tasking, task: t.entity_task, role: role
+    ) } }
 
-    representation = Api::V1::TaskSearchRepresenter.new(outputs).as_json
+    let!(:output)         { Hashie::Mash.new(
+      'items' => Domain::GetCourseUserTasks[
+        course: course, user: user
+      ].collect{|t| t.task}
+    ) }
+    let!(:representation) { Api::V1::TaskSearchRepresenter.new(output).as_json }
 
-    expect(representation).to include(
-      "total_count" => task_count,
-      "items" => outputs[:items].map{ | item |
-        json = item.as_json.slice('id', 'title', 'task_plan_id', 'is_shared', 'steps')
-        json['opens_at']  = DateTimeUtilities.to_api_s(item.opens_at)
-        json['due_at']    = DateTimeUtilities.to_api_s(item.due_at)
-        json['is_shared'] = item.is_shared
-        json['steps']     = item.task_steps.as_json
-        json
-      }
-    )
+    it "generates a JSON representation of their tasks" do
+      expect(representation).to include(
+        "total_count" => task_count,
+        "items" => tasks.map{ | task |
+          json = task.as_json.slice('id', 'title', 'task_plan_id')
+          json['type']      = task.task_type
+          json['opens_at']  = DateTimeUtilities.to_api_s(task.opens_at)
+          json['due_at']    = DateTimeUtilities.to_api_s(task.due_at)
+          json['is_shared'] = task.is_shared
+          json['steps']     = task.task_steps.as_json
+          json
+        }
+      )
+    end
+
   end
 
 end

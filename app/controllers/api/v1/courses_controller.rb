@@ -15,7 +15,8 @@ class Api::V1::CoursesController < Api::V1::ApiController
     #{json_schema(Api::V1::CoursesRepresenter, include: :readable)}
   EOS
   def index
-    courses = Domain::ListCourses.call(user: current_human_user.entity_user, with: :roles)
+    courses = Domain::ListCourses.call(user: current_human_user.entity_user,
+                                       with: :roles)
                                  .outputs.courses
     respond_with courses, represent_with: Api::V1::CoursesRepresenter
   end
@@ -30,7 +31,6 @@ class Api::V1::CoursesController < Api::V1::ApiController
   EOS
   def readings
     course = Entity::Course.find(params[:id])
-    # OSU::AccessPolicy.require_action_allowed!(:readings, current_api_user, course)
 
     # For the moment, we're assuming just one book per course
     books = CourseContent::GetCourseBooks.call(course: course).outputs.books
@@ -38,6 +38,27 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
     toc = Content::VisitBook[book: books.first, visitor_names: :toc]
     respond_with toc, represent_with: Api::V1::BookTocRepresenter
+  end
+
+  api :GET, '/courses/:course_id/exercises',
+            "Returns a course\'s exercises, filtered by the page_ids param"
+  description <<-EOS
+    Returns a list of exercises tagged with LO's matching the given pages.
+    If no page_ids are specified, returns an empty array.
+
+    #{json_schema(Api::V1::ExerciseSearchRepresenter, include: :readable)}
+  EOS
+  def exercises
+    course = Entity::Course.find(params[:id])
+    OSU::AccessPolicy.require_action_allowed!(:exercises,
+                                              current_api_user,
+                                              course)
+
+    los = Content::GetPageLos[page_ids: params[:page_ids]]
+    outputs = Domain::SearchLocalExercises.call(tag: los, match_count: 1)
+                                          .outputs
+
+    respond_with outputs, represent_with: Api::V1::ExerciseSearchRepresenter
   end
 
   api :GET, '/courses/:course_id/plans', 'Returns a course\'s plans'
@@ -60,8 +81,9 @@ class Api::V1::CoursesController < Api::V1::ApiController
     # No authorization is necessary because if the user isn't authorized, they'll just get
     # back an empty list of tasks
     course = Entity::Course.find(params[:id])
-    tasks = Domain::GetCourseUserTasks[course: course, user: current_human_user.entity_user]
-    output = Hashie::Mash.new({'items' => tasks.collect{|t| t.task}})
+    tasks = Domain::GetCourseUserTasks[course: course,
+                                       user: current_human_user.entity_user]
+    output = Hashie::Mash.new('items' => tasks.collect{|t| t.task})
     respond_with output, represent_with: Api::V1::TaskSearchRepresenter
   end
 

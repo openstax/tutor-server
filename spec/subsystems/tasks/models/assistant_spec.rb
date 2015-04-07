@@ -8,7 +8,6 @@ RSpec.describe Tasks::Models::Assistant, :type => :model do
 
   it { is_expected.to validate_presence_of(:name) }
   it { is_expected.to validate_presence_of(:code_class_name) }
-  it { is_expected.to validate_presence_of(:task_plan_type) }
 
   it { is_expected.to validate_uniqueness_of(:name) }
   it { is_expected.to validate_uniqueness_of(:code_class_name) }

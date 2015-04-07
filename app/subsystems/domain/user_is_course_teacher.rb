@@ -4,12 +4,12 @@ class Domain::UserIsCourseTeacher
   uses_routine Role::GetUserRoles, translations: {outputs: {type: :verbatim}}
   uses_routine CourseMembership::IsCourseTeacher,
                translations: {
-                outputs: {
-                  map: {
-                    is_course_teacher: :user_is_course_teacher
-                    }
-                  }
-                }
+                 outputs: {
+                   map: {
+                     is_course_teacher: :user_is_course_teacher
+                   }
+                 }
+               }
 
   protected
 

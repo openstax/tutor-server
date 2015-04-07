@@ -41,12 +41,19 @@ RSpec.describe Tasks::Models::TaskedExercise, :type => :model do
     )
   end
 
-  it 'does not accept a multiple choice answer before a free response' do
+  it 'does not accept a multiple choice answer before a free response unless the free-response format is not present' do
     tasked_exercise.answer_id = tasked_exercise.answer_ids.first
     expect(tasked_exercise).not_to be_valid
     expect(tasked_exercise.errors).to include :free_response
 
     tasked_exercise.free_response = 'abc'
+    expect(tasked_exercise).to be_valid
+
+    tasked_exercise.free_response = nil
+    expect(tasked_exercise).not_to be_valid
+
+    tasked_exercise.wrapper.instance_variable_set('@formats',
+                                                  ['multiple-choice'])
     expect(tasked_exercise).to be_valid
   end
 

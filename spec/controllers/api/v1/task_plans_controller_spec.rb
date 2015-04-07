@@ -5,8 +5,16 @@ describe Api::V1::TaskPlansController, :type => :controller,
                                        :version => :v1 do
 
   let!(:course) { Domain::CreateCourse.call.outputs.course }
-  let!(:assistant) { FactoryGirl.create :tasks_assistant,
-                                        code_class_name: "Tasks::Assistants::IReadingAssistant" }
+
+  let!(:assistant) { FactoryGirl.create(
+    :tasks_assistant, code_class_name: "Tasks::Assistants::IReadingAssistant"
+  ) }
+
+  let!(:course_assistant) { FactoryGirl.create :tasks_course_assistant,
+                                               course: course,
+                                               assistant: assistant,
+                                               tasks_task_plan_type: 'test' }
+
   let!(:user) { FactoryGirl.create :user }
   let!(:teacher) { FactoryGirl.create :user }
 
@@ -14,7 +22,8 @@ describe Api::V1::TaskPlansController, :type => :controller,
   let!(:task_plan) { FactoryGirl.create(:tasks_task_plan,
                                         owner: course,
                                         assistant: assistant,
-                                        settings: { page_ids: [page.id] }) }
+                                        settings: { page_ids: [page.id] },
+                                        type: 'test') }
   let!(:tasking_plan) {
     tp = FactoryGirl.build :tasks_tasking_plan, task_plan: task_plan, target: user
     task_plan.tasking_plans << tp
@@ -88,7 +97,9 @@ describe Api::V1::TaskPlansController, :type => :controller,
   context 'create' do
     it 'allows a teacher to create a task_plan for their course' do
       controller.sign_in teacher
-      expect { api_post :create, nil, parameters: {course_id: course.id},
+      expect { api_post :create,
+                        nil,
+                        parameters: { course_id: course.id },
                         raw_post_data: Api::V1::TaskPlanRepresenter
                                          .new(task_plan).to_json }
         .to change{ Tasks::Models::TaskPlan.count }.by(1)
@@ -101,17 +112,41 @@ describe Api::V1::TaskPlansController, :type => :controller,
 
     it 'does not allow an unauthorized user to create a task_plan' do
       controller.sign_in user
-      expect { api_post :create, nil, parameters: {course_id: course.id},
-               raw_post_data: Api::V1::TaskPlanRepresenter.new(task_plan)
-                                                          .to_json }
-        .to raise_error(SecurityTransgression)
+      expect {
+        api_post :create,
+                 nil,
+                 parameters: {
+                   course_id: course.id
+                 },
+                 raw_post_data: Api::V1::TaskPlanRepresenter
+                                  .new(task_plan).to_json
+      }.to raise_error(SecurityTransgression)
     end
 
     it 'does not allow an anonymous user to create a task_plan' do
-      expect { api_post :create, nil, parameters: {course_id: course.id},
-               raw_post_data: Api::V1::TaskPlanRepresenter.new(task_plan)
-                                                          .to_json }
-        .to raise_error(SecurityTransgression)
+      expect {
+        api_post :create,
+                 nil,
+                 parameters: {
+                   course_id: course.id
+                 },
+                 raw_post_data: Api::V1::TaskPlanRepresenter
+                                  .new(task_plan).to_json
+      }.to raise_error(SecurityTransgression)
+    end
+
+    it 'fails with 422 Unprocessable Entity if no Assistant found' do
+      controller.sign_in teacher
+      result = nil
+      expect {
+        result = api_post :create,
+                          nil,
+                          parameters: {course_id: course.id},
+                          raw_post_data: Api::V1::TaskPlanRepresenter
+                                           .new(task_plan).to_hash
+                                           .except('type').to_json
+      }.not_to change{ Tasks::Models::TaskPlan.count }
+      expect(response).to have_http_status(:unprocessable_entity)
     end
   end
 

@@ -366,7 +366,6 @@ ActiveRecord::Schema.define(version: 20150406200833) do
   create_table "tasks_assistants", force: :cascade do |t|
     t.string   "name",            null: false
     t.string   "code_class_name", null: false
-    t.string   "task_plan_type",  null: false
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
   end
@@ -375,16 +374,17 @@ ActiveRecord::Schema.define(version: 20150406200833) do
   add_index "tasks_assistants", ["name"], name: "index_tasks_assistants_on_name", unique: true
 
   create_table "tasks_course_assistants", force: :cascade do |t|
-    t.integer  "entity_course_id",   null: false
-    t.integer  "tasks_assistant_id", null: false
+    t.integer  "entity_course_id",     null: false
+    t.integer  "tasks_assistant_id",   null: false
+    t.string   "tasks_task_plan_type", null: false
     t.text     "settings"
     t.text     "data"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
   end
 
-  add_index "tasks_course_assistants", ["entity_course_id", "tasks_assistant_id"], name: "tasks_course_assistant_course_on_assistant_unique", unique: true
-  add_index "tasks_course_assistants", ["tasks_assistant_id"], name: "index_tasks_course_assistants_on_tasks_assistant_id"
+  add_index "tasks_course_assistants", ["entity_course_id", "tasks_task_plan_type"], name: "index_tasks_course_assistants_on_course_id_and_task_plan_type", unique: true
+  add_index "tasks_course_assistants", ["tasks_assistant_id", "entity_course_id"], name: "index_tasks_course_assistants_on_assistant_id_and_course_id"
 
   create_table "tasks_task_plans", force: :cascade do |t|
     t.integer  "tasks_assistant_id", null: false
@@ -489,8 +489,9 @@ ActiveRecord::Schema.define(version: 20150406200833) do
     t.integer  "entity_task_id"
     t.string   "task_type",                             null: false
     t.string   "title",                                 null: false
-    t.datetime "opens_at",                              null: false
+    t.datetime "opens_at"
     t.datetime "due_at"
+    t.text     "description"
     t.integer  "tasks_taskings_count",      default: 0, null: false
     t.text     "spaced_practice_algorithm",             null: false
     t.datetime "created_at",                            null: false

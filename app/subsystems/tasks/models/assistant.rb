@@ -6,7 +6,6 @@ class Tasks::Models::Assistant < Tutor::SubSystems::BaseModel
 
   validates :name, presence: true, uniqueness: true
   validates :code_class_name, presence: true, uniqueness: true
-  validates :task_plan_type, presence: true
   validate :code_class_existence, if: :code_class_name
 
   # Delegate all real work to the actual implementation (the "worker")

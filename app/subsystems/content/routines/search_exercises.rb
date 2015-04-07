@@ -27,13 +27,14 @@ class Content::Routines::SearchExercises
     relation = relation.where(query_hash)
 
     unless tags.nil?
+      match_count = options[:match_count] || tags.size
       # Tag intersection
       # http://stackoverflow.com/a/2000642
       relation = relation.joins(exercise_tags: :tag)
                          .where(exercise_tags: {tag: {name: tags}})
                          .group(:id).having{ count(
                              distinct(exercise_tags.tag.id)
-                         ).eq my{tags.size} }
+                         ).gteq match_count }
     end
 
     run(:order, options.merge(relation: relation,

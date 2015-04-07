@@ -41,6 +41,10 @@ class OpenStax::Exercises::V1::Exercise
                      .collect{ |q| q.merge('id' => q['id'].to_s)}
   end
 
+  def formats
+    @formats ||= questions.collect{ |q| q['formats'] }
+  end
+
   def answers
     @answers ||= questions.collect do |q|
       q['answers'].collect{ |a| a.merge('id' => a['id'].to_s) }

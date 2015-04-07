@@ -44,6 +44,7 @@ Rails.application.routes.draw do
     resources :courses, only: [:index] do
       member do
         get 'readings'
+        get 'exercises'
         get 'plans'
         get 'tasks'
         get 'events'

@@ -34,7 +34,8 @@ module Api::V1
         Tasks::Models::TaskedReading     => ->(*){TaskedReadingRepresenter},
         Tasks::Models::TaskedExercise    => ->(*){TaskedExerciseRepresenter},
         Tasks::Models::TaskedVideo       => ->(*){TaskedVideoRepresenter},
-        Tasks::Models::TaskedInteractive => ->(*){TaskedInteractiveRepresenter}
+        Tasks::Models::TaskedInteractive => ->(*){TaskedInteractiveRepresenter},
+        Tasks::Models::TaskedPlaceholder => ->(*){TaskedPlaceholderRepresenter}
       }
     end
 

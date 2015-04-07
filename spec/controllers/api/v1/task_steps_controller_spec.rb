@@ -137,7 +137,6 @@ describe Api::V1::TaskStepsController, :type => :controller,
     it "should allow owner to recover exercises with recovery steps" do
       expect {
         api_put :recovery, user_1_token, parameters: {
-          task_id: tasked_exercise_with_recovery.task_step.task.id,
           id: tasked_exercise_with_recovery.task_step.id
         }
       }.to change{tasked_exercise_with_recovery.task_step.task
@@ -242,6 +241,7 @@ describe Api::V1::TaskStepsController, :type => :controller,
     it "should allow marking completion of reading steps by the owner" do
       tasked = create_tasked(:tasked_reading, user_1_role)
       api_put :completed, user_1_token, parameters: {id: tasked.task_step.id}
+
       expect(response).to have_http_status(:success)
 
       expect(response.body).to eq(Api::V1::TaskedReadingRepresenter.new(
@@ -254,14 +254,15 @@ describe Api::V1::TaskStepsController, :type => :controller,
     it "should not allow marking completion of reading steps by random user" do
       tasked = create_tasked(:tasked_reading, user_1_role)
       expect{
-        api_put :completed, user_2_token, parameters: {task_id: tasked.task_step.task.id, id: tasked.task_step.id}
+        api_put :completed, user_2_token, parameters: {id: tasked.task_step.id}
       }.to raise_error SecurityTransgression
       expect(tasked.task_step(true).completed?).to be_falsy
     end
 
     it "should allow marking completion of exercise steps" do
       tasked = create_tasked(:tasked_exercise, user_1_role).reload
-      api_put :completed, user_1_token, parameters: {task_id: tasked.task_step.task.id, id: tasked.task_step.id}
+      api_put :completed, user_1_token, parameters: {id: tasked.task_step.id}
+
       expect(response).to have_http_status(:success)
 
       expect(response.body).to eq(Api::V1::TaskedExerciseRepresenter.new(
