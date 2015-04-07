@@ -42,6 +42,9 @@ class SpacedPracticeAlgorithmIReading
     @k_ago_map.each do |k_ago, num_k_ago_exercises|
       break if k_ago >= maps.count
 
+      k_ago_task_title = maps[k_ago][:task].title
+      k_ago_task_los   = maps[k_ago][:los]
+
       candidate_exercises = (maps[k_ago][:content_exercises] - all_taskee_exercises).sort_by{|ex| ex.id}.take(10)
       #puts "candidate_exercises: #{candidate_exercises.collect{|ex| ex.id}.sort}"
 
@@ -67,6 +70,8 @@ class SpacedPracticeAlgorithmIReading
           content:   exercise.content,
           exercise:  chosen_exercise
         )
+        task_step.tasked.inject_debug_content(debug_content: "LOs: #{k_ago_task_los.inspect}<br>")
+        task_step.tasked.inject_debug_content(debug_content: "Task: #{k_ago_task_title}<br>")
         task_step.tasked.inject_debug_content(debug_content: 'SPE<br>')
         task_step.tasked.save!
         task_step.save!

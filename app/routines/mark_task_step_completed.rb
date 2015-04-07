@@ -13,7 +13,7 @@ class MarkTaskStepCompleted
     transfer_errors_from(task_step.tasked, {type: :verbatim}, true)
 
     task = task_step.task
-    task.handle_task_step_completion!
+    task.handle_task_step_completion!(completion_time: completion_time)
     transfer_errors_from(task, {type: :verbatim}, true)
   end
 

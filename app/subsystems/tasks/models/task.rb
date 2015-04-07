@@ -68,8 +68,8 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     write_attribute(:spaced_practice_algorithm, YAML.dump(algorithm))
   end
 
-  def handle_task_step_completion!
-    spaced_practice_algorithm.call(event: :task_step_completion, task: self)
+  def handle_task_step_completion!(completion_time: Time.now)
+    spaced_practice_algorithm.call(event: :task_step_completion, task: self, current_time: completion_time)
   end
 
   protected

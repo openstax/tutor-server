@@ -393,7 +393,7 @@ ActiveRecord::Schema.define(version: 20150406200833) do
     t.string   "title"
     t.string   "type",               null: false
     t.text     "settings",           null: false
-    t.datetime "opens_at",           null: false
+    t.datetime "opens_at"
     t.datetime "due_at"
     t.datetime "published_at"
     t.datetime "created_at",         null: false
