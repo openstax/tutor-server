@@ -93,7 +93,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
       expect(response).to have_http_status(:success)
       hash = response.body_as_hash
       expect(hash[:total_count]).to eq(63)
-      page_los = Content::GetPageLos[page_ids: [2, 3]]
+      page_los = Content::GetLos[page_ids: [2, 3]]
       hash[:items].each do |item|
         wrapper = OpenStax::Exercises::V1::Exercise.new(item[:content])
         item_los = wrapper.los

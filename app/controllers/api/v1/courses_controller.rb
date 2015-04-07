@@ -41,10 +41,11 @@ class Api::V1::CoursesController < Api::V1::ApiController
   end
 
   api :GET, '/courses/:course_id/exercises',
-            "Returns a course\'s exercises, filtered by the page_ids param"
+            "Returns a course\'s exercises, filtered by the page_ids param or the book_part_ids params"
   description <<-EOS
-    Returns a list of exercises tagged with LO's matching the given pages.
-    If no page_ids are specified, returns an empty array.
+    Returns a list of exercises tagged with LO's matching the pages
+    or book_parts with the given ID's.
+    If no page_ids or book_part_ids are specified, returns an empty array.
 
     #{json_schema(Api::V1::ExerciseSearchRepresenter, include: :readable)}
   EOS
@@ -54,7 +55,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
                                               current_api_user,
                                               course)
 
-    los = Content::GetPageLos[page_ids: params[:page_ids]]
+    los = Content::GetLos[params]
     outputs = Domain::SearchLocalExercises.call(tag: los, match_count: 1)
                                           .outputs
 
