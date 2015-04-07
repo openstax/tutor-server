@@ -22,7 +22,7 @@ class Domain::SearchLocalExercises
     unless not_assigned_to.nil?
       used = exercises_assigned_to(relation: relation, roles: not_assigned_to)
                .reorder(nil).limit(nil)
-      relation = relation.where{id.not_in used.select(:id)}
+      relation = relation.where{id.not_in used.pluck(:id)}
     end
 
     # TODO: use wrapper
