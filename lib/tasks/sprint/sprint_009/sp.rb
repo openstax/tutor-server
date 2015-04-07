@@ -10,9 +10,9 @@ module Sprint009
       OpenStax::Exercises::V1.use_real_client
 
       puts "===== CREATING USERS ====="
-      student1 = FactoryGirl.create :user, username: 'in_order'
-      student2 = FactoryGirl.create :user, username: 'out_of_order'
-      student3 = FactoryGirl.create :user, username: 'skipped'
+      student1 = FactoryGirl.create :user, username: 'order_1_2_3_4'
+      student2 = FactoryGirl.create :user, username: 'order_2_1_4_3'
+      student3 = FactoryGirl.create :user, username: 'no_history'
 
       puts "===== CREATING COURSE ====="
       physics_course = Domain::CreateCourse[name: 'Physics']
@@ -71,7 +71,8 @@ module Sprint009
           taskees:   taskee_roles,
           assistant: assistant,
           opens_at:  task_dates[ii][:opens_at],
-          due_at:    task_dates[ii][:due_at]
+          due_at:    task_dates[ii][:due_at],
+          title:     "iReading #{ii+1}: #{page_data.title}"
         )
         tasks
       end
@@ -82,7 +83,7 @@ module Sprint009
 
       puts "===== CREATING USER HISTORIES ====="
 
-      # taskee1: in order
+      # taskee1: task completion order #1 #2 #3 #4
       reading_task_groups[0][0].core_task_steps.each_with_index do |task_step, ii|
         MarkTaskStepCompleted.call(task_step: task_step, completion_time: task_dates[0][:opens_at]+(10+ii).minutes)
       end
@@ -96,7 +97,7 @@ module Sprint009
         MarkTaskStepCompleted.call(task_step: task_step, completion_time: task_dates[3][:opens_at]+(10+ii).minutes)
       end
 
-      # taskee2: out of order
+      # taskee2: task completion order #2 #1 #4 #3
       reading_task_groups[1][1].core_task_steps.each_with_index do |task_step, ii|
         MarkTaskStepCompleted.call(task_step: task_step, completion_time: task_dates[0][:opens_at]+(10+ii).minutes)
       end
@@ -110,17 +111,19 @@ module Sprint009
         MarkTaskStepCompleted.call(task_step: task_step, completion_time: task_dates[3][:opens_at]+(10+ii).minutes)
       end
 
+      # taskee3: no task completion
     end
 
     private
 
-    def create_tasks(page_id:, taskees:, assistant:, opens_at: Time.now, due_at: opens_at+1.week)
+    def create_tasks(page_id:, taskees:, assistant:, opens_at: Time.now, due_at: opens_at+1.week, title: 'iReading')
       ## create TaskPlans for each Page with LOs
       task_plan = FactoryGirl.create(:tasks_task_plan,
         assistant: assistant,
-        opens_at: opens_at,
-        due_at:   due_at,
-        settings: { page_ids: [page_id] }
+        opens_at:  opens_at,
+        due_at:    due_at,
+        title:     title,
+        settings: { page_ids: [page_id] },
       )
 
       ## Add TaskingPlans for each Taskee to the TaskPlans
