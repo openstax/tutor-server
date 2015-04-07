@@ -41,7 +41,7 @@ module Api::V1
                             TaskedRepresenterMapper.models.collect{ |klass|
                               "'" + klass.name.demodulize.remove("Tasked")
                                          .underscore.downcase + "'"
-                            }.join(',')}"
+                            }.reject{|m| m == 'placeholder'}.join(',')}"
              }
 
     property :is_completed,
