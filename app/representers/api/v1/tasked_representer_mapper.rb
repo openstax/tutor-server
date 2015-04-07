@@ -36,7 +36,6 @@ module Api::V1
         Tasks::Models::TaskedPlaceholder => ->(*){TaskedPlaceholderRepresenter},
         Tasks::Models::TaskedVideo       => ->(*){TaskedVideoRepresenter},
         Tasks::Models::TaskedInteractive => ->(*){TaskedInteractiveRepresenter},
-        Tasks::Models::TaskedPlaceholder => ->(*){TaskedPlaceholderRepresenter}
       }
     end
 
