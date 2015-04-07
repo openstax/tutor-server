@@ -26,9 +26,8 @@ class Content::ImportBook
     # TODO this code below should probably be in Domain
     #
 
-    exercise_data =
-      Content::VisitBook[book: outputs[:book],
-                              visitor_names: :exercises]
+    exercise_data = Content::VisitBook[book: outputs[:book],
+                                       visitor_names: :exercises]
 
     biglearn_exercises = exercise_data.values.collect do |ed|
       tags = ed['los'] + ed['tags']

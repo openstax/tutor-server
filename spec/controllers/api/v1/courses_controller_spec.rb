@@ -602,5 +602,4 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
     end
 
   end
-
 end

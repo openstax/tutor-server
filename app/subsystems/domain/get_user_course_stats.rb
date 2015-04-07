@@ -15,48 +15,54 @@ class Domain::GetUserCourseStats
 
   protected
   def exec(user:, course:)
+    run(:get_course_profile, course: course)
+    run(:get_course_books, course: course)
     compile_course_stats
   end
 
   private
   def compile_course_stats
     outputs[:course_stats] = {
-      title: 'Physics',
-      topics: [
-        { id: 123,
-          title: 'Kinematics',
-          number: '5',
-          questions_answered_count: 48,
-          current_level: 0.5,
-          page_ids: [ 234, 345 ],
-          practice_count: 12
-        },
-        { id: 456,
-          title: 'Other Physics',
-          number: '5.1',
-          questions_answered_count: 38,
-          current_level: 0.4,
-          page_ids: [ 231, 897 ],
-          practice_count: 8
-        },
-        { id: 789,
-          title: 'Excellent Topics',
-          number: '5.2',
-          questions_answered_count: 42,
-          current_level: 0.8,
-          page_ids: [ 28, 89 ],
-          practice_count: 15
-        }
-      ]
+      title: outputs.profile.name,
+      fields: collect_book_parts
     }
   end
 
   def collect_book_parts
-    outputs.book_parts.collect do |book_part|
-      { id: book_part.id,
-        title: book_part.title,
-        number: book_part.path,
-        page_ids: book_part.page_ids }
+    compile_course_books_toc
+    book_parts = []
+    outputs.book_toc.each do |book_toc|
+      book_parts << transform_toc(book_toc)
+      book_parts << transform_child_toc(book_toc)
     end
+    book_parts.flatten
+  end
+
+  def compile_course_books_toc
+    outputs[:book_toc] = []
+    outputs.books.each do |book|
+      outputs.book_toc << run(:get_book_toc, book: book, visitor_names: :toc).outputs.toc
+    end
+  end
+
+  def transform_toc(book_toc)
+    book_toc.collect do |toc|
+      { id: toc.id,
+        title: toc.title,
+        number: toc.path,
+        page_ids: toc.page_ids || [] }
+    end
+  end
+
+  def transform_child_toc(book_toc)
+    children = []
+    book_toc.each do |toc|
+      next unless toc.children
+      children << transform_toc(toc.children)
+      toc.children.each do |child_toc|
+        children << transform_toc(child_toc.children)
+      end
+    end
+    children.flatten
   end
 end
