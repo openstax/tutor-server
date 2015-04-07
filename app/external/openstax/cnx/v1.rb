@@ -3,9 +3,11 @@ require 'open-uri'
 module OpenStax::Cnx::V1
 
   ARCHIVE_URL_BASE ='http://archive.cnx.org/contents/'
+  SSL_ARCHIVE_URL_BASE ='https://archive.cnx.org/contents/'
 
-  def self.url_for(id)
-    URI::join(ARCHIVE_URL_BASE, id).to_s
+  def self.url_for(id, options={})
+    options[:secure] ||= false
+    URI::join((options[:secure] ? SSL_ARCHIVE_URL_BASE : ARCHIVE_URL_BASE), id).to_s
   end
 
   def self.fetch(id)
