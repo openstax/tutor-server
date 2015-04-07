@@ -47,7 +47,7 @@ module Api::V1
              writeable: false,
              readable: true,
              schema_info: {
-               description: "When the task is due (nil means always open)"
+               description: "When the task is due (nil means never due)"
              }
 
     property :is_shared,
