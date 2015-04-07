@@ -179,6 +179,21 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true, :
                                                opens_at: be_kind_of(String),
                                                steps: have(5).items)
     end
+
+    it "must be called by a user who belongs to the course" do
+      expect{
+        api_post :practice, user_1_token, parameters: {id: course.id}
+      }.to raise_error(IllegalState)
+    end
+
+    it "must be called by a user who has the role" do
+      Domain::AddUserAsCourseStudent.call(course: course, user: user_1.entity_user)
+      expect{
+        # The role belongs to user_1, we pass user_2_token
+        api_post :practice, user_2_token, parameters: {id: course.id, role_id: Entity::Role.last.id}
+      }.to raise_error(IllegalState)
+    end
+
   end
 
   describe "practice_get" do
