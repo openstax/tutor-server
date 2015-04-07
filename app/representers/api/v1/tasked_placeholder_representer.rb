@@ -1,9 +1,36 @@
 module Api::V1
   class TaskedPlaceholderRepresenter < Roar::Decorator
 
-    include TaskStepProperties
+    include Roar::JSON
 
-    ## overridden from TaskStepProperties
+    property :id,
+             type: Integer,
+             writeable: false,
+             getter: -> (*) { task_step.id },
+             schema_info: {
+               required: true
+             }
+
+    property :task_id,
+             type: Integer,
+             writeable: false,
+             readable: true,
+             getter: lambda {|*| task_step.tasks_task_id },
+             schema_info: {
+                 required: true,
+                 description: "The id of the Task"
+             }
+
+    property :is_completed,
+             type: 'boolean',
+             writeable: false,
+             readable: true,
+             getter: lambda {|*| task_step.completed?},
+             schema_info: {
+               required: true,
+               description: "Whether or not this step is complete"
+             }
+
     property :type,
              type: String,
              writeable: false,
