@@ -204,19 +204,104 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
   end
 
   describe "practice_post" do
+    let!(:lo)            { FactoryGirl.create :content_tag,
+                                               tag_type: :lo,
+                                               name: 'lo01' }
+
+    let!(:page)           { FactoryGirl.create :content_page }
+
+    let!(:page_tag)       { FactoryGirl.create :content_page_tag,
+                                               page: page, tag: lo }
+
+    let!(:exercise_1)     { FactoryGirl.create :content_exercise }
+    let!(:exercise_2)     { FactoryGirl.create :content_exercise }
+    let!(:exercise_3)     { FactoryGirl.create :content_exercise }
+    let!(:exercise_4)     { FactoryGirl.create :content_exercise }
+    let!(:exercise_5)     { FactoryGirl.create :content_exercise }
+
+    let!(:exercise_tag_1) { FactoryGirl.create :content_exercise_tag,
+                                               exercise: exercise_1, tag: lo }
+    let!(:exercise_tag_2) { FactoryGirl.create :content_exercise_tag,
+                                               exercise: exercise_2, tag: lo }
+    let!(:exercise_tag_3) { FactoryGirl.create :content_exercise_tag,
+                                               exercise: exercise_3, tag: lo }
+    let!(:exercise_tag_4) { FactoryGirl.create :content_exercise_tag,
+                                               exercise: exercise_4, tag: lo }
+    let!(:exercise_tag_5) { FactoryGirl.create :content_exercise_tag,
+                                               exercise: exercise_5, tag: lo }
+
     it "works" do
-      Domain::AddUserAsCourseStudent.call(course: course, user: user_1.entity_user)
+      role = Domain::AddUserAsCourseStudent.call(course: course,
+                                                 user: user_1.entity_user)
+                                           .outputs.role
 
       expect {
-        api_post :practice, user_1_token, parameters: {id: course.id, role_id: Entity::Role.last.id}
+        api_post :practice,
+                 user_1_token,
+                 parameters: {id: course.id, role_id: role.id},
+                 raw_post_data: { page_ids: [page.id] }.to_json
       }.to change{ Tasks::Models::Task.count }.by(1)
 
       expect(response).to have_http_status(:success)
 
-      expect(response.body_as_hash).to include(id: be_kind_of(Integer),
-                                               title: "Practice",
-                                               opens_at: be_kind_of(String),
-                                               steps: have(5).items)
+      hash = response.body_as_hash
+      expect(hash).to include(id: be_kind_of(Integer),
+                              title: "Practice",
+                              opens_at: be_kind_of(String),
+                              steps: have(5).items)
+
+      step_urls = Set.new hash[:steps].collect{|s| s[:content_url]}
+      exercises = [exercise_1, exercise_2, exercise_3, exercise_4, exercise_5]
+      exercise_urls = Set.new exercises.collect{ |e| e.url }
+      expect(step_urls).to eq exercise_urls
+    end
+
+    it "prefers unassigned exercises" do
+      role = Domain::AddUserAsCourseStudent.call(course: course,
+                                                 user: user_1.entity_user)
+                                           .outputs.role
+
+      # Assign the first 5 exercises
+      Domain::ResetPracticeWidget.call(
+        role: role, condition: :local, page_ids: [page.id]
+      )
+
+      # Then add 3 more to be assigned
+      exercise_6 = FactoryGirl.create :content_exercise
+      exercise_7 = FactoryGirl.create :content_exercise
+      exercise_8 = FactoryGirl.create :content_exercise
+
+      exercise_tag_6 = FactoryGirl.create :content_exercise_tag,
+                                          exercise: exercise_6, tag: lo
+      exercise_tag_7 = FactoryGirl.create :content_exercise_tag,
+                                          exercise: exercise_7, tag: lo
+      exercise_tag_8 = FactoryGirl.create :content_exercise_tag,
+                                          exercise: exercise_8, tag: lo
+
+      expect {
+        api_post :practice,
+                 user_1_token,
+                 parameters: {id: course.id, role_id: role.id},
+                 raw_post_data: { page_ids: [page.id] }.to_json
+      }.to change{ Tasks::Models::Task.count }.by(1)
+
+      expect(response).to have_http_status(:success)
+
+      hash = response.body_as_hash
+      expect(hash).to include(id: be_kind_of(Integer),
+                              title: "Practice",
+                              opens_at: be_kind_of(String),
+                              steps: have(5).items)
+
+      step_urls = Set.new hash[:steps].collect{|s| s[:content_url]}
+      expect(step_urls).to include(exercise_6.url)
+      expect(step_urls).to include(exercise_7.url)
+      expect(step_urls).to include(exercise_8.url)
+
+      exercises = [exercise_1, exercise_2, exercise_3, exercise_4,
+                   exercise_5, exercise_6, exercise_7, exercise_8]
+      exercise_urls = Set.new exercises.collect{ |e| e.url }
+      expect(step_urls.proper_subset?(exercise_urls)).to eq true
     end
 
     it "must be called by a user who belongs to the course" do

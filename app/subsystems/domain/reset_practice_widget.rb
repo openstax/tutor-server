@@ -6,27 +6,37 @@ class Domain::ResetPracticeWidget
 
   protected
 
-  def exec(role:, condition:)
+  def exec(role:, condition:, page_ids: [], book_part_ids: [])
 
     # Get the existing practice widget and remove incomplete exercises from it
     # so they can be used in later practice
 
-    existing_practice_task = run(Domain::GetPracticeWidget, role: role).outputs.task
+    existing_practice_task = run(Domain::GetPracticeWidget, role: role).outputs
+                                                                       .task
     # TODO actually do the step removal
+
+    # Gather relevant LO's from pages and book_parts
+
+    los = Content::GetLos[page_ids: page_ids, book_part_ids: book_part_ids]
 
     # Gather 5 exercises
 
-    exercises = condition == :fake ?
-      get_fake_exercises(count: 5) :
-      get_biglearn_exercises(count: 5, user: Role::GetUsersForRoles[role], condition: condition)
+    exercises = case condition
+    when :fake
+      get_fake_exercises(count: 5)
+    when :local
+      get_local_exercises(count: 5, role: role, tags: los)
+    else
+      get_biglearn_exercises(count: 5, role: role, tags: los)
+    end
 
     # Create the new practice widget task, and put the exercises into steps
 
     # TODO move this whole routine into Tasks, use run(...) here
 
     task = Tasks::CreateTask[task_type: 'practice',
-                                   title: 'Practice',
-                                   opens_at: Time.now]
+                             title: 'Practice',
+                             opens_at: Time.now]
 
     exercises.each do |exercise|
       step = Tasks::Models::TaskStep.new(task: task)
@@ -54,11 +64,32 @@ class Domain::ResetPracticeWidget
     end
   end
 
-  def get_biglearn_exercises(count:, user:, condition:)
-    condition = tagify_condition(condition)
+  def get_local_exercises(count:, role:, tags:)
+    exercises = Domain::SearchLocalExercises[not_assigned_to: role,
+                                             tags: tags].to_a.shuffle
+
+    count.times.collect do
+      exercise = exercises.pop
+
+      if exercise.nil?
+        # We ran out of exercises, so start repeating them
+        exercises = Domain::SearchLocalExercises[tags: tags].to_a.shuffle
+        exercise = exercises.pop
+
+        fatal_error(code: :no_exercises_found,
+                    message: "No exercises matched the given ID's") \
+          if exercise.nil?
+      end
+
+      exercise
+    end
+  end
+
+  def get_biglearn_exercises(count:, role:, tags:)
+    condition = condition_tags(tags)
 
     exercise_uids = OpenStax::BigLearn::V1.get_projection_exercises(
-      user: user , tag_search: condition, count: 5,
+      user: role , tag_search: condition, count: 5,
       difficulty: 0.5, allow_repetitions: true
     )
 
@@ -69,7 +100,7 @@ class Domain::ResetPracticeWidget
     end
   end
 
-  def tagify_condition(condition)
+  def condition_tags(condition)
     condition
   end
 
