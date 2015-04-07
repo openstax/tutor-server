@@ -62,6 +62,17 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     self.content = json_hash.to_json
   end
 
+  # submits the result to exchange
+  def handle_task_step_completion!
+    # Currently assuming only one question per tasked_exercise, see also correct_answer_id
+    question = wrapper.questions.first
+    # "trial" is set to only "0" for now.  When multiple
+    # attempts are supported, it will be incremented to indicate the attempt #
+    OpenStax::Exchange.record_multiple_choice_answer(
+      question['id'], url, '0', answer_id
+    )
+  end
+
   protected
 
   # Eventually this will be enforced by the exercise substeps
