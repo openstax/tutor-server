@@ -18,6 +18,12 @@ class Tasks::Assistants::HomeworkAssistant
         },
         "description": {
           "type": "string"
+        },
+        "page_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
         }
       },
       "additionalProperties": false
