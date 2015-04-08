@@ -1,0 +1,23 @@
+<%# Copyright 2011-2013 Rice University. Licensed under the Affero General Public
+    License version 3 or later.  See the COPYRIGHT file for details. %>
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tutor</title>
+    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => false %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track' => false %>
+    <%= csrf_meta_tags %>
+  </head>
+  <body>
+    <div class="container" id="application-body-api-docs">
+      <%= render 'layouts/authentication' %>
+      <%= render 'layouts/flash_messages' %>
+      <%= yield %>
+    </div>
+    <script type='text/javascript'>
+      $('pre.code, pre.prettyprint').each(function(index) {
+        $(this).html(Tutor.Ui.syntaxHighlight($(this).html()));
+      });
+    </script>
+  </body>
+</html>
