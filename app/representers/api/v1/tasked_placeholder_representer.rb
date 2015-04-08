@@ -38,11 +38,7 @@ module Api::V1
              getter: lambda { |*| 'exercise' },
              schema_info: {
                required: true,
-               description: "The type of this TaskStep, one of: #{
-                            TaskedRepresenterMapper.models.collect{ |klass|
-                              "'" + klass.name.demodulize.remove("Tasked")
-                                         .underscore.downcase + "'"
-                            }.reject{|m| m == 'placeholder'}.join(',')}"
+               description: 'The type of this TaskStep, which should always be "exercise"'
              }
 
     property :url,
