@@ -13,8 +13,8 @@ RSpec.describe Domain::MapUsersAccounts do
     end
 
     context 'when the account can find a matching profile' do
-      let!(:found) { FactoryGirl.create(:profile, account_id: 1) }
-      let(:account) { double(:account, id: 1, is_anonymous?: false) }
+      let!(:found) { FactoryGirl.create(:profile) }
+      let(:account) { double(:account, id: found.account_id, is_anonymous?: false) }
 
       it 'returns the profile' do
         expect(profile).to eq(found)
@@ -37,7 +37,7 @@ RSpec.describe Domain::MapUsersAccounts do
 
   describe '.user_to_account' do
     it 'returns the associated profile account' do
-      user = FactoryGirl.create(:user)
+      user = FactoryGirl.create(:user_profile)
       expected = user.account
 
       result = Domain::MapUsersAccounts.user_to_account(user)

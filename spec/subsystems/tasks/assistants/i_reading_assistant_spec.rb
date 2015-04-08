@@ -170,7 +170,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
 
     let!(:num_taskees) { 3 }
 
-    let!(:taskees) { num_taskees.times.collect{ FactoryGirl.create(:user) } }
+    let!(:taskees) { num_taskees.times.collect{ FactoryGirl.create(:user_profile) } }
 
     let!(:tasking_plans) {
       taskees.collect{ |t|

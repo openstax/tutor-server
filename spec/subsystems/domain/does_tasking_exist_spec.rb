@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Domain::DoesTaskingExist, :type => :routine do
-  let(:nontaskee) { FactoryGirl.create(:user) }
-  let(:taskee)    { FactoryGirl.create(:user) }
+  let(:nontaskee) { FactoryGirl.create(:user_profile) }
+  let(:taskee)    { FactoryGirl.create(:user_profile) }
   let(:tasked)    { FactoryGirl.create(:tasks_tasked_exercise) }
   let!(:tasking)  { FactoryGirl.create(:tasks_tasking,
                                        role: Role::GetDefaultUserRole[taskee.entity_user],

@@ -29,7 +29,7 @@ RSpec.describe DistributeTasks, :type => :routine do
   end
 
   it "calls the distribute_tasks method on the task_plan's assistant" do
-    user = FactoryGirl.create :user
+    user = FactoryGirl.create :user_profile
     task_plan = FactoryGirl.create(:tasks_tasking_plan, target: user).task_plan
 
     expect(DummyAssistant).to receive(:distribute_tasks).with(

@@ -15,8 +15,8 @@ describe Api::V1::TaskPlansController, :type => :controller,
                                                assistant: assistant,
                                                tasks_task_plan_type: 'test' }
 
-  let!(:user) { FactoryGirl.create :user }
-  let!(:teacher) { FactoryGirl.create :user }
+  let!(:user) { FactoryGirl.create :user_profile }
+  let!(:teacher) { FactoryGirl.create :user_profile }
 
   let!(:page) { FactoryGirl.create :content_page }
   let!(:task_plan) { FactoryGirl.create(:tasks_task_plan,
@@ -30,7 +30,7 @@ describe Api::V1::TaskPlansController, :type => :controller,
     tp
   }
 
-  let(:unaffiliated_teacher) { FactoryGirl.create :user }
+  let(:unaffiliated_teacher) { FactoryGirl.create :user_profile }
 
   before do
     Domain::AddUserAsCourseTeacher.call(course: course, user: teacher.entity_user)

@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe FillIReadingSpacedPracticeSlot, :type => :routine do
 
-  let!(:user) { FactoryGirl.create :user }
+  let!(:user) { FactoryGirl.create :user_profile }
 
   it 'returns a fake exercise hash' do
     result = FillIReadingSpacedPracticeSlot.call(user, 1)

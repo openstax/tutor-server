@@ -98,15 +98,15 @@ gem 'httparty'
 # Ordered models
 gem 'sortability'
 
+# PostgreSQL database
+gem 'pg'
+
 group :development, :test do
   # Allows 'ap' alternative to 'pp'
   gem 'awesome_print'
 
   # Thin development server
   gem 'thin'
-
-  # SQLite3 development database
-  gem 'sqlite3'
 
   # Call 'binding.pry' anywhere in the code to stop execution and get a debugger console
   gem 'pry' # needed when debugging without 'rails_helper'
@@ -175,9 +175,6 @@ group :production do
 
   # Unicorn worker killer
   gem 'unicorn-worker-killer'
-
-  # PostgreSQL production database
-  gem 'pg'
 
   # AWS SES
   gem 'aws-ses', '~> 0.6.0', :require => 'aws/ses'

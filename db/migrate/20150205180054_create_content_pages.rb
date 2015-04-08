@@ -13,7 +13,7 @@ class CreateContentPages < ActiveRecord::Migration
       t.index [:content_book_part_id, :number], unique: true
     end
 
-    add_foreign_key :content_pages, :content_books, on_update: :cascade,
-                                                    on_delete: :cascade
+    add_foreign_key :content_pages, :content_book_parts, on_update: :cascade,
+                                                         on_delete: :cascade
   end
 end

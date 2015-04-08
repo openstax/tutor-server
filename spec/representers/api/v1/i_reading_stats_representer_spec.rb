@@ -28,7 +28,7 @@ RSpec.describe Api::V1::IReadingStatsRepresenter, :type => :representer do
             "correct_count"   => 0,
             "incorrect_count" => 0,
             "page" => a_hash_including(
-              "id"     => 1,
+              "id"     => task_plan.settings['page_ids'].first,
               "number" => 1,
               "title"  => "Force"
             )

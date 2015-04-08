@@ -4,7 +4,7 @@ RSpec.describe Api::V1::TaskSearchRepresenter, :type => :representer do
 
   context "a user" do
 
-    let!(:user)           { FactoryGirl.create(:user).entity_user }
+    let!(:user)           { FactoryGirl.create(:user_profile).entity_user }
     let!(:course)         { FactoryGirl.create(:entity_course) }
     let!(:role)           { Domain::AddUserAsCourseStudent.call(user: user,
                                                                course: course)

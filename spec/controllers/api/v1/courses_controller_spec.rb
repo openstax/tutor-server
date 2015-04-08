@@ -5,12 +5,12 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
                                            :version => :v1, :vcr => VCR_OPTS  do
 
   let!(:application)     { FactoryGirl.create :doorkeeper_application }
-  let!(:user_1)          { FactoryGirl.create :user }
+  let!(:user_1)          { FactoryGirl.create :user_profile }
   let!(:user_1_token)    { FactoryGirl.create :doorkeeper_access_token,
                                               application: application,
                                               resource_owner_id: user_1.id }
 
-  let!(:user_2)          { FactoryGirl.create :user }
+  let!(:user_2)          { FactoryGirl.create :user_profile }
   let!(:user_2_token)    { FactoryGirl.create :doorkeeper_access_token,
                                               application: application,
                                               resource_owner_id: user_2.id }
@@ -24,39 +24,39 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
     it "should work on the happy path" do
       root_book_part = FactoryGirl.create(:content_book_part, :standard_contents_1)
       CourseContent::AddBookToCourse.call(course: course, book: root_book_part.book)
+      toc = Content::VisitBook[book: root_book_part.book, visitor_names: :toc].first
 
       api_get :readings, user_1_token, parameters: {id: course.id}
-
       expect(response).to have_http_status(:success)
       expect(response.body_as_hash).to eq([{
-        id: 2,
+        id: toc.id,
         title: 'unit 1',
         type: 'part',
         children: [
           {
-            id: 3,
+            id: toc.children[0].id,
             title: 'chapter 1',
             type: 'part',
             children: [
               {
-                id: 1,
+                id: toc.children[0].children[0].id,
                 title: 'first page',
                 type: 'page'
               },
               {
-                id: 2,
+                id: toc.children[0].children[1].id,
                 title: 'second page',
                 type: 'page'
               }
             ]
           },
           {
-            id: 4,
+            id: toc.children[1].id,
             title: 'chapter 2',
             type: 'part',
             children: [
               {
-                id: 3,
+                id: toc.children[1].children[0].id,
                 title: 'third page',
                 type: 'page'
               }
@@ -87,13 +87,14 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
     end
 
     it "should work on the happy path" do
+      page_ids = Content::Models::Page.all.map(&:id)
       api_get :exercises, user_1_token, parameters: {id: course.id,
-                                                     page_ids: [2, 3]}
+                                                     page_ids: page_ids}
 
       expect(response).to have_http_status(:success)
       hash = response.body_as_hash
-      expect(hash[:total_count]).to eq(63)
-      page_los = Content::GetLos[page_ids: [2, 3]]
+      expect(hash[:total_count]).to eq(127)
+      page_los = Content::GetLos[page_ids: page_ids]
       hash[:items].each do |item|
         wrapper = OpenStax::Exercises::V1::Exercise.new(item[:content])
         item_los = wrapper.los
@@ -324,6 +325,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
     it "returns nothing when practice widget not yet set" do
       Domain::AddUserAsCourseStudent.call(course: course, user: user_1.entity_user)
       api_get :practice, user_1_token, parameters: {id: course.id, role_id: Entity::Role.last.id}
+
       expect(response).to have_http_status(:not_found)
     end
 

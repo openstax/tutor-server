@@ -3,7 +3,7 @@ require "rails_helper"
 describe Api::V1::UsersController, :type => :controller, :api => true, :version => :v1 do
 
   let!(:application)     { FactoryGirl.create :doorkeeper_application }
-  let!(:user_1)          { FactoryGirl.create :user }
+  let!(:user_1)          { FactoryGirl.create :user_profile }
   let!(:user_1_token)    { FactoryGirl.create :doorkeeper_access_token,
                                               application: application,
                                               resource_owner_id: user_1.id }
