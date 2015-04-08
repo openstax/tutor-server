@@ -80,11 +80,12 @@ RSpec.describe Tasks::Models::TaskedExercise, :type => :model do
   end
 
   it 'records answers in exchange when the task_step is completed' do
+    exchange_identifier = 42
+    allow(tasked_exercise).to receive(:identifier).and_return(exchange_identifier)
     tasked_exercise.free_response = 'abc'
     tasked_exercise.answer_id = tasked_exercise.answer_ids.first
-    question_id = tasked_exercise.wrapper.questions.first['id']
     expect(OpenStax::Exchange).to receive(:record_multiple_choice_answer)
-                                   .with(question_id,
+                                   .with(exchange_identifier,
                                          tasked_exercise.url,
                                          "0", tasked_exercise.answer_ids.first)
     tasked_exercise.handle_task_step_completion!

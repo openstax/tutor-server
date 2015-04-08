@@ -103,7 +103,7 @@ class SpacedPracticeAlgorithmIReading
 
     placeholder_task_steps.each do |task_step|
       #puts "filling placeholder with fake exercise"
-      exercise_hash = OpenStax::Exercises::V1.fake_client.new_exercise_hash
+      exercise_hash = OpenStax::Exercises::V1.fake_client.new_exercise_hash(number: SecureRandom.hex(4).to_i(16))
       exercise = OpenStax::Exercises::V1::Exercise.new(exercise_hash.to_json)
 
       task_step.tasked.destroy!
