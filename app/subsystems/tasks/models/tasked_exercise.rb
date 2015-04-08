@@ -19,24 +19,6 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     can_be_recovered
   end
 
-  def url
-    u = super
-    return u unless u.nil?
-    u = wrapper.url
-    self.url = u
-    save if persisted?
-    u
-  end
-
-  def title
-    t = super
-    return t unless t.nil?
-    t = wrapper.title
-    self.title = t
-    save if persisted?
-    t
-  end
-
   def feedback_html
     wrapper.feedback_html(answer_id)
   end

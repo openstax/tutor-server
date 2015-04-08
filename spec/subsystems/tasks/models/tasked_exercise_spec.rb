@@ -9,24 +9,16 @@ RSpec.describe Tasks::Models::TaskedExercise, :type => :model do
                         .to(:wrapper) }
 
   let!(:hash) { OpenStax::Exercises::V1.fake_client.new_exercise_hash }
-  let!(:tasked_exercise) { FactoryGirl.create(:tasks_tasked_exercise,
-                                              content: hash.to_json) }
+  let!(:content_exercise) { FactoryGirl.create :content_exercise,
+                                               content: hash.to_json }
+  let!(:tasked_exercise)  { FactoryGirl.create(:tasks_tasked_exercise,
+                                               exercise: content_exercise) }
 
   it 'can return its wrapper' do
     expect(tasked_exercise.wrapper).to be_a(OpenStax::Exercises::V1::Exercise)
 
     expect(tasked_exercise.wrapper.url).to eq tasked_exercise.url
     expect(tasked_exercise.wrapper.content).to eq tasked_exercise.content
-  end
-
-  it 'automatically sets the url and title from the content' do
-    tasked_exercise.url = nil
-    expect(tasked_exercise.url).to(
-      eq "http://exercises.openstax.org/exercises/#{hash[:uid]}"
-    )
-
-    tasked_exercise.title = nil
-    expect(tasked_exercise.title).to eq hash['title']
   end
 
   it 'can return feedback depending on the selected answer' do
