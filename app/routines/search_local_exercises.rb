@@ -1,4 +1,4 @@
-class Domain::SearchLocalExercises
+class SearchLocalExercises
 
   lev_routine express_output: :items
 

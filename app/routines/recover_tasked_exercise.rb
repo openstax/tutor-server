@@ -2,8 +2,8 @@ class RecoverTaskedExercise
 
   lev_routine
 
-  uses_routine Domain::TaskExercise, as: :task_exercise
-  uses_routine Domain::SearchLocalExercises, as: :search
+  uses_routine TaskExercise, as: :task_exercise
+  uses_routine SearchLocalExercises, as: :search
 
   protected
 

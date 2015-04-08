@@ -1,4 +1,4 @@
-class Domain::AddBookToCourse
+class AddBookToCourse
   lev_routine
 
   uses_routine CourseContent::AddBookToCourse,

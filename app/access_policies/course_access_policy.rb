@@ -4,7 +4,7 @@ class CourseAccessPolicy
     when :readings
       requestor.is_human?
     when :exercises
-      Domain::UserIsCourseTeacher[user: requestor.entity_user, course: course]
+      UserIsCourseTeacher[user: requestor.entity_user, course: course]
     else
       false
     end

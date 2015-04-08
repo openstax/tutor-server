@@ -1,8 +1,8 @@
 require 'rails_helper'
 
-RSpec.describe Domain::MapUsersAccounts do
+RSpec.describe MapUsersAccounts do
   describe '.account_to_user' do
-    let(:profile) { Domain::MapUsersAccounts.account_to_user(account) }
+    let(:profile) { MapUsersAccounts.account_to_user(account) }
 
     context 'when the account is anonymous' do
       let(:account) { double(:account, is_anonymous?: true) }
@@ -40,7 +40,7 @@ RSpec.describe Domain::MapUsersAccounts do
       user = FactoryGirl.create(:user_profile)
       expected = user.account
 
-      result = Domain::MapUsersAccounts.user_to_account(user)
+      result = MapUsersAccounts.user_to_account(user)
 
       expect(result.username).to eq(expected.username)
     end

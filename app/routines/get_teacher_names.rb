@@ -1,7 +1,7 @@
-class Domain::GetTeacherNames
+class GetTeacherNames
   lev_routine
 
-  uses_routine Domain::GetCourseTeacherUsers,
+  uses_routine GetCourseTeacherUsers,
     translations: { outputs: { type: :verbatim } },
     as: :get_teacher_users
 

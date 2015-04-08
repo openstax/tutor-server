@@ -1,4 +1,4 @@
-class Domain::ImportBook
+class ImportBook
 
   #
   # NOT CURRENTLY USED

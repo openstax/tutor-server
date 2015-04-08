@@ -8,11 +8,11 @@ module Sprint008
       student, teacher, both_user = create_users
       taken, teaching, both_course = create_courses
 
-      Domain::AddUserAsCourseTeacher.call(course: teaching, user: teacher)
-      Domain::AddUserAsCourseStudent.call(course: taken, user: student)
+      AddUserAsCourseTeacher.call(course: teaching, user: teacher)
+      AddUserAsCourseStudent.call(course: taken, user: student)
 
-      Domain::AddUserAsCourseTeacher.call(course: both_course, user: both_user)
-      Domain::AddUserAsCourseStudent.call(course: both_course, user: both_user)
+      AddUserAsCourseTeacher.call(course: both_course, user: both_user)
+      AddUserAsCourseStudent.call(course: both_course, user: both_user)
 
       taken_plan    = FactoryGirl.create( :tasks_task_plan, owner: taken)
       FactoryGirl.create(:tasks_task, tasked_to:[student], task_plan: taken_plan)
@@ -34,9 +34,9 @@ module Sprint008
     end
 
     def create_courses
-      taken = Domain::CreateCourse.call(name: 'Being Taken').outputs.profile
-      teaching = Domain::CreateCourse.call(name: 'Being Taught').outputs.profile
-      both = Domain::CreateCourse.call(name: 'Both').outputs.profile
+      taken = CreateCourse.call(name: 'Being Taken').outputs.profile
+      teaching = CreateCourse.call(name: 'Being Taught').outputs.profile
+      both = CreateCourse.call(name: 'Both').outputs.profile
       return taken.course, teaching.course, both.course
     end
 

@@ -1,13 +1,13 @@
-class Domain::ListCourses
+class ListCourses
   lev_routine
 
   uses_routine CourseProfile::GetAllProfiles,
                translations: { outputs: { map: { profiles: :courses } } },
                as: :get_profiles
-  uses_routine Domain::GetTeacherNames,
+  uses_routine GetTeacherNames,
                translations: { outputs: { type: :verbatim } },
                as: :get_teacher_names
-  uses_routine Domain::GetUserCourseRoles,
+  uses_routine GetUserCourseRoles,
                translations: { outputs: { type: :verbatim } },
                as: :get_course_roles
 

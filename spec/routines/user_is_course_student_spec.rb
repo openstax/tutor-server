@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Domain::UserIsCourseStudent do
+describe UserIsCourseStudent do
 
   context "when the user is not a student for the given course" do
     it "returns false" do
@@ -24,7 +24,7 @@ describe Domain::UserIsCourseStudent do
       CourseMembership::AddStudent.call(course: target_course, role: other_student_role)
 
       ## Perform test
-      result = Domain::UserIsCourseStudent.call(user: target_user, course: target_course)
+      result = UserIsCourseStudent.call(user: target_user, course: target_course)
       expect(result.errors).to be_empty
       expect(result.outputs.user_is_course_teacher).to be_falsey
     end
@@ -40,7 +40,7 @@ describe Domain::UserIsCourseStudent do
       CourseMembership::AddStudent.call(course: target_course, role: target_student_role)
 
       ## Perform test
-      result = Domain::UserIsCourseStudent.call(user: target_user, course: target_course)
+      result = UserIsCourseStudent.call(user: target_user, course: target_course)
       expect(result.errors).to be_empty
       expect(result.outputs.user_is_course_student).to be_truthy
     end

@@ -13,11 +13,11 @@
 #     If one is a :teacher, return it
 #     Otherwise fail with fatal_error code: multiple_roles
 #
-class Domain::ChooseCourseRole
+class ChooseCourseRole
 
   lev_routine express_output: :role
 
-  uses_routine Domain::GetUserCourseRoles
+  uses_routine GetUserCourseRoles
 
   protected
 
@@ -27,7 +27,7 @@ class Domain::ChooseCourseRole
       fatal_error(code: :invalid_role, message:"Role not found") unless role
       validate_role_membership(course, user, role)
     else
-      roles = Domain::GetUserCourseRoles[course:course, user:user, types:allowed_role_type]
+      roles = GetUserCourseRoles[course:course, user:user, types:allowed_role_type]
       validate_role_listing(roles)
     end
   end
@@ -37,7 +37,7 @@ class Domain::ChooseCourseRole
   # the simplest case where we were given a role.
   # Verify the user has it on the course and return
   def validate_role_membership(course, user, role)
-    if Domain::GetUserCourseRoles[course:course, user:user].include?(role)
+    if GetUserCourseRoles[course:course, user:user].include?(role)
       outputs[:role] = role
     else
       fatal_error(code: :invalid_role, message:"Invalid role for user in course")

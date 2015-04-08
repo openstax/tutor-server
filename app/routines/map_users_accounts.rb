@@ -1,4 +1,4 @@
-module Domain::MapUsersAccounts
+module MapUsersAccounts
 
   class << self
     def account_to_user(account)

@@ -1,7 +1,7 @@
-class Domain::GetCourseUserTasks
+class GetCourseUserTasks
   lev_routine express_output: :tasks
 
-  uses_routine Domain::GetUserCourseRoles,
+  uses_routine GetUserCourseRoles,
                as: :get_roles,
                translations: { outputs: { type: :verbatim } }
   uses_routine Tasks::GetTasks,

@@ -1,7 +1,7 @@
-class Domain::ResetPracticeWidget
+class ResetPracticeWidget
   lev_routine express_output: :task
 
-  uses_routine Domain::GetPracticeWidget
+  uses_routine GetPracticeWidget
   uses_routine Tasks::CreateTasking
 
   protected
@@ -11,8 +11,7 @@ class Domain::ResetPracticeWidget
     # Get the existing practice widget and remove incomplete exercises from it
     # so they can be used in later practice
 
-    existing_practice_task = run(Domain::GetPracticeWidget, role: role).outputs
-                                                                       .task
+    existing_practice_task = run(GetPracticeWidget, role: role).outputs.task
     # TODO actually do the step removal
 
     # Gather relevant LO's from pages and book_parts
@@ -41,7 +40,7 @@ class Domain::ResetPracticeWidget
     exercises.each do |exercise|
       step = Tasks::Models::TaskStep.new(task: task)
 
-      step.tasked = Domain::TaskExercise[exercise: exercise, task_step: step]
+      step.tasked = TaskExercise[exercise: exercise, task_step: step]
 
       task.task_steps << step
     end
@@ -65,15 +64,16 @@ class Domain::ResetPracticeWidget
   end
 
   def get_local_exercises(count:, role:, tags:)
-    exercises = Domain::SearchLocalExercises[not_assigned_to: role,
-                                             tags: tags].to_a.shuffle
+    exercises = SearchLocalExercises[not_assigned_to: role,
+                                     tags: tags].to_a.shuffle
 
     count.times.collect do
       exercise = exercises.pop
 
       if exercise.nil?
         # We ran out of exercises, so start repeating them
-        exercises = Domain::SearchLocalExercises[tags: tags].to_a.shuffle
+        exercises = SearchLocalExercises[assigned_to: role,
+                                         tags: tags].to_a.shuffle
         exercise = exercises.pop
 
         fatal_error(code: :no_exercises_found,

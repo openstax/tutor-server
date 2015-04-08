@@ -1,7 +1,7 @@
 class Admin::CoursesUpdate
   lev_handler
 
-  uses_routine Domain::UpdateCourse, as: :update_course
+  uses_routine UpdateCourse, as: :update_course
 
   protected
 

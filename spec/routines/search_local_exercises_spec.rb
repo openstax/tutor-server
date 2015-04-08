@@ -1,8 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Domain::SearchLocalExercises, :type => :routine,
-                                             :vcr => VCR_OPTS do
+RSpec.describe SearchLocalExercises, :type => :routine, :vcr => VCR_OPTS do
 
   let!(:book_part) { FactoryGirl.create :content_book_part }
 
@@ -30,12 +29,12 @@ RSpec.describe Domain::SearchLocalExercises, :type => :routine,
                                        book_part: book_part)
 
     url = Content::Models::Exercise.last.url
-    exercises = Domain::SearchLocalExercises.call(url: url).outputs.items
+    exercises = SearchLocalExercises.call(url: url).outputs.items
     expect(exercises.length).to eq 1
     expect(exercises.first.url).to eq url
 
     lo = 'k12phys-ch04-s01-lo01'
-    exercises = Domain::SearchLocalExercises.call(tag: lo).outputs.items
+    exercises = SearchLocalExercises.call(tag: lo).outputs.items
     expect(exercises.length).to eq 16
     exercises.each do |exercise|
       tags = exercise.exercise_tags.collect{|et| et.tag.name}
@@ -45,7 +44,7 @@ RSpec.describe Domain::SearchLocalExercises, :type => :routine,
     end
 
     embed_tag = 'k12phys-ch04-ex021'
-    exercises = Domain::SearchLocalExercises.call(tag: embed_tag).outputs.items
+    exercises = SearchLocalExercises.call(tag: embed_tag).outputs.items
     expect(exercises.length).to eq 1
     expect(exercises.first.exercise_tags.collect{|et| et.tag.name}).to(
       include embed_tag
@@ -65,19 +64,19 @@ RSpec.describe Domain::SearchLocalExercises, :type => :routine,
 
     Content::Routines::TagResource.call(exercise_3, 'test-tag')
 
-    Domain::TaskExercise[exercise: exercise_1, task_step: exercise_step_1]
-    Domain::TaskExercise[exercise: exercise_2, task_step: exercise_step_2]
+    TaskExercise[exercise: exercise_1, task_step: exercise_step_1]
+    TaskExercise[exercise: exercise_2, task_step: exercise_step_2]
 
     task.task_steps << exercise_step_1
     task.task_steps << exercise_step_2
     task.save!
 
-    out = Domain::SearchLocalExercises.call(assigned_to: role).outputs.items
+    out = SearchLocalExercises.call(assigned_to: role).outputs.items
     expect(out).to include(exercise_1)
     expect(out).to include(exercise_2)
     expect(out.length).to eq 2
 
-    out = Domain::SearchLocalExercises.call(not_assigned_to: role,
+    out = SearchLocalExercises.call(not_assigned_to: role,
                                             tag: 'test-tag').outputs.items
     expect(out).to eq [exercise_3]
   end

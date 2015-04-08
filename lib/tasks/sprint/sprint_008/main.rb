@@ -15,24 +15,24 @@ module Sprint008
 
       # Make 2 courses
 
-      course1 = Domain::CreateCourse[name: 'Physics']
-      course2 = Domain::CreateCourse[name: 'Fundamentals of Risk']
+      course1 = CreateCourse[name: 'Physics']
+      course2 = CreateCourse[name: 'Fundamentals of Risk']
 
       # Import the sample content book and add it to a course
 
-      book = Domain::FetchAndImportBook[id: '7db9aa72-f815-4c3b-9cb6-d50cf5318b58']
-      Domain::AddBookToCourse[book: book, course: course1]
+      book = FetchAndImportBook[id: '7db9aa72-f815-4c3b-9cb6-d50cf5318b58']
+      AddBookToCourse[book: book, course: course1]
 
       # Add the teachers to their courses
 
-      Domain::AddUserAsCourseTeacher[course: course1, user: teacher.entity_user]
-      Domain::AddUserAsCourseTeacher[course: course2, user: teacher_and_student.entity_user]
+      AddUserAsCourseTeacher[course: course1, user: teacher.entity_user]
+      AddUserAsCourseTeacher[course: course2, user: teacher_and_student.entity_user]
 
       # Add the students to the courses
 
-      Domain::AddUserAsCourseStudent[course: course1, user: student.entity_user]
+      AddUserAsCourseStudent[course: course1, user: student.entity_user]
       student_role = Entity::Models::Role.last
-      Domain::AddUserAsCourseStudent[course: course2, user: teacher_and_student.entity_user]
+      AddUserAsCourseStudent[course: course2, user: teacher_and_student.entity_user]
 
       # Set up three reading tasks (will include try another)
 
@@ -57,7 +57,7 @@ module Sprint008
       DistributeTasks.call(tp)
 
       # Set up a practice widget
-      Domain::ResetPracticeWidget.call(role: student_role, condition: :fake)
+      ResetPracticeWidget.call(role: student_role, condition: :fake)
 
       # Set up a task plan that will have activity for the stats
       stats_tp = FactoryGirl.create :tasks_task_plan, assistant: a,

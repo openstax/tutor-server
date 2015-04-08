@@ -1,8 +1,8 @@
-class Domain::UpdateCourse
+class UpdateCourse
   lev_routine
 
   uses_routine CourseProfile::UpdateProfile, as: :update_profile
-  uses_routine Domain::AddUserAsCourseTeacher, as: :assign_teacher
+  uses_routine AddUserAsCourseTeacher, as: :assign_teacher
 
   protected
 

@@ -7,7 +7,7 @@
 #   types: can be `:any` or an array including one
 #     or more of `:student`, `:teacher`, `:any`
 #
-class Domain::GetUserCourseRoles
+class GetUserCourseRoles
   lev_routine express_output: :roles
 
   uses_routine Role::GetUserRoles,

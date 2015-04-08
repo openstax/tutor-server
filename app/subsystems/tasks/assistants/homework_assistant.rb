@@ -33,7 +33,7 @@ class Tasks::Assistants::HomeworkAssistant
   def self.add_exercise_step(task:, exercise:)
     step = Tasks::Models::TaskStep.new(task: task)
 
-    Domain::TaskExercise[task_step: step, exercise: exercise]
+    TaskExercise[task_step: step, exercise: exercise]
 
     task.task_steps << step
   end

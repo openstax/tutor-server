@@ -1,4 +1,4 @@
-class Domain::GetCourseTeacherUsers
+class GetCourseTeacherUsers
   lev_routine
 
   uses_routine CourseMembership::GetTeachers, translations: {outputs: {map: {teachers: :teacher_roles}}}

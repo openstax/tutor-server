@@ -1,4 +1,4 @@
-class Domain::FetchAndImportBook
+class FetchAndImportBook
 
   lev_routine express_output: :book
 

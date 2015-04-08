@@ -1,4 +1,4 @@
-class Domain::CreateUserProfile
+class CreateUserProfile
   lev_routine
 
   uses_routine UserProfile::CreateProfile,

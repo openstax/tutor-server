@@ -161,7 +161,7 @@ class Tasks::Assistants::IReadingAssistant
                   tag: exercise_fragment.embed_tag
                 ]
     exercise = exercises.first
-    Domain::TaskExercise[exercise: exercises.first,
+    TaskExercise[exercise: exercises.first,
                          can_be_recovered: can_be_recovered,
                          task_step: step]
   end

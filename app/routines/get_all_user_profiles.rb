@@ -1,4 +1,4 @@
-class Domain::GetAllUserProfiles
+class GetAllUserProfiles
   lev_routine
 
   uses_routine UserProfile::GetAllUserProfiles,

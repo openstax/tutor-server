@@ -1,4 +1,4 @@
-class Domain::DoesTaskingExist
+class DoesTaskingExist
   lev_routine
 
   uses_routine Role::GetUserRoles,

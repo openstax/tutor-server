@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.feature 'Administration' do
   before do
-    Domain::CreateCourse.call
+    CreateCourse.call
 
     FactoryGirl.create(:user_profile, full_name: 'Teacher')
     FactoryGirl.create(:user_profile, full_name: 'Other Teacher')

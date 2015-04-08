@@ -9,12 +9,12 @@ module Sprint008
       teacher = FactoryGirl.create :user_profile, username: 'teacher'
       student = FactoryGirl.create :user_profile, username: 'student'
 
-      book = Domain::FetchAndImportBook.call(
+      book = FetchAndImportBook.call(
                id: '7db9aa72-f815-4c3b-9cb6-d50cf5318b58'
              ).outputs.book
-      course = Domain::CreateCourse.call.outputs.course
-      Domain::AddBookToCourse.call(book: book, course: course)
-      Domain::AddUserAsCourseTeacher.call(course: course, user: teacher)
+      course = CreateCourse.call.outputs.course
+      AddBookToCourse.call(book: book, course: course)
+      AddUserAsCourseTeacher.call(course: course, user: teacher)
 
       a = FactoryGirl.create :tasks_assistant, code_class_name: "Tasks::Assistants::IReadingAssistant"
       page_ids = Content::Models::BookPart.where(book: book)

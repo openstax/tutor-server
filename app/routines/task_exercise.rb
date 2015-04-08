@@ -1,4 +1,4 @@
-class Domain::TaskExercise
+class TaskExercise
 
   lev_routine express_output: :tasked_exercise
 

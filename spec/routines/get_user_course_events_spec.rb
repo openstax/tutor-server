@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe GetUserCourseEvents, :type => :routine do
-  let(:course) { Domain::CreateCourse.call.outputs.course }
+  let(:course) { CreateCourse.call.outputs.course }
   let(:user)   { FactoryGirl.create(:user_profile).entity_user }
 
   it 'gets all events for a course' do

@@ -1,4 +1,4 @@
-class Domain::UserIsCourseTeacher
+class UserIsCourseTeacher
   lev_routine
 
   uses_routine Role::GetUserRoles, translations: {outputs: {type: :verbatim}}

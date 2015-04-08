@@ -1,4 +1,4 @@
-class Domain::CreateCourse
+class CreateCourse
   lev_routine express_output: :course
 
   uses_routine CourseProfile::Routines::CreateCourseProfile,

@@ -6,7 +6,7 @@ RSpec.describe Api::V1::TaskSearchRepresenter, :type => :representer do
 
     let!(:user)           { FactoryGirl.create(:user_profile).entity_user }
     let!(:course)         { FactoryGirl.create(:entity_course) }
-    let!(:role)           { Domain::AddUserAsCourseStudent.call(user: user,
+    let!(:role)           { AddUserAsCourseStudent.call(user: user,
                                                                course: course)
                                                          .outputs.role }
     let!(:default_task)   { FactoryGirl.create(:tasks_task) }
@@ -19,7 +19,7 @@ RSpec.describe Api::V1::TaskSearchRepresenter, :type => :representer do
     ) } }
 
     let!(:output)         { Hashie::Mash.new(
-      'items' => Domain::GetCourseUserTasks[
+      'items' => GetCourseUserTasks[
         course: course, user: user
       ].collect{|t| t.task}
     ) }

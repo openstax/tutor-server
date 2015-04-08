@@ -4,7 +4,7 @@ RSpec.describe 'Administration' do
   scenario 'edit a course' do
     admin = FactoryGirl.create(:user_profile, :administrator)
     stub_current_user(admin)
-    Domain::CreateCourse.call(name: 'Change me')
+    CreateCourse.call(name: 'Change me')
 
     visit admin_courses_path
     click_link 'edit'

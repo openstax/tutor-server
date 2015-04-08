@@ -1,4 +1,4 @@
-class Domain::GetCourse
+class GetCourse
   lev_routine
 
   uses_routine CourseProfile::GetProfile,

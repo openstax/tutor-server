@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Domain::ChooseCourseRole do
+describe ChooseCourseRole do
 
   let(:teacher){ Entity::User.create! }
   let(:student){ Entity::User.create! }
@@ -27,7 +27,7 @@ describe Domain::ChooseCourseRole do
   context "when a role is provided" do
 
     context "and the user has it" do
-      subject { Domain::ChooseCourseRole.call(user: student, course: course, role_id: student_role.id) }
+      subject { ChooseCourseRole.call(user: student, course: course, role_id: student_role.id) }
       it "returns the user's role" do
         expect(subject.outputs.role).to eq(student_role)
       end
@@ -35,7 +35,7 @@ describe Domain::ChooseCourseRole do
 
     context "and the user lacks it" do
       subject(:result) {
-        Domain::ChooseCourseRole.call(user: student, course: course, role_id: teacher_role.id)
+        ChooseCourseRole.call(user: student, course: course, role_id: teacher_role.id)
       }
 
       describe "errors" do
@@ -56,7 +56,7 @@ describe Domain::ChooseCourseRole do
   context "when a role is not given" do
     context "and the user does not have any roles on the course" do
       subject(:result) {
-        Domain::ChooseCourseRole.call(user: interloper, course: course)
+        ChooseCourseRole.call(user: interloper, course: course)
       }
 
       describe "errors" do
@@ -74,7 +74,7 @@ describe Domain::ChooseCourseRole do
 
     context "and the user has a single role" do
       subject(:result) {
-        Domain::ChooseCourseRole.call(user: teacher, course: course)
+        ChooseCourseRole.call(user: teacher, course: course)
       }
 
       describe "errors" do
@@ -96,7 +96,7 @@ describe Domain::ChooseCourseRole do
           role=Entity::Role.create!(role_type: :student)
           Role::AddUserRole[user: teacher, role: role]
           CourseMembership::Models::Student.create(entity_course_id: course.id, entity_role_id: role.id)
-          Domain::ChooseCourseRole.call(
+          ChooseCourseRole.call(
             user: teacher, course: course, allowed_role_type: role_type
           ).outputs.role
         }
@@ -116,7 +116,7 @@ describe Domain::ChooseCourseRole do
         Role::AddUserRole[user: student, role: role]
         CourseMembership::Models::Student.create!(entity_course_id: course.id, entity_role_id: role.id)
 
-        errors = Domain::ChooseCourseRole.call(user: student, course: course).errors
+        errors = ChooseCourseRole.call(user: student, course: course).errors
         expect(errors).not_to be_empty
         expect(errors.first.code).to eq(:multiple_roles)
       end

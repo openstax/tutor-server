@@ -1,4 +1,4 @@
-class Domain::GetPracticeWidget
+class GetPracticeWidget
   lev_routine express_output: :task
 
   uses_routine Tasks::GetPracticeTask,

@@ -11,13 +11,13 @@ module Sprint008
 
       user = FactoryGirl.create :user, username: 'student'
       course = Entity::Course.create!
-      Domain::AddUserAsCourseStudent[course: course, user: user]
+      AddUserAsCourseStudent[course: course, user: user]
       student_role = Entity::Role.last
 
       outputs[:book_id] = '7db9aa72-f815-4c3b-9cb6-d50cf5318b58'
 
-      book = Domain::FetchAndImportBook[id: outputs[:book_id]]
-      Domain::AddBookToCourse[book: book, course: course]
+      book = FetchAndImportBook[id: outputs[:book_id]]
+      AddBookToCourse[book: book, course: course]
 
       condition = {
         _and: [
@@ -37,7 +37,7 @@ module Sprint008
         ]
       }
 
-      outputs[:task] = Domain::ResetPracticeWidget[
+      outputs[:task] = ResetPracticeWidget[
         role: student_role,
         condition: condition
       ]

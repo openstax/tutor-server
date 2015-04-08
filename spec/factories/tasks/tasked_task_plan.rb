@@ -5,7 +5,7 @@ FactoryGirl.define do
       number_of_students 10
     end
 
-    owner { Domain::CreateCourse.call.outputs.course }
+    owner { CreateCourse.call.outputs.course }
 
     settings do
       cnx_page  = OpenStax::Cnx::V1::Page.new(

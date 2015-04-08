@@ -15,14 +15,14 @@ module Sprint009
       student3 = FactoryGirl.create :user, username: 'no_history'
 
       puts "===== CREATING COURSE ====="
-      physics_course = Domain::CreateCourse[name: 'Physics']
+      physics_course = CreateCourse[name: 'Physics']
 
       puts "===== ASSIGNING USERS TO COURSE ROLES ====="
-      Domain::AddUserAsCourseStudent.call(course: physics_course, user: student1.entity_user)
+      AddUserAsCourseStudent.call(course: physics_course, user: student1.entity_user)
       student_role1 = Entity::Role.last
-      Domain::AddUserAsCourseStudent.call(course: physics_course, user: student2.entity_user)
+      AddUserAsCourseStudent.call(course: physics_course, user: student2.entity_user)
       student_role2 = Entity::Role.last
-      Domain::AddUserAsCourseStudent.call(course: physics_course, user: student3.entity_user)
+      AddUserAsCourseStudent.call(course: physics_course, user: student3.entity_user)
       student_role3 = Entity::Role.last
 
       ## Retrieve a book from CNX
