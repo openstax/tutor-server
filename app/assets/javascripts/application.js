@@ -14,4 +14,8 @@
 //= require jquery_ujs
 //= require bootstrap-sprockets
 //= require turbolinks
+//= require_self
 //= require_tree .
+//= require ./ui
+
+window.Tutor = window.Tutor || {};
