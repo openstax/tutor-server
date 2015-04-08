@@ -1,7 +1,8 @@
 require 'rails_helper'
+require 'vcr_helper'
 
 module OpenStax::BigLearn
-  RSpec.describe V1::RealClient, :type => :external do
+  RSpec.describe V1::RealClient, :type => :external, :vcr => VCR_OPTS do
 
     it 'stringifies tag searches' do
       tag_search = {
