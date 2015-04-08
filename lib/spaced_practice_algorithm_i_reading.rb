@@ -17,7 +17,7 @@ class SpacedPracticeAlgorithmIReading
     #puts "taskee_role: #{taskee_role.inspect}"
     #puts "@k_ago_map:  #{@k_ago_map.inspect}"
 
-    return unless task.core_task_steps_completed? || task.past_due?(current_time: current_time)
+    return if (event == :task_step_completion) && !task.core_task_steps_completed?
 
     #puts "core tasks completed"
 
@@ -28,7 +28,13 @@ class SpacedPracticeAlgorithmIReading
 
     #puts "=== POPULATING SPEs ==="
 
-    ireading_event_history = get_ireading_task_history(taskee: taskee_role, current_task: task, current_time: current_time)
+    ireading_event_history =
+      if event == :task_step_completion
+        get_completion_history(taskee: taskee_role, current_task: task, current_time: current_time)
+      else
+        get_force_history(taskee: taskee_role, current_task: task, current_time: current_time)
+      end
+
     maps = create_spaced_practice_exercise_pool_maps(tasks: ireading_event_history)
 
     #puts "map data:"
@@ -139,22 +145,53 @@ class SpacedPracticeAlgorithmIReading
     task_debug
   end
 
-  def get_ireading_task_history(taskee:, current_task:, current_time: Time.now)
+  def get_completion_history(taskee:, current_task:, current_time: Time.now)
     tasks = Tasks::Models::Task.joins{taskings}
                                .where{taskings.entity_role_id == taskee.id}
 
     ireading_tasks = tasks.select{|task| task.task_type == "reading"}
 
-    completed_or_past_due_ireading_tasks = ireading_tasks.select do |task|
-      add_task_to_history = task.core_task_steps_completed? || task.past_due?(current_time: [current_time, current_task.due_at].min)
-      if add_task_to_history && (task != current_task) && !task.core_task_steps_completed?
-        task.populate_spaced_practice_exercises!(current_time: task.due_at)
+    history_ireading_tasks = ireading_tasks.select do |task|
+      add_task_to_history = task.core_task_steps_completed? || task.past_due?(current_time: current_time)
+      if add_task_to_history && !task.core_task_steps_completed?
+        task.populate_spaced_practice_exercises!(event: :force, current_time: current_time)
         task.save!
       end
       add_task_to_history
     end
 
-    sorted_tasks = completed_or_past_due_ireading_tasks.sort_by do |task|
+    sorted_tasks = history_ireading_tasks.sort_by do |task|
+      times = [task.due_at]
+      times << task.core_task_steps_completed_at if task.core_task_steps_completed?
+      times.min
+    end.reverse
+
+    sorted_tasks
+  end
+
+  def get_force_history(taskee:, current_task:, current_time: Time.now)
+    tasks = Tasks::Models::Task.joins{taskings}
+                               .where{taskings.entity_role_id == taskee.id}
+    ireading_tasks = tasks.select{|task| task.task_type == "reading"}
+
+    history_ireading_tasks = ireading_tasks.select do |task|
+      add_task_to_history =
+        if task == current_task
+          true
+        elsif task.core_task_steps_completed?
+          task.core_task_steps_completed_at <= current_task.due_at
+        else
+          task.past_due?(current_time: [current_time, current_task.due_at].min)
+        end
+
+      if add_task_to_history && (task != current_task) && !task.core_task_steps_completed?
+        task.populate_spaced_practice_exercises!(event: :force, current_time: [current_time, current_task.due_at].min)
+        task.save!
+      end
+      add_task_to_history
+    end
+
+    sorted_tasks = history_ireading_tasks.sort_by do |task|
       times = [task.due_at]
       times << task.core_task_steps_completed_at if task.core_task_steps_completed?
       times.min
