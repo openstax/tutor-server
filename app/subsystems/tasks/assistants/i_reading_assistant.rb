@@ -116,7 +116,7 @@ class Tasks::Assistants::IReadingAssistant
   end
 
   def self.add_spaced_practice_exercise_steps!(task: task, taskee: taskee)
-    k_ago_map = [ [0,1], [1,3] ]
+    k_ago_map = [ [1,1], [2,1] ]
     task.spaced_practice_algorithm = SpacedPracticeAlgorithmIReading.new(k_ago_map: k_ago_map)
 
     max_num_spaced_practice_steps = k_ago_map.reduce(0) {|result, pair| result += pair.last}

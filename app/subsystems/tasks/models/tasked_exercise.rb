@@ -56,9 +56,16 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     end.first
   end
 
-  def inject_debug_content(debug_content:)
+  def inject_debug_content(debug_content:, pre_br: false, post_br: false)
     json_hash = JSON.parse(self.content)
-    json_hash['questions'].first['stem_html'] = debug_content + json_hash['questions'].first['stem_html']
+    stem_html = json_hash['questions'].first['stem_html']
+    match_data = %r{\<!-- debug_begin --\>\<pre\>(?<existing_debug_content>(?m:.*?))\</pre\>\<!-- debug_end --\>}.match(stem_html)
+    new_debug_content = match_data ? match_data[:existing_debug_content] : ""
+    new_debug_content += debug_content
+    new_debug_content += "\n"
+    stem_html.gsub!(%r{\<!-- debug_begin --\>(?m:.*?)\</pre\>\<!-- debug_end --\>}, '')
+    stem_html += "<!-- debug_begin --><pre>#{new_debug_content}</pre><!-- debug_end -->"
+    json_hash['questions'].first['stem_html'] = stem_html
     self.content = json_hash.to_json
   end
 
