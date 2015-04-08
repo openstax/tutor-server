@@ -93,12 +93,16 @@ module OpenStax::Cnx::V1
       # do the opposite (make absolute links into relative links)
       # and make sure all files are properly served
       doc.css("[src]").each do |tag|
-        uri = URI.parse(URI.escape(tag.attributes["src"].value))
-        next if uri.absolute?
+        src = tag.attributes["src"]
+        uri = URI.parse(URI.escape(src.value))
 
-        tag.attributes["src"].value = URI.unescape(
-          OpenStax::Cnx::V1.url_for(uri)
-        )
+        if uri.absolute?
+          next if uri.host != 'archive.cnx.org'
+          uri.scheme = "https"
+          src.value = uri.to_s
+        else
+          src.value = URI.unescape(OpenStax::Cnx::V1.url_for(uri, secure: true))
+        end
       end
 
       doc.to_html

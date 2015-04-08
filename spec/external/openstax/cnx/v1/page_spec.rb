@@ -89,6 +89,7 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, :vcr => VCR_OPTS do
 
           doc.css('[src]').each do |tag|
             uri = URI.parse(URI.escape(tag.attributes['src'].value))
+            expect(uri.scheme).to eq('https') if (uri.host == 'archive.cnx.org')
             expect(uri.absolute?).to eq true
           end
         end
