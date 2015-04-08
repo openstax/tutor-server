@@ -40,10 +40,6 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
           title: nil},
         { klass: Tasks::Models::TaskedPlaceholder,
           title: nil},
-        { klass: Tasks::Models::TaskedPlaceholder,
-          title: nil},
-        { klass: Tasks::Models::TaskedPlaceholder,
-          title: nil}
       ]
     }
 
@@ -149,8 +145,6 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
       [
         { klass: Tasks::Models::TaskedPlaceholder },
         { klass: Tasks::Models::TaskedPlaceholder },
-        { klass: Tasks::Models::TaskedPlaceholder },
-        { klass: Tasks::Models::TaskedPlaceholder }
       ]
     }
 
