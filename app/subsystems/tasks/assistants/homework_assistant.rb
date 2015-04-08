@@ -65,8 +65,8 @@ class Tasks::Assistants::HomeworkAssistant
       # Fake Spaced practice
       SPACED_PRACTICE_MAP.each do |k_ago, number|
         number.times do
-          exercise = FillIReadingSpacedPracticeSlot.call(taskee, k_ago)
-                                                   .outputs.exercise
+          hash = OpenStax::Exercises::V1.fake_client.new_exercise_hash
+          exercise = OpenStax::Exercises::V1::Exercise.new(hash.to_json)
 
           add_exercise_step(task: task, exercise: exercise)
         end
