@@ -87,7 +87,7 @@ class SpacedPracticeAlgorithmIReading
         tasked_exercise.inject_debug_content(debug_content: "based on the following iReading history:")
         ireading_event_history.each_with_index do |task, k_ago|
           tasked_exercise.inject_debug_content(
-            debug_content: "  k_ago=#{k_ago}: #{get_task_debug(task)} (CC?=#{!!task.core_task_steps_completed?}, PD=?#{!!task.past_due?})"
+            debug_content: "  k_ago=#{k_ago}: #{get_task_debug(task)} (CC?=#{!!task.core_task_steps_completed?}, PD?=#{!!task.past_due?})"
           )
         end
         tasked_exercise.inject_debug_content(debug_content: "and comes from a pool built from the following LOs:")
@@ -122,7 +122,7 @@ class SpacedPracticeAlgorithmIReading
       tasked_exercise.inject_debug_content(debug_content: "Based on the following iReading history:")
       ireading_event_history.each_with_index do |task, k_ago|
         tasked_exercise.inject_debug_content(
-          debug_content: "  k_ago=#{k_ago}: #{get_task_debug(task)} (CC?=#{!!task.core_task_steps_completed?}, PD=?#{!!task.past_due?})"
+          debug_content: "  k_ago=#{k_ago}: #{get_task_debug(task)} (CC?=#{!!task.core_task_steps_completed?}, PD?=#{!!task.past_due?})"
         )
       end
       tasked_exercise.inject_debug_content(debug_content: "the Spaced Practice Algorithm could not fill this exercise slot.")
