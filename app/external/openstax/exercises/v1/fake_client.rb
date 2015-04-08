@@ -6,8 +6,8 @@ class OpenStax::Exercises::V1::FakeClient
 
   def reset!
     @exercises_array = []
-    @uid = 0
-    @exercise_number = 0
+    @uid = 10000
+    @exercise_number = 10000
   end
 
   def initialize

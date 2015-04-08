@@ -75,8 +75,14 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     question = wrapper.questions.first
     # "trial" is set to only "0" for now.  When multiple
     # attempts are supported, it will be incremented to indicate the attempt #
+
+    ## Blatent hack below (the identifier *should* be set to
+    ## the exchange identifier in the current user's profile,
+    ## but the role id is a close temporary proxy):
+    identifier = task_step.task.taskings.first.role.id
+
     OpenStax::Exchange.record_multiple_choice_answer(
-      question['id'], url, '0', answer_id
+      identifier, url, '0', answer_id
     )
   end
 
