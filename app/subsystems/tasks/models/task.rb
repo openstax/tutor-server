@@ -69,7 +69,11 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def handle_task_step_completion!(completion_time: Time.now)
-    spaced_practice_algorithm.call(event: :task_step_completion, task: self, current_time: completion_time)
+    self.populate_spaced_practice_exercises!(event: :task_step_completion, current_time: completion_time)
+  end
+
+  def populate_spaced_practice_exercises!(event: :force, current_time: Time.now)
+    spaced_practice_algorithm.call(event: event, task: self, current_time: current_time)
   end
 
   protected
