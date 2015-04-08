@@ -45,7 +45,7 @@ RSpec.describe Content::Routines::ImportPage, :type => :routine, :vcr => VCR_OPT
                                             book_part: book_part)
         }.to change{ Content::Models::Tag.lo.count }.by(2)
 
-        tags = Content::Models::Tag.lo.to_a
+        tags = Content::Models::Tag.lo.order(:id).to_a
         expect(tags[-2].name).to eq 'k12phys-ch04-s01-lo01'
         expect(tags[-1].name).to eq 'k12phys-ch04-s01-lo02'
 
@@ -67,7 +67,7 @@ RSpec.describe Content::Routines::ImportPage, :type => :routine, :vcr => VCR_OPT
                                             book_part: book_part)
         }.to change{ Content::Models::Exercise.count }.by(31)
 
-        exercises = Content::Models::Exercise.all.to_a
+        exercises = Content::Models::Exercise.all.order(:id).to_a
       end
     end
   end
