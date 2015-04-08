@@ -52,6 +52,7 @@ Rails.application.routes.draw do
         post 'practice(/role/:role_id)', action: :practice
         get 'practice(/role/:role_id)', action: :practice
         get 'stats(/role/:role_id)', action: :stats
+        get 'performance(/role/:role_id)', action: :performance
       end
 
       resources :task_plans, path: '/plans', shallow: true, except: [:index, :edit] do

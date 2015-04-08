@@ -156,6 +156,18 @@ class Api::V1::CoursesController < Api::V1::ApiController
       respond_with(task.task, represent_with: Api::V1::TaskRepresenter)
   end
 
+  api :GET, '/courses/:course_id/performance(/role/:role_id)', 'Returns performance book for the user'
+  def performance
+    course = Entity::Course.find(params[:id])
+    role = ChooseCourseRole[course: course, user: current_human_user.entity_user, role_id: params[:role_id]]
+    pbook = Tasks::GetPerformanceBook[course: course, role: role]
+
+    # TODO This returns nicely formatted JSON for the API which is good for the
+    #      demo, but should be replaced by a representer
+    require 'json'
+    render json: JSON.pretty_generate(pbook)
+  end
+
   protected
 
   def get_course_role(types: :any)
