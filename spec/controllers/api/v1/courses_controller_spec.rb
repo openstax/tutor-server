@@ -87,13 +87,14 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
     end
 
     it "should work on the happy path" do
+      page_ids = Content::Models::Page.all.map(&:id)
       api_get :exercises, user_1_token, parameters: {id: course.id,
-                                                     page_ids: [2, 3]}
+                                                     page_ids: page_ids}
 
       expect(response).to have_http_status(:success)
       hash = response.body_as_hash
-      expect(hash[:total_count]).to eq(63)
-      page_los = Content::GetLos[page_ids: [2, 3]]
+      expect(hash[:total_count]).to eq(127)
+      page_los = Content::GetLos[page_ids: page_ids]
       hash[:items].each do |item|
         wrapper = OpenStax::Exercises::V1::Exercise.new(item[:content])
         item_los = wrapper.los
