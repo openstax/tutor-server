@@ -87,7 +87,7 @@ class SpacedPracticeAlgorithmIReading
         tasked_exercise.inject_debug_content(debug_content: "based on the following iReading history:")
         ireading_event_history.each_with_index do |task, k_ago|
           tasked_exercise.inject_debug_content(
-            debug_content: "  k_ago=#{k_ago}: #{get_task_debug(task)} (CC?=#{!!task.core_task_steps_completed?}, PD=?#{!!task.past_due?})"
+            debug_content: "  k_ago=#{k_ago}: #{get_task_debug(task)} (CC?=#{!!task.core_task_steps_completed?}, PD?=#{!!task.past_due?})"
           )
         end
         tasked_exercise.inject_debug_content(debug_content: "and comes from a pool built from the following LOs:")
@@ -103,7 +103,7 @@ class SpacedPracticeAlgorithmIReading
 
     placeholder_task_steps.each do |task_step|
       #puts "filling placeholder with fake exercise"
-      exercise_hash = OpenStax::Exercises::V1.fake_client.new_exercise_hash
+      exercise_hash = OpenStax::Exercises::V1.fake_client.new_exercise_hash(number: SecureRandom.hex(4).to_i(16))
       exercise = OpenStax::Exercises::V1::Exercise.new(exercise_hash.to_json)
 
       task_step.tasked.destroy!
@@ -122,7 +122,7 @@ class SpacedPracticeAlgorithmIReading
       tasked_exercise.inject_debug_content(debug_content: "Based on the following iReading history:")
       ireading_event_history.each_with_index do |task, k_ago|
         tasked_exercise.inject_debug_content(
-          debug_content: "  k_ago=#{k_ago}: #{get_task_debug(task)} (CC?=#{!!task.core_task_steps_completed?}, PD=?#{!!task.past_due?})"
+          debug_content: "  k_ago=#{k_ago}: #{get_task_debug(task)} (CC?=#{!!task.core_task_steps_completed?}, PD?=#{!!task.past_due?})"
         )
       end
       tasked_exercise.inject_debug_content(debug_content: "the Spaced Practice Algorithm could not fill this exercise slot.")

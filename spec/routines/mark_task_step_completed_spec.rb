@@ -20,6 +20,7 @@ RSpec.describe MarkTaskStepCompleted, :type => :routine do
   # end
 
   it 'can mark an exercise step as completed' do
+    allow(tasked_exercise).to receive(:identifier).and_return(42)
     result = MarkTaskStepCompleted.call(task_step: tasked_exercise.task_step)
     expect(result.errors).to be_empty
     expect(tasked_exercise.task_step.completed_at).not_to be_nil
