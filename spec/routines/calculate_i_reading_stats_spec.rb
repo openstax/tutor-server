@@ -1,6 +1,7 @@
 require 'rails_helper'
+require 'vcr_helper'
 
-describe CalculateIReadingStats do
+describe CalculateIReadingStats, :type => :routine, :vcr => VCR_OPTS do
 
   let(:number_of_students){ 8 }
 
@@ -33,7 +34,9 @@ describe CalculateIReadingStats do
     it "records partial/complete status" do
 
       first_task = task_plan.tasks.first
-      step = first_task.task_steps.where(tasked_type:"Tasks::Models::TaskedReading").first
+      step = first_task.task_steps.where(
+        tasked_type:"Tasks::Models::TaskedReading"
+      ).first
       MarkTaskStepCompleted.call(task_step: step)
 
       stats = CalculateIReadingStats.call(plan: task_plan).outputs.stats

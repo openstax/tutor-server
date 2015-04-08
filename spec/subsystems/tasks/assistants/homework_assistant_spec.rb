@@ -9,6 +9,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, :type => :assistant,
   ) }
 
   let!(:exercises) {
+    OpenStax::Exercises::V1.use_real_client
     Content::Routines::ImportExercises.call(tag: 'k12phys-ch04-s01-lo01')
                                       .outputs.exercises
   }
@@ -17,9 +18,9 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, :type => :assistant,
   let!(:tutor_exercise_count) { 4 } # Adjust if spaced practice changes
 
   let!(:task_plan) {
-    FactoryGirl.create :tasks_task_plan, assistant: assistant,
-                                         settings: { exercise_ids: exercise_ids,
-                                                     description: "Hello!" }
+    FactoryGirl.create :tasks_task_plan, assistant: assistant, settings: {
+      exercise_ids: exercise_ids, description: "Hello!"
+    }
   }
 
   let!(:taskees) { 3.times.collect{ Entity::User.create } }

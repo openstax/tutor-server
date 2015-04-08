@@ -69,13 +69,13 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
   end
 
   describe "#exercises" do
-    let!(:book) { Domain::FetchAndImportBook[
+    let!(:book) { FetchAndImportBook[
       id: '7db9aa72-f815-4c3b-9cb6-d50cf5318b58'
     ] }
 
     before(:each) do
       CourseContent::AddBookToCourse.call(course: course, book: book)
-      Domain::AddUserAsCourseTeacher.call(course: course,
+      AddUserAsCourseTeacher.call(course: course,
                                           user: user_1.entity_user)
     end
 
@@ -147,10 +147,10 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
     end
 
     context 'user is a teacher' do
-      let(:teaching) { Domain::CreateCourse.call.outputs.profile }
+      let(:teaching) { CreateCourse.call.outputs.profile }
 
       before do
-        Domain::AddUserAsCourseTeacher.call(course: teaching.course, user: user_1.entity_user)
+        AddUserAsCourseTeacher.call(course: teaching.course, user: user_1.entity_user)
       end
 
       it 'returns the teacher roles with the course' do
@@ -164,10 +164,10 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
     end
 
     context 'user is a student' do
-      let(:taking) { Domain::CreateCourse.call.outputs.profile }
+      let(:taking) { CreateCourse.call.outputs.profile }
 
       before do
-        Domain::AddUserAsCourseStudent.call(course: taking.course, user: user_1.entity_user)
+        AddUserAsCourseStudent.call(course: taking.course, user: user_1.entity_user)
       end
 
       it 'returns the student roles with the course' do
@@ -181,11 +181,11 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
     end
 
     context 'user is both a teacher and student' do
-      let(:both) { Domain::CreateCourse.call.outputs.profile }
+      let(:both) { CreateCourse.call.outputs.profile }
 
       before do
-        Domain::AddUserAsCourseStudent.call(course: both.course, user: user_1.entity_user)
-        Domain::AddUserAsCourseTeacher.call(course: both.course, user: user_1.entity_user)
+        AddUserAsCourseStudent.call(course: both.course, user: user_1.entity_user)
+        AddUserAsCourseTeacher.call(course: both.course, user: user_1.entity_user)
       end
 
       it 'returns both roles with the course' do
@@ -232,7 +232,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
                                                exercise: exercise_5, tag: lo }
 
     it "works" do
-      role = Domain::AddUserAsCourseStudent.call(course: course,
+      role = AddUserAsCourseStudent.call(course: course,
                                                  user: user_1.entity_user)
                                            .outputs.role
 
@@ -258,12 +258,12 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
     end
 
     it "prefers unassigned exercises" do
-      role = Domain::AddUserAsCourseStudent.call(course: course,
+      role = AddUserAsCourseStudent.call(course: course,
                                                  user: user_1.entity_user)
                                            .outputs.role
 
       # Assign the first 5 exercises
-      Domain::ResetPracticeWidget.call(
+      ResetPracticeWidget.call(
         role: role, condition: :local, page_ids: [page.id]
       )
 
@@ -312,7 +312,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
     end
 
     it "must be called by a user who has the role" do
-      Domain::AddUserAsCourseStudent.call(course: course, user: user_1.entity_user)
+      AddUserAsCourseStudent.call(course: course, user: user_1.entity_user)
       expect{
         # The role belongs to user_1, we pass user_2_token
         api_post :practice, user_2_token, parameters: {id: course.id, role_id: Entity::Role.last.id}
@@ -323,16 +323,16 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
 
   describe "practice_get" do
     it "returns nothing when practice widget not yet set" do
-      Domain::AddUserAsCourseStudent.call(course: course, user: user_1.entity_user)
+      AddUserAsCourseStudent.call(course: course, user: user_1.entity_user)
       api_get :practice, user_1_token, parameters: {id: course.id, role_id: Entity::Role.last.id}
 
       expect(response).to have_http_status(:not_found)
     end
 
     it "returns a practice widget" do
-      Domain::AddUserAsCourseStudent.call(course: course, user: user_1.entity_user)
-      Domain::ResetPracticeWidget.call(role: Entity::Role.last, condition: :fake)
-      Domain::ResetPracticeWidget.call(role: Entity::Role.last, condition: :fake)
+      AddUserAsCourseStudent.call(course: course, user: user_1.entity_user)
+      ResetPracticeWidget.call(role: Entity::Role.last, condition: :fake)
+      ResetPracticeWidget.call(role: Entity::Role.last, condition: :fake)
 
       api_get :practice, user_1_token, parameters: {id: course.id, role_id: Entity::Role.last.id}
 

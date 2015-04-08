@@ -3,7 +3,7 @@ class TaskedAccessPolicy
     case action
     when :read, :create, :update, :destroy, :mark_completed, :recover, :refresh
       requestor.is_human? &&
-      Domain::DoesTaskingExist[task_component: tasked, user: requestor]
+      DoesTaskingExist[task_component: tasked, user: requestor]
     else
       false
     end

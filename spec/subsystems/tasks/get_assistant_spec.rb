@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Tasks::GetAssistant do
-  let!(:course)           { Domain::CreateCourse.call.outputs.course }
+  let!(:course)           { CreateCourse.call.outputs.course }
   let!(:assistant)        { FactoryGirl.create :tasks_assistant }
   let!(:course_assistant) {
     FactoryGirl.create :tasks_course_assistant, course: course,

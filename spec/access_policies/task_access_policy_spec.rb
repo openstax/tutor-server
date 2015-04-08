@@ -15,13 +15,13 @@ RSpec.describe TaskAccessPolicy, :type => :access_policy do
       # already true for User
 
       context 'and the requestor has taskings in the task' do
-        before { allow(Domain::DoesTaskingExist).to receive(:[]) { true } }
+        before { allow(DoesTaskingExist).to receive(:[]) { true } }
 
         it { should be true }
       end
 
       context 'and the requestor has no taskings in the task' do
-        before { allow(Domain::DoesTaskingExist).to receive(:[]) { false } }
+        before { allow(DoesTaskingExist).to receive(:[]) { false } }
 
         it { should be false }
       end

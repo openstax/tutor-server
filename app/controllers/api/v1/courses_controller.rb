@@ -15,9 +15,8 @@ class Api::V1::CoursesController < Api::V1::ApiController
     #{json_schema(Api::V1::CoursesRepresenter, include: :readable)}
   EOS
   def index
-    courses = Domain::ListCourses.call(user: current_human_user.entity_user,
-                                       with: :roles)
-                                 .outputs.courses
+    courses = ListCourses.call(user: current_human_user.entity_user,
+                               with: :roles).outputs.courses
     respond_with courses, represent_with: Api::V1::CoursesRepresenter
   end
 
@@ -56,8 +55,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
                                               course)
 
     los = Content::GetLos[params]
-    outputs = Domain::SearchLocalExercises.call(tag: los, match_count: 1)
-                                          .outputs
+    outputs = SearchLocalExercises.call(tag: los, match_count: 1).outputs
 
     respond_with outputs, represent_with: Api::V1::ExerciseSearchRepresenter
   end
@@ -82,8 +80,8 @@ class Api::V1::CoursesController < Api::V1::ApiController
     # No authorization is necessary because if the user isn't authorized, they'll just get
     # back an empty list of tasks
     course = Entity::Course.find(params[:id])
-    tasks = Domain::GetCourseUserTasks[course: course,
-                                       user: current_human_user.entity_user]
+    tasks = GetCourseUserTasks[course: course,
+                               user: current_human_user.entity_user]
     output = Hashie::Mash.new('items' => tasks.collect{|t| t.task})
     respond_with output, represent_with: Api::V1::TaskSearchRepresenter
   end
@@ -94,7 +92,8 @@ class Api::V1::CoursesController < Api::V1::ApiController
   EOS
   def events
     course = Entity::Course.find(params[:id])
-    outputs = GetUserCourseEvents.call(user: current_human_user.entity_user, course: course).outputs
+    outputs = GetUserCourseEvents.call(user: current_human_user.entity_user,
+                                       course: course).outputs
     respond_with outputs, represent_with: Api::V1::CourseEventsRepresenter
   end
 
@@ -113,7 +112,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     practice = OpenStruct.new
     consume!(practice, represent_with: Api::V1::PracticeRepresenter)
 
-    entity_task = Domain::ResetPracticeWidget[
+    entity_task = ResetPracticeWidget[
       role: get_practice_role, condition: :local,
       page_ids: practice.page_ids, book_part_ids: practice.book_part_ids
     ]
@@ -124,7 +123,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   api :GET, '/courses/:course_id/practice(/role/:role_id)',
             'Gets the most recent practice widget'
   def practice_get
-    task = Domain::GetPracticeWidget[role: get_practice_role]
+    task = GetPracticeWidget[role: get_practice_role]
 
     task.nil? ?
       head(:not_found) :
@@ -134,11 +133,10 @@ class Api::V1::CoursesController < Api::V1::ApiController
   protected
 
   def get_practice_role
-    result = Domain::ChooseCourseRole.call(user: current_human_user.entity_user,
-                                           course: Entity::Course.find(params[:id]),
-                                           allowed_role_type: :student,
-                                           role_id: params[:role_id]
-                                          )
+    result = ChooseCourseRole.call(user: current_human_user.entity_user,
+                                   course: Entity::Course.find(params[:id]),
+                                   allowed_role_type: :student,
+                                   role_id: params[:role_id])
     if result.errors.any?
       raise(IllegalState, result.errors.map(&:message).to_sentence)
     end

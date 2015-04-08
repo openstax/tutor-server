@@ -275,8 +275,8 @@ describe Api::V1::TaskStepsController, :type => :controller,
 
   describe "practice task update step" do
     it "allows updating of a step (needed to test access to legacy and SS taskings)" do
-      Domain::AddUserAsCourseStudent[course: course, user: user_1.entity_user]
-      task = Domain::ResetPracticeWidget[role: Entity::Role.last, condition: :fake]
+      AddUserAsCourseStudent[course: course, user: user_1.entity_user]
+      task = ResetPracticeWidget[role: Entity::Role.last, condition: :fake]
 
       step = task.task.task_steps.first
 

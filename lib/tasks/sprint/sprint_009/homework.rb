@@ -9,15 +9,13 @@ module Sprint009
       teacher = FactoryGirl.create :user, username: 'teacher'
       student = FactoryGirl.create :user, username: 'student'
 
-      book = Domain::FetchAndImportBook.call(
+      book = FetchAndImportBook.call(
                id: '7db9aa72-f815-4c3b-9cb6-d50cf5318b58'
              ).outputs.book
-      course = Domain::CreateCourse.call.outputs.course
-      Domain::AddBookToCourse.call(book: book, course: course)
-      Domain::AddUserAsCourseTeacher.call(course: course,
-                                          user: teacher.entity_user)
-      Domain::AddUserAsCourseStudent.call(course: course,
-                                          user: student.entity_user)
+      course = CreateCourse.call.outputs.course
+      AddBookToCourse.call(book: book, course: course)
+      AddUserAsCourseTeacher.call(course: course, user: teacher.entity_user)
+      AddUserAsCourseStudent.call(course: course, user: student.entity_user)
 
       r_assistant = FactoryGirl.create(
         :tasks_assistant,

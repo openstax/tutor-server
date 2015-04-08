@@ -6,7 +6,7 @@ class Admin::CoursesCreate
     validates :name, presence: true
   end
 
-  uses_routine Domain::CreateCourse
+  uses_routine CreateCourse
 
   protected
 
@@ -15,6 +15,6 @@ class Admin::CoursesCreate
   end
 
   def handle
-    run(Domain::CreateCourse, name: course_params.name)
+    run(CreateCourse, name: course_params.name)
   end
 end

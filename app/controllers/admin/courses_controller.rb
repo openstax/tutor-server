@@ -2,8 +2,7 @@ class Admin::CoursesController < Admin::BaseController
   before_action :get_users, only: [:new, :edit]
 
   def index
-    @courses = Domain::ListCourses.call(with: :teacher_names)
-                                  .outputs.courses
+    @courses = ListCourses.call(with: :teacher_names).outputs.courses
   end
 
   def create
@@ -15,7 +14,7 @@ class Admin::CoursesController < Admin::BaseController
   end
 
   def edit
-    @course = Domain::GetCourse.call(params[:id]).outputs.course
+    @course = GetCourse.call(params[:id]).outputs.course
   end
 
   def update
@@ -34,6 +33,6 @@ class Admin::CoursesController < Admin::BaseController
   end
 
   def get_users
-    @users = Domain::GetAllUserProfiles.call.outputs.profiles
+    @users = GetAllUserProfiles.call.outputs.profiles
   end
 end

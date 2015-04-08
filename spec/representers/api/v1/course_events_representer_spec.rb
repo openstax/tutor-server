@@ -2,14 +2,14 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::CourseEventsRepresenter, :type => :representer do
 
-  let(:course) { Domain::CreateCourse.call.outputs.course }
+  let(:course) { CreateCourse.call.outputs.course }
   let(:user)   { FactoryGirl.create(:user_profile).entity_user }
 
   it 'gets all events for a course' do
     plan = FactoryGirl.create(:tasks_task_plan, owner: course)
     task = FactoryGirl.create(:tasks_task )
 
-    role = Domain::AddUserAsCourseTeacher.call(course: course, user: user).outputs.role
+    role = AddUserAsCourseTeacher.call(course: course, user: user).outputs.role
 
     tasking = FactoryGirl.create(:tasks_tasking, role: role, task: task.entity_task)
 

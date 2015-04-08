@@ -6,8 +6,8 @@ RSpec.describe Admin::CoursesController do
   before { controller.sign_in(admin) }
 
   describe 'GET #index' do
-    it 'assigns all Domain::ListCourses output to @courses' do
-      Domain::CreateCourse.call(name: 'Hello World')
+    it 'assigns all ListCourses output to @courses' do
+      CreateCourse.call(name: 'Hello World')
       get :index
 
       expect(assigns[:courses].count).to eq(1)
