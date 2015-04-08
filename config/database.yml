@@ -20,6 +20,7 @@ test:
   <<: *default
   database: <%= ENV['OXT_TEST_DB'] || 'ox_tutor_test' %>
 
-production:
-  <<: *default
-  database: db/production.sqlite3
+## Production database is intentionally left unconfigured
+#production:
+#  <<: *default
+#  database: <%= ENV['OXT_PROD_DB'] || 'ox_tutor_production' %>
