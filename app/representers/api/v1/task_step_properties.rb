@@ -34,14 +34,11 @@ module Api::V1
              type: String,
              writeable: false,
              readable: true,
-             getter: lambda { |*| self.class.name.demodulize.remove("Tasked").underscore.downcase },
+             getter: lambda { |*| self.class.name.demodulize.remove("Tasked")
+                                                 .underscore.downcase },
              schema_info: {
                required: true,
-               description: "The type of this TaskStep, one of: #{
-                            TaskedRepresenterMapper.models.collect{ |klass|
-                              "'" + klass.name.demodulize.remove("Tasked")
-                                         .underscore.downcase + "'"
-                            }.reject{|m| m == 'placeholder'}.join(',')}"
+               description: "The type of this TaskStep"
              }
 
     property :is_completed,
