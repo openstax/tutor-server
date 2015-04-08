@@ -39,7 +39,7 @@ class SpacedPracticeAlgorithmIReading
     all_taskee_exercises = maps.collect{|map| map[:taskee_exercises]}.flatten.compact.uniq
     #puts "all_taskee_exercises: #{all_taskee_exercises.collect{|ex| ex.id}.sort}"
 
-    @k_ago_map.each do |k_ago, num_k_ago_exercises|
+    @k_ago_map.each do |k_ago, num_k_ago_ex|
       break if k_ago >= maps.count
 
       k_ago_task_title = maps[k_ago][:task].title
@@ -48,7 +48,7 @@ class SpacedPracticeAlgorithmIReading
       candidate_exercises = (maps[k_ago][:content_exercises] - all_taskee_exercises).sort_by{|ex| ex.id}.take(10)
       #puts "candidate_exercises: #{candidate_exercises.collect{|ex| ex.id}.sort}"
 
-      num_k_ago_exercises.times do
+      num_k_ago_ex.times do |index|
         task_step = placeholder_task_steps.shift
         break if task_step.nil?
 
@@ -63,17 +63,32 @@ class SpacedPracticeAlgorithmIReading
         exercise = OpenStax::Exercises::V1::Exercise.new(chosen_exercise.content)
 
         task_step.tasked.destroy!
-        task_step.tasked = Tasks::Models::TaskedExercise.new(
+        tasked_exercise = Tasks::Models::TaskedExercise.new(
           task_step: task_step,
           title:     exercise.title,
           url:       exercise.url,
           content:   exercise.content,
           exercise:  chosen_exercise
         )
-        task_step.tasked.inject_debug_content(debug_content: "LOs: #{k_ago_task_los.inspect}<br>")
-        task_step.tasked.inject_debug_content(debug_content: "Task: #{k_ago_task_title}<br>")
-        task_step.tasked.inject_debug_content(debug_content: 'SPE<br>')
-        task_step.tasked.save!
+        task_step.tasked = tasked_exercise
+
+        tasked_exercise.inject_debug_content(debug_content: "This exercise belongs to #{get_task_debug(task)}.")
+        tasked_exercise.inject_debug_content(debug_content: "The Spaced Practice Alogirthm is using the following selection rules:")
+        @k_ago_map.each do |k_ago, num_ex|
+          tasked_exercise.inject_debug_content(debug_content: "  choose #{num_ex} #{'exercise'.pluralize(num_ex)} from #{k_ago} iReadings ago")
+        end
+        tasked_exercise.inject_debug_content(debug_content: "This is the #{(index+1).ordinalize} of #{num_k_ago_ex} #{'exercise'.pluralize(num_k_ago_ex)} for k_ago=#{k_ago}")
+        tasked_exercise.inject_debug_content(debug_content: "based on the following iReading history:")
+        ireading_event_history.each_with_index do |task, k_ago|
+          tasked_exercise.inject_debug_content(
+            debug_content: "  k_ago=#{k_ago}: #{get_task_debug(task)} (CC?=#{!!task.core_task_steps_completed?}, PD=?#{!!task.past_due?})"
+          )
+        end
+        tasked_exercise.inject_debug_content(debug_content: "and comes from a pool built from the following LOs:")
+        k_ago_task_los.each do |lo|
+          tasked_exercise.inject_debug_content(debug_content: "  #{lo}")
+        end
+        tasked_exercise.save!
         task_step.save!
       end
 
@@ -86,19 +101,43 @@ class SpacedPracticeAlgorithmIReading
       exercise = OpenStax::Exercises::V1::Exercise.new(exercise_hash.to_json)
 
       task_step.tasked.destroy!
-      task_step.tasked = Tasks::Models::TaskedExercise.new(
+      tasked_exercise = Tasks::Models::TaskedExercise.new(
         task_step: task_step,
         title:     exercise.title,
         url:       exercise.url,
         content:   exercise.content
       )
-      task_step.tasked.inject_debug_content(debug_content: 'FAKE PLACEHOLDER EXERCISE<br>')
+      tasked_exercise.inject_debug_content(debug_content: "This exercise belongs to #{get_task_debug(task)}.")
+      tasked_exercise.inject_debug_content(debug_content: "The Spaced Practice Alogirthm is using the following selection rules:")
+      @k_ago_map.each do |k_ago, num_ex|
+        tasked_exercise.inject_debug_content(debug_content: "  choose #{num_ex} #{'exercise'.pluralize(num_ex)} from #{k_ago} iReadings ago")
+      end
+
+      tasked_exercise.inject_debug_content(debug_content: "Based on the following iReading history:")
+      ireading_event_history.each_with_index do |task, k_ago|
+        tasked_exercise.inject_debug_content(
+          debug_content: "  k_ago=#{k_ago}: #{get_task_debug(task)} (CC?=#{!!task.core_task_steps_completed?}, PD=?#{!!task.past_due?})"
+        )
+      end
+      tasked_exercise.inject_debug_content(debug_content: "the Spaced Practice Algorithm could not fill this exercise slot.")
+      tasked_exercise.inject_debug_content(debug_content: "Eventually this slot will either go away or be filled by")
+      tasked_exercise.inject_debug_content(debug_content: "a personalized exercise chosen by BigLean.")
       task_step.tasked.save!
       task_step.save!
     end
   end
 
   protected
+
+  def get_task_debug(task)
+    match_data = %r{\A(?<title_part>.*?):.+\z}.match(task.title)
+    task_debug = if match_data
+        match_data[:title_part]
+      else
+        task.title
+      end
+    task_debug
+  end
 
   def get_ireading_task_history(taskee:, current_time: Time.now)
     tasks = Tasks::Models::Task.joins{taskings}
