@@ -151,7 +151,7 @@ GEM
       railties (>= 3.2)
     erubis (2.7.0)
     eventmachine (1.0.7)
-    exception_notification (4.0.1)
+    exception_notification (4.1.0)
       actionmailer (>= 3.0.4)
       activesupport (>= 3.0.4)
     execjs (2.4.0)
@@ -173,7 +173,7 @@ GEM
       responders
       squeel
     get_process_mem (0.2.0)
-    globalid (0.3.3)
+    globalid (0.3.5)
       activesupport (>= 4.1.0)
     haml (4.0.6)
       tilt
@@ -248,7 +248,7 @@ GEM
       representable (>= 2.0)
       roar (>= 1.0)
       squeel (>= 0.5.0)
-    openstax_api (5.2.0)
+    openstax_api (5.2.1)
       doorkeeper (>= 2.0)
       exception_notification (>= 4.0)
       lev (>= 1.0.0)
@@ -498,7 +498,7 @@ DEPENDENCIES
   newrelic_rpm
   nifty-generators
   openstax_accounts (~> 5.0.1)
-  openstax_api (~> 5.2.0)
+  openstax_api (~> 5.2.1)
   openstax_exchange
   openstax_utilities (~> 4.2.0)
   pg
