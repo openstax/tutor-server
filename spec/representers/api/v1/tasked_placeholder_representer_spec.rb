@@ -13,7 +13,7 @@ RSpec.describe Api::V1::TaskedPlaceholderRepresenter, :type => :representer do
 
   it "represents a tasked placeholder" do
     expect(representation).to include(
-      "id"           => tasked_placeholder.id,
+      "id"           => tasked_placeholder.task_step.id,
       "type"         => "exercise",  ## <-- not a typo
       "is_completed" => false,
       # "content_url"  => tasked_placeholder.url,

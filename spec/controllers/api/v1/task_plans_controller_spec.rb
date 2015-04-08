@@ -5,8 +5,16 @@ describe Api::V1::TaskPlansController, :type => :controller,
                                        :version => :v1 do
 
   let!(:course) { Domain::CreateCourse.call.outputs.course }
-  let!(:assistant) { FactoryGirl.create :tasks_assistant,
-                                        code_class_name: "Tasks::Assistants::IReadingAssistant" }
+
+  let!(:assistant) { FactoryGirl.create(
+    :tasks_assistant, code_class_name: "Tasks::Assistants::IReadingAssistant"
+  ) }
+
+  let!(:course_assistant) { FactoryGirl.create :tasks_course_assistant,
+                                               course: course,
+                                               assistant: assistant,
+                                               tasks_task_plan_type: 'test' }
+
   let!(:user) { FactoryGirl.create :user_profile }
   let!(:teacher) { FactoryGirl.create :user_profile }
 
