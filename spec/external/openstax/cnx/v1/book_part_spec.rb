@@ -20,7 +20,9 @@ RSpec.describe OpenStax::Cnx::V1::BookPart, :type => :external do
         ],
         title: 'Updated Tutor HS Physics Content - legacy',
         expected: {
-          part_classes: [OpenStax::Cnx::V1::BookPart]
+          part_classes: [OpenStax::Cnx::V1::BookPart],
+          paths: ['1'],
+          is_intros: [nil]
         }
       },
       { id: "subcol",
@@ -36,7 +38,9 @@ RSpec.describe OpenStax::Cnx::V1::BookPart, :type => :external do
         expected: {
           part_classes: [OpenStax::Cnx::V1::Page,
                          OpenStax::Cnx::V1::Page,
-                         OpenStax::Cnx::V1::Page]
+                         OpenStax::Cnx::V1::Page],
+          paths: ['1', '2', '3'],
+          is_intros: [true, false, false]
         }
       }
     ],
@@ -56,7 +60,9 @@ RSpec.describe OpenStax::Cnx::V1::BookPart, :type => :external do
         ],
         title: 'Updated Tutor HS Physics Content - legacy',
         expected: {
-          part_classes: [OpenStax::Cnx::V1::BookPart]
+          part_classes: [OpenStax::Cnx::V1::BookPart],
+          paths: ['1'],
+          is_intros: [nil]
         }
       },
       { id: "subcol",
@@ -72,7 +78,9 @@ RSpec.describe OpenStax::Cnx::V1::BookPart, :type => :external do
         expected: {
           part_classes: [OpenStax::Cnx::V1::Page,
                          OpenStax::Cnx::V1::Page,
-                         OpenStax::Cnx::V1::Page]
+                         OpenStax::Cnx::V1::Page],
+          paths: ['1', '2', '3'],
+          is_intros: [true, false, false]
         }
       }
     ]
@@ -101,6 +109,14 @@ RSpec.describe OpenStax::Cnx::V1::BookPart, :type => :external do
 
           expect(book_part.parts.collect{|p| p.class}).to(
             eq hash[:expected][:part_classes]
+          )
+
+          expect(book_part.parts.collect{|p| p.path}).to(
+            eq hash[:expected][:paths]
+          )
+
+          expect(book_part.parts.collect{|p| p.is_intro? rescue nil}).to(
+            eq hash[:expected][:is_intros]
           )
         end
       end

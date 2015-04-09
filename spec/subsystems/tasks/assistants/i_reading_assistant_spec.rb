@@ -14,8 +14,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
 
   context "for Force version 11" do
     let!(:cnx_page_hash) { { 'id' => '092bbf0d-0729-42ce-87a6-fd96fd87a083@11',
-                             'title' => 'Force',
-                             'path' => '8.6' } }
+                             'title' => 'Force' } }
 
     let!(:core_step_gold_data) {
       [
@@ -47,7 +46,8 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
       core_step_gold_data + spaced_practice_step_gold_data
     }
 
-    let!(:cnx_page) { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash) }
+    let!(:cnx_page) { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash,
+                                                  path: '8.6' ) }
 
     let!(:page)     {
       Content::Routines::ImportPage.call(

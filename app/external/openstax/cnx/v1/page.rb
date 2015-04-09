@@ -37,10 +37,12 @@ module OpenStax::Cnx::V1
     # Find the LO within the class string and ensure it is properly formatted
     LO_REGEX = /ost-tag-lo-([\w-]+-lo[\d]+)/
 
-    def initialize(hash: {}, path: nil, id: nil, url: nil, title: nil,
-                   full_hash: nil, content: nil, los: nil, fragments: nil)
+    def initialize(hash: {}, path: '', is_intro: false, id: nil, url: nil,
+                   title: nil, full_hash: nil, content: nil, los: nil,
+                   fragments: nil)
       @hash      = hash
       @path      = path
+      @is_intro  = is_intro
       @id        = id
       @url       = url
       @title     = title
@@ -70,7 +72,11 @@ module OpenStax::Cnx::V1
     end
 
     def path
-      @path ||= hash.fetch('path') { |_| '' }
+      @path
+    end
+
+    def is_intro?
+      @is_intro
     end
 
     def full_hash
