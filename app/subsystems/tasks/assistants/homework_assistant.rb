@@ -7,7 +7,8 @@ class Tasks::Assistants::HomeworkAssistant
     '{
       "type": "object",
       "required": [
-        "exercise_ids"
+        "exercise_ids",
+        "exercise_count_dynamic"
       ],
       "properties": {
         "exercise_ids": {
@@ -15,6 +16,11 @@ class Tasks::Assistants::HomeworkAssistant
           "items": {
             "type": "integer"
           }
+        },
+        "exercise_count_dynamic": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4
         },
         "description": {
           "type": "string"
