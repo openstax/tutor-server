@@ -6,8 +6,8 @@ module Sprint009
     protected
 
     def exec
-      teacher = FactoryGirl.create :user, username: 'teacher'
-      student = FactoryGirl.create :user, username: 'student'
+      teacher = FactoryGirl.create :user_profile, username: 'teacher'
+      student = FactoryGirl.create :user_profile, username: 'student'
 
       book = FetchAndImportBook.call(
                id: '7db9aa72-f815-4c3b-9cb6-d50cf5318b58'

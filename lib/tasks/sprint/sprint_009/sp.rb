@@ -10,9 +10,9 @@ module Sprint009
       OpenStax::Exercises::V1.use_real_client
 
       puts "===== CREATING USERS ====="
-      student1 = FactoryGirl.create :user, username: 'order_1_2_3_4'
-      student2 = FactoryGirl.create :user, username: 'order_2_1_4_3'
-      student3 = FactoryGirl.create :user, username: 'no_history'
+      student1 = FactoryGirl.create :user_profile, username: 'order_1_2_3_4'
+      student2 = FactoryGirl.create :user_profile, username: 'order_2_1_4_3'
+      student3 = FactoryGirl.create :user_profile, username: 'no_history'
 
       puts "===== CREATING COURSE ====="
       physics_course = CreateCourse[name: 'Physics']
