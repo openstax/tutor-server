@@ -15,7 +15,7 @@ class Admin::CoursesController < Admin::BaseController
 
   def edit
     entity_course = Entity::Course.find(params[:id])
-    @course = Domain::GetCourse[course: entity_course]
+    @course = GetCourse[course: entity_course]
   end
 
   def update
