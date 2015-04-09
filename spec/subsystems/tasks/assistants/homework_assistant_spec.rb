@@ -19,7 +19,9 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, :type => :assistant,
 
   let!(:task_plan) {
     FactoryGirl.create :tasks_task_plan, assistant: assistant, settings: {
-      exercise_ids: exercise_ids, description: "Hello!"
+      exercise_ids: exercise_ids,
+      exercises_count_dynamic: 2,
+      description: "Hello!"
     }
   }
 
