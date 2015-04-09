@@ -21,8 +21,7 @@ RSpec.describe OpenStax::Cnx::V1::BookPart, :type => :external do
         title: 'Updated Tutor HS Physics Content - legacy',
         expected: {
           part_classes: [OpenStax::Cnx::V1::BookPart],
-          paths: ['1'],
-          is_intros: [nil]
+          paths: ['1']
         }
       },
       { id: "subcol",
@@ -39,8 +38,7 @@ RSpec.describe OpenStax::Cnx::V1::BookPart, :type => :external do
           part_classes: [OpenStax::Cnx::V1::Page,
                          OpenStax::Cnx::V1::Page,
                          OpenStax::Cnx::V1::Page],
-          paths: ['1', '2', '3'],
-          is_intros: [true, false, false]
+          paths: ['1', '2', '3']
         }
       }
     ],
@@ -61,8 +59,7 @@ RSpec.describe OpenStax::Cnx::V1::BookPart, :type => :external do
         title: 'Updated Tutor HS Physics Content - legacy',
         expected: {
           part_classes: [OpenStax::Cnx::V1::BookPart],
-          paths: ['1'],
-          is_intros: [nil]
+          paths: ['1']
         }
       },
       { id: "subcol",
@@ -79,8 +76,7 @@ RSpec.describe OpenStax::Cnx::V1::BookPart, :type => :external do
           part_classes: [OpenStax::Cnx::V1::Page,
                          OpenStax::Cnx::V1::Page,
                          OpenStax::Cnx::V1::Page],
-          paths: ['1', '2', '3'],
-          is_intros: [true, false, false]
+          paths: ['1', '2', '3']
         }
       }
     ]
@@ -113,10 +109,6 @@ RSpec.describe OpenStax::Cnx::V1::BookPart, :type => :external do
 
           expect(book_part.parts.collect{|p| p.path}).to(
             eq hash[:expected][:paths]
-          )
-
-          expect(book_part.parts.collect{|p| p.is_intro? rescue nil}).to(
-            eq hash[:expected][:is_intros]
           )
         end
       end

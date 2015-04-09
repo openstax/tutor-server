@@ -11,10 +11,10 @@ class Content::Routines::ImportBookPart
   # Imports and saves a Cnx::BookPart as a Content::BookPart
   # Returns the Content::BookPart object
   def exec(cnx_book_part:, parent_book_part: nil, book: nil)
-    book_part = Content::Models::BookPart.create(book: book,
-                                         parent_book_part: parent_book_part,
-                                         title: cnx_book_part.title,
-                                         path: cnx_book_part.path)
+    book_part = Content::Models::BookPart.create(
+      book: book, parent_book_part: parent_book_part,
+      title: cnx_book_part.title, path: cnx_book_part.path
+    )
 
     parent_book_part.child_book_parts << book_part unless parent_book_part.nil?
 

@@ -4,12 +4,12 @@ class TaskExercise
 
   protected
 
-  def exec(exercise:, can_be_recovered: false, task_step: nil)
+  def exec(exercise:, title: nil, can_be_recovered: false, task_step: nil)
     outputs[:tasked_exercise] = Tasks::Models::TaskedExercise.new(
       task_step: task_step,
       exercise: (exercise.is_a?(Content::Models::Exercise) ? exercise : nil),
       url: exercise.url,
-      title: exercise.title,
+      title: title || exercise.title,
       content: exercise.content,
       can_be_recovered: can_be_recovered
     )
