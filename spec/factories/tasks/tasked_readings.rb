@@ -7,6 +7,7 @@ FactoryGirl.define do
     task_step nil
     url { Faker::Internet.url }
     title { Faker::Lorem.sentence(3) }
+    path { "#{rand(1..10)}.#{rand(1..10)}" }
     content { Faker::Lorem.paragraph }
 
     after(:build) do |tasked_reading, evaluator|
