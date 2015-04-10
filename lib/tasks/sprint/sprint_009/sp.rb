@@ -35,6 +35,7 @@ module Sprint009
       ## Import the book (which imports the associated exercises)
       puts "===== IMPORTING BOOK ====="
       content_book = Content::ImportBook.call(cnx_book: cnx_book).outputs.book
+      AddBookToCourse.call(book: content_book, course: physics_course)
 
       ## Retrieve the page info
       page_data = Content::VisitBook.call(book: content_book, visitor_names: :page_data).outputs.page_data
