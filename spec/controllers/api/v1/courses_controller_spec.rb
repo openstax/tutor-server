@@ -41,11 +41,13 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
               {
                 id: toc.children[0].children[0].id,
                 title: 'first page',
+                chapter_section: '1.1',
                 type: 'page'
               },
               {
                 id: toc.children[0].children[1].id,
                 title: 'second page',
+                chapter_section: '1.2',
                 type: 'page'
               }
             ]
@@ -58,6 +60,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
               {
                 id: toc.children[1].children[0].id,
                 title: 'third page',
+                chapter_section: '1.3',
                 type: 'page'
               }
             ]
