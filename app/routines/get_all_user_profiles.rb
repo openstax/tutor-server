@@ -1,7 +1,7 @@
 class GetAllUserProfiles
-  lev_routine
+  lev_routine express_output: :profiles
 
-  uses_routine UserProfile::GetAllUserProfiles,
+  uses_routine UserProfile::ListProfiles,
     translations: { outputs: { type: :verbatim } },
     as: :get_all_user_profiles
 

@@ -1,6 +1,6 @@
 class Admin::UsersController < Admin::BaseController
   def index
-    @users = Domain::ListUsers[]
+    @users = GetAllUserProfiles[]
   end
 
   def create
