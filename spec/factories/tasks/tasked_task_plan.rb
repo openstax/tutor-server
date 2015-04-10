@@ -1,11 +1,16 @@
 FactoryGirl.define do
   factory :tasked_task_plan, parent: :tasks_task_plan do
 
+    type 'reading'
+    assistant { Tasks::Models::Assistant.find_by(
+                  code_class_name: 'Tasks::Assistants::IReadingAssistant'
+                ) || FactoryGirl.create(
+                  :tasks_assistant, code_class_name: 'Tasks::Assistants::IReadingAssistant'
+                ) }
+
     transient do
       number_of_students 10
     end
-
-    owner { CreateCourse.call.outputs.course }
 
     settings do
       cnx_page  = OpenStax::Cnx::V1::Page.new(
@@ -18,11 +23,14 @@ FactoryGirl.define do
     end
 
     after(:create) do |task_plan,evaluator|
-      taskees = evaluator.number_of_students.times.collect{
+      evaluator.number_of_students.times.each do
         user = FactoryGirl.create :user_profile
-        Role::GetDefaultUserRole[user.entity_user]
-      }
-      Tasks::Assistants::IReadingAssistant.distribute_tasks(task_plan: task_plan, taskees: taskees)
+        role = Role::GetDefaultUserRole[user.entity_user]
+        tp = FactoryGirl.create :tasks_tasking_plan, target: role, task_plan: task_plan
+        task_plan.tasking_plans << tp
+      end
+
+      DistributeTasks.call(task_plan)
     end
   end
 end

@@ -40,7 +40,8 @@ module Api::V1
 
     property :stats,
              extend: TaskPlanStatsRepresenter,
-             getter: ->(args){ args[:stats] },
+             getter: ->(args){ CalculateTaskPlanStats.call(plan: self).outputs.stats },
+             if: ->(args) { !published_at.nil? },
              type: Object,
              readable: true,
              writable: false

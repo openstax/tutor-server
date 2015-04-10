@@ -1,7 +1,7 @@
 class TaskPlanAccessPolicy
   def self.action_allowed?(action, requestor, task_plan)
     case action
-    when :read, :create, :update, :publish, :destroy, :stats
+    when :read, :create, :update, :publish, :destroy
       if task_plan.owner.is_a?(Entity::Course)
         UserIsCourseTeacher[user: requestor.entity_user,
                             course: task_plan.owner] rescue false
