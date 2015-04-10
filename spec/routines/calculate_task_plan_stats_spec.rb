@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-describe CalculateIReadingStats, :type => :routine, :vcr => VCR_OPTS do
+describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
 
   let(:number_of_students){ 8 }
 
@@ -11,7 +11,7 @@ describe CalculateIReadingStats, :type => :routine, :vcr => VCR_OPTS do
   }
 
   let(:stats){
-    CalculateIReadingStats.call(plan: task_plan).outputs.stats
+    CalculateTaskPlanStats.call(plan: task_plan).outputs.stats
   }
 
   context "With an unworked plan" do
@@ -39,19 +39,19 @@ describe CalculateIReadingStats, :type => :routine, :vcr => VCR_OPTS do
       ).first
       MarkTaskStepCompleted.call(task_step: step)
 
-      stats = CalculateIReadingStats.call(plan: task_plan).outputs.stats
+      stats = CalculateTaskPlanStats.call(plan: task_plan).outputs.stats
       expect(stats.course.complete_count).to eq(0)
       expect(stats.course.partially_complete_count).to eq(1)
 
       first_task.task_steps.each{ |ts| MarkTaskStepCompleted.call(task_step: ts) }
-      stats = CalculateIReadingStats.call(plan: task_plan.reload).outputs.stats
+      stats = CalculateTaskPlanStats.call(plan: task_plan.reload).outputs.stats
 
       expect(stats.course.complete_count).to eq(1)
       expect(stats.course.partially_complete_count).to eq(0)
 
       last_plan=task_plan.tasks.last
       MarkTaskStepCompleted.call(task_step: last_plan.task_steps.first)
-      stats = CalculateIReadingStats.call(plan: task_plan.reload).outputs.stats
+      stats = CalculateTaskPlanStats.call(plan: task_plan.reload).outputs.stats
       expect(stats.course.complete_count).to eq(1)
       expect(stats.course.partially_complete_count).to eq(1)
     end
@@ -71,7 +71,7 @@ describe CalculateIReadingStats, :type => :routine, :vcr => VCR_OPTS do
         end
         MarkTaskStepCompleted.call(task_step: ts)
       }
-      stats = CalculateIReadingStats.call(plan: task_plan.reload).outputs.stats
+      stats = CalculateTaskPlanStats.call(plan: task_plan.reload).outputs.stats
       page = stats.course.current_pages.first
       expect(page['page']['title']).to eq('Force')
       expect(page['student_count']).to eq(number_of_students)

@@ -1,4 +1,4 @@
-class CalculateIReadingStats
+class CalculateTaskPlanStats
 
   lev_routine
 

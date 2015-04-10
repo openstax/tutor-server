@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Api::V1::IReadingStatsRepresenter, :type => :representer,
+RSpec.describe Api::V1::TaskPlanStatsRepresenter, :type => :representer,
                                                   :vcr => VCR_OPTS do
 
   let(:number_of_students){ 2 }
@@ -12,10 +12,10 @@ RSpec.describe Api::V1::IReadingStatsRepresenter, :type => :representer,
   }
 
   let(:stats){
-    CalculateIReadingStats.call(plan: task_plan).outputs.stats
+    CalculateTaskPlanStats.call(plan: task_plan).outputs.stats
   }
 
-  let(:representation) { Api::V1::IReadingStatsRepresenter.new(stats).as_json }
+  let(:representation) { Api::V1::TaskPlanStatsRepresenter.new(stats).as_json }
 
   it "represents a tasked exercise's stats" do
     expect(representation).to include(
