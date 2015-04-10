@@ -3,9 +3,9 @@ require 'rails_helper'
 RSpec.feature 'Administrator' do
   scenario 'signs in as another user' do
 
-    user = FactoryGirl.create(:user, username: 'a_user')
+    user = FactoryGirl.create(:user_profile, username: 'a_user')
 
-    admin = FactoryGirl.create(:user, :administrator)
+    admin = FactoryGirl.create(:user_profile, :administrator)
     # FIXME login without using the accounts dev tool
     page.driver.post(
       OpenStax::Accounts::Engine.routes.url_helpers

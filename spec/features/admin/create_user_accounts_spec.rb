@@ -2,13 +2,13 @@ require 'rails_helper'
 
 OpenStax::Accounts.instance_eval do
   def create_temp_user(attrs)
-    FactoryGirl.create(:profile, username: attrs[:username])
+    FactoryGirl.create(:user_profile, username: attrs[:username])
   end
 end
 
 RSpec.feature 'Administration' do
   scenario 'create a user with a username and password' do
-    admin = FactoryGirl.create(:user, :administrator)
+    admin = FactoryGirl.create(:user_profile, :administrator)
     stub_current_user(admin)
 
     visit admin_root_path
