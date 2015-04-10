@@ -10,27 +10,35 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
     )
   }
 
-  let!(:book_part) { FactoryGirl.create :content_book_part }
+  let!(:book_part) {
+    FactoryGirl.create :content_book_part,
+                       title: "Forces and Newton's Laws of Motion"
+  }
 
-  context "for Force version 11" do
-    let!(:cnx_page_hash) { { 'id' => '092bbf0d-0729-42ce-87a6-fd96fd87a083@11',
-                             'title' => 'Force',
-                             'path' => '8.6' } }
+  context "for Introduction version 9 and Force version 11" do
+    let!(:cnx_page_hashes) { [
+      { 'id' => '1491e74e-ed39-446f-a602-e7ab881af101@9',
+        'title' => 'Introduction' },
+      { 'id' => '092bbf0d-0729-42ce-87a6-fd96fd87a083@11',
+        'title' => 'Force' }
+    ] }
 
     let!(:core_step_gold_data) {
       [
         { klass: Tasks::Models::TaskedReading,
-          title: "TBD; Section Learning Objectives; Defining Force and Dynamics"},
+          title: "Forces and Newton's Laws of Motion"},
+        { klass: Tasks::Models::TaskedReading,
+          title: "Force"},
         { klass: Tasks::Models::TaskedVideo,
-          title: "A Note called Watch Physics with YouTube Embedded"},
+          title: nil},
         { klass: Tasks::Models::TaskedReading,
           title: nil},
         { klass: Tasks::Models::TaskedReading,
-          title: "Mars Probe Explosion"},
+          title: nil},
         { klass: Tasks::Models::TaskedExercise,
           title: nil},
         { klass: Tasks::Models::TaskedReading,
-          title: "Free-body Diagrams and Examples of Forces"}
+          title: nil}
       ]
     }
 
@@ -47,19 +55,21 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
       core_step_gold_data + spaced_practice_step_gold_data
     }
 
-    let!(:cnx_page) { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash) }
+    let!(:cnx_pages) { cnx_page_hashes.each_with_index.collect do |hash, i|
+      OpenStax::Cnx::V1::Page.new(hash: hash, path: "8.#{i+1}")
+    end }
 
-    let!(:page)     {
+    let!(:pages)     { cnx_pages.collect do |cnx_page|
       Content::Routines::ImportPage.call(
         cnx_page:  cnx_page,
         book_part: book_part
       ).outputs.page
-    }
+    end }
 
     let!(:task_plan) {
       FactoryGirl.create(:tasks_task_plan,
         assistant: assistant,
-        settings: { page_ids: [page.id] }
+        settings: { page_ids: pages.collect{ |page| page.id } }
       )
     }
 
@@ -91,7 +101,9 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
 
         non_placeholder_task_steps = task_steps.reject{|ts| ts.tasked_type.demodulize == 'TaskedPlaceholder'}
 
-        non_placeholder_task_steps.each do |task_step|
+        non_placeholder_task_steps.each_with_index do |task_step, i|
+          page = (i == 0) ? pages.first : pages.last
+
           expect(task_step.tasked.content).not_to include('snap-lab')
 
           if task_step.tasked_type.demodulize == 'TaskedExercise'
@@ -99,7 +111,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
           end
 
           if task_step.tasked_type.demodulize == 'TaskedReading'
-            expect(task_step.tasked.path).to eq('8.6')
+            expect(task_step.tasked.path).to eq(page.path)
           end
 
           other_task_steps = non_placeholder_task_steps.reject{|ts| ts == task_step}
@@ -125,26 +137,34 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
   context "for Inertia version 11" do
     let!(:cnx_page_hash) { {
       'id' => '61445f78-00e2-45ae-8e2c-461b17d9b4fd@11',
-      'title' => "Newton's First Law of Motion: Inertia",
-      'path' => 'anything'
+      'title' => "Newton's First Law of Motion: Inertia"
     } }
 
     let!(:core_step_gold_data) {
       [
-        { klass: Tasks::Models::TaskedReading },
-        { klass: Tasks::Models::TaskedVideo },
-        { klass: Tasks::Models::TaskedExercise },
-        { klass: Tasks::Models::TaskedInteractive },
-        { klass: Tasks::Models::TaskedReading },
-        { klass: Tasks::Models::TaskedExercise },
-        { klass: Tasks::Models::TaskedReading }
+        { klass: Tasks::Models::TaskedReading,
+          title: "Newton's First Law of Motion: Inertia" },
+        { klass: Tasks::Models::TaskedVideo,
+          title: nil },
+        { klass: Tasks::Models::TaskedExercise,
+          title: nil },
+        { klass: Tasks::Models::TaskedInteractive,
+          title: nil },
+        { klass: Tasks::Models::TaskedReading,
+          title: nil },
+        { klass: Tasks::Models::TaskedExercise,
+          title: nil },
+        { klass: Tasks::Models::TaskedReading,
+          title: nil }
       ]
     }
 
     let!(:spaced_practice_step_gold_data) {
       [
-        { klass: Tasks::Models::TaskedPlaceholder },
-        { klass: Tasks::Models::TaskedPlaceholder },
+        { klass: Tasks::Models::TaskedPlaceholder,
+          title: nil },
+        { klass: Tasks::Models::TaskedPlaceholder,
+          title: nil },
       ]
     }
 
@@ -189,6 +209,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
         expect(task_steps.count).to eq task_step_gold_data.count
         task_steps.each_with_index do |task_step, ii|
           expect(task_step.tasked.class).to eq(task_step_gold_data[ii][:klass])
+          expect(task_step.tasked.title).to eq(task_step_gold_data[ii][:title])
         end
       end
     end

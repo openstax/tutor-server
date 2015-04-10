@@ -88,29 +88,40 @@ class Tasks::Assistants::IReadingAssistant
 
   def self.add_core_steps!(task:, cnx_pages:)
     cnx_pages.each do |page|
+      # Chapter intro pages get their titles from the chapter instead
+      title = page.is_intro? ? page.book_part_title : page.title
+
       page.fragments.each do |fragment|
         step = Tasks::Models::TaskStep.new(task: task, page_id: page.id)
 
         step.tasked =
           case fragment
           when OpenStax::Cnx::V1::Fragment::ExerciseChoice
-            tasked_exercise_choice(exercise_choice_fragment: fragment, step: step)
+            tasked_exercise_choice(exercise_choice_fragment: fragment,
+                                   step: step, title: title)
           when OpenStax::Cnx::V1::Fragment::Exercise
-            tasked_exercise(exercise_fragment: fragment, step: step)
+            tasked_exercise(exercise_fragment: fragment,
+                            step: step, title: title)
           when OpenStax::Cnx::V1::Fragment::Video
-            tasked_video(video_fragment: fragment, step: step)
+            tasked_video(video_fragment: fragment, step: step, title: title)
           when OpenStax::Cnx::V1::Fragment::Interactive
-            tasked_interactive(interactive_fragment: fragment, step: step)
+            tasked_interactive(interactive_fragment: fragment,
+                               step: step, title: title)
           else
-            tasked_reading(reading_fragment: fragment, page: page, step: step)
+            tasked_reading(reading_fragment: fragment, page: page,
+                           title: title, step: step)
           end
 
         next if step.tasked.nil?
         step.core_group!
 
         task.task_steps << step
+
+        # Only the first step for each Page should have a title
+        title = nil
       end
     end
+
     task.save!
     task
   end
@@ -133,24 +144,26 @@ class Tasks::Assistants::IReadingAssistant
     task
   end
 
-  def self.tasked_reading(reading_fragment:, page:, step: nil)
+  def self.tasked_reading(reading_fragment:, page:, step:, title: nil)
     Tasks::Models::TaskedReading.new(task_step: step,
                                      url: page.url,
                                      path: page.path,
-                                     title: reading_fragment.title,
+                                     title: title,
                                      content: reading_fragment.to_html)
   end
 
-  def self.tasked_exercise_choice(exercise_choice_fragment:, step:)
+  def self.tasked_exercise_choice(exercise_choice_fragment:, step:, title: nil)
     exercises = exercise_choice_fragment.exercise_fragments
     tasked_exercise(exercise_fragment: exercises.sample,
+                    step: step,
                     can_be_recovered: true,
-                    step: step)
+                    title: title)
   end
 
   def self.tasked_exercise(exercise_fragment:,
+                           step:,
                            can_be_recovered: false,
-                           step: nil)
+                           title: nil)
     if exercise_fragment.embed_tag.blank?
       logger.warn "Exercise without embed tag found while creating iReading"
       return
@@ -161,12 +174,13 @@ class Tasks::Assistants::IReadingAssistant
                   tag: exercise_fragment.embed_tag
                 ]
     exercise = exercises.first
-    TaskExercise[exercise: exercises.first,
-                         can_be_recovered: can_be_recovered,
-                         task_step: step]
+    tasked = TaskExercise[exercise: exercises.first,
+                          title: title,
+                          can_be_recovered: can_be_recovered,
+                          task_step: step]
   end
 
-  def self.tasked_video(video_fragment:, step: nil)
+  def self.tasked_video(video_fragment:, step:, title: nil)
     if video_fragment.url.blank?
       logger.warn "Video without embed tag found while creating iReading"
       return
@@ -174,11 +188,11 @@ class Tasks::Assistants::IReadingAssistant
 
     Tasks::Models::TaskedVideo.new(task_step: step,
                                    url: video_fragment.url,
-                                   title: video_fragment.title,
+                                   title: title,
                                    content: video_fragment.to_html)
   end
 
-  def self.tasked_interactive(interactive_fragment:, step: nil)
+  def self.tasked_interactive(interactive_fragment:, step:, title: nil)
     if interactive_fragment.url.blank?
       logger.warn('Interactive without iframe found while creating iReading')
       return
@@ -186,7 +200,7 @@ class Tasks::Assistants::IReadingAssistant
 
     Tasks::Models::TaskedInteractive.new(task_step: step,
                                          url: interactive_fragment.url,
-                                         title: interactive_fragment.title,
+                                         title: title,
                                          content: interactive_fragment.to_html)
   end
 

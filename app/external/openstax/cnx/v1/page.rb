@@ -37,17 +37,20 @@ module OpenStax::Cnx::V1
     # Find the LO within the class string and ensure it is properly formatted
     LO_REGEX = /ost-tag-lo-([\w-]+-lo[\d]+)/
 
-    def initialize(hash: {}, path: nil, id: nil, url: nil, title: nil,
-                   full_hash: nil, content: nil, los: nil, fragments: nil)
-      @hash      = hash
-      @path      = path
-      @id        = id
-      @url       = url
-      @title     = title
-      @full_hash = full_hash
-      @content   = content
-      @los       = los
-      @fragments = fragments
+    def initialize(hash: {}, path: '', is_intro: nil, book_part_title: nil,
+                   id: nil, url: nil, title: nil, full_hash: nil, content: nil,
+                   los: nil, fragments: nil)
+      @hash            = hash
+      @path            = path
+      @is_intro        = is_intro
+      @book_part_title = book_part_title
+      @id              = id
+      @url             = url
+      @title           = title
+      @full_hash       = full_hash
+      @content         = content
+      @los             = los
+      @fragments       = fragments
     end
 
     attr_reader :hash, :path
@@ -70,7 +73,19 @@ module OpenStax::Cnx::V1
     end
 
     def path
-      @path ||= hash.fetch('path') { |_| '' }
+      @path
+    end
+
+    def is_intro?
+      return @is_intro unless @is_intro.nil?
+      # CNX plans to implement a better way to identify chapter intro pages
+      # This is a hack to be used until that happens
+      @is_intro = title.start_with?('Introduction') && \
+                  (path.blank? || path.end_with?('.1'))
+    end
+
+    def book_part_title
+      @book_part_title
     end
 
     def full_hash

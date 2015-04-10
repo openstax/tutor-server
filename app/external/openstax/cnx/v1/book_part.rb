@@ -33,7 +33,9 @@ module OpenStax::Cnx::V1
           BookPart.new(hash: hash,
                        path: "#{path_prefix}#{book_part_index += 1}")
         else
-          Page.new(hash: hash, path: "#{path_prefix}#{page_index += 1}")
+          Page.new(hash: hash,
+                   path: "#{path_prefix}#{page_index += 1}",
+                   book_part_title: title)
         end
       end
     end

@@ -8,7 +8,8 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, :vcr => VCR_OPTS do
                title: 'Introduction',
                expected: {
                 los: [],
-                fragment_classes: [OpenStax::Cnx::V1::Fragment::Text]
+                fragment_classes: [OpenStax::Cnx::V1::Fragment::Text],
+                is_intro: true
                }
              },
              { id: '092bbf0d-0729-42ce-87a6-fd96fd87a083@4',
@@ -18,7 +19,8 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, :vcr => VCR_OPTS do
                 fragment_classes: [OpenStax::Cnx::V1::Fragment::Text,
                                    OpenStax::Cnx::V1::Fragment::Text,
                                    OpenStax::Cnx::V1::Fragment::Exercise,
-                                   OpenStax::Cnx::V1::Fragment::Text]
+                                   OpenStax::Cnx::V1::Fragment::Text],
+                is_intro: false
                }
              },
              { id: '61445f78-00e2-45ae-8e2c-461b17d9b4fd@3',
@@ -30,14 +32,16 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, :vcr => VCR_OPTS do
                                    OpenStax::Cnx::V1::Fragment::Exercise,
                                    OpenStax::Cnx::V1::Fragment::Interactive,
                                    OpenStax::Cnx::V1::Fragment::Exercise,
-                                   OpenStax::Cnx::V1::Fragment::Text]
+                                   OpenStax::Cnx::V1::Fragment::Text],
+                is_intro: false
                }
              }],
     latest: [{ id: '1491e74e-ed39-446f-a602-e7ab881af101',
                title: 'Introduction',
                expected: {
                 los: [],
-                fragment_classes: [OpenStax::Cnx::V1::Fragment::Text]
+                fragment_classes: [OpenStax::Cnx::V1::Fragment::Text],
+                is_intro: true
                }
              },
              { id: '092bbf0d-0729-42ce-87a6-fd96fd87a083',
@@ -47,7 +51,8 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, :vcr => VCR_OPTS do
                 fragment_classes: [OpenStax::Cnx::V1::Fragment::Text,
                                    OpenStax::Cnx::V1::Fragment::Text,
                                    OpenStax::Cnx::V1::Fragment::Exercise,
-                                   OpenStax::Cnx::V1::Fragment::Text]
+                                   OpenStax::Cnx::V1::Fragment::Text],
+                is_intro: false
                }
              },
              { id: '61445f78-00e2-45ae-8e2c-461b17d9b4fd',
@@ -59,7 +64,8 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, :vcr => VCR_OPTS do
                                    OpenStax::Cnx::V1::Fragment::Exercise,
                                    OpenStax::Cnx::V1::Fragment::Interactive,
                                    OpenStax::Cnx::V1::Fragment::Exercise,
-                                   OpenStax::Cnx::V1::Fragment::Text]
+                                   OpenStax::Cnx::V1::Fragment::Text],
+                is_intro: false
                }
              }]
   )
@@ -110,6 +116,14 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, :vcr => VCR_OPTS do
           expect(page.fragments.collect{|f| f.class}).to(
             eq hash[:expected][:fragment_classes]
           )
+        end
+      end
+
+      it "can identify chapter introduction pages" do
+        infos.each do |hash|
+          page = OpenStax::Cnx::V1::Page.new(hash: hash.except(:expected))
+
+          expect(page.is_intro?).to eq hash[:expected][:is_intro]
         end
       end
     end
