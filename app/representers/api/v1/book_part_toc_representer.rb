@@ -28,6 +28,15 @@ module Api::V1
                description: 'The type of the TOC entry, either "part" (for units, chapters, etc), or "page"'
              }
 
+    property :path,
+             as: :chapter_section,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               required: true,
+               description: 'The chapter and section in the book, e.g. "5.2"'
+             }
+
     collection :children,
                as: :children,
                writeable: false,
