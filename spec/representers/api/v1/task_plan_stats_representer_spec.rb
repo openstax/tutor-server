@@ -20,6 +20,7 @@ RSpec.describe Api::V1::TaskPlanStatsRepresenter, :type => :representer,
   it "represents a tasked exercise's stats" do
     expect(representation).to include(
       "course" => a_hash_including(
+        "mean_grade_percentage"    => 0,
         "total_count"              => 2,
         "complete_count"           => 0,
         "partially_complete_count" => 0,

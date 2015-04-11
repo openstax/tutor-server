@@ -17,6 +17,7 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
   context "With an unworked plan" do
 
     it "is all zero for an unworked task_plan" do
+      expect(stats.course.mean_grade_percentage).to eq (0)
       expect(stats.course.total_count).to eq(task_plan.tasks.length)
       expect(stats.course.complete_count).to eq(0)
       expect(stats.course.partially_complete_count).to eq(0)
@@ -29,7 +30,7 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
 
   end
 
-  context "after tasks are marked as completed" do
+  context "after task steps are marked as completed" do
 
     it "records partial/complete status" do
 
@@ -40,18 +41,21 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
       MarkTaskStepCompleted.call(task_step: step)
 
       stats = CalculateTaskPlanStats.call(plan: task_plan).outputs.stats
+      expect(stats.course.mean_grade_percentage).to eq (0)
       expect(stats.course.complete_count).to eq(0)
       expect(stats.course.partially_complete_count).to eq(1)
 
       first_task.task_steps.each{ |ts| MarkTaskStepCompleted.call(task_step: ts) }
       stats = CalculateTaskPlanStats.call(plan: task_plan.reload).outputs.stats
 
+      expect(stats.course.mean_grade_percentage).to eq (0)
       expect(stats.course.complete_count).to eq(1)
       expect(stats.course.partially_complete_count).to eq(0)
 
       last_plan=task_plan.tasks.last
       MarkTaskStepCompleted.call(task_step: last_plan.task_steps.first)
       stats = CalculateTaskPlanStats.call(plan: task_plan.reload).outputs.stats
+      expect(stats.course.mean_grade_percentage).to eq (0)
       expect(stats.course.complete_count).to eq(1)
       expect(stats.course.partially_complete_count).to eq(1)
     end
@@ -59,7 +63,7 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
 
   end
 
-  context "after tasks are marked as correct" do
+  context "after task steps are marked as correct" do
 
     it "records them" do
       first_task = task_plan.tasks.first
@@ -74,6 +78,7 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
       stats = CalculateTaskPlanStats.call(plan: task_plan.reload).outputs.stats
       page = stats.course.current_pages.first
       expect(page['page']['title']).to eq('Force')
+      expect(page['mean_grade_percentage']).to eq(100)
       expect(page['student_count']).to eq(number_of_students)
       expect(page['correct_count']).to eq(1)
       expect(page['incorrect_count']).to eq(0)

@@ -32,6 +32,10 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     correct_answer_ids.first
   end
 
+  def is_correct?
+    correct_answer_id == answer_id
+  end
+
   def answer_ids
     answers.collect do |q|
       q.collect{|a| a['id'].to_s}

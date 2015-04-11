@@ -60,9 +60,31 @@ class CalculateTaskPlanStats
     [ stats.merge(page_stats_for_steps(steps)) ]
   end
 
+  def get_gradable_taskeds(task)
+    task.task_steps.select do |ts|
+      # Step is TaskedExercise and task is past due or step is completed
+      # TODO: Handle tasks turned in before due date
+      ts.tasked_type.demodulize == 'TaskedExercise' && (task.past_due? || ts.completed?)
+    end.collect{ |ts| ts.tasked }
+  end
+
+  def generate_task_grade(task)
+    gradables = get_gradable_taskeds(task)
+    return if gradables.blank?
+    gradables.select{|g| g.is_correct?}.count/gradables.count
+  end
+
+  def mean_grade_percentage(tasks)
+    grades_array = tasks.collect{ |task| generate_task_grade(task) }.compact
+    sum_of_grades = grades_array.inject(:+)
+    return nil if sum_of_grades.nil?
+    (sum_of_grades*100/grades_array.count).round
+  end
+
   def generate_course_stat_data
-    tasks = @plan.tasks.to_a
+    tasks = @plan.tasks.preload(task_steps: :tasked).to_a
     {
+      mean_grade_percentage: mean_grade_percentage(tasks),
 
       total_count: tasks.count,
 
