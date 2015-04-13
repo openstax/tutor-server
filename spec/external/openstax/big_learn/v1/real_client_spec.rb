@@ -12,11 +12,6 @@ module OpenStax::BigLearn
 
     let(:client) { described_class.new(configuration) }
 
-    xit 'has configurable api url' do
-      OpenStax::BigLearn::V1::Configuration.server_url = 'http://test.com'
-      expect(described_class.server_url).to eq('http://test.com')
-    end
-
     it 'stringifies tag searches' do
       tag_search = {
         _and: [
