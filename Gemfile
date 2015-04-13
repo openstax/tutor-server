@@ -102,6 +102,9 @@ gem 'sortability'
 gem 'pg'
 
 group :development, :test do
+  # Get env variables from .env file
+  gem 'dotenv-rails'
+
   # Allows 'ap' alternative to 'pp'
   gem 'awesome_print'
 
