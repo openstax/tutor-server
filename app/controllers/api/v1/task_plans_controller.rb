@@ -14,7 +14,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   # show
   ###############################################################
 
-  api :GET, '/plans/:id', "Retrieve a TaskPlan along with it's statistics"
+  api :GET, '/plans/:id', "Retrieve a TaskPlan along with its statistics"
   description <<-EOS
    ### Example JSON response
     ```{
@@ -62,9 +62,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   EOS
   def show
     plan = Tasks::Models::TaskPlan.find(params[:id])
-    OSU::AccessPolicy.require_action_allowed!(:stats, current_api_user, plan)
-    stats = CalculateIReadingStats.call(plan:plan).outputs.stats
-    render json: Api::V1::TaskPlanRepresenter.new(plan).to_hash(stats: stats)
+    standard_read(plan, Api::V1::TaskPlanRepresenter)
   end
 
   ###############################################################

@@ -76,12 +76,12 @@ module Api::V1
                description: "Whether or not a recovery exercise is available"
              }
 
-    property :is_correct,
+    property :is_correct?,
+             as: :is_correct,
              type: 'boolean',
              writeable: false,
              readable: true,
              if: -> (*) { task_step.completed? },
-             getter: -> (*) { correct_answer_id == answer_id },
              schema_info: {
                description: "Whether or not the answer given by the student is correct"
              }

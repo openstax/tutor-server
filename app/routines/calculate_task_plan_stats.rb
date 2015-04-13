@@ -1,6 +1,6 @@
-class CalculateIReadingStats
+class CalculateTaskPlanStats
 
-  lev_routine
+  lev_routine express_output: :stats
 
   protected
 
@@ -19,7 +19,7 @@ class CalculateIReadingStats
     completed = steps.select {|ts| ts.completed? }
     stats = {
       student_count: role_ids.length,
-      correct_count: completed.count{|step| step.tasked.correct_answer_id == step.tasked.answer_id }
+      correct_count: completed.count{|step| step.tasked.is_correct? }
     }
     stats[:incorrect_count] = completed.length - stats[:correct_count]
     stats
@@ -60,9 +60,31 @@ class CalculateIReadingStats
     [ stats.merge(page_stats_for_steps(steps)) ]
   end
 
+  def get_gradable_taskeds(task)
+    task.task_steps.select do |ts|
+      # Gradable steps are TaskedExercise that are marked as completed
+      ts.tasked_type.demodulize == 'TaskedExercise' && ts.completed?
+    end.collect{ |ts| ts.tasked }
+  end
+
+  def get_task_grade(task)
+    gradables = get_gradable_taskeds(task)
+    return if gradables.blank?
+    gradables.select{|g| g.is_correct?}.count/gradables.count
+  end
+
+  def mean_grade_percent(tasks)
+    grades_array = tasks.collect{ |task| get_task_grade(task) }.compact
+    sum_of_grades = grades_array.inject(:+)
+    return nil if sum_of_grades.nil?
+    (sum_of_grades*100.0/grades_array.count).round
+  end
+
   def generate_course_stat_data
-    tasks = @plan.tasks.to_a
+    tasks = @plan.tasks.preload(task_steps: :tasked)
+                       .includes(:taskings).to_a
     {
+      mean_grade_percent: mean_grade_percent(tasks),
 
       total_count: tasks.count,
 

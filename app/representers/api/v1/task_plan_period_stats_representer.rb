@@ -1,8 +1,17 @@
 module Api::V1
 
   # Represents course and periods
-  class IReadingPeriodStatsRepresenter < Roar::Decorator
+  class TaskPlanPeriodStatsRepresenter < Roar::Decorator
     include Roar::JSON
+
+    property :mean_grade_percent,
+      type: Integer,
+      readable: true,
+      writeable: false,
+      schema_info: {
+        minimum: 0,
+        maximum: 100
+      }
 
     property :total_count,
       type: Integer,
