@@ -1,10 +1,6 @@
 class Domain::GetUserCourseStats
   lev_routine express_output: :course_stats
 
-  uses_routine CourseProfile::GetProfile,
-    translations: { outputs: { type: :verbatim } },
-    as: :get_course_profile
-
   uses_routine CourseContent::GetCourseBooks,
     translations: { outputs: { type: :verbatim } },
     as: :get_course_books
@@ -15,54 +11,42 @@ class Domain::GetUserCourseStats
 
   protected
   def exec(user:, course:)
-    run(:get_course_profile, course: course)
     run(:get_course_books, course: course)
+    run(:get_book_toc, book: outputs.books.first, visitor_names: :toc)
     compile_course_stats
   end
 
   private
   def compile_course_stats
     outputs[:course_stats] = {
-      title: outputs.profile.name,
+      title: outputs.toc.first.title,
       fields: collect_book_parts
     }
   end
 
   def collect_book_parts
-    compile_course_books_toc
     book_parts = []
-    outputs.book_toc.each do |book_toc|
-      book_parts << transform_toc(book_toc)
-      book_parts << transform_child_toc(book_toc)
+    outputs.toc.from(1).each do |book_toc|
+      book_parts << translate_toc(book_toc)
     end
-    book_parts.flatten
+    book_parts
   end
 
-  def compile_course_books_toc
-    outputs[:book_toc] = []
-    outputs.books.each do |book|
-      outputs.book_toc << run(:get_book_toc, book: book, visitor_names: :toc).outputs.toc
+  def translate_toc(toc)
+    translated = {
+      id: toc.id,
+      title: toc.title,
+      unit: toc.path
+    }
+
+    if (toc.children || []).any?
+      translated.merge!(pages: translate_children(toc.children))
     end
+
+    translated
   end
 
-  def transform_toc(book_toc)
-    book_toc.collect do |toc|
-      { id: toc.id,
-        title: toc.title,
-        number: toc.path,
-        page_ids: toc.page_ids || [] }
-    end
-  end
-
-  def transform_child_toc(book_toc)
-    children = []
-    book_toc.each do |toc|
-      next unless toc.children
-      children << transform_toc(toc.children)
-      toc.children.each do |child_toc|
-        children << transform_toc(child_toc.children)
-      end
-    end
-    children.flatten
+  def translate_children(children)
+    children.collect { |child_toc| translate_toc(child_toc) }
   end
 end
