@@ -108,6 +108,9 @@ group :development, :test do
   # Allows 'ap' alternative to 'pp'
   gem 'awesome_print'
 
+  # Clean the database between tests and suites
+  gem 'database_cleaner'
+
   # Thin development server
   gem 'thin'
 
