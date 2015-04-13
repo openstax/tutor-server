@@ -16,8 +16,8 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
 
   context "With an unworked plan" do
 
-    it "is all zero for an unworked task_plan" do
-      expect(stats.course.mean_grade_percentage).to eq (0)
+    it "is all nil or zero for an unworked task_plan" do
+      expect(stats.course.mean_grade_percentage).to be_nil
       expect(stats.course.total_count).to eq(task_plan.tasks.length)
       expect(stats.course.complete_count).to eq(0)
       expect(stats.course.partially_complete_count).to eq(0)
@@ -41,7 +41,7 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
       MarkTaskStepCompleted.call(task_step: step)
 
       stats = CalculateTaskPlanStats.call(plan: task_plan).outputs.stats
-      expect(stats.course.mean_grade_percentage).to eq (0)
+      expect(stats.course.mean_grade_percentage).to be_nil
       expect(stats.course.complete_count).to eq(0)
       expect(stats.course.partially_complete_count).to eq(1)
 
@@ -76,9 +76,11 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
         MarkTaskStepCompleted.call(task_step: ts)
       }
       stats = CalculateTaskPlanStats.call(plan: task_plan.reload).outputs.stats
+      expect(stats.course.mean_grade_percentage).to eq (100)
+      expect(stats.course.complete_count).to eq(1)
+      expect(stats.course.partially_complete_count).to eq(0)
       page = stats.course.current_pages.first
       expect(page['page']['title']).to eq('Force')
-      expect(page['mean_grade_percentage']).to eq(100)
       expect(page['student_count']).to eq(number_of_students)
       expect(page['correct_count']).to eq(1)
       expect(page['incorrect_count']).to eq(0)

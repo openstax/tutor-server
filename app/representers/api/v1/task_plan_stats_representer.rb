@@ -5,7 +5,6 @@ module Api::V1
     include Roar::JSON
 
     property :course,
-      type: Object,
       readable: true,
       writeable: false,
       decorator: TaskPlanPeriodStatsRepresenter
