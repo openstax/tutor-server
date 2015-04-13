@@ -73,7 +73,7 @@ class CalculateTaskPlanStats
     gradables.select{|g| g.is_correct?}.count/gradables.count
   end
 
-  def mean_grade_percentage(tasks)
+  def mean_grade_percent(tasks)
     grades_array = tasks.collect{ |task| get_task_grade(task) }.compact
     sum_of_grades = grades_array.inject(:+)
     return nil if sum_of_grades.nil?
@@ -84,7 +84,7 @@ class CalculateTaskPlanStats
     tasks = @plan.tasks.preload(task_steps: :tasked)
                        .includes(:taskings).to_a
     {
-      mean_grade_percentage: mean_grade_percentage(tasks),
+      mean_grade_percent: mean_grade_percent(tasks),
 
       total_count: tasks.count,
 

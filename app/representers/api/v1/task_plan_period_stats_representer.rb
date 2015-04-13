@@ -4,7 +4,7 @@ module Api::V1
   class TaskPlanPeriodStatsRepresenter < Roar::Decorator
     include Roar::JSON
 
-    property :mean_grade_percentage,
+    property :mean_grade_percent,
       type: Integer,
       readable: true,
       writeable: false,

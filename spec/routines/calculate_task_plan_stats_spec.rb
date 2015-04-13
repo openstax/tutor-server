@@ -17,7 +17,7 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
   context "With an unworked plan" do
 
     it "is all nil or zero for an unworked task_plan" do
-      expect(stats.course.mean_grade_percentage).to be_nil
+      expect(stats.course.mean_grade_percent).to be_nil
       expect(stats.course.total_count).to eq(task_plan.tasks.length)
       expect(stats.course.complete_count).to eq(0)
       expect(stats.course.partially_complete_count).to eq(0)
@@ -42,21 +42,21 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
       MarkTaskStepCompleted.call(task_step: step)
 
       stats = CalculateTaskPlanStats.call(plan: task_plan).outputs.stats
-      expect(stats.course.mean_grade_percentage).to be_nil
+      expect(stats.course.mean_grade_percent).to be_nil
       expect(stats.course.complete_count).to eq(0)
       expect(stats.course.partially_complete_count).to eq(1)
 
       first_task.task_steps.each{ |ts| MarkTaskStepCompleted.call(task_step: ts) }
       stats = CalculateTaskPlanStats.call(plan: task_plan.reload).outputs.stats
 
-      expect(stats.course.mean_grade_percentage).to eq (0)
+      expect(stats.course.mean_grade_percent).to eq (0)
       expect(stats.course.complete_count).to eq(1)
       expect(stats.course.partially_complete_count).to eq(0)
 
       last_task = tasks.last
       MarkTaskStepCompleted.call(task_step: last_task.task_steps.first)
       stats = CalculateTaskPlanStats.call(plan: task_plan.reload).outputs.stats
-      expect(stats.course.mean_grade_percentage).to eq (0)
+      expect(stats.course.mean_grade_percent).to eq (0)
       expect(stats.course.complete_count).to eq(1)
       expect(stats.course.partially_complete_count).to eq(1)
     end
@@ -78,7 +78,7 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
         MarkTaskStepCompleted.call(task_step: ts)
       }
       stats = CalculateTaskPlanStats.call(plan: task_plan.reload).outputs.stats
-      expect(stats.course.mean_grade_percentage).to eq (100)
+      expect(stats.course.mean_grade_percent).to eq (100)
       expect(stats.course.complete_count).to eq(1)
       expect(stats.course.partially_complete_count).to eq(0)
       page = stats.course.current_pages.first
@@ -96,7 +96,7 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
         MarkTaskStepCompleted.call(task_step: ts)
       }
       stats = CalculateTaskPlanStats.call(plan: task_plan.reload).outputs.stats
-      expect(stats.course.mean_grade_percentage).to eq (50)
+      expect(stats.course.mean_grade_percent).to eq (50)
       expect(stats.course.complete_count).to eq(2)
       expect(stats.course.partially_complete_count).to eq(0)
       page = stats.course.current_pages.first
@@ -115,7 +115,7 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
         MarkTaskStepCompleted.call(task_step: ts)
       }
       stats = CalculateTaskPlanStats.call(plan: task_plan.reload).outputs.stats
-      expect(stats.course.mean_grade_percentage).to eq (67)
+      expect(stats.course.mean_grade_percent).to eq (67)
       expect(stats.course.complete_count).to eq(3)
       expect(stats.course.partially_complete_count).to eq(0)
       page = stats.course.current_pages.first
@@ -134,7 +134,7 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
         MarkTaskStepCompleted.call(task_step: ts)
       }
       stats = CalculateTaskPlanStats.call(plan: task_plan.reload).outputs.stats
-      expect(stats.course.mean_grade_percentage).to eq (75)
+      expect(stats.course.mean_grade_percent).to eq (75)
       expect(stats.course.complete_count).to eq(4)
       expect(stats.course.partially_complete_count).to eq(0)
       page = stats.course.current_pages.first
