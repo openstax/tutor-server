@@ -105,4 +105,16 @@ RSpec.describe Tasks::Models::Task, :type => :model do
     expect(spa).to respond_to(:call)
   end
 
+  it 'knows when feedback should be available' do
+    task = FactoryGirl.build(:tasks_task, due_at: nil)
+    task.feedback_at = nil
+    expect(task.feedback_available?).to eq false
+
+    task.feedback_at = Time.now
+    expect(task.feedback_available?).to eq true
+
+    task.feedback_at = Time.now + 1.minute
+    expect(task.feedback_available?).to eq false
+  end
+
 end

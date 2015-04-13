@@ -35,6 +35,10 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     current_time > due_at
   end
 
+  def feedback_available?(current_time: Time.now)
+    !feedback_at.nil? && current_time >= feedback_at
+  end
+
   def completed?
     self.task_steps.all?{|ts| ts.completed? }
   end

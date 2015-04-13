@@ -62,7 +62,8 @@ class Tasks::Assistants::HomeworkAssistant
                                title: title,
                                description: description,
                                opens_at: opens_at,
-                               due_at: due_at]
+                               due_at: due_at,
+                               feedback_at: due_at]
 
       exercises.each do |exercise|
         add_exercise_step(task: task, exercise: exercise)

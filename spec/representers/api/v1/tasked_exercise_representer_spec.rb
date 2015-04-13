@@ -27,7 +27,8 @@ RSpec.describe Api::V1::TaskedExerciseRepresenter, :type => :representer do
   end
 
 
-  context "when complete" do
+  context "when complete and" do
+
     before do
       tasked_exercise.free_response = 'Four score and seven years ago ...'
       tasked_exercise.answer_id = tasked_exercise.answer_ids.first
@@ -36,18 +37,48 @@ RSpec.describe Api::V1::TaskedExerciseRepresenter, :type => :representer do
       tasked_exercise.task_step.save!
     end
 
-    it "has additional fields" do
-      expect(representation).to include(
-        "id"                => tasked_exercise.task_step.id,
-        "type"              => "exercise",
-        "is_completed"      => true,
-        "content_url"       => tasked_exercise.url,
-        "correct_answer_id" =>tasked_exercise.correct_answer_id,
-        "answer_id"         =>tasked_exercise.answer_ids.first,
-        "free_response"     =>"Four score and seven years ago ...",
-        "has_recovery"      => false,
-        "is_correct"        => true
-      )
+    context "feedback is available for the task" do
+
+      before do
+        tasked_exercise.task_step.task.feedback_at = Time.now
+        tasked_exercise.task_step.task.save!
+      end
+
+      it "has additional fields" do
+        expect(representation).to include(
+          "id"                => tasked_exercise.task_step.id,
+          "type"              => "exercise",
+          "is_completed"      => true,
+          "content_url"       => tasked_exercise.url,
+          "correct_answer_id" =>tasked_exercise.correct_answer_id,
+          "answer_id"         =>tasked_exercise.answer_ids.first,
+          "free_response"     =>"Four score and seven years ago ...",
+          "has_recovery"      => false,
+          "is_correct"        => true
+        )
+      end
+
+    end
+
+    context "feedback is not available for the task" do
+
+      it "has no additional fields" do
+        expect(representation).to include(
+          "id"                => tasked_exercise.task_step.id,
+          "type"              => "exercise",
+          "is_completed"      => true,
+          "content_url"       => tasked_exercise.url,
+          "answer_id"         =>tasked_exercise.answer_ids.first,
+          "free_response"     =>"Four score and seven years ago ..."
+        )
+
+        expect(representation).not_to include(
+          "correct_answer_id" => tasked_exercise.correct_answer_id,
+          "has_recovery"      => false,
+          "is_correct"        => true
+        )
+      end
+
     end
 
   end

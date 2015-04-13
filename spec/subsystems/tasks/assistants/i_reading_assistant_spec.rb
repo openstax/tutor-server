@@ -86,12 +86,13 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
       }
     }
 
-    it 'splits a CNX module into many different steps and assigns them' do
+    it 'splits a CNX module into many different steps and assigns them with immediate feedback' do
       tasks = DistributeTasks.call(task_plan).outputs.tasks
       expect(tasks.length).to eq num_taskees
 
       tasks.each do |task|
         expect(task.taskings.length).to eq 1
+        expect(task.feedback_at).to be <= Time.now
 
         expect(task.core_task_steps.count).to eq(core_step_gold_data.count)
         expect(task.spaced_practice_task_steps.count).to eq(spaced_practice_step_gold_data.count)
@@ -200,10 +201,12 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
       }
     }
 
-    it 'is split into different task steps' do
+    it 'is split into different task steps with immediate feedback' do
       tasks = DistributeTasks.call(task_plan).outputs.tasks
       tasks.each do |task|
         expect(task.taskings.length).to eq 1
+        expect(task.feedback_at).to be <= Time.now
+
         task_steps = task.task_steps
 
         expect(task_steps.count).to eq task_step_gold_data.count

@@ -32,13 +32,15 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, :type => :assistant,
     )
   } }
 
-  it 'assigns the exercises chosen by the teacher and sets the description' do
+  it 'assigns the exercises chosen by the teacher and sets the description and feedback_at' do
     tasks = DistributeTasks.call(task_plan).outputs.tasks
     expect(tasks.length).to eq 3
 
     tasks.each do |task|
       expect(task.taskings.length).to eq 1
       expect(task.description).to eq "Hello!"
+      expect(task.feedback_at).to eq task.due_at
+
       task_steps = task.task_steps
       expect(task_steps.length).to(
         eq exercise_ids.length + tutor_exercise_count

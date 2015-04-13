@@ -8,8 +8,7 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
   validates :content, presence: true
   validate :valid_state, :valid_answer, :not_completed
 
-  delegate :answers, :correct_answer_ids, :content_without_correctness,
-           to: :wrapper
+  delegate :answers, :correct_answer_ids, :content_without_correctness, to: :wrapper
 
   def wrapper
     @wrapper ||= OpenStax::Exercises::V1::Exercise.new(content)
