@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
-                                           :version => :v1, :vcr => VCR_OPTS  do
+                                           :version => :v1, :vcr => VCR_OPTS do
 
   let!(:application)     { FactoryGirl.create :doorkeeper_application }
   let!(:user_1)          { FactoryGirl.create :user_profile }
