@@ -1,19 +1,18 @@
 class OpenStax::BigLearn::V1::RealClient
-  include Singleton
+  def initialize(configuration)
+    @client_id = configuration.client_id
+    @secret = configuration.secret
+    @server_url = configuration.server_url
+    @oauth_client = OAuth2::Client.new(@client_id, @secret, site: @server_url)
+    @oauth_token = @oauth_client.client_credentials.get_token if @client_id
+  end
 
   # TODO implement these methods when real API set; use HTTParty, e.g:
   #   response = HTTParty.get(url)
   #   ids = response.parsed_response["questionTopics"].collect{|qt| qt["question"]}
-
-  URL_BASE = "http://api1.biglearn.openstax.org/"
-  ADD_EXERCISES_URL = URL_BASE + "facts/questions"
-  PROJECTION_EXERCISES_URL = URL_BASE + "projections/questions"
-
   def add_exercises(exercises)
     payload = construct_exercises_payload(exercises)
-    result = HTTParty.post(ADD_EXERCISES_URL,
-                           body: payload.to_json,
-                           headers: { 'Content-Type' => 'application/json' })
+    result = post(add_exercises_url, payload)
     handle_result(result)
   end
 
@@ -26,7 +25,7 @@ class OpenStax::BigLearn::V1::RealClient
       allow_repetition: allow_repetitions ? 'true' : 'false'
     }
 
-    result = HTTParty.get(PROJECTION_EXERCISES_URL, query: query)
+    result = get(projection_exercises_url, query: query)
 
     handle_result(result)
 
@@ -47,6 +46,24 @@ class OpenStax::BigLearn::V1::RealClient
   end
 
   private
+  def post(url, body)
+    HTTParty.post(url,
+                  body: body.to_json,
+                  headers: { 'Content-Type' => 'application/json' })
+  end
+
+  def get(url, params = {})
+    HTTParty.get(url, params)
+  end
+
+  def add_exercises_url
+    @server_url + 'facts/questions'
+  end
+
+  def projection_exercises_url
+    @server_url + 'projections/questions'
+  end
+
   def construct_exercises_payload(exercises)
     payload = { question_tags: [] }
     [exercises].flatten.each do |exercise|
