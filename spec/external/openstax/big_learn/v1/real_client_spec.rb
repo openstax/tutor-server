@@ -4,6 +4,14 @@ require 'vcr_helper'
 module OpenStax::BigLearn
   RSpec.describe V1::RealClient, :type => :external, :vcr => VCR_OPTS do
 
+    let(:configuration) {
+      c = OpenStax::BigLearn::V1::Configuration.new
+      c.server_url = 'http://api1.biglearn.openstax.org/'
+      c
+    }
+
+    let(:client) { described_class.new(configuration) }
+
     it 'stringifies tag searches' do
       tag_search = {
         _and: [
@@ -23,7 +31,7 @@ module OpenStax::BigLearn
         ]
       }
 
-      expect(V1::real_client.stringify_tag_search(tag_search)).to eq(
+      expect(client.stringify_tag_search(tag_search)).to eq(
         '(("practice-concepts" OR "practice-problem" OR "test-prep-multiple-choice") AND ("k12phys-ch04-s01-lo01" OR "k12phys-ch04-s01-lo02"))'
       )
     end
@@ -47,7 +55,7 @@ module OpenStax::BigLearn
         ]
       }
 
-      V1.real_client.get_projection_exercises(
+      client.get_projection_exercises(
         user: nil , tag_search: tag_search, count: 5,
         difficulty: 0.5, allow_repetitions: true
       )
