@@ -19,7 +19,7 @@ class CalculateTaskPlanStats
     completed = steps.select {|ts| ts.completed? }
     stats = {
       student_count: role_ids.length,
-      correct_count: completed.count{|step| step.tasked.correct_answer_id == step.tasked.answer_id }
+      correct_count: completed.count{|step| step.tasked.is_correct? }
     }
     stats[:incorrect_count] = completed.length - stats[:correct_count]
     stats
@@ -77,7 +77,7 @@ class CalculateTaskPlanStats
     grades_array = tasks.collect{ |task| get_task_grade(task) }.compact
     sum_of_grades = grades_array.inject(:+)
     return nil if sum_of_grades.nil?
-    (sum_of_grades*100/grades_array.count).round
+    (sum_of_grades*100.0/grades_array.count).round
   end
 
   def generate_course_stat_data
