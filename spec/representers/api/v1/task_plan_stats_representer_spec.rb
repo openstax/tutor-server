@@ -12,7 +12,7 @@ RSpec.describe Api::V1::TaskPlanStatsRepresenter, :type => :representer,
   }
 
   let(:stats){
-    CalculateTaskPlanStats.call(plan: task_plan).outputs.stats
+    CalculateTaskPlanStats[plan: task_plan]
   }
 
   let(:representation) { Api::V1::TaskPlanStatsRepresenter.new(stats).as_json }
