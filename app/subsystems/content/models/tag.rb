@@ -7,4 +7,9 @@ class Content::Models::Tag < Tutor::SubSystems::BaseModel
 
   validates :name, presence: true
   validates :tag_type, presence: true
+
+  def chapter_section
+    matches = /-ch(\d+)-s(\d+)-lo\d+$/.match(name)
+    "#{matches[1].to_i}.#{matches[2].to_i}" unless matches.nil?
+  end
 end
