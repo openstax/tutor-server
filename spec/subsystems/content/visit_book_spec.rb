@@ -28,15 +28,13 @@ RSpec.describe Content::VisitBook, :type => :routine do
               'id' => ftoc.children[0].children[0].id,
               'title' => 'first page',
               'type' => 'page',
-              'path' => '1.1',
-              'los' => ['ost-tag-lo-topic1-lo1', 'ost-tag-lo-topic2-lo2'],
+              'path' => '1.1'
             },
             {
               'id' => ftoc.children[0].children[1].id,
               'title' => 'second page',
               'type' => 'page',
-              'path' => '1.2',
-              'los' => ['ost-tag-lo-topic2-lo2', 'ost-tag-lo-topic3-lo3'],
+              'path' => '1.2'
             }
           ]
         },
@@ -49,8 +47,7 @@ RSpec.describe Content::VisitBook, :type => :routine do
               'id' => ftoc.children[1].children[0].id,
               'title' => 'third page',
               'type' => 'page',
-              'path' => '1.3',
-              'los' => ['ost-tag-lo-topic4-lo4'],
+              'path' => '1.3'
             }
           ]
         }
