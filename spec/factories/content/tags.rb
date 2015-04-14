@@ -1,7 +1,7 @@
 FactoryGirl.define do
-  sequence :tag_name do |n| "Tag #{n}" end
+  sequence :value do |n| "Tag #{n}" end
 
   factory :content_tag, class: '::Content::Models::Tag' do
-    name { generate(:tag_name) }
+    value { generate(:value) }
   end
 end

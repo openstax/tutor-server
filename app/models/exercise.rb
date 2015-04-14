@@ -5,11 +5,11 @@ class Exercise < Entity
   exposes :url, :title, :content
 
   def tags
-    tag_models.collect{ |t| t.name }
+    tag_models.collect{ |t| t.value }
   end
 
   def los
-    tag_models.select{ |t| t.lo? }.collect{ |t| t.name }
+    tag_models.select{ |t| t.lo? }.collect{ |t| t.value }
   end
 
   protected

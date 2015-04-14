@@ -16,9 +16,9 @@ RSpec.describe Exercise, :type => :model do
 
     expect(exercise.url).not_to be_blank
     expect(JSON.parse(exercise.content)).not_to be_blank
-    expect(exercise.tags).to include(tag.name)
-    expect(exercise.tags).to include(lo.name)
-    expect(exercise.los).not_to include(tag.name)
-    expect(exercise.los).to include(lo.name)
+    expect(exercise.tags).to include(tag.value)
+    expect(exercise.tags).to include(lo.value)
+    expect(exercise.los).not_to include(tag.value)
+    expect(exercise.los).to include(lo.value)
   end
 end
