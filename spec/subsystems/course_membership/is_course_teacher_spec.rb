@@ -31,6 +31,12 @@ describe CourseMembership::IsCourseTeacher do
         expect(result.outputs.is_course_teacher).to be_falsey
       end
     end
+    context "when expressed called" do
+      it "returns false" do
+        is_course_teacher = CourseMembership::IsCourseTeacher[course: target_course, roles: target_teacher_role]
+        expect(is_course_teacher).to be_falsey
+      end
+    end
   end
 
   context "when a teacher of the given course" do
@@ -57,6 +63,12 @@ describe CourseMembership::IsCourseTeacher do
         result = CourseMembership::IsCourseTeacher.call(course: target_course, roles: roles)
         expect(result.errors).to be_empty
         expect(result.outputs.is_course_teacher).to be_truthy
+      end
+    end
+    context "when expressed called" do
+      it "returns true" do
+        is_course_teacher = CourseMembership::IsCourseTeacher[course: target_course, roles: target_teacher_role]
+        expect(is_course_teacher).to be_truthy
       end
     end
   end
