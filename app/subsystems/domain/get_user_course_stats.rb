@@ -20,33 +20,20 @@ class Domain::GetUserCourseStats
   def compile_course_stats
     outputs[:course_stats] = {
       title: outputs.toc.first.title,
-      fields: collect_book_parts
+      fields: outputs.toc.from(1).map { |toc| translate_toc(toc) }
     }
-  end
-
-  def collect_book_parts
-    book_parts = []
-    outputs.toc.from(1).each do |book_toc|
-      book_parts << translate_toc(book_toc)
-    end
-    book_parts
   end
 
   def translate_toc(toc)
-    translated = {
-      id: toc.id,
-      title: toc.title,
-      unit: toc.path
-    }
-
-    if (toc.children || []).any?
-      translated.merge!(pages: translate_children(toc.children))
-    end
-
+    translated = { id: toc.id,
+                   title: toc.title,
+                   unit: toc.path }
+    merge_pages_for_toc_children(translated, toc.children)
     translated
   end
 
-  def translate_children(children)
-    children.collect { |child_toc| translate_toc(child_toc) }
+  def merge_pages_for_toc_children(hash, children)
+    return unless (children || []).any?
+    hash.merge!(pages: children.collect { |child| translate_toc(child) })
   end
 end
