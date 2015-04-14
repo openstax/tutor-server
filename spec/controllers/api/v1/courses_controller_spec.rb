@@ -309,7 +309,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
   describe "practice_post" do
     let!(:lo)            { FactoryGirl.create :content_tag,
                                                tag_type: :lo,
-                                               name: 'lo01' }
+                                               value: 'lo01' }
 
     let!(:page)           { FactoryGirl.create :content_page }
 

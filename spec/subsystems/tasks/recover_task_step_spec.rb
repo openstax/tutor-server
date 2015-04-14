@@ -3,9 +3,9 @@ require 'rails_helper'
 RSpec.describe Tasks::RecoverTaskStep, :type => :routine do
 
   let!(:lo)              { FactoryGirl.create :content_tag,
-                                              name: 'ost-tag-lo-test-lo01' }
+                                              value: 'ost-tag-lo-test-lo01' }
   let!(:pp)              { FactoryGirl.create :content_tag,
-                                              name: 'practice-problem' }
+                                              value: 'practice-problem' }
 
   let!(:tasked_reading)  { FactoryGirl.create(:tasks_tasked_reading) }
 
@@ -22,7 +22,7 @@ RSpec.describe Tasks::RecoverTaskStep, :type => :routine do
       :tasks_tasked_exercise,
       can_be_recovered: true,
       content: OpenStax::Exercises::V1.fake_client
-                                      .new_exercise_hash(tags: [lo.name])
+                                      .new_exercise_hash(tags: [lo.value])
                                       .to_json
     )
     te.task_step.task = task
@@ -36,7 +36,7 @@ RSpec.describe Tasks::RecoverTaskStep, :type => :routine do
     :content_exercise,
     content: OpenStax::Exercises::V1.fake_client
                                     .new_exercise_hash(
-                                      tags: [lo.name, pp.name]
+                                      tags: [lo.value, pp.value]
                                     ).to_json
   ) }
   let!(:recovery_tagging_1)   { FactoryGirl.create(

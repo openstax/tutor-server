@@ -16,7 +16,7 @@ RSpec.describe SearchLocalExercises, :type => :routine, :vcr => VCR_OPTS do
   let!(:exercise_2)    { FactoryGirl.create :content_exercise }
   let!(:exercise_3)    { FactoryGirl.create :content_exercise }
 
-  let!(:test_tag)      { FactoryGirl.create :content_tag, name: 'test-tag' }
+  let!(:test_tag)      { FactoryGirl.create :content_tag, value: 'test-tag' }
 
   it 'can search imported exercises' do
     OpenStax::Exercises::V1.configure do |config|

@@ -194,7 +194,7 @@ class SpacedPracticeAlgorithmIReading
       content_pages = Content::Models::Page.find(page_ids)
       los = content_pages.collect do |page|
         page_los = page.page_tags.select{|page_tag| page_tag.tag.lo?}
-                                 .collect{|page_tag| page_tag.tag.name}
+                                 .collect{|page_tag| page_tag.tag.value}
         page_los
       end.flatten.compact.uniq
 
@@ -205,7 +205,7 @@ class SpacedPracticeAlgorithmIReading
         exercise
       end.flatten.compact.uniq
 
-      content_exercises = Content::Models::Exercise.joins{exercise_tags.tag}.where{exercise_tags.tag.name.in los}.uniq
+      content_exercises = Content::Models::Exercise.joins{exercise_tags.tag}.where{exercise_tags.tag.value.in los}.uniq
 
       {
         task: task,

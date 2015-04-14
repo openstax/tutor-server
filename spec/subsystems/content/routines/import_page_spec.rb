@@ -46,15 +46,15 @@ RSpec.describe Content::Routines::ImportPage, :type => :routine, :vcr => VCR_OPT
         }.to change{ Content::Models::Tag.lo.count }.by(2)
 
         tags = Content::Models::Tag.lo.order(:id).to_a
-        expect(tags[-2].name).to eq 'k12phys-ch04-s01-lo01'
-        expect(tags[-1].name).to eq 'k12phys-ch04-s01-lo02'
+        expect(tags[-2].value).to eq 'k12phys-ch04-s01-lo01'
+        expect(tags[-1].value).to eq 'k12phys-ch04-s01-lo02'
 
         tagged_tags = result.outputs[:tags]
         expect(tagged_tags).not_to be_empty
         expect(tagged_tags).to(
           eq Content::Models::Page.last.page_tags.collect{|pt| pt.tag}
         )
-        expect(tagged_tags.collect{|t| t.name}).to eq [
+        expect(tagged_tags.collect{|t| t.value}).to eq [
           'k12phys-ch04-s01-lo01',
           'k12phys-ch04-s01-lo02'
         ]
