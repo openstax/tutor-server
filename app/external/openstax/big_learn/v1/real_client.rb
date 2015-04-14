@@ -1,7 +1,5 @@
 class OpenStax::BigLearn::V1::RealClient
   def initialize(configuration)
-    @client_id = configuration.client_id
-    @secret = configuration.secret
     @server_url = configuration.server_url
   end
 
