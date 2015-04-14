@@ -36,7 +36,7 @@ module Api::V1
              type: String,
              writeable: false,
              readable: true,
-             if: -> (*) { task_step.completed? },
+             if: -> (*) { task_step.feedback_available? },
              schema_info: {
                description: "The Exercise's correct answer's id"
              }
@@ -61,7 +61,7 @@ module Api::V1
              type: String,
              writeable: false,
              readable: true,
-             if: -> (*) { task_step.completed? },
+             if: -> (*) { task_step.feedback_available? },
              schema_info: {
                description: "The feedback given to the student"
              }
@@ -71,7 +71,7 @@ module Api::V1
              type: 'boolean',
              writeable: false,
              readable: true,
-             if: -> (*) { task_step.completed? },
+             if: -> (*) { task_step.feedback_available? },
              schema_info: {
                description: "Whether or not a recovery exercise is available"
              }
@@ -81,7 +81,7 @@ module Api::V1
              type: 'boolean',
              writeable: false,
              readable: true,
-             if: -> (*) { task_step.completed? },
+             if: -> (*) { task_step.feedback_available? },
              schema_info: {
                description: "Whether or not the answer given by the student is correct"
              }

@@ -81,7 +81,8 @@ class Tasks::Assistants::IReadingAssistant
                              task_type: 'reading',
                              title:     title,
                              opens_at:  opens_at,
-                             due_at:    due_at]
+                             due_at:    due_at,
+                             feedback_at: Time.now]
     task.save!
     task
   end

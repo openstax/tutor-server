@@ -9,11 +9,12 @@ RSpec.describe "Exercise update progression", type: :request, :api => true, :ver
                                               resource_owner_id: user_1.id }
 
   let!(:tasked) { FactoryGirl.create(:tasks_tasked_exercise,
-                                     :with_tasking, tasked_to: Role::GetDefaultUserRole[user_1.entity_user]) }
+                                     :with_tasking,
+                                     tasked_to: Role::GetDefaultUserRole[user_1.entity_user]) }
 
   let!(:step_route_base) { "/api/steps/#{tasked.task_step.id}" }
 
-  it "only shows feedback and correct answer id after completed" do
+  it "only shows feedback and correct answer id after completed and feedback available" do
 
     api_get(step_route_base, user_1_token)
 
@@ -36,8 +37,21 @@ RSpec.describe "Exercise update progression", type: :request, :api => true, :ver
     expect(response.body_as_hash).not_to have_key(:feedback_html)
     expect(response.body_as_hash).not_to have_key(:correct_answer_id)
 
-    # Mark it as complete and then get it again (PUT returns No Content)
+    # Mark it as complete and then get it again
     api_put("#{step_route_base}/completed", user_1_token)
+
+    expect(response.body_as_hash).not_to have_key(:feedback_html)
+    expect(response.body_as_hash).not_to have_key(:correct_answer_id)
+
+    api_get(step_route_base, user_1_token)
+
+    expect(response.body_as_hash).not_to have_key(:feedback_html)
+    expect(response.body_as_hash).not_to have_key(:correct_answer_id)
+
+    # Get it again after feedback is available
+    tasked.task_step.task.feedback_at = Time.now
+    tasked.task_step.task.save!
+
     api_get(step_route_base, user_1_token)
 
     expect(response.body_as_hash).to include(feedback_html: 'Right!')
