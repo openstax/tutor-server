@@ -49,6 +49,8 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, :vcr => VCR_OPTS do
                expected: {
                 los: ['k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02'],
                 fragment_classes: [OpenStax::Cnx::V1::Fragment::Text,
+                                   OpenStax::Cnx::V1::Fragment::Video,
+                                   OpenStax::Cnx::V1::Fragment::Text,
                                    OpenStax::Cnx::V1::Fragment::Text,
                                    OpenStax::Cnx::V1::Fragment::Exercise,
                                    OpenStax::Cnx::V1::Fragment::Text],
