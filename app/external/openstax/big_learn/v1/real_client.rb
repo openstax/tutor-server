@@ -3,8 +3,6 @@ class OpenStax::BigLearn::V1::RealClient
     @client_id = configuration.client_id
     @secret = configuration.secret
     @server_url = configuration.server_url
-    @oauth_client = OAuth2::Client.new(@client_id, @secret, site: @server_url)
-    @oauth_token = @oauth_client.client_credentials.get_token if @client_id
   end
 
   # TODO implement these methods when real API set; use HTTParty, e.g:
