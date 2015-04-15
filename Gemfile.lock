@@ -233,12 +233,10 @@ GEM
     omniauth (1.2.2)
       hashie (>= 1.2, < 4)
       rack (~> 1.0)
-    omniauth-oauth2 (1.2.0)
-      faraday (>= 0.8, < 0.10)
-      multi_json (~> 1.3)
+    omniauth-oauth2 (1.3.0)
       oauth2 (~> 1.0)
       omniauth (~> 1.2)
-    openstax_accounts (5.0.1)
+    openstax_accounts (5.1.0)
       action_interceptor (>= 1.0)
       keyword_search (>= 1.0.0)
       lev (>= 2.2.1)
@@ -500,7 +498,7 @@ DEPENDENCIES
   mini_magick
   newrelic_rpm
   nifty-generators
-  openstax_accounts (~> 5.0.1)
+  openstax_accounts (~> 5.1)
   openstax_api (~> 5.3.0)
   openstax_exchange
   openstax_utilities (~> 4.2.0)
