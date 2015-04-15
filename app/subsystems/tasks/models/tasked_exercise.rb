@@ -66,7 +66,7 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     ## the exchange identifier in the current user's profile,
     ## but the role id is a close temporary proxy):
     OpenStax::Exchange.record_multiple_choice_answer(
-      self.identifier, url, '0', answer_id
+      identifier, url, trial, answer_id
     )
   end
 
@@ -74,6 +74,10 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
 
   def identifier
     task_step.task.taskings.first.role.id
+  end
+
+  def trial
+    task_step.id.to_s
   end
 
   # Eventually this will be enforced by the exercise substeps

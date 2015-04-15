@@ -70,7 +70,7 @@ class CalculateTaskPlanStats
   def get_task_grade(task)
     gradables = get_gradable_taskeds(task)
     return if gradables.blank?
-    gradables.select{|g| g.is_correct?}.count/gradables.count
+    gradables.select{|g| g.is_correct?}.count.to_f/gradables.count
   end
 
   def mean_grade_percent(tasks)
