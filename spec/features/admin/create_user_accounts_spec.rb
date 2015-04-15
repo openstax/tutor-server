@@ -1,12 +1,7 @@
 require 'rails_helper'
+require 'vcr_helper'
 
-OpenStax::Accounts.instance_eval do
-  def create_temp_user(attrs)
-    FactoryGirl.create(:user_profile, username: attrs[:username])
-  end
-end
-
-RSpec.feature 'Administration' do
+RSpec.feature 'Administration', vcr: VCR_OPTS do
   scenario 'create a user with a username and password' do
     admin = FactoryGirl.create(:user_profile, :administrator)
     stub_current_user(admin)

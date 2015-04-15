@@ -11,7 +11,6 @@ module MapUsersAccounts
     end
 
     private
-
     def anonymous_profile
       UserProfile::Models::Profile.anonymous if @account.is_anonymous?
     end
