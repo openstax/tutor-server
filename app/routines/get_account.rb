@@ -10,4 +10,3 @@ class GetAccount
     run(:get_account, id)
   end
 end
-

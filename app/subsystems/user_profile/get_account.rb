@@ -6,4 +6,3 @@ class UserProfile::GetAccount
     outputs[:account] = OpenStax::Accounts::Account.find(id)
   end
 end
-
