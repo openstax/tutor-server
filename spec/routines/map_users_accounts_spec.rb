@@ -5,7 +5,12 @@ RSpec.describe MapUsersAccounts do
     let(:profile) { MapUsersAccounts.account_to_user(account) }
 
     context 'when the account is anonymous' do
-      let(:account) { double(:account, is_anonymous?: true) }
+      let(:account) do
+        OpenStax::Accounts::CreateTempAccount.call(username: 'account')
+                                             .outputs.account
+      end
+
+      before { allow(account).to receive(:is_anonymous?) { true } }
 
       it 'returns an anonymous instance' do
         expect(profile).to be_a(UserProfile::Models::AnonymousUser)
@@ -14,7 +19,7 @@ RSpec.describe MapUsersAccounts do
 
     context 'when the account can find a matching profile' do
       let!(:found) { FactoryGirl.create(:profile) }
-      let(:account) { double(:account, id: found.account_id, is_anonymous?: false) }
+      let(:account) { found.account }
 
       it 'returns the profile' do
         expect(profile).to eq(found)
@@ -22,11 +27,14 @@ RSpec.describe MapUsersAccounts do
     end
 
     context 'when a profile can be created successfully' do
-      let(:account) { double(:account, id: 2, is_anonymous?: false) }
+      let(:account) do
+        OpenStax::Accounts::CreateTempAccount.call(username: 'account')
+                                             .outputs.account
+      end
 
       it 'returns the created profile for the account' do
         expect(profile).to be_a(UserProfile::Models::Profile)
-        expect(profile.account_id).to eq(2)
+        expect(profile.account_id).to eq(account.id)
       end
 
       it "sets the profile's exchange_identifier" do
