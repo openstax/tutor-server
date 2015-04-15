@@ -46,12 +46,6 @@ class Entity
     end
   end
 
-  delegate :id, to: :repository
-
-  protected :repository, :repository_class, :exposed_methods
-
-  protected
-
   def initialize(args = {})
     if args.is_a?(repository_class)
       @repository = args
@@ -59,5 +53,9 @@ class Entity
       @repository = repository_class.new(args)
     end
   end
+
+  delegate :id, to: :repository
+
+  protected :repository, :repository_class, :exposed_methods
 
 end
