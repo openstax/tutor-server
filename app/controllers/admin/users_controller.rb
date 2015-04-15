@@ -12,7 +12,7 @@ class Admin::UsersController < Admin::BaseController
   end
 
   def become
-    account = Domain::GetAccount[params[:id]]
+    account = GetAccount[params[:id]]
     sign_in(account)
     redirect_to root_path
   end

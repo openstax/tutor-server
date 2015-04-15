@@ -1,4 +1,4 @@
-class Domain::GetAccount
+class GetAccount
   lev_routine express_output: :account
 
   uses_routine UserProfile::GetAccount,
