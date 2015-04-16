@@ -1,4 +1,4 @@
-require './app/routines/map_users_accounts'
+require './lib/map_users_accounts'
 
 secrets = Rails.application.secrets['openstax']['accounts']
 
