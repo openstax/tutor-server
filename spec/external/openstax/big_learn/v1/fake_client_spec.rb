@@ -3,13 +3,15 @@ require 'rails_helper'
 module OpenStax::BigLearn
   RSpec.describe V1::FakeClient, :type => :external do
 
+    let(:client) { described_class.new }
+
     it 'allows adding of exercises' do
-      expect{V1::fake_client.add_exercises(V1::Exercise.new('e42', 'topic'))}
-        .to change{V1::fake_client.store_exercises_copy.count}.by(1)
+      expect{client.add_exercises(V1::Exercise.new('e42', 'topic'))}
+        .to change{client.store_exercises_copy.count}.by(1)
 
-      V1::fake_client.reload! # make sure data is really saved
+      client.reload! # make sure data is really saved
 
-      expect(V1::fake_client.store_exercises_copy).to include('e42' => ['topic'])
+      expect(client.store_exercises_copy).to include('e42' => ['topic'])
     end
 
     it 'matches boolean tag searches' do
@@ -48,21 +50,23 @@ module OpenStax::BigLearn
       ]
 
       scenarios.each do |scenario|
-        expect(V1::fake_client.tags_match_condition?(
+        expect(client.tags_match_condition?(
                                  scenario[:tags],
                                  scenario[:condition])).to eq scenario[:succeeds]
       end
     end
 
     context "get_projection_exercises" do
-      V1::fake_client.add_exercises(V1::Exercise.new('e1', 'lo1', 'concept'))
-      V1::fake_client.add_exercises(V1::Exercise.new('e2', 'lo1', 'homework'))
-      V1::fake_client.add_exercises(V1::Exercise.new('e3', 'lo2', 'concept'))
-      V1::fake_client.add_exercises(V1::Exercise.new('e4', 'lo2', 'concept'))
-      V1::fake_client.add_exercises(V1::Exercise.new('e5', 'lo3', 'concept'))
+      before do
+        client.add_exercises(V1::Exercise.new('e1', 'lo1', 'concept'))
+        client.add_exercises(V1::Exercise.new('e2', 'lo1', 'homework'))
+        client.add_exercises(V1::Exercise.new('e3', 'lo2', 'concept'))
+        client.add_exercises(V1::Exercise.new('e4', 'lo2', 'concept'))
+        client.add_exercises(V1::Exercise.new('e5', 'lo3', 'concept'))
+      end
 
       it "works when allow_repetitions is false" do
-        exercises = V1::fake_client.get_projection_exercises(
+        exercises = client.get_projection_exercises(
           user: nil,
           tag_search: { _and: [ { _or: ['lo1', 'lo2'] }, 'concept'] },
           count: 5,
@@ -74,7 +78,7 @@ module OpenStax::BigLearn
       end
 
       it "works when allow_repetitions is true" do
-        exercises = V1::fake_client.get_projection_exercises(
+        exercises = client.get_projection_exercises(
           user: nil,
           tag_search: { _and: [ { _or: ['lo1', 'lo2'] }, 'concept'] },
           count: 5,
