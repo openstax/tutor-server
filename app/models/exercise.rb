@@ -1,5 +1,9 @@
 class Exercise < Entity
-  self.repository_class = Content::Models::Exercise
+  wraps Content::Models::Exercise
 
   exposes :find, :url, :title, :content
+
+  def tags
+    repository.exercise_tags.includes(:tag).collect{|et| et.tag.name}
+  end
 end
