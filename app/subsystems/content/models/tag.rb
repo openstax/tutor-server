@@ -3,7 +3,7 @@ class Content::Models::Tag < Tutor::SubSystems::BaseModel
   has_many :exercise_tags, dependent: :destroy
 
   # List the different types of tags
-  enum tag_type: [ :generic, :lo ]
+  enum tag_type: [ :generic, :teks, :lo ]
 
   validates :value, presence: true
   validates :tag_type, presence: true
