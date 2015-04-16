@@ -204,6 +204,105 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
     end
   end
 
+  describe "#events" do
+    context "user is teacher" do
+      let!(:teacher_role) {
+        AddUserAsCourseTeacher.call(
+          course: course,
+          user:   user_1.entity_user
+        ).outputs[:role]
+      }
+
+      let!(:class_entity_course) {
+        class_entity_course = class_double(Entity::Course).as_stubbed_const
+        allow(class_entity_course).
+          to receive(:find).with(course.id.to_s).
+          and_return(course)
+        class_entity_course
+      }
+
+      let!(:lev_result) {
+        lev_result = double(Lev::Routine::Result)
+        allow(lev_result).
+          to receive(:outputs).
+          and_return({tasks: [], plans: []})
+        lev_result
+      }
+
+      let!(:get_role_course_events) {
+        get_role_course_events = class_double(GetRoleCourseEvents).as_stubbed_const
+        get_role_course_events
+      }
+
+      context "and not a student" do
+        context "and no role is given" do
+          it "should find the teacher role's events" do
+            expect(get_role_course_events).
+              to receive(:call).with(course: course, role: teacher_role).
+              and_return(lev_result)
+
+            api_get :events,
+                    user_1_token,
+                    parameters: {id: course.id}
+          end
+        end
+        context "and the teacher role is given" do
+          it "should find the teacher role's events" do
+            expect(get_role_course_events).
+              to receive(:call).with(course: course, role: teacher_role).
+              and_return(lev_result)
+
+            api_get :events,
+                    user_1_token,
+                    parameters: {id: course.id, role_id: teacher_role.id}
+          end
+        end
+      end
+      context "and also a student" do
+        let!(:student_role) {
+          AddUserAsCourseStudent.call(
+            course: course,
+            user:   user_1.entity_user
+          ).outputs[:role]
+        }
+
+        context "and no role is given" do
+          it "should find the teacher role's events" do
+            expect(get_role_course_events).
+              to receive(:call).with(course: course, role: teacher_role).
+              and_return(lev_result)
+
+            api_get :events,
+                    user_1_token,
+                    parameters: {id: course.id}
+          end
+        end
+        context "and the teacher role is given" do
+          it "should find the teacher role's events" do
+            expect(get_role_course_events).
+              to receive(:call).with(course: course, role: teacher_role).
+              and_return(lev_result)
+
+            api_get :events,
+                    user_1_token,
+                    parameters: {id: course.id, role_id: teacher_role.id}
+          end
+        end
+        context "and the student role is given" do
+          it "should find the student role's events" do
+            expect(get_role_course_events).
+              to receive(:call).with(course: course, role: student_role).
+              and_return(lev_result)
+
+            api_get :events,
+                    user_1_token,
+                    parameters: {id: course.id, role_id: student_role.id}
+          end
+        end
+      end
+    end
+  end
+
   describe "practice_post" do
     let!(:lo)            { FactoryGirl.create :content_tag,
                                                tag_type: :lo,
