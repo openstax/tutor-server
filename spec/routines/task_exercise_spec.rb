@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe TaskExercise do
-  let!(:exercise)  { FactoryGirl.create(:content_exercise) }
+  let!(:exercise)  { FactoryGirl.create(:exercise) }
   let!(:task_step) { FactoryGirl.build(:tasks_task_step) }
 
   it 'builds but does not save a TaskedExercise for the given exercise and task_step' do

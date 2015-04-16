@@ -7,7 +7,7 @@ class TaskExercise
   def exec(exercise:, title: nil, can_be_recovered: false, task_step: nil)
     outputs[:tasked_exercise] = Tasks::Models::TaskedExercise.new(
       task_step: task_step,
-      exercise: (exercise.is_a?(Content::Models::Exercise) ? exercise : nil),
+      exercise: (exercise.is_a?(Exercise) ? exercise._repository : nil),
       url: exercise.url,
       title: title || exercise.title,
       content: exercise.content,

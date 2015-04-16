@@ -55,9 +55,9 @@ class Api::V1::CoursesController < Api::V1::ApiController
                                               course)
 
     los = Content::GetLos[params]
-    outputs = SearchLocalExercises.call(tag: los, match_count: 1).outputs
+    results = SearchLocalExercises.call(tag: los, match_count: 1).outputs
 
-    respond_with outputs, represent_with: Api::V1::ExerciseSearchRepresenter
+    respond_with results, represent_with: Api::V1::ExerciseSearchRepresenter
   end
 
   api :GET, '/courses/:course_id/plans', 'Returns a course\'s plans'

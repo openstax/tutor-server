@@ -110,9 +110,10 @@ describe Api::V1::TaskStepsController, :type => :controller,
     it "updates the selected answer of an exercise" do
       tasked.free_response = "Ipsum lorem"
       tasked.save!
+      answer_id = Exercise.new(tasked.exercise).answers[0][0]['id']
 
-      api_put :update, user_1_token, parameters: id_parameters,
-              raw_post_data: { answer_id: tasked.answers[0][0]['id'] }
+      api_put :update, user_1_token,
+              parameters: id_parameters, raw_post_data: { answer_id: answer_id }
 
       expect(response).to have_http_status(:success)
 
@@ -120,12 +121,14 @@ describe Api::V1::TaskStepsController, :type => :controller,
         eq(Api::V1::TaskedExerciseRepresenter.new(tasked.reload).to_json)
       )
 
-      expect(tasked.reload.answer_id).to eq tasked.answers[0][0]['id']
+      expect(tasked.reload.answer_id).to eq answer_id
     end
 
     it "does not update the answer if the free response is not set" do
-      api_put :update, user_1_token, parameters: id_parameters,
-              raw_post_data: { answer_id: tasked.answers[0][0]['id'] }
+      answer_id = Exercise.new(tasked.exercise).answers[0][0]['id']
+
+      api_put :update, user_1_token,
+              parameters: id_parameters, raw_post_data: { answer_id: answer_id }
 
       expect(response).to have_http_status(:unprocessable_entity)
       expect(tasked.reload.answer_id).to be_nil

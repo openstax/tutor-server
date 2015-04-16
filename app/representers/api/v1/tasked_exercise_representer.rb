@@ -27,20 +27,23 @@ module Api::V1
              type: String,
              writeable: false,
              readable: true,
+             getter: -> (*) { Exercise.new(exercise).content_without_correctness },
              schema_info: {
                required: false,
                description: "The Exercise's content without correctness and feedback info"
              }
 
-    property :correct_answer_id,
-             type: String,
+    property :can_be_recovered,
+             as: :has_recovery,
+             type: 'boolean',
              writeable: false,
              readable: true,
              if: -> (*) { task_step.feedback_available? },
              schema_info: {
-               description: "The Exercise's correct answer's id"
+               description: "Whether or not a recovery exercise is available"
              }
 
+    # The properties below assume an Exercise with only 1 Question
     property :answer_id,
              type: String,
              writeable: true,
@@ -62,18 +65,19 @@ module Api::V1
              writeable: false,
              readable: true,
              if: -> (*) { task_step.feedback_available? },
+             getter: -> (*) { Exercise.new(exercise).feedback_for(answer_id) },
              schema_info: {
                description: "The feedback given to the student"
              }
 
-    property :can_be_recovered,
-             as: :has_recovery,
-             type: 'boolean',
+    property :correct_answer_id,
+             type: String,
              writeable: false,
              readable: true,
              if: -> (*) { task_step.feedback_available? },
+             getter: -> (*) { Exercise.new(exercise).correct_answer_ids.first.first },
              schema_info: {
-               description: "Whether or not a recovery exercise is available"
+               description: "The Exercise's correct answer's id"
              }
 
     property :is_correct?,
@@ -82,6 +86,7 @@ module Api::V1
              writeable: false,
              readable: true,
              if: -> (*) { task_step.feedback_available? },
+             getter: -> (*) { Exercise.new(exercise).answer_is_correct?(answer_id) },
              schema_info: {
                description: "Whether or not the answer given by the student is correct"
              }

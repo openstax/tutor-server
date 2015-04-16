@@ -3,6 +3,7 @@ class SearchLocalExercises
   lev_routine express_output: :items
 
   uses_routine Content::Routines::SearchExercises, as: :search
+  uses_routine Tasks::GetAssignedExercises, as: :assigned
 
   protected
 
@@ -15,39 +16,18 @@ class SearchLocalExercises
 
     # Get exercises already assigned to a user
     unless assigned_to.nil?
-      relation = exercises_assigned_to(relation: relation, roles: assigned_to)
+      relation = run(:assigned, relation: relation, roles: assigned_to).outputs.exercises
     end
 
     # Get exercises not already assigned to a user
     unless not_assigned_to.nil?
-      used = exercises_assigned_to(relation: relation, roles: not_assigned_to)
-               .reorder(nil).limit(nil)
+      used = run(:assigned, relation: relation, roles: not_assigned_to)
+               .outputs.exercises.reorder(nil).limit(nil)
       relation = relation.where{id.not_in used.pluck(:id)}
     end
 
-    # TODO: use wrapper
-    outputs[:items] = relation.readonly!.to_a
+    outputs[:items] = Entity::Relation.new(relation).to_a
 
-  end
-
-  def exercises_assigned_to(relation:, roles:)
-    relation.joins(
-      tasked_exercises: {
-        task_step: {
-          task: :taskings
-        }
-      }
-    ).where(
-      tasked_exercises: {
-        task_step: {
-          task: {
-            taskings: {
-              entity_role_id: [roles].flatten.compact.collect{|r| r.id}
-            }
-          }
-        }
-      }
-    )
   end
 
 end

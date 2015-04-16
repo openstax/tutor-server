@@ -2,43 +2,14 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
   acts_as_tasked
 
   belongs_to :exercise, subsystem: :content
-  protected :exercise
 
   validates :url, presence: true
   validates :content, presence: true
+  validates :exercise, presence: true
   validate :valid_state, :valid_answer, :not_completed
-
-  delegate :answers, :correct_answer_ids, :content_without_correctness, to: :wrapper
-
-  def wrapper
-    @wrapper ||= OpenStax::Exercises::V1::Exercise.new(content)
-  end
 
   def can_be_recovered?
     can_be_recovered
-  end
-
-  def feedback_html
-    wrapper.feedback_html(answer_id)
-  end
-
-  # Assume only 1 question for now
-  def formats
-    wrapper.formats.first
-  end
-
-  def correct_answer_id
-    correct_answer_ids.first
-  end
-
-  def is_correct?
-    correct_answer_id == answer_id
-  end
-
-  def answer_ids
-    answers.collect do |q|
-      q.collect{|a| a['id'].to_s}
-    end.first
   end
 
   def inject_debug_content(debug_content:, pre_br: false, post_br: false)
@@ -54,10 +25,11 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     self.content = json_hash.to_json
   end
 
+  # This is domain logic; move to a Task/TaskStep/TaskedExercise wrapper
   # submits the result to exchange
   def handle_task_step_completion!
     # Currently assuming only one question per tasked_exercise, see also correct_answer_id
-    question = wrapper.questions.first
+    question = Exercise.new(exercise).questions.first
     # "trial" is set to only "0" for now.  When multiple
     # attempts are supported, it will be incremented to indicate the attempt #
 

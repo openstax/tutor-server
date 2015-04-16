@@ -8,19 +8,15 @@ class RecoverTaskedExercise
   protected
 
   def exec(tasked_exercise:)
-    fatal_error(code: :recovery_not_available) \
-      unless tasked_exercise.can_be_recovered?
+    fatal_error(code: :recovery_not_available) unless tasked_exercise.can_be_recovered?
 
-    recovery_exercise = get_recovery_exercise_for(
-      tasked_exercise: tasked_exercise
-    )
+    recovery_exercise = get_recovery_exercise_for(tasked_exercise: tasked_exercise)
 
     fatal_error(code: :recovery_not_available) if recovery_exercise.nil?
 
     task_step = tasked_exercise.task_step
 
-    recovery_step = create_task_step_after(task_step: task_step,
-                                           exercise: recovery_exercise)
+    recovery_step = create_task_step_after(task_step: task_step, exercise: recovery_exercise)
     transfer_errors_from(recovery_step, type: :verbatim)
 
     tasked_exercise.update_attribute(:can_be_recovered, false)
@@ -53,7 +49,7 @@ class RecoverTaskedExercise
     ex_relation = Content::Models::Exercise.preload(exercise_tags: :tag)
 
     # Randomize LO order
-    los = tasked_exercise.wrapper.los.shuffle
+    los = Exercise.new(tasked_exercise.exercise).los.shuffle
 
     # Try to find unassigned exercises first
     taskees = tasked_exercise.task_step.task.taskings.collect{|t| t.role}

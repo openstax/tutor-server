@@ -1,31 +1,19 @@
-require 'entity'
+require 'entity/common'
 
 class Entity
   class Relation
 
-    attr_reader :repository
-    protected :repository
+    include Entity::Common
 
     def initialize(repository)
       @repository = repository
     end
 
-    def _repository
-      repository
-    end
+    def inspect
+      entries = to_a.take([limit_value, 11].compact.min).map!(&:inspect)
+      entries[10] = '...' if entries.size == 11
 
-    def method_missing(method_name, *arguments, &block)
-      if repository.respond_to?(method_name, true)
-        args = arguments.collect { |arg| Entity._unwrap(arg) }
-        result = repository.send(method_name, *args, &block)
-        Entity._wrap(result)
-      else
-        super
-      end
-    end
-
-    def respond_to_missing?(method_name, include_private = false)
-      repository.respond_to?(method_name, include_private) || super
+      "#<#{self.class.name} [#{entries.join(', ')}]>"
     end
 
   end

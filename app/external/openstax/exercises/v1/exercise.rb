@@ -45,18 +45,29 @@ class OpenStax::Exercises::V1::Exercise
     @formats ||= questions.collect{ |q| q['formats'] }
   end
 
-  def answers
-    @answers ||= questions.collect do |q|
+  def question_answers
+    @question_answers ||= questions.collect do |q|
       q['answers'].collect{ |a| a.merge('id' => a['id'].to_s) }
     end
   end
 
-  def correct_answer_ids
-    @correct_answer_ids ||= answers.collect do |ans|
-      ans.select do |a|
-        correctness = Float(a['correctness']) rescue 0
-        correctness >= 1
-      end.first['id']
+  def question_answer_ids
+    @question_answer_ids ||= question_answers.collect do |q|
+      q.collect{|a| a['id'].to_s}
+    end
+  end
+
+  def correct_question_answers
+    @correct_question_answers ||= question_answers.collect do |q|
+      q.select do |a|
+        (Float(a['correctness']) rescue 0) >= 1
+      end
+    end
+  end
+
+  def correct_question_answer_ids
+    @correct_question_answer_ids ||= correct_question_answers.collect do |q|
+      q.collect{|a| a['id'].to_s}
     end
   end
 
@@ -64,19 +75,15 @@ class OpenStax::Exercises::V1::Exercise
     return @feedback_map unless @feedback_map.nil?
 
     @feedback_map = {}
-    answers.each do |ans|
+    question_answers.each do |ans|
       ans.each { |a| @feedback_map[a['id']] = a['feedback_html'] }
     end
     @feedback_map
   end
 
-  def feedback_html(answer_id)
-    feedback_map[answer_id] || ''
-  end
-
-  def answers_without_correctness
-    answers.collect do |ans|
-      ans.collect { |a| a.except('correctness', 'feedback_html') }
+  def question_answers_without_correctness
+    question_answers.collect do |q|
+      q.collect { |a| a.except('correctness', 'feedback_html') }
     end
   end
 
@@ -84,7 +91,7 @@ class OpenStax::Exercises::V1::Exercise
     i = -1
     content_hash['questions'].collect do |q|
       i = i + 1
-      q.merge('answers' => answers_without_correctness[i])
+      q.merge('answers' => question_answers_without_correctness[i])
     end
   end
 

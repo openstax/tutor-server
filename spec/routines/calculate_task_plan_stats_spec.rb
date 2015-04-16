@@ -127,7 +127,7 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
       fourth_task = tasks.fourth
       fourth_task.task_steps.each{ |ts|
         if ts.tasked_type == "Tasks::Models::TaskedExercise"
-          ts.tasked.answer_id = ts.tasked.correct_answer_id
+          ts.tasked.answer_id = Exercise.new(ts.tasked.exercise).correct_answer_ids.flatten.first
           ts.tasked.free_response = 'a sentence explaining all the things'
           ts.tasked.save!
         end
