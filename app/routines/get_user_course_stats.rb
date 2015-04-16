@@ -1,4 +1,4 @@
-class Domain::GetUserCourseStats
+class GetUserCourseStats
   lev_routine express_output: :course_stats
 
   uses_routine CourseContent::GetCourseBooks,
