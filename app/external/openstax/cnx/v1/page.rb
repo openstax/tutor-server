@@ -39,7 +39,7 @@ module OpenStax::Cnx::V1
 
     def initialize(hash: {}, path: '', is_intro: nil, book_part_title: nil,
                    id: nil, url: nil, title: nil, full_hash: nil, content: nil,
-                   los: nil, fragments: nil)
+                   los: nil, fragments: nil, tag_defs: nil)
       @hash            = hash
       @path            = path
       @is_intro        = is_intro
@@ -51,6 +51,7 @@ module OpenStax::Cnx::V1
       @content         = content
       @los             = los
       @fragments       = fragments
+      @tag_defs        = tag_defs
     end
 
     attr_reader :hash, :path
@@ -135,6 +136,23 @@ module OpenStax::Cnx::V1
       @los ||= root.css(LO_CSS).collect do |node|
         LO_REGEX.match(node.attributes['class']).try(:[], 1)
       end.compact.uniq
+    end
+
+    def tag_defs
+      # Extract tag name and description from .ost-standards-def
+      return @tag_defs unless @tag_defs.nil?
+      @tag_defs = {}
+      # ost-standards-def is inside .os-teacher which was removed in root
+      doc = Nokogiri::HTML(content)
+      doc.css('[class^="ost-standards-def"]').each do |node|
+        name = node.css('[class^="ost-standards-name"]').first.try(:content).try(:strip)
+        description = node.css('[class^="ost-standards-description"]').first.try(:content).try(:strip)
+        class_name = node.attr('class').split.last
+        @tag_defs[class_name] = {}
+        @tag_defs[class_name][:name] = name
+        @tag_defs[class_name][:description] = description
+      end
+      @tag_defs
     end
 
     def fragments
