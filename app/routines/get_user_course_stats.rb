@@ -32,18 +32,12 @@ class GetUserCourseStats
   end
 
   def translate_toc(toc)
-    translated = { id: toc.id,
-                   title: toc.title,
-                   questions_answered_count: rand(50),
-                   current_level: rand(0.0..1.0),
-                   practice_count: rand(30),
-                   unit: toc.path }
-    merge_pages_for_toc_children(translated, toc.children)
-    translated
-  end
-
-  def merge_pages_for_toc_children(hash, children)
-    return unless (children || []).any?
-    hash.merge!(pages: children.collect { |child| translate_toc(child) })
+    { id: toc.id,
+      title: toc.title,
+      questions_answered_count: rand(50),
+      current_level: rand(0.0..1.0),
+      practice_count: rand(30),
+      unit: toc.path,
+      page_ids: (toc.children || []).collect(&:id) }
   end
 end
