@@ -17,7 +17,7 @@ module Sprint009
     protected
     def exec
       run(:create_course)
-      run(:fetch_and_import_book, id: '031da8d3-b525-429c-80cf-6c8ed997733a')
+      run(:fetch_and_import_book, id: '7db9aa72-f815-4c3b-9cb6-d50cf5318b58@4.57')
       run(:add_book_to_course, course: outputs.course, book: outputs.book)
     end
   end
