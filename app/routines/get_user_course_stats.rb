@@ -27,6 +27,9 @@ class GetUserCourseStats
   def translate_toc(toc)
     translated = { id: toc.id,
                    title: toc.title,
+                   questions_answered_count: rand(50),
+                   current_level: rand(0.0..1.0),
+                   practice_count: rand(30),
                    unit: toc.path }
     merge_pages_for_toc_children(translated, toc.children)
     translated
