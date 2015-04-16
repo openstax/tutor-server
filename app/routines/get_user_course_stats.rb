@@ -19,9 +19,16 @@ class GetUserCourseStats
   private
   def compile_course_stats
     outputs[:course_stats] = {
-      title: outputs.toc.first.title,
-      fields: outputs.toc.from(1).map { |toc| translate_toc(toc) }
+      title: outputs.toc.first.title, # should be root book
+      fields: compile_toc_for_fields
     }
+  end
+
+  def compile_toc_for_fields
+    outputs.toc.from(1).map do |toc| # skip the root book for fields
+      next if toc.title.match(/preface/i)
+      translate_toc(toc)
+    end
   end
 
   def translate_toc(toc)
