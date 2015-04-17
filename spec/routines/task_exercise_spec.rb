@@ -12,7 +12,7 @@ RSpec.describe TaskExercise do
     expect(tasked_exercise).not_to be_persisted
     expect(tasked_exercise.can_be_recovered).to eq true
     expect(tasked_exercise.task_step).to eq task_step
-    expect(tasked_exercise.send :exercise).to eq exercise
+    expect(Exercise.new(tasked_exercise.send :exercise)).to eq exercise
     expect(tasked_exercise.url).to eq exercise.url
     expect(tasked_exercise.title).to eq exercise.title
     expect(tasked_exercise.content).to eq exercise.content

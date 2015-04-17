@@ -66,16 +66,10 @@ class SpacedPracticeAlgorithmIReading
         #puts "  candidate_exercises:  #{candidate_exercises.collect{|ex| ex.id}.sort}"
         #puts "  all_taskee_exercises: #{all_taskee_exercises.collect{|ex| ex.id}.sort}"
 
-        exercise = OpenStax::Exercises::V1::Exercise.new(chosen_exercise.content)
+        exercise = Exercise.new(chosen_exercise)
 
         task_step.tasked.destroy!
-        tasked_exercise = Tasks::Models::TaskedExercise.new(
-          task_step: task_step,
-          title:     exercise.title,
-          url:       exercise.url,
-          content:   exercise.content,
-          exercise:  chosen_exercise
-        )
+        tasked_exercise = TaskExercise[task_step: task_step, exercise: exercise]
         task_step.tasked = tasked_exercise
 
         tasked_exercise.inject_debug_content(debug_content: "This exercise belongs to #{get_task_debug(task)}.")
@@ -107,12 +101,9 @@ class SpacedPracticeAlgorithmIReading
       exercise = OpenStax::Exercises::V1::Exercise.new(exercise_hash.to_json)
 
       task_step.tasked.destroy!
-      tasked_exercise = Tasks::Models::TaskedExercise.new(
-        task_step: task_step,
-        title:     exercise.title,
-        url:       exercise.url,
-        content:   exercise.content
-      )
+      # Since OpenStax::Exercises::V1::Exercise no longer responds to ID,
+      # the tasked_exercise will have no associated content_exercise
+      tasked_exercise = TaskExercise[task_step: task_step, exercise: exercise]
       tasked_exercise.inject_debug_content(debug_content: "This exercise belongs to #{get_task_debug(task)}.")
       tasked_exercise.inject_debug_content(debug_content: "The Spaced Practice Alogirthm is using the following selection rules:")
       @k_ago_map.each do |k_ago, num_ex|

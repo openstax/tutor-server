@@ -15,7 +15,7 @@ class Content::Routines::SearchExercises
 
   def exec(options = {})
 
-    relation = options[:relation] || Content::Models::Exercise
+    relation = options[:relation] || Content::Models::Exercise.preload(exercise_tags: :tag)
     urls = [options[:url]].flatten unless options[:url].nil?
     titles = [options[:title]].flatten unless options[:title].nil?
     tags = [options[:tag]].flatten unless options[:tag].nil?

@@ -5,7 +5,6 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
 
   validates :url, presence: true
   validates :content, presence: true
-  validates :exercise, presence: true
   validate :valid_state, :valid_answer, :not_completed
 
   def can_be_recovered?
@@ -49,6 +48,19 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
 
   def trial
     task_step.id.to_s
+  end
+
+  # Hack until we have substeps
+  def wrapper
+    @wrapper ||= OpenStax::Exercises::V1::Exercise.new(content)
+  end
+
+  def formats
+    @formats ||= wrapper.question_formats.first
+  end
+
+  def answer_ids
+    @answer_ids ||= wrapper.question_answer_ids.first
   end
 
   # Eventually this will be enforced by the exercise substeps

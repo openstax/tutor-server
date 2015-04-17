@@ -46,8 +46,6 @@ class RecoverTaskedExercise
   def get_recovery_exercise_for(tasked_exercise:,
                                 required_tag_names: ['practice-problem'])
 
-    ex_relation = Content::Models::Exercise.preload(exercise_tags: :tag)
-
     # Randomize LO order
     los = Exercise.new(tasked_exercise.exercise).los.shuffle
 
@@ -55,7 +53,6 @@ class RecoverTaskedExercise
     taskees = tasked_exercise.task_step.task.taskings.collect{|t| t.role}
     los.each do |lo|
       exercise = run(:search,
-        relation: ex_relation,
         not_assigned_to: taskees,
         tag: required_tag_names + [lo]
       ).outputs.items.shuffle.first
@@ -66,7 +63,6 @@ class RecoverTaskedExercise
     # No unassigned exercises found, so return a previously assigned exercise
     los.each do |lo|
       exercise = run(:search,
-        relation: ex_relation,
         tag: required_tag_names + [lo]
       ).outputs.items.shuffle.first
 

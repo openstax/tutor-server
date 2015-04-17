@@ -5,7 +5,7 @@ class Exercise < Entity
 
   # Could simplify some of these by building question and answer wrappers
   # (POROs, not Entity subclasses, since no DB object for them)
-  delegate :uid, :questions, :formats, :question_answers, :question_answer_ids,
+  delegate :uid, :questions, :question_formats, :question_answers, :question_answer_ids,
            :correct_question_answers, :correct_question_answer_ids,
            :content_without_correctness, to: :wrapper
 
@@ -31,7 +31,8 @@ class Exercise < Entity
 
   protected
 
-  # To remove the dependency on the wrapper, we would have to store the parsed content
+  # To remove the dependency on the wrapper,
+  # we would have to store the parsed content instead of just storing the JSON
   def wrapper
     @wrapper ||= OpenStax::Exercises::V1::Exercise.new(content)
   end

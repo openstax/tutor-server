@@ -75,7 +75,7 @@ module Api::V1
              writeable: false,
              readable: true,
              if: -> (*) { task_step.feedback_available? },
-             getter: -> (*) { Exercise.new(exercise).correct_answer_ids.first.first },
+             getter: -> (*) { Exercise.new(exercise).correct_question_answer_ids[0][0] },
              schema_info: {
                description: "The Exercise's correct answer's id"
              }

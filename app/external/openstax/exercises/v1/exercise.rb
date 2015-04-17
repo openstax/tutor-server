@@ -18,7 +18,6 @@ class OpenStax::Exercises::V1::Exercise
   def uid
     @uid ||= content_hash['uid']
   end
-  alias_method :id, :uid
 
   def url
     @url ||= "#{BASE_URL}/#{uid}"
@@ -41,7 +40,7 @@ class OpenStax::Exercises::V1::Exercise
                      .collect{ |q| q.merge('id' => q['id'].to_s)}
   end
 
-  def formats
+  def question_formats
     @formats ||= questions.collect{ |q| q['formats'] }
   end
 

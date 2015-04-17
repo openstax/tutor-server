@@ -110,7 +110,7 @@ describe Api::V1::TaskStepsController, :type => :controller,
     it "updates the selected answer of an exercise" do
       tasked.free_response = "Ipsum lorem"
       tasked.save!
-      answer_id = Exercise.new(tasked.exercise).answers[0][0]['id']
+      answer_id = Exercise.new(tasked.exercise).question_answers[0][0]['id']
 
       api_put :update, user_1_token,
               parameters: id_parameters, raw_post_data: { answer_id: answer_id }
@@ -125,7 +125,7 @@ describe Api::V1::TaskStepsController, :type => :controller,
     end
 
     it "does not update the answer if the free response is not set" do
-      answer_id = Exercise.new(tasked.exercise).answers[0][0]['id']
+      answer_id = Exercise.new(tasked.exercise).question_answers[0][0]['id']
 
       api_put :update, user_1_token,
               parameters: id_parameters, raw_post_data: { answer_id: answer_id }
