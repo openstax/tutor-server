@@ -225,7 +225,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
         lev_result = double(Lev::Routine::Result)
         allow(lev_result).
           to receive(:outputs).
-          and_return({tasks: [], plans: []})
+          and_return(Hashie::Mash.new(tasks: [], plans: []))
         lev_result
       }
 
