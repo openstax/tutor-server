@@ -6,8 +6,8 @@ RSpec.describe Content::Routines::ImportPage, :type => :routine, :vcr => VCR_OPT
   let!(:book_part) { FactoryGirl.create :content_book_part }
 
   cnx_page_infos = {
-    stable: { id: '092bbf0d-0729-42ce-87a6-fd96fd87a083', title: 'Force' },
-    latest: { id: '092bbf0d-0729-42ce-87a6-fd96fd87a083@4', title: 'Force' }
+    stable: { id: '092bbf0d-0729-42ce-87a6-fd96fd87a083@4', title: 'Force' },
+    latest: { id: '092bbf0d-0729-42ce-87a6-fd96fd87a083', title: 'Force' }
   }
 
   cnx_pages = HashWithIndifferentAccess[cnx_page_infos.collect do |name, info|
