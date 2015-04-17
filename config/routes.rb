@@ -47,7 +47,7 @@ Rails.application.routes.draw do
         get 'exercises'
         get 'plans'
         get 'tasks'
-        get 'events'
+        get 'events(/role/:role_id)', action: :events
         post 'practice(/role/:role_id)', action: :practice
         get 'practice(/role/:role_id)', action: :practice
       end

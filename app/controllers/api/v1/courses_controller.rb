@@ -86,15 +86,14 @@ class Api::V1::CoursesController < Api::V1::ApiController
     respond_with output, represent_with: Api::V1::TaskSearchRepresenter
   end
 
-  api :GET, '/courses/:course_id/events', 'Gets all events for a given course'
+  api :GET, '/courses/:course_id/events(/role/:role_id)', 'Gets all events for a given course'
   description <<-EOS
     #{json_schema(Api::V1::CourseEventsRepresenter, include: :readable)}
   EOS
   def events
     course = Entity::Course.find(params[:id])
-    outputs = GetUserCourseEvents.call(user: current_human_user.entity_user,
-                                       course: course).outputs
-    respond_with outputs, represent_with: Api::V1::CourseEventsRepresenter
+    result = GetRoleCourseEvents.call(course: course, role: get_course_role(types: :any))
+    respond_with result.outputs, represent_with: Api::V1::CourseEventsRepresenter
   end
 
   api nil, nil, nil
@@ -132,15 +131,19 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
   protected
 
-  def get_practice_role
+  def get_course_role(types: :any)
     result = ChooseCourseRole.call(user: current_human_user.entity_user,
                                    course: Entity::Course.find(params[:id]),
-                                   allowed_role_type: :student,
+                                   allowed_role_type: types,
                                    role_id: params[:role_id])
     if result.errors.any?
       raise(IllegalState, result.errors.map(&:message).to_sentence)
     end
     result.outputs.role
+  end
+
+  def get_practice_role
+    get_course_role(types: :student)
   end
 
 end

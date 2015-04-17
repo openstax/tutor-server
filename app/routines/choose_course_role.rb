@@ -22,44 +22,78 @@ class ChooseCourseRole
   protected
 
   def exec(user:, course:, allowed_role_type: :any, role_id: nil)
+    user_course_roles = GetUserCourseRoles[
+      course: course,
+      user:   user,
+      types:  allowed_role_type
+    ]
+
     if role_id
-      role = Entity::Role.find(role_id)
-      fatal_error(code: :invalid_role, message:"Role not found") unless role
-      validate_role_membership(course, user, role)
+      user_course_roles = user_course_roles.select{|role| role.id == Integer(role_id)}
+      if user_course_roles.none?
+        fatal_error(
+          code:    :invalid_role,
+          message: "The user does not have the specified role in the course"
+        )
+      end
+    end
+
+    case allowed_role_type
+    when :any
+      unless find_unique_role(course: course, roles: user_course_roles, type: :teacher)
+        unless find_unique_role(course: course, roles: user_course_roles, type: :student)
+          fatal_error(
+            code:    :invalid_user,
+            message: "The user does not have the any role in the course"
+          )
+        end
+      end
+    when :teacher
+      unless find_unique_role(course: course, roles: user_course_roles, type: :teacher)
+        fatal_error(
+          code:    :invalid_user,
+          message: "The user does not have any teacher roles in the course"
+        )
+      end
+    when :student
+      unless find_unique_role(course: course, roles: user_course_roles, type: :student)
+        fatal_error(
+          code:    :invalid_user,
+          message: "The user does not have any student roles in the course"
+        )
+      end
     else
-      roles = GetUserCourseRoles[course:course, user:user, types:allowed_role_type]
-      validate_role_listing(roles)
+      fatal_error(
+        code: :invalid_argument,
+        message: ":allowed_role_type must be one of {:any, :teacher, :student} (not #{allowed_role_type})"
+      )
     end
   end
 
   private
 
-  # the simplest case where we were given a role.
-  # Verify the user has it on the course and return
-  def validate_role_membership(course, user, role)
-    if GetUserCourseRoles[course:course, user:user].include?(role)
-      outputs[:role] = role
-    else
-      fatal_error(code: :invalid_role, message:"Invalid role for user in course")
-    end
-  end
-
-  # Choose the "best" role from the list
-  # of possible roles for the user
-  def validate_role_listing(roles)
-    if roles.none?
-      fatal_error(code: :invalid_user, message:"The user does not have the specified role" )
-    elsif roles.one?
-      outputs[:role] = roles.first
-    else
-      teacher_role = roles.detect(&:teacher?)
-      if teacher_role
-        outputs[:role] = teacher_role
-      else
-        fatal_error(code: :multiple_roles, message:"The role must be specified because there is more than one student role available" )
+  def find_unique_role(course:, roles:, type:)
+    role_name = "#{type.to_s}"
+    method_name = "#{role_name}?"
+    matching_roles = roles.select do |role|
+      case type
+      when :teacher
+        CourseMembership::IsCourseTeacher[course: course, roles: role]
+      when :student
+        CourseMembership::IsCourseStudent[course: course, roles: role]
       end
     end
-  end
+    if matching_roles.count > 1
+      fatal_error(
+        code:    :multiple_roles,
+        message: "The user has multiple #{role_name} roles in the course (specifiy role to narrow selection)"
+      )
+    end
 
+    found_it = (matching_roles.count == 1)
+    outputs[:role] = matching_roles.first if found_it
+
+    found_it
+  end
 
 end

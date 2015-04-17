@@ -2,27 +2,84 @@ require 'rails_helper'
 
 describe ChooseCourseRole do
 
-  let(:teacher){ Entity::User.create! }
-  let(:student){ Entity::User.create! }
+  let(:teacher) { Entity::User.create! }
+  let(:student) { Entity::User.create! }
 
   let(:interloper){ Entity::User.create! }
 
   let(:course){ Entity::Course.create! }
 
-  let!(:teacher_role){
-    role=Entity::Role.create!(role_type: :teacher)
+  let!(:teacher_role) {
+    role = Entity::Role.create!(role_type: :teacher)
     Role::AddUserRole[user: teacher, role: role]
     CourseMembership::AddTeacher[course: course, role: role]
     role
   }
 
-  let!(:student_role){
-    role=Entity::Role.create!
+  let!(:student_role) {
+    role = Entity::Role.create!
     Role::AddUserRole[user: student, role: role]
     CourseMembership::AddStudent[course: course, role: role]
     role
   }
 
+  context "when the user is both a teacher and a student" do
+
+    let(:user) { Entity::User.create! }
+
+    let!(:user_teacher_role) {
+      role = Entity::Role.create!
+      Role::AddUserRole[user: user, role: role]
+      CourseMembership::AddTeacher[course: course, role: role]
+      role
+    }
+
+    let!(:user_student_role) {
+      role = Entity::Role.create!
+      Role::AddUserRole[user: user, role: role]
+      CourseMembership::AddStudent[course: course, role: role]
+      role
+    }
+
+    context "and a role id is not given" do
+      context "and allowed_role_type: :any" do
+        subject {
+          ChooseCourseRole.call(
+            user:    user,
+            course:  course,
+            allowed_role_type: :any
+          )
+        }
+        it "returns the user's teacher role" do
+          expect(subject.outputs.role).to eq(user_teacher_role)
+        end
+      end
+      context "and allowed_role_type: :teacher" do
+        subject {
+          ChooseCourseRole.call(
+            user:    user,
+            course:  course,
+            allowed_role_type: :teacher
+          )
+        }
+        it "returns the user's teacher role" do
+          expect(subject.outputs.role).to eq(user_teacher_role)
+        end
+      end
+      context "and allowed_role_type: :student" do
+        subject {
+          ChooseCourseRole.call(
+            user:    user,
+            course:  course,
+            allowed_role_type: :student
+          )
+        }
+        it "returns the user's student role" do
+          expect(subject.outputs.role).to eq(user_student_role)
+        end
+      end
+    end
+  end
 
   context "when a role is provided" do
 
@@ -48,12 +105,12 @@ describe ChooseCourseRole do
         subject{ result.outputs.role }
         it { should be_nil }
       end
-
     end
 
   end
 
   context "when a role is not given" do
+
     context "and the user does not have any roles on the course" do
       subject(:result) {
         ChooseCourseRole.call(user: interloper, course: course)
@@ -70,7 +127,6 @@ describe ChooseCourseRole do
         it { should be_nil }
       end
     end
-
 
     context "and the user has a single role" do
       subject(:result) {
@@ -89,7 +145,6 @@ describe ChooseCourseRole do
     end
 
     context "and the user has a multiple roles" do
-
       context "when one is a teacher" do
         let(:role_type){ :any }
         subject(:found) {
@@ -120,7 +175,6 @@ describe ChooseCourseRole do
         expect(errors).not_to be_empty
         expect(errors.first.code).to eq(:multiple_roles)
       end
-
     end
 
   end
