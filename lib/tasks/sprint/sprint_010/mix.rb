@@ -48,14 +48,18 @@ module Sprint010
       course.reload
 
       # Create and distribute 3 readings and 3 homeworks
-      tp_1 = FactoryGirl.create :tasks_task_plan, owner: course,
+      tp_1 = FactoryGirl.create :tasks_task_plan, title: 'iReading #1 - Intro and Subchapter #1',
+                                                  owner: course,
+                                                  type: 'reading',
                                                   assistant: r_assistant,
                                                   settings: { page_ids: [1, 2] }
       tp_1.tasking_plans << FactoryGirl.create(:tasks_tasking_plan,
                                                target: course, task_plan: tp_1)
       DistributeTasks.call(tp_1)
 
-      tp_2 = FactoryGirl.create :tasks_task_plan, owner: course,
+      tp_2 = FactoryGirl.create :tasks_task_plan, title: 'Homework #1 - Odd Exercises',
+                                                  owner: course,
+                                                  type: 'homework',
                                                   assistant: hw_assistant,
                                                   settings: {
         exercise_ids: [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25],
@@ -65,14 +69,18 @@ module Sprint010
                                              target: course, task_plan: tp_2)
       DistributeTasks.call(tp_2)
 
-      tp_3 = FactoryGirl.create :tasks_task_plan, owner: course,
+      tp_3 = FactoryGirl.create :tasks_task_plan, title: 'iReading #2 - Subchapter #2',
+                                                  owner: course,
+                                                  type: 'reading',
                                                   assistant: r_assistant,
                                                   settings: { page_ids: [3] }
       tp_3.tasking_plans << FactoryGirl.create(:tasks_tasking_plan,
                                                target: course, task_plan: tp_3)
       DistributeTasks.call(tp_3)
 
-      tp_4 = FactoryGirl.create :tasks_task_plan, owner: course,
+      tp_4 = FactoryGirl.create :tasks_task_plan, title: 'Homework #2 - Even Exercises',
+                                                  owner: course,
+                                                  type: 'homework',
                                                   assistant: hw_assistant,
                                                   settings: {
         exercise_ids: [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24],
@@ -82,17 +90,21 @@ module Sprint010
                                                target: course, task_plan: tp_4)
       DistributeTasks.call(tp_4)
 
-      tp_5 = FactoryGirl.create :tasks_task_plan, owner: course,
+      tp_5 = FactoryGirl.create :tasks_task_plan, title: 'iReading #3 - Subchapter #3',
+                                                  owner: course,
+                                                  type: 'reading',
                                                   assistant: r_assistant,
                                                   settings: { page_ids: [4] }
       tp_5.tasking_plans << FactoryGirl.create(:tasks_tasking_plan,
                                                target: course, task_plan: tp_5)
       DistributeTasks.call(tp_5)
 
-      tp_6 = FactoryGirl.create :tasks_task_plan, owner: course,
+      tp_6 = FactoryGirl.create :tasks_task_plan, title: 'Homework #3 - Fibonacci Exercises',
+                                                  owner: course,
+                                                  type: 'homework',
                                                   assistant: hw_assistant,
                                                   settings: {
-        exercise_ids: [1, 2, 3, 5, 8, 13, 21],
+        exercise_ids: [1, 2, 3, 5, 8, 13, 21, 34, 55, 89],
         exercises_count_dynamic: 4
       }
       tp_6.tasking_plans << FactoryGirl.create(:tasks_tasking_plan,
