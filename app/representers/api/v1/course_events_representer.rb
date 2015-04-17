@@ -1,6 +1,8 @@
 module Api::V1
 
-  class CourseEventsRepresenter < OpenStax::Api::V1::AbstractSearchRepresenter
+  class CourseEventsRepresenter < ::Roar::Decorator
+
+    include ::Roar::JSON
 
     class CommonElements < Roar::Decorator
       include Roar::JSON
@@ -48,11 +50,12 @@ module Api::V1
 
     end
 
-    collection :plans, readable: true, decorator: PlanElements
+    collection :plans,
+               readable: true,
+               decorator: PlanElements
 
     collection :tasks,
                readable: true,
-               getter: -> (*) { tasks.collect{|t| t.task} },
                decorator: TaskElements
 
   end
