@@ -54,7 +54,7 @@ module Tutor::SubSystems
           options[:foreign_key] ||= "#{subsystem_name}_#{association_name.to_s.underscore}_id"
         else
           klass_name = self.name.demodulize.underscore
-          options[:foreign_key] ||= "#{subsystem_name}_#{klass_name}_id"
+          options[:foreign_key] ||= "#{my_subsystem_name}_#{klass_name}_id"
         end
         options
       end
