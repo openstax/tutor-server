@@ -13,10 +13,10 @@ RSpec.describe OpenStax::Exercises::V1::Exercise, :type => :external do
     expect(exercise.content).to eq content
     expect(exercise.url).to eq "http://exercises.openstax.org/exercises/#{hash[:uid]}"
     expect(exercise.title).to eq title
-    expect(exercise.answers[0].length).to eq 2
-    expect(exercise.correct_answer_ids[0]).to eq exercise.answers[0][0]['id']
-    expect(exercise.feedback_html(exercise.answers[0][0]['id'])).to eq 'Right!'
-    expect(exercise.feedback_html(exercise.answers[0][1]['id'])).to eq 'Wrong!'
+    expect(exercise.question_answers[0].length).to eq 2
+    expect(exercise.correct_question_answer_ids[0][0]).to eq exercise.question_answers[0][0]['id']
+    expect(exercise.feedback_map[exercise.question_answers[0][0]['id']]).to eq 'Right!'
+    expect(exercise.feedback_map[exercise.question_answers[0][1]['id']]).to eq 'Wrong!'
     expect(exercise.tags).to eq ['i-am-lo01', 'generic-tag']
     expect(exercise.los).to eq ['i-am-lo01']
   end

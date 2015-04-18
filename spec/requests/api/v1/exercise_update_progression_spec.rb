@@ -29,7 +29,7 @@ RSpec.describe "Exercise update progression", type: :request, :api => true, :ver
     expect(response.body_as_hash).not_to have_key(:feedback_html)
     expect(response.body_as_hash).not_to have_key(:correct_answer_id)
 
-    correct_answer_id = Exercise.new(tasked.exercise).correct_question_answer_ids[0][0]
+    correct_answer_id = Task::TaskedExercise.new(tasked).correct_answer_id
     tasked.answer_id = correct_answer_id
     tasked.save!
 
@@ -67,7 +67,7 @@ RSpec.describe "Exercise update progression", type: :request, :api => true, :ver
     tasked.reload
     expect(tasked.free_response).to eq 'abcdef'
 
-    answer_id = Exercise.new(tasked.exercise).question_answers[0][1]['id']
+    answer_id = Task::TaskedExercise.new(tasked).answer_ids.first
     api_put("#{step_route_base}", user_1_token,
             raw_post_data: {answer_id: answer_id}.to_json)
     expect(response).to have_http_status(:success)
@@ -88,7 +88,7 @@ RSpec.describe "Exercise update progression", type: :request, :api => true, :ver
     tasked.reload
     expect(tasked.free_response).to eq 'abcdef'
 
-    new_answer_id = Exercise.new(tasked.exercise).question_answers[0][0]['id']
+    new_answer_id = Task::TaskedExercise.new(tasked).answer_ids.first
     api_put("#{step_route_base}", user_1_token,
             raw_post_data: {answer_id: new_answer_id}.to_json)
     expect(response).to have_http_status(:unprocessable_entity)

@@ -27,13 +27,12 @@ module Api::V1
              type: String,
              writeable: false,
              readable: true,
-             getter: -> (*) { Exercise.new(exercise).content_without_correctness },
              schema_info: {
                required: false,
                description: "The Exercise's content without correctness and feedback info"
              }
 
-    property :can_be_recovered,
+    property :can_be_recovered?,
              as: :has_recovery,
              type: 'boolean',
              writeable: false,
@@ -60,12 +59,12 @@ module Api::V1
                description: "The student's free response"
              }
 
-    property :feedback_html,
+    property :feedback,
+             as: :feedback_html,
              type: String,
              writeable: false,
              readable: true,
              if: -> (*) { task_step.feedback_available? },
-             getter: -> (*) { Exercise.new(exercise).feedback_for(answer_id) },
              schema_info: {
                description: "The feedback given to the student"
              }
@@ -75,7 +74,6 @@ module Api::V1
              writeable: false,
              readable: true,
              if: -> (*) { task_step.feedback_available? },
-             getter: -> (*) { Exercise.new(exercise).correct_question_answer_ids[0][0] },
              schema_info: {
                description: "The Exercise's correct answer's id"
              }
@@ -86,7 +84,6 @@ module Api::V1
              writeable: false,
              readable: true,
              if: -> (*) { task_step.feedback_available? },
-             getter: -> (*) { Exercise.new(exercise).answer_is_correct?(answer_id) },
              schema_info: {
                description: "Whether or not the answer given by the student is correct"
              }

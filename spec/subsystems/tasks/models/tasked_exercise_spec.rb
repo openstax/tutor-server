@@ -10,8 +10,7 @@ RSpec.describe Tasks::Models::TaskedExercise, :type => :model do
                                                exercise: content_exercise) }
 
   it 'does not accept a multiple choice answer before a free response unless the free-response format is not present' do
-    tasked_exercise.answer_id = Exercise.new(tasked_exercise.exercise)
-                                  .question_answer_ids.flatten.first
+    tasked_exercise.answer_id = Task::TaskedExercise.new(tasked_exercise).answer_ids.last
     expect(tasked_exercise).not_to be_valid
     expect(tasked_exercise.errors).to include :free_response
 
@@ -21,7 +20,7 @@ RSpec.describe Tasks::Models::TaskedExercise, :type => :model do
     tasked_exercise.free_response = nil
     expect(tasked_exercise).not_to be_valid
 
-    tasked_exercise.instance_variable_set('@formats', ['multiple-choice'])
+    tasked_exercise.parser.instance_variable_set('@question_formats', ['multiple-choice'])
     expect(tasked_exercise).to be_valid
   end
 
@@ -31,15 +30,13 @@ RSpec.describe Tasks::Models::TaskedExercise, :type => :model do
     expect(tasked_exercise).not_to be_valid
     expect(tasked_exercise.errors).to include :answer_id
 
-    tasked_exercise.answer_id = Exercise.new(tasked_exercise.exercise)
-                                  .question_answer_ids.flatten.last
+    tasked_exercise.answer_id = Task::TaskedExercise.new(tasked_exercise).answer_ids.last
     expect(tasked_exercise).to be_valid
   end
 
   it 'cannot be updated after it is completed' do
     tasked_exercise.free_response = 'abc'
-    tasked_exercise.answer_id = Exercise.new(tasked_exercise.exercise)
-                                  .question_answer_ids.flatten.first
+    tasked_exercise.answer_id = Task::TaskedExercise.new(tasked_exercise).answer_ids.first
     tasked_exercise.save!
 
     tasked_exercise.task_step.complete
@@ -57,8 +54,9 @@ RSpec.describe Tasks::Models::TaskedExercise, :type => :model do
 
   it 'records answers in exchange when the task_step is completed' do
     exchange_identifier = 42
-    answer_id = Exercise.new(tasked_exercise.exercise).question_answer_ids.flatten.first
-    allow(tasked_exercise).to receive(:identifier).and_return(exchange_identifier)
+    wrapper = Task::TaskedExercise.new(tasked_exercise)
+    answer_id = wrapper.answer_ids.first
+    allow(wrapper).to receive(:identifier).and_return(exchange_identifier)
     tasked_exercise.free_response = 'abc'
     tasked_exercise.answer_id = answer_id
     expect(OpenStax::Exchange).to receive(:record_multiple_choice_answer)
@@ -66,6 +64,6 @@ RSpec.describe Tasks::Models::TaskedExercise, :type => :model do
                                          tasked_exercise.url,
                                          tasked_exercise.task_step.id.to_s,
                                          answer_id)
-    tasked_exercise.handle_task_step_completion!
+    wrapper.handle_task_step_completion!
   end
 end

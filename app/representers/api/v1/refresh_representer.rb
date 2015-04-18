@@ -16,7 +16,6 @@ module Api::V1
              writeable: false,
              readable: true,
              decorator: TaskedExerciseRepresenter,
-             getter: ->(*) { recovery_step.tasked },
              schema_info: {
                required: true,
                description: 'The exercise to be used for "try another"'

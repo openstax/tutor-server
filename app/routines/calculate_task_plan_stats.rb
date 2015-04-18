@@ -19,7 +19,7 @@ class CalculateTaskPlanStats
     completed = steps.select {|ts| ts.completed? }
     stats = {
       student_count: role_ids.length,
-      correct_count: completed.count{|step| step.tasked.is_correct? }
+      correct_count: completed.count{|step| Task::TaskedExercise.new(step.tasked).is_correct? }
     }
     stats[:incorrect_count] = completed.length - stats[:correct_count]
     stats

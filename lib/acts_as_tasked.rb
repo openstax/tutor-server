@@ -12,10 +12,6 @@ module ActsAsTasked
         after_update { task_step.try(:touch) if task_step.try(:persisted?) }
 
         delegate :completed_at, :completed?, :complete, to: :task_step, allow_nil: true
-
-        def can_be_recovered?
-          false
-        end
       end
     end
   end

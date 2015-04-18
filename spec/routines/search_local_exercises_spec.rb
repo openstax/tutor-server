@@ -61,8 +61,8 @@ RSpec.describe SearchLocalExercises, :type => :routine, :vcr => VCR_OPTS do
 
     Content::Routines::TagResource.call(exercise_3, 'test-tag')
 
-    TaskExercise[exercise: Exercise.new(exercise_1), task_step: exercise_step_1]
-    TaskExercise[exercise: Exercise.new(exercise_2), task_step: exercise_step_2]
+    Task::TaskedExercise.new(exercise: Exercise.new(exercise_1), task_step: exercise_step_1)
+    Task::TaskedExercise.new(exercise: Exercise.new(exercise_2), task_step: exercise_step_2)
 
     task.task_steps << exercise_step_1
     task.task_steps << exercise_step_2

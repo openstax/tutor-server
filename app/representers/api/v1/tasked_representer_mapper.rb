@@ -32,10 +32,10 @@ module Api::V1
     def self.map
       @@map ||= {
         Tasks::Models::TaskedReading     => ->(*){TaskedReadingRepresenter},
-        Tasks::Models::TaskedExercise    => ->(*){TaskedExerciseRepresenter},
+        Task::TaskedExercise             => ->(*){TaskedExerciseRepresenter},
         Tasks::Models::TaskedPlaceholder => ->(*){TaskedPlaceholderRepresenter},
         Tasks::Models::TaskedVideo       => ->(*){TaskedVideoRepresenter},
-        Tasks::Models::TaskedInteractive => ->(*){TaskedInteractiveRepresenter},
+        Tasks::Models::TaskedInteractive => ->(*){TaskedInteractiveRepresenter}
       }
     end
 

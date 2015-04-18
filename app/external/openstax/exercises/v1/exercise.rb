@@ -41,7 +41,7 @@ class OpenStax::Exercises::V1::Exercise
   end
 
   def question_formats
-    @formats ||= questions.collect{ |q| q['formats'] }
+    @question_formats ||= questions.collect{ |q| q['formats'] }
   end
 
   def question_answers
@@ -81,21 +81,21 @@ class OpenStax::Exercises::V1::Exercise
   end
 
   def question_answers_without_correctness
-    question_answers.collect do |q|
+    @question_answers_without_correctness ||= question_answers.collect do |q|
       q.collect { |a| a.except('correctness', 'feedback_html') }
     end
   end
 
   def questions_without_correctness
-    i = -1
-    content_hash['questions'].collect do |q|
-      i = i + 1
+    @questions_without_correctness ||= content_hash['questions'].each_with_index.collect do |q, i|
       q.merge('answers' => question_answers_without_correctness[i])
     end
   end
 
   def content_without_correctness
-    content_hash.merge('questions' => questions_without_correctness)
+    @content_without_correctness ||= content_hash.merge(
+      'questions' => questions_without_correctness
+    )
   end
 
 end

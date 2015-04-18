@@ -7,37 +7,18 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
   validates :content, presence: true
   validate :valid_state, :valid_answer, :not_completed
 
-  def can_be_recovered?
-    can_be_recovered
-  end
+  delegate :los, to: :parser
 
-  def inject_debug_content(debug_content:, pre_br: false, post_br: false)
-    json_hash = JSON.parse(self.content)
-    stem_html = json_hash['questions'].first['stem_html']
-    match_data = %r{\<!-- debug_begin --\>\<pre\>(?<existing_debug_content>(?m:.*?))\</pre\>\<!-- debug_end --\>}.match(stem_html)
-    new_debug_content = match_data ? match_data[:existing_debug_content] : ""
-    new_debug_content += debug_content
-    new_debug_content += "\n"
-    stem_html.gsub!(%r{\<!-- debug_begin --\>(?m:.*?)\</pre\>\<!-- debug_end --\>}, '')
-    stem_html += "<!-- debug_begin --><pre>#{new_debug_content}</pre><!-- debug_end -->"
-    json_hash['questions'].first['stem_html'] = stem_html
-    self.content = json_hash.to_json
-  end
+  ## Blatent hack below (the identifier *should* be set to
+  ## the exchange identifier in the current user's profile,
+  ## but the role id is a close temporary proxy):
+  OpenStax::Exchange.record_multiple_choice_answer(
+    identifier, url, trial, answer_id
+  )
 
-  # This is domain logic; move to a Task/TaskStep/TaskedExercise wrapper
-  # submits the result to exchange
-  def handle_task_step_completion!
-    # Currently assuming only one question per tasked_exercise, see also correct_answer_id
-    question = Exercise.new(exercise).questions.first
-    # "trial" is set to only "0" for now.  When multiple
-    # attempts are supported, it will be incremented to indicate the attempt #
-
-    ## Blatent hack below (the identifier *should* be set to
-    ## the exchange identifier in the current user's profile,
-    ## but the role id is a close temporary proxy):
-    OpenStax::Exchange.record_multiple_choice_answer(
-      identifier, url, trial, answer_id
-    )
+  # We depend on the parser because we do not save the parsed content
+  def parser
+    @parser ||= OpenStax::Exercises::V1::Exercise.new(content)
   end
 
   protected
@@ -50,17 +31,13 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     task_step.id.to_s
   end
 
-  # Hack until we have substeps
-  def wrapper
-    @wrapper ||= OpenStax::Exercises::V1::Exercise.new(content)
-  end
-
+  # The following 2 methods assume only 1 Question
   def formats
-    @formats ||= wrapper.question_formats.first
+    parser.question_formats[0]
   end
 
   def answer_ids
-    @answer_ids ||= wrapper.question_answer_ids.first
+    parser.question_answer_ids[0]
   end
 
   # Eventually this will be enforced by the exercise substeps

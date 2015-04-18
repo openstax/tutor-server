@@ -8,11 +8,12 @@ class RecoverTaskedExercise
   protected
 
   def exec(tasked_exercise:)
-    fatal_error(code: :recovery_not_available) unless tasked_exercise.can_be_recovered?
+    fatal_error(code: :recovery_not_available) \
+      unless tasked_exercise.respond_to?(:can_be_recovered) && tasked_exercise.can_be_recovered
 
     recovery_exercise = get_recovery_exercise_for(tasked_exercise: tasked_exercise)
 
-    fatal_error(code: :recovery_not_available) if recovery_exercise.nil?
+    fatal_error(code: :recovery_not_found) if recovery_exercise.nil?
 
     task_step = tasked_exercise.task_step
 
@@ -47,7 +48,7 @@ class RecoverTaskedExercise
                                 required_tag_names: ['practice-problem'])
 
     # Randomize LO order
-    los = Exercise.new(tasked_exercise.exercise).los.shuffle
+    los = tasked_exercise.los.shuffle
 
     # Try to find unassigned exercises first
     taskees = tasked_exercise.task_step.task.taskings.collect{|t| t.role}
