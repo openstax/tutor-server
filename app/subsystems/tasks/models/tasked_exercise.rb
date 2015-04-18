@@ -11,27 +11,12 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
 
   delegate :los, to: :parser
 
-  ## Blatent hack below (the identifier *should* be set to
-  ## the exchange identifier in the current user's profile,
-  ## but the role id is a close temporary proxy):
-  OpenStax::Exchange.record_multiple_choice_answer(
-    identifier, url, trial, answer_id
-  )
-
   # We depend on the parser because we do not save the parsed content
   def parser
     @parser ||= OpenStax::Exercises::V1::Exercise.new(content)
   end
 
   protected
-
-  def identifier
-    task_step.task.taskings.first.role.id
-  end
-
-  def trial
-    task_step.id.to_s
-  end
 
   # The following 2 methods assume only 1 Question
   def formats

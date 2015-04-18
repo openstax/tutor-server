@@ -64,7 +64,7 @@ class CalculateTaskPlanStats
     task.task_steps.select do |ts|
       # Gradable steps are TaskedExercise that are marked as completed
       ts.tasked_type.demodulize == 'TaskedExercise' && ts.completed?
-    end.collect{ |ts| ts.tasked }
+    end.collect{ |ts| Task::TaskedExercise.new(ts.tasked) }
   end
 
   def get_task_grade(task)

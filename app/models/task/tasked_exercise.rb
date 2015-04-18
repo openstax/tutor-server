@@ -33,10 +33,10 @@ class Task::TaskedExercise < Entity
     # "trial" is set to only "0" for now.  When multiple
     # attempts are supported, it will be incremented to indicate the attempt #
 
-    ## Blatent hack below (the identifier *should* be set to
+    ## Blatant hack below (the identifier *should* be set to
     ## the exchange identifier in the current user's profile,
     ## but the role id is a close temporary proxy):
-    OpenStax::Exchange.record_multiple_choice_answer(identifier, url, '0', answer_id)
+    OpenStax::Exchange.record_multiple_choice_answer(identifier, url, trial, answer_id)
   end
 
   def inject_debug_content(debug_content:, pre_br: false, post_br: false)
@@ -85,6 +85,10 @@ class Task::TaskedExercise < Entity
 
   def identifier
     repository.task_step.task.taskings.first.role.id
+  end
+
+  def trial
+    repository.task_step.id.to_s
   end
   
 end
