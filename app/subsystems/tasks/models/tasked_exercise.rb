@@ -1,6 +1,8 @@
 class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
   acts_as_tasked
 
+  wrapped_by ::Task::TaskedExercise
+
   belongs_to :exercise, subsystem: :content
 
   validates :url, presence: true
