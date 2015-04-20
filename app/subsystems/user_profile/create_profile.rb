@@ -18,9 +18,10 @@ module UserProfile
 
       prepped_attrs = {
         entity_user_id: attrs[:entity_user_id] || new_entity_user_id,
-        account_id: attrs[:account_id] || new_account_id(attrs),
-        exchange_identifier: OpenStax::Exchange.create_identifier
+        account_id: attrs[:account_id] || new_account_id(attrs)
       }
+
+      prepped_attrs[:exchange_identifier] ||= OpenStax::Exchange.create_identifier
 
       attrs.except(*account_attributes).merge(prepped_attrs)
     end
