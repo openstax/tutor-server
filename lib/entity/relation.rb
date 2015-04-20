@@ -7,8 +7,9 @@ class Entity
     self._passthrough = true
 
     # The constructor for Entity::Relation only accepts an ActiveRecord::Relation object
+    # The relation is set as readonly
     def initialize(repository)
-      @repository = repository
+      @repository = repository.readonly
     end
 
     # Same as ActiveRecord::Relation's inspect, but wraps entry class names
