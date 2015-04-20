@@ -51,15 +51,15 @@ RSpec.describe Content::ImportBook, :type => :routine, :vcr => VCR_OPTS do
         expect(biglearn_client.store_exercises_copy).to_not be_empty
       end
 
-      it 'adds a path signifier according to subcol structure' do
+      it 'adds a chapter_section signifier according to subcol structure' do
         book_import = Content::ImportBook.call(cnx_book: book)
         root_book_part = book_import.outputs.book_part
 
         root_book_part.child_book_parts.each_with_index do |chapter, i|
-          expect(chapter.path).to eq("#{i + 1}")
+          expect(chapter.chapter_section).to eq("#{i + 1}")
 
           chapter.pages.each_with_index do |page, pidx|
-            expect(page.path).to eq("#{i + 1}.#{pidx + 1}")
+            expect(page.chapter_section).to eq("#{i + 1}.#{pidx + 1}")
           end
         end
       end

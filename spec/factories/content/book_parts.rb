@@ -18,7 +18,7 @@ FactoryGirl.define do
       (evaluator.contents[:pages] || {}).each do |page|
         the_page = FactoryGirl.create(:content_page,
                                       title: page[:title],
-                                      path: page[:path],
+                                      chapter_section: page[:chapter_section],
                                       book_part: book_part)
         Content::Routines::TagResource[the_page, page[:los]]
       end
@@ -37,12 +37,12 @@ FactoryGirl.define do
                   {
                     title: 'first page',
                     los: ['ost-tag-lo-topic1-lo1', 'ost-tag-lo-topic2-lo2'],
-                    path: '1.1'
+                    chapter_section: '1.1'
                   },
                   {
                     title: 'second page',
                     los: ['ost-tag-lo-topic2-lo2', 'ost-tag-lo-topic3-lo3'],
-                    path: '1.2'
+                    chapter_section: '1.2'
                   }
                 ]
               },
@@ -52,7 +52,7 @@ FactoryGirl.define do
                   {
                     title: 'third page',
                     los: ['ost-tag-lo-topic4-lo4'],
-                    path: '1.3'
+                    chapter_section: '1.3'
                   }
                 ]
               }

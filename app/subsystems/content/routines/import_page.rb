@@ -27,7 +27,7 @@ class Content::Routines::ImportPage
                       title: cnx_page.title,
                       content: cnx_page.converted_content,
                       book_part: book_part,
-                      path: cnx_page.path)
+                      chapter_section: cnx_page.chapter_section)
     book_part.pages << outputs[:page] unless book_part.nil?
     transfer_errors_from outputs[:page], {type: :verbatim}, true
 

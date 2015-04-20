@@ -75,7 +75,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
         task_id: task_step.tasks_task_id,
         type: 'reading',
         title: 'title',
-        chapter_section: task_step.tasked.path,
+        chapter_section: task_step.tasked.chapter_section,
         is_completed: false,
         content_url: 'http://u.rl',
         content_html: 'content'

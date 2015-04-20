@@ -31,7 +31,7 @@ ActiveRecord::Schema.define(version: 20150402221032) do
     t.integer  "entity_book_id"
     t.integer  "number",              null: false
     t.string   "title",               null: false
-    t.string   "path"
+    t.string   "chapter_section"
     t.datetime "created_at",          null: false
     t.datetime "updated_at",          null: false
   end
@@ -77,7 +77,7 @@ ActiveRecord::Schema.define(version: 20150402221032) do
     t.integer  "content_book_part_id"
     t.integer  "number",               null: false
     t.string   "title",                null: false
-    t.string   "path"
+    t.string   "chapter_section"
     t.datetime "created_at",           null: false
     t.datetime "updated_at",           null: false
   end
@@ -450,12 +450,12 @@ ActiveRecord::Schema.define(version: 20150402221032) do
   end
 
   create_table "tasks_tasked_readings", force: :cascade do |t|
-    t.string   "url",        null: false
-    t.text     "content",    null: false
+    t.string   "url",             null: false
+    t.text     "content",         null: false
     t.string   "title"
-    t.string   "path"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string   "chapter_section"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
   end
 
   create_table "tasks_tasked_videos", force: :cascade do |t|

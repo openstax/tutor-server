@@ -4,12 +4,12 @@ class Content::Routines::CreatePage
 
   protected
 
-  def exec(url:, title:, content:, book_part:, path:)
+  def exec(url:, title:, content:, book_part:, chapter_section:)
     page = Content::Models::Page.create(url: url,
                                 title: title,
                                 content: content,
                                 book_part: book_part,
-                                path: path)
+                                chapter_section: chapter_section)
     transfer_errors_from(page, {type: :verbatim}, true)
 
     outputs[:page] = page
