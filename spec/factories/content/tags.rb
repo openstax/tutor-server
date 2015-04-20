@@ -3,5 +3,7 @@ FactoryGirl.define do
 
   factory :content_tag, class: '::Content::Models::Tag' do
     value { generate(:value) }
+    name { Faker::Lorem.word }
+    description { Faker::Lorem.paragraph }
   end
 end
