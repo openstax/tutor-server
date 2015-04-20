@@ -6,7 +6,7 @@ class CreateContentBookParts < ActiveRecord::Migration
       t.references :entity_book
       t.integer :number, null: false
       t.string :title, null: false
-      t.string :path
+      t.string :chapter_section
 
       t.timestamps null: false
 

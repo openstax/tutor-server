@@ -28,13 +28,13 @@ RSpec.describe Content::VisitBook, :type => :routine do
               'id' => ftoc.children[0].children[0].id,
               'title' => 'first page',
               'type' => 'page',
-              'path' => '1.1'
+              'chapter_section' => '1.1'
             },
             {
               'id' => ftoc.children[0].children[1].id,
               'title' => 'second page',
               'type' => 'page',
-              'path' => '1.2'
+              'chapter_section' => '1.2'
             }
           ]
         },
@@ -47,7 +47,7 @@ RSpec.describe Content::VisitBook, :type => :routine do
               'id' => ftoc.children[1].children[0].id,
               'title' => 'third page',
               'type' => 'page',
-              'path' => '1.3'
+              'chapter_section' => '1.3'
             }
           ]
         }

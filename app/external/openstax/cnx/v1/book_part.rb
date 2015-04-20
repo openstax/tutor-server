@@ -1,15 +1,15 @@
 module OpenStax::Cnx::V1
   class BookPart
 
-    def initialize(hash: {}, path: nil, title: nil, contents: nil, parts: nil)
-      @hash     = hash
-      @path     = path
-      @title    = title
-      @contents = contents
-      @parts    = parts
+    def initialize(hash: {}, chapter_section: nil, title: nil, contents: nil, parts: nil)
+      @hash            = hash
+      @chapter_section = chapter_section
+      @title           = title
+      @contents        = contents
+      @parts           = parts
     end
 
-    attr_reader :hash, :path
+    attr_reader :hash, :chapter_section
 
     def title
       @title ||= hash.fetch('title') { |key|
@@ -24,17 +24,17 @@ module OpenStax::Cnx::V1
     end
 
     def parts
-      path_prefix = path.blank? ? "" : "#{path}."
+      path_prefix = chapter_section.blank? ? "" : "#{chapter_section}."
       book_part_index = 0
       page_index = 0
 
       @parts ||= contents.collect do |hash|
         if hash['id'] == 'subcol'
           BookPart.new(hash: hash,
-                       path: "#{path_prefix}#{book_part_index += 1}")
+                       chapter_section: "#{path_prefix}#{book_part_index += 1}")
         else
           Page.new(hash: hash,
-                   path: "#{path_prefix}#{page_index += 1}",
+                   chapter_section: "#{path_prefix}#{page_index += 1}",
                    book_part_title: title)
         end
       end

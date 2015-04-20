@@ -10,7 +10,7 @@ class Content::Models::PageDataVisitor < Content::Models::BookVisitor
       tags: get_page_tags(page),
       los: get_page_los(page),
       title: page.title,
-      path: page.path,
+      chapter_section: page.chapter_section,
       url: page.url,
       version: get_page_version(page)
     }
