@@ -60,6 +60,18 @@ RSpec.describe Content::Routines::ImportPage, :type => :routine, :vcr => VCR_OPT
         ]
       end
 
+      it 'creates tags from ost-standard-defs' do
+        result = Content::Routines::ImportPage.call(cnx_page: cnx_page,
+                                                    book_part: book_part)
+        tag = Content::Models::Tag.find_by(value: 'ost-tag-teks-112-39-c-4c')
+        if name.to_s == 'stable'
+          expect(tag).to be_nil
+        else
+          expect(tag.name).to eq '4C'
+          expect(tag.description).to eq 'analyze and describe accelerated motion in two dimensions using equations, including projectile and circular examples'
+        end
+      end
+
       it 'gets exercises with LO tags from the content' do
         result = nil
         expect {

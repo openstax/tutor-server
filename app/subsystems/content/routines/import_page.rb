@@ -14,6 +14,9 @@ class Content::Routines::ImportPage
                as: :import_exercises,
                translations: { outputs: { scope: :exercises } }
 
+  uses_routine Content::Routines::CreateTags,
+               as: :create_tags
+
   protected
 
   # Imports and saves a Cnx::Page as a Content::Models::Page
@@ -27,6 +30,9 @@ class Content::Routines::ImportPage
                       path: cnx_page.path)
     book_part.pages << outputs[:page] unless book_part.nil?
     transfer_errors_from outputs[:page], {type: :verbatim}, true
+
+    # Create tags
+    run(:create_tags, cnx_page.tag_defs)
 
     # Tag Page with LO's
     run(:tag, outputs[:page], cnx_page.los, tag_type: :lo)
