@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::TaskedVideoRepresenter, :type => :representer do
+RSpec.describe Api::V1::Tasks::TaskedVideoRepresenter, :type => :representer do
   it 'should represent a video' do
     task_step = FactoryGirl.create(:tasks_tasked_video).task_step
     json = Api::V1::TaskedVideoRepresenter.new(task_step.tasked).to_json

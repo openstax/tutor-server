@@ -14,23 +14,20 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
 
   api :GET, '/steps/:step_id', 'Gets the specified TaskStep'
   def show
-    task_step = Tasks::Models::TaskStep.find(params[:id])
-    tasked = Task::TaskedExercise.temp_hack(task_step.tasked)
+    tasked = Tasks::Models::TaskStep.find(params[:id]).tasked
     standard_read(tasked, Api::V1::TaskedRepresenterMapper.representer_for(tasked), true)
   end
 
   api :PUT, '/steps/:step_id', 'Updates the specified TaskStep'
   def update
-    task_step = Tasks::Models::TaskStep.find(params[:id])
-    tasked = Task::TaskedExercise.temp_hack(task_step.tasked)
+    tasked = Tasks::Models::TaskStep.find(params[:id]).tasked
     standard_update(tasked, Api::V1::TaskedRepresenterMapper.representer_for(tasked))
   end
 
   api :PUT, '/steps/:step_id/completed',
             'Marks the specified TaskStep as completed (if applicable)'
   def completed
-    task_step = Tasks::Models::TaskStep.find(params[:id])
-    tasked = Task::TaskedExercise.temp_hack(task_step.tasked)
+    tasked = Tasks::Models::TaskStep.find(params[:id]).tasked
     OSU::AccessPolicy.require_action_allowed!(:mark_completed, current_api_user, tasked)
 
     result = MarkTaskStepCompleted.call(task_step: task_step)
@@ -47,15 +44,14 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
   api :PUT, '/steps/:step_id/recovery',
             'Requests an exercise similar to the given one for credit recovery'
   def recovery
-    tasked = Task::TaskedExercise.temp_hack(Tasks::Models::TaskStep.find(params[:id]).tasked)
+    tasked = Tasks::Models::TaskStep.find(params[:id]).tasked
     OSU::AccessPolicy.require_action_allowed!(:recover, current_api_user, tasked)
 
-    result = tasked.recover
+    result = RecoverTaskedExercise[tasked_exercise: tasked]
 
     if result.errors.any?
       render_api_errors(result.errors)
     else
-      tasked = Task::TaskedExercise.temp_hack(result.outputs.recovery_step.tasked)
       respond_with tasked,
                    responder: ResponderWithPutContent,
                    represent_with: Api::V1::TaskedRepresenterMapper.representer_for(tasked)
@@ -68,17 +64,14 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     #{json_schema(Api::V1::RefreshRepresenter, include: :readable)}
   EOS
   def refresh
-    tasked = Task::TaskedExercise.temp_hack(Tasks::Models::TaskStep.find(params[:id]).tasked)
+    tasked = Tasks::Models::TaskStep.find(params[:id]).tasked
     OSU::AccessPolicy.require_action_allowed!(:refresh, current_api_user, tasked)
 
-    result = tasked.refresh
+    result = RefreshTaskedExercise[tasked_exercise: tasked]
 
     if result.errors.any?
       render_api_errors(result.errors)
     else
-      result.outputs[:recovery_step] = Task::TaskedExercise.temp_hack(
-        result.outputs.recovery_step.tasked
-      )
       respond_with result.outputs, represent_with: Api::V1::RefreshRepresenter,
                                    responder: ResponderWithPutContent
     end

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::TaskedExerciseRepresenter, :type => :representer do
+RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, :type => :representer do
 
   let(:exercise_content) { OpenStax::Exercises::V1.fake_client.new_exercise_hash }
   let(:tasked_exercise) {

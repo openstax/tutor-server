@@ -63,9 +63,7 @@ module Api::V1
                writeable: false,
                readable: true,
                # render and decorate the Tasked's, not the TaskSteps
-               getter: -> (*) { task_steps.collect{ |ts|
-                 Task::TaskedExercise.temp_hack(ts.tasked)
-               } },
+               getter: -> (*) { task_steps.collect{ |ts| ts.tasked } },
                decorator: Api::V1::TaskedRepresenterMapper.new,
                schema_info: {
                  required: true,

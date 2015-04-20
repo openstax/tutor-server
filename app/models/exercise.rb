@@ -4,10 +4,6 @@ class Exercise < Entity
 
   exposes :url, :title, :content
 
-  def self.search(options = {})
-    SearchLocalExercises[options]
-  end
-
   def tags
     tag_models.collect{ |t| t.name }
   end

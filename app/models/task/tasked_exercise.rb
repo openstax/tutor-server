@@ -19,14 +19,6 @@ class Task::TaskedExercise < Entity
     t.is_a?(Tasks::Models::TaskedExercise) ? new(t).passthrough : t
   end
 
-  def recover
-    RecoverTaskedExercise.call(tasked_exercise: repository)
-  end
-
-  def refresh
-    RefreshTaskedExercise.call(tasked_exercise: repository)
-  end
-
   def handle_task_step_completion!
     # Currently assuming only one question per tasked_exercise, see also correct_answer_id
     question = questions.first

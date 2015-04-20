@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::TaskedPlaceholderRepresenter, :type => :representer do
+RSpec.describe Api::V1::Tasks::TaskedPlaceholderRepresenter, :type => :representer do
 
   let(:tasked_placeholder) {
     task_step = FactoryGirl.create(:tasks_task_step)
