@@ -54,10 +54,21 @@ RSpec.describe Content::Routines::ImportPage, :type => :routine, :vcr => VCR_OPT
         expect(tagged_tags).to(
           eq Content::Models::Page.last.page_tags.collect{|pt| pt.tag}
         )
-        expect(tagged_tags.collect{|t| t.value}).to eq [
-          'k12phys-ch04-s01-lo01',
-          'k12phys-ch04-s01-lo02'
-        ]
+        expected_tagged_tags = ['k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02']
+        expected_tagged_tags << 'ost-tag-teks-112-39-c-4c' if name.to_s == 'latest'
+        expect(tagged_tags.collect{|t| t.value}).to eq expected_tagged_tags
+      end
+
+      it 'creates tags from ost-standard-defs' do
+        result = Content::Routines::ImportPage.call(cnx_page: cnx_page,
+                                                    book_part: book_part)
+        tag = Content::Models::Tag.find_by(value: 'ost-tag-teks-112-39-c-4c')
+        if name.to_s == 'stable'
+          expect(tag).to be_nil
+        else
+          expect(tag.name).to eq '4C'
+          expect(tag.description).to eq 'analyze and describe accelerated motion in two dimensions using equations, including projectile and circular examples'
+        end
       end
 
       it 'gets exercises with LO tags from the content' do

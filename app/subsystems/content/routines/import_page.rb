@@ -28,8 +28,8 @@ class Content::Routines::ImportPage
     book_part.pages << outputs[:page] unless book_part.nil?
     transfer_errors_from outputs[:page], {type: :verbatim}, true
 
-    # Tag Page with LO's
-    run(:tag, outputs[:page], cnx_page.los, tag_type: :lo)
+    # Tag the Page
+    run(:tag, outputs[:page], cnx_page.tags)
 
     # Get Exercises from OSE that match the LO's
     run(:import_exercises, tag: cnx_page.los)
