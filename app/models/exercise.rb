@@ -2,7 +2,7 @@ class Exercise < Entity
 
   wraps Content::Models::Exercise
 
-  instance_exposes :url, :title, :content, :exercise_tags
+  instance_exposes :url, :title, :content
 
   def tags
     tag_models.collect{ |t| t.name }

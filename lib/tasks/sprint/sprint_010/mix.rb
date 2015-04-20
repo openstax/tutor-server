@@ -123,7 +123,7 @@ module Sprint010
 
             # And 3/4 of those correct
             if ts.tasked_type.demodulize == "TaskedExercise" && rand(4) < 3
-              ts.tasked.answer_id = Task::TaskedExercise.temp_hack(ts.tasked).correct_answer_id
+              ts.tasked.answer_id = ts.tasked.correct_answer_id
               ts.tasked.free_response = Faker::Hacker.say_something_smart
               ts.tasked.save!
             end

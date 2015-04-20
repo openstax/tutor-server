@@ -2,7 +2,7 @@ class Tasks::RefreshTaskedExercise
 
   lev_routine
 
-  uses_routine RecoverTaskedExercise,
+  uses_routine Tasks::RecoverTaskedExercise,
                as: :recover, translations: { outputs: { type: :verbatim } }
 
   protected

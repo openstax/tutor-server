@@ -1,7 +1,6 @@
 class CreateTasksTaskedExercises < ActiveRecord::Migration
   def change
     create_table :tasks_tasked_exercises do |t|
-      t.references :content_exercise
       t.boolean :can_be_recovered, null: false, default: false
       t.string :url, null: false
       t.text :content, null: false

@@ -6,9 +6,7 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, :type => :representer 
   let(:tasked_exercise) {
     FactoryGirl.create(:tasks_tasked_exercise, content: exercise_content.to_json)
   }
-  let(:representation) { Api::V1::TaskedExerciseRepresenter.new(
-    Task::TaskedExercise.new(tasked_exercise)
-  ).as_json }
+  let(:representation) { Api::V1::TaskedExerciseRepresenter.new(tasked_exercise).as_json }
 
   it "represents a tasked exercise" do
     content = exercise_content.deep_stringify_keys
@@ -31,8 +29,8 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, :type => :representer 
 
   context "when complete and" do
 
-    let!(:answer_id)         { Task::TaskedExercise.new(tasked_exercise).answer_ids.first }
-    let!(:correct_answer_id) { Task::TaskedExercise.new(tasked_exercise).correct_answer_id }
+    let!(:answer_id)         { tasked_exercise.answer_ids.last }
+    let!(:correct_answer_id) { tasked_exercise.correct_answer_id }
 
     before do
       tasked_exercise.free_response = 'Four score and seven years ago ...'

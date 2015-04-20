@@ -19,7 +19,7 @@ class CalculateTaskPlanStats
     completed = steps.select {|ts| ts.completed? }
     stats = {
       student_count: role_ids.length,
-      correct_count: completed.count{|step| Task::TaskedExercise.new(step.tasked).is_correct? }
+      correct_count: completed.count{|step| step.tasked.is_correct? }
     }
     stats[:incorrect_count] = completed.length - stats[:correct_count]
     stats
@@ -64,7 +64,7 @@ class CalculateTaskPlanStats
     task.task_steps.select do |ts|
       # Gradable steps are TaskedExercise that are marked as completed
       ts.tasked_type.demodulize == 'TaskedExercise' && ts.completed?
-    end.collect{ |ts| Task::TaskedExercise.new(ts.tasked) }
+    end.collect{ |ts| ts.tasked }
   end
 
   def get_task_grade(task)

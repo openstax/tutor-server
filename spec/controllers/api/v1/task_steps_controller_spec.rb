@@ -101,7 +101,7 @@ describe Api::V1::TaskStepsController, :type => :controller,
       expect(response).to have_http_status(:success)
 
       expect(response.body).to eq(
-        Api::V1::TaskedExerciseRepresenter.new(Task::TaskedExercise.new(tasked.reload)).to_json
+        Api::V1::TaskedExerciseRepresenter.new(tasked.reload).to_json
       )
 
       expect(tasked.reload.free_response).to eq "Ipsum lorem"
@@ -110,7 +110,7 @@ describe Api::V1::TaskStepsController, :type => :controller,
     it "updates the selected answer of an exercise" do
       tasked.free_response = "Ipsum lorem"
       tasked.save!
-      answer_id = Task::TaskedExercise.new(tasked).answer_ids.first
+      answer_id = tasked.answer_ids.first
 
       api_put :update, user_1_token,
               parameters: id_parameters, raw_post_data: { answer_id: answer_id }
@@ -118,14 +118,14 @@ describe Api::V1::TaskStepsController, :type => :controller,
       expect(response).to have_http_status(:success)
 
       expect(response.body).to eq(
-        Api::V1::TaskedExerciseRepresenter.new(Task::TaskedExercise.new(tasked.reload)).to_json
+        Api::V1::TaskedExerciseRepresenter.new(tasked.reload).to_json
       )
 
       expect(tasked.reload.answer_id).to eq answer_id
     end
 
     it "does not update the answer if the free response is not set" do
-      answer_id = Task::TaskedExercise.new(tasked).answer_ids.first
+      answer_id = tasked.answer_ids.first
 
       api_put :update, user_1_token,
               parameters: id_parameters, raw_post_data: { answer_id: answer_id }
@@ -147,7 +147,7 @@ describe Api::V1::TaskStepsController, :type => :controller,
       expect(response).to have_http_status(:success)
 
       recovery_step = tasked_exercise_with_recovery.task_step.next_by_number
-      tasked = Task::TaskedExercise.new(recovery_step.tasked)
+      tasked = recovery_step.tasked
 
       expect(response.body).to(
         eq Api::V1::TaskedExerciseRepresenter.new(tasked).to_json
@@ -199,7 +199,7 @@ describe Api::V1::TaskStepsController, :type => :controller,
       expect(hash['refresh_step']['url']).to eq task_step.tasked.url
 
       recovery_step = tasked_exercise_with_recovery.task_step.next_by_number
-      tasked = Task::TaskedExercise.new(recovery_step.tasked)
+      tasked = recovery_step.tasked
 
       expect(hash['recovery_step']).to eq JSON.parse(
         Api::V1::TaskedExerciseRepresenter.new(tasked).to_json
@@ -268,9 +268,7 @@ describe Api::V1::TaskStepsController, :type => :controller,
 
       expect(response).to have_http_status(:success)
 
-      expect(response.body).to eq(Api::V1::TaskedExerciseRepresenter.new(
-        Task::TaskedExercise.new(tasked.reload)
-      ).to_json)
+      expect(response.body).to eq(Api::V1::TaskedExerciseRepresenter.new(tasked.reload).to_json)
 
       expect(tasked.task_step(true).completed?).to be_truthy
     end

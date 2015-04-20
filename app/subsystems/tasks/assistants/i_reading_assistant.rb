@@ -174,10 +174,8 @@ class Tasks::Assistants::IReadingAssistant
                   tag: exercise_fragment.embed_tag
                 ]
     exercise = exercises.first
-    Task::TaskedExercise.new(exercise: exercises.first,
-                             title: title,
-                             can_be_recovered: can_be_recovered,
-                             task_step: step)
+    TaskExercise[exercise: exercises.first, title: title,
+                 can_be_recovered: can_be_recovered, task_step: step]
   end
 
   def self.tasked_video(video_fragment:, step:, title: nil)

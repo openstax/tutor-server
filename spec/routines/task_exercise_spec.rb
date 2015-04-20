@@ -12,10 +12,10 @@ RSpec.describe TaskExercise do
     expect(tasked_exercise).not_to be_persisted
     expect(tasked_exercise.can_be_recovered).to eq true
     expect(tasked_exercise.task_step).to eq task_step
-    wrapper = Task::TaskedExercise.new(tasked_exercise)
-    expect(wrapper.exercise).to eq exercise
-    expect(wrapper.url).to eq exercise.url
-    expect(wrapper.title).to eq exercise.title
-    expect(wrapper.content).to eq exercise.content
+    parser = tasked_exercise.parser
+    expect(parser.exercise).to eq exercise
+    expect(parser.url).to eq exercise.url
+    expect(parser.title).to eq exercise.title
+    expect(parser.content).to eq exercise.content
   end
 end

@@ -9,7 +9,7 @@ class MarkTaskStepCompleted
     task_step.save
     transfer_errors_from(task_step, {type: :verbatim}, true)
 
-    Task::TaskedExercise.temp_hack(task_step.tasked).try(:handle_task_step_completion!)
+    task_step.tasked.handle_task_step_completion!
     transfer_errors_from(task_step.tasked, {type: :verbatim}, true)
 
     task = task_step.task
