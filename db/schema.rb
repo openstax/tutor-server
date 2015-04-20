@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150402221032) do
+ActiveRecord::Schema.define(version: 20150420184110) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -60,6 +60,15 @@ ActiveRecord::Schema.define(version: 20150402221032) do
 
   add_index "content_exercises", ["title"], name: "index_content_exercises_on_title", using: :btree
   add_index "content_exercises", ["url"], name: "index_content_exercises_on_url", unique: true, using: :btree
+
+  create_table "content_lo_teks_tags", force: :cascade do |t|
+    t.integer  "lo_id",      null: false
+    t.integer  "teks_id",    null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "content_lo_teks_tags", ["lo_id", "teks_id"], name: "content_lo_teks_tag_lo_teks_uniq", unique: true, using: :btree
 
   create_table "content_page_tags", force: :cascade do |t|
     t.integer  "content_page_id", null: false
@@ -525,6 +534,8 @@ ActiveRecord::Schema.define(version: 20150402221032) do
   add_foreign_key "content_book_parts", "entity_books", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_exercise_tags", "content_exercises", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_exercise_tags", "content_tags", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "content_lo_teks_tags", "content_tags", column: "lo_id"
+  add_foreign_key "content_lo_teks_tags", "content_tags", column: "teks_id"
   add_foreign_key "content_page_tags", "content_pages", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_page_tags", "content_tags", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_pages", "content_book_parts", on_update: :cascade, on_delete: :cascade
