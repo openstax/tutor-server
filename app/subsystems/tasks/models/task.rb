@@ -27,7 +27,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     self.spaced_practice_algorithm ||= SpacedPracticeAlgorithmDoNothing.new
   end
 
-  def is_shared
+  def is_shared?
     taskings.size > 1
   end
 

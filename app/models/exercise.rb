@@ -17,5 +17,5 @@ class Exercise < Entity
   def tag_models
     repository.exercise_tags.includes(:tag).collect{ |et| et.tag }
   end
-  
+
 end

@@ -46,13 +46,13 @@ RSpec.describe Tasks::RefreshTaskStep, :type => :routine do
   it "cannot be called on taskeds without a recovery step" do
     result = nil
     expect {
-      result = Tasks::RefreshTaskedExercise.call(task_step: tasked_reading.task_step)
+      result = Tasks::RefreshTaskStep.call(task_step: tasked_reading.task_step)
     }.not_to change{ tasked_reading.task_step }
     expect(result.errors.first.code).to eq(:recovery_not_available)
 
     result = nil
     expect {
-      result = Tasks::RefreshTaskedExercise.call(task_step: tasked_exercise.task_step)
+      result = Tasks::RefreshTaskStep.call(task_step: tasked_exercise.task_step)
     }.not_to change{ tasked_reading.task_step }
     expect(result.errors.first.code).to eq(:recovery_not_available)
   end
@@ -62,7 +62,7 @@ RSpec.describe Tasks::RefreshTaskStep, :type => :routine do
     recovery_step = nil
     task_step = tasked_exercise_with_recovery.task_step
     expect {
-      result = Tasks::RefreshTaskedExercise.call(
+      result = Tasks::RefreshTaskStep.call(
         task_step: tasked_exercise_with_recovery.task_step
       )
     }.to change{ recovery_step = task_step.reload.next_by_number }
@@ -76,7 +76,7 @@ RSpec.describe Tasks::RefreshTaskStep, :type => :routine do
   end
 
   it "returns a refresh step and a recovery step" do
-    result = Tasks::RefreshTaskedExercise.call(
+    result = Tasks::RefreshTaskStep.call(
         task_step: tasked_exercise_with_recovery.task_step.reload
     )
 

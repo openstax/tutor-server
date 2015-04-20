@@ -1,8 +1,6 @@
 require "rails_helper"
 
-describe Api::V1::TaskStepsController, :type => :controller,
-                                       :api => true,
-                                       :version => :v1 do
+describe Api::V1::TaskStepsController, :type => :controller, :api => true, :version => :v1 do
 
   let!(:application)     { FactoryGirl.create :doorkeeper_application }
   let!(:user_1)          { FactoryGirl.create :user_profile }
@@ -27,7 +25,7 @@ describe Api::V1::TaskStepsController, :type => :controller,
   let!(:task)            { task_step.task.reload }
 
   let!(:tasking)         { FactoryGirl.create :tasks_tasking, role: user_1_role,
-                                                        task: task.entity_task }
+                                                              task: task.entity_task }
 
   let!(:tasked_exercise) {
     te = FactoryGirl.build :tasks_tasked_exercise
@@ -47,9 +45,7 @@ describe Api::V1::TaskStepsController, :type => :controller,
     te = FactoryGirl.build(
       :tasks_tasked_exercise,
       can_be_recovered: true,
-      content: OpenStax::Exercises::V1.fake_client
-                                      .new_exercise_hash(tags: [lo.name])
-                                      .to_json
+      content: OpenStax::Exercises::V1.fake_client.new_exercise_hash(tags: [lo.name]).to_json
     )
     te.task_step.task = task
     te.save!
@@ -59,9 +55,8 @@ describe Api::V1::TaskStepsController, :type => :controller,
   let!(:recovery_exercise) { FactoryGirl.create(
     :content_exercise,
     content: OpenStax::Exercises::V1.fake_client
-                                    .new_exercise_hash(
-                                      tags: [lo.name, pp.name]
-                                    ).to_json
+                                    .new_exercise_hash(tags: [lo.name, pp.name])
+                                    .to_json
   ) }
   let!(:recovery_tagging_1)   { FactoryGirl.create(
     :content_exercise_tag, exercise: recovery_exercise, tag: lo
@@ -72,8 +67,7 @@ describe Api::V1::TaskStepsController, :type => :controller,
 
   describe "#show" do
     it "should work on the happy path" do
-      api_get :show, user_1_token, parameters: { task_id: task_step.task.id,
-                                                 id: task_step.id }
+      api_get :show, user_1_token, parameters: { task_id: task_step.task.id, id: task_step.id }
       expect(response).to have_http_status(:success)
 
       expect(response.body_as_hash).to eq({
@@ -91,8 +85,7 @@ describe Api::V1::TaskStepsController, :type => :controller,
   describe "PATCH update" do
 
     let!(:tasked) { create_tasked(:tasked_exercise, user_1_role) }
-    let!(:id_parameters) { { task_id: tasked.task_step.task.id,
-                             id: tasked.task_step.id } }
+    let!(:id_parameters) { { task_id: tasked.task_step.task.id, id: tasked.task_step.id } }
 
     it "updates the free response of an exercise" do
       api_put :update, user_1_token, parameters: id_parameters,
@@ -101,7 +94,7 @@ describe Api::V1::TaskStepsController, :type => :controller,
       expect(response).to have_http_status(:success)
 
       expect(response.body).to eq(
-        Api::V1::TaskedExerciseRepresenter.new(tasked.reload).to_json
+        Api::V1::Tasks::TaskedExerciseRepresenter.new(tasked.reload).to_json
       )
 
       expect(tasked.reload.free_response).to eq "Ipsum lorem"
@@ -118,7 +111,7 @@ describe Api::V1::TaskStepsController, :type => :controller,
       expect(response).to have_http_status(:success)
 
       expect(response.body).to eq(
-        Api::V1::TaskedExerciseRepresenter.new(tasked.reload).to_json
+        Api::V1::Tasks::TaskedExerciseRepresenter.new(tasked.reload).to_json
       )
 
       expect(tasked.reload.answer_id).to eq answer_id
@@ -150,7 +143,7 @@ describe Api::V1::TaskStepsController, :type => :controller,
       tasked = recovery_step.tasked
 
       expect(response.body).to(
-        eq Api::V1::TaskedExerciseRepresenter.new(tasked).to_json
+        eq Api::V1::Tasks::TaskedExerciseRepresenter.new(tasked).to_json
       )
 
       expect(tasked.los & tasked_exercise_with_recovery.parser.los).not_to be_empty
@@ -202,7 +195,7 @@ describe Api::V1::TaskStepsController, :type => :controller,
       tasked = recovery_step.tasked
 
       expect(hash['recovery_step']).to eq JSON.parse(
-        Api::V1::TaskedExerciseRepresenter.new(tasked).to_json
+        Api::V1::Tasks::TaskedExerciseRepresenter.new(tasked).to_json
       )
 
       expect(tasked.los & tasked_exercise_with_recovery.parser.los).not_to be_empty
@@ -247,7 +240,7 @@ describe Api::V1::TaskStepsController, :type => :controller,
 
       expect(response).to have_http_status(:success)
 
-      expect(response.body).to eq(Api::V1::TaskedReadingRepresenter.new(
+      expect(response.body).to eq(Api::V1::Tasks::TaskedReadingRepresenter.new(
         tasked.reload
       ).to_json)
 
@@ -268,7 +261,9 @@ describe Api::V1::TaskStepsController, :type => :controller,
 
       expect(response).to have_http_status(:success)
 
-      expect(response.body).to eq(Api::V1::TaskedExerciseRepresenter.new(tasked.reload).to_json)
+      expect(response.body).to eq(
+        Api::V1::Tasks::TaskedExerciseRepresenter.new(tasked.reload).to_json
+      )
 
       expect(tasked.task_step(true).completed?).to be_truthy
     end
@@ -294,8 +289,7 @@ describe Api::V1::TaskStepsController, :type => :controller,
     # Make sure the type has the tasks_ prefix
     type = type.to_s.starts_with?("tasks_") ? type : "tasks_#{type}".to_sym
     tasked = FactoryGirl.create(type)
-    tasking = FactoryGirl.create(:tasks_tasking,
-                                 role: owner,
+    tasking = FactoryGirl.create(:tasks_tasking, role: owner,
                                  task: tasked.task_step.task.entity_task)
     tasked
   end

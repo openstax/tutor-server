@@ -13,7 +13,6 @@ RSpec.describe TaskExercise do
     expect(tasked_exercise.can_be_recovered).to eq true
     expect(tasked_exercise.task_step).to eq task_step
     parser = tasked_exercise.parser
-    expect(parser.exercise).to eq exercise
     expect(parser.url).to eq exercise.url
     expect(parser.title).to eq exercise.title
     expect(parser.content).to eq exercise.content

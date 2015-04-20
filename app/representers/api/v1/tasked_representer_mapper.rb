@@ -12,7 +12,7 @@ module Api::V1
     end
 
     def self.representer_for(task_step_or_tasked)
-      tasked_class = task_step_or_tasked.is_a?(Tasks::Models::TaskStep) ?
+      tasked_class = task_step_or_tasked.is_a?(::Tasks::Models::TaskStep) ?
                        task_step_or_tasked.tasked.class :
                        task_step_or_tasked.class
       representer = map[tasked_class].call
@@ -31,11 +31,11 @@ module Api::V1
 
     def self.map
       @@map ||= {
-        ::Tasks::Models::TaskedReading     => ->(*){Tasks::TaskedReadingRepresenter},
-        ::Tasks::Models::TaskedExercise    => ->(*){Tasks::TaskedExerciseRepresenter},
-        ::Tasks::Models::TaskedPlaceholder => ->(*){Tasks::TaskedPlaceholderRepresenter},
-        ::Tasks::Models::TaskedVideo       => ->(*){Tasks::TaskedVideoRepresenter},
-        ::Tasks::Models::TaskedInteractive => ->(*){Tasks::TaskedInteractiveRepresenter}
+        ::Tasks::Models::TaskedReading     => ->(*) {Api::V1::Tasks::TaskedReadingRepresenter},
+        ::Tasks::Models::TaskedExercise    => ->(*) {Api::V1::Tasks::TaskedExerciseRepresenter},
+        ::Tasks::Models::TaskedPlaceholder => ->(*) {Api::V1::Tasks::TaskedPlaceholderRepresenter},
+        ::Tasks::Models::TaskedVideo       => ->(*) {Api::V1::Tasks::TaskedVideoRepresenter},
+        ::Tasks::Models::TaskedInteractive => ->(*) {Api::V1::Tasks::TaskedInteractiveRepresenter}
       }
     end
 

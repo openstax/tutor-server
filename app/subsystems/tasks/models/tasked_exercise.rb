@@ -38,7 +38,7 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     stem_html.gsub!(%r{\<!-- debug_begin --\>(?m:.*?)\</pre\>\<!-- debug_end --\>}, '')
     stem_html += "<!-- debug_begin --><pre>#{new_debug_content}</pre><!-- debug_end -->"
     json_hash['questions'].first['stem_html'] = stem_html
-    repository.content = json_hash.to_json
+    self.content = json_hash.to_json
   end
 
   # The following 3 methods assume only 1 Question
@@ -60,6 +60,10 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
 
   def is_correct?
     correct_question_answer_ids.flatten.include?(answer_id)
+  end
+
+  def can_be_answered?
+    true
   end
 
   def can_be_recovered?

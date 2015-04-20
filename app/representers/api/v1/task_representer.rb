@@ -50,7 +50,8 @@ module Api::V1
                description: "When the task is due (nil means never due)"
              }
 
-    property :is_shared,
+    property :is_shared?,
+             as: :is_shared,
              writeable: false,
              readable: true,
              schema_info: {
@@ -62,9 +63,7 @@ module Api::V1
                as: :steps,
                writeable: false,
                readable: true,
-               # render and decorate the Tasked's, not the TaskSteps
-               getter: -> (*) { task_steps.collect{ |ts| ts.tasked } },
-               decorator: Api::V1::TaskedRepresenterMapper.new,
+               decorator: TaskStepRepresenter,
                schema_info: {
                  required: true,
                  description: "The steps which this Task is composed of"

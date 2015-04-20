@@ -25,8 +25,8 @@ RSpec.describe Api::V1::TaskedRepresenterMapper do
     it 'returns all tasked representers' do
       # Get all the Tasked.*Representer classes
       expected_tasked_representers = Set.new Dir[
-        'app/representers/api/v1/tasked*_representer.rb'
-      ].collect{ |f| f.remove('app/representers/api/v1/')
+        'app/representers/api/v1/tasks/tasked*_representer.rb'
+      ].collect{ |f| f.remove('app/representers/api/v1/tasks/')
                       .remove('.rb').classify }
 
       # Get all the representers in the mapper
@@ -45,7 +45,7 @@ RSpec.describe Api::V1::TaskedRepresenterMapper do
       task_step = FactoryGirl.create :tasks_task_step
 
       expect(mapper.representer_for(task_step)).to(
-        eq(Api::V1::TaskedReadingRepresenter)
+        eq(Api::V1::Tasks::TaskedReadingRepresenter)
       )
     end
 
@@ -53,7 +53,7 @@ RSpec.describe Api::V1::TaskedRepresenterMapper do
       tasked_video = FactoryGirl.create :tasks_tasked_video
 
       expect(mapper.representer_for(tasked_video)).to(
-        eq(Api::V1::TaskedVideoRepresenter)
+        eq(Api::V1::Tasks::TaskedVideoRepresenter)
       )
     end
   end
