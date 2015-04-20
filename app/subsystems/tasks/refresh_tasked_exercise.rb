@@ -1,4 +1,4 @@
-class RefreshTaskedExercise
+class Tasks::RefreshTaskedExercise
 
   lev_routine
 

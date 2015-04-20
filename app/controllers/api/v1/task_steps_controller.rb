@@ -47,7 +47,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     tasked = Tasks::Models::TaskStep.find(params[:id]).tasked
     OSU::AccessPolicy.require_action_allowed!(:recover, current_api_user, tasked)
 
-    result = RecoverTaskedExercise[tasked_exercise: tasked]
+    result = Tasks::RecoverTaskedExercise[tasked_exercise: tasked]
 
     if result.errors.any?
       render_api_errors(result.errors)
@@ -67,7 +67,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     tasked = Tasks::Models::TaskStep.find(params[:id]).tasked
     OSU::AccessPolicy.require_action_allowed!(:refresh, current_api_user, tasked)
 
-    result = RefreshTaskedExercise[tasked_exercise: tasked]
+    result = Tasks::RefreshTaskedExercise[tasked_exercise: tasked]
 
     if result.errors.any?
       render_api_errors(result.errors)

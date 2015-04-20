@@ -1,4 +1,4 @@
-class RecoverTaskedExercise
+class Tasks::RecoverTaskedExercise
 
   lev_routine
 
