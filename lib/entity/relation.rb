@@ -3,12 +3,15 @@ require 'entity'
 class Entity
   class Relation < Entity
 
+    # Expose all relation methods by default
     self._passthrough = true
 
+    # The constructor for Entity::Relation only accepts an ActiveRecord::Relation object
     def initialize(repository)
       @repository = repository
     end
 
+    # Same as ActiveRecord::Relation's inspect, but wraps entry class names
     def inspect
       return to_s if @repository.nil?
 
