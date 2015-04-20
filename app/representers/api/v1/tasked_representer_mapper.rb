@@ -31,11 +31,11 @@ module Api::V1
 
     def self.map
       @@map ||= {
-        Tasks::Models::TaskedReading     => ->(*){Tasks::TaskedReadingRepresenter},
-        Tasks::Models::TaskedExercise    => ->(*){Tasks::TaskedExerciseRepresenter},
-        Tasks::Models::TaskedPlaceholder => ->(*){Tasks::TaskedPlaceholderRepresenter},
-        Tasks::Models::TaskedVideo       => ->(*){Tasks::TaskedVideoRepresenter},
-        Tasks::Models::TaskedInteractive => ->(*){Tasks::TaskedInteractiveRepresenter}
+        ::Tasks::Models::TaskedReading     => ->(*){Tasks::TaskedReadingRepresenter},
+        ::Tasks::Models::TaskedExercise    => ->(*){Tasks::TaskedExerciseRepresenter},
+        ::Tasks::Models::TaskedPlaceholder => ->(*){Tasks::TaskedPlaceholderRepresenter},
+        ::Tasks::Models::TaskedVideo       => ->(*){Tasks::TaskedVideoRepresenter},
+        ::Tasks::Models::TaskedInteractive => ->(*){Tasks::TaskedInteractiveRepresenter}
       }
     end
 

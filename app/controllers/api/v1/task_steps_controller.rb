@@ -27,7 +27,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
   api :PUT, '/steps/:step_id/completed',
             'Marks the specified TaskStep as completed (if applicable)'
   def completed
-    tasked = Tasks::Models::TaskStep.find(params[:id]).tasked
+    task_step = Tasks::Models::TaskStep.find(params[:id])
     OSU::AccessPolicy.require_action_allowed!(:mark_completed, current_api_user, tasked)
 
     result = MarkTaskStepCompleted.call(task_step: task_step)
@@ -44,10 +44,10 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
   api :PUT, '/steps/:step_id/recovery',
             'Requests an exercise similar to the given one for credit recovery'
   def recovery
-    tasked = Tasks::Models::TaskStep.find(params[:id]).tasked
+    task_step = Tasks::Models::TaskStep.find(params[:id])
     OSU::AccessPolicy.require_action_allowed!(:recover, current_api_user, tasked)
 
-    result = Tasks::RecoverTaskedExercise[tasked_exercise: tasked]
+    result = Tasks::RecoverTaskStep[task_step: task_step]
 
     if result.errors.any?
       render_api_errors(result.errors)
@@ -64,10 +64,10 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     #{json_schema(Api::V1::RefreshRepresenter, include: :readable)}
   EOS
   def refresh
-    tasked = Tasks::Models::TaskStep.find(params[:id]).tasked
+    task_step = Tasks::Models::TaskStep.find(params[:id])
     OSU::AccessPolicy.require_action_allowed!(:refresh, current_api_user, tasked)
 
-    result = Tasks::RefreshTaskedExercise[tasked_exercise: tasked]
+    result = Tasks::RefreshTaskStep[task_step: task_step]
 
     if result.errors.any?
       render_api_errors(result.errors)

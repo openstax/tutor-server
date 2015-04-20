@@ -1,15 +1,14 @@
-class Tasks::RefreshTaskedExercise
+class Tasks::RefreshTaskStep
 
   lev_routine
 
-  uses_routine Tasks::RecoverTaskedExercise,
+  uses_routine Tasks::RecoverTaskStep,
                as: :recover, translations: { outputs: { type: :verbatim } }
 
   protected
 
-  def exec(tasked_exercise:)
-    task_step = tasked_exercise.task_step
-    run(:recover, tasked_exercise: tasked_exercise)
+  def exec(task_step:)
+    run(:recover, task_step: task_step)
 
     outputs[:refresh_step] = refresh_step_for(task_step: task_step)
   end

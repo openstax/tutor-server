@@ -1,4 +1,4 @@
-class Tasks::RecoverTaskedExercise
+class Tasks::RecoverTaskStep
 
   lev_routine
 
@@ -7,15 +7,12 @@ class Tasks::RecoverTaskedExercise
 
   protected
 
-  def exec(tasked_exercise:)
-    fatal_error(code: :recovery_not_available) \
-      unless tasked_exercise.respond_to?(:can_be_recovered) && tasked_exercise.can_be_recovered
+  def exec(task_step:)
+    fatal_error(code: :recovery_not_available) unless task_step.can_be_recovered?
 
-    recovery_exercise = get_recovery_exercise_for(tasked_exercise: tasked_exercise)
+    recovery_exercise = get_recovery_exercise_for(task_step: task_step)
 
     fatal_error(code: :recovery_not_found) if recovery_exercise.nil?
-
-    task_step = tasked_exercise.task_step
 
     recovery_step = create_task_step_after(task_step: task_step, exercise: recovery_exercise)
     transfer_errors_from(recovery_step, type: :verbatim)
@@ -35,8 +32,7 @@ class Tasks::RecoverTaskedExercise
     step = Tasks::Models::TaskStep.new(
       task: task, number: task_step.number + 1
     )
-    step.tasked = run(:task_exercise, task_step: step, exercise: exercise)
-                    .outputs.tasked_exercise
+    step.tasked = run(:task_exercise, task_step: step, exercise: exercise).outputs.tasked_exercise
     task.task_steps << step
     step.save!
     step
@@ -44,14 +40,13 @@ class Tasks::RecoverTaskedExercise
 
   # Finds an Exercise with all the required tags and at least one LO
   # Prefers unassigned Exercises
-  def get_recovery_exercise_for(tasked_exercise:,
-                                required_tag_names: ['practice-problem'])
+  def get_recovery_exercise_for(task_step:, required_tag_names: ['practice-problem'])
 
     # Randomize LO order
-    los = tasked_exercise.los.shuffle
+    los = task_step.tasked.los.shuffle
 
     # Try to find unassigned exercises first
-    taskees = tasked_exercise.task_step.task.taskings.collect{|t| t.role}
+    taskees = task_step.task.taskings.collect{|t| t.role}
     los.each do |lo|
       exercise = run(:search,
         not_assigned_to: taskees,
