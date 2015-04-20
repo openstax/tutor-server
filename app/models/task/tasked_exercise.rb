@@ -2,8 +2,9 @@ class Task::TaskedExercise < Entity
 
   wraps Tasks::Models::TaskedExercise
 
-  exposes :url, :title, :content, :exercise, :task_step, :los,
-          :answer_id, :answer_ids, :free_response, :transaction
+  instance_exposes :url, :title, :content, :exercise, :task_step, :los,
+                   :answer_id, :answer_ids, :free_response
+  class_exposes :transaction
 
   delegate :uid, :questions, :question_formats, :question_answers, :question_answer_ids,
            :correct_question_answers, :correct_question_answer_ids,
@@ -16,7 +17,7 @@ class Task::TaskedExercise < Entity
   end
 
   def self.temp_hack(t)
-    t.is_a?(Tasks::Models::TaskedExercise) ? new(t).passthrough : t
+    t.is_a?(Tasks::Models::TaskedExercise) ? new(t) : t
   end
 
   def handle_task_step_completion!
