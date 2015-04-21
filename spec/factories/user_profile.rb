@@ -13,11 +13,11 @@ FactoryGirl.define do
 
     after(:build) do |user, evaluator|
       user.account ||= FactoryGirl.build(:openstax_accounts_account,
-                                       username: evaluator.username,
-                                       first_name: evaluator.first_name,
-                                       last_name: evaluator.last_name,
-                                       full_name: evaluator.full_name,
-                                       title: evaluator.title)
+                                         username: evaluator.username,
+                                         first_name: evaluator.first_name,
+                                         last_name: evaluator.last_name,
+                                         full_name: evaluator.full_name,
+                                         title: evaluator.title)
       user.entity_user ||= Entity::User.new
     end
 
