@@ -63,42 +63,5 @@ FactoryGirl.define do
       }}
     end
 
-    trait :two_level_nested_with_preface do
-      contents do
-        {
-          title: 'Root',
-          book_parts: [
-            {
-              title: 'Preface'
-            },
-            {
-              title: 'Chapter 1',
-              pages: [
-                {
-                  title: 'First page',
-                  los: ['ost-tag-lo-topic1-lo1', 'ost-tag-lo-topic2-lo2'],
-                  path: '1.1'
-                },
-                {
-                  title: 'Second page',
-                  los: ['ost-tag-lo-topic2-lo2', 'ost-tag-lo-topic3-lo3'],
-                  path: '1.2'
-                }
-              ]
-            },
-            {
-              title: 'Chapter 2',
-              pages: [
-                {
-                  title: 'Third page',
-                  los: ['ost-tag-lo-topic4-lo4'],
-                  path: '1.3'
-                }
-              ]
-            }
-          ]
-        }
-      end
-    end
   end
 end
