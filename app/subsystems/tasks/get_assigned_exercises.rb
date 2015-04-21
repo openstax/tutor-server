@@ -5,7 +5,7 @@ class Tasks::GetAssignedExercises
 
   protected
 
-  def exec(roles:, relation: Exercise.all)
+  def exec(roles:, relation: Content::Models::Exercise.all)
     role_ids = verify_and_get_id_array(roles, Entity::Role)
 
     outputs[:exercises] = relation.joins(
