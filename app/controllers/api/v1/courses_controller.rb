@@ -113,7 +113,11 @@ class Api::V1::CoursesController < Api::V1::ApiController
   description nil
   def stats
     course = Entity::Course.find(params[:id])
-    course_stats = GetUserCourseStats[user: current_human_user.entity_user, course: course]
+    role = ChooseCourseRole[course: course,
+                            user: current_human_user.entity_user,
+                            allowed_role_type: :student,
+                            role_id: params[:role_id]]
+    course_stats = GetCourseStats[role: role, course: course]
     respond_with course_stats, represent_with: Api::V1::CourseStatsRepresenter
   end
 
