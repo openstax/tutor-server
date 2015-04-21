@@ -147,7 +147,7 @@ GEM
     docile (1.1.5)
     domain_name (0.5.23)
       unf (>= 0.0.5, < 1.0.0)
-    doorkeeper (2.1.4)
+    doorkeeper (2.2.0)
       railties (>= 3.2)
     erubis (2.7.0)
     eventmachine (1.0.7)
@@ -248,7 +248,7 @@ GEM
       representable (>= 2.0)
       roar (>= 1.0)
       squeel (>= 0.5.0)
-    openstax_api (5.2.2)
+    openstax_api (5.3.0)
       doorkeeper (>= 2.0)
       exception_notification (>= 4.0)
       lev (>= 1.0.0)
@@ -497,7 +497,7 @@ DEPENDENCIES
   newrelic_rpm
   nifty-generators
   openstax_accounts (~> 5.0.1)
-  openstax_api (~> 5.2.2)
+  openstax_api (~> 5.3.0)
   openstax_exchange
   openstax_utilities (~> 4.2.0)
   pg
