@@ -47,6 +47,8 @@ class Content::VisitBookPart
         outputs[:exercises] = Content::Models::ExerciseVisitor.new
       when 'page_data'
         outputs[:page_data] = Content::Models::PageDataVisitor.new
+      else
+        raise "undefined visitor #{name}. Try one of toc, exercises, page_data"
       end
     end
   end
