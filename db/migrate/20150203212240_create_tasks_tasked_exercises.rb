@@ -10,7 +10,7 @@ class CreateTasksTaskedExercises < ActiveRecord::Migration
 
       t.timestamps null: false
 
-      t.index :content_exercise_id
+      t.index :url
     end
 
   end
