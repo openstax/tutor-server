@@ -80,7 +80,7 @@ class ChooseCourseRole
     if matching_roles.many?
       fatal_error(
         code:    :multiple_roles,
-        message: "The user has multiple #{role_name} roles in the course (specifiy role to narrow selection)"
+        message: "The user has multiple #{type} roles in the course (specifiy role to narrow selection)"
       )
     end
 
