@@ -5,7 +5,7 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
 
   validates :url, presence: true
   validates :content, presence: true
-  validate :valid_state, :valid_answer, :not_completed
+  validate :valid_state, :valid_answer, :no_feedback
 
   delegate :uid, :questions, :question_formats, :question_answers, :question_answer_ids,
            :correct_question_answers, :correct_question_answer_ids, :feedback_map,
@@ -97,11 +97,13 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     false
   end
 
-  def not_completed
-    # Cannot change the answer after exercise is turned in
-    return if task_step.try(:completed_at_was).blank?
+  def no_feedback
+    # Cannot change the answer after feedback is available
+    # Feedback is available immediately for iReadings, or at the due date for HW,
+    # but waits until the step is marked as completed
+    return unless task_step.try(:feedback_available?)
 
-    errors.add(:base, 'cannot be updated after it is marked as completed')
+    errors.add(:base, 'cannot be updated after feedback becomes available')
     false
   end
 end
