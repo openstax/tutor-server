@@ -1,5 +1,6 @@
 require 'rails_helper'
 require 'vcr_helper'
+require './lib/tasks/sprint/sprint_009/sp'
 
 RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
                                            :version => :v1, :vcr => VCR_OPTS do
