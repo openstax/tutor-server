@@ -1,16 +1,11 @@
 class Entity
 
+  # Class methods
+
   # Keep track of which AR classes are wrapped by which Entities and vice-versa
   cattr_reader :_wrapped_classes, :_unwrapped_classes
   @@_wrapped_classes = {}
   @@_unwrapped_classes = {}
-
-  class << ActiveRecord::Base
-    # Lists the Entity that wraps this class for autoload purposes
-    def wrapped_by(entity_class)
-      entity_class.wraps(self)
-    end
-  end
 
   class << self
     # Lists class methods that are part of the API
@@ -51,9 +46,9 @@ class Entity
     end
 
     # Lists the class that is wrapped by this Entity
+    # Required for the Entity to function
     def wraps(klass)
-      _wrapped_classes[klass.name] ||= self
-      _unwrapped_classes[name] ||= klass
+      _unwrapped_classes[name] = klass
       instance_exposes(klass.respond_to?(:primary_key) ? klass.primary_key.to_sym : :id)
     end
 
@@ -67,7 +62,7 @@ class Entity
     # For internal use only
     def _wrap(obj)
       case obj
-      when ActiveRecord::Relation
+      when ::ActiveRecord::Relation
         Entity::Relation.new(obj)
       when Class
         _wrapped_classes[obj.name] || obj
@@ -105,6 +100,8 @@ class Entity
       end
     end
   end
+
+  # Instance methods
 
   # The instance object being wrapped
   attr_reader :repository
@@ -146,4 +143,5 @@ class Entity
 
 end
 
+require 'entity/active_record/base/class_methods'
 require 'entity/relation'
