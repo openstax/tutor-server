@@ -13,10 +13,6 @@ RSpec.describe Entity, type: :lib do
       object_id
     end
 
-    def self.class_name
-      name
-    end
-
     def self.find
       new
     end
@@ -39,17 +35,16 @@ RSpec.describe Entity, type: :lib do
   class DummyEntity < Entity
     wraps Dummy
 
-    class_exposes :class_id, :class_name, :find, :new
-
-    instance_exposes :instance_id, :related_dummy
+    exposes :class_id, :find, :new, from_class: Dummy
+    exposes :instance_id, :related_dummy
   end
 
   let!(:dummy_instance) { Dummy.new }
   let!(:dummy_entity)   { DummyEntity.new dummy_instance }
 
   it 'remembers which classes are wrapped by which entities' do
-    expect(Entity._wrapped_classes[Dummy.name]).to eq DummyEntity
-    expect(Entity._unwrapped_classes[DummyEntity.name]).to eq Dummy
+    expect(Entity._wrap_class_procs[Dummy.name].call(dummy_instance)).to eq DummyEntity
+    expect(Entity._unwrapped_classes[DummyEntity.name]).to include(Dummy)
   end
 
   it 'can expose instance and class methods' do
@@ -60,10 +55,7 @@ RSpec.describe Entity, type: :lib do
     expect(dummy_entity.instance_id).to eq dummy_instance.instance_id
   end
 
-  it 'automatically wraps classes and class names' do
-    expect(DummyEntity).to respond_to :class_name
-    expect(DummyEntity.class_name).to eq 'DummyEntity'
-
+  it 'automatically wraps classes' do
     expect(DummyEntity).to respond_to :find
     found = DummyEntity.find
     expect(found).to be_a DummyEntity

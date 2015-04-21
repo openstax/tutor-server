@@ -12,7 +12,7 @@ class Entity
     it 'adds wrapped_by to classes that extend it' do
       expect(DummyClass).to respond_to(:wrapped_by)
       DummyClass.wrapped_by DummyEntityClass
-      expect(Entity._wrapped_classes[DummyClass.name]).to eq DummyEntityClass
+      expect(Entity._wrap_class_procs[DummyClass.name].call(DummyClass.new)).to eq DummyEntityClass
     end
   end
 end
