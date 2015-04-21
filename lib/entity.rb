@@ -113,10 +113,12 @@ class Entity
   def initialize(args = {})
     if self.class._repository_classes.include?(args.class)
       @repository = args
+    elsif self.class._repository_classes.empty?
+      raise "#{self.class.name} does not wrap any classes."
     else
-      raise ArgumentError, "When initializing #{self.class}, you must pass either #{
-                           self.class._repository_classes.join(', ')} or another #{
-                           self.class} as an argument."
+      raise ArgumentError, "When initializing #{self.class.name}, you must pass either #{
+                           self.class._repository_classes.to_a.join(', ')} or another #{
+                           self.class.name} as an argument."
     end
   end
 

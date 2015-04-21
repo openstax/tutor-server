@@ -4,6 +4,9 @@ RSpec.describe Entity, type: :lib do
   class DummyEntity < Entity
   end
 
+  class AnotherDummyEntity < Entity
+  end
+
   class Dummy
     extend Entity::ClassMethods
 
@@ -32,11 +35,30 @@ RSpec.describe Entity, type: :lib do
     end
   end
 
+  class AnotherDummy
+    extend Entity::ClassMethods
+
+    attr_accessor :type
+
+    wrapped_by do |instance|
+      case instance.type
+      when 'another'
+        AnotherDummyEntity
+      else
+        DummyEntity
+      end
+    end
+  end
+
   class DummyEntity < Entity
-    wraps Dummy
+    wraps Dummy, AnotherDummy
 
     exposes :class_id, :find, :new, from_class: Dummy
     exposes :instance_id, :related_dummy
+  end
+
+  class AnotherDummyEntity < Entity
+    wraps AnotherDummy
   end
 
   let!(:dummy_instance) { Dummy.new }
@@ -84,5 +106,21 @@ RSpec.describe Entity, type: :lib do
     expect(dummy_entity == dummy_entity_2).to eq true
     expect(dummy_entity.eql? dummy_entity_2).to eq true
     expect(dummy_entity.equal? dummy_entity_2).to eq false
+  end
+
+  it 'can wrap multiple classes and a class can be wrapped by multiple entities' do
+    entity_1 = DummyEntity.new(dummy_instance)
+    expect(entity_1._repository).to be_a(Dummy)
+
+    another_dummy_instance = AnotherDummy.new
+    entity_2 = DummyEntity.new(another_dummy_instance)
+    expect(entity_2._repository).to be_a(AnotherDummy)
+
+    entity_3 = Entity._wrap(another_dummy_instance)
+    expect(entity_3).to be_a(DummyEntity)
+
+    another_dummy_instance.type = 'another'
+    entity_4 = Entity._wrap(another_dummy_instance)
+    expect(entity_4).to be_a(AnotherDummyEntity)
   end
 end
