@@ -1,5 +1,5 @@
 module Tasks
-  class GetRoleTaskSteps
+  class GetRoleCompletedTaskSteps
     lev_routine express_output: :task_steps
 
     uses_routine GetTasks,
