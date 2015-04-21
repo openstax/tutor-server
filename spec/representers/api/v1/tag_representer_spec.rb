@@ -3,25 +3,40 @@ require 'rails_helper'
 RSpec.describe Api::V1::TagRepresenter, type: :representer do
 
   let!(:lo_tag) {
-    FactoryGirl.create(:content_tag,
-                       value: 'ost-tag-lo-k12phys-ch04-s01-lo01',
-                       name: '(4C)',
-                       tag_type: 1,
-                       description: 'analyze and describe accelerated motion in two dimensions')
+    FactoryGirl.create :content_tag,
+                       value: 'k12phys-ch04-s02-lo02',
+                       tag_type: :lo,
+                       name: 'Discuss the relationship between mass and inertia',
+                       description: nil
   }
 
-  let!(:generic_tag) {
-    FactoryGirl.create(:content_tag)
+  let!(:teks_tag) {
+    FactoryGirl.create :content_tag,
+                       value: 'ost-tag-teks-112-39-c-4d',
+                       tag_type: :teks,
+                       name: '(D)',
+                       description: 'calculate the effect of forces on objects'
   }
+
+  let!(:generic_tag) { FactoryGirl.create :content_tag }
 
   it 'represents a LO tag' do
     representation = Api::V1::TagRepresenter.new(lo_tag).as_json
     expect(representation).to eq(
-      'id' => 'ost-tag-lo-k12phys-ch04-s01-lo01',
-      'name' => '(4C)',
-      'description' => 'analyze and describe accelerated motion in two dimensions',
+      'id' => 'k12phys-ch04-s02-lo02',
+      'name' => 'Discuss the relationship between mass and inertia',
       'type' => 'lo',
-      'chapter_section' => '4.1'
+      'chapter_section' => '4.2'
+    )
+  end
+
+  it 'represents a TEKS tag' do
+    representation = Api::V1::TagRepresenter.new(teks_tag).as_json
+    expect(representation).to eq(
+      'id' => 'ost-tag-teks-112-39-c-4d',
+      'name' => '(D)',
+      'description' => 'calculate the effect of forces on objects',
+      'type' => 'teks',
     )
   end
 

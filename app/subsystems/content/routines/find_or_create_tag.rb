@@ -11,6 +11,8 @@ class Content::Routines::FindOrCreateTag
   #       name:        the name of the tag
   #       description: the tag's description
   #       type:        the type of the tag, one of Content::Models::Tag.tag_types
+  #       teks:        a raw value of a (possibly non-existent) TEKS tag to link
+  #                    to (type must be "lo")
   # Type can be set optionally for inputs of type String, must be one of
   #   Content::Models::Tag.tag_types
   #
@@ -43,6 +45,17 @@ class Content::Routines::FindOrCreateTag
       description: hash[:description],
       tag_type: hash[:type],
     )
+
+    # If the hash mentions a TEKS tag, link it
+
+    teks_value = hash[:teks]
+
+    if teks_value
+      raise "Can only link TEKS tags to LOs" if tag.tag_type != "lo"
+
+      teks_tag = Content::Models::Tag.find_or_initialize_by(value: teks_value.to_s)
+      Content::Models::LoTeksTag.create(lo: tag, teks: teks_tag)
+    end
 
     tag
   end

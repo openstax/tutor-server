@@ -166,13 +166,16 @@ module OpenStax::Cnx::V1
       doc.css('[class^="ost-learning-objective-def"]').each do |node|
         classes = node.attr('class').split
         lo_value = LO_REGEX.match(classes[1]).try(:[], 1)
+        teks_value = classes[2]
         next if lo_value.nil?
+        teks_value = classes[2]
         name = node.content.strip
         name.gsub!(/\s+/, ' ')
         @tags[lo_value] ||= {}
         @tags[lo_value].merge!({
           value: lo_value,
           name: name,
+          teks: teks_value,
           type: :lo
         })
       end

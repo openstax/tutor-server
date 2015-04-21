@@ -37,11 +37,13 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, :vcr => VCR_OPTS do
                     value: 'k12phys-ch04-s02-lo01',
                     type: :lo,
                     name: 'Describe Newton\'s first law and friction MATHMATH',
+                    teks: 'ost-tag-teks-112-39-c-4d'
                   },
                   {
                     value: 'k12phys-ch04-s02-lo02',
                     type: :lo,
                     name: 'Discuss the relationship between mass and inertia',
+                    teks: 'ost-tag-teks-112-39-c-4d'
                   }
                 ],
                 fragment_classes: [OpenStax::Cnx::V1::Fragment::Text,
@@ -71,11 +73,13 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, :vcr => VCR_OPTS do
                     value: 'k12phys-ch04-s01-lo01',
                     type: :lo,
                     name: 'Differentiate between force, net force and dynamics',
+                    teks: 'ost-tag-teks-112-39-c-4c'
                   },
                   {
                     value: 'k12phys-ch04-s01-lo02',
                     type: :lo,
                     name: 'Draw a free-body diagram',
+                    teks: 'ost-tag-teks-112-39-c-4e'
                   },
                   {
                     value: 'ost-tag-teks-112-39-c-4c',
@@ -102,11 +106,13 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, :vcr => VCR_OPTS do
                     value: 'k12phys-ch04-s02-lo01',
                     type: :lo,
                     name: 'Describe Newton\'s first law and friction a∝1ma∝1m',
+                    teks: 'ost-tag-teks-112-39-c-4d'
                   },
                   {
                     value: 'k12phys-ch04-s02-lo02',
                     type: :lo,
                     name: 'Discuss the relationship between mass and inertia',
+                    teks: 'ost-tag-teks-112-39-c-4d'
                   },
                   {
                     value: 'ost-tag-teks-112-39-c-4d',
