@@ -1,5 +1,9 @@
-class GetUserCourseStats
+class GetCourseStats
   lev_routine express_output: :course_stats
+
+  uses_routine Tasks::GetTasks,
+    translations: { outputs: { type: :verbatim } },
+    as: :get_tasks
 
   uses_routine CourseContent::GetCourseBooks,
     translations: { outputs: { type: :verbatim } },
@@ -10,7 +14,8 @@ class GetUserCourseStats
     as: :get_book_toc
 
   protected
-  def exec(user:, course:)
+  def exec(role:, course:)
+    run(:get_tasks, roles: role)
     run(:get_course_books, course: course)
     run(:get_book_toc, book: outputs.books.first, visitor_names: :toc)
     compile_course_stats
@@ -25,6 +30,7 @@ class GetUserCourseStats
   end
 
   def compile_toc_for_fields
+    binding.pry
     outputs.toc.from(1).map do |toc| # skip the root book for fields
       next if toc.title.match(/preface/i)
       translate_toc(toc)
