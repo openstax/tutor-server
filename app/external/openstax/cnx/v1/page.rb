@@ -135,9 +135,11 @@ module OpenStax::Cnx::V1
     end
 
     def tag_defs
-      # Extract tag name and description from .ost-standards-def
+      # Extract tag name and description from .ost-standards-def and .os-learning-objective-def
       return @tag_defs unless @tag_defs.nil?
+
       @tag_defs = {}
+
       # ost-standards-def is inside .os-teacher which was removed in root
       doc = Nokogiri::HTML(content)
       doc.css('[class^="ost-standards-def"]').each do |node|
@@ -148,6 +150,16 @@ module OpenStax::Cnx::V1
         @tag_defs[class_name][:name] = name
         @tag_defs[class_name][:description] = description
       end
+
+      doc.css('[class^="ost-learning-objective-def"]').each do |node|
+        classes = node.attr('class').split
+        lo_class = classes[1]
+        teks_class = classes[2]
+        name = node.content.strip
+        name.gsub!(/\s+/, ' ')
+        @tag_defs[lo_class] = { name: name, teks: teks_class }
+      end
+
       @tag_defs
     end
 

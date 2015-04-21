@@ -30,7 +30,16 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, :vcr => VCR_OPTS do
                title: 'Newton\'s First Law of Motion: Inertia',
                expected: {
                 los: ['k12phys-ch04-s02-lo01', 'k12phys-ch04-s02-lo02'],
-                tag_defs: {},
+                tag_defs: {
+                  'ost-tag-lo-k12phys-ch04-s02-lo01' => {
+                    name: 'Describe Newton\'s first law and friction MATHMATH',
+                    teks: 'ost-tag-teks-112-39-c-4d'
+                  },
+                  'ost-tag-lo-k12phys-ch04-s02-lo02' => {
+                    name: 'Discuss the relationship between mass and inertia',
+                    teks: 'ost-tag-teks-112-39-c-4d'
+                  }
+                },
                 fragment_classes: [OpenStax::Cnx::V1::Fragment::Text,
                                    OpenStax::Cnx::V1::Fragment::Video,
                                    OpenStax::Cnx::V1::Fragment::Exercise,
@@ -57,6 +66,14 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, :vcr => VCR_OPTS do
                   'ost-tag-teks-112-39-c-4c' => {
                     name: '4C',
                     description: 'analyze and describe accelerated motion in two dimensions using equations, including projectile and circular examples'
+                  },
+                  'ost-tag-lo-k12phys-ch04-s01-lo01' => {
+                    name: 'Differentiate between force, net force and dynamics',
+                    teks: 'ost-tag-teks-112-39-c-4c'
+                  },
+                  'ost-tag-lo-k12phys-ch04-s01-lo02' => {
+                    name: 'Draw a free-body diagram',
+                    teks: 'ost-tag-teks-112-39-c-4e'
                   }
                 },
                 fragment_classes: [OpenStax::Cnx::V1::Fragment::Text,
@@ -76,6 +93,14 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, :vcr => VCR_OPTS do
                   'ost-tag-teks-112-39-c-4d' => {
                     name: '(D)',
                     description: 'calculate the effect of forces on objects, including the law of inertia, the relationship between force and acceleration, and the nature of force pairs between objects'
+                  },
+                  'ost-tag-lo-k12phys-ch04-s02-lo01' => {
+                    name: 'Describe Newton\'s first law and friction a∝1ma∝1m',
+                    teks: 'ost-tag-teks-112-39-c-4d'
+                  },
+                  'ost-tag-lo-k12phys-ch04-s02-lo02' => {
+                    name: 'Discuss the relationship between mass and inertia',
+                    teks: 'ost-tag-teks-112-39-c-4d'
                   }
                 },
                 fragment_classes: [OpenStax::Cnx::V1::Fragment::Text,
