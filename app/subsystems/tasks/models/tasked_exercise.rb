@@ -36,6 +36,16 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     correct_answer_id == answer_id
   end
 
+  def make_correct!
+    self.answer_id = correct_answer_id
+    self.save!
+  end
+
+  def make_incorrect!
+    self.answer_id = nil
+    self.save!
+  end
+
   def inject_debug_content(debug_content:, pre_br: false, post_br: false)
     json_hash = JSON.parse(self.content)
     stem_html = json_hash['questions'].first['stem_html']
