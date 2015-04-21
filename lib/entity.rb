@@ -19,7 +19,7 @@ class Entity
             elsif args.is_a?(self.class)
               @repository = args._repository
             else
-              @repository = self.class._repository_class.new(_unwrap(args))
+              @repository = self.class._repository_class.new(self.class._unwrap(args))
             end
           end
         else
@@ -143,5 +143,7 @@ class Entity
 
 end
 
-require 'entity/active_record/base/class_methods'
+require 'entity/class_methods'
 require 'entity/relation'
+
+::ActiveRecord::Base.extend Entity::ClassMethods
