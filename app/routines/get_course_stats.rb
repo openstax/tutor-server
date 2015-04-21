@@ -1,7 +1,7 @@
 class GetCourseStats
   lev_routine express_output: :course_stats
 
-  uses_routine Tasks::GetRoleTaskSteps,
+  uses_routine Tasks::GetRoleCompletedTaskSteps,
     translations: { outputs: { type: :verbatim } },
     as: :get_role_task_steps
 
