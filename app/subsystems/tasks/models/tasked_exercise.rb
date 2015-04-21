@@ -28,6 +28,14 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     OpenStax::Exchange.record_multiple_choice_answer(identifier, url, trial, answer_id)
   end
 
+  def has_correctness?
+    true
+  end
+
+  def is_correct?
+    correct_answer_id == answer_id
+  end
+
   def inject_debug_content(debug_content:, pre_br: false, post_br: false)
     json_hash = JSON.parse(self.content)
     stem_html = json_hash['questions'].first['stem_html']

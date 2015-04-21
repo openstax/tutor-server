@@ -14,6 +14,15 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   scope :complete, -> { where{completed_at != nil} }
   scope :incomplete, -> { where{completed_at == nil} }
 
+  def has_correctness?
+    tasked.has_correctness?
+  end
+
+  def is_correct?
+    return nil unless has_correctness?
+    tasked.is_correct?
+  end
+
   def complete(completion_time: Time.now)
     self.completed_at ||= completion_time
   end

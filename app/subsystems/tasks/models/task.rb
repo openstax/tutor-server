@@ -1,7 +1,6 @@
 require_relative 'entity_extensions'
 
 class Tasks::Models::Task < Tutor::SubSystems::BaseModel
-
   belongs_to :task_plan
   belongs_to :entity_task, class_name: 'Entity::Task',
                            dependent: :destroy,
