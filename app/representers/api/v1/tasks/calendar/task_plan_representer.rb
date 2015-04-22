@@ -30,12 +30,6 @@ module Api::V1
                  readable: true,
                  writeable: true
 
-        property :stats,
-                 extend: Stats::TaskPlanRepresenter,
-                 getter: ->(args) { CalculateTaskPlanStats[plan: self] },
-                 readable: true,
-                 writable: false
-
         property :trouble,
                  type: :boolean,
                  readable: true,
