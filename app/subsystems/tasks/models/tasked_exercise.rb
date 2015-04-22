@@ -62,10 +62,6 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     correct_question_answer_ids.flatten.include?(answer_id)
   end
 
-  def can_be_answered?
-    true
-  end
-
   def can_be_recovered?
     can_be_recovered
   end

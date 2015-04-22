@@ -13,10 +13,6 @@ module ActsAsTasked
 
         delegate :completed_at, :completed?, :complete, to: :task_step, allow_nil: true
 
-        def can_be_answered?
-          false
-        end
-
         def can_be_recovered?
           false
         end
