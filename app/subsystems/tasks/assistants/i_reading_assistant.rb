@@ -169,9 +169,10 @@ class Tasks::Assistants::IReadingAssistant
     exercises = Content::Routines::SearchExercises[
                   tag: exercise_fragment.embed_tag
                 ]
-    exercise = exercises.first
-    TaskExercise[exercise: exercises.first, title: title,
-                 can_be_recovered: can_be_recovered, task_step: step]
+    if exercise = exercises.first
+      TaskExercise[exercise: exercise, title: title,
+                   can_be_recovered: can_be_recovered, task_step: step]
+    end
   end
 
   def self.tasked_video(video_fragment:, step:, title: nil)
