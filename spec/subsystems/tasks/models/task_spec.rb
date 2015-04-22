@@ -16,13 +16,13 @@ RSpec.describe Tasks::Models::Task, :type => :model do
     expect(task).to_not be_valid
   end
 
-  it "reports is_shared correctly" do
+  it "reports is_shared? correctly" do
     task1 = FactoryGirl.create(:tasks_task)
     FactoryGirl.create(:tasks_tasking, task: task1.entity_task)
-    expect(task1.is_shared).to be_falsy
+    expect(task1.is_shared?).to be_falsy
 
     FactoryGirl.create(:tasks_tasking, task: task1.entity_task)
-    expect(task1.is_shared).to be_truthy
+    expect(task1.is_shared?).to be_truthy
   end
 
   it 'returns core task steps' do

@@ -1,4 +1,4 @@
-module Api::V1
+module Api::V1::Tasks
   class TaskedExerciseRepresenter < Roar::Decorator
 
     include TaskStepProperties
@@ -32,15 +32,17 @@ module Api::V1
                description: "The Exercise's content without correctness and feedback info"
              }
 
-    property :correct_answer_id,
-             type: String,
+    property :can_be_recovered?,
+             as: :has_recovery,
+             type: 'boolean',
              writeable: false,
              readable: true,
              if: -> (*) { task_step.feedback_available? },
              schema_info: {
-               description: "The Exercise's correct answer's id"
+               description: "Whether or not a recovery exercise is available"
              }
 
+    # The properties below assume an Exercise with only 1 Question
     property :answer_id,
              type: String,
              writeable: true,
@@ -57,7 +59,8 @@ module Api::V1
                description: "The student's free response"
              }
 
-    property :feedback_html,
+    property :feedback,
+             as: :feedback_html,
              type: String,
              writeable: false,
              readable: true,
@@ -66,14 +69,13 @@ module Api::V1
                description: "The feedback given to the student"
              }
 
-    property :can_be_recovered,
-             as: :has_recovery,
-             type: 'boolean',
+    property :correct_answer_id,
+             type: String,
              writeable: false,
              readable: true,
              if: -> (*) { task_step.feedback_available? },
              schema_info: {
-               description: "Whether or not a recovery exercise is available"
+               description: "The Exercise's correct answer's id"
              }
 
     property :is_correct?,

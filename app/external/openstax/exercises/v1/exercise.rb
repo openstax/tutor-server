@@ -18,7 +18,6 @@ class OpenStax::Exercises::V1::Exercise
   def uid
     @uid ||= content_hash['uid']
   end
-  alias_method :id, :uid
 
   def url
     @url ||= "#{BASE_URL}/#{uid}"
@@ -33,30 +32,40 @@ class OpenStax::Exercises::V1::Exercise
   end
 
   def los
-    @los ||= tags.collect{|t| LO_REGEX.match(t).try(:[], 0)}.compact.uniq
+    @los ||= tags.collect{ |tag| LO_REGEX.match(tag).try(:[], 0) }.compact.uniq
   end
 
   def questions
-    @questions ||= content_hash['questions']
-                     .collect{ |q| q.merge('id' => q['id'].to_s)}
+    @questions ||= content_hash['questions'].collect{ |qq| qq.merge('id' => qq['id'].to_s)}
   end
 
-  def formats
-    @formats ||= questions.collect{ |q| q['formats'] }
+  def question_formats
+    @question_formats ||= questions.collect{ |qq| qq['formats'] }
   end
 
-  def answers
-    @answers ||= questions.collect do |q|
-      q['answers'].collect{ |a| a.merge('id' => a['id'].to_s) }
+  def question_answers
+    @question_answers ||= questions.collect do |qq|
+      qq['answers'].collect{ |aa| aa.merge('id' => aa['id'].to_s) }
     end
   end
 
-  def correct_answer_ids
-    @correct_answer_ids ||= answers.collect do |ans|
-      ans.select do |a|
-        correctness = Float(a['correctness']) rescue 0
-        correctness >= 1
-      end.first['id']
+  def question_answer_ids
+    @question_answer_ids ||= question_answers.collect do |qa|
+      qa.collect{ |ans| ans['id'].to_s }
+    end
+  end
+
+  def correct_question_answers
+    @correct_question_answers ||= question_answers.collect do |qa|
+      qa.select do |ans|
+        (Float(ans['correctness']) rescue 0) >= 1
+      end
+    end
+  end
+
+  def correct_question_answer_ids
+    @correct_question_answer_ids ||= correct_question_answers.collect do |cqa|
+      cqa.collect{ |ans| ans['id'].to_s }
     end
   end
 
@@ -64,32 +73,29 @@ class OpenStax::Exercises::V1::Exercise
     return @feedback_map unless @feedback_map.nil?
 
     @feedback_map = {}
-    answers.each do |ans|
-      ans.each { |a| @feedback_map[a['id']] = a['feedback_html'] }
+    question_answers.each do |qa|
+      qa.each { |ans| @feedback_map[ans['id']] = ans['feedback_html'] }
     end
     @feedback_map
   end
 
-  def feedback_html(answer_id)
-    feedback_map[answer_id] || ''
-  end
-
-  def answers_without_correctness
-    answers.collect do |ans|
-      ans.collect { |a| a.except('correctness', 'feedback_html') }
+  def question_answers_without_correctness
+    @question_answers_without_correctness ||= question_answers.collect do |qa|
+      qa.collect { |ans| ans.except('correctness', 'feedback_html') }
     end
   end
 
   def questions_without_correctness
-    i = -1
-    content_hash['questions'].collect do |q|
-      i = i + 1
-      q.merge('answers' => answers_without_correctness[i])
+    @questions_without_correctness ||= content_hash['questions'].each_with_index
+                                                                .collect do |qq, ii|
+      qq.merge('answers' => question_answers_without_correctness[ii])
     end
   end
 
   def content_without_correctness
-    content_hash.merge('questions' => questions_without_correctness)
+    @content_without_correctness ||= content_hash.merge(
+      'questions' => questions_without_correctness
+    )
   end
 
 end

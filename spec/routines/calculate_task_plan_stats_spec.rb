@@ -3,7 +3,7 @@ require 'vcr_helper'
 
 describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
 
-  let(:number_of_students){ 8 }
+  let(:number_of_students) { 8 }
 
   let(:task_plan) {
     FactoryGirl.create :tasked_task_plan,
@@ -37,7 +37,7 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
       tasks = task_plan.tasks.to_a
       first_task = tasks.first
       step = first_task.task_steps.where(
-        tasked_type:"Tasks::Models::TaskedReading"
+        tasked_type: "Tasks::Models::TaskedReading"
       ).first
       MarkTaskStepCompleted.call(task_step: step)
 
@@ -70,7 +70,7 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
       tasks = task_plan.tasks.to_a
       first_task = tasks.first
       first_task.task_steps.each{ |ts|
-        if ts.tasked_type == "Tasks::Models::TaskedExercise"
+        if ts.tasked_type.demodulize == "TaskedExercise"
           ts.tasked.answer_id = ts.tasked.correct_answer_id
           ts.tasked.free_response = 'a sentence explaining all the things'
           ts.tasked.save!
@@ -89,7 +89,7 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
 
       second_task = tasks.second
       second_task.task_steps.each{ |ts|
-        if ts.tasked_type == "Tasks::Models::TaskedExercise"
+        if ts.tasked_type.demodulize == "TaskedExercise"
           ts.tasked.free_response = 'a sentence not explaining anything'
           ts.tasked.save!
         end
@@ -107,7 +107,7 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
 
       third_task = tasks.third
       third_task.task_steps.each{ |ts|
-        if ts.tasked_type == "Tasks::Models::TaskedExercise"
+        if ts.tasked_type.demodulize == "TaskedExercise"
           ts.tasked.answer_id = ts.tasked.correct_answer_id
           ts.tasked.free_response = 'a sentence explaining all the things'
           ts.tasked.save!
@@ -126,7 +126,7 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
 
       fourth_task = tasks.fourth
       fourth_task.task_steps.each{ |ts|
-        if ts.tasked_type == "Tasks::Models::TaskedExercise"
+        if ts.tasked_type.demodulize == "TaskedExercise"
           ts.tasked.answer_id = ts.tasked.correct_answer_id
           ts.tasked.free_response = 'a sentence explaining all the things'
           ts.tasked.save!

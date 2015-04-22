@@ -1,44 +1,31 @@
 class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
   acts_as_tasked
 
-  belongs_to :exercise, subsystem: :content
-  protected :exercise
+  belongs_to :exercise, subsystem: :content, primary_key: :url, foreign_key: :url
 
   validates :url, presence: true
   validates :content, presence: true
   validate :valid_state, :valid_answer, :not_completed
 
-  delegate :answers, :correct_answer_ids, :content_without_correctness, to: :wrapper
+  delegate :uid, :questions, :question_formats, :question_answers, :question_answer_ids,
+           :correct_question_answers, :correct_question_answer_ids, :feedback_map,
+           :content_without_correctness, :tags, :los, to: :parser
 
-  def wrapper
-    @wrapper ||= OpenStax::Exercises::V1::Exercise.new(content)
+  # We depend on the parser because we do not save the parsed content
+  def parser
+    @parser ||= OpenStax::Exercises::V1::Exercise.new(content)
   end
 
-  def can_be_recovered?
-    can_be_recovered
-  end
+  def handle_task_step_completion!
+    # Currently assuming only one question per tasked_exercise, see also correct_answer_id
+    question = questions.first
+    # "trial" is set to only "0" for now.  When multiple
+    # attempts are supported, it will be incremented to indicate the attempt #
 
-  def feedback_html
-    wrapper.feedback_html(answer_id)
-  end
-
-  # Assume only 1 question for now
-  def formats
-    wrapper.formats.first
-  end
-
-  def correct_answer_id
-    correct_answer_ids.first
-  end
-
-  def is_correct?
-    correct_answer_id == answer_id
-  end
-
-  def answer_ids
-    answers.collect do |q|
-      q.collect{|a| a['id'].to_s}
-    end.first
+    ## Blatant hack below (the identifier *should* be set to
+    ## the exchange identifier in the current user's profile,
+    ## but the role id is a close temporary proxy):
+    OpenStax::Exchange.record_multiple_choice_answer(identifier, url, trial, answer_id)
   end
 
   def inject_debug_content(debug_content:, pre_br: false, post_br: false)
@@ -54,19 +41,29 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     self.content = json_hash.to_json
   end
 
-  # submits the result to exchange
-  def handle_task_step_completion!
-    # Currently assuming only one question per tasked_exercise, see also correct_answer_id
-    question = wrapper.questions.first
-    # "trial" is set to only "0" for now.  When multiple
-    # attempts are supported, it will be incremented to indicate the attempt #
+  # The following 3 methods assume only 1 Question
+  def formats
+    question_formats[0]
+  end
 
-    ## Blatent hack below (the identifier *should* be set to
-    ## the exchange identifier in the current user's profile,
-    ## but the role id is a close temporary proxy):
-    OpenStax::Exchange.record_multiple_choice_answer(
-      identifier, url, trial, answer_id
-    )
+  def answer_ids
+    question_answer_ids[0]
+  end
+
+  def correct_answer_id
+    correct_question_answer_ids[0].first
+  end
+
+  def feedback
+    feedback_map[answer_id] || ''
+  end
+
+  def is_correct?
+    correct_question_answer_ids.flatten.include?(answer_id)
+  end
+
+  def can_be_recovered?
+    can_be_recovered
   end
 
   protected

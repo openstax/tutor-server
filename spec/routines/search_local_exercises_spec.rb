@@ -3,20 +3,20 @@ require 'vcr_helper'
 
 RSpec.describe SearchLocalExercises, :type => :routine, :vcr => VCR_OPTS do
 
-  let!(:book_part) { FactoryGirl.create :content_book_part }
+  let!(:book_part)     { FactoryGirl.create :content_book_part }
 
   let!(:cnx_page_hash) { { 'id' => '092bbf0d-0729-42ce-87a6-fd96fd87a083@11',
                            'title' => 'Force' } }
 
-  let!(:cnx_page)   { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash) }
+  let!(:cnx_page)      { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash) }
 
-  let!(:role)       { Entity::Role.create }
+  let!(:role)          { Entity::Role.create }
 
-  let!(:exercise_1) { FactoryGirl.create :content_exercise }
-  let!(:exercise_2) { FactoryGirl.create :content_exercise }
-  let!(:exercise_3) { FactoryGirl.create :content_exercise }
+  let!(:exercise_1)    { FactoryGirl.create :content_exercise }
+  let!(:exercise_2)    { FactoryGirl.create :content_exercise }
+  let!(:exercise_3)    { FactoryGirl.create :content_exercise }
 
-  let!(:test_tag)   { FactoryGirl.create :content_tag, name: 'test-tag' }
+  let!(:test_tag)      { FactoryGirl.create :content_tag, name: 'test-tag' }
 
   it 'can search imported exercises' do
     OpenStax::Exercises::V1.configure do |config|
@@ -37,18 +37,15 @@ RSpec.describe SearchLocalExercises, :type => :routine, :vcr => VCR_OPTS do
     exercises = SearchLocalExercises.call(tag: lo).outputs.items
     expect(exercises.length).to eq 16
     exercises.each do |exercise|
-      tags = exercise.exercise_tags.collect{|et| et.tag.name}
-      expect(tags).to include(lo)
-      wrapper = OpenStax::Exercises::V1::Exercise.new(exercise.content)
-      expect(wrapper.los).to include(lo)
+      tags = exercise.tags
+      expect(exercise.tags).to include(lo)
+      expect(exercise.los).to include(lo)
     end
 
     embed_tag = 'k12phys-ch04-ex021'
     exercises = SearchLocalExercises.call(tag: embed_tag).outputs.items
     expect(exercises.length).to eq 1
-    expect(exercises.first.exercise_tags.collect{|et| et.tag.name}).to(
-      include embed_tag
-    )
+    expect(exercises.first.tags).to include(embed_tag)
   end
 
   it 'can search exercises that have or have not been assigned to a role' do
@@ -64,21 +61,21 @@ RSpec.describe SearchLocalExercises, :type => :routine, :vcr => VCR_OPTS do
 
     Content::Routines::TagResource.call(exercise_3, 'test-tag')
 
-    TaskExercise[exercise: exercise_1, task_step: exercise_step_1]
-    TaskExercise[exercise: exercise_2, task_step: exercise_step_2]
+    TaskExercise[exercise: Exercise.new(exercise_1), task_step: exercise_step_1]
+    TaskExercise[exercise: Exercise.new(exercise_2), task_step: exercise_step_2]
 
     task.task_steps << exercise_step_1
     task.task_steps << exercise_step_2
     task.save!
 
     out = SearchLocalExercises.call(assigned_to: role).outputs.items
-    expect(out).to include(exercise_1)
-    expect(out).to include(exercise_2)
+    expect(out).to include(Exercise.new(exercise_1))
+    expect(out).to include(Exercise.new(exercise_2))
     expect(out.length).to eq 2
 
     out = SearchLocalExercises.call(not_assigned_to: role,
                                             tag: 'test-tag').outputs.items
-    expect(out).to eq [exercise_3]
+    expect(out).to eq [Exercise.new(exercise_3)]
   end
 
 end

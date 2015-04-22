@@ -122,7 +122,7 @@ module Sprint010
             next unless si < complete_count
 
             # And 3/4 of those correct
-            if ts.tasked_type == "Tasks::Models::TaskedExercise" && rand(4) < 3
+            if ts.tasked_type.demodulize == "TaskedExercise" && rand(4) < 3
               ts.tasked.answer_id = ts.tasked.correct_answer_id
               ts.tasked.free_response = Faker::Hacker.say_something_smart
               ts.tasked.save!

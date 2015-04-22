@@ -95,23 +95,22 @@ class Tasks::Assistants::IReadingAssistant
       page.fragments.each do |fragment|
         step = Tasks::Models::TaskStep.new(task: task, page_id: page.id)
 
-        step.tasked =
-          case fragment
-          when OpenStax::Cnx::V1::Fragment::ExerciseChoice
-            tasked_exercise_choice(exercise_choice_fragment: fragment,
-                                   step: step, title: title)
-          when OpenStax::Cnx::V1::Fragment::Exercise
-            tasked_exercise(exercise_fragment: fragment,
-                            step: step, title: title)
-          when OpenStax::Cnx::V1::Fragment::Video
-            tasked_video(video_fragment: fragment, step: step, title: title)
-          when OpenStax::Cnx::V1::Fragment::Interactive
-            tasked_interactive(interactive_fragment: fragment,
-                               step: step, title: title)
-          else
-            tasked_reading(reading_fragment: fragment, page: page,
-                           title: title, step: step)
-          end
+        case fragment
+        when OpenStax::Cnx::V1::Fragment::ExerciseChoice
+          tasked_exercise_choice(exercise_choice_fragment: fragment,
+                                 step: step, title: title)
+        when OpenStax::Cnx::V1::Fragment::Exercise
+          tasked_exercise(exercise_fragment: fragment,
+                          step: step, title: title)
+        when OpenStax::Cnx::V1::Fragment::Video
+          tasked_video(video_fragment: fragment, step: step, title: title)
+        when OpenStax::Cnx::V1::Fragment::Interactive
+          tasked_interactive(interactive_fragment: fragment,
+                             step: step, title: title)
+        else
+          tasked_reading(reading_fragment: fragment, page: page,
+                         title: title, step: step)
+        end
 
         next if step.tasked.nil?
         step.core_group!
@@ -175,10 +174,8 @@ class Tasks::Assistants::IReadingAssistant
                   tag: exercise_fragment.embed_tag
                 ]
     exercise = exercises.first
-    tasked = TaskExercise[exercise: exercises.first,
-                          title: title,
-                          can_be_recovered: can_be_recovered,
-                          task_step: step]
+    TaskExercise[exercise: exercises.first, title: title,
+                 can_be_recovered: can_be_recovered, task_step: step]
   end
 
   def self.tasked_video(video_fragment:, step:, title: nil)

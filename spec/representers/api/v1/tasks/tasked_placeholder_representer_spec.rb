@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::TaskedPlaceholderRepresenter, :type => :representer do
+RSpec.describe Api::V1::Tasks::TaskedPlaceholderRepresenter, :type => :representer do
 
   let(:tasked_placeholder) {
     task_step = FactoryGirl.create(:tasks_task_step)
@@ -9,13 +9,14 @@ RSpec.describe Api::V1::TaskedPlaceholderRepresenter, :type => :representer do
     task_step.save!
     tasked_placeholder
   }
-  let(:representation)     { Api::V1::TaskedPlaceholderRepresenter.new(tasked_placeholder).as_json }
+  let(:representation)     { Api::V1::Tasks::TaskedPlaceholderRepresenter.new(tasked_placeholder)
+                                                                         .as_json }
 
   it "represents a tasked placeholder" do
     expect(representation).to include(
       "id"           => tasked_placeholder.task_step.id,
       "type"         => "exercise",  ## <-- not a typo
-      "is_completed" => false,
+      "is_completed" => false
       # "content_url"  => tasked_placeholder.url,
       # "content"      => tasked_placeholder.content
     )

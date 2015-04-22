@@ -1,5 +1,5 @@
-module Api::V1
-  class TaskedReadingRepresenter < Roar::Decorator
+module Api::V1::Tasks
+  class TaskedInteractiveRepresenter < Roar::Decorator
 
     include TaskStepProperties
 
@@ -10,7 +10,7 @@ module Api::V1
              as: :content_url,
              schema_info: {
                required: false,
-               description: "The source URL for this Reading"
+               description: "The source URL for this Interactive"
              }
 
     property :title,
@@ -19,7 +19,7 @@ module Api::V1
              readable: true,
              schema_info: {
                required: true,
-               description: "The title of this Reading"
+               description: "The title of this Interactive"
              }
 
     property :content,
@@ -29,7 +29,7 @@ module Api::V1
              as: :content_html,
              schema_info: {
                required: false,
-               description: "The Reading content as HTML"
+               description: "The content as HTML"
              }
 
   end

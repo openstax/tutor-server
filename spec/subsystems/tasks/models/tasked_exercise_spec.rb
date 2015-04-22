@@ -3,38 +3,14 @@ require 'rails_helper'
 RSpec.describe Tasks::Models::TaskedExercise, :type => :model do
   it { is_expected.to validate_presence_of(:content) }
 
-  it { is_expected.to delegate_method(:answers).to(:wrapper) }
-  it { is_expected.to delegate_method(:correct_answer_ids).to(:wrapper) }
-  it { is_expected.to delegate_method(:content_without_correctness)
-                        .to(:wrapper) }
-
   let!(:hash) { OpenStax::Exercises::V1.fake_client.new_exercise_hash }
   let!(:content_exercise) { FactoryGirl.create :content_exercise,
                                                content: hash.to_json }
   let!(:tasked_exercise)  { FactoryGirl.create(:tasks_tasked_exercise,
                                                exercise: content_exercise) }
 
-  it 'can return its wrapper' do
-    expect(tasked_exercise.wrapper).to be_a(OpenStax::Exercises::V1::Exercise)
-
-    expect(tasked_exercise.wrapper.url).to eq tasked_exercise.url
-    expect(tasked_exercise.wrapper.content).to eq tasked_exercise.content
-  end
-
-  it 'can return feedback depending on the selected answer' do
-    tasked_exercise.answer_id = tasked_exercise.answer_ids.first
-    expect(tasked_exercise.feedback_html).to(
-      eq tasked_exercise.answers[0][0]['feedback_html']
-    )
-
-    tasked_exercise.answer_id = tasked_exercise.answer_ids.last
-    expect(tasked_exercise.feedback_html).to(
-      eq tasked_exercise.answers[0][1]['feedback_html']
-    )
-  end
-
   it 'does not accept a multiple choice answer before a free response unless the free-response format is not present' do
-    tasked_exercise.answer_id = tasked_exercise.answer_ids.first
+    tasked_exercise.answer_id = tasked_exercise.answer_ids.last
     expect(tasked_exercise).not_to be_valid
     expect(tasked_exercise.errors).to include :free_response
 
@@ -44,8 +20,7 @@ RSpec.describe Tasks::Models::TaskedExercise, :type => :model do
     tasked_exercise.free_response = nil
     expect(tasked_exercise).not_to be_valid
 
-    tasked_exercise.wrapper.instance_variable_set('@formats',
-                                                  ['multiple-choice'])
+    tasked_exercise.parser.instance_variable_set('@question_formats', ['multiple-choice'])
     expect(tasked_exercise).to be_valid
   end
 
@@ -79,14 +54,15 @@ RSpec.describe Tasks::Models::TaskedExercise, :type => :model do
 
   it 'records answers in exchange when the task_step is completed' do
     exchange_identifier = 42
+    answer_id = tasked_exercise.answer_ids.first
     allow(tasked_exercise).to receive(:identifier).and_return(exchange_identifier)
     tasked_exercise.free_response = 'abc'
-    tasked_exercise.answer_id = tasked_exercise.answer_ids.first
+    tasked_exercise.answer_id = answer_id
     expect(OpenStax::Exchange).to receive(:record_multiple_choice_answer)
                                    .with(exchange_identifier,
                                          tasked_exercise.url,
                                          tasked_exercise.task_step.id.to_s,
-                                         tasked_exercise.answer_ids.first)
+                                         answer_id)
     tasked_exercise.handle_task_step_completion!
   end
 end

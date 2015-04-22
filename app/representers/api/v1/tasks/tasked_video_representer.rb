@@ -1,5 +1,5 @@
-module Api::V1
-  class TaskedInteractiveRepresenter < Roar::Decorator
+module Api::V1::Tasks
+  class TaskedVideoRepresenter < Roar::Decorator
 
     include TaskStepProperties
 
@@ -10,7 +10,7 @@ module Api::V1
              as: :content_url,
              schema_info: {
                required: false,
-               description: "The source URL for this Interactive"
+               description: "The source URL for this Video"
              }
 
     property :title,
@@ -19,7 +19,7 @@ module Api::V1
              readable: true,
              schema_info: {
                required: true,
-               description: "The title of this Interactive"
+               description: "The title of this Video"
              }
 
     property :content,

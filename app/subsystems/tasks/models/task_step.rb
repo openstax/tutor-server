@@ -9,6 +9,8 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   validates :tasked_id, uniqueness: { scope: :tasked_type }
   validates :group_type, presence: true
 
+  delegate :can_be_answered?, :can_be_recovered?, to: :tasked
+
   def complete(completion_time: Time.now)
     self.completed_at ||= completion_time
   end

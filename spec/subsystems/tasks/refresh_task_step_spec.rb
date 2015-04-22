@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe RefreshTaskedExercise, :type => :routine do
+RSpec.describe Tasks::RefreshTaskStep, :type => :routine do
 
   let!(:lo)              { FactoryGirl.create :content_tag,
                                               name: 'ost-tag-lo-test-lo01' }
@@ -46,13 +46,13 @@ RSpec.describe RefreshTaskedExercise, :type => :routine do
   it "cannot be called on taskeds without a recovery step" do
     result = nil
     expect {
-      result = RefreshTaskedExercise.call(tasked_exercise: tasked_reading)
+      result = Tasks::RefreshTaskStep.call(task_step: tasked_reading.task_step)
     }.not_to change{ tasked_reading.task_step }
     expect(result.errors.first.code).to eq(:recovery_not_available)
 
     result = nil
     expect {
-      result = RefreshTaskedExercise.call(tasked_exercise: tasked_exercise)
+      result = Tasks::RefreshTaskStep.call(task_step: tasked_exercise.task_step)
     }.not_to change{ tasked_reading.task_step }
     expect(result.errors.first.code).to eq(:recovery_not_available)
   end
@@ -62,8 +62,8 @@ RSpec.describe RefreshTaskedExercise, :type => :routine do
     recovery_step = nil
     task_step = tasked_exercise_with_recovery.task_step
     expect {
-      result = RefreshTaskedExercise.call(
-        tasked_exercise: tasked_exercise_with_recovery
+      result = Tasks::RefreshTaskStep.call(
+        task_step: tasked_exercise_with_recovery.task_step
       )
     }.to change{ recovery_step = task_step.reload.next_by_number }
 
@@ -76,8 +76,8 @@ RSpec.describe RefreshTaskedExercise, :type => :routine do
   end
 
   it "returns a refresh step and a recovery step" do
-    result = RefreshTaskedExercise.call(
-        tasked_exercise: tasked_exercise_with_recovery.reload
+    result = Tasks::RefreshTaskStep.call(
+        task_step: tasked_exercise_with_recovery.task_step.reload
     )
 
     expect(result.errors).to be_empty

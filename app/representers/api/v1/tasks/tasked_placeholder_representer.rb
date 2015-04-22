@@ -1,4 +1,4 @@
-module Api::V1
+module Api::V1::Tasks
   class TaskedPlaceholderRepresenter < Roar::Decorator
 
     include Roar::JSON

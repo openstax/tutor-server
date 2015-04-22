@@ -9,14 +9,12 @@ RSpec.describe Content::GetExercise, :type => :routine do
 
   it "should get the Exercise by id and return a wrapper around it" do
     exercise = Content::GetExercise[id: exercise_1.id]
-    expect(exercise).to be_a(OpenStax::Exercises::V1::Exercise)
+    expect(exercise).to be_a(Exercise)
     expect(exercise.content).to eq exercise_1.content
-    expect(exercise.uid).to eq '1@1'
 
     exercise = Content::GetExercise[id: exercise_2.id]
-    expect(exercise).to be_a(OpenStax::Exercises::V1::Exercise)
+    expect(exercise).to be_a(Exercise)
     expect(exercise.content).to eq exercise_2.content
-    expect(exercise.uid).to eq '2@1'
   end
 
 end
