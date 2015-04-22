@@ -55,6 +55,7 @@ Rails.application.routes.draw do
       resources :task_plans, path: '/plans', shallow: true, except: [:index, :edit] do
         member do
           post 'publish'
+          get 'stats'
           get 'review'
         end
       end
