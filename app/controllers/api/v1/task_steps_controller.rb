@@ -16,7 +16,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
   def show
     task_step = Tasks::Models::TaskStep.find(params[:id])
     tasked = task_step.tasked
-    standard_read(tasked, Api::V1::TaskedRepresenterMapper.representer_for(tasked))
+    standard_read(tasked, Api::V1::TaskedRepresenterMapper.representer_for(tasked), true)
   end
 
   api :PUT, '/steps/:step_id', 'Updates the specified TaskStep'

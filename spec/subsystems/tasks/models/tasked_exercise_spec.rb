@@ -71,6 +71,12 @@ RSpec.describe Tasks::Models::TaskedExercise, :type => :model do
     expect(tasked_exercise.reload).not_to be_valid
   end
 
+  it "invalidates task's cache when updated" do
+    tasked_exercise.free_response = 'abc'
+    tasked_exercise.answer_id = tasked_exercise.answer_ids.first
+    expect { tasked_exercise.save! }.to change{ tasked_exercise.task_step.task.cache_key }
+  end
+
   it 'records answers in exchange when the task_step is completed' do
     exchange_identifier = 42
     allow(tasked_exercise).to receive(:identifier).and_return(exchange_identifier)
