@@ -59,14 +59,16 @@ RSpec.describe "Exercise update progression", type: :request, :api => true, :ver
     expect(response.body_as_hash).to include(correct_answer_id: correct_answer_id)
   end
 
-  it "does not allow the answer to be changed after completed" do
+  it "does not allow the answer to be changed after completed and feedback is available" do
+    # Initial free response
     api_put("#{step_route_base}", user_1_token,
-            raw_post_data: {free_response: 'abcdef'}.to_json)
+            raw_post_data: {free_response: 'My first answer'}.to_json)
     expect(response).to have_http_status(:success)
 
     tasked.reload
-    expect(tasked.free_response).to eq 'abcdef'
+    expect(tasked.free_response).to eq 'My first answer'
 
+    # Initial multiple choice
     answer_id = tasked.answer_ids.first
     api_put("#{step_route_base}", user_1_token,
             raw_post_data: {answer_id: answer_id}.to_json)
@@ -75,19 +77,36 @@ RSpec.describe "Exercise update progression", type: :request, :api => true, :ver
     tasked.reload
     expect(tasked.answer_id).to eq answer_id
 
-    # Mark it as complete and then get it again (PUT returns No Content)
+    # Mark it as complete
     api_put("#{step_route_base}/completed", user_1_token)
+
+    expect(response).to have_http_status(:success)
+
+    # No feedback yet because feedback date has not been reached
+    expect(response.body_as_hash).not_to include(:correct_answer_id)
+    expect(response.body_as_hash).not_to include(:feedback_html)
 
     tasked.reload
     expect(tasked.completed?).to eq true
 
+    # Feedback date has not passed, so the answer can still be updated
+    api_put("#{step_route_base}", user_1_token,
+            raw_post_data: {free_response: 'Something else!'}.to_json)
+    expect(response).to have_http_status(:success)
+
+    # The feedback date arrives
+    tasked.task_step.task.feedback_at = Time.now
+    tasked.task_step.task.save!
+
+    # Free response cannot be changed
     api_put("#{step_route_base}", user_1_token,
             raw_post_data: {free_response: 'I changed my mind!'}.to_json)
     expect(response).to have_http_status(:unprocessable_entity)
 
     tasked.reload
-    expect(tasked.free_response).to eq 'abcdef'
+    expect(tasked.free_response).to eq 'Something else!'
 
+    # Multiple choice cannot be changed
     new_answer_id = tasked.answer_ids.first
     api_put("#{step_route_base}", user_1_token,
             raw_post_data: {answer_id: new_answer_id}.to_json)

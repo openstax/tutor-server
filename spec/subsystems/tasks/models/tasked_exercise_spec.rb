@@ -34,15 +34,29 @@ RSpec.describe Tasks::Models::TaskedExercise, :type => :model do
     expect(tasked_exercise).to be_valid
   end
 
-  it 'cannot be updated after it is completed' do
+  it 'cannot be updated after the step is completed and feedback is available' do
+    tasked_exercise.task_step.task.feedback_at = Time.now
+    tasked_exercise.task_step.task.save!
+
     tasked_exercise.free_response = 'abc'
     tasked_exercise.answer_id = tasked_exercise.answer_ids.first
     tasked_exercise.save!
 
+    expect(tasked_exercise.reload).to be_valid
+
     tasked_exercise.task_step.complete
     tasked_exercise.task_step.save!
 
-    expect(tasked_exercise).not_to be_valid
+    expect(tasked_exercise.reload).not_to be_valid
+
+    tasked_exercise.task_step.task.feedback_at = nil
+    tasked_exercise.task_step.task.save!
+
+    expect(tasked_exercise.reload).to be_valid
+
+    tasked_exercise.task_step.task.feedback_at = Time.now
+    tasked_exercise.task_step.task.save!
+
     expect(tasked_exercise.reload).not_to be_valid
   end
 

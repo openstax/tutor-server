@@ -32,7 +32,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def past_due?(current_time: Time.now)
-    current_time > due_at
+    !due_at.nil? && current_time > due_at
   end
 
   def feedback_available?(current_time: Time.now)
