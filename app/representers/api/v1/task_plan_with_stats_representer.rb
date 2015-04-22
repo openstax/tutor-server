@@ -1,5 +1,5 @@
 module Api::V1
-  class TaskPlanRepresenter < Roar::Decorator
+  class TaskPlanWithStatsRepresenter < Roar::Decorator
 
     include Roar::JSON
 
@@ -37,6 +37,13 @@ module Api::V1
              type: Object,
              readable: true,
              writeable: true
+
+    property :stats,
+             extend: Tasks::Stats::TaskPlanRepresenter,
+             getter: ->(args){ CalculateTaskPlanStats[plan: self] },
+             if: ->(args) { !published_at.nil? },
+             readable: true,
+             writable: false
 
   end
 end

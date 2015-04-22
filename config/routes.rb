@@ -53,7 +53,10 @@ Rails.application.routes.draw do
       end
 
       resources :task_plans, path: '/plans', shallow: true, except: [:index, :edit] do
-        post 'publish', on: :member
+        member do
+          post 'publish'
+          get 'review'
+        end
       end
     end
   end
