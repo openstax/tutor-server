@@ -1,12 +1,38 @@
 module Api::V1
   module Tasks
     module Calendar
-      class TaskPlanRepresenter < Api::V1::TaskPlanRepresenter
+      class TaskPlanRepresenter < ::Roar::Decorator
+
+        include ::Roar::JSON
+
+        property :id,
+                 type: Integer,
+                 readable: true,
+                 writeable: false
+
+        property :type,
+                 type: String,
+                 readable: true,
+                 writeable: true
+
+        property :title,
+                 type: String,
+                 readable: true,
+                 writeable: true
+
+        property :opens_at,
+                 type: String,
+                 readable: true,
+                 writeable: true
+
+        property :due_at,
+                 type: String,
+                 readable: true,
+                 writeable: true
 
         property :stats,
                  extend: Stats::TaskPlanRepresenter,
                  getter: ->(args) { CalculateTaskPlanStats[plan: self] },
-                 if: ->(args) { !published_at.nil? },
                  readable: true,
                  writable: false
 

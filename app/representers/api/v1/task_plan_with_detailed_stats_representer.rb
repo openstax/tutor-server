@@ -6,7 +6,6 @@ module Api::V1
              getter: ->(args) {
                CalculateTaskPlanStats[plan: self, details: true]
              },
-             if: ->(args) { !published_at.nil? },
              readable: true,
              writable: false
 
