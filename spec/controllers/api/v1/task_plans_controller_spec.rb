@@ -251,14 +251,14 @@ describe Api::V1::TaskPlansController, :type => :controller, :api => true, :vers
     it 'cannot be requested by unrelated teachers' do
       controller.sign_in unaffiliated_teacher
       expect {
-        api_get :stats, nil, parameters: {id: task_plan.id}
+        api_get :stats, nil, parameters: {id: published_task_plan.id}
       }.to raise_error(SecurityTransgression)
     end
 
     it "can be requested by the course's teacher" do
       controller.sign_in teacher
       expect {
-        api_get :stats, nil, parameters: {id: task_plan.id}
+        api_get :stats, nil, parameters: {id: published_task_plan.id}
       }.to_not raise_error
     end
 
@@ -277,14 +277,14 @@ describe Api::V1::TaskPlansController, :type => :controller, :api => true, :vers
     it 'cannot be requested by unrelated teachers' do
       controller.sign_in unaffiliated_teacher
       expect {
-        api_get :review, nil, parameters: {id: task_plan.id}
+        api_get :review, nil, parameters: {id: published_task_plan.id}
       }.to raise_error(SecurityTransgression)
     end
 
     it "can be requested by the course's teacher" do
       controller.sign_in teacher
       expect {
-        api_get :review, nil, parameters: {id: task_plan.id}
+        api_get :review, nil, parameters: {id: published_task_plan.id}
       }.to_not raise_error
     end
 
