@@ -6,11 +6,11 @@ module Api::V1
 
     collection :plans,
                readable: true,
-               decorator: Tasks::Calendar::TaskPlanRepresenter
+               decorator: Api::V1::Tasks::Calendar::TaskPlanRepresenter
 
     collection :tasks,
                readable: true,
-               decorator: Tasks::Calendar::TaskRepresenter
+               decorator: Api::V1::Tasks::Calendar::TaskRepresenter
 
   end
 end
