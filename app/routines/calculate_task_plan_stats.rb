@@ -106,8 +106,9 @@ class CalculateTaskPlanStats
     }
   end
 
-  def exec(plan:nil)
+  def exec(plan:, details: false)
     @plan = plan
+    @details = details
 
     outputs[:stats] = Hashie::Mash.new(
       {

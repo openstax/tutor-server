@@ -130,11 +130,11 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
         ]
       }
     }```
-    #{json_schema(Api::V1::TaskPlanWithStatsRepresenter, include: :readable)}
+    #{json_schema(Api::V1::TaskPlanWithDetailedStatsRepresenter, include: :readable)}
   EOS
-  def show
+  def review
     plan = Tasks::Models::TaskPlan.find(params[:id])
-    standard_read(plan, Api::V1::TaskPlanWithStatsRepresenter)
+    standard_read(plan, Api::V1::TaskPlanWithDetailedStatsRepresenter)
   end
 
   ###############################################################

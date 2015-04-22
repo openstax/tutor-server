@@ -94,7 +94,7 @@ module Sprint010
                                                   owner: course,
                                                   type: 'reading',
                                                   assistant: r_assistant,
-                                                  settings: { page_ids: [4] }
+                                                  settings: { page_ids: [5] }
       tp_5.tasking_plans << FactoryGirl.create(:tasks_tasking_plan,
                                                target: course, task_plan: tp_5)
       DistributeTasks.call(tp_5)

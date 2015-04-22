@@ -5,8 +5,7 @@ module Api::V1
 
         include Roar::JSON
 
-        property :content,
-                 as: :content_html,
+        property :content_html,
                  writeable: false,
                  readable: true
 
@@ -21,8 +20,7 @@ module Api::V1
         property :selected_count,
                  type: Integer,
                  writeable: false,
-                 readable: true,
-                 getter: ->(*) {  }
+                 readable: true
 
       end
     end

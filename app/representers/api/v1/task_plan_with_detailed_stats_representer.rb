@@ -1,10 +1,10 @@
 module Api::V1
-  class TaskPlanWithStatsRepresenter < TaskPlanRepresenter
+  class TaskPlanWithDetailedStatsRepresenter < TaskPlanRepresenter
 
     property :stats,
              extend: Tasks::Stats::TaskPlanRepresenter,
              getter: ->(args) {
-               CalculateTaskPlanStats[plan: self]
+               CalculateTaskPlanStats[plan: self, details: true]
              },
              if: ->(args) { !published_at.nil? },
              readable: true,
