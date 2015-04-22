@@ -41,32 +41,6 @@ describe Api::V1::TaskPlansController, :type => :controller, :api => true, :vers
     AddUserAsCourseTeacher.call(course: course, user: teacher.entity_user)
   end
 
-  context 'review' do
-
-    it 'cannot be requested by unrelated teachers' do
-      controller.sign_in unaffiliated_teacher
-      expect {
-        api_get :review, nil, parameters: {id: task_plan.id}
-      }.to raise_error(SecurityTransgression)
-    end
-
-    it "can be requested by the course's teacher" do
-      controller.sign_in teacher
-      expect {
-        api_get :review, nil, parameters: {id: task_plan.id}
-      }.to_not raise_error
-    end
-
-    it 'includes stats' do
-      controller.sign_in teacher
-      api_get :review, nil, parameters: {id: published_task_plan.id}
-      body = JSON.parse(response.body)
-      # The representer spec does validate the json so we'll rely on it and just check presense
-      expect(body['stats']).to be_a(Hash)
-    end
-
-  end
-
   context 'show' do
     before(:each) do
       task_plan.save!
@@ -270,6 +244,58 @@ describe Api::V1::TaskPlansController, :type => :controller, :api => true, :vers
                                                       id: task_plan.id} }
         .to raise_error(SecurityTransgression)
     end
+  end
+
+  context 'stats' do
+
+    it 'cannot be requested by unrelated teachers' do
+      controller.sign_in unaffiliated_teacher
+      expect {
+        api_get :stats, nil, parameters: {id: task_plan.id}
+      }.to raise_error(SecurityTransgression)
+    end
+
+    it "can be requested by the course's teacher" do
+      controller.sign_in teacher
+      expect {
+        api_get :stats, nil, parameters: {id: task_plan.id}
+      }.to_not raise_error
+    end
+
+    it 'includes stats' do
+      controller.sign_in teacher
+      api_get :stats, nil, parameters: {id: published_task_plan.id}
+      body = JSON.parse(response.body)
+      # The representer spec does validate the json so we'll rely on it and just check presense
+      expect(body['stats']).to be_a(Hash)
+    end
+
+  end
+
+  context 'review' do
+
+    it 'cannot be requested by unrelated teachers' do
+      controller.sign_in unaffiliated_teacher
+      expect {
+        api_get :review, nil, parameters: {id: task_plan.id}
+      }.to raise_error(SecurityTransgression)
+    end
+
+    it "can be requested by the course's teacher" do
+      controller.sign_in teacher
+      expect {
+        api_get :review, nil, parameters: {id: task_plan.id}
+      }.to_not raise_error
+    end
+
+    it 'includes stats' do
+      controller.sign_in teacher
+      api_get :review, nil, parameters: {id: published_task_plan.id}
+      body = JSON.parse(response.body)
+      # The representer spec does validate the json so we'll rely on it and just check presense
+      expect(body['stats']).to be_a(Hash)
+    end
+
   end
 
 end
