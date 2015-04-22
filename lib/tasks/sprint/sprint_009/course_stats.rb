@@ -26,6 +26,10 @@ module Sprint009
       translations: { outputs: { map: { tasks: :distributed_tasks } } },
       as: :distribute_tasks
 
+    uses_routine MarkTaskStepCompleted,
+      translations: { outputs: { type: :verbatim } },
+      as: :mark_task_step_completed
+
     protected
     def exec
       puts "=== Creating course ==="
@@ -49,10 +53,7 @@ module Sprint009
       outputs[:tasks] = create_assignments(role: student_role)
 
       puts "=== Creating student history ==="
-      outputs.tasks.collect(&:task_steps).find_each do |task_step|
-        task_step.make_correct! if task_step.has_correctness?
-        task_step.complete
-      end
+      make_task_steps_correct
     end
 
     private
@@ -68,7 +69,14 @@ module Sprint009
         tasks << outputs.distributed_tasks
       end
 
-      tasks
+      tasks.flatten.uniq
+    end
+
+    def make_task_steps_correct
+      outputs.tasks.collect(&:task_steps).flatten.uniq.each do |task_step|
+        task_step.make_correct! if task_step.has_correctness?
+        run(:mark_task_step_completed, task_step: task_step)
+      end
     end
 
     def ireading_task_plan
@@ -80,7 +88,7 @@ module Sprint009
         assistant: assistant,
         title: 'Reading',
         settings: {
-          page_ids: outputs.page_data.from(1).collect(&:id)
+          page_ids: outputs.page_data.from(1).collect(&:id) # 0 is preface
         })
     end
 
@@ -93,7 +101,8 @@ module Sprint009
         assistant: assistant,
         title: 'Homework',
         settings: {
-          page_ids: outputs.page_data.from(1).collect(&:id)
+          exercise_ids: Content::Models::Exercise.pluck(:id),
+          exercises_count_dynamic: 2
         })
     end
   end
