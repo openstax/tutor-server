@@ -4,9 +4,11 @@ require 'vcr_helper'
 RSpec.describe Tasks::Assistants::HomeworkAssistant, :type => :assistant,
                                                      :vcr => VCR_OPTS do
 
-  let!(:assistant) { FactoryGirl.create(
-    :tasks_assistant, code_class_name: 'Tasks::Assistants::HomeworkAssistant'
-  ) }
+  let!(:assistant) {
+    FactoryGirl.create(:tasks_assistant,
+      code_class_name: 'Tasks::Assistants::HomeworkAssistant'
+    )
+  }
 
   let!(:exercises) {
     OpenStax::Exercises::V1.use_real_client
@@ -14,27 +16,41 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, :type => :assistant,
                                       .outputs.exercises
   }
 
-  let!(:exercise_ids) { exercises[1..-2].collect{|e| e.id} }
-  let!(:tutor_exercise_count) { 4 } # Adjust if spaced practice changes
+  let!(:teacher_selected_exercises) { exercises[1..-2] }
+  let!(:teacher_selected_exercise_ids) { teacher_selected_exercises.collect{|e| e.id} }
+
+  let!(:tutor_selected_exercise_count) { 4 } # Adjust if spaced practice changes
+
+  let!(:assignment_exercise_count) { teacher_selected_exercise_ids.count + tutor_selected_exercise_count }
 
   let!(:task_plan) {
-    FactoryGirl.create :tasks_task_plan, assistant: assistant, settings: {
-      exercise_ids: exercise_ids,
-      exercises_count_dynamic: 2,
-      description: "Hello!"
-    }
+    FactoryGirl.create(:tasks_task_plan,
+      assistant: assistant,
+      settings: {
+        exercise_ids: teacher_selected_exercise_ids,
+        exercises_count_dynamic: tutor_selected_exercise_count,
+        description: "Hello!"
+      }
+    )
   }
 
-  let!(:taskees) { 3.times.collect{ Entity::User.create } }
-  let!(:tasking_plans) { taskees.collect { |t|
-    task_plan.tasking_plans << FactoryGirl.create(
-      :tasks_tasking_plan, task_plan: task_plan, target: t
-    )
-  } }
+  let!(:num_taskees) { 3 }
+
+  let!(:taskees) { num_taskees.times.collect{ Entity::User.create } }
+
+  let!(:tasking_plans) {
+    taskees.collect do |taskee|
+      task_plan.tasking_plans <<
+        FactoryGirl.create(:tasks_tasking_plan,
+          task_plan: task_plan,
+          target:    taskee
+        )
+    end
+  }
 
   it 'assigns the exercises chosen by the teacher and sets the description and feedback_at' do
     tasks = DistributeTasks.call(task_plan).outputs.tasks
-    expect(tasks.length).to eq 3
+    expect(tasks.length).to eq num_taskees
 
     tasks.each do |task|
       expect(task.taskings.length).to eq 1
@@ -42,20 +58,24 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, :type => :assistant,
       expect(task.feedback_at).to eq task.due_at
 
       task_steps = task.task_steps
-      expect(task_steps.length).to(
-        eq exercise_ids.length + tutor_exercise_count
-      )
+      expect(task_steps.count).to eq(assignment_exercise_count)
 
-      task_steps[0..exercise_ids.length-1].each_with_index do |task_step, i|
-        exercise = exercises[i+1]
-        tasked = task_step.tasked
-        expect(tasked).to be_a(Tasks::Models::TaskedExercise)
-        expect(tasked.url).to eq(exercise.url)
-        expect(tasked.title).to eq(exercise.title)
-        expect(tasked.content).to eq(exercise.content)
+      non_placeholder_task_steps = task_steps.reject{|ts| ts.tasked_type.demodulize == 'TaskedPlaceholder'}
+      expect(non_placeholder_task_steps.count).to eq(teacher_selected_exercises.count)
 
-        (task_steps - [task_step]).each do |other_step|
-          expect(tasked.content).not_to(
+      non_placeholder_task_steps.each_with_index do |task_step, ii|
+        tasked_exercise = task_step.tasked
+
+        exercise = teacher_selected_exercises[ii]
+
+        expect(tasked_exercise).to be_a(Tasks::Models::TaskedExercise)
+        expect(tasked_exercise.url).to eq(exercise.url)
+        expect(tasked_exercise.title).to eq(exercise.title)
+        expect(tasked_exercise.content).to eq(exercise.content)
+
+        other_task_steps = non_placeholder_task_steps.reject{|ts| ts == task_step}
+        other_task_steps.each do |other_step|
+          expect(tasked_exercise.content).not_to(
             include(other_step.tasked.content)
           )
         end
