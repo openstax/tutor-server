@@ -37,6 +37,7 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
   end
 
   def make_correct!
+    self.free_response = '.'
     self.answer_id = correct_answer_id
     self.save!
   end
