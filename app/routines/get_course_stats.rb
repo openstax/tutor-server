@@ -38,7 +38,7 @@ class GetCourseStats
 
       { id: book_part.id,
         current_level: rand(0.0..1.0),
-        page_ids: task_steps.collect(&:page_id),
+        page_ids: task_steps.collect(&:page_id).uniq,
         practice_count: rand(30),
         questions_answered_count: rand(50),
         title: book_part.title,
@@ -48,6 +48,7 @@ class GetCourseStats
 
   def task_steps_grouped_by_book_part
     outputs.task_steps.group_by do |task_step|
+      next unless task_step.page_id
       run(:get_page, id: task_step.page_id).outputs.page.book_part_id
     end
   end
