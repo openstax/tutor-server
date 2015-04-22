@@ -33,7 +33,7 @@ module Sprint009
     protected
     def exec
       puts "=== Creating course ==="
-      run(:create_course)
+      run(:create_course, name: 'Physics')
 
       puts "=== Fetch & import book ==="
       run(:fetch_and_import_book, id: '7db9aa72-f815-4c3b-9cb6-d50cf5318b58@4.57')
