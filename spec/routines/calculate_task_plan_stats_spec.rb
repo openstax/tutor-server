@@ -82,7 +82,7 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
       expect(stats.course.complete_count).to eq(1)
       expect(stats.course.partially_complete_count).to eq(0)
       page = stats.course.current_pages.first
-      expect(page['page']['title']).to eq('Force')
+      expect(page['title']).to eq('Force')
       expect(page['student_count']).to eq(number_of_students)
       expect(page['correct_count']).to eq(1)
       expect(page['incorrect_count']).to eq(0)
@@ -100,7 +100,7 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
       expect(stats.course.complete_count).to eq(2)
       expect(stats.course.partially_complete_count).to eq(0)
       page = stats.course.current_pages.first
-      expect(page['page']['title']).to eq('Force')
+      expect(page['title']).to eq('Force')
       expect(page['student_count']).to eq(number_of_students)
       expect(page['correct_count']).to eq(1)
       expect(page['incorrect_count']).to eq(1)
@@ -119,7 +119,7 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
       expect(stats.course.complete_count).to eq(3)
       expect(stats.course.partially_complete_count).to eq(0)
       page = stats.course.current_pages.first
-      expect(page['page']['title']).to eq('Force')
+      expect(page['title']).to eq('Force')
       expect(page['student_count']).to eq(number_of_students)
       expect(page['correct_count']).to eq(2)
       expect(page['incorrect_count']).to eq(1)
@@ -138,7 +138,7 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
       expect(stats.course.complete_count).to eq(4)
       expect(stats.course.partially_complete_count).to eq(0)
       page = stats.course.current_pages.first
-      expect(page['page']['title']).to eq('Force')
+      expect(page['title']).to eq('Force')
       expect(page['student_count']).to eq(number_of_students)
       expect(page['correct_count']).to eq(3)
       expect(page['incorrect_count']).to eq(1)
