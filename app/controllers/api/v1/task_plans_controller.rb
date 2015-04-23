@@ -87,7 +87,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   api :GET, '/plans/:id/stats', "Retrieve a TaskPlan along with its statistics"
   description <<-EOS
     ### Example JSON response
-    ```json
+    <pre class='code'>
     {
         "id": 2543,
         "type": "reading",
@@ -121,7 +121,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
             "periods": []
         }
     }
-    ```
+    </pre>
     #{json_schema(Api::V1::TaskPlanWithStatsRepresenter, include: :readable)}
   EOS
   def stats
@@ -136,7 +136,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   api :GET, '/plans/:id/review', "Retrieve a TaskPlan along with its detailed statistics"
   description <<-EOS
     ### Example JSON response
-    ```json
+    <pre class='code'>
     {
         "id": 2543,
         "type": "reading",
@@ -195,7 +195,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
             "periods": []
         }
     }
-    ```
+    </pre>
     #{json_schema(Api::V1::TaskPlanWithDetailedStatsRepresenter, include: :readable)}
   EOS
   def review
