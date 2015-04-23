@@ -15,16 +15,21 @@ class GetCourseStats
 
   uses_routine Content::VisitBook,
     translations: { outputs: { type: :verbatim } },
-    as: :get_book_toc
+    as: :visit_book
+
+  uses_routine Tasks::GetCompletedTaskedExercises,
+    translations: { outputs: { type: :verbatim } },
+    as: :get_completed_tasked_exercises
 
   protected
   def exec(role:, course:)
     run(:get_role_task_steps, roles: role)
     run(:get_course_books, course: course)
-    run(:get_book_toc, book: outputs.books.first, visitor_names: :toc)
+    run(:visit_book, book: outputs.books.first, visitor_names: :toc)
+    run(:visit_book, book: outputs.books.first, visitor_names: :page_data)
 
     outputs[:course_stats] = { title: root_book_title,
-                               fields: compile_fields }
+                               fields: compile_fields(role: role) }
   end
 
   private
@@ -32,7 +37,7 @@ class GetCourseStats
     outputs.toc.first.title
   end
 
-  def compile_fields
+  def compile_fields(role: role)
     task_steps_grouped_by_book_part.collect do |book_part_id, task_steps|
       book_part = find_book_part(book_part_id)
       page_ids = task_steps.collect(&:page_id).uniq
@@ -41,19 +46,19 @@ class GetCourseStats
       current_level = OpenStax::BigLearn::V1.get_clue(learner_ids: [],
                                                       tags: lo_tags)
 
+      run(:get_completed_tasked_exercises, roles: role, tags: lo_tags)
 
       { id: book_part.id,
         current_level: current_level,
         practice_count: rand(30),
-        questions_answered_count: rand(50),
+        questions_answered_count: outputs.completed_tasked_exercises.count,
         title: book_part.title,
         unit: book_part.path }
     end
   end
 
   def task_steps_grouped_by_book_part
-    outputs.task_steps.group_by do |task_step|
-      next unless task_step.page_id
+    outputs.task_steps.select { |t| t.page_id.present? }.group_by do |task_step|
       run(:get_page, id: task_step.page_id).outputs.page.book_part_id
     end
   end
