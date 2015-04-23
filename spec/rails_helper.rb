@@ -6,7 +6,7 @@ require 'rspec/rails'
 require 'shoulda/matchers'
 
 # Temporary fix for specs
-require_relative '../app/models/entity/role'
+require_dependency '../../app/models/entity/role'
 
 # Add additional requires below this line. Rails is not loaded until this point!
 
