@@ -35,10 +35,15 @@ class GetCourseStats
   def compile_fields
     task_steps_grouped_by_book_part.collect do |book_part_id, task_steps|
       book_part = find_book_part(book_part_id)
+      page_ids = task_steps.collect(&:page_id).uniq
+      lo_tags = outputs.page_data.select { |p| page_ids.include?(p.id) }
+                                 .collect(&:los).flatten.uniq
+      current_level = OpenStax::BigLearn::V1.get_clue(learner_ids: [],
+                                                      tags: lo_tags)
+
 
       { id: book_part.id,
-        current_level: rand(0.0..1.0),
-        page_ids: task_steps.collect(&:page_id).uniq,
+        current_level: current_level,
         practice_count: rand(30),
         questions_answered_count: rand(50),
         title: book_part.title,
