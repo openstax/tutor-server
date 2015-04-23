@@ -32,21 +32,27 @@ RSpec.describe Api::V1::CourseEventsRepresenter, :type => :representer do
 end
 
 def plan_hash_including_for(plan:)
-  a_hash_including(
+  hash = {
     "id"       => plan.id,
     "opens_at" => DateTimeUtilities.to_api_s(plan.opens_at),
     "due_at"   => DateTimeUtilities.to_api_s(plan.due_at),
     "trouble"  => be_a_kind_of(TrueClass).or( be_a_kind_of(FalseClass) ),
     "type"     => plan.type
-  )
+  }
+  hash["title"] = plan.title unless plan.title.nil?
+
+  a_hash_including hash
 end
 
 def task_hash_including_for(task:)
-  a_hash_including(
-    "id" => task.id,
+  hash = {
+    "id"       => task.id,
     "opens_at" => DateTimeUtilities.to_api_s(task.opens_at),
     "due_at"   => DateTimeUtilities.to_api_s(task.due_at),
     "type"     => task.task_type,
     "complete" => task.completed?
-  )
+  }
+  hash["title"] = task.title unless task.title.nil?
+
+  a_hash_including hash
 end

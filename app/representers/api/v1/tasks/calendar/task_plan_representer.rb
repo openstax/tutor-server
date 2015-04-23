@@ -13,27 +13,28 @@ module Api::V1
         property :type,
                  type: String,
                  readable: true,
-                 writeable: true
+                 writeable: false
 
         property :title,
                  type: String,
                  readable: true,
-                 writeable: true
+                 writeable: false
 
         property :opens_at,
                  type: String,
                  readable: true,
-                 writeable: true
+                 writeable: false
 
         property :due_at,
                  type: String,
                  readable: true,
-                 writeable: true
+                 writeable: false
 
         property :trouble,
                  type: :boolean,
                  readable: true,
-                 getter: lambda{|*| rand(0..1)==0 }
+                 writeable: false,
+                 getter: lambda{ |*| rand(0..1)==0 }
         # ^^^^^ REPLACE with real value once spec for calculating it is available
 
       end

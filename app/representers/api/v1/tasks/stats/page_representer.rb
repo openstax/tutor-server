@@ -5,23 +5,20 @@ module Api::V1
 
         include Roar::JSON
 
-        property :page do
+        property :id,
+                 type: Integer,
+                 readable: true,
+                 writeable: false
 
-          property :id,
-                   type: Integer,
-                   readable: true,
-                   writeable: false
+        property :number,
+                 type: String,
+                 readable: true,
+                 writeable: false
 
-          property :number,
-                   type: String,
-                   readable: true,
-                   writeable: false
-
-          property :title,
-                   type: String,
-                   readable: true,
-                   writeable: false
-        end
+        property :title,
+                 type: String,
+                 readable: true,
+                 writeable: false
 
         property :student_count,
                  type: Integer,

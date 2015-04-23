@@ -1,8 +1,8 @@
 module Api::V1
-  class TaskPlanWithDetailedStatsRepresenter < TaskPlanRepresenter
+  class TaskPlanWithDetailedStatsRepresenter < TaskPlanWithStatsRepresenter
 
     property :stats,
-             extend: Tasks::Stats::TaskPlanRepresenter,
+             decorator: Api::V1::Tasks::Stats::TaskPlanRepresenter,
              getter: ->(args) {
                CalculateTaskPlanStats[plan: self, details: true]
              },

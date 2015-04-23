@@ -28,11 +28,9 @@ class CalculateTaskPlanStats
 
   def generate_page_stats(page, include_previous=false)
     stats = {
-      page: {
-        id:     page.id,
-        number: page.number,
-        title:  page.title
-      }
+      id:     page.id,
+      number: page.number,
+      title:  page.title
     }
     # find all the exercise task steps for the page number
     steps = completed_exercises_for_page_id(page.id)
@@ -50,11 +48,9 @@ class CalculateTaskPlanStats
   def generate_spaced_practice_stats
     # spaced excercises do not have pages
     stats = {
-      page: {
-        id:     0000,
-        number: 0000,
-        title:  ""
-      }
+      id:     0000,
+      number: 0000,
+      title:  ""
     }
     steps = completed_exercises_for_page_id(nil)
     [ stats.merge(page_stats_for_steps(steps)) ]

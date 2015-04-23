@@ -7,24 +7,35 @@ module Api::V1
 
         property :id,
                  type: Integer,
-                 readable: true
+                 readable: true,
+                 writeable: false
+
+        property :task_type,
+                 as: :type,
+                 type: String,
+                 readable: true,
+                 writeable: false
 
         property :title,
                  type: String,
-                 readable: true
+                 readable: true,
+                 writeable: false
 
         property :opens_at,
                  type: DateTime,
-                 readable: true
+                 readable: true,
+                 writeable: false
 
         property :due_at,
                  type: DateTime,
-                 readable: true
+                 readable: true,
+                 writeable: false
 
         property :completed?,
                  as: :complete,
                  type: :boolean,
-                 readable: true
+                 readable: true,
+                 writeable: false
 
       end
     end

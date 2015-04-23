@@ -14,6 +14,8 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, :type => :represen
 
   it "represents a tasked exercise's stats" do
     expect(representation).to include(
+      "id" => task_plan.id,
+      "type" => "reading",
       "stats" => {
         "course" => a_hash_including(
           "total_count"              => 2,
@@ -21,29 +23,28 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, :type => :represen
           "partially_complete_count" => 0,
           "current_pages"            => a_collection_containing_exactly(
             a_hash_including(
+              "id"     => task_plan.settings['page_ids'].first,
+              "number" => 1,
+              "title"  => "Force",
               "student_count"   => 2,
               "correct_count"   => 0,
               "incorrect_count" => 0,
-              "page" => a_hash_including(
-                "id"     => task_plan.settings['page_ids'].first,
-                "number" => 1,
-                "title"  => "Force"
-              )
+              "exercises" => nil
             )
           ),
           "spaced_pages" => a_collection_containing_exactly(
             a_hash_including(
-              "student_count"   => 0, ## newly created Tasks can have TaskedPlaceholders
+              "id"     => 0,
+              "number" => 0,
+              "title"  => "",
+              "student_count"   => 0,
               "correct_count"   => 0,
               "incorrect_count" => 0,
-              "page" => a_hash_including(
-                "id"     => 0,
-                "number" => 0,
-                "title"  => ""
-              )
+              "exercises" => nil
             )
           )
-        )
+        ),
+        "periods" => []
       }
     )
   end
