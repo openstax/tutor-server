@@ -19,7 +19,7 @@ module Api::V1
                    type: Object,
                    writeable: false,
                    readable: true,
-                   decorator: AnswerRepresenter
+                   decorator: Api::V1::Tasks::Stats::AnswerRepresenter
 
       end
     end

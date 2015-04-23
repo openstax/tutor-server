@@ -39,13 +39,13 @@ module Api::V1
                    type: Object,
                    writeable: false,
                    readable: true,
-                   decorator: ExerciseRepresenter
+                   decorator: Api::V1::Tasks::Stats::ExerciseRepresenter
 
         property :previous_attempt,
                  type: Object,
                  writeable: false,
                  readable: true,
-                 decorator: PageRepresenter
+                 decorator: self
 
       end
     end

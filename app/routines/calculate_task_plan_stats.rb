@@ -4,12 +4,12 @@ class CalculateTaskPlanStats
 
   protected
 
-  def completed_exercises_for_page_id(page_id)
-    @plan.tasks.inject([]) do |collection, task|
-      collection + task.task_steps.find_all{ |ts|
+  def exercise_steps_for_page_id(page_id)
+    @plan.tasks.collect do |task|
+      task.task_steps.select do |ts|
         ts.tasked_type.ends_with?("TaskedExercise") && ts.page_id == page_id
-      }
-    end
+      end
+    end.flatten
   end
 
   def answer_stats_for_tasked_exercises(tasked_exercises)
@@ -60,7 +60,7 @@ class CalculateTaskPlanStats
       title:  page.title
     }
     # find all the exercise task steps for the page number
-    steps = completed_exercises_for_page_id(page.id)
+    steps = exercise_steps_for_page_id(page.id)
     stats.merge page_stats_for_steps(steps)
   end
 
@@ -79,7 +79,7 @@ class CalculateTaskPlanStats
       number: 0000,
       title:  ""
     }
-    steps = completed_exercises_for_page_id(nil)
+    steps = exercise_steps_for_page_id(nil)
     [ stats.merge(page_stats_for_steps(steps)) ]
   end
 

@@ -8,12 +8,12 @@ module Api::V1
         property :course,
                  readable: true,
                  writeable: false,
-                 decorator: CourseAndPeriodRepresenter
+                 decorator: Api::V1::Tasks::Stats::CourseAndPeriodRepresenter
 
         collection :periods,
                    readable: true,
                    writable: false,
-                   decorator: CourseAndPeriodRepresenter
+                   decorator: Api::V1::Tasks::Stats::CourseAndPeriodRepresenter
 
       end
     end

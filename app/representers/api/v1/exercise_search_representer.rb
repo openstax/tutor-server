@@ -3,7 +3,7 @@ module Api::V1
 
     collection :items, inherit: true,
                        class: Exercise,
-                       decorator: ExerciseRepresenter
+                       decorator: Api::V1::ExerciseRepresenter
 
   end
 end
