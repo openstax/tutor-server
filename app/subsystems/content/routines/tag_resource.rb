@@ -9,21 +9,15 @@ class Content::Routines::TagResource
     tagging_class = options[:tagging_class] || \
                       "#{resource_class_name}Tag".constantize
     resource_field = resource_class_name.underscore.split('/').last.to_sym
-    tag_type = options[:tag_type] || 0
-    outputs[:tag_type] = tag_type
 
     outputs[:tags] = []
     outputs[:taggings] = []
-    [tags].flatten.compact.each do |t|
-      tag = t.is_a?(Content::Models::Tag) ? \
-            t : Content::Models::Tag.find_or_initialize_by(value: t.to_s)
-      unless tag.persisted?
-        tag.tag_type = tag_type
-        tag.save!
-      end
 
-      outputs[:tags] << tag
-      transfer_errors_from(tag, scope: :tags)
+    [tags].flatten.compact.each do |tag|
+      content_tag = run(FindOrCreateTag, input: tag, type: options[:tag_type]).outputs.tag
+
+      outputs[:tags] << content_tag
+      transfer_errors_from(content_tag, scope: :tags)
 
       tagging = tagging_class.find_or_create_by(tag: tag,
                                                 resource_field => resource)
