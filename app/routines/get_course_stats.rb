@@ -17,10 +17,6 @@ class GetCourseStats
     translations: { outputs: { type: :verbatim } },
     as: :visit_book
 
-  uses_routine Tasks::GetCompletedTaskedExercises,
-    translations: { outputs: { type: :verbatim } },
-    as: :get_completed_tasked_exercises
-
   protected
   def exec(role:, course:)
     run(:get_role_task_steps, roles: role)
@@ -46,14 +42,19 @@ class GetCourseStats
       current_level = OpenStax::BigLearn::V1.get_clue(learner_ids: [],
                                                       tags: lo_tags)
 
-      run(:get_completed_tasked_exercises, roles: role, tags: lo_tags)
-
       { id: book_part.id,
         current_level: current_level,
+        pages: [], # coming soon
         practice_count: rand(30),
-        questions_answered_count: outputs.completed_tasked_exercises.count,
+        questions_answered_count: completed_tasked_exercises(task_steps).count,
         title: book_part.title,
         unit: book_part.path }
+    end
+  end
+
+  def completed_tasked_exercises(task_steps)
+    task_steps.keep_if do |t|
+      t.tasked_type == 'Tasks::Models::TaskedExercise' && t.completed?
     end
   end
 
