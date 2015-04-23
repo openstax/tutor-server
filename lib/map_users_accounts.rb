@@ -11,7 +11,6 @@ module MapUsersAccounts
     end
 
     private
-
     def anonymous_profile
       UserProfile::Models::Profile.anonymous if @account.is_anonymous?
     end
@@ -21,8 +20,11 @@ module MapUsersAccounts
     end
 
     def create_profile
-      create_profile = UserProfile::CreateProfile.call(account_id: @account.id,
-                                                       exchange_identifier: identifier)
+      create_profile = UserProfile::CreateProfile.call(attrs: {
+        account_id: @account.id,
+        exchange_identifier: identifier
+      })
+
       if error = create_profile.errors.first
         raise error.message
       else

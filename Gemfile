@@ -43,7 +43,7 @@ gem 'openstax_utilities', '~> 4.2.0'
 gem 'whenever'
 
 # OpenStax Accounts integration
-gem 'openstax_accounts', '~> 5.0.1'
+gem 'openstax_accounts', '~> 5.1'
 # OpenStax Exchange integration
 gem 'openstax_exchange'
 
@@ -56,7 +56,7 @@ gem 'apipie-rails'
 gem 'maruku'
 
 # Lev framework
-gem 'lev', git: 'https://github.com/lml/lev.git', ref: '264819012e'
+gem 'lev', '~> 4.1'
 
 # Ruby dsl for SQL queries
 gem 'squeel'
@@ -102,6 +102,9 @@ gem 'sortability'
 gem 'pg'
 
 group :development, :test do
+  # Get env variables from .env file
+  gem 'dotenv-rails'
+
   # Allows 'ap' alternative to 'pp'
   gem 'awesome_print'
 

@@ -33,6 +33,6 @@ class Admin::CoursesController < Admin::BaseController
   end
 
   def get_users
-    @users = GetAllUserProfiles.call.outputs.profiles
+    @users = GetAllUserProfiles[]
   end
 end
