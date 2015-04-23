@@ -4,6 +4,10 @@ module OpenStax::BigLearn::V1
   # API Wrappers
   #
 
+  def self.get_clue(learner_ids:, tags:)
+    client.get_clue(learner_ids: learner_ids, tags: tags)
+  end
+
   def self.add_exercises(exercises)
     client.add_exercises(exercises)
   end

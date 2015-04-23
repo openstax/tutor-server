@@ -3,6 +3,10 @@ class OpenStax::BigLearn::V1::FakeClient
   # API methods
   #
 
+  def get_clue(learner_ids:, tags:)
+    rand(0.0..1.0)
+  end
+
   def add_exercises(exercises)
     # Iterate through the exercises, storing each in the store, overwriting
     # any with the same ID
