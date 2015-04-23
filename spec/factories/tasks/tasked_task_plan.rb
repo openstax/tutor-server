@@ -18,7 +18,8 @@ FactoryGirl.define do
                'title' => 'Force'}
       )
       book_part = FactoryGirl.create :content_book_part
-      page      = Content::Routines::ImportPage.call(cnx_page: cnx_page, book_part: book_part).outputs.page
+      page      = Content::Routines::ImportPage.call(cnx_page: cnx_page, book_part: book_part)
+                                               .outputs.page
       { page_ids: [page.id] }
     end
 

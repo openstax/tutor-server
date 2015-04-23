@@ -16,7 +16,8 @@ class CalculateTaskPlanStats
     tasked_exercises.first.answer_ids.collect do |answer_id|
       {
         id: answer_id,
-        selected_count: tasked_exercises.select{ |te| te.answer_id == answer_id }.count
+        selected_count: tasked_exercises.select{ |te| te.answer_id == answer_id && \
+                                                      te.completed? }.count
       }
     end
   end
@@ -24,13 +25,14 @@ class CalculateTaskPlanStats
   def exercise_stats_for_steps(steps)
     tasked_exercises = steps.collect{ |s| s.tasked }
     urls = Set.new(steps.collect{ |s| s.tasked.url })
-    tasked_exercises = steps.select{ |s| s.completed? }.collect{ |s| s.tasked }
+    tasked_exercises = steps.collect{ |s| s.tasked }
     urls.collect do |url|
       selected_tasked_exercises = tasked_exercises.select{ |te| te.url == url }
+      completed_tasked_exercises = selected_tasked_exercises.select{ |te| te.completed? }
 
       {
         content_json: selected_tasked_exercises.first.content,
-        answered_count: selected_tasked_exercises.count,
+        answered_count: completed_tasked_exercises.count,
         answers: answer_stats_for_tasked_exercises(selected_tasked_exercises)
       }
     end

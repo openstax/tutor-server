@@ -3,13 +3,13 @@ require 'vcr_helper'
 
 RSpec.describe Api::V1::TaskPlanWithStatsRepresenter, :type => :representer, :vcr => VCR_OPTS do
 
-  let(:number_of_students){ 2 }
+  let!(:number_of_students){ 2 }
 
-  let(:task_plan) {
+  let!(:task_plan) {
     FactoryGirl.create :tasked_task_plan, number_of_students: number_of_students
   }
 
-  let(:representation) { Api::V1::TaskPlanWithStatsRepresenter.new(task_plan).as_json }
+  let!(:representation) { Api::V1::TaskPlanWithStatsRepresenter.new(task_plan).as_json }
 
   it "represents a tasked exercise's stats" do
     expect(representation).to include(

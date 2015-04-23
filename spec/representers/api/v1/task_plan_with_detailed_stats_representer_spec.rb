@@ -4,13 +4,11 @@ require 'vcr_helper'
 RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, :type => :representer,
                                                               :vcr => VCR_OPTS do
 
-  let(:number_of_students){ 2 }
+  let!(:number_of_students){ 2 }
 
-  let(:task_plan) {
+  let!(:task_plan) {
     FactoryGirl.create :tasked_task_plan, number_of_students: number_of_students
   }
-
-  let(:representation) { Api::V1::TaskPlanWithDetailedStatsRepresenter.new(task_plan).as_json }
 
   it "represents a tasked exercise's stats" do
     # Answer an exercise correctly and mark it as completed
@@ -32,6 +30,7 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, :type => :represen
     task_step.tasked.save!
     MarkTaskStepCompleted.call(task_step: task_step)
 
+    representation = Api::V1::TaskPlanWithDetailedStatsRepresenter.new(task_plan).as_json
     expect(representation).to include(
       "id" => task_plan.id,
       "type" => "reading",
