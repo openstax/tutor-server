@@ -5,17 +5,10 @@ module Api::V1
 
         include Roar::JSON
 
-        property :content_html,
+        property :id,
+                 type: String,
                  writeable: false,
                  readable: true
-
-        property :correctness,
-                 type: Float,
-                 writeable: false,
-                 readable: true,
-                 schema_info: {
-                   type: "number"
-                 }
 
         property :selected_count,
                  type: Integer,

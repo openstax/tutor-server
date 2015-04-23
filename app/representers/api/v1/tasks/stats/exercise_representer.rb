@@ -5,15 +5,18 @@ module Api::V1
 
         include Roar::JSON
 
-        property :content_html,
+        property :content_json,
+                 type: String,
                  writeable: false,
                  readable: true
 
         property :answered_count,
+                 type: Integer,
                  writeable: false,
                  readable: true
 
         collection :answers,
+                   type: Object,
                    writeable: false,
                    readable: true,
                    decorator: AnswerRepresenter

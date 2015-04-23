@@ -5,6 +5,9 @@ require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
 require 'shoulda/matchers'
 
+# Temporary fix for specs
+require_relative '../app/models/entity/role'
+
 # Add additional requires below this line. Rails is not loaded until this point!
 
 Dir.glob("#{Rails.root}/spec/mocks/**/*.rb").each { |f| require f }
