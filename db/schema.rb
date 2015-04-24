@@ -423,7 +423,6 @@ ActiveRecord::Schema.define(version: 20150420184110) do
     t.string   "tasked_type",               null: false
     t.integer  "number",                    null: false
     t.datetime "completed_at"
-    t.integer  "page_id"
     t.integer  "group_type",    default: 0, null: false
     t.datetime "created_at",                null: false
     t.datetime "updated_at",                null: false

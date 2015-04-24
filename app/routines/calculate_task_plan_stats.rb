@@ -5,9 +5,10 @@ class CalculateTaskPlanStats
   protected
 
   def exercise_steps_for_page_id(page_id)
+    page_los = Content::GetLos[page_ids: page_id]
     @plan.tasks.collect do |task|
       task.task_steps.select do |ts|
-        ts.tasked_type.ends_with?("TaskedExercise") && ts.page_id == page_id
+        ts.tasked_type.ends_with?("TaskedExercise") && (ts.tasked.los & page_los).any?
       end
     end.flatten
   end
