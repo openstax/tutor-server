@@ -46,7 +46,7 @@ class SetupCourseStats
     puts "=== Create assignments ==="
     create_assignments(role: student_role)
 
-    puts "=== Setting student history ==="
+    puts "=== Set student history ==="
     stagger_page_level_practice_widgets(role: student_role)
     stagger_chapter_level_practice_widgets(role: student_role)
   end
