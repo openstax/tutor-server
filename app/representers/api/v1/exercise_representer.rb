@@ -9,7 +9,12 @@ module Api::V1
 
     property :title, readable: true, schema_info: { required: true }
 
-    property :content, readable: true, schema_info: { required: true }
+    property :content,
+             getter: -> (*) { ::JSON.parse(content) },
+             readable: true,
+             schema_info: {
+               required: true
+             }
 
     collection :tags_with_teks,
                as: :tags,
