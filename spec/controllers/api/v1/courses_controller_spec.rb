@@ -424,6 +424,24 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
 
   end
 
+  describe 'GET #stats' do
+    it 'works' do
+      OpenStax::BigLearn::V1.use_fake_client
+
+      SetupCourseStats[]
+
+      account = OpenStax::Accounts::Account.find_by(username: 'student')
+      profile = MapUsersAccounts.account_to_user(account)
+      profile_token = FactoryGirl.create(:doorkeeper_access_token,
+                                          application: application,
+                                          resource_owner_id: profile.id)
+      course = CourseProfile::Models::Profile.find_by(name: 'Physics').course
+
+      api_get :stats, profile_token, parameters: { id: course.id }
+      binding.pry
+    end
+  end
+
   describe "practice_get" do
     it "returns nothing when practice widget not yet set" do
       AddUserAsCourseStudent.call(course: course, user: user_1.entity_user)
