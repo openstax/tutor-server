@@ -93,7 +93,16 @@ class Api::V1::CoursesController < Api::V1::ApiController
   def events
     course = Entity::Course.find(params[:id])
     result = GetRoleCourseEvents.call(course: course, role: get_course_role(types: :any))
+    GetTeacherNames(params[:id])
     respond_with result.outputs, represent_with: Api::V1::CourseEventsRepresenter
+  end
+
+  def dashboard
+    data = Api::V1::Courses::Dashboard.call(
+             course: params[:id],
+             role: get_course_role(types: :any)
+           ).outputs
+    respond_with data, represent_with: Api::V1::CourseDashboardRepresenter
   end
 
   api nil, nil, nil
