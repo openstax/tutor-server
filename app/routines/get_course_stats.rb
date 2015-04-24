@@ -36,37 +36,64 @@ class GetCourseStats
   def compile_fields(role: role)
     task_steps_grouped_by_book_part.collect do |book_part_id, task_steps|
       book_part = find_book_part(book_part_id)
-      page_ids = task_steps.collect(&:page_id).uniq
-      lo_tags = outputs.page_data.select { |p| page_ids.include?(p.id) }
-                                 .collect(&:los).flatten.uniq
-      current_level = OpenStax::BigLearn::V1.get_clue(learner_ids: [],
-                                                      tags: lo_tags)
+      practices = completed_practices(task_steps: task_steps)
+      page_ids = task_steps.collect(&:page_id).flatten.uniq
 
       { id: book_part.id,
-        current_level: current_level,
-        pages: [], # coming soon
-        practice_count: rand(30),
-        questions_answered_count: completed_tasked_exercises(task_steps).count,
+        current_level: get_current_level(page_ids: page_ids),
+        pages: compile_pages(task_steps: task_steps),
+        practice_count: practices.count,
+        questions_answered_count: task_steps.count,
         title: book_part.title,
-        unit: book_part.path }
+        number: book_part.path }
     end
   end
 
-  def completed_tasked_exercises(task_steps)
-    task_steps.keep_if do |t|
-      t.tasked_type == 'Tasks::Models::TaskedExercise' && t.completed?
+  def compile_pages(task_steps:)
+    task_steps.collect(&:page_id).flatten.uniq.collect do |page_id|
+      filtered_task_steps = task_steps.select { |ts| ts.page_id == page_id }
+      page = outputs.page_data.select { |p| p.id == page_id }.first
+      practices = completed_practices(task_steps: filtered_task_steps)
+
+      { id: page.id,
+        current_level: get_current_level(page_ids: page_id),
+        practice_count: practices.count,
+        questions_answered_count: filtered_task_steps.count,
+        title: page.title,
+        number: page.path }
     end
+  end
+
+  def completed_practices(task_steps:)
+    tasks = Tasks::Models::Task.where(id: task_steps.collect(&:tasks_task_id).uniq)
+                               .where{task_type == "practice"}
+    tasks.select(&:completed?)
+  end
+
+  def get_current_level(page_ids:)
+    lo_tags = get_lo_tags(page_ids: page_ids)
+    OpenStax::BigLearn::V1.get_clue(learner_ids: [], tags: lo_tags)
+  end
+
+  def get_lo_tags(page_ids:)
+    page_ids = [page_ids].flatten
+    outputs.page_data.select { |p| page_ids.include?(p.id) }
+                     .collect(&:los).flatten.uniq
   end
 
   def task_steps_grouped_by_book_part
-    outputs.task_steps.select { |t| t.page_id.present? }.group_by do |task_step|
+    outputs.task_steps.select { |t|
+      t.page_id.present? &&
+        t.tasked_type == 'Tasks::Models::TaskedExercise' &&
+          t.completed?
+    }.group_by do |task_step|
       run(:get_page, id: task_step.page_id).outputs.page.book_part_id
     end
   end
 
   def find_book_part(id)
     toc_children = outputs.toc.collect(&:children).flatten
-    book_part = outputs.toc.first { |bp| bp.id == id }
-    book_part ||= toc_children.first { |bp| bp.id == id }
+    book_part = outputs.toc.select { |bp| bp.id == id }.first
+    book_part ||= toc_children.select { |bp| bp.id == id }.first
   end
 end
