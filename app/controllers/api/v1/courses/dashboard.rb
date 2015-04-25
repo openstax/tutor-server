@@ -9,8 +9,7 @@ class Api::V1::Courses::Dashboard
   uses_routine GetCourse,
                as: :get_course
   uses_routine GetTeacherNames,
-               as: :get_teacher_names,
-               translations: { outputs: { scope: :course } }
+               as: :get_teacher_names
 
   protected
 
@@ -44,8 +43,14 @@ class Api::V1::Courses::Dashboard
   end
 
   def load_course(course, role_type)
-    run(:get_course_profile, course)
+    run(:get_course, course.id)
     run(:get_teacher_names, course.id)
+
+    outputs[:course] = {
+      id: outputs["[:get_course, :course]"].course_id,
+      name: outputs["[:get_course, :course]"].name,
+      teacher_names: outputs["[:get_teacher_names, :teacher_names]"]
+    }
   end
 
   def load_role(role, role_type)
