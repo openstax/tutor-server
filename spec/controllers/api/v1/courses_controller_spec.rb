@@ -448,25 +448,26 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
   end
 
   describe "dashboard" do
-    let!(:student_user)   { FactoryGirl.create(:user_profile).entity_user }
+    let!(:student_profile){ FactoryGirl.create(:user_profile) }
+    let!(:student_user)   { student_profile.entity_user }
     let!(:student_role)   { AddUserAsCourseStudent.call(user: student_user,
                                                         course: course)
                                                   .outputs.role }
     let!(:student_token)  { FactoryGirl.create :doorkeeper_access_token,
                                                application: application,
-                                               resource_owner_id: student_user.id }
+                                               resource_owner_id: student_profile.id }
 
-
-    let!(:teacher_user)   { FactoryGirl.create(:user_profile,
+    let!(:teacher_profile){ FactoryGirl.create(:user_profile,
                                                first_name: 'Bob',
                                                last_name: 'Newhart',
-                                               full_name: 'Bob Newhart').entity_user }
+                                               full_name: 'Bob Newhart') }
+    let!(:teacher_user)   { teacher_profile.entity_user }
     let!(:teacher_role)   { AddUserAsCourseTeacher.call(user: teacher_user,
                                                         course: course)
                                                   .outputs.role }
     let!(:teacher_token)  { FactoryGirl.create :doorkeeper_access_token,
                                                application: application,
-                                               resource_owner_id: teacher_user.id }
+                                               resource_owner_id: teacher_profile.id }
 
     let!(:reading_task)   { FactoryGirl.create(:tasks_task,
                                                task_type: 'reading',
