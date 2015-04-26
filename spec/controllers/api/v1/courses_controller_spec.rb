@@ -18,7 +18,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
   let!(:userless_token)  { FactoryGirl.create :doorkeeper_access_token,
                                               application: application }
 
-  let!(:course) { Entity::Course.create! }
+  let!(:course) { CreateCourse[name: 'Physics 101'] }
 
   describe "#readings" do
     it "should work on the happy path" do
@@ -445,6 +445,161 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
                                                opens_at: be_kind_of(String),
                                                steps: have(5).items)
     end
+  end
+
+  describe "dashboard" do
+    let!(:student_user)   { FactoryGirl.create(:user_profile).entity_user }
+    let!(:student_role)   { AddUserAsCourseStudent.call(user: student_user,
+                                                        course: course)
+                                                  .outputs.role }
+    let!(:student_token)  { FactoryGirl.create :doorkeeper_access_token,
+                                               application: application,
+                                               resource_owner_id: student_user.id }
+
+
+    let!(:teacher_user)   { FactoryGirl.create(:user_profile,
+                                               first_name: 'Bob',
+                                               last_name: 'Newhart',
+                                               full_name: 'Bob Newhart').entity_user }
+    let!(:teacher_role)   { AddUserAsCourseTeacher.call(user: teacher_user,
+                                                        course: course)
+                                                  .outputs.role }
+    let!(:teacher_token)  { FactoryGirl.create :doorkeeper_access_token,
+                                               application: application,
+                                               resource_owner_id: teacher_user.id }
+
+    let!(:reading_task)   { FactoryGirl.create(:tasks_task,
+                                               task_type: 'reading',
+                                               opens_at: Time.now - 1.week,
+                                               due_at: Time.now,
+                                               step_types: [:tasks_tasked_reading,
+                                                            :tasks_tasked_exercise,
+                                                            :tasks_tasked_exercise],
+                                               tasked_to: student_role)}
+
+    let!(:hw1_task)   { FactoryGirl.create(:tasks_task,
+                                           task_type: 'homework',
+                                           opens_at: Time.now - 1.week,
+                                           due_at: Time.now,
+                                           step_types: [:tasks_tasked_exercise,
+                                                        :tasks_tasked_exercise,
+                                                        :tasks_tasked_exercise],
+                                           tasked_to: student_role)}
+
+    let!(:hw2_task)   { FactoryGirl.create(:tasks_task,
+                                           task_type: 'homework',
+                                           opens_at: Time.now - 1.week,
+                                           due_at: Time.now,
+                                           step_types: [:tasks_tasked_exercise,
+                                                        :tasks_tasked_exercise,
+                                                        :tasks_tasked_exercise],
+                                           tasked_to: student_role)}
+
+    let!(:hw3_task)   { FactoryGirl.create(:tasks_task,
+                                           task_type: 'homework',
+                                           opens_at: Time.now - 1.week,
+                                           due_at: Time.now+2.weeks,
+                                           step_types: [:tasks_tasked_exercise,
+                                                        :tasks_tasked_exercise,
+                                                        :tasks_tasked_exercise],
+                                           tasked_to: student_role)}
+
+    let!(:plan) { FactoryGirl.create(:tasks_task_plan, owner: course)}
+
+    it "works for a student without a role specified" do
+      Hacks::AnswerExercise[task_step: hw1_task.task_steps[0], is_correct: true]
+      Hacks::AnswerExercise[task_step: hw1_task.task_steps[2], is_correct: false]
+
+      Hacks::AnswerExercise[task_step: hw2_task.task_steps[0], is_correct: true]
+      Hacks::AnswerExercise[task_step: hw2_task.task_steps[1], is_correct: true]
+      Hacks::AnswerExercise[task_step: hw2_task.task_steps[2], is_correct: false]
+
+      Hacks::AnswerExercise[task_step: hw3_task.task_steps[0], is_correct: false]
+      Hacks::AnswerExercise[task_step: hw3_task.task_steps[1], is_correct: false]
+      Hacks::AnswerExercise[task_step: hw3_task.task_steps[2], is_correct: false]
+
+
+      api_get :dashboard, student_token, parameters: {id: course.id}
+
+      expect(HashWithIndifferentAccess[response.body_as_hash]).to include(
+
+        "tasks" => a_collection_including(
+          a_hash_including(
+            "id" => reading_task.id,
+            "title" => reading_task.title,
+            "due_at" => be_kind_of(String),
+            "type" => "reading",
+            "complete" => false,
+            "exercise_count" => 2,
+            "complete_exercise_count" => 0
+          ),
+          a_hash_including(
+            "id" => hw1_task.id,
+            "title" => hw1_task.title,
+            "opens_at" => be_kind_of(String),
+            "due_at" => be_kind_of(String),
+            "type" => "homework",
+            "complete" => false,
+            "exercise_count" => 3,
+            "complete_exercise_count" => 2
+          ),
+          a_hash_including(
+            "id" => hw2_task.id,
+            "title" => hw2_task.title,
+            "opens_at" => be_kind_of(String),
+            "due_at" => be_kind_of(String),
+            "type" => "homework",
+            "complete" => true,
+            "exercise_count" => 3,
+            "complete_exercise_count" => 3,
+            "correct_exercise_count" => 2
+          ),
+          a_hash_including(
+            "id" => hw3_task.id,
+            "title" => hw3_task.title,
+            "opens_at" => be_kind_of(String),
+            "due_at" => be_kind_of(String),
+            "type" => "homework",
+            "complete" => true,
+            "exercise_count" => 3,
+            "complete_exercise_count" => 3,
+          ),
+        ),
+        "role" => {
+          "id" => student_role.id,
+          "type" => "student"
+        },
+        "course" => {
+          "name" => "Physics 101",
+          "teacher_names" => [ "Bob Newhart" ]
+        }
+      )
+    end
+
+    it "works for a teacher without a role specified" do
+      api_get :dashboard, teacher_token, parameters: {id: course.id}
+
+      expect(HashWithIndifferentAccess[response.body_as_hash]).to include(
+        "role" => {
+          "id" => teacher_role.id,
+          "type" => "teacher"
+        },
+        "course" => {
+          "name" => "Physics 101",
+          "teacher_names" => [ "Bob Newhart" ]
+        },
+        "tasks" => [],
+        "plans" => a_collection_including(
+          a_hash_including(
+            "id" => plan.id,
+            "opens_at" => be_kind_of(String),
+            "due_at" => be_kind_of(String),
+            "type" => "reading"
+          )
+        )
+      )
+    end
+
   end
 
 end

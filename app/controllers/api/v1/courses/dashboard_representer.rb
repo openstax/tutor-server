@@ -72,7 +72,8 @@ module Api::V1::Courses
 
       property :correct_exercise_count,
                type: Integer,
-               readable: true
+               readable: true,
+               if: -> (*) { past_due? && completed? }
     end
 
     class Role < Roar::Decorator

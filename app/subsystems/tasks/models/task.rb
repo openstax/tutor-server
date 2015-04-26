@@ -80,6 +80,22 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     spaced_practice_algorithm.call(event: event, task: self, current_time: current_time)
   end
 
+  def exercise_count
+    exercise_steps.count
+  end
+
+  def complete_exercise_count
+    exercise_steps.complete.count
+  end
+
+  def correct_exercise_count
+    exercise_steps.select{|step| step.tasked.is_correct?}.count
+  end
+
+  def exercise_steps
+    task_steps.where{tasked_type == 'Tasks::Models::TaskedExercise'}
+  end
+
   protected
 
   def opens_at_or_due_at

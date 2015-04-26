@@ -98,11 +98,12 @@ class Api::V1::CoursesController < Api::V1::ApiController
   end
 
   def dashboard
+    course = Entity::Course.find(params[:id])
     data = Api::V1::Courses::Dashboard.call(
-             course: params[:id],
+             course: course,
              role: get_course_role(types: :any)
            ).outputs
-    respond_with data, represent_with: Api::V1::CourseDashboardRepresenter
+    respond_with data, represent_with: Api::V1::Courses::DashboardRepresenter
   end
 
   api nil, nil, nil
