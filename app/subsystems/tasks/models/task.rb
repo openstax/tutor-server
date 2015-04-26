@@ -93,7 +93,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def exercise_steps
-    task_steps.where{tasked_type == 'Tasks::Models::TaskedExercise'}
+    task_steps.where{tasked_type.in %w(Tasks::Models::TaskedExercise Tasks::Models::TaskedPlaceholder)}
   end
 
   protected

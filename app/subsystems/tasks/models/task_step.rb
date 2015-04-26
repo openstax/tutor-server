@@ -12,6 +12,7 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   delegate :can_be_answered?, :can_be_recovered?, to: :tasked
 
   scope :complete, -> { where{completed_at != nil} }
+  scope :incomplete, -> { where{completed_at == nil} }
 
   def complete(completion_time: Time.now)
     self.completed_at ||= completion_time

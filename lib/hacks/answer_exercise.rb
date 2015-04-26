@@ -17,7 +17,9 @@ module Hacks
       end
 
       tasked.update_attributes(free_response: '.', answer_id: answer_id)
-      task_step.update_attributes(completed_at: Time.now)
+
+      MarkTaskStepCompleted[task_step: task_step]
+      # task_step.update_attributes(completed_at: Time.now)
     end
   end
 end
