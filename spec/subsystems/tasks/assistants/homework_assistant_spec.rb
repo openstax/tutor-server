@@ -57,13 +57,12 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, :type => :assistant,
       expect(task.description).to eq "Hello!"
       expect(task.feedback_at).to eq task.due_at
 
-      task_steps = task.task_steps
-      expect(task_steps.count).to eq(assignment_exercise_count)
+      expect(task.task_steps.count).to eq(assignment_exercise_count)
 
-      non_placeholder_task_steps = task_steps.reject{|ts| ts.tasked_type.demodulize == 'TaskedPlaceholder'}
-      expect(non_placeholder_task_steps.count).to eq(teacher_selected_exercises.count)
+      core_task_steps = task.core_task_steps
+      expect(core_task_steps.count).to eq(teacher_selected_exercises.count)
 
-      non_placeholder_task_steps.each_with_index do |task_step, ii|
+      core_task_steps.each_with_index do |task_step, ii|
         tasked_exercise = task_step.tasked
 
         exercise = teacher_selected_exercises[ii]
@@ -73,13 +72,16 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, :type => :assistant,
         expect(tasked_exercise.title).to eq(exercise.title)
         expect(tasked_exercise.content).to eq(exercise.content)
 
-        other_task_steps = non_placeholder_task_steps.reject{|ts| ts == task_step}
+        other_task_steps = core_task_steps.reject{|ts| ts == task_step}
         other_task_steps.each do |other_step|
           expect(tasked_exercise.content).not_to(
             include(other_step.tasked.content)
           )
         end
       end
+
+      spaced_practice_task_steps = task.spaced_practice_task_steps
+      expect(spaced_practice_task_steps.count).to eq(tutor_selected_exercise_count)
     end
 
     expected_roles = taskees.collect{ |t| Role::GetDefaultUserRole[t] }

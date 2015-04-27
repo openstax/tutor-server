@@ -85,7 +85,8 @@ class Tasks::Assistants::HomeworkAssistant
 
   def self.add_core_steps!(task:, exercises:)
     exercises.each do |exercise|
-      add_exercise_step(task: task, exercise: exercise)
+      step = add_exercise_step(task: task, exercise: exercise)
+      step.core_group!
     end
 
     task.save!
@@ -96,7 +97,7 @@ class Tasks::Assistants::HomeworkAssistant
     step = Tasks::Models::TaskStep.new(task: task)
     TaskExercise[task_step: step, exercise: exercise]
     task.task_steps << step
-    task
+    step
   end
 
   def self.add_spaced_practice_exercise_steps!(task:, taskee:)
@@ -105,7 +106,8 @@ class Tasks::Assistants::HomeworkAssistant
       number.times do
         hash = OpenStax::Exercises::V1.fake_client.new_exercise_hash
         exercise = OpenStax::Exercises::V1::Exercise.new(hash.to_json)
-        add_exercise_step(task: task, exercise: exercise)
+        step = add_exercise_step(task: task, exercise: exercise)
+        step.spaced_practice_group!
       end
     end
 
