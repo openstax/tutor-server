@@ -25,7 +25,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, :type => :assistant,
   ] }
 
   let!(:cnx_pages) { cnx_page_hashes.each_with_index.collect do |hash, i|
-    OpenStax::Cnx::V1::Page.new(hash: hash, path: "8.#{i+1}")
+    OpenStax::Cnx::V1::Page.new(hash: hash, chapter_section: "8.#{i+1}")
   end }
 
   let!(:pages)     { cnx_pages.collect do |cnx_page|
@@ -36,8 +36,17 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, :type => :assistant,
   end }
 
   let!(:exercises) {
-    Content::Models::Exercise.joins{exercise_tags.tag}.
-                              where{exercise_tags.tag.name == 'k12phys-ch04-s01-lo01'}
+    page_los = Content::GetLos[page_ids: pages.map(&:id)]
+
+    page_exercises = Content::Routines::SearchExercises[tag: page_los, match_count: 1]
+
+    exercises = Content::Models::Exercise.joins{exercise_tags.tag}
+                                         .where{exercise_tags.tag.value.in ['chapter-review-problem', 'chapter-review-concept']}
+                                         .where{id.in page_exercises.map(&:id)}
+
+    exercises = exercises.sort_by{|ex| ex.uid}
+    puts "exercises = #{exercises.map(&:uid)}"
+    exercises
   }
 
   let!(:teacher_selected_exercises) { exercises[1..5] }
@@ -73,6 +82,8 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, :type => :assistant,
   }
 
   it "creates the expected assignments" do
+    puts "teacher_selected_exercises = #{teacher_selected_exercises.collect{|ex| ex.uid}}"
+
     allow(Tasks::Assistants::HomeworkAssistant).
       to receive(:k_ago_map) { [ [0,tutor_selected_exercise_count] ] }
 
