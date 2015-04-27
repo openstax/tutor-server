@@ -2,7 +2,7 @@ require_relative 'entity_extensions'
 
 class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
-  @@VALID_TASK_TYPES = ['homework', 'reading']
+  @@VALID_TASK_TYPES = ['homework', 'reading', 'practice']
 
   belongs_to :task_plan
   belongs_to :entity_task, class_name: 'Entity::Task',
@@ -53,6 +53,10 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   def reading?
     self.task_type == "reading"
+  end
+
+  def practice?
+    self.task_type == "practice"
   end
 
   def core_task_steps

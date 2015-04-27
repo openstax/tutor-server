@@ -16,6 +16,10 @@ module ActsAsTasked
         def can_be_recovered?
           false
         end
+
+        def exercise?
+          false
+        end
       end
     end
   end

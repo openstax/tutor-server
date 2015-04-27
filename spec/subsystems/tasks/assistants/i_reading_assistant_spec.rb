@@ -87,6 +87,8 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
     }
 
     it 'splits a CNX module into many different steps and assigns them with immediate feedback' do
+      allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [[0,2]]}
+
       tasks = DistributeTasks.call(task_plan).outputs.tasks
       expect(tasks.length).to eq num_taskees
 
@@ -201,6 +203,8 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
     }
 
     it 'is split into different task steps with immediate feedback' do
+      allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [[0,2]]}
+
       tasks = DistributeTasks.call(task_plan).outputs.tasks
       tasks.each do |task|
         expect(task.taskings.length).to eq 1
