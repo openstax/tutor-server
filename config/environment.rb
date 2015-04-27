@@ -8,6 +8,7 @@ require 'html_tree_operations'
 require 'fake_store'
 require 'verify_and_get_id_array'
 require 'entity'
+require 'hacks/answer_exercise'
 
 SITE_NAME = "OpenStax Tutor"
 COPYRIGHT_HOLDER = "Rice University"

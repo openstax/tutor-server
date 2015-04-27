@@ -96,6 +96,19 @@ class Api::V1::CoursesController < Api::V1::ApiController
     respond_with result.outputs, represent_with: Api::V1::CourseEventsRepresenter
   end
 
+  api :GET, '/courses/:course_id/dashboard(/role/:role_id)', 'Gets dashboard information for a given course'
+  description <<-EOS
+    #{json_schema(Api::V1::Courses::DashboardRepresenter, include: :readable)}
+  EOS
+  def dashboard
+    course = Entity::Course.find(params[:id])
+    data = Api::V1::Courses::Dashboard.call(
+             course: course,
+             role: get_course_role(types: :any)
+           ).outputs
+    respond_with data, represent_with: Api::V1::Courses::DashboardRepresenter
+  end
+
   api nil, nil, nil
   description nil
   def practice

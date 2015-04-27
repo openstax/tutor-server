@@ -117,4 +117,20 @@ RSpec.describe Tasks::Models::Task, :type => :model do
     expect(task.feedback_available?).to eq false
   end
 
+  it 'counts exercise steps' do
+    task = FactoryGirl.create(:tasks_task,
+                              task_type: 'homework',
+                              step_types: [:tasks_tasked_exercise,
+                                           :tasks_tasked_reading,
+                                           :tasks_tasked_exercise,
+                                           :tasks_tasked_exercise])
+
+    Hacks::AnswerExercise[task_step: task.task_steps[0], is_correct: true]
+    Hacks::AnswerExercise[task_step: task.task_steps[3], is_correct: false]
+
+    expect(task.exercise_count).to eq 3
+    expect(task.complete_exercise_count).to eq 2
+    expect(task.correct_exercise_count).to eq 1
+  end
+
 end
