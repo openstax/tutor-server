@@ -37,11 +37,11 @@ module OpenStax::Cnx::V1
     # Find the LO within the class string and ensure it is properly formatted
     LO_REGEX = /ost-tag-lo-([\w-]+-lo[\d]+)/
 
-    def initialize(hash: {}, path: '', is_intro: nil, book_part_title: nil,
+    def initialize(hash: {}, chapter_section: '', is_intro: nil, book_part_title: nil,
                    id: nil, url: nil, title: nil, full_hash: nil, content: nil,
-                   los: nil, fragments: nil)
+                   los: nil, fragments: nil, tags: nil)
       @hash            = hash
-      @path            = path
+      @chapter_section = chapter_section
       @is_intro        = is_intro
       @book_part_title = book_part_title
       @id              = id
@@ -51,9 +51,10 @@ module OpenStax::Cnx::V1
       @content         = content
       @los             = los
       @fragments       = fragments
+      @tags            = tags
     end
 
-    attr_reader :hash, :path
+    attr_reader :hash, :chapter_section
 
     def id
       @id ||= hash.fetch('id') { |key|
@@ -72,16 +73,12 @@ module OpenStax::Cnx::V1
       }
     end
 
-    def path
-      @path
-    end
-
     def is_intro?
       return @is_intro unless @is_intro.nil?
       # CNX plans to implement a better way to identify chapter intro pages
       # This is a hack to be used until that happens
       @is_intro = title.start_with?('Introduction') && \
-                  (path.blank? || path.end_with?('.1'))
+                  (chapter_section.blank? || chapter_section.end_with?('.1'))
     end
 
     def book_part_title
@@ -132,9 +129,58 @@ module OpenStax::Cnx::V1
     end
 
     def los
-      @los ||= root.css(LO_CSS).collect do |node|
-        LO_REGEX.match(node.attributes['class']).try(:[], 1)
-      end.compact.uniq
+      @los ||= tags.collect { |attributes| attributes[:type] == :lo ? attributes[:value] : nil }.compact
+    end
+
+    def tags
+      return @tags.values unless @tags.nil?
+
+      @tags = {}
+
+      # Extract tag name and description from .ost-standards-def and .os-learning-objective-def.
+      # Also extract any LOs we find in use in case they weren't appropriately defined with in
+      # their own .os-learning-objective-def block.
+
+      root.css(LO_CSS).each do |node|
+        lo_value = LO_REGEX.match(node.attributes['class']).try(:[], 1)
+        @tags[lo_value] = { value: lo_value, type: :lo } if lo_value.present?
+      end
+
+      # Can't use self.root b/c ost-standards-def is inside .os-teacher which was removed in root.
+      doc = Nokogiri::HTML(content)
+
+      # teks tags
+      doc.css('[class^="ost-standards-def"]').each do |node|
+        name = node.css('[class^="ost-standards-name"]').first.try(:content).try(:strip)
+        description = node.css('[class^="ost-standards-description"]').first.try(:content).try(:strip)
+        tag_value = node.attr('class').split.last
+        @tags[tag_value] = {
+          value: tag_value,
+          name: name,
+          description: description,
+          type: :teks
+        }
+      end
+
+      # lo tags
+      doc.css('[class^="ost-learning-objective-def"]').each do |node|
+        classes = node.attr('class').split
+        lo_value = LO_REGEX.match(classes[1]).try(:[], 1)
+        teks_value = classes[2]
+        next if lo_value.nil?
+        teks_value = classes[2]
+        name = node.content.strip
+        name.gsub!(/\s+/, ' ')
+        @tags[lo_value] ||= {}
+        @tags[lo_value].merge!({
+          value: lo_value,
+          name: name,
+          teks: teks_value,
+          type: :lo
+        })
+      end
+
+      @tags.values
     end
 
     def fragments

@@ -21,7 +21,7 @@ RSpec.describe OpenStax::Cnx::V1::BookPart, :type => :external do
         title: 'Updated Tutor HS Physics Content - legacy',
         expected: {
           part_classes: [OpenStax::Cnx::V1::BookPart],
-          paths: ['1']
+          chapter_sections: ['1']
         }
       },
       { id: "subcol",
@@ -38,7 +38,7 @@ RSpec.describe OpenStax::Cnx::V1::BookPart, :type => :external do
           part_classes: [OpenStax::Cnx::V1::Page,
                          OpenStax::Cnx::V1::Page,
                          OpenStax::Cnx::V1::Page],
-          paths: ['1', '2', '3']
+          chapter_sections: ['1', '2', '3']
         }
       }
     ],
@@ -59,7 +59,7 @@ RSpec.describe OpenStax::Cnx::V1::BookPart, :type => :external do
         title: 'Updated Tutor HS Physics Content - legacy',
         expected: {
           part_classes: [OpenStax::Cnx::V1::BookPart],
-          paths: ['1']
+          chapter_sections: ['1']
         }
       },
       { id: "subcol",
@@ -76,7 +76,7 @@ RSpec.describe OpenStax::Cnx::V1::BookPart, :type => :external do
           part_classes: [OpenStax::Cnx::V1::Page,
                          OpenStax::Cnx::V1::Page,
                          OpenStax::Cnx::V1::Page],
-          paths: ['1', '2', '3']
+          chapter_sections: ['1', '2', '3']
         }
       }
     ]
@@ -90,7 +90,7 @@ RSpec.describe OpenStax::Cnx::V1::BookPart, :type => :external do
             hash: hash.except(:expected)
           )
           expect(book_part.hash).not_to be_blank
-          expect(book_part.path).to be_blank
+          expect(book_part.chapter_section).to be_blank
           expect(book_part.title).to eq hash[:title]
           expect(book_part.contents).not_to be_blank
           expect(book_part.parts).not_to be_empty
@@ -107,8 +107,8 @@ RSpec.describe OpenStax::Cnx::V1::BookPart, :type => :external do
             eq hash[:expected][:part_classes]
           )
 
-          expect(book_part.parts.collect{|p| p.path}).to(
-            eq hash[:expected][:paths]
+          expect(book_part.parts.collect{|p| p.chapter_section}).to(
+            eq hash[:expected][:chapter_sections]
           )
         end
       end

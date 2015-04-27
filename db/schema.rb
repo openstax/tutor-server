@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150406200833) do
+ActiveRecord::Schema.define(version: 20150420184110) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,7 +31,7 @@ ActiveRecord::Schema.define(version: 20150406200833) do
     t.integer  "entity_book_id"
     t.integer  "number",              null: false
     t.string   "title",               null: false
-    t.string   "path"
+    t.string   "chapter_section"
     t.datetime "created_at",          null: false
     t.datetime "updated_at",          null: false
   end
@@ -61,6 +61,15 @@ ActiveRecord::Schema.define(version: 20150406200833) do
   add_index "content_exercises", ["title"], name: "index_content_exercises_on_title", using: :btree
   add_index "content_exercises", ["url"], name: "index_content_exercises_on_url", unique: true, using: :btree
 
+  create_table "content_lo_teks_tags", force: :cascade do |t|
+    t.integer  "lo_id",      null: false
+    t.integer  "teks_id",    null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "content_lo_teks_tags", ["lo_id", "teks_id"], name: "content_lo_teks_tag_lo_teks_uniq", unique: true, using: :btree
+
   create_table "content_page_tags", force: :cascade do |t|
     t.integer  "content_page_id", null: false
     t.integer  "content_tag_id",  null: false
@@ -77,7 +86,7 @@ ActiveRecord::Schema.define(version: 20150406200833) do
     t.integer  "content_book_part_id"
     t.integer  "number",               null: false
     t.string   "title",                null: false
-    t.string   "path"
+    t.string   "chapter_section"
     t.datetime "created_at",           null: false
     t.datetime "updated_at",           null: false
   end
@@ -86,15 +95,16 @@ ActiveRecord::Schema.define(version: 20150406200833) do
   add_index "content_pages", ["url"], name: "index_content_pages_on_url", unique: true, using: :btree
 
   create_table "content_tags", force: :cascade do |t|
-    t.string   "name",                    null: false
+    t.string   "value",                   null: false
     t.integer  "tag_type",    default: 0, null: false
+    t.string   "name"
     t.text     "description"
     t.datetime "created_at",              null: false
     t.datetime "updated_at",              null: false
   end
 
-  add_index "content_tags", ["name"], name: "index_content_tags_on_name", unique: true, using: :btree
   add_index "content_tags", ["tag_type"], name: "index_content_tags_on_tag_type", using: :btree
+  add_index "content_tags", ["value"], name: "index_content_tags_on_value", unique: true, using: :btree
 
   create_table "course_content_course_books", force: :cascade do |t|
     t.integer  "entity_course_id", null: false
@@ -449,12 +459,12 @@ ActiveRecord::Schema.define(version: 20150406200833) do
   end
 
   create_table "tasks_tasked_readings", force: :cascade do |t|
-    t.string   "url",        null: false
-    t.text     "content",    null: false
+    t.string   "url",             null: false
+    t.text     "content",         null: false
     t.string   "title"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string   "path"
+    t.string   "chapter_section"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
   end
 
   create_table "tasks_tasked_videos", force: :cascade do |t|
@@ -524,6 +534,8 @@ ActiveRecord::Schema.define(version: 20150406200833) do
   add_foreign_key "content_book_parts", "entity_books", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_exercise_tags", "content_exercises", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_exercise_tags", "content_tags", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "content_lo_teks_tags", "content_tags", column: "lo_id"
+  add_foreign_key "content_lo_teks_tags", "content_tags", column: "teks_id"
   add_foreign_key "content_page_tags", "content_pages", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_page_tags", "content_tags", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_pages", "content_book_parts", on_update: :cascade, on_delete: :cascade

@@ -34,7 +34,7 @@ RSpec.describe Content::Routines::ImportExercises, :type => :routine,
 
       exercises = Content::Models::Exercise.all.order(:id).to_a
       exercises[-2..-1].each do |exercise|
-        expect(exercise.exercise_tags.collect{|et| et.tag.name}).to(
+        expect(exercise.exercise_tags.collect{|et| et.tag.value}).to(
           include 'k12phys-ch04-s01-lo02'
         )
       end
@@ -49,7 +49,7 @@ RSpec.describe Content::Routines::ImportExercises, :type => :routine,
 
       exercises = Content::Models::Exercise.all.order(:id).to_a
       exercises[-3..-1].each do |exercise|
-        expect(exercise.exercise_tags.collect{|et| et.tag.name} & tags).not_to(
+        expect(exercise.exercise_tags.collect{|et| et.tag.value} & tags).not_to(
           be_empty
         )
       end
@@ -68,11 +68,11 @@ RSpec.describe Content::Routines::ImportExercises, :type => :routine,
       end
 
       exercises = Content::Models::Exercise.all.to_a
-      expect(exercises[-3].exercise_tags.collect{|et| et.tag.name})
+      expect(exercises[-3].exercise_tags.collect{|et| et.tag.value})
         .to eq ['k12phys-ch04-s01-lo01']
-      expect(exercises[-2].exercise_tags.collect{|et| et.tag.name})
+      expect(exercises[-2].exercise_tags.collect{|et| et.tag.value})
         .to eq ['k12phys-ch04-s01-lo02']
-      expect(exercises[-1].exercise_tags.collect{|et| et.tag.name})
+      expect(exercises[-1].exercise_tags.collect{|et| et.tag.value})
         .to eq ['k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02']
     end
   end
@@ -94,7 +94,7 @@ RSpec.describe Content::Routines::ImportExercises, :type => :routine,
 
       exercises = Content::Models::Exercise.all.order(:id).to_a
       exercises[-15..-1].each do |exercise|
-        expect(exercise.exercise_tags.collect{|et| et.tag.name}).to(
+        expect(exercise.exercise_tags.collect{|et| et.tag.value}).to(
           include 'k12phys-ch04-s01-lo02'
         )
       end
@@ -107,7 +107,7 @@ RSpec.describe Content::Routines::ImportExercises, :type => :routine,
 
       exercises = Content::Models::Exercise.all.order(:id).to_a
       exercises[-31..-1].each do |exercise|
-        expect(exercise.exercise_tags.collect{|et| et.tag.name} & tags).not_to(
+        expect(exercise.exercise_tags.collect{|et| et.tag.value} & tags).not_to(
           be_empty
         )
       end
@@ -124,13 +124,13 @@ RSpec.describe Content::Routines::ImportExercises, :type => :routine,
       exercises[-31..-1].each do |exercise|
         wrapper = OpenStax::Exercises::V1::Exercise.new(exercise.content)
 
-        exercise.exercise_tags.collect{|et| et.tag.name}.each do |tag|
+        exercise.exercise_tags.collect{|et| et.tag.value}.each do |tag|
           expect(wrapper.tags).to include tag
         end
 
         exercise.exercise_tags.joins(:tag).where(tag: {
           tag_type: Content::Models::Tag.tag_types[:lo]
-        }).collect{|et| et.tag.name}.each do |lo|
+        }).collect{|et| et.tag.value}.each do |lo|
           expect(wrapper.los).to include lo
         end
       end

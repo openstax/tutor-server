@@ -56,7 +56,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
     }
 
     let!(:cnx_pages) { cnx_page_hashes.each_with_index.collect do |hash, i|
-      OpenStax::Cnx::V1::Page.new(hash: hash, path: "8.#{i+1}")
+      OpenStax::Cnx::V1::Page.new(hash: hash, chapter_section: "8.#{i+1}")
     end }
 
     let!(:pages)     { cnx_pages.collect do |cnx_page|
@@ -112,7 +112,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
           end
 
           if task_step.tasked_type.demodulize == 'TaskedReading'
-            expect(task_step.tasked.path).to eq(page.path)
+            expect(task_step.tasked.chapter_section).to eq(page.chapter_section)
           end
 
           other_task_steps = non_placeholder_task_steps.reject{|ts| ts == task_step}

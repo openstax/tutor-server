@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe Content::GetPage do
-  it 'returns the cnx page with a path' do
-    page = FactoryGirl.create(:content_page, path: '5.1')
+  it 'returns the cnx page with chapter and section' do
+    page = FactoryGirl.create(:content_page, chapter_section: '5.1')
     result = Content::GetPage[id: page.id]
 
-    expect(result.path).to eq('5.1')
+    expect(result.chapter_section).to eq('5.1')
   end
 end

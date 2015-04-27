@@ -2,14 +2,14 @@ class Exercise < Entity
 
   wraps Content::Models::Exercise
 
-  exposes :url, :title, :content
+  exposes :url, :title, :content, :tags_with_teks
 
   def tags
-    tag_models.collect{ |t| t.name }
+    tag_models.collect{ |t| t.value }
   end
 
   def los
-    tag_models.select{ |t| t.lo? }.collect{ |t| t.name }
+    tag_models.select{ |t| t.lo? }.collect{ |t| t.value }
   end
 
   protected

@@ -31,7 +31,7 @@ class Content::Routines::SearchExercises
       # Tag intersection
       # http://stackoverflow.com/a/2000642
       relation = relation.joins(exercise_tags: :tag)
-                         .where(exercise_tags: {tag: {name: tags}})
+                         .where(exercise_tags: {tag: {value: tags}})
                          .group(:id).having{ count(
                              distinct(exercise_tags.tag.id)
                          ).gteq match_count }

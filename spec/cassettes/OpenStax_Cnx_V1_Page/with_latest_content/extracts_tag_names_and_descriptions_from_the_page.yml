@@ -37,9 +37,9 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Tue, 14 Apr 2015 21:14:45 GMT
+      - Thu, 16 Apr 2015 13:59:30 GMT
       X-Varnish:
-      - '186790101'
+      - '187563055'
       Via:
       - 1.1 varnish
       Connection:
@@ -54,7 +54,7 @@ http_interactions:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Tue, 14 Apr 2015 21:14:39 GMT
+  recorded_at: Thu, 16 Apr 2015 13:59:23 GMT
 - request:
     method: get
     uri: http://archive.cnx.org/contents/1491e74e-ed39-446f-a602-e7ab881af101@10
@@ -92,9 +92,9 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Tue, 14 Apr 2015 21:14:45 GMT
+      - Thu, 16 Apr 2015 13:59:30 GMT
       X-Varnish:
-      - 186790102 185252616
+      - 187563057 185252616
       Via:
       - 1.1 varnish
       Connection:
@@ -102,7 +102,7 @@ http_interactions:
       X-Cache:
       - HIT
       X-Varnish-Age:
-      - '353281'
+      - '499966'
       Age:
       - '0'
     body:
@@ -214,7 +214,7 @@ http_interactions:
         "Alina", "title": "", "othername": "", "email": "alinams@rice.edu", "fullname":
         "Alina Slavik", "id": "AlinaManager"}}]}'
     http_version: 
-  recorded_at: Tue, 14 Apr 2015 21:14:39 GMT
+  recorded_at: Thu, 16 Apr 2015 13:59:23 GMT
 - request:
     method: get
     uri: http://archive.cnx.org/contents/092bbf0d-0729-42ce-87a6-fd96fd87a083
@@ -252,9 +252,9 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Tue, 14 Apr 2015 21:14:46 GMT
+      - Thu, 16 Apr 2015 13:59:31 GMT
       X-Varnish:
-      - '186790106'
+      - '187563059'
       Via:
       - 1.1 varnish
       Connection:
@@ -269,7 +269,7 @@ http_interactions:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Tue, 14 Apr 2015 21:14:39 GMT
+  recorded_at: Thu, 16 Apr 2015 13:59:24 GMT
 - request:
     method: get
     uri: http://archive.cnx.org/contents/092bbf0d-0729-42ce-87a6-fd96fd87a083@32
@@ -307,9 +307,9 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Tue, 14 Apr 2015 21:14:46 GMT
+      - Thu, 16 Apr 2015 13:59:31 GMT
       X-Varnish:
-      - 186790107 185238232
+      - 187563060 185238232
       Via:
       - 1.1 varnish
       Connection:
@@ -317,7 +317,7 @@ http_interactions:
       X-Cache:
       - HIT
       X-Varnish-Age:
-      - '355687'
+      - '502372'
       Age:
       - '0'
     body:
@@ -777,7 +777,7 @@ http_interactions:
         "suffix": "", "firstname": "Alina", "title": "", "othername": "", "email":
         "alinams@rice.edu", "fullname": "Alina Slavik", "id": "AlinaManager"}}]}'
     http_version: 
-  recorded_at: Tue, 14 Apr 2015 21:14:40 GMT
+  recorded_at: Thu, 16 Apr 2015 13:59:24 GMT
 - request:
     method: get
     uri: http://archive.cnx.org/contents/61445f78-00e2-45ae-8e2c-461b17d9b4fd
@@ -815,9 +815,9 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Tue, 14 Apr 2015 21:14:46 GMT
+      - Thu, 16 Apr 2015 13:59:31 GMT
       X-Varnish:
-      - '186790112'
+      - '187563063'
       Via:
       - 1.1 varnish
       Connection:
@@ -832,7 +832,7 @@ http_interactions:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Tue, 14 Apr 2015 21:14:40 GMT
+  recorded_at: Thu, 16 Apr 2015 13:59:24 GMT
 - request:
     method: get
     uri: http://archive.cnx.org/contents/61445f78-00e2-45ae-8e2c-461b17d9b4fd@39
@@ -870,9 +870,9 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Tue, 14 Apr 2015 21:14:47 GMT
+      - Thu, 16 Apr 2015 13:59:32 GMT
       X-Varnish:
-      - 186790114 186724233
+      - 187563066 186724233
       Via:
       - 1.1 varnish
       Connection:
@@ -880,7 +880,7 @@ http_interactions:
       X-Cache:
       - HIT
       X-Varnish-Age:
-      - '9702'
+      - '156388'
       Age:
       - '0'
     body:
@@ -1421,5 +1421,5 @@ http_interactions:
         "Alina", "title": "", "othername": "", "email": "alinams@rice.edu", "fullname":
         "Alina Slavik", "id": "AlinaManager"}}]}'
     http_version: 
-  recorded_at: Tue, 14 Apr 2015 21:14:41 GMT
+  recorded_at: Thu, 16 Apr 2015 13:59:25 GMT
 recorded_with: VCR 2.9.3

@@ -22,7 +22,7 @@ class Content::Models::TocVisitor < Content::Models::BookVisitor
       id: page.id,
       title: page.title,
       type: 'page',
-      path: page.path
+      chapter_section: page.chapter_section
     })
   end
 

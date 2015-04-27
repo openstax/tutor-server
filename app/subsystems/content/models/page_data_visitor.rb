@@ -10,7 +10,7 @@ class Content::Models::PageDataVisitor < Content::Models::BookVisitor
       tags: get_page_tags(page),
       los: get_page_los(page),
       title: page.title,
-      path: page.path,
+      chapter_section: page.chapter_section,
       url: page.url,
       version: get_page_version(page)
     }
@@ -23,18 +23,18 @@ class Content::Models::PageDataVisitor < Content::Models::BookVisitor
   private
   def get_page_path(page)
     page.page_tags.collect do |page_tag|
-      { type: page_tag.tag.tag_type, name: page_tag.tag.name }
+      { type: page_tag.tag.tag_type, value: page_tag.tag.value }
     end
   end
 
   def get_page_los(page)
     tags = get_page_tags(page)
-    tags.select { |tag| tag[:type] == 'lo' }.collect { |tag| tag[:name] }
+    tags.select { |tag| tag[:type] == 'lo' }.collect { |tag| tag[:value] }
   end
 
   def get_page_tags(page)
     page.page_tags.collect do |page_tag|
-      { type: page_tag.tag.tag_type, name: page_tag.tag.name }
+      { type: page_tag.tag.tag_type, value: page_tag.tag.value }
     end
   end
 

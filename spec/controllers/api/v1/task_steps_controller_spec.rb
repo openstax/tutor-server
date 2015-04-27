@@ -37,15 +37,15 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
   let!(:course)          { Entity::Course.create }
 
   let!(:lo)              { FactoryGirl.create :content_tag,
-                                              name: 'ost-tag-lo-test-lo01' }
+                                              value: 'ost-tag-lo-test-lo01' }
   let!(:pp)              { FactoryGirl.create :content_tag,
-                                              name: 'practice-problem' }
+                                              value: 'practice-problem' }
 
   let!(:tasked_exercise_with_recovery) {
     te = FactoryGirl.build(
       :tasks_tasked_exercise,
       can_be_recovered: true,
-      content: OpenStax::Exercises::V1.fake_client.new_exercise_hash(tags: [lo.name]).to_json
+      content: OpenStax::Exercises::V1.fake_client.new_exercise_hash(tags: [lo.value]).to_json
     )
     te.task_step.task = task
     te.save!
@@ -55,7 +55,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
   let!(:recovery_exercise) { FactoryGirl.create(
     :content_exercise,
     content: OpenStax::Exercises::V1.fake_client
-                                    .new_exercise_hash(tags: [lo.name, pp.name])
+                                    .new_exercise_hash(tags: [lo.value, pp.value])
                                     .to_json
   ) }
   let!(:recovery_tagging_1)   { FactoryGirl.create(
@@ -75,6 +75,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
         task_id: task_step.tasks_task_id,
         type: 'reading',
         title: 'title',
+        chapter_section: task_step.tasked.chapter_section,
         is_completed: false,
         content_url: 'http://u.rl',
         content_html: 'content'

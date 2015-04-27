@@ -8,6 +8,7 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, :vcr => VCR_OPTS do
                title: 'Introduction',
                expected: {
                 los: [],
+                tags: [],
                 fragment_classes: [OpenStax::Cnx::V1::Fragment::Text],
                 is_intro: true
                }
@@ -16,6 +17,10 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, :vcr => VCR_OPTS do
                title: 'Force',
                expected: {
                 los: ['k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02'],
+                tags: [
+                  { value: 'k12phys-ch04-s01-lo01', type: :lo },
+                  { value: 'k12phys-ch04-s01-lo02', type: :lo }
+                ],
                 fragment_classes: [OpenStax::Cnx::V1::Fragment::Text,
                                    OpenStax::Cnx::V1::Fragment::Text,
                                    OpenStax::Cnx::V1::Fragment::Exercise,
@@ -27,6 +32,20 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, :vcr => VCR_OPTS do
                title: 'Newton\'s First Law of Motion: Inertia',
                expected: {
                 los: ['k12phys-ch04-s02-lo01', 'k12phys-ch04-s02-lo02'],
+                tags: [
+                  {
+                    value: 'k12phys-ch04-s02-lo01',
+                    type: :lo,
+                    name: 'Describe Newton\'s first law and friction MATHMATH',
+                    teks: 'ost-tag-teks-112-39-c-4d'
+                  },
+                  {
+                    value: 'k12phys-ch04-s02-lo02',
+                    type: :lo,
+                    name: 'Discuss the relationship between mass and inertia',
+                    teks: 'ost-tag-teks-112-39-c-4d'
+                  }
+                ],
                 fragment_classes: [OpenStax::Cnx::V1::Fragment::Text,
                                    OpenStax::Cnx::V1::Fragment::Video,
                                    OpenStax::Cnx::V1::Fragment::Exercise,
@@ -40,6 +59,7 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, :vcr => VCR_OPTS do
                title: 'Introduction',
                expected: {
                 los: [],
+                tags: [],
                 fragment_classes: [OpenStax::Cnx::V1::Fragment::Text],
                 is_intro: true
                }
@@ -48,7 +68,29 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, :vcr => VCR_OPTS do
                title: 'Force',
                expected: {
                 los: ['k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02'],
+                tags: [
+                  {
+                    value: 'k12phys-ch04-s01-lo01',
+                    type: :lo,
+                    name: 'Differentiate between force, net force and dynamics',
+                    teks: 'ost-tag-teks-112-39-c-4c'
+                  },
+                  {
+                    value: 'k12phys-ch04-s01-lo02',
+                    type: :lo,
+                    name: 'Draw a free-body diagram',
+                    teks: 'ost-tag-teks-112-39-c-4e'
+                  },
+                  {
+                    value: 'ost-tag-teks-112-39-c-4c',
+                    type: :teks,
+                    name: '4C',
+                    description: 'analyze and describe accelerated motion in two dimensions using equations, including projectile and circular examples'
+                  }
+                ],
                 fragment_classes: [OpenStax::Cnx::V1::Fragment::Text,
+                                   OpenStax::Cnx::V1::Fragment::Video,
+                                   OpenStax::Cnx::V1::Fragment::Text,
                                    OpenStax::Cnx::V1::Fragment::Text,
                                    OpenStax::Cnx::V1::Fragment::Exercise,
                                    OpenStax::Cnx::V1::Fragment::Text],
@@ -59,6 +101,26 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, :vcr => VCR_OPTS do
                title: 'Newton\'s First Law of Motion: Inertia',
                expected: {
                 los: ['k12phys-ch04-s02-lo01', 'k12phys-ch04-s02-lo02'],
+                tags: [
+                  {
+                    value: 'k12phys-ch04-s02-lo01',
+                    type: :lo,
+                    name: 'Describe Newton\'s first law and friction a∝1ma∝1m',
+                    teks: 'ost-tag-teks-112-39-c-4d'
+                  },
+                  {
+                    value: 'k12phys-ch04-s02-lo02',
+                    type: :lo,
+                    name: 'Discuss the relationship between mass and inertia',
+                    teks: 'ost-tag-teks-112-39-c-4d'
+                  },
+                  {
+                    value: 'ost-tag-teks-112-39-c-4d',
+                    type: :teks,
+                    name: '(D)',
+                    description: 'calculate the effect of forces on objects, including the law of inertia, the relationship between force and acceleration, and the nature of force pairs between objects'
+                  }
+                ],
                 fragment_classes: [OpenStax::Cnx::V1::Fragment::Text,
                                    OpenStax::Cnx::V1::Fragment::Video,
                                    OpenStax::Cnx::V1::Fragment::Exercise,
@@ -85,6 +147,7 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, :vcr => VCR_OPTS do
           expect(page.root).not_to be_nil
           expect(page.los).not_to be_nil
           expect(page.fragments).not_to be_nil
+          expect(page.tags).not_to be_nil
         end
       end
 
@@ -124,6 +187,15 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, :vcr => VCR_OPTS do
           page = OpenStax::Cnx::V1::Page.new(hash: hash.except(:expected))
 
           expect(page.is_intro?).to eq hash[:expected][:is_intro]
+        end
+      end
+
+      it 'extracts tag names and descriptions from the page' do
+        infos.each do |hash|
+          page = OpenStax::Cnx::V1::Page.new(hash: hash.except(:expected))
+          tags = page.tags.collect { |tag| tag.stringify_keys }
+
+          expect(tags).to eq hash[:expected][:tags]
         end
       end
     end

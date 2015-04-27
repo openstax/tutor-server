@@ -2,61 +2,6 @@
 http_interactions:
 - request:
     method: get
-    uri: http://archive.cnx.org/contents/092bbf0d-0729-42ce-87a6-fd96fd87a083
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      Accept:
-      - text/json
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      User-Agent:
-      - Ruby
-  response:
-    status:
-      code: 302
-      message: Found
-    headers:
-      Access-Control-Allow-Headers:
-      - origin,dnt,accept-encoding,accept-language,keep-alive,user-agent,x-requested-with,if-modified-since,cache-control,content-type
-      Access-Control-Allow-Methods:
-      - GET, OPTIONS
-      Access-Control-Allow-Origin:
-      - "*"
-      Content-Type:
-      - text/plain
-      Location:
-      - "/contents/092bbf0d-0729-42ce-87a6-fd96fd87a083@4"
-      Server:
-      - waitress
-      X-Varnish-Action:
-      - FETCH (pass - status > 300, not content)
-      Content-Length:
-      - '0'
-      Accept-Ranges:
-      - bytes
-      Date:
-      - Fri, 13 Mar 2015 21:03:35 GMT
-      X-Varnish:
-      - '168850003'
-      Via:
-      - 1.1 varnish
-      Connection:
-      - keep-alive
-      X-Cache:
-      - MISS
-      X-Varnish-Age:
-      - '0'
-      Age:
-      - '0'
-    body:
-      encoding: UTF-8
-      string: ''
-    http_version: 
-  recorded_at: Fri, 13 Mar 2015 21:03:44 GMT
-- request:
-    method: get
     uri: http://archive.cnx.org/contents/092bbf0d-0729-42ce-87a6-fd96fd87a083@4
     body:
       encoding: US-ASCII
@@ -92,9 +37,9 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Fri, 13 Mar 2015 21:03:35 GMT
+      - Fri, 13 Mar 2015 21:03:45 GMT
       X-Varnish:
-      - 168850004 168781301
+      - 168850043 168781301
       Via:
       - 1.1 varnish
       Connection:
@@ -102,7 +47,7 @@ http_interactions:
       X-Cache:
       - HIT
       X-Varnish-Age:
-      - '9813'
+      - '9823'
       Age:
       - '0'
     body:
@@ -401,7 +346,7 @@ http_interactions:
         "suffix": "", "firstname": "Alina", "title": "", "othername": "", "email":
         "alinams@rice.edu", "fullname": "Alina Slavik", "id": "AlinaManager"}}]}'
     http_version: 
-  recorded_at: Fri, 13 Mar 2015 21:03:44 GMT
+  recorded_at: Fri, 13 Mar 2015 21:03:53 GMT
 - request:
     method: get
     uri: http://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-s01-lo01,k12phys-ch04-s01-lo02
@@ -423,7 +368,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 13 Mar 2015 21:03:38 GMT
+      - Fri, 13 Mar 2015 21:03:47 GMT
       Content-Type:
       - text/html
       Content-Length:
@@ -438,7 +383,7 @@ http_interactions:
         bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
         (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
     http_version: 
-  recorded_at: Fri, 13 Mar 2015 21:03:44 GMT
+  recorded_at: Fri, 13 Mar 2015 21:03:53 GMT
 - request:
     method: get
     uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-s01-lo01,k12phys-ch04-s01-lo02
@@ -460,7 +405,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 13 Mar 2015 21:03:39 GMT
+      - Fri, 13 Mar 2015 21:03:49 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -480,12 +425,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=K2JqNFBqUm5STkRBK0ZPSFpZeVoxUHdhMThIQVB5UDdZOTlPWm9kVWtSbHVjMFFDWjk5RmpMUU0wSnhYa25YYU9zTGk2NzRrUDNjc3lhWEo2OWdKb1E9PS0tRmxnZkU2bHQ3d21MZUIwSGZ5WHFrQT09--1192e5b68fc440d3d8b00c098b304f57cf63fc9e;
+      - _exercises_session=elNMUE9ZS3lPanF6b1JXbUlqNVVDVFR1ZWlaT2NEU2ovRXpQQWl5N1IwakpJYWgrTGhCS1VvdENqYytUQlRhTGpSY04wbkZXZjBFQlFnWFNQd2IyZFE9PS0tZFlxNXFnelo4a0kxRzVERTVsbUV5QT09--88492f797a4ba8be8ceb4ba5065f48def2b46ee8;
         path=/; HttpOnly
       X-Request-Id:
-      - a477f0c2-af40-4204-bcad-992517ace67f
+      - 6fe6f715-5280-44f5-b9d1-6d503b4f2632
       X-Runtime:
-      - '0.822255'
+      - '0.818547'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -1526,5 +1471,5 @@ http_interactions:
         PyJ9XSwiaGludHMiOltdLCJmb3JtYXRzIjpbIm11bHRpcGxlLWNob2ljZSIs
         ImZyZWUtcmVzcG9uc2UiXSwiY29tYm9fY2hvaWNlcyI6W119XX1dfQ==
     http_version: 
-  recorded_at: Fri, 13 Mar 2015 21:03:45 GMT
+  recorded_at: Fri, 13 Mar 2015 21:03:55 GMT
 recorded_with: VCR 2.9.3

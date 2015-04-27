@@ -41,11 +41,13 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
               {
                 id: toc.children[0].children[0].id,
                 title: 'first page',
+                chapter_section: '1.1',
                 type: 'page'
               },
               {
                 id: toc.children[0].children[1].id,
                 title: 'second page',
+                chapter_section: '1.2',
                 type: 'page'
               }
             ]
@@ -58,6 +60,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
               {
                 id: toc.children[1].children[0].id,
                 title: 'third page',
+                chapter_section: '1.3',
                 type: 'page'
               }
             ]
@@ -96,7 +99,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
       expect(hash[:total_count]).to eq(127)
       page_los = Content::GetLos[page_ids: page_ids]
       hash[:items].each do |item|
-        wrapper = OpenStax::Exercises::V1::Exercise.new(item[:content])
+        wrapper = OpenStax::Exercises::V1::Exercise.new(item[:content].to_json)
         item_los = wrapper.los
         expect(item_los).not_to be_empty
         item_los.each do |item_lo|
@@ -306,7 +309,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
   describe "practice_post" do
     let!(:lo)            { FactoryGirl.create :content_tag,
                                                tag_type: :lo,
-                                               name: 'lo01' }
+                                               value: 'lo01' }
 
     let!(:page)           { FactoryGirl.create :content_page }
 

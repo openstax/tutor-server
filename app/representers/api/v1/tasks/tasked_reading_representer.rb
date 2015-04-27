@@ -22,6 +22,15 @@ module Api::V1::Tasks
                description: "The title of this Reading"
              }
 
+    property :chapter_section,
+             type: String,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               required: true,
+               description: 'The chapter and section in the book, e.g. "5.2"'
+             }
+
     property :content,
              type: String,
              writeable: false,

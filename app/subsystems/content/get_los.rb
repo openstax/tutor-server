@@ -18,7 +18,7 @@ class Content::GetLos
                                         .joins(:page_tags)
                                         .where(page_tags: {
                                           content_page_id: page_ids
-                                        }).pluck(:name)
+                                        }).pluck(:value)
   end
 
 end
