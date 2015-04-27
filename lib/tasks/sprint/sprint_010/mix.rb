@@ -62,6 +62,7 @@ module Sprint010
                                                   type: 'homework',
                                                   assistant: hw_assistant,
                                                   settings: {
+        page_ids: [2],
         exercise_ids: [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25],
         exercises_count_dynamic: 2
       }
@@ -83,6 +84,7 @@ module Sprint010
                                                   type: 'homework',
                                                   assistant: hw_assistant,
                                                   settings: {
+        page_ids: [2],
         exercise_ids: [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24],
         exercises_count_dynamic: 3
       }
@@ -104,7 +106,8 @@ module Sprint010
                                                   type: 'homework',
                                                   assistant: hw_assistant,
                                                   settings: {
-        exercise_ids: [1, 2, 3, 5, 8, 13, 21, 34, 55, 89],
+        page_ids: [2, 3],
+        exercise_ids: [1, 2, 3, 5, 8, 13, 21, 34, 55],
         exercises_count_dynamic: 4
       }
       tp_6.tasking_plans << FactoryGirl.create(:tasks_tasking_plan,
