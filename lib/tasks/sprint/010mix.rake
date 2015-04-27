@@ -1,5 +1,3 @@
-require 'factory_girl_rails'
-
 namespace :sprint do
   desc 'Sprint 10 Mixed iReading and Homework'
   task :'010mix' => :environment do |tt, args|
