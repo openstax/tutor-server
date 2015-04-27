@@ -48,17 +48,39 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, :type => :assistant,
     end
   }
 
-  it 'assigns the exercises chosen by the teacher and sets the description and feedback_at' do
+  it "sets description, task type, and feedback_at" do
     tasks = DistributeTasks.call(task_plan).outputs.tasks
-    expect(tasks.length).to eq num_taskees
-
     tasks.each do |task|
-      expect(task.taskings.length).to eq 1
-      expect(task.description).to eq "Hello!"
-      expect(task.feedback_at).to eq task.due_at
+      expect(task.description).to eq("Hello!")
+      expect(task.homework?).to be_truthy
+      expect(task.feedback_at).to eq(task.due_at)
+    end
+  end
 
+  it "creates one task per taskee" do
+    tasks = DistributeTasks.call(task_plan).outputs.tasks
+    expect(tasks.count).to eq(taskees.count)
+  end
+
+  it "assigns each task to one role" do
+    tasks = DistributeTasks.call(task_plan).outputs.tasks
+    tasks.each do |task|
+      expect(task.taskings.count).to eq(1)
+    end
+    expected_roles = taskees.collect{ |taskee| Role::GetDefaultUserRole[taskee] }
+    expect(tasks.collect{|t| t.taskings.first.role}).to eq expected_roles
+  end
+
+  it "assigns the correct number of exercises" do
+    tasks = DistributeTasks.call(task_plan).outputs.tasks
+    tasks.each do |task|
       expect(task.task_steps.count).to eq(assignment_exercise_count)
+    end
+  end
 
+  it "assigns the teacher-selected exercises as the task's core exercises" do
+    tasks = DistributeTasks.call(task_plan).outputs.tasks
+    tasks.each do |task|
       core_task_steps = task.core_task_steps
       expect(core_task_steps.count).to eq(teacher_selected_exercises.count)
 
@@ -71,25 +93,16 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, :type => :assistant,
         expect(tasked_exercise.url).to eq(exercise.url)
         expect(tasked_exercise.title).to eq(exercise.title)
         expect(tasked_exercise.content).to eq(exercise.content)
-
-        other_task_steps = core_task_steps.reject{|ts| ts == task_step}
-        other_task_steps.each do |other_step|
-          expect(tasked_exercise.content).not_to(
-            include(other_step.tasked.content)
-          )
-        end
       end
+    end
+  end
 
+  it "assigns the tutor-selected spaced practice exercises" do
+    tasks = DistributeTasks.call(task_plan).outputs.tasks
+    tasks.each do |task|
       spaced_practice_task_steps = task.spaced_practice_task_steps
       expect(spaced_practice_task_steps.count).to eq(tutor_selected_exercise_count)
     end
-
-    expected_roles = taskees.collect{ |t| Role::GetDefaultUserRole[t] }
-    expect(tasks.collect{|t| t.taskings.first.role}).to eq expected_roles
-  end
-
-  # TODO (spaced practice etc)
-  xit 'assigns the exercises chosen by tutor' do
   end
 
 end

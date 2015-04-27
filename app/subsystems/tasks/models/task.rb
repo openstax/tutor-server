@@ -2,6 +2,8 @@ require_relative 'entity_extensions'
 
 class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
+  @@VALID_TASK_TYPES = ['homework', 'reading']
+
   belongs_to :task_plan
   belongs_to :entity_task, class_name: 'Entity::Task',
                            dependent: :destroy,
@@ -12,6 +14,8 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
                                  autosave: true,
                                  inverse_of: :task
   has_many :taskings, dependent: :destroy, through: :entity_task
+
+  validate :task_type_is_valid
 
   validates :title, presence: true
   validates :due_at, timeliness: { on_or_after: :opens_at },
@@ -41,6 +45,14 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   def completed?
     self.task_steps.all?{|ts| ts.completed? }
+  end
+
+  def homework?
+    self.task_type == "homework"
+  end
+
+  def reading?
+    self.task_type == "reading"
   end
 
   def core_task_steps
@@ -97,6 +109,12 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   protected
+
+  def task_type_is_valid
+    return if @@VALID_TASK_TYPES.include?(task_type)
+    errors.add(:base, "needs task type to be one of {#{@@VALID_TASK_TYPES.join(',')}}")
+    false
+  end
 
   def opens_at_or_due_at
     return unless opens_at.blank? && due_at.blank?
