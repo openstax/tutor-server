@@ -15,7 +15,6 @@ class Content::Routines::SearchPages
   protected
 
   def exec(options = {})
-
     relation = options[:relation] || Content::Models::Page.preload(page_tags: :tag)
     urls = [options[:url]].flatten unless options[:url].nil?
     titles = [options[:title]].flatten unless options[:title].nil?
@@ -34,7 +33,7 @@ class Content::Routines::SearchPages
       # Tag intersection
       # http://stackoverflow.com/a/2000642
       relation = relation.joins(page_tags: :tag)
-                         .where(page_tags: {tag: {name: tags}})
+                         .where(page_tags: {tag: {value: tags}})
                          .group(:id)
                          .having{ count(distinct(page_tags.tag.id)).gteq match_count }
     end

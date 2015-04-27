@@ -18,7 +18,7 @@ RSpec.describe Content::Routines::SearchPages, :type => :routine, :vcr => VCR_OP
     pages = Content::Routines::SearchPages.call(tag: lo).outputs.items
     expect(pages.length).to eq 1
     page = pages.first
-    tags = page.page_tags.collect{|et| et.tag.name}
+    tags = page.page_tags.collect{|et| et.tag.value}
     expect(tags).to include(lo)
     parser = OpenStax::Cnx::V1::Page.new(content: page.content)
     expect(parser.los).to include(lo)
