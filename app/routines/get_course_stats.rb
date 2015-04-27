@@ -5,10 +5,6 @@ class GetCourseStats
     translations: { outputs: { type: :verbatim } },
     as: :get_role_task_steps
 
-  uses_routine Content::GetPage,
-    translations: { outputs: { type: :verbatim } },
-    as: :get_page
-
   uses_routine CourseContent::GetCourseBooks,
     translations: { outputs: { type: :verbatim } },
     as: :get_course_books
@@ -24,8 +20,7 @@ class GetCourseStats
     run(:visit_book, book: outputs.books.first, visitor_names: :toc)
     run(:visit_book, book: outputs.books.first, visitor_names: :page_data)
 
-    outputs[:course_stats] = { title: root_book_title,
-                               fields: compile_fields(role: role) }
+    outputs[:course_stats] = { title: root_book_title, fields: compile_fields }
   end
 
   private
@@ -33,14 +28,13 @@ class GetCourseStats
     outputs.toc.first.title
   end
 
-  def compile_fields(role: role)
+  def compile_fields
     task_steps_grouped_by_book_part.collect do |book_part_id, task_steps|
       book_part = find_book_part(book_part_id)
       practices = completed_practices(task_steps: task_steps)
-      page_ids = task_steps.collect(&:page_id).flatten.uniq
 
       { id: book_part.id,
-        current_level: get_current_level(page_ids: page_ids),
+        current_level: get_current_level(task_steps: task_steps),
         pages: compile_pages(task_steps: task_steps),
         practice_count: practices.count,
         questions_answered_count: task_steps.count,
@@ -50,44 +44,51 @@ class GetCourseStats
   end
 
   def compile_pages(task_steps:)
-    task_steps.collect(&:page_id).flatten.uniq.collect do |page_id|
-      filtered_task_steps = task_steps.select { |ts| ts.page_id == page_id }
-      page = outputs.page_data.select { |p| p.id == page_id }.first
-      practices = completed_practices(task_steps: filtered_task_steps)
+    tags = get_lo_tags(task_steps: task_steps)
+    pages = Content::Routines::SearchPages[tag: tags, match_count: 1]
 
+    pages.uniq.collect do |page|
+      filtered_task_steps = filter_task_steps_by_page(task_steps: task_steps,
+                                                      page: page)
       { id: page.id,
-        current_level: get_current_level(page_ids: page_id),
-        practice_count: practices.count,
+        current_level: get_current_level(task_steps: filtered_task_steps),
+        practice_count: completed_practices(task_steps: filtered_task_steps).count,
         questions_answered_count: filtered_task_steps.count,
         title: page.title,
-        number: page.path }
+        number: page.chapter_section }
+    end
+  end
+
+  def filter_task_steps_by_page(task_steps:, page:)
+    task_steps.select do |task_step|
+      page_data = outputs.page_data.select { |p| p.id == page.id }.first
+      not (task_step.tasked.los & page_data.los).empty?
     end
   end
 
   def completed_practices(task_steps:)
-    tasks = Tasks::Models::Task.where(id: task_steps.collect(&:tasks_task_id).uniq)
-                               .where{task_type == "practice"}
+    task_ids = task_steps.collect(&:tasks_task_id).uniq
+    tasks = Tasks::Models::Task.where(id: task_ids)
+                               .where { task_type == "practice" }
     tasks.select(&:completed?)
   end
 
-  def get_current_level(page_ids:)
-    lo_tags = get_lo_tags(page_ids: page_ids)
+  def get_current_level(task_steps:)
+    lo_tags = get_lo_tags(task_steps: task_steps)
     OpenStax::BigLearn::V1.get_clue(learner_ids: [], tags: lo_tags)
   end
 
-  def get_lo_tags(page_ids:)
-    page_ids = [page_ids].flatten
-    outputs.page_data.select { |p| page_ids.include?(p.id) }
-                     .collect(&:los).flatten.uniq
+  def get_lo_tags(task_steps:)
+    [task_steps].flatten.collect(&:tasked).flatten.collect(&:los).flatten.uniq
   end
 
   def task_steps_grouped_by_book_part
     outputs.task_steps.select { |t|
-      t.page_id.present? &&
-        t.tasked_type == 'Tasks::Models::TaskedExercise' &&
-          t.completed?
-    }.group_by do |task_step|
-      run(:get_page, id: task_step.page_id).outputs.page.book_part_id
+      t.tasked_type.ends_with?('TaskedExercise')
+    }.group_by do |t|
+      tags = get_lo_tags(task_steps: t)
+      pages = Content::Routines::SearchPages[tag: tags]
+      pages.first.content_book_part_id
     end
   end
 
