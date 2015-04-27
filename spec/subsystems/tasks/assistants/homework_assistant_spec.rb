@@ -4,19 +4,43 @@ require 'vcr_helper'
 RSpec.describe Tasks::Assistants::HomeworkAssistant, :type => :assistant,
                                                      :vcr => VCR_OPTS do
 
+  before(:each) { OpenStax::Exercises::V1.use_real_client }
+
   let!(:assistant) {
     FactoryGirl.create(:tasks_assistant,
       code_class_name: 'Tasks::Assistants::HomeworkAssistant'
     )
   }
 
-  let!(:exercises) {
-    OpenStax::Exercises::V1.use_real_client
-    Content::Routines::ImportExercises.call(tag: 'k12phys-ch04-s01-lo01')
-                                      .outputs.exercises
+  let!(:book_part) {
+    FactoryGirl.create :content_book_part,
+                       title: "Forces and Newton's Laws of Motion"
   }
 
-  let!(:teacher_selected_exercises) { exercises[1..-2] }
+  let!(:cnx_page_hashes) { [
+    { 'id' => '1491e74e-ed39-446f-a602-e7ab881af101@9',
+      'title' => 'Introduction' },
+    { 'id' => '092bbf0d-0729-42ce-87a6-fd96fd87a083@11',
+      'title' => 'Force' }
+  ] }
+
+  let!(:cnx_pages) { cnx_page_hashes.each_with_index.collect do |hash, i|
+    OpenStax::Cnx::V1::Page.new(hash: hash, path: "8.#{i+1}")
+  end }
+
+  let!(:pages)     { cnx_pages.collect do |cnx_page|
+    Content::Routines::ImportPage.call(
+      cnx_page:  cnx_page,
+      book_part: book_part
+    ).outputs.page
+  end }
+
+  let!(:exercises) {
+    Content::Models::Exercise.joins{exercise_tags.tag}.
+                              where{exercise_tags.tag.name == 'k12phys-ch04-s01-lo01'}
+  }
+
+  let!(:teacher_selected_exercises) { exercises[1..5] }
   let!(:teacher_selected_exercise_ids) { teacher_selected_exercises.collect{|e| e.id} }
 
   let!(:tutor_selected_exercise_count) { 4 } # Adjust if spaced practice changes
@@ -48,38 +72,35 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, :type => :assistant,
     end
   }
 
-  it "sets description, task type, and feedback_at" do
+  it "creates the expected assignments" do
+    allow(Tasks::Assistants::HomeworkAssistant).
+      to receive(:k_ago_map) { [ [0,tutor_selected_exercise_count] ] }
+
     tasks = DistributeTasks.call(task_plan).outputs.tasks
+
+    ## it "sets description, task type, and feedback_at"
     tasks.each do |task|
       expect(task.description).to eq("Hello!")
       expect(task.homework?).to be_truthy
       expect(task.feedback_at).to eq(task.due_at)
     end
-  end
 
-  it "creates one task per taskee" do
-    tasks = DistributeTasks.call(task_plan).outputs.tasks
+    ## it "creates one task per taskee"
     expect(tasks.count).to eq(taskees.count)
-  end
 
-  it "assigns each task to one role" do
-    tasks = DistributeTasks.call(task_plan).outputs.tasks
+    ## it "assigns each task to one role"
     tasks.each do |task|
       expect(task.taskings.count).to eq(1)
     end
     expected_roles = taskees.collect{ |taskee| Role::GetDefaultUserRole[taskee] }
     expect(tasks.collect{|t| t.taskings.first.role}).to eq expected_roles
-  end
 
-  it "assigns the correct number of exercises" do
-    tasks = DistributeTasks.call(task_plan).outputs.tasks
+    ## it "assigns the correct number of exercises"
     tasks.each do |task|
       expect(task.task_steps.count).to eq(assignment_exercise_count)
     end
-  end
 
-  it "assigns the teacher-selected exercises as the task's core exercises" do
-    tasks = DistributeTasks.call(task_plan).outputs.tasks
+    ## it "assigns the teacher-selected exercises as the task's core exercises"
     tasks.each do |task|
       core_task_steps = task.core_task_steps
       expect(core_task_steps.count).to eq(teacher_selected_exercises.count)
@@ -95,10 +116,8 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, :type => :assistant,
         expect(tasked_exercise.content).to eq(exercise.content)
       end
     end
-  end
 
-  it "assigns the tutor-selected spaced practice exercises" do
-    tasks = DistributeTasks.call(task_plan).outputs.tasks
+    ## it "assigns the tutor-selected spaced practice exercises"
     tasks.each do |task|
       spaced_practice_task_steps = task.spaced_practice_task_steps
       expect(spaced_practice_task_steps.count).to eq(tutor_selected_exercise_count)

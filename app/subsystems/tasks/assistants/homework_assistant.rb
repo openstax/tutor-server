@@ -101,18 +101,105 @@ class Tasks::Assistants::HomeworkAssistant
   end
 
   def self.add_spaced_practice_exercise_steps!(task:, taskee:)
-    k_ago_map = [[1, 4]]
-    k_ago_map.each do |k_ago, number|
+    # k_ago_map = [[1, 4]]
+    # k_ago_map.each do |k_ago, number|
+    #   number.times do
+    #     hash = OpenStax::Exercises::V1.fake_client.new_exercise_hash
+    #     exercise = OpenStax::Exercises::V1::Exercise.new(hash.to_json)
+    #     step = add_exercise_step(task: task, exercise: exercise)
+    #     step.spaced_practice_group!
+    #   end
+    # end
+
+    homework_history = get_taskee_homework_history(task: task, taskee: taskee)
+    #puts "taskee: #{taskee.inspect}"
+    #puts "ireading history:  #{homework_history.inspect}"
+
+    exercise_history = get_exercise_history(tasks: homework_history)
+    #puts "exercise history:  #{exercise_history.collect{|ex| ex.id}.sort}"
+
+    exercise_pools = get_exercise_pools(tasks: homework_history)
+    #puts "exercise pools:  #{exercise_pools.map{|ep| ep.collect{|ex| ex.id}.sort}}}"
+
+    self.k_ago_map.each do |k_ago, number|
+      break if k_ago >= exercise_pools.count
+
+      candidate_exercises = (exercise_pools[k_ago] - exercise_history).sort_by{|ex| ex.id}.take(10)
+
       number.times do
-        hash = OpenStax::Exercises::V1.fake_client.new_exercise_hash
-        exercise = OpenStax::Exercises::V1::Exercise.new(hash.to_json)
-        step = add_exercise_step(task: task, exercise: exercise)
+        #puts "candidate_exercises: #{candidate_exercises.collect{|ex| ex.id}.sort}"
+        #puts "exercise history:    #{exercise_history.collect{|ex| ex.id}.sort}"
+
+        chosen_exercise = candidate_exercises.first #sample
+        #puts "chosen exercise:     #{chosen_exercise.id}"
+
+        candidate_exercises.delete(chosen_exercise)
+        exercise_history.push(chosen_exercise)
+
+        step = add_exercise_step(task: task, exercise: chosen_exercise)
         step.spaced_practice_group!
       end
     end
 
     task.save!
     task
+  end
+
+  def self.get_taskee_homework_history(task:, taskee:)
+    tasks = Tasks::Models::Task.joins{taskings}.
+                                where{taskings.entity_role_id == taskee.id}
+
+    homework_history = tasks.
+                         select{|tt| tt.homework?}.
+                         reject{|tt| tt == task}.
+                         sort_by{|tt| tt.due_at}.
+                         push(task).
+                         reverse
+
+    homework_history
+  end
+
+  def self.get_exercise_history(tasks:)
+    exercise_history = tasks.collect do |task|
+      exercise_steps = task.task_steps.select{|task_step| task_step.exercise?}
+      content_exercises = exercise_steps.collect do |ex_step|
+        content_exercise = Content::Models::Exercise.where{url == ex_step.tasked.url}
+      end
+      content_exercises
+    end.flatten.compact
+    exercise_history
+  end
+
+  def self.get_exercise_pools(tasks:)
+    exercise_pools = tasks.collect do |task|
+      urls = task.task_steps.select{|task_step| task_step.exercise?}.
+                             collect{|task_step| task_step.tasked.url}.
+                             uniq
+
+      content_exercises = Content::Models::Exercise.where{url.in urls}
+
+      los = content_exercises.collect do |content_exercise|
+        content_exercise.exercise_tags.collect do |ex_tag|
+          ex_tag.tag.lo? ? ex_tag.tag.name : nil
+        end
+      end.flatten.compact.uniq
+
+      exercises = Content::Models::Exercise.joins{exercise_tags.tag}.
+                                            where{exercise_tags.tag.name.in los}.
+                                            uniq
+      exercises = exercises.select do |ex|
+        ex.exercise_tags.detect do |ex_tag|
+          ['chapter-review-problem', 'chapter-review-concept'].include?(ex_tag.tag.name)
+        end
+      end
+
+      exercises
+    end
+    exercise_pools
+  end
+
+  def self.k_ago_map
+    k_ago_map = [ [0,1], [2,1] ]
   end
 
   def self.assign_task!(task:, taskee:)
