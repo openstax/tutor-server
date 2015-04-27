@@ -82,7 +82,7 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
       expect(stats.course.complete_count).to eq(1)
       expect(stats.course.partially_complete_count).to eq(0)
       page = stats.course.current_pages.first
-      expect(page['page']['title']).to eq('Force')
+      expect(page['title']).to eq('Force')
       expect(page['student_count']).to eq(number_of_students)
       expect(page['correct_count']).to eq(1)
       expect(page['incorrect_count']).to eq(0)
@@ -100,7 +100,7 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
       expect(stats.course.complete_count).to eq(2)
       expect(stats.course.partially_complete_count).to eq(0)
       page = stats.course.current_pages.first
-      expect(page['page']['title']).to eq('Force')
+      expect(page['title']).to eq('Force')
       expect(page['student_count']).to eq(number_of_students)
       expect(page['correct_count']).to eq(1)
       expect(page['incorrect_count']).to eq(1)
@@ -119,7 +119,7 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
       expect(stats.course.complete_count).to eq(3)
       expect(stats.course.partially_complete_count).to eq(0)
       page = stats.course.current_pages.first
-      expect(page['page']['title']).to eq('Force')
+      expect(page['title']).to eq('Force')
       expect(page['student_count']).to eq(number_of_students)
       expect(page['correct_count']).to eq(2)
       expect(page['incorrect_count']).to eq(1)
@@ -138,10 +138,96 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
       expect(stats.course.complete_count).to eq(4)
       expect(stats.course.partially_complete_count).to eq(0)
       page = stats.course.current_pages.first
-      expect(page['page']['title']).to eq('Force')
+      expect(page['title']).to eq('Force')
       expect(page['student_count']).to eq(number_of_students)
       expect(page['correct_count']).to eq(3)
       expect(page['incorrect_count']).to eq(1)
+    end
+
+    it "returns detailed stats if :details is true" do
+      tasks = task_plan.tasks.to_a
+      first_task = tasks.first
+      first_tasked_exercise = \
+        first_task.task_steps.select{ |ts| ts.tasked_type.demodulize == "TaskedExercise" }
+                  .first.tasked
+
+      first_task.task_steps.each{ |ts|
+        if ts.tasked_type.demodulize == "TaskedExercise"
+          ts.tasked.answer_id = ts.tasked.correct_answer_id
+          ts.tasked.free_response = 'a sentence explaining all the things'
+          ts.tasked.save!
+        end
+        MarkTaskStepCompleted.call(task_step: ts)
+      }
+      stats = CalculateTaskPlanStats.call(plan: task_plan.reload, details: true).outputs.stats
+      exercises = stats.course.current_pages.first.exercises
+      exercises.each do |exercise|
+        expect(exercise.answered_count).to eq 1
+      end
+      expect(exercises.first.content_json).to eq first_tasked_exercise.content
+      correct_answer = exercises.first.answers.select do |a|
+        a.id == first_tasked_exercise.correct_answer_id
+      end.first
+      expect(correct_answer.selected_count).to eq 1
+
+      second_task = tasks.second
+      second_task.task_steps.each{ |ts|
+        if ts.tasked_type.demodulize == "TaskedExercise"
+          ts.tasked.free_response = 'a sentence not explaining anything'
+          ts.tasked.save!
+        end
+        MarkTaskStepCompleted.call(task_step: ts)
+      }
+      stats = CalculateTaskPlanStats.call(plan: task_plan.reload, details: true).outputs.stats
+      exercises = stats.course.current_pages.first.exercises
+      exercises.each do |exercise|
+        expect(exercise.answered_count).to eq 2
+      end
+      expect(exercises.first.content_json).to eq first_tasked_exercise.content
+      correct_answer = exercises.first.answers.select do |a|
+        a.id == first_tasked_exercise.correct_answer_id
+      end.first
+      expect(correct_answer.selected_count).to eq 1
+
+      third_task = tasks.third
+      third_task.task_steps.each{ |ts|
+        if ts.tasked_type.demodulize == "TaskedExercise"
+          ts.tasked.answer_id = ts.tasked.correct_answer_id
+          ts.tasked.free_response = 'a sentence explaining all the things'
+          ts.tasked.save!
+        end
+        MarkTaskStepCompleted.call(task_step: ts)
+      }
+      stats = CalculateTaskPlanStats.call(plan: task_plan.reload, details: true).outputs.stats
+      exercises = stats.course.current_pages.first.exercises
+      exercises.each do |exercise|
+        expect(exercise.answered_count).to eq 3
+      end
+      expect(exercises.first.content_json).to eq first_tasked_exercise.content
+      correct_answer = exercises.first.answers.select do |a|
+        a.id == first_tasked_exercise.correct_answer_id
+      end.first
+      expect(correct_answer.selected_count).to eq 2
+
+      fourth_task = tasks.fourth
+      fourth_task.task_steps.each{ |ts|
+        if ts.tasked_type.demodulize == "TaskedExercise"
+          ts.tasked.answer_id = ts.tasked.correct_answer_id
+          ts.tasked.free_response = 'a sentence explaining all the things'
+          ts.tasked.save!
+        end
+        MarkTaskStepCompleted.call(task_step: ts)
+      }
+      stats = CalculateTaskPlanStats.call(plan: task_plan.reload, details: true).outputs.stats
+      exercises = stats.course.current_pages.first.exercises
+      exercises.each do |exercise|
+        expect(exercise.answered_count).to eq 4
+      end
+      expect(exercises.first.content_json).to eq first_tasked_exercise.content
+      correct_answer = exercises.first.answers.select do |a|
+        a.id == first_tasked_exercise.correct_answer_id
+      end.first
+      expect(correct_answer.selected_count).to eq 3
     end
 
   end

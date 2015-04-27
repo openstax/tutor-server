@@ -38,12 +38,5 @@ module Api::V1
              readable: true,
              writeable: true
 
-    property :stats,
-             extend: TaskPlanStatsRepresenter,
-             getter: ->(args){ CalculateTaskPlanStats[plan: self] },
-             if: ->(args) { !published_at.nil? },
-             readable: true,
-             writable: false
-
   end
 end
