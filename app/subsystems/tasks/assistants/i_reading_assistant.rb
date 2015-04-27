@@ -124,20 +124,37 @@ class Tasks::Assistants::IReadingAssistant
 
   def self.add_spaced_practice_exercise_steps!(task: task, taskee: taskee)
     k_ago_map = [ [1,1], [2,1] ]
-    task.spaced_practice_algorithm = SpacedPracticeAlgorithmIReading.new(k_ago_map: k_ago_map)
 
-    max_num_spaced_practice_steps = k_ago_map.reduce(0) {|result, pair| result += pair.last}
-    max_num_spaced_practice_steps.times do
-      step = Tasks::Models::TaskStep.new(task: task)
-      step.tasked = Tasks::Models::TaskedPlaceholder.new
-
-      step.spaced_practice_group!
-
-      task.task_steps << step
+    k_ago_map.each do |k_ago, number|
+      number.times do
+        hash = OpenStax::Exercises::V1.fake_client.new_exercise_hash
+        exercise = OpenStax::Exercises::V1::Exercise.new(hash.to_json)
+        step = add_exercise_step(task: task, exercise: exercise)
+        step.spaced_practice_group!
+      end
     end
+
+    # task.spaced_practice_algorithm = SpacedPracticeAlgorithmIReading.new(k_ago_map: k_ago_map)
+
+    # max_num_spaced_practice_steps = k_ago_map.reduce(0) {|result, pair| result += pair.last}
+    # max_num_spaced_practice_steps.times do
+    #   step = Tasks::Models::TaskStep.new(task: task)
+    #   step.tasked = Tasks::Models::TaskedPlaceholder.new
+
+    #   step.spaced_practice_group!
+
+    #   task.task_steps << step
+    # end
 
     task.save!
     task
+  end
+
+  def self.add_exercise_step(task:, exercise:)
+    step = Tasks::Models::TaskStep.new(task: task)
+    TaskExercise[task_step: step, exercise: exercise]
+    task.task_steps << step
+    step
   end
 
   def self.tasked_reading(reading_fragment:, page:, step:, title: nil)
