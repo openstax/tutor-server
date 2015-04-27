@@ -12,7 +12,7 @@ class Content::GetPage
       book_part_id: page.book_part.try(:id),
       content: page.content,
       hash: {},
-      path: page.path,
+      chapter_section: page.chapter_section,
       title: page.title,
       url: page.url
     )
