@@ -1,8 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Content::Routines::SearchExercises, :type => :routine,
-                                                   :vcr => VCR_OPTS do
+RSpec.describe Content::Routines::SearchExercises, :type => :routine, :vcr => VCR_OPTS do
 
   let!(:book_part) { FactoryGirl.create :content_book_part }
 
@@ -12,8 +11,7 @@ RSpec.describe Content::Routines::SearchExercises, :type => :routine,
   let!(:cnx_page) { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash) }
 
   it 'can search imported exercises' do
-    Content::Routines::ImportPage.call(cnx_page: cnx_page,
-                                       book_part: book_part)
+    Content::Routines::ImportPage.call(cnx_page: cnx_page, book_part: book_part)
 
     url = Content::Models::Exercise.first.url
     exercises = Content::Routines::SearchExercises.call(url: url).outputs.items

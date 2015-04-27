@@ -93,23 +93,19 @@ class Tasks::Assistants::IReadingAssistant
       title = page.is_intro? ? page.book_part_title : page.title
 
       page.fragments.each do |fragment|
-        step = Tasks::Models::TaskStep.new(task: task, page_id: page.id)
+        step = Tasks::Models::TaskStep.new(task: task)
 
         case fragment
         when OpenStax::Cnx::V1::Fragment::ExerciseChoice
-          tasked_exercise_choice(exercise_choice_fragment: fragment,
-                                 step: step, title: title)
+          tasked_exercise_choice(exercise_choice_fragment: fragment, step: step, title: title)
         when OpenStax::Cnx::V1::Fragment::Exercise
-          tasked_exercise(exercise_fragment: fragment,
-                          step: step, title: title)
+          tasked_exercise(exercise_fragment: fragment, step: step, title: title)
         when OpenStax::Cnx::V1::Fragment::Video
           tasked_video(video_fragment: fragment, step: step, title: title)
         when OpenStax::Cnx::V1::Fragment::Interactive
-          tasked_interactive(interactive_fragment: fragment,
-                             step: step, title: title)
+          tasked_interactive(interactive_fragment: fragment, step: step, title: title)
         else
-          tasked_reading(reading_fragment: fragment, page: page,
-                         title: title, step: step)
+          tasked_reading(reading_fragment: fragment, page: page, title: title, step: step)
         end
 
         next if step.tasked.nil?
