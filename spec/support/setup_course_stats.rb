@@ -9,19 +9,19 @@ class SetupCourseStats
     translations: { outputs: { type: :verbatim } },
     as: :fetch_and_import_book
 
-  uses_routine AddBookToCourse, as: :add_book_to_course
-
   uses_routine Content::VisitBook,
     translations: { outputs: { type: :verbatim } },
     as: :visit_book
 
-  uses_routine AddUserAsCourseStudent, as: :add_user_as_course_student
-
-  uses_routine DistributeTasks, as: :distribute_tasks
-
   uses_routine MarkTaskStepCompleted,
     translations: { outputs: { type: :verbatim } },
     as: :mark_task_step_completed
+
+  uses_routine AddBookToCourse, as: :add_book_to_course
+
+  uses_routine AddUserAsCourseStudent, as: :add_user_as_course_student
+
+  uses_routine DistributeTasks, as: :distribute_tasks
 
   protected
   def exec
@@ -54,22 +54,25 @@ class SetupCourseStats
   private
   def stagger_page_level_practice_widgets(role:)
     entity_task = ResetPracticeWidget[page_ids: outputs.page_data[1].id,
-                                      role: role, condition: :fake]
+                                      role: role, condition: :local]
     entity_task.task.task_steps.first(2).each do |task_step|
+      task_step.make_correct! if task_step.has_correctness?
       run(:mark_task_step_completed, task_step: task_step)
     end
 
     entity_task = ResetPracticeWidget[page_ids: outputs.page_data[2].id,
-                                      role: role, condition: :fake]
+                                      role: role, condition: :local]
     entity_task.task.task_steps.each do |task_step|
+      task_step.make_correct! if task_step.has_correctness?
       run(:mark_task_step_completed, task_step: task_step)
     end
   end
 
   def stagger_chapter_level_practice_widgets(role:)
     entity_task = ResetPracticeWidget[book_part_ids: outputs.toc[0].id,
-                                      role: role, condition: :fake]
+                                      role: role, condition: :local]
     entity_task.task.task_steps.each do |task_step|
+      task_step.make_correct! if task_step.has_correctness?
       run(:mark_task_step_completed, task_step: task_step)
     end
   end
@@ -106,6 +109,7 @@ class SetupCourseStats
       assistant: assistant,
       title: 'Homework',
       settings: {
+        page_ids: outputs.page_data.from(1).collect(&:id), # 0 is preface
         exercise_ids: Content::Models::Exercise.pluck(:id),
         exercises_count_dynamic: 2
       })
