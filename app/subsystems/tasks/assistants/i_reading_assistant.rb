@@ -188,16 +188,16 @@ class Tasks::Assistants::IReadingAssistant
       content_pages = Content::Models::Page.find(page_ids)
       los = content_pages.collect do |page|
         page_los = page.page_tags.select{|page_tag| page_tag.tag.lo?}
-                                 .collect{|page_tag| page_tag.tag.name}
+                                 .collect{|page_tag| page_tag.tag.value}
         page_los
       end.flatten.compact.uniq
 
       exercises = Content::Models::Exercise.joins{exercise_tags.tag}.
-                                            where{exercise_tags.tag.name.in los}.
+                                            where{exercise_tags.tag.value.in los}.
                                             uniq
       exercises = exercises.select do |ex|
         ex.exercise_tags.detect do |ex_tag|
-          ['practice-problem', 'practice-concepts'].include?(ex_tag.tag.name)
+          ['practice-problem', 'practice-concepts'].include?(ex_tag.tag.value)
         end
       end
 
