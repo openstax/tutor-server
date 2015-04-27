@@ -7,6 +7,8 @@ class ResetPracticeWidget
   protected
 
   def exec(role:, condition:, page_ids: [], book_part_ids: [])
+    page_ids = [page_ids].flatten
+    book_part_ids = [book_part_ids].flatten
 
     # Get the existing practice widget and remove incomplete exercises from it
     # so they can be used in later practice
@@ -33,7 +35,15 @@ class ResetPracticeWidget
 
     # TODO move this whole routine into Tasks, use run(...) here
 
-    task = Tasks::CreateTask[task_type: 'practice',
+    if book_part_ids.count == 1
+      task_type = 'chapter-practice'
+    elsif page_ids.count == 1
+      task_type = 'page-practice'
+    else
+      raise "Can only specify one page or one book part to practice for now"
+    end
+
+    task = Tasks::CreateTask[task_type: task_type,
                              title: 'Practice',
                              opens_at: Time.now]
 
