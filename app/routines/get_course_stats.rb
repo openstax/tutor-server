@@ -17,8 +17,7 @@ class GetCourseStats
   def exec(role:, course:)
     run(:get_role_task_steps, roles: role)
     run(:get_course_books, course: course)
-    run(:visit_book, book: outputs.books.first, visitor_names: :toc)
-    run(:visit_book, book: outputs.books.first, visitor_names: :page_data)
+    run(:visit_book, book: outputs.books.first, visitor_names: [:toc, :page_data])
 
     outputs[:course_stats] = { title: root_book_title, fields: compile_fields }
   end
