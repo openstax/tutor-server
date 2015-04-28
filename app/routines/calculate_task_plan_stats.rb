@@ -2,16 +2,9 @@ class CalculateTaskPlanStats
 
   lev_routine express_output: :stats
 
-  protected
+  uses_routine Content::Routines::SearchPages, as: :search_pages
 
-  def exercise_steps_for_page_id(page_id)
-    page_los = Content::GetLos[page_ids: page_id]
-    @plan.tasks.collect do |task|
-      task.task_steps.select do |ts|
-        ts.tasked_type.ends_with?("TaskedExercise") && (ts.tasked.los & page_los).any?
-      end
-    end.flatten
-  end
+  protected
 
   def answer_stats_for_tasked_exercises(tasked_exercises)
     tasked_exercises.first.answer_ids.collect do |answer_id|
@@ -23,10 +16,8 @@ class CalculateTaskPlanStats
     end
   end
 
-  def exercise_stats_for_steps(steps)
-    tasked_exercises = steps.collect{ |s| s.tasked }
-    urls = Set.new(steps.collect{ |s| s.tasked.url })
-    tasked_exercises = steps.collect{ |s| s.tasked }
+  def exercise_stats_for_tasked_exercises(tasked_exercises)
+    urls = Set.new(tasked_exercises.collect{ |te| te.url })
     urls.collect do |url|
       selected_tasked_exercises = tasked_exercises.select{ |te| te.url == url }
       completed_tasked_exercises = selected_tasked_exercises.select{ |te| te.completed? }
@@ -39,55 +30,37 @@ class CalculateTaskPlanStats
     end
   end
 
-  def page_stats_for_steps(steps)
-    role_ids = steps.each_with_object([]){ |step, collection|
-      step.task.taskings.each{ |tasking| collection << tasking.entity_role_id }
+  def page_stats_for_tasked_exercises(tasked_exercises)
+    role_ids = tasked_exercises.each_with_object([]){ |tasked_exercise, collection|
+      tasked_exercise.task_step.task.taskings.each{ |tasking|
+        collection << tasking.entity_role_id
+      }
     }.uniq
-    completed = steps.select { |ts| ts.completed? }
-    correct_count = completed.count{|step| step.tasked.is_correct? }
+    completed = tasked_exercises.select { |te| te.completed? }
+    correct_count = completed.count{ |te| te.is_correct? }
     stats = {
       student_count: role_ids.length,
       correct_count: correct_count,
       incorrect_count: completed.length - correct_count
     }
-    stats[:exercises] = exercise_stats_for_steps(steps) if @details
+    stats[:exercises] = exercise_stats_for_tasked_exercises(tasked_exercises) if @details
     stats
   end
 
-  def generate_page_stats(page, include_previous=false)
+  def generate_page_stats(page, tasked_exercises, include_previous=false)
     stats = {
       id:     page.id,
       number: page.number,
       title:  page.title
     }
-    # find all the exercise task steps for the page number
-    steps = exercise_steps_for_page_id(page.id)
-    stats.merge page_stats_for_steps(steps)
-  end
 
-  def task_plan_pages
-    if @plan.settings && @plan.settings['page_ids']
-      Content::GetPagesAttributes.call(page_ids: @plan.settings['page_ids']).outputs.pages
-    else
-      []
-    end
-  end
-
-  def generate_spaced_practice_stats
-    # spaced exercises do not have pages
-    stats = {
-      id:     0000,
-      number: 0000,
-      title:  ""
-    }
-    steps = exercise_steps_for_page_id(nil)
-    [ stats.merge(page_stats_for_steps(steps)) ]
+    stats.merge page_stats_for_tasked_exercises(tasked_exercises)
   end
 
   def get_gradable_taskeds(task)
     task.task_steps.select do |ts|
       # Gradable steps are TaskedExercise that are marked as completed
-      ts.tasked_type.ends_with?("TaskedExercise") && ts.completed?
+      ts.tasked.exercise? && ts.completed?
     end.collect{ |ts| ts.tasked }
   end
 
@@ -102,6 +75,24 @@ class CalculateTaskPlanStats
     sum_of_grades = grades_array.inject(:+)
     return nil if sum_of_grades.nil?
     (sum_of_grades*100.0/grades_array.count).round
+  end
+
+  def get_tasked_exercises_from_task_steps(task_steps)
+    task_steps.flatten.collect{ |ts| ts.tasked }.select{ |t| t.exercise? }
+  end
+
+  def get_page_for_tasked_exercise(tasked_exercise)
+    run(:search_pages, tag: tasked_exercise.los).outputs.items.first
+  end
+
+  def group_tasked_exercises_by_pages(tasked_exercises)
+    tasked_exercises.group_by{ |te| get_page_for_tasked_exercise(te) }
+  end
+
+  def generate_page_stats_for_task_steps(task_steps)
+    tasked_exercises = get_tasked_exercises_from_task_steps(task_steps)
+    page_hash = group_tasked_exercises_by_pages(tasked_exercises)
+    page_hash.collect{ |page, tasked_exercises| generate_page_stats(page, tasked_exercises) }
   end
 
   def generate_course_stat_data
@@ -121,11 +112,11 @@ class CalculateTaskPlanStats
           !task.task_steps.all?{| ts | ts.completed? }
       },
 
-      current_pages: task_plan_pages.map{|page|
-        generate_page_stats(page)
-      },
+      current_pages: generate_page_stats_for_task_steps(tasks.collect{ |t| t.core_task_steps }),
 
-      spaced_pages: generate_spaced_practice_stats
+      spaced_pages: generate_page_stats_for_task_steps(
+                      tasks.collect{ |t| t.spaced_practice_task_steps }
+                    )
     }
   end
 

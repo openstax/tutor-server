@@ -11,7 +11,7 @@ RSpec.describe Api::V1::TaskPlanWithStatsRepresenter, :type => :representer, :vc
 
   let!(:representation) { Api::V1::TaskPlanWithStatsRepresenter.new(task_plan).as_json }
 
-  it "represents a tasked exercise's stats" do
+  it "represents a task plan's stats" do
     expect(representation).to include(
       "id" => task_plan.id,
       "type" => "reading",
@@ -30,16 +30,7 @@ RSpec.describe Api::V1::TaskPlanWithStatsRepresenter, :type => :representer, :vc
               "incorrect_count" => 0
             )
           ),
-          "spaced_pages" => a_collection_containing_exactly(
-            a_hash_including(
-              "id"     => 0,
-              "number" => 0,
-              "title"  => "",
-              "student_count"   => 0,
-              "correct_count"   => 0,
-              "incorrect_count" => 0
-            )
-          )
+          "spaced_pages" => []
         ),
         "periods" => []
       }
