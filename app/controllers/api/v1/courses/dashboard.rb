@@ -43,7 +43,7 @@ class Api::V1::Courses::Dashboard
   end
 
   def load_course(course, role_type)
-    run(:get_course, course.id)
+    run(:get_course, course: course)
     run(:get_teacher_names, course.id)
 
     outputs[:course] = {

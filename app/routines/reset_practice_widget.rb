@@ -40,7 +40,7 @@ class ResetPracticeWidget
     elsif page_ids.count == 1
       task_type = 'page-practice'
     else
-      raise "Can only specify one page or one book part to practice for now"
+      task_type = 'mixed-practice'
     end
 
     task = Tasks::CreateTask[task_type: task_type,

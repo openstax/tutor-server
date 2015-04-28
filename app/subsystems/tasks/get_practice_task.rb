@@ -8,7 +8,7 @@ class Tasks::GetPracticeTask
   def exec(role:)
     outputs[:task] = Tasks::Models::Task.joins{entity_task.taskings}
                                         .where{entity_task.taskings.entity_role_id == role.id}
-                                        .where{task_type == 'practice'}
+                                        .where{task_type =~ '%-practice'}
                                         .order{created_at}
                                         .last
                                         .try(:entity_task)
