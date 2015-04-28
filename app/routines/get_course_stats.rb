@@ -41,7 +41,7 @@ class GetCourseStats
         practice_count: practices.count,
         questions_answered_count: task_steps.count,
         title: book_part.title,
-        number: book_part.path }
+        number: book_part.chapter_section }
     end
   end
 

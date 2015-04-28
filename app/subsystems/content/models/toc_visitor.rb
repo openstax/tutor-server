@@ -9,7 +9,8 @@ class Content::Models::TocVisitor < Content::Models::BookVisitor
       id: book_part.id,
       title: book_part.title,
       type: 'part',
-      children: []
+      children: [],
+      chapter_section: book_part.chapter_section
     }
 
     current_level.push(data)
