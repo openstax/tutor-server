@@ -128,10 +128,10 @@ class Tasks::Assistants::IReadingAssistant
     #puts "ireading history:  #{ireading_history.inspect}"
 
     exercise_history = get_exercise_history(tasks: ireading_history)
-    #puts "exercise history:  #{exercise_history.collect{|ex| ex.id}.sort}"
+    #puts "exercise history:  #{exercise_history.map(&:uid).sort}"
 
     exercise_pools = get_exercise_pools(tasks: ireading_history)
-    #puts "exercise pools:  #{exercise_pools.map{|ep| ep.collect{|ex| ex.id}.sort}}}"
+    #puts "exercise pools:  #{exercise_pools.map{|ep| ep.map(&:uid).sort}}}"
 
     self.k_ago_map.each do |k_ago, number|
       break if k_ago >= exercise_pools.count
@@ -139,11 +139,11 @@ class Tasks::Assistants::IReadingAssistant
       candidate_exercises = (exercise_pools[k_ago] - exercise_history).sort_by{|ex| ex.id}.take(10)
 
       number.times do
-        #puts "candidate_exercises: #{candidate_exercises.collect{|ex| ex.id}.sort}"
-        #puts "exercise history:    #{exercise_history.collect{|ex| ex.id}.sort}"
+        #puts "candidate_exercises: #{candidate_exercises.map(&:uid).sort}"
+        #puts "exercise history:    #{exercise_history.map(&:uid).sort}"
 
         chosen_exercise = candidate_exercises.first #sample
-        #puts "chosen exercise:     #{chosen_exercise.id}"
+        #puts "chosen exercise:     #{chosen_exercise.uid}"
 
         candidate_exercises.delete(chosen_exercise)
         exercise_history.push(chosen_exercise)
@@ -185,21 +185,13 @@ class Tasks::Assistants::IReadingAssistant
   def self.get_exercise_pools(tasks:)
     exercise_pools = tasks.collect do |task|
       page_ids = task.task_plan.settings['page_ids']
-      content_pages = Content::Models::Page.find(page_ids)
-      los = content_pages.collect do |page|
-        page_los = page.page_tags.select{|page_tag| page_tag.tag.lo?}
-                                 .collect{|page_tag| page_tag.tag.value}
-        page_los
-      end.flatten.compact.uniq
+      page_los = Content::GetLos[page_ids: page_ids]
 
-      exercises = Content::Models::Exercise.joins{exercise_tags.tag}.
-                                            where{exercise_tags.tag.value.in los}.
-                                            uniq
-      exercises = exercises.select do |ex|
-        ex.exercise_tags.detect do |ex_tag|
-          ['practice-problem', 'practice-concepts'].include?(ex_tag.tag.value)
-        end
-      end
+      page_exercises = Content::Routines::SearchExercises[tag: page_los, match_count: 1]
+
+      exercises = Content::Models::Exercise.joins{exercise_tags.tag}
+                                           .where{exercise_tags.tag.value.in ['practice-problem', 'practice-concept', 'practice-concepts']}
+                                           .where{id.in page_exercises.map(&:id)}
 
       exercises
     end
