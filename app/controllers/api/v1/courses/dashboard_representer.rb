@@ -110,10 +110,12 @@ module Api::V1::Courses
                readable: true,
                decorator: -> (task, *) {
                  case task.task_type
-                 when :reading
+                 when 'reading'
                    ReadingTask
-                 when :homework
+                 when 'homework'
                    HomeworkTask
+                 else
+                   raise "Unknown task type: #{task.task_type}"
                  end
                }
 
