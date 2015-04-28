@@ -74,20 +74,26 @@ class SetupCourseStats
   end
 
   def create_assignments(role:)
-    [ireading_task_plan, homework_task_plan].each do |task_plan|
-      task_plan.tasking_plans << FactoryGirl.create(:tasks_tasking_plan,
-                                                    task_plan: task_plan,
-                                                    target: role)
+    ireading_task_plan.tasking_plans << FactoryGirl.create(:tasks_tasking_plan,
+                                                           target: role)
+    homework_task_plan.tasking_plans << FactoryGirl.create(:tasks_tasking_plan,
+                                                           target: role)
 
-      run(:distribute_tasks, task_plan)
+    run(:distribute_tasks, ireading_task_plan)
+    run(:distribute_tasks, homework_task_plan).outputs.tasks.each do |task|
+      task.task_steps.first(2).each do |t|
+        Hacks::AnswerExercise[task_step: t, is_correct: true]
+      end
     end
   end
 
   def ireading_task_plan
+    return @ireading_task_plan if defined?(@ireading_task_plan)
+
     assistant = FactoryGirl.create(:tasks_assistant,
       code_class_name: 'Tasks::Assistants::IReadingAssistant')
 
-    FactoryGirl.create(:tasks_task_plan,
+    @ireading_task_plan = FactoryGirl.create(:tasks_task_plan,
       owner: outputs.course,
       assistant: assistant,
       title: 'Reading',
@@ -97,16 +103,20 @@ class SetupCourseStats
   end
 
   def homework_task_plan
+    return @homework_task_plan if defined?(@homework_task_plan)
+
     assistant = FactoryGirl.create(:tasks_assistant,
       code_class_name: 'Tasks::Assistants::HomeworkAssistant')
+    exercise_ids = outputs.page_data[1].los.collect do |tag|
+      SearchLocalExercises[tag: tag].first.id
+    end
 
-    FactoryGirl.create(:tasks_task_plan,
+    @homework_task_plan = FactoryGirl.create(:tasks_task_plan,
       owner: outputs.course,
       assistant: assistant,
       title: 'Homework',
       settings: {
-        page_ids: outputs.page_data.from(1).collect(&:id), # 0 is preface
-        exercise_ids: Content::Models::Exercise.pluck(:id),
+        exercise_ids: exercise_ids,
         exercises_count_dynamic: 2
       })
   end
