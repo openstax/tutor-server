@@ -20,6 +20,9 @@ class GetCourseStats
     run(:visit_book, book: outputs.books.first, visitor_names: :toc)
     run(:visit_book, book: outputs.books.first, visitor_names: :page_data)
 
+    puts "TOC:\n#{JSON.parse(outputs.toc.to_json)}\n"
+    puts "Page Data:\n#{JSON.parse(outputs.page_data.to_json)}\n"
+
     outputs[:course_stats] = { title: root_book_title, fields: compile_fields }
   end
 
@@ -31,7 +34,8 @@ class GetCourseStats
   def compile_fields
     task_steps_grouped_by_book_part.collect do |book_part_id, task_steps|
       book_part = find_book_part(book_part_id)
-      practices = completed_practices(task_steps: task_steps)
+      practices = completed_practices(task_steps: task_steps,
+                                      task_type: ['chapter-practice', 'page-practice'])
 
       { id: book_part.id,
         current_level: get_current_level(task_steps: task_steps),
@@ -63,8 +67,11 @@ class GetCourseStats
     pages.uniq.collect do |page|
       filtered_task_steps = filter_task_steps_by_page(task_steps: task_steps,
                                                       page: page)
+
       practices = completed_practices(task_steps: filtered_task_steps,
                                       task_type: 'page-practice')
+
+      puts "Page #{page.id}: task steps: #{filtered_task_steps.collect(&:id)}; LOs: #{outputs.page_data.select { |p| p.id == page.id }.first.los}; practices: #{practices.collect(&:id)} "
 
       { id: page.id,
         current_level: get_current_level(task_steps: filtered_task_steps),
@@ -76,16 +83,16 @@ class GetCourseStats
   end
 
   def filter_task_steps_by_page(task_steps:, page:)
+    page_data = outputs.page_data.select { |p| p.id == page.id }.first
+    page_los = page_data.los
     task_steps.select do |task_step|
-      page_data = outputs.page_data.select { |p| p.id == page.id }.first
-      (task_step.tasked.los & page_data.los).any?
+      (task_step.tasked.los & page_los).any?
     end
   end
 
-  def completed_practices(task_steps:, task_type: nil)
+  def completed_practices(task_steps:, task_type:)
     task_ids = task_steps.collect(&:tasks_task_id).uniq
-    tasks = Tasks::Models::Task.where(id: task_ids)
-    tasks = tasks.where(task_type: task_type) if task_type.present?
+    tasks = Tasks::Models::Task.where(id: task_ids, task_type: task_type)
     tasks.select(&:completed?)
   end
 
