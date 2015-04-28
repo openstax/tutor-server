@@ -10,7 +10,6 @@ class CreateTasksTasks < ActiveRecord::Migration
       t.datetime :feedback_at
       t.text :description
       t.integer :tasks_taskings_count, null: false, default: 0
-      t.text :spaced_practice_algorithm, null: false
 
       t.timestamps null: false
 

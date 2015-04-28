@@ -66,6 +66,10 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     can_be_recovered
   end
 
+  def exercise?
+    true
+  end
+
   protected
 
   def identifier

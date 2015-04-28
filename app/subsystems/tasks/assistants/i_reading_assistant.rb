@@ -122,22 +122,91 @@ class Tasks::Assistants::IReadingAssistant
     task
   end
 
-  def self.add_spaced_practice_exercise_steps!(task: task, taskee: taskee)
-    k_ago_map = [ [1,1], [2,1] ]
-    task.spaced_practice_algorithm = SpacedPracticeAlgorithmIReading.new(k_ago_map: k_ago_map)
+  def self.add_spaced_practice_exercise_steps!(task:, taskee:)
+    ireading_history = get_taskee_ireading_history(task: task, taskee: taskee)
+    #puts "taskee: #{taskee.inspect}"
+    #puts "ireading history:  #{ireading_history.inspect}"
 
-    max_num_spaced_practice_steps = k_ago_map.reduce(0) {|result, pair| result += pair.last}
-    max_num_spaced_practice_steps.times do
-      step = Tasks::Models::TaskStep.new(task: task)
-      step.tasked = Tasks::Models::TaskedPlaceholder.new
+    exercise_history = get_exercise_history(tasks: ireading_history)
+    #puts "exercise history:  #{exercise_history.map(&:uid).sort}"
 
-      step.spaced_practice_group!
+    exercise_pools = get_exercise_pools(tasks: ireading_history)
+    #puts "exercise pools:  #{exercise_pools.map{|ep| ep.map(&:uid).sort}}}"
 
-      task.task_steps << step
+    self.k_ago_map.each do |k_ago, number|
+      break if k_ago >= exercise_pools.count
+
+      candidate_exercises = (exercise_pools[k_ago] - exercise_history).sort_by{|ex| ex.id}.take(10)
+
+      number.times do
+        #puts "candidate_exercises: #{candidate_exercises.map(&:uid).sort}"
+        #puts "exercise history:    #{exercise_history.map(&:uid).sort}"
+
+        chosen_exercise = candidate_exercises.first #sample
+        #puts "chosen exercise:     #{chosen_exercise.uid}"
+
+        candidate_exercises.delete(chosen_exercise)
+        exercise_history.push(chosen_exercise)
+
+        step = add_exercise_step(task: task, exercise: chosen_exercise)
+        step.spaced_practice_group!
+      end
     end
 
     task.save!
     task
+  end
+
+  def self.get_taskee_ireading_history(task:, taskee:)
+    tasks = Tasks::Models::Task.joins{taskings}.
+                                where{taskings.entity_role_id == taskee.id}
+
+    ireading_history = tasks.
+                         select{|tt| tt.reading?}.
+                         reject{|tt| tt == task}.
+                         sort_by{|tt| tt.due_at}.
+                         push(task).
+                         reverse
+
+    ireading_history
+  end
+
+  def self.get_exercise_history(tasks:)
+    exercise_history = tasks.collect do |task|
+      exercise_steps = task.task_steps.select{|task_step| task_step.exercise?}
+      content_exercises = exercise_steps.collect do |ex_step|
+        content_exercise = Content::Models::Exercise.where{url == ex_step.tasked.url}
+      end
+      content_exercises
+    end.flatten.compact
+    exercise_history
+  end
+
+  def self.get_exercise_pools(tasks:)
+    exercise_pools = tasks.collect do |task|
+      page_ids = task.task_plan.settings['page_ids']
+      page_los = Content::GetLos[page_ids: page_ids]
+
+      page_exercises = Content::Routines::SearchExercises[tag: page_los, match_count: 1]
+
+      exercises = Content::Models::Exercise.joins{exercise_tags.tag}
+                                           .where{exercise_tags.tag.value.in ['practice-problem', 'practice-concept', 'practice-concepts']}
+                                           .where{id.in page_exercises.map(&:id)}
+
+      exercises
+    end
+    exercise_pools
+  end
+
+  def self.k_ago_map
+    k_ago_map = [ [1,1], [2,1] ]
+  end
+
+  def self.add_exercise_step(task:, exercise:)
+    step = Tasks::Models::TaskStep.new(task: task)
+    TaskExercise[task_step: step, exercise: exercise]
+    task.task_steps << step
+    step
   end
 
   def self.tasked_reading(reading_fragment:, page:, step:, title: nil)

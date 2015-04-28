@@ -44,9 +44,9 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
 
     let!(:spaced_practice_step_gold_data) {
       [
-        { klass: Tasks::Models::TaskedPlaceholder,
+        { klass: Tasks::Models::TaskedExercise,
           title: nil},
-        { klass: Tasks::Models::TaskedPlaceholder,
+        { klass: Tasks::Models::TaskedExercise,
           title: nil},
       ]
     }
@@ -87,6 +87,8 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
     }
 
     it 'splits a CNX module into many different steps and assigns them with immediate feedback' do
+      allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [[0,2]]}
+
       tasks = DistributeTasks.call(task_plan).outputs.tasks
       expect(tasks.length).to eq num_taskees
 
@@ -94,15 +96,17 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
         expect(task.taskings.length).to eq 1
         expect(task.feedback_at).to be <= Time.now
 
-        expect(task.core_task_steps.count).to eq(core_step_gold_data.count)
-        expect(task.spaced_practice_task_steps.count).to eq(spaced_practice_step_gold_data.count)
-
         task_steps = task.task_steps
         expect(task_steps.count).to eq(task_step_gold_data.count)
+        task_steps.each_with_index do |task_step, ii|
+          expect(task_step.tasked.class).to eq(task_step_gold_data[ii][:klass])
+          expect(task_step.tasked.title).to eq(task_step_gold_data[ii][:title])
+        end
 
-        non_placeholder_task_steps = task_steps.reject{|ts| ts.tasked_type.demodulize == 'TaskedPlaceholder'}
+        core_task_steps = task.core_task_steps
+        expect(core_task_steps.count).to eq(core_step_gold_data.count)
 
-        non_placeholder_task_steps.each_with_index do |task_step, i|
+        core_task_steps.each_with_index do |task_step, i|
           page = (i == 0) ? pages.first : pages.last
 
           expect(task_step.tasked.content).not_to include('snap-lab')
@@ -115,7 +119,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
             expect(task_step.tasked.chapter_section).to eq(page.chapter_section)
           end
 
-          other_task_steps = non_placeholder_task_steps.reject{|ts| ts == task_step}
+          other_task_steps = core_task_steps.reject{|ts| ts == task_step}
           other_task_steps.each do |other_step|
             expect(task_step.tasked.content).not_to(
               include(other_step.tasked.content)
@@ -124,10 +128,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
 
         end
 
-        task_steps.each_with_index do |task_step, ii|
-          expect(task_step.tasked.class).to eq(task_step_gold_data[ii][:klass])
-          expect(task_step.tasked.title).to eq(task_step_gold_data[ii][:title])
-        end
+        expect(task.spaced_practice_task_steps.count).to eq(spaced_practice_step_gold_data.count)
       end
 
       expected_roles = taskees.collect{ |t| Role::GetDefaultUserRole[t] }
@@ -162,9 +163,9 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
 
     let!(:spaced_practice_step_gold_data) {
       [
-        { klass: Tasks::Models::TaskedPlaceholder,
+        { klass: Tasks::Models::TaskedExercise,
           title: nil },
-        { klass: Tasks::Models::TaskedPlaceholder,
+        { klass: Tasks::Models::TaskedExercise,
           title: nil },
       ]
     }
@@ -202,6 +203,8 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
     }
 
     it 'is split into different task steps with immediate feedback' do
+      allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [[0,2]]}
+
       tasks = DistributeTasks.call(task_plan).outputs.tasks
       tasks.each do |task|
         expect(task.taskings.length).to eq 1

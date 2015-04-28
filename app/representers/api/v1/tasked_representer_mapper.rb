@@ -33,7 +33,6 @@ module Api::V1
       @@map ||= {
         ::Tasks::Models::TaskedReading     => ->(*) {Api::V1::Tasks::TaskedReadingRepresenter},
         ::Tasks::Models::TaskedExercise    => ->(*) {Api::V1::Tasks::TaskedExerciseRepresenter},
-        ::Tasks::Models::TaskedPlaceholder => ->(*) {Api::V1::Tasks::TaskedPlaceholderRepresenter},
         ::Tasks::Models::TaskedVideo       => ->(*) {Api::V1::Tasks::TaskedVideoRepresenter},
         ::Tasks::Models::TaskedInteractive => ->(*) {Api::V1::Tasks::TaskedInteractiveRepresenter}
       }

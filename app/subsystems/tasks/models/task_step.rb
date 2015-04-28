@@ -9,7 +9,7 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   validates :tasked_id, uniqueness: { scope: :tasked_type }
   validates :group_type, presence: true
 
-  delegate :can_be_answered?, :can_be_recovered?, to: :tasked
+  delegate :can_be_answered?, :can_be_recovered?, :exercise?, to: :tasked
 
   scope :complete, -> { where{completed_at != nil} }
   scope :incomplete, -> { where{completed_at == nil} }
@@ -24,9 +24,5 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
 
   def feedback_available?
     completed? && task.feedback_available?
-  end
-
-  def placeholder?
-    self.tasked_type.demodulize == 'TaskedPlaceholder'
   end
 end

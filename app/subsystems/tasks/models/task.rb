@@ -2,6 +2,8 @@ require_relative 'entity_extensions'
 
 class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
+  @@VALID_TASK_TYPES = ['homework', 'reading', 'practice']
+
   belongs_to :task_plan
   belongs_to :entity_task, class_name: 'Entity::Task',
                            dependent: :destroy,
@@ -13,19 +15,14 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
                                  inverse_of: :task
   has_many :taskings, dependent: :destroy, through: :entity_task
 
+  validate :task_type_is_valid
+
   validates :title, presence: true
   validates :due_at, timeliness: { on_or_after: :opens_at },
                      allow_nil: true,
                      if: :opens_at
-  validates :spaced_practice_algorithm, presence: true
 
   validate :opens_at_or_due_at
-
-  after_initialize :init
-
-  def init
-    self.spaced_practice_algorithm ||= SpacedPracticeAlgorithmDoNothing.new
-  end
 
   def is_shared?
     taskings.size > 1
@@ -41,6 +38,18 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   def completed?
     self.task_steps.all?{|ts| ts.completed? }
+  end
+
+  def homework?
+    self.task_type == "homework"
+  end
+
+  def reading?
+    self.task_type == "reading"
+  end
+
+  def practice?
+    self.task_type == "practice"
   end
 
   def core_task_steps
@@ -60,24 +69,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     self.core_task_steps.collect{|ts| ts.completed_at}.max
   end
 
-  def spaced_practice_algorithm
-    serialized_algorithm = read_attribute(:spaced_practice_algorithm)
-    return nil unless serialized_algorithm
-    algorithm = YAML.load(serialized_algorithm)
-    algorithm
-  end
-
-  def spaced_practice_algorithm=(algorithm)
-    raise ArgumentError, "algorithm cannot be nil" if algorithm.nil?
-    write_attribute(:spaced_practice_algorithm, YAML.dump(algorithm))
-  end
-
   def handle_task_step_completion!(completion_time: Time.now)
-    self.populate_spaced_practice_exercises!(event: :task_step_completion, current_time: completion_time)
-  end
-
-  def populate_spaced_practice_exercises!(event: :force, current_time: Time.now)
-    spaced_practice_algorithm.call(event: event, task: self, current_time: current_time)
   end
 
   def exercise_count
@@ -93,10 +85,16 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def exercise_steps
-    task_steps.where{tasked_type.in %w(Tasks::Models::TaskedExercise Tasks::Models::TaskedPlaceholder)}
+    task_steps.where{tasked_type.in %w(Tasks::Models::TaskedExercise)}
   end
 
   protected
+
+  def task_type_is_valid
+    return if @@VALID_TASK_TYPES.include?(task_type)
+    errors.add(:base, "needs task type to be one of {#{@@VALID_TASK_TYPES.join(',')}}")
+    false
+  end
 
   def opens_at_or_due_at
     return unless opens_at.blank? && due_at.blank?
