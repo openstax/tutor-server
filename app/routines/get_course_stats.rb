@@ -20,9 +20,6 @@ class GetCourseStats
     run(:visit_book, book: outputs.books.first, visitor_names: :toc)
     run(:visit_book, book: outputs.books.first, visitor_names: :page_data)
 
-    puts "TOC:\n#{JSON.parse(outputs.toc.to_json)}\n"
-    puts "Page Data:\n#{JSON.parse(outputs.page_data.to_json)}\n"
-
     outputs[:course_stats] = { title: root_book_title, fields: compile_fields }
   end
 
@@ -70,8 +67,6 @@ class GetCourseStats
 
       practices = completed_practices(task_steps: filtered_task_steps,
                                       task_type: 'page-practice')
-
-      puts "Page #{page.id}: task steps: #{filtered_task_steps.collect(&:id)}; LOs: #{outputs.page_data.select { |p| p.id == page.id }.first.los}; practices: #{practices.collect(&:id)} "
 
       { id: page.id,
         current_level: get_current_level(task_steps: filtered_task_steps),

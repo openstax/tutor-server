@@ -65,13 +65,9 @@ class SetupCourseStats
     entity_task = ResetPracticeWidget[book_part_ids: book_part_ids, page_ids: page_ids,
                                       role: role, condition: :local]
 
-    puts "Made practice widget; Task: #{entity_task.id}/#{entity_task.task.id}; Type: #{entity_task.task.task_type}; " +
-         "Part IDs: #{book_part_ids}; Page IDs: #{page_ids}"
-
     entity_task.task.task_steps.first(num_correct).each do |task_step|
       task_step.make_correct! if task_step.has_correctness?
       run(:mark_task_step_completed, task_step: task_step)
-      puts "  Step ID #{task_step.id}; LOs: #{task_step.tasked.los.join(', ')}; complete? = #{task_step.completed?}"
     end
   end
 
