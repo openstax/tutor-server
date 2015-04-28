@@ -428,7 +428,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
     it 'works' do
       OpenStax::BigLearn::V1.use_fake_client
 
-      SetupCourseStats[]
+      capture_stdout { SetupCourseStats[] }
 
       account = OpenStax::Accounts::Account.find_by(username: 'student')
       profile = MapUsersAccounts.account_to_user(account)
@@ -438,7 +438,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
       course = CourseProfile::Models::Profile.find_by(name: 'Physics').course
 
       api_get :stats, profile_token, parameters: { id: course.id }
-      binding.pry
+      puts response.body_as_hash
     end
   end
 
