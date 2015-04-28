@@ -9,9 +9,7 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
 
   has_many :tags, through: :exercise_tags
 
-  delegate :uid, :questions, :question_formats, :question_answers, :question_answer_ids,
-           :correct_question_answers, :correct_question_answer_ids, :feedback_map,
-           :content_without_correctness, :los, to: :parser
+  delegate :uid, to: :parser
 
   # We depend on the parser because we do not save the parsed content
   def parser
