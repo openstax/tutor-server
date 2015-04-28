@@ -32,7 +32,8 @@ class GetCourseStats
     task_steps_grouped_by_book_part.collect do |book_part_id, task_steps|
       book_part = find_book_part(book_part_id)
       practices = completed_practices(task_steps: task_steps,
-                                      task_type: ['chapter-practice', 'page-practice'])
+                                      task_type: ['chapter-practice',
+                                                  'page-practice'])
 
       { id: book_part.id,
         current_level: get_current_level(task_steps: task_steps),
