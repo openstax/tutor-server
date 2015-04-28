@@ -73,7 +73,8 @@ class Setup001
         owner: course,
         type: 'reading',
         assistant: r_assistant,
-        opens_at: Time.now,
+        opens_at: r_open_date,
+        due_at: r_due_date,
         settings: { page_ids: r_page_ids }
       )
       r_tp.tasking_plans << Tasks::Models::TaskingPlan.create!(target: course, task_plan: r_tp)
@@ -87,7 +88,8 @@ class Setup001
                                               owner: course,
                                               type: 'homework',
                                               assistant: hw_assistant,
-                                              opens_at: Time.now,
+                                              opens_at: hw_open_date,
+                                              due_at: hw_due_date,
                                               settings: {
                                                 page_ids: hw_page_ids,
                                                 exercise_ids: exercise_ids,
@@ -116,18 +118,20 @@ class Setup001
         complete_count = ((2 - tpi/2)/2.0)*task.task_steps.count
 
         task.task_steps.each_with_index do |ts, si|
-          # Only mark some steps as complete
+          # Some steps are left in their incomplete state
           next unless si < complete_count
 
-          # And 3/4 of those correct
-          if ts.tasked_type.ends_with?("TaskedExercise") && rand(4) < 3
-            ts.tasked.answer_id = ts.tasked.correct_answer_id
-            ts.tasked.free_response = 'A sentence explaining all the things!'
-            ts.tasked.save!
+          if ts.tasked.exercise?
+            r = rand(8)
+            # 3/4 of completed exercises are correct
+            # If r == 0, the exercise is blank (and incorrect)
+            # If r == 1, the exercise is not blank but is incorrect
+            # Otherwise, it's correct
+            Hacks::AnswerExercise.call(task_step: ts, is_correct: r > 1) if r > 0
+          else
+            # Not an exercise, so just mark as completed
+            run(:mark_completed, task_step: ts)
           end
-
-          # The other 1/4 are blank and thus incorrect
-          run(:mark_completed, task_step: ts)
         end
       end
     end
