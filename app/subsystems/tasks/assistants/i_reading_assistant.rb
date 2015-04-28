@@ -78,7 +78,7 @@ class Tasks::Assistants::IReadingAssistant
     due_at   = task_plan.due_at || (task_plan.opens_at + 1.week)
 
     task = Tasks::CreateTask[task_plan: task_plan,
-                             task_type: 'reading',
+                             task_type: :reading,
                              title:     title,
                              opens_at:  opens_at,
                              due_at:    due_at,

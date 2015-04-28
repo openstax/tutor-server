@@ -101,7 +101,7 @@ RSpec.describe Tasks::Models::Task, :type => :model do
 
   it 'counts exercise steps' do
     task = FactoryGirl.create(:tasks_task,
-                              task_type: 'homework',
+                              task_type: :homework,
                               step_types: [:tasks_tasked_exercise,
                                            :tasks_tasked_reading,
                                            :tasks_tasked_exercise,

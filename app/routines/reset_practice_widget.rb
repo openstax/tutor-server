@@ -35,13 +35,13 @@ class ResetPracticeWidget
 
     # TODO move this whole routine into Tasks, use run(...) here
 
-    if book_part_ids.count == 1
-      task_type = 'chapter-practice'
-    elsif page_ids.count == 1
-      task_type = 'page-practice'
-    else
-      task_type = 'mixed-practice'
-    end
+    task_type = if book_part_ids.count == 1
+                  :chapter_practice
+                elsif page_ids.count == 1
+                  :page_practice
+                else
+                  :mixed_practice
+                end
 
     task = Tasks::CreateTask[task_type: task_type,
                              title: 'Practice',

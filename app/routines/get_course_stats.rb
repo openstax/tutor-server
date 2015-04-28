@@ -31,9 +31,10 @@ class GetCourseStats
   def compile_fields
     task_steps_grouped_by_book_part.collect do |book_part_id, task_steps|
       book_part = find_book_part(book_part_id)
-      practices = completed_practices(task_steps: task_steps,
-                                      task_type: ['chapter-practice',
-                                                  'page-practice'])
+      practices = completed_practices(
+        task_steps: task_steps,
+        task_type: :mixed_practice
+      )
 
       { id: book_part.id,
         current_level: get_current_level(task_steps: task_steps),
@@ -66,8 +67,10 @@ class GetCourseStats
       filtered_task_steps = filter_task_steps_by_page(task_steps: task_steps,
                                                       page: page)
 
-      practices = completed_practices(task_steps: filtered_task_steps,
-                                      task_type: 'page-practice')
+      practices = completed_practices(
+        task_steps: filtered_task_steps,
+        task_type: :page_practice
+      )
 
       { id: page.id,
         current_level: get_current_level(task_steps: filtered_task_steps),

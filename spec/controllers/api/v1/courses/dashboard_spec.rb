@@ -19,14 +19,14 @@ describe Api::V1::Courses::Dashboard, :type => :routine, :vcr => VCR_OPTS do
                                                 .outputs.role }
 
   let!(:reading_task)   { FactoryGirl.create(:tasks_task,
-                                             task_type: 'reading',
+                                             task_type: :reading,
                                              step_types: [:tasks_tasked_reading,
                                                           :tasks_tasked_exercise,
                                                           :tasks_tasked_exercise],
                                              tasked_to: student_role)}
 
   let!(:homework_task)   { FactoryGirl.create(:tasks_task,
-                                              task_type: 'homework',
+                                              task_type: :reading,
                                               step_types: [:tasks_tasked_exercise,
                                                            :tasks_tasked_exercise,
                                                            :tasks_tasked_exercise],
