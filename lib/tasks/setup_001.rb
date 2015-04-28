@@ -42,12 +42,14 @@ class Setup001
                                            tasks_task_plan_type: 'homework')
 
     # Add teacher to course
-    teacher = run(:create_profile, attrs: {username: 'teacher'}).outputs.profile
+    teacher = run(:create_profile, attrs: {username: 'teacher',
+                                           password: 'password'}).outputs.profile
     run(:add_teacher, course: course, user: teacher.entity_user)
 
     # Add 10 students to course
     10.times.each_with_index do |i|
-      student = run(:create_profile, attrs: {username: "student_#{i}"}).outputs.profile
+      student = run(:create_profile, attrs: {username: "student#{i + 1}",
+                                             password: 'password'}).outputs.profile
       run(:add_student, course: course, user: student.entity_user)
     end
 
