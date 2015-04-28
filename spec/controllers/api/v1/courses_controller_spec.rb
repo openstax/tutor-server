@@ -336,8 +336,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
 
     it "works" do
       role = AddUserAsCourseStudent.call(course: course,
-                                                 user: user_1.entity_user)
-                                           .outputs.role
+                                         user: user_1.entity_user).outputs.role
 
       expect {
         api_post :practice,
