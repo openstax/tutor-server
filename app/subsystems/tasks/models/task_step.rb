@@ -25,8 +25,4 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   def feedback_available?
     completed? && task.feedback_available?
   end
-
-  def placeholder?
-    self.tasked_type.demodulize == 'TaskedPlaceholder'
-  end
 end

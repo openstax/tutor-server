@@ -21,15 +21,8 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   validates :due_at, timeliness: { on_or_after: :opens_at },
                      allow_nil: true,
                      if: :opens_at
-  validates :spaced_practice_algorithm, presence: true
 
   validate :opens_at_or_due_at
-
-  after_initialize :init
-
-  def init
-    self.spaced_practice_algorithm ||= SpacedPracticeAlgorithmDoNothing.new
-  end
 
   def is_shared?
     taskings.size > 1
@@ -76,24 +69,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     self.core_task_steps.collect{|ts| ts.completed_at}.max
   end
 
-  def spaced_practice_algorithm
-    serialized_algorithm = read_attribute(:spaced_practice_algorithm)
-    return nil unless serialized_algorithm
-    algorithm = YAML.load(serialized_algorithm)
-    algorithm
-  end
-
-  def spaced_practice_algorithm=(algorithm)
-    raise ArgumentError, "algorithm cannot be nil" if algorithm.nil?
-    write_attribute(:spaced_practice_algorithm, YAML.dump(algorithm))
-  end
-
   def handle_task_step_completion!(completion_time: Time.now)
-    self.populate_spaced_practice_exercises!(event: :task_step_completion, current_time: completion_time)
-  end
-
-  def populate_spaced_practice_exercises!(event: :force, current_time: Time.now)
-    spaced_practice_algorithm.call(event: event, task: self, current_time: current_time)
   end
 
   def exercise_count
@@ -109,7 +85,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def exercise_steps
-    task_steps.where{tasked_type.in %w(Tasks::Models::TaskedExercise Tasks::Models::TaskedPlaceholder)}
+    task_steps.where{tasked_type.in %w(Tasks::Models::TaskedExercise)}
   end
 
   protected
