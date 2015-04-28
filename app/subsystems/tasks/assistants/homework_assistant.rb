@@ -101,25 +101,15 @@ class Tasks::Assistants::HomeworkAssistant
   end
 
   def self.add_spaced_practice_exercise_steps!(task:, taskee:)
-    # k_ago_map = [[1, 4]]
-    # k_ago_map.each do |k_ago, number|
-    #   number.times do
-    #     hash = OpenStax::Exercises::V1.fake_client.new_exercise_hash
-    #     exercise = OpenStax::Exercises::V1::Exercise.new(hash.to_json)
-    #     step = add_exercise_step(task: task, exercise: exercise)
-    #     step.spaced_practice_group!
-    #   end
-    # end
-
     homework_history = get_taskee_homework_history(task: task, taskee: taskee)
     #puts "taskee: #{taskee.inspect}"
     #puts "ireading history:  #{homework_history.inspect}"
 
     exercise_history = get_exercise_history(tasks: homework_history)
-    #puts "exercise history:  #{exercise_history.collect{|ex| ex.uid}.sort}"
+    #puts "exercise history:  #{exercise_history.map(&:uid).sort}"
 
     exercise_pools = get_exercise_pools(tasks: homework_history)
-    #puts "exercise pools:  #{exercise_pools.map{|ep| ep.collect{|ex| ex.uid}.sort}}}"
+    #puts "exercise pools:  #{exercise_pools.map{|ep| ep.map(&:uid).sort}}}"
 
     self.k_ago_map.each do |k_ago, number|
       break if k_ago >= exercise_pools.count
@@ -127,9 +117,8 @@ class Tasks::Assistants::HomeworkAssistant
       candidate_exercises = (exercise_pools[k_ago] - exercise_history).sort_by{|ex| ex.uid}.take(10)
 
       number.times do
-
-        #puts "candidate_exercises: #{candidate_exercises.collect{|ex| ex.uid}.sort}"
-        #puts "exercise history:    #{exercise_history.collect{|ex| ex.uid}.sort}"
+        #puts "candidate_exercises: #{candidate_exercises.map(&:uid).sort}"
+        #puts "exercise history:    #{exercise_history.map(&:uid).sort}"
 
         chosen_exercise = candidate_exercises.first #sample
         #puts "chosen exercise:     #{chosen_exercise.uid}"
