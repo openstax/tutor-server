@@ -45,7 +45,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, :type => :assistant,
                                          .where{id.in page_exercises.map(&:id)}
 
     exercises = exercises.sort_by{|ex| ex.uid}
-    puts "exercises = #{exercises.map(&:uid)}"
+    #puts "exercises = #{exercises.map(&:uid)}"
     exercises
   }
 
@@ -82,7 +82,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, :type => :assistant,
   }
 
   it "creates the expected assignments" do
-    puts "teacher_selected_exercises = #{teacher_selected_exercises.collect{|ex| ex.uid}}"
+    #puts "teacher_selected_exercises = #{teacher_selected_exercises.collect{|ex| ex.uid}}"
 
     allow(Tasks::Assistants::HomeworkAssistant).
       to receive(:k_ago_map) { [ [0,tutor_selected_exercise_count] ] }
