@@ -11,7 +11,7 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
 
   delegate :uid, :questions, :question_formats, :question_answers, :question_answer_ids,
            :correct_question_answers, :correct_question_answer_ids, :feedback_map,
-           :content_without_correctness, :tags, :los, to: :parser
+           :content_without_correctness, :los, to: :parser
 
   # We depend on the parser because we do not save the parsed content
   def parser
