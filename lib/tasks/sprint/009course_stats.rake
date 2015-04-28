@@ -6,7 +6,9 @@ namespace :sprint do
 
     puts "*== Course Stats API ==*"
     puts ""
-    puts "/api/course/#{course.id}/stats"
+    puts "Login as 'student'"
+    puts ""
+    puts "visit /api/course/#{course.id}/stats"
     puts ""
     puts "*======================*"
   end
