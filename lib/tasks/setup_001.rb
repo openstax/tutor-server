@@ -12,6 +12,7 @@ class Setup001
   uses_routine Content::GetLos, as: :get_los
   uses_routine SearchLocalExercises, as: :search_exercises
   uses_routine MarkTaskStepCompleted, as: :mark_completed
+  uses_routine TaskExercise, as: :task_exercise
 
   protected
 
@@ -57,8 +58,16 @@ class Setup001
 
     # Create and distribute 4 readings and 4 homeworks
     4.times.each_with_index do |i|
+      # Set Homework pages, open date and due date
       hw_page_ids = [Content::Models::Page.offset(i + 1).first.id]
+      hw_open_date = Time.now + (2*i - 4).weeks
+      hw_due_date = Time.now + (2*i - 3).weeks
+
+      # Set iReading pages, open date and due date
       r_page_ids = i == 0 ? [Content::Models::Page.first.id] + hw_page_ids : hw_page_ids
+      r_open_date = Time.now + (2*i - 5).weeks
+      r_due_date = Time.now + (2*i - 3).weeks
+
       r_tp = Tasks::Models::TaskPlan.create!(
         title: "iReading ##{i + 1} - #{'Intro and ' if i == 0}Subchapter ##{i + 1}",
         owner: course,
@@ -88,10 +97,22 @@ class Setup001
       run(:distribute, hw_tp)
     end
 
+    # Add a fake exercise with recovery to the third reading
+    # because the FE wants 2 exercises to demo "try another"/"refresh my memory"
+    Tasks::Models::TaskPlan.all.order(:created_at).fifth.tasks.each do |task|
+      task_step = Tasks::Models::TaskStep.new(task: task, number: 8)
+      exercise = run(:search_exercises, tag: 'k12phys-ch04-ex079').outputs.items.first
+      task_step.tasked = run(:task_exercise,
+                             exercise: exercise,
+                             task_step: task_step,
+                             can_be_recovered: true).outputs.tasked_exercise
+      task_step.save!
+    end
+
     # Mark some assignments as complete and correct
     Tasks::Models::TaskPlan.all.order(:created_at).each_with_index do |tp, tpi|
-      tp.reload.tasks.each_with_index do |task, ti|
-        # Make Tasks 1 and 2 complete, 3 and 4 incomplete and 5, 6, 7, 8 not started
+      tp.tasks.each_with_index do |task, ti|
+        # Make Tasks 1 and 2 complete, 3 and 4 half complete and 5, 6, 7, 8 not started
         complete_count = ((2 - tpi/2)/2.0)*task.task_steps.count
 
         task.task_steps.each_with_index do |ts, si|
