@@ -43,8 +43,8 @@ class SetupCourseStats
     run(:add_user_as_course_student, course: outputs.course, user: student.entity_user)
     student_role = Entity::Role.last
 
-    puts "=== Create assignments ==="
-    create_assignments(role: student_role)
+    # puts "=== Create assignments ==="
+    # create_assignments(role: student_role)
 
     puts "=== Set student history ==="
     stagger_page_level_practice_widgets(role: student_role)
@@ -53,27 +53,25 @@ class SetupCourseStats
 
   private
   def stagger_page_level_practice_widgets(role:)
-    entity_task = ResetPracticeWidget[page_ids: outputs.page_data[1].id,
-                                      role: role, condition: :local]
-    entity_task.task.task_steps.first(2).each do |task_step|
-      task_step.make_correct! if task_step.has_correctness?
-      run(:mark_task_step_completed, task_step: task_step)
-    end
-
-    entity_task = ResetPracticeWidget[page_ids: outputs.page_data[2].id,
-                                      role: role, condition: :local]
-    entity_task.task.task_steps.each do |task_step|
-      task_step.make_correct! if task_step.has_correctness?
-      run(:mark_task_step_completed, task_step: task_step)
-    end
+    make_and_work_practice_widget(role: role, num_correct: 2, page_ids: outputs.page_data[1].id)
+    make_and_work_practice_widget(role: role, num_correct: 5, page_ids: outputs.page_data[2].id)
   end
 
   def stagger_chapter_level_practice_widgets(role:)
-    entity_task = ResetPracticeWidget[book_part_ids: outputs.toc[0].id,
+    make_and_work_practice_widget(role: role, num_correct: 5, book_part_ids: outputs.toc[0].id)
+  end
+
+  def make_and_work_practice_widget(role:, num_correct:, book_part_ids: [], page_ids: [])
+    entity_task = ResetPracticeWidget[book_part_ids: book_part_ids, page_ids: page_ids,
                                       role: role, condition: :local]
-    entity_task.task.task_steps.each do |task_step|
+
+    puts "Made practice widget; Task: #{entity_task.id}/#{entity_task.task.id}; Type: #{entity_task.task.task_type}; " +
+         "Part IDs: #{book_part_ids}; Page IDs: #{page_ids}"
+
+    entity_task.task.task_steps.first(num_correct).each do |task_step|
       task_step.make_correct! if task_step.has_correctness?
       run(:mark_task_step_completed, task_step: task_step)
+      puts "  Step ID #{task_step.id}; LOs: #{task_step.tasked.los.join(', ')}; complete? = #{task_step.completed?}"
     end
   end
 
