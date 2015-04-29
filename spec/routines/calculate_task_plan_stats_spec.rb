@@ -193,7 +193,7 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
       exercises.each do |exercise|
         expect(exercise.answered_count).to eq 1
       end
-      expect(exercises.first.content_json).to eq first_tasked_exercise.content
+      expect(exercises.first.content_json).to eq first_tasked_exercise.parser.content_hash
       correct_answer = exercises.first.answers.select do |a|
         a.id == first_tasked_exercise.correct_answer_id
       end.first

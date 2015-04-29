@@ -93,8 +93,8 @@ class OpenStax::Exercises::V1::Exercise
     end
   end
 
-  def content_without_correctness
-    @content_without_correctness ||= content_hash.merge(
+  def content_hash_without_correctness
+    @content_hash_without_correctness ||= content_hash.merge(
       'questions' => questions_without_correctness
     )
   end

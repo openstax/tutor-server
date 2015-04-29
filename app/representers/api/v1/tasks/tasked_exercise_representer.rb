@@ -23,8 +23,8 @@ module Api::V1::Tasks
                description: "The title of this Exercise"
              }
 
-    property :content_without_correctness,
-             as: :content,
+    property :content_hash_without_correctness,
+             as: :content_json,
              type: String,
              writeable: false,
              readable: true,
