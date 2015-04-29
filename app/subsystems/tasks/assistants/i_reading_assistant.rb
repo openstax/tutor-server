@@ -199,7 +199,7 @@ class Tasks::Assistants::IReadingAssistant
   end
 
   def self.k_ago_map
-    k_ago_map = [ [1,1], [2,1] ]
+    [ [1,1], [2,1] ]
   end
 
   def self.add_exercise_step(task:, exercise:)

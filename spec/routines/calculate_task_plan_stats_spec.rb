@@ -6,8 +6,8 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
   let(:number_of_students) { 8 }
 
   let(:task_plan) {
-    FactoryGirl.create :tasked_task_plan,
-                       number_of_students: number_of_students
+    allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [ [0, 2] ] }
+    FactoryGirl.create :tasked_task_plan, number_of_students: number_of_students
   }
 
   let(:stats){
@@ -26,6 +26,9 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
       expect(page.student_count).to eq(8)
       expect(page.incorrect_count).to eq(0)
       expect(page.correct_count).to eq(0)
+
+      spaced_page = stats.course.spaced_pages[0]
+      expect(spaced_page).to eq page
     end
 
   end
@@ -70,7 +73,7 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
       tasks = task_plan.tasks.to_a
       first_task = tasks.first
       first_task.task_steps.each{ |ts|
-        if ts.tasked_type.demodulize == "TaskedExercise"
+        if ts.tasked.exercise?
           ts.tasked.answer_id = ts.tasked.correct_answer_id
           ts.tasked.free_response = 'a sentence explaining all the things'
           ts.tasked.save!
@@ -81,15 +84,22 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
       expect(stats.course.mean_grade_percent).to eq (100)
       expect(stats.course.complete_count).to eq(1)
       expect(stats.course.partially_complete_count).to eq(0)
+
       page = stats.course.current_pages.first
       expect(page['title']).to eq('Force')
       expect(page['student_count']).to eq(number_of_students)
       expect(page['correct_count']).to eq(1)
       expect(page['incorrect_count']).to eq(0)
 
+      spaced_page = stats.course.spaced_pages.first
+      expect(spaced_page['title']).to eq('Force')
+      expect(spaced_page['student_count']).to eq(number_of_students)
+      expect(spaced_page['correct_count']).to eq(2)
+      expect(spaced_page['incorrect_count']).to eq(0)
+
       second_task = tasks.second
       second_task.task_steps.each{ |ts|
-        if ts.tasked_type.demodulize == "TaskedExercise"
+        if ts.tasked.exercise?
           ts.tasked.free_response = 'a sentence not explaining anything'
           ts.tasked.save!
         end
@@ -99,15 +109,22 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
       expect(stats.course.mean_grade_percent).to eq (50)
       expect(stats.course.complete_count).to eq(2)
       expect(stats.course.partially_complete_count).to eq(0)
+
       page = stats.course.current_pages.first
       expect(page['title']).to eq('Force')
       expect(page['student_count']).to eq(number_of_students)
       expect(page['correct_count']).to eq(1)
       expect(page['incorrect_count']).to eq(1)
 
+      spaced_page = stats.course.spaced_pages.first
+      expect(spaced_page['title']).to eq('Force')
+      expect(spaced_page['student_count']).to eq(number_of_students)
+      expect(spaced_page['correct_count']).to eq(2)
+      expect(spaced_page['incorrect_count']).to eq(2)
+
       third_task = tasks.third
       third_task.task_steps.each{ |ts|
-        if ts.tasked_type.demodulize == "TaskedExercise"
+        if ts.tasked.exercise?
           ts.tasked.answer_id = ts.tasked.correct_answer_id
           ts.tasked.free_response = 'a sentence explaining all the things'
           ts.tasked.save!
@@ -118,15 +135,22 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
       expect(stats.course.mean_grade_percent).to eq (67)
       expect(stats.course.complete_count).to eq(3)
       expect(stats.course.partially_complete_count).to eq(0)
+
       page = stats.course.current_pages.first
       expect(page['title']).to eq('Force')
       expect(page['student_count']).to eq(number_of_students)
       expect(page['correct_count']).to eq(2)
       expect(page['incorrect_count']).to eq(1)
 
+      spaced_page = stats.course.spaced_pages.first
+      expect(spaced_page['title']).to eq('Force')
+      expect(spaced_page['student_count']).to eq(number_of_students)
+      expect(spaced_page['correct_count']).to eq(4)
+      expect(spaced_page['incorrect_count']).to eq(2)
+
       fourth_task = tasks.fourth
       fourth_task.task_steps.each{ |ts|
-        if ts.tasked_type.demodulize == "TaskedExercise"
+        if ts.tasked.exercise?
           ts.tasked.answer_id = ts.tasked.correct_answer_id
           ts.tasked.free_response = 'a sentence explaining all the things'
           ts.tasked.save!
@@ -137,22 +161,27 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
       expect(stats.course.mean_grade_percent).to eq (75)
       expect(stats.course.complete_count).to eq(4)
       expect(stats.course.partially_complete_count).to eq(0)
+
       page = stats.course.current_pages.first
       expect(page['title']).to eq('Force')
       expect(page['student_count']).to eq(number_of_students)
       expect(page['correct_count']).to eq(3)
       expect(page['incorrect_count']).to eq(1)
+
+      spaced_page = stats.course.spaced_pages.first
+      expect(spaced_page['title']).to eq('Force')
+      expect(spaced_page['student_count']).to eq(number_of_students)
+      expect(spaced_page['correct_count']).to eq(6)
+      expect(spaced_page['incorrect_count']).to eq(2)
     end
 
     it "returns detailed stats if :details is true" do
       tasks = task_plan.tasks.to_a
       first_task = tasks.first
-      first_tasked_exercise = \
-        first_task.task_steps.select{ |ts| ts.tasked_type.demodulize == "TaskedExercise" }
-                  .first.tasked
+      first_tasked_exercise = first_task.task_steps.select{ |ts| ts.tasked.exercise? }.first.tasked
 
       first_task.task_steps.each{ |ts|
-        if ts.tasked_type.demodulize == "TaskedExercise"
+        if ts.tasked.exercise?
           ts.tasked.answer_id = ts.tasked.correct_answer_id
           ts.tasked.free_response = 'a sentence explaining all the things'
           ts.tasked.save!
@@ -172,7 +201,7 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
 
       second_task = tasks.second
       second_task.task_steps.each{ |ts|
-        if ts.tasked_type.demodulize == "TaskedExercise"
+        if ts.tasked.exercise?
           ts.tasked.free_response = 'a sentence not explaining anything'
           ts.tasked.save!
         end
@@ -191,7 +220,7 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
 
       third_task = tasks.third
       third_task.task_steps.each{ |ts|
-        if ts.tasked_type.demodulize == "TaskedExercise"
+        if ts.tasked.exercise?
           ts.tasked.answer_id = ts.tasked.correct_answer_id
           ts.tasked.free_response = 'a sentence explaining all the things'
           ts.tasked.save!
@@ -211,7 +240,7 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
 
       fourth_task = tasks.fourth
       fourth_task.task_steps.each{ |ts|
-        if ts.tasked_type.demodulize == "TaskedExercise"
+        if ts.tasked.exercise?
           ts.tasked.answer_id = ts.tasked.correct_answer_id
           ts.tasked.free_response = 'a sentence explaining all the things'
           ts.tasked.save!

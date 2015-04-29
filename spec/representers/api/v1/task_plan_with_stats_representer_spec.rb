@@ -6,6 +6,7 @@ RSpec.describe Api::V1::TaskPlanWithStatsRepresenter, :type => :representer, :vc
   let!(:number_of_students){ 2 }
 
   let!(:task_plan) {
+    allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [ [0, 2] ] }
     FactoryGirl.create :tasked_task_plan, number_of_students: number_of_students
   }
 
@@ -30,7 +31,16 @@ RSpec.describe Api::V1::TaskPlanWithStatsRepresenter, :type => :representer, :vc
               "incorrect_count" => 0
             )
           ),
-          "spaced_pages" => []
+          "spaced_pages" => a_collection_containing_exactly(
+            a_hash_including(
+              "id"     => task_plan.settings['page_ids'].first,
+              "number" => 1,
+              "title"  => "Force",
+              "student_count"   => 2,
+              "correct_count"   => 0,
+              "incorrect_count" => 0
+            )
+          )
         ),
         "periods" => []
       }

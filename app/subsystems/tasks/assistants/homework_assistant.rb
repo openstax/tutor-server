@@ -185,7 +185,7 @@ class Tasks::Assistants::HomeworkAssistant
   end
 
   def self.k_ago_map
-    k_ago_map = [ [0,1], [2,1] ]
+    [ [0,1], [2,1] ]
   end
 
   def self.assign_task!(task:, taskee:)

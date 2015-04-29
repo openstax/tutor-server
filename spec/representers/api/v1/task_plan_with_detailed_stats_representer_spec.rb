@@ -7,6 +7,7 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, :type => :represen
   let!(:number_of_students){ 2 }
 
   let!(:task_plan) {
+    allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [ [0, 2] ] }
     FactoryGirl.create :tasked_task_plan, number_of_students: number_of_students
   }
 
@@ -54,15 +55,35 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, :type => :represen
                 { "id" => correct_answer_id.to_s, "selected_count" => 1 },
                 { "id" => incorrect_answer_ids.first.to_s, "selected_count" => 1 },
                 { "id" => incorrect_answer_ids.second.to_s, "selected_count" => 0 },
-                { "id" => incorrect_answer_ids.third.to_s, "selected_count" => 0 },
+                { "id" => incorrect_answer_ids.third.to_s, "selected_count" => 0 }
               )
             )
           ),
-          "spaced_pages" => []
+          "spaced_pages" => a_collection_containing_exactly(
+            "id"     => task_plan.settings['page_ids'].first,
+            "number" => 1,
+            "title"  => "Force",
+            "student_count"   => 2,
+            "correct_count"   => 0,
+            "incorrect_count" => 0,
+            "exercises" => a_collection_containing_exactly(
+              { "content_json" => a_kind_of(String),
+                "answered_count" => 0,
+                "answers" => a_kind_of(Array) },
+              { "content_json" => a_kind_of(String),
+                "answered_count" => 0,
+                "answers" => a_kind_of(Array) }
+            )
+          )
         },
         "periods" => []
       }
     )
+    representation['stats']['course']['spaced_pages'].first['exercises'].each do |exercise|
+      exercise['answers'].each do |answer|
+        expect(answer['selected_count']).to eq 0
+      end
+    end
   end
 
 end
