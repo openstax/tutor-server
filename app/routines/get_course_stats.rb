@@ -15,6 +15,9 @@ class GetCourseStats
 
   protected
   def exec(role:, course:)
+    @role = role
+    # OpenStax::BigLearn::V1.use_real_client
+
     run(:get_role_task_steps, roles: role)
     run(:get_course_books, course: course)
     run(:visit_book, book: outputs.books.first, visitor_names: [:toc, :page_data])
@@ -29,6 +32,9 @@ class GetCourseStats
   end
 
   private
+
+  attr_reader :role
+
   def root_book_title
     outputs.toc.first.title
   end
@@ -109,7 +115,7 @@ class GetCourseStats
 
   def get_current_level(task_steps:)
     lo_tags = get_lo_tags(task_steps: task_steps)
-    OpenStax::BigLearn::V1.get_clue(learner_ids: [], tags: lo_tags)
+    OpenStax::BigLearn::V1.get_clue(learner_ids: role.id, tags: lo_tags)
   end
 
   def find_book_part(id)

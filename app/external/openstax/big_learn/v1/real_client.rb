@@ -1,6 +1,6 @@
 class OpenStax::BigLearn::V1::RealClient
-  def initialize(configuration)
-    @server_url = configuration.server_url
+  def initialize()
+    @server_url = "http://api1.biglearn.openstax.org/"
   end
 
   # TODO implement these methods when real API set; use HTTParty, e.g:
@@ -41,6 +41,25 @@ class OpenStax::BigLearn::V1::RealClient
     end
   end
 
+  def get_clue(learner_ids:, tags:)
+    raise "Some tags must be specified when getting a CLUE" if tags.empty?
+    raise "At least one learner ID must be specified when getting a CLUE" if learner_ids.empty?
+
+    tag_search = stringify_tag_search(:_or => tags)
+
+    query = {
+      learners: learner_ids.collect{|id| id.to_s}.first,
+      aggregations: tag_search,
+    }
+
+    result = get(clue_url, query: query)
+
+    handle_result(result)
+
+    # get the value out of the result
+    raise NotYetImplemented
+  end
+
   private
   def post(url, body)
     HTTParty.post(url,
@@ -58,6 +77,10 @@ class OpenStax::BigLearn::V1::RealClient
 
   def projection_exercises_url
     @server_url + 'projections/questions'
+  end
+
+  def clue_url
+    @server_url + 'knowledge/clue'
   end
 
   def construct_exercises_payload(exercises)

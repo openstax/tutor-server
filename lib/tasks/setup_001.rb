@@ -46,10 +46,12 @@ class Setup001
     teacher = new_profile(username: 'teacher', name: 'Bill Nye')
     run(:add_teacher, course: course, user: teacher.entity_user)
 
+    student_roles = []
+
     # Add 10 students to course
     10.times.each_with_index do |i|
       student = new_profile(username: "student#{i + 1}")
-      run(:add_student, course: course, user: student.entity_user)
+      student_roles.push(run(:add_student, course: course, user: student.entity_user).outputs.role)
     end
 
     course.reload
@@ -113,6 +115,16 @@ class Setup001
     hw_tp.tasking_plans << Tasks::Models::TaskingPlan.create!(target: course, task_plan: hw_tp)
     run(:distribute, hw_tp)
 
+    # Add some practice widgets and work them for students[0]
+
+    make_and_work_practice_widget(role: student_roles[0],
+                                  num_correct: 2,
+                                  page_ids: Content::Models::Page.offset(1).first.id)
+
+    make_and_work_practice_widget(role: student_roles[0],
+                                  num_correct: 5,
+                                  page_ids: Content::Models::Page.offset(2).first.id)
+
 
     # Add a fake exercise with recovery to the third reading
     # because the FE wants 2 exercises to demo "try another"/"refresh my memory"
@@ -170,6 +182,17 @@ class Setup001
                                       full_name: name)
 
     profile
+  end
+
+  def make_and_work_practice_widget(role:, num_correct:, book_part_ids: [],
+                                                         page_ids: [])
+    entity_task = ResetPracticeWidget[book_part_ids: book_part_ids,
+                                      page_ids: page_ids,
+                                      role: role, condition: :local]
+
+    entity_task.task.task_steps.first(num_correct).each do |task_step|
+      Hacks::AnswerExercise[task_step: task_step, is_correct: true]
+    end
   end
 
 end

@@ -108,6 +108,9 @@ module Api::V1::Courses
 
     collection :tasks,
                readable: true,
+               skip_render: -> (object, options) {
+                 !['reading','homework'].include?(object.task_type.to_s)
+               },
                decorator: -> (task, *) {
                  case task.task_type.to_s
                  when 'reading'
