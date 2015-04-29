@@ -96,8 +96,7 @@ class CalculateTaskPlanStats
   end
 
   def generate_course_stat_data
-    tasks = @plan.tasks.preload(task_steps: :tasked)
-                       .includes(:taskings).to_a
+    tasks = @plan.tasks.preload(task_steps: :tasked).includes(:taskings).to_a
     {
       mean_grade_percent: mean_grade_percent(tasks),
 
