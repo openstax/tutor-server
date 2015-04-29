@@ -6,6 +6,7 @@ module Api::V1
         include Roar::JSON
 
         property :content_json,
+                 getter: ->(*) { ::JSON.parse(content_json) },
                  type: String,
                  writeable: false,
                  readable: true
