@@ -59,7 +59,7 @@ class Tasks::Assistants::HomeworkAssistant
   def self.create_homework_task!(task_plan:, taskee:, exercises:)
     task = create_task!(task_plan: task_plan)
     add_core_steps!(task: task, exercises: exercises)
-    add_spaced_practice_exercise_steps!(task: task, taskee: taskee)
+    add_spaced_practice_exercise_steps!(task_plan: task_plan, task: task, taskee: taskee)
   end
 
   def self.create_task!(task_plan:)
@@ -100,7 +100,7 @@ class Tasks::Assistants::HomeworkAssistant
     step
   end
 
-  def self.add_spaced_practice_exercise_steps!(task:, taskee:)
+  def self.add_spaced_practice_exercise_steps!(task_plan:, task:, taskee:)
     homework_history = get_taskee_homework_history(task: task, taskee: taskee)
     #puts "taskee: #{taskee.inspect}"
     #puts "ireading history:  #{homework_history.inspect}"
@@ -111,7 +111,8 @@ class Tasks::Assistants::HomeworkAssistant
     exercise_pools = get_exercise_pools(tasks: homework_history)
     #puts "exercise pools:  #{exercise_pools.map{|ep| ep.map(&:uid).sort}}}"
 
-    self.k_ago_map.each do |k_ago, number|
+    num_spaced_practice_exercises = get_num_spaced_practice_exercises(task_plan: task_plan)
+    self.k_ago_map(num_spaced_practice_exercises).each do |k_ago, number|
       break if k_ago >= exercise_pools.count
 
       candidate_exercises = (exercise_pools[k_ago] - exercise_history).sort_by{|ex| ex.uid}.take(10)
@@ -184,8 +185,31 @@ class Tasks::Assistants::HomeworkAssistant
     exercise_pools
   end
 
-  def self.k_ago_map
-    [ [0,1], [2,1] ]
+  def self.get_num_spaced_practice_exercises(task_plan:)
+    exercises_count_dynamic = task_plan[:settings]['exercises_count_dynamic']
+    num_spaced_practice_exercises = [0, exercises_count_dynamic-1].max
+    num_spaced_practice_exercises
+  end
+
+  def self.k_ago_map(num_spaced_practice_exercises)
+    ## NOTE: These will be updated over time.
+    k_ago_map =
+      case num_spaced_practice_exercises
+      when 0
+        []
+      when 1
+        [ [1,1] ]
+      when 2
+        [ [1,1], [3,1] ]
+      when 3
+        [ [1,2], [3,1] ]
+      when 4
+        [ [1,2], [3,2] ]
+      else
+        raise "could not determine k-ago map for num_spaced_practice_exercises=#{num_spaced_practice_exercises}"
+      end
+
+    k_ago_map
   end
 
   def self.assign_task!(task:, taskee:)
