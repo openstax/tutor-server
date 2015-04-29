@@ -22,7 +22,7 @@ class CalculateTaskPlanStats
       answer_stats = answer_stats_for_tasked_exercises(selected_tasked_exercises)
 
       {
-        content_json: exercise.content_with_answer_stats(answer_stats),
+        content: exercise.content_with_answer_stats(answer_stats),
         answered_count: completed_tasked_exercises.count
       }
     end

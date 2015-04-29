@@ -5,7 +5,7 @@ module Api::V1
 
         include Roar::JSON
 
-        property :content_json,
+        property :content,
                  type: String,
                  writeable: false,
                  readable: true

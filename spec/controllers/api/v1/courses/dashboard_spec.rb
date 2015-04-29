@@ -39,12 +39,12 @@ describe Api::V1::Courses::Dashboard, :type => :routine, :vcr => VCR_OPTS do
 
     expect(HashWithIndifferentAccess[outputs]).to include(
       course: a_hash_including(
-        id: course.id.to_s,
+        id: course.id,
         name: "Physics 101",
         teacher_names: ['Bob Newhart']
       ),
       role: {
-        id: student_role.id.to_s,
+        id: student_role.id,
         type: 'student'
       },
       tasks: [
@@ -59,12 +59,12 @@ describe Api::V1::Courses::Dashboard, :type => :routine, :vcr => VCR_OPTS do
 
     expect(HashWithIndifferentAccess[outputs]).to include(
       course: a_hash_including(
-        id: course.id.to_s,
+        id: course.id,
         name: "Physics 101",
         teacher_names: ['Bob Newhart']
       ),
       role: {
-        id: teacher_role.id.to_s,
+        id: teacher_role.id,
         type: 'teacher'
       },
       tasks: [],

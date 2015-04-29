@@ -24,7 +24,7 @@ module Api::V1::Tasks
              }
 
     property :content_hash_without_correctness,
-             as: :content_json,
+             as: :content,
              type: String,
              writeable: false,
              readable: true,

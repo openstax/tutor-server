@@ -19,10 +19,11 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, :type => :representer 
 
     expect(representation).to include(
       "id"           => tasked_exercise.task_step.id.to_s,
+      "task_id"      => tasked_exercise.task_step.task.id.to_s,
       "type"         => "exercise",
       "is_completed" => false,
       "content_url"  => tasked_exercise.url,
-      "content"      => content
+      "content" => content
     )
   end
 
@@ -50,6 +51,7 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, :type => :representer 
       it "has additional fields" do
         expect(representation).to include(
           "id"                => tasked_exercise.task_step.id.to_s,
+          "task_id"           => tasked_exercise.task_step.task.id.to_s,
           "type"              => "exercise",
           "is_completed"      => true,
           "content_url"       => tasked_exercise.url,
@@ -68,6 +70,7 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, :type => :representer 
       it "has no additional fields" do
         expect(representation).to include(
           "id"                => tasked_exercise.task_step.id.to_s,
+          "task_id"           => tasked_exercise.task_step.task.id.to_s,
           "type"              => "exercise",
           "is_completed"      => true,
           "content_url"       => tasked_exercise.url,

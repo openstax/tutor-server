@@ -14,7 +14,7 @@ RSpec.describe Api::V1::TaskPlanWithStatsRepresenter, :type => :representer, :vc
 
   it "represents a task plan's stats" do
     expect(representation).to include(
-      "id" => task_plan.id,
+      "id" => task_plan.id.to_s,
       "type" => "reading",
       "stats" => {
         "course" => a_hash_including(

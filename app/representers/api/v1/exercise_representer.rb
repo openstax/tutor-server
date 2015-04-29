@@ -23,7 +23,7 @@ module Api::V1
              schema_info: { required: true }
 
     property :content_hash,
-             as: :content_json,
+             as: :content,
              readable: true,
              writeable: false,
              schema_info: { required: true }

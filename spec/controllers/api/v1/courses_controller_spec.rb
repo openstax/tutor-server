@@ -157,7 +157,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
       it 'returns the teacher roles with the course' do
         api_get :index, user_1_token
         expect(response.body).to include({
-          id: teaching.course.id,
+          id: teaching.course.id.to_s,
           name: teaching.name,
           roles: [{ id: teacher.id.to_s, type: 'teacher' }]
         }.to_json)
