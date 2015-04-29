@@ -137,6 +137,7 @@ class Tasks::Assistants::IReadingAssistant
       break if k_ago >= exercise_pools.count
 
       candidate_exercises = (exercise_pools[k_ago] - exercise_history).sort_by{|ex| ex.id}.take(10)
+      break if candidate_exercises.count < number
 
       number.times do
         #puts "candidate_exercises: #{candidate_exercises.map(&:uid).sort}"
