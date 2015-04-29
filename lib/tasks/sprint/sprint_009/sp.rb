@@ -66,7 +66,7 @@ module Sprint009
       ]
 
       ## task = reading_task_groups[assignment_index][taskee_index]
-      reading_task_groups = page_data[1..4].each_with_index.collect do |page_data, ii|
+      reading_task_groups = page_data.from(1).each_with_index.collect do |page_data, ii|
         tasks = create_tasks(
           page_id:   page_data.id,
           taskees:   taskee_roles,

@@ -1,8 +1,9 @@
 require 'rails_helper'
 require 'vcr_helper'
+require './lib/tasks/sprint/sprint_009/course_stats'
 
 RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
-                                           :version => :v1, :vcr => VCR_OPTS  do
+                                           :version => :v1, :vcr => VCR_OPTS do
 
   let!(:application)     { FactoryGirl.create :doorkeeper_application }
   let!(:user_1)          { FactoryGirl.create :user_profile }
@@ -335,8 +336,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
 
     it "works" do
       role = AddUserAsCourseStudent.call(course: course,
-                                                 user: user_1.entity_user)
-                                           .outputs.role
+                                         user: user_1.entity_user).outputs.role
 
       expect {
         api_post :practice,
@@ -470,7 +470,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
                                                resource_owner_id: teacher_profile.id }
 
     let!(:reading_task)   { FactoryGirl.create(:tasks_task,
-                                               task_type: 'reading',
+                                               task_type: :reading,
                                                opens_at: Time.now - 1.week,
                                                due_at: Time.now,
                                                step_types: [:tasks_tasked_reading,
@@ -479,7 +479,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
                                                tasked_to: student_role)}
 
     let!(:hw1_task)   { FactoryGirl.create(:tasks_task,
-                                           task_type: 'homework',
+                                           task_type: :homework,
                                            opens_at: Time.now - 1.week,
                                            due_at: Time.now,
                                            step_types: [:tasks_tasked_exercise,
@@ -488,7 +488,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
                                            tasked_to: student_role)}
 
     let!(:hw2_task)   { FactoryGirl.create(:tasks_task,
-                                           task_type: 'homework',
+                                           task_type: :homework,
                                            opens_at: Time.now - 1.week,
                                            due_at: Time.now,
                                            step_types: [:tasks_tasked_exercise,
@@ -497,7 +497,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
                                            tasked_to: student_role)}
 
     let!(:hw3_task)   { FactoryGirl.create(:tasks_task,
-                                           task_type: 'homework',
+                                           task_type: :homework,
                                            opens_at: Time.now - 1.week,
                                            due_at: Time.now+2.weeks,
                                            step_types: [:tasks_tasked_exercise,
@@ -602,5 +602,4 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
     end
 
   end
-
 end

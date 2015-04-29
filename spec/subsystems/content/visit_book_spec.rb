@@ -36,7 +36,8 @@ RSpec.describe Content::VisitBook, :type => :routine do
               'type' => 'page',
               'chapter_section' => '1.2'
             }
-          ]
+          ],
+          'chapter_section' => nil
         },
         {
           'id' => ftoc.children[1].id,
@@ -49,9 +50,11 @@ RSpec.describe Content::VisitBook, :type => :routine do
               'type' => 'page',
               'chapter_section' => '1.3'
             }
-          ]
+          ],
+          'chapter_section' => nil
         }
-      ]
+      ],
+      'chapter_section' => nil
     }])
   end
 

@@ -1,5 +1,5 @@
 class GetCourse
-  lev_routine
+  lev_routine express_output: :course
 
   uses_routine CourseProfile::GetProfile,
     translations: { outputs: { map: { profile: :course } } },
@@ -7,7 +7,7 @@ class GetCourse
 
   protected
 
-  def exec(entity_course_id)
-    run(:get_profile, entity_course_id)
+  def exec(course:)
+    run(:get_profile, course: course)
   end
 end

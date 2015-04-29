@@ -4,6 +4,10 @@ module OpenStax::BigLearn::V1
   # API Wrappers
   #
 
+  def self.get_clue(learner_ids:, tags:)
+    client.get_clue(learner_ids: learner_ids, tags: tags)
+  end
+
   def self.add_exercises(exercises)
     client.add_exercises(exercises)
   end
@@ -36,11 +40,11 @@ module OpenStax::BigLearn::V1
 
   # Accessor for the fake client, which has some extra fake methods on it
   def self.fake_client
-    @fake_client ||= FakeClient.instance
+    @fake_client ||= FakeClient.new
   end
 
   def self.real_client
-    @real_client ||= RealClient.instance
+    @real_client ||= RealClient.new
   end
 
   def self.use_real_client

@@ -7,6 +7,8 @@ class ResetPracticeWidget
   protected
 
   def exec(role:, condition:, page_ids: [], book_part_ids: [])
+    page_ids = [page_ids].flatten
+    book_part_ids = [book_part_ids].flatten
 
     # Get the existing practice widget and remove incomplete exercises from it
     # so they can be used in later practice
@@ -33,7 +35,15 @@ class ResetPracticeWidget
 
     # TODO move this whole routine into Tasks, use run(...) here
 
-    task = Tasks::CreateTask[task_type: 'practice',
+    task_type = if book_part_ids.count == 1
+                  :chapter_practice
+                elsif page_ids.count == 1
+                  :page_practice
+                else
+                  :mixed_practice
+                end
+
+    task = Tasks::CreateTask[task_type: task_type,
                              title: 'Practice',
                              opens_at: Time.now]
 
@@ -65,20 +75,19 @@ class ResetPracticeWidget
 
   def get_local_exercises(count:, role:, tags:)
     exercises = SearchLocalExercises[not_assigned_to: role,
-                                     tags: tags].to_a.shuffle
+                                     tag: tags,
+                                     match_count: 1].to_a.shuffle
 
     count.times.collect do
-      exercise = exercises.pop
-
-      if exercise.nil?
+      unless exercise = exercises.pop
         # We ran out of exercises, so start repeating them
         exercises = SearchLocalExercises[assigned_to: role,
-                                         tags: tags].to_a.shuffle
-        exercise = exercises.pop
-
-        fatal_error(code: :no_exercises_found,
-                    message: "No exercises matched the given ID's") \
-          if exercise.nil?
+                                         tag: tags,
+                                         match_count: 1].to_a.shuffle
+        unless exercise = exercises.pop
+          fatal_error(code: :no_exercises_found,
+                      message: "No exercises matched the given ID's")
+        end
       end
 
       exercise

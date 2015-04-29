@@ -1,12 +1,13 @@
 class CourseProfile::GetProfile
-  lev_routine
+  lev_routine express_output: :profile
 
   protected
 
-  def exec(entity_course_id)
-    profile = CourseProfile::Models::Profile.find_by(entity_course_id: entity_course_id)
-    outputs[:profile] = {}
-    outputs[:profile][:course_id] = profile.entity_course_id
-    outputs[:profile][:name] = profile.name
+  def exec(course:)
+    profile = CourseProfile::Models::Profile.find_by(entity_course_id: course.id)
+    outputs[:profile] = {
+      course_id: course.id,
+      name: profile.name
+    }
   end
 end

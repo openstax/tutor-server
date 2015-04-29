@@ -39,11 +39,12 @@ module OpenStax::Cnx::V1
 
     def initialize(hash: {}, chapter_section: '', is_intro: nil, book_part_title: nil,
                    id: nil, url: nil, title: nil, full_hash: nil, content: nil,
-                   los: nil, fragments: nil, tags: nil)
+                   los: nil, fragments: nil, tags: nil, book_part_id: nil)
       @hash            = hash
       @chapter_section = chapter_section
       @is_intro        = is_intro
       @book_part_title = book_part_title
+      @book_part_id    = book_part_id
       @id              = id
       @url             = url
       @title           = title
@@ -83,6 +84,10 @@ module OpenStax::Cnx::V1
 
     def book_part_title
       @book_part_title
+    end
+
+    def book_part_id
+      @book_part_id
     end
 
     def full_hash

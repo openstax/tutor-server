@@ -71,7 +71,7 @@ class Tasks::Assistants::HomeworkAssistant
 
     task = Tasks::CreateTask[
       task_plan:   task_plan,
-      task_type:   'homework',
+      task_type:   :homework,
       title:       title,
       description: description,
       opens_at:    opens_at,
