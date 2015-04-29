@@ -19,7 +19,13 @@ class GetCourseStats
     run(:get_course_books, course: course)
     run(:visit_book, book: outputs.books.first, visitor_names: [:toc, :page_data])
 
-    outputs[:course_stats] = { title: root_book_title, fields: compile_fields }
+    chapters = compile_chapters
+
+    outputs[:course_stats] = {
+      title: root_book_title,
+      page_ids: chapters.collect{|cc| cc[:page_ids]}.flatten.uniq,
+      children: chapters
+    }
   end
 
   private
@@ -27,7 +33,7 @@ class GetCourseStats
     outputs.toc.first.title
   end
 
-  def compile_fields
+  def compile_chapters
     task_steps_grouped_by_book_part.collect do |book_part_id, task_steps|
       book_part = find_book_part(book_part_id)
       practices = completed_practices(
@@ -35,13 +41,18 @@ class GetCourseStats
         task_type: :mixed_practice
       )
 
-      { id: book_part.id,
-        current_level: get_current_level(task_steps: task_steps),
-        pages: compile_pages(task_steps: task_steps),
-        practice_count: practices.count,
-        questions_answered_count: task_steps.count,
+      pages = compile_pages(task_steps: task_steps)
+
+      {
+        id: book_part.id,
         title: book_part.title,
-        number: book_part.chapter_section }
+        chapter_section: book_part.chapter_section,
+        questions_answered_count: task_steps.count,
+        current_level: get_current_level(task_steps: task_steps),
+        practice_count: practices.count,
+        page_ids: pages.collect{|pp| pp[:id]},
+        children: pages
+      }
     end
   end
 
@@ -72,11 +83,13 @@ class GetCourseStats
       )
 
       { id: page.id,
+        title: page.title,
+        chapter_section: page.chapter_section,
+        questions_answered_count: filtered_task_steps.count,
         current_level: get_current_level(task_steps: filtered_task_steps),
         practice_count: practices.count,
-        questions_answered_count: filtered_task_steps.count,
-        title: page.title,
-        number: page.chapter_section }
+        page_ids: [page.id]
+      }
     end
   end
 

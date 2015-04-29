@@ -3,7 +3,7 @@ module Api::V1
     include Roar::JSON
 
     property :title, readable: true
-
-    property :fields, readable: true
+    property :page_ids, readable: true
+    property :children, readable: true
   end
 end
