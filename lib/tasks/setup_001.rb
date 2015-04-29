@@ -58,13 +58,13 @@ class Setup001
     4.times.each_with_index do |i|
       # Set Homework pages, open date and due date
       hw_page_ids = [Content::Models::Page.offset(i + 1).first.id]
-      hw_open_date = Time.now + (2*i - 4).weeks
-      hw_due_date = Time.now + (2*i - 3).weeks
+      hw_open_date = Time.now + ((2*i - 4)/2).weeks
+      hw_due_date = Time.now + ((2*i - 3)/2).weeks
 
       # Set iReading pages, open date and due date
       r_page_ids = i == 0 ? [Content::Models::Page.first.id] + hw_page_ids : hw_page_ids
-      r_open_date = Time.now + (2*i - 5).weeks
-      r_due_date = Time.now + (2*i - 3).weeks
+      r_open_date = Time.now + ((2*i - 5)/2).weeks
+      r_due_date = Time.now + ((2*i - 3)/2).weeks
 
       r_tp = Tasks::Models::TaskPlan.create!(
         title: "iReading ##{i + 1} - #{'Intro and ' if i == 0}Subchapter ##{i + 1}",
