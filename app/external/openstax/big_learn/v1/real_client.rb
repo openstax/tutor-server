@@ -25,8 +25,8 @@ class OpenStax::BigLearn::V1::RealClient
 
     handle_result(result)
 
-    # Return the UIDs
-    result["questions"].collect { |q| q["question"] }
+    # get the value out of the result
+    raise NotYetImplemented
   end
 
   def stringify_tag_search(tag_search)
