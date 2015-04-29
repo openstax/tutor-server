@@ -6,7 +6,6 @@ module Api::V1
         include Roar::JSON
 
         property :content_json,
-                 getter: ->(*) { ::JSON.parse(content_json) },
                  type: String,
                  writeable: false,
                  readable: true
@@ -15,12 +14,6 @@ module Api::V1
                  type: Integer,
                  writeable: false,
                  readable: true
-
-        collection :answers,
-                   type: Object,
-                   writeable: false,
-                   readable: true,
-                   decorator: Api::V1::Tasks::Stats::AnswerRepresenter
 
       end
     end

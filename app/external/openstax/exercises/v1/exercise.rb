@@ -86,8 +86,7 @@ class OpenStax::Exercises::V1::Exercise
   end
 
   def questions_without_correctness
-    @questions_without_correctness ||= content_hash['questions'].each_with_index
-                                                                .collect do |qq, ii|
+    @questions_without_correctness ||= questions.each_with_index.collect do |qq, ii|
       qq.merge('answers' => question_answers_without_correctness[ii])
     end
   end
@@ -95,6 +94,25 @@ class OpenStax::Exercises::V1::Exercise
   def content_without_correctness
     @content_without_correctness ||= content_hash.merge(
       'questions' => questions_without_correctness
+    )
+  end
+
+  def question_answers_with_stats(stats)
+    question_answers.collect do |qa|
+      qa.collect{ |ans| ans.merge('selected_count' => stats[ans['id']] || 0) }
+    end
+  end
+
+  def questions_with_answer_stats(stats)
+    answer_stats = question_answers_with_stats(stats)
+    questions.each_with_index.collect do |qq, ii|
+      qq.merge('answers' => answer_stats[ii])
+    end
+  end
+
+  def content_with_answer_stats(stats)
+    content_hash.merge(
+      'questions' => questions_with_answer_stats(stats)
     )
   end
 
