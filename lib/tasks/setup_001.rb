@@ -54,17 +54,19 @@ class Setup001
 
     course.reload
 
+    due_date_deltas = [ -1.week, 1.day, 2.days, 1.5.weeks]
+
     # Create and distribute 4 readings and 4 homeworks
     4.times.each_with_index do |i|
       # Set Homework pages, open date and due date
       hw_page_ids = [Content::Models::Page.offset(i + 1).first.id]
-      hw_open_date = Time.now + ((2*i - 4)/2).weeks
-      hw_due_date = Time.now + ((2*i - 3)/2).weeks
+      hw_due_date = Time.now + due_date_deltas[i]
+      hw_open_date = hw_due_date - 1.week
 
       # Set iReading pages, open date and due date
       r_page_ids = i == 0 ? [Content::Models::Page.first.id] + hw_page_ids : hw_page_ids
-      r_open_date = Time.now + ((2*i - 5)/2).weeks
-      r_due_date = Time.now + ((2*i - 3)/2).weeks
+      r_due_date = Time.now + due_date_deltas[i]
+      r_open_date = r_due_date - 1.week
 
       r_tp = Tasks::Models::TaskPlan.create!(
         title: "iReading ##{i + 1} - #{'Intro and ' if i == 0}Subchapter ##{i + 1}",
@@ -96,6 +98,21 @@ class Setup001
       hw_tp.tasking_plans << Tasks::Models::TaskingPlan.create!(target: course, task_plan: hw_tp)
       run(:distribute, hw_tp)
     end
+
+    # Add another HW before the ones above (add it here so it is later w.r.t. created_at)
+    hw_tp = Tasks::Models::TaskPlan.create!(title: "Homework 0",
+                                              owner: course,
+                                              type: 'homework',
+                                              assistant: hw_assistant,
+                                              opens_at: Time.now - 3.weeks,
+                                              due_at: Time.now - 2.weeks,
+                                              settings: {
+                                                exercise_ids: Content::Models::Exercise.last(2).collect(&:id),
+                                                exercises_count_dynamic: 2
+                                              })
+    hw_tp.tasking_plans << Tasks::Models::TaskingPlan.create!(target: course, task_plan: hw_tp)
+    run(:distribute, hw_tp)
+
 
     # Add a fake exercise with recovery to the third reading
     # because the FE wants 2 exercises to demo "try another"/"refresh my memory"
