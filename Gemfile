@@ -104,6 +104,9 @@ gem 'pg'
 # Lorem Ipsum
 gem 'faker'
 
+# Type coercion for Representable
+gem 'virtus'
+
 group :development, :test do
   # Get env variables from .env file
   gem 'dotenv-rails'

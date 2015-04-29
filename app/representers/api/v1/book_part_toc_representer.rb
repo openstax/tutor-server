@@ -2,22 +2,19 @@ module Api::V1
   class BookPartTocRepresenter < Roar::Decorator
 
     include Roar::JSON
+    include Representable::Coercion
 
     property :id,
-             type: Integer,
+             type: String,
              writeable: false,
              readable: true,
-             schema_info: {
-               required: true
-             }
+             schema_info: { required: true }
 
     property :title,
              type: String,
              writeable: false,
              readable: true,
-             schema_info: {
-               required: true
-             }
+             schema_info: { required: true }
 
     property :type,
              type: String,

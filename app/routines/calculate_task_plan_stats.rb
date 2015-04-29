@@ -48,7 +48,6 @@ class CalculateTaskPlanStats
   def generate_page_stats(page, tasked_exercises, include_previous=false)
     stats = {
       id:     page.id,
-      number: page.number,
       title:  page.title
     }
 

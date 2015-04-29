@@ -4,9 +4,10 @@ module Api::V1
       class TaskRepresenter < Roar::Decorator
 
         include Roar::JSON
+        include Representable::Coercion
 
         property :id,
-                 type: Integer,
+                 type: String,
                  readable: true,
                  writeable: false
 

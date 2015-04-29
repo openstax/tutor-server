@@ -6,10 +6,12 @@ module Api::V1
 
     collection :plans,
                readable: true,
+               writeable: false,
                decorator: Api::V1::Tasks::Calendar::TaskPlanRepresenter
 
     collection :tasks,
                readable: true,
+               writeable: false,
                decorator: Api::V1::Tasks::Calendar::TaskRepresenter
 
   end

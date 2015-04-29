@@ -2,6 +2,7 @@ module Api::V1::Tasks
   class TaskedExerciseRepresenter < Roar::Decorator
 
     include TaskStepProperties
+    include Representable::Coercion
 
     property :url,
              type: String,
