@@ -120,17 +120,17 @@ class OpenStax::Exercises::V1::Exercise
 
   def stringify_content_hash_ids!
     (@content_hash['authors'] || []).each do |au|
-      au['user_id'] = au['user_id'].to_s
+      au['user_id'] = au['user_id'].try(:to_s)
     end
 
     (@content_hash['copyright_holders'] || []).each do |cr|
-      cr['user_id'] = cr['user_id'].to_s
+      cr['user_id'] = cr['user_id'].try(:to_s)
     end
 
     (@content_hash['questions'] || []).each do |qq|
-      qq['id'] = qq['id'].to_s
+      qq['id'] = qq['id'].try(:to_s)
       (qq['answers'] || []).each do |aa|
-        aa['id'] = aa['id'].to_s
+        aa['id'] = aa['id'].try(:to_s)
       end
     end
   end

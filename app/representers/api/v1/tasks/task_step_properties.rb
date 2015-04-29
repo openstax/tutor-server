@@ -43,12 +43,12 @@ module Api::V1::Tasks
              }
 
     property :is_completed,
-             type: 'boolean',
              writeable: false,
              readable: true,
              getter: lambda {|*| task_step.completed?},
              schema_info: {
                required: true,
+               type: 'boolean',
                description: "Whether or not this step is complete"
              }
 

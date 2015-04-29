@@ -32,10 +32,10 @@ module Api::V1
                  writeable: false
 
         property :trouble,
-                 type: :boolean,
                  readable: true,
                  writeable: false,
-                 getter: lambda{ |*| rand(0..1)==0 }
+                 getter: lambda{ |*| rand(0..1)==0 },
+                 schema_info: { type: 'boolean' }
         # ^^^^^ REPLACE with real value once spec for calculating it is available
 
       end

@@ -34,9 +34,9 @@ module Api::V1
 
         property :completed?,
                  as: :complete,
-                 type: :boolean,
                  readable: true,
-                 writeable: false
+                 writeable: false,
+                 schema_info: { type: 'boolean' }
 
       end
     end
