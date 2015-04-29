@@ -42,8 +42,7 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, :type => :represen
           "complete_count"           => 0,
           "partially_complete_count" => 2,
           "current_pages"            => a_collection_containing_exactly(
-            "id"     => task_plan.settings['page_ids'].first,
-            "number" => 1,
+            "id"     => task_plan.settings['page_ids'].first.to_s,
             "title"  => "Force",
             "student_count"   => 2,
             "correct_count"   => 1,
@@ -60,8 +59,7 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, :type => :represen
             )
           ),
           "spaced_pages" => a_collection_containing_exactly(
-            "id"     => task_plan.settings['page_ids'].first,
-            "number" => 1,
+            "id"     => task_plan.settings['page_ids'].first.to_s,
             "title"  => "Force",
             "student_count"   => 2,
             "correct_count"   => 0,

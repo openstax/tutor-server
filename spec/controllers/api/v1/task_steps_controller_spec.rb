@@ -71,7 +71,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
       expect(response).to have_http_status(:success)
 
       expect(response.body_as_hash).to eq({
-        id: task_step.id,
+        id: task_step.id.to_s,
         task_id: task_step.tasks_task_id,
         type: 'reading',
         title: 'title',
@@ -107,7 +107,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
       answer_id = tasked.answer_ids.first
 
       api_put :update, user_1_token,
-              parameters: id_parameters, raw_post_data: { answer_id: answer_id }
+              parameters: id_parameters, raw_post_data: { answer_id: answer_id.to_s }
 
       expect(response).to have_http_status(:success)
 
@@ -122,7 +122,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
       answer_id = tasked.answer_ids.first
 
       api_put :update, user_1_token,
-              parameters: id_parameters, raw_post_data: { answer_id: answer_id }
+              parameters: id_parameters, raw_post_data: { answer_id: answer_id.to_s }
 
       expect(response).to have_http_status(:unprocessable_entity)
       expect(tasked.reload.answer_id).to be_nil
@@ -215,8 +215,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
         }
       }.to raise_error(SecurityTransgression)
 
-      expect(tasked_exercise_with_recovery.task_step.task
-                                          .reload.task_steps.count).to(
+      expect(tasked_exercise_with_recovery.task_step.task.reload.task_steps.count).to(
         eq step_count
       )
     end
@@ -237,7 +236,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
   describe "#completed" do
     it "should allow marking completion of reading steps by the owner" do
       tasked = create_tasked(:tasked_reading, user_1_role)
-      api_put :completed, user_1_token, parameters: {id: tasked.task_step.id}
+      api_put :completed, user_1_token, parameters: { id: tasked.task_step.id }
 
       expect(response).to have_http_status(:success)
 
@@ -251,14 +250,14 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
     it "should not allow marking completion of reading steps by random user" do
       tasked = create_tasked(:tasked_reading, user_1_role)
       expect{
-        api_put :completed, user_2_token, parameters: {id: tasked.task_step.id}
+        api_put :completed, user_2_token, parameters: { id: tasked.task_step.id }
       }.to raise_error SecurityTransgression
       expect(tasked.task_step(true).completed?).to be_falsy
     end
 
     it "should allow marking completion of exercise steps" do
       tasked = create_tasked(:tasked_exercise, user_1_role).reload
-      api_put :completed, user_1_token, parameters: {id: tasked.task_step.id}
+      api_put :completed, user_1_token, parameters: { id: tasked.task_step.id }
 
       expect(response).to have_http_status(:success)
 

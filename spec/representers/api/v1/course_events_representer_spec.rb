@@ -33,7 +33,7 @@ end
 
 def plan_hash_including_for(plan:)
   hash = {
-    "id"       => plan.id,
+    "id"       => plan.id.to_s,
     "opens_at" => DateTimeUtilities.to_api_s(plan.opens_at),
     "due_at"   => DateTimeUtilities.to_api_s(plan.due_at),
     "trouble"  => be_a_kind_of(TrueClass).or( be_a_kind_of(FalseClass) ),
@@ -46,7 +46,7 @@ end
 
 def task_hash_including_for(task:)
   hash = {
-    "id"       => task.id,
+    "id"       => task.id.to_s,
     "opens_at" => DateTimeUtilities.to_api_s(task.opens_at),
     "due_at"   => DateTimeUtilities.to_api_s(task.due_at),
     "type"     => task.task_type,

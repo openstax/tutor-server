@@ -60,7 +60,6 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
       }
     end
   }
-  # let(:representation) { Api::V1::TaskPlanRepresenter.new(task_plan).as_json }
 
   it "represents dashboard output" do
     representation = Api::V1::Courses::DashboardRepresenter.new(data).as_json
@@ -68,7 +67,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
     expect(representation).to include(
       "plans" => [
         a_hash_including(
-          "id" => 23,
+          "id" => '23',
           "title" => "HW1",
           "opens_at" => "now",
           "due_at" => "then",
@@ -77,7 +76,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
       ],
       "tasks" => [
         a_hash_including(
-          "id" => 34,
+          "id" => '34',
           "title" => "HW2",
           "opens_at" => "now",
           "due_at" => "then",
@@ -87,7 +86,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
           "complete_exercise_count" => 4
         ),
         a_hash_including(
-          "id" => 37,
+          "id" => '37',
           "title" => "Reading 1",
           "due_at" => "then",
           "type" => "reading",
@@ -96,7 +95,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
           "complete_exercise_count" => 6
         ),
         a_hash_including(
-          "id" => 89,
+          "id" => '89',
           "title" => "HW3",
           "opens_at" => "now",
           "due_at" => "then",
@@ -108,7 +107,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
         ),
       ],
       "role" => {
-        "id" => 34,
+        "id" => '34',
         "type" => "teacher"
       },
       "course" => {

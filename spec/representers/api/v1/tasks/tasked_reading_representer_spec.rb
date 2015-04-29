@@ -6,8 +6,8 @@ RSpec.describe Api::V1::Tasks::TaskedReadingRepresenter, :type => :representer d
     json = Api::V1::Tasks::TaskedReadingRepresenter.new(task_step.tasked).to_json
 
     expect(JSON.parse(json)).to eq({
-      id: task_step.id,
-      task_id: task_step.tasks_task_id,
+      id: task_step.id.to_s,
+      task_id: task_step.tasks_task_id.to_s,
       type: "reading",
       title: task_step.tasked.title,
       chapter_section: task_step.tasked.chapter_section,

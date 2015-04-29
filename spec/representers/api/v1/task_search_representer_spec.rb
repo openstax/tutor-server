@@ -29,7 +29,8 @@ RSpec.describe Api::V1::TaskSearchRepresenter, :type => :representer do
       expect(representation).to include(
         "total_count" => task_count,
         "items" => tasks.map{ | task |
-          json = task.as_json.slice('id', 'title', 'task_plan_id')
+          json = task.as_json.slice('title', 'task_plan_id')
+          json['id']        = task.id.to_s
           json['type']      = task.task_type
           json['opens_at']  = DateTimeUtilities.to_api_s(task.opens_at)
           json['due_at']    = DateTimeUtilities.to_api_s(task.due_at)

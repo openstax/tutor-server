@@ -11,7 +11,7 @@ class Tasks::Assistants::HomeworkAssistant
         "exercise_ids": {
           "type": "array",
           "items": {
-            "type": "integer"
+            "type": "string"
           }
         },
         "exercises_count_dynamic": {
@@ -25,7 +25,7 @@ class Tasks::Assistants::HomeworkAssistant
         "page_ids": {
           "type": "array",
           "items": {
-            "type": "integer"
+            "type": "string"
           }
         }
       },
