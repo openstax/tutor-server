@@ -101,6 +101,9 @@ gem 'sortability'
 # PostgreSQL database
 gem 'pg'
 
+# Lorem Ipsum
+gem 'faker'
+
 group :development, :test do
   # Get env variables from .env file
   gem 'dotenv-rails'
@@ -130,9 +133,6 @@ group :development, :test do
 
   # Fixture replacement
   gem 'factory_girl_rails'
-
-  # Lorem Ipsum
-  gem 'faker'
 
   # Stubs HTTP requests
   gem 'webmock'

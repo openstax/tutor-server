@@ -31,7 +31,7 @@ class Setup001
     book = run(:import_book, id: '7db9aa72-f815-4c3b-9cb6-d50cf5318b58').outputs.book
 
     # Create course and add the imported book to it
-    course = run(:create_course).outputs.course
+    course = run(:create_course, name: 'Physics I').outputs.course
     run(:add_book, book: book, course: course)
 
     # Add assistants to course so teacher can create assignments
@@ -43,14 +43,12 @@ class Setup001
                                            tasks_task_plan_type: 'homework')
 
     # Add teacher to course
-    teacher = run(:create_profile, attrs: {username: 'teacher',
-                                           password: 'password'}).outputs.profile
+    teacher = new_profile(username: 'teacher', name: 'Bill Nye')
     run(:add_teacher, course: course, user: teacher.entity_user)
 
     # Add 10 students to course
     10.times.each_with_index do |i|
-      student = run(:create_profile, attrs: {username: "student#{i + 1}",
-                                             password: 'password'}).outputs.profile
+      student = new_profile(username: "student#{i + 1}")
       run(:add_student, course: course, user: student.entity_user)
     end
 
@@ -138,6 +136,23 @@ class Setup001
         end
       end
     end
+  end
+
+  def new_profile(username:, name: nil, password: 'password')
+    name ||= Faker::Name.name
+    first_name, last_name = name.split(' ')
+    raise "need a full name" if last_name.nil?
+
+    # I don't think password is actually used here
+    # TODO change :create_profile to take explicit attributes
+    profile = run(:create_profile, attrs: { username: username,
+                                            password: password } ).outputs.profile
+
+    profile.account.update_attributes(first_name: first_name,
+                                      last_name: last_name,
+                                      full_name: name)
+
+    profile
   end
 
 end
