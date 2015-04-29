@@ -5,6 +5,9 @@ module OpenStax::BigLearn::V1
   #
 
   def self.get_clue(learner_ids:, tags:)
+    tags = [tags].flatten.compact
+    learner_ids = [learner_ids].flatten.compact
+
     client.get_clue(learner_ids: learner_ids, tags: tags)
   end
 
