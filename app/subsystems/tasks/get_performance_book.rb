@@ -3,10 +3,6 @@ require_relative 'models/entity_extensions'
 class Tasks::GetPerformanceBook
   lev_routine express_output: :performance_book
 
-  uses_routine Tasks::GetTasks,
-               as: :get_tasks,
-               translations: { outputs: { type: :verbatim } }
-
   uses_routine Role::GetUsersForRoles,
                as: :get_users_for_roles,
                translations: { outputs: { type: :verbatim } }
@@ -37,7 +33,7 @@ class Tasks::GetPerformanceBook
     @class_average = {}
     tasks = []
     run(:get_students, course).outputs.students.each do |student|
-      tasks = run(:get_tasks, roles: student).outputs.tasks.collect { |task| task.task }
+      tasks = get_tasks_for_student(student)
       tasks.each { |task| @class_average[task.task_plan.id] ||= [] }
       users = run(:get_users_for_roles, student).outputs.users
       full_name = run(:get_user_full_names, users).outputs.full_names.first
@@ -48,6 +44,15 @@ class Tasks::GetPerformanceBook
       data_headings: tasks.collect { |task| get_data_headings(task.task_plan) },
       students: student_data_list,
     }
+  end
+
+  def get_tasks_for_student(student)
+    # Return reading and homework tasks for a student ordered by due date
+    Tasks::Models::Task
+      .joins { taskings }
+      .where { taskings.entity_role_id == student.id }
+      .where { task_type.in Tasks::Models::Task.task_types.values_at(:reading, :homework) }
+      .order { due_at }
   end
 
   def get_data_headings(task_plan)
