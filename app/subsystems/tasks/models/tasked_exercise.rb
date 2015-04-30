@@ -98,7 +98,7 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
   end
 
   def trial
-    task_step.id.to_s
+    SecureRandom.hex
   end
 
   # Eventually this will be enforced by the exercise substeps

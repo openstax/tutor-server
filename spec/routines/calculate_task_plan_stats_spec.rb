@@ -3,20 +3,17 @@ require 'vcr_helper'
 
 describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
 
-  let(:number_of_students) { 8 }
+  let!(:number_of_students) { 8 }
 
-  let(:task_plan) {
+  let!(:task_plan) {
     allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [ [0, 2] ] }
     FactoryGirl.create :tasked_task_plan, number_of_students: number_of_students
-  }
-
-  let(:stats){
-    CalculateTaskPlanStats.call(plan: task_plan).outputs.stats
   }
 
   context "With an unworked plan" do
 
     it "is all nil or zero for an unworked task_plan" do
+      stats = CalculateTaskPlanStats.call(plan: task_plan).outputs.stats
       expect(stats.course.mean_grade_percent).to be_nil
       expect(stats.course.total_count).to eq(task_plan.tasks.length)
       expect(stats.course.complete_count).to eq(0)
@@ -49,7 +46,9 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
       expect(stats.course.complete_count).to eq(0)
       expect(stats.course.partially_complete_count).to eq(1)
 
-      first_task.task_steps.each{ |ts| MarkTaskStepCompleted.call(task_step: ts) }
+      first_task.task_steps.each do |ts|
+        MarkTaskStepCompleted.call(task_step: ts) unless ts.completed?
+      end
       stats = CalculateTaskPlanStats.call(plan: task_plan.reload).outputs.stats
 
       expect(stats.course.mean_grade_percent).to eq (0)
