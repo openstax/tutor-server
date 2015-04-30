@@ -74,7 +74,7 @@ class Tasks::GetPerformanceBook
     }
     tasks.each_with_index do |task, index|
       data = {
-        status: task_status(task),
+        status: task.status,
         type: task.task_type,
         id: task.id,
       }
@@ -82,18 +82,6 @@ class Tasks::GetPerformanceBook
       student_data[:data] << data
     end
     student_data
-  end
-
-  def task_status(task)
-    # task is "completed" if all steps are completed,
-    #         "in_progress" if some steps are completed and
-    #         "not_started" if no steps are completed
-    if task.completed?
-      'completed'
-    else
-      in_progress = task.task_steps.any? { |ts| ts.completed? }
-      in_progress ? 'in_progress' : 'not_started'
-    end
   end
 
   def exercise_count(task, index)

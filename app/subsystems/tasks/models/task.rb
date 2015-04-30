@@ -39,6 +39,18 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     self.task_steps.all?{|ts| ts.completed? }
   end
 
+  def status
+    # task is "completed" if all steps are completed,
+    #         "in_progress" if some steps are completed and
+    #         "not_started" if no steps are completed
+    if self.completed?
+      'completed'
+    else
+      in_progress = self.task_steps.any? { |ts| ts.completed? }
+      in_progress ? 'in_progress' : 'not_started'
+    end
+  end
+
   def practice?
     page_practice? || chapter_practice? || mixed_practice?
   end
