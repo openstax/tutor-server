@@ -105,6 +105,12 @@ gem 'pg'
 gem 'faker'
 
 group :development, :test do
+  # SQLite adapter
+  gem 'sqlite3'
+
+  # Allows the use of the in-memory SQLite3 database in Rails tests
+  gem 'memory_test_fix'
+
   # Get env variables from .env file
   gem 'dotenv-rails'
 
