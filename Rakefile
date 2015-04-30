@@ -12,15 +12,18 @@ begin
   require 'rspec/core/rake_task'
 
   namespace :spec do
-    desc "Run fast examples"
+    desc "Run the fast code examples"
     RSpec::Core::RakeTask.new(:fast) do |t|
       t.rspec_opts = %w[--tag ~speed:slow]
     end
 
-    desc "Run slow examples"
+    desc "Run the slow code examples"
     RSpec::Core::RakeTask.new(:slow) do |t|
       t.rspec_opts = %w[--tag speed:slow]
     end
+
+    desc "Run the fast code examples first, then the slow code examples"
+    task :speed => ['spec:fast', 'spec:slow']
   end
 rescue LoadError
 end
