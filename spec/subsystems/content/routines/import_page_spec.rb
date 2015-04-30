@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Content::Routines::ImportPage, :type => :routine, :vcr => VCR_OPTS do
+RSpec.describe Content::Routines::ImportPage, type: :routine, speed: :slow, vcr: VCR_OPTS do
 
   let!(:book_part) { FactoryGirl.create :content_book_part }
 
