@@ -73,10 +73,10 @@ RSpec.describe Tasks::Models::TaskedExercise, :type => :model do
     tasked_exercise.free_response = 'abc'
     tasked_exercise.answer_id = answer_id
     expect(OpenStax::Exchange).to receive(:record_multiple_choice_answer)
-                                   .with(exchange_identifier,
-                                         tasked_exercise.url,
-                                         tasked_exercise.task_step.id.to_s,
-                                         answer_id)
+                                    .with(exchange_identifier,
+                                          tasked_exercise.url,
+                                          a_kind_of(String),
+                                          answer_id)
     tasked_exercise.handle_task_step_completion!
   end
 end

@@ -1,29 +1,18 @@
-# SQLite version 3.x
-#   gem install sqlite3
-#
-#   Ensure the SQLite 3 gem is defined in your Gemfile
-#   gem 'sqlite3'
-#
 default: &default
-  adapter: postgresql
+  adapter: <%= ENV['OXT_IN_MEMORY_DB'] ? 'sqlite3' : 'postgresql' %>
   username: <%= ENV['OXT_DB_USER'] || 'ox_tutor' %>
   password: <%= ENV['OXT_DB_PASS'] || 'ox_tutor_secret_password' %>
+  verbosity: <%= 'quiet' if ENV['OXT_IN_MEMORY_DB'] %>
 
 development:
-  adapter: sqlite3
-  database: ":memory:"
-  verbosity: quiet
+  <<: *default
+  database: <%= ENV['OXT_IN_MEMORY_DB'] ? ':memory:' : (ENV['OXT_DEV_DB'] || 'ox_tutor_dev') %>
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  adapter: sqlite3
-  database: ":memory:"
-  verbosity: quiet
+  database: <%= ENV['OXT_IN_MEMORY_DB'] ? ':memory:' : (ENV['OXT_TEST_DB'] || 'ox_tutor_dev') %>
 
 ## Production database is intentionally left unconfigured
-#production:
-#  <<: *default
-#  database: <%= ENV['OXT_PROD_DB'] || 'ox_tutor_production' %>
