@@ -172,14 +172,12 @@ class Setup001
     first_name, last_name = name.split(' ')
     raise "need a full name" if last_name.nil?
 
-    # I don't think password is actually used here
-    # TODO change :create_profile to take explicit attributes
+    # The password will be set if stubbing is disabled
     profile = run(:create_profile, attrs: { username: username,
                                             password: password } ).outputs.profile
 
-    profile.account.update_attributes(first_name: first_name,
-                                      last_name: last_name,
-                                      full_name: name)
+    # We call update_columns here so this update is not sent to OpenStax Accounts
+    profile.account.update_columns(first_name: first_name, last_name: last_name, full_name: name)
 
     profile
   end
