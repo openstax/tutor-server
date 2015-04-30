@@ -30,18 +30,18 @@ class Tasks::GetPerformanceBook
 
   def get_performance_book_for_teacher(course)
     student_data_list = []
-    @class_average = {}
+    @class_average = []
     tasks = []
     run(:get_students, course).outputs.students.each do |student|
       tasks = get_tasks_for_student(student)
-      tasks.each { |task| @class_average[task.task_plan.id] ||= [] }
+      tasks.each { |task| @class_average << [] }
       users = run(:get_users_for_roles, student).outputs.users
       full_name = run(:get_user_full_names, users).outputs.full_names.first
       student_data_list << get_student_data(tasks, full_name, student)
     end
 
     performance_book = {
-      data_headings: tasks.collect { |task| get_data_headings(task.task_plan) },
+      data_headings: tasks.collect.with_index { |task, index| get_data_headings(task, index) },
       students: student_data_list,
     }
   end
@@ -55,14 +55,14 @@ class Tasks::GetPerformanceBook
       .order { due_at }
   end
 
-  def get_data_headings(task_plan)
-    { title: task_plan.title }.merge(class_average(task_plan))
+  def get_data_headings(task, index)
+    { title: task.title }.merge(class_average(task, index))
   end
 
-  def class_average(task_plan)
-    # Only return a class average if the task plan is a homework and at least one person has started on it
-    return {} unless task_plan.type == 'homework' && @class_average[task_plan.id].present?
-    { class_average: @class_average[task_plan.id].reduce(:+) * 100 / @class_average[task_plan.id].length }
+  def class_average(task, index)
+    # Only return a class average if the task is a homework and at least one person has started on it
+    return {} unless task.task_type == 'homework' && @class_average[index].present?
+    { class_average: @class_average[index].reduce(:+) * 100 / @class_average[index].length }
   end
 
   def get_student_data(tasks, full_name, role)
@@ -71,13 +71,13 @@ class Tasks::GetPerformanceBook
       role: role.id,
       data: [],
     }
-    tasks.each do |task|
+    tasks.each_with_index do |task, index|
       data = {
         status: task_status(task),
         type: task.task_type,
         id: task.id,
       }
-      data.merge!(exercise_count(task))
+      data.merge!(exercise_count(task, index))
       student_data[:data] << data
     end
     student_data
@@ -95,11 +95,11 @@ class Tasks::GetPerformanceBook
     end
   end
 
-  def exercise_count(task)
+  def exercise_count(task, index)
     return {} unless task.task_type == 'homework'
     correct_count = task.task_steps.select { |ts| ts.tasked.is_correct? }.length
     attempted_count = task.task_steps.select { |ts| ts.completed? }.length
-    @class_average[task.task_plan.id] << (Float(correct_count) / attempted_count) if attempted_count > 0
+    @class_average[index] << (Float(correct_count) / attempted_count) if attempted_count > 0
     {
       exercise_count: task.task_steps.length,
       correct_exercise_count: correct_count,
