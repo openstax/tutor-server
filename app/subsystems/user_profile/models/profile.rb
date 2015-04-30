@@ -9,7 +9,8 @@ class UserProfile::Models::Profile < Tutor::SubSystems::BaseModel
     class_name: 'UserProfile::Models::Administrator'
 
   validates :account, :entity_user, presence: true, uniqueness: true
-  validates :exchange_identifier, presence: true
+  validates :exchange_read_identifier, presence: true
+  validates :exchange_write_identifier, presence: true
 
   delegate :username, :first_name, :last_name, :full_name, :title,
            :name, :casual_name, :first_name=, :last_name=, :full_name=,

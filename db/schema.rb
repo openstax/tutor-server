@@ -510,17 +510,19 @@ ActiveRecord::Schema.define(version: 20150420184110) do
   add_index "tasks_tasks", ["tasks_task_plan_id"], name: "index_tasks_tasks_on_tasks_task_plan_id", using: :btree
 
   create_table "user_profile_profiles", force: :cascade do |t|
-    t.integer  "entity_user_id",      null: false
-    t.integer  "account_id",          null: false
-    t.string   "exchange_identifier", null: false
+    t.integer  "entity_user_id",            null: false
+    t.integer  "account_id",                null: false
+    t.string   "exchange_read_identifier",  null: false
+    t.string   "exchange_write_identifier", null: false
     t.datetime "deleted_at"
-    t.datetime "created_at",          null: false
-    t.datetime "updated_at",          null: false
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
   end
 
   add_index "user_profile_profiles", ["account_id"], name: "index_user_profile_profiles_on_account_id", unique: true, using: :btree
   add_index "user_profile_profiles", ["deleted_at"], name: "index_user_profile_profiles_on_deleted_at", using: :btree
-  add_index "user_profile_profiles", ["exchange_identifier"], name: "index_user_profile_profiles_on_exchange_identifier", unique: true, using: :btree
+  add_index "user_profile_profiles", ["exchange_read_identifier"], name: "index_user_profile_profiles_on_exchange_read_identifier", unique: true, using: :btree
+  add_index "user_profile_profiles", ["exchange_write_identifier"], name: "index_user_profile_profiles_on_exchange_write_identifier", unique: true, using: :btree
 
   add_foreign_key "administrators", "user_profile_profiles", column: "profile_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_book_parts", "content_book_parts", column: "parent_book_part_id", on_update: :cascade, on_delete: :cascade

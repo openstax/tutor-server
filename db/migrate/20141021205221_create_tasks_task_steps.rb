@@ -13,7 +13,6 @@ class CreateTasksTaskSteps < ActiveRecord::Migration
       t.index [:tasks_task_id, :number], unique: true
     end
 
-    add_foreign_key :tasks_task_steps, :tasks_tasks,
-                    on_update: :cascade, on_delete: :cascade
+    add_foreign_key :tasks_task_steps, :tasks_tasks, on_update: :cascade, on_delete: :cascade
   end
 end

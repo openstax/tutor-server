@@ -12,7 +12,7 @@ class CreateEducators < ActiveRecord::Migration
 
     add_foreign_key :educators, :courses, on_update: :cascade,
                                           on_delete: :cascade
-    add_foreign_key :educators, :users, on_update: :cascade,
-                                        on_delete: :cascade
+    add_foreign_key :educators, :user_profile_profiles, column: :user_id, on_update: :cascade,
+                                                                          on_delete: :cascade
   end
 end
