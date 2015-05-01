@@ -1,4 +1,4 @@
-class Content::Models::PageDataVisitor < Content::Models::BookVisitor
+class Content::Models::Visitors::PageData < Content::Models::Visitors::Book
 
   def initialize
     @page_data = []

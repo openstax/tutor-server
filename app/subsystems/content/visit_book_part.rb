@@ -42,11 +42,11 @@ class Content::VisitBookPart
     visitor_names.collect do |name|
       case name.to_s
       when 'toc'
-        outputs[:toc] = Content::Models::TocVisitor.new
+        outputs[:toc] = Content::Models::Visitors::Toc.new
       when 'exercises'
-        outputs[:exercises] = Content::Models::ExerciseVisitor.new
+        outputs[:exercises] = Content::Models::Visitors::Exercise.new
       when 'page_data'
-        outputs[:page_data] = Content::Models::PageDataVisitor.new
+        outputs[:page_data] = Content::Models::Visitors::PageData.new
       else
         raise "undefined visitor #{name}. Try one of toc, exercises, page_data"
       end

@@ -1,4 +1,4 @@
-module OpenStax::Cnx::V1::BookVisitor
+module OpenStax::Cnx::V1::Visitors::Book
   VISIT_TYPES = %i{pre in post}
   ELEM_CLASSES = [OpenStax::Cnx::V1::Book,
                   OpenStax::Cnx::V1::BookPart,

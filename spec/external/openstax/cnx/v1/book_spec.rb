@@ -90,7 +90,7 @@ RSpec.describe OpenStax::Cnx::V1::Book, :type => :external, :vcr => VCR_OPTS do
 end
 
 class TestVisitor
-  include OpenStax::Cnx::V1::BookVisitor
+  include OpenStax::Cnx::V1::Visitors::Book
 
   attr_reader :pre_order_visited
   attr_reader :in_order_visited
@@ -106,8 +106,8 @@ class TestVisitor
   ##   def pre_order_visit_book(book:, depth:)
   ##     @pre_order_visited << [book.class.name.demodulize, depth]
   ##   end
-  OpenStax::Cnx::V1::BookVisitor::VISIT_TYPES.each do |visit_order|
-    OpenStax::Cnx::V1::BookVisitor::ELEM_TYPES.each do |elem_type|
+  OpenStax::Cnx::V1::Visitors::Book::VISIT_TYPES.each do |visit_order|
+    OpenStax::Cnx::V1::Visitors::Book::ELEM_TYPES.each do |elem_type|
       method_body = <<-EOS
         def #{visit_order}_order_visit_#{elem_type}(#{elem_type}:, depth:)
           @#{visit_order}_order_visited << [#{elem_type}.class.name.demodulize, depth]
