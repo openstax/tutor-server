@@ -13,7 +13,7 @@ development:
 test:
   <<: *default
   adapter: <%= ENV['OXT_TEST_DB'] == ':memory:' ? 'sqlite3' : 'postgresql' %>
-  database: '<%= ENV['OXT_TEST_DB'] || 'ox_tutor_dev' %>'
+  database: '<%= ENV['OXT_TEST_DB'] || 'ox_tutor_test' %>'
   verbosity: <%= 'quiet' if ENV['OXT_TEST_DB'] == ':memory:' %>
 
 ## Production database is intentionally left unconfigured
