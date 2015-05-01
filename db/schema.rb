@@ -27,8 +27,8 @@ ActiveRecord::Schema.define(version: 20150428224104) do
   create_table "content_book_parts", force: :cascade do |t|
     t.string   "url"
     t.text     "content"
+    t.integer  "entity_book_id",      null: false
     t.integer  "parent_book_part_id"
-    t.integer  "entity_book_id"
     t.integer  "number",              null: false
     t.string   "title",               null: false
     t.string   "chapter_section"

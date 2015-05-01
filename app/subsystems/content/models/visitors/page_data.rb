@@ -21,6 +21,7 @@ class Content::Models::Visitors::PageData < Content::Models::Visitors::Book
   end
 
   private
+
   def get_page_los(page)
     tags = get_page_tags(page)
     tags.select { |tag| tag[:type] == 'lo' }.collect { |tag| tag[:value] }
