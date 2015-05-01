@@ -2,13 +2,13 @@ require 'rails_helper'
 require 'vcr_helper'
 
 VCR_OPTS[:record] = :once
-RSpec.describe OpenStax::Cnx::V1::Fragment::Interactive, :type => :external,
+RSpec.describe OpenStax::Cnx::V1::Fragments::Interactive, :type => :external,
                                                          :vcr => VCR_OPTS do
   let!(:cnx_page_id) { '61445f78-00e2-45ae-8e2c-461b17d9b4fd@4' }
   let!(:cnx_page) { OpenStax::Cnx::V1::Page.new(id: cnx_page_id) }
   let!(:interactive_fragments) {
     cnx_page.fragments.select do |f|
-      f.is_a? OpenStax::Cnx::V1::Fragment::Interactive
+      f.is_a? OpenStax::Cnx::V1::Fragments::Interactive
     end
   }
   let!(:expected_titles) { ['Forces and Motion: Basics'] }

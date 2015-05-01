@@ -1,13 +1,13 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe OpenStax::Cnx::V1::Fragment::Exercise, :type => :external,
+RSpec.describe OpenStax::Cnx::V1::Fragments::Exercise, :type => :external,
                                                       :vcr => VCR_OPTS do
   let!(:cnx_page_id)    { '092bbf0d-0729-42ce-87a6-fd96fd87a083@4' }
   let!(:cnx_page)       { OpenStax::Cnx::V1::Page.new(id: cnx_page_id) }
   let!(:exercise_fragments) {
     cnx_page.fragments.select do |f|
-      f.is_a? OpenStax::Cnx::V1::Fragment::Exercise
+      f.is_a? OpenStax::Cnx::V1::Fragments::Exercise
     end
   }
   let!(:expected_titles) { [ nil ] }

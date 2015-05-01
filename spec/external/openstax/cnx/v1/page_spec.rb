@@ -9,7 +9,7 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, :vcr => VCR_OPTS do
                expected: {
                 los: [],
                 tags: [],
-                fragment_classes: [OpenStax::Cnx::V1::Fragment::Text],
+                fragment_classes: [OpenStax::Cnx::V1::Fragments::Text],
                 is_intro: true
                }
              },
@@ -21,10 +21,10 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, :vcr => VCR_OPTS do
                   { value: 'k12phys-ch04-s01-lo01', type: :lo },
                   { value: 'k12phys-ch04-s01-lo02', type: :lo }
                 ],
-                fragment_classes: [OpenStax::Cnx::V1::Fragment::Text,
-                                   OpenStax::Cnx::V1::Fragment::Text,
-                                   OpenStax::Cnx::V1::Fragment::Exercise,
-                                   OpenStax::Cnx::V1::Fragment::Text],
+                fragment_classes: [OpenStax::Cnx::V1::Fragments::Text,
+                                   OpenStax::Cnx::V1::Fragments::Text,
+                                   OpenStax::Cnx::V1::Fragments::Exercise,
+                                   OpenStax::Cnx::V1::Fragments::Text],
                 is_intro: false
                }
              },
@@ -46,12 +46,12 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, :vcr => VCR_OPTS do
                     teks: 'ost-tag-teks-112-39-c-4d'
                   }
                 ],
-                fragment_classes: [OpenStax::Cnx::V1::Fragment::Text,
-                                   OpenStax::Cnx::V1::Fragment::Video,
-                                   OpenStax::Cnx::V1::Fragment::Exercise,
-                                   OpenStax::Cnx::V1::Fragment::Interactive,
-                                   OpenStax::Cnx::V1::Fragment::Exercise,
-                                   OpenStax::Cnx::V1::Fragment::Text],
+                fragment_classes: [OpenStax::Cnx::V1::Fragments::Text,
+                                   OpenStax::Cnx::V1::Fragments::Video,
+                                   OpenStax::Cnx::V1::Fragments::Exercise,
+                                   OpenStax::Cnx::V1::Fragments::Interactive,
+                                   OpenStax::Cnx::V1::Fragments::Exercise,
+                                   OpenStax::Cnx::V1::Fragments::Text],
                 is_intro: false
                }
              }],
@@ -60,7 +60,7 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, :vcr => VCR_OPTS do
                expected: {
                 los: [],
                 tags: [],
-                fragment_classes: [OpenStax::Cnx::V1::Fragment::Text],
+                fragment_classes: [OpenStax::Cnx::V1::Fragments::Text],
                 is_intro: true
                }
              },
@@ -88,12 +88,12 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, :vcr => VCR_OPTS do
                     description: 'analyze and describe accelerated motion in two dimensions using equations, including projectile and circular examples'
                   }
                 ],
-                fragment_classes: [OpenStax::Cnx::V1::Fragment::Text,
-                                   OpenStax::Cnx::V1::Fragment::Video,
-                                   OpenStax::Cnx::V1::Fragment::Text,
-                                   OpenStax::Cnx::V1::Fragment::Text,
-                                   OpenStax::Cnx::V1::Fragment::Exercise,
-                                   OpenStax::Cnx::V1::Fragment::Text],
+                fragment_classes: [OpenStax::Cnx::V1::Fragments::Text,
+                                   OpenStax::Cnx::V1::Fragments::Video,
+                                   OpenStax::Cnx::V1::Fragments::Text,
+                                   OpenStax::Cnx::V1::Fragments::Text,
+                                   OpenStax::Cnx::V1::Fragments::Exercise,
+                                   OpenStax::Cnx::V1::Fragments::Text],
                 is_intro: false
                }
              },
@@ -121,12 +121,12 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, :vcr => VCR_OPTS do
                     description: 'calculate the effect of forces on objects, including the law of inertia, the relationship between force and acceleration, and the nature of force pairs between objects'
                   }
                 ],
-                fragment_classes: [OpenStax::Cnx::V1::Fragment::Text,
-                                   OpenStax::Cnx::V1::Fragment::Video,
-                                   OpenStax::Cnx::V1::Fragment::Exercise,
-                                   OpenStax::Cnx::V1::Fragment::Interactive,
-                                   OpenStax::Cnx::V1::Fragment::Exercise,
-                                   OpenStax::Cnx::V1::Fragment::Text],
+                fragment_classes: [OpenStax::Cnx::V1::Fragments::Text,
+                                   OpenStax::Cnx::V1::Fragments::Video,
+                                   OpenStax::Cnx::V1::Fragments::Exercise,
+                                   OpenStax::Cnx::V1::Fragments::Interactive,
+                                   OpenStax::Cnx::V1::Fragments::Exercise,
+                                   OpenStax::Cnx::V1::Fragments::Text],
                 is_intro: false
                }
              }]
