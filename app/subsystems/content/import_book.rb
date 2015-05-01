@@ -13,8 +13,7 @@ class Content::ImportBook
   def exec(cnx_book:)
     outputs[:book] = Entity::Book.create!
 
-    run(:import_book_part, cnx_book_part: cnx_book.root_book_part,
-                           book: outputs[:book])
+    run(:import_book_part, cnx_book_part: cnx_book.root_book_part, book: outputs[:book])
     transfer_errors_from(outputs[:book_part], {type: :verbatim}, true)
 
     #
@@ -26,8 +25,7 @@ class Content::ImportBook
     # TODO this code below should probably be in Domain
     #
 
-    exercise_data = Content::VisitBook[book: outputs[:book],
-                                       visitor_names: :exercises]
+    exercise_data = Content::VisitBook[book: outputs[:book], visitor_names: :exercises]
 
     biglearn_exercises = exercise_data.values.collect do |ed|
       tags = ed['los'] + ed['tags']

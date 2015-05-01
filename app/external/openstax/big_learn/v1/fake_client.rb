@@ -3,7 +3,7 @@ class OpenStax::BigLearn::V1::FakeClient
   # API methods
   #
 
-  def get_clue(learner_ids:, tags:)
+  def get_clue(roles:, tags:)
     rand(0.0..1.0)
   end
 
@@ -18,7 +18,7 @@ class OpenStax::BigLearn::V1::FakeClient
     save!
   end
 
-  def get_projection_exercises(user:, tag_search:, count:,
+  def get_projection_exercises(role:, tag_search:, count:,
                                difficulty:, allow_repetitions:)
     # Get the matches (no SPARFA obviously :)
     matches = store_exercises_copy.select do |uid, tags|
