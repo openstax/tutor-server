@@ -67,7 +67,7 @@ module OpenStax::BigLearn
 
       it "works when allow_repetitions is false" do
         exercises = client.get_projection_exercises(
-          user: nil,
+          role: nil,
           tag_search: { _and: [ { _or: ['lo1', 'lo2'] }, 'concept'] },
           count: 5,
           difficulty: 0.5,
@@ -79,7 +79,7 @@ module OpenStax::BigLearn
 
       it "works when allow_repetitions is true" do
         exercises = client.get_projection_exercises(
-          user: nil,
+          role: nil,
           tag_search: { _and: [ { _or: ['lo1', 'lo2'] }, 'concept'] },
           count: 5,
           difficulty: 0.5,

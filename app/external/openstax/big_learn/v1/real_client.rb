@@ -21,7 +21,7 @@ class OpenStax::BigLearn::V1::RealClient
   def get_projection_exercises(role:, tag_search:, count:,
                                difficulty:, allow_repetitions:)
     query = {
-      learner_id: get_exchange_read_identifiers_for_roles(role).first,
+      learner_id: get_exchange_read_identifiers_for_roles(roles: role).first,
       number_of_questions: count,
       tag_query: stringify_tag_search(tag_search),
       allow_repetition: allow_repetitions ? 'true' : 'false'
@@ -54,7 +54,7 @@ class OpenStax::BigLearn::V1::RealClient
     tag_search = stringify_tag_search(:_or => tags)
 
     query = {
-      learners: get_exchange_read_identifiers_for_roles(role),
+      learners: get_exchange_read_identifiers_for_roles(roles: role),
       aggregations: tag_search,
     }
 

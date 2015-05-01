@@ -55,8 +55,13 @@ module OpenStax::BigLearn
         ]
       }
 
+      profile = UserProfile::CreateProfile.call(attrs: {username: SecureRandom.hex})
+                                          .outputs.profile
+      profile.update_attribute(:exchange_read_identifier, '123')
+      role = Role::CreateUserRole[profile.entity_user]
+
       client.get_projection_exercises(
-        user: nil , tag_search: tag_search, count: 5,
+        role: role , tag_search: tag_search, count: 5,
         difficulty: 0.5, allow_repetitions: true
       )
     end
