@@ -42,7 +42,7 @@ RSpec.describe UserProfile::CreateProfile do
                                                   openstax_uid: 'something')
 
     expect {
-      described_class[username: 'blah2', account_id: account.id]
+      described_class[account_id: account.id]
     }.not_to change { OpenStax::Accounts::Account.count }
   end
 end
