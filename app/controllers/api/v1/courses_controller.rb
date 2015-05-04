@@ -161,15 +161,18 @@ class Api::V1::CoursesController < Api::V1::ApiController
   EOS
   def performance_export
     course = Entity::Course.find_by(id: params[:id])
+
     if course && UserIsCourseTeacher[course: course,
                                      user: current_human_user.entity_user]
       Queues::ExportPerformanceBook[]
-      head status: :created
+      status = :created
     elsif course
-      head status: :forbidden
+      status = :forbidden
     else
-      head status: :not_found
+      status = :not_found
     end
+
+    head status: status
   end
 
   api :GET, '/courses/:course_id/performance(/role/:role_id)', 'Returns performance book for the user'
