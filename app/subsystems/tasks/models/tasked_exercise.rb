@@ -94,11 +94,11 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
   def identifier
     # TODO this code (and the blatant hack above) have got to go! Had to add the
     # tries and the secure random to a basic unit test to work.
-    task_step.task.taskings.try(:first).try(:role).try(:id) || SecureRandom.hex
+    task_step.task.taskings.try(:first).try(:role).try(:id).try(:to_s) || SecureRandom.hex
   end
 
   def trial
-    SecureRandom.hex
+    task_step.id.to_s
   end
 
   # Eventually this will be enforced by the exercise substeps
