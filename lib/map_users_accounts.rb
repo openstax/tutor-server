@@ -22,8 +22,7 @@ module MapUsersAccounts
     def create_profile
       create_profile = UserProfile::CreateProfile.call(
         account_id: @account.id,
-        exchange_read_identifier: identifiers.read,
-        exchange_write_identifier: identifiers.write
+        exchange_identifiers: identifiers
       )
 
       if error = create_profile.errors.first
