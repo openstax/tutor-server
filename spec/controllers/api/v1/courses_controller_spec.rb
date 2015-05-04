@@ -814,4 +814,46 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       end
     end
   end
+
+  describe 'POST #performance_export' do
+    let(:teacher) { FactoryGirl.create :user_profile }
+    let(:teacher_token) { FactoryGirl.create :doorkeeper_access_token,
+                           application: application,
+                           resource_owner_id: teacher.id }
+
+    before do
+      AddUserAsCourseTeacher[course: course, user: teacher.entity_user]
+    end
+
+    it 'returns 201 for authorized teachers' do
+      api_post :performance_export, teacher_token, parameters: { id: course.id }
+
+      expect(response.status).to eq(201)
+    end
+
+    it 'kicks off the performance book export for authorized teachers' do
+      allow(Queues::ExportPerformanceBook).to receive(:[])
+
+      api_post :performance_export, teacher_token, parameters: { id: course.id }
+
+      expect(Queues::ExportPerformanceBook).to have_received(:[])
+    end
+
+    it 'returns 403 unauthorized users' do
+      unknown = FactoryGirl.create :user_profile
+      unknown_token = FactoryGirl.create :doorkeeper_access_token,
+                                         application: application,
+                                         resource_owner_id: unknown.id
+
+      api_post :performance_export, unknown_token, parameters: { id: course.id }
+
+      expect(response.status).to eq(403)
+    end
+
+    it 'returns 404 for non-existent courses' do
+      api_post :performance_export, teacher_token, parameters: { id: 'nope' }
+
+      expect(response.status).to eq(404)
+    end
+  end
 end
