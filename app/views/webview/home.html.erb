@@ -33,7 +33,8 @@
           <li><a href="#research">Research</a></li>
           <li><a href="#sponsors">Sponsors</a></li>
           <li><a href="#contact">Contact</a></li>
-          <li><a class="btn-dark" href="#">Sign In</a></li>
+
+          <li><%= link_to 'Sign in', openstax_accounts.login_path, class: 'btn-dark' %></li>
         </ul>
       </div>
       <!-- /.navbar-collapse -->
@@ -196,7 +197,7 @@
 
 <!-- INFO CONTENT
 ============================================= -->
-<div class="info-wrap" id="research">
+<div class="info-wrap" id="research" style='padding-bottom:0px'>
   <div class="container">
     <div class="row">
       <div class="section-title">
@@ -248,7 +249,7 @@
 
 <!-- INFO CONTENT
 ============================================= -->
-<div class="info-wrap" id="sponsors" style='padding-top:0px'>
+<div class="info-wrap" id="sponsors">
   <div class="container">
     <div class="row">
       <div class="section-title">
