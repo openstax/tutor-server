@@ -206,10 +206,10 @@ GEM
       mime-types (>= 1.16, < 3)
     maruku (0.7.2)
     method_source (0.8.2)
-    mime-types (2.4.3)
+    mime-types (2.5)
     mini_magick (4.2.0)
     mini_portile (0.6.2)
-    minitest (5.6.0)
+    minitest (5.6.1)
     multi_json (1.11.0)
     multi_xml (0.5.5)
     multipart-post (2.0.0)
@@ -230,7 +230,7 @@ GEM
     omniauth-oauth2 (1.3.0)
       oauth2 (~> 1.0)
       omniauth (~> 1.2)
-    openstax_accounts (5.1.1)
+    openstax_accounts (5.1.2)
       action_interceptor (>= 1.0)
       keyword_search (>= 1.0.0)
       lev (>= 2.2.1)
@@ -492,7 +492,7 @@ DEPENDENCIES
   mini_magick
   newrelic_rpm
   nifty-generators
-  openstax_accounts (~> 5.1.1)
+  openstax_accounts (~> 5.1.2)
   openstax_api (~> 5.3.0)
   openstax_exchange
   openstax_utilities (~> 4.2.0)

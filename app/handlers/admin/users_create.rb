@@ -11,6 +11,8 @@ class Admin::UsersCreate
   end
 
   def handle
-    run(:create_profile, attrs: params[:user])
+    user_params = params[:user]
+    run(:create_profile, username: user_params[:username],
+                         password: user_params[:password])
   end
 end
