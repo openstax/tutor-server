@@ -108,6 +108,9 @@ group :development, :test do
   # Get env variables from .env file
   gem 'dotenv-rails'
 
+  # Run specs in parallel
+  gem "parallel_tests"
+
   # Allows 'ap' alternative to 'pp'
   gem 'awesome_print'
 

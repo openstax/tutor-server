@@ -18,7 +18,7 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: <%= ENV['OXT_TEST_DB'] || 'ox_tutor_test' %>
+  database: <%= ENV['OXT_TEST_DB'] || 'ox_tutor_test' %><%= "_#{ENV['TEST_ENV_NUMBER']}" if ENV['TEST_ENV_NUMBER'] %>
 
 ## Production database is intentionally left unconfigured
 #production:
