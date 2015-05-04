@@ -3,7 +3,7 @@ class CreateTasksTasks < ActiveRecord::Migration
     create_table :tasks_tasks do |t|
       t.references :tasks_task_plan
       t.references :entity_task
-      t.string :task_type, null: false
+      t.integer :task_type, null: false
       t.string :title, null: false
       t.datetime :opens_at
       t.datetime :due_at

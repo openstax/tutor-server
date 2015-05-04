@@ -42,7 +42,7 @@ RSpec.describe Content::Routines::ImportPage, :type => :routine, :vcr => VCR_OPT
         result = nil
         expect {
           result = Content::Routines::ImportPage.call(cnx_page: cnx_page,
-                                            book_part: book_part)
+                                                      book_part: book_part)
         }.to change{ Content::Models::Tag.lo.count }.by(2)
 
         tags = Content::Models::Tag.lo.order(:id).to_a
@@ -51,8 +51,8 @@ RSpec.describe Content::Routines::ImportPage, :type => :routine, :vcr => VCR_OPT
 
         tagged_tags = result.outputs[:tags]
         expect(tagged_tags).not_to be_empty
-        expect(tagged_tags).to(
-          eq Content::Models::Page.last.page_tags.collect{|pt| pt.tag}
+        expect(Set.new tagged_tags.collect{|t| t.value}).to(
+          eq Set.new(Content::Models::Page.last.page_tags.collect{|pt| pt.tag.value})
         )
         expected_tagged_tags = ['k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02']
         expected_tagged_tags << 'ost-tag-teks-112-39-c-4c' if name.to_s == 'latest'
