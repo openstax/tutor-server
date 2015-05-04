@@ -104,6 +104,9 @@ gem 'pg'
 # Lorem Ipsum
 gem 'faker'
 
+# Background job queueing
+gem 'resque'
+
 # Type coercion for Representable
 gem 'virtus'
 
