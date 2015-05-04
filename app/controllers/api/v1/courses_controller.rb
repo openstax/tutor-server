@@ -175,6 +175,18 @@ class Api::V1::CoursesController < Api::V1::ApiController
     head status: status
   end
 
+  api :GET, '/courses/:course_id/performance/exports',
+             'Gets the export of the performance book for authorized teachers'
+  description <<-EOS
+    - 102 (:processing) while there is yet no file
+    - TODO
+  EOS
+  def performance_exports
+    status = :processing
+    head status: status
+  end
+
+
   api :GET, '/courses/:course_id/performance(/role/:role_id)', 'Returns performance book for the user'
   description <<-EOS
     #{json_schema(Api::V1::PerformanceBookRepresenter, include: :readable)}

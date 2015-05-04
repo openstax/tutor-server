@@ -856,4 +856,21 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       expect(response.status).to eq(404)
     end
   end
+
+  describe 'GET #performance_exports' do
+    let(:teacher) { FactoryGirl.create :user_profile }
+    let(:teacher_token) { FactoryGirl.create :doorkeeper_access_token,
+                           application: application,
+                           resource_owner_id: teacher.id }
+
+    before do
+      AddUserAsCourseTeacher[course: course, user: teacher.entity_user]
+    end
+
+    it 'returns 102 while there is no file' do
+      api_get :performance_exports, teacher_token, parameters: { id: course.id }
+
+      expect(response.status).to eq(102)
+    end
+  end
 end
