@@ -126,15 +126,12 @@ module OpenStax::Cnx::V1
     end
 
     def root
-      return @root unless @root.nil?
-
-      @root = doc.at_css(ROOT_CSS)
-      @root.css(DISCARD_CSS).remove
-      @root
+      @root ||= doc.at_css(ROOT_CSS)
     end
 
     def los
-      @los ||= tags.collect { |attributes| attributes[:type] == :lo ? attributes[:value] : nil }.compact
+      @los ||= tags.collect { |attributes| attributes[:type] == :lo ? attributes[:value] : nil }
+                   .compact
     end
 
     def tags
@@ -194,7 +191,8 @@ module OpenStax::Cnx::V1
       @fragments = []
 
       # Initialize current_reading
-      current_text = root
+      current_text = root.dup
+      current_text.css(DISCARD_CSS).remove
 
       # Find first split
       split = current_text.at_css(SPLIT_CSS)
