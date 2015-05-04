@@ -151,6 +151,27 @@ class Api::V1::CoursesController < Api::V1::ApiController
       head(:not_found) : respond_with(task.task, represent_with: Api::V1::TaskRepresenter)
   end
 
+  api :POST, '/courses/:course_id/performance/export',
+             'Begins the export of the performance book for authorized teachers'
+  description <<-EOS
+    201 if the role is a teacher of a course
+      -- The export background job will be started
+    403 if the role is not a teacher of the course
+    404 if the course does not exist
+  EOS
+  def performance_export
+    course = Entity::Course.find_by(id: params[:id])
+    if course && UserIsCourseTeacher[course: course,
+                                     user: current_human_user.entity_user]
+      Queues::ExportPerformanceBook[]
+      head status: :created
+    elsif course
+      head status: :forbidden
+    else
+      head status: :not_found
+    end
+  end
+
   api :GET, '/courses/:course_id/performance(/role/:role_id)', 'Returns performance book for the user'
   description <<-EOS
     #{json_schema(Api::V1::PerformanceBookRepresenter, include: :readable)}
