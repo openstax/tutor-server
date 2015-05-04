@@ -98,7 +98,7 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
   end
 
   def trial
-    '1'
+    task_step.id.to_s
   end
 
   # Eventually this will be enforced by the exercise substeps
@@ -109,8 +109,7 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
               answer_id.blank? || \
               !formats.include?('free-response')
 
-    errors.add(:free_response,
-               'must not be blank before entering a multiple choice answer')
+    errors.add(:free_response, 'must not be blank before entering a multiple choice answer')
     false
   end
 
