@@ -117,6 +117,9 @@ group :development, :test do
   # Allows the use of the in-memory SQLite3 database in Rails tests
   gem 'memory_test_fix'
 
+  # Resque but for testing
+  gem 'resque_spec'
+
   # Get env variables from .env file
   gem 'dotenv-rails'
 
