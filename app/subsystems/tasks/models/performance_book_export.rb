@@ -4,5 +4,14 @@ module Tasks::Models
 
     belongs_to :course, subsystem: :entity
     belongs_to :role, subsystem: :entity
+
+    def filepath
+      "/tmp/#{filename}.#{extension}"
+    end
+
+    private
+    def extension
+      'xlsx'
+    end
   end
 end
