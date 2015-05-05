@@ -48,7 +48,38 @@ RSpec.describe SearchLocalExercises, :type => :routine, :vcr => VCR_OPTS do
     expect(exercises.first.tags).to include(embed_tag)
   end
 
+  it 'returns only the latest version of each exercise' do
+    OpenStax::Exercises::V1.configure do |config|
+      config.server_url = 'http://exercises-dev1.openstax.org'
+    end
+
+    OpenStax::Exercises::V1.use_real_client
+
+    Content::Routines::ImportPage.call(cnx_page: cnx_page, book_part: book_part)
+
+    embed_tag = 'k12phys-ch04-ex021'
+    exercises = SearchLocalExercises.call(tag: embed_tag).outputs.items
+    expect(exercises.length).to eq 1
+    exercise = exercises.first
+    expect(exercise.tags).to include embed_tag
+    number = exercise.url.split('/').last.split('@').first
+    exercise_2 = FactoryGirl.create :content_exercise, number: number, version: 2,
+                                                       url: exercise.url.split('@').first + '@2'
+    Content::Routines::TagResource.call(exercise_2, exercise.tags)
+
+    exercises = SearchLocalExercises.call(tag: embed_tag).outputs.items
+    expect(exercises.length).to eq 1
+    expect(exercises.first).not_to eq exercise
+    expect(exercises.first).to eq exercise_2
+  end
+
   it 'can search exercises that have or have not been assigned to a role' do
+    OpenStax::Exercises::V1.configure do |config|
+      config.server_url = 'http://exercises-dev1.openstax.org'
+    end
+
+    OpenStax::Exercises::V1.use_real_client
+
     task_step = FactoryGirl.create :tasks_task_step
     task = task_step.task.reload
 
