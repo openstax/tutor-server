@@ -36,10 +36,8 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
 
   let!(:course)          { Entity::Course.create }
 
-  let!(:lo)              { FactoryGirl.create :content_tag,
-                                              value: 'ost-tag-lo-test-lo01' }
-  let!(:pp)              { FactoryGirl.create :content_tag,
-                                              value: 'practice-problem' }
+  let!(:lo)              { FactoryGirl.create :content_tag, value: 'ost-tag-lo-test-lo01' }
+  let!(:pp)              { FactoryGirl.create :content_tag, value: 'practice-problem' }
 
   let!(:tasked_exercise_with_recovery) {
     te = FactoryGirl.build(

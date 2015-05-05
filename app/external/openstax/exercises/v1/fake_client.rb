@@ -54,9 +54,8 @@ class OpenStax::Exercises::V1::FakeClient
   def new_exercise_hash(options = {})
     options[:number] ||= next_exercise_number
     options[:version] ||= 1
-    options[:tags] ||= []
     {
-      uid: "#{options[:number].to_s}@#{options[:version].to_s}",
+      uid: options[:uid] || "#{options[:number].to_s}@#{options[:version].to_s}",
       tags: options[:tags] || [],
       stimulus_html: "This is fake exercise #{options[:number]}. <span data-math='\\dfrac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}'></span>",
       questions: [
@@ -76,14 +75,11 @@ class OpenStax::Exercises::V1::FakeClient
   end
 
   def add_exercise(options={})
-    exercise_number = next_exercise_number
-
-    options[:number] ||= exercise_number
-    options[:content] ||= new_exercise_hash(options)
-    options[:tags] ||= []
+    options[:number] ||= next_exercise_number
     options[:version] ||= 1
-    options[:uid] ||= options[:uid] || options[:id] || \
-                      "#{options[:number]}@#{options[:version]}"
+    options[:tags] ||= []
+    options[:uid] ||= options[:uid] || options[:id] || "#{options[:number]}@#{options[:version]}"
+    options[:content] ||= new_exercise_hash(options)
 
     @exercises_array.push(
       {
@@ -99,11 +95,11 @@ class OpenStax::Exercises::V1::FakeClient
   private
 
   def next_uid
-    @uid += 1
+    @uid -= 1
   end
 
   def next_exercise_number
-    @exercise_number += 1
+    @exercise_number -= 1
   end
 
   # Makes the value of hash[:key] an array if isn't already one and the key exists

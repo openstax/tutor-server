@@ -1,6 +1,6 @@
 require 'rails_helper'
 require 'vcr_helper'
-require './lib/tasks/sprint/sprint_009/course_stats'
+require 'database_cleaner'
 
 RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                            version: :v1, speed: :slow, vcr: VCR_OPTS do
@@ -69,42 +69,6 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         ]
       }])
 
-    end
-  end
-
-  describe "#exercises" do
-    let!(:book) { FetchAndImportBook[
-      id: '7db9aa72-f815-4c3b-9cb6-d50cf5318b58'
-    ] }
-
-    before(:each) do
-      CourseContent::AddBookToCourse.call(course: course, book: book)
-      AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
-    end
-
-    it "should return an empty result if no page_ids specified" do
-      api_get :exercises, user_1_token, parameters: {id: course.id}
-
-      expect(response).to have_http_status(:success)
-      expect(response.body_as_hash).to eq({total_count: 0, items: []})
-    end
-
-    it "should work on the happy path" do
-      page_ids = Content::Models::Page.all.map(&:id)
-      api_get :exercises, user_1_token, parameters: {id: course.id, page_ids: page_ids}
-
-      expect(response).to have_http_status(:success)
-      hash = response.body_as_hash
-      expect(hash[:total_count]).to eq(127)
-      page_los = Content::GetLos[page_ids: page_ids]
-      hash[:items].each do |item|
-        wrapper = OpenStax::Exercises::V1::Exercise.new(item[:content].to_json)
-        item_los = wrapper.los
-        expect(item_los).not_to be_empty
-        item_los.each do |item_lo|
-          expect(page_los).to include(item_lo)
-        end
-      end
     end
   end
 
@@ -247,6 +211,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                     parameters: {id: course.id}
           end
         end
+
         context "and the teacher role is given" do
           it "should find the teacher role's events" do
             expect(get_role_course_events).
@@ -596,207 +561,251 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
   end
 
-  describe '#performance' do
-    let!(:book) {
-      book = FetchAndImportBook[id: '7db9aa72-f815-4c3b-9cb6-d50cf5318b58']
-      CourseContent::AddBookToCourse.call(course: course, book: book)
-      book
-    }
-    let!(:page_ids) {
-      Content::Models::Page.all.map(&:id)
-    }
+  context 'with book' do
+    before(:all) do
+      DatabaseCleaner.start
 
-    let!(:teacher) { FactoryGirl.create :user_profile }
-    let!(:teacher_token) { FactoryGirl.create :doorkeeper_access_token,
-                           application: application,
-                           resource_owner_id: teacher.id }
-
-    let!(:user_3) { FactoryGirl.create :user_profile }
-    let!(:user_3_token) { FactoryGirl.create :doorkeeper_access_token,
-                          application: application,
-                          resource_owner_id: user_3.id }
-
-    let!(:add_users_to_course) {
-      AddUserAsCourseTeacher[course: course, user: teacher.entity_user]
-      AddUserAsCourseStudent[course: course, user: user_1.entity_user]
-      AddUserAsCourseStudent[course: course, user: user_2.entity_user]
-    }
-    let!(:user_1_role) {
-      GetUserCourseRoles[course: course, user: user_1.entity_user].first
-    }
-    let!(:user_2_role) {
-      GetUserCourseRoles[course: course, user: user_2.entity_user].first
-    }
-
-    let!(:r_assistant) {
-      FactoryGirl.create :tasks_assistant,
-        code_class_name: 'Tasks::Assistants::IReadingAssistant'
-    }
-    let!(:hw_assistant) {
-      FactoryGirl.create :tasks_assistant,
-        code_class_name: 'Tasks::Assistants::HomeworkAssistant'
-    }
-
-    let!(:r_tp) {
-      tp = Tasks::Models::TaskPlan.create!(
-        title: 'Reading task plan',
-        owner: course,
-        type: 'reading',
-        assistant: r_assistant,
-        opens_at: Time.now,
-        due_at: Time.now + 1.week,
-        settings: { page_ids: page_ids.first(2).collect(&:to_s) }
-      )
-      tp.tasking_plans << Tasks::Models::TaskingPlan.create!(target: course, task_plan: tp)
-      DistributeTasks[tp]
-      tp
-    }
-    let!(:hw_tp) {
-      tp = Tasks::Models::TaskPlan.create!(
-        title: 'Homework task plan',
-        owner: course,
-        type: 'homework',
-        assistant: hw_assistant,
-        opens_at: Time.now,
-        due_at: Time.now + 1.day,
-        settings: { exercise_ids: Content::Models::Exercise.first(5).collect{|ex| ex.id.to_s},
-                    exercises_count_dynamic: 2 }
-      )
-      tp.tasking_plans << Tasks::Models::TaskingPlan.create!(target: course, task_plan: tp)
-      DistributeTasks[tp]
-      tp
-    }
-    let!(:hw2_tp) {
-      tp = Tasks::Models::TaskPlan.create!(
-        title: 'Homework 2 task plan',
-        owner: course,
-        type: 'homework',
-        assistant: hw_assistant,
-        opens_at: Time.now,
-        due_at: Time.now + 2.week,
-        settings: { exercise_ids: Content::Models::Exercise.last(2).collect{|ex| ex.id.to_s},
-                    exercises_count_dynamic: 2 }
-      )
-      tp.tasking_plans << Tasks::Models::TaskingPlan.create!(target: course, task_plan: tp)
-      DistributeTasks[tp]
-      tp
-    }
-
-    it 'should work on the happy path' do
-      user_1_role_id = user_1_role.id
-      user_2_role_id = user_2_role.id
-
-      user_1_tasks = Tasks::Models::Task
-        .joins { taskings }
-        .where { taskings.entity_role_id == user_1_role_id }
-        .where { task_type.in Tasks::Models::Task.task_types.values_at(:reading, :homework) }
-        .order { due_at }
-        .includes { task_steps.tasked }
-
-      user_2_tasks = Tasks::Models::Task
-        .joins { taskings }
-        .where { taskings.entity_role_id == user_2_role_id }
-        .where { task_type.in Tasks::Models::Task.task_types.values_at(:reading, :homework) }
-        .order { due_at }
-        .includes { task_steps.tasked }
-
-      # User 1 answered everything in homework task plan correctly
-      user_1_tasks[0].task_steps.each do |ts|
-        Hacks::AnswerExercise[task_step: ts, is_correct: true]
+      VCR.use_cassette("Api_V1_CoursesController/with_book", VCR_OPTS) do
+        @book = FetchAndImportBook[id: '7db9aa72-f815-4c3b-9cb6-d50cf5318b58']
       end
-
-      # User 1 completed the reading task plan
-      user_1_tasks[1].task_steps.each do |ts|
-        MarkTaskStepCompleted[task_step: ts]
-      end
-
-      # User 2 answered 2 questions correctly and 2 incorrectly in
-      # homework task plan
-      user_2_tasks[0].task_steps.first(2).each do |ts|
-        Hacks::AnswerExercise[task_step: ts, is_correct: true]
-      end
-      user_2_tasks[0].task_steps.last(2).each do |ts|
-        Hacks::AnswerExercise[task_step: ts, is_correct: false]
-      end
-
-      # User 2 started the reading task plan
-      MarkTaskStepCompleted[task_step: user_2_tasks[1].task_steps.first]
-
-      api_get :performance, teacher_token, parameters: { id: course.id }
-
-      expect(response).to have_http_status :success
-      expect(response.body_as_hash).to eq(
-        data_headings: [
-          { title: 'Homework task plan', class_average: 75 },
-          { title: 'Reading task plan' },
-          { title: 'Homework 2 task plan' }
-        ],
-        students: [{
-          name: user_1.full_name,
-          role: user_1_role_id,
-          data: [
-            {
-              type: 'homework',
-              id: user_1_tasks[0].id,
-              status: 'completed',
-              exercise_count: 5,
-              correct_exercise_count: 5,
-              recovered_exercise_count: 0
-            },
-            {
-              type: 'reading',
-              id: user_1_tasks[1].id,
-              status: 'completed'
-            },
-            {
-              type: 'homework',
-              id: user_1_tasks[2].id,
-              status: 'not_started',
-              exercise_count: 3,
-              correct_exercise_count: 0,
-              recovered_exercise_count: 0
-            }
-          ]
-        }, {
-          name: user_2.full_name,
-          role: user_2_role_id,
-          data: [
-            {
-              type: 'homework',
-              id: user_2_tasks[0].id,
-              status: 'in_progress',
-              exercise_count: 5,
-              correct_exercise_count: 2,
-              recovered_exercise_count: 0
-            },
-            {
-              type: 'reading',
-              id: user_2_tasks[1].id,
-              status: 'in_progress'
-            },
-            {
-              type: 'homework',
-              id: user_2_tasks[2].id,
-              status: 'not_started',
-              exercise_count: 3,
-              correct_exercise_count: 0,
-              recovered_exercise_count: 0
-            }
-          ]
-        }]
-      )
     end
 
-    it 'raises error for users not in the course' do
-      expect {
-        api_get :performance, user_3_token, parameters: { id: course.id }
-      }.to raise_error StandardError
+    before(:each) do
+      CourseContent::AddBookToCourse.call(course: course, book: @book)
     end
 
-    it 'raises error for students' do
-      expect {
-        api_get :performance, user_1_token, parameters: { id: course.id }
-      }.to raise_error SecurityTransgression
+    after(:all) do
+      DatabaseCleaner.clean
+    end
+
+    describe "#exercises" do
+      before(:each) do
+        AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
+      end
+
+      it "should return an empty result if no page_ids specified" do
+        api_get :exercises, user_1_token, parameters: {id: course.id}
+
+        expect(response).to have_http_status(:success)
+        expect(response.body_as_hash).to eq({total_count: 0, items: []})
+      end
+
+      it "should work on the happy path" do
+        page_ids = Content::Models::Page.all.map(&:id)
+        api_get :exercises, user_1_token, parameters: {id: course.id, page_ids: page_ids}
+
+        expect(response).to have_http_status(:success)
+        hash = response.body_as_hash
+        expect(hash[:total_count]).to eq(127)
+        page_los = Content::GetLos[page_ids: page_ids]
+        hash[:items].each do |item|
+          wrapper = OpenStax::Exercises::V1::Exercise.new(item[:content].to_json)
+          item_los = wrapper.los
+          expect(item_los).not_to be_empty
+          item_los.each do |item_lo|
+            expect(page_los).to include(item_lo)
+          end
+        end
+      end
+    end
+
+    describe '#performance' do
+      let!(:page_ids) {
+        Content::Models::Page.all.map(&:id)
+      }
+
+      let!(:teacher) { FactoryGirl.create :user_profile }
+      let!(:teacher_token) { FactoryGirl.create :doorkeeper_access_token,
+                             application: application,
+                             resource_owner_id: teacher.id }
+
+      let!(:user_3) { FactoryGirl.create :user_profile }
+      let!(:user_3_token) { FactoryGirl.create :doorkeeper_access_token,
+                            application: application,
+                            resource_owner_id: user_3.id }
+
+      let!(:add_users_to_course) {
+        AddUserAsCourseTeacher[course: course, user: teacher.entity_user]
+        AddUserAsCourseStudent[course: course, user: user_1.entity_user]
+        AddUserAsCourseStudent[course: course, user: user_2.entity_user]
+      }
+      let!(:user_1_role) {
+        GetUserCourseRoles[course: course, user: user_1.entity_user].first
+      }
+      let!(:user_2_role) {
+        GetUserCourseRoles[course: course, user: user_2.entity_user].first
+      }
+
+      let!(:r_assistant) {
+        FactoryGirl.create :tasks_assistant,
+          code_class_name: 'Tasks::Assistants::IReadingAssistant'
+      }
+      let!(:hw_assistant) {
+        FactoryGirl.create :tasks_assistant,
+          code_class_name: 'Tasks::Assistants::HomeworkAssistant'
+      }
+
+      let!(:r_tp) {
+        tp = Tasks::Models::TaskPlan.create!(
+          title: 'Reading task plan',
+          owner: course,
+          type: 'reading',
+          assistant: r_assistant,
+          opens_at: Time.now,
+          due_at: Time.now + 1.week,
+          settings: { page_ids: page_ids.first(2).collect(&:to_s) }
+        )
+        tp.tasking_plans << Tasks::Models::TaskingPlan.create!(target: course, task_plan: tp)
+        DistributeTasks[tp]
+        tp
+      }
+      let!(:hw_tp) {
+        tp = Tasks::Models::TaskPlan.create!(
+          title: 'Homework task plan',
+          owner: course,
+          type: 'homework',
+          assistant: hw_assistant,
+          opens_at: Time.now,
+          due_at: Time.now + 1.day,
+          settings: { exercise_ids: Content::Models::Exercise.first(5).collect{ |e| e.id.to_s },
+                      exercises_count_dynamic: 2 }
+        )
+        tp.tasking_plans << Tasks::Models::TaskingPlan.create!(target: course, task_plan: tp)
+        DistributeTasks[tp]
+        tp
+      }
+      let!(:hw2_tp) {
+        tp = Tasks::Models::TaskPlan.create!(
+          title: 'Homework 2 task plan',
+          owner: course,
+          type: 'homework',
+          assistant: hw_assistant,
+          opens_at: Time.now,
+          due_at: Time.now + 2.week,
+          settings: { exercise_ids: Content::Models::Exercise.last(2).collect{ |e| e.id.to_s },
+                      exercises_count_dynamic: 2 }
+        )
+        tp.tasking_plans << Tasks::Models::TaskingPlan.create!(target: course, task_plan: tp)
+        DistributeTasks[tp]
+        tp
+      }
+
+      it 'should work on the happy path' do
+        user_1_role_id = user_1_role.id
+        user_2_role_id = user_2_role.id
+
+        user_1_tasks = Tasks::Models::Task
+          .joins { taskings }
+          .where { taskings.entity_role_id == user_1_role_id }
+          .where { task_type.in Tasks::Models::Task.task_types.values_at(:reading, :homework) }
+          .order { due_at }
+          .includes { task_steps.tasked }
+
+        user_2_tasks = Tasks::Models::Task
+          .joins { taskings }
+          .where { taskings.entity_role_id == user_2_role_id }
+          .where { task_type.in Tasks::Models::Task.task_types.values_at(:reading, :homework) }
+          .order { due_at }
+          .includes { task_steps.tasked }
+
+        # User 1 answered everything in homework task plan correctly
+        user_1_tasks[0].task_steps.each do |ts|
+          Hacks::AnswerExercise[task_step: ts, is_correct: true]
+        end
+
+        # User 1 completed the reading task plan
+        user_1_tasks[1].task_steps.each do |ts|
+          MarkTaskStepCompleted[task_step: ts]
+        end
+
+        # User 2 answered 2 questions correctly and 2 incorrectly in
+        # homework task plan
+        user_2_tasks[0].task_steps.first(2).each do |ts|
+          Hacks::AnswerExercise[task_step: ts, is_correct: true]
+        end
+        user_2_tasks[0].task_steps.last(2).each do |ts|
+          Hacks::AnswerExercise[task_step: ts, is_correct: false]
+        end
+
+        # User 2 started the reading task plan
+        MarkTaskStepCompleted[task_step: user_2_tasks[1].task_steps.first]
+
+        api_get :performance, teacher_token, parameters: { id: course.id }
+
+        expect(response).to have_http_status :success
+        expect(response.body_as_hash).to eq(
+          data_headings: [
+            { title: 'Homework task plan', class_average: 75 },
+            { title: 'Reading task plan' },
+            { title: 'Homework 2 task plan' }
+          ],
+          students: [{
+            name: user_1.full_name,
+            role: user_1_role_id,
+            data: [
+              {
+                type: 'homework',
+                id: user_1_tasks[0].id,
+                status: 'completed',
+                exercise_count: 5,
+                correct_exercise_count: 5,
+                recovered_exercise_count: 0
+              },
+              {
+                type: 'reading',
+                id: user_1_tasks[1].id,
+                status: 'completed'
+              },
+              {
+                type: 'homework',
+                id: user_1_tasks[2].id,
+                status: 'not_started',
+                exercise_count: 3,
+                correct_exercise_count: 0,
+                recovered_exercise_count: 0
+              }
+            ]
+          }, {
+            name: user_2.full_name,
+            role: user_2_role_id,
+            data: [
+              {
+                type: 'homework',
+                id: user_2_tasks[0].id,
+                status: 'in_progress',
+                exercise_count: 5,
+                correct_exercise_count: 2,
+                recovered_exercise_count: 0
+              },
+              {
+                type: 'reading',
+                id: user_2_tasks[1].id,
+                status: 'in_progress'
+              },
+              {
+                type: 'homework',
+                id: user_2_tasks[2].id,
+                status: 'not_started',
+                exercise_count: 3,
+                correct_exercise_count: 0,
+                recovered_exercise_count: 0
+              }
+            ]
+          }]
+        )
+      end
+
+      it 'raises error for users not in the course' do
+        expect {
+          api_get :performance, user_3_token, parameters: { id: course.id }
+        }.to raise_error StandardError
+      end
+
+      it 'raises error for students' do
+        expect {
+          api_get :performance, user_1_token, parameters: { id: course.id }
+        }.to raise_error SecurityTransgression
+      end
     end
   end
 end

@@ -60,35 +60,34 @@ RSpec.describe Content::VisitBook, :type => :routine do
 
   it "should get tagged exercises out of a book" do
 
-    OpenStax::Exercises::V1.fake_client.add_exercise(uid: 1, tags: ['ost-tag-lo-topic1-lo1','concept'])
-    OpenStax::Exercises::V1.fake_client.add_exercise(uid: 2, tags: ['ost-tag-lo-topic2-lo2','homework'])
-    OpenStax::Exercises::V1.fake_client.add_exercise(uid: 3, tags: ['ost-tag-lo-topic3-lo3','concept'])
+    OpenStax::Exercises::V1.fake_client.add_exercise(tags: ['ost-tag-lo-topic1-lo1','concept'])
+    OpenStax::Exercises::V1.fake_client.add_exercise(tags: ['ost-tag-lo-topic2-lo2','homework'])
+    OpenStax::Exercises::V1.fake_client.add_exercise(tags: ['ost-tag-lo-topic3-lo3','concept'])
 
     Content::Routines::ImportExercises.call(tag: 'ost-tag-lo-topic1-lo1')
     Content::Routines::ImportExercises.call(tag: 'ost-tag-lo-topic2-lo2')
     Content::Routines::ImportExercises.call(tag: 'ost-tag-lo-topic3-lo3')
 
-    exercises = Content::VisitBook[book: root_book_part.book,
-                                   visitor_names: :exercises]
+    exercises = Content::VisitBook[book: root_book_part.book, visitor_names: :exercises]
 
     expect(exercises).to include({
-      '1@1' => {
-        'uid' => '1@1',
-        'id' => exercises['1@1']['id'],
+      '-1@1' => {
+        'uid' => '-1@1',
+        'id' => exercises['-1@1']['id'],
         'url' => a_kind_of(String),
         'los' => ['ost-tag-lo-topic1-lo1'],
         'tags' => ['concept']
       },
-      '2@1' => {
-        'uid' => '2@1',
-        'id' => exercises['2@1']['id'],
+      '-2@1' => {
+        'uid' => '-2@1',
+        'id' => exercises['-2@1']['id'],
         'url' => a_kind_of(String),
         'los' => ['ost-tag-lo-topic2-lo2'],
         'tags' => ['homework']
       },
-      '3@1' => {
-        'uid' => '3@1',
-        'id' => exercises['3@1']['id'],
+      '-3@1' => {
+        'uid' => '-3@1',
+        'id' => exercises['-3@1']['id'],
         'url' => a_kind_of(String),
         'los' => ['ost-tag-lo-topic3-lo3'],
         'tags' => ['concept']
