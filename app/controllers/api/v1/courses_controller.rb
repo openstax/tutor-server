@@ -176,14 +176,34 @@ class Api::V1::CoursesController < Api::V1::ApiController
   end
 
   api :GET, '/courses/:course_id/performance/exports',
-             'Gets the export of the performance book for authorized teachers'
+            'Gets the export history of the performance book for authorized teachers'
   description <<-EOS
     - 102 (:processing) while there is yet no file
-    - TODO
+    - 403 when the user is not a teacher of the course
+    - 404 when the course does not exist
+    #{json_schema(Api::V1::PerformanceBookExportsRepresenter, include: :readable)}
   EOS
   def performance_exports
-    status = :processing
-    head status: status
+    course = Entity::Course.find_by(id: params[:id])
+    export_history = [OpenStruct.new(filename: 'todo-soon',
+                                     url: '/to/do/soon',
+                                     created_at: 'in FE format'),
+                      OpenStruct.new(filename: 'todo-soon2',
+                                     url: '/to/do/2/soon',
+                                     created_at: '/in FE format 2')]
+
+    if course && UserIsCourseTeacher[course: course,
+                                     user: current_human_user.entity_user]
+      status = check_queued_jobs.any? ? :processing : :ok
+    elsif course
+      status = :forbidden
+    else
+      status = :not_found
+    end
+
+    respond_with export_history,
+                 represent_with: Api::V1::PerformanceBookExportsRepresenter,
+                 status: status
   end
 
 
@@ -214,6 +234,10 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
   def get_practice_role
     get_course_role(types: :student)
+  end
+
+  def check_queued_jobs
+    []
   end
 
 end
