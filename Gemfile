@@ -110,6 +110,9 @@ gem 'resque'
 # Type coercion for Representable
 gem 'virtus'
 
+# Create xlsx files
+gem 'axlsx', '~> 2.1.0.pre'
+
 group :development, :test do
   # SQLite adapter
   gem 'sqlite3'
