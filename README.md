@@ -63,3 +63,13 @@ rake db:migrate
 rake db:seed
 rails server
 ```
+
+## Running specs in parallel
+
+OpenStax Tutor can optionally run it's specs using the [parallel_tests](https://github.com/grosser/parallel_tests) gem.  This can result in the test suite completing 2-3 times faster depending on how many CPU cores the testing environment has available.
+
+To use the feature, run `rake parallel:create`.  This will create multiple copies of the database, one for each CPU core.  This command needs to be ran only once.
+
+After creating the databases and after changing any of the migrations, run `rake parallel:prepare` to copy the database schema to each of them.
+
+`rake parallel:spec` can then be used to run the testing suite in parallel.
