@@ -5,10 +5,10 @@ module Api::V1::Tasks
     include Representable::Coercion
 
     property :url,
+             as: :content_url,
              type: String,
              writeable: false,
              readable: true,
-             as: :content_url,
              schema_info: {
                required: false,
                description: "The source URL for this Exercise"
