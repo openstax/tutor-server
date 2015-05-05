@@ -53,11 +53,14 @@ ActiveRecord::Schema.define(version: 20150420184110) do
   create_table "content_exercises", force: :cascade do |t|
     t.string   "url"
     t.text     "content"
+    t.integer  "number",     null: false
+    t.integer  "version",    null: false
     t.string   "title"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
+  add_index "content_exercises", ["number", "version"], name: "index_content_exercises_on_number_and_version", unique: true, using: :btree
   add_index "content_exercises", ["title"], name: "index_content_exercises_on_title", using: :btree
   add_index "content_exercises", ["url"], name: "index_content_exercises_on_url", unique: true, using: :btree
 

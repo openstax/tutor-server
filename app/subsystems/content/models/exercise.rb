@@ -9,11 +9,16 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
 
   has_many :tags, through: :exercise_tags
 
-  delegate :uid, :content_hash, to: :parser
+  has_many :same_number, class_name: "Content::Models::Exercise",
+                         primary_key: :number,
+                         foreign_key: :number
 
-  # We depend on the parser because we do not save the parsed content
-  def parser
-    @parser ||= OpenStax::Exercises::V1::Exercise.new(content)
+  scope :latest, -> { joins(:same_number)
+                        .group(same_number: :number)
+                        .having{version == max(same_number.version)} }
+
+  def uid
+    "#{number}@#{version}"
   end
 
   def tags_with_teks

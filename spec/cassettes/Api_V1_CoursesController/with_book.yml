@@ -37,9 +37,9 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Tue, 05 May 2015 22:21:19 GMT
+      - Wed, 06 May 2015 19:50:33 GMT
       X-Varnish:
-      - '1242780034'
+      - '1243679165'
       Via:
       - 1.1 varnish
       Connection:
@@ -54,7 +54,7 @@ http_interactions:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Tue, 05 May 2015 22:21:10 GMT
+  recorded_at: Wed, 06 May 2015 19:50:27 GMT
 - request:
     method: get
     uri: http://archive.cnx.org/contents/7db9aa72-f815-4c3b-9cb6-d50cf5318b58@4.128.json
@@ -92,9 +92,9 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Tue, 05 May 2015 22:21:19 GMT
+      - Wed, 06 May 2015 19:50:33 GMT
       X-Varnish:
-      - 1242780035 1240695458
+      - 1243679168 1243646655
       Via:
       - 1.1 varnish
       Connection:
@@ -102,7 +102,7 @@ http_interactions:
       X-Cache:
       - HIT
       X-Varnish-Age:
-      - '203453'
+      - '1870'
       Age:
       - '0'
     body:
@@ -548,7 +548,7 @@ http_interactions:
         "revised": "2015-03-05T20:40:19Z", "publisher": {"surname": "Slavik", "suffix":
         "", "firstname": "Alina", "title": "", "fullname": "Alina Slavik", "id": "AlinaManager"}}]}'
     http_version: 
-  recorded_at: Tue, 05 May 2015 22:21:10 GMT
+  recorded_at: Wed, 06 May 2015 19:50:27 GMT
 - request:
     method: get
     uri: http://archive.cnx.org/contents/1491e74e-ed39-446f-a602-e7ab881af101@10
@@ -586,9 +586,9 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Tue, 05 May 2015 22:21:19 GMT
+      - Wed, 06 May 2015 19:50:33 GMT
       X-Varnish:
-      - 1242780036 1241369250
+      - 1243679169 1241369250
       Via:
       - 1.1 varnish
       Connection:
@@ -596,7 +596,7 @@ http_interactions:
       X-Cache:
       - HIT
       X-Varnish-Age:
-      - '143362'
+      - '220716'
       Age:
       - '0'
     body:
@@ -699,7 +699,7 @@ http_interactions:
         "suffix": "", "firstname": "Alina", "title": "", "fullname": "Alina Slavik",
         "id": "AlinaManager"}}]}'
     http_version: 
-  recorded_at: Tue, 05 May 2015 22:21:10 GMT
+  recorded_at: Wed, 06 May 2015 19:50:27 GMT
 - request:
     method: get
     uri: 'http://exercises-dev1.openstax.org/api/exercises?q=tag:'
@@ -721,7 +721,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Tue, 05 May 2015 22:22:00 GMT
+      - Wed, 06 May 2015 19:51:14 GMT
       Content-Type:
       - text/html
       Content-Length:
@@ -736,7 +736,7 @@ http_interactions:
         bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
         (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
     http_version: 
-  recorded_at: Tue, 05 May 2015 22:21:10 GMT
+  recorded_at: Wed, 06 May 2015 19:50:27 GMT
 - request:
     method: get
     uri: 'https://exercises-dev1.openstax.org/api/exercises?q=tag:'
@@ -758,7 +758,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Tue, 05 May 2015 22:22:03 GMT
+      - Wed, 06 May 2015 19:51:18 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -778,12 +778,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=R05NcDBKdERiUDRGVThZUEw3eHR5Wk5lcytFTGI5clJoQjJlaUJBRExTZys4dDVQd2NuY0tDaTVPUC91SmFlWHAyY1IzZ0Nna2E4Nml2UFhXYkwzaWc9PS0tUFYyVjZUTDZxaWMvUU9tNEtzVm1Fdz09--c60ea2bc1dcb2130c565002a6b5cdf4c49cc7b44;
+      - _exercises_session=M3VNMVZLVTJJMjY3aEhFK0RpZG50Y1d2a2o5R1ZkZ2xHVTB0cUVTeHE0b3B1a3pYblUra3phS3R1TXJXbVVXZDErc0g3QjIycklkMTV1UDR3c085Ync9PS0tNFF2SEluMlM1aDJ1NTcxKzdZY0hwdz09--422a840bbf12ccadd40b2af9ab7b17ae48f70e87;
         path=/; HttpOnly
       X-Request-Id:
-      - f980bdb5-0a97-423c-b614-e46dcb52570b
+      - 330106e5-31ee-476a-af69-9635c605ae9d
       X-Runtime:
-      - '3.374027'
+      - '3.412008'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -5119,7 +5119,7 @@ http_interactions:
         XSwiaGludHMiOltdLCJmb3JtYXRzIjpbIm11bHRpcGxlLWNob2ljZSIsImZy
         ZWUtcmVzcG9uc2UiXSwiY29tYm9fY2hvaWNlcyI6W119XX1dfQ==
     http_version: 
-  recorded_at: Tue, 05 May 2015 22:21:14 GMT
+  recorded_at: Wed, 06 May 2015 19:50:31 GMT
 - request:
     method: get
     uri: http://archive.cnx.org/contents/092bbf0d-0729-42ce-87a6-fd96fd87a083@33
@@ -5157,9 +5157,9 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Tue, 05 May 2015 22:21:31 GMT
+      - Wed, 06 May 2015 19:51:02 GMT
       X-Varnish:
-      - 1242780203 1241369254
+      - 1243679560 1241369254
       Via:
       - 1.1 varnish
       Connection:
@@ -5167,7 +5167,7 @@ http_interactions:
       X-Cache:
       - HIT
       X-Varnish-Age:
-      - '143373'
+      - '220745'
       Age:
       - '0'
     body:
@@ -5603,7 +5603,7 @@ http_interactions:
         "Slavik", "suffix": "", "firstname": "Alina", "title": "", "fullname": "Alina
         Slavik", "id": "AlinaManager"}}]}'
     http_version: 
-  recorded_at: Tue, 05 May 2015 22:21:21 GMT
+  recorded_at: Wed, 06 May 2015 19:50:57 GMT
 - request:
     method: get
     uri: http://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-s01-lo01,k12phys-ch04-s01-lo02
@@ -5625,7 +5625,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Tue, 05 May 2015 22:22:11 GMT
+      - Wed, 06 May 2015 19:51:44 GMT
       Content-Type:
       - text/html
       Content-Length:
@@ -5640,7 +5640,7 @@ http_interactions:
         bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
         (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
     http_version: 
-  recorded_at: Tue, 05 May 2015 22:21:22 GMT
+  recorded_at: Wed, 06 May 2015 19:50:57 GMT
 - request:
     method: get
     uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-s01-lo01,k12phys-ch04-s01-lo02
@@ -5662,7 +5662,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Tue, 05 May 2015 22:22:12 GMT
+      - Wed, 06 May 2015 19:51:45 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -5682,12 +5682,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=YjArYnczV0dsTzJxSm1INGRJR2RYaXVlck4xZDBUeUkrYWYyVG5aa2ZybGtaeVhYYjJ5Mk5xazRYVzFCVDgxUzBTYWM2c05rMXRNSlp0MmIvemlUSlE9PS0taVdlSXRrbmc2RUpIZkhMU0pWTlowQT09--3c1639fdac457892472ed91cd09752a7cee9f7f9;
+      - _exercises_session=TW9iV0V1ekZYNTlGcXlTNXhVa0lQdEtmbkZqaUhReGJnd0pGTm1hNTVVWVhIQ28rdVh5WUx1V2E4c29DSkE5M2ZFMnoyckhPa1dvamtsOXpQc2YzRUE9PS0tK0VUVlV0SXhSaVJjQUdVMnVIV2UzUT09--d349f972ccb82bb4f2c6568c06df0f3efcff99d6;
         path=/; HttpOnly
       X-Request-Id:
-      - 96ae5c19-a6e5-4f34-a740-7543532f0056
+      - 3fe5a3e1-c55f-4f02-b693-182190c9cd10
       X-Runtime:
-      - '0.839527'
+      - '0.837924'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -6715,7 +6715,7 @@ http_interactions:
         LCJmb3JtYXRzIjpbIm11bHRpcGxlLWNob2ljZSIsImZyZWUtcmVzcG9uc2Ui
         XSwiY29tYm9fY2hvaWNlcyI6W119XX1dfQ==
     http_version: 
-  recorded_at: Tue, 05 May 2015 22:21:23 GMT
+  recorded_at: Wed, 06 May 2015 19:50:58 GMT
 - request:
     method: get
     uri: http://archive.cnx.org/contents/61445f78-00e2-45ae-8e2c-461b17d9b4fd@39
@@ -6753,9 +6753,9 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Tue, 05 May 2015 22:21:34 GMT
+      - Wed, 06 May 2015 19:51:07 GMT
       X-Varnish:
-      - 1242780246 1241369259
+      - 1243679616 1241369259
       Via:
       - 1.1 varnish
       Connection:
@@ -6763,7 +6763,7 @@ http_interactions:
       X-Cache:
       - HIT
       X-Varnish-Age:
-      - '143376'
+      - '220749'
       Age:
       - '0'
     body:
@@ -7270,7 +7270,7 @@ http_interactions:
         "suffix": "", "firstname": "Alina", "title": "", "fullname": "Alina Slavik",
         "id": "AlinaManager"}}]}'
     http_version: 
-  recorded_at: Tue, 05 May 2015 22:21:24 GMT
+  recorded_at: Wed, 06 May 2015 19:51:01 GMT
 - request:
     method: get
     uri: http://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-s02-lo01,k12phys-ch04-s02-lo02
@@ -7292,7 +7292,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Tue, 05 May 2015 22:22:14 GMT
+      - Wed, 06 May 2015 19:51:48 GMT
       Content-Type:
       - text/html
       Content-Length:
@@ -7307,7 +7307,7 @@ http_interactions:
         bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
         (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
     http_version: 
-  recorded_at: Tue, 05 May 2015 22:21:25 GMT
+  recorded_at: Wed, 06 May 2015 19:51:01 GMT
 - request:
     method: get
     uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-s02-lo01,k12phys-ch04-s02-lo02
@@ -7329,7 +7329,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Tue, 05 May 2015 22:22:15 GMT
+      - Wed, 06 May 2015 19:51:49 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -7349,12 +7349,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=UC9iNm5DNHJTc0VVdW03UUl1U0s2RTlGNDVHc3RTZnprN1dWaGFBcnB0WFhXQ1U5QnN5VDhGczhOYlNXZGFSWnRubFlublZyMERLNzhvYzJoanoxVnc9PS0tSnVXTldEaTlFNjl2WFdnSEtRV0tadz09--b0f1220c457fd3795969671fcb1501756bf542d8;
+      - _exercises_session=ZG9rN0sycFlIUG1kbDg0TzlGRGloeDdyekIrWmp6VU55U3ZIOS9lZ1BuT2ZHTWJLS052TmQ1M2xZSkRuTmJoTW1OZDFwcU9HK21HTUJ3NzBqcnVSWUE9PS0tQ0U2RStsdjZlZ3Y5RFZaM3luUEZxQT09--b82423e0a0b8f479c34a58024923c6a28fbfecbf;
         path=/; HttpOnly
       X-Request-Id:
-      - b9fa3211-51d5-4b3f-aaa3-27ae53f6053e
+      - 4807e656-4b6c-4645-aa62-d9ef7f9c7d16
       X-Runtime:
-      - '0.851466'
+      - '0.866099'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -8462,7 +8462,7 @@ http_interactions:
         IjpbIm11bHRpcGxlLWNob2ljZSIsImZyZWUtcmVzcG9uc2UiXSwiY29tYm9f
         Y2hvaWNlcyI6W119XX1dfQ==
     http_version: 
-  recorded_at: Tue, 05 May 2015 22:21:26 GMT
+  recorded_at: Wed, 06 May 2015 19:51:03 GMT
 - request:
     method: get
     uri: http://archive.cnx.org/contents/d60a912c-83cf-443a-a6c2-3dd95545e7d4@35
@@ -8500,9 +8500,9 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Tue, 05 May 2015 22:21:37 GMT
+      - Wed, 06 May 2015 19:51:12 GMT
       X-Varnish:
-      - 1242780289 1241369264
+      - 1243679695 1241369264
       Via:
       - 1.1 varnish
       Connection:
@@ -8510,7 +8510,7 @@ http_interactions:
       X-Cache:
       - HIT
       X-Varnish-Age:
-      - '143379'
+      - '220754'
       Age:
       - '0'
     body:
@@ -9234,7 +9234,7 @@ http_interactions:
         "publisher": {"surname": "Slavik", "suffix": "", "firstname": "Alina", "title":
         "", "fullname": "Alina Slavik", "id": "AlinaManager"}}]}'
     http_version: 
-  recorded_at: Tue, 05 May 2015 22:21:28 GMT
+  recorded_at: Wed, 06 May 2015 19:51:06 GMT
 - request:
     method: get
     uri: http://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-s03-lo01,k12phys-ch04-s03-lo02
@@ -9256,7 +9256,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Tue, 05 May 2015 22:22:17 GMT
+      - Wed, 06 May 2015 19:51:53 GMT
       Content-Type:
       - text/html
       Content-Length:
@@ -9271,7 +9271,7 @@ http_interactions:
         bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
         (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
     http_version: 
-  recorded_at: Tue, 05 May 2015 22:21:28 GMT
+  recorded_at: Wed, 06 May 2015 19:51:06 GMT
 - request:
     method: get
     uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-s03-lo01,k12phys-ch04-s03-lo02
@@ -9293,7 +9293,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Tue, 05 May 2015 22:22:19 GMT
+      - Wed, 06 May 2015 19:51:54 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -9313,12 +9313,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=TkVhTVNwOFdUS0xPWEUyczhYM21yM2t3UDZ0TlFVaEtseEN6NHhoa2c0QzZlaDhBMnZJMk9sb3hYU0phWlZZL3ZENk83WUZuQ1pCanB1L0ZIWUhjZGc9PS0tb1YrNC9VY3hXN3pDdWpSV29udTZRQT09--4d1a7154b75cd161fc1934d868c83c01d3574380;
+      - _exercises_session=cG5GNnh1Z2xOU1MxSUdsSHFjNVZkcC9FSTJUYitlSWY0NHN5SXJna2lpSmJWd1RLR2JxQk94eE5ZY0U3MEZSVjJEQzl1bWNScHphWS9qM1gyb3lFaHc9PS0tOHNtZENablhFOUZmWlkrTnN0OXNOZz09--9722e359be2f62669e0f59c2029be9ec3f75c09a;
         path=/; HttpOnly
       X-Request-Id:
-      - 4ed64e43-0e49-49d5-ac27-d046eed8a7c7
+      - 0fdc7300-73f7-4660-943c-83dfdce6e343
       X-Runtime:
-      - '0.945009'
+      - '0.880999'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -10347,7 +10347,7 @@ http_interactions:
         bXVsdGlwbGUtY2hvaWNlIiwiZnJlZS1yZXNwb25zZSJdLCJjb21ib19jaG9p
         Y2VzIjpbXX1dfV19
     http_version: 
-  recorded_at: Tue, 05 May 2015 22:21:29 GMT
+  recorded_at: Wed, 06 May 2015 19:51:08 GMT
 - request:
     method: get
     uri: http://archive.cnx.org/contents/26906559-5f4c-4b41-8c23-3380fec28355@23
@@ -10385,9 +10385,9 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Tue, 05 May 2015 22:21:40 GMT
+      - Wed, 06 May 2015 19:51:17 GMT
       X-Varnish:
-      - 1242780340 1241369268
+      - 1243679742 1241369268
       Via:
       - 1.1 varnish
       Connection:
@@ -10395,7 +10395,7 @@ http_interactions:
       X-Cache:
       - HIT
       X-Varnish-Age:
-      - '143382'
+      - '220758'
       Age:
       - '0'
     body:
@@ -10968,7 +10968,7 @@ http_interactions:
         "publisher": {"surname": "Slavik", "suffix": "", "firstname": "Alina", "title":
         "", "fullname": "Alina Slavik", "id": "AlinaManager"}}]}'
     http_version: 
-  recorded_at: Tue, 05 May 2015 22:21:31 GMT
+  recorded_at: Wed, 06 May 2015 19:51:11 GMT
 - request:
     method: get
     uri: http://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-s04-lo01,k12phys-ch04-s04-lo02
@@ -10990,7 +10990,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Tue, 05 May 2015 22:22:21 GMT
+      - Wed, 06 May 2015 19:51:58 GMT
       Content-Type:
       - text/html
       Content-Length:
@@ -11005,7 +11005,7 @@ http_interactions:
         bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
         (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
     http_version: 
-  recorded_at: Tue, 05 May 2015 22:21:31 GMT
+  recorded_at: Wed, 06 May 2015 19:51:11 GMT
 - request:
     method: get
     uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-s04-lo01,k12phys-ch04-s04-lo02
@@ -11027,7 +11027,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Tue, 05 May 2015 22:22:22 GMT
+      - Wed, 06 May 2015 19:51:59 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -11047,12 +11047,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=TjV4NSszQ1A5blkrTjd2TkRZTVRGSzZsZWtBU2diQTAvMzF2cXZkNWhTNGdqaTh4Nkg3ODZSTkUwRUV3QjNKekN5RFZxbjBSNVAzUllQU0IrQzNPU2c9PS0tczhkK2dhaHoxaE5kZCtPTDlUc3FKdz09--6cd1489669720b8604f3ef984111ac989014341e;
+      - _exercises_session=em1rK2JqRndMcXZBaUh6d0pJTVpWenZBSndveVVmNXphaVk2cGhhOC9DVUxUMldIL0FuL3U5OEZYUW5PR0FQRDI1aXhEREJhVFlyUTY4ZjJxM2pKK3c9PS0teVUzdVFuVEh6QzRwTDRVbGY4RVVtUT09--3a78a006efed6f8912743e5e61d03eaa5e9209ed;
         path=/; HttpOnly
       X-Request-Id:
-      - 3844a6bd-ed8e-471f-bb9c-32da5fcacf22
+      - 0f8841ff-e7ba-4df4-a69c-68217d64637b
       X-Runtime:
-      - '0.874324'
+      - '0.876781'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -12224,5 +12224,5 @@ http_interactions:
         In1dLCJoaW50cyI6W10sImZvcm1hdHMiOlsibXVsdGlwbGUtY2hvaWNlIiwi
         ZnJlZS1yZXNwb25zZSJdLCJjb21ib19jaG9pY2VzIjpbXX1dfV19
     http_version: 
-  recorded_at: Tue, 05 May 2015 22:21:33 GMT
+  recorded_at: Wed, 06 May 2015 19:51:13 GMT
 recorded_with: VCR 2.9.3

@@ -22,10 +22,10 @@ module Api::V1
              writeable: false,
              schema_info: { required: true }
 
-    property :content_hash,
-             as: :content,
+    property :content,
              readable: true,
              writeable: false,
+             getter: ->(*) { ::JSON.parse(content) },
              schema_info: { required: true }
 
     collection :tags_with_teks,

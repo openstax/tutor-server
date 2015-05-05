@@ -2,7 +2,7 @@ class Exercise < Entity
 
   wraps Content::Models::Exercise
 
-  exposes :url, :title, :content, :content_hash, :tags_with_teks
+  exposes :url, :title, :content, :uid, :tags_with_teks
 
   def tags
     tag_models.collect{ |t| t.value }

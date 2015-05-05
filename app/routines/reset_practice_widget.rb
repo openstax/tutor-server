@@ -86,7 +86,7 @@ class ResetPracticeWidget
                                          match_count: 1].to_a.shuffle
         unless exercise = exercises.pop
           fatal_error(code: :no_exercises_found,
-                      message: "No exercises matched the given ID's")
+                      message: "No exercises matched the given tags: #{tags.inspect}")
         end
       end
 
