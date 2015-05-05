@@ -44,4 +44,8 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   def feedback_available?
     completed? && task.feedback_available?
   end
+
+  def group_name
+    group_type.gsub(/_group\z/, '').gsub('_', ' ')
+  end
 end

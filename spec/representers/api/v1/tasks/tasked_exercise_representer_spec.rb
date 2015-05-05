@@ -5,6 +5,7 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, :type => :representer 
     @task_step = instance_double(Tasks::Models::TaskStep)
     allow(@task_step).to receive(:id).and_return(15)
     allow(@task_step).to receive(:tasks_task_id).and_return(42)
+    allow(@task_step).to receive(:group_name).and_return('Some group')
     @task_step
   }
 
@@ -54,6 +55,10 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, :type => :representer 
 
     it "has the correct 'content'" do
       expect(representation).to include("content" => 'Some content')
+    end
+
+    it "has the correct 'group'" do
+      expect(representation).to include("group" => 'Some group')
     end
   end
 
