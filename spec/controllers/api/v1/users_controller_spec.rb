@@ -17,6 +17,8 @@ describe Api::V1::UsersController, :type => :controller, :api => true, :version 
       it "should return an ok (200) code" do
         api_get :show, user_1_token
         expect(response.code).to eq('200')
+        payload = JSON.parse(response.body)
+        expect(payload).to eq("name" => user_1.name)
       end
     end
     context "caller does not have an authorization token" do
