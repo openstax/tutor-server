@@ -5,10 +5,10 @@ module Api::V1::Tasks
     include Representable::Coercion
 
     property :url,
+             as: :content_url,
              type: String,
              writeable: false,
              readable: true,
-             as: :content_url,
              schema_info: {
                required: false,
                description: "The source URL for this Exercise"
@@ -41,6 +41,16 @@ module Api::V1::Tasks
              schema_info: {
                type: 'boolean',
                description: "Whether or not a recovery exercise is available"
+             }
+
+    property :group_name,
+             as: :group,
+             type: String,
+             writeable: false,
+             readable: true,
+             getter: lambda {|*| task_step.group_name },
+             schema_info: {
+                description: "Which exercise group the exercise belongs to (default,core,spaced practice,personalized)"
              }
 
     # The properties below assume an Exercise with only 1 Question

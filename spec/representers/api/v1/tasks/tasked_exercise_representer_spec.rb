@@ -1,92 +1,203 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, :type => :representer do
-
-  let(:exercise_content) { OpenStax::Exercises::V1.fake_client.new_exercise_hash }
-  let(:tasked_exercise) {
-    FactoryGirl.create(:tasks_tasked_exercise, content: exercise_content.to_json)
+  let!(:task_step) {
+    @task_step = instance_double(Tasks::Models::TaskStep)
+    allow(@task_step).to receive(:id).and_return(15)
+    allow(@task_step).to receive(:tasks_task_id).and_return(42)
+    allow(@task_step).to receive(:group_name).and_return('Some group')
+    allow(@task_step).to receive(:completed?).and_return(false)
+    allow(@task_step).to receive(:feedback_available?).and_return(false)
+    allow(@task_step).to receive(:related_content).and_return([])
+    @task_step
   }
-  let(:representation) { Api::V1::Tasks::TaskedExerciseRepresenter.new(tasked_exercise).as_json }
 
-  it "represents a tasked exercise" do
-    content = exercise_content.deep_stringify_keys
-    content['questions'].each do |q|
-      q['answers'].each do |a|
-        a.delete('correctness')
-        a.delete('feedback_html')
-      end
+  let!(:tasked_exercise) {
+    @tasked_exercise = instance_double(Tasks::Models::TaskedExercise)
+
+    ## Avoid rspec double class when figuring out :type
+    allow(@tasked_exercise).to receive(:class).and_return(Tasks::Models::TaskedExercise)
+
+    allow(@tasked_exercise).to receive(:task_step).and_return(@task_step)
+
+    ## TaskedExercise-specific properties
+    allow(@tasked_exercise).to receive(:url).and_return('Some url')
+    allow(@tasked_exercise).to receive(:title).and_return('Some title')
+    allow(@tasked_exercise).to receive(:content_hash_without_correctness).and_return('Some content')
+    allow(@tasked_exercise).to receive(:feedback).and_return('Some feedback')
+    allow(@tasked_exercise).to receive(:correct_answer_id).and_return('456')
+    allow(@tasked_exercise).to receive(:can_be_recovered?).and_return(false)
+    allow(@tasked_exercise).to receive(:is_correct?).and_return(false)
+    allow(@tasked_exercise).to receive(:free_response).and_return(nil)
+    allow(@tasked_exercise).to receive(:answer_id).and_return(nil)
+
+    @tasked_exercise
+  }
+
+  let(:representation) { ## NOTE: This is lazily-evaluated on purpose!
+    Api::V1::Tasks::TaskedExerciseRepresenter.new(tasked_exercise).as_json
+  }
+
+  shared_examples "a good exercise representation should" do
+    it "'type' == 'exercise'" do
+      expect(representation).to include("type" => "exercise")
     end
 
-    expect(representation).to include(
-      "id"           => tasked_exercise.task_step.id.to_s,
-      "task_id"      => tasked_exercise.task_step.task.id.to_s,
-      "type"         => "exercise",
-      "is_completed" => false,
-      "content_url"  => tasked_exercise.url,
-      "content" => content
-    )
-  end
-
-
-  context "when complete and" do
-
-    let!(:answer_id)         { tasked_exercise.answer_ids.first }
-    let!(:correct_answer_id) { tasked_exercise.correct_answer_id }
-
-    before do
-      tasked_exercise.free_response = 'Four score and seven years ago ...'
-      tasked_exercise.answer_id = answer_id
-      tasked_exercise.save!
-      tasked_exercise.task_step.complete
-      tasked_exercise.task_step.save!
+    it "correctly references the TaskStep and Task ids" do
+      expect(representation).to include(
+        "id"      => 15.to_s,
+        "task_id" => 42.to_s
+      )
     end
 
-    context "feedback is available for the task" do
-
-      before do
-        tasked_exercise.task_step.task.feedback_at = Time.now
-        tasked_exercise.task_step.task.save!
-      end
-
-      it "has additional fields" do
-        expect(representation).to include(
-          "id"                => tasked_exercise.task_step.id.to_s,
-          "task_id"           => tasked_exercise.task_step.task.id.to_s,
-          "type"              => "exercise",
-          "is_completed"      => true,
-          "content_url"       => tasked_exercise.url,
-          "correct_answer_id" => correct_answer_id.to_s,
-          "answer_id"         => answer_id.to_s,
-          "free_response"     => "Four score and seven years ago ...",
-          "has_recovery"      => false,
-          "is_correct"        => true
-        )
-      end
-
+    it "has the correct 'content_url'" do
+      expect(representation).to include("content_url" => 'Some url')
     end
 
-    context "feedback is not available for the task" do
+    it "has the correct 'title'" do
+      expect(representation).to include("title" => 'Some title')
+    end
 
-      it "has no additional fields" do
-        expect(representation).to include(
-          "id"                => tasked_exercise.task_step.id.to_s,
-          "task_id"           => tasked_exercise.task_step.task.id.to_s,
-          "type"              => "exercise",
-          "is_completed"      => true,
-          "content_url"       => tasked_exercise.url,
-          "answer_id"         => answer_id.to_s,
-          "free_response"     => "Four score and seven years ago ..."
-        )
+    it "has the correct 'content'" do
+      expect(representation).to include("content" => 'Some content')
+    end
 
-        expect(representation).not_to include(
-          "correct_answer_id" => correct_answer_id.to_s,
-          "has_recovery"      => false,
-          "is_correct"        => true
-        )
-      end
+    it "has the correct 'group'" do
+      expect(representation).to include("group" => 'Some group')
+    end
 
+    it "has 'related_content'" do
+      expect(representation).to include("related_content")
     end
 
   end
 
+  context "non-completed exercise" do
+
+    before(:each) do
+      allow(@tasked_exercise).to receive(:free_response).and_return(nil)
+      allow(@tasked_exercise).to receive(:answer_id).and_return(nil)
+
+      allow(@task_step).to receive(:completed?).and_return(false)
+      allow(@task_step).to receive(:feedback_available?).and_return(false)
+    end
+
+    it_behaves_like "a good exercise representation should"
+
+    it "'is_completed' == false" do
+      expect(representation).to include("is_completed" => false)
+    end
+
+    it "'has_recovery' is not included" do
+      expect(representation).to_not include("has_recovery")
+    end
+
+    it "'feedback_html' is not included" do
+      expect(representation).to_not include("feedback_html")
+    end
+
+    it "'correct_answer_id' is not included" do
+      expect(representation).to_not include("correct_answer_id")
+    end
+
+  end
+
+  context "completed exercise" do
+
+    before(:each) do
+      allow(@tasked_exercise).to receive(:free_response).and_return('Some response')
+      allow(@tasked_exercise).to receive(:answer_id).and_return('123')
+
+      allow(@task_step).to receive(:completed?).and_return(true)
+    end
+
+    it "'is_completed' == true" do
+      expect(representation).to include("is_completed" => true)
+    end
+
+    context "feedback available" do
+
+      before(:each) do
+        allow(@task_step).to receive(:feedback_available?).and_return(true)
+      end
+
+      it_behaves_like "a good exercise representation should"
+
+      it "has correct 'has_recovery'" do
+        expect(representation).to include("has_recovery" => false)
+      end
+
+      it "has correct 'feedback_html'" do
+        expect(representation).to include("feedback_html" => 'Some feedback')
+      end
+
+      it "has the correct 'is_correct'" do
+        expect(representation).to include("is_correct" => false)
+      end
+
+      it "has the correct 'correct_answer_id'" do
+        expect(representation).to include("correct_answer_id" => '456')
+      end
+
+    end
+
+    context "feedback unavailable" do
+
+      before(:each) do
+        allow(@task_step).to receive(:feedback_available?).and_return(false)
+      end
+
+      it_behaves_like "a good exercise representation should"
+
+      it "'has_recovery' is not included" do
+        expect(representation).to_not include("has_recovery")
+      end
+
+      it "'feedback_html' is not included" do
+        expect(representation).to_not include("feedback_html")
+      end
+
+      it "'is_correct' is not included" do
+        expect(representation).to_not include("is_correct")
+      end
+
+      it "'correct_answer_id' is not included" do
+        expect(representation).to_not include("correct_answer_id")
+      end
+
+    end
+
+  end
+
+  context "without related content" do
+
+    before(:each) do
+      allow(@task_step).to receive(:related_content).and_return([])
+    end
+
+    it_behaves_like "a good exercise representation should"
+
+    it "has the correct 'related_content'" do
+      expect(representation).to include("related_content" => [])
+    end
+
+  end
+
+  context "with related content" do
+
+    before(:each) do
+      allow(@task_step).to receive(:related_content).and_return([{title: "Some title", chapter_section: "4.2"}])
+    end
+
+    it_behaves_like "a good exercise representation should"
+
+    it "has the correct 'related_content'" do
+      expect(representation).to include(
+        "related_content" => a_collection_including(
+          a_hash_including({"title" => "Some title", "chapter_section" => "4.2"})
+        )
+      )
+    end
+
+  end
 end

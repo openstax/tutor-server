@@ -44,4 +44,17 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   def feedback_available?
     completed? && task.feedback_available?
   end
+
+  def group_name
+    group_type.gsub(/_group\z/, '').gsub('_', ' ')
+  end
+
+  def related_content
+    [
+      {
+        title: "Some Dummy Title",
+        chapter_section: "3.14"
+      }
+    ]
+  end
 end
