@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
+describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
 
   let!(:number_of_students) { 8 }
 

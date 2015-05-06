@@ -2,8 +2,8 @@ require 'rails_helper'
 require 'vcr_helper'
 require './lib/tasks/sprint/sprint_009/course_stats'
 
-RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
-                                           :version => :v1, :vcr => VCR_OPTS do
+RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
+                                           version: :v1, speed: :slow, vcr: VCR_OPTS do
 
   let!(:application)     { FactoryGirl.create :doorkeeper_application }
   let!(:user_1)          { FactoryGirl.create :user_profile }
@@ -165,9 +165,9 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
     end
 
     context 'user is a student' do
-      let(:taking) { CreateCourse.call.outputs.profile }
+      let!(:taking) { CreateCourse.call.outputs.profile }
 
-      before do
+      before(:each) do
         AddUserAsCourseStudent.call(course: taking.course, user: user_1.entity_user)
       end
 
@@ -182,9 +182,9 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
     end
 
     context 'user is both a teacher and student' do
-      let(:both) { CreateCourse.call.outputs.profile }
+      let!(:both) { CreateCourse.call.outputs.profile }
 
-      before do
+      before(:each) do
         AddUserAsCourseStudent.call(course: both.course, user: user_1.entity_user)
         AddUserAsCourseTeacher.call(course: both.course, user: user_1.entity_user)
       end

@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Content::ImportBook, :type => :routine, :vcr => VCR_OPTS do
+RSpec.describe Content::ImportBook, type: :routine, speed: :slow, vcr: VCR_OPTS do
 
   # Store version differences in this hash
   cnx_book_infos = {

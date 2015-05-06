@@ -1,7 +1,9 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Api::V1::TaskPlanWithStatsRepresenter, :type => :representer, :vcr => VCR_OPTS do
+RSpec.describe Api::V1::TaskPlanWithStatsRepresenter, type: :representer,
+                                                      speed: :medium,
+                                                      vcr: VCR_OPTS do
 
   let!(:number_of_students){ 2 }
 
