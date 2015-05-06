@@ -1,14 +1,14 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe OpenStax::Cnx::V1::Fragment::Video, :type => :external,
+RSpec.describe OpenStax::Cnx::V1::Fragments::Video, :type => :external,
                                                    :vcr => VCR_OPTS do
   context 'when video is a link' do
     let!(:cnx_page_id) { '61445f78-00e2-45ae-8e2c-461b17d9b4fd' }
     let!(:cnx_page) { OpenStax::Cnx::V1::Page.new(id: cnx_page_id) }
     let!(:video_fragments) {
       cnx_page.fragments.select do |f|
-        f.is_a? OpenStax::Cnx::V1::Fragment::Video
+        f.is_a? OpenStax::Cnx::V1::Fragments::Video
       end
     }
     let!(:expected_titles) { ['Newton’s first law of motion'] }
@@ -64,7 +64,7 @@ EOF
     let!(:cnx_page) { OpenStax::Cnx::V1::Page.new(id: cnx_page_id) }
     let!(:video_fragments) {
       cnx_page.fragments.select do |f|
-        f.is_a? OpenStax::Cnx::V1::Fragment::Video
+        f.is_a? OpenStax::Cnx::V1::Fragments::Video
       end
     }
     let!(:expected_titles) { ["A Note called Watch Physics with YouTube Embedded"] }

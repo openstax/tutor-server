@@ -2,8 +2,8 @@ class CreateContentBookParts < ActiveRecord::Migration
   def change
     create_table :content_book_parts do |t|
       t.resource allow_nil: true
+      t.references :entity_book, null: false
       t.references :parent_book_part
-      t.references :entity_book
       t.integer :number, null: false
       t.string :title, null: false
       t.string :chapter_section
@@ -16,10 +16,10 @@ class CreateContentBookParts < ActiveRecord::Migration
     end
 
     add_foreign_key :content_book_parts, :content_book_parts, column: :parent_book_part_id,
-                                                    on_update: :cascade,
-                                                    on_delete: :cascade
+                                                              on_update: :cascade,
+                                                              on_delete: :cascade
 
     add_foreign_key :content_book_parts, :entity_books, on_update: :cascade,
-                                                   on_delete: :cascade
+                                                        on_delete: :cascade
   end
 end

@@ -1,4 +1,4 @@
-class Content::Models::PageDataVisitor < Content::Models::BookVisitor
+class Content::Models::Visitors::PageData < Content::Models::Visitors::Book
 
   def initialize
     @page_data = []
@@ -21,6 +21,7 @@ class Content::Models::PageDataVisitor < Content::Models::BookVisitor
   end
 
   private
+
   def get_page_los(page)
     tags = get_page_tags(page)
     tags.select { |tag| tag[:type] == 'lo' }.collect { |tag| tag[:value] }

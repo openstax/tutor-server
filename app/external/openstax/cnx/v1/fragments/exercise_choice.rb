@@ -1,5 +1,5 @@
-module OpenStax::Cnx::V1::Fragment
-  class Exercise
+module OpenStax::Cnx::V1::Fragments
+  class ExerciseChoice
 
     # Used to get the title
     TITLE_CSS = '[data-type="title"]'
@@ -7,16 +7,13 @@ module OpenStax::Cnx::V1::Fragment
     # For fragments missing a proper title
     DEFAULT_TITLE = nil
 
-    # CSS to find the exercise embed code attribute
-    EMBED_CODE_CSS = 'a[href^="#ost/api/ex/"]'
+    # Split the exercise fragments on this class
+    EXERCISE_CSS = '.os-exercise'
 
-    # Regex to extract the appropriate tag from the embed code
-    EMBED_TAG_REGEX = /\A#ost\/api\/ex\/([\w-]+)\z/
-
-    def initialize(node:, title: nil, short_code: nil)
+    def initialize(node:, title: nil, exercise_fragments: nil)
       @node       = node
       @title      = title
-      @short_code = short_code
+      @exercise_fragments  = exercise_fragments
     end
 
     attr_reader :node
@@ -26,17 +23,18 @@ module OpenStax::Cnx::V1::Fragment
                  DEFAULT_TITLE
     end
 
-    def embed_code
-      @embed_code ||= node.at_css(EMBED_CODE_CSS).try(:[], 'href')
-    end
-
-    def embed_tag
-      @short_code ||= EMBED_TAG_REGEX.match(embed_code).try(:[], 1)
+    def exercise_fragments
+      @exercise_fragments ||= node.css(EXERCISE_CSS).collect do |ex_node|
+        Exercise.new(node: ex_node)
+      end
     end
 
     def visit(visitor:, depth: 0)
       visitor.pre_order_visit(elem: self, depth: depth)
       visitor.in_order_visit(elem: self, depth: depth)
+      exercise_fragments.each do |exercise_fragment|
+        exercise_fragment.visit(visitor: visitor, depth: depth+1)
+      end
       visitor.post_order_visit(elem: self, depth: depth)
     end
 

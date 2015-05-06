@@ -1,6 +1,6 @@
 ## This class exists only to aid debugging.
-class OpenStax::Cnx::V1::BookToStringVisitor
-  include OpenStax::Cnx::V1::BookVisitor
+class OpenStax::Cnx::V1::Visitors::Book::ToString
+  include OpenStax::Cnx::V1::Visitors::Book
 
   def initialize(initial_indent: 0, indent_increment: 2, field_indent: 5)
     @string = ''

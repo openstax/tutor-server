@@ -208,22 +208,22 @@ module OpenStax::Cnx::V1
           recursive_compact(exercise, split) unless exercise.nil?
 
           if split.matches?(VIDEO_CSS)
-            splitting_fragments << Fragment::Video.new(node: split)
+            splitting_fragments << Fragments::Video.new(node: split)
           elsif split.matches?(INTERACTIVE_CSS)
-            splitting_fragments << Fragment::Interactive.new(node: split)
+            splitting_fragments << Fragments::Interactive.new(node: split)
           else
-            splitting_fragments << Fragment::Text.new(node: split)
+            splitting_fragments << Fragments::Text.new(node: split)
           end
-          splitting_fragments << Fragment::Exercise.new(node: exercise) unless exercise.nil?
+          splitting_fragments << Fragments::Exercise.new(node: exercise) unless exercise.nil?
         elsif split.matches?(FEATURE_CSS)
           # Text Feature
-          splitting_fragments << Fragment::Text.new(node: split)
+          splitting_fragments << Fragments::Text.new(node: split)
         elsif split.matches?(EXERCISE_CHOICE_CSS)
           # Exercise choice
-          splitting_fragments << Fragment::ExerciseChoice.new(node: split)
+          splitting_fragments << Fragments::ExerciseChoice.new(node: split)
         elsif split.matches?(EXERCISE_CSS)
           # Exercise
-          splitting_fragments << Fragment::Exercise.new(node: split)
+          splitting_fragments << Fragments::Exercise.new(node: split)
         end
 
         # Copy the reading content and find the split in the copy
@@ -241,7 +241,7 @@ module OpenStax::Cnx::V1
 
         # Create text fragment before current split
         unless current_text.content.blank?
-          @fragments << Fragment::Text.new(node: current_text)
+          @fragments << Fragments::Text.new(node: current_text)
         end
 
         # Add contents from splitting fragments
@@ -253,7 +253,7 @@ module OpenStax::Cnx::V1
 
       # Create text fragment after all splits
       unless current_text.content.blank?
-        @fragments << Fragment::Text.new(node: current_text)
+        @fragments << Fragments::Text.new(node: current_text)
       end
 
       @fragments

@@ -1,4 +1,4 @@
-class Content::Models::BookVisitor
+class Content::Models::Visitors::Book
 
   def book_part_includes
     []

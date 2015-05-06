@@ -1,4 +1,4 @@
-module OpenStax::Cnx::V1::Fragment
+module OpenStax::Cnx::V1::Fragments
   class Text
 
     # Used to get the title

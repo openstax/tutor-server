@@ -1,4 +1,4 @@
-class Content::Models::ExerciseVisitor < Content::Models::BookVisitor
+class Content::Models::Visitors::Exercise < Content::Models::Visitors::Book
 
   def initialize
     @exercises = {}

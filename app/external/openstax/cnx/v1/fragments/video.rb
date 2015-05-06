@@ -1,4 +1,4 @@
-module OpenStax::Cnx::V1::Fragment
+module OpenStax::Cnx::V1::Fragments
   class Video
 
     # Used to get the title

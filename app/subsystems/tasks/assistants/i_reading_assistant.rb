@@ -21,7 +21,7 @@ class Tasks::Assistants::IReadingAssistant
   def self.distribute_tasks(task_plan:, taskees:)
     ## NOTE: This implementation isn't particularly robust: failure to distribute to any taskee will
     ##       result in failure to distribute to EVERY taskee (because the entire transaction will be
-    ##       rolled back).  Eventually, we will probably want to create an "undistributed" task and
+    ##       rolled back). Eventually, we will probably want to create an "undistributed" task and
     ##       have per-taskee workers (with per-taskee transactions) build and distribute the tasks.
 
     cnx_pages = collect_cnx_pages(task_plan: task_plan)
@@ -96,13 +96,13 @@ class Tasks::Assistants::IReadingAssistant
         step = Tasks::Models::TaskStep.new(task: task)
 
         case fragment
-        when OpenStax::Cnx::V1::Fragment::ExerciseChoice
+        when OpenStax::Cnx::V1::Fragments::ExerciseChoice
           tasked_exercise_choice(exercise_choice_fragment: fragment, step: step, title: title)
-        when OpenStax::Cnx::V1::Fragment::Exercise
+        when OpenStax::Cnx::V1::Fragments::Exercise
           tasked_exercise(exercise_fragment: fragment, step: step, title: title)
-        when OpenStax::Cnx::V1::Fragment::Video
+        when OpenStax::Cnx::V1::Fragments::Video
           tasked_video(video_fragment: fragment, step: step, title: title)
-        when OpenStax::Cnx::V1::Fragment::Interactive
+        when OpenStax::Cnx::V1::Fragments::Interactive
           tasked_interactive(interactive_fragment: fragment, step: step, title: title)
         else
           tasked_reading(reading_fragment: fragment, page: page, title: title, step: step)
