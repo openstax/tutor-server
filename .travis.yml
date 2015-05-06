@@ -1,4 +1,4 @@
-# Copyright 2011-2013 Rice University. Licensed under the Affero General Public 
+# Copyright 2011-2015 Rice University. Licensed under the Affero General Public 
 # License version 3 or later.  See the COPYRIGHT file for details.
 
 # language: ruby
@@ -20,17 +20,18 @@ cache: bundler
 bundler_args: --without production --retry=6
 addons:
  postgresql: "9.3"
+env:
+  - "TEST_GROUP=1,2"
 script:
-  - RAILS_ENV=test bundle exec rake --trace db:migrate spec
+  - bundle exec parallel_rspec spec/ -n 2 --only-group $TEST_GROUP
 branches:
   only:
     - master
 before_script:
-  - gem install pg
-  - psql -c 'create database travis_ci_test;' -U postgres
   - export OXT_DB_USER=postgres
   - export OXT_DB_PASS=
   - export OXT_TEST_DB=travis_ci_test
+  - bundle exec rake parallel:create[2] parallel:load_schema[2] parallel:seed[2]
 before_install:
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
