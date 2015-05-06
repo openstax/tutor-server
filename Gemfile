@@ -182,6 +182,7 @@ group :test do
   gem 'shoulda-matchers', require: false
   gem 'capybara-webkit'
   gem 'launchy'
+  gem 'database_cleaner'
 end
 
 group :production do

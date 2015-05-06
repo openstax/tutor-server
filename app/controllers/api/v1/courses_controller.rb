@@ -111,7 +111,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
   api :GET, '/courses/:id/stats(/role/:role_id)', 'Returns course stats for Learning Guide'
   description <<-EOS
-    #{json_schema(Api::V1::Courses::CourseStatsRepresenter, include: :readable)}
+    #{json_schema(Api::V1::CourseStatsRepresenter, include: :readable)}
   EOS
   def stats
     course = Entity::Course.find(params[:id])

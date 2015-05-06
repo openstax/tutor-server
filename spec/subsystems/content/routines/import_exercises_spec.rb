@@ -67,12 +67,12 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
       end
 
       exercises = Content::Models::Exercise.all.to_a
-      expect(exercises[-3].exercise_tags.collect{|et| et.tag.value})
-        .to eq ['k12phys-ch04-s01-lo01']
-      expect(exercises[-2].exercise_tags.collect{|et| et.tag.value})
-        .to eq ['k12phys-ch04-s01-lo02']
-      expect(exercises[-1].exercise_tags.collect{|et| et.tag.value})
-        .to eq ['k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02']
+      assigned_tags = Set.new [exercises[-3], exercises[-2], exercises[-1]].collect do |exercise|
+        Set.new exercise.exercise_tags.collect{ |et| et.tag.value }
+      end
+      expect(assigned_tags).to include(Set.new ['k12phys-ch04-s01-lo01'])
+      expect(assigned_tags).to include(Set.new ['k12phys-ch04-s01-lo02'])
+      expect(assigned_tags).to include(Set.new ['k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02'])
     end
   end
 
