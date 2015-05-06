@@ -516,7 +516,7 @@ DEPENDENCIES
   newrelic_rpm
   nifty-generators
   openstax_accounts (~> 5.1.2)
-  openstax_api (~> 5.3.0)
+  openstax_api (~> 5.4.1)
   openstax_exchange
   openstax_utilities (~> 4.2.0)
   parallel_tests
