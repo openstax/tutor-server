@@ -5,7 +5,7 @@ RSpec.describe Api::V1::Tasks::TaskedVideoRepresenter, :type => :representer do
     task_step = FactoryGirl.create(:tasks_tasked_video).task_step
     json = Api::V1::Tasks::TaskedVideoRepresenter.new(task_step.tasked).to_json
 
-    expect(JSON.parse(json)).to eq({
+    expect(JSON.parse(json)).to include({
       id: task_step.id.to_s,
       task_id: task_step.tasks_task_id.to_s,
       type: 'video',
@@ -13,6 +13,7 @@ RSpec.describe Api::V1::Tasks::TaskedVideoRepresenter, :type => :representer do
       is_completed: false,
       content_url: task_step.tasked.url,
       content_html: task_step.tasked.content,
+      related_content: a_kind_of(Array)
     }.stringify_keys)
   end
 end

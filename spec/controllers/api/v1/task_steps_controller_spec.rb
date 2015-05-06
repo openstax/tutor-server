@@ -68,7 +68,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
       api_get :show, user_1_token, parameters: { task_id: task_step.task.id, id: task_step.id }
       expect(response).to have_http_status(:success)
 
-      expect(response.body_as_hash).to eq({
+      expect(response.body_as_hash).to include({
         id: task_step.id.to_s,
         task_id: task_step.tasks_task_id.to_s,
         type: 'reading',
@@ -76,7 +76,8 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
         chapter_section: task_step.tasked.chapter_section,
         is_completed: false,
         content_url: 'http://u.rl',
-        content_html: 'content'
+        content_html: 'content',
+        related_content: a_kind_of(Array)
       })
     end
   end
