@@ -2,8 +2,7 @@ class Content::Routines::TagResource
 
   lev_routine
 
-  uses_routine Content::Routines::FindOrCreateTag,
-               as: :find_or_create_tag
+  uses_routine Content::Routines::FindOrCreateTag, as: :find_or_create_tag
 
   protected
 

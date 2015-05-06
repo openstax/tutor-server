@@ -14,6 +14,10 @@ class Content::Routines::ImportExercises
     outputs[:exercises] = []
     OpenStax::Exercises::V1.exercises(query_hash)['items'].each do |wrapper|
       exercise = Content::Models::Exercise.find_or_initialize_by(url: wrapper.url)
+      uid = wrapper.uid
+      number_version = uid.split('@')
+      exercise.number = number_version.first
+      exercise.version = number_version.last
       exercise.title = wrapper.title
       exercise.content = wrapper.content
       exercise.save
