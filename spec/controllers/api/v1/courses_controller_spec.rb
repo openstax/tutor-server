@@ -645,7 +645,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
         assistant: r_assistant,
         opens_at: Time.now,
         due_at: Time.now + 1.week,
-        settings: { page_ids: page_ids.first(2) }
+        settings: { page_ids: page_ids.first(2).collect(&:to_s) }
       )
       tp.tasking_plans << Tasks::Models::TaskingPlan.create!(target: course, task_plan: tp)
       DistributeTasks[tp]
@@ -659,7 +659,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
         assistant: hw_assistant,
         opens_at: Time.now,
         due_at: Time.now + 1.day,
-        settings: { exercise_ids: Content::Models::Exercise.first(5).collect(&:id),
+        settings: { exercise_ids: Content::Models::Exercise.first(5).collect{|ex| ex.id.to_s},
                     exercises_count_dynamic: 2 }
       )
       tp.tasking_plans << Tasks::Models::TaskingPlan.create!(target: course, task_plan: tp)
@@ -674,7 +674,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
         assistant: hw_assistant,
         opens_at: Time.now,
         due_at: Time.now + 2.week,
-        settings: { exercise_ids: Content::Models::Exercise.last(2).collect(&:id),
+        settings: { exercise_ids: Content::Models::Exercise.last(2).collect{|ex| ex.id.to_s},
                     exercises_count_dynamic: 2 }
       )
       tp.tasking_plans << Tasks::Models::TaskingPlan.create!(target: course, task_plan: tp)
