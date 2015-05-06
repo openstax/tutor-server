@@ -17,15 +17,13 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
   end
 
   def handle_task_step_completion!
+    # TODO: Do this somewhere else, it does not belong here
+
     # Currently assuming only one question per tasked_exercise, see also correct_answer_id
     question = questions.first
-    # "trial" is set to only "0" for now.  When multiple
+    # "trial" is set to only "1" for now. When multiple
     # attempts are supported, it will be incremented to indicate the attempt #
-
-    ## Blatant hack below (the identifier *should* be set to
-    ## the exchange identifier in the current user's profile,
-    ## but the role id is a close temporary proxy):
-    OpenStax::Exchange.record_multiple_choice_answer(identifier, url, trial, answer_id)
+    OpenStax::Exchange.record_multiple_choice_answer(identifiers.first, url, trial, answer_id)
   end
 
   def has_correctness?
@@ -91,10 +89,12 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
 
   protected
 
-  def identifier
-    # TODO this code (and the blatant hack above) have got to go! Had to add the
-    # tries and the secure random to a basic unit test to work.
-    task_step.task.taskings.try(:first).try(:role).try(:id).try(:to_s) || SecureRandom.hex
+  def identifiers
+    # No group work
+    roles = task_step.task.taskings.collect{ |t| t.role }
+    users = Role::GetUsersForRoles[roles]
+    UserProfile::Models::Profile.where(entity_user: users)
+                                .collect{ |p| p.exchange_write_identifier }
   end
 
   def trial
@@ -109,8 +109,7 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
               answer_id.blank? || \
               !formats.include?('free-response')
 
-    errors.add(:free_response,
-               'must not be blank before entering a multiple choice answer')
+    errors.add(:free_response, 'must not be blank before entering a multiple choice answer')
     false
   end
 

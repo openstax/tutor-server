@@ -1,6 +1,7 @@
 FactoryGirl.define do
   factory :user_profile, aliases: [:profile], class: 'UserProfile::Models::Profile' do
-    exchange_identifier { SecureRandom.hex.to_s }
+    exchange_read_identifier  { SecureRandom.hex.to_s }
+    exchange_write_identifier { SecureRandom.hex.to_s }
 
     transient do
       username { SecureRandom.hex.to_s }

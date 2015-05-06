@@ -80,8 +80,7 @@ class GetCourseStats
     pages = Content::Routines::SearchPages[tag: tags, match_count: 1]
 
     pages.uniq.collect do |page|
-      filtered_task_steps = filter_task_steps_by_page(task_steps: task_steps,
-                                                      page: page)
+      filtered_task_steps = filter_task_steps_by_page(task_steps: task_steps, page: page)
 
       practices = completed_practices(
         task_steps: filtered_task_steps,
@@ -115,7 +114,7 @@ class GetCourseStats
 
   def get_current_level(task_steps:)
     lo_tags = get_lo_tags(task_steps: task_steps)
-    OpenStax::BigLearn::V1.get_clue(learner_ids: role.id, tags: lo_tags)
+    OpenStax::BigLearn::V1.get_clue(roles: role, tags: lo_tags)
   end
 
   def find_book_part(id)

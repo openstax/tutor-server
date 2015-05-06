@@ -22,7 +22,7 @@ module MapUsersAccounts
     def create_profile
       create_profile = UserProfile::CreateProfile.call(
         account_id: @account.id,
-        exchange_identifier: identifier
+        exchange_identifiers: identifiers
       )
 
       if error = create_profile.errors.first
@@ -32,8 +32,8 @@ module MapUsersAccounts
       end
     end
 
-    def identifier
-      OpenStax::Exchange.create_identifier
+    def identifiers
+      OpenStax::Exchange.create_identifiers
     end
   end
 

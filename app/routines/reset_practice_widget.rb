@@ -98,7 +98,7 @@ class ResetPracticeWidget
     condition = condition_tags(tags)
 
     exercise_uids = OpenStax::BigLearn::V1.get_projection_exercises(
-      user: role , tag_search: condition, count: 5,
+      role: role , tag_search: condition, count: 5,
       difficulty: 0.5, allow_repetitions: true
     )
 

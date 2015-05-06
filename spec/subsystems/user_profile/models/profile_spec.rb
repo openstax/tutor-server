@@ -7,7 +7,8 @@ RSpec.describe UserProfile::Models::Profile, :type => :model do
   it { is_expected.to have_one(:administrator).dependent(:destroy) }
 
   it { is_expected.to validate_presence_of(:account) }
-  it { is_expected.to validate_presence_of(:exchange_identifier) }
+  it { is_expected.to validate_presence_of(:exchange_read_identifier) }
+  it { is_expected.to validate_presence_of(:exchange_write_identifier) }
 
   it 'must enforce that one account is only used by one user' do
     user1 = FactoryGirl.create(:user_profile)

@@ -12,10 +12,16 @@ class OpenStax::BigLearn::V1::RealClient
     handle_result(result)
   end
 
-  def get_projection_exercises(user:, tag_search:, count:,
+  def get_exchange_read_identifiers_for_roles(roles:)
+    users = Role::GetUsersForRoles[roles]
+    UserProfile::Models::Profile.where(entity_user: users)
+                                .collect{ |p| p.exchange_read_identifier }
+  end
+
+  def get_projection_exercises(role:, tag_search:, count:,
                                difficulty:, allow_repetitions:)
     query = {
-      learner_id: 123,
+      learner_id: get_exchange_read_identifiers_for_roles(roles: role).first,
       number_of_questions: count,
       tag_query: stringify_tag_search(tag_search),
       allow_repetition: allow_repetitions ? 'true' : 'false'
@@ -41,14 +47,14 @@ class OpenStax::BigLearn::V1::RealClient
     end
   end
 
-  def get_clue(learner_ids:, tags:)
+  def get_clue(roles:, tags:)
     raise "Some tags must be specified when getting a CLUE" if tags.empty?
-    raise "At least one learner ID must be specified when getting a CLUE" if learner_ids.empty?
+    raise "At least one role must be specified when getting a CLUE" if roles.empty?
 
     tag_search = stringify_tag_search(:_or => tags)
 
     query = {
-      learners: learner_ids.collect{|id| id.to_s}.first,
+      learners: get_exchange_read_identifiers_for_roles(roles: role),
       aggregations: tag_search,
     }
 

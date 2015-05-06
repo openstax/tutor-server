@@ -50,9 +50,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   EOS
   def exercises
     course = Entity::Course.find(params[:id])
-    OSU::AccessPolicy.require_action_allowed!(:exercises,
-                                              current_api_user,
-                                              course)
+    OSU::AccessPolicy.require_action_allowed!(:exercises, current_api_user, course)
 
     los = Content::GetLos[params]
     outputs = SearchLocalExercises.call(tag: los, match_count: 1).outputs
@@ -80,8 +78,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     # No authorization is necessary because if the user isn't authorized, they'll just get
     # back an empty list of tasks
     course = Entity::Course.find(params[:id])
-    tasks = GetCourseUserTasks[course: course,
-                               user: current_human_user.entity_user]
+    tasks = GetCourseUserTasks[course: course, user: current_human_user.entity_user]
     output = Hashie::Mash.new('items' => tasks.collect{|t| t.task})
     respond_with output, represent_with: Api::V1::TaskSearchRepresenter
   end
@@ -142,8 +139,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
       role: get_practice_role, condition: :local,
       page_ids: practice.page_ids, book_part_ids: practice.book_part_ids
     ]
-    respond_with entity_task.task, represent_with: Api::V1::TaskRepresenter,
-                                   location: nil
+    respond_with entity_task.task, represent_with: Api::V1::TaskRepresenter, location: nil
   end
 
   api :GET, '/courses/:course_id/practice(/role/:role_id)',

@@ -24,11 +24,9 @@ class CreateStudents < ActiveRecord::Migration
 
 
 
-    add_foreign_key :students, :courses, on_update: :cascade,
-                                         on_delete: :cascade
-    add_foreign_key :students, :sections, on_update: :cascade,
-                                          on_delete: :cascade
-    add_foreign_key :students, :users, on_update: :cascade,
-                                       on_delete: :cascade
+    add_foreign_key :students, :courses, on_update: :cascade, on_delete: :cascade
+    add_foreign_key :students, :sections, on_update: :cascade, on_delete: :cascade
+    add_foreign_key :students, :user_profile_profiles, column: :user_id, on_update: :cascade,
+                                                                         on_delete: :cascade
   end
 end
