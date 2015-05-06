@@ -9,6 +9,7 @@ require 'fake_store'
 require 'verify_and_get_id_array'
 require 'entity'
 require 'representable/coercion'
+require 'chapter_section_formatter'
 
 SITE_NAME = "OpenStax Tutor"
 COPYRIGHT_HOLDER = "Rice University"

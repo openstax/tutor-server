@@ -28,6 +28,7 @@ module Api::V1
     property :chapter_section,
              type: String,
              readable: true,
+             getter: chapter_section_formatter,
              writeable: false,
              schema_info: {
                required: false,

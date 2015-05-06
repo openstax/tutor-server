@@ -28,7 +28,7 @@ RSpec.describe Api::V1::ExerciseRepresenter, type: :representer do
         'id' => 'ost-tag-lo-k12phys-ch04-s02-lo01',
         'type' => 'lo',
         'name' => 'Describe Newton\'s first law and friction',
-        'chapter_section' => '4.2',
+        'chapter_section' => [4,2],
       }, {
         'id' => 'ost-tag-teks-112-39-c-4d',
         'type' => 'generic',

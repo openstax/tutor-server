@@ -26,6 +26,7 @@ module Api::V1::Tasks
              type: String,
              writeable: false,
              readable: true,
+             getter: chapter_section_formatter,
              schema_info: {
                required: true,
                description: 'The chapter and section in the book, e.g. "5.2"'

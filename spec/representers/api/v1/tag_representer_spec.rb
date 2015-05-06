@@ -26,7 +26,7 @@ RSpec.describe Api::V1::TagRepresenter, type: :representer do
       'id' => 'k12phys-ch04-s02-lo02',
       'name' => 'Discuss the relationship between mass and inertia',
       'type' => 'lo',
-      'chapter_section' => '4.2'
+      'chapter_section' => [4,2]
     )
   end
 
