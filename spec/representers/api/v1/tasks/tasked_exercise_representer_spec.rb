@@ -6,6 +6,9 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, :type => :representer 
     allow(@task_step).to receive(:id).and_return(15)
     allow(@task_step).to receive(:tasks_task_id).and_return(42)
     allow(@task_step).to receive(:group_name).and_return('Some group')
+    allow(@task_step).to receive(:completed?).and_return(false)
+    allow(@task_step).to receive(:feedback_available?).and_return(false)
+    allow(@task_step).to receive(:related_content).and_return([])
     @task_step
   }
 
@@ -25,11 +28,13 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, :type => :representer 
     allow(@tasked_exercise).to receive(:correct_answer_id).and_return('456')
     allow(@tasked_exercise).to receive(:can_be_recovered?).and_return(false)
     allow(@tasked_exercise).to receive(:is_correct?).and_return(false)
+    allow(@tasked_exercise).to receive(:free_response).and_return(nil)
+    allow(@tasked_exercise).to receive(:answer_id).and_return(nil)
 
     @tasked_exercise
   }
 
-  let(:representation) {
+  let(:representation) { ## NOTE: This is lazily-evaluated on purpose!
     Api::V1::Tasks::TaskedExerciseRepresenter.new(tasked_exercise).as_json
   }
 
@@ -60,8 +65,12 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, :type => :representer 
     it "has the correct 'group'" do
       expect(representation).to include("group" => 'Some group')
     end
-  end
 
+    it "has 'related_content'" do
+      expect(representation).to include("related_content")
+    end
+
+  end
 
   context "non-completed exercise" do
 
@@ -104,6 +113,10 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, :type => :representer 
       allow(@task_step).to receive(:completed?).and_return(true)
     end
 
+    it "'is_completed' == true" do
+      expect(representation).to include("is_completed" => true)
+    end
+
     context "feedback available" do
 
       before(:each) do
@@ -111,10 +124,6 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, :type => :representer 
       end
 
       it_behaves_like "a good exercise representation should"
-
-      it "'is_completed' == true" do
-        expect(representation).to include("is_completed" => true)
-      end
 
       it "has correct 'has_recovery'" do
         expect(representation).to include("has_recovery" => false)
@@ -142,10 +151,6 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, :type => :representer 
 
       it_behaves_like "a good exercise representation should"
 
-      it "'is_completed' == true" do
-        expect(representation).to include("is_completed" => true)
-      end
-
       it "'has_recovery' is not included" do
         expect(representation).to_not include("has_recovery")
       end
@@ -163,6 +168,38 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, :type => :representer 
       end
 
     end
+
   end
 
+  context "without related content" do
+
+    before(:each) do
+      allow(@task_step).to receive(:related_content).and_return([])
+    end
+
+    it_behaves_like "a good exercise representation should"
+
+    it "has the correct 'related_content'" do
+      expect(representation).to include("related_content" => [])
+    end
+
+  end
+
+  context "with related content" do
+
+    before(:each) do
+      allow(@task_step).to receive(:related_content).and_return([{title: "Some title", chapter_section: "4.2"}])
+    end
+
+    it_behaves_like "a good exercise representation should"
+
+    it "has the correct 'related_content'" do
+      expect(representation).to include(
+        "related_content" => a_collection_including(
+          a_hash_including({"title" => "Some title", "chapter_section" => "4.2"})
+        )
+      )
+    end
+
+  end
 end

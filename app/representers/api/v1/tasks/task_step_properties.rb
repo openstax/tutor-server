@@ -52,5 +52,15 @@ module Api::V1::Tasks
                description: "Whether or not this step is complete"
              }
 
+    collection :related_content,
+               writeable: false,
+               readable: true,
+               # decorator: TaskStepRepresenter,
+               getter: lambda {|*| task_step.related_content },
+               schema_info: {
+                 required: true,
+                 description: "Misc information related to this exercise"
+               }
+
   end
 end
