@@ -148,8 +148,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     task = GetPracticeWidget[role: get_practice_role]
 
     task.nil? ?
-      head(:not_found) :
-      respond_with(task.task, represent_with: Api::V1::TaskRepresenter)
+      head(:not_found) : respond_with(task.task, represent_with: Api::V1::TaskRepresenter)
   end
 
   api :GET, '/courses/:course_id/performance(/role/:role_id)', 'Returns performance book for the user'
