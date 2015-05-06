@@ -99,5 +99,16 @@ module Api::V1::Tasks
                description: "Whether or not the answer given by the student is correct"
              }
 
+    ## TODO: Move this to TaskStepProperties
+    collection :related_content,
+               writeable: false,
+               readable: true,
+               # decorator: TaskStepRepresenter,
+               getter: lambda {|*| task_step.related_content },
+               schema_info: {
+                 required: true,
+                 description: "Misc information related to this exercise"
+               }
+
   end
 end
