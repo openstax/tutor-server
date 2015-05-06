@@ -4,8 +4,10 @@ require 'coveralls'
 SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
   SimpleCov::Formatter::HTMLFormatter,
   Coveralls::SimpleCov::Formatter
-]
+] if ParallelTests.first_process?
 SimpleCov.start 'rails'
+
+at_exit { ParallelTests.wait_for_other_processes_to_finish if ParallelTests.first_process? }
 
 require 'awesome_print'
 require 'database_cleaner'
