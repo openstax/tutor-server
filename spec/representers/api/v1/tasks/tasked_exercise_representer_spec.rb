@@ -23,7 +23,7 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, :type => :representer 
     ## TaskedExercise-specific properties
     allow(@tasked_exercise).to receive(:url).and_return('Some url')
     allow(@tasked_exercise).to receive(:title).and_return('Some title')
-    allow(@tasked_exercise).to receive(:content_without_correctness).and_return('Some content')
+    allow(@tasked_exercise).to receive(:content_hash_without_correctness).and_return('Some content')
     allow(@tasked_exercise).to receive(:feedback).and_return('Some feedback')
     allow(@tasked_exercise).to receive(:correct_answer_id).and_return('456')
     allow(@tasked_exercise).to receive(:can_be_recovered?).and_return(false)
@@ -45,8 +45,8 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, :type => :representer 
 
     it "correctly references the TaskStep and Task ids" do
       expect(representation).to include(
-        "id"           => 15,
-        "task_id"      => 42
+        "id"      => 15.to_s,
+        "task_id" => 42.to_s
       )
     end
 
@@ -90,7 +90,6 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, :type => :representer 
 
     it "'has_recovery' is not included" do
       expect(representation).to_not include("has_recovery")
-          "task_id"           => tasked_exercise.task_step.task.id.to_s,
     end
 
     it "'feedback_html' is not included" do
@@ -102,7 +101,6 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, :type => :representer 
     end
 
   end
-          "task_id"           => tasked_exercise.task_step.task.id.to_s,
 
   context "completed exercise" do
 
