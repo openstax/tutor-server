@@ -18,7 +18,7 @@ class WebviewController < ApplicationController
   protected
 
   def resolve_layout
-    'home' == action_name ? 'application' : 'webview'
+    'home' == action_name ? false : 'webview'
   end
 
 end
