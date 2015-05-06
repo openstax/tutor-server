@@ -27,7 +27,7 @@ describe Api::V1::TasksController, :type => :controller, :api => true, :version 
     it "should work on the happy path" do
       api_get :show, user_1_token, parameters: {id: task_1.id}
       expect(response.code).to eq '200'
-      expect(response.body_as_hash).to include(id: task_1.id)
+      expect(response.body_as_hash).to include(id: task_1.id.to_s)
       expect(response.body_as_hash).to include(title: 'A Task Title')
       expect(response.body_as_hash).to have_key(:steps)
       expect(response.body_as_hash[:steps][0]).to include(type: 'reading')

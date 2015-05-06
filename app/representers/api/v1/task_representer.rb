@@ -2,32 +2,26 @@ module Api::V1
   class TaskRepresenter < Roar::Decorator
 
     include Roar::JSON
+    include Representable::Coercion
 
     property :id,
-             type: Integer,
+             type: String,
              writeable: false,
              readable: true,
-             schema_info: {
-               required: true
-             }
+             schema_info: { required: true }
 
     property :task_type,
              as: :type,
              type: String,
              writeable: false,
              readable: true,
-             schema_info: {
-               required: true,
-               description: "The type of this Task"
-             }
+             schema_info: { required: true, description: "The type of this Task" }
 
     property :title,
              type: String,
              writeable: false,
              readable: true,
-             schema_info: {
-               required: true
-             }
+             schema_info: { required: true }
 
     property :description,
              type: String,
@@ -46,9 +40,7 @@ module Api::V1
              type: DateTime,
              writeable: false,
              readable: true,
-             schema_info: {
-               description: "When the task is due (nil means never due)"
-             }
+             schema_info: { description: "When the task is due (nil means never due)" }
 
     property :is_shared?,
              as: :is_shared,

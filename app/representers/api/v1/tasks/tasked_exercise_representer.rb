@@ -2,6 +2,7 @@ module Api::V1::Tasks
   class TaskedExerciseRepresenter < Roar::Decorator
 
     include TaskStepProperties
+    include Representable::Coercion
 
     property :url,
              type: String,
@@ -22,7 +23,7 @@ module Api::V1::Tasks
                description: "The title of this Exercise"
              }
 
-    property :content_without_correctness,
+    property :content_hash_without_correctness,
              as: :content,
              type: String,
              writeable: false,
@@ -34,11 +35,11 @@ module Api::V1::Tasks
 
     property :can_be_recovered?,
              as: :has_recovery,
-             type: 'boolean',
              writeable: false,
              readable: true,
              if: -> (*) { task_step.feedback_available? },
              schema_info: {
+               type: 'boolean',
                description: "Whether or not a recovery exercise is available"
              }
 
@@ -80,11 +81,11 @@ module Api::V1::Tasks
 
     property :is_correct?,
              as: :is_correct,
-             type: 'boolean',
              writeable: false,
              readable: true,
              if: -> (*) { task_step.feedback_available? },
              schema_info: {
+               type: 'boolean',
                description: "Whether or not the answer given by the student is correct"
              }
 

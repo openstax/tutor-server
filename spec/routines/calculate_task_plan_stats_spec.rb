@@ -192,11 +192,20 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
       exercises.each do |exercise|
         expect(exercise.answered_count).to eq 1
       end
-      expect(exercises.first.content_json).to eq first_tasked_exercise.content
-      correct_answer = exercises.first.answers.select do |a|
+
+      content_without_selected_count = exercises.first.content.merge(
+        'questions' => exercises.first.content.questions.collect do |qq|
+          qq.merge('answers' => qq.answers.collect do |aa|
+            aa.except('selected_count')
+          end)
+        end
+      )
+      expect(content_without_selected_count).to eq first_tasked_exercise.parser.content_hash
+
+      correct_answer = exercises.first.content['questions'].first['answers'].select do |a|
         a.id == first_tasked_exercise.correct_answer_id
       end.first
-      expect(correct_answer.selected_count).to eq 1
+      expect(correct_answer['selected_count']).to eq 1
 
       second_task = tasks.second
       second_task.task_steps.each{ |ts|
@@ -211,11 +220,20 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
       exercises.each do |exercise|
         expect(exercise.answered_count).to eq 2
       end
-      expect(exercises.first.content_json).to eq first_tasked_exercise.content
-      correct_answer = exercises.first.answers.select do |a|
+
+      content_without_selected_count = exercises.first.content.merge(
+        'questions' => exercises.first.content.questions.collect do |qq|
+          qq.merge('answers' => qq.answers.collect do |aa|
+            aa.except('selected_count')
+          end)
+        end
+      )
+      expect(content_without_selected_count).to eq first_tasked_exercise.parser.content_hash
+
+      correct_answer = exercises.first.content['questions'].first['answers'].select do |a|
         a.id == first_tasked_exercise.correct_answer_id
       end.first
-      expect(correct_answer.selected_count).to eq 1
+      expect(correct_answer['selected_count']).to eq 1
 
       third_task = tasks.third
       third_task.task_steps.each{ |ts|
@@ -231,11 +249,20 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
       exercises.each do |exercise|
         expect(exercise.answered_count).to eq 3
       end
-      expect(exercises.first.content_json).to eq first_tasked_exercise.content
-      correct_answer = exercises.first.answers.select do |a|
+
+      content_without_selected_count = exercises.first.content.merge(
+        'questions' => exercises.first.content.questions.collect do |qq|
+          qq.merge('answers' => qq.answers.collect do |aa|
+            aa.except('selected_count')
+          end)
+        end
+      )
+      expect(content_without_selected_count).to eq first_tasked_exercise.parser.content_hash
+
+      correct_answer = exercises.first.content['questions'].first['answers'].select do |a|
         a.id == first_tasked_exercise.correct_answer_id
       end.first
-      expect(correct_answer.selected_count).to eq 2
+      expect(correct_answer['selected_count']).to eq 2
 
       fourth_task = tasks.fourth
       fourth_task.task_steps.each{ |ts|
@@ -251,11 +278,20 @@ describe CalculateTaskPlanStats, :type => :routine, :vcr => VCR_OPTS do
       exercises.each do |exercise|
         expect(exercise.answered_count).to eq 4
       end
-      expect(exercises.first.content_json).to eq first_tasked_exercise.content
-      correct_answer = exercises.first.answers.select do |a|
+
+      content_without_selected_count = exercises.first.content.merge(
+        'questions' => exercises.first.content.questions.collect do |qq|
+          qq.merge('answers' => qq.answers.collect do |aa|
+            aa.except('selected_count')
+          end)
+        end
+      )
+      expect(content_without_selected_count).to eq first_tasked_exercise.parser.content_hash
+
+      correct_answer = exercises.first.content['questions'].first['answers'].select do |a|
         a.id == first_tasked_exercise.correct_answer_id
       end.first
-      expect(correct_answer.selected_count).to eq 3
+      expect(correct_answer['selected_count']).to eq 3
     end
 
   end

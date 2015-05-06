@@ -4,13 +4,9 @@ module Api::V1
       class PageRepresenter < Roar::Decorator
 
         include Roar::JSON
+        include Representable::Coercion
 
         property :id,
-                 type: Integer,
-                 readable: true,
-                 writeable: false
-
-        property :number,
                  type: String,
                  readable: true,
                  writeable: false

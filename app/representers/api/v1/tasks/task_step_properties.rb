@@ -2,6 +2,7 @@ module Api::V1::Tasks
   module TaskStepProperties
 
     include Roar::JSON
+    include Representable::Coercion
 
     # These properties will be included in specific Tasked steps; therefore
     # their getters will be called from that context and so must call up to
@@ -13,7 +14,7 @@ module Api::V1::Tasks
     # values always reach up to it.
 
     property :id,
-             type: Integer,
+             type: String,
              writeable: false,
              getter: -> (*) { task_step.id },
              schema_info: {
@@ -21,7 +22,7 @@ module Api::V1::Tasks
              }
 
     property :task_id,
-             type: Integer,
+             type: String,
              writeable: false,
              readable: true,
              getter: lambda {|*| task_step.tasks_task_id },
@@ -42,12 +43,12 @@ module Api::V1::Tasks
              }
 
     property :is_completed,
-             type: 'boolean',
              writeable: false,
              readable: true,
              getter: lambda {|*| task_step.completed?},
              schema_info: {
                required: true,
+               type: 'boolean',
                description: "Whether or not this step is complete"
              }
 

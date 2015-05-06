@@ -9,7 +9,7 @@ RSpec.describe Api::V1::TaskPlanRepresenter, :type => :representer do
 
   it "represents a task plan" do
     expect(representation).to include(
-      "id" => task_plan.id,
+      "id" => task_plan.id.to_s,
       "type" => task_plan.type
     )
     expect(representation["stats"]).to be_nil

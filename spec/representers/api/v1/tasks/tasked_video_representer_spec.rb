@@ -6,8 +6,8 @@ RSpec.describe Api::V1::Tasks::TaskedVideoRepresenter, :type => :representer do
     json = Api::V1::Tasks::TaskedVideoRepresenter.new(task_step.tasked).to_json
 
     expect(JSON.parse(json)).to eq({
-      id: task_step.id,
-      task_id: task_step.tasks_task_id,
+      id: task_step.id.to_s,
+      task_id: task_step.tasks_task_id.to_s,
       type: 'video',
       title: task_step.tasked.title,
       is_completed: false,

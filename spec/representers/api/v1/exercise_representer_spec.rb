@@ -16,16 +16,12 @@ RSpec.describe Api::V1::ExerciseRepresenter, type: :representer do
                        description: 'calculate the effect of forces on objects'
   }
   let!(:lo_teks) { FactoryGirl.create :content_lo_teks_tag, lo: lo, teks: teks }
-  let!(:exercise_tag) {
-    FactoryGirl.create :content_exercise_tag,
-                       exercise: exercise,
-                       tag: lo
-  }
+  let!(:exercise_tag) { FactoryGirl.create :content_exercise_tag, exercise: exercise, tag: lo }
 
   it 'represents an exercise with tags' do
     representation = Api::V1::ExerciseRepresenter.new(exercise).as_json
     expect(representation).to eq(
-      'id' => exercise.id,
+      'id' => exercise.id.to_s,
       'url' => exercise.url,
       'content' => JSON.parse(exercise.content),
       'tags' => [{

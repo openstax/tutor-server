@@ -7,12 +7,9 @@ class CalculateTaskPlanStats
   protected
 
   def answer_stats_for_tasked_exercises(tasked_exercises)
-    tasked_exercises.first.answer_ids.collect do |answer_id|
-      {
-        id: answer_id,
-        selected_count: tasked_exercises.select{ |te| te.answer_id == answer_id && \
+    tasked_exercises.first.answer_ids.each_with_object({}) do |answer_id, hash|
+      hash[answer_id] = tasked_exercises.select{ |te| te.answer_id == answer_id && \
                                                       te.completed? }.count
-      }
     end
   end
 
@@ -21,11 +18,12 @@ class CalculateTaskPlanStats
     urls.collect do |url|
       selected_tasked_exercises = tasked_exercises.select{ |te| te.url == url }
       completed_tasked_exercises = selected_tasked_exercises.select{ |te| te.completed? }
+      exercise = OpenStax::Exercises::V1::Exercise.new(selected_tasked_exercises.first.content)
+      answer_stats = answer_stats_for_tasked_exercises(selected_tasked_exercises)
 
       {
-        content_json: selected_tasked_exercises.first.content,
-        answered_count: completed_tasked_exercises.count,
-        answers: answer_stats_for_tasked_exercises(selected_tasked_exercises)
+        content: exercise.content_with_answer_stats(answer_stats),
+        answered_count: completed_tasked_exercises.count
       }
     end
   end
@@ -50,7 +48,6 @@ class CalculateTaskPlanStats
   def generate_page_stats(page, tasked_exercises, include_previous=false)
     stats = {
       id:     page.id,
-      number: page.number,
       title:  page.title
     }
 

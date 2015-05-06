@@ -50,7 +50,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, :type => :assistant,
   }
 
   let!(:teacher_selected_exercises) { exercises[1..5] }
-  let!(:teacher_selected_exercise_ids) { teacher_selected_exercises.collect{|e| e.id} }
+  let!(:teacher_selected_exercise_ids) { teacher_selected_exercises.collect{|e| e.id.to_s} }
 
   let!(:tutor_selected_exercise_count) { 4 } # Adjust if spaced practice changes
 

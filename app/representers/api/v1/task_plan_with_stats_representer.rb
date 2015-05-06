@@ -2,9 +2,10 @@ module Api::V1
   class TaskPlanWithStatsRepresenter < ::Roar::Decorator
 
     include Roar::JSON
+    include Representable::Coercion
 
     property :id,
-             type: Integer,
+             type: String,
              readable: true,
              writeable: false
 
@@ -20,9 +21,7 @@ module Api::V1
 
     property :stats,
              decorator: Api::V1::Tasks::Stats::TaskPlanRepresenter,
-             getter: ->(args) {
-               CalculateTaskPlanStats[plan: self]
-             },
+             getter: ->(args) { CalculateTaskPlanStats[plan: self] },
              readable: true,
              writable: false
 

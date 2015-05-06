@@ -5,21 +5,21 @@ module Api::V1
 
     collection :page_ids,
                writeable: true,
-               readable: true,
+               readable: false,
                schema_info: {
                  description: "The page_ids to use for practice",
                  items: {
-                   type: 'integer'
+                   type: 'string'
                  }
                }
 
     collection :book_part_ids,
                writeable: true,
-               readable: true,
+               readable: false,
                schema_info: {
                  description: "The book_part_ids to use for practice",
                  items: {
-                   type: 'integer'
+                   type: 'string'
                  }
                }
 

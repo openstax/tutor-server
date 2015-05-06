@@ -61,12 +61,12 @@ class Setup001
     # Create and distribute 4 readings and 4 homeworks
     4.times.each_with_index do |i|
       # Set Homework pages, open date and due date
-      hw_page_ids = [Content::Models::Page.offset(i + 1).first.id]
+      hw_page_ids = [Content::Models::Page.offset(i + 1).first.id.to_s]
       hw_due_date = Time.now + due_date_deltas[i]
       hw_open_date = hw_due_date - 1.week
 
       # Set iReading pages, open date and due date
-      r_page_ids = i == 0 ? [Content::Models::Page.first.id] + hw_page_ids : hw_page_ids
+      r_page_ids = i == 0 ? [Content::Models::Page.first.id.to_s] + hw_page_ids : hw_page_ids
       r_due_date = Time.now + due_date_deltas[i]
       r_open_date = r_due_date - 1.week
 
@@ -83,9 +83,8 @@ class Setup001
       run(:distribute, r_tp)
 
       page_los = run(:get_los, page_ids: hw_page_ids).outputs.los
-      exercise_ids = run(:search_exercises, tag: page_los, match_count: 1).outputs.items
-                                                                          .shuffle.take(5)
-                                                                          .collect{ |e| e.id }
+      exercise_ids = run(:search_exercises, tag: page_los, match_count: 1)
+                       .outputs.items.shuffle.take(5).collect{ |e| e.id.to_s }
       hw_tp = Tasks::Models::TaskPlan.create!(title: "Homework ##{i + 1} - Subchapter ##{i + 1}",
                                               owner: course,
                                               type: 'homework',
@@ -109,7 +108,9 @@ class Setup001
                                               opens_at: Time.now - 3.weeks,
                                               due_at: Time.now - 2.weeks,
                                               settings: {
-                                                exercise_ids: Content::Models::Exercise.last(2).collect(&:id),
+                                                exercise_ids: Content::Models::Exercise
+                                                                .order(:created_at)
+                                                                .last(2).collect{ |e| e.id.to_s },
                                                 exercises_count_dynamic: 2
                                               })
     hw_tp.tasking_plans << Tasks::Models::TaskingPlan.create!(target: course, task_plan: hw_tp)
@@ -182,8 +183,7 @@ class Setup001
     profile
   end
 
-  def make_and_work_practice_widget(role:, num_correct:, book_part_ids: [],
-                                                         page_ids: [])
+  def make_and_work_practice_widget(role:, num_correct:, book_part_ids: [], page_ids: [])
     entity_task = ResetPracticeWidget[book_part_ids: book_part_ids,
                                       page_ids: page_ids,
                                       role: role, condition: :local]

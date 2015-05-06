@@ -12,7 +12,11 @@ class OpenStax::Exercises::V1::Exercise
   end
 
   def content_hash
-    @content_hash ||= JSON.parse(content)
+    return @content_hash unless @content_hash.nil?
+
+    @content_hash = JSON.parse(content)
+    stringify_content_hash_ids!
+    @content_hash
   end
 
   def uid
@@ -36,7 +40,7 @@ class OpenStax::Exercises::V1::Exercise
   end
 
   def questions
-    @questions ||= content_hash['questions'].collect{ |qq| qq.merge('id' => qq['id'].to_s)}
+    @questions ||= content_hash['questions']
   end
 
   def question_formats
@@ -44,14 +48,12 @@ class OpenStax::Exercises::V1::Exercise
   end
 
   def question_answers
-    @question_answers ||= questions.collect do |qq|
-      qq['answers'].collect{ |aa| aa.merge('id' => aa['id'].to_s) }
-    end
+    @question_answers ||= questions.collect{ |qq| qq['answers'] }
   end
 
   def question_answer_ids
     @question_answer_ids ||= question_answers.collect do |qa|
-      qa.collect{ |ans| ans['id'].to_s }
+      qa.collect{ |ans| ans['id'] }
     end
   end
 
@@ -86,16 +88,51 @@ class OpenStax::Exercises::V1::Exercise
   end
 
   def questions_without_correctness
-    @questions_without_correctness ||= content_hash['questions'].each_with_index
-                                                                .collect do |qq, ii|
+    @questions_without_correctness ||= questions.each_with_index.collect do |qq, ii|
       qq.merge('answers' => question_answers_without_correctness[ii])
     end
   end
 
-  def content_without_correctness
-    @content_without_correctness ||= content_hash.merge(
+  def content_hash_without_correctness
+    @content_hash_without_correctness ||= content_hash.merge(
       'questions' => questions_without_correctness
     )
+  end
+
+  def question_answers_with_stats(stats)
+    question_answers.collect do |qa|
+      qa.collect{ |ans| ans.merge('selected_count' => stats[ans['id']] || 0) }
+    end
+  end
+
+  def questions_with_answer_stats(stats)
+    answer_stats = question_answers_with_stats(stats)
+    questions.each_with_index.collect do |qq, ii|
+      qq.merge('answers' => answer_stats[ii])
+    end
+  end
+
+  def content_with_answer_stats(stats)
+    content_hash.merge('questions' => questions_with_answer_stats(stats))
+  end
+
+  protected
+
+  def stringify_content_hash_ids!
+    (@content_hash['authors'] || []).each do |au|
+      au['user_id'] = au['user_id'].try(:to_s)
+    end
+
+    (@content_hash['copyright_holders'] || []).each do |cr|
+      cr['user_id'] = cr['user_id'].try(:to_s)
+    end
+
+    (@content_hash['questions'] || []).each do |qq|
+      qq['id'] = qq['id'].try(:to_s)
+      (qq['answers'] || []).each do |aa|
+        aa['id'] = aa['id'].try(:to_s)
+      end
+    end
   end
 
 end

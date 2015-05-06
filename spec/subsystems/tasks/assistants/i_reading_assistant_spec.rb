@@ -69,7 +69,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
     let!(:task_plan) {
       FactoryGirl.create(:tasks_task_plan,
         assistant: assistant,
-        settings: { page_ids: pages.collect{ |page| page.id } }
+        settings: { page_ids: pages.collect{ |page| page.id.to_s } }
       )
     }
 
@@ -186,7 +186,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, :type => :assistant, :vcr =
     let!(:task_plan) {
       FactoryGirl.create(:tasks_task_plan,
         assistant: assistant,
-        settings: { page_ids: [page.id] }
+        settings: { page_ids: [page.id.to_s] }
       )
     }
 

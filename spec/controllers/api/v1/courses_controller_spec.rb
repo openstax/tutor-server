@@ -30,23 +30,23 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
       api_get :readings, user_1_token, parameters: {id: course.id}
       expect(response).to have_http_status(:success)
       expect(response.body_as_hash).to eq([{
-        id: toc.id,
+        id: toc.id.to_s,
         title: 'unit 1',
         type: 'part',
         children: [
           {
-            id: toc.children[0].id,
+            id: toc.children[0].id.to_s,
             title: 'chapter 1',
             type: 'part',
             children: [
               {
-                id: toc.children[0].children[0].id,
+                id: toc.children[0].children[0].id.to_s,
                 title: 'first page',
                 chapter_section: '1.1',
                 type: 'page'
               },
               {
-                id: toc.children[0].children[1].id,
+                id: toc.children[0].children[1].id.to_s,
                 title: 'second page',
                 chapter_section: '1.2',
                 type: 'page'
@@ -54,12 +54,12 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
             ]
           },
           {
-            id: toc.children[1].id,
+            id: toc.children[1].id.to_s,
             title: 'chapter 2',
             type: 'part',
             children: [
               {
-                id: toc.children[1].children[0].id,
+                id: toc.children[1].children[0].id.to_s,
                 title: 'third page',
                 chapter_section: '1.3',
                 type: 'page'
@@ -79,8 +79,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
 
     before(:each) do
       CourseContent::AddBookToCourse.call(course: course, book: book)
-      AddUserAsCourseTeacher.call(course: course,
-                                          user: user_1.entity_user)
+      AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
     end
 
     it "should return an empty result if no page_ids specified" do
@@ -92,8 +91,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
 
     it "should work on the happy path" do
       page_ids = Content::Models::Page.all.map(&:id)
-      api_get :exercises, user_1_token, parameters: {id: course.id,
-                                                     page_ids: page_ids}
+      api_get :exercises, user_1_token, parameters: {id: course.id, page_ids: page_ids}
 
       expect(response).to have_http_status(:success)
       hash = response.body_as_hash
@@ -118,8 +116,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
 
       expect(response).to have_http_status(:success)
       expect(response.body).to(
-        eq({ total_count: 1,
-             items: [Api::V1::TaskPlanRepresenter.new(task_plan)] }.to_json)
+        eq({ total_count: 1, items: [Api::V1::TaskPlanRepresenter.new(task_plan)] }.to_json)
       )
 
     end
@@ -160,9 +157,9 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
       it 'returns the teacher roles with the course' do
         api_get :index, user_1_token
         expect(response.body).to include({
-          id: teaching.course.id,
+          id: teaching.course.id.to_s,
           name: teaching.name,
-          roles: [{ id: teacher.id, type: 'teacher' }]
+          roles: [{ id: teacher.id.to_s, type: 'teacher' }]
         }.to_json)
       end
     end
@@ -177,9 +174,9 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
       it 'returns the student roles with the course' do
         api_get :index, user_1_token
         expect(response.body).to include({
-          id: taking.course.id,
+          id: taking.course.id.to_s,
           name: taking.name,
-          roles: [{ id: student.id, type: 'student' }]
+          roles: [{ id: student.id.to_s, type: 'student' }]
         }.to_json)
       end
     end
@@ -195,10 +192,10 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
       it 'returns both roles with the course' do
         api_get :index, user_1_token
         expect(response.body).to include({
-          id: both.course.id,
+          id: both.course.id.to_s,
           name: both.name,
-          roles: [{ id: student.id, type: 'student', },
-                  { id: teacher.id, type: 'teacher', }]
+          roles: [{ id: student.id.to_s, type: 'student', },
+                  { id: teacher.id.to_s, type: 'teacher', }]
         }.to_json)
       end
     end
@@ -335,20 +332,19 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
                                                exercise: exercise_5, tag: lo }
 
     it "works" do
-      role = AddUserAsCourseStudent.call(course: course,
-                                         user: user_1.entity_user).outputs.role
+      role = AddUserAsCourseStudent.call(course: course, user: user_1.entity_user).outputs.role
 
       expect {
         api_post :practice,
                  user_1_token,
                  parameters: {id: course.id, role_id: role.id},
-                 raw_post_data: { page_ids: [page.id] }.to_json
+                 raw_post_data: { page_ids: [page.id.to_s] }.to_json
       }.to change{ Tasks::Models::Task.count }.by(1)
 
       expect(response).to have_http_status(:success)
 
       hash = response.body_as_hash
-      expect(hash).to include(id: be_kind_of(Integer),
+      expect(hash).to include(id: be_kind_of(String),
                               title: "Practice",
                               opens_at: be_kind_of(String),
                               steps: have(5).items)
@@ -360,14 +356,10 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
     end
 
     it "prefers unassigned exercises" do
-      role = AddUserAsCourseStudent.call(course: course,
-                                                 user: user_1.entity_user)
-                                           .outputs.role
+      role = AddUserAsCourseStudent.call(course: course, user: user_1.entity_user).outputs.role
 
       # Assign the first 5 exercises
-      ResetPracticeWidget.call(
-        role: role, condition: :local, page_ids: [page.id]
-      )
+      ResetPracticeWidget.call(role: role, condition: :local, page_ids: [page.id])
 
       # Then add 3 more to be assigned
       exercise_6 = FactoryGirl.create :content_exercise
@@ -385,13 +377,13 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
         api_post :practice,
                  user_1_token,
                  parameters: {id: course.id, role_id: role.id},
-                 raw_post_data: { page_ids: [page.id] }.to_json
+                 raw_post_data: { page_ids: [page.id.to_s] }.to_json
       }.to change{ Tasks::Models::Task.count }.by(1)
 
       expect(response).to have_http_status(:success)
 
       hash = response.body_as_hash
-      expect(hash).to include(id: be_kind_of(Integer),
+      expect(hash).to include(id: be_kind_of(String),
                               title: "Practice",
                               opens_at: be_kind_of(String),
                               steps: have(5).items)
@@ -417,7 +409,8 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
       AddUserAsCourseStudent.call(course: course, user: user_1.entity_user)
       expect{
         # The role belongs to user_1, we pass user_2_token
-        api_post :practice, user_2_token, parameters: {id: course.id, role_id: Entity::Role.last.id}
+        api_post :practice, user_2_token, parameters: {id: course.id,
+                                                       role_id: Entity::Role.last.id}
       }.to raise_error(IllegalState)
     end
 
@@ -440,7 +433,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
 
       expect(response).to have_http_status(:success)
 
-      expect(response.body_as_hash).to include(id: be_kind_of(Integer),
+      expect(response.body_as_hash).to include(id: be_kind_of(String),
                                                title: "Practice",
                                                opens_at: be_kind_of(String),
                                                steps: have(5).items)
@@ -526,7 +519,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
 
         "tasks" => a_collection_including(
           a_hash_including(
-            "id" => reading_task.id,
+            "id" => reading_task.id.to_s,
             "title" => reading_task.title,
             "due_at" => be_kind_of(String),
             "type" => "reading",
@@ -535,7 +528,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
             "complete_exercise_count" => 0
           ),
           a_hash_including(
-            "id" => hw1_task.id,
+            "id" => hw1_task.id.to_s,
             "title" => hw1_task.title,
             "opens_at" => be_kind_of(String),
             "due_at" => be_kind_of(String),
@@ -545,7 +538,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
             "complete_exercise_count" => 2
           ),
           a_hash_including(
-            "id" => hw2_task.id,
+            "id" => hw2_task.id.to_s,
             "title" => hw2_task.title,
             "opens_at" => be_kind_of(String),
             "due_at" => be_kind_of(String),
@@ -556,7 +549,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
             "correct_exercise_count" => 2
           ),
           a_hash_including(
-            "id" => hw3_task.id,
+            "id" => hw3_task.id.to_s,
             "title" => hw3_task.title,
             "opens_at" => be_kind_of(String),
             "due_at" => be_kind_of(String),
@@ -567,7 +560,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
           ),
         ),
         "role" => {
-          "id" => student_role.id,
+          "id" => student_role.id.to_s,
           "type" => "student"
         },
         "course" => {
@@ -582,7 +575,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
 
       expect(HashWithIndifferentAccess[response.body_as_hash]).to include(
         "role" => {
-          "id" => teacher_role.id,
+          "id" => teacher_role.id.to_s,
           "type" => "teacher"
         },
         "course" => {
@@ -592,7 +585,7 @@ RSpec.describe Api::V1::CoursesController, :type => :controller, :api => true,
         "tasks" => [],
         "plans" => a_collection_including(
           a_hash_including(
-            "id" => plan.id,
+            "id" => plan.id.to_s,
             "opens_at" => be_kind_of(String),
             "due_at" => be_kind_of(String),
             "type" => "reading"

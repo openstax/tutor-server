@@ -4,9 +4,10 @@ module Api::V1
       class TaskRepresenter < Roar::Decorator
 
         include Roar::JSON
+        include Representable::Coercion
 
         property :id,
-                 type: Integer,
+                 type: String,
                  readable: true,
                  writeable: false
 
@@ -33,9 +34,9 @@ module Api::V1
 
         property :completed?,
                  as: :complete,
-                 type: :boolean,
                  readable: true,
-                 writeable: false
+                 writeable: false,
+                 schema_info: { type: 'boolean' }
 
       end
     end

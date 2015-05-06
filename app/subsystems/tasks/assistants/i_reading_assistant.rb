@@ -10,7 +10,7 @@ class Tasks::Assistants::IReadingAssistant
         "page_ids": {
           "type": "array",
           "items": {
-            "type": "integer"
+            "type": "string"
           }
         }
       },
