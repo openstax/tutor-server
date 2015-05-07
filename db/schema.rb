@@ -427,6 +427,7 @@ ActiveRecord::Schema.define(version: 20150420184110) do
     t.integer  "number",                    null: false
     t.datetime "completed_at"
     t.integer  "group_type",    default: 0, null: false
+    t.text     "settings",                  null: false
     t.datetime "created_at",                null: false
     t.datetime "updated_at",                null: false
   end

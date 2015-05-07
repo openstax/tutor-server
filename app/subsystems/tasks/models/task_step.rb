@@ -4,6 +4,8 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
 
   enum group_type: [:default_group, :core_group, :spaced_practice_group]
 
+  serialize :settings, JSON
+
   validates :task, presence: true
   validates :tasked, presence: true
   validates :tasked_id, uniqueness: { scope: :tasked_type }
@@ -13,6 +15,17 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
 
   scope :complete, -> { where{completed_at != nil} }
   scope :incomplete, -> { where{completed_at == nil} }
+
+  after_initialize :init_settings
+  after_initialize :init_related_content
+
+  def init_settings
+    self.settings ||= {}
+  end
+
+  def init_related_content
+    self.settings['related_content'] ||= []
+  end
 
   def has_correctness?
     tasked.has_correctness?
@@ -50,11 +63,15 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   end
 
   def related_content
-    [
-      {
-        title: "Some Dummy Title",
-        chapter_section: "3.14"
-      }
-    ]
+    self.settings['related_content']
   end
+
+  def related_content=(value)
+    self.settings['related_content'] = value
+  end
+
+  def add_related_content(related_content_hash)
+    self.settings['related_content'] << related_content_hash
+  end
+
 end

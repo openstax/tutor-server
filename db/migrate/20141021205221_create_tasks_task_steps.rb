@@ -6,6 +6,7 @@ class CreateTasksTaskSteps < ActiveRecord::Migration
       t.integer :number, null: false
       t.datetime :completed_at
       t.integer :group_type, default: 0, null: false
+      t.text :settings, null: false
 
       t.timestamps null: false
 

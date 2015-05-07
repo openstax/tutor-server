@@ -126,6 +126,9 @@ group :development, :test do
   # Thin development server
   gem 'thin'
 
+  # Call 'debugger' anywhere in the code to stop execution and get a debugger console
+  gem 'byebug'
+
   # Call 'binding.pry' anywhere in the code to stop execution and get a debugger console
   gem 'pry' # needed when debugging without 'rails_helper'
   gem 'pry-nav'

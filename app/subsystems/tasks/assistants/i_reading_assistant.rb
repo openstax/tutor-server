@@ -90,31 +90,32 @@ class Tasks::Assistants::IReadingAssistant
   def self.add_core_steps!(task:, cnx_pages:)
     cnx_pages.each do |page|
       # Chapter intro pages get their titles from the chapter instead
-      title = page.is_intro? ? page.book_part_title : page.title
+      page_title = page.is_intro? ? page.book_part_title : page.title
 
+      fragment_title = page_title
       page.fragments.each do |fragment|
         step = Tasks::Models::TaskStep.new(task: task)
 
         case fragment
         when OpenStax::Cnx::V1::Fragment::ExerciseChoice
-          tasked_exercise_choice(exercise_choice_fragment: fragment, step: step, title: title)
+          tasked_exercise_choice(exercise_choice_fragment: fragment, step: step, title: fragment_title)
         when OpenStax::Cnx::V1::Fragment::Exercise
-          tasked_exercise(exercise_fragment: fragment, step: step, title: title)
+          tasked_exercise(exercise_fragment: fragment, step: step, title: fragment_title)
         when OpenStax::Cnx::V1::Fragment::Video
-          tasked_video(video_fragment: fragment, step: step, title: title)
+          tasked_video(video_fragment: fragment, step: step, title: fragment_title)
         when OpenStax::Cnx::V1::Fragment::Interactive
-          tasked_interactive(interactive_fragment: fragment, step: step, title: title)
+          tasked_interactive(interactive_fragment: fragment, step: step, title: fragment_title)
         else
-          tasked_reading(reading_fragment: fragment, page: page, title: title, step: step)
+          tasked_reading(reading_fragment: fragment, page: page, title: fragment_title, step: step)
         end
 
         next if step.tasked.nil?
         step.core_group!
-
+        step.add_related_content({title: page_title, chapter_section: page.chapter_section})
         task.task_steps << step
 
         # Only the first step for each Page should have a title
-        title = nil
+        fragment_title = nil
       end
     end
 
@@ -146,10 +147,13 @@ class Tasks::Assistants::IReadingAssistant
         chosen_exercise = candidate_exercises.first #sample
         #puts "chosen exercise:     #{chosen_exercise.uid}"
 
+        related_content = get_related_content_for(chosen_exercise)
+
         candidate_exercises.delete(chosen_exercise)
         exercise_history.push(chosen_exercise)
 
         step = add_exercise_step(task: task, exercise: chosen_exercise)
+        step.add_related_content(related_content)
         step.spaced_practice_group!
       end
     end
@@ -201,6 +205,27 @@ class Tasks::Assistants::IReadingAssistant
 
   def self.k_ago_map
     [ [1,1], [2,1] ]
+  end
+
+  def self.get_related_content_for(content_exercise)
+    page = content_exercise_page(content_exercise)
+
+    {
+      title: page.title,
+      chapter_section: page.chapter_section
+    }
+  end
+
+  def self.content_exercise_page(content_exercise)
+    los = Content::Models::Tag.joins{exercise_tags.exercise}
+                              .where{exercise_tags.exercise.url == content_exercise.url}
+                              .select{|tag| tag.lo?}
+
+    pages = Content::Models::Page.joins{page_tags.tag}
+                                 .where{page_tags.tag.id.in los.map(&:id)}
+
+    raise "#{pages.count} pages found for exercise #{content_exercise.url}" unless pages.one?
+    pages.first
   end
 
   def self.add_exercise_step(task:, exercise:)
