@@ -28,28 +28,37 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     let!(:core_step_gold_data) {
       [
         { klass: Tasks::Models::TaskedReading,
-          title: "Forces and Newton's Laws of Motion"},
+          title: "Forces and Newton's Laws of Motion",
+          related_content: [{title: "Forces and Newton's Laws of Motion", chapter_section: "8.1"}] },
         { klass: Tasks::Models::TaskedReading,
-          title: "Force"},
+          title: "Force",
+          related_content: [{title: "Force", chapter_section: "8.2"}] },
         { klass: Tasks::Models::TaskedVideo,
-          title: nil},
+          title: nil,
+          related_content: [{title: "Force", chapter_section: "8.2"}] },
         { klass: Tasks::Models::TaskedReading,
-          title: nil},
+          title: nil,
+          related_content: [{title: "Force", chapter_section: "8.2"}] },
         { klass: Tasks::Models::TaskedReading,
-          title: nil},
+          title: nil,
+          related_content: [{title: "Force", chapter_section: "8.2"}] },
         { klass: Tasks::Models::TaskedExercise,
-          title: nil},
+          title: nil,
+          related_content: [{title: "Force", chapter_section: "8.2"}] },
         { klass: Tasks::Models::TaskedReading,
-          title: nil}
+          title: nil,
+          related_content: [{title: "Force", chapter_section: "8.2"}] }
       ]
     }
 
     let!(:spaced_practice_step_gold_data) {
       [
         { klass: Tasks::Models::TaskedExercise,
-          title: nil},
+          title: nil,
+          related_content: [{title: "Force", chapter_section: "8.2"}] },
         { klass: Tasks::Models::TaskedExercise,
-          title: nil},
+          title: nil,
+          related_content: [{title: "Force", chapter_section: "8.2"}] },
       ]
     }
 
@@ -103,6 +112,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         task_steps.each_with_index do |task_step, ii|
           expect(task_step.tasked.class).to eq(task_step_gold_data[ii][:klass])
           expect(task_step.tasked.title).to eq(task_step_gold_data[ii][:title])
+          expect(task_step.related_content).to eq(task_step_gold_data[ii][:related_content])
         end
 
         core_task_steps = task.core_task_steps
