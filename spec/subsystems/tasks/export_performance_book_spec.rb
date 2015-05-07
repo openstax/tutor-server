@@ -12,6 +12,6 @@ RSpec.describe Tasks::ExportPerformanceBook do
   it 'does not blow up' do
     role = GetUserCourseRoles[course: course, user: teacher.entity_user].first
     described_class[role: role, course: course]
-    expect(1).to eq(1)
+    expect(File.read('./tmp/sup.xlsx').length).not_to eq(0)
   end
 end

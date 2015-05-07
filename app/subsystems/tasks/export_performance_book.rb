@@ -26,26 +26,27 @@ module Tasks
 
     private
     def create_summary_worksheet(file:)
-      title_style = nil
-      course_name, created_date = Axlsx::RichText.new, Axlsx::RichText.new
-
-      file.workbook.styles do |style|
-        title_style = style.add_style alignment: { horizontal: :center }
-      end
-
-      course_name.add_run(outputs.profile.name, b: true)
-      created_date.add_run(Date.today)
-
-      file.workbook.add_worksheet(name: 'Summary') do |sheet|
-        sheet.add_row [course_name], style: title_style
-        sheet.add_row [created_date]
+      file.workbook.add_worksheet(name: 'Course Summary') do |sheet|
+        sheet.add_row [outputs.profile.name]
+        sheet.add_row ["Generated: #{Date.today}"]
       end
     end
 
     def create_data_worksheet(file:)
-      file.workbook.add_worksheet(name: 'Data') do |sheet|
-        sheet.add_row(outputs.performance_book.data_headings.collect(&:title))
+      file.workbook.add_worksheet(name: 'Performance Book Data') do |sheet|
+        sheet.add_row data_headers
+        outputs.performance_book.students.each do |student|
+          sheet.add_row student_data(student)
+        end
       end
+    end
+
+    def data_headers
+      outputs.performance_book.data_headings.collect(&:title)
+    end
+
+    def student_data(student)
+      [student.name]
     end
 
 #{"data_headings"=>[
