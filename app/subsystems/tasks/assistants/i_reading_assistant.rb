@@ -224,7 +224,7 @@ class Tasks::Assistants::IReadingAssistant
     pages = Content::Models::Page.joins{page_tags.tag}
                                  .where{page_tags.tag.id.in los.map(&:id)}
 
-    raise "multiple pages found for exercise #{content_exercise.url}" unless pages.one?
+    raise "#{pages.count} pages found for exercise #{content_exercise.url}" unless pages.one?
     pages.first
   end
 
