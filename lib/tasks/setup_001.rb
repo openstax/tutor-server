@@ -110,7 +110,8 @@ class Setup001
                                               settings: {
                                                 exercise_ids: Content::Models::Exercise
                                                                 .order(:created_at)
-                                                                .last(2).collect{ |e| e.id.to_s },
+                                                                .last(3).first(2) ## the last exercise is mis-tagged
+                                                                .collect{ |e| e.id.to_s },
                                                 exercises_count_dynamic: 2
                                               })
     hw_tp.tasking_plans << Tasks::Models::TaskingPlan.create!(target: course, task_plan: hw_tp)
