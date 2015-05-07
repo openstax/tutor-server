@@ -35,4 +35,25 @@ RSpec.describe Tasks::Models::TaskStep, :type => :model do
       expect(task_step.group_name).to eq(name_by_type[group_type])
     end
   end
+
+  context "related content" do
+    it "can get related content" do
+      expect(task_step.related_content).to eq([])
+    end
+
+    it "can set related content" do
+      target_related_content = [{title: 'blah', chapter_section: 'blah'}]
+      task_step.related_content = target_related_content
+      expect(task_step.related_content).to eq(target_related_content)
+    end
+
+    it "can add new related content" do
+      expect(task_step.related_content).to eq([])
+
+      content = {title: 'blah', chapter_section: 'blah'}
+      expect{
+        task_step.add_related_content content
+      }.to change{task_step.related_content}.by [content]
+    end
+  end
 end
