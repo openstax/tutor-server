@@ -1,4 +1,4 @@
-class CreateAdministrators < ActiveRecord::Migration
+class CreateUserProfileAdministrators < ActiveRecord::Migration
   def change
     create_table :administrators do |t|
       t.references :profile, null: false
