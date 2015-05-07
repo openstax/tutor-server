@@ -1,6 +1,6 @@
 class CreateUserProfileAdministrators < ActiveRecord::Migration
   def change
-    create_table :administrators do |t|
+    create_table :user_profile_administrators do |t|
       t.references :profile, null: false
 
       t.timestamps null: false
@@ -8,7 +8,7 @@ class CreateUserProfileAdministrators < ActiveRecord::Migration
       t.index :profile_id, unique: true
     end
 
-    add_foreign_key :administrators, :user_profile_profiles,
+    add_foreign_key :user_profile_administrators, :user_profile_profiles,
                     column: :profile_id, on_update: :cascade, on_delete: :cascade
   end
 end

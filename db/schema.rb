@@ -16,14 +16,6 @@ ActiveRecord::Schema.define(version: 20150420184110) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "administrators", force: :cascade do |t|
-    t.integer  "profile_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "administrators", ["profile_id"], name: "index_administrators_on_profile_id", unique: true, using: :btree
-
   create_table "content_book_parts", force: :cascade do |t|
     t.string   "url"
     t.text     "content"
@@ -449,6 +441,14 @@ ActiveRecord::Schema.define(version: 20150420184110) do
   add_index "tasks_tasks", ["task_type"], name: "index_tasks_tasks_on_task_type", using: :btree
   add_index "tasks_tasks", ["tasks_task_plan_id"], name: "index_tasks_tasks_on_tasks_task_plan_id", using: :btree
 
+  create_table "user_profile_administrators", force: :cascade do |t|
+    t.integer  "profile_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "user_profile_administrators", ["profile_id"], name: "index_user_profile_administrators_on_profile_id", unique: true, using: :btree
+
   create_table "user_profile_profiles", force: :cascade do |t|
     t.integer  "entity_user_id",            null: false
     t.integer  "account_id",                null: false
@@ -464,7 +464,6 @@ ActiveRecord::Schema.define(version: 20150420184110) do
   add_index "user_profile_profiles", ["exchange_read_identifier"], name: "index_user_profile_profiles_on_exchange_read_identifier", unique: true, using: :btree
   add_index "user_profile_profiles", ["exchange_write_identifier"], name: "index_user_profile_profiles_on_exchange_write_identifier", unique: true, using: :btree
 
-  add_foreign_key "administrators", "user_profile_profiles", column: "profile_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_book_parts", "content_book_parts", column: "parent_book_part_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_book_parts", "entity_books", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_exercise_tags", "content_exercises", on_update: :cascade, on_delete: :cascade
@@ -492,4 +491,5 @@ ActiveRecord::Schema.define(version: 20150420184110) do
   add_foreign_key "tasks_taskings", "entity_tasks"
   add_foreign_key "tasks_tasks", "entity_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasks", "tasks_task_plans", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "user_profile_administrators", "user_profile_profiles", column: "profile_id", on_update: :cascade, on_delete: :cascade
 end
