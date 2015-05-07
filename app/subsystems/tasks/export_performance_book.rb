@@ -16,6 +16,7 @@ module Tasks
       run(:get_performance_book, course: course, role: role)
 
       Axlsx::Package.new do |file|
+        file.use_shared_strings = true        # OS X Numbers interoperability
         create_summary_worksheet(file: file)
         create_data_worksheet(file: file)
         file.serialize('./tmp/sup.xlsx')
@@ -26,8 +27,11 @@ module Tasks
 
     private
     def create_summary_worksheet(file:)
+      course_name = Axlsx::RichText.new
+      course_name.add_run(outputs.profile.name, b: true)
+
       file.workbook.add_worksheet(name: 'Course Summary') do |sheet|
-        sheet.add_row [outputs.profile.name]
+        sheet.add_row [course_name]
         sheet.add_row ["Generated: #{Date.today}"]
       end
     end
@@ -35,6 +39,7 @@ module Tasks
     def create_data_worksheet(file:)
       file.workbook.add_worksheet(name: 'Performance Book Data') do |sheet|
         sheet.add_row data_headers
+        sheet.add_row display_class_averages
         outputs.performance_book.students.each do |student|
           sheet.add_row student_data(student)
         end
@@ -42,17 +47,40 @@ module Tasks
     end
 
     def data_headers
-      outputs.performance_book.data_headings.collect(&:title)
+      headings = outputs.performance_book.data_headings.collect(&:title)
+      (['Students'] + headings).collect do |header|
+        text = Axlsx::RichText.new
+        text.add_run(header, b: true)
+        text
+      end
+    end
+
+    def display_class_averages
+      averages = outputs.performance_book.data_headings.collect(&:class_average)
+      (['Class average'] + averages).collect do |average|
+        text = Axlsx::RichText.new
+        text.add_run(average, b: true)
+        text
+      end
     end
 
     def student_data(student)
-      [student.name]
+      [student.name] + student.data.collect { |data|
+        [data.status, score(data)]
+      }.flatten
     end
 
-#{"data_headings"=>[
-    #{"title"=>"Homework task plan", "class_average"=>75.0},
-    #{"title"=>"Reading task plan"},
-    #{"title"=>"Homework 2 task plan"}],
+    def score(data)
+      case data.type
+      when 'homework'
+        data.correct_exercise_count/data.exercise_count.to_f
+      when 'reading'
+        ''
+      else
+        ''
+      end
+    end
+
  #"students"=>
   #[{"name"=>"658c3baf3e25f616bdea88fcb5b04ffa",
     #"role"=>2,
