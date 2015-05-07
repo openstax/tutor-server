@@ -5,7 +5,8 @@ RSpec.describe Tasks::ExportPerformanceBook do
   let(:teacher) { FactoryGirl.create :user_profile }
 
   before do
-    SetupPerformanceBookData[course: course, teacher: teacher]
+    book = FetchAndImportBook[id: '7db9aa72-f815-4c3b-9cb6-d50cf5318b58']
+    SetupPerformanceBookData[course: course, teacher: teacher, book: book]
   end
 
   it 'does not blow up' do
