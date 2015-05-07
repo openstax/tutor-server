@@ -85,8 +85,12 @@ class Tasks::Assistants::HomeworkAssistant
 
   def self.add_core_steps!(task:, exercises:)
     exercises.each do |exercise|
+      related_content = get_related_content_for(exercise)
+
       step = add_exercise_step(task: task, exercise: exercise)
       step.core_group!
+
+      step.add_related_content(related_content)
     end
 
     task.save!
@@ -98,6 +102,27 @@ class Tasks::Assistants::HomeworkAssistant
     TaskExercise[task_step: step, exercise: exercise]
     task.task_steps << step
     step
+  end
+
+  def self.get_related_content_for(cnx_exercise)
+    page = cnx_exercise_page(cnx_exercise)
+
+    {
+      title: page.title,
+      chapter_section: page.chapter_section
+    }
+  end
+
+  def self.cnx_exercise_page(cnx_exercise)
+    los = Content::Models::Tag.joins{exercise_tags.exercise}
+                              .where{exercise_tags.exercise.url == cnx_exercise.url}
+                              .select{|tag| tag.lo?}
+
+    pages = Content::Models::Page.joins{page_tags.tag}
+                                 .where{page_tags.tag.id.in los.map(&:id)}
+
+    raise "multiple pages found for exercise #{cnx_exercise.url}" unless pages.one?
+    pages.first
   end
 
   def self.add_spaced_practice_exercise_steps!(task_plan:, task:, taskee:)
@@ -128,8 +153,12 @@ class Tasks::Assistants::HomeworkAssistant
         candidate_exercises.delete(chosen_exercise)
         exercise_history.push(chosen_exercise)
 
+        related_content = get_related_content_for(chosen_exercise)
+
         step = add_exercise_step(task: task, exercise: chosen_exercise)
         step.spaced_practice_group!
+
+        step.add_related_content(related_content)
       end
     end
 
