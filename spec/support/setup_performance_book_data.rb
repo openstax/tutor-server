@@ -2,9 +2,8 @@ class SetupPerformanceBookData
   lev_routine
 
   protected
-  def exec(course:, teacher:, students: [])
+  def exec(course:, teacher:, students: [], book:)
     students = [students].flatten
-    book = FetchAndImportBook[id: '7db9aa72-f815-4c3b-9cb6-d50cf5318b58']
     reading_assistant = FactoryGirl.create(:tasks_assistant,
       code_class_name: 'Tasks::Assistants::IReadingAssistant')
     homework_assistant = FactoryGirl.create :tasks_assistant,
