@@ -614,7 +614,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       before do
         SetupPerformanceBookData[course: course,
                                  teacher: teacher,
-                                 students: student_1]
+                                 students: student_1,
+                                 book: @book]
       end
 
       it 'should work on the happy path' do
