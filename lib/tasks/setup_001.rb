@@ -42,6 +42,10 @@ class Setup001
                                            assistant: hw_assistant,
                                            tasks_task_plan_type: 'homework')
 
+    # Add an admin user
+    admin = new_profile(username: 'admin', name: 'Administrator User')
+    UserProfile::MakeAdministrator[user: admin.entity_user]
+
     # Add teacher to course
     teacher = new_profile(username: 'teacher', name: 'Bill Nye')
     run(:add_teacher, course: course, user: teacher.entity_user)
