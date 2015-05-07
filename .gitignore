@@ -53,3 +53,6 @@ notes
 
 # Ignore generated doc
 doc
+
+# Ignore profiling logs from Pilfer
+pilfer.log

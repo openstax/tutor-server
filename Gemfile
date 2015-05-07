@@ -135,6 +135,8 @@ group :development, :test do
   gem 'pry-rails'
   gem 'pry-stack_explorer'
 
+  gem 'byebug'
+
   # Access an IRB console on exceptions page and /console in development
   gem 'web-console', '~> 2.0.0'
 
@@ -145,6 +147,8 @@ group :development, :test do
   gem 'rspec-rails'
 
   gem 'rspec-collection_matchers'
+
+  gem 'pilfer', '~> 1.0.0'
 
   # Fixture replacement
   gem 'factory_girl_rails'
