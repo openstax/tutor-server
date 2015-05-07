@@ -5,19 +5,15 @@ require 'database_cleaner'
 RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                            version: :v1, speed: :slow, vcr: VCR_OPTS do
 
-  let!(:application)     { FactoryGirl.create :doorkeeper_application }
   let!(:user_1)          { FactoryGirl.create :user_profile }
   let!(:user_1_token)    { FactoryGirl.create :doorkeeper_access_token,
-                                              application: application,
                                               resource_owner_id: user_1.id }
 
   let!(:user_2)          { FactoryGirl.create :user_profile }
   let!(:user_2_token)    { FactoryGirl.create :doorkeeper_access_token,
-                                              application: application,
                                               resource_owner_id: user_2.id }
 
-  let!(:userless_token)  { FactoryGirl.create :doorkeeper_access_token,
-                                              application: application }
+  let!(:userless_token)  { FactoryGirl.create :doorkeeper_access_token }
 
   let!(:course) { CreateCourse[name: 'Physics 101'] }
 
@@ -412,7 +408,6 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                                         course: course)
                                                   .outputs.role }
     let!(:student_token)  { FactoryGirl.create :doorkeeper_access_token,
-                                               application: application,
                                                resource_owner_id: student_profile.id }
 
     let!(:teacher_profile){ FactoryGirl.create(:user_profile,
@@ -424,7 +419,6 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                                         course: course)
                                                   .outputs.role }
     let!(:teacher_token)  { FactoryGirl.create :doorkeeper_access_token,
-                                               application: application,
                                                resource_owner_id: teacher_profile.id }
 
     let!(:reading_task)   { FactoryGirl.create(:tasks_task,
@@ -818,7 +812,6 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   describe 'POST #performance_export' do
     let(:teacher) { FactoryGirl.create :user_profile }
     let(:teacher_token) { FactoryGirl.create :doorkeeper_access_token,
-                           application: application,
                            resource_owner_id: teacher.id }
 
     before do
@@ -842,7 +835,6 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     it 'returns 403 unauthorized users' do
       unknown = FactoryGirl.create :user_profile
       unknown_token = FactoryGirl.create :doorkeeper_access_token,
-                                         application: application,
                                          resource_owner_id: unknown.id
 
       api_post :performance_export, unknown_token, parameters: { id: course.id }
@@ -860,7 +852,6 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   describe 'GET #performance_exports' do
     let(:teacher) { FactoryGirl.create :user_profile }
     let(:teacher_token) { FactoryGirl.create :doorkeeper_access_token,
-                           application: application,
                            resource_owner_id: teacher.id }
 
     before do
@@ -886,7 +877,6 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     it 'returns 403 for users who are not teachers of the course' do
       unknown = FactoryGirl.create :user_profile
       unknown_token = FactoryGirl.create :doorkeeper_access_token,
-                                         application: application,
                                          resource_owner_id: unknown.id
 
       api_get :performance_exports, unknown_token, parameters: { id: course.id }
