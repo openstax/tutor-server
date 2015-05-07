@@ -89,7 +89,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   EOS
   def events
     course = Entity::Course.find(params[:id])
-    result = GetRoleCourseEvents.call(course: course, role: get_course_role(types: :any))
+    result = GetRoleCourseEvents.call(course: course, role: get_course_role)
     respond_with result.outputs, represent_with: Api::V1::CourseEventsRepresenter
   end
 
@@ -101,7 +101,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     course = Entity::Course.find(params[:id])
     data = Api::V1::Courses::Dashboard.call(
              course: course,
-             role: get_course_role(types: :any)
+             role: get_course_role
            ).outputs
     respond_with data, represent_with: Api::V1::Courses::DashboardRepresenter
   end
@@ -112,10 +112,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   EOS
   def stats
     course = Entity::Course.find(params[:id])
-    role = ChooseCourseRole[course: course,
-                            user: current_human_user.entity_user,
-                            allowed_role_type: :student,
-                            role_id: params[:role_id]]
+    role = get_course_role(types: :student)
     course_stats = GetCourseStats[role: role, course: course]
     respond_with course_stats, represent_with: Api::V1::CourseStatsRepresenter
   end
@@ -185,15 +182,11 @@ class Api::V1::CoursesController < Api::V1::ApiController
   EOS
   def performance_exports
     course = Entity::Course.find_by(id: params[:id])
-    export_history = [OpenStruct.new(filename: 'todo-soon',
-                                     url: '/to/do/soon',
-                                     created_at: 'in FE format'),
-                      OpenStruct.new(filename: 'todo-soon2',
-                                     url: '/to/do/2/soon',
-                                     created_at: '/in FE format 2')]
+    export_history = []
 
-    if course && UserIsCourseTeacher[course: course,
-                                     user: current_human_user.entity_user]
+    if course && teaching?(course)
+      export_history = Tasks::GetPerformanceBookExports[course: course,
+                                                        role: get_course_role]
       status = check_queued_jobs.any? ? :processing : :ok
     elsif course
       status = :forbidden
@@ -213,8 +206,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   EOS
   def performance
     course = Entity::Course.find(params[:id])
-    role = ChooseCourseRole[course: course, user: current_human_user.entity_user, role_id: params[:role_id]]
-    pbook = Tasks::GetPerformanceBook[course: course, role: role]
+    pbook = Tasks::GetPerformanceBook[course: course, role: get_course_role]
 
     respond_with(Hashie::Mash.new(pbook), represent_with: Api::V1::PerformanceBookRepresenter)
   end
@@ -238,6 +230,10 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
   def check_queued_jobs
     []
+  end
+
+  def teaching?(course)
+    UserIsCourseTeacher[course: course, user: current_human_user.entity_user]
   end
 
 end

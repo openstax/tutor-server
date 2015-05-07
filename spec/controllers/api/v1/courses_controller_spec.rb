@@ -748,11 +748,22 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
 
     it 'returns the filename, url, timestamp of all exports for the course' do
+      role = ChooseCourseRole[user: teacher.entity_user,
+                              course: course,
+                              allowed_role_type: :teacher]
+      export = FactoryGirl.create(:performance_book_export,
+                                  filename: 'hello_world',
+                                  course: course,
+                                  role: role)
+
       allow(controller).to receive(:check_queued_jobs) { [] }
 
       api_get :performance_exports, teacher_token, parameters: { id: course.id }
 
       expect(response.status).to eq(200)
+      expect(response.body_as_hash.last[:filename]).to eq('hello_world.xlsx')
+      expect(response.body_as_hash.last[:url]).to eq('/something/here/hello_world.xlsx')
+      expect(response.body_as_hash.last[:created_at]).not_to be_nil
     end
 
     it 'returns 102 while there is no file' do
