@@ -2,19 +2,26 @@ class SetupPerformanceBookData
   lev_routine
 
   protected
-  def exec(course:, teacher:)
-    student_1 = FactoryGirl.create :user_profile
-    student_2 = FactoryGirl.create :user_profile
+  def exec(course:, teacher:, students: [])
+    students = [students].flatten
     book = FetchAndImportBook[id: '7db9aa72-f815-4c3b-9cb6-d50cf5318b58']
     reading_assistant = FactoryGirl.create(:tasks_assistant,
       code_class_name: 'Tasks::Assistants::IReadingAssistant')
     homework_assistant = FactoryGirl.create :tasks_assistant,
       code_class_name: 'Tasks::Assistants::HomeworkAssistant'
 
+    if students.empty?
+      students = [FactoryGirl.create(:user_profile),
+                  FactoryGirl.create(:user_profile)]
+    elsif students.count == 1
+      students << FactoryGirl.create(:user_profile)
+    end
+
     CourseContent::AddBookToCourse.call(course: course, book: book)
     AddUserAsCourseTeacher[course: course, user: teacher.entity_user]
-    AddUserAsCourseStudent[course: course, user: student_1.entity_user]
-    AddUserAsCourseStudent[course: course, user: student_2.entity_user]
+    students.each do |student|
+      AddUserAsCourseStudent[course: course, user: student.entity_user]
+    end
 
     page_ids = Content::Models::Page.all.map(&:id)
 
@@ -28,8 +35,9 @@ class SetupPerformanceBookData
       settings: { page_ids: page_ids.first(2).collect(&:to_s) }
     )
 
-    reading_taskplan.tasking_plans << Tasks::Models::TaskingPlan.create!(target: course,
-                                                                         task_plan: reading_taskplan)
+    reading_taskplan.tasking_plans << Tasks::Models::TaskingPlan
+      .create!(target: course, task_plan: reading_taskplan)
+
     DistributeTasks[reading_taskplan]
 
     homework_taskplan = Tasks::Models::TaskPlan.create!(
@@ -39,12 +47,15 @@ class SetupPerformanceBookData
       assistant: homework_assistant,
       opens_at: Time.now,
       due_at: Time.now + 1.day,
-      settings: { exercise_ids: Content::Models::Exercise.first(5).collect(&:id).map(&:to_s),
-                  exercises_count_dynamic: 2 }
+      settings: {
+        exercise_ids: Content::Models::Exercise.first(5).collect(&:id).map(&:to_s),
+        exercises_count_dynamic: 2
+      }
     )
 
-    homework_taskplan.tasking_plans << Tasks::Models::TaskingPlan.create!(target: course,
-                                                                          task_plan: homework_taskplan)
+    homework_taskplan.tasking_plans << Tasks::Models::TaskingPlan
+      .create!(target: course, task_plan: homework_taskplan)
+
     DistributeTasks[homework_taskplan]
 
     homework2_taskplan = Tasks::Models::TaskPlan.create!(
@@ -54,29 +65,34 @@ class SetupPerformanceBookData
       assistant: homework_assistant,
       opens_at: Time.now,
       due_at: Time.now + 2.week,
-      settings: { exercise_ids: Content::Models::Exercise.last(2).collect(&:id).map(&:to_s),
-                  exercises_count_dynamic: 2 }
+      settings: {
+        exercise_ids: Content::Models::Exercise.last(2).collect(&:id).map(&:to_s),
+        exercises_count_dynamic: 2
+      }
     )
 
-    homework2_taskplan.tasking_plans << Tasks::Models::TaskingPlan.create!(target: course,
-                                                                           task_plan: homework2_taskplan)
+    homework2_taskplan.tasking_plans << Tasks::Models::TaskingPlan
+      .create!(target: course, task_plan: homework2_taskplan)
 
     DistributeTasks[homework2_taskplan]
 
-    student_1_role = GetUserCourseRoles[course: course, user: student_1.entity_user].first
-    student_2_role = GetUserCourseRoles[course: course, user: student_2.entity_user].first
+    student_1_role = GetUserCourseRoles[course: course,
+                                        user: students[0].entity_user].first
+    student_2_role = GetUserCourseRoles[course: course,
+                                        user: students[1].entity_user].first
+    task_types = Tasks::Models::Task.task_types.values_at(:reading, :homework)
 
     student_1_tasks = Tasks::Models::Task
       .joins { taskings }
       .where { taskings.entity_role_id == my { student_1_role.id } }
-      .where { task_type.in Tasks::Models::Task.task_types.values_at(:reading, :homework) }
+      .where { task_type.in my { task_types } }
       .order { due_at }
       .includes { task_steps.tasked }
 
     student_2_tasks = Tasks::Models::Task
       .joins { taskings }
       .where { taskings.entity_role_id == my { student_2_role.id } }
-      .where { task_type.in Tasks::Models::Task.task_types.values_at(:reading, :homework) }
+      .where { task_type.in my { task_types } }
       .order { due_at }
       .includes { task_steps.tasked }
 
