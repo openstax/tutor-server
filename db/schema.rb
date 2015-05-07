@@ -16,14 +16,6 @@ ActiveRecord::Schema.define(version: 20150420184110) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "administrators", force: :cascade do |t|
-    t.integer  "profile_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "administrators", ["profile_id"], name: "index_administrators_on_profile_id", unique: true, using: :btree
-
   create_table "content_book_parts", force: :cascade do |t|
     t.string   "url"
     t.text     "content"
@@ -146,37 +138,6 @@ ActiveRecord::Schema.define(version: 20150420184110) do
 
   add_index "course_profile_profiles", ["entity_course_id"], name: "index_course_profile_profiles_on_entity_course_id", unique: true, using: :btree
   add_index "course_profile_profiles", ["name"], name: "index_course_profile_profiles_on_name", using: :btree
-
-  create_table "courses", force: :cascade do |t|
-    t.string   "school",                          null: false
-    t.string   "name",                            null: false
-    t.string   "short_name",                      null: false
-    t.string   "time_zone",                       null: false
-    t.text     "description",                     null: false
-    t.text     "approved_emails",                 null: false
-    t.boolean  "allow_student_custom_identifier", null: false
-    t.datetime "starts_at"
-    t.datetime "ends_at"
-    t.datetime "visible_at"
-    t.datetime "invisible_at"
-    t.datetime "created_at",                      null: false
-    t.datetime "updated_at",                      null: false
-  end
-
-  add_index "courses", ["ends_at", "starts_at"], name: "index_courses_on_ends_at_and_starts_at", using: :btree
-  add_index "courses", ["invisible_at", "visible_at"], name: "index_courses_on_invisible_at_and_visible_at", using: :btree
-  add_index "courses", ["school", "name"], name: "index_courses_on_school_and_name", unique: true, using: :btree
-  add_index "courses", ["short_name", "school"], name: "index_courses_on_short_name_and_school", unique: true, using: :btree
-
-  create_table "educators", force: :cascade do |t|
-    t.integer  "course_id",  null: false
-    t.integer  "user_id",    null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "educators", ["course_id"], name: "index_educators_on_course_id", using: :btree
-  add_index "educators", ["user_id", "course_id"], name: "index_educators_on_user_id_and_course_id", unique: true, using: :btree
 
   create_table "entity_books", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -347,38 +308,6 @@ ActiveRecord::Schema.define(version: 20150420184110) do
 
   add_index "role_users", ["entity_user_id", "entity_role_id"], name: "role_users_user_role_uniq", unique: true, using: :btree
 
-  create_table "sections", force: :cascade do |t|
-    t.integer  "course_id",  null: false
-    t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "sections", ["course_id"], name: "index_sections_on_course_id", using: :btree
-  add_index "sections", ["name", "course_id"], name: "index_sections_on_name_and_course_id", unique: true, using: :btree
-
-  create_table "students", force: :cascade do |t|
-    t.integer  "course_id",                   null: false
-    t.integer  "section_id"
-    t.integer  "user_id",                     null: false
-    t.integer  "level"
-    t.boolean  "has_dropped"
-    t.string   "student_custom_identifier"
-    t.string   "educator_custom_identifier"
-    t.string   "random_education_identifier", null: false
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
-  end
-
-  add_index "students", ["course_id"], name: "index_students_on_course_id", using: :btree
-  add_index "students", ["educator_custom_identifier"], name: "index_students_on_educator_custom_identifier", using: :btree
-  add_index "students", ["level"], name: "index_students_on_level", using: :btree
-  add_index "students", ["random_education_identifier"], name: "index_students_on_random_education_identifier", unique: true, using: :btree
-  add_index "students", ["section_id"], name: "index_students_on_section_id", using: :btree
-  add_index "students", ["student_custom_identifier"], name: "index_students_on_student_custom_identifier", using: :btree
-  add_index "students", ["user_id", "course_id"], name: "index_students_on_user_id_and_course_id", unique: true, using: :btree
-  add_index "students", ["user_id", "section_id"], name: "index_students_on_user_id_and_section_id", unique: true, using: :btree
-
   create_table "tasks_assistants", force: :cascade do |t|
     t.string   "name",            null: false
     t.string   "code_class_name", null: false
@@ -513,6 +442,14 @@ ActiveRecord::Schema.define(version: 20150420184110) do
   add_index "tasks_tasks", ["task_type"], name: "index_tasks_tasks_on_task_type", using: :btree
   add_index "tasks_tasks", ["tasks_task_plan_id"], name: "index_tasks_tasks_on_tasks_task_plan_id", using: :btree
 
+  create_table "user_profile_administrators", force: :cascade do |t|
+    t.integer  "profile_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "user_profile_administrators", ["profile_id"], name: "index_user_profile_administrators_on_profile_id", unique: true, using: :btree
+
   create_table "user_profile_profiles", force: :cascade do |t|
     t.integer  "entity_user_id",            null: false
     t.integer  "account_id",                null: false
@@ -528,7 +465,6 @@ ActiveRecord::Schema.define(version: 20150420184110) do
   add_index "user_profile_profiles", ["exchange_read_identifier"], name: "index_user_profile_profiles_on_exchange_read_identifier", unique: true, using: :btree
   add_index "user_profile_profiles", ["exchange_write_identifier"], name: "index_user_profile_profiles_on_exchange_write_identifier", unique: true, using: :btree
 
-  add_foreign_key "administrators", "user_profile_profiles", column: "profile_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_book_parts", "content_book_parts", column: "parent_book_part_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_book_parts", "entity_books", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_exercise_tags", "content_exercises", on_update: :cascade, on_delete: :cascade
@@ -545,14 +481,8 @@ ActiveRecord::Schema.define(version: 20150420184110) do
   add_foreign_key "course_membership_teachers", "entity_courses"
   add_foreign_key "course_membership_teachers", "entity_roles"
   add_foreign_key "course_profile_profiles", "entity_courses"
-  add_foreign_key "educators", "courses", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "educators", "user_profile_profiles", column: "user_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "role_users", "entity_roles"
   add_foreign_key "role_users", "entity_users"
-  add_foreign_key "sections", "courses", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "students", "courses", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "students", "sections", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "students", "user_profile_profiles", column: "user_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_course_assistants", "entity_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_course_assistants", "tasks_assistants", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_plans", "tasks_assistants", on_update: :cascade, on_delete: :cascade
@@ -562,4 +492,5 @@ ActiveRecord::Schema.define(version: 20150420184110) do
   add_foreign_key "tasks_taskings", "entity_tasks"
   add_foreign_key "tasks_tasks", "entity_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasks", "tasks_task_plans", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "user_profile_administrators", "user_profile_profiles", column: "profile_id", on_update: :cascade, on_delete: :cascade
 end
