@@ -45,7 +45,8 @@ class ResetPracticeWidget
 
     task = Tasks::CreateTask[task_type: task_type,
                              title: 'Practice',
-                             opens_at: Time.now]
+                             opens_at: Time.now,
+                             feedback_at: Time.now]
 
     exercises.each do |exercise|
       step = Tasks::Models::TaskStep.new(task: task)
