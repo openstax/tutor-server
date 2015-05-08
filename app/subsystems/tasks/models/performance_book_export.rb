@@ -10,5 +10,9 @@ module Tasks::Models
     def filename
       export.file.identifier
     end
+
+    def url
+      export.url
+    end
   end
 end
