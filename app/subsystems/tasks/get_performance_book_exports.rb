@@ -7,16 +7,11 @@ module Tasks
       exports = Models::PerformanceBookExport.where(course: course, role: role)
       outputs[:exports] = exports.collect do |export|
         {
-          filename: "#{export.filename}.#{extension}",
-          url: "/something/here/#{export.filename}.#{extension}",
+          filename: export.filename,
+          url: export.file.url,
           created_at: export.created_at
         }
       end
-    end
-
-    private
-    def extension
-      'xlsx'
     end
   end
 end

@@ -8,26 +8,28 @@ RSpec.describe Tasks::GetPerformanceBookExports do
     course = Entity::Course.last
     role = Entity::Role.last
 
-    physics = FactoryGirl.create(:performance_book_export,
-                                 filename: 'Physics_I_Performance',
-                                 course: course,
-                                 role: role)
+    physics_file = File.open('./tmp/Physics_I_Performance.xlsx', 'w+')
+    biology_file = File.open('./tmp/Biology_I_Performance.xlsx', 'w+')
 
-    biology = FactoryGirl.create(:performance_book_export,
-                                 filename: 'Biology_I_Performance',
-                                 course: course,
-                                 role: role)
+    physics_export = FactoryGirl.create(:performance_book_export,
+                                        file: physics_file,
+                                        course: course,
+                                        role: role)
+    biology_export = FactoryGirl.create(:performance_book_export,
+                                        file: biology_file,
+                                        course: course,
+                                        role: role)
 
     exports = described_class[course: course, role: role]
 
     # newest on top
     expect(exports).to eq([
       { 'filename' => 'Biology_I_Performance.xlsx',
-        'url' => '/something/here/Biology_I_Performance.xlsx',
-        'created_at' => biology.created_at },
+        'url' => biology_export.file.url,
+        'created_at' => biology_export.created_at },
       { 'filename' => 'Physics_I_Performance.xlsx',
-        'url' => '/something/here/Physics_I_Performance.xlsx',
-        'created_at' => physics.created_at }
+        'url' => physics_export.file.url,
+        'created_at' => physics_export.created_at }
     ])
   end
 end
