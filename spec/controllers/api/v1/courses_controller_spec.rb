@@ -714,11 +714,13 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
 
     it 'kicks off the performance book export for authorized teachers' do
+      role = ChooseCourseRole[course: course, user: teacher.entity_user]
       allow(Queues::ExportPerformanceBook).to receive(:[])
 
       api_post :performance_export, teacher_token, parameters: { id: course.id }
 
       expect(Queues::ExportPerformanceBook).to have_received(:[])
+        .with(course: course, role: role)
     end
 
     it 'returns 403 unauthorized users' do
@@ -756,22 +758,12 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                   course: course,
                                   role: role)
 
-      allow(controller).to receive(:check_queued_jobs) { [] }
-
       api_get :performance_exports, teacher_token, parameters: { id: course.id }
 
       expect(response.status).to eq(200)
       expect(response.body_as_hash.last[:filename]).to eq('test.txt')
       expect(response.body_as_hash.last[:url]).to eq(export.url)
       expect(response.body_as_hash.last[:created_at]).not_to be_nil
-    end
-
-    it 'returns 102 while there is no file' do
-      allow(controller).to receive(:check_queued_jobs) { [1] }
-
-      api_get :performance_exports, teacher_token, parameters: { id: course.id }
-
-      expect(response.status).to eq(102)
     end
 
     it 'returns 403 for users who are not teachers of the course' do

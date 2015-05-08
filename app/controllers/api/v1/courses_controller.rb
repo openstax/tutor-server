@@ -161,7 +161,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
     if course && UserIsCourseTeacher[course: course,
                                      user: current_human_user.entity_user]
-      Queues::ExportPerformanceBook[]
+      Queues::ExportPerformanceBook[course: course, role: get_course_role]
       status = :created
     elsif course
       status = :forbidden
@@ -175,10 +175,9 @@ class Api::V1::CoursesController < Api::V1::ApiController
   api :GET, '/courses/:course_id/performance/exports',
             'Gets the export history of the performance book for authorized teachers'
   description <<-EOS
-    - 102 (:processing) while there is yet no file
+    #{json_schema(Api::V1::PerformanceBookExportsRepresenter, include: :readable)}
     - 403 when the user is not a teacher of the course
     - 404 when the course does not exist
-    #{json_schema(Api::V1::PerformanceBookExportsRepresenter, include: :readable)}
   EOS
   def performance_exports
     course = Entity::Course.find_by(id: params[:id])
@@ -187,7 +186,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     if course && teaching?(course)
       export_history = Tasks::GetPerformanceBookExports[course: course,
                                                         role: get_course_role]
-      status = check_queued_jobs.any? ? :processing : :ok
+      status = :ok
     elsif course
       status = :forbidden
     else
@@ -226,10 +225,6 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
   def get_practice_role
     get_course_role(types: :student)
-  end
-
-  def check_queued_jobs
-    []
   end
 
   def teaching?(course)
