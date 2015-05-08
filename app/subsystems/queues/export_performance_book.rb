@@ -3,8 +3,8 @@ module Queues
     lev_routine
 
     protected
-    def exec
-      Jobs::ExportPerformanceBookJob.perform_later
+    def exec(course:, role:)
+      Jobs::ExportPerformanceBookJob.perform_later(course: course, role: role)
     end
   end
 end
