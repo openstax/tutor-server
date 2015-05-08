@@ -8,7 +8,7 @@ module Tasks
       outputs[:exports] = exports.collect do |export|
         {
           filename: export.filename,
-          url: export.file.url,
+          url: export.url,
           created_at: export.created_at
         }
       end
