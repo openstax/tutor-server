@@ -146,7 +146,8 @@ module Sprint010
     def page_exercise_ids(page_id)
       los = Content::GetLos[page_ids: page_id]
       exercises = Content::Routines::SearchExercises[tag: los, match_count: 1]
-      hw_exercises = exercises.select{|ex| (ex.tags.map(&:value) & ['chapter-review-problem', 'chapter-review-concept']).any?}
+      hw_exercises = exercises.select{|ex| (ex.tags.map(&:value) & ['problem', 'concept']).any? && \
+                                            ex.tags.map(&:value).include?('chapter-review')}
       ids = hw_exercises.map(&:id)
       ids
     end

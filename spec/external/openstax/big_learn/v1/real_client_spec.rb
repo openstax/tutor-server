@@ -17,9 +17,12 @@ module OpenStax::BigLearn
         _and: [
           {
             _or: [
-              'practice-concepts',
-              'practice-problem',
-              'test-prep-multiple-choice'
+              'os-practice-concepts',
+              'os-practice-problems',
+              _and: [
+                'test-prep',
+                'multiple-choice'
+              ]
             ]
           },
           {
@@ -32,7 +35,7 @@ module OpenStax::BigLearn
       }
 
       expect(client.stringify_tag_search(tag_search)).to eq(
-        '(("practice-concepts" OR "practice-problem" OR "test-prep-multiple-choice") AND ("k12phys-ch04-s01-lo01" OR "k12phys-ch04-s01-lo02"))'
+        '(("os-practice-concepts" OR "os-practice-problems" OR ("test-prep" AND "multiple-choice")) AND ("k12phys-ch04-s01-lo01" OR "k12phys-ch04-s01-lo02"))'
       )
     end
 
@@ -41,9 +44,12 @@ module OpenStax::BigLearn
         _and: [
           {
             _or: [
-              'practice-concepts',
-              'practice-problem',
-              'test-prep-multiple-choice'
+              'os-practice-concepts',
+              'os-practice-problems',
+              _and: [
+                'test-prep',
+                'multiple-choice'
+              ]
             ]
           },
           {

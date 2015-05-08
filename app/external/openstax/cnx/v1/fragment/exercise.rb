@@ -22,8 +22,7 @@ module OpenStax::Cnx::V1::Fragment
     attr_reader :node
 
     def title
-      @title ||= node.at_css(TITLE_CSS).try(:content).try(:strip) || \
-                 DEFAULT_TITLE
+      @title ||= node.at_css(TITLE_CSS).try(:content).try(:strip) || DEFAULT_TITLE
     end
 
     def embed_code
