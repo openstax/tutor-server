@@ -5,7 +5,7 @@ RSpec.describe Tasks::RecoverTaskStep, :type => :routine do
   let!(:lo)              { FactoryGirl.create :content_tag,
                                               value: 'ost-tag-lo-test-lo01' }
   let!(:pp)              { FactoryGirl.create :content_tag,
-                                              value: 'practice-problem' }
+                                              value: 'os-practice-problems' }
 
   let!(:tasked_reading)  { FactoryGirl.create(:tasks_tasked_reading) }
 

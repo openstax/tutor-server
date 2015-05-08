@@ -596,7 +596,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
         expect(response).to have_http_status(:success)
         hash = response.body_as_hash
-        expect(hash[:total_count]).to eq(127)
+        expect(hash[:total_count]).to eq(128)
         page_los = Content::GetLos[page_ids: page_ids]
         hash[:items].each do |item|
           wrapper = OpenStax::Exercises::V1::Exercise.new(item[:content].to_json)
@@ -738,7 +738,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(response).to have_http_status :success
         expect(response.body_as_hash).to eq(
           data_headings: [
-            { title: 'Homework task plan', class_average: 75 },
+            { title: 'Homework task plan', class_average: 75.0 },
             { title: 'Reading task plan' },
             { title: 'Homework 2 task plan' }
           ],

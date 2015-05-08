@@ -206,9 +206,13 @@ class Tasks::Assistants::HomeworkAssistant
       page_los       = Content::GetLos[page_ids: pages.map(&:id)]
       page_exercises = Content::Routines::SearchExercises[tag: page_los, match_count: 1]
 
+      review_exercises = Content::Models::Exercise.joins{exercise_tags.tag}
+                                                  .where{exercise_tags.tag.value.eq 'ost-chapter-review'}
+                                                  .where{id.in page_exercises.map(&:id)}
+
       exercises = Content::Models::Exercise.joins{exercise_tags.tag}
-                                           .where{exercise_tags.tag.value.in ['chapter-review-problem', 'chapter-review-concept']}
-                                           .where{id.in page_exercises.map(&:id)}
+                                           .where{exercise_tags.tag.value.in ['concept', 'problem']}
+                                           .where{id.in review_exercises.map(&:id)}
 
       exercises
     end

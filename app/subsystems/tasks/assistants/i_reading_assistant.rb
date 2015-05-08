@@ -195,7 +195,7 @@ class Tasks::Assistants::IReadingAssistant
       page_exercises = Content::Routines::SearchExercises[tag: page_los, match_count: 1]
 
       exercises = Content::Models::Exercise.joins{exercise_tags.tag}
-                                           .where{exercise_tags.tag.value.in ['practice-problem', 'practice-concept', 'practice-concepts']}
+                                           .where{exercise_tags.tag.value.in ['os-practice-problems', 'os-practice-concepts']}
                                            .where{id.in page_exercises.map(&:id)}
 
       exercises

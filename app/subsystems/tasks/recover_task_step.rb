@@ -40,7 +40,7 @@ class Tasks::RecoverTaskStep
 
   # Finds an Exercise with all the required tags and at least one LO
   # Prefers unassigned Exercises
-  def get_recovery_exercise_for(task_step:, required_tag_names: ['practice-problem'])
+  def get_recovery_exercise_for(task_step:, required_tag_names: ['os-practice-problems'])
 
     # Randomize LO order
     los = task_step.tasked.los.shuffle

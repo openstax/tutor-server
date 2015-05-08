@@ -41,9 +41,13 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
 
     page_exercises = Content::Routines::SearchExercises[tag: page_los, match_count: 1]
 
+    review_exercises = Content::Models::Exercise.joins{exercise_tags.tag}
+                                                .where{exercise_tags.tag.value.eq 'ost-chapter-review'}
+                                                .where{id.in page_exercises.map(&:id)}
+
     exercises = Content::Models::Exercise.joins{exercise_tags.tag}
-                                         .where{exercise_tags.tag.value.in ['chapter-review-problem', 'chapter-review-concept']}
-                                         .where{id.in page_exercises.map(&:id)}
+                                         .where{exercise_tags.tag.value.in ['problem', 'concept']}
+                                         .where{id.in review_exercises.map(&:id)}
 
     exercises = exercises.sort_by{|ex| ex.uid}
     #puts "exercises = #{exercises.map(&:uid)}"
