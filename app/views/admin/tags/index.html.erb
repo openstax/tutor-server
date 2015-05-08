@@ -1,0 +1,32 @@
+<%= form_tag '', method: :get do %>
+  <%= label_tag :value, 'Tag ID' %>
+  <%= text_field_tag :value, params[:value] %>
+  <%= submit_tag 'Search' %>
+<% end %>
+
+<% if params[:value] && @tags.empty? %>
+  <p>No tags found.</p>
+<% end %>
+
+<% if @tags.present? %>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @tags.each do |tag| %>
+        <tr>
+          <td><%= tag.value %></td>
+          <td><%= tag.name %></td>
+          <td>
+            <%= link_to 'edit', edit_admin_tag_path(tag.id) %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
