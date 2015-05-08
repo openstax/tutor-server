@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150505184224) do
+ActiveRecord::Schema.define(version: 20150508190834) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -337,6 +337,7 @@ ActiveRecord::Schema.define(version: 20150505184224) do
     t.integer  "entity_role_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "file"
   end
 
   add_index "tasks_performance_book_exports", ["entity_course_id"], name: "index_tasks_performance_book_exports_on_entity_course_id", using: :btree
