@@ -159,8 +159,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   def performance_export
     course = Entity::Course.find_by(id: params[:id])
 
-    if course && UserIsCourseTeacher[course: course,
-                                     user: current_human_user.entity_user]
+    if course && current_user_is_teaching?(course)
       Queues::ExportPerformanceBook[course: course, role: get_course_role]
       status = :created
     elsif course
@@ -183,7 +182,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     course = Entity::Course.find_by(id: params[:id])
     export_history = []
 
-    if course && teaching?(course)
+    if course && current_user_is_teaching?(course)
       export_history = Tasks::GetPerformanceBookExports[course: course,
                                                         role: get_course_role]
       status = :ok
@@ -227,7 +226,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     get_course_role(types: :student)
   end
 
-  def teaching?(course)
+  def current_user_is_teaching?(course)
     UserIsCourseTeacher[course: course, user: current_human_user.entity_user]
   end
 
