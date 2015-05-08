@@ -36,6 +36,10 @@ class UserProfile::Models::Profile < Tutor::SubSystems::BaseModel
     !deleted_at.nil?
   end
 
+  def is_admin?
+    !administrator.nil?
+  end
+
   def destroy
     update_attribute(:deleted_at, Time.now)
   end

@@ -7,5 +7,8 @@ module Api::V1
 
     property :name
 
+    property :is_admin?,
+             as: :is_admin
+
   end
 end
