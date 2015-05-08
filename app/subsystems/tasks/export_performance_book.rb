@@ -61,9 +61,7 @@ module Tasks
     end
 
     def student_data(student)
-      [student.name] + student.data.collect { |data|
-        [score(data)]
-      }.flatten
+      [student.name] + student.data.collect { |data| score(data) }
     end
 
     def score(data)

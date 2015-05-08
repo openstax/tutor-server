@@ -4,7 +4,7 @@ module Tasks
 
     def exec(course:, role:, filepath:)
       export = Models::PerformanceBookExport.new(course: course, role: role)
-      File.open(filepath) { |f| export.file = f }
+      File.open(filepath) { |f| export.export = f }
       export.save!
     end
   end
