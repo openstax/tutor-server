@@ -53,7 +53,6 @@ class Tasks::Assistants::IReadingAssistant
     task = create_task!(task_plan: task_plan)
     add_core_steps!(task: task, cnx_pages: cnx_pages)
     add_spaced_practice_exercise_steps!(task: task, taskee: taskee)
-    # add_coverage_exercise_steps!(task: task, taskee: taskee)
     # add_personalized_exercise_steps!(task: task, taskee: taskee)
 
     task.save!
@@ -111,7 +110,7 @@ class Tasks::Assistants::IReadingAssistant
 
         next if step.tasked.nil?
         step.core_group!
-        step.add_related_content({title: page_title, chapter_section: page.chapter_section})
+        step.add_related_content(related_content_for_page(page: page, title: page_title))
         task.task_steps << step
 
         # Only the first step for each Page should have a title
@@ -147,13 +146,11 @@ class Tasks::Assistants::IReadingAssistant
         chosen_exercise = candidate_exercises.first #sample
         #puts "chosen exercise:     #{chosen_exercise.uid}"
 
-        related_content = get_related_content_for(chosen_exercise)
-
         candidate_exercises.delete(chosen_exercise)
         exercise_history.push(chosen_exercise)
 
         step = add_exercise_step(task: task, exercise: chosen_exercise)
-        step.add_related_content(related_content)
+        add_exercise_related_content!(step: step, exercise: chosen_exercise)
         step.spaced_practice_group!
       end
     end
@@ -207,13 +204,19 @@ class Tasks::Assistants::IReadingAssistant
     [ [1,1], [2,1] ]
   end
 
+  def self.add_exercise_related_content!(step:, exercise:)
+    related_content = self.get_related_content_for(exercise)
+    step.add_related_content(related_content)
+    step
+  end
+
+  def self.related_content_for_page(page:, title: page.title, chapter_section: page.chapter_section)
+    {title: title, chapter_section: chapter_section}
+  end
+
   def self.get_related_content_for(content_exercise)
     page = content_exercise_page(content_exercise)
-
-    {
-      title: page.title,
-      chapter_section: page.chapter_section
-    }
+    related_content_for_page(page: page)
   end
 
   def self.content_exercise_page(content_exercise)
