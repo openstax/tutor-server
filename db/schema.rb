@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150508190834) do
+ActiveRecord::Schema.define(version: 20150505184224) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -332,12 +332,11 @@ ActiveRecord::Schema.define(version: 20150508190834) do
   add_index "tasks_course_assistants", ["tasks_assistant_id", "entity_course_id"], name: "index_tasks_course_assistants_on_assistant_id_and_course_id", using: :btree
 
   create_table "tasks_performance_book_exports", force: :cascade do |t|
-    t.string   "filename"
     t.integer  "entity_course_id"
     t.integer  "entity_role_id"
+    t.string   "export"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "file"
   end
 
   add_index "tasks_performance_book_exports", ["entity_course_id"], name: "index_tasks_performance_book_exports_on_entity_course_id", using: :btree
