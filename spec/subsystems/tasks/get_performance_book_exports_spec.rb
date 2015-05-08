@@ -12,11 +12,11 @@ RSpec.describe Tasks::GetPerformanceBookExports do
     biology_file = File.open('./tmp/Biology_I_Performance.xlsx', 'w+')
 
     physics_export = FactoryGirl.create(:performance_book_export,
-                                        file: physics_file,
+                                        export: physics_file,
                                         course: course,
                                         role: role)
     biology_export = FactoryGirl.create(:performance_book_export,
-                                        file: biology_file,
+                                        export: biology_file,
                                         course: course,
                                         role: role)
 
@@ -25,10 +25,10 @@ RSpec.describe Tasks::GetPerformanceBookExports do
     # newest on top
     expect(exports).to eq([
       { 'filename' => 'Biology_I_Performance.xlsx',
-        'url' => biology_export.file.url,
+        'url' => biology_export.url,
         'created_at' => biology_export.created_at },
       { 'filename' => 'Physics_I_Performance.xlsx',
-        'url' => physics_export.file.url,
+        'url' => physics_export.url,
         'created_at' => physics_export.created_at }
     ])
   end
