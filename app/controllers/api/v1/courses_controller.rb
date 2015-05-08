@@ -159,16 +159,10 @@ class Api::V1::CoursesController < Api::V1::ApiController
   def performance_export
     course = Entity::Course.find_by(id: params[:id])
 
-    if course && current_user_is_teaching?(course)
+    authorize_response_for_teacher(course) do |status|
       Queues::ExportPerformanceBook[course: course, role: get_course_role]
-      status = :created
-    elsif course
-      status = :forbidden
-    else
-      status = :not_found
+      head :created
     end
-
-    head status: status
   end
 
   api :GET, '/courses/:course_id/performance/exports',
@@ -180,21 +174,13 @@ class Api::V1::CoursesController < Api::V1::ApiController
   EOS
   def performance_exports
     course = Entity::Course.find_by(id: params[:id])
-    export_history = []
 
-    if course && current_user_is_teaching?(course)
-      export_history = Tasks::GetPerformanceBookExports[course: course,
-                                                        role: get_course_role]
-      status = :ok
-    elsif course
-      status = :forbidden
-    else
-      status = :not_found
+    authorize_response_for_teacher(course) do
+      exports = Tasks::GetPerformanceBookExports[course: course,
+                                                 role: get_course_role]
+      respond_with exports,
+                   represent_with: Api::V1::PerformanceBookExportsRepresenter
     end
-
-    respond_with export_history,
-                 represent_with: Api::V1::PerformanceBookExportsRepresenter,
-                 status: status
   end
 
 
@@ -210,6 +196,20 @@ class Api::V1::CoursesController < Api::V1::ApiController
   end
 
   protected
+  def authorize_response_for_teacher(course)
+    status = if course && current_user_is_teaching?(course)
+               :ok
+             elsif course
+               :forbidden
+             else
+               :not_found
+             end
+    if status == :ok
+      yield
+    else
+      head status
+    end
+  end
 
   def get_course_role(types: :any)
     result = ChooseCourseRole.call(user: current_human_user.entity_user,
