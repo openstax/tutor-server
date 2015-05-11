@@ -116,15 +116,11 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
     taskee = taskings.first.role
 
-    homework_history = get_taskee_homework_history(task: self, taskee: taskee)
-
-    exercise_history = get_exercise_history(tasks: homework_history)
-
-    exercise_pools = get_exercise_pools(tasks: homework_history)
+    homework_los = get_homework_los(task: self)
 
     exercise_uids = OpenStax::BigLearn::V1.get_projection_exercises(
       role:              taskee,
-      tag_search:        biglearn_condition([exercise_pools.first]),
+      tag_search:        biglearn_condition(homework_los),
       count:             num_placeholders,
       difficulty:        0.5,
       allow_repetitions: true
@@ -146,68 +142,23 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     self
   end
 
-  def get_taskee_homework_history(task:, taskee:)
-    tasks = Tasks::Models::Task.joins{taskings}.
-                                where{taskings.entity_role_id == taskee.id}
+  def get_homework_los(task:)
+    urls = task.task_steps.select{|task_step| task_step.exercise?}.
+                           collect{|task_step| task_step.tasked.url}.
+                           uniq
 
-    homework_history = tasks.
-                         select{|tt| tt.homework?}.
-                         reject{|tt| tt == task}.
-                         sort_by{|tt| tt.due_at}.
-                         push(task).
-                         reverse
+    exercise_los = Content::Models::Tag.joins{exercise_tags.exercise}
+                                       .where{exercise_tags.exercise.url.in urls}
+                                       .select{|tag| tag.lo?}
+                                       .collect{|tag| tag.value}
 
-    homework_history
+    pages = Content::Routines::SearchPages[tag: exercise_los, match_count: 1]
+    homework_los = Content::GetLos[page_ids: pages.map(&:id)]
+
+    homework_los
   end
 
-  def get_exercise_history(tasks:)
-    exercise_history = tasks.collect do |task|
-      exercise_steps = task.task_steps.select{|task_step| task_step.exercise?}
-      content_exercises = exercise_steps.collect do |ex_step|
-        content_exercise = Content::Models::Exercise.where{url == ex_step.tasked.url}
-      end
-      content_exercises
-    end.flatten.compact
-    exercise_history
-  end
-
-  def get_exercise_pools(tasks:)
-    exercise_pools = tasks.collect do |task|
-      urls = task.task_steps.select{|task_step| task_step.exercise?}.
-                             collect{|task_step| task_step.tasked.url}.
-                             uniq
-
-      exercise_los = Content::Models::Tag.joins{exercise_tags.exercise}
-                                         .where{exercise_tags.exercise.url.in urls}
-                                         .select{|tag| tag.lo?}
-                                         .collect{|tag| tag.value}
-
-      pages          = Content::Routines::SearchPages[tag: exercise_los, match_count: 1]
-      page_los       = Content::GetLos[page_ids: pages.map(&:id)]
-      page_exercises = Content::Routines::SearchExercises[tag: page_los, match_count: 1]
-
-      review_exercises = Content::Models::Exercise.joins{exercise_tags.tag}
-                                                  .where{exercise_tags.tag.value.eq 'ost-chapter-review'}
-                                                  .where{id.in page_exercises.map(&:id)}
-
-      exercises = Content::Models::Exercise.joins{exercise_tags.tag}
-                                           .where{exercise_tags.tag.value.in ['concept', 'problem']}
-                                           .where{id.in review_exercises.map(&:id)}
-
-      exercises
-    end
-    exercise_pools
-  end
-
-  def biglearn_condition(exercise_pools)
-    urls = exercise_pools.flatten.map(&:url).uniq
-
-    los = Content::Models::Tag.joins{exercise_tags.exercise}
-                              .where{exercise_tags.exercise.url.in urls}
-                              .select{|tag| tag.lo?}
-                              .collect{|tag| tag.value}
-                              .uniq
-
+  def biglearn_condition(los)
     condition = {
       _and: [
         {
