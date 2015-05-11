@@ -32,7 +32,6 @@ class GetCourseStats
   end
 
   private
-
   attr_reader :role
 
   def root_book_title

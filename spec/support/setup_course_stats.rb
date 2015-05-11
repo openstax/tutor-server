@@ -19,14 +19,14 @@ class SetupCourseStats
 
   uses_routine AddBookToCourse, as: :add_book_to_course
 
-  uses_routine AddUserAsCourseStudent, as: :add_user_as_course_student
+  uses_routine AddUserAsCourseStudent, as: :add_student_user_to_course
 
   uses_routine DistributeTasks, as: :distribute_tasks
 
   protected
-  def exec
+  def exec(course: nil, role: nil)
     puts "=== Creating course ==="
-    run(:create_course, name: 'Physics')
+    outputs.course = course || run(:create_course, name: 'Physics')
 
     puts "=== Fetch & import book ==="
     run(:fetch_and_import_book, id: '7db9aa72-f815-4c3b-9cb6-d50cf5318b58@4.57')
@@ -36,13 +36,18 @@ class SetupCourseStats
     puts "=== Add book to course ==="
     run(:add_book_to_course, course: outputs.course, book: outputs.book)
 
-    puts "=== Creating student ==="
-    student = FactoryGirl.create(:user_profile, username: 'student')
+    if role
+      puts "=== Using requested student role ==="
+      student_role = role
+    else
+      puts "=== Creating student ==="
+      student = FactoryGirl.create(:user_profile, username: 'student')
 
-    puts "=== Add student to course ==="
-    run(:add_user_as_course_student, course: outputs.course,
-                                     user: student.entity_user)
-    student_role = Entity::Role.last
+      puts "=== Add student to course ==="
+      run(:add_student_user_to_course, course: outputs.course,
+                                       user: student.entity_user)
+      student_role = Entity::Role.last
+    end
 
     puts "=== Create assignments ==="
     create_assignments(role: student_role)
@@ -98,7 +103,7 @@ class SetupCourseStats
       assistant: assistant,
       title: 'Reading',
       settings: {
-        page_ids: outputs.page_data.from(1).collect(&:id) # 0 is preface
+        page_ids: outputs.page_data.from(1).collect(&:id).collect(&:to_s) # 0 is preface
       })
   end
 
@@ -108,7 +113,7 @@ class SetupCourseStats
     assistant = FactoryGirl.create(:tasks_assistant,
       code_class_name: 'Tasks::Assistants::HomeworkAssistant')
     exercise_ids = outputs.page_data[1].los.collect do |tag|
-      SearchLocalExercises[tag: tag].first.id
+      SearchLocalExercises[tag: tag].first.id.to_s
     end
 
     @homework_task_plan = FactoryGirl.create(:tasks_task_plan,
