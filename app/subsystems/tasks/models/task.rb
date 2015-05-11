@@ -83,8 +83,8 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     exercise_steps.count
   end
 
-  def complete_exercise_count
-    exercise_steps.complete.count
+  def completed_exercise_count
+    completed_exercise_steps.count
   end
 
   def correct_exercise_count
@@ -92,7 +92,11 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def exercise_steps
-    task_steps.where{tasked_type.in %w(Tasks::Models::TaskedExercise)}
+    task_steps.select{|task_step| task_step.exercise?}
+  end
+
+  def completed_exercise_steps
+    exercise_steps.select{|step| step.completed?}
   end
 
   protected

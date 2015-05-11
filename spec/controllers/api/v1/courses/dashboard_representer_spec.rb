@@ -24,7 +24,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
           completed?: false,
           past_due?: false,
           exercise_count: 5,
-          complete_exercise_count: 4,
+          completed_exercise_count: 4,
           correct_exercise_count: 3
         }),
         Hashie::Mash.new({
@@ -34,7 +34,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
           task_type: :reading,
           completed?: false,
           exercise_count: 7,
-          complete_exercise_count: 6,
+          completed_exercise_count: 6,
         }),
         Hashie::Mash.new({
           id: 89,
@@ -45,7 +45,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
           completed?: true,
           past_due?: true,
           exercise_count: 8,
-          complete_exercise_count: 8,
+          completed_exercise_count: 8,
           correct_exercise_count: 3
         }),
       ]

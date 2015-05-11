@@ -129,7 +129,7 @@ RSpec.describe Tasks::Models::Task, :type => :model do
     Hacks::AnswerExercise[task_step: task.task_steps[3], is_correct: false]
 
     expect(task.exercise_count).to eq 3
-    expect(task.complete_exercise_count).to eq 2
+    expect(task.completed_exercise_count).to eq 2
     expect(task.correct_exercise_count).to eq 1
   end
 
