@@ -57,9 +57,12 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
   let!(:teacher_selected_exercises) { exercises[1..5] }
   let!(:teacher_selected_exercise_ids) { teacher_selected_exercises.collect{|e| e.id.to_s} }
 
-  let!(:tutor_selected_exercise_count) { 4 } # Adjust if spaced practice changes
+  let!(:tutor_selected_exercise_count) { 4 }
+  let!(:personalized_exercise_count) { 2 }
 
-  let!(:assignment_exercise_count) { teacher_selected_exercise_ids.count + tutor_selected_exercise_count }
+  let!(:assignment_exercise_count) { teacher_selected_exercise_ids.count +
+                                     tutor_selected_exercise_count +
+                                     personalized_exercise_count }
 
   let!(:task_plan) {
     FactoryGirl.create(:tasks_task_plan,
@@ -91,6 +94,8 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
 
     allow(Tasks::Assistants::HomeworkAssistant).
       to receive(:k_ago_map) { [ [0,tutor_selected_exercise_count] ] }
+    allow(Tasks::Assistants::HomeworkAssistant).
+      to receive(:num_personalized_exercises) { personalized_exercise_count }
 
     tasks = DistributeTasks.call(task_plan).outputs.tasks
 
@@ -137,7 +142,25 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
     tasks.each do |task|
       spaced_practice_task_steps = task.spaced_practice_task_steps
       expect(spaced_practice_task_steps.count).to eq(tutor_selected_exercise_count)
+
+      spaced_practice_task_steps.each do |task_step|
+        tasked_exercise = task_step.tasked
+        expect(tasked_exercise).to be_a(Tasks::Models::TaskedExercise)
+      end
     end
+
+    ## it "assigns personalized exericse placeholders"
+    tasks.each do |task|
+      personalized_task_steps = task.personalized_task_steps
+      expect(personalized_task_steps.count).to eq(personalized_exercise_count)
+
+      personalized_task_steps.each do |task_step|
+        tasked_placeholder = task_step.tasked
+        expect(tasked_placeholder).to be_a(Tasks::Models::TaskedPlaceholder)
+        expect(tasked_placeholder.exercise_type?).to be_truthy
+      end
+    end
+
   end
 
 end
