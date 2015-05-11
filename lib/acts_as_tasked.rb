@@ -20,6 +20,10 @@ module ActsAsTasked
         def exercise?
           false
         end
+
+        def placeholder?
+          false
+        end
       end
     end
   end

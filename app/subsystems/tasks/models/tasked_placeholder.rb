@@ -5,6 +5,10 @@ class Tasks::Models::TaskedPlaceholder < Tutor::SubSystems::BaseModel
 
   validates :placeholder_type, presence: true
 
+  def placeholder?
+    true
+  end
+
   def placeholder_name
     placeholder_type.gsub(/_type\z/, '').gsub('_', ' ')
   end
