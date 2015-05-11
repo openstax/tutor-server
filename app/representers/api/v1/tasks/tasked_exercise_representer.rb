@@ -43,16 +43,6 @@ module Api::V1::Tasks
                description: "Whether or not a recovery exercise is available"
              }
 
-    property :group_name,
-             as: :group,
-             type: String,
-             writeable: false,
-             readable: true,
-             getter: lambda {|*| task_step.group_name },
-             schema_info: {
-                description: "Which exercise group the exercise belongs to (default,core,spaced practice,personalized)"
-             }
-
     # The properties below assume an Exercise with only 1 Question
     property :answer_id,
              type: String,

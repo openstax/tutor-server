@@ -2,7 +2,7 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   sortable_belongs_to :task, on: :number, inverse_of: :task_steps, touch: true
   belongs_to :tasked, polymorphic: true, dependent: :destroy, inverse_of: :task_step, touch: true
 
-  enum group_type: [:default_group, :core_group, :spaced_practice_group]
+  enum group_type: [:default_group, :core_group, :spaced_practice_group, :personalized_group]
 
   serialize :settings, JSON
 
@@ -11,7 +11,7 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   validates :tasked_id, uniqueness: { scope: :tasked_type }
   validates :group_type, presence: true
 
-  delegate :can_be_answered?, :can_be_recovered?, :exercise?, to: :tasked
+  delegate :can_be_answered?, :can_be_recovered?, :exercise?, :placeholder?, to: :tasked
 
   scope :complete, -> { where{completed_at != nil} }
   scope :incomplete, -> { where{completed_at == nil} }

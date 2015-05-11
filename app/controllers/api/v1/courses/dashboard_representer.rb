@@ -66,7 +66,8 @@ module Api::V1::Courses
                readable: true,
                writeable: false
 
-      property :complete_exercise_count,
+      property :completed_exercise_count,
+               as: :complete_exercise_count,
                type: Integer,
                readable: true,
                writeable: false
@@ -78,7 +79,8 @@ module Api::V1::Courses
                readable: true,
                writeable: false
 
-      property :complete_exercise_count,
+      property :completed_exercise_count,
+               as: :complete_exercise_count,
                type: Integer,
                readable: true,
                writeable: false

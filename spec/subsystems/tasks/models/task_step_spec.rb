@@ -22,6 +22,27 @@ RSpec.describe Tasks::Models::TaskStep, :type => :model do
     expect { task_step.save! }.to change{ task_step.task.cache_key }
   end
 
+  context "group types" do
+    it "is created with 'default' group type" do
+      expect(task_step.default_group?).to be_truthy
+    end
+
+    it "supports the 'core' group type" do
+      task_step.core_group!
+      expect(task_step.core_group?).to be_truthy
+    end
+
+    it "supports the 'spaced practice' group type" do
+      task_step.spaced_practice_group!
+      expect(task_step.spaced_practice_group?).to be_truthy
+    end
+
+    it "supports the 'personalized' group type" do
+      task_step.personalized_group!
+      expect(task_step.personalized_group?).to be_truthy
+    end
+  end
+
   it "converts its group type to a name" do
     name_by_type = {
       "default_group"         => "default",

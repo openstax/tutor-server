@@ -60,6 +60,7 @@ class Tasks::Assistants::HomeworkAssistant
     task = create_task!(task_plan: task_plan)
     add_core_steps!(task: task, exercises: exercises)
     add_spaced_practice_exercise_steps!(task_plan: task_plan, task: task, taskee: taskee)
+    add_personalized_exercise_steps!(task_plan: task_plan, task: task, taskee: taskee)
   end
 
   def self.create_task!(task_plan:)
@@ -244,6 +245,24 @@ class Tasks::Assistants::HomeworkAssistant
       end
 
     k_ago_map
+  end
+
+  def self.add_personalized_exercise_steps!(task_plan:, task:, taskee:)
+    num_personalized_exercises.times do
+      task_step = Tasks::Models::TaskStep.new(task: task)
+      tasked_placeholder = Tasks::Models::TaskedPlaceholder.new(task_step: task_step)
+      tasked_placeholder.exercise_type!
+      task_step.tasked = tasked_placeholder
+      task_step.personalized_group!
+      task.task_steps << task_step
+    end
+
+    task.save!
+    task
+  end
+
+  def self.num_personalized_exercises
+    1
   end
 
   def self.assign_task!(task:, taskee:)

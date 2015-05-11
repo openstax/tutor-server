@@ -39,7 +39,17 @@ module Api::V1::Tasks
                                                  .underscore.downcase },
              schema_info: {
                required: true,
-               description: "The type of this TaskStep"
+               description: "The type of this TaskStep (exercise, reading, video, placeholder, etc.)"
+             }
+
+    property :group_name,
+             as: :group,
+             type: String,
+             writeable: false,
+             readable: true,
+             getter: lambda {|*| task_step.group_name },
+             schema_info: {
+                description: "Which group this TaskStep belongs to (default,core,spaced practice,personalized)"
              }
 
     property :is_completed,

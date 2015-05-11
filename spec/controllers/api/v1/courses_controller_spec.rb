@@ -641,8 +641,11 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           code_class_name: 'Tasks::Assistants::IReadingAssistant'
       }
       let!(:hw_assistant) {
-        FactoryGirl.create :tasks_assistant,
+        assistant = FactoryGirl.create(:tasks_assistant,
           code_class_name: 'Tasks::Assistants::HomeworkAssistant'
+        )
+        allow(Tasks::Assistants::HomeworkAssistant).to receive(:num_personalized_exercises).and_return(0)
+        assistant
       }
 
       let!(:r_tp) {
