@@ -1,6 +1,6 @@
 require 'rails_helper'
 require 'vcr_helper'
-VCR_OPTS.merge!(record: :new_episodes)
+require 'database_cleaner'
 
 RSpec.describe GetCourseStats, vcr: VCR_OPTS do
 
@@ -12,7 +12,7 @@ RSpec.describe GetCourseStats, vcr: VCR_OPTS do
   end
 
   after(:all) do
-    #CleanupCourseStatsSetup[]
+    DatabaseCleaner.clean
   end
 
   it 'gets the task steps for the role' do
