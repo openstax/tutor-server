@@ -9,6 +9,7 @@ module Api::V1::Tasks
              writeable: false,
              readable: true,
              schema_info: {
+                required: true,
                 description: "Which TaskStep type this Placeholder is standing in for"
              }
 
