@@ -77,6 +77,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def handle_task_step_completion!(completion_time: Time.now)
+    populate_placeholders(core_completion_time: completion_time) if core_task_steps_completed?
   end
 
   def exercise_count
@@ -105,6 +106,128 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     return unless opens_at.blank? && due_at.blank?
     errors.add(:base, 'needs either the opens_at date or due_at date')
     false
+  end
+
+  def populate_placeholders(core_completion_time: Time.now)
+    personalized_placeholder_task_steps = personalized_task_steps.select{|task_step| task_step.placeholder?}
+    return if personalized_placeholder_task_steps.none?
+
+    num_placeholders = personalized_placeholder_task_steps.count
+
+    taskee = taskings.first.role
+
+    homework_history = get_taskee_homework_history(task: self, taskee: taskee)
+
+    exercise_history = get_exercise_history(tasks: homework_history)
+
+    exercise_pools = get_exercise_pools(tasks: homework_history)
+
+    exercise_uids = OpenStax::BigLearn::V1.get_projection_exercises(
+      role:              taskee,
+      tag_search:        biglearn_condition([exercise_pools.first]),
+      count:             num_placeholders,
+      difficulty:        0.5,
+      allow_repetitions: true
+    )
+    exercise_urls = exercise_uids.collect{|uid| "http://exercises.openstax.org/exercises/#{uid}"}
+    chosen_exercises = SearchLocalExercises[url: exercise_urls, match_count: 1]
+    raise "could not fill all placeholder slots (expected #{num_placeholders} exercises, got #{chosen_exercises.count})" \
+      unless chosen_exercises.count == num_placeholders
+
+    chosen_exercise_task_step_pairs = chosen_exercises.zip(personalized_placeholder_task_steps)
+    chosen_exercise_task_step_pairs.each do |exercise, step|
+      step.tasked.destroy!
+      tasked_exercise = TaskExercise[task_step: step, exercise: exercise]
+      step.personalized_group!
+      # inject_debug_content!(step.tasked, "This exercise is part of the #{step.group_type}")
+    end
+
+    self.save!
+    self
+  end
+
+  def get_taskee_homework_history(task:, taskee:)
+    tasks = Tasks::Models::Task.joins{taskings}.
+                                where{taskings.entity_role_id == taskee.id}
+
+    homework_history = tasks.
+                         select{|tt| tt.homework?}.
+                         reject{|tt| tt == task}.
+                         sort_by{|tt| tt.due_at}.
+                         push(task).
+                         reverse
+
+    homework_history
+  end
+
+  def get_exercise_history(tasks:)
+    exercise_history = tasks.collect do |task|
+      exercise_steps = task.task_steps.select{|task_step| task_step.exercise?}
+      content_exercises = exercise_steps.collect do |ex_step|
+        content_exercise = Content::Models::Exercise.where{url == ex_step.tasked.url}
+      end
+      content_exercises
+    end.flatten.compact
+    exercise_history
+  end
+
+  def get_exercise_pools(tasks:)
+    exercise_pools = tasks.collect do |task|
+      urls = task.task_steps.select{|task_step| task_step.exercise?}.
+                             collect{|task_step| task_step.tasked.url}.
+                             uniq
+
+      exercise_los = Content::Models::Tag.joins{exercise_tags.exercise}
+                                         .where{exercise_tags.exercise.url.in urls}
+                                         .select{|tag| tag.lo?}
+                                         .collect{|tag| tag.value}
+
+      pages          = Content::Routines::SearchPages[tag: exercise_los, match_count: 1]
+      page_los       = Content::GetLos[page_ids: pages.map(&:id)]
+      page_exercises = Content::Routines::SearchExercises[tag: page_los, match_count: 1]
+
+      review_exercises = Content::Models::Exercise.joins{exercise_tags.tag}
+                                                  .where{exercise_tags.tag.value.eq 'ost-chapter-review'}
+                                                  .where{id.in page_exercises.map(&:id)}
+
+      exercises = Content::Models::Exercise.joins{exercise_tags.tag}
+                                           .where{exercise_tags.tag.value.in ['concept', 'problem']}
+                                           .where{id.in review_exercises.map(&:id)}
+
+      exercises
+    end
+    exercise_pools
+  end
+
+  def biglearn_condition(exercise_pools)
+    urls = exercise_pools.flatten.map(&:url).uniq
+
+    los = Content::Models::Tag.joins{exercise_tags.exercise}
+                              .where{exercise_tags.exercise.url.in urls}
+                              .select{|tag| tag.lo?}
+                              .collect{|tag| tag.value}
+                              .uniq
+
+    condition = {
+      _and: [
+        {
+          _and: [
+            'ost-chapter-review',
+            {
+              _or: [
+                'concept',
+                'problem'
+              ]
+            }
+          ]
+        },
+        {
+          _or: los
+        }
+      ]
+    }
+
+    condition
   end
 
 end

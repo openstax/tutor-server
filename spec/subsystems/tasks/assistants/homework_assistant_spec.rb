@@ -5,7 +5,10 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
                                                      speed: :slow,
                                                      vcr: VCR_OPTS do
 
-  before(:each) { OpenStax::Exercises::V1.use_real_client }
+  before(:each) {
+    OpenStax::Exercises::V1.use_real_client
+    OpenStax::BigLearn::V1.use_fake_client
+  }
 
   let!(:assistant) {
     FactoryGirl.create(:tasks_assistant,
