@@ -25,7 +25,7 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     # attempts are supported, it will be incremented to indicate the attempt #
     OpenStax::Exchange.record_multiple_choice_answer(identifiers.first, url, trial, answer_id)
 
-    grade = is_correct? ? '1' : '0'
+    grade = is_correct? ? 1 : 0
     grader = 'tutor'
     OpenStax::Exchange.record_grade(identifiers.first, url, trial, grade, grader)
   end

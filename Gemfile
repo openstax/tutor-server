@@ -45,7 +45,7 @@ gem 'whenever'
 # OpenStax Accounts integration
 gem 'openstax_accounts', '~> 5.1.2'
 # OpenStax Exchange integration
-gem 'openstax_exchange', '~> 0.2.0'
+gem 'openstax_exchange', '~> 0.2.1'
 
 # Datetime parsing
 gem 'chronic'

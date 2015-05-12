@@ -81,7 +81,7 @@ RSpec.describe Tasks::Models::TaskedExercise, :type => :model do
                                    .with(exchange_identifier,
                                          tasked_exercise.url,
                                          tasked_exercise.task_step.id.to_s,
-                                         '1',
+                                         1,
                                          'tutor')
     tasked_exercise.handle_task_step_completion!
   end
