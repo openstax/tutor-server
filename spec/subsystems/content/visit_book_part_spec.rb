@@ -16,49 +16,54 @@ RSpec.describe Content::VisitBookPart, :type => :routine do
   it "should get the TOC with the TOC option" do
 
     toc = Content::VisitBookPart[book_part: book_part, visitor_names: :toc]
-    ftoc = toc.first
-    expect(toc).to eq([{
-      'id' => ftoc.id,
-      'title' => 'unit 1',
+    expect(toc).to eq({
+      'id' => toc.id,
+      'title' => 'book title',
       'type' => 'part',
       'children' => [
-        {
-          'id' => ftoc.children[0].id,
-          'title' => 'chapter 1',
-          'type' => 'part',
-          'children' => [
-            {
-              'id' => ftoc.children[0].children[0].id,
-              'title' => 'first page',
-              'type' => 'page',
-              'chapter_section' => '1.1'
-            },
-            {
-              'id' => ftoc.children[0].children[1].id,
-              'title' => 'second page',
-              'type' => 'page',
-              'chapter_section' => '1.2'
-            }
-          ],
-          'chapter_section' => nil
-        },
-        {
-          'id' => ftoc.children[1].id,
-          'title' => 'chapter 2',
-          'type' => 'part',
-          'children' => [
-            {
-              'id' => ftoc.children[1].children[0].id,
-              'title' => 'third page',
-              'type' => 'page',
-              'chapter_section' => '1.3'
-            }
-          ],
-          'chapter_section' => nil
-        }
+        'id' => toc.children[0].id,
+        'title' => 'unit 1',
+        'type' => 'part',
+        'children' => [
+          {
+            'id' => toc.children[0].children[0].id,
+            'title' => 'chapter 1',
+            'type' => 'part',
+            'children' => [
+              {
+                'id' => toc.children[0].children[0].children[0].id,
+                'title' => 'first page',
+                'type' => 'page',
+                'chapter_section' => '1.1'
+              },
+              {
+                'id' => toc.children[0].children[0].children[1].id,
+                'title' => 'second page',
+                'type' => 'page',
+                'chapter_section' => '1.2'
+              }
+            ],
+            'chapter_section' => nil
+          },
+          {
+            'id' => toc.children[0].children[1].id,
+            'title' => 'chapter 2',
+            'type' => 'part',
+            'children' => [
+              {
+                'id' => toc.children[0].children[1].children[0].id,
+                'title' => 'third page',
+                'type' => 'page',
+                'chapter_section' => '1.3'
+              }
+            ],
+            'chapter_section' => nil
+          }
+        ],
+        'chapter_section' => nil
       ],
       'chapter_section' => nil
-    }])
+    })
   end
 
   it "should get tagged exercises out of a book_part" do

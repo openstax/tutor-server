@@ -26,7 +26,7 @@ FactoryGirl.define do
 
     trait :standard_contents_1 do
       contents {{
-        title: 'root',
+        title: 'book title',
         book_parts: [
           {
             title: 'unit 1',

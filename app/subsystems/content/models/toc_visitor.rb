@@ -40,7 +40,7 @@ class Content::Models::TocVisitor < Content::Models::BookVisitor
   end
 
   def output
-    current_level[:children]
+    current_level
   end
 
 end

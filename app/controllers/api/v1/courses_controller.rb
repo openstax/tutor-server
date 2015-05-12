@@ -36,7 +36,9 @@ class Api::V1::CoursesController < Api::V1::ApiController
     raise NotYetImplemented if books.count > 1
 
     toc = Content::VisitBook[book: books.first, visitor_names: :toc]
-    respond_with toc, represent_with: Api::V1::BookTocRepresenter
+    # Return [toc] as a list so that in the future we may have toc from more
+    # than one book
+    respond_with [toc], represent_with: Api::V1::BookTocRepresenter
   end
 
   api :GET, '/courses/:course_id/exercises',
