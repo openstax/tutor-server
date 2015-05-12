@@ -24,6 +24,10 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     # "trial" is set to only "1" for now. When multiple
     # attempts are supported, it will be incremented to indicate the attempt #
     OpenStax::Exchange.record_multiple_choice_answer(identifiers.first, url, trial, answer_id)
+
+    grade = is_correct? ? '1' : '0'
+    grader = 'tutor'
+    OpenStax::Exchange.record_grade(identifiers.first, url, trial, grade, grader)
   end
 
   def has_correctness?
@@ -90,7 +94,6 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
   protected
 
   def identifiers
-    # No group work
     roles = task_step.task.taskings.collect{ |t| t.role }
     users = Role::GetUsersForRoles[roles]
     UserProfile::Models::Profile.where(entity_user: users)
