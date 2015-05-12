@@ -121,7 +121,7 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
 
       exercises = Content::Models::Exercise.all.to_a
       exercises[-31..-1].each do |exercise|
-        wrapper = OpenStax::Exercises::V1::Exercise.new(exercise.content)
+        wrapper = OpenStax::Exercises::V1::Exercise.new(content: exercise.content)
 
         exercise.exercise_tags.collect{|et| et.tag.value}.each do |tag|
           expect(wrapper.tags).to include tag

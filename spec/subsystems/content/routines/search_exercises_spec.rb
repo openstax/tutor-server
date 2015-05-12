@@ -30,7 +30,7 @@ RSpec.describe Content::Routines::SearchExercises, type: :routine, speed: :slow,
     exercises.each do |exercise|
       tags = exercise.exercise_tags.collect{|et| et.tag.value}
       expect(tags).to include(lo)
-      wrapper = OpenStax::Exercises::V1::Exercise.new(exercise.content)
+      wrapper = OpenStax::Exercises::V1::Exercise.new(content: exercise.content)
       expect(wrapper.tags).to include(lo)
       expect(wrapper.los).to include(lo)
     end

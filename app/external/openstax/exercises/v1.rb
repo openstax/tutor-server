@@ -10,7 +10,8 @@ module OpenStax::Exercises::V1
     exercises_json = client.exercises(options)
     exercises_hash = JSON.parse(exercises_json)
     exercises_hash['items'] = exercises_hash['items'].collect{|e|
-      OpenStax::Exercises::V1::Exercise.new(e.to_json)
+      OpenStax::Exercises::V1::Exercise.new(content: e.to_json,
+                                            base_url: client.server_url)
     }
     exercises_hash
   end
@@ -42,6 +43,10 @@ module OpenStax::Exercises::V1
 
   def self.use_fake_client
     @client = fake_client
+  end
+
+  def server_url
+    client.server_url
   end
 
   private

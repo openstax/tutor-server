@@ -1,14 +1,13 @@
 class OpenStax::Exercises::V1::Exercise
 
-  BASE_URL = 'http://exercises.openstax.org/exercises'
-
   # This Regex finds the LO's within the exercise tags
   LO_REGEX = /[\w-]+-lo[\d]+/
 
   attr_reader :content
 
-  def initialize(content)
-    @content = content || '{}'
+  def initialize(content: '{}', base_url: 'http://unknown-exercises-server.openstax.org')
+    @content = content
+    @base_url = base_url
   end
 
   def content_hash
@@ -24,7 +23,7 @@ class OpenStax::Exercises::V1::Exercise
   end
 
   def url
-    @url ||= "#{BASE_URL}/#{uid}"
+    @url ||= "#{@base_url}/exercises/#{uid}"
   end
 
   def title

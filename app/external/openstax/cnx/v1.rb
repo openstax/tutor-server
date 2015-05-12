@@ -33,6 +33,8 @@ module OpenStax::Cnx::V1
   end
 
   def self.fetch(id)
+    url = url_for(id)
+    Rails.logger.debug { "Fetching #{url}" }
     JSON.parse open(url_for(id), 'ACCEPT' => 'text/json').read
   end
 

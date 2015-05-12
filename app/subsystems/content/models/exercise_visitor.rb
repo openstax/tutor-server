@@ -10,7 +10,7 @@ class Content::Models::ExerciseVisitor < Content::Models::BookVisitor
       .where{exercise_tags.tag.page_tags.content_page_id == my{page.id}}
 
     page_exercises.each do |page_exercise|
-      wrapper = OpenStax::Exercises::V1::Exercise.new(page_exercise.content)
+      wrapper = OpenStax::Exercises::V1::Exercise.new(content: page_exercise.content)
 
       (@exercises[wrapper.uid] ||= {}).tap do |entry|
         entry['uid']  = wrapper.uid

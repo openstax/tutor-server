@@ -67,36 +67,7 @@ class Demo001
 
   end
 
-  def print_task(task:)
-    types = task.task_steps.collect do |step|
-      case step.tasked
-      when Tasks::Models::TaskedExercise
-        'e'
-      when Tasks::Models::TaskedReading
-        'r'
-      when Tasks::Models::TaskedVideo
-        'v'
-      when Tasks::Models::TaskedInteractive
-        'i'
-      else
-        'o'
-      end
-    end
 
-    "Task #{task.id} / #{task.task_type} / #{types.join(' ')}"
-  end
-
-  def work_ireadings(ireading:, settings:)
-    raise "not yet implemented"
-  end
-
-  def initialize_randomizer(seed)
-    @randomizer = Random.new(seed)
-  end
-
-  def rand(max=nil)
-    max.nil? ? @randomizer.rand : @randomizer.rand(max)
-  end
 
   def exec(random_seed: nil)
     # By default, choose a fixed seed for repeatability and fewer surprises
@@ -107,7 +78,7 @@ class Demo001
     course = create_course(name: 'Physics I')
 
     book = OpenStax::Cnx::V1.with_archive_url(url: archive_url) do
-      run(:import_book, id: 'e4c329f3-1972-4835-a203-3e8c539e4df3@2.1').outputs.book
+      run(:import_book, id: 'e4c329f3-1972-4835-a203-3e8c539e4df3@2.14').outputs.book
     end
 
     run(:add_book, book: book, course: course)
@@ -115,7 +86,7 @@ class Demo001
     teacher_profile = new_user_profile(username: 'teacher', name: 'Bill Nye')
     run(:add_teacher, course: course, user: teacher_profile.entity_user)
 
-    students = 20.times.collect do |ii|
+    students = 1.times.collect do |ii|
       new_course_student(course: course, username: "student#{(ii + 1).to_s.rjust(2,'0')}")
     end
 
@@ -123,11 +94,8 @@ class Demo001
 
     initial_date = Chronic.parse("October 14, 2015")
 
-    assign_ireading(course: course, chapter_sections: '4.2', due_at: initial_date - 1.week).each do |ireading|
-      log print_task(task: ireading)
-    end
 
-    assign_ireading(course: course, chapter_sections: '3.3', due_at: initial_date - 5.days).each do |ireading|
+    assign_ireading(course: course, chapter_sections: ['3.1', '3.2'], due_at: initial_date - 5.days).each do |ireading|
       log(print_task(task: ireading))
     end
 
@@ -135,9 +103,13 @@ class Demo001
       log(print_task(task: ireading))
     end
 
-    assign_ireading(course: course, chapter_sections: '4.3', due_at: initial_date - 0.days).each do |ireading|
-      log(print_task(task: ireading))
+    assign_ireading(course: course, chapter_sections: ['4.1','4.2'], due_at: initial_date - 1.week).each do |ireading|
+      log print_task(task: ireading)
     end
+
+    # assign_ireading(course: course, chapter_sections: ['4.2', '4.3', '4.4'], due_at: initial_date - 0.days).each do |ireading|
+    #   log(print_task(task: ireading))
+    # end
 
   end
 
@@ -254,6 +226,39 @@ class Demo001
 
   def log(message)
     puts "#{message}\n"
+  end
+
+  def print_task(task:)
+    types = task.task_steps.collect do |step|
+      code = case step.tasked
+      when Tasks::Models::TaskedExercise
+        "e"
+      when Tasks::Models::TaskedReading
+        'r'
+      when Tasks::Models::TaskedVideo
+        'v'
+      when Tasks::Models::TaskedInteractive
+        'i'
+      else
+        'o'
+      end
+
+      "#{step.id}#{code}"
+    end
+
+    "Task #{task.id} / #{task.task_type} / #{types.join(' ')}"
+  end
+
+  def work_ireadings(ireading:, settings:)
+    raise "not yet implemented"
+  end
+
+  def initialize_randomizer(seed)
+    @randomizer = Random.new(seed)
+  end
+
+  def rand(max=nil)
+    max.nil? ? @randomizer.rand : @randomizer.rand(max)
   end
 
 end

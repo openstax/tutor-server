@@ -13,7 +13,7 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
 
   # We depend on the parser because we do not save the parsed content
   def parser
-    @parser ||= OpenStax::Exercises::V1::Exercise.new(content)
+    @parser ||= OpenStax::Exercises::V1::Exercise.new(content: content)
   end
 
   def handle_task_step_completion!
