@@ -151,15 +151,8 @@ class Setup001
           next unless si < complete_count
 
           if ts.tasked.exercise?
-            # 1/3 of completed exercises are blank (and incorrect)
-            # 1/3 of completed exercises are not blank but incorrect
-            # The remaining 1/3 are correct
-            r = rand(3)
-            if r == 0
-              run(:mark_completed, task_step: ts)
-            else
-              Hacks::AnswerExercise.call(task_step: ts, is_correct: r > 1)
-            end
+            # half of the completed exercises get the correct answer, the rest get incorrect
+            Hacks::AnswerExercise.call(task_step: ts, is_correct: [true, false].sample)
           else
             # Not an exercise, so just mark as completed
             run(:mark_completed, task_step: ts)
