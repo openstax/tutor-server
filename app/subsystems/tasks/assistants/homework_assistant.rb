@@ -262,7 +262,7 @@ class Tasks::Assistants::HomeworkAssistant
   end
 
   def self.num_personalized_exercises
-    0
+    1
   end
 
   def self.assign_task!(task:, taskee:)

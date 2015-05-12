@@ -49,6 +49,7 @@ module Api::V1::Tasks
              readable: true,
              getter: lambda {|*| task_step.group_name },
              schema_info: {
+                required: true,
                 description: "Which group this TaskStep belongs to (default,core,spaced practice,personalized)"
              }
 
