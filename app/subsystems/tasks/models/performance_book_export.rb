@@ -2,7 +2,7 @@ module Tasks::Models
   class PerformanceBookExport < Tutor::SubSystems::BaseModel
     mount_uploader :export, ExportUploader
 
-    default_scope { order('created_at DESC') }
+    default_scope { order(created_at: :desc) }
 
     belongs_to :course, subsystem: :entity
     belongs_to :role, subsystem: :entity
