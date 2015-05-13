@@ -264,7 +264,15 @@ class Demo001
         @step_types.count.times.collect{nil}
       when :incomplete
         responses = @step_types.count.times.collect{ [1,0,nil][rand(3)]}
-        responses[0] = nil # always make first step incomplete to guarantee core steps incomplete
+
+        # incomplete is more than not_started, so make sure we have started by setting
+        # the first response to complete/correct. always make last step incomplete to
+        # guarantee not complete; if only one step, :incomplete will be the same as
+        # :not_started
+
+        responses[0] = 1
+        responses[responses.count-1] = nil
+
         responses
       end
     end
