@@ -18,7 +18,9 @@ class Demo001
 
   DEFAULT_TASK_DURATION = 1.week
 
-  def exec(random_seed: nil)
+  def exec(random_seed: nil, print_logs: false)
+
+    @print_logs = print_logs
 
     # By default, choose a fixed seed for repeatability and fewer surprises
     @random_seed = random_seed
@@ -470,7 +472,7 @@ class Demo001
   end
 
   def log(message)
-    puts "#{message}\n"
+    puts "#{message}\n" if @print_logs
   end
 
   def print_task(task:)

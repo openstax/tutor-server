@@ -2,7 +2,7 @@ namespace :demo do
   desc 'Initializes data for the deployment demo'
   task :'001' => :environment do |tt, args|
     require 'tasks/demo_001'
-    result = Demo001.call
+    result = Demo001.call(print_logs: true)
 
     if result.errors.none?
       puts "Success!"
