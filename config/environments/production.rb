@@ -86,4 +86,12 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+
+  # Send email to developers when users encounter exceptions
+  config.middleware.use ExceptionNotification::Rack,
+    :email => {
+      :email_prefix => "[Tutor] ",
+      :sender_address => %{"OpenStax Tutor" <noreply@openstax.org>},
+      :exception_recipients => %w{tutor-notifications@openstax.org}
+    }
 end
