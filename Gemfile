@@ -135,8 +135,6 @@ group :development, :test do
   gem 'pry-rails'
   gem 'pry-stack_explorer'
 
-  gem 'byebug'
-
   # Access an IRB console on exceptions page and /console in development
   gem 'web-console', '~> 2.0.0'
 
