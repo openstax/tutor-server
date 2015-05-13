@@ -18,8 +18,7 @@ class OpenStax::BigLearn::V1::FakeClient
     save!
   end
 
-  def get_projection_exercises(role:, tag_search:, count:,
-                               difficulty:, allow_repetitions:)
+  def get_projection_exercises(role:, tag_search:, count:, difficulty:, allow_repetitions:)
     # Get the matches (no SPARFA obviously :)
     matches = store_exercises_copy.select do |uid, tags|
       tags_match_condition?(tags, tag_search)

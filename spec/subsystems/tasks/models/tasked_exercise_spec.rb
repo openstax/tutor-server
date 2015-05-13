@@ -66,17 +66,23 @@ RSpec.describe Tasks::Models::TaskedExercise, :type => :model do
     expect { tasked_exercise.save! }.to change{ tasked_exercise.task_step.task.cache_key }
   end
 
-  it 'records answers in exchange when the task_step is completed' do
+  it 'records answers and grade in exchange when the task_step is completed' do
     exchange_identifier = 42
-    answer_id = tasked_exercise.answer_ids.first
+    correct_answer_id = tasked_exercise.correct_answer_id
     allow(tasked_exercise).to receive(:identifiers).and_return([exchange_identifier])
     tasked_exercise.free_response = 'abc'
-    tasked_exercise.answer_id = answer_id
+    tasked_exercise.answer_id = correct_answer_id
     expect(OpenStax::Exchange).to receive(:record_multiple_choice_answer)
                                    .with(exchange_identifier,
                                          tasked_exercise.url,
                                          tasked_exercise.task_step.id.to_s,
-                                         answer_id)
+                                         correct_answer_id)
+    expect(OpenStax::Exchange).to receive(:record_grade)
+                                   .with(exchange_identifier,
+                                         tasked_exercise.url,
+                                         tasked_exercise.task_step.id.to_s,
+                                         1,
+                                         'tutor')
     tasked_exercise.handle_task_step_completion!
   end
 end
