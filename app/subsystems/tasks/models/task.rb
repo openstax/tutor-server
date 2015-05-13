@@ -125,8 +125,8 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
       difficulty:        0.5,
       allow_repetitions: true
     )
-    exercise_urls = exercise_uids.collect{|uid| "http://exercises.openstax.org/exercises/#{uid}"}
-    chosen_exercises = SearchLocalExercises[url: exercise_urls, match_count: 1]
+
+    chosen_exercises = SearchLocalExercises[uid: exercise_uids]
     raise "could not fill all placeholder slots (expected #{num_placeholders} exercises, got #{chosen_exercises.count})" \
       unless chosen_exercises.count == num_placeholders
 

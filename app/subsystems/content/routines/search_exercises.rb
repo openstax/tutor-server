@@ -8,6 +8,8 @@ class Content::Routines::SearchExercises
   SORTABLE_FIELDS = {
     'url' => :url,
     'title' => :title,
+    'number' => :number,
+    'version' => :version,
     'created_at' => :created_at
   }
 
@@ -19,12 +21,30 @@ class Content::Routines::SearchExercises
     urls = [options[:url]].flatten unless options[:url].nil?
     titles = [options[:title]].flatten unless options[:title].nil?
     tags = [options[:tag]].flatten unless options[:tag].nil?
+    numbers = [options[:number]].flatten unless options[:number].nil?
+    versions = [options[:version]].flatten unless options[:version].nil?
+    uids = [options[:uid]].flatten unless options[:uid].nil?
 
     query_hash = {}
     query_hash[:url] = urls unless urls.nil?
     query_hash[:title] = titles unless titles.nil?
+    query_hash[:number] = numbers unless numbers.nil?
+    query_hash[:version] = versions unless versions.nil?
 
     relation = relation.where(query_hash)
+
+    unless uids.nil?
+      relation = relation.where do
+        cumulative_query = nil
+        uids.each do |uid|
+          n, v = uid.split('@')
+          query = ((number == n) & (version == v))
+          cumulative_query = cumulative_query.nil? ? query : (cumulative_query | query)
+        end
+
+        cumulative_query
+      end
+    end
 
     unless tags.nil?
       match_count = options[:match_count] || tags.size
@@ -32,7 +52,7 @@ class Content::Routines::SearchExercises
       # http://stackoverflow.com/a/2000642
       relation = relation.joins(exercise_tags: :tag)
                          .where(exercise_tags: {tag: {value: tags}})
-                         .group(:id).having{
+                         .group(:id).having {
                            count(distinct(exercise_tags.tag.id)).gteq match_count
                          }
     end
