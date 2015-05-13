@@ -23,6 +23,17 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   validate :opens_at_or_due_at
 
+  def personalized_placeholder_strategy
+    serialized_strategy = read_attribute(:personalized_placeholder_strategy)
+    strategy = serialized_strategy.nil? ? nil : YAML.load(serialized_strategy)
+    strategy
+  end
+
+  def personalized_placeholder_strategy=(strategy)
+    serialized_strategy = strategy.nil? ? nil : YAML.dump(strategy)
+    write_attribute(:personalized_placeholder_strategy, serialized_strategy)
+  end
+
   def is_shared?
     taskings.size > 1
   end
@@ -77,7 +88,12 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def handle_task_step_completion!(completion_time: Time.now)
-    populate_placeholders(core_completion_time: completion_time) if core_task_steps_completed?
+    return unless core_task_steps_completed?
+
+    strategy = personalized_placeholder_strategy
+    unless strategy.nil?
+      strategy.populate_placeholders(task: self, completion_time: completion_time)
+    end
   end
 
   def exercise_count
