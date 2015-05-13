@@ -9,10 +9,10 @@ class SetupPerformanceBookData
     homework_assistant = FactoryGirl.create :tasks_assistant,
       code_class_name: 'Tasks::Assistants::HomeworkAssistant'
 
-    if students.empty?
+    if students.none?
       students = [FactoryGirl.create(:user_profile),
                   FactoryGirl.create(:user_profile)]
-    elsif students.count == 1
+    elsif students.one?
       students << FactoryGirl.create(:user_profile)
     end
 
