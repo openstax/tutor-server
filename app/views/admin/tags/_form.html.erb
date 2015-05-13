@@ -1,0 +1,25 @@
+<% method ||= :post %>
+
+<%= lev_form_for :tag, url: url, method: method do |f| %>
+  <table>
+    <tr>
+      <td><%= f.label :value, 'ID' %></td>
+      <td><%= f.text_field :value, disabled: 'disabled' %></td>
+    </tr>
+
+    <tr>
+      <td><%= f.label :name %></td>
+      <td><%= f.text_field :name, size: 50 %></td>
+    </tr>
+
+    <tr>
+      <td><%= f.label :description %></td>
+      <td><%= f.text_area :description, rows: 5, cols: 50 %></td>
+    </tr>
+
+    <tr>
+      <td></td>
+      <td><%= f.submit 'Save', class: 'btn btn-primary' %></td>
+    </tr>
+  </table>
+<% end %>

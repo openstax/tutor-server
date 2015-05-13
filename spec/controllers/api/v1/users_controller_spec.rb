@@ -8,6 +8,11 @@ describe Api::V1::UsersController, :type => :controller, :api => true, :version 
                                               application: application,
                                               resource_owner_id: user_1.id }
 
+  let!(:admin)           { FactoryGirl.create :user_profile, :administrator }
+  let!(:admin_token)     { FactoryGirl.create :doorkeeper_access_token,
+                                              application: application,
+                                              resource_owner_id: admin.id }
+
   let!(:userless_token)  { FactoryGirl.create :doorkeeper_access_token,
                                               application: application,
                                               resource_owner_id: nil }
@@ -18,7 +23,14 @@ describe Api::V1::UsersController, :type => :controller, :api => true, :version 
         api_get :show, user_1_token
         expect(response.code).to eq('200')
         payload = JSON.parse(response.body)
-        expect(payload).to eq("name" => user_1.name)
+        expect(payload).to eq("name" => user_1.name, 'is_admin' => false)
+      end
+
+      it 'returns is_admin flag correctly' do
+        api_get :show, admin_token
+        expect(response.code).to eq('200')
+        payload = JSON.parse(response.body)
+        expect(payload).to eq("name" => admin.name, 'is_admin' => true)
       end
     end
     context "caller does not have an authorization token" do

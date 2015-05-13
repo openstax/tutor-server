@@ -85,6 +85,8 @@ Rails.application.routes.draw do
         patch 'undelete'
       end
     end
+
+    resources :tags, only: [:index, :edit, :update, :show]
   end
 
   namespace :dev do
