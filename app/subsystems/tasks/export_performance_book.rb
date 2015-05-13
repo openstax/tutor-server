@@ -80,7 +80,9 @@ module Tasks
     end
 
     def tmp_file_path
-      ['./tmp/', generate_file_name, '.xlsx'].join('')
+      ['./tmp/', generate_file_name, '.xlsx'].join('').tap do |filename|
+        raise "Filename already exists" if File.exist?(filename)
+      end
     end
 
     def generate_file_name
