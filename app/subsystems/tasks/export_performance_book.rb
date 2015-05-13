@@ -15,12 +15,12 @@ module Tasks
       run(:get_course_profile, course: course)
       run(:get_performance_book, course: course, role: role)
 
-      Axlsx::Package.new do |file|
-        file.use_shared_strings = true # OS X Numbers interoperability
-        file.workbook.styles.fonts.first.name = 'Helvetica Neue'
-        create_summary_worksheet(file: file)
-        create_data_worksheet(file: file)
-        file.serialize(tmp_file_path)
+      Axlsx::Package.new do |axlsx|
+        axlsx.use_shared_strings = true # OS X Numbers interoperability
+        axlsx.workbook.styles.fonts.first.name = 'Helvetica Neue'
+        create_summary_worksheet(package: axlsx)
+        create_data_worksheet(package: axlsx)
+        axlsx.serialize(tmp_file_path)
       end
 
       Models::PerformanceBookExport.create!(course: course,
@@ -29,15 +29,15 @@ module Tasks
     end
 
     private
-    def create_summary_worksheet(file:)
-      file.workbook.add_worksheet(name: 'Course Summary') do |sheet|
+    def create_summary_worksheet(package:)
+      package.workbook.add_worksheet(name: 'Course Summary') do |sheet|
         sheet.add_row [bold_text("#{outputs.profile.name} Performance Book")]
         sheet.add_row [Date.today]
       end
     end
 
-    def create_data_worksheet(file:)
-      file.workbook.add_worksheet(name: 'Student Performance') do |sheet|
+    def create_data_worksheet(package:)
+      package.workbook.add_worksheet(name: 'Student Performance') do |sheet|
         sheet.add_row(data_headers)
         sheet.add_row(gather_class_averages)
         outputs.performance_book.students.each do |student|
