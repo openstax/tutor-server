@@ -10,10 +10,6 @@ module Tasks
       translations: { outputs: { type: :verbatim } },
       as: :get_performance_book
 
-    uses_routine CreatePerformanceBookExport,
-      translations: { outputs: { type: :verbatim } },
-      as: :create_performance_book_export
-
     protected
     def exec(role:, course:)
       run(:get_course_profile, course: course)
@@ -27,9 +23,9 @@ module Tasks
         file.serialize(tmp_file_path)
       end
 
-      run(:create_performance_book_export, filepath: tmp_file_path,
-                                           course: course,
-                                           role: role)
+      Models::PerformanceBookExport.create!(course: course,
+                                            role: role,
+                                            export: File.open(tmp_file_path))
     end
 
     private
