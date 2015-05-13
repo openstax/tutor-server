@@ -92,6 +92,10 @@ class OpenStax::Exercises::V1::FakeClient
     )
   end
 
+  def server_url
+    "https://fake.exercises.client.openstax.org"
+  end
+
   private
 
   def next_uid

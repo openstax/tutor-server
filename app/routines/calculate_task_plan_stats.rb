@@ -18,7 +18,7 @@ class CalculateTaskPlanStats
     urls.collect do |url|
       selected_tasked_exercises = tasked_exercises.select{ |te| te.url == url }
       completed_tasked_exercises = selected_tasked_exercises.select{ |te| te.completed? }
-      exercise = OpenStax::Exercises::V1::Exercise.new(selected_tasked_exercises.first.content)
+      exercise = OpenStax::Exercises::V1::Exercise.new(content: selected_tasked_exercises.first.content)
       answer_stats = answer_stats_for_tasked_exercises(selected_tasked_exercises)
 
       {

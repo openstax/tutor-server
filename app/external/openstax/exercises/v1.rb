@@ -10,7 +10,8 @@ module OpenStax::Exercises::V1
     exercises_json = client.exercises(options)
     exercises_hash = JSON.parse(exercises_json)
     exercises_hash['items'] = exercises_hash['items'].collect{|e|
-      OpenStax::Exercises::V1::Exercise.new(e.to_json)
+      OpenStax::Exercises::V1::Exercise.new(content: e.to_json,
+                                            base_url: client.server_url)
     }
     exercises_hash
   end
@@ -29,11 +30,11 @@ module OpenStax::Exercises::V1
 
   # Accessor for the fake client, which has some extra fake methods on it
   def self.fake_client
-    @fake_client ||= FakeClient.instance
+    FakeClient.instance
   end
 
   def self.real_client
-    @real_client ||= RealClient.new(configuration)
+    RealClient.new(configuration)
   end
 
   def self.use_real_client
@@ -42,6 +43,26 @@ module OpenStax::Exercises::V1
 
   def self.use_fake_client
     @client = fake_client
+  end
+
+  # Lets the caller use a temporary configuration to execute a block
+  def self.with_configuration(new_configuration)
+    old_configuration = configuration
+    old_client = client
+
+    @configuration = Configuration.new()
+    new_configuration.each{|k,v| @configuration.send("#{k}=",v)}
+
+    @client = nil
+
+    yield
+
+    @configuration = old_configuration
+    @client = old_client
+  end
+
+  def server_url
+    client.server_url
   end
 
   private

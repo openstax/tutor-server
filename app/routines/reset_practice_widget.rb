@@ -70,7 +70,7 @@ class ResetPracticeWidget
   def get_fake_exercises(count:)
     count.times.collect do
       exercise_content = OpenStax::Exercises::V1.fake_client.new_exercise_hash
-      exercise = OpenStax::Exercises::V1::Exercise.new(exercise_content.to_json)
+      exercise = OpenStax::Exercises::V1::Exercise.new(content: exercise_content.to_json)
     end
   end
 
@@ -106,7 +106,7 @@ class ResetPracticeWidget
     urls = exercise_uids.collect{|uid| "http://exercises.openstax.org/exercises/#{uid}"}
 
     Content::Exercise.where{url.in urls}.all.collect do |content_exercise|
-      OpenStax::Exercises::V1::Exercise.new(content_exercise.content)
+      OpenStax::Exercises::V1::Exercise.new(content: content_exercise.content)
     end
   end
 

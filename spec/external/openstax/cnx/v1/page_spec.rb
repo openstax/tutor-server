@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, :vcr => VCR_OPTS do
+RSpec.describe OpenStax::Cnx::V1::Page, :type => :external do
 
   cnx_page_infos = HashWithIndifferentAccess.new(
     stable: [{ id: '1491e74e-ed39-446f-a602-e7ab881af101@1',
@@ -199,6 +199,31 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, :vcr => VCR_OPTS do
         end
       end
     end
+  end
+
+  it "gets the right fragments for sample content section 3.2" do
+
+    json = OpenStax::Cnx::V1.with_archive_url(url: 'https://archive-staging-tutor.cnx.org/contents/') do
+      OpenStax::Cnx::V1.fetch('95a1573d-0915-4203-8989-913325160855@4')
+    end
+
+    page = OpenStax::Cnx::V1::Page.new(full_hash: json)
+
+    expect(page.fragments.collect(&:class)).to eq [
+      OpenStax::Cnx::V1::Fragment::Text,
+      OpenStax::Cnx::V1::Fragment::Interactive,
+      OpenStax::Cnx::V1::Fragment::Exercise,
+      OpenStax::Cnx::V1::Fragment::Text,
+      OpenStax::Cnx::V1::Fragment::Text,
+      OpenStax::Cnx::V1::Fragment::Text,
+      OpenStax::Cnx::V1::Fragment::ExerciseChoice,
+      OpenStax::Cnx::V1::Fragment::Video,
+      OpenStax::Cnx::V1::Fragment::Exercise,
+      # OpenStax::Cnx::V1::Fragment::Exercise,  # put back after merge fixes
+      OpenStax::Cnx::V1::Fragment::Text,
+    ]
+
+
   end
 
 end

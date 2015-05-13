@@ -31,6 +31,8 @@ class OpenStax::Exercises::V1::RealClient
     request(:get, uri, with_accept_header(options)).body
   end
 
+  attr_reader :server_url
+
   private
 
   def with_accept_header(options = {})

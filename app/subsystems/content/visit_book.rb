@@ -5,7 +5,7 @@
 #   visitor_names: an array of strings or symbols that can include:
 #     :toc - returns a table of contents
 #     :exercises - returns all exercises in the book
-#     :pages - returns page metadata
+#     :page_data - returns page metadata
 #
 class Content::VisitBook
   lev_routine

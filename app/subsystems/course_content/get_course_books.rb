@@ -1,5 +1,5 @@
 class CourseContent::GetCourseBooks
-  lev_routine
+  lev_routine express_output: :books
 
   protected
 

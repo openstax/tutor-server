@@ -16,6 +16,8 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   scope :complete, -> { where{completed_at != nil} }
   scope :incomplete, -> { where{completed_at == nil} }
 
+  scope :exercises, -> { where{tasked_type == TaskedExercise.class.name} }
+
   after_initialize :init_settings
   after_initialize :init_related_content
 

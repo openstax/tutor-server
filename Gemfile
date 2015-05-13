@@ -146,6 +146,8 @@ group :development, :test do
 
   gem 'rspec-collection_matchers'
 
+  gem 'pilfer', '~> 1.0.0'
+
   # Fixture replacement
   gem 'factory_girl_rails'
 
