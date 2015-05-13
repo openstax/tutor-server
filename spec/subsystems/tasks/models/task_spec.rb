@@ -117,6 +117,58 @@ RSpec.describe Tasks::Models::Task, :type => :model do
     expect(task.personalized_placeholder_strategy).to be_nil
   end
 
+  context 'personalized_placeholder_strategy is not set' do
+    let!(:task) {
+      task = Tasks::Models::Task.new
+      task.personalized_placeholder_strategy = nil
+      task
+    }
+
+    it 'does not invoke the personalized_placeholder_strategy upon task step completion' do
+      allow(task).to receive(:core_task_steps_completed?).and_return(true)
+      expect{
+        task.handle_task_step_completion!
+      }.to_not raise_error
+    end
+  end
+
+  context 'personalized_placeholder_strategy is set' do
+    let!(:task) {
+      task = Tasks::Models::Task.new
+      class Strategy
+        def populate_placeholders(*args)
+          raise "called"
+        end
+      end
+      task.personalized_placeholder_strategy = Strategy.new
+      task
+    }
+
+    context 'all core step have been completed' do
+      before(:each) do
+        allow(task).to receive(:core_task_steps_completed?).and_return(true)
+      end
+
+      it 'invokes the personalized_placeholder_strategy upon task step completion' do
+        expect{
+          task.handle_task_step_completion!
+        }.to raise_error
+      end
+    end
+
+    context 'all core steps have not been completed' do
+      before(:each) do
+        allow(task).to receive(:core_task_steps_completed?).and_return(false)
+      end
+
+      it 'does not invoke the personalized_placeholder_strategy upon task step completion' do
+        expect{
+          task.handle_task_step_completion!
+        }.to_not raise_error
+      end
+    end
+  end
+
   it 'knows when feedback should be available' do
     task = FactoryGirl.build(:tasks_task, due_at: nil)
     task.feedback_at = nil
