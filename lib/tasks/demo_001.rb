@@ -84,6 +84,7 @@ class Demo001
 
     assign_ireading(course: course,
                     chapter_sections: ['3.1', '3.2', '3.3'],
+                    title: 'Reading 3.1 - 3.3',
                     due_at: initial_date - 5.days).each_with_index do |ireading, index|
 
       work_task(task: ireading, responses: responses_list[index])
@@ -159,6 +160,7 @@ class Demo001
 
     assign_ireading(course: course,
                     chapter_sections: ['4.1', '4.2'],
+                    title: 'Reading 4.1 - 4.2',
                     due_at: initial_date - 0.days).each_with_index do |ireading, index|
 
       work_task(task: ireading, responses: responses_list[index])
