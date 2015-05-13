@@ -22,14 +22,16 @@ module OpenStax::Cnx::V1
     EXERCISE_CLASS = 'os-exercise'
 
     # Interactive fragment
-    INTERACTIVE_CLASS = 'ost-interactive'
+    INTERACTIVE_CLASSES = ['os-interactive', 'ost-interactive']
 
     # Video fragment
     VIDEO_CLASS = 'ost-video'
 
     # Split fragments on these
     SPLIT_CSS = [ASSESSED_FEATURE_CLASS, FEATURE_CLASS, EXERCISE_CHOICE_CLASS,
-                 EXERCISE_CLASS, INTERACTIVE_CLASS, VIDEO_CLASS].collect{ |c| ".#{c}" }.join(', ')
+                 EXERCISE_CLASS, INTERACTIVE_CLASSES, VIDEO_CLASS].flatten
+                                                                  .collect{ |c| ".#{c}" }
+                                                                  .join(', ')
 
     # Find a node with a class that starts with ost-tag-lo-
     LO_CSS = '[class^="ost-tag-lo-"]'
@@ -95,9 +97,7 @@ module OpenStax::Cnx::V1
     end
 
     def content
-      @content ||= full_hash.fetch('content') { |key|
-        raise "Page id=#{id} is missing #{key}"
-      }
+      @content ||= full_hash.fetch('content') { |key| raise "Page id=#{id} is missing #{key}" }
     end
 
     def doc
@@ -210,7 +210,7 @@ module OpenStax::Cnx::V1
 
       return Fragment::Text.new(node: node) if klass.nil?
 
-      if klass.include?(INTERACTIVE_CLASS)
+      if INTERACTIVE_CLASSES.any? { |interactive_class| klass.include?(interactive_class) }
         # Simulation
         Fragment::Interactive.new(node: node)
       elsif klass.include?(VIDEO_CLASS)
