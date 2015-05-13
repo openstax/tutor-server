@@ -9,7 +9,6 @@
       "We didn't understand what you asked for."
     when :internal_server_error
       "Sorry, Tutor had some unexpected trouble with your request."
-    else
     end
 
   code = Rack::Utils.status_code(@status)
