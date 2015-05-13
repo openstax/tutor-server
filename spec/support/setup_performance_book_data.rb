@@ -110,7 +110,7 @@ class SetupPerformanceBookData
     student_2_tasks[0].task_steps.first(2).each do |ts|
       Hacks::AnswerExercise[task_step: ts, is_correct: true]
     end
-    student_2_tasks[0].task_steps.last(2).each do |ts|
+    student_2_tasks[0].task_steps[2..3].each do |ts|
       Hacks::AnswerExercise[task_step: ts, is_correct: false]
     end
 
