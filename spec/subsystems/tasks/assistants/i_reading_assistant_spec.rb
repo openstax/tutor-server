@@ -62,8 +62,16 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       ]
     }
 
+    let!(:personalized_step_gold_data) {
+      [
+        { klass: Tasks::Models::TaskedPlaceholder,
+          title: nil,
+          related_content: [] }
+      ]
+    }
+
     let!(:task_step_gold_data) {
-      core_step_gold_data + spaced_practice_step_gold_data
+      core_step_gold_data + spaced_practice_step_gold_data + personalized_step_gold_data
     }
 
     let!(:cnx_pages) { cnx_page_hashes.each_with_index.collect do |hash, i|
@@ -111,6 +119,8 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         expect(task_steps.count).to eq(task_step_gold_data.count)
         task_steps.each_with_index do |task_step, ii|
           expect(task_step.tasked.class).to eq(task_step_gold_data[ii][:klass])
+          next if task_step.placeholder?
+
           expect(task_step.tasked.title).to eq(task_step_gold_data[ii][:title])
           expect(task_step.related_content).to eq(task_step_gold_data[ii][:related_content])
         end
@@ -141,6 +151,8 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         end
 
         expect(task.spaced_practice_task_steps.count).to eq(spaced_practice_step_gold_data.count)
+
+        expect(task.personalized_task_steps.count).to eq(personalized_step_gold_data.count)
       end
 
       expected_roles = taskees.collect{ |t| Role::GetDefaultUserRole[t] }
@@ -216,6 +228,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
     it 'is split into different task steps with immediate feedback' do
       allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [[0,2]]}
+      allow(Tasks::Assistants::IReadingAssistant).to receive(:num_personalized_exercises) { 0 }
 
       tasks = DistributeTasks.call(task_plan).outputs.tasks
       tasks.each do |task|

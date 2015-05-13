@@ -53,7 +53,7 @@ class Tasks::Assistants::IReadingAssistant
     task = create_task!(task_plan: task_plan)
     add_core_steps!(task: task, cnx_pages: cnx_pages)
     add_spaced_practice_exercise_steps!(task: task, taskee: taskee)
-    # add_personalized_exercise_steps!(task: task, taskee: taskee)
+    add_personalized_exercise_steps!(task_plan: task_plan, task: task, taskee: taskee)
 
     task.save!
     task
@@ -202,6 +202,24 @@ class Tasks::Assistants::IReadingAssistant
 
   def self.k_ago_map
     [ [1,1], [2,1] ]
+  end
+
+  def self.add_personalized_exercise_steps!(task_plan: task_plan, task: task, taskee: taskee)
+    num_personalized_exercises.times do
+      task_step = Tasks::Models::TaskStep.new(task: task)
+      tasked_placeholder = Tasks::Models::TaskedPlaceholder.new(task_step: task_step)
+      tasked_placeholder.exercise_type!
+      task_step.tasked = tasked_placeholder
+      task_step.personalized_group!
+      task.task_steps << task_step
+    end
+
+    task.save!
+    task
+  end
+
+  def self.num_personalized_exercises
+    1
   end
 
   def self.add_exercise_related_content!(step:, exercise:)
