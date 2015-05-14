@@ -25,47 +25,52 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     it "should work on the happy path" do
       root_book_part = FactoryGirl.create(:content_book_part, :standard_contents_1)
       CourseContent::AddBookToCourse.call(course: course, book: root_book_part.book)
-      toc = Content::VisitBook[book: root_book_part.book, visitor_names: :toc].first
+      toc = Content::VisitBook[book: root_book_part.book, visitor_names: :toc]
 
       api_get :readings, user_1_token, parameters: {id: course.id}
       expect(response).to have_http_status(:success)
       expect(response.body_as_hash).to eq([{
         id: toc.id.to_s,
-        title: 'unit 1',
+        title: 'book title',
         type: 'part',
         children: [
-          {
-            id: toc.children[0].id.to_s,
-            title: 'chapter 1',
-            type: 'part',
-            children: [
-              {
-                id: toc.children[0].children[0].id.to_s,
-                title: 'first page',
-                chapter_section: [1,1],
-                type: 'page'
-              },
-              {
-                id: toc.children[0].children[1].id.to_s,
-                title: 'second page',
-                chapter_section: [1,2],
-                type: 'page'
-              }
-            ]
-          },
-          {
-            id: toc.children[1].id.to_s,
-            title: 'chapter 2',
-            type: 'part',
-            children: [
-              {
-                id: toc.children[1].children[0].id.to_s,
-                title: 'third page',
-                chapter_section: [1,3],
-                type: 'page'
-              }
-            ]
-          }
+          id: toc.children[0].id.to_s,
+          title: 'unit 1',
+          type: 'part',
+          children: [
+            {
+              id: toc.children[0].children[0].id.to_s,
+              title: 'chapter 1',
+              type: 'part',
+              children: [
+                {
+                  id: toc.children[0].children[0].children[0].id.to_s,
+                  title: 'first page',
+                  chapter_section: [1,1],
+                  type: 'page'
+                },
+                {
+                  id: toc.children[0].children[0].children[1].id.to_s,
+                  title: 'second page',
+                  chapter_section: [1,2],
+                  type: 'page'
+                }
+              ]
+            },
+            {
+              id: toc.children[0].children[1].id.to_s,
+              title: 'chapter 2',
+              type: 'part',
+              children: [
+                {
+                  id: toc.children[0].children[1].children[0].id.to_s,
+                  title: 'third page',
+                  chapter_section: [1,3],
+                  type: 'page'
+                }
+              ]
+            }
+          ]
         ]
       }])
 
