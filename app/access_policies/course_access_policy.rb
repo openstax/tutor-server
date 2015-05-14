@@ -3,7 +3,7 @@ class CourseAccessPolicy
     case action
     when :readings
       requestor.is_human?
-    when :exercises
+    when :exercises, :export
       UserIsCourseTeacher[user: requestor.entity_user, course: course]
     else
       false

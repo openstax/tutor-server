@@ -728,15 +728,15 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       unknown_token = FactoryGirl.create :doorkeeper_access_token,
                                          resource_owner_id: unknown.id
 
-      api_post :performance_export, unknown_token, parameters: { id: course.id }
-
-      expect(response.status).to eq(403)
+      expect {
+        api_post :performance_export, unknown_token, parameters: { id: course.id }
+      }.to raise_error(SecurityTransgression)
     end
 
     it 'returns 404 for non-existent courses' do
-      api_post :performance_export, teacher_token, parameters: { id: 'nope' }
-
-      expect(response.status).to eq(404)
+      expect {
+        api_post :performance_export, teacher_token, parameters: { id: 'nope' }
+      }.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
 
@@ -771,15 +771,15 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       unknown_token = FactoryGirl.create :doorkeeper_access_token,
                                          resource_owner_id: unknown.id
 
-      api_get :performance_exports, unknown_token, parameters: { id: course.id }
-
-      expect(response.status).to eq(403)
+      expect {
+        api_get :performance_exports, unknown_token, parameters: { id: course.id }
+      }.to raise_error(SecurityTransgression)
     end
 
     it 'returns 404 for non-existent courses' do
-      api_get :performance_exports, teacher_token, parameters: { id: 'nope' }
-
-      expect(response.status).to eq(404)
+      expect {
+        api_get :performance_exports, teacher_token, parameters: { id: 'nope' }
+      }.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
 end
