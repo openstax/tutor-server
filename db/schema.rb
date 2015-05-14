@@ -430,15 +430,16 @@ ActiveRecord::Schema.define(version: 20150507224137) do
   create_table "tasks_tasks", force: :cascade do |t|
     t.integer  "tasks_task_plan_id"
     t.integer  "entity_task_id"
-    t.integer  "task_type",                        null: false
-    t.string   "title",                            null: false
+    t.integer  "task_type",                                     null: false
+    t.string   "title",                                         null: false
     t.datetime "opens_at"
     t.datetime "due_at"
     t.datetime "feedback_at"
     t.text     "description"
-    t.integer  "tasks_taskings_count", default: 0, null: false
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
+    t.integer  "tasks_taskings_count",              default: 0, null: false
+    t.text     "personalized_placeholder_strategy"
+    t.datetime "created_at",                                    null: false
+    t.datetime "updated_at",                                    null: false
   end
 
   add_index "tasks_tasks", ["due_at", "opens_at"], name: "index_tasks_tasks_on_due_at_and_opens_at", using: :btree

@@ -7,6 +7,7 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
 
   let!(:task_plan) {
     allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [ [0, 2] ] }
+    allow(Tasks::Assistants::IReadingAssistant).to receive(:num_personalized_exercises) { 0 }
     FactoryGirl.create :tasked_task_plan, number_of_students: number_of_students
   }
 
