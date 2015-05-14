@@ -22,6 +22,8 @@ RSpec.describe Tasks::GetPerformanceBookExports do
 
     exports = described_class[course: course, role: role]
 
+    exports = exports.collect{|export| HashWithIndifferentAccess.new(export.to_hash)}
+
     # newest on top
     expect(exports).to eq([
       { 'filename' => 'Biology_I_Performance.xlsx',
