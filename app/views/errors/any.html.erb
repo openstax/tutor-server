@@ -1,0 +1,20 @@
+<%
+  message =
+    case @status
+    when :forbidden
+      "You are not allowed to access this."
+    when :not_found
+      "We couldn't find what you asked for."
+    when :unprocessable_entity
+      "We didn't understand what you asked for."
+    when :internal_server_error
+      "Sorry, Tutor had some unexpected trouble with your request."
+    end
+
+  code = Rack::Utils.status_code(@status)
+%>
+
+<h3><%= message %></h3>
+
+<p>We're sorry this <%= code %> error occurred.  If you need help, please contact OpenStax
+  and reference error <%= @error_id %>.</p>

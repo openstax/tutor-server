@@ -24,6 +24,23 @@ And then create the development and test databases:
 
 `createdb --username ox_tutor ox_tutor_test`
 
+## Error Pages/Responses
+
+By default, the development and test environments see different error responses than the production environment does.
+Dev and test environments will see HTML responses with backtraces and helpful debugging information; the production
+environment will see nicely-formatted HTML error pages or simple JSON responses.
+
+Our frontend developers will often use the development environment during testing but will likely want to see
+production-like error responses.  To achieve this, set a `USE_DEV_ERROR_RESPONSES` to `false`.  This can be achieved
+with a `.env` file in the root folder containing:
+
+```
+USE_DEV_ERROR_RESPONSES=false
+```
+
+A `.env.frontend_example` file is available in the repository for FE devs to copy over to `.env`.  The recommend
+behavior is to do this and then only switch to a `true` setting if you need to debug (see backtraces, etc).
+
 ## Testing with capybara
 
 Capybara-webkit depends on Qt.  If you don't have Qt installed, you can install
