@@ -715,11 +715,11 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
     it 'kicks off the performance book export for authorized teachers' do
       role = ChooseCourseRole[course: course, user: teacher.entity_user]
-      allow(Queues::ExportPerformanceBook).to receive(:[])
+      allow(Tasks::Jobs::ExportPerformanceBookJob).to receive(:perform_later)
 
       api_post :performance_export, teacher_token, parameters: { id: course.id }
 
-      expect(Queues::ExportPerformanceBook).to have_received(:[])
+      expect(Tasks::Jobs::ExportPerformanceBookJob).to have_received(:perform_later)
         .with(course: course, role: role)
     end
 

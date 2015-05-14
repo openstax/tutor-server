@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Queues::Jobs::ExportPerformanceBookJob do
+RSpec.describe Tasks::Jobs::ExportPerformanceBookJob do
   it 'executes the Tasks::ExportPerformanceBook routine' do
     course = Entity::Course.create!
     role = Entity::Role.create!

@@ -159,7 +159,8 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
     OSU::AccessPolicy.require_action_allowed!(:export, current_api_user, course)
 
-    Queues::ExportPerformanceBook[course: course, role: get_course_role]
+    Tasks::Jobs::ExportPerformanceBookJob.perform_later(course: course,
+                                                        role: get_course_role)
 
     head :created
   end
