@@ -206,9 +206,4 @@ class Api::V1::CoursesController < Api::V1::ApiController
   def get_practice_role
     get_course_role(types: :student)
   end
-
-  def current_user_is_teaching?(course)
-    UserIsCourseTeacher[course: course, user: current_human_user.entity_user]
-  end
-
 end
