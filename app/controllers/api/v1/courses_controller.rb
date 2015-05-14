@@ -153,36 +153,31 @@ class Api::V1::CoursesController < Api::V1::ApiController
   description <<-EOS
     201 if the role is a teacher of a course
       -- The export background job will be started
-    403 if the role is not a teacher of the course
-    404 if the course does not exist
   EOS
   def performance_export
-    course = Entity::Course.find_by(id: params[:id])
+    course = Entity::Course.find(params[:id])
 
-    authorize_response_for_teacher(course) do |status|
-      Queues::ExportPerformanceBook[course: course, role: get_course_role]
-      head :created
-    end
+    OSU::AccessPolicy.require_action_allowed!(:export, current_api_user, course)
+
+    Queues::ExportPerformanceBook[course: course, role: get_course_role]
+
+    head :created
   end
 
   api :GET, '/courses/:course_id/performance/exports',
             'Gets the export history of the performance book for authorized teachers'
   description <<-EOS
     #{json_schema(Api::V1::PerformanceBookExportsRepresenter, include: :readable)}
-    - 403 when the user is not a teacher of the course
-    - 404 when the course does not exist
   EOS
   def performance_exports
-    course = Entity::Course.find_by(id: params[:id])
+    course = Entity::Course.find(params[:id])
 
-    authorize_response_for_teacher(course) do
-      exports = Tasks::GetPerformanceBookExports[course: course,
-                                                 role: get_course_role]
-      respond_with exports,
-                   represent_with: Api::V1::PerformanceBookExportsRepresenter
-    end
+    OSU::AccessPolicy.require_action_allowed!(:export, current_api_user, course)
+
+    exports = Tasks::GetPerformanceBookExports[course: course, role: get_course_role]
+
+    respond_with exports, represent_with: Api::V1::PerformanceBookExportsRepresenter
   end
-
 
   api :GET, '/courses/:course_id/performance(/role/:role_id)', 'Returns performance book for the user'
   description <<-EOS
@@ -196,21 +191,6 @@ class Api::V1::CoursesController < Api::V1::ApiController
   end
 
   protected
-  def authorize_response_for_teacher(course)
-    status = if course && current_user_is_teaching?(course)
-               :ok
-             elsif course
-               :forbidden
-             else
-               :not_found
-             end
-    if status == :ok
-      yield
-    else
-      head status
-    end
-  end
-
   def get_course_role(types: :any)
     result = ChooseCourseRole.call(user: current_human_user.entity_user,
                                    course: Entity::Course.find(params[:id]),
