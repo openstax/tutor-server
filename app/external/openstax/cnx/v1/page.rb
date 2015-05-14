@@ -10,26 +10,28 @@ module OpenStax::Cnx::V1
     DISCARD_CSS = '.ost-reading-discard, .os-teacher'
 
     # Just a page break
-    ASSESSED_FEATURE_CSS = '.ost-assessed-feature'
+    ASSESSED_FEATURE_CLASS = 'ost-assessed-feature'
 
     # Just a page break
-    FEATURE_CSS = '.ost-feature'
+    FEATURE_CLASS = 'ost-feature'
 
     # Exercise choice fragment
-    EXERCISE_CHOICE_CSS = '.ost-exercise-choice'
+    EXERCISE_CHOICE_CLASS = 'ost-exercise-choice'
 
     # Exercise fragment
-    EXERCISE_CSS = '.os-exercise'
+    EXERCISE_CLASS = 'os-exercise'
 
     # Interactive fragment
-    INTERACTIVE_CSS = '.ost-interactive'
+    INTERACTIVE_CLASSES = ['os-interactive', 'ost-interactive']
 
     # Video fragment
-    VIDEO_CSS = '.ost-video'
+    VIDEO_CLASS = 'ost-video'
 
     # Split fragments on these
-    SPLIT_CSS = [ASSESSED_FEATURE_CSS, FEATURE_CSS, EXERCISE_CHOICE_CSS,
-                 EXERCISE_CSS, INTERACTIVE_CSS, VIDEO_CSS].join(', ')
+    SPLIT_CSS = [ASSESSED_FEATURE_CLASS, FEATURE_CLASS, EXERCISE_CHOICE_CLASS,
+                 EXERCISE_CLASS, INTERACTIVE_CLASSES, VIDEO_CLASS].flatten
+                                                                  .collect{ |c| ".#{c}" }
+                                                                  .join(', ')
 
     # Find a node with a class that starts with ost-tag-lo-
     LO_CSS = '[class^="ost-tag-lo-"]'
@@ -95,9 +97,7 @@ module OpenStax::Cnx::V1
     end
 
     def content
-      @content ||= full_hash.fetch('content') { |key|
-        raise "Page id=#{id} is missing #{key}"
-      }
+      @content ||= full_hash.fetch('content') { |key| raise "Page id=#{id} is missing #{key}" }
     end
 
     def doc
@@ -188,75 +188,10 @@ module OpenStax::Cnx::V1
     def fragments
       return @fragments unless @fragments.nil?
 
-      @fragments = []
+      root_copy = root.dup
+      root_copy.css(DISCARD_CSS).remove
 
-      # Initialize current_reading
-      current_text = root.dup
-      current_text.css(DISCARD_CSS).remove
-
-      # Find first split
-      split = current_text.at_css(SPLIT_CSS)
-
-      # Split the root and collect the TaskStep attributes
-      while !split.nil? do
-        splitting_fragments = []
-        # Figure out what we just split on, testing in priority order
-        if split.matches?(ASSESSED_FEATURE_CSS)
-          # Assessed Feature = Video + Exercise or Interactive + Exercise or Text + Exercise
-          exercise = split.at_css(EXERCISE_CSS)
-          Rails.logger.warn { "An assessed feature should have an exercise but doesn't: #{url}" } if exercise.nil?
-          recursive_compact(exercise, split) unless exercise.nil?
-
-          if split.matches?(VIDEO_CSS)
-            splitting_fragments << Fragment::Video.new(node: split)
-          elsif split.matches?(INTERACTIVE_CSS)
-            splitting_fragments << Fragment::Interactive.new(node: split)
-          else
-            splitting_fragments << Fragment::Text.new(node: split)
-          end
-          splitting_fragments << Fragment::Exercise.new(node: exercise) unless exercise.nil?
-        elsif split.matches?(FEATURE_CSS)
-          # Text Feature
-          splitting_fragments << Fragment::Text.new(node: split)
-        elsif split.matches?(EXERCISE_CHOICE_CSS)
-          # Exercise choice
-          splitting_fragments << Fragment::ExerciseChoice.new(node: split)
-        elsif split.matches?(EXERCISE_CSS)
-          # Exercise
-          splitting_fragments << Fragment::Exercise.new(node: split)
-        end
-
-        # Copy the reading content and find the split in the copy
-        next_text = current_text.dup
-        split_copy = next_text.at_css(SPLIT_CSS)
-
-        # One copy retains the content before the split;
-        # the other retains the content after the split
-        remove_after(split, current_text)
-        remove_before(split_copy, next_text)
-
-        # Remove the splits and any empty parents
-        recursive_compact(split, current_text)
-        recursive_compact(split_copy, next_text)
-
-        # Create text fragment before current split
-        unless current_text.content.blank?
-          @fragments << Fragment::Text.new(node: current_text)
-        end
-
-        # Add contents from splitting fragments
-        @fragments += splitting_fragments
-
-        current_text = next_text
-        split = current_text.at_css(SPLIT_CSS)
-      end
-
-      # Create text fragment after all splits
-      unless current_text.content.blank?
-        @fragments << Fragment::Text.new(node: current_text)
-      end
-
-      @fragments
+      @fragments = split_into_fragments(root_copy)
     end
 
     def visit(visitor:, depth: 0)
@@ -266,6 +201,85 @@ module OpenStax::Cnx::V1
         fragment.visit(visitor: visitor, depth: depth+1)
       end
       visitor.post_order_visit(elem: self, depth: depth)
+    end
+
+    protected
+
+    def node_to_fragment(node)
+      klass = node['class']
+
+      return Fragment::Text.new(node: node) if klass.nil?
+
+      if INTERACTIVE_CLASSES.any? { |interactive_class| klass.include?(interactive_class) }
+        # Simulation
+        Fragment::Interactive.new(node: node)
+      elsif klass.include?(VIDEO_CLASS)
+        # Video
+        Fragment::Video.new(node: node)
+      elsif klass.include?(EXERCISE_CHOICE_CLASS)
+        # Exercise choice
+        Fragment::ExerciseChoice.new(node: node)
+      elsif klass.include?(EXERCISE_CLASS)
+        # Exercise
+        Fragment::Exercise.new(node: node)
+      else
+        # Nothing matched, so consider it to be plain text
+        Fragment::Text.new(node: node)
+      end
+    end
+
+    def split_into_fragments(node)
+      fragments = []
+
+      # Initialize current_node
+      current_node = node
+
+      # Find first split
+      split = current_node.at_css(SPLIT_CSS)
+
+      # Split the root and collect the TaskStep attributes
+      while !split.nil? do
+        klass = split['class']
+
+        if klass.include?(ASSESSED_FEATURE_CLASS) || klass.include?(FEATURE_CLASS)
+          # Feature or Assessed Feature: do a recursive split
+          splitting_fragments = split_into_fragments(split)
+        else
+          # Get a single fragment for the given node
+          splitting_fragments = [node_to_fragment(split)]
+        end
+
+        # Copy the node content and find the same split CSS in the copy
+        next_node = current_node.dup
+        split_copy = next_node.at_css(SPLIT_CSS)
+
+        # One copy retains the content before the split;
+        # the other retains the content after the split
+        remove_after(split, current_node)
+        remove_before(split_copy, next_node)
+
+        # Remove the splits and any empty parents
+        recursive_compact(split, current_node)
+        recursive_compact(split_copy, next_node)
+
+        # Create text fragment before current split
+        unless current_node.content.blank?
+          fragments << node_to_fragment(current_node)
+        end
+
+        # Add contents from splitting fragments
+        fragments += splitting_fragments
+
+        current_node = next_node
+        split = current_node.at_css(SPLIT_CSS)
+      end
+
+      # Create text fragment after all splits
+      unless current_node.content.blank?
+        fragments << node_to_fragment(current_node)
+      end
+
+      fragments
     end
 
   end

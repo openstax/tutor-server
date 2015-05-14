@@ -287,7 +287,7 @@ class Tasks::Assistants::IReadingAssistant
 
   def self.tasked_interactive(interactive_fragment:, step:, title: nil)
     if interactive_fragment.url.blank?
-      logger.warn('Interactive without iframe found while creating iReading')
+      logger.warn('Interactive without url found while creating iReading')
       return
     end
 

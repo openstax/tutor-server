@@ -18,7 +18,7 @@ class Demo001
 
   DEFAULT_TASK_DURATION = 1.week
 
-  def exec(random_seed: nil, print_logs: false)
+  def exec(random_seed: nil, print_logs: true)
 
     @print_logs = print_logs
 
@@ -57,7 +57,7 @@ class Demo001
     #
 
     responses_list = new_responses_list(
-      step_types: %w( r r e r r r e v e r r i e r r e r r r e r e r ),
+      step_types: %w( r r i e r r r e v e e r r i e e r r e r r r e r e r ),
       entries: [
                   98,
                   67,
@@ -67,7 +67,7 @@ class Demo001
                   :incomplete,
                   :not_started,
                   78,
-                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 ),  # explicit example, could also be `100`
+                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 ),  # explicit example, could also be `100`
                   86,
                   100,
                   82,

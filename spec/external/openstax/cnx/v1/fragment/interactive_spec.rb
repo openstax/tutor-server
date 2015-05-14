@@ -1,9 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-VCR_OPTS[:record] = :once
-RSpec.describe OpenStax::Cnx::V1::Fragment::Interactive, :type => :external,
-                                                         :vcr => VCR_OPTS do
+RSpec.describe OpenStax::Cnx::V1::Fragment::Interactive, :type => :external, :vcr => VCR_OPTS do
   let!(:cnx_page_id) { '61445f78-00e2-45ae-8e2c-461b17d9b4fd@4' }
   let!(:cnx_page) { OpenStax::Cnx::V1::Page.new(id: cnx_page_id) }
   let!(:interactive_fragments) {
@@ -24,9 +22,7 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::Interactive, :type => :external,
 <li>When force is equal, no one wins.</li>
 </ol>
 <p id="fs-idp52126304">Next, click on the Friction tab. Try selecting different objects for the person to push. Slide the applied force button to the right to apply force to the right and to the left to apply force to the left. The force will continue to be applied as long as you hold the button down. See the arrow representing friction change in magnitude and direction depending on how much force you apply. Try increasing or decreasing the friction force to see how this affects the motion.</p>
- 
-
-  </div>
+<iframe width="960" height="785" src="http://archive.cnx.org/specials/e2ca52af-8c6b-450e-ac2f-9300b38e8739/moving-man/"></iframe>\n\n  </div>
 EOF
   ] }
 
