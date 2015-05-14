@@ -1,4 +1,7 @@
 require_relative 'entity_extensions'
+
+require_relative '../lo_strategies/homework'
+require_relative '../lo_strategies/i_reading'
 require_relative '../placeholder_strategies/homework_personalized'
 require_relative '../placeholder_strategies/i_reading_personalized'
 
@@ -24,6 +27,17 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
                      if: :opens_at
 
   validate :opens_at_or_due_at
+
+  def lo_strategy
+    serialized_strategy = read_attribute(:lo_strategy)
+    strategy = serialized_strategy.nil? ? nil : YAML.load(serialized_strategy)
+    strategy
+  end
+
+  def lo_strategy=(strategy)
+    serialized_strategy = strategy.nil? ? nil : YAML.dump(strategy)
+    write_attribute(:lo_strategy, serialized_strategy)
+  end
 
   def personalized_placeholder_strategy
     serialized_strategy = read_attribute(:personalized_placeholder_strategy)
@@ -96,6 +110,11 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     unless strategy.nil?
       strategy.populate_placeholders(task: self)
     end
+  end
+
+  def los
+    strategy = lo_strategy
+    strategy.nil? ? [] : strategy.los(task: self)
   end
 
   def exercise_count

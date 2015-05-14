@@ -117,6 +117,37 @@ RSpec.describe Tasks::Models::Task, :type => :model do
     expect(task.personalized_placeholder_strategy).to be_nil
   end
 
+  context 'lo_strategy is not set' do
+    let!(:task) {
+      task = Tasks::Models::Task.new
+      task.lo_strategy = nil
+      task
+    }
+
+    it 'returns an empty enumerable of LOs' do
+      expect(task.los).to be_empty
+    end
+  end
+
+  context 'lo_strategy is set' do
+    let!(:task) {
+      task = Tasks::Models::Task.new
+      class Strategy
+        def los(task:)
+          raise "called"
+        end
+      end
+      task.lo_strategy = Strategy.new
+      task
+    }
+
+    it 'delegates to its lo_strategy to get LOs' do
+      expect{
+        task.los
+      }.to raise_error("called")
+    end
+  end
+
   context 'personalized_placeholder_strategy is not set' do
     let!(:task) {
       task = Tasks::Models::Task.new
@@ -136,7 +167,7 @@ RSpec.describe Tasks::Models::Task, :type => :model do
     let!(:task) {
       task = Tasks::Models::Task.new
       class Strategy
-        def populate_placeholders(*args)
+        def populate_placeholders(task:)
           raise "called"
         end
       end
@@ -152,7 +183,7 @@ RSpec.describe Tasks::Models::Task, :type => :model do
       it 'invokes the personalized_placeholder_strategy upon task step completion' do
         expect{
           task.handle_task_step_completion!
-        }.to raise_error
+        }.to raise_error("called")
       end
     end
 

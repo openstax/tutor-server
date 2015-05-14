@@ -10,6 +10,8 @@ class CreateTasksTasks < ActiveRecord::Migration
       t.datetime :feedback_at
       t.text :description
       t.integer :tasks_taskings_count, null: false, default: 0
+
+      t.text :lo_strategy
       t.text :personalized_placeholder_strategy
 
       t.timestamps null: false

@@ -58,6 +58,9 @@ class Tasks::Assistants::HomeworkAssistant
 
   def self.create_homework_task!(task_plan:, taskee:, exercises:)
     task = create_task!(task_plan: task_plan)
+
+    task.lo_strategy = Tasks::LoStrategies::Homework.new
+
     add_core_steps!(task: task, exercises: exercises)
     add_spaced_practice_exercise_steps!(task_plan: task_plan, task: task, taskee: taskee)
     add_personalized_exercise_steps!(task_plan: task_plan, task: task, taskee: taskee)

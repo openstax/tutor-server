@@ -1,6 +1,4 @@
 class Tasks::PlaceholderStrategies::IReadingPersonalized
-  def initalize
-  end
 
   def populate_placeholders(task:)
     personalized_placeholder_task_steps = task.personalized_task_steps.select{|task_step| task_step.placeholder?}
@@ -10,11 +8,11 @@ class Tasks::PlaceholderStrategies::IReadingPersonalized
 
     taskee = task.taskings.first.role
 
-    ireading_los = get_ireading_los(task: task)
+    los = task.los
 
     exercise_uids = OpenStax::BigLearn::V1.get_projection_exercises(
       role:              taskee,
-      tag_search:        biglearn_condition(ireading_los),
+      tag_search:        biglearn_condition(los),
       count:             num_placeholders,
       difficulty:        0.5,
       allow_repetitions: true
@@ -34,12 +32,6 @@ class Tasks::PlaceholderStrategies::IReadingPersonalized
 
     task.save!
     task
-  end
-
-  def get_ireading_los(task:)
-    page_ids = task.task_plan.settings['page_ids']
-    los = Content::GetLos[page_ids: page_ids]
-    los
   end
 
   def biglearn_condition(los)
@@ -64,4 +56,5 @@ class Tasks::PlaceholderStrategies::IReadingPersonalized
 
     condition
   end
+
 end
