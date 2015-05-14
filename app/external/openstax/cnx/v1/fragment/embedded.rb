@@ -79,7 +79,7 @@ module OpenStax::Cnx::V1::Fragment
     end
 
     def url_node
-      @url_node ||= node.at_css(TAGGED_URL_CSS) || node.at_css(UNTAGGED_URL_CSS)
+      @url_node ||= node.at_css(TAGGED_URL_CSS) || node.css(UNTAGGED_URL_CSS).last
     end
 
   end
