@@ -20,7 +20,9 @@ RSpec.describe Tasks::GetPerformanceBookExports do
                                         course: course,
                                         role: role)
 
-    exports = described_class[course: course, role: role]
+    exports = described_class[course: course, role: role].map do |e|
+      HashWithIndifferentAccess.new(e)
+    end
 
     # newest on top
     expect(exports).to eq([
