@@ -21,13 +21,13 @@ RSpec.describe Tasks::GetPerformanceBookExports do
                                         role: role)
 
     # newest on top
-    expect(described_class[course: course, role: role]).to eq([
-      { 'filename' => 'Biology_I_Performance.xlsx',
-        'url' => biology_export.url,
-        'created_at' => biology_export.created_at },
-      { 'filename' => 'Physics_I_Performance.xlsx',
-        'url' => physics_export.url,
-        'created_at' => physics_export.created_at }
-    ])
+    expect(described_class[course: course, role: role]).to include(
+      hash_including('filename' => 'Biology_I_Performance.xlsx',
+                     'url' => biology_export.url,
+                     'created_at' => biology_export.created_at),
+      hash_including('filename' => 'Physics_I_Performance.xlsx',
+                     'url' => physics_export.url,
+                     'created_at' => physics_export.created_at)
+    )
   end
 end
