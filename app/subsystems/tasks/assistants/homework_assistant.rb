@@ -248,6 +248,9 @@ class Tasks::Assistants::HomeworkAssistant
   end
 
   def self.add_personalized_exercise_steps!(task_plan:, task:, taskee:)
+    task.personalized_placeholder_strategy = Tasks::PlaceholderStrategies::HomeworkPersonalized.new \
+      if num_personalized_exercises > 0
+
     num_personalized_exercises.times do
       task_step = Tasks::Models::TaskStep.new(task: task)
       tasked_placeholder = Tasks::Models::TaskedPlaceholder.new(task_step: task_step)
