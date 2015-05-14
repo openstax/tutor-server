@@ -29,11 +29,11 @@ class DistributeTasks
     # Intervention settings already included when the task_plan was saved
     err = validate_json(assistant.schema, task_plan.settings)
 
-    fatal_error(code: :invalid_settings, message: 'Invalid settings') unless err.empty?
+    fatal_error(code: :invalid_settings, message: 'Invalid settings', data: err) \
+      unless err.empty?
 
     # Call the assistant code to create and distribute Tasks
-    outputs[:tasks] = assistant.distribute_tasks(task_plan: task_plan,
-                                                 taskees: taskees)
+    outputs[:tasks] = assistant.distribute_tasks(task_plan: task_plan, taskees: taskees)
     task_plan.update_attributes(published_at: Time.now)
   end
 
