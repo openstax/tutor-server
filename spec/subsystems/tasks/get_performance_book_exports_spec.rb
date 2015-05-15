@@ -28,19 +28,11 @@ RSpec.describe Tasks::GetPerformanceBookExports do
 
     expect(export[0].filename).to eq 'Biology_I_Performance.xlsx'
     expect(export[0].url).to eq biology_export.url
-    expect(export[0].created_at).to eq biology_export.created_at
+    expect(export[0].created_at).to be_the_same_time_as biology_export.created_at
 
     expect(export[1].filename).to eq 'Physics_I_Performance.xlsx'
     expect(export[1].url).to eq physics_export.url
-    expect(export[1].created_at).to eq physics_export.created_at
+    expect(export[1].created_at).to be_the_same_time_as physics_export.created_at
 
-    # expect().to include(
-    #   hash_including('filename' => 'Biology_I_Performance.xlsx',
-    #                  'url' => biology_export.url,
-    #                  'created_at' => biology_export.created_at),
-    #   hash_including('filename' => 'Physics_I_Performance.xlsx',
-    #                  'url' => physics_export.url,
-    #                  'created_at' => physics_export.created_at)
-    # )
   end
 end

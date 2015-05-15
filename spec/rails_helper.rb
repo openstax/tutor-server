@@ -82,3 +82,10 @@ RSpec::Matchers.define :have_routine_errors do
     "expected that #{actual} would not have errors"
   end
 end
+
+# https://gist.github.com/shime/9930893
+RSpec::Matchers.define :be_the_same_time_as do |expected|
+  match do |actual|
+    expect(expected.strftime("%d-%m-%Y %H:%M:%S")).to eq(actual.strftime("%d-%m-%Y %H:%M:%S"))
+  end
+end
