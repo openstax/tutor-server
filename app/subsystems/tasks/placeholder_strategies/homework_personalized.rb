@@ -28,6 +28,7 @@ class Tasks::PlaceholderStrategies::HomeworkPersonalized
       tasked_exercise = TaskExercise[task_step: step, exercise: exercise]
       # inject_debug_content!(step.tasked, "This exercise is part of the #{step.group_type}")
       step.save!
+      step.reload
     end
 
     task.save!
