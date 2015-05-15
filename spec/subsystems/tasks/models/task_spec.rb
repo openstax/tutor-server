@@ -25,7 +25,7 @@ RSpec.describe Tasks::Models::Task, :type => :model do
     expect(task1.is_shared?).to be_truthy
   end
 
-  it 'returns core task steps' do
+  xit 'returns core task steps' do
     core_step1            = instance_double('TaskStep', :core_group? => true)
     core_step2            = instance_double('TaskStep', :core_group? => true)
     core_step3            = instance_double('TaskStep', :core_group? => true)
@@ -43,7 +43,7 @@ RSpec.describe Tasks::Models::Task, :type => :model do
     end
   end
 
-  it 'returns spaced_practice task steps' do
+  xit 'returns spaced_practice task steps' do
     core_step1            = instance_double('TaskStep', :spaced_practice_group? => false)
     core_step2            = instance_double('TaskStep', :spaced_practice_group? => false)
     core_step3            = instance_double('TaskStep', :spaced_practice_group? => false)
@@ -61,7 +61,7 @@ RSpec.describe Tasks::Models::Task, :type => :model do
     end
   end
 
-  it 'returns personalized task steps' do
+  xit 'returns personalized task steps' do
     core_step1         = instance_double('TaskStep', :personalized_group? => false)
     core_step2         = instance_double('TaskStep', :personalized_group? => false)
     core_step3         = instance_double('TaskStep', :personalized_group? => false)
@@ -79,7 +79,7 @@ RSpec.describe Tasks::Models::Task, :type => :model do
     end
   end
 
-  it 'determines if its core task steps are completed' do
+  xit 'determines if its core task steps are completed' do
     core_step1            = instance_double('TaskStep', :core_group? => true,  :completed? => true)
     core_step2            = instance_double('TaskStep', :core_group? => true,  :completed? => true)
     core_step3            = instance_double('TaskStep', :core_group? => true,  :completed? => true)
@@ -92,7 +92,7 @@ RSpec.describe Tasks::Models::Task, :type => :model do
     expect(task.core_task_steps_completed?).to be_truthy
   end
 
-  it 'determines if its core task steps are not completed' do
+  xit 'determines if its core task steps are not completed' do
     core_step1            = instance_double('TaskStep', :core_group? => true,  :completed? => true)
     core_step2            = instance_double('TaskStep', :core_group? => true,  :completed? => true)
     core_step3            = instance_double('TaskStep', :core_group? => true,  :completed? => false)

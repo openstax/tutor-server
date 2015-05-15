@@ -97,20 +97,24 @@ class SetupPerformanceBookData
 
     # User 1 answered everything in homework task plan correctly
     student_1_tasks[0].task_steps.each do |ts|
+      ts.reload
       Hacks::AnswerExercise[task_step: ts, is_correct: true]
     end
 
     # User 1 completed the reading task plan
     student_1_tasks[1].task_steps.each do |ts|
+      ts.reload
       MarkTaskStepCompleted[task_step: ts]
     end
 
     # User 2 answered 2 questions correctly and 2 incorrectly in
     # homework task plan
     student_2_tasks[0].task_steps.first(2).each do |ts|
+      ts.reload
       Hacks::AnswerExercise[task_step: ts, is_correct: true]
     end
     student_2_tasks[0].task_steps[2..3].each do |ts|
+      ts.reload
       Hacks::AnswerExercise[task_step: ts, is_correct: false]
     end
 
