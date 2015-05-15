@@ -25,7 +25,7 @@ class GetCourseStats
     chapters = compile_chapters
 
     outputs[:course_stats] = {
-      title: root_book_title,
+      title: outputs.toc.title, # toc is the root book
       page_ids: chapters.collect{|cc| cc[:page_ids]}.flatten.uniq,
       children: chapters
     }
@@ -33,10 +33,6 @@ class GetCourseStats
 
   private
   attr_reader :role
-
-  def root_book_title
-    outputs.toc.title
-  end
 
   def compile_chapters
     task_steps_grouped_by_book_part.collect do |book_part_id, task_steps|
@@ -117,7 +113,8 @@ class GetCourseStats
   end
 
   def find_book_part(id)
-    book_parts_by_id[id]
+    book_part = outputs.toc if outputs.toc.id == id
+    book_part ||= outputs.toc.children.select { |bp| bp.id == id }.first
   end
 
   def book_parts_by_id

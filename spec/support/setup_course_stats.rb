@@ -63,7 +63,7 @@ class SetupCourseStats
 
     make_and_work_practice_widget(role: student_role,
                                   num_correct: 5,
-                                  book_part_ids: outputs.toc[0].id)
+                                  book_part_ids: outputs.toc.id)
   end
 
   private
