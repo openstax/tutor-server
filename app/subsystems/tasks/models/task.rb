@@ -83,15 +83,15 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def core_task_steps
-    self.task_steps.select{|ts| ts.core_group?}
+    self.task_steps.core_group
   end
 
   def spaced_practice_task_steps
-    self.task_steps.select{|ts| ts.spaced_practice_group?}
+    self.task_steps.spaced_practice_group
   end
 
   def personalized_task_steps
-    self.task_steps.select{|ts| ts.personalized_group?}
+    self.task_steps.personalized_group
   end
 
   def core_task_steps_completed?
