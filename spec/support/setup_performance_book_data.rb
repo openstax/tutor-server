@@ -96,25 +96,29 @@ class SetupPerformanceBookData
       .includes { task_steps.tasked }
 
     # User 1 answered everything in homework task plan correctly
-    student_1_tasks[0].task_steps.each do |ts|
-      ts.reload
+    student_1_tasks[0].core_task_steps.each do |ts|
+      Hacks::AnswerExercise[task_step: ts, is_correct: true]
+    end
+    student_1_tasks[0].non_core_task_steps.each do |ts|
       Hacks::AnswerExercise[task_step: ts, is_correct: true]
     end
 
     # User 1 completed the reading task plan
-    student_1_tasks[1].task_steps.each do |ts|
-      ts.reload
+    student_1_tasks[1].core_task_steps.each do |ts|
+      MarkTaskStepCompleted[task_step: ts]
+    end
+    student_1_tasks[1].non_core_task_steps.each do |ts|
       MarkTaskStepCompleted[task_step: ts]
     end
 
     # User 2 answered 2 questions correctly and 2 incorrectly in
     # homework task plan
-    student_2_tasks[0].task_steps.first(2).each do |ts|
-      ts.reload
+    core_task_steps = student_2_tasks[0].core_task_steps
+    raise "expected at least 4 core task steps" if core_task_steps.count < 4
+    core_task_steps.first(2).each do |ts|
       Hacks::AnswerExercise[task_step: ts, is_correct: true]
     end
-    student_2_tasks[0].task_steps[2..3].each do |ts|
-      ts.reload
+    core_task_steps[2..3].each do |ts|
       Hacks::AnswerExercise[task_step: ts, is_correct: false]
     end
 
