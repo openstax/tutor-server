@@ -1,7 +1,7 @@
 class Tasks::PlaceholderStrategies::IReadingPersonalized
 
   def populate_placeholders(task:)
-    personalized_placeholder_task_steps = task.personalized_task_steps.select{|task_step| task_step.placeholder?}
+    personalized_placeholder_task_steps = task.personalized_task_steps.select(&:placeholder?)
     return if personalized_placeholder_task_steps.none?
 
     num_placeholders = personalized_placeholder_task_steps.count
@@ -26,8 +26,8 @@ class Tasks::PlaceholderStrategies::IReadingPersonalized
     chosen_exercise_task_step_pairs.each do |exercise, step|
       step.tasked.destroy!
       tasked_exercise = TaskExercise[task_step: step, exercise: exercise]
-      step.personalized_group!
       # inject_debug_content!(step.tasked, "This exercise is part of the #{step.group_type}")
+      step.save!
     end
 
     task.save!
