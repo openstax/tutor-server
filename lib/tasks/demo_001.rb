@@ -57,7 +57,7 @@ class Demo001
     #
 
     responses_list = new_responses_list(
-      step_types: %w( r r i e r r r e v e e r r i e e r r e r r r e r e r ),
+      step_types: %w( r r i e r r r e v e e r r i e e r r e r r r e r e r e ),
       entries: [
                   98,
                   67,
@@ -67,7 +67,7 @@ class Demo001
                   :incomplete,
                   :not_started,
                   78,
-                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 ),  # explicit example, could also be `100`
+                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 ),  # explicit example, could also be `100`
                   86,
                   100,
                   82,
@@ -95,7 +95,7 @@ class Demo001
     #
 
     responses_list = new_responses_list(
-      step_types: %w( e e e e e e e e e e ),
+      step_types: %w( e e e e e e e e e e e ),
       entries: [
                   90,
                   87,
@@ -133,7 +133,7 @@ class Demo001
     #
 
     responses_list = new_responses_list(
-      step_types: %w( r i e r r e r r r e r e r e ),
+      step_types: %w( r i e e ),
       entries: [
                   94,
                   88,
@@ -171,7 +171,7 @@ class Demo001
     #
 
     responses_list = new_responses_list(
-      step_types: %w( e e e e e e e e ),
+      step_types: %w( e e e e e e e e e e ),
       entries: [
                  :incomplete,
                  :incomplete,
@@ -418,25 +418,34 @@ class Demo001
   # exercise correctness
   def work_task(task:, responses:)
 
-    core_task_steps = task.task_steps.core_group
-    core_task_steps_count = core_task_steps.count
+    raise "Invalid number of responses " +
+          "(responses,task_steps) = (#{responses.count}, #{task.task_steps.count})\n" +
+          "(task = #{print_task(task: task)}) " \
+      if responses.count != task.task_steps.count
 
-    raise "Not enough core responses" if responses.count < core_task_steps_count
+    core_task_steps = task.core_task_steps
+    core_task_steps_count = core_task_steps.count
 
     core_task_steps.each_with_index do |step, index|
       work_step(step, responses[index])
     end
 
-    return if !task.core_task_steps_completed?
+    spaced_practice_task_steps = task.spaced_practice_task_steps
+    spaced_practice_task_steps_count = spaced_practice_task_steps.count
 
-    noncore_steps = task.task_steps(true).incomplete
-
-    raise "Not enough noncore responses" \
-      if responses.count < noncore_steps.count + core_task_steps_count
-
-    noncore_steps.each_with_index do |step, index|
+    spaced_practice_task_steps.each_with_index do |step, index|
       work_step(step, responses[index + core_task_steps_count])
     end
+
+    return unless task.core_task_steps_completed?
+
+    personalized_task_steps = task.personalized_task_steps
+    personalized_task_steps_count = personalized_task_steps.count
+
+    personalized_task_steps.each_with_index do |step, index|
+      work_step(step, responses[index + core_task_steps_count + spaced_practice_task_steps_count])
+    end
+
   end
 
   # Works a step with the given response; for exercise steps, response can be
@@ -444,6 +453,9 @@ class Demo001
   # nil or 'n' means incomplete, non-nil means complete.
   def work_step(step, response)
     return if response.nil? || response == 'n'
+
+    raise "cannot complete a TaskedPlaceholder (Task: #{print_task(task: step.task)}, Step: #{step.id})" \
+      if step.tasked.placeholder?
 
     response = (response.zero? ? false : true) if response.is_a?(Integer)
     response = (response == '0' ? false : true) if response.is_a?(String)
@@ -487,7 +499,7 @@ class Demo001
 
   def print_task(task:)
     types = task.task_steps.collect do |step|
-      code = case step.tasked
+      step_code = case step.tasked
       when Tasks::Models::TaskedExercise
         "e"
       when Tasks::Models::TaskedReading
@@ -496,11 +508,25 @@ class Demo001
         'v'
       when Tasks::Models::TaskedInteractive
         'i'
+      when Tasks::Models::TaskedPlaceholder
+        'p'
       else
         'o'
       end
 
-      "#{step.id}#{code}"
+      group_code = if step.default_group?
+        'd'
+      elsif step.core_group?
+        'c'
+      elsif step.spaced_practice_group?
+        's'
+      elsif step.personalized_group?
+        'p'
+      else
+        'o'
+      end
+
+      "#{group_code}#{step.id}#{step_code}"
     end
 
     "Task #{task.id} / #{task.task_type} / #{types.join(' ')}"
