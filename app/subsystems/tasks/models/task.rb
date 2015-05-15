@@ -86,6 +86,10 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     self.task_steps(true).core_group
   end
 
+  def non_core_task_steps
+    self.task_steps(true) - self.core_task_steps
+  end
+
   def spaced_practice_task_steps
     self.task_steps(true).spaced_practice_group
   end
