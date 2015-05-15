@@ -5,19 +5,15 @@ require 'database_cleaner'
 RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                            version: :v1, speed: :slow, vcr: VCR_OPTS do
 
-  let!(:application)     { FactoryGirl.create :doorkeeper_application }
   let!(:user_1)          { FactoryGirl.create :user_profile }
   let!(:user_1_token)    { FactoryGirl.create :doorkeeper_access_token,
-                                              application: application,
                                               resource_owner_id: user_1.id }
 
   let!(:user_2)          { FactoryGirl.create :user_profile }
   let!(:user_2_token)    { FactoryGirl.create :doorkeeper_access_token,
-                                              application: application,
                                               resource_owner_id: user_2.id }
 
-  let!(:userless_token)  { FactoryGirl.create :doorkeeper_access_token,
-                                              application: application }
+  let!(:userless_token)  { FactoryGirl.create :doorkeeper_access_token }
 
   let!(:course) { CreateCourse[name: 'Physics 101'] }
 
@@ -417,7 +413,6 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                                         course: course)
                                                   .outputs.role }
     let!(:student_token)  { FactoryGirl.create :doorkeeper_access_token,
-                                               application: application,
                                                resource_owner_id: student_profile.id }
 
     let!(:teacher_profile){ FactoryGirl.create(:user_profile,
@@ -429,7 +424,6 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                                         course: course)
                                                   .outputs.role }
     let!(:teacher_token)  { FactoryGirl.create :doorkeeper_access_token,
-                                               application: application,
                                                resource_owner_id: teacher_profile.id }
 
     let!(:reading_task)   { FactoryGirl.create(:tasks_task,
@@ -615,189 +609,78 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
 
     describe '#performance' do
-      let!(:page_ids) {
-        Content::Models::Page.all.map(&:id)
-      }
+      let(:teacher) { FactoryGirl.create :user_profile }
+      let(:teacher_token) { FactoryGirl.create :doorkeeper_access_token,
+                              resource_owner_id: teacher.id }
+      let(:student_1) { FactoryGirl.create :user_profile }
+      let(:student_1_token) { FactoryGirl.create :doorkeeper_access_token,
+                                resource_owner_id: student_1.id }
 
-      let!(:teacher) { FactoryGirl.create :user_profile }
-      let!(:teacher_token) { FactoryGirl.create :doorkeeper_access_token,
-                             application: application,
-                             resource_owner_id: teacher.id }
-
-      let!(:user_3) { FactoryGirl.create :user_profile }
-      let!(:user_3_token) { FactoryGirl.create :doorkeeper_access_token,
-                            application: application,
-                            resource_owner_id: user_3.id }
-
-      let!(:add_users_to_course) {
-        AddUserAsCourseTeacher[course: course, user: teacher.entity_user]
-        AddUserAsCourseStudent[course: course, user: user_1.entity_user]
-        AddUserAsCourseStudent[course: course, user: user_2.entity_user]
-      }
-      let!(:user_1_role) {
-        GetUserCourseRoles[course: course, user: user_1.entity_user].first
-      }
-      let!(:user_2_role) {
-        GetUserCourseRoles[course: course, user: user_2.entity_user].first
-      }
-
-      let!(:r_assistant) {
-        FactoryGirl.create :tasks_assistant,
-          code_class_name: 'Tasks::Assistants::IReadingAssistant'
-      }
-      let!(:hw_assistant) {
-        assistant = FactoryGirl.create(:tasks_assistant,
-          code_class_name: 'Tasks::Assistants::HomeworkAssistant'
-        )
-        allow(Tasks::Assistants::HomeworkAssistant).to receive(:num_personalized_exercises).and_return(0)
-        assistant
-      }
-
-      let!(:r_tp) {
-        tp = Tasks::Models::TaskPlan.create!(
-          title: 'Reading task plan',
-          owner: course,
-          type: 'reading',
-          assistant: r_assistant,
-          opens_at: Time.now,
-          due_at: Time.now + 1.week,
-          settings: { page_ids: page_ids.first(2).collect(&:to_s) }
-        )
-        tp.tasking_plans << Tasks::Models::TaskingPlan.create!(target: course, task_plan: tp)
-        DistributeTasks[tp]
-        tp
-      }
-      let!(:hw_tp) {
-        tp = Tasks::Models::TaskPlan.create!(
-          title: 'Homework task plan',
-          owner: course,
-          type: 'homework',
-          assistant: hw_assistant,
-          opens_at: Time.now,
-          due_at: Time.now + 1.day,
-          settings: { exercise_ids: Content::Models::Exercise.first(5).collect{ |e| e.id.to_s },
-                      exercises_count_dynamic: 2 }
-        )
-        tp.tasking_plans << Tasks::Models::TaskingPlan.create!(target: course, task_plan: tp)
-        DistributeTasks[tp]
-        tp
-      }
-      let!(:hw2_tp) {
-        tp = Tasks::Models::TaskPlan.create!(
-          title: 'Homework 2 task plan',
-          owner: course,
-          type: 'homework',
-          assistant: hw_assistant,
-          opens_at: Time.now,
-          due_at: Time.now + 2.week,
-          settings: { exercise_ids: Content::Models::Exercise.all
-                                                             .sort_by{|ex| ex.url}
-                                                             .last(3).first(2) ## the last exercise is mis-tagged
-                                                             .collect{ |e| e.id.to_s },
-                      exercises_count_dynamic: 2 }
-        )
-        tp.tasking_plans << Tasks::Models::TaskingPlan.create!(target: course, task_plan: tp)
-        DistributeTasks[tp]
-        tp
-      }
+      before do
+        SetupPerformanceBookData[course: course,
+                                 teacher: teacher,
+                                 students: student_1,
+                                 book: @book]
+      end
 
       it 'should work on the happy path' do
-        user_1_role_id = user_1_role.id
-        user_2_role_id = user_2_role.id
-
-        user_1_tasks = Tasks::Models::Task
-          .joins { taskings }
-          .where { taskings.entity_role_id == user_1_role_id }
-          .where { task_type.in Tasks::Models::Task.task_types.values_at(:reading, :homework) }
-          .order { due_at }
-          .includes { task_steps.tasked }
-
-        user_2_tasks = Tasks::Models::Task
-          .joins { taskings }
-          .where { taskings.entity_role_id == user_2_role_id }
-          .where { task_type.in Tasks::Models::Task.task_types.values_at(:reading, :homework) }
-          .order { due_at }
-          .includes { task_steps.tasked }
-
-        # User 1 answered everything in homework task plan correctly
-        user_1_tasks[0].task_steps.each do |ts|
-          Hacks::AnswerExercise[task_step: ts, is_correct: true]
-        end
-
-        # User 1 completed the reading task plan
-        user_1_tasks[1].task_steps.each do |ts|
-          MarkTaskStepCompleted[task_step: ts]
-        end
-
-        # User 2 answered 2 questions correctly and 2 incorrectly in
-        # homework task plan
-        user_2_tasks[0].task_steps.first(2).each do |ts|
-          Hacks::AnswerExercise[task_step: ts, is_correct: true]
-        end
-        user_2_tasks[0].task_steps.last(2).each do |ts|
-          Hacks::AnswerExercise[task_step: ts, is_correct: false]
-        end
-
-        # User 2 started the reading task plan
-        MarkTaskStepCompleted[task_step: user_2_tasks[1].task_steps.first]
-
         api_get :performance, teacher_token, parameters: { id: course.id }
 
         expect(response).to have_http_status :success
-        expect(response.body_as_hash).to eq(
+        expect(response.body_as_hash).to include(
           data_headings: [
             { title: 'Homework task plan', class_average: 75.0 },
             { title: 'Reading task plan' },
             { title: 'Homework 2 task plan' }
           ],
           students: [{
-            name: user_1.full_name,
-            role: user_1_role_id,
+            name: kind_of(String),
+            role: kind_of(Integer),
             data: [
               {
                 type: 'homework',
-                id: user_1_tasks[0].id,
+                id: kind_of(Integer),
                 status: 'completed',
-                exercise_count: 5,
-                correct_exercise_count: 5,
+                exercise_count: 6,
+                correct_exercise_count: 6,
                 recovered_exercise_count: 0
               },
               {
                 type: 'reading',
-                id: user_1_tasks[1].id,
+                id: kind_of(Integer),
                 status: 'completed'
               },
               {
                 type: 'homework',
-                id: user_1_tasks[2].id,
+                id: kind_of(Integer),
                 status: 'not_started',
-                exercise_count: 3,
+                exercise_count: 4,
                 correct_exercise_count: 0,
                 recovered_exercise_count: 0
               }
             ]
           }, {
-            name: user_2.full_name,
-            role: user_2_role_id,
+            name: kind_of(String),
+            role: kind_of(Integer),
             data: [
               {
                 type: 'homework',
-                id: user_2_tasks[0].id,
+                id: kind_of(Integer),
                 status: 'in_progress',
-                exercise_count: 5,
+                exercise_count: 6,
                 correct_exercise_count: 2,
                 recovered_exercise_count: 0
               },
               {
                 type: 'reading',
-                id: user_2_tasks[1].id,
+                id: kind_of(Integer),
                 status: 'in_progress'
               },
               {
                 type: 'homework',
-                id: user_2_tasks[2].id,
+                id: kind_of(Integer),
                 status: 'not_started',
-                exercise_count: 3,
+                exercise_count: 4,
                 correct_exercise_count: 0,
                 recovered_exercise_count: 0
               }
@@ -808,15 +691,100 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
       it 'raises error for users not in the course' do
         expect {
-          api_get :performance, user_3_token, parameters: { id: course.id }
+          api_get :performance, userless_token, parameters: { id: course.id }
         }.to raise_error StandardError
       end
 
       it 'raises error for students' do
         expect {
-          api_get :performance, user_1_token, parameters: { id: course.id }
+          api_get :performance, student_1_token, parameters: { id: course.id }
         }.to raise_error SecurityTransgression
       end
+    end
+  end
+
+  describe 'POST #performance_export' do
+    let(:teacher) { FactoryGirl.create :user_profile }
+    let(:teacher_token) { FactoryGirl.create :doorkeeper_access_token,
+                           resource_owner_id: teacher.id }
+
+    before do
+      AddUserAsCourseTeacher[course: course, user: teacher.entity_user]
+    end
+
+    it 'returns 201 for authorized teachers' do
+      api_post :performance_export, teacher_token, parameters: { id: course.id }
+
+      expect(response.status).to eq(201)
+    end
+
+    it 'kicks off the performance book export for authorized teachers' do
+      role = ChooseCourseRole[course: course, user: teacher.entity_user]
+      allow(Tasks::Jobs::ExportPerformanceBookJob).to receive(:perform_later)
+
+      api_post :performance_export, teacher_token, parameters: { id: course.id }
+
+      expect(Tasks::Jobs::ExportPerformanceBookJob).to have_received(:perform_later)
+        .with(course: course, role: role)
+    end
+
+    it 'returns 403 unauthorized users' do
+      unknown = FactoryGirl.create :user_profile
+      unknown_token = FactoryGirl.create :doorkeeper_access_token,
+                                         resource_owner_id: unknown.id
+
+      expect {
+        api_post :performance_export, unknown_token, parameters: { id: course.id }
+      }.to raise_error(SecurityTransgression)
+    end
+
+    it 'returns 404 for non-existent courses' do
+      expect {
+        api_post :performance_export, teacher_token, parameters: { id: 'nope' }
+      }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+  end
+
+  describe 'GET #performance_exports' do
+    let(:teacher) { FactoryGirl.create :user_profile }
+    let(:teacher_token) { FactoryGirl.create :doorkeeper_access_token,
+                           resource_owner_id: teacher.id }
+
+    before do
+      AddUserAsCourseTeacher[course: course, user: teacher.entity_user]
+    end
+
+    it 'returns the filename, url, timestamp of all exports for the course' do
+      role = ChooseCourseRole[user: teacher.entity_user,
+                              course: course,
+                              allowed_role_type: :teacher]
+      export = FactoryGirl.create(:performance_book_export,
+                                  export: File.open('./tmp/test.txt', 'w+'),
+                                  course: course,
+                                  role: role)
+
+      api_get :performance_exports, teacher_token, parameters: { id: course.id }
+
+      expect(response.status).to eq(200)
+      expect(response.body_as_hash.last[:filename]).to eq('test.txt')
+      expect(response.body_as_hash.last[:url]).to eq(export.url)
+      expect(response.body_as_hash.last[:created_at]).not_to be_nil
+    end
+
+    it 'returns 403 for users who are not teachers of the course' do
+      unknown = FactoryGirl.create :user_profile
+      unknown_token = FactoryGirl.create :doorkeeper_access_token,
+                                         resource_owner_id: unknown.id
+
+      expect {
+        api_get :performance_exports, unknown_token, parameters: { id: course.id }
+      }.to raise_error(SecurityTransgression)
+    end
+
+    it 'returns 404 for non-existent courses' do
+      expect {
+        api_get :performance_exports, teacher_token, parameters: { id: 'nope' }
+      }.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
 end

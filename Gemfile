@@ -104,8 +104,14 @@ gem 'pg'
 # Lorem Ipsum
 gem 'faker'
 
+# Background job queueing
+gem 'resque'
+
 # Type coercion for Representable
 gem 'virtus'
+
+# Create xlsx files
+gem 'axlsx', '~> 2.1.0.pre'
 
 group :development, :test do
   # SQLite adapter
@@ -113,6 +119,9 @@ group :development, :test do
 
   # Allows the use of the in-memory SQLite3 database in Rails tests
   gem 'memory_test_fix'
+
+  # Resque but for testing
+  gem 'resque_spec'
 
   # Get env variables from .env file
   gem 'dotenv-rails'

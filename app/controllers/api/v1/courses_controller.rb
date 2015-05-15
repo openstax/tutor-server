@@ -91,7 +91,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   EOS
   def events
     course = Entity::Course.find(params[:id])
-    result = GetRoleCourseEvents.call(course: course, role: get_course_role(types: :any))
+    result = GetRoleCourseEvents.call(course: course, role: get_course_role)
     respond_with result.outputs, represent_with: Api::V1::CourseEventsRepresenter
   end
 
@@ -103,7 +103,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     course = Entity::Course.find(params[:id])
     data = Api::V1::Courses::Dashboard.call(
              course: course,
-             role: get_course_role(types: :any)
+             role: get_course_role
            ).outputs
     respond_with data, represent_with: Api::V1::Courses::DashboardRepresenter
   end
@@ -114,10 +114,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   EOS
   def stats
     course = Entity::Course.find(params[:id])
-    role = ChooseCourseRole[course: course,
-                            user: current_human_user.entity_user,
-                            allowed_role_type: :student,
-                            role_id: params[:role_id]]
+    role = get_course_role(types: :student)
     course_stats = GetCourseStats[role: role, course: course]
     respond_with course_stats, represent_with: Api::V1::CourseStatsRepresenter
   end
@@ -153,20 +150,50 @@ class Api::V1::CoursesController < Api::V1::ApiController
       head(:not_found) : respond_with(task.task, represent_with: Api::V1::TaskRepresenter)
   end
 
+  api :POST, '/courses/:course_id/performance/export',
+             'Begins the export of the performance book for authorized teachers'
+  description <<-EOS
+    201 if the role is a teacher of a course
+      -- The export background job will be started
+  EOS
+  def performance_export
+    course = Entity::Course.find(params[:id])
+
+    OSU::AccessPolicy.require_action_allowed!(:export, current_api_user, course)
+
+    Tasks::Jobs::ExportPerformanceBookJob.perform_later(course: course,
+                                                        role: get_course_role)
+
+    head :created
+  end
+
+  api :GET, '/courses/:course_id/performance/exports',
+            'Gets the export history of the performance book for authorized teachers'
+  description <<-EOS
+    #{json_schema(Api::V1::PerformanceBookExportsRepresenter, include: :readable)}
+  EOS
+  def performance_exports
+    course = Entity::Course.find(params[:id])
+
+    OSU::AccessPolicy.require_action_allowed!(:export, current_api_user, course)
+
+    exports = Tasks::GetPerformanceBookExports[course: course, role: get_course_role]
+
+    respond_with exports, represent_with: Api::V1::PerformanceBookExportsRepresenter
+  end
+
   api :GET, '/courses/:course_id/performance(/role/:role_id)', 'Returns performance book for the user'
   description <<-EOS
     #{json_schema(Api::V1::PerformanceBookRepresenter, include: :readable)}
   EOS
   def performance
     course = Entity::Course.find(params[:id])
-    role = ChooseCourseRole[course: course, user: current_human_user.entity_user, role_id: params[:role_id]]
-    pbook = Tasks::GetPerformanceBook[course: course, role: role]
+    pbook = Tasks::GetPerformanceBook[course: course, role: get_course_role]
 
     respond_with(Hashie::Mash.new(pbook), represent_with: Api::V1::PerformanceBookRepresenter)
   end
 
   protected
-
   def get_course_role(types: :any)
     result = ChooseCourseRole.call(user: current_human_user.entity_user,
                                    course: Entity::Course.find(params[:id]),
@@ -181,5 +208,4 @@ class Api::V1::CoursesController < Api::V1::ApiController
   def get_practice_role
     get_course_role(types: :student)
   end
-
 end

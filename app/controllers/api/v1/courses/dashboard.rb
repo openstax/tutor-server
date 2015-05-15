@@ -6,8 +6,8 @@ class Api::V1::Courses::Dashboard
                translations: { outputs: { map: { items: :plans } } }
   uses_routine ::Tasks::GetTasks,
                as: :get_tasks
-  uses_routine GetCourse,
-               as: :get_course
+  uses_routine GetCourseProfile,
+               as: :get_course_profile
   uses_routine GetTeacherNames,
                as: :get_teacher_names
 
@@ -43,12 +43,12 @@ class Api::V1::Courses::Dashboard
   end
 
   def load_course(course, role_type)
-    run(:get_course, course: course)
+    run(:get_course_profile, course: course)
     run(:get_teacher_names, course.id)
 
     outputs[:course] = {
-      id: outputs["[:get_course, :course]"].course_id,
-      name: outputs["[:get_course, :course]"].name,
+      id: course.id,
+      name: outputs["[:get_course_profile, :profile]"].name,
       teacher_names: outputs["[:get_teacher_names, :teacher_names]"]
     }
   end

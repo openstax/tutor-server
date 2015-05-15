@@ -9,6 +9,14 @@ class Tasks::Models::TaskedPlaceholder < Tutor::SubSystems::BaseModel
     true
   end
 
+  def is_correct?
+    false
+  end
+
+  def completed?
+    false
+  end
+
   def placeholder_name
     placeholder_type.gsub(/_type\z/, '').gsub('_', ' ')
   end
