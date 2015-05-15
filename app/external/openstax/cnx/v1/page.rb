@@ -7,7 +7,7 @@ module OpenStax::Cnx::V1
     ROOT_CSS = 'html > body'
 
     # Remove completely
-    DISCARD_CSS = '.ost-reading-discard, .os-teacher'
+    DISCARD_CSS = '.ost-reading-discard, .os-teacher, [data-type="glossary"]'
 
     # Just a page break
     ASSESSED_FEATURE_CLASS = 'ost-assessed-feature'
@@ -143,18 +143,16 @@ module OpenStax::Cnx::V1
       # Also extract any LOs we find in use in case they weren't appropriately defined with in
       # their own .os-learning-objective-def block.
 
+      # Root is no longer modified by the fragment code, so we can use it
       root.css(LO_CSS).each do |node|
         lo_value = LO_REGEX.match(node.attributes['class']).try(:[], 1)
         @tags[lo_value] = { value: lo_value, type: :lo } if lo_value.present?
       end
 
-      # Can't use self.root b/c ost-standards-def is inside .os-teacher which was removed in root.
-      doc = Nokogiri::HTML(content)
-
       # teks tags
-      doc.css('[class^="ost-standards-def"]').each do |node|
-        name = node.css('[class^="ost-standards-name"]').first.try(:content).try(:strip)
-        description = node.css('[class^="ost-standards-description"]').first.try(:content).try(:strip)
+      root.css('[class^="ost-standards-def"]').each do |node|
+        name = node.at_css('[class^="ost-standards-name"]').try(:content).try(:strip)
+        description = node.at_css('[class^="ost-standards-description"]').try(:content).try(:strip)
         tag_value = node.attr('class').split.last
         @tags[tag_value] = {
           value: tag_value,
@@ -165,7 +163,7 @@ module OpenStax::Cnx::V1
       end
 
       # lo tags
-      doc.css('[class^="ost-learning-objective-def"]').each do |node|
+      root.css('[class^="ost-learning-objective-def"]').each do |node|
         classes = node.attr('class').split
         lo_value = LO_REGEX.match(classes[1]).try(:[], 1)
         teks_value = classes[2]

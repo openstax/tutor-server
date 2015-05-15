@@ -27,7 +27,7 @@ class Demo001
 
     exercises_url = 'https://exercises-demo.openstax.org'
     archive_url = 'https://archive-staging-tutor.cnx.org/contents/'
-    cnx_book_id = 'e4c329f3-1972-4835-a203-3e8c539e4df3@2.14'
+    cnx_book_id = 'e4c329f3-1972-4835-a203-3e8c539e4df3@2.20'
 
     OpenStax::Exercises::V1.with_configuration(server_url: exercises_url) do
       OpenStax::Cnx::V1.with_archive_url(url: archive_url) do
@@ -281,7 +281,7 @@ class Demo001
   end
 
   def new_user_profile(username:, name: nil, password: 'password', sign_contracts: true)
-    name ||= Faker::Name.name
+    name ||= @@name_pool.shift || Faker::Name.name
     first_name, last_name = name.split(' ')
     raise "need a full name" if last_name.nil?
 
@@ -539,5 +539,58 @@ class Demo001
   def rand(max=nil)
     max.nil? ? randomizer.rand : randomizer.rand(max)
   end
+
+  @@name_pool = %w(
+    Alden\ Pyle
+    Atticus\ Finch
+    Augie\ March
+    Charlie\ Marlow
+    Lily\ Bart
+    Clyde\ Griffiths
+    Florentino\ Ariza
+    George\ Smiley
+    Harry\ Potter
+    Henry\ Chinaski
+    Holly\ Golightly
+    Ignatius\ Reilly
+    Jean\ Brodie
+    Leopold\ Bloom
+    Clarissa\ Dalloway
+    Molly\ Bloom
+    Nathan\ Zuckerman
+    Rabbit\ Angstrom
+    Seymour\ Glass
+    Stephen\ Dedalus
+    Earlene\ Hayes
+    Richmond\ Lang
+    Rigoberto\ Hegmann
+    Isobel\ Russel
+    Myron\ Sauer
+    Jared\ Fritsch
+    Myriam\ Reynolds
+    Bernhard\ Stark
+    Isobel\ Witting
+    Vernien\ Walker
+    Lionel\ Hayes
+    Mariah\ Buckridge
+    Cleve\ Pacocha
+    Fabiola\ Thiel
+    Beatrice\ Batz
+    Mikayla\ Hintz
+    Giovanny\ Jaskolski
+    Ashleigh\ Goyette
+    Janelle\ Skiles
+    Willie\ Herman
+    Dorthy\ Pagac
+    Bettie\ Hackett
+    Nellie\ Effertz
+    Albin\ Kirlin
+    Sean\ Kuvalis
+    Alyce\ Tromp
+    Regan\ Buckridge
+    Alene\ Macejkovic
+    Kevin\ Lowe
+    Helmer\ Schuppe
+  )
 
 end

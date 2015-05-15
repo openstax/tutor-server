@@ -195,6 +195,21 @@ describe Api::V1::TaskPlansController, :type => :controller, :api => true, :vers
       expect { api_post :publish, nil, parameters: { course_id: course.id, id: task_plan.id } }
         .to raise_error(SecurityTransgression)
     end
+
+    it 'returns an error message if the task_plan settings are invalid' do
+      task_plan.settings[:exercise_ids] = [1, 2, 3]
+      task_plan.settings[:exercises_count_dynamic] = 3
+      task_plan.save!
+
+      controller.sign_in teacher
+      expect { api_post :publish, nil, parameters: { course_id: course.id, id: task_plan.id } }
+        .not_to change{ Tasks::Models::Task.count }
+      expect(response).to have_http_status(:unprocessable_entity)
+      error = response.body_as_hash[:errors].first
+      expect(error[:code]).to eq 'invalid_settings'
+      expect(error[:message]).to eq 'Invalid settings'
+      expect(error[:data].first).to include("The property '#/' contains additional properties [\"exercise_ids\", \"exercises_count_dynamic\"] outside of the schema when none are allowed in schema")
+    end
   end
 
   context 'destroy' do

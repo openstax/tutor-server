@@ -179,8 +179,6 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         { klass: Tasks::Models::TaskedReading,
           title: nil },
         { klass: Tasks::Models::TaskedExercise,
-          title: nil },
-        { klass: Tasks::Models::TaskedReading,
           title: nil }
       ]
     }
