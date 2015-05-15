@@ -63,7 +63,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def completed?
-    self.task_steps.all?{|ts| ts.completed? }
+    self.task_steps(true).all?{|ts| ts.completed? }
   end
 
   def status
@@ -83,15 +83,15 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def core_task_steps
-    self.task_steps.core_group
+    self.task_steps(true).core_group
   end
 
   def spaced_practice_task_steps
-    self.task_steps.spaced_practice_group
+    self.task_steps(true).spaced_practice_group
   end
 
   def personalized_task_steps
-    self.task_steps.personalized_group
+    self.task_steps(true).personalized_group
   end
 
   def core_task_steps_completed?
@@ -130,7 +130,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def exercise_steps
-    task_steps.select{|task_step| task_step.exercise?}
+    task_steps(true).select{|task_step| task_step.exercise?}
   end
 
   def completed_exercise_steps
