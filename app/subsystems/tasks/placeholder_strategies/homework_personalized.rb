@@ -27,6 +27,8 @@ class Tasks::PlaceholderStrategies::HomeworkPersonalized
       step.tasked.destroy!
       tasked_exercise = TaskExercise[task_step: step, exercise: exercise]
       # inject_debug_content!(step.tasked, "This exercise is part of the #{step.group_type}")
+      tasked_exercise.save!
+      step.save!
     end
 
     task
