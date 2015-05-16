@@ -10,9 +10,9 @@ module Hacks
       tasked = task_step.tasked
 
       if !tasked.is_a?(Tasks::Models::TaskedExercise)
-        puts "tasked:    #{tasked.inspect}"
-        puts "task step: #{task_step.inspect}"
-        puts "task:      #{task_step.task.inspect}"
+        # puts "tasked:    #{tasked.inspect}"
+        # puts "task step: #{task_step.inspect}"
+        # puts "task:      #{task_step.task.inspect}"
         raise "Task step isn't an exercise"
       end
 

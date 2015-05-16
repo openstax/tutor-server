@@ -1,10 +1,12 @@
 require 'rails_helper'
 
-RSpec.describe Tasks::ExportPerformanceBook do
+RSpec.describe Tasks::ExportPerformanceBook, speed: :slow do
   let(:course) { CreateCourse[name: 'Physics'] }
   let(:teacher) { FactoryGirl.create :user_profile }
 
-  before do
+  before(:each) do
+    OpenStax::Exercises::V1.use_real_client
+
     book = FetchAndImportBook[id: '7db9aa72-f815-4c3b-9cb6-d50cf5318b58']
     SetupPerformanceBookData[course: course, teacher: teacher, book: book]
   end
