@@ -21,7 +21,7 @@ bundler_args: --without production --retry=6
 addons:
  postgresql: "9.3"
 script:
-  - bundle exec parallel_rspec ./spec/subsystems/tasks/export_performance_book_spec.rb
+  - bundle exec parallel_rspec ./spec
 branches:
   only:
     - master
