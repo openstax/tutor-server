@@ -31,6 +31,7 @@ class Tasks::PlaceholderStrategies::HomeworkPersonalized
       step.save!
     end
 
+    task.save!
     task
   end
 
