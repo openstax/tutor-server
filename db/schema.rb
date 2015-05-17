@@ -448,7 +448,7 @@ ActiveRecord::Schema.define(version: 20150507224137) do
     t.datetime "feedback_at"
     t.text     "description"
     t.integer  "tasks_taskings_count",              default: 0, null: false
-    t.text     "lo_strategy"
+    t.text     "settings",                                      null: false
     t.text     "personalized_placeholder_strategy"
     t.datetime "created_at",                                    null: false
     t.datetime "updated_at",                                    null: false

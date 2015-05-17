@@ -59,7 +59,7 @@ class Tasks::Assistants::HomeworkAssistant
   def self.create_homework_task!(task_plan:, taskee:, exercises:)
     task = create_task!(task_plan: task_plan)
 
-    task.lo_strategy = Tasks::LoStrategies::Homework.new
+    set_los(task: task, exercises: exercises)
 
     add_core_steps!(task: task, exercises: exercises)
     add_spaced_practice_exercise_steps!(task_plan: task_plan, task: task, taskee: taskee)
@@ -82,6 +82,23 @@ class Tasks::Assistants::HomeworkAssistant
       due_at:      due_at,
       feedback_at: due_at
     ]
+
+    task.save!
+    task
+  end
+
+  def self.set_los(task:, exercises:)
+    urls = exercises.map(&:url)
+
+    exercise_los = Content::Models::Tag.joins{exercise_tags.exercise}
+                                       .where{exercise_tags.exercise.url.in urls}
+                                       .select{|tag| tag.lo?}
+                                       .collect{|tag| tag.value}
+
+    pages = Content::Routines::SearchPages[tag: exercise_los, match_count: 1]
+    los = Content::GetLos[page_ids: pages.map(&:id)]
+
+    task.los = los
 
     task.save!
     task
