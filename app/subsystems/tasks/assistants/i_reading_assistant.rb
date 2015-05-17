@@ -52,11 +52,19 @@ class Tasks::Assistants::IReadingAssistant
   def self.create_ireading_task!(task_plan:, taskee:, cnx_pages:)
     task = create_task!(task_plan: task_plan)
 
-    task.lo_strategy = Tasks::LoStrategies::IReading.new
+    set_los(task: task, cnx_pages: cnx_pages)
 
     add_core_steps!(task: task, cnx_pages: cnx_pages)
     add_spaced_practice_exercise_steps!(task: task, taskee: taskee)
     add_personalized_exercise_steps!(task_plan: task_plan, task: task, taskee: taskee)
+
+    task.save!
+    task
+  end
+
+  def self.set_los(task:, cnx_pages:)
+    los = cnx_pages.map(&:los).flatten.uniq
+    task.los = los
 
     task.save!
     task

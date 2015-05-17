@@ -1,7 +1,5 @@
 require_relative 'entity_extensions'
 
-require_relative '../lo_strategies/homework'
-require_relative '../lo_strategies/i_reading'
 require_relative '../placeholder_strategies/homework_personalized'
 require_relative '../placeholder_strategies/i_reading_personalized'
 
@@ -21,6 +19,8 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
                                  inverse_of: :task
   has_many :taskings, dependent: :destroy, through: :entity_task
 
+  serialize :settings, JSON
+
   validates :title, presence: true
   validates :due_at, timeliness: { on_or_after: :opens_at },
                      allow_nil: true,
@@ -28,15 +28,20 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   validate :opens_at_or_due_at
 
-  def lo_strategy
-    serialized_strategy = read_attribute(:lo_strategy)
-    strategy = serialized_strategy.nil? ? nil : YAML.load(serialized_strategy)
-    strategy
+  after_initialize :post_init
+
+  def post_init
+    self.settings ||= {}
+    self.settings['los'] ||= []
   end
 
-  def lo_strategy=(strategy)
-    serialized_strategy = strategy.nil? ? nil : YAML.dump(strategy)
-    write_attribute(:lo_strategy, serialized_strategy)
+  def los
+    settings['los']
+  end
+
+  def los=(new_los)
+    self.settings['los'] = new_los
+    los
   end
 
   def personalized_placeholder_strategy
@@ -114,11 +119,6 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     unless strategy.nil?
       strategy.populate_placeholders(task: self)
     end
-  end
-
-  def los
-    strategy = lo_strategy
-    strategy.nil? ? [] : strategy.los(task: self)
   end
 
   def exercise_count
