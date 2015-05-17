@@ -57,6 +57,7 @@ class Demo001
     #
 
     responses_list = new_responses_list(
+      assignment_type: :reading,
       step_types: %w( r r i e r r r e v e e r i e e r r e r r r e r e e ),
       entries: [
                   98,
@@ -95,6 +96,7 @@ class Demo001
     #
 
     responses_list = new_responses_list(
+      assignment_type: :homework,
       step_types: %w( e e e e e e e e e e e ),
       entries: [
                   90,
@@ -133,6 +135,7 @@ class Demo001
     #
 
     responses_list = new_responses_list(
+      assignment_type: :reading,
       step_types: %w( r i e e ),
       entries: [
                   94,
@@ -171,6 +174,7 @@ class Demo001
     #
 
     responses_list = new_responses_list(
+      assignment_type: :homework,
       step_types: %w( e e e e e e e e e e ),
       entries: [
                  :incomplete,
@@ -213,13 +217,17 @@ class Demo001
   #
   #############################################################################
 
-  def new_responses_list(step_types:, entries:)
-    ResponsesList.new(step_types: step_types, entries: entries, randomizer: randomizer)
+  def new_responses_list(assignment_type:, step_types:, entries:)
+    ResponsesList.new(assignment_type: assignment_type, step_types: step_types, entries: entries, randomizer: randomizer)
   end
 
   class ResponsesList
-    def initialize(step_types:, entries:, randomizer:)
+    def initialize(assignment_type:, step_types:, entries:, randomizer:)
+      raise ":assignment_type (#{assignment_type}) must be one of {:homework,:reading}" \
+        unless [:homework,:reading].include?(assignment_type)
       raise "Must have at least one step" if step_types.length == 0
+
+      @assignment_type = assignment_type
       @step_types = step_types
       @list = []
       @randomizer = randomizer
@@ -236,7 +244,7 @@ class Demo001
     private
 
     def get_explicit_responses(entry)
-      case entry
+      result = case entry
       when Array
         raise "Number of explicit responses doesn't match number of steps" \
           if @step_types.length != entry.length
@@ -265,7 +273,7 @@ class Demo001
       when :not_started
         @step_types.count.times.collect{nil}
       when :incomplete
-        responses = @step_types.count.times.collect{ [1,0,nil][rand(3)]}
+        responses = @step_types.count.times.collect{ [1,0,nil].sample }
 
         # incomplete is more than not_started, so make sure we have started by setting
         # the first response to complete/correct. always make last step incomplete to
@@ -277,6 +285,18 @@ class Demo001
 
         responses
       end
+
+      ## Steps in readings cannot be skipped - so once the first
+      ## skipped step is reached, skip all following steps.
+      if @assignment_type == :reading
+        index = result.find_index(nil)
+        unless index.nil?
+          nils = Array.new(result[index..-1].count) { nil }
+          result[index..-1] = nils
+        end
+      end
+
+      result
     end
   end
 
