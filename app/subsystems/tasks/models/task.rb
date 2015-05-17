@@ -44,17 +44,6 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     los
   end
 
-  def lo_strategy
-    serialized_strategy = read_attribute(:lo_strategy)
-    strategy = serialized_strategy.nil? ? nil : YAML.load(serialized_strategy)
-    strategy
-  end
-
-  def lo_strategy=(strategy)
-    serialized_strategy = strategy.nil? ? nil : YAML.dump(strategy)
-    write_attribute(:lo_strategy, serialized_strategy)
-  end
-
   def personalized_placeholder_strategy
     serialized_strategy = read_attribute(:personalized_placeholder_strategy)
     strategy = serialized_strategy.nil? ? nil : YAML.load(serialized_strategy)
