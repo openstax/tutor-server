@@ -1,4 +1,7 @@
 require_relative 'entity_extensions'
+
+require_relative '../lo_strategies/homework'
+require_relative '../lo_strategies/i_reading'
 require_relative '../placeholder_strategies/homework_personalized'
 require_relative '../placeholder_strategies/i_reading_personalized'
 
@@ -25,6 +28,17 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   validate :opens_at_or_due_at
 
+  def lo_strategy
+    serialized_strategy = read_attribute(:lo_strategy)
+    strategy = serialized_strategy.nil? ? nil : YAML.load(serialized_strategy)
+    strategy
+  end
+
+  def lo_strategy=(strategy)
+    serialized_strategy = strategy.nil? ? nil : YAML.dump(strategy)
+    write_attribute(:lo_strategy, serialized_strategy)
+  end
+
   def personalized_placeholder_strategy
     serialized_strategy = read_attribute(:personalized_placeholder_strategy)
     strategy = serialized_strategy.nil? ? nil : YAML.load(serialized_strategy)
@@ -49,7 +63,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def completed?
-    self.task_steps.all?{|ts| ts.completed? }
+    self.task_steps(true).all?{|ts| ts.completed? }
   end
 
   def status
@@ -69,15 +83,19 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def core_task_steps
-    self.task_steps.select{|ts| ts.core_group?}
+    self.task_steps(true).includes(:tasked).core_group
+  end
+
+  def non_core_task_steps
+    self.task_steps(true).includes(:tasked) - self.core_task_steps
   end
 
   def spaced_practice_task_steps
-    self.task_steps.select{|ts| ts.spaced_practice_group?}
+    self.task_steps(true).includes(:tasked).spaced_practice_group
   end
 
   def personalized_task_steps
-    self.task_steps.select{|ts| ts.personalized_group?}
+    self.task_steps(true).includes(:tasked).personalized_group
   end
 
   def core_task_steps_completed?
@@ -98,6 +116,11 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     end
   end
 
+  def los
+    strategy = lo_strategy
+    strategy.nil? ? [] : strategy.los(task: self)
+  end
+
   def exercise_count
     exercise_steps.count
   end
@@ -111,7 +134,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def exercise_steps
-    task_steps.select{|task_step| task_step.exercise?}
+    task_steps(true).includes(:tasked).select{|task_step| task_step.exercise?}
   end
 
   def completed_exercise_steps

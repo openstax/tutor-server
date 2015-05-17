@@ -148,20 +148,62 @@ class Setup001
     Tasks::Models::TaskPlan.all.order(:created_at).each_with_index do |tp, tpi|
       tp.tasks.each_with_index do |task, ti|
         # Make Tasks 1 and 2 complete, 3 and 4 half complete and 5, 6, 7, 8 not started
-        complete_count = ((2 - tpi/2)/2.0)*task.task_steps.count
+        complete_count = ((2 - tpi/2)/2.0)*task.task_steps(true).count
 
-        task.task_steps.each_with_index do |ts, si|
+        core_task_steps       = task.core_task_steps
+        core_task_steps_count = core_task_steps.count
+        offset = 0
+        core_task_steps.each_with_index do |task_step, index|
+          step_index = index + offset
+
           # Some steps are left in their incomplete state
-          next unless si < complete_count
+          next unless step_index < complete_count
 
-          if ts.tasked.exercise?
+          if task_step.tasked.exercise?
             # half of the completed exercises get the correct answer, the rest get incorrect
-            Hacks::AnswerExercise.call(task_step: ts, is_correct: [true, false].sample)
+            Hacks::AnswerExercise.call(task_step: task_step, is_correct: [true, false].sample)
           else
             # Not an exercise, so just mark as completed
-            run(:mark_completed, task_step: ts)
+            run(:mark_completed, task_step: task_step)
           end
         end
+
+        spaced_practice_task_steps       = task.spaced_practice_task_steps
+        spaced_practice_task_steps_count = spaced_practice_task_steps.count
+        offset = core_task_steps_count
+        spaced_practice_task_steps.each_with_index do |task_step, index|
+          step_index = index + offset
+
+          # Some steps are left in their incomplete state
+          next unless step_index < complete_count
+
+          if task_step.tasked.exercise?
+            # half of the completed exercises get the correct answer, the rest get incorrect
+            Hacks::AnswerExercise.call(task_step: task_step, is_correct: [true, false].sample)
+          else
+            # Not an exercise, so just mark as completed
+            run(:mark_completed, task_step: task_step)
+          end
+        end
+
+        personalized_task_steps       = task.personalized_task_steps
+        personalized_task_steps_count = personalized_task_steps.count
+        offset = core_task_steps_count + spaced_practice_task_steps_count
+        personalized_task_steps.each_with_index do |task_step, index|
+          step_index = index + offset
+
+          # Some steps are left in their incomplete state
+          next unless step_index < complete_count
+
+          if task_step.tasked.exercise?
+            # half of the completed exercises get the correct answer, the rest get incorrect
+            Hacks::AnswerExercise.call(task_step: task_step, is_correct: [true, false].sample)
+          else
+            # Not an exercise, so just mark as completed
+            run(:mark_completed, task_step: task_step)
+          end
+        end
+
       end
     end
   end

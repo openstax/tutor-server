@@ -8,7 +8,13 @@ module Hacks
 
     def exec(task_step:, is_correct:, free_response: nil, completed: true)
       tasked = task_step.tasked
-      raise "Task step isn't an exercise" if !tasked.is_a?(Tasks::Models::TaskedExercise)
+
+      if !tasked.is_a?(Tasks::Models::TaskedExercise)
+        # puts "tasked:    #{tasked.inspect}"
+        # puts "task step: #{task_step.inspect}"
+        # puts "task:      #{task_step.task.inspect}"
+        raise "Task step isn't an exercise"
+      end
 
       if is_correct
         free_response ||= 'A sentence explaining all the things!'
