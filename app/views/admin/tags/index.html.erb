@@ -4,7 +4,7 @@
   <%= submit_tag 'Search' %>
 <% end %>
 
-<% if params[:value] && @tags.empty? %>
+<% if params[:value].present? && @tags.empty? %>
   <p>No tags found.</p>
 <% end %>
 
