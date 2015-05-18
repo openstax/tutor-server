@@ -25,23 +25,18 @@ class GetCourseStats
     chapters = compile_chapters
 
     outputs[:course_stats] = {
-      title: root_book_title,
+      title: outputs.toc.title, # toc is the root book
       page_ids: chapters.collect{|cc| cc[:page_ids]}.flatten.uniq,
       children: chapters
     }
   end
 
   private
-
   attr_reader :role
-
-  def root_book_title
-    outputs.toc.title
-  end
 
   def compile_chapters
     task_steps_grouped_by_book_part.collect do |book_part_id, task_steps|
-      book_part = find_book_part(book_part_id)
+      book_part = book_parts_by_id[book_part_id]
       practices = completed_practices(
         task_steps: task_steps,
         task_type: :mixed_practice
@@ -117,15 +112,11 @@ class GetCourseStats
     OpenStax::BigLearn::V1.get_clue(roles: role, tags: lo_tags)
   end
 
-  def find_book_part(id)
-    book_parts_by_id[id]
-  end
-
   def book_parts_by_id
-    @book_parts_by_id ||= Hash[book_parts.map{|part| [part.id, part]}]
+    @book_parts_by_id ||= Hash[book_parts.map { |part| [part.id, part] }]
   end
 
   def book_parts
-    outputs.toc.children
+    [outputs.toc, outputs.toc.children].flatten
   end
 end
