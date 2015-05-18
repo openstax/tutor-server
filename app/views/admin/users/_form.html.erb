@@ -1,11 +1,24 @@
 <% method ||= :post %>
 
 <%= lev_form_for :user, url: url, method: method do |f| %>
-  <%= f.label :username %>
-  <%= f.text_field :username %>
+  <div>
+    <%= f.label :username %>
+    <%= f.text_field :username %>
+  </div>
 
-  <%= f.label :password %>
-  <%= f.password_field :password %>
+  <% if @user.nil? %>
+    <div>
+      <%= f.label :password %>
+      <%= f.password_field :password %>
+    </div>
+  <% end %>
 
-  <%= f.submit 'Save', class: 'btn btn-primary' %>
+  <div>
+    <%= f.label :full_name %>
+    <%= f.text_field :full_name %>
+  </div>
+
+  <div>
+    <%= f.submit 'Save', class: 'btn btn-primary' %>
+  </div>
 <% end %>
