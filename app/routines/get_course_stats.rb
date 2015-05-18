@@ -36,7 +36,7 @@ class GetCourseStats
 
   def compile_chapters
     task_steps_grouped_by_book_part.collect do |book_part_id, task_steps|
-      book_part = find_book_part(book_part_id)
+      book_part = book_parts_by_id[book_part_id]
       practices = completed_practices(
         task_steps: task_steps,
         task_type: :mixed_practice
@@ -110,10 +110,6 @@ class GetCourseStats
   def get_current_level(task_steps:)
     lo_tags = get_lo_tags(task_steps: task_steps)
     OpenStax::BigLearn::V1.get_clue(roles: role, tags: lo_tags)
-  end
-
-  def find_book_part(id)
-    book_parts_by_id.values.select { |b| b.id == id }.first
   end
 
   def book_parts_by_id
