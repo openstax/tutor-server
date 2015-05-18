@@ -49,7 +49,8 @@ class Demo001
     log("Added #{teacher_profile.account.full_name} as a teacher and added #{students.count} students.")
 
     # TODO change to October date once Timecop better integrated
-    initial_date = Time.now # Chronic.parse("October 14, 2015")
+    # initial_date = Time.now # Chronic.parse("October 14, 2015")
+    initial_date = (Time.now.midnight + 1.day) - (0.001).seconds
 
     log("Assignments will be due around #{initial_date}.")
 
