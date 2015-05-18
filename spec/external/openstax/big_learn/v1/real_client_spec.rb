@@ -10,7 +10,7 @@ module OpenStax::BigLearn
       c
     }
 
-    let(:client) { described_class.new }
+    let(:client) { described_class.new(configuration) }
 
     it 'stringifies tag searches' do
       tag_search = {

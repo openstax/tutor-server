@@ -1,19 +1,17 @@
 require 'oauth2'
 
 class OpenStax::Exercises::V1::RealClient
+
   NON_QUERY_PARAMS = ['order_by', 'page', 'per_page', 'ob', 'p', 'pp']
 
   def initialize(exercises_configuration)
-    @client_id   = exercises_configuration.client_id
-    @secret      = exercises_configuration.secret
-    @server_url  = exercises_configuration.server_url
+    @server_url   = exercises_configuration.server_url
+    @client_id    = exercises_configuration.client_id
+    @secret       = exercises_configuration.secret
 
-    @oauth_client = OAuth2::Client.new(
-      @client_id, @secret, site: @server_url
-    )
+    @oauth_client = OAuth2::Client.new(@client_id, @secret, site: @url)
 
-    @oauth_token = @oauth_client.client_credentials.get_token \
-                     unless @client_id.nil?
+    @oauth_token  = @oauth_client.client_credentials.get_token unless @client_id.nil?
   end
 
   def request(*args)
@@ -37,7 +35,8 @@ class OpenStax::Exercises::V1::RealClient
 
   def with_accept_header(options = {})
     options[:headers] ||= {}
-    options[:headers].merge!({ 'Accept' => "application/vnd.openstax.v1" })
+    options[:headers].merge!('Accept' => 'application/vnd.openstax.v1')
     options
   end
+
 end

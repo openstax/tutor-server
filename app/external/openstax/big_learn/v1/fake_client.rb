@@ -1,4 +1,7 @@
 class OpenStax::BigLearn::V1::FakeClient
+
+  include Singleton
+
   #
   # API methods
   #

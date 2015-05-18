@@ -9,7 +9,6 @@ end
 
 OpenStax::Exchange::FakeClient.configure do |config|
   config.registered_platforms   = { secrets['client_id'] => secrets['secret'] }
-
   config.server_url             = secrets['url']
   config.supported_api_versions = ['v1']
 end
