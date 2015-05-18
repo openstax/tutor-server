@@ -15,7 +15,7 @@ class OpenStax::BigLearn::V1::FakeClient
     # any with the same ID
 
     [exercises].flatten.each do |exercise|
-      store['exercises'][exercise.uid] = exercise.tags
+      store['exercises'][exercise.url] = exercise.tags
     end
 
     save!

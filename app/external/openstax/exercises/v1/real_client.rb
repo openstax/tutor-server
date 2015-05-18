@@ -4,6 +4,8 @@ class OpenStax::Exercises::V1::RealClient
 
   NON_QUERY_PARAMS = ['order_by', 'page', 'per_page', 'ob', 'p', 'pp']
 
+  attr_reader :server_url
+
   def initialize(exercises_configuration)
     @server_url   = exercises_configuration.server_url
     @client_id    = exercises_configuration.client_id
@@ -28,8 +30,6 @@ class OpenStax::Exercises::V1::RealClient
 
     request(:get, uri, with_accept_header(options)).body
   end
-
-  attr_reader :server_url
 
   private
 

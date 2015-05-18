@@ -5,9 +5,9 @@ class OpenStax::Exercises::V1::Exercise
 
   attr_reader :content
 
-  def initialize(content: '{}', base_url: 'http://unknown-exercises-server.openstax.org')
+  def initialize(content: '{}', server_url: OpenStax::Exercises::V1.server_url)
     @content = content
-    @base_url = base_url
+    @server_url = server_url
   end
 
   def content_hash
@@ -23,7 +23,7 @@ class OpenStax::Exercises::V1::Exercise
   end
 
   def url
-    @url ||= "#{@base_url}/exercises/#{uid}"
+    @url ||= "#{@server_url}/exercises/#{uid}"
   end
 
   def title

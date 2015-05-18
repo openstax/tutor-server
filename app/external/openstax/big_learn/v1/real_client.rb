@@ -103,7 +103,7 @@ class OpenStax::BigLearn::V1::RealClient
   def construct_exercises_payload(exercises)
     payload = { question_tags: [] }
     [exercises].flatten.each do |exercise|
-      payload[:question_tags].push(question_id: exercise.uid, tags: exercise.tags)
+      payload[:question_tags].push(question_id: exercise.url, tags: exercise.tags)
     end
     payload
   end

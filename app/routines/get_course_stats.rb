@@ -16,7 +16,6 @@ class GetCourseStats
   protected
   def exec(role:, course:)
     @role = role
-    # OpenStax::BigLearn::V1.use_real_client
 
     run(:get_role_task_steps, roles: role)
     run(:get_course_books, course: course)

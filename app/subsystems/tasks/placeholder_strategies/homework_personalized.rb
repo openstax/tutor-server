@@ -10,7 +10,7 @@ class Tasks::PlaceholderStrategies::HomeworkPersonalized
 
     los = task.los
 
-    exercise_uids = OpenStax::BigLearn::V1.get_projection_exercises(
+    exercise_urls = OpenStax::BigLearn::V1.get_projection_exercises(
       role:              taskee,
       tag_search:        biglearn_condition(los),
       count:             num_placeholders,
@@ -18,7 +18,7 @@ class Tasks::PlaceholderStrategies::HomeworkPersonalized
       allow_repetitions: true
     )
 
-    chosen_exercises = SearchLocalExercises[uid: exercise_uids]
+    chosen_exercises = SearchLocalExercises[url: exercise_urls]
     raise "could not fill all placeholder slots (expected #{num_placeholders} exercises, got #{chosen_exercises.count})" \
       unless chosen_exercises.count == num_placeholders
 

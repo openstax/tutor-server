@@ -19,6 +19,9 @@ RSpec.describe OpenStax::BigLearn::V1, :type => :external do
     OpenStax::BigLearn::V1.use_real_client
     expect(OpenStax::BigLearn::V1.send :client).to be_a(OpenStax::BigLearn::V1::RealClient)
 
+    OpenStax::BigLearn::V1.use_fake_client
+    expect(OpenStax::BigLearn::V1.send :client).to be_a(OpenStax::BigLearn::V1::FakeClient)
+
     OpenStax::BigLearn::V1.instance_variable_set('@client', initial_client)
   end
 
