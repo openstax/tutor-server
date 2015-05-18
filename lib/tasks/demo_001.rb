@@ -6,6 +6,7 @@ class Demo001
   uses_routine CreateCourse, as: :create_course
   uses_routine AddBookToCourse, as: :add_book
   uses_routine UserProfile::CreateProfile, as: :create_profile
+  uses_routine UserProfile::MakeAdministrator, as: :make_administrator
   uses_routine AddUserAsCourseTeacher, as: :add_teacher
   uses_routine AddUserAsCourseStudent, as: :add_student
   uses_routine DistributeTasks, as: :distribute
@@ -38,6 +39,10 @@ class Demo001
 
     course = create_course(name: 'Physics I')
     run(:add_book, book: outputs.book, course: course)
+
+    admin_profile = new_user_profile(username: 'admin', name: 'Administrator User')
+    run(:make_administrator, user: admin_profile.entity_user)
+    log("Added an admin user #{admin_profile.account.full_name}")
 
     teacher_profile = new_user_profile(username: 'teacher', name: 'Bill Nye')
     run(:add_teacher, course: course, user: teacher_profile.entity_user)
