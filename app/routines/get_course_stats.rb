@@ -36,7 +36,7 @@ class GetCourseStats
   attr_reader :role
 
   def root_book_title
-    outputs.toc.first.title
+    outputs.toc.title
   end
 
   def compile_chapters
@@ -118,8 +118,14 @@ class GetCourseStats
   end
 
   def find_book_part(id)
-    toc_children = outputs.toc.collect(&:children).flatten
-    book_part = outputs.toc.select { |bp| bp.id == id }.first
-    book_part ||= toc_children.select { |bp| bp.id == id }.first
+    book_parts_by_id[id]
+  end
+
+  def book_parts_by_id
+    @book_parts_by_id ||= Hash[book_parts.map{|part| [part.id, part]}]
+  end
+
+  def book_parts
+    outputs.toc.children
   end
 end
