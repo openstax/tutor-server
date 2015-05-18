@@ -113,15 +113,14 @@ class GetCourseStats
   end
 
   def find_book_part(id)
-    book_part = outputs.toc if outputs.toc.id == id
-    book_part ||= outputs.toc.children.select { |bp| bp.id == id }.first
+    book_parts_by_id.values.select { |b| b.id == id }.first
   end
 
   def book_parts_by_id
-    @book_parts_by_id ||= Hash[book_parts.map{|part| [part.id, part]}]
+    @book_parts_by_id ||= Hash[book_parts.map { |part| [part.id, part] }]
   end
 
   def book_parts
-    outputs.toc.children
+    [outputs.toc, outputs.toc.children].flatten
   end
 end
