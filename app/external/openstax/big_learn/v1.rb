@@ -44,11 +44,11 @@ module OpenStax::BigLearn::V1
 
   # Accessor for the fake client, which has some extra fake methods on it
   def self.fake_client
-    @fake_client ||= FakeClient.new
+    FakeClient.instance
   end
 
   def self.real_client
-    @real_client ||= RealClient.new
+    RealClient.new(configuration)
   end
 
   def self.use_real_client
@@ -63,7 +63,7 @@ module OpenStax::BigLearn::V1
 
   def self.client
     begin
-      @client ||= fake_client
+      @client ||= real_client
     rescue StandardError => error
       raise ClientError.new("initialization failure", error)
     end

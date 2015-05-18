@@ -29,7 +29,7 @@ class Content::ImportBook
 
     biglearn_exercises = exercise_data.values.collect do |ed|
       tags = ed['los'] + ed['tags']
-      OpenStax::BigLearn::V1::Exercise.new(ed['uid'], *tags)
+      OpenStax::BigLearn::V1::Exercise.new(ed['url'], *tags)
     end
 
     OpenStax::BigLearn::V1.add_exercises(biglearn_exercises)

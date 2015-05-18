@@ -1,15 +1,19 @@
 class OpenStax::BigLearn::V1::RealClient
-  def initialize()
-    @server_url = "http://api1.biglearn.openstax.org/"
+
+  def initialize(big_learn_configuration)
+    @server_url   = big_learn_configuration.server_url
+    @client_id    = big_learn_configuration.client_id
+    @secret       = big_learn_configuration.secret
+
+    @oauth_client = OAuth2::Client.new(@client_id, @secret, site: @server_url)
+
+    @oauth_token  = @oauth_client.client_credentials.get_token unless @client_id.nil?
   end
 
-  # TODO implement these methods when real API set; use HTTParty, e.g:
-  #   response = HTTParty.get(url)
-  #   ids = response.parsed_response["questionTopics"].collect{|qt| qt["question"]}
   def add_exercises(exercises)
-    payload = construct_exercises_payload(exercises)
-    result = post(add_exercises_url, payload)
-    handle_result(result)
+    options = { body: construct_exercises_payload(exercises).to_json }
+    response = request(:post, add_exercises_uri, with_content_type_header(options))
+    handle_response(response)
   end
 
   def get_exchange_read_identifiers_for_roles(roles:)
@@ -18,8 +22,7 @@ class OpenStax::BigLearn::V1::RealClient
                                 .collect{ |p| p.exchange_read_identifier }
   end
 
-  def get_projection_exercises(role:, tag_search:, count:,
-                               difficulty:, allow_repetitions:)
+  def get_projection_exercises(role:, tag_search:, count:, difficulty:, allow_repetitions:)
     query = {
       learner_id: get_exchange_read_identifiers_for_roles(roles: role).first,
       number_of_questions: count,
@@ -27,9 +30,9 @@ class OpenStax::BigLearn::V1::RealClient
       allow_repetition: allow_repetitions ? 'true' : 'false'
     }
 
-    result = get(projection_exercises_url, query: query)
+    response = request(:get, projection_exercises_uri(query))
 
-    handle_result(result)
+    result = handle_response(response)
 
     # Return the UIDs
     result["questions"].collect { |q| q["question"] }
@@ -54,56 +57,61 @@ class OpenStax::BigLearn::V1::RealClient
     tag_search = stringify_tag_search(:_or => tags)
 
     query = {
-      learners: get_exchange_read_identifiers_for_roles(roles: role),
-      aggregations: tag_search,
+      learners: get_exchange_read_identifiers_for_roles(roles: role), aggregations: tag_search
     }
 
-    result = get(clue_url, query: query)
+    response = request(:get, clue_uri(query))
 
-    handle_result(result)
+    result = handle_response(response)
 
     # get the value out of the result
     raise NotYetImplemented
   end
 
   private
-  def post(url, body)
-    HTTParty.post(url,
-                  body: body.to_json,
-                  headers: { 'Content-Type' => 'application/json' })
+
+  def with_content_type_header(options = {})
+    options[:headers] ||= {}
+    options[:headers].merge!('Content-Type' => 'application/json')
+    options
   end
 
-  def get(url, params = {})
-    HTTParty.get(url, params)
+  def request(*args)
+    (@oauth_token || @oauth_client).request(*args)
   end
 
-  def add_exercises_url
-    @server_url + 'facts/questions'
+  def add_exercises_uri
+    uri = URI(@server_url)
+    uri.path = '/facts/questions'
+    uri
   end
 
-  def projection_exercises_url
-    @server_url + 'projections/questions'
+  def projection_exercises_uri(query)
+    uri = URI(@server_url)
+    uri.path = '/projections/questions'
+    uri.query = query.to_query
+    uri
   end
 
-  def clue_url
-    @server_url + 'knowledge/clue'
+  def clue_uri(query)
+    uri = URI(@server_url)
+    uri.path = '/knowledge/clue'
+    uri.query = query.to_query
+    uri
   end
 
   def construct_exercises_payload(exercises)
     payload = { question_tags: [] }
     [exercises].flatten.each do |exercise|
-      payload[:question_tags].push({
-        question_id: exercise.uid,
-        tags: exercise.tags
-      })
+      payload[:question_tags].push(question_id: exercise.url, tags: exercise.tags)
     end
     payload
   end
 
-  def handle_result(result)
-    if result.code != 200
-      raise "BigLearn error #{result.code}; #{result}; #{result.request}"
-    end
+  def handle_response(response)
+    raise "BigLearnError #{response.status}:\n#{response.body}" if response.status != 200
+
+    JSON.parse(response.body)
   end
 
   def stringify_tag_search_hash(conditions)
@@ -124,4 +132,5 @@ class OpenStax::BigLearn::V1::RealClient
   def join_tag_searches(tag_searches, op)
     tag_searches.collect { |ts| stringify_tag_search(ts) }.join(" #{op} ")
   end
+
 end

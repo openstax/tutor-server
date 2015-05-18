@@ -3,7 +3,7 @@ require 'rails_helper'
 module OpenStax::BigLearn
   RSpec.describe V1::FakeClient, :type => :external do
 
-    let(:client) { described_class.new }
+    let(:client) { described_class.instance }
 
     it 'allows adding of exercises' do
       expect{client.add_exercises(V1::Exercise.new('e42', 'topic'))}

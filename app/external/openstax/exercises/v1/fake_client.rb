@@ -14,6 +14,10 @@ class OpenStax::Exercises::V1::FakeClient
     reset!
   end
 
+  def server_url
+    "https://fake.exercises.client.openstax.org"
+  end
+
   #
   # Api wrappers
   #
@@ -43,8 +47,7 @@ class OpenStax::Exercises::V1::FakeClient
     end
     result ||= []
 
-    { total_count: result.length,
-      items: result.collect{|exercise| exercise[:content]} }.to_json
+    { total_count: result.length, items: result.collect{|exercise| exercise[:content]} }.to_json
   end
 
   #
@@ -90,10 +93,6 @@ class OpenStax::Exercises::V1::FakeClient
         uid: options[:uid]
       }
     )
-  end
-
-  def server_url
-    "https://fake.exercises.client.openstax.org"
   end
 
   private
