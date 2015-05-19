@@ -11,6 +11,7 @@ class Tasks::GetTasks
     role_ids = verify_and_get_id_array(roles, Entity::Role)
 
     entity_tasks = Tasks::Models::Tasking.
+                     includes(:task).
                      where{entity_role_id.in role_ids}.
                      collect{|tasking| tasking.task}
 

@@ -10,7 +10,7 @@ module Tasks
     def exec(roles:)
       run(:get_tasks, roles: roles)
 
-      outputs[:task_steps] = Models::Task.includes(:task_steps)
+      outputs[:task_steps] = Models::Task.includes(task_steps: :tasked)
                                          .where(entity_task: outputs.tasks)
                                          .collect(&:task_steps).flatten
                                          .select(&:completed?)

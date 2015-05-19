@@ -27,7 +27,7 @@ class Content::Models::PageDataVisitor < Content::Models::BookVisitor
   end
 
   def get_page_tags(page)
-    page.page_tags.collect do |page_tag|
+    page.page_tags.includes(:tag).collect do |page_tag|
       { type: page_tag.tag.tag_type, value: page_tag.tag.value }
     end
   end
