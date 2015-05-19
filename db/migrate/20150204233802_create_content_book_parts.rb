@@ -6,7 +6,7 @@ class CreateContentBookParts < ActiveRecord::Migration
       t.references :entity_book
       t.integer :number, null: false
       t.string :title, null: false
-      t.string :chapter_section
+      t.text :chapter_section
 
       t.timestamps null: false
 
@@ -15,11 +15,9 @@ class CreateContentBookParts < ActiveRecord::Migration
       t.index :entity_book_id
     end
 
-    add_foreign_key :content_book_parts, :content_book_parts, column: :parent_book_part_id,
-                                                    on_update: :cascade,
-                                                    on_delete: :cascade
+    add_foreign_key :content_book_parts, :content_book_parts,
+                    column: :parent_book_part_id, on_update: :cascade, on_delete: :cascade
 
-    add_foreign_key :content_book_parts, :entity_books, on_update: :cascade,
-                                                   on_delete: :cascade
+    add_foreign_key :content_book_parts, :entity_books, on_update: :cascade, on_delete: :cascade
   end
 end

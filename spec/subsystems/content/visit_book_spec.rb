@@ -17,49 +17,49 @@ RSpec.describe Content::VisitBook, :type => :routine do
       'id' => toc.id,
       'title' => 'book title',
       'type' => 'part',
+      'chapter_section' => [],
       'children' => [
         'id' => toc.children[0].id,
         'title' => 'unit 1',
         'type' => 'part',
+        'chapter_section' => [1],
         'children' => [
           {
             'id' => toc.children[0].children[0].id,
             'title' => 'chapter 1',
             'type' => 'part',
+            'chapter_section' => [1, 1],
             'children' => [
               {
                 'id' => toc.children[0].children[0].children[0].id,
                 'title' => 'first page',
                 'type' => 'page',
-                'chapter_section' => '1.1'
+                'chapter_section' => [1, 1, 1]
               },
               {
                 'id' => toc.children[0].children[0].children[1].id,
                 'title' => 'second page',
                 'type' => 'page',
-                'chapter_section' => '1.2'
+                'chapter_section' => [1, 1, 2]
               }
-            ],
-            'chapter_section' => nil
+            ]
           },
           {
             'id' => toc.children[0].children[1].id,
             'title' => 'chapter 2',
             'type' => 'part',
+            'chapter_section' => [1, 2],
             'children' => [
               {
                 'id' => toc.children[0].children[1].children[0].id,
                 'title' => 'third page',
                 'type' => 'page',
-                'chapter_section' => '1.3'
+                'chapter_section' => [1, 2, 1]
               }
-            ],
-            'chapter_section' => nil
+            ]
           }
-        ],
-        'chapter_section' => nil
-      ],
-      'chapter_section' => nil
+        ]
+      ]
     })
   end
 

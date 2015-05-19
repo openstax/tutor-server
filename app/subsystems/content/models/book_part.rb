@@ -1,6 +1,8 @@
 class Content::Models::BookPart < Tutor::SubSystems::BaseModel
   acts_as_resource allow_nil: true
 
+  serialize :chapter_section, Array
+
   belongs_to :book, subsystem: :entity
 
   sortable_belongs_to :parent_book_part, on: :number,

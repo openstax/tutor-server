@@ -41,7 +41,7 @@ RSpec.describe GetCourseStats, vcr: VCR_OPTS do
         hash_including(
           "id"=>kind_of(Integer),
           "title"=>"Forces and Newton's Laws of Motion",
-          "chapter_section"=>"1",
+          "chapter_section"=>[1],
           "questions_answered_count"=>14,
           "current_level"=>kind_of(Float),
           "practice_count"=>0,
@@ -50,7 +50,7 @@ RSpec.describe GetCourseStats, vcr: VCR_OPTS do
             hash_including(
               "id"=>kind_of(Integer),
               "title"=>kind_of(String),
-              "chapter_section"=>kind_of(String),
+              "chapter_section"=>kind_of(Array),
               "questions_answered_count"=>kind_of(Integer),
               "current_level"=>kind_of(Float),
               "practice_count"=>0,

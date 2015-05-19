@@ -26,13 +26,13 @@ module Api::V1
              writeable: false
 
     property :chapter_section,
-             type: String,
+             type: Array,
              readable: true,
-             getter: chapter_section_formatter,
              writeable: false,
+             if: ->(*) { !chapter_section.blank? },
              schema_info: {
                required: false,
-               description: 'The chapter and section in the book, e.g. "5.2"'
+               description: 'The chapter and section in the book, e.g. [5, 2]'
              }
 
   end

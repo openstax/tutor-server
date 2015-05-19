@@ -9,6 +9,6 @@ RSpec.describe Content::Models::Tag, :type => :model do
   it { is_expected.to validate_presence_of(:tag_type) }
 
   it 'returns the chapter and section information' do
-    expect(tag.chapter_section).to eq('4.1')
+    expect(tag.chapter_section).to eq([4, 1])
   end
 end

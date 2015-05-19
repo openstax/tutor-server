@@ -12,6 +12,6 @@ class Content::Models::Tag < Tutor::SubSystems::BaseModel
 
   def chapter_section
     matches = /-ch(\d+)-s(\d+)-lo\d+$/.match(value)
-    "#{matches[1].to_i}.#{matches[2].to_i}" unless matches.nil?
+    matches.nil? ? [] : [matches[1].to_i, matches[2].to_i]
   end
 end

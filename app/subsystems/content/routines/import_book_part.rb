@@ -24,8 +24,7 @@ class Content::Routines::ImportBookPart
                               parent_book_part: book_part).outputs.book_part
         book_part.child_book_parts << child_book_part
       elsif part.is_a?(OpenStax::Cnx::V1::Page)
-        page = run(:import_page, cnx_page: part,
-                   book_part: book_part).outputs.page
+        page = run(:import_page, cnx_page: part, book_part: book_part).outputs.page
         book_part.pages << page
       else
         raise "Unknown class #{part.class}"

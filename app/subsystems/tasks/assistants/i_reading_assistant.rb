@@ -100,7 +100,7 @@ class Tasks::Assistants::IReadingAssistant
   def self.add_core_steps!(task:, cnx_pages:)
     cnx_pages.each do |page|
       # Chapter intro pages get their titles from the chapter instead
-      page_title = page.is_intro? ? page.book_part_title : page.title
+      page_title = page.is_intro? ? page.book_part.title : page.title
 
       fragment_title = page_title
       page.fragments.each do |fragment|

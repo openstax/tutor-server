@@ -56,10 +56,12 @@ RSpec.describe Content::ImportBook, type: :routine, speed: :slow, vcr: VCR_OPTS 
         root_book_part = book_import.outputs.book_part
 
         root_book_part.child_book_parts.each_with_index do |chapter, i|
-          expect(chapter.chapter_section).to eq("#{i + 1}")
+          expect(chapter.chapter_section).to eq([i + 1])
 
+          page_offset = 1
           chapter.pages.each_with_index do |page, pidx|
-            expect(page.chapter_section).to eq("#{i + 1}.#{pidx + 1}")
+            page_offset = 0 if page.is_intro?
+            expect(page.chapter_section).to eq([i + 1, pidx + page_offset])
           end
         end
       end

@@ -21,7 +21,7 @@ RSpec.describe OpenStax::Cnx::V1::BookPart, :type => :external do
         title: 'Updated Tutor HS Physics Content - legacy',
         expected: {
           part_classes: [OpenStax::Cnx::V1::BookPart],
-          chapter_sections: ['1']
+          chapter_sections: [[1]]
         }
       },
       { id: "subcol",
@@ -38,7 +38,7 @@ RSpec.describe OpenStax::Cnx::V1::BookPart, :type => :external do
           part_classes: [OpenStax::Cnx::V1::Page,
                          OpenStax::Cnx::V1::Page,
                          OpenStax::Cnx::V1::Page],
-          chapter_sections: ['1', '2', '3']
+          chapter_sections: [[0], [1], [2]]
         }
       }
     ],
@@ -59,7 +59,7 @@ RSpec.describe OpenStax::Cnx::V1::BookPart, :type => :external do
         title: 'Updated Tutor HS Physics Content - legacy',
         expected: {
           part_classes: [OpenStax::Cnx::V1::BookPart],
-          chapter_sections: ['1']
+          chapter_sections: [[1]]
         }
       },
       { id: "subcol",
@@ -76,7 +76,7 @@ RSpec.describe OpenStax::Cnx::V1::BookPart, :type => :external do
           part_classes: [OpenStax::Cnx::V1::Page,
                          OpenStax::Cnx::V1::Page,
                          OpenStax::Cnx::V1::Page],
-          chapter_sections: ['1', '2', '3']
+          chapter_sections: [[0], [1], [2]]
         }
       }
     ]

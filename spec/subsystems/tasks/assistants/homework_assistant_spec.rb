@@ -29,7 +29,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
   ] }
 
   let!(:cnx_pages) { cnx_page_hashes.each_with_index.collect do |hash, i|
-    OpenStax::Cnx::V1::Page.new(hash: hash, chapter_section: "8.#{i+1}")
+    OpenStax::Cnx::V1::Page.new(hash: hash, chapter_section: [8, i+1])
   end }
 
   let!(:pages)     { cnx_pages.collect do |cnx_page|
