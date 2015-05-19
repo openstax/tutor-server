@@ -524,6 +524,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  addressable
   apipie-rails
   autoprefixer-rails
   awesome_print

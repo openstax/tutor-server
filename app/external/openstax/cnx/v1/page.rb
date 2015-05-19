@@ -104,29 +104,54 @@ module OpenStax::Cnx::V1
       @doc ||= Nokogiri::HTML(content)
     end
 
-    # Changes relative URL's in the content to be absolute
-    def converted_content
-      # In the future (when books are readable in Tutor),
-      # do the opposite (make absolute links into relative links)
-      # and make sure all files are properly served
-      doc.css("[src]").each do |tag|
-        src = tag.attributes["src"]
-        uri = URI.parse(URI.escape(src.value))
+    def root
+      @root ||= doc.at_css(ROOT_CSS)
+    end
+
+    # Changes relative url attributes in the doc to be absolute
+    # Changes http embedded scripts/images/iframes to https
+    def converted_doc
+      # In the future, change to point to reference material within Tutor
+      return @converted_doc unless @converted_doc.nil?
+
+      @converted_doc = doc.dup
+
+      @converted_doc.css("[src]").each do |link|
+        src = link.attributes["src"]
+        uri = Addressable::URI.parse(src.value)
 
         if uri.absolute?
-          next if uri.host != 'archive.cnx.org'
+          # Since this is embedded content, make sure it is https
           uri.scheme = "https"
           src.value = uri.to_s
         else
-          src.value = URI.unescape(OpenStax::Cnx::V1.url_for(uri, secure: true))
+          next if uri.path.blank?
+
+          # Relative link: make secure and absolute
+          src.value = OpenStax::Cnx::V1.url_for(uri, secure: true)
         end
       end
 
-      doc.to_html
+      @converted_doc.css("[href]").each do |link|
+        href = link.attributes["href"]
+        uri = Addressable::URI.parse(href.value)
+
+        # Anchors don't need to be https
+        next if uri.absolute? || uri.path.blank?
+
+        # Relative link: make secure and absolute
+        href.value = OpenStax::Cnx::V1.url_for(uri, secure: true)
+      end
+
+      @converted_doc
     end
 
-    def root
-      @root ||= doc.at_css(ROOT_CSS)
+    def converted_content
+      @converted_content ||= converted_doc.to_html
+    end
+
+    def converted_root
+      @converted_root ||= converted_doc.at_css(ROOT_CSS)
     end
 
     def los
@@ -186,7 +211,7 @@ module OpenStax::Cnx::V1
     def fragments
       return @fragments unless @fragments.nil?
 
-      root_copy = root.dup
+      root_copy = converted_root.dup
       root_copy.css(DISCARD_CSS).remove
 
       @fragments = split_into_fragments(root_copy)

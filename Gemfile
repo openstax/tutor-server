@@ -36,6 +36,9 @@ gem 'turbolinks'
 # Rails 5 HTML sanitizer
 gem 'rails-html-sanitizer', '~> 1.0'
 
+# URI replacement
+gem 'addressable'
+
 # Utilities for OpenStax websites
 gem 'openstax_utilities', '~> 4.2.0'
 
