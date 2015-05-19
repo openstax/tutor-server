@@ -168,7 +168,7 @@ class Tasks::Assistants::HomeworkAssistant
         #puts "candidate_exercises: #{candidate_exercises.map(&:uid).sort}"
         #puts "exercise history:    #{exercise_history.map(&:uid).sort}"
 
-        chosen_exercise = candidate_exercises.first #sample
+        chosen_exercise = candidate_exercises.sample # .first to aid debug
         #puts "chosen exercise:     #{chosen_exercise.uid}"
 
         candidate_exercises.delete(chosen_exercise)
@@ -255,11 +255,11 @@ class Tasks::Assistants::HomeworkAssistant
       when 1
         [ [1,1] ]
       when 2
-        [ [1,1], [3,1] ]
+        [ [1,1], [2,1] ]
       when 3
-        [ [1,2], [3,1] ]
+        [ [1,2], [2,1] ]
       when 4
-        [ [1,2], [3,2] ]
+        [ [1,2], [2,2] ]
       else
         raise "could not determine k-ago map for num_spaced_practice_exercises=#{num_spaced_practice_exercises}"
       end
