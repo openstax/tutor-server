@@ -50,25 +50,42 @@ class OpenStax::BigLearn::V1::RealClient
     end
   end
 
+  # Return a CLUE value for the specified set of roles and the group of tags.  May return
+  # nil if no CLUE is available (e.g. no exercises attached to these tags).
+  #
+  # BigLearn can actually take multiple sets of tag queries at once and return a CLUE
+  # for each; we're not using that capability yet. When we do we'll probably rename the
+  # `tags` argument to `tag_sets` or something (or we'll make a first class `TagSearch`
+  # citizen inside this module and accept an array of those into this method).
   def get_clue(roles:, tags:)
-    raise "Some tags must be specified when getting a CLUE" if tags.empty?
-    raise "At least one role must be specified when getting a CLUE" if roles.empty?
+    raise "Some tags must be specified when getting a CLUE" if tags.blank?
+    raise "At least one role must be specified when getting a CLUE" if roles.blank?
 
     tag_search = stringify_tag_search(:_or => tags)
 
     query = {
-      learners: get_exchange_read_identifiers_for_roles(roles: role), aggregations: tag_search
+      learners: get_exchange_read_identifiers_for_roles(roles: roles), aggregations: tag_search
     }
 
     response = request(:get, clue_uri(query))
 
     result = handle_response(response)
 
-    # get the value out of the result
-    raise NotYetImplemented
+    # extract the clue using the knowledge that we have a simplified input (only one
+    # tag query, so we can just pull out the appropriate value).  It could be that there's
+    # no CLUE to give, in which case we return nil.
+    clue = result.try(:[], "aggregates").try(:first).try(:[], "aggregate")
   end
 
   private
+
+  def stringify_query_hash(query_hash)
+    # Standard Rails `to_query` method converts an array (blah = [1,2,3])
+    # to "blah[]=1&blah[]=2&blah[]=3", but BigLearn doesn't like the brackets,
+    # which get encoded as '%5B%5D' so take them out
+
+    query_hash.to_query.remove('%5B%5D')
+  end
 
   def with_content_type_header(options = {})
     options[:headers] ||= {}
@@ -96,7 +113,7 @@ class OpenStax::BigLearn::V1::RealClient
   def clue_uri(query)
     uri = URI(@server_url)
     uri.path = '/knowledge/clue'
-    uri.query = query.to_query
+    uri.query = stringify_query_hash(query)
     uri
   end
 
@@ -130,7 +147,7 @@ class OpenStax::BigLearn::V1::RealClient
   end
 
   def join_tag_searches(tag_searches, op)
-    tag_searches.collect { |ts| stringify_tag_search(ts) }.join(" #{op} ")
+    [tag_searches].flatten.collect { |ts| stringify_tag_search(ts) }.join(" #{op} ")
   end
 
 end

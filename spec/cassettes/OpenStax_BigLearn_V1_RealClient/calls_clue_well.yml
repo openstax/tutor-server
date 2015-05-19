@@ -1,0 +1,39 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://biglearn-dev1.openstax.org/knowledge/clue?aggregations=(%22k12phys-ch04-s02-lo01%22)&learners=0edbe5f8f30abc5ba56b5b890bddbbe2
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Tue, 19 May 2015 00:38:33 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '111'
+      Connection:
+      - keep-alive
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains
+    body:
+      encoding: UTF-8
+      string: "{\n  \"aggregates\": [\n    {\n      \"aggregate\": 0.5, \n      \"tag_query\":
+        \"(\\\"k12phys-ch04-s02-lo01\\\")\"\n    }\n  ]\n}"
+    http_version: 
+  recorded_at: Tue, 19 May 2015 00:38:32 GMT
+recorded_with: VCR 2.9.3
