@@ -29,15 +29,17 @@ class CalculateTaskPlanStats
   end
 
   def page_stats_for_tasked_exercises(tasked_exercises)
-    role_ids = tasked_exercises.each_with_object([]){ |tasked_exercise, collection|
+    completed = tasked_exercises.select { |te| te.completed? }
+
+    some_completed_role_ids = completed.each_with_object([]){ |tasked_exercise, collection|
       tasked_exercise.task_step.task.taskings.each{ |tasking|
         collection << tasking.entity_role_id
       }
     }.uniq
-    completed = tasked_exercises.select { |te| te.completed? }
+
     correct_count = completed.count{ |te| te.is_correct? }
     stats = {
-      student_count: role_ids.length,
+      student_count: some_completed_role_ids.length,
       correct_count: correct_count,
       incorrect_count: completed.length - correct_count
     }

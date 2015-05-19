@@ -27,7 +27,7 @@ RSpec.describe Api::V1::TaskPlanWithStatsRepresenter, type: :representer,
             a_hash_including(
               "id"     => task_plan.settings['page_ids'].first.to_s,
               "title"  => "Force",
-              "student_count"   => 2,
+              "student_count"   => 0,
               "correct_count"   => 0,
               "incorrect_count" => 0
             )
@@ -36,7 +36,7 @@ RSpec.describe Api::V1::TaskPlanWithStatsRepresenter, type: :representer,
             a_hash_including(
               "id"     => task_plan.settings['page_ids'].first.to_s,
               "title"  => "Force",
-              "student_count"   => 2,
+              "student_count"   => 0,
               "correct_count"   => 0,
               "incorrect_count" => 0
             )
