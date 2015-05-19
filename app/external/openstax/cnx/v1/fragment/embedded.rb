@@ -29,7 +29,8 @@ module OpenStax::Cnx::V1::Fragment
     end
 
     def url
-      @url ||= url_node.try(:[], 'src') || url_node.try(:[], 'href')
+      @url ||= (url_node.try(:[], 'src') || url_node.try(:[], 'href'))
+                 .try(:gsub, 'http://', 'https://')
     end
 
     def width
