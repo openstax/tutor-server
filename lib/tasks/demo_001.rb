@@ -301,7 +301,8 @@ class Demo001
     end
   end
 
-  def new_user_profile(username:, name: nil, password: 'password', sign_contracts: true)
+  def new_user_profile(username:, name: nil, password: nil, sign_contracts: true)
+    password ||= 'password'
     name ||= @@name_pool.shift || Faker::Name.name
     first_name, last_name = name.split(' ')
     raise "need a full name" if last_name.nil?
