@@ -98,20 +98,20 @@ class OpenStax::BigLearn::V1::RealClient
   end
 
   def add_exercises_uri
-    uri = URI(@server_url)
+    uri = Addressable::URI.parse(@server_url)
     uri.path = '/facts/questions'
     uri
   end
 
   def projection_exercises_uri(query)
-    uri = URI(@server_url)
+    uri = Addressable::URI.parse(@server_url)
     uri.path = '/projections/questions'
     uri.query = query.to_query
     uri
   end
 
   def clue_uri(query)
-    uri = URI(@server_url)
+    uri = Addressable::URI.parse(@server_url)
     uri.path = '/knowledge/clue'
     uri.query = stringify_query_hash(query)
     uri

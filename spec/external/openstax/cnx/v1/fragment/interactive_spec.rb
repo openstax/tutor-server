@@ -10,7 +10,7 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::Interactive, :type => :external, :vc
     end
   }
   let!(:expected_titles) { ['Forces and Motion: Basics'] }
-  let!(:expected_urls) { ['http://archive.cnx.org/specials/e2ca52af-8c6b-450e-ac2f-9300b38e8739/moving-man/'] }
+  let!(:expected_urls) { ['https://archive.cnx.org/specials/e2ca52af-8c6b-450e-ac2f-9300b38e8739/moving-man/'] }
   let!(:expected_content) { [<<EOF.rstrip
 <div data-type="note" id="fs-idm38320288" class="ost-assessed-feature ost-interactive virtual-physics ost-tag-lo-k12phys-ch04-s02-lo02" data-label="Virtual Physics">
 <div data-type="title">Forces and Motion: Basics</div>
@@ -22,7 +22,7 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::Interactive, :type => :external, :vc
 <li>When force is equal, no one wins.</li>
 </ol>
 <p id="fs-idp52126304">Next, click on the Friction tab. Try selecting different objects for the person to push. Slide the applied force button to the right to apply force to the right and to the left to apply force to the left. The force will continue to be applied as long as you hold the button down. See the arrow representing friction change in magnitude and direction depending on how much force you apply. Try increasing or decreasing the friction force to see how this affects the motion.</p>
-<iframe width="960" height="785" src="http://archive.cnx.org/specials/e2ca52af-8c6b-450e-ac2f-9300b38e8739/moving-man/"></iframe>\n\n  </div>
+<iframe width="960" height="785" src="https://archive.cnx.org/specials/e2ca52af-8c6b-450e-ac2f-9300b38e8739/moving-man/"></iframe>\n\n  </div>
 EOF
   ] }
 

@@ -29,8 +29,17 @@ module OpenStax::Cnx::V1::Fragment
     end
 
     def url
-      @url ||= (url_node.try(:[], 'src') || url_node.try(:[], 'href'))
-                 .try(:gsub, 'http://', 'https://')
+      @url ||= url_node.try(:[], 'src')
+      return @url unless @url.nil?
+
+      # No source attribute found, so try href
+      original_url = url_node.try(:[], 'href')
+      return nil if original_url.nil?
+
+      # This is an anchor, which Page does not convert to https, so redo the conversion here
+      uri = Addressable::URI.parse(original_url)
+      uri.scheme = 'https'
+      @url = uri.to_s
     end
 
     def width
@@ -44,7 +53,6 @@ module OpenStax::Cnx::V1::Fragment
     def to_html
       return @to_html unless @to_html.nil?
 
-      parent_node = 
       case url_node.name
       when 'iframe'
         # Reuse url node's iframe

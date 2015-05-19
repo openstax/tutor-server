@@ -29,7 +29,9 @@ module OpenStax::Cnx::V1
 
   def self.url_for(id, options={})
     options[:secure] ||= false
-    URI::join((options[:secure] ? archive_url_base(ssl: true) : archive_url_base), id).to_s
+    Addressable::URI.join(
+      (options[:secure] ? archive_url_base(ssl: true) : archive_url_base), id
+    ).to_s
   end
 
   def self.fetch(id)
