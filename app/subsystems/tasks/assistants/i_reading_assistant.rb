@@ -280,6 +280,11 @@ class Tasks::Assistants::IReadingAssistant
 
   def self.tasked_exercise_choice(exercise_choice_fragment:, step:, title: nil)
     exercises = exercise_choice_fragment.exercise_fragments
+    if exercises.empty?
+      logger.warn "Exercise Choice without Exercises found while creating iReading"
+      return
+    end
+
     tasked_exercise(exercise_fragment: exercises.sample,
                     step: step,
                     can_be_recovered: true,
