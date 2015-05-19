@@ -54,7 +54,7 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
           "spaced_pages" => a_collection_containing_exactly(
             "id"     => task_plan.settings['page_ids'].first.to_s,
             "title"  => "Force",
-            "student_count"   => 2,
+            "student_count"   => 0,
             "correct_count"   => 0,
             "incorrect_count" => 0,
             "exercises" => a_collection_containing_exactly(
