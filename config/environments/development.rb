@@ -42,5 +42,10 @@ Rails.application.configure do
 
   # Don't error out when trying to connect to external sites
   WebMock.allow_net_connect!
+
+  config.after_initialize do
+    Bullet.enable = true
+    Bullet.bullet_logger = true # tail -f log/bullet.log
+  end
 end
 

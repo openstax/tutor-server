@@ -25,6 +25,7 @@ GEM
     active_attr (0.8.5)
       activemodel (>= 3.0.2, < 5.0)
       activesupport (>= 3.0.2, < 5.0)
+    active_record_query_trace (1.4)
     activejob (4.2.0)
       activesupport (= 4.2.0)
       globalid (>= 0.3.0)
@@ -77,6 +78,9 @@ GEM
       sass (~> 3.0)
       terminal-table (~> 1.4)
     builder (3.2.2)
+    bullet (4.14.7)
+      activesupport (>= 3.0.0)
+      uniform_notifier (~> 1.9.0)
     byebug (3.5.1)
       columnize (~> 0.8)
       debugger-linecache (~> 1.2)
@@ -492,6 +496,7 @@ GEM
     unicorn-worker-killer (0.4.3)
       get_process_mem (~> 0)
       unicorn (~> 4)
+    uniform_notifier (1.9.0)
     validates_timeliness (3.0.14)
       timeliness (~> 0.3.6)
     vcr (2.9.3)
@@ -524,6 +529,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  active_record_query_trace
   addressable
   apipie-rails
   autoprefixer-rails
@@ -532,6 +538,7 @@ DEPENDENCIES
   axlsx (~> 2.1.0.pre)
   bootstrap-sass (~> 3.2.0)
   brakeman
+  bullet
   byebug
   capybara-webkit
   carrierwave
