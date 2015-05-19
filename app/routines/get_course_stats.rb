@@ -21,7 +21,7 @@ class GetCourseStats
     run(:get_course_books, course: course)
     run(:visit_book, book: outputs.books.first, visitor_names: [:toc, :page_data])
 
-    chapters = compile_chapters
+    chapters = compile_chapters.sort_by{|ch| ch[:chapter_section]}
 
     outputs[:course_stats] = {
       title: outputs.toc.title, # toc is the root book
@@ -41,7 +41,7 @@ class GetCourseStats
         task_type: :mixed_practice
       )
 
-      pages = compile_pages(task_steps: task_steps)
+      pages = compile_pages(task_steps: task_steps).sort_by{|page| page[:chapter_section]}
 
       {
         id: book_part.id,
