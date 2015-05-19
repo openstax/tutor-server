@@ -9,6 +9,7 @@
 <% end %>
 
 <% if @tags.present? %>
+  <%= will_paginate @tags %>
   <table border="1">
     <thead>
       <tr>
@@ -29,4 +30,5 @@
       <% end %>
     </tbody>
   </table>
+  <%= will_paginate @tags %>
 <% end %>

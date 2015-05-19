@@ -113,6 +113,9 @@ gem 'virtus'
 # Create xlsx files
 gem 'axlsx', '~> 2.1.0.pre'
 
+# Pagination library
+gem 'will_paginate', '~> 3.0.6'
+
 group :development, :test do
   # SQLite adapter
   gem 'sqlite3'
