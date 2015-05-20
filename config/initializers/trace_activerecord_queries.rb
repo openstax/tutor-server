@@ -1,1 +1,1 @@
-ActiveRecordQueryTrace.enabled = ((ENV['TRACE_ACTIVERECORD_QUERIES'] || '').downcase == 'true')
+ActiveRecordQueryTrace.enabled = EnvUtilities.load_boolean(name: 'TRACE_ACTIVERECORD_QUERIES', default: false)
