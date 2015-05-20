@@ -31,6 +31,15 @@ module Api::V1
                  writeable: false,
                  readable: true
 
+        property :chapter_section,
+                 type: Array,
+                 writeable: false,
+                 readable: true,
+                 schema_info: {
+                   required: true,
+                   description: 'The chapter and section in the book, e.g. [5, 2]'
+                 }
+
         collection :exercises,
                    type: Object,
                    writeable: false,

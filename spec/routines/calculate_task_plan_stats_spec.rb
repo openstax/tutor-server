@@ -90,12 +90,14 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(page['student_count']).to eq(1) # num students with completed task steps
       expect(page['correct_count']).to eq(1)
       expect(page['incorrect_count']).to eq(0)
+      expect(page['chapter_section']).to eq([1, 1])
 
       spaced_page = stats.course.spaced_pages.first
       expect(spaced_page['title']).to eq('Force')
       expect(spaced_page['student_count']).to eq(1)
       expect(spaced_page['correct_count']).to eq(2)
       expect(spaced_page['incorrect_count']).to eq(0)
+      expect(spaced_page['chapter_section']).to eq([1, 1])
 
       second_task = tasks.second
       second_task.task_steps.each{ |ts|
@@ -115,12 +117,14 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(page['student_count']).to eq(2)
       expect(page['correct_count']).to eq(1)
       expect(page['incorrect_count']).to eq(1)
+      expect(page['chapter_section']).to eq([1, 1])
 
       spaced_page = stats.course.spaced_pages.first
       expect(spaced_page['title']).to eq('Force')
       expect(spaced_page['student_count']).to eq(2)
       expect(spaced_page['correct_count']).to eq(2)
       expect(spaced_page['incorrect_count']).to eq(2)
+      expect(spaced_page['chapter_section']).to eq([1, 1])
 
       third_task = tasks.third
       third_task.task_steps.each{ |ts|
@@ -141,12 +145,14 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(page['student_count']).to eq(3)
       expect(page['correct_count']).to eq(2)
       expect(page['incorrect_count']).to eq(1)
+      expect(page['chapter_section']).to eq([1, 1])
 
       spaced_page = stats.course.spaced_pages.first
       expect(spaced_page['title']).to eq('Force')
       expect(spaced_page['student_count']).to eq(3)
       expect(spaced_page['correct_count']).to eq(4)
       expect(spaced_page['incorrect_count']).to eq(2)
+      expect(spaced_page['chapter_section']).to eq([1, 1])
 
       fourth_task = tasks.fourth
       fourth_task.task_steps.each{ |ts|
@@ -167,12 +173,14 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(page['student_count']).to eq(4)
       expect(page['correct_count']).to eq(3)
       expect(page['incorrect_count']).to eq(1)
+      expect(page['chapter_section']).to eq([1, 1])
 
       spaced_page = stats.course.spaced_pages.first
       expect(spaced_page['title']).to eq('Force')
       expect(spaced_page['student_count']).to eq(4)
       expect(spaced_page['correct_count']).to eq(6)
       expect(spaced_page['incorrect_count']).to eq(2)
+      expect(spaced_page['chapter_section']).to eq([1, 1])
     end
 
     it "returns detailed stats if :details is true" do

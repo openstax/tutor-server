@@ -49,8 +49,9 @@ class CalculateTaskPlanStats
 
   def generate_page_stats(page, tasked_exercises, include_previous=false)
     stats = {
-      id:     page.id,
-      title:  page.title
+      id:              page.id,
+      title:           page.title,
+      chapter_section: page.chapter_section
     }
 
     stats.merge page_stats_for_tasked_exercises(tasked_exercises)

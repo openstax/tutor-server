@@ -12,7 +12,7 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
     FactoryGirl.create :tasked_task_plan, number_of_students: number_of_students
   }
 
-  xit "represents a task plan's stats" do ## This spec is too brittle (it depends on the inner workings of assistants)
+  it "represents a task plan's stats" do
     # Answer an exercise correctly and mark it as completed
     task_step = task_plan.tasks.first.task_steps.select{ |ts| ts.tasked.exercise? }.first
     answer_ids = task_step.tasked.answer_ids
@@ -46,9 +46,9 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
             "student_count"   => 2,
             "correct_count"   => 1,
             "incorrect_count" => 1,
+            "chapter_section" => [1, 1],
             "exercises" => a_collection_containing_exactly(
-              "content" => a_kind_of(Hash),
-              "answered_count" => 2
+              "content" => a_kind_of(Hash), "answered_count" => 2
             )
           ),
           "spaced_pages" => a_collection_containing_exactly(
@@ -57,12 +57,8 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
             "student_count"   => 0,
             "correct_count"   => 0,
             "incorrect_count" => 0,
-            "exercises" => a_collection_containing_exactly(
-              { "content" => a_kind_of(Hash),
-                "answered_count" => 0 },
-              { "content" => a_kind_of(Hash),
-                "answered_count" => 0 }
-            )
+            "chapter_section" => [1, 1],
+            "exercises" => a_kind_of(Array)
           )
         },
         "periods" => []
