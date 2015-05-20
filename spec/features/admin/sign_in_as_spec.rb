@@ -11,6 +11,8 @@ RSpec.feature 'Administrator' do
 
     visit admin_root_path
     click_link 'Users'
+    fill_in 'search_term', with: 'a_user'
+    click_button 'Search User'
     click_link 'sign in as', match: :first
 
     expect(current_path).to eq(dashboard_path)
