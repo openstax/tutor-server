@@ -80,7 +80,7 @@ module Tasks
     end
 
     def tmp_file_path
-      ['./tmp/', generate_file_name, '.xlsx'].join('')
+      @tmp_file_path ||= ['./tmp/', generate_file_name, '.xlsx'].join('')
     end
 
     def generate_file_name

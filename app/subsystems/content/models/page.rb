@@ -6,6 +6,7 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
   sortable_belongs_to :book_part, on: :number, inverse_of: :pages
 
   has_many :page_tags, dependent: :destroy
+  has_many :tags, through: :page_tags
 
   validates :title, presence: true
 
