@@ -26,12 +26,12 @@ module Api::V1
              }
 
     property :chapter_section,
+             type: Array,
              writeable: false,
-             getter: chapter_section_formatter,
              readable: true,
              schema_info: {
                required: true,
-               description: 'The chapter and section in the book, e.g. "5.2"'
+               description: 'The chapter and section in the book, e.g. [5, 2]'
              }
 
     collection :children,

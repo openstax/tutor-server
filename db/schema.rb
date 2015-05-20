@@ -23,7 +23,7 @@ ActiveRecord::Schema.define(version: 20150507224137) do
     t.integer  "entity_book_id"
     t.integer  "number",              null: false
     t.string   "title",               null: false
-    t.string   "chapter_section"
+    t.text     "chapter_section"
     t.datetime "created_at",          null: false
     t.datetime "updated_at",          null: false
   end
@@ -81,7 +81,7 @@ ActiveRecord::Schema.define(version: 20150507224137) do
     t.integer  "content_book_part_id"
     t.integer  "number",               null: false
     t.string   "title",                null: false
-    t.string   "chapter_section"
+    t.text     "chapter_section"
     t.datetime "created_at",           null: false
     t.datetime "updated_at",           null: false
   end
@@ -404,7 +404,7 @@ ActiveRecord::Schema.define(version: 20150507224137) do
     t.string   "url",             null: false
     t.text     "content",         null: false
     t.string   "title"
-    t.string   "chapter_section"
+    t.text     "chapter_section"
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
   end

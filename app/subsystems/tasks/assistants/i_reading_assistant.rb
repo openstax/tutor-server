@@ -24,13 +24,13 @@ class Tasks::Assistants::IReadingAssistant
     ##       rolled back).  Eventually, we will probably want to create an "undistributed" task and
     ##       have per-taskee workers (with per-taskee transactions) build and distribute the tasks.
 
-    cnx_pages = collect_cnx_pages(task_plan: task_plan)
+    pages = collect_pages(task_plan: task_plan)
 
     tasks = taskees.collect do |taskee|
       task = create_ireading_task!(
         task_plan: task_plan,
         taskee:    taskee,
-        cnx_pages: cnx_pages
+        pages: pages
       )
       assign_task!(task: task, taskee: taskee)
       task
@@ -41,20 +41,20 @@ class Tasks::Assistants::IReadingAssistant
 
   protected
 
-  def self.collect_cnx_pages(task_plan:)
+  def self.collect_pages(task_plan:)
     page_ids = task_plan.settings['page_ids']
-    cnx_pages = page_ids.collect do |page_id|
+    pages = page_ids.collect do |page_id|
       Content::GetPage.call(id: page_id).outputs.page
     end
-    cnx_pages
+    pages
   end
 
-  def self.create_ireading_task!(task_plan:, taskee:, cnx_pages:)
+  def self.create_ireading_task!(task_plan:, taskee:, pages:)
     task = create_task!(task_plan: task_plan)
 
-    set_los(task: task, cnx_pages: cnx_pages)
+    set_los(task: task, pages: pages)
 
-    add_core_steps!(task: task, cnx_pages: cnx_pages)
+    add_core_steps!(task: task, pages: pages)
     add_spaced_practice_exercise_steps!(task: task, taskee: taskee)
     add_personalized_exercise_steps!(task_plan: task_plan, task: task, taskee: taskee)
 
@@ -62,8 +62,8 @@ class Tasks::Assistants::IReadingAssistant
     task
   end
 
-  def self.set_los(task:, cnx_pages:)
-    los = cnx_pages.map(&:los).flatten.uniq
+  def self.set_los(task:, pages:)
+    los = pages.map(&:los).flatten.uniq
     task.los = los
 
     task.save!
@@ -97,10 +97,10 @@ class Tasks::Assistants::IReadingAssistant
     task
   end
 
-  def self.add_core_steps!(task:, cnx_pages:)
-    cnx_pages.each do |page|
+  def self.add_core_steps!(task:, pages:)
+    pages.each do |page|
       # Chapter intro pages get their titles from the chapter instead
-      page_title = page.is_intro? ? page.book_part_title : page.title
+      page_title = page.is_intro? ? page.book_part.title : page.title
 
       fragment_title = page_title
       page.fragments.each do |fragment|

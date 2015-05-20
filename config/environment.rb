@@ -9,7 +9,6 @@ require 'fake_store'
 require 'verify_and_get_id_array'
 require 'entity'
 require 'representable/coercion'
-require 'chapter_section_formatter'
 require 'env_utilities'
 
 SITE_NAME = "OpenStax Tutor"

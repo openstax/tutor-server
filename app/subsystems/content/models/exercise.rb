@@ -4,10 +4,9 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
   wrapped_by ::Exercise
 
   has_many :exercise_tags, dependent: :destroy
+  has_many :tags, through: :exercise_tags
 
   has_many :tasked_exercises, subsystem: :tasks, primary_key: :url, foreign_key: :url
-
-  has_many :tags, through: :exercise_tags
 
   # Exercises with the same number as this one, used to find the latest version below
   has_many :same_number, class_name: "Content::Models::Exercise",

@@ -90,8 +90,8 @@ class Demo001
     )
 
     assign_ireading(course: course,
-                    chapter_sections: ['3.1', '3.2', '3.3'],
-                    title: 'Reading 3.1 - 3.3',
+                    chapter_sections: [[3, 0], [3, 1], [3, 2]],
+                    title: 'Reading 3.0 - 3.2',
                     due_at: initial_date - 5.days).each_with_index do |ireading, index|
 
       work_task(task: ireading, responses: responses_list[index])
@@ -129,7 +129,7 @@ class Demo001
     )
 
     assign_homework(course: course,
-                    chapter_sections: ['3.1', '3.2', '3.3'],
+                    chapter_sections: [[3, 0], [3, 1], [3, 2]],
                     num_exercises: 10,
                     due_at: initial_date - 3.days).each_with_index do |hw, index|
 
@@ -168,8 +168,8 @@ class Demo001
     )
 
     assign_ireading(course: course,
-                    chapter_sections: ['4.1', '4.2'],
-                    title: 'Reading 4.1 - 4.2',
+                    chapter_sections: [[4, 0], [4, 1]],
+                    title: 'Reading 4.0 - 4.1',
                     due_at: initial_date - 0.days).each_with_index do |ireading, index|
 
       work_task(task: ireading, responses: responses_list[index])
@@ -207,7 +207,7 @@ class Demo001
     )
 
     assign_homework(course: course,
-                    chapter_sections: ['4.1', '4.2'],
+                    chapter_sections: [[4, 0], [4, 1]],
                     num_exercises: 8,
                     due_at: initial_date - 0.days).each_with_index do |hw, index|
 
@@ -495,7 +495,8 @@ class Demo001
   end
 
   def lookup_pages(book:, chapter_sections:)
-    chapter_sections = [chapter_sections].flatten.compact
+    chapter_sections = (chapter_sections.first.is_a?(Array) ? \
+                        chapter_sections : [chapter_sections]).compact
 
     @page_data ||= {}
     @page_data[book.id] ||= Content::VisitBook[book: book, visitor_names: :page_data]

@@ -19,35 +19,34 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
   context "for Introduction version 9 and Force version 11" do
     let!(:cnx_page_hashes) { [
-      { 'id' => '1491e74e-ed39-446f-a602-e7ab881af101@9',
-        'title' => 'Introduction' },
-      { 'id' => '092bbf0d-0729-42ce-87a6-fd96fd87a083@11',
-        'title' => 'Force' }
+      { 'id' => '1491e74e-ed39-446f-a602-e7ab881af101@9', 'title' => 'Introduction' },
+      { 'id' => '092bbf0d-0729-42ce-87a6-fd96fd87a083@11', 'title' => 'Force' }
     ] }
 
     let!(:core_step_gold_data) {
       [
         { klass: Tasks::Models::TaskedReading,
           title: "Forces and Newton's Laws of Motion",
-          related_content: [{title: "Forces and Newton's Laws of Motion", chapter_section: "8.1"}] },
+          related_content: [{title: "Forces and Newton's Laws of Motion",
+                             chapter_section: [8, 1]}] },
         { klass: Tasks::Models::TaskedReading,
           title: "Force",
-          related_content: [{title: "Force", chapter_section: "8.2"}] },
+          related_content: [{title: "Force", chapter_section: [8, 2]}] },
         { klass: Tasks::Models::TaskedVideo,
           title: nil,
-          related_content: [{title: "Force", chapter_section: "8.2"}] },
+          related_content: [{title: "Force", chapter_section: [8, 2]}] },
         { klass: Tasks::Models::TaskedReading,
           title: nil,
-          related_content: [{title: "Force", chapter_section: "8.2"}] },
+          related_content: [{title: "Force", chapter_section: [8, 2]}] },
         { klass: Tasks::Models::TaskedReading,
           title: nil,
-          related_content: [{title: "Force", chapter_section: "8.2"}] },
+          related_content: [{title: "Force", chapter_section: [8, 2]}] },
         { klass: Tasks::Models::TaskedExercise,
           title: nil,
-          related_content: [{title: "Force", chapter_section: "8.2"}] },
+          related_content: [{title: "Force", chapter_section: [8, 2]}] },
         { klass: Tasks::Models::TaskedReading,
           title: nil,
-          related_content: [{title: "Force", chapter_section: "8.2"}] }
+          related_content: [{title: "Force", chapter_section: [8, 2]}] }
       ]
     }
 
@@ -55,10 +54,10 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       [
         { klass: Tasks::Models::TaskedExercise,
           title: nil,
-          related_content: [{title: "Force", chapter_section: "8.2"}] },
+          related_content: [{title: "Force", chapter_section: [8, 2]}] },
         { klass: Tasks::Models::TaskedExercise,
           title: nil,
-          related_content: [{title: "Force", chapter_section: "8.2"}] },
+          related_content: [{title: "Force", chapter_section: [8, 2]}] },
       ]
     }
 
@@ -75,7 +74,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     }
 
     let!(:cnx_pages) { cnx_page_hashes.each_with_index.collect do |hash, i|
-      OpenStax::Cnx::V1::Page.new(hash: hash, chapter_section: "8.#{i+1}")
+      OpenStax::Cnx::V1::Page.new(hash: hash, chapter_section: [8, i+1])
     end }
 
     let!(:pages)     { cnx_pages.collect do |cnx_page|
@@ -106,7 +105,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     }
 
     it 'splits a CNX module into many different steps and assigns them with immediate feedback' do
-      allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [[0,2]]}
+      allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [[0, 2]]}
 
       tasks = DistributeTasks.call(task_plan).outputs.tasks
       expect(tasks.length).to eq num_taskees
@@ -225,7 +224,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     }
 
     it 'is split into different task steps with immediate feedback' do
-      allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [[0,2]]}
+      allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [[0, 2]]}
       allow(Tasks::Assistants::IReadingAssistant).to receive(:num_personalized_exercises) { 0 }
 
       tasks = DistributeTasks.call(task_plan).outputs.tasks

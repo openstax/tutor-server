@@ -10,7 +10,7 @@ RSpec.describe Api::V1::Tasks::TaskedReadingRepresenter, :type => :representer d
       task_id: task_step.tasks_task_id.to_s,
       type: "reading",
       title: task_step.tasked.title,
-      chapter_section: ChapterSectionFormatter.format(task_step.tasked.chapter_section),
+      chapter_section: task_step.tasked.chapter_section,
       is_completed: false,
       content_url: task_step.tasked.url,
       content_html: task_step.tasked.content,
