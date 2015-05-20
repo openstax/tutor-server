@@ -1,6 +1,8 @@
 ActionController::Base.class_exec do
 
-  rescue_from Exception, :with => :rescue_from_exception
+  protect_from_forgery with: :exception
+
+  rescue_from Exception, with: :rescue_from_exception
 
   protected
 
