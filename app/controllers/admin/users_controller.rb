@@ -2,7 +2,7 @@ class Admin::UsersController < Admin::BaseController
   before_action :get_user, only: [:edit, :update]
 
   def index
-    @users = GetAllUserProfiles[]
+    @users = UserProfile::SearchProfiles[search_term: "%#{params[:search_term]}%"] if params[:search_term].present?
   end
 
   def create
@@ -10,7 +10,7 @@ class Admin::UsersController < Admin::BaseController
                 complete: -> (*) {
                   update_account(@handler_result.outputs[:profile], [:full_name])
                   flash[:notice] = 'The user has been added.'
-                  redirect_to admin_users_path
+                  redirect_to admin_users_path(search_term: @handler_result.outputs[:profile].username)
                 })
   end
 
