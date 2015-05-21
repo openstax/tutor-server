@@ -31,7 +31,7 @@ module OpenStax::Cnx::V1
         if hash['id'] == 'subcol'
           BookPart.new(hash: hash, chapter_section: chapter_section + [book_part_index += 1])
         else
-          page = Page.new(hash: hash)
+          page = OpenStax::Cnx::V1::Page.new(hash: hash)
           page_index -= 1 if page.is_intro?
           page.chapter_section = chapter_section + [page_index += 1]
           page

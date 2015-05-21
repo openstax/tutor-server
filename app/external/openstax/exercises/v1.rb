@@ -49,15 +49,17 @@ module OpenStax::Exercises::V1
     old_configuration = configuration
     old_client = client
 
-    @configuration = Configuration.new()
-    new_configuration.each{|k,v| @configuration.send("#{k}=",v)}
+    begin
+      @configuration = Configuration.new()
+      new_configuration.each{|k,v| @configuration.send("#{k}=",v)}
 
-    @client = nil
+      @client = nil
 
-    yield
-
-    @configuration = old_configuration
-    @client = old_client
+      yield
+    ensure
+      @configuration = old_configuration
+      @client = old_client
+    end
   end
 
   def self.server_url
