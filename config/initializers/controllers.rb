@@ -4,7 +4,13 @@ ActionController::Base.class_exec do
 
   rescue_from Exception, with: :rescue_from_exception
 
+  before_action :load_time
+
   protected
+
+  def load_time
+    Timecop.load_time if Timecop.enabled?
+  end
 
   def rescue_from_exception(exception)
     # See https://github.com/rack/rack/blob/master/lib/rack/utils.rb#L453 for error names/symbols
@@ -48,4 +54,5 @@ ActionController::Base.class_exec do
       type.all  { render nothing: true, status: status }
     end
   end
+
 end
