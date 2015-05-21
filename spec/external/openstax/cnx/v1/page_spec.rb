@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe OpenStax::Cnx::V1::Page, :type => :external do
+RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, vcr: VCR_OPTS do
 
   cnx_page_infos = HashWithIndifferentAccess.new(
     stable: [{ id: '1491e74e-ed39-446f-a602-e7ab881af101@1',
@@ -155,9 +155,14 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external do
           doc = Nokogiri::HTML(page.converted_content)
 
           doc.css('[src]').each do |tag|
-            uri = URI.parse(URI.escape(tag.attributes['src'].value))
-            expect(uri.scheme).to eq('https') if (uri.host == 'archive.cnx.org')
+            uri = Addressable::URI.parse(tag.attributes['src'].value)
+            expect(uri.scheme).to eq('https')
             expect(uri.absolute?).to eq true
+          end
+
+          doc.css('[href]').each do |tag|
+            uri = Addressable::URI.parse(tag.attributes['href'].value)
+            expect(uri.absolute?).to eq true unless uri.path.blank?
           end
         end
       end

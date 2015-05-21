@@ -1,6 +1,7 @@
 require 'rails_helper'
+require 'vcr_helper'
 
-RSpec.describe Tasks::ExportPerformanceBook, speed: :slow do
+RSpec.describe Tasks::ExportPerformanceBook, speed: :slow, vcr: VCR_OPTS do
   let(:course) { CreateCourse[name: 'Physics'] }
   let(:teacher) { FactoryGirl.create :user_profile }
 

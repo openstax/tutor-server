@@ -21,9 +21,13 @@ module OpenStax::Cnx::V1
     old_url = archive_url_base
     old_ssl_url = archive_url_base(ssl: true)
 
-    set_archive_url_base(url: url)
-    result = yield
-    set_archive_url_base(url: old_url, ssl: old_ssl_url)
+    begin
+      set_archive_url_base(url: url)
+      result = yield
+    ensure
+      set_archive_url_base(url: old_url, ssl: old_ssl_url)
+    end
+
     result
   end
 
