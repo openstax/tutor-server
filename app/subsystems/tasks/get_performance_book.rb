@@ -48,11 +48,19 @@ class Tasks::GetPerformanceBook
 
   def get_tasks_for_student(student)
     # Return reading and homework tasks for a student ordered by due date
-    Tasks::Models::Task
-      .joins { taskings }
-      .where { taskings.entity_role_id == student.id }
-      .where { task_type.in Tasks::Models::Task.task_types.values_at(:reading, :homework) }
-      .order { due_at }
+    tasks = Tasks::Models::Task
+              .joins { taskings }
+              .where { taskings.entity_role_id == student.id }
+              .where { task_type.in Tasks::Models::Task.task_types.values_at(:reading, :homework) }
+              .order { due_at }
+              .includes(task_steps: :tasked)
+
+    task_steps_by_tasked_type = tasks.collect(&:task_steps).flatten.group_by(&:tasked_type)
+    exercises = task_steps_by_tasked_type.fetch("Tasks::Models::TaskedExercise",[])
+    preloader = ActiveRecord::Associations::Preloader.new
+    preloader.preload(exercises, :tasked_exercise)
+
+    tasks
   end
 
   def get_data_headings(task, index)
@@ -71,7 +79,7 @@ class Tasks::GetPerformanceBook
       role: role.id,
       data: [],
     }
-    tasks.preload(task_steps: :tasked).each_with_index do |task, index|
+    tasks.each_with_index do |task, index|
       data = {
         status: task.status,
         type: task.task_type,
@@ -85,7 +93,7 @@ class Tasks::GetPerformanceBook
 
   def exercise_count(task, index)
     return {} unless task.task_type == 'homework'
-    correct_count = task.task_steps.select { |ts| ts.tasked.is_correct? }.length
+    correct_count = task.task_steps.select { |ts| ts.tasked_exercise.is_correct? }.length
     attempted_count = task.task_steps.select(&:completed?).length
     @class_average[index] << (Float(correct_count) / attempted_count) if attempted_count > 0
     {
@@ -94,5 +102,4 @@ class Tasks::GetPerformanceBook
       recovered_exercise_count: task.task_steps.select { |ts| ts.tasked.can_be_recovered? }.length
     }
   end
-
 end
