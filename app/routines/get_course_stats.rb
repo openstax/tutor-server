@@ -108,7 +108,7 @@ class GetCourseStats
 
   def get_current_level(task_steps:)
     lo_tags = get_lo_tags(task_steps: task_steps)
-    OpenStax::BigLearn::V1.get_clue(roles: role, tags: lo_tags)
+    OpenStax::Biglearn::V1.get_clue(roles: role, tags: lo_tags)
   end
 
   def book_parts_by_id

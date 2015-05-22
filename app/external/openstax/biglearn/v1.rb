@@ -1,4 +1,4 @@
-module OpenStax::BigLearn::V1
+module OpenStax::Biglearn::V1
 
   #
   # API Wrappers

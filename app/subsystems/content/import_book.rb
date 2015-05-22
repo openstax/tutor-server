@@ -17,7 +17,7 @@ class Content::ImportBook
     transfer_errors_from(outputs[:book_part], {type: :verbatim}, true)
 
     #
-    # Send exercise and tag info to BigLearn
+    # Send exercise and tag info to Biglearn
     #
     # First, build up local lists of the exercises and tags, then
     # send those lists all at once to one call each in the BL API.
@@ -30,10 +30,10 @@ class Content::ImportBook
 
     biglearn_exercises = exercise_data.values.collect do |ed|
       tags = ed['los'] + ed['tags']
-      OpenStax::BigLearn::V1::Exercise.new(ed['url'], *tags)
+      OpenStax::Biglearn::V1::Exercise.new(ed['url'], *tags)
     end
 
-    OpenStax::BigLearn::V1.add_exercises(biglearn_exercises)
+    OpenStax::Biglearn::V1.add_exercises(biglearn_exercises)
   end
 
 end

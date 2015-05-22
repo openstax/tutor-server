@@ -33,8 +33,8 @@ RSpec.describe Content::ImportBook, type: :routine, speed: :slow, vcr: VCR_OPTS 
   cnx_books.each do |name, book|
     context "with the #{name.to_s} content" do
 
-      before(:each)          { OpenStax::BigLearn::V1.use_fake_client }
-      let!(:biglearn_client) { OpenStax::BigLearn::V1.fake_client }
+      before(:each)          { OpenStax::Biglearn::V1.use_fake_client }
+      let!(:biglearn_client) { OpenStax::Biglearn::V1.fake_client }
 
       it 'creates a new Book structure and Pages and sets their attributes' do
         result = nil
