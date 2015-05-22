@@ -16,16 +16,24 @@ RSpec.describe ApplicationController do
       Rails.application.secrets[:timecop_enable] = true
     end
 
-    it 'freezes time' do
+    it 'travels time' do
       t = Time.now
 
-      Settings.timecop_time = t
+      Settings.timecop_offset = nil
       controller.send :load_time
-      expect(Time.now).to eq t
+      expect(Time.now).to be_within(1.second).of(t)
 
-      Settings.timecop_time = nil
+      Settings.timecop_offset = 1.hour
       controller.send :load_time
-      expect(Time.now).to be > t
+      expect(Time.now).to be_within(1.second).of(t + 1.hour)
+
+      Settings.timecop_offset = -1.hour
+      controller.send :load_time
+      expect(Time.now).to be_within(1.second).of(t - 1.hour)
+
+      Settings.timecop_offset = nil
+      controller.send :load_time
+      expect(Time.now).to be_within(1.second).of(t)
     end
   end
 
@@ -34,16 +42,24 @@ RSpec.describe ApplicationController do
       Rails.application.secrets[:timecop_enable] = false
     end
 
-    it 'does not freeze time' do
+    it 'does not travel time' do
       t = Time.now
 
-      Settings.timecop_time = t
+      Settings.timecop_offset = nil
       controller.send :load_time
-      expect(Time.now).to be > t
+      expect(Time.now).to be_within(1.second).of(t)
 
-      Settings.timecop_time = nil
+      Settings.timecop_offset = 1.hour
       controller.send :load_time
-      expect(Time.now).to be > t
+      expect(Time.now).to be_within(1.second).of(t)
+
+      Settings.timecop_offset = -1.hour
+      controller.send :load_time
+      expect(Time.now).to be_within(1.second).of(t)
+
+      Settings.timecop_offset = nil
+      controller.send :load_time
+      expect(Time.now).to be_within(1.second).of(t)
     end
   end
 end

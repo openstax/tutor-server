@@ -3,19 +3,21 @@ class Timecop
     Rails.application.secrets[:timecop_enable]
   end
 
-  def self.store_time(time = Time.now)
-    Settings.timecop_time = time
-    freeze(time)
+  def self.travel_all(time)
+    self.return
+    Settings.timecop_offset = time - Time.now
+    travel(time)
   end
 
-  def self.clear_time
-    Settings.timecop_time = nil
+  def self.return_all
     self.return
+    Settings.timecop_offset = nil
   end
 
   def self.load_time
-    time = Settings.timecop_time
-    time.nil? ? self.return : freeze(time)
+    self.return
+    offset = Settings.timecop_offset
+    travel(Time.now + offset) unless offset.nil?
   end
 end
 

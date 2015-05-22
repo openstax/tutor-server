@@ -1,11 +1,11 @@
 module Settings
   mattr_accessor :store
 
-  def self.timecop_time
-    store.get('timecop:time')
+  def self.timecop_offset
+    store.get('timecop:offset')
   end
 
-  def self.timecop_time=(value)
-    store.set('timecop:time', value)
+  def self.timecop_offset=(value)
+    store.set('timecop:offset', value)
   end
 end
