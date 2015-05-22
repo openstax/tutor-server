@@ -14,19 +14,7 @@ RSpec.describe UserProfile::SearchProfiles do
 
   it 'searches username and full name' do
     results = described_class[search_term: '%ch%']
-    results.sort_by! { |r| r.id }
-    expect(results).to eq [ {
-      'id' => user_1.id,
-      'account_id' => user_1.account.id,
-      'entity_user_id' => user_1.entity_user.id,
-      'full_name' => 'Chris Mass',
-      'username' => 'student'
-    }, {
-      'id' => user_2.id,
-      'account_id' => user_2.account.id,
-      'entity_user_id' => user_2.entity_user.id,
-      'full_name' => 'Stan Dup',
-      'username' => 'teacher'
-    } ]
+    results.order(:id)
+    expect(results).to eq [user_1, user_2]
   end
 end

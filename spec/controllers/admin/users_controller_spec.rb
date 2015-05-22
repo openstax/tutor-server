@@ -14,29 +14,11 @@ RSpec.describe Admin::UsersController do
   it 'searches users by username and full name' do
     get :index, search_term: 'STR'
     expect(assigns[:users].length).to eq 1
-    expect(assigns[:users]).to eq [ {
-      'id' => admin.id,
-      'account_id' => admin.account.id,
-      'entity_user_id' => admin.entity_user.id,
-      'full_name' => 'Administrator',
-      'username' => 'admin'
-    } ]
+    expect(assigns[:users]).to eq [admin]
 
     get :index, search_term: 'st'
     expect(assigns[:users].length).to eq 2
-    expect(assigns[:users].sort_by { |a| a[:id] }).to eq [ {
-      'id' => admin.id,
-      'account_id' => admin.account.id,
-      'entity_user_id' => admin.entity_user.id,
-      'full_name' => 'Administrator',
-      'username' => 'admin'
-    }, {
-      'id' => user.id,
-      'account_id' => user.account.id,
-      'entity_user_id' => user.entity_user.id,
-      'full_name' => 'User One',
-      'username' => 'student'
-    } ]
+    expect(assigns[:users].sort_by { |a| a.id }).to eq [admin, user]
   end
 
   it 'creates a new user' do
@@ -48,9 +30,8 @@ RSpec.describe Admin::UsersController do
 
     get :index, search_term: 'new'
     expect(assigns[:users].length).to eq 1
-    expect(assigns[:users].first).to include(
-      username: 'new',
-      full_name: 'New User')
+    expect(assigns[:users].first.username).to eq 'new'
+    expect(assigns[:users].first.full_name).to eq 'New User'
   end
 
   it 'updates a user' do
