@@ -86,7 +86,7 @@ class Tasks::GetPerformanceBook
   def exercise_count(task, index)
     return {} unless task.task_type == 'homework'
     correct_count = task.task_steps.select { |ts| ts.tasked.is_correct? }.length
-    attempted_count = task.task_steps.select { |ts| ts.completed? }.length
+    attempted_count = task.task_steps.select(&:completed?).length
     @class_average[index] << (Float(correct_count) / attempted_count) if attempted_count > 0
     {
       exercise_count: task.task_steps.length,
