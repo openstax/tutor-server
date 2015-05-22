@@ -1,9 +1,9 @@
 class OpenStax::BigLearn::V1::RealClient
 
-  def initialize(big_learn_configuration)
-    @server_url   = big_learn_configuration.server_url
-    @client_id    = big_learn_configuration.client_id
-    @secret       = big_learn_configuration.secret
+  def initialize(biglearn_configuration)
+    @server_url   = biglearn_configuration.server_url
+    @client_id    = biglearn_configuration.client_id
+    @secret       = biglearn_configuration.secret
 
     @oauth_client = OAuth2::Client.new(@client_id, @secret, site: @server_url)
 
@@ -11,6 +11,7 @@ class OpenStax::BigLearn::V1::RealClient
   end
 
   def add_exercises(exercises)
+    puts "Adding exercises to #{@server_url}"
     options = { body: construct_exercises_payload(exercises).to_json }
     response = request(:post, add_exercises_uri, with_content_type_header(options))
     handle_response(response)

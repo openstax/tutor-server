@@ -14,6 +14,8 @@ class OpenStax::BigLearn::V1::FakeClient
     # Iterate through the exercises, storing each in the store, overwriting
     # any with the same ID
 
+    puts "Adding fake exercises"
+
     [exercises].flatten.each do |exercise|
       store['exercises'][exercise.url] = exercise.tags
     end
