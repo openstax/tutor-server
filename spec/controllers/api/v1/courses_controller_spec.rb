@@ -633,9 +633,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(response).to have_http_status :success
         expect(response.body_as_hash).to include(
           data_headings: [
-            { title: 'Homework task plan', class_average: 75.0 },
+            { title: 'Homework task plan', class_average: kind_of(Float) },
             { title: 'Reading task plan' },
-            { title: 'Homework 2 task plan' }
+            { title: 'Homework 2 task plan', class_average: kind_of(Float) }
           ],
           students: [{
             name: kind_of(String),
@@ -659,7 +659,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                 id: kind_of(Integer),
                 status: 'not_started',
                 exercise_count: 4,
-                correct_exercise_count: 0,
+                correct_exercise_count: 1,
                 recovered_exercise_count: 0
               }
             ]
@@ -672,7 +672,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                 id: kind_of(Integer),
                 status: 'in_progress',
                 exercise_count: 6,
-                correct_exercise_count: 2,
+                correct_exercise_count: 3,
                 recovered_exercise_count: 0
               },
               {
@@ -685,7 +685,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                 id: kind_of(Integer),
                 status: 'not_started',
                 exercise_count: 4,
-                correct_exercise_count: 0,
+                correct_exercise_count: 1,
                 recovered_exercise_count: 0
               }
             ]
