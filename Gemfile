@@ -107,6 +107,9 @@ gem 'pg'
 # Lorem Ipsum
 gem 'faker'
 
+# Key-value store for caching and job queuing
+gem 'redis-rails'
+
 # Background job queueing
 gem 'resque'
 
@@ -131,6 +134,9 @@ group :development, :test do
 
   # Allows the use of the in-memory SQLite3 database in Rails tests
   gem 'memory_test_fix'
+
+  # Fake in-memory Redis for development and testing
+  gem 'fakeredis'
 
   # Resque but for testing
   gem 'resque_spec'

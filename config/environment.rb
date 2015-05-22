@@ -10,6 +10,7 @@ require 'verify_and_get_id_array'
 require 'entity'
 require 'representable/coercion'
 require 'env_utilities'
+require 'settings'
 
 SITE_NAME = "OpenStax Tutor"
 COPYRIGHT_HOLDER = "Rice University"
