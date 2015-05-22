@@ -10,6 +10,7 @@
 <% end %>
 
 <% if @users.present? %>
+  <%= will_paginate @users %>
   <table>
     <thead>
       <tr>
@@ -18,7 +19,7 @@
       </tr>
     </thead>
     <tbody>
-      <% @users.each do |user| %>
+      <% @users.items.each do |user| %>
         <tr>
           <td><%= user.username %></td>
           <td>
@@ -30,4 +31,5 @@
       <% end %>
     </tbody>
   </table>
+  <%= will_paginate @users %>
 <% end %>
