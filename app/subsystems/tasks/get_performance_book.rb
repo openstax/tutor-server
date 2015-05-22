@@ -53,7 +53,6 @@ class Tasks::GetPerformanceBook
       .where { taskings.entity_role_id == student.id }
       .where { task_type.in Tasks::Models::Task.task_types.values_at(:reading, :homework) }
       .order { due_at }
-      .includes { task_steps.tasked }
   end
 
   def get_data_headings(task, index)
@@ -72,7 +71,7 @@ class Tasks::GetPerformanceBook
       role: role.id,
       data: [],
     }
-    tasks.each_with_index do |task, index|
+    tasks.preload(task_steps: :tasked).each_with_index do |task, index|
       data = {
         status: task.status,
         type: task.task_type,
