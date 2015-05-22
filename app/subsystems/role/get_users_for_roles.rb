@@ -5,7 +5,7 @@ class Role::GetUsersForRoles
 
   def exec(roles)
     role_ids = [roles].flatten.compact.collect{|r| r.id}
-    ss_maps = Role::Models::User.where{entity_role_id.in role_ids}
-    outputs[:users] = ss_maps.collect{|ss_map| ss_map.user}.uniq
+    ss_maps = Role::Models::User.includes(:user).where{entity_role_id.in role_ids}
+    outputs[:users] = ss_maps.collect(&:user).uniq
   end
 end
