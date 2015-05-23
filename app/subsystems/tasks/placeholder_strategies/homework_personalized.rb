@@ -10,7 +10,7 @@ class Tasks::PlaceholderStrategies::HomeworkPersonalized
 
     los = task.los
 
-    exercise_urls = OpenStax::BigLearn::V1.get_projection_exercises(
+    exercise_urls = OpenStax::Biglearn::V1.get_projection_exercises(
       role:              taskee,
       tag_search:        biglearn_condition(los),
       count:             num_placeholders,

@@ -1,9 +1,9 @@
-class OpenStax::BigLearn::V1::RealClient
+class OpenStax::Biglearn::V1::RealClient
 
-  def initialize(big_learn_configuration)
-    @server_url   = big_learn_configuration.server_url
-    @client_id    = big_learn_configuration.client_id
-    @secret       = big_learn_configuration.secret
+  def initialize(biglearn_configuration)
+    @server_url   = biglearn_configuration.server_url
+    @client_id    = biglearn_configuration.client_id
+    @secret       = biglearn_configuration.secret
 
     @oauth_client = OAuth2::Client.new(@client_id, @secret, site: @server_url)
 
@@ -53,7 +53,7 @@ class OpenStax::BigLearn::V1::RealClient
   # Return a CLUE value for the specified set of roles and the group of tags.  May return
   # nil if no CLUE is available (e.g. no exercises attached to these tags).
   #
-  # BigLearn can actually take multiple sets of tag queries at once and return a CLUE
+  # Biglearn can actually take multiple sets of tag queries at once and return a CLUE
   # for each; we're not using that capability yet. When we do we'll probably rename the
   # `tags` argument to `tag_sets` or something (or we'll make a first class `TagSearch`
   # citizen inside this module and accept an array of those into this method).
@@ -81,7 +81,7 @@ class OpenStax::BigLearn::V1::RealClient
 
   def stringify_query_hash(query_hash)
     # Standard Rails `to_query` method converts an array (blah = [1,2,3])
-    # to "blah[]=1&blah[]=2&blah[]=3", but BigLearn doesn't like the brackets,
+    # to "blah[]=1&blah[]=2&blah[]=3", but Biglearn doesn't like the brackets,
     # which get encoded as '%5B%5D' so take them out
 
     query_hash.to_query.remove('%5B%5D')
@@ -126,7 +126,7 @@ class OpenStax::BigLearn::V1::RealClient
   end
 
   def handle_response(response)
-    raise "BigLearnError #{response.status}:\n#{response.body}" if response.status != 200
+    raise "BiglearnError #{response.status}:\n#{response.body}" if response.status != 200
 
     JSON.parse(response.body)
   end

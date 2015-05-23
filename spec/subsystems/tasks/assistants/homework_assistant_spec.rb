@@ -7,7 +7,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
 
   before(:each) {
     OpenStax::Exercises::V1.use_real_client
-    OpenStax::BigLearn::V1.use_fake_client
+    OpenStax::Biglearn::V1.use_fake_client
   }
 
   let!(:assistant) {

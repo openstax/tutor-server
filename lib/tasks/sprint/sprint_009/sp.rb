@@ -6,7 +6,7 @@ module Sprint009
     protected
 
     def exec
-      OpenStax::BigLearn::V1.use_fake_client
+      OpenStax::Biglearn::V1.use_fake_client
       OpenStax::Exercises::V1.use_real_client
 
       puts "===== CREATING USERS ====="

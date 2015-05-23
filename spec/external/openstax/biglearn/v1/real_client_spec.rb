@@ -1,11 +1,11 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-module OpenStax::BigLearn
+module OpenStax::Biglearn
   RSpec.describe V1::RealClient, :type => :external, :vcr => VCR_OPTS do
 
     let(:configuration) {
-      c = OpenStax::BigLearn::V1::Configuration.new
+      c = OpenStax::Biglearn::V1::Configuration.new
       c.server_url = 'http://api1.biglearn.openstax.org/'
       c
     }
@@ -72,9 +72,9 @@ module OpenStax::BigLearn
     end
 
     it 'calls clue well' do
-      dev1_configuration = OpenStax::BigLearn::V1::Configuration.new
+      dev1_configuration = OpenStax::Biglearn::V1::Configuration.new
       dev1_configuration.server_url = 'https://biglearn-dev1.openstax.org'
-      dev1_client = OpenStax::BigLearn::V1::RealClient.new(dev1_configuration)
+      dev1_client = OpenStax::Biglearn::V1::RealClient.new(dev1_configuration)
 
       profile = UserProfile::CreateProfile.call(username: SecureRandom.hex).outputs.profile
       profile.update_attribute(:exchange_read_identifier, '0edbe5f8f30abc5ba56b5b890bddbbe2')

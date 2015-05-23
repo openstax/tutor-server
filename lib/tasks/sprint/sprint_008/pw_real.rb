@@ -7,7 +7,7 @@ module Sprint008
 
     def exec
 
-      OpenStax::BigLearn::V1.use_real_client
+      OpenStax::Biglearn::V1.use_real_client
 
       user = FactoryGirl.create :user, username: 'student'
       course = Entity::Course.create!

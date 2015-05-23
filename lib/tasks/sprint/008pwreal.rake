@@ -11,7 +11,7 @@ namespace :sprint do
       }
 
       puts "For book #{outputs.book_id} and course #{outputs.course.id}, created a practice " +
-           "widget searching for recommended problems in BigLearn matching\n\n#{OpenStax::BigLearn::V1.real_client.stringify_tag_search(outputs.condition)}\n\n" +
+           "widget searching for recommended problems in Biglearn matching\n\n#{OpenStax::Biglearn::V1.real_client.stringify_tag_search(outputs.condition)}\n\n" +
            "The practice widget has #{outputs.task.task_steps.count} exercises:\n\n"
 
       exercises.each_with_index do |ex, ii|

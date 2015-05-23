@@ -1,4 +1,4 @@
-class OpenStax::BigLearn::V1::FakeClient
+class OpenStax::Biglearn::V1::FakeClient
 
   include Singleton
 

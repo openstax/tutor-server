@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-module OpenStax::BigLearn
+module OpenStax::Biglearn
   RSpec.describe V1::FakeClient, :type => :external do
 
     let(:client) { described_class.instance }

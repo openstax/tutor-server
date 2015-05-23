@@ -1,4 +1,4 @@
-class OpenStax::BigLearn::V1::Exercise
+class OpenStax::Biglearn::V1::Exercise
 
   attr_reader :url, :tags
 
