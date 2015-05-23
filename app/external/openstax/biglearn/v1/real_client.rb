@@ -11,7 +11,6 @@ class OpenStax::Biglearn::V1::RealClient
   end
 
   def add_exercises(exercises)
-    puts "Adding exercises to #{@server_url}"
     options = { body: construct_exercises_payload(exercises).to_json }
     response = request(:post, add_exercises_uri, with_content_type_header(options))
     handle_response(response)

@@ -6,7 +6,6 @@ OpenStax::Biglearn::V1.configure do |config|
   config.secret     = secrets['secret']
 end
 
-puts secrets
 # By default, stub unless in the production environment
 stub = secrets['stub'].nil? ? !Rails.env.production? : secrets['stub']
 stub ? OpenStax::Biglearn::V1.use_fake_client : OpenStax::Biglearn::V1.use_real_client
