@@ -187,9 +187,6 @@ group :development, :test do
   # Automated security checks
   gem 'brakeman'
 
-  # Time travel gem
-  gem 'timecop'
-
   # Command line reference
   gem 'cheat'
 
@@ -215,6 +212,11 @@ group :test do
   gem 'capybara-webkit'
   gem 'launchy'
   gem 'database_cleaner'
+end
+
+group :development, :test, :demo do
+  # Time travel gem
+  gem 'timecop'
 end
 
 group :production do
