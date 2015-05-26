@@ -28,7 +28,7 @@ class Demo001
 
     exercises_url = 'https://exercises-demo.openstax.org'
     archive_url = 'https://archive-staging-tutor.cnx.org/contents/'
-    cnx_book_id = 'e4c329f3-1972-4835-a203-3e8c539e4df3@2.20'
+    cnx_book_id = 'e4c329f3-1972-4835-a203-3e8c539e4df3@2.33'
 
     OpenStax::Exercises::V1.with_configuration(server_url: exercises_url) do
       OpenStax::Cnx::V1.with_archive_url(url: archive_url) do
