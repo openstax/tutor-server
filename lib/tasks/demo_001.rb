@@ -17,9 +17,19 @@ class Demo001
 
   protected
 
+  STABLE_VERSION = 2.33
   DEFAULT_TASK_DURATION = 1.week
 
-  def exec(random_seed: nil, print_logs: true)
+  def exec(print_logs: true, book_version: :latest, random_seed: nil)
+
+    version_string = case book_version.to_sym
+    when :latest
+      ''
+    when :stable
+      "@#{STABLE_VERSION}"
+    else
+      book_version.blank? ? '' : "@#{book_version.to_s}"
+    end
 
     @print_logs = print_logs
 
@@ -28,7 +38,7 @@ class Demo001
 
     exercises_url = 'https://exercises-demo.openstax.org'
     archive_url = 'https://archive-staging-tutor.cnx.org/contents/'
-    cnx_book_id = 'e4c329f3-1972-4835-a203-3e8c539e4df3@2.33'
+    cnx_book_id = "e4c329f3-1972-4835-a203-3e8c539e4df3#{version_string}"
 
     OpenStax::Exercises::V1.with_configuration(server_url: exercises_url) do
       OpenStax::Cnx::V1.with_archive_url(url: archive_url) do
