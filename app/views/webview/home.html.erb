@@ -9,7 +9,7 @@
 </head>
 
 <body id="home">
-<div class="body">
+<div class="body tutor-home">
 
 <!-- HEADER
 ============================================= -->
@@ -28,13 +28,11 @@
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse navbar-right navbar-ex1-collapse">
         <ul class="nav navbar-nav">
-          <li><a href="#intro-header">Impact</a></li>
-          <li><a href="#features">Features</a></li>
           <li><a href="#research">Research</a></li>
           <li><a href="#sponsors">Sponsors</a></li>
           <li><a href="#contact">Contact</a></li>
 
-          <li><%= link_to 'Sign in', openstax_accounts.login_path, class: 'btn-dark' %></li>
+          <li><%= link_to 'Sign in', openstax_accounts.login_path, class: 'btn-large btn-primary' %></li>
         </ul>
       </div>
       <!-- /.navbar-collapse -->
@@ -50,16 +48,18 @@
 <div id="intro-header" class="intro-header">
   <div class="container">
 
-    <div class="row space30" style="display: flex; align-items: center">
+    <div class="row space30">
 
-      <div class="col-md-6">
-        <iframe width="500" height="315" src="https://www.youtube.com/embed/5ZQ9tscs7mM" frameborder="0" allowfullscreen></iframe>
+      <div class="taglines col-md-push-6 col-sm-12 col-md-6">
+        <p>A Personalized Learning</p>
+        <p>Experience from a Tutor</p>
+        <p>That Adapts to You</p>
       </div>
 
-      <div class="col-md-6">
-        <h6>a Personalized Learning</h6>
-        <h6>Experience from a Tutor</h6>
-        <h6>That Adapts to You</h6>
+      <div class="col-md-pull-6 col-sm-12 col-md-6">
+        <div class="tutor-video">
+          <iframe frameborder="0" allowfullscreen src="https://www.youtube.com/embed/5ZQ9tscs7mM"></iframe>
+        </div>
       </div>
 
     </div>
