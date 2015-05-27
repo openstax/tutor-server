@@ -5,7 +5,9 @@ class DummyAssistant
 
   def self.distribute_tasks(task_plan:, taskees:)
     taskees.collect do |taskee|
-      FactoryGirl.create(:tasks_tasking, role: taskee).task
+      task = FactoryGirl.create :tasks_task, task_plan: task_plan
+      FactoryGirl.create(:tasks_tasking, role: taskee, task: task.entity_task)
+      task
     end
   end
 end

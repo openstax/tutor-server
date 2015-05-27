@@ -17,7 +17,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
                                  dependent: :destroy,
                                  autosave: true,
                                  inverse_of: :task
-  has_many :taskings, dependent: :destroy, through: :entity_task
+  has_many :taskings, through: :entity_task
 
   serialize :settings, JSON
 
