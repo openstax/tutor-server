@@ -150,6 +150,7 @@ describe Api::V1::TaskPlansController, :type => :controller, :api => true, :vers
       api_put :update, nil, parameters: { course_id: course.id, id: task_plan.id },
               raw_post_data: Api::V1::TaskPlanRepresenter.new(task_plan).to_json
       expect(response).to have_http_status(:success)
+      task_plan.reload ## task_plan can be altered on the way in to/out of the database
       expect(response.body).to(
         eq(Api::V1::TaskPlanRepresenter.new(task_plan).to_json)
       )
