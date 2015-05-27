@@ -16,46 +16,50 @@
 @import "bootstrap-sprockets";
 @import "bootstrap";
 @import "common_colors";
-@import url(http://fonts.googleapis.com/css?family=Nunito:400,300,700);
+@import url(http://fonts.googleapis.com/css?family=Lato:400);
 
-/*
- * jQuery FlexSlider v2.0
- * http://www.woothemes.com/flexslider/
- *
- * Copyright 2012 WooThemes
- * Free to use under the GPLv2 license.
- * http://www.gnu.org/licenses/gpl-2.0.html
- *
- * Contributing author: Tyler Smith (@mbmufffin)
- */
+.tutor-home {
+  .navbar-brand {
+    background-position-x: 0;
+    background-position-y: 5px;
+    background-size: 217px 30px;
+    height: 40px;
+  }  
+  .taglines {
 
-
-/* Browser Resets */
-.flex-container a:active,
-.flexslider a:active,
-.flex-container a:focus,
-.flexslider a:focus  {outline: none;}
-.slides,
-.flex-control-nav,
-.flex-direction-nav {margin: 0; padding: 0; list-style: none;}
-
-/* FlexSlider Necessary Styles
-*********************************/
-.flexslider {margin: 0; padding: 0;}
-.flexslider .slides > li {display: none; -webkit-backface-visibility: hidden;} /* Hide the slides before the JS is loaded. Avoids image jumping */
-.flexslider .slides img {width: 100%; display: block;}
-.flex-pauseplay span {text-transform: capitalize;}
-
-/* Clearfix for the .slides element */
-.slides:after {content: "."; display: block; clear: both; visibility: hidden; line-height: 0; height: 0;}
-html[xmlns] .slides {display: block;}
-* html .slides {height: 1%;}
-
-/* No JavaScript Fallback */
-/* If you are not using another script, such as Modernizr, make sure you
- * include js that eliminates this class on page load */
-.no-js .slides > li:first-child {display: block;}
-
+    > p {
+      font-size: 40px;
+      font-size: 3.5vw;
+      font-family: Lato;
+      font-weight: 900;
+      
+      @media only screen and (max-width: $screen-md) {
+        font-size: 5vw;
+        text-align: center;
+      }
+      
+      @media only screen and (min-width: 1200px) {
+        font-size: 3vw;
+      }
+      @media only screen and (min-width: 1700px) {
+        font-size: 2.5vw;
+      }
+    }
+  }
+  .tutor-video {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 60%;
+    iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
 
 /* FlexSlider Default Theme
 *********************************/
@@ -135,7 +139,7 @@ body,html {
 body {
   // font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 300;
-  font-family: Nunito;
+  font-family: Lato;
 }
 
 .body {
@@ -145,7 +149,7 @@ body {
 }
 
 h1,h2,h3,h4,h5,h6 {
-  font-family: Nunito;
+  font-family: Lato;
   font-weight: 900;
 }
 
@@ -154,9 +158,10 @@ a {
 }
 
 .big-prose {
-  font-family: Nunito;
+  font-family: Lato;
   font-weight: 300;
   font-size: 24px;
+  padding: 0 10px;
 }
 
 .no-padding {
@@ -226,7 +231,7 @@ header {}
 .navbar-default {
   background: white;
   border: none;
-  padding: 50px 0;
+  padding: 10px 0;
   -webkit-transition: all .3s ease-in-out;
   -moz-transition: all .3s ease-in-out;
   -o-transition: all .3s ease-in-out;
@@ -361,7 +366,7 @@ header {}
 
 .intro-header {
   background: $os_green;
-  padding: 210px 0 40px;
+  padding: 100px 0 40px;
 }
 
 .intro-header h6 {
@@ -369,7 +374,7 @@ header {}
   font-weight: 300;
   // text-transform: uppercase;
   color: white;
-  font-family: Nunito;
+  font-family: Lato;
 }
 
 .intro-header .big-prose {
@@ -629,7 +634,7 @@ header {}
 .info-content h4 {
   font-size: 34px;
   color: #393f4a;
-  font-family: Nunito;
+  font-family: Lato;
   margin: 0 0 50px;
 }
 
@@ -706,7 +711,7 @@ header {}
   font-weight: 300;
   text-align: center;
   margin: 0 0 5px;
-  font-family: Nunito;
+  font-family: Lato;
 }
 
 .staff-content p {
@@ -722,7 +727,7 @@ header {}
 .team-wrap p {
   text-align: center;
   margin: 0 auto;
-  font-family: Nunito;
+  font-family: Lato;
   font-weight: 300;
   color: $os_orange;
   padding: 10px 10px 30px;
@@ -1804,7 +1809,6 @@ footer p a:hover {
 }
 
 .intro-header {
-  background: #f8bc3b;
   padding: 100px 0 20px;
 }
 
@@ -1977,8 +1981,6 @@ footer p a:hover {
 @media only screen and (min-width: 480px) and (max-width: 767px) {
 
 .container {
-  max-width: 400px;
-  width: 400px;
   margin: 0 auto;
 }
 
