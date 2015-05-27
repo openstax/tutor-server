@@ -67,7 +67,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def completed?
-    self.task_steps(true).all?{|ts| ts.completed? }
+    self.task_steps.all?{|ts| ts.completed? }
   end
 
   def status
@@ -87,19 +87,19 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def core_task_steps
-    self.task_steps(true).includes(:tasked).core_group
+    self.task_steps.includes(:tasked).core_group
   end
 
   def non_core_task_steps
-    self.task_steps(true).includes(:tasked) - self.core_task_steps
+    self.task_steps.includes(:tasked) - self.core_task_steps
   end
 
   def spaced_practice_task_steps
-    self.task_steps(true).includes(:tasked).spaced_practice_group
+    self.task_steps.includes(:tasked).spaced_practice_group
   end
 
   def personalized_task_steps
-    self.task_steps(true).includes(:tasked).personalized_group
+    self.task_steps.includes(:tasked).personalized_group
   end
 
   def core_task_steps_completed?
@@ -118,6 +118,8 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     unless strategy.nil?
       strategy.populate_placeholders(task: self)
     end
+
+    self.task_steps(true)
   end
 
   def exercise_count
@@ -133,7 +135,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def exercise_steps
-    task_steps(true).includes(:tasked).select{|task_step| task_step.exercise?}
+    task_steps.includes(:tasked).select{|task_step| task_step.exercise?}
   end
 
   def completed_exercise_steps

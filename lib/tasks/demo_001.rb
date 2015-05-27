@@ -26,7 +26,7 @@ class Demo001
     # By default, choose a fixed seed for repeatability and fewer surprises
     @random_seed = random_seed
 
-    exercises_url = 'https://exercises-demo.openstax.org'
+    exercises_url = 'https://exercises-demo2.openstax.org'
     archive_url = 'https://archive-staging-tutor.cnx.org/contents/'
     cnx_book_id = 'e4c329f3-1972-4835-a203-3e8c539e4df3@2.20'
 
