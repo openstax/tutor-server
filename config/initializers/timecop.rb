@@ -1,3 +1,4 @@
+require "timecop"
 class Timecop
   def self.enabled?
     Rails.application.secrets[:timecop_enable]
