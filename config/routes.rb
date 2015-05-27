@@ -89,6 +89,11 @@ Rails.application.routes.draw do
     end
 
     resources :tags, only: [:index, :edit, :update, :show]
+
+    get :timecop, controller: :timecop, action: :index
+    put :reset_time, controller: :timecop
+    post :freeze_time, controller: :timecop
+    post :time_travel, controller: :timecop
   end
 
   namespace :dev do
