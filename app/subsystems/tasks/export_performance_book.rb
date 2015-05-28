@@ -1,6 +1,6 @@
 module Tasks
   class ExportPerformanceBook
-    lev_routine
+    lev_routine express_output: :output_filename
 
     uses_routine GetCourseProfile,
       translations: { outputs: { type: :verbatim } },
@@ -23,6 +23,7 @@ module Tasks
         axlsx.serialize(tmp_file_path)
       end
 
+      outputs[:output_filename] = tmp_file_path
       Models::PerformanceBookExport.create!(course: course,
                                             role: role,
                                             export: File.open(tmp_file_path))

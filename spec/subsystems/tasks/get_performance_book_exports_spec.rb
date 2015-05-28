@@ -22,6 +22,9 @@ RSpec.describe Tasks::GetPerformanceBookExports do
 
     export = described_class[course: course, role: role]
 
+    File.delete(physics_file.path) if File.exist? physics_file.path
+    File.delete(biology_file.path) if File.exist? biology_file.path
+
     # newest on top
 
     expect(export.length).to eq 2
