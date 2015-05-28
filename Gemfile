@@ -122,13 +122,15 @@ gem 'axlsx', '~> 2.1.0.pre'
 # Pagination library
 gem 'will_paginate', '~> 3.0.6'
 
-group :development, :test do
+group :development do
   # Nail down n+1 queries and unused eager loading
   gem 'bullet'
 
   # Trace AR queries
   gem 'active_record_query_trace'
+end
 
+group :development, :test do
   # SQLite adapter
   gem 'sqlite3'
 
