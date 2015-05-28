@@ -16,6 +16,7 @@
 @import "bootstrap-sprockets";
 @import "bootstrap";
 @import "common_colors";
+
 @import url(http://fonts.googleapis.com/css?family=Lato:400);
 
 .tutor-home {
@@ -24,15 +25,26 @@
     background-position-y: 5px;
     background-size: 217px 30px;
     height: 40px;
-  }  
+  }
+  .navbar-default {
+    .sign-in {
+      @extend .btn-lg;
+      @extend .btn-primary;
+      border-radius: 0px;
+      background-color: $os_orange;
+      color: white;
+      &:hover{
+        background-color: darken( $os-orange, 5% );
+      }
+    }
+  }
   .taglines {
-
     > p {
       font-size: 40px;
       font-size: 3.5vw;
       font-family: Lato;
       font-weight: 900;
-      
+      color: white;
       @media only screen and (max-width: $screen-md) {
         font-size: 5vw;
         text-align: center;
@@ -60,6 +72,7 @@
     }
   }
 }
+            
 
 /* FlexSlider Default Theme
 *********************************/
@@ -98,35 +111,6 @@ display:block;
   font-size: 46px;
 }
 
-/* Direction Nav */
-// .flex-direction-nav {*height: 0;}
-// .flex-direction-nav a {width: 16px; height: 27px; margin: -20px 0 0; display: block; background: #ff0000; position: absolute; top: 135px; z-index: 10; cursor: pointer; text-indent: -9999px; -webkit-transition: all .3s ease;}
-// .flex-direction-nav .flex-next {background:url(../images/next.png); right: 30%; opacity: 0.5;}
-// .flex-direction-nav .flex-prev {background:url(../images/prev.png);left: 30%; opacity: 0.5;}
-
-.flexslider:hover .flex-next:hover, .flexslider:hover .flex-prev:hover {opacity: 1;}
-.flex-direction-nav .flex-disabled {opacity: .3!important; filter:alpha(opacity=30); cursor: default;}
-
-/* Control Nav */
-.flex-control-nav {position: absolute; bottom: -40px; left:0px;right:0px;text-align: center;}
-.flex-control-nav li {margin: 0 6px; display: inline-block; zoom: 1; *display: inline;}
-.flex-control-paging li a {width: 11px; height: 11px; display: block; background: #666; background: rgba(0,0,0,0.5); cursor: pointer; text-indent: -9999px; -webkit-border-radius: 20px; -moz-border-radius: 20px; -o-border-radius: 20px; border-radius: 20px; box-shadow: inset 0 0 3px rgba(0,0,0,0.3);}
-.flex-control-paging li a:hover { background: #333; background: rgba(0,0,0,0.7); }
-.flex-control-paging li a.flex-active { background: #000; background: rgba(0,0,0,0.9); cursor: default; }
-
-.flex-control-thumbs {margin: 0px auto; position: static; overflow: hidden;display:table;width:100%;}
-.flex-control-thumbs li {width: 20%;margin: 0 5px;overflow:hidden;position:relative;z-index:900;}
-.flex-control-thumbs img {max-width: 100%; display: table; margin:0 auto;cursor: pointer;opacity:0.5;   }
-.flex-control-thumbs img:hover {opacity: 1;   filter: none;
-  cursor:pointer;}
-.flex-control-thumbs .flex-active {opacity: 1; cursor: default;   filter: none;
-  cursor:pointer;}
-
-@media screen and (max-width: 860px) {
-  .flex-direction-nav .flex-prev {opacity: 1; left: 0;}
-  .flex-direction-nav .flex-next {opacity: 1; right: 0;}
-}
-
 /*-------------------------------------------------------------
                     GLOBAL STYLES
 ---------------------------------------------------------------*/
@@ -137,7 +121,7 @@ body,html {
 }
 
 body {
-  // font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 300;
   font-family: Lato;
 }
@@ -241,12 +225,6 @@ header {}
 .navbar-brand {
   color: #393f4a !important;
   margin: 0;
-  // font-size: 42px;
-  // font-family: Pacifico;
-  // -webkit-transition: all .3s ease-in-out;
-  // -moz-transition: all .3s ease-in-out;
-  // -o-transition: all .3s ease-in-out;
-  // transition: all .3s ease-in-out;
   background: image-url("OST-Horiz-TM-CMYK.svg") no-repeat;
   width: 350px;
 }
@@ -270,95 +248,6 @@ header {}
 }
 
 
-.btn-dark {
-  width: 140px;
-  line-height: 28px !important;
-  text-align: center;
-  font-size: 15px;
-  color: #fff !important;
-  text-align: center;
-  border-radius: 5px;
-  background: #3a3a3a !important;
-  border: 2px solid #3a3a3a;
-  display: table;
-  text-transform: uppercase;
-  float: right;
-  font-weight: 700;
-  top: -4px;
-  margin-left: 30px;
-  -webkit-transition: all .3s ease-in-out;
-  -moz-transition: all .3s ease-in-out;
-  -o-transition: all .3s ease-in-out;
-  transition: all .3s ease-in-out;
-}
-
-.btn-dark:hover {
-  color: #3a3a3a !important;
-  background: transparent !important;
-  -webkit-transition: all .3s ease-in-out;
-  -moz-transition: all .3s ease-in-out;
-  -o-transition: all .3s ease-in-out;
-  transition: all .3s ease-in-out;
-}
-
-.btn-lite {
-  width: 160px;
-  line-height: 50px;
-  text-align: center;
-  font-size: 15px;
-  color: #393f4a;
-  text-align: center;
-  border-radius: 5px;
-  border: 2px solid #fff;
-  background: #fff;
-  display: table;
-  text-transform: uppercase;
-  margin: 65px auto 0;
-  font-weight: 700;
-  -webkit-transition: all .3s ease-in-out;
-  -moz-transition: all .3s ease-in-out;
-  -o-transition: all .3s ease-in-out;
-  transition: all .3s ease-in-out;
-}
-
-.btn-lite:hover {
-  color: #fff;
-  background: transparent;
-  border: 2px solid #fff;
-  -webkit-transition: all .3s ease-in-out;
-  -moz-transition: all .3s ease-in-out;
-  -o-transition: all .3s ease-in-out;
-  transition: all .3s ease-in-out;
-}
-
-.btn-lite1 {
-  width: 160px;
-  line-height: 50px;
-  text-align: center;
-  font-size: 15px;
-  color: #3a3a3a;
-  border: 2px solid #3a3a3a;
-  text-align: center;
-  border-radius: 5px;
-  background: #fff;
-  display: table;
-  text-transform: uppercase;
-  margin: 40px auto 100px;
-  font-weight: 700;
-  -webkit-transition: all .3s ease-in-out;
-  -moz-transition: all .3s ease-in-out;
-  -o-transition: all .3s ease-in-out;
-  transition: all .3s ease-in-out;
-}
-
-.btn-lite1:hover {
-  color: #27ae60;
-  border: 2px solid #27ae60;
-  -webkit-transition: all .3s ease-in-out;
-  -moz-transition: all .3s ease-in-out;
-  -o-transition: all .3s ease-in-out;
-  transition: all .3s ease-in-out;
-}
 
 /*-------------------------------------------------------------
                     SLIDER STYLES
@@ -372,7 +261,6 @@ header {}
 .intro-header h6 {
   font-size: 40px;
   font-weight: 300;
-  // text-transform: uppercase;
   color: white;
   font-family: Lato;
 }
@@ -1029,8 +917,17 @@ header {}
   opacity: 1;
 }
 
-.submit {
+.contact-wrap input[type=submit] {
+  @extend .btn-lg;
+  width: 150px;
+  background-color: $os_gray;
+  color: white;
   margin: 0;
+  &:hover{
+    color: white;
+    background-color: lighten($os_gray, 5%);
+    text-decoration: none;
+  }
 }
 
 /*-------------------------------------------------------------
