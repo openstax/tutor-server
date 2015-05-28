@@ -48,7 +48,7 @@ class Demo001 < DemoBase
     run(:make_administrator, user: admin_profile.entity_user)
     log("Added an admin user #{admin_profile.account.full_name}")
 
-    teacher_profile = new_user_profile(username: 'teacher', name: 'Bill Nye')
+    teacher_profile = new_user_profile(username: 'teacher', name: 'Charles Morris')
     run(:add_teacher, course: course, user: teacher_profile.entity_user)
 
     students = 20.times.collect do |ii|
