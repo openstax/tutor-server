@@ -125,6 +125,12 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     exercise_steps.count
   end
 
+  def actual_and_placeholder_exercise_count
+    task_steps(true).includes(:tasked).select{ |task_step|
+      task_step.exercise? || (task_step.placeholder? && task_step.tasked.exercise_type?)
+    }.length
+  end
+
   def completed_exercise_count
     completed_exercise_steps.count
   end

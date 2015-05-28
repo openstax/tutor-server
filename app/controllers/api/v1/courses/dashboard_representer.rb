@@ -61,7 +61,8 @@ module Api::V1::Courses
     end
 
     class ReadingTask < TaskBase
-      property :exercise_count,
+      property :actual_and_placeholder_exercise_count,
+               as: :exercise_count,
                type: Integer,
                readable: true,
                writeable: false
@@ -74,7 +75,8 @@ module Api::V1::Courses
     end
 
     class HomeworkTask < TaskBase
-      property :exercise_count,
+      property :actual_and_placeholder_exercise_count,
+               as: :exercise_count,
                type: Integer,
                readable: true,
                writeable: false
