@@ -12,6 +12,7 @@ task :demo, [:book_version, :random_seed] => :environment do |tt, args|
       puts "#{base_name} Success!"
     else
       result.errors.each{ |error| puts "#{base_name} Error: " + Lev::ErrorTranslator.translate(error) }
+      break
     end
   end
 end
