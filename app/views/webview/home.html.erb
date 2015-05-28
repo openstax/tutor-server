@@ -285,16 +285,16 @@
   <div class="container">
     <div class="row">
       <div class="section-title">
-        <h3>Contact Us</h3>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla non congue sapien, in tempus odio.</p>
+        <h3>Need to contact us?</h3>
+        <p>We're here to help</p>
       </div>
       <div class="space90"></div>
       <div class="col-md-8 col-md-offset-2">
-        <form>
+        <%= form_tag contact_form_path %>
           <input type="text" placeholder="NAME:"/>
           <input type="text" placeholder="E-MAIL:"/>
           <textarea rows="5" placeholder="MESSAGE:"></textarea>
-          <a class="btn-lite submit" href="#">Submit</a>
+          <input type="submit" class="submit" value="Submit">
         </form>
       </div>
     </div>
