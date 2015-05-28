@@ -15,7 +15,8 @@ RSpec.describe Tasks::ExportPerformanceBook, speed: :slow, vcr: VCR_OPTS do
   it 'does not blow up' do
     role = GetUserCourseRoles[course: course, user: teacher.entity_user].first
     expect {
-      described_class[role: role, course: course]
+      output_filename = described_class[role: role, course: course]
+      File.delete(output_filename) if File.exist? output_filename
     }.not_to raise_error
   end
 end
