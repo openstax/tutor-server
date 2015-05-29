@@ -9,6 +9,7 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, :type => :representer 
     allow(step).to receive(:completed?).and_return(false)
     allow(step).to receive(:feedback_available?).and_return(false)
     allow(step).to receive(:related_content).and_return([])
+    allow(step).to receive(:labels).and_return([])
     step
   }
 
@@ -44,6 +45,8 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, :type => :representer 
     end
 
     it "correctly references the TaskStep and Task ids" do
+      allow(task_step).to receive(:id).and_return(15)
+      allow(task_step).to receive(:tasks_task_id).and_return(42)
       expect(representation).to include(
         "id"      => 15.to_s,
         "task_id" => 42.to_s
@@ -51,23 +54,33 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, :type => :representer 
     end
 
     it "has the correct 'content_url'" do
+      allow(tasked_exercise).to receive(:url).and_return('Some url')
       expect(representation).to include("content_url" => 'Some url')
     end
 
     it "has the correct 'title'" do
+      allow(tasked_exercise).to receive(:title).and_return('Some title')
       expect(representation).to include("title" => 'Some title')
     end
 
     it "has the correct 'content'" do
+      allow(tasked_exercise).to receive(:content_hash_without_correctness).and_return('Some content')
       expect(representation).to include("content" => 'Some content')
     end
 
     it "has the correct 'group'" do
+      allow(task_step).to receive(:group_name).and_return('Some group')
       expect(representation).to include("group" => 'Some group')
     end
 
     it "has 'related_content'" do
+      allow(task_step).to receive(:related_content).and_return([])
       expect(representation).to include("related_content")
+    end
+
+    it "has 'labels'" do
+      allow(task_step).to receive(:labels).and_return([])
+      expect(representation).to include("labels")
     end
 
   end

@@ -69,7 +69,16 @@ module Api::V1::Tasks
                getter: lambda {|*| task_step.related_content },
                schema_info: {
                  required: true,
-                 description: "Misc information related to this step"
+                 description: "Misc content related to this step"
+               }
+
+    collection :labels,
+               writeable: false,
+               readable: true,
+               getter: lambda {|*| task_step.labels },
+               schema_info: {
+                 required: true,
+                 description: "Misc properties related to this step"
                }
 
   end

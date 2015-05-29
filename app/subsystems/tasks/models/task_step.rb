@@ -19,10 +19,15 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   scope :exercises, -> { where{tasked_type == Tasks::Models::TaskedExercise.name} }
 
   after_initialize :init_settings
+  after_initialize :init_labels
   after_initialize :init_related_content
 
   def init_settings
     self.settings ||= {}
+  end
+
+  def init_labels
+    self.settings['labels'] ||= []
   end
 
   def init_related_content
@@ -74,6 +79,21 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
 
   def add_related_content(related_content_hash)
     self.settings['related_content'] << related_content_hash
+  end
+
+  def labels
+    self.settings['labels']
+  end
+
+  def labels=(value)
+    self.settings['labels'] = value
+    self.settings['labels'] ||= []
+  end
+
+  def add_labels(labels)
+    [labels].flatten.each do |label|
+      self.settings['labels'] << label
+    end
   end
 
 end
