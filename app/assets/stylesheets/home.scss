@@ -38,6 +38,7 @@ $standard-spacing: 40px;
     background-position-x: 0;
     background-position-y: 12px;
     background-size: 217px 30px;
+    width: 250px;
     height: $standard-spacing;
   }
   .navbar-default {
@@ -49,6 +50,7 @@ $standard-spacing: 40px;
       height: 43px;
       font-size: 18px;
       line-height: 1.4;
+      margin: 5px 10px;
     }
   }
   .taglines {
