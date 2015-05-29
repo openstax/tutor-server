@@ -123,9 +123,6 @@ gem 'axlsx', '~> 2.1.0.pre'
 gem 'will_paginate', '~> 3.0.6'
 
 group :development do
-  # Nail down n+1 queries and unused eager loading
-  gem 'bullet'
-
   # Trace AR queries
   gem 'active_record_query_trace'
 end
@@ -163,6 +160,9 @@ group :development, :test do
   gem 'pry-nav'
   gem 'pry-rails'
   gem 'pry-stack_explorer'
+
+  # Nail down n+1 queries and unused eager loading
+  gem 'bullet'
 
   # Access an IRB console on exceptions page and /console in development
   gem 'web-console', '~> 2.0.0'
