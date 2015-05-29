@@ -10,6 +10,13 @@ RSpec.describe Api::V1::TagRepresenter, type: :representer do
                        description: nil
   }
 
+  let!(:dok_tag) {
+    FactoryGirl.create :content_tag,
+                       value: 'dok1',
+                       tag_type: :generic,
+                       name: nil
+  }
+
   let!(:teks_tag) {
     FactoryGirl.create :content_tag,
                        value: 'ost-tag-teks-112-39-c-4d',
@@ -47,6 +54,13 @@ RSpec.describe Api::V1::TagRepresenter, type: :representer do
       'name' => generic_tag.name,
       'description' => generic_tag.description,
       'type' => 'generic',
+    )
+  end
+
+  it 'shows the default name for dok tags' do
+    representation = Api::V1::TagRepresenter.new(dok_tag).as_json
+    expect(representation).to include(
+      'name' => 'DOK: 1'
     )
   end
 
