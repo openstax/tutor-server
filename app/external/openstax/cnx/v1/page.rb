@@ -218,26 +218,23 @@ module OpenStax::Cnx::V1
     protected
 
     def node_to_fragment(node)
-      klass = node['class']
+      klass = node['class'] || []
 
-      return Fragment::Text.new(node: node) if klass.nil?
+      fragment =
+        if INTERACTIVE_CLASSES.any? { |interactive_class| klass.include?(interactive_class) }
+          Fragment::Interactive.new(node: node)
+        elsif klass.include?(VIDEO_CLASS)
+          Fragment::Video.new(node: node)
+        elsif klass.include?(EXERCISE_CHOICE_CLASS)
+          Fragment::ExerciseChoice.new(node: node)
+        elsif klass.include?(EXERCISE_CLASS)
+          Fragment::Exercise.new(node: node)
+        else
+          Fragment::Text.new(node: node)
+        end
 
-      if INTERACTIVE_CLASSES.any? { |interactive_class| klass.include?(interactive_class) }
-        # Simulation
-        Fragment::Interactive.new(node: node)
-      elsif klass.include?(VIDEO_CLASS)
-        # Video
-        Fragment::Video.new(node: node)
-      elsif klass.include?(EXERCISE_CHOICE_CLASS)
-        # Exercise choice
-        Fragment::ExerciseChoice.new(node: node)
-      elsif klass.include?(EXERCISE_CLASS)
-        # Exercise
-        Fragment::Exercise.new(node: node)
-      else
-        # Nothing matched, so consider it to be plain text
-        Fragment::Text.new(node: node)
-      end
+      fragment.add_labels('worked-example') if klass.include?('worked-example')
+      fragment
     end
 
     def split_into_fragments(node)

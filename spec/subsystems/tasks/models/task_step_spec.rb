@@ -77,4 +77,25 @@ RSpec.describe Tasks::Models::TaskStep, :type => :model do
       }.to change{task_step.related_content}.by [content]
     end
   end
+
+  context "labels" do
+    it "can get labels" do
+      expect(task_step.labels).to eq([])
+    end
+
+    it "can set labels" do
+      target_labels = ['label1', 'label2']
+      task_step.labels = target_labels
+      expect(task_step.labels).to eq(target_labels)
+    end
+
+    it "can add new labels" do
+      expect(task_step.labels).to eq([])
+
+      labels = ['a', 'b']
+      expect{
+        task_step.add_labels labels
+      }.to change{task_step.labels}.by labels
+    end
+  end
 end

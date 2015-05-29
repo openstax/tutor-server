@@ -1,5 +1,6 @@
 module OpenStax::Cnx::V1::Fragment
   class ExerciseChoice
+    include ActsAsFragment
 
     # Used to get the title
     TITLE_CSS = '[data-type="title"]'
@@ -29,13 +30,12 @@ module OpenStax::Cnx::V1::Fragment
       end
     end
 
-    def visit(visitor:, depth: 0)
-      visitor.pre_order_visit(elem: self, depth: depth)
-      visitor.in_order_visit(elem: self, depth: depth)
+    protected
+
+    def custom_visit(visitor:, depth:)
       exercise_fragments.each do |exercise_fragment|
         exercise_fragment.visit(visitor: visitor, depth: depth+1)
       end
-      visitor.post_order_visit(elem: self, depth: depth)
     end
 
   end

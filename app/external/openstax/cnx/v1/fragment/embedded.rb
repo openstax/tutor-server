@@ -1,5 +1,6 @@
 module OpenStax::Cnx::V1::Fragment
   class Embedded
+    include ActsAsFragment
 
     class_attribute :default_width, :default_height
 
@@ -73,12 +74,6 @@ module OpenStax::Cnx::V1::Fragment
       end
 
       @to_html ||= node.to_html
-    end
-
-    def visit(visitor:, depth: 0)
-      visitor.pre_order_visit(elem: self, depth: depth)
-      visitor.in_order_visit(elem: self, depth: depth)
-      visitor.post_order_visit(elem: self, depth: depth)
     end
 
     protected

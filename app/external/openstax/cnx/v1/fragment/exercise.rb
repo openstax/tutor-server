@@ -1,5 +1,6 @@
 module OpenStax::Cnx::V1::Fragment
   class Exercise
+    include ActsAsFragment
 
     # Used to get the title
     TITLE_CSS = '[data-type="title"]'
@@ -31,12 +32,6 @@ module OpenStax::Cnx::V1::Fragment
 
     def embed_tag
       @short_code ||= EMBED_TAG_REGEX.match(embed_code).try(:[], 1)
-    end
-
-    def visit(visitor:, depth: 0)
-      visitor.pre_order_visit(elem: self, depth: depth)
-      visitor.in_order_visit(elem: self, depth: depth)
-      visitor.post_order_visit(elem: self, depth: depth)
     end
 
   end

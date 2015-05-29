@@ -121,6 +121,7 @@ class Tasks::Assistants::IReadingAssistant
 
         next if step.tasked.nil?
         step.core_group!
+        step.add_labels(fragment.labels)
         step.add_related_content(related_content_for_page(page: page, title: page_title))
         task.task_steps << step
 

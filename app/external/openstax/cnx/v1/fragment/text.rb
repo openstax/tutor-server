@@ -1,5 +1,6 @@
 module OpenStax::Cnx::V1::Fragment
   class Text
+    include ActsAsFragment
 
     # Used to get the title
     TITLE_CSS = '[data-type="title"]'
@@ -26,12 +27,5 @@ module OpenStax::Cnx::V1::Fragment
     def to_html
       node.to_html
     end
-
-    def visit(visitor:, depth: 0)
-      visitor.pre_order_visit(elem: self, depth: depth)
-      visitor.in_order_visit(elem: self, depth: depth)
-      visitor.post_order_visit(elem: self, depth: depth)
-    end
-
   end
 end
