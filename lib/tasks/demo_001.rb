@@ -1,12 +1,5 @@
 require_relative 'demo_base'
 
-if ActiveRecordQueryTrace.enabled
-  logger = Logger.new(STDOUT)
-  logger.info "ActiveRecord Query Trace is enabled! This will be way too slow!"
-  logger.info "DISABLING ActiveRecord Query Trace"
-  ActiveRecordQueryTrace.enabled = false
-end
-
 class Demo001 < DemoBase
 
   lev_routine
