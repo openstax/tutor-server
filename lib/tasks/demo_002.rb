@@ -93,83 +93,87 @@ class Demo002 < DemoBase
 
     end
 
-    ### First Chapter 4 iReading
+    #
+    # PER JAH DON'T DO CH 4 ASSIGNMENTS
     #
 
-    responses_list = new_responses_list(
-      assignment_type: :reading,
-      step_types: %w( r i e e ),
-      entries: [
-                  94,
-                  88,
-                  60,
-                  :incomplete,
-                  84,
-                  :incomplete,
-                  92,
-                  82,
-                  100,
-                  81,
-                  100,
-                  87,
-                  59,
-                  82,
-                  :incomplete,
-                  :not_started,
-                  :not_started,
-                  66,
-                  88,
-                  89
-               ]
-    )
+    # ### First Chapter 4 iReading
+    # #
 
-    assign_ireading(course: course,
-                    chapter_sections: [[4, 0], [4, 1]],
-                    title: 'Reading 4.0 - 4.1',
-                    due_at: initial_date - 0.days).each_with_index do |ireading, index|
+    # responses_list = new_responses_list(
+    #   assignment_type: :reading,
+    #   step_types: %w( r i e e ),
+    #   entries: [
+    #               94,
+    #               88,
+    #               60,
+    #               :incomplete,
+    #               84,
+    #               :incomplete,
+    #               92,
+    #               82,
+    #               100,
+    #               81,
+    #               100,
+    #               87,
+    #               59,
+    #               82,
+    #               :incomplete,
+    #               :not_started,
+    #               :not_started,
+    #               66,
+    #               88,
+    #               89
+    #            ]
+    # )
 
-      work_task(task: ireading, responses: responses_list[index])
+    # assign_ireading(course: course,
+    #                 chapter_sections: [[4, 0], [4, 1]],
+    #                 title: 'Reading 4.0 - 4.1',
+    #                 due_at: initial_date - 0.days).each_with_index do |ireading, index|
 
-    end
+    #   work_task(task: ireading, responses: responses_list[index])
 
-    ### First Chapter 4 HW
-    #
+    # end
 
-    responses_list = new_responses_list(
-      assignment_type: :homework,
-      step_types: %w( e e e e e e e e e e ),
-      entries: [
-                 :incomplete,
-                 :incomplete,
-                 95,
-                 72,
-                 89,
-                 70,
-                 96,
-                 87,
-                 100,
-                 84,
-                 100,
-                 83,
-                 70,
-                 88,
-                 83,
-                 90,
-                 77,
-                 76,
-                 91,
-                 85
-               ]
-    )
+    # ### First Chapter 4 HW
+    # #
 
-    assign_homework(course: course,
-                    chapter_sections: [[4, 0], [4, 1]],
-                    num_exercises: 8,
-                    due_at: initial_date - 0.days).each_with_index do |hw, index|
+    # responses_list = new_responses_list(
+    #   assignment_type: :homework,
+    #   step_types: %w( e e e e e e e e e e ),
+    #   entries: [
+    #              :incomplete,
+    #              :incomplete,
+    #              95,
+    #              72,
+    #              89,
+    #              70,
+    #              96,
+    #              87,
+    #              100,
+    #              84,
+    #              100,
+    #              83,
+    #              70,
+    #              88,
+    #              83,
+    #              90,
+    #              77,
+    #              76,
+    #              91,
+    #              85
+    #            ]
+    # )
 
-      work_task(task: hw, responses: responses_list[index])
+    # assign_homework(course: course,
+    #                 chapter_sections: [[4, 0], [4, 1]],
+    #                 num_exercises: 8,
+    #                 due_at: initial_date - 0.days).each_with_index do |hw, index|
 
-    end
+    #   work_task(task: hw, responses: responses_list[index])
+
+    # end
 
   end
 end
