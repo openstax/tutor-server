@@ -52,8 +52,17 @@ $standard-spacing: 40px;
       line-height: 1.4;
       margin: 5px 10px;
     }
+
+  }
+  .promo {
+    display: flex;
+    align-items: center;
+    @media only screen and (max-width: $screen-md) {
+      display: block;
+    }  
   }
   .taglines {
+
     > p {
       font-size: $standard-spacing;
       font-size: 3vw;
@@ -108,8 +117,40 @@ $standard-spacing: 40px;
 
     }
   }
-}
-            
+
+  
+  .big-prose {
+    padding: $standard-spacing;
+    font-family: Lato;
+    font-weight: 300;
+    font-size: 24px;
+    
+    background-color: white;
+    color: black;
+  }
+
+  .qa {
+    padding: $standard-spacing 0;
+    background-color: $os_orange;
+    color: white;
+    
+    .qa-content {
+      h4 {
+        font-size: 24px;
+        margin: 0 0 15px;
+        text-align: center;
+      }
+      p {
+        font-size: 16px;
+        text-align: center;
+        font-weight: 400;
+        line-height: 28px;
+        margin: 0 auto;
+        width: 95%;
+      }
+    }
+  }
+}          
 
 /* FlexSlider Default Theme
 *********************************/
@@ -176,22 +217,6 @@ h1,h2,h3,h4,h5,h6 {
 
 a {
   color: #27ae60;
-}
-
-.big-prose {
-  background-color: $os_green;
-  color: white;
-  padding-bottom: $standard-spacing;
-  font-family: Lato;
-  font-weight: 300;
-  font-size: 24px;
-
-  @media only screen and (max-width: $screen-md-min) {
-    background-color: white;
-    color: black;
-    padding: $standard-spacing;
-    
-  }
 }
 
 .no-padding {
@@ -316,37 +341,6 @@ header {}
                     SERVICES STYLES
 ---------------------------------------------------------------*/
 
-.qa {
-  background: #fff;
-  padding: $standard-spacing 0;
-  @media only screen and (max-width: $screen-md-min) {
-    background-color: $os_orange;
-    color: white;
-  }
-
-}
-
-.qa-content {
-  img {
-    display: table;
-    margin: 0 auto 35px;
-  }
-
-  h4 {
-    font-size: 24px;
-    margin: 0 0 15px;
-    text-align: center;
-  }
-
-  p {
-    font-size: 16px;
-    text-align: center;
-    font-weight: 400;
-    line-height: 28px;
-    margin: 0 auto;
-    width: 95%;
-  }
-}
 
 /*-------------------------------------------------------------
                     COMMON STYLES
