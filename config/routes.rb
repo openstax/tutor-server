@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   scope module: 'static_pages' do
     get 'about'
     get 'contact'
+    post 'contact_form'
     get 'copyright'
     get 'developers'
     get 'help'

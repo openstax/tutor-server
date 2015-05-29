@@ -27,12 +27,11 @@
       </div>
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse navbar-right navbar-ex1-collapse">
-        <ul class="nav navbar-nav">
-          <li><a href="#research">Research</a></li>
+        <ul class="nav navbar-nav links">
           <li><a href="#sponsors">Sponsors</a></li>
           <li><a href="#contact">Contact</a></li>
 
-          <li><%= link_to 'Sign in', openstax_accounts.login_path, class: 'btn-large btn-primary' %></li>
+          <li><%= link_to 'Sign in', openstax_accounts.login_path, class: 'sign-in' %></li>
         </ul>
       </div>
       <!-- /.navbar-collapse -->
@@ -48,7 +47,7 @@
 <div id="intro-header" class="intro-header">
   <div class="container">
 
-    <div class="row space30">
+    <div class="row promo">
 
       <div class="taglines col-md-push-6 col-sm-12 col-md-6">
         <p>A Personalized Learning</p>
@@ -58,18 +57,22 @@
 
       <div class="col-md-pull-6 col-sm-12 col-md-6">
         <div class="tutor-video">
-          <iframe frameborder="0" allowfullscreen src="https://www.youtube.com/embed/5ZQ9tscs7mM"></iframe>
+          <iframe frameborder="0" allowfullscreen src="https://www.youtube.com/embed/YlZhjroR1rk"></iframe>
         </div>
       </div>
 
     </div>
 
-    <div class="row big-prose">
-      OpenStax Tutor melds new cyber and social infrastructures to put powerful learning tools in the hands of educators and learners. OpenStax Tutor is an ambitious effort that combines high-quality, public-ready software with advanced research.
-    </div>
-
   </div>
 </div>
+<div class="big-prose">
+  <div class="container">
+    <div class="row">
+      OpenStax Tutor melds new cyber and social infrastructures to put powerful learning tools in the hands of educators and learners. OpenStax Tutor is an ambitious effort that combines high-quality, public-ready software with advanced research.
+    </div>
+  </div>
+</div>
+
 
 <!-- SLIDER
 ============================================= -->
@@ -79,193 +82,41 @@
 <div class="qa" id="qa">
   <div class="container">
     <div class="row">
-      <div class="col-md-4 qa-content">
 
+      <div class="col-sm-6 col-xs-12 qa-content">
         <h4>What is it?</h4>
         <p>A study resource, homework, and test delivery system that uses powerful, advanced techniques to improve student learning and instructor understanding.</p>
       </div>
-      <div class="col-md-4 qa-content">
 
+      <div class="col-sm-6 col-xs-12 qa-content team">
         <h4>Who is behind it?</h4>
-        <p>OpenStax Tutor is a non-profit venture at Rice University, run by professional software developers and learning researchers, and supported by foundations.</p>
+        <p>A non-profit venture at Rice University, run by professional software developers and learning researchers, and supported by foundations.</p>
       </div>
-      <div class="col-md-4 qa-content">
 
-        <h4>How much does it cost?</h4>
-        <p>OpenStax Tutor is free for individual students and teachers. Depending on their usage, organization-level users may pay a small mission-support fee.</p>
-      </div>
     </div>
   </div>
   <!-- /.container -->
 </div>
-<!-- Q/A
-============================================= -->
-
-<!-- TEAM CONTENT
-============================================= -->
-<div class="team-wrap" id="features">
-  <div class="container">
-    <div class="row">
-      <div class="section-title">
-        <h3>Features</h3>
-      </div>
-      <div class="space90"></div>
-
-      <div class="col-md-12 no-padding space50">
-        <div class="col-md-3">
-          <div class="staff-content staff-content1">
-            <div class="staff-img">
-              <img src="" class="img-responsive" alt=""/>
-            </div>
-            <h5>Feature 1</h5>
-            <p>Details details details details details details</p>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="staff-content staff-content2">
-            <div class="staff-img">
-              <img src="" class="img-responsive" alt=""/>
-            </div>
-            <h5>Feature 2</h5>
-            <p>Details details details details details details</p>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="staff-content staff-content3">
-            <div class="staff-img">
-              <img src="" class="img-responsive" alt=""/>
-            </div>
-            <h5>Feature 3</h5>
-            <p>Details details details details details details</p>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="staff-content staff-content4">
-            <div class="staff-img">
-              <img src="" class="img-responsive" alt=""/>
-            </div>
-            <h5>Feature 4</h5>
-            <p>Details details details details details details</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-12 no-padding">
-        <div class="col-md-3">
-          <div class="staff-content staff-content1">
-            <div class="staff-img">
-              <img src="" class="img-responsive" alt=""/>
-            </div>
-            <h5>Feature 5</h5>
-            <p>Details details details details details details</p>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="staff-content staff-content2">
-            <div class="staff-img">
-              <img src="" class="img-responsive" alt=""/>
-            </div>
-            <h5>Feature 6</h5>
-            <p>Details details details details details details</p>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="staff-content staff-content3">
-            <div class="staff-img">
-              <img src="" class="img-responsive" alt=""/>
-            </div>
-            <h5>Feature 7</h5>
-            <p>Details details details details details details</p>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="staff-content staff-content4">
-            <div class="staff-img">
-              <img src="" class="img-responsive" alt=""/>
-            </div>
-            <h5>Feature 8</h5>
-            <p>Details details details details details details</p>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</div>
-<!-- TEAM CONTENT
-============================================= -->
 
 <!-- INFO CONTENT
 ============================================= -->
-<div class="info-wrap" id="research" style='padding-bottom:0px'>
-  <div class="container">
-    <div class="row">
-      <div class="section-title">
-        <h3>Research</h3>
-      </div>
-      <div class="space80"></div>
-      <div class="col-md-12 no-padding info-content space60">
-        <div class="col-md-6">
-          <img src="" class="img-responsive s1" style="border:1px solid gray; width: 500px; height: 250px" alt=""/>
-        </div>
-        <div class="col-md-6">
-          <h4>Cognitive Science</h4>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla non congue sapien, in tempus odio. Donec in aliquam ipsum. Morbi ut erat vitae nulla iacli sedictum sit amet ut dui. Integer vel velit tempus, feugiat diam vel, ultricies tortor. Morbi enim felis, scelerisque ultricies augue ac, iaculis venenatis dolor.</p>
-        </div>
-      </div>
-      <div class="col-md-12 no-padding info-content space60">
-        <div class="col-md-6">
-          <h4>Machine Learning</h4>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla non congue sapien, in tempus odio. Donec in aliquam ipsum. Morbi ut erat vitae nulla iacli sedictum sit amet ut dui. Integer vel velit tempus, feugiat diam vel, ultricies tortor. Morbi enim felis, scelerisque ultricies augue ac, iaculis venenatis dolor.</p>
-        </div>
-        <div class="col-md-6">
-          <img src="" class="img-responsive pull-right s2" style="border:1px solid gray; width: 500px; height: 250px" alt=""/>
-        </div>
-      </div>
-      <div class="col-md-12 no-padding info-content space60">
-        <div class="col-md-6">
-          <img src="" class="img-responsive s1" style="border:1px solid gray; width: 500px; height: 250px" alt=""/>
-        </div>
-        <div class="col-md-6">
-          <h4>Privacy-focused</h4>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla non congue sapien, in tempus odio. Donec in aliquam ipsum. Morbi ut erat vitae nulla iacli sedictum sit amet ut dui. Integer vel velit tempus, feugiat diam vel, ultricies tortor. Morbi enim felis, scelerisque ultricies augue ac, iaculis venenatis dolor.</p>
-        </div>
-      </div>
-      <div class="col-md-12 no-padding info-content space60">
-        <div class="col-md-6">
-          <h4>Peer-reviewed publications</h4>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla non congue sapien, in tempus odio. Donec in aliquam ipsum. Morbi ut erat vitae nulla iacli sedictum sit amet ut dui. Integer vel velit tempus, feugiat diam vel, ultricies tortor. Morbi enim felis, scelerisque ultricies augue ac, iaculis venenatis dolor.</p>
-        </div>
-        <div class="col-md-6">
-          <img src="" class="img-responsive pull-right s2" style="border:1px solid gray; width: 500px; height: 250px" alt=""/>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- INFO CONTENT
-============================================= -->
-
-
-<!-- INFO CONTENT
-============================================= -->
-<div class="info-wrap" id="sponsors">
+<div class="info-wrap sponsors">
   <div class="container">
     <div class="row">
       <div class="section-title">
         <h3>Sponsors</h3>
       </div>
-      <div class="space80"></div>
-      <div class="col-md-12 no-padding info-content space60" style="display: flex; align-items: center">
-        <div class="col-md-6" style='text-align:center'>
+      <div class="col-md-12 sponsor">
+        <div class="col-md-6 logo">
           <%= image_tag 'ljaf_color_tagline_transp.gif' %>
         </div>
         <div class="col-md-6">
           <p>Laura and John Arnold Foundation (LJAF) actively seeks opportunities to invest in organizations and thought leaders that have a sincere interest in implementing fundamental changes that not only yield immediate gains, but also repair broken systems for future generations. LJAF currently focuses its strategic investments on education, criminal justice, research integrity, and public accountability.</p>
         </div>
       </div>
-      <div class="col-md-12 no-padding info-content space60" style="display: flex; align-items: center">
-        <div class="col-md-6" style='text-align:center'>
+
+      <div class="col-md-12 sponsor">
+        <div class="col-md-6 logo">
           <%= image_tag 'gates_red.jpg' %>
         </div>
         <div class="col-md-6">
@@ -285,16 +136,16 @@
   <div class="container">
     <div class="row">
       <div class="section-title">
-        <h3>Contact Us</h3>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla non congue sapien, in tempus odio.</p>
+        <h3>Need to contact us?</h3>
+        <p>We're here to help</p>
       </div>
       <div class="space90"></div>
       <div class="col-md-8 col-md-offset-2">
-        <form>
+        <%= form_tag contact_form_path %>
           <input type="text" placeholder="NAME:"/>
           <input type="text" placeholder="E-MAIL:"/>
           <textarea rows="5" placeholder="MESSAGE:"></textarea>
-          <a class="btn-lite submit" href="#">Submit</a>
+          <input type="submit" class="submit" value="Submit">
         </form>
       </div>
     </div>
