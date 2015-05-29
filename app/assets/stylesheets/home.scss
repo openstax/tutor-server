@@ -157,7 +157,7 @@ a {
 .big-prose {
   background-color: $os_green;
   color: white;
-  padding: 10px 0 $standard-spacing;
+  padding-bottom: $standard-spacing;
   font-family: Lato;
   font-weight: 300;
   font-size: 24px;
@@ -277,7 +277,7 @@ header {}
 
 .intro-header {
   background: $os_green;
-  padding: 100px 0 0px;
+  padding: 100px 0 $standard-spacing;
 }
 
 .intro-header h6 {
