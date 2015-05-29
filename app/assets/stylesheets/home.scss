@@ -22,7 +22,7 @@
 .tutor-home {
   .navbar-brand {
     background-position-x: 0;
-    background-position-y: 5px;
+    background-position-y: 12px;
     background-size: 217px 30px;
     height: 40px;
   }
@@ -36,6 +36,14 @@
       &:hover{
         background-color: darken( $os-orange, 5% );
       }
+    }
+  }
+  .navbar-nav.links {
+    li a {
+      // enforce uniform size for all navbar links
+      height: 43px;
+      font-size: 18px;
+      line-height: 1.4;
     }
   }
   .taglines {
