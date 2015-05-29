@@ -945,6 +945,7 @@ header {}
 }
 
 .contact-wrap input[type=submit] {
+  text-transform: uppercase;
   @include tutor-button();
   width: 150px;
 }
