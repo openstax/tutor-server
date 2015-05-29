@@ -30,13 +30,15 @@
     background-color: darken( $os-orange, 5% );
   }
 }
+
+$standard-spacing: 40px;
             
 .tutor-home {
   .navbar-brand {
     background-position-x: 0;
     background-position-y: 12px;
     background-size: 217px 30px;
-    height: 40px;
+    height: $standard-spacing;
   }
   .navbar-default {
     .sign-in { @include tutor-button(); }
@@ -51,7 +53,7 @@
   }
   .taglines {
     > p {
-      font-size: 40px;
+      font-size: $standard-spacing;
       font-size: 3.5vw;
       font-family: Lato;
       font-weight: 900;
@@ -155,7 +157,7 @@ a {
 .big-prose {
   background-color: $os_green;
   color: white;
-  padding: 10px 0 40px;
+  padding: 10px 0 $standard-spacing;
   font-family: Lato;
   font-weight: 300;
   font-size: 24px;
@@ -163,8 +165,8 @@ a {
   @media only screen and (max-width: $screen-md-min) {
     background-color: white;
     color: black;
-    padding: 25px;
-    margin: 25px 0 0 0;
+    padding: $standard-spacing;
+    
   }
 }
 
@@ -197,7 +199,7 @@ a {
 }
 
 .space40 {
-  margin-bottom: 40px;
+  margin-bottom: $standard-spacing;
 }
 
 .space50 {
@@ -279,7 +281,7 @@ header {}
 }
 
 .intro-header h6 {
-  font-size: 40px;
+  font-size: $standard-spacing;
   font-weight: 300;
   color: white;
   font-family: Lato;
@@ -295,7 +297,7 @@ header {}
 
 .qa {
   background: #fff;
-  padding: 25px 0;
+  padding: $standard-spacing 0;
   @media only screen and (max-width: $screen-md-min) {
     background-color: $os_orange;
     color: white;
@@ -337,7 +339,7 @@ header {}
 .portfolio-wrap h3,.team-wrap h3,.pricing-wrap h3,.news-wrap h3,.contact-wrap h3 {
   color: #fff;
   text-transform: uppercase;
-  margin: 0 0 15px;
+  margin: 0 0 $standard-spacing;
   text-align: center;
   font-size: 48px;
   letter-spacing: 4px;
@@ -346,7 +348,7 @@ header {}
 .info-wrap h3 {
   color: #000;
   text-transform: uppercase;
-  margin: 0 0 15px;
+  margin: 0 0 $standard-spacing;
   text-align: center;
   font-size: 48px;
   letter-spacing: 4px;
@@ -537,7 +539,7 @@ header {}
 ---------------------------------------------------------------*/
 
 .info-wrap {
-  padding: 25px 0;
+  padding: $standard-spacing 0;
   background: #fff;
 }
 
@@ -663,8 +665,8 @@ header {}
 .quote p {
   font-size: 26px;
   color: #393f4a;
-  line-height: 40px;
-  margin: 50px auto 40px;
+  line-height: $standard-spacing;
+  margin: 50px auto $standard-spacing;
   text-align: center;
   width: 57%;
   font-style: italic;
@@ -686,7 +688,7 @@ header {}
   border-radius: 5px;
   margin: 0 auto;
   position: relative;
-  padding: 40px 20px;
+  padding: $standard-spacing 20px;
   z-index: 1;
 }
 
@@ -722,7 +724,7 @@ header {}
 .line-sep {
   height: 6px;
   border-radius: 6px;
-  width: 40px;
+  width: $standard-spacing;
   background: #c6cad1;
   margin: 28px auto;
 }
@@ -730,7 +732,7 @@ header {}
 .popular .line-sep {
   height: 6px;
   border-radius: 6px;
-  width: 40px;
+  width: $standard-spacing;
   background: #27ae60;
   margin: 28px auto;
 }
