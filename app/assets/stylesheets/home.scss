@@ -56,19 +56,21 @@ $standard-spacing: 40px;
   .taglines {
     > p {
       font-size: $standard-spacing;
-      font-size: 3.5vw;
+      font-size: 3vw;
       font-family: Lato;
       font-weight: 900;
       color: white;
+      margin-left: $standard-spacing;
       @media only screen and (max-width: $screen-md) {
-        font-size: 5vw;
+        font-size: 5.5vw;
         text-align: center;
+        margin: 0;
       }
       @media only screen and (min-width: 1200px) {
-        font-size: 3vw;
+        font-size: 2.8vw;
       }
       @media only screen and (min-width: 1700px) {
-        font-size: 50px;
+        font-size: 45px;
       }
     }
   }
@@ -83,6 +85,27 @@ $standard-spacing: 40px;
       left: 0;
       width: 100%;
       height: 100%;
+    }
+  }
+  .sponsors {
+    .sponsor {
+      margin-bottom: $standard-spacing;
+      font-size: 16px;
+      color: #393f4a;
+      line-height: 28px;
+
+      .logo {
+        text-align: center;
+      }
+      display: flex;
+      align-items: center;
+      @media only screen and (max-width: $screen-md-min) {
+        display: block;
+        .logo {
+          text-align: left;
+        }
+      }
+
     }
   }
 }
@@ -279,14 +302,11 @@ header {}
 .intro-header {
   background: $os_green;
   padding: 100px 0 $standard-spacing;
+  @media only screen and (max-width: $screen-md-min) {
+    padding-top: 70px;
+  }  
 }
 
-.intro-header h6 {
-  font-size: $standard-spacing;
-  font-weight: 300;
-  color: white;
-  font-family: Lato;
-}
 
 .intro-header .big-prose {
   color: white;
@@ -1675,9 +1695,6 @@ footer p a:hover {
   margin-left: 10px;
 }
 
-.intro-header h6 {
-  font-size: 70px !important;
-}
 
 .portfolio-wrap p,.team-wrap p,.pricing-wrap p,.news-wrap p,.contact-wrap p {
   width: 85%;
@@ -1726,9 +1743,6 @@ footer p a:hover {
   margin-left: 25%;
 }
 
-.intro-header {
-  padding: 100px 0 20px;
-}
 
 .navbar-collapse.in {
   overflow-y: visible;
