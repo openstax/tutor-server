@@ -111,7 +111,7 @@ $standard-spacing: 40px;
       @media only screen and (max-width: $screen-md-min) {
         display: block;
         .logo {
-          text-align: left;
+          margin-bottom: 30px;
         }
       }
 
