@@ -19,6 +19,18 @@
 
 @import url(http://fonts.googleapis.com/css?family=Lato:400);
 
+
+@mixin tutor-button(){
+  @extend .btn-lg;
+  @extend .btn-primary;
+  border-radius: 0px;
+  background-color: $os_orange;
+  color: white;
+  &:hover{
+    background-color: darken( $os-orange, 5% );
+  }
+}
+            
 .tutor-home {
   .navbar-brand {
     background-position-x: 0;
@@ -27,16 +39,7 @@
     height: 40px;
   }
   .navbar-default {
-    .sign-in {
-      @extend .btn-lg;
-      @extend .btn-primary;
-      border-radius: 0px;
-      background-color: $os_orange;
-      color: white;
-      &:hover{
-        background-color: darken( $os-orange, 5% );
-      }
-    }
+    .sign-in { @include tutor-button(); }
   }
   .navbar-nav.links {
     li a {
@@ -926,16 +929,8 @@ header {}
 }
 
 .contact-wrap input[type=submit] {
-  @extend .btn-lg;
+  @include tutor-button();
   width: 150px;
-  background-color: $os_gray;
-  color: white;
-  margin: 0;
-  &:hover{
-    color: white;
-    background-color: lighten($os_gray, 5%);
-    text-decoration: none;
-  }
 }
 
 /*-------------------------------------------------------------
