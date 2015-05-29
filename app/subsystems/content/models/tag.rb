@@ -17,8 +17,11 @@ class Content::Models::Tag < Tutor::SubSystems::BaseModel
 
   def name
     read_attribute(:name) || (
-      convert(/dok(\d+)/, "DOK $1") ||
-      convert(/blooms\-(\d+)/, "Blooms $1")
+      convert(/dok(\d+)/, "DOK: $1") ||
+      convert(/blooms\-(\d+)/, "Blooms: $1") ||
+      convert(/time-short/, "Length: S") ||
+      convert(/time-med/, "Length: M") ||
+      convert(/time-long/, "Length: L")
     )
   end
 

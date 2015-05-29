@@ -17,10 +17,16 @@ RSpec.describe Content::Models::Tag, :type => :model do
   end
 
   it 'picks a default DOK name' do
-    expect(Content::Models::Tag.new(value: 'dok1').name).to eq('DOK 1')
+    expect(Content::Models::Tag.new(value: 'dok1').name).to eq('DOK: 1')
   end
 
   it 'picks a default Blooms name' do
-    expect(Content::Models::Tag.new(value: 'blooms-3').name).to eq('Blooms 3')
+    expect(Content::Models::Tag.new(value: 'blooms-3').name).to eq('Blooms: 3')
+  end
+
+  it 'picks default time names' do
+    expect(Content::Models::Tag.new(value: 'time-short').name).to eq('Length: S')
+    expect(Content::Models::Tag.new(value: 'time-med').name).to eq('Length: M')
+    expect(Content::Models::Tag.new(value: 'time-long').name).to eq('Length: L')
   end
 end
