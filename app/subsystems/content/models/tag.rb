@@ -14,4 +14,26 @@ class Content::Models::Tag < Tutor::SubSystems::BaseModel
     matches = /-ch(\d+)-s(\d+)-lo\d+$/.match(value)
     matches.nil? ? [] : [matches[1].to_i, matches[2].to_i]
   end
+
+  def name
+    read_attribute(:name) || (
+      convert(/dok(\d+)/, "DOK $1") ||
+      convert(/blooms\-(\d+)/, "Blooms $1")
+    )
+  end
+
+  protected
+
+  def convert(regex, template)
+    match_data = value.match(regex)
+    return nil if match_data.nil?
+
+    (1..match_data.length-1).each do |match_index|
+      template.gsub!("$#{match_index}", match_data[match_index])
+    end
+
+    template
+  end
+
+
 end
