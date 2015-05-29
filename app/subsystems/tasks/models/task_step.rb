@@ -91,9 +91,7 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   end
 
   def add_labels(labels)
-    [labels].flatten.each do |label|
-      self.settings['labels'] << label
-    end
+    self.settings['labels'] = [self.settings['labels'], labels].flatten.compact.uniq
   end
 
 end
