@@ -6,5 +6,3 @@ if (
   ActiveRecordQueryTrace.enabled = true
   puts "ActiveRecord Query Trace is enabled! This will be way too slow!"
 end
-
-
