@@ -60,7 +60,7 @@ RSpec.describe Api::V1::TagRepresenter, type: :representer do
   it 'shows the default name for dok tags' do
     representation = Api::V1::TagRepresenter.new(dok_tag).as_json
     expect(representation).to include(
-      'name' => 'DOK 1'
+      'name' => 'DOK: 1'
     )
   end
 
