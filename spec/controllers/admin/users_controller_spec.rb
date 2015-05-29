@@ -13,12 +13,12 @@ RSpec.describe Admin::UsersController do
 
   it 'searches users by username and full name' do
     get :index, search_term: 'STR'
-    expect(assigns[:users].length).to eq 1
-    expect(assigns[:users]).to eq [admin]
+    expect(assigns[:users].items.length).to eq 1
+    expect(assigns[:users].items).to eq [admin]
 
     get :index, search_term: 'st'
-    expect(assigns[:users].length).to eq 2
-    expect(assigns[:users].sort_by { |a| a.id }).to eq [admin, user]
+    expect(assigns[:users].items.length).to eq 2
+    expect(assigns[:users].items.sort_by { |a| a.id }).to eq [admin, user]
   end
 
   it 'creates a new user' do
