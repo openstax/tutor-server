@@ -38,17 +38,7 @@ class Tasks::PlaceholderStrategies::IReadingPersonalized
   def biglearn_condition(los)
     condition = {
       _and: [
-        {
-          _and: [
-            'ost-chapter-review',
-            {
-              _or: [
-                'concept',
-                'problem'
-              ]
-            }
-          ]
-        },
+        'os-practice-concepts',
         {
           _or: los
         }
