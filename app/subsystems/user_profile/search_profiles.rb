@@ -11,12 +11,12 @@ module UserProfile
                                          (lower(account.last_name).like search_term) }
                                 .order(order)
                                 .includes { account }
+
       do_pagination = page.present?
       profiles = profiles.paginate(page: page, per_page: per_page) if do_pagination
 
       outputs[:profiles] = Hashie::Mash.new(
         total_items: do_pagination ? profiles.total_entries : profiles.count,
-        total_pages: do_pagination ? profiles.total_pages : 1,
         items: profiles.collect do |profile|
           {
             id: profile.id,
