@@ -2,8 +2,12 @@ class Admin::UsersController < Admin::BaseController
   before_action :get_user, only: [:edit, :update]
 
   def index
-    @users = UserProfile::SearchProfiles[search_term: "%#{params[:search_term]}%", page: params[:page] || 1, per_page: 10] if params[:search_term].present?
-    @users[:renderer] = WillPaginate::ActionView::LinkRenderer
+    @per_page = 30
+    @user_search =
+      UserProfile::SearchProfiles[search_term: "%#{params[:search_term]}%",
+                                  page: params[:page] || 1,
+                                  per_page: @per_page] \
+      if params[:search_term].present?
   end
 
   def create
