@@ -227,15 +227,20 @@ class Tasks::Assistants::HomeworkAssistant
       page_los       = Content::GetLos[page_ids: pages.map(&:id)]
       page_exercises = Content::Routines::SearchExercises[tag: page_los, match_count: 1]
 
+      practice_problems = Content::Models::Exercise.joins{exercise_tags.tag}
+                                                   .where{exercise_tags.tag.value.eq 'os-practice-problems'}
+                                                   .where{id.in page_exercises.map(&:id)}
+
       review_exercises = Content::Models::Exercise.joins{exercise_tags.tag}
                                                   .where{exercise_tags.tag.value.eq 'ost-chapter-review'}
                                                   .where{id.in page_exercises.map(&:id)}
 
       exercises = Content::Models::Exercise.joins{exercise_tags.tag}
-                                           .where{exercise_tags.tag.value.in ['concept', 'problem']}
+                                           .where{exercise_tags.tag.value.in ['concept', 'problem', 'critical-thinking']}
                                            .where{id.in review_exercises.map(&:id)}
 
-      exercises
+      combined = [practice_problems, exercises].flatten.uniq.to_a
+      combined
     end
     exercise_pools
   end

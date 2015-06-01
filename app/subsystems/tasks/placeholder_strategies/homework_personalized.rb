@@ -44,7 +44,8 @@ class Tasks::PlaceholderStrategies::HomeworkPersonalized
             {
               _or: [
                 'concept',
-                'problem'
+                'problem',
+                'critical-thinking'
               ]
             }
           ]
