@@ -233,10 +233,13 @@ class Tasks::Assistants::HomeworkAssistant
 
       review_exercises = Content::Models::Exercise.joins{exercise_tags.tag}
                                                   .where{exercise_tags.tag.value.eq 'ost-chapter-review'}
-                                                  .where{exercise_tags.tag.value.in ['concept', 'problem', 'critical-thinking']}
                                                   .where{id.in page_exercises.map(&:id)}
 
-      combined = [practice_problems, review_exercises].flatten.uniq.to_a
+      selected_review_exercises = Content::Models::Exercise.joins{exercise_tags.tag}
+                                                           .where{exercise_tags.tag.value.in ['concept', 'problem', 'critical-thinking']}
+                                                           .where{id.in review_exercises.map(&:id)}
+
+      combined = [practice_problems, selected_review_exercises].flatten.uniq.to_a
       combined
     end
     exercise_pools
