@@ -21,7 +21,6 @@ RSpec.describe UserProfile::SearchProfiles do
   it 'searches username and name' do
     results = described_class[search_term: '%ch%']
     expect(results.total_items).to eq 2
-    expect(results.total_pages).to eq 1
     expect(results.items).to eq [ {
       'id' => user_2.id,
       'account_id' => user_2.account.id,
@@ -40,7 +39,6 @@ RSpec.describe UserProfile::SearchProfiles do
   it 'paginates results' do
     results = described_class[search_term: '%', per_page: 2, page: 1]
     expect(results.total_items).to eq 3
-    expect(results.total_pages).to eq 2
     expect(results.items).to eq [ {
       'id' => user_2.id,
       'account_id' => user_2.account.id,
@@ -57,7 +55,6 @@ RSpec.describe UserProfile::SearchProfiles do
 
     results = described_class[search_term: '%', per_page: 2, page: 2]
     expect(results.total_items).to eq 3
-    expect(results.total_pages).to eq 2
     expect(results.items).to eq [ {
       'id' => admin.id,
       'account_id' => admin.account.id,

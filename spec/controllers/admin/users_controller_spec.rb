@@ -13,8 +13,8 @@ RSpec.describe Admin::UsersController do
 
   it 'searches users by username and full name' do
     get :index, search_term: 'STR'
-    expect(assigns[:users].items.length).to eq 1
-    expect(assigns[:users].items).to eq [ {
+    expect(assigns[:user_search].items.length).to eq 1
+    expect(assigns[:user_search].items).to eq [ {
       'id' => admin.id,
       'account_id' => admin.account.id,
       'entity_user_id' => admin.entity_user.id,
@@ -23,8 +23,8 @@ RSpec.describe Admin::UsersController do
     } ]
 
     get :index, search_term: 'st'
-    expect(assigns[:users].items.length).to eq 2
-    expect(assigns[:users].items.sort_by { |a| a[:id] }).to eq [ {
+    expect(assigns[:user_search].items.length).to eq 2
+    expect(assigns[:user_search].items.sort_by { |a| a[:id] }).to eq [ {
       'id' => admin.id,
       'account_id' => admin.account.id,
       'entity_user_id' => admin.entity_user.id,
@@ -47,8 +47,8 @@ RSpec.describe Admin::UsersController do
     }
 
     get :index, search_term: 'new'
-    expect(assigns[:users].items.length).to eq 1
-    expect(assigns[:users].items.first).to include(
+    expect(assigns[:user_search].items.length).to eq 1
+    expect(assigns[:user_search].items.first).to include(
       username: 'new',
       full_name: 'New User')
   end
