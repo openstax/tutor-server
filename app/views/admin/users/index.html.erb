@@ -5,22 +5,35 @@
   <%= submit_tag 'Search User' %>
 <% end %>
 
-<% if params[:search_term].present? && @users.empty? %>
+<% if params[:search_term].present? && @user_search.empty? %>
   <p>No users found.</p>
 <% end %>
 
-<% if @users.present? %>
+<% if @user_search.present? %>
+
+  <%
+    pagination = will_paginate(
+      WillPaginate::Collection.create(params[:page] || 1, @per_page, @user_search.total_items) do |pager|
+        pager.replace @user_search.items
+      end
+    )
+  %>
+
+  <%= pagination %>
+
   <table>
     <thead>
       <tr>
         <th>Username</th>
+        <th>Name</th>
         <th>Actions</th>
       </tr>
     </thead>
     <tbody>
-      <% @users.each do |user| %>
+      <% @user_search.items.each do |user| %>
         <tr>
           <td><%= user.username %></td>
+          <td><%= user.full_name %></td>
           <td>
               <%= link_to 'edit', edit_admin_user_path(user.id) %> |
               <%= link_to 'sign in as', become_admin_user_path(user.account_id),
@@ -30,4 +43,7 @@
       <% end %>
     </tbody>
   </table>
+
+  <%= pagination %>
+
 <% end %>
