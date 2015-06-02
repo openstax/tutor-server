@@ -30,15 +30,12 @@ class Demo001 < DemoBase
       book_version.blank? ? '' : "@#{book_version.to_s}"
     end
 
-    exercises_url = 'https://exercises-demo.openstax.org'
     archive_url = 'https://archive-staging-tutor.cnx.org/contents/'
     cnx_book_id = "93e2b09d-261c-4007-a987-0b3062fe154b#{version_string}"
 
-    OpenStax::Exercises::V1.with_configuration(server_url: exercises_url) do
-      OpenStax::Cnx::V1.with_archive_url(url: archive_url) do
-        run(:import_book, id: cnx_book_id)
-        log("Imported book #{cnx_book_id} from #{archive_url} and #{exercises_url}.")
-      end
+    OpenStax::Cnx::V1.with_archive_url(url: archive_url) do
+      run(:import_book, id: cnx_book_id)
+      log("Imported book #{cnx_book_id} from #{archive_url}.")
     end
 
     course = create_course(name: 'Physics I')
