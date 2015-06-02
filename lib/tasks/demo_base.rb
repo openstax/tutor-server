@@ -348,7 +348,7 @@ class DemoBase
   end
 
   def randomizer
-    @randomizer ||= Random.new(@random_seed || 1234)
+    @randomizer ||= Random.new(@random_seed || 1234789)
   end
 
   def rand(max=nil)

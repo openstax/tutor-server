@@ -175,6 +175,7 @@ class Demo002 < DemoBase
 
     end
 
+    log("Setting the time to #{anchor_date} which may or may not stick depending on which environment this is.")
     Timecop.travel_all(anchor_date)
 
   end
