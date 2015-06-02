@@ -71,7 +71,7 @@ class SetupCourseStats
                                                          page_ids: [])
     entity_task = ResetPracticeWidget[book_part_ids: book_part_ids,
                                       page_ids: page_ids,
-                                      role: role, condition: :local]
+                                      role: role, exercise_source: :local]
 
     entity_task.task.task_steps.first(num_correct).each do |task_step|
       Hacks::AnswerExercise[task_step: task_step, is_correct: true]

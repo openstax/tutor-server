@@ -135,7 +135,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     consume!(practice, represent_with: Api::V1::PracticeRepresenter)
 
     entity_task = ResetPracticeWidget[
-      role: get_practice_role, condition: :local,
+      role: get_practice_role, exercise_source: :biglearn,
       page_ids: practice.page_ids, book_part_ids: practice.book_part_ids
     ]
     respond_with entity_task.task, represent_with: Api::V1::TaskRepresenter, location: nil

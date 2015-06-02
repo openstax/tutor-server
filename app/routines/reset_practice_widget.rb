@@ -6,7 +6,7 @@ class ResetPracticeWidget
 
   protected
 
-  def exec(role:, condition:, page_ids: [], book_part_ids: [])
+  def exec(role:, exercise_source:, page_ids: [], book_part_ids: [])
     page_ids = [page_ids].flatten
     book_part_ids = [book_part_ids].flatten
 
@@ -22,13 +22,15 @@ class ResetPracticeWidget
 
     # Gather 5 exercises
 
-    exercises = case condition
+    exercises = case exercise_source
     when :fake
       get_fake_exercises(count: 5)
     when :local
       get_local_exercises(count: 5, role: role, tags: los)
+    when :biglearn
+      get_biglearn_exercises(count: 5, role: role, los: los)
     else
-      get_biglearn_exercises(count: 5, role: role, tags: los)
+      raise ArgumentError, "exercise_source: must be one of [:fake, :local, :biglearn]"
     end
 
     # Create the new practice widget task, and put the exercises into steps
@@ -95,8 +97,8 @@ class ResetPracticeWidget
     end
   end
 
-  def get_biglearn_exercises(count:, role:, tags:)
-    condition = condition_tags(tags)
+  def get_biglearn_exercises(count:, role:, los:)
+    condition = biglearn_condition(los)
 
     exercise_uids = OpenStax::Biglearn::V1.get_projection_exercises(
       role: role , tag_search: condition, count: 5,
@@ -105,12 +107,16 @@ class ResetPracticeWidget
 
     urls = exercise_uids.collect{|uid| "http://exercises.openstax.org/exercises/#{uid}"}
 
-    Content::Exercise.where{url.in urls}.all.collect do |content_exercise|
+    Content::Models::Exercise.where{url.in urls}.all.collect do |content_exercise|
       OpenStax::Exercises::V1::Exercise.new(content: content_exercise.content)
     end
   end
 
-  def condition_tags(condition)
+  def biglearn_condition(los)
+    condition = {
+      _or: los
+    }
+
     condition
   end
 

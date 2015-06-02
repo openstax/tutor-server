@@ -33,7 +33,7 @@ class OpenStax::Biglearn::V1::FakeClient
     # If we didn't get as many as requested and repetitions are allowed,
     # pad the results, repeat the matches until we have enough, making
     # sure to clip at the desired count in case we go over.
-    while (allow_repetitions && results.length < count)
+    while (allow_repetitions && results.length < count && matches.any?)
       results.push(*matches)
     end
     results = results.first(count).collect{|r| r[0]}
