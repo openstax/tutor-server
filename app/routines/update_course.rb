@@ -7,7 +7,7 @@ class UpdateCourse
   protected
 
   def exec(id, course_params)
-    course_params.delete(:teacher_ids).reject(&:blank?).each do |user_id|
+    course_params.delete(:teacher_ids) { |key| [] }.reject(&:blank?).each do |user_id|
       user = Entity::User.find(user_id)
       course = Entity::Course.find(id)
       run(:assign_teacher, course: course, user: user)
