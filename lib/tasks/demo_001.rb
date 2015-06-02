@@ -12,9 +12,14 @@ class Demo001 < DemoBase
 
   protected
 
-  STABLE_VERSION = 2.33
+  STABLE_VERSION = 1.18
 
   def exec(print_logs: true, book_version: :latest, random_seed: nil)
+
+    set_print_logs(print_logs)
+
+    # By default, choose a fixed seed for repeatability and fewer surprises
+    set_random_seed(random_seed)
 
     version_string = case book_version.to_sym
     when :latest
@@ -25,14 +30,9 @@ class Demo001 < DemoBase
       book_version.blank? ? '' : "@#{book_version.to_s}"
     end
 
-    @print_logs = print_logs
-
-    # By default, choose a fixed seed for repeatability and fewer surprises
-    @random_seed = random_seed
-
     exercises_url = 'https://exercises-demo.openstax.org'
     archive_url = 'https://archive-staging-tutor.cnx.org/contents/'
-    cnx_book_id = "e4c329f3-1972-4835-a203-3e8c539e4df3#{version_string}"
+    cnx_book_id = "93e2b09d-261c-4007-a987-0b3062fe154b#{version_string}"
 
     OpenStax::Exercises::V1.with_configuration(server_url: exercises_url) do
       OpenStax::Cnx::V1.with_archive_url(url: archive_url) do

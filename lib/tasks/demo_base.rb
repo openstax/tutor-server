@@ -348,11 +348,19 @@ class DemoBase
   end
 
   def randomizer
-    @randomizer ||= Random.new(@random_seed || 1234)
+    @randomizer ||= Random.new(@random_seed || 1234789)
   end
 
   def rand(max=nil)
     max.nil? ? randomizer.rand : randomizer.rand(max)
+  end
+
+  def set_random_seed(random_seed)
+    @random_seed = random_seed
+  end
+
+  def set_print_logs(print_logs)
+    @print_logs = print_logs
   end
 
   @@name_pool = %w(
