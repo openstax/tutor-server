@@ -100,16 +100,15 @@ class ResetPracticeWidget
   def get_biglearn_exercises(count:, role:, los:)
     condition = biglearn_condition(los)
 
-    exercise_uids = OpenStax::Biglearn::V1.get_projection_exercises(
+    urls = OpenStax::Biglearn::V1.get_projection_exercises(
       role: role , tag_search: condition, count: 5,
       difficulty: 0.5, allow_repetitions: true
     )
 
-    urls = exercise_uids.collect{|uid| "http://exercises.openstax.org/exercises/#{uid}"}
-
-    Content::Models::Exercise.where{url.in urls}.all.collect do |content_exercise|
+    exercises = Content::Models::Exercise.where{url.in urls}.all.collect do |content_exercise|
       OpenStax::Exercises::V1::Exercise.new(content: content_exercise.content)
     end
+    exercises
   end
 
   def biglearn_condition(los)
