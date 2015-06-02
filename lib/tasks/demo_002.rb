@@ -8,6 +8,11 @@ class Demo002 < DemoBase
 
   def exec(print_logs: true, book_version: :latest, random_seed: nil)
 
+    set_print_logs(print_logs)
+
+    # By default, choose a fixed seed for repeatability and fewer surprises
+    set_random_seed(random_seed)
+
     anchor_date = Time.now.next_week(:tuesday).advance(hours: 15)
 
     monday_1    = anchor_date - 8.days
@@ -24,7 +29,7 @@ class Demo002 < DemoBase
 
     responses_list = new_responses_list(
       assignment_type: :reading,
-      step_types: %w( r r i e r r r e v e e e ),
+      step_types: %w( r r i e r r e v e e ),
       entries: [
                   98,
                   67,
@@ -34,7 +39,7 @@ class Demo002 < DemoBase
                   :incomplete,
                   :not_started,
                   78,
-                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 ),  # explicit example, could also be `100`
+                  %w( 1 1 1 1 1 1 1 1 1 1 ),  # explicit example, could also be `100`
                   86,
                   100,
                   82,
@@ -63,7 +68,7 @@ class Demo002 < DemoBase
 
     responses_list = new_responses_list(
       assignment_type: :reading,
-      step_types: %w( r i e e r r e r r r e r e e e ),
+      step_types: %w( r i e r r e r r r e r e e e ),
       entries: [
                   94,
                   79,
@@ -73,7 +78,7 @@ class Demo002 < DemoBase
                   :incomplete,
                   :not_started,
                   72,
-                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 ),  # explicit example, could also be `100`
+                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 1 1 ),  # explicit example, could also be `100`
                   80,
                   100,
                   88,
@@ -176,6 +181,7 @@ class Demo002 < DemoBase
     end
 
     log("Setting the time to #{anchor_date} which may or may not stick depending on which environment this is.")
+    log("-- if the time didn't stick, log in as the administrator and modify the time in the admin console.")
     Timecop.travel_all(anchor_date)
 
   end

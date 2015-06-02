@@ -355,6 +355,14 @@ class DemoBase
     max.nil? ? randomizer.rand : randomizer.rand(max)
   end
 
+  def set_random_seed(random_seed)
+    @random_seed = random_seed
+  end
+
+  def set_print_logs(print_logs)
+    @print_logs = print_logs
+  end
+
   @@name_pool = %w(
     Alden\ Pyle
     Atticus\ Finch
