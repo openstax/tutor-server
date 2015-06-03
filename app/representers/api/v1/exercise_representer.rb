@@ -28,10 +28,11 @@ module Api::V1
              getter: ->(*) { ::JSON.parse(content) },
              schema_info: { required: true }
 
-    collection :tags_with_teks,
+    collection :tags,
                as: :tags,
                readable: true,
                writeable: false,
+               getter: -> (*) { tags_with_teks.select { |tag| tag.visible } },
                decorator: TagRepresenter,
                schema_info: { required: true, description: 'Tags for this exercise' }
 
