@@ -348,6 +348,7 @@ class DemoBase
   end
 
   def randomizer
+    # By default, choose a fixed seed for repeatability and fewer surprises
     @randomizer ||= Random.new(@random_seed || 1234789)
   end
 

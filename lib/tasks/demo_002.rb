@@ -9,10 +9,13 @@ class Demo002 < DemoBase
   def exec(print_logs: true, book_version: :latest, random_seed: nil)
 
     set_print_logs(print_logs)
-
-    # By default, choose a fixed seed for repeatability and fewer surprises
     set_random_seed(random_seed)
 
+    # Choose an anchor date that we will eventually travel to, and set all
+    # other dates relative to it.  Make sure to reset to real time before
+    # using "Time.now" in computing the anchor date.
+
+    Timecop.return_all
     anchor_date = Time.now.next_week(:tuesday).advance(hours: 15)
 
     monday_1    = anchor_date - 8.days
