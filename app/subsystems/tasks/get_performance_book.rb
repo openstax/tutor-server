@@ -23,6 +23,7 @@ module Tasks
       student_tasks, student_data = [], []
       student_profiles = run(:get_student_profiles, course: course).outputs.profiles
       tasks = get_tasks(student_profiles)
+      exercises = get_exercises(tasks)
 
       student_profiles.collect do |student_profile|
         student_tasks = tasks.select { |t| taskings_exist?(t, student_profile) }
@@ -31,7 +32,7 @@ module Tasks
         student_data << {
           name: student_profile.full_name,
           role: student_profile.entity_role_id
-        }.merge(get_student_data(student_tasks))
+        }.merge(get_student_data(student_tasks, exercises))
       end
 
       {
@@ -52,6 +53,11 @@ module Tasks
         .includes(:taskings, :task_steps)
     end
 
+    def get_exercises(tasks)
+      tasked_ids = tasks.collect(&:task_steps).flatten.collect(&:tasked_id)
+      Models::TaskedExercise.where(id: tasked_ids)
+    end
+
     def taskings_exist?(task, profile)
       task.taskings.collect(&:entity_role_id).include?(profile.entity_role_id)
     end
@@ -70,7 +76,7 @@ module Tasks
       }
     end
 
-    def get_student_data(tasks)
+    def get_student_data(tasks, exercises)
       {
         data: tasks.collect.with_index { |t, i|
           data = {
@@ -80,7 +86,7 @@ module Tasks
           }
 
           if t.task_type == 'homework'
-            data.merge!(exercise_count(t.task_steps, i))
+            data.merge!(exercise_count(t.task_steps, exercises, i))
           end
 
           data
@@ -88,10 +94,11 @@ module Tasks
       }
     end
 
-    def exercise_count(task_steps, index)
+    def exercise_count(task_steps, exercises, index)
+      tasked_ids = task_steps.collect(&:tasked_id)
+      exercises = exercises.select { |e| tasked_ids.include?(e.id) }
+
       attempted_count = task_steps.select(&:completed?).length
-      tasked_ids = task_steps.collect(&:tasked_id).join(',')
-      exercises = Models::TaskedExercise.find_by_sql("SELECT  * FROM tasks_tasked_exercises WHERE id IN (#{tasked_ids})")
       correct_count = exercises.select(&:is_correct?).length
 
       if attempted_count > 0
