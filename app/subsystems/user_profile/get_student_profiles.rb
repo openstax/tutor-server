@@ -19,12 +19,13 @@ module UserProfile
       student_roles = run(:get_students, course).outputs.students
       users = run(:get_users_for_roles, student_roles).outputs.users
       names = run(:get_user_full_names, users).outputs.full_names
+      role_users = Role::Models::User.where(entity_user_id: users.collect(&:id))
 
       outputs[:profiles] = student_roles.collect do |role|
-        user = users.select { |u| u.entity_role_id == role.id }.first
-        name = names.select { |n| n.entity_user_id == user.id }.first
+        user_id = role_users.select { |u| u.entity_role_id == role.id }.first.entity_user_id
+        name = names.select { |n| n.entity_user_id == user_id }.first
         {
-          entity_user_id: user.id,
+          entity_user_id: user_id,
           entity_role_id: role.id,
           full_name: name.full_name
         }
