@@ -2,16 +2,8 @@ module Tasks
   class GetPerformanceBook
     lev_routine express_output: :performance_book
 
-    uses_routine Role::GetUsersForRoles,
-                 as: :get_users_for_roles,
-                 translations: { outputs: { type: :verbatim } }
-
-    uses_routine UserProfile::GetUserFullNames,
-                 as: :get_user_full_names,
-                 translations: { outputs: { type: :verbatim } }
-
-    uses_routine CourseMembership::GetStudents,
-                 as: :get_students,
+    uses_routine UserProfile::GetStudentProfiles,
+                 as: :get_student_profiles,
                  translations: { outputs: { type: :verbatim } }
 
     protected
@@ -28,33 +20,46 @@ module Tasks
     private
 
     def get_performance_book_for_teacher(course)
-      student_data_list = []
-      tasks = []
+      student_tasks, student_data = [], []
+      student_profiles = run(:get_student_profiles, course: course).outputs.profiles
+      tasks = get_tasks(student_profiles)
 
-      run(:get_students, course).outputs.students.each do |student|
-        tasks = get_tasks(student)
-        @class_average = [[]] * tasks.count
-        student_data_list << get_student_data(student, tasks)
+      student_profiles.collect do |student_profile|
+        student_tasks = tasks.select { |t| taskings_exist?(t, student_profile) }
+        @class_average = [[]] * student_tasks.length
+
+        student_data << {
+          name: student_profile.full_name,
+          role: student_profile.entity_role_id
+        }.merge(get_student_data(student_tasks))
       end
 
       {
-        data_headings: tasks.collect.with_index { |t, i| get_data_headings(t, i) },
-        students: student_data_list,
+        data_headings: get_data_headings(student_tasks),
+        students: student_data
       }
     end
 
-    def get_tasks(role)
+    def get_tasks(student_profiles)
+      role_ids = student_profiles.collect(&:entity_role_id)
       # Return reading and homework tasks for a student ordered by due date
-      Tasks::Models::Task
+      @tasks ||= Tasks::Models::Task
         .joins { taskings }
-        .where { taskings.entity_role_id == role.id }
-        .where { task_type.in Tasks::Models::Task.task_types.values_at(:reading, :homework) }
+        .where { taskings.entity_role_id.in role_ids }
+        .where { task_type.in Tasks::Models::Task.task_types.values_at(:reading,
+                                                                       :homework) }
         .order { due_at }
-        .includes(:task_steps)
+        .includes(:taskings, :task_steps)
     end
 
-    def get_data_headings(task, index)
-      { title: task.title }.merge(class_average(task, index))
+    def taskings_exist?(task, profile)
+      task.taskings.collect(&:entity_role_id).include?(profile.entity_role_id)
+    end
+
+    def get_data_headings(tasks)
+      tasks.collect.with_index { |t, i|
+        { title: t.title }.merge(class_average(t, i))
+      }
     end
 
     def class_average(task, index)
@@ -65,12 +70,8 @@ module Tasks
       }
     end
 
-    def get_student_data(role, tasks)
-      users = run(:get_users_for_roles, role).outputs.users
-
+    def get_student_data(tasks)
       {
-        name: run(:get_user_full_names, users).outputs.full_names.first,
-        role: role.id,
         data: tasks.collect.with_index { |t, i|
           data = {
             status: t.status,
