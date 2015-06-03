@@ -228,6 +228,22 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                     parameters: {id: course.id, role_id: teacher_role.id}
           end
         end
+
+        context "and a student role is given" do
+          it "should find the student role's events" do
+            user_2_role = AddUserAsCourseStudent.call(
+              course: course,
+              user: user_2.entity_user).outputs[:role]
+
+            expect(get_role_course_events).
+              to receive(:call).with(course: course, role: user_2_role).
+              and_return(lev_result)
+
+            api_get :events,
+                    user_1_token,
+                    parameters: { id: course.id, role_id: user_2_role.id }
+          end
+        end
       end
       context "and also a student" do
         let!(:student_role) {
