@@ -25,7 +25,10 @@ class ChooseCourseRole
     run(:get_roles, course: course, user: user, types: allowed_role_type)
 
     if role_id
-      outputs.roles = outputs.roles.select { |r| r.id == Integer(role_id) }
+      extra_roles = get_course_student_roles(course: course, user: user)
+      outputs.roles = outputs.roles.select { |r| r.id == Integer(role_id) } +
+                      extra_roles.select { |r| r.id == Integer(role_id) }
+      outputs.roles.uniq!
       if outputs.roles.none?
         fatal_error(
           code:    :invalid_role,
@@ -88,5 +91,16 @@ class ChooseCourseRole
     outputs[:role] = matching_roles.first if found_it
 
     found_it
+  end
+
+  def get_course_student_roles(course:, user:)
+    # Return student roles if user is a teacher
+    user_roles = Role::GetUserRoles.call(user).outputs[:roles]
+    is_teacher = CourseMembership::IsCourseTeacher[course: course, roles: user_roles]
+    if is_teacher
+      CourseMembership::GetCourseRoles.call(course: course, types: :student).outputs[:roles]
+    else
+      []
+    end
   end
 end
