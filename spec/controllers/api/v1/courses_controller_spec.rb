@@ -408,6 +408,16 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                                opens_at: be_kind_of(String),
                                                steps: have(5).items)
     end
+
+    it "can be called by a teacher using a student role" do
+      AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
+      student_role = AddUserAsCourseStudent.call(course: course, user: user_2.entity_user).outputs[:role]
+      ResetPracticeWidget.call(role: student_role, exercise_source: :fake)
+
+      api_get :practice, user_1_token, parameters: { id: course.id, role_id: student_role.id }
+
+      expect(response).to have_http_status(:success)
+    end
   end
 
   describe "dashboard" do
