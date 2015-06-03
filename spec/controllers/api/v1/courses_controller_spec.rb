@@ -562,6 +562,22 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       )
     end
 
+    it "works for a teacher with student role specified" do
+      api_get :dashboard, teacher_token, parameters: { id: course.id, role_id: student_role }
+
+      response_body = HashWithIndifferentAccess[response.body_as_hash]
+      expect(response_body['role']).to eq({
+        'id' => student_role.id.to_s,
+        'type' => 'student'
+      })
+      expect(response_body['course']).to eq({
+        'name' => 'Physics 101',
+        'teacher_names' => ['Bob Newhart']
+      })
+      expect(response_body['tasks']).not_to be_empty
+      expect(response_body['plans']).to be_nil
+    end
+
   end
 
   context 'with book' do
