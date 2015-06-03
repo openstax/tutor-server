@@ -9,7 +9,7 @@ RSpec.describe OpenStax::Exercises::V1::Exercise, :type => :external do
   it 'returns attributes from the exercise JSON' do
     exercise = OpenStax::Exercises::V1::Exercise.new(content: content)
     expect(exercise.content).to eq content
-    expect(exercise.url).to eq "#{OpenStax::Exercises::V1.server_url}/exercises/#{hash[:uid]}"
+    expect(exercise.url).to eq "#{OpenStax::Exercises::V1.server_url}/api/exercises/#{hash[:uid]}"
     expect(exercise.title).to eq title
     expect(exercise.question_answers[0].length).to eq 2
     expect(exercise.correct_question_answer_ids[0][0]).to eq exercise.question_answers[0][0]['id']
