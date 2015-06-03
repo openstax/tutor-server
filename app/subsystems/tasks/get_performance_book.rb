@@ -50,7 +50,7 @@ module Tasks
         .where { taskings.entity_role_id == role.id }
         .where { task_type.in Tasks::Models::Task.task_types.values_at(:reading, :homework) }
         .order { due_at }
-        .includes(task_steps: :tasked)
+        .includes(:task_steps)
     end
 
     def get_data_headings(task, index)
@@ -72,21 +72,25 @@ module Tasks
         name: run(:get_user_full_names, users).outputs.full_names.first,
         role: role.id,
         data: tasks.collect.with_index { |t, i|
-          {
+          data = {
             status: t.status,
             type: t.task_type,
             id: t.id,
-          }.merge(exercise_count(t, i))
+          }
+
+          if t.task_type == 'homework'
+            data.merge!(exercise_count(t.task_steps, i))
+          end
+
+          data
         }
       }
     end
 
-    def exercise_count(task, index)
-      return {} unless task.task_type == 'homework'
-
-      attempted_count = task.task_steps.select(&:completed?).length
-      tasked_ids = task.task_steps.collect(&:tasked_id)
-      exercises = Models::TaskedExercise.find_by_sql("SELECT  * FROM tasks_tasked_exercises WHERE id IN (#{tasked_ids.join(',')})")
+    def exercise_count(task_steps, index)
+      attempted_count = task_steps.select(&:completed?).length
+      tasked_ids = task_steps.collect(&:tasked_id).join(',')
+      exercises = Models::TaskedExercise.find_by_sql("SELECT  * FROM tasks_tasked_exercises WHERE id IN (#{tasked_ids})")
       correct_count = exercises.select(&:is_correct?).length
 
       if attempted_count > 0
@@ -94,11 +98,9 @@ module Tasks
       end
 
       {
-        exercise_count: task.task_steps.length,
+        exercise_count: task_steps.length,
         correct_exercise_count: correct_count,
-        recovered_exercise_count: task.task_steps.select { |ts|
-          ts.tasked.can_be_recovered?
-        }.length
+        recovered_exercise_count: exercises.select(&:can_be_recovered?).length
       }
     end
   end

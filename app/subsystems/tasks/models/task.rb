@@ -65,7 +65,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def completed?
-    self.task_steps(true).all?{|ts| ts.completed? }
+    self.task_steps.all?(&:completed?)
   end
 
   def status
