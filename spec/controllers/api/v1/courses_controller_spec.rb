@@ -657,9 +657,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
               {
                 type: 'homework',
                 id: kind_of(Integer),
-                status: 'not_started',
+                status: 'in_progress',
                 exercise_count: 4,
-                correct_exercise_count: 1,
+                correct_exercise_count: 3,
                 recovered_exercise_count: 0
               }
             ]
@@ -672,7 +672,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                 id: kind_of(Integer),
                 status: 'in_progress',
                 exercise_count: 6,
-                correct_exercise_count: 3,
+                correct_exercise_count: 2,
                 recovered_exercise_count: 0
               },
               {
@@ -683,7 +683,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
               {
                 type: 'homework',
                 id: kind_of(Integer),
-                status: 'not_started',
+                status: 'in_progress',
                 exercise_count: 4,
                 correct_exercise_count: 1,
                 recovered_exercise_count: 0

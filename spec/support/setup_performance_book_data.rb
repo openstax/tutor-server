@@ -111,6 +111,13 @@ class SetupPerformanceBookData
       MarkTaskStepCompleted[task_step: ts]
     end
 
+    # User 1 answered 3 correct, 1 incorrect in 2nd homework
+    student_1_tasks[2].core_task_steps.each do |ts|
+      Hacks::AnswerExercise[task_step: ts, is_correct: true]
+    end
+    Hacks::AnswerExercise[task_step: student_1_tasks[2].non_core_task_steps.first,
+                          is_correct: true]
+
     # User 2 answered 2 questions correctly and 2 incorrectly in
     # homework task plan
     core_task_steps = student_2_tasks[0].core_task_steps
@@ -118,11 +125,12 @@ class SetupPerformanceBookData
     core_task_steps.first(2).each do |ts|
       Hacks::AnswerExercise[task_step: ts, is_correct: true]
     end
-    core_task_steps[2..3].each do |ts|
-      Hacks::AnswerExercise[task_step: ts, is_correct: false]
-    end
 
     # User 2 started the reading task plan
     MarkTaskStepCompleted[task_step: student_2_tasks[1].task_steps.first]
+
+    # User 2 answered 1 correct in 2nd homework
+    Hacks::AnswerExercise[task_step: student_2_tasks[2].core_task_steps.first,
+                          is_correct: true]
   end
 end
