@@ -6,10 +6,16 @@ ActionController::Base.class_exec do
 
   before_action :load_time
 
+  after_action :set_date_header
+
   protected
 
   def load_time
     Timecop.load_time if Timecop.enabled?
+  end
+
+  def set_date_header
+    response.header['Date'] = Time.now.httpdate
   end
 
   def rescue_from_exception(exception)
