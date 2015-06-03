@@ -1,5 +1,3 @@
-require_relative 'entity_extensions'
-
 require_relative '../placeholder_strategies/homework_personalized'
 require_relative '../placeholder_strategies/i_reading_personalized'
 

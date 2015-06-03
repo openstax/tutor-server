@@ -1,5 +1,3 @@
-require_relative 'models/entity_extensions'
-
 module Tasks
   class GetPerformanceBook
     lev_routine express_output: :performance_book

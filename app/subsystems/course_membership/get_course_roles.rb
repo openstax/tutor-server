@@ -1,5 +1,3 @@
-require_relative 'models/entity_extensions'
-
 class CourseMembership::GetCourseRoles
   lev_routine
 
