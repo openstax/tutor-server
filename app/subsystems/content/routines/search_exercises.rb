@@ -17,7 +17,7 @@ class Content::Routines::SearchExercises
 
   def exec(options = {})
 
-    relation = options[:relation] || Content::Models::Exercise.latest.preload(exercise_tags: :tag)
+    relation = options[:relation] || Content::Models::Exercise.preload(exercise_tags: :tag)
     urls = [options[:url]].flatten unless options[:url].nil?
     titles = [options[:title]].flatten unless options[:title].nil?
     tags = [options[:tag]].flatten unless options[:tag].nil?
@@ -30,6 +30,9 @@ class Content::Routines::SearchExercises
     query_hash[:title] = titles unless titles.nil?
     query_hash[:number] = numbers unless numbers.nil?
     query_hash[:version] = versions unless versions.nil?
+
+    # If no version is specified, return only the latest
+    relation = relation.latest if urls.nil? && versions.nil? && uids.nil?
 
     relation = relation.where(query_hash)
 
