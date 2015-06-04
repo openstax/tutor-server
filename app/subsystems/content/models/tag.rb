@@ -5,10 +5,20 @@ class Content::Models::Tag < Tutor::SubSystems::BaseModel
   has_many :teks_tags, through: :lo_teks_tags, class_name: 'Tag', source: :teks
 
   # List the different types of tags
-  enum tag_type: [ :generic, :teks, :lo ]
+  enum tag_type: [ :generic, :teks, :lo, :dok, :blooms, :length ]
 
   validates :value, presence: true
   validates :tag_type, presence: true
+
+  before_save :update_tag_type
+
+  TAG_TYPE_REGEX = {
+    dok: /^dok/,
+    blooms: /^blooms-/,
+    length: /^time-/,
+    teks: /^ost-tag-teks-/,
+    lo: /-lo\d+$/
+  }
 
   def chapter_section
     matches = /-ch(\d+)-s(\d+)-lo\d+$/.match(value)
@@ -38,5 +48,17 @@ class Content::Models::Tag < Tutor::SubSystems::BaseModel
     template
   end
 
+  def update_tag_type
+    self.tag_type = get_tag_type if tag_type.nil? || tag_type == 'generic'
+  end
+
+  def get_tag_type
+    TAG_TYPE_REGEX.each do |type, regex|
+      if value.match(regex)
+        return type
+      end
+    end
+    return :generic
+  end
 
 end

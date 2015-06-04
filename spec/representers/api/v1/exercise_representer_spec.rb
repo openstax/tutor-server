@@ -40,7 +40,7 @@ RSpec.describe Api::V1::ExerciseRepresenter, type: :representer do
         'chapter_section' => [4,2],
       }, {
         'id' => 'ost-tag-teks-112-39-c-4d',
-        'type' => 'generic',
+        'type' => 'teks',
         'name' => '(D)',
         'description' => 'calculate the effect of forces on objects'
       }]
