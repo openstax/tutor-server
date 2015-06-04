@@ -44,11 +44,10 @@ module Tasks
     def get_tasks(student_profiles)
       role_ids = student_profiles.collect(&:entity_role_id)
       # Return reading and homework tasks for a student ordered by due date
-      @tasks ||= Tasks::Models::Task
+      @tasks ||= Models::Task
         .joins { taskings }
         .where { taskings.entity_role_id.in role_ids }
-        .where { task_type.in Tasks::Models::Task.task_types.values_at(:reading,
-                                                                       :homework) }
+        .where { task_type.in Models::Task.task_types.values_at(:reading, :homework) }
         .order { due_at }
         .includes(:taskings, :task_steps)
     end
