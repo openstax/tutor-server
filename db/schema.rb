@@ -115,14 +115,23 @@ ActiveRecord::Schema.define(version: 20150507224137) do
   add_index "course_content_course_books", ["entity_book_id"], name: "index_course_content_course_books_on_entity_book_id", using: :btree
   add_index "course_content_course_books", ["entity_course_id", "entity_book_id"], name: "[\"course_books_course_id_on_book_id_unique\"]", unique: true, using: :btree
 
-  create_table "course_membership_students", force: :cascade do |t|
+  create_table "course_membership_periods", force: :cascade do |t|
     t.integer  "entity_course_id", null: false
-    t.integer  "entity_role_id",   null: false
+    t.string   "name",             null: false
     t.datetime "created_at",       null: false
     t.datetime "updated_at",       null: false
   end
 
-  add_index "course_membership_students", ["entity_course_id", "entity_role_id"], name: "course_membership_student_course_role_uniq", unique: true, using: :btree
+  add_index "course_membership_periods", ["entity_course_id", "name"], name: "index_course_membership_periods_on_entity_course_id_and_name", unique: true, using: :btree
+
+  create_table "course_membership_students", force: :cascade do |t|
+    t.integer  "course_membership_period_id", null: false
+    t.integer  "entity_role_id",              null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+  end
+
+  add_index "course_membership_students", ["course_membership_period_id", "entity_role_id"], name: "course_membership_student_period_role_uniq", unique: true, using: :btree
 
   create_table "course_membership_teachers", force: :cascade do |t|
     t.integer  "entity_course_id", null: false
@@ -497,7 +506,8 @@ ActiveRecord::Schema.define(version: 20150507224137) do
   add_foreign_key "content_pages", "content_book_parts", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_content_course_books", "entity_books"
   add_foreign_key "course_content_course_books", "entity_courses"
-  add_foreign_key "course_membership_students", "entity_courses"
+  add_foreign_key "course_membership_periods", "entity_courses", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "course_membership_students", "course_membership_periods"
   add_foreign_key "course_membership_students", "entity_roles"
   add_foreign_key "course_membership_teachers", "entity_courses"
   add_foreign_key "course_membership_teachers", "entity_roles"

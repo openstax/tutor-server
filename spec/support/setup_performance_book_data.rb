@@ -18,8 +18,9 @@ class SetupPerformanceBookData
 
     CourseContent::AddBookToCourse.call(course: course, book: book)
     AddUserAsCourseTeacher[course: course, user: teacher.entity_user]
+    period = CreatePeriod[course: course]
     students.each do |student|
-      AddUserAsCourseStudent[course: course, user: student.entity_user]
+      AddUserAsPeriodStudent[period: period, user: student.entity_user]
     end
 
     page_ids = Content::Models::Page.all.map(&:id)

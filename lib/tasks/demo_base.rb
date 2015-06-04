@@ -120,10 +120,10 @@ class DemoBase
     FinePrint.sign_contract(profile, string_name)
   end
 
-  def new_course_student(course:, username: nil, name: nil, password: nil)
+  def new_period_student(period:, username: nil, name: nil, password: nil)
     profile = new_user_profile(username: username, name: name, password: password)
     user = profile.entity_user
-    role = run(AddUserAsCourseStudent, course: course, user: user).outputs.role
+    role = run(AddUserAsPeriodStudent, period: period, user: user).outputs.role
 
     {
       profile: profile,
@@ -306,6 +306,14 @@ class DemoBase
     log("Created a course named '#{name}'.")
 
     course
+  end
+
+  def create_period(course:)
+    period = run(:create_period, course: course).outputs.period
+
+    log("Created a period named '#{period.name}'.")
+
+    period
   end
 
   def log(message)

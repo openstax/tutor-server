@@ -1,7 +1,11 @@
 class CourseMembership::Models::Student < Tutor::SubSystems::BaseModel
-  belongs_to :role, subsystem: :entity
-  belongs_to :course, subsystem: :entity
+  wrapped_by ::Student
 
-  validates :entity_role_id,   presence: true, uniqueness: {scope: :entity_course_id}
-  validates :entity_course_id, presence: true
+  belongs_to :period
+  belongs_to :role, subsystem: :entity
+
+  has_one :course, through: :period
+
+  validates :period, presence: true
+  validates :role, presence: true, uniqueness: { scope: :course_membership_period_id }
 end

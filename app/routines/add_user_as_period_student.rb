@@ -1,4 +1,4 @@
-class AddUserAsCourseStudent
+class AddUserAsPeriodStudent
   lev_routine
 
   uses_routine UserIsCourseTeacher
@@ -8,7 +8,8 @@ class AddUserAsCourseStudent
 
   protected
 
-  def exec(user:, course:)
+  def exec(user:, period:)
+    course = period.course
     result = run(UserIsCourseTeacher, user: user, course: course)
     unless result.outputs.user_is_course_teacher
       result = run(UserIsCourseStudent, user: user, course: course)
@@ -17,6 +18,6 @@ class AddUserAsCourseStudent
     end
 
     run(Role::CreateUserRole, user, :student)
-    run(CourseMembership::AddStudent, course: course, role: outputs.role)
+    run(CourseMembership::AddStudent, period: period, role: outputs.role)
   end
 end

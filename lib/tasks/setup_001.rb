@@ -4,10 +4,11 @@ class Setup001
 
   uses_routine FetchAndImportBook, as: :import_book
   uses_routine CreateCourse, as: :create_course
+  uses_routine CreatePeriod, as: :create_period
   uses_routine AddBookToCourse, as: :add_book
   uses_routine UserProfile::CreateProfile, as: :create_profile
   uses_routine AddUserAsCourseTeacher, as: :add_teacher
-  uses_routine AddUserAsCourseStudent, as: :add_student
+  uses_routine AddUserAsPeriodStudent, as: :add_student
   uses_routine DistributeTasks, as: :distribute
   uses_routine Content::GetLos, as: :get_los
   uses_routine SearchLocalExercises, as: :search_exercises
@@ -34,6 +35,9 @@ class Setup001
     course = run(:create_course, name: 'Physics I').outputs.course
     run(:add_book, book: book, course: course)
 
+    # Create course period
+    period = run(:create_period).outputs.period
+
     # Add assistants to course so teacher can create assignments
     Tasks::Models::CourseAssistant.create!(course: course,
                                            assistant: r_assistant,
@@ -52,10 +56,10 @@ class Setup001
 
     student_roles = []
 
-    # Add 10 students to course
+    # Add 10 students to the period
     10.times.each_with_index do |i|
       student = new_profile(username: "student#{i + 1}")
-      student_roles.push(run(:add_student, course: course, user: student.entity_user).outputs.role)
+      student_roles.push(run(:add_student, period: period, user: student.entity_user).outputs.role)
     end
 
     course.reload

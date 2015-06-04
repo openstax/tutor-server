@@ -6,6 +6,7 @@ class Demo001 < DemoBase
 
   uses_routine FetchAndImportBook, as: :import_book, translations: { outputs: { type: :verbatim } }
   uses_routine CreateCourse, as: :create_course
+  uses_routine CreatePeriod, as: :create_period
   uses_routine AddBookToCourse, as: :add_book
   uses_routine UserProfile::MakeAdministrator, as: :make_administrator
   uses_routine AddUserAsCourseTeacher, as: :add_teacher
@@ -41,6 +42,8 @@ class Demo001 < DemoBase
     course = create_course(name: 'Physics I')
     run(:add_book, book: outputs.book, course: course)
 
+    period = create_period(course: course)
+
     admin_profile = new_user_profile(username: 'admin', name: 'Administrator User')
     run(:make_administrator, user: admin_profile.entity_user)
     log("Added an admin user #{admin_profile.account.full_name}")
@@ -49,7 +52,7 @@ class Demo001 < DemoBase
     run(:add_teacher, course: course, user: teacher_profile.entity_user)
 
     students = 20.times.collect do |ii|
-      new_course_student(course: course, username: "student#{(ii + 1).to_s.rjust(2,'0')}")
+      new_period_student(period: period, username: "student#{(ii + 1).to_s.rjust(2,'0')}")
     end
 
     log("Added #{teacher_profile.account.full_name} as a teacher and added #{students.count} students.")
