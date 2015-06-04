@@ -9,8 +9,8 @@ class Admin::TagsController < Admin::BaseController
   end
 
   def update
-    @tag.update_attributes(name: params[:tags][:name],
-                           description: params[:tags][:description])
+    @tag.update_attributes(name: params[:tag][:name],
+                           description: params[:tag][:description])
     flash[:notice] = 'The tag has been updated.'
     redirect_to admin_tags_path(value: @tag.value)
   end

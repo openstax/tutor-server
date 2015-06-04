@@ -30,7 +30,7 @@ RSpec.describe Admin::TagsController do
 
   describe 'PUT #update' do
     it 'updates the name and description of the tag' do
-      put :update, id: tag_1.id, tags: {
+      put :update, id: tag_1.id, tag: {
         name: 'k12 physics chapter 4 exercise 3',
         description: 'Student should be able to do this exercise',
         value: 'immutable'
