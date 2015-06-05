@@ -22,37 +22,59 @@ RSpec.describe Content::Models::Tag, :type => :model do
     expect(tag.tag_type).to eq 'lo'
   end
 
+  it 'does not assign the visible field if it is already set' do
+    tag = FactoryGirl.create :content_tag, visible: true
+    expect(tag.visible).to be true
+
+    tag = FactoryGirl.create :content_tag, visible: false
+    expect(tag.visible).to be false
+  end
+
+  it 'creates a generic tag' do
+    tag = FactoryGirl.create :content_tag
+    expect(tag.visible).to be false
+  end
+
   it 'creates a LO tag' do
     expect(tag.tag_type).to eq 'lo'
+    expect(tag.visible).to be true
   end
 
   it 'creates a TEKS tag' do
     tag = FactoryGirl.create :content_tag, name: '(4E)', value: 'ost-tag-teks-112-39-c-4e'
     expect(tag.name).to eq '(4E)'
     expect(tag.tag_type).to eq 'teks'
+    expect(tag.visible).to be true
   end
 
   it 'creates a DOK tag' do
     tag = FactoryGirl.create :content_tag, name: nil, value: 'dok1'
     expect(tag.name).to eq('DOK: 1')
     expect(tag.tag_type).to eq 'dok'
+    expect(tag.visible).to be true
   end
 
   it 'creates a Blooms tag' do
     tag = FactoryGirl.create :content_tag, name: nil, value: 'blooms-3'
     expect(tag.name).to eq('Blooms: 3')
     expect(tag.tag_type).to eq 'blooms'
+    expect(tag.visible).to be true
   end
 
   it 'creates a Length tag' do
     tag = FactoryGirl.create :content_tag, name: nil, value: 'time-short'
     expect(tag.name).to eq('Length: S')
     expect(tag.tag_type).to eq 'length'
+    expect(tag.visible).to be true
 
     tag = FactoryGirl.create :content_tag, name: nil, value: 'time-med'
     expect(tag.name).to eq('Length: M')
+    expect(tag.tag_type).to eq 'length'
+    expect(tag.visible).to be true
 
     tag = FactoryGirl.create :content_tag, name: nil, value: 'time-long'
     expect(tag.name).to eq('Length: L')
+    expect(tag.tag_type).to eq 'length'
+    expect(tag.visible).to be true
   end
 end

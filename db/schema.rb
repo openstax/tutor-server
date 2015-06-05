@@ -90,13 +90,13 @@ ActiveRecord::Schema.define(version: 20150507224137) do
   add_index "content_pages", ["url"], name: "index_content_pages_on_url", unique: true, using: :btree
 
   create_table "content_tags", force: :cascade do |t|
-    t.string   "value",                      null: false
-    t.integer  "tag_type",    default: 0,    null: false
+    t.string   "value",                   null: false
+    t.integer  "tag_type",    default: 0, null: false
     t.string   "name"
     t.text     "description"
-    t.boolean  "visible",     default: true
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
+    t.boolean  "visible"
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
   end
 
   add_index "content_tags", ["tag_type"], name: "index_content_tags_on_tag_type", using: :btree
