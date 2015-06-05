@@ -35,5 +35,10 @@ module Api::V1
                description: 'The chapter and section in the book, e.g. [5, 2]'
              }
 
+    property :data,
+             type: String,
+             readable: true,
+             writeable: false
+
   end
 end
