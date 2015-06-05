@@ -15,7 +15,7 @@ ActionController::Base.class_exec do
   end
 
   def set_date_header
-    response.header['Date'] = Time.now.httpdate
+    response.header['X-App-Date'] = Time.now.httpdate
   end
 
   def rescue_from_exception(exception)
