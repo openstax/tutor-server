@@ -75,14 +75,12 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     task_plan = Tasks::Models::TaskPlan.find(params[:id])
     OSU::AccessPolicy.require_action_allowed!(:publish, current_api_user, task_plan)
 
-    result = DistributeTasks.call(task_plan)
-    if result.errors.empty?
-      respond_with task_plan, represent_with: Api::V1::TaskPlanRepresenter, location: nil
+    if (settings = CheckValidSettings[validatable: task_plan])[:valid]
+      DistributeTasks.perform_later(task_plan)
+      respond_with task_plan.reload,
+        represent_with: Api::V1::TaskPlanRepresenter, location: nil
     else
-      error_hashes = result.errors.collect do |error|
-        {code: error.code, message: error.message, data: error.data}
-      end
-      render json: { errors: error_hashes }, status: :unprocessable_entity
+      render json: settings[:errors].last, status: :unprocessable_entity
     end
   end
 

@@ -206,10 +206,11 @@ describe Api::V1::TaskPlansController, :type => :controller, :api => true, :vers
       task_plan.save!
 
       controller.sign_in teacher
-      expect { api_post :publish, nil, parameters: { course_id: course.id, id: task_plan.id } }
-        .not_to change{ Tasks::Models::Task.count }
+      expect {
+        api_post :publish, nil, parameters: { course_id: course.id, id: task_plan.id }
+      }.not_to change{ Tasks::Models::Task.count }
       expect(response).to have_http_status(:unprocessable_entity)
-      error = response.body_as_hash[:errors].first
+      error = response.body_as_hash
       expect(error[:code]).to eq 'invalid_settings'
       expect(error[:message]).to eq 'Invalid settings'
       expect(error[:data].first).to include("The property '#/' contains additional properties [\"exercise_ids\", \"exercises_count_dynamic\"] outside of the schema when none are allowed in schema")
