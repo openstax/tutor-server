@@ -8,10 +8,13 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
         Hashie::Mash.new({
           id: 23,
           title: 'HW1',
-          opens_at: 'now',
-          due_at: 'then',
           trouble: false,
-          type: 'homework'
+          type: 'homework',
+          tasking_plans: Hashie::Mash.new(
+            target: CourseMembership::Models::Period.new(id: 42),
+            opens_at: 'now',
+            due_at: 'then'
+          )
         })
       ]
       mash.tasks = [
@@ -69,9 +72,12 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
         a_hash_including(
           "id" => '23',
           "title" => "HW1",
-          "opens_at" => "now",
-          "due_at" => "then",
-          "type" => "homework"
+          "type" => "homework",
+          "periods" => {
+            "id" => '42',
+            "opens_at" => "now",
+            "due_at" => "then"
+          }
         )
       ],
       "tasks" => [

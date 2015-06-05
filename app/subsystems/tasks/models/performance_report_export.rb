@@ -1,5 +1,5 @@
 module Tasks::Models
-  class PerformanceBookExport < Tutor::SubSystems::BaseModel
+  class PerformanceReportExport < Tutor::SubSystems::BaseModel
     mount_uploader :export, ExportUploader
 
     default_scope { order(created_at: :desc) }

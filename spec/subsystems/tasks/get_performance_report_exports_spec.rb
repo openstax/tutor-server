@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Tasks::GetPerformanceBookExports do
+RSpec.describe Tasks::GetPerformanceReportExports do
   it 'returns the export info related to courses' do
     AddUserAsCourseTeacher[course: Entity::Course.create!,
                            user: Entity::User.create!]
@@ -11,11 +11,11 @@ RSpec.describe Tasks::GetPerformanceBookExports do
     physics_file = File.open('./tmp/Physics_I_Performance.xlsx', 'w+')
     biology_file = File.open('./tmp/Biology_I_Performance.xlsx', 'w+')
 
-    physics_export = FactoryGirl.create(:performance_book_export,
+    physics_export = FactoryGirl.create(:performance_report_export,
                                         export: physics_file,
                                         course: course,
                                         role: role)
-    biology_export = FactoryGirl.create(:performance_book_export,
+    biology_export = FactoryGirl.create(:performance_report_export,
                                         export: biology_file,
                                         course: course,
                                         role: role)

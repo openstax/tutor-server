@@ -18,7 +18,7 @@ class Tasks::Assistants::IReadingAssistant
     }'
   end
 
-  def self.distribute_tasks(task_plan:, taskees:)
+  def self.distribute_tasks(task_plan:, tasking_plans:)
     ## NOTE: This implementation isn't particularly robust: failure to distribute to any taskee will
     ##       result in failure to distribute to EVERY taskee (because the entire transaction will be
     ##       rolled back).  Eventually, we will probably want to create an "undistributed" task and
@@ -26,13 +26,13 @@ class Tasks::Assistants::IReadingAssistant
 
     pages = collect_pages(task_plan: task_plan)
 
-    tasks = taskees.collect do |taskee|
+    tasks = tasking_plans.collect do |tasking_plan|
       task = create_ireading_task!(
-        task_plan: task_plan,
-        taskee:    taskee,
-        pages: pages
+        task_plan:    task_plan,
+        tasking_plan: tasking_plan,
+        pages:        pages
       )
-      assign_task!(task: task, taskee: taskee)
+      assign_task!(task: task, taskee: tasking_plan.target)
       task
     end
 
@@ -49,14 +49,14 @@ class Tasks::Assistants::IReadingAssistant
     pages
   end
 
-  def self.create_ireading_task!(task_plan:, taskee:, pages:)
-    task = create_task!(task_plan: task_plan)
+  def self.create_ireading_task!(task_plan:, tasking_plan:, pages:)
+    task = create_task!(task_plan: task_plan, tasking_plan: tasking_plan)
 
     set_los(task: task, pages: pages)
 
     add_core_steps!(task: task, pages: pages)
-    add_spaced_practice_exercise_steps!(task: task, taskee: taskee)
-    add_personalized_exercise_steps!(task_plan: task_plan, task: task, taskee: taskee)
+    add_spaced_practice_exercise_steps!(task: task, taskee: tasking_plan.target)
+    add_personalized_exercise_steps!(task_plan: task_plan, task: task, taskee: tasking_plan.target)
 
     task.save!
     task
@@ -82,10 +82,10 @@ class Tasks::Assistants::IReadingAssistant
     task
   end
 
-  def self.create_task!(task_plan:)
+  def self.create_task!(task_plan:, tasking_plan:)
     title    = task_plan.title || 'iReading'
-    opens_at = task_plan.opens_at
-    due_at   = task_plan.due_at || (task_plan.opens_at + 1.week)
+    opens_at = tasking_plan.opens_at
+    due_at   = tasking_plan.due_at || (tasking_plan.opens_at + 1.week)
 
     task = Tasks::CreateTask[task_plan: task_plan,
                              task_type: :reading,

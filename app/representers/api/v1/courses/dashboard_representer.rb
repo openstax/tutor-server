@@ -18,16 +18,6 @@ module Api::V1::Courses
                readable: true,
                writeable: false
 
-      property :opens_at,
-               type: DateTime,
-               readable: true,
-               writeable: false
-
-      property :due_at,
-               type: DateTime,
-               readable: true,
-               writeable: false
-
     end
 
     class Plan < Base
@@ -43,9 +33,26 @@ module Api::V1::Courses
                type: String,
                readable: true,
                writeable: false
+
+      collection :periods,
+                 readable: true,
+                 writeable: false,
+                 decorator: Api::V1::PeriodRepresenter,
+                 getter: ->(*) { tasking_plans.collect{ |tt| tt.target } }
+
     end
 
     class TaskBase < Base
+
+      property :opens_at,
+               type: DateTime,
+               readable: true,
+               writeable: false
+
+      property :due_at,
+               type: DateTime,
+               readable: true,
+               writeable: false
 
       property :task_type,
                as: :type,

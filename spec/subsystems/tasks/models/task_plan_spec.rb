@@ -9,25 +9,4 @@ RSpec.describe Tasks::Models::TaskPlan, :type => :model do
 
   it { is_expected.to validate_presence_of(:owner) }
   it { is_expected.to validate_presence_of(:assistant) }
-
-  it "requires either due_at or opens_at" do
-    task_plan = FactoryGirl.build(:tasks_task_plan, opens_at: Time.now,
-                                                    due_at: nil)
-    expect(task_plan).to be_valid
-
-    task_plan = FactoryGirl.build(:tasks_task_plan, opens_at: nil,
-                                                    due_at: Time.now)
-    expect(task_plan).to be_valid
-
-    task_plan = FactoryGirl.build(:tasks_task_plan, opens_at: nil, due_at: nil)
-    expect(task_plan).not_to be_valid
-  end
-
-  it "requires non-nil due_at to be after opens_at" do
-    task_plan = FactoryGirl.build(:tasks_task_plan, due_at: nil)
-    expect(task_plan).to be_valid
-
-    task_plan = FactoryGirl.build(:tasks_task_plan, opens_at: Time.now, due_at: Time.now - 1.week)
-    expect(task_plan).to_not be_valid
-  end
 end

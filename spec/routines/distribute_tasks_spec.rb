@@ -32,10 +32,7 @@ RSpec.describe DistributeTasks, type: :routine do
     end
 
     it "calls the distribute_tasks method on the task_plan's assistant" do
-      expect(DummyAssistant).to receive(:distribute_tasks).with(
-        task_plan: task_plan,
-        taskees: [Role::GetDefaultUserRole[user.entity_user]]
-      )
+      expect(DummyAssistant).to receive(:distribute_tasks)
 
       result = DistributeTasks.call(task_plan)
       expect(result.errors).to be_empty
@@ -85,10 +82,7 @@ RSpec.describe DistributeTasks, type: :routine do
     end
 
     it "calls the distribute_tasks method on the task_plan's assistant" do
-      expect(DummyAssistant).to receive(:distribute_tasks).with(
-        task_plan: task_plan,
-        taskees: [Role::GetDefaultUserRole[user.entity_user]]
-      )
+      expect(DummyAssistant).to receive(:distribute_tasks)
 
       result = DistributeTasks.call(task_plan)
       expect(result.errors).to be_empty

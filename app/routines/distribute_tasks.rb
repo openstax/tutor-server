@@ -4,7 +4,7 @@ class DistributeTasks
 
   lev_routine
 
-  uses_routine GetTaskeesFromTaskPlan, as: :get_taskees
+  uses_routine SplitTaskPlanTaskingPlans, as: :get_tasking_plans
 
   protected
 
@@ -30,10 +30,11 @@ class DistributeTasks
       task_plan.reload
     end
 
-    taskees = run(:get_taskees, task_plan).outputs[:taskees]
+    tasking_plans = run(:get_tasking_plans, task_plan).outputs[:tasking_plans]
 
     # Call the assistant code to create and distribute Tasks
-    outputs[:tasks] = assistant.distribute_tasks(task_plan: task_plan, taskees: taskees)
+    outputs[:tasks] = assistant.distribute_tasks(task_plan: task_plan,
+                                                 tasking_plans: tasking_plans)
     task_plan.update_attributes(published_at: Time.now)
   end
 

@@ -34,10 +34,15 @@ end
 def plan_hash_including_for(plan:)
   hash = {
     "id"       => plan.id.to_s,
-    "opens_at" => DateTimeUtilities.to_api_s(plan.opens_at),
-    "due_at"   => DateTimeUtilities.to_api_s(plan.due_at),
     "trouble"  => be_a_kind_of(TrueClass).or( be_a_kind_of(FalseClass) ),
-    "type"     => plan.type
+    "type"     => plan.type,
+    "periods"  => plan.tasking_plans.collect do |tp|
+      {
+        "id" => tp.target_id,
+        "opens_at" => DateTimeUtilities.to_api_s(tp.opens_at),
+        "due_at" => DateTimeUtilities.to_api_s(tp.due_at)
+      }
+    end
   }
   hash["title"] = plan.title unless plan.title.nil?
 

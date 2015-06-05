@@ -1,5 +1,5 @@
 module Api::V1
-  class PerformanceBookRepresenter < Roar::Decorator
+  class PerformanceReportRepresenter < Roar::Decorator
 
     include Roar::JSON
 
@@ -58,10 +58,14 @@ module Api::V1
                type: String,
                readable: true
 
-      property :class_average,
+      property :average,
                type: Float,
                readable: true
     end
+
+    property :period,
+             readable: true,
+             decorator: PeriodRepresenter
 
     collection :data_headings,
                readable: true,

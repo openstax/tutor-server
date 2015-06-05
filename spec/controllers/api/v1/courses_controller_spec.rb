@@ -583,9 +583,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         "plans" => a_collection_including(
           a_hash_including(
             "id" => plan.id.to_s,
-            "opens_at" => be_kind_of(String),
-            "due_at" => be_kind_of(String),
-            "type" => "reading"
+            "type" => "reading",
+            "periods" => []
           )
         )
       )
@@ -700,10 +699,10 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                 resource_owner_id: student_1.id }
 
       before do
-        SetupPerformanceBookData[course: course,
-                                 teacher: teacher,
-                                 students: student_1,
-                                 book: @book]
+        SetupPerformanceReportData[course: course,
+                                   teacher: teacher,
+                                   students: student_1,
+                                   book: @book]
       end
 
       it 'should work on the happy path' do
@@ -803,11 +802,11 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
     it 'kicks off the performance book export for authorized teachers' do
       role = ChooseCourseRole[course: course, user: teacher.entity_user]
-      allow(Tasks::Jobs::ExportPerformanceBookJob).to receive(:perform_later)
+      allow(Tasks::Jobs::ExportPerformanceReportJob).to receive(:perform_later)
 
       api_post :performance_export, teacher_token, parameters: { id: course.id }
 
-      expect(Tasks::Jobs::ExportPerformanceBookJob).to have_received(:perform_later)
+      expect(Tasks::Jobs::ExportPerformanceReportJob).to have_received(:perform_later)
         .with(course: course, role: role)
     end
 
@@ -841,7 +840,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       role = ChooseCourseRole[user: teacher.entity_user,
                               course: course,
                               allowed_role_type: :teacher]
-      export = FactoryGirl.create(:performance_book_export,
+      export = FactoryGirl.create(:performance_report_export,
                                   export: File.open('./tmp/test.txt', 'w+'),
                                   course: course,
                                   role: role)

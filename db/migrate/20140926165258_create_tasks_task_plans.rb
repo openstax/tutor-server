@@ -6,13 +6,10 @@ class CreateTasksTaskPlans < ActiveRecord::Migration
       t.string :title
       t.string :type, null: false
       t.text :settings, null: false
-      t.datetime :opens_at
-      t.datetime :due_at
       t.datetime :published_at
       t.timestamps null: false
 
       t.index [:owner_id, :owner_type]
-      t.index [:due_at, :opens_at]
       t.index :tasks_assistant_id
     end
 

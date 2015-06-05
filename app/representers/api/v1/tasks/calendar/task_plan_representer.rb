@@ -21,22 +21,18 @@ module Api::V1
                  readable: true,
                  writeable: false
 
-        property :opens_at,
-                 type: String,
-                 readable: true,
-                 writeable: false
-
-        property :due_at,
-                 type: String,
-                 readable: true,
-                 writeable: false
-
         property :trouble,
                  readable: true,
                  writeable: false,
                  getter: lambda{ |*| rand(0..1)==0 },
                  schema_info: { type: 'boolean' }
         # ^^^^^ REPLACE with real value once spec for calculating it is available
+
+        collection :tasking_plans,
+                   as: :periods,
+                   decorator: Api::V1::TaskingPlanPeriodRepresenter,
+                   readable: true,
+                   writeable: true
 
       end
     end

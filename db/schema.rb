@@ -344,7 +344,7 @@ ActiveRecord::Schema.define(version: 20150507224137) do
   add_index "tasks_course_assistants", ["entity_course_id", "tasks_task_plan_type"], name: "index_tasks_course_assistants_on_course_id_and_task_plan_type", unique: true, using: :btree
   add_index "tasks_course_assistants", ["tasks_assistant_id", "entity_course_id"], name: "index_tasks_course_assistants_on_assistant_id_and_course_id", using: :btree
 
-  create_table "tasks_performance_book_exports", force: :cascade do |t|
+  create_table "tasks_performance_report_exports", force: :cascade do |t|
     t.integer  "entity_course_id"
     t.integer  "entity_role_id"
     t.string   "export"
@@ -352,8 +352,8 @@ ActiveRecord::Schema.define(version: 20150507224137) do
     t.datetime "updated_at"
   end
 
-  add_index "tasks_performance_book_exports", ["entity_course_id"], name: "index_tasks_performance_book_exports_on_entity_course_id", using: :btree
-  add_index "tasks_performance_book_exports", ["entity_role_id"], name: "index_tasks_performance_book_exports_on_entity_role_id", using: :btree
+  add_index "tasks_performance_report_exports", ["entity_course_id"], name: "index_tasks_performance_report_exports_on_entity_course_id", using: :btree
+  add_index "tasks_performance_report_exports", ["entity_role_id"], name: "index_tasks_performance_report_exports_on_entity_role_id", using: :btree
 
   create_table "tasks_task_plans", force: :cascade do |t|
     t.integer  "tasks_assistant_id", null: false
@@ -362,14 +362,11 @@ ActiveRecord::Schema.define(version: 20150507224137) do
     t.string   "title"
     t.string   "type",               null: false
     t.text     "settings",           null: false
-    t.datetime "opens_at"
-    t.datetime "due_at"
     t.datetime "published_at"
     t.datetime "created_at",         null: false
     t.datetime "updated_at",         null: false
   end
 
-  add_index "tasks_task_plans", ["due_at", "opens_at"], name: "index_tasks_task_plans_on_due_at_and_opens_at", using: :btree
   add_index "tasks_task_plans", ["owner_id", "owner_type"], name: "index_tasks_task_plans_on_owner_id_and_owner_type", using: :btree
   add_index "tasks_task_plans", ["tasks_assistant_id"], name: "index_tasks_task_plans_on_tasks_assistant_id", using: :btree
 
@@ -434,10 +431,13 @@ ActiveRecord::Schema.define(version: 20150507224137) do
     t.integer  "target_id",          null: false
     t.string   "target_type",        null: false
     t.integer  "tasks_task_plan_id", null: false
+    t.datetime "opens_at"
+    t.datetime "due_at"
     t.datetime "created_at",         null: false
     t.datetime "updated_at",         null: false
   end
 
+  add_index "tasks_tasking_plans", ["due_at", "opens_at"], name: "index_tasks_tasking_plans_on_due_at_and_opens_at", using: :btree
   add_index "tasks_tasking_plans", ["target_id", "target_type", "tasks_task_plan_id"], name: "index_tasking_plans_on_t_id_and_t_type_and_t_p_id", unique: true, using: :btree
   add_index "tasks_tasking_plans", ["tasks_task_plan_id"], name: "index_tasks_tasking_plans_on_tasks_task_plan_id", using: :btree
 
@@ -516,8 +516,8 @@ ActiveRecord::Schema.define(version: 20150507224137) do
   add_foreign_key "role_users", "entity_users"
   add_foreign_key "tasks_course_assistants", "entity_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_course_assistants", "tasks_assistants", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "tasks_performance_book_exports", "entity_courses"
-  add_foreign_key "tasks_performance_book_exports", "entity_roles"
+  add_foreign_key "tasks_performance_report_exports", "entity_courses"
+  add_foreign_key "tasks_performance_report_exports", "entity_roles"
   add_foreign_key "tasks_task_plans", "tasks_assistants", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_steps", "tasks_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasking_plans", "tasks_task_plans", on_update: :cascade, on_delete: :cascade

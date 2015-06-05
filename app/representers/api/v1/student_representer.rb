@@ -1,17 +1,20 @@
 module Api::V1
-  class PerformanceBookExportRepresenter < Roar::Decorator
+  class StudentRepresenter < Roar::Decorator
+
     include Roar::JSON
+    include Representable::Coercion
 
-    property :filename,
+    property :name,
              type: String,
              readable: true
 
-    property :url,
+    property :period_id,
              type: String,
              readable: true
 
-    property :created_at,
+    property :role_id,
              type: String,
              readable: true
+
   end
 end

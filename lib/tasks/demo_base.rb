@@ -172,14 +172,14 @@ class DemoBase
       owner: course,
       type: 'reading',
       assistant: reading_assistant,
-      opens_at: opens_at,
-      due_at: due_at,
       settings: { page_ids: pages.collect{|page| page.id.to_s} }
     )
 
     distribute_tasks(task_plan: task_plan,
                      to: to || course,
-                     message: "Assigned ireading for #{chapter_sections}, due: #{due_at}, title: #{task_plan.title}")
+                     message: "Assigned ireading for #{chapter_sections}, due: #{due_at}, title: #{task_plan.title}",
+                     opens_at: opens_at,
+                     due_at: due_at)
   end
 
   def assign_homework(course:, chapter_sections:, due_at:, opens_at: nil, duration: nil,
@@ -205,8 +205,6 @@ class DemoBase
       owner: course,
       type: 'homework',
       assistant: hw_assistant,
-      opens_at: opens_at,
-      due_at: due_at,
       settings: {
         page_ids: pages.collect{|page| page.id.to_s},
         exercise_ids: exercise_ids,
@@ -214,14 +212,17 @@ class DemoBase
       }
     )
 
-    distribute_tasks(task_plan: task_plan, to: to || course)
+    distribute_tasks(task_plan: task_plan, to: to || course, opens_at: opens_at, due_at: due_at)
   end
 
-  def distribute_tasks(task_plan:, to:, message: nil)
-    task_plan.tasking_plans << Tasks::Models::TaskingPlan.create!(target: to, task_plan: task_plan)
+  def distribute_tasks(task_plan:, to:, opens_at:, due_at:, message: nil)
+    task_plan.tasking_plans << Tasks::Models::TaskingPlan.create!(target: to,
+                                                                  task_plan: task_plan,
+                                                                  opens_at: opens_at,
+                                                                  due_at: due_at)
     tasks = run(DistributeTasks, task_plan).outputs.tasks
 
-    log(message || "Assigned #{task_plan.type}, '#{task_plan.title}' due at #{task_plan.due_at}; #{tasks.count} times")
+    log(message || "Assigned #{task_plan.type}, '#{task_plan.title}' due at #{due_at}; #{tasks.count} times")
     log("One task looks like: " + print_task(task: tasks.first)) if tasks.any?
 
     tasks

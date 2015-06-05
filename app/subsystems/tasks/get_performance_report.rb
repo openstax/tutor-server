@@ -1,6 +1,6 @@
 module Tasks
-  class GetPerformanceBook
-    lev_routine express_output: :performance_book
+  class GetPerformanceReport
+    lev_routine express_output: :performance_report
 
     uses_routine GetStudentProfiles,
                  as: :get_student_profiles,
@@ -9,9 +9,9 @@ module Tasks
     protected
 
     def exec(course:, role:)
-      outputs[:performance_book] = \
+      outputs[:performance_report] = \
         if CourseMembership::IsCourseTeacher[course: course, roles: [role]]
-          get_performance_book_for_teacher(course)
+          get_performance_report_for_teacher(course)
         else
           raise(SecurityTransgression, 'The caller is not a teacher in this course')
         end
@@ -19,7 +19,7 @@ module Tasks
 
     private
 
-    def get_performance_book_for_teacher(course)
+    def get_performance_report_for_teacher(course)
       student_tasks, student_data = [], []
       student_profiles = run(:get_student_profiles, course: course).outputs.profiles
       tasks = get_tasks(student_profiles)

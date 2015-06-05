@@ -1,4 +1,4 @@
-class SetupPerformanceBookData
+class SetupPerformanceReportData
   lev_routine
 
   protected
@@ -30,13 +30,12 @@ class SetupPerformanceBookData
       owner: course,
       type: 'reading',
       assistant: reading_assistant,
-      opens_at: Time.now,
-      due_at: Time.now + 1.week,
       settings: { page_ids: page_ids.first(2).collect(&:to_s) }
     )
 
     reading_taskplan.tasking_plans << Tasks::Models::TaskingPlan
-      .create!(target: course, task_plan: reading_taskplan)
+      .create!(target: course, task_plan: reading_taskplan,
+               opens_at: Time.now, due_at: Time.now + 1.week)
 
     DistributeTasks[reading_taskplan]
 
@@ -45,8 +44,6 @@ class SetupPerformanceBookData
       owner: course,
       type: 'homework',
       assistant: homework_assistant,
-      opens_at: Time.now,
-      due_at: Time.now + 1.day,
       settings: {
         exercise_ids: Content::Models::Exercise.first(5).collect(&:id).map(&:to_s),
         exercises_count_dynamic: 2
@@ -54,7 +51,8 @@ class SetupPerformanceBookData
     )
 
     homework_taskplan.tasking_plans << Tasks::Models::TaskingPlan
-      .create!(target: course, task_plan: homework_taskplan)
+      .create!(target: course, task_plan: homework_taskplan,
+               opens_at: Time.now, due_at: Time.now + 1.day)
 
     DistributeTasks[homework_taskplan]
 
@@ -63,8 +61,6 @@ class SetupPerformanceBookData
       owner: course,
       type: 'homework',
       assistant: homework_assistant,
-      opens_at: Time.now,
-      due_at: Time.now + 2.week,
       settings: {
         exercise_ids: Content::Models::Exercise.last(2).collect(&:id).map(&:to_s),
         exercises_count_dynamic: 2
@@ -72,7 +68,8 @@ class SetupPerformanceBookData
     )
 
     homework2_taskplan.tasking_plans << Tasks::Models::TaskingPlan
-      .create!(target: course, task_plan: homework2_taskplan)
+      .create!(target: course, task_plan: homework2_taskplan,
+               opens_at: Time.now, due_at: Time.now + 2.week)
 
     DistributeTasks[homework2_taskplan]
 

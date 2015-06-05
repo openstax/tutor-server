@@ -33,16 +33,16 @@ class Tasks::Assistants::HomeworkAssistant
     }'
   end
 
-  def self.distribute_tasks(task_plan:, taskees:)
+  def self.distribute_tasks(task_plan:, tasking_plans:)
     exercises = collect_exercises(task_plan: task_plan)
 
-    tasks = taskees.collect do |taskee|
+    tasks = tasking_plans.collect do |tasking_plan|
       task = create_homework_task!(
-        task_plan: task_plan,
-        taskee:    taskee,
-        exercises: exercises
+        task_plan:    task_plan,
+        tasking_plan: tasking_plan,
+        exercises:    exercises
       )
-      assign_task!(task: task, taskee: taskee)
+      assign_task!(task: task, taskee: tasking_plan.target)
       task
     end
 
@@ -56,20 +56,20 @@ class Tasks::Assistants::HomeworkAssistant
     exercises
   end
 
-  def self.create_homework_task!(task_plan:, taskee:, exercises:)
-    task = create_task!(task_plan: task_plan)
+  def self.create_homework_task!(task_plan:, tasking_plan:, exercises:)
+    task = create_task!(task_plan: task_plan, tasking_plan: tasking_plan)
 
     set_los(task: task, exercises: exercises)
 
     add_core_steps!(task: task, exercises: exercises)
-    add_spaced_practice_exercise_steps!(task_plan: task_plan, task: task, taskee: taskee)
-    add_personalized_exercise_steps!(task_plan: task_plan, task: task, taskee: taskee)
+    add_spaced_practice_exercise_steps!(task_plan: task_plan, task: task, taskee: tasking_plan.target)
+    add_personalized_exercise_steps!(task_plan: task_plan, task: task, taskee: tasking_plan.target)
   end
 
-  def self.create_task!(task_plan:)
+  def self.create_task!(task_plan:, tasking_plan:)
     title    = task_plan.title || 'Homework'
-    opens_at = task_plan.opens_at
-    due_at   = task_plan.due_at || (task_plan.opens_at + 1.week)
+    opens_at = tasking_plan.opens_at
+    due_at   = tasking_plan.due_at || (tasking_plan.opens_at + 1.week)
 
     description = task_plan.settings['description']
 

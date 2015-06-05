@@ -83,11 +83,12 @@ class Setup001
         owner: course,
         type: 'reading',
         assistant: r_assistant,
-        opens_at: r_open_date,
-        due_at: r_due_date,
         settings: { page_ids: r_page_ids }
       )
-      r_tp.tasking_plans << Tasks::Models::TaskingPlan.create!(target: course, task_plan: r_tp)
+      r_tp.tasking_plans << Tasks::Models::TaskingPlan.create!(target: course,
+                                                               task_plan: r_tp,
+                                                               opens_at: r_open_date,
+                                                               due_at: r_due_date)
       run(:distribute, r_tp)
 
       page_los = run(:get_los, page_ids: hw_page_ids).outputs.los
@@ -97,14 +98,15 @@ class Setup001
                                               owner: course,
                                               type: 'homework',
                                               assistant: hw_assistant,
-                                              opens_at: hw_open_date,
-                                              due_at: hw_due_date,
                                               settings: {
                                                 page_ids: hw_page_ids,
                                                 exercise_ids: exercise_ids,
                                                 exercises_count_dynamic: [i + 2, 4].min
                                               })
-      hw_tp.tasking_plans << Tasks::Models::TaskingPlan.create!(target: course, task_plan: hw_tp)
+      hw_tp.tasking_plans << Tasks::Models::TaskingPlan.create!(target: course,
+                                                                task_plan: hw_tp,
+                                                                opens_at: hw_open_date,
+                                                                due_at: hw_due_date)
       run(:distribute, hw_tp)
     end
 
@@ -113,8 +115,6 @@ class Setup001
                                               owner: course,
                                               type: 'homework',
                                               assistant: hw_assistant,
-                                              opens_at: Time.now - 3.weeks,
-                                              due_at: Time.now - 2.weeks,
                                               settings: {
                                                 exercise_ids: Content::Models::Exercise
                                                                 .order(:created_at)
@@ -122,7 +122,10 @@ class Setup001
                                                                 .collect{ |e| e.id.to_s },
                                                 exercises_count_dynamic: 2
                                               })
-    hw_tp.tasking_plans << Tasks::Models::TaskingPlan.create!(target: course, task_plan: hw_tp)
+    hw_tp.tasking_plans << Tasks::Models::TaskingPlan.create!(target: course,
+                                                              task_plan: hw_tp,
+                                                              opens_at: Time.now - 3.weeks,
+                                                              due_at: Time.now - 2.weeks)
     run(:distribute, hw_tp)
 
     # Add some practice widgets and work them for students[0]
