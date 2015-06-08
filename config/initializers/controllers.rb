@@ -6,7 +6,7 @@ ActionController::Base.class_exec do
 
   before_action :load_time
 
-  after_action :set_date_header
+  after_action :set_app_date_header
 
   protected
 
@@ -14,7 +14,7 @@ ActionController::Base.class_exec do
     Timecop.load_time if Timecop.enabled?
   end
 
-  def set_date_header
+  def set_app_date_header
     response.header['X-App-Date'] = Time.now.httpdate
   end
 
