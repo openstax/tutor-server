@@ -8,6 +8,9 @@ ActionController::Base.class_exec do
 
   after_action :set_app_date_header
 
+  # Skip setting the Date header in openstax_api, since this is now done in the X-App-Date header
+  skip_after_action :set_date_header
+
   protected
 
   def load_time
