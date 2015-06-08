@@ -32,7 +32,7 @@ module Api::V1
 
     collection :tasking_plans,
                as: :periods,
-               class: Tasks::Models::TaskingPlan,
+               class: ::Tasks::Models::TaskingPlan,
                decorator: TaskingPlanPeriodRepresenter,
                readable: true,
                writeable: true
