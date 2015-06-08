@@ -6,7 +6,10 @@ ActionController::Base.class_exec do
 
   before_action :load_time
 
-  after_action :set_date_header
+  after_action :set_app_date_header
+
+  # Skip setting the Date header in openstax_api, since this is now done in the X-App-Date header
+  skip_after_action :set_date_header
 
   protected
 
@@ -14,7 +17,7 @@ ActionController::Base.class_exec do
     Timecop.load_time if Timecop.enabled?
   end
 
-  def set_date_header
+  def set_app_date_header
     response.header['X-App-Date'] = Time.now.httpdate
   end
 
