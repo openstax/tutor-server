@@ -606,6 +606,40 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
   end
 
+  describe '#stats' do
+    context 'user is teacher' do
+      let!(:teacher_role) {
+        AddUserAsCourseTeacher.call(
+          course: course, user: user_1.entity_user).outputs[:role]
+      }
+
+      let!(:student_role) {
+        AddUserAsCourseStudent.call(
+          course: course, user: user_2.entity_user).outputs[:role]
+      }
+
+      let!(:course_stats) {
+        Hashie::Mash.new(title: 'Title', page_ids: [1], children: [])
+      }
+
+      let!(:get_course_stats) {
+        class_double(GetCourseStats).as_stubbed_const
+      }
+
+      context 'and a student role is given' do
+        it 'returns the student stats' do
+          expect(get_course_stats)
+            .to receive(:[]).with(role: student_role, course: course)
+            .and_return(course_stats)
+
+          api_get :stats,
+                  user_1_token,
+                  parameters: { id: course.id, role_id: student_role }
+        end
+      end
+    end
+  end
+
   context 'with book' do
     before(:all) do
       DatabaseCleaner.start
