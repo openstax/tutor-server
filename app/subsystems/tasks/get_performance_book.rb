@@ -2,7 +2,7 @@ module Tasks
   class GetPerformanceBook
     lev_routine express_output: :performance_book
 
-    uses_routine UserProfile::GetStudentProfiles,
+    uses_routine GetStudentProfiles,
                  as: :get_student_profiles,
                  translations: { outputs: { type: :verbatim } }
 
