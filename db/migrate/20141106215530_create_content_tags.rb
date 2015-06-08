@@ -5,6 +5,8 @@ class CreateContentTags < ActiveRecord::Migration
       t.integer :tag_type, null: false, default: 0
       t.string :name
       t.text :description
+      t.string :data
+      t.boolean :visible
 
       t.timestamps null: false
 

@@ -5,10 +5,22 @@ class Content::Models::Tag < Tutor::SubSystems::BaseModel
   has_many :teks_tags, through: :lo_teks_tags, class_name: 'Tag', source: :teks
 
   # List the different types of tags
-  enum tag_type: [ :generic, :teks, :lo ]
+  enum tag_type: [ :generic, :teks, :lo, :dok, :blooms, :length ]
 
   validates :value, presence: true
   validates :tag_type, presence: true
+
+  before_save :update_tag_type_data_and_visible
+
+  TAG_TYPE_REGEX = {
+    dok: /^dok(\d+)$/,
+    blooms: /^blooms-(\d+)$/,
+    length: /^time-(.+)$/,
+    teks: /^ost-tag-teks-.*-(.+)$/,
+    lo: /-lo\d+$/
+  }
+
+  VISIBLE_TAG_TYPES = [:teks, :lo, :dok, :blooms, :length]
 
   def chapter_section
     matches = /-ch(\d+)-s(\d+)-lo\d+$/.match(value)
@@ -38,5 +50,27 @@ class Content::Models::Tag < Tutor::SubSystems::BaseModel
     template
   end
 
+  def update_tag_type_data_and_visible
+    self.tag_type = get_tag_type if tag_type.nil? || tag_type == 'generic'
+    self.data = get_data if data.nil?
+    self.visible = VISIBLE_TAG_TYPES.include?(tag_type.to_sym) if visible.nil?
+    # need to return true here because if self.visible evaluates to false, the
+    # record does not get saved
+    return true
+  end
+
+  def get_tag_type
+    TAG_TYPE_REGEX.each do |type, regex|
+      if value.match(regex)
+        return type
+      end
+    end
+    return :generic
+  end
+
+  def get_data
+    m = value.match(TAG_TYPE_REGEX[tag_type.to_sym] || //)
+    return m && m[1]
+  end
 
 end

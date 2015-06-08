@@ -4,6 +4,6 @@ class Content::SearchTags
   protected
 
   def exec(tag_value:)
-    outputs[:tags] = Content::Models::Tag.where { value.like tag_value }
+    outputs[:tags] = Content::Models::Tag.where { value.like tag_value }.order { value }
   end
 end

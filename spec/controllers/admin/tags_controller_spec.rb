@@ -29,17 +29,19 @@ RSpec.describe Admin::TagsController do
   end
 
   describe 'PUT #update' do
-    it 'updates the name and description of the tag' do
-      put :update, id: tag_1.id, tags: {
+    it 'updates the name, description and visible flag of the tag' do
+      put :update, id: tag_1.id, tag: {
         name: 'k12 physics chapter 4 exercise 3',
         description: 'Student should be able to do this exercise',
-        value: 'immutable'
+        value: 'immutable',
+        visible: '0'
       }
 
       tag_1.reload
       expect(tag_1.value).to eq 'k12phys-ch04-ex003'
       expect(tag_1.name).to eq 'k12 physics chapter 4 exercise 3'
       expect(tag_1.description).to eq 'Student should be able to do this exercise'
+      expect(tag_1.visible).to be false
     end
   end
 

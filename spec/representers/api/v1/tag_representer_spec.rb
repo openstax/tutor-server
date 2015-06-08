@@ -44,6 +44,7 @@ RSpec.describe Api::V1::TagRepresenter, type: :representer do
       'name' => '(D)',
       'description' => 'calculate the effect of forces on objects',
       'type' => 'teks',
+      'data' => '4d'
     )
   end
 
