@@ -105,7 +105,7 @@ module Tasks
       end
 
       {
-        exercise_count: task_steps.length,
+        exercise_count: exercises.length,
         correct_exercise_count: correct_count,
         recovered_exercise_count: exercises.select(&:can_be_recovered?).length
       }
