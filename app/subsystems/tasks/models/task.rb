@@ -1,10 +1,7 @@
-require_relative 'entity_extensions'
-
 require_relative '../placeholder_strategies/homework_personalized'
 require_relative '../placeholder_strategies/i_reading_personalized'
 
 class Tasks::Models::Task < Tutor::SubSystems::BaseModel
-
   enum task_type: [:homework, :reading, :chapter_practice,
                    :page_practice, :mixed_practice]
 
@@ -68,7 +65,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def completed?
-    self.task_steps(true).all?{|ts| ts.completed? }
+    self.task_steps.all?(&:completed?)
   end
 
   def status

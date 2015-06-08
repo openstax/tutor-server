@@ -4,7 +4,9 @@ class CourseMembership::GetStudents
   protected
 
   def exec(course)
-    ss_maps = CourseMembership::Models::Student.where{entity_course_id == course.id}
-    outputs[:students] = ss_maps.collect{|ss_map| ss_map.role}
+    outputs[:students] = CourseMembership::Models::Student
+                           .includes(:role)
+                           .where(course: course)
+                           .collect(&:role)
   end
 end
