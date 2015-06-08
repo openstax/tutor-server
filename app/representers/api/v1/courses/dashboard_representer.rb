@@ -34,11 +34,11 @@ module Api::V1::Courses
                readable: true,
                writeable: false
 
-      collection :periods,
+      collection :tasking_plans,
+                 as: :periods,
                  readable: true,
                  writeable: false,
-                 decorator: Api::V1::PeriodRepresenter,
-                 getter: ->(*) { tasking_plans.collect{ |tt| tt.target } }
+                 decorator: Api::V1::TaskingPlanPeriodRepresenter
 
     end
 

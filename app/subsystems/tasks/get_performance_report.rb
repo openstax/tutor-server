@@ -27,7 +27,7 @@ module Tasks
 
       student_profiles.collect do |student_profile|
         student_tasks = tasks.select { |t| taskings_exist?(t, student_profile) }
-        @class_average = [[]] * student_tasks.length
+        @average = [[]] * student_tasks.length
 
         student_data << {
           name: student_profile.full_name,
@@ -63,15 +63,15 @@ module Tasks
 
     def get_data_headings(tasks)
       tasks.collect.with_index { |t, i|
-        { title: t.title }.merge(class_average(t, i))
+        { title: t.title }.merge(average(t, i))
       }
     end
 
-    def class_average(task, index)
+    def average(task, index)
       # check if the task is a homework and at least one person has started on it
-      return {} unless task.task_type == 'homework' && @class_average[index].present?
+      return {} unless task.task_type == 'homework' && @average[index].present?
       {
-        class_average: @class_average[index].reduce(:+) * 100 / @class_average[index].length
+        average: @average[index].reduce(:+) * 100 / @average[index].length
       }
     end
 
@@ -101,7 +101,7 @@ module Tasks
       correct_count = exercises.select(&:is_correct?).length
 
       if attempted_count > 0
-        @class_average[index] << (Float(correct_count) / attempted_count)
+        @average[index] << (Float(correct_count) / attempted_count)
       end
 
       {

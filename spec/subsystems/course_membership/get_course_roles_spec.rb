@@ -2,11 +2,12 @@ require 'rails_helper'
 
 describe CourseMembership::GetCourseRoles do
   let!(:other_course) { Entity::Course.create! }
+  let!(:other_period) { CreatePeriod[course: other_course] }
 
   let!(:other_student_role) {
     other_role = Entity::Role.create!
     CourseMembership::AddStudent.call(
-      course: other_course,
+      period: other_period,
       role:   other_role
     )
     other_role
@@ -35,6 +36,7 @@ describe CourseMembership::GetCourseRoles do
   context "when types: :any" do
     let!(:types) { :any }
     let!(:target_course) { Entity::Course.create! }
+    let!(:target_period) { CreatePeriod[course: target_course] }
 
     context "and there are no roles for the target course" do
       it "returns an empty enumerable" do
@@ -48,7 +50,7 @@ describe CourseMembership::GetCourseRoles do
       let!(:target_student_role) {
         target_role = Entity::Role.create!
         CourseMembership::AddStudent.call(
-          course: target_course,
+          period: target_period,
           role:   target_role
         )
         target_role
@@ -90,13 +92,13 @@ describe CourseMembership::GetCourseRoles do
 
         target_role2 = Entity::Role.create!
         CourseMembership::AddStudent.call(
-          course: target_course,
+          period: target_period,
           role:   target_role2
         )
 
         target_role3 = Entity::Role.create!
         CourseMembership::AddStudent.call(
-          course: target_course,
+          period: target_period,
           role:   target_role3
         )
         [target_role1, target_role2, target_role3]
@@ -116,6 +118,7 @@ describe CourseMembership::GetCourseRoles do
   context "when types: :teacher" do
     let!(:types) { :teacher }
     let!(:target_course) { Entity::Course.create! }
+    let!(:target_period) { CreatePeriod[course: target_course] }
 
     context "and there are no roles for the target course" do
       it "returns an empty enumerable" do
@@ -129,7 +132,7 @@ describe CourseMembership::GetCourseRoles do
       let!(:target_student_role) {
         target_role = Entity::Role.create!
         CourseMembership::AddStudent.call(
-          course: target_course,
+          period: target_period,
           role:   target_role
         )
         target_role
@@ -164,7 +167,7 @@ describe CourseMembership::GetCourseRoles do
       let!(:target_roles) {
         target_role1 = Entity::Role.create!
         CourseMembership::AddStudent.call(
-          course: target_course,
+          period: target_period,
           role:   target_role1
         )
 
@@ -176,7 +179,7 @@ describe CourseMembership::GetCourseRoles do
 
         target_role3 = Entity::Role.create!
         CourseMembership::AddStudent.call(
-          course: target_course,
+          period: target_period,
           role:   target_role3
         )
         [target_role2]
@@ -196,6 +199,7 @@ describe CourseMembership::GetCourseRoles do
   context "when types: :student" do
     let!(:types) { :student }
     let!(:target_course) { Entity::Course.create! }
+    let!(:target_period) { CreatePeriod[course: target_course] }
 
     context "and there are no roles for the target course" do
       it "returns an empty enumerable" do
@@ -209,7 +213,7 @@ describe CourseMembership::GetCourseRoles do
       let!(:target_student_role) {
         target_role = Entity::Role.create!
         CourseMembership::AddStudent.call(
-          course: target_course,
+          period: target_period,
           role:   target_role
         )
         target_role
@@ -250,13 +254,13 @@ describe CourseMembership::GetCourseRoles do
 
         target_role2 = Entity::Role.create!
         CourseMembership::AddStudent.call(
-          course: target_course,
+          period: target_period,
           role:   target_role2
         )
 
         target_role3 = Entity::Role.create!
         CourseMembership::AddStudent.call(
-          course: target_course,
+          period: target_period,
           role:   target_role3
         )
         [target_role2, target_role3]

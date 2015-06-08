@@ -31,7 +31,7 @@ module Tasks
 
     private
     def create_summary_worksheet(package:)
-      package.workbook.add_worksheet(name: 'Period Summary') do |sheet|
+      package.workbook.add_worksheet(name: 'Summary') do |sheet|
         sheet.add_row [bold_text("#{outputs.profile.name} Performance Report")]
         sheet.add_row [Date.today]
       end
@@ -40,7 +40,7 @@ module Tasks
     def create_data_worksheet(package:)
       package.workbook.add_worksheet(name: 'Student Performance') do |sheet|
         sheet.add_row(data_headers)
-        sheet.add_row(gather_class_averages)
+        sheet.add_row(gather_averages)
         outputs.performance_report.students.each do |student|
           sheet.add_row student_data(student)
         end
@@ -52,9 +52,9 @@ module Tasks
       (['Students'] + headings).collect { |header| bold_text(header) }
     end
 
-    def gather_class_averages
-      averages = outputs.performance_report.data_headings.collect(&:period_average)
-      (['Period average'] + averages).collect { |average| bold_text(average) }
+    def gather_averages
+      averages = outputs.performance_report.data_headings.collect(&:average)
+      (['Average'] + averages).collect { |average| bold_text(average) }
     end
 
     def student_data(student)

@@ -1,5 +1,5 @@
 module Api::V1
-  class RosterRepresenter < Roar::Decorator
+  class StudentsRepresenter < Roar::Decorator
     include Representable::JSON::Collection
 
     items extend: StudentRepresenter

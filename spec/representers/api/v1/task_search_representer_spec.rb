@@ -6,7 +6,8 @@ RSpec.describe Api::V1::TaskSearchRepresenter, :type => :representer do
 
     let!(:user)           { FactoryGirl.create(:user_profile).entity_user }
     let!(:course)         { FactoryGirl.create(:entity_course) }
-    let!(:role)           { AddUserAsCourseStudent.call(user: user, course: course).outputs.role }
+    let!(:period)         { CreatePeriod[course: course] }
+    let!(:role)           { AddUserAsPeriodStudent.call(user: user, period: period).outputs.role }
     let!(:default_task)   { FactoryGirl.create(:tasks_task) }
     let!(:task_count)     { rand(5..10) }
     let!(:tasks)          { task_count.times.collect { FactoryGirl.create(:tasks_task) } }

@@ -10,11 +10,13 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
           title: 'HW1',
           trouble: false,
           type: 'homework',
-          tasking_plans: Hashie::Mash.new(
-            target: CourseMembership::Models::Period.new(id: 42),
-            opens_at: 'now',
-            due_at: 'then'
-          )
+          tasking_plans: [
+            Hashie::Mash.new(
+              target: CourseMembership::Models::Period.new(id: 42),
+              opens_at: 'now',
+              due_at: 'then'
+            )
+          ]
         })
       ]
       mash.tasks = [

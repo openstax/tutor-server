@@ -35,6 +35,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
   }
 
   let!(:course)          { Entity::Course.create }
+  let!(:period)          { CreatePeriod[course: course] }
 
   let!(:lo)              { FactoryGirl.create :content_tag, value: 'ost-tag-lo-test-lo01' }
   let!(:pp)              { FactoryGirl.create :content_tag, value: 'os-practice-problems' }
@@ -270,7 +271,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
 
   describe "practice task update step" do
     it "allows updating of a step (needed to test access to legacy and SS taskings)" do
-      AddUserAsCourseStudent[course: course, user: user_1.entity_user]
+      AddUserAsPeriodStudent[period: period, user: user_1.entity_user]
       task = ResetPracticeWidget[role: Entity::Role.last, exercise_source: :fake]
 
       step = task.task.task_steps.first

@@ -2,8 +2,11 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
   wrapped_by ::Period
 
   belongs_to :course, subsystem: :entity
+  has_many :teachers, through: :course
+  has_many :teacher_roles, through: :teachers, source: :role, class_name: 'Entity::Role'
 
   has_many :students, dependent: :destroy
+  has_many :student_roles, through: :students, source: :role, class_name: 'Entity::Role'
 
   before_destroy :no_students, prepend: true
 

@@ -36,7 +36,7 @@ class Setup001
     run(:add_book, book: book, course: course)
 
     # Create course period
-    period = run(:create_period).outputs.period
+    period = run(:create_period, course: course).outputs.period
 
     # Add assistants to course so teacher can create assignments
     Tasks::Models::CourseAssistant.create!(course: course,

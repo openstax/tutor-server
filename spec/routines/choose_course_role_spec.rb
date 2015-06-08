@@ -8,6 +8,7 @@ describe ChooseCourseRole do
   let(:interloper){ Entity::User.create! }
 
   let(:course){ Entity::Course.create! }
+  let(:period){ CreatePeriod[course: course] }
 
   let!(:teacher_role) {
     role = Entity::Role.create!(role_type: :teacher)
@@ -19,7 +20,7 @@ describe ChooseCourseRole do
   let!(:student_role) {
     role = Entity::Role.create!
     Role::AddUserRole[user: student, role: role]
-    CourseMembership::AddStudent[course: course, role: role]
+    CourseMembership::AddStudent[period: period, role: role]
     role
   }
 
@@ -37,7 +38,7 @@ describe ChooseCourseRole do
     let!(:user_student_role) {
       role = Entity::Role.create!
       Role::AddUserRole[user: user, role: role]
-      CourseMembership::AddStudent[course: course, role: role]
+      CourseMembership::AddStudent[period: period, role: role]
       role
     }
 
@@ -156,11 +157,11 @@ describe ChooseCourseRole do
 
     context "and the user has a multiple roles" do
       context "when one is a teacher" do
-        let(:role_type){ :any }
+        let(:role_type) { :any }
         subject(:found) {
-          role=Entity::Role.create!(role_type: :student)
+          role = Entity::Role.create!(role_type: :student)
           Role::AddUserRole[user: teacher, role: role]
-          CourseMembership::Models::Student.create(entity_course_id: course.id, entity_role_id: role.id)
+          CourseMembership::AddStudent[period: period, role: role]
           ChooseCourseRole.call(
             user: teacher, course: course, allowed_role_type: role_type
           ).outputs.role
@@ -177,9 +178,9 @@ describe ChooseCourseRole do
       end
 
       it "fails with an error if one is not a teacher" do
-        role=Entity::Role.create(role_type: :student)
+        role = Entity::Role.create(role_type: :student)
         Role::AddUserRole[user: student, role: role]
-        CourseMembership::Models::Student.create!(entity_course_id: course.id, entity_role_id: role.id)
+        CourseMembership::AddStudent[period: period, role: role]
 
         errors = ChooseCourseRole.call(user: student, course: course).errors
         expect(errors).not_to be_empty

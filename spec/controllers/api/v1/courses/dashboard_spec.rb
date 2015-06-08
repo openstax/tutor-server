@@ -4,10 +4,11 @@ require 'vcr_helper'
 describe Api::V1::Courses::Dashboard, :type => :routine, :vcr => VCR_OPTS do
 
   let!(:course)         { CreateCourse[name: 'Physics 101'] }
+  let!(:period)         { CreatePeriod[course: course] }
 
   let!(:student_user)   { FactoryGirl.create(:user_profile).entity_user }
-  let!(:student_role)   { AddUserAsCourseStudent.call(user: student_user,
-                                                      course: course)
+  let!(:student_role)   { AddUserAsPeriodStudent.call(user: student_user,
+                                                      period: period)
                                                 .outputs.role }
 
   let!(:teacher_user)   { FactoryGirl.create(:user_profile,
