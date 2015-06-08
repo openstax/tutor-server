@@ -107,6 +107,16 @@ describe ChooseCourseRole do
       end
     end
 
+    context "and the role is a course student and the user is a teacher" do
+      subject {
+        ChooseCourseRole.call(user: teacher, course: course, role_id: student_role.id)
+      }
+
+      it "returns the provided role" do
+        expect(subject.outputs.role).to eq(student_role)
+      end
+    end
+
   end
 
   context "when a role is not given" do

@@ -228,6 +228,22 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                     parameters: {id: course.id, role_id: teacher_role.id}
           end
         end
+
+        context "and a student role is given" do
+          it "should find the student role's events" do
+            user_2_role = AddUserAsCourseStudent.call(
+              course: course,
+              user: user_2.entity_user).outputs[:role]
+
+            expect(get_role_course_events).
+              to receive(:call).with(course: course, role: user_2_role).
+              and_return(lev_result)
+
+            api_get :events,
+                    user_1_token,
+                    parameters: { id: course.id, role_id: user_2_role.id }
+          end
+        end
       end
       context "and also a student" do
         let!(:student_role) {
@@ -408,6 +424,16 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                                opens_at: be_kind_of(String),
                                                steps: have(5).items)
     end
+
+    it "can be called by a teacher using a student role" do
+      AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
+      student_role = AddUserAsCourseStudent.call(course: course, user: user_2.entity_user).outputs[:role]
+      ResetPracticeWidget.call(role: student_role, exercise_source: :fake)
+
+      api_get :practice, user_1_token, parameters: { id: course.id, role_id: student_role.id }
+
+      expect(response).to have_http_status(:success)
+    end
   end
 
   describe "dashboard" do
@@ -562,6 +588,56 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       )
     end
 
+    it "works for a teacher with student role specified" do
+      api_get :dashboard, teacher_token, parameters: { id: course.id, role_id: student_role }
+
+      response_body = HashWithIndifferentAccess[response.body_as_hash]
+      expect(response_body['role']).to eq({
+        'id' => student_role.id.to_s,
+        'type' => 'student'
+      })
+      expect(response_body['course']).to eq({
+        'name' => 'Physics 101',
+        'teacher_names' => ['Bob Newhart']
+      })
+      expect(response_body['tasks']).not_to be_empty
+      expect(response_body['plans']).to be_nil
+    end
+
+  end
+
+  describe '#stats' do
+    context 'user is teacher' do
+      let!(:teacher_role) {
+        AddUserAsCourseTeacher.call(
+          course: course, user: user_1.entity_user).outputs[:role]
+      }
+
+      let!(:student_role) {
+        AddUserAsCourseStudent.call(
+          course: course, user: user_2.entity_user).outputs[:role]
+      }
+
+      let!(:course_stats) {
+        Hashie::Mash.new(title: 'Title', page_ids: [1], children: [])
+      }
+
+      let!(:get_course_stats) {
+        class_double(GetCourseStats).as_stubbed_const
+      }
+
+      context 'and a student role is given' do
+        it 'returns the student stats' do
+          expect(get_course_stats)
+            .to receive(:[]).with(role: student_role, course: course)
+            .and_return(course_stats)
+
+          api_get :stats,
+                  user_1_token,
+                  parameters: { id: course.id, role_id: student_role }
+        end
+      end
+    end
   end
 
   context 'with book' do
