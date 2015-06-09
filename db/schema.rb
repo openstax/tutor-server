@@ -82,6 +82,8 @@ ActiveRecord::Schema.define(version: 20150507224137) do
     t.integer  "number",               null: false
     t.string   "title",                null: false
     t.text     "chapter_section"
+    t.string   "uuid"
+    t.string   "version"
     t.datetime "created_at",           null: false
     t.datetime "updated_at",           null: false
   end
