@@ -2,13 +2,12 @@
 
 Assistant Classes must:
 
-  1. Implement the `distribute_tasks(task_plan:, taskees:)`
+  1. Implement the `create_tasks(task_plan:, taskees:)`
      singleton method which:
-       - Receives as inputs the TaskPlan being assigned and
-         the taskees (targets)
-       - Creates Task objects and assigns them to the taskees
-         based on the task_plan
-       - Returns the assigned Tasks
+       - Receives as inputs the TaskPlan being assigned and the taskees (targets)
+       - Builds Task objects and calls yield(task, taskee) to assign them and set the dates
+       - Saves the Tasks
+       - Returns an array containing the Tasks
 
   2. Implement the `schema` singleton method which:
        - Receives no arguments
@@ -23,7 +22,7 @@ class AbstractAssistant
     {}
   end
 
-  def self.distribute_tasks(task_plan:, taskees:)
+  def self.create_tasks(task_plan:, taskees:)
     raise NotImplementedError
   end
 

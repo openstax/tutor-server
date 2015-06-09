@@ -4,7 +4,7 @@ class CourseMembership::IsCourseStudent
   protected
 
   def exec(course:, roles:)
-    outputs[:is_course_student] = course.periods.joins(students: :role)
+    outputs[:is_course_student] = course.periods.joins(:students)
                                                 .where(students: {entity_role_id: roles}).exists?
   end
 end

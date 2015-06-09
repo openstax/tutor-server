@@ -1,5 +1,3 @@
-require_relative 'models/entity_extensions'
-
 class CourseMembership::GetPeriodRoles
   lev_routine
 
@@ -7,7 +5,8 @@ class CourseMembership::GetPeriodRoles
 
   protected
 
-  def exec(period:, types: :any)
+  def exec(periods:, types: :any)
+    periods = [periods].flatten.uniq
     types = [types].flatten.uniq
 
     if types.include?(:any)
@@ -17,13 +16,13 @@ class CourseMembership::GetPeriodRoles
     outputs[:roles] = types.collect do |type|
       case type
       when :student
-        period.student_roles
+        periods.collect{|p| p.student_roles}
       when :teacher
-        period.teacher_roles
+        periods.collect{|p| p.teacher_roles}
       else
         raise ArgumentError, "invalid type: #{type} (valid types are #{ROLE_TYPES})"
       end
-    end
+    end.flatten.uniq
   end
 
 end

@@ -1,6 +1,6 @@
 class Tasks::Models::TaskingPlan < Tutor::SubSystems::BaseModel
 
-  belongs_to :task_plan
+  belongs_to :task_plan, inverse_of: :tasking_plans
   belongs_to :target, polymorphic: true
 
   validates :target, presence: true

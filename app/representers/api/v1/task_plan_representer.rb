@@ -31,9 +31,8 @@ module Api::V1
              writeable: true
 
     collection :tasking_plans,
-               as: :periods,
                class: ::Tasks::Models::TaskingPlan,
-               decorator: TaskingPlanPeriodRepresenter,
+               decorator: TaskingPlanRepresenter,
                readable: true,
                writeable: true
 

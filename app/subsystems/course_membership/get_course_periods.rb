@@ -1,7 +1,5 @@
-require_relative 'models/entity_extensions'
-
 class CourseMembership::GetCoursePeriods
-  lev_routine
+  lev_routine express_output: :periods
 
   protected
 

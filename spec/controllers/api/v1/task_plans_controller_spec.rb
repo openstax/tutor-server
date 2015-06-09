@@ -3,6 +3,7 @@ require "rails_helper"
 describe Api::V1::TaskPlansController, :type => :controller, :api => true, :version => :v1 do
 
   let!(:course) { CreateCourse.call.outputs.course }
+  let!(:period) { CreatePeriod[course: course] }
 
   let!(:assistant) { FactoryGirl.create(
     :tasks_assistant, code_class_name: "Tasks::Assistants::IReadingAssistant"
@@ -15,6 +16,7 @@ describe Api::V1::TaskPlansController, :type => :controller, :api => true, :vers
 
   let!(:user) { FactoryGirl.create :user_profile }
   let!(:teacher) { FactoryGirl.create :user_profile }
+  let!(:student) { FactoryGirl.create :user_profile }
 
   let!(:page) { FactoryGirl.create :content_page }
   let!(:task_plan) { FactoryGirl.create(:tasks_task_plan,
@@ -23,7 +25,7 @@ describe Api::V1::TaskPlansController, :type => :controller, :api => true, :vers
                                         settings: { page_ids: [page.id.to_s] },
                                         type: 'test') }
   let!(:tasking_plan) {
-    tp = FactoryGirl.build :tasks_tasking_plan, task_plan: task_plan, target: user
+    tp = FactoryGirl.build :tasks_tasking_plan, task_plan: task_plan, target: period.to_model
     task_plan.tasking_plans << tp
     tp
   }
@@ -39,6 +41,7 @@ describe Api::V1::TaskPlansController, :type => :controller, :api => true, :vers
 
   before do
     AddUserAsCourseTeacher.call(course: course, user: teacher.entity_user)
+    AddUserAsPeriodStudent.call(period: period, user: student.entity_user)
   end
 
   context 'show' do

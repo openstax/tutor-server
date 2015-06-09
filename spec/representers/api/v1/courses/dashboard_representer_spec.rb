@@ -12,7 +12,8 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
           type: 'homework',
           tasking_plans: [
             Hashie::Mash.new(
-              target: CourseMembership::Models::Period.new(id: 42),
+              target_id: 42,
+              target_type: 'CourseMembership::Models::Period',
               opens_at: 'now',
               due_at: 'then'
             )
@@ -75,14 +76,17 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
           "id" => '23',
           "title" => "HW1",
           "type" => "homework",
-          "periods" => {
-            "id" => '42',
-            "opens_at" => "now",
-            "due_at" => "then"
-          }
+          "tasking_plans" => [
+            {
+              "target_id" => '42',
+              "target_type" => 'period',
+              "opens_at" => "now",
+              "due_at" => "then"
+            }
+          ]
         )
       ],
-      "tasks" => [
+      "tasks" => a_collection_containing_exactly(
         a_hash_including(
           "id" => '34',
           "title" => "HW2",
@@ -113,14 +117,14 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
           "complete_exercise_count" => 8,
           "correct_exercise_count" => 3
         ),
-      ],
+      ),
       "role" => {
         "id" => '34',
         "type" => "teacher"
       },
       "course" => {
         "name" => "Physics 101",
-        "teacher_names" => [ "Andrew Garcia", "Bob Newhart" ]
+        "teacher_names" => a_collection_containing_exactly( "Andrew Garcia", "Bob Newhart" )
       }
     )
 

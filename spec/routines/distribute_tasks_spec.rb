@@ -23,7 +23,7 @@ RSpec.describe DistributeTasks, type: :routine do
           "additionalProperties": false
         }'
       )
-      expect(DummyAssistant).not_to receive(:distribute_tasks)
+      expect(DummyAssistant).not_to receive(:create_tasks)
 
       result = DistributeTasks.call(task_plan)
       expect(result.errors.first.code).to eq :invalid_settings
@@ -31,8 +31,8 @@ RSpec.describe DistributeTasks, type: :routine do
       expect(task_plan.tasks).to be_blank
     end
 
-    it "calls the distribute_tasks method on the task_plan's assistant" do
-      expect(DummyAssistant).to receive(:distribute_tasks)
+    it "calls the create_tasks method on the task_plan's assistant" do
+      expect(DummyAssistant).to receive(:create_tasks)
 
       result = DistributeTasks.call(task_plan)
       expect(result.errors).to be_empty
@@ -73,7 +73,7 @@ RSpec.describe DistributeTasks, type: :routine do
           "additionalProperties": false
         }'
       )
-      expect(DummyAssistant).not_to receive(:distribute_tasks)
+      expect(DummyAssistant).not_to receive(:create_tasks)
 
       result = DistributeTasks.call(task_plan)
       expect(result.errors.first.code).to eq :invalid_settings
@@ -81,8 +81,8 @@ RSpec.describe DistributeTasks, type: :routine do
       expect(task_plan.tasks).to eq previous_tasks
     end
 
-    it "calls the distribute_tasks method on the task_plan's assistant" do
-      expect(DummyAssistant).to receive(:distribute_tasks)
+    it "calls the create_tasks method on the task_plan's assistant" do
+      expect(DummyAssistant).to receive(:create_tasks)
 
       result = DistributeTasks.call(task_plan)
       expect(result.errors).to be_empty

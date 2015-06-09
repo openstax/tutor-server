@@ -1,6 +1,6 @@
-class SplitTaskPlanTaskingPlans
+class IndividualizeTaskingPlans
 
-  lev_routine
+  lev_routine express_output: :tasking_plans
 
   protected
 
@@ -16,13 +16,9 @@ class SplitTaskPlanTaskingPlans
       when Entity::User
         Role::GetDefaultUserRole[target]
       when Entity::Course
-        CourseMembership::GetCourseRoles.call(
-          course: target, types: :student
-        ).outputs.roles
-      when CourseMemberShip::Models::Period
-        CourseMembership::GetCourseRoles.call(
-          course: target.course, types: :student
-        ).outputs.roles
+        CourseMembership::GetCourseRoles.call(course: target, types: :student).outputs.roles
+      when CourseMembership::Models::Period
+        CourseMembership::GetPeriodRoles.call(periods: target, types: :student).outputs.roles
       else
         raise NotYetImplemented
       end

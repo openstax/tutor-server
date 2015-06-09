@@ -6,7 +6,7 @@ class CreatePeriod
     as: :create_period
 
   def exec(course:, name: nil)
-    name ||= "#{(course.periods.count + 1).ordinalize} Period"
+    name ||= (course.periods.count + 1).ordinalize
     run(:create_period, course: course, name: name)
   end
 end

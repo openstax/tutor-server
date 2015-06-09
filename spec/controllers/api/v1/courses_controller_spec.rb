@@ -463,7 +463,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           a_hash_including(
             "id" => plan.id.to_s,
             "type" => "reading",
-            "periods" => []
+            "tasking_plans" => []
           )
         )
       )

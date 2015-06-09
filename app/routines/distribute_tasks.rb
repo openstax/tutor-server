@@ -4,7 +4,7 @@ class DistributeTasks
 
   lev_routine
 
-  uses_routine SplitTaskPlanTaskingPlans, as: :get_tasking_plans
+  uses_routine IndividualizeTaskingPlans, as: :get_tasking_plans
 
   protected
 
@@ -30,11 +30,32 @@ class DistributeTasks
       task_plan.reload
     end
 
-    tasking_plans = run(:get_tasking_plans, task_plan).outputs[:tasking_plans]
+    tasking_plans = run(:get_tasking_plans, task_plan).outputs.tasking_plans
 
-    # Call the assistant code to create and distribute Tasks
-    outputs[:tasks] = assistant.distribute_tasks(task_plan: task_plan,
-                                                 tasking_plans: tasking_plans)
+    date_map = {}
+    taskees = tasking_plans.collect do |tp|
+      taskee = tp.target
+      date_map[taskee] = [tp.opens_at, tp.due_at]
+      taskee
+    end
+
+    # Call the assistant code to create Tasks, then distribute them
+    outputs[:tasks] = assistant.create_tasks(task_plan: task_plan,
+                                             taskees: taskees) do |task, taskee|
+      tasking = Tasks::Models::Tasking.new(
+        task: task.entity_task,
+        role: taskee
+      )
+      task.entity_task.taskings << tasking
+
+      dates = date_map[taskee]
+      task.opens_at = dates.first
+      task.due_at = dates.second || (task.opens_at + 1.week)
+      task.feedback_at ||= task.due_at
+      task.save!
+      task
+    end
+
     task_plan.update_attributes(published_at: Time.now)
   end
 

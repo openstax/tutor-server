@@ -1,5 +1,5 @@
 class CourseMembership::CreatePeriod
-  lev_routine
+  lev_routine express_output: :period
 
   protected
 

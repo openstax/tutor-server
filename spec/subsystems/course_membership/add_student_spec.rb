@@ -15,8 +15,8 @@ describe CourseMembership::AddStudent do
     end
   end
 
-  context "when adding a existing student role to a course" do
-    it "changes the student's period" do
+  context "when adding an existing student role to a course" do
+    it "fails" do
       role = Entity::Role.create!
       course = Entity::Course.create!
       period_1 = CreatePeriod[course: course]
@@ -34,9 +34,9 @@ describe CourseMembership::AddStudent do
       expect {
         result = CourseMembership::AddStudent.call(period: period_2, role: role)
       }.to_not change{ CourseMembership::Models::Student.count }
-      expect(result.errors).to be_empty
+      expect(result.errors).to_not be_empty
       expect(student.reload.course).to eq course
-      expect(::Period.new(student.period)).to eq period_2
+      expect(::Period.new(student.period)).to eq period_1
     end
   end
 end

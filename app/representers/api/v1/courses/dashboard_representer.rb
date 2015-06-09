@@ -35,10 +35,9 @@ module Api::V1::Courses
                writeable: false
 
       collection :tasking_plans,
-                 as: :periods,
                  readable: true,
                  writeable: false,
-                 decorator: Api::V1::TaskingPlanPeriodRepresenter
+                 decorator: Api::V1::TaskingPlanRepresenter
 
     end
 

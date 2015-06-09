@@ -1,17 +1,23 @@
 module Api::V1
-  class TaskingPlanPeriodRepresenter < Roar::Decorator
+  class TaskingPlanRepresenter < Roar::Decorator
 
     include Roar::JSON
     include Representable::Coercion
 
-    property :id,
+    TARGET_TYPE_TO_API_MAP = { 'CourseMembership::Models::Period' => 'period' }
+    TARGET_TYPE_TO_CLASS_MAP = { 'period' => 'CourseMembership::Models::Period' }
+
+    property :target_id,
+             type: String,
+             readable: true,
+             writeable: true
+
+    property :target_type,
              type: String,
              readable: true,
              writeable: true,
-             getter: ->(*) { target.try(:id) },
-             setter: ->(val, *) {
-              self.target = CourseMembership::Models::Period.find(val)
-            }
+             getter: ->(*) { TARGET_TYPE_TO_API_MAP[target_type] },
+             setter: ->(val, *) { self.target_type = TARGET_TYPE_TO_CLASS_MAP[val] }
 
     property :opens_at,
              type: String,
