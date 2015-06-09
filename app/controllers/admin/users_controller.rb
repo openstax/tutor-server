@@ -8,6 +8,11 @@ class Admin::UsersController < Admin::BaseController
                                   page: params[:page] || 1,
                                   per_page: @per_page] \
       if params[:search_term].present?
+
+    respond_to do |format|
+      format.html
+      format.json { render json: @user_search }
+    end
   end
 
   def create

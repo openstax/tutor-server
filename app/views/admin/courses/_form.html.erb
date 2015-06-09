@@ -4,9 +4,11 @@
   <%= f.label :name %>
   <%= f.text_field :name %>
 
-  <%= f.label :teacher_ids, 'Assign teachers' %>
-  <%= f.collection_select :teacher_ids, @users, :entity_user_id, :full_name, {},
-                          { multiple: true } %>
+  <% unless @course.nil? %>
+    <%= f.label :teacher, 'Assign teachers' %>
+    <%= f.text_field :teacher %>
+    <ul id="assigned-teachers"></ul>
+  <% end %>
 
   <%= f.submit 'Save', class: 'btn btn-primary' %>
 <% end %>
