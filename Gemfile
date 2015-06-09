@@ -4,7 +4,7 @@
 source 'https://rubygems.org'
 
 # Rails framework
-gem 'rails', '4.2.0'
+gem 'rails', '4.2.1'
 
 # Bootstrap front-end framework
 gem 'bootstrap-sass', '~> 3.2.0'
