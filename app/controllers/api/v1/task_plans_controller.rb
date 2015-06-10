@@ -77,7 +77,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
 
     if (settings = CheckValidSettings[validatable: task_plan])[:valid]
       job = DistributeTasks.perform_later(task_plan, validate: false)
-      render json: { id: task_plan.id, job: "/jobs/#{job.job_id}" }, status: :accepted
+      render json: { task_plan: api_task_plan_path(task_plan) }, status: :accepted
     else
       render json: settings[:errors], status: :unprocessable_entity
     end

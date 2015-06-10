@@ -189,8 +189,7 @@ describe Api::V1::TaskPlansController, :type => :controller, :api => true, :vers
 
       job_hash = JSON.parse(response.body)
 
-      expect(job_hash['id']).to eq(task_plan.id)
-      expect(job_hash['job']).to match(/\A\/jobs\/[a-z0-9-]+\z/)
+      expect(job_hash['task_plan']).to eq("/api/plans/#{task_plan.id}")
     end
 
     it 'does not allow an unauthorized user to publish a task_plan' do
