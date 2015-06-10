@@ -74,6 +74,7 @@ gem "keyword_search"
 # File uploads
 gem 'remotipart'
 gem 'carrierwave'
+gem 'fog-aws'
 
 # Image editing
 gem 'mini_magick'
