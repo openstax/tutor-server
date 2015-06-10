@@ -85,37 +85,15 @@ module Tasks
     def get_student_data(tasks, exercises)
       {
         data: tasks.collect.with_index { |t, i|
-          data = {
+          {
             status: t.status,
             type: t.task_type,
             id: t.id,
+            exercise_count: t.exercise_count,
+            correct_exercise_count: t.correct_exercise_count,
+            recovered_exercise_count: t.recovered_exercise_count
           }
-
-          if t.task_type == 'homework'
-            data.merge!(exercise_count(t.task_steps, exercises, i))
-          end
-
-          data
         }
-      }
-    end
-
-    def exercise_count(task_steps, exercises, index)
-      tasked_exercises = task_steps.select { |ts| ts.tasked_type == 'Tasks::Models::TaskedExercise' }
-      tasked_ids = tasked_exercises.collect(&:tasked_id)
-      exercises = exercises.select { |e| tasked_ids.include?(e.id) }
-
-      attempted_count = task_steps.select(&:completed?).length
-      correct_count = exercises.select(&:is_correct?).length
-
-      if attempted_count > 0
-        @average[-1][index] << (Float(correct_count) / attempted_count)
-      end
-
-      {
-        exercise_count: exercises.length,
-        correct_exercise_count: correct_count,
-        recovered_exercise_count: exercises.select(&:can_be_recovered?).length
       }
     end
   end

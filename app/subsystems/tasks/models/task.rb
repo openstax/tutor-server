@@ -116,6 +116,15 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   def handle_task_step_completion!(completion_time: Time.now)
     return unless core_task_steps_completed?
 
+    tasked_ids = task_steps.collect(&:tasked_id)
+    exercises = Models::TaskedExercise.where(id: tasked_ids)
+
+    update_attributes({
+      exercise_count: exercises.length,
+      correct_exercise_count: exercises.select(&:is_correct?).length
+      recovered_exercise_count: exercises.select(&:can_be_recovered?).length
+    })
+
     strategy = personalized_placeholder_strategy
     unless strategy.nil?
       strategy.populate_placeholders(task: self)
