@@ -66,6 +66,8 @@ Rails.application.routes.draw do
         end
       end
     end
+
+    get 'pages/:uuid(@:version)', controller: :pages, action: :get_page
   end
 
   namespace 'admin' do
