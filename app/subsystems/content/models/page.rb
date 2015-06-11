@@ -12,6 +12,10 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
 
   delegate :fragments, :is_intro?, to: :parser
 
+  def cnx_id
+    "#{uuid}@#{version}"
+  end
+
   protected
 
   def parser

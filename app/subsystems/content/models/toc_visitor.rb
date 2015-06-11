@@ -23,6 +23,7 @@ class Content::Models::TocVisitor < Content::Models::BookVisitor
       id: page.id,
       title: page.title,
       type: 'page',
+      cnx_id: page.cnx_id,
       chapter_section: page.chapter_section
     })
   end
