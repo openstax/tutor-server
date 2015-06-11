@@ -115,9 +115,7 @@ module Tasks
         self.core_task_steps.collect{|ts| ts.completed_at}.max
       end
 
-      def handle_task_step_completion!(completion_time: Time.now)
-        return unless core_task_steps_completed?
-
+      def update_exercise_counters
         tasked_ids = task_steps.collect(&:tasked_id)
         exercises = TaskedExercise.where(id: tasked_ids)
 
@@ -126,6 +124,10 @@ module Tasks
           correct_exercise_count: exercises.select(&:is_correct?).length,
           recovered_exercise_count: exercises.select(&:can_be_recovered?).length
         })
+      end
+
+      def handle_task_step_completion!(completion_time: Time.now)
+        return unless core_task_steps_completed?
 
         strategy = personalized_placeholder_strategy
         unless strategy.nil?
