@@ -31,10 +31,17 @@ module Tasks
         student_profiles.collect do |student_profile|
           student_tasks = tasks.select { |t| taskings_exist?(t, student_profile) }
 
+
         student_data << {
           name: student_profile.full_name,
           role: student_profile.entity_role_id,
-          data: student_tasks.collect { |task|
+          data: student_tasks.collect.with_index { |task, index|
+            attempted_count = task.task_steps.select(&:completed?).length
+
+            if attempted_count > 0
+              @class_average[index] << (Float(task.correct_exercise_count) / attempted_count)
+            end
+
             {
               status: task.status,
               type: task.task_type,
