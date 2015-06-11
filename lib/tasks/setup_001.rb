@@ -29,7 +29,7 @@ class Setup001
     )
 
     # Import sample book into Tutor
-    book = run(:import_book, id: '7db9aa72-f815-4c3b-9cb6-d50cf5318b58').outputs.book
+    book = run(:import_book, id: '93e2b09d-261c-4007-a987-0b3062fe154b').outputs.book
 
     # Create course and add the imported book to it
     course = run(:create_course, name: 'Physics I').outputs.course
@@ -143,7 +143,7 @@ class Setup001
     # because the FE wants 2 exercises to demo "try another"/"refresh my memory"
     Tasks::Models::TaskPlan.all.order(:created_at).fifth.tasks.each do |task|
       task_step = Tasks::Models::TaskStep.new(task: task, number: 8)
-      exercise = run(:search_exercises, tag: 'k12phys-ch04-ex079').outputs.items.first
+      exercise = run(:search_exercises, tag: 'k12phys-ch04-ex073').outputs.items.first
       task_step.tasked = run(:task_exercise,
                              exercise: exercise,
                              task_step: task_step,

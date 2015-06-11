@@ -14,7 +14,8 @@ FactoryGirl.define do
 
     settings do
       cnx_page = OpenStax::Cnx::V1::Page.new(
-        hash: {'id' => '092bbf0d-0729-42ce-87a6-fd96fd87a083', 'title' => 'Force'}
+        hash: { 'id' => '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6',
+                'title' => 'Newton\'s First Law of Motion: Inertia' }
       )
       book_part = FactoryGirl.create :content_book_part
       page    = Content::Routines::ImportPage.call(cnx_page: cnx_page, book_part: book_part)

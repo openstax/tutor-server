@@ -62,6 +62,30 @@ module OpenStax::Exercises::V1
     end
   end
 
+  # Lets the caller use a temporary fake client to execute a block
+  def self.with_fake_client
+    old_client = client
+
+    begin
+      use_fake_client
+      yield
+    ensure
+      @client = old_client
+    end
+  end
+
+  # Lets the caller use a temporary real client to execute a block
+  def self.with_real_client
+    old_client = client
+
+    begin
+      use_real_client
+      yield
+    ensure
+      @client = old_client
+    end
+  end
+
   def self.server_url
     client.server_url
   end

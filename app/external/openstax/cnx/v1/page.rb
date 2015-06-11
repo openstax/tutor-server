@@ -33,11 +33,8 @@ module OpenStax::Cnx::V1
                                                                   .collect{ |c| ".#{c}" }
                                                                   .join(', ')
 
-    # Find a node with a class that starts with ost-tag-lo-
-    LO_CSS = '[class^="ost-tag-lo-"]'
-
-    # Find the LO within the class string and ensure it is properly formatted
-    LO_REGEX = /ost-tag-lo-([\w-]+-lo[\d]+)/
+    # Find the tag within the class string and ensure it is properly formatted
+    TAG_REGEX = /ost-tag-(?:lo-)?([\w+-]+)/
 
     def initialize(hash: {}, chapter_section: [], is_intro: nil, id: nil, url: nil,
                    title: nil, full_hash: nil, content: nil, los: nil, fragments: nil, tags: nil)
@@ -154,20 +151,13 @@ module OpenStax::Cnx::V1
       @tags = {}
 
       # Extract tag name and description from .ost-standards-def and .os-learning-objective-def.
-      # Also extract any LOs we find in use in case they weren't appropriately defined with in
-      # their own .os-learning-objective-def block.
+      # TODO: Flaky code (assumes some order on the class definition tags)
 
-      # Root is no longer modified by the fragment code, so we can use it
-      root.css(LO_CSS).each do |node|
-        lo_value = LO_REGEX.match(node.attributes['class']).try(:[], 1)
-        @tags[lo_value] = { value: lo_value, type: :lo } if lo_value.present?
-      end
-
-      # teks tags
+      # TEKS tags
       root.css('[class^="ost-standards-def"]').each do |node|
         name = node.at_css('[class^="ost-standards-name"]').try(:content).try(:strip)
         description = node.at_css('[class^="ost-standards-description"]').try(:content).try(:strip)
-        tag_value = node.attr('class').split.last
+        tag_value = TAG_REGEX.match(node.attr('class').split.last).try(:[], 1)
         @tags[tag_value] = {
           value: tag_value,
           name: name,
@@ -176,13 +166,12 @@ module OpenStax::Cnx::V1
         }
       end
 
-      # lo tags
+      # LO tags
       root.css('[class^="ost-learning-objective-def"]').each do |node|
         classes = node.attr('class').split
-        lo_value = LO_REGEX.match(classes[1]).try(:[], 1)
-        teks_value = classes[2]
+        lo_value = TAG_REGEX.match(classes[1]).try(:[], 1)
+        teks_value = TAG_REGEX.match(classes[2]).try(:[], 1)
         next if lo_value.nil?
-        teks_value = classes[2]
         name = node.content.strip
         name.gsub!(/\s+/, ' ')
         @tags[lo_value] ||= {}

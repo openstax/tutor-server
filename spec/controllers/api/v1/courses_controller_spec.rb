@@ -526,7 +526,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       DatabaseCleaner.start
 
       VCR.use_cassette("Api_V1_CoursesController/with_book", VCR_OPTS) do
-        @book = FetchAndImportBook[id: '7db9aa72-f815-4c3b-9cb6-d50cf5318b58']
+        @book = FetchAndImportBook[id: '93e2b09d-261c-4007-a987-0b3062fe154b']
       end
     end
 
@@ -556,7 +556,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
         expect(response).to have_http_status(:success)
         hash = response.body_as_hash
-        expect(hash[:total_count]).to eq(128)
+        expect(hash[:total_count]).to eq(219)
         page_los = Content::GetLos[page_ids: page_ids]
         hash[:items].each do |item|
           wrapper = OpenStax::Exercises::V1::Exercise.new(content: item[:content].to_json)

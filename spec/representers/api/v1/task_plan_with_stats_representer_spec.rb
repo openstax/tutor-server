@@ -28,7 +28,7 @@ RSpec.describe Api::V1::TaskPlanWithStatsRepresenter, type: :representer,
             "current_pages"            => a_collection_containing_exactly(
               a_hash_including(
                 "id"     => task_plan.settings['page_ids'].first.to_s,
-                "title"  => "Force",
+                "title"  => "Newton's First Law of Motion: Inertia",
                 "student_count"   => 0,
                 "correct_count"   => 0,
                 "incorrect_count" => 0,
@@ -38,7 +38,7 @@ RSpec.describe Api::V1::TaskPlanWithStatsRepresenter, type: :representer,
             "spaced_pages" => a_collection_containing_exactly(
               a_hash_including(
                 "id"     => task_plan.settings['page_ids'].first.to_s,
-                "title"  => "Force",
+                "title"  => "Newton's First Law of Motion: Inertia",
                 "student_count"   => 0,
                 "correct_count"   => 0,
                 "incorrect_count" => 0,

@@ -33,7 +33,7 @@ RSpec.describe GetCourseStats, vcr: VCR_OPTS do
 
   it 'visits the book TOC and Page Data' do
     stats = described_class.call(course: @course, role: @role)
-    expect(stats.outputs.toc.title).to eq("Updated Tutor HS Physics Content - legacy")
+    expect(stats.outputs.toc.title).to eq("Physics")
     expect(stats.outputs.page_data).to have(5).items
   end
 

@@ -36,7 +36,7 @@ class SetupCourseStats
     run(:create_period, course: course)
 
     puts "=== Fetch & import book ==="
-    run(:fetch_and_import_book, id: '7db9aa72-f815-4c3b-9cb6-d50cf5318b58@4.57')
+    run(:fetch_and_import_book, id: '93e2b09d-261c-4007-a987-0b3062fe154b')
     run(:visit_book, book: outputs.book, visitor_names: :page_data)
     run(:visit_book, book: outputs.book, visitor_names: :toc)
 

@@ -6,10 +6,8 @@ RSpec.describe Tasks::ExportPerformanceReport, speed: :slow, vcr: VCR_OPTS do
   let(:teacher) { FactoryGirl.create :user_profile }
 
   before(:each) do
-    OpenStax::Exercises::V1.use_real_client
-
-    book = FetchAndImportBook[id: '7db9aa72-f815-4c3b-9cb6-d50cf5318b58']
-    SetupPerformanceReportData[course: course, teacher: teacher, book: book]
+    book = FetchAndImportBook[id: '93e2b09d-261c-4007-a987-0b3062fe154b']
+    SetupPerformanceBookData[course: course, teacher: teacher, book: book]
   end
 
   it 'does not blow up' do

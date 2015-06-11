@@ -5,27 +5,17 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
                                                      speed: :slow,
                                                      vcr: VCR_OPTS do
 
-  before(:each) {
-    OpenStax::Exercises::V1.use_real_client
-    OpenStax::Biglearn::V1.use_fake_client
-  }
-
   let!(:assistant) {
-    FactoryGirl.create(:tasks_assistant,
-      code_class_name: 'Tasks::Assistants::HomeworkAssistant'
-    )
+    FactoryGirl.create(:tasks_assistant, code_class_name: 'Tasks::Assistants::HomeworkAssistant')
   }
 
   let!(:book_part) {
-    FactoryGirl.create :content_book_part,
-                       title: "Forces and Newton's Laws of Motion"
+    FactoryGirl.create :content_book_part, title: "Forces and Newton's Laws of Motion"
   }
 
   let!(:cnx_page_hashes) { [
-    { 'id' => '1491e74e-ed39-446f-a602-e7ab881af101@9',
-      'title' => 'Introduction' },
-    { 'id' => '092bbf0d-0729-42ce-87a6-fd96fd87a083@11',
-      'title' => 'Force' }
+    { 'id' => '1bb611e9-0ded-48d6-a107-fbb9bd900851', 'title' => 'Introduction' },
+    { 'id' => '95e61258-2faf-41d4-af92-f62e1414175a', 'title' => 'Force' }
   ] }
 
   let!(:cnx_pages) { cnx_page_hashes.each_with_index.collect do |hash, i|
@@ -53,7 +43,6 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
                                          .where{id.in review_exercises.map(&:id)}
 
     exercises = exercises.sort_by{|ex| ex.uid}
-    #puts "exercises = #{exercises.map(&:uid)}"
     exercises
   }
 
