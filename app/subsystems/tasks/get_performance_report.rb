@@ -27,22 +27,24 @@ module Tasks
         student_tasks, student_data = [], []
         student_profiles = run(:get_student_profiles, period: period).outputs.profiles
         tasks = get_tasks(student_profiles, period.id)
-        exercises = get_exercises(tasks)
 
         student_profiles.collect do |student_profile|
           student_tasks = tasks.select { |t| taskings_exist?(t, student_profile) }
 
-          student_data << {
-            name: student_profile.full_name,
-            role: student_profile.entity_role_id
-          }.merge(get_student_data(student_tasks, exercises))
-        end
-
-        Hashie::Mash.new({
-          period: period,
-          data_headings: get_data_headings(student_tasks),
-          students: student_data
-        })
+        student_data << {
+          name: student_profile.full_name,
+          role: student_profile.entity_role_id,
+          data: student_tasks.collect { |task|
+            {
+              status: task.status,
+              type: task.task_type,
+              id: task.id,
+              exercise_count: task.exercise_count,
+              correct_exercise_count: task.correct_exercise_count,
+              recovered_exercise_count: task.recovered_exercise_count
+            }
+          }
+        }
       end
     end
 
@@ -55,13 +57,6 @@ module Tasks
         .where { task_type.in Models::Task.task_types.values_at(:reading, :homework) }
         .order('due_at DESC')
         .includes(:taskings, :task_steps)
-    end
-
-    def get_exercises(tasks)
-      task_steps = tasks.collect(&:task_steps).flatten
-      tasked_exercises = task_steps.select { |ts| ts.tasked_type == 'Tasks::Models::TaskedExercise' }
-      tasked_ids = tasked_exercises.collect(&:tasked_id)
-      Models::TaskedExercise.where(id: tasked_ids)
     end
 
     def taskings_exist?(task, profile)
@@ -79,21 +74,6 @@ module Tasks
       return {} unless task.task_type == 'homework' && @average[-1][index].present?
       {
         average: @average[-1][index].reduce(:+) * 100 / @average[-1][index].length
-      }
-    end
-
-    def get_student_data(tasks, exercises)
-      {
-        data: tasks.collect.with_index { |t, i|
-          {
-            status: t.status,
-            type: t.task_type,
-            id: t.id,
-            exercise_count: t.exercise_count,
-            correct_exercise_count: t.correct_exercise_count,
-            recovered_exercise_count: t.recovered_exercise_count
-          }
-        }
       }
     end
   end

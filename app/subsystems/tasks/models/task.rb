@@ -113,17 +113,29 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     self.core_task_steps.collect{|ts| ts.completed_at}.max
   end
 
+  def exercise_count
+    0
+  end
+
+  def correct_exercise_count
+    0
+  end
+
+  def recovered_exercise_count
+    0
+  end
+
   def handle_task_step_completion!(completion_time: Time.now)
     return unless core_task_steps_completed?
 
-    tasked_ids = task_steps.collect(&:tasked_id)
-    exercises = Models::TaskedExercise.where(id: tasked_ids)
+    #tasked_ids = task_steps.collect(&:tasked_id)
+    #exercises = Models::TaskedExercise.where(id: tasked_ids)
 
-    update_attributes({
-      exercise_count: exercises.length,
-      correct_exercise_count: exercises.select(&:is_correct?).length
-      recovered_exercise_count: exercises.select(&:can_be_recovered?).length
-    })
+    #update_attributes({
+      #exercise_count: exercises.length,
+      #correct_exercise_count: exercises.select(&:is_correct?).length
+      #recovered_exercise_count: exercises.select(&:can_be_recovered?).length
+    #})
 
     strategy = personalized_placeholder_strategy
     unless strategy.nil?
