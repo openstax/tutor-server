@@ -39,7 +39,7 @@ module Tasks
             attempted_count = task.task_steps.select(&:completed?).length
 
             if attempted_count > 0
-              @class_average[index] << (Float(task.correct_exercise_count) / attempted_count)
+              @average[index] << (Float(task.correct_exercise_count) / attempted_count)
             end
 
             {
