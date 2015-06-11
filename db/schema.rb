@@ -469,9 +469,9 @@ ActiveRecord::Schema.define(version: 20150611132134) do
     t.text     "personalized_placeholder_strategy"
     t.datetime "created_at",                                    null: false
     t.datetime "updated_at",                                    null: false
-    t.integer  "exercise_count"
-    t.integer  "correct_exercise_count"
-    t.integer  "recovered_exercise_count"
+    t.integer  "exercise_count",                    default: 0, null: false
+    t.integer  "correct_exercise_count",            default: 0, null: false
+    t.integer  "recovered_exercise_count",          default: 0, null: false
   end
 
   add_index "tasks_tasks", ["correct_exercise_count"], name: "index_tasks_tasks_on_correct_exercise_count", using: :btree
