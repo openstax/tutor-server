@@ -4,5 +4,7 @@ FactoryGirl.define do
     association :book_part, factory: :content_book_part
     title { Faker::Lorem.words(3) }
     content { Faker::Lorem.paragraphs(2) }
+    uuid { SecureRandom.uuid }
+    version { Random.rand(1..10) }
   end
 end
