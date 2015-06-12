@@ -745,10 +745,10 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       AddUserAsCourseTeacher[course: course, user: teacher.entity_user]
     end
 
-    it 'returns 201 for authorized teachers' do
+    it 'returns 202 for authorized teachers' do
       api_post :performance_export, teacher_token, parameters: { id: course.id }
 
-      expect(response.status).to eq(201)
+      expect(response.status).to eq(202)
     end
 
     it 'kicks off the performance book export for authorized teachers' do
