@@ -6,6 +6,9 @@ class Content::ImportBook
                as: :import_book_part,
                translations: { outputs: { type: :verbatim } }
 
+  uses_routine Content::Routines::UpdatePageContent,
+               as: :update_page_content
+
   protected
 
   # Imports and saves a Cnx::Book as an Entity::Book
@@ -15,6 +18,8 @@ class Content::ImportBook
 
     run(:import_book_part, cnx_book_part: cnx_book.root_book_part, book: outputs[:book])
     transfer_errors_from(outputs[:book_part], {type: :verbatim}, true)
+
+    run(:update_page_content, book_part: outputs[:book_part])
 
     #
     # Send exercise and tag info to Biglearn
