@@ -60,6 +60,7 @@ gem 'maruku'
 
 # Lev framework
 gem 'lev', '~> 4.2'
+gem 'active_job_status'
 
 # Ruby dsl for SQL queries
 gem 'squeel'

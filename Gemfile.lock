@@ -25,6 +25,9 @@ GEM
     active_attr (0.8.5)
       activemodel (>= 3.0.2, < 5.0)
       activesupport (>= 3.0.2, < 5.0)
+    active_job_status (0.0.5)
+      activejob (~> 4.2)
+      activesupport (~> 4.2)
     active_record_query_trace (1.4)
     activejob (4.2.1)
       activesupport (= 4.2.1)
@@ -547,6 +550,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  active_job_status
   active_record_query_trace
   addressable
   apipie-rails
