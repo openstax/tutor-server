@@ -20,11 +20,14 @@ class Content::Routines::ImportPage
   # into the given Content::Models::BookPart
   # Returns the Content::Models::Page object
   def exec(cnx_page:, book_part:)
+    uuid, version = cnx_page.id.split('@')
     run(:create_page, url: cnx_page.url,
                       title: cnx_page.title,
                       content: cnx_page.converted_content,
                       book_part: book_part,
-                      chapter_section: cnx_page.chapter_section)
+                      chapter_section: cnx_page.chapter_section,
+                      uuid: uuid,
+                      version: version)
     book_part.pages << outputs[:page] unless book_part.nil?
     transfer_errors_from outputs[:page], {type: :verbatim}, true
 

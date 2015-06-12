@@ -35,12 +35,14 @@ RSpec.describe Content::VisitBookPart, :type => :routine do
             'children' => [
               {
                 'id' => toc.children[0].children[0].children[0].id,
+                'cnx_id' => Content::Models::Page.find(toc.children[0].children[0].children[0].id).cnx_id,
                 'title' => 'first page',
                 'type' => 'page',
                 'chapter_section' => [1, 1, 1]
               },
               {
                 'id' => toc.children[0].children[0].children[1].id,
+                'cnx_id' => Content::Models::Page.find(toc.children[0].children[0].children[1].id).cnx_id,
                 'title' => 'second page',
                 'type' => 'page',
                 'chapter_section' => [1, 1, 2]
@@ -55,6 +57,7 @@ RSpec.describe Content::VisitBookPart, :type => :routine do
             'children' => [
               {
                 'id' => toc.children[0].children[1].children[0].id,
+                'cnx_id' => Content::Models::Page.find(toc.children[0].children[1].children[0].id).cnx_id,
                 'title' => 'third page',
                 'type' => 'page',
                 'chapter_section' => [1, 2, 1]

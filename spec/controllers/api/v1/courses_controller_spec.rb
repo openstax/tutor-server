@@ -44,12 +44,14 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
               children: [
                 {
                   id: toc.children[0].children[0].children[0].id.to_s,
+                  cnx_id: Content::Models::Page.find(toc.children[0].children[0].children[0].id).cnx_id,
                   title: 'first page',
                   chapter_section: [1, 1, 1],
                   type: 'page'
                 },
                 {
                   id: toc.children[0].children[0].children[1].id.to_s,
+                  cnx_id: Content::Models::Page.find(toc.children[0].children[0].children[1].id).cnx_id,
                   title: 'second page',
                   chapter_section: [1, 1, 2],
                   type: 'page'
@@ -64,6 +66,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
               children: [
                 {
                   id: toc.children[0].children[1].children[0].id.to_s,
+                  cnx_id: Content::Models::Page.find(toc.children[0].children[1].children[0].id).cnx_id,
                   title: 'third page',
                   chapter_section: [1, 2, 1],
                   type: 'page'
