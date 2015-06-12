@@ -585,7 +585,7 @@ DEPENDENCIES
   json-schema
   keyword_search
   launchy
-  lev (~> 4.2)
+  lev (~> 4.3)
   lograge
   maruku
   memory_test_fix

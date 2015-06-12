@@ -59,7 +59,7 @@ gem 'apipie-rails'
 gem 'maruku'
 
 # Lev framework
-gem 'lev', '~> 4.2'
+gem 'lev', '~> 4.3'
 gem 'active_job_status'
 
 # Ruby dsl for SQL queries

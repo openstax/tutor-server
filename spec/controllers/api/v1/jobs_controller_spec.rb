@@ -1,8 +1,10 @@
 require 'rails_helper'
 
-class TestJob < TrackableJob
-  def perform
-  end
+class TestRoutine
+  lev_routine
+
+  protected
+  def exec; end
 end
 
 RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :v1 do
@@ -13,7 +15,7 @@ RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :
                                         resource_owner_id: user.id) }
 
   describe 'GET #show' do
-    let(:job) { TestJob.perform_later }
+    let(:job) { TestRoutine.perform_later }
 
     it 'returns the status of queued jobs' do
       api_get :show, user_token, parameters: { id: job.job_id }
@@ -33,7 +35,7 @@ RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :
       job = nil
 
       perform_enqueued_jobs do
-        job = TestJob.perform_later
+        job = TestRoutine.perform_later
       end
 
       api_get :show, user_token, parameters: { id: job.job_id }
