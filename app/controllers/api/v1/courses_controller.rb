@@ -162,9 +162,10 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
     OSU::AccessPolicy.require_action_allowed!(:export, current_api_user, course)
 
-    Tasks::ExportPerformanceBook.perform_later(course: course, role: get_course_role)
+    job = Tasks::ExportPerformanceBook.perform_later(course: course,
+                                                     role: get_course_role)
 
-    head :accepted
+    render json: { job: api_job_path(job.job_id) }, status: :accepted
   end
 
   api :GET, '/courses/:course_id/performance/exports',

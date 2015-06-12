@@ -747,18 +747,12 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
     it 'returns 202 for authorized teachers' do
       api_post :performance_export, teacher_token, parameters: { id: course.id }
-
       expect(response.status).to eq(202)
     end
 
-    it 'kicks off the performance book export for authorized teachers' do
-      role = ChooseCourseRole[course: course, user: teacher.entity_user]
-      allow(Tasks::Jobs::ExportPerformanceReportJob).to receive(:perform_later)
-
+    it 'returns the job path for the performance book export for authorized teachers' do
       api_post :performance_export, teacher_token, parameters: { id: course.id }
-
-      expect(Tasks::Jobs::ExportPerformanceReportJob).to have_received(:perform_later)
-        .with(course: course, role: role)
+      expect(response.body_as_hash[:job]).to match(%r{/jobs/[a-f0-9-]+})
     end
 
     it 'returns 403 unauthorized users' do
