@@ -216,7 +216,7 @@ GEM
     kgio (2.9.3)
     launchy (2.4.3)
       addressable (~> 2.3)
-    lev (4.3.0)
+    lev (4.1.0)
       actionpack (>= 3.0)
       active_attr
       activemodel (>= 3.0)
@@ -581,7 +581,7 @@ DEPENDENCIES
   json-schema
   keyword_search
   launchy
-  lev (~> 4.1)
+  lev (~> 4.1.0)
   lograge
   maruku
   memory_test_fix
