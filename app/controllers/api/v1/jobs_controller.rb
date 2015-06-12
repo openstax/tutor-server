@@ -2,8 +2,8 @@ module Api
   module V1
     class JobsController < ApiController
       def show
-        status = ActiveJobStatus::JobStatus.get_status(job_id: params[:id])
-        render json: { status: status || :completed }
+        status = Resque::Plugins::Status::Hash.get(params[:id])
+        render json: { status: status }
       end
     end
   end

@@ -59,8 +59,8 @@ gem 'apipie-rails'
 gem 'maruku'
 
 # Lev framework
-gem 'lev', '~> 4.3'
-gem 'active_job_status'
+gem 'lev', '~> 4.4'
+gem 'resque-status'
 
 # Ruby dsl for SQL queries
 gem 'squeel'
@@ -137,9 +137,6 @@ group :development, :test do
 
   # Fake in-memory Redis for development and testing
   gem 'fakeredis'
-
-  # Resque but for testing
-  gem 'resque_spec'
 
   # Get env variables from .env file
   gem 'dotenv-rails'
