@@ -16,14 +16,12 @@ class Demo002 < DemoBase
     # using "Time.now" in computing the anchor date.
 
     Timecop.return_all
-    anchor_date = Time.now.next_week(:tuesday).advance(hours: 15)
+    noon_today = Time.now.noon
 
-    monday_1    = anchor_date - 8.days
-    wednesday_1 = anchor_date - 6.days
-    friday_1    = anchor_date - 4.days
-    monday_2    = anchor_date - 1.day
-
-    log("Assignments will be due in the week+ leading up to #{anchor_date}.")
+    task_4_due_at = standard_due_at(school_day_on_or_before(noon_today))
+    task_3_due_at = standard_due_at(school_day_on_or_before(task_4_due_at - 2.days))
+    task_2_due_at = standard_due_at(school_day_on_or_before(task_3_due_at - 2.days))
+    task_1_due_at = standard_due_at(school_day_on_or_before(task_2_due_at - 2.days))
 
     course = Entity::Course.last
 
@@ -39,7 +37,7 @@ class Demo002 < DemoBase
                   55,
                   77,
                   88,
-                  :incomplete,
+                  %w( 1 1 1 1 1 1 0 1 1 1 ),
                   :not_started,
                   78,
                   %w( 1 1 1 1 1 1 1 1 1 1 ),  # explicit example, could also be `100`
@@ -59,8 +57,8 @@ class Demo002 < DemoBase
 
     assign_ireading(course: course,
                     chapter_sections: [[3, 0], [3, 1]],
-                    title: 'Reading 3.0 - 3.1',
-                    due_at: monday_1).each_with_index do |ireading, index|
+                    title: 'Read 3.1 Acceleration Pt1',
+                    due_at: task_1_due_at).each_with_index do |ireading, index|
 
       work_task(task: ireading, responses: responses_list[index])
 
@@ -74,32 +72,32 @@ class Demo002 < DemoBase
       step_types: %w( r i e r r e r r r e r e e e ),
       entries: [
                   94,
-                  79,
+                  %w( 1 1 0 1 1 0 1 1 1 1 1 1 0 1 ),
                   40,
-                  80,
+                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 0 1 ),
                   60,
                   :incomplete,
                   :not_started,
                   72,
-                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 1 1 ),  # explicit example, could also be `100`
+                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 0 1 ),  # explicit example, could also be `100`
                   80,
                   100,
-                  88,
-                  73,
-                  80,
+                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 0 1 ),
+                  %w( 1 1 0 1 1 1 1 1 1 0 1 1 0 1 ),
+                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 0 0 ),
                   79,
-                  40,
+                  %w( 1 1 0 1 1 0 1 1 1 1 1 0 0 0 ),
                   :incomplete,
                   :incomplete,
-                  87,
-                  86
+                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 0 1 ),
+                  %w( 1 1 1 1 1 0 1 1 1 1 1 1 0 0 )
                ]
     )
 
     assign_ireading(course: course,
                     chapter_sections: [[3, 2]],
-                    title: 'Reading 3.2',
-                    due_at: wednesday_1).each_with_index do |ireading, index|
+                    title: 'Read 3.2 Acceleration Pt2',
+                    due_at: task_2_due_at).each_with_index do |ireading, index|
 
       work_task(task: ireading, responses: responses_list[index])
 
@@ -115,30 +113,31 @@ class Demo002 < DemoBase
                   90,
                   87,
                   98,
-                  70,
+                  %w( 1 1 1 1 1 0 0 1 1 1 1 ),
                   88,
                   :not_started,
                   :not_started,
                   :not_started,
                   100,
-                  82,
+                  %w( 1 0 0 1 1 0 0 1 1 0 1 ),
                   100,
                   86,
-                  81,
+                  %w( 1 1 1 1 1 0 0 1 1 0 1 ),
                   89,
-                  81,
+                  %w( 0 1 0 1 0 0 0 1 0 0 0 ),
                   93,
                   :incomplete,
                   :incomplete,
                   98,
-                  68
+                  23
                ]
     )
 
     assign_homework(course: course,
                     chapter_sections: [[3, 0], [3, 1], [3, 2]],
+                    title: 'HW Chapter 3 Acceleration',
                     num_exercises: 10,
-                    due_at: friday_1).each_with_index do |hw, index|
+                    due_at: task_3_due_at).each_with_index do |hw, index|
 
       work_task(task: hw, responses: responses_list[index])
 
@@ -159,33 +158,41 @@ class Demo002 < DemoBase
                   :incomplete,
                   92,
                   82,
-                  100,
-                  81,
+                  %w( 1 1 1 1 0 1 1 1 0 1 ),
+                  %w( 1 1 1 1 1 1 0 1 0 1 ),
                   100,
                   87,
-                  59,
+                  %w( 1 1 1 1 0 1 0 0 0 1 ),
                   82,
                   :incomplete,
                   :not_started,
                   :not_started,
-                  66,
+                  %w( 1 1 1 1 0 1 1 1 0 1 ),
                   88,
-                  89
+                  %w( 1 1 1 1 0 1 1 1 0 1 ),
                ]
     )
 
     assign_ireading(course: course,
                     chapter_sections: [[4, 0], [4, 1], [4, 2]],
-                    title: 'Reading 4.0 - 4.2',
-                    due_at: monday_2).each_with_index do |ireading, index|
+                    title: 'Read 4.1-4.2 Force & Motion Pt1',
+                    due_at: task_4_due_at).each_with_index do |ireading, index|
 
       work_task(task: ireading, responses: responses_list[index])
 
     end
 
-    log("Setting the time to #{anchor_date} which may or may not stick depending on which environment this is.")
-    log("-- if the time didn't stick, log in as the administrator and modify the time in the admin console.")
-    Timecop.travel_all(anchor_date)
-
   end
+
+  def school_day_on_or_before(time)
+    while time.sunday? || time.saturday?
+      time = time.yesterday
+    end
+    time
+  end
+
+  def standard_due_at(time)
+    time.midnight + 7.hours
+  end
+
 end

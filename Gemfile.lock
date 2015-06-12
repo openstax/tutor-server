@@ -165,7 +165,7 @@ GEM
     equalizer (0.0.11)
     erubis (2.7.0)
     eventmachine (1.0.7)
-    exception_notification (4.1.0)
+    exception_notification (4.1.1)
       actionmailer (>= 3.0.4)
       activesupport (>= 3.0.4)
     execjs (2.4.0)
@@ -216,7 +216,7 @@ GEM
     kgio (2.9.3)
     launchy (2.4.3)
       addressable (~> 2.3)
-    lev (4.2.0)
+    lev (4.3.0)
       actionpack (>= 3.0)
       active_attr
       activemodel (>= 3.0)
@@ -238,12 +238,12 @@ GEM
       activerecord (>= 3.2.0, < 4.99.0)
       railties (>= 3.2.0, < 4.99.0)
     method_source (0.8.2)
-    mime-types (2.5)
+    mime-types (2.6.1)
     mini_magick (4.2.0)
     mini_portile (0.6.2)
     minitest (5.7.0)
     mono_logger (1.1.0)
-    multi_json (1.11.0)
+    multi_json (1.11.1)
     multi_xml (0.5.5)
     multipart-post (2.0.0)
     netrc (0.10.3)
@@ -276,7 +276,7 @@ GEM
       representable (>= 2.0)
       roar (>= 1.0)
       squeel (>= 0.5.0)
-    openstax_api (5.4.4)
+    openstax_api (5.4.5)
       doorkeeper (>= 2.0)
       exception_notification (>= 4.0)
       lev (>= 1.0.0)
@@ -289,7 +289,7 @@ GEM
     openstax_exchange (0.2.1)
       hashie
       oauth2 (>= 0.5.0)
-    openstax_utilities (4.2.0)
+    openstax_utilities (4.2.1)
       keyword_search
       lev
       rails (>= 3.1)
@@ -378,7 +378,7 @@ GEM
       redis (>= 2.2)
     ref (1.0.5)
     remotipart (1.2.1)
-    representable (2.2.0)
+    representable (2.2.2)
       multi_json
       nokogiri
       uber (~> 0.0.7)
@@ -589,7 +589,7 @@ DEPENDENCIES
   newrelic_rpm
   nifty-generators
   openstax_accounts (~> 5.1.2)
-  openstax_api (~> 5.4.4)
+  openstax_api (~> 5.4.5)
   openstax_exchange (~> 0.2.1)
   openstax_utilities (~> 4.2.0)
   parallel_tests
