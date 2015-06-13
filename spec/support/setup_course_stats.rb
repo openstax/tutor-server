@@ -5,6 +5,10 @@ class SetupCourseStats
     translations: { outputs: { type: :verbatim } },
     as: :create_course
 
+  uses_routine CreatePeriod,
+    translations: { outputs: { type: :verbatim } },
+    as: :create_period
+
   uses_routine FetchAndImportBook,
     translations: { outputs: { type: :verbatim } },
     as: :fetch_and_import_book
@@ -19,7 +23,7 @@ class SetupCourseStats
 
   uses_routine AddBookToCourse, as: :add_book_to_course
 
-  uses_routine AddUserAsCourseStudent, as: :add_student_user_to_course
+  uses_routine AddUserAsPeriodStudent, as: :add_student_user_to_period
 
   uses_routine DistributeTasks, as: :distribute_tasks
 
@@ -27,6 +31,9 @@ class SetupCourseStats
   def exec(course: nil, role: nil)
     puts "=== Creating course ==="
     outputs.course = course || run(:create_course, name: 'Physics')
+
+    puts "=== Creating a course period ==="
+    run(:create_period, course: course)
 
     puts "=== Fetch & import book ==="
     run(:fetch_and_import_book, id: '7db9aa72-f815-4c3b-9cb6-d50cf5318b58@4.57')
@@ -44,8 +51,7 @@ class SetupCourseStats
       student = FactoryGirl.create(:user_profile, username: 'student')
 
       puts "=== Add student to course ==="
-      run(:add_student_user_to_course, course: outputs.course,
-                                       user: student.entity_user)
+      run(:add_student_user_to_period, period: outputs.period, user: student.entity_user)
       student_role = Entity::Role.last
     end
 

@@ -162,26 +162,79 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
                         "incorrect_count": 1,
                         "exercises": [
                             {
-                                "content": "{\"uid\":\"1@1\",\"number\":1,\"version\":1,\"published_at\":\"2015-04-22T19:30:19.187Z\",\"editors\":[],\"authors\":[{\"user_id\":1}],\"copyright_holders\":[{\"user_id\":2}],\"derived_from\":[],\"attachments\":[],\"tags\":[\"k12phys-ch04-s01-lo01\",\"k12phys-ch04-ex001\",\"os-practice-concepts\",\"inbook-yes\",\"dok1\",\"time-short\",\"display-free-response\"],\"stimulus_html\":\"\",\"questions\":[{\"id\":464,\"stimulus_html\":\"\",\"stem_html\":\"What is kinematics?\",\"answers\":[{\"id\":1683,\"content_html\":\"Kinematics is the study of atomic structure\",\"correctness\":\"0.0\",\"feedback_html\":\"Are you sure that the study of atomic structures is a part of kinematics?\"},{\"id\":1682,\"content_html\":\"Kinematics is the study of dimensions\",\"correctness\":\"0.0\",\"feedback_html\":\"Is it correct to say that dimensional analysis is done in kinematics?\"},{\"id\":1681,\"content_html\":\"Kinematics is the study of cause of motion\",\"correctness\":\"0.0\",\"feedback_html\":\"Do you think cause of motion is studied under kinematics? What about the study of force and its effect on a body. Is that kinematics?\"},{\"id\":1680,\"content_html\":\"Kinematics is the study of motion\",\"correctness\":\"1.0\",\"feedback_html\":\"Correct! Motion of a body is studied under kinematics\"}],\"hints\":[],\"formats\":[\"multiple-choice\",\"free-response\"],\"combo_choices\":[]}]}",
-                                "answered_count": 2,
-                                "answers": [
-                                    {
-                                        "id": "1683",
-                                        "selected_count": 1
-                                    },
-                                    {
-                                        "id": "1682",
-                                        "selected_count": 0
-                                    },
-                                    {
-                                        "id": "1681",
-                                        "selected_count": 0
-                                    },
-                                    {
-                                        "id": "1680",
-                                        "selected_count": 1
-                                    }
-                                ]
+                                "content": {
+                                    "uid": "1@1",
+                                    "number": 1,
+                                    "version": 1,
+                                    "published_at": "2015-04-22T19:30:19.187Z",
+                                    "editors": [],
+                                    "authors": [
+                                        {
+                                            "user_id": 1
+                                        }
+                                    ],
+                                    "copyright_holders": [
+                                        {
+                                            "user_id": 2
+                                        }
+                                    ],
+                                    "derived_from": [],
+                                    "attachments": [],
+                                    "tags": [
+                                        "k12phys-ch04-s01-lo01",
+                                        "k12phys-ch04-ex001",
+                                        "os-practice-concepts",
+                                        "inbook-yes",
+                                        "dok1",
+                                        "time-short",
+                                        "display-free-response"
+                                    ],
+                                    "stimulus_html": "",
+                                    "questions": [
+                                        {
+                                            "id": 464,
+                                            "stimulus_html": "",
+                                            "stem_html": "What is kinematics?",
+                                            "answers": [
+                                                {
+                                                    "id": 1683,
+                                                    "content_html": "Kinematics is the study of atomic structure",
+                                                    "correctness": "0.0",
+                                                    "feedback_html": "Are you sure that the study of atomic structures is a part of kinematics?",
+                                                    "selected_count": 1
+                                                },
+                                                {
+                                                    "id": 1682,
+                                                    "content_html": "Kinematics is the study of dimensions",
+                                                    "correctness": "0.0",
+                                                    "feedback_html": "Is it correct to say that dimensional analysis is done in kinematics?",
+                                                    "selected_count": 0
+                                                },
+                                                {
+                                                    "id": 1681,
+                                                    "content_html": "Kinematics is the study of cause of motion",
+                                                    "correctness": "0.0",
+                                                    "feedback_html": "Do you think cause of motion is studied under kinematics? What about the study of force and its effect on a body. Is that kinematics?",
+                                                    "selected_count": 0
+                                                },
+                                                {
+                                                    "id": 1680,
+                                                    "content_html": "Kinematics is the study of motion",
+                                                    "correctness": "1.0",
+                                                    "feedback_html": "Correct! Motion of a body is studied under kinematics",
+                                                    "selected_count": 1
+                                                }
+                                            ],
+                                            "hints": [],
+                                            "formats": [
+                                                "multiple-choice",
+                                                "free-response"
+                                            ],
+                                            "combo_choices": []
+                                        }
+                                    ]
+                                },
+                                "answered_count": 2
                             }
                         ]
                     }

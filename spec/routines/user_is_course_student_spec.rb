@@ -11,17 +11,19 @@ describe UserIsCourseStudent do
       other_student_role  = Entity::Role.create!
       target_course       = Entity::Course.create!
       other_course        = Entity::Course.create!
+      target_period       = CreatePeriod[course: target_course]
+      other_period       = CreatePeriod[course: other_course]
 
       Role::AddUserRole.call(user: target_user, role: target_student_role)
       Role::AddUserRole.call(user: target_user, role: target_teacher_role)
       Role::AddUserRole.call(user: other_user,  role: other_student_role)
 
       ## Make the target user a student of another course
-      CourseMembership::AddStudent.call(course: other_course, role: target_student_role)
+      CourseMembership::AddStudent.call(period: other_period, role: target_student_role)
       ## Make the target user a teacher in the target course
       CourseMembership::AddTeacher.call(course: other_course, role: target_teacher_role)
       ## Make another user a student of the target course
-      CourseMembership::AddStudent.call(course: target_course, role: other_student_role)
+      CourseMembership::AddStudent.call(period: target_period, role: other_student_role)
 
       ## Perform test
       result = UserIsCourseStudent.call(user: target_user, course: target_course)
@@ -35,9 +37,10 @@ describe UserIsCourseStudent do
       target_user         = Entity::User.create!
       target_student_role = Entity::Role.create!
       target_course       = Entity::Course.create!
+      target_period       = CreatePeriod[course: target_course]
 
       Role::AddUserRole.call(user: target_user, role: target_student_role)
-      CourseMembership::AddStudent.call(course: target_course, role: target_student_role)
+      CourseMembership::AddStudent.call(period: target_period, role: target_student_role)
 
       ## Perform test
       result = UserIsCourseStudent.call(user: target_user, course: target_course)

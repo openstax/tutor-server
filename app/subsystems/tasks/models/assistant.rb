@@ -9,7 +9,7 @@ class Tasks::Models::Assistant < Tutor::SubSystems::BaseModel
   validate :code_class_existence, if: :code_class_name
 
   # Delegate all real work to the actual implementation (the "worker")
-  delegate :schema, :distribute_tasks, to: :code_class
+  delegate :schema, :build_tasks, to: :code_class
 
   protected
 

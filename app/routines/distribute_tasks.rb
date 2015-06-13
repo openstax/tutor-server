@@ -4,7 +4,7 @@ class DistributeTasks
 
   lev_routine
 
-  uses_routine GetTaskeesFromTaskPlan, as: :get_taskees
+  uses_routine IndividualizeTaskingPlans, as: :get_tasking_plans
 
   protected
 
@@ -30,10 +30,29 @@ class DistributeTasks
       task_plan.reload
     end
 
-    taskees = run(:get_taskees, task_plan).outputs[:taskees]
+    tasking_plans = run(:get_tasking_plans, task_plan).outputs.tasking_plans
 
-    # Call the assistant code to create and distribute Tasks
-    outputs[:tasks] = assistant.distribute_tasks(task_plan: task_plan, taskees: taskees)
+    taskees = tasking_plans.collect { |tp| tp.target }
+    opens_ats = tasking_plans.collect { |tp| tp.opens_at }
+    due_ats = tasking_plans.collect { |tp| tp.due_at }
+
+    # Call the assistant code to create Tasks, then distribute them
+    tasks = assistant.build_tasks(task_plan: task_plan, taskees: taskees)
+    tasks.each_with_index do |task, ii|
+      tasking = Tasks::Models::Tasking.new(
+        task: task.entity_task,
+        role: taskees[ii]
+      )
+      task.entity_task.taskings << tasking
+
+      task.opens_at = opens_ats[ii]
+      task.due_at = due_ats[ii] || (task.opens_at + 1.week)
+      task.feedback_at ||= task.due_at
+      task.save!
+    end
+
+    outputs[:tasks] = tasks
+
     task_plan.update_attributes(published_at: Time.now)
   end
 

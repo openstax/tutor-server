@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Exercise, :type => :model do
+RSpec.describe Exercise, type: :model do
   subject(:exercise) { FactoryGirl.create :exercise }
   let!(:lo)          { FactoryGirl.create :content_tag, tag_type: :lo }
   let!(:tag)         { FactoryGirl.create :content_tag }

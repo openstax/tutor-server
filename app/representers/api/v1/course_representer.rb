@@ -22,5 +22,11 @@ module Api::V1
                writeable: false,
                schema_info: { required: false }
 
+    collection :periods,
+               extend: Api::V1::PeriodRepresenter,
+               readable: true,
+               writeable: false,
+               schema_info: { required: false }
+
   end
 end

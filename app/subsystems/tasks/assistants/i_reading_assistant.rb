@@ -18,7 +18,7 @@ class Tasks::Assistants::IReadingAssistant
     }'
   end
 
-  def self.distribute_tasks(task_plan:, taskees:)
+  def self.build_tasks(task_plan:, taskees:)
     ## NOTE: This implementation isn't particularly robust: failure to distribute to any taskee will
     ##       result in failure to distribute to EVERY taskee (because the entire transaction will be
     ##       rolled back).  Eventually, we will probably want to create an "undistributed" task and
@@ -26,17 +26,13 @@ class Tasks::Assistants::IReadingAssistant
 
     pages = collect_pages(task_plan: task_plan)
 
-    tasks = taskees.collect do |taskee|
-      task = create_ireading_task!(
-        task_plan: task_plan,
-        taskee:    taskee,
-        pages: pages
+    taskees.collect do |taskee|
+      build_ireading_task(
+        task_plan:    task_plan,
+        taskee:       taskee,
+        pages:        pages
       )
-      assign_task!(task: task, taskee: taskee)
-      task
     end
-
-    tasks
   end
 
   protected
@@ -49,8 +45,8 @@ class Tasks::Assistants::IReadingAssistant
     pages
   end
 
-  def self.create_ireading_task!(task_plan:, taskee:, pages:)
-    task = create_task!(task_plan: task_plan)
+  def self.build_ireading_task(task_plan:, taskee:, pages:)
+    task = build_task(task_plan: task_plan)
 
     set_los(task: task, pages: pages)
 
@@ -58,43 +54,24 @@ class Tasks::Assistants::IReadingAssistant
     add_spaced_practice_exercise_steps!(task: task, taskee: taskee)
     add_personalized_exercise_steps!(task_plan: task_plan, task: task, taskee: taskee)
 
-    task.save!
     task
   end
 
   def self.set_los(task:, pages:)
     los = pages.map(&:los).flatten.uniq
     task.los = los
-
-    task.save!
     task
   end
 
-  def self.assign_task!(task:, taskee:)
-    # No group tasks for this assistant
-    tasking = Tasks::Models::Tasking.new(
-      task: task.entity_task,
-      role: taskee
-    )
-    task.entity_task.taskings << tasking
-
-    task.save!
-    task
-  end
-
-  def self.create_task!(task_plan:)
+  def self.build_task(task_plan:)
     title    = task_plan.title || 'iReading'
-    opens_at = task_plan.opens_at
-    due_at   = task_plan.due_at || (task_plan.opens_at + 1.week)
 
-    task = Tasks::CreateTask[task_plan: task_plan,
-                             task_type: :reading,
-                             title:     title,
-                             opens_at:  opens_at,
-                             due_at:    due_at,
-                             feedback_at: Time.now]
-    task.save!
-    task
+    Tasks::BuildTask[
+      task_plan: task_plan,
+      task_type: :reading,
+      title:     title,
+      feedback_at: Time.now
+    ]
   end
 
   def self.add_core_steps!(task:, pages:)
@@ -120,7 +97,7 @@ class Tasks::Assistants::IReadingAssistant
         end
 
         next if step.tasked.nil?
-        step.core_group!
+        step.group_type = :core_group
         step.add_labels(fragment.labels)
         step.add_related_content(related_content_for_page(page: page, title: page_title))
         task.task_steps << step
@@ -130,7 +107,6 @@ class Tasks::Assistants::IReadingAssistant
       end
     end
 
-    task.save!
     task
   end
 
@@ -163,11 +139,10 @@ class Tasks::Assistants::IReadingAssistant
 
         step = add_exercise_step(task: task, exercise: chosen_exercise)
         add_exercise_related_content!(step: step, exercise: chosen_exercise)
-        step.spaced_practice_group!
+        step.group_type = :spaced_practice_group
       end
     end
 
-    task.save!
     task
   end
 
@@ -223,13 +198,12 @@ class Tasks::Assistants::IReadingAssistant
     num_personalized_exercises.times do
       task_step = Tasks::Models::TaskStep.new(task: task)
       tasked_placeholder = Tasks::Models::TaskedPlaceholder.new(task_step: task_step)
-      tasked_placeholder.exercise_type!
+      tasked_placeholder.placeholder_type = :exercise_type
       task_step.tasked = tasked_placeholder
-      task_step.personalized_group!
+      task_step.group_type = :personalized_group
       task.task_steps << task_step
     end
 
-    task.save!
     task
   end
 

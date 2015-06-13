@@ -5,15 +5,10 @@ module Api::V1
 
         include Roar::JSON
 
-        property :course,
-                 readable: true,
-                 writeable: false,
-                 decorator: Api::V1::Tasks::Stats::CourseAndPeriodRepresenter
-
         collection :periods,
                    readable: true,
                    writable: false,
-                   decorator: Api::V1::Tasks::Stats::CourseAndPeriodRepresenter
+                   decorator: Api::V1::Tasks::Stats::PeriodRepresenter
 
       end
     end

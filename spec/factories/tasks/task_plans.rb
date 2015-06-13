@@ -2,14 +2,14 @@ FactoryGirl.define do
   factory :tasks_task_plan, class: '::Tasks::Models::TaskPlan' do
     transient do
       duration 1.week
+      opens_at { Time.now }
+      due_at   { opens_at + duration }
       num_tasking_plans 0
       assistant_code_class_name "DummyAssistant"
     end
 
     association :owner, factory: :entity_course
     settings { {}.to_json }
-    opens_at { Time.now }
-    due_at { opens_at + duration }
     type "reading"
 
     after(:build) do |task_plan, evaluator|
@@ -21,7 +21,9 @@ FactoryGirl.define do
 
       evaluator.num_tasking_plans.times do
         task_plan.tasking_plans << FactoryGirl.build(:tasks_tasking_plan,
-                                                     task_plan: task_plan)
+                                                     task_plan: task_plan,
+                                                     opens_at: evaluator.opens_at,
+                                                     due_at: evaluator.due_at)
       end
     end
   end

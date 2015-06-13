@@ -33,20 +33,16 @@ class Tasks::Assistants::HomeworkAssistant
     }'
   end
 
-  def self.distribute_tasks(task_plan:, taskees:)
+  def self.build_tasks(task_plan:, taskees:)
     exercises = collect_exercises(task_plan: task_plan)
 
-    tasks = taskees.collect do |taskee|
-      task = create_homework_task!(
-        task_plan: task_plan,
-        taskee:    taskee,
-        exercises: exercises
+    taskees.collect do |taskee|
+      build_homework_task(
+        task_plan:    task_plan,
+        taskee:       taskee,
+        exercises:    exercises
       )
-      assign_task!(task: task, taskee: taskee)
-      task
     end
-
-    tasks
   end
 
   def self.collect_exercises(task_plan:)
@@ -56,8 +52,8 @@ class Tasks::Assistants::HomeworkAssistant
     exercises
   end
 
-  def self.create_homework_task!(task_plan:, taskee:, exercises:)
-    task = create_task!(task_plan: task_plan)
+  def self.build_homework_task(task_plan:, taskee:, exercises:)
+    task = build_task(task_plan: task_plan)
 
     set_los(task: task, exercises: exercises)
 
@@ -66,25 +62,17 @@ class Tasks::Assistants::HomeworkAssistant
     add_personalized_exercise_steps!(task_plan: task_plan, task: task, taskee: taskee)
   end
 
-  def self.create_task!(task_plan:)
+  def self.build_task(task_plan:)
     title    = task_plan.title || 'Homework'
-    opens_at = task_plan.opens_at
-    due_at   = task_plan.due_at || (task_plan.opens_at + 1.week)
 
     description = task_plan.settings['description']
 
-    task = Tasks::CreateTask[
+    Tasks::BuildTask[
       task_plan:   task_plan,
       task_type:   :homework,
       title:       title,
-      description: description,
-      opens_at:    opens_at,
-      due_at:      due_at,
-      feedback_at: due_at
+      description: description
     ]
-
-    task.save!
-    task
   end
 
   def self.set_los(task:, exercises:)
@@ -100,7 +88,6 @@ class Tasks::Assistants::HomeworkAssistant
 
     task.los = los
 
-    task.save!
     task
   end
 
@@ -109,12 +96,11 @@ class Tasks::Assistants::HomeworkAssistant
       related_content = get_related_content_for(exercise)
 
       step = add_exercise_step(task: task, exercise: exercise)
-      step.core_group!
+      step.group_type = :core_group
 
       step.add_related_content(related_content)
     end
 
-    task.save!
     task
   end
 
@@ -177,13 +163,12 @@ class Tasks::Assistants::HomeworkAssistant
         related_content = get_related_content_for(chosen_exercise)
 
         step = add_exercise_step(task: task, exercise: chosen_exercise)
-        step.spaced_practice_group!
+        step.group_type = :spaced_practice_group
 
         step.add_related_content(related_content)
       end
     end
 
-    task.save!
     task
   end
 
@@ -279,29 +264,17 @@ class Tasks::Assistants::HomeworkAssistant
     num_personalized_exercises.times do
       task_step = Tasks::Models::TaskStep.new(task: task)
       tasked_placeholder = Tasks::Models::TaskedPlaceholder.new(task_step: task_step)
-      tasked_placeholder.exercise_type!
+      tasked_placeholder.placeholder_type = :exercise_type
       task_step.tasked = tasked_placeholder
-      task_step.personalized_group!
+      task_step.group_type = :personalized_group
       task.task_steps << task_step
     end
 
-    task.save!
     task
   end
 
   def self.num_personalized_exercises
     1
-  end
-
-  def self.assign_task!(task:, taskee:)
-    # No group tasks for this assistant
-    task.entity_task.taskings << Tasks::Models::Tasking.new(
-      task: task.entity_task,
-      role: taskee
-    )
-
-    task.save!
-    task
   end
 
 end

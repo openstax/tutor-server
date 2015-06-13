@@ -7,11 +7,13 @@ class Entity
             :joined_includes_values, :load, :many?, :reload, :reset, :scoping, :size, :to_a,
             :to_sql, :uniq_value, :values, :where_values_hash, :exists?, :fifth, :fifth!, :find,
             :find_by, :find_by!, :first, :first!, :forty_two, :forty_two!, :fourth, :fourth!,
-            :last, :last!, :second, :second!, :take, :take!, :third, :third!, :average,
-            :calculate, :count, :ids, :maximum, :minimum, :pluck, :sum, :except, :merge, :only,
-            :distinct, :eager_load, :extending, :from, :group, :having, :includes, :joins, :limit,
-            :lock, :none, :offset, :order, :preload, :references, :reorder, :reverse_order,
-            :rewhere, :select, :uniq, :unscope, :where, :find_each, :find_in_batches
+            :last, :last!, :second, :second!, :take, :take!, :third, :third!, :average, :calculate,
+            :count, :ids, :maximum, :minimum, :pluck, :sum, :except, :merge, :only, :distinct,
+            :eager_load, :extending, :from, :group, :having, :includes, :joins, :limit, :lock,
+            :none, :offset, :order, :preload, :references, :reorder, :reverse_order, :rewhere,
+            :select, :uniq, :unscope, :where, :find_each, :find_in_batches, :to_xml, :to_yaml,
+            :length, :collect, :map, :each, :all?, :include?, :to_ary, :join, :table_name,
+            :quoted_table_name, :primary_key, :quoted_primary_key, :connection, :columns_hash
 
     # The constructor for Entity::Relation only accepts an ActiveRecord::Relation object
     # The relation is set as readonly

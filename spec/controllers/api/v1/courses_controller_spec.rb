@@ -16,6 +16,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   let!(:userless_token)  { FactoryGirl.create :doorkeeper_access_token }
 
   let!(:course) { CreateCourse[name: 'Physics 101'] }
+  let!(:period) { CreatePeriod[course: course] }
 
   describe "#readings" do
     it "should work on the happy path" do
@@ -120,52 +121,46 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
 
     context 'user is a teacher' do
-      let(:teaching) { CreateCourse.call.outputs.profile }
-
       before do
-        AddUserAsCourseTeacher.call(course: teaching.course, user: user_1.entity_user)
+        AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
       end
 
       it 'returns the teacher roles with the course' do
         api_get :index, user_1_token
         expect(response.body).to include({
-          id: teaching.course.id.to_s,
-          name: teaching.name,
+          id: course.id.to_s,
+          name: course.profile.name,
           roles: [{ id: teacher.id.to_s, type: 'teacher' }]
         }.to_json)
       end
     end
 
     context 'user is a student' do
-      let!(:taking) { CreateCourse.call.outputs.profile }
-
       before(:each) do
-        AddUserAsCourseStudent.call(course: taking.course, user: user_1.entity_user)
+        AddUserAsPeriodStudent.call(period: period, user: user_1.entity_user)
       end
 
       it 'returns the student roles with the course' do
         api_get :index, user_1_token
         expect(response.body).to include({
-          id: taking.course.id.to_s,
-          name: taking.name,
+          id: course.id.to_s,
+          name: course.profile.name,
           roles: [{ id: student.id.to_s, type: 'student' }]
         }.to_json)
       end
     end
 
     context 'user is both a teacher and student' do
-      let!(:both) { CreateCourse.call.outputs.profile }
-
       before(:each) do
-        AddUserAsCourseStudent.call(course: both.course, user: user_1.entity_user)
-        AddUserAsCourseTeacher.call(course: both.course, user: user_1.entity_user)
+        AddUserAsPeriodStudent.call(period: period, user: user_1.entity_user)
+        AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
       end
 
       it 'returns both roles with the course' do
         api_get :index, user_1_token
         expect(response.body).to include({
-          id: both.course.id.to_s,
-          name: both.name,
+          id: course.id.to_s,
+          name: course.profile.name,
           roles: [{ id: student.id.to_s, type: 'student', },
                   { id: teacher.id.to_s, type: 'teacher', }]
         }.to_json)
@@ -174,122 +169,6 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
     it "returns tasks for a role holder in a certain course" do
       skip "skipped until implement the real /api/courses/123/tasks endpoint with role awareness"
-    end
-  end
-
-  describe "#events" do
-    context "user is teacher" do
-      let!(:teacher_role) {
-        AddUserAsCourseTeacher.call(
-          course: course,
-          user:   user_1.entity_user
-        ).outputs[:role]
-      }
-
-      let!(:class_entity_course) {
-        class_entity_course = class_double(Entity::Course).as_stubbed_const
-        allow(class_entity_course).
-          to receive(:find).with(course.id.to_s).
-          and_return(course)
-        class_entity_course
-      }
-
-      let!(:lev_result) {
-        lev_result = double(Lev::Routine::Result)
-        allow(lev_result).
-          to receive(:outputs).
-          and_return(Hashie::Mash.new(tasks: [], plans: []))
-        lev_result
-      }
-
-      let!(:get_role_course_events) {
-        get_role_course_events = class_double(GetRoleCourseEvents).as_stubbed_const
-        get_role_course_events
-      }
-
-      context "and not a student" do
-        context "and no role is given" do
-          it "should find the teacher role's events" do
-            expect(get_role_course_events).
-              to receive(:call).with(course: course, role: teacher_role).
-              and_return(lev_result)
-
-            api_get :events,
-                    user_1_token,
-                    parameters: {id: course.id}
-          end
-        end
-
-        context "and the teacher role is given" do
-          it "should find the teacher role's events" do
-            expect(get_role_course_events).
-              to receive(:call).with(course: course, role: teacher_role).
-              and_return(lev_result)
-
-            api_get :events,
-                    user_1_token,
-                    parameters: {id: course.id, role_id: teacher_role.id}
-          end
-        end
-
-        context "and a student role is given" do
-          it "should find the student role's events" do
-            user_2_role = AddUserAsCourseStudent.call(
-              course: course,
-              user: user_2.entity_user).outputs[:role]
-
-            expect(get_role_course_events).
-              to receive(:call).with(course: course, role: user_2_role).
-              and_return(lev_result)
-
-            api_get :events,
-                    user_1_token,
-                    parameters: { id: course.id, role_id: user_2_role.id }
-          end
-        end
-      end
-      context "and also a student" do
-        let!(:student_role) {
-          AddUserAsCourseStudent.call(
-            course: course,
-            user:   user_1.entity_user
-          ).outputs[:role]
-        }
-
-        context "and no role is given" do
-          it "should find the teacher role's events" do
-            expect(get_role_course_events).
-              to receive(:call).with(course: course, role: teacher_role).
-              and_return(lev_result)
-
-            api_get :events,
-                    user_1_token,
-                    parameters: {id: course.id}
-          end
-        end
-        context "and the teacher role is given" do
-          it "should find the teacher role's events" do
-            expect(get_role_course_events).
-              to receive(:call).with(course: course, role: teacher_role).
-              and_return(lev_result)
-
-            api_get :events,
-                    user_1_token,
-                    parameters: {id: course.id, role_id: teacher_role.id}
-          end
-        end
-        context "and the student role is given" do
-          it "should find the student role's events" do
-            expect(get_role_course_events).
-              to receive(:call).with(course: course, role: student_role).
-              and_return(lev_result)
-
-            api_get :events,
-                    user_1_token,
-                    parameters: {id: course.id, role_id: student_role.id}
-          end
-        end
-      end
     end
   end
 
@@ -321,7 +200,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                                exercise: exercise_5, tag: lo }
 
     xit "works" do
-      role = AddUserAsCourseStudent.call(course: course, user: user_1.entity_user).outputs.role
+      role = AddUserAsPeriodStudent.call(period: period, user: user_1.entity_user).outputs.role
 
       expect {
         api_post :practice,
@@ -345,7 +224,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
 
     xit "prefers unassigned exercises" do
-      role = AddUserAsCourseStudent.call(course: course, user: user_1.entity_user).outputs.role
+      role = AddUserAsPeriodStudent.call(period: period, user: user_1.entity_user).outputs.role
 
       # Assign the first 5 exercises
       ResetPracticeWidget.call(role: role, condition: :local, page_ids: [page.id])
@@ -395,7 +274,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
 
     it "must be called by a user who has the role" do
-      AddUserAsCourseStudent.call(course: course, user: user_1.entity_user)
+      AddUserAsPeriodStudent.call(period: period, user: user_1.entity_user)
       expect{
         # The role belongs to user_1, we pass user_2_token
         api_post :practice, user_2_token, parameters: {id: course.id,
@@ -407,14 +286,14 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
   describe "practice_get" do
     it "returns nothing when practice widget not yet set" do
-      AddUserAsCourseStudent.call(course: course, user: user_1.entity_user)
+      AddUserAsPeriodStudent.call(period: period, user: user_1.entity_user)
       api_get :practice, user_1_token, parameters: {id: course.id, role_id: Entity::Role.last.id}
 
       expect(response).to have_http_status(:not_found)
     end
 
     it "returns a practice widget" do
-      AddUserAsCourseStudent.call(course: course, user: user_1.entity_user)
+      AddUserAsPeriodStudent.call(period: period, user: user_1.entity_user)
       ResetPracticeWidget.call(role: Entity::Role.last, exercise_source: :fake)
       ResetPracticeWidget.call(role: Entity::Role.last, exercise_source: :fake)
 
@@ -430,7 +309,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
     it "can be called by a teacher using a student role" do
       AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
-      student_role = AddUserAsCourseStudent.call(course: course, user: user_2.entity_user).outputs[:role]
+      student_role = AddUserAsPeriodStudent.call(period: period, user: user_2.entity_user).outputs[:role]
       ResetPracticeWidget.call(role: student_role, exercise_source: :fake)
 
       api_get :practice, user_1_token, parameters: { id: course.id, role_id: student_role.id }
@@ -442,8 +321,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   describe "dashboard" do
     let!(:student_profile){ FactoryGirl.create(:user_profile) }
     let!(:student_user)   { student_profile.entity_user }
-    let!(:student_role)   { AddUserAsCourseStudent.call(user: student_user,
-                                                        course: course)
+    let!(:student_role)   { AddUserAsPeriodStudent.call(user: student_user,
+                                                        period: period)
                                                   .outputs.role }
     let!(:student_token)  { FactoryGirl.create :doorkeeper_access_token,
                                                resource_owner_id: student_profile.id }
@@ -583,9 +462,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         "plans" => a_collection_including(
           a_hash_including(
             "id" => plan.id.to_s,
-            "opens_at" => be_kind_of(String),
-            "due_at" => be_kind_of(String),
-            "type" => "reading"
+            "type" => "reading",
+            "tasking_plans" => []
           )
         )
       )
@@ -617,8 +495,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       }
 
       let!(:student_role) {
-        AddUserAsCourseStudent.call(
-          course: course, user: user_2.entity_user).outputs[:role]
+        AddUserAsPeriodStudent.call(
+          period: period, user: user_2.entity_user).outputs[:role]
       }
 
       let!(:course_stats) {
@@ -700,10 +578,10 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                 resource_owner_id: student_1.id }
 
       before do
-        SetupPerformanceBookData[course: course,
-                                 teacher: teacher,
-                                 students: student_1,
-                                 book: @book]
+        SetupPerformanceReportData[course: course,
+                                   teacher: teacher,
+                                   students: student_1,
+                                   book: @book]
       end
 
       it 'should work on the happy path' do
@@ -712,9 +590,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(response).to have_http_status :success
         expect(response.body_as_hash).to include(
           data_headings: [
-            { title: 'Homework task plan', class_average: kind_of(Float) },
+            { title: 'Homework task plan', average: kind_of(Float) },
             { title: 'Reading task plan' },
-            { title: 'Homework 2 task plan', class_average: kind_of(Float) }
+            { title: 'Homework 2 task plan', average: kind_of(Float) }
           ],
           students: [{
             name: kind_of(String),
@@ -803,11 +681,11 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
     it 'kicks off the performance book export for authorized teachers' do
       role = ChooseCourseRole[course: course, user: teacher.entity_user]
-      allow(Tasks::Jobs::ExportPerformanceBookJob).to receive(:perform_later)
+      allow(Tasks::Jobs::ExportPerformanceReportJob).to receive(:perform_later)
 
       api_post :performance_export, teacher_token, parameters: { id: course.id }
 
-      expect(Tasks::Jobs::ExportPerformanceBookJob).to have_received(:perform_later)
+      expect(Tasks::Jobs::ExportPerformanceReportJob).to have_received(:perform_later)
         .with(course: course, role: role)
     end
 
@@ -841,7 +719,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       role = ChooseCourseRole[user: teacher.entity_user,
                               course: course,
                               allowed_role_type: :teacher]
-      export = FactoryGirl.create(:performance_book_export,
+      export = FactoryGirl.create(:performance_report_export,
                                   export: File.open('./tmp/test.txt', 'w+'),
                                   course: course,
                                   role: role)

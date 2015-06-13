@@ -4,13 +4,15 @@ describe CourseMembership::IsCourseStudent do
 
   context "when not a student of the given course" do
     let(:target_course)       { Entity::Course.create! }
+    let(:target_period)       { CreatePeriod[course: target_course] }
     let(:other_course)        { Entity::Course.create! }
+    let(:other_period)        { CreatePeriod[course: other_course] }
     let(:target_student_role) { Entity::Role.create! }
     let(:other_student_role)  { Entity::Role.create! }
 
     before(:each) do
-      CourseMembership::AddStudent.call(course: other_course,  role: target_student_role)
-      CourseMembership::AddStudent.call(course: target_course, role: other_student_role)
+      CourseMembership::AddStudent.call(period: other_period,  role: target_student_role)
+      CourseMembership::AddStudent.call(period: target_period, role: other_student_role)
     end
 
     context "when a single role is given" do
@@ -44,10 +46,11 @@ describe CourseMembership::IsCourseStudent do
 
   context "when a student of the given course" do
     let(:target_course)       { Entity::Course.create! }
+    let(:target_period)       { CreatePeriod[course: target_course] }
     let(:target_student_role) { Entity::Role.create! }
 
     before(:each) do
-      CourseMembership::AddStudent.call(course: target_course, role: target_student_role)
+      CourseMembership::AddStudent.call(period: target_period, role: target_student_role)
     end
 
     context "when a single role is given" do
