@@ -33,20 +33,15 @@ class Tasks::Assistants::HomeworkAssistant
     }'
   end
 
-  def self.create_tasks(task_plan:, taskees:)
+  def self.build_tasks(task_plan:, taskees:)
     exercises = collect_exercises(task_plan: task_plan)
 
     taskees.collect do |taskee|
-      task = build_homework_task(
+      build_homework_task(
         task_plan:    task_plan,
         taskee:       taskee,
         exercises:    exercises
       )
-
-      yield(task, taskee) if block_given?
-
-      task.save!
-      task
     end
   end
 

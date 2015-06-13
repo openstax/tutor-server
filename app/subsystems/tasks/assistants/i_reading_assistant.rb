@@ -18,7 +18,7 @@ class Tasks::Assistants::IReadingAssistant
     }'
   end
 
-  def self.create_tasks(task_plan:, taskees:)
+  def self.build_tasks(task_plan:, taskees:)
     ## NOTE: This implementation isn't particularly robust: failure to distribute to any taskee will
     ##       result in failure to distribute to EVERY taskee (because the entire transaction will be
     ##       rolled back).  Eventually, we will probably want to create an "undistributed" task and
@@ -27,16 +27,11 @@ class Tasks::Assistants::IReadingAssistant
     pages = collect_pages(task_plan: task_plan)
 
     taskees.collect do |taskee|
-      task = build_ireading_task(
+      build_ireading_task(
         task_plan:    task_plan,
         taskee:       taskee,
         pages:        pages
       )
-
-      yield(task, taskee) if block_given?
-
-      task.save!
-      task
     end
   end
 

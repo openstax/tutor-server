@@ -1,4 +1,5 @@
 # Moves the given role to a new period
+# Don't use until UX figures out what they want as behavior/warnings
 class CourseMembership::MoveStudent
   lev_routine
 

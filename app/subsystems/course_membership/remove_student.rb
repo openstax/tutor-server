@@ -1,4 +1,5 @@
 # Removes the given role from its period/course
+# Don't use until UX figures out what they want as behavior/warnings
 class CourseMembership::RemoveStudent
   lev_routine
 

@@ -32,29 +32,26 @@ class DistributeTasks
 
     tasking_plans = run(:get_tasking_plans, task_plan).outputs.tasking_plans
 
-    date_map = {}
-    taskees = tasking_plans.collect do |tp|
-      taskee = tp.target
-      date_map[taskee] = [tp.opens_at, tp.due_at]
-      taskee
-    end
+    taskees = tasking_plans.collect { |tp| tp.target }
+    opens_ats = tasking_plans.collect { |tp| tp.opens_at }
+    due_ats = tasking_plans.collect { |tp| tp.due_at }
 
     # Call the assistant code to create Tasks, then distribute them
-    outputs[:tasks] = assistant.create_tasks(task_plan: task_plan,
-                                             taskees: taskees) do |task, taskee|
+    tasks = assistant.build_tasks(task_plan: task_plan, taskees: taskees)
+    tasks.each_with_index do |task, ii|
       tasking = Tasks::Models::Tasking.new(
         task: task.entity_task,
-        role: taskee
+        role: taskees[ii]
       )
       task.entity_task.taskings << tasking
 
-      dates = date_map[taskee]
-      task.opens_at = dates.first
-      task.due_at = dates.second || (task.opens_at + 1.week)
+      task.opens_at = opens_ats[ii]
+      task.due_at = due_ats[ii] || (task.opens_at + 1.week)
       task.feedback_at ||= task.due_at
       task.save!
-      task
     end
+
+    outputs[:tasks] = tasks
 
     task_plan.update_attributes(published_at: Time.now)
   end
