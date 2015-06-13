@@ -35,37 +35,39 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
       "id" => task_plan.id.to_s,
       "type" => "reading",
       "stats" => {
-        "course" => {
-          "mean_grade_percent"       => 50,
-          "total_count"              => 2,
-          "complete_count"           => 0,
-          "partially_complete_count" => 2,
-          "current_pages"            => a_collection_containing_exactly(
-            "id"     => task_plan.settings['page_ids'].first.to_s,
-            "title"  => "Force",
-            "student_count"   => 2,
-            "correct_count"   => 1,
-            "incorrect_count" => 1,
-            "chapter_section" => [1, 1],
-            "exercises" => a_collection_containing_exactly(
-              "content" => a_kind_of(Hash), "answered_count" => 2
+        "periods" => [
+          {
+            "name"                     => 'None',
+            "mean_grade_percent"       => 50,
+            "total_count"              => 2,
+            "complete_count"           => 0,
+            "partially_complete_count" => 2,
+            "current_pages"            => a_collection_containing_exactly(
+              "id"     => task_plan.settings['page_ids'].first.to_s,
+              "title"  => "Force",
+              "student_count"   => 2,
+              "correct_count"   => 1,
+              "incorrect_count" => 1,
+              "chapter_section" => [1, 1],
+              "exercises" => a_collection_containing_exactly(
+                "content" => a_kind_of(Hash), "answered_count" => 2
+              )
+            ),
+            "spaced_pages" => a_collection_containing_exactly(
+              "id"     => task_plan.settings['page_ids'].first.to_s,
+              "title"  => "Force",
+              "student_count"   => 0,
+              "correct_count"   => 0,
+              "incorrect_count" => 0,
+              "chapter_section" => [1, 1],
+              "exercises" => a_kind_of(Array)
             )
-          ),
-          "spaced_pages" => a_collection_containing_exactly(
-            "id"     => task_plan.settings['page_ids'].first.to_s,
-            "title"  => "Force",
-            "student_count"   => 0,
-            "correct_count"   => 0,
-            "incorrect_count" => 0,
-            "chapter_section" => [1, 1],
-            "exercises" => a_kind_of(Array)
-          )
-        },
-        "periods" => []
+          }
+        ]
       }
     )
 
-    representation['stats']['course']['current_pages'].first['exercises'].each do |exercise|
+    representation['stats']['periods'].first['current_pages'].first['exercises'].each do |exercise|
       exercise['content']['questions'].first['answers'].each do |answer|
         case answer['id']
         when correct_answer_id, incorrect_answer_ids.first
@@ -76,7 +78,7 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
       end
     end
 
-    representation['stats']['course']['spaced_pages'].first['exercises'].each do |exercise|
+    representation['stats']['periods'].first['spaced_pages'].first['exercises'].each do |exercise|
       exercise['content']['questions'].first['answers'].each do |answer|
         expect(answer['selected_count']).to eq 0
       end

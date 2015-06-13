@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe CourseMembership::AddStudent do
+describe CourseMembership::AddStudent, type: :routine do
   context "when adding a new student role to a period" do
     it "succeeds" do
       role = Entity::Role.create!

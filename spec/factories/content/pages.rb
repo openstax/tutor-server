@@ -6,5 +6,6 @@ FactoryGirl.define do
     content { Faker::Lorem.paragraphs(2) }
     uuid { SecureRandom.uuid }
     version { Random.rand(1..10) }
+    chapter_section [1, 1]
   end
 end

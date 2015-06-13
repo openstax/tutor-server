@@ -95,40 +95,51 @@ class CalculateTaskPlanStats
     page_hash.collect{ |page, tasked_exercises| generate_page_stats(page, tasked_exercises) }
   end
 
-  def generate_course_stat_data
-    tasks = @plan.tasks.preload(task_steps: :tasked).includes(:taskings).to_a
-    {
-      mean_grade_percent: mean_grade_percent(tasks),
+  def no_period
+    @no_period ||= CourseMembership::Models::Period.new(name: 'None')
+  end
 
-      total_count: tasks.count,
+  def generate_period_stat_data
+    tasks = @plan.tasks.preload(task_steps: :tasked)
+                       .includes(taskings: {role: {students: :period}}).to_a
+    grouped_tasks = tasks.group_by do |tt|
+      tt.taskings.first.role.students.first.try(:period) || no_period
+    end
+    grouped_tasks.collect do |period, period_tasks|
+      {
+        id: period.id,
 
-      complete_count: tasks.count{|task|
-        task.task_steps.all?{| ts | ts.completed? }
-      },
+        name: period.name,
 
-      partially_complete_count: tasks.count{|task|
-        task.task_steps.any?{| ts | ts.completed? } &&
-          !task.task_steps.all?{| ts | ts.completed? }
-      },
+        mean_grade_percent: mean_grade_percent(period_tasks),
 
-      current_pages: generate_page_stats_for_task_steps(tasks.collect{ |t| t.core_task_steps }),
+        total_count: period_tasks.count,
 
-      spaced_pages: generate_page_stats_for_task_steps(
-                      tasks.collect{ |t| t.spaced_practice_task_steps }
-                    )
-    }
+        complete_count: period_tasks.count{|task|
+          task.task_steps.all?{| ts | ts.completed? }
+        },
+
+        partially_complete_count: period_tasks.count{|task|
+          task.task_steps.any?{| ts | ts.completed? } &&
+            !task.task_steps.all?{| ts | ts.completed? }
+        },
+
+        current_pages: generate_page_stats_for_task_steps(
+                         period_tasks.collect{ |t| t.core_task_steps }
+                       ),
+
+        spaced_pages: generate_page_stats_for_task_steps(
+                        period_tasks.collect{ |t| t.spaced_practice_task_steps }
+                      )
+      }
+    end
   end
 
   def exec(plan:, details: false)
     @plan = plan
     @details = details
 
-    outputs[:stats] = Hashie::Mash.new(
-      {
-        course: generate_course_stat_data,
-        periods: [] # Awaiting implementation of periods subsystem
-      }
-    )
+    outputs[:stats] = Hashie::Mash.new(periods: generate_period_stat_data)
   end
 
 end

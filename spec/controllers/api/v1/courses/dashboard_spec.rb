@@ -8,8 +8,7 @@ describe Api::V1::Courses::Dashboard, :type => :routine, :vcr => VCR_OPTS do
 
   let!(:student_user)   { FactoryGirl.create(:user_profile).entity_user }
   let!(:student_role)   { AddUserAsPeriodStudent.call(user: student_user,
-                                                      period: period)
-                                                .outputs.role }
+                                                      period: period).outputs.role }
 
   let!(:teacher_user)   { FactoryGirl.create(:user_profile,
                                              first_name: 'Bob',

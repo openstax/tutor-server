@@ -1,8 +1,8 @@
 module Api::V1
   module Tasks
     module Stats
-      # Represents stats for course and periods
-      class CourseAndPeriodRepresenter < Roar::Decorator
+      # Represents stats for course periods
+      class PeriodRepresenter < Roar::Decorator
 
         include Roar::JSON
         include Representable::Coercion
@@ -12,7 +12,7 @@ module Api::V1
                  readable: true,
                  writeable: false
 
-        property :title,
+        property :name,
                  type: String,
                  readable: true,
                  writeable: false
