@@ -42,7 +42,8 @@ class Demo001 < DemoBase
     course = create_course(name: 'Physics I')
     run(:add_book, book: outputs.book, course: course)
 
-    period = create_period(course: course)
+    period_1 = create_period(course: course)
+    period_2 = create_period(course: course)
 
     admin_profile = new_user_profile(username: 'admin', name: 'Administrator User')
     run(:make_administrator, user: admin_profile.entity_user)
@@ -52,7 +53,8 @@ class Demo001 < DemoBase
     run(:add_teacher, course: course, user: teacher_profile.entity_user)
 
     students = 20.times.collect do |ii|
-      new_period_student(period: period, username: "student#{(ii + 1).to_s.rjust(2,'0')}")
+      new_period_student(period: (ii.even? ? period_1 : period_2),
+                         username: "student#{(ii + 1).to_s.rjust(2,'0')}")
     end
 
     log("Added #{teacher_profile.account.full_name} as a teacher and added #{students.count} students.")

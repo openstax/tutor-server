@@ -216,10 +216,14 @@ class DemoBase
   end
 
   def distribute_tasks(task_plan:, to:, opens_at:, due_at:, message: nil)
-    task_plan.tasking_plans << Tasks::Models::TaskingPlan.create!(target: to,
-                                                                  task_plan: task_plan,
-                                                                  opens_at: opens_at,
-                                                                  due_at: due_at)
+    targets = [to].flatten
+    targets.each do |target|
+      task_plan.tasking_plans << Tasks::Models::TaskingPlan.create!(target: target,
+                                                                    task_plan: task_plan,
+                                                                    opens_at: opens_at,
+                                                                    due_at: due_at)
+    end
+
     tasks = run(DistributeTasks, task_plan).outputs.tasks
 
     log(message || "Assigned #{task_plan.type}, '#{task_plan.title}' due at #{due_at}; #{tasks.count} times")
