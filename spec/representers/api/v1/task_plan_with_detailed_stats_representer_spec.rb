@@ -50,7 +50,12 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
               "incorrect_count" => 1,
               "chapter_section" => [1, 1],
               "exercises" => a_collection_containing_exactly(
-                "content" => a_kind_of(Hash), "answered_count" => 2
+                {
+                  "content" => a_kind_of(Hash), "answered_count" => 2
+                },
+                {
+                  "content" => a_kind_of(Hash), "answered_count" => 0
+                }
               )
             ),
             "spaced_pages" => a_collection_containing_exactly(
@@ -67,15 +72,19 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
       }
     )
 
-    representation['stats']['periods'].first['current_pages'].first['exercises'].each do |exercise|
-      exercise['content']['questions'].first['answers'].each do |answer|
-        case answer['id']
-        when correct_answer_id, incorrect_answer_ids.first
-          expect(answer['selected_count']).to eq 1
-        else
-          expect(answer['selected_count']).to eq 0
-        end
+    exercise_1 = representation['stats']['periods'].first['current_pages'].first['exercises'].first
+    exercise_1['content']['questions'].first['answers'].each do |answer|
+      case answer['id']
+      when correct_answer_id, incorrect_answer_ids.first
+        expect(answer['selected_count']).to eq 1
+      else
+        expect(answer['selected_count']).to eq 0
       end
+    end
+
+    exercise_2 = representation['stats']['periods'].first['current_pages'].first['exercises'].last
+    exercise_2['content']['questions'].first['answers'].each do |answer|
+      expect(answer['selected_count']).to eq 0
     end
 
     representation['stats']['periods'].first['spaced_pages'].first['exercises'].each do |exercise|

@@ -34,7 +34,7 @@ RSpec.describe SearchLocalExercises, :type => :routine, :vcr => VCR_OPTS do
       expect(exercise.los).to include(lo)
     end
 
-    embed_tag = 'k12phys-ch04-ex021'
+    embed_tag = 'k12phys-ch04-ex013'
     exercises = SearchLocalExercises.call(tag: embed_tag).outputs.items
     expect(exercises.length).to eq 1
     expect(exercises.first.tags).to include(embed_tag)
@@ -43,7 +43,7 @@ RSpec.describe SearchLocalExercises, :type => :routine, :vcr => VCR_OPTS do
   it 'returns only the latest version of each exercise' do
     Content::Routines::ImportPage.call(cnx_page: cnx_page, book_part: book_part)
 
-    embed_tag = 'k12phys-ch04-ex021'
+    embed_tag = 'k12phys-ch04-ex013'
     exercises = SearchLocalExercises.call(tag: embed_tag).outputs.items
     expect(exercises.length).to eq 1
     exercise = exercises.first

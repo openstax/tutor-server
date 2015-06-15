@@ -10,7 +10,6 @@ RSpec.describe Content::ImportBook, type: :routine, speed: :slow, vcr: VCR_OPTS 
   def test_book_part(book_part)
     expect(book_part).to be_persisted
     expect(book_part.title).not_to be_blank
-    expect(book_part.child_book_parts.to_a + book_part.pages.to_a).not_to be_empty
 
     book_part.child_book_parts.each do |cbp|
       next if cbp == book_part
@@ -30,7 +29,7 @@ RSpec.describe Content::ImportBook, type: :routine, speed: :slow, vcr: VCR_OPTS 
     result = nil
     expect {
       result = Content::ImportBook.call(cnx_book: cnx_book);
-    }.to change{ Content::Models::BookPart.count }.by(2)
+    }.to change{ Content::Models::BookPart.count }.by(5)
     expect(result.errors).to be_empty
 
     book_part = result.outputs.book_part

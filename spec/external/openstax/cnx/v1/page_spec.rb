@@ -72,7 +72,7 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, vcr: VCR_OPTS do
             {
               value: 'k12phys-ch04-s01-lo01',
               type: :lo,
-              name: 'Differentiate between force, net force and dynamics',
+              name: 'Differentiate between force, net force, and dynamics',
               teks: 'teks-112-39-c-4c'
             },
             {
@@ -107,7 +107,7 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, vcr: VCR_OPTS do
             {
               value: 'k12phys-ch04-s02-lo01',
               type: :lo,
-              name: 'Describe Newton\'s first law and friction a∝1ma∝1m',
+              name: 'Describe Newton’s first law and friction',
               teks: 'teks-112-39-c-4d'
             },
             {
@@ -119,7 +119,7 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, vcr: VCR_OPTS do
             {
               value: 'teks-112-39-c-4d',
               type: :teks,
-              name: '(D)',
+              name: '(4D)',
               description: 'calculate the effect of forces on objects, including the law of inertia, the relationship between force and acceleration, and the nature of force pairs between objects'
             }
           ],

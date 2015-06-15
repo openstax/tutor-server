@@ -61,15 +61,15 @@ class SetupCourseStats
     puts "=== Set student history ==="
     make_and_work_practice_widget(role: student_role,
                                   num_correct: 2,
-                                  page_ids: outputs.page_data[1].id)
+                                  page_ids: outputs.page_data[4].id)
 
     make_and_work_practice_widget(role: student_role,
                                   num_correct: 5,
-                                  page_ids: outputs.page_data[2].id)
+                                  page_ids: outputs.page_data[5].id)
 
     make_and_work_practice_widget(role: student_role,
                                   num_correct: 5,
-                                  book_part_ids: outputs.toc.id)
+                                  book_part_ids: outputs.toc.children[3].id)
   end
 
   private
@@ -85,10 +85,8 @@ class SetupCourseStats
   end
 
   def create_assignments(role:)
-    ireading_task_plan.tasking_plans << FactoryGirl.create(:tasks_tasking_plan,
-                                                           target: role)
-    homework_task_plan.tasking_plans << FactoryGirl.create(:tasks_tasking_plan,
-                                                           target: role)
+    ireading_task_plan.tasking_plans << FactoryGirl.create(:tasks_tasking_plan, target: role)
+    homework_task_plan.tasking_plans << FactoryGirl.create(:tasks_tasking_plan, target: role)
 
     run(:distribute_tasks, ireading_task_plan)
     run(:distribute_tasks, homework_task_plan).outputs.tasks.each do |task|
@@ -118,7 +116,7 @@ class SetupCourseStats
 
     assistant = FactoryGirl.create(:tasks_assistant,
       code_class_name: 'Tasks::Assistants::HomeworkAssistant')
-    exercise_ids = outputs.page_data[1].los.collect do |tag|
+    exercise_ids = outputs.page_data[4].los.collect do |tag|
       SearchLocalExercises[tag: tag].first.id.to_s
     end
 

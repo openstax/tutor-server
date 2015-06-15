@@ -21,7 +21,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Thu, 11 Jun 2015 23:02:41 GMT
+      - Mon, 15 Jun 2015 21:12:42 GMT
       Content-Type:
       - text/plain
       Content-Length:
@@ -42,7 +42,7 @@ http_interactions:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Tue, 16 Jun 2015 20:01:56 GMT
+  recorded_at: Mon, 15 Jun 2015 21:09:30 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/95e61258-2faf-41d4-af92-f62e1414175a@4.json
@@ -64,7 +64,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Thu, 11 Jun 2015 23:02:41 GMT
+      - Mon, 15 Jun 2015 21:12:43 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -364,7 +364,7 @@ http_interactions:
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Tue, 16 Jun 2015 20:01:56 GMT
+  recorded_at: Mon, 15 Jun 2015 21:09:30 GMT
 - request:
     method: get
     uri: https://exercises-dev.openstax.org/api/exercises?q=tag:k12phys-ch04-s01-lo01,k12phys-ch04-s01-lo02
@@ -390,13 +390,13 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Thu, 11 Jun 2015 23:41:14 GMT
+      - Mon, 15 Jun 2015 21:09:41 GMT
       Etag:
       - W/"eca76b4cd1fda703e0f9a9b1461a3584"
       Server:
       - nginx/1.4.6 (Ubuntu)
       Set-Cookie:
-      - _exercises_session=U0FXU29UV1dNRU50UjVueTZma01XQTRXT3pnbncyMTlOdTk0TVdMSWMybFJuQ2M3WERMM3hUY2hkcXJyWG1hVnhMQzZUM1o1WWY0VHcveUFRZk5CZGc9PS0tTi9LbVVOZ3dNRU1aNThmanpHS094Zz09--54913798bb7a8743630c3440cb6a5430525b3702;
+      - _exercises_session=RU5UaGNoZFQxK0VBdjl4S0ZXUXhmZFAwb3QremZEam9Pb0szRjBybGI1eUczbmRkQ2V1RXBTRThDZ1pjYXFMcGNDWi9qRmtFbEpiYW5WUUFUdlJPRVE9PS0tVFNiWnB6dXFoNENndnA5bSttWnpOdz09--8f24936a4fbf2961077d63adf27c5e5522f463d4;
         path=/; HttpOnly
       Status:
       - 200 OK
@@ -407,9 +407,9 @@ http_interactions:
       X-Frame-Options:
       - SAMEORIGIN
       X-Request-Id:
-      - 4eb7c06a-fb04-4402-a135-74af198f0b58
+      - 7dcd5bdd-cc33-48fd-b6fa-26c90af1f2ae
       X-Runtime:
-      - '0.589605'
+      - '0.566190'
       X-Xss-Protection:
       - 1; mode=block
       Transfer-Encoding:
@@ -1657,61 +1657,5 @@ http_interactions:
         fV0sImhpbnRzIjpbXSwiZm9ybWF0cyI6WyJtdWx0aXBsZS1jaG9pY2UiXSwi
         Y29tYm9fY2hvaWNlcyI6W119XX1dfQ==
     http_version: 
-  recorded_at: Tue, 16 Jun 2015 20:07:27 GMT
-- request:
-    method: get
-    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:lo-k12phys-ch04-s01-lo01,lo-k12phys-ch04-s01-lo02
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Faraday v0.9.1
-      Accept:
-      - application/vnd.openstax.v1
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Access-Control-Allow-Origin:
-      - "*"
-      Cache-Control:
-      - max-age=0, private, must-revalidate
-      Content-Type:
-      - application/json; charset=utf-8
-      Date:
-      - Fri, 12 Jun 2015 00:05:27 GMT
-      Etag:
-      - W/"7d677de0cf405de24f0f10b68258ceb0"
-      Server:
-      - nginx/1.4.6 (Ubuntu)
-      Set-Cookie:
-      - _exercises_session=eWw1NGV6NUNqb3FMUFF0emNaMU10TC9sQ2lndGdBZlpUOFpweVpVcUtIYnhXcVlXU2poME0wTnY1YWJVYWZtb1h5L0cvRUIrRHZqdkdmUG9KajlQdlE9PS0tR1NWeW8yejZzZ2ZTaDhoV2RZK2hOZz09--3f28d3f05ed4c382b04a52dc5a55b05e0ad4d96f;
-        path=/; HttpOnly
-      Status:
-      - 200 OK
-      Strict-Transport-Security:
-      - max-age=31536000; includeSubdomains
-      X-Content-Type-Options:
-      - nosniff
-      X-Frame-Options:
-      - SAMEORIGIN
-      X-Request-Id:
-      - f7f32e24-5809-4f00-989a-17c3d80459de
-      X-Runtime:
-      - '0.014092'
-      X-Xss-Protection:
-      - 1; mode=block
-      Content-Length:
-      - '28'
-      Connection:
-      - keep-alive
-    body:
-      encoding: UTF-8
-      string: '{"total_count":0,"items":[]}'
-    http_version: 
-  recorded_at: Fri, 12 Jun 2015 00:05:39 GMT
+  recorded_at: Mon, 15 Jun 2015 21:09:31 GMT
 recorded_with: VCR 2.9.3

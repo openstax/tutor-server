@@ -88,7 +88,7 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       page = stats.periods.first.current_pages.first
       expect(page['title']).to eq("Newton's First Law of Motion: Inertia")
       expect(page['student_count']).to eq(1) # num students with completed task steps
-      expect(page['correct_count']).to eq(1)
+      expect(page['correct_count']).to eq(2)
       expect(page['incorrect_count']).to eq(0)
       expect(page['chapter_section']).to eq([1, 1])
 
@@ -115,8 +115,8 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       page = stats.periods.first.current_pages.first
       expect(page['title']).to eq("Newton's First Law of Motion: Inertia")
       expect(page['student_count']).to eq(2)
-      expect(page['correct_count']).to eq(1)
-      expect(page['incorrect_count']).to eq(1)
+      expect(page['correct_count']).to eq(2)
+      expect(page['incorrect_count']).to eq(2)
       expect(page['chapter_section']).to eq([1, 1])
 
       spaced_page = stats.periods.first.spaced_pages.first
@@ -143,8 +143,8 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       page = stats.periods.first.current_pages.first
       expect(page['title']).to eq("Newton's First Law of Motion: Inertia")
       expect(page['student_count']).to eq(3)
-      expect(page['correct_count']).to eq(2)
-      expect(page['incorrect_count']).to eq(1)
+      expect(page['correct_count']).to eq(4)
+      expect(page['incorrect_count']).to eq(2)
       expect(page['chapter_section']).to eq([1, 1])
 
       spaced_page = stats.periods.first.spaced_pages.first
@@ -171,8 +171,8 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       page = stats.periods.first.current_pages.first
       expect(page['title']).to eq("Newton's First Law of Motion: Inertia")
       expect(page['student_count']).to eq(4)
-      expect(page['correct_count']).to eq(3)
-      expect(page['incorrect_count']).to eq(1)
+      expect(page['correct_count']).to eq(6)
+      expect(page['incorrect_count']).to eq(2)
       expect(page['chapter_section']).to eq([1, 1])
 
       spaced_page = stats.periods.first.spaced_pages.first

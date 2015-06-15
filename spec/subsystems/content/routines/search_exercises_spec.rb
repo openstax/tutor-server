@@ -28,7 +28,7 @@ RSpec.describe Content::Routines::SearchExercises, type: :routine, speed: :slow,
       expect(wrapper.los).to include(lo)
     end
 
-    embed_tag = 'k12phys-ch04-ex021'
+    embed_tag = 'k12phys-ch04-ex013'
     exercises = Content::Routines::SearchExercises.call(tag: embed_tag).outputs.items
     expect(exercises.length).to eq 1
     expect(exercises.first.exercise_tags.collect{|et| et.tag.value}).to include embed_tag
@@ -37,7 +37,7 @@ RSpec.describe Content::Routines::SearchExercises, type: :routine, speed: :slow,
   it 'returns only the latest version of each exercise' do
     Content::Routines::ImportPage.call(cnx_page: cnx_page, book_part: book_part)
 
-    embed_tag = 'k12phys-ch04-ex021'
+    embed_tag = 'k12phys-ch04-ex013'
     exercises = Content::Routines::SearchExercises.call(tag: embed_tag).outputs.items
     expect(exercises.length).to eq 1
     exercise = exercises.first
