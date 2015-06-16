@@ -8,7 +8,7 @@ class CourseAccessPolicy
       UserIsCourseTeacher[user: requestor.entity_user, course: course]
     when :readings
       requestor.is_human?
-    when :exercises, :export
+    when :exercises, :export, :roster
       UserIsCourseTeacher[user: requestor.entity_user, course: course]
     else
       false
