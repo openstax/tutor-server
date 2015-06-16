@@ -44,6 +44,12 @@ RSpec.describe Content::Routines::UpdatePageContent, type: :routine do
     'https://archive.cnx.org/contents/aaf30a54-a356-4c5f-8c0d-2f55e4d20556@3'
   ] }
 
+  around(:each) do |example|
+    OpenStax::Cnx::V1.with_archive_url(url: 'http://archive.cnx.org/contents/') do
+      example.run
+    end
+  end
+
   it 'updates page content links to relative url if the link points to the book' do
     doc = Nokogiri::HTML(page_1.content)
 
