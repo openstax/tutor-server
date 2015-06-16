@@ -2,15 +2,15 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe OpenStax::Cnx::V1, :type => :external, :vcr => VCR_OPTS do
-  let!(:cnx_collection_id) { '7db9aa72-f815-4c3b-9cb6-d50cf5318b58@2.2' }
-  let!(:cnx_module_id)     { '1491e74e-ed39-446f-a602-e7ab881af101@1' }
+  let!(:cnx_collection_id) { '93e2b09d-261c-4007-a987-0b3062fe154b' }
+  let!(:cnx_module_id)     { '95e61258-2faf-41d4-af92-f62e1414175a' }
 
   it "can generate url's for resources in the cnx archive" do
     expect(OpenStax::Cnx::V1.url_for('module_id@version')).to(
-      eq('http://archive.cnx.org/contents/module_id@version'))
+      eq('https://archive-staging-tutor.cnx.org/contents/module_id@version'))
 
     expect(OpenStax::Cnx::V1.url_for('/resources/image.jpg')).to(
-      eq('http://archive.cnx.org/resources/image.jpg'))
+      eq('https://archive-staging-tutor.cnx.org/resources/image.jpg'))
   end
 
   it "can fetch collections and modules from CNX" do

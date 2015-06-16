@@ -33,25 +33,25 @@ RSpec.describe GetCourseStats, vcr: VCR_OPTS do
 
   it 'visits the book TOC and Page Data' do
     stats = described_class.call(course: @course, role: @role)
-    expect(stats.outputs.toc.title).to eq("Updated Tutor HS Physics Content - legacy")
-    expect(stats.outputs.page_data).to have(5).items
+    expect(stats.outputs.toc.title).to eq("Physics")
+    expect(stats.outputs.page_data).to have(8).items
   end
 
   it 'returns the full course stats' do
     expect(described_class[course: @course, role: @role]).to include(
-      "title"=>"Updated Tutor HS Physics Content - legacy",
+      "title"=>"Physics",
       "page_ids"=>kind_of(Array),
       "children"=>array_including(
-        hash_including(
+        {
           "id"=>kind_of(Integer),
-          "title"=>"Forces and Newton's Laws of Motion",
-          "chapter_section"=>[1],
+          "title"=>"Force and Newton's Laws of Motion",
+          "chapter_section"=>[4],
           "questions_answered_count"=>14,
           "current_level"=>kind_of(Float),
           "practice_count"=>0,
           "page_ids"=>kind_of(Array),
           "children"=>array_including(
-            hash_including(
+            {
               "id"=>kind_of(Integer),
               "title"=>kind_of(String),
               "chapter_section"=>kind_of(Array),
@@ -59,9 +59,9 @@ RSpec.describe GetCourseStats, vcr: VCR_OPTS do
               "current_level"=>kind_of(Float),
               "practice_count"=>0,
               "page_ids"=>kind_of(Array)
-            )
+            }
           ) # /array_including - nested children
-        ) # /hash_including - the children
+        } # /hash - the children
       ) # /array_including - children
     ) # /be_a_hash_including
   end

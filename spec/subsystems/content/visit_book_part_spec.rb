@@ -3,9 +3,8 @@ require 'rails_helper'
 RSpec.describe Content::VisitBookPart, :type => :routine do
 
   around(:each) do |example|
-    OpenStax::Exercises::V1.use_fake_client
     OpenStax::Exercises::V1.fake_client.reset!
-    example.run
+    OpenStax::Exercises::V1.with_fake_client { example.run }
     OpenStax::Exercises::V1.fake_client.reset!
   end
 

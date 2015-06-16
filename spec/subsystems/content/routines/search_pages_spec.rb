@@ -3,7 +3,7 @@ require 'vcr_helper'
 
 RSpec.describe Content::Routines::SearchPages, type: :routine, speed: :slow, vcr: VCR_OPTS do
 
-  let!(:cnx_book_hash) { { id: '7db9aa72-f815-4c3b-9cb6-d50cf5318b58@1.4' } }
+  let!(:cnx_book_hash) { { id: '93e2b09d-261c-4007-a987-0b3062fe154b' } }
   let!(:book)          { OpenStax::Cnx::V1::Book.new(cnx_book_hash) }
 
   it 'can search imported pages' do

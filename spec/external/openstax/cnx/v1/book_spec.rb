@@ -3,88 +3,87 @@ require 'vcr_helper'
 
 RSpec.describe OpenStax::Cnx::V1::Book, :type => :external, :vcr => VCR_OPTS do
 
-  cnx_book_id = '7db9aa72-f815-4c3b-9cb6-d50cf5318b58'
-  cnx_book_versions = ['@2.2', '@4.3']
+  cnx_book_id = '93e2b09d-261c-4007-a987-0b3062fe154b'
   cnx_book_gold_data = {
-    '@2.2' => {
-      pre_order:  [["Book", 0],
-                     ["BookPart", 1],
-                       ["BookPart", 2],
-                         ["Page", 3],
-                           ["Text", 4],
-                         ["Page", 3],
-                           ["Text", 4], ["Text", 4], ["Exercise", 4], ["Text", 4],
-                         ["Page", 3],
-                           ["Text", 4], ["Video", 4], ["Exercise", 4], ["Interactive", 4], ["Exercise", 4]],
-      post_order: [["Text", 4],
-                     ["Page", 3],
-                   ["Text", 4], ["Text", 4], ["Exercise", 4], ["Text", 4],
-                     ["Page", 3],
-                   ["Text", 4], ["Video", 4], ["Exercise", 4], ["Interactive", 4], ["Exercise", 4],
-                     ["Page", 3],
-                       ["BookPart", 2],
-                         ["BookPart", 1],
-                           ["Book", 0]]
-    },
-    '@4.3' => {
-      pre_order:  [["Book", 0],
-                     ["BookPart", 1],
-                       ["BookPart", 2],
-                         ["Page", 3],
-                           ["Text", 4],
-                         ["Page", 3],
-                           ["Text", 4], ["Text", 4], ["Exercise", 4], ["Text", 4],
-                         ["Page", 3],
-                           ["Text", 4], ["Video", 4], ["Exercise", 4], ["Interactive", 4], ["Exercise", 4],
-                         ["Page", 3],
-                           ["Text", 4], ["Exercise", 4], ["Text", 4], ["Video", 4], ["Exercise", 4], ["Text", 4], ["Text", 4],
-                           ["ExerciseChoice", 4],
-                             ["Exercise", 5], ["Exercise", 5],
-                           ["Text", 4], ["Exercise", 4],
-                         ["Page", 3],
-                           ["Text", 4]],
-      post_order: [  ["Text", 4],
-                       ["Page", 3],
-                     ["Text", 4], ["Text", 4], ["Exercise", 4], ["Text", 4],
-                       ["Page", 3],
-                     ["Text", 4], ["Video", 4], ["Exercise", 4], ["Interactive", 4], ["Exercise", 4],
-                       ["Page", 3],
-                     ["Text", 4], ["Exercise", 4], ["Text", 4], ["Video", 4], ["Exercise", 4], ["Text", 4], ["Text", 4],
-                   ["Exercise", 5], ["Exercise", 5],
-                     ["ExerciseChoice", 4],
-                     ["Text", 4], ["Exercise", 4],
-                       ["Page", 3],
-                     ["Text", 4],
-                       ["Page", 3],
-                         ["BookPart", 2],
-                           ["BookPart", 1],
-                             ["Book", 0]]
-    }
+    pre_order:  [
+      ["Book", 0],
+        ["BookPart", 1],
+          ["BookPart", 2],
+          ["BookPart", 2],
+          ["BookPart", 2],
+            ["Page", 3],
+              ["Text", 4],
+            ["Page", 3],
+              ["Text", 4], ["Interactive", 4], ["Exercise", 4], ["Text", 4], ["Text", 4], ["ExerciseChoice", 4],
+                ["Exercise", 5], ["Exercise", 5],
+              ["Video", 4], ["Exercise", 4],
+            ["Page", 3],
+              ["Text", 4], ["Interactive", 4], ["Exercise", 4], ["Text", 4], ["Text", 4], ["Exercise", 4], ["Text", 4], ["Text", 4], ["Text", 4], ["Exercise", 4], ["Text", 4], ["ExerciseChoice", 4],
+                ["Exercise", 5], ["Exercise", 5],
+          ["BookPart", 2],
+            ["Page", 3],
+              ["Text", 4],
+            ["Page", 3],
+              ["Text", 4],
+            ["Page", 3],
+              ["Text", 4], ["Video", 4], ["Exercise", 4], ["Interactive", 4], ["Exercise", 4],
+            ["Page", 3],
+              ["Text", 4], ["Video", 4], ["Exercise", 4], ["Text", 4], ["ExerciseChoice", 4],
+                ["Exercise", 5], ["Exercise", 5],
+            ["Page", 3],
+              ["Text", 4], ["Text", 4], ["Exercise", 4], ["Video", 4], ["Exercise", 4], ["Text", 4],  ["ExerciseChoice", 4],
+                ["Exercise", 5], ["Exercise", 5]],
+    post_order: [
+          ["BookPart", 2],
+          ["BookPart", 2],
+              ["Text", 4],
+            ["Page", 3],
+              ["Text", 4], ["Interactive", 4], ["Exercise", 4], ["Text", 4], ["Text", 4],
+                ["Exercise", 5], ["Exercise", 5],
+              ["ExerciseChoice", 4], ["Video", 4], ["Exercise", 4],
+            ["Page", 3],
+              ["Text", 4], ["Interactive", 4], ["Exercise", 4], ["Text", 4], ["Text", 4], ["Exercise", 4], ["Text", 4], ["Text", 4], ["Text", 4], ["Exercise", 4], ["Text", 4],
+                ["Exercise", 5], ["Exercise", 5],
+              ["ExerciseChoice", 4],
+            ["Page", 3],
+          ["BookPart", 2],
+              ["Text", 4],
+            ["Page", 3],
+              ["Text", 4],
+            ["Page", 3],
+              ["Text", 4], ["Video", 4], ["Exercise", 4], ["Interactive", 4], ["Exercise", 4],
+            ["Page", 3],
+              ["Text", 4], ["Video", 4], ["Exercise", 4], ["Text", 4],
+                ["Exercise", 5], ["Exercise", 5],
+              ["ExerciseChoice", 4],
+            ["Page", 3],
+              ["Text", 4], ["Text", 4], ["Exercise", 4], ["Video", 4], ["Exercise", 4], ["Text", 4],
+                ["Exercise", 5], ["Exercise", 5],
+              ["ExerciseChoice", 4],
+            ["Page", 3],
+          ["BookPart", 2],
+        ["BookPart", 1],
+      ["Book", 0]
+    ]
   }
-  cnx_book_versions.each do |version|
-    id = "#{cnx_book_id}#{version}"
-    context "with '#{id}' content" do
-      it "provides info about the book with the given id" do
-        book = OpenStax::Cnx::V1::Book.new(id: id)
-        expect(book.id).to eq id
-        expect(book.hash).not_to be_blank
-        expect(book.title).to eq "Updated Tutor HS Physics Content - legacy"
-        expect(book.tree).not_to be_nil
-        expect(book.root_book_part).to be_a OpenStax::Cnx::V1::BookPart
-      end
 
-      it "accepts a visitor" do
-        post_order_gold_data =
-        book = OpenStax::Cnx::V1::Book.new(id: id)
+  it "provides info about the book with the given id" do
+    book = OpenStax::Cnx::V1::Book.new(id: cnx_book_id)
+    expect(book.id).to eq cnx_book_id
+    expect(book.hash).not_to be_blank
+    expect(book.title).to eq 'Physics'
+    expect(book.tree).not_to be_nil
+    expect(book.root_book_part).to be_a OpenStax::Cnx::V1::BookPart
+  end
 
-        visitor = TestVisitor.new
-        book.visit(visitor: visitor)
-        expect(visitor.pre_order_visited).to  eq(cnx_book_gold_data[version][:pre_order])
-        expect(visitor.in_order_visited).to   eq(cnx_book_gold_data[version][:pre_order]) # <-- not a typo!
-        expect(visitor.post_order_visited).to eq(cnx_book_gold_data[version][:post_order])
-      end
+  it "accepts a visitor" do
+    book = OpenStax::Cnx::V1::Book.new(id: cnx_book_id)
 
-    end
+    visitor = TestVisitor.new
+    book.visit(visitor: visitor)
+    expect(visitor.pre_order_visited).to  eq(cnx_book_gold_data[:pre_order])
+    expect(visitor.in_order_visited).to   eq(cnx_book_gold_data[:pre_order]) # <-- not a typo!
+    expect(visitor.post_order_visited).to eq(cnx_book_gold_data[:post_order])
   end
 
 end

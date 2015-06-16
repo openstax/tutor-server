@@ -5,8 +5,7 @@ RSpec.describe SearchLocalExercises, :type => :routine, :vcr => VCR_OPTS do
 
   let!(:book_part)     { FactoryGirl.create :content_book_part }
 
-  let!(:cnx_page_hash) { { 'id' => '092bbf0d-0729-42ce-87a6-fd96fd87a083@11',
-                           'title' => 'Force' } }
+  let!(:cnx_page_hash) { { 'id' => '95e61258-2faf-41d4-af92-f62e1414175a', 'title' => 'Force' } }
 
   let!(:cnx_page)      { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash) }
 
@@ -19,14 +18,7 @@ RSpec.describe SearchLocalExercises, :type => :routine, :vcr => VCR_OPTS do
   let!(:test_tag)      { FactoryGirl.create :content_tag, value: 'test-tag' }
 
   it 'can search imported exercises' do
-    OpenStax::Exercises::V1.configure do |config|
-      config.server_url = 'http://exercises-dev1.openstax.org'
-    end
-
-    OpenStax::Exercises::V1.use_real_client
-
-    Content::Routines::ImportPage.call(cnx_page: cnx_page,
-                                       book_part: book_part)
+    Content::Routines::ImportPage.call(cnx_page: cnx_page, book_part: book_part)
 
     url = Content::Models::Exercise.last.url
     exercises = SearchLocalExercises.call(url: url).outputs.items
@@ -35,29 +27,23 @@ RSpec.describe SearchLocalExercises, :type => :routine, :vcr => VCR_OPTS do
 
     lo = 'k12phys-ch04-s01-lo01'
     exercises = SearchLocalExercises.call(tag: lo).outputs.items
-    expect(exercises.length).to eq 16
+    expect(exercises.length).to eq 17
     exercises.each do |exercise|
       tags = exercise.tags
       expect(exercise.tags).to include(lo)
       expect(exercise.los).to include(lo)
     end
 
-    embed_tag = 'k12phys-ch04-ex021'
+    embed_tag = 'k12phys-ch04-ex013'
     exercises = SearchLocalExercises.call(tag: embed_tag).outputs.items
     expect(exercises.length).to eq 1
     expect(exercises.first.tags).to include(embed_tag)
   end
 
   it 'returns only the latest version of each exercise' do
-    OpenStax::Exercises::V1.configure do |config|
-      config.server_url = 'http://exercises-dev1.openstax.org'
-    end
-
-    OpenStax::Exercises::V1.use_real_client
-
     Content::Routines::ImportPage.call(cnx_page: cnx_page, book_part: book_part)
 
-    embed_tag = 'k12phys-ch04-ex021'
+    embed_tag = 'k12phys-ch04-ex013'
     exercises = SearchLocalExercises.call(tag: embed_tag).outputs.items
     expect(exercises.length).to eq 1
     exercise = exercises.first
@@ -74,12 +60,6 @@ RSpec.describe SearchLocalExercises, :type => :routine, :vcr => VCR_OPTS do
   end
 
   it 'can search exercises that have or have not been assigned to a role' do
-    OpenStax::Exercises::V1.configure do |config|
-      config.server_url = 'http://exercises-dev1.openstax.org'
-    end
-
-    OpenStax::Exercises::V1.use_real_client
-
     task_step = FactoryGirl.create :tasks_task_step
     task = task_step.task.reload
 
@@ -104,8 +84,7 @@ RSpec.describe SearchLocalExercises, :type => :routine, :vcr => VCR_OPTS do
     expect(out).to include(Exercise.new(exercise_2))
     expect(out.length).to eq 2
 
-    out = SearchLocalExercises.call(not_assigned_to: role,
-                                            tag: 'test-tag').outputs.items
+    out = SearchLocalExercises.call(not_assigned_to: role, tag: 'test-tag').outputs.items
     expect(out).to eq [Exercise.new(exercise_3)]
   end
 

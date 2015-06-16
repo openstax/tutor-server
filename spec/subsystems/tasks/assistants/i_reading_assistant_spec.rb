@@ -5,22 +5,18 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
                                                      speed: :slow,
                                                      vcr: VCR_OPTS do
 
-  before(:each) { OpenStax::Exercises::V1.use_real_client }
   let!(:assistant) {
-    FactoryGirl.create(:tasks_assistant,
-      code_class_name: 'Tasks::Assistants::IReadingAssistant'
-    )
+    FactoryGirl.create(:tasks_assistant, code_class_name: 'Tasks::Assistants::IReadingAssistant')
   }
 
   let!(:book_part) {
-    FactoryGirl.create :content_book_part,
-                       title: "Forces and Newton's Laws of Motion"
+    FactoryGirl.create :content_book_part, title: "Forces and Newton's Laws of Motion"
   }
 
-  context "for Introduction version 9 and Force version 11" do
+  context "for Introduction and Force" do
     let!(:cnx_page_hashes) { [
-      { 'id' => '1491e74e-ed39-446f-a602-e7ab881af101@9', 'title' => 'Introduction' },
-      { 'id' => '092bbf0d-0729-42ce-87a6-fd96fd87a083@11', 'title' => 'Force' }
+      { 'id' => '1bb611e9-0ded-48d6-a107-fbb9bd900851', 'title' => 'Introduction' },
+      { 'id' => '95e61258-2faf-41d4-af92-f62e1414175a', 'title' => 'Force' }
     ] }
 
     let!(:core_step_gold_data) {
@@ -31,21 +27,6 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
                              chapter_section: [8, 1]}] },
         { klass: Tasks::Models::TaskedReading,
           title: "Force",
-          related_content: [{title: "Force", chapter_section: [8, 2]}] },
-        { klass: Tasks::Models::TaskedVideo,
-          title: nil,
-          related_content: [{title: "Force", chapter_section: [8, 2]}] },
-        { klass: Tasks::Models::TaskedReading,
-          title: nil,
-          related_content: [{title: "Force", chapter_section: [8, 2]}] },
-        { klass: Tasks::Models::TaskedReading,
-          title: nil,
-          related_content: [{title: "Force", chapter_section: [8, 2]}] },
-        { klass: Tasks::Models::TaskedExercise,
-          title: nil,
-          related_content: [{title: "Force", chapter_section: [8, 2]}] },
-        { klass: Tasks::Models::TaskedReading,
-          title: nil,
           related_content: [{title: "Force", chapter_section: [8, 2]}] }
       ]
     }
@@ -159,9 +140,9 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     end
   end
 
-  context "for Inertia version 11" do
+  context "for Inertia" do
     let!(:cnx_page_hash) { {
-      'id' => '61445f78-00e2-45ae-8e2c-461b17d9b4fd@11',
+      'id' => '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6',
       'title' => "Newton's First Law of Motion: Inertia"
     } }
 
@@ -174,8 +155,6 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         { klass: Tasks::Models::TaskedExercise,
           title: nil },
         { klass: Tasks::Models::TaskedInteractive,
-          title: nil },
-        { klass: Tasks::Models::TaskedReading,
           title: nil },
         { klass: Tasks::Models::TaskedExercise,
           title: nil }

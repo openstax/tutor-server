@@ -86,14 +86,14 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(stats.periods.first.partially_complete_count).to eq(0)
 
       page = stats.periods.first.current_pages.first
-      expect(page['title']).to eq('Force')
+      expect(page['title']).to eq("Newton's First Law of Motion: Inertia")
       expect(page['student_count']).to eq(1) # num students with completed task steps
-      expect(page['correct_count']).to eq(1)
+      expect(page['correct_count']).to eq(2)
       expect(page['incorrect_count']).to eq(0)
       expect(page['chapter_section']).to eq([1, 1])
 
       spaced_page = stats.periods.first.spaced_pages.first
-      expect(spaced_page['title']).to eq('Force')
+      expect(spaced_page['title']).to eq("Newton's First Law of Motion: Inertia")
       expect(spaced_page['student_count']).to eq(1)
       expect(spaced_page['correct_count']).to eq(2)
       expect(spaced_page['incorrect_count']).to eq(0)
@@ -113,14 +113,14 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(stats.periods.first.partially_complete_count).to eq(0)
 
       page = stats.periods.first.current_pages.first
-      expect(page['title']).to eq('Force')
+      expect(page['title']).to eq("Newton's First Law of Motion: Inertia")
       expect(page['student_count']).to eq(2)
-      expect(page['correct_count']).to eq(1)
-      expect(page['incorrect_count']).to eq(1)
+      expect(page['correct_count']).to eq(2)
+      expect(page['incorrect_count']).to eq(2)
       expect(page['chapter_section']).to eq([1, 1])
 
       spaced_page = stats.periods.first.spaced_pages.first
-      expect(spaced_page['title']).to eq('Force')
+      expect(spaced_page['title']).to eq("Newton's First Law of Motion: Inertia")
       expect(spaced_page['student_count']).to eq(2)
       expect(spaced_page['correct_count']).to eq(2)
       expect(spaced_page['incorrect_count']).to eq(2)
@@ -141,14 +141,14 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(stats.periods.first.partially_complete_count).to eq(0)
 
       page = stats.periods.first.current_pages.first
-      expect(page['title']).to eq('Force')
+      expect(page['title']).to eq("Newton's First Law of Motion: Inertia")
       expect(page['student_count']).to eq(3)
-      expect(page['correct_count']).to eq(2)
-      expect(page['incorrect_count']).to eq(1)
+      expect(page['correct_count']).to eq(4)
+      expect(page['incorrect_count']).to eq(2)
       expect(page['chapter_section']).to eq([1, 1])
 
       spaced_page = stats.periods.first.spaced_pages.first
-      expect(spaced_page['title']).to eq('Force')
+      expect(spaced_page['title']).to eq("Newton's First Law of Motion: Inertia")
       expect(spaced_page['student_count']).to eq(3)
       expect(spaced_page['correct_count']).to eq(4)
       expect(spaced_page['incorrect_count']).to eq(2)
@@ -169,14 +169,14 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(stats.periods.first.partially_complete_count).to eq(0)
 
       page = stats.periods.first.current_pages.first
-      expect(page['title']).to eq('Force')
+      expect(page['title']).to eq("Newton's First Law of Motion: Inertia")
       expect(page['student_count']).to eq(4)
-      expect(page['correct_count']).to eq(3)
-      expect(page['incorrect_count']).to eq(1)
+      expect(page['correct_count']).to eq(6)
+      expect(page['incorrect_count']).to eq(2)
       expect(page['chapter_section']).to eq([1, 1])
 
       spaced_page = stats.periods.first.spaced_pages.first
-      expect(spaced_page['title']).to eq('Force')
+      expect(spaced_page['title']).to eq("Newton's First Law of Motion: Inertia")
       expect(spaced_page['student_count']).to eq(4)
       expect(spaced_page['correct_count']).to eq(6)
       expect(spaced_page['incorrect_count']).to eq(2)
