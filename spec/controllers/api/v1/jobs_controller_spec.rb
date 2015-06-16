@@ -1,4 +1,3 @@
-require 'mock_redis'
 require 'rails_helper'
 
 RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :v1 do
