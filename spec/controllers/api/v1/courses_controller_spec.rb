@@ -166,9 +166,62 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         }.to_json)
       end
     end
+  end
 
-    it "returns tasks for a role holder in a certain course" do
-      skip "skipped until implement the real /api/courses/123/tasks endpoint with role awareness"
+  describe "show" do
+    let(:roles) { Role::GetUserRoles.call(user_1.entity_user).outputs.roles }
+    let(:teacher) { roles.select(&:teacher?).first }
+    let(:student) { roles.select(&:student?).first }
+
+    it 'returns successfully' do
+      api_get :show, user_1_token, parameters: { id: course.id }
+      expect(response.code).to eq('200')
+    end
+
+    context 'user is a teacher' do
+      before do
+        AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
+      end
+
+      it 'returns the teacher roles with the course' do
+        api_get :show, user_1_token, parameters: { id: course.id }
+        expect(response.body).to include({
+          id: course.id.to_s,
+          name: course.profile.name,
+          periods: [{ id: period.id.to_s, name: period.name }]
+        }.to_json)
+      end
+    end
+
+    context 'user is a student' do
+      before(:each) do
+        AddUserAsPeriodStudent.call(period: period, user: user_1.entity_user)
+      end
+
+      it 'returns the student roles with the course' do
+        api_get :show, user_1_token, parameters: { id: course.id }
+        expect(response.body).to include({
+          id: course.id.to_s,
+          name: course.profile.name,
+          periods: [{ id: period.id.to_s, name: period.name }]
+        }.to_json)
+      end
+    end
+
+    context 'user is both a teacher and student' do
+      before(:each) do
+        AddUserAsPeriodStudent.call(period: period, user: user_1.entity_user)
+        AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
+      end
+
+      it 'returns both roles with the course' do
+        api_get :show, user_1_token, parameters: { id: course.id }
+        expect(response.body).to include({
+          id: course.id.to_s,
+          name: course.profile.name,
+          periods: [{ id: period.id.to_s, name: period.name }]
+        }.to_json)
+      end
     end
   end
 

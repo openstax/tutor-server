@@ -3,4 +3,6 @@ class Entity::Course < Tutor::SubSystems::BaseModel
 
   has_many :periods, subsystem: :course_membership
   has_many :teachers, subsystem: :course_membership
+
+  delegate :name, to: :profile
 end

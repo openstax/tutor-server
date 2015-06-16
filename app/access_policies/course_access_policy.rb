@@ -1,6 +1,8 @@
 class CourseAccessPolicy
   def self.action_allowed?(action, requestor, course)
     case action
+    when :index, :read
+      !requestor.is_anonymous?
     when :readings
       requestor.is_human?
     when :exercises, :export
