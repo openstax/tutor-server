@@ -24,6 +24,7 @@ class Demo002 < DemoBase
     task_1_due_at = standard_due_at(school_day_on_or_before(task_2_due_at - 2.days))
 
     course = Entity::Course.last
+    periods = course.periods
 
     ### First Chapter 3 iReading
     #
@@ -58,7 +59,8 @@ class Demo002 < DemoBase
     assign_ireading(course: course,
                     chapter_sections: [[3, 0], [3, 1]],
                     title: 'Read 3.1 Acceleration Pt1',
-                    due_at: task_1_due_at).each_with_index do |ireading, index|
+                    due_at: task_1_due_at,
+                    to: periods).each_with_index do |ireading, index|
 
       work_task(task: ireading, responses: responses_list[index])
 
@@ -97,7 +99,8 @@ class Demo002 < DemoBase
     assign_ireading(course: course,
                     chapter_sections: [[3, 2]],
                     title: 'Read 3.2 Acceleration Pt2',
-                    due_at: task_2_due_at).each_with_index do |ireading, index|
+                    due_at: task_2_due_at,
+                    to: periods).each_with_index do |ireading, index|
 
       work_task(task: ireading, responses: responses_list[index])
 
@@ -137,7 +140,8 @@ class Demo002 < DemoBase
                     chapter_sections: [[3, 0], [3, 1], [3, 2]],
                     title: 'HW Chapter 3 Acceleration',
                     num_exercises: 10,
-                    due_at: task_3_due_at).each_with_index do |hw, index|
+                    due_at: task_3_due_at,
+                    to: periods).each_with_index do |hw, index|
 
       work_task(task: hw, responses: responses_list[index])
 
@@ -176,7 +180,8 @@ class Demo002 < DemoBase
     assign_ireading(course: course,
                     chapter_sections: [[4, 0], [4, 1], [4, 2]],
                     title: 'Read 4.1-4.2 Force & Motion Pt1',
-                    due_at: task_4_due_at).each_with_index do |ireading, index|
+                    due_at: task_4_due_at,
+                    to: periods).each_with_index do |ireading, index|
 
       work_task(task: ireading, responses: responses_list[index])
 
