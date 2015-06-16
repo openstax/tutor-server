@@ -9,7 +9,8 @@ RSpec.describe BuildTaskPlan, :type => :routine do
                                    assistant: assistant).outputs.task_plan
 
     expect(task_plan).not_to be_persisted
-    expect(task_plan.tasking_plans.first.target).to eq(course)
-    expect(task_plan.assistant).to eq(assistant)
+    expect(task_plan.tasking_plans).to be_empty
+    expect(task_plan.owner).to eq course
+    expect(task_plan.assistant).to eq assistant
   end
 end
