@@ -115,9 +115,17 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     let(:teacher) { roles.select(&:teacher?).first }
     let(:student) { roles.select(&:student?).first }
 
-    it 'returns successfully' do
-      api_get :index, user_1_token
-      expect(response.code).to eq('200')
+    context 'anonymous user' do
+      it 'raises SecurityTransgression' do
+        expect{ api_get :index, nil }.to raise_error(SecurityTransgression)
+      end
+    end
+
+    context 'user is not in the course' do
+      it 'returns successfully' do
+        api_get :index, user_1_token
+        expect(response).to have_http_status(:success)
+      end
     end
 
     context 'user is a teacher' do
@@ -173,9 +181,20 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     let(:teacher) { roles.select(&:teacher?).first }
     let(:student) { roles.select(&:student?).first }
 
-    it 'returns successfully' do
-      api_get :show, user_1_token, parameters: { id: course.id }
-      expect(response.code).to eq('200')
+    context 'anonymous user' do
+      it 'raises SecurityTransgression' do
+        expect{ api_get :show, nil, parameters: { id: course.id } }.to(
+          raise_error(SecurityTransgression)
+        )
+      end
+    end
+
+    context 'user is not in the course' do
+      it 'raises SecurityTransgression' do
+        expect{ api_get :show, user_1_token, parameters: { id: course.id } }.to(
+          raise_error(SecurityTransgression)
+        )
+      end
     end
 
     context 'user is a teacher' do
