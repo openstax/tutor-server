@@ -122,7 +122,7 @@ module Tasks
         update_attributes({
           exercise_count: exercises.length,
           correct_exercise_count: exercises.select(&:is_correct?).length,
-          recovered_exercise_count: exercises.select(&:can_be_recovered?).length
+          recovered_exercise_count: 0
         })
       end
 
