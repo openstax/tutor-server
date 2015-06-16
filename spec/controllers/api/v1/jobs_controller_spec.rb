@@ -14,7 +14,7 @@ RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :
 
       protected
       def exec
-        outputs[:job_data] = { filename: 'something' }
+        status.save(filename: 'something')
       end
     }
   end
@@ -24,30 +24,36 @@ RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :
 
     it 'returns the status of queued jobs' do
       api_get :show, user_token, parameters: { id: job_id }
-      expect(response.body_as_hash[:status]).to match(
-        hash_including(status: 'queued')
-      )
-    end
-
-    it 'returns the status of working jobs' do
-      allow(Resque::Plugins::Status::Hash).to receive(:get)
-        .with(job_id).and_return(Hashie::Mash.new(status: 'working'))
-
-      api_get :show, user_token, parameters: { id: job_id }
-
-      expect(response.body_as_hash[:status]).to match(
-        hash_including(status: 'working')
-      )
+      expect(response.body_as_hash).to eq({ state: 'queued' })
     end
 
     it 'returns the status of completed jobs' do
-      Resque.inline = true
+      ActiveJob::Base.queue_adapter = :inline
 
       api_get :show, user_token, parameters: { id: job_id }
 
-      expect(response.body_as_hash[:status]).to match(
-        hash_including(status: 'completed', filename: 'something')
-      )
+      expect(response.body_as_hash).to eq({ state: 'completed',
+                                            filename: 'something' })
+
+      ActiveJob::Base.queue_adapter = :test
+    end
+
+    it 'works end-2-end for ExportPerformanceReport' do
+      ActiveJob::Base.queue_adapter = :inline
+
+      user = Entity::User.create!
+      course = CreateCourse[name: 'Physics']
+      user_token = FactoryGirl.create :doorkeeper_access_token,
+                                      resource_owner_id: user.id
+
+      AddUserAsCourseTeacher[course: course, user: user]
+      job_id = Tasks::ExportPerformanceReport.perform_later(course: course,
+                                                            role: Entity::Role.last)
+
+      api_get :show, user_token, parameters: { id: job_id }
+      expect(response.body_as_hash[:url]).to eq(Tasks::Models::PerformanceReportExport.last.url)
+
+      ActiveJob::Base.queue_adapter = :test
     end
   end
 end
