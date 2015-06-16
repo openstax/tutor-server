@@ -20,6 +20,7 @@ module Api::V1
                extend: Api::V1::RoleRepresenter,
                readable: true,
                writeable: false,
+               if: ->(*) { respond_to?(:roles) },
                schema_info: { required: false }
 
     collection :periods,

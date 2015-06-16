@@ -42,7 +42,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :courses, only: [:index] do
+    resources :courses, only: [:index, :show] do
       member do
         get 'readings'
         get 'exercises'
