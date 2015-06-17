@@ -814,4 +814,71 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       }.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
+
+  describe 'GET #students' do
+    let(:teacher) { FactoryGirl.create :user_profile }
+    let(:teacher_token) { FactoryGirl.create :doorkeeper_access_token,
+                                             resource_owner_id: teacher.id }
+
+    let(:student_1) { FactoryGirl.create :user_profile }
+
+    let(:student_2) { FactoryGirl.create :user_profile }
+
+    let(:student_3) { FactoryGirl.create :user_profile }
+
+    let(:period_2) { CreatePeriod[course: course] }
+
+    it 'returns the student roster' do
+      AddUserAsCourseTeacher.call(course: course, user: teacher.entity_user)
+      student_1_role = AddUserAsPeriodStudent.call(period: period, user: student_1.entity_user).outputs[:role]
+      student_2_role = AddUserAsPeriodStudent.call(period: period, user: student_2.entity_user).outputs[:role]
+      student_3_role = AddUserAsPeriodStudent.call(period: period_2, user: student_3.entity_user).outputs[:role]
+
+      api_get :students, teacher_token, parameters: { id: course.id }
+      students = response.body_as_hash
+      students.sort { |a, b| a['id'] <=> b['id'] }
+      expect(students).to eq([
+        {
+          id: students[0][:id],
+          first_name: student_1.first_name,
+          last_name: student_1.last_name,
+          name: student_1.full_name,
+          period_id: period.id.to_s,
+          role_id: student_1_role.id.to_s,
+        },
+        {
+          id: students[1][:id],
+          first_name: student_2.first_name,
+          last_name: student_2.last_name,
+          name: student_2.full_name,
+          period_id: period.id.to_s,
+          role_id: student_2_role.id.to_s,
+        },
+        {
+          id: students[2][:id],
+          first_name: student_3.first_name,
+          last_name: student_3.last_name,
+          name: student_3.full_name,
+          period_id: period_2.id.to_s,
+          role_id: student_3_role.id.to_s,
+        },
+      ])
+    end
+
+    it 'returns 403 for users who are not teachers of the course' do
+      unknown = FactoryGirl.create :user_profile
+      unknown_token = FactoryGirl.create :doorkeeper_access_token,
+                                         resource_owner_id: unknown.id
+
+      expect {
+        api_get :students, unknown_token, parameters: { id: course.id }
+      }.to raise_error(SecurityTransgression)
+    end
+
+    it 'returns 404 for non-existent courses' do
+      expect {
+        api_get :students, teacher_token, parameters: { id: 'nope' }
+      }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+  end
 end
