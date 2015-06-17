@@ -4,7 +4,7 @@
 source 'https://rubygems.org'
 
 # Rails framework
-gem 'rails', '4.2.0'
+gem 'rails', '4.2.1'
 
 # Bootstrap front-end framework
 gem 'bootstrap-sass', '~> 3.2.0'
@@ -59,7 +59,7 @@ gem 'apipie-rails'
 gem 'maruku'
 
 # Lev framework
-gem 'lev', '~> 4.2'
+gem 'lev', github: 'lml/lev', ref: 'ba7634ba437'
 
 # Ruby dsl for SQL queries
 gem 'squeel'
@@ -136,9 +136,6 @@ group :development, :test do
 
   # Fake in-memory Redis for development and testing
   gem 'fakeredis'
-
-  # Resque but for testing
-  gem 'resque_spec'
 
   # Get env variables from .env file
   gem 'dotenv-rails'

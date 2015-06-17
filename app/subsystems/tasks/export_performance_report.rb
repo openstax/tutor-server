@@ -24,9 +24,10 @@ module Tasks
       end
 
       outputs[:output_filename] = tmp_file_path
-      Models::PerformanceReportExport.create!(course: course,
-                                              role: role,
-                                              export: File.open(tmp_file_path))
+      export = Models::PerformanceReportExport.create!(course: course,
+                                                       role: role,
+                                                       export: File.open(tmp_file_path))
+      status.save({ url: export.url })
     end
 
     private
