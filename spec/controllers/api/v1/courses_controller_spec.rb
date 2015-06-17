@@ -859,7 +859,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     it 'returns 202 for authorized teachers' do
       api_post :performance_export, teacher_token, parameters: { id: course.id }
       expect(response.status).to eq(202)
-      expect(response.body_as_hash[:job]).to match(%r{http://test.host/api/jobs/[a-z0-9-]+})
+      expect(response.body_as_hash[:job]).to match(%r{/api/jobs/[a-z0-9-]+})
     end
 
     it 'returns the job path for the performance book export for authorized teachers' do
