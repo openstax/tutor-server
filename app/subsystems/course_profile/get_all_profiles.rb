@@ -3,12 +3,18 @@ class CourseProfile::GetAllProfiles
 
   protected
 
-  def exec
-    outputs[:profiles] = CourseProfile::Models::Profile.all.collect do |profile|
-      {
-        id: profile.entity_course_id,
-        name: profile.name
-      }
-    end
+  def exec(user: nil)
+    profiles = CourseProfile::Models::Profile.all
+    filtered = if user
+                 profiles.select { |p| UserIsCourseStudent[user: user,
+                                                           course: p.course] }
+               else
+                 profiles
+               end
+
+    outputs[:profiles] = profiles.collect do |profile|
+                           { id: profile.entity_course_id,
+                             name: profile.name }
+                         end
   end
 end

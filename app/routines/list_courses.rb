@@ -14,7 +14,7 @@ class ListCourses
   protected
 
   def exec(user: nil, with: [])
-    run(:get_profiles)
+    run(:get_profiles, user: user)
     run_with_options(user, with)
   end
 

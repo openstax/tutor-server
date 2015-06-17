@@ -122,9 +122,10 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
 
     context 'user is not in the course' do
-      it 'returns successfully' do
+      it 'returns nothing' do
         api_get :index, user_1_token
         expect(response).to have_http_status(:success)
+        expect(response.body).to eq([])
       end
     end
 
