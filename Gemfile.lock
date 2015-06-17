@@ -1,6 +1,7 @@
 GIT
   remote: git://github.com/lml/lev.git
   revision: ba7634ba4373b178131dc59288df2e51138c869b
+  ref: ba7634ba437
   specs:
     lev (4.3.0)
       actionpack (>= 3.0)
