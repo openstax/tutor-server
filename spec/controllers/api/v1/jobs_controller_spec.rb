@@ -23,6 +23,7 @@ RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :
 
     it 'returns the status of queued jobs' do
       api_get :show, user_token, parameters: { id: job_id }
+      expect(response).to have_http_status(202)
       expect(response.body_as_hash).to eq({ state: 'queued' })
     end
 
@@ -31,6 +32,7 @@ RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :
 
       api_get :show, user_token, parameters: { id: job_id }
 
+      expect(response).to have_http_status(200)
       expect(response.body_as_hash).to eq({ state: 'completed',
                                             filename: 'something' })
 
