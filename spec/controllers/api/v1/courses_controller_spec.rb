@@ -129,6 +129,22 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       end
     end
 
+    context 'user is a teacher or student in the course' do
+      before do
+        AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
+      end
+
+      it 'includes the periods for the course' do
+        api_get :index, user_1_token
+        expect(response.body).to include({
+          id: course.id.to_s,
+          name: course.profile.name,
+          roles: [{ id: teacher.id.to_s, type: 'teacher' }],
+          periods: [{ id: period.id.to_s, name: period.name }]
+        }.to_json)
+      end
+    end
+
     context 'user is a teacher' do
       before do
         AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
@@ -139,7 +155,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(response.body).to include({
           id: course.id.to_s,
           name: course.profile.name,
-          roles: [{ id: teacher.id.to_s, type: 'teacher' }]
+          roles: [{ id: teacher.id.to_s, type: 'teacher' }],
+          periods: [{ id: period.id.to_s, name: period.name }]
         }.to_json)
       end
     end
@@ -154,7 +171,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(response.body).to include({
           id: course.id.to_s,
           name: course.profile.name,
-          roles: [{ id: student.id.to_s, type: 'student' }]
+          roles: [{ id: student.id.to_s, type: 'student' }],
+          periods: [{ id: period.id.to_s, name: period.name }]
         }.to_json)
       end
     end
@@ -171,7 +189,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           id: course.id.to_s,
           name: course.profile.name,
           roles: [{ id: student.id.to_s, type: 'student', },
-                  { id: teacher.id.to_s, type: 'teacher', }]
+                  { id: teacher.id.to_s, type: 'teacher', }],
+          periods: [{ id: period.id.to_s, name: period.name }]
         }.to_json)
       end
     end

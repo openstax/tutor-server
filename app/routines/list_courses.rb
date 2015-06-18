@@ -13,6 +13,9 @@ class ListCourses
   uses_routine GetUserCourseRoles,
                translations: { outputs: { type: :verbatim } },
                as: :get_course_roles
+  uses_routine CourseMembership::GetCoursePeriods,
+               translations: { outputs: { type: :verbatim } },
+               as: :get_course_periods
 
   protected
 
@@ -48,6 +51,8 @@ class ListCourses
         set_teacher_names_on_courses
       when :roles
         set_roles_on_courses(user)
+      when :periods
+        set_periods_on_courses
       end
     end
   end
@@ -65,6 +70,13 @@ class ListCourses
       course.roles = roles.collect do |role|
         { id: role.id, type: role.role_type }
       end
+    end
+  end
+
+  def set_periods_on_courses
+    outputs.courses.each do |course|
+      routine = run(:get_course_periods, course: Entity::Course.find(course.id))
+      course.periods = routine.outputs.periods
     end
   end
 
