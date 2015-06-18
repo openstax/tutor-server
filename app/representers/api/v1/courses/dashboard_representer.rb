@@ -23,6 +23,7 @@ module Api::V1::Courses
     class Plan < Base
 
       property :trouble,
+               as: :is_trouble,
                readable: true,
                writeable: false,
                getter: lambda{|*| rand(0..1)==0 },
