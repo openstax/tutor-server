@@ -48,7 +48,7 @@ module Tasks
         .joins { taskings }
         .where { taskings.entity_role_id.in role_ids }
         .where { task_type.in Models::Task.task_types.values_at(:reading, :homework) }
-        .order { due_at }
+        .order('due_at DESC')
         .includes(:taskings, :task_steps)
     end
 
