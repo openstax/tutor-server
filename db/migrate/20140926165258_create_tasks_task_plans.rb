@@ -6,6 +6,7 @@ class CreateTasksTaskPlans < ActiveRecord::Migration
       t.string :title
       t.string :type, null: false
       t.text :settings, null: false
+      t.datetime :publish_last_requested_at
       t.datetime :published_at
       t.timestamps null: false
 

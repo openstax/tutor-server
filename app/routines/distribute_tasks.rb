@@ -1,6 +1,6 @@
 class DistributeTasks
 
-  lev_routine transaction: :no_transaction # The controller already wraps this in a transaction
+  lev_routine
 
   uses_routine IndividualizeTaskingPlans, as: :get_tasking_plans
 
@@ -10,6 +10,9 @@ class DistributeTasks
     task_plan.publish_last_requested_at = Time.now
 
     assistant = task_plan.assistant
+
+    # Abort Task creation early if task_plan is invalid
+    transfer_errors_from(task_plan, { type: :verbatim }, true) unless task_plan.valid?
 
     # Delete pre-existing assignments
     task_plan.tasks.destroy_all unless task_plan.tasks.empty?

@@ -19,19 +19,11 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
   validates :owner, presence: true
   validates :type, presence: true
 
-  before_save :validate_settings
-
-  def publish_last_requested_at
-    published_at
-  end
-
-  def publish_last_requested_at=(val)
-    self.published_at = val
-  end
+  validate :valid_settings
 
   protected
 
-  def validate_settings
+  def valid_settings
     schema = assistant.try(:schema)
     return if schema.blank?
 

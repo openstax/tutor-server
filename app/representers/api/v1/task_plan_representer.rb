@@ -19,6 +19,11 @@ module Api::V1
              readable: true,
              writeable: true
 
+    property :is_publish_requested,
+             readable: true,
+             writeable: true,
+             schema_info: { type: 'boolean' }
+
     property :publish_last_requested_at,
              type: String,
              readable: true,
@@ -39,11 +44,6 @@ module Api::V1
                decorator: TaskingPlanRepresenter,
                readable: true,
                writeable: true
-
-    property :is_publish_requested,
-             readable: false,
-             writeable: true,
-             schema_info: { type: 'boolean' }
 
   end
 end
