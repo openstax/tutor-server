@@ -18,7 +18,7 @@ class SetupPerformanceReportData
 
     CourseContent::AddBookToCourse.call(course: course, book: book)
     AddUserAsCourseTeacher[course: course, user: teacher.entity_user]
-    period = CreatePeriod[course: course]
+    period = course.periods.empty? ? CreatePeriod[course: course] : course.periods.first
     students.each do |student|
       AddUserAsPeriodStudent[period: period, user: student.entity_user]
     end

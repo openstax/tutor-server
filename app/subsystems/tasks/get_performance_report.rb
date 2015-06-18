@@ -20,31 +20,35 @@ module Tasks
     private
 
     def get_performance_report_for_teacher(course)
-      student_tasks, student_data = [], []
-      student_profiles = run(:get_student_profiles, course: course).outputs.profiles
-      tasks = get_tasks(student_profiles)
-      exercises = get_exercises(tasks)
+      @tasks = {}
+      course.periods.collect do |period|
+        student_tasks, student_data = [], []
+        student_profiles = run(:get_student_profiles, period: period).outputs.profiles
+        tasks = get_tasks(student_profiles, period.id)
+        exercises = get_exercises(tasks)
 
-      student_profiles.collect do |student_profile|
-        student_tasks = tasks.select { |t| taskings_exist?(t, student_profile) }
-        @average = [[]] * student_tasks.length
+        student_profiles.collect do |student_profile|
+          student_tasks = tasks.select { |t| taskings_exist?(t, student_profile) }
+          @average = [[]] * student_tasks.length
 
-        student_data << {
-          name: student_profile.full_name,
-          role: student_profile.entity_role_id
-        }.merge(get_student_data(student_tasks, exercises))
+          student_data << {
+            name: student_profile.full_name,
+            role: student_profile.entity_role_id
+          }.merge(get_student_data(student_tasks, exercises))
+        end
+
+        Hashie::Mash.new({
+          period: period,
+          data_headings: get_data_headings(student_tasks),
+          students: student_data
+        })
       end
-
-      {
-        data_headings: get_data_headings(student_tasks),
-        students: student_data
-      }
     end
 
-    def get_tasks(student_profiles)
+    def get_tasks(student_profiles, period_id)
       role_ids = student_profiles.collect(&:entity_role_id)
       # Return reading and homework tasks for a student ordered by due date
-      @tasks ||= Models::Task
+      @tasks[period_id] ||= Models::Task
         .joins { taskings }
         .where { taskings.entity_role_id.in role_ids }
         .where { task_type.in Models::Task.task_types.values_at(:reading, :homework) }

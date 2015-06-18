@@ -191,7 +191,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     course = Entity::Course.find(params[:id])
     preport = Tasks::GetPerformanceReport[course: course, role: get_course_role]
 
-    respond_with(Hashie::Mash.new(preport), represent_with: Api::V1::PerformanceReportRepresenter)
+    respond_with(preport, represent_with: Api::V1::PerformanceReportRepresenter)
   end
 
   api :GET, '/courses/:course_id/students', 'Returns all the students in the course'

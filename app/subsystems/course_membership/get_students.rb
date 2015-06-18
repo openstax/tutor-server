@@ -3,10 +3,10 @@ class CourseMembership::GetStudents
 
   protected
 
-  def exec(course)
+  def exec(period:)
     outputs[:students] = CourseMembership::Models::Student
                            .includes(:role)
-                           .where(period: course.periods)
+                           .where(period: period)
                            .collect(&:role)
   end
 end

@@ -681,6 +681,10 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
         expect(response).to have_http_status :success
         expect(response.body_as_hash).to include(
+          period: {
+            id: course.periods.first.id.to_s,
+            name: course.periods.first.name
+          },
           data_headings: [
             { title: 'Homework 2 task plan', average: kind_of(Float) },
             { title: 'Reading task plan' },
