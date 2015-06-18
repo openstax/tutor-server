@@ -43,7 +43,9 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :courses, only: [:index, :show] do
+    get 'user/courses', to: 'courses#index', as: :courses
+
+    resources :courses, only: [:show] do
       member do
         get 'readings'
         get 'exercises'
