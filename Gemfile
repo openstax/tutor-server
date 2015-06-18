@@ -59,7 +59,7 @@ gem 'apipie-rails'
 gem 'maruku'
 
 # Lev framework
-gem 'lev', github: 'lml/lev', ref: 'ba7634ba437'
+gem 'lev', github: 'lml/lev', ref: '3bfe3f4172ede83df02b97b371d252aaf39c9aff'
 
 # Ruby dsl for SQL queries
 gem 'squeel'
