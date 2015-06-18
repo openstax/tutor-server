@@ -76,7 +76,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     OSU::AccessPolicy.require_action_allowed!(:publish, current_api_user, task_plan)
 
     if (settings = CheckValidSettings[validatable: task_plan])[:valid]
-      job = DistributeTasks.perform_later(task_plan, validate: false)
+      job = DistributeTasks.perform_later(task_plan)
       render json: { task_plan: api_task_plan_path(task_plan) }, status: :accepted
     else
       render json: settings[:errors], status: :unprocessable_entity
