@@ -61,9 +61,8 @@ Rails.application.routes.draw do
         get 'students', action: :students
       end
 
-      resources :task_plans, path: '/plans', shallow: true, except: [:index, :edit] do
+      resources :task_plans, path: '/plans', shallow: true, except: [:index, :new, :edit] do
         member do
-          post 'publish'
           get 'stats'
           get 'review'
         end

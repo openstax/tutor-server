@@ -19,11 +19,15 @@ module Api::V1
              readable: true,
              writeable: true
 
+    property :publish_last_requested_at,
+             type: String,
+             readable: true,
+             writeable: false
+
     property :published_at,
              type: String,
              readable: true,
-             writeable: true,
-             setter: lambda {|val, args| self.published_at = Chronic.parse(val)}
+             writeable: false
 
     property :settings,
              type: Object,
@@ -35,6 +39,11 @@ module Api::V1
                decorator: TaskingPlanRepresenter,
                readable: true,
                writeable: true
+
+    property :is_publish_requested,
+             readable: false,
+             writeable: true,
+             schema_info: { type: 'boolean' }
 
   end
 end
