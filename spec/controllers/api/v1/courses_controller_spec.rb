@@ -125,7 +125,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       it 'returns nothing' do
         api_get :index, user_1_token
         expect(response).to have_http_status(:success)
-        expect(response.body).to eq([])
+        expect(JSON.parse(response.body)).to eq([])
       end
     end
 

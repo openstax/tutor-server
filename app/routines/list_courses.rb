@@ -1,9 +1,12 @@
 class ListCourses
   lev_routine
 
-  uses_routine CourseProfile::GetAllProfiles,
-               translations: { outputs: { map: { profiles: :courses } } },
-               as: :get_profiles
+  uses_routine UserIsCourseStudent,
+               translations: { outputs: { type: :verbatim } },
+               as: :is_student
+  uses_routine UserIsCourseTeacher,
+               translations: { outputs: { type: :verbatim } },
+               as: :is_teacher
   uses_routine GetTeacherNames,
                translations: { outputs: { type: :verbatim } },
                as: :get_teacher_names
@@ -14,11 +17,29 @@ class ListCourses
   protected
 
   def exec(user: nil, with: [])
-    run(:get_profiles, user: user)
+    outputs[:courses] = collect_course_information(user)
     run_with_options(user, with)
   end
 
   private
+  def collect_course_information(user)
+    profiles = if user
+                 CourseProfile::Models::Profile.all.select do |p|
+                   run(:is_student, user: user, course: p.course)
+                       .outputs.user_is_course_student ||
+                   run(:is_teacher, user: user, course: p.course)
+                       .outputs.user_is_course_teacher
+                 end
+               else
+                 CourseProfile::Models::Profile.all
+               end
+    profiles.collect do |p|
+      {
+        id: p.entity_course_id,
+        name: p.name
+      }
+    end
+  end
 
   def run_with_options(user, with)
     [with].flatten.each do |option|
