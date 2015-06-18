@@ -17,7 +17,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   def index
     OSU::AccessPolicy.require_action_allowed!(:index, current_api_user, Entity::Course)
     courses = ListCourses.call(user: current_human_user.entity_user,
-                               with: :roles).outputs.courses
+                               with: [:roles, :periods]).outputs.courses
     respond_with courses, represent_with: Api::V1::CoursesRepresenter
   end
 

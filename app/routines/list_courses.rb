@@ -1,24 +1,48 @@
 class ListCourses
   lev_routine
 
-  uses_routine CourseProfile::GetAllProfiles,
-               translations: { outputs: { map: { profiles: :courses } } },
-               as: :get_profiles
+  uses_routine UserIsCourseStudent,
+               translations: { outputs: { type: :verbatim } },
+               as: :is_student
+  uses_routine UserIsCourseTeacher,
+               translations: { outputs: { type: :verbatim } },
+               as: :is_teacher
   uses_routine GetTeacherNames,
                translations: { outputs: { type: :verbatim } },
                as: :get_teacher_names
   uses_routine GetUserCourseRoles,
                translations: { outputs: { type: :verbatim } },
                as: :get_course_roles
+  uses_routine CourseMembership::GetCoursePeriods,
+               translations: { outputs: { type: :verbatim } },
+               as: :get_course_periods
 
   protected
 
   def exec(user: nil, with: [])
-    run(:get_profiles)
+    outputs[:courses] = collect_course_information(user)
     run_with_options(user, with)
   end
 
   private
+  def collect_course_information(user)
+    profiles = if user
+                 CourseProfile::Models::Profile.all.select do |p|
+                   run(:is_student, user: user, course: p.course)
+                       .outputs.user_is_course_student ||
+                   run(:is_teacher, user: user, course: p.course)
+                       .outputs.user_is_course_teacher
+                 end
+               else
+                 CourseProfile::Models::Profile.all
+               end
+    profiles.collect do |p|
+      {
+        id: p.entity_course_id,
+        name: p.name
+      }
+    end
+  end
 
   def run_with_options(user, with)
     [with].flatten.each do |option|
@@ -27,6 +51,8 @@ class ListCourses
         set_teacher_names_on_courses
       when :roles
         set_roles_on_courses(user)
+      when :periods
+        set_periods_on_courses
       end
     end
   end
@@ -44,6 +70,13 @@ class ListCourses
       course.roles = roles.collect do |role|
         { id: role.id, type: role.role_type }
       end
+    end
+  end
+
+  def set_periods_on_courses
+    outputs.courses.each do |course|
+      routine = run(:get_course_periods, course: Entity::Course.find(course.id))
+      course.periods = routine.outputs.periods
     end
   end
 
