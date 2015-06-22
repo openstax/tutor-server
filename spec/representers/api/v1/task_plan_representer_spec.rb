@@ -9,6 +9,7 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
     allow(tmp).to receive(:id).and_return(nil)
     allow(tmp).to receive(:type).and_return(nil)
     allow(tmp).to receive(:title).and_return(nil)
+    allow(tmp).to receive(:description).and_return(nil)
     allow(tmp).to receive(:is_publish_requested).and_return(nil)
     allow(tmp).to receive(:publish_last_requested_at).and_return(nil)
     allow(tmp).to receive(:published_at).and_return(nil)
@@ -55,6 +56,19 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
     it "can be written" do
       Api::V1::TaskPlanRepresenter.new(task_plan).from_json({"title" => 'New title'}.to_json)
       expect(task_plan).to have_received(:title=).with('New title')
+    end
+  end
+
+  context "description" do
+    it "can be read" do
+      allow(task_plan).to receive(:description).and_return('Some description')
+      expect(representation).to include("description" => 'Some description')
+    end
+
+    it "can be written" do
+      Api::V1::TaskPlanRepresenter.new(task_plan)
+                                  .from_json({"description" => 'New description'}.to_json)
+      expect(task_plan).to have_received(:description=).with('New description')
     end
   end
 

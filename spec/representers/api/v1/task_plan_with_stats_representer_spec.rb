@@ -20,7 +20,8 @@ RSpec.describe Api::V1::TaskPlanWithStatsRepresenter, type: :representer,
       "type" => "reading",
       "stats" => [
         {
-          "name"                     => 'None',
+          "id"                       => task_plan.owner.periods.first.id.to_s,
+          "name"                     => "1st",
           "total_count"              => 2,
           "complete_count"           => 0,
           "partially_complete_count" => 0,

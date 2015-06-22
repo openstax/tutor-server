@@ -36,7 +36,8 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
       "type" => "reading",
       "stats" => [
         {
-          "name"                     => 'None',
+          "id"                       => task_plan.owner.periods.first.id.to_s,
+          "name"                     => "1st",
           "mean_grade_percent"       => 50,
           "total_count"              => 2,
           "complete_count"           => 0,

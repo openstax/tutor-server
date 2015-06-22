@@ -306,14 +306,13 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
   end
 
   context "With multiple course periods" do
-    let!(:course)   { Entity::Course.create! }
-    let!(:period_1) { CreatePeriod[course: course, name: 'Alpha'] }
+    let!(:course)   { task_plan.owner }
     let!(:period_2) { CreatePeriod[course: course, name: 'Beta'] }
 
     before(:each) do
       task_plan.tasking_plans.each_with_index do |tp, ii|
-        CourseMembership::AddStudent[period: (ii < task_plan.tasks.length/2 ? period_1 : period_2),
-                                     role: tp.target]
+        next if ii < task_plan.tasks.length/2
+        CourseMembership::MoveStudent[period: period_2, role: tp.target]
       end
     end
 

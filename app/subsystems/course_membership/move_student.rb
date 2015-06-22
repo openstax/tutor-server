@@ -10,7 +10,7 @@ class CourseMembership::MoveStudent
     fatal_error(code: :not_a_student,
                 message: 'The provided role is not a student in any course') if student.nil?
 
-    student.period = period
+    student.period = period.to_model
     student.save
     transfer_errors_from(student, {type: :verbatim}, true)
   end

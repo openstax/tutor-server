@@ -19,6 +19,11 @@ module Api::V1
              readable: true,
              writeable: true
 
+    property :description,
+             type: String,
+             readable: true,
+             writeable: true
+
     property :is_publish_requested,
              readable: true,
              writeable: true,

@@ -4,8 +4,8 @@ FactoryGirl.define do
       duration 1.week
     end
 
-    association :target, factory: :entity_course
     association :task_plan, factory: :tasks_task_plan
+    target { task_plan.owner }
 
     opens_at { Time.now }
     due_at   { opens_at + duration }

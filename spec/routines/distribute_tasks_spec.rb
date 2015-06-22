@@ -1,10 +1,18 @@
 require 'rails_helper'
 
 RSpec.describe DistributeTasks, type: :routine do
-  context 'unpublished task_plan' do
-    let!(:user)      { FactoryGirl.create :user_profile }
-    let!(:task_plan) { FactoryGirl.create(:tasks_tasking_plan, target: user).task_plan }
 
+  let!(:course)    { Entity::Course.create! }
+  let!(:period)    { CreatePeriod[course: course] }
+  let!(:user)      {
+    profile = FactoryGirl.create :user_profile
+    AddUserAsPeriodStudent.call(user: profile.entity_user, period: period)
+    profile
+  }
+  let!(:task_plan) { FactoryGirl.create(:tasks_task_plan, owner: course) }
+  let!(:tasking_plan) { FactoryGirl.create(:tasks_tasking_plan, target: user, task_plan: task_plan) }
+
+  context 'unpublished task_plan' do
     it "calls the build_tasks method on the task_plan's assistant" do
       expect(DummyAssistant).to receive(:build_tasks).and_return([])
 
@@ -19,12 +27,10 @@ RSpec.describe DistributeTasks, type: :routine do
   end
 
   context 'published task_plan' do
-    let!(:user)      { FactoryGirl.create :user_profile }
-    let!(:task_plan) {
-      tp = FactoryGirl.create(:tasks_tasking_plan, target: user).task_plan
-      DistributeTasks.call(tp)
-      tp.reload
-    }
+    before(:each) do
+      DistributeTasks.call(task_plan)
+      task_plan.reload
+    end
 
     it "calls the build_tasks method on the task_plan's assistant" do
       expect(DummyAssistant).to receive(:build_tasks).and_return([])
