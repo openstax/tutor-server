@@ -15,17 +15,17 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
 
     it "is all nil or zero for an unworked task_plan" do
       stats = CalculateTaskPlanStats.call(plan: task_plan).outputs.stats
-      expect(stats.periods.first.mean_grade_percent).to be_nil
-      expect(stats.periods.first.total_count).to eq(task_plan.tasks.length)
-      expect(stats.periods.first.complete_count).to eq(0)
-      expect(stats.periods.first.partially_complete_count).to eq(0)
+      expect(stats.first.mean_grade_percent).to be_nil
+      expect(stats.first.total_count).to eq(task_plan.tasks.length)
+      expect(stats.first.complete_count).to eq(0)
+      expect(stats.first.partially_complete_count).to eq(0)
 
-      page = stats.periods.first.current_pages[0]
+      page = stats.first.current_pages[0]
       expect(page.student_count).to eq(0) # no students have worked yet
       expect(page.incorrect_count).to eq(0)
       expect(page.correct_count).to eq(0)
 
-      spaced_page = stats.periods.first.spaced_pages[0]
+      spaced_page = stats.first.spaced_pages[0]
       expect(spaced_page).to eq page
     end
 
@@ -43,25 +43,25 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       MarkTaskStepCompleted.call(task_step: step)
 
       stats = CalculateTaskPlanStats.call(plan: task_plan).outputs.stats
-      expect(stats.periods.first.mean_grade_percent).to be_nil
-      expect(stats.periods.first.complete_count).to eq(0)
-      expect(stats.periods.first.partially_complete_count).to eq(1)
+      expect(stats.first.mean_grade_percent).to be_nil
+      expect(stats.first.complete_count).to eq(0)
+      expect(stats.first.partially_complete_count).to eq(1)
 
       first_task.task_steps.each do |ts|
         MarkTaskStepCompleted.call(task_step: ts) unless ts.completed?
       end
       stats = CalculateTaskPlanStats.call(plan: task_plan.reload).outputs.stats
 
-      expect(stats.periods.first.mean_grade_percent).to eq (0)
-      expect(stats.periods.first.complete_count).to eq(1)
-      expect(stats.periods.first.partially_complete_count).to eq(0)
+      expect(stats.first.mean_grade_percent).to eq (0)
+      expect(stats.first.complete_count).to eq(1)
+      expect(stats.first.partially_complete_count).to eq(0)
 
       last_task = tasks.last
       MarkTaskStepCompleted.call(task_step: last_task.task_steps.first)
       stats = CalculateTaskPlanStats.call(plan: task_plan.reload).outputs.stats
-      expect(stats.periods.first.mean_grade_percent).to eq (0)
-      expect(stats.periods.first.complete_count).to eq(1)
-      expect(stats.periods.first.partially_complete_count).to eq(1)
+      expect(stats.first.mean_grade_percent).to eq (0)
+      expect(stats.first.complete_count).to eq(1)
+      expect(stats.first.partially_complete_count).to eq(1)
     end
 
 
@@ -81,18 +81,18 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
         MarkTaskStepCompleted.call(task_step: ts)
       }
       stats = CalculateTaskPlanStats.call(plan: task_plan.reload).outputs.stats
-      expect(stats.periods.first.mean_grade_percent).to eq (100)
-      expect(stats.periods.first.complete_count).to eq(1)
-      expect(stats.periods.first.partially_complete_count).to eq(0)
+      expect(stats.first.mean_grade_percent).to eq (100)
+      expect(stats.first.complete_count).to eq(1)
+      expect(stats.first.partially_complete_count).to eq(0)
 
-      page = stats.periods.first.current_pages.first
+      page = stats.first.current_pages.first
       expect(page['title']).to eq("Newton's First Law of Motion: Inertia")
       expect(page['student_count']).to eq(1) # num students with completed task steps
       expect(page['correct_count']).to eq(2)
       expect(page['incorrect_count']).to eq(0)
       expect(page['chapter_section']).to eq([1, 1])
 
-      spaced_page = stats.periods.first.spaced_pages.first
+      spaced_page = stats.first.spaced_pages.first
       expect(spaced_page['title']).to eq("Newton's First Law of Motion: Inertia")
       expect(spaced_page['student_count']).to eq(1)
       expect(spaced_page['correct_count']).to eq(2)
@@ -108,18 +108,18 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
         MarkTaskStepCompleted.call(task_step: ts)
       }
       stats = CalculateTaskPlanStats.call(plan: task_plan.reload).outputs.stats
-      expect(stats.periods.first.mean_grade_percent).to eq (50)
-      expect(stats.periods.first.complete_count).to eq(2)
-      expect(stats.periods.first.partially_complete_count).to eq(0)
+      expect(stats.first.mean_grade_percent).to eq (50)
+      expect(stats.first.complete_count).to eq(2)
+      expect(stats.first.partially_complete_count).to eq(0)
 
-      page = stats.periods.first.current_pages.first
+      page = stats.first.current_pages.first
       expect(page['title']).to eq("Newton's First Law of Motion: Inertia")
       expect(page['student_count']).to eq(2)
       expect(page['correct_count']).to eq(2)
       expect(page['incorrect_count']).to eq(2)
       expect(page['chapter_section']).to eq([1, 1])
 
-      spaced_page = stats.periods.first.spaced_pages.first
+      spaced_page = stats.first.spaced_pages.first
       expect(spaced_page['title']).to eq("Newton's First Law of Motion: Inertia")
       expect(spaced_page['student_count']).to eq(2)
       expect(spaced_page['correct_count']).to eq(2)
@@ -136,18 +136,18 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
         MarkTaskStepCompleted.call(task_step: ts)
       }
       stats = CalculateTaskPlanStats.call(plan: task_plan.reload).outputs.stats
-      expect(stats.periods.first.mean_grade_percent).to eq (67)
-      expect(stats.periods.first.complete_count).to eq(3)
-      expect(stats.periods.first.partially_complete_count).to eq(0)
+      expect(stats.first.mean_grade_percent).to eq (67)
+      expect(stats.first.complete_count).to eq(3)
+      expect(stats.first.partially_complete_count).to eq(0)
 
-      page = stats.periods.first.current_pages.first
+      page = stats.first.current_pages.first
       expect(page['title']).to eq("Newton's First Law of Motion: Inertia")
       expect(page['student_count']).to eq(3)
       expect(page['correct_count']).to eq(4)
       expect(page['incorrect_count']).to eq(2)
       expect(page['chapter_section']).to eq([1, 1])
 
-      spaced_page = stats.periods.first.spaced_pages.first
+      spaced_page = stats.first.spaced_pages.first
       expect(spaced_page['title']).to eq("Newton's First Law of Motion: Inertia")
       expect(spaced_page['student_count']).to eq(3)
       expect(spaced_page['correct_count']).to eq(4)
@@ -164,18 +164,18 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
         MarkTaskStepCompleted.call(task_step: ts)
       }
       stats = CalculateTaskPlanStats.call(plan: task_plan.reload).outputs.stats
-      expect(stats.periods.first.mean_grade_percent).to eq (75)
-      expect(stats.periods.first.complete_count).to eq(4)
-      expect(stats.periods.first.partially_complete_count).to eq(0)
+      expect(stats.first.mean_grade_percent).to eq (75)
+      expect(stats.first.complete_count).to eq(4)
+      expect(stats.first.partially_complete_count).to eq(0)
 
-      page = stats.periods.first.current_pages.first
+      page = stats.first.current_pages.first
       expect(page['title']).to eq("Newton's First Law of Motion: Inertia")
       expect(page['student_count']).to eq(4)
       expect(page['correct_count']).to eq(6)
       expect(page['incorrect_count']).to eq(2)
       expect(page['chapter_section']).to eq([1, 1])
 
-      spaced_page = stats.periods.first.spaced_pages.first
+      spaced_page = stats.first.spaced_pages.first
       expect(spaced_page['title']).to eq("Newton's First Law of Motion: Inertia")
       expect(spaced_page['student_count']).to eq(4)
       expect(spaced_page['correct_count']).to eq(6)
@@ -197,7 +197,7 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
         MarkTaskStepCompleted.call(task_step: ts)
       }
       stats = CalculateTaskPlanStats.call(plan: task_plan.reload, details: true).outputs.stats
-      exercises = stats.periods.first.current_pages.first.exercises
+      exercises = stats.first.current_pages.first.exercises
       exercises.each do |exercise|
         expect(exercise.answered_count).to eq 1
       end
@@ -225,7 +225,7 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
         MarkTaskStepCompleted.call(task_step: ts)
       }
       stats = CalculateTaskPlanStats.call(plan: task_plan.reload, details: true).outputs.stats
-      exercises = stats.periods.first.current_pages.first.exercises
+      exercises = stats.first.current_pages.first.exercises
       exercises.each do |exercise|
         expect(exercise.answered_count).to eq 2
       end
@@ -254,7 +254,7 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
         MarkTaskStepCompleted.call(task_step: ts)
       }
       stats = CalculateTaskPlanStats.call(plan: task_plan.reload, details: true).outputs.stats
-      exercises = stats.periods.first.current_pages.first.exercises
+      exercises = stats.first.current_pages.first.exercises
       exercises.each do |exercise|
         expect(exercise.answered_count).to eq 3
       end
@@ -283,7 +283,7 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
         MarkTaskStepCompleted.call(task_step: ts)
       }
       stats = CalculateTaskPlanStats.call(plan: task_plan.reload, details: true).outputs.stats
-      exercises = stats.periods.first.current_pages.first.exercises
+      exercises = stats.first.current_pages.first.exercises
       exercises.each do |exercise|
         expect(exercise.answered_count).to eq 4
       end
@@ -320,30 +320,30 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
     it "splits the students into their periods" do
       stats = CalculateTaskPlanStats.call(plan: task_plan).outputs.stats
 
-      expect(stats.periods.first.mean_grade_percent).to be_nil
-      expect(stats.periods.first.total_count).to eq(task_plan.tasks.length/2)
-      expect(stats.periods.first.complete_count).to eq(0)
-      expect(stats.periods.first.partially_complete_count).to eq(0)
+      expect(stats.first.mean_grade_percent).to be_nil
+      expect(stats.first.total_count).to eq(task_plan.tasks.length/2)
+      expect(stats.first.complete_count).to eq(0)
+      expect(stats.first.partially_complete_count).to eq(0)
 
-      page = stats.periods.first.current_pages[0]
+      page = stats.first.current_pages[0]
       expect(page.student_count).to eq(0)
       expect(page.incorrect_count).to eq(0)
       expect(page.correct_count).to eq(0)
 
-      spaced_page = stats.periods.first.spaced_pages[0]
+      spaced_page = stats.first.spaced_pages[0]
       expect(spaced_page).to eq page
 
-      expect(stats.periods.second.mean_grade_percent).to be_nil
-      expect(stats.periods.second.total_count).to eq(task_plan.tasks.length/2)
-      expect(stats.periods.second.complete_count).to eq(0)
-      expect(stats.periods.second.partially_complete_count).to eq(0)
+      expect(stats.second.mean_grade_percent).to be_nil
+      expect(stats.second.total_count).to eq(task_plan.tasks.length/2)
+      expect(stats.second.complete_count).to eq(0)
+      expect(stats.second.partially_complete_count).to eq(0)
 
-      page = stats.periods.second.current_pages[0]
+      page = stats.second.current_pages[0]
       expect(page.student_count).to eq(0)
       expect(page.incorrect_count).to eq(0)
       expect(page.correct_count).to eq(0)
 
-      spaced_page = stats.periods.second.spaced_pages[0]
+      spaced_page = stats.second.spaced_pages[0]
       expect(spaced_page).to eq page
     end
 

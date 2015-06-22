@@ -34,45 +34,43 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
     expect(representation).to include(
       "id" => task_plan.id.to_s,
       "type" => "reading",
-      "stats" => {
-        "periods" => [
-          {
-            "name"                     => 'None',
-            "mean_grade_percent"       => 50,
-            "total_count"              => 2,
-            "complete_count"           => 0,
-            "partially_complete_count" => 2,
-            "current_pages"            => a_collection_containing_exactly(
-              "id"     => task_plan.settings['page_ids'].first.to_s,
-              "title"  => "Newton's First Law of Motion: Inertia",
-              "student_count"   => 2,
-              "correct_count"   => 1,
-              "incorrect_count" => 1,
-              "chapter_section" => [1, 1],
-              "exercises" => a_collection_containing_exactly(
-                {
-                  "content" => a_kind_of(Hash), "answered_count" => 2
-                },
-                {
-                  "content" => a_kind_of(Hash), "answered_count" => 0
-                }
-              )
-            ),
-            "spaced_pages" => a_collection_containing_exactly(
-              "id"     => task_plan.settings['page_ids'].first.to_s,
-              "title"  => "Newton's First Law of Motion: Inertia",
-              "student_count"   => 0,
-              "correct_count"   => 0,
-              "incorrect_count" => 0,
-              "chapter_section" => [1, 1],
-              "exercises" => a_kind_of(Array)
+      "stats" => [
+        {
+          "name"                     => 'None',
+          "mean_grade_percent"       => 50,
+          "total_count"              => 2,
+          "complete_count"           => 0,
+          "partially_complete_count" => 2,
+          "current_pages"            => a_collection_containing_exactly(
+            "id"     => task_plan.settings['page_ids'].first.to_s,
+            "title"  => "Newton's First Law of Motion: Inertia",
+            "student_count"   => 2,
+            "correct_count"   => 1,
+            "incorrect_count" => 1,
+            "chapter_section" => [1, 1],
+            "exercises" => a_collection_containing_exactly(
+              {
+                "content" => a_kind_of(Hash), "answered_count" => 2
+              },
+              {
+                "content" => a_kind_of(Hash), "answered_count" => 0
+              }
             )
-          }
-        ]
-      }
+          ),
+          "spaced_pages" => a_collection_containing_exactly(
+            "id"     => task_plan.settings['page_ids'].first.to_s,
+            "title"  => "Newton's First Law of Motion: Inertia",
+            "student_count"   => 0,
+            "correct_count"   => 0,
+            "incorrect_count" => 0,
+            "chapter_section" => [1, 1],
+            "exercises" => a_kind_of(Array)
+          )
+        }
+      ]
     )
 
-    exercise_1 = representation['stats']['periods'].first['current_pages'].first['exercises'].first
+    exercise_1 = representation['stats'].first['current_pages'].first['exercises'].first
     exercise_1['content']['questions'].first['answers'].each do |answer|
       case answer['id']
       when correct_answer_id, incorrect_answer_ids.first
@@ -82,12 +80,12 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
       end
     end
 
-    exercise_2 = representation['stats']['periods'].first['current_pages'].first['exercises'].last
+    exercise_2 = representation['stats'].first['current_pages'].first['exercises'].last
     exercise_2['content']['questions'].first['answers'].each do |answer|
       expect(answer['selected_count']).to eq 0
     end
 
-    representation['stats']['periods'].first['spaced_pages'].first['exercises'].each do |exercise|
+    representation['stats'].first['spaced_pages'].first['exercises'].each do |exercise|
       exercise['content']['questions'].first['answers'].each do |answer|
         expect(answer['selected_count']).to eq 0
       end

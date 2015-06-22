@@ -106,8 +106,8 @@ class CalculateTaskPlanStats
       tt.taskings.first.role.students.first.try(:period) || no_period
     end
     grouped_tasks.collect do |period, period_tasks|
-      {
-        id: period.id,
+      Hashie::Mash.new(
+        period_id: period.id,
 
         name: period.name,
 
@@ -131,7 +131,7 @@ class CalculateTaskPlanStats
         spaced_pages: generate_page_stats_for_task_steps(
                         period_tasks.collect{ |t| t.spaced_practice_task_steps }
                       )
-      }
+      )
     end
   end
 
@@ -139,7 +139,7 @@ class CalculateTaskPlanStats
     @plan = plan
     @details = details
 
-    outputs[:stats] = Hashie::Mash.new(periods: generate_period_stat_data)
+    outputs[:stats] = generate_period_stat_data
   end
 
 end

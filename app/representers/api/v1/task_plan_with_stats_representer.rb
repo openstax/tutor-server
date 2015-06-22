@@ -19,11 +19,11 @@ module Api::V1
              readable: true,
              writeable: true
 
-    property :stats,
-             decorator: Api::V1::Tasks::Stats::TaskPlanRepresenter,
-             getter: ->(args) { CalculateTaskPlanStats[plan: self] },
-             readable: true,
-             writable: false
+    collection :stats,
+               decorator: Api::V1::Tasks::Stats::StatRepresenter,
+               getter: ->(args) { CalculateTaskPlanStats[plan: self] },
+               readable: true,
+               writable: false
 
   end
 end

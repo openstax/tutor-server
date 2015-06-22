@@ -262,7 +262,7 @@ describe Api::V1::TaskPlansController, :type => :controller, :api => true, :vers
       api_get :stats, nil, parameters: { id: published_task_plan.id }
       body = JSON.parse(response.body)
       # The representer spec does validate the json so we'll rely on it and just check presense
-      expect(body['stats']).to be_a(Hash)
+      expect(body['stats']).to be_a(Array)
     end
 
   end
@@ -288,7 +288,7 @@ describe Api::V1::TaskPlansController, :type => :controller, :api => true, :vers
       api_get :review, nil, parameters: { id: published_task_plan.id }
       body = JSON.parse(response.body)
       # The representer spec does validate the json so we'll rely on it and just check presense
-      expect(body['stats']).to be_a(Hash)
+      expect(body['stats']).to be_a(Array)
     end
 
   end
