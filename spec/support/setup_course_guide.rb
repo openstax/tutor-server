@@ -1,4 +1,4 @@
-class SetupCourseStats
+class SetupCourseGuide
   lev_routine express_output: :course
 
   uses_routine CreateCourse, as: :create_course

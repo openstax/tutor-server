@@ -677,7 +677,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
   end
 
-  describe '#stats' do
+  describe '#student_guide' do
     context 'user is teacher' do
       let!(:teacher_role) {
         AddUserAsCourseTeacher.call(
@@ -689,23 +689,23 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           period: period, user: user_2.entity_user).outputs[:role]
       }
 
-      let!(:course_stats) {
+      let!(:course_guide) {
         Hashie::Mash.new(title: 'Title', page_ids: [1], children: [])
       }
 
-      let!(:get_course_stats) {
-        class_double(GetCourseStats).as_stubbed_const
+      let!(:get_course_guide) {
+        class_double(GetCourseGuide).as_stubbed_const
       }
 
       context 'and a student role is given' do
-        it 'returns the student stats' do
-          expect(get_course_stats)
+        it 'returns the student guide' do
+          expect(get_course_guide)
             .to receive(:[]).with(role: student_role, course: course)
-            .and_return(course_stats)
+            .and_return(course_guide)
 
-          api_get :stats,
+          api_get :student_guide,
                   user_1_token,
-                  parameters: { id: course.id, role_id: student_role }
+                  parameters: { id: course.id, role_id: student_role.id }
         end
       end
 

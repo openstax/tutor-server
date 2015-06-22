@@ -1,5 +1,5 @@
 module Api::V1
-  class CourseStatsRepresenter < Roar::Decorator
+  class CourseGuideRepresenter < Roar::Decorator
     include Roar::JSON
 
     property :title,

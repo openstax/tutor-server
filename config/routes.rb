@@ -54,7 +54,8 @@ Rails.application.routes.draw do
         get 'dashboard(/role/:role_id)', action: :dashboard
         post 'practice(/role/:role_id)', action: :practice
         get 'practice(/role/:role_id)', action: :practice
-        get 'guide(/role/:role_id)', action: :stats
+        get 'guide(/role/:role_id)', action: :student_guide
+        get 'teacher_guide', action: :teacher_guide
         get 'performance(/role/:role_id)', action: :performance
         post 'performance/export', action: :performance_export
         get 'performance/exports', action: :performance_exports

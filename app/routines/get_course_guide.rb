@@ -1,5 +1,5 @@
-class GetCourseStats
-  lev_routine express_output: :course_stats
+class GetCourseGuide
+  lev_routine express_output: :course_guide
 
   uses_routine Tasks::GetRoleCompletedTaskSteps,
     translations: { outputs: { type: :verbatim } },
@@ -23,7 +23,7 @@ class GetCourseStats
 
     chapters = compile_chapters.sort_by{|ch| ch[:chapter_section]}
 
-    outputs[:course_stats] = {
+    outputs[:course_guide] = {
       title: outputs.toc.title, # toc is the root book
       page_ids: chapters.collect{|cc| cc[:page_ids]}.flatten.uniq,
       children: chapters
