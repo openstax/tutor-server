@@ -39,31 +39,37 @@ RSpec.describe GetCourseGuide, vcr: VCR_OPTS do
   end
 
   it 'returns the full course guide' do
-    expect(described_class[course: @course, role: @role]).to include(
-      "title"=>"Physics",
-      "page_ids"=>kind_of(Array),
-      "children"=>array_including(
-        {
-          "id"=>kind_of(Integer),
-          "title"=>"Force and Newton's Laws of Motion",
-          "chapter_section"=>[4],
-          "questions_answered_count"=>14,
-          "current_level"=>kind_of(Float),
-          "practice_count"=>0,
+    expect(described_class[course: @course, role: @role]).to include({
+       'period' => {
+          id: kind_of(Integer),
+          name: '1st'
+        },
+        'stats' => {
+          "title"=>"Physics",
           "page_ids"=>kind_of(Array),
           "children"=>array_including(
             {
               "id"=>kind_of(Integer),
-              "title"=>kind_of(String),
-              "chapter_section"=>kind_of(Array),
-              "questions_answered_count"=>kind_of(Integer),
+              "title"=>"Force and Newton's Laws of Motion",
+              "chapter_section"=>[4],
+              "questions_answered_count"=>14,
               "current_level"=>kind_of(Float),
               "practice_count"=>0,
-              "page_ids"=>kind_of(Array)
-            }
-          ) # /array_including - nested children
-        } # /hash - the children
-      ) # /array_including - children
-    ) # /be_a_hash_including
+              "page_ids"=>kind_of(Array),
+              "children"=>array_including(
+                {
+                  "id"=>kind_of(Integer),
+                  "title"=>kind_of(String),
+                  "chapter_section"=>kind_of(Array),
+                  "questions_answered_count"=>kind_of(Integer),
+                  "current_level"=>kind_of(Float),
+                  "practice_count"=>0,
+                  "page_ids"=>kind_of(Array)
+                }
+              ) # /array_including - nested children
+            } # /hash - the children
+          ) # /array_including - children
+        } # /stats
+      }) # /be_a_hash_including
   end
 end
