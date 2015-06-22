@@ -13,21 +13,34 @@ class GetCourseGuide
     translations: { outputs: { type: :verbatim } },
     as: :visit_book
 
+  uses_routine CourseMembership::GetCoursePeriods,
+    translations: { outputs: { type: :verbatim } },
+    as: :get_periods
+
   protected
   def exec(role:, course:)
     @role = role
 
     run(:get_role_task_steps, roles: role)
     run(:get_course_books, course: course)
+    run(:get_periods, course: course)
     run(:visit_book, book: outputs.books.first, visitor_names: [:toc, :page_data])
 
     chapters = compile_chapters.sort_by{|ch| ch[:chapter_section]}
 
-    outputs[:course_guide] = {
-      title: outputs.toc.title, # toc is the root book
-      page_ids: chapters.collect{|cc| cc[:page_ids]}.flatten.uniq,
-      children: chapters
-    }
+    outputs[:course_guide] = outputs[:periods].collect do |period|
+      {
+        period: {
+          id: period.id,
+          name: period.name
+        },
+        stats: {
+          title: outputs.toc.title, # toc is the root book
+          page_ids: chapters.collect{|cc| cc[:page_ids]}.flatten.uniq,
+          children: chapters
+        }
+      }
+    end
   end
 
   private
