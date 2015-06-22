@@ -180,24 +180,29 @@ describe Api::V1::TaskPlansController, :type => :controller, :api => true, :vers
 
     it 'allows a teacher to publish a task_plan for their course' do
       controller.sign_in teacher
-      expect { api_post :publish, nil, parameters: { course_id: course.id, id: task_plan.id } }
-        .to change{ Tasks::Models::Task.count }.by(1)
-      expect(response).to have_http_status(:success)
-      # need to reload the task_plan since publishing it will set the
-      # publish_at date and change the representation
-      expect(task_plan.reload.published_at).to be_within(1.second).of(Time.now)
-      expect(response.body).to eq Api::V1::TaskPlanRepresenter.new(task_plan).to_json
+
+      expect {
+        api_post :publish, nil, parameters: { course_id: course.id, id: task_plan.id }
+      }.to change{ Tasks::Models::Task.count }.by(1)
+
+      expect(response).to have_http_status(:accepted)
+
+      job_hash = JSON.parse(response.body)
+
+      expect(job_hash['task_plan']).to eq("/api/plans/#{task_plan.id}")
     end
 
     it 'does not allow an unauthorized user to publish a task_plan' do
       controller.sign_in user
-      expect { api_post :publish, nil, parameters: { course_id: course.id, id: task_plan.id } }
-        .to raise_error(SecurityTransgression)
+      expect {
+        api_post :publish, nil, parameters: { course_id: course.id, id: task_plan.id }
+      }.to raise_error(SecurityTransgression)
     end
 
     it 'does not allow an anonymous user to publish a task_plan' do
-      expect { api_post :publish, nil, parameters: { course_id: course.id, id: task_plan.id } }
-        .to raise_error(SecurityTransgression)
+      expect {
+        api_post :publish, nil, parameters: { course_id: course.id, id: task_plan.id }
+      }.to raise_error(SecurityTransgression)
     end
 
     it 'returns an error message if the task_plan settings are invalid' do
@@ -206,10 +211,11 @@ describe Api::V1::TaskPlansController, :type => :controller, :api => true, :vers
       task_plan.save!
 
       controller.sign_in teacher
-      expect { api_post :publish, nil, parameters: { course_id: course.id, id: task_plan.id } }
-        .not_to change{ Tasks::Models::Task.count }
+      expect {
+        api_post :publish, nil, parameters: { course_id: course.id, id: task_plan.id }
+      }.not_to change{ Tasks::Models::Task.count }
       expect(response).to have_http_status(:unprocessable_entity)
-      error = response.body_as_hash[:errors].first
+      error = response.body_as_hash
       expect(error[:code]).to eq 'invalid_settings'
       expect(error[:message]).to eq 'Invalid settings'
       expect(error[:data].first).to include("The property '#/' contains additional properties [\"exercise_ids\", \"exercises_count_dynamic\"] outside of the schema when none are allowed in schema")

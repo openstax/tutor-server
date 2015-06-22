@@ -137,6 +137,9 @@ group :development, :test do
   # Fake in-memory Redis for development and testing
   gem 'fakeredis'
 
+  # Resque in test mode
+  gem 'resque_spec'
+
   # Get env variables from .env file
   gem 'dotenv-rails'
 
