@@ -9,8 +9,8 @@ class Api::V1::JobsController < Api::V1::ApiController
 
   api :GET, '/jobs/:id', 'Returns job statuses'
   description <<-EOS
-    Returns queues job statuses in the system
-    { status: [:queued, :working, :complete] }
+    Returns queued job statuses in the system
+    { status: \\[:queued, :working, :complete\\] }
   EOS
   def show
     status = Lev::Status.find(params[:id])
