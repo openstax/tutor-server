@@ -137,11 +137,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   EOS
   def teacher_guide
     course = Entity::Course.find(params[:id])
-    role = if params[:role_id]
-             get_course_role(types: :student)
-           else
-             get_course_role(types: :teacher)
-           end
+    role = get_course_role(types: :teacher)
     course_guide = GetCourseGuide[role: role, course: course]
     respond_with course_guide, represent_with: Api::V1::CourseGuideRepresenter
   end

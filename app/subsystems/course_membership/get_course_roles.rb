@@ -1,8 +1,9 @@
 class CourseMembership::GetCourseRoles
-  lev_routine
+  lev_routine express_output: :roles
 
-  uses_routine CourseMembership::GetPeriodRoles, as: :get_period_roles,
-                                                 translations: { outputs: { type: :verbatim } }
+  uses_routine CourseMembership::GetPeriodRoles,
+    as: :get_period_roles,
+    translations: { outputs: { type: :verbatim } }
 
   protected
 
