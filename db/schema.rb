@@ -364,6 +364,7 @@ ActiveRecord::Schema.define(version: 20150507224137) do
     t.text     "settings",                  null: false
     t.datetime "publish_last_requested_at"
     t.datetime "published_at"
+    t.string   "publish_job_uuid"
     t.datetime "created_at",                null: false
     t.datetime "updated_at",                null: false
   end

@@ -27,8 +27,6 @@ Rails.application.routes.draw do
   api :v1, :default => true do
     resources :jobs, only: :show
 
-    resources :jobs, only: :show
-
     resources :users, only: [:index]
 
     resource :user, only: [:show] do

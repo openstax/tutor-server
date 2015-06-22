@@ -12,11 +12,6 @@ RSpec.describe DistributeTasks, type: :routine do
       expect(result.errors).to be_empty
     end
 
-    it "sets the publish_last_requested_at field" do
-      DistributeTasks.call(task_plan)
-      expect(task_plan.reload.publish_last_requested_at).to be_within(1.second).of(Time.now)
-    end
-
     it "sets the published_at field" do
       DistributeTasks.call(task_plan)
       expect(task_plan.reload.published_at).to be_within(1.second).of(Time.now)
@@ -36,11 +31,6 @@ RSpec.describe DistributeTasks, type: :routine do
 
       result = DistributeTasks.call(task_plan)
       expect(result.errors).to be_empty
-    end
-
-    it "sets the publish_last_requested_at field" do
-      DistributeTasks.call(task_plan)
-      expect(task_plan.reload.publish_last_requested_at).to be_within(1.second).of(Time.now)
     end
 
     it "sets the published_at field" do

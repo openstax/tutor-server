@@ -160,8 +160,13 @@ describe Api::V1::TaskPlansController, :type => :controller, :api => true, :vers
         expect(new_task_plan.publish_last_requested_at).to be_within(1.second).of(Time.now)
         expect(new_task_plan.published_at).to be_within(1.second).of(Time.now)
 
+        # Revert task_plan to its state when the job was queued
         new_task_plan.is_publish_requested = true
+        new_task_plan.published_at = nil
         expect(response.body).to eq Api::V1::TaskPlanRepresenter.new(new_task_plan).to_json
+
+        response_hash = JSON.parse(response.body)
+        expect(response_hash['progress_url']).to include("/api/jobs/")
       end
 
       it 'returns an error message if the task_plan settings are invalid' do
@@ -227,7 +232,12 @@ describe Api::V1::TaskPlansController, :type => :controller, :api => true, :vers
         expect(task_plan.reload.publish_last_requested_at).to be_within(1.second).of(Time.now)
         expect(task_plan.published_at).to be_within(1.second).of(Time.now)
 
+        # Revert task_plan to its state when the job was queued
+        task_plan.published_at = nil
         expect(response.body).to eq Api::V1::TaskPlanRepresenter.new(task_plan).to_json
+
+        response_hash = JSON.parse(response.body)
+        expect(response_hash['progress_url']).to include("/api/jobs/")
       end
 
       it 'returns an error message if the task_plan settings are invalid' do
