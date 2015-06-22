@@ -67,9 +67,10 @@ module Api::V1
 
       include Roar::JSON
 
-      property :period,
+      property :period_id,
+               type: String,
                readable: true,
-               decorator: PeriodRepresenter
+               getter: -> (*) { period.id.to_s }
 
       collection :data_headings,
                  readable: true,
