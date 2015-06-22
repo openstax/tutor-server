@@ -674,39 +674,32 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       expect(response_body['tasks']).not_to be_empty
       expect(response_body['plans']).to be_nil
     end
-
   end
 
-  describe '#student_guide' do
-    let!(:student_role) {
-      AddUserAsPeriodStudent.call(
-        period: period, user: user_2.entity_user).outputs[:role]
+  describe 'Learning guides' do
+    let!(:teacher_role) {
+      AddUserAsCourseTeacher.call(course: course,
+                                  user: user_1.entity_user).outputs[:role]
     }
 
     let!(:course_guide) {
       Hashie::Mash.new(title: 'Title', page_ids: [1], children: [])
     }
 
-    let!(:get_course_guide) {
-      class_double(GetCourseGuide).as_stubbed_const
-    }
+    let!(:get_course_guide) { class_double(GetCourseGuide).as_stubbed_const }
 
-    it 'returns the student guide' do
-      expect(get_course_guide)
-        .to receive(:[]).with(role: student_role, course: course)
-        .and_return(course_guide)
+    describe '#student_guide' do
+      let!(:student_role) {
+        AddUserAsPeriodStudent.call(period: period,
+                                    user: user_2.entity_user).outputs[:role]
+      }
 
-      api_get :student_guide,
-              user_2_token,
-              parameters: { id: course.id }
-    end
-  end
+      let!(:user_3) { FactoryGirl.create :user_profile }
 
-  describe '#teacher_guide' do
-    let!(:teacher_role) {
-      AddUserAsCourseTeacher.call(
-        course: course, user: user_1.entity_user).outputs[:role]
-    }
+      let!(:student_3_role) {
+        AddUserAsPeriodStudent.call(period: period,
+                                    user: user_3.entity_user).outputs[:role]
+      }
 
       context 'and a student role is not given' do
         it 'raises IllegalState' do
@@ -717,14 +710,14 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       end
     end
 
-    it 'returns a student guide when the student role is provided' do
-      expect(get_course_guide)
-        .to receive(:[]).with(role: student_role, course: course)
-        .and_return(course_guide)
+    describe '#teacher_guide' do
+      it 'returns the teacher guide' do
+        expect(get_course_guide).to receive(:[])
+                                    .with(role: teacher_role, course: course)
+                                    .and_return(course_guide)
 
-      api_get :teacher_guide,
-              user_1_token,
-              parameters: { id: course.id, role_id: student_role.id }
+        api_get :teacher_guide, user_1_token, parameters: { id: course.id }
+      end
     end
 
     context 'user is anonymous' do

@@ -9,7 +9,9 @@ RSpec.describe GetCourseGuide, vcr: VCR_OPTS do
     @course = Entity::Course.create!
     @period = CreatePeriod[course: @course]
     @student = Entity::User.create!
+    @teacher = Entity::User.create!
     @role = AddUserAsPeriodStudent.call(period: @period, user: @student).outputs.role
+    @teacher_role = AddUserAsCourseTeacher.call(course: @course, user: @teacher).outputs.role
     @student.reload
 
     VCR.use_cassette("GetCourseGuide/setup_course_guide", VCR_OPTS) do
@@ -38,38 +40,76 @@ RSpec.describe GetCourseGuide, vcr: VCR_OPTS do
     expect(guide.outputs.page_data).to have(8).items
   end
 
-  it 'returns the full course guide' do
+  it 'returns the period course guide for a student' do
     expect(described_class[course: @course, role: @role]).to include({
-       'period' => {
-          id: kind_of(Integer),
-          name: '1st'
-        },
-        'stats' => {
-          "title"=>"Physics",
-          "page_ids"=>kind_of(Array),
-          "children"=>array_including(
-            {
-              "id"=>kind_of(Integer),
-              "title"=>"Force and Newton's Laws of Motion",
-              "chapter_section"=>[4],
-              "questions_answered_count"=>14,
-              "current_level"=>kind_of(Float),
-              "practice_count"=>0,
-              "page_ids"=>kind_of(Array),
-              "children"=>array_including(
-                {
-                  "id"=>kind_of(Integer),
-                  "title"=>kind_of(String),
-                  "chapter_section"=>kind_of(Array),
-                  "questions_answered_count"=>kind_of(Integer),
-                  "current_level"=>kind_of(Float),
-                  "practice_count"=>0,
-                  "page_ids"=>kind_of(Array)
-                }
-              ) # /array_including - nested children
-            } # /hash - the children
-          ) # /array_including - children
-        } # /stats
-      }) # /be_a_hash_including
+      'period' => {
+         id: kind_of(Integer),
+         name: '1st'
+       },
+       'stats' => {
+         "title"=>"Physics",
+         "page_ids"=>kind_of(Array),
+         "children"=>array_including(
+           {
+             "id"=>kind_of(Integer),
+             "title"=>"Force and Newton's Laws of Motion",
+             "chapter_section"=>[4],
+             "questions_answered_count"=>14,
+             "current_level"=>kind_of(Float),
+             "practice_count"=>0,
+             "page_ids"=>kind_of(Array),
+             "children"=>array_including(
+               {
+                 "id"=>kind_of(Integer),
+                 "title"=>kind_of(String),
+                 "chapter_section"=>kind_of(Array),
+                 "questions_answered_count"=>kind_of(Integer),
+                 "current_level"=>kind_of(Float),
+                 "practice_count"=>0,
+                 "page_ids"=>kind_of(Array)
+               }
+             ) # /array_including - nested children
+           } # /hash - the children
+         ) # /array_including - children
+       } # /stats
+     }) # /be_a_hash_including
+  end
+
+  it 'returns all course guide periods for teachers' do
+    expect(described_class[course: @course, role: @teacher_role]).to include({
+      'periods' => [
+        { id: kind_of(Integer),
+          name: '1st',
+          stats: {
+            "title"=>"Physics",
+            "page_ids"=>kind_of(Array),
+            "children"=>array_including(
+              {
+                "id"=>kind_of(Integer),
+                "title"=>"Force and Newton's Laws of Motion",
+                "chapter_section"=>[4],
+                "questions_answered_count"=>14,
+                "current_level"=>kind_of(Float),
+                "practice_count"=>0,
+                "page_ids"=>kind_of(Array),
+                "children"=>array_including(
+                  {
+                    "id"=>kind_of(Integer),
+                    "title"=>kind_of(String),
+                    "chapter_section"=>kind_of(Array),
+                    "questions_answered_count"=>kind_of(Integer),
+                    "current_level"=>kind_of(Float),
+                    "practice_count"=>0,
+                    "page_ids"=>kind_of(Array)
+                  }
+                ) # /array_including - nested children
+              } # /hash - the children
+            ) # /array_including - children
+          } },
+        { id: kind_of(Integer),
+          name: '2nd',
+          stats: kind_of(Hash) }
+      ] # /periods
+    }) # /a_hash_including
   end
 end

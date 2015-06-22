@@ -1,5 +1,5 @@
 class CourseMembership::GetPeriodRoles
-  lev_routine
+  lev_routine express_output: :roles
 
   ROLE_TYPES = [:student, :teacher, :any]
 
