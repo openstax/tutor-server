@@ -678,44 +678,67 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   end
 
   describe '#student_guide' do
-    context 'user is teacher' do
-      let!(:teacher_role) {
-        AddUserAsCourseTeacher.call(
-          course: course, user: user_1.entity_user).outputs[:role]
-      }
+    let!(:student_role) {
+      AddUserAsPeriodStudent.call(
+        period: period, user: user_2.entity_user).outputs[:role]
+    }
 
-      let!(:student_role) {
-        AddUserAsPeriodStudent.call(
-          period: period, user: user_2.entity_user).outputs[:role]
-      }
+    let!(:course_guide) {
+      Hashie::Mash.new(title: 'Title', page_ids: [1], children: [])
+    }
 
-      let!(:course_guide) {
-        Hashie::Mash.new(title: 'Title', page_ids: [1], children: [])
-      }
+    let!(:get_course_guide) {
+      class_double(GetCourseGuide).as_stubbed_const
+    }
 
-      let!(:get_course_guide) {
-        class_double(GetCourseGuide).as_stubbed_const
-      }
+    it 'returns the student guide' do
+      expect(get_course_guide)
+        .to receive(:[]).with(role: student_role, course: course)
+        .and_return(course_guide)
 
-      context 'and a student role is given' do
-        it 'returns the student guide' do
-          expect(get_course_guide)
-            .to receive(:[]).with(role: student_role, course: course)
-            .and_return(course_guide)
+      api_get :student_guide,
+              user_2_token,
+              parameters: { id: course.id }
+    end
+  end
 
-          api_get :student_guide,
-                  user_1_token,
-                  parameters: { id: course.id, role_id: student_role.id }
-        end
-      end
+  describe '#teacher_guide' do
+    let!(:teacher_role) {
+      AddUserAsCourseTeacher.call(
+        course: course, user: user_1.entity_user).outputs[:role]
+    }
 
-      context 'and a student role is not given' do
-        it 'raises IllegalState' do
-          expect {
-            api_get :stats, user_1_token, parameters: { id: course.id }
-          }.to raise_error(IllegalState)
-        end
-      end
+    let!(:student_role) {
+      AddUserAsPeriodStudent.call(
+        period: period, user: user_2.entity_user).outputs[:role]
+    }
+
+    let!(:course_guide) {
+      Hashie::Mash.new(title: 'Title', page_ids: [1], children: [])
+    }
+
+    let!(:get_course_guide) {
+      class_double(GetCourseGuide).as_stubbed_const
+    }
+
+    it 'returns the teacher guide' do
+      expect(get_course_guide)
+        .to receive(:[]).with(role: teacher_role, course: course)
+        .and_return(course_guide)
+
+      api_get :teacher_guide,
+              user_1_token,
+              parameters: { id: course.id }
+    end
+
+    it 'returns a student guide when the student role is provided' do
+      expect(get_course_guide)
+        .to receive(:[]).with(role: student_role, course: course)
+        .and_return(course_guide)
+
+      api_get :teacher_guide,
+              user_1_token,
+              parameters: { id: course.id, role_id: student_role.id }
     end
 
     context 'user is anonymous' do
