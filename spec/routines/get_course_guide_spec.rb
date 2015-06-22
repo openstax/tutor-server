@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'vcr_helper'
 require 'database_cleaner'
 
-RSpec.describe GetCourseStats, vcr: VCR_OPTS do
+RSpec.describe GetCourseGuide, vcr: VCR_OPTS do
 
   before(:all) do
     DatabaseCleaner.start
@@ -12,8 +12,8 @@ RSpec.describe GetCourseStats, vcr: VCR_OPTS do
     @role = AddUserAsPeriodStudent.call(period: @period, user: @student).outputs.role
     @student.reload
 
-    VCR.use_cassette("GetCourseStats/setup_course_stats", VCR_OPTS) do
-      capture_stdout { SetupCourseStats[course: @course, period: @period, role: @role] }
+    VCR.use_cassette("GetCourseGuide/setup_course_guide", VCR_OPTS) do
+      capture_stdout { SetupCourseGuide[course: @course, period: @period, role: @role] }
     end
   end
 
@@ -22,23 +22,23 @@ RSpec.describe GetCourseStats, vcr: VCR_OPTS do
   end
 
   it 'gets the task steps for the role' do
-    stats = described_class.call(course: @course, role: @role)
-    expect(stats.outputs).to have(14).task_steps
+    guide = described_class.call(course: @course, role: @role)
+    expect(guide.outputs).to have(14).task_steps
   end
 
   it 'gets the book' do
-    stats = described_class.call(course: @course, role: @role)
+    guide = described_class.call(course: @course, role: @role)
     book = Entity::Book.last
-    expect(stats.outputs.books.last).to eq(book)
+    expect(guide.outputs.books.last).to eq(book)
   end
 
   it 'visits the book TOC and Page Data' do
-    stats = described_class.call(course: @course, role: @role)
-    expect(stats.outputs.toc.title).to eq("Physics")
-    expect(stats.outputs.page_data).to have(8).items
+    guide = described_class.call(course: @course, role: @role)
+    expect(guide.outputs.toc.title).to eq("Physics")
+    expect(guide.outputs.page_data).to have(8).items
   end
 
-  it 'returns the full course stats' do
+  it 'returns the full course guide' do
     expect(described_class[course: @course, role: @role]).to include(
       "title"=>"Physics",
       "page_ids"=>kind_of(Array),

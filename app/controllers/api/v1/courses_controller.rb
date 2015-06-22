@@ -118,15 +118,15 @@ class Api::V1::CoursesController < Api::V1::ApiController
     respond_with data, represent_with: Api::V1::Courses::DashboardRepresenter
   end
 
-  api :GET, '/courses/:id/stats(/role/:role_id)', 'Returns course stats for Learning Guide'
+  api :GET, '/courses/:id/student_guide(/role/:role_id)', 'Returns course guide for Learning Guide'
   description <<-EOS
-    #{json_schema(Api::V1::CourseStatsRepresenter, include: :readable)}
+    #{json_schema(Api::V1::CourseGuideRepresenter, include: :readable)}
   EOS
-  def stats
+  def student_guide
     course = Entity::Course.find(params[:id])
     role = get_course_role(types: :student)
-    course_stats = GetCourseStats[role: role, course: course]
-    respond_with course_stats, represent_with: Api::V1::CourseStatsRepresenter
+    course_guide = GetCourseGuide[role: role, course: course]
+    respond_with course_guide, represent_with: Api::V1::CourseGuideRepresenter
   end
 
   api nil, nil, nil
