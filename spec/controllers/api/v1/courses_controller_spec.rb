@@ -111,9 +111,10 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   end
 
   describe "index" do
-    let(:roles) { Role::GetUserRoles.call(user_1.entity_user).outputs.roles }
-    let(:teacher) { roles.select(&:teacher?).first }
-    let(:student) { roles.select(&:student?).first }
+    let(:roles)          { Role::GetUserRoles.call(user_1.entity_user).outputs.roles }
+    let(:teacher)        { roles.select(&:teacher?).first }
+    let(:student)        { roles.select(&:student?).first }
+    let!(:zeroth_period) { CreatePeriod[course: course, name: '0th'] }
 
     context 'anonymous user' do
       it 'raises SecurityTransgression' do
@@ -140,7 +141,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           id: course.id.to_s,
           name: course.profile.name,
           roles: [{ id: teacher.id.to_s, type: 'teacher' }],
-          periods: [{ id: period.id.to_s, name: period.name }]
+          periods: [{ id: zeroth_period.id.to_s, name: zeroth_period.name },
+                    { id: period.id.to_s, name: period.name }]
         }.to_json)
       end
     end
@@ -156,7 +158,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           id: course.id.to_s,
           name: course.profile.name,
           roles: [{ id: teacher.id.to_s, type: 'teacher' }],
-          periods: [{ id: period.id.to_s, name: period.name }]
+          periods: [{ id: zeroth_period.id.to_s, name: zeroth_period.name },
+                    { id: period.id.to_s, name: period.name }]
         }.to_json)
       end
     end
@@ -172,7 +175,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           id: course.id.to_s,
           name: course.profile.name,
           roles: [{ id: student.id.to_s, type: 'student' }],
-          periods: [{ id: period.id.to_s, name: period.name }]
+          periods: [{ id: zeroth_period.id.to_s, name: zeroth_period.name },
+                    { id: period.id.to_s, name: period.name }]
         }.to_json)
       end
     end
@@ -190,16 +194,18 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           name: course.profile.name,
           roles: [{ id: student.id.to_s, type: 'student', },
                   { id: teacher.id.to_s, type: 'teacher', }],
-          periods: [{ id: period.id.to_s, name: period.name }]
+          periods: [{ id: zeroth_period.id.to_s, name: zeroth_period.name },
+                    { id: period.id.to_s, name: period.name }]
         }.to_json)
       end
     end
   end
 
   describe "show" do
-    let(:roles) { Role::GetUserRoles.call(user_1.entity_user).outputs.roles }
-    let(:teacher) { roles.select(&:teacher?).first }
-    let(:student) { roles.select(&:student?).first }
+    let(:roles)          { Role::GetUserRoles.call(user_1.entity_user).outputs.roles }
+    let(:teacher)        { roles.select(&:teacher?).first }
+    let(:student)        { roles.select(&:student?).first }
+    let!(:zeroth_period) { CreatePeriod[course: course, name: '0th'] }
 
     context 'anonymous user' do
       it 'raises SecurityTransgression' do
@@ -227,7 +233,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(response.body).to include({
           id: course.id.to_s,
           name: course.profile.name,
-          periods: [{ id: period.id.to_s, name: period.name }]
+          periods: [{ id: zeroth_period.id.to_s, name: zeroth_period.name },
+                    { id: period.id.to_s, name: period.name }]
         }.to_json)
       end
     end
@@ -242,7 +249,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(response.body).to include({
           id: course.id.to_s,
           name: course.profile.name,
-          periods: [{ id: period.id.to_s, name: period.name }]
+          periods: [{ id: zeroth_period.id.to_s, name: zeroth_period.name },
+                    { id: period.id.to_s, name: period.name }]
         }.to_json)
       end
     end
@@ -258,7 +266,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(response.body).to include({
           id: course.id.to_s,
           name: course.profile.name,
-          periods: [{ id: period.id.to_s, name: period.name }]
+          periods: [{ id: zeroth_period.id.to_s, name: zeroth_period.name },
+                    { id: period.id.to_s, name: period.name }]
         }.to_json)
       end
     end

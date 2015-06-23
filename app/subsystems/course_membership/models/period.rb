@@ -14,6 +14,8 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
   validates :course, presence: true
   validates :name, presence: true, uniqueness: { scope: :entity_course_id }
 
+  default_scope { order(:name) }
+
   protected
 
   def no_students
