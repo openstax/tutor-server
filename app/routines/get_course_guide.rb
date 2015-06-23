@@ -28,11 +28,14 @@ class GetCourseGuide
   protected
   def exec(role:, course:)
     @role, @course = role, course
+
     get_task_steps
+
     run(:get_course_books, course: course)
     run(:get_periods, course: course)
     run(:visit_book, book: outputs.books.first, visitor_names: [:toc, :page_data])
-    compile_course_guide
+
+    outputs[:course_guide] = compile_course_guide
   end
 
   private
@@ -40,37 +43,21 @@ class GetCourseGuide
 
   def compile_course_guide
     if run(:is_teacher, course: course, roles: role).outputs.is_course_teacher
-      course_guide = outputs[:periods].collect do |period|
-        chapters = compile_chapters # cant memoize
-
+      outputs[:periods].collect do |period|
         {
-          period: {
-            id: period.id,
-            name: period.name
-          },
-          stats: {
-            title: outputs.toc.title, # toc is the root book
-            page_ids: chapters.collect { |cc| cc[:page_ids] }.flatten.uniq,
-            children: chapters
-          }
+          period_id: period.id,
+          title: outputs.toc.title, # toc is root book
+          page_ids: compile_chapters.collect { |cc| cc[:page_ids] }.flatten.uniq,
+          children: compile_chapters
         }
       end
-    else
-      course_guide = {
-        periods: outputs[:periods].collect do |period|
-          chapters = compile_chapters # cant memoize
-
-          {
-            id: period.id,
-            name: period.name,
-            stats: {
-              title: outputs.toc.title, # toc is the root book
-              page_ids: chapters.collect { |cc| cc[:page_ids] }.flatten.uniq,
-              children: chapters
-            }
-          }
-        end
-      }
+    else # only 1 period for student role
+      [{ period: { id: outputs[:periods].last.id },
+         stats: {
+           title: outputs.toc.title, # toc is root book
+           page_ids: compile_chapters.collect { |cc| cc[:page_ids] }.flatten.uniq,
+           children: compile_chapters
+         } }]
     end
   end
 
@@ -84,7 +71,7 @@ class GetCourseGuide
   end
 
   def compile_chapters
-    task_steps_grouped_by_book_part.collect { |book_part_id, task_steps|
+    @chapters ||= task_steps_grouped_by_book_part.collect { |book_part_id, task_steps|
       book_part = book_parts_by_id[book_part_id]
       practices = completed_practices(task_steps, :mixed_practice)
       pages = compile_pages(task_steps)
