@@ -25,6 +25,13 @@ RSpec.describe TaskAccessPolicy, :type => :access_policy do
 
         it { should be false }
       end
+
+      context 'and the requestor is a course teacher' do
+        before { allow(DoesTaskingExist).to receive(:[]) { false }
+                 allow(UserIsCourseTeacher).to receive(:[]) { true } }
+
+        it { should be true }
+      end
     end
 
     context 'and the requestor is not human' do
