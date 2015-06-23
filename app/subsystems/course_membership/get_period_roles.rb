@@ -1,28 +1,28 @@
-class CourseMembership::GetPeriodRoles
-  lev_routine express_output: :roles
+module CourseMembership
+  class GetPeriodRoles
+    lev_routine express_output: :roles
 
-  ROLE_TYPES = [:student, :teacher, :any]
+    ROLE_TYPES = [:student, :teacher, :any]
 
-  protected
+    protected
+    def exec(periods:, types: :any)
+      periods = [periods].flatten.uniq
+      types = [types].flatten.uniq
 
-  def exec(periods:, types: :any)
-    periods = [periods].flatten.uniq
-    types = [types].flatten.uniq
-
-    if types.include?(:any)
-      types = ROLE_TYPES - [:any]
-    end
-
-    outputs[:roles] = types.collect do |type|
-      case type
-      when :student
-        periods.collect{|p| p.student_roles}
-      when :teacher
-        periods.collect{|p| p.teacher_roles}
-      else
-        raise ArgumentError, "invalid type: #{type} (valid types are #{ROLE_TYPES})"
+      if types.include?(:any)
+        types = ROLE_TYPES - [:any]
       end
-    end.flatten.uniq
-  end
 
+      outputs[:roles] = types.collect do |type|
+        case type
+        when :student
+          periods.collect{|p| p.student_roles}
+        when :teacher
+          periods.collect{|p| p.teacher_roles}
+        else
+          raise ArgumentError, "invalid type: #{type} (valid types are #{ROLE_TYPES})"
+        end
+      end.flatten.uniq
+    end
+  end
 end
