@@ -676,59 +676,6 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
   end
 
-  describe 'Learning guides' do
-    let!(:teacher_role) {
-      AddUserAsCourseTeacher.call(course: course,
-                                  user: user_1.entity_user).outputs[:role]
-    }
-
-    let!(:course_guide) {
-      Hashie::Mash.new(title: 'Title', page_ids: [1], children: [])
-    }
-
-    let!(:get_course_guide) { class_double(GetCourseGuide).as_stubbed_const }
-
-    describe '#student_guide' do
-      let!(:student_role) {
-        AddUserAsPeriodStudent.call(period: period,
-                                    user: user_2.entity_user).outputs[:role]
-      }
-
-      let!(:user_3) { FactoryGirl.create :user_profile }
-
-      let!(:student_3_role) {
-        AddUserAsPeriodStudent.call(period: period,
-                                    user: user_3.entity_user).outputs[:role]
-      }
-
-      context 'and a student role is not given' do
-        it 'raises IllegalState' do
-          expect {
-            api_get :student_guide, user_1_token, parameters: { id: course.id }
-          }.to raise_error(IllegalState)
-        end
-      end
-    end
-
-    describe '#teacher_guide' do
-      it 'returns the teacher guide' do
-        expect(get_course_guide).to receive(:[])
-                                    .with(role: teacher_role, course: course)
-                                    .and_return(course_guide)
-
-        api_get :teacher_guide, user_1_token, parameters: { id: course.id }
-      end
-    end
-
-    context 'user is anonymous' do
-      it 'raises IllegalState' do
-        expect {
-          api_get :student_guide, nil, parameters: { id: course.id }
-        }.to raise_error(IllegalState)
-      end
-    end
-  end
-
   context 'with book' do
     before(:all) do
       DatabaseCleaner.start
