@@ -16,9 +16,8 @@ module Api
       EOS
       def student
         course = Entity::Course.find(params[:id])
-        role = get_course_role(types: :student)
-        course_guide = GetCourseGuide[role: role, course: course]
-        respond_with course_guide, represent_with: Api::V1::CourseGuideRepresenter
+        guide = GetCourseGuide[role: role(course, :student), course: course]
+        respond_with guide, represent_with: Api::V1::CourseGuideRepresenter
       end
 
       api :GET, '/courses/:id/teacher_guide(/role/:role_id)',
@@ -28,15 +27,14 @@ module Api
       EOS
       def teacher
         course = Entity::Course.find(params[:id])
-        role = get_course_role(types: :teacher)
-        course_guide = GetCourseGuide[role: role, course: course]
-        respond_with course_guide, represent_with: Api::V1::CourseGuideRepresenter
+        guide = GetCourseGuide[role: role(course, :teacher), course: course]
+        respond_with guide, represent_with: Api::V1::CourseGuideRepresenter
       end
 
       private
-      def get_course_role(types: :any)
+      def role(course, types = :any)
         result = ChooseCourseRole.call(user: current_human_user.entity_user,
-                                       course: Entity::Course.find(params[:id]),
+                                       course: course,
                                        allowed_role_type: types,
                                        role_id: params[:role_id])
         if result.errors.any?

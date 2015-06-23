@@ -44,21 +44,18 @@ class GetCourseGuide
   def compile_course_guide
     if run(:is_teacher, course: course, roles: role).outputs.is_course_teacher
       outputs[:periods].collect do |period|
-        {
-          period_id: period.id,
-          title: outputs.toc.title, # toc is root book
-          page_ids: compile_chapters.collect { |cc| cc[:page_ids] }.flatten.uniq,
-          children: compile_chapters
-        }
+        { period_id: period.id }.merge(course_stats)
       end
     else # only 1 period for student role
       [{ period: { id: outputs[:periods].last.id },
-         stats: {
-           title: outputs.toc.title, # toc is root book
-           page_ids: compile_chapters.collect { |cc| cc[:page_ids] }.flatten.uniq,
-           children: compile_chapters
-         } }]
+         stats: course_stats }]
     end
+  end
+
+  def course_stats
+    { title: outputs.toc.title, # toc is root book
+      page_ids: compile_chapters.collect { |cc| cc[:page_ids] }.flatten.uniq,
+      children: compile_chapters }
   end
 
   def get_task_steps
