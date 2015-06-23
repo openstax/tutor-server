@@ -32,7 +32,7 @@ class GetCourseGuide
     get_task_steps
 
     run(:get_course_books, course: course)
-    run(:get_periods, course: course)
+    run(:get_periods, course: course, roles: role)
     run(:visit_book, book: outputs.books.first, visitor_names: [:toc, :page_data])
 
     outputs[:course_guide] = compile_course_guide
