@@ -24,12 +24,11 @@ class SetupCourseGuide
   uses_routine DistributeTasks, as: :distribute_tasks
 
   protected
-  def exec(course: nil, period: nil, role: nil)
+  def exec(course:, roles: [])
+    roles = [roles].flatten
+
     puts "=== Creating course ==="
     outputs.course = course || run(:create_course, name: 'Physics').outputs.course
-
-    puts "=== Creating a course period ==="
-    outputs.period = period || run(:create_period, course: course).outputs.period
 
     puts "=== Fetch & import book ==="
     run(:fetch_and_import_book, id: '93e2b09d-261c-4007-a987-0b3062fe154b')
@@ -39,33 +38,37 @@ class SetupCourseGuide
     puts "=== Add book to course ==="
     run(:add_book_to_course, course: outputs.course, book: outputs.book)
 
-    if role
-      puts "=== Using requested student role ==="
-      student_role = role
+    if roles.any?
+      puts "=== Using requested student roles ==="
     else
+      puts "=== Creating a course period ==="
+      run(:create_period, course: course)
+
       puts "=== Creating student ==="
       student = FactoryGirl.create(:user_profile, username: 'student')
 
       puts "=== Add student to course ==="
       run(:add_student_user_to_period, period: outputs.period, user: student.entity_user)
-      student_role = Entity::Role.order(created_at: :desc).first
+      roles = [Entity::Role.last]
     end
 
-    puts "=== Create assignments ==="
-    create_assignments(role: student_role)
+    roles.each do |role|
+      puts "=== Create assignments ==="
+      create_assignments(role: role)
 
-    puts "=== Set student history ==="
-    make_and_work_practice_widget(role: student_role,
-                                  num_correct: 2,
-                                  page_ids: outputs.page_data[4].id)
+      puts "=== Set student history ==="
+      make_and_work_practice_widget(role: role,
+                                    num_correct: 2,
+                                    page_ids: outputs.page_data[4].id)
 
-    make_and_work_practice_widget(role: student_role,
-                                  num_correct: 5,
-                                  page_ids: outputs.page_data[5].id)
+      make_and_work_practice_widget(role: role,
+                                    num_correct: 5,
+                                    page_ids: outputs.page_data[5].id)
 
-    make_and_work_practice_widget(role: student_role,
-                                  num_correct: 5,
-                                  book_part_ids: outputs.toc.children[3].id)
+      make_and_work_practice_widget(role: role,
+                                    num_correct: 5,
+                                    book_part_ids: outputs.toc.children[3].id)
+    end
   end
 
   private

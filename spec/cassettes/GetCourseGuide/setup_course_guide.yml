@@ -21,7 +21,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Mon, 22 Jun 2015 17:44:19 GMT
+      - Tue, 23 Jun 2015 18:33:44 GMT
       Content-Type:
       - text/plain
       Content-Length:
@@ -42,7 +42,7 @@ http_interactions:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Mon, 22 Jun 2015 17:40:43 GMT
+  recorded_at: Tue, 23 Jun 2015 18:30:04 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/93e2b09d-261c-4007-a987-0b3062fe154b@3.8.json
@@ -64,7 +64,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Mon, 22 Jun 2015 17:44:20 GMT
+      - Tue, 23 Jun 2015 18:33:44 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -219,7 +219,7 @@ http_interactions:
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Mon, 22 Jun 2015 17:40:43 GMT
+  recorded_at: Tue, 23 Jun 2015 18:30:04 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/4e40d43d-cfee-412e-919c-facccdf0535d@3
@@ -241,7 +241,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Mon, 22 Jun 2015 17:44:20 GMT
+      - Tue, 23 Jun 2015 18:33:45 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -363,7 +363,7 @@ http_interactions:
         "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "", "fullname":
         "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Mon, 22 Jun 2015 17:40:44 GMT
+  recorded_at: Tue, 23 Jun 2015 18:30:05 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/0e58aa87-2e09-40a7-8bf3-269b2fa16509@6
@@ -385,7 +385,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Mon, 22 Jun 2015 17:44:20 GMT
+      - Tue, 23 Jun 2015 18:33:45 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -889,7 +889,7 @@ http_interactions:
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Mon, 22 Jun 2015 17:40:44 GMT
+  recorded_at: Tue, 23 Jun 2015 18:30:05 GMT
 - request:
     method: get
     uri: https://exercises-dev.openstax.org/api/exercises?q=tag:k12phys-ch03-s01-lo01,k12phys-ch03-s01-lo02
@@ -915,13 +915,13 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Mon, 22 Jun 2015 17:41:16 GMT
+      - Tue, 23 Jun 2015 18:29:58 GMT
       Etag:
       - W/"cc08541321a0501626c794fb36aae269"
       Server:
       - nginx/1.4.6 (Ubuntu)
       Set-Cookie:
-      - _exercises_session=dWRxbVlRNmxZaGNpc25sVDIrditKZlVuWGtidHZlUzVHQmd3b2I0QmFVV0poOWpFTVo5UXR3Qjg0Ny9EOEgwVW9wcDlwS1hmN1E1WE1iK3JaWWJ1WkE9PS0tZGIxd2k3aXlqRndxckQzM1VhVXVvUT09--06c2e27e79ab8b082fffe940465748cf74cdab53;
+      - _exercises_session=UlovSC9iREVyV2hWbGwyYXVlbStlSWFxYmZsN2FydzduUWlVUHVLTjVBQlo1OXVPdTZTbk5rV0QzQVFKNTRSSmVpbnM2blFMOXNpeEd3UXVRRGtld1E9PS0tWjUrc0ZGdDdnVE1HUjN2WExSUjM0dz09--b51f50d6c20f9ab31edc09d4ad8baf5da26c9c10;
         path=/; HttpOnly
       Status:
       - 200 OK
@@ -932,9 +932,9 @@ http_interactions:
       X-Frame-Options:
       - SAMEORIGIN
       X-Request-Id:
-      - 6a04bc35-0749-4f51-9f8e-0319046e67ac
+      - 064fd481-0dab-480b-b429-c10372a22f25
       X-Runtime:
-      - '0.779237'
+      - '0.608058'
       X-Xss-Protection:
       - 1; mode=block
       Transfer-Encoding:
@@ -2683,7 +2683,7 @@ http_interactions:
         ZXJpb2QuIn1dLCJoaW50cyI6W10sImZvcm1hdHMiOlsibXVsdGlwbGUtY2hv
         aWNlIiwiZnJlZS1yZXNwb25zZSJdLCJjb21ib19jaG9pY2VzIjpbXX1dfV19
     http_version: 
-  recorded_at: Mon, 22 Jun 2015 17:40:46 GMT
+  recorded_at: Tue, 23 Jun 2015 18:30:07 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/3005b86b-d993-4048-aff0-500256001f42@7
@@ -2705,7 +2705,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Mon, 22 Jun 2015 17:44:30 GMT
+      - Tue, 23 Jun 2015 18:33:56 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -3580,7 +3580,7 @@ http_interactions:
         "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "", "fullname":
         "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Mon, 22 Jun 2015 17:40:54 GMT
+  recorded_at: Tue, 23 Jun 2015 18:30:16 GMT
 - request:
     method: get
     uri: https://exercises-dev.openstax.org/api/exercises?q=tag:k12phys-ch03-s02-lo01,k12phys-ch03-s02-lo02
@@ -3606,13 +3606,13 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Mon, 22 Jun 2015 17:40:46 GMT
+      - Tue, 23 Jun 2015 18:30:51 GMT
       Etag:
       - W/"1e00bf3ea234cee442cb6b78f9a8b26b"
       Server:
       - nginx/1.4.6 (Ubuntu)
       Set-Cookie:
-      - _exercises_session=TUVXQlVCUVdLR2dNS2xNNFdvUWlRMEpEM3p3djBKNFEwM2c5ZVV6ZWovTDI3dENhUXZXeW1Pamx1ZzlrUGpEUEhJY0Nxb2NnZ1RmbVlKYnlrSnZpOGc9PS0tMG5VWlo3T1cwdC92MmVkbWJITnFWZz09--28538525286713c7611eb23601c8f1d65db22386;
+      - _exercises_session=R2lZdWFSRXNZUGtSWGQ0dkIrbGVKNkxJTlNPeXBMTnVhbmZONVlUbGw4dExGcEhLWmJxM1BtOGZWODRJSDNPU0lwZUp5YlV4RFo3a2N1Sjk2TVJEM2c9PS0tOVpnREd4YTloeUtJL2MrcWkvMjh4QT09--c229f9f4482409bc20d38d4b01e0797bf5ab76de;
         path=/; HttpOnly
       Status:
       - 200 OK
@@ -3623,9 +3623,9 @@ http_interactions:
       X-Frame-Options:
       - SAMEORIGIN
       X-Request-Id:
-      - de84da1d-7009-4673-be45-68a7ac798b93
+      - 00184eb0-814a-4619-863c-3c3be833b775
       X-Runtime:
-      - '0.681099'
+      - '0.665875'
       X-Xss-Protection:
       - 1; mode=block
       Transfer-Encoding:
@@ -5454,7 +5454,7 @@ http_interactions:
         PyJ9XSwiaGludHMiOltdLCJmb3JtYXRzIjpbIm11bHRpcGxlLWNob2ljZSIs
         ImZyZWUtcmVzcG9uc2UiXSwiY29tYm9fY2hvaWNlcyI6W119XX1dfQ==
     http_version: 
-  recorded_at: Mon, 22 Jun 2015 17:40:56 GMT
+  recorded_at: Tue, 23 Jun 2015 18:30:18 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/1bb611e9-0ded-48d6-a107-fbb9bd900851@2
@@ -5476,7 +5476,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Mon, 22 Jun 2015 17:44:39 GMT
+      - Tue, 23 Jun 2015 18:34:05 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -5573,7 +5573,7 @@ http_interactions:
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Mon, 22 Jun 2015 17:41:02 GMT
+  recorded_at: Tue, 23 Jun 2015 18:30:25 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/95e61258-2faf-41d4-af92-f62e1414175a@4
@@ -5595,7 +5595,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Mon, 22 Jun 2015 17:44:39 GMT
+      - Tue, 23 Jun 2015 18:34:06 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -5895,7 +5895,7 @@ http_interactions:
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Mon, 22 Jun 2015 17:41:03 GMT
+  recorded_at: Tue, 23 Jun 2015 18:30:26 GMT
 - request:
     method: get
     uri: https://exercises-dev.openstax.org/api/exercises?q=tag:k12phys-ch04-s01-lo01,k12phys-ch04-s01-lo02
@@ -5921,13 +5921,13 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Mon, 22 Jun 2015 17:40:55 GMT
+      - Tue, 23 Jun 2015 18:31:00 GMT
       Etag:
       - W/"2e1e41ebab5e88e9c14cbe773f1beb07"
       Server:
       - nginx/1.4.6 (Ubuntu)
       Set-Cookie:
-      - _exercises_session=bUhVdVpGQWY4b2JVSlBxazdxeUxSLzZGbGRMcUQxVlA1cTlsYmFEbndZR3BsaGQ3bytlOC93VmNtZ3JzRGJZZGZ6TVk5d1JXa3hONS9ZWFIxMVd0OGc9PS0tQkpTQ1NaL2dxNW53cUtRaW5Rd2NRdz09--fab79b1d4105a12207f1a244dab23e02f54d8a9d;
+      - _exercises_session=MC9pM2E5Q01UT2thczdleTdUanN0b0t5WEpxbW5TcFc5NC9Ba0dEcjR1RGRIeTRzTjJJZklGK2JDVU41aWxBTDREQkliMngrZFV4c2RLRVB1dVg0cHc9PS0tTW9sK3ladk4zWGVqeFFuM3BkNVVRdz09--24c6770149d32e9c6d5d2fadf223ad5ed81d2e5a;
         path=/; HttpOnly
       Status:
       - 200 OK
@@ -5938,9 +5938,9 @@ http_interactions:
       X-Frame-Options:
       - SAMEORIGIN
       X-Request-Id:
-      - 3fe475e2-49bb-4e1b-92d4-7497ae569b46
+      - bfb43f19-ad49-4e8f-a3a8-e7fc0c8ec733
       X-Runtime:
-      - '0.494012'
+      - '0.561417'
       X-Xss-Protection:
       - 1; mode=block
       Transfer-Encoding:
@@ -7187,7 +7187,7 @@ http_interactions:
         YXRzIjpbIm11bHRpcGxlLWNob2ljZSJdLCJjb21ib19jaG9pY2VzIjpbXX1d
         fV19
     http_version: 
-  recorded_at: Mon, 22 Jun 2015 17:41:04 GMT
+  recorded_at: Tue, 23 Jun 2015 18:30:27 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/640e3e84-09a5-4033-b2a7-b7fe5ec29dc6@4
@@ -7209,7 +7209,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Mon, 22 Jun 2015 17:44:46 GMT
+      - Tue, 23 Jun 2015 18:34:14 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -7631,7 +7631,7 @@ http_interactions:
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Mon, 22 Jun 2015 17:41:10 GMT
+  recorded_at: Tue, 23 Jun 2015 18:30:34 GMT
 - request:
     method: get
     uri: https://exercises-dev.openstax.org/api/exercises?q=tag:k12phys-ch04-s02-lo01,k12phys-ch04-s02-lo02
@@ -7657,13 +7657,13 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Mon, 22 Jun 2015 17:41:41 GMT
+      - Tue, 23 Jun 2015 18:30:26 GMT
       Etag:
       - W/"392db1aa88ce6268b5c8fe1b19a7d470"
       Server:
       - nginx/1.4.6 (Ubuntu)
       Set-Cookie:
-      - _exercises_session=M3piUm4rNzdRc1lkd243cGFKREhkc3l4amVJUmEwWUoxem9OcFBvV3dMTlBxWUxGK0M4WXFKek9IbVpORWNZQ0prS3NUVUJPdS9yY2tKTGpFZWw2eWc9PS0tekZJN2VOWmRCaXdzRlpySnZ2Ni82QT09--f2e332dcf7a22cd23b63e8b89d70ad1e34934d69;
+      - _exercises_session=d1VJWnY1am1JRjJxT1FWRUZwMjBQNEJTaUxhL2l0MXRVTWUrdDN1NWg2dGFtenZZNXhnc3lXTUw5K1Jod2g3alhRRkxwOTNrNDhXZlVqdXh5U2JZaGc9PS0teDhlOXh1S1BTVkZ4OVQrem1wRUNuQT09--e0bec7a3d8ddf8503ebbbe6bec91a4ff28ede754;
         path=/; HttpOnly
       Status:
       - 200 OK
@@ -7674,9 +7674,9 @@ http_interactions:
       X-Frame-Options:
       - SAMEORIGIN
       X-Request-Id:
-      - 7f5e7c20-f89b-4084-940d-adf26c92877b
+      - 1733b730-236c-4f64-9106-608b05835d94
       X-Runtime:
-      - '0.567880'
+      - '0.555603'
       X-Xss-Protection:
       - 1; mode=block
       Transfer-Encoding:
@@ -8938,7 +8938,7 @@ http_interactions:
         aXBsZS1jaG9pY2UiLCJmcmVlLXJlc3BvbnNlIl0sImNvbWJvX2Nob2ljZXMi
         OltdfV19XX0=
     http_version: 
-  recorded_at: Mon, 22 Jun 2015 17:41:11 GMT
+  recorded_at: Tue, 23 Jun 2015 18:30:35 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/548a8717-71e1-4d65-80f0-7b8c6ed4b4c0@3
@@ -8960,7 +8960,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Mon, 22 Jun 2015 17:44:53 GMT
+      - Tue, 23 Jun 2015 18:34:22 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -9527,7 +9527,7 @@ http_interactions:
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Mon, 22 Jun 2015 17:41:17 GMT
+  recorded_at: Tue, 23 Jun 2015 18:30:42 GMT
 - request:
     method: get
     uri: https://exercises-dev.openstax.org/api/exercises?q=tag:k12phys-ch04-s03-lo01,k12phys-ch04-s03-lo02
@@ -9553,13 +9553,13 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Mon, 22 Jun 2015 17:41:09 GMT
+      - Tue, 23 Jun 2015 18:31:16 GMT
       Etag:
       - W/"b9211a2416641f7ea9f02816ddd6dc57"
       Server:
       - nginx/1.4.6 (Ubuntu)
       Set-Cookie:
-      - _exercises_session=c3pPS2RtY2lTcFgrVnJ0SWpDTHJYTEVicUZ1eUk0VndOejlXbkpTcDNIbnVkVE56MVYyU0Fzd1VZS2Z0UlgxaVJvdmRDSmxDVjduS3R3WEp6NUtweGc9PS0tZkJmdmVIa1JwZW5aU3RQMVFVT0h3dz09--23c63bb89f902f1797877292228ed99d00d3edea;
+      - _exercises_session=M08yajlSbUp0R0RtNWNsZUl5dXNUS0poMzREK1ZTUU52REszYUg1ZjllQjhzR0ZDMnV4Sld3cGlncXJibjNPWXBiKzJHRkI1QmVySDZPWXUrbzMvWUE9PS0tSFpFbVFxOWQ0VCt0Q25pTFpRZEJjdz09--1ad6d70221e20e5f2c44f69e72c960e9d658f46a;
         path=/; HttpOnly
       Status:
       - 200 OK
@@ -9570,9 +9570,9 @@ http_interactions:
       X-Frame-Options:
       - SAMEORIGIN
       X-Request-Id:
-      - c9f982df-be21-40fe-b7c8-74edc9f3cf77
+      - e541084f-2912-4820-acb4-9b3150d6859c
       X-Runtime:
-      - '0.530358'
+      - '0.621183'
       X-Xss-Protection:
       - 1; mode=block
       Transfer-Encoding:
@@ -11058,7 +11058,7 @@ http_interactions:
         OltdLCJmb3JtYXRzIjpbIm11bHRpcGxlLWNob2ljZSIsImZyZWUtcmVzcG9u
         c2UiXSwiY29tYm9fY2hvaWNlcyI6W119XX1dfQ==
     http_version: 
-  recorded_at: Mon, 22 Jun 2015 17:41:19 GMT
+  recorded_at: Tue, 23 Jun 2015 18:30:43 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/dbc79576-8c66-41d2-929a-74bcd036a1df@4
@@ -11080,7 +11080,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Mon, 22 Jun 2015 17:45:01 GMT
+      - Tue, 23 Jun 2015 18:34:30 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -11781,7 +11781,7 @@ http_interactions:
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Mon, 22 Jun 2015 17:41:25 GMT
+  recorded_at: Tue, 23 Jun 2015 18:30:50 GMT
 - request:
     method: get
     uri: https://exercises-dev.openstax.org/api/exercises?q=tag:k12phys-ch04-s04-lo01,k12phys-ch04-s04-lo02
@@ -11807,13 +11807,13 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Mon, 22 Jun 2015 17:41:56 GMT
+      - Tue, 23 Jun 2015 18:30:42 GMT
       Etag:
       - W/"b655ea2b8acf5cd631c40866c2b26510"
       Server:
       - nginx/1.4.6 (Ubuntu)
       Set-Cookie:
-      - _exercises_session=OXhGWlh3eUVEcjU3TXZGTE90eEVHOHN0MVc3NFF4SjNnbFYxayt5N0RUSGdwaE9xMUUzWHUwc0dSeWFjQ2Y1NVF1dUo5dGhuZDErSTB2am9JMmlXVGc9PS0tRlVFUUlyRUE0S2wzMFArQ29hUkJsQT09--d73874e3bee81ac48af2224a152021afc55f4cb4;
+      - _exercises_session=SU9xWVdKckFrWFlSNzgyRGU3RFl0NVdlNmgwTG5PQVpyWU5CeHUwWlR1cmpLaE9vRUJKaGtXQzJnMDFQVEpvdkRsOTdFRVk3TVFXalVxOEF5QVRWWmc9PS0tTzlQSldVNVdNOEQvUVRPOC9keUJWdz09--73fdba9136bdefb92020dcf5c7f79a38bd7c03b4;
         path=/; HttpOnly
       Status:
       - 200 OK
@@ -11824,9 +11824,9 @@ http_interactions:
       X-Frame-Options:
       - SAMEORIGIN
       X-Request-Id:
-      - dedcf875-75a6-4e36-bc73-87364f968e8d
+      - e1231719-e458-4def-bddb-585ca88bbcb9
       X-Runtime:
-      - '0.609664'
+      - '0.531841'
       X-Xss-Protection:
       - 1; mode=block
       Transfer-Encoding:
@@ -13206,5 +13206,5 @@ http_interactions:
         XSwiaGludHMiOltdLCJmb3JtYXRzIjpbIm11bHRpcGxlLWNob2ljZSIsImZy
         ZWUtcmVzcG9uc2UiXSwiY29tYm9fY2hvaWNlcyI6W119XX1dfQ==
     http_version: 
-  recorded_at: Mon, 22 Jun 2015 17:41:27 GMT
+  recorded_at: Tue, 23 Jun 2015 18:30:52 GMT
 recorded_with: VCR 2.9.3
