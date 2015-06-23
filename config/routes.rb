@@ -70,7 +70,10 @@ Rails.application.routes.draw do
       end
     end
 
-    get 'pages/:uuid(@:version)', controller: :pages, action: :get_page
+    scope 'pages', controller: :pages, action: :get_page do
+      get ':uuid@:version'
+      get ':uuid'
+    end
   end
 
   namespace 'admin' do
