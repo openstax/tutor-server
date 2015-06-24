@@ -694,7 +694,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
               {
                 type: 'homework',
                 id: kind_of(Integer),
-                status: 'in_progress',
+                status: 'completed',
                 exercise_count: 4,
                 correct_exercise_count: 3,
                 recovered_exercise_count: 0

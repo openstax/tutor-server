@@ -115,6 +115,8 @@ class SetupPerformanceReportData
     end
     Hacks::AnswerExercise[task_step: student_1_tasks[2].non_core_task_steps.first,
                           is_correct: true]
+    Hacks::AnswerExercise[task_step: student_1_tasks[2].non_core_task_steps.last,
+                          is_correct: false]
 
     # User 2 answered 2 questions correctly and 2 incorrectly in
     # homework task plan
@@ -122,6 +124,9 @@ class SetupPerformanceReportData
     raise "expected at least 4 core task steps" if core_task_steps.count < 4
     core_task_steps.first(2).each do |ts|
       Hacks::AnswerExercise[task_step: ts, is_correct: true]
+    end
+    core_task_steps.last(2).each do |ts|
+      Hacks::AnswerExercise[task_step: ts, is_correct: false]
     end
 
     # User 2 started the reading task plan
