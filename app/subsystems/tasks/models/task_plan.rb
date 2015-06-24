@@ -17,6 +17,7 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
 
   serialize :settings, JSON
 
+  validates :title, presence: true
   validates :assistant, presence: true
   validates :owner, presence: true
   validates :type, presence: true

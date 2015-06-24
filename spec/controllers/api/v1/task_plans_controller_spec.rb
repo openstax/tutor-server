@@ -104,9 +104,13 @@ describe Api::V1::TaskPlansController, :type => :controller, :api => true, :vers
         .to change{ Tasks::Models::TaskPlan.count }.by(1)
       expect(response).to have_http_status(:success)
 
-      expect(response.body).to(
-        eq(Api::V1::TaskPlanRepresenter.new(Tasks::Models::TaskPlan.last).to_json)
-      )
+      task_plan = Tasks::Models::TaskPlan.last
+      course = task_plan.owner
+      Time.use_zone(course.profile.timezone) do
+        expect(response.body).to(
+          eq(Api::V1::TaskPlanRepresenter.new(Tasks::Models::TaskPlan.last).to_json)
+        )
+      end
     end
 
     it 'does not allow an unauthorized user to create a task_plan' do
@@ -198,9 +202,12 @@ describe Api::V1::TaskPlansController, :type => :controller, :api => true, :vers
               raw_post_data: Api::V1::TaskPlanRepresenter.new(task_plan).to_json
       expect(response).to have_http_status(:success)
       task_plan.reload ## task_plan can be altered on the way in to/out of the database
-      expect(response.body).to(
-        eq(Api::V1::TaskPlanRepresenter.new(task_plan).to_json)
-      )
+      course = task_plan.owner
+      Time.use_zone(course.profile.timezone) do
+        expect(response.body).to(
+          eq(Api::V1::TaskPlanRepresenter.new(task_plan).to_json)
+        )
+      end
     end
 
     it 'does not allow an unauthorized user to update a task_plan' do

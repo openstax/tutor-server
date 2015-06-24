@@ -361,7 +361,7 @@ ActiveRecord::Schema.define(version: 20150507224137) do
     t.integer  "owner_id",                  null: false
     t.string   "owner_type",                null: false
     t.string   "type",                      null: false
-    t.string   "title"
+    t.string   "title",                     null: false
     t.text     "description"
     t.text     "settings",                  null: false
     t.datetime "publish_last_requested_at"
@@ -436,7 +436,7 @@ ActiveRecord::Schema.define(version: 20150507224137) do
     t.string   "target_type",        null: false
     t.integer  "tasks_task_plan_id", null: false
     t.datetime "opens_at"
-    t.datetime "due_at"
+    t.datetime "due_at",             null: false
     t.datetime "created_at",         null: false
     t.datetime "updated_at",         null: false
   end

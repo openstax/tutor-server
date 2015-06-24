@@ -43,22 +43,24 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   EOS
   def create
     course = Entity::Course.find(params[:course_id])
-    task_plan = BuildTaskPlan[course: course]
+    Time.use_zone(course.profile.timezone) do
+      task_plan = BuildTaskPlan[course: course]
 
-    # Modified standard_create code
-    Tasks::Models::TaskPlan.transaction do
-      consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter)
-      task_plan.assistant = Tasks::GetAssistant[course: course, task_plan: task_plan]
-      return head :unprocessable_entity if task_plan.assistant.nil?
-      OSU::AccessPolicy.require_action_allowed!(:create, current_api_user, task_plan)
-      uuid = distribute_task_plan_if_requested(task_plan)
+      # Modified standard_create code
+      Tasks::Models::TaskPlan.transaction do
+        consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter)
+        task_plan.assistant = Tasks::GetAssistant[course: course, task_plan: task_plan]
+        return head :unprocessable_entity if task_plan.assistant.nil?
+        OSU::AccessPolicy.require_action_allowed!(:create, current_api_user, task_plan)
+        uuid = distribute_task_plan_if_requested(task_plan)
 
-      if task_plan.save
-        respond_with task_plan, represent_with: Api::V1::TaskPlanRepresenter,
-                                status: uuid.nil? ? :ok : :accepted,
-                                location: nil
-      else
-        render_api_errors(task_plan.errors)
+        if task_plan.save
+          respond_with task_plan, represent_with: Api::V1::TaskPlanRepresenter,
+                                  status: uuid.nil? ? :ok : :accepted,
+                                  location: nil
+        else
+          render_api_errors(task_plan.errors)
+        end
       end
     end
   end
@@ -75,19 +77,21 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     # Modified standard_update code
     task_plan = Tasks::Models::TaskPlan.find(params[:id])
     OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, task_plan)
+    course = task_plan.owner
+    Time.use_zone(course.profile.timezone) do
+      task_plan.with_lock do
+        consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter)
+        OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, task_plan)
+        uuid = distribute_task_plan_if_requested(task_plan)
 
-    task_plan.with_lock do
-      consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter)
-      OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, task_plan)
-      uuid = distribute_task_plan_if_requested(task_plan)
-
-      if task_plan.save
-        # http://stackoverflow.com/a/27413178
-        respond_with task_plan, represent_with: Api::V1::TaskPlanRepresenter,
-                                responder: ResponderWithPutContent,
-                                status: uuid.nil? ? :ok : :accepted
-      else
-        render_api_errors(task_plan.errors)
+        if task_plan.save
+          # http://stackoverflow.com/a/27413178
+          respond_with task_plan, represent_with: Api::V1::TaskPlanRepresenter,
+                                  responder: ResponderWithPutContent,
+                                  status: uuid.nil? ? :ok : :accepted
+        else
+          render_api_errors(task_plan.errors)
+        end
       end
     end
   end

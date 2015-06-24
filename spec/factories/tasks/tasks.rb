@@ -12,7 +12,7 @@ FactoryGirl.define do
     task_type :reading
     title "A task"
     opens_at { Time.now }
-    due_at { opens_at + duration }
+    due_at { (opens_at || Time.now) + duration }
 
     after(:build) do |task, evaluator|
       evaluator.step_types.each_with_index do |type, i|

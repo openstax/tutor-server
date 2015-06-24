@@ -32,7 +32,8 @@ module Api::V1
     property :publish_last_requested_at,
              type: String,
              readable: true,
-             writeable: false
+             writeable: false,
+             getter: ->(*) { DateTimeUtilities.to_api_s(publish_last_requested_at) }
 
     property :publish_job_url,
              type: String,
@@ -44,7 +45,8 @@ module Api::V1
     property :published_at,
              type: String,
              readable: true,
-             writeable: false
+             writeable: false,
+             getter: ->(*) { DateTimeUtilities.to_api_s(published_at) }
 
     property :settings,
              type: Object,

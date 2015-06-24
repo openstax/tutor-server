@@ -4,7 +4,7 @@ class CreateTasksTaskPlans < ActiveRecord::Migration
       t.references :tasks_assistant, null: false
       t.references :owner, polymorphic: true, null: false
       t.string :type, null: false
-      t.string :title
+      t.string :title, null: false
       t.text :description
       t.text :settings, null: false
       t.datetime :publish_last_requested_at
