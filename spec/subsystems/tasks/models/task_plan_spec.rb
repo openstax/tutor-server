@@ -14,6 +14,7 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
   it { is_expected.to validate_presence_of(:title) }
   it { is_expected.to validate_presence_of(:owner) }
   it { is_expected.to validate_presence_of(:assistant) }
+  it { is_expected.to validate_presence_of(:tasking_plans) }
 
   it "validates settings against the assistant's schema" do
     task_plan.assistant = FactoryGirl.create(

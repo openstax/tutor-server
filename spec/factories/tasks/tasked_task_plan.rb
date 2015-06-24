@@ -29,13 +29,13 @@ FactoryGirl.define do
       course = task_plan.owner
       period = course.periods.first || CreatePeriod[course: course]
 
-      evaluator.number_of_students.times.each do
-        user = FactoryGirl.create :user_profile
+      task_plan.tasking_plans = evaluator.number_of_students.times.collect do |ii|
+        user = create :user_profile
         role = Role::GetDefaultUserRole[user.entity_user]
         CourseMembership::AddStudent.call(period: period, role: role)
-        tp = FactoryGirl.create :tasks_tasking_plan, target: role, task_plan: task_plan
-        task_plan.tasking_plans << tp
+        build :tasks_tasking_plan, task_plan: task_plan, target: role
       end
+      task_plan.save!
 
       DistributeTasks.call(task_plan)
       task_plan.reload

@@ -29,7 +29,7 @@ module Api::V1
              readable: true
 
     property :opens_at,
-             type: DateTime,
+             type: String,
              writeable: false,
              readable: true,
              getter: ->(*) { DateTimeUtilities.to_api_s(opens_at) },
@@ -38,7 +38,7 @@ module Api::V1
              }
 
     property :due_at,
-             type: DateTime,
+             type: String,
              writeable: false,
              readable: true,
              getter: ->(*) { DateTimeUtilities.to_api_s(due_at) },

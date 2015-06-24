@@ -4,8 +4,10 @@ module Api::V1
     include Roar::JSON
     include Representable::Coercion
 
-    TARGET_TYPE_TO_API_MAP = { 'CourseMembership::Models::Period' => 'period' }
-    TARGET_TYPE_TO_CLASS_MAP = { 'period' => 'CourseMembership::Models::Period' }
+    TARGET_TYPE_TO_API_MAP = { 'CourseMembership::Models::Period' => 'period',
+                               'Entity::Course' => 'course' }
+    TARGET_TYPE_TO_CLASS_MAP = { 'period' => 'CourseMembership::Models::Period',
+                                 'course' => 'Entity::Course' }
 
     property :target_id,
              type: String,

@@ -21,6 +21,7 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
   validates :assistant, presence: true
   validates :owner, presence: true
   validates :type, presence: true
+  validates :tasking_plans, presence: true
 
   validate :valid_settings, :changes_allowed
 

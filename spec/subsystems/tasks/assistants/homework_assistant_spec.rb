@@ -57,18 +57,16 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
                                      personalized_exercise_count }
 
   let!(:task_plan) {
-    FactoryGirl.create(:tasks_task_plan,
+    FactoryGirl.build(:tasks_task_plan,
       assistant: assistant,
       description: "Hello!",
       settings: {
         exercise_ids: teacher_selected_exercise_ids,
         exercises_count_dynamic: tutor_selected_exercise_count
-      }
+      },
+      num_tasking_plans: 0
     )
   }
-
-  let!(:course) { task_plan.owner }
-  let!(:period) { CreatePeriod[course: course] }
 
   let!(:num_taskees) { 3 }
 
@@ -79,14 +77,20 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
   end }
 
   let!(:tasking_plans) {
-    taskees.collect do |taskee|
+    tps = taskees.collect do |taskee|
       task_plan.tasking_plans <<
         FactoryGirl.create(:tasks_tasking_plan,
           task_plan: task_plan,
           target:    taskee
         )
     end
+
+    task_plan.save
+    tps
   }
+
+  let!(:course) { task_plan.owner }
+  let!(:period) { CreatePeriod[course: course] }
 
   it "creates the expected assignments" do
     #puts "teacher_selected_exercises = #{teacher_selected_exercises.collect{|ex| ex.uid}}"

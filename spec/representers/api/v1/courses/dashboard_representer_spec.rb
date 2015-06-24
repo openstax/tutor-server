@@ -2,6 +2,12 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
 
+  let(:opens_at) { Time.now }
+  let(:api_opens_at) { DateTimeUtilities.to_api_s(opens_at) }
+
+  let(:due_at) { opens_at + 1.week }
+  let(:api_due_at) { DateTimeUtilities.to_api_s(due_at) }
+
   let(:data) {
     Hashie::Mash.new.tap do |mash|
       mash.plans = [
@@ -14,8 +20,8 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
             Hashie::Mash.new(
               target_id: 42,
               target_type: 'CourseMembership::Models::Period',
-              opens_at: 'now',
-              due_at: 'then'
+              opens_at: opens_at,
+              due_at: due_at
             )
           ]
         })
@@ -24,8 +30,8 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
         Hashie::Mash.new({
           id: 34,
           title: 'HW2',
-          opens_at: 'now',
-          due_at: 'then',
+          opens_at: opens_at,
+          due_at: due_at,
           task_type: :homework,
           completed?: false,
           past_due?: false,
@@ -36,7 +42,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
         Hashie::Mash.new({
           id: 37,
           title: 'Reading 1',
-          due_at: 'then',
+          due_at: due_at,
           task_type: :reading,
           completed?: false,
           actual_and_placeholder_exercise_count: 7,
@@ -45,8 +51,8 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
         Hashie::Mash.new({
           id: 89,
           title: 'HW3',
-          opens_at: 'now',
-          due_at: 'then',
+          opens_at: opens_at,
+          due_at: due_at,
           task_type: :homework,
           completed?: true,
           past_due?: true,
@@ -80,8 +86,8 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
             {
               "target_id" => '42',
               "target_type" => 'period',
-              "opens_at" => "now",
-              "due_at" => "then"
+              "opens_at" => api_opens_at,
+              "due_at" => api_due_at
             }
           ]
         )
@@ -90,8 +96,8 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
         a_hash_including(
           "id" => '34',
           "title" => "HW2",
-          "opens_at" => "now",
-          "due_at" => "then",
+          "opens_at" => api_opens_at,
+          "due_at" => api_due_at,
           "type" => "homework",
           "complete" => false,
           "exercise_count" => 5,
@@ -100,7 +106,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
         a_hash_including(
           "id" => '37',
           "title" => "Reading 1",
-          "due_at" => "then",
+          "due_at" => api_due_at,
           "type" => "reading",
           "complete" => false,
           "exercise_count" => 7,
@@ -109,8 +115,8 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
         a_hash_including(
           "id" => '89',
           "title" => "HW3",
-          "opens_at" => "now",
-          "due_at" => "then",
+          "opens_at" => api_opens_at,
+          "due_at" => api_due_at,
           "type" => "homework",
           "complete" => true,
           "exercise_count" => 8,

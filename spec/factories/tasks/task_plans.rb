@@ -4,7 +4,7 @@ FactoryGirl.define do
       duration 1.week
       opens_at { Time.now }
       due_at   { opens_at + duration }
-      num_tasking_plans 0
+      num_tasking_plans 1
       assistant_code_class_name "DummyAssistant"
     end
 
@@ -21,10 +21,10 @@ FactoryGirl.define do
                               FactoryGirl.build(:tasks_assistant, code_class_name_hash)
 
       evaluator.num_tasking_plans.times do
-        task_plan.tasking_plans << FactoryGirl.build(:tasks_tasking_plan,
-                                                     task_plan: task_plan,
-                                                     opens_at: evaluator.opens_at,
-                                                     due_at: evaluator.due_at)
+        FactoryGirl.build(:tasks_tasking_plan,
+                          task_plan: task_plan,
+                          opens_at: evaluator.opens_at,
+                          due_at: evaluator.due_at)
       end
     end
   end
