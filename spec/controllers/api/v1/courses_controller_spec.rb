@@ -676,10 +676,23 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                            last_name: 'Two',
                                            full_name: 'Student Two' }
 
+      let(:student_2) { FactoryGirl.create :user_profile,
+                                           first_name: 'Student',
+                                           last_name: 'Two',
+                                           full_name: 'Student Two' }
+      let(:student_3) { FactoryGirl.create :user_profile,
+                                           first_name: 'Student',
+                                           last_name: 'Three',
+                                           full_name: 'Student Three' }
+      let(:student_4) { FactoryGirl.create :user_profile,
+                                           first_name: 'Student',
+                                           last_name: 'Four',
+                                           full_name: 'Student Four' }
+
       before do
         SetupPerformanceReportData[course: course,
                                    teacher: teacher,
-                                   students: [student_1, student_2],
+                                   students: [student_1, student_2, student_3, student_4],
                                    book: @book]
       end
 
@@ -744,6 +757,66 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                 status: 'in_progress',
                 exercise_count: 5,
                 correct_exercise_count: 2,
+                recovered_exercise_count: 0
+              }
+            ]
+          }]
+        }, {
+          period_id: course.periods.order(:id).last.id.to_s,
+          data_headings: [
+            { title: 'Homework 2 task plan' },
+            { title: 'Reading task plan' },
+            { title: 'Homework task plan', average: 100.0 }
+          ],
+          students: [{
+            name: student_3.full_name,
+            role: resp[1][:students][0][:role],
+            data: [
+              {
+                type: 'homework',
+                id: resp[1][:students][0][:data][0][:id],
+                status: 'not_started',
+                exercise_count: 3,
+                correct_exercise_count: 0,
+                recovered_exercise_count: 0
+              },
+              {
+                type: 'reading',
+                id: resp[1][:students][0][:data][1][:id],
+                status: 'not_started'
+              },
+              {
+                type: 'homework',
+                id: resp[1][:students][0][:data][2][:id],
+                status: 'completed',
+                exercise_count: 6,
+                correct_exercise_count: 6,
+                recovered_exercise_count: 0
+              }
+            ]
+          }, {
+            name: student_4.full_name,
+            role: resp[1][:students][1][:role],
+            data: [
+              {
+                type: 'homework',
+                id: resp[1][:students][1][:data][0][:id],
+                status: 'not_started',
+                exercise_count: 3,
+                correct_exercise_count: 0,
+                recovered_exercise_count: 0
+              },
+              {
+                type: 'reading',
+                id: resp[1][:students][1][:data][1][:id],
+                status: 'not_started'
+              },
+              {
+                type: 'homework',
+                id: resp[1][:students][1][:data][2][:id],
+                status: 'not_started',
+                exercise_count: 5,
+                correct_exercise_count: 0,
                 recovered_exercise_count: 0
               }
             ]

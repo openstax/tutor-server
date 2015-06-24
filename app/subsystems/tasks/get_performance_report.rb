@@ -21,8 +21,9 @@ module Tasks
 
     def get_performance_report_for_teacher(course)
       @tasks = {}
-      @average = Hash.new { |h, k| h[k] = [] }
+      @average = []
       course.periods.collect do |period|
+        @average << Hash.new { |h, k| h[k] = [] }
         student_tasks, student_data = [], []
         student_profiles = run(:get_student_profiles, period: period).outputs.profiles
         tasks = get_tasks(student_profiles, period.id)
@@ -73,9 +74,9 @@ module Tasks
 
     def average(task, index)
       # check if the task is a homework and at least one person has started on it
-      return {} unless task.task_type == 'homework' && @average[index].present?
+      return {} unless task.task_type == 'homework' && @average[-1][index].present?
       {
-        average: @average[index].reduce(:+) * 100 / @average[index].length
+        average: @average[-1][index].reduce(:+) * 100 / @average[-1][index].length
       }
     end
 
@@ -105,7 +106,7 @@ module Tasks
       correct_count = exercises.select(&:is_correct?).length
 
       if attempted_count > 0
-        @average[index] << (Float(correct_count) / attempted_count)
+        @average[-1][index] << (Float(correct_count) / attempted_count)
       end
 
       {
