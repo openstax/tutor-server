@@ -21,6 +21,7 @@ module Tasks
 
     def get_performance_report_for_teacher(course)
       @tasks = {}
+      @average = Hash.new { |h, k| h[k] = [] }
       course.periods.collect do |period|
         student_tasks, student_data = [], []
         student_profiles = run(:get_student_profiles, period: period).outputs.profiles
@@ -29,7 +30,6 @@ module Tasks
 
         student_profiles.collect do |student_profile|
           student_tasks = tasks.select { |t| taskings_exist?(t, student_profile) }
-          @average = [[]] * student_tasks.length
 
           student_data << {
             name: student_profile.full_name,
