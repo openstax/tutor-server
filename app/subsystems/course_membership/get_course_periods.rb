@@ -9,15 +9,20 @@ module CourseMembership
     protected
     def exec(course:, roles: [])
       roles = [roles].flatten
-      periods = Entity::Relation.new(course.periods)
 
       outputs[:periods] = if roles.any?
-                            periods.select { |p|
-                              (run(:get_roles, periods: p).outputs.roles & roles) == roles
-                            }
+                            periods_in_roles(course.periods, roles)
                           else
-                            periods
+                            Entity::Relation.new(course.periods)
                           end
+    end
+
+    private
+    def periods_in_roles(periods, roles)
+      periods.select do |p|
+        roles_in_period = run(:get_roles, periods: p).outputs.roles
+        (roles_in_period & roles) == roles
+      end
     end
   end
 end
