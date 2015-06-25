@@ -1,0 +1,18 @@
+<%= link_to 'Add district', new_admin_district_path %>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @districts.each do |district| %>
+      <tr>
+        <td><%= district.name %></td>
+        <td><%= link_to 'edit', edit_admin_district_path(district.id) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

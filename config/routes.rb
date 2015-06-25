@@ -95,6 +95,8 @@ Rails.application.routes.draw do
       resources :students, only: [:index], shallow: true
     end
 
+    resources :districts, except: :destroy
+
     resource :cron, only: [:update]
 
     resources :exceptions, only: [:show]
