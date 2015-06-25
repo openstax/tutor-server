@@ -37,11 +37,25 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     expect(task_plan).not_to be_valid
   end
 
-  it "requires due_at to be in the future when publishing" do
+  it 'requires due_at to be in the future when publishing' do
     task_plan.is_publish_requested = true
     expect(task_plan).to be_valid
 
     task_plan.tasking_plans.first.due_at = Time.now.yesterday
     expect(task_plan).to_not be_valid
+  end
+
+  it 'cannot be deleted if it has open tasks' do
+    expect(task_plan.destroy).to eq task_plan
+    expect(task_plan.destroyed?).to eq true
+
+    new_task.save!
+    new_task.reload
+    expect(new_task.task_plan.destroy).to eq false
+    expect(new_task.task_plan.destroyed?).to eq false
+    expect(new_task.task_plan.errors).to include(:base)
+    expect(new_task.task_plan.errors.messages).to(
+      include(:base => ["cannot be deleted after it is open"])
+    )
   end
 end
