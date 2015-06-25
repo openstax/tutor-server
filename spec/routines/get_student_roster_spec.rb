@@ -39,7 +39,7 @@ describe GetStudentRoster do
   it 'returns all the students in the course' do
     students = GetStudentRoster[course: course]
     students.sort { |a, b| a.id <=> b.id }
-    expect(students).to eq([
+    expect(Set.new students).to eq(Set.new [
       {
         'id' => students[0].id,
         'first_name' => student_1.first_name,
@@ -63,7 +63,7 @@ describe GetStudentRoster do
         'name' => student_3.full_name,
         'period_id' => period_2.id,
         'role_id' => student_3_role.id,
-      },
+      }
     ])
   end
 end

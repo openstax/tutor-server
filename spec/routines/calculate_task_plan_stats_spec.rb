@@ -11,7 +11,7 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
     FactoryGirl.create :tasked_task_plan, number_of_students: number_of_students
   }
 
-  context "With an unworked plan" do
+  context "with an unworked plan" do
 
     it "is all nil or zero for an unworked task_plan" do
       stats = CalculateTaskPlanStats.call(plan: task_plan).outputs.stats
@@ -188,18 +188,31 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       first_task = tasks.first
       first_tasked_exercise = first_task.task_steps.select{ |ts| ts.tasked.exercise? }.first.tasked
 
-      first_task.task_steps.each{ |ts|
+      selected_answers = [[], [], [], []]
+      first_task.task_steps.each { |ts|
         if ts.tasked.exercise?
           ts.tasked.answer_id = ts.tasked.correct_answer_id
           ts.tasked.free_response = 'a sentence explaining all the things'
           ts.tasked.save!
+          selected_answers[0] << ts.tasked.answer_id
         end
         MarkTaskStepCompleted.call(task_step: ts)
       }
+      roles = first_task.taskings.collect{ |ts| ts.role }
+      users = Role::GetUsersForRoles[roles]
+      first_task_names = UserProfile::GetUserFullNames.call(users).outputs
+                                                      .full_names.collect{ |fn| fn.full_name }
+
       stats = CalculateTaskPlanStats.call(plan: task_plan.reload, details: true).outputs.stats
       exercises = stats.first.current_pages.first.exercises
-      exercises.each do |exercise|
+      exercises.each_with_index do |exercise, ii|
         expect(exercise.answered_count).to eq 1
+        expect(exercise.answers.length).to eq 1
+        expect(exercise.answers[0]).to eq(
+          'student_names' => first_task_names,
+          'free_response' => 'a sentence explaining all the things',
+          'answer_id' => selected_answers[0][ii]
+        )
       end
 
       content_without_selected_count = exercises.first.content.merge(
@@ -221,13 +234,32 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
         if ts.tasked.exercise?
           ts.tasked.free_response = 'a sentence not explaining anything'
           ts.tasked.save!
+          selected_answers[1] << ts.tasked.answer_id
         end
         MarkTaskStepCompleted.call(task_step: ts)
       }
+      roles = second_task.taskings.collect{ |ts| ts.role }
+      users = Role::GetUsersForRoles[roles]
+      second_task_names = UserProfile::GetUserFullNames.call(users).outputs
+                                                       .full_names.collect{ |fn| fn.full_name }
+
       stats = CalculateTaskPlanStats.call(plan: task_plan.reload, details: true).outputs.stats
       exercises = stats.first.current_pages.first.exercises
-      exercises.each do |exercise|
+      exercises.each_with_index do |exercise, ii|
         expect(exercise.answered_count).to eq 2
+        expect(exercise.answers.length).to eq 2
+        expect(Set.new exercise.answers).to eq(Set.new [
+          {
+            'student_names' => first_task_names,
+            'free_response' => 'a sentence explaining all the things',
+            'answer_id' => selected_answers[0][ii]
+          },
+          {
+            'student_names' => second_task_names,
+            'free_response' => 'a sentence not explaining anything',
+            'answer_id' => selected_answers[1][ii]
+          }
+        ])
       end
 
       content_without_selected_count = exercises.first.content.merge(
@@ -250,13 +282,37 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
           ts.tasked.answer_id = ts.tasked.correct_answer_id
           ts.tasked.free_response = 'a sentence explaining all the things'
           ts.tasked.save!
+          selected_answers[2] << ts.tasked.answer_id
         end
         MarkTaskStepCompleted.call(task_step: ts)
       }
+      roles = third_task.taskings.collect{ |ts| ts.role }
+      users = Role::GetUsersForRoles[roles]
+      third_task_names = UserProfile::GetUserFullNames.call(users).outputs
+                                                      .full_names.collect{ |fn| fn.full_name }
+
       stats = CalculateTaskPlanStats.call(plan: task_plan.reload, details: true).outputs.stats
       exercises = stats.first.current_pages.first.exercises
-      exercises.each do |exercise|
+      exercises.each_with_index do |exercise, ii|
         expect(exercise.answered_count).to eq 3
+        expect(exercise.answers.length).to eq 3
+        expect(Set.new exercise.answers).to eq(Set.new [
+          {
+            'student_names' => first_task_names,
+            'free_response' => 'a sentence explaining all the things',
+            'answer_id' => selected_answers[0][ii]
+          },
+          {
+            'student_names' => second_task_names,
+            'free_response' => 'a sentence not explaining anything',
+            'answer_id' => selected_answers[1][ii]
+          },
+          {
+            'student_names' => third_task_names,
+            'free_response' => 'a sentence explaining all the things',
+            'answer_id' => selected_answers[2][ii]
+          }
+        ])
       end
 
       content_without_selected_count = exercises.first.content.merge(
@@ -279,13 +335,42 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
           ts.tasked.answer_id = ts.tasked.correct_answer_id
           ts.tasked.free_response = 'a sentence explaining all the things'
           ts.tasked.save!
+          selected_answers[3] << ts.tasked.answer_id
         end
         MarkTaskStepCompleted.call(task_step: ts)
       }
+      roles = fourth_task.taskings.collect{ |ts| ts.role }
+      users = Role::GetUsersForRoles[roles]
+      fourth_task_names = UserProfile::GetUserFullNames.call(users).outputs
+                                                       .full_names.collect{ |fn| fn.full_name }
+
       stats = CalculateTaskPlanStats.call(plan: task_plan.reload, details: true).outputs.stats
       exercises = stats.first.current_pages.first.exercises
-      exercises.each do |exercise|
+      exercises.each_with_index do |exercise, ii|
         expect(exercise.answered_count).to eq 4
+        expect(exercise.answers.length).to eq 4
+        expect(Set.new exercise.answers).to eq(Set.new [
+          {
+            'student_names' => first_task_names,
+            'free_response' => 'a sentence explaining all the things',
+            'answer_id' => selected_answers[0][ii]
+          },
+          {
+            'student_names' => second_task_names,
+            'free_response' => 'a sentence not explaining anything',
+            'answer_id' => selected_answers[1][ii]
+          },
+          {
+            'student_names' => third_task_names,
+            'free_response' => 'a sentence explaining all the things',
+            'answer_id' => selected_answers[2][ii]
+          },
+          {
+            'student_names' => fourth_task_names,
+            'free_response' => 'a sentence explaining all the things',
+            'answer_id' => selected_answers[3][ii]
+          }
+        ])
       end
 
       content_without_selected_count = exercises.first.content.merge(
@@ -305,14 +390,15 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
 
   end
 
-  context "With multiple course periods" do
+  context "with multiple course periods" do
     let!(:course)   { task_plan.owner }
     let!(:period_2) { CreatePeriod[course: course, name: 'Beta'] }
 
     before(:each) do
       task_plan.tasking_plans.each_with_index do |tp, ii|
         next if ii < task_plan.tasks.length/2
-        CourseMembership::MoveStudent[period: period_2, role: tp.target]
+        tp.target.period = period_2
+        tp.target.save!
       end
     end
 
