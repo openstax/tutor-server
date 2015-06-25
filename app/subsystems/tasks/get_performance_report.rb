@@ -88,7 +88,7 @@ module Tasks
           data = {
             status: t.status,
             type: t.task_type,
-            id: t.id,
+            id: t.id.to_s,
           }
 
           if t.task_type == 'homework'
