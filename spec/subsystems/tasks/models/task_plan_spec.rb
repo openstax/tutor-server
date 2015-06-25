@@ -36,4 +36,12 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     task_plan.settings = { due_at: Time.now }.to_json
     expect(task_plan).not_to be_valid
   end
+
+  it "requires due_at to be in the future when publishing" do
+    task_plan.is_publish_requested = true
+    expect(task_plan).to be_valid
+
+    task_plan.tasking_plans.first.due_at = Time.now.yesterday
+    expect(task_plan).to_not be_valid
+  end
 end

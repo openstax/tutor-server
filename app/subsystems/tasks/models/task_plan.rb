@@ -23,7 +23,7 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
   validates :type, presence: true
   validates :tasking_plans, presence: true
 
-  validate :valid_settings, :changes_allowed
+  validate :valid_settings, :changes_allowed, :publish_requested_before_due
 
   protected
 
@@ -44,6 +44,13 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
               (!is_publish_requested && changes.except(*UPDATABLE_ATTRIBUTES).empty?)
     action = is_publish_requested ? 'republished' : 'updated'
     errors.add(:base, "cannot be #{action} after it is open")
+    false
+  end
+
+  def publish_requested_before_due
+    return if !is_publish_requested || \
+              tasking_plans.none? { |tp| !tp.due_at.nil? && tp.due_at < Time.now }
+    errors.add(:due_at, 'cannot be in the past when publishing')
     false
   end
 
