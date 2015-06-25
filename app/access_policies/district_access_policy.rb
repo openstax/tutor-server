@@ -5,7 +5,7 @@ class DistrictAccessPolicy
       true
     when :read
       true
-    when :edit, :destroy, :update
+    when :edit, :destroy, :update, :delete
       requestor.is_admin?
     else
       false

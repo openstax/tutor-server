@@ -11,7 +11,14 @@
     <% @districts.each do |district| %>
       <tr>
         <td><%= district.name %></td>
-        <td><%= link_to 'edit', edit_admin_district_path(district.id) %></td>
+        <td>
+          <%= link_to 'edit', edit_admin_district_path(district.id) %>&nbsp;|
+          <%= link_to 'delete', admin_district_path(district.id),
+                                method: :delete,
+                                data: {
+                                  confirm: "Are you sure you want to delete `#{district.name}`?"
+                                } %>
+        </td>
       </tr>
     <% end %>
   </tbody>

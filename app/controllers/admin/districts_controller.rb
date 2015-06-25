@@ -22,7 +22,7 @@ module Admin
       handle_with(Admin::DistrictsUpdate,
                   success: -> {
                     redirect_to admin_districts_path,
-                    notice: 'The district has been updated.'
+                                notice: 'The district has been updated.'
                   },
                   failure: -> {
                     @district = GetDistrict[id: params[:id],
@@ -30,6 +30,14 @@ module Admin
                                             caller: current_user]
                     @district.attributes.merge!(district_params)
                     render :edit
+                  })
+    end
+
+    def destroy
+      handle_with(Admin::DistrictsDestroy,
+                  success: -> {
+                    redirect_to admin_districts_path,
+                                notice: 'The district has been deleted.'
                   })
     end
   end
