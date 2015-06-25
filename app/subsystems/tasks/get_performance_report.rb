@@ -58,7 +58,9 @@ module Tasks
     end
 
     def get_exercises(tasks)
-      tasked_ids = tasks.collect(&:task_steps).flatten.collect(&:tasked_id)
+      task_steps = tasks.collect(&:task_steps).flatten
+      tasked_exercises = task_steps.select { |ts| ts.tasked_type == 'Tasks::Models::TaskedExercise' }
+      tasked_ids = tasked_exercises.collect(&:tasked_id)
       Models::TaskedExercise.where(id: tasked_ids)
     end
 
@@ -99,7 +101,8 @@ module Tasks
     end
 
     def exercise_count(task_steps, exercises, index)
-      tasked_ids = task_steps.collect(&:tasked_id)
+      tasked_exercises = task_steps.select { |ts| ts.tasked_type == 'Tasks::Models::TaskedExercise' }
+      tasked_ids = tasked_exercises.collect(&:tasked_id)
       exercises = exercises.select { |e| tasked_ids.include?(e.id) }
 
       attempted_count = task_steps.select(&:completed?).length
