@@ -122,10 +122,8 @@ gem 'axlsx', '~> 2.1.0.pre'
 # Pagination library
 gem 'will_paginate', '~> 3.0.6'
 
-group :development do
-  # Trace AR queries
-  gem 'active_record_query_trace'
-end
+# Time travel
+gem 'timecop'
 
 group :development, :test do
   # SQLite adapter
@@ -206,16 +204,16 @@ group :development, :test do
   gem 'coveralls', require: false
 end
 
+group :development do
+  # Trace AR queries
+  gem 'active_record_query_trace'
+end
+
 group :test do
   gem 'shoulda-matchers', require: false
   gem 'capybara-webkit'
   gem 'launchy'
   gem 'database_cleaner'
-end
-
-group :development, :test, :demo do
-  # Time travel gem
-  gem 'timecop'
 end
 
 group :production do
