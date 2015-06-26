@@ -141,6 +141,45 @@ describe Api::V1::TaskPlansController, :type => :controller, :api => true, :vers
       }.not_to change{ Tasks::Models::TaskPlan.count }
       expect(response).to have_http_status(:unprocessable_entity)
     end
+
+    context 'when is_publish_requested is set' do
+      let!(:valid_json_hash) {
+        task_plan.is_publish_requested = true
+        JSON.parse(Api::V1::TaskPlanRepresenter.new(task_plan).to_json)
+      }
+
+      it 'allows a teacher to publish a task_plan for their course' do
+        controller.sign_in teacher
+        expect { api_post :create,
+                          nil,
+                          parameters: { course_id: course.id },
+                          raw_post_data: valid_json_hash.to_json }
+          .to change{ Tasks::Models::TaskPlan.count }.by(1)
+        expect(response).to have_http_status(:success)
+        new_task_plan = Tasks::Models::TaskPlan.find(JSON.parse(response.body)['id'])
+        expect(new_task_plan.publish_last_requested_at).to be_within(1.second).of(Time.now)
+        expect(new_task_plan.published_at).to be_within(1.second).of(Time.now)
+
+        new_task_plan.is_publish_requested = true
+        expect(response.body).to eq Api::V1::TaskPlanRepresenter.new(new_task_plan).to_json
+      end
+
+      it 'returns an error message if the task_plan settings are invalid' do
+        invalid_json_hash = valid_json_hash
+        invalid_json_hash['settings']['exercise_ids'] = [1, 2, 3]
+        invalid_json_hash['settings']['exercises_count_dynamic'] = 3
+
+        controller.sign_in teacher
+        expect { api_post :create,
+                          nil,
+                          parameters: { course_id: course.id },
+                          raw_post_data: invalid_json_hash.to_json }
+          .not_to change{ Tasks::Models::TaskPlan.count }
+        expect(response).to have_http_status(:unprocessable_entity)
+        error = response.body_as_hash[:errors].first
+        expect(error[:message]).to include "Settings - The property '#/' contains additional properties [\"exercise_ids\", \"exercises_count_dynamic\"] outside of the schema when none are allowed in schema"
+      end
+    end
   end
 
   context 'update' do
@@ -171,48 +210,38 @@ describe Api::V1::TaskPlansController, :type => :controller, :api => true, :vers
                raw_post_data: Api::V1::TaskPlanRepresenter.new(task_plan).to_json }
         .to raise_error(SecurityTransgression)
     end
-  end
 
-  context 'publish' do
-    before(:each) do
-      task_plan.save!
-    end
+    context 'when is_publish_requested is set' do
+      let!(:valid_json_hash) {
+        task_plan.is_publish_requested = true
+        JSON.parse(Api::V1::TaskPlanRepresenter.new(task_plan).to_json)
+      }
 
-    it 'allows a teacher to publish a task_plan for their course' do
-      controller.sign_in teacher
-      expect { api_post :publish, nil, parameters: { course_id: course.id, id: task_plan.id } }
-        .to change{ Tasks::Models::Task.count }.by(1)
-      expect(response).to have_http_status(:success)
-      # need to reload the task_plan since publishing it will set the
-      # publish_at date and change the representation
-      expect(task_plan.reload.published_at).to be_within(1.second).of(Time.now)
-      expect(response.body).to eq Api::V1::TaskPlanRepresenter.new(task_plan).to_json
-    end
+      it 'allows a teacher to publish a task_plan for their course' do
+        controller.sign_in teacher
+        api_put :update, nil, parameters: { course_id: course.id, id: task_plan.id },
+                              raw_post_data: valid_json_hash.to_json
+        expect(response).to have_http_status(:success)
+        # Need to reload the task_plan since publishing it will set the
+        # publication dates and change the representation
+        expect(task_plan.reload.publish_last_requested_at).to be_within(1.second).of(Time.now)
+        expect(task_plan.published_at).to be_within(1.second).of(Time.now)
 
-    it 'does not allow an unauthorized user to publish a task_plan' do
-      controller.sign_in user
-      expect { api_post :publish, nil, parameters: { course_id: course.id, id: task_plan.id } }
-        .to raise_error(SecurityTransgression)
-    end
+        expect(response.body).to eq Api::V1::TaskPlanRepresenter.new(task_plan).to_json
+      end
 
-    it 'does not allow an anonymous user to publish a task_plan' do
-      expect { api_post :publish, nil, parameters: { course_id: course.id, id: task_plan.id } }
-        .to raise_error(SecurityTransgression)
-    end
+      it 'returns an error message if the task_plan settings are invalid' do
+        invalid_json_hash = valid_json_hash
+        invalid_json_hash['settings']['exercise_ids'] = [1, 2, 3]
+        invalid_json_hash['settings']['exercises_count_dynamic'] = 3
 
-    it 'returns an error message if the task_plan settings are invalid' do
-      task_plan.settings[:exercise_ids] = [1, 2, 3]
-      task_plan.settings[:exercises_count_dynamic] = 3
-      task_plan.save!
-
-      controller.sign_in teacher
-      expect { api_post :publish, nil, parameters: { course_id: course.id, id: task_plan.id } }
-        .not_to change{ Tasks::Models::Task.count }
-      expect(response).to have_http_status(:unprocessable_entity)
-      error = response.body_as_hash[:errors].first
-      expect(error[:code]).to eq 'invalid_settings'
-      expect(error[:message]).to eq 'Invalid settings'
-      expect(error[:data].first).to include("The property '#/' contains additional properties [\"exercise_ids\", \"exercises_count_dynamic\"] outside of the schema when none are allowed in schema")
+        controller.sign_in teacher
+        api_put :update, nil, parameters: { course_id: course.id, id: task_plan.id },
+                              raw_post_data: invalid_json_hash.to_json
+        expect(response).to have_http_status(:unprocessable_entity)
+        error = response.body_as_hash[:errors].first
+        expect(error[:message]).to include "Settings - The property '#/' contains additional properties [\"exercise_ids\", \"exercises_count_dynamic\"] outside of the schema when none are allowed in schema"
+      end
     end
   end
 

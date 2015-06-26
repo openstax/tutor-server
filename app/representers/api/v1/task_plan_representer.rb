@@ -19,11 +19,20 @@ module Api::V1
              readable: true,
              writeable: true
 
+    property :is_publish_requested,
+             readable: true,
+             writeable: true,
+             schema_info: { type: 'boolean' }
+
+    property :publish_last_requested_at,
+             type: String,
+             readable: true,
+             writeable: false
+
     property :published_at,
              type: String,
              readable: true,
-             writeable: true,
-             setter: lambda {|val, args| self.published_at = Chronic.parse(val)}
+             writeable: false
 
     property :settings,
              type: Object,

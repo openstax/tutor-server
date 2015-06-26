@@ -43,10 +43,11 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   EOS
   def create
     course = Entity::Course.find(params[:course_id])
-    plan = BuildTaskPlan[course: course]
-    standard_create(plan, Api::V1::TaskPlanRepresenter) do |tp|
+    task_plan = BuildTaskPlan[course: course]
+    standard_create(task_plan, Api::V1::TaskPlanRepresenter) do |tp|
       tp.assistant = Tasks::GetAssistant[course: course, task_plan: tp]
       return head :unprocessable_entity if tp.assistant.nil?
+      DistributeTasks.call(tp) if tp.is_publish_requested && tp.errors.empty?
     end
   end
 
@@ -60,29 +61,8 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   EOS
   def update
     task_plan = Tasks::Models::TaskPlan.find(params[:id])
-    standard_update(task_plan, Api::V1::TaskPlanRepresenter)
-  end
-
-  ###############################################################
-  # publish
-  ###############################################################
-
-  api :POST, '/plans/:id/publish', 'Publishes the specified TaskPlan'
-  description <<-EOS
-    #{json_schema(Api::V1::TaskPlanRepresenter, include: :writeable)}
-  EOS
-  def publish
-    task_plan = Tasks::Models::TaskPlan.find(params[:id])
-    OSU::AccessPolicy.require_action_allowed!(:publish, current_api_user, task_plan)
-
-    result = DistributeTasks.call(task_plan)
-    if result.errors.empty?
-      respond_with task_plan, represent_with: Api::V1::TaskPlanRepresenter, location: nil
-    else
-      error_hashes = result.errors.collect do |error|
-        {code: error.code, message: error.message, data: error.data}
-      end
-      render json: { errors: error_hashes }, status: :unprocessable_entity
+    standard_update(task_plan, Api::V1::TaskPlanRepresenter) do |tp|
+      DistributeTasks.call(tp) if tp.is_publish_requested && tp.errors.empty?
     end
   end
 

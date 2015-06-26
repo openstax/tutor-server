@@ -1,5 +1,3 @@
-require 'json-schema'
-
 class DistributeTasks
 
   lev_routine
@@ -8,27 +6,16 @@ class DistributeTasks
 
   protected
 
-  def validate_json(schema, object, options = {})
-    options[:insert_defaults] = true if options[:insert_defaults].nil?
-
-    JSON::Validator.fully_validate(schema, object, options)
-  end
-
   def exec(task_plan)
-    owner = task_plan.owner
+    task_plan.publish_last_requested_at = Time.now
+
     assistant = task_plan.assistant
 
-    # Validate the given settings against the assistant's schema
-    # Intervention settings already included when the task_plan was saved
-    err = validate_json(assistant.schema, task_plan.settings)
-
-    fatal_error(code: :invalid_settings, message: 'Invalid settings', data: err) unless err.empty?
+    # Abort Task creation early if task_plan is invalid
+    transfer_errors_from(task_plan, { type: :verbatim }, true) unless task_plan.valid?
 
     # Delete pre-existing assignments
-    unless task_plan.tasks.empty?
-      task_plan.tasks.destroy_all
-      task_plan.reload
-    end
+    task_plan.tasks.destroy_all unless task_plan.tasks.empty?
 
     tasking_plans = run(:get_tasking_plans, task_plan).outputs.tasking_plans
 
@@ -53,7 +40,8 @@ class DistributeTasks
 
     outputs[:tasks] = tasks
 
-    task_plan.update_attributes(published_at: Time.now)
+    task_plan.published_at = Time.now
+    task_plan.save
   end
 
 end

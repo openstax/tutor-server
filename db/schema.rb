@@ -356,15 +356,16 @@ ActiveRecord::Schema.define(version: 20150507224137) do
   add_index "tasks_performance_report_exports", ["entity_role_id"], name: "index_tasks_performance_report_exports_on_entity_role_id", using: :btree
 
   create_table "tasks_task_plans", force: :cascade do |t|
-    t.integer  "tasks_assistant_id", null: false
-    t.integer  "owner_id",           null: false
-    t.string   "owner_type",         null: false
+    t.integer  "tasks_assistant_id",        null: false
+    t.integer  "owner_id",                  null: false
+    t.string   "owner_type",                null: false
     t.string   "title"
-    t.string   "type",               null: false
-    t.text     "settings",           null: false
+    t.string   "type",                      null: false
+    t.text     "settings",                  null: false
+    t.datetime "publish_last_requested_at"
     t.datetime "published_at"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
   end
 
   add_index "tasks_task_plans", ["owner_id", "owner_type"], name: "index_tasks_task_plans_on_owner_id_and_owner_type", using: :btree
