@@ -21,4 +21,17 @@ RSpec.feature 'Admin editing a course' do
     expect(page).to have_css('.flash_notice', text: 'The course has been updated.')
     expect(page).to have_css('tr td', text: 'Changed')
   end
+
+  scenario 'Adding a period' do
+    visit admin_courses_path
+    click_link 'edit'
+
+    click_link 'Add period'
+    expect(page).to have_content('New period for "Physics I"')
+
+    fill_in 'Name', with: '2nd'
+    click_button 'Save'
+
+    expect(current_path).to eq(edit_admin_course_path(@course))
+  end
 end
