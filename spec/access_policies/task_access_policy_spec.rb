@@ -17,7 +17,17 @@ RSpec.describe TaskAccessPolicy, :type => :access_policy do
       context 'and the requestor has taskings in the task' do
         before { allow(DoesTaskingExist).to receive(:[]) { true } }
 
-        it { should be true }
+        context "and the task's open date has passed" do
+          before { allow(task).to receive(:past_open?) { true } }
+
+          it { should be true }
+        end
+
+        context "and the task's open date has not passed" do
+          before { allow(task).to receive(:past_open?) { false } }
+
+          it { should be false }
+        end
       end
 
       context 'and the requestor has no taskings in the task' do

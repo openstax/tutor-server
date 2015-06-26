@@ -15,13 +15,23 @@ RSpec.describe TaskedAccessPolicy, :type => :access_policy do
       context 'and the requestor is human' do
         before { allow(requestor).to receive(:is_human?) { true } }
 
-        context 'and the tasked has tasks for the requestor' do
+        context 'and the tasked is part of a task for the requestor' do
           before { allow(DoesTaskingExist).to receive(:[]) { true } }
 
-          it { should be true }
+          context "and the task's open date has passed" do
+            before { allow(tasked.task_step.task).to receive(:past_open?) { true } }
+
+            it { should be true }
+          end
+
+          context "and the task's open date has not passed" do
+            before { allow(tasked.task_step.task).to receive(:past_open?) { false } }
+
+            it { should be false }
+          end
         end
 
-        context 'and the tasked has no tasks for the requestor' do
+        context 'and the tasked is not part of a task for the requestor' do
           before { allow(DoesTaskingExist).to receive(:[]) { false } }
 
           it { should be false }
