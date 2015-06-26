@@ -7,7 +7,6 @@ module Tasks
                  translations: { outputs: { type: :verbatim } }
 
     protected
-
     def exec(course:, role:)
       outputs[:performance_report] = \
         if CourseMembership::IsCourseTeacher[course: course, roles: [role]]
@@ -18,40 +17,47 @@ module Tasks
     end
 
     private
-
     def get_performance_report_for_teacher(course)
       @tasks = {}
       @average = []
+
       course.periods.collect do |period|
         @average << Hash.new { |h, k| h[k] = [] }
-        student_tasks, student_data = [], []
+
         student_profiles = run(:get_student_profiles, period: period).outputs.profiles
         tasks = get_tasks(student_profiles, period.id)
 
-        student_profiles.collect do |student_profile|
-          student_tasks = tasks.select { |t| taskings_exist?(t, student_profile) }
-
-
-        student_data << {
-          name: student_profile.full_name,
-          role: student_profile.entity_role_id,
-          data: student_tasks.collect.with_index { |task, index|
-            attempted_count = task.task_steps.select(&:completed?).length
-
-            if attempted_count > 0
-              @average[index] << (Float(task.correct_exercise_count) / attempted_count)
-            end
-
+        {
+          period: { id: period.id },
+          students: student_profiles.collect do |student_profile|
+            student_tasks = tasks.select { |t| taskings_exist?(t, student_profile) }
             {
-              status: task.status,
-              type: task.task_type,
-              id: task.id,
-              exercise_count: task.exercise_count,
-              correct_exercise_count: task.correct_exercise_count,
-              recovered_exercise_count: task.recovered_exercise_count
+              name: student_profile.full_name,
+              role: student_profile.entity_role_id,
+              data: student_tasks.collect.with_index { |task, index|
+                set_average(task, index)
+
+                {
+                  status: task.status,
+                  type: task.task_type,
+                  id: task.id,
+                  exercise_count: task.exercise_count,
+                  correct_exercise_count: task.correct_exercise_count,
+                  recovered_exercise_count: task.recovered_exercise_count
+                }
+              }
             }
-          }
-        }
+          end
+        }.merge(data_headings: get_data_headings(tasks))
+      end
+    end
+
+    def set_average(task, index)
+      attempted_count = task.task_steps.select(&:completed?).length
+
+      if attempted_count > 0
+        @average[index] = []
+        @average[index] << (Float(task.correct_exercise_count) / attempted_count)
       end
     end
 
