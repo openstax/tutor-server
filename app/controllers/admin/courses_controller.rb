@@ -16,6 +16,7 @@ class Admin::CoursesController < Admin::BaseController
   def edit
     entity_course = Entity::Course.find(params[:id])
     @course = GetCourseProfile[course: entity_course]
+    @periods = entity_course.periods
   end
 
   def update

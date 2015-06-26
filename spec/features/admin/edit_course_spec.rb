@@ -33,5 +33,20 @@ RSpec.feature 'Admin editing a course' do
     click_button 'Save'
 
     expect(current_path).to eq(edit_admin_course_path(@course))
+    expect(page).to have_content('2nd edit')
+  end
+
+  scenario 'Editing a period' do
+    visit admin_courses_path
+    click_link 'edit'
+
+    click_link 'edit'
+    expect(page).to have_content('Edit period')
+
+    fill_in 'Name', with: 'first'
+    click_button 'Save'
+
+    expect(current_path).to eq(edit_admin_course_path(@course))
+    expect(page).to have_content('first edit')
   end
 end
