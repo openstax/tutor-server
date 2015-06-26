@@ -844,7 +844,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                 type: 'reading',
                 id: resp[0][:students][0][:data][1][:id],
                 status: 'completed',
-                exercise_count: 3,
+                exercise_count: 4,
                 correct_exercise_count: 0,
                 recovered_exercise_count: 0
               },

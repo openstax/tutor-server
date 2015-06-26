@@ -23,7 +23,7 @@ module Tasks
 
       course.periods.collect do |period|
         @average << Hash.new { |h, k| h[k] = [] }
-
+        student_tasks = []
         student_profiles = run(:get_student_profiles, period: period).outputs.profiles
         tasks = get_tasks(student_profiles, period.id)
 
@@ -48,7 +48,7 @@ module Tasks
               }
             }
           end
-        }.merge(data_headings: get_data_headings(tasks))
+        }.merge(data_headings: get_data_headings(student_tasks))
       end
     end
 
@@ -56,8 +56,7 @@ module Tasks
       attempted_count = task.task_steps.select(&:completed?).length
 
       if attempted_count > 0
-        @average[index] = []
-        @average[index] << (Float(task.correct_exercise_count) / attempted_count)
+        @average[-1][index] << (Float(task.correct_exercise_count) / attempted_count)
       end
     end
 
