@@ -15,6 +15,11 @@ module Api::V1
                  writeable: false,
                  readable: true
 
+        collection :answers,
+                   writeable: false,
+                   readable: true,
+                   decorator: Api::V1::Tasks::Stats::AnswerRepresenter
+
       end
     end
   end
