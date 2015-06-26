@@ -1,4 +1,6 @@
 class Admin::TimecopController < Admin::BaseController
+  before_filter :timecop_enabled
+
   def index
   end
 
@@ -15,6 +17,11 @@ class Admin::TimecopController < Admin::BaseController
   end
 
   private
+
+  def timecop_enabled
+    Timecop.enabled? || head(:not_found)
+  end
+
   def timestr_and_zonestr_to_utc_time(time_str, time_zone_str)
     time = Chronic.parse(time_str)
     raise "Unable to parse time: #{time_str}" if time.nil?
