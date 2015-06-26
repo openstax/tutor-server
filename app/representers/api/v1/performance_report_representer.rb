@@ -1,7 +1,7 @@
 module Api::V1
   class PerformanceReportRepresenter < Roar::Decorator
 
-    include Roar::JSON
+    include Representable::JSON::Collection
 
     class StudentData < Roar::Decorator
 
@@ -63,17 +63,25 @@ module Api::V1
                readable: true
     end
 
-    property :period,
-             readable: true,
-             decorator: PeriodRepresenter
+    class ReportPerPeriod < Roar::Decorator
 
-    collection :data_headings,
-               readable: true,
-               decorator: DataHeadings
+      include Roar::JSON
 
-    collection :students,
+      property :period_id,
+               type: String,
                readable: true,
-               decorator: Students
+               getter: -> (*) { period.id.to_s }
+
+      collection :data_headings,
+                 readable: true,
+                 decorator: DataHeadings
+
+      collection :students,
+                 readable: true,
+                 decorator: Students
+    end
+
+    items extend: ReportPerPeriod
 
   end
 

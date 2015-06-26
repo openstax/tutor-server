@@ -665,14 +665,34 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       let(:teacher) { FactoryGirl.create :user_profile }
       let(:teacher_token) { FactoryGirl.create :doorkeeper_access_token,
                               resource_owner_id: teacher.id }
-      let(:student_1) { FactoryGirl.create :user_profile }
+      let(:student_1) { FactoryGirl.create :user_profile,
+                                           first_name: 'Student',
+                                           last_name: 'One',
+                                           full_name: 'Student One' }
       let(:student_1_token) { FactoryGirl.create :doorkeeper_access_token,
                                 resource_owner_id: student_1.id }
+      let(:student_2) { FactoryGirl.create :user_profile,
+                                           first_name: 'Student',
+                                           last_name: 'Two',
+                                           full_name: 'Student Two' }
+
+      let(:student_2) { FactoryGirl.create :user_profile,
+                                           first_name: 'Student',
+                                           last_name: 'Two',
+                                           full_name: 'Student Two' }
+      let(:student_3) { FactoryGirl.create :user_profile,
+                                           first_name: 'Student',
+                                           last_name: 'Three',
+                                           full_name: 'Student Three' }
+      let(:student_4) { FactoryGirl.create :user_profile,
+                                           first_name: 'Student',
+                                           last_name: 'Four',
+                                           full_name: 'Student Four' }
 
       before do
         SetupPerformanceReportData[course: course,
                                    teacher: teacher,
-                                   students: student_1,
+                                   students: [student_1, student_2, student_3, student_4],
                                    book: @book]
       end
 
@@ -680,66 +700,128 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         api_get :performance, teacher_token, parameters: { id: course.id }
 
         expect(response).to have_http_status :success
-        expect(response.body_as_hash).to include(
+        resp = response.body_as_hash
+        expect(resp).to eq([{
+          period_id: course.periods.first.id.to_s,
           data_headings: [
-            { title: 'Homework task plan', average: kind_of(Float) },
+            { title: 'Homework 2 task plan', average: 87.5 },
             { title: 'Reading task plan' },
-            { title: 'Homework 2 task plan', average: kind_of(Float) }
+            { title: 'Homework task plan', average: 75.0 }
           ],
           students: [{
-            name: kind_of(String),
-            role: kind_of(Integer),
+            name: 'Student One',
+            role: resp[0][:students][0][:role],
             data: [
               {
                 type: 'homework',
-                id: kind_of(Integer),
+                id: resp[0][:students][0][:data][0][:id],
                 status: 'completed',
-                exercise_count: 6,
-                correct_exercise_count: 6,
+                exercise_count: 4,
+                correct_exercise_count: 3,
                 recovered_exercise_count: 0
               },
               {
                 type: 'reading',
-                id: kind_of(Integer),
+                id: resp[0][:students][0][:data][1][:id],
                 status: 'completed'
               },
               {
                 type: 'homework',
-                id: kind_of(Integer),
-                status: 'in_progress',
-                exercise_count: 4,
-                correct_exercise_count: 3,
+                id: resp[0][:students][0][:data][2][:id],
+                status: 'completed',
+                exercise_count: 6,
+                correct_exercise_count: 6,
                 recovered_exercise_count: 0
               }
             ]
           }, {
-            name: kind_of(String),
-            role: kind_of(Integer),
+            name: 'Student Two',
+            role: resp[0][:students][1][:role],
             data: [
               {
                 type: 'homework',
-                id: kind_of(Integer),
-                status: 'in_progress',
-                exercise_count: 5,
-                correct_exercise_count: 2,
-                recovered_exercise_count: 0
-              },
-              {
-                type: 'reading',
-                id: kind_of(Integer),
-                status: 'in_progress'
-              },
-              {
-                type: 'homework',
-                id: kind_of(Integer),
+                id: resp[0][:students][1][:data][0][:id],
                 status: 'in_progress',
                 exercise_count: 3,
                 correct_exercise_count: 1,
                 recovered_exercise_count: 0
+              },
+              {
+                type: 'reading',
+                id: resp[0][:students][1][:data][1][:id],
+                status: 'in_progress'
+              },
+              {
+                type: 'homework',
+                id: resp[0][:students][1][:data][2][:id],
+                status: 'in_progress',
+                exercise_count: 5,
+                correct_exercise_count: 2,
+                recovered_exercise_count: 0
               }
             ]
           }]
-        )
+        }, {
+          period_id: course.periods.order(:id).last.id.to_s,
+          data_headings: [
+            { title: 'Homework 2 task plan' },
+            { title: 'Reading task plan' },
+            { title: 'Homework task plan', average: 100.0 }
+          ],
+          students: [{
+            name: student_3.full_name,
+            role: resp[1][:students][0][:role],
+            data: [
+              {
+                type: 'homework',
+                id: resp[1][:students][0][:data][0][:id],
+                status: 'not_started',
+                exercise_count: 3,
+                correct_exercise_count: 0,
+                recovered_exercise_count: 0
+              },
+              {
+                type: 'reading',
+                id: resp[1][:students][0][:data][1][:id],
+                status: 'not_started'
+              },
+              {
+                type: 'homework',
+                id: resp[1][:students][0][:data][2][:id],
+                status: 'completed',
+                exercise_count: 6,
+                correct_exercise_count: 6,
+                recovered_exercise_count: 0
+              }
+            ]
+          }, {
+            name: student_4.full_name,
+            role: resp[1][:students][1][:role],
+            data: [
+              {
+                type: 'homework',
+                id: resp[1][:students][1][:data][0][:id],
+                status: 'not_started',
+                exercise_count: 3,
+                correct_exercise_count: 0,
+                recovered_exercise_count: 0
+              },
+              {
+                type: 'reading',
+                id: resp[1][:students][1][:data][1][:id],
+                status: 'not_started'
+              },
+              {
+                type: 'homework',
+                id: resp[1][:students][1][:data][2][:id],
+                status: 'not_started',
+                exercise_count: 5,
+                correct_exercise_count: 0,
+                recovered_exercise_count: 0
+              }
+            ]
+          }]
+        }])
       end
 
       it 'raises error for users not in the course' do

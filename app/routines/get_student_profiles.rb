@@ -14,8 +14,8 @@ class GetStudentProfiles
                translations: { outputs: { type: :verbatim } }
 
   protected
-  def exec(course: course)
-    student_roles = run(:get_students, course).outputs.students
+  def exec(period: period)
+    student_roles = run(:get_students, period: period).outputs.students
     users = run(:get_users_for_roles, student_roles).outputs.users
     names = run(:get_user_full_names, users).outputs.full_names
     role_users = Role::Models::User.where(entity_user_id: users.collect(&:id))

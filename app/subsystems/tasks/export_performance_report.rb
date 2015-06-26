@@ -19,7 +19,7 @@ module Tasks
         axlsx.use_shared_strings = true # OS X Numbers interoperability
         axlsx.workbook.styles.fonts.first.name = 'Helvetica Neue'
         create_summary_worksheet(package: axlsx)
-        create_data_worksheet(package: axlsx)
+        create_data_worksheets(package: axlsx)
         axlsx.serialize(tmp_file_path)
       end
 
@@ -38,23 +38,25 @@ module Tasks
       end
     end
 
-    def create_data_worksheet(package:)
-      package.workbook.add_worksheet(name: 'Student Performance') do |sheet|
-        sheet.add_row(data_headers)
-        sheet.add_row(gather_averages)
-        outputs.performance_report.students.each do |student|
-          sheet.add_row student_data(student)
+    def create_data_worksheets(package:)
+      outputs.performance_report.each do |report|
+        package.workbook.add_worksheet(name: report[:period][:name]) do |sheet|
+          sheet.add_row(data_headers(report[:data_headings]))
+          sheet.add_row(gather_averages(report[:data_headings]))
+          report.students.each do |student|
+            sheet.add_row(student_data(student))
+          end
         end
       end
     end
 
-    def data_headers
-      headings = outputs.performance_report.data_headings.collect(&:title)
+    def data_headers(data_headings)
+      headings = data_headings.collect(&:title)
       (['Students'] + headings).collect { |header| bold_text(header) }
     end
 
-    def gather_averages
-      averages = outputs.performance_report.data_headings.collect(&:average)
+    def gather_averages(data_headings)
+      averages = data_headings.collect(&:average)
       (['Average'] + averages).collect { |average| bold_text(average) }
     end
 
