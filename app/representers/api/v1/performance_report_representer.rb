@@ -12,7 +12,7 @@ module Api::V1
                readable: true
 
       property :id,
-               type: Integer,
+               type: String,
                readable: true
 
       property :status,
@@ -41,7 +41,7 @@ module Api::V1
                readable: true
 
       property :role,
-               type: Integer,
+               type: String,
                readable: true
 
       collection :data,
