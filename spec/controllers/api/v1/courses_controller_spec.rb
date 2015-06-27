@@ -713,9 +713,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(resp).to eq([{
           period_id: course.periods.first.id.to_s,
           data_headings: [
-            { title: 'Homework 2 task plan', average: 87.5 },
-            { title: 'Reading task plan' },
-            { title: 'Homework task plan', average: 75.0 }
+            { title: 'Homework 2 task plan', plan_id: resp[0][:data_headings][0][:plan_id], average: 87.5 },
+            { title: 'Reading task plan', plan_id: resp[0][:data_headings][1][:plan_id]  },
+            { title: 'Homework task plan', plan_id: resp[0][:data_headings][2][:plan_id], average: 75.0 }
           ],
           students: [{
             name: 'Student One',
@@ -773,9 +773,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         }, {
           period_id: course.periods.order(:id).last.id.to_s,
           data_headings: [
-            { title: 'Homework 2 task plan' },
-            { title: 'Reading task plan' },
-            { title: 'Homework task plan', average: 100.0 }
+            { title: 'Homework 2 task plan', plan_id: resp[1][:data_headings][0][:plan_id] },
+            { title: 'Reading task plan', plan_id: resp[1][:data_headings][1][:plan_id]  },
+            { title: 'Homework task plan', plan_id: resp[1][:data_headings][2][:plan_id], average: 100.0 }
           ],
           students: [{
             name: student_3.full_name,
