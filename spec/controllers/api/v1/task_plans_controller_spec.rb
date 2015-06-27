@@ -166,7 +166,7 @@ describe Api::V1::TaskPlansController, :type => :controller, :api => true, :vers
         expect(response.body).to eq Api::V1::TaskPlanRepresenter.new(new_task_plan).to_json
 
         response_hash = JSON.parse(response.body)
-        expect(response_hash['progress_url']).to include("/api/jobs/")
+        expect(response_hash['publish_job_url']).to include("/api/jobs/")
       end
 
       it 'returns an error message if the task_plan settings are invalid' do
@@ -237,7 +237,7 @@ describe Api::V1::TaskPlansController, :type => :controller, :api => true, :vers
         expect(response.body).to eq Api::V1::TaskPlanRepresenter.new(task_plan).to_json
 
         response_hash = JSON.parse(response.body)
-        expect(response_hash['progress_url']).to include("/api/jobs/")
+        expect(response_hash['publish_job_url']).to include("/api/jobs/")
       end
 
       it 'returns an error message if the task_plan settings are invalid' do

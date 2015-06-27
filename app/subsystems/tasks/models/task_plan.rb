@@ -21,7 +21,7 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
   validates :owner, presence: true
   validates :type, presence: true
 
-  validate :valid_settings, :not_open
+  validate :valid_settings, :changes_allowed
 
   protected
 
@@ -37,8 +37,8 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
     false
   end
 
-  def not_open
-    return if tasks.none? { |tt| tt.opens_at.nil? || tt.opens_at <= Time.now } || \
+  def changes_allowed
+    return if tasks.none? { |tt| tt.past_open? } || \
               (!is_publish_requested && changes.except(*UPDATABLE_ATTRIBUTES).empty?)
     action = is_publish_requested ? 'republished' : 'updated'
     errors.add(:base, "cannot be #{action} after it is open")

@@ -34,11 +34,12 @@ module Api::V1
              readable: true,
              writeable: false
 
-    property :progress_url,
+    property :publish_job_url,
              type: String,
              readable: true,
              writeable: false,
-             getter: ->(*) { "/api/jobs/#{publish_job_uuid}" }
+             getter: ->(*) { "/api/jobs/#{publish_job_uuid}" },
+             if: ->(*) { !publish_job_uuid.nil? }
 
     property :published_at,
              type: String,
