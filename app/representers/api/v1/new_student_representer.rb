@@ -1,5 +1,5 @@
 module Api::V1
-  class StudentRepresenter < Roar::Decorator
+  class NewStudentRepresenter < Roar::Decorator
 
     include Roar::JSON
     include Representable::Coercion
@@ -30,19 +30,34 @@ module Api::V1
                required: true
              }
 
+    property :email,
+             type: String,
+             writeable: true,
+             readable: true
+
+    property :username,
+             type: String,
+             writeable: true,
+             readable: true
+
+    property :password,
+             type: String,
+             writeable: true,
+             readable: false
+
     property :first_name,
              type: String,
-             writeable: false,
+             writeable: true,
              readable: true
 
     property :last_name,
              type: String,
-             writeable: false,
+             writeable: true,
              readable: true
 
     property :full_name,
              type: String,
-             writeable: false,
+             writeable: true,
              readable: true
 
   end
