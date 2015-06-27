@@ -72,15 +72,22 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       )
     }
 
+    let!(:course) { task_plan.owner }
+    let!(:period) { CreatePeriod[course: course] }
+
     let!(:num_taskees) { 3 }
 
-    let!(:taskees) { num_taskees.times.collect{ Entity::User.create } }
+    let!(:taskees) { num_taskees.times.collect do
+      user = Entity::User.create
+      AddUserAsPeriodStudent.call(user: user, period: period)
+      user
+    end }
 
     let!(:tasking_plans) {
-      taskees.collect{ |t|
+      taskees.collect{ |tt|
         task_plan.tasking_plans << FactoryGirl.create(:tasks_tasking_plan,
           task_plan: task_plan,
-          target: t
+          target: tt
         )
       }
     }
@@ -190,9 +197,16 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       )
     }
 
+    let!(:course) { task_plan.owner }
+    let!(:period) { CreatePeriod[course: course] }
+
     let!(:num_taskees) { 3 }
 
-    let!(:taskees) { num_taskees.times.collect{ FactoryGirl.create(:user_profile) } }
+    let!(:taskees) { num_taskees.times.collect do
+      user = Entity::User.create
+      AddUserAsPeriodStudent.call(user: user, period: period)
+      user
+    end }
 
     let!(:tasking_plans) {
       taskees.collect{ |t|

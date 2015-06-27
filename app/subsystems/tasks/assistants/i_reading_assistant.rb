@@ -65,11 +65,13 @@ class Tasks::Assistants::IReadingAssistant
 
   def self.build_task(task_plan:)
     title    = task_plan.title || 'iReading'
+    description = task_plan.description
 
     Tasks::BuildTask[
       task_plan: task_plan,
       task_type: :reading,
       title:     title,
+      description: description,
       feedback_at: Time.now
     ]
   end

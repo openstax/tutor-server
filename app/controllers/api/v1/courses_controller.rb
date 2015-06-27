@@ -154,7 +154,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   api :POST, '/courses/:course_id/performance/export',
              'Begins the export of the performance report for authorized teachers'
   description <<-EOS
-    201 if the role is a teacher of a course
+    202 if the role is a teacher of a course
       -- The export background job will be started
   EOS
   def performance_export

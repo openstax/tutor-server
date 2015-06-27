@@ -44,10 +44,22 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   def create
     course = Entity::Course.find(params[:course_id])
     task_plan = BuildTaskPlan[course: course]
-    standard_create(task_plan, Api::V1::TaskPlanRepresenter) do |tp|
-      tp.assistant = Tasks::GetAssistant[course: course, task_plan: tp]
-      return head :unprocessable_entity if tp.assistant.nil?
-      DistributeTasks.call(tp) if tp.is_publish_requested && tp.errors.empty?
+
+    # Modified standard_create code
+    Tasks::Models::TaskPlan.transaction do
+      consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter)
+      task_plan.assistant = Tasks::GetAssistant[course: course, task_plan: task_plan]
+      return head :unprocessable_entity if task_plan.assistant.nil?
+      OSU::AccessPolicy.require_action_allowed!(:create, current_api_user, task_plan)
+      uuid = distribute_task_plan_if_requested(task_plan)
+
+      if task_plan.save
+        respond_with task_plan, represent_with: Api::V1::TaskPlanRepresenter,
+                                status: uuid.nil? ? :ok : :accepted,
+                                location: nil
+      else
+        render_api_errors(task_plan.errors)
+      end
     end
   end
 
@@ -60,9 +72,23 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     #{json_schema(Api::V1::TaskPlanRepresenter, include: :writeable)}
   EOS
   def update
+    # Modified standard_update code
     task_plan = Tasks::Models::TaskPlan.find(params[:id])
-    standard_update(task_plan, Api::V1::TaskPlanRepresenter) do |tp|
-      DistributeTasks.call(tp) if tp.is_publish_requested && tp.errors.empty?
+    OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, task_plan)
+
+    task_plan.with_lock do
+      consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter)
+      OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, task_plan)
+      uuid = distribute_task_plan_if_requested(task_plan)
+
+      if task_plan.save
+        # http://stackoverflow.com/a/27413178
+        respond_with task_plan, represent_with: Api::V1::TaskPlanRepresenter,
+                                responder: ResponderWithPutContent,
+                                status: uuid.nil? ? :ok : :accepted
+      else
+        render_api_errors(task_plan.errors)
+      end
     end
   end
 
@@ -253,6 +279,18 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   def destroy
     task_plan = Tasks::Models::TaskPlan.find(params[:id])
     standard_destroy(task_plan)
+  end
+
+  protected
+
+  def distribute_task_plan_if_requested(task_plan)
+    return unless task_plan.is_publish_requested
+
+    task_plan.publish_last_requested_at = Time.now
+    task_plan.save # Save before sending it out
+    return unless task_plan.errors.empty?
+
+    task_plan.publish_job_uuid = DistributeTasks.perform_later(task_plan)
   end
 
 end

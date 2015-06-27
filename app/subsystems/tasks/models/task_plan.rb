@@ -2,6 +2,8 @@ require 'json-schema'
 
 class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
 
+  UPDATABLE_ATTRIBUTES = ['title', 'description']
+
   attr_accessor :is_publish_requested
 
   # Allow use of 'type' column without STI
@@ -19,7 +21,7 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
   validates :owner, presence: true
   validates :type, presence: true
 
-  validate :valid_settings
+  validate :valid_settings, :changes_allowed
 
   protected
 
@@ -32,6 +34,14 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
     json_errors.each do |json_error|
       errors.add(:settings, "- #{json_error}")
     end
+    false
+  end
+
+  def changes_allowed
+    return if tasks.none? { |tt| tt.past_open? } || \
+              (!is_publish_requested && changes.except(*UPDATABLE_ATTRIBUTES).empty?)
+    action = is_publish_requested ? 'republished' : 'updated'
+    errors.add(:base, "cannot be #{action} after it is open")
     false
   end
 

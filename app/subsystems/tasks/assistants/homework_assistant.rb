@@ -19,9 +19,6 @@ class Tasks::Assistants::HomeworkAssistant
           "minimum": 2,
           "maximum": 4
         },
-        "description": {
-          "type": "string"
-        },
         "page_ids": {
           "type": "array",
           "items": {
@@ -64,8 +61,7 @@ class Tasks::Assistants::HomeworkAssistant
 
   def self.build_task(task_plan:)
     title    = task_plan.title || 'Homework'
-
-    description = task_plan.settings['description']
+    description = task_plan.description
 
     Tasks::BuildTask[
       task_plan:   task_plan,

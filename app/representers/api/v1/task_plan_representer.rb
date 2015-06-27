@@ -19,6 +19,11 @@ module Api::V1
              readable: true,
              writeable: true
 
+    property :description,
+             type: String,
+             readable: true,
+             writeable: true
+
     property :is_publish_requested,
              readable: true,
              writeable: true,
@@ -28,6 +33,13 @@ module Api::V1
              type: String,
              readable: true,
              writeable: false
+
+    property :publish_job_url,
+             type: String,
+             readable: true,
+             writeable: false,
+             getter: ->(*) { "/api/jobs/#{publish_job_uuid}" },
+             if: ->(*) { !publish_job_uuid.nil? }
 
     property :published_at,
              type: String,

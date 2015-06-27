@@ -41,4 +41,6 @@ Rails.application.configure do
   WebMock.allow_net_connect!
 
   OpenStax::Cnx::V1.set_archive_url_base(url: 'https://archive-staging-tutor.cnx.org/contents/')
+
+  config.active_job.queue_adapter = :inline
 end

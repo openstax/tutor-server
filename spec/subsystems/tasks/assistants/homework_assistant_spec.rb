@@ -59,17 +59,24 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
   let!(:task_plan) {
     FactoryGirl.create(:tasks_task_plan,
       assistant: assistant,
+      description: "Hello!",
       settings: {
         exercise_ids: teacher_selected_exercise_ids,
-        exercises_count_dynamic: tutor_selected_exercise_count,
-        description: "Hello!"
+        exercises_count_dynamic: tutor_selected_exercise_count
       }
     )
   }
 
+  let!(:course) { task_plan.owner }
+  let!(:period) { CreatePeriod[course: course] }
+
   let!(:num_taskees) { 3 }
 
-  let!(:taskees) { num_taskees.times.collect{ Entity::User.create } }
+  let!(:taskees) { num_taskees.times.collect do
+    user = Entity::User.create
+    AddUserAsPeriodStudent.call(user: user, period: period)
+    user
+  end }
 
   let!(:tasking_plans) {
     taskees.collect do |taskee|

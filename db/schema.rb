@@ -359,11 +359,13 @@ ActiveRecord::Schema.define(version: 20150507224137) do
     t.integer  "tasks_assistant_id",        null: false
     t.integer  "owner_id",                  null: false
     t.string   "owner_type",                null: false
-    t.string   "title"
     t.string   "type",                      null: false
+    t.string   "title"
+    t.text     "description"
     t.text     "settings",                  null: false
     t.datetime "publish_last_requested_at"
     t.datetime "published_at"
+    t.string   "publish_job_uuid"
     t.datetime "created_at",                null: false
     t.datetime "updated_at",                null: false
   end
@@ -457,10 +459,10 @@ ActiveRecord::Schema.define(version: 20150507224137) do
     t.integer  "entity_task_id"
     t.integer  "task_type",                                     null: false
     t.string   "title",                                         null: false
+    t.text     "description"
     t.datetime "opens_at"
     t.datetime "due_at"
     t.datetime "feedback_at"
-    t.text     "description"
     t.integer  "tasks_taskings_count",              default: 0, null: false
     t.text     "settings",                                      null: false
     t.text     "personalized_placeholder_strategy"
