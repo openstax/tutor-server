@@ -395,10 +395,10 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
     let!(:period_2) { CreatePeriod[course: course, name: 'Beta'] }
 
     before(:each) do
-      task_plan.tasking_plans.each_with_index do |tp, ii|
-        next if ii < task_plan.tasks.length/2
-        tp.target.period = period_2
-        tp.target.save!
+      task_plan.tasking_plans.last(number_of_students/2).each do |tp|
+        student = tp.target.students.first
+        student.period = period_2.to_model
+        student.save!
       end
     end
 
