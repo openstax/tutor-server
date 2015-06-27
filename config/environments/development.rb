@@ -47,5 +47,11 @@ Rails.application.configure do
     Bullet.enable = true
     Bullet.bullet_logger = true # tail -f log/bullet.log
   end
+
+  # Use fake "background" jobs by default (real background jobs require TBD running and
+  # monitoring of workers)
+  if !EnvUtilities.load_boolean(name: 'USE_REAL_BACKGROUND_JOBS', default: false)
+    config.active_job.queue_adapter = :inline
+  end
 end
 
