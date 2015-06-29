@@ -44,7 +44,7 @@ class Api::V1::StudentsController < Api::V1::ApiController
     end
 
     if @result.errors.any?
-      render json: { errors: @result.errors }, status: :conflict
+      render_api_errors(@result.errors)
     else
       respond_with @payload.merge(@student.attributes),
                    represent_with: Api::V1::NewStudentRepresenter,
