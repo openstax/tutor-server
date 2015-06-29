@@ -8,17 +8,17 @@ module UserProfile
 
     protected
 
-    def exec(username: nil, password: nil, entity_user_id: nil, account_id: nil,
+    def exec(email: nil, username: nil, password: nil, entity_user_id: nil, account_id: nil,
              exchange_identifiers: nil)
-      if username.nil? && account_id.nil?
-        raise ArgumentError, 'Username required without an account id'
+      if email.nil? && username.nil? && account_id.nil?
+        raise ArgumentError, 'Email or username required without an account id'
       end
 
       outputs[:profile] = Models::Profile.create!(
         exchange_read_identifier: (exchange_identifiers || new_identifiers).read,
         exchange_write_identifier: (exchange_identifiers || new_identifiers).write,
         entity_user_id: entity_user_id || new_entity_user_id,
-        account_id: account_id || new_account_id(username: username, password: password)
+        account_id: account_id || new_account_id(email: email, username: username, password: password)
       )
     end
 
