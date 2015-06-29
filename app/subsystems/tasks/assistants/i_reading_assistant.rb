@@ -208,7 +208,7 @@ class Tasks::Assistants::IReadingAssistant
   end
 
   def self.num_personalized_exercises
-    1
+    0
   end
 
   def self.add_exercise_related_content!(step:, exercise:)
