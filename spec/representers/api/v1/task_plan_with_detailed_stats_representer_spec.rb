@@ -33,7 +33,7 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
     representation = Api::V1::TaskPlanWithDetailedStatsRepresenter.new(task_plan).as_json
     expect(representation).to include(
       "id" => task_plan.id.to_s,
-      "title" => "A plan",
+      "title" => task_plan.title,
       "type" => "reading",
       "stats" => [
         {

@@ -52,7 +52,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
         task_plan.assistant = Tasks::GetAssistant[course: course, task_plan: task_plan]
         return head :unprocessable_entity if task_plan.assistant.nil?
         OSU::AccessPolicy.require_action_allowed!(:create, current_api_user, task_plan)
-        uuid = distribute_task_plan_if_requested(task_plan)
+        uuid = distribute_or_update_tasks(task_plan)
 
         if task_plan.save
           respond_with task_plan, represent_with: Api::V1::TaskPlanRepresenter,
@@ -82,7 +82,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
       task_plan.with_lock do
         consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter)
         OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, task_plan)
-        uuid = distribute_task_plan_if_requested(task_plan)
+        uuid = distribute_or_update_tasks(task_plan)
 
         if task_plan.save
           # http://stackoverflow.com/a/27413178
@@ -287,14 +287,19 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
 
   protected
 
-  def distribute_task_plan_if_requested(task_plan)
-    return unless task_plan.is_publish_requested
+  # Distributes or updates distributed tasks for the given task_plan
+  # Returns the job uuid, if any
+  def distribute_or_update_tasks(task_plan)
+    if task_plan.is_publish_requested
+      task_plan.publish_last_requested_at = Time.now
+      task_plan.save # Save before sending it out
+      return unless task_plan.errors.empty?
 
-    task_plan.publish_last_requested_at = Time.now
-    task_plan.save # Save before sending it out
-    return unless task_plan.errors.empty?
-
-    task_plan.publish_job_uuid = DistributeTasks.perform_later(task_plan)
+      task_plan.publish_job_uuid = DistributeTasks.perform_later(task_plan)
+    else
+      PropagateTaskPlanUpdates.call(task_plan: task_plan)
+      nil
+    end
   end
 
 end
