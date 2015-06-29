@@ -9,7 +9,7 @@ module Api
         EOS
       end
 
-      api :GET, '/courses/:id/guide',
+      api :GET, '/courses/:id/guide(/role/:role_id)',
                 'Returns a student course guide for Learning Guide'
       description <<-EOS
         #{json_schema(Api::V1::CourseGuideRepresenter, include: :readable)}
@@ -20,7 +20,7 @@ module Api
         respond_with guide, represent_with: Api::V1::CourseGuideRepresenter
       end
 
-      api :GET, '/courses/:id/teacher_guide(/role/:role_id)',
+      api :GET, '/courses/:id/teacher_guide',
                 'Returns course guide for Learning Guide for teachers'
       description <<-EOS
         #{json_schema(Api::V1::CourseGuideRepresenter, include: :readable)}

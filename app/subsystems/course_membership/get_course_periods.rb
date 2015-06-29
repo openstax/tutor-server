@@ -11,14 +11,14 @@ module CourseMembership
       roles = [roles].flatten
 
       outputs[:periods] = if roles.any?
-                            periods_in_roles(course.periods, roles)
+                            periods_for_roles(course.periods, roles)
                           else
                             Entity::Relation.new(course.periods)
                           end
     end
 
     private
-    def periods_in_roles(periods, roles)
+    def periods_for_roles(periods, roles)
       periods.select do |p|
         roles_in_period = run(:get_roles, periods: p).outputs.roles
         (roles_in_period & roles) == roles
