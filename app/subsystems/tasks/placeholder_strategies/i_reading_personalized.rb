@@ -19,7 +19,7 @@ class Tasks::PlaceholderStrategies::IReadingPersonalized
     )
 
     chosen_exercises = SearchLocalExercises[url: exercise_urls]
-    raise "could not fill all placeholder slots (expected #{num_placeholders} exercises, got #{chosen_exercises.count})" \
+    raise "could not fill all placeholder slots (expected #{num_placeholders} exercises, got #{chosen_exercises.count}) from urls #{exercise_urls}" \
       unless chosen_exercises.count == num_placeholders
 
     chosen_exercise_task_step_pairs = chosen_exercises.zip(personalized_placeholder_task_steps)
