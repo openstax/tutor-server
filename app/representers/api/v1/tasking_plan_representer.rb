@@ -4,8 +4,10 @@ module Api::V1
     include Roar::JSON
     include Representable::Coercion
 
-    TARGET_TYPE_TO_API_MAP = { 'CourseMembership::Models::Period' => 'period' }
-    TARGET_TYPE_TO_CLASS_MAP = { 'period' => 'CourseMembership::Models::Period' }
+    TARGET_TYPE_TO_API_MAP = { 'CourseMembership::Models::Period' => 'period',
+                               'Entity::Course' => 'course' }
+    TARGET_TYPE_TO_CLASS_MAP = { 'period' => 'CourseMembership::Models::Period',
+                                 'course' => 'Entity::Course' }
 
     property :target_id,
              type: String,
@@ -23,16 +25,22 @@ module Api::V1
              type: String,
              readable: true,
              writeable: true,
-             setter: lambda {|val, args| self.opens_at = Chronic.parse(val)}
+             getter: ->(*) { DateTimeUtilities.to_api_s(opens_at) },
+             setter: ->(val, *) {
+               orig_time = DateTimeUtilities.from_api_s(val)
+               new_time  = orig_time.in_time_zone.midnight + 1.minute
+               self.opens_at = new_time
+             }
 
     property :due_at,
              type: String,
              readable: true,
              writeable: true,
-             setter: lambda {|val, args|
-                orig_time = Chronic.parse(val)
-                new_time  = orig_time.midnight + 7.hours
-                self.due_at = new_time
+             getter: ->(*) { DateTimeUtilities.to_api_s(due_at) },
+             setter: ->(val, *) {
+               orig_time = DateTimeUtilities.from_api_s(val)
+               new_time  = orig_time.in_time_zone.midnight + 7.hours
+               self.due_at = new_time
              }
 
   end

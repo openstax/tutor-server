@@ -29,7 +29,7 @@ class SetupPerformanceReportData
 
     page_ids = Content::Models::Page.all.map(&:id)
 
-    reading_taskplan = Tasks::Models::TaskPlan.create!(
+    reading_taskplan = Tasks::Models::TaskPlan.new(
       title: 'Reading task plan',
       owner: course,
       type: 'reading',
@@ -37,13 +37,15 @@ class SetupPerformanceReportData
       settings: { page_ids: page_ids.first(2).collect(&:to_s) }
     )
 
-    reading_taskplan.tasking_plans << Tasks::Models::TaskingPlan
-      .create!(target: course, task_plan: reading_taskplan,
-               opens_at: Time.now, due_at: Time.now + 1.week)
+    reading_taskplan.tasking_plans << Tasks::Models::TaskingPlan.new(
+      target: course, task_plan: reading_taskplan, opens_at: Time.now, due_at: Time.now + 1.week
+    )
+
+    reading_taskplan.save!
 
     DistributeTasks[reading_taskplan]
 
-    homework_taskplan = Tasks::Models::TaskPlan.create!(
+    homework_taskplan = Tasks::Models::TaskPlan.new(
       title: 'Homework task plan',
       owner: course,
       type: 'homework',
@@ -54,13 +56,15 @@ class SetupPerformanceReportData
       }
     )
 
-    homework_taskplan.tasking_plans << Tasks::Models::TaskingPlan
-      .create!(target: course, task_plan: homework_taskplan,
-               opens_at: Time.now, due_at: Time.now + 1.day)
+    homework_taskplan.tasking_plans << Tasks::Models::TaskingPlan.new(
+      target: course, task_plan: homework_taskplan, opens_at: Time.now, due_at: Time.now + 1.day
+    )
+
+    homework_taskplan.save!
 
     DistributeTasks[homework_taskplan]
 
-    homework2_taskplan = Tasks::Models::TaskPlan.create!(
+    homework2_taskplan = Tasks::Models::TaskPlan.new(
       title: 'Homework 2 task plan',
       owner: course,
       type: 'homework',
@@ -71,9 +75,11 @@ class SetupPerformanceReportData
       }
     )
 
-    homework2_taskplan.tasking_plans << Tasks::Models::TaskingPlan
-      .create!(target: course, task_plan: homework2_taskplan,
-               opens_at: Time.now, due_at: Time.now + 2.week)
+    homework2_taskplan.tasking_plans << Tasks::Models::TaskingPlan.new(
+      target: course, task_plan: homework2_taskplan, opens_at: Time.now, due_at: Time.now + 2.week
+    )
+
+    homework2_taskplan.save!
 
     DistributeTasks[homework2_taskplan]
 

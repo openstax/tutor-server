@@ -17,11 +17,15 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
 
   serialize :settings, JSON
 
+  validates :title, presence: true
   validates :assistant, presence: true
   validates :owner, presence: true
   validates :type, presence: true
+  validates :tasking_plans, presence: true
 
-  validate :valid_settings, :changes_allowed
+  validate :valid_settings, :changes_allowed, :not_due_before_publish
+
+  before_destroy :not_open_before_destroy, prepend: true
 
   protected
 
@@ -42,6 +46,19 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
               (!is_publish_requested && changes.except(*UPDATABLE_ATTRIBUTES).empty?)
     action = is_publish_requested ? 'republished' : 'updated'
     errors.add(:base, "cannot be #{action} after it is open")
+    false
+  end
+
+  def not_due_before_publish
+    return if !is_publish_requested || \
+              tasking_plans.none? { |tp| !tp.due_at.nil? && tp.due_at < Time.now }
+    errors.add(:due_at, 'cannot be in the past when publishing')
+    false
+  end
+
+  def not_open_before_destroy
+    return if tasks.none? { |tt| tt.past_open? }
+    errors.add(:base, "cannot be deleted after it is open")
     false
   end
 

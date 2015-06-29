@@ -11,6 +11,7 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
     allow(tmp).to receive(:title).and_return(nil)
     allow(tmp).to receive(:description).and_return(nil)
     allow(tmp).to receive(:is_publish_requested).and_return(nil)
+    allow(tmp).to receive(:publish_job_uuid).and_return(nil)
     allow(tmp).to receive(:publish_last_requested_at).and_return(nil)
     allow(tmp).to receive(:published_at).and_return(nil)
     allow(tmp).to receive(:settings).and_return(nil)
@@ -88,15 +89,15 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
 
   context "publish_last_requested_at" do
     it "can be read" do
-      publish_last_requested_at = Time.now
-      allow(task_plan).to receive(:publish_last_requested_at).and_return(publish_last_requested_at)
+      expected = Time.now
+      allow(task_plan).to receive(:publish_last_requested_at).and_return(expected)
       expect(representation).to(
-        include("publish_last_requested_at" => publish_last_requested_at.to_s)
+        include("publish_last_requested_at" => DateTimeUtilities.to_api_s(expected))
       )
     end
 
     it "cannot be written (attempts are silently ignored)" do
-      publish_last_requested_at = Chronic.parse(Time.now.to_s)
+      publish_last_requested_at = DateTimeUtilities.to_api_s(Time.now)
       Api::V1::TaskPlanRepresenter.new(task_plan).from_json(
         {"publish_last_requested_at" => publish_last_requested_at.to_s}.to_json
       )
@@ -106,13 +107,13 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
 
   context "published_at" do
     it "can be read" do
-      published_at = Time.now
-      allow(task_plan).to receive(:published_at).and_return(published_at)
-      expect(representation).to include("published_at" => published_at.to_s)
+      expected = Time.now
+      allow(task_plan).to receive(:published_at).and_return(expected)
+      expect(representation).to include("published_at" => DateTimeUtilities.to_api_s(expected))
     end
 
     it "cannot be written (attempts are silently ignored)" do
-      published_at = Chronic.parse(Time.now.to_s)
+      published_at = DateTimeUtilities.to_api_s(Time.now)
       Api::V1::TaskPlanRepresenter.new(task_plan).from_json({"published_at" => published_at.to_s}.to_json)
       expect(task_plan).to_not have_received(:published_at=)
     end

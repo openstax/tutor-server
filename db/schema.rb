@@ -143,10 +143,11 @@ ActiveRecord::Schema.define(version: 20150507224137) do
   add_index "course_membership_teachers", ["entity_course_id", "entity_role_id"], name: "course_membership_teacher_course_role_uniq", unique: true, using: :btree
 
   create_table "course_profile_profiles", force: :cascade do |t|
-    t.integer  "entity_course_id", null: false
-    t.string   "name",             null: false
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.integer  "entity_course_id",                                        null: false
+    t.string   "name",                                                    null: false
+    t.string   "timezone",         default: "Central Time (US & Canada)", null: false
+    t.datetime "created_at",                                              null: false
+    t.datetime "updated_at",                                              null: false
   end
 
   add_index "course_profile_profiles", ["entity_course_id"], name: "index_course_profile_profiles_on_entity_course_id", unique: true, using: :btree
@@ -360,7 +361,7 @@ ActiveRecord::Schema.define(version: 20150507224137) do
     t.integer  "owner_id",                  null: false
     t.string   "owner_type",                null: false
     t.string   "type",                      null: false
-    t.string   "title"
+    t.string   "title",                     null: false
     t.text     "description"
     t.text     "settings",                  null: false
     t.datetime "publish_last_requested_at"
@@ -435,7 +436,7 @@ ActiveRecord::Schema.define(version: 20150507224137) do
     t.string   "target_type",        null: false
     t.integer  "tasks_task_plan_id", null: false
     t.datetime "opens_at"
-    t.datetime "due_at"
+    t.datetime "due_at",             null: false
     t.datetime "created_at",         null: false
     t.datetime "updated_at",         null: false
   end

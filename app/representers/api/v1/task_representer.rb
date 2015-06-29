@@ -29,17 +29,19 @@ module Api::V1
              readable: true
 
     property :opens_at,
-             type: DateTime,
+             type: String,
              writeable: false,
              readable: true,
+             getter: ->(*) { DateTimeUtilities.to_api_s(opens_at) },
              schema_info: {
                description: "When the task is available to be worked (nil means available immediately)"
              }
 
     property :due_at,
-             type: DateTime,
+             type: String,
              writeable: false,
              readable: true,
+             getter: ->(*) { DateTimeUtilities.to_api_s(due_at) },
              schema_info: { description: "When the task is due (nil means never due)" }
 
     property :is_shared?,

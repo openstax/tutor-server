@@ -3,6 +3,7 @@ class CreateCourseProfileProfiles < ActiveRecord::Migration
     create_table :course_profile_profiles do |t|
       t.integer :entity_course_id, null: false
       t.string :name,   null: false
+      t.string :timezone, null: false, default: 'Central Time (US & Canada)'
       t.timestamps null: false
 
       t.index :entity_course_id, unique: true

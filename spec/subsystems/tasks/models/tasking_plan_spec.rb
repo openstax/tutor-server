@@ -1,7 +1,8 @@
 require 'rails_helper'
 
-RSpec.describe Tasks::Models::TaskingPlan, :type => :model do
+RSpec.describe Tasks::Models::TaskingPlan, type: :model do
   subject(:tasking_plan) { FactoryGirl.create :tasks_tasking_plan }
+
   let!(:task_plan)       { tasking_plan.task_plan }
   let!(:target)          { tasking_plan.target }
   let!(:course)          { task_plan.owner }
@@ -11,6 +12,15 @@ RSpec.describe Tasks::Models::TaskingPlan, :type => :model do
 
   it { is_expected.to validate_presence_of(:target) }
   it { is_expected.to validate_presence_of(:task_plan) }
+  it { is_expected.to validate_presence_of(:due_at) }
+
+  it "requires due_at to be after non-nil opens_at" do
+    task = FactoryGirl.build(:tasks_task, opens_at: nil)
+    expect(task).to be_valid
+
+    task = FactoryGirl.build(:tasks_task, opens_at: Time.now, due_at: Time.now - 1.hour)
+    expect(task).to_not be_valid
+  end
 
   it "requires target to be unique for the task_plan" do
     expect(tasking_plan).to be_valid
