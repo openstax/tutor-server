@@ -6,6 +6,7 @@ class Demo002 < DemoBase
 
   protected
 
+
   def exec(print_logs: true, book_version: :latest, random_seed: nil)
 
     set_print_logs(print_logs)
@@ -18,12 +19,64 @@ class Demo002 < DemoBase
     Timecop.return_all
     noon_today = Time.now.noon
 
-    task_4_due_at = standard_due_at(school_day_on_or_before(noon_today))
-    task_3_due_at = standard_due_at(school_day_on_or_before(task_4_due_at - 2.days))
-    task_2_due_at = standard_due_at(school_day_on_or_before(task_3_due_at - 2.days))
-    task_1_due_at = standard_due_at(school_day_on_or_before(task_2_due_at - 2.days))
+    due=Array.new(4)
+    due[3] = standard_due_at(school_day_on_or_before(noon_today))
+    due[2] = standard_due_at(school_day_on_or_before(due[3] - 2.days))
+    due[1] = standard_due_at(school_day_on_or_before(due[2] - 2.days))
+    due[0] = standard_due_at(school_day_on_or_before(due[1] - 2.days))
 
-    course = Entity::Course.last
+    create_biology_assignments( find_course('Biology I'), due )
+    create_physics_assignments( find_course('Physics I'), due )
+
+  end
+
+  def find_course(name)
+    CourseProfile::Models::Profile.where(name: name).first!.course
+  end
+
+  def create_biology_assignments(course, due_at)
+    periods = course.periods
+    responses_list = new_responses_list(
+      assignment_type: :reading,
+      step_types: %w( r r i e r r e v e e r r i e r r e v e e ),
+      entries: [
+                  98,
+                  67,
+                  55,
+                  77,
+                  88,
+                  %w( 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 0 ),
+                  :not_started,
+                  78,
+                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 ),  # explicit example, could also be `100`
+                  86,
+                  100,
+                  82,
+                  71,
+                  90,
+                  78,
+                  87,
+                  :incomplete,
+                  :incomplete,
+                  90,
+                  85
+               ]
+    )
+
+    assign_ireading(course: course,
+                    chapter_sections: [[1, 1, 0], [1, 1, 1], [1,1,2]],
+                    title: 'Read Unit 1. The Chemistry of Life',
+                    due_at: due_at[1],
+                    to: periods).each_with_index do |ireading, index|
+
+      work_task(task: ireading, responses: responses_list[index])
+
+    end
+
+  end
+
+  def create_physics_assignments(course, due_at)
+
     periods = course.periods
 
     ### First Chapter 3 iReading
@@ -59,7 +112,7 @@ class Demo002 < DemoBase
     assign_ireading(course: course,
                     chapter_sections: [[3, 0], [3, 1]],
                     title: 'Read 3.1 Acceleration Pt1',
-                    due_at: task_1_due_at,
+                    due_at: due_at[0],
                     to: periods).each_with_index do |ireading, index|
 
       work_task(task: ireading, responses: responses_list[index])
@@ -99,7 +152,7 @@ class Demo002 < DemoBase
     assign_ireading(course: course,
                     chapter_sections: [[3, 2]],
                     title: 'Read 3.2 Acceleration Pt2',
-                    due_at: task_2_due_at,
+                    due_at: due_at[1],
                     to: periods).each_with_index do |ireading, index|
 
       work_task(task: ireading, responses: responses_list[index])
@@ -140,7 +193,7 @@ class Demo002 < DemoBase
                     chapter_sections: [[3, 0], [3, 1], [3, 2]],
                     title: 'HW Chapter 3 Acceleration',
                     num_exercises: 10,
-                    due_at: task_3_due_at,
+                    due_at: due_at[2],
                     to: periods).each_with_index do |hw, index|
 
       work_task(task: hw, responses: responses_list[index])
@@ -180,7 +233,7 @@ class Demo002 < DemoBase
     assign_ireading(course: course,
                     chapter_sections: [[4, 0], [4, 1], [4, 2]],
                     title: 'Read 4.1-4.2 Force & Motion Pt1',
-                    due_at: task_4_due_at,
+                    due_at: due_at[3],
                     to: periods).each_with_index do |ireading, index|
 
       work_task(task: ireading, responses: responses_list[index])
