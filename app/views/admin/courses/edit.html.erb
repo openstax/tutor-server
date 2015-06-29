@@ -7,3 +7,9 @@
 <h2>Edit Periods</h2>
 
 <%= render 'periods' %>
+
+<hr />
+
+<h2>Upload student roster</h2>
+
+<%= render 'students', url: students_admin_course_path(@course.course_id) %>
