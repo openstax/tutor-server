@@ -4,6 +4,10 @@ class CalculateTaskPlanStats
 
   uses_routine Content::Routines::SearchPages, as: :search_pages
 
+  uses_routine Role::GetUsersForRoles, as: :get_users_for_roles
+
+  uses_routine UserProfile::GetUserFullNames, as: :get_user_full_names
+
   protected
 
   def answer_stats_for_tasked_exercises(tasked_exercises)
@@ -23,7 +27,18 @@ class CalculateTaskPlanStats
 
       {
         content: exercise.content_with_answer_stats(answer_stats),
-        answered_count: completed_tasked_exercises.count
+        answered_count: completed_tasked_exercises.count,
+        answers: completed_tasked_exercises.collect do |te|
+          roles = te.task_step.task.taskings.collect{ |ts| ts.role }
+          users = run(:get_users_for_roles, roles).outputs.users
+          names = run(:get_user_full_names, users).outputs.full_names.collect{ |fn| fn.full_name }
+
+          {
+            student_names: names,
+            free_response: te.free_response,
+            answer_id: te.answer_id
+          }
+        end
       }
     end
   end

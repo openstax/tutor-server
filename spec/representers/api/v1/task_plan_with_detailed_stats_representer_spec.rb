@@ -52,10 +52,25 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
             "chapter_section" => [1, 1],
             "exercises" => a_collection_containing_exactly(
               {
-                "content" => a_kind_of(Hash), "answered_count" => 2
+                "content" => a_kind_of(Hash),
+                "answered_count" => 2,
+                "answers" => a_collection_containing_exactly(
+                  {
+                    "student_names" => [ a_kind_of(String) ],
+                    "free_response" => "a sentence explaining all the things",
+                    "answer_id" => correct_answer_id
+                  },
+                  {
+                    "student_names" => [ a_kind_of(String) ],
+                    "free_response" => "a sentence not explaining anything",
+                    "answer_id" => incorrect_answer_ids.first
+                  }
+                )
               },
               {
-                "content" => a_kind_of(Hash), "answered_count" => 0
+                "content" => a_kind_of(Hash),
+                "answered_count" => 0,
+                "answers" => []
               }
             )
           ),
