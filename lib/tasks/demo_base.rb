@@ -39,7 +39,7 @@ class DemoBase
     def get_explicit_responses(entry)
       result = case entry
       when Array
-        raise "Number of explicit responses doesn't match number of steps" \
+        raise "Number of explicit responses (#{@step_types.length}) doesn't match number of steps (#{entry.length})" \
           if @step_types.length != entry.length
         entry
       when Integer, Float
