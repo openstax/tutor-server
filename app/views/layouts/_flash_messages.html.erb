@@ -1,3 +1,9 @@
 <% flash.each do |name, msg| %>
-  <%= content_tag :div, msg, class: "flash_#{name}" %>
+  <% if msg.kind_of?(Array) %>
+    <% msg.each do |m| %>
+      <%= content_tag :div, m, class: "flash_#{name}" %>
+    <% end %>
+  <% else %>
+    <%= content_tag :div, msg, class: "flash_#{name}" %>
+  <% end %>
 <% end %>
