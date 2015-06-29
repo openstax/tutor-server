@@ -34,21 +34,28 @@ class Demo002 < DemoBase
     CourseProfile::Models::Profile.where(name: name).first!.course
   end
 
+
+  ####################################################################
+  ## Biology course assignments                                     ##
+  ####################################################################
   def create_biology_assignments(course, due_at)
     periods = course.periods
+
+    ### First Unit 1 iReading
+    #
     responses_list = new_responses_list(
       assignment_type: :reading,
-      step_types: %w( r r i e r r e v e e r r i e r r e v e e ),
+      step_types: %w( r i e r r e v e e r r i e r r e v e e ),
       entries: [
                   98,
                   67,
                   55,
                   77,
                   88,
-                  %w( 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 0 ),
+                  80,
                   :not_started,
                   78,
-                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 ),  # explicit example, could also be `100`
+                  100,
                   86,
                   100,
                   82,
@@ -73,8 +80,92 @@ class Demo002 < DemoBase
 
     end
 
+    ### Second Unit 2 iReading
+    #
+
+    responses_list = new_responses_list(
+      assignment_type: :reading,
+      step_types: %w( r i e r r e r r r e r e e ),
+      entries: [
+                  94,
+                  %w( 1 1 0 1 1 0 1 1 1 1 1 1 1 ),
+                  40,
+                  %w( 1 1 1 1 1 1 1 1 1 0 1 1 1 ),
+                  60,
+                  :incomplete,
+                  :not_started,
+                  72,
+                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 1 ),  # explicit example, could also be `100`
+                  80,
+                  100,
+                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 1 ),
+                  %w( 1 1 0 1 1 1 1 1 1 0 1 1 1 ),
+                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 0 ),
+                  79,
+                  %w( 1 1 0 1 1 0 1 1 1 1 1 1 1 ),
+                  :incomplete,
+                  :incomplete,
+                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 0 ),
+                  %w( 1 1 1 1 1 0 1 1 1 1 1 1 1 )
+               ]
+    )
+
+    assign_ireading(course: course,
+                    chapter_sections: [[2, 3, 0], [2, 3, 1], [2, 3, 2]],
+                    title: 'Read Unit 2. The Cell',
+                    due_at: due_at[2],
+                    to: periods).each_with_index do |ireading, index|
+
+      work_task(task: ireading, responses: responses_list[index])
+
+    end
+
+    ### First Unit 1 HW
+    #
+
+    responses_list = new_responses_list(
+      assignment_type: :homework,
+      step_types: %w( e e e e e e e e e e ),
+      entries: [
+                  90,
+                  87,
+                  98,
+                  %w( 1 1 1 1 1 0 0 1 1 1 ),
+                  88,
+                  :not_started,
+                  :not_started,
+                  :not_started,
+                  100,
+                  %w( 1 0 0 1 1 0 0 1 1 0 ),
+                  100,
+                  86,
+                  %w( 1 1 1 1 1 0 0 1 1 0 ),
+                  89,
+                  %w( 0 1 0 1 0 0 0 1 0 0 ),
+                  93,
+                  :incomplete,
+                  :incomplete,
+                  98,
+                  23
+               ]
+    )
+
+    assign_homework(course: course,
+                    chapter_sections: [[1, 1, 0], [1, 1, 1], [1,1,2]],
+                    title: 'HW The Chemistry of Life',
+                    num_exercises: 10,
+                    due_at: due_at[3],
+                    to: periods).each_with_index do |hw, index|
+
+      work_task(task: hw, responses: responses_list[index])
+
+    end
+
   end
 
+  ####################################################################
+  ## Physics course assignments                                     ##
+  ####################################################################
   def create_physics_assignments(course, due_at)
 
     periods = course.periods
@@ -84,17 +175,17 @@ class Demo002 < DemoBase
 
     responses_list = new_responses_list(
       assignment_type: :reading,
-      step_types: %w( r r i e r r e v e e ),
+      step_types: %w( r r i e r r e v e ),
       entries: [
                   98,
                   67,
                   55,
                   77,
                   88,
-                  %w( 1 1 1 1 1 1 0 1 1 1 ),
+                  21,
                   :not_started,
                   78,
-                  %w( 1 1 1 1 1 1 1 1 1 1 ),  # explicit example, could also be `100`
+                  100,  # explicit example, could also be `100`
                   86,
                   100,
                   82,
@@ -124,28 +215,28 @@ class Demo002 < DemoBase
 
     responses_list = new_responses_list(
       assignment_type: :reading,
-      step_types: %w( r i e r r e r r r e r e e e ),
+      step_types: %w( r i e r r e r r r e r e e ),
       entries: [
                   94,
-                  %w( 1 1 0 1 1 0 1 1 1 1 1 1 0 1 ),
+                  %w( 1 1 0 1 1 0 1 1 1 1 1 1 1 ),
                   40,
-                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 0 1 ),
+                  %w( 1 1 1 1 1 1 1 1 1 0 1 1 1 ),
                   60,
                   :incomplete,
                   :not_started,
                   72,
-                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 0 1 ),  # explicit example, could also be `100`
+                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 1 ),  # explicit example, could also be `100`
                   80,
                   100,
-                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 0 1 ),
-                  %w( 1 1 0 1 1 1 1 1 1 0 1 1 0 1 ),
-                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 0 0 ),
+                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 1 ),
+                  %w( 1 1 0 1 1 1 1 1 1 0 1 1 1 ),
+                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 0 ),
                   79,
-                  %w( 1 1 0 1 1 0 1 1 1 1 1 0 0 0 ),
+                  %w( 1 1 0 1 1 0 1 1 1 1 1 1 1 ),
                   :incomplete,
                   :incomplete,
-                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 0 1 ),
-                  %w( 1 1 1 1 1 0 1 1 1 1 1 1 0 0 )
+                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 0 ),
+                  %w( 1 1 1 1 1 0 1 1 1 1 1 1 1 )
                ]
     )
 
@@ -164,23 +255,23 @@ class Demo002 < DemoBase
 
     responses_list = new_responses_list(
       assignment_type: :homework,
-      step_types: %w( e e e e e e e e e e e ),
+      step_types: %w( e e e e e e e e e e ),
       entries: [
                   90,
                   87,
                   98,
-                  %w( 1 1 1 1 1 0 0 1 1 1 1 ),
+                  %w( 1 1 1 1 1 0 0 1 1 1 ),
                   88,
                   :not_started,
                   :not_started,
                   :not_started,
                   100,
-                  %w( 1 0 0 1 1 0 0 1 1 0 1 ),
+                  %w( 1 0 0 1 1 0 0 1 1 0 ),
                   100,
                   86,
-                  %w( 1 1 1 1 1 0 0 1 1 0 1 ),
+                  %w( 1 1 1 1 1 0 0 1 1 0 ),
                   89,
-                  %w( 0 1 0 1 0 0 0 1 0 0 0 ),
+                  %w( 0 1 0 1 0 0 0 1 0 0 ),
                   93,
                   :incomplete,
                   :incomplete,
@@ -200,12 +291,12 @@ class Demo002 < DemoBase
 
     end
 
-    ### First Chapter 4 iReading
-    #
+    # ### First Chapter 4 iReading
+    # #
 
     responses_list = new_responses_list(
       assignment_type: :reading,
-      step_types: %w( r r r v e i e e e e ),
+      step_types: %w( r r r v e i e e e ),
       entries: [
                   94,
                   88,
@@ -215,18 +306,18 @@ class Demo002 < DemoBase
                   :incomplete,
                   92,
                   82,
-                  %w( 1 1 1 1 0 1 1 1 0 1 ),
-                  %w( 1 1 1 1 1 1 0 1 0 1 ),
+                  %w( 1 1 1 1 0 1 1 1 0 ),
+                  %w( 1 1 1 1 1 1 0 1 0 ),
                   100,
                   87,
-                  %w( 1 1 1 1 0 1 0 0 0 1 ),
+                  %w( 1 1 1 1 0 1 0 0 0 ),
                   82,
                   :incomplete,
                   :not_started,
                   :not_started,
-                  %w( 1 1 1 1 0 1 1 1 0 1 ),
+                  %w( 1 1 1 1 0 1 1 1 0 ),
                   88,
-                  %w( 1 1 1 1 0 1 1 1 0 1 ),
+                  %w( 1 1 1 1 0 1 1 1 0 )
                ]
     )
 
