@@ -85,28 +85,28 @@ class Demo002 < DemoBase
 
     responses_list = new_responses_list(
       assignment_type: :reading,
-      step_types: %w( r i e r r e r r r e r e e ),
+      step_types: %w( r i e r r e r r r e r e e e ),
       entries: [
                   94,
-                  %w( 1 1 0 1 1 0 1 1 1 1 1 1 1 ),
+                  %w( 1 1 0 1 1 0 1 1 1 1 1 1 1 1 ),
                   40,
-                  %w( 1 1 1 1 1 1 1 1 1 0 1 1 1 ),
+                  %w( 1 1 1 1 1 1 1 1 1 0 1 1 1 1 ),
                   60,
                   :incomplete,
                   :not_started,
                   72,
-                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 1 ),  # explicit example, could also be `100`
+                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 1 1 ),  # explicit example, could also be `100`
                   80,
                   100,
-                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 1 ),
-                  %w( 1 1 0 1 1 1 1 1 1 0 1 1 1 ),
-                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 0 ),
+                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 1 0 ),
+                  %w( 1 1 0 1 1 1 1 1 1 0 1 1 1 0 ),
+                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 0 0 ),
                   79,
-                  %w( 1 1 0 1 1 0 1 1 1 1 1 1 1 ),
+                  %w( 1 1 0 1 1 0 1 1 1 1 1 1 1 1 ),
                   :incomplete,
                   :incomplete,
-                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 0 ),
-                  %w( 1 1 1 1 1 0 1 1 1 1 1 1 1 )
+                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 0 1 ),
+                  %w( 1 1 1 1 1 0 1 1 1 1 1 1 1 1 )
                ]
     )
 
