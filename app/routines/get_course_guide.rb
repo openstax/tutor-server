@@ -53,9 +53,11 @@ class GetCourseGuide
   end
 
   def course_stats
+    chapters = compile_chapters # can't memoize in a loop
+
     { title: outputs.toc.title, # toc is root book
-      page_ids: compile_chapters.collect { |cc| cc[:page_ids] }.flatten.uniq,
-      children: compile_chapters }
+      page_ids: chapters.collect { |cc| cc[:page_ids] }.flatten.uniq,
+      children: chapters }
   end
 
   def get_task_steps
@@ -68,7 +70,7 @@ class GetCourseGuide
   end
 
   def compile_chapters
-    @chapters ||= task_steps_grouped_by_book_part.collect { |book_part_id, task_steps|
+    task_steps_grouped_by_book_part.collect { |book_part_id, task_steps|
       book_part = book_parts_by_id[book_part_id]
       practices = completed_practices(task_steps, :mixed_practice)
       pages = compile_pages(task_steps)
