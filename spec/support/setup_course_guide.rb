@@ -1,9 +1,11 @@
 class SetupCourseGuide
   lev_routine express_output: :course
 
-  uses_routine CreateCourse, as: :create_course
+  uses_routine CreateCourse,
+    as: :create_course
 
-  uses_routine CreatePeriod, as: :create_period
+  uses_routine CreatePeriod,
+    as: :create_period
 
   uses_routine FetchAndImportBook,
     translations: { outputs: { type: :verbatim } },
@@ -17,11 +19,15 @@ class SetupCourseGuide
     translations: { outputs: { type: :verbatim } },
     as: :mark_task_step_completed
 
-  uses_routine AddBookToCourse, as: :add_book_to_course
+  uses_routine AddBookToCourse,
+    as: :add_book_to_course
 
-  uses_routine AddUserAsPeriodStudent, as: :add_student_user_to_period
+  uses_routine AddUserAsPeriodStudent,
+    as: :add_student_user_to_period
 
-  uses_routine DistributeTasks, as: :distribute_tasks
+  uses_routine DistributeTasks,
+    translations: { outputs: { type: :verbatim } },
+    as: :distribute_tasks
 
   protected
   def exec(course:, roles: [])
@@ -32,8 +38,7 @@ class SetupCourseGuide
 
     puts "=== Fetch & import book ==="
     run(:fetch_and_import_book, id: '93e2b09d-261c-4007-a987-0b3062fe154b')
-    run(:visit_book, book: outputs.book, visitor_names: :page_data)
-    run(:visit_book, book: outputs.book, visitor_names: :toc)
+    run(:visit_book, book: outputs.book, visitor_names: [:page_data, :toc])
 
     puts "=== Add book to course ==="
     run(:add_book_to_course, course: outputs.course, book: outputs.book)
@@ -53,10 +58,11 @@ class SetupCourseGuide
     end
 
     roles.each do |role|
+      puts "=== Set Role##{role.id} history ==="
+
       puts "=== Create assignments ==="
       create_assignments(role: role)
 
-      puts "=== Set student history ==="
       make_and_work_practice_widget(role: role,
                                     num_correct: 2,
                                     page_ids: outputs.page_data[4].id)
@@ -69,6 +75,7 @@ class SetupCourseGuide
                                     num_correct: 5,
                                     book_part_ids: outputs.toc.children[3].id)
     end
+
   end
 
   private
@@ -81,21 +88,24 @@ class SetupCourseGuide
     entity_task.task.task_steps.first(num_correct).each do |task_step|
       Hacks::AnswerExercise[task_step: task_step, is_correct: true]
     end
+
+    puts "==== practice widget ===="
+    print_task(entity_task.task)
   end
 
   def create_assignments(role:)
-    ireading_task_plan.tasking_plans << FactoryGirl.create(
-      :tasks_tasking_plan, task_plan: ireading_task_plan, target: role
-    )
-    homework_task_plan.tasking_plans << FactoryGirl.create(
-      :tasks_tasking_plan, task_plan: homework_task_plan, target: role
-    )
+    run(:distribute_tasks, ireading_task_plan).outputs.tasks.each do |task|
+      puts "===== Reading ====="
+      print_task(task)
+    end
 
-    run(:distribute_tasks, ireading_task_plan)
     run(:distribute_tasks, homework_task_plan).outputs.tasks.each do |task|
       task.task_steps.first(2).each do |t|
         Hacks::AnswerExercise[task_step: t, is_correct: true]
       end
+
+      puts "===== Homework ===="
+      print_task(task)
     end
   end
 
@@ -131,5 +141,41 @@ class SetupCourseGuide
         exercise_ids: exercise_ids,
         exercises_count_dynamic: 2
       })
+  end
+
+  def print_task(task)
+    task.task_steps.collect do |step|
+      step_code = case step.tasked
+                  when Tasks::Models::TaskedExercise;    'e'
+                  when Tasks::Models::TaskedReading;     'r'
+                  when Tasks::Models::TaskedVideo;       'v'
+                  when Tasks::Models::TaskedInteractive; 'i'
+                  when Tasks::Models::TaskedPlaceholder; 'p'
+                  else; 'o'
+                  end
+
+      group_code = if step.default_group?; 'd'
+                   elsif step.core_group?; 'c'
+                   elsif step.spaced_practice_group?; 's'
+                   elsif step.personalized_group?;    'p'
+                   else; 'o'
+                   end
+
+      completeness = if step.completed?
+                       'Com'
+                     else
+                       'Incom'
+                     end
+
+      correctness = if step.is_correct?
+                      'C'
+                    else
+                      'I/N'
+                    end
+
+      puts "#{step_code}:#{group_code}:#{step.tasked.los.uniq}:#{completeness}:#{correctness}"
+      puts "=========================="
+      puts ""
+    end
   end
 end

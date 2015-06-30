@@ -47,7 +47,7 @@ class GetCourseGuide
         { period_id: period.id }.merge(course_stats)
       end
     else # only 1 period for student role
-      [{ period: { id: outputs[:periods].last.id } }.merge(course_stats)]
+      [course_stats]
     end
   end
 
@@ -69,7 +69,7 @@ class GetCourseGuide
   end
 
   def compile_chapters
-    task_steps_grouped_by_book_part.collect { |book_part_id, task_steps|
+    exercises_grouped_by_book_part.collect { |book_part_id, task_steps|
       book_part = book_parts_by_id[book_part_id]
       practices = completed_practices(task_steps, :mixed_practice)
       pages = compile_pages(task_steps)
@@ -87,12 +87,10 @@ class GetCourseGuide
     }.sort_by { |ch| ch[:chapter_section] }
   end
 
-  def task_steps_grouped_by_book_part
-    outputs.task_steps.select { |t|
-      t.tasked_type.ends_with?('TaskedExercise')
-    }.group_by do |t|
-      pages = Content::Routines::SearchPages[tag: get_lo_tags(t)]
-      pages.first.content_book_part_id
+  def exercises_grouped_by_book_part
+    outputs.task_steps.select { |t| t.exercise? && t.completed? }.group_by do |t|
+      puts t.tasked_type
+      Content::Routines::SearchPages[tag: get_lo_tags(t)].first.content_book_part_id
     end
   end
 

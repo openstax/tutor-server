@@ -54,7 +54,7 @@ RSpec.describe Api::V1::GuidesController, type: :controller, api: true,
                                     .and_return(course_guide)
 
         api_get :student, user_1_token, parameters: { id: course.id,
-                                                             role_id: student_3_role.id }
+                                                      role_id: student_3_role.id }
       end
     end
 
