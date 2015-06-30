@@ -9,7 +9,7 @@ FactoryGirl.define do
     end
 
     association :owner, factory: :entity_course
-    title "A plan"
+    title "A task"
     settings { {}.to_json }
     type "reading"
 

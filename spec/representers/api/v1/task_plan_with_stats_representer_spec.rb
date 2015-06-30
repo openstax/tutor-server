@@ -17,7 +17,7 @@ RSpec.describe Api::V1::TaskPlanWithStatsRepresenter, type: :representer,
   it "represents a task plan's stats" do
     expect(representation).to include(
       "id" => task_plan.id.to_s,
-      "title" => "A plan",
+      "title" => task_plan.title,
       "type" => "reading",
       "stats" => [
         {
