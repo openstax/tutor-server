@@ -133,7 +133,7 @@ class Tasks::Assistants::IReadingAssistant
         #puts "candidate_exercises: #{candidate_exercises.map(&:uid).sort}"
         #puts "exercise history:    #{exercise_history.map(&:uid).sort}"
 
-        chosen_exercise = candidate_exercises.sample # .first to aid debug
+        chosen_exercise = candidate_exercises.sample
         #puts "chosen exercise:     #{chosen_exercise.uid}"
 
         candidate_exercises.delete(chosen_exercise)
