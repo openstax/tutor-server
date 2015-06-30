@@ -111,7 +111,7 @@ gem 'faker'
 gem 'redis-rails'
 
 # Background job queueing
-gem 'resque'
+gem 'resque', '~> 1.24.1'
 
 # Type coercion for Representable
 gem 'virtus'
