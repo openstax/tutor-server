@@ -237,7 +237,7 @@ class DemoBase
   # exercise correctness
   def work_task(task:, responses:)
 
-    raise "Invalid number of responses " +
+    raise "Invalid number of responses for #{task.title}" +
           "(responses,task_steps) = (#{responses.count}, #{task.task_steps.count})\n" +
           "(task = #{print_task(task: task)}) " \
       if responses.count != task.task_steps.count
