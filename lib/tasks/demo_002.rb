@@ -45,7 +45,7 @@ class Demo002 < DemoBase
     #
     responses_list = new_responses_list(
       assignment_type: :reading,
-      step_types: %w( r i e r r e v e e r r i e r r e v e e ),
+      step_types: %w( r i e r r e v e e r r i e r r e v e e e ),
       entries: [
                   98,
                   67,
@@ -85,28 +85,28 @@ class Demo002 < DemoBase
 
     responses_list = new_responses_list(
       assignment_type: :reading,
-      step_types: %w( r i e r r e r r r e r e e e ),
+      step_types: %w( r i e r r e r r r e r e e e e ),
       entries: [
                   94,
-                  %w( 1 1 0 1 1 0 1 1 1 1 1 1 1 1 ),
+                  %w( 1 1 0 1 1 0 1 1 1 1 1 1 1 1 1 ),
                   40,
-                  %w( 1 1 1 1 1 1 1 1 1 0 1 1 1 1 ),
+                  %w( 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 ),
                   60,
                   :incomplete,
                   :not_started,
                   72,
-                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 1 1 ),  # explicit example, could also be `100`
+                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 ),  # explicit example, could also be `100`
                   80,
                   100,
-                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 1 0 ),
-                  %w( 1 1 0 1 1 1 1 1 1 0 1 1 1 0 ),
-                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 0 0 ),
+                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 ),
+                  %w( 1 1 0 1 1 1 1 1 1 0 1 1 1 0 1 ),
+                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 ),
                   79,
-                  %w( 1 1 0 1 1 0 1 1 1 1 1 1 1 1 ),
+                  %w( 1 1 0 1 1 0 1 1 1 1 1 1 1 1 0 ),
                   :incomplete,
                   :incomplete,
-                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 0 1 ),
-                  %w( 1 1 1 1 1 0 1 1 1 1 1 1 1 1 )
+                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 ),
+                  %w( 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 )
                ]
     )
 
@@ -125,23 +125,23 @@ class Demo002 < DemoBase
 
     responses_list = new_responses_list(
       assignment_type: :homework,
-      step_types: %w( e e e e e e e e e e ),
+      step_types: %w( e e e e e e e e e e e ),
       entries: [
                   90,
                   87,
                   98,
-                  %w( 1 1 1 1 1 0 0 1 1 1 ),
+                  %w( 1 1 1 1 1 0 0 1 1 1 1 ),
                   88,
                   :not_started,
                   :not_started,
                   :not_started,
                   100,
-                  %w( 1 0 0 1 1 0 0 1 1 0 ),
+                  %w( 1 0 0 1 1 0 0 1 1 0 0 ),
                   100,
                   86,
-                  %w( 1 1 1 1 1 0 0 1 1 0 ),
+                  %w( 1 1 1 1 1 0 0 1 1 0 1 ),
                   89,
-                  %w( 0 1 0 1 0 0 0 1 0 0 ),
+                  %w( 0 1 0 1 0 0 0 1 0 0 0 ),
                   93,
                   :incomplete,
                   :incomplete,
@@ -175,7 +175,7 @@ class Demo002 < DemoBase
 
     responses_list = new_responses_list(
       assignment_type: :reading,
-      step_types: %w( r r i e r r e v e ),
+      step_types: %w( r r i e r r e v e e ),
       entries: [
                   98,
                   67,
@@ -215,28 +215,28 @@ class Demo002 < DemoBase
 
     responses_list = new_responses_list(
       assignment_type: :reading,
-      step_types: %w( r i e r r e r r r e r e e ),
+      step_types: %w( r i e r r e r r r e r e e e ),
       entries: [
                   94,
-                  %w( 1 1 0 1 1 0 1 1 1 1 1 1 1 ),
+                  %w( 1 1 0 1 1 0 1 1 1 1 1 1 1 0 ),
                   40,
-                  %w( 1 1 1 1 1 1 1 1 1 0 1 1 1 ),
+                  %w( 1 1 1 1 1 1 1 1 1 0 1 1 1 1 ),
                   60,
                   :incomplete,
                   :not_started,
                   72,
-                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 1 ),  # explicit example, could also be `100`
+                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 1 1 ),  # explicit example, could also be `100`
                   80,
                   100,
-                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 1 ),
-                  %w( 1 1 0 1 1 1 1 1 1 0 1 1 1 ),
-                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 0 ),
+                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 1 0 ),
+                  %w( 1 1 0 1 1 1 1 1 1 0 1 1 1 0 ),
+                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 0 1 ),
                   79,
-                  %w( 1 1 0 1 1 0 1 1 1 1 1 1 1 ),
+                  %w( 1 1 0 1 1 0 1 1 1 1 1 1 1 0 ),
                   :incomplete,
                   :incomplete,
-                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 0 ),
-                  %w( 1 1 1 1 1 0 1 1 1 1 1 1 1 )
+                  %w( 1 1 1 1 1 1 1 1 1 1 1 1 0 1 ),
+                  %w( 1 1 1 1 1 0 1 1 1 1 1 1 1 0 )
                ]
     )
 
@@ -255,23 +255,23 @@ class Demo002 < DemoBase
 
     responses_list = new_responses_list(
       assignment_type: :homework,
-      step_types: %w( e e e e e e e e e e ),
+      step_types: %w( e e e e e e e e e e e ),
       entries: [
                   90,
                   87,
                   98,
-                  %w( 1 1 1 1 1 0 0 1 1 1 ),
+                  %w( 1 1 1 1 1 0 0 1 1 1 1 ),
                   88,
                   :not_started,
                   :not_started,
                   :not_started,
                   100,
-                  %w( 1 0 0 1 1 0 0 1 1 0 ),
+                  %w( 1 0 0 1 1 0 0 1 1 0 0 ),
                   100,
                   86,
-                  %w( 1 1 1 1 1 0 0 1 1 0 ),
+                  %w( 1 1 1 1 1 0 0 1 1 0 1 ),
                   89,
-                  %w( 0 1 0 1 0 0 0 1 0 0 ),
+                  %w( 0 1 0 1 0 0 0 1 0 0 1 ),
                   93,
                   :incomplete,
                   :incomplete,
@@ -296,7 +296,7 @@ class Demo002 < DemoBase
 
     responses_list = new_responses_list(
       assignment_type: :reading,
-      step_types: %w( r r r v e i e e e ),
+      step_types: %w( r r r v e i e e e e ),
       entries: [
                   94,
                   88,
@@ -306,18 +306,18 @@ class Demo002 < DemoBase
                   :incomplete,
                   92,
                   82,
-                  %w( 1 1 1 1 0 1 1 1 0 ),
-                  %w( 1 1 1 1 1 1 0 1 0 ),
+                  %w( 1 1 1 1 0 1 1 1 0 1 ),
+                  %w( 1 1 1 1 1 1 0 1 0 0 ),
                   100,
                   87,
-                  %w( 1 1 1 1 0 1 0 0 0 ),
+                  %w( 1 1 1 1 0 1 0 0 0 1 ),
                   82,
                   :incomplete,
                   :not_started,
                   :not_started,
-                  %w( 1 1 1 1 0 1 1 1 0 ),
+                  %w( 1 1 1 1 0 1 1 1 0 0 ),
                   88,
-                  %w( 1 1 1 1 0 1 1 1 0 )
+                  %w( 1 1 1 1 0 1 1 1 0 1 )
                ]
     )
 

@@ -12,15 +12,14 @@ class Tasks::PlaceholderStrategies::IReadingPersonalized
 
     exercise_urls = OpenStax::Biglearn::V1.get_projection_exercises(
       role:              taskee,
-      tag_search:        biglearn_condition(los),
+      tag_search:        biglearn_condition(task),
       count:             num_placeholders,
       difficulty:        0.5,
       allow_repetitions: true
     )
 
     chosen_exercises = SearchLocalExercises[url: exercise_urls]
-    raise "could not fill all placeholder slots (expected #{num_placeholders} exercises, got #{chosen_exercises.count}) from urls #{exercise_urls}" \
-      unless chosen_exercises.count == num_placeholders
+    raise "could not fill all placeholder slots (expected #{num_placeholders} exercises, got #{chosen_exercises.count}) for query: #{biglearn_condition(los)}"  unless chosen_exercises.count == num_placeholders
 
     chosen_exercise_task_step_pairs = chosen_exercises.zip(personalized_placeholder_task_steps)
     chosen_exercise_task_step_pairs.each do |exercise, step|
@@ -35,17 +34,16 @@ class Tasks::PlaceholderStrategies::IReadingPersonalized
     task
   end
 
-  def biglearn_condition(los)
-    condition = {
-      _and: [
-        'os-practice-concepts',
-        {
-          _or: los
-        }
-      ]
-    }
-
-    condition
+  def biglearn_condition(task)
+    # DONT YOU JUDGE ME!
+    if task.task_plan.owner.name =~ /biology/i
+       { _and: [
+           'apbio', 'ost-chapter-review', 'review', 'time-short',
+           { _or: ['k12phys', 'os-practice-concepts'] + task.los }
+       ] }
+    else
+      { _and: [ 'os-practice-concepts', { _or: task.los } ] }
+    end
   end
 
 end
