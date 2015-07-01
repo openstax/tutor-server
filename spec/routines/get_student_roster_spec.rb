@@ -38,8 +38,8 @@ describe GetStudentRoster do
 
   it 'returns all the students in the course' do
     students = GetStudentRoster[course: course]
-    students.sort { |a, b| a.id <=> b.id }
-    expect(Set.new students).to eq(Set.new [
+    students.sort! { |a, b| a.id <=> b.id }
+    expect(students).to eq([
       {
         'id' => students[0].id,
         'first_name' => student_1.first_name,
