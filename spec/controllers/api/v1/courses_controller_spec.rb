@@ -19,10 +19,42 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   let!(:period) { CreatePeriod[course: course] }
 
   describe "#readings" do
+    it 'raises SecurityTransgression if user is anonymous or not in the course' do
+      root_book_part = FactoryGirl.create(:content_book_part)
+      CourseContent::AddBookToCourse.call(course: course, book: root_book_part.book)
+
+      expect {
+        api_get :readings, nil, parameters: { id: course.id }
+      }.to raise_error(SecurityTransgression)
+
+      expect {
+        api_get :readings, user_1_token, parameters: { id: course.id }
+      }.to raise_error(SecurityTransgression)
+    end
+
+    it 'works for students in the course' do
+      # used in FE for reference view
+      root_book_part = FactoryGirl.create(:content_book_part, :standard_contents_1)
+      CourseContent::AddBookToCourse.call(course: course, book: root_book_part.book)
+      AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
+      AddUserAsPeriodStudent.call(period: period, user: user_2.entity_user)
+
+      api_get :readings, user_1_token, parameters: { id: course.id }
+      expect(response).to have_http_status(:success)
+      teacher_response = response.body_as_hash
+
+      api_get :readings, user_2_token, parameters: { id: course.id }
+      expect(response).to have_http_status(:success)
+      student_response = response.body_as_hash
+
+      expect(teacher_response).to eq(student_response)
+    end
+
     it "should work on the happy path" do
       root_book_part = FactoryGirl.create(:content_book_part, :standard_contents_1)
       CourseContent::AddBookToCourse.call(course: course, book: root_book_part.book)
       toc = Content::VisitBook[book: root_book_part.book, visitor_names: :toc]
+      AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
 
       api_get :readings, user_1_token, parameters: {id: course.id}
       expect(response).to have_http_status(:success)
