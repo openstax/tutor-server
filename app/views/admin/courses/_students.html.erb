@@ -1,0 +1,11 @@
+<% method ||= :post %>
+
+<%= form_for(:course,  url: url, method: method, html: { multipart: true }) do |f| %>
+  <%= f.label :period %>
+  <%= f.collection_select :period, @periods, :id, :name, {} %>
+
+  <%= label_tag :student_roster %>
+  <%= file_field_tag :student_roster %>
+
+  <%= f.submit 'Upload', class: 'btn btn-primary' %>
+<% end %>

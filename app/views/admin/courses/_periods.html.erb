@@ -1,0 +1,18 @@
+<%= link_to 'Add period', new_admin_course_period_path(@course.course_id) %>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @periods.each do |period| %>
+    <tr>
+      <td><%= period.name %></td>
+      <td><%= link_to 'edit', edit_admin_course_period_path(@course.course_id, period) %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

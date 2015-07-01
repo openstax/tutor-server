@@ -80,7 +80,12 @@ Rails.application.routes.draw do
 
     resources :administrators, only: [:index, :create, :destroy]
 
-    resources :courses, except: :destroy
+    resources :courses, except: :destroy do
+      member do
+        post 'students'
+      end
+      resources :periods, except: :destroy
+    end
 
     resource :cron, only: [:update]
 
