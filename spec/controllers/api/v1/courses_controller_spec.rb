@@ -682,6 +682,18 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
       end
 
+      it 'raises SecurityTransgression if user is anonymous or not a teacher' do
+        page_ids = Content::Models::Page.all.map(&:id)
+
+        expect {
+          api_get :exercises, nil, parameters: { id: course.id, page_ids: page_ids }
+        }.to raise_error(SecurityTransgression)
+
+        expect {
+          api_get :exercises, user_2_token, parameters: { id: course.id, page_ids: page_ids }
+        }.to raise_error(SecurityTransgression)
+      end
+
       it "should return an empty result if no page_ids specified" do
         api_get :exercises, user_1_token, parameters: {id: course.id}
 
