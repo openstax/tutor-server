@@ -33,15 +33,20 @@ class Tasks::PlaceholderStrategies::IReadingPersonalized
   end
 
   def biglearn_condition(task)
-    # DONT YOU JUDGE ME!
-    if task.task_plan.owner.name =~ /biology/i
-       { _and: [
-           'apbio', 'ost-chapter-review', 'review', 'time-short',
-           { _or: ['k12phys', 'os-practice-concepts'] + task.los }
-       ] }
-    else
-      { _and: [ 'os-practice-concepts', { _or: task.los } ] }
-    end
+    {
+      _and: [
+        { _or: task.los },
+        {
+          _or: [
+            {
+              _and: ['apbio', 'ost-chapter-review', 'review', 'time-short']
+            }, {
+              _and: ['os-practice-concepts'] # add 'k12phys' once they're imported
+            }
+          ]
+        }
+      ]
+    }
   end
 
 end
