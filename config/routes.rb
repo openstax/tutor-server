@@ -58,7 +58,6 @@ Rails.application.routes.draw do
         get 'performance(/role/:role_id)', action: :performance
         post 'performance/export', action: :performance_export
         get 'performance/exports', action: :performance_exports
-        get 'students', action: :students
       end
 
       resources :task_plans, path: '/plans', shallow: true, except: [:index, :new, :edit] do
@@ -67,6 +66,8 @@ Rails.application.routes.draw do
           get 'review'
         end
       end
+
+      resources :students, shallow: true
     end
 
     scope 'pages', controller: :pages, action: :get_page do

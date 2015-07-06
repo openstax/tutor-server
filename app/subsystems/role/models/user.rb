@@ -4,4 +4,6 @@ class Role::Models::User < Tutor::SubSystems::BaseModel
 
   validates :entity_user_id, presence: true
   validates :entity_role_id, presence: true
+
+  delegate :first_name, :last_name, :full_name, to: :user
 end

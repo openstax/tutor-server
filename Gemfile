@@ -47,6 +47,7 @@ gem 'whenever'
 
 # OpenStax Accounts integration
 gem 'openstax_accounts', '~> 5.2.0'
+
 # OpenStax Exchange integration
 gem 'openstax_exchange', '~> 0.2.1'
 
