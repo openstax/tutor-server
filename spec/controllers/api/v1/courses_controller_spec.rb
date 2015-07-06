@@ -469,6 +469,21 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
       expect(response).to have_http_status(:success)
     end
+
+    it 'raises IllegalState if user is anonymous or not in the course or is not a student' do
+      expect {
+        api_get :practice, nil, parameters: { id: course.id }
+      }.to raise_error(IllegalState)
+
+      expect {
+        api_get :practice, user_1_token, parameters: { id: course.id }
+      }.to raise_error(IllegalState)
+
+      AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
+      expect {
+        api_get :practice, user_1_token, parameters: { id: course.id }
+      }.to raise_error(IllegalState)
+    end
   end
 
   describe "dashboard" do
