@@ -687,6 +687,22 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                   parameters: { id: course.id, role_id: student_role }
         end
       end
+
+      context 'and a student role is not given' do
+        it 'raises IllegalState' do
+          expect {
+            api_get :stats, user_1_token, parameters: { id: course.id }
+          }.to raise_error(IllegalState)
+        end
+      end
+    end
+
+    context 'user is anonymous' do
+      it 'raises IllegalState' do
+        expect {
+          api_get :stats, nil, parameters: { id: course.id }
+        }.to raise_error(IllegalState)
+      end
     end
   end
 
