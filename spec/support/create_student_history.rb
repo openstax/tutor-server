@@ -8,7 +8,6 @@ class CreateStudentHistory
                                    as: :visit_book
   uses_routine DistributeTasks, translations: { outputs: { type: :verbatim } }
   uses_routine FetchAndImportBook, translations: { outputs: { type: :verbatim } }
-  uses_routine MarkTaskStepCompleted, translations: { outputs: { type: :verbatim } }
 
   protected
   def exec(course:, roles: [], book_id: '93e2b09d-261c-4007-a987-0b3062fe154b')
