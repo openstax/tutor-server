@@ -182,7 +182,7 @@ class Demo002 < DemoBase
                   55,
                   77,
                   88,
-                  21,
+                  %w( 1 1 1 1 1 1 0 1 1 1 ),
                   :not_started,
                   78,
                   100,  # explicit example, could also be `100`
@@ -218,7 +218,7 @@ class Demo002 < DemoBase
       step_types: %w( r i e r r e r r r e r e e e ),
       entries: [
                   94,
-                  %w( 1 1 0 1 1 0 1 1 1 1 1 1 1 0 ),
+                  %w( 1 1 0 1 1 0 1 1 1 1 1 1 0 1 ),
                   40,
                   %w( 1 1 1 1 1 1 1 1 1 0 1 1 1 1 ),
                   60,
