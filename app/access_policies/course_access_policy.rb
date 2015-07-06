@@ -3,7 +3,7 @@ class CourseAccessPolicy
     case action
     when :index
       !requestor.is_anonymous?
-    when :read, :readings
+    when :read, :readings, :task_plans
       # readings should be readable by course teachers and students because FE
       # uses it for the reference view
       requestor.is_human? && \

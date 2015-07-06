@@ -114,16 +114,36 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   end
 
   describe "#plans" do
-    it "should work on the happy path" do
-      task_plan = FactoryGirl.create(:tasks_task_plan, owner: course)
+    let!(:task_plan) { FactoryGirl.create :tasks_task_plan, owner: course }
 
+    it 'raises SecurityTransgression if user is anonymous or not in the course' do
+      expect {
+        api_get :plans, nil, parameters: { id: course.id }
+      }.to raise_error(SecurityTransgression)
+
+      expect {
+        api_get :plans, user_1_token, parameters: { id: course.id }
+      }.to raise_error(SecurityTransgression)
+    end
+
+    it 'returns task plans for course teachers' do
+      AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
       api_get :plans, user_1_token, parameters: {id: course.id}
 
       expect(response).to have_http_status(:success)
       expect(response.body).to(
         eq({ total_count: 1, items: [Api::V1::TaskPlanRepresenter.new(task_plan)] }.to_json)
       )
+    end
 
+    it 'returns task plans for course students' do
+      AddUserAsPeriodStudent.call(period: period, user: user_2.entity_user)
+      api_get :plans, user_2_token, parameters: {id: course.id}
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to(
+        eq({ total_count: 1, items: [Api::V1::TaskPlanRepresenter.new(task_plan)] }.to_json)
+      )
     end
   end
 
