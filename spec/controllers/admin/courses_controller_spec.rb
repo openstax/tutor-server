@@ -47,9 +47,9 @@ RSpec.describe Admin::CoursesController do
 
       student_roster = GetStudentRoster[course: course]
       expect(student_roster.length).to eq(3)
-      expect(student_roster[0].name).to eq('Carol Burgess')
-      expect(student_roster[1].name).to eq('Melissa Haynes')
-      expect(student_roster[2].name).to eq('Alexander Himmel')
+      expect(student_roster[0].full_name).to eq('Carol Burgess')
+      expect(student_roster[1].full_name).to eq('Melissa Haynes')
+      expect(student_roster[2].full_name).to eq('Alexander Himmel')
     end
 
     it 'does not add any students if any username has been taken' do
