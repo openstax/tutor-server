@@ -24,7 +24,7 @@ RSpec.describe GetCourseGuide, vcr: VCR_OPTS do
                                            user: @teacher]
 
     VCR.use_cassette("GetCourseGuide/setup_course_guide", VCR_OPTS) do
-      SetupCourseGuide[course: @course, roles: [@role, @second_role]]
+      CreateStudentHistory[course: @course, roles: [@role, @second_role]]
     end
   end
 
