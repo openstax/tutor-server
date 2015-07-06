@@ -50,8 +50,9 @@ class Tasks::RecoverTaskStep
     los.each do |lo|
       exercise = run(:search,
         not_assigned_to: taskees,
-        tag: required_tag_names + [lo]
-      ).outputs.items.shuffle.first
+        tag: required_tag_names + [lo],
+        random: true
+      ).outputs.items.first
 
       return exercise unless exercise.nil?
     end
@@ -59,8 +60,9 @@ class Tasks::RecoverTaskStep
     # No unassigned exercises found, so return a previously assigned exercise
     los.each do |lo|
       exercise = run(:search,
-        tag: required_tag_names + [lo]
-      ).outputs.items.shuffle.first
+        tag: required_tag_names + [lo],
+        random: true
+      ).outputs.items.first
 
       return exercise unless exercise.nil?
     end
