@@ -5,7 +5,7 @@ class Content::Models::Tag < Tutor::SubSystems::BaseModel
   has_many :teks_tags, through: :lo_teks_tags, class_name: 'Tag', source: :teks
 
   # List the different types of tags
-  enum tag_type: [ :generic, :teks, :lo, :dok, :blooms, :length ]
+  enum tag_type: [ :generic, :lo, :aplo, :teks, :dok, :blooms, :length ]
 
   validates :value, presence: true
   validates :tag_type, presence: true
@@ -20,7 +20,7 @@ class Content::Models::Tag < Tutor::SubSystems::BaseModel
     lo: /-lo\d+$/
   }
 
-  VISIBLE_TAG_TYPES = [:teks, :lo, :dok, :blooms, :length]
+  VISIBLE_TAG_TYPES = [:lo, :aplo, :teks, :dok, :blooms, :length]
 
   def chapter_section
     matches = /-ch(\d+)-s(\d+)-lo\d+$/.match(value)
@@ -56,7 +56,7 @@ class Content::Models::Tag < Tutor::SubSystems::BaseModel
     self.visible = VISIBLE_TAG_TYPES.include?(tag_type.to_sym) if visible.nil?
     # need to return true here because if self.visible evaluates to false, the
     # record does not get saved
-    return true
+    true
   end
 
   def get_tag_type

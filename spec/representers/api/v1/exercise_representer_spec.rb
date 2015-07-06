@@ -41,8 +41,7 @@ RSpec.describe Api::V1::ExerciseRepresenter, type: :representer do
       }, {
         'id' => 'ost-tag-teks-112-39-c-4d',
         'type' => 'teks',
-        'name' => '(D)',
-        'description' => 'calculate the effect of forces on objects',
+        'name' => '(D) calculate the effect of forces on objects',
         'data' => '4d'
       }]
     )

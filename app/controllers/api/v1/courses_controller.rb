@@ -73,10 +73,11 @@ class Api::V1::CoursesController < Api::V1::ApiController
     course = Entity::Course.find(params[:id])
     OSU::AccessPolicy.require_action_allowed!(:exercises, current_api_user, course)
 
-    los = Content::GetLos[params]
-    outputs = SearchLocalExercises.call(tag: los, match_count: 1).outputs
+    lo_outputs = Content::GetLos.call(params).outputs
+    tags = lo_outputs.los + lo_outputs.aplos
+    search_outputs = SearchLocalExercises.call(tag: tags, match_count: 1).outputs
 
-    respond_with outputs, represent_with: Api::V1::ExerciseSearchRepresenter
+    respond_with search_outputs, represent_with: Api::V1::ExerciseSearchRepresenter
   end
 
   api :GET, '/courses/:course_id/plans', 'Returns a course\'s plans'

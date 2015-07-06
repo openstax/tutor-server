@@ -26,13 +26,13 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, vcr: VCR_OPTS do
             {
               value: 'k12phys-ch03-s02-lo01',
               type: :lo,
-              name: 'Explain the kinematic equations related to acceleration and illustrate them with graphs.',
+              description: 'Explain the kinematic equations related to acceleration and illustrate them with graphs.',
               teks: 'teks-112-39-c-4a'
             },
             {
               value: 'k12phys-ch03-s02-lo02',
               type: :lo,
-              name: 'Apply the kinematic equations and related graphs to problems involving acceleration.',
+              description: 'Apply the kinematic equations and related graphs to problems involving acceleration.',
               teks: 'teks-112-39-c-4a'
             }
           ],
@@ -72,13 +72,13 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, vcr: VCR_OPTS do
             {
               value: 'k12phys-ch04-s01-lo01',
               type: :lo,
-              name: 'Differentiate between force, net force, and dynamics',
+              description: 'Differentiate between force, net force, and dynamics',
               teks: 'teks-112-39-c-4c'
             },
             {
               value: 'k12phys-ch04-s01-lo02',
               type: :lo,
-              name: 'Draw a free-body diagram',
+              description: 'Draw a free-body diagram',
               teks: 'teks-112-39-c-4e'
             },
             {
@@ -107,13 +107,13 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, vcr: VCR_OPTS do
             {
               value: 'k12phys-ch04-s02-lo01',
               type: :lo,
-              name: 'Describe Newton’s first law and friction',
+              description: 'Describe Newton’s first law and friction',
               teks: 'teks-112-39-c-4d'
             },
             {
               value: 'k12phys-ch04-s02-lo02',
               type: :lo,
-              name: 'Discuss the relationship between mass and inertia',
+              description: 'Discuss the relationship between mass and inertia',
               teks: 'teks-112-39-c-4d'
             },
             {

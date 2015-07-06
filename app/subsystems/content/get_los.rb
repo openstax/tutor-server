@@ -19,6 +19,12 @@ class Content::GetLos
                                         .where(page_tags: {
                                           content_page_id: page_ids
                                         }).pluck(:value)
+
+    outputs[:aplos] = Content::Models::Tag.aplo
+                                          .joins(:page_tags)
+                                          .where(page_tags: {
+                                            content_page_id: page_ids
+                                          }).pluck(:value)
   end
 
 end
