@@ -27,7 +27,6 @@ class SearchLocalExercises
     end
 
     outputs[:items] = Entity::Relation.new(relation).to_a
-    outputs[:items] = outputs.items.shuffle if options[:random]
   end
 
 end

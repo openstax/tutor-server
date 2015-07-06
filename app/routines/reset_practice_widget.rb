@@ -79,16 +79,18 @@ class ResetPracticeWidget
   def get_local_exercises(count:, role:, tags:, randomize: true)
     exercises = SearchLocalExercises[not_assigned_to: role,
                                      tag: tags,
-                                     match_count: 1,
-                                     random: randomize]
+                                     match_count: 1]
+    exercises = exercises.shuffle if randomize
 
     count.times.collect do
       unless exercise = exercises.pop
         # We ran out of exercises, so start repeating them
         exercises = SearchLocalExercises[assigned_to: role,
                                          tag: tags,
-                                         match_count: 1,
-                                         random: randomize]
+                                         match_count: 1]
+
+        exercises = exercises.shuffle if randomize
+
         unless exercise = exercises.pop
           fatal_error(code: :no_exercises_found,
                       message: "No exercises matched the given tags: #{tags.inspect}")

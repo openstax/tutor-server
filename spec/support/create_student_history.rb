@@ -66,7 +66,8 @@ class CreateStudentHistory
     ResetPracticeWidget[role: role,
                         book_part_ids: ids[:book_parts],
                         page_ids: ids[:pages],
-                        exercise_source: :local].task.task_steps
+                        exercise_source: :local,
+                        randomize: false].task.task_steps
   end
 
   def answer_correctly(steps, num)
