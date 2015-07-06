@@ -529,6 +529,16 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
     let!(:plan) { FactoryGirl.create(:tasks_task_plan, owner: course)}
 
+    it 'raises IllegalState if user is anonymous or not in course' do
+      expect {
+        api_get :dashboard, nil, parameters: { id: course.id }
+      }.to raise_error(IllegalState)
+
+      expect {
+        api_get :dashboard, user_1_token, parameters: { id: course.id }
+      }.to raise_error(IllegalState)
+    end
+
     it "works for a student without a role specified" do
       Hacks::AnswerExercise[task_step: hw1_task.task_steps[0], is_correct: true]
       Hacks::AnswerExercise[task_step: hw1_task.task_steps[2], is_correct: false]
