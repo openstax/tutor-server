@@ -19,15 +19,13 @@ class CreateStudentHistory
       create_assignments(course, role)
 
       # practice widgets assign 5 task steps to the role
-      practice_steps = create_practice_widget(role, { pages: outputs.page_data[4].id })
+      practice_steps = create_practice_widget(role, pages: outputs.page_data[4].id)
       answer_correctly(practice_steps, 2) # 2/5
 
-      practice_steps = create_practice_widget(role, { pages: outputs.page_data[5].id })
+      practice_steps = create_practice_widget(role, pages: outputs.page_data[5].id)
       answer_correctly(practice_steps, 5) # 5/5
 
-      practice_steps = create_practice_widget(role, {
-        book_parts: outputs.toc.children[3].id
-      })
+      practice_steps = create_practice_widget(role, book_parts: outputs.toc.children[3].id)
       answer_correctly(practice_steps, 5) # 5/5
     end
   end
@@ -55,7 +53,7 @@ class CreateStudentHistory
     run(:add_book_to_course, course: course, book: outputs.book)
   end
 
-  def create_practice_widget(role, ids: {})
+  def create_practice_widget(role, ids = {})
     ResetPracticeWidget[role: role,
                         book_part_ids: ids[:book_parts],
                         page_ids: ids[:pages],
@@ -90,14 +88,6 @@ class CreateStudentHistory
       settings: {
         page_ids: outputs.page_data.from(1).collect(&:id).collect(&:to_s) # 0 is preface
       })
-
-    @ireading_task_plan.tasking_plans << FactoryGirl.create(
-     :tasks_tasking_plan, task_plan: @ireading_task_plan, target: role
-    )
-
-    @ireading_task_plan.save
-
-    @ireading_task_plan
   end
 
   def create_homework_task_plan(course, role)
@@ -118,13 +108,5 @@ class CreateStudentHistory
         exercise_ids: exercise_ids,
         exercises_count_dynamic: 2
       })
-
-    @homework_task_plan.tasking_plans << FactoryGirl.create(
-      :tasks_tasking_plan, task_plan: @homework_task_plan, target: role
-    )
-
-    @homework_task_plan.save
-
-    @homework_task_plan
   end
 end
