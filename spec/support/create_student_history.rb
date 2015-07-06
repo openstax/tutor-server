@@ -53,13 +53,6 @@ class CreateStudentHistory
     run(:add_book_to_course, course: course, book: outputs.book)
   end
 
-  def create_practice_widget(role, ids = {})
-    ResetPracticeWidget[role: role,
-                        book_part_ids: ids[:book_parts],
-                        page_ids: ids[:pages],
-                        exercise_source: :local].task.task_steps
-  end
-
   def create_assignments(course, role)
     run(:distribute_tasks, create_ireading_task_plan(course, role))
 
@@ -67,6 +60,13 @@ class CreateStudentHistory
     run(:distribute_tasks, task_plan).outputs.tasks.each do |task|
       answer_correctly(task.task_steps, 2)
     end
+  end
+
+  def create_practice_widget(role, ids = {})
+    ResetPracticeWidget[role: role,
+                        book_part_ids: ids[:book_parts],
+                        page_ids: ids[:pages],
+                        exercise_source: :local].task.task_steps
   end
 
   def answer_correctly(steps, num)
