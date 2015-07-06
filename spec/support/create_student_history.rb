@@ -10,27 +10,29 @@ class CreateStudentHistory
   uses_routine FetchAndImportBook, translations: { outputs: { type: :verbatim } }
 
   protected
-  def exec(course:, roles: [], book_id: '93e2b09d-261c-4007-a987-0b3062fe154b')
+  def exec(course:, roles: setup_student_role, book_id: '93e2b09d-261c-4007-a987-0b3062fe154b')
     setup_course_book(course, book_id)
 
-    if [roles].flatten.any?
-      puts "=== Using requested student roles ==="
-      create_student_history(course, roles)
-    else
-      create_student_history(course, setup_student_role)
+    [roles].flatten.each do |role|
+      puts "=== Set Role##{role.id} history ==="
+
+      create_assignments(course, role)
+
+      # practice widgets assign 5 task steps to the role
+      practice_steps = create_practice_widget(role, { pages: outputs.page_data[4].id })
+      answer_correctly(practice_steps, 2) # 2/5
+
+      practice_steps = create_practice_widget(role, { pages: outputs.page_data[5].id })
+      answer_correctly(practice_steps, 5) # 5/5
+
+      practice_steps = create_practice_widget(role, {
+        book_parts: outputs.toc.children[3].id
+      })
+      answer_correctly(practice_steps, 5) # 5/5
     end
   end
 
   private
-  def setup_course_book(course, book_id)
-    puts "=== Fetch & import book ==="
-    run(:fetch_and_import_book, id: book_id)
-    run(:visit_book, book: outputs.book, visitor_names: [:page_data, :toc])
-
-    puts "=== Add book to course ==="
-    run(:add_book_to_course, course: course, book: outputs.book)
-  end
-
   def setup_student_role
     puts "=== Creating a course period ==="
     run(:create_period, course: course)
@@ -44,31 +46,13 @@ class CreateStudentHistory
     Entity::Role.last
   end
 
-  def create_student_history(course, roles)
-    [roles].flatten.each do |role|
-      puts "=== Set Role##{role.id} history ==="
+  def setup_course_book(course, book_id)
+    puts "=== Fetch & import book ==="
+    run(:fetch_and_import_book, id: book_id)
+    run(:visit_book, book: outputs.book, visitor_names: [:page_data, :toc])
 
-      create_assignments(course, role)
-
-      # practice widgets assign 5 task steps to the role
-      practice_steps = create_practice_widget(role, {
-        pages: outputs.page_data[4].id
-      })
-
-      answer_correctly(practice_steps, 2) # 2/5
-
-      practice_steps = create_practice_widget(role, {
-        pages: outputs.page_data[5].id
-      })
-
-      answer_correctly(practice_steps, 5) # 5/5
-
-      practice_steps = create_practice_widget(role, {
-        book_parts: outputs.toc.children[3].id
-      })
-
-      answer_correctly(practice_steps, 5) # 5/5
-    end
+    puts "=== Add book to course ==="
+    run(:add_book_to_course, course: course, book: outputs.book)
   end
 
   def create_practice_widget(role, ids: {})

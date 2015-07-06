@@ -89,7 +89,6 @@ class GetCourseGuide
 
   def exercises_grouped_by_book_part
     outputs.task_steps.select { |t| t.exercise? && t.completed? }.group_by do |t|
-      puts t.tasked_type
       Content::Routines::SearchPages[tag: get_lo_tags(t)].first.content_book_part_id
     end
   end
