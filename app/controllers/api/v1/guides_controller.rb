@@ -38,9 +38,10 @@ module Api
                                        allowed_role_type: types,
                                        role_id: params[:role_id])
         if result.errors.any?
-          raise(IllegalState, result.errors.map(&:message).to_sentence)
+          raise(SecurityTransgression, :invalid_role)
+        else
+          result.outputs.role
         end
-        result.outputs.role
       end
     end
   end
