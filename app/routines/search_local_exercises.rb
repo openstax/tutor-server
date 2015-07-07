@@ -27,6 +27,7 @@ class SearchLocalExercises
     end
 
     outputs[:items] = Entity::Relation.new(relation).to_a
+
   end
 
 end
