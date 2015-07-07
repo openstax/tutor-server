@@ -167,7 +167,7 @@ class DemoBase
 
     raise "No pages to assign" if pages.blank?
 
-    task_plan = Tasks::Models::TaskPlan.create!(
+    task_plan = Tasks::Models::TaskPlan.new(
       title: title || pages.first.title,
       owner: course,
       type: 'reading',
@@ -200,7 +200,7 @@ class DemoBase
                        .take(num_exercises)
                        .collect{ |e| e.id.to_s }
 
-    task_plan = Tasks::Models::TaskPlan.create!(
+    task_plan = Tasks::Models::TaskPlan.new(
       title: title || "Homework - #{chapter_sections.join('-')}",
       owner: course,
       type: 'homework',
@@ -218,11 +218,12 @@ class DemoBase
   def distribute_tasks(task_plan:, to:, opens_at:, due_at:, message: nil)
     targets = [to].flatten
     targets.each do |target|
-      task_plan.tasking_plans << Tasks::Models::TaskingPlan.create!(target: target,
-                                                                    task_plan: task_plan,
-                                                                    opens_at: opens_at,
-                                                                    due_at: due_at)
+      task_plan.tasking_plans << Tasks::Models::TaskingPlan.new(target: target,
+                                                                task_plan: task_plan,
+                                                                opens_at: opens_at,
+                                                                due_at: due_at)
     end
+    task_plan.save!
 
     tasks = run(DistributeTasks, task_plan).outputs.tasks
 

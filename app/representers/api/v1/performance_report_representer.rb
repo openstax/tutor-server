@@ -12,7 +12,7 @@ module Api::V1
                readable: true
 
       property :id,
-               type: Integer,
+               type: String,
                readable: true
 
       property :status,
@@ -41,7 +41,7 @@ module Api::V1
                readable: true
 
       property :role,
-               type: Integer,
+               type: String,
                readable: true
 
       collection :data,
@@ -55,6 +55,10 @@ module Api::V1
       include Roar::JSON
 
       property :title,
+               type: String,
+               readable: true
+
+      property :plan_id,
                type: String,
                readable: true
 

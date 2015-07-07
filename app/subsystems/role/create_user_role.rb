@@ -1,5 +1,3 @@
-require_relative '../../models/entity/role'
-
 class Role::CreateUserRole
   lev_routine express_output: :role
 

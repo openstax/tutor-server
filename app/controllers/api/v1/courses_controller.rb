@@ -16,19 +16,26 @@ class Api::V1::CoursesController < Api::V1::ApiController
   EOS
   def index
     OSU::AccessPolicy.require_action_allowed!(:index, current_api_user, Entity::Course)
-    courses = ListCourses.call(user: current_human_user.entity_user,
-                               with: [:roles, :periods]).outputs.courses
-    respond_with courses, represent_with: Api::V1::CoursesRepresenter
+    courses_info = CollectCourseInfo[user: current_human_user.entity_user,
+                                     with: [:roles, :periods]]
+    respond_with courses_info, represent_with: Api::V1::CoursesRepresenter
   end
 
   api :GET, '/courses/:course_id', 'Returns information about a specific course, including periods'
   description <<-EOS
-    Returns information about a specific course, including periods
+    Returns information about a specific course, including periods and roles
     #{json_schema(Api::V1::CourseRepresenter, include: :readable)}
   EOS
   def show
     course = Entity::Course.find(params[:id])
-    standard_read course, Api::V1::CourseRepresenter
+    OSU::AccessPolicy.require_action_allowed!(:read, current_api_user, course)
+
+    # Use CollectCourseInfo instead of just representing the entity course so
+    # we can gather extra information
+    course_info = CollectCourseInfo[course: course,
+                                    user: current_human_user.entity_user,
+                                    with: [:roles, :periods]].first
+    respond_with course_info, represent_with: Api::V1::CourseRepresenter
   end
 
   api :GET, '/courses/:course_id/readings', 'Returns a course\'s readings'
@@ -41,6 +48,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   EOS
   def readings
     course = Entity::Course.find(params[:id])
+    OSU::AccessPolicy.require_action_allowed!(:readings, current_api_user, course)
 
     # For the moment, we're assuming just one book per course
     books = CourseContent::GetCourseBooks.call(course: course).outputs.books
@@ -65,10 +73,11 @@ class Api::V1::CoursesController < Api::V1::ApiController
     course = Entity::Course.find(params[:id])
     OSU::AccessPolicy.require_action_allowed!(:exercises, current_api_user, course)
 
-    los = Content::GetLos[params]
-    outputs = SearchLocalExercises.call(tag: los, match_count: 1).outputs
+    lo_outputs = Content::GetLos.call(params).outputs
+    tags = lo_outputs.los + lo_outputs.aplos
+    search_outputs = SearchLocalExercises.call(tag: tags, match_count: 1).outputs
 
-    respond_with outputs, represent_with: Api::V1::ExerciseSearchRepresenter
+    respond_with search_outputs, represent_with: Api::V1::ExerciseSearchRepresenter
   end
 
   api :GET, '/courses/:course_id/plans', 'Returns a course\'s plans'
@@ -77,7 +86,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   EOS
   def plans
     course = Entity::Course.find(params[:id])
-    # OSU::AccessPolicy.require_action_allowed!(:task_plans, current_api_user, course)
+    OSU::AccessPolicy.require_action_allowed!(:task_plans, current_api_user, course)
 
     out = GetCourseTaskPlans.call(course: course).outputs
     respond_with out, represent_with: Api::V1::TaskPlanSearchRepresenter
@@ -154,7 +163,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   api :POST, '/courses/:course_id/performance/export',
              'Begins the export of the performance report for authorized teachers'
   description <<-EOS
-    201 if the role is a teacher of a course
+    202 if the role is a teacher of a course
       -- The export background job will be started
   EOS
   def performance_export

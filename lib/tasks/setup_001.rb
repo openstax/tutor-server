@@ -78,54 +78,57 @@ class Setup001
       r_due_date = Time.now + due_date_deltas[i]
       r_open_date = r_due_date - 1.week
 
-      r_tp = Tasks::Models::TaskPlan.create!(
+      r_tp = Tasks::Models::TaskPlan.new(
         title: "iReading ##{i + 1} - #{'Intro and ' if i == 0}Subchapter ##{i + 1}",
         owner: course,
         type: 'reading',
         assistant: r_assistant,
         settings: { page_ids: r_page_ids }
       )
-      r_tp.tasking_plans << Tasks::Models::TaskingPlan.create!(target: course,
-                                                               task_plan: r_tp,
-                                                               opens_at: r_open_date,
-                                                               due_at: r_due_date)
+      r_tp.tasking_plans << Tasks::Models::TaskingPlan.new(target: course,
+                                                           task_plan: r_tp,
+                                                           opens_at: r_open_date,
+                                                           due_at: r_due_date)
+      r_tp.save!
       run(:distribute, r_tp)
 
       page_los = run(:get_los, page_ids: hw_page_ids).outputs.los
       exercise_ids = run(:search_exercises, tag: page_los, match_count: 1)
                        .outputs.items.shuffle.take(5).collect{ |e| e.id.to_s }
-      hw_tp = Tasks::Models::TaskPlan.create!(title: "Homework ##{i + 1} - Subchapter ##{i + 1}",
-                                              owner: course,
-                                              type: 'homework',
-                                              assistant: hw_assistant,
-                                              settings: {
-                                                page_ids: hw_page_ids,
-                                                exercise_ids: exercise_ids,
-                                                exercises_count_dynamic: [i + 2, 4].min
-                                              })
-      hw_tp.tasking_plans << Tasks::Models::TaskingPlan.create!(target: course,
-                                                                task_plan: hw_tp,
-                                                                opens_at: hw_open_date,
-                                                                due_at: hw_due_date)
+      hw_tp = Tasks::Models::TaskPlan.new(title: "Homework ##{i + 1} - Subchapter ##{i + 1}",
+                                          owner: course,
+                                          type: 'homework',
+                                          assistant: hw_assistant,
+                                          settings: {
+                                            page_ids: hw_page_ids,
+                                            exercise_ids: exercise_ids,
+                                            exercises_count_dynamic: [i + 2, 4].min
+                                          })
+      hw_tp.tasking_plans << Tasks::Models::TaskingPlan.new(target: course,
+                                                            task_plan: hw_tp,
+                                                            opens_at: hw_open_date,
+                                                            due_at: hw_due_date)
+      hw_tp.save!
       run(:distribute, hw_tp)
     end
 
     # Add another HW before the ones above (add it here so it is later w.r.t. created_at)
-    hw_tp = Tasks::Models::TaskPlan.create!(title: "Homework 0",
-                                              owner: course,
-                                              type: 'homework',
-                                              assistant: hw_assistant,
-                                              settings: {
-                                                exercise_ids: Content::Models::Exercise
-                                                                .order(:created_at)
-                                                                .last(3).first(2) ## the last exercise is mis-tagged
-                                                                .collect{ |e| e.id.to_s },
-                                                exercises_count_dynamic: 2
-                                              })
-    hw_tp.tasking_plans << Tasks::Models::TaskingPlan.create!(target: course,
-                                                              task_plan: hw_tp,
-                                                              opens_at: Time.now - 3.weeks,
-                                                              due_at: Time.now - 2.weeks)
+    hw_tp = Tasks::Models::TaskPlan.new(title: "Homework 0",
+                                        owner: course,
+                                        type: 'homework',
+                                        assistant: hw_assistant,
+                                        settings: {
+                                          exercise_ids: Content::Models::Exercise
+                                                          .order(:created_at)
+                                                          .last(3).first(2) ## the last exercise is mis-tagged
+                                                          .collect{ |e| e.id.to_s },
+                                          exercises_count_dynamic: 2
+                                        })
+    hw_tp.tasking_plans << Tasks::Models::TaskingPlan.new(target: course,
+                                                          task_plan: hw_tp,
+                                                          opens_at: Time.now - 3.weeks,
+                                                          due_at: Time.now - 2.weeks)
+    hw_tp.save!
     run(:distribute, hw_tp)
 
     # Add some practice widgets and work them for students[0]

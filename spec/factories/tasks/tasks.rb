@@ -10,9 +10,10 @@ FactoryGirl.define do
     association :task_plan, factory: :tasks_task_plan
     association :entity_task, factory: :entity_task
     task_type :reading
-    title "A task"
+    title       { task_plan.title }
+    description { task_plan.description }
     opens_at { Time.now }
-    due_at { opens_at + duration }
+    due_at { (opens_at || Time.now) + duration }
 
     after(:build) do |task, evaluator|
       evaluator.step_types.each_with_index do |type, i|

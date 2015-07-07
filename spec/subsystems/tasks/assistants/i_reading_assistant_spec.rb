@@ -66,24 +66,36 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     end }
 
     let!(:task_plan) {
-      FactoryGirl.create(:tasks_task_plan,
+      FactoryGirl.build(:tasks_task_plan,
         assistant: assistant,
-        settings: { page_ids: pages.collect{ |page| page.id.to_s } }
+        settings: { page_ids: pages.collect{ |page| page.id.to_s } },
+        num_tasking_plans: 0
       )
     }
 
     let!(:num_taskees) { 3 }
 
-    let!(:taskees) { num_taskees.times.collect{ Entity::User.create } }
+    let!(:taskees) { num_taskees.times.collect do
+      user = Entity::User.create
+      AddUserAsPeriodStudent.call(user: user, period: period)
+      user
+    end }
 
     let!(:tasking_plans) {
-      taskees.collect{ |t|
-        task_plan.tasking_plans << FactoryGirl.create(:tasks_tasking_plan,
-          task_plan: task_plan,
-          target: t
-        )
-      }
+      tps = taskees.collect do |taskee|
+        task_plan.tasking_plans <<
+          FactoryGirl.build(:tasks_tasking_plan,
+            task_plan: task_plan,
+            target:    taskee
+          )
+      end
+
+      task_plan.save
+      tps
     }
+
+    let!(:course) { task_plan.owner }
+    let!(:period) { CreatePeriod[course: course] }
 
     it 'splits a CNX module into many different steps and assigns them with immediate feedback' do
       allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [[0, 2]]}
@@ -190,16 +202,25 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       )
     }
 
+    let!(:course) { task_plan.owner }
+    let!(:period) { CreatePeriod[course: course] }
+
     let!(:num_taskees) { 3 }
 
-    let!(:taskees) { num_taskees.times.collect{ FactoryGirl.create(:user_profile) } }
+    let!(:taskees) { num_taskees.times.collect do
+      user = Entity::User.create
+      AddUserAsPeriodStudent.call(user: user, period: period)
+      user
+    end }
 
     let!(:tasking_plans) {
-      taskees.collect{ |t|
-        task_plan.tasking_plans << FactoryGirl.create(
+      tps = taskees.collect{ |t|
+        task_plan.tasking_plans << FactoryGirl.build(
           :tasks_tasking_plan, task_plan: task_plan, target: t
         )
       }
+      task_plan.save!
+      tps
     }
 
     it 'is split into different task steps with immediate feedback' do

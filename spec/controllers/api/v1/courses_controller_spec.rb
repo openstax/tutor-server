@@ -19,10 +19,42 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   let!(:period) { CreatePeriod[course: course] }
 
   describe "#readings" do
+    it 'raises SecurityTransgression if user is anonymous or not in the course' do
+      root_book_part = FactoryGirl.create(:content_book_part)
+      CourseContent::AddBookToCourse.call(course: course, book: root_book_part.book)
+
+      expect {
+        api_get :readings, nil, parameters: { id: course.id }
+      }.to raise_error(SecurityTransgression)
+
+      expect {
+        api_get :readings, user_1_token, parameters: { id: course.id }
+      }.to raise_error(SecurityTransgression)
+    end
+
+    it 'works for students in the course' do
+      # used in FE for reference view
+      root_book_part = FactoryGirl.create(:content_book_part, :standard_contents_1)
+      CourseContent::AddBookToCourse.call(course: course, book: root_book_part.book)
+      AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
+      AddUserAsPeriodStudent.call(period: period, user: user_2.entity_user)
+
+      api_get :readings, user_1_token, parameters: { id: course.id }
+      expect(response).to have_http_status(:success)
+      teacher_response = response.body_as_hash
+
+      api_get :readings, user_2_token, parameters: { id: course.id }
+      expect(response).to have_http_status(:success)
+      student_response = response.body_as_hash
+
+      expect(teacher_response).to eq(student_response)
+    end
+
     it "should work on the happy path" do
       root_book_part = FactoryGirl.create(:content_book_part, :standard_contents_1)
       CourseContent::AddBookToCourse.call(course: course, book: root_book_part.book)
       toc = Content::VisitBook[book: root_book_part.book, visitor_names: :toc]
+      AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
 
       api_get :readings, user_1_token, parameters: {id: course.id}
       expect(response).to have_http_status(:success)
@@ -82,16 +114,36 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   end
 
   describe "#plans" do
-    it "should work on the happy path" do
-      task_plan = FactoryGirl.create(:tasks_task_plan, owner: course)
+    let!(:task_plan) { FactoryGirl.create :tasks_task_plan, owner: course }
 
+    it 'raises SecurityTransgression if user is anonymous or not in the course' do
+      expect {
+        api_get :plans, nil, parameters: { id: course.id }
+      }.to raise_error(SecurityTransgression)
+
+      expect {
+        api_get :plans, user_1_token, parameters: { id: course.id }
+      }.to raise_error(SecurityTransgression)
+    end
+
+    it 'returns task plans for course teachers' do
+      AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
       api_get :plans, user_1_token, parameters: {id: course.id}
 
       expect(response).to have_http_status(:success)
       expect(response.body).to(
         eq({ total_count: 1, items: [Api::V1::TaskPlanRepresenter.new(task_plan)] }.to_json)
       )
+    end
 
+    it 'returns task plans for course students' do
+      AddUserAsPeriodStudent.call(period: period, user: user_2.entity_user)
+      api_get :plans, user_2_token, parameters: {id: course.id}
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to(
+        eq({ total_count: 1, items: [Api::V1::TaskPlanRepresenter.new(task_plan)] }.to_json)
+      )
     end
   end
 
@@ -207,6 +259,14 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     let(:student)        { roles.select(&:student?).first }
     let!(:zeroth_period) { CreatePeriod[course: course, name: '0th'] }
 
+    context 'course does not exist' do
+      it 'raises RecordNotFound' do
+        expect{ api_get :show, nil, parameters: { id: -1 } }.to(
+          raise_error(ActiveRecord::RecordNotFound)
+        )
+      end
+    end
+
     context 'anonymous user' do
       it 'raises SecurityTransgression' do
         expect{ api_get :show, nil, parameters: { id: course.id } }.to(
@@ -224,51 +284,49 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
 
     context 'user is a teacher' do
-      before do
-        AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
-      end
+      let!(:teacher) { AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user).outputs.role }
 
       it 'returns the teacher roles with the course' do
         api_get :show, user_1_token, parameters: { id: course.id }
-        expect(response.body).to include({
+        expect(response.body_as_hash).to match a_hash_including(
           id: course.id.to_s,
           name: course.profile.name,
           periods: [{ id: zeroth_period.id.to_s, name: zeroth_period.name },
-                    { id: period.id.to_s, name: period.name }]
-        }.to_json)
+                    { id: period.id.to_s, name: period.name }],
+          roles: [{ id: teacher.id.to_s, type: 'teacher' }],
+        )
       end
     end
 
     context 'user is a student' do
-      before(:each) do
-        AddUserAsPeriodStudent.call(period: period, user: user_1.entity_user)
-      end
+      let!(:student) { AddUserAsPeriodStudent.call(period: period, user: user_1.entity_user).outputs.role }
 
       it 'returns the student roles with the course' do
         api_get :show, user_1_token, parameters: { id: course.id }
-        expect(response.body).to include({
+        expect(response.body_as_hash).to match a_hash_including(
           id: course.id.to_s,
           name: course.profile.name,
           periods: [{ id: zeroth_period.id.to_s, name: zeroth_period.name },
-                    { id: period.id.to_s, name: period.name }]
-        }.to_json)
+                    { id: period.id.to_s, name: period.name }],
+          roles: [{ id: student.id.to_s, type: 'student' }],
+        )
       end
     end
 
     context 'user is both a teacher and student' do
-      before(:each) do
-        AddUserAsPeriodStudent.call(period: period, user: user_1.entity_user)
-        AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
-      end
+      let!(:student) { AddUserAsPeriodStudent.call(period: period, user: user_1.entity_user).outputs.role }
+      let!(:teacher) { AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user).outputs.role }
 
       it 'returns both roles with the course' do
         api_get :show, user_1_token, parameters: { id: course.id }
-        expect(response.body).to include({
+        expect(response.body_as_hash).to match a_hash_including(
           id: course.id.to_s,
           name: course.profile.name,
           periods: [{ id: zeroth_period.id.to_s, name: zeroth_period.name },
-                    { id: period.id.to_s, name: period.name }]
-        }.to_json)
+                    { id: period.id.to_s, name: period.name }],
+          roles: [{ id: student.id.to_s, type: 'student' },
+                  { id: teacher.id.to_s, type: 'teacher' }],
+        )
       end
     end
   end
@@ -417,6 +475,21 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
       expect(response).to have_http_status(:success)
     end
+
+    it 'raises IllegalState if user is anonymous or not in the course or is not a student' do
+      expect {
+        api_get :practice, nil, parameters: { id: course.id }
+      }.to raise_error(IllegalState)
+
+      expect {
+        api_get :practice, user_1_token, parameters: { id: course.id }
+      }.to raise_error(IllegalState)
+
+      AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
+      expect {
+        api_get :practice, user_1_token, parameters: { id: course.id }
+      }.to raise_error(IllegalState)
+    end
   end
 
   describe "dashboard" do
@@ -476,6 +549,16 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                            tasked_to: student_role)}
 
     let!(:plan) { FactoryGirl.create(:tasks_task_plan, owner: course)}
+
+    it 'raises IllegalState if user is anonymous or not in course' do
+      expect {
+        api_get :dashboard, nil, parameters: { id: course.id }
+      }.to raise_error(IllegalState)
+
+      expect {
+        api_get :dashboard, user_1_token, parameters: { id: course.id }
+      }.to raise_error(IllegalState)
+    end
 
     it "works for a student without a role specified" do
       Hacks::AnswerExercise[task_step: hw1_task.task_steps[0], is_correct: true]
@@ -564,7 +647,13 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           a_hash_including(
             "id" => plan.id.to_s,
             "type" => "reading",
-            "tasking_plans" => []
+            "tasking_plans" => [
+              { "target_id" => course.id.to_s,
+                "target_type" => 'course',
+                "opens_at" => DateTimeUtilities.to_api_s(plan.tasking_plans.first.opens_at),
+                "due_at" => DateTimeUtilities.to_api_s(plan.tasking_plans.first.due_at)
+              }
+            ]
           )
         )
       )
@@ -619,6 +708,22 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                   parameters: { id: course.id, role_id: student_role }
         end
       end
+
+      context 'and a student role is not given' do
+        it 'raises IllegalState' do
+          expect {
+            api_get :stats, user_1_token, parameters: { id: course.id }
+          }.to raise_error(IllegalState)
+        end
+      end
+    end
+
+    context 'user is anonymous' do
+      it 'raises IllegalState' do
+        expect {
+          api_get :stats, nil, parameters: { id: course.id }
+        }.to raise_error(IllegalState)
+      end
     end
   end
 
@@ -642,6 +747,18 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     describe "#exercises" do
       before(:each) do
         AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
+      end
+
+      it 'raises SecurityTransgression if user is anonymous or not a teacher' do
+        page_ids = Content::Models::Page.all.map(&:id)
+
+        expect {
+          api_get :exercises, nil, parameters: { id: course.id, page_ids: page_ids }
+        }.to raise_error(SecurityTransgression)
+
+        expect {
+          api_get :exercises, user_2_token, parameters: { id: course.id, page_ids: page_ids }
+        }.to raise_error(SecurityTransgression)
       end
 
       it "should return an empty result if no page_ids specified" do
@@ -713,9 +830,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(resp).to eq([{
           period_id: course.periods.first.id.to_s,
           data_headings: [
-            { title: 'Homework 2 task plan', average: 87.5 },
-            { title: 'Reading task plan' },
-            { title: 'Homework task plan', average: 75.0 }
+            { title: 'Homework 2 task plan', plan_id: resp[0][:data_headings][0][:plan_id], average: 87.5 },
+            { title: 'Reading task plan', plan_id: resp[0][:data_headings][1][:plan_id]  },
+            { title: 'Homework task plan', plan_id: resp[0][:data_headings][2][:plan_id], average: 75.0 }
           ],
           students: [{
             name: 'Student One',
@@ -773,9 +890,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         }, {
           period_id: course.periods.order(:id).last.id.to_s,
           data_headings: [
-            { title: 'Homework 2 task plan' },
-            { title: 'Reading task plan' },
-            { title: 'Homework task plan', average: 100.0 }
+            { title: 'Homework 2 task plan', plan_id: resp[1][:data_headings][0][:plan_id] },
+            { title: 'Reading task plan', plan_id: resp[1][:data_headings][1][:plan_id]  },
+            { title: 'Homework task plan', plan_id: resp[1][:data_headings][2][:plan_id], average: 100.0 }
           ],
           students: [{
             name: student_3.full_name,
@@ -859,6 +976,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     it 'returns 202 for authorized teachers' do
       api_post :performance_export, teacher_token, parameters: { id: course.id }
       expect(response.status).to eq(202)
+      expect(response.body_as_hash[:job]).to match(%r{/api/jobs/[a-z0-9-]+})
     end
 
     it 'returns the job path for the performance book export for authorized teachers' do
@@ -922,73 +1040,6 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     it 'returns 404 for non-existent courses' do
       expect {
         api_get :performance_exports, teacher_token, parameters: { id: 'nope' }
-      }.to raise_error(ActiveRecord::RecordNotFound)
-    end
-  end
-
-  describe 'GET #students' do
-    let(:teacher) { FactoryGirl.create :user_profile }
-    let(:teacher_token) { FactoryGirl.create :doorkeeper_access_token,
-                                             resource_owner_id: teacher.id }
-
-    let(:student_1) { FactoryGirl.create :user_profile }
-
-    let(:student_2) { FactoryGirl.create :user_profile }
-
-    let(:student_3) { FactoryGirl.create :user_profile }
-
-    let(:period_2) { CreatePeriod[course: course] }
-
-    it 'returns the student roster' do
-      AddUserAsCourseTeacher.call(course: course, user: teacher.entity_user)
-      student_1_role = AddUserAsPeriodStudent.call(period: period, user: student_1.entity_user).outputs[:role]
-      student_2_role = AddUserAsPeriodStudent.call(period: period, user: student_2.entity_user).outputs[:role]
-      student_3_role = AddUserAsPeriodStudent.call(period: period_2, user: student_3.entity_user).outputs[:role]
-
-      api_get :students, teacher_token, parameters: { id: course.id }
-      students = response.body_as_hash
-      students.sort { |a, b| a['id'] <=> b['id'] }
-      expect(students).to eq([
-        {
-          id: students[0][:id],
-          first_name: student_1.first_name,
-          last_name: student_1.last_name,
-          name: student_1.full_name,
-          period_id: period.id.to_s,
-          role_id: student_1_role.id.to_s,
-        },
-        {
-          id: students[1][:id],
-          first_name: student_2.first_name,
-          last_name: student_2.last_name,
-          name: student_2.full_name,
-          period_id: period.id.to_s,
-          role_id: student_2_role.id.to_s,
-        },
-        {
-          id: students[2][:id],
-          first_name: student_3.first_name,
-          last_name: student_3.last_name,
-          name: student_3.full_name,
-          period_id: period_2.id.to_s,
-          role_id: student_3_role.id.to_s,
-        },
-      ])
-    end
-
-    it 'returns 403 for users who are not teachers of the course' do
-      unknown = FactoryGirl.create :user_profile
-      unknown_token = FactoryGirl.create :doorkeeper_access_token,
-                                         resource_owner_id: unknown.id
-
-      expect {
-        api_get :students, unknown_token, parameters: { id: course.id }
-      }.to raise_error(SecurityTransgression)
-    end
-
-    it 'returns 404 for non-existent courses' do
-      expect {
-        api_get :students, teacher_token, parameters: { id: 'nope' }
       }.to raise_error(ActiveRecord::RecordNotFound)
     end
   end

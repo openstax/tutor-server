@@ -1,36 +1,18 @@
 require 'rails_helper'
 
 RSpec.describe DistributeTasks, type: :routine do
+
+  let!(:course)    { Entity::Course.create! }
+  let!(:period)    { CreatePeriod[course: course] }
+  let!(:user)      {
+    profile = FactoryGirl.create :user_profile
+    AddUserAsPeriodStudent.call(user: profile.entity_user, period: period)
+    profile
+  }
+  let!(:task_plan) { FactoryGirl.create(:tasks_task_plan, owner: course) }
+  let!(:tasking_plan) { FactoryGirl.create(:tasks_tasking_plan, target: user, task_plan: task_plan) }
+
   context 'unpublished task_plan' do
-    let!(:user)      { FactoryGirl.create :user_profile }
-    let!(:task_plan) { FactoryGirl.create(:tasks_tasking_plan, target: user).task_plan }
-
-    it 'validates the task_plan settings against the assistant schema' do
-      allow(DummyAssistant).to receive(:schema).and_return(
-        '{
-          "type": "object",
-          "required": [
-            "page_ids"
-          ],
-          "properties": {
-            "page_ids": {
-              "type": "array",
-              "items": {
-                "type": "integer"
-              }
-            }
-          },
-          "additionalProperties": false
-        }'
-      )
-      expect(DummyAssistant).not_to receive(:build_tasks)
-
-      result = DistributeTasks.call(task_plan)
-      expect(result.errors.first.code).to eq :invalid_settings
-      expect(task_plan.reload.published_at).to be_nil
-      expect(task_plan.tasks).to be_blank
-    end
-
     it "calls the build_tasks method on the task_plan's assistant" do
       expect(DummyAssistant).to receive(:build_tasks).and_return([])
 
@@ -45,40 +27,9 @@ RSpec.describe DistributeTasks, type: :routine do
   end
 
   context 'published task_plan' do
-    let!(:user)      { FactoryGirl.create :user_profile }
-    let!(:task_plan) {
-      tp = FactoryGirl.create(:tasks_tasking_plan, target: user).task_plan
-      DistributeTasks.call(tp)
-      tp.reload
-    }
-
-    it 'validates the task_plan settings against the assistant schema' do
-      previous_published_at = task_plan.published_at
-      previous_tasks = task_plan.tasks
-
-      allow(DummyAssistant).to receive(:schema).and_return(
-        '{
-          "type": "object",
-          "required": [
-            "page_ids"
-          ],
-          "properties": {
-            "page_ids": {
-              "type": "array",
-              "items": {
-                "type": "integer"
-              }
-            }
-          },
-          "additionalProperties": false
-        }'
-      )
-      expect(DummyAssistant).not_to receive(:build_tasks)
-
-      result = DistributeTasks.call(task_plan)
-      expect(result.errors.first.code).to eq :invalid_settings
-      expect(task_plan.reload.published_at).to eq previous_published_at
-      expect(task_plan.tasks).to eq previous_tasks
+    before(:each) do
+      DistributeTasks.call(task_plan)
+      task_plan.reload
     end
 
     it "calls the build_tasks method on the task_plan's assistant" do

@@ -33,8 +33,20 @@ module OpenStax::Cnx::V1
                                                                   .collect{ |c| ".#{c}" }
                                                                   .join(', ')
 
-    # Find the tag within the class string and ensure it is properly formatted
-    TAG_REGEX = /ost-tag-(?:lo-)?([\w+-]+)/
+    # Find nodes that define relevant tags
+    LO_DEF_NODE_CSS = '.ost-learning-objective-def'
+    STD_DEF_NODE_CSS = '.ost-standards-def'
+    TEKS_DEF_NODE_CSS = '.ost-standards-teks'
+    APBIO_DEF_NODE_CSS = '.ost-standards-apbio'
+
+    STD_NAME_NODE_CSS = '.ost-standards-name'
+    STD_DESC_NODE_CSS = '.ost-standards-description'
+
+    # Find specific tags and extract the relevant parts
+    LO_REGEX = /ost-tag-lo-([\w+-]+)/
+    STD_REGEX = /ost-tag-std-([\w+-]+)/
+    TEKS_REGEX = /ost-tag-(teks-[\w+-]+)/
+    APLO_REGEX = /ost-tag-std-apbio-lo-([\w+-]+)/
 
     def initialize(hash: {}, chapter_section: [], is_intro: nil, id: nil, url: nil,
                    title: nil, full_hash: nil, content: nil, los: nil, fragments: nil, tags: nil)
@@ -141,8 +153,11 @@ module OpenStax::Cnx::V1
     end
 
     def los
-      @los ||= tags.collect { |attributes| attributes[:type] == :lo ? attributes[:value] : nil }
-                   .compact
+      @los ||= tags.select{ |tag| tag[:type] == :lo }.collect{ |tag| tag[:value] }
+    end
+
+    def aplos
+      @aplos ||= tags.select{ |tag| tag[:type] == :aplo }.collect{ |tag| tag[:value] }
     end
 
     def tags
@@ -151,36 +166,51 @@ module OpenStax::Cnx::V1
       @tags = {}
 
       # Extract tag name and description from .ost-standards-def and .os-learning-objective-def.
-      # TODO: Flaky code (assumes some order on the class definition tags)
 
-      # TEKS tags
-      root.css('[class^="ost-standards-def"]').each do |node|
-        name = node.at_css('[class^="ost-standards-name"]').try(:content).try(:strip)
-        description = node.at_css('[class^="ost-standards-description"]').try(:content).try(:strip)
-        tag_value = TAG_REGEX.match(node.attr('class').split.last).try(:[], 1)
-        @tags[tag_value] = {
-          value: tag_value,
-          name: name,
+      # LO tags
+      root.css(LO_DEF_NODE_CSS).each do |node|
+        klass = node.attr('class')
+        lo_value = LO_REGEX.match(klass).try(:[], 1)
+        next if lo_value.nil?
+
+        teks_value = TEKS_REGEX.match(klass).try(:[], 1)
+        description = node.content.strip
+
+        @tags[lo_value] = {
+          value: lo_value,
           description: description,
-          type: :teks
+          teks: teks_value,
+          type: :lo
         }
       end
 
-      # LO tags
-      root.css('[class^="ost-learning-objective-def"]').each do |node|
-        classes = node.attr('class').split
-        lo_value = TAG_REGEX.match(classes[1]).try(:[], 1)
-        teks_value = TAG_REGEX.match(classes[2]).try(:[], 1)
-        next if lo_value.nil?
-        name = node.content.strip
-        name.gsub!(/\s+/, ' ')
-        @tags[lo_value] ||= {}
-        @tags[lo_value].merge!({
-          value: lo_value,
+      # Other standards
+      root.css(STD_DEF_NODE_CSS).each do |node|
+        klass = node.attr('class')
+        name = node.at_css(STD_NAME_NODE_CSS).try(:content).try(:strip)
+        description = node.at_css(STD_DESC_NODE_CSS).try(:content).try(:strip)
+        value = nil
+
+        if node.matches?(TEKS_DEF_NODE_CSS)
+          value = TEKS_REGEX.match(klass).try(:[], 1)
+          type = :teks
+        elsif node.matches?(APBIO_DEF_NODE_CSS)
+          # Hack - Remove when we have another way to determine chapter/section for AP LO's
+          # Get book, chapter and section from first LO (for bio)
+          hack = /([\w+-]+)-lo[\d]+/.match(@tags.values.first[:value]).try(:[], 1) || 'apbio'
+          value = APLO_REGEX.match(klass).try(:[], 1)
+          value = "#{hack}-aplo-#{value}" unless value.nil?
+          type = :aplo
+        end
+
+        next if value.nil?
+
+        @tags[value] = {
+          value: value,
           name: name,
-          teks: teks_value,
-          type: :lo
-        })
+          description: description,
+          type: type
+        }
       end
 
       @tags.values

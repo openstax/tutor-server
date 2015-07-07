@@ -17,10 +17,12 @@ RSpec.describe Api::V1::TaskPlanWithStatsRepresenter, type: :representer,
   it "represents a task plan's stats" do
     expect(representation).to include(
       "id" => task_plan.id.to_s,
+      "title" => task_plan.title,
       "type" => "reading",
       "stats" => [
         {
-          "name"                     => 'None',
+          "period_id"                => task_plan.owner.periods.first.id.to_s,
+          "name"                     => "1st",
           "total_count"              => 2,
           "complete_count"           => 0,
           "partially_complete_count" => 0,

@@ -25,15 +25,20 @@ FactoryGirl.define do
       { page_ids: [page.id.to_s] }
     end
 
-    after(:create) do |task_plan,evaluator|
-      evaluator.number_of_students.times.each do
-        user = FactoryGirl.create :user_profile
+    after(:create) do |task_plan, evaluator|
+      course = task_plan.owner
+      period = course.periods.first || CreatePeriod[course: course]
+
+      task_plan.tasking_plans = evaluator.number_of_students.times.collect do |ii|
+        user = create :user_profile
         role = Role::GetDefaultUserRole[user.entity_user]
-        tp = FactoryGirl.create :tasks_tasking_plan, target: role, task_plan: task_plan
-        task_plan.tasking_plans << tp
+        CourseMembership::AddStudent.call(period: period, role: role)
+        build :tasks_tasking_plan, task_plan: task_plan, target: role
       end
+      task_plan.save!
 
       DistributeTasks.call(task_plan)
+      task_plan.reload
     end
   end
 end

@@ -94,4 +94,6 @@ Rails.application.configure do
       :sender_address => %{"OpenStax Tutor" <noreply@openstax.org>},
       :exception_recipients => %w{tutor-notifications@openstax.org}
     }
+
+  config.active_job.queue_adapter = :resque
 end

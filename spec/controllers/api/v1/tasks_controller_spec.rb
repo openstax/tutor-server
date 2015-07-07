@@ -33,6 +33,16 @@ describe Api::V1::TasksController, :type => :controller, :api => true, :version 
       expect(response.body_as_hash[:steps][0]).to include(type: 'reading')
       expect(response.body_as_hash[:steps][1]).to include(type: 'exercise')
     end
+
+    it 'raises SecurityTransgression when user is anonymous or not a teacher' do
+      expect {
+        api_get :show, nil, parameters: { id: task_1.id }
+      }.to raise_error(SecurityTransgression)
+
+      expect {
+        api_get :show, user_2_token, parameters: { id: task_1.id }
+      }.to raise_error(SecurityTransgression)
+    end
   end
 
 end

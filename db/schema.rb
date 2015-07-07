@@ -143,10 +143,11 @@ ActiveRecord::Schema.define(version: 20150507224137) do
   add_index "course_membership_teachers", ["entity_course_id", "entity_role_id"], name: "course_membership_teacher_course_role_uniq", unique: true, using: :btree
 
   create_table "course_profile_profiles", force: :cascade do |t|
-    t.integer  "entity_course_id", null: false
-    t.string   "name",             null: false
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.integer  "entity_course_id",                                        null: false
+    t.string   "name",                                                    null: false
+    t.string   "timezone",         default: "Central Time (US & Canada)", null: false
+    t.datetime "created_at",                                              null: false
+    t.datetime "updated_at",                                              null: false
   end
 
   add_index "course_profile_profiles", ["entity_course_id"], name: "index_course_profile_profiles_on_entity_course_id", unique: true, using: :btree
@@ -356,15 +357,18 @@ ActiveRecord::Schema.define(version: 20150507224137) do
   add_index "tasks_performance_report_exports", ["entity_role_id"], name: "index_tasks_performance_report_exports_on_entity_role_id", using: :btree
 
   create_table "tasks_task_plans", force: :cascade do |t|
-    t.integer  "tasks_assistant_id", null: false
-    t.integer  "owner_id",           null: false
-    t.string   "owner_type",         null: false
-    t.string   "title"
-    t.string   "type",               null: false
-    t.text     "settings",           null: false
+    t.integer  "tasks_assistant_id",        null: false
+    t.integer  "owner_id",                  null: false
+    t.string   "owner_type",                null: false
+    t.string   "type",                      null: false
+    t.string   "title",                     null: false
+    t.text     "description"
+    t.text     "settings",                  null: false
+    t.datetime "publish_last_requested_at"
     t.datetime "published_at"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
+    t.string   "publish_job_uuid"
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
   end
 
   add_index "tasks_task_plans", ["owner_id", "owner_type"], name: "index_tasks_task_plans_on_owner_id_and_owner_type", using: :btree
@@ -432,7 +436,7 @@ ActiveRecord::Schema.define(version: 20150507224137) do
     t.string   "target_type",        null: false
     t.integer  "tasks_task_plan_id", null: false
     t.datetime "opens_at"
-    t.datetime "due_at"
+    t.datetime "due_at",             null: false
     t.datetime "created_at",         null: false
     t.datetime "updated_at",         null: false
   end
@@ -456,10 +460,10 @@ ActiveRecord::Schema.define(version: 20150507224137) do
     t.integer  "entity_task_id"
     t.integer  "task_type",                                     null: false
     t.string   "title",                                         null: false
+    t.text     "description"
     t.datetime "opens_at"
     t.datetime "due_at"
     t.datetime "feedback_at"
-    t.text     "description"
     t.integer  "tasks_taskings_count",              default: 0, null: false
     t.text     "settings",                                      null: false
     t.text     "personalized_placeholder_strategy"

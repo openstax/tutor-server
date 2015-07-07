@@ -1,13 +1,9 @@
 class SetupCourseStats
   lev_routine express_output: :course
 
-  uses_routine CreateCourse,
-    translations: { outputs: { type: :verbatim } },
-    as: :create_course
+  uses_routine CreateCourse, as: :create_course
 
-  uses_routine CreatePeriod,
-    translations: { outputs: { type: :verbatim } },
-    as: :create_period
+  uses_routine CreatePeriod, as: :create_period
 
   uses_routine FetchAndImportBook,
     translations: { outputs: { type: :verbatim } },
@@ -28,12 +24,12 @@ class SetupCourseStats
   uses_routine DistributeTasks, as: :distribute_tasks
 
   protected
-  def exec(course: nil, role: nil)
+  def exec(course: nil, period: nil, role: nil)
     puts "=== Creating course ==="
-    outputs.course = course || run(:create_course, name: 'Physics')
+    outputs.course = course || run(:create_course, name: 'Physics').outputs.course
 
     puts "=== Creating a course period ==="
-    run(:create_period, course: course)
+    outputs.period = period || run(:create_period, course: course).outputs.period
 
     puts "=== Fetch & import book ==="
     run(:fetch_and_import_book, id: '93e2b09d-261c-4007-a987-0b3062fe154b')
@@ -52,7 +48,7 @@ class SetupCourseStats
 
       puts "=== Add student to course ==="
       run(:add_student_user_to_period, period: outputs.period, user: student.entity_user)
-      student_role = Entity::Role.last
+      student_role = Entity::Role.order(created_at: :desc).first
     end
 
     puts "=== Create assignments ==="
@@ -85,8 +81,12 @@ class SetupCourseStats
   end
 
   def create_assignments(role:)
-    ireading_task_plan.tasking_plans << FactoryGirl.create(:tasks_tasking_plan, target: role)
-    homework_task_plan.tasking_plans << FactoryGirl.create(:tasks_tasking_plan, target: role)
+    ireading_task_plan.tasking_plans << FactoryGirl.create(
+      :tasks_tasking_plan, task_plan: ireading_task_plan, target: role
+    )
+    homework_task_plan.tasking_plans << FactoryGirl.create(
+      :tasks_tasking_plan, task_plan: homework_task_plan, target: role
+    )
 
     run(:distribute_tasks, ireading_task_plan)
     run(:distribute_tasks, homework_task_plan).outputs.tasks.each do |task|

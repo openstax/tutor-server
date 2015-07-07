@@ -46,7 +46,8 @@ gem 'openstax_utilities', '~> 4.2.0'
 gem 'whenever'
 
 # OpenStax Accounts integration
-gem 'openstax_accounts', '~> 5.1.2'
+gem 'openstax_accounts', '~> 5.2.0'
+
 # OpenStax Exchange integration
 gem 'openstax_exchange', '~> 0.2.1'
 
@@ -111,7 +112,7 @@ gem 'faker'
 gem 'redis-rails'
 
 # Background job queueing
-gem 'resque'
+gem 'resque', '~> 1.24.1'
 
 # Type coercion for Representable
 gem 'virtus'
@@ -134,6 +135,9 @@ group :development, :test do
 
   # Fake in-memory Redis for development and testing
   gem 'fakeredis'
+
+  # Resque in test mode
+  gem 'resque_spec'
 
   # Get env variables from .env file
   gem 'dotenv-rails'

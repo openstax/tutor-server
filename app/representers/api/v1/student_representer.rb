@@ -12,45 +12,38 @@ module Api::V1
                required: true
              }
 
-    property :first_name,
+    property :course_membership_period_id,
+             as: :period_id,
+             type: String,
+             writeable: true,
+             readable: true,
+             schema_info: {
+               required: true
+             }
+
+    property :entity_role_id,
+             as: :role_id,
              type: String,
              writeable: false,
              readable: true,
              schema_info: {
                required: true
              }
+
+    property :first_name,
+             type: String,
+             writeable: false,
+             readable: true
 
     property :last_name,
              type: String,
              writeable: false,
-             readable: true,
-             schema_info: {
-               required: true
-             }
+             readable: true
 
-    property :name,
+    property :full_name,
              type: String,
              writeable: false,
-             readable: true,
-             schema_info: {
-               required: true
-             }
-
-    property :period_id,
-             type: String,
-             writeable: false,
-             readable: true,
-             schema_info: {
-               required: true
-             }
-
-    property :role_id,
-             type: String,
-             writeable: false,
-             readable: true,
-             schema_info: {
-               required: true
-             }
+             readable: true
 
   end
 end

@@ -29,6 +29,5 @@ module Tutor
     # Temporary fix until we update openstax_api
     # to include this for JSON responses
     ActiveSupport.escape_html_entities_in_json = false
-    config.active_job.queue_adapter = :resque
   end
 end

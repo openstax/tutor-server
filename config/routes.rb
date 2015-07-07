@@ -58,16 +58,16 @@ Rails.application.routes.draw do
         get 'performance(/role/:role_id)', action: :performance
         post 'performance/export', action: :performance_export
         get 'performance/exports', action: :performance_exports
-        get 'students', action: :students
       end
 
-      resources :task_plans, path: '/plans', shallow: true, except: [:index, :edit] do
+      resources :task_plans, path: '/plans', shallow: true, except: [:index, :new, :edit] do
         member do
-          post 'publish'
           get 'stats'
           get 'review'
         end
       end
+
+      resources :students, shallow: true
     end
 
     scope 'pages', controller: :pages, action: :get_page do
@@ -81,7 +81,12 @@ Rails.application.routes.draw do
 
     resources :administrators, only: [:index, :create, :destroy]
 
-    resources :courses, except: :destroy
+    resources :courses, except: :destroy do
+      member do
+        post 'students'
+      end
+      resources :periods, except: :destroy
+    end
 
     resource :cron, only: [:update]
 

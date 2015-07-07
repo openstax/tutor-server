@@ -81,6 +81,16 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
         related_content: a_kind_of(Array)
       })
     end
+
+    it 'raises SecurityTransgression when user is anonymous or not a teacher' do
+      expect {
+        api_get :show, nil, parameters: { task_id: task_step.task.id, id: task_step.id }
+      }.to raise_error(SecurityTransgression)
+
+      expect {
+        api_get :show, user_2_token, parameters: { task_id: task_step.task.id, id: task_step.id }
+      }.to raise_error(SecurityTransgression)
+    end
   end
 
   describe "PATCH update" do

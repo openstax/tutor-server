@@ -1,6 +1,6 @@
 # Adds the given role to the given period
 class CourseMembership::AddStudent
-  lev_routine
+  lev_routine express_output: :student
 
   protected
 
@@ -13,7 +13,8 @@ class CourseMembership::AddStudent
       }."
     ) unless student.nil?
 
-    student = CourseMembership::Models::Student.create(role: role, period: period.to_model)
-    transfer_errors_from(student, {type: :verbatim}, true)
+    outputs[:student] = CourseMembership::Models::Student.create(role: role,
+                                                                 period: period.to_model)
+    transfer_errors_from(outputs[:student], type: :verbatim)
   end
 end

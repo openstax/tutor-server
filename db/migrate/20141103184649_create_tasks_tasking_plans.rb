@@ -4,7 +4,7 @@ class CreateTasksTaskingPlans < ActiveRecord::Migration
       t.references :target, polymorphic: true, null: false
       t.references :tasks_task_plan, null: false
       t.datetime :opens_at
-      t.datetime :due_at
+      t.datetime :due_at, null: false
 
       t.timestamps null: false
 

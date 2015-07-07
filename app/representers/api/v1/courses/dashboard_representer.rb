@@ -45,14 +45,16 @@ module Api::V1::Courses
     class TaskBase < Base
 
       property :opens_at,
-               type: DateTime,
+               type: String,
                readable: true,
-               writeable: false
+               writeable: false,
+               getter: ->(*) { DateTimeUtilities.to_api_s(opens_at) }
 
       property :due_at,
-               type: DateTime,
+               type: String,
                readable: true,
-               writeable: false
+               writeable: false,
+               getter: ->(*) { DateTimeUtilities.to_api_s(due_at) }
 
       property :task_type,
                as: :type,

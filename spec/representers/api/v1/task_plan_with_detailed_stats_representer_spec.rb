@@ -33,10 +33,12 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
     representation = Api::V1::TaskPlanWithDetailedStatsRepresenter.new(task_plan).as_json
     expect(representation).to include(
       "id" => task_plan.id.to_s,
+      "title" => task_plan.title,
       "type" => "reading",
       "stats" => [
         {
-          "name"                     => 'None',
+          "period_id"                => task_plan.owner.periods.first.id.to_s,
+          "name"                     => "1st",
           "mean_grade_percent"       => 50,
           "total_count"              => 2,
           "complete_count"           => 0,
@@ -50,10 +52,25 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
             "chapter_section" => [1, 1],
             "exercises" => a_collection_containing_exactly(
               {
-                "content" => a_kind_of(Hash), "answered_count" => 2
+                "content" => a_kind_of(Hash),
+                "answered_count" => 2,
+                "answers" => a_collection_containing_exactly(
+                  {
+                    "student_names" => [ a_kind_of(String) ],
+                    "free_response" => "a sentence explaining all the things",
+                    "answer_id" => correct_answer_id
+                  },
+                  {
+                    "student_names" => [ a_kind_of(String) ],
+                    "free_response" => "a sentence not explaining anything",
+                    "answer_id" => incorrect_answer_ids.first
+                  }
+                )
               },
               {
-                "content" => a_kind_of(Hash), "answered_count" => 0
+                "content" => a_kind_of(Hash),
+                "answered_count" => 0,
+                "answers" => []
               }
             )
           ),

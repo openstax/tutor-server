@@ -56,6 +56,10 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     taskings.size > 1
   end
 
+  def past_open?(current_time: Time.now)
+    opens_at.nil? || current_time > opens_at
+  end
+
   def past_due?(current_time: Time.now)
     !due_at.nil? && current_time > due_at
   end

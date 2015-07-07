@@ -10,9 +10,10 @@ RSpec.describe GetCourseStats, vcr: VCR_OPTS do
     @period = CreatePeriod[course: @course]
     @student = Entity::User.create!
     @role = AddUserAsPeriodStudent.call(period: @period, user: @student).outputs.role
+    @student.reload
 
     VCR.use_cassette("GetCourseStats/setup_course_stats", VCR_OPTS) do
-      capture_stdout { SetupCourseStats[course: @course, role: @role] }
+      capture_stdout { SetupCourseStats[course: @course, period: @period, role: @role] }
     end
   end
 
