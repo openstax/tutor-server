@@ -7,8 +7,8 @@ class Demo002 < DemoBase
   protected
 
 
-  def exec(print_logs: true, book_version: :latest, random_seed: nil)
-
+  def exec(book: :all, print_logs: true, book_version: :latest, random_seed: nil)
+    book = book.to_sym
     set_print_logs(print_logs)
     set_random_seed(random_seed)
 
@@ -25,8 +25,9 @@ class Demo002 < DemoBase
     due[1] = standard_due_at(school_day_on_or_before(due[2] - 2.days))
     due[0] = standard_due_at(school_day_on_or_before(due[1] - 2.days))
 
-    create_biology_assignments( find_course('Biology I'), due )
-    create_physics_assignments( find_course('Physics I'), due )
+
+    create_biology_assignments( find_course('Biology I'), due ) if [:all, :bio].include?(book)
+    create_physics_assignments( find_course('Physics I'), due ) if [:all, :phy].include?(book)
 
   end
 

@@ -15,8 +15,8 @@ class Demo001 < DemoBase
 
   STABLE_VERSION = 1.18
 
-  def exec(print_logs: true, book_version: :latest, random_seed: nil)
-
+  def exec(book: :all, print_logs: true, book_version: :latest, random_seed: nil)
+    book = book.to_sym
     set_print_logs(print_logs)
 
     # By default, choose a fixed seed for repeatability and fewer surprises
@@ -45,15 +45,17 @@ class Demo001 < DemoBase
     teacher_profile = new_user_profile(username: 'teacher', name: 'Charles Morris')
     courses={}
     cnx_books.each do | course_name, cnx_book_id |
-      book = nil
+      course_code = course_name[0...3].downcase.to_sym
+      next unless book == :all or course_code == book
+
+      cnx_book = nil
       OpenStax::Cnx::V1.with_archive_url(url: archive_url) do
-        book = run(:import_book, id: cnx_book_id).outputs.book
+        cnx_book = run(:import_book, id: cnx_book_id).outputs.book
         log("Imported book #{course_name} #{cnx_book_id} from #{archive_url}.")
       end
-      course_code = course_name[0...3].downcase
       course = create_course(name: course_name)
       courses[course_code] = course
-      run(:add_book, book: book, course: course)
+      run(:add_book, book: cnx_book, course: course)
 
       create_period(course: course)
       create_period(course: course)
@@ -63,13 +65,14 @@ class Demo001 < DemoBase
     end
 
     students = 10.times.collect do |ii|
-      # Hey Fizzbuzz :)
-      student_courses = if 0 == ii % 5
+      # if all books are being imported, switch between them
+      # otherwise just use what we've got
+      student_courses = if :all != book || 0 == ii % 5
                           courses.values
                         elsif 0 == ii % 2
-                          [courses['bio']]
+                          [courses[:bio]]
                         else
-                          [courses['phy']]
+                          [courses[:phy]]
                         end
       username = "student#{(ii + 1).to_s.rjust(2,'0')}"
       user = new_user_profile(username: username).entity_user
