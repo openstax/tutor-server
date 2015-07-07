@@ -6,9 +6,10 @@ class CourseAccessPolicy
     when :read, :readings, :task_plans
       # readings should be readable by course teachers and students because FE
       # uses it for the reference view
-      requestor.is_human? && \
-      (UserIsCourseStudent[user: requestor.entity_user, course: course] || \
-       UserIsCourseTeacher[user: requestor.entity_user, course: course])
+      requestor.is_human? &&
+        (requestor.is_admin? ||
+          UserIsCourseStudent[user: requestor.entity_user, course: course] ||
+            UserIsCourseTeacher[user: requestor.entity_user, course: course])
     when :exercises, :export, :roster
       requestor.is_human? && UserIsCourseTeacher[user: requestor.entity_user, course: course]
     else
