@@ -66,7 +66,7 @@ RSpec.describe GetCourseGuide, vcr: VCR_OPTS do
     ))
   end
 
-  it 'returns each book for the course period' do
+  it "returns each book's stats for the course period" do
     book = described_class[course: @course, role: @role].first['children'].first
 
     expect([book]).to include(a_hash_including(
@@ -81,64 +81,24 @@ RSpec.describe GetCourseGuide, vcr: VCR_OPTS do
     ))
   end
 
-  xit 'pending the rest' do
-          [{"id"=>5,
-           "title"=>"Force",
-           "chapter_section"=>[4, 1],
-           "questions_answered_count"=>7,
-           "current_level"=>kind_of(Float),
-           "practice_count"=>0,
-           "page_ids"=>[5]},
-          {"id"=>6,
-           "title"=>"Newton's First Law of Motion: Inertia",
-           "chapter_section"=>[4, 2],
-           "questions_answered_count"=>7,
-           "current_level"=>kind_of(Float),
-           "practice_count"=>0,
-           "page_ids"=>[6]},
-          {"id"=>7,
-           "title"=>"Newton's Second Law of Motion",
-           "chapter_section"=>[4, 3],
-           "questions_answered_count"=>1,
-           "current_level"=>kind_of(Float),
-           "practice_count"=>0,
-           "page_ids"=>[7]},
-          {"id"=>8,
-           "title"=>"Newton's Third Law of Motion",
-           "chapter_section"=>[4, 4],
-           "questions_answered_count"=>1,
-           "current_level"=>kind_of(Float),
-           "practice_count"=>0,
-           "page_ids"=>[8]}]
-  end
+  it "returns each book part's stats for the course period" do
+    parts = described_class[course: @course, role: @role].first['children'].first['children']
 
-  xit 'other role' do
-    expect(described_class[course: @course, role: @second_role]).to include({
-      "title"=>"Physics",
-      "page_ids"=>kind_of(Array),
-      "children"=>array_including(
-        {
-          "id"=>kind_of(Integer),
-          "title"=>"Force and Newton's Laws of Motion",
-          "chapter_section"=>[4],
-          "questions_answered_count"=>14,
-          "current_level"=>kind_of(Float),
-          "practice_count"=>0,
-          "page_ids"=>kind_of(Array),
-          "children"=>array_including(
-            {
-              "id"=>kind_of(Integer),
-              "title"=>kind_of(String),
-              "chapter_section"=>kind_of(Array),
-              "questions_answered_count"=>kind_of(Integer),
-              "current_level"=>kind_of(Float),
-              "practice_count"=>0,
-              "page_ids"=>kind_of(Array)
-            }
-          ) # /array_including - nested children
-        } # /hash - the children
-      ) # /array_including - children
-    }) # /be_a_hash_including
+    expect(parts).to include(
+      a_hash_including("id"=>kind_of(Integer),
+                       "title"=>"Force",
+                       "chapter_section"=>[4, 1],
+                       "questions_answered_count"=>11,
+                       "current_level"=>kind_of(Float),
+                       "practice_count"=>0,
+                       "page_ids"=>[kind_of(Integer)]),
+      a_hash_including("id"=>kind_of(Integer),
+                       "title"=>"Newton's First Law of Motion: Inertia",
+                       "chapter_section"=>[4, 2],
+                       "questions_answered_count"=>5,
+                       "current_level"=>kind_of(Float),
+                       "practice_count"=>0,
+                       "page_ids"=>[kind_of(Integer)]))
   end
 
   it 'returns all course guide periods for teachers' do
@@ -156,52 +116,40 @@ RSpec.describe GetCourseGuide, vcr: VCR_OPTS do
     })
   end
 
-  xit 'pending the rest' do
-          {
-            "id"=>kind_of(Integer),
-            "title"=>"Force and Newton's Laws of Motion",
-            "chapter_section"=>[4],
-            "questions_answered_count"=>32,
-            "current_level"=>kind_of(Float),
-            "practice_count"=>0,
-            "page_ids"=>kind_of(Array),
-            "children"=>array_including(
-              {
-                "id"=>kind_of(Integer),
-                "title"=>kind_of(String),
-                "chapter_section"=>kind_of(Array),
-                "questions_answered_count"=>kind_of(Integer),
-                "current_level"=>kind_of(Float),
-                "practice_count"=>0,
-                "page_ids"=>kind_of(Array)
-              }
-            ) # /array_including - nested children
-      }
-      { period_id: @second_period.id,
-        "title"=>"Physics",
-        "page_ids"=>kind_of(Array),
-        "children"=>array_including(
-          {
-            "id"=>kind_of(Integer),
-            "title"=>"Force and Newton's Laws of Motion",
-            "chapter_section"=>[4],
-            "questions_answered_count"=>32,
-            "current_level"=>kind_of(Float),
-            "practice_count"=>0,
-            "page_ids"=>kind_of(Array),
-            "children"=>array_including(
-              {
-                "id"=>kind_of(Integer),
-                "title"=>kind_of(String),
-                "chapter_section"=>kind_of(Array),
-                "questions_answered_count"=>kind_of(Integer),
-                "current_level"=>kind_of(Float),
-                "practice_count"=>0,
-                "page_ids"=>kind_of(Array)
-              }
-            ) # /array_including - nested children
-          } # /hash - the children
-        ) # /array_including - children
-      } # /period_id: ...
+  it 'includes the book stats for the periods' do
+    book = described_class[course: @course, role: @teacher_role].first['children'].first
+
+    expect([book]).to include(a_hash_including(
+      "id" => kind_of(Integer),
+      "title" => "Force and Newton's Laws of Motion",
+      "chapter_section" => [4],
+      "questions_answered_count" => 32,
+      "current_level" => kind_of(Float),
+      "practice_count" => 0,
+      "page_ids" => [kind_of(Integer), kind_of(Integer)],
+      "children" => array_including(kind_of(Hash))
+    ))
+  end
+
+  it 'includes the book part stats for the periods' do
+    book_parts = described_class[course: @course, role: @teacher_role].first['children']
+                                                                      .first['children']
+
+    expect(book_parts).to include(
+      a_hash_including("id" => kind_of(Integer),
+                       "title" => "Force",
+                       "chapter_section" => [4, 1],
+                       "questions_answered_count" => 22,
+                       "current_level" => kind_of(Float),
+                       "practice_count" => 0,
+                       "page_ids" => [kind_of(Integer)]),
+      a_hash_including("id" => kind_of(Integer),
+                       "title" => "Newton's First Law of Motion: Inertia",
+                       "chapter_section" => [4, 2],
+                       "questions_answered_count" => 10,
+                       "current_level" => kind_of(Float),
+                       "practice_count" => 0,
+                       "page_ids" => [kind_of(Integer)])
+    )
   end
 end
