@@ -14,6 +14,7 @@ module Api::V1
 
     collection :children,
                readable: true,
-               writeable: false
+               writeable: false,
+               extend: CourseGuideChildrenRepresenter
   end
 end
