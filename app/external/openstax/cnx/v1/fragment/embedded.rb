@@ -1,5 +1,6 @@
 module OpenStax::Cnx::V1::Fragment
   class Embedded
+
     include ActsAsFragment
 
     class_attribute :default_width, :default_height

@@ -76,37 +76,53 @@ class Tasks::Assistants::IReadingAssistant
     ]
   end
 
+  def self.task_fragments(task, fragments, fragment_title, page, related_content)
+    fragments.each do |fragment|
+      step = Tasks::Models::TaskStep.new(task: task)
+
+      case fragment
+      when OpenStax::Cnx::V1::Fragment::Feature
+        subfragments = fragment.fragments
+        exercise_subfragments = subfragments.select(&:exercise?)
+        if exercise_subfragments.count > 1
+          # Remove all Exercise fragments and replace with an ExerciseChoice
+          subfragments = subfragments - exercise_subfragments
+          subfragments << OpenStax::Cnx::V1::Fragment::ExerciseChoice.new(
+            node: nil, title: nil, exercise_fragments: exercise_subfragments
+          )
+        end
+
+        task_fragments(task, subfragments, fragment_title, page, related_content)
+      when OpenStax::Cnx::V1::Fragment::ExerciseChoice
+        tasked_exercise_choice(exercise_choice_fragment: fragment, step: step, title: fragment_title)
+      when OpenStax::Cnx::V1::Fragment::Exercise
+        tasked_exercise(exercise_fragment: fragment, step: step, title: fragment_title)
+      when OpenStax::Cnx::V1::Fragment::Video
+        tasked_video(video_fragment: fragment, step: step, title: fragment_title)
+      when OpenStax::Cnx::V1::Fragment::Interactive
+        tasked_interactive(interactive_fragment: fragment, step: step, title: fragment_title)
+      else
+        tasked_reading(reading_fragment: fragment, page: page, title: fragment_title, step: step)
+      end
+
+      next if step.tasked.nil?
+      step.group_type = :core_group
+      step.add_labels(fragment.labels)
+      step.add_related_content(related_content)
+      task.task_steps << step
+
+      # Only the first step for each Page should have a title
+      fragment_title = nil
+    end
+  end
+
   def self.add_core_steps!(task:, pages:)
     pages.each do |page|
       # Chapter intro pages get their titles from the chapter instead
       page_title = page.is_intro? ? page.book_part.title : page.title
+      related_content = related_content_for_page(page: page, title: page_title)
 
-      fragment_title = page_title
-      page.fragments.each do |fragment|
-        step = Tasks::Models::TaskStep.new(task: task)
-
-        case fragment
-        when OpenStax::Cnx::V1::Fragment::ExerciseChoice
-          tasked_exercise_choice(exercise_choice_fragment: fragment, step: step, title: fragment_title)
-        when OpenStax::Cnx::V1::Fragment::Exercise
-          tasked_exercise(exercise_fragment: fragment, step: step, title: fragment_title)
-        when OpenStax::Cnx::V1::Fragment::Video
-          tasked_video(video_fragment: fragment, step: step, title: fragment_title)
-        when OpenStax::Cnx::V1::Fragment::Interactive
-          tasked_interactive(interactive_fragment: fragment, step: step, title: fragment_title)
-        else
-          tasked_reading(reading_fragment: fragment, page: page, title: fragment_title, step: step)
-        end
-
-        next if step.tasked.nil?
-        step.group_type = :core_group
-        step.add_labels(fragment.labels)
-        step.add_related_content(related_content_for_page(page: page, title: page_title))
-        task.task_steps << step
-
-        # Only the first step for each Page should have a title
-        fragment_title = nil
-      end
+      task_fragments(task, page.fragments, page_title, page, related_content)
     end
 
     task
@@ -262,25 +278,26 @@ class Tasks::Assistants::IReadingAssistant
       return
     end
 
-    tasked_exercise(exercise_fragment: exercises.sample,
-                    step: step,
-                    can_be_recovered: true,
-                    title: title)
+    chosen_exercise = exercises.sample
+    case chosen_exercise
+    when OpenStax::Cnx::V1::Fragment::Exercise
+      tasked_exercise(exercise_fragment: chosen_exercise, step: step,
+                      can_be_recovered: true, title: title)
+    when OpenStax::Cnx::V1::Fragment::ExerciseChoice
+      tasked_exercise_choice(exercise_choice_fragment: chosen_exercise, step: step, title: title)
+    else
+      logger.warn "Exercise Choice with invalid Exercise fragment found while creating iReading"
+    end
   end
 
-  def self.tasked_exercise(exercise_fragment:,
-                           step:,
-                           can_be_recovered: false,
-                           title: nil)
+  def self.tasked_exercise(exercise_fragment:, step:, can_be_recovered: false, title: nil)
     if exercise_fragment.embed_tag.blank?
       logger.warn "Exercise without embed tag found while creating iReading"
       return
     end
 
     # Search local (cached) Exercises for one matching the embed tag
-    exercises = Content::Routines::SearchExercises[
-                  tag: exercise_fragment.embed_tag
-                ]
+    exercises = Content::Routines::SearchExercises[tag: exercise_fragment.embed_tag]
     if exercise = exercises.first
       TaskExercise[exercise: exercise, title: title,
                    can_be_recovered: can_be_recovered, task_step: step]
