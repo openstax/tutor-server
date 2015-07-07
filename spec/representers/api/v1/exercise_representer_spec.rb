@@ -6,8 +6,8 @@ RSpec.describe Api::V1::ExerciseRepresenter, type: :representer do
     FactoryGirl.create :content_tag,
                        tag_type: :lo,
                        value: 'ost-tag-lo-k12phys-ch04-s02-lo01',
-                       name: 'Describe Newton\'s first law and friction',
-                       description: nil
+                       name: nil,
+                       description: 'Describe Newton\'s first law and friction'
   }
   let!(:lo2) {
     FactoryGirl.create :content_tag,
@@ -36,12 +36,13 @@ RSpec.describe Api::V1::ExerciseRepresenter, type: :representer do
       'tags' => [{
         'id' => 'ost-tag-lo-k12phys-ch04-s02-lo01',
         'type' => 'lo',
-        'name' => 'Describe Newton\'s first law and friction',
+        'description' => 'Describe Newton\'s first law and friction',
         'chapter_section' => [4,2],
       }, {
         'id' => 'ost-tag-teks-112-39-c-4d',
         'type' => 'teks',
-        'name' => '(D) calculate the effect of forces on objects',
+        'name' => '(D)',
+        'description' => 'calculate the effect of forces on objects',
         'data' => '4d'
       }]
     )

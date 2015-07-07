@@ -18,8 +18,12 @@ module Api::V1
     property :name,
              type: String,
              readable: true,
-             writeable: false,
-             getter: ->(*) { "#{name} #{description}".strip }
+             writeable: false
+
+    property :description,
+             type: String,
+             readable: true,
+             writeable: false
 
     property :chapter_section,
              type: Array,
