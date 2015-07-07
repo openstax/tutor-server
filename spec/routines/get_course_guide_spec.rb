@@ -77,7 +77,7 @@ RSpec.describe GetCourseGuide, vcr: VCR_OPTS do
       "questions_answered_count"=>16,
       "current_level"=>kind_of(Float),
       "practice_count"=>0,
-      "page_ids"=>[5, 6],
+      "page_ids"=>[kind_of(Integer), kind_of(Integer)],
       "children"=> array_including(kind_of(Hash))
     ))
   end
