@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150507224137) do
+ActiveRecord::Schema.define(version: 20150611132134) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -469,10 +469,16 @@ ActiveRecord::Schema.define(version: 20150507224137) do
     t.text     "personalized_placeholder_strategy"
     t.datetime "created_at",                                    null: false
     t.datetime "updated_at",                                    null: false
+    t.integer  "exercise_count",                    default: 0, null: false
+    t.integer  "correct_exercise_count",            default: 0, null: false
+    t.integer  "recovered_exercise_count",          default: 0, null: false
   end
 
+  add_index "tasks_tasks", ["correct_exercise_count"], name: "index_tasks_tasks_on_correct_exercise_count", using: :btree
   add_index "tasks_tasks", ["due_at", "opens_at"], name: "index_tasks_tasks_on_due_at_and_opens_at", using: :btree
   add_index "tasks_tasks", ["entity_task_id"], name: "index_tasks_tasks_on_entity_task_id", using: :btree
+  add_index "tasks_tasks", ["exercise_count"], name: "index_tasks_tasks_on_exercise_count", using: :btree
+  add_index "tasks_tasks", ["recovered_exercise_count"], name: "index_tasks_tasks_on_recovered_exercise_count", using: :btree
   add_index "tasks_tasks", ["task_type"], name: "index_tasks_tasks_on_task_type", using: :btree
   add_index "tasks_tasks", ["tasks_task_plan_id"], name: "index_tasks_tasks_on_tasks_task_plan_id", using: :btree
 
