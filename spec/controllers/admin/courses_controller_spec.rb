@@ -6,7 +6,7 @@ RSpec.describe Admin::CoursesController do
   before { controller.sign_in(admin) }
 
   describe 'GET #index' do
-    it 'assigns all ListCourses output to @courses' do
+    it 'assigns all CollectCourseInfo output to @courses' do
       CreateCourse.call(name: 'Hello World')
       get :index
 

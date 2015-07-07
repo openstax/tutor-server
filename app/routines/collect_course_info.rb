@@ -1,5 +1,5 @@
-class ListCourses
-  lev_routine
+class CollectCourseInfo
+  lev_routine express_output: :courses
 
   uses_routine UserIsCourseStudent,
                translations: { outputs: { type: :verbatim } },
@@ -19,14 +19,16 @@ class ListCourses
 
   protected
 
-  def exec(user: nil, with: [])
-    outputs[:courses] = collect_course_information(user)
-    run_with_options(user, with)
+  def exec(course: nil, user: nil, with: [])
+    outputs[:courses] = collect_basic_course_info(course, user)
+    collect_extended_course_info(user, with)
   end
 
   private
-  def collect_course_information(user)
-    profiles = if user
+  def collect_basic_course_info(course, user)
+    profiles = if course
+                 CourseProfile::Models::Profile.where(entity_course_id: course.id) || []
+               elsif user
                  CourseProfile::Models::Profile.all.select do |p|
                    run(:is_student, user: user, course: p.course)
                        .outputs.user_is_course_student ||
@@ -36,6 +38,7 @@ class ListCourses
                else
                  CourseProfile::Models::Profile.all
                end
+
     profiles.collect do |p|
       {
         id: p.entity_course_id,
@@ -44,7 +47,7 @@ class ListCourses
     end
   end
 
-  def run_with_options(user, with)
+  def collect_extended_course_info(user, with)
     [with].flatten.each do |option|
       case option
       when :teacher_names

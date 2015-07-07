@@ -16,19 +16,26 @@ class Api::V1::CoursesController < Api::V1::ApiController
   EOS
   def index
     OSU::AccessPolicy.require_action_allowed!(:index, current_api_user, Entity::Course)
-    courses = ListCourses.call(user: current_human_user.entity_user,
-                               with: [:roles, :periods]).outputs.courses
-    respond_with courses, represent_with: Api::V1::CoursesRepresenter
+    courses_info = CollectCourseInfo[user: current_human_user.entity_user,
+                                     with: [:roles, :periods]]
+    respond_with courses_info, represent_with: Api::V1::CoursesRepresenter
   end
 
   api :GET, '/courses/:course_id', 'Returns information about a specific course, including periods'
   description <<-EOS
-    Returns information about a specific course, including periods
+    Returns information about a specific course, including periods and roles
     #{json_schema(Api::V1::CourseRepresenter, include: :readable)}
   EOS
   def show
     course = Entity::Course.find(params[:id])
-    standard_read course, Api::V1::CourseRepresenter
+    OSU::AccessPolicy.require_action_allowed!(:read, current_api_user, course)
+
+    # Use CollectCourseInfo instead of just representing the entity course so
+    # we can gather extra information
+    course_info = CollectCourseInfo[course: course,
+                                    user: current_human_user.entity_user,
+                                    with: [:roles, :periods]].first
+    respond_with course_info, represent_with: Api::V1::CourseRepresenter
   end
 
   api :GET, '/courses/:course_id/readings', 'Returns a course\'s readings'
