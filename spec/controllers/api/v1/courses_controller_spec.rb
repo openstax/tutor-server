@@ -19,10 +19,42 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   let!(:period) { CreatePeriod[course: course] }
 
   describe "#readings" do
+    it 'raises SecurityTransgression if user is anonymous or not in the course' do
+      root_book_part = FactoryGirl.create(:content_book_part)
+      CourseContent::AddBookToCourse.call(course: course, book: root_book_part.book)
+
+      expect {
+        api_get :readings, nil, parameters: { id: course.id }
+      }.to raise_error(SecurityTransgression)
+
+      expect {
+        api_get :readings, user_1_token, parameters: { id: course.id }
+      }.to raise_error(SecurityTransgression)
+    end
+
+    it 'works for students in the course' do
+      # used in FE for reference view
+      root_book_part = FactoryGirl.create(:content_book_part, :standard_contents_1)
+      CourseContent::AddBookToCourse.call(course: course, book: root_book_part.book)
+      AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
+      AddUserAsPeriodStudent.call(period: period, user: user_2.entity_user)
+
+      api_get :readings, user_1_token, parameters: { id: course.id }
+      expect(response).to have_http_status(:success)
+      teacher_response = response.body_as_hash
+
+      api_get :readings, user_2_token, parameters: { id: course.id }
+      expect(response).to have_http_status(:success)
+      student_response = response.body_as_hash
+
+      expect(teacher_response).to eq(student_response)
+    end
+
     it "should work on the happy path" do
       root_book_part = FactoryGirl.create(:content_book_part, :standard_contents_1)
       CourseContent::AddBookToCourse.call(course: course, book: root_book_part.book)
       toc = Content::VisitBook[book: root_book_part.book, visitor_names: :toc]
+      AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
 
       api_get :readings, user_1_token, parameters: {id: course.id}
       expect(response).to have_http_status(:success)
@@ -82,16 +114,36 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   end
 
   describe "#plans" do
-    it "should work on the happy path" do
-      task_plan = FactoryGirl.create(:tasks_task_plan, owner: course)
+    let!(:task_plan) { FactoryGirl.create :tasks_task_plan, owner: course }
 
+    it 'raises SecurityTransgression if user is anonymous or not in the course' do
+      expect {
+        api_get :plans, nil, parameters: { id: course.id }
+      }.to raise_error(SecurityTransgression)
+
+      expect {
+        api_get :plans, user_1_token, parameters: { id: course.id }
+      }.to raise_error(SecurityTransgression)
+    end
+
+    it 'returns task plans for course teachers' do
+      AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
       api_get :plans, user_1_token, parameters: {id: course.id}
 
       expect(response).to have_http_status(:success)
       expect(response.body).to(
         eq({ total_count: 1, items: [Api::V1::TaskPlanRepresenter.new(task_plan)] }.to_json)
       )
+    end
 
+    it 'returns task plans for course students' do
+      AddUserAsPeriodStudent.call(period: period, user: user_2.entity_user)
+      api_get :plans, user_2_token, parameters: {id: course.id}
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to(
+        eq({ total_count: 1, items: [Api::V1::TaskPlanRepresenter.new(task_plan)] }.to_json)
+      )
     end
   end
 
@@ -417,6 +469,21 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
       expect(response).to have_http_status(:success)
     end
+
+    it 'raises IllegalState if user is anonymous or not in the course or is not a student' do
+      expect {
+        api_get :practice, nil, parameters: { id: course.id }
+      }.to raise_error(IllegalState)
+
+      expect {
+        api_get :practice, user_1_token, parameters: { id: course.id }
+      }.to raise_error(IllegalState)
+
+      AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
+      expect {
+        api_get :practice, user_1_token, parameters: { id: course.id }
+      }.to raise_error(IllegalState)
+    end
   end
 
   describe "dashboard" do
@@ -476,6 +543,16 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                            tasked_to: student_role)}
 
     let!(:plan) { FactoryGirl.create(:tasks_task_plan, owner: course)}
+
+    it 'raises IllegalState if user is anonymous or not in course' do
+      expect {
+        api_get :dashboard, nil, parameters: { id: course.id }
+      }.to raise_error(IllegalState)
+
+      expect {
+        api_get :dashboard, user_1_token, parameters: { id: course.id }
+      }.to raise_error(IllegalState)
+    end
 
     it "works for a student without a role specified" do
       Hacks::AnswerExercise[task_step: hw1_task.task_steps[0], is_correct: true]
@@ -625,6 +702,22 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                   parameters: { id: course.id, role_id: student_role }
         end
       end
+
+      context 'and a student role is not given' do
+        it 'raises IllegalState' do
+          expect {
+            api_get :stats, user_1_token, parameters: { id: course.id }
+          }.to raise_error(IllegalState)
+        end
+      end
+    end
+
+    context 'user is anonymous' do
+      it 'raises IllegalState' do
+        expect {
+          api_get :stats, nil, parameters: { id: course.id }
+        }.to raise_error(IllegalState)
+      end
     end
   end
 
@@ -648,6 +741,18 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     describe "#exercises" do
       before(:each) do
         AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
+      end
+
+      it 'raises SecurityTransgression if user is anonymous or not a teacher' do
+        page_ids = Content::Models::Page.all.map(&:id)
+
+        expect {
+          api_get :exercises, nil, parameters: { id: course.id, page_ids: page_ids }
+        }.to raise_error(SecurityTransgression)
+
+        expect {
+          api_get :exercises, user_2_token, parameters: { id: course.id, page_ids: page_ids }
+        }.to raise_error(SecurityTransgression)
       end
 
       it "should return an empty result if no page_ids specified" do

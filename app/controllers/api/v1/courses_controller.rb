@@ -41,6 +41,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   EOS
   def readings
     course = Entity::Course.find(params[:id])
+    OSU::AccessPolicy.require_action_allowed!(:readings, current_api_user, course)
 
     # For the moment, we're assuming just one book per course
     books = CourseContent::GetCourseBooks.call(course: course).outputs.books
@@ -77,7 +78,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   EOS
   def plans
     course = Entity::Course.find(params[:id])
-    # OSU::AccessPolicy.require_action_allowed!(:task_plans, current_api_user, course)
+    OSU::AccessPolicy.require_action_allowed!(:task_plans, current_api_user, course)
 
     out = GetCourseTaskPlans.call(course: course).outputs
     respond_with out, represent_with: Api::V1::TaskPlanSearchRepresenter
