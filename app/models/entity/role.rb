@@ -6,5 +6,5 @@ class Entity::Role < Tutor::SubSystems::BaseModel
 
   has_one :user, dependent: :destroy, subsystem: :role
 
-  delegate :first_name, :last_name, :full_name, to: :user
+  delegate :username, :first_name, :last_name, :full_name, to: :user
 end

@@ -33,7 +33,8 @@ module Api::V1
     property :email,
              type: String,
              writeable: true,
-             readable: true
+             readable: true,
+             getter: ->(args) { args[:email] }
 
     property :username,
              type: String,
