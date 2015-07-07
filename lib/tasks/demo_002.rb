@@ -6,8 +6,8 @@ class Demo002 < DemoBase
 
   protected
 
-
   def exec(book: :all, print_logs: true, book_version: :latest, random_seed: nil)
+
     book = book.to_sym
     set_print_logs(print_logs)
     set_random_seed(random_seed)
@@ -46,7 +46,7 @@ class Demo002 < DemoBase
     #
     responses_list = new_responses_list(
       assignment_type: :reading,
-      step_types: %w( r i e r r e v e e r r i e r r e v e e e ),
+      step_types: %w( r r r r r r r e r r e r r e r r e r e r p ),
       entries: [
                   98,
                   67,
@@ -86,7 +86,7 @@ class Demo002 < DemoBase
 
     responses_list = new_responses_list(
       assignment_type: :reading,
-      step_types: %w( r i e r r e r r r e r e e e e ),
+      step_types: %w( r r r r r r r r r r e r r r p ),
       entries: [
                   94,
                   %w( 1 1 0 1 1 0 1 1 1 1 1 1 1 1 1 ),
@@ -126,7 +126,7 @@ class Demo002 < DemoBase
 
     responses_list = new_responses_list(
       assignment_type: :homework,
-      step_types: %w( e e e e e e e e e e e ),
+      step_types: %w( e e e e e e e e e e p ),
       entries: [
                   90,
                   87,
@@ -176,7 +176,7 @@ class Demo002 < DemoBase
 
     responses_list = new_responses_list(
       assignment_type: :reading,
-      step_types: %w( r r i e r r e v e e ),
+      step_types: %w( r r i e r r e v e p ),
       entries: [
                   98,
                   67,
@@ -216,7 +216,7 @@ class Demo002 < DemoBase
 
     responses_list = new_responses_list(
       assignment_type: :reading,
-      step_types: %w( r i e r r e r r r e r e e e ),
+      step_types: %w( r i e r r e r r r e r e e p ),
       entries: [
                   94,
                   %w( 1 1 0 1 1 0 1 1 1 1 1 1 0 1 ),
@@ -256,7 +256,7 @@ class Demo002 < DemoBase
 
     responses_list = new_responses_list(
       assignment_type: :homework,
-      step_types: %w( e e e e e e e e e e e ),
+      step_types: %w( e e e e e e e e e e p ),
       entries: [
                   90,
                   87,
@@ -297,7 +297,7 @@ class Demo002 < DemoBase
 
     responses_list = new_responses_list(
       assignment_type: :reading,
-      step_types: %w( r r r v e i e e e e ),
+      step_types: %w( r r r v e i e e e p ),
       entries: [
                   94,
                   88,

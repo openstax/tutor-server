@@ -35,7 +35,7 @@ class Content::Routines::ImportPage
     run(:tag, outputs[:page], cnx_page.tags)
 
     # Get Exercises from OSE that match the LO's
-    run(:import_exercises, tag: cnx_page.los) unless cnx_page.los.blank?
+    run(:import_exercises, tag: cnx_page.los + cnx_page.aplos) unless cnx_page.los.blank?
   end
 
 end

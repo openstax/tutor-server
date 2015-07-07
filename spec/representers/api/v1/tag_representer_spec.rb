@@ -6,8 +6,8 @@ RSpec.describe Api::V1::TagRepresenter, type: :representer do
     FactoryGirl.create :content_tag,
                        value: 'k12phys-ch04-s02-lo02',
                        tag_type: :lo,
-                       name: 'Discuss the relationship between mass and inertia',
-                       description: nil
+                       name: nil,
+                       description: 'Discuss the relationship between mass and inertia'
   }
 
   let!(:dok_tag) {
@@ -27,11 +27,11 @@ RSpec.describe Api::V1::TagRepresenter, type: :representer do
 
   let!(:generic_tag) { FactoryGirl.create :content_tag }
 
-  it 'represents a LO tag' do
+  it 'represents an LO tag' do
     representation = Api::V1::TagRepresenter.new(lo_tag).as_json
     expect(representation).to eq(
       'id' => 'k12phys-ch04-s02-lo02',
-      'name' => 'Discuss the relationship between mass and inertia',
+      'description' => 'Discuss the relationship between mass and inertia',
       'type' => 'lo',
       'chapter_section' => [4,2]
     )

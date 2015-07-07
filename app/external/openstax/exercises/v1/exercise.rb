@@ -3,6 +3,9 @@ class OpenStax::Exercises::V1::Exercise
   # This Regex finds the LO's within the exercise tags
   LO_REGEX = /[\w-]+-lo[\d]+/
 
+  # This Regex finds the AP LO's within the exercise tags
+  APLO_REGEX = /[\w-]+-aplo[\d]+/
+
   attr_reader :content
 
   def initialize(content: '{}', server_url: OpenStax::Exercises::V1.server_url)
@@ -36,6 +39,10 @@ class OpenStax::Exercises::V1::Exercise
 
   def los
     @los ||= tags.collect{ |tag| LO_REGEX.match(tag).try(:[], 0) }.compact.uniq
+  end
+
+  def aplos
+    @aplos ||= tags.collect{ |tag| APLO_REGEX.match(tag).try(:[], 0) }.compact.uniq
   end
 
   def questions

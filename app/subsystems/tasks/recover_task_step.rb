@@ -43,7 +43,7 @@ class Tasks::RecoverTaskStep
   def get_recovery_exercise_for(task_step:, required_tag_names: ['os-practice-problems'])
 
     # Randomize LO order
-    los = task_step.tasked.los.shuffle
+    los = (task_step.tasked.los + task_step.tasked.aplos).shuffle
 
     # Try to find unassigned exercises first
     taskees = task_step.task.taskings.collect{|t| t.role}
