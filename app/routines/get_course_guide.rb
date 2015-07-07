@@ -47,7 +47,7 @@ class GetCourseGuide
         { period_id: period.id }.merge(course_stats)
       end
     else # only 1 period for student role
-      [course_stats]
+      course_stats
     end
   end
 
