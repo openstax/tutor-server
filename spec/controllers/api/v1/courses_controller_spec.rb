@@ -323,6 +323,20 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         }.to_json)
       end
     end
+
+    context 'user is an admin' do
+      before { user_1.create_administrator }
+
+      it 'allows access' do
+        api_get :show, user_1_token, parameters: { id: course.id }
+        expect(response.body).to include({
+          id: course.id.to_s,
+          name: course.profile.name,
+          periods: [{ id: zeroth_period.id.to_s, name: zeroth_period.name },
+                    { id: period.id.to_s, name: period.name }]
+        }.to_json)
+      end
+    end
   end
 
   describe "practice_post" do
