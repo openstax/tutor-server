@@ -17,8 +17,7 @@ module Api::V1
 
     collection :chapter_section,
                readable: true,
-               writeable: false,
-               schema_info: { items: { type: 'string' } }
+               writeable: false
 
     property :questions_answered_count,
              type: Integer,
@@ -41,11 +40,12 @@ module Api::V1
     collection :page_ids,
                readable: true,
                writeable: false,
+               getter: -> (*) { page_ids && page_ids.map(&:to_s) },
                schema_info: { items: { type: 'string' } }
 
     collection :children,
                readable: true,
                writeable: false,
-               extend: CourseGuideChildrenRepresenter
+               decorator: CourseGuideChildRepresenter
   end
 end
