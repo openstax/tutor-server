@@ -46,9 +46,10 @@ class Api::V1::StudentsController < Api::V1::ApiController
     if @result.errors.any?
       render_api_errors(@result.errors)
     else
-      respond_with @payload.merge(@student.attributes),
+      respond_with @student,
                    represent_with: Api::V1::NewStudentRepresenter,
-                   location: api_student_url(@student)
+                   location: api_student_url(@student),
+                   email: @payload.email
     end
   end
 
