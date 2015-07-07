@@ -37,6 +37,7 @@ class DemoBase
     private
 
     def get_explicit_responses(entry)
+
       result = case entry
       when Array
         raise "Number of explicit responses (#{entry.length}) doesn't match number of steps (#{@step_types.length}) " \
@@ -63,9 +64,9 @@ class DemoBase
             1 # mark all non-exercises complete
           end
         end
-      when :not_started
+      when 'ns'
         @step_types.count.times.collect{nil}
-      when :incomplete
+      when 'i'
         responses = @step_types.count.times.collect{ [1,0,nil].sample }
 
         # incomplete is more than not_started, so make sure we have started by setting
