@@ -79,7 +79,7 @@ class ResetPracticeWidget
   def get_local_exercises(count:, role:, tags:, randomize: true)
     exercises = SearchLocalExercises[not_assigned_to: role,
                                      tag: tags,
-                                     match_count: 1]
+                                     match_count: 1].to_a
     exercises = exercises.shuffle if randomize
 
     count.times.collect do
@@ -87,8 +87,7 @@ class ResetPracticeWidget
         # We ran out of exercises, so start repeating them
         exercises = SearchLocalExercises[assigned_to: role,
                                          tag: tags,
-                                         match_count: 1]
-
+                                         match_count: 1].to_a
         exercises = exercises.shuffle if randomize
 
         unless exercise = exercises.pop
