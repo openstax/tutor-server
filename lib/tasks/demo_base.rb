@@ -39,7 +39,7 @@ class DemoBase
     def get_explicit_responses(entry)
       result = case entry
       when Array
-        raise "Number of explicit responses doesn't match number of steps" \
+        raise "Number of explicit responses (#{entry.length}) doesn't match number of steps (#{@step_types.length}) " \
           if @step_types.length != entry.length
         entry
       when Integer, Float
@@ -238,7 +238,7 @@ class DemoBase
   # exercise correctness
   def work_task(task:, responses:)
 
-    raise "Invalid number of responses " +
+    raise "Invalid number of responses for #{task.title}" +
           "(responses,task_steps) = (#{responses.count}, #{task.task_steps.count})\n" +
           "(task = #{print_task(task: task)}) " \
       if responses.count != task.task_steps.count

@@ -4,7 +4,7 @@ class Demo001 < DemoBase
 
   lev_routine
 
-  uses_routine FetchAndImportBook, as: :import_book, translations: { outputs: { type: :verbatim } }
+  uses_routine FetchAndImportBook, as: :import_book
   uses_routine CreateCourse, as: :create_course
   uses_routine CreatePeriod, as: :create_period
   uses_routine AddBookToCourse, as: :add_book
@@ -15,49 +15,75 @@ class Demo001 < DemoBase
 
   STABLE_VERSION = 1.18
 
-  def exec(print_logs: true, book_version: :latest, random_seed: nil)
-
+  def exec(book: :all, print_logs: true, book_version: :latest, random_seed: nil)
+    book = book.to_sym
     set_print_logs(print_logs)
 
     # By default, choose a fixed seed for repeatability and fewer surprises
     set_random_seed(random_seed)
 
     version_string = case book_version.to_sym
-    when :latest
-      ''
-    when :stable
-      "@#{STABLE_VERSION}"
-    else
-      book_version.blank? ? '' : "@#{book_version.to_s}"
-    end
+                     when :latest
+                       ''
+                     when :stable
+                       "@#{STABLE_VERSION}"
+                     else
+                       book_version.blank? ? '' : "@#{book_version.to_s}"
+                     end
 
     archive_url = 'https://archive-staging-tutor.cnx.org/contents/'
-    cnx_book_id = "93e2b09d-261c-4007-a987-0b3062fe154b#{version_string}"
 
-    OpenStax::Cnx::V1.with_archive_url(url: archive_url) do
-      run(:import_book, id: cnx_book_id)
-      log("Imported book #{cnx_book_id} from #{archive_url}.")
-    end
-
-    course = create_course(name: 'Physics I')
-    run(:add_book, book: outputs.book, course: course)
-
-    period_1 = create_period(course: course)
-    period_2 = create_period(course: course)
+    cnx_books = {
+      'Biology I' => "ccbc51fa-49f3-40bb-98d6-07a15a7ab6b7#{version_string}",
+      'Physics I' => "93e2b09d-261c-4007-a987-0b3062fe154b#{version_string}"
+    }
 
     admin_profile = new_user_profile(username: 'admin', name: 'Administrator User')
     run(:make_administrator, user: admin_profile.entity_user)
     log("Added an admin user #{admin_profile.account.full_name}")
 
     teacher_profile = new_user_profile(username: 'teacher', name: 'Charles Morris')
-    run(:add_teacher, course: course, user: teacher_profile.entity_user)
+    courses={}
+    cnx_books.each do | course_name, cnx_book_id |
+      course_code = course_name[0...3].downcase.to_sym
+      next unless book == :all or course_code == book
 
-    students = 20.times.collect do |ii|
-      new_period_student(period: (ii.even? ? period_1 : period_2),
-                         username: "student#{(ii + 1).to_s.rjust(2,'0')}")
+      cnx_book = nil
+      OpenStax::Cnx::V1.with_archive_url(url: archive_url) do
+        cnx_book = run(:import_book, id: cnx_book_id).outputs.book
+        log("Imported book #{course_name} #{cnx_book_id} from #{archive_url}.")
+      end
+      course = create_course(name: course_name)
+      courses[course_code] = course
+      run(:add_book, book: cnx_book, course: course)
+
+      create_period(course: course)
+      create_period(course: course)
+
+      run(:add_teacher, course: course, user: teacher_profile.entity_user)
+
     end
 
-    log("Added #{teacher_profile.account.full_name} as a teacher and added #{students.count} students.")
-  end
+    students = 10.times.collect do |ii|
+      # if all books are being imported, switch between them
+      # otherwise just use what we've got
+      student_courses = if :all != book || 0 == ii % 5
+                          courses.values
+                        elsif 0 == ii % 2
+                          [courses[:bio]]
+                        else
+                          [courses[:phy]]
+                        end
+      username = "student#{(ii + 1).to_s.rjust(2,'0')}"
+      user = new_user_profile(username: username).entity_user
 
+      student_courses.map do | course |
+        run(AddUserAsPeriodStudent, period: course.periods[ii%2], user: user)
+      end
+
+    end
+
+    log("Added #{teacher_profile.account.full_name} as a teacher and added #{students.flatten.count} students.")
+
+  end
 end

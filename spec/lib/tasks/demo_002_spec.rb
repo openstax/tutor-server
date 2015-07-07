@@ -8,8 +8,8 @@ RSpec.describe Demo002, type: :request, version: :v1, speed: :slow, vcr: VCR_OPT
   context 'with the stable book version' do
     it "doesn't catch on fire" do
       # Demo002 depends on Demo001
-      expect(Demo001.call(print_logs: false, book_version: :stable).errors).to be_empty
-      expect(Demo002.call(print_logs: false, book_version: :stable).errors).to be_empty
+      expect(Demo001.call(print_logs: false).errors).to be_empty
+      expect(Demo002.call(print_logs: false).errors).to be_empty
     end
   end
 

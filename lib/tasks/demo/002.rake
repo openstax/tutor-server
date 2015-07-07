@@ -1,6 +1,6 @@
 namespace :demo do
   desc 'Initializes data for the deployment demo (script 2)'
-  task :'002', [:book_version, :random_seed] => :environment do |tt, args|
+  task :'002', [:book, :book_version, :random_seed] => :environment do |tt, args|
     require 'tasks/demo_002'
     result = Demo002.call(args.to_h.merge(print_logs: true))
 
