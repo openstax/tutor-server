@@ -2,7 +2,7 @@ class Admin::CoursesController < Admin::BaseController
   before_action :get_users, only: [:new, :edit]
 
   def index
-    @courses = ListCourses.call(with: :teacher_names).outputs.courses
+    @courses = CollectCourseInfo[with: :teacher_names]
   end
 
   def create

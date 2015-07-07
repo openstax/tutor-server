@@ -259,6 +259,14 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     let(:student)        { roles.select(&:student?).first }
     let!(:zeroth_period) { CreatePeriod[course: course, name: '0th'] }
 
+    context 'course does not exist' do
+      it 'raises RecordNotFound' do
+        expect{ api_get :show, nil, parameters: { id: -1 } }.to(
+          raise_error(ActiveRecord::RecordNotFound)
+        )
+      end
+    end
+
     context 'anonymous user' do
       it 'raises SecurityTransgression' do
         expect{ api_get :show, nil, parameters: { id: course.id } }.to(
@@ -276,51 +284,49 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
 
     context 'user is a teacher' do
-      before do
-        AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
-      end
+      let!(:teacher) { AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user).outputs.role }
 
       it 'returns the teacher roles with the course' do
         api_get :show, user_1_token, parameters: { id: course.id }
-        expect(response.body).to include({
+        expect(response.body_as_hash).to match a_hash_including(
           id: course.id.to_s,
           name: course.profile.name,
           periods: [{ id: zeroth_period.id.to_s, name: zeroth_period.name },
-                    { id: period.id.to_s, name: period.name }]
-        }.to_json)
+                    { id: period.id.to_s, name: period.name }],
+          roles: [{ id: teacher.id.to_s, type: 'teacher' }],
+        )
       end
     end
 
     context 'user is a student' do
-      before(:each) do
-        AddUserAsPeriodStudent.call(period: period, user: user_1.entity_user)
-      end
+      let!(:student) { AddUserAsPeriodStudent.call(period: period, user: user_1.entity_user).outputs.role }
 
       it 'returns the student roles with the course' do
         api_get :show, user_1_token, parameters: { id: course.id }
-        expect(response.body).to include({
+        expect(response.body_as_hash).to match a_hash_including(
           id: course.id.to_s,
           name: course.profile.name,
           periods: [{ id: zeroth_period.id.to_s, name: zeroth_period.name },
-                    { id: period.id.to_s, name: period.name }]
-        }.to_json)
+                    { id: period.id.to_s, name: period.name }],
+          roles: [{ id: student.id.to_s, type: 'student' }],
+        )
       end
     end
 
     context 'user is both a teacher and student' do
-      before(:each) do
-        AddUserAsPeriodStudent.call(period: period, user: user_1.entity_user)
-        AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
-      end
+      let!(:student) { AddUserAsPeriodStudent.call(period: period, user: user_1.entity_user).outputs.role }
+      let!(:teacher) { AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user).outputs.role }
 
       it 'returns both roles with the course' do
         api_get :show, user_1_token, parameters: { id: course.id }
-        expect(response.body).to include({
+        expect(response.body_as_hash).to match a_hash_including(
           id: course.id.to_s,
           name: course.profile.name,
           periods: [{ id: zeroth_period.id.to_s, name: zeroth_period.name },
-                    { id: period.id.to_s, name: period.name }]
-        }.to_json)
+                    { id: period.id.to_s, name: period.name }],
+          roles: [{ id: student.id.to_s, type: 'student' },
+                  { id: teacher.id.to_s, type: 'teacher' }],
+        )
       end
     end
   end
