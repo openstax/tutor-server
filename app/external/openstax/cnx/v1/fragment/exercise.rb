@@ -34,5 +34,9 @@ module OpenStax::Cnx::V1::Fragment
       @short_code ||= EMBED_TAG_REGEX.match(embed_code).try(:[], 1)
     end
 
+    def exercise?
+      true
+    end
+
   end
 end
