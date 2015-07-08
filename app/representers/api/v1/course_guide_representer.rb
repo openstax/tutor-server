@@ -1,6 +1,7 @@
 module Api::V1
   class CourseGuideRepresenter < Roar::Decorator
     include Roar::JSON
+    include Representable::JSON::Collection
 
     property :title,
              type: String,
