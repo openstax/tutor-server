@@ -1,29 +1,33 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::CourseGuideRepresenter do
-  it 'has a title' do
-    guide = Hashie::Mash.new({ title: 'Hello' })
-    decorated = described_class.new(guide)
-    expect(decorated.to_hash['title']).to eq('Hello')
+  # CourseGuideRepresenter expects an array input because
+  # GetCourseGuide returns an array of hashes
+  # note the `guide` variable assignments
+
+  it 'uses the title property' do
+    guide = [Hashie::Mash.new({ title: 'Hello' })]
+    decorated = described_class.new(guide).to_hash.first
+    expect(decorated['title']).to eq('Hello')
   end
 
-  it 'has page ids' do
-    guide = Hashie::Mash.new({ title: 'Hello', page_ids: [1, 2] })
-    decorated = described_class.new(guide)
-    expect(decorated.to_hash['page_ids']).to eq(['1', '2'])
+  it 'casts page_ids to strings' do
+    guide = [Hashie::Mash.new({ title: 'Hello', page_ids: [1, 2] })]
+    decorated = described_class.new(guide).to_hash.first
+    expect(decorated['page_ids']).to eq(['1', '2'])
   end
 
-  it 'has children' do
-    guide = Hashie::Mash.new({ children: [{ title: 'my cool title',
-                                            chapter_section: [1, 4],
-                                            questions_answered_count: 25,
-                                            current_level: 0.89,
-                                            practice_count: 3,
-                                            page_ids: [4, 5, 6] }] })
+  it 'recurses children with the child representer' do
+    guide = [Hashie::Mash.new({ children: [{ title: 'my cool title',
+                                             chapter_section: [1, 4],
+                                             questions_answered_count: 25,
+                                             current_level: 0.89,
+                                             practice_count: 3,
+                                             page_ids: [4, 5, 6] }] })]
 
-    decorated = described_class.new(guide)
+    decorated = described_class.new(guide).to_hash.first
 
-    expect(decorated.to_hash['children']).to eq([{
+    expect(decorated['children']).to eq([{
       'title' => 'my cool title',
       'chapter_section' => [1, 4],
       'questions_answered_count' => 25,

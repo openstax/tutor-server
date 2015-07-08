@@ -1,7 +1,6 @@
 module Api::V1
-  class CourseGuideRepresenter < Roar::Decorator
+  class CourseGuidePeriodRepresenter < Roar::Decorator
     include Roar::JSON
-    include Representable::JSON::Collection
 
     property :title,
              type: String,
@@ -18,5 +17,10 @@ module Api::V1
                readable: true,
                writeable: false,
                decorator: CourseGuideChildRepresenter
+  end
+
+  class CourseGuideRepresenter < Roar::Decorator
+    include Representable::JSON::Collection
+    items extend: CourseGuidePeriodRepresenter
   end
 end
