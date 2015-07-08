@@ -149,6 +149,8 @@ RSpec.describe Tasks::Models::Task, :type => :model do
     Hacks::AnswerExercise[task_step: task.task_steps[0], is_correct: true]
     Hacks::AnswerExercise[task_step: task.task_steps[3], is_correct: false]
 
+    task.reload
+
     expect(task.exercise_count).to eq 3
     expect(task.completed_exercise_count).to eq 2
     expect(task.correct_exercise_count).to eq 1

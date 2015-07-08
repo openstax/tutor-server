@@ -14,6 +14,17 @@ class CreateTasksTasks < ActiveRecord::Migration
       t.text :settings, null: false
       t.text :personalized_placeholder_strategy
 
+      t.integer :steps_count,                      null: false, default: 0
+      t.integer :completed_steps_count,            null: false, default: 0
+      t.integer :core_steps_count,                 null: false, default: 0
+      t.integer :completed_core_steps_count,       null: false, default: 0
+      t.integer :exercise_steps_count,             null: false, default: 0
+      t.integer :completed_exercise_steps_count,   null: false, default: 0
+      t.integer :recovered_exercise_steps_count,   null: false, default: 0
+      t.integer :correct_exercise_steps_count,     null: false, default: 0
+      t.integer :placeholder_steps_count,          null: false, default: 0
+      t.integer :placeholder_exercise_steps_count, null: false, default: 0
+
       t.timestamps null: false
 
       t.index :tasks_task_plan_id

@@ -375,15 +375,16 @@ ActiveRecord::Schema.define(version: 20150507224137) do
   add_index "tasks_task_plans", ["tasks_assistant_id"], name: "index_tasks_task_plans_on_tasks_assistant_id", using: :btree
 
   create_table "tasks_task_steps", force: :cascade do |t|
-    t.integer  "tasks_task_id",             null: false
-    t.integer  "tasked_id",                 null: false
-    t.string   "tasked_type",               null: false
-    t.integer  "number",                    null: false
+    t.integer  "tasks_task_id",               null: false
+    t.integer  "tasked_id",                   null: false
+    t.string   "tasked_type",                 null: false
+    t.integer  "number",                      null: false
     t.datetime "completed_at"
-    t.integer  "group_type",    default: 0, null: false
-    t.text     "settings",                  null: false
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
+    t.integer  "group_type",      default: 0, null: false
+    t.text     "related_content"
+    t.text     "labels"
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
   end
 
   add_index "tasks_task_steps", ["tasked_id", "tasked_type"], name: "index_tasks_task_steps_on_tasked_id_and_tasked_type", unique: true, using: :btree
@@ -467,6 +468,16 @@ ActiveRecord::Schema.define(version: 20150507224137) do
     t.integer  "tasks_taskings_count",              default: 0, null: false
     t.text     "settings",                                      null: false
     t.text     "personalized_placeholder_strategy"
+    t.integer  "steps_count",                       default: 0, null: false
+    t.integer  "completed_steps_count",             default: 0, null: false
+    t.integer  "core_steps_count",                  default: 0, null: false
+    t.integer  "completed_core_steps_count",        default: 0, null: false
+    t.integer  "exercise_steps_count",              default: 0, null: false
+    t.integer  "completed_exercise_steps_count",    default: 0, null: false
+    t.integer  "recovered_exercise_steps_count",    default: 0, null: false
+    t.integer  "correct_exercise_steps_count",      default: 0, null: false
+    t.integer  "placeholder_steps_count",           default: 0, null: false
+    t.integer  "placeholder_exercise_steps_count",  default: 0, null: false
     t.datetime "created_at",                                    null: false
     t.datetime "updated_at",                                    null: false
   end

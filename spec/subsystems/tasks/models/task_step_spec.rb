@@ -65,6 +65,8 @@ RSpec.describe Tasks::Models::TaskStep, :type => :model do
     it "can set related content" do
       target_related_content = [{title: 'blah', chapter_section: 'blah'}]
       task_step.related_content = target_related_content
+      task_step.save!
+      task_step.reload
       expect(task_step.related_content).to eq(target_related_content)
     end
 
@@ -74,6 +76,8 @@ RSpec.describe Tasks::Models::TaskStep, :type => :model do
       content = {title: 'blah', chapter_section: 'blah'}
       expect{
         task_step.add_related_content content
+        task_step.save!
+        task_step.reload
       }.to change{task_step.related_content}.by [content]
     end
   end
@@ -86,6 +90,8 @@ RSpec.describe Tasks::Models::TaskStep, :type => :model do
     it "can set labels" do
       target_labels = ['label1', 'label2']
       task_step.labels = target_labels
+      task_step.save!
+      task_step.reload
       expect(task_step.labels).to eq(target_labels)
     end
 
@@ -95,6 +101,8 @@ RSpec.describe Tasks::Models::TaskStep, :type => :model do
       labels = ['a', 'b']
       expect{
         task_step.add_labels labels
+        task_step.save!
+        task_step.reload
       }.to change{task_step.labels}.by labels
     end
   end
