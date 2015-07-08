@@ -59,17 +59,17 @@ RSpec.describe GetCourseGuide, vcr: VCR_OPTS do
   end
 
   it 'returns the period course guide for a student' do
-    expect(described_class[course: @course, role: @role]).to match a_hash_including(
+    expect(described_class[course: @course, role: @role]).to include(a_hash_including(
       "title"=>"Physics",
       "page_ids"=>[kind_of(Integer), kind_of(Integer)],
       "children"=> array_including(kind_of(Hash))
-    )
+    ))
   end
 
   it "returns each book's stats for the course period" do
-    book = described_class[course: @course, role: @role]['children'].first
+    book = described_class[course: @course, role: @role].first['children'].first
 
-    expect(book).to match a_hash_including(
+    expect([book]).to include(a_hash_including(
       "id"=>kind_of(Integer),
       "title"=>"Force and Newton's Laws of Motion",
       "chapter_section"=>[4],
@@ -78,11 +78,11 @@ RSpec.describe GetCourseGuide, vcr: VCR_OPTS do
       "practice_count"=>0,
       "page_ids"=>[kind_of(Integer), kind_of(Integer)],
       "children"=> array_including(kind_of(Hash))
-    )
+    ))
   end
 
   it "returns each book part's stats for the course period" do
-    parts = described_class[course: @course, role: @role]['children'].first['children']
+    parts = described_class[course: @course, role: @role].first['children'].first['children']
 
     expect(parts).to include(
       a_hash_including("id"=>kind_of(Integer),
