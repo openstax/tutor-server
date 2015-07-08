@@ -36,6 +36,7 @@ module Api::V1
         ::Tasks::Models::TaskedPlaceholder => ->(*) {Api::V1::Tasks::TaskedPlaceholderRepresenter},
         ::Tasks::Models::TaskedReading     => ->(*) {Api::V1::Tasks::TaskedReadingRepresenter},
         ::Tasks::Models::TaskedVideo       => ->(*) {Api::V1::Tasks::TaskedVideoRepresenter},
+        ::Tasks::Models::TaskedExternalUrl => ->(*) {Api::V1::Tasks::TaskedExternalUrlRepresenter}
       }
     end
 
