@@ -27,7 +27,6 @@ module Tasks
         student_tasks, student_data = [], []
         student_profiles = run(:get_student_profiles, period: period).outputs.profiles
         tasks = get_tasks(student_profiles, period.id)
-        exercises = get_exercises(tasks)
 
         student_profiles.collect do |student_profile|
           student_tasks = tasks.select { |t| taskings_exist?(t, student_profile) }
@@ -35,7 +34,7 @@ module Tasks
           student_data << {
             name: student_profile.full_name,
             role: student_profile.entity_role_id
-          }.merge(get_student_data(student_tasks, exercises))
+          }.merge(get_student_data(student_tasks))
         end
 
         Hashie::Mash.new({
@@ -54,14 +53,7 @@ module Tasks
         .where { taskings.entity_role_id.in role_ids }
         .where { task_type.in Models::Task.task_types.values_at(:reading, :homework) }
         .order('due_at DESC')
-        .includes(:taskings, :task_steps)
-    end
-
-    def get_exercises(tasks)
-      task_steps = tasks.collect(&:task_steps).flatten
-      tasked_exercises = task_steps.select { |ts| ts.tasked_type == 'Tasks::Models::TaskedExercise' }
-      tasked_ids = tasked_exercises.collect(&:tasked_id)
-      Models::TaskedExercise.where(id: tasked_ids)
+        .includes(:taskings)#, :task_steps)
     end
 
     def taskings_exist?(task, profile)
@@ -82,17 +74,17 @@ module Tasks
       }
     end
 
-    def get_student_data(tasks, exercises)
+    def get_student_data(tasks)
       {
-        data: tasks.collect.with_index { |t, i|
+        data: tasks.collect.with_index { |task, index|
           data = {
-            status: t.status,
-            type: t.task_type,
-            id: t.id,
+            status: task.status,
+            type: task.task_type,
+            id: task.id,
           }
 
-          if t.task_type == 'homework'
-            data.merge!(exercise_count(t.task_steps, exercises, i))
+          if task.task_type == 'homework'
+            data.merge!(exercise_count(task, index))
           end
 
           data
@@ -100,22 +92,20 @@ module Tasks
       }
     end
 
-    def exercise_count(task_steps, exercises, index)
-      tasked_exercises = task_steps.select { |ts| ts.tasked_type == 'Tasks::Models::TaskedExercise' }
-      tasked_ids = tasked_exercises.collect(&:tasked_id)
-      exercises = exercises.select { |e| tasked_ids.include?(e.id) }
-
-      attempted_count = task_steps.select(&:completed?).length
-      correct_count = exercises.select(&:is_correct?).length
+    def exercise_count(task, index)
+      exercise_count  = task.exercise_steps_count
+      attempted_count = task.completed_exercise_steps_count
+      correct_count   = task.correct_exercise_steps_count
+      recovered_count = 0
 
       if attempted_count > 0
         @average[-1][index] << (Float(correct_count) / attempted_count)
       end
 
       {
-        exercise_count: exercises.length,
+        exercise_count: exercise_count,
         correct_exercise_count: correct_count,
-        recovered_exercise_count: exercises.select(&:can_be_recovered?).length
+        recovered_exercise_count: recovered_count
       }
     end
   end
