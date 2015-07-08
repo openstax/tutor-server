@@ -13,14 +13,15 @@ class CreateStudentHistory
   def exec(course:, roles: setup_student_role, book_id: '93e2b09d-261c-4007-a987-0b3062fe154b')
     setup_course_book(course, book_id)
 
-    [roles].flatten.each do |role|
+    [roles].flatten.each_with_index do |role, i|
       puts "=== Set Role##{role.id} history ==="
 
       create_assignments(course, role)
 
       # practice widgets assign 5 task steps to the role
-      practice_steps = create_practice_widget(role, pages: outputs.page_data[4].id)
-      answer_correctly(practice_steps, 2) # 2/5
+      # i + 1 because i == 0 is often the Introduction
+      practice_steps = create_practice_widget(role, pages: outputs.page_data[i + 1].id)
+      answer_correctly(practice_steps, 2 + i) # 2 or 3/5
 
       practice_steps = create_practice_widget(role, pages: outputs.page_data[5].id)
       answer_correctly(practice_steps, 5) # 5/5

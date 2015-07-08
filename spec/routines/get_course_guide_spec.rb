@@ -23,7 +23,9 @@ RSpec.describe GetCourseGuide, vcr: VCR_OPTS do
                                            user: @teacher]
 
     VCR.use_cassette("GetCourseGuide/setup_course_guide", VCR_OPTS) do
-      capture_stdout { CreateStudentHistory[course: @course, roles: [@role, @second_role]] }
+      capture_stdout do
+        CreateStudentHistory[course: @course, roles: [@role, @second_role]]
+      end
     end
   end
 
@@ -36,7 +38,7 @@ RSpec.describe GetCourseGuide, vcr: VCR_OPTS do
     expect(guide.outputs).to have(16).task_steps
 
     guide = described_class.call(course: @course, role: @second_role)
-    expect(guide.outputs).to have(16).task_steps
+    expect(guide.outputs).to have(17).task_steps
   end
 
   it 'gets the book' do
@@ -59,11 +61,13 @@ RSpec.describe GetCourseGuide, vcr: VCR_OPTS do
   end
 
   it 'returns the period course guide for a student' do
-    expect(described_class[course: @course, role: @role]).to include(a_hash_including(
+    result = described_class[course: @course, role: @role]
+
+    expect(result).to match a_hash_including(
       "title"=>"Physics",
-      "page_ids"=>[kind_of(Integer), kind_of(Integer)],
+      "page_ids"=>[kind_of(Integer)]*3,
       "children"=> array_including(kind_of(Hash))
-    ))
+    )
   end
 
   it "returns each book's stats for the course period" do
@@ -71,47 +75,44 @@ RSpec.describe GetCourseGuide, vcr: VCR_OPTS do
 
     expect([book]).to include(a_hash_including(
       "id"=>kind_of(Integer),
-      "title"=>"Force and Newton's Laws of Motion",
-      "chapter_section"=>[4],
-      "questions_answered_count"=>16,
+      "title"=>"Acceleration",
+      "chapter_section"=>[3],
+      "questions_answered_count"=>2,
       "current_level"=>kind_of(Float),
       "practice_count"=>0,
-      "page_ids"=>[kind_of(Integer), kind_of(Integer)],
+      "page_ids"=>[kind_of(Integer)],
       "children"=> array_including(kind_of(Hash))
     ))
   end
 
   it "returns each book part's stats for the course period" do
-    parts = described_class[course: @course, role: @role].first['children'].first['children']
+    parts = described_class[course: @course, role: @role].first['children']
+                                                         .first['children']
 
-    expect(parts).to include(
-      a_hash_including("id"=>kind_of(Integer),
-                       "title"=>"Force",
-                       "chapter_section"=>[4, 1],
-                       "questions_answered_count"=>11,
-                       "current_level"=>kind_of(Float),
-                       "practice_count"=>0,
-                       "page_ids"=>[kind_of(Integer)]),
-      a_hash_including("id"=>kind_of(Integer),
-                       "title"=>"Newton's First Law of Motion: Inertia",
-                       "chapter_section"=>[4, 2],
-                       "questions_answered_count"=>5,
-                       "current_level"=>kind_of(Float),
-                       "practice_count"=>0,
-                       "page_ids"=>[kind_of(Integer)]))
+    expect(parts).to match a_hash_including(
+      "id"=>kind_of(Integer),
+      "title"=>"Acceleration",
+      "chapter_section"=>[3, 1],
+      "questions_answered_count"=>2,
+      "current_level"=>kind_of(Float),
+      "practice_count"=>0,
+      "page_ids"=>[kind_of(Integer)]
+    )
   end
 
   it 'returns all course guide periods for teachers' do
-    expect(described_class[course: @course, role: @teacher_role]).to include({
+    result = described_class[course: @course, role: @teacher_role]
+
+    expect(result).to include({
       period_id: @period.id,
       title: 'Physics',
-      page_ids: [kind_of(Integer), kind_of(Integer)],
+      page_ids: [kind_of(Integer)]*4,
       children: array_including(kind_of(Hash))
     },
     {
       period_id: @second_period.id,
       title: 'Physics',
-      page_ids: [kind_of(Integer), kind_of(Integer)],
+      page_ids: [kind_of(Integer)]*4,
       children: array_including(kind_of(Hash))
     })
   end
@@ -119,16 +120,16 @@ RSpec.describe GetCourseGuide, vcr: VCR_OPTS do
   it 'includes the book stats for the periods' do
     book = described_class[course: @course, role: @teacher_role].first['children'].first
 
-    expect([book]).to include(a_hash_including(
-      "id" => kind_of(Integer),
-      "title" => "Force and Newton's Laws of Motion",
-      "chapter_section" => [4],
-      "questions_answered_count" => 32,
-      "current_level" => kind_of(Float),
-      "practice_count" => 0,
-      "page_ids" => [kind_of(Integer), kind_of(Integer)],
+    expect([book]).to match a_hash_including(
+      "id"=>kind_of(Integer),
+      "title"=>"Acceleration",
+      "chapter_section"=>[3],
+      "questions_answered_count"=>5,
+      "current_level"=>kind_of(Float),
+      "practice_count"=>0,
+      "page_ids"=>[kind_of(Integer)]*2,
       "children" => array_including(kind_of(Hash))
-    ))
+    )
   end
 
   it 'includes the book part stats for the periods' do
@@ -136,20 +137,20 @@ RSpec.describe GetCourseGuide, vcr: VCR_OPTS do
                                                                       .first['children']
 
     expect(book_parts).to include(
-      a_hash_including("id" => kind_of(Integer),
-                       "title" => "Force",
-                       "chapter_section" => [4, 1],
-                       "questions_answered_count" => 22,
-                       "current_level" => kind_of(Float),
-                       "practice_count" => 0,
-                       "page_ids" => [kind_of(Integer)]),
-      a_hash_including("id" => kind_of(Integer),
-                       "title" => "Newton's First Law of Motion: Inertia",
-                       "chapter_section" => [4, 2],
-                       "questions_answered_count" => 10,
-                       "current_level" => kind_of(Float),
-                       "practice_count" => 0,
-                       "page_ids" => [kind_of(Integer)])
+      a_hash_including("id"=>kind_of(Integer),
+                       "title"=>"Acceleration",
+                       "chapter_section"=>[3, 1],
+                       "questions_answered_count"=>2,
+                       "current_level"=>kind_of(Float),
+                       "practice_count"=>0,
+                       "page_ids"=>[kind_of(Integer)]),
+      a_hash_including("id"=>kind_of(Integer),
+                       "title"=>"Representing Acceleration with Equations and Graphs",
+                       "chapter_section"=>[3, 2],
+                       "questions_answered_count"=>3,
+                       "current_level"=>kind_of(Float),
+                       "practice_count"=>0,
+                       "page_ids"=>[kind_of(Integer)])
     )
   end
 end
