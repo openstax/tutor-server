@@ -674,57 +674,6 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       expect(response_body['tasks']).not_to be_empty
       expect(response_body['plans']).to be_nil
     end
-
-  end
-
-  describe '#stats' do
-    context 'user is teacher' do
-      let!(:teacher_role) {
-        AddUserAsCourseTeacher.call(
-          course: course, user: user_1.entity_user).outputs[:role]
-      }
-
-      let!(:student_role) {
-        AddUserAsPeriodStudent.call(
-          period: period, user: user_2.entity_user).outputs[:role]
-      }
-
-      let!(:course_stats) {
-        Hashie::Mash.new(title: 'Title', page_ids: [1], children: [])
-      }
-
-      let!(:get_course_stats) {
-        class_double(GetCourseStats).as_stubbed_const
-      }
-
-      context 'and a student role is given' do
-        it 'returns the student stats' do
-          expect(get_course_stats)
-            .to receive(:[]).with(role: student_role, course: course)
-            .and_return(course_stats)
-
-          api_get :stats,
-                  user_1_token,
-                  parameters: { id: course.id, role_id: student_role }
-        end
-      end
-
-      context 'and a student role is not given' do
-        it 'raises IllegalState' do
-          expect {
-            api_get :stats, user_1_token, parameters: { id: course.id }
-          }.to raise_error(IllegalState)
-        end
-      end
-    end
-
-    context 'user is anonymous' do
-      it 'raises IllegalState' do
-        expect {
-          api_get :stats, nil, parameters: { id: course.id }
-        }.to raise_error(IllegalState)
-      end
-    end
   end
 
   context 'with book' do

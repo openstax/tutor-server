@@ -6,7 +6,7 @@ class ResetPracticeWidget
 
   protected
 
-  def exec(role:, exercise_source:, page_ids: [], book_part_ids: [])
+  def exec(role:, exercise_source:, page_ids: [], book_part_ids: [], randomize: true)
     page_ids = [page_ids].flatten
     book_part_ids = [book_part_ids].flatten
 
@@ -26,7 +26,7 @@ class ResetPracticeWidget
     when :fake
       get_fake_exercises(count: 5)
     when :local
-      get_local_exercises(count: 5, role: role, tags: los)
+      get_local_exercises(count: 5, role: role, tags: los, randomize: randomize)
     when :biglearn
       get_biglearn_exercises(count: 5, role: role, los: los)
     else
@@ -76,17 +76,20 @@ class ResetPracticeWidget
     end
   end
 
-  def get_local_exercises(count:, role:, tags:)
+  def get_local_exercises(count:, role:, tags:, randomize: true)
     exercises = SearchLocalExercises[not_assigned_to: role,
                                      tag: tags,
-                                     match_count: 1].to_a.shuffle
+                                     match_count: 1].to_a
+    exercises = exercises.shuffle if randomize
 
     count.times.collect do
       unless exercise = exercises.pop
         # We ran out of exercises, so start repeating them
         exercises = SearchLocalExercises[assigned_to: role,
                                          tag: tags,
-                                         match_count: 1].to_a.shuffle
+                                         match_count: 1].to_a
+        exercises = exercises.shuffle if randomize
+
         unless exercise = exercises.pop
           fatal_error(code: :no_exercises_found,
                       message: "No exercises matched the given tags: #{tags.inspect}")
