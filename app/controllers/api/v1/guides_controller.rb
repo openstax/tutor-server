@@ -17,7 +17,7 @@ module Api
       def student
         course = Entity::Course.find(params[:id])
         guide = GetCourseGuide[role: role(course, :student), course: course]
-        respond_with guide, represent_with: Api::V1::CourseGuideRepresenter
+        respond_with guide, represent_with: Api::V1::CourseGuidePeriodRepresenter
       end
 
       api :GET, '/courses/:id/teacher_guide',
