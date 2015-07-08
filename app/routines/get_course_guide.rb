@@ -17,9 +17,9 @@ class GetCourseGuide
     translations: { outputs: { type: :verbatim } },
     as: :get_periods
 
-  uses_routine CourseMembership::GetCourseRoles,
+  uses_routine CourseMembership::GetPeriodRoles,
     translations: { outputs: { type: :verbatim } },
-    as: :get_course_roles
+    as: :get_period_roles
 
   uses_routine CourseMembership::IsCourseTeacher,
     translations: { outputs: { type: :verbatim } },
@@ -29,47 +29,44 @@ class GetCourseGuide
   def exec(role:, course:)
     @role, @course = role, course
 
-    get_task_steps
-
     run(:get_course_books, course: course)
     run(:get_periods, course: course, roles: role)
     run(:visit_book, book: outputs.books.first, visitor_names: [:toc, :page_data])
+    run(:get_period_roles, periods: outputs.periods, types: :student)
 
-    outputs[:course_guide] = compile_course_guide
+    if is_teacher?
+      run(:get_role_task_steps, roles: outputs.roles)
+    else
+      run(:get_role_task_steps, roles: role)
+    end
+
+    outputs.course_guide = compile_course_guide
   end
 
   private
   attr_reader :role, :course
 
   def compile_course_guide
-    if run(:is_teacher, course: course, roles: role).outputs.is_course_teacher
-      outputs[:periods].collect do |period|
-        { period_id: period.id }.merge(course_stats)
+    if is_teacher?
+      outputs.periods.collect do |period|
+        { period_id: period.id }.merge(course_stats(period))
       end
     else # only 1 period for student role
       [course_stats]
     end
   end
 
-  def course_stats
-    chapters = compile_chapters # can't memoize in a loop
+  def course_stats(period = nil)
+    chapters = compile_chapters(period) # can't memoize in a loop
 
     { title: outputs.toc.title, # toc is root book
       page_ids: chapters.collect { |cc| cc[:page_ids] }.flatten.uniq,
       children: chapters }
   end
 
-  def get_task_steps
-    if run(:is_teacher, course: course, roles: role).outputs.is_course_teacher
-      run(:get_course_roles, course: course, types: :student)
-      run(:get_role_task_steps, roles: outputs.roles)
-    else
-      run(:get_role_task_steps, roles: role)
-    end
-  end
-
-  def compile_chapters
+  def compile_chapters(period)
     exercises_grouped_by_book_part.collect { |book_part_id, task_steps|
+      task_steps = filter_task_steps_by_period_roles(task_steps)
       book_part = book_parts_by_id[book_part_id]
       practices = completed_practices(task_steps, :mixed_practice)
       pages = compile_pages(task_steps)
@@ -85,6 +82,16 @@ class GetCourseGuide
         children: pages
       }
     }.sort_by { |ch| ch[:chapter_section] }
+  end
+
+  def filter_task_steps_by_period_roles(task_steps)
+    role_ids = outputs.roles.flatten.collect(&:id)
+
+    task_steps.select do |task_step|
+      task_ids = task_step.task.taskings.where(entity_role_id: role_ids)
+                                        .collect(&:entity_task_id)
+      task_ids.include?(task_step.tasks_task_id)
+    end
   end
 
   def exercises_grouped_by_book_part
@@ -141,5 +148,9 @@ class GetCourseGuide
 
   def book_parts
     [outputs.toc, outputs.toc.children].flatten
+  end
+
+  def is_teacher?
+    run(:is_teacher, course: course, roles: role).outputs.is_course_teacher
   end
 end
