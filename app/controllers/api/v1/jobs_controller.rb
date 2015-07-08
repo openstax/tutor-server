@@ -10,7 +10,7 @@ class Api::V1::JobsController < Api::V1::ApiController
   api :GET, '/jobs/:id', 'Returns job statuses'
   description <<-EOS
     Returns queued job statuses in the system
-    { status: \\[:queued, :working, :complete\\] }
+    { status: \\[:queued, :working, :completed, :failed, :killed\\] }
   EOS
   def show
     status = Lev::Status.find(params[:id])
@@ -23,6 +23,10 @@ class Api::V1::JobsController < Api::V1::ApiController
     case switch
     when Lev::Status::STATE_COMPLETED
       200
+    when Lev::Status::STATE_FAILED
+      500
+    when Lev::Status::STATE_KILLED
+      404
     else
       202
     end
