@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Content::Routines::UpdatePageContent, type: :routine do
+RSpec.describe Content::Routines::UpdatePageContent, type: :routine, vcr: VCR_OPTS do
 
   let!(:book_part) { FactoryGirl.create :content_book_part }
 
