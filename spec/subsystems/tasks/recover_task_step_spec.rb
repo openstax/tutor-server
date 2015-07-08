@@ -25,12 +25,12 @@ RSpec.describe Tasks::RecoverTaskStep, :type => :routine do
                                       .new_exercise_hash(tags: [lo.value])
                                       .to_json
     )
-    te.task_step.task = task
+    te.task_step.task = task.reload
     te.save!
     te
   }
 
-  let!(:next_step)  { FactoryGirl.create(:tasks_task_step, task: task) }
+  let!(:next_step)  { FactoryGirl.create(:tasks_task_step, task: task.reload) }
 
   let!(:recovery_exercise) { FactoryGirl.create(
     :content_exercise,

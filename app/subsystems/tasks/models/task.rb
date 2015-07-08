@@ -69,7 +69,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def completed?
-    self.task_steps.all?(&:completed?)
+    steps_count == completed_steps_count
   end
 
   def status
@@ -79,7 +79,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     if self.completed?
       'completed'
     else
-      in_progress = self.task_steps.any? { |ts| ts.completed? }
+      in_progress = (completed_steps_count > 0)
       in_progress ? 'in_progress' : 'not_started'
     end
   end
@@ -89,23 +89,23 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def core_task_steps
-    self.task_steps(true).includes(:tasked).core_group
+    self.task_steps.preload(:tasked).to_a.select(&:core_group?)
   end
 
   def non_core_task_steps
-    self.task_steps(true).includes(:tasked) - self.core_task_steps
+    self.task_steps.preload(:tasked).to_a - self.core_task_steps
   end
 
   def spaced_practice_task_steps
-    self.task_steps(true).includes(:tasked).spaced_practice_group
+    self.task_steps.preload(:tasked).to_a.select(&:spaced_practice_group?)
   end
 
   def personalized_task_steps
-    self.task_steps(true).includes(:tasked).personalized_group
+    self.task_steps.preload(:tasked).to_a.select(&:personalized_group?)
   end
 
   def core_task_steps_completed?
-    self.core_task_steps.all?{|ts| ts.completed?}
+    core_steps_count == completed_core_steps_count
   end
 
   def core_task_steps_completed_at
@@ -114,34 +114,68 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def handle_task_step_completion!(completion_time: Time.now)
-    return unless core_task_steps_completed?
+    # puts "#{self.id} handing task step completion"
 
-    strategy = personalized_placeholder_strategy
-    unless strategy.nil?
-      strategy.populate_placeholders(task: self)
+    update_step_counts!
+
+    if core_task_steps_completed? && placeholder_steps_count > 0
+      # puts "#{self.id} running placeholder strategy"
+
+      strategy = personalized_placeholder_strategy
+      unless strategy.nil?
+        strategy.populate_placeholders(task: self)
+      end
+
+      update_step_counts!
     end
   end
 
+  def update_step_counts!
+    # puts "#{self.id} updating step counts"
+
+    steps = self.task_steps.to_a
+
+    update_steps_count(task_steps: steps)
+    update_completed_steps_count(task_steps: steps)
+    update_core_steps_count(task_steps: steps)
+    update_completed_core_steps_count(task_steps: steps)
+    update_exercise_steps_count(task_steps: steps)
+    update_completed_exercise_steps_count(task_steps: steps)
+    update_correct_exercise_steps_count(task_steps: steps)
+    update_placeholder_steps_count(task_steps: steps)
+    update_placeholder_exercise_steps_count(task_steps: steps)
+
+    # puts "#{self.id}   steps_count                #{steps_count}"
+    # puts "#{self.id}   completed_steps_count      #{completed_steps_count}"
+    # puts "#{self.id}   placeholder_steps_count    #{placeholder_steps_count}"
+    # puts "#{self.id}   core_steps_count           #{core_steps_count}"
+    # puts "#{self.id}   completed_core_steps_count #{completed_core_steps_count}"
+    # puts "#{self.id}   core_task_steps_completed? #{core_task_steps_completed?}"
+    # puts "#{self.id}   completed?                 #{completed?}"
+
+    save!
+
+    self
+  end
+
   def exercise_count
-    exercise_steps.count
+    exercise_steps_count
   end
 
   def actual_and_placeholder_exercise_count
-    task_steps(true).includes(:tasked).select{ |task_step|
-      task_step.exercise? || (task_step.placeholder? && task_step.tasked.exercise_type?)
-    }.length
+    exercise_steps_count + placeholder_exercise_steps_count
   end
 
   def completed_exercise_count
-    completed_exercise_steps.count
+    completed_exercise_steps_count
   end
 
   def correct_exercise_count
-    exercise_steps.select{|step| step.tasked.is_correct?}.count
+    correct_exercise_steps_count
   end
 
   def exercise_steps
-    task_steps(true).includes(:tasked).select{|task_step| task_step.exercise?}
+    task_steps.preload(:tasked).select{|task_step| task_step.exercise?}
   end
 
   def completed_exercise_steps
@@ -154,6 +188,48 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     return unless opens_at.blank? && due_at.blank?
     errors.add(:base, 'needs either the opens_at date or due_at date')
     false
+  end
+
+  def update_steps_count(task_steps:)
+    self.steps_count = task_steps.count
+  end
+
+  def update_completed_steps_count(task_steps:)
+    self.completed_steps_count = task_steps.count(&:completed?)
+  end
+
+  def update_core_steps_count(task_steps:)
+    self.core_steps_count = task_steps.count(&:core_group?)
+  end
+
+  def update_completed_core_steps_count(task_steps:)
+    self.completed_core_steps_count = task_steps.select(&:core_group?)
+                                                .count(&:completed?)
+  end
+
+  def update_exercise_steps_count(task_steps:)
+    self.exercise_steps_count = task_steps.count(&:exercise?)
+  end
+
+  def update_completed_exercise_steps_count(task_steps:)
+    self.completed_exercise_steps_count = task_steps.select(&:exercise?)
+                                                    .count(&:completed?)
+  end
+
+  def update_correct_exercise_steps_count(task_steps:)
+    self.correct_exercise_steps_count = task_steps.select(&:exercise?)
+                                                  .select{|step| step.tasked.is_correct?}
+                                                  .count
+  end
+
+  def update_placeholder_steps_count(task_steps:)
+    self.placeholder_steps_count = task_steps.count(&:placeholder?)
+  end
+
+  def update_placeholder_exercise_steps_count(task_steps:)
+    self.placeholder_exercise_steps_count = task_steps.select(&:placeholder?)
+                                                      .select{|step| step.tasked.exercise_type?}
+                                                      .count
   end
 
 end

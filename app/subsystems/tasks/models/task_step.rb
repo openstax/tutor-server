@@ -4,7 +4,8 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
 
   enum group_type: [:default_group, :core_group, :spaced_practice_group, :personalized_group]
 
-  serialize :settings, JSON
+  serialize :related_content, Array
+  serialize :labels, Array
 
   validates :task, presence: true
   validates :tasked, presence: true
@@ -18,21 +19,7 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
 
   scope :exercises, -> { where{tasked_type == Tasks::Models::TaskedExercise.name} }
 
-  after_initialize :init_settings
-  after_initialize :init_labels
-  after_initialize :init_related_content
-
-  def init_settings
-    self.settings ||= {}
-  end
-
-  def init_labels
-    self.settings['labels'] ||= []
-  end
-
-  def init_related_content
-    self.settings['related_content'] ||= []
-  end
+  after_save { task.update_step_counts! }
 
   def has_correctness?
     tasked.has_correctness?
@@ -69,29 +56,12 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
     group_type.gsub(/_group\z/, '').gsub('_', ' ')
   end
 
-  def related_content
-    self.settings['related_content']
-  end
-
-  def related_content=(value)
-    self.settings['related_content'] = value
-  end
-
   def add_related_content(related_content_hash)
-    self.settings['related_content'] << related_content_hash
-  end
-
-  def labels
-    self.settings['labels']
-  end
-
-  def labels=(value)
-    self.settings['labels'] = value
-    self.settings['labels'] ||= []
+    self.related_content << related_content_hash
   end
 
   def add_labels(labels)
-    self.settings['labels'] = [self.settings['labels'], labels].flatten.compact.uniq
+    self.labels = [self.labels, labels].flatten.compact.uniq
   end
 
 end
