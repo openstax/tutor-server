@@ -474,6 +474,7 @@ ActiveRecord::Schema.define(version: 20150507224137) do
     t.integer  "completed_core_steps_count",        default: 0, null: false
     t.integer  "exercise_steps_count",              default: 0, null: false
     t.integer  "completed_exercise_steps_count",    default: 0, null: false
+    t.integer  "recovered_exercise_steps_count",    default: 0, null: false
     t.integer  "correct_exercise_steps_count",      default: 0, null: false
     t.integer  "placeholder_steps_count",           default: 0, null: false
     t.integer  "placeholder_exercise_steps_count",  default: 0, null: false

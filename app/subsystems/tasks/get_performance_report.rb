@@ -53,7 +53,7 @@ module Tasks
         .where { taskings.entity_role_id.in role_ids }
         .where { task_type.in Models::Task.task_types.values_at(:reading, :homework) }
         .order('due_at DESC')
-        .includes(:taskings)#, :task_steps)
+        .includes(:taskings)
     end
 
     def taskings_exist?(task, profile)
@@ -96,7 +96,7 @@ module Tasks
       exercise_count  = task.exercise_steps_count
       attempted_count = task.completed_exercise_steps_count
       correct_count   = task.correct_exercise_steps_count
-      recovered_count = 0
+      recovered_count = task.recovered_exercise_steps_count
 
       if attempted_count > 0
         @average[-1][index] << (Float(correct_count) / attempted_count)

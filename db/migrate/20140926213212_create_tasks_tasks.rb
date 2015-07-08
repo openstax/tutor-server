@@ -20,6 +20,7 @@ class CreateTasksTasks < ActiveRecord::Migration
       t.integer :completed_core_steps_count,       null: false, default: 0
       t.integer :exercise_steps_count,             null: false, default: 0
       t.integer :completed_exercise_steps_count,   null: false, default: 0
+      t.integer :recovered_exercise_steps_count,   null: false, default: 0
       t.integer :correct_exercise_steps_count,     null: false, default: 0
       t.integer :placeholder_steps_count,          null: false, default: 0
       t.integer :placeholder_exercise_steps_count, null: false, default: 0

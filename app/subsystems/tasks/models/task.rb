@@ -114,13 +114,9 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def handle_task_step_completion!(completion_time: Time.now)
-    # puts "#{self.id} handing task step completion"
-
     update_step_counts!
 
     if core_task_steps_completed? && placeholder_steps_count > 0
-      # puts "#{self.id} running placeholder strategy"
-
       strategy = personalized_placeholder_strategy
       unless strategy.nil?
         strategy.populate_placeholders(task: self)
@@ -131,8 +127,6 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def update_step_counts!
-    # puts "#{self.id} updating step counts"
-
     steps = self.task_steps.to_a
 
     update_steps_count(task_steps: steps)
@@ -144,14 +138,6 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     update_correct_exercise_steps_count(task_steps: steps)
     update_placeholder_steps_count(task_steps: steps)
     update_placeholder_exercise_steps_count(task_steps: steps)
-
-    # puts "#{self.id}   steps_count                #{steps_count}"
-    # puts "#{self.id}   completed_steps_count      #{completed_steps_count}"
-    # puts "#{self.id}   placeholder_steps_count    #{placeholder_steps_count}"
-    # puts "#{self.id}   core_steps_count           #{core_steps_count}"
-    # puts "#{self.id}   completed_core_steps_count #{completed_core_steps_count}"
-    # puts "#{self.id}   core_task_steps_completed? #{core_task_steps_completed?}"
-    # puts "#{self.id}   completed?                 #{completed?}"
 
     save!
 
@@ -203,8 +189,8 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def update_completed_core_steps_count(task_steps:)
-    self.completed_core_steps_count = task_steps.select(&:core_group?)
-                                                .count(&:completed?)
+    self.completed_core_steps_count =
+      task_steps.count{|step| step.core_group? && step.completed?}
   end
 
   def update_exercise_steps_count(task_steps:)
@@ -212,14 +198,13 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def update_completed_exercise_steps_count(task_steps:)
-    self.completed_exercise_steps_count = task_steps.select(&:exercise?)
-                                                    .count(&:completed?)
+    self.completed_exercise_steps_count =
+      task_steps.count{|step| step.exercise? && step.completed?}
   end
 
   def update_correct_exercise_steps_count(task_steps:)
-    self.correct_exercise_steps_count = task_steps.select(&:exercise?)
-                                                  .select{|step| step.tasked.is_correct?}
-                                                  .count
+    self.correct_exercise_steps_count =
+      task_steps.count{|step| step.exercise? && step.tasked.is_correct?}
   end
 
   def update_placeholder_steps_count(task_steps:)
@@ -227,9 +212,8 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def update_placeholder_exercise_steps_count(task_steps:)
-    self.placeholder_exercise_steps_count = task_steps.select(&:placeholder?)
-                                                      .select{|step| step.tasked.exercise_type?}
-                                                      .count
+    self.placeholder_exercise_steps_count =
+      task_steps.count{|step| step.placeholder? && step.tasked.exercise_type?}
   end
 
 end
