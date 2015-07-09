@@ -129,11 +129,13 @@ ActiveRecord::Schema.define(version: 20150712051607) do
   create_table "course_membership_students", force: :cascade do |t|
     t.integer  "course_membership_period_id", null: false
     t.integer  "entity_role_id",              null: false
+    t.string   "deidentifier",                null: false
     t.datetime "created_at",                  null: false
     t.datetime "updated_at",                  null: false
   end
 
   add_index "course_membership_students", ["course_membership_period_id", "entity_role_id"], name: "course_membership_student_period_role_uniq", unique: true, using: :btree
+  add_index "course_membership_students", ["deidentifier"], name: "index_course_membership_students_on_deidentifier", unique: true, using: :btree
 
   create_table "course_membership_teachers", force: :cascade do |t|
     t.integer  "entity_course_id", null: false

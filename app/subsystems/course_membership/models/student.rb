@@ -6,6 +6,19 @@ class CourseMembership::Models::Student < Tutor::SubSystems::BaseModel
 
   validates :period, presence: true
   validates :role, presence: true, uniqueness: { scope: :course_membership_period_id }
+  validates :deidentifier, uniqueness: true
 
   delegate :username, :first_name, :last_name, :full_name, to: :role
+
+  before_save :generate_deidentifier
+
+  protected
+
+  def generate_deidentifier
+    begin
+      deidentifier = SecureRandom.hex(4)
+    end while CourseMembership::Models::Student.exists?(deidentifier: deidentifier)
+    self.deidentifier ||= deidentifier
+  end
+
 end
