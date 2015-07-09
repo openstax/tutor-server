@@ -156,4 +156,244 @@ RSpec.describe Tasks::Models::Task, :type => :model do
     expect(task.correct_exercise_count).to eq 1
   end
 
+  context "update step counts" do
+    let!(:task) {
+      tt = Tasks::Models::Task.new
+      allow(tt).to receive(:save!)
+      tt
+    }
+
+    let!(:step) {
+      instance_double(Tasks::Models::TaskStep).tap do |step|
+        allow(step).to receive(:core_group?).and_return(false)
+        allow(step).to receive(:completed?).and_return(false)
+        allow(step).to receive(:exercise?).and_return(false)
+        allow(step).to receive(:placeholder?).and_return(false)
+      end
+    }
+
+    let!(:completed_step) {
+      instance_double(Tasks::Models::TaskStep).tap do |step|
+        allow(step).to receive(:core_group?).and_return(false)
+        allow(step).to receive(:completed?).and_return(true)
+        allow(step).to receive(:exercise?).and_return(false)
+        allow(step).to receive(:placeholder?).and_return(false)
+      end
+    }
+
+    let!(:core_step) {
+      instance_double(Tasks::Models::TaskStep).tap do |step|
+        allow(step).to receive(:core_group?).and_return(true)
+        allow(step).to receive(:completed?).and_return(false)
+        allow(step).to receive(:exercise?).and_return(false)
+        allow(step).to receive(:placeholder?).and_return(false)
+      end
+    }
+
+    let!(:completed_core_step) {
+      instance_double(Tasks::Models::TaskStep).tap do |step|
+        allow(step).to receive(:core_group?).and_return(true)
+        allow(step).to receive(:completed?).and_return(true)
+        allow(step).to receive(:exercise?).and_return(false)
+        allow(step).to receive(:placeholder?).and_return(false)
+      end
+    }
+
+    let!(:exercise_step) {
+      instance_double(Tasks::Models::TaskStep).tap do |step|
+        allow(step).to receive(:core_group?).and_return(false)
+        allow(step).to receive(:completed?).and_return(false)
+        allow(step).to receive(:exercise?).and_return(true)
+        allow(step).to receive(:placeholder?).and_return(false)
+        allow(step).to receive(:tasked).and_return(
+          instance_double(Tasks::Models::TaskedExercise).tap do |exercise|
+            allow(exercise).to receive(:is_correct?).and_return(false)
+          end
+        )
+      end
+    }
+
+    let!(:completed_exercise_step) {
+      instance_double(Tasks::Models::TaskStep).tap do |step|
+        allow(step).to receive(:core_group?).and_return(false)
+        allow(step).to receive(:completed?).and_return(true)
+        allow(step).to receive(:exercise?).and_return(true)
+        allow(step).to receive(:placeholder?).and_return(false)
+        allow(step).to receive(:tasked).and_return(
+          instance_double(Tasks::Models::TaskedExercise).tap do |exercise|
+            allow(exercise).to receive(:is_correct?).and_return(false)
+          end
+        )
+      end
+    }
+
+    let!(:correct_exercise_step) {
+      instance_double(Tasks::Models::TaskStep).tap do |step|
+        allow(step).to receive(:core_group?).and_return(false)
+        allow(step).to receive(:completed?).and_return(true)
+        allow(step).to receive(:exercise?).and_return(true)
+        allow(step).to receive(:placeholder?).and_return(false)
+        allow(step).to receive(:tasked).and_return(
+          instance_double(Tasks::Models::TaskedExercise).tap do |exercise|
+            allow(exercise).to receive(:is_correct?).and_return(true)
+          end
+        )
+      end
+    }
+
+    let!(:placeholder_step) {
+      instance_double(Tasks::Models::TaskStep).tap do |step|
+        allow(step).to receive(:core_group?).and_return(false)
+        allow(step).to receive(:completed?).and_return(false)
+        allow(step).to receive(:exercise?).and_return(false)
+        allow(step).to receive(:placeholder?).and_return(true)
+        allow(step).to receive(:tasked).and_return(
+          instance_double(Tasks::Models::TaskedPlaceholder).tap do |exercise|
+            allow(exercise).to receive(:exercise_type?).and_return(false)
+          end
+        )
+      end
+    }
+
+    let!(:placeholder_exercise_step) {
+      instance_double(Tasks::Models::TaskStep).tap do |step|
+        allow(step).to receive(:core_group?).and_return(false)
+        allow(step).to receive(:completed?).and_return(false)
+        allow(step).to receive(:exercise?).and_return(false)
+        allow(step).to receive(:placeholder?).and_return(true)
+        allow(step).to receive(:tasked).and_return(
+          instance_double(Tasks::Models::TaskedPlaceholder).tap do |exercise|
+            allow(exercise).to receive(:exercise_type?).and_return(true)
+          end
+        )
+      end
+    }
+
+    context "steps count" do
+      it "works with no steps" do
+        allow(task).to receive(:task_steps).and_return([])
+        task.update_step_counts!
+        expect(task.steps_count).to eq(0)
+      end
+
+      it "works with multiple steps" do
+        allow(task).to receive(:task_steps).and_return([step, step])
+        task.update_step_counts!
+        expect(task.steps_count).to eq(2)
+      end
+    end
+
+    context "completed steps count" do
+      it "works with no steps" do
+        allow(task).to receive(:task_steps).and_return([])
+        task.update_step_counts!
+        expect(task.completed_steps_count).to eq(0)
+      end
+
+      it "works with multiple completed steps" do
+        allow(task).to receive(:task_steps).and_return([completed_step, step, completed_step])
+        task.update_step_counts!
+        expect(task.completed_steps_count).to eq(2)
+      end
+    end
+
+    context "core steps count" do
+      it "works with no steps" do
+        allow(task).to receive(:task_steps).and_return([])
+        task.update_step_counts!
+        expect(task.core_steps_count).to eq(0)
+      end
+
+      it "works with multiple core steps" do
+        allow(task).to receive(:task_steps).and_return([core_step, step, core_step])
+        task.update_step_counts!
+        expect(task.core_steps_count).to eq(2)
+      end
+    end
+
+    context "completed core steps count" do
+      it "works with no steps" do
+        allow(task).to receive(:task_steps).and_return([])
+        task.update_step_counts!
+        expect(task.completed_core_steps_count).to eq(0)
+      end
+
+      it "works with multiple completed core steps" do
+        allow(task).to receive(:task_steps).and_return([completed_core_step, step, core_step, completed_core_step])
+        task.update_step_counts!
+        expect(task.completed_core_steps_count).to eq(2)
+      end
+    end
+
+    context "exercise steps count" do
+      it "works with no steps" do
+        allow(task).to receive(:task_steps).and_return([])
+        task.update_step_counts!
+        expect(task.exercise_steps_count).to eq(0)
+      end
+
+      it "works with multiple exercise steps" do
+        allow(task).to receive(:task_steps).and_return([exercise_step, step, exercise_step])
+        task.update_step_counts!
+        expect(task.exercise_steps_count).to eq(2)
+      end
+    end
+
+    context "completed exercise steps count" do
+      it "works with no steps" do
+        allow(task).to receive(:task_steps).and_return([])
+        task.update_step_counts!
+        expect(task.completed_exercise_steps_count).to eq(0)
+      end
+
+      it "works with multiple completed exercise steps" do
+        allow(task).to receive(:task_steps).and_return([completed_exercise_step, exercise_step, step, completed_exercise_step])
+        task.update_step_counts!
+        expect(task.completed_exercise_steps_count).to eq(2)
+      end
+    end
+
+    context "correct exercise steps count" do
+      it "works with no steps" do
+        allow(task).to receive(:task_steps).and_return([])
+        task.update_step_counts!
+        expect(task.correct_exercise_steps_count).to eq(0)
+      end
+
+      it "works with multiple correct exercise steps" do
+        allow(task).to receive(:task_steps).and_return([correct_exercise_step, completed_exercise_step, correct_exercise_step])
+        task.update_step_counts!
+        expect(task.correct_exercise_steps_count).to eq(2)
+      end
+    end
+
+    context "placeholder steps count" do
+      it "works with no steps" do
+        allow(task).to receive(:task_steps).and_return([])
+        task.update_step_counts!
+        expect(task.placeholder_steps_count).to eq(0)
+      end
+
+      it "works with multiple placeholder steps" do
+        allow(task).to receive(:task_steps).and_return([placeholder_step, step, placeholder_step])
+        task.update_step_counts!
+        expect(task.placeholder_steps_count).to eq(2)
+      end
+    end
+
+    context "placeholder exercise steps count" do
+      it "works with no steps" do
+        allow(task).to receive(:task_steps).and_return([])
+        task.update_step_counts!
+        expect(task.placeholder_exercise_steps_count).to eq(0)
+      end
+
+      it "works with multiple placeholder exercise steps" do
+        allow(task).to receive(:task_steps).and_return([placeholder_exercise_step, placeholder_step, placeholder_exercise_step])
+        task.update_step_counts!
+        expect(task.placeholder_exercise_steps_count).to eq(2)
+      end
+    end
+
+  end
 end
