@@ -52,7 +52,7 @@ class Demo001 < DemoBase
 
         period_content.students.each do |initials|
           student = get_student(initials) ||
-            new_user_profile(username: "user-#{initials}", name: people.students[initials])
+            new_user_profile(username: "student-#{initials}", name: people.students[initials])
 
           run(AddUserAsPeriodStudent, period: period, user: student.entity_user)
 
