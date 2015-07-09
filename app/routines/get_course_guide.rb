@@ -159,6 +159,6 @@ class GetCourseGuide
   end
 
   def is_teacher?
-    run(:is_teacher, course: course, roles: role).outputs.is_course_teacher
+    @is_teacher ||= run(:is_teacher, course: course, roles: role).outputs.is_course_teacher
   end
 end
