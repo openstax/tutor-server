@@ -142,7 +142,12 @@ class GetCourseGuide
 
   def get_current_level(task_steps)
     lo_tags = get_lo_tags(task_steps)
-    OpenStax::Biglearn::V1.get_clue(roles: role, tags: lo_tags)
+
+    if is_teacher?
+      OpenStax::Biglearn::V1.get_clue(roles: outputs.roles, tags: lo_tags)
+    else
+      OpenStax::Biglearn::V1.get_clue(roles: role, tags: lo_tags)
+    end
   end
 
   def book_parts_by_id
