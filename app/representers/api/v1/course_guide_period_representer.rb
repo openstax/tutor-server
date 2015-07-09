@@ -11,7 +11,10 @@ module Api::V1
                readable: true,
                writeable: false,
                getter: -> (*) { page_ids && page_ids.map(&:to_s) },
-               schema_info: { items: { type: 'string' } }
+               schema_info: {
+                 required: true,
+                 description: "Page IDs as strings ['1', '2', ...]"
+               }
 
     collection :children,
                readable: true,
