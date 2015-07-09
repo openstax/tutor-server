@@ -9,33 +9,40 @@ periods:
     students: [af,ag,bb,cd,eh,ft,js,ms,nz,ra]
 assignments:
 
+  - type: reading
+    title: Read 3.1 Acceleration Pt1
+    periods: [0] # indexes of the periods array on the course
+    chapter_sections: [[3, 0], [3, 1]]
+    step_types: [ r, r, r, i, e, r, e, v, e, p ]
+    due_at: <%= due_today %>
+    scores: [ 98, 67, 55, 77, 88, i, ns, 78, 100, 86, 100, 82, 71, 90, 78, 87, i, i, 90, 85, ns, ns ]
 
   - type: reading
     title: Read 3.2 Acceleration Pt2
     periods: [0,1] # indexes of the periods array on the course
     chapter_sections: [[3, 2]]
-    step_types: [ r, i, e, r, r, e, r, r, r, e, r, e, p]
+    step_types: [ r, i, e, r, r, r, e, r, r, r, e, r, e, p]
     due_at: <%= due_today %>
     scores:
       - 88
-      - [ 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0 ]
+      - [ 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0 ]
       - 40
-      - [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1 ]
+      - [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1 ]
       - 60
       - i
       - ns
       - 72
-      - [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1 ]
+      - [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1 ]
       - 80
       - 100
-      - [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1 ]
-      - [ 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0 ]
-      - [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ]
+      - [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1 ]
+      - [ 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0 ]
+      - [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1 ]
       - 79
-      - [ 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1 ]
+      - [ 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1 ]
       - i
       - i
-      - [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 ]
+      - [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0 ]
       - i
 
   - type: reading
@@ -65,14 +72,6 @@ assignments:
       - [ 1, 1, 0, 1, 1, 0, 0, 1, 1 ]
       - 88
       - [ 1, 1, 0, 1, 1, 1, 1, 0, 0 ]
-
-  - type: reading
-    title: Read 3.1 Acceleration Pt1
-    periods: [0] # indexes of the periods array on the course
-    chapter_sections: [[3, 0], [3, 1]]
-    step_types: [ r, r, r, r, i, e, r, r, e, v, e, p ]
-    due_at: <%= due_today %>
-    scores: [ 98, 67, 55, 77, 88, i, ns, 78, 100, 86, 100, 82, 71, 90, 78, 87, i, i, 90, 85, ns, ns ]
 
   - type: homework
     title: HW Chapter 3 Acceleration

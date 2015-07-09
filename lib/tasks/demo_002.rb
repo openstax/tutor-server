@@ -49,6 +49,8 @@ class Demo002 < DemoBase
                     to: assignment.periods.map{|index| content.course.periods.at(index) },
                     due_at: assignment.due_at).each_with_index do |ireading, index|
 
+      puts '*'*80
+      puts index
       work_task(task: ireading, responses: responses_list[index])
     end
 

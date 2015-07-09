@@ -248,7 +248,7 @@ class DemoBase
     tasks = run(DistributeTasks, task_plan).outputs.tasks
 
     log(message || "Assigned #{task_plan.type}, '#{task_plan.title}' due at #{due_at}; #{tasks.count} times")
-    log("One task looks like: " + print_task(task: tasks.first)) if tasks.any?
+#    log("One task looks like: " + print_task(task: tasks.first)) if tasks.any?
 
     tasks
   end
@@ -257,6 +257,16 @@ class DemoBase
   # not completed; any non-nil means completed. 1/0 (true/false) is for
   # exercise correctness
   def work_task(task:, responses:)
+    log("Task #{task.id} looks like: " + print_task(task: task))
+
+    # puts task.title
+    # p task
+    # p responses
+
+    if responses.count != task.task_steps.count
+      debugger
+    end
+
     raise "Invalid number of responses for #{task.title}" +
           "(responses,task_steps) = (#{responses.count}, #{task.task_steps.count})\n" +
           "(task = #{print_task(task: task)}) " \
