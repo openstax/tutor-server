@@ -23,47 +23,45 @@ class Demo001 < DemoBase
 
     archive_url = 'https://archive-staging-tutor.cnx.org/contents/'
 
-    admin_profile = new_user_profile(username: 'admin', name: 'Administrator User')
+    admin_profile = new_user_profile(username: 'admin', name: people.administrator)
     run(:make_administrator, user: admin_profile.entity_user)
     log("Added an admin user #{admin_profile.account.full_name}")
 
-    teacher_profile = new_user_profile(username: 'teacher', name: 'Charles Morris')
-    courses={}
-
     ContentConfiguration[book.to_sym].each do | content |
-      cnx_book = nil
-      OpenStax::Cnx::V1.with_archive_url(url: archive_url) do
-        cnx_book = run(:import_book, id: content.cnx_book_id).outputs.book
-        log("Imported book #{content.course_name} #{content.cnx_book_id} from #{archive_url}.")
-      end
-      course = create_course(name: content.course_name)
-      courses[content] = course
-      run(:add_book, book: cnx_book, course: course)
 
-      create_period(course: course)
-      create_period(course: course)
+      course = create_course(name: content.course_name)
+
+      OpenStax::Cnx::V1.with_archive_url(url: archive_url) do
+        cnx_book = run(:import_book, id: content.cnx_book).outputs.book
+        log("Imported book #{content.course_name} #{content.cnx_book} from #{archive_url}.")
+        run(:add_book, book: cnx_book, course: course)
+      end
+
+
+      teacher_profile = get_teacher(content.teacher) ||
+                        new_user_profile(username: "teacher-#{content.teacher}",
+                                         name: people.teachers[content.teacher])
 
       run(:add_teacher, course: course, user: teacher_profile.entity_user)
-    end
 
-    students = 10.times.collect do |ii|
-      # if all books are being imported, switch between them
-      # otherwise just use what we've got
-      student_courses = if :all != book || 0 == ii % 5
-                          courses.values
-                        else
-                          [courses.values.sample]
-                        end
-      username = "student#{(ii + 1).to_s.rjust(2,'0')}"
-      user = new_user_profile(username: username).entity_user
+      log("Created course '#{content.course_name}' with '#{people.teachers[content.teacher]}' as teacher")
+      content.periods.each do | period_content |
 
-      student_courses.map do | course |
-        run(AddUserAsPeriodStudent, period: course.periods[ii%2], user: user)
-      end
+        period = run(:create_period, course: course, name: period_content.name).outputs.period
+        log("  Created a period '#{period_content.name}'.")
 
-    end
+        period_content.students.each do |initials|
+          student = get_student(initials) ||
+            new_user_profile(username: "user-#{initials}", name: people.students[initials])
 
-    log("Added #{teacher_profile.account.full_name} as a teacher and added #{students.flatten.count} students.")
+          run(AddUserAsPeriodStudent, period: period, user: student.entity_user)
+
+          log("    Added '#{people.students[initials]}'")
+        end
+
+      end # periods
+
+    end # book
 
   end
 end

@@ -35,8 +35,8 @@ class Demo002 < DemoBase
                     chapter_sections: assignment.chapter_sections,
                     title: assignment.title,
                     num_exercises: assignment.num_exercises,
-                    due_at: assignment.due_at,
-                    to: content.periods).each_with_index do |hw, index|
+                    to: assignment.periods.map{|index| content.course.periods.at(index) },
+                    due_at: assignment.due_at).each_with_index do |hw, index|
 
       work_task(task: hw, responses: responses_list[index])
     end
@@ -46,8 +46,8 @@ class Demo002 < DemoBase
     assign_ireading(course: content.course,
                     chapter_sections: assignment.chapter_sections,
                     title: assignment.title,
-                    due_at: assignment.due_at,
-                    to: content.periods).each_with_index do |ireading, index|
+                    to: assignment.periods.map{|index| content.course.periods.at(index) },
+                    due_at: assignment.due_at).each_with_index do |ireading, index|
 
       work_task(task: ireading, responses: responses_list[index])
     end

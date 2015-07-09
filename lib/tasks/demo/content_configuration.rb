@@ -74,21 +74,23 @@ class ContentConfiguration
             else
               [ File.join(CONFIG_DIR, "#{name}.yml") ]
             end
-    files.map{|file| self.new(file) }
+    files
+      .reject{|path| File.basename(path) == "people.yml" }
+      .map{|file| self.new(file) }
   end
 
-  def_delegators :@configuration, :course_name, :assignments
+  def_delegators :@configuration, :course_name, :assignments, :teacher, :periods
 
   def initialize(config_file)
     @configuration = Hashie::Mash.load(config_file, parser: ConfigFileParser)
   end
 
-  def cnx_book_id
+  def cnx_book
     version = if @configuration.cnx_book_version.blank? || @configuration.cnx_book_version == 'latest'
-      ''
-      else
-        "@#{@configuration.cnx_book_version}"
-    end
+                ''
+              else
+                "@#{@configuration.cnx_book_version}"
+              end
     "#{@configuration.cnx_book_id}#{version}"
   end
 
@@ -96,8 +98,10 @@ class ContentConfiguration
     @course ||= CourseProfile::Models::Profile.where(name: @configuration.course_name).first!.course
   end
 
-  def periods
-    course.periods
+  private
+
+  def people
+    @people ||= Hashie::Mash.load(File.dirname(__FILE__)+"/people.yml")
   end
 
 end

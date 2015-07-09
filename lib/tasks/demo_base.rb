@@ -1,3 +1,5 @@
+require 'hashie/mash'
+
 class DemoBase
 
   protected
@@ -12,6 +14,23 @@ class DemoBase
 
   def new_responses_list(assignment_type:, step_types:, entries:)
     ResponsesList.new(assignment_type: assignment_type, step_types: step_types, entries: entries, randomizer: randomizer)
+  end
+
+  def people
+    @people ||= Hashie::Mash.load(File.dirname(__FILE__)+"/demo/people.yml")
+  end
+
+  def user_profile_for_name(name)
+    UserProfile::Models::Profile.joins(:account)
+      .where(account: { full_name: name}).first
+  end
+
+  def get_teacher(initials)
+    user_profile_for_name people.teachers[initials]
+  end
+
+  def get_student(initials)
+    user_profile_for_name people.students[initials]
   end
 
   class ResponsesList
@@ -315,13 +334,6 @@ class DemoBase
     course
   end
 
-  def create_period(course:)
-    period = run(:create_period, course: course).outputs.period
-
-    log("Created a period named '#{period.name}'.")
-
-    period
-  end
 
   def log(message)
     puts "#{message}\n" if @print_logs
