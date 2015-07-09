@@ -19,7 +19,7 @@ module Api::V1
                decorator: CourseGuideChildRepresenter
   end
 
-  class CourseGuideRepresenter < Roar::Decorator
+  class TeacherCourseGuideRepresenter < Roar::Decorator
     include Representable::JSON::Collection
     items extend: CourseGuidePeriodRepresenter
   end

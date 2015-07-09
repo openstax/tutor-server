@@ -1,7 +1,7 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::CourseGuideRepresenter do
-  # CourseGuideRepresenter expects an array input because
+RSpec.describe Api::V1::TeacherCourseGuideRepresenter do
+  # TeacherCourseGuideRepresenter expects an array input because
   # GetCourseGuide returns an array of hashes
   # note the `guide` variable assignments
 

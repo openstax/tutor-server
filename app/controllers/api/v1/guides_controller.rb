@@ -12,7 +12,7 @@ module Api
       api :GET, '/courses/:id/guide(/role/:role_id)',
                 'Returns a student course guide for Learning Guide'
       description <<-EOS
-        #{json_schema(Api::V1::CourseGuideRepresenter, include: :readable)}
+        #{json_schema(Api::V1::CourseGuidePeriodRepresenter, include: :readable)}
       EOS
       def student
         course = Entity::Course.find(params[:id])
@@ -23,12 +23,12 @@ module Api
       api :GET, '/courses/:id/teacher_guide',
                 'Returns course guide for Learning Guide for teachers'
       description <<-EOS
-        #{json_schema(Api::V1::CourseGuideRepresenter, include: :readable)}
+        #{json_schema(Api::V1::TeacherCourseGuideRepresenter, include: :readable)}
       EOS
       def teacher
         course = Entity::Course.find(params[:id])
         guide = GetCourseGuide[role: role(course, :teacher), course: course]
-        respond_with guide, represent_with: Api::V1::CourseGuideRepresenter
+        respond_with guide, represent_with: Api::V1::TeacherCourseGuideRepresenter
       end
 
       private
