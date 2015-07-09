@@ -3,7 +3,7 @@ require_relative '../placeholder_strategies/i_reading_personalized'
 
 class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   enum task_type: [:homework, :reading, :chapter_practice,
-                   :page_practice, :mixed_practice]
+                   :page_practice, :mixed_practice, :external]
 
   belongs_to :task_plan
   belongs_to :entity_task, class_name: 'Entity::Task',
