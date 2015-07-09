@@ -4,7 +4,7 @@ class OpenStax::Exercises::V1::Exercise
   LO_REGEX = /[\w-]+-lo[\d]+/
 
   # This Regex finds the AP LO's within the exercise tags
-  APLO_REGEX = /[\w-]+-aplo-[\d]+/
+  APLO_REGEX = /[\w-]+-aplo-[\w-]+/
 
   attr_reader :content
 
