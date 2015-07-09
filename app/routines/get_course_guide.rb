@@ -93,9 +93,7 @@ class GetCourseGuide
     role_ids = outputs.roles.flatten.collect(&:id)
 
     task_steps.select do |task_step|
-      task_ids = task_step.task.taskings.where(entity_role_id: role_ids)
-                                        .collect(&:entity_task_id)
-      task_ids.include?(task_step.tasks_task_id)
+      task_step.task.taskings.any? { |t| role_ids.include?(t.entity_role_id) }
     end
   end
 
