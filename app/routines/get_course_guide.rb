@@ -32,39 +32,44 @@ class GetCourseGuide
     run(:get_course_books, course: course)
     run(:get_periods, course: course, roles: role)
     run(:visit_book, book: outputs.books.first, visitor_names: [:toc, :page_data])
-    run(:get_period_roles, periods: outputs.periods, types: :student)
 
-    if is_teacher?
-      run(:get_role_task_steps, roles: outputs.roles)
-    else
-      run(:get_role_task_steps, roles: role)
-    end
+    get_role_completed_task_steps
 
-    outputs.course_guide = compile_course_guide
+    outputs.course_guide = if is_teacher?
+                             gather_course_stats_for_teacher
+                           else
+                             gather_course_stats
+                           end
   end
 
   private
   attr_reader :role, :course
 
-  def compile_course_guide
-    if is_teacher?
-      outputs.periods.collect do |period|
-        { period_id: period.id }.merge(course_stats(period))
-      end
-    else # only 1 period for student role
-      [course_stats]
+  def gather_course_stats_for_teacher
+    outputs.periods.collect do |period|
+      { period_id: period.id }.merge(gather_course_stats)
     end
   end
 
-  def course_stats(period = nil)
-    chapters = compile_chapters(period) # can't memoize in a loop
+  def gather_course_stats
+    chapters = compile_chapters
 
-    { title: outputs.toc.title, # toc is root book
+    { title: outputs.toc.title,
       page_ids: chapters.collect { |cc| cc[:page_ids] }.flatten.uniq,
       children: chapters }
   end
 
-  def compile_chapters(period)
+  def get_role_completed_task_steps
+    if is_teacher?
+      run(:get_period_roles, periods: outputs.periods, types: :student)
+      run(:get_role_task_steps, roles: outputs.roles)
+    else
+      outputs.roles = [role]
+      run(:get_role_task_steps, roles: role)
+    end
+  end
+
+  def compile_chapters
     exercises_grouped_by_book_part.collect { |book_part_id, task_steps|
       task_steps = filter_task_steps_by_period_roles(task_steps)
       book_part = book_parts_by_id[book_part_id]
@@ -95,7 +100,7 @@ class GetCourseGuide
   end
 
   def exercises_grouped_by_book_part
-    outputs.task_steps.select { |t| t.exercise? && t.completed? }.group_by do |t|
+    outputs.task_steps.flatten.select { |t| t.exercise? && t.completed? }.group_by do |t|
       Content::Routines::SearchPages[tag: get_lo_tags(t)].first.content_book_part_id
     end
   end

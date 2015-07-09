@@ -72,7 +72,7 @@ RSpec.describe GetCourseGuide, vcr: VCR_OPTS do
   end
 
   it "returns each book's stats for the course period" do
-    book = described_class[course: @course, role: @role].first['children'].first
+    book = described_class[course: @course, role: @role]['children'].first
 
     expect([book]).to include(a_hash_including(
       "id"=>kind_of(Integer),
@@ -87,8 +87,7 @@ RSpec.describe GetCourseGuide, vcr: VCR_OPTS do
   end
 
   it "returns each book part's stats for the course period" do
-    parts = described_class[course: @course, role: @role].first['children']
-                                                         .first['children']
+    parts = described_class[course: @course, role: @role]['children'].first['children']
 
     expect(parts).to match a_hash_including(
       "id"=>kind_of(Integer),
