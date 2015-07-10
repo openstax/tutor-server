@@ -23,6 +23,11 @@ module OpenStax::Cnx::V1
       }
     end
 
+    def is_chapter?
+      # A BookPart is a chapter if it has no BookPart children
+      @is_chapter ||= contents.none?{ |hash| hash['id'] == 'subcol' }
+    end
+
     def parts
       book_part_index = 0
       page_index = 0
