@@ -1,7 +1,6 @@
 module OpenStax::Cnx::V1
   class Page
 
-    include HtmlTreeOperations
     include FragmentSplitter
 
     # Start parsing here

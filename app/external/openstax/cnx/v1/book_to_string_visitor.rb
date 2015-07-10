@@ -22,6 +22,10 @@ class OpenStax::Cnx::V1::BookToStringVisitor
     add_field(depth, "LOs = #{page.los}")
   end
 
+  def pre_order_visit_fragment_feature(fragment_feature:, depth:)
+    add_elem(depth, "FEATURE  title = #{fragment_feature.title}")
+  end
+
   def pre_order_visit_fragment_text(fragment_text:, depth:)
     add_elem(depth, "TEXT  title = #{fragment_text.title}")
   end
