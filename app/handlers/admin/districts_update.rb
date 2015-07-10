@@ -6,7 +6,7 @@ class Admin::DistrictsUpdate
     validates :name, presence: true
   end
 
-  uses_routine UpdateDistrict
+  uses_routine CourseDetail::UpdateDistrict, as: :update_district
 
   protected
   def authorized?
@@ -14,8 +14,6 @@ class Admin::DistrictsUpdate
   end
 
   def handle
-    run(:update_district, id: params[:id],
-                          attributes: district_params.as_hash(:name),
-                          caller: caller)
+    run(:update_district, id: params[:id], attributes: district_params.as_hash(:name))
   end
 end

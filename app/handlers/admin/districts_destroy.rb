@@ -1,7 +1,7 @@
 class Admin::DistrictsDestroy
   lev_handler
 
-  uses_routine DeleteDistrict
+  uses_routine CourseDetail::DeleteDistrict, as: :delete_district
 
   protected
   def authorized?
@@ -9,6 +9,6 @@ class Admin::DistrictsDestroy
   end
 
   def handle
-    run(:delete_district, id: params[:id], caller: caller)
+    run(:delete_district, id: params[:id])
   end
 end

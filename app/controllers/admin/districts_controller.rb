@@ -1,13 +1,11 @@
 module Admin
   class DistrictsController < BaseController
     def index
-      @districts = ListDistricts[]
+      @districts = CourseDetail::ListDistricts[]
     end
 
     def edit
-      @district = GetDistrict[id: params[:id],
-                              action: :edit,
-                              caller: current_user]
+      @district = CourseDetail::GetDistrict[id: params[:id]]
     end
 
     def create
@@ -25,9 +23,7 @@ module Admin
                                 notice: 'The district has been updated.'
                   },
                   failure: -> {
-                    @district = GetDistrict[id: params[:id],
-                                            action: :edit,
-                                            caller: current_user]
+                    @district = CourseDetail::GetDistrict[id: params[:id]]
                     @district.attributes.merge!(district_params)
                     render :edit
                   })

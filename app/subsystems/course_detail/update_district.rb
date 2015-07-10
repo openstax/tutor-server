@@ -3,12 +3,12 @@ module CourseDetail
     lev_routine express_output: :district
 
     protected
-    def exec(id:, attributes: {}, caller:)
-      district = GetDistrict[id: id, action: :update, caller: caller]
+    def exec(id:, attributes: {})
+      district = Models::District.find(id)
 
       district.update_attributes(attributes)
 
-      outputs[:district] = {
+      outputs.district = {
         id: district.id,
         name: district.name
       }
