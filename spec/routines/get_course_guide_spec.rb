@@ -66,7 +66,7 @@ RSpec.describe GetCourseGuide, vcr: VCR_OPTS do
 
     expect(result).to match a_hash_including(
       "title"=>"Physics",
-      "page_ids"=>[kind_of(Integer)]*3,
+      "page_ids"=>[kind_of(Integer)]*4,
       "children"=> array_including(kind_of(Hash))
     )
   end
@@ -106,13 +106,13 @@ RSpec.describe GetCourseGuide, vcr: VCR_OPTS do
     expect(result).to include({
       period_id: @period.id,
       title: 'Physics',
-      page_ids: [kind_of(Integer)]*4,
+      page_ids: [kind_of(Integer)]*5,
       children: array_including(kind_of(Hash))
     },
     {
       period_id: @second_period.id,
       title: 'Physics',
-      page_ids: [kind_of(Integer)]*4,
+      page_ids: [kind_of(Integer)]*5,
       children: array_including(kind_of(Hash))
     })
   end
