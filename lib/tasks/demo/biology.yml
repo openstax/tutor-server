@@ -18,8 +18,8 @@ assignments:
 
   - type: reading
     step_types: [ r, r, e, r, r, e, r, r, e, r, r, e, r, e, r, p, e, e, r, r, e ]
-    chapter_sections: [[1, 1, 0], [1, 1, 1], [1,1,2]]
-    title: Read Unit 1. The Chemistry of Life
+    chapter_sections: [[1, 0], [1, 1], [1, 2]]
+    title: Read Chapter 1. The Study of Life
     periods:
       - index: 0 # index of the period's definition above
         opens_at: <%= standard_due_at(today-3.days) %> # could be ommited and a default would be used
@@ -40,8 +40,8 @@ assignments:
 
   - type: reading
     step_types: [ r, r, r, r, r, r, r, e, r, r, r, p ]
-    chapter_sections: [[2, 3, 0], [2, 3, 1], [2, 3, 2]]
-    title: Read Unit 2. The Cell
+    chapter_sections: [[6, 0], [6, 1], [6, 2]]
+    title: Read Chapter 6. Metabolism
     periods:
       - index: 0 # 1st Period
         due_at: <%= due_two_days_ago %>
@@ -72,8 +72,8 @@ assignments:
 
   - type: homework
     step_types: [ e, e, e, e, e, e, e, e, e, e, p ]
-    chapter_sections: [[1, 1, 0], [1, 1, 1], [1,1,2]]
-    title: HW The Chemistry of Life
+    chapter_sections: [[1, 0], [1, 1], [1, 2]]
+    title: HW Chapter 1. The Study of Life
     num_exercises: 10
     periods:
       - index: 2 # 1st Period

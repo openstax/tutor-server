@@ -14,8 +14,8 @@ assignments:
 
   - type: reading
     step_types: [ r, r, e, r, r, e, r, r, e, r, r, e, r, e, r, p, e, e, r, r, e ]
-    chapter_sections: [[1, 1, 0], [1, 1, 1], [1,1,2]]
-    title: Read Unit 1. The Chemistry of Life
+    chapter_sections: [[1, 0], [1, 1], [1, 2]]
+    title: Read Chapter 1. The Study of Life
     periods:
       - index: 0
         opens_at: <%= standard_due_at(today-3.days) %> # could be ommited and a default would be used
@@ -28,8 +28,8 @@ assignments:
 
   - type: homework
     step_types: [ e, e, e, e, e, e, e, e, e, e, p ]
-    chapter_sections: [[1, 1, 0], [1, 1, 1], [1,1,2]]
-    title: HW The Chemistry of Life
+    chapter_sections: [[1, 0], [1, 1], [1, 2]]
+    title: HW Chapter 1. The Study of Life
     num_exercises: 10
     periods:
       - index: 0
