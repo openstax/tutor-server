@@ -36,27 +36,51 @@ class Tasks::PlaceholderStrategies::HomeworkPersonalized
   end
 
   def biglearn_condition(los)
-    condition = {
+    {
       _and: [
+        { _or: los },
         {
-          _and: [
-            'ost-chapter-review',
+          _or: [
             {
-              _or: [
-                'concept',
-                'problem',
-                'critical-thinking'
+              _and: [
+                'k12phys',
+                'ost-chapter-review',
+                {
+                  _or: [
+                    'concept',
+                    'problem',
+                    'critical-thinking'
+                  ]
+                }
+              ]
+            },
+            {
+              _and: [
+                'apbio',
+                'ost-chapter-review',
+                {
+                  _or: [
+                    'critical-thinking',
+                    'ap-test-prep',
+                    {
+                      _and: [
+                        'review',
+                        {
+                          _or: [
+                            'time-medium',
+                            'time-long'
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
               ]
             }
           ]
-        },
-        {
-          _or: los
         }
       ]
     }
-
-    condition
   end
 
 end
