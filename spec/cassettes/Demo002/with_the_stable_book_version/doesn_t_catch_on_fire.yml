@@ -732,7 +732,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:08:57 GMT
+      - Fri, 10 Jul 2015 21:00:55 GMT
       Content-Type:
       - text/plain
       Content-Length:
@@ -753,7 +753,7 @@ http_interactions:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:04:23 GMT
+  recorded_at: Fri, 10 Jul 2015 20:56:21 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/ccbc51fa-49f3-40bb-98d6-07a15a7ab6b7@5.63.json
@@ -775,7 +775,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:08:57 GMT
+      - Fri, 10 Jul 2015 21:00:55 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -1277,7 +1277,7 @@ http_interactions:
         "suffix": null, "firstname": "Tutor", "title": "", "fullname": "Tutor APBio",
         "id": "tutor_apbio"}}]}'
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:04:23 GMT
+  recorded_at: Fri, 10 Jul 2015 20:56:21 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/dc74b6ed-d06a-4fef-8479-8eefd058b59a@23
@@ -1299,7 +1299,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:08:58 GMT
+      - Fri, 10 Jul 2015 21:00:56 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -1479,7 +1479,7 @@ http_interactions:
         null, "firstname": "Tutor", "title": "", "fullname": "Tutor APBio", "id":
         "tutor_apbio"}}]}'
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:04:23 GMT
+  recorded_at: Fri, 10 Jul 2015 20:56:21 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/4d5fc58c-cdea-4950-a91d-a5f141a38744@29
@@ -1501,7 +1501,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:08:58 GMT
+      - Fri, 10 Jul 2015 21:00:56 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -2350,7 +2350,7 @@ http_interactions:
         "APBio", "suffix": null, "firstname": "Tutor", "title": "", "fullname": "Tutor
         APBio", "id": "tutor_apbio"}}]}'
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:04:24 GMT
+  recorded_at: Fri, 10 Jul 2015 20:56:21 GMT
 - request:
     method: get
     uri: https://exercises-dev.openstax.org/api/exercises?q=tag:apbio-ch01-s01-lo01,apbio-ch01-s01-lo02,apbio-ch01-s01-aplo-2-3
@@ -2372,7 +2372,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:04:27 GMT
+      - Fri, 10 Jul 2015 20:56:25 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -2394,12 +2394,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=dHgrUHB4bk8rdk16QUFRN1ZWOVdHaFlFMUV5d2JnQzVxMkRZV0U1UzRBRjAyNFRqVzBPNGsvVlZJZjdMUVY5Z0ZadzBLWmJXQ1RkUUlpZytKWlFtUUE9PS0tNFMyaWZnOFVILyswMDNoMktKc1prZz09--ac75feba971ee530c76b2f8753eeae3c13409446;
+      - _exercises_session=citaWmUyU1NTQUE5MjRtanRhUVBtMmFBV1BvTnFqS2ZTa1M1cmV0OHdIclZWRS83RGRoRjAra2N2RHlkSTN0bXIvT3luaVNZbkdHNmYwdmJHMlowbEE9PS0tWTR6aU1SZGx6d0FvN1NnVmU3VHpmZz09--c5d25bd7ea58ce913d6eb3de07d45f3ddb359795;
         path=/; HttpOnly
       X-Request-Id:
-      - c6f755f7-3a0c-4145-a6e6-aa9f24282368
+      - a4b18f90-1936-4101-94a0-16cc119e2bb5
       X-Runtime:
-      - '0.407377'
+      - '0.220685'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -2983,7 +2983,7 @@ http_interactions:
         bnRzIjpbXSwiZm9ybWF0cyI6WyJmcmVlLXJlc3BvbnNlIiwibXVsdGlwbGUt
         Y2hvaWNlIl0sImNvbWJvX2Nob2ljZXMiOltdfV19XX0=
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:04:25 GMT
+  recorded_at: Fri, 10 Jul 2015 20:56:23 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/cb7cf05b-7e16-4a53-a498-003b01ec3d7f@24
@@ -3005,7 +3005,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:09:02 GMT
+      - Fri, 10 Jul 2015 21:01:00 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -3825,7 +3825,7 @@ http_interactions:
         "2015-04-21T15:25:34Z", "publisher": {"surname": "APBio", "suffix": null,
         "firstname": "Tutor", "title": "", "fullname": "Tutor APBio", "id": "tutor_apbio"}}]}'
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:04:28 GMT
+  recorded_at: Fri, 10 Jul 2015 20:56:26 GMT
 - request:
     method: get
     uri: https://exercises-dev.openstax.org/api/exercises?q=tag:apbio-ch01-s02-lo01,apbio-ch01-s02-lo02,apbio-ch01-s02-lo03,apbio-ch01-s02-aplo-1-14,apbio-ch01-s02-aplo-1-18
@@ -3847,7 +3847,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:04:31 GMT
+      - Fri, 10 Jul 2015 20:56:29 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -3869,12 +3869,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=MXZWSU9oWUcyZEowZ0llUit5K0tjL2p4d3lzbnNjMUNWWllxVitpWGdiUUptd1p0ajl4VlNINzJQMytOcjlybkhpckVxL1d5VjFWc1FpaFo3M0grdVE9PS0tbVlUeXQyT2pGRU4yZTlKSHYybFR3dz09--490aaf9455892794e3b3a13f6e941b61d9e522f3;
+      - _exercises_session=YlFVYTVXS0xHajlPUm1oOXBqQ214STFELzhSS3RnTU81dm8rT1RhbVA5RVJ3aWlKM0h2aDN0d2dOK3pHZzZ5UUdOM3FZcCt4YWRETHJoNDRvMHVVRFE9PS0tSzJDbjZtWE9xUVg0T25NVng1WjVrZz09--283bb5fb8f0187e4204fa45f198e466e6f25cd12;
         path=/; HttpOnly
       X-Request-Id:
-      - fbeb978e-f170-466d-93f9-c943cdb28885
+      - fb3b005b-d55e-4f6c-9941-726b9b3df6a1
       X-Runtime:
-      - '0.688080'
+      - '0.690113'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -4813,7 +4813,7 @@ http_interactions:
         XSwiZm9ybWF0cyI6WyJtdWx0aXBsZS1jaG9pY2UiLCJmcmVlLXJlc3BvbnNl
         Il0sImNvbWJvX2Nob2ljZXMiOltdfV19XX0=
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:04:29 GMT
+  recorded_at: Fri, 10 Jul 2015 20:56:27 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/d146e100-19c1-429d-9218-1ebb7325f594@15
@@ -4835,7 +4835,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:09:08 GMT
+      - Fri, 10 Jul 2015 21:01:06 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -4995,7 +4995,7 @@ http_interactions:
         null, "firstname": "Tutor", "title": "", "fullname": "Tutor APBio", "id":
         "tutor_apbio"}}]}'
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:04:34 GMT
+  recorded_at: Fri, 10 Jul 2015 20:56:32 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/85d6c500-9860-42e8-853a-e6940a50224f@21
@@ -5017,7 +5017,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:09:08 GMT
+      - Fri, 10 Jul 2015 21:01:06 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -5421,7 +5421,7 @@ http_interactions:
         null, "firstname": "Tutor", "title": "", "fullname": "Tutor APBio", "id":
         "tutor_apbio"}}]}'
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:04:34 GMT
+  recorded_at: Fri, 10 Jul 2015 20:56:32 GMT
 - request:
     method: get
     uri: https://exercises-dev.openstax.org/api/exercises?q=tag:apbio-ch03-s01-lo01,apbio-ch03-s01-lo02,apbio-ch03-s01-aplo-1-27,apbio-ch03-s01-aplo-1-28
@@ -5443,7 +5443,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:04:37 GMT
+      - Fri, 10 Jul 2015 20:56:35 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -5465,12 +5465,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=aGxjVEdkQmFqVlY0a0NxcDE1SjE2WE44bnVPWnAxMnYyNzRlUVByd3lmaU1IN2F6bmJQK2oxelpFT1dmT0lxVEl4OGFkV3VCbHZtUGJ6eWZISjdpQ0E9PS0tMEpUK2pyL1RwT0c2SlIzcFozcVc1UT09--dfcee7fcb056d61756f0f49c7875426649d748f5;
+      - _exercises_session=TlVoZ1IrdndXZnhCNjFBeGtub083UDlURnFzT3pOdTFSNmdNZ3d4QW5MS1pKRkhZc09RMXdXOWZmOFlVNmROQkwxY3Zxa3hXNmdIa0owc1FkeVIyclE9PS0tL2dWMWFlTnN2QUYvTEsySUwvdUpwdz09--931e4d6e384f62d57c65a0af39638d6bc0d69395;
         path=/; HttpOnly
       X-Request-Id:
-      - 84746696-7431-4f10-981a-31af058e72fb
+      - 1591297d-4e6b-458e-9c52-20015b90138d
       X-Runtime:
-      - '0.280359'
+      - '0.247115'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -6186,7 +6186,7 @@ http_interactions:
         ZWx5IGFmZmVjdCBkaWdlc3Rpb24uIn1dLCJoaW50cyI6W10sImZvcm1hdHMi
         OlsibXVsdGlwbGUtY2hvaWNlIl0sImNvbWJvX2Nob2ljZXMiOltdfV19XX0=
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:04:35 GMT
+  recorded_at: Fri, 10 Jul 2015 20:56:33 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/cb5052e5-d776-4570-8e4b-61171b792703@20
@@ -6208,7 +6208,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:09:13 GMT
+      - Fri, 10 Jul 2015 21:01:11 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -6901,7 +6901,7 @@ http_interactions:
         "suffix": null, "firstname": "Tutor", "title": "", "fullname": "Tutor APBio",
         "id": "tutor_apbio"}}]}'
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:04:38 GMT
+  recorded_at: Fri, 10 Jul 2015 20:56:36 GMT
 - request:
     method: get
     uri: https://exercises-dev.openstax.org/api/exercises?q=tag:apbio-ch03-s02-lo01,apbio-ch03-s02-lo02,apbio-ch03-s02-lo03,apbio-ch03-s02-aplo-4-1,apbio-ch03-s02-aplo-4-2,apbio-ch03-s02-aplo-4-3
@@ -6923,7 +6923,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:04:42 GMT
+      - Fri, 10 Jul 2015 20:56:39 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -6945,12 +6945,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=Vkc1S3MzTHFvYnBUN1NaTzVackRTNEpJZXdqWFkyeWNEa3dGUmlxWTR5NTVpY0ZOdHBBNkJnbHREZWZUeDBtcWVGRUZRWDV2U3VZL0Q3SlNNWjc1WGc9PS0tWlp0NnBWM28yOThrbVEzV2p1L2J5UT09--1084e0202d72508f7b9c1d448900b966e15dc92f;
+      - _exercises_session=TU80OXh4alFRbHFPaHV5cEViQ3gzLzBHZUJhMlIwb1JxdGJvTHJtWC9BQU5aMUxySGx3TXlVYlZLNGlvSWk2Q1lIVjJGS2R2QUVudnVLdEg5K2g5VEE9PS0tU0dUZjV3bGNkbDFrdUdIdTV5ZUdvUT09--6c241e351d0a8d23326af30497ecf477abf2ed97;
         path=/; HttpOnly
       X-Request-Id:
-      - e87eb950-649b-4a42-a7bc-b97717307528
+      - 219f5379-6aec-4fa6-a2e7-aa8ea135a2de
       X-Runtime:
-      - '0.390839'
+      - '0.394432'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -7802,7 +7802,7 @@ http_interactions:
         LCJoaW50cyI6W10sImZvcm1hdHMiOlsibXVsdGlwbGUtY2hvaWNlIiwiZnJl
         ZS1yZXNwb25zZSJdLCJjb21ib19jaG9pY2VzIjpbXX1dfV19
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:04:39 GMT
+  recorded_at: Fri, 10 Jul 2015 20:56:37 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/84ab6fe4-c1c3-4d36-b4c8-6615d6100820@18
@@ -7824,7 +7824,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:09:18 GMT
+      - Fri, 10 Jul 2015 21:01:16 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -8591,7 +8591,7 @@ http_interactions:
         null, "firstname": "Tutor", "title": "", "fullname": "Tutor APBio", "id":
         "tutor_apbio"}}]}'
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:04:44 GMT
+  recorded_at: Fri, 10 Jul 2015 20:56:42 GMT
 - request:
     method: get
     uri: https://exercises-dev.openstax.org/api/exercises?q=tag:apbio-ch03-s03-lo01,apbio-ch03-s03-lo02,apbio-ch03-s03-lo03,apbio-ch03-s03-lo04,apbio-ch03-s03-lo05,apbio-ch03-s03-lo06,apbio-ch03-s03-aplo-4-1,apbio-ch03-s03-aplo-4-2,apbio-ch03-s03-aplo-4-3
@@ -8613,7 +8613,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:04:47 GMT
+      - Fri, 10 Jul 2015 20:56:45 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -8635,12 +8635,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=RkRBdk5Vay91cndKL1Vaa1NDSnhBNzh2MVVkL243UjI1K3d0cktGM09wVzFqR01haWdSZy94dEh3Y0VoNEJ1RUNCYm52ZVV5THh5TjRmWG9nVnZmVXc9PS0tYTUyeWlaSVZLVUNVYVA2MTRZTDQvdz09--79b634125e7e39201493809f8aa390308c692ab1;
+      - _exercises_session=eXpzRWNUNHdXZUNkbWVaaG5GYllsZm5lWjkzaEJsVXZUYXgvejBuMlB0c01KV0E0dzJubnhEMU90VTYySkViRWRYM01DZ2RRa3pFaFlTWlNRVmJvTWc9PS0tOHdvRXF1dWhOUDM3dUFwQk80SHlOQT09--f007516953767386cbd0aae9502ffd1016cc5ed9;
         path=/; HttpOnly
       X-Request-Id:
-      - e0b6e9bb-dbc2-4d96-bb37-2f9397e5e2e8
+      - e8b43c59-4455-443c-8e8a-2ddb9cb41075
       X-Runtime:
-      - '0.526613'
+      - '0.533365'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -9995,7 +9995,7 @@ http_interactions:
         bGUtY2hvaWNlIiwiZnJlZS1yZXNwb25zZSJdLCJjb21ib19jaG9pY2VzIjpb
         XX1dfV19
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:04:45 GMT
+  recorded_at: Fri, 10 Jul 2015 20:56:43 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/cbbe54d1-c692-4405-a487-1c0f8ef8ea92@21
@@ -10017,7 +10017,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:09:27 GMT
+      - Fri, 10 Jul 2015 21:01:24 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -10854,7 +10854,7 @@ http_interactions:
         "APBio", "suffix": null, "firstname": "Tutor", "title": "", "fullname": "Tutor
         APBio", "id": "tutor_apbio"}}]}'
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:04:52 GMT
+  recorded_at: Fri, 10 Jul 2015 20:56:50 GMT
 - request:
     method: get
     uri: https://exercises-dev.openstax.org/api/exercises?q=tag:apbio-ch03-s04-lo01,apbio-ch03-s04-lo02,apbio-ch03-s04-lo03,apbio-ch03-s04-lo04,apbio-ch03-s04-aplo-4-1,apbio-ch03-s04-aplo-4-2,apbio-ch03-s04-aplo-4-3
@@ -10876,7 +10876,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:04:56 GMT
+      - Fri, 10 Jul 2015 20:56:53 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -10898,12 +10898,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=Y3diVXVGMTVqY3J5REx3RXNMNzZxSFVSbHBKcndjT3FWN0Nub3h4NjNLT1BUZHc2WE1yTExPM0R5bkc3cGY3c28zSEMvTWJlUWttcXozVmNDNlJZbEE9PS0tN3JSZThCS0tPMWlTNllRVVRCYUFsdz09--f93a185f2ec034c709df4cdce589fd8795a98ceb;
+      - _exercises_session=UjFzVTFTSzdjMkpBcXhGWmZiYUc3V3diQWM0ZG42K09KZnlXN2JyN1k2cDQxdnBUcU9Nak5wTXlGMGE3RUo1R0R1MmJRMWJkUUM1dGxta0IwS0VaTmc9PS0tK3crMzY3M21JenpaK3dxZDZqK1NNQT09--2d776a27ee7f4250bc796c27086185e3336ba4d0;
         path=/; HttpOnly
       X-Request-Id:
-      - 2fa85cd8-28b0-445c-b3f9-dbbcc7fd8520
+      - 3af15014-e1ee-49ad-8f96-2ce89ae40887
       X-Runtime:
-      - '0.552862'
+      - '0.483617'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -12138,7 +12138,7 @@ http_interactions:
         aW50cyI6W10sImZvcm1hdHMiOlsibXVsdGlwbGUtY2hvaWNlIiwiZnJlZS1y
         ZXNwb25zZSJdLCJjb21ib19jaG9pY2VzIjpbXX1dfV19
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:04:54 GMT
+  recorded_at: Fri, 10 Jul 2015 20:56:51 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/c20c3501-a63c-4b40-aa6c-0bdafa8a2d33@19
@@ -12160,7 +12160,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:09:35 GMT
+      - Fri, 10 Jul 2015 21:01:31 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -12792,7 +12792,7 @@ http_interactions:
         null, "firstname": "Tutor", "title": "", "fullname": "Tutor APBio", "id":
         "tutor_apbio"}}]}'
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:05:01 GMT
+  recorded_at: Fri, 10 Jul 2015 20:56:57 GMT
 - request:
     method: get
     uri: https://exercises-dev.openstax.org/api/exercises?q=tag:apbio-ch03-s05-lo01,apbio-ch03-s05-lo02,apbio-ch03-s05-lo03,apbio-ch03-s05-aplo-3-1,apbio-ch03-s05-aplo-3-6,apbio-ch03-s05-aplo-4-1,apbio-ch03-s05-aplo-4-2,apbio-ch03-s05-aplo-4-3
@@ -12814,7 +12814,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:05:04 GMT
+      - Fri, 10 Jul 2015 20:57:00 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -12836,12 +12836,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=ZFU0V0lILzdqNWR1SjVBcXhXbllkYjJIR2hoZmJJb2oxR1VMdEpua1owVHMzWEFwVlV4c2xwbXYzSWdvbFdaRStmdTkxaXBKdmdBcFBPREp4dWE3WXc9PS0tKzNRUk5sTUY4WHdUc0llbjJWUVh3Zz09--43d3fbb8408ac281f1b239fb3949a01b53d0455b;
+      - _exercises_session=V2k1S1NrMWZ2R3dDMklqSmpXQjR5cUF2cHdMMGl0amR5cDd3cUtxeGhyYk5HWTQ1QVc2ZmpZSTZvZzBabmJIbndycDU2WDV5RyswWTFnYklGZ056Z0E9PS0tbGNOcnA4ZW13Smd3dXZRL2FwblB6UT09--c05028253ed4bb266c71cc1596710593a578d94b;
         path=/; HttpOnly
       X-Request-Id:
-      - fef3ac3f-6ec7-4e33-94f4-9d6075436528
+      - 28a87030-64e4-4fe4-b4b7-5af7cf4ff7c4
       X-Runtime:
-      - '0.504839'
+      - '0.434760'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -13716,7 +13716,7 @@ http_interactions:
         cm1hdHMiOlsibXVsdGlwbGUtY2hvaWNlIiwiZnJlZS1yZXNwb25zZSJdLCJj
         b21ib19jaG9pY2VzIjpbXX1dfV19
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:05:02 GMT
+  recorded_at: Fri, 10 Jul 2015 20:56:58 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/cc819477-32dc-425d-bdd6-f7a1279fdf29@29
@@ -13738,7 +13738,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:09:41 GMT
+      - Fri, 10 Jul 2015 21:01:37 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -13946,7 +13946,7 @@ http_interactions:
         null, "firstname": "Tutor", "title": "", "fullname": "Tutor APBio", "id":
         "tutor_apbio"}}]}'
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:05:07 GMT
+  recorded_at: Fri, 10 Jul 2015 20:57:03 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/29d90913-172b-4684-bd7d-c62ec7f639a0@27
@@ -13968,7 +13968,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:09:41 GMT
+      - Fri, 10 Jul 2015 21:01:37 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -14529,7 +14529,7 @@ http_interactions:
         null, "firstname": "Tutor", "title": "", "fullname": "Tutor APBio", "id":
         "tutor_apbio"}}]}'
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:05:07 GMT
+  recorded_at: Fri, 10 Jul 2015 20:57:03 GMT
 - request:
     method: get
     uri: https://exercises-dev.openstax.org/api/exercises?q=tag:apbio-ch06-s01-lo01,apbio-ch06-s01-lo02,apbio-ch06-s01-lo03,apbio-ch06-s01-aplo-1-14,apbio-ch06-s01-aplo-1-15,apbio-ch06-s01-aplo-1-16,apbio-ch06-s01-aplo-2-1
@@ -14551,7 +14551,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:05:11 GMT
+      - Fri, 10 Jul 2015 20:57:06 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -14573,12 +14573,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=VUdjbitLaCt6TDBFMlFEa01mLzJYYU1mc29IbjFiQVFYQ0JDN2xwSS9RVGs4U1hhQUdGTGMvclo3VXlBMEVuN3Q4cTM4RUdSeXJPYmMzU3Uyay9QRmc9PS0tUmY2RGxza2g4WVRZUzl2RDZHNkJNQT09--b361583e59410b74347c4c8c94bc2ca4df9bc084;
+      - _exercises_session=MHR4dkRKWllYNEt0L1RaNFo3NWJtZElrZVE2dnZ5d09KUkx4bDJvTkpVV3RtdDFqZlMxd1pxZ1NKRHByb1dZWkZFYTlsejJIaWF0UjlwOWdxYlExVkE9PS0tWWI5RjI0K2lLd3ZJSG9VTzhQZVpMUT09--ce1f4c5358afc075ca1a688b38f0213c69f4737c;
         path=/; HttpOnly
       X-Request-Id:
-      - ce584845-3e09-4096-873f-4ec92bc23154
+      - 18b42252-1699-4616-8e95-3cf7accc398b
       X-Runtime:
-      - '0.692943'
+      - '0.594427'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -15834,7 +15834,7 @@ http_interactions:
         IjpbXSwiZm9ybWF0cyI6WyJtdWx0aXBsZS1jaG9pY2UiLCJmcmVlLXJlc3Bv
         bnNlIl0sImNvbWJvX2Nob2ljZXMiOltdfV19XX0=
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:05:08 GMT
+  recorded_at: Fri, 10 Jul 2015 20:57:04 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/0b06de0f-e78d-4e82-83cd-08b6a4ab32f9@22
@@ -15856,7 +15856,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:09:48 GMT
+      - Fri, 10 Jul 2015 21:01:44 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -16504,7 +16504,7 @@ http_interactions:
         "2015-04-21T16:01:18Z", "publisher": {"surname": "APBio", "suffix": null,
         "firstname": "Tutor", "title": "", "fullname": "Tutor APBio", "id": "tutor_apbio"}}]}'
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:05:14 GMT
+  recorded_at: Fri, 10 Jul 2015 20:57:10 GMT
 - request:
     method: get
     uri: https://exercises-dev.openstax.org/api/exercises?q=tag:apbio-ch06-s02-lo01,apbio-ch06-s02-lo02,apbio-ch06-s02-lo03,apbio-ch06-s02-lo04,apbio-ch06-s02-aplo-2-1,apbio-ch06-s02-aplo-2-2
@@ -16526,7 +16526,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:05:17 GMT
+      - Fri, 10 Jul 2015 20:57:13 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -16548,12 +16548,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=N3JDMUMwS3dDQWttRlZHQTBHNXUwUlFIMVRVbG1RM0dQa2J2SGs5YXlzcGNYZkxWbXpaYVB3eW9wVDdVM1JZTWJlQ1JMSlRwN3kxT1ZLd0pwZ1JxTHc9PS0tVkJkcUxnUWp1b3JFSk1NblNwTG16Zz09--2c66e6ec18b9fc663b279e3d91b62005c68db53d;
+      - _exercises_session=ZjJZeWZNYnhSWm9OZ0JyRHUrVzBzOE1DU3YwWnF1UERoRXRLMm9CQ2ZkaUxWajBWSE9OL0FoRUFwWFkwUkp0WUNyVHVtQ2d2T3NqK2EzNXU3WlRLV0E9PS0tQ1Vqa1ZDUml1K2NWSFdTWmpxMEZmQT09--839a053b02d77a75577575553b6e739e42e8d4b3;
         path=/; HttpOnly
       X-Request-Id:
-      - 7619e4ed-923e-4de0-a732-b066937a28f5
+      - 9699ba0d-3883-4f7c-bf1d-5564d397ef28
       X-Runtime:
-      - '0.479404'
+      - '0.478871'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -17846,7 +17846,7 @@ http_interactions:
         LCJmb3JtYXRzIjpbIm11bHRpcGxlLWNob2ljZSIsImZyZWUtcmVzcG9uc2Ui
         XSwiY29tYm9fY2hvaWNlcyI6W119XX1dfQ==
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:05:15 GMT
+  recorded_at: Fri, 10 Jul 2015 20:57:11 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/bfa2b300-4b44-4111-b198-893b9aaa4eca@23
@@ -17868,7 +17868,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:09:55 GMT
+      - Fri, 10 Jul 2015 21:01:51 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -18265,7 +18265,7 @@ http_interactions:
         "suffix": null, "firstname": "Tutor", "title": "", "fullname": "Tutor APBio",
         "id": "tutor_apbio"}}]}'
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:05:21 GMT
+  recorded_at: Fri, 10 Jul 2015 20:57:17 GMT
 - request:
     method: get
     uri: https://exercises-dev.openstax.org/api/exercises?q=tag:apbio-ch06-s03-lo01,apbio-ch06-s03-lo02,apbio-ch06-s03-aplo-2-1
@@ -18287,7 +18287,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:05:24 GMT
+      - Fri, 10 Jul 2015 20:57:19 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -18309,12 +18309,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=TCtnV1JCTVVIbytIM2FEcmF0N25hc2FiYktWNnVpZEYwK1FzUldPdmxHWnErQi9UNEhzMVdLb05yZS9ZU01URlJmRDRhZHZzV2cwZXFyVSszWmxGNnc9PS0tMmlabjJQTnloVE9zV2dpK3JYaDNLUT09--20eaf98785bdaeab25259fdc1649cfba7b5c4460;
+      - _exercises_session=eStacUkxcFNzaGl6c1RUcHkxYjhtbUFUL0piTDQzbldqVllGVk9jSEMxME9tTGRETUZvQkhzNjRVQ2d0WHhDSWdtZFVhU3U1Z3VHZWpkcWFFWWtEdGc9PS0tMEVRZklSV3Yrb3ZBTEkyUml2bHI0UT09--2f76fa63ed0cb0a3c3895efca53a67443e78142e;
         path=/; HttpOnly
       X-Request-Id:
-      - 0e5ed083-73c4-40fe-b467-99ced6e86e31
+      - 603f2f9a-41f9-4eaa-83a7-85d224b9d845
       X-Runtime:
-      - '0.182823'
+      - '0.196797'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -18800,7 +18800,7 @@ http_interactions:
         aW50cyI6W10sImZvcm1hdHMiOlsiZnJlZS1yZXNwb25zZSIsIm11bHRpcGxl
         LWNob2ljZSJdLCJjb21ib19jaG9pY2VzIjpbXX1dfV19
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:05:21 GMT
+  recorded_at: Fri, 10 Jul 2015 20:57:17 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/31b3b6de-638f-4a95-8df3-d186e513bc16@26
@@ -18822,7 +18822,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:09:59 GMT
+      - Fri, 10 Jul 2015 21:01:54 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -19225,7 +19225,7 @@ http_interactions:
         "APBio", "suffix": null, "firstname": "Tutor", "title": "", "fullname": "Tutor
         APBio", "id": "tutor_apbio"}}]}'
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:05:24 GMT
+  recorded_at: Fri, 10 Jul 2015 20:57:20 GMT
 - request:
     method: get
     uri: https://exercises-dev.openstax.org/api/exercises?q=tag:apbio-ch06-s04-lo01,apbio-ch06-s04-lo02,apbio-ch06-s04-aplo-2-1
@@ -19247,7 +19247,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:05:27 GMT
+      - Fri, 10 Jul 2015 20:57:23 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -19269,12 +19269,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=WS9tQjMrOGMxc0JXL2JwWGtDUUFld3dLbnRDSGZiMENjOTFKdVhaM1VVTzlSK1RiK01PWXM2cUw2eXRZYUpWS29RSUJOZzVBUnJRa3pyQjNZaGtpR3c9PS0tb0tXa2RxM1B4cWxEcGxsbVpzT2pCZz09--9984ff1c4073b3624a350ed0413e6228d06627f2;
+      - _exercises_session=WmtVWTV6VExjUldRMkNaVGxyY3BPUDJ5Zm0ycGZGbng0bTgxSzRLd295WU0xZ21EY0xmSEFnM2RBMmZHYU1hTzUzRnhrS2JJWG0zMlNsc2s0T0lLS1E9PS0tTm9DZEsxTU91L1A1TGdCT3ZUdWJHZz09--452c1cb4ba39d1cba013db759d19ad8fc9f34994;
         path=/; HttpOnly
       X-Request-Id:
-      - b8cff282-f70a-4d77-a080-ab4e04040d03
+      - 1f2c1ed4-82d5-4c8b-b361-6a605e9c964d
       X-Runtime:
-      - '0.208877'
+      - '0.206857'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -19458,7 +19458,7 @@ http_interactions:
         reactants to cause a chemical reaction. Every reaction, whether exergonic
         or endergonic, requires activation energy."}],"hints":[],"formats":["free-response","multiple-choice"],"combo_choices":[]}]}]}'
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:05:25 GMT
+  recorded_at: Fri, 10 Jul 2015 20:57:20 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/b5dc02e5-d7c7-42a2-bc32-de96f7272a82@26
@@ -19480,7 +19480,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:10:02 GMT
+      - Fri, 10 Jul 2015 21:01:57 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -20140,7 +20140,7 @@ http_interactions:
         null, "firstname": "Tutor", "title": "", "fullname": "Tutor APBio", "id":
         "tutor_apbio"}}]}'
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:05:27 GMT
+  recorded_at: Fri, 10 Jul 2015 20:57:23 GMT
 - request:
     method: get
     uri: https://exercises-dev.openstax.org/api/exercises?q=tag:apbio-ch06-s05-lo01,apbio-ch06-s05-lo02,apbio-ch06-s05-aplo-4-17
@@ -20162,7 +20162,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:05:30 GMT
+      - Fri, 10 Jul 2015 20:57:26 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -20184,12 +20184,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=YnlBTzRYMGllWjVOT1VyVmZmRGRZMnJsUGpha294aXg0QUtMTGVrRWZjait3NFhPN1dKT0ducFlyMlZ0VVkvYzF0VExqMFQ2S3Q3NHE2d1NmcU5rd2c9PS0tYTI0TEc4VWdLbWF5NXpKMlFmZmMrdz09--9e615db4c097d7bb04ead35df2c5baf4e56723e6;
+      - _exercises_session=WlgxZ3VJOWREcFM1WU5jWld4QmdiM1JpejFBNDNRUTJWUU5XeU1vaVo4UVl3aGhYMUQ2ZytkMWQ5YWVyZGovTzhrNTJzWlJuTHlwRXVSelA1bmh5bEE9PS0tWlRNeW5DRFJveXhPbmt1U1JVaUpudz09--34548516579d56ce91f2b19732d7cd22cd425e82;
         path=/; HttpOnly
       X-Request-Id:
-      - f35194af-b2b3-4900-8748-8fa58347f2ef
+      - 59baab6c-9095-4d17-b42e-4048a4c664d4
       X-Runtime:
-      - '0.228409'
+      - '0.250967'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -20898,7 +20898,7 @@ http_interactions:
         IjpbXSwiZm9ybWF0cyI6WyJmcmVlLXJlc3BvbnNlIiwibXVsdGlwbGUtY2hv
         aWNlIl0sImNvbWJvX2Nob2ljZXMiOltdfV19XX0=
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:05:28 GMT
+  recorded_at: Fri, 10 Jul 2015 20:57:24 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/93e2b09d-261c-4007-a987-0b3062fe154b
@@ -20920,7 +20920,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:10:08 GMT
+      - Fri, 10 Jul 2015 21:02:03 GMT
       Content-Type:
       - text/plain
       Content-Length:
@@ -20941,7 +20941,7 @@ http_interactions:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:05:34 GMT
+  recorded_at: Fri, 10 Jul 2015 20:57:29 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.4.json
@@ -20963,7 +20963,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:10:09 GMT
+      - Fri, 10 Jul 2015 21:02:03 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -21128,7 +21128,7 @@ http_interactions:
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:05:34 GMT
+  recorded_at: Fri, 10 Jul 2015 20:57:29 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/4e40d43d-cfee-412e-919c-facccdf0535d@3
@@ -21150,7 +21150,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:10:09 GMT
+      - Fri, 10 Jul 2015 21:02:04 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -21272,7 +21272,7 @@ http_interactions:
         "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "", "fullname":
         "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:05:35 GMT
+  recorded_at: Fri, 10 Jul 2015 20:57:29 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/0e58aa87-2e09-40a7-8bf3-269b2fa16509@9
@@ -21294,7 +21294,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:10:09 GMT
+      - Fri, 10 Jul 2015 21:02:04 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -21808,7 +21808,7 @@ http_interactions:
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:05:35 GMT
+  recorded_at: Fri, 10 Jul 2015 20:57:29 GMT
 - request:
     method: get
     uri: https://exercises-dev.openstax.org/api/exercises?q=tag:k12phys-ch03-s01-lo01,k12phys-ch03-s01-lo02
@@ -21830,7 +21830,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:05:38 GMT
+      - Fri, 10 Jul 2015 20:57:33 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -21852,12 +21852,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=Y084WVNmUFJKdWNpNjlDNUU3cDRlMGJ6eXkrUjdSdFE2Q01hbnVINTgvc29scTRGT1ptczdzdnlBOXVkNjJoMEtYQVZuSkRhME1XWWlBVUdjT1ZDNWc9PS0tdTRMS3NpczYwenhHd3MvdnFycURvUT09--d9a07605d83476230e8f7543defe6ab0b523018e;
+      - _exercises_session=cnRkMkVpRUo2R0ZoOFExRGNDaG9IOURUTEVGei8zR2lic2pCZTRPbmovSUFSZXhJTUV2QjhJREMrUVg5Y2tlampTS0ZRcUMwcDdTNks5SnN2Nnk2N3c9PS0taWVPM2djdEl3NW9ObnNJTHUxSXpIZz09--b93ff7bc112145aa43bb2c81b35379fd1025b025;
         path=/; HttpOnly
       X-Request-Id:
-      - 39822aef-5c64-41df-a064-aedbbe8a0544
+      - 2078d73c-0f12-4308-8979-d058ed1d6202
       X-Runtime:
-      - '0.501675'
+      - '0.479729'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -23652,7 +23652,7 @@ http_interactions:
         b2ljZSIsImZyZWUtcmVzcG9uc2UiXSwiY29tYm9fY2hvaWNlcyI6W119XX1d
         fQ==
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:05:36 GMT
+  recorded_at: Fri, 10 Jul 2015 20:57:31 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/3005b86b-d993-4048-aff0-500256001f42@7
@@ -23674,7 +23674,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:10:18 GMT
+      - Fri, 10 Jul 2015 21:02:12 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -24549,7 +24549,7 @@ http_interactions:
         "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "", "fullname":
         "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:05:43 GMT
+  recorded_at: Fri, 10 Jul 2015 20:57:38 GMT
 - request:
     method: get
     uri: https://exercises-dev.openstax.org/api/exercises?q=tag:k12phys-ch03-s02-lo01,k12phys-ch03-s02-lo02
@@ -24571,7 +24571,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:05:46 GMT
+      - Fri, 10 Jul 2015 20:57:41 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -24593,12 +24593,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=Z0dYQmVWbG5CNkdZWDlnektGQjlWZ1FVb1NjQjhRSjhRVHBnL3hicG1rKzdJMmFocFNpZ0NsWVdZcGdqMFNCZk5SWDNDUC96RnpRaFowc2VPcFoydkE9PS0tOU1NRXdIVXc3bGN1bXVoWmpub1cxUT09--949526b1c558ba5f5adb509d590b881fc8f6db3b;
+      - _exercises_session=VmRhYkUxMi9vQ0lTZFVHeU9wUVYzOGpybHErWktnMmllM0lCZnZWVnRha3V0bHp1Y0FMeTE0R2toa1owZEt5b2x2QlBrWWk1MGFoRkVhakhTZzMvMWc9PS0tWUxlMVRMSUl3YjAxaDJJRkdTdHAwdz09--90761881387869b6feeb0f03cddc5b2b364eb18d;
         path=/; HttpOnly
       X-Request-Id:
-      - 2e26eb43-e7a2-41a8-abbe-b91444e26031
+      - e1a8b3c7-d54b-47cf-8982-2c4c22c95fd9
       X-Runtime:
-      - '0.452755'
+      - '0.487967'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -26467,7 +26467,7 @@ http_interactions:
         cGxlLWNob2ljZSIsImZyZWUtcmVzcG9uc2UiXSwiY29tYm9fY2hvaWNlcyI6
         W119XX1dfQ==
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:05:44 GMT
+  recorded_at: Fri, 10 Jul 2015 20:57:39 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/1bb611e9-0ded-48d6-a107-fbb9bd900851@2
@@ -26489,7 +26489,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:10:26 GMT
+      - Fri, 10 Jul 2015 21:02:21 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -26586,7 +26586,7 @@ http_interactions:
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:05:51 GMT
+  recorded_at: Fri, 10 Jul 2015 20:57:46 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/95e61258-2faf-41d4-af92-f62e1414175a@4
@@ -26608,7 +26608,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:10:26 GMT
+      - Fri, 10 Jul 2015 21:02:21 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -26908,7 +26908,7 @@ http_interactions:
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:05:52 GMT
+  recorded_at: Fri, 10 Jul 2015 20:57:46 GMT
 - request:
     method: get
     uri: https://exercises-dev.openstax.org/api/exercises?q=tag:k12phys-ch04-s01-lo01,k12phys-ch04-s01-lo02
@@ -26930,7 +26930,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:05:55 GMT
+      - Fri, 10 Jul 2015 20:57:49 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -26952,12 +26952,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=WU5kRkpIdnU0ZDhtcisrVnN4TDd4OCtDWjBiZ2h6V0J1S2l1bFc0dUNSdWlZTTdhSWovR1ZSdFNZM1N6YSthTnZJa3U2UytxNVZMdTNzNzVJMU9rdlE9PS0tSENlcFVNNzJBZHNnNWJmMndRZlkzZz09--5ac5c919b2ebe3040b127162797edba80a2c5f92;
+      - _exercises_session=bEVWV1Q5cnlWRGpWV3dMT3lTbjdNREZCYzkwVEkzZ0R0eURnT2RRbUwzcHBPdU1TV1BLNGIrTE83MVRDTmJDeHU4N2x2Uk8zK29CYmtFamlhSkZNYlE9PS0tbnJ3VCszbmIwVlgrMUdqS1VRaGZ1QT09--cbbdccab85e6e15b1bc6c00560f0a8683fba5adb;
         path=/; HttpOnly
       X-Request-Id:
-      - f022a0ae-b07f-44c5-9f44-3196a5b14a3c
+      - 87186941-5240-4413-b7aa-e11c7fa2f97e
       X-Runtime:
-      - '0.400933'
+      - '0.411880'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -28234,7 +28234,7 @@ http_interactions:
         dGhlIHNhbWUgZGlyZWN0aW9uLiJ9XSwiaGludHMiOltdLCJmb3JtYXRzIjpb
         Im11bHRpcGxlLWNob2ljZSJdLCJjb21ib19jaG9pY2VzIjpbXX1dfV19
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:05:53 GMT
+  recorded_at: Fri, 10 Jul 2015 20:57:47 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/640e3e84-09a5-4033-b2a7-b7fe5ec29dc6@4
@@ -28256,7 +28256,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:10:35 GMT
+      - Fri, 10 Jul 2015 21:02:28 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -28678,7 +28678,7 @@ http_interactions:
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:06:00 GMT
+  recorded_at: Fri, 10 Jul 2015 20:57:53 GMT
 - request:
     method: get
     uri: https://exercises-dev.openstax.org/api/exercises?q=tag:k12phys-ch04-s02-lo01,k12phys-ch04-s02-lo02
@@ -28700,7 +28700,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:06:04 GMT
+      - Fri, 10 Jul 2015 20:57:57 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -28722,12 +28722,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=cGdWaTAvbmtuL1lFOXFxekdyUGo4VklGZlU0VzNncUFKT1BHU1ZZNUhWZVFiTDdzdUFqM3lhaWZkaDNhR21RVTlqQ1B3aXhzQ2tldEI5d0w0WHVNcHc9PS0tR2ZPR0xISmNPaTNieE9uU3ZwSnpaUT09--aa92de3dbb993f2c0493e9a59a832c2209f30394;
+      - _exercises_session=RmVWSHlMMll4aHFlQmtIdHRRbSt2RGt2RWkrVEtsZlYvYmF0eUpxZmxaZWhpV3pXTWkzUUkwcHZaaDEvS1pMTGl6VGRjQUZ1NmhkanF5QW5qaXJiRkE9PS0tQXFRSW1XL3dhZHpOTURjeTNkZ0kydz09--df6322910610475002e4970b9cc25ad4dc6f6b19;
         path=/; HttpOnly
       X-Request-Id:
-      - a177e762-1abe-4060-be0b-b2fdd2593e9e
+      - 16d2b6f8-bbcc-4bbe-bbdb-b726fd931362
       X-Runtime:
-      - '0.454784'
+      - '0.411016'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -30020,7 +30020,7 @@ http_interactions:
         aW50cyI6W10sImZvcm1hdHMiOlsibXVsdGlwbGUtY2hvaWNlIiwiZnJlZS1y
         ZXNwb25zZSJdLCJjb21ib19jaG9pY2VzIjpbXX1dfV19
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:06:01 GMT
+  recorded_at: Fri, 10 Jul 2015 20:57:54 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/548a8717-71e1-4d65-80f0-7b8c6ed4b4c0@3
@@ -30042,7 +30042,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:10:42 GMT
+      - Fri, 10 Jul 2015 21:02:35 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -30609,7 +30609,7 @@ http_interactions:
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:06:07 GMT
+  recorded_at: Fri, 10 Jul 2015 20:58:01 GMT
 - request:
     method: get
     uri: https://exercises-dev.openstax.org/api/exercises?q=tag:k12phys-ch04-s03-lo01,k12phys-ch04-s03-lo02
@@ -30631,7 +30631,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:06:11 GMT
+      - Fri, 10 Jul 2015 20:58:04 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -30653,12 +30653,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=Nm9mVlFTZ3NCSGZoOGtJYnJwdzFXUk1QeFI3dENIQWN1bytvTkRMK1YzeTJJdThUQnpveFZ1Sy9wdnJiYlZucDRXaEhGWFNtNTBueUtrNzlkYXpRTnc9PS0tN1htT01MNDNIUEwvUlFyNWVxSGdFdz09--590c4e15be558cf8fcb4b665babb9264a9d53761;
+      - _exercises_session=Sy82Znl5KzlqR1NJcWp6NHdGRWw5dTlNQ0RlZzRYOFhPRHU1QUYyMU9sQWp1N1hxZGl2THZMVnd1WnlzVjRhM1VtenF1TUd0MTExRmR2T3Q2MDFYOGc9PS0tMTRxSkRVeWpFQmpKbUJNM1hTNWRHZz09--be99a0d4840bfe2f4f012242cb65255e45450173;
         path=/; HttpOnly
       X-Request-Id:
-      - 3c6860d7-52a9-40cd-9b7a-dec94e8425e1
+      - 412c636c-6390-47f2-b28c-8278a304c4e9
       X-Runtime:
-      - '0.430843'
+      - '0.514142'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -32181,7 +32181,7 @@ http_interactions:
         LCJoaW50cyI6W10sImZvcm1hdHMiOlsibXVsdGlwbGUtY2hvaWNlIiwiZnJl
         ZS1yZXNwb25zZSJdLCJjb21ib19jaG9pY2VzIjpbXX1dfV19
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:06:08 GMT
+  recorded_at: Fri, 10 Jul 2015 20:58:02 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/dbc79576-8c66-41d2-929a-74bcd036a1df@4
@@ -32203,7 +32203,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:10:49 GMT
+      - Fri, 10 Jul 2015 21:02:42 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -32904,7 +32904,7 @@ http_interactions:
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:06:15 GMT
+  recorded_at: Fri, 10 Jul 2015 20:58:08 GMT
 - request:
     method: get
     uri: https://exercises-dev.openstax.org/api/exercises?q=tag:k12phys-ch04-s04-lo01,k12phys-ch04-s04-lo02
@@ -32926,7 +32926,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 10 Jul 2015 20:06:18 GMT
+      - Fri, 10 Jul 2015 20:58:11 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -32948,12 +32948,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=cWxTREpNc0E0SDVDRGJ3Q3I2K2M5K3FKVy9iLzBYK2RLMnhJR3JydDJMYkxadFpBRmV1bHhRWUp3T2JRcTJsOEJpV1Q2Z2RjMUJlc0QrUHRMb0FKOGc9PS0teFZoUkpld0lma0t0eTBUZG4yZVFrZz09--7a03e9cc3944fa75e7404029171874876773dec9;
+      - _exercises_session=cGNYTXlRRVczQkxraUNyMlZMVWJidVBGSC9WcE1sOW9RM0pLQWN2UWdJRzVrakVIdE5uVjJvdk5RVG9kOW03ZWFPRVMyR0pGcHl5NDZwZU1qbVdodlE9PS0tVlhXWWh4NXNxd0JQeWpZZSs4cTFhZz09--51cd946342fe0dbbaafeb92b8e60ea52aaa400e7;
         path=/; HttpOnly
       X-Request-Id:
-      - 70497ad4-ea91-4fbf-8a4b-f40b1bfdf373
+      - 034623e0-00b9-4aa7-adc7-6d574cc56fbb
       X-Runtime:
-      - '0.408745'
+      - '0.413976'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -34367,5 +34367,5 @@ http_interactions:
         bGUtY2hvaWNlIiwiZnJlZS1yZXNwb25zZSJdLCJjb21ib19jaG9pY2VzIjpb
         XX1dfV19
     http_version: 
-  recorded_at: Fri, 10 Jul 2015 20:06:16 GMT
+  recorded_at: Fri, 10 Jul 2015 20:58:09 GMT
 recorded_with: VCR 2.9.3

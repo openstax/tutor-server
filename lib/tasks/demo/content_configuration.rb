@@ -74,9 +74,9 @@ class ContentConfiguration
 
   def self.[](name)
     files = if :all == name
-              Dir[File.join(CONFIG_DIR, '*.yml')]
+              Dir[File.join(self.config_directory, '*.yml')]
             else
-              [ File.join(CONFIG_DIR, "#{name}.yml") ]
+              [ File.join(self.config_directory, "#{name}.yml") ]
             end
     files
       .reject{|path| File.basename(path) == "people.yml" }
@@ -101,6 +101,17 @@ class ContentConfiguration
 
   def course
     @course ||= CourseProfile::Models::Profile.where(name: @configuration.course_name).first!.course
+  end
+
+  def self.config_directory
+    Thread.current[:config_directory] || CONFIG_DIR
+  end
+
+  def self.with_config_directory( directory )
+    prev_config, Thread.current[:config_directory] = self.config_directory, directory
+    yield self
+  ensure
+    Thread.current[:config_directory] = prev_config
   end
 
   private

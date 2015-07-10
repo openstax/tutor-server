@@ -1,3 +1,5 @@
+# If any substantial changes are made to this file such as book_id or version
+# The fixture at spec/fixtures/demo-imports/physics.yml must also be updated
 course_name: Physics I
 cnx_book_id: 93e2b09d-261c-4007-a987-0b3062fe154b
 cnx_book_version: latest

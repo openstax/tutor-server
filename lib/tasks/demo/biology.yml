@@ -1,3 +1,5 @@
+# If any substantial changes are made to this file such as book_id or version
+# The fixture at spec/fixtures/demo-imports/biology.yml must also be updated
 course_name: Biology I
 cnx_book_id: ccbc51fa-49f3-40bb-98d6-07a15a7ab6b7
 cnx_book_version: latest
@@ -19,20 +21,20 @@ assignments:
     chapter_sections: [[1, 1, 0], [1, 1, 1], [1,1,2]]
     title: Read Unit 1. The Chemistry of Life
     periods:
-      - index: 0 # index of the title above
+      - index: 0 # index of the period's definition above
         opens_at: <%= standard_due_at(today-3.days) %> # could be ommited and a default would be used
         due_at: <%= due_today %>
         students: {ak: 98,at: 67,bh: 55,gj: 77,kl: 88,ir: ns,mb: 78,ra: 100,sg: 86}
 
-      - index: 1 # index of the title above
+      - index: 1 # index of the period's definition above
         due_at: <%= due_today %>
         students: {af: 100,am: 82,hp: 71,ft: 90,gs: 87,jb: i,mh: i,ne: 90,sd: 85,vw: ns}
 
-      - index: 2 # index of the title above
+      - index: 2 # index of the period's definition above
         due_at: <%= due_today %>
         students: {ag: 100,ap: 82,bs: 71,eh: 90,hc: 78,hg: 87,iu: i,iw: i,nz: 90,rl: 85,sk: ns}
 
-      - index: 3 # index of the title above
+      - index: 3 # index of the period's definition above
         due_at: <%= due_today %>
         students: {an: 100,cg: 82,cd: 71,dp: 90,fa: 78,jr: 87,js: i,lh: i,ms: 90,rb: 85,wh: ns}
 
@@ -41,7 +43,7 @@ assignments:
     chapter_sections: [[2, 3, 0], [2, 3, 1h], [2, 3, 2]]
     title: Read Unit 2. The Cell
     periods:
-      - index: 0 # index of the title above
+      - index: 0 # 1st Period
         due_at: <%= due_two_days_ago %>
         students:
           ak: 94
@@ -53,7 +55,7 @@ assignments:
           mb: ns
           ra: 72
           sg: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ]  # explicit example, could also be `100`
-      - index: 3 # index of the title above
+      - index: 3 # 3rd period
         due_at: <%= due_today %>
         students:
           an: 80
@@ -74,7 +76,7 @@ assignments:
     title: HW The Chemistry of Life
     num_exercises: 10
     periods:
-      - index: 2 # index of the title above
+      - index: 2 # 1st Period
         due_at: <%= due_three_days_ago %>
         students:
           ag: 90
@@ -88,7 +90,7 @@ assignments:
           nz: [ 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0 ]
           rl: 80
           sk: 65
-      - index: 3 # index of the title above
+      - index: 3 # 4th Period
         due_at: <%= due_two_days_ago %>
         students:
           an: 100

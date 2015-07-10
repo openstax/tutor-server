@@ -1,0 +1,43 @@
+# This is a stripped down verion of lib/tasks/demo/biology.yml
+# It's only used by the demo spec
+course_name: Biology I
+cnx_book_id: ccbc51fa-49f3-40bb-98d6-07a15a7ab6b7
+cnx_book_version: latest
+teacher: cm
+periods:
+  - name: 1st Period
+    students: [ak,gj]
+  - name: 2nd Period
+    students: [gs]
+
+assignments:
+
+  - type: reading
+    step_types: [ r, r, e, r, r, e, r, r, e, r, r, e, r, e, r, p, e, e, r, r, e ]
+    chapter_sections: [[1, 1, 0], [1, 1, 1], [1,1,2]]
+    title: Read Unit 1. The Chemistry of Life
+    periods:
+      - index: 0
+        opens_at: <%= standard_due_at(today-3.days) %> # could be ommited and a default would be used
+        due_at: <%= due_today %>
+        students: {ak: i,gj: 77}
+
+      - index: 1
+        due_at: <%= due_today %>
+        students: {gs: ns}
+
+  - type: homework
+    step_types: [ e, e, e, e, e, e, e, e, e, e, p ]
+    chapter_sections: [[1, 1, 0], [1, 1, 1], [1,1,2]]
+    title: HW The Chemistry of Life
+    num_exercises: 10
+    periods:
+      - index: 0
+        due_at: <%= due_three_days_ago %>
+        students:
+          ak: 90
+          gj: [ 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1 ]
+      - index: 1
+        due_at: <%= due_two_days_ago %>
+        students:
+          gs: i
