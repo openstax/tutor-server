@@ -2,6 +2,12 @@ module Api::V1
   class CourseGuidePeriodRepresenter < Roar::Decorator
     include Roar::JSON
 
+    property :period_id,
+             type: String,
+             readable: true,
+             writeable: false,
+             getter: -> (*) { period_id.to_s }
+
     property :title,
              type: String,
              readable: true,

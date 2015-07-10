@@ -3,12 +3,6 @@ module Api::V1
     include Roar::JSON
     include Representable::Coercion
 
-    property :id,
-             type: String,
-             readable: true,
-             writeable: false,
-             schema_info: { required: true }
-
     property :title,
              type: String,
              readable: true,
