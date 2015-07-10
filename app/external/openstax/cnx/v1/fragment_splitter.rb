@@ -1,11 +1,10 @@
 module OpenStax::Cnx::V1
   module FragmentSplitter
 
-    # Just a page break
-    ASSESSED_FEATURE_CLASS = 'ost-assessed-feature'
+    include HtmlTreeOperations
 
     # Just a page break
-    FEATURE_CLASS = 'ost-feature'
+    FEATURE_CLASSES = ['ost-assessed-feature', 'ost-feature']
 
     # Exercise choice fragment
     EXERCISE_CHOICE_CLASS = 'ost-exercise-choice'
@@ -20,18 +19,18 @@ module OpenStax::Cnx::V1
     VIDEO_CLASS = 'ost-video'
 
     # Split fragments on these
-    SPLIT_CSS = [ASSESSED_FEATURE_CLASS, FEATURE_CLASS, EXERCISE_CHOICE_CLASS,
-                 EXERCISE_CLASS, INTERACTIVE_CLASSES, VIDEO_CLASS].flatten
-                                                                  .collect{ |c| ".#{c}" }
-                                                                  .join(', ')
+    SPLIT_CSS = [FEATURE_CLASSES, EXERCISE_CHOICE_CLASS, EXERCISE_CLASS,
+                 INTERACTIVE_CLASSES, VIDEO_CLASS].flatten.collect{ |c| ".#{c}" }.join(', ')
 
     protected
 
-    def node_to_fragment(node)
+    def node_to_fragment(node, skip_features)
       klass = node['class'] || []
 
       fragment =
-        if INTERACTIVE_CLASSES.any? { |interactive_class| klass.include?(interactive_class) }
+        if FEATURE_CLASSES.any? { |feature_class| klass.include?(feature_class) } && !skip_features
+          Fragment::Feature.new(node: node)
+        elsif INTERACTIVE_CLASSES.any? { |interactive_class| klass.include?(interactive_class) }
           Fragment::Interactive.new(node: node)
         elsif klass.include?(VIDEO_CLASS)
           Fragment::Video.new(node: node)
@@ -47,7 +46,7 @@ module OpenStax::Cnx::V1
       fragment
     end
 
-    def split_into_fragments(node)
+    def split_into_fragments(node, skip_features = false)
       fragments = []
 
       # Initialize current_node
@@ -60,13 +59,8 @@ module OpenStax::Cnx::V1
       while !split.nil? do
         klass = split['class']
 
-        if klass.include?(ASSESSED_FEATURE_CLASS) || klass.include?(FEATURE_CLASS)
-          # Feature or Assessed Feature: do a recursive split
-          splitting_fragments = split_into_fragments(split)
-        else
-          # Get a single fragment for the given node
-          splitting_fragments = [node_to_fragment(split)]
-        end
+        # Get a single fragment for the given node
+        splitting_fragment = node_to_fragment(split, skip_features)
 
         # Copy the node content and find the same split CSS in the copy
         next_node = current_node.dup
@@ -83,11 +77,11 @@ module OpenStax::Cnx::V1
 
         # Create text fragment before current split
         unless current_node.content.blank?
-          fragments << node_to_fragment(current_node)
+          fragments << node_to_fragment(current_node, skip_features)
         end
 
         # Add contents from splitting fragments
-        fragments += splitting_fragments
+        fragments << splitting_fragment
 
         current_node = next_node
         split = current_node.at_css(SPLIT_CSS)
@@ -95,7 +89,7 @@ module OpenStax::Cnx::V1
 
       # Create text fragment after all splits
       unless current_node.content.blank?
-        fragments << node_to_fragment(current_node)
+        fragments << node_to_fragment(current_node, skip_features)
       end
 
       fragments
