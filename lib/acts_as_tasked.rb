@@ -24,6 +24,14 @@ module ActsAsTasked
         def placeholder?
           false
         end
+
+        def has_correctness?
+          false
+        end
+
+        def los
+          []
+        end
       end
     end
   end
