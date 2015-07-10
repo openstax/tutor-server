@@ -2,6 +2,717 @@
 http_interactions:
 - request:
     method: get
+    uri: https://archive-staging-tutor.cnx.org/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.2.json
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - text/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Thu, 09 Jul 2015 17:46:17 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '11117'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Headers:
+      - origin,dnt,accept-encoding,accept-language,keep-alive,user-agent,x-requested-with,if-modified-since,cache-control,content-type
+      Access-Control-Allow-Methods:
+      - GET, OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains
+    body:
+      encoding: UTF-8
+      string: '{"googleAnalytics": "", "version": "4.2", "submitlog": "--", "abstract":
+        "<div xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:c=\"http://cnx.rice.edu/cnxml\"
+        xmlns:md=\"http://cnx.rice.edu/mdml\" xmlns:qml=\"http://cnx.rice.edu/qml/1.0\"
+        xmlns:mod=\"http://cnx.rice.edu/#moduleIds\" xmlns:bib=\"http://bibtexml.sf.net/\"
+        xmlns:data=\"http://dev.w3.org/html5/spec/#custom\"/>", "revised": "2015-07-08T12:50:37Z",
+        "printStyle": null, "roles": null, "keywords": [], "id": "93e2b09d-261c-4007-a987-0b3062fe154b",
+        "title": "Physics", "mediaType": "application/vnd.org.cnx.collection", "subjects":
+        ["Science and Technology"], "legacy_id": "col10014", "parentId": null, "publishers":
+        [{"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
+        "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}], "parent": {"authors":
+        [], "version": "", "id": null, "title": null}, "stateid": 1, "parentTitle":
+        null, "authors": [{"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
+        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}], "parentVersion":
+        "", "legacy_version": "1.4", "licensors": [{"surname": "HSPhysics", "suffix":
+        null, "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id":
+        "tutor_hsphysics"}], "language": "en", "license": {"url": "http://creativecommons.org/licenses/by/4.0/",
+        "code": "by", "version": "4.0", "name": "Attribution"}, "created": "2015-05-29T18:59:40Z",
+        "tree": {"id": "93e2b09d-261c-4007-a987-0b3062fe154b@4.2", "contents": [{"id":
+        "subcol", "contents": [], "title": "What is Physics?"}, {"id": "subcol", "contents":
+        [], "title": "Motion in One Dimension"}, {"id": "subcol", "contents": [{"id":
+        "4e40d43d-cfee-412e-919c-facccdf0535d@3", "title": "Introduction"}, {"id":
+        "0e58aa87-2e09-40a7-8bf3-269b2fa16509@7", "title": "Acceleration"}, {"id":
+        "3005b86b-d993-4048-aff0-500256001f42@7", "title": "Representing Acceleration
+        with Equations and Graphs"}], "title": "Acceleration"}, {"id": "subcol", "contents":
+        [{"id": "1bb611e9-0ded-48d6-a107-fbb9bd900851@2", "title": "Introduction"},
+        {"id": "95e61258-2faf-41d4-af92-f62e1414175a@4", "title": "Force"}, {"id":
+        "640e3e84-09a5-4033-b2a7-b7fe5ec29dc6@4", "title": "Newton''s First Law of
+        Motion: Inertia"}, {"id": "548a8717-71e1-4d65-80f0-7b8c6ed4b4c0@3", "title":
+        "Newton''s Second Law of Motion"}, {"id": "dbc79576-8c66-41d2-929a-74bcd036a1df@4",
+        "title": "Newton''s Third Law of Motion"}], "title": "Force and Newton''s
+        Laws of Motion"}], "title": "Physics"}, "doctype": "", "buyLink": null, "submitter":
+        {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
+        "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}, "parentAuthors":
+        [], "history": [{"changes": "--", "version": "4.2", "revised": "2015-07-08T12:50:37Z",
+        "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
+        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
+        "--", "version": "4.1", "revised": "2015-07-01T19:44:13Z", "publisher": {"surname":
+        "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "", "fullname":
+        "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "applied CCAP Physics
+        template", "version": "3.8", "revised": "2015-06-17T16:49:51Z", "publisher":
+        {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
+        "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "applied
+        CCAP Physics template", "version": "3.7", "revised": "2015-06-15T20:33:52Z",
+        "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
+        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
+        "applied CCAP Physics template", "version": "3.6", "revised": "2015-06-11T17:31:59Z",
+        "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
+        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
+        "applied CCAP Physics template", "version": "3.5", "revised": "2015-06-11T17:28:17Z",
+        "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
+        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
+        "applied CCAP Physics template", "version": "3.4", "revised": "2015-06-10T19:56:12Z",
+        "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
+        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
+        "applied CCAP Physics template", "version": "3.3", "revised": "2015-06-10T19:34:00Z",
+        "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
+        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
+        "applied CCAP Physics template", "version": "3.2", "revised": "2015-06-09T22:38:53Z",
+        "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
+        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
+        "applied CCAP Physics template", "version": "3.1", "revised": "2015-06-09T20:34:45Z",
+        "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
+        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
+        "changed collection title and titles for first two chapters", "version": "2.2",
+        "revised": "2015-06-09T20:31:49Z", "publisher": {"surname": "HSPhysics", "suffix":
+        null, "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id":
+        "tutor_hsphysics"}}, {"changes": "changed collection title and titles for
+        first two chapters", "version": "2.1", "revised": "2015-06-02T18:34:49Z",
+        "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
+        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
+        "added ch. 3 and 4 modules; may still need to tweak placeholder settings for
+        chs. 1 and 2", "version": "1.18", "revised": "2015-06-01T21:07:58Z", "publisher":
+        {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
+        "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "added
+        ch. 3 and 4 modules; may still need to tweak placeholder settings for chs.
+        1 and 2", "version": "1.17", "revised": "2015-06-01T20:59:26Z", "publisher":
+        {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
+        "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "added
+        ch. 3 and 4 modules; may still need to tweak placeholder settings for chs.
+        1 and 2", "version": "1.16", "revised": "2015-06-01T18:48:18Z", "publisher":
+        {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
+        "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "added
+        ch. 3 and 4 modules; may still need to tweak placeholder settings for chs.
+        1 and 2", "version": "1.15", "revised": "2015-06-01T16:37:40Z", "publisher":
+        {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
+        "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "added
+        ch. 3 and 4 modules; may still need to tweak placeholder settings for chs.
+        1 and 2", "version": "1.14", "revised": "2015-06-01T16:35:46Z", "publisher":
+        {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
+        "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "added
+        ch. 3 and 4 modules; may still need to tweak placeholder settings for chs.
+        1 and 2", "version": "1.13", "revised": "2015-06-01T16:33:26Z", "publisher":
+        {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
+        "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "added
+        ch. 3 and 4 modules; may still need to tweak placeholder settings for chs.
+        1 and 2", "version": "1.12", "revised": "2015-06-01T16:31:59Z", "publisher":
+        {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
+        "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "added
+        ch. 3 and 4 modules; may still need to tweak placeholder settings for chs.
+        1 and 2", "version": "1.11", "revised": "2015-06-01T16:28:02Z", "publisher":
+        {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
+        "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "added
+        ch. 3 and 4 modules; may still need to tweak placeholder settings for chs.
+        1 and 2", "version": "1.10", "revised": "2015-06-01T16:27:45Z", "publisher":
+        {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
+        "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "added
+        ch. 3 and 4 modules; may still need to tweak placeholder settings for chs.
+        1 and 2", "version": "1.9", "revised": "2015-06-01T16:17:11Z", "publisher":
+        {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
+        "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "added
+        ch. 3 and 4 modules; may still need to tweak placeholder settings for chs.
+        1 and 2", "version": "1.8", "revised": "2015-06-01T16:09:14Z", "publisher":
+        {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
+        "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "added
+        ch. 3 and 4 modules; may still need to tweak placeholder settings for chs.
+        1 and 2", "version": "1.7", "revised": "2015-06-01T16:01:53Z", "publisher":
+        {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
+        "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "added
+        ch. 3 and 4 modules; may still need to tweak placeholder settings for chs.
+        1 and 2", "version": "1.6", "revised": "2015-06-01T15:56:03Z", "publisher":
+        {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
+        "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "added
+        ch. 3 and 4 modules; may still need to tweak placeholder settings for chs.
+        1 and 2", "version": "1.5", "revised": "2015-06-01T15:55:27Z", "publisher":
+        {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
+        "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "added
+        ch. 3 and 4 modules; may still need to tweak placeholder settings for chs.
+        1 and 2", "version": "1.4", "revised": "2015-06-01T15:51:38Z", "publisher":
+        {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
+        "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "added
+        ch. 3 and 4 modules; may still need to tweak placeholder settings for chs.
+        1 and 2", "version": "1.3", "revised": "2015-06-01T15:25:29Z", "publisher":
+        {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
+        "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "added
+        ch. 3 and 4 modules; may still need to tweak placeholder settings for chs.
+        1 and 2", "version": "1.2", "revised": "2015-06-01T15:22:18Z", "publisher":
+        {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
+        "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "added
+        ch. 3 and 4 modules; may still need to tweak placeholder settings for chs.
+        1 and 2", "version": "1.1", "revised": "2015-05-29T19:29:09Z", "publisher":
+        {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
+        "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
+    http_version: 
+  recorded_at: Thu, 09 Jul 2015 17:41:47 GMT
+- request:
+    method: get
+    uri: https://archive-staging-tutor.cnx.org/contents/0e58aa87-2e09-40a7-8bf3-269b2fa16509@7
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - text/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Thu, 09 Jul 2015 17:46:18 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '50807'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Headers:
+      - origin,dnt,accept-encoding,accept-language,keep-alive,user-agent,x-requested-with,if-modified-since,cache-control,content-type
+      Access-Control-Allow-Methods:
+      - GET, OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains
+    body:
+      encoding: UTF-8
+      string: '{"googleAnalytics": null, "version": "7", "submitlog": "created links
+        to figures within same step, different steps", "abstract": "<div xmlns=\"http://www.w3.org/1999/xhtml\"
+        xmlns:c=\"http://cnx.rice.edu/cnxml\" xmlns:md=\"http://cnx.rice.edu/mdml\"
+        xmlns:qml=\"http://cnx.rice.edu/qml/1.0\" xmlns:mod=\"http://cnx.rice.edu/#moduleIds\"
+        xmlns:bib=\"http://bibtexml.sf.net/\" xmlns:data=\"http://dev.w3.org/html5/spec/#custom\"/>",
+        "revised": "2015-07-08T12:50:38Z", "printStyle": null, "roles": null, "keywords":
+        ["velocity", "vector quantities", "time", "negative acceleration", "instantaneous
+        acceleration", "displacement", "deceleration", "average acceleration"], "id":
+        "0e58aa87-2e09-40a7-8bf3-269b2fa16509", "title": "Acceleration", "mediaType":
+        "application/vnd.org.cnx.module", "content": "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head
+        xmlns:c=\"http://cnx.rice.edu/cnxml\" xmlns:md=\"http://cnx.rice.edu/mdml\"><title>Acceleration</title><meta
+        name=\"created-time\" content=\"2015/05/29 14:05:34 -0500\"/><meta name=\"revised-time\"
+        content=\"2015/07/08 07:50:38.947 GMT-5\"/><meta name=\"author\" content=\"tutor_hsphysics\"/><meta
+        name=\"acl-list\" content=\"tutor_hsphysics\"/><meta name=\"licensor\" content=\"tutor_hsphysics\"/><meta
+        name=\"license\" content=\"http://creativecommons.org/licenses/by/4.0/\"/><meta
+        name=\"keywords\" content=\"average acceleration, deceleration, displacement,
+        instantaneous acceleration, negative acceleration, time, vector quantities,
+        velocity\"/><meta name=\"subject\" content=\"Science and Technology\"/></head>\n\n<body
+        xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:c=\"http://cnx.rice.edu/cnxml\"
+        xmlns:md=\"http://cnx.rice.edu/mdml\" xmlns:qml=\"http://cnx.rice.edu/qml/1.0\"
+        xmlns:mod=\"http://cnx.rice.edu/#moduleIds\" xmlns:bib=\"http://bibtexml.sf.net/\"
+        xmlns:data=\"http://dev.w3.org/html5/spec/#custom\"><div data-type=\"document-title\">Acceleration</div>\n<section
+        data-depth=\"1\" id=\"fs-idm32602112\" class=\"section-opener\">\n<div data-type=\"note\"
+        data-has-label=\"true\" id=\"fs-idm15002784\" class=\"note learning-objectives\"
+        data-label=\"\"><div data-type=\"title\" class=\"title\">Section Learning
+        Objectives</div>\n<p id=\"fs-idm23421280\">By the end of this section, you
+        will be able to:</p>\n<ul id=\"fs-idp24241232\"><li class=\"ost-learning-objective-def
+        ost-tag-lo-k12phys-ch03-s01-lo01 ost-tag-teks-112-39-c-4b\">Explain acceleration
+        and determine the direction and magnitude of acceleration in one dimension.</li>\n<li
+        class=\"ost-learning-objective-def ost-tag-lo-k12phys-ch03-s01-lo02 ost-tag-teks-112-39-c-4a
+        ost-tag-teks-112-39-c-4b\">Analyze motion in one dimension using kinematic
+        equations and graphic representations.</li>\n</ul></div>\n\n<div data-type=\"note\"
+        data-has-label=\"true\" id=\"fs-idm5732144\" class=\"note os-teacher\" data-label=\"Teacher
+        Support\">\n<p id=\"fs-idp3095152\">The Learning Objectives in this section
+        will help your students master the following TEKS:</p>\n<ul id=\"fs-idm6050816\">\n<li
+        class=\"ost-standards-def ost-standards-teks ost-tag-teks-112-39-c-4a\"><span
+        class=\"ost-standards-name\">(4A)</span><span class=\"ost-standards-discard\">:</span><span
+        class=\"ost-standards-description\">Generate and interpret graphs and charts
+        describing different types of motion, including the use of real-time technology
+        such as motion detectors or photogates.</span></li>\n<li class=\"ost-standards-def
+        ost-standards-teks ost-tag-teks-112-39-c-4b\"><span class=\"ost-standards-name\">(4B)</span><span
+        class=\"ost-standards-discard\">:</span><span class=\"ost-standards-description\">Describe
+        and analyze motion in one dimension using equations with the concepts of distance,
+        displacement, speed, average velocity, instantaneous velocity, and acceleration.</span></li>\n</ul>\n</div><table
+        id=\"fs-idp26088544\" summary=\"The list of Key Terms includes: average acceleration,
+        instantaneous acceleration, and negative acceleration.\" class=\"unnumbered
+        key-terms ost-reading-discard\" data-label=\"\"><caption><span data-type=\"title\">Section
+        Key Terms</span></caption><tbody>\n<tr>\n<td>average acceleration</td>\n<td>instantaneous
+        acceleration</td>\n<td>negative acceleration</td>\n</tr>\n</tbody></table><div
+        data-type=\"note\" data-has-label=\"true\" id=\"fs-idp33495232\" class=\"note
+        os-teacher\" data-label=\"Teacher Support\">\n<p id=\"fs-idp6842880\"><span
+        class=\"ost-level-below\">[BL]</span><span class=\"ost-level-on\">[OL]</span>
+        Begin a general discussion about acceleration and deceleration. Ask for examples
+        of both. Explain that deceleration is not used in physics because acceleration
+        can be positive or negative. Lead the students to their topics of interest,
+        such as motor vehicles or sports. Explain that the capital Greek letter delta
+        always means &#8220;final minus initial&#8221; and that the net change may
+        be zero, positive, or negative.</p>\n<p id=\"fs-idm13370000\"><span class=\"ost-level-above\">[AL]</span>
+        See how much students remember about vectors. What does a vector arrow represent?
+        Ask them to name some quantities that are vectors and some that are scalars.</p>\n</div></section>\n\n<section
+        data-depth=\"1\" id=\"fs-idm21400512\" class=\"ost-tag-lo-k12phys-ch03-s01-lo01\"><h1
+        data-type=\"title\">Defining Acceleration</h1><p id=\"fs-idp32132880\">Throughout
+        this chapter we will use the following terms: <em data-effect=\"italics\">time</em>,
+        <em data-effect=\"italics\">displacement</em>, <em data-effect=\"italics\">velocity</em>,
+        and <em data-effect=\"italics\">acceleration</em>. Recall that each of these
+        terms has a designated variable and SI unit of measurement as follows:</p>\n<ul
+        id=\"fs-idp27202528\"><li><span data-type=\"term\" class=\"no-emphasis\">Time</span>:
+        <em data-effect=\"italics\">t</em>, measured in seconds (s)</li>\n<li><span
+        data-type=\"term\" class=\"no-emphasis\">Displacement</span>: &#916;<em data-effect=\"italics\">d</em>,
+        measured in meters (m)</li>\n<li><span data-type=\"term\" class=\"no-emphasis\">Velocity</span>:
+        <em data-effect=\"italics\">v</em>, measured in meters per second (m/s)</li>\n<li><span
+        data-type=\"term\" class=\"no-emphasis\">Acceleration</span>: <em data-effect=\"italics\">a</em>,
+        measured in meters per second per second (m/s<sup>2</sup>, also called meters
+        per second squared)</li>\n<li>Also note:\n<ul id=\"fs-idm15527984\">\n<li>&#916;
+        means &#8220;change in.&#8221;</li>\n<li>The subscript &#8220;0&#8221; refers
+        to an initial value (sometimes subscript &#8220;i&#8221; is used to refer
+        to initial value).</li>\n<li>The subscript &#8220;f&#8221; refers to final
+        value.</li>\n<li>A bar over a symbol, such as <math xmlns=\"http://www.w3.org/1998/Math/MathML\"
+        display=\"inline\"><semantics><mrow><mover accent=\"true\"><mi>a</mi>\n<mo>&#175;</mo></mover></mrow><annotation-xml
+        encoding=\"MathML-Content\"><mover accent=\"true\"><mi>a</mi>\n<mo>&#175;</mo></mover></annotation-xml></semantics></math>,
+        means &#8220;average.&#8221;</li>\n</ul>\n</li>\n</ul><div data-type=\"note\"
+        data-has-label=\"true\" id=\"fs-idm20606336\" class=\"note os-teacher\" data-label=\"Teacher
+        Support\">\n<p id=\"fs-idm21364672\"><span class=\"ost-level-below\">[BL]</span>
+        Review the definitions of the terms: <em data-effect=\"italics\">time</em>,
+        <em data-effect=\"italics\">displacement</em>, <em data-effect=\"italics\">velocity</em>,
+        and <em data-effect=\"italics\">acceleration</em>. Point out that the variables
+        commonly used to represent these quantities are the first letters of the corresponding
+        term.</p>\n<p id=\"fs-idm25154368\"><span class=\"ost-level-on\">[OL]</span>
+        Verify that the students know the SI units in which time, displacement, velocity,
+        and acceleration are expressed. Note that these are some of the seven &#8220;base
+        units&#8221; of the metric system. Explain that converting to base units is
+        a good first step when calculating these quantities. Explain the meaning of
+        &#8220;seconds squared&#8221; in the denominator of the units of acceleration.</p>\n<p
+        id=\"fs-idm70881568\"><span class=\"ost-level-above\">[AL]</span> Review all
+        the base units of the metric system. Explain how these units are interrelated.
+        For example, show how the length is defined by time.</p>\n<p id=\"fs-idm31661664\"><span
+        class=\"ost-level-below\">[BL]</span><span class=\"ost-level-on\">[OL]</span>
+        Use the equation <math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><semantics><mrow>\n<mrow>\n
+        <mover accent=\"true\">\n<mi>a</mi>\n<mo>&#175;</mo>\n</mover>\n<mtext>&#8201;</mtext><mo>=</mo><mfrac>\n<mrow>\n<mi>&#916;</mi><mi>v</mi>\n</mrow>\n<mrow>\n<mi>&#916;</mi><mi>t</mi>\n</mrow>\n</mfrac>\n<mo>=</mo><mfrac>\n
+        <mrow>\n    <msub>\n     <mi>v</mi>\n     <mtext>f</mtext>\n    </msub>\n    <mo>&#8722;</mo><msub>\n     <mi>v</mi>\n     <mn>0</mn>\n    </msub>\n    \n   </mrow>\n   <mrow>\n    <msub>\n     <mi>t</mi>\n     <mtext>f</mtext>\n    </msub>\n    <mo>&#8722;</mo><msub>\n     <mi>t</mi>\n     <mn>0</mn>\n    </msub>\n    \n   </mrow>\n  </mfrac>\n  \n
+        </mrow>\n</mrow><annotation-xml encoding=\"MathML-Content\"><mrow>\n <mover
+        accent=\"true\">\n<mi>a</mi>\n<mo>&#175;</mo>\n</mover>\n<mtext>&#8201;</mtext><mo>=</mo><mfrac>\n<mrow>\n<mi>&#916;</mi><mi>v</mi>\n</mrow>\n<mrow>\n<mi>&#916;</mi><mi>t</mi>\n</mrow>\n</mfrac>\n<mo>=</mo><mfrac>\n
+        <mrow>\n    <msub>\n     <mi>v</mi>\n     <mtext>f</mtext>\n    </msub>\n    <mo>&#8722;</mo><msub>\n     <mi>v</mi>\n     <mn>0</mn>\n    </msub>\n    \n   </mrow>\n   <mrow>\n    <msub>\n     <mi>t</mi>\n     <mtext>f</mtext>\n    </msub>\n    <mo>&#8722;</mo><msub>\n     <mi>t</mi>\n     <mn>0</mn>\n    </msub>\n    \n   </mrow>\n  </mfrac>\n  \n
+        </mrow></annotation-xml></semantics></math> to emphasize the relationship
+        between &#916; and the subscripts &#8220;f&#8221; and &#8220;0.&#8221; Distinguish
+        between constant and variable acceleration. There could be confusion here,
+        especially in the case of increasing acceleration. Be sure students understand
+        that the word &#8220;deceleration&#8221; is not used in physics and that acceleration
+        can be positive or negative.</p><p id=\"fs-idp6693680\"><span class=\"ost-level-above\">[AL]</span>
+        See if students can use the concept of acceleration to understand confusing
+        statements such as &#8220;a decrease in the rate of increase.&#8221; For example,
+        use the concept of acceleration to analyze the statement &#8220;the rate of
+        increase in the cost of health care is decreasing.&#8221; If the increase
+        in the cost is defined as positive, then the &#8220;acceleration&#8221; in
+        the cost of health care would be negative.</p>\n<p id=\"fs-idm2513040\"><span
+        class=\"ost-level-on\">[OL]</span> The arrow for acceleration that points
+        opposite to the arrow for velocity a may be confusing. Explain that it points
+        in the direction opposite the velocity because it is the velocity is getting
+        smaller (i.e., the velocity arrow is getting shorter).</p>\n</div><p id=\"fs-idp44355664\">Acceleration
+        is the change in velocity divided by a period of time during which the change
+        occurs. The SI units of velocity are m/s and the SI units for time are s,
+        so the SI units for acceleration are m/s<sup>2</sup>. <span data-type=\"term\">Average
+        acceleration</span> is given by</p>\n\n<div data-type=\"equation\" id=\"fs-idm11502816\"
+        class=\"equation unnumbered ost-tag-lo-k12phys-ch03-s01-lo01\">\n<math xmlns=\"http://www.w3.org/1998/Math/MathML\"
+        display=\"block\"><semantics><mrow>\n <mrow>\n  <mover accent=\"true\">\n   <mi>a</mi>\n   <mo>&#175;</mo>\n  </mover>\n  <mo>=</mo><mfrac>\n   <mrow>\n    <mi>&#916;</mi><mi>v</mi>\n   </mrow>\n   <mrow>\n    <mi>&#916;</mi><mi>t</mi>\n   </mrow>\n  </mfrac>\n  <mo>=</mo><mfrac>\n   <mrow>\n    <msub>\n     <mi>v</mi>\n     <mtext>f</mtext>\n    </msub>\n    <mo>&#8722;</mo><msub>\n     <mi>v</mi>\n     <mn>0</mn>\n    </msub>\n    \n   </mrow>\n   <mrow>\n    <msub>\n     <mi>t</mi>\n     <mtext>f</mtext>\n    </msub>\n    <mo>&#8722;</mo><msub>\n     <mi>t</mi>\n     <mn>0</mn>\n    </msub>\n    \n   </mrow>\n  </mfrac>\n  \n
+        </mrow>\n</mrow><annotation-xml encoding=\"MathML-Content\"><mrow>\n  <mover
+        accent=\"true\">\n   <mi>a</mi>\n   <mo>&#175;</mo>\n  </mover>\n  <mo>=</mo><mfrac>\n   <mrow>\n    <mi>&#916;</mi><mi>v</mi>\n   </mrow>\n   <mrow>\n    <mi>&#916;</mi><mi>t</mi>\n   </mrow>\n  </mfrac>\n  <mo>=</mo><mfrac>\n   <mrow>\n    <msub>\n     <mi>v</mi>\n     <mtext>f</mtext>\n    </msub>\n    <mo>&#8722;</mo><msub>\n     <mi>v</mi>\n     <mn>0</mn>\n    </msub>\n    \n   </mrow>\n   <mrow>\n    <msub>\n     <mi>t</mi>\n     <mtext>f</mtext>\n    </msub>\n    <mo>&#8722;</mo><msub>\n     <mi>t</mi>\n     <mn>0</mn>\n    </msub>\n    \n   </mrow>\n  </mfrac>\n  \n
+        </mrow></annotation-xml></semantics></math>\n</div>\n\n<p id=\"fs-idp22305568\">Average
+        acceleration is distinguished from <span data-type=\"term\">instantaneous
+        acceleration</span>, which is acceleration at a specific instant in time.
+        The magnitude of acceleration is often not constant over time. For example,
+        runners in a race accelerate at a greater rate in the first second of a race
+        than during the following seconds. You do not need to know the instantaneous
+        acceleration at all times to calculate average acceleration. All you need
+        to know is the change in velocity (i.e., the final velocity minus the initial
+        velocity) and the change in time (i.e., the final time minus the initial time),
+        as shown in the formula. Note that the average acceleration can be positive,
+        negative, or zero. A <span data-type=\"term\">negative acceleration</span>
+        is simply an acceleration in the negative direction.</p><p id=\"fs-idp25862848\">Keep
+        in mind that, although acceleration points in the same direction as the <em
+        data-effect=\"italics\">change</em> in velocity, it is not always in the direction
+        of the velocity itself. When an object slows down, its acceleration is opposite
+        to the direction of its velocity. In everyday language, this is called deceleration,
+        but in physics, it is acceleration (whose direction happens to be opposite
+        that of the velocity). For now, let us assume that motion to the right along
+        the <em data-effect=\"italics\">x</em>-axis is &#8220;positive&#8221; and
+        motion to the left is &#8220;negative.&#8221;</p>\n<p id=\"fs-idp37610544\"><a
+        href=\"#Figure_03_01_Car\" class=\"autogenerated-content\">[link]</a> shows
+        a car with positive acceleration in (a) and negative acceleration in (b).
+        The arrows represent vectors showing the direction and magnitude of velocity
+        and acceleration.</p><figure id=\"Figure_03_01_Car\" class=\"ost-tag-lo-k12phys-ch03-s01-lo01\"><figcaption>The
+        car is speeding up in (a) and slowing down in (b).</figcaption>\n<span data-type=\"media\"
+        id=\"fs-idp52490976\" data-alt=\"Two similar cars are shown. The first car
+        is speeding up as indicated by a velocity vector and an acceleration vector
+        pointing to the right. The second car is slowing down as indicated by a velocity
+        vector pointing to the right and an acceleration vector pointing to the left.
+        Unlabeled x and y-axes are shown for reference.\">\n<img src=\"/resources/ae0cefd87a7be8d358302ab7d9cfeeb0d71d9818/CNX_HSPhysics_03_01_car.jpg\"
+        data-media-type=\"image/jpeg\" alt=\"Two similar cars are shown. The first
+        car is speeding up as indicated by a velocity vector and an acceleration vector
+        pointing to the right. The second car is slowing down as indicated by a velocity
+        vector pointing to the right and an acceleration vector pointing to the left.
+        Unlabeled x and y-axes are shown for reference.\"/>\n</span>\n\n</figure>\n\n<p
+        id=\"fs-idp56616272\">Velocity and acceleration are both <span data-type=\"term\"
+        class=\"no-emphasis\">vector quantities</span>. Recall that vectors have both
+        magnitude and direction. An object travelling at a constant velocity&#8212;therefore
+        having no acceleration&#8212;does accelerate if it changes direction. This
+        is why turning the steering wheel of a moving car makes the car accelerate:
+        its velocity changes direction.</p><div data-type=\"note\" data-has-label=\"true\"
+        id=\"fs-idp56122560\" class=\"note ost-assessed-feature os-interactive virtual-physics
+        ost-tag-lo-k12phys-ch03-s01-lo01\" data-label=\"Virtual Physics\"><div data-type=\"title\"
+        class=\"title\">The Moving Man</div>\n<p id=\"fs-idp24239584\">With this animation,
+        you can produce both variations of acceleration and velocity shown in the
+        simulation below, plus a few more. Vary the velocity and acceleration by sliding
+        the red and green markers along the scales. Keeping the velocity marker near
+        zero will make the effect of acceleration more obvious. Try changing acceleration
+        from positive to negative while the man is moving. We will come back to this
+        animation and look at the &#8220;Charts&#8221; view when we study graphical
+        representation of motion.</p><figure id=\"eip-idp10072272\" class=\"ost-embed-container\"><figcaption>\n<a
+        href=\"http://connexions.github.io/simulations/moving-man/\" class=\"os-embed\">Click
+        here for the Moving Man simulation</a>\n  </figcaption>\n<span data-type=\"media\"
+        id=\"eip-idp39684176\" data-alt=\"...\">\n    <img src=\"/resources/c965beb24bbbe1a0b8a47c569fcb7c41f36d7d47/Moving_Man_Sim.jpg\"
+        data-media-type=\"image/jpeg\" alt=\"...\"/>\n  </span>\n  \n</figure>\n\n<div
+        data-type=\"note\" data-has-label=\"true\" id=\"fs-idp50985968\" class=\"note
+        os-teacher\" data-label=\"Teacher Support\">\n<p id=\"fs-idp19127424\">Have
+        students use a very low setting for velocity and acceleration because it is
+        easier to see how the motion changes. Show them how setting velocity as positive
+        and acceleration as negative creates the motion that resembles that of an
+        object thrown into the air.</p>\n</div>\n<div data-type=\"exercise\" id=\"fs-idp9187104\"
+        class=\"exercise os-exercise grasp-check unnumbered\" data-label=\"Grasp Check\">\n<div
+        data-type=\"problem\" class=\"problem\" id=\"fs-idp20986976\">\n<p id=\"fs-idp7725440\">\n<a
+        href=\"#ost/api/ex/k12phys-ch03-ex001\" class=\"autogenerated-content\">[link]</a>\n</p>\n</div>\n</div></div></section><section
+        data-depth=\"1\" id=\"fs-idm27472368\" class=\"ost-tag-lo-k12phys-ch03-s01-lo02\"><h1
+        data-type=\"title\">Calculating Average Acceleration</h1>\n<p id=\"fs-idp36840768\">Remember
+        the equation for average acceleration: <math xmlns=\"http://www.w3.org/1998/Math/MathML\"
+        display=\"inline\"><semantics><mrow>\n <mrow>\n  <mover accent=\"true\">\n   <mi>a</mi>\n   <mo>&#175;</mo>\n  </mover>\n  <mo>=</mo><mfrac>\n   <mrow>\n    <mi>&#916;</mi><mi>v</mi>\n   </mrow>\n   <mrow>\n    <mi>&#916;</mi><mi>t</mi>\n   </mrow>\n  </mfrac>\n  <mo>=</mo><mfrac>\n   <mrow>\n    <msub>\n     <mi>v</mi>\n     <mtext>f</mtext>\n    </msub>\n    <mo>&#8722;</mo><msub>\n     <mi>v</mi>\n     <mn>0</mn>\n    </msub>\n    \n   </mrow>\n   <mrow>\n    <msub>\n     <mi>t</mi>\n     <mtext>f</mtext>\n    </msub>\n    <mo>&#8722;</mo><msub>\n     <mi>t</mi>\n     <mn>0</mn>\n    </msub>\n    \n   </mrow>\n  </mfrac>\n  \n
+        </mrow>\n</mrow><annotation-xml encoding=\"MathML-Content\"><mrow>\n  <mover
+        accent=\"true\">\n   <mi>a</mi>\n   <mo>&#175;</mo>\n  </mover>\n  <mo>=</mo><mfrac>\n   <mrow>\n    <mi>&#916;</mi><mi>v</mi>\n   </mrow>\n   <mrow>\n    <mi>&#916;</mi><mi>t</mi>\n   </mrow>\n  </mfrac>\n  <mo>=</mo><mfrac>\n   <mrow>\n    <msub>\n     <mi>v</mi>\n     <mtext>f</mtext>\n    </msub>\n    <mo>&#8722;</mo><msub>\n     <mi>v</mi>\n     <mn>0</mn>\n    </msub>\n    \n   </mrow>\n   <mrow>\n    <msub>\n     <mi>t</mi>\n     <mtext>f</mtext>\n    </msub>\n    <mo>&#8722;</mo><msub>\n     <mi>t</mi>\n     <mn>0</mn>\n    </msub>\n    \n   </mrow>\n  </mfrac>\n  \n
+        </mrow></annotation-xml></semantics></math>.\n You can see that the calculation
+        of average acceleration involves three values: change in time, &#916;<em data-effect=\"italics\">t</em>;
+        change in velocity, &#916;<em data-effect=\"italics\">v</em>; and acceleration,
+        <em data-effect=\"italics\">a</em>.</p><p id=\"fs-idp41662800\">Change in
+        <span data-type=\"term\" class=\"no-emphasis\">time</span> is often stated
+        as a time interval, and change in velocity can often be calculated by subtracting
+        the initial velocity from the final velocity. Average acceleration is then
+        simply change in velocity divided by change in time. Before you begin calculating,
+        be sure that all distances and times have been converted to meters and seconds.
+        Look at these examples of acceleration of a subway train.</p><div data-type=\"note\"
+        data-has-label=\"true\" id=\"fs-idm2891888\" class=\"note os-teacher\" data-label=\"Teacher
+        Support\">\n<p id=\"fs-idp6692672\"><span class=\"ost-level-below\">[BL]</span><span
+        class=\"ost-level-on\">[OL]</span> Before beginning the calculations, verify
+        that students understand the equation for acceleration. Do they understand
+        what it means when quantities have a plus or minus sign? Do they understand
+        the units for each variable?</p>\n</div><div data-type=\"note\" data-has-label=\"true\"
+        id=\"fs-idp42721584\" class=\"note ost-feature worked-example ost-tag-lo-k12phys-ch03-s01-lo02\"
+        data-label=\"Worked Example\"><div data-type=\"title\" class=\"title\">An
+        Accelerating Subway Train</div>\n<div data-type=\"exercise\" id=\"fs-idp17233664\"
+        class=\"exercise ost-k12phys-ch03-ex002 unnumbered\" data-label=\"\">\n<div
+        data-type=\"problem\" class=\"problem\" id=\"fs-idp6324528\">\n<p id=\"fs-idp15224384\">A
+        subway train accelerates from rest to 30.0 km/h in 20.0 s. What is the average
+        acceleration during that time interval? <a href=\"#Figure_03_01_Car\" class=\"autogenerated-content\">[link]</a></p><div
+        data-type=\"note\" class=\"note\" data-has-label=\"true\" id=\"eip-idp69732560\"
+        data-label=\"\"><div data-type=\"title\" class=\"title\">Strategy</div>\n\n<p
+        id=\"eip-idp40602976\">Start by making a simple sketch:</p>\n<figure id=\"Figure_03_01_velocity_img\"
+        data-label=\"\"><span data-type=\"media\" id=\"eip-idp51096160\" data-alt=\"A
+        velocity vector and an acceleration vector are shown. The original velocity
+        is zero kilometers per hour, and the final velocity is thirty kilometers per
+        hour. The acceleration is unknown. Both vectors are pointing to the right,
+        and the velocity vector is longer than the acceleration vector. Unlabeled
+        x and y-axes are shown reference.\">\n<img src=\"/resources/5d29e065fa8f79f3830492e4ebe4aed21835e7d0/CNX_HSPhysics_03_01_velocity_img.jpg\"
+        data-media-type=\"image/jpeg\" alt=\"A velocity vector and an acceleration
+        vector are shown. The original velocity is zero kilometers per hour, and the
+        final velocity is thirty kilometers per hour. The acceleration is unknown.
+        Both vectors are pointing to the right, and the velocity vector is longer
+        than the acceleration vector. Unlabeled x and y-axes are shown reference.\"/>\n</span></figure><p
+        id=\"eip-idp53967904\">This problem involves four steps: </p>\n<ol id=\"eip-idp46582480\"><li>Convert
+        to units of meters and seconds. </li>\n<li>Determine the change in velocity.  </li>\n<li>Determine
+        the change in time.  </li>\n<li>Use these values to calculate the average
+        acceleration. </li></ol>\n</div></div>\n<div data-type=\"solution\" class=\"solution\"
+        id=\"fs-idp57867792\">\n<ol id=\"fs-idp6286512\" data-number-style=\"arabic\"><li>Identify
+        the knowns. Be sure to read the problem for given information, which may not
+        &#8220;look&#8221; like numbers. When the problem states that the train starts
+        from rest, you can write down that the initial velocity is 0 m/s. Therefore:
+        <em data-effect=\"italics\">v</em><sub>0</sub> = 0; <em data-effect=\"italics\">v</em><sub>f</sub>
+        = 30.0 km/h; and &#916;<em data-effect=\"italics\">t</em> = 20.0 s</li>\n<li><p
+        id=\"eip-id1164353575973\">Convert the units:</p>\n<div data-type=\"equation\"
+        class=\"equation\" id=\"eip-id1164353575976\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"
+        display=\"block\"><semantics><mrow>\n <mrow>\n  <mfrac>\n   <mrow>\n    <mn>30.0</mn><mtext>&#8201;</mtext><mtext>km</mtext>\n   </mrow>\n   <mtext>h</mtext>\n  </mfrac>\n  <mo>&#215;</mo><mfrac>\n   <mrow>\n    <msup>\n     <mrow>\n      <mn>10</mn>\n     </mrow>\n     <mn>3</mn>\n    </msup>\n    <mtext>&#8201;</mtext><mtext>m</mtext>\n   </mrow>\n   <mrow>\n    <mtext>&#8201;</mtext><mn>1</mn><mtext>&#8201;</mtext><mtext>km</mtext>\n   </mrow>\n  </mfrac>\n  <mo>&#215;</mo><mfrac>\n   <mrow>\n    <mn>1</mn><mtext>&#8201;</mtext><mtext>h</mtext>\n   </mrow>\n   <mrow>\n    <mn>3600</mn><mtext>&#8201;</mtext><mtext>s</mtext>\n   </mrow>\n  </mfrac>\n  <mo>=</mo><mn>8.333</mn><mfrac>\n   <mtext>m</mtext>\n   <mtext>s</mtext>\n  </mfrac>\n
+        </mrow>\n</mrow><annotation-xml encoding=\"MathML-Content\"><mrow>\n  <mfrac>\n   <mrow>\n    <mn>30.0</mn><mtext>&#8201;</mtext><mtext>km</mtext>\n   </mrow>\n   <mtext>h</mtext>\n  </mfrac>\n  <mo>&#215;</mo><mfrac>\n   <mrow>\n    <msup>\n     <mrow>\n      <mn>10</mn>\n     </mrow>\n     <mn>3</mn>\n    </msup>\n    <mtext>&#8201;</mtext><mtext>m</mtext>\n   </mrow>\n   <mrow>\n    <mtext>&#8201;</mtext><mn>1</mn><mtext>&#8201;</mtext><mtext>km</mtext>\n   </mrow>\n  </mfrac>\n  <mo>&#215;</mo><mfrac>\n   <mrow>\n    <mn>1</mn><mtext>&#8201;</mtext><mtext>h</mtext>\n   </mrow>\n   <mrow>\n    <mn>3600</mn><mtext>&#8201;</mtext><mtext>s</mtext>\n   </mrow>\n  </mfrac>\n  <mo>=</mo><mn>8.333</mn><mfrac>\n   <mtext>m</mtext>\n   <mtext>s</mtext>\n  </mfrac>\n
+        </mrow></annotation-xml></semantics></math>\n</div>\n</li>\n<li>Calculate
+        change in velocity, <math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><semantics><mrow>\n
+        <mrow>\n  <mi>&#916;</mi><mi>v</mi><mo>=</mo><msub>\n   <mi>v</mi>\n   <mtext>f</mtext>\n  </msub>\n  <mo>&#8722;</mo><msub>\n   <mi>v</mi>\n   <mn>0</mn>\n  </msub>\n  <mo>=</mo><mn>8.333</mn><mtext>&#8201;</mtext><mtext>m/s</mtext><mo>&#8722;</mo><mn>0</mn><mo>=</mo><mo>+</mo><mn>8.333</mn><mtext>&#8201;</mtext><mtext>m/s</mtext>\n
+        </mrow>\n</mrow><annotation-xml encoding=\"MathML-Content\"><mrow>\n  <mi>&#916;</mi><mi>v</mi><mo>=</mo><msub>\n   <mi>v</mi>\n   <mtext>f</mtext>\n  </msub>\n  <mo>&#8722;</mo><msub>\n   <mi>v</mi>\n   <mn>0</mn>\n  </msub>\n  <mo>=</mo><mn>8.333</mn><mtext>&#8201;</mtext><mtext>m/s</mtext><mo>&#8722;</mo><mn>0</mn><mo>=</mo><mo>+</mo><mn>8.333</mn><mtext>&#8201;</mtext><mtext>m/s</mtext>\n
+        </mrow></annotation-xml></semantics></math>, where the plus sign means the
+        change in velocity is to the right.</li>\n<li><p id=\"fs-idm13131248\">We
+        know &#916;<em data-effect=\"italics\">t</em>, so all we have to do is insert
+        the known values into the formula for average acceleration:</p>\n<div data-type=\"equation\"
+        class=\"equation\" id=\"fs-idp50157200\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"
+        display=\"block\"><semantics><mrow>\n <mrow>\n  <mover accent=\"true\">\n   <mi>a</mi>\n   <mo>&#175;</mo>\n  </mover>\n  <mo>=</mo><mfrac>\n   <mrow>\n    <mi>&#916;</mi><mi>v</mi>\n   </mrow>\n   <mrow>\n    <mi>&#916;</mi><mi>t</mi>\n   </mrow>\n  </mfrac>\n  <mo>=</mo><mfrac>\n   <mrow>\n    <mn>8.333</mn><mtext>&#8201;</mtext><mtext>m/s</mtext>\n   </mrow>\n   <mrow>\n    <mn>20.0</mn><mtext>&#8201;</mtext><mtext>s</mtext>\n   </mrow>\n  </mfrac>\n  <mo>=</mo><mo>+</mo><mn>0.417</mn><mfrac>\n   <mtext>m</mtext>\n   <mrow>\n    <msup>\n     <mtext>s</mtext>\n     <mtext>2</mtext>\n    </msup>\n    \n   </mrow>\n  </mfrac>\n  \n
+        </mrow>\n</mrow><annotation-xml encoding=\"MathML-Content\"><mrow>\n  <mover
+        accent=\"true\">\n   <mi>a</mi>\n   <mo>&#175;</mo>\n  </mover>\n  <mo>=</mo><mfrac>\n   <mrow>\n    <mi>&#916;</mi><mi>v</mi>\n   </mrow>\n   <mrow>\n    <mi>&#916;</mi><mi>t</mi>\n   </mrow>\n  </mfrac>\n  <mo>=</mo><mfrac>\n   <mrow>\n    <mn>8.333</mn><mtext>&#8201;</mtext><mtext>m/s</mtext>\n   </mrow>\n   <mrow>\n    <mn>20.0</mn><mtext>&#8201;</mtext><mtext>s</mtext>\n   </mrow>\n  </mfrac>\n  <mo>=</mo><mo>+</mo><mn>0.417</mn><mfrac>\n   <mtext>m</mtext>\n   <mrow>\n    <msup>\n     <mtext>s</mtext>\n     <mtext>2</mtext>\n    </msup>\n    \n   </mrow>\n  </mfrac>\n  \n
+        </mrow></annotation-xml></semantics></math></div>\n</li>\n</ol></div>\n<div
+        data-type=\"commentary\" class=\"commentary\" id=\"fs-idp14591072\"><div data-type=\"title\">Discussion</div>\n<p
+        id=\"fs-idp1446624\">The plus sign in the answer means that acceleration is
+        to the right. This is a reasonable conclusion because the train starts from
+        rest and ends up with a velocity directed to the right (i.e., positive). So
+        acceleration is in the same direction as the <em data-effect=\"italics\">change</em>
+        in velocity, as it should be.</p>\n<div data-type=\"note\" data-has-label=\"true\"
+        id=\"fs-idm16457456\" class=\"note os-teacher\" data-label=\"Teacher Support\">\n<p
+        id=\"fs-idm58747504\">Note that extra digits were carried along and rounding
+        off to the correct number of significant figures, 3, was not done until the
+        final answer was calculated.</p>\n</div></div>\n</div></div><section data-depth=\"2\"
+        id=\"fs-idm1835456\" class=\"os-practice-problems ost-exercise-choice\"><h2
+        data-type=\"title\">Practice Problems</h2>\n<div data-type=\"exercise\" id=\"fs-idp25744304\"
+        class=\"exercise os-exercise\">\n<div data-type=\"problem\" class=\"problem\"
+        id=\"fs-idp59062448\">\n<p id=\"fs-idp2005936\">\n<a href=\"#ost/api/ex/k12phys-ch03-ex004\"
+        class=\"autogenerated-content\">[link]</a>\n</p>\n</div>\n</div>\n<div data-type=\"exercise\"
+        id=\"fs-idp37722688\" class=\"exercise os-exercise\">\n<div data-type=\"problem\"
+        class=\"problem\" id=\"fs-idp15818576\">\n<p id=\"fs-idp2352976\">\n<a href=\"#ost/api/ex/k12phys-ch03-ex005\"
+        class=\"autogenerated-content\">[link]</a>\n</p>\n</div>\n</div>\n</section>\n\n<div
+        data-type=\"note\" data-has-label=\"true\" id=\"fs-idm3223168\" class=\"note
+        watch-physics ost-assessed-feature ost-video ost-tag-lo-k12phys-ch03-s01-lo02\"
+        data-label=\"Watch Physics\"><div data-type=\"title\" class=\"title\">Acceleration</div>\n\n<p
+        id=\"fs-idm41969712\">This video shows the basic calculation of acceleration
+        and some useful unit conversions.</p>\n<div data-type=\"media\" id=\"fs-idp1939200\"
+        data-alt=\"This link takes you to a lecture that shows the basic calculation
+        of acceleration.\" class=\"os-embed\">\n<iframe width=\"660\" height=\"371.4\"
+        src=\"https://www.khanacademy.org/embed_video?v=FOkQszg1-j8\"/>\n</div>\n<div
+        data-type=\"note\" data-has-label=\"true\" id=\"fs-idp47197296\" class=\"note
+        os-teacher\" data-label=\"Teacher Support\">\n<p id=\"fs-idm17064800\">Ask
+        students to note the explanation of units and the identification of the vector
+        quantities. Tell them the calculations demonstrated in the video are fairly
+        straightforward and that the definitions given for displacement, elapsed time,
+        velocity, and acceleration should be clear.</p>\n</div>\n<div data-type=\"exercise\"
+        id=\"fs-idm9377712\" class=\"exercise os-exercise grasp-check unnumbered\"
+        data-label=\"Grasp Check\">\n<div data-type=\"problem\" class=\"problem\"
+        id=\"fs-idp38160256\">\n<p id=\"fs-idm22950864\">\n<a href=\"#ost/api/ex/k12phys-ch03-ex006\"
+        class=\"autogenerated-content\">[link]</a>\n</p>\n</div>\n</div>\n</div><div
+        data-type=\"note\" data-has-label=\"true\" id=\"fs-idp58007968\" class=\"note
+        ost-assignable ost-reading-discard ost-assessed-feature snap-lab students-2
+        safety-warning ost-tag-lo-k12phys-ch03-s01-lo02\" data-label=\"Snap Lab\"><div
+        data-type=\"title\" class=\"title\">Measure the Acceleration of a Bicycle
+        on a Slope</div>\n<p id=\"fs-idp20446944\">In this lab you will take measurements
+        to determine if the acceleration of a moving bicycle is constant. If the acceleration
+        is constant, then the following relationships hold: <math xmlns=\"http://www.w3.org/1998/Math/MathML\"
+        display=\"inline\"><semantics><mrow>\n <mrow>\n  <mover accent=\"true\">\n   <mi>v</mi>\n   <mo>&#175;</mo>\n  </mover>\n  <mo>=</mo><mfrac>\n   <mrow>\n    <mi>&#916;</mi><mi>d</mi>\n   </mrow>\n   <mrow>\n    <mi>&#916;</mi><mi>t</mi>\n   </mrow>\n  </mfrac>\n  <mo>=</mo><mfrac>\n   <mrow>\n    <msub>\n     <mi>v</mi>\n     <mn>0</mn>\n    </msub>\n    <mo>+</mo><msub>\n     <mi>v</mi>\n     <mtext>f</mtext>\n    </msub>\n    \n   </mrow>\n   <mn>2</mn>\n  </mfrac>\n  \n
+        </mrow>\n</mrow><annotation-xml encoding=\"MathML-Content\"><mrow>\n  <mover
+        accent=\"true\">\n   <mi>v</mi>\n   <mo>&#175;</mo>\n  </mover>\n  <mo>=</mo><mfrac>\n   <mrow>\n    <mi>&#916;</mi><mi>d</mi>\n   </mrow>\n   <mrow>\n    <mi>&#916;</mi><mi>t</mi>\n   </mrow>\n  </mfrac>\n  <mo>=</mo><mfrac>\n   <mrow>\n    <msub>\n     <mi>v</mi>\n     <mn>0</mn>\n    </msub>\n    <mo>+</mo><msub>\n     <mi>v</mi>\n     <mtext>f</mtext>\n    </msub>\n    \n   </mrow>\n   <mn>2</mn>\n  </mfrac>\n  \n
+        </mrow></annotation-xml></semantics></math>\n If <math xmlns=\"http://www.w3.org/1998/Math/MathML\"
+        display=\"inline\"><semantics><mrow>\n <mrow>\n  <msub>\n   <mi>v</mi>\n   <mn>0</mn>\n  </msub>\n  <mo>=</mo><mn>0</mn>\n
+        </mrow>\n</mrow><annotation-xml encoding=\"MathML-Content\"><mrow>\n  <msub>\n   <mi>v</mi>\n   <mn>0</mn>\n  </msub>\n  <mo>=</mo><mn>0</mn>\n
+        </mrow></annotation-xml></semantics></math>\n, then <math xmlns=\"http://www.w3.org/1998/Math/MathML\"
+        display=\"inline\"><semantics><mrow>\n <mrow>\n  <msub>\n   <mi>v</mi>\n   <mtext>f</mtext>\n  </msub>\n  <mo>=</mo><mn>2</mn><mover
+        accent=\"true\">\n   <mi>v</mi>\n   <mo>&#175;</mo>\n  </mover>\n  \n </mrow>\n</mrow><annotation-xml
+        encoding=\"MathML-Content\"><mrow>\n  <msub>\n   <mi>v</mi>\n   <mtext>f</mtext>\n  </msub>\n  <mo>=</mo><mn>2</mn><mover
+        accent=\"true\">\n   <mi>v</mi>\n   <mo>&#175;</mo>\n  </mover>\n  \n </mrow></annotation-xml></semantics></math>\n
+        and <math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><semantics><mrow>\n
+        <mrow>\n  <mover accent=\"true\">\n   <mi>a</mi>\n   <mo>&#175;</mo>\n  </mover>\n  <mo>=</mo><mfrac>\n   <mrow>\n    <msub>\n     <mi>v</mi>\n     <mtext>f</mtext>\n    </msub>\n    \n   </mrow>\n   <mrow>\n    <mi>&#916;</mi><mi>t</mi>\n   </mrow>\n  </mfrac>\n  \n
+        </mrow>\n</mrow><annotation-xml encoding=\"MathML-Content\"><mrow>\n  <mover
+        accent=\"true\">\n   <mi>a</mi>\n   <mo>&#175;</mo>\n  </mover>\n  <mo>=</mo><mfrac>\n   <mrow>\n    <msub>\n     <mi>v</mi>\n     <mtext>f</mtext>\n    </msub>\n    \n   </mrow>\n   <mrow>\n    <mi>&#916;</mi><mi>t</mi>\n   </mrow>\n  </mfrac>\n  \n
+        </mrow></annotation-xml></semantics></math>.</p>\n<p id=\"fs-idp24601632\">You
+        will work in pairs to measure and record data for a bicycle coasting down
+        an incline on a uniform, gentle slope. The data will consist of distances
+        traveled and elapsed times.</p>\n<ul data-labeled-item=\"true\" id=\"fs-idm32837456\"
+        class=\"warnings\" data-label=\"Safety Warnings\">\n<li>Find an open area
+        to minimize the risk of injury during this lab.</li>\n</ul>\n<ul id=\"fs-idp50621536\"
+        class=\"materials\" data-label=\"Materials\">\n<li>stopwatch</li>\n<li>measuring
+        tape</li>\n<li>bicycle</li>\n</ul>\n<ol id=\"fs-idp12409168\">\n<li>Find a
+        gentle, paved slope, such as an incline on a bike path. The more gentle the
+        slope, the more accurate your data is likely to be.</li>\n<li>Mark uniform
+        distances along the slope, such as 5 m, 10 m, etc.</li>\n<li>Determine the
+        following roles: the bike rider, the timer, and the recorder. The recorder
+        should create a data table to collect the distance and time data.</li>\n<li>Have
+        the rider at the starting point at rest on the bike. When the timer calls
+        &#8220;Start,&#8221; the timer starts the stopwatch and the rider begins coasting
+        down the slope on the bike without pedaling.</li>\n<li>Have the timer call
+        out the elapsed times as the bike passes each marked point. The recorder should
+        record the times in the data table. It may be necessary to repeat the process
+        to practice roles and make necessary adjustments.</li>\n<li>Once acceptable
+        data has been recorded, switch roles. Repeat Steps 3&#8211;5 to collect a
+        second set of data.</li>\n<li>Switch roles again to collect a third set of
+        data.</li>\n<li>Calculate average acceleration for each set of distance-time
+        data. If your result for <math xmlns=\"http://www.w3.org/1998/Math/MathML\"
+        display=\"inline\"><semantics><mrow><mover accent=\"true\"><mi>a</mi><mo>&#175;</mo></mover></mrow><annotation-xml
+        encoding=\"MathML-Content\"><mover accent=\"true\"><mi>a</mi><mo>&#175;</mo></mover></annotation-xml></semantics></math>
+        is not the same for different pairs of &#916;<em data-effect=\"italics\">v</em>
+        and &#916;<em data-effect=\"italics\">t</em>, then acceleration is not constant.</li>\n<li>Interpret
+        your results.</li>\n</ol>\n\n<div data-type=\"note\" data-has-label=\"true\"
+        id=\"fs-idp14002656\" class=\"note os-teacher\" data-label=\"Teacher Support\">\n<p
+        id=\"fs-idp14290224\">Explain that two factors that could prevent uniform
+        acceleration are (i) friction between the tires and the pavement and in the
+        bicycle axles, and (ii) air resistance. Discuss methods for minimizing these
+        factors (e.g., selecting a smooth surface for the bike to coast, greasing
+        the axels, etc.). Explain that friction will only decrease acceleration, but
+        air resistance to a tail wind would increase acceleration. Discuss why it
+        would be difficult to study constant acceleration if students were to pedal
+        the bicycle. Note that the given kinematic equation that is valid for constant
+        acceleration, which is presented at the start of the Snap Lab!, will be presented
+        in further detail in the following section.</p>\n<p id=\"fs-idp21164368\">Prior
+        to the lab, investigate appropriate areas around the school that have gentle,
+        uniform slopes. Should the number of bicycles be limited, consider conducting
+        the lab as a whole class or in larger clusters. Ensure that the planned paths
+        of student groups not cross and that there is adequate space for riders to
+        stop without risk of injury.</p>\n</div>\n<div data-type=\"exercise\" id=\"fs-idp49731264\"
+        class=\"exercise os-exercise grasp-check unnumbered\" data-label=\"Grasp Check\">\n<div
+        data-type=\"problem\" class=\"problem\" id=\"fs-idp29276832\">\n<p id=\"fs-idp231936\">\n<a
+        href=\"#ost/api/ex/k12phys-ch03-ex008\" class=\"autogenerated-content\">[link]</a>\n</p>\n</div>\n</div>\n</div>\n</section>\n<section
+        data-depth=\"1\" id=\"fs-idm93639936\" class=\"os-practice-concepts ost-reading-discard\"><h1
+        data-type=\"title\">Check Your Understanding</h1>\n<div data-type=\"note\"
+        data-has-label=\"true\" id=\"fs-idp2540320\" class=\"note os-teacher\" data-label=\"Teacher
+        Support\">\n<p id=\"fs-idp7464112\">Use these questions to assess student
+        achievement of the section&#8217;s Learning Objectives. If students are struggling
+        with a specific objective, these questions will help identify which and direct
+        students to the relevant content.</p>\n</div><div data-type=\"exercise\" id=\"fs-idm96016\"
+        class=\"exercise os-exercise\">\n<div data-type=\"problem\" class=\"problem\"
+        id=\"fs-idp1965728\">\n<p id=\"fs-idp34384608\">\n<a href=\"#ost/api/ex/k12phys-ch03-ex009\"
+        class=\"autogenerated-content\">[link]</a>\n</p>\n</div>\n</div>\n<div data-type=\"exercise\"
+        id=\"fs-idm7907216\" class=\"exercise os-exercise\">\n<div data-type=\"problem\"
+        class=\"problem\" id=\"fs-idp14866672\">\n<p id=\"fs-idm12694144\">\n<a href=\"#ost/api/ex/k12phys-ch03-ex010\"
+        class=\"autogenerated-content\">[link]</a>\n</p>\n</div>\n</div>\n</section>\n\n<section
+        data-depth=\"1\" id=\"fs-idm9378240\" class=\"summary ost-reading-discard\"><h1
+        data-type=\"title\">Section Summary</h1>\n<ul id=\"fs-idm9527648\">\n<li>Acceleration
+        is the rate of change of velocity and may be negative or positive.</li>\n<li>Average
+        acceleration is expressed in m/s2 and, in one dimension, can be calculated
+        by using <math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><semantics><mrow>\n
+        <mrow>\n  <mover accent=\"true\">\n   <mi>a</mi>\n   <mo>&#175;</mo>\n  </mover>\n  <mo>=</mo><mfrac>\n   <mrow>\n    <mi>&#916;</mi><mi>v</mi>\n   </mrow>\n   <mrow>\n    <mi>&#916;</mi><mi>t</mi>\n   </mrow>\n  </mfrac>\n  <mo>=</mo><mfrac>\n   <mrow>\n    <msub>\n     <mi>v</mi>\n     <mtext>f</mtext>\n    </msub>\n    <mo>&#8722;</mo><msub>\n     <mi>v</mi>\n     <mn>0</mn>\n    </msub>\n    \n   </mrow>\n   <mrow>\n    <msub>\n     <mi>t</mi>\n     <mtext>f</mtext>\n    </msub>\n    <mo>&#8722;</mo><msub>\n     <mi>t</mi>\n     <mi>o</mi>\n    </msub>\n    \n   </mrow>\n  </mfrac>\n  \n
+        </mrow>\n</mrow><annotation-xml encoding=\"MathML-Content\"><mrow>\n  <mover
+        accent=\"true\">\n   <mi>a</mi>\n   <mo>&#175;</mo>\n  </mover>\n  <mo>=</mo><mfrac>\n   <mrow>\n    <mi>&#916;</mi><mi>v</mi>\n   </mrow>\n   <mrow>\n    <mi>&#916;</mi><mi>t</mi>\n   </mrow>\n  </mfrac>\n  <mo>=</mo><mfrac>\n   <mrow>\n    <msub>\n     <mi>v</mi>\n     <mtext>f</mtext>\n    </msub>\n    <mo>&#8722;</mo><msub>\n     <mi>v</mi>\n     <mn>0</mn>\n    </msub>\n    \n   </mrow>\n   <mrow>\n    <msub>\n     <mi>t</mi>\n     <mtext>f</mtext>\n    </msub>\n    <mo>&#8722;</mo><msub>\n     <mi>t</mi>\n     <mi>o</mi>\n    </msub>\n    \n   </mrow>\n  </mfrac>\n  \n
+        </mrow></annotation-xml></semantics></math>\n</li>\n</ul>\n</section>\n\n<section
+        data-depth=\"1\" id=\"fs-idp35380400\" class=\"ost-reading-discard key-equations\"><h1
+        data-type=\"title\">Key Equations</h1><table id=\"eip-972\" summary=\"The
+        list of Key Equations includes the equation for average acceleration\" data-label=\"\"><colgroup><col
+        data-align=\"left\"/><col data-align=\"left\"/></colgroup><tbody>\n  <tr>\n    <td><strong>Average
+        acceleration</strong></td>\n    <td><div data-type=\"equation\" id=\"eip-id1164354922054\"
+        class=\"equation unnumbered\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"
+        display=\"block\"><semantics><mrow>\n <mrow>\n  <mover accent=\"true\">\n   <mi>a</mi>\n   <mo>&#175;</mo>\n  </mover>\n  <mo>=</mo><mfrac>\n   <mrow>\n    <mi>&#916;</mi><mi>v</mi>\n   </mrow>\n   <mrow>\n    <mi>&#916;</mi><mi>t</mi>\n   </mrow>\n  </mfrac>\n  <mo>=</mo><mfrac>\n   <mrow>\n    <msub>\n     <mi>v</mi>\n     <mtext>f</mtext>\n    </msub>\n    <mo>&#8722;</mo><msub>\n     <mi>v</mi>\n     <mn>0</mn>\n    </msub>\n    \n   </mrow>\n   <mrow>\n    <msub>\n     <mi>t</mi>\n     <mtext>f</mtext>\n    </msub>\n    <mo>&#8722;</mo><msub>\n     <mi>t</mi>\n     <mi>o</mi>\n    </msub>\n    \n   </mrow>\n  </mfrac>\n  \n
+        </mrow>\n</mrow><annotation-xml encoding=\"MathML-Content\"><mrow>\n  <mover
+        accent=\"true\">\n   <mi>a</mi>\n   <mo>&#175;</mo>\n  </mover>\n  <mo>=</mo><mfrac>\n   <mrow>\n    <mi>&#916;</mi><mi>v</mi>\n   </mrow>\n   <mrow>\n    <mi>&#916;</mi><mi>t</mi>\n   </mrow>\n  </mfrac>\n  <mo>=</mo><mfrac>\n   <mrow>\n    <msub>\n     <mi>v</mi>\n     <mtext>f</mtext>\n    </msub>\n    <mo>&#8722;</mo><msub>\n     <mi>v</mi>\n     <mn>0</mn>\n    </msub>\n    \n   </mrow>\n   <mrow>\n    <msub>\n     <mi>t</mi>\n     <mtext>f</mtext>\n    </msub>\n    <mo>&#8722;</mo><msub>\n     <mi>t</mi>\n     <mi>o</mi>\n    </msub>\n    \n   </mrow>\n  </mfrac>\n  \n
+        </mrow></annotation-xml></semantics></math>\n</div></td>\n  </tr>\n</tbody></table></section><section
+        data-depth=\"1\" id=\"fs-idp21023312\" class=\"ost-reading-discard ost-chapter-review
+        concept\"><h1 data-type=\"title\">Concept Items</h1>\n<div data-type=\"exercise\"
+        id=\"fs-idm94893408\" class=\"exercise os-exercise\">\n<div data-type=\"problem\"
+        class=\"problem\" id=\"fs-idp27174016\">\n<p id=\"fs-idp42379248\">\n<a href=\"#ost/api/ex/k12phys-ch03-ex011\"
+        class=\"autogenerated-content\">[link]</a>\n</p>\n</div>\n</div>\n</section>\n<section
+        data-depth=\"1\" id=\"fs-idp66548080\" class=\"ost-reading-discard ost-chapter-review
+        critical-thinking\"><h1 data-type=\"title\">Critical Thinking Items</h1>\n<div
+        data-type=\"exercise\" id=\"fs-idm25988896\" class=\"exercise os-exercise\">\n<div
+        data-type=\"problem\" class=\"problem\" id=\"fs-idp32355296\">\n<p id=\"fs-idm36430304\">\n<a
+        href=\"#ost/api/ex/k12phys-ch03-ex012\" class=\"autogenerated-content\">[link]</a>\n</p>\n</div>\n</div>\n</section>\n<section
+        data-depth=\"1\" id=\"fs-idp16539568\" class=\"ost-reading-discard ost-chapter-review
+        problem\"><h1 data-type=\"title\">Problems</h1>\n<div data-type=\"exercise\"
+        id=\"fs-idp25246160\" class=\"exercise os-exercise\">\n<div data-type=\"problem\"
+        class=\"problem\" id=\"fs-idm74159440\">\n<p id=\"fs-idp62495152\">\n<a href=\"#ost/api/ex/k12phys-ch03-ex013\"
+        class=\"autogenerated-content\">[link]</a>\n</p>\n</div>\n</div>\n<div data-type=\"exercise\"
+        id=\"fs-idp59012320\" class=\"exercise os-exercise\">\n<div data-type=\"problem\"
+        class=\"problem\" id=\"fs-idm48613872\">\n<p id=\"fs-idp28495072\">\n<a href=\"#ost/api/ex/k12phys-ch03-ex014\"
+        class=\"autogenerated-content\">[link]</a>\n</p>\n</div>\n</div>\n</section>\n\n<section
+        data-depth=\"1\" id=\"fs-idp30946192\" class=\"ost-reading-discard ost-test-prep
+        multiple-choice\"><h1 data-type=\"title\">Test Prep Multiple Choice</h1>\n<div
+        data-type=\"exercise\" id=\"fs-idm9033648\" class=\"exercise os-exercise\">\n<div
+        data-type=\"problem\" class=\"problem\" id=\"fs-idm512032\">\n<p id=\"fs-idm3500608\">\n<a
+        href=\"#ost/api/ex/k12phys-ch03-ex015\" class=\"autogenerated-content\">[link]</a>\n</p>\n</div>\n</div>\n<div
+        data-type=\"exercise\" id=\"fs-idm141844320\" class=\"exercise os-exercise\">\n<div
+        data-type=\"problem\" class=\"problem\" id=\"fs-idp5724784\">\n<p id=\"fs-idm3898080\">\n<a
+        href=\"#ost/api/ex/k12phys-ch03-ex016\" class=\"autogenerated-content\">[link]</a>\n</p>\n</div>\n</div>\n</section>\n<section
+        data-depth=\"1\" id=\"fs-idm14002752\" class=\"ost-reading-discard ost-test-prep
+        short-answer\"><h1 data-type=\"title\">Test Prep Short Answer</h1>\n<div data-type=\"exercise\"
+        id=\"fs-idm40699088\" class=\"exercise os-exercise\">\n<div data-type=\"problem\"
+        class=\"problem\" id=\"fs-idm26784944\">\n<p id=\"fs-idm3361904\">\n<a href=\"#ost/api/ex/k12phys-ch03-ex017\"
+        class=\"autogenerated-content\">[link]</a>\n</p>\n</div>\n</div>\n<div data-type=\"exercise\"
+        id=\"fs-idp40450800\" class=\"exercise os-exercise\">\n<div data-type=\"problem\"
+        class=\"problem\" id=\"fs-idp34972432\">\n<p id=\"fs-idm82246272\">\n<a href=\"#ost/api/ex/k12phys-ch03-ex018\"
+        class=\"autogenerated-content\">[link]</a>\n</p>\n</div>\n</div>\n<div data-type=\"exercise\"
+        id=\"fs-idp30486784\" class=\"exercise os-exercise\">\n<div data-type=\"problem\"
+        class=\"problem\" id=\"fs-idp6068768\">\n<p id=\"fs-idp27414480\">\n<a href=\"#ost/api/ex/k12phys-ch03-ex019\"
+        class=\"autogenerated-content\">[link]</a>\n</p>\n</div>\n</div>\n<div data-type=\"exercise\"
+        id=\"fs-idm39098688\" class=\"exercise os-exercise\">\n<div data-type=\"problem\"
+        class=\"problem\" id=\"fs-idm8375696\">\n<p id=\"fs-idp36067616\">\n<a href=\"#ost/api/ex/k12phys-ch03-ex020\"
+        class=\"autogenerated-content\">[link]</a>\n</p>\n</div>\n</div>\n</section>\n\n<section
+        data-depth=\"1\" id=\"fs-idm16520384\" class=\"ost-reading-discard ost-test-prep
+        extended-response\"><h1 data-type=\"title\">Test Prep Extended Response</h1>\n<div
+        data-type=\"exercise\" id=\"fs-idm11852608\" class=\"exercise os-exercise\">\n<div
+        data-type=\"problem\" class=\"problem\" id=\"fs-idm15178352\">\n<p id=\"fs-idm8444608\">\n<a
+        href=\"#ost/api/ex/k12phys-ch03-ex021\" class=\"autogenerated-content\">[link]</a>\n</p>\n</div>\n</div>\n<div
+        data-type=\"exercise\" id=\"fs-idm75037648\" class=\"exercise os-exercise\">\n<div
+        data-type=\"problem\" class=\"problem\" id=\"fs-idm19363936\">\n<p id=\"fs-idm15049488\">\n<a
+        href=\"#ost/api/ex/k12phys-ch03-ex022\" class=\"autogenerated-content\">[link]</a>\n</p>\n</div>\n</div>\n</section>\n\n<div
+        data-type=\"glossary\"><h2 data-type=\"glossary-title\">Glossary</h2>\n<dl
+        class=\"definition\" id=\"fs-idm16637648\">\n<dt>average acceleration</dt><dd
+        id=\"fs-idm23520624\">change in velocity divided by the time interval over
+        which it changed</dd>\n</dl>\n<dl class=\"definition\" id=\"fs-idm516880\">\n<dt>instantaneous
+        acceleration</dt> <dd id=\"fs-idm46472224\">rate of change of velocity at
+        a specific instant in time</dd>\n</dl>\n<dl class=\"definition\" id=\"fs-idp14365632\">\n<dt>negative
+        acceleration</dt> <dd id=\"fs-idm23612832\">acceleration in the negative direction</dd>\n</dl>\n</div></body>\n\n</html>",
+        "subjects": ["Science and Technology"], "legacy_id": "m43249", "parentId":
+        null, "publishers": [{"surname": "HSPhysics", "suffix": null, "firstname":
+        "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}],
+        "parent": {"authors": [], "version": "", "id": null, "title": null}, "stateid":
+        1, "parentTitle": null, "authors": [{"surname": "HSPhysics", "suffix": null,
+        "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}],
+        "parentVersion": "", "legacy_version": "1.7", "licensors": [{"surname": "HSPhysics",
+        "suffix": null, "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics",
+        "id": "tutor_hsphysics"}], "language": "en", "license": {"url": "http://creativecommons.org/licenses/by/4.0/",
+        "code": "by", "version": "4.0", "name": "Attribution"}, "created": "2015-05-29T19:05:34Z",
+        "doctype": "", "buyLink": null, "submitter": {"surname": "HSPhysics", "suffix":
+        null, "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id":
+        "tutor_hsphysics"}, "parentAuthors": [], "history": [{"changes": "created
+        links to figures within same step, different steps", "version": "7", "revised":
+        "2015-07-08T12:50:38Z", "publisher": {"surname": "HSPhysics", "suffix": null,
+        "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}},
+        {"changes": "removed \"all\" from \"do not need to know all the instantaneous
+        acceleration values\"", "version": "6", "revised": "2015-06-10T19:34:01Z",
+        "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
+        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
+        "updated list in worked example for enumeration rather than bullet points",
+        "version": "5", "revised": "2015-06-09T20:31:50Z", "publisher": {"surname":
+        "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "", "fullname":
+        "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "changed figure
+        to simulation in edited narrative text", "version": "4", "revised": "2015-06-01T20:59:27Z",
+        "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
+        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
+        "Nothing", "version": "3", "revised": "2015-06-01T16:27:46Z", "publisher":
+        {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
+        "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "Removed
+        Links, Worked Example, and 2nd Grasp Check", "version": "2", "revised": "2015-06-01T15:22:19Z",
+        "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
+        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
+        "Created, imported module for editing", "version": "1", "revised": "2015-05-29T19:07:11Z",
+        "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
+        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
+    http_version: 
+  recorded_at: Thu, 09 Jul 2015 17:41:47 GMT
+- request:
+    method: get
     uri: https://archive-staging-tutor.cnx.org/contents/ccbc51fa-49f3-40bb-98d6-07a15a7ab6b7
     body:
       encoding: US-ASCII
@@ -20223,7 +20934,7 @@ http_interactions:
       Access-Control-Allow-Origin:
       - "*"
       Location:
-      - "/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.2.json"
+      - "/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.4.json"
       Strict-Transport-Security:
       - max-age=63072000; includeSubDomains
     body:
@@ -20233,7 +20944,7 @@ http_interactions:
   recorded_at: Wed, 08 Jul 2015 23:43:42 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.2.json
+    uri: https://archive-staging-tutor.cnx.org/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.4.json
     body:
       encoding: US-ASCII
       string: ''
@@ -20256,7 +20967,7 @@ http_interactions:
       Content-Type:
       - application/json
       Content-Length:
-      - '11117'
+      - '11553'
       Connection:
       - keep-alive
       Access-Control-Allow-Headers:
@@ -20269,11 +20980,11 @@ http_interactions:
       - max-age=63072000; includeSubDomains
     body:
       encoding: UTF-8
-      string: '{"googleAnalytics": "", "version": "4.2", "submitlog": "--", "abstract":
+      string: '{"googleAnalytics": "", "version": "4.4", "submitlog": "--", "abstract":
         "<div xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:c=\"http://cnx.rice.edu/cnxml\"
         xmlns:md=\"http://cnx.rice.edu/mdml\" xmlns:qml=\"http://cnx.rice.edu/qml/1.0\"
         xmlns:mod=\"http://cnx.rice.edu/#moduleIds\" xmlns:bib=\"http://bibtexml.sf.net/\"
-        xmlns:data=\"http://dev.w3.org/html5/spec/#custom\"/>", "revised": "2015-07-08T12:50:37Z",
+        xmlns:data=\"http://dev.w3.org/html5/spec/#custom\"/>", "revised": "2015-07-09T22:02:27Z",
         "printStyle": null, "roles": null, "keywords": [], "id": "93e2b09d-261c-4007-a987-0b3062fe154b",
         "title": "Physics", "mediaType": "application/vnd.org.cnx.collection", "subjects":
         ["Science and Technology"], "legacy_id": "col10014", "parentId": null, "publishers":
@@ -20286,11 +20997,11 @@ http_interactions:
         null, "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id":
         "tutor_hsphysics"}], "language": "en", "license": {"url": "http://creativecommons.org/licenses/by/4.0/",
         "code": "by", "version": "4.0", "name": "Attribution"}, "created": "2015-05-29T18:59:40Z",
-        "tree": {"id": "93e2b09d-261c-4007-a987-0b3062fe154b@4.2", "contents": [{"id":
+        "tree": {"id": "93e2b09d-261c-4007-a987-0b3062fe154b@4.4", "contents": [{"id":
         "subcol", "contents": [], "title": "What is Physics?"}, {"id": "subcol", "contents":
         [], "title": "Motion in One Dimension"}, {"id": "subcol", "contents": [{"id":
         "4e40d43d-cfee-412e-919c-facccdf0535d@3", "title": "Introduction"}, {"id":
-        "0e58aa87-2e09-40a7-8bf3-269b2fa16509@7", "title": "Acceleration"}, {"id":
+        "0e58aa87-2e09-40a7-8bf3-269b2fa16509@9", "title": "Acceleration"}, {"id":
         "3005b86b-d993-4048-aff0-500256001f42@7", "title": "Representing Acceleration
         with Equations and Graphs"}], "title": "Acceleration"}, {"id": "subcol", "contents":
         [{"id": "1bb611e9-0ded-48d6-a107-fbb9bd900851@2", "title": "Introduction"},
@@ -20302,41 +21013,46 @@ http_interactions:
         Laws of Motion"}], "title": "Physics"}, "doctype": "", "buyLink": null, "submitter":
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}, "parentAuthors":
-        [], "history": [{"changes": "--", "version": "4.2", "revised": "2015-07-08T12:50:37Z",
+        [], "history": [{"changes": "--", "version": "4.4", "revised": "2015-07-09T22:02:27Z",
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
-        "--", "version": "4.1", "revised": "2015-07-01T19:44:13Z", "publisher": {"surname":
+        "--", "version": "4.3", "revised": "2015-07-09T20:45:05Z", "publisher": {"surname":
         "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "", "fullname":
-        "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "applied CCAP Physics
-        template", "version": "3.8", "revised": "2015-06-17T16:49:51Z", "publisher":
-        {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
-        "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "applied
-        CCAP Physics template", "version": "3.7", "revised": "2015-06-15T20:33:52Z",
-        "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
-        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
-        "applied CCAP Physics template", "version": "3.6", "revised": "2015-06-11T17:31:59Z",
-        "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
-        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
-        "applied CCAP Physics template", "version": "3.5", "revised": "2015-06-11T17:28:17Z",
-        "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
-        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
-        "applied CCAP Physics template", "version": "3.4", "revised": "2015-06-10T19:56:12Z",
-        "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
-        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
-        "applied CCAP Physics template", "version": "3.3", "revised": "2015-06-10T19:34:00Z",
-        "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
-        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
-        "applied CCAP Physics template", "version": "3.2", "revised": "2015-06-09T22:38:53Z",
-        "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
-        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
-        "applied CCAP Physics template", "version": "3.1", "revised": "2015-06-09T20:34:45Z",
-        "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
-        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
-        "changed collection title and titles for first two chapters", "version": "2.2",
-        "revised": "2015-06-09T20:31:49Z", "publisher": {"surname": "HSPhysics", "suffix":
-        null, "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id":
-        "tutor_hsphysics"}}, {"changes": "changed collection title and titles for
-        first two chapters", "version": "2.1", "revised": "2015-06-02T18:34:49Z",
+        "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "--", "version":
+        "4.2", "revised": "2015-07-08T12:50:37Z", "publisher": {"surname": "HSPhysics",
+        "suffix": null, "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics",
+        "id": "tutor_hsphysics"}}, {"changes": "--", "version": "4.1", "revised":
+        "2015-07-01T19:44:13Z", "publisher": {"surname": "HSPhysics", "suffix": null,
+        "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}},
+        {"changes": "applied CCAP Physics template", "version": "3.8", "revised":
+        "2015-06-17T16:49:51Z", "publisher": {"surname": "HSPhysics", "suffix": null,
+        "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}},
+        {"changes": "applied CCAP Physics template", "version": "3.7", "revised":
+        "2015-06-15T20:33:52Z", "publisher": {"surname": "HSPhysics", "suffix": null,
+        "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}},
+        {"changes": "applied CCAP Physics template", "version": "3.6", "revised":
+        "2015-06-11T17:31:59Z", "publisher": {"surname": "HSPhysics", "suffix": null,
+        "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}},
+        {"changes": "applied CCAP Physics template", "version": "3.5", "revised":
+        "2015-06-11T17:28:17Z", "publisher": {"surname": "HSPhysics", "suffix": null,
+        "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}},
+        {"changes": "applied CCAP Physics template", "version": "3.4", "revised":
+        "2015-06-10T19:56:12Z", "publisher": {"surname": "HSPhysics", "suffix": null,
+        "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}},
+        {"changes": "applied CCAP Physics template", "version": "3.3", "revised":
+        "2015-06-10T19:34:00Z", "publisher": {"surname": "HSPhysics", "suffix": null,
+        "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}},
+        {"changes": "applied CCAP Physics template", "version": "3.2", "revised":
+        "2015-06-09T22:38:53Z", "publisher": {"surname": "HSPhysics", "suffix": null,
+        "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}},
+        {"changes": "applied CCAP Physics template", "version": "3.1", "revised":
+        "2015-06-09T20:34:45Z", "publisher": {"surname": "HSPhysics", "suffix": null,
+        "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}},
+        {"changes": "changed collection title and titles for first two chapters",
+        "version": "2.2", "revised": "2015-06-09T20:31:49Z", "publisher": {"surname":
+        "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "", "fullname":
+        "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "changed collection
+        title and titles for first two chapters", "version": "2.1", "revised": "2015-06-02T18:34:49Z",
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
         "added ch. 3 and 4 modules; may still need to tweak placeholder settings for
@@ -20559,7 +21275,7 @@ http_interactions:
   recorded_at: Wed, 08 Jul 2015 23:43:43 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/0e58aa87-2e09-40a7-8bf3-269b2fa16509@7
+    uri: https://archive-staging-tutor.cnx.org/contents/0e58aa87-2e09-40a7-8bf3-269b2fa16509@9
     body:
       encoding: US-ASCII
       string: ''
@@ -20582,7 +21298,7 @@ http_interactions:
       Content-Type:
       - application/json
       Content-Length:
-      - '50807'
+      - '51383'
       Connection:
       - keep-alive
       Access-Control-Allow-Headers:
@@ -20595,19 +21311,19 @@ http_interactions:
       - max-age=63072000; includeSubDomains
     body:
       encoding: UTF-8
-      string: '{"googleAnalytics": null, "version": "7", "submitlog": "created links
-        to figures within same step, different steps", "abstract": "<div xmlns=\"http://www.w3.org/1999/xhtml\"
+      string: '{"googleAnalytics": null, "version": "9", "submitlog": "removed os-interactive
+        on <link> in Virtual Physics", "abstract": "<div xmlns=\"http://www.w3.org/1999/xhtml\"
         xmlns:c=\"http://cnx.rice.edu/cnxml\" xmlns:md=\"http://cnx.rice.edu/mdml\"
         xmlns:qml=\"http://cnx.rice.edu/qml/1.0\" xmlns:mod=\"http://cnx.rice.edu/#moduleIds\"
         xmlns:bib=\"http://bibtexml.sf.net/\" xmlns:data=\"http://dev.w3.org/html5/spec/#custom\"/>",
-        "revised": "2015-07-08T12:50:38Z", "printStyle": null, "roles": null, "keywords":
+        "revised": "2015-07-09T22:02:29Z", "printStyle": null, "roles": null, "keywords":
         ["velocity", "vector quantities", "time", "negative acceleration", "instantaneous
         acceleration", "displacement", "deceleration", "average acceleration"], "id":
         "0e58aa87-2e09-40a7-8bf3-269b2fa16509", "title": "Acceleration", "mediaType":
         "application/vnd.org.cnx.module", "content": "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head
         xmlns:c=\"http://cnx.rice.edu/cnxml\" xmlns:md=\"http://cnx.rice.edu/mdml\"><title>Acceleration</title><meta
         name=\"created-time\" content=\"2015/05/29 14:05:34 -0500\"/><meta name=\"revised-time\"
-        content=\"2015/07/08 07:50:38.947 GMT-5\"/><meta name=\"author\" content=\"tutor_hsphysics\"/><meta
+        content=\"2015/07/09 17:02:29.559 GMT-5\"/><meta name=\"author\" content=\"tutor_hsphysics\"/><meta
         name=\"acl-list\" content=\"tutor_hsphysics\"/><meta name=\"licensor\" content=\"tutor_hsphysics\"/><meta
         name=\"license\" content=\"http://creativecommons.org/licenses/by/4.0/\"/><meta
         name=\"keywords\" content=\"average acceleration, deceleration, displacement,
@@ -20772,11 +21488,11 @@ http_interactions:
         zero will make the effect of acceleration more obvious. Try changing acceleration
         from positive to negative while the man is moving. We will come back to this
         animation and look at the &#8220;Charts&#8221; view when we study graphical
-        representation of motion.</p><figure id=\"eip-idp10072272\" class=\"ost-embed-container\"><figcaption>\n<a
-        href=\"http://connexions.github.io/simulations/moving-man/\" class=\"os-embed\">Click
-        here for the Moving Man simulation</a>\n  </figcaption>\n<span data-type=\"media\"
-        id=\"eip-idp39684176\" data-alt=\"...\">\n    <img src=\"/resources/c965beb24bbbe1a0b8a47c569fcb7c41f36d7d47/Moving_Man_Sim.jpg\"
-        data-media-type=\"image/jpeg\" alt=\"...\"/>\n  </span>\n  \n</figure>\n\n<div
+        representation of motion.</p><figure id=\"eip-idp10072272\" class=\"ost-embed-container\"><figcaption><a
+        href=\"https://archive.cnx.org/specials/e2ca52af-8c6b-450e-ac2f-9300b38e8739/moving-man/\"
+        class=\"os-embed\">Click here for the Moving Man simulation</a>\n  </figcaption><span
+        data-type=\"media\" id=\"eip-idp39684176\" data-alt=\"...\">\n    <img src=\"/resources/c965beb24bbbe1a0b8a47c569fcb7c41f36d7d47/Moving_Man_Sim.jpg\"
+        data-media-type=\"image/jpeg\" alt=\"...\"/>\n  </span>\n  \n</figure><div
         data-type=\"note\" data-has-label=\"true\" id=\"fs-idp50985968\" class=\"note
         os-teacher\" data-label=\"Teacher Support\">\n<p id=\"fs-idp19127424\">Have
         students use a very low setting for velocity and acceleration because it is
@@ -21054,31 +21770,38 @@ http_interactions:
         "parent": {"authors": [], "version": "", "id": null, "title": null}, "stateid":
         1, "parentTitle": null, "authors": [{"surname": "HSPhysics", "suffix": null,
         "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}],
-        "parentVersion": "", "legacy_version": "1.7", "licensors": [{"surname": "HSPhysics",
+        "parentVersion": "", "legacy_version": "1.9", "licensors": [{"surname": "HSPhysics",
         "suffix": null, "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics",
         "id": "tutor_hsphysics"}], "language": "en", "license": {"url": "http://creativecommons.org/licenses/by/4.0/",
         "code": "by", "version": "4.0", "name": "Attribution"}, "created": "2015-05-29T19:05:34Z",
         "doctype": "", "buyLink": null, "submitter": {"surname": "HSPhysics", "suffix":
         null, "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id":
-        "tutor_hsphysics"}, "parentAuthors": [], "history": [{"changes": "created
-        links to figures within same step, different steps", "version": "7", "revised":
-        "2015-07-08T12:50:38Z", "publisher": {"surname": "HSPhysics", "suffix": null,
-        "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}},
-        {"changes": "removed \"all\" from \"do not need to know all the instantaneous
-        acceleration values\"", "version": "6", "revised": "2015-06-10T19:34:01Z",
+        "tutor_hsphysics"}, "parentAuthors": [], "history": [{"changes": "removed
+        os-interactive on <link> in Virtual Physics", "version": "9", "revised": "2015-07-09T22:02:29Z",
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
-        "updated list in worked example for enumeration rather than bullet points",
-        "version": "5", "revised": "2015-06-09T20:31:50Z", "publisher": {"surname":
+        "Changed moving man sim to point to archive.cnx and also added class os-interactive",
+        "version": "8", "revised": "2015-07-09T20:45:06Z", "publisher": {"surname":
         "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "", "fullname":
-        "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "changed figure
-        to simulation in edited narrative text", "version": "4", "revised": "2015-06-01T20:59:27Z",
+        "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "created links to
+        figures within same step, different steps", "version": "7", "revised": "2015-07-08T12:50:38Z",
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
-        "Nothing", "version": "3", "revised": "2015-06-01T16:27:46Z", "publisher":
+        "removed \"all\" from \"do not need to know all the instantaneous acceleration
+        values\"", "version": "6", "revised": "2015-06-10T19:34:01Z", "publisher":
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
-        "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "Removed
-        Links, Worked Example, and 2nd Grasp Check", "version": "2", "revised": "2015-06-01T15:22:19Z",
+        "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "updated
+        list in worked example for enumeration rather than bullet points", "version":
+        "5", "revised": "2015-06-09T20:31:50Z", "publisher": {"surname": "HSPhysics",
+        "suffix": null, "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics",
+        "id": "tutor_hsphysics"}}, {"changes": "changed figure to simulation in edited
+        narrative text", "version": "4", "revised": "2015-06-01T20:59:27Z", "publisher":
+        {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
+        "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "Nothing",
+        "version": "3", "revised": "2015-06-01T16:27:46Z", "publisher": {"surname":
+        "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "", "fullname":
+        "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "Removed Links,
+        Worked Example, and 2nd Grasp Check", "version": "2", "revised": "2015-06-01T15:22:19Z",
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
         "Created, imported module for editing", "version": "1", "revised": "2015-05-29T19:07:11Z",

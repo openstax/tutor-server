@@ -83,7 +83,7 @@ class ContentConfiguration
       .map{|file| self.new(file) }
   end
 
-  def_delegators :@configuration, :course_name, :assignments, :teacher, :period_names
+  def_delegators :@configuration, :course_name, :assignments, :teacher, :periods
 
   def initialize(config_file)
     @configuration = Hashie::Mash.load(config_file, parser: ConfigFileParser)
@@ -106,25 +106,15 @@ class ContentConfiguration
   private
 
   def validate_config
-    # loop through each assignment and verify that the same student isn't in multiple periods
+    # loop through each assignment and verify that the students match the roster for the period
     @configuration.assignments.each do | assignment |
       assignment.periods.each do | period |
-        initials = period.students.keys
-        # it's tempting to attempt to find if the same student was listed twice in a period
-        # But we can't do that since students is a hash,
-        # and a duplicate student would just be a duplicate key and latter overwrites previous
-
-        @configuration.assignments.each do | testing_assignment |
-          testing_assignment.periods.each do | testing_period |
-            next if testing_period['index'] == period['index']
-            common_students = initials & testing_period.students.keys
-            unless common_students.blank?
-              raise "#{@configuration.course_name} has student(s) #{common_students.join(',')} in both '#{@configuration.period_names[period['index']]}' and '#{@configuration.period_names[testing_period['index']]}'"
-            end
-
-          end
+        period_config = @configuration.periods.at( period[:index] )
+        if period_config.students.sort != period.students.keys.sort
+          raise "Students assignments for #{@configuration.course_name} period #{period_config.name} do not match for assignment #{assignment.title}"
         end
       end
+
     end
   end
 end

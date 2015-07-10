@@ -2,11 +2,15 @@ course_name: Biology I
 cnx_book_id: ccbc51fa-49f3-40bb-98d6-07a15a7ab6b7
 cnx_book_version: latest
 teacher: cm
-period_names:
-  - 1st Period
-  - 2nd Period
-  - 3rd Period
-  - 4th Period
+periods:
+  - name: 1st Period
+    students: [ak,at,bh,gj,kl,ir,mb,ra,sg]
+  - name: 2nd Period
+    students: [af,am,hp,ft,gs,jb,mh,ne,sd,vw]
+  - name: 3rd Period
+    students: [ag,ap,bs,eh,hc,hg,iu,iw,nz,rl,sk]
+  - name: 4th Period
+    students: [an,cg,cd,dp,fa,jr,js,lh,ms,rb,wh]
 
 assignments:
 
@@ -22,7 +26,7 @@ assignments:
 
       - index: 1 # index of the title above
         due_at: <%= due_today %>
-        students: {af: 100,am: 82,bb: 71,hp: 90,ft: 78,gs: 87,jb: i,mh: i,ne: 90,sd: 85,vw: ns}
+        students: {af: 100,am: 82,hp: 71,ft: 90,gs: 87,jb: i,mh: i,ne: 90,sd: 85,vw: ns}
 
       - index: 2 # index of the title above
         due_at: <%= due_today %>
@@ -68,6 +72,7 @@ assignments:
     step_types: [ e, e, e, e, e, e, e, e, e, e, p ]
     chapter_sections: [[1, 1, 0], [1, 1, 1], [1,1,2]]
     title: HW The Chemistry of Life
+    num_exercises: 10
     periods:
       - index: 2 # index of the title above
         due_at: <%= due_three_days_ago %>

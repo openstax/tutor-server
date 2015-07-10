@@ -33,21 +33,14 @@ class Demo001 < DemoBase
 
       course = create_course(name: content.course_name)
 
-      content.period_names.each_with_index do | name, index |
-        period = run(:create_period, course: course, name: name).outputs.period
-        log("  Created period: #{name}")
-
-        # Find all the unique students that have an assignment for the period
-        content.assignments.map{| assignment|
-          assignment.periods
-            .find_all{|pr| index == pr[:index] }
-            .map{|pr| pr.students.keys }
-          # find_or_create an account for them and add them to the period
-        }.flatten.uniq.sort.each do | initials |
+      content.periods.each_with_index do | period_content, index |
+        period = run(:create_period, course: course, name: period_content.name).outputs.period
+        log("  Created period: #{period_content.name}")
+        period_content.students.each do | initials |
           name = people.students[initials]
           student = get_student(initials) ||
                     new_user_profile(username: "student-#{initials}", name: name)
-          log("    Added: #{name}")
+          log("    #{initials} (#{name})")
 
           run(AddUserAsPeriodStudent, period: period, user: student.entity_user)
         end

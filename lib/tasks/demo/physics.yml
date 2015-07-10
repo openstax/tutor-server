@@ -2,9 +2,11 @@ course_name: Physics I
 cnx_book_id: 93e2b09d-261c-4007-a987-0b3062fe154b
 cnx_book_version: latest
 teacher: cm
-period_names:
-  - Period 1
-  - Period 2
+periods:
+  - name: Period 1
+    students: [ak,at,cp,gj,hp,lb,lt,ne,sd,vw]
+  - name: Period 2
+    students: [af,ag,bb,cd,eh,ft,js,ms,nz,ra]
 
 assignments:
 

@@ -35,9 +35,6 @@ class Demo002 < DemoBase
 
           tasks.each do | task |
             user = task.taskings.first.role.user.user
-            if ! responses_list[ user.id ]
-              debugger
-            end
             work_task(task: task, responses: responses_list[ user.id ])
           end
 
