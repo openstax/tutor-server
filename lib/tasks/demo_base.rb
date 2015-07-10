@@ -266,7 +266,7 @@ class DemoBase
   # `responses` is an array of 1 (or true), 0 (or false), or nil; nil means
   # not completed; any non-nil means completed. 1/0 (true/false) is for
   # exercise correctness
-  def work_task(task:, responses:)
+  def work_task(task:, responses:[])
 
     log("Working with #{responses}")
 
