@@ -1,6 +1,8 @@
 require_relative 'demo_base'
 require_relative 'demo/content_configuration'
 
+
+## Imports a book from CNX and creates a course with periods from it's data
 class Demo001 < DemoBase
 
   lev_routine
@@ -23,13 +25,33 @@ class Demo001 < DemoBase
 
     archive_url = 'https://archive-staging-tutor.cnx.org/contents/'
 
-    admin_profile = new_user_profile(username: 'admin', name: people.administrator)
+    admin_profile = new_user_profile(username: 'admin', name: people.admin)
     run(:make_administrator, user: admin_profile.entity_user)
     log("Added an admin user #{admin_profile.account.full_name}")
 
     ContentConfiguration[book.to_sym].each do | content |
 
       course = create_course(name: content.course_name)
+
+      content.period_names.each_with_index do | name, index |
+        period = run(:create_period, course: course, name: name).outputs.period
+        log("  Created period: #{name}")
+
+        # Find all the unique students that have an assignment for the period
+        content.assignments.map{| assignment|
+          assignment.periods
+            .find_all{|pr| index == pr[:index] }
+            .map{|pr| pr.students.keys }
+          # find_or_create an account for them and add them to the period
+        }.flatten.uniq.sort.each do | initials |
+          name = people.students[initials]
+          student = get_student(initials) ||
+                    new_user_profile(username: "student-#{initials}", name: name)
+          log("    Added: #{name}")
+
+          run(AddUserAsPeriodStudent, period: period, user: student.entity_user)
+        end
+      end
 
       OpenStax::Cnx::V1.with_archive_url(url: archive_url) do
         cnx_book = run(:import_book, id: content.cnx_book).outputs.book
@@ -45,21 +67,6 @@ class Demo001 < DemoBase
       run(:add_teacher, course: course, user: teacher_profile.entity_user)
 
       log("Created course '#{content.course_name}' with '#{people.teachers[content.teacher]}' as teacher")
-      content.periods.each do | period_content |
-
-        period = run(:create_period, course: course, name: period_content.name).outputs.period
-        log("  Created a period '#{period_content.name}'.")
-
-        period_content.students.each do |initials|
-          student = get_student(initials) ||
-            new_user_profile(username: "student-#{initials}", name: people.students[initials])
-
-          run(AddUserAsPeriodStudent, period: period, user: student.entity_user)
-
-          log("    Added '#{people.students[initials]}'")
-        end
-
-      end # periods
 
     end # book
 

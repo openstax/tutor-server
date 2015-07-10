@@ -2,75 +2,98 @@ course_name: Biology I
 cnx_book_id: ccbc51fa-49f3-40bb-98d6-07a15a7ab6b7
 cnx_book_version: latest
 teacher: cm
-periods:
-  - name: 1st Period
-    students: [ak,at,bh,gj,kl,ir,mb,ra,sg]
-  - name: 2nd Period
-    students: [af,am,bb,hp,ft,gs,jb,mh,ne,sd,vw]
+period_names:
+  - 1st Period
+  - 2nd Period
+  - 3rd Period
+  - 4th Period
+
 assignments:
 
   - type: reading
     step_types: [ r, r, e, r, r, e, r, r, e, r, r, e, r, e, r, p, e, e, r, r, e ]
     chapter_sections: [[1, 1, 0], [1, 1, 1], [1,1,2]]
-    periods: [0, 1] # indexes of the periods array on the course
     title: Read Unit 1. The Chemistry of Life
-    due_at: <%= due_one_day_ago %>
-    scores:     [ 98, 67, 55, 77, 88, 80, ns, 78, 100, 86, 100, 82, 71, 90, 78, 87, i, i, 90, 85 ]
+    periods:
+      - index: 0 # index of the title above
+        opens_at: <%= standard_due_at(today-3.days) %> # could be ommited and a default would be used
+        due_at: <%= due_today %>
+        students: {ak: 98,at: 67,bh: 55,gj: 77,kl: 88,ir: ns,mb: 78,ra: 100,sg: 86}
+
+      - index: 1 # index of the title above
+        due_at: <%= due_today %>
+        students: {af: 100,am: 82,bb: 71,hp: 90,ft: 78,gs: 87,jb: i,mh: i,ne: 90,sd: 85,vw: ns}
+
+      - index: 2 # index of the title above
+        due_at: <%= due_today %>
+        students: {ag: 100,ap: 82,bs: 71,eh: 90,hc: 78,hg: 87,iu: i,iw: i,nz: 90,rl: 85,sk: ns}
+
+      - index: 3 # index of the title above
+        due_at: <%= due_today %>
+        students: {an: 100,cg: 82,cd: 71,dp: 90,fa: 78,jr: 87,js: i,lh: i,ms: 90,rb: 85,wh: ns}
 
   - type: reading
     step_types: [ r, r, r, r, r, r, r, e, r, r, r, p ]
     chapter_sections: [[2, 3, 0], [2, 3, 1h], [2, 3, 2]]
-    periods: [0, 1]
     title: Read Unit 2. The Cell
-    due_at: <%= due_two_days_ago %>
-    scores:
-      - 94
-      - [ 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1 ]
-      - 40
-      - [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1 ]
-      - 60,
-      - i
-      - ns
-      - 72
-      - [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ]  # explicit example, could also be `100`
-      - 80
-      - 100
-      - [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0 ]
-      - [ 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1 ]
-      - [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0 ]
-      - 79
-      - [ 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0 ]
-      - i
-      - i
-      - [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1 ]
-      - [ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1 ]
+    periods:
+      - index: 0 # index of the title above
+        due_at: <%= due_two_days_ago %>
+        students:
+          ak: 94
+          at: [ 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1 ]
+          bh: 40
+          gj: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1 ]
+          kl: 60
+          ir: i
+          mb: ns
+          ra: 72
+          sg: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ]  # explicit example, could also be `100`
+      - index: 3 # index of the title above
+        due_at: <%= due_today %>
+        students:
+          an: 80
+          cg: 100
+          cd: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0 ]
+          dp: [ 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1 ]
+          fa: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0 ]
+          jr: 79
+          js: [ 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0 ]
+          lh: i
+          ms: i
+          rb: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1 ]
+          wh: [ 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1 ]
 
   - type: homework
     step_types: [ e, e, e, e, e, e, e, e, e, e, p ]
     chapter_sections: [[1, 1, 0], [1, 1, 1], [1,1,2]]
-    periods: [1]
-    num_exercises: 10
-    periods: [0,1] # indexes of the periods array on the course
     title: HW The Chemistry of Life
-    due_at: <%= due_three_days_ago %>
-    scores:
-      - 90
-      - 87
-      - 98
-      - [ 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1 ]
-      - 88
-      - ns
-      - ns
-      - ns
-      - 100
-      - [ 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0 ]
-      - 100
-      - 86
-      - [ 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1 ]
-      - 89
-      - [ 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0 ]
-      - 93
-      - i
-      - i
-      - 98
-      - 23
+    periods:
+      - index: 2 # index of the title above
+        due_at: <%= due_three_days_ago %>
+        students:
+          ag: 90
+          ap: 87
+          bs: 98
+          eh: [ 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1 ]
+          hc: 88
+          hg: ns
+          iu: ns
+          iw: 100
+          nz: [ 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0 ]
+          rl: 80
+          sk: 65
+      - index: 3 # index of the title above
+        due_at: <%= due_two_days_ago %>
+        students:
+          an: 100
+          cg: [ 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1 ]
+          cd: [ 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1 ]
+          dp: 80
+          fa: 90
+          jr: [ 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0 ]
+          js: i
+          lh: ns
+          ms: i
+          rb: 80
+          wh: 100
