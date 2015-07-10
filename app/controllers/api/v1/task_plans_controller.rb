@@ -39,6 +39,24 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
 
   api :POST, '/courses/:course_id/plans', 'Creates a TaskPlan'
   description <<-EOS
+### IReading settings:
+
+<pre class="code">
+#{Tasks::Assistants::IReadingAssistant.schema}
+</pre>
+
+### Homework settings:
+
+<pre class="code">
+#{Tasks::Assistants::HomeworkAssistant.schema}
+</pre>
+
+### External assignment settings:
+
+<pre class="code">
+#{Tasks::Assistants::ExternalAssignmentAssistant.schema}
+</pre>
+
     #{json_schema(Api::V1::TaskPlanRepresenter, include: :writeable)}
   EOS
   def create
