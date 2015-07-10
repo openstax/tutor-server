@@ -1,5 +1,5 @@
 desc 'Initializes data for the deployment demo (run all demo:* tasks), book can be either all, bio or phy.'
-task :demo, [:book, :book_version, :random_seed] => :environment do |tt, args|
+task :demo, [:book, :random_seed] => :environment do |tt, args|
   filenames = Dir.glob('lib/tasks/demo_[0-9]*.rb').sort
   filenames.each do |filename|
     base_name = File.basename(filename, '.rb')

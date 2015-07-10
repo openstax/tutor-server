@@ -1,3 +1,5 @@
+require 'hashie/mash'
+
 class DemoBase
 
   protected
@@ -10,33 +12,62 @@ class DemoBase
   #
   #############################################################################
 
-  def new_responses_list(assignment_type:, step_types:, entries:)
-    ResponsesList.new(assignment_type: assignment_type, step_types: step_types, entries: entries, randomizer: randomizer)
+  def new_responses_list(assignment_type:, students:, step_types:)
+    students = students.map do | initials, score |
+      student = get_student(initials) ||
+                raise("Unable to find student for initials #{initials}")
+      [student, score]
+    end
+
+    ResponsesList.new(assignment_type: assignment_type,
+                      students: students,
+                      step_types: step_types,
+                      randomizer: randomizer)
+  end
+
+  def people
+    @people ||= Hashie::Mash.load(File.dirname(__FILE__)+"/demo/people.yml")
+  end
+
+  def user_profile_for_name(name)
+    UserProfile::Models::Profile.joins(:account)
+      .where(account: { full_name: name}).first
+  end
+
+  def get_teacher(initials)
+    user_profile_for_name people.teachers[initials]
+  end
+
+  def get_student(initials)
+    user_profile_for_name people.students[initials]
   end
 
   class ResponsesList
-    def initialize(assignment_type:, step_types:, entries:, randomizer:)
+    def initialize(assignment_type:, students:, step_types:, randomizer:)
+
       raise ":assignment_type (#{assignment_type}) must be one of {:homework,:reading}" \
         unless [:homework,:reading].include?(assignment_type)
       raise "Must have at least one step" if step_types.length == 0
 
       @assignment_type = assignment_type
+
       @step_types = step_types
-      @list = []
+      @list = {}
       @randomizer = randomizer
 
-      entries.each do |entry|
-        @list.push(get_explicit_responses(entry))
+      students.each do |student, responses|
+        @list[student.id] = get_explicit_responses(responses)
       end
     end
 
-    def [](index)
-      @list[index]
+    def [](student_id)
+      @list[student_id]
     end
 
     private
 
     def get_explicit_responses(entry)
+
       result = case entry
       when Array
         raise "Number of explicit responses (#{entry.length}) doesn't match number of steps (#{@step_types.length}) " \
@@ -63,9 +94,9 @@ class DemoBase
             1 # mark all non-exercises complete
           end
         end
-      when :not_started
+      when 'ns'
         @step_types.count.times.collect{nil}
-      when :incomplete
+      when 'i'
         responses = @step_types.count.times.collect{ [1,0,nil].sample }
 
         # incomplete is more than not_started, so make sure we have started by setting
@@ -95,7 +126,7 @@ class DemoBase
 
   def new_user_profile(username:, name: nil, password: nil, sign_contracts: true)
     password ||= 'password'
-    name ||= @@name_pool.shift || Faker::Name.name
+
     first_name, last_name = name.split(' ')
     raise "need a full name" if last_name.nil?
 
@@ -184,7 +215,6 @@ class DemoBase
 
   def assign_homework(course:, chapter_sections:, due_at:, opens_at: nil, duration: nil,
                       num_exercises: 5, to: nil, title: nil)
-
     raise "Cannot set both opens_at and duration" if opens_at.present? && duration.present?
     duration ||= DEFAULT_TASK_DURATION
     opens_at ||= due_at - duration
@@ -236,7 +266,9 @@ class DemoBase
   # `responses` is an array of 1 (or true), 0 (or false), or nil; nil means
   # not completed; any non-nil means completed. 1/0 (true/false) is for
   # exercise correctness
-  def work_task(task:, responses:)
+  def work_task(task:, responses:[])
+
+    log("Working with #{responses}")
 
     raise "Invalid number of responses for #{task.title}" +
           "(responses,task_steps) = (#{responses.count}, #{task.task_steps.count})\n" +
@@ -314,13 +346,6 @@ class DemoBase
     course
   end
 
-  def create_period(course:)
-    period = run(:create_period, course: course).outputs.period
-
-    log("Created a period named '#{period.name}'.")
-
-    period
-  end
 
   def log(message)
     puts "#{message}\n" if @print_logs
@@ -378,56 +403,4 @@ class DemoBase
     @print_logs = print_logs
   end
 
-  @@name_pool = %w(
-    Alden\ Pyle
-    Atticus\ Finch
-    Augie\ March
-    Charlie\ Marlow
-    Lily\ Bart
-    Clyde\ Griffiths
-    Florentino\ Ariza
-    George\ Smiley
-    Harry\ Potter
-    Henry\ Chinaski
-    Holly\ Golightly
-    Ignatius\ Reilly
-    Jean\ Brodie
-    Leopold\ Bloom
-    Clarissa\ Dalloway
-    Molly\ Bloom
-    Nathan\ Zuckerman
-    Rabbit\ Angstrom
-    Seymour\ Glass
-    Stephen\ Dedalus
-    Earlene\ Hayes
-    Richmond\ Lang
-    Rigoberto\ Hegmann
-    Isobel\ Russel
-    Myron\ Sauer
-    Jared\ Fritsch
-    Myriam\ Reynolds
-    Bernhard\ Stark
-    Isobel\ Witting
-    Vernien\ Walker
-    Lionel\ Hayes
-    Mariah\ Buckridge
-    Cleve\ Pacocha
-    Fabiola\ Thiel
-    Beatrice\ Batz
-    Mikayla\ Hintz
-    Giovanny\ Jaskolski
-    Ashleigh\ Goyette
-    Janelle\ Skiles
-    Willie\ Herman
-    Dorthy\ Pagac
-    Bettie\ Hackett
-    Nellie\ Effertz
-    Albin\ Kirlin
-    Sean\ Kuvalis
-    Alyce\ Tromp
-    Regan\ Buckridge
-    Alene\ Macejkovic
-    Kevin\ Lowe
-    Helmer\ Schuppe
-  )
 end
