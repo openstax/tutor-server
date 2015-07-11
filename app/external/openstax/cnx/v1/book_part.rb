@@ -1,15 +1,11 @@
 module OpenStax::Cnx::V1
   class BookPart
 
-    def initialize(hash: {}, chapter_section: [], title: nil, contents: nil, parts: nil)
-      @hash            = hash
-      @chapter_section = chapter_section
-      @title           = title
-      @contents        = contents
-      @parts           = parts
+    def initialize(hash: {})
+      @hash = hash
     end
 
-    attr_reader :hash, :chapter_section
+    attr_reader :hash
 
     def title
       @title ||= hash.fetch('title') { |key|
@@ -29,17 +25,11 @@ module OpenStax::Cnx::V1
     end
 
     def parts
-      book_part_index = 0
-      page_index = 0
-
       @parts ||= contents.collect do |hash|
         if hash['id'] == 'subcol'
-          BookPart.new(hash: hash, chapter_section: chapter_section + [book_part_index += 1])
+          BookPart.new(hash: hash)
         else
-          page = OpenStax::Cnx::V1::Page.new(hash: hash)
-          page_index -= 1 if page.is_intro?
-          page.chapter_section = chapter_section + [page_index += 1]
-          page
+          OpenStax::Cnx::V1::Page.new(hash: hash)
         end
       end
     end

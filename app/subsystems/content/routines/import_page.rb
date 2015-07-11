@@ -1,6 +1,6 @@
 class Content::Routines::ImportPage
 
-  lev_routine
+  lev_routine express_output: :page
 
   uses_routine Content::Routines::CreatePage,
                as: :create_page,
@@ -19,7 +19,7 @@ class Content::Routines::ImportPage
   # Imports and saves a Cnx::Page as a Content::Models::Page
   # into the given Content::Models::BookPart
   # Returns the Content::Models::Page object
-  def exec(cnx_page:, book_part:, chapter_section:)
+  def exec(cnx_page:, book_part:, chapter_section: nil)
     uuid, version = cnx_page.id.split('@')
     run(:create_page, url: cnx_page.url,
                       title: cnx_page.title,

@@ -19,8 +19,7 @@ RSpec.describe OpenStax::Cnx::V1::BookPart, :type => :external do
       ],
       title: 'Physics',
       expected: {
-        part_classes: [OpenStax::Cnx::V1::BookPart],
-        chapter_sections: [[1]]
+        part_classes: [OpenStax::Cnx::V1::BookPart]
       }
     },
     { id: "subcol",
@@ -36,8 +35,7 @@ RSpec.describe OpenStax::Cnx::V1::BookPart, :type => :external do
       expected: {
         part_classes: [OpenStax::Cnx::V1::Page,
                        OpenStax::Cnx::V1::Page,
-                       OpenStax::Cnx::V1::Page],
-        chapter_sections: [[0], [1], [2]]
+                       OpenStax::Cnx::V1::Page]
       }
     }
   ]
@@ -50,7 +48,6 @@ RSpec.describe OpenStax::Cnx::V1::BookPart, :type => :external do
     cnx_book_infos.each do |hash|
       book_part = book_part_for(hash)
       expect(book_part.hash).not_to be_blank
-      expect(book_part.chapter_section).to be_blank
       expect(book_part.title).to eq hash[:title]
       expect(book_part.contents).not_to be_blank
       expect(book_part.parts).not_to be_empty
@@ -63,10 +60,6 @@ RSpec.describe OpenStax::Cnx::V1::BookPart, :type => :external do
 
       expect(book_part.parts.collect{|p| p.class}).to(
         eq hash[:expected][:part_classes]
-      )
-
-      expect(book_part.parts.collect{|p| p.chapter_section}).to(
-        eq hash[:expected][:chapter_sections]
       )
     end
   end

@@ -34,10 +34,13 @@ class Content::Routines::ImportBookPart
             parent_book_part: book_part,
             chapter_section: chapter_section + [index + 1])
       elsif part.is_a?(OpenStax::Cnx::V1::Page)
+        # Introductions start at x.0; others start at x.1
+        index_offset = 1 if index == 0 && !part.is_intro?
+
         run(:import_page,
             cnx_page: part,
             book_part: book_part,
-            chapter_section: chapter_section + [index])
+            chapter_section: chapter_section + [index + index_offset])
       else
         raise "Unknown class #{part.class}"
       end
