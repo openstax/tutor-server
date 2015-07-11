@@ -35,9 +35,10 @@ class Demo002 < DemoBase
 
           tasks.each_with_index do | task, index |
             user = task.taskings.first.role.user.user
-            responses = responses_list[ user.id ]
+
+            responses = responses_list[ user.profile.id ]
             unless responses
-              raise "#{assignment.title} period index #{period['index']} has no responses for task index #{index}"
+              raise "#{assignment.title} period index #{period['index']} has no responses for task #{index} for user #{user.profile.id} #{user.username}"
             end
             work_task(task: task, responses: responses)
           end
@@ -55,14 +56,14 @@ class Demo002 < DemoBase
                     chapter_sections: assignment.chapter_sections,
                     title: assignment.title,
                     num_exercises: assignment.num_exercises,
-                    to: content.course.periods.at(period[:index]),
+                    to: content.course.periods.order(:created_at).at(period[:index]),
                     opens_at: period.opens_at,
                     due_at: period.due_at)
   end
 
   def create_and_work_reading(content, period, assignment, responses_list)
     assign_ireading(course: content.course,
-                    to: content.course.periods.at(period[:index]),
+                    to: content.course.periods.order(:created_at).at(period[:index]),
                     chapter_sections: assignment.chapter_sections,
                     title: assignment.title,
                     opens_at: period.opens_at,
