@@ -20,7 +20,7 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, speed: :slow, vcr:
     uuid, version = cnx_page.id.split('@')
     expect(result.outputs[:page].uuid).to eq uuid
     expect(result.outputs[:page].version).to eq version
-    expect(result.outputs[:page].chapter_section) to eq chapter_section
+    expect(result.outputs[:page].chapter_section).to eq chapter_section
   end
 
   it 'converts relative links into absolute links' do
