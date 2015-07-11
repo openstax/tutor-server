@@ -56,12 +56,10 @@ class DemoBase
       @randomizer = randomizer
 
       profile_responses.each do |profile, responses|
+        p profile
         @list[profile.id] = get_explicit_responses(responses)
       end
     end
-      def debug_list
-        p @list
-      end
     def [](profile_id)
       @list[profile_id]
     end
