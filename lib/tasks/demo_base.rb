@@ -13,14 +13,14 @@ class DemoBase
   #############################################################################
 
   def new_responses_list(assignment_type:, students:, step_types:)
-    students = students.map do | initials, score |
-      student = get_student(initials) ||
+    profile_responses = students.map do | initials, score |
+      profile = get_student_profile(initials) ||
                 raise("Unable to find student for initials #{initials}")
-      [student, score]
+      [profile, score]
     end
 
     ResponsesList.new(assignment_type: assignment_type,
-                      students: students,
+                      profile_responses: profile_responses,
                       step_types: step_types,
                       randomizer: randomizer)
   end
@@ -31,19 +31,19 @@ class DemoBase
 
   def user_profile_for_name(name)
     UserProfile::Models::Profile.joins(:account)
-      .where(account: { full_name: name}).first
+      .where(account: { full_name: name }).first
   end
 
-  def get_teacher(initials)
+  def get_teacher_profile(initials)
     user_profile_for_name people.teachers[initials]
   end
 
-  def get_student(initials)
+  def get_student_profile(initials)
     user_profile_for_name people.students[initials]
   end
 
   class ResponsesList
-    def initialize(assignment_type:, students:, step_types:, randomizer:)
+    def initialize(assignment_type:, profile_responses:, step_types:, randomizer:)
 
       raise ":assignment_type (#{assignment_type}) must be one of {:homework,:reading}" \
         unless [:homework,:reading].include?(assignment_type)
@@ -55,13 +55,13 @@ class DemoBase
       @list = {}
       @randomizer = randomizer
 
-      students.each do |student, responses|
-        @list[student.id] = get_explicit_responses(responses)
+      profile_responses.each do |profile, responses|
+        p profile
+        @list[profile.id] = get_explicit_responses(responses)
       end
     end
-
-    def [](student_id)
-      @list[student_id]
+    def [](profile_id)
+      @list[profile_id]
     end
 
     private
