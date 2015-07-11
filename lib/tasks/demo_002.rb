@@ -37,7 +37,8 @@ class Demo002 < DemoBase
           tasks.each_with_index do | task, index |
             user = task.taskings.first.role.user.user
             p user
-            responses = responses_list[ user.id ]
+
+            responses = responses_list[ user.profile.id ]
             unless responses
               raise "#{assignment.title} period index #{period['index']} has no responses for task #{index} for user #{user.id} #{user.username}"
             end
