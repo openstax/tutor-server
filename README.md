@@ -2,6 +2,20 @@
 [![Build Status](https://travis-ci.org/openstax/tutor-server.png?branch=master)](https://travis-ci.org/openstax/tutor-server)
 [![Coverage Status](https://img.shields.io/coveralls/openstax/tutor-server.svg)](https://coveralls.io/r/openstax/tutor-server)
 
+# OpenStax testing logins
+
+The demo tasks populate the server with a few students:
+
+  * student-ak
+  * student-hp
+  * student-hg
+  * student-cd
+  * student-nz
+  * student-ne
+  * student-sd
+
+The teacher login is: teacher-cm
+
 # OpenStax Tutor Backend Server
 
 ## Configuring database for Development and Testing
