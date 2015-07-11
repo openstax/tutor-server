@@ -59,7 +59,9 @@ class DemoBase
         @list[profile.id] = get_explicit_responses(responses)
       end
     end
-
+      def debug_list
+        p @list
+      end
     def [](profile_id)
       @list[profile_id]
     end

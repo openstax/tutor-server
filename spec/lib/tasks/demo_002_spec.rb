@@ -14,8 +14,8 @@ RSpec.describe Demo002, type: :request, version: :v1, speed: :slow, vcr: VCR_OPT
       fixtures_directory = File.join(File.dirname(__FILE__),'../../fixtures/demo-imports')
 
       ContentConfiguration.with_config_directory(fixtures_directory) do
-        expect(Demo001.call(print_logs: false).errors).to be_empty
-        expect(Demo002.call(print_logs: false).errors).to be_empty
+        expect(Demo001.call(print_logs: true).errors).to be_empty
+        expect(Demo002.call(print_logs: true).errors).to be_empty
       end
     end
   end

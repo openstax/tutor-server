@@ -32,12 +32,12 @@ class Demo002 < DemoBase
                   else
                     create_and_work_homework(content, period, assignment, responses_list)
                   end
-
+p responses_list
           tasks.each_with_index do | task, index |
             user = task.taskings.first.role.user.user
             responses = responses_list[ user.id ]
             unless responses
-              raise "#{assignment.title} period index #{period['index']} has no responses for task #{index} for user #{user.username}"
+              raise "#{assignment.title} period index #{period['index']} has no responses for task #{index} for user #{user.id} #{user.username}"
             end
             work_task(task: task, responses: responses)
           end
