@@ -40,7 +40,7 @@ assignments:
 
   - type: reading
     step_types: [ r, r, r, r, r, r, r, e, r, r, r, p ]
-    chapter_sections: [[2, 3, 0], [2, 3, 1h], [2, 3, 2]]
+    chapter_sections: [[2, 3, 0], [2, 3, 1], [2, 3, 2]]
     title: Read Unit 2. The Cell
     periods:
       - index: 0 # 1st Period
