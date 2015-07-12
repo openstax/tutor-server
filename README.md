@@ -2,20 +2,6 @@
 [![Build Status](https://travis-ci.org/openstax/tutor-server.png?branch=master)](https://travis-ci.org/openstax/tutor-server)
 [![Coverage Status](https://img.shields.io/coveralls/openstax/tutor-server.svg)](https://coveralls.io/r/openstax/tutor-server)
 
-# OpenStax testing logins
-
-The demo tasks populate the server with a few students:
-
-  * student-ak
-  * student-hp
-  * student-hg
-  * student-cd
-  * student-nz
-  * student-ne
-  * student-sd
-
-The teacher login is: teacher-cm
-
 # OpenStax Tutor Backend Server
 
 ## Configuring database for Development and Testing
@@ -45,7 +31,7 @@ Dev and test environments will see HTML responses with backtraces and helpful de
 environment will see nicely-formatted HTML error pages or simple JSON responses.
 
 Our frontend developers will often use the development environment during testing but will likely want to see
-production-like error responses.  To achieve this, set a `USE_DEV_ERROR_RESPONSES` to `false`.  This can be achieved
+production-like error responses.  To achieve this, set a `USE_DEV_ERROR_RESPONSES` environment variable to `false`.  This can be achieved
 with a `.env` file in the root folder containing:
 
 ```
@@ -54,6 +40,14 @@ USE_DEV_ERROR_RESPONSES=false
 
 A `.env.frontend_example` file is available in the repository for FE devs to copy over to `.env`.  The recommend
 behavior is to do this and then only switch to a `true` setting if you need to debug (see backtraces, etc).
+
+## Background Jobs
+
+Tutor in production runs background jobs using resque and redis.  In the development environment, however, background jobs are run "inline", i.e. not in the background.  To actually run these jobs in the background in the development environment, set the environment variable `USE_REAL_BACKGROUND_JOBS` to `true`.
+
+## Bullet
+
+Bullet is a gem for finding N+1 queries and the like.  To enable it in development, set an `ENABLE_BULLET` environment variable to `true`.  Then you can tail `log/bullet.log`.
 
 ## Testing with capybara
 
@@ -87,3 +81,31 @@ To use the feature, run `rake parallel:create`.  This will create multiple copie
 After creating the databases and after changing any of the migrations, run `rake parallel:prepare` to copy the database schema to each of them.
 
 `rake parallel:spec` can then be used to run the testing suite in parallel.
+
+## Running Demos
+
+A demo rake task exists to populate the database with certain courses and scenarios.  The demos assume that appropriate data has been loaded into CNX and Exercises.  Before running the task you should drop the database and reload it:
+
+`bundle exec rake db:drop db:create db:migrate db:seed demo`
+
+The courses that are set up in the demo are determined by the YAML files in the [lib/tasks/demo](https://github.com/openstax/tutor-server/tree/master/lib/tasks/demo) directory.  It is in these files that you can configure different periods, student membership in periods, CNX book UUID and version, assignments and progress on those assignments, etc.
+
+By default, all YAML files in that directory are run (with the exception of `people.yml`).  If you want to only run one, you can specify its name in the rake call, e.g. to load only the Biology course you would say:
+
+`bundle exec rake db:drop db:create db:migrate db:seed demo[biology]`
+
+As an admin you can search for the various users set up by the demo scripts (or you can check out the demo YAML files in `/lib/tasks`).  For your convenience, here are a few of the student usernames:
+
+  * student-ak
+  * student-hp
+  * student-hg
+  * student-cd
+  * student-nz
+  * student-ne
+  * student-sd
+
+The teacher login is: teacher-cm
+
+These teachers and students derive their username from the full names.  E.g. `student-cd` maps to the user "Clarissa Dalloway".  The full list of names and initials can be [found here](https://github.com/openstax/tutor-server/blob/master/lib/tasks/demo/people.yml).
+
+
