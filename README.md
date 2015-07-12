@@ -108,4 +108,8 @@ The teacher login is: teacher-cm
 
 These teachers and students derive their username from the full names.  E.g. `student-cd` maps to the user "Clarissa Dalloway".  The full list of names and initials can be [found here](https://github.com/openstax/tutor-server/blob/master/lib/tasks/demo/people.yml).
 
+## Profiling
+
+See [this napkin note](https://github.com/openstax/napkin-notes/blob/master/jp/profiling_tutor_server.md)
+
 
