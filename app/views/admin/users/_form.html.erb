@@ -1,22 +1,23 @@
 <% method ||= :post %>
 
-<%= lev_form_for :user, url: url, method: method do |f| %>
-  <div>
-    <%= f.label :username %>
+<%= lev_form_for :user, url: url, method: method, html: {class: 'form-horizontal'} do |f| %>
+
+  <div class='form-group'>
+    <%= f.label :username, class: 'col-sm-2 control-label' %>
     <%= f.text_field :username %>
   </div>
 
   <% if @user.nil? %>
-    <div>
-      <%= f.label :password %>
+    <div class='form-group'>
+      <%= f.label :password, class: 'col-sm-2 control-label' %>
       <%= f.password_field :password %>
     </div>
   <% end %>
 
-  <div>
-    <%= f.label :full_name %>
+  <div class='form-group'>
+    <%= f.label :full_name, class: 'col-sm-2 control-label' %>
     <%= f.text_field :full_name %>
-  </div>
+  </div class='form-group'>
 
   <div>
     <%= f.submit 'Save', class: 'btn btn-primary' %>
