@@ -10,7 +10,11 @@
     <div class="form-group">
       <%= f.label :teacher, 'Assign teachers' %>
       <%= f.text_field :teacher, class: 'form-control' %>
-      <ul id="assigned-teachers"></ul>
+      <ul id="assigned-teachers">
+      <% @teachers.each do |teacher| %>
+        <li><%= teacher.name %></li>
+      <% end %>
+      </ul>
     </div>
   <% end %>
 
