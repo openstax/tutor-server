@@ -2,7 +2,7 @@
 # It's only used by the demo spec
 course_name: Biology I
 cnx_book_id: ccbc51fa-49f3-40bb-98d6-07a15a7ab6b7
-cnx_book_version: latest
+cnx_book_version: 5.63
 teacher: cm
 periods:
   - name: 1st Period

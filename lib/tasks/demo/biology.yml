@@ -2,7 +2,7 @@
 # The fixture at spec/fixtures/demo-imports/biology.yml must also be updated
 course_name: Biology I
 cnx_book_id: ccbc51fa-49f3-40bb-98d6-07a15a7ab6b7
-cnx_book_version: latest
+cnx_book_version: 5.63
 teacher: cm
 periods:
   - name: 1st Period
@@ -39,7 +39,7 @@ assignments:
         students: {an: 100,cg: 82,cd: 71,dp: 90,fa: 78,jr: 87,js: i,lh: i,ms: 90,rb: 85,wh: ns}
 
   - type: reading
-    step_types: [ r, r, r, r, r, r, r, e, r, r, r, p ]
+    step_types: [ r, r, r, r, r, r, r, e, r, r, e, r, r, r, p ]
     chapter_sections: [[2, 3, 0], [2, 3, 1], [2, 3, 2]]
     title: Read Unit 2. The Cell
     periods:
@@ -47,28 +47,28 @@ assignments:
         due_at: <%= due_two_days_ago %>
         students:
           ak: 94
-          at: [ 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1 ]
+          at: [ 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1 ]
           bh: 40
-          gj: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1 ]
+          gj: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1 ]
           kl: 60
           ir: i
           mb: ns
           ra: 72
-          sg: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ]  # explicit example, could also be `100`
+          sg: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ]  # explicit example, could also be `100`
       - index: 3 # 3rd period
         due_at: <%= due_today %>
         students:
           an: 80
           cg: 100
-          cd: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0 ]
-          dp: [ 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1 ]
-          fa: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0 ]
+          cd: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1 ]
+          dp: [ 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1 ]
+          fa: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0 ]
           jr: 79
-          js: [ 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0 ]
+          js: [ 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1 ]
           lh: i
           ms: i
-          rb: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1 ]
-          wh: [ 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1 ]
+          rb: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1 ]
+          wh: [ 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1 ]
 
   - type: homework
     step_types: [ e, e, e, e, e, e, e, e, e, e, p ]
