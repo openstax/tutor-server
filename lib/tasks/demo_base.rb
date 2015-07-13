@@ -188,6 +188,13 @@ class DemoBase
     )
   end
 
+  def external_assignment_assistant
+    @external_assignment_assistant ||= Tasks::Models::Assistant.find_or_create_by!(
+      name: "External Assignment Assistant",
+      code_class_name: "Tasks::Assistants::ExternalAssignmentAssistant"
+    )
+  end
+
   def assign_ireading(course:, chapter_sections:, due_at:, opens_at:nil, duration: nil, to: nil, title: nil)
     raise "Cannot set both opens_at and duration" if opens_at.present? && duration.present?
     duration ||= DEFAULT_TASK_DURATION
@@ -340,6 +347,9 @@ class DemoBase
     Tasks::Models::CourseAssistant.create!(course: course,
                                            assistant: hw_assistant,
                                            tasks_task_plan_type: 'homework')
+    Tasks::Models::CourseAssistant.create!(course: course,
+                                           assistant: external_assignment_assistant,
+                                           tasks_task_plan_type: 'external')
 
     log("Created a course named '#{name}'.")
 
