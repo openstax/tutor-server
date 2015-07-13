@@ -2,6 +2,8 @@ class Content::Models::BookPart < Tutor::SubSystems::BaseModel
   acts_as_resource allow_nil: true
 
   serialize :chapter_section, Array
+  serialize :toc_cache, Hash
+  serialize :page_data_cache, Array
 
   belongs_to :book, subsystem: :entity
 

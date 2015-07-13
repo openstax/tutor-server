@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150708120910) do
+ActiveRecord::Schema.define(version: 20150712051607) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -26,6 +26,8 @@ ActiveRecord::Schema.define(version: 20150708120910) do
     t.text     "chapter_section"
     t.datetime "created_at",          null: false
     t.datetime "updated_at",          null: false
+    t.text     "toc_cache"
+    t.text     "page_data_cache"
   end
 
   add_index "content_book_parts", ["entity_book_id"], name: "index_content_book_parts_on_entity_book_id", using: :btree
