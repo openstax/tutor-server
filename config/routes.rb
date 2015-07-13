@@ -115,6 +115,8 @@ Rails.application.routes.draw do
     put :reset_time, controller: :timecop
     post :freeze_time, controller: :timecop
     post :time_travel, controller: :timecop
+
+    resources :books, only: [:index]
   end
 
   namespace :dev do

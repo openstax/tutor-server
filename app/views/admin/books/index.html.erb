@@ -1,0 +1,22 @@
+<% @page_header = 'Books' %>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>UUID</th>
+      <th>Version</th>
+      <th>Link to Archive</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @books.each do |book| %>
+    <tr>
+      <td><%= book.title %></td>
+      <td><%= book.uuid %></td>
+      <td><%= book.version %></td>
+      <td><%= link_to 'Archive', book.url, target: '_blank', class: 'btn btn-xs btn-primary' %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
