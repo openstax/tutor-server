@@ -24,19 +24,11 @@ module OpenStax::Cnx::V1
     TEKS_REGEX = /ost-tag-(teks-[\w+-]+)/
     APLO_REGEX = /ost-tag-std-apbio-lo-([\w+-]+)/
 
-    def initialize(hash: {}, chapter_section: [], is_intro: nil, id: nil, url: nil,
-                   title: nil, full_hash: nil, content: nil, los: nil, fragments: nil, tags: nil)
+    def initialize(hash: {}, id: nil, title: nil, content: nil)
       @hash            = hash
-      @chapter_section = chapter_section
-      @is_intro        = is_intro
       @id              = id
-      @url             = url
       @title           = title
-      @full_hash       = full_hash
       @content         = content
-      @los             = los
-      @fragments       = fragments
-      @tags            = tags
     end
 
     attr_reader :hash
