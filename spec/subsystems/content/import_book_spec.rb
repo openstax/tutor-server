@@ -86,6 +86,12 @@ RSpec.describe Content::ImportBook, type: :routine, speed: :slow, vcr: VCR_OPTS 
     page = root_book_part.child_book_parts.third.pages.second
     expect(page.title).to eq "Macromolecules"
     expect(page.chapter_section).to eq [3,1]
+
+    # Jump to 6th chapter (getting us into 2nd unit)
+
+    part = root_book_part.child_book_parts[5]
+    expect(part.title).to eq "Metabolism"
+    expect(part.chapter_section).to eq [6]
   end
 
 end
