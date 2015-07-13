@@ -1,8 +1,10 @@
 <% method ||= :post %>
 
 <%= lev_form_for :district, url: url, method: method do |f| %>
-  <%= f.label :name %>
-  <%= f.text_field :name %>
+  <div class='form-group'>
+    <%= f.label :name %>
+    <%= f.text_field :name %>
+  </div>
 
   <%= f.submit 'Save', class: 'btn btn-primary' %>
 <% end %>
