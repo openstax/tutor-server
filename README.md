@@ -86,7 +86,7 @@ After creating the databases and after changing any of the migrations, run `rake
 
 A demo rake task exists to populate the database with certain courses and scenarios.  The demos assume that appropriate data has been loaded into CNX and Exercises.  Before running the task you should drop the database and reload it:
 
-`bundle exec rake db:drop db:create db:migrate db:seed demo`
+`bundle exec rake db:reset demo`
 
 The courses that are set up in the demo are determined by the YAML files in the [lib/tasks/demo](https://github.com/openstax/tutor-server/tree/master/lib/tasks/demo) directory.  It is in these files that you can configure different periods, student membership in periods, CNX book UUID and version, assignments and progress on those assignments, etc.
 
