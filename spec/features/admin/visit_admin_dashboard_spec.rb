@@ -7,7 +7,7 @@ RSpec.describe 'Admnistration' do
 
     visit admin_root_path
 
-    expect(page).to have_content('Tutor Administration')
+    expect(page).to have_content('Tutor Admin Console')
     expect(page).to have_link('Courses', href: admin_courses_path)
   end
 end
