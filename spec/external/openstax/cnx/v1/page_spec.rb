@@ -38,16 +38,13 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, vcr: VCR_OPTS do
           ],
           fragment_classes: [
             OpenStax::Cnx::V1::Fragment::Text,
-            OpenStax::Cnx::V1::Fragment::Interactive,
-            OpenStax::Cnx::V1::Fragment::Exercise,
+            OpenStax::Cnx::V1::Fragment::Feature,
             OpenStax::Cnx::V1::Fragment::Text,
+            OpenStax::Cnx::V1::Fragment::Feature,
+            OpenStax::Cnx::V1::Fragment::Feature,
             OpenStax::Cnx::V1::Fragment::Text,
-            OpenStax::Cnx::V1::Fragment::Exercise,
-            OpenStax::Cnx::V1::Fragment::Text,
-            OpenStax::Cnx::V1::Fragment::Text,
-            OpenStax::Cnx::V1::Fragment::Text,
-            OpenStax::Cnx::V1::Fragment::Exercise,
-            OpenStax::Cnx::V1::Fragment::Text,
+            OpenStax::Cnx::V1::Fragment::Feature,
+            OpenStax::Cnx::V1::Fragment::Feature,
             OpenStax::Cnx::V1::Fragment::ExerciseChoice
           ],
           is_intro: false
@@ -124,10 +121,8 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, vcr: VCR_OPTS do
             }
           ],
           fragment_classes: [OpenStax::Cnx::V1::Fragment::Text,
-                             OpenStax::Cnx::V1::Fragment::Video,
-                             OpenStax::Cnx::V1::Fragment::Exercise,
-                             OpenStax::Cnx::V1::Fragment::Interactive,
-                             OpenStax::Cnx::V1::Fragment::Exercise],
+                             OpenStax::Cnx::V1::Fragment::Feature,
+                             OpenStax::Cnx::V1::Fragment::Feature],
           is_intro: false
         }
       }

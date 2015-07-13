@@ -38,11 +38,11 @@ class Demo001 < DemoBase
         log("  Created period: #{period_content.name}")
         period_content.students.each do | initials |
           name = people.students[initials]
-          student = get_student(initials) ||
+          profile = get_student_profile(initials) ||
                     new_user_profile(username: "student-#{initials}", name: name)
           log("    #{initials} (#{name})")
 
-          run(AddUserAsPeriodStudent, period: period, user: student.entity_user)
+          run(AddUserAsPeriodStudent, period: period, user: profile.entity_user)
         end
       end
 
@@ -53,7 +53,7 @@ class Demo001 < DemoBase
       end
 
 
-      teacher_profile = get_teacher(content.teacher) ||
+      teacher_profile = get_teacher_profile(content.teacher) ||
                         new_user_profile(username: "teacher-#{content.teacher}",
                                          name: people.teachers[content.teacher])
 
