@@ -116,7 +116,12 @@ Rails.application.routes.draw do
     post :freeze_time, controller: :timecop
     post :time_travel, controller: :timecop
 
-    resources :books, only: [:index]
+    resources :books, only: [:index] do
+      collection do
+        get :import
+        post :import
+      end
+    end
   end
 
   namespace :dev do
