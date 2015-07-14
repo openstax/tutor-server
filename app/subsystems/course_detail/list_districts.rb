@@ -5,7 +5,7 @@ module CourseDetail
     protected
     def exec
       districts = Models::District.all
-      outputs[:districts] = districts.collect do |district|
+      outputs.districts = districts.collect do |district|
         {
           id: district.id,
           name: district.name
