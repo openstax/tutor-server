@@ -8,6 +8,7 @@ RSpec.describe Content::Models::BookPart, :type => :model do
   it { is_expected.to have_many(:child_book_parts).dependent(:destroy) }
   it { is_expected.to have_many(:pages).dependent(:destroy) }
   it { is_expected.to validate_presence_of(:title) }
+  it { is_expected.to validate_presence_of(:book) }
 
   it "can find roots" do
     expect(Content::Models::BookPart.root_for(book_id: book_part.book.id)).to eq book_part

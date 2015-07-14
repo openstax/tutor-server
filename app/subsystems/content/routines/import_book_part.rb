@@ -10,7 +10,7 @@ class Content::Routines::ImportBookPart
 
   # Imports and saves a Cnx::BookPart as a Content::BookPart
   # Returns the Content::BookPart object
-  def exec(cnx_book_part:, parent_book_part: nil, book: nil, chapter_section_tracker: nil)
+  def exec(cnx_book_part:, parent_book_part: nil, book:, chapter_section_tracker: nil)
 
     chapter_section_tracker ||= ChapterSectionTracker.new
 
@@ -36,6 +36,7 @@ class Content::Routines::ImportBookPart
         run(:import_book_part,
             cnx_book_part: part,
             parent_book_part: book_part,
+            book: book,
             chapter_section_tracker: chapter_section_tracker)
 
       elsif part.is_a?(OpenStax::Cnx::V1::Page)
@@ -58,7 +59,6 @@ class Content::Routines::ImportBookPart
   def is_unit?(parent_book_part, cnx_book_part)
     !parent_book_part.nil? && cnx_book_part.has_child_book_parts?
   end
-
 
   class ChapterSectionTracker
     def initialize
