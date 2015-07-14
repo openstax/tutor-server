@@ -97,6 +97,8 @@ Rails.application.routes.draw do
 
     resources :districts
 
+    resources :schools
+
     resource :cron, only: [:update]
 
     resources :exceptions, only: [:show]
