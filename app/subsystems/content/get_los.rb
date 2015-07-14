@@ -1,6 +1,6 @@
 class Content::GetLos
 
-  lev_routine express_output: :los
+  lev_routine express_output: :all
 
   protected
 
@@ -22,6 +22,8 @@ class Content::GetLos
                                           .where(page_tags: {
                                             content_page_id: page_ids
                                           }).pluck(:value)
+
+    outputs[:all] = outputs[:los] + outputs[:aplos]
   end
 
 end

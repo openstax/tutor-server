@@ -194,8 +194,7 @@ class Tasks::Assistants::IReadingAssistant
   def self.get_exercise_pools(tasks:)
     exercise_pools = tasks.collect do |task|
       page_ids = task.task_plan.settings['page_ids']
-      lo_outputs = Content::GetLos.call(page_ids: page_ids)
-      page_los = lo_outputs.los + lo_outputs.aplos
+      page_los = Content::GetLos[page_ids: page_ids]
 
       page_exercises = Content::Routines::SearchExercises[tag: page_los, match_count: 1]
       page_exercise_ids = page_exercises.pluck(:id)

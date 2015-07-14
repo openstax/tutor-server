@@ -216,19 +216,17 @@ class Tasks::Assistants::HomeworkAssistant
                              collect{|task_step| task_step.tasked.url}.
                              uniq
 
-      exercise_tags = Content::Models::Tag.joins{exercise_tags.exercise}
-                                          .where{exercise_tags.exercise.url.in urls}
-                                          .select{ |tag| tag.lo? || tag.aplo? }
-                                          .collect{ |tag| tag.value }
-
-      pages      = Content::Routines::SearchPages[tag: exercise_tags, match_count: 1]
-      lo_outputs = Content::GetLos.call(page_ids: pages.map(&:id))
-      page_los = lo_outputs.los + lo_outputs.aplos
+      exercise_los = Content::Models::Tag.joins{exercise_tags.exercise}
+                                         .where{exercise_tags.exercise.url.in urls}
+                                         .select{ |tag| tag.lo? || tag.aplo? }
+                                         .collect{ |tag| tag.value }
+      pages    = Content::Routines::SearchPages[tag: exercise_los, match_count: 1]
+      page_los = Content::GetLos[page_ids: pages.map(&:id)]
 
       phys_tags = [
         page_los,
         'k12phys',
-        ['os-practice-problems', 'os-chapter-review'],
+        ['os-practice-problems', 'ost-chapter-review'],
         ['os-practice-problems', 'concept', 'problem', 'critical-thinking']
       ]
 
