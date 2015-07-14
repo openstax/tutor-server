@@ -32,6 +32,6 @@ class ExportUploader < CarrierWave::Uploader::Base
   def fog_attributes
     return super if original_filename.blank?
 
-    super.merge { 'Content-Disposition' => "attachment; filename=\"#{original_filename}\"" }
+    super.merge('Content-Disposition' => "attachment; filename=\"#{original_filename}\"")
   end
 end

@@ -15,8 +15,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
   let!(:userless_token)  { FactoryGirl.create :doorkeeper_access_token }
 
-  let!(:course) { CreateCourse[name: 'Physics 101'] }
-  let!(:period) { CreatePeriod[course: course] }
+  let!(:course)          { CreateCourse[name: 'Physics 101'] }
+  let!(:period)          { CreatePeriod[course: course] }
 
   describe "#readings" do
     it 'raises SecurityTransgression if user is anonymous or not in the course' do
@@ -963,15 +963,19 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       role = ChooseCourseRole[user: teacher.entity_user,
                               course: course,
                               allowed_role_type: :teacher]
-      export = FactoryGirl.create(:performance_report_export,
-                                  export: File.open('./tmp/test.xls', 'w+'),
-                                  course: course,
-                                  role: role)
+
+      export = Tempfile.open(['test_export', '.xls']) do |file|
+        FactoryGirl.create(:performance_report_export,
+                           export: file,
+                           course: course,
+                           role: role)
+      end
 
       api_get :performance_exports, teacher_token, parameters: { id: course.id }
 
       expect(response.status).to eq(200)
-      expect(response.body_as_hash.last[:filename]).to eq('test.xls')
+      expect(response.body_as_hash.last[:filename]).not_to include('test_export')
+      expect(response.body_as_hash.last[:filename]).to include('.xls')
       expect(response.body_as_hash.last[:url]).to eq(export.url)
       expect(response.body_as_hash.last[:created_at]).not_to be_nil
     end
