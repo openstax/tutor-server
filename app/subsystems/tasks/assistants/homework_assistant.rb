@@ -76,13 +76,16 @@ class Tasks::Assistants::HomeworkAssistant
 
     exercise_los = Content::Models::Tag.joins{exercise_tags.exercise}
                                        .where{exercise_tags.exercise.url.in urls}
-                                       .select{|tag| tag.lo?}
+                                       .select{|tag| tag.lo? || tag.aplo? }
                                        .collect{|tag| tag.value}
 
     pages = Content::Routines::SearchPages[tag: exercise_los, match_count: 1]
-    los = Content::GetLos[page_ids: pages.map(&:id)]
+    outs = Content::GetLos.call(page_ids: pages.map(&:id)).outputs
+    los = outs.los
+    aplos = outs.aplos
 
     task.los = los
+    task.aplos = aplos
 
     task
   end
@@ -193,34 +196,52 @@ class Tasks::Assistants::HomeworkAssistant
     exercise_history
   end
 
+  def self.exercises_that_match_one_tag_per_level(levels)
+    relation = Content::Models::Exercise.unscoped
+
+    levels.each do |tags|
+      matching_exercises = Content::Routines::SearchExercises[tag: tags, match_count: 1]
+      exercise_ids = matching_exercises.to_a.collect{ |ex| ex.id }
+      relation = Content::Models::Exercise.where(id: exercise_ids)
+    end
+
+    relation
+  end
+
   def self.get_exercise_pools(tasks:)
     exercise_pools = tasks.collect do |task|
       urls = task.task_steps.select{|task_step| task_step.exercise?}.
                              collect{|task_step| task_step.tasked.url}.
                              uniq
 
-      exercise_los = Content::Models::Tag.joins{exercise_tags.exercise}
-                                         .where{exercise_tags.exercise.url.in urls}
-                                         .select{|tag| tag.lo?}
-                                         .collect{|tag| tag.value}
+      exercise_tags = Content::Models::Tag.joins{exercise_tags.exercise}
+                                          .where{exercise_tags.exercise.url.in urls}
+                                          .select{ |tag| tag.lo? || tag.aplo? }
+                                          .collect{ |tag| tag.value }
 
-      pages          = Content::Routines::SearchPages[tag: exercise_los, match_count: 1]
-      page_los       = Content::GetLos[page_ids: pages.map(&:id)]
-      page_exercises = Content::Routines::SearchExercises[tag: page_los, match_count: 1]
+      pages      = Content::Routines::SearchPages[tag: exercise_tags, match_count: 1]
+      lo_outputs = Content::GetLos.call(page_ids: pages.map(&:id))
+      page_los = lo_outputs.los + lo_outputs.aplos
 
-      practice_problems = Content::Models::Exercise.joins{exercise_tags.tag}
-                                                   .where{exercise_tags.tag.value.eq 'os-practice-problems'}
-                                                   .where{id.in page_exercises.map(&:id)}
+      phys_tags = [
+        page_los,
+        'k12phys',
+        ['os-practice-problems', 'os-chapter-review'],
+        ['os-practice-problems', 'concept', 'problem', 'critical-thinking']
+      ]
 
-      review_exercises = Content::Models::Exercise.joins{exercise_tags.tag}
-                                                  .where{exercise_tags.tag.value.eq 'ost-chapter-review'}
-                                                  .where{id.in page_exercises.map(&:id)}
+      bio_tags = [
+        page_los,
+        'apbio',
+        'ost-chapter-review',
+        ['critical-thinking', 'ap-test-prep', 'review'],
+        ['critical-thinking', 'ap-test-prep', 'time-medium', 'time-long']
+      ]
 
-      selected_review_exercises = Content::Models::Exercise.joins{exercise_tags.tag}
-                                                           .where{exercise_tags.tag.value.in ['concept', 'problem', 'critical-thinking']}
-                                                           .where{id.in review_exercises.map(&:id)}
+      phys_exercises = exercises_that_match_one_tag_per_level(phys_tags).to_a
+      bio_exercises = exercises_that_match_one_tag_per_level(bio_tags).to_a
 
-      combined = [practice_problems, selected_review_exercises].flatten.uniq.to_a
+      combined = [phys_exercises, bio_exercises].flatten.uniq.to_a
       combined
     end
     exercise_pools

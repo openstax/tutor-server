@@ -59,7 +59,9 @@ class Tasks::Assistants::IReadingAssistant
 
   def self.set_los(task:, pages:)
     los = pages.map(&:los).flatten.uniq
+    aplos = pages.map(&:aplos).flatten.uniq
     task.los = los
+    task.aplos = aplos
     task
   end
 
@@ -192,15 +194,25 @@ class Tasks::Assistants::IReadingAssistant
   def self.get_exercise_pools(tasks:)
     exercise_pools = tasks.collect do |task|
       page_ids = task.task_plan.settings['page_ids']
-      page_los = Content::GetLos[page_ids: page_ids]
+      lo_outputs = Content::GetLos.call(page_ids: page_ids)
+      page_los = lo_outputs.los + lo_outputs.aplos
 
       page_exercises = Content::Routines::SearchExercises[tag: page_los, match_count: 1]
+      page_exercise_ids = page_exercises.to_a.collect{ |ex| ex.id }
+      page_exercise_relation = Content::Models::Exercise.where(id: page_exercise_ids)
 
-      exercises = Content::Models::Exercise.joins{exercise_tags.tag}
-                                           .where{exercise_tags.tag.value.eq 'os-practice-concepts'}
-                                           .where{id.in page_exercises.map(&:id)}
+      phys_tags = ['k12phys', 'os-practice-concepts']
+      phys_exercises = Content::Routines::SearchExercises[relation: page_exercise_relation,
+                                                          tag: phys_tags,
+                                                          match_count: 2]
 
-      exercises
+      bio_tags = ['apbio', 'ost-chapter-review', 'review', 'time-short']
+      bio_exercises = Content::Routines::SearchExercises[relation: page_exercise_relation,
+                                                         tag: bio_tags,
+                                                         match_count: 4]
+
+      combined = [phys_exercises, bio_exercises].flatten.uniq.to_a
+      combined
     end
     exercise_pools
   end
