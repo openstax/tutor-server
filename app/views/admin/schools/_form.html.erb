@@ -1,14 +1,17 @@
 <% method ||= :post %>
 
-<%= lev_form_for :district, url: url, method: method do |f| %>
+<%= lev_form_for :school, url: url, method: method do |f| %>
   <div class='form-group'>
     <%= f.label :name %>
     <%= f.text_field :name %>
   </div>
 
   <div class='form-group'>
-    <%= f.label :district_id %>
-    <%= f.collection_select :district_id, @districts, :id, :name, include_blank: true %>
+    <%= f.label :course_detail_district_id, 'District' %>
+    <%= f.collection_select :course_detail_district_id,
+                            @districts,
+                            :id, :name,
+                            include_blank: true %>
   </div>
 
   <%= f.submit 'Save', class: 'btn btn-primary' %>

@@ -2,7 +2,9 @@ module CourseDetail
   class UpdateSchool
     lev_routine express_output: :school
 
-    uses_routine GetSchool, translations: { outputs: { type: :verbatim } }
+    uses_routine GetSchool,
+      translations: { outputs: { type: :verbatim } },
+      as: :get_school
 
     protected
     def exec(id:, attributes: {})

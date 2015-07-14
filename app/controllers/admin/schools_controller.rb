@@ -12,9 +12,13 @@ module Admin
 
     def create
       handle_with(Admin::SchoolsCreate,
-                  complete: -> {
+                  success: -> {
                     redirect_to admin_schools_path,
                                 notice: 'The school has been created.'
+                  },
+                  failure: -> {
+                    @school = CourseDetail::Models::School.new(school_params)
+                    render :new
                   })
     end
 
@@ -42,6 +46,10 @@ module Admin
     private
     def populate_districts
       @districts = CourseDetail::ListDistricts[]
+    end
+
+    def school_params
+      params.require(:school).permit(:name, :district_id)
     end
   end
 end

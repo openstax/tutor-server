@@ -27,7 +27,7 @@ RSpec.describe 'Administration' do
     fill_in 'Name', with: 'Edited Name'
     click_button 'Save'
 
-    expect(current_path).to eq(admin_school_path)
+    expect(current_path).to eq(admin_schools_path)
     expect(page).to have_css('.flash_notice', text: 'The school has been updated.')
     expect(page).to have_css('tr td', text: 'Edited Name')
   end
