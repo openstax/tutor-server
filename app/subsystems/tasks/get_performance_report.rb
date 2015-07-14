@@ -51,8 +51,8 @@ module Tasks
       @tasks[period_id] ||= Models::Task
         .joins { taskings }
         .where { taskings.entity_role_id.in role_ids }
-        .where { task_type.in Models::Task.task_types.values_at(:reading, :homework, :external) }
-        .order('due_at DESC')
+        .where { task_type.in Models::Task.task_types.values_at(:reading, :homework) }
+        .order { due_at.asc }
         .includes(:taskings)
     end
 
@@ -62,7 +62,10 @@ module Tasks
 
     def get_data_headings(tasks)
       tasks.collect.with_index { |t, i|
-        { title: t.title, plan_id: t.tasks_task_plan_id, type: t.task_type }.merge(average(t, i))
+        { title: t.title,
+          plan_id: t.tasks_task_plan_id,
+          due_at: t.due_at
+        }.merge(average(t, i))
       }
     end
 
