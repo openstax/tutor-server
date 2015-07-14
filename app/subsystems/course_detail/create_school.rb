@@ -3,11 +3,8 @@ module CourseDetail
     lev_routine express_output: :school
 
     protected
-    def exec(name: 'Unnamed')
-      school = Models::School.create!(name: name)
-
-      outputs.school = { id: school.id,
-                         name: school.name }
+    def exec(name: 'Unnamed', district_id: nil)
+      Models::School.create(name: name, course_detail_district_id: district_id)
     end
   end
 end

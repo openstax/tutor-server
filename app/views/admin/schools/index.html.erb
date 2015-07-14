@@ -4,6 +4,7 @@
   <thead>
     <tr>
       <th>Name</th>
+      <th>District</th>
       <th>Actions</th>
     </tr>
   </thead>
@@ -11,6 +12,7 @@
     <% @schools.each do |school| %>
       <tr>
         <td><%= school.name %></td>
+        <td><%= school.district_name %></td>
         <td>
           <%= link_to 'edit', edit_admin_school_path(school.id),
                               class: 'btn btn-xs btn-primary' %>
