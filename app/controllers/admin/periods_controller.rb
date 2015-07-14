@@ -1,7 +1,7 @@
 class Admin::PeriodsController < Admin::BaseController
   before_action :get_course
 
-  before_action :get_period, only: [:edit, :update]
+  before_action :get_period, only: [:edit, :update, :destroy]
 
   def new
   end
@@ -16,6 +16,15 @@ class Admin::PeriodsController < Admin::BaseController
 
   def update
     @period.update_attributes(name: params[:period][:name])
+    redirect_to edit_admin_course_path(@course.id)
+  end
+
+  def destroy
+    if @period.destroy
+      flash[:notice] = "Period \"#{@period.name}\" deleted."
+    else
+      flash[:error] = @period.errors.full_messages
+    end
     redirect_to edit_admin_course_path(@course.id)
   end
 
