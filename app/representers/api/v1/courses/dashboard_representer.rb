@@ -153,7 +153,6 @@ module Api::V1::Courses
                    HomeworkTask
                  else
                    TaskBase
-                   # raise "Unknown task type: #{task.task_type}"
                  end
                }
 
