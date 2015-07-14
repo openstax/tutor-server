@@ -12,4 +12,8 @@ class Page < Entity
     repository.tags.select{ |t| t.lo? }.collect{ |t| t.value }
   end
 
+  def aplos
+    repository.tags.select{ |t| t.aplo? }.collect{ |t| t.value }
+  end
+
 end

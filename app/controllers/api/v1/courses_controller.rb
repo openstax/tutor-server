@@ -63,7 +63,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   api :GET, '/courses/:course_id/exercises',
             "Returns a course\'s exercises, filtered by the page_ids param or the book_part_ids params"
   description <<-EOS
-    Returns a list of exercises tagged with LO's matching the pages
+    Returns a list of assignable exercises tagged with LO's matching the pages
     or book_parts with the given ID's.
     If no page_ids or book_part_ids are specified, returns an empty array.
 
@@ -75,7 +75,13 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
     lo_outputs = Content::GetLos.call(params).outputs
     tags = lo_outputs.los + lo_outputs.aplos
-    search_outputs = SearchLocalExercises.call(tag: tags, match_count: 1).outputs
+
+    review_exercises = Content::Routines::SearchExercises[tag: 'ost-chapter-review']
+    review_exercise_ids = review_exercises.pluck(:id)
+    review_exercise_relation = Content::Models::Exercise.where(id: review_exercise_ids)
+    search_outputs = SearchLocalExercises.call(relation: review_exercise_relation,
+                                               tag: tags,
+                                               match_count: 1).outputs
 
     respond_with search_outputs, represent_with: Api::V1::ExerciseSearchRepresenter
   end

@@ -99,7 +99,8 @@ class GetCourseGuide
 
   def exercises_grouped_by_book_part
     outputs.task_steps.flatten.select { |t| t.exercise? && t.completed? }.group_by do |t|
-      Content::Routines::SearchPages[tag: get_lo_tags(t)].first.content_book_part_id
+      tags = get_lo_tags(t) + get_aplo_tags(t)
+      Content::Routines::SearchPages[tag: tags].first.content_book_part_id
     end
   end
 
@@ -107,8 +108,12 @@ class GetCourseGuide
     [task_steps].flatten.collect(&:tasked).flatten.collect(&:los).flatten.uniq
   end
 
+  def get_aplo_tags(task_steps)
+    [task_steps].flatten.collect(&:tasked).flatten.collect(&:aplos).flatten.uniq
+  end
+
   def compile_pages(task_steps)
-    tags = get_lo_tags(task_steps)
+    tags = get_lo_tags(task_steps) + get_aplo_tags(task_steps)
     pages = Content::Routines::SearchPages[tag: tags, match_count: 1]
 
     pages.uniq.collect { |page|
@@ -129,8 +134,9 @@ class GetCourseGuide
   def filter_task_steps_by_page(task_steps, page)
     page_data = outputs.page_data.select { |p| p.id == page.id }.first
     page_los = page_data.los
+    page_aplos = page_data.aplos
     task_steps.select do |task_step|
-      (task_step.tasked.los & page_los).any?
+      (task_step.tasked.los & page_los).any? || (task_step.tasked.aplos & page_aplos).any?
     end
   end
 
@@ -141,12 +147,12 @@ class GetCourseGuide
   end
 
   def get_current_level(task_steps)
-    lo_tags = get_lo_tags(task_steps)
+    tags = get_lo_tags(task_steps) + get_aplo_tags(task_steps)
 
     if is_teacher?
-      OpenStax::Biglearn::V1.get_clue(roles: outputs.roles, tags: lo_tags)
+      OpenStax::Biglearn::V1.get_clue(roles: outputs.roles, tags: tags)
     else
-      OpenStax::Biglearn::V1.get_clue(roles: role, tags: lo_tags)
+      OpenStax::Biglearn::V1.get_clue(roles: role, tags: tags)
     end
   end
 

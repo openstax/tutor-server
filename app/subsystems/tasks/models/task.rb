@@ -30,6 +30,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   def post_init
     self.settings ||= {}
     self.settings['los'] ||= []
+    self.settings['aplos'] ||= []
   end
 
   def los
@@ -38,7 +39,14 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   def los=(new_los)
     self.settings['los'] = new_los
-    los
+  end
+
+  def aplos
+    settings['aplos']
+  end
+
+  def aplos=(new_aplos)
+    self.settings['aplos'] = new_aplos
   end
 
   def personalized_placeholder_strategy
