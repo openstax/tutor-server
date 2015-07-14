@@ -77,6 +77,34 @@ RSpec.describe Admin::CoursesController do
     end
   end
 
+  describe 'POST #set_book' do
+    let!(:course) { FactoryGirl.create(:course_profile_profile, name: 'Physics I').course }
+    let!(:book_1) { FactoryGirl.create(:content_book_part, title: 'Physics').book }
+    let!(:book_2) { FactoryGirl.create(:content_book_part, title: 'Biology').book }
+    let!(:course_book) {
+      AddBookToCourse.call(course: course, book: book_1)
+      course.reload.course_books.first
+    }
+
+    context 'when the book is already being used' do
+      it 'does not recreate the association' do
+        post :set_book, id: course.id, book_id: book_1.id
+        cb = course.reload.course_books.first
+        expect(cb.id).to eq course_book.id
+        expect(flash[:notice]).to eq 'Course book "Physics" is already selected for "Physics I"'
+      end
+    end
+
+    context 'when a new book is selected' do
+      it 'removes the existing association and creates a new one' do
+        post :set_book, id: course.id, book_id: book_2.id
+        cb = course.reload.books
+        expect(cb).to eq [book_2]
+        expect(flash[:notice]).to eq 'Course book "Biology" selected for "Physics I"'
+      end
+    end
+  end
+
   context 'disallowing baddies' do
     it 'disallows unauthenticated visitors' do
       allow(controller).to receive(:current_account) { nil }
