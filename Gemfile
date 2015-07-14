@@ -74,7 +74,6 @@ gem "keyword_search"
 # File uploads
 gem 'remotipart'
 gem 'carrierwave'
-gem 'fog-aws'
 
 # Image editing
 gem 'mini_magick'
@@ -230,6 +229,9 @@ group :production do
 
   # AWS SES
   gem 'aws-ses', '~> 0.6.0', :require => 'aws/ses'
+
+  # Fog
+  gem 'fog', require: 'fog/aws'
 
   # Notify developers of Exceptions in production
   gem 'exception_notification'

@@ -1,10 +1,12 @@
-# encoding: utf-8
-
 class ExportUploader < CarrierWave::Uploader::Base
   ALLOWED_EXTENSIONS = %w(xdoc doc pdf csv xls xlsx)
 
   def extension_white_list
     ALLOWED_EXTENSIONS
+  end
+
+  def content_hash
+    Digest::SHA2.new.update(read).to_s
   end
 
   def cache_dir
@@ -13,10 +15,6 @@ class ExportUploader < CarrierWave::Uploader::Base
 
   def store_dir
     'exports'
-  end
-
-  def content_hash
-    Digest::SHA2.new.update(read).to_s
   end
 
   def filename
@@ -28,6 +26,12 @@ class ExportUploader < CarrierWave::Uploader::Base
     # Don't try to hash uncached files
     return super unless cached?
 
-    original_filename || "#{content_hash}.#{file.extension}"
+    "#{content_hash}.#{file.extension}"
+  end
+
+  def fog_attributes
+    return super if original_filename.blank?
+
+    super.merge { 'Content-Disposition' => "attachment; filename=\"#{original_filename}\"" }
   end
 end

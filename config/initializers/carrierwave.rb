@@ -2,8 +2,6 @@ require 'addressable/uri'
 
 CarrierWave.configure do |config|
   if Rails.env.production?
-    require 'fog/aws'
-
     secrets = Rails.application.secrets['aws']['s3']
 
     fog_credentials = secrets['access_key_id'].blank? ? \
