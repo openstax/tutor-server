@@ -9,6 +9,7 @@ class Content::Models::PageDataVisitor < Content::Models::BookVisitor
       id: page.id,
       tags: get_page_tags(page),
       los: get_page_los(page),
+      aplos: get_page_aplos(page),
       title: page.title,
       chapter_section: page.chapter_section,
       url: page.url,
@@ -26,8 +27,14 @@ class Content::Models::PageDataVisitor < Content::Models::BookVisitor
     tags.select { |tag| tag[:type] == 'lo' }.collect { |tag| tag[:value] }
   end
 
+  def get_page_aplos(page)
+    tags = get_page_tags(page)
+    tags.select { |tag| tag[:type] == 'aplo' }.collect { |tag| tag[:value] }
+  end
+
   def get_page_tags(page)
-    page.page_tags.includes(:tag).collect do |page_tag|
+    @tags ||= {}
+    @tags[page.id] ||= page.page_tags.includes(:tag).collect do |page_tag|
       { type: page_tag.tag.tag_type, value: page_tag.tag.value }
     end
   end
