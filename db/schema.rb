@@ -445,7 +445,7 @@ ActiveRecord::Schema.define(version: 20150712051607) do
     t.integer  "target_id",          null: false
     t.string   "target_type",        null: false
     t.integer  "tasks_task_plan_id", null: false
-    t.datetime "opens_at"
+    t.datetime "opens_at",           null: false
     t.datetime "due_at",             null: false
     t.datetime "created_at",         null: false
     t.datetime "updated_at",         null: false
@@ -471,7 +471,7 @@ ActiveRecord::Schema.define(version: 20150712051607) do
     t.integer  "task_type",                                     null: false
     t.string   "title",                                         null: false
     t.text     "description"
-    t.datetime "opens_at"
+    t.datetime "opens_at",                                      null: false
     t.datetime "due_at"
     t.datetime "feedback_at"
     t.integer  "tasks_taskings_count",              default: 0, null: false
