@@ -3,7 +3,7 @@
 <%= lev_form_for :district, url: url, method: method do |f| %>
   <div class='form-group'>
     <%= f.label :name %>
-    <%= f.text_field :name %>
+    <%= f.text_field :name, class: 'form-control' %>
   </div>
 
   <%= f.submit 'Save', class: 'btn btn-primary' %>
