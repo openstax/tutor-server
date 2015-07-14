@@ -964,14 +964,14 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                               course: course,
                               allowed_role_type: :teacher]
       export = FactoryGirl.create(:performance_report_export,
-                                  export: File.open('./tmp/test.txt', 'w+'),
+                                  export: File.open('./tmp/test.xls', 'w+'),
                                   course: course,
                                   role: role)
 
       api_get :performance_exports, teacher_token, parameters: { id: course.id }
 
       expect(response.status).to eq(200)
-      expect(response.body_as_hash.last[:filename]).to eq('test.txt')
+      expect(response.body_as_hash.last[:filename]).to eq('test.xls')
       expect(response.body_as_hash.last[:url]).to eq(export.url)
       expect(response.body_as_hash.last[:created_at]).not_to be_nil
     end
