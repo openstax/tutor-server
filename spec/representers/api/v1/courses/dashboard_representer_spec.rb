@@ -60,6 +60,15 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
           completed_exercise_count: 8,
           correct_exercise_count: 3
         }),
+        Hashie::Mash.new({
+          id: 99,
+          title: 'Ext1',
+          opens_at: opens_at,
+          due_at: due_at,
+          task_type: :external,
+          completed?: true,
+          past_due?: true
+        }),
       ]
       mash.course = {
         course_id: 2,
@@ -122,6 +131,14 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
           "exercise_count" => 8,
           "complete_exercise_count" => 8,
           "correct_exercise_count" => 3
+        ),
+        a_hash_including(
+          "id" => '99',
+          "title" => "Ext1",
+          "opens_at" => api_opens_at,
+          "due_at" => api_due_at,
+          "type" => "external",
+          "complete" => true
         ),
       ),
       "role" => {

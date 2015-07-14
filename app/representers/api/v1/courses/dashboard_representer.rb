@@ -143,7 +143,7 @@ module Api::V1::Courses
                readable: true,
                writeable: false,
                skip_render: -> (object, options) {
-                 !['reading','homework'].include?(object.task_type.to_s)
+                 !['reading','homework','external'].include?(object.task_type.to_s)
                },
                decorator: -> (task, *) {
                  case task.task_type.to_s
@@ -152,7 +152,8 @@ module Api::V1::Courses
                  when 'homework'
                    HomeworkTask
                  else
-                   raise "Unknown task type: #{task.task_type}"
+                   TaskBase
+                   # raise "Unknown task type: #{task.task_type}"
                  end
                }
 
