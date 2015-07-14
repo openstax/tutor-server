@@ -90,6 +90,7 @@ Rails.application.routes.draw do
     resources :courses, except: :destroy do
       member do
         post :students
+        post :set_book
       end
       resources :periods, shallow: true
       resources :students, only: [:index], shallow: true

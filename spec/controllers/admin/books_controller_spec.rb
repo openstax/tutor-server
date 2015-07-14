@@ -19,14 +19,16 @@ RSpec.describe Admin::BooksController, speed: :slow, vcr: VCR_OPTS do
           'title' => 'AP Biology',
           'uuid' => book_part_2.uuid,
           'version' => book_part_2.version,
-          'url' => book_part_2.url
+          'url' => book_part_2.url,
+          'title_with_id' => "AP Biology (#{book_part_2.uuid}@#{book_part_2.version})"
         },
         {
           'id' => book_part_1.entity_book_id,
           'title' => 'Physics',
           'uuid' => book_part_1.uuid,
           'version' => book_part_1.version,
-          'url' => book_part_1.url
+          'url' => book_part_1.url,
+          'title_with_id' => "Physics (#{book_part_1.uuid}@#{book_part_1.version})"
         }
       ])
     end

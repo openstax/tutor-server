@@ -19,14 +19,16 @@ RSpec.describe Content::ListBooks, type: :routine do
         'title' => book_2.title,
         'url' => book_2.url,
         'uuid' => book_2.uuid,
-        'version' => book_2.version
+        'version' => book_2.version,
+        'title_with_id' => "#{book_2.title} (#{book_2.uuid}@#{book_2.version})"
       },
       {
         'id' => book_1.entity_book_id,
         'title' => 'My Book',
         'url' => "https://archive.cnx.org/contents/#{book_1_uuid}@6",
         'uuid' => book_1_uuid,
-        'version' => '6'
+        'version' => '6',
+        'title_with_id' => "My Book (#{book_1_uuid}@6)"
       }
     ])
   end

@@ -11,7 +11,8 @@ class Content::ListBooks
         title: book_part.title,
         url: book_part.url,
         uuid: book_part.uuid,
-        version: book_part.version
+        version: book_part.version,
+        title_with_id: "#{book_part.title} (#{book_part.uuid}@#{book_part.version})"
       )
     end
   end
