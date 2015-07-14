@@ -200,12 +200,14 @@ class Tasks::Assistants::HomeworkAssistant
     relation = Content::Models::Exercise.unscoped
 
     levels.each do |tags|
-      matching_exercises = Content::Routines::SearchExercises[tag: tags, match_count: 1]
-      exercise_ids = matching_exercises.to_a.collect{ |ex| ex.id }
-      relation = Content::Models::Exercise.where(id: exercise_ids)
+      matching_exercises = Content::Routines::SearchExercises[relation: relation,
+                                                              tag: tags,
+                                                              match_count: 1]
+      matching_exercise_ids = matching_exercises.pluck(:id)
+      relation = Content::Models::Exercise.where(id: matching_exercise_ids)
     end
 
-    relation
+    relation.preload(exercise_tags: :tag)
   end
 
   def self.get_exercise_pools(tasks:)

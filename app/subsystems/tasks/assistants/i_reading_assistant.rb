@@ -198,7 +198,7 @@ class Tasks::Assistants::IReadingAssistant
       page_los = lo_outputs.los + lo_outputs.aplos
 
       page_exercises = Content::Routines::SearchExercises[tag: page_los, match_count: 1]
-      page_exercise_ids = page_exercises.to_a.collect{ |ex| ex.id }
+      page_exercise_ids = page_exercises.pluck(:id)
       page_exercise_relation = Content::Models::Exercise.where(id: page_exercise_ids)
 
       phys_tags = ['k12phys', 'os-practice-concepts']
