@@ -37,10 +37,10 @@ class Demo001 < DemoBase
         period = run(:create_period, course: course, name: period_content.name).outputs.period
         log("  Created period: #{period_content.name}")
         period_content.students.each do | initials |
-          name = people.students[initials]
+          student_info = people.students[initials]
           profile = get_student_profile(initials) ||
-                    new_user_profile(username: "student-#{initials}", name: name)
-          log("    #{initials} (#{name})")
+                    new_user_profile(username: student_info.username, name:  student_info.name)
+          log("    #{initials} (#{student_info.name})")
 
           run(AddUserAsPeriodStudent, period: period, user: profile.entity_user)
         end
@@ -54,12 +54,12 @@ class Demo001 < DemoBase
 
 
       teacher_profile = get_teacher_profile(content.teacher) ||
-                        new_user_profile(username: "teacher-#{content.teacher}",
-                                         name: people.teachers[content.teacher])
+                        new_user_profile(username: people.teachers[content.teacher].username,
+                                         name: people.teachers[content.teacher].name)
 
       run(:add_teacher, course: course, user: teacher_profile.entity_user)
 
-      log("Created course '#{content.course_name}' with '#{people.teachers[content.teacher]}' as teacher")
+      log("Created course '#{content.course_name}' with '#{people.teachers[content.teacher].name}' as teacher")
 
     end # book
 

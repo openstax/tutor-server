@@ -29,17 +29,21 @@ class DemoBase
     @people ||= Hashie::Mash.load(File.dirname(__FILE__)+"/demo/people.yml")
   end
 
-  def user_profile_for_name(name)
+  def user_profile_for_username(username)
     UserProfile::Models::Profile.joins(:account)
-      .where(account: { full_name: name }).first
+      .where(account: { username: username }).first
   end
 
   def get_teacher_profile(initials)
-    user_profile_for_name people.teachers[initials]
+    teacher_info = people.teachers[initials]
+    raise "Unable to find teacher for #{initials}" unless teacher_info
+    user_profile_for_username teacher_info.username
   end
 
   def get_student_profile(initials)
-    user_profile_for_name people.students[initials]
+    student_info = people.students[initials]
+    raise "Unable to find student for #{initials}" unless student_info
+    user_profile_for_username student_info.username
   end
 
   class ResponsesList

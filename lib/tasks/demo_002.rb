@@ -38,6 +38,7 @@ class Demo002 < DemoBase
 
             responses = responses_list[ user.profile.id ]
             unless responses
+              binding.pry
               raise "#{assignment.title} period index #{period['index']} has no responses for task #{index} for user #{user.profile.id} #{user.username}"
             end
             work_task(task: task, responses: responses)
