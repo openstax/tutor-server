@@ -119,11 +119,6 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     core_steps_count == completed_core_steps_count
   end
 
-  def core_task_steps_completed_at
-    return nil unless self.core_task_steps_completed?
-    self.core_task_steps.collect{|ts| ts.completed_at}.max
-  end
-
   def handle_task_step_completion!(completion_time: Time.now)
     update_step_counts!
 
@@ -176,7 +171,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def completed_exercise_steps
-    exercise_steps.select{|step| step.completed?}
+    exercise_steps.select(&:completed?)
   end
 
   protected

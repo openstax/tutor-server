@@ -10,6 +10,15 @@ RSpec.describe Tasks::Models::TaskStep, :type => :model do
   it { is_expected.to validate_presence_of(:tasked) }
   it { is_expected.to validate_presence_of(:group_type) }
 
+  it 'completes a first and last completion datetime to track lateness' do
+    time = Time.current
+
+    Timecop.freeze(time) { task_step.complete }
+
+    expect(task_step.first_completed_at).to eq(time)
+    expect(task_step.last_completed_at).to eq(time)
+  end
+
   it "requires tasked to be unique" do
     expect(task_step).to be_valid
 
