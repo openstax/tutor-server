@@ -6,6 +6,20 @@ class DistributeTasks
 
   protected
 
+  def efficiently_save(task)
+    steps = task.task_steps.to_a
+    task.task_steps = []
+    task.save!
+    steps.each do |step|
+      tasked = step.tasked
+      tasked.task_step = nil
+      tasked.save!
+      step.tasked = tasked
+      task.task_steps << step
+      step.save!
+    end
+  end
+
   def exec(task_plan)
     # Delete pre-existing assignments
     task_plan.tasks.destroy_all unless task_plan.tasks.empty?
@@ -30,7 +44,7 @@ class DistributeTasks
       task.opens_at = opens_ats[ii]
       task.due_at = due_ats[ii] || (task.opens_at + 1.week)
       task.feedback_at ||= task.due_at
-      task.save!
+      efficiently_save(task)
     end
 
     outputs[:tasks] = tasks
