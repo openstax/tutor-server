@@ -80,7 +80,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
   def refresh
     OSU::AccessPolicy.require_action_allowed!(:refresh, current_api_user, @tasked)
 
-    result = Tasks::RefreshTaskStep.call(task_step: @task_step)
+    result = ::Tasks::RefreshTaskStep.call(task_step: @task_step)
 
     if result.errors.any?
       render_api_errors(result.errors)
@@ -94,7 +94,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
   private
 
   def get_task_step
-    @task_step = Tasks::Models::TaskStep.find(params[:id])
+    @task_step = ::Tasks::Models::TaskStep.find(params[:id])
     @tasked = @task_step.tasked
   end
 
