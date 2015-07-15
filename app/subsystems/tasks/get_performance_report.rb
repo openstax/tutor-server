@@ -22,6 +22,7 @@ module Tasks
     def get_performance_report_for_teacher(course)
       @tasks = {}
       @average = []
+
       course.periods.collect do |period|
         @average << Hash.new { |h, k| h[k] = [] }
         student_tasks, student_data = [], []
@@ -49,11 +50,11 @@ module Tasks
       role_ids = student_profiles.collect(&:entity_role_id)
       # Return reading and homework tasks for a student ordered by due date
       @tasks[period_id] ||= Models::Task
+        .includes(:taskings)
         .joins { taskings }
         .where { taskings.entity_role_id.in role_ids }
-        .where { task_type.in Models::Task.task_types.values_at(:reading, :homework) }
-        .order { due_at.asc }
-        .includes(:taskings)
+        .where(task_type: %w(reading homework))
+        .order { taskings.due_at.asc }
     end
 
     def taskings_exist?(task, profile)

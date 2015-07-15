@@ -456,10 +456,11 @@ ActiveRecord::Schema.define(version: 20150712051607) do
   add_index "tasks_tasking_plans", ["tasks_task_plan_id"], name: "index_tasks_tasking_plans_on_tasks_task_plan_id", using: :btree
 
   create_table "tasks_taskings", force: :cascade do |t|
-    t.integer  "entity_role_id", null: false
-    t.integer  "entity_task_id", null: false
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
+    t.integer  "entity_role_id",                                 null: false
+    t.integer  "entity_task_id",                                 null: false
+    t.datetime "created_at",                                     null: false
+    t.datetime "updated_at",                                     null: false
+    t.datetime "due_at",         default: '2015-07-22 21:14:10', null: false
   end
 
   add_index "tasks_taskings", ["entity_role_id", "entity_task_id"], name: "[\"tasks_taskings_role_id_on_task_id_unique\"]", unique: true, using: :btree
