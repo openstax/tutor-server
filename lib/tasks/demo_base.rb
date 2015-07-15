@@ -29,17 +29,21 @@ class DemoBase
     @people ||= Hashie::Mash.load(File.dirname(__FILE__)+"/demo/people.yml")
   end
 
-  def user_profile_for_name(name)
+  def user_profile_for_username(username)
     UserProfile::Models::Profile.joins(:account)
-      .where(account: { full_name: name }).first
+      .where(account: { username: username }).first
   end
 
   def get_teacher_profile(initials)
-    user_profile_for_name people.teachers[initials]
+    teacher_info = people.teachers[initials]
+    raise "Unable to find teacher for #{initials}" unless teacher_info
+    user_profile_for_username teacher_info.username
   end
 
   def get_student_profile(initials)
-    user_profile_for_name people.students[initials]
+    student_info = people.students[initials]
+    raise "Unable to find student for #{initials}" unless student_info
+    user_profile_for_username student_info.username
   end
 
   class ResponsesList
@@ -195,37 +199,22 @@ class DemoBase
     )
   end
 
-  def assign_ireading(course:, chapter_sections:, due_at:, opens_at:nil, duration: nil, to: nil, title: nil)
-    raise "Cannot set both opens_at and duration" if opens_at.present? && duration.present?
-    duration ||= DEFAULT_TASK_DURATION
-    opens_at ||= due_at - duration
-
+  def assign_ireading(course:, chapter_sections:, title:)
     book = CourseContent::GetCourseBooks[course: course].first
     pages = lookup_pages(book: book, chapter_sections: chapter_sections)
 
     raise "No pages to assign" if pages.blank?
 
-    task_plan = Tasks::Models::TaskPlan.new(
-      title: title || pages.first.title,
+    Tasks::Models::TaskPlan.new(
+      title: title,
       owner: course,
       type: 'reading',
       assistant: reading_assistant,
       settings: { page_ids: pages.collect{|page| page.id.to_s} }
     )
-
-    distribute_tasks(task_plan: task_plan,
-                     to: to || course,
-                     message: "Assigned ireading for #{chapter_sections}, due: #{due_at}, title: #{task_plan.title}",
-                     opens_at: opens_at,
-                     due_at: due_at)
   end
 
-  def assign_homework(course:, chapter_sections:, due_at:, opens_at: nil, duration: nil,
-                      num_exercises: 5, to: nil, title: nil)
-    raise "Cannot set both opens_at and duration" if opens_at.present? && duration.present?
-    duration ||= DEFAULT_TASK_DURATION
-    opens_at ||= due_at - duration
-
+  def assign_homework(course:, chapter_sections:,  num_exercises:, title:)
     book = CourseContent::GetCourseBooks[course: course].first
     pages = lookup_pages(book: book, chapter_sections: chapter_sections)
 
@@ -237,8 +226,8 @@ class DemoBase
                        .take(num_exercises)
                        .collect{ |e| e.id.to_s }
 
-    task_plan = Tasks::Models::TaskPlan.new(
-      title: title || "Homework - #{chapter_sections.join('-')}",
+    Tasks::Models::TaskPlan.new(
+      title: title,
       owner: course,
       type: 'homework',
       assistant: hw_assistant,
@@ -249,10 +238,9 @@ class DemoBase
       }
     )
 
-    distribute_tasks(task_plan: task_plan, to: to || course, opens_at: opens_at, due_at: due_at)
   end
 
-  def distribute_tasks(task_plan:, to:, opens_at:, due_at:, message: nil)
+  def add_tasking_plan(task_plan:, to:, opens_at:, due_at:, message: nil)
     targets = [to].flatten
     targets.each do |target|
       task_plan.tasking_plans << Tasks::Models::TaskingPlan.new(target: target,
@@ -261,10 +249,12 @@ class DemoBase
                                                                 due_at: due_at)
     end
     task_plan.save!
+  end
 
+  def distribute_tasks(task_plan:)
     tasks = run(DistributeTasks, task_plan).outputs.tasks
 
-    log(message || "Assigned #{task_plan.type}, '#{task_plan.title}' due at #{due_at}; #{tasks.count} times")
+    log("Assigned #{task_plan.type} #{tasks.count} times")
     log("One task looks like: " + print_task(task: tasks.first)) if tasks.any?
 
     tasks
@@ -274,9 +264,6 @@ class DemoBase
   # not completed; any non-nil means completed. 1/0 (true/false) is for
   # exercise correctness
   def work_task(task:, responses:[])
-
-    log("Working with #{responses}")
-
     raise "Invalid number of responses for #{task.title}" +
           "(responses,task_steps) = (#{responses.count}, #{task.task_steps.count})\n" +
           "(task = #{print_task(task: task)}) " \

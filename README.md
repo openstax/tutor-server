@@ -94,22 +94,20 @@ By default, all YAML files in that directory are run (with the exception of `peo
 
 `bundle exec rake db:drop db:create db:migrate db:seed demo[biology]`
 
-As an admin you can search for the various users set up by the demo scripts (or you can check out the demo YAML files in `/lib/tasks`).  For your convenience, here are a few of the student usernames:
+As an admin you can search for the various users set up by the demo scripts (or you can check out the demo YAML files in `/lib/tasks`).  For your convenience, here are a few of the student usernames and the courses they are setup with:
 
-  * student-ak
-  * student-hp
-  * student-hg
-  * student-cd
-  * student-nz
-  * student-ne
-  * student-sd
+  * student01 - biology and physics
+  * student02 - biology and physics
+  * student03 - biology and physics
+  * student08 - physics only
+  * student09 - biology only
+  * student31 - biology only
+  * student33 - physics only
 
-The teacher login is: teacher-cm
+A teacher is setup with username: `teacher01`
 
-These teachers and students derive their username from the full names.  E.g. `student-cd` maps to the user "Clarissa Dalloway".  The full list of names and initials can be [found here](https://github.com/openstax/tutor-server/blob/master/lib/tasks/demo/people.yml).
+The full list of teachers and students can be [found here](https://github.com/openstax/tutor-server/blob/master/lib/tasks/demo/people.yml).
 
 ## Profiling
 
 See [this napkin note](https://github.com/openstax/napkin-notes/blob/master/jp/profiling_tutor_server.md)
-
-
