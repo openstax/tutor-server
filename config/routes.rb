@@ -91,7 +91,7 @@ Rails.application.routes.draw do
       member do
         post 'students'
       end
-      resources :periods
+      resources :periods, shallow: true
     end
 
     resource :cron, only: [:update]

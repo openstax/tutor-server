@@ -1,5 +1,5 @@
 class Admin::PeriodsController < Admin::BaseController
-  before_action :get_course
+  before_action :get_course, only: [:new, :create]
 
   before_action :get_period, only: [:edit, :update, :destroy]
 
@@ -34,6 +34,7 @@ class Admin::PeriodsController < Admin::BaseController
   end
 
   def get_period
-    @period = @course.periods.find(params[:id])
+    @period = CourseMembership::Models::Period.find(params[:id])
+    @course = @period.course
   end
 end
