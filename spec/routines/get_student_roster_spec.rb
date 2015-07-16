@@ -45,24 +45,33 @@ describe GetStudentRoster do
         'first_name' => student_1.first_name,
         'last_name' => student_1.last_name,
         'full_name' => student_1.full_name,
+        'name' => student_1.name,
         'course_membership_period_id' => period_1.id,
         'entity_role_id' => student_1_role.id,
+        'username' => student_1.username,
+        'deidentifier' => student_1_role.students.first.deidentifier
       },
       {
         'id' => students[1].id,
         'first_name' => student_2.first_name,
         'last_name' => student_2.last_name,
         'full_name' => student_2.full_name,
+        'name' => student_2.name,
         'course_membership_period_id' => period_1.id,
         'entity_role_id' => student_2_role.id,
+        'username' => student_2.username,
+        'deidentifier' => student_2_role.students.first.deidentifier
       },
       {
         'id' => students[2].id,
         'first_name' => student_3.first_name,
         'last_name' => student_3.last_name,
         'full_name' => student_3.full_name,
+        'name' => student_3.name,
         'course_membership_period_id' => period_2.id,
         'entity_role_id' => student_3_role.id,
+        'username' => student_3.username,
+        'deidentifier' => student_3_role.students.first.deidentifier
       }
     ])
   end
