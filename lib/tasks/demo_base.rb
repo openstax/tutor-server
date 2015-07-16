@@ -269,27 +269,24 @@ class DemoBase
           "(task = #{print_task(task: task)}) " \
       if responses.count != task.steps_count
 
-    core_task_steps = task.core_task_steps.to_a
-    core_task_steps_count = core_task_steps.count
+    core_task_steps = task.core_task_steps
 
     core_task_steps.each_with_index do |step, index|
       work_step(step, responses[index])
     end
 
-    spaced_practice_task_steps = task.spaced_practice_task_steps.to_a
-    spaced_practice_task_steps_count = spaced_practice_task_steps.count
+    spaced_practice_task_steps = task.spaced_practice_task_steps
 
     spaced_practice_task_steps.each_with_index do |step, index|
-      work_step(step, responses[index + core_task_steps_count])
+      work_step(step, responses[index + core_task_steps.size])
     end
 
     return unless task.core_task_steps_completed?
 
-    personalized_task_steps = task.personalized_task_steps.to_a
-    personalized_task_steps_count = personalized_task_steps.count
+    personalized_task_steps = task.personalized_task_steps
 
     personalized_task_steps.each_with_index do |step, index|
-      work_step(step, responses[index + core_task_steps_count + spaced_practice_task_steps_count])
+      work_step(step, responses[index + core_task_steps.size + spaced_practice_task_steps.size])
     end
 
   end
