@@ -22,6 +22,8 @@ class Content::Models::BookPart < Tutor::SubSystems::BaseModel
                             dependent: :destroy,
                             inverse_of: :book_part
 
+  scope :roots, -> { where { parent_book_part_id == nil } }
+
   validates :title, presence: true
   validates :book, presence: true
 
