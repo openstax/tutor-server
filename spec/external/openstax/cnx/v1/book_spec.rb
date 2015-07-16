@@ -135,6 +135,8 @@ RSpec.describe OpenStax::Cnx::V1::Book, :type => :external, :vcr => VCR_OPTS do
     expect(book.id).to eq cnx_book_id
     expect(book.hash).not_to be_blank
     expect(book.url).to eq expected_book_url
+    expect(book.uuid).to eq '93e2b09d-261c-4007-a987-0b3062fe154b'
+    expect(book.version).to eq '3.6'
     expect(book.title).to eq 'Physics'
     expect(book.tree).not_to be_nil
     expect(book.root_book_part).to be_a OpenStax::Cnx::V1::BookPart

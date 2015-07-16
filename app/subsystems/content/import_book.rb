@@ -18,7 +18,9 @@ class Content::ImportBook
 
     run(:import_book_part, cnx_book_part: cnx_book.root_book_part,
                            book: outputs[:book],
-                           book_url: cnx_book.url)
+                           book_url: cnx_book.url,
+                           uuid: cnx_book.uuid,
+                           version: cnx_book.version)
     transfer_errors_from(outputs[:book_part], {type: :verbatim}, true)
 
     run(:update_page_content, book_part: outputs[:book_part])

@@ -6,6 +6,9 @@ FactoryGirl.define do
 
     title { contents[:title] || Faker::Lorem.words(3).join(" ") }
     association :book, factory: :entity_book
+    uuid { parent_book_part.nil? ? contents[:uuid] || SecureRandom.uuid : nil }
+    version { parent_book_part.nil? ? contents[:version] || "#{Random.rand(1..10)}.#{Random.rand(1..30)}" : nil }
+    url { parent_book_part.nil? ? "https://archive.cnx.org/contents/#{uuid}@#{version}" : nil }
 
     after(:create) do |book_part, evaluator|
       (evaluator.contents[:book_parts] || {}).each do |child_book_part|
