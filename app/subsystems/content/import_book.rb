@@ -16,7 +16,9 @@ class Content::ImportBook
   def exec(cnx_book:)
     outputs[:book] = Entity::Book.create!
 
-    run(:import_book_part, cnx_book_part: cnx_book.root_book_part, book: outputs[:book])
+    run(:import_book_part, cnx_book_part: cnx_book.root_book_part,
+                           book: outputs[:book],
+                           book_url: cnx_book.url)
     transfer_errors_from(outputs[:book_part], {type: :verbatim}, true)
 
     run(:update_page_content, book_part: outputs[:book_part])

@@ -34,6 +34,7 @@ RSpec.describe Content::ImportBook, type: :routine, speed: :slow, vcr: VCR_OPTS 
     expect(result.errors).to be_empty
 
     book_part = result.outputs.book_part
+    expect(book_part.url).to eq phys_cnx_book.url
 
     # TODO: Cache TOC and check it here
     test_book_part(book_part)

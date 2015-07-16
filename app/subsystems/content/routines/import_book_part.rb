@@ -10,7 +10,7 @@ class Content::Routines::ImportBookPart
 
   # Imports and saves a Cnx::BookPart as a Content::BookPart
   # Returns the Content::BookPart object
-  def exec(cnx_book_part:, parent_book_part: nil, book:, chapter_section_tracker: nil)
+  def exec(cnx_book_part:, parent_book_part: nil, book:, chapter_section_tracker: nil, book_url: nil)
 
     chapter_section_tracker ||= ChapterSectionTracker.new
 
@@ -22,7 +22,8 @@ class Content::Routines::ImportBookPart
         book: book,
         parent_book_part: parent_book_part,
         title: cnx_book_part.title,
-        chapter_section: chapter_section_tracker.value
+        chapter_section: chapter_section_tracker.value,
+        url: book_url
       )
 
       parent_book_part.child_book_parts << book_part unless parent_book_part.nil?

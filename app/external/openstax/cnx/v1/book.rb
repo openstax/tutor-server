@@ -16,6 +16,10 @@ module OpenStax::Cnx::V1
       @hash ||= OpenStax::Cnx::V1.fetch(id)
     end
 
+    def url
+      @url ||= OpenStax::Cnx::V1.url_for(id)
+    end
+
     def title
       @title ||= hash.fetch('title') { |key|
         raise "Book id=#{id} is missing #{key}"
