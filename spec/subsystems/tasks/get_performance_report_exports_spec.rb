@@ -8,32 +8,33 @@ RSpec.describe Tasks::GetPerformanceReportExports do
     course = Entity::Course.last
     role = Entity::Role.last
 
-    physics_file = File.open('./tmp/Physics_I_Performance.xlsx', 'w+')
-    biology_file = File.open('./tmp/Biology_I_Performance.xlsx', 'w+')
+    physics_export = Tempfile.open(['Physics_I_Performance', '.xlsx']) do |physics_file|
+      FactoryGirl.create(:performance_report_export,
+                         export: physics_file,
+                         course: course,
+                         role: role)
+    end
 
-    physics_export = FactoryGirl.create(:performance_report_export,
-                                        export: physics_file,
-                                        course: course,
-                                        role: role)
-    biology_export = FactoryGirl.create(:performance_report_export,
-                                        export: biology_file,
-                                        course: course,
-                                        role: role)
+    biology_export = Tempfile.open(['Biology_I_Performance', '.xlsx']) do |biology_file|
+      FactoryGirl.create(:performance_report_export,
+                         export: biology_file,
+                         course: course,
+                         role: role)
+    end
 
     export = described_class[course: course, role: role]
 
-    File.delete(physics_file.path) if File.exist? physics_file.path
-    File.delete(biology_file.path) if File.exist? biology_file.path
-
-    # newest on top
+    # newest on top - enforced by default_scope in the model
 
     expect(export.length).to eq 2
 
-    expect(export[0].filename).to eq 'Biology_I_Performance.xlsx'
+    expect(export[0].filename).not_to include 'Biology_I_Performance'
+    expect(export[0].filename).to include '.xlsx'
     expect(export[0].url).to eq biology_export.url
     expect(export[0].created_at).to be_the_same_time_as biology_export.created_at
 
-    expect(export[1].filename).to eq 'Physics_I_Performance.xlsx'
+    expect(export[1].filename).not_to include 'Physics_I_Performance'
+    expect(export[1].filename).to include '.xlsx'
     expect(export[1].url).to eq physics_export.url
     expect(export[1].created_at).to be_the_same_time_as physics_export.created_at
 
