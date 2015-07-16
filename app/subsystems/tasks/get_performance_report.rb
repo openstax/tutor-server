@@ -48,13 +48,13 @@ module Tasks
 
     def get_tasks(student_profiles, period_id)
       role_ids = student_profiles.collect(&:entity_role_id)
+      task_types = Models::Task.task_types.values_at(:reading, :homework)
       # Return reading and homework tasks for a student ordered by due date
-      @tasks[period_id] ||= Models::Task
-        .includes(:taskings)
-        .joins { taskings }
-        .where { taskings.entity_role_id.in role_ids }
-        .where(task_type: %w(reading homework))
-        .order { taskings.due_at.asc }
+      @tasks[period_id] ||= Models::Task.includes(:taskings)
+                                        .joins(:taskings)
+                                        .where{taskings.entity_role_id.in role_ids}
+                                        .where(task_type: task_types)
+                                        .order(:due_at)
     end
 
     def taskings_exist?(task, profile)
