@@ -83,6 +83,10 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     steps_count == completed_steps_count
   end
 
+  def last_worked!(time:)
+    update_attributes(last_worked_at: time)
+  end
+
   def status
     # task is "completed" if all steps are completed,
     #         "in_progress" if some steps are completed and
