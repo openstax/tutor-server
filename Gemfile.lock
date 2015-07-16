@@ -1,17 +1,3 @@
-GIT
-  remote: git://github.com/lml/lev.git
-  revision: 3bfe3f4172ede83df02b97b371d252aaf39c9aff
-  ref: 3bfe3f4172ede83df02b97b371d252aaf39c9aff
-  specs:
-    lev (4.3.0)
-      actionpack (>= 3.0)
-      active_attr
-      activemodel (>= 3.0)
-      activerecord (>= 3.0)
-      hashie
-      transaction_isolation
-      transaction_retry
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -230,6 +216,14 @@ GEM
     kgio (2.9.3)
     launchy (2.4.3)
       addressable (~> 2.3)
+    lev (4.3.1)
+      actionpack (>= 3.0)
+      active_attr
+      activemodel (>= 3.0)
+      activerecord (>= 3.0)
+      hashie
+      transaction_isolation
+      transaction_retry
     libv8 (3.16.14.7)
     lograge (0.3.1)
       actionpack (>= 3)
@@ -587,7 +581,7 @@ DEPENDENCIES
   json-schema
   keyword_search
   launchy
-  lev!
+  lev (~> 4.3.1)
   lograge
   maruku
   memory_test_fix
