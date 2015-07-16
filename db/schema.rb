@@ -20,7 +20,7 @@ ActiveRecord::Schema.define(version: 20150712051607) do
     t.string   "url"
     t.text     "content"
     t.integer  "parent_book_part_id"
-    t.integer  "entity_book_id"
+    t.integer  "entity_book_id",      null: false
     t.integer  "number",              null: false
     t.string   "title",               null: false
     t.text     "chapter_section"
