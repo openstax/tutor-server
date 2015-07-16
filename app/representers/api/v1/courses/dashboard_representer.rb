@@ -35,6 +35,12 @@ module Api::V1::Courses
                readable: true,
                writeable: false
 
+      property :published_at,
+               type: String,
+               readable: true,
+               writeable: false,
+               getter: ->(*) { DateTimeUtilities.to_api_s(published_at) }
+
       collection :tasking_plans,
                  readable: true,
                  writeable: false,
