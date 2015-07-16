@@ -8,6 +8,8 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
   let(:due_at) { opens_at + 1.week }
   let(:api_due_at) { DateTimeUtilities.to_api_s(due_at) }
 
+  let(:published_at) { opens_at }
+
   let(:data) {
     Hashie::Mash.new.tap do |mash|
       mash.plans = [
@@ -16,6 +18,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
           title: 'HW1',
           trouble: false,
           type: 'homework',
+          published_at: published_at,
           tasking_plans: [
             Hashie::Mash.new(
               target_id: 42,
@@ -91,6 +94,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
           "id" => '23',
           "title" => "HW1",
           "type" => "homework",
+          "published_at" => be_kind_of(String),
           "tasking_plans" => [
             {
               "target_id" => '42',

@@ -548,7 +548,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                                         :tasks_tasked_exercise],
                                            tasked_to: student_role)}
 
-    let!(:plan) { FactoryGirl.create(:tasks_task_plan, owner: course)}
+    let!(:plan) { FactoryGirl.create(:tasks_task_plan, owner: course,
+                                                       published_at: Time.now - 1.week)}
 
     it 'raises IllegalState if user is anonymous or not in course' do
       expect {
@@ -647,6 +648,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           a_hash_including(
             "id" => plan.id.to_s,
             "type" => "reading",
+            "published_at" => be_kind_of(String),
             "tasking_plans" => [
               { "target_id" => course.id.to_s,
                 "target_type" => 'course',
