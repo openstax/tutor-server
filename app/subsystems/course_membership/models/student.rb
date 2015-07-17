@@ -1,11 +1,13 @@
 class CourseMembership::Models::Student < Tutor::SubSystems::BaseModel
+  belongs_to :course, subsystem: :entity
   belongs_to :role, subsystem: :entity
-  belongs_to :period
 
-  has_one :course, through: :period, class_name: 'Entity::Course'
+  has_many :enrollments, dependent: :destroy
+  has_one :active_enrollment, -> { latest }, class_name: 'CourseMembership::Models::Enrollment'
+  has_one :period, through: :active_enrollment
 
-  validates :period, presence: true
-  validates :role, presence: true, uniqueness: { scope: :course_membership_period_id }
+  validates :course, presence: true
+  validates :role, presence: true, uniqueness: { scope: :entity_course_id }
   validates :deidentifier, uniqueness: true
 
   delegate :username, :first_name, :last_name, :full_name, :name, to: :role

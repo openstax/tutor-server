@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe CourseMembership::Models::Period, type: :model do
-  subject(:period) { CreatePeriod[course: Entity::Course.create!] }
+  subject(:period) { CreatePeriod[course: Entity::Course.create!].to_model }
 
   it { is_expected.to belong_to(:course) }
 
@@ -19,9 +19,9 @@ RSpec.describe CourseMembership::Models::Period, type: :model do
   it 'cannot be deleted if it has any students' do
     student_profile = FactoryGirl.create(:user_profile)
     AddUserAsPeriodStudent[period: period, user: student_profile.entity_user]
-    expect { period.destroy }.not_to change(CourseMembership::Models::Period.count)
+    expect { period.destroy }.not_to change{CourseMembership::Models::Period.count}
     expect(period.errors).not_to be_empty
     period.students.destroy_all
-    expect { period.destroy }.to change(CourseMembership::Models::Period.count).by(-1)
+    expect { period.destroy }.to change{CourseMembership::Models::Period.count}.by(-1)
   end
 end

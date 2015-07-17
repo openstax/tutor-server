@@ -13,8 +13,11 @@ class CourseMembership::AddStudent
       }."
     ) unless student.nil?
 
-    outputs[:student] = CourseMembership::Models::Student.create(role: role,
-                                                                 period: period.to_model)
+    outputs[:student] = CourseMembership::Models::Student.new(role: role, course: period.course)
+    outputs[:student].enrollments << CourseMembership::Models::Enrollment.new(
+      student: outputs[:student], period: period.to_model
+    )
+    outputs[:student].save
     transfer_errors_from(outputs[:student], type: :verbatim)
   end
 end
