@@ -48,7 +48,7 @@ module Tasks
 
     def get_tasks(student_profiles, period_id)
       role_ids = student_profiles.collect(&:entity_role_id)
-      task_types = Models::Task.task_types.values_at(:reading, :homework)
+      task_types = Models::Task.task_types.values_at(:reading, :homework, :external)
       # Return reading and homework tasks for a student ordered by due date
       @tasks[period_id] ||= Models::Task.includes(:taskings)
                                         .joins(:taskings)
