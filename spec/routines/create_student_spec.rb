@@ -13,7 +13,7 @@ describe CreateStudent, type: :routine do
     expect(result.errors).to be_empty
 
     student = result.outputs.student
-    expect(student.role.user.user.profile.account.username).to eq 'dummyuser'
+    expect(student.role.role_user.user.profile.account.username).to eq 'dummyuser'
     expect(student.first_name).to eq 'Dummy'
     expect(student.last_name).to eq 'User'
     expect(student.full_name).to eq 'Dummy User'

@@ -7,7 +7,7 @@ class GetStudentRoster
     students = CourseMembership::Models::Student
       .joins { period }
       .where { period.entity_course_id == course.id }
-      .includes(role: { user: { user: { profile: :account } } })
+      .includes(role: { role_user: { user: { profile: :account } } })
 
     outputs[:students] = students.collect do |student|
       Hashie::Mash.new({
