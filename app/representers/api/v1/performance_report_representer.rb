@@ -62,6 +62,10 @@ module Api::V1
                type: String,
                readable: true
 
+      property :type,
+               type: String,
+               readable: true
+
       property :average,
                type: Float,
                readable: true
