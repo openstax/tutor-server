@@ -19,11 +19,14 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   serialize :settings, JSON
 
   validates :title, presence: true
-  validates :due_at, timeliness: { on_or_after: :opens_at },
-                     allow_nil: true,
-                     if: :opens_at
 
-  validate :opens_at_or_due_at
+  validates :opens_at, presence: true, timeliness: { type: :date }
+
+  # Practice Widget can create tasks with no due date
+  # We already validate dates for teacher-created assignments in the TaskingPlan
+  validates :due_at, timeliness: { type: :date }, allow_nil: true
+
+  validate :due_at_on_or_after_opens_at
 
   after_initialize :post_init
 
@@ -178,9 +181,9 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   protected
 
-  def opens_at_or_due_at
-    return unless opens_at.blank? && due_at.blank?
-    errors.add(:base, 'needs either the opens_at date or due_at date')
+  def due_at_on_or_after_opens_at
+    return if due_at.nil? || opens_at.nil? || due_at >= opens_at
+    errors.add(:due_at, 'must be on or after opens_at')
     false
   end
 
