@@ -62,7 +62,7 @@ module Tasks
 
     def get_data_headings(tasks)
       tasks.collect.with_index { |t, i|
-        { title: t.title, plan_id: t.tasks_task_plan_id }.merge(average(t, i))
+        { title: t.title, plan_id: t.tasks_task_plan_id, type: t.task_type }.merge(average(t, i))
       }
     end
 
