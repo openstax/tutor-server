@@ -10,7 +10,7 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
     allow(tmp).to receive(:type).and_return(nil)
     allow(tmp).to receive(:title).and_return(nil)
     allow(tmp).to receive(:description).and_return(nil)
-    allow(tmp).to receive(:is_publish_requested).and_return(nil)
+    allow(tmp).to receive(:is_publish_requested?).and_return(nil)
     allow(tmp).to receive(:publish_job_uuid).and_return(nil)
     allow(tmp).to receive(:publish_last_requested_at).and_return(nil)
     allow(tmp).to receive(:published_at).and_return(nil)
@@ -75,7 +75,7 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
 
   context "is_publish_requested" do
     it "can be read" do
-      allow(task_plan).to receive(:is_publish_requested).and_return(true)
+      allow(task_plan).to receive(:is_publish_requested?).and_return(true)
       expect(representation).to include("is_publish_requested" => true)
     end
 
