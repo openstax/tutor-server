@@ -4,5 +4,5 @@ class Entity::User < Tutor::SubSystems::BaseModel
   has_many :role_user, subsystem: :role
   has_many :roles, through: :role_user
 
-  delegate :username, :first_name, :last_name, :full_name, to: :profile
+  delegate :username, :first_name, :last_name, :full_name, :name, to: :profile
 end
