@@ -62,6 +62,12 @@ module Api::V1::Courses
                writeable: false,
                getter: ->(*) { DateTimeUtilities.to_api_s(due_at) }
 
+      property :last_worked_at,
+               type: String,
+               readable: true,
+               writeable: false,
+               getter: ->(*) { DateTimeUtilities.to_api_s(last_worked_at) }
+
       property :task_type,
                as: :type,
                type: String,
