@@ -64,22 +64,18 @@ module Api::V1::Tasks
              }
 
     property :last_completed_at,
+             type: String,
              writeable: false,
              readable: true,
-             schema_info: {
-               required: true,
-               type: 'datetime',
-               description: "The most recent completion date by the taskee"
-             }
+             getter: ->(*) { DateTimeUtilities.to_api_s(last_completed_at) },
+             schema_info: { description: "The most recent completion date by the taskee" }
 
     property :first_completed_at,
+             type: String,
              writeable: false,
              readable: true,
-             schema_info: {
-               required: true,
-               type: 'datetime',
-               description: "The first completion date by the taskee"
-             }
+             getter: ->(*) { DateTimeUtilities.to_api_s(first_completed_at) },
+             schema_info: { description: "The first completion date by the taskee" }
 
     collection :related_content,
                writeable: false,

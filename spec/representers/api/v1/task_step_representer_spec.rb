@@ -2,12 +2,16 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::TaskStepRepresenter do
   it 'includes the *complete_at fields' do
-    time = Time.current
-    task_step = FactoryGirl.create(:tasks_task_step, first_completed_at: time - 1.week,
-                                                     last_completed_at: time)
+    last_time = Time.current
+    first_time = last_time - 1.week
+    formatted_first_time = DateTimeUtilities.to_api_s(first_time)
+    formatted_last_time = DateTimeUtilities.to_api_s(last_time)
+    task_step = FactoryGirl.create(:tasks_task_step, first_completed_at: first_time,
+                                                     last_completed_at: last_time)
 
     representation = described_class.prepare(task_step).to_hash
-    expect(representation).to include('first_completed_at' => time - 1.week,
-                                      'last_completed_at' => time)
+
+    expect(representation).to include('first_completed_at' => formatted_first_time,
+                                      'last_completed_at' => formatted_last_time)
   end
 end
