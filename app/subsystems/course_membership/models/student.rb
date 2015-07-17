@@ -23,4 +23,9 @@ class CourseMembership::Models::Student < Tutor::SubSystems::BaseModel
     self.deidentifier ||= deidentifier
   end
 
+  delegate :username, :first_name, :last_name, :full_name, to: :role
+
+  def period
+    enrollments.active.take.try(:period)
+  end
 end
