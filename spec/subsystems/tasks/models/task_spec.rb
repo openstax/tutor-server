@@ -10,6 +10,17 @@ RSpec.describe Tasks::Models::Task, :type => :model do
 
   it { is_expected.to validate_presence_of(:opens_at) }
 
+  describe '#handle_task_step_completion!' do
+    it 'marks #last_worked_at to the completion_time' do
+      time = Time.current
+      task = FactoryGirl.create(:tasks_task)
+
+      task.handle_task_step_completion!(completion_time: time)
+
+      expect(task.last_worked_at).to eq(time)
+    end
+  end
+
   it "requires non-nil due_at to be after opens_at" do
     task = FactoryGirl.build(:tasks_task, due_at: nil)
     expect(task).to be_valid

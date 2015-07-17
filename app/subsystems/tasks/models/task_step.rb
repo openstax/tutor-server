@@ -43,7 +43,6 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   def complete(completion_time: Time.current)
     self.first_completed_at ||= completion_time
     self.last_completed_at = completion_time
-    task.last_worked!(time: completion_time)
   end
 
   def completed?

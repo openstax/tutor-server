@@ -83,8 +83,8 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     steps_count == completed_steps_count
   end
 
-  def last_worked!(time:)
-    update_attributes(last_worked_at: time)
+  def set_last_worked_at(time:)
+    self.last_worked_at = time
   end
 
   def status
@@ -123,7 +123,8 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     core_steps_count == completed_core_steps_count
   end
 
-  def handle_task_step_completion!(completion_time: Time.now)
+  def handle_task_step_completion!(completion_time: Time.current)
+    set_last_worked_at(time: completion_time)
     update_step_counts!
 
     if core_task_steps_completed? && placeholder_steps_count > 0
@@ -172,10 +173,6 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   def exercise_steps
     task_steps.preload(:tasked).select{|task_step| task_step.exercise?}
-  end
-
-  def completed_exercise_steps
-    exercise_steps.select(&:completed?)
   end
 
   protected

@@ -19,10 +19,6 @@ RSpec.describe Tasks::Models::TaskStep, :type => :model do
       expect(task_step.first_completed_at).to eq(time)
       expect(task_step.last_completed_at).to eq(time)
     end
-
-    it 'marks its task#last_worked_at to last_completed_at on complete' do
-      expect(task_step.task.last_worked_at).to eq(time)
-    end
   end
 
   it "requires tasked to be unique" do
