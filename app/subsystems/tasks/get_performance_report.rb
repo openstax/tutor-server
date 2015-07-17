@@ -51,7 +51,7 @@ module Tasks
       @tasks[period_id] ||= Models::Task
         .joins { taskings }
         .where { taskings.entity_role_id.in role_ids }
-        .where { task_type.in Models::Task.task_types.values_at(:reading, :homework) }
+        .where { task_type.in Models::Task.task_types.values_at(:reading, :homework, :external) }
         .order('due_at DESC')
         .includes(:taskings)
     end
