@@ -9,7 +9,10 @@
   <% @periods.each do |period| %>
     <tr>
       <td><%= period.name %></td>
-      <td><%= link_to 'Edit', edit_admin_course_period_path(@course.course_id, period), class: "btn btn-xs btn-primary"  %></td>
+      <td>
+        <%= link_to 'Edit', edit_admin_period_path(period), class: "btn btn-xs btn-primary"  %>
+        <%= link_to 'Delete', admin_period_path(period), method: :delete, class: 'btn btn-xs btn-primary' %>
+      </td>
     </tr>
   <% end %>
   </tbody>
