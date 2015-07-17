@@ -122,7 +122,7 @@ class Tasks::Assistants::HomeworkAssistant
   def self.cnx_exercise_page(cnx_exercise)
     los = Content::Models::Tag.joins{exercise_tags.exercise}
                               .where{exercise_tags.exercise.url == cnx_exercise.url}
-                              .select{|tag| tag.lo?}
+                              .select{|tag| tag.lo? || tag.aplo?}
 
     pages = Content::Models::Page.joins{page_tags.tag}
                                  .where{page_tags.tag.id.in los.map(&:id)}
