@@ -4,7 +4,7 @@ class Role::AddUserRole
   protected
 
   def exec(user:, role:)
-    ss_map = Role::Models::User.create(user: user, role: role)
+    ss_map = Role::Models::RoleUser.create(user: user, role: role)
     transfer_errors_from(ss_map, {type: :verbatim}, true)
   end
 end

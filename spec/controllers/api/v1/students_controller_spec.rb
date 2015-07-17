@@ -12,7 +12,7 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
   let!(:student_user)      { student_profile.entity_user }
   let!(:student_role)      {
     role = Entity::Role.create
-    Role::Models::User.create!(user: student_user, role: role)
+    Role::Models::RoleUser.create!(user: student_user, role: role)
     role
   }
   let!(:student)           { CourseMembership::AddStudent[role: student_role, period: period] }
@@ -24,7 +24,7 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
   let!(:teacher_user)      { teacher_profile.entity_user }
   let!(:teacher_role)      {
     role = Entity::Role.create
-    Role::Models::User.create!(user: teacher_user, role: role)
+    Role::Models::RoleUser.create!(user: teacher_user, role: role)
     role
   }
   let!(:teacher)           { CourseMembership::AddTeacher[role: teacher_role, course: course] }
@@ -36,7 +36,7 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
   let!(:student_user_2)    { student_profile_2.entity_user }
   let!(:student_role_2)    {
     role = Entity::Role.create
-    Role::Models::User.create!(user: student_user_2, role: role)
+    Role::Models::RoleUser.create!(user: student_user_2, role: role)
     role
   }
   let!(:student_2)         { CourseMembership::AddStudent[role: student_role_2, period: period] }
@@ -45,7 +45,7 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
   let!(:student_user_3)    { student_profile_3.entity_user }
   let!(:student_role_3)    {
     role = Entity::Role.create
-    Role::Models::User.create!(user: student_user_3, role: role)
+    Role::Models::RoleUser.create!(user: student_user_3, role: role)
     role
   }
   let!(:student_3)         { CourseMembership::AddStudent[role: student_role_3, period: period_2] }

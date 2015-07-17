@@ -315,14 +315,14 @@ ActiveRecord::Schema.define(version: 20150712051607) do
 
   add_index "openstax_accounts_groups", ["openstax_uid"], name: "index_openstax_accounts_groups_on_openstax_uid", unique: true, using: :btree
 
-  create_table "role_users", force: :cascade do |t|
+  create_table "role_role_users", force: :cascade do |t|
     t.integer  "entity_user_id", null: false
     t.integer  "entity_role_id", null: false
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
   end
 
-  add_index "role_users", ["entity_user_id", "entity_role_id"], name: "role_users_user_role_uniq", unique: true, using: :btree
+  add_index "role_role_users", ["entity_user_id", "entity_role_id"], name: "role_role_users_user_role_uniq", unique: true, using: :btree
 
   create_table "tasks_assistants", force: :cascade do |t|
     t.string   "name",            null: false
@@ -536,8 +536,8 @@ ActiveRecord::Schema.define(version: 20150712051607) do
   add_foreign_key "course_membership_teachers", "entity_courses"
   add_foreign_key "course_membership_teachers", "entity_roles"
   add_foreign_key "course_profile_profiles", "entity_courses"
-  add_foreign_key "role_users", "entity_roles"
-  add_foreign_key "role_users", "entity_users"
+  add_foreign_key "role_role_users", "entity_roles"
+  add_foreign_key "role_role_users", "entity_users"
   add_foreign_key "tasks_course_assistants", "entity_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_course_assistants", "tasks_assistants", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_performance_report_exports", "entity_courses"
