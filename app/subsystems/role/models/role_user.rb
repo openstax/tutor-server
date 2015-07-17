@@ -1,4 +1,4 @@
-class Role::Models::User < Tutor::SubSystems::BaseModel
+class Role::Models::RoleUser < Tutor::SubSystems::BaseModel
   belongs_to :user, subsystem: :entity
   belongs_to :role, subsystem: :entity
 
