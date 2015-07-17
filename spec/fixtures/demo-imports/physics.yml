@@ -16,7 +16,7 @@ assignments:
     step_types: [ r, r, r, i, e, r, e, v, e, p ]
     periods:
       - index: 0
-        opens_at: <%= standard_due_at(today-3.days) %> # could be ommited and a default would be used
+        opens_at: <%= open_three_days_ago %>
         due_at: <%= due_today %>
         students: {sd: 81, vw: i}
 
@@ -26,6 +26,7 @@ assignments:
     step_types: [ r, i, e, r, r, r, e, r, r, r, e, r, e, p]
     periods:
       - index: 0
+        opens_at: <%= open_three_days_ago %>
         due_at: <%= due_today %>
         students:
           sd: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1 ]
@@ -38,6 +39,7 @@ assignments:
     step_types: [ e, e, e, e, e, e, e, e, e, e, p ]
     periods:
       - index: 0
+        opens_at: <%= open_one_day_ago %>
         due_at: <%= due_today %>
         students:
           sd: i

@@ -18,11 +18,12 @@ assignments:
     title: Read Chapter 1. The Study of Life
     periods:
       - index: 0
-        opens_at: <%= standard_due_at(today-3.days) %> # could be ommited and a default would be used
+        opens_at: <%= open_three_days_ago %>
         due_at: <%= due_today %>
         students: {ak: i,gj: 77}
 
       - index: 1
+        opens_at: <%= open_three_days_ago %>
         due_at: <%= due_today %>
         students: {gs: ns}
 
@@ -33,11 +34,13 @@ assignments:
     num_exercises: 10
     periods:
       - index: 0
+        opens_at: <%= open_three_days_ago %>
         due_at: <%= due_three_days_ago %>
         students:
           ak: 90
           gj: [ 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1 ]
       - index: 1
+        opens_at: <%= open_two_days_ago %>
         due_at: <%= due_two_days_ago %>
         students:
           gs: i

@@ -30,24 +30,44 @@ class ContentConfiguration
       @noon_today
     end
 
+    def standard_opens_at(time)
+      time.midnight + 1.minute
+    end
+
     def standard_due_at(time)
       time.midnight + 7.hours
     end
 
+    def open_today
+      standard_opens_at(school_day_on_or_before(today))
+    end
+
+    def open_one_day_ago
+      standard_opens_at(school_day_on_or_before(today - 1.day))
+    end
+
+    def open_two_days_ago
+      standard_opens_at(school_day_on_or_before(today - 2.days))
+    end
+
+    def open_three_days_ago
+      standard_opens_at(school_day_on_or_before(today - 3.days))
+    end
+
     def due_today
-      standard_due_at(school_day_on_or_before(noon_today))
+      standard_due_at(school_day_on_or_before(today))
     end
 
     def due_one_day_ago
-      standard_due_at(school_day_on_or_before(due_today))
+      standard_due_at(school_day_on_or_before(today - 1.day))
     end
 
     def due_two_days_ago
-      standard_due_at(school_day_on_or_before(due_one_day_ago - 2.days))
+      standard_due_at(school_day_on_or_before(today - 2.days))
     end
 
     def due_three_days_ago
-      standard_due_at(school_day_on_or_before(due_two_days_ago - 3.days))
+      standard_due_at(school_day_on_or_before(today - 3.days))
     end
 
   end
