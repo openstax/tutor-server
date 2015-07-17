@@ -381,13 +381,13 @@ ActiveRecord::Schema.define(version: 20150716231241) do
     t.integer  "tasked_id",                      null: false
     t.string   "tasked_type",                    null: false
     t.integer  "number",                         null: false
+    t.datetime "first_completed_at"
+    t.datetime "last_completed_at"
     t.integer  "group_type",         default: 0, null: false
     t.text     "related_content"
     t.text     "labels"
     t.datetime "created_at",                     null: false
     t.datetime "updated_at",                     null: false
-    t.datetime "first_completed_at"
-    t.datetime "last_completed_at"
   end
 
   add_index "tasks_task_steps", ["tasked_id", "tasked_type"], name: "index_tasks_task_steps_on_tasked_id_and_tasked_type", unique: true, using: :btree
