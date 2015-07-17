@@ -27,13 +27,20 @@ module Api::V1
     property :is_publish_requested,
              readable: true,
              writeable: true,
+             getter: ->(*) { is_publish_requested? },
              schema_info: { type: 'boolean' }
+
 
     property :publish_last_requested_at,
              type: String,
              readable: true,
              writeable: false,
              getter: ->(*) { DateTimeUtilities.to_api_s(publish_last_requested_at) }
+
+    property :publish_job_uuid,
+             type: String,
+             readable: true,
+             writeable: false
 
     property :publish_job_url,
              type: String,

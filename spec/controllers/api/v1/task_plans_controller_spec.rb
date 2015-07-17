@@ -24,6 +24,7 @@ describe Api::V1::TaskPlansController, :type => :controller, :api => true, :vers
                                        assistant: assistant,
                                        settings: { page_ids: [page.id.to_s] },
                                        type: 'test',
+                                       opens_at: Time.now,
                                        num_tasking_plans: 0) }
   let!(:tasking_plan) { FactoryGirl.create :tasks_tasking_plan,
                                            task_plan: task_plan,
@@ -232,7 +233,7 @@ describe Api::V1::TaskPlansController, :type => :controller, :api => true, :vers
         controller.sign_in teacher
         api_put :update, nil, parameters: { course_id: course.id, id: task_plan.id },
                               raw_post_data: valid_json_hash.to_json
-        expect(response).to have_http_status(:success)
+        expect(response).to have_http_status(:accepted)
         # Need to reload the task_plan since publishing it will set the
         # publication dates and change the representation
         expect(task_plan.reload.publish_last_requested_at).to be_within(10.seconds).of(Time.now)
@@ -244,6 +245,26 @@ describe Api::V1::TaskPlansController, :type => :controller, :api => true, :vers
 
         response_hash = JSON.parse(response.body)
         expect(response_hash['publish_job_url']).to include("/api/jobs/")
+
+        task_plan.reload
+
+        publish_last_requested_at = task_plan.publish_last_requested_at
+        published_at = task_plan.published_at
+        publish_job_uuid = task_plan.publish_job_uuid
+
+        # Since the task_plan opens_at is in the past, further publish requests should be ignored
+        expect {
+          api_put :update, nil, parameters: { course_id: course.id, id: task_plan.id },
+                                raw_post_data: valid_json_hash.merge('title' => 'Canceled').to_json
+        }.not_to change{ task_plan.reload.tasks }
+        expect(response).to have_http_status(:ok)
+
+        expect(task_plan.publish_last_requested_at).to eq publish_last_requested_at
+        expect(task_plan.published_at).to eq published_at
+        expect(task_plan.publish_job_uuid).to eq publish_job_uuid
+        expect(task_plan.title).to eq 'Canceled'
+
+        expect(response.body).to eq Api::V1::TaskPlanRepresenter.new(task_plan).to_json
       end
 
       it 'returns an error message if the task_plan settings are invalid' do

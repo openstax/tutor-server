@@ -4,7 +4,7 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
 
   UPDATABLE_ATTRIBUTES = ['title', 'description']
 
-  attr_accessor :is_publish_requested
+  attr_writer :is_publish_requested
 
   # Allow use of 'type' column without STI
   self.inheritance_column = nil
@@ -27,6 +27,14 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
 
   before_destroy :not_open_before_destroy, prepend: true
 
+  def tasks_past_open?
+    tasks.any?{ |tt| tt.past_open? }
+  end
+
+  def is_publish_requested?
+    !published_at.nil? || @is_publish_requested
+  end
+
   protected
 
   def valid_settings
@@ -42,22 +50,20 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
   end
 
   def changes_allowed
-    return if tasks.none? { |tt| tt.past_open? } || \
-              (!is_publish_requested && changes.except(*UPDATABLE_ATTRIBUTES).empty?)
-    action = is_publish_requested ? 'republished' : 'updated'
-    errors.add(:base, "cannot be #{action} after it is open")
+    return if !tasks_past_open? || changes.except(*UPDATABLE_ATTRIBUTES).empty?
+    errors.add(:base, "cannot be updated after it is open")
     false
   end
 
   def not_due_before_publish
-    return if !is_publish_requested || \
+    return if !is_publish_requested? || \
               tasking_plans.none? { |tp| !tp.due_at.nil? && tp.due_at < Time.now }
     errors.add(:due_at, 'cannot be in the past when publishing')
     false
   end
 
   def not_open_before_destroy
-    return if tasks.none? { |tt| tt.past_open? }
+    return unless tasks_past_open?
     errors.add(:base, "cannot be deleted after it is open")
     false
   end
