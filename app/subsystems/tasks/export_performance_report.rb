@@ -42,6 +42,7 @@ module Tasks
       outputs.performance_report.each do |report|
         package.workbook.add_worksheet(name: report[:period][:name]) do |sheet|
           sheet.add_row(data_headers(report[:data_headings]))
+          sheet.add_row(gather_due_dates(report[:data_headings]))
           sheet.add_row(gather_averages(report[:data_headings]))
           report.students.each do |student|
             sheet.add_row(student_data(student))
@@ -55,9 +56,14 @@ module Tasks
       (['Students'] + headings).collect { |header| bold_text(header) }
     end
 
+    def gather_due_dates(data_headings)
+      due_dates = data_headings.collect(&:due_at)
+      (['Due Date'] + due_dates).collect { |due_date| italic_text(due_date) }
+    end
+
     def gather_averages(data_headings)
       averages = data_headings.collect(&:average)
-      (['Average'] + averages).collect { |average| bold_text(average) }
+      (['Average'] + averages).collect { |average| italic_text(average) }
     end
 
     def student_data(student)
@@ -80,6 +86,12 @@ module Tasks
     def bold_text(content)
       text = Axlsx::RichText.new
       text.add_run(content, b: true)
+      text
+    end
+
+    def italic_text(content)
+      text = Axlsx::RichText.new
+      text.add_run(content, i: true)
       text
     end
 

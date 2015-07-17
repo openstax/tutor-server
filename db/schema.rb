@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150712051607) do
+ActiveRecord::Schema.define(version: 20150716231241) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -377,16 +377,17 @@ ActiveRecord::Schema.define(version: 20150712051607) do
   add_index "tasks_task_plans", ["tasks_assistant_id"], name: "index_tasks_task_plans_on_tasks_assistant_id", using: :btree
 
   create_table "tasks_task_steps", force: :cascade do |t|
-    t.integer  "tasks_task_id",               null: false
-    t.integer  "tasked_id",                   null: false
-    t.string   "tasked_type",                 null: false
-    t.integer  "number",                      null: false
-    t.datetime "completed_at"
-    t.integer  "group_type",      default: 0, null: false
+    t.integer  "tasks_task_id",                  null: false
+    t.integer  "tasked_id",                      null: false
+    t.string   "tasked_type",                    null: false
+    t.integer  "number",                         null: false
+    t.datetime "first_completed_at"
+    t.datetime "last_completed_at"
+    t.integer  "group_type",         default: 0, null: false
     t.text     "related_content"
     t.text     "labels"
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
   end
 
   add_index "tasks_task_steps", ["tasked_id", "tasked_type"], name: "index_tasks_task_steps_on_tasked_id_and_tasked_type", unique: true, using: :btree
@@ -489,10 +490,12 @@ ActiveRecord::Schema.define(version: 20150712051607) do
     t.integer  "placeholder_exercise_steps_count",  default: 0, null: false
     t.datetime "created_at",                                    null: false
     t.datetime "updated_at",                                    null: false
+    t.datetime "last_worked_at"
   end
 
   add_index "tasks_tasks", ["due_at", "opens_at"], name: "index_tasks_tasks_on_due_at_and_opens_at", using: :btree
   add_index "tasks_tasks", ["entity_task_id"], name: "index_tasks_tasks_on_entity_task_id", using: :btree
+  add_index "tasks_tasks", ["last_worked_at"], name: "index_tasks_tasks_on_last_worked_at", using: :btree
   add_index "tasks_tasks", ["task_type"], name: "index_tasks_tasks_on_task_type", using: :btree
   add_index "tasks_tasks", ["tasks_task_plan_id"], name: "index_tasks_tasks_on_tasks_task_plan_id", using: :btree
 

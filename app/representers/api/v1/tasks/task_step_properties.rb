@@ -63,6 +63,20 @@ module Api::V1::Tasks
                description: "Whether or not this step is complete"
              }
 
+    property :last_completed_at,
+             type: String,
+             writeable: false,
+             readable: true,
+             getter: ->(*) { DateTimeUtilities.to_api_s(last_completed_at) },
+             schema_info: { description: "The most recent completion date by the taskee" }
+
+    property :first_completed_at,
+             type: String,
+             writeable: false,
+             readable: true,
+             getter: ->(*) { DateTimeUtilities.to_api_s(first_completed_at) },
+             schema_info: { description: "The first completion date by the taskee" }
+
     collection :related_content,
                writeable: false,
                readable: true,

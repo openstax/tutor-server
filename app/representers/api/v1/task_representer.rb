@@ -44,6 +44,13 @@ module Api::V1
              getter: ->(*) { DateTimeUtilities.to_api_s(due_at) },
              schema_info: { description: "When the task is due (nil means never due)" }
 
+    property :last_worked_at,
+             type: String,
+             writeable: false,
+             readable: true,
+             getter: ->(*) { DateTimeUtilities.to_api_s(last_worked_at) },
+             schema_info: { description: "When the task was last worked (nil means not yet worked)" }
+
     property :is_shared?,
              as: :is_shared,
              writeable: false,

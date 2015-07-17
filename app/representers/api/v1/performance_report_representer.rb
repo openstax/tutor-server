@@ -30,6 +30,18 @@ module Api::V1
       property :recovered_exercise_count,
                type: Integer,
                readable: true
+
+      property :due_at,
+               type: String,
+               readable: true,
+               writeable: false,
+               getter: ->(*) { DateTimeUtilities.to_api_s(due_at) }
+
+      property :last_worked_at,
+               type: String,
+               readable: true,
+               writeable: false,
+               getter: ->(*) { DateTimeUtilities.to_api_s(last_worked_at) }
     end
 
     class Students < Roar::Decorator
@@ -65,6 +77,12 @@ module Api::V1
       property :type,
                type: String,
                readable: true
+
+      property :due_at,
+               type: String,
+               readable: true,
+               writeable: false,
+               getter: ->(*) { DateTimeUtilities.to_api_s(due_at) }
 
       property :average,
                type: Float,

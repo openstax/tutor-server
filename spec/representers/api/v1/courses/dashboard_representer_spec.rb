@@ -8,6 +8,9 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
   let(:due_at) { opens_at + 1.week }
   let(:api_due_at) { DateTimeUtilities.to_api_s(due_at) }
 
+  let(:last_worked_at) { opens_at + 1.day }
+  let(:api_last_worked_at) { DateTimeUtilities.to_api_s(last_worked_at) }
+
   let(:published_at) { opens_at }
 
   let(:data) {
@@ -35,6 +38,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
           title: 'HW2',
           opens_at: opens_at,
           due_at: due_at,
+          last_worked_at: last_worked_at,
           task_type: :homework,
           completed?: false,
           past_due?: false,
@@ -46,6 +50,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
           id: 37,
           title: 'Reading 1',
           due_at: due_at,
+          last_worked_at: last_worked_at,
           task_type: :reading,
           completed?: false,
           actual_and_placeholder_exercise_count: 7,
@@ -56,6 +61,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
           title: 'HW3',
           opens_at: opens_at,
           due_at: due_at,
+          last_worked_at: last_worked_at,
           task_type: :homework,
           completed?: true,
           past_due?: true,
@@ -68,6 +74,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
           title: 'Ext1',
           opens_at: opens_at,
           due_at: due_at,
+          last_worked_at: last_worked_at,
           task_type: :external,
           completed?: true,
           past_due?: true
@@ -111,6 +118,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
           "title" => "HW2",
           "opens_at" => api_opens_at,
           "due_at" => api_due_at,
+          "last_worked_at" => api_last_worked_at,
           "type" => "homework",
           "complete" => false,
           "exercise_count" => 5,
@@ -120,6 +128,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
           "id" => '37',
           "title" => "Reading 1",
           "due_at" => api_due_at,
+          "last_worked_at" => api_last_worked_at,
           "type" => "reading",
           "complete" => false,
           "exercise_count" => 7,
@@ -130,6 +139,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
           "title" => "HW3",
           "opens_at" => api_opens_at,
           "due_at" => api_due_at,
+          "last_worked_at" => api_last_worked_at,
           "type" => "homework",
           "complete" => true,
           "exercise_count" => 8,
@@ -141,6 +151,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
           "title" => "Ext1",
           "opens_at" => api_opens_at,
           "due_at" => api_due_at,
+          "last_worked_at" => api_last_worked_at,
           "type" => "external",
           "complete" => true
         ),

@@ -14,8 +14,8 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
 
   delegate :can_be_answered?, :can_be_recovered?, :exercise?, :placeholder?, to: :tasked
 
-  scope :complete, -> { where{completed_at != nil} }
-  scope :incomplete, -> { where{completed_at == nil} }
+  scope :complete, -> { where{first_completed_at != nil} }
+  scope :incomplete, -> { where{first_completed_at == nil} }
 
   scope :exercises, -> { where{tasked_type == Tasks::Models::TaskedExercise.name} }
 
@@ -40,12 +40,13 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
     tasked.make_incorrect!
   end
 
-  def complete(completion_time: Time.now)
-    self.completed_at ||= completion_time
+  def complete(completion_time: Time.current)
+    self.first_completed_at ||= completion_time
+    self.last_completed_at = completion_time
   end
 
   def completed?
-    !self.completed_at.nil?
+    !first_completed_at.nil?
   end
 
   def feedback_available?
