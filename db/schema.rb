@@ -120,7 +120,6 @@ ActiveRecord::Schema.define(version: 20150716231241) do
   create_table "course_membership_enrollments", force: :cascade do |t|
     t.integer  "course_membership_period_id"
     t.integer  "course_membership_student_id"
-    t.datetime "inactive_at"
     t.datetime "created_at",                   null: false
     t.datetime "updated_at",                   null: false
   end
@@ -141,13 +140,14 @@ ActiveRecord::Schema.define(version: 20150716231241) do
     t.integer  "entity_course_id", null: false
     t.integer  "entity_role_id",   null: false
     t.string   "deidentifier",     null: false
+    t.datetime "inactive_at"
     t.datetime "created_at",       null: false
     t.datetime "updated_at",       null: false
   end
 
   add_index "course_membership_students", ["deidentifier"], name: "index_course_membership_students_on_deidentifier", unique: true, using: :btree
-  add_index "course_membership_students", ["entity_course_id", "entity_role_id"], name: "course_membership_students_course_role_uniq", unique: true, using: :btree
-  add_index "course_membership_students", ["entity_role_id"], name: "index_course_membership_students_on_entity_role_id", using: :btree
+  add_index "course_membership_students", ["entity_course_id", "inactive_at"], name: "course_membership_students_course_inactive", using: :btree
+  add_index "course_membership_students", ["entity_role_id", "entity_course_id"], name: "course_membership_students_role_course_uniq", unique: true, using: :btree
 
   create_table "course_membership_teachers", force: :cascade do |t|
     t.integer  "entity_course_id", null: false

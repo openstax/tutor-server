@@ -2,6 +2,10 @@
 class CourseMembership::AddStudent
   lev_routine express_output: :student
 
+  uses_routine CourseMembership::AddEnrollment,
+               as: :add_enrollment,
+               translations: { outputs: { type: :verbatim } }
+
   protected
 
   def exec(period:, role:)
@@ -13,11 +17,9 @@ class CourseMembership::AddStudent
       }."
     ) unless student.nil?
 
-    outputs[:student] = CourseMembership::Models::Student.new(role: role, course: period.course)
-    outputs[:student].enrollments << CourseMembership::Models::Enrollment.new(
-      student: outputs[:student], period: period.to_model
-    )
-    outputs[:student].save
-    transfer_errors_from(outputs[:student], type: :verbatim)
+    student = CourseMembership::Models::Student.create(role: role, course: period.course)
+    transfer_errors_from(student, {type: :verbatim}, true)
+
+    run(:add_enrollment, period: period, student: student)
   end
 end

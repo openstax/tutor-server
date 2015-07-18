@@ -7,10 +7,15 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
   has_many :teacher_roles, through: :teachers, source: :role, class_name: 'Entity::Role'
 
   has_many :enrollments, dependent: :destroy
-  has_many :students, through: :enrollments
-  has_many :student_roles, through: :students, source: :role, class_name: 'Entity::Role'
+  has_many :latest_enrollments, -> { latest }, class_name: 'CourseMembership::Models::Enrollment'
 
-  before_destroy :no_active_enrollments, prepend: true
+  has_many :students, through: :latest_enrollments
+  has_many :active_students, -> { active }, class_name: 'CourseMembership::Models::Student',
+                                            through: :latest_enrollments
+
+  has_many :student_roles, through: :active_students, source: :role, class_name: 'Entity::Role'
+
+  before_destroy :no_active_students, prepend: true
 
   validates :course, presence: true
   validates :name, presence: true, uniqueness: { scope: :entity_course_id }
@@ -19,8 +24,8 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
 
   protected
 
-  def no_active_enrollments
-    return unless enrollments.active.exists?
+  def no_active_students
+    return unless active_students.exists?
     errors.add(:students, 'must be moved to another period before this period can be deleted')
     false
   end

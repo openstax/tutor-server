@@ -5,7 +5,6 @@ class CreateCourseMembershipEnrollments < ActiveRecord::Migration
                    foreign_key: { on_update: :cascade, on_delete: :cascade }
       t.references :course_membership_student,
                    foreign_key: { on_update: :cascade, on_delete: :cascade }
-      t.datetime   :inactive_at
 
       t.timestamps null: false
 

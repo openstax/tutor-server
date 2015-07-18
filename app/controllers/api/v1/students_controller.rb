@@ -60,7 +60,21 @@ class Api::V1::StudentsController < Api::V1::ApiController
     #{json_schema(Api::V1::StudentRepresenter, include: :writeable)}
   EOS
   def update
-    standard_update(@student, Api::V1::StudentRepresenter)
+    @student.with_lock do
+      OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, @student)
+      payload = consume!(Hashie::Mash.new, represent_with: Api::V1::StudentRepresenter)
+      period = CourseMembership::Models::Period.find(@payload['course_membership_period_id'])
+      result = MoveStudent.call(student: @student, period: period)
+      OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, @student)
+    end
+
+    if result.errors.any?
+      render_api_errors(result.errors)
+    else
+      respond_with result.outputs.student,
+                   represent_with: Api::V1::StudentRepresenter,
+                   responder: ResponderWithPutContent
+    end
   end
 
   api :DELETE, '/students/:student_id', 'Removes a student from their course'
@@ -68,7 +82,14 @@ class Api::V1::StudentsController < Api::V1::ApiController
     Removes a student from their course.
   EOS
   def destroy
-    standard_destroy(@student)
+    OSU::AccessPolicy.require_action_allowed!(:destroy, current_api_user, @student)
+    result = DeleteStudent.call(@student)
+
+    if result.errors.any?
+      render_api_errors(result.errors)
+    else
+      head :no_content
+    end
   end
 
   protected

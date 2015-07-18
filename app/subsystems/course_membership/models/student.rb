@@ -25,7 +25,23 @@ class CourseMembership::Models::Student < Tutor::SubSystems::BaseModel
 
   delegate :username, :first_name, :last_name, :full_name, to: :role
 
+  scope :active, -> { where(inactive_at: nil) }
+
   def period
-    enrollments.active.take.try(:period)
+    enrollments.last.try(:period)
+  end
+
+  def active?
+    inactive_at.nil?
+  end
+
+  def inactivate(time = Time.now)
+    self.inactive_at = time
+    self
+  end
+
+  def activate
+    self.inactive_at = nil
+    self
   end
 end
