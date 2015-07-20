@@ -1,8 +1,8 @@
 module CourseDetail
   module Models
     class School < Tutor::SubSystems::BaseModel
-      belongs_to :district, class_name: 'CourseDetail::Models::District',
-                            foreign_key: 'course_detail_district_id'
+      has_many :profiles, subsystem: :course_profile
+      belongs_to :district
 
       validates :name, presence: true,
                        uniqueness: { scope: :course_detail_district_id }
