@@ -19,12 +19,13 @@ class Demo002 < DemoBase
 
         log("Creating #{assignment.type} #{assignment.title} for course #{content.course_name} (#{assignment.step_types.length} steps)")
 
+        course = content.course
         task_plan = if assignment.type == 'reading'
-                 assign_ireading(course: content.course,
+                 assign_ireading(course: course,
                                  chapter_sections: assignment.chapter_sections,
                                  title: assignment.title)
                else
-                 assign_homework(course: content.course,
+                 assign_homework(course: course,
                                  chapter_sections: assignment.chapter_sections,
                                  title: assignment.title,
                                  num_exercises: assignment.num_exercises)
@@ -32,9 +33,8 @@ class Demo002 < DemoBase
 
         assignment.periods.each do | period |
           log("  Adding tasking plan for period #{period[:index]}")
-
           add_tasking_plan(task_plan: task_plan,
-                           to: content.course.periods.order(:created_at).at(period[:index]),
+                           to: course.periods.where(name: content.get_period(period.id).name).first!,
                            opens_at: period.opens_at,
                            due_at: period.due_at)
 

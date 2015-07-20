@@ -5,13 +5,17 @@ cnx_book_id: ccbc51fa-49f3-40bb-98d6-07a15a7ab6b7
 cnx_book_version: 5.63
 teacher: cm
 periods:
-  - name: 1st Period
+  - id: p1
+    name: 1st Period
     students: [ak,at,bh,gj,kl,ir,mb,ra,sg]
-  - name: 2nd Period
+  - id: p2
+    name: 2nd Period
     students: [af,am,hp,ft,gs,jb,mh,ne,sd,vw]
-  - name: 3rd Period
+  - id: p3
+    name: 3rd Period
     students: [ag,ap,bs,eh,hc,hg,iu,iw,nz,rl,sk]
-  - name: 4th Period
+  - id: p4
+    name: 4th Period
     students: [an,cg,cd,dp,fa,jr,js,lh,ms,rb,wh]
 
 assignments:
@@ -21,22 +25,22 @@ assignments:
     chapter_sections: [[1, 0], [1, 1], [1, 2]]
     title: Read Chapter 1. The Study of Life
     periods:
-      - index: 0 # index of the period's definition above
+      - id: p1
         opens_at: <%= open_three_days_ago %>
         due_at: <%= due_today %>
         students: {ak: 98,at: 67,bh: 55,gj: 77,kl: 88,ir: ns,mb: 78,ra: 100,sg: 86}
 
-      - index: 1 # index of the period's definition above
+      - id: p2
         opens_at: <%= open_three_days_ago %>
         due_at: <%= due_today %>
         students: {af: 100,am: 82,hp: 71,ft: 90,gs: 87,jb: i,mh: i,ne: 90,sd: 85,vw: ns}
 
-      - index: 2 # index of the period's definition above
+      - id: p3
         opens_at: <%= open_three_days_ago %>
         due_at: <%= due_today %>
         students: {ag: 100,ap: 82,bs: 71,eh: 90,hc: 78,hg: 87,iu: i,iw: i,nz: 90,rl: 85,sk: ns}
 
-      - index: 3 # index of the period's definition above
+      - id: p4
         opens_at: <%= open_three_days_ago %>
         due_at: <%= due_today %>
         students: {an: 100,cg: 82,cd: 71,dp: 90,fa: 78,jr: 87,js: i,lh: i,ms: 90,rb: 85,wh: ns}
@@ -46,7 +50,7 @@ assignments:
     chapter_sections: [[6, 0], [6, 1], [6, 2]]
     title: Read Chapter 6. Metabolism
     periods:
-      - index: 0 # 1st Period
+      - id: p1
         opens_at: <%= open_three_days_ago %>
         due_at: <%= due_two_days_ago %>
         students:
@@ -59,7 +63,7 @@ assignments:
           mb: ns
           ra: 72
           sg: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ]  # explicit example, could also be `100`
-      - index: 3 # 3rd period
+      - id: p4
         opens_at: <%= open_one_day_ago %>
         due_at: <%= due_today %>
         students:
@@ -81,7 +85,7 @@ assignments:
     title: HW The Study of Life
     num_exercises: 10
     periods:
-      - index: 2 # 1st Period
+      - id: p3
         opens_at: <%= open_three_days_ago %>
         due_at: <%= due_three_days_ago %>
         students:
@@ -96,7 +100,7 @@ assignments:
           nz: [ 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0 ]
           rl: 80
           sk: 65
-      - index: 3 # 4th Period
+      - id: p4
         opens_at: <%= open_two_days_ago %>
         due_at: <%= due_two_days_ago %>
         students:

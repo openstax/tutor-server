@@ -55,7 +55,7 @@ class ContentConfiguration
     end
 
     def due_today
-      standard_due_at(school_day_on_or_before(today))
+      standard_due_at(today)
     end
 
     def due_one_day_ago
@@ -134,13 +134,20 @@ class ContentConfiguration
     Thread.current[:config_directory] = prev_config
   end
 
+  def get_period(id)
+    @configuration.periods.detect{|period| period['id'] == id}
+  end
+
   private
 
   def validate_config
     # loop through each assignment and verify that the students match the roster for the period
     @configuration.assignments.each do | assignment |
-      assignment.periods.each do | period |
-        period_config = @configuration.periods.at( period[:index] )
+      assignment.periods.each_with_index do | period, index |
+        period_config = get_period(period.id)
+        if period_config.nil?
+          raise "Unable to find period # #{index} id #{period.id} for assignment #{assignment.title}"
+        end
         if period_config.students.sort != period.students.keys.sort
           raise "Students assignments for #{@configuration.course_name} period #{period_config.name} do not match for assignment #{assignment.title}"
         end
