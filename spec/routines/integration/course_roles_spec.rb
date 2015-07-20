@@ -4,7 +4,7 @@ describe "domain: course roles" do
 
   context "adding teachers to courses" do
     let(:target_user)   { Entity::User.create! }
-    let(:target_course) { CreateCourse.call.outputs.course }
+    let(:target_course) { CreateCourse[name: 'Target'] }
 
     context "when a user is not a teacher of a course" do
       it "the user can be made a course teacher" do
@@ -33,7 +33,7 @@ describe "domain: course roles" do
     context "courses with multiple teachers" do
       let(:target_user1)  { Entity::User.create! }
       let(:target_user2)  { Entity::User.create! }
-      let(:target_course) { CreateCourse.call.outputs.course }
+      let(:target_course) { CreateCourse[name: 'unnamed'] }
 
       it "are allowed" do
         result = AddUserAsCourseTeacher.call(user: target_user1, course: target_course)
@@ -55,7 +55,7 @@ describe "domain: course roles" do
 
   context "adding students to courses" do
     let(:target_user)   { Entity::User.create! }
-    let(:target_course) { CreateCourse.call.outputs.course }
+    let(:target_course) { CreateCourse[name: 'Cool course'] }
     let(:target_period) { CreatePeriod[course: target_course] }
 
     context "when a user is not a teacher of a course" do

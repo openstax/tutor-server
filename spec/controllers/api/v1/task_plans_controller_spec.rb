@@ -2,7 +2,7 @@ require "rails_helper"
 
 describe Api::V1::TaskPlansController, :type => :controller, :api => true, :version => :v1 do
 
-  let!(:course) { CreateCourse.call.outputs.course }
+  let!(:course) { CreateCourse[name: 'Anything'] }
   let!(:period) { CreatePeriod[course: course] }
 
   let!(:assistant) { FactoryGirl.create(
