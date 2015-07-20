@@ -36,4 +36,16 @@ RSpec.describe 'Administration' do
     expect(page).to have_css('.flash_notice', text: 'The district has been deleted.')
     expect(page).not_to have_content('Houston Independent School District')
   end
+
+  scenario 'attempt destroying a district with schools assigned' do
+    district = CourseDetail::Models::District.last
+    school = CourseDetail::CreateSchool[name: 'Cool School', district: district]
+
+    click_link 'delete'
+
+    expect(current_path).to eq(admin_districts_path)
+    expect(page).to have_css('.flash_alert',
+                             text: "Cannot delete a district with schools assigned")
+    expect(page).to have_content('Houston Independent School District')
+  end
 end

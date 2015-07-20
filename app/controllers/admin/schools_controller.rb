@@ -48,6 +48,10 @@ module Admin
                   success: -> {
                     redirect_to admin_schools_path,
                                 notice: 'The school has been deleted.'
+                  },
+                  failure: -> {
+                    redirect_to admin_schools_path,
+                                alert: @handler_result.errors.first.message
                   })
     end
 

@@ -42,6 +42,10 @@ module Admin
                   success: -> {
                     redirect_to admin_districts_path,
                                 notice: 'The district has been deleted.'
+                  },
+                  failure: -> {
+                    redirect_to admin_districts_path,
+                                alert: @handler_result.errors.first.message
                   })
     end
   end

@@ -9,7 +9,8 @@ module CourseDetail
       if district.schools.empty?
         district.destroy
       else
-        district.errors.add(:base, "Cannot delete a district with schools assigned")
+        fatal_error(code: :resource_has_dependencies,
+                    message: "Cannot delete a district with schools assigned")
       end
     end
   end

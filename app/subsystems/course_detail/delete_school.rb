@@ -9,7 +9,8 @@ module CourseDetail
       if school.profiles.empty?
         school.destroy
       else
-        school.errors.add(:base, "Cannot delete a school with courses assigned.")
+        fatal_error(code: :resource_has_dependencies,
+                    message: "Cannot delete a school with courses associated.")
       end
     end
   end
