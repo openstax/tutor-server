@@ -3,7 +3,7 @@ module CourseDetail
     lev_routine express_output: :district
 
     protected
-    def exec(name: 'Unnamed')
+    def exec(name:)
       district = Models::District.create!(name: name)
 
       outputs[:district] = {
