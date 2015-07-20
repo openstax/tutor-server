@@ -1,6 +1,5 @@
 class Admin::CoursesController < Admin::BaseController
-  before_action :get_users, except: [:index, :destroy]
-  before_action :get_schools, except: [:index, :destroy]
+  before_action :get_schools, except: [:index, :destroy, :students]
 
   def index
     @courses = CollectCourseInfo[with: :teacher_names]
@@ -60,10 +59,6 @@ class Admin::CoursesController < Admin::BaseController
                                      .permit(:name,
                                              :course_detail_school_id,
                                              teacher_ids: []) }
-  end
-
-  def get_users
-    @users = GetAllUserProfiles[]
   end
 
   def get_schools

@@ -4,13 +4,20 @@ module Admin
 
     def index
       @schools = CourseDetail::ListSchools[]
+      @page_header = "Manage schools"
     end
 
     def edit
       @school = CourseDetail::GetSchool[id: params[:id]]
+      @page_header = "Edit school"
+    end
+
+    def new
+      @page_header = "Create a school"
     end
 
     def create
+      @page_header = "Create a school"
       handle_with(Admin::SchoolsCreate,
                   success: -> {
                     redirect_to admin_schools_path,
@@ -23,6 +30,7 @@ module Admin
     end
 
     def update
+      @page_header = "Edit school"
       handle_with(Admin::SchoolsUpdate,
                   success: -> {
                     redirect_to admin_schools_path,
