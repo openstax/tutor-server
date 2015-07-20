@@ -68,7 +68,7 @@ class Api::V1::StudentsController < Api::V1::ApiController
       OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, @student)
     end
 
-    if result.errors.any?
+    if @result.errors.any?
       render_api_errors(@result.errors)
     else
       respond_with @result.outputs.student,
@@ -83,7 +83,7 @@ class Api::V1::StudentsController < Api::V1::ApiController
   EOS
   def destroy
     OSU::AccessPolicy.require_action_allowed!(:destroy, current_api_user, @student)
-    result = DeleteStudent.call(@student)
+    result = InactivateStudent.call(student: @student)
 
     if result.errors.any?
       render_api_errors(result.errors)
