@@ -241,7 +241,10 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
         it 'removes the student from the course' do
           api_delete :destroy, teacher_token, parameters: valid_params
           expect(response).to have_http_status(:no_content)
-          expect(CourseMembership::Models::Student.where(id: student.id).exists?).to eq false
+
+          student.reload
+          expect(student.persisted?).to eq true
+          expect(student.active?).to eq false
         end
       end
 
