@@ -124,7 +124,7 @@ ActiveRecord::Schema.define(version: 20150716231241) do
     t.datetime "updated_at",                   null: false
   end
 
-  add_index "course_membership_enrollments", ["course_membership_period_id", "course_membership_student_id"], name: "course_membership_enrollments_period_student_uniq", unique: true, using: :btree
+  add_index "course_membership_enrollments", ["course_membership_period_id", "course_membership_student_id"], name: "course_membership_enrollments_period_student", using: :btree
   add_index "course_membership_enrollments", ["course_membership_student_id", "created_at"], name: "course_membership_enrollments_student_created_at_uniq", unique: true, using: :btree
 
   create_table "course_membership_periods", force: :cascade do |t|

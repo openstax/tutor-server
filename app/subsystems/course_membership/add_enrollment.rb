@@ -1,7 +1,7 @@
 # Adds the given student to the given period
 class CourseMembership::AddEnrollment
 
-  lev_routine express_output: :enrollment
+  lev_routine
 
   protected
 

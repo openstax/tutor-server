@@ -8,10 +8,10 @@ class CreateCourseMembershipEnrollments < ActiveRecord::Migration
 
       t.timestamps null: false
 
-      t.index [:course_membership_period_id, :course_membership_student_id],
-              unique: true, name: 'course_membership_enrollments_period_student_uniq'
       t.index [:course_membership_student_id, :created_at],
               unique: true, name: 'course_membership_enrollments_student_created_at_uniq'
+      t.index [:course_membership_period_id, :course_membership_student_id],
+              name: 'course_membership_enrollments_period_student'
     end
   end
 end
