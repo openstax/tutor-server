@@ -15,7 +15,7 @@ class Admin::SchoolsCreate
   end
 
   def handle
-    run(:create_school, name: school_params.name,
-                        district_id: school_params.course_detail_district_id)
+    district = CourseDetail::GetDistrict[id: school_params.course_detail_district_id]
+    run(:create_school, name: school_params.name, district_id: district)
   end
 end
