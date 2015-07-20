@@ -18,6 +18,7 @@ module CourseMembership
     end
 
     private
+
     def periods_for_roles(periods, roles)
       periods.select do |p|
         roles_in_period = run(:get_roles, periods: p).outputs.roles

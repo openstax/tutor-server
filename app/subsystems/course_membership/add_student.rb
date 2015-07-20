@@ -9,11 +9,10 @@ class CourseMembership::AddStudent
   protected
 
   def exec(period:, role:)
-    course_periods = period.course.periods.to_a
     student = CourseMembership::Models::Student.find_by(role: role)
     fatal_error(
       code: :already_a_student, message: "The provided role is already a student in #{
-        student.period.course.profile.try(:name) || 'some course'
+        student.course.profile.try(:name) || 'some course'
       }."
     ) unless student.nil?
 

@@ -63,15 +63,15 @@ class Api::V1::StudentsController < Api::V1::ApiController
     @student.with_lock do
       OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, @student)
       payload = consume!(Hashie::Mash.new, represent_with: Api::V1::StudentRepresenter)
-      period = CourseMembership::Models::Period.find(@payload['course_membership_period_id'])
-      result = MoveStudent.call(student: @student, period: period)
+      period = CourseMembership::Models::Period.find(payload['course_membership_period_id'])
+      @result = MoveStudent.call(student: @student, period: period)
       OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, @student)
     end
 
     if result.errors.any?
-      render_api_errors(result.errors)
+      render_api_errors(@result.errors)
     else
-      respond_with result.outputs.student,
+      respond_with @result.outputs.student,
                    represent_with: Api::V1::StudentRepresenter,
                    responder: ResponderWithPutContent
     end

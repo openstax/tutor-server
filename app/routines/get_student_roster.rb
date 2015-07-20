@@ -4,10 +4,7 @@ class GetStudentRoster
   protected
 
   def exec(course:)
-    students = CourseMembership::Models::Student
-      .joins { period }
-      .where { period.entity_course_id == course.id }
-      .includes(role: { user: { profile: :account } })
+    students = course.students.includes(:enrollments, role: { user: { profile: :account } })
 
     outputs[:students] = students.collect do |student|
       Hashie::Mash.new({

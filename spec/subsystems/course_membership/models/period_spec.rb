@@ -8,8 +8,7 @@ RSpec.describe CourseMembership::Models::Period, type: :model do
   it { is_expected.to have_many(:teachers) }
   it { is_expected.to have_many(:teacher_roles) }
 
-  it { is_expected.to have_many(:students) }
-  it { is_expected.to have_many(:student_roles) }
+  it { is_expected.to have_many(:enrollments) }
 
   it { is_expected.to validate_presence_of(:course) }
   it { is_expected.to validate_presence_of(:name) }
@@ -21,7 +20,7 @@ RSpec.describe CourseMembership::Models::Period, type: :model do
     AddUserAsPeriodStudent[period: period, user: student_profile.entity_user]
     expect { period.destroy }.not_to change{CourseMembership::Models::Period.count}
     expect(period.errors).not_to be_empty
-    period.enrollments.each{ |en| en.inactivate.save! }
+    period.enrollments.each{ |en| en.student.inactivate.save! }
     expect { period.destroy }.to change{CourseMembership::Models::Period.count}.by(-1)
   end
 end

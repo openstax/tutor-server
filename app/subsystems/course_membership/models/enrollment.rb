@@ -8,9 +8,13 @@ class CourseMembership::Models::Enrollment < Tutor::SubSystems::BaseModel
   default_scope -> { order(created_at: :asc) }
 
   scope :latest, -> {
-    joins{CourseMembership::Models::Enrollment.unscoped.as(:same_student).on{
-      (same_student.course_membership_student_id == ~course_membership_student_id) & \
-      (same_student.created_at > ~created_at)
-    }.outer}.where(same_student: {id: nil})
+    joins{CourseMembership::Models::Enrollment.unscoped.as(:newer_enrollment).on{
+      (newer_enrollment.course_membership_student_id == ~course_membership_student_id) & \
+      (newer_enrollment.created_at > ~created_at)
+    }.outer}.where(newer_enrollment: {id: nil})
+  }
+
+  scope :active, -> {
+    joins(:student).where(student: {inactive_at: nil})
   }
 end
