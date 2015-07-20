@@ -2,14 +2,15 @@ module CourseDetail
   class DeleteSchool
     lev_routine
 
-    uses_routine GetSchool,
-      translations: { outputs: { type: :verbatim } },
-      as: :get_school
-
     protected
     def exec(id:)
-      run(:get_school, id: id)
-      outputs.school.destroy
+      school = Models::School.find(id)
+
+      if school.profiles.empty?
+        school.destroy
+      else
+        school.errors.add(:base, "Cannot delete a school with courses assigned.")
+      end
     end
   end
 end

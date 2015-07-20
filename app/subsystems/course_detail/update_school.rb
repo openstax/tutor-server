@@ -2,18 +2,12 @@ module CourseDetail
   class UpdateSchool
     lev_routine express_output: :school
 
-    uses_routine GetSchool,
-      translations: { outputs: { type: :verbatim } },
-      as: :get_school
-
     protected
     def exec(id:, attributes: {})
-      run(:get_school, id: id)
-
-      outputs.school.update_attributes(attributes)
-
-      outputs.school = { id: outputs.school.id,
-                         name: outputs.school.name }
+      school = Models::School.find(id)
+      school.update_attributes(attributes)
+      outputs.school = { id: school.id,
+                         name: school.name }
     end
   end
 end

@@ -38,4 +38,16 @@ RSpec.describe 'Administration' do
     expect(page).to have_css('.flash_notice', text: 'The school has been deleted.')
     expect(page).not_to have_content('John F Kennedy High')
   end
+
+  scenario 'attempt destroying a school with courses assigned' do
+    school = CourseDetail::Models::School.last
+    course = CreateCourse[name: 'Physics', school: school]
+
+    click_link 'delete'
+
+    expect(current_path).to eq(admin_schools_path)
+    expect(page).to have_css('.errors',
+                             text: "Cannot delete a school with courses assigned.")
+    expect(page).to have_content('John F Kennedy High')
+  end
 end

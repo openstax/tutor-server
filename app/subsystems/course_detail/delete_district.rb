@@ -4,7 +4,13 @@ module CourseDetail
 
     protected
     def exec(id:)
-      Models::District.find(id).destroy
+      district = Models::District.find(id)
+
+      if district.schools.empty?
+        district.destroy
+      else
+        district.errors.add(:base, "Cannot delete a district with schools assigned")
+      end
     end
   end
 end
