@@ -11,7 +11,6 @@ RSpec.describe 'Administration' do
     click_link 'Add school'
 
     fill_in 'Name', with: 'John F Kennedy High'
-    select 'Good district', from: 'District'
     click_button 'Save'
   end
 
@@ -19,7 +18,6 @@ RSpec.describe 'Administration' do
     expect(current_path).to eq(admin_schools_path)
     expect(page).to have_css('.flash_notice', text: 'The school has been created.')
     expect(page).to have_css('tr td', text: 'John F Kennedy High')
-    expect(page).to have_css('tr td', text: 'Good district')
   end
 
   scenario 'edit a school' do
