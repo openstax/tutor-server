@@ -88,9 +88,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def status
-    if late?
-      'late'
-    elsif completed?
+    if completed?
       'completed'
     elsif completed_steps_count > 0
       'in_progress'
