@@ -39,6 +39,10 @@ class DemoTasks < DemoBase
                            due_at: period.due_at)
         end
 
+        log("  Distributing tasks")
+        task_plan = Tasks::Models::TaskPlan.where(owner: content.course, title: assignment.title).first!
+        distribute_tasks(task_plan:task_plan)
+
       end
     end
 
