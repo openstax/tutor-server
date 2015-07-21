@@ -4,7 +4,7 @@ module CourseDetail
 
     protected
     def exec(id:)
-      if id != 0 # webforms weirdness
+      if !id.blank? && id != 0 # webforms weirdness
         outputs.district = Models::District.find(id)
       end
     end
