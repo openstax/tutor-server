@@ -11,13 +11,17 @@ RSpec.describe Tasks::Models::Task, :type => :model do
   it { is_expected.to validate_presence_of(:opens_at) }
 
   describe '#status' do
-    it 'is late when last_worked_at is past due_at' do
+    it 'is late when last_worked_at or the current time is past due_at' do
       task = FactoryGirl.create(:tasks_task, opens_at: Time.current - 1.week,
                                              due_at: Time.current - 1.day)
 
+      # Last worked at is past due_at
       task.set_last_worked_at(time: Time.current)
       task.save
+      expect(task.status).to eq('late')
 
+      # Or time just IS past the due_at
+      task.update_attributes(last_worked_at: nil)
       expect(task.status).to eq('late')
     end
   end
