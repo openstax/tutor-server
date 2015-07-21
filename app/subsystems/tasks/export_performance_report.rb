@@ -28,17 +28,15 @@ module Tasks
 
     private
     def generate_export_file!(format)
-      export_file_writer = const_get(
-        "PerformanceReport::WriteToFile::#{format.to_s.camelize}"
-      )# PerformanceReport::WriteToFile::Xlsx
-
+      klass = "Tasks::PerformanceReport::WriteToFile::#{format.to_s.camelize}"
+      exporter = klass.constantize
       filename = [outputs.profile.name,
                   'Performance',
                   Time.current.strftime("%Y%m%d-%H%M%S")].join('_')
 
-      export_file_writer[profile: outputs.profile,
-                         report: outputs.performance_report,
-                         filename: "./tmp/#{filename}"]
+      exporter[profile: outputs.profile,
+               report: outputs.performance_report,
+               filename: "./tmp/#{filename}"]
     end
   end
 end

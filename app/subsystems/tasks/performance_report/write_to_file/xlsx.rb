@@ -14,7 +14,7 @@ module Tasks
             create_summary_worksheet(profile.name, axlsx)
             create_data_worksheets(report, axlsx)
 
-            if axlsx.serialize(outputs.filepath)
+            if axlsx.serialize(filepath)
               outputs.filepath = filepath
             else
               fatal_error(code: :export_failed,
