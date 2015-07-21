@@ -16,12 +16,7 @@ class Admin::CoursesCreate
   end
 
   def handle
-    school = nil
-
-    if id = course_params.course_detail_school_id && id != 0
-      school = CourseDetail::GetSchool[id: id]
-    end
-
+    school = CourseDetail::GetSchool[id: course_params.course_detail_school_id]
     run(:create_course, name: course_params.name, school: school)
   end
 end

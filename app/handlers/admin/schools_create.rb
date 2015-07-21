@@ -16,6 +16,6 @@ class Admin::SchoolsCreate
 
   def handle
     district = CourseDetail::GetDistrict[id: school_params.course_detail_district_id]
-    run(:create_school, name: school_params.name, district_id: district)
+    run(:create_school, name: school_params.name, district: district)
   end
 end
