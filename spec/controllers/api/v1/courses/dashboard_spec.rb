@@ -27,6 +27,7 @@ describe Api::V1::Courses::Dashboard, :type => :routine, :vcr => VCR_OPTS do
 
   let!(:homework_task)   { FactoryGirl.create(:tasks_task,
                                               task_type: :reading,
+                                              opens_at: 1.day.from_now,
                                               step_types: [:tasks_tasked_exercise,
                                                            :tasks_tasked_exercise,
                                                            :tasks_tasked_exercise],
@@ -48,8 +49,7 @@ describe Api::V1::Courses::Dashboard, :type => :routine, :vcr => VCR_OPTS do
         type: 'student'
       },
       tasks: a_collection_including(
-        reading_task,
-        homework_task
+        reading_task # the un-opened homework_task is not included
       )
     )
   end
