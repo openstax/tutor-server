@@ -37,8 +37,10 @@ module Tasks
               sheet.add_row(data_headers(report[:data_headings]))
               sheet.add_row(gather_due_dates(report[:data_headings]))
               sheet.add_row(gather_averages(report[:data_headings]))
+
               report.students.each do |student|
-                sheet.add_row(student_data(student))
+                styles = cell_styles(student.data, package)
+                sheet.add_row(student_scores(student), styles: styles)
               end
             end
           end
@@ -59,7 +61,13 @@ module Tasks
           (['Average'] + averages).collect { |average| italic_text(average) }
         end
 
-        def student_data(student)
+        def cell_styles(data, package)
+          data.collect do |d|
+            package.workbook.styles.add_style bg_color: 'FFFF93' if d.late
+          end
+        end
+
+        def student_scores(student)
           [student.name] + student.data.collect { |data| score(data) }
         end
 
