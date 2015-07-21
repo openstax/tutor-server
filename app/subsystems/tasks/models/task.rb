@@ -88,15 +88,19 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def status
-    if completed? && last_worked_at > due_at
+    if late?
       'late'
     elsif completed?
-      'complete'
+      'completed'
     elsif completed_steps_count > 0
       'in_progress'
     else
       'not_started'
     end
+  end
+
+  def late?
+    last_worked_at > due_at
   end
 
   def practice?
