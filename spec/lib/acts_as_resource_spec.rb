@@ -1,13 +1,18 @@
 require 'rails_helper'
 
 RSpec.describe ActsAsResource do
-  [:content_page, :content_exercise].each do |class_name|
-    context class_name do
-      subject(:r) { FactoryGirl.create class_name }
+  context 'content_exercise' do
+    subject(:exercise) { FactoryGirl.create :content_exercise }
 
-      it { is_expected.to validate_presence_of(:url) }
-      it { is_expected.to validate_uniqueness_of(:url) }
-    end
+    it { is_expected.to validate_presence_of(:url) }
+    it { is_expected.to validate_uniqueness_of(:url) }
+  end
+
+  context 'content_page' do
+    subject(:page) { FactoryGirl.create :content_page }
+
+    it { is_expected.to validate_presence_of(:url) }
+    it { is_expected.not_to validate_uniqueness_of(:url) }
   end
 
   context 'book' do

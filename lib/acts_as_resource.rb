@@ -9,7 +9,7 @@ module ActsAsResource
         def acts_as_resource(options = {})
           class_exec do
             validates :url, presence: true unless options[:allow_nil]
-            validates :url, uniqueness: true, allow_nil: options[:allow_nil]
+            validates :url, uniqueness: true, allow_nil: options[:allow_nil] unless options[:url_not_unique]
 
             def content
               # TODO: Caching
@@ -29,8 +29,8 @@ module ActsAsResource
         end
 
         # Adds resource index after table creation
-        def resource_index
-          index :url, unique: true
+        def resource_index(options = {})
+          index :url, unique: true unless options[:url_not_unique]
         end
       end
     end

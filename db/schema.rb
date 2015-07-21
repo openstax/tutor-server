@@ -93,7 +93,7 @@ ActiveRecord::Schema.define(version: 20150716231241) do
   end
 
   add_index "content_pages", ["content_book_part_id", "number"], name: "index_content_pages_on_content_book_part_id_and_number", unique: true, using: :btree
-  add_index "content_pages", ["url"], name: "index_content_pages_on_url", unique: true, using: :btree
+  add_index "content_pages", ["content_book_part_id", "url"], name: "index_content_pages_on_content_book_part_id_and_url", unique: true, using: :btree
 
   create_table "content_tags", force: :cascade do |t|
     t.string   "value",                   null: false
