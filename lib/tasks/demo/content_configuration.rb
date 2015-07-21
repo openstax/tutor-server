@@ -4,7 +4,7 @@ require 'erb'
 
 class ContentConfiguration
   # Yaml files will be located inside this directory
-  CONFIG_DIR = File.dirname(__FILE__)
+  DEFAULT_CONFIG_DIR = File.dirname(__FILE__)
 
   # Methods in this class are available inside ERB blocks in the YAML file
   class YamlERB
@@ -93,10 +93,15 @@ class ContentConfiguration
   extend Forwardable
 
   def self.[](name)
+    # The directory for the config files can be either set using either
+    # config_directory block (which sets it's value using Thread.current),
+    # the CONFIG environmental variable or the default
+    config_directory = Thread.current[:config_directory] || ENV['CONFIG'] || DEFAULT_CONFIG_DIR
+
     files = if :all == name
-              Dir[File.join(self.config_directory, '*.yml')]
+              Dir[File.join(config_directory, '*.yml')]
             else
-              [ File.join(self.config_directory, "#{name}.yml") ]
+              [ File.join(config_directory, "#{name}.yml") ]
             end
     files
       .reject{|path| File.basename(path) == "people.yml" }
@@ -125,12 +130,9 @@ class ContentConfiguration
     @course ||= CourseProfile::Models::Profile.where(name: @configuration.course_name).first!.course
   end
 
-  def self.config_directory
-    Thread.current[:config_directory] || ENV['CONFIG'] || CONFIG_DIR
-  end
 
   def self.with_config_directory( directory )
-    prev_config, Thread.current[:config_directory] = self.config_directory, directory
+    prev_config, Thread.current[:config_directory] = Thread.current[:config_directory], directory
     yield self
   ensure
     Thread.current[:config_directory] = prev_config
