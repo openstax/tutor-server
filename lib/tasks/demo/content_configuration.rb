@@ -124,7 +124,7 @@ class ContentConfiguration
   end
 
   def self.config_directory
-    Thread.current[:config_directory] || CONFIG_DIR
+    Thread.current[:config_directory] || ENV['CONFIG'] || CONFIG_DIR
   end
 
   def self.with_config_directory( directory )
@@ -152,7 +152,6 @@ class ContentConfiguration
           raise "Students assignments for #{@configuration.course_name} period #{period_config.name} do not match for assignment #{assignment.title}"
         end
       end
-
     end
   end
 end
