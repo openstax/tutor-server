@@ -207,7 +207,7 @@ class Demo002 < DemoBase
                     due_at: due_at[0],
                     to: periods).each_with_index do |ireading, index|
 
-      work_task(task: ireading, responses: responses_list[index])
+      # work_task(task: ireading, responses: responses_list[index])
 
     end
 

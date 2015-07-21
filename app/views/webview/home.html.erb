@@ -28,10 +28,9 @@
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse navbar-right navbar-ex1-collapse">
         <ul class="nav navbar-nav links">
-          <li><a href="#sponsors">Sponsors</a></li>
-          <li><a href="#contact">Contact</a></li>
-
-          <li><%= link_to 'Sign in', openstax_accounts.login_path, class: 'sign-in' %></li>
+          <li><%= link_to 'Login', openstax_accounts.login_path, class: 'sign-in' %></li>
+          <li><a href="#contact">Help</a></li>
+          <li>Rice Logo</li>
         </ul>
       </div>
       <!-- /.navbar-collapse -->
@@ -42,8 +41,6 @@
 <!-- HEADER
 ============================================= -->
 
-<!-- SLIDER
-============================================= -->
 <div id="intro-header" class="intro-header">
   <div class="container">
 
@@ -56,107 +53,15 @@
       </div>
 
       <div class="col-md-pull-6 col-sm-12 col-md-6">
-        <div class="tutor-video">
-          <iframe frameborder="0" allowfullscreen src="https://www.youtube.com/embed/YlZhjroR1rk"></iframe>
-        </div>
+
       </div>
 
     </div>
 
   </div>
 </div>
-<div class="big-prose">
-  <div class="container">
-    <div class="row">
-      OpenStax Tutor melds new cyber and social infrastructures to put powerful learning tools in the hands of educators and learners. OpenStax Tutor is an ambitious effort that combines high-quality, public-ready software with advanced research.
-    </div>
-  </div>
-</div>
 
 
-<!-- SLIDER
-============================================= -->
-
-<!-- Q/A
-============================================= -->
-<div class="qa" id="qa">
-  <div class="container">
-    <div class="row">
-
-      <div class="col-sm-6 col-xs-12 qa-content">
-        <h4>What is it?</h4>
-        <p>A study resource, homework, and test delivery system that uses powerful, advanced techniques to improve student learning and instructor understanding.</p>
-      </div>
-
-      <div class="col-sm-6 col-xs-12 qa-content team">
-        <h4>Who is behind it?</h4>
-        <p>A non-profit venture at Rice University, run by professional software developers and learning researchers, and supported by foundations.</p>
-      </div>
-
-    </div>
-  </div>
-  <!-- /.container -->
-</div>
-
-<!-- INFO CONTENT
-============================================= -->
-<div class="info-wrap sponsors">
-  <div class="container">
-    <div class="row">
-      <div class="section-title">
-        <h3>Sponsors</h3>
-      </div>
-      <div class="col-md-12 sponsor">
-        <div class="col-md-6 logo">
-          <%= image_tag 'ljaf_color_tagline_transp.gif' %>
-        </div>
-        <div class="col-md-6">
-          <p>Laura and John Arnold Foundation (LJAF) actively seeks opportunities to invest in organizations and thought leaders that have a sincere interest in implementing fundamental changes that not only yield immediate gains, but also repair broken systems for future generations. LJAF currently focuses its strategic investments on education, criminal justice, research integrity, and public accountability.</p>
-        </div>
-      </div>
-
-      <div class="col-md-12 sponsor">
-        <div class="col-md-6 logo">
-          <%= image_tag 'gates_red.jpg' %>
-        </div>
-        <div class="col-md-6">
-          <p>Guided by the belief that every life has equal value, the Bill & Melinda Gates Foundation works to help all people lead healthy, productive lives. In developing countries, it focuses on improving people’s health with vaccines and other life-saving tools and giving them the chance to lift themselves out of hunger and extreme poverty. In the United States, it seeks to significantly improve education so that all young people have the opportunity to reach their full potential. Based in Seattle, Washington, the foundation is led by CEO Jeff Raikes and Co-chair William H. Gates Sr., under the direction of Bill and Melinda Gates and Warren Buffett.</p>
-        </div>
-
-      </div>
-    </div>
-  </div>
-</div>
-<!-- INFO CONTENT
-============================================= -->
-
-<!-- CONTACT FORM
-============================================= -->
-<div class="contact-wrap" id="contact">
-  <div class="container">
-    <div class="row">
-      <div class="section-title">
-        <h3>Need to contact us?</h3>
-        <p>We're here to help</p>
-      </div>
-      <div class="space90"></div>
-      <div class="col-md-8 col-md-offset-2">
-        <%= form_tag contact_form_path %>
-          <input type="text" placeholder="NAME:"/>
-          <input type="text" placeholder="E-MAIL:"/>
-          <textarea rows="5" placeholder="MESSAGE:"></textarea>
-          <input type="submit" class="submit" value="Submit">
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- CONTACT FORM
-============================================= -->
-
-
-<!-- FOOTER
-============================================= -->
 <footer>
   <div class="container">
     <div class="row">
