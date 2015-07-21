@@ -12,7 +12,9 @@ module Tasks
 
     protected
     def exec(role:, course:, format: :xlsx)
-      export_file_writer = const_get("PerformanceReport::WriteToFile::#{format.camelize}")
+      export_file_writer = const_get(
+        "PerformanceReport::WriteToFile::#{format.to_s.camelize}"
+      )# PerformanceReport::WriteToFile::Xlsx
 
       run(:get_course_profile, course: course)
       run(:get_performance_report, course: course, role: role)
@@ -38,8 +40,8 @@ module Tasks
     end
 
     def generate_file_name
-      [outputs.profile.name, '_Performance_',
-       Time.current.strftime("%Y%m%d-%H%M%S")].join('')
+      [outputs.profile.name, 'Performance',
+       Time.current.strftime("%Y%m%d-%H%M%S")].join('_')
     end
   end
 end
