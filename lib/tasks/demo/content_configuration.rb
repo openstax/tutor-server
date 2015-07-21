@@ -110,8 +110,10 @@ class ContentConfiguration
     validate_config
   end
 
-  def cnx_book
-    version = if @configuration.cnx_book_version.blank? || @configuration.cnx_book_version == 'latest'
+  def cnx_book(book_version=:defined)
+    version = if book_version.to_sym != :defined
+                book_version.to_sym == :latest ? '' : book_version
+              elsif @configuration.cnx_book_version.blank? || @configuration.cnx_book_version == 'latest'
                 ''
               else
                 "@#{@configuration.cnx_book_version}"

@@ -15,7 +15,7 @@ class DemoContent < DemoBase
 
   protected
 
-  def exec(book: :all, print_logs: true, random_seed: nil)
+  def exec(book: :all, print_logs: true, random_seed: nil, version: :defined)
 
     set_print_logs(print_logs)
 
@@ -46,8 +46,9 @@ class DemoContent < DemoBase
       end
 
       OpenStax::Cnx::V1.with_archive_url(url: archive_url) do
-        cnx_book = run(:import_book, id: content.cnx_book).outputs.book
-        log("Imported book #{content.course_name} #{content.cnx_book} from #{archive_url}.")
+        book = content.cnx_book(version)
+        cnx_book = run(:import_book, id: book).outputs.book
+        log("Imported book #{content.course_name} #{book} from #{archive_url}.")
         run(:add_book, book: cnx_book, course: course)
       end
 
