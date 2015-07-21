@@ -865,15 +865,15 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
               due_at: resp[1][:data_headings][2][:due_at] }
           ],
           students: [{
-            name: student_3.full_name,
+            name: 'Student Four',
             role: resp[1][:students][0][:role],
             data: [
               {
                 type: 'homework',
                 id: resp[1][:students][0][:data][0][:id],
-                status: 'completed',
-                exercise_count: 6,
-                correct_exercise_count: 6,
+                status: 'not_started',
+                exercise_count: 5,
+                correct_exercise_count: 0,
                 recovered_exercise_count: 0
               },
               {
@@ -890,16 +890,17 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                 recovered_exercise_count: 0
               }
             ]
-          }, {
-            name: student_4.full_name,
+          },
+          {
+            name: 'Student Three',
             role: resp[1][:students][1][:role],
             data: [
               {
                 type: 'homework',
                 id: resp[1][:students][1][:data][0][:id],
-                status: 'not_started',
-                exercise_count: 5,
-                correct_exercise_count: 0,
+                status: 'completed',
+                exercise_count: 6,
+                correct_exercise_count: 6,
                 recovered_exercise_count: 0
               },
               {

@@ -46,10 +46,10 @@ module Tasks
       task_types = Models::Task.task_types.values_at(:reading, :homework, :external)
       # Return reading and homework tasks for a student ordered by due date
       @taskings[period.id] ||= period.taskings
-                                     .includes(task: :task, role: {user: :profile})
+                                     .includes(task: :task, role: {user: {profile: :account}})
                                      .joins(task: :task)
                                      .where(task: {task: {task_type: task_types}})
-                                     .order{task.task.due_at}
+                                     .order{[role.user.profile.account.full_name, task.task.due_at]}
     end
 
     def get_data_headings(tasks)
