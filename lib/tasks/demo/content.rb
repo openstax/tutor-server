@@ -1,9 +1,8 @@
 require_relative 'demo_base'
-require_relative 'demo/content_configuration'
-
+require_relative 'content_configuration'
 
 ## Imports a book from CNX and creates a course with periods from it's data
-class Demo001 < DemoBase
+class DemoContent < DemoBase
 
   lev_routine
 

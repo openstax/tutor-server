@@ -1,10 +1,9 @@
 require_relative 'demo_base'
-require_relative 'demo/content_configuration'
+require_relative 'content_configuration'
 
 # Adds students to the course periods, assigns Sets up the periods and students for a course
 # and then generates activity for them
-
-class Demo002 < DemoBase
+class DemoWork < DemoBase
 
   lev_routine
 
@@ -17,30 +16,8 @@ class Demo002 < DemoBase
     ContentConfiguration[book.to_sym].each do | content |
       content.assignments.each do | assignment |
 
-        log("Creating #{assignment.type} #{assignment.title} for course #{content.course_name} (#{assignment.step_types.length} steps)")
-
-        course = content.course
-        task_plan = if assignment.type == 'reading'
-                 assign_ireading(course: course,
-                                 chapter_sections: assignment.chapter_sections,
-                                 title: assignment.title)
-               else
-                 assign_homework(course: course,
-                                 chapter_sections: assignment.chapter_sections,
-                                 title: assignment.title,
-                                 num_exercises: assignment.num_exercises)
-               end
-
-        assignment.periods.each do | period |
-          log("  Adding tasking plan for period #{period[:index]}")
-          add_tasking_plan(task_plan: task_plan,
-                           to: course.periods.where(name: content.get_period(period.id).name).first!,
-                           opens_at: period.opens_at,
-                           due_at: period.due_at)
-
-        end
-
         log("  Distributing tasks")
+        task_plan = Tasks::Models::TaskPlan.where(owner: content.course, title: assignment.title).first!
         tasks = distribute_tasks(task_plan:task_plan)
 
         responses_list = new_responses_list(
@@ -62,8 +39,6 @@ class Demo002 < DemoBase
       end
     end
 
-    Timecop.return_all
   end
-
 
 end

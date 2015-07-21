@@ -26,7 +26,7 @@ class DemoBase
   end
 
   def people
-    @people ||= Hashie::Mash.load(File.dirname(__FILE__)+"/demo/people.yml")
+    @people ||= Hashie::Mash.load(File.dirname(__FILE__)+'/people.yml')
   end
 
   def user_profile_for_username(username)
