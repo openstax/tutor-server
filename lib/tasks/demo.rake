@@ -1,7 +1,6 @@
 desc 'Initializes data for the deployment demo (run all demo:* tasks), book can be either all, bio or phy.'
-task :demo, [:book, :random_seed] => [
-       'demo:content', 'demo:tasks', 'demo:work'
-     ] do
+task :demo, [:book, :random_seed] => ['demo:content', 'demo:tasks'] do |tt, args|
+  Rake::Task[:"demo:work"].invoke(args[:book],args[:random_seed]) unless ENV['NOWORK']
   puts 'All demo tasks completed'
 end
 
