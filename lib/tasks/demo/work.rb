@@ -30,7 +30,7 @@ class DemoWork < DemoBase
           user = task.taskings.first.role.user
           responses = responses_list[ user.profile.id ]
           unless responses
-            raise "#{assignment.title} period index #{period['index']} has no responses for task #{index} for user #{user.profile.id} #{user.username}"
+            raise "#{assignment.title} period #{period.id} has no responses for task #{index} for user #{user.profile.id} #{user.username}"
           end
           log("    Working task # #{index}")
           work_task(task: task, responses: responses)

@@ -31,7 +31,7 @@ class DemoTasks < DemoBase
                     end
 
         assignment.periods.each do | period |
-          log("  Adding tasking plan for period #{period[:index]}")
+          log("  Adding tasking plan for period #{period.id}")
           course_period = course.periods.where(name: content.get_period(period.id).name).first!
           add_tasking_plan(task_plan: task_plan,
                            to: course_period,
