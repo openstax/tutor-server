@@ -26,6 +26,7 @@ class GetCourseGuide
     as: :is_teacher
 
   protected
+
   def exec(role:, course:)
     @role, @course = role, course
 
@@ -43,20 +44,23 @@ class GetCourseGuide
   end
 
   private
+
   attr_reader :role, :course
 
   def gather_course_stats_for_teacher
     outputs.periods.collect do |period|
-      { period_id: period.id }.merge(gather_course_stats)
+      { period_id: period.id }.merge(gather_course_stats(period))
     end
   end
 
-  def gather_course_stats
-    chapters = compile_chapters
+  def gather_course_stats(period)
+    chapters = compile_chapters(period)
 
-    { title: outputs.toc.title,
-      page_ids: chapters.collect { |cc| cc[:page_ids] }.flatten.uniq,
-      children: chapters }
+    {
+      title: outputs.toc.title,
+      page_ids: chapters.collect{ |cc| cc[:page_ids] }.flatten.uniq,
+      children: chapters
+    }
   end
 
   def get_role_completed_task_steps
@@ -69,9 +73,9 @@ class GetCourseGuide
     end
   end
 
-  def compile_chapters
+  def compile_chapters(period)
     exercises_grouped_by_book_part.collect { |book_part_id, task_steps|
-      task_steps = filter_task_steps_by_period_roles(task_steps)
+      task_steps = filter_task_steps_by_period(task_steps, period)
       book_part = book_parts_by_id[book_part_id]
       practices = completed_practices(task_steps, :mixed_practice)
       pages = compile_pages(task_steps)
@@ -89,8 +93,8 @@ class GetCourseGuide
     }.sort_by { |ch| ch[:chapter_section] }
   end
 
-  def filter_task_steps_by_period_roles(task_steps)
-    role_ids = outputs.roles.flatten.collect(&:id)
+  def filter_task_steps_by_period(task_steps, period)
+    role_ids = period.student_roles.flatten.collect(&:id)
 
     task_steps.select do |task_step|
       task_step.task.taskings.where(entity_role_id: role_ids).any?
@@ -98,7 +102,7 @@ class GetCourseGuide
   end
 
   def exercises_grouped_by_book_part
-    outputs.task_steps.flatten.select { |t| t.exercise? && t.completed? }.group_by do |t|
+    outputs.task_steps.flatten.select { |ts| ts.exercise? && ts.completed? }.group_by do |t|
       tags = get_lo_tags(t) + get_aplo_tags(t)
       Content::Routines::SearchPages[tag: tags].first.content_book_part_id
     end
@@ -150,7 +154,9 @@ class GetCourseGuide
     tags = get_lo_tags(task_steps) + get_aplo_tags(task_steps)
 
     if is_teacher?
-      OpenStax::Biglearn::V1.get_clue(roles: outputs.roles, tags: tags)
+      roles = task_steps.collect{ |ts| ts.task.taskings.collect{ |tg| tg.role } }
+                        .flatten.uniq
+      OpenStax::Biglearn::V1.get_clue(roles: roles, tags: tags)
     else
       OpenStax::Biglearn::V1.get_clue(roles: role, tags: tags)
     end
