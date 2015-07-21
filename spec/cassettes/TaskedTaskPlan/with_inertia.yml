@@ -21,7 +21,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Tue, 14 Jul 2015 02:02:28 GMT
+      - Tue, 21 Jul 2015 20:05:19 GMT
       Content-Type:
       - text/plain
       Content-Length:
@@ -42,7 +42,7 @@ http_interactions:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Tue, 14 Jul 2015 01:57:44 GMT
+  recorded_at: Tue, 21 Jul 2015 20:00:15 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/640e3e84-09a5-4033-b2a7-b7fe5ec29dc6@4.json
@@ -64,7 +64,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Tue, 14 Jul 2015 02:02:28 GMT
+      - Tue, 21 Jul 2015 20:05:19 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -486,7 +486,7 @@ http_interactions:
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Tue, 14 Jul 2015 01:57:44 GMT
+  recorded_at: Tue, 21 Jul 2015 20:00:15 GMT
 - request:
     method: get
     uri: https://exercises-dev.openstax.org/api/exercises?q=tag:k12phys-ch04-s02-lo01,k12phys-ch04-s02-lo02
@@ -506,9 +506,9 @@ http_interactions:
       message: OK
     headers:
       Server:
-      - nginx/1.4.6 (Ubuntu)
+      - nginx
       Date:
-      - Tue, 14 Jul 2015 01:57:51 GMT
+      - Tue, 21 Jul 2015 20:00:27 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -530,12 +530,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=V1I3UzZONVhXRW5FYm5ManhzcDdUVm96VDM5ekNQZUdFbVlzaEhlYnJRNDJvbFhSQWI2ekduOTdQb0ZtYWpjUW1KS3hYbk9UaXQ1UEJCelF6MVRDQXc9PS0tWDFocW9renFyVGFkcHorSVArK015QT09--70890c2262ce392078ce3367c9de90d51fdd9ab0;
+      - _exercises_session=eGZQbS9ycnd5WlBQNEpsNEx4TStKVWJ3aFVCTVJ6TnlXZTN3RXN0SGJOVzE4bnBQY1NiWUFkWVczZ2RhVEtFSTVXb0NTY2lDZ255L2MzOEtUNmp2L2c9PS0tNnRiUTFHZ1h5RjM4Y25YN2liUjYrZz09--04b45bee1f1eab08984d50fb47aa1a0728ab8ac3;
         path=/; HttpOnly
       X-Request-Id:
-      - 4b1283b6-ebee-4be3-8761-87b02b09275d
+      - dae627a7-bc4d-42c6-b713-00d5352be60a
       X-Runtime:
-      - '0.383581'
+      - '0.427056'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -1828,5 +1828,5 @@ http_interactions:
         aW50cyI6W10sImZvcm1hdHMiOlsibXVsdGlwbGUtY2hvaWNlIiwiZnJlZS1y
         ZXNwb25zZSJdLCJjb21ib19jaG9pY2VzIjpbXX1dfV19
     http_version: 
-  recorded_at: Tue, 14 Jul 2015 01:57:45 GMT
+  recorded_at: Tue, 21 Jul 2015 20:00:16 GMT
 recorded_with: VCR 2.9.3
