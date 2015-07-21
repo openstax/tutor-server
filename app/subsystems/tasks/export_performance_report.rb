@@ -1,6 +1,6 @@
 module Tasks
   class ExportPerformanceReport
-    lev_routine express_output: :output_filename
+    lev_routine express_output: :filepath
 
     uses_routine GetCourseProfile,
       translations: { outputs: { type: :verbatim } },
@@ -32,20 +32,13 @@ module Tasks
         "PerformanceReport::WriteToFile::#{format.to_s.camelize}"
       )# PerformanceReport::WriteToFile::Xlsx
 
+      filename = [outputs.profile.name,
+                  'Performance',
+                  Time.current.strftime("%Y%m%d-%H%M%S")].join('_')
+
       export_file_writer[profile: outputs.profile,
                          report: outputs.performance_report,
-                         filepath: tmp_file_path]
-
-      tmp_file_path
-    end
-
-    def tmp_file_path
-      @tmp_file_path ||= ['./tmp/', generate_file_name, '.xlsx'].join('')
-    end
-
-    def generate_file_name
-      [outputs.profile.name, 'Performance',
-       Time.current.strftime("%Y%m%d-%H%M%S")].join('_')
+                         filename: "./tmp/#{filename}"]
     end
   end
 end

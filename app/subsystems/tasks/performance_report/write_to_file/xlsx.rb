@@ -2,16 +2,24 @@ module Tasks
   module PerformanceReport
     module WriteToFile
       class Xlsx
-        lev_routine
+        lev_routine express_output: :filepath
 
         protected
-        def exec(profile:, report:, filepath:)
+        def exec(profile:, report:, filename:)
+          filepath = "#{filename}.xlsx"
+
           Axlsx::Package.new do |axlsx|
             axlsx.use_shared_strings = true # OS X Numbers interoperability
             axlsx.workbook.styles.fonts.first.name = 'Helvetica Neue'
             create_summary_worksheet(profile.name, axlsx)
             create_data_worksheets(report, axlsx)
-            axlsx.serialize(filepath)
+
+            if axlsx.serialize(outputs.filepath)
+              outputs.filepath = filepath
+            else
+              fatal_error(code: :export_failed,
+                          message: "PerformanceReport::WriteToFile::Xlsx failed")
+            end
           end
         end
 
