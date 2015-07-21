@@ -143,6 +143,10 @@ class ContentConfiguration
   private
 
   def validate_config
+    # make sure the titles for assignments are unique
+    titles = @configuration.assignments.map(&:title)
+    duplicate = titles.detect {|e| titles.rindex(e) != titles.index(e) }
+    raise "Assignment #{duplicate} for #{@configuration.course_name} is listed more than once" if duplicate
     # loop through each assignment and verify that the students match the roster for the period
     @configuration.assignments.each do | assignment |
       assignment.periods.each_with_index do | period, index |
