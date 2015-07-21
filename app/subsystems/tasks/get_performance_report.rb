@@ -30,6 +30,8 @@ module Tasks
 
           student_data << {
             name: student_role.full_name,
+            first_name: student_role.first_name,
+            last_name: student_role.last_name,
             role: student_role.id
           }.merge(get_student_data(student_tasks))
         end

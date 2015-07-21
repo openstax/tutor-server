@@ -52,6 +52,14 @@ module Api::V1
                type: String,
                readable: true
 
+      property :first_name,
+               type: String,
+               readable: true
+
+      property :last_name,
+               type: String,
+               readable: true
+
       property :role,
                type: String,
                readable: true
