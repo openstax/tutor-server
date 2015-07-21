@@ -12,18 +12,10 @@ module Tasks
 
     protected
     def exec(role:, course:, format: :xlsx)
-      export_file_writer = const_get(
-        "PerformanceReport::WriteToFile::#{format.to_s.camelize}"
-      )# PerformanceReport::WriteToFile::Xlsx
-
       run(:get_course_profile, course: course)
       run(:get_performance_report, course: course, role: role)
 
-      outputs.filepath = tmp_file_path
-
-      export_file_writer[profile: outputs.profile,
-                         report: outputs.performance_report,
-                         filepath: outputs.filepath]
+      outputs.filepath = generate_export_file!(format)
 
       export = Models::PerformanceReportExport.create!(
         course: course,
@@ -35,6 +27,18 @@ module Tasks
     end
 
     private
+    def generate_export_file!(format)
+      export_file_writer = const_get(
+        "PerformanceReport::WriteToFile::#{format.to_s.camelize}"
+      )# PerformanceReport::WriteToFile::Xlsx
+
+      export_file_writer[profile: outputs.profile,
+                         report: outputs.performance_report,
+                         filepath: tmp_file_path]
+
+      tmp_file_path
+    end
+
     def tmp_file_path
       @tmp_file_path ||= ['./tmp/', generate_file_name, '.xlsx'].join('')
     end
