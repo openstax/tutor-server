@@ -18,17 +18,8 @@ class Api::V1::Courses::Dashboard
 
     raise SecurityTransgression if role_type.nil?
 
-    tasks = load_tasks(role)
-    if :teacher == role_type
-      load_plans(course)
-    end
-    if :student == role_type
-      # students are not allowed to view un-opened tasks
-      Time.use_zone(course.profile.timezone) do
-        tasks = tasks.where{ opens_at.lt Time.now }
-      end
-    end
-    outputs[:tasks] = tasks
+    load_tasks(role, role_type)
+    load_plans(course) if :teacher == role_type
     load_course(course, role_type)
     load_role(role, role_type)
   end
@@ -41,10 +32,14 @@ class Api::V1::Courses::Dashboard
     end
   end
 
-  def load_tasks(role)
+  def load_tasks(role, role_type)
     run(:get_tasks, roles: role)
     entity_task_ids = outputs["[:get_tasks, :tasks]"].collect{|entity_task| entity_task.id}
-    Tasks::Models::Task.where{entity_task_id.in entity_task_ids}
+    tasks = Tasks::Models::Task.where{entity_task_id.in entity_task_ids}
+    if :student == role_type
+      tasks = tasks.where{ opens_at.lt Time.now }
+    end
+    outputs[:tasks] = tasks
   end
 
   def load_plans(course)
