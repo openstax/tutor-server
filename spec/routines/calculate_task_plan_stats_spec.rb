@@ -394,7 +394,7 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
 
     before(:each) do
       task_plan.tasking_plans.last(number_of_students/2).each do |tp|
-        enrollment = tp.target.students.first.enrollments.last
+        enrollment = tp.target.student.enrollments.last
         enrollment.period = period_2.to_model
         enrollment.save!
       end
