@@ -1,16 +1,39 @@
 class CourseMembership::Models::Student < Tutor::SubSystems::BaseModel
+  belongs_to :course, subsystem: :entity
   belongs_to :role, subsystem: :entity
-  belongs_to :period
 
-  has_one :course, through: :period, class_name: 'Entity::Course'
+  has_many :enrollments, dependent: :destroy
 
-  validates :period, presence: true
-  validates :role, presence: true, uniqueness: { scope: :course_membership_period_id }
+  validates :course, presence: true
+  validates :role, presence: true, uniqueness: { scope: :entity_course_id }
   validates :deidentifier, uniqueness: true
 
   delegate :username, :first_name, :last_name, :full_name, :name, to: :role
 
   before_save :generate_deidentifier
+
+  delegate :username, :first_name, :last_name, :full_name, to: :role
+  delegate :period, :course_membership_period_id, to: :latest_enrollment
+
+  scope :active, -> { where(inactive_at: nil) }
+
+  def active?
+    inactive_at.nil?
+  end
+
+  def inactivate(time = Time.now)
+    self.inactive_at = time
+    self
+  end
+
+  def activate
+    self.inactive_at = nil
+    self
+  end
+
+  def latest_enrollment
+    enrollments.last
+  end
 
   protected
 
@@ -20,5 +43,4 @@ class CourseMembership::Models::Student < Tutor::SubSystems::BaseModel
     end while CourseMembership::Models::Student.exists?(deidentifier: deidentifier)
     self.deidentifier ||= deidentifier
   end
-
 end

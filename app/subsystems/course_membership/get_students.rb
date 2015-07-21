@@ -4,9 +4,6 @@ class CourseMembership::GetStudents
   protected
 
   def exec(period:)
-    outputs[:students] = CourseMembership::Models::Student
-                           .includes(:role)
-                           .where(period: period)
-                           .collect(&:role)
+    outputs[:students] = period.student_roles
   end
 end

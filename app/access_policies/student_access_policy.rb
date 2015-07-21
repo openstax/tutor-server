@@ -4,7 +4,7 @@ class StudentAccessPolicy
     when :create, :update, :destroy
       requestor.is_human? && 
       UserIsCourseTeacher[user: requestor.entity_user,
-                          course: student.period.course]
+                          course: student.course]
     else
       false
     end
