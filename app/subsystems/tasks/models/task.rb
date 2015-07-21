@@ -88,14 +88,14 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def status
-    # task is "completed" if all steps are completed,
-    #         "in_progress" if some steps are completed and
-    #         "not_started" if no steps are completed
-    if self.completed?
-      'completed'
+    if completed? && last_worked_at > due_at
+      'late'
+    elsif completed?
+      'complete'
+    elsif completed_steps_count > 0
+      'in_progress'
     else
-      in_progress = (completed_steps_count > 0)
-      in_progress ? 'in_progress' : 'not_started'
+      'not_started'
     end
   end
 
