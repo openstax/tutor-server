@@ -100,7 +100,11 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def late?
-    (last_worked_at || Time.current) > due_at
+    worked_on? && last_worked_at > due_at
+  end
+
+  def worked_on?
+    last_worked_at.present?
   end
 
   def practice?
