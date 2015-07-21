@@ -1,4 +1,5 @@
 class CourseProfile::Models::Profile < Tutor::SubSystems::BaseModel
+  belongs_to :school, subsystem: :course_detail
   belongs_to :course, subsystem: :entity
 
   validates :name, presence: true
