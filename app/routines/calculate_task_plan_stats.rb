@@ -116,9 +116,9 @@ class CalculateTaskPlanStats
 
   def generate_period_stat_data
     tasks = @plan.tasks.preload(task_steps: :tasked)
-                       .includes(taskings: {role: {students: {enrollments: :period}}}).to_a
+                       .includes(taskings: :period).to_a
     grouped_tasks = tasks.group_by do |tt|
-      tt.taskings.first.role.students.first.try(:period) || no_period
+      tt.taskings.first.try(:period) || no_period
     end
     grouped_tasks.collect do |period, period_tasks|
       Hashie::Mash.new(
