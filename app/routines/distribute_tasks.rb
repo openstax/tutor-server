@@ -35,9 +35,11 @@ class DistributeTasks
     # Call the assistant code to create Tasks, then distribute them
     tasks = assistant.build_tasks(task_plan: task_plan, taskees: taskees)
     tasks.each_with_index do |task, ii|
+      role = taskees[ii]
       tasking = Tasks::Models::Tasking.new(
         task: task.entity_task,
-        role: taskees[ii]
+        role: role,
+        period: role.student.try(:period)
       )
       task.entity_task.taskings << tasking
 
