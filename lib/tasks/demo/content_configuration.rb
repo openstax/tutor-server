@@ -2,6 +2,7 @@ require 'hashie/mash'
 require 'yaml'
 require 'erb'
 
+# Reads in a YAML file containg configuration for a course and it's students
 class ContentConfiguration
   # Yaml files will be located inside this directory
   DEFAULT_CONFIG_DIR = File.dirname(__FILE__)
@@ -129,7 +130,6 @@ class ContentConfiguration
   def course
     @course ||= CourseProfile::Models::Profile.where(name: @configuration.course_name).first!.course
   end
-
 
   def self.with_config_directory( directory )
     prev_config, Thread.current[:config_directory] = Thread.current[:config_directory], directory
