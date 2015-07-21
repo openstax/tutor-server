@@ -53,21 +53,21 @@ module Tasks
 
     def data_headers(data_headings)
       headings = data_headings.collect(&:title)
-      (['Students'] + headings).collect { |header| bold_text(header) }
+      (['Students', 'First Name', 'Last Name'] + headings).collect { |header| bold_text(header) }
     end
 
     def gather_due_dates(data_headings)
       due_dates = data_headings.collect(&:due_at)
-      (['Due Date'] + due_dates).collect { |due_date| italic_text(due_date) }
+      (['Due Date', '', ''] + due_dates).collect { |due_date| italic_text(due_date) }
     end
 
     def gather_averages(data_headings)
       averages = data_headings.collect(&:average)
-      (['Average'] + averages).collect { |average| italic_text(average) }
+      (['Average', '', ''] + averages).collect { |average| italic_text(average) }
     end
 
     def student_data(student)
-      [student.name] + student.data.collect { |data| score(data) }
+      [student.name, student.first_name, student.last_name] + student.data.collect { |data| score(data) }
     end
 
     def score(data)
