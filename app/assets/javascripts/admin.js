@@ -40,7 +40,7 @@ $(document).ready(function() {
         success: function(data) {
           response($.map(data.items, function(item) {
             return {
-              label: item.full_name,
+              label: item.full_name + ' (' + item.username + ')',
               value: item.id
             };
           }));

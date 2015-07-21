@@ -21,7 +21,7 @@
       <%= f.text_field :teacher, class: 'form-control', placeholder: 'Start typing to search for a user...' %>
       <ul id="assigned-teachers">
       <% @teachers.each do |teacher| %>
-        <li><%= teacher.name %></li>
+        <li><%= teacher.name %> (<%= teacher.username %>)</li>
       <% end %>
       </ul>
     </div>
