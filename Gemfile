@@ -60,7 +60,7 @@ gem 'apipie-rails'
 gem 'maruku'
 
 # Lev framework
-gem 'lev', github: 'lml/lev', ref: '3bfe3f4172ede83df02b97b371d252aaf39c9aff'
+gem 'lev', '~> 4.3.1'
 
 # Ruby dsl for SQL queries
 gem 'squeel'
@@ -229,6 +229,9 @@ group :production do
 
   # AWS SES
   gem 'aws-ses', '~> 0.6.0', :require => 'aws/ses'
+
+  # Fog
+  gem 'fog', require: 'fog/aws'
 
   # Notify developers of Exceptions in production
   gem 'exception_notification'

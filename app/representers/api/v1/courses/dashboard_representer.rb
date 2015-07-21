@@ -35,6 +35,12 @@ module Api::V1::Courses
                readable: true,
                writeable: false
 
+      property :published_at,
+               type: String,
+               readable: true,
+               writeable: false,
+               getter: ->(*) { DateTimeUtilities.to_api_s(published_at) }
+
       collection :tasking_plans,
                  readable: true,
                  writeable: false,
@@ -55,6 +61,12 @@ module Api::V1::Courses
                readable: true,
                writeable: false,
                getter: ->(*) { DateTimeUtilities.to_api_s(due_at) }
+
+      property :last_worked_at,
+               type: String,
+               readable: true,
+               writeable: false,
+               getter: ->(*) { DateTimeUtilities.to_api_s(last_worked_at) }
 
       property :task_type,
                as: :type,
@@ -143,7 +155,7 @@ module Api::V1::Courses
                readable: true,
                writeable: false,
                skip_render: -> (object, options) {
-                 !['reading','homework'].include?(object.task_type.to_s)
+                 !['reading','homework','external'].include?(object.task_type.to_s)
                },
                decorator: -> (task, *) {
                  case task.task_type.to_s
@@ -152,7 +164,7 @@ module Api::V1::Courses
                  when 'homework'
                    HomeworkTask
                  else
-                   raise "Unknown task type: #{task.task_type}"
+                   TaskBase
                  end
                }
 

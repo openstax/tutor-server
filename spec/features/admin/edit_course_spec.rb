@@ -11,7 +11,7 @@ RSpec.feature 'Admin editing a course' do
 
   scenario 'Editing the name of a course' do
     visit admin_courses_path
-    click_link 'edit'
+    click_link 'Edit'
 
     expect(page).to have_content('Edit Course')
     fill_in 'Name', with: 'Changed'
@@ -24,29 +24,29 @@ RSpec.feature 'Admin editing a course' do
 
   scenario 'Adding a period' do
     visit admin_courses_path
-    click_link 'edit'
+    click_link 'Edit'
 
     click_link 'Add period'
-    expect(page).to have_content('New period for "Physics I"')
+    expect(page).to have_content('New Period for Physics I')
 
     fill_in 'Name', with: '2nd'
     click_button 'Save'
 
     expect(current_path).to eq(edit_admin_course_path(@course))
-    expect(page).to have_content('2nd edit')
+    expect(page).to have_content('2nd Edit')
   end
 
   scenario 'Editing a period' do
     visit admin_courses_path
-    click_link 'edit'
+    click_link 'Edit'
 
-    click_link 'edit'
-    expect(page).to have_content('Edit period')
+    click_link 'Edit'
+    expect(page).to have_content('Edit Period')
 
     fill_in 'Name', with: 'first'
     click_button 'Save'
 
     expect(current_path).to eq(edit_admin_course_path(@course))
-    expect(page).to have_content('first edit')
+    expect(page).to have_content('first Edit')
   end
 end

@@ -39,6 +39,24 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
 
   api :POST, '/courses/:course_id/plans', 'Creates a TaskPlan'
   description <<-EOS
+### IReading settings:
+
+<pre class="code">
+#{Tasks::Assistants::IReadingAssistant.schema}
+</pre>
+
+### Homework settings:
+
+<pre class="code">
+#{Tasks::Assistants::HomeworkAssistant.schema}
+</pre>
+
+### External assignment settings:
+
+<pre class="code">
+#{Tasks::Assistants::ExternalAssignmentAssistant.schema}
+</pre>
+
     #{json_schema(Api::V1::TaskPlanRepresenter, include: :writeable)}
   EOS
   def create
@@ -290,16 +308,19 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   # Distributes or updates distributed tasks for the given task_plan
   # Returns the job uuid, if any
   def distribute_or_update_tasks(task_plan)
-    if task_plan.is_publish_requested
+    if task_plan.tasks_past_open?
+      # Tasks already open: propagate updates
+      PropagateTaskPlanUpdates.call(task_plan: task_plan)
+      nil
+    elsif task_plan.is_publish_requested?
+      # Publish requested or already published but tasks not open: trigger publish
       task_plan.publish_last_requested_at = Time.now
       task_plan.save # Save before sending it out
       return unless task_plan.errors.empty?
 
       task_plan.publish_job_uuid = DistributeTasks.perform_later(task_plan)
-    else
-      PropagateTaskPlanUpdates.call(task_plan: task_plan)
-      nil
     end
+    # Not published and publish not requested: do nothing
   end
 
 end

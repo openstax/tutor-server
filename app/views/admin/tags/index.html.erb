@@ -1,7 +1,15 @@
+<% @page_header = "Tags" %>
+
 <%= form_tag '', method: :get do %>
-  <%= label_tag :value, 'Tag ID' %>
-  <%= text_field_tag :value, params[:value] %>
-  <%= submit_tag 'Search' %>
+
+<div class="input-group form-group">
+   <%= text_field_tag :value, params[:value], class: 'form-control', placeholder: 'Search here' %>
+   <span class="input-group-btn">
+        <%= submit_tag 'Search', class: "btn btn-primary"  %>
+   </span>
+</div>
+
+
 <% end %>
 
 <% if params[:value].present? && @tags.empty? %>
@@ -10,7 +18,7 @@
 
 <% if @tags.present? %>
   <%= will_paginate @tags %>
-  <table border="1">
+  <table class="table table-striped">
     <thead>
       <tr>
         <th>ID</th>
@@ -24,7 +32,7 @@
           <td><%= tag.value %></td>
           <td><%= tag.name %></td>
           <td>
-            <%= link_to 'edit', edit_admin_tag_path(tag.id) %>
+            <%= link_to 'edit', edit_admin_tag_path(tag.id), class: "btn btn-xs btn-primary"  %>
           </td>
         </tr>
       <% end %>

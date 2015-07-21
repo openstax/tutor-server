@@ -19,17 +19,21 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   serialize :settings, JSON
 
   validates :title, presence: true
-  validates :due_at, timeliness: { on_or_after: :opens_at },
-                     allow_nil: true,
-                     if: :opens_at
 
-  validate :opens_at_or_due_at
+  validates :opens_at, presence: true, timeliness: { type: :date }
+
+  # Practice Widget can create tasks with no due date
+  # We already validate dates for teacher-created assignments in the TaskingPlan
+  validates :due_at, timeliness: { type: :date }, allow_nil: true
+
+  validate :due_at_on_or_after_opens_at
 
   after_initialize :post_init
 
   def post_init
     self.settings ||= {}
     self.settings['los'] ||= []
+    self.settings['aplos'] ||= []
   end
 
   def los
@@ -38,7 +42,14 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   def los=(new_los)
     self.settings['los'] = new_los
-    los
+  end
+
+  def aplos
+    settings['aplos']
+  end
+
+  def aplos=(new_aplos)
+    self.settings['aplos'] = new_aplos
   end
 
   def personalized_placeholder_strategy
@@ -70,6 +81,10 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   def completed?
     steps_count == completed_steps_count
+  end
+
+  def set_last_worked_at(time:)
+    self.last_worked_at = time
   end
 
   def status
@@ -108,12 +123,8 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     core_steps_count == completed_core_steps_count
   end
 
-  def core_task_steps_completed_at
-    return nil unless self.core_task_steps_completed?
-    self.core_task_steps.collect{|ts| ts.completed_at}.max
-  end
-
-  def handle_task_step_completion!(completion_time: Time.now)
+  def handle_task_step_completion!(completion_time: Time.current)
+    set_last_worked_at(time: completion_time)
     update_step_counts!
 
     if core_task_steps_completed? && placeholder_steps_count > 0
@@ -164,15 +175,11 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     task_steps.preload(:tasked).select{|task_step| task_step.exercise?}
   end
 
-  def completed_exercise_steps
-    exercise_steps.select{|step| step.completed?}
-  end
-
   protected
 
-  def opens_at_or_due_at
-    return unless opens_at.blank? && due_at.blank?
-    errors.add(:base, 'needs either the opens_at date or due_at date')
+  def due_at_on_or_after_opens_at
+    return if due_at.nil? || opens_at.nil? || due_at >= opens_at
+    errors.add(:due_at, 'must be on or after opens_at')
     false
   end
 

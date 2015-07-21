@@ -9,7 +9,7 @@ describe Role::AddUserRole do
       result = nil
       expect {
         result = Role::AddUserRole.call(user: user, role: role)
-      }.to change { Role::Models::User.count }.by(1)
+      }.to change { Role::Models::RoleUser.count }.by(1)
       expect(result.errors).to be_empty
     end
   end
@@ -21,7 +21,7 @@ describe Role::AddUserRole do
       result = nil
       expect {
         result = Role::AddUserRole.call(user: user, role: role)
-      }.to change { Role::Models::User.count }.by(1)
+      }.to change { Role::Models::RoleUser.count }.by(1)
       expect(result.errors).to be_empty
 
       expect {

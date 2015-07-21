@@ -23,6 +23,8 @@ RSpec.describe Api::V1::Tasks::TaskedPlaceholderRepresenter, :type => :represent
 
     ## TaskedPlaceholder-specific properties
     allow(placeholder).to receive(:placeholder_name).and_return('Some step type')
+    allow(placeholder).to receive(:last_completed_at).and_return(Time.current)
+    allow(placeholder).to receive(:first_completed_at).and_return(Time.current - 1.week)
 
     placeholder
   }

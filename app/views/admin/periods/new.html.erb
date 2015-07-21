@@ -1,2 +1,3 @@
-<h2>New period for "<%= @course.name %>"</h2>
+<% @page_header = "New Period for #{@course.name}" %>
+
 <%= render 'form', url: admin_course_periods_path(@course.id) %>

@@ -18,7 +18,7 @@ class GetStudentProfiles
     student_roles = run(:get_students, period: period).outputs.students
     users = run(:get_users_for_roles, student_roles).outputs.users
     names = run(:get_user_full_names, users).outputs.full_names
-    role_users = Role::Models::User.where(entity_user_id: users.collect(&:id))
+    role_users = Role::Models::RoleUser.where(entity_user_id: users.collect(&:id))
 
     outputs[:profiles] = student_roles.collect do |role|
       user_id = role_users.select { |u| u.entity_role_id == role.id }.first.entity_user_id

@@ -6,7 +6,7 @@ class CreateTasksTasks < ActiveRecord::Migration
       t.integer :task_type, null: false
       t.string :title, null: false
       t.text :description
-      t.datetime :opens_at
+      t.datetime :opens_at, null: false
       t.datetime :due_at
       t.datetime :feedback_at
       t.integer :tasks_taskings_count, null: false, default: 0

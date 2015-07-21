@@ -7,7 +7,7 @@ RSpec.describe StudentAccessPolicy, type: :access_policy do
   let(:student_user) { FactoryGirl.create(:user_profile).entity_user }
   let(:student_role) {
     role = Entity::Role.create
-    Role::Models::User.create!(user: student_user, role: role)
+    Role::Models::RoleUser.create!(user: student_user, role: role)
     role
   }
   let(:student)      { CourseMembership::AddStudent[role: student_role, period: period] }

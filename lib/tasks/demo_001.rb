@@ -1,5 +1,8 @@
 require_relative 'demo_base'
+require_relative 'demo/content_configuration'
 
+
+## Imports a book from CNX and creates a course with periods from it's data
 class Demo001 < DemoBase
 
   lev_routine
@@ -13,77 +16,52 @@ class Demo001 < DemoBase
 
   protected
 
-  STABLE_VERSION = 1.18
+  def exec(book: :all, print_logs: true, random_seed: nil)
 
-  def exec(book: :all, print_logs: true, book_version: :latest, random_seed: nil)
-    book = book.to_sym
     set_print_logs(print_logs)
 
     # By default, choose a fixed seed for repeatability and fewer surprises
     set_random_seed(random_seed)
 
-    version_string = case book_version.to_sym
-                     when :latest
-                       ''
-                     when :stable
-                       "@#{STABLE_VERSION}"
-                     else
-                       book_version.blank? ? '' : "@#{book_version.to_s}"
-                     end
-
     archive_url = 'https://archive-staging-tutor.cnx.org/contents/'
 
-    cnx_books = {
-      'Biology I' => "ccbc51fa-49f3-40bb-98d6-07a15a7ab6b7#{version_string}",
-      'Physics I' => "93e2b09d-261c-4007-a987-0b3062fe154b#{version_string}"
-    }
-
-    admin_profile = new_user_profile(username: 'admin', name: 'Administrator User')
+    admin_profile = new_user_profile(username: 'admin', name: people.admin)
     run(:make_administrator, user: admin_profile.entity_user)
     log("Added an admin user #{admin_profile.account.full_name}")
 
-    teacher_profile = new_user_profile(username: 'teacher', name: 'Charles Morris')
-    courses={}
-    cnx_books.each do | course_name, cnx_book_id |
-      course_code = course_name[0...3].downcase.to_sym
-      next unless book == :all or course_code == book
+    ContentConfiguration[book.to_sym].each do | content |
 
-      cnx_book = nil
-      OpenStax::Cnx::V1.with_archive_url(url: archive_url) do
-        cnx_book = run(:import_book, id: cnx_book_id).outputs.book
-        log("Imported book #{course_name} #{cnx_book_id} from #{archive_url}.")
+      course = create_course(name: content.course_name)
+
+      content.periods.each_with_index do | period_content, index |
+        period = run(:create_period, course: course, name: period_content.name).outputs.period
+        log("  Created period: #{period_content.name}")
+        period_content.students.each do | initials |
+          student_info = people.students[initials]
+          profile = get_student_profile(initials) ||
+                    new_user_profile(username: student_info.username, name:  student_info.name)
+          log("    #{initials} (#{student_info.name})")
+
+          run(AddUserAsPeriodStudent, period: period, user: profile.entity_user)
+        end
       end
-      course = create_course(name: course_name)
-      courses[course_code] = course
-      run(:add_book, book: cnx_book, course: course)
 
-      create_period(course: course)
-      create_period(course: course)
+      OpenStax::Cnx::V1.with_archive_url(url: archive_url) do
+        cnx_book = run(:import_book, id: content.cnx_book).outputs.book
+        log("Imported book #{content.course_name} #{content.cnx_book} from #{archive_url}.")
+        run(:add_book, book: cnx_book, course: course)
+      end
+
+
+      teacher_profile = get_teacher_profile(content.teacher) ||
+                        new_user_profile(username: people.teachers[content.teacher].username,
+                                         name: people.teachers[content.teacher].name)
 
       run(:add_teacher, course: course, user: teacher_profile.entity_user)
 
-    end
+      log("Created course '#{content.course_name}' with '#{people.teachers[content.teacher].name}' as teacher")
 
-    students = 10.times.collect do |ii|
-      # if all books are being imported, switch between them
-      # otherwise just use what we've got
-      student_courses = if :all != book || 0 == ii % 5
-                          courses.values
-                        elsif 0 == ii % 2
-                          [courses[:bio]]
-                        else
-                          [courses[:phy]]
-                        end
-      username = "student#{(ii + 1).to_s.rjust(2,'0')}"
-      user = new_user_profile(username: username).entity_user
-
-      student_courses.map do | course |
-        run(AddUserAsPeriodStudent, period: course.periods[ii%2], user: user)
-      end
-
-    end
-
-    log("Added #{teacher_profile.account.full_name} as a teacher and added #{students.flatten.count} students.")
+    end # book
 
   end
 end

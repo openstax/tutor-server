@@ -1,0 +1,55 @@
+admin: Administrator User
+teachers:
+  cm: {name: Charles Morris,     username: teacher01 }
+
+students:
+  af: {name: Atticus Finch,      username: student01 }
+  ag: {name: Ashleigh Goyette,   username: student02 }
+  ak: {name: Albin Kirlin,       username: student03 }
+  am: {name: Augie March,        username: student04 }
+  an: {name: Alene Macejkovic,   username: student05 }
+  ap: {name: Alden Pyle,         username: student06 }
+  at: {name: Alyce Tromp,        username: student07 }
+  bb: {name: Beatrice Batz,      username: student08 }
+  bh: {name: Bettie Hackett,     username: student09 }
+  bs: {name: Bernhard Stark,     username: student10 }
+  cd: {name: Clarissa Dalloway,  username: student11 }
+  cg: {name: Clyde Griffiths,    username: student12 }
+  cm: {name: Charlie Marlow,     username: student13 }
+  cp: {name: Cleve Pacocha,      username: student14 }
+  dp: {name: Dorthy Pagac,       username: student15 }
+  eh: {name: Earlene Hayes,      username: student16 }
+  fa: {name: Florentino Ariza,   username: student17 }
+  ft: {name: Fabiola Thiel,      username: student18 }
+  gj: {name: Giovanny Jaskolski, username: student19 }
+  gs: {name: George Smiley,      username: student20 }
+  hc: {name: Henry Chinaski,     username: student21 }
+  hg: {name: Holly Golightly,    username: student22 }
+  hp: {name: Harry Potter,       username: student23 }
+  hs: {name: Helmer Schuppe,     username: student24 }
+  ir: {name: Ignatius Reilly,    username: student25 }
+  iu: {name: Isobel Russel,      username: student26 }
+  iw: {name: Isobel Witting,     username: student27 }
+  jb: {name: Jean Brodie,        username: student28 }
+  jr: {name: Jared Fritsch,      username: student29 }
+  js: {name: Janelle Skiles,     username: student30 }
+  kl: {name: Kevin Lowe,         username: student31 }
+  lb: {name: Leopold Bloom,      username: student32 }
+  lt: {name: Lily Bart,          username: student33 }
+  lh: {name: Lionel Hayes,       username: student34 }
+  mb: {name: Molly Bloom,        username: student35 }
+  mu: {name: Mariah Buckridge,   username: student36 }
+  mh: {name: Mikayla Hintz,      username: student37 }
+  mr: {name: Myriam Reynolds,    username: student38 }
+  ms: {name: Myron Sauer,        username: student39 }
+  ne: {name: Nellie Effertz,     username: student40 }
+  nz: {name: Nathan Zuckerman,   username: student41 }
+  ra: {name: Rabbit Angstrom,    username: student42 }
+  rb: {name: Regan Buckridge,    username: student43 }
+  rh: {name: Rigoberto Hegmann,  username: student44 }
+  rl: {name: Richmond Lang,      username: student45 }
+  sd: {name: Stephen Dedalus,    username: student46 }
+  sg: {name: Seymour Glass,      username: student47 }
+  sk: {name: Sean Kuvalis,       username: student48 }
+  vw: {name: Vernien Walker,     username: student49 }
+  wh: {name: Willie Herman,      username: student50 }

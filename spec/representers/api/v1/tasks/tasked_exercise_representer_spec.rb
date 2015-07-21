@@ -31,6 +31,8 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, :type => :representer 
     allow(exercise).to receive(:is_correct?).and_return(false)
     allow(exercise).to receive(:free_response).and_return(nil)
     allow(exercise).to receive(:answer_id).and_return(nil)
+    allow(exercise).to receive(:last_completed_at).and_return(Time.current)
+    allow(exercise).to receive(:first_completed_at).and_return(Time.current - 1.week)
 
     exercise
   }

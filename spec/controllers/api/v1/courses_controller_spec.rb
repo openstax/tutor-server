@@ -15,8 +15,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
   let!(:userless_token)  { FactoryGirl.create :doorkeeper_access_token }
 
-  let!(:course) { CreateCourse[name: 'Physics 101'] }
-  let!(:period) { CreatePeriod[course: course] }
+  let!(:course)          { CreateCourse[name: 'Physics 101'] }
+  let!(:period)          { CreatePeriod[course: course] }
 
   describe "#readings" do
     it 'raises SecurityTransgression if user is anonymous or not in the course' do
@@ -548,7 +548,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                                         :tasks_tasked_exercise],
                                            tasked_to: student_role)}
 
-    let!(:plan) { FactoryGirl.create(:tasks_task_plan, owner: course)}
+    let!(:plan) { FactoryGirl.create(:tasks_task_plan, owner: course,
+                                                       published_at: Time.now - 1.week)}
 
     it 'raises IllegalState if user is anonymous or not in course' do
       expect {
@@ -647,6 +648,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           a_hash_including(
             "id" => plan.id.to_s,
             "type" => "reading",
+            "published_at" => be_kind_of(String),
             "tasking_plans" => [
               { "target_id" => course.id.to_s,
                 "target_type" => 'course',
@@ -673,57 +675,6 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       })
       expect(response_body['tasks']).not_to be_empty
       expect(response_body['plans']).to be_nil
-    end
-
-  end
-
-  describe '#stats' do
-    context 'user is teacher' do
-      let!(:teacher_role) {
-        AddUserAsCourseTeacher.call(
-          course: course, user: user_1.entity_user).outputs[:role]
-      }
-
-      let!(:student_role) {
-        AddUserAsPeriodStudent.call(
-          period: period, user: user_2.entity_user).outputs[:role]
-      }
-
-      let!(:course_stats) {
-        Hashie::Mash.new(title: 'Title', page_ids: [1], children: [])
-      }
-
-      let!(:get_course_stats) {
-        class_double(GetCourseStats).as_stubbed_const
-      }
-
-      context 'and a student role is given' do
-        it 'returns the student stats' do
-          expect(get_course_stats)
-            .to receive(:[]).with(role: student_role, course: course)
-            .and_return(course_stats)
-
-          api_get :stats,
-                  user_1_token,
-                  parameters: { id: course.id, role_id: student_role }
-        end
-      end
-
-      context 'and a student role is not given' do
-        it 'raises IllegalState' do
-          expect {
-            api_get :stats, user_1_token, parameters: { id: course.id }
-          }.to raise_error(IllegalState)
-        end
-      end
-    end
-
-    context 'user is anonymous' do
-      it 'raises IllegalState' do
-        expect {
-          api_get :stats, nil, parameters: { id: course.id }
-        }.to raise_error(IllegalState)
-      end
     end
   end
 
@@ -774,7 +725,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
         expect(response).to have_http_status(:success)
         hash = response.body_as_hash
-        expect(hash[:total_count]).to eq(219)
+        expect(hash[:total_count]).to eq(70)
         page_los = Content::GetLos[page_ids: page_ids]
         hash[:items].each do |item|
           wrapper = OpenStax::Exercises::V1::Exercise.new(content: item[:content].to_json)
@@ -830,9 +781,19 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(resp).to eq([{
           period_id: course.periods.first.id.to_s,
           data_headings: [
-            { title: 'Homework 2 task plan', plan_id: resp[0][:data_headings][0][:plan_id], average: 87.5 },
-            { title: 'Reading task plan', plan_id: resp[0][:data_headings][1][:plan_id]  },
-            { title: 'Homework task plan', plan_id: resp[0][:data_headings][2][:plan_id], average: 75.0 }
+            { title: 'Homework task plan',
+              plan_id: resp[0][:data_headings][0][:plan_id],
+              due_at: resp[0][:data_headings][0][:due_at],
+              average: 75.0 },
+
+            { title: 'Reading task plan',
+              plan_id: resp[0][:data_headings][1][:plan_id],
+              due_at: resp[0][:data_headings][1][:due_at] },
+
+            { title: 'Homework 2 task plan',
+              plan_id: resp[0][:data_headings][2][:plan_id],
+              due_at: resp[0][:data_headings][2][:due_at],
+              average: 87.5 }
           ],
           students: [{
             name: 'Student One',
@@ -842,8 +803,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                 type: 'homework',
                 id: resp[0][:students][0][:data][0][:id],
                 status: 'completed',
-                exercise_count: 4,
-                correct_exercise_count: 3,
+                exercise_count: 6,
+                correct_exercise_count: 6,
                 recovered_exercise_count: 0
               },
               {
@@ -855,8 +816,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                 type: 'homework',
                 id: resp[0][:students][0][:data][2][:id],
                 status: 'completed',
-                exercise_count: 6,
-                correct_exercise_count: 6,
+                exercise_count: 4,
+                correct_exercise_count: 3,
                 recovered_exercise_count: 0
               }
             ]
@@ -868,8 +829,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                 type: 'homework',
                 id: resp[0][:students][1][:data][0][:id],
                 status: 'in_progress',
-                exercise_count: 3,
-                correct_exercise_count: 1,
+                exercise_count: 5,
+                correct_exercise_count: 2,
                 recovered_exercise_count: 0
               },
               {
@@ -881,8 +842,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                 type: 'homework',
                 id: resp[0][:students][1][:data][2][:id],
                 status: 'in_progress',
-                exercise_count: 5,
-                correct_exercise_count: 2,
+                exercise_count: 3,
+                correct_exercise_count: 1,
                 recovered_exercise_count: 0
               }
             ]
@@ -890,9 +851,18 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         }, {
           period_id: course.periods.order(:id).last.id.to_s,
           data_headings: [
-            { title: 'Homework 2 task plan', plan_id: resp[1][:data_headings][0][:plan_id] },
-            { title: 'Reading task plan', plan_id: resp[1][:data_headings][1][:plan_id]  },
-            { title: 'Homework task plan', plan_id: resp[1][:data_headings][2][:plan_id], average: 100.0 }
+            { title: 'Homework task plan',
+              plan_id: resp[1][:data_headings][0][:plan_id],
+              due_at: resp[1][:data_headings][0][:due_at],
+              average: 100.0 },
+
+            { title: 'Reading task plan',
+              plan_id: resp[1][:data_headings][1][:plan_id],
+              due_at: resp[1][:data_headings][1][:due_at] },
+
+            { title: 'Homework 2 task plan',
+              plan_id: resp[1][:data_headings][2][:plan_id],
+              due_at: resp[1][:data_headings][2][:due_at] }
           ],
           students: [{
             name: student_3.full_name,
@@ -901,9 +871,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
               {
                 type: 'homework',
                 id: resp[1][:students][0][:data][0][:id],
-                status: 'not_started',
-                exercise_count: 3,
-                correct_exercise_count: 0,
+                status: 'completed',
+                exercise_count: 6,
+                correct_exercise_count: 6,
                 recovered_exercise_count: 0
               },
               {
@@ -914,9 +884,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
               {
                 type: 'homework',
                 id: resp[1][:students][0][:data][2][:id],
-                status: 'completed',
-                exercise_count: 6,
-                correct_exercise_count: 6,
+                status: 'not_started',
+                exercise_count: 3,
+                correct_exercise_count: 0,
                 recovered_exercise_count: 0
               }
             ]
@@ -928,7 +898,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                 type: 'homework',
                 id: resp[1][:students][1][:data][0][:id],
                 status: 'not_started',
-                exercise_count: 3,
+                exercise_count: 5,
                 correct_exercise_count: 0,
                 recovered_exercise_count: 0
               },
@@ -941,7 +911,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                 type: 'homework',
                 id: resp[1][:students][1][:data][2][:id],
                 status: 'not_started',
-                exercise_count: 5,
+                exercise_count: 3,
                 correct_exercise_count: 0,
                 recovered_exercise_count: 0
               }
@@ -1014,15 +984,19 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       role = ChooseCourseRole[user: teacher.entity_user,
                               course: course,
                               allowed_role_type: :teacher]
-      export = FactoryGirl.create(:performance_report_export,
-                                  export: File.open('./tmp/test.txt', 'w+'),
-                                  course: course,
-                                  role: role)
+
+      export = Tempfile.open(['test_export', '.xls']) do |file|
+        FactoryGirl.create(:performance_report_export,
+                           export: file,
+                           course: course,
+                           role: role)
+      end
 
       api_get :performance_exports, teacher_token, parameters: { id: course.id }
 
       expect(response.status).to eq(200)
-      expect(response.body_as_hash.last[:filename]).to eq('test.txt')
+      expect(response.body_as_hash.last[:filename]).not_to include('test_export')
+      expect(response.body_as_hash.last[:filename]).to include('.xls')
       expect(response.body_as_hash.last[:url]).to eq(export.url)
       expect(response.body_as_hash.last[:created_at]).not_to be_nil
     end

@@ -22,6 +22,7 @@ module Tasks
     def get_performance_report_for_teacher(course)
       @tasks = {}
       @average = []
+
       course.periods.collect do |period|
         @average << Hash.new { |h, k| h[k] = [] }
         student_tasks, student_data = [], []
@@ -47,13 +48,13 @@ module Tasks
 
     def get_tasks(student_profiles, period_id)
       role_ids = student_profiles.collect(&:entity_role_id)
+      task_types = Models::Task.task_types.values_at(:reading, :homework, :external)
       # Return reading and homework tasks for a student ordered by due date
-      @tasks[period_id] ||= Models::Task
-        .joins { taskings }
-        .where { taskings.entity_role_id.in role_ids }
-        .where { task_type.in Models::Task.task_types.values_at(:reading, :homework) }
-        .order('due_at DESC')
-        .includes(:taskings)
+      @tasks[period_id] ||= Models::Task.includes(:taskings)
+                                        .joins(:taskings)
+                                        .where{taskings.entity_role_id.in role_ids}
+                                        .where(task_type: task_types)
+                                        .order(:due_at)
     end
 
     def taskings_exist?(task, profile)
@@ -62,7 +63,10 @@ module Tasks
 
     def get_data_headings(tasks)
       tasks.collect.with_index { |t, i|
-        { title: t.title, plan_id: t.tasks_task_plan_id }.merge(average(t, i))
+        { title: t.title,
+          plan_id: t.tasks_task_plan_id,
+          due_at: t.due_at
+        }.merge(average(t, i))
       }
     end
 

@@ -3,7 +3,7 @@ class CreateContentBookParts < ActiveRecord::Migration
     create_table :content_book_parts do |t|
       t.resource allow_nil: true
       t.references :parent_book_part
-      t.references :entity_book
+      t.references :entity_book, null: false
       t.integer :number, null: false
       t.string :title, null: false
       t.text :chapter_section

@@ -1,13 +1,21 @@
 <% method ||= :post %>
 
 <%= lev_form_for :course, url: url, method: method do |f| %>
-  <%= f.label :name %>
-  <%= f.text_field :name %>
+  <div class="form-group">
+    <%= f.label :name %>
+    <%= f.text_field :name, class: 'form-control' %>
+  </div>
 
   <% unless @course.nil? %>
-    <%= f.label :teacher, 'Assign teachers' %>
-    <%= f.text_field :teacher %>
-    <ul id="assigned-teachers"></ul>
+    <div class="form-group">
+      <%= f.label :teacher, 'Assign teachers' %>
+      <%= f.text_field :teacher, class: 'form-control' %>
+      <ul id="assigned-teachers">
+      <% @teachers.each do |teacher| %>
+        <li><%= teacher.name %></li>
+      <% end %>
+      </ul>
+    </div>
   <% end %>
 
   <%= f.submit 'Save', class: 'btn btn-primary' %>

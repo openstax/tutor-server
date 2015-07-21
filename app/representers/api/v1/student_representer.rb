@@ -45,5 +45,10 @@ module Api::V1
              writeable: false,
              readable: true
 
+    property :deidentifier,
+             type: String,
+             writeable: false,
+             readable: true
+
   end
 end

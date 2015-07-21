@@ -90,14 +90,12 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(page['student_count']).to eq(1) # num students with completed task steps
       expect(page['correct_count']).to eq(2)
       expect(page['incorrect_count']).to eq(0)
-      expect(page['chapter_section']).to eq([1, 1])
 
       spaced_page = stats.first.spaced_pages.first
       expect(spaced_page['title']).to eq("Newton's First Law of Motion: Inertia")
       expect(spaced_page['student_count']).to eq(1)
       expect(spaced_page['correct_count']).to eq(2)
       expect(spaced_page['incorrect_count']).to eq(0)
-      expect(spaced_page['chapter_section']).to eq([1, 1])
 
       second_task = tasks.second
       second_task.task_steps.each{ |ts|

@@ -106,4 +106,24 @@ RSpec.describe Content::VisitBookPart, :type => :routine do
 
   end
 
+  it "should cache visitations" do
+    trials = [
+      { name: :toc,       attribute: :toc_cache,       fake_data: {'fake' => 'hash'} },
+      { name: :page_data, attribute: :page_data_cache, fake_data: ['fake', 'array']}
+    ]
+
+
+    trials.each do |trial|
+      Content::VisitBookPart[book_part: book_part, visitor_names: trial[:name]]
+      book_part.reload
+
+      expect(book_part.send(trial[:attribute])).not_to be_blank
+
+      book_part.update_attribute(trial[:attribute], trial[:fake_data])
+
+      value = Content::VisitBookPart[book_part: book_part, visitor_names: trial[:name]]
+      expect(value).to eq(trial[:fake_data])
+    end
+  end
+
 end

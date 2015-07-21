@@ -18,14 +18,15 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
     { 'id' => '95e61258-2faf-41d4-af92-f62e1414175a', 'title' => 'Force' }
   ] }
 
-  let!(:cnx_pages) { cnx_page_hashes.each_with_index.collect do |hash, i|
-    OpenStax::Cnx::V1::Page.new(hash: hash, chapter_section: [8, i+1])
+  let!(:cnx_pages) { cnx_page_hashes.collect do |hash|
+    OpenStax::Cnx::V1::Page.new(hash: hash)
   end }
 
-  let!(:pages)     { cnx_pages.collect do |cnx_page|
+  let!(:pages)     { cnx_pages.collect.with_index do |cnx_page, ii|
     Content::Routines::ImportPage.call(
       cnx_page:  cnx_page,
-      book_part: book_part
+      book_part: book_part,
+      chapter_section: [8, ii+1]
     ).outputs.page
   end }
 

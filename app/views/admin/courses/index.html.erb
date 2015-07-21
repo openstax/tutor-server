@@ -1,6 +1,6 @@
-<%= link_to 'Add Course', new_admin_course_path %>
+<% @page_header = "Courses" %>
 
-<table>
+<table class="table table-striped">
   <thead>
     <tr>
       <th>Name</th>
@@ -13,8 +13,14 @@
       <tr>
         <td><%= course.name %></td>
         <td><%= course.teacher_names.to_sentence %></td>
-        <td><%= link_to 'edit', edit_admin_course_path(course.id) %></td>
+        <td>
+          <%= link_to 'Edit', edit_admin_course_path(course.id), class: "btn btn-xs btn-primary" %>
+          <%= link_to 'Students', students_admin_course_path(course.id), class: 'btn btn-xs btn-primary' %>
+        </td>
       </tr>
     <% end %>
   </tbody>
 </table>
+
+
+<%= link_to 'Add Course', new_admin_course_path, class: "btn btn-primary" %>

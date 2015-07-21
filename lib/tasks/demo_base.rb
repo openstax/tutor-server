@@ -1,3 +1,5 @@
+require 'hashie/mash'
+
 class DemoBase
 
   protected
@@ -10,33 +12,66 @@ class DemoBase
   #
   #############################################################################
 
-  def new_responses_list(assignment_type:, step_types:, entries:)
-    ResponsesList.new(assignment_type: assignment_type, step_types: step_types, entries: entries, randomizer: randomizer)
+  def new_responses_list(assignment_type:, students:, step_types:)
+    profile_responses = students.map do | initials, score |
+      profile = get_student_profile(initials) ||
+                raise("Unable to find student for initials #{initials}")
+      [profile, score]
+    end
+
+    ResponsesList.new(assignment_type: assignment_type,
+                      profile_responses: profile_responses,
+                      step_types: step_types,
+                      randomizer: randomizer)
+  end
+
+  def people
+    @people ||= Hashie::Mash.load(File.dirname(__FILE__)+"/demo/people.yml")
+  end
+
+  def user_profile_for_username(username)
+    UserProfile::Models::Profile.joins(:account)
+      .where(account: { username: username }).first
+  end
+
+  def get_teacher_profile(initials)
+    teacher_info = people.teachers[initials]
+    raise "Unable to find teacher for #{initials}" unless teacher_info
+    user_profile_for_username teacher_info.username
+  end
+
+  def get_student_profile(initials)
+    student_info = people.students[initials]
+    raise "Unable to find student for #{initials}" unless student_info
+    user_profile_for_username student_info.username
   end
 
   class ResponsesList
-    def initialize(assignment_type:, step_types:, entries:, randomizer:)
+    def initialize(assignment_type:, profile_responses:, step_types:, randomizer:)
+
       raise ":assignment_type (#{assignment_type}) must be one of {:homework,:reading}" \
         unless [:homework,:reading].include?(assignment_type)
       raise "Must have at least one step" if step_types.length == 0
 
       @assignment_type = assignment_type
+
       @step_types = step_types
-      @list = []
+      @list = {}
       @randomizer = randomizer
 
-      entries.each do |entry|
-        @list.push(get_explicit_responses(entry))
+      profile_responses.each do |profile, responses|
+        @list[profile.id] = get_explicit_responses(responses)
       end
     end
 
-    def [](index)
-      @list[index]
+    def [](profile_id)
+      @list[profile_id]
     end
 
     private
 
     def get_explicit_responses(entry)
+
       result = case entry
       when Array
         raise "Number of explicit responses (#{entry.length}) doesn't match number of steps (#{@step_types.length}) " \
@@ -63,9 +98,9 @@ class DemoBase
             1 # mark all non-exercises complete
           end
         end
-      when :not_started
+      when 'ns'
         @step_types.count.times.collect{nil}
-      when :incomplete
+      when 'i'
         responses = @step_types.count.times.collect{ [1,0,nil].sample }
 
         # incomplete is more than not_started, so make sure we have started by setting
@@ -95,7 +130,7 @@ class DemoBase
 
   def new_user_profile(username:, name: nil, password: nil, sign_contracts: true)
     password ||= 'password'
-    name ||= @@name_pool.shift || Faker::Name.name
+
     first_name, last_name = name.split(' ')
     raise "need a full name" if last_name.nil?
 
@@ -157,38 +192,29 @@ class DemoBase
     )
   end
 
-  def assign_ireading(course:, chapter_sections:, due_at:, opens_at:nil, duration: nil, to: nil, title: nil)
-    raise "Cannot set both opens_at and duration" if opens_at.present? && duration.present?
-    duration ||= DEFAULT_TASK_DURATION
-    opens_at ||= due_at - duration
+  def external_assignment_assistant
+    @external_assignment_assistant ||= Tasks::Models::Assistant.find_or_create_by!(
+      name: "External Assignment Assistant",
+      code_class_name: "Tasks::Assistants::ExternalAssignmentAssistant"
+    )
+  end
 
+  def assign_ireading(course:, chapter_sections:, title:)
     book = CourseContent::GetCourseBooks[course: course].first
     pages = lookup_pages(book: book, chapter_sections: chapter_sections)
 
     raise "No pages to assign" if pages.blank?
 
-    task_plan = Tasks::Models::TaskPlan.new(
-      title: title || pages.first.title,
+    Tasks::Models::TaskPlan.new(
+      title: title,
       owner: course,
       type: 'reading',
       assistant: reading_assistant,
       settings: { page_ids: pages.collect{|page| page.id.to_s} }
     )
-
-    distribute_tasks(task_plan: task_plan,
-                     to: to || course,
-                     message: "Assigned ireading for #{chapter_sections}, due: #{due_at}, title: #{task_plan.title}",
-                     opens_at: opens_at,
-                     due_at: due_at)
   end
 
-  def assign_homework(course:, chapter_sections:, due_at:, opens_at: nil, duration: nil,
-                      num_exercises: 5, to: nil, title: nil)
-
-    raise "Cannot set both opens_at and duration" if opens_at.present? && duration.present?
-    duration ||= DEFAULT_TASK_DURATION
-    opens_at ||= due_at - duration
-
+  def assign_homework(course:, chapter_sections:,  num_exercises:, title:)
     book = CourseContent::GetCourseBooks[course: course].first
     pages = lookup_pages(book: book, chapter_sections: chapter_sections)
 
@@ -200,8 +226,8 @@ class DemoBase
                        .take(num_exercises)
                        .collect{ |e| e.id.to_s }
 
-    task_plan = Tasks::Models::TaskPlan.new(
-      title: title || "Homework - #{chapter_sections.join('-')}",
+    Tasks::Models::TaskPlan.new(
+      title: title,
       owner: course,
       type: 'homework',
       assistant: hw_assistant,
@@ -212,10 +238,9 @@ class DemoBase
       }
     )
 
-    distribute_tasks(task_plan: task_plan, to: to || course, opens_at: opens_at, due_at: due_at)
   end
 
-  def distribute_tasks(task_plan:, to:, opens_at:, due_at:, message: nil)
+  def add_tasking_plan(task_plan:, to:, opens_at:, due_at:, message: nil)
     targets = [to].flatten
     targets.each do |target|
       task_plan.tasking_plans << Tasks::Models::TaskingPlan.new(target: target,
@@ -224,10 +249,12 @@ class DemoBase
                                                                 due_at: due_at)
     end
     task_plan.save!
+  end
 
+  def distribute_tasks(task_plan:)
     tasks = run(DistributeTasks, task_plan).outputs.tasks
 
-    log(message || "Assigned #{task_plan.type}, '#{task_plan.title}' due at #{due_at}; #{tasks.count} times")
+    log("Assigned #{task_plan.type} #{tasks.count} times")
     log("One task looks like: " + print_task(task: tasks.first)) if tasks.any?
 
     tasks
@@ -236,34 +263,30 @@ class DemoBase
   # `responses` is an array of 1 (or true), 0 (or false), or nil; nil means
   # not completed; any non-nil means completed. 1/0 (true/false) is for
   # exercise correctness
-  def work_task(task:, responses:)
-
+  def work_task(task:, responses:[])
     raise "Invalid number of responses for #{task.title}" +
           "(responses,task_steps) = (#{responses.count}, #{task.task_steps.count})\n" +
           "(task = #{print_task(task: task)}) " \
-      if responses.count != task.task_steps.count
+      if responses.count != task.steps_count
 
     core_task_steps = task.core_task_steps
-    core_task_steps_count = core_task_steps.count
 
     core_task_steps.each_with_index do |step, index|
       work_step(step, responses[index])
     end
 
     spaced_practice_task_steps = task.spaced_practice_task_steps
-    spaced_practice_task_steps_count = spaced_practice_task_steps.count
 
     spaced_practice_task_steps.each_with_index do |step, index|
-      work_step(step, responses[index + core_task_steps_count])
+      work_step(step, responses[index + core_task_steps.size])
     end
 
     return unless task.core_task_steps_completed?
 
     personalized_task_steps = task.personalized_task_steps
-    personalized_task_steps_count = personalized_task_steps.count
 
     personalized_task_steps.each_with_index do |step, index|
-      work_step(step, responses[index + core_task_steps_count + spaced_practice_task_steps_count])
+      work_step(step, responses[index + core_task_steps.size + spaced_practice_task_steps.size])
     end
 
   end
@@ -308,19 +331,15 @@ class DemoBase
     Tasks::Models::CourseAssistant.create!(course: course,
                                            assistant: hw_assistant,
                                            tasks_task_plan_type: 'homework')
+    Tasks::Models::CourseAssistant.create!(course: course,
+                                           assistant: external_assignment_assistant,
+                                           tasks_task_plan_type: 'external')
 
     log("Created a course named '#{name}'.")
 
     course
   end
 
-  def create_period(course:)
-    period = run(:create_period, course: course).outputs.period
-
-    log("Created a period named '#{period.name}'.")
-
-    period
-  end
 
   def log(message)
     puts "#{message}\n" if @print_logs
@@ -378,56 +397,4 @@ class DemoBase
     @print_logs = print_logs
   end
 
-  @@name_pool = %w(
-    Alden\ Pyle
-    Atticus\ Finch
-    Augie\ March
-    Charlie\ Marlow
-    Lily\ Bart
-    Clyde\ Griffiths
-    Florentino\ Ariza
-    George\ Smiley
-    Harry\ Potter
-    Henry\ Chinaski
-    Holly\ Golightly
-    Ignatius\ Reilly
-    Jean\ Brodie
-    Leopold\ Bloom
-    Clarissa\ Dalloway
-    Molly\ Bloom
-    Nathan\ Zuckerman
-    Rabbit\ Angstrom
-    Seymour\ Glass
-    Stephen\ Dedalus
-    Earlene\ Hayes
-    Richmond\ Lang
-    Rigoberto\ Hegmann
-    Isobel\ Russel
-    Myron\ Sauer
-    Jared\ Fritsch
-    Myriam\ Reynolds
-    Bernhard\ Stark
-    Isobel\ Witting
-    Vernien\ Walker
-    Lionel\ Hayes
-    Mariah\ Buckridge
-    Cleve\ Pacocha
-    Fabiola\ Thiel
-    Beatrice\ Batz
-    Mikayla\ Hintz
-    Giovanny\ Jaskolski
-    Ashleigh\ Goyette
-    Janelle\ Skiles
-    Willie\ Herman
-    Dorthy\ Pagac
-    Bettie\ Hackett
-    Nellie\ Effertz
-    Albin\ Kirlin
-    Sean\ Kuvalis
-    Alyce\ Tromp
-    Regan\ Buckridge
-    Alene\ Macejkovic
-    Kevin\ Lowe
-    Helmer\ Schuppe
-  )
 end

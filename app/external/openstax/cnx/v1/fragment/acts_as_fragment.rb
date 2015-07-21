@@ -15,6 +15,10 @@ module OpenStax::Cnx::V1::Fragment
       @labels = [@labels, labels].flatten.compact.uniq
     end
 
+    def exercise?
+      false
+    end
+
     protected
 
     def custom_visit(visitor:, depth:)

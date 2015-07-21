@@ -2,6 +2,8 @@ class Content::Models::BookPart < Tutor::SubSystems::BaseModel
   acts_as_resource allow_nil: true
 
   serialize :chapter_section, Array
+  serialize :toc_cache, Hash
+  serialize :page_data_cache, Array
 
   belongs_to :book, subsystem: :entity
 
@@ -21,9 +23,10 @@ class Content::Models::BookPart < Tutor::SubSystems::BaseModel
                             inverse_of: :book_part
 
   validates :title, presence: true
+  validates :book, presence: true
 
   def self.root_for(book_id:)
-    where(entity_book_id: book_id).where(parent_book_part_id: nil).first
+    find_by(entity_book_id: book_id, parent_book_part_id: nil)
   end
 
 end

@@ -7,13 +7,13 @@ RSpec.describe ActsAsTasked do
     it { is_expected.to have_one(:task_step) }
 
     it "causes #{tasked_class} to delegate methods to its task_step" do
-      expect(tasked.completed_at).to be_nil
-      expect(tasked.completed?).to eq false
+      expect(tasked.first_completed_at).to be_nil
+      expect(tasked).to_not be_completed
 
       tasked.complete
 
-      expect(tasked.completed_at).to eq tasked.task_step.completed_at
-      expect(tasked.completed?).to eq true
+      expect(tasked.first_completed_at).to eq tasked.task_step.first_completed_at
+      expect(tasked).to be_completed
     end
   end
 end

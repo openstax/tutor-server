@@ -1,15 +1,15 @@
-<h2>Edit Course</h2>
+<% @page_header = "Edit Course" %>
 
 <%= render 'form', url: admin_course_path, method: :put %>
 
-<hr />
+<hr/>
 
-<h2>Edit Periods</h2>
+<h3>Periods</h3>
 
 <%= render 'periods' %>
 
-<hr />
+<hr/>
 
-<h2>Upload student roster</h2>
+<h3>Upload Student Roster</h3>
 
 <%= render 'students', url: students_admin_course_path(@course.course_id) %>

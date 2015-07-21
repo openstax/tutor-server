@@ -12,22 +12,25 @@ module OpenStax::Cnx::V1::Fragment
     EXERCISE_CSS = '.os-exercise'
 
     def initialize(node:, title: nil, exercise_fragments: nil)
-      @node       = node
-      @title      = title
-      @exercise_fragments  = exercise_fragments
+      @node               = node
+      @title              = title
+      @exercise_fragments = exercise_fragments
     end
 
     attr_reader :node
 
     def title
-      @title ||= node.at_css(TITLE_CSS).try(:content).try(:strip) || \
-                 DEFAULT_TITLE
+      @title ||= node.at_css(TITLE_CSS).try(:content).try(:strip) || DEFAULT_TITLE
     end
 
     def exercise_fragments
       @exercise_fragments ||= node.css(EXERCISE_CSS).collect do |ex_node|
         Exercise.new(node: ex_node)
       end
+    end
+
+    def exercise?
+      true
     end
 
     protected

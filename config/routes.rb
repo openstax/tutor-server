@@ -45,6 +45,13 @@ Rails.application.routes.draw do
 
     get 'user/courses', to: 'courses#index', as: :courses
 
+    resources :guides, path: 'courses', only: [] do
+      member do
+        get 'guide(/role/:role_id)', action: :student
+        get 'teacher_guide', action: :teacher
+      end
+    end
+
     resources :courses, only: [:show] do
       member do
         get 'readings'
@@ -54,7 +61,6 @@ Rails.application.routes.draw do
         get 'dashboard(/role/:role_id)', action: :dashboard
         post 'practice(/role/:role_id)', action: :practice
         get 'practice(/role/:role_id)', action: :practice
-        get 'guide(/role/:role_id)', action: :stats
         get 'performance(/role/:role_id)', action: :performance
         post 'performance/export', action: :performance_export
         get 'performance/exports', action: :performance_exports
@@ -83,9 +89,10 @@ Rails.application.routes.draw do
 
     resources :courses, except: :destroy do
       member do
-        post 'students'
+        post :students
       end
-      resources :periods, except: :destroy
+      resources :periods, shallow: true
+      resources :students, only: [:index], shallow: true
     end
 
     resource :cron, only: [:update]

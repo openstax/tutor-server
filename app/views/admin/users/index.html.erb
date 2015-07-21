@@ -1,8 +1,16 @@
-<%= link_to 'Create user', new_admin_user_path %>
+<% @page_header = "Users" %>
+
 
 <%= form_tag '', method: :get do %>
-  <%= text_field_tag :search_term, params[:search_term] %>
-  <%= submit_tag 'Search User' %>
+
+<div class="input-group form-group">
+   <%= text_field_tag :search_term, params[:search_term], class: 'form-control', placeholder: 'Search here' %>
+   <span class="input-group-btn">
+        <%= submit_tag 'Search', class: "btn btn-primary"  %>
+   </span>
+</div>
+
+
 <% end %>
 
 <% if params[:search_term].present? && @user_search.empty? %>
@@ -21,7 +29,7 @@
 
   <%= pagination %>
 
-  <table>
+  <table class="table table-striped">
     <thead>
       <tr>
         <th>Username</th>
@@ -35,9 +43,9 @@
           <td><%= user.username %></td>
           <td><%= user.full_name %></td>
           <td>
-              <%= link_to 'edit', edit_admin_user_path(user.id) %> |
-              <%= link_to 'sign in as', become_admin_user_path(user.account_id),
-                                        method: :post %>
+              <%= link_to 'Edit', edit_admin_user_path(user.id), class: "btn btn-xs btn-primary" %>
+              <%= link_to 'Sign in as', become_admin_user_path(user.account_id),
+                                        method: :post, class: "btn btn-xs btn-primary" %>
           </td>
         </tr>
       <% end %>
@@ -47,3 +55,5 @@
   <%= pagination %>
 
 <% end %>
+
+<div><%= link_to 'Create user', new_admin_user_path, class: "btn btn-primary" %></div>

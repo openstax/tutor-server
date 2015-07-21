@@ -4,7 +4,8 @@ class Entity::Role < Tutor::SubSystems::BaseModel
   has_many :students, dependent: :destroy, subsystem: :course_membership
   has_many :teachers, dependent: :destroy, subsystem: :course_membership
 
-  has_one :user, dependent: :destroy, subsystem: :role
+  has_one :role_user, dependent: :destroy, subsystem: :role
+  has_one :user, through: :role_user
 
-  delegate :username, :first_name, :last_name, :full_name, to: :user
+  delegate :username, :first_name, :last_name, :full_name, :name, to: :user
 end

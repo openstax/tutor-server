@@ -2,6 +2,7 @@
 //= require jquery_ujs
 //= require jquery.datetimepicker
 //= require jquery-ui-1.11.4.custom.min
+//= require bootstrap-sprockets
 
 //=============== Date Time Picker ============//
 $(document).ready(function() {

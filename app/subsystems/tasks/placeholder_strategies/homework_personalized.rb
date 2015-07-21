@@ -8,7 +8,7 @@ class Tasks::PlaceholderStrategies::HomeworkPersonalized
 
     taskee = task.taskings.first.role
 
-    los = task.los
+    los = task.los + task.aplos
 
     exercise_urls = OpenStax::Biglearn::V1.get_projection_exercises(
       role:              taskee,

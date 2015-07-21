@@ -1,30 +1,25 @@
 <% method ||= :post %>
 
-<%= lev_form_for :tag, url: url, method: method do |f| %>
-  <table>
-    <tr>
-      <td><%= f.label :value, 'ID' %></td>
-      <td><%= f.text_field :value, disabled: 'disabled' %></td>
-    </tr>
+<%= lev_form_for :tag, url: url, method: method, html: {class: 'form-horizontal'} do |f| %>
+  <div class='form-group'>
+    <%= f.label :value, value: 'ID', class: 'col-sm-2 control-label' %>
+    <%= f.text_field :value, disabled: 'disabled' %>
+  </div>
 
-    <tr>
-      <td><%= f.label :name %></td>
-      <td><%= f.text_field :name, size: 50 %></td>
-    </tr>
+  <div class='form-group'>
+    <%= f.label :name, class: 'col-sm-2 control-label' %>
+    <%= f.text_field :name, size: 50 %>
+  </div>
 
-    <tr>
-      <td><%= f.label :description %></td>
-      <td><%= f.text_area :description, rows: 5, cols: 50 %></td>
-    </tr>
+  <div class='form-group'>
+    <%= f.label :description, class: 'col-sm-2 control-label' %>
+    <%= f.text_area :description, rows: 5, cols: 50 %>
+  </div>
 
-    <tr>
-      <td><%= f.label :visible %></td>
-      <td><%= f.check_box :visible %></td>
-    </tr>
+  <div class='form-group'>
+    <%= f.label :visible, class: 'col-sm-2 control-label' %>
+    <%= f.check_box :visible %>
+  </div>
 
-    <tr>
-      <td></td>
-      <td><%= f.submit 'Save', class: 'btn btn-primary' %></td>
-    </tr>
-  </table>
+  <%= f.submit 'Save', class: 'btn btn-primary' %>
 <% end %>

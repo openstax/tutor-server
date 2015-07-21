@@ -12,7 +12,7 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
   let!(:student_user)      { student_profile.entity_user }
   let!(:student_role)      {
     role = Entity::Role.create
-    Role::Models::User.create!(user: student_user, role: role)
+    Role::Models::RoleUser.create!(user: student_user, role: role)
     role
   }
   let!(:student)           { CourseMembership::AddStudent[role: student_role, period: period] }
@@ -24,7 +24,7 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
   let!(:teacher_user)      { teacher_profile.entity_user }
   let!(:teacher_role)      {
     role = Entity::Role.create
-    Role::Models::User.create!(user: teacher_user, role: role)
+    Role::Models::RoleUser.create!(user: teacher_user, role: role)
     role
   }
   let!(:teacher)           { CourseMembership::AddTeacher[role: teacher_role, course: course] }
@@ -36,7 +36,7 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
   let!(:student_user_2)    { student_profile_2.entity_user }
   let!(:student_role_2)    {
     role = Entity::Role.create
-    Role::Models::User.create!(user: student_user_2, role: role)
+    Role::Models::RoleUser.create!(user: student_user_2, role: role)
     role
   }
   let!(:student_2)         { CourseMembership::AddStudent[role: student_role_2, period: period] }
@@ -45,7 +45,7 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
   let!(:student_user_3)    { student_profile_3.entity_user }
   let!(:student_role_3)    {
     role = Entity::Role.create
-    Role::Models::User.create!(user: student_user_3, role: role)
+    Role::Models::RoleUser.create!(user: student_user_3, role: role)
     role
   }
   let!(:student_3)         { CourseMembership::AddStudent[role: student_role_3, period: period_2] }
@@ -70,7 +70,8 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
               last_name: student.last_name,
               full_name: student.full_name,
               period_id: period.id.to_s,
-              role_id: student_role.id.to_s
+              role_id: student_role.id.to_s,
+              deidentifier: student.deidentifier
             },
             {
               id: student_2.id.to_s,
@@ -78,7 +79,8 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
               last_name: student_2.last_name,
               full_name: student_2.full_name,
               period_id: period.id.to_s,
-              role_id: student_role_2.id.to_s
+              role_id: student_role_2.id.to_s,
+              deidentifier: student_2.deidentifier
             },
             {
               id: student_3.id.to_s,
@@ -86,7 +88,8 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
               last_name: student_3.last_name,
               full_name: student_3.full_name,
               period_id: period_2.id.to_s,
-              role_id: student_role_3.id.to_s
+              role_id: student_role_3.id.to_s,
+              deidentifier: student_3.deidentifier
             }
           ]
         end
@@ -146,7 +149,8 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
             last_name: 'User',
             full_name: 'Dummy User',
             period_id: period.id.to_s,
-            role_id: new_student.entity_role_id.to_s
+            role_id: new_student.entity_role_id.to_s,
+            deidentifier: new_student.deidentifier
           })
         end
       end
@@ -193,7 +197,8 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
             last_name: student.last_name,
             full_name: student.full_name,
             period_id: period_2.id.to_s,
-            role_id: student.entity_role_id.to_s
+            role_id: student.entity_role_id.to_s,
+            deidentifier: student.deidentifier
           })
           expect(student.reload.period).to eq period_2.to_model
         end

@@ -6,8 +6,7 @@ class Admin::UsersController < Admin::BaseController
     @user_search =
       UserProfile::SearchProfiles[search_term: "%#{params[:search_term]}%",
                                   page: params[:page] || 1,
-                                  per_page: @per_page] \
-      if params[:search_term].present?
+                                  per_page: @per_page]
 
     respond_to do |format|
       format.html

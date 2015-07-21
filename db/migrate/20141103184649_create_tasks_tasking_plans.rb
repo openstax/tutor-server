@@ -3,7 +3,7 @@ class CreateTasksTaskingPlans < ActiveRecord::Migration
     create_table :tasks_tasking_plans do |t|
       t.references :target, polymorphic: true, null: false
       t.references :tasks_task_plan, null: false
-      t.datetime :opens_at
+      t.datetime :opens_at, null: false
       t.datetime :due_at, null: false
 
       t.timestamps null: false
