@@ -90,6 +90,7 @@ Rails.application.routes.draw do
     resources :courses, except: :destroy do
       member do
         post :students
+        post :set_book
       end
       resources :periods, shallow: true
       resources :students, only: [:index], shallow: true
@@ -119,6 +120,13 @@ Rails.application.routes.draw do
     put :reset_time, controller: :timecop
     post :freeze_time, controller: :timecop
     post :time_travel, controller: :timecop
+
+    resources :books, only: [:index] do
+      collection do
+        get :import
+        post :import
+      end
+    end
   end
 
   namespace :dev do

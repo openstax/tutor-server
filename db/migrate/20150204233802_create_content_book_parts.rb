@@ -7,6 +7,8 @@ class CreateContentBookParts < ActiveRecord::Migration
       t.integer :number, null: false
       t.string :title, null: false
       t.text :chapter_section
+      t.string :uuid
+      t.string :version
 
       t.timestamps null: false
 

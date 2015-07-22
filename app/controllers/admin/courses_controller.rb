@@ -19,6 +19,8 @@ class Admin::CoursesController < Admin::BaseController
     @periods = entity_course.periods
     teachers = entity_course.teachers.includes(role: { user: { profile: :account } })
     @teachers = teachers.collect { |t| t.role.user.profile }
+    @books = Content::ListBooks[]
+    @course_book = entity_course.books.first
   end
 
   def update
@@ -49,6 +51,23 @@ class Admin::CoursesController < Admin::BaseController
     else
       add_students(period, users)
       flash[:notice] = 'Student roster has been uploaded.'
+    end
+    redirect_to edit_admin_course_path(params[:id])
+  end
+
+  def set_book
+    if params[:book_id].blank?
+      flash[:error] = 'Please select a course book'
+      return redirect_to edit_admin_course_path(params[:id])
+    end
+
+    course = Entity::Course.find(params[:id])
+    book = Entity::Book.find(params[:book_id])
+    if course.books.include?(book)
+      flash[:notice] = "Course book \"#{book.root_book_part.title}\" is already selected for \"#{course.profile.name}\""
+    else
+      CourseContent::AddBookToCourse.call(course: course, book: book, remove_other_books: true)
+      flash[:notice] = "Course book \"#{book.root_book_part.title}\" selected for \"#{course.profile.name}\""
     end
     redirect_to edit_admin_course_path(params[:id])
   end

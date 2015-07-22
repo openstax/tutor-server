@@ -11,7 +11,8 @@ class CreateContentPages < ActiveRecord::Migration
 
       t.timestamps null: false
 
-      t.resource_index
+      t.resource_index(url_not_unique: true)
+      t.index [:content_book_part_id, :url], unique: true
       t.index [:content_book_part_id, :number], unique: true
     end
 

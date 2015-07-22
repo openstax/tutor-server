@@ -77,6 +77,73 @@ RSpec.describe Admin::CoursesController do
     end
   end
 
+  describe 'GET #edit' do
+    let!(:course) { FactoryGirl.create(:course_profile_profile, name: 'Physics I').course }
+    let!(:book_1) { FactoryGirl.create(:content_book_part, title: 'Physics').book }
+    let!(:uuid_1) { book_1.root_book_part.uuid }
+    let!(:version_1) { book_1.root_book_part.version }
+    let!(:book_2) { FactoryGirl.create(:content_book_part, title: 'Biology').book }
+    let!(:uuid_2) { book_2.root_book_part.uuid }
+    let!(:version_2) { book_2.root_book_part.version }
+    let!(:course_book) {
+      AddBookToCourse.call(course: course, book: book_1)
+      CourseContent::Models::CourseBook.where { entity_course_id == my { course.id } }
+                                       .where { entity_book_id == my { book_1.id } }
+                                       .first
+    }
+
+    it 'selects the correct book' do
+      get :edit, id: course.id
+      expect(assigns[:course_book]).to eq book_1
+      expect(assigns[:books].sort { |a, b| a.id <=> b.id }).to eq([
+        {
+          'id' => book_1.id,
+          'title' => 'Physics',
+          'url' => book_1.root_book_part.url,
+          'uuid' => uuid_1,
+          'version' => version_1,
+          'title_with_id' => "Physics (#{uuid_1}@#{version_1})"
+        },
+        {
+          'id' => book_2.id,
+          'title' => 'Biology',
+          'url' => book_2.root_book_part.url,
+          'uuid' => uuid_2,
+          'version' => version_2,
+          'title_with_id' => "Biology (#{uuid_2}@#{version_2})"
+        }
+      ])
+    end
+  end
+
+  describe 'POST #set_book' do
+    let!(:course) { FactoryGirl.create(:course_profile_profile, name: 'Physics I').course }
+    let!(:book_1) { FactoryGirl.create(:content_book_part, title: 'Physics').book }
+    let!(:book_2) { FactoryGirl.create(:content_book_part, title: 'Biology').book }
+    let!(:course_book) {
+      AddBookToCourse.call(course: course, book: book_1)
+      course.reload.course_books.first
+    }
+
+    context 'when the book is already being used' do
+      it 'does not recreate the association' do
+        post :set_book, id: course.id, book_id: book_1.id
+        cb = course.reload.course_books.first
+        expect(cb.id).to eq course_book.id
+        expect(flash[:notice]).to eq 'Course book "Physics" is already selected for "Physics I"'
+      end
+    end
+
+    context 'when a new book is selected' do
+      it 'removes the existing association and creates a new one' do
+        post :set_book, id: course.id, book_id: book_2.id
+        cb = course.reload.books
+        expect(cb).to eq [book_2]
+        expect(flash[:notice]).to eq 'Course book "Biology" selected for "Physics I"'
+      end
+    end
+  end
+
   context 'disallowing baddies' do
     it 'disallows unauthenticated visitors' do
       allow(controller).to receive(:current_account) { nil }

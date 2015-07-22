@@ -1,5 +1,5 @@
 class Content::Models::Page < Tutor::SubSystems::BaseModel
-  acts_as_resource
+  acts_as_resource(url_not_unique: true)
 
   serialize :chapter_section, Array
 
