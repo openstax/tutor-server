@@ -807,12 +807,16 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                 status: 'completed',
                 exercise_count: 6,
                 correct_exercise_count: 6,
-                recovered_exercise_count: 0
+                recovered_exercise_count: 0,
+                due_at: resp[0][:students][0][:data][0][:due_at],
+                last_worked_at: resp[0][:students][0][:data][0][:last_worked_at]
               },
               {
                 type: 'reading',
                 id: resp[0][:students][0][:data][1][:id],
-                status: 'completed'
+                status: 'completed',
+                due_at: resp[0][:students][0][:data][1][:due_at],
+                last_worked_at: resp[0][:students][0][:data][1][:last_worked_at]
               },
               {
                 type: 'homework',
@@ -820,7 +824,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                 status: 'completed',
                 exercise_count: 4,
                 correct_exercise_count: 3,
-                recovered_exercise_count: 0
+                recovered_exercise_count: 0,
+                due_at: resp[0][:students][0][:data][2][:due_at],
+                last_worked_at: resp[0][:students][0][:data][2][:last_worked_at]
               }
             ]
           }, {
@@ -835,12 +841,16 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                 status: 'in_progress',
                 exercise_count: 5,
                 correct_exercise_count: 2,
-                recovered_exercise_count: 0
+                recovered_exercise_count: 0,
+                due_at: resp[0][:students][1][:data][0][:due_at],
+                last_worked_at: resp[0][:students][1][:data][0][:last_worked_at]
               },
               {
                 type: 'reading',
                 id: resp[0][:students][1][:data][1][:id],
-                status: 'in_progress'
+                status: 'in_progress',
+                due_at: resp[0][:students][1][:data][1][:due_at],
+                last_worked_at: resp[0][:students][1][:data][1][:last_worked_at]
               },
               {
                 type: 'homework',
@@ -848,7 +858,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                 status: 'in_progress',
                 exercise_count: 3,
                 correct_exercise_count: 1,
-                recovered_exercise_count: 0
+                recovered_exercise_count: 0,
+                due_at: resp[0][:students][1][:data][2][:due_at],
+                last_worked_at: resp[0][:students][1][:data][2][:last_worked_at]
               }
             ]
           }]
@@ -862,7 +874,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
             { title: 'Reading task plan',
               plan_id: resp[1][:data_headings][1][:plan_id],
-              due_at: resp[1][:data_headings][1][:due_at] },
+              due_at: resp[1][:data_headings][1][:due_at]
+
+            },
 
             { title: 'Homework 2 task plan',
               plan_id: resp[1][:data_headings][2][:plan_id],
@@ -880,12 +894,14 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                 status: 'not_started',
                 exercise_count: 5,
                 correct_exercise_count: 0,
-                recovered_exercise_count: 0
+                recovered_exercise_count: 0,
+                due_at: resp[1][:students][0][:data][0][:due_at]
               },
               {
                 type: 'reading',
                 id: resp[1][:students][0][:data][1][:id],
-                status: 'not_started'
+                status: 'not_started',
+                due_at: resp[1][:students][0][:data][1][:due_at]
               },
               {
                 type: 'homework',
@@ -893,7 +909,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                 status: 'not_started',
                 exercise_count: 3,
                 correct_exercise_count: 0,
-                recovered_exercise_count: 0
+                recovered_exercise_count: 0,
+                due_at: resp[1][:students][0][:data][2][:due_at]
               }
             ]
           },
@@ -909,12 +926,15 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                 status: 'completed',
                 exercise_count: 6,
                 correct_exercise_count: 6,
-                recovered_exercise_count: 0
+                recovered_exercise_count: 0,
+                due_at: resp[1][:students][1][:data][0][:due_at],
+                last_worked_at: resp[1][:students][1][:data][0][:last_worked_at]
               },
               {
                 type: 'reading',
                 id: resp[1][:students][1][:data][1][:id],
-                status: 'not_started'
+                status: 'not_started',
+                due_at: resp[1][:students][1][:data][1][:due_at]
               },
               {
                 type: 'homework',
@@ -922,7 +942,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                 status: 'not_started',
                 exercise_count: 3,
                 correct_exercise_count: 0,
-                recovered_exercise_count: 0
+                recovered_exercise_count: 0,
+                due_at: resp[1][:students][1][:data][2][:due_at]
               }
             ]
           }]
