@@ -12,10 +12,13 @@ module ActsAsTasked
         after_update { task_step.try(:touch) if task_step.try(:persisted?) }
 
         delegate :first_completed_at, :last_completed_at, :completed?, :complete,
-          to: :task_step,
-          allow_nil: true
+                 to: :task_step, allow_nil: true
 
         def can_be_recovered?
+          false
+        end
+
+        def has_correctness?
           false
         end
 
@@ -24,10 +27,6 @@ module ActsAsTasked
         end
 
         def placeholder?
-          false
-        end
-
-        def has_correctness?
           false
         end
 

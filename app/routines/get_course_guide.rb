@@ -1,38 +1,17 @@
 class GetCourseGuide
   lev_routine express_output: :course_guide
 
-  uses_routine CourseContent::GetCourseBooks,
-    translations: { outputs: { type: :verbatim } },
-    as: :get_course_books
-
-  uses_routine CourseMembership::GetCoursePeriods,
-    translations: { outputs: { type: :verbatim } },
-    as: :get_periods
-
   protected
 
   def exec(role:, course:)
-    run(:get_course_books, course: course)
-    run(:get_periods, course: course, roles: role)
-
-    outputs.course_guide = gather_course_stats_for_teacher
+    outputs.course_guide = gather_course_stats(course)
   end
 
   private
 
-  def gather_course_stats_for_teacher
-    outputs.periods.collect do |period|
-      period_stats_per_book = gather_period_stats(period)
-      period_stats_per_book.collect{ |book_stats| { period_id: period.id }.merge(book_stats) }
-      # Assume only 1 book for now
-      period_stats_per_book.first
-    end
-  end
-
   def completed_task_steps_for_period(period)
-    period.enrollments.latest.active.preload(
-      student: {role: {taskings: {task: {task: {task_steps: [{task: {taskings: :role}},
-                                                              :tasked]}}}}}
+    period.enrollments.latest.active.eager_load(
+      student: {role: {taskings: {task: {task: {task_steps: {task: {taskings: :role}}}}}}}
     ).collect{ |en| en.student.role.taskings.collect{ |ts| ts.task.task.task_steps } }
      .flatten.select(&:completed?)
   end
@@ -117,5 +96,14 @@ class GetCourseGuide
   def gather_period_stats(period)
     task_steps = completed_task_steps_for_period(period)
     compile_books(task_steps)
+  end
+
+  def gather_course_stats(course)
+    course.periods.collect do |period|
+      period_stats_per_book = gather_period_stats(period)
+      period_stats_per_book.collect{ |book_stats| { period_id: period.id }.merge(book_stats) }
+      # Assume only 1 book for now
+      period_stats_per_book.first
+    end
   end
 end
