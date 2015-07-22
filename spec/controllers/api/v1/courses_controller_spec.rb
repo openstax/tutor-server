@@ -797,6 +797,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           ],
           students: [{
             name: 'Student One',
+            first_name: 'Student',
+            last_name: 'One',
             role: resp[0][:students][0][:role],
             data: [
               {
@@ -823,6 +825,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
             ]
           }, {
             name: 'Student Two',
+            first_name: 'Student',
+            last_name: 'Two',
             role: resp[0][:students][1][:role],
             data: [
               {
@@ -866,6 +870,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           ],
           students: [{
             name: 'Student Four',
+            first_name: 'Student',
+            last_name: 'Four',
             role: resp[1][:students][0][:role],
             data: [
               {
@@ -893,6 +899,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           },
           {
             name: 'Student Three',
+            first_name: 'Student',
+            last_name: 'Three',
             role: resp[1][:students][1][:role],
             data: [
               {

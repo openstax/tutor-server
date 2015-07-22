@@ -8,11 +8,9 @@ class CourseMembership::Models::Student < Tutor::SubSystems::BaseModel
   validates :role, presence: true, uniqueness: { scope: :entity_course_id }
   validates :deidentifier, uniqueness: true
 
-  delegate :username, :first_name, :last_name, :full_name, :name, to: :role
-
   before_save :generate_deidentifier
 
-  delegate :username, :first_name, :last_name, :full_name, to: :role
+  delegate :username, :first_name, :last_name, :full_name, :name, to: :role
   delegate :period, :course_membership_period_id, to: :latest_enrollment
 
   scope :active, -> { where(inactive_at: nil) }
