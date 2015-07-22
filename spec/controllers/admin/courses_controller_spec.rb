@@ -7,7 +7,7 @@ RSpec.describe Admin::CoursesController do
 
   describe 'GET #index' do
     it 'assigns all CollectCourseInfo output to @courses' do
-      CreateCourse.call(name: 'Hello World')
+      CreateCourse[name: 'Hello World']
       get :index
 
       expect(assigns[:courses].count).to eq(1)

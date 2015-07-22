@@ -22,6 +22,18 @@ RSpec.feature 'Admin editing a course' do
     expect(page).to have_css('tr td', text: 'Changed')
   end
 
+  scenario 'Assigning a school' do
+    FactoryGirl.create(:school, name: 'School name')
+    visit admin_courses_path
+    click_link 'Edit'
+
+    select 'School name', from: 'School'
+    click_button 'Save'
+
+    expect(current_path).to eq(admin_courses_path)
+    expect(page).to have_css('tr td', text: 'School name')
+  end
+
   scenario 'Adding a period' do
     visit admin_courses_path
     click_link 'Edit'

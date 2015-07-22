@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe CreateStudent, type: :routine do
-  let!(:course) { CreateCourse.call.outputs.course }
+  let!(:course) { CreateCourse[name: 'A good course'] }
   let!(:period) { CreatePeriod[course: course] }
 
   it 'creates a new student in the given period with a username and a password' do

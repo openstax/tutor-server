@@ -5,8 +5,15 @@ class CreateCourse
     translations: { outputs: { type: :verbatim } },
     as: :create_course_profile
 
-  def exec(name: 'Unnamed')
+  def exec(name:, school: nil)
+    school ||= NoSchool.new
     outputs[:course] = Entity::Course.create!
-    run(:create_course_profile, name: name, course: outputs.course)
+    run(:create_course_profile, name: name,
+                                course: outputs.course,
+                                course_detail_school_id: school.id)
+  end
+
+  class NoSchool
+    def id; end
   end
 end

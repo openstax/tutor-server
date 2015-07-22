@@ -117,6 +117,19 @@ ActiveRecord::Schema.define(version: 20150716231241) do
   add_index "course_content_course_books", ["entity_book_id"], name: "index_course_content_course_books_on_entity_book_id", using: :btree
   add_index "course_content_course_books", ["entity_course_id", "entity_book_id"], name: "[\"course_books_course_id_on_book_id_unique\"]", unique: true, using: :btree
 
+  create_table "course_detail_districts", force: :cascade do |t|
+    t.string "name", null: false
+  end
+
+  create_table "course_detail_schools", force: :cascade do |t|
+    t.string   "name",                      null: false
+    t.integer  "course_detail_district_id"
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+  end
+
+  add_index "course_detail_schools", ["course_detail_district_id"], name: "index_course_detail_schools_on_course_detail_district_id", using: :btree
+
   create_table "course_membership_enrollments", force: :cascade do |t|
     t.integer  "course_membership_period_id"
     t.integer  "course_membership_student_id"
@@ -159,13 +172,15 @@ ActiveRecord::Schema.define(version: 20150716231241) do
   add_index "course_membership_teachers", ["entity_course_id", "entity_role_id"], name: "course_membership_teacher_course_role_uniq", unique: true, using: :btree
 
   create_table "course_profile_profiles", force: :cascade do |t|
-    t.integer  "entity_course_id",                                        null: false
-    t.string   "name",                                                    null: false
-    t.string   "timezone",         default: "Central Time (US & Canada)", null: false
-    t.datetime "created_at",                                              null: false
-    t.datetime "updated_at",                                              null: false
+    t.integer  "entity_course_id",                                               null: false
+    t.string   "name",                                                           null: false
+    t.string   "timezone",                default: "Central Time (US & Canada)", null: false
+    t.datetime "created_at",                                                     null: false
+    t.datetime "updated_at",                                                     null: false
+    t.integer  "course_detail_school_id"
   end
 
+  add_index "course_profile_profiles", ["course_detail_school_id"], name: "index_course_profile_profiles_on_course_detail_school_id", using: :btree
   add_index "course_profile_profiles", ["entity_course_id"], name: "index_course_profile_profiles_on_entity_course_id", unique: true, using: :btree
   add_index "course_profile_profiles", ["name"], name: "index_course_profile_profiles_on_name", using: :btree
 
@@ -547,6 +562,7 @@ ActiveRecord::Schema.define(version: 20150716231241) do
   add_foreign_key "content_pages", "content_book_parts", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_content_course_books", "entity_books"
   add_foreign_key "course_content_course_books", "entity_courses"
+  add_foreign_key "course_detail_schools", "course_detail_districts"
   add_foreign_key "course_membership_enrollments", "course_membership_periods", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_membership_enrollments", "course_membership_students", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_membership_periods", "entity_courses", on_update: :cascade, on_delete: :cascade

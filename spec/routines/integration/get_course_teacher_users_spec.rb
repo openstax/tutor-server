@@ -3,8 +3,8 @@ require 'rails_helper'
 describe GetCourseTeacherUsers do
 
   context "when a course has no teachers" do
-    let(:target_course) { CreateCourse.call.outputs.course }
-    let(:other_course)  { CreateCourse.call.outputs.course }
+    let(:target_course) { CreateCourse[name: 'target'] }
+    let(:other_course)  { CreateCourse[name: 'other'] }
     let(:other_user)    { Entity::User.create! }
 
     before(:each) do
@@ -20,8 +20,8 @@ describe GetCourseTeacherUsers do
   end
 
   context "when a course has one teacher" do
-    let(:target_course) { CreateCourse.call.outputs.course }
-    let(:other_course)  { CreateCourse.call.outputs.course }
+    let(:target_course) { CreateCourse[name: 'target 2'] }
+    let(:other_course)  { CreateCourse[name: 'other 2'] }
     let(:target_user)   { Entity::User.create! }
     let(:other_user)    { Entity::User.create! }
 
@@ -41,8 +41,8 @@ describe GetCourseTeacherUsers do
   end
 
   context "when a course has multiple teachers" do
-    let(:target_course) { CreateCourse.call.outputs.course }
-    let(:other_course)  { CreateCourse.call.outputs.course }
+    let(:target_course) { CreateCourse[name: 'target 3'] }
+    let(:other_course)  { CreateCourse[name: 'other 3'] }
     let(:target_user1)  { Entity::User.create! }
     let(:target_user2)  { Entity::User.create! }
     let(:other_user)    { Entity::User.create! }

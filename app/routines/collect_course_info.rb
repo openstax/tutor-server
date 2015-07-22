@@ -42,7 +42,8 @@ class CollectCourseInfo
     profiles.collect do |p|
       {
         id: p.entity_course_id,
-        name: p.name
+        name: p.name,
+        school_name: p.school_name
       }
     end
   end

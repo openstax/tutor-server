@@ -1,5 +1,5 @@
 class Admin::CoursesController < Admin::BaseController
-  before_action :get_users, only: [:new, :edit]
+  before_action :get_schools, except: [:index, :destroy, :students]
 
   def index
     @courses = CollectCourseInfo[with: :teacher_names]
@@ -56,11 +56,13 @@ class Admin::CoursesController < Admin::BaseController
   private
   def course_params
     { id: params[:id], course: params.require(:course)
-                                     .permit(:name, teacher_ids: []) }
+                                     .permit(:name,
+                                             :course_detail_school_id,
+                                             teacher_ids: []) }
   end
 
-  def get_users
-    @users = GetAllUserProfiles[]
+  def get_schools
+    @schools = CourseDetail::ListSchools[]
   end
 
   def add_students(period, users)
