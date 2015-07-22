@@ -58,6 +58,7 @@ module Tasks
       tasks.collect.with_index { |t, i|
         { title: t.title,
           plan_id: t.tasks_task_plan_id,
+          type: t.task_type,
           due_at: t.due_at
         }.merge(average(t, i))
       }
@@ -78,6 +79,8 @@ module Tasks
             status: task.status,
             type: task.task_type,
             id: task.id,
+            due_at: task.due_at,
+            last_worked_at: task.last_worked_at
           }
 
           if task.task_type == 'homework'
