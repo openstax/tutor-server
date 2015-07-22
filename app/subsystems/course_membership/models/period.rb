@@ -7,6 +7,9 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
   has_many :teacher_roles, through: :teachers, source: :role, class_name: 'Entity::Role'
 
   has_many :enrollments, dependent: :destroy
+  has_many :active_enrollments,
+           -> (period) { period.enrollments.latest.active },
+           class_name: '::CourseMembership::Models::Enrollment'
 
   has_many :taskings, subsystem: :tasks, dependent: :nullify
   has_many :tasks, through: :taskings
@@ -19,7 +22,7 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
   default_scope { order(:name) }
 
   def student_roles
-    enrollments.latest.active.includes(student: :role).collect{ |en| en.student.role }
+    active_enrollments.includes(student: :role).collect{ |en| en.student.role }
   end
 
   protected
