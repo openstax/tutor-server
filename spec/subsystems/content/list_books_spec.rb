@@ -1,35 +1,31 @@
 require 'rails_helper'
 
 RSpec.describe Content::ListBooks, type: :routine do
-  let!(:book_1_uuid) { '64e410d3-42a0-4e3e-af06-7ca547af06ee' }
-  let!(:book_1) {
-    FactoryGirl.create :content_book_part, contents: {
-      title: 'My Book',
-      uuid: book_1_uuid,
-      version: '6'
-    }
-  }
-  let!(:book_2) { FactoryGirl.create :content_book_part, :standard_contents_1 }
+  let(:books) { Content::ListBooks[] }
 
-  it 'returns all the books' do
-    books = Content::ListBooks[]
-    expect(books).to eq([
-      {
-        'id' => book_2.entity_book_id,
-        'title' => book_2.title,
-        'url' => book_2.url,
-        'uuid' => book_2.uuid,
-        'version' => book_2.version,
-        'title_with_id' => "#{book_2.title} (#{book_2.uuid}@#{book_2.version})"
-      },
-      {
-        'id' => book_1.entity_book_id,
-        'title' => 'My Book',
-        'url' => "https://archive.cnx.org/contents/#{book_1_uuid}@6",
-        'uuid' => book_1_uuid,
-        'version' => '6',
-        'title_with_id' => "My Book (#{book_1_uuid}@6)"
-      }
-    ])
+  context "when no books are present" do
+    it "returns no books" do
+      expect(books).to be_empty
+    end
+  end
+
+  context "when books are present" do
+    let!(:book1) {
+      FactoryGirl.create(:content_book_part, contents: { title: 'Title c' })
+    }
+    let!(:book2) {
+      FactoryGirl.create(:content_book_part, contents: { title: 'Title Z' })
+    }
+    let!(:book3) {
+      FactoryGirl.create(:content_book_part, contents: { title: 'Title a' })
+    }
+
+    it "returns all books" do
+      expect(books.collect(&:uuid)).to contain_exactly(book1.uuid, book2.uuid, book3.uuid)
+    end
+
+    it "sorts returned books by title (ascending, ascii)" do
+      expect(books.collect(&:title)).to eq(['Title Z', 'Title a', 'Title c'])
+    end
   end
 end
