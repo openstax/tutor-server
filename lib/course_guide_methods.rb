@@ -1,20 +1,6 @@
-class GetCourseGuide
-  lev_routine express_output: :course_guide
-
-  protected
-
-  def exec(role:, course:)
-    outputs.course_guide = gather_course_stats(course)
-  end
+module CourseGuideMethods
 
   private
-
-  def completed_task_steps_for_period(period)
-    period.enrollments.latest.active.eager_load(
-      student: {role: {taskings: {task: {task: {task_steps: {task: {taskings: :role}}}}}}}
-    ).collect{ |en| en.student.role.taskings.collect{ |ts| ts.task.task.task_steps } }
-     .flatten.select(&:completed?)
-  end
 
   def group_exercises_by_related_content(exercises, rc_key = nil)
     result = {}
@@ -31,7 +17,9 @@ class GetCourseGuide
   end
 
   def completed_practices(task_steps, task_type)
-    task_steps.collect(&:task).select{ |task| task.task_type == task_type && task.completed? }.uniq
+    task_steps.collect(&:task).select do |task|
+      task.completed? && (task.chapter_practice? || task.page_practice? || task.mixed_practice?)
+    end.uniq
   end
 
   def get_los(task_steps)
@@ -60,12 +48,12 @@ class GetCourseGuide
         practice_count: practices.count,
         page_ids: [related_content[:id]]
       }
-    end.sort_by{ |ch| ch[:chapter_section] }
+    end.sort_by{ |pg| pg[:chapter_section] }
   end
 
   def compile_chapters(task_steps)
     group_exercises_by_related_content(task_steps, :chapter).collect do |related_content,
-                                                                           task_steps|
+                                                                         task_steps|
       practices = completed_practices(task_steps, :mixed_practice)
       pages = compile_pages(task_steps)
 
@@ -76,7 +64,7 @@ class GetCourseGuide
         current_level: get_current_level(task_steps),
         practice_count: practices.count,
         page_ids: pages.collect{|pp| pp[:page_ids]}.flatten.uniq,
-        pages: pages
+        children: pages
       }
     end.sort_by{ |ch| ch[:chapter_section] }
   end
@@ -93,17 +81,4 @@ class GetCourseGuide
     end.sort_by{ |bk| bk[:title] }
   end
 
-  def gather_period_stats(period)
-    task_steps = completed_task_steps_for_period(period)
-    compile_books(task_steps)
-  end
-
-  def gather_course_stats(course)
-    course.periods.collect do |period|
-      period_stats_per_book = gather_period_stats(period)
-      period_stats_per_book.collect{ |book_stats| { period_id: period.id }.merge(book_stats) }
-      # Assume only 1 book for now
-      period_stats_per_book.first
-    end
-  end
 end
