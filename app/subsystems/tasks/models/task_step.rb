@@ -65,4 +65,12 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
     self.labels = [self.labels, labels].flatten.compact.uniq
   end
 
+  def los
+    related_content.collect{ |rc| rc[:los] }.flatten
+  end
+
+  def aplos
+    related_content.collect{ |rc| rc[:aplos] }.flatten
+  end
+
 end

@@ -246,22 +246,34 @@ class Tasks::Assistants::IReadingAssistant
     step
   end
 
-  def self.related_content_for_page(page:, title: page.title, chapter_section: page.chapter_section)
-    {title: title, chapter_section: chapter_section}
+  def self.related_content_for_page(page:, title: page.title)
+    bp = page.book_part
+    book = bp.book
+    book_root = book.root_book_part
+
+    {
+      book: { id: book.id, title: book_root.title },
+      chapter: { id: bp.id, title: bp.title, chapter_section: bp.chapter_section },
+      page: { id: page.id, title: page.title, chapter_section: page.chapter_section },
+      los: page.los,
+      aplos: page.aplos
+    }
   end
 
   def self.get_related_content_for(content_exercise)
     page = content_exercise_page(content_exercise)
-    related_content_for_page(page: page)
+    related_content_for_page(page: page).merge(
+      los: content_exercise.los,
+      aplos: content_exercise.aplos
+    )
   end
 
   def self.content_exercise_page(content_exercise)
-    los = Content::Models::Tag.joins{exercise_tags.exercise}
-                              .where{exercise_tags.exercise.url == content_exercise.url}
-                              .select{|tag| tag.lo?}
+    los = content_exercise.los + content_exercise.aplos
 
     pages = Content::Models::Page.joins{page_tags.tag}
-                                 .where{page_tags.tag.id.in los.map(&:id)}
+                                 .where{page_tags.tag.value.in los}
+                                 .includes(book_part: {book: :root_book_part})
 
     raise "#{pages.count} pages found for exercise #{content_exercise.url}" unless pages.one?
     pages.first

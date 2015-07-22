@@ -10,7 +10,7 @@ module Tasks
     def exec(roles:)
       run(:get_tasks, roles: roles)
 
-      outputs[:task_steps] = outputs[:tasks].includes(task: {task_steps: :tasked})
+      outputs[:task_steps] = outputs[:tasks].preload(task: {task_steps: [:task, :tasked]})
                                             .collect{ |tt| tt.task.task_steps }.flatten
                                             .select(&:completed?)
     end

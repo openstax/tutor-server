@@ -34,6 +34,10 @@ module ActsAsTasked
         def los
           []
         end
+
+        def aplos
+          []
+        end
       end
     end
   end

@@ -80,7 +80,7 @@ module Api::V1::Tasks
     collection :related_content,
                writeable: false,
                readable: true,
-               getter: lambda {|*| task_step.related_content },
+               getter: lambda {|*| task_step.related_content.try([], :page) },
                schema_info: {
                  required: true,
                  description: "Misc content related to this step"

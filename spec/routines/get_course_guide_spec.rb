@@ -1,7 +1,6 @@
 require 'rails_helper'
 require 'vcr_helper'
 require 'database_cleaner'
-VCR_OPTS.merge!(record: :new_episodes)
 
 RSpec.describe GetCourseGuide, vcr: VCR_OPTS do
 

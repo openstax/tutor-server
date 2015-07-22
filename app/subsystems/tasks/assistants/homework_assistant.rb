@@ -110,24 +110,28 @@ class Tasks::Assistants::HomeworkAssistant
     step
   end
 
-  def self.get_related_content_for(cnx_exercise)
-    page = cnx_exercise_page(cnx_exercise)
+  def self.get_related_content_for(content_exercise)
+    page = content_exercise_page(content_exercise)
+    bp = page.book_part
+    book = bp.book
+    book_root = book.root_book_part
 
     {
-      title: page.title,
-      chapter_section: page.chapter_section
+      book: { id: book.id, title: book_root.title },
+      chapter: { id: bp.id, title: bp.title, chapter_section: bp.chapter_section },
+      page: { id: page.id, title: page.title, chapter_section: page.chapter_section },
+      los: content_exercise.los,
+      aplos: content_exercise.aplos
     }
   end
 
-  def self.cnx_exercise_page(cnx_exercise)
-    los = Content::Models::Tag.joins{exercise_tags.exercise}
-                              .where{exercise_tags.exercise.url == cnx_exercise.url}
-                              .select{|tag| tag.lo? || tag.aplo?}
+  def self.content_exercise_page(content_exercise)
+    los = content_exercise.los + content_exercise.aplos
 
     pages = Content::Models::Page.joins{page_tags.tag}
-                                 .where{page_tags.tag.id.in los.map(&:id)}
+                                 .where{page_tags.tag.value.in los}
 
-    raise "#{pages.count} pages found for exercise #{cnx_exercise.url}" unless pages.one?
+    raise "#{pages.count} pages found for exercise #{content_exercise.url}" unless pages.one?
     pages.first
   end
 
