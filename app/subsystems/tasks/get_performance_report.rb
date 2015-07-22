@@ -58,6 +58,7 @@ module Tasks
       tasks.collect.with_index { |t, i|
         { title: t.title,
           plan_id: t.tasks_task_plan_id,
+          type: t.task_type,
           due_at: t.due_at
         }.merge(average(t, i))
       }
