@@ -15,16 +15,20 @@ $(document).ready(function() {
   $('#course_teacher').autocomplete({
     minLength: 2,
     select: function(event_, ui) {
-      var checkbox = $('<input type="checkbox" name="course[teacher_ids][]"/>');
-      checkbox.val(ui.item.value);
-      checkbox.attr('checked', true);
-      checkbox.attr('id', 'checkbox-' + Date.now());
+      var hidden = $('<input type="hidden" name="course[teacher_ids][]"/>');
+      hidden.val(ui.item.value);
       var label = $('<label>');
       label.text(ui.item.label);
-      label.attr('for', checkbox.attr('id'));
+      var remove = $('<button class="btn btn-default btn-xs">');
+      remove.text('remove');
+      remove.click(function() {
+        $(this).parent().detach();
+        return false;
+      });
       var li = $('<li>');
-      li.append(checkbox).append(label);
+      li.append(hidden).append(label).append('&nbsp;&nbsp;').append(remove);
       $('#assigned-teachers').append(li);
+      $('#assigned-teachers').find('.help-block').removeClass('hidden');
       $('#course_teacher').val('');
       return false;
     },
@@ -40,7 +44,7 @@ $(document).ready(function() {
         success: function(data) {
           response($.map(data.items, function(item) {
             return {
-              label: item.full_name,
+              label: item.full_name + ' (' + item.username + ')',
               value: item.id
             };
           }));
