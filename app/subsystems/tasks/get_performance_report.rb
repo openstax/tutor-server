@@ -78,6 +78,8 @@ module Tasks
             status: task.status,
             type: task.task_type,
             id: task.id,
+            due_at: task.due_at,
+            last_worked_at: task.last_worked_at
           }
 
           if task.task_type == 'homework'
