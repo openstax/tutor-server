@@ -1,13 +1,15 @@
 # If any substantial changes are made to this file such as book_id or version
 # The fixture at spec/fixtures/demo-imports/physics.yml must also be updated
 course_name: Physics I
-cnx_book_id: 93e2b09d-261c-4007-a987-0b3062fe154b
-cnx_book_version: 4.4
+cnx_book_id: 334f8b61-30eb-4475-8e05-5260a4866b4b
+cnx_book_version: 3.1
 teacher: cm
 periods:
-  - name: Period 1
+  - id: p1
+    name: Period 1
     students: [ak,at,cp,gj,hp,lb,lt,ne,sd,vw]
-  - name: Period 2
+  - id: p2
+    name: Period 2
     students: [af,ag,bb,cd,eh,ft,js,ms,nz,ra]
 
 assignments:
@@ -15,13 +17,13 @@ assignments:
   - type: reading
     title: Read 3.1 Acceleration Pt1
     chapter_sections: [[3, 0], [3, 1]]
-    step_types: [ r, r, r, i, e, r, e, v, e, p ]
+    step_types: [ r, r, i, e, r, r, r, e, v, e, p ]
     periods:
-      - index: 0 # index of the title above
+      - id: p1
         opens_at: <%= open_three_days_ago %>
         due_at: <%= due_today %>
         students: {ak: 98, at: 67,cp: 55,gj: 77,hp: 88,lb: i,lt: ns,ne: 78,sd: 100,vw: 100}
-      - index: 1 # index of the title above
+      - id: p2
         opens_at: <%= open_three_days_ago %>
         due_at: <%= due_today %>
         students: {af: 82,ag: 71,bb: 90,cd: 78,eh: 87,ft: i,js: i,ms: 90,nz: 85,ra: ns}
@@ -31,7 +33,7 @@ assignments:
     chapter_sections: [[3, 2]]
     step_types: [ r, i, e, r, r, r, e, r, r, r, e, r, e, p]
     periods:
-      - index: 0 # index of the title above
+      - id: p1
         opens_at: <%= open_three_days_ago %>
         due_at: <%= due_today %>
         students:
@@ -45,7 +47,7 @@ assignments:
           ne: 72
           sd: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1 ]
           vw: 80
-      - index: 1 # index of the title above
+      - id: p2
         opens_at: <%= open_three_days_ago %>
         due_at: <%= due_today %>
         students:
@@ -66,7 +68,7 @@ assignments:
     chapter_sections: [[4, 0], [4, 1], [4, 2]]
     step_types: [ r, r, v, e, e, e, i, e, e, p ]
     periods:
-      - index: 0 # index of the title above
+      - id: p1
         opens_at: <%= open_three_days_ago %>
         due_at: <%= due_three_days_ago %>
         students:
@@ -80,7 +82,7 @@ assignments:
           ne: 100
           sd: 87
           vw: [ 1, 1, 1, 1, 0, 0, 1, 0, 0, 0 ]
-      - index: 1 # index of the title above
+      - id: p2
         opens_at: <%= open_three_days_ago %>
         due_at: <%= due_three_days_ago %>
         students:
@@ -101,7 +103,7 @@ assignments:
     chapter_sections: [[3, 0], [3, 1], [3, 2]]
     step_types: [ e, e, e, e, e, e, e, e, e, e, p ]
     periods:
-      - index: 0 # index of the title above
+      - id: p1
         opens_at: <%= open_one_day_ago %>
         due_at: <%= due_today %>
         students:
@@ -115,7 +117,7 @@ assignments:
           ne: 100
           sd: i
           vw: [ 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0 ]
-      - index: 1 # index of the title above
+      - id: p2
         opens_at: <%= open_one_day_ago %>
         due_at: <%= due_today %>
         students:

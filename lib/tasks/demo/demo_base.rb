@@ -26,7 +26,7 @@ class DemoBase
   end
 
   def people
-    @people ||= Hashie::Mash.load(File.dirname(__FILE__)+"/demo/people.yml")
+    @people ||= Hashie::Mash.load(File.dirname(__FILE__)+'/people.yml')
   end
 
   def user_profile_for_username(username)
@@ -264,9 +264,10 @@ class DemoBase
   # not completed; any non-nil means completed. 1/0 (true/false) is for
   # exercise correctness
   def work_task(task:, responses:[])
-    raise "Invalid number of responses for #{task.title}" +
+    log( "Invalid number of responses for #{task.title}" +
           "(responses,task_steps) = (#{responses.count}, #{task.task_steps.count})\n" +
-          "(task = #{print_task(task: task)}) " \
+         "(task = #{print_task(task: task)}) \n" +
+         "Continuing: Any tasks that do not have a response will not be worked" ) \
       if responses.count != task.steps_count
 
     core_task_steps = task.core_task_steps

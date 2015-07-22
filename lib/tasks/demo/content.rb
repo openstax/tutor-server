@@ -1,9 +1,8 @@
 require_relative 'demo_base'
-require_relative 'demo/content_configuration'
-
+require_relative 'content_configuration'
 
 ## Imports a book from CNX and creates a course with periods from it's data
-class Demo001 < DemoBase
+class DemoContent < DemoBase
 
   lev_routine
 
@@ -16,7 +15,7 @@ class Demo001 < DemoBase
 
   protected
 
-  def exec(book: :all, print_logs: true, random_seed: nil)
+  def exec(book: :all, print_logs: true, random_seed: nil, version: :defined)
 
     set_print_logs(print_logs)
 
@@ -47,8 +46,10 @@ class Demo001 < DemoBase
       end
 
       OpenStax::Cnx::V1.with_archive_url(url: archive_url) do
-        cnx_book = run(:import_book, id: content.cnx_book).outputs.book
-        log("Imported book #{content.course_name} #{content.cnx_book} from #{archive_url}.")
+        book = content.cnx_book(version)
+        log("Starting book import for #{book} from #{archive_url}.")
+        cnx_book = run(:import_book, id: book).outputs.book
+        log("Imported book complete.")
         run(:add_book, book: cnx_book, course: course)
       end
 

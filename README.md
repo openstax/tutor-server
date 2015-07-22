@@ -92,7 +92,15 @@ The courses that are set up in the demo are determined by the YAML files in the 
 
 By default, all YAML files in that directory are run (with the exception of `people.yml`).  If you want to only run one, you can specify its name in the rake call, e.g. to load only the Biology course you would say:
 
-`bundle exec rake db:drop db:create db:migrate db:seed demo[biology]`
+`bundle exec rake db:reset demo[biology]`
+
+One or more of the The YAML files can be copied to a different directory and customized.  They can then be ran by setting the CONFIG variable like so: `CONFIG=../custom-config bundle exec rake db:reset demo[biology]`
+
+Working the assignments may be skipped if the NOWORK variable is set: `NOWORK=t bundle exec rake db:reset demo`
+
+The book version can be set:
+
+`bundle exec rake db:reset demo[biology, latest]` The course can be set to `all` to import all the available content, and latest can be substituted with an explicit version i.e. `4.4`.
 
 As an admin you can search for the various users set up by the demo scripts (or you can check out the demo YAML files in `/lib/tasks`).  For your convenience, here are a few of the student usernames and the courses they are setup with:
 

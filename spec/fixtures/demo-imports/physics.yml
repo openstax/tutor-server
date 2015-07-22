@@ -5,7 +5,8 @@ cnx_book_id: 93e2b09d-261c-4007-a987-0b3062fe154b
 cnx_book_version: 4.4
 teacher: cm
 periods:
-  - name: Period 1
+  - id: p1
+    name: Period 1
     students: [sd, vw]
 
 assignments:
@@ -15,7 +16,7 @@ assignments:
     chapter_sections: [[3, 0], [3, 1]]
     step_types: [ r, r, r, i, e, r, e, v, e, p ]
     periods:
-      - index: 0
+      - id: p1
         opens_at: <%= open_three_days_ago %>
         due_at: <%= due_today %>
         students: {sd: 81, vw: i}
@@ -25,7 +26,7 @@ assignments:
     chapter_sections: [[3, 2]]
     step_types: [ r, i, e, r, r, r, e, r, r, r, e, r, e, p]
     periods:
-      - index: 0
+      - id: p1
         opens_at: <%= open_three_days_ago %>
         due_at: <%= due_today %>
         students:
@@ -38,7 +39,7 @@ assignments:
     chapter_sections: [[3, 0], [3, 1], [3, 2]]
     step_types: [ e, e, e, e, e, e, e, e, e, e, p ]
     periods:
-      - index: 0
+      - id: p1
         opens_at: <%= open_one_day_ago %>
         due_at: <%= due_today %>
         students:

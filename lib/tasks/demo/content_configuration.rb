@@ -2,9 +2,10 @@ require 'hashie/mash'
 require 'yaml'
 require 'erb'
 
+# Reads in a YAML file containg configuration for a course and it's students
 class ContentConfiguration
   # Yaml files will be located inside this directory
-  CONFIG_DIR = File.dirname(__FILE__)
+  DEFAULT_CONFIG_DIR = File.dirname(__FILE__)
 
   # Methods in this class are available inside ERB blocks in the YAML file
   class YamlERB
@@ -55,7 +56,7 @@ class ContentConfiguration
     end
 
     def due_today
-      standard_due_at(school_day_on_or_before(today))
+      standard_due_at(today)
     end
 
     def due_one_day_ago
@@ -93,10 +94,15 @@ class ContentConfiguration
   extend Forwardable
 
   def self.[](name)
+    # The directory for the config files can be either set using either
+    # config_directory block (which sets it's value using Thread.current),
+    # the CONFIG environmental variable or the default
+    config_directory = Thread.current[:config_directory] || ENV['CONFIG'] || DEFAULT_CONFIG_DIR
+
     files = if :all == name
-              Dir[File.join(self.config_directory, '*.yml')]
+              Dir[File.join(config_directory, '*.yml')]
             else
-              [ File.join(self.config_directory, "#{name}.yml") ]
+              [ File.join(config_directory, "#{name}.yml") ]
             end
     files
       .reject{|path| File.basename(path) == "people.yml" }
@@ -110,8 +116,10 @@ class ContentConfiguration
     validate_config
   end
 
-  def cnx_book
-    version = if @configuration.cnx_book_version.blank? || @configuration.cnx_book_version == 'latest'
+  def cnx_book(book_version=:defined)
+    version = if book_version.to_sym != :defined
+                book_version.to_sym == :latest ? '' : book_version
+              elsif @configuration.cnx_book_version.blank? || @configuration.cnx_book_version == 'latest'
                 ''
               else
                 "@#{@configuration.cnx_book_version}"
@@ -123,29 +131,35 @@ class ContentConfiguration
     @course ||= CourseProfile::Models::Profile.where(name: @configuration.course_name).first!.course
   end
 
-  def self.config_directory
-    Thread.current[:config_directory] || CONFIG_DIR
-  end
-
   def self.with_config_directory( directory )
-    prev_config, Thread.current[:config_directory] = self.config_directory, directory
+    prev_config, Thread.current[:config_directory] = Thread.current[:config_directory], directory
     yield self
   ensure
     Thread.current[:config_directory] = prev_config
   end
 
+  def get_period(id)
+    @configuration.periods.detect{|period| period['id'] == id}
+  end
+
   private
 
   def validate_config
+    # make sure the titles for assignments are unique
+    titles = @configuration.assignments.map(&:title)
+    duplicate = titles.detect {|e| titles.rindex(e) != titles.index(e) }
+    raise "Assignment #{duplicate} for #{@configuration.course_name} is listed more than once" if duplicate
     # loop through each assignment and verify that the students match the roster for the period
     @configuration.assignments.each do | assignment |
-      assignment.periods.each do | period |
-        period_config = @configuration.periods.at( period[:index] )
+      assignment.periods.each_with_index do | period, index |
+        period_config = get_period(period.id)
+        if period_config.nil?
+          raise "Unable to find period # #{index} id #{period.id} for assignment #{assignment.title}"
+        end
         if period_config.students.sort != period.students.keys.sort
           raise "Students assignments for #{@configuration.course_name} period #{period_config.name} do not match for assignment #{assignment.title}"
         end
       end
-
     end
   end
 end
