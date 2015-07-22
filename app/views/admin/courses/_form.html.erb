@@ -22,6 +22,7 @@
       <ul id="assigned-teachers">
       <% @teachers.each do |teacher| %>
         <li><%= teacher.name %> (<%= teacher.username %>)</li>
+        <li class="hidden help-block">Click "Save" to assign the following teachers.</li>
       <% end %>
       </ul>
     </div>

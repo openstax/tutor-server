@@ -28,6 +28,7 @@ $(document).ready(function() {
       var li = $('<li>');
       li.append(hidden).append(label).append('&nbsp;&nbsp;').append(remove);
       $('#assigned-teachers').append(li);
+      $('#assigned-teachers').find('.help-block').removeClass('hidden');
       $('#course_teacher').val('');
       return false;
     },
