@@ -28,7 +28,7 @@ module Tasks
 
     private
     def generate_export_file!(format)
-      klass = "Tasks::PerformanceReport::WriteToFile::#{format.to_s.camelize}"
+      klass = "Tasks::PerformanceReport::Export#{format.to_s.camelize}"
       exporter = klass.constantize
       filename = [outputs.profile.name,
                   'Performance',
