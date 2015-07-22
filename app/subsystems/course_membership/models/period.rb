@@ -8,6 +8,9 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
 
   has_many :enrollments, dependent: :destroy
 
+  has_many :taskings, subsystem: :tasks, dependent: :nullify
+  has_many :tasks, through: :taskings
+
   before_destroy :no_active_students, prepend: true
 
   validates :course, presence: true

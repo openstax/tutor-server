@@ -16,7 +16,7 @@ class Tasks::Assistants::ExternalAssignmentAssistant
   end
 
   def self.build_tasks(task_plan:, taskees:)
-    students = taskees.collect { |taskee| taskee.students.first }.compact
+    students = taskees.collect { |taskee| taskee.student }.compact
 
     raise StandardError, 'External assignment taskees must all be students'\
       if students.length != taskees.length

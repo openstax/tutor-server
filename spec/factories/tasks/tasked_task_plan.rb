@@ -17,11 +17,15 @@ FactoryGirl.define do
         hash: { 'id' => '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6',
                 'title' => 'Newton\'s First Law of Motion: Inertia' }
       )
-      book_part = FactoryGirl.create :content_book_part
-      page    = Content::Routines::ImportPage[cnx_page: cnx_page, book_part: book_part,
-                                              chapter_section: [1, 1]]
 
-      { page_ids: [page.id.to_s] }
+      book_part = FactoryGirl.create :content_book_part
+
+      VCR.use_cassette("TaskedTaskPlan/with_inertia", VCR_OPTS) do
+        @page = Content::Routines::ImportPage[cnx_page: cnx_page, book_part: book_part,
+                                              chapter_section: [1, 1]]
+      end
+
+      { page_ids: [@page.id.to_s] }
     end
 
     after(:create) do |task_plan, evaluator|

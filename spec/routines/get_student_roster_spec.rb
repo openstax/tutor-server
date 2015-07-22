@@ -49,7 +49,7 @@ describe GetStudentRoster do
         'course_membership_period_id' => period_1.id,
         'entity_role_id' => student_1_role.id,
         'username' => student_1.username,
-        'deidentifier' => student_1_role.students.first.deidentifier
+        'deidentifier' => student_1_role.student.deidentifier
       },
       {
         'id' => students[1].id,
@@ -60,7 +60,7 @@ describe GetStudentRoster do
         'course_membership_period_id' => period_1.id,
         'entity_role_id' => student_2_role.id,
         'username' => student_2.username,
-        'deidentifier' => student_2_role.students.first.deidentifier
+        'deidentifier' => student_2_role.student.deidentifier
       },
       {
         'id' => students[2].id,
@@ -71,7 +71,7 @@ describe GetStudentRoster do
         'course_membership_period_id' => period_2.id,
         'entity_role_id' => student_3_role.id,
         'username' => student_3.username,
-        'deidentifier' => student_3_role.students.first.deidentifier
+        'deidentifier' => student_3_role.student.deidentifier
       }
     ])
   end

@@ -488,13 +488,15 @@ ActiveRecord::Schema.define(version: 20150716231241) do
   add_index "tasks_tasking_plans", ["tasks_task_plan_id"], name: "index_tasks_tasking_plans_on_tasks_task_plan_id", using: :btree
 
   create_table "tasks_taskings", force: :cascade do |t|
-    t.integer  "entity_role_id", null: false
-    t.integer  "entity_task_id", null: false
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
+    t.integer  "entity_role_id",              null: false
+    t.integer  "entity_task_id",              null: false
+    t.integer  "course_membership_period_id"
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
   end
 
-  add_index "tasks_taskings", ["entity_role_id", "entity_task_id"], name: "[\"tasks_taskings_role_id_on_task_id_unique\"]", unique: true, using: :btree
+  add_index "tasks_taskings", ["course_membership_period_id"], name: "index_tasks_taskings_on_course_membership_period_id", using: :btree
+  add_index "tasks_taskings", ["entity_role_id", "entity_task_id"], name: "tasks_taskings_role_id_on_task_id_unique", unique: true, using: :btree
   add_index "tasks_taskings", ["entity_task_id"], name: "index_tasks_taskings_on_entity_task_id", using: :btree
 
   create_table "tasks_tasks", force: :cascade do |t|
@@ -582,8 +584,9 @@ ActiveRecord::Schema.define(version: 20150716231241) do
   add_foreign_key "tasks_task_plans", "tasks_assistants", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_steps", "tasks_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasking_plans", "tasks_task_plans", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "tasks_taskings", "entity_roles"
-  add_foreign_key "tasks_taskings", "entity_tasks"
+  add_foreign_key "tasks_taskings", "course_membership_periods", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "tasks_taskings", "entity_roles", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_taskings", "entity_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasks", "entity_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasks", "tasks_task_plans", on_update: :cascade, on_delete: :cascade
   add_foreign_key "user_profile_administrators", "user_profile_profiles", column: "profile_id", on_update: :cascade, on_delete: :cascade

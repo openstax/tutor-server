@@ -1,7 +1,9 @@
 class Tasks::Models::Tasking < Tutor::SubSystems::BaseModel
-  belongs_to :role, subsystem: :entity
   belongs_to :task, subsystem: :entity
+  belongs_to :role, subsystem: :entity
 
-  validates :role, presence: true
-  validates :task, presence: true, uniqueness: { scope: :entity_role_id }
+  belongs_to :period, subsystem: :course_membership
+
+  validates :task, presence: true
+  validates :role, presence: true, uniqueness: { scope: :entity_task_id }
 end

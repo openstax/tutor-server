@@ -2,10 +2,6 @@ module Tasks
   class GetPerformanceReport
     lev_routine express_output: :performance_report
 
-    uses_routine GetStudentProfiles,
-                 as: :get_student_profiles,
-                 translations: { outputs: { type: :verbatim } }
-
     protected
 
     def exec(course:, role:)
@@ -20,21 +16,21 @@ module Tasks
     private
 
     def get_performance_report_for_teacher(course)
-      @tasks = {}
+      @taskings = {}
       @average = []
 
       course.periods.collect do |period|
         @average << Hash.new { |h, k| h[k] = [] }
         student_tasks, student_data = [], []
-        student_profiles = run(:get_student_profiles, period: period).outputs.profiles
-        tasks = get_tasks(student_profiles, period.id)
+        taskings = get_taskings(period)
+        role_taskings = taskings.to_a.group_by{ |tg| tg.role }
 
-        student_profiles.collect do |student_profile|
-          student_tasks = tasks.select { |t| taskings_exist?(t, student_profile) }
+        role_taskings.collect do |student_role, taskings|
+          student_tasks = taskings.collect{ |tg| tg.task.task }
 
           student_data << {
-            name: student_profile.full_name,
-            role: student_profile.entity_role_id
+            name: student_role.full_name,
+            role: student_role.id
           }.merge(get_student_data(student_tasks))
         end
 
@@ -46,19 +42,14 @@ module Tasks
       end
     end
 
-    def get_tasks(student_profiles, period_id)
-      role_ids = student_profiles.collect(&:entity_role_id)
+    def get_taskings(period)
       task_types = Models::Task.task_types.values_at(:reading, :homework, :external)
       # Return reading and homework tasks for a student ordered by due date
-      @tasks[period_id] ||= Models::Task.includes(:taskings)
-                                        .joins(:taskings)
-                                        .where{taskings.entity_role_id.in role_ids}
-                                        .where(task_type: task_types)
-                                        .order(:due_at)
-    end
-
-    def taskings_exist?(task, profile)
-      task.taskings.collect(&:entity_role_id).include?(profile.entity_role_id)
+      @taskings[period.id] ||= period.taskings
+                                     .includes(task: :task, role: {user: {profile: :account}})
+                                     .joins(task: :task)
+                                     .where(task: {task: {task_type: task_types}})
+                                     .order{[role.user.profile.account.full_name, task.task.due_at]}
     end
 
     def get_data_headings(tasks)
