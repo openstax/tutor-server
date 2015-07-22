@@ -18,7 +18,7 @@ class DemoWork < DemoBase
 
         task_plan = Tasks::Models::TaskPlan.where(owner: content.course, title: assignment.title).first!
 
-        responses_list = new_responses_list(
+        tasks_profile = build_tasks_profile(
           students: assignment.periods.map{|period| period.students.map(&:to_a) }.flatten(1),
           assignment_type: assignment.type.to_sym,
           step_types: assignment.step_types,
@@ -26,12 +26,18 @@ class DemoWork < DemoBase
         log("Working assignment: #{assignment.title}")
         task_plan.tasks.each_with_index do | task, index |
           user = task.taskings.first.role.user
-          responses = responses_list[ user.profile.id ]
-          unless responses
+          profile = tasks_profile[ user.profile.id ]
+
+          unless profile
             raise "#{assignment.title} period #{period.id} has no responses for task #{index} for user #{user.profile.id} #{user.username}"
           end
           log("  Task # #{index}")
-          work_task(task: task, responses: responses)
+          lateness = assignment.late[profile.initials]
+          if lateness
+            binding.pry
+          else
+            work_task(task: task, responses: profile.responses)
+          end
         end
 
       end

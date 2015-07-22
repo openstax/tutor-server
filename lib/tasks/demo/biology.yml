@@ -24,6 +24,8 @@ assignments:
     step_types: [ r, r, e, r, r, e, r, r, e, r, r, e, r, e, r, p, e, e, r, r, e ]
     chapter_sections: [[1, 0], [1, 1], [1, 2]]
     title: Read Chapter 1. The Study of Life
+    late:
+      ak: <% 1.day %>
     periods:
       - id: p1
         opens_at: <%= open_three_days_ago %>
