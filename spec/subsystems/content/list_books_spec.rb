@@ -24,8 +24,8 @@ RSpec.describe Content::ListBooks, type: :routine do
       expect(books.collect(&:uuid)).to contain_exactly(book1.uuid, book2.uuid, book3.uuid)
     end
 
-    it "sorts returned books by title (ascending, ascii)" do
-      expect(books.collect(&:title)).to eq(['Title Z', 'Title a', 'Title c'])
+    it "sorts returned books by title (ascending, case-insensitive)" do
+      expect(books.collect(&:title)).to eq(['Title a', 'Title c', 'Title Z'])
     end
   end
 end

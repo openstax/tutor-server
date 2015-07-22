@@ -4,7 +4,7 @@ class Content::ListBooks
   protected
 
   def exec
-    root_book_parts = Content::Models::BookPart.roots.order(:title)
+    root_book_parts = Content::Models::BookPart.roots.order{lower(title)}
     outputs[:books] = root_book_parts.collect do |book_part|
       Hashie::Mash.new(
         id: book_part.entity_book_id,
