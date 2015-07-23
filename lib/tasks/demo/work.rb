@@ -33,13 +33,9 @@ class DemoWork < DemoBase
           end
           lateness = assignment.late ? assignment.late[profile.initials] : nil
           log("  Work #{profile.initials}")
-          if lateness
-            period_info = assignment.periods.detect{|pr| pr.students[profile.initials] }
-            log("    ... #{lateness} seconds late")
-            Timecop.freeze(period_info.opens_at + lateness) do
-              work_task(task: task, responses: profile.responses)
-            end
-          else
+          worked_at = task.due_at + (lateness ? lateness : -60)
+
+          Timecop.freeze(worked_at) do
             work_task(task: task, responses: profile.responses)
           end
         end
