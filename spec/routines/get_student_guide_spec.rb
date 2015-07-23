@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'vcr_helper'
 require 'database_cleaner'
 
-RSpec.describe GetStudentGuide, vcr: VCR_OPTS do
+RSpec.describe GetStudentGuide do
 
   before(:all) do
     DatabaseCleaner.start
@@ -30,31 +30,14 @@ RSpec.describe GetStudentGuide, vcr: VCR_OPTS do
     DatabaseCleaner.clean
   end
 
-  it 'gets the completed task steps for the role' do
-    guide = described_class.call(role: @role)
-    expect(guide.outputs).to have(16).task_steps
+  it 'gets the completed task step counts for the role' do
+    result = described_class[role: @role]
+    total_count = result['children'].map{ |cc| cc['questions_answered_count'] }.reduce(:+)
+    expect(total_count).to eq 16
 
-    guide = described_class.call(role: @second_role)
-    expect(guide.outputs).to have(17).task_steps
-  end
-
-  it 'gets the book' do
-    guide = described_class.call(role: @role)
-    book = Entity::Book.last
-    expect(guide.outputs.books.last).to eq(book)
-
-    guide = described_class.call(role: @second_role)
-    expect(guide.outputs.books.last).to eq(book)
-  end
-
-  it 'visits the book TOC and Page Data' do
-    guide = described_class.call(role: @role)
-    expect(guide.outputs.toc.title).to eq("Physics")
-    expect(guide.outputs.page_data).to have(8).items
-
-    guide = described_class.call(role: @second_role)
-    expect(guide.outputs.toc.title).to eq("Physics")
-    expect(guide.outputs.page_data).to have(8).items
+    result = described_class[role: @second_role]
+    total_count = result['children'].map{ |cc| cc['questions_answered_count'] }.reduce(:+)
+    expect(total_count).to eq 17
   end
 
   it 'returns the period course guide for a student' do
@@ -71,7 +54,6 @@ RSpec.describe GetStudentGuide, vcr: VCR_OPTS do
     book = described_class[role: @role]['children'].first
 
     expect([book]).to include(a_hash_including(
-      "id"=>kind_of(Integer),
       "title"=>"Acceleration",
       "chapter_section"=>[3],
       "questions_answered_count"=>2,
@@ -86,7 +68,6 @@ RSpec.describe GetStudentGuide, vcr: VCR_OPTS do
     parts = described_class[role: @role]['children'].first['children']
 
     expect(parts).to match a_hash_including(
-      "id"=>kind_of(Integer),
       "title"=>"Acceleration",
       "chapter_section"=>[3, 1],
       "questions_answered_count"=>2,

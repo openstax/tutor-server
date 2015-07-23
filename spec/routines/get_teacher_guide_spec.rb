@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'vcr_helper'
 require 'database_cleaner'
 
-RSpec.describe GetTeacherGuide, vcr: VCR_OPTS do
+RSpec.describe GetTeacherGuide do
 
   before(:all) do
     DatabaseCleaner.start
@@ -36,45 +36,59 @@ RSpec.describe GetTeacherGuide, vcr: VCR_OPTS do
     expect(result).to include({
       period_id: @period.id,
       title: 'Physics',
-      page_ids: [kind_of(Integer)]*5,
+      page_ids: [kind_of(Integer)]*4,
       children: array_including(kind_of(Hash))
     },
     {
       period_id: @second_period.id,
       title: 'Physics',
-      page_ids: [kind_of(Integer)]*5,
+      page_ids: [kind_of(Integer)]*4,
       children: array_including(kind_of(Hash))
     })
   end
 
-  it 'includes the book stats for the periods' do
-    book = described_class[role: @teacher_role].first['children'].first
+  it 'includes the chapter stats for the periods' do
+    period_1_chapter_1 = described_class[role: @teacher_role].first['children'].first
 
-    expect([book]).to match a_hash_including(
-      "id"=>kind_of(Integer),
+    expect([period_1_chapter_1]).to match a_hash_including(
       "title"=>"Acceleration",
       "chapter_section"=>[3],
-      "questions_answered_count"=>5,
+      "questions_answered_count"=>2,
       "current_level"=>kind_of(Float),
       "practice_count"=>0,
-      "page_ids"=>[kind_of(Integer)]*2,
+      "page_ids"=>[kind_of(Integer)],
+      "children" => array_including(kind_of(Hash))
+    )
+
+    period_2_chapter_1 = described_class[role: @teacher_role].second['children'].first
+
+    expect([period_2_chapter_1]).to match a_hash_including(
+      "title"=>"Acceleration",
+      "chapter_section"=>[3],
+      "questions_answered_count"=>3,
+      "current_level"=>kind_of(Float),
+      "practice_count"=>0,
+      "page_ids"=>[kind_of(Integer)],
       "children" => array_including(kind_of(Hash))
     )
   end
 
-  it 'includes the book part stats for the periods' do
-    book_parts = described_class[role: @teacher_role].first['children'].first['children']
+  it 'includes the page stats for the periods' do
+    period_1_pages = described_class[role: @teacher_role].first['children'].first['children']
 
-    expect(book_parts).to include(
-      a_hash_including("id"=>kind_of(Integer),
-                       "title"=>"Acceleration",
+    expect(period_1_pages).to include(
+      a_hash_including("title"=>"Acceleration",
                        "chapter_section"=>[3, 1],
                        "questions_answered_count"=>2,
                        "current_level"=>kind_of(Float),
                        "practice_count"=>0,
-                       "page_ids"=>[kind_of(Integer)]),
-      a_hash_including("id"=>kind_of(Integer),
-                       "title"=>"Representing Acceleration with Equations and Graphs",
+                       "page_ids"=>[kind_of(Integer)])
+    )
+
+    period_2_pages = described_class[role: @teacher_role].second['children'].first['children']
+
+    expect(period_2_pages).to include(
+      a_hash_including("title"=>"Representing Acceleration with Equations and Graphs",
                        "chapter_section"=>[3, 2],
                        "questions_answered_count"=>3,
                        "current_level"=>kind_of(Float),
