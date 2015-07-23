@@ -43,6 +43,12 @@ module Tasks
               sheet.add_row(student_scores(student), style: styles)
               add_late_comments(sheet, student.data, row)
             end
+
+            percent = sheet.styles.add_style num_fmt: 9 # Percent fmt "25%"
+
+            report[:data_headings].each.with_index do |heading, i|
+              sheet.col_style(i + 2, percent, row_offset: 2) if heading.average
+            end
           end
         end
       end
