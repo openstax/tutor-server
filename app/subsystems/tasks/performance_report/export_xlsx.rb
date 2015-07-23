@@ -44,10 +44,10 @@ module Tasks
               add_late_comments(sheet, student.data, row)
             end
 
-            percent = sheet.styles.add_style num_fmt: 9 # Percent fmt "25%"
+            percent = sheet.styles.add_style num_fmt: Axlsx::NUM_FMT_PERCENT # Percent fmt "25%"
 
             report[:data_headings].each.with_index do |heading, i|
-              sheet.col_style(i + 2, percent, row_offset: 2) if heading.average
+              sheet.col_style(i+1, percent, row_offset: 1) if heading.average
             end
           end
         end
@@ -60,12 +60,12 @@ module Tasks
 
       def gather_due_dates(data_headings)
         due_dates = data_headings.collect(&:due_at)
-        (['Due Date'] + due_dates).collect { |due_date| italic_text(due_date) }
+        ['Due Date'] + due_dates.collect { |due_date| italic_text(due_date.strftime("%m/%d/%Y")) }
       end
 
       def gather_averages(data_headings)
         averages = data_headings.map do |heading|
-          '%.2f' % heading.average if heading.average
+          heading.average if heading.average
         end
 
         (['Average'] + averages).collect { |average| italic_text(average) }
