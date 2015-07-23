@@ -12,18 +12,6 @@ class DemoBase
   #
   #############################################################################
 
-  def new_responses_list(assignment_type:, students:, step_types:)
-    profile_responses = students.map do | initials, score |
-      profile = get_student_profile(initials) ||
-                raise("Unable to find student for initials #{initials}")
-      [profile, score]
-    end
-
-    ResponsesList.new(assignment_type: assignment_type,
-                      profile_responses: profile_responses,
-                      step_types: step_types,
-                      randomizer: randomizer)
-  end
 
   def people
     @people ||= Hashie::Mash.load(File.dirname(__FILE__)+'/people.yml')
@@ -46,7 +34,20 @@ class DemoBase
     user_profile_for_username student_info.username
   end
 
-  class ResponsesList
+  def build_tasks_profile(assignment_type:, students:, step_types:)
+    profile_responses = students.map do | initials, score |
+      profile = get_student_profile(initials) ||
+                raise("Unable to find student for initials #{initials}")
+      [initials, profile, score]
+    end
+
+    TasksProfile.new(assignment_type: assignment_type,
+                      profile_responses: profile_responses,
+                      step_types: step_types,
+                      randomizer: randomizer)
+  end
+
+  class TasksProfile
     def initialize(assignment_type:, profile_responses:, step_types:, randomizer:)
 
       raise ":assignment_type (#{assignment_type}) must be one of {:homework,:reading}" \
@@ -56,16 +57,19 @@ class DemoBase
       @assignment_type = assignment_type
 
       @step_types = step_types
-      @list = {}
+      @profiles = {}
       @randomizer = randomizer
 
-      profile_responses.each do |profile, responses|
-        @list[profile.id] = get_explicit_responses(responses)
+      profile_responses.each do |initials, profile, responses|
+        @profiles[profile.id] = OpenStruct.new(
+          responses:  get_explicit_responses(responses),
+          initials: initials
+        )
       end
     end
 
     def [](profile_id)
-      @list[profile_id]
+      @profiles[profile_id]
     end
 
     private
