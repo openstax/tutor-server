@@ -198,20 +198,6 @@ class Api::V1::CoursesController < Api::V1::ApiController
     respond_with(preport, represent_with: Api::V1::PerformanceReportRepresenter)
   end
 
-  api :GET, '/courses/:course_id/students', 'Returns all the students in the course'
-  description <<-EOS
-    #{json_schema(Api::V1::StudentsRepresenter, include: :readable)}
-  EOS
-  def students
-    course = Entity::Course.find(params[:id])
-
-    OSU::AccessPolicy.require_action_allowed!(:roster, current_api_user, course)
-
-    roster = GetStudentRoster[course: course]
-
-    respond_with(roster, represent_with: Api::V1::StudentsRepresenter)
-  end
-
   protected
   def get_course_role(types: :any)
     result = ChooseCourseRole.call(user: current_human_user.entity_user,
