@@ -247,7 +247,7 @@ class Tasks::Assistants::IReadingAssistant
   end
 
   def self.related_content_for_page(page:, title: page.title)
-    { id: page.id, title: title, chapter_section: page.chapter_section }
+    { title: title, chapter_section: page.chapter_section }
   end
 
   def self.get_related_content_for(content_exercise)

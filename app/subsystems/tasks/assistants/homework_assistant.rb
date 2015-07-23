@@ -113,7 +113,7 @@ class Tasks::Assistants::HomeworkAssistant
   def self.get_related_content_for(content_exercise)
     page = content_exercise_page(content_exercise)
 
-    { id: page.id, title: page.title, chapter_section: page.chapter_section }
+    { title: page.title, chapter_section: page.chapter_section }
   end
 
   def self.content_exercise_page(content_exercise)

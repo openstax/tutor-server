@@ -74,7 +74,7 @@ module CourseGuideMethods
         practice_count: practices.count,
         page_ids: [page.id]
       }
-    end.sort_by{ |pg| pg.chapter_section }
+    end.sort_by{ |pg| pg[:chapter_section] }
   end
 
   def compile_chapters(task_steps, book)

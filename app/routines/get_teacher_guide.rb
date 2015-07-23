@@ -28,10 +28,6 @@ class GetTeacherGuide
   end
 
   def gather_course_stats(course)
-    course.periods.collect do |period|
-      period_stats_per_book = gather_period_stats(period)
-      # Assume only 1 book for now
-      period_stats_per_book.first
-    end
+    course.periods.collect{ |period| gather_period_stats(period) }
   end
 end
