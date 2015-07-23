@@ -31,10 +31,14 @@ class DemoWork < DemoBase
           unless profile
             raise "#{assignment.title} period #{period.id} has no responses for task #{index} for user #{user.profile.id} #{user.username}"
           end
-          log("  Task # #{index}")
-          lateness = assignment.late[profile.initials]
+          lateness = assignment.late ? assignment.late[profile.initials] : nil
+          log("  Work #{profile.initials}")
           if lateness
-            binding.pry
+            period_info = assignment.periods.detect{|pr| pr.students[profile.initials] }
+            log("    ... #{lateness} seconds late")
+            Timecop.freeze(period_info.opens_at + lateness) do
+              work_task(task: task, responses: profile.responses)
+            end
           else
             work_task(task: task, responses: profile.responses)
           end
