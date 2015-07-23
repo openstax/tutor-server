@@ -55,4 +55,32 @@ RSpec.describe Content::Routines::SearchExercises, type: :routine, speed: :slow,
     expect(exercises.first).to eq exercise_2
   end
 
+  it 'can extract the exercise number from its url' do
+    Content::Routines::ImportPage.call(cnx_page: cnx_page, book_part: book_part)
+
+    embed_tag = 'k12phys-ch04-ex013'
+    exercises = Content::Routines::SearchExercises.call(tag: embed_tag).outputs.items
+    expect(exercises.length).to eq 1
+    exercise = exercises.first
+    expect(exercise.exercise_tags.collect{|et| et.tag.value}).to include embed_tag
+
+    exercise_2 = FactoryGirl.create :content_exercise, number: exercise.number,
+                                                       version: exercise.version + 1,
+                                                       url: exercise.url.split('@').first + '@2'
+    tags = exercise.exercise_tags.collect{ |et| et.tag.value }
+    Content::Routines::TagResource.call(exercise_2, tags)
+
+    exercises = Content::Routines::SearchExercises.call(url: exercise.url).outputs.items
+    expect(exercises.length).to eq 1
+    expect(exercises.first).to eq exercise
+    expect(exercises.first).not_to eq exercise_2
+
+    exercises = Content::Routines::SearchExercises.call(
+      url: exercise.url, extract_numbers_from_urls: true
+    ).outputs.items
+    expect(exercises.length).to eq 1
+    expect(exercises.first).not_to eq exercise
+    expect(exercises.first).to eq exercise_2
+  end
+
 end
