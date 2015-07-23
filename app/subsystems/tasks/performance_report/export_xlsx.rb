@@ -44,10 +44,10 @@ module Tasks
               add_late_comments(sheet, student.data, row)
             end
 
-            percent = sheet.styles.add_style num_fmt: Axlsx::NUM_FMT_PERCENT # Percent fmt "25%"
+            percent = sheet.styles.add_style num_fmt: Axlsx::NUM_FMT_PERCENT
 
             report[:data_headings].each.with_index do |heading, i|
-              sheet.col_style(i+1, percent, row_offset: 1) if heading.average
+              sheet.col_style(i + 1, percent, row_offset: 2) if heading.average
             end
           end
         end
