@@ -43,7 +43,8 @@
           <td><%= user.username %></td>
           <td><%= user.full_name %></td>
           <td>
-              <%= link_to 'Edit', edit_admin_user_path(user.id), class: "btn btn-xs btn-primary" %>
+            <!-- User profile changes are not being propagated to Accounts yet, you can go to the Accounts admin console to edit users there. -->
+            <!-- <%= link_to 'Edit', edit_admin_user_path(user.id), class: "btn btn-xs btn-primary" %> -->
               <%= link_to 'Sign in as', become_admin_user_path(user.account_id),
                                         method: :post, class: "btn btn-xs btn-primary" %>
           </td>
