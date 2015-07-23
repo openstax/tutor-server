@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>OpenStax Tutor</title>
+  <meta name="robots" content="noindex">
   <meta http-equiv="content-type" content="text/html; charset=UTF8" />
   <%= stylesheet_link_tag 'home', media: 'all' %>
   <%= javascript_include_tag 'home' %>
@@ -28,10 +29,10 @@
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse navbar-right navbar-ex1-collapse">
         <ul class="nav navbar-nav links">
-          <li><%= link_to 'Login', openstax_accounts.login_path, class: 'sign-in' %></li>
-          <li><a href="#contact">Help</a></li>
-          <li>Rice Logo</li>
+          <li><%= link_to 'Login', openstax_accounts.login_path, class: 'btn' %></li>
+          <li><a href="http://openstaxtutor.zendesk.com" target="_blank">Help</a></li>
         </ul>
+        <a class="navbar-brand-rice" href="http://www.rice.edu" target="_blank"></a>
       </div>
       <!-- /.navbar-collapse -->
     </div>
@@ -44,16 +45,17 @@
 <div id="intro-header" class="intro-header">
   <div class="container">
 
-    <div class="row promo">
+    <div class="row">
 
-      <div class="taglines col-md-push-6 col-sm-12 col-md-6">
-        <p>A Personalized Learning</p>
-        <p>Experience from a Tutor</p>
-        <p>That Adapts to You</p>
-      </div>
-
-      <div class="col-md-pull-6 col-sm-12 col-md-6">
-
+      <div class="col-sm-12">
+        <div class="taglines">
+          <div>
+            <p>Personalized Learning</p>
+            <p>from a tutor that adapts to you</p>
+          </div>
+          <br>
+          <a class="btn btn-primary" href="http://k12.openstax.org/" target="_blank">Learn More</a>
+        </div>
       </div>
 
     </div>
@@ -61,11 +63,10 @@
   </div>
 </div>
 
-
 <footer>
   <div class="container">
     <div class="row">
-      <p>&copy; 2015 <a href="http://www.rice.edu">Rice University</a></p>
+      <p>&copy; 2015 <a href="http://www.rice.edu" target="_blank">Rice University</a></p>
     </div>
   </div>
 </footer>
