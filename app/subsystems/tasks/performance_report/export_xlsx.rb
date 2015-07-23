@@ -58,7 +58,10 @@ module Tasks
       end
 
       def gather_averages(data_headings)
-        averages = data_headings.collect(&:average)
+        averages = data_headings.map do |heading|
+          '%.2f' % heading.average if heading.average
+        end
+
         (['Average'] + averages).collect { |average| italic_text(average) }
       end
 
@@ -83,7 +86,7 @@ module Tasks
       def score(data)
         case data.type
         when 'homework'
-          data.correct_exercise_count/data.exercise_count.to_f
+          '%.2f' % (data.correct_exercise_count/data.exercise_count.to_f)
         when 'reading'
           data.status.humanize
         else
