@@ -19,11 +19,25 @@ class Content::Routines::SearchExercises
 
     relation = options[:relation] || Content::Models::Exercise.preload(exercise_tags: :tag)
     urls = [options[:url]].flatten unless options[:url].nil?
+    like_urls = nil
     titles = [options[:title]].flatten unless options[:title].nil?
     tags = [options[:tag]].flatten unless options[:tag].nil?
     numbers = [options[:number]].flatten unless options[:number].nil?
     versions = [options[:version]].flatten unless options[:version].nil?
     uids = [options[:uid]].flatten unless options[:uid].nil?
+
+    if options[:extract_numbers_from_urls] && !urls.nil?
+      numbers ||= []
+      like_urls = urls.collect do |url|
+        uri = Addressable::URI.parse(url)
+        split_path = uri.path.split('/')
+        endpoint = split_path.slice(0..-2).join('/')
+        uid = split_path.last
+        numbers << uid.split('@').first
+        "#{uri.site}#{endpoint}/%"
+      end
+      urls = nil
+    end
 
     query_hash = {}
     query_hash[:url] = urls unless urls.nil?
@@ -35,6 +49,7 @@ class Content::Routines::SearchExercises
     relation = relation.latest if urls.nil? && versions.nil? && uids.nil?
 
     relation = relation.where(query_hash)
+    relation = relation.where{url.like_any like_urls} unless like_urls.nil?
 
     unless uids.nil?
       relation = relation.where do
