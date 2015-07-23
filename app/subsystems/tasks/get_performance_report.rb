@@ -76,6 +76,7 @@ module Tasks
       {
         data: tasks.collect.with_index { |task, index|
           data = {
+            late: task.late?,
             status: task.status,
             type: task.task_type,
             id: task.id,
