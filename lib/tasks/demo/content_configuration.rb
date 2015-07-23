@@ -1,82 +1,17 @@
 require 'hashie/mash'
 require 'yaml'
 require 'erb'
+require_relative 'content_configuration_yaml_methods'
 
 # Reads in a YAML file containg configuration for a course and it's students
 class ContentConfiguration
   # Yaml files will be located inside this directory
   DEFAULT_CONFIG_DIR = File.dirname(__FILE__)
 
-  # Methods in this class are available inside ERB blocks in the YAML file
-  class YamlERB
-
-    attr_reader :noon_today
-
-    def initialize
-      @noon_today = Time.now.noon
-    end
-
-    def get_binding
-      binding
-    end
-
-    def school_day_on_or_before(time)
-      while time.sunday? || time.saturday?
-        time = time.yesterday
-      end
-      time
-    end
-
-    def today
-      @noon_today
-    end
-
-    def standard_opens_at(time)
-      time.midnight + 1.minute
-    end
-
-    def standard_due_at(time)
-      time.midnight + 7.hours
-    end
-
-    def open_today
-      standard_opens_at(school_day_on_or_before(today))
-    end
-
-    def open_one_day_ago
-      standard_opens_at(school_day_on_or_before(today - 1.day))
-    end
-
-    def open_two_days_ago
-      standard_opens_at(school_day_on_or_before(today - 2.days))
-    end
-
-    def open_three_days_ago
-      standard_opens_at(school_day_on_or_before(today - 3.days))
-    end
-
-    def due_today
-      standard_due_at(today)
-    end
-
-    def due_one_day_ago
-      standard_due_at(school_day_on_or_before(today - 1.day))
-    end
-
-    def due_two_days_ago
-      standard_due_at(school_day_on_or_before(today - 2.days))
-    end
-
-    def due_three_days_ago
-      standard_due_at(school_day_on_or_before(today - 3.days))
-    end
-
-  end
-
   class ConfigFileParser
     def initialize(file_path)
       @content = File.read(file_path)
-      @helpers = YamlERB.new
+      @helpers = ContentConfigurationYamlMethods.new
       @file_path = file_path
     end
 
