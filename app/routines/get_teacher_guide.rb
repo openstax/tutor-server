@@ -12,16 +12,19 @@ class GetTeacherGuide
 
   private
 
-  def completed_task_steps_for_period(period)
-    period.enrollments.latest.active.eager_load(
-      student: {role: {taskings: {task: {task: {task_steps: {task: {taskings: :role}}}}}}}
-    ).collect{ |en| en.student.role.taskings.collect{ |ts| ts.task.task.task_steps } }
-     .flatten.select(&:completed?)
+  def completed_exercise_steps_for_period(period)
+    filter_completed_exercise_steps(
+      period.enrollments.latest.active.preload(
+        student: {role: {taskings: {task: {task: {task_steps: {task: {taskings: :role}}}}}}}
+      ).collect{ |en| en.student.role.taskings.collect{ |ts| ts.task.task.task_steps } }
+       .flatten
+    )
   end
 
   def gather_period_stats(period)
-    task_steps = completed_task_steps_for_period(period)
-    compile_books(task_steps).collect{ |book_stats| { period_id: period.id }.merge(book_stats) }
+    task_steps = completed_exercise_steps_for_period(period)
+    book = period.course.books.last
+    { period_id: period.id }.merge(compile_guide(task_steps, book))
   end
 
   def gather_course_stats(course)

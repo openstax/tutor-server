@@ -80,7 +80,7 @@ module Api::V1::Tasks
     collection :related_content,
                writeable: false,
                readable: true,
-               getter: lambda {|*| task_step.related_content.collect{|rc| rc[:page]} },
+               getter: ->(*) { task_step.related_content },
                schema_info: {
                  required: true,
                  description: "Misc content related to this step"
@@ -89,7 +89,7 @@ module Api::V1::Tasks
     collection :labels,
                writeable: false,
                readable: true,
-               getter: lambda {|*| task_step.labels },
+               getter: ->(*) { task_step.labels },
                schema_info: {
                  required: true,
                  description: "Misc properties related to this step"

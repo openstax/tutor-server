@@ -12,7 +12,8 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   validates :tasked_id, uniqueness: { scope: :tasked_type }
   validates :group_type, presence: true
 
-  delegate :can_be_answered?, :can_be_recovered?, to: :tasked
+  delegate :can_be_answered?, :can_be_recovered?, :has_correctness?, :exercise?, :placeholder?,
+           :los, :aplos, to: :tasked
 
   scope :complete, -> { where{first_completed_at != nil} }
   scope :incomplete, -> { where{first_completed_at == nil} }
@@ -20,18 +21,6 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   scope :exercises, -> { where{tasked_type == Tasks::Models::TaskedExercise.name} }
 
   after_save { task.update_step_counts! }
-
-  def exercise?
-    tasked_type == Tasks::Models::TaskedExercise.name
-  end
-
-  def placeholder?
-    tasked_type == Tasks::Models::TaskedPlaceholder.name
-  end
-
-  def has_correctness?
-    tasked.has_correctness?
-  end
 
   def is_correct?
     return nil unless has_correctness?
@@ -71,14 +60,6 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
 
   def add_labels(labels)
     self.labels = [self.labels, labels].flatten.compact.uniq
-  end
-
-  def los
-    related_content.collect{ |rc| rc[:los] }.flatten
-  end
-
-  def aplos
-    related_content.collect{ |rc| rc[:aplos] }.flatten
   end
 
 end

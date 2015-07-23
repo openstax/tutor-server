@@ -112,17 +112,8 @@ class Tasks::Assistants::HomeworkAssistant
 
   def self.get_related_content_for(content_exercise)
     page = content_exercise_page(content_exercise)
-    bp = page.book_part
-    book = bp.book
-    book_root = book.root_book_part
 
-    {
-      book: { id: book.id, title: book_root.title },
-      chapter: { id: bp.id, title: bp.title, chapter_section: bp.chapter_section },
-      page: { id: page.id, title: page.title, chapter_section: page.chapter_section },
-      los: content_exercise.los,
-      aplos: content_exercise.aplos
-    }
+    { id: page.id, title: page.title, chapter_section: page.chapter_section }
   end
 
   def self.content_exercise_page(content_exercise)
