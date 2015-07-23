@@ -24,12 +24,10 @@ assignments:
     step_types: [ r, r, e, r, r, e, r, r, e, r, r, e, r, e, r, p, e, e, r, r, e ]
     chapter_sections: [[1, 0], [1, 1], [1, 2]]
     title: Read Chapter 1. The Study of Life
-    late:
-      ak: <%= 1.day %>
     periods:
       - id: p1
-        opens_at: <%= open_three_days_ago %>
-        due_at: <%= due_today %>
+        opens_at: <%= open_two_days_ago %>
+        due_at: <%= due_tomorrow %>
         students: {ak: 98,at: 67,bh: 55,gj: 77,kl: 88,ir: ns,mb: 78,ra: 100,sg: 86}
 
       - id: p2
@@ -51,6 +49,11 @@ assignments:
     step_types: [ r, r, r, r, r, r, r, e, r, r, e, r, r, r, r, p ]
     chapter_sections: [[6, 0], [6, 1], [6, 2]]
     title: Read Chapter 6. Metabolism
+    late:
+      ak: <%= 1.day %>
+      cg: <%= 4.hours %>
+      fa: <%= 1.day %>
+      ra: <%= 10.minutes %>
     periods:
       - id: p1
         opens_at: <%= open_three_days_ago %>
@@ -86,10 +89,15 @@ assignments:
     chapter_sections: [[1, 0], [1, 1], [1, 2]]
     title: HW The Study of Life
     num_exercises: 10
+    late:
+      ap: <%= 1.day %>
+      bs: <%= 4.hours %>
+      hg: <%= 1.day %>
+      an: <%= 10.minutes %>
     periods:
       - id: p3
         opens_at: <%= open_three_days_ago %>
-        due_at: <%= due_three_days_ago %>
+        due_at: <%= due_yesterday %>
         students:
           ag: 90
           ap: 87
@@ -104,7 +112,7 @@ assignments:
           sk: 65
       - id: p4
         opens_at: <%= open_two_days_ago %>
-        due_at: <%= due_two_days_ago %>
+        due_at: <%= due_today %>
         students:
           an: 100
           cg: [ 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1 ]
