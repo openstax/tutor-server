@@ -254,19 +254,20 @@ class Tasks::Assistants::HomeworkAssistant
   end
 
   def self.k_ago_map(num_spaced_practice_exercises)
-    ## NOTE: These will be updated over time.
+    ## Entries in the list have the form:
+    ##   [from-this-many-events-ago, choose-this-many-exercises]
     k_ago_map =
       case num_spaced_practice_exercises
       when 0
         []
       when 1
-        [ [1,1] ]
+        [ [2,1] ]
       when 2
-        [ [1,1], [2,1] ]
+        [ [2,1], [4,1] ]
       when 3
-        [ [1,2], [2,1] ]
+        [ [2,2], [4,1] ]
       when 4
-        [ [1,2], [2,2] ]
+        [ [2,2], [4,2] ]
       else
         raise "could not determine k-ago map for num_spaced_practice_exercises=#{num_spaced_practice_exercises}"
       end

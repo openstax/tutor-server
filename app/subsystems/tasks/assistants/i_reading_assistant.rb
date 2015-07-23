@@ -217,7 +217,9 @@ class Tasks::Assistants::IReadingAssistant
   end
 
   def self.k_ago_map
-    [ [1,1], [2,1] ]
+    ## Entries in the list have the form:
+    ##   [from-this-many-events-ago, choose-this-many-exercises]
+    [ [2,1], [4,1] ]
   end
 
   def self.add_personalized_exercise_steps!(task_plan: task_plan, task: task, taskee: taskee)
