@@ -90,5 +90,21 @@ module OpenStax::Biglearn
       end
     end
 
+    context "get_clue" do
+      it 'returns a well-formatted clue' do
+        profile = UserProfile::CreateProfile.call(username: SecureRandom.hex).outputs.profile
+        profile.update_attribute(:exchange_read_identifier, '0edbe5f8f30abc5ba56b5b890bddbbe2')
+        role = Role::CreateUserRole[profile.entity_user]
+
+        # This assumes that a book has been imported
+        clue = client.get_clue(roles: role, tags: 'k12phys-ch04-s02-lo01')
+
+        expect(clue[:aggregate]).to be_a(Float)
+        expect(['high', 'medium', 'low']).to include(clue[:level])
+        expect(['good', 'bad']).to include(clue[:confidence])
+        expect(['above', 'below']).to include(clue[:threshold])
+      end
+    end
+
   end
 end

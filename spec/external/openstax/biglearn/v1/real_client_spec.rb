@@ -6,7 +6,7 @@ module OpenStax::Biglearn
 
     let(:configuration) {
       c = OpenStax::Biglearn::V1::Configuration.new
-      c.server_url = 'http://api1.biglearn.openstax.org/'
+      c.server_url = 'http://biglearn-dev.openstax.org/'
       c
     }
 
@@ -72,18 +72,17 @@ module OpenStax::Biglearn
     end
 
     it 'calls clue well' do
-      dev1_configuration = OpenStax::Biglearn::V1::Configuration.new
-      dev1_configuration.server_url = 'https://biglearn-dev1.openstax.org'
-      dev1_client = OpenStax::Biglearn::V1::RealClient.new(dev1_configuration)
-
       profile = UserProfile::CreateProfile.call(username: SecureRandom.hex).outputs.profile
       profile.update_attribute(:exchange_read_identifier, '0edbe5f8f30abc5ba56b5b890bddbbe2')
       role = Role::CreateUserRole[profile.entity_user]
 
       # This assumes that a book has been imported
-      clue = dev1_client.get_clue(roles: role, tags: 'k12phys-ch04-s02-lo01')
+      clue = client.get_clue(roles: role, tags: 'k12phys-ch04-s02-lo01')
 
-      expect(clue).to eq 0.5
+        expect(clue[:aggregate]).to be_a(Float)
+        expect(['high', 'medium', 'low']).to include(clue[:level])
+        expect(['good', 'bad']).to include(clue[:confidence])
+        expect(['above', 'below']).to include(clue[:threshold])
     end
 
   end
