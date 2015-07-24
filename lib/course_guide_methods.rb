@@ -2,91 +2,95 @@ module CourseGuideMethods
 
   private
 
-  def filter_completed_exercise_steps(task_steps)
-    task_steps.flatten.select{ |ts| ts.exercise? && ts.completed? }
+  def get_completed_tasked_exercises_from_task_steps(task_steps)
+    tasked_exercise_ids = task_steps.flatten.select{ |ts| ts.exercise? && ts.completed? }
+                                            .collect{ |ts| ts.tasked_id }
+    Tasks::Models::TaskedExercise.where(id: tasked_exercise_ids).eager_load(
+      [{task_step: {task: {taskings: :role}}},
+       {exercise: {tags: {page_tags: {page: {book_part: :book}}}}}]
+    )
   end
 
-  def group_task_steps_by_pages_from_book(task_steps, book)
-    task_steps.each_with_object({}) do |ts, hash|
-      pages = ts.tasked.exercise.tags.collect do |tt|
+  def group_tasked_exercises_by_pages_from_book(tasked_exercises, book)
+    tasked_exercises.each_with_object({}) do |te, hash|
+      pages = te.exercise.tags.collect do |tt|
         tt.page_tags.collect{ |pt| pt.page }
       end.flatten.uniq
 
       pages.each do |page|
         next unless page.book_part.book == book
         hash[page] ||= []
-        hash[page] << ts
+        hash[page] << te
       end
     end
   end
 
-  def group_task_steps_by_chapters_from_book(task_steps, book)
-    task_steps.each_with_object({}) do |ts, hash|
-      chapters = ts.tasked.exercise.tags.collect do |tt|
+  def group_tasked_exercises_by_chapters_from_book(tasked_exercises, book)
+    tasked_exercises.each_with_object({}) do |te, hash|
+      chapters = te.exercise.tags.collect do |tt|
         tt.page_tags.collect{ |pt| pt.page.book_part }
       end.flatten.uniq
 
       chapters.each do |chapter|
         next unless chapter.book == book
         hash[chapter] ||= []
-        hash[chapter] << ts
+        hash[chapter] << te
       end
     end
   end
 
-  def filter_task_steps_by_book(task_steps, book)
-    task_steps.select do |ts|
-      ts.tasked.exercise.tags.any? do |tt|
+  def filter_tasked_exercises_by_book(tasked_exercises, book)
+    tasked_exercises.select do |te|
+      te.exercise.tags.any? do |tt|
         tt.page_tags.any?{ |pt| pt.page.book_part.book == book }
       end
     end
   end
 
-  def completed_practices(task_steps)
-    task_steps.collect(&:task).select do |task|
+  def completed_practices(tasked_exercises)
+    tasked_exercises.collect{ |te| te.task_step.task }.select do |task|
       task.completed? && (task.chapter_practice? || task.page_practice? || task.mixed_practice?)
     end.uniq
   end
 
-  def get_los(task_steps)
-    [task_steps].flatten.collect(&:los).flatten.uniq
+  def get_lo_and_aplos(tasked_exercises)
+    [tasked_exercises].flatten.collect{ |te| te.los + te.aplos }.flatten.uniq
   end
 
-  def get_aplos(task_steps)
-    [task_steps].flatten.collect(&:aplos).flatten.uniq
-  end
-
-  def get_current_level(task_steps)
-    tags = get_los(task_steps) + get_aplos(task_steps)
-    roles = task_steps.collect{ |ts| ts.task.taskings.collect{ |tg| tg.role } }.flatten
+  def get_current_level(tasked_exercises)
+    tags = get_lo_and_aplos(tasked_exercises)
+    roles = tasked_exercises.collect{ |ts| ts.task_step.task.taskings.collect{ |tg| tg.role } }
+                            .flatten
     OpenStax::Biglearn::V1.get_clue(roles: roles, tags: tags)
   end
 
-  def compile_pages(task_steps, book)
-    group_task_steps_by_pages_from_book(task_steps, book).collect do |page, task_steps|
-      practices = completed_practices(task_steps)
+  def compile_pages(tasked_exercises, book)
+    group_tasked_exercises_by_pages_from_book(tasked_exercises, book)
+      .collect do |page, tasked_exercises|
+      practices = completed_practices(tasked_exercises)
 
       {
         title: page.title,
         chapter_section: page.chapter_section,
-        questions_answered_count: task_steps.count,
-        current_level: get_current_level(task_steps),
+        questions_answered_count: tasked_exercises.count,
+        current_level: get_current_level(tasked_exercises),
         practice_count: practices.count,
         page_ids: [page.id]
       }
     end.sort_by{ |pg| pg[:chapter_section] }
   end
 
-  def compile_chapters(task_steps, book)
-    group_task_steps_by_chapters_from_book(task_steps, book).collect do |chapter, task_steps|
-      pages = compile_pages(task_steps, book)
-      practices = completed_practices(task_steps)
+  def compile_chapters(tasked_exercises, book)
+    group_tasked_exercises_by_chapters_from_book(tasked_exercises, book)
+      .collect do |chapter, tasked_exercises|
+      pages = compile_pages(tasked_exercises, book)
+      practices = completed_practices(tasked_exercises)
 
       {
         title: chapter.title,
         chapter_section: chapter.chapter_section,
-        questions_answered_count: task_steps.count,
-        current_level: get_current_level(task_steps),
+        questions_answered_count: tasked_exercises.count,
+        current_level: get_current_level(tasked_exercises),
         practice_count: practices.count,
         page_ids: pages.collect{|pp| pp[:page_ids]}.flatten,
         children: pages
@@ -95,8 +99,9 @@ module CourseGuideMethods
   end
 
   def compile_guide(task_steps, book)
-    ts = filter_task_steps_by_book(task_steps, book)
-    chapters = compile_chapters(ts, book)
+    tasked_exercises = get_completed_tasked_exercises_from_task_steps(task_steps)
+    filtered_tasked_exercises = filter_tasked_exercises_by_book(tasked_exercises, book)
+    chapters = compile_chapters(filtered_tasked_exercises, book)
 
     {
       title: book.root_book_part.title,
