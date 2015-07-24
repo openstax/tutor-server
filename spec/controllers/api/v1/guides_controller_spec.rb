@@ -39,17 +39,17 @@ RSpec.describe Api::V1::GuidesController, type: :controller, api: true,
       }
 
       it 'returns the student guide for the logged in user' do
-        expect(GetCourseGuide).to receive(:[])
-                                  .with(role: student_role, course: course)
-                                  .and_return(course_guide)
+        expect(GetStudentGuide).to receive(:[])
+                               .with(role: student_role)
+                               .and_return(course_guide)
 
         api_get :student, user_2_token, parameters: { id: course.id }
       end
 
       it 'returns the student guide for a teacher providing a student role ID' do
-        expect(GetCourseGuide).to receive(:[])
-                                  .with(role: student_3_role, course: course)
-                                  .and_return(course_guide)
+        expect(GetStudentGuide).to receive(:[])
+                               .with(role: student_3_role)
+                               .and_return(course_guide)
 
         api_get :student, user_1_token, parameters: { id: course.id,
                                                       role_id: student_3_role.id }
@@ -58,9 +58,9 @@ RSpec.describe Api::V1::GuidesController, type: :controller, api: true,
 
     describe '#teacher' do
       it 'returns the teacher guide' do
-        expect(GetCourseGuide).to receive(:[])
-                                  .with(role: teacher_role, course: course)
-                                  .and_return([course_guide])
+        expect(GetTeacherGuide).to receive(:[])
+                               .with(role: teacher_role)
+                               .and_return([course_guide])
 
         api_get :teacher, user_1_token, parameters: { id: course.id }
       end

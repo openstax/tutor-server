@@ -12,7 +12,7 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   validates :tasked_id, uniqueness: { scope: :tasked_type }
   validates :group_type, presence: true
 
-  delegate :can_be_answered?, :can_be_recovered?, :exercise?, :placeholder?, to: :tasked
+  delegate :can_be_answered?, :can_be_recovered?, :has_correctness?, to: :tasked
 
   scope :complete, -> { where{first_completed_at != nil} }
   scope :incomplete, -> { where{first_completed_at == nil} }
@@ -21,8 +21,12 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
 
   after_save { task.update_step_counts! }
 
-  def has_correctness?
-    tasked.has_correctness?
+  def exercise?
+    tasked_type == Tasks::Models::TaskedExercise.name
+  end
+
+  def placeholder?
+    tasked_type == Tasks::Models::TaskedPlaceholder.name
   end
 
   def is_correct?

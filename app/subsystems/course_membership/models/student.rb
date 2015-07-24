@@ -5,7 +5,7 @@ class CourseMembership::Models::Student < Tutor::SubSystems::BaseModel
   has_many :enrollments, dependent: :destroy
 
   validates :course, presence: true
-  validates :role, presence: true, uniqueness: { scope: :entity_course_id }
+  validates :role, presence: true, uniqueness: true
   validates :deidentifier, uniqueness: true
 
   before_save :generate_deidentifier

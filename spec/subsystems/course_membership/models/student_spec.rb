@@ -1,11 +1,16 @@
 require 'rails_helper'
 
 RSpec.describe CourseMembership::Models::Student, type: :model do
+  let!(:period) { CreatePeriod[course: Entity::Course.create!].to_model }
+  subject(:student) { AddUserAsPeriodStudent[user: Entity::User.create!, period: period].student }
+
   it { is_expected.to belong_to(:course) }
   it { is_expected.to belong_to(:role) }
 
   it { is_expected.to validate_presence_of(:course) }
   it { is_expected.to validate_presence_of(:role) }
+
+  it { is_expected.to validate_uniqueness_of(:role) }
 
   [:username, :first_name, :last_name, :full_name].each do |method|
     it { is_expected.to delegate_method(method).to(:role) }

@@ -2,16 +2,15 @@ module CourseMembership
   class GetCoursePeriods
     lev_routine express_output: :periods
 
-    uses_routine GetPeriodRoles,
-      translations: { outputs: { type: :verbatim } },
-      as: :get_roles
+    uses_routine CourseMembership::IsCourseTeacher, as: :is_teacher
 
     protected
+
     def exec(course:, roles: [])
       roles = [roles].flatten
 
       outputs[:periods] = if roles.any?
-                            periods_for_roles(course.periods, roles)
+                            periods_for_roles(course, roles)
                           else
                             Entity::Relation.new(course.periods)
                           end
@@ -19,11 +18,10 @@ module CourseMembership
 
     private
 
-    def periods_for_roles(periods, roles)
-      periods.select do |p|
-        roles_in_period = run(:get_roles, periods: p).outputs.roles
-        (roles_in_period & roles) == roles
-      end
+    def periods_for_roles(course, roles)
+      is_teacher = run(:is_teacher, course: course, roles: roles).outputs.is_course_teacher
+      role_periods = is_teacher ? course.periods : roles.collect{ |rr| rr.student.try(:period) }
+      course.periods & role_periods
     end
   end
 end

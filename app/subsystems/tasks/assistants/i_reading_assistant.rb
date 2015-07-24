@@ -248,8 +248,8 @@ class Tasks::Assistants::IReadingAssistant
     step
   end
 
-  def self.related_content_for_page(page:, title: page.title, chapter_section: page.chapter_section)
-    {title: title, chapter_section: chapter_section}
+  def self.related_content_for_page(page:, title: page.title)
+    { title: title, chapter_section: page.chapter_section }
   end
 
   def self.get_related_content_for(content_exercise)
@@ -258,12 +258,10 @@ class Tasks::Assistants::IReadingAssistant
   end
 
   def self.content_exercise_page(content_exercise)
-    los = Content::Models::Tag.joins{exercise_tags.exercise}
-                              .where{exercise_tags.exercise.url == content_exercise.url}
-                              .select{|tag| tag.lo?}
+    los = content_exercise.los + content_exercise.aplos
 
     pages = Content::Models::Page.joins{page_tags.tag}
-                                 .where{page_tags.tag.id.in los.map(&:id)}
+                                 .where{page_tags.tag.value.in los}
 
     raise "#{pages.count} pages found for exercise #{content_exercise.url}" unless pages.one?
     pages.first

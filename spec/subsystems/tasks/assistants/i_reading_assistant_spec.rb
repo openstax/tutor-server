@@ -27,7 +27,8 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
                              chapter_section: [8, 1]}] },
         { klass: Tasks::Models::TaskedReading,
           title: "Force",
-          related_content: [{title: "Force", chapter_section: [8, 2]}] }
+          related_content: [{title: "Force",
+                             chapter_section: [8, 2]}] }
       ]
     }
 
@@ -35,10 +36,12 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       [
         { klass: Tasks::Models::TaskedExercise,
           title: nil,
-          related_content: [{title: "Force", chapter_section: [8, 2]}] },
+          related_content: [{title: "Force",
+                            chapter_section: [8, 2]}] },
         { klass: Tasks::Models::TaskedExercise,
           title: nil,
-          related_content: [{title: "Force", chapter_section: [8, 2]}] },
+          related_content: [{title: "Force",
+                             chapter_section: [8, 2]}] },
       ]
     }
 

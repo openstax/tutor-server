@@ -27,6 +27,14 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
     "#{number}@#{version}"
   end
 
+  def los
+    tags.to_a.select(&:lo?).collect(&:value)
+  end
+
+  def aplos
+    tags.to_a.select(&:aplo?).collect(&:value)
+  end
+
   def tags_with_teks
     # Include tek tags
     tags.collect { |t| [t, t.teks_tags] }.flatten.uniq

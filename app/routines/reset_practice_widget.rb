@@ -54,6 +54,7 @@ class ResetPracticeWidget
       step = Tasks::Models::TaskStep.new(task: task)
 
       step.tasked = TaskExercise[exercise: exercise, task_step: step]
+      step.add_related_content(get_related_content_for(exercise)) unless exercise_source == :fake
 
       task.task_steps << step
     end
@@ -67,6 +68,22 @@ class ResetPracticeWidget
     # return the Task
 
     outputs[:task] = task.entity_task
+  end
+
+  def get_related_content_for(content_exercise)
+    page = content_exercise_page(content_exercise)
+
+    { title: page.title, chapter_section: page.chapter_section }
+  end
+
+  def content_exercise_page(content_exercise)
+    los = content_exercise.los + content_exercise.aplos
+
+    pages = Content::Models::Page.joins{page_tags.tag}
+                                 .where{page_tags.tag.value.in los}
+
+    raise "#{pages.count} pages found for exercise #{content_exercise.url}" unless pages.one?
+    pages.first
   end
 
   def get_fake_exercises(count:)

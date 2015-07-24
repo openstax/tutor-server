@@ -16,6 +16,14 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
     "#{uuid}@#{version}"
   end
 
+  def los
+    tags.to_a.select(&:lo?).collect(&:value)
+  end
+
+  def aplos
+    tags.to_a.select(&:aplo?).collect(&:value)
+  end
+
   protected
 
   def parser
