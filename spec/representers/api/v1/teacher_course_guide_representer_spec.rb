@@ -22,6 +22,7 @@ RSpec.describe Api::V1::TeacherCourseGuideRepresenter do
                                              chapter_section: [1, 4],
                                              questions_answered_count: 25,
                                              current_level: 0.89,
+                                             interpretation: 'high',
                                              practice_count: 3,
                                              page_ids: [4, 5, 6] }] })]
 
@@ -32,6 +33,7 @@ RSpec.describe Api::V1::TeacherCourseGuideRepresenter do
       'chapter_section' => [1, 4],
       'questions_answered_count' => 25,
       'current_level' => 0.89,
+      'interpretation' => 'high',
       'practice_count' => 3,
       'page_ids' => ['4', '5', '6']
     }])

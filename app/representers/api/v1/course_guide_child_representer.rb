@@ -22,8 +22,12 @@ module Api::V1
     property :current_level,
              type: Float,
              readable: true,
-             writeable: false,
-             schema_info: { required: true }
+             writeable: false
+
+    property :interpretation,
+             type: String,
+             readable: true,
+             writeable: false
 
     property :practice_count,
              type: Integer,
