@@ -32,8 +32,17 @@ RSpec.describe OpenStax::Biglearn::V1, :type => :external do
     let!(:exercise) { OpenStax::Biglearn::V1::Exercise.new('e42', 'topic') }
 
     it 'delegates get_clue to the client' do
-      expect(client).to receive(:get_clue).twice.with(roles: [role], tags: [tag])
+      clue = OpenStax::Biglearn::V1::FakeClient.instance.get_clue(roles: [role], tags: [tag])
+      expect(client).to receive(:get_clue).twice.with(roles: [role], tags: [tag]) { clue }
       expect(OpenStax::Biglearn::V1.get_clue(roles: [role], tags: [tag])).to(
+        eq client.get_clue(roles: [role], tags: [tag])[:aggregate]
+      )
+    end
+
+    it 'delegates get_filtered_clue as get_clue to the client' do
+      clue = OpenStax::Biglearn::V1::FakeClient.instance.get_clue(roles: [role], tags: [tag])
+      expect(client).to receive(:get_clue).twice.with(roles: [role], tags: [tag]) { clue }
+      expect(OpenStax::Biglearn::V1.get_filtered_clue(roles: [role], tags: [tag])).to(
         eq client.get_clue(roles: [role], tags: [tag])
       )
     end

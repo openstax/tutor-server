@@ -51,7 +51,7 @@ class OpenStax::Biglearn::V1::RealClient
   end
 
   # Return a CLUE value for the specified set of roles and the group of tags.  May return
-  # nil if no CLUE is available (e.g. no exercises attached to these tags).
+  # nil if no CLUE is available (e.g. no exercises attached to these tags or confidence too low).
   #
   # Biglearn can actually take multiple sets of tag queries at once and return a CLUE
   # for each; we're not using that capability yet. When we do we'll probably rename the
@@ -69,12 +69,18 @@ class OpenStax::Biglearn::V1::RealClient
 
     response = request(:get, clue_uri(query))
 
-    result = handle_response(response)
+    result = handle_response(response) || {}
 
     # extract the clue using the knowledge that we have a simplified input (only one
     # tag query, so we can just pull out the appropriate value).  It could be that there's
     # no CLUE to give, in which case we return nil.
-    clue = result.try(:[], "aggregates").try(:first).try(:[], "aggregate")
+    aggregate = result['aggregates'].try(:first) || {}
+    interpretation = aggregate['interpretation'] || {}
+
+    { aggregate: aggregate['aggregate'],
+      level: interpretation['level'],
+      confidence: interpretation['confidence'],
+      threshold: interpretation['threshold'] }
   end
 
   private

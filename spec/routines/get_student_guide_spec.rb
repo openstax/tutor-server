@@ -58,6 +58,7 @@ RSpec.describe GetStudentGuide do
       "chapter_section"=>[3],
       "questions_answered_count"=>2,
       "current_level"=>kind_of(Float),
+      "interpretation"=>kind_of(String),
       "practice_count"=>0,
       "page_ids"=>[kind_of(Integer)],
       "children"=> array_including(kind_of(Hash))
@@ -72,6 +73,7 @@ RSpec.describe GetStudentGuide do
       "chapter_section"=>[3, 1],
       "questions_answered_count"=>2,
       "current_level"=>kind_of(Float),
+      "interpretation"=>kind_of(String),
       "practice_count"=>0,
       "page_ids"=>[kind_of(Integer)]
     )

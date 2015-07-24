@@ -61,19 +61,21 @@ module CourseGuideMethods
     tags = get_lo_and_aplos(tasked_exercises)
     roles = tasked_exercises.collect{ |ts| ts.task_step.task.taskings.collect{ |tg| tg.role } }
                             .flatten
-    OpenStax::Biglearn::V1.get_clue(roles: roles, tags: tags)
+    OpenStax::Biglearn::V1.get_filtered_clue(roles: roles, tags: tags)
   end
 
   def compile_pages(tasked_exercises, book)
     group_tasked_exercises_by_pages_from_book(tasked_exercises, book)
       .collect do |page, tasked_exercises|
       practices = completed_practices(tasked_exercises)
+      clue = get_current_level(tasked_exercises)
 
       {
         title: page.title,
         chapter_section: page.chapter_section,
         questions_answered_count: tasked_exercises.count,
-        current_level: get_current_level(tasked_exercises),
+        current_level: clue[:aggregate],
+        interpretation: clue[:level],
         practice_count: practices.count,
         page_ids: [page.id]
       }
@@ -85,12 +87,14 @@ module CourseGuideMethods
       .collect do |chapter, tasked_exercises|
       pages = compile_pages(tasked_exercises, book)
       practices = completed_practices(tasked_exercises)
+      clue = get_current_level(tasked_exercises)
 
       {
         title: chapter.title,
         chapter_section: chapter.chapter_section,
         questions_answered_count: tasked_exercises.count,
-        current_level: get_current_level(tasked_exercises),
+        current_level: clue[:aggregate],
+        interpretation: clue[:level],
         practice_count: practices.count,
         page_ids: pages.collect{|pp| pp[:page_ids]}.flatten,
         children: pages
