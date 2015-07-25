@@ -6,6 +6,10 @@ class Content::Routines::ImportPage
                as: :create_page,
                translations: { outputs: { type: :verbatim } }
 
+  uses_routine Content::Routines::FindOrCreateTags,
+               as: :find_or_create_tags,
+               translations: { outputs: { type: :verbatim } }
+
   uses_routine Content::Routines::TagResource,
                as: :tag,
                translations: { outputs: { type: :verbatim } }
@@ -32,10 +36,12 @@ class Content::Routines::ImportPage
     transfer_errors_from outputs[:page], {type: :verbatim}, true
 
     # Tag the Page
-    run(:tag, outputs[:page], cnx_page.tags)
+    run(:find_or_create_tags, input: cnx_page.tags)
+    run(:tag, outputs[:page], outputs[:tags], tagging_class: Content::Models::PageTag)
 
     # Get Exercises from OSE that match the LO's
-    run(:import_exercises, tag: cnx_page.los + cnx_page.aplos) unless cnx_page.los.blank?
+    los = outputs[:tags].select{ |tag| tag.lo? || tag.aplo? }.collect{ |tag| tag.value }
+    run(:import_exercises, tag: los) unless los.empty?
   end
 
 end

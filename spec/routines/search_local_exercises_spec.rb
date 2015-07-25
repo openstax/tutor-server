@@ -51,7 +51,8 @@ RSpec.describe SearchLocalExercises, :type => :routine, :vcr => VCR_OPTS do
     number = exercise.url.split('/').last.split('@').first
     exercise_2 = FactoryGirl.create :content_exercise, number: number, version: 2,
                                                        url: exercise.url.split('@').first + '@2'
-    Content::Routines::TagResource.call(exercise_2, exercise.tags)
+    tags = Content::Routines::FindOrCreateTags[input: exercise.tag_hashes]
+    Content::Routines::TagResource.call(exercise_2, tags)
 
     exercises = SearchLocalExercises.call(tag: embed_tag).outputs.items
     expect(exercises.length).to eq 1
@@ -70,7 +71,8 @@ RSpec.describe SearchLocalExercises, :type => :routine, :vcr => VCR_OPTS do
     exercise_step_1 = Tasks::Models::TaskStep.new(task: task)
     exercise_step_2 = Tasks::Models::TaskStep.new(task: task)
 
-    Content::Routines::TagResource.call(exercise_3, 'test-tag')
+    tag = Content::Routines::FindOrCreateTags[input: [{value: 'test-tag'}]]
+    Content::Routines::TagResource.call(exercise_3, tag)
 
     TaskExercise[exercise: Exercise.new(exercise_1), task_step: exercise_step_1]
     TaskExercise[exercise: Exercise.new(exercise_2), task_step: exercise_step_2]

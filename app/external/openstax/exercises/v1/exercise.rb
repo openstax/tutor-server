@@ -37,12 +37,30 @@ class OpenStax::Exercises::V1::Exercise
     @tags ||= content_hash['tags']
   end
 
+  def tag_hashes
+    @tag_hashes ||= tags.collect do |tag|
+      {
+        value: tag,
+        type: !LO_REGEX.match(tag).nil? ? :lo : \
+             (!APLO_REGEX.match(tag).nil? ? :aplo : :generic)
+      }
+    end
+  end
+
+  def lo_hashes
+    @lo_hashes ||= tag_hashes.select{ |hash| hash[:type] == :lo }
+  end
+
+  def aplo_hashes
+    @aplo_hashes ||= tag_hashes.select{ |hash| hash[:type] == :aplo }
+  end
+
   def los
-    @los ||= tags.collect{ |tag| LO_REGEX.match(tag).try(:[], 0) }.compact.uniq
+    @los ||= lo_hashes.collect{ |hash| hash[:value] }
   end
 
   def aplos
-    @aplos ||= tags.collect{ |tag| APLO_REGEX.match(tag).try(:[], 0) }.compact.uniq
+    @aplos ||= aplo_hashes.collect{ |hash| hash[:value] }
   end
 
   def questions

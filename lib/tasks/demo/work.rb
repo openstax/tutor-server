@@ -24,7 +24,9 @@ class DemoWork < DemoBase
           step_types: assignment.step_types,
         )
         log("Working assignment: #{assignment.title}")
-        task_plan.tasks.each_with_index do | task, index |
+        task_plan.tasks.eager_load({taskings: {role: {user: {profile: :account}}}})
+                       .preload({task_steps: [:tasked, :task]})
+                       .each_with_index do | task, index |
           user = task.taskings.first.role.user
           profile = tasks_profile[ user.profile.id ]
 
