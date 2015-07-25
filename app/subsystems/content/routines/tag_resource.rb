@@ -12,7 +12,7 @@ class Content::Routines::TagResource
     outputs[:taggings] = []
 
     [tags].flatten.compact.each do |tag|
-      tagging = tagging_class.create(tag: tag, resource_field => resource)
+      tagging = tagging_class.find_or_create_by(tag: tag, resource_field => resource)
       outputs[:taggings] << tagging
       transfer_errors_from(tagging, scope: :taggings)
     end
