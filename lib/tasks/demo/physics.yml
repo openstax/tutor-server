@@ -31,76 +31,36 @@ assignments:
   - type: reading
     title: Read 3.2 Acceleration Pt2
     chapter_sections: [[3, 2]]
-    step_types: [ r, i, e, r, r, r, e, r, r, r, e, r, e, p]
+    step_types: [ r, i, e, r, r, e, r, r, r, e, r, e, p ]
     periods:
       - id: p1
         opens_at: <%= open_two_days_ago %>
         due_at: <%= due_tomorrow %>
         students:
           ak: 88
-          at: [ 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0 ]
+          at: [ 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1 ]
           cp: 40
-          gj: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1 ]
+          gj: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1 ]
           hp: 60
           lb: i
           lt: ns
           ne: 72
-          sd: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1 ]
+          sd: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1 ]
           vw: 80
       - id: p2
         opens_at: <%= open_three_days_ago %>
         due_at: <%= due_today %>
         students:
           af: 100
-          ag: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1 ]
-          bb: [ 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0 ]
-          cd: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1 ]
+          ag: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0 ]
+          bb: [ 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0 ]
+          cd: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1 ]
           eh: 79
-          ft: [ 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1 ]
+          ft: [ 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1 ]
           js: i
           ms: i
           nz: i
-          ra: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0 ]
-
-
-  - type: reading
-    title: Read 4.1-4.2 Force & Motion Pt1
-    chapter_sections: [[4, 0], [4, 1], [4, 2]]
-    step_types: [ r, r, v, e, e, e, i, e, e, p ]
-    late:
-      ak: <%= 2.hours %>
-      hp: <%= 2.days %>
-      at: <%= 10.minutes %>
-      nz: <%= 8.hours %>
-    periods:
-      - id: p1
-        opens_at: <%= open_three_days_ago %>
-        due_at: <%= due_three_days_ago %>
-        students:
-          ak: 94
-          at: 60
-          cp: i
-          gj: 92
-          hp: 82
-          lb: [ 1, 1, 1, 1, 0, 1, 0, 1, 1, 1 ]
-          lt: [ 1, 1, 0, 1, 1, 0, 1, 1, 1, 1 ]
-          ne: 100
-          sd: 87
-          vw: [ 1, 1, 1, 1, 0, 0, 1, 0, 0, 0 ]
-      - id: p2
-        opens_at: <%= open_three_days_ago %>
-        due_at: <%= due_three_days_ago %>
-        students:
-          af: [ 1, 1, 1, 1, 0, 0, 1, 0, 0, 0 ]
-          ag: 82
-          bb: i
-          cd: ns
-          eh: ns
-          ft: [ 1, 1, 0, 1, 1, 0, 0, 1, 1, 1 ]
-          js: 88
-          ms: [ 1, 1, 0, 1, 1, 1, 1, 0, 0, 1 ]
-          nz: 90
-          ra: [ 1, 1, 1, 1, 1, 0, 1, 1, 1, 0 ]
+          ra: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1 ]
 
   - type: homework
     title: HW Chapter 3 Acceleration
@@ -128,3 +88,45 @@ assignments:
           ms: i
           nz: i
           ra: i
+
+
+
+  - type: reading
+    title: Read 4.1-4.2 Force & Motion Pt1
+    chapter_sections: [[4, 0], [4, 1], [4, 2]]
+    num_exercises: 10
+    step_types: [ r, r, r, v, e, i, e, e, p ]
+    late:
+      ak: <%= 2.hours %>
+      hp: <%= 2.days %>
+      at: <%= 10.minutes %>
+      nz: <%= 8.hours %>
+    periods:
+      - id: p1
+        opens_at: <%= open_today %>
+        due_at: <%= due_two_days_from_now %>
+        students:
+          ak: 94
+          at: 60
+          cp: i
+          gj: 92
+          hp: 82
+          lb: [ 1, 1, 1, 1, 0, 1, 0, 1, 1 ]
+          lt: [ 1, 1, 0, 1, 1, 0, 1, 1, 1 ]
+          ne: 100
+          sd: 87
+          vw: [ 1, 1, 1, 1, 0, 0, 1, 0, 0 ]
+      - id: p2
+        opens_at: <%= open_today %>
+        due_at: <%= due_two_days_from_now %>
+        students:
+          af: [ 1, 1, 1, 1, 0, 0, 1, 0, 0 ]
+          ag: 82
+          bb: i
+          cd: ns
+          eh: ns
+          ft: [ 1, 1, 0, 1, 1, 0, 0, 1, 1 ]
+          js: 88
+          ms: [ 1, 1, 0, 1, 1, 1, 1, 0, 0 ]
+          nz: 90
+          ra: [ 1, 1, 1, 1, 1, 0, 1, 1, 1 ]
