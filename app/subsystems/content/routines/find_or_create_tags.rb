@@ -15,9 +15,15 @@ class Content::Routines::FindOrCreateTags
   #                    to (type must be "lo")
   #
   def exec(input:)
-    tags = input.select{ |ii| ii.is_a?(Content::Models::Tag) }
-    hash_array = input.select{ |ii| ii.is_a?(Hash) }
-    outputs[:tags] = tags + find_or_create_tags_from_hash_array(hash_array)
+    tag_objects, hashes = partition_content_tags(input)
+    tag_objects.each{ |tag| tag.save! unless tag.persisted? }
+    outputs[:tags] = tag_objects + find_or_create_tags_from_hash_array(hashes)
+  end
+
+  private
+
+  def partition_content_tags(input)
+    [input].flatten.partition{ |obj| obj.is_a?(Content::Models::Tag) }
   end
 
   def find_or_create_tags_from_hash_array(hash_array)

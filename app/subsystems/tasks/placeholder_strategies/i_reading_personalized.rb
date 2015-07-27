@@ -17,7 +17,7 @@ class Tasks::PlaceholderStrategies::IReadingPersonalized
       difficulty:        0.5,
       allow_repetitions: true
     )
-debugger if exercise_urls.empty?
+
     chosen_exercises = SearchLocalExercises[url: exercise_urls, extract_numbers_from_urls: true]
     raise "could not fill all placeholder slots (expected #{num_placeholders} exercises, got #{chosen_exercises.count}) for query: #{biglearn_condition(los)}"  unless chosen_exercises.count == num_placeholders
 
