@@ -86,18 +86,6 @@ class Api::V1::CoursesController < Api::V1::ApiController
     respond_with search_outputs, represent_with: Api::V1::ExerciseSearchRepresenter
   end
 
-  api :GET, '/courses/:course_id/plans', 'Returns a course\'s plans'
-  description <<-EOS
-    #{json_schema(Api::V1::TaskPlanSearchRepresenter, include: :writeable)}
-  EOS
-  def plans
-    course = Entity::Course.find(params[:id])
-    OSU::AccessPolicy.require_action_allowed!(:task_plans, current_api_user, course)
-
-    out = GetCourseTaskPlans.call(course: course).outputs
-    respond_with out, represent_with: Api::V1::TaskPlanSearchRepresenter
-  end
-
   api :GET, '/courses/:course_id/tasks', 'Gets all course tasks assigned to the role holder making the request'
   description <<-EOS
     #{json_schema(Api::V1::TaskSearchRepresenter, include: :readable)}
