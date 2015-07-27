@@ -8,7 +8,7 @@ module Tasks::Models
     belongs_to :role, subsystem: :entity
 
     def filename
-      export.file.identifier
+      export.file.filename
     end
 
     def url
