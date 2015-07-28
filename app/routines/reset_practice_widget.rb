@@ -45,10 +45,17 @@ class ResetPracticeWidget
                   :mixed_practice
                 end
 
+    # In a multi-web server environment, it is possible for one server to create
+    # the practice task and another to request it very quickly and if the server
+    # times are not completely sync'd the request can be reject because the task
+    # looks non open.  When we have PracticeTasks maybe they can not have an opens_at
+    # but for now HACK it by setting it to open in the near past.
+    task_time = 10.minutes.ago
+
     task = Tasks::BuildTask[task_type: task_type,
                             title: 'Practice',
-                            opens_at: Time.now,
-                            feedback_at: Time.now]
+                            opens_at: task_time,
+                            feedback_at: task_time]
 
     exercises.each do |exercise|
       step = Tasks::Models::TaskStep.new(task: task)
