@@ -51,7 +51,7 @@ module Api::V1
              readable: true
 
     property :active?,
-             as: :active,
+             as: :is_active,
              writeable: false,
              readable: true,
              schema_info: {

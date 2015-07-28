@@ -17,7 +17,7 @@ class GetStudentRoster
         entity_role_id: student.entity_role_id,
         username: student.username,
         deidentifier: student.deidentifier,
-        active: student.active?
+        :active? => student.active?
       })
     end
   end

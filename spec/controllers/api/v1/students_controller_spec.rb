@@ -71,7 +71,8 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
               full_name: student.full_name,
               period_id: period.id.to_s,
               role_id: student_role.id.to_s,
-              deidentifier: student.deidentifier
+              deidentifier: student.deidentifier,
+              is_active: true
             },
             {
               id: student_2.id.to_s,
@@ -80,7 +81,8 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
               full_name: student_2.full_name,
               period_id: period.id.to_s,
               role_id: student_role_2.id.to_s,
-              deidentifier: student_2.deidentifier
+              deidentifier: student_2.deidentifier,
+              is_active: true
             },
             {
               id: student_3.id.to_s,
@@ -89,7 +91,8 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
               full_name: student_3.full_name,
               period_id: period_2.id.to_s,
               role_id: student_role_3.id.to_s,
-              deidentifier: student_3.deidentifier
+              deidentifier: student_3.deidentifier,
+              is_active: true
             }
           ]
         end
@@ -150,7 +153,8 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
             full_name: 'Dummy User',
             period_id: period.id.to_s,
             role_id: new_student.entity_role_id.to_s,
-            deidentifier: new_student.deidentifier
+            deidentifier: new_student.deidentifier,
+            is_active: true
           })
         end
       end
@@ -198,7 +202,8 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
             full_name: student.full_name,
             period_id: period_2.id.to_s,
             role_id: student.entity_role_id.to_s,
-            deidentifier: student.deidentifier
+            deidentifier: student.deidentifier,
+            is_active: true
           })
           expect(student.reload.period).to eq period_2.to_model
         end

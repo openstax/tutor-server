@@ -66,5 +66,9 @@ module Api::V1
              writeable: false,
              readable: true
 
+    property :active?,
+             as: :is_active,
+             writeable: false,
+             readable: true
   end
 end
