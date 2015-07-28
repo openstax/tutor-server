@@ -3,6 +3,7 @@ class Admin::SchoolsUpdate
 
   paramify :school do
     attribute :name, type: String
+    attribute :course_detail_district_id, type: Integer
     validates :name, presence: true
   end
 
@@ -14,6 +15,8 @@ class Admin::SchoolsUpdate
   end
 
   def handle
-    run(:update_school, id: params[:id], attributes: school_params.as_hash(:name))
+    run(:update_school, id: params[:id],
+                        attributes: school_params.as_hash(:name,
+                                                          :course_detail_district_id))
   end
 end

@@ -7,6 +7,7 @@ module CourseDetail
       school = Models::School.find(id)
       school.update_attributes(attributes)
       outputs.school = { id: school.id,
+                         district_id: school.course_detail_district_id,
                          name: school.name }
     end
   end

@@ -2,8 +2,6 @@ require 'rails_helper'
 
 RSpec.describe 'Administration' do
   before do
-    FactoryGirl.create(:district, name: 'Good district')
-
     admin = FactoryGirl.create(:user_profile, :administrator)
     stub_current_user(admin)
 
@@ -29,6 +27,19 @@ RSpec.describe 'Administration' do
     expect(current_path).to eq(admin_schools_path)
     expect(page).to have_css('.flash_notice', text: 'The school has been updated.')
     expect(page).to have_css('tr td', text: 'Edited Name')
+  end
+
+  scenario 'add a district' do
+    FactoryGirl.create(:district, name: 'Good district')
+
+    click_link 'edit'
+
+    select 'Good district', from: 'District'
+    click_button 'Save'
+
+    expect(current_path).to eq(admin_schools_path)
+    expect(page).to have_css('.flash_notice', text: 'The school has been updated.')
+    expect(page).to have_css('tr td', text: 'Good district')
   end
 
   scenario 'destroy a school' do
