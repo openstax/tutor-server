@@ -95,10 +95,12 @@ module Tasks
           '%.2f' % (data.correct_exercise_count/data.exercise_count.to_f)
         when 'reading'
           data.status.humanize
+        when 'external'
+          data.status.humanize
         else
           raise "Undefined case for data.type #{data.type} " +
                 "please define it here, or use one of " +
-                "homework, reading"
+                "homework, reading, external"
         end
       end
 
