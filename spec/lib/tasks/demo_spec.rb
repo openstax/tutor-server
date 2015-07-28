@@ -4,7 +4,7 @@ require 'tasks/demo/content'
 require 'tasks/demo/tasks'
 require 'tasks/demo/work'
 
-RSpec.describe 'DemoTasks', type: :request, version: :v1, speed: :slow, vcr: VCR_OPTS do
+RSpec.describe 'Demo', type: :request, version: :v1, speed: :slow, vcr: VCR_OPTS do
 
   context 'with the stable book version' do
     it "doesn't catch on fire" do

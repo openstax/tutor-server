@@ -1,10 +1,10 @@
 require 'rails_helper'
 
-RSpec.describe Content::Routines::TagResource, :type => :routine do
+RSpec.describe Content::Routines::TagResource, type: :routine do
   let!(:tag_1)     { FactoryGirl.create :content_tag }
   let!(:tag_2)     { FactoryGirl.create :content_tag }
-  let!(:new_tag_1) { FactoryGirl.build  :content_tag }
-  let!(:new_tag_2) { FactoryGirl.build  :content_tag }
+  let!(:lo_tag_1)  { FactoryGirl.create  :content_tag, tag_type: :lo }
+  let!(:lo_tag_2)  { FactoryGirl.create  :content_tag, tag_type: :lo }
 
   resource_definitions = [
     {
@@ -26,7 +26,7 @@ RSpec.describe Content::Routines::TagResource, :type => :routine do
       result = nil
       expect {
         result = Content::Routines::TagResource.call(
-          resource, [tag_1, tag_2.value]
+          resource, [tag_1, tag_2]
         )
       }.to change{
         resource.send(resource_definition.tagging_relation).count
@@ -50,7 +50,7 @@ RSpec.describe Content::Routines::TagResource, :type => :routine do
 
       expect {
         result = Content::Routines::TagResource.call(
-          resource, [new_tag_1, new_tag_2.value], tag_type: :lo
+          resource, [lo_tag_1, lo_tag_2]
         )
       }.to change{
         resource.send(resource_definition.tagging_relation).count
@@ -60,7 +60,7 @@ RSpec.describe Content::Routines::TagResource, :type => :routine do
 
       resource.reload
 
-      expected_tags = [tag_1, tag_2, new_tag_1, new_tag_2]
+      expected_tags = [tag_1, tag_2, lo_tag_1, lo_tag_2]
       actual_tags = resource.send(resource_definition.tagging_relation)
                             .collect{|tagging| tagging.tag}
 

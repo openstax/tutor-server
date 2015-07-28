@@ -2,9 +2,8 @@ class Content::Routines::ImportExercises
 
   lev_routine
 
-  uses_routine Content::Routines::TagResource,
-               as: :tag,
-               translations: { outputs: { type: :verbatim } }
+  uses_routine Content::Routines::FindOrCreateTags, as: :find_or_create_tags
+  uses_routine Content::Routines::TagResource, as: :tag
 
   protected
 
@@ -23,10 +22,9 @@ class Content::Routines::ImportExercises
       exercise.save
       transfer_errors_from(exercise, {type: :verbatim}, true)
 
-      lo_tags = wrapper.los
-      non_lo_tags = wrapper.tags - lo_tags
-      run(:tag, exercise, lo_tags, tag_type: :lo)
-      run(:tag, exercise, non_lo_tags)
+      tags = run(:find_or_create_tags, input: wrapper.tag_hashes).outputs.tags
+
+      run(:tag, exercise, tags, tagging_class: Content::Models::ExerciseTag)
 
       outputs[:exercises] << exercise
     end

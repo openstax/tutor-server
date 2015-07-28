@@ -24,13 +24,13 @@ assignments:
   - type: reading
     title: Read 3.2 Acceleration Pt2
     chapter_sections: [[3, 2]]
-    step_types: [ r, i, e, r, r, r, e, r, r, r, e, r, e, p]
+    step_types: [ r, i, e, r, r, e, r, r, r, e, r, e, p]
     periods:
       - id: p1
         opens_at: <%= open_three_days_ago %>
         due_at: <%= due_today %>
         students:
-          sd: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1 ]
+          sd: [ 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1 ]
           vw: ns
 
   - type: homework

@@ -46,8 +46,7 @@ RSpec.describe Content::Routines::SearchExercises, type: :routine, speed: :slow,
     exercise_2 = FactoryGirl.create :content_exercise, number: exercise.number,
                                                        version: exercise.version + 1,
                                                        url: exercise.url.split('@').first + '@2'
-    tags = exercise.exercise_tags.collect{ |et| et.tag.value }
-    Content::Routines::TagResource.call(exercise_2, tags)
+    Content::Routines::TagResource.call(exercise_2, exercise.tags)
 
     exercises = Content::Routines::SearchExercises.call(tag: embed_tag).outputs.items
     expect(exercises.length).to eq 1
@@ -67,8 +66,7 @@ RSpec.describe Content::Routines::SearchExercises, type: :routine, speed: :slow,
     exercise_2 = FactoryGirl.create :content_exercise, number: exercise.number,
                                                        version: exercise.version + 1,
                                                        url: exercise.url.split('@').first + '@2'
-    tags = exercise.exercise_tags.collect{ |et| et.tag.value }
-    Content::Routines::TagResource.call(exercise_2, tags)
+    Content::Routines::TagResource.call(exercise_2, exercise.tags)
 
     exercises = Content::Routines::SearchExercises.call(url: exercise.url).outputs.items
     expect(exercises.length).to eq 1

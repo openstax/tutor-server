@@ -24,7 +24,9 @@ FactoryGirl.define do
                                       title: page[:title],
                                       chapter_section: page[:chapter_section],
                                       book_part: book_part)
-        Content::Routines::TagResource[the_page, page[:los]]
+        lo_hashes = page[:los].collect{ |lo| { value: lo, type: :lo } }
+        tags = Content::Routines::FindOrCreateTags[input: lo_hashes]
+        Content::Routines::TagResource[the_page, tags]
       end
     end
 

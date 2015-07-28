@@ -50,8 +50,7 @@ RSpec.describe Api::V1::PagesController, type: :controller, api: true,
       end
 
       it 'returns the page with the correct uuid and version' do
-        api_get :get_page, nil, parameters: { uuid: @page_uuid,
-                                              version: '2' }
+        api_get :get_page, nil, parameters: { uuid: @page_uuid, version: '2' }
         expect(response).to have_http_status(200)
         expect(response.body_as_hash).to eq({
           content_html: @old_page.content
