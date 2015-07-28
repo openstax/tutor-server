@@ -16,7 +16,8 @@ RSpec.describe Api::V1::StudentRepresenter, type: :representer do
       'first_name' => student.first_name,
       'last_name' => student.last_name,
       'full_name' => student.full_name,
-      'deidentifier' => student.deidentifier
+      'deidentifier' => student.deidentifier,
+      'active' => student.active?
     )
   end
 end

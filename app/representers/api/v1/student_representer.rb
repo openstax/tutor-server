@@ -50,5 +50,14 @@ module Api::V1
              writeable: false,
              readable: true
 
+    property :active?,
+             as: :active,
+             writeable: false,
+             readable: true,
+             schema_info: {
+                required: true,
+                description: "Student is dropped iff false"
+             }
+
   end
 end
