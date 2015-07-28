@@ -59,12 +59,12 @@ Rails.application.routes.draw do
         get 'plans'
         get 'tasks'
         get 'dashboard(/role/:role_id)', action: :dashboard
-        post 'practice(/role/:role_id)', action: :practice
-        get 'practice(/role/:role_id)', action: :practice
         get 'performance(/role/:role_id)', action: :performance
         post 'performance/export', action: :performance_export
         get 'performance/exports', action: :performance_exports
       end
+
+      match 'practice(/role/:role_id)' => 'practices#practice', via: [:get, :post]
 
       resources :task_plans, path: '/plans', shallow: true, except: [:index, :new, :edit] do
         member do

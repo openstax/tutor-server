@@ -112,37 +112,6 @@ class Api::V1::CoursesController < Api::V1::ApiController
     respond_with data, represent_with: Api::V1::Courses::DashboardRepresenter
   end
 
-  api nil, nil, nil
-  description nil
-  def practice
-    request.post? ? practice_post : practice_get
-  end
-
-  api :POST, '/courses/:course_id/practice(/role/:role_id)',
-             'Starts a new practice widget'
-  description <<-EOS
-    #{json_schema(Api::V1::PracticeRepresenter, include: :writeable)}
-  EOS
-  def practice_post
-    practice = OpenStruct.new
-    consume!(practice, represent_with: Api::V1::PracticeRepresenter)
-
-    entity_task = ResetPracticeWidget[
-      role: get_practice_role, exercise_source: :biglearn,
-      page_ids: practice.page_ids, book_part_ids: practice.book_part_ids
-    ]
-    respond_with entity_task.task, represent_with: Api::V1::TaskRepresenter, location: nil
-  end
-
-  api :GET, '/courses/:course_id/practice(/role/:role_id)',
-            'Gets the most recent practice widget'
-  def practice_get
-    task = GetPracticeWidget[role: get_practice_role]
-
-    task.nil? ?
-      head(:not_found) : respond_with(task.task, represent_with: Api::V1::TaskRepresenter)
-  end
-
   api :POST, '/courses/:course_id/performance/export',
              'Begins the export of the performance report for authorized teachers'
   description <<-EOS
@@ -196,9 +165,5 @@ class Api::V1::CoursesController < Api::V1::ApiController
       raise(IllegalState, result.errors.map(&:message).to_sentence)
     end
     result.outputs.role
-  end
-
-  def get_practice_role
-    get_course_role(types: :student)
   end
 end
