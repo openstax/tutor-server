@@ -64,7 +64,8 @@ Rails.application.routes.draw do
         get 'performance/exports', action: :performance_exports
       end
 
-      match 'practice(/role/:role_id)' => 'practices#practice', via: [:get, :post]
+      post 'practice(/role/:role_id)' => 'practices#create'
+      get 'practice(/role/:role_id)' => 'practices#show'
 
       resources :task_plans, path: '/plans', shallow: true, except: [:index, :new, :edit] do
         member do
