@@ -20,8 +20,8 @@ class ResetPracticeWidget
 
     # Get the existing practice widget and remove incomplete exercises from it
     # so they can be used in later practice
-    # run(:get_practice_widget, role: role)
     # TODO actually do the step removal
+    # run(:get_practice_widget, role: role)
 
     # Gather relevant LO's from pages and book_parts
     los = Content::GetLos[page_ids: page_ids, book_part_ids: book_part_ids]
@@ -88,21 +88,13 @@ class ResetPracticeWidget
   end
 
   def get_biglearn_exercises(count, role, los)
-    condition = biglearn_condition(los)
-
     urls = OpenStax::Biglearn::V1.get_projection_exercises(
-      role: role , tag_search: condition, count: 5,
+      role: role , tag_search: { _or: los }, count: 5,
       difficulty: 0.5, allow_repetitions: true
     )
 
     Content::Models::Exercise.where{url.in urls}.all.collect do |content_exercise|
       OpenStax::Exercises::V1::Exercise.new(content: content_exercise.content)
     end
-  end
-
-  def biglearn_condition(los)
-    {
-      _or: los
-    }
   end
 end
