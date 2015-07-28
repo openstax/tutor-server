@@ -75,16 +75,12 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1,
 
     it "prefers unassigned exercises" do
       # Assign the first 5 exercises
-      ResetPracticeWidget[role: role, exercise_source: :local, page_ids: [page.id]]
+      ResetPracticeWidget[role: role, exercise_source: :biglearn, page_ids: [page.id]]
 
-      # Then add 3 more to be assigned
+      # Then add another to be assigned
       exercise_6 = FactoryGirl.create :content_exercise
-      exercise_7 = FactoryGirl.create :content_exercise
-      exercise_8 = FactoryGirl.create :content_exercise
 
       FactoryGirl.create :content_exercise_tag, exercise: exercise_6, tag: lo
-      FactoryGirl.create :content_exercise_tag, exercise: exercise_7, tag: lo
-      FactoryGirl.create :content_exercise_tag, exercise: exercise_8, tag: lo
 
       api_post :create,
                user_1_token,
@@ -95,11 +91,8 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1,
       step_urls = Set.new hash[:steps].collect{|s| s[:content_url]}
 
       expect(step_urls).to include(exercise_6.url)
-      expect(step_urls).to include(exercise_7.url)
-      expect(step_urls).to include(exercise_8.url)
 
-      exercises = [exercise_1, exercise_2, exercise_3, exercise_4,
-                   exercise_5, exercise_6, exercise_7, exercise_8]
+      exercises = [exercise_1, exercise_2, exercise_3, exercise_4, exercise_5, exercise_6]
       exercise_urls = Set.new exercises.collect(&:url)
 
       expect(step_urls.proper_subset?(exercise_urls)).to eq true
