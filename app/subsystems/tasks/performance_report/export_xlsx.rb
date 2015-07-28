@@ -96,7 +96,7 @@ module Tasks
         when 'reading'
           data.status.humanize
         when 'external'
-          data.status.humanize
+          data.status == "not_started" ? "Not clicked" : "Clicked"
         else
           raise "Undefined case for data.type #{data.type} " +
                 "please define it here, or use one of " +
