@@ -1,18 +1,12 @@
 module Api
   module V1
     class PracticesController < ApiController
-      api nil, nil, nil
-      description nil
-      def practice
-        request.post? ? practice_post : practice_get
-      end
-
       api :POST, '/courses/:course_id/practice(/role/:role_id)',
                  'Starts a new practice widget'
       description <<-EOS
         #{json_schema(Api::V1::PracticeRepresenter, include: :writeable)}
       EOS
-      def practice_post
+      def create
         practice = OpenStruct.new
         consume!(practice, represent_with: Api::V1::PracticeRepresenter)
 
@@ -28,7 +22,7 @@ module Api
 
       api :GET, '/courses/:course_id/practice(/role/:role_id)',
                 'Gets the most recent practice widget'
-      def practice_get
+      def show
         task = GetPracticeWidget[role: get_practice_role]
 
         task.nil? ? head(:not_found) :

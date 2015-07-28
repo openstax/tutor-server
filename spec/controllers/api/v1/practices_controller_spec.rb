@@ -17,7 +17,7 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1,
   let(:course) { CreateCourse[name: 'Physics 101'] }
   let(:period) { CreatePeriod[course: course] }
 
-  describe "POST #practice" do
+  describe "POST #create" do
     let(:lo) { FactoryGirl.create :content_tag, tag_type: :lo, value: 'lo01' }
     let(:page) { FactoryGirl.create :content_page }
     let!(:page_tag) { FactoryGirl.create :content_page_tag, page: page, tag: lo }
@@ -29,25 +29,20 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1,
     let(:exercise_5) { FactoryGirl.create :content_exercise }
 
     let!(:exercise_tag_1) { FactoryGirl.create :content_exercise_tag,
-                                              exercise: exercise_1, tag: lo }
+                                               exercise: exercise_1, tag: lo }
     let!(:exercise_tag_2) { FactoryGirl.create :content_exercise_tag,
-                                              exercise: exercise_2, tag: lo }
+                                               exercise: exercise_2, tag: lo }
     let!(:exercise_tag_3) { FactoryGirl.create :content_exercise_tag,
-                                              exercise: exercise_3, tag: lo }
+                                               exercise: exercise_3, tag: lo }
     let!(:exercise_tag_4) { FactoryGirl.create :content_exercise_tag,
-                                              exercise: exercise_4, tag: lo }
+                                               exercise: exercise_4, tag: lo }
     let!(:exercise_tag_5) { FactoryGirl.create :content_exercise_tag,
-                                              exercise: exercise_5, tag: lo }
+                                               exercise: exercise_5, tag: lo }
 
-    let(:role) { AddUserAsPeriodStudent[period: period, user: user_1.entity_user] }
-
-    before do
-      # Assign the first 5 exercises
-      ResetPracticeWidget[role: role, exercise_source: :local, page_ids: [page.id]]
-    end
+    let!(:role) { AddUserAsPeriodStudent[period: period, user: user_1.entity_user] }
 
     it 'returns the practice task data' do
-      api_post :practice,
+      api_post :create,
                user_1_token,
                parameters: { course_id: course.id, role_id: role.id },
                raw_post_data: { page_ids: [page.id.to_s] }.to_json
@@ -64,21 +59,24 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1,
     end
 
     it 'returns exercise URLs' do
-      api_post :practice,
+      api_post :create,
                user_1_token,
                parameters: { course_id: course.id, role_id: role.id },
                raw_post_data: { page_ids: [page.id.to_s] }.to_json
 
       hash = response.body_as_hash
 
-      step_urls = Set.new hash[:steps].collect{|s| s[:content_url]}
+      step_urls = Set.new(hash[:steps].collect { |s| s[:content_url] })
       exercises = [exercise_1, exercise_2, exercise_3, exercise_4, exercise_5]
-      exercise_urls = Set.new exercises.collect{ |e| e.url }
+      exercise_urls = Set.new(exercises.collect(&:url))
 
       expect(step_urls).to eq exercise_urls
     end
 
     it "prefers unassigned exercises" do
+      # Assign the first 5 exercises
+      ResetPracticeWidget[role: role, exercise_source: :local, page_ids: [page.id]]
+
       # Then add 3 more to be assigned
       exercise_6 = FactoryGirl.create :content_exercise
       exercise_7 = FactoryGirl.create :content_exercise
@@ -88,7 +86,7 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1,
       FactoryGirl.create :content_exercise_tag, exercise: exercise_7, tag: lo
       FactoryGirl.create :content_exercise_tag, exercise: exercise_8, tag: lo
 
-      api_post :practice,
+      api_post :create,
                user_1_token,
                parameters: { course_id: course.id, role_id: role.id },
                raw_post_data: { page_ids: [page.id.to_s] }.to_json
@@ -109,7 +107,7 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1,
 
     it "must be called by a user who belongs to the course" do
       expect{
-        api_post :practice,
+        api_post :create,
                  user_2_token,
                  parameters: { course_id: course.id, role_id: role.id },
                  raw_post_data: { page_ids: [page.id.to_s] }.to_json
@@ -117,11 +115,11 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1,
     end
   end
 
-  describe "GET #practice" do
+  describe "GET #show" do
     it "returns nothing when practice widget not yet set" do
       AddUserAsPeriodStudent.call(period: period, user: user_1.entity_user)
-      api_get :practice, user_1_token, parameters: { course_id: course.id,
-                                                     role_id: Entity::Role.last.id }
+      api_get :show, user_1_token, parameters: { course_id: course.id,
+                                                 role_id: Entity::Role.last.id }
 
       expect(response).to have_http_status(:not_found)
     end
@@ -131,8 +129,8 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1,
       ResetPracticeWidget.call(role: Entity::Role.last, exercise_source: :fake)
       ResetPracticeWidget.call(role: Entity::Role.last, exercise_source: :fake)
 
-      api_get :practice, user_1_token, parameters: { course_id: course.id,
-                                                     role_id: Entity::Role.last.id }
+      api_get :show, user_1_token, parameters: { course_id: course.id,
+                                                 role_id: Entity::Role.last.id }
 
       expect(response).to have_http_status(:success)
 
@@ -147,25 +145,25 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1,
       student_role = AddUserAsPeriodStudent[period: period, user: user_2.entity_user]
       ResetPracticeWidget.call(role: student_role, exercise_source: :fake)
 
-      api_get :practice, user_1_token, parameters: { course_id: course.id,
-                                                     role_id: student_role.id }
+      api_get :show, user_1_token, parameters: { course_id: course.id,
+                                                 role_id: student_role.id }
 
       expect(response).to have_http_status(:success)
     end
 
     it 'raises IllegalState if user is anonymous or not in the course or is not a student' do
       expect {
-        api_get :practice, nil, parameters: { course_id: course.id }
+        api_get :show, nil, parameters: { course_id: course.id }
       }.to raise_error(IllegalState)
 
       expect {
-        api_get :practice, user_1_token, parameters: { course_id: course.id }
+        api_get :show, user_1_token, parameters: { course_id: course.id }
       }.to raise_error(IllegalState)
 
       AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
 
       expect {
-        api_get :practice, user_1_token, parameters: { course_id: course.id }
+        api_get :show, user_1_token, parameters: { course_id: course.id }
       }.to raise_error(IllegalState)
     end
   end
