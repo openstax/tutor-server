@@ -72,17 +72,9 @@ class CalculateTaskPlanStats
     stats.merge page_stats_for_tasked_exercises(tasked_exercises)
   end
 
-  def get_gradable_taskeds(task)
-    task.task_steps.select do |ts|
-      # Gradable steps are TaskedExercise that are marked as completed
-      ts.tasked.exercise? && ts.completed?
-    end.collect{ |ts| ts.tasked }
-  end
-
   def get_task_grade(task)
-    gradables = get_gradable_taskeds(task)
-    return if gradables.blank?
-    gradables.select{|g| g.is_correct?}.count.to_f/gradables.count
+    return if task.completed_exercise_steps_count == 0
+    task.correct_exercise_steps_count.to_f / task.completed_exercise_steps_count
   end
 
   def mean_grade_percent(tasks)
@@ -130,14 +122,9 @@ class CalculateTaskPlanStats
 
         total_count: period_tasks.count,
 
-        complete_count: period_tasks.count{|task|
-          task.task_steps.all?{| ts | ts.completed? }
-        },
+        complete_count: period_tasks.count(&:completed?),
 
-        partially_complete_count: period_tasks.count{|task|
-          task.task_steps.any?{| ts | ts.completed? } &&
-            !task.task_steps.all?{| ts | ts.completed? }
-        },
+        partially_complete_count: period_tasks.count(&:in_progress?),
 
         current_pages: generate_page_stats_for_task_steps(
                          period_tasks.collect{ |t| t.core_task_steps }

@@ -83,6 +83,10 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     steps_count == completed_steps_count
   end
 
+  def in_progress?
+    completed_steps_count > 0 && !completed?
+  end
+
   def set_last_worked_at(time:)
     self.last_worked_at = time
   end
