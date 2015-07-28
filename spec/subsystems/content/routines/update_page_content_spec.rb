@@ -49,6 +49,15 @@ RSpec.describe Content::Routines::UpdatePageContent, type: :routine, vcr: VCR_OP
     'https://archive.cnx.org/contents/aaf30a54-a356-4c5f-8c0d-2f55e4d20556@3'
   ] }
 
+  let!(:page_with_exercises) {
+    cnx_page = OpenStax::Cnx::V1::Page.new({
+      id: 'bbefeebe-61f3-47fc-8b51-0ccb8f1bb8cc@23',
+      title: 'Carbon'
+    })
+    OpenStax::Cnx::V1.with_archive_url(url: 'https://archive-staging-tutor.cnx.org/contents/') do
+      Content::Routines::ImportPage.call(cnx_page: cnx_page, book_part: book_part).outputs[:page]
+    end
+  }
 
   it 'updates page content links to relative url if the link points to the book' do
     doc = Nokogiri::HTML(page_1.content)
@@ -67,5 +76,42 @@ RSpec.describe Content::Routines::UpdatePageContent, type: :routine, vcr: VCR_OP
       link = doc.xpath("//a[text()=\"#{value}\"]").first
       expect(link.attribute('href').value).to eq after_hrefs[i]
     end
+  end
+
+  it 'updates exercise links to absolute urls' do
+    doc = Nokogiri::HTML(page_with_exercises.content)
+
+    expected_links = doc.xpath('//a[starts-with(@href, "#ost")]').collect do |link|
+      link.attribute('href').value
+    end
+
+    # Remove the exercise linked to apbio-ch02-ex031
+    Content::Models::Tag.find_by_value('apbio-ch02-ex031').exercises
+      .destroy_all
+
+    # Remove the tag for apbio-ch02-ex032
+    Content::Models::Tag.find_by_value('apbio-ch02-ex032').destroy
+
+    # Get the rest of the exercises
+    tags = Content::Models::Tag.where { value.like 'apbio-ch02-ex0%' }
+                               .order(:value)
+                               .includes(:exercises)
+
+    # replace the expected links with exercise urls
+    # (there are exercises created for the links except there is 1 tag with no
+    # exercises and one link that doesn't have a tag)
+    tags.each_with_index do |tag, i|
+      expected_links[i] = tag.exercises.first.url unless tag.exercises.empty?
+    end
+
+    Content::Routines::UpdatePageContent.call(book_part: book_part)
+    page_with_exercises.reload
+
+    doc = Nokogiri::HTML(page_with_exercises.content)
+    links = doc.xpath('//a[starts-with(@href, "#ost") or contains(@href, "exercises")]').collect do |link|
+      link.attribute('href').value
+    end
+
+    expect(links).to eq expected_links
   end
 end
