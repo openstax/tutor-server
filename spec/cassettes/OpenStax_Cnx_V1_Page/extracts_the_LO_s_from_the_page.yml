@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/3005b86b-d993-4048-aff0-500256001f42
+    uri: http://archive-staging-tutor.cnx.org/contents/3005b86b-d993-4048-aff0-500256001f42
     body:
       encoding: US-ASCII
       string: ''
@@ -45,7 +45,7 @@ http_interactions:
   recorded_at: Mon, 15 Jun 2015 20:40:31 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/3005b86b-d993-4048-aff0-500256001f42@7.json
+    uri: http://archive-staging-tutor.cnx.org/contents/3005b86b-d993-4048-aff0-500256001f42@7.json
     body:
       encoding: US-ASCII
       string: ''
@@ -942,7 +942,7 @@ http_interactions:
   recorded_at: Mon, 15 Jun 2015 20:40:32 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/1bb611e9-0ded-48d6-a107-fbb9bd900851
+    uri: http://archive-staging-tutor.cnx.org/contents/1bb611e9-0ded-48d6-a107-fbb9bd900851
     body:
       encoding: US-ASCII
       string: ''
@@ -985,7 +985,7 @@ http_interactions:
   recorded_at: Mon, 15 Jun 2015 20:40:32 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/1bb611e9-0ded-48d6-a107-fbb9bd900851@2.json
+    uri: http://archive-staging-tutor.cnx.org/contents/1bb611e9-0ded-48d6-a107-fbb9bd900851@2.json
     body:
       encoding: US-ASCII
       string: ''
@@ -1104,7 +1104,7 @@ http_interactions:
   recorded_at: Mon, 15 Jun 2015 20:40:32 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/95e61258-2faf-41d4-af92-f62e1414175a
+    uri: http://archive-staging-tutor.cnx.org/contents/95e61258-2faf-41d4-af92-f62e1414175a
     body:
       encoding: US-ASCII
       string: ''
@@ -1147,7 +1147,7 @@ http_interactions:
   recorded_at: Mon, 15 Jun 2015 20:40:32 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/95e61258-2faf-41d4-af92-f62e1414175a@4.json
+    uri: http://archive-staging-tutor.cnx.org/contents/95e61258-2faf-41d4-af92-f62e1414175a@4.json
     body:
       encoding: US-ASCII
       string: ''
@@ -1469,7 +1469,7 @@ http_interactions:
   recorded_at: Mon, 15 Jun 2015 20:40:32 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/640e3e84-09a5-4033-b2a7-b7fe5ec29dc6
+    uri: http://archive-staging-tutor.cnx.org/contents/640e3e84-09a5-4033-b2a7-b7fe5ec29dc6
     body:
       encoding: US-ASCII
       string: ''
@@ -1512,7 +1512,7 @@ http_interactions:
   recorded_at: Mon, 15 Jun 2015 20:40:32 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/640e3e84-09a5-4033-b2a7-b7fe5ec29dc6@4.json
+    uri: http://archive-staging-tutor.cnx.org/contents/640e3e84-09a5-4033-b2a7-b7fe5ec29dc6@4.json
     body:
       encoding: US-ASCII
       string: ''

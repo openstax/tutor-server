@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/93e2b09d-261c-4007-a987-0b3062fe154b
+    uri: http://archive-staging-tutor.cnx.org/contents/93e2b09d-261c-4007-a987-0b3062fe154b
     body:
       encoding: US-ASCII
       string: ''
@@ -45,7 +45,7 @@ http_interactions:
   recorded_at: Thu, 11 Jun 2015 23:21:19 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/93e2b09d-261c-4007-a987-0b3062fe154b@3.6.json
+    uri: http://archive-staging-tutor.cnx.org/contents/93e2b09d-261c-4007-a987-0b3062fe154b@3.6.json
     body:
       encoding: US-ASCII
       string: ''

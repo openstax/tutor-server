@@ -7,10 +7,10 @@ RSpec.describe OpenStax::Cnx::V1, :type => :external, :vcr => VCR_OPTS do
 
   it "can generate url's for resources in the cnx archive" do
     expect(OpenStax::Cnx::V1.url_for('module_id@version')).to(
-      eq('https://archive-staging-tutor.cnx.org/contents/module_id@version'))
+      eq('http://archive-staging-tutor.cnx.org/contents/module_id@version'))
 
     expect(OpenStax::Cnx::V1.url_for('/resources/image.jpg')).to(
-      eq('https://archive-staging-tutor.cnx.org/resources/image.jpg'))
+      eq('http://archive-staging-tutor.cnx.org/resources/image.jpg'))
   end
 
   it "can fetch collections and modules from CNX" do

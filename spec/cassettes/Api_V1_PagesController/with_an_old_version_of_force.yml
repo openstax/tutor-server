@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/95e61258-2faf-41d4-af92-f62e1414175a@2
+    uri: http://archive-staging-tutor.cnx.org/contents/95e61258-2faf-41d4-af92-f62e1414175a@2
     body:
       encoding: US-ASCII
       string: ''

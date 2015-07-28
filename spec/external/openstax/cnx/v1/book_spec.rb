@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe OpenStax::Cnx::V1::Book, :type => :external, :vcr => VCR_OPTS do
+RSpec.describe OpenStax::Cnx::V1::Book, type: :external, vcr: VCR_OPTS do
 
   cnx_book_id = '93e2b09d-261c-4007-a987-0b3062fe154b'
   cnx_book_gold_data = {
@@ -127,7 +127,7 @@ RSpec.describe OpenStax::Cnx::V1::Book, :type => :external, :vcr => VCR_OPTS do
   }
 
   let!(:expected_book_url) {
-    'https://archive-staging-tutor.cnx.org/contents/93e2b09d-261c-4007-a987-0b3062fe154b'
+    'http://archive-staging-tutor.cnx.org/contents/93e2b09d-261c-4007-a987-0b3062fe154b'
   }
 
   it "provides info about the book with the given id" do
