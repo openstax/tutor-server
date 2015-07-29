@@ -102,7 +102,7 @@ RSpec.describe Content::Routines::UpdatePageContent, type: :routine, vcr: VCR_OP
     #
     # 1. Start with the original exercise links (links that start with #ost)
     #    that we got from the html
-    # 2. Replace the the links with Content::Models::Exercise.url
+    # 2. Replace the the links with Content::Models::Exercise.url and format as API links
     # 3. Except for apbio-ch02-ex031 because we removed the exercise (to test
     #    error handling)
     # 4. Except for apbio-ch02-ex032 because we removed the tag (to test error
