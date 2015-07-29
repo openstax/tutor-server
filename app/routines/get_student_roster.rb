@@ -16,7 +16,8 @@ class GetStudentRoster
         course_membership_period_id: student.course_membership_period_id,
         entity_role_id: student.entity_role_id,
         username: student.username,
-        deidentifier: student.deidentifier
+        deidentifier: student.deidentifier,
+        :active? => student.active?
       })
     end
   end
