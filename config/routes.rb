@@ -110,6 +110,8 @@ Rails.application.routes.draw do
 
     resources :licenses
 
+    resources :jobs, only: [:index, :show]
+
     resources :users, except: :destroy do
       member do
         post 'become'

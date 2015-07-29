@@ -1,0 +1,21 @@
+<%= will_paginate @jobs %>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @jobs.each do |job| %>
+      <tr>
+        <td class='job_id'><%= job.id %></td>
+        <td class='job_status'><%= job.status %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= will_paginate @jobs %>
