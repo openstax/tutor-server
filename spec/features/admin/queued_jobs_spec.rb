@@ -17,12 +17,15 @@ RSpec.feature 'Administration of queued jobs' do
 
     Tasks::ExportPerformanceReport.perform_later(course: course, role: role)
 
+    job = Lev::Status.all.last
+    job.set_progress(0.5)
+
     stub_current_user(admin)
     visit admin_root_path
     click_link 'Queued jobs'
 
     expect(current_path).to eq(admin_jobs_path)
     expect(page).to have_css('.job_status', text: 'queued')
-    expect(page).to have_css('.job_progress', text: '0%')
+    expect(page).to have_css('.job_progress', text: '50%')
   end
 end

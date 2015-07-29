@@ -14,7 +14,7 @@
       <tr>
         <td class='job_id'><%= job.id %></td>
         <td class='job_status'><%= job.status %></td>
-        <td class='job_progress'><%= job.progress.to_f * 100 %>%</td>
+        <td class='job_progress'><%= number_to_percentage(job.progress.to_f * 100, precision: 0) %></td>
       </tr>
     <% end %>
   </tbody>

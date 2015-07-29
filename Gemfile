@@ -133,9 +133,6 @@ group :development, :test do
   # Allows the use of the in-memory SQLite3 database in Rails tests
   gem 'memory_test_fix'
 
-  # Fake in-memory Redis for development and testing
-  gem 'fakeredis'
-
   # Resque in test mode
   gem 'resque_spec'
 
@@ -214,6 +211,9 @@ group :development do
 end
 
 group :test do
+  # Fake in-memory Redis for development and testing
+  gem 'fakeredis'
+
   gem 'shoulda-matchers', require: false
   gem 'capybara-webkit'
   gem 'launchy'
