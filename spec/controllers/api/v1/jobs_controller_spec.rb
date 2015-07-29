@@ -10,11 +10,8 @@ RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :
     stub_const 'TestRoutine', Class.new
     TestRoutine.class_eval {
       lev_routine
-
       protected
-      def exec
-        status.save(filename: 'something')
-      end
+      def exec; end
     }
   end
 
@@ -24,7 +21,7 @@ RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :
     it 'returns the status of queued jobs' do
       api_get :show, user_token, parameters: { id: job_id }
       expect(response).to have_http_status(202)
-      expect(response.body_as_hash).to eq({ state: 'queued' })
+      expect(response.body_as_hash).to include({ status: 'queued' })
     end
 
     it 'returns the status of completed jobs' do
@@ -33,8 +30,7 @@ RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :
       api_get :show, user_token, parameters: { id: job_id }
 
       expect(response).to have_http_status(200)
-      expect(response.body_as_hash).to eq({ state: 'completed',
-                                            filename: 'something' })
+      expect(response.body_as_hash).to include({ status: 'completed' })
 
       ActiveJob::Base.queue_adapter = :test
     end

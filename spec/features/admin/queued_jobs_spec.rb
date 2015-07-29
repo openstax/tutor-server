@@ -23,5 +23,6 @@ RSpec.feature 'Administration of queued jobs' do
 
     expect(current_path).to eq(admin_jobs_path)
     expect(page).to have_css('.job_status', text: 'queued')
+    expect(page).to have_css('.job_progress', text: '0%')
   end
 end

@@ -14,8 +14,8 @@ class Api::V1::JobsController < Api::V1::ApiController
   EOS
   def show
     status = Lev::Status.find(params[:id])
-    code = http_status_code(status['state'])
-    render json: status, status: code
+    code = http_status_code(status.status)
+    render json: status, with: :url, status: code
   end
 
   private
