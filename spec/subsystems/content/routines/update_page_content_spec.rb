@@ -101,7 +101,7 @@ RSpec.describe Content::Routines::UpdatePageContent, type: :routine, vcr: VCR_OP
     # (there are exercises created for the links except there is 1 tag with no
     # exercises and one link that doesn't have a tag)
     tags.each_with_index do |tag, i|
-      expected_links[i] = tag.exercises.first.url unless tag.exercises.empty?
+      expected_links[i] = tag.exercises.first.url.gsub(/\/exercises\//, '/api/exercises/') unless tag.exercises.empty?
     end
 
     Content::Routines::UpdatePageContent.call(book_part: book_part)
