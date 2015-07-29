@@ -3,6 +3,7 @@ class Content::Models::Tag < Tutor::SubSystems::BaseModel
   has_many :exercise_tags, dependent: :destroy
   has_many :lo_teks_tags, foreign_key: :lo_id, dependent: :destroy
   has_many :teks_tags, through: :lo_teks_tags, class_name: 'Tag', source: :teks
+  has_many :exercises, through: :exercise_tags
 
   # List the different types of tags
   enum tag_type: [ :generic, :lo, :aplo, :teks, :dok, :blooms, :length ]

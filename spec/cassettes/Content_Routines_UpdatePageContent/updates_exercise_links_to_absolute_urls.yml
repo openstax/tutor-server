@@ -21,7 +21,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Tue, 28 Jul 2015 20:45:33 GMT
+      - Tue, 28 Jul 2015 20:45:40 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -602,7 +602,7 @@ http_interactions:
         "APBio", "suffix": null, "firstname": "Tutor", "title": "", "fullname": "Tutor
         APBio", "id": "tutor_apbio"}}]}'
     http_version: 
-  recorded_at: Tue, 28 Jul 2015 20:40:02 GMT
+  recorded_at: Tue, 28 Jul 2015 20:40:08 GMT
 - request:
     method: get
     uri: https://exercises-dev.openstax.org/api/exercises?q=tag:apbio-ch02-s03-lo01,apbio-ch02-s03-lo02
@@ -624,7 +624,7 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Tue, 28 Jul 2015 20:40:28 GMT
+      - Tue, 28 Jul 2015 20:40:35 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -646,12 +646,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=VmEyNnBOLzY5QnhwWTVkL1BZQ2xkRmdlOG9SVkF5TmdTUVJWOC82bEpCMEZkMEM1aElvL1BIUFVWQWRia2FMMEZxOVNVa1MrNkpTeXFaYURqMmVpdVE9PS0tSE8ya0xRMFpuVkxoTEFOcm0zVmkwdz09--d550fd53fdbbb65fdc0b5016764506c16610110a;
+      - _exercises_session=QS82MWVObFltZGwyNE5ROVhUbU1NS21oeUN6am4yVmlQZHczRlBsVXBleFlUb0o3cnVRNC9xT00zVG1SM0xnbHZuSGoyZzFOM0dEMlR1VUJ4ZXhXbFE9PS0tUXJwcWR0WllHWlhLQ3NLbG9WNGVqUT09--3c1b81191e5f1e7ff2431c4aad7563d4c8f60066;
         path=/; HttpOnly
       X-Request-Id:
-      - 845ec04a-b44e-4f49-a4d5-ce5178297eac
+      - c480e5d8-4898-45c4-b43b-d57f97e8fbf7
       X-Runtime:
-      - '0.229352'
+      - '0.234797'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -1212,7 +1212,7 @@ http_interactions:
         aGludHMiOltdLCJmb3JtYXRzIjpbIm11bHRpcGxlLWNob2ljZSIsImZyZWUt
         cmVzcG9uc2UiXSwiY29tYm9fY2hvaWNlcyI6W119XX1dfQ==
     http_version: 
-  recorded_at: Tue, 28 Jul 2015 20:40:03 GMT
+  recorded_at: Tue, 28 Jul 2015 20:40:09 GMT
 - request:
     method: get
     uri: http://archive.cnx.org/contents/102e9604-daa7-4a09-9f9e-232251d1a4ee@7
@@ -1250,9 +1250,9 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Tue, 28 Jul 2015 20:40:07 GMT
+      - Tue, 28 Jul 2015 20:40:13 GMT
       X-Varnish:
-      - 1314496772 1314491583
+      - 1314496941 1314491583
       Via:
       - 1.1 varnish
       Connection:
@@ -1260,7 +1260,7 @@ http_interactions:
       X-Cache:
       - HIT
       X-Varnish-Age:
-      - '418'
+      - '424'
       Age:
       - '0'
     body:
@@ -2427,7 +2427,7 @@ http_interactions:
         {"surname": "Williamson", "suffix": "", "firstname": "Collins", "title": "",
         "fullname": "Collins Williamson", "id": "dcwillman"}}]}'
     http_version: 
-  recorded_at: Tue, 28 Jul 2015 20:40:06 GMT
+  recorded_at: Tue, 28 Jul 2015 20:40:12 GMT
 - request:
     method: get
     uri: http://archive.cnx.org/contents/127f63f7-d67f-4710-8625-2b1d4128ef6b@2
@@ -2465,9 +2465,9 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Tue, 28 Jul 2015 20:40:08 GMT
+      - Tue, 28 Jul 2015 20:40:14 GMT
       X-Varnish:
-      - 1314496794 1314491598
+      - 1314496956 1314491598
       Via:
       - 1.1 varnish
       Connection:
@@ -2475,7 +2475,7 @@ http_interactions:
       X-Cache:
       - HIT
       X-Varnish-Age:
-      - '417'
+      - '424'
       Age:
       - '0'
     body:
@@ -2564,5 +2564,5 @@ http_interactions:
         "firstname": "College", "title": "", "fullname": "OSC Physics Maintainer",
         "id": "cnxcap"}}]}'
     http_version: 
-  recorded_at: Tue, 28 Jul 2015 20:40:07 GMT
+  recorded_at: Tue, 28 Jul 2015 20:40:13 GMT
 recorded_with: VCR 2.9.3
