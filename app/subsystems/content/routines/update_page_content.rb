@@ -53,7 +53,7 @@ class Content::Routines::UpdatePageContent
       return if tag.nil? # nothing to do if we can't find the tag
       exercise = tag.exercises.first
       return if exercise.nil? # nothing to do if we don't have the exercise
-      attr.value = exercise.url
+      attr.value = exercise.url.gsub(/\/exercises\//, '/api/exercises/')
     end
   end
 
