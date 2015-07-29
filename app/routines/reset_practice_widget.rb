@@ -114,7 +114,7 @@ class ResetPracticeWidget
   end
 
   def exercise_page(exercise)
-    tags = exercise.exercise_tags.collect{ |et| et.tag }
+    tags = exercise._repository.exercise_tags.collect{ |et| et.tag }
     los = tags.select{ |tag| tag.lo? || tag.aplo? }
     pages = los.collect{ |lo| lo.page_tags.collect{ |pt| pt.page } }.flatten.compact
 
