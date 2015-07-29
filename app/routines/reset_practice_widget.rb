@@ -16,8 +16,8 @@ class ResetPracticeWidget
   BASE_RELATION = Content::Models::Exercise.preload(exercise_tags: {tag: {page_tags: :page}})
 
   def exec(role:, exercise_source:, page_ids: [], book_part_ids: [], randomize: true)
-    page_ids = [page_ids].flatten
-    book_part_ids = [book_part_ids].flatten
+    page_ids = [page_ids].flatten.compact
+    book_part_ids = [book_part_ids].flatten.compact
 
     # Get the existing practice widget and remove incomplete exercises from it
     # so they can be used in later practice
@@ -47,7 +47,7 @@ class ResetPracticeWidget
       # Not enough exercises
       fatal_error(
         code: :not_enough_exercises,
-        message: "Not enough exercises to build the Practice Widget. LO's: #{los.inspect}. Needed: #{count}. Got: #{num_exercises}"
+        message: "Not enough exercises to build the Practice Widget. LO's: #{los.inspect}. Needed: #{count}. Got: #{num_exercises}."
       )
     end
 
