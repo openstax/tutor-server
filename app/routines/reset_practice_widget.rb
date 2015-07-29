@@ -1,9 +1,7 @@
 class ResetPracticeWidget
   lev_routine express_output: :task
 
-  uses_routine GetPracticeWidget,
-    translations: { outputs: { type: :verbatim } },
-    as: :get_practice_widget
+  uses_routine GetPracticeWidget, as: :get_practice_widget
 
   uses_routine Tasks::CreateTasking,
     translations: { outputs: { type: :verbatim } },
@@ -20,8 +18,8 @@ class ResetPracticeWidget
 
     # Get the existing practice widget and remove incomplete exercises from it
     # so they can be used in later practice
-    # TODO actually do the step removal
-    # run(:get_practice_widget, role: role)
+    existing_practice_task = run(:get_practice_widget, role: role).outputs.task.try(:task)
+    existing_practice_task.task_steps.incomplete.destroy_all unless existing_practice_task.nil?
 
     # Gather relevant LO's from pages and book_parts
     los = Content::GetLos[page_ids: page_ids, book_part_ids: book_part_ids]
