@@ -45,15 +45,15 @@ class Content::Routines::UpdatePageContent
 
   def absolutize_exercise_links(attr)
     # Change exercise links (like #ost/api/ex/apbio-ch02-ex026) to absolute
-    # urls (like https://exercises-dev.openstax.org/exercises/475@3)
+    # urls (like https://exercises-dev.openstax.org/api/exercises?q=tag:apbio-ch02-ex026)
 
     if attr.value.starts_with?('#ost/')
-      exercise_tag = attr.value.split('/').last
-      tag = Content::Models::Tag.where { value == exercise_tag }.first
-      return if tag.nil? # nothing to do if we can't find the tag
-      exercise = tag.exercises.first
-      return if exercise.nil? # nothing to do if we don't have the exercise
-      attr.value = exercise.url.gsub(/\/exercises\//, '/api/exercises/')
+      tag_name = attr.value.split('/').last
+      # exercises url looks like "https://exercises-dev.openstax.org"
+      exercises_url = OpenStax::Exercises::V1.configuration.server_url
+      uri = Addressable::URI.join(exercises_url, '/api/exercises')
+      uri.query_values = { q: "tag:#{tag_name}" }
+      attr.value = uri.to_s
     end
   end
 
