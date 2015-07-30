@@ -21,7 +21,10 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
           title: 'HW1',
           trouble: false,
           type: 'homework',
+          is_publish_requested?: true,
           published_at: published_at,
+          publish_last_requested_at: published_at,
+          publish_job_uuid: "394839483948",
           tasking_plans: [
             Hashie::Mash.new(
               target_id: 42,
@@ -101,7 +104,10 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
           "id" => '23',
           "title" => "HW1",
           "type" => "homework",
+          "is_publish_requested" => true,
           "published_at" => be_kind_of(String),
+          "publish_last_requested_at" => be_kind_of(String),
+          "publish_job_uuid" => "394839483948",
           "tasking_plans" => [
             {
               "target_id" => '42',

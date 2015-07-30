@@ -35,11 +35,29 @@ module Api::V1::Courses
                readable: true,
                writeable: false
 
+
+      property :is_publish_requested,
+               readable: true,
+               writeable: true,
+               getter: ->(*) { is_publish_requested? },
+               schema_info: { type: 'boolean' }
+
       property :published_at,
                type: String,
                readable: true,
                writeable: false,
                getter: ->(*) { DateTimeUtilities.to_api_s(published_at) }
+
+      property :publish_last_requested_at,
+               type: String,
+               readable: true,
+               writeable: false,
+               getter: ->(*) { DateTimeUtilities.to_api_s(publish_last_requested_at) }
+
+      property :publish_job_uuid,
+               type: String,
+               readable: true,
+               writeable: false
 
       collection :tasking_plans,
                  readable: true,
