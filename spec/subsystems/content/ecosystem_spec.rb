@@ -159,8 +159,8 @@ module Content
     context "fetching reading core exercise pool" do
       context "delegation" do
         context "single page" do
-          let!(:page) { valid_page }
-          let!(:strategy_expected_pages) { [page] }
+          let(:page) { valid_page }
+          let(:strategy_expected_pages) { [page] }
 
           it "delegates to its strategy with the correct pages:" do
             ecosystem.reading_core_exercises(pages: page)
@@ -169,8 +169,8 @@ module Content
         end
 
         context "multiple pages" do
-          let!(:pages) { [valid_page, valid_page] }
-          let!(:strategy_expected_pages) { pages }
+          let(:pages) { [valid_page, valid_page] }
+          let(:strategy_expected_pages) { pages }
 
           it "delegates to its strategy with the correct pages:" do
             ecosystem.reading_core_exercises(pages: pages)
@@ -180,7 +180,7 @@ module Content
       end
 
       context "strategy returns Content::Ecosystem::Exercises" do
-        let!(:pages) { [valid_page, valid_page] }
+        let(:pages) { [valid_page, valid_page] }
         let(:strategy_reading_core_exercises) { [ valid_exercise, valid_exercise ] }
 
         it "returns the strategy's exercises" do
@@ -190,7 +190,7 @@ module Content
       end
 
       context "strategy doesn't return Content::Ecosystem::Exercises" do
-        let!(:pages) { [valid_page, valid_page] }
+        let(:pages) { [valid_page, valid_page] }
         let(:strategy_reading_core_exercises) { [ valid_exercise, invalid_exercise, valid_exercise ] }
 
         it "raises Content::Ecosystem::StrategyError" do
@@ -201,7 +201,7 @@ module Content
       end
 
       context "invalid pages:" do
-        let!(:pages) { [valid_page, invalid_page, valid_page] }
+        let(:pages) { [valid_page, invalid_page, valid_page] }
 
         it "raises ArgumentError" do
           expect{
