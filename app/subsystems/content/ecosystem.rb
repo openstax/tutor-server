@@ -17,8 +17,18 @@ class Content::Ecosystem
     books = @strategy.books
 
     raise StrategyError \
-      if books.detect{|book| !book.is_a?(Book)}
+      if books.detect{|obj| !obj.is_a?(Book)}
 
     books
   end
+
+  def exercises
+    exercises = @strategy.exercises
+
+    raise StrategyError \
+      if exercises.detect{|obj| !obj.is_a?(Exercise)}
+
+    exercises
+  end
+
 end

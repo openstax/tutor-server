@@ -19,11 +19,11 @@ module Content
       let(:strategy) {
         double("strategy").tap{ |dbl|
           allow(dbl).to receive(:uuid).with(no_args)
-                       .and_return(uuid)
+                       .and_return(strategy_uuid)
         }
       }
 
-      let(:uuid) { Ecosystem::Uuid.new }
+      let(:strategy_uuid) { Ecosystem::Uuid.new }
 
       context "delegation" do
         it "delegates to its strategy" do
@@ -33,12 +33,12 @@ module Content
 
         context "strategy returns Ecosystem::Uuid" do
           it "returns the strategy's uuid" do
-            expect(ecosystem.uuid).to eq(uuid)
+            expect(ecosystem.uuid).to eq(strategy_uuid)
           end
         end
 
         context "strategy doesn't return an Ecosystem::Uuid" do
-          let(:uuid) { Object.new }
+          let(:strategy_uuid) { Object.new }
 
           it "raises Ecosystem::StrategyError" do
             expect{
@@ -88,6 +88,51 @@ module Content
           it "raises Ecosystem::StrategyError" do
             expect{
               ecosystem.books
+            }.to raise_error(Ecosystem::StrategyError)
+          end
+        end
+      end
+    end
+
+    context "fetching all exercises" do
+      let(:ecosystem) {
+        Ecosystem.new(strategy: strategy)
+      }
+
+      let(:strategy) {
+        double("strategy").tap{ |dbl|
+          allow(dbl).to receive(:exercises).with(no_args)
+                       .and_return(strategy_exercises)
+        }
+      }
+
+      let(:strategy_exercises) {
+        [ Ecosystem::Exercise.new(strategy: Object.new),
+          Ecosystem::Exercise.new(strategy: Object.new) ]
+      }
+
+      context "delegation" do
+        it "delegates to its strategy" do
+          ecosystem.exercises
+          expect(strategy).to have_received(:exercises).with(no_args)
+        end
+
+        context "strategy returns Ecosystem::Exercises" do
+          it "returns the strategy's exercises" do
+            expect(ecosystem.exercises).to eq(strategy_exercises)
+          end
+        end
+
+        context "strategy doesn't return Ecosystem::Exercises" do
+          let(:strategy_exercises) {
+            [ Ecosystem::Exercise.new(strategy: Object.new),
+              Object.new,
+              Ecosystem::Exercise.new(strategy: Object.new) ]
+          }
+
+          it "raises Ecosystem::StrategyError" do
+            expect{
+              ecosystem.exercises
             }.to raise_error(Ecosystem::StrategyError)
           end
         end
