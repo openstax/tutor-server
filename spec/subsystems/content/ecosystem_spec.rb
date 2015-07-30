@@ -179,24 +179,26 @@ module Content
         end
       end
 
-      context "strategy returns Content::Ecosystem::Exercises" do
+      context "valid pages:" do
         let(:pages) { [valid_page, valid_page] }
-        let(:strategy_reading_core_exercises) { [ valid_exercise, valid_exercise ] }
 
-        it "returns the strategy's exercises" do
-          exercises = ecosystem.reading_core_exercises(pages: pages)
-          expect(exercises).to eq(strategy_reading_core_exercises)
+        context "strategy returns Content::Ecosystem::Exercises" do
+          let(:strategy_reading_core_exercises) { [ valid_exercise, valid_exercise ] }
+
+          it "returns the strategy's exercises" do
+            exercises = ecosystem.reading_core_exercises(pages: pages)
+            expect(exercises).to eq(strategy_reading_core_exercises)
+          end
         end
-      end
 
-      context "strategy doesn't return Content::Ecosystem::Exercises" do
-        let(:pages) { [valid_page, valid_page] }
-        let(:strategy_reading_core_exercises) { [ valid_exercise, invalid_exercise, valid_exercise ] }
+        context "strategy doesn't return Content::Ecosystem::Exercises" do
+          let(:strategy_reading_core_exercises) { [ valid_exercise, invalid_exercise, valid_exercise ] }
 
-        it "raises Content::Ecosystem::StrategyError" do
-          expect{
-            ecosystem.reading_core_exercises(pages: pages)
-          }.to raise_error(Content::Ecosystem::StrategyError)
+          it "raises Content::Ecosystem::StrategyError" do
+            expect{
+              ecosystem.reading_core_exercises(pages: pages)
+            }.to raise_error(Content::Ecosystem::StrategyError)
+          end
         end
       end
 
