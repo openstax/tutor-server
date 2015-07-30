@@ -487,7 +487,7 @@ http_interactions:
   recorded_at: Wed, 25 Mar 2015 13:19:55 GMT
 - request:
     method: get
-    uri: http://archive-staging-tutor.cnx.org/contents/092bbf0d-0729-42ce-87a6-fd96fd87a083
+    uri: https://archive-staging-tutor.cnx.org/contents/092bbf0d-0729-42ce-87a6-fd96fd87a083
     body:
       encoding: US-ASCII
       string: ''

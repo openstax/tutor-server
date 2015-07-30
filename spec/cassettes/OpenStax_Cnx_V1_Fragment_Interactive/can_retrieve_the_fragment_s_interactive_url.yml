@@ -502,7 +502,7 @@ http_interactions:
   recorded_at: Wed, 25 Mar 2015 16:02:46 GMT
 - request:
     method: get
-    uri: http://archive-staging-tutor.cnx.org/contents/61445f78-00e2-45ae-8e2c-461b17d9b4fd@4
+    uri: https://archive-staging-tutor.cnx.org/contents/61445f78-00e2-45ae-8e2c-461b17d9b4fd@4
     body:
       encoding: US-ASCII
       string: ''

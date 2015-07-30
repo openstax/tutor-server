@@ -22,8 +22,6 @@ class DemoContent < DemoBase
     # By default, choose a fixed seed for repeatability and fewer surprises
     set_random_seed(random_seed)
 
-    archive_url = 'https://archive-staging-tutor.cnx.org/contents/'
-
     admin_profile = new_user_profile(username: 'admin', name: people.admin)
     run(:make_administrator, user: admin_profile.entity_user)
     log("Added an admin user #{admin_profile.account.full_name}")
@@ -45,14 +43,12 @@ class DemoContent < DemoBase
         end
       end
 
-      OpenStax::Cnx::V1.with_archive_url(url: archive_url) do
-        book = content.cnx_book(version)
-        log("Starting book import for #{course.name} #{book} from #{archive_url}.")
-        cnx_book = run(:import_book, id: book).outputs.book
-        log("Imported book complete.")
-        run(:add_book, book: cnx_book, course: course)
-      end
-
+      book = content.cnx_book(version)
+      log("Starting book import for #{course.name} #{book} from #{
+            OpenStax::Cnx::V1.archive_url_base}.")
+      cnx_book = run(:import_book, id: book).outputs.book
+      log("Imported book complete.")
+      run(:add_book, book: cnx_book, course: course)
 
       teacher_profile = get_teacher_profile(content.teacher) ||
                         new_user_profile(username: people.teachers[content.teacher].username,
