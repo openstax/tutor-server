@@ -37,7 +37,7 @@ module Content
           expect(ecosystem.books).to eq(strategy_books)
         end
 
-        it "does not raise an error when its strategy returns Ecosystem::Books" do
+        it "allows its strategy to return Ecosystem::Books" do
           expect{
             ecosystem.books
           }.to_not raise_error
