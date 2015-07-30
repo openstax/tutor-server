@@ -4,6 +4,15 @@ class Content::Ecosystem
     @strategy = strategy
   end
 
+  def uuid
+    uuid = @strategy.uuid
+
+    raise StrategyError \
+      unless uuid.is_a? Uuid
+
+    uuid
+  end
+
   def books
     books = @strategy.books
 
