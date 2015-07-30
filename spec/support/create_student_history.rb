@@ -13,10 +13,10 @@ class CreateStudentHistory
   def exec(course:, roles: setup_student_role, book_id: '93e2b09d-261c-4007-a987-0b3062fe154b')
     setup_course_book(course, book_id)
 
+    create_assignments(course, course.periods.reload)
+
     [roles].flatten.each_with_index do |role, i|
       puts "=== Set Role##{role.id} history ==="
-
-      create_assignments(course, role)
 
       # practice widgets assign 5 task steps to the role
       # i + 1 because i == 0 is often the Introduction
@@ -32,6 +32,7 @@ class CreateStudentHistory
   end
 
   private
+
   def setup_student_role
     puts "=== Creating a course period ==="
     run(:create_period, course: course)
@@ -54,11 +55,13 @@ class CreateStudentHistory
     run(:add_book_to_course, course: course, book: outputs.book)
   end
 
-  def create_assignments(course, role)
-    run(:distribute_tasks, create_ireading_task_plan(course, role))
+  def create_assignments(course, periods)
+    periods = [periods].flatten.compact
+    run(:distribute_tasks, create_ireading_task_plan(course, periods))
 
-    task_plan = create_homework_task_plan(course, role)
-    run(:distribute_tasks, task_plan).outputs.tasks.each do |task|
+    task_plan = create_homework_task_plan(course, periods)
+    tasks = run(:distribute_tasks, task_plan).outputs.tasks
+    tasks.each do |task|
       answer_correctly(task.task_steps, 2)
     end
   end
@@ -72,42 +75,75 @@ class CreateStudentHistory
 
   def answer_correctly(steps, num)
     steps.first(num).each do |step|
+      puts step.id.to_s
       Hacks::AnswerExercise[task_step: step, is_correct: true]
     end
   end
 
-  def create_ireading_task_plan(course, role)
-    return @ireading_task_plan if defined?(@ireading_task_plan)
-
-    assistant = FactoryGirl.create(:tasks_assistant,
+  def ireading_assistant
+    @ireading_assistant ||= FactoryGirl.create(:tasks_assistant,
       code_class_name: 'Tasks::Assistants::IReadingAssistant')
+  end
 
-    @ireading_task_plan = FactoryGirl.create(:tasks_task_plan,
+  def create_ireading_task_plan(course, periods)
+    task_plan = FactoryGirl.build(
+      :tasks_task_plan,
       owner: course,
-      assistant: assistant,
+      assistant: ireading_assistant,
       title: 'Reading',
       settings: {
         page_ids: outputs.page_data.from(1).collect(&:id).collect(&:to_s) # 0 is preface
-      })
+      },
+      num_tasking_plans: 0
+    )
+
+    periods.each do |period|
+      tasking_plan = FactoryGirl.build(
+        :tasks_tasking_plan,
+        task_plan: task_plan,
+        target: period
+      )
+
+      task_plan.tasking_plans << tasking_plan
+    end
+
+    task_plan.save!
+    task_plan
   end
 
-  def create_homework_task_plan(course, role)
-    return @homework_task_plan if defined?(@homework_task_plan)
-
-    assistant = FactoryGirl.create(:tasks_assistant,
+  def homework_assistant
+    @homework_assistant ||= FactoryGirl.create(:tasks_assistant,
       code_class_name: 'Tasks::Assistants::HomeworkAssistant')
+  end
 
+  def create_homework_task_plan(course, periods)
     exercise_ids = outputs.page_data[4].los.collect do |tag|
       SearchLocalExercises[tag: tag].first.id.to_s
     end
 
-    @homework_task_plan = FactoryGirl.create(:tasks_task_plan,
+    task_plan = FactoryGirl.build(
+      :tasks_task_plan,
       owner: course,
-      assistant: assistant,
+      assistant: homework_assistant,
       title: 'Homework',
       settings: {
         exercise_ids: exercise_ids,
         exercises_count_dynamic: 2
-      })
+      },
+      num_tasking_plans: 0
+    )
+
+    periods.each do |period|
+      tasking_plan = FactoryGirl.build(
+        :tasks_tasking_plan,
+        task_plan: task_plan,
+        target: period
+      )
+
+      task_plan.tasking_plans << tasking_plan
+    end
+
+    task_plan.save!
+    task_plan
   end
 end

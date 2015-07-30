@@ -52,9 +52,9 @@ class DistributeTasks
       efficiently_save(task)
     end
 
-    outputs[:tasks] = tasks
-
     task_plan.update_column(:published_at, Time.now)
+
+    outputs[:tasks] = tasks
   end
 
 end
