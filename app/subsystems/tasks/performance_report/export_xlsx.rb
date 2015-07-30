@@ -60,7 +60,10 @@ module Tasks
 
       def gather_due_dates(data_headings)
         due_dates = data_headings.collect(&:due_at)
-        [italic_text('Due Date')] + due_dates.collect { |due_date| italic_text(due_date.strftime("%m/%d/%Y")) }
+
+        [italic_text('Due Date')] + due_dates.collect do |due_date|
+          italic_text(due_date.strftime("%m/%d/%Y"))
+        end
       end
 
       def gather_averages(data_headings)

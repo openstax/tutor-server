@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe MarkTaskStepCompleted, :type => :routine do
+RSpec.describe MarkTaskStepCompleted, type: :routine do
 
   let!(:tasked_reading) { FactoryGirl.create(:tasks_tasked_reading) }
   let!(:tasked_exercise) { FactoryGirl.create(:tasks_tasked_exercise) }

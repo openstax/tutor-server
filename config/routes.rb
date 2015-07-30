@@ -59,8 +59,6 @@ Rails.application.routes.draw do
         get 'plans'
         get 'tasks'
         get 'dashboard(/role/:role_id)', action: :dashboard
-        post 'practice(/role/:role_id)', action: :practice
-        get 'practice(/role/:role_id)', action: :practice
 
         scope :performance, controller: :performance_reports do
           get '(/role/:role_id)', action: :index
@@ -68,6 +66,9 @@ Rails.application.routes.draw do
           get 'exports'
         end
       end
+
+      post 'practice(/role/:role_id)' => 'practices#create'
+      get 'practice(/role/:role_id)' => 'practices#show'
 
       resources :task_plans, path: '/plans', shallow: true, except: [:index, :new, :edit] do
         member do

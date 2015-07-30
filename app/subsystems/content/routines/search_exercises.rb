@@ -49,7 +49,7 @@ class Content::Routines::SearchExercises
     relation = relation.latest if urls.nil? && versions.nil? && uids.nil?
 
     relation = relation.where(query_hash)
-    relation = relation.where{url.like_any like_urls} unless like_urls.nil?
+    relation = relation.where{url.like_any like_urls} unless like_urls.blank?
 
     unless uids.nil?
       relation = relation.where do
