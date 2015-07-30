@@ -21,6 +21,9 @@ class DistributeTasks
   end
 
   def exec(task_plan)
+    # Lock the TaskPlan to prevent concurrent update/publish
+    task_plan.lock!
+
     # Delete pre-existing assignments
     task_plan.tasks.destroy_all unless task_plan.tasks.empty?
 

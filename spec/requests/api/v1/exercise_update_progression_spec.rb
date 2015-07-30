@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "Exercise update progression", type: :request, :api => true, :version => :v1 do
+RSpec.describe "Exercise update progression", type: :request, api: true, version: :v1 do
 
   let!(:application)     { FactoryGirl.create :doorkeeper_application }
   let!(:user_1)          { FactoryGirl.create :user_profile }
