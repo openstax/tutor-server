@@ -5,7 +5,11 @@ class OpenStax::Biglearn::V1::RealClient
     @client_id    = biglearn_configuration.client_id
     @secret       = biglearn_configuration.secret
 
-    @oauth_client = OAuth2::Client.new(@client_id, @secret, site: @server_url)
+    # Make Faraday (used by Oauth2) encode arrays without the [], since Biglearn uses CGI
+    connection_opts = { request: { params_encoder: Faraday::FlatParamsEncoder } }
+
+    @oauth_client = OAuth2::Client.new(@client_id, @secret, site: @server_url,
+                                                            connection_opts: connection_opts)
 
     @oauth_token  = @oauth_client.client_credentials.get_token unless @client_id.nil?
   end
@@ -30,7 +34,7 @@ class OpenStax::Biglearn::V1::RealClient
       allow_repetition: allow_repetitions ? 'true' : 'false'
     }
 
-    response = request(:get, projection_exercises_uri(query))
+    response = request(:get, projection_exercises_uri, params: query)
 
     result = handle_response(response)
 
@@ -67,7 +71,7 @@ class OpenStax::Biglearn::V1::RealClient
       learners: get_exchange_read_identifiers_for_roles(roles: roles), aggregations: tag_search
     }
 
-    response = request(:get, clue_uri(query))
+    response = request(:get, clue_uri, params: query)
 
     result = handle_response(response) || {}
 
@@ -85,14 +89,6 @@ class OpenStax::Biglearn::V1::RealClient
 
   private
 
-  def stringify_query_hash(query_hash)
-    # Standard Rails `to_query` method converts an array (blah = [1,2,3])
-    # to "blah[]=1&blah[]=2&blah[]=3", but Biglearn doesn't like the brackets,
-    # which get encoded as '%5B%5D' so take them out
-
-    query_hash.to_query.remove('%5B%5D')
-  end
-
   def with_content_type_header(options = {})
     options[:headers] ||= {}
     options[:headers].merge!('Content-Type' => 'application/json')
@@ -104,23 +100,15 @@ class OpenStax::Biglearn::V1::RealClient
   end
 
   def add_exercises_uri
-    uri = Addressable::URI.parse(@server_url)
-    uri.path = '/facts/questions'
-    uri
+    Addressable::URI.join(@server_url, '/facts/questions')
   end
 
-  def projection_exercises_uri(query)
-    uri = Addressable::URI.parse(@server_url)
-    uri.path = '/projections/questions'
-    uri.query = query.to_query
-    uri
+  def projection_exercises_uri
+    Addressable::URI.join(@server_url, '/projections/questions')
   end
 
-  def clue_uri(query)
-    uri = Addressable::URI.parse(@server_url)
-    uri.path = '/knowledge/clue'
-    uri.query = stringify_query_hash(query)
-    uri
+  def clue_uri
+    Addressable::URI.join(@server_url, '/knowledge/clue')
   end
 
   def construct_exercises_payload(exercises)
