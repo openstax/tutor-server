@@ -20,13 +20,13 @@ RSpec.describe Content::Routines::UpdatePageContent, type: :routine, vcr: VCR_OP
   }
 
   let!(:page_1) {
-    OpenStax::Cnx::V1.with_archive_url(url: 'http://archive.cnx.org/contents/') do
+    OpenStax::Cnx::V1.with_archive_url(url: 'https://archive.cnx.org/contents/') do
       Content::Routines::ImportPage.call(cnx_page: cnx_page_1, book_part: book_part).outputs[:page]
     end
   }
 
   let!(:page_2) {
-    OpenStax::Cnx::V1.with_archive_url(url: 'http://archive.cnx.org/contents/') do
+    OpenStax::Cnx::V1.with_archive_url(url: 'https://archive.cnx.org/contents/') do
       Content::Routines::ImportPage.call(cnx_page: cnx_page_2, book_part: book_part).outputs[:page]
     end
   }

@@ -32,6 +32,7 @@ module OpenStax::Cnx::V1
   end
 
   def self.url_for(id, options={})
+    options[:secure] = true if options[:secure].nil?
     Addressable::URI.join(archive_url_base(ssl: options[:secure]), id).to_s
   end
 

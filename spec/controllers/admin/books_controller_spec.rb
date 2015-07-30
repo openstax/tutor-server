@@ -35,7 +35,7 @@ RSpec.describe Admin::BooksController, speed: :slow, vcr: VCR_OPTS do
   end
 
   describe 'POST #import' do
-    let!(:archive_url) { 'http://archive-staging-tutor.cnx.org/contents/' }
+    let!(:archive_url) { 'https://archive-staging-tutor.cnx.org/contents/' }
     let!(:cnx_id) { '93e2b09d-261c-4007-a987-0b3062fe154b@4.4' }
 
     it 'imports books' do
