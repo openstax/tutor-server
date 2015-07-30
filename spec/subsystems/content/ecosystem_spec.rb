@@ -23,16 +23,9 @@ module Content
         Ecosystem.new(strategy: strategy)
       }
 
-      let!(:book_double) {
-        double(Ecosystem::Book).tap{ |double|
-          allow(double).to receive(:is_a?).with(Ecosystem::Book)
-                       .and_return(true)
-        }
-      }
-
       context "happy paths" do
         let!(:strategy_books) {
-          [book_double]
+          [Ecosystem::Book.new(strategy: Object.new)]
         }
 
         it "delegates to its strategy" do
@@ -52,12 +45,18 @@ module Content
       end
 
       context "error paths" do
-        let!(:strategy_books) { [book_double, Object.new, book_double] }
+        context "strategy doesn't return Ecosystem::Books" do
+          let!(:strategy_books) {
+            [ Ecosystem::Book.new(strategy: Object.new),
+              Object.new,
+              Ecosystem::Book.new(strategy: Object.new) ]
+          }
 
-        it "raises error when its strategy does not return Ecosystem::Books" do
-          expect{
-            ecosystem.books
-          }.to raise_error(Ecosystem::StrategyError)
+          it "raises Ecosystem::StrategyError" do
+            expect{
+              ecosystem.books
+            }.to raise_error(Ecosystem::StrategyError)
+          end
         end
       end
     end
