@@ -25,7 +25,7 @@ RSpec.feature 'Administration of queued jobs' do
     job.set_progress(0.5)
 
     visit admin_root_path
-    click_link 'Queued jobs'
+    click_link 'Jobs'
 
     expect(current_path).to eq(admin_jobs_path)
     expect(page).to have_css('.job_status', text: 'queued')
