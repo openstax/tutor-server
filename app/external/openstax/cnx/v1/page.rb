@@ -109,6 +109,11 @@ module OpenStax::Cnx::V1
         href.value = OpenStax::Cnx::V1.url_for(uri, secure: true)
       end
 
+      # Absolutize exercise links
+      @converted_doc.css(".#{EXERCISE_CLASS}").each do |exercise|
+        Fragment::Exercise.absolutize_url(exercise)
+      end
+
       @converted_doc
     end
 
