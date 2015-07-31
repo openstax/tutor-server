@@ -13,19 +13,19 @@ class Api::V1::JobsController < Api::V1::ApiController
     { status: \\[:queued, :working, :completed, :failed, :killed\\] }
   EOS
   def show
-    status = Lev::BackgroundJob.find(params[:id])
-    code = http_status_code(status.status)
-    render json: status, with: :url, status: code
+    job = Lev::BackgroundJob.find(params[:id])
+    code = http_status_code(job.status)
+    render json: job, with: :url, status: code
   end
 
   private
-  def http_status_code(switch)
-    case switch
+  def http_status_code(status)
+    case status
     when Lev::BackgroundJob::STATE_COMPLETED
       200
     when Lev::BackgroundJob::STATE_FAILED
       500
-    when Lev::BackgroundJob::STATE_KILLED
+    when Lev::BackgroundJob::STATE_KILLED || Lev::BackgroundJob::STATE_UNKNOWN
       404
     else
       202
