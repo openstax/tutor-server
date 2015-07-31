@@ -21,6 +21,9 @@ class DistributeTasks
   end
 
   def exec(task_plan)
+    # Lock the TaskPlan to prevent concurrent update/publish
+    task_plan.lock!
+
     # Delete pre-existing assignments
     task_plan.tasks.destroy_all unless task_plan.tasks.empty?
 
@@ -49,9 +52,9 @@ class DistributeTasks
       efficiently_save(task)
     end
 
-    outputs[:tasks] = tasks
-
     task_plan.update_column(:published_at, Time.now)
+
+    outputs[:tasks] = tasks
   end
 
 end

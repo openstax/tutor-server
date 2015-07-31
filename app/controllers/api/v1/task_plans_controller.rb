@@ -97,6 +97,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, task_plan)
     course = task_plan.owner
     Time.use_zone(course.profile.timezone) do
+      # Lock the TaskPlan to prevent concurrent update/publish
       task_plan.with_lock do
         consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter)
         OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, task_plan)
