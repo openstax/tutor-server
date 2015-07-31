@@ -25,7 +25,7 @@ Rails.application.routes.draw do
   apipie
 
   api :v1, :default => true do
-    resources :jobs, only: :show
+    resources :jobs, only: [:index, :show]
 
     resources :users, only: [:index]
 
