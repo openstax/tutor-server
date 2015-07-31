@@ -213,5 +213,180 @@ module Content
       end
     end
 
+
+    context "fetching reading dynamic exercise pool" do
+      context "delegation" do
+        context "single page" do
+          let(:page) { valid_page }
+          let(:strategy_expected_pages) { [page] }
+
+          it "delegates to its strategy with the correct pages:" do
+            ecosystem.reading_dynamic_exercises(pages: page)
+            expect(strategy).to have_received(:reading_dynamic_exercises)
+          end
+        end
+
+        context "multiple pages" do
+          let(:pages) { [valid_page, valid_page] }
+          let(:strategy_expected_pages) { pages }
+
+          it "delegates to its strategy with the correct pages:" do
+            ecosystem.reading_dynamic_exercises(pages: pages)
+            expect(strategy).to have_received(:reading_dynamic_exercises)
+          end
+        end
+      end
+
+      context "valid pages:" do
+        let(:pages) { [valid_page, valid_page] }
+
+        context "strategy returns Content::Ecosystem::Exercises" do
+          let(:strategy_reading_dynamic_exercises) { [ valid_exercise, valid_exercise ] }
+
+          it "returns the strategy's exercises" do
+            exercises = ecosystem.reading_dynamic_exercises(pages: pages)
+            expect(exercises).to eq(strategy_reading_dynamic_exercises)
+          end
+        end
+
+        context "strategy doesn't return Content::Ecosystem::Exercises" do
+          let(:strategy_reading_dynamic_exercises) { [ valid_exercise, invalid_exercise, valid_exercise ] }
+
+          it "raises Content::Ecosystem::StrategyError" do
+            expect{
+              ecosystem.reading_dynamic_exercises(pages: pages)
+            }.to raise_error(Content::Ecosystem::StrategyError)
+          end
+        end
+      end
+
+      context "invalid pages:" do
+        let(:pages) { [valid_page, invalid_page, valid_page] }
+
+        it "raises ArgumentError" do
+          expect{
+            ecosystem.reading_dynamic_exercises(pages: pages)
+          }.to raise_error(ArgumentError)
+        end
+      end
+    end
+
+
+    context "fetching homework core exercise pool" do
+      context "delegation" do
+        context "single page" do
+          let(:page) { valid_page }
+          let(:strategy_expected_pages) { [page] }
+
+          it "delegates to its strategy with the correct pages:" do
+            ecosystem.homework_core_exercises(pages: page)
+            expect(strategy).to have_received(:homework_core_exercises)
+          end
+        end
+
+        context "multiple pages" do
+          let(:pages) { [valid_page, valid_page] }
+          let(:strategy_expected_pages) { pages }
+
+          it "delegates to its strategy with the correct pages:" do
+            ecosystem.homework_core_exercises(pages: pages)
+            expect(strategy).to have_received(:homework_core_exercises)
+          end
+        end
+      end
+
+      context "valid pages:" do
+        let(:pages) { [valid_page, valid_page] }
+
+        context "strategy returns Content::Ecosystem::Exercises" do
+          let(:strategy_homework_core_exercises) { [ valid_exercise, valid_exercise ] }
+
+          it "returns the strategy's exercises" do
+            exercises = ecosystem.homework_core_exercises(pages: pages)
+            expect(exercises).to eq(strategy_homework_core_exercises)
+          end
+        end
+
+        context "strategy doesn't return Content::Ecosystem::Exercises" do
+          let(:strategy_homework_core_exercises) { [ valid_exercise, invalid_exercise, valid_exercise ] }
+
+          it "raises Content::Ecosystem::StrategyError" do
+            expect{
+              ecosystem.homework_core_exercises(pages: pages)
+            }.to raise_error(Content::Ecosystem::StrategyError)
+          end
+        end
+      end
+
+      context "invalid pages:" do
+        let(:pages) { [valid_page, invalid_page, valid_page] }
+
+        it "raises ArgumentError" do
+          expect{
+            ecosystem.homework_core_exercises(pages: pages)
+          }.to raise_error(ArgumentError)
+        end
+      end
+    end
+
+
+    context "fetching homework dynamic exercise pool" do
+      context "delegation" do
+        context "single page" do
+          let(:page) { valid_page }
+          let(:strategy_expected_pages) { [page] }
+
+          it "delegates to its strategy with the correct pages:" do
+            ecosystem.homework_dynamic_exercises(pages: page)
+            expect(strategy).to have_received(:homework_dynamic_exercises)
+          end
+        end
+
+        context "multiple pages" do
+          let(:pages) { [valid_page, valid_page] }
+          let(:strategy_expected_pages) { pages }
+
+          it "delegates to its strategy with the correct pages:" do
+            ecosystem.homework_dynamic_exercises(pages: pages)
+            expect(strategy).to have_received(:homework_dynamic_exercises)
+          end
+        end
+      end
+
+      context "valid pages:" do
+        let(:pages) { [valid_page, valid_page] }
+
+        context "strategy returns Content::Ecosystem::Exercises" do
+          let(:strategy_homework_dynamic_exercises) { [ valid_exercise, valid_exercise ] }
+
+          it "returns the strategy's exercises" do
+            exercises = ecosystem.homework_dynamic_exercises(pages: pages)
+            expect(exercises).to eq(strategy_homework_dynamic_exercises)
+          end
+        end
+
+        context "strategy doesn't return Content::Ecosystem::Exercises" do
+          let(:strategy_homework_dynamic_exercises) { [ valid_exercise, invalid_exercise, valid_exercise ] }
+
+          it "raises Content::Ecosystem::StrategyError" do
+            expect{
+              ecosystem.homework_dynamic_exercises(pages: pages)
+            }.to raise_error(Content::Ecosystem::StrategyError)
+          end
+        end
+      end
+
+      context "invalid pages:" do
+        let(:pages) { [valid_page, invalid_page, valid_page] }
+
+        it "raises ArgumentError" do
+          expect{
+            ecosystem.homework_dynamic_exercises(pages: pages)
+          }.to raise_error(ArgumentError)
+        end
+      end
+    end
+
+
   end
 end
