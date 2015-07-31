@@ -49,6 +49,12 @@ class DistributeTasks
 
     # Call the assistant code to create Tasks, then distribute them
     entity_tasks = assistant.build_tasks(task_plan: task_plan, taskees: untasked_taskees)
+
+    if entity_tasks.flat_map(&:task).any? { |t| t.task_steps.empty? }
+      fatal_error(code: :empty_tasks,
+                  message: 'Tasks could not be published because some tasks were empty')
+    end
+
     entity_tasks.each_with_index do |entity_task, ii|
       role = untasked_taskees[ii]
       tasking = Tasks::Models::Tasking.new(

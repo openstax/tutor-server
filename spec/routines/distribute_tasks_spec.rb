@@ -2,32 +2,37 @@ require 'rails_helper'
 
 RSpec.describe DistributeTasks, type: :routine do
 
-  let!(:course)    { Entity::Course.create! }
-  let!(:period)    { CreatePeriod[course: course] }
-  let!(:user)      {
-    profile = FactoryGirl.create :user_profile
-    AddUserAsPeriodStudent.call(user: profile.entity_user, period: period)
-    profile
-  }
-  let!(:new_user)      {
-    profile = FactoryGirl.create :user_profile
-    AddUserAsPeriodStudent.call(user: profile.entity_user, period: period)
-    profile
-  }
-  let!(:task_plan) {
-    task_plan = FactoryGirl.build(:tasks_task_plan, owner: course)
-    task_plan.tasking_plans.first.target = period.to_model
-    task_plan.save!
-    task_plan
-  }
+  let(:course)    { Entity::Course.create! }
+  let(:period)    { CreatePeriod[course: course] }
+  let(:user)      { FactoryGirl.create :user_profile }
+  let(:task_plan) { FactoryGirl.create(:tasks_task_plan, owner: course) }
+  let(:tasking_plan) { FactoryGirl.create(:tasks_tasking_plan, target: user,
+                                                               task_plan: task_plan) }
 
-  before(:each) do
-    
+  before do
+    AddUserAsPeriodStudent.call(user: user.entity_user, period: period)
+  end
+
+  context 'no steps in any of the tasks' do
+    it 'adds an error' do
+      allow_any_instance_of(Tasks::Models::Task).to receive(:task_steps) { [] }
+
+      error = DistributeTasks.call(task_plan).errors.last
+
+      expect(error).not_to be_nil
+      expect(error.code).to eq(:empty_tasks)
+      expect(error.message).to eq(
+        'Tasks could not be published because some tasks were empty'
+      )
+    end
   end
 
   context 'unpublished task_plan' do
-    it 'creates tasks for the task_plan' do
-      expect(task_plan.tasks).to be_empty
+    before do
+      expect(DummyAssistant).to receive(:build_tasks).and_return([])
+    end
+
+    it "calls the build_tasks method on the task_plan's assistant" do
       result = DistributeTasks.call(task_plan)
       expect(result.errors).to be_empty
       expect(task_plan.tasks.size).to eq 2
@@ -41,12 +46,13 @@ RSpec.describe DistributeTasks, type: :routine do
   end
 
   context 'published task_plan' do
-    before(:each) do
+    before do
       DistributeTasks.call(task_plan)
       new_user.entity_user.roles.each do |role|
         role.taskings.each{ |tasking| tasking.task.destroy }
       end
       task_plan.reload
+      expect(DummyAssistant).to receive(:build_tasks).and_return([])
     end
 
     context 'before the open date' do
