@@ -17,7 +17,6 @@ class Content::Routines::UpdatePageContent
         path = URI.parse(attr.value).path
 
         change_page_links(path, page_uuids, attr)
-        absolutize_exercise_links(attr)
       end
 
       page.update_attributes(content: doc.to_html)
@@ -40,20 +39,6 @@ class Content::Routines::UpdatePageContent
         # change the link to a relative link, with just <uuid><rest-of-path>
         attr.value = path.gsub(/^\/contents\//, '')
       end
-    end
-  end
-
-  def absolutize_exercise_links(attr)
-    # Change exercise links (like #ost/api/ex/apbio-ch02-ex026) to absolute
-    # urls (like https://exercises-dev.openstax.org/api/exercises?q=tag:apbio-ch02-ex026)
-
-    if attr.value.starts_with?('#ost/')
-      tag_name = attr.value.split('/').last
-      # exercises url looks like "https://exercises-dev.openstax.org"
-      exercises_url = OpenStax::Exercises::V1.configuration.server_url
-      uri = Addressable::URI.join(exercises_url, '/api/exercises')
-      uri.query_values = { q: "tag:#{tag_name}" }
-      attr.value = uri.to_s
     end
   end
 
