@@ -101,9 +101,7 @@ module Content
       end
 
       context "strategy returns Content::Ecosystem::Books" do
-        let(:strategy_books) {
-          [ valid_book, valid_book ]
-        }
+        let(:strategy_books) { [ valid_book, valid_book ] }
 
         it "returns the strategy's books" do
           books = ecosystem.books
@@ -112,9 +110,7 @@ module Content
       end
 
       context "strategy doesn't return Content::Ecosystem::Books" do
-        let(:strategy_books) {
-          [ valid_book, invalid_book, valid_book ]
-        }
+        let(:strategy_books) { [ valid_book, invalid_book, valid_book ] }
 
         it "raises Content::Ecosystem::StrategyError" do
           expect{
@@ -132,9 +128,7 @@ module Content
       end
 
       context "strategy returns Content::Ecosystem::Exercises" do
-        let(:strategy_exercises) {
-          [ valid_exercise, valid_exercise ]
-        }
+        let(:strategy_exercises) { [ valid_exercise, valid_exercise ] }
 
         it "returns the strategy's exercises" do
           exercises = ecosystem.exercises
@@ -143,9 +137,7 @@ module Content
       end
 
       context "strategy doesn't return Content::Ecosystem::Exercises" do
-        let(:strategy_exercises) {
-          [ valid_exercise, invalid_exercise, valid_exercise ]
-        }
+        let(:strategy_exercises) { [ valid_exercise, invalid_exercise, valid_exercise ] }
 
         it "raises Ecosystem::StrategyError" do
           expect{
