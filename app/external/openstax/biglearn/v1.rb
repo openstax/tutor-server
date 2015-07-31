@@ -45,9 +45,11 @@ module OpenStax::Biglearn::V1
                                                 count: count, difficulty: difficulty,
                                                 allow_repetitions: allow_repetitions)
 
-    if exercises.size != count
+    num_exercises = (exercises || []).size
+
+    if num_exercises != count
       Rails.logger.warn {
-        "Biglearn.get_projection_exercises only returned #{exercises.count} of #{count} " +
+        "Biglearn.get_projection_exercises only returned #{num_exercises} of #{count} " +
         "requested exercises [role: #{role}, tag_search: #{tag_search}, difficulty: #{difficulty}, " +
         "allow_repetitions: #{allow_repetitions}] exercises = #{exercises}"
       }
