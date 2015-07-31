@@ -60,6 +60,66 @@ class Content::Ecosystem
     exercises
   end
 
+  def reading_dynamic_exercises(pages:)
+    pages_arr = Array(pages).flatten.compact
+
+    raise_collection_class_error(
+      collection: pages_arr,
+      klass:      Content::Ecosystem::Page,
+      error:      ArgumentError
+    )
+
+    exercises = @strategy.reading_dynamic_exercises(pages: pages_arr)
+
+    raise_collection_class_error(
+      collection: exercises,
+      klass:      Content::Ecosystem::Exercise,
+      error:      Content::Ecosystem::StrategyError
+    )
+
+    exercises
+  end
+
+  def homework_core_exercises(pages:)
+    pages_arr = Array(pages).flatten.compact
+
+    raise_collection_class_error(
+      collection: pages_arr,
+      klass:      Content::Ecosystem::Page,
+      error:      ArgumentError
+    )
+
+    exercises = @strategy.homework_core_exercises(pages: pages_arr)
+
+    raise_collection_class_error(
+      collection: exercises,
+      klass:      Content::Ecosystem::Exercise,
+      error:      Content::Ecosystem::StrategyError
+    )
+
+    exercises
+  end
+
+  def homework_dynamic_exercises(pages:)
+    pages_arr = Array(pages).flatten.compact
+
+    raise_collection_class_error(
+      collection: pages_arr,
+      klass:      Content::Ecosystem::Page,
+      error:      ArgumentError
+    )
+
+    exercises = @strategy.homework_dynamic_exercises(pages: pages_arr)
+
+    raise_collection_class_error(
+      collection: exercises,
+      klass:      Content::Ecosystem::Exercise,
+      error:      Content::Ecosystem::StrategyError
+    )
+
+    exercises
+  end
+
   private
 
   def raise_collection_class_error(collection:, klass:, error:)
