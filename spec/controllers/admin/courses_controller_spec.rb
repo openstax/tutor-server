@@ -36,12 +36,32 @@ RSpec.describe Admin::CoursesController do
   describe 'POST #students' do
     let!(:course) { CreateCourse[name: 'Physics'] }
     let!(:period) { CreatePeriod[course: course, name: '1st'] }
-    let!(:file) { fixture_file_upload('files/test_courses_post_students.csv', 'text/csv') }
-    let!(:file2) { fixture_file_upload('files/test_courses_post_students2.csv', 'text/csv') }
+    let!(:email_file) {
+      fixture_file_upload('files/test_courses_post_students_email.csv', 'text/csv')
+    }
+    let!(:pass_file) {
+      fixture_file_upload('files/test_courses_post_students_pass.csv', 'text/csv')
+    }
+    let!(:invalid_file) {
+      fixture_file_upload('files/test_courses_post_students_invalid.csv', 'text/csv')
+    }
 
-    it 'adds students to a course period' do
+    it 'adds students to a course period with an email address' do
       expect {
-        post :students, id: course.id, course: { period: period.id }, student_roster: file
+        post :students, id: course.id, course: { period: period.id }, student_roster: email_file
+      }.to change { OpenStax::Accounts::Account.count }.by(3)
+      expect(flash[:notice]).to eq('Student roster has been uploaded.')
+
+      student_roster = GetStudentRoster[course: course]
+      expect(student_roster.length).to eq(3)
+      expect(student_roster[0].full_name).to eq('Carol Burgess')
+      expect(student_roster[1].full_name).to eq('Melissa Haynes')
+      expect(student_roster[2].full_name).to eq('Alexander Himmel')
+    end
+
+    it 'adds students to a course period with a password' do
+      expect {
+        post :students, id: course.id, course: { period: period.id }, student_roster: pass_file
       }.to change { OpenStax::Accounts::Account.count }.by(3)
       expect(flash[:notice]).to eq('Student roster has been uploaded.')
 
@@ -55,8 +75,8 @@ RSpec.describe Admin::CoursesController do
     it 'does not add any students if any username has been taken' do
       FactoryGirl.create :user_profile, username: 'alexh'
       expect {
-        post :students, id: course.id, course: { period: period.id }, student_roster: file
-      }.to change { OpenStax::Accounts::Account.count }.by(0)
+        post :students, id: course.id, course: { period: period.id }, student_roster: email_file
+      }.not_to change { OpenStax::Accounts::Account.count }
       expect(flash[:error]).to eq([
         'Error uploading student roster',
         'On line 4, username alexh has already been taken.'
@@ -65,14 +85,14 @@ RSpec.describe Admin::CoursesController do
 
     it 'does not add any students if username or email is missing' do
       expect {
-        post :students, id: course.id, course: { period: period.id }, student_roster: file2
-      }.to change { OpenStax::Accounts::Account.count }.by(0)
+        post :students, id: course.id, course: { period: period.id }, student_roster: invalid_file
+      }.not_to change { OpenStax::Accounts::Account.count }
       expect(flash[:error]).to eq([
         'Error uploading student roster',
-        'On line 2, email is missing.',
+        'On line 2, either an email or a password is required.',
         'On line 3, username is missing.',
         'On line 4, username is missing.',
-        'On line 4, email is missing.'
+        'On line 4, either an email or a password is required.'
       ])
     end
   end
