@@ -105,7 +105,8 @@ class ResetPracticeWidget
       role: role , tag_search: { _or: los }, count: 5, difficulty: 0.5, allow_repetitions: true
     )
 
-    SearchLocalExercises[relation: BASE_RELATION, url: urls].tap do |exercises|
+    SearchLocalExercises[relation: BASE_RELATION, url: urls,
+                         extract_numbers_from_urls: true].tap do |exercises|
       if exercises.size != urls.count
         fatal_error(code: :missing_local_exercises,
                     message: "Biglearn returned more exercises for the practice widget than " +
