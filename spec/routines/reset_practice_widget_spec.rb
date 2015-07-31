@@ -19,4 +19,16 @@ RSpec.describe ResetPracticeWidget, type: :routine do
     expect(practice_task.task.task_steps.reload.size).to eq 1
   end
 
+  it 'errors when biglearn does not return enough' do
+    allow(OpenStax::Biglearn::V1).to receive(:get_projection_exercises) { ['dummy_url'] }
+    result = ResetPracticeWidget.call(role: role, exercise_source: :biglearn, page_ids: [])
+    expect(result.errors.first.code).to eq :missing_local_exercises
+  end
+
+  it 'errors when there are not enough exercises returned for the widget' do
+    allow_any_instance_of(ResetPracticeWidget).to receive(:get_fake_exercises) { [] }
+    result = ResetPracticeWidget.call(role: role, exercise_source: :fake, page_ids: [])
+    expect(result.errors.first.code).to eq :not_enough_exercises
+  end
+
 end

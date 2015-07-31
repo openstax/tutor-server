@@ -41,9 +41,19 @@ module OpenStax::Biglearn::V1
   #
   def self.get_projection_exercises(role:, tag_search: {},
                                     count: 1, difficulty: 0.5, allow_repetitions: true)
-    client.get_projection_exercises(role: role, tag_search: tag_search,
-                                    count: count, difficulty: difficulty,
-                                    allow_repetitions: allow_repetitions)
+    exercises = client.get_projection_exercises(role: role, tag_search: tag_search,
+                                                count: count, difficulty: difficulty,
+                                                allow_repetitions: allow_repetitions)
+
+    if exercises.size != count
+      Rails.logger.warn {
+        "Biglearn.get_projection_exercises only returned #{exercises.count} of #{count} " +
+        "requested exercises [role: #{role}, tag_search: #{tag_search}, difficulty: #{difficulty}, " +
+        "allow_repetitions: #{allow_repetitions}] exercises = #{exercises}"
+      }
+    end
+
+    exercises
   end
 
   #
