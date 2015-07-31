@@ -88,7 +88,7 @@ RSpec.describe Admin::CoursesController do
     let!(:course_book) {
       AddBookToCourse.call(course: course, book: book_1)
       CourseContent::Models::CourseBook.where { entity_course_id == my { course.id } }
-                                       .where { entity_book_id == my { book_1.id } }
+                                       .where { content_book_id == my { book_1.id } }
                                        .first
     }
 

@@ -20,7 +20,7 @@ ActiveRecord::Schema.define(version: 20150716231241) do
     t.string   "url"
     t.text     "content"
     t.integer  "parent_book_part_id"
-    t.integer  "entity_book_id",      null: false
+    t.integer  "content_book_id",     null: false
     t.integer  "number",              null: false
     t.string   "title",               null: false
     t.text     "chapter_section"
@@ -32,9 +32,14 @@ ActiveRecord::Schema.define(version: 20150716231241) do
     t.text     "page_data_cache"
   end
 
-  add_index "content_book_parts", ["entity_book_id"], name: "index_content_book_parts_on_entity_book_id", using: :btree
+  add_index "content_book_parts", ["content_book_id"], name: "index_content_book_parts_on_content_book_id", using: :btree
   add_index "content_book_parts", ["parent_book_part_id", "number"], name: "index_content_book_parts_on_parent_book_part_id_and_number", unique: true, using: :btree
   add_index "content_book_parts", ["url"], name: "index_content_book_parts_on_url", unique: true, using: :btree
+
+  create_table "content_books", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "content_exercise_tags", force: :cascade do |t|
     t.integer  "content_exercise_id", null: false
@@ -111,13 +116,13 @@ ActiveRecord::Schema.define(version: 20150716231241) do
 
   create_table "course_content_course_books", force: :cascade do |t|
     t.integer  "entity_course_id", null: false
-    t.integer  "entity_book_id",   null: false
+    t.integer  "content_book_id",  null: false
     t.datetime "created_at",       null: false
     t.datetime "updated_at",       null: false
   end
 
-  add_index "course_content_course_books", ["entity_book_id"], name: "index_course_content_course_books_on_entity_book_id", using: :btree
-  add_index "course_content_course_books", ["entity_course_id", "entity_book_id"], name: "[\"course_books_course_id_on_book_id_unique\"]", unique: true, using: :btree
+  add_index "course_content_course_books", ["content_book_id"], name: "index_course_content_course_books_on_content_book_id", using: :btree
+  add_index "course_content_course_books", ["entity_course_id", "content_book_id"], name: "[\"course_books_course_id_on_book_id_unique\"]", unique: true, using: :btree
 
   create_table "course_detail_districts", force: :cascade do |t|
     t.string "name", null: false
@@ -186,11 +191,6 @@ ActiveRecord::Schema.define(version: 20150716231241) do
   add_index "course_profile_profiles", ["course_detail_school_id"], name: "index_course_profile_profiles_on_course_detail_school_id", using: :btree
   add_index "course_profile_profiles", ["entity_course_id"], name: "index_course_profile_profiles_on_entity_course_id", unique: true, using: :btree
   add_index "course_profile_profiles", ["name"], name: "index_course_profile_profiles_on_name", using: :btree
-
-  create_table "entity_books", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
 
   create_table "entity_courses", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -557,7 +557,7 @@ ActiveRecord::Schema.define(version: 20150716231241) do
   add_index "user_profile_profiles", ["exchange_write_identifier"], name: "index_user_profile_profiles_on_exchange_write_identifier", unique: true, using: :btree
 
   add_foreign_key "content_book_parts", "content_book_parts", column: "parent_book_part_id", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "content_book_parts", "entity_books", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "content_book_parts", "content_books", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_exercise_tags", "content_exercises", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_exercise_tags", "content_tags", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_lo_teks_tags", "content_tags", column: "lo_id"
@@ -565,7 +565,7 @@ ActiveRecord::Schema.define(version: 20150716231241) do
   add_foreign_key "content_page_tags", "content_pages", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_page_tags", "content_tags", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_pages", "content_book_parts", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "course_content_course_books", "entity_books"
+  add_foreign_key "course_content_course_books", "content_books"
   add_foreign_key "course_content_course_books", "entity_courses"
   add_foreign_key "course_detail_schools", "course_detail_districts"
   add_foreign_key "course_membership_enrollments", "course_membership_periods", on_update: :cascade, on_delete: :cascade

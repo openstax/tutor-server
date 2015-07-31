@@ -62,7 +62,7 @@ class Admin::CoursesController < Admin::BaseController
     end
 
     course = Entity::Course.find(params[:id])
-    book = Entity::Book.find(params[:book_id])
+    book = Content::Models::Book.find(params[:book_id])
     if course.books.include?(book)
       flash[:notice] = "Course book \"#{book.root_book_part.title}\" is already selected for \"#{course.profile.name}\""
     else

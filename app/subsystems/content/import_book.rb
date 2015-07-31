@@ -11,10 +11,10 @@ class Content::ImportBook
 
   protected
 
-  # Imports and saves a Cnx::Book as an Entity::Book
+  # Imports and saves a Cnx::Book as an Content::Models::Book
   # Returns the Book object, Resource object and collection JSON as a hash
   def exec(cnx_book:)
-    outputs[:book] = Entity::Book.create!
+    outputs[:book] = Content::Models::Book.create!
 
     run(:import_book_part, cnx_book_part: cnx_book.root_book_part,
                            book: outputs[:book],

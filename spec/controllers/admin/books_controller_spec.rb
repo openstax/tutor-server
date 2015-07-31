@@ -15,7 +15,7 @@ RSpec.describe Admin::BooksController, speed: :slow, vcr: VCR_OPTS do
 
       expect(assigns[:books]).to eq([
         {
-          'id' => book_part_2.entity_book_id,
+          'id' => book_part_2.content_book_id,
           'title' => 'AP Biology',
           'uuid' => book_part_2.uuid,
           'version' => book_part_2.version,
@@ -23,7 +23,7 @@ RSpec.describe Admin::BooksController, speed: :slow, vcr: VCR_OPTS do
           'title_with_id' => "AP Biology (#{book_part_2.uuid}@#{book_part_2.version})"
         },
         {
-          'id' => book_part_1.entity_book_id,
+          'id' => book_part_1.content_book_id,
           'title' => 'Physics',
           'uuid' => book_part_1.uuid,
           'version' => book_part_1.version,
@@ -42,7 +42,7 @@ RSpec.describe Admin::BooksController, speed: :slow, vcr: VCR_OPTS do
       expect {
         post :import, archive_url: archive_url,
                       cnx_id: cnx_id
-      }.to change { Entity::Book.count }.by(1)
+      }.to change { Content::Models::Book.count }.by(1)
       expect(flash[:notice]).to eq 'Book "Physics" imported.'
     end
 
@@ -54,7 +54,7 @@ RSpec.describe Admin::BooksController, speed: :slow, vcr: VCR_OPTS do
       expect {
         post :import, archive_url: archive_url,
                       cnx_id: cnx_id
-      }.not_to change { Entity::Book.count }
+      }.not_to change { Content::Models::Book.count }
       expect(flash[:error]).to eq 'Book "Physics" already imported.'
     end
 
@@ -66,7 +66,7 @@ RSpec.describe Admin::BooksController, speed: :slow, vcr: VCR_OPTS do
       expect {
         post :import, archive_url: archive_url,
                       cnx_id: cnx_id.sub('@4.4', '@4.3')
-      }.to change { Entity::Book.count }.by(1)
+      }.to change { Content::Models::Book.count }.by(1)
       expect(flash[:notice]).to eq 'Book "Physics" imported.'
     end
   end

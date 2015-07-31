@@ -1,10 +1,10 @@
 require 'rails_helper'
 
-RSpec.describe CourseContent::GetCourseBooks, :type => :routine do
+RSpec.describe CourseContent::GetCourseBooks, type: :routine do
 
   let!(:course) { Entity::Course.create! }
-  let!(:book1)  { Entity::Book.create! }
-  let!(:book2)  { Entity::Book.create! }
+  let!(:book1)  { Content::Models::Book.create! }
+  let!(:book2)  { Content::Models::Book.create! }
 
   it "finds course books" do
     CourseContent::AddBookToCourse.call(course: course, book: book1)
