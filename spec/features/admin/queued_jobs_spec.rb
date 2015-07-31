@@ -17,7 +17,7 @@ RSpec.feature 'Administration of queued jobs' do
 
     Tasks::ExportPerformanceReport.perform_later(course: course, role: role)
 
-    job = Lev::Status.all.last
+    job = Lev::BackgroundJob.all.last
     job.set_progress(0.5)
 
     stub_current_user(admin)
