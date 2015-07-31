@@ -23,7 +23,7 @@ module Tasks
         export: File.open(outputs.filepath)
       )
 
-      status.save({ url: export.url })
+      job.save(url: export.url)
     end
 
     private

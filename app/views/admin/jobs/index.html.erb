@@ -1,0 +1,23 @@
+<%= will_paginate @jobs %>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Status</th>
+      <th>Progress</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @jobs.each do |job| %>
+      <tr>
+        <td class='job_id'><%= link_to job.id, admin_job_path(job.id) %></td>
+        <td class='job_status'><%= job.status %></td>
+        <td class='job_progress'><%= number_to_percentage(job.progress.to_f * 100, precision: 0) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= will_paginate @jobs %>
