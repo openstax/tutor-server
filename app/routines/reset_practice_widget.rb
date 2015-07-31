@@ -47,7 +47,8 @@ class ResetPracticeWidget
       # Not enough exercises
       fatal_error(
         code: :not_enough_exercises,
-        message: "Not enough exercises to build the Practice Widget. LO's: #{los.inspect}. Needed: #{count}. Got: #{num_exercises}."
+        message: "Not enough exercises to build the Practice Widget. [los: #{los.inspect}, " +
+                 "role: #{role.id}, needed: #{count}, got: #{num_exercises}]"
       )
     end
 
@@ -104,7 +105,16 @@ class ResetPracticeWidget
       role: role , tag_search: { _or: los }, count: 5, difficulty: 0.5, allow_repetitions: true
     )
 
-    exercises = SearchLocalExercises[relation: BASE_RELATION, url: urls]
+    SearchLocalExercises[relation: BASE_RELATION, url: urls,
+                         extract_numbers_from_urls: true].tap do |exercises|
+      if exercises.size != urls.count
+        fatal_error(code: :missing_local_exercises,
+                    message: "Biglearn returned more exercises for the practice widget than " +
+                             "were present locally. [los: #{los}, role: #{role.id}, " +
+                             "requested: #{count}, from_biglearn: #{urls.count}, " +
+                             "local_found: #{exercises.size}] biglearn_urls: #{urls}")
+      end
+    end
   end
 
   def get_related_content_for(exercise)
