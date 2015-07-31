@@ -6,7 +6,7 @@ class Entity::Course < Tutor::SubSystems::BaseModel
   has_many :students, subsystem: :course_membership
 
   has_many :course_books, subsystem: :course_content
-  has_many :books, through: :course_books
+  has_many :books, through: :course_books, subsystem: :content
 
   delegate :name, to: :profile
 end
