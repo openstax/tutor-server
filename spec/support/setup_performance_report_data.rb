@@ -27,14 +27,15 @@ class SetupPerformanceReportData
       AddUserAsPeriodStudent[period: period_2, user: student.entity_user]
     end
 
-    page_ids = book.root_book_part.child_book_parts.third.pages.pluck(:id).first(2)
+    # Exclude introduction pages b/c they don't have LOs
+    page_ids = Content::Models::Page.where{title != "Introduction"}.map(&:id)
 
     reading_taskplan = Tasks::Models::TaskPlan.new(
       title: 'Reading task plan',
       owner: course,
       type: 'reading',
       assistant: reading_assistant,
-      settings: { page_ids: page_ids.collect(&:to_s) }
+      settings: { page_ids: page_ids.first(2).collect(&:to_s) }
     )
 
     reading_taskplan.tasking_plans << Tasks::Models::TaskingPlan.new(

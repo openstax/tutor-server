@@ -81,4 +81,12 @@ RSpec.describe Content::Routines::SearchExercises, type: :routine, speed: :slow,
     expect(exercises.first).to eq exercise_2
   end
 
+  it 'does not explode when url is empty and extract_numbers_from_urls is true' do
+    exercises = Content::Routines::SearchExercises[
+      url: [], extract_numbers_from_urls: true
+    ]
+    expect(exercises.all).not_to eq RuntimeError
+    expect(exercises).to eq []
+  end
+
 end

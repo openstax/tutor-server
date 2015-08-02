@@ -6,7 +6,7 @@ RSpec.describe MapUsersAccounts do
 
     context 'when the account is anonymous' do
       let(:account) do
-        OpenStax::Accounts::CreateTempAccount.call(username: 'account').outputs.account
+        OpenStax::Accounts::FindOrCreateAccount.call(username: 'account').outputs.account
       end
 
       before { allow(account).to receive(:is_anonymous?) { true } }
@@ -27,7 +27,7 @@ RSpec.describe MapUsersAccounts do
 
     context 'when a profile can be created successfully' do
       let(:account) do
-        OpenStax::Accounts::CreateTempAccount.call(username: 'account').outputs.account
+        OpenStax::Accounts::FindOrCreateAccount.call(username: 'account').outputs.account
       end
 
       it 'returns the created profile for the account' do

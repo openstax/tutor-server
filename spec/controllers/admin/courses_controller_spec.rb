@@ -34,45 +34,54 @@ RSpec.describe Admin::CoursesController do
   end
 
   describe 'POST #students' do
-    let!(:course) { CreateCourse[name: 'Physics'] }
-    let!(:period) { CreatePeriod[course: course, name: '1st'] }
-    let!(:file) { fixture_file_upload('files/test_courses_post_students.csv', 'text/csv') }
-    let!(:file2) { fixture_file_upload('files/test_courses_post_students2.csv', 'text/csv') }
+    let!(:physics) { CreateCourse[name: 'Physics'] }
+    let!(:physics_period) { CreatePeriod[course: physics, name: '1st'] }
+
+    let!(:biology) { CreateCourse[name: 'Biology'] }
+    let!(:biology_period) { CreatePeriod[course: biology, name: '3rd'] }
+
+    let!(:file_1) { fixture_file_upload('files/test_courses_post_students_1.csv', 'text/csv') }
+    let!(:file_2) { fixture_file_upload('files/test_courses_post_students_2.csv', 'text/csv') }
+    let!(:incomplete_file) { fixture_file_upload('files/test_courses_post_students_incomplete.csv', 'text/csv') }
 
     it 'adds students to a course period' do
       expect {
-        post :students, id: course.id, course: { period: period.id }, student_roster: file
+        post :students, id: physics.id, course: { period: physics_period.id }, student_roster: file_1
       }.to change { OpenStax::Accounts::Account.count }.by(3)
       expect(flash[:notice]).to eq('Student roster has been uploaded.')
 
-      student_roster = GetStudentRoster[course: course]
+      student_roster = GetStudentRoster[course: physics]
       expect(student_roster.length).to eq(3)
-      expect(student_roster[0].full_name).to eq('Carol Burgess')
-      expect(student_roster[1].full_name).to eq('Melissa Haynes')
-      expect(student_roster[2].full_name).to eq('Alexander Himmel')
+      expect(student_roster[0].first_name).to eq('Carol')
+      expect(student_roster[1].first_name).to eq('Melissa')
+      expect(student_roster[2].first_name).to eq('Alexander')
     end
 
-    it 'does not add any students if any username has been taken' do
-      FactoryGirl.create :user_profile, username: 'alexh'
+    it 'reuses existing users for existing usernames' do
+      # FactoryGirl.create :user_profile, username: 'alexh'
       expect {
-        post :students, id: course.id, course: { period: period.id }, student_roster: file
+        post :students, id: physics.id, course: { period: physics_period.id }, student_roster: file_1
+      }.to change { OpenStax::Accounts::Account.count }.by(3)
+
+      expect {
+        post :students, id: biology.id, course: { period: biology_period.id }, student_roster: file_2
+      }.to change { OpenStax::Accounts::Account.count }.by(1) # 2 in file but 1 reused
+
+      # Carol B should be in both courses
+      expect(UserIsCourseStudent[user: Entity::User.second, course: physics]).to eq true
+      expect(UserIsCourseStudent[user: Entity::User.second, course: biology]).to eq true
+    end
+
+    it 'does not add any students if username or password is missing' do
+      expect {
+        post :students, id: physics.id, course: { period: physics_period.id }, student_roster: incomplete_file
       }.to change { OpenStax::Accounts::Account.count }.by(0)
       expect(flash[:error]).to eq([
         'Error uploading student roster',
-        'On line 4, username alexh has already been taken.'
-      ])
-    end
-
-    it 'does not add any students if username or email is missing' do
-      expect {
-        post :students, id: course.id, course: { period: period.id }, student_roster: file2
-      }.to change { OpenStax::Accounts::Account.count }.by(0)
-      expect(flash[:error]).to eq([
-        'Error uploading student roster',
-        'On line 2, email is missing.',
+        'On line 2, password is missing.',
         'On line 3, username is missing.',
         'On line 4, username is missing.',
-        'On line 4, email is missing.'
+        'On line 4, password is missing.'
       ])
     end
   end
