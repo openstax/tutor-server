@@ -77,7 +77,7 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :students, shallow: true
+      resources :students, shallow: true, except: :create
     end
 
     scope 'pages', controller: :pages, action: :get_page do

@@ -124,66 +124,69 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
     end
   end
 
-  describe '#create' do
-    let!(:valid_params) { { course_id: course.id } }
-    let!(:valid_body)   {
-      {
-        period_id: period.id.to_s,
-        username: 'dummyuser',
-        password: 'pass',
-        first_name: 'Dummy',
-        last_name: 'User',
-        full_name: 'Dummy User'
-      }
-    }
+  # TEMPORARILY SKIPPED UNTIL WE RESURRECT THE ABILITY FOR A TEACHER TO ADD A STUDENT
+  # SEE STUDENTS CONTROLLER COMMENT
+  #
+  # describe '#create' do
+  #   let!(:valid_params) { { course_id: course.id } }
+  #   let!(:valid_body)   {
+  #     {
+  #       period_id: period.id.to_s,
+  #       username: 'dummyuser',
+  #       password: 'pass',
+  #       first_name: 'Dummy',
+  #       last_name: 'User',
+  #       full_name: 'Dummy User'
+  #     }
+  #   }
 
-    context 'caller has an authorization token' do
-      context 'caller is a course teacher' do
-        it 'creates a new student' do
-          expect {
-            api_post :create, teacher_token, parameters: valid_params, raw_post_data: valid_body
-          }.to change{ UserProfile::Models::Profile.count }.by(1)
-          expect(response).to have_http_status(:created)
-          new_student = CourseMembership::Models::Student.find(response.body_as_hash[:id])
-          expect(response.body_as_hash).to eq({
-            id: new_student.id.to_s,
-            username: 'dummyuser',
-            first_name: 'Dummy',
-            last_name: 'User',
-            full_name: 'Dummy User',
-            period_id: period.id.to_s,
-            role_id: new_student.entity_role_id.to_s,
-            deidentifier: new_student.deidentifier,
-            is_active: true
-          })
-        end
-      end
+  #   context 'caller has an authorization token' do
+  #     context 'caller is a course teacher' do
+  #       it 'creates a new student' do
+  #         expect {
+  #           api_post :create, teacher_token, parameters: valid_params, raw_post_data: valid_body
+  #         }.to change{ UserProfile::Models::Profile.count }.by(1)
+  #         expect(response).to have_http_status(:created)
+  #         new_student = CourseMembership::Models::Student.find(response.body_as_hash[:id])
+  #         expect(response.body_as_hash).to eq({
+  #           id: new_student.id.to_s,
+  #           username: 'dummyuser',
+  #           first_name: 'Dummy',
+  #           last_name: 'User',
+  #           full_name: 'Dummy User',
+  #           period_id: period.id.to_s,
+  #           role_id: new_student.entity_role_id.to_s,
+  #           deidentifier: new_student.deidentifier,
+  #           is_active: true
+  #         })
+  #       end
+  #     end
 
-      context 'caller is not a course teacher' do
-        it 'raises SecurityTransgression' do
-          expect {
-            api_post :create, student_token, parameters: valid_params, raw_post_data: valid_body
-          }.to raise_error(SecurityTransgression)
-        end
-      end
-    end
+  #     context 'caller is not a course teacher' do
+  #       it 'raises SecurityTransgression' do
+  #         expect {
+  #           api_post :create, student_token, parameters: valid_params, raw_post_data: valid_body
+  #         }.to raise_error(SecurityTransgression)
+  #       end
+  #     end
+  #   end
 
-    context 'caller has an application/client credentials authorization token' do
-      it 'raises SecurityTransgression' do
-        expect {
-          api_post :create, userless_token, parameters: valid_params, raw_post_data: valid_body
-        }.to raise_error(SecurityTransgression)
-      end
-    end
+  #   context 'caller has an application/client credentials authorization token' do
+  #     it 'raises SecurityTransgression' do
+  #       expect {
+  #         api_post :create, userless_token, parameters: valid_params, raw_post_data: valid_body
+  #       }.to raise_error(SecurityTransgression)
+  #     end
+  #   end
 
-    context 'caller does not have an authorization token' do
-      it 'raises SecurityTransgression' do
-        expect {
-          api_post :create, nil, parameters: valid_params, raw_post_data: valid_body
-        }.to raise_error(SecurityTransgression)
-      end
-    end
-  end
+  #   context 'caller does not have an authorization token' do
+  #     it 'raises SecurityTransgression' do
+  #       expect {
+  #         api_post :create, nil, parameters: valid_params, raw_post_data: valid_body
+  #       }.to raise_error(SecurityTransgression)
+  #     end
+  #   end
+  # end
 
   describe '#update' do
     let!(:valid_params) { { id: student.id } }
