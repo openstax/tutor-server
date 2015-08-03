@@ -1,5 +1,5 @@
 module Ecosystem
-  class Book < Wrapper
+  class Chapter < Wrapper
 
     def title
       title = @strategy.title
@@ -11,18 +11,6 @@ module Ecosystem
       )
 
       title
-    end
-
-    def chapters
-      chapters = @strategy.chapters
-
-      raise_collection_class_error(
-        collection: chapters,
-        klass:      ::Ecosystem::Chapter,
-        error:      ::Ecosystem::StrategyError
-      )
-
-      chapters
     end
 
     def pages

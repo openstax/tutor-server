@@ -1,16 +1,12 @@
 module Ecosystem
-  class Ecosystem
+  class Ecosystem < Wrapper
 
-    def initialize(strategy:)
-      @strategy = strategy
-    end
-
-    def uuid
-      uuid = @strategy.uuid
+    def id
+      id = @strategy.id
 
       raise_collection_class_error(
-        collection: [uuid],
-        klass:      ::Ecosystem::Uuid,
+        collection: id,
+        klass:      Integer,
         error:      ::Ecosystem::StrategyError
       )
 
@@ -119,12 +115,6 @@ module Ecosystem
       )
 
       exercises
-    end
-
-    private
-
-    def raise_collection_class_error(collection:, klass:, error:)
-      raise error if collection.detect{|obj| !obj.is_a? klass}
     end
 
   end

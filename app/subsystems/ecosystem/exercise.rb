@@ -1,6 +1,5 @@
 module Ecosystem
-  class Exercise
-    def initialize(strategy:)
-    end
+  class Exercise < Wrapper
+
   end
 end
