@@ -20,11 +20,11 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
   end
 
   def los
-    tags.to_a.select(&:lo?).collect(&:value)
+    tags.to_a.select(&:lo?)
   end
 
   def aplos
-    tags.to_a.select(&:aplo?).collect(&:value)
+    tags.to_a.select(&:aplo?)
   end
 
   protected

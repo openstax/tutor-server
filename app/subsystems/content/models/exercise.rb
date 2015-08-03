@@ -1,7 +1,7 @@
 class Content::Models::Exercise < Tutor::SubSystems::BaseModel
   acts_as_resource
 
-  wrapped_by ::Exercise
+  wrapped_by ::Ecosystem::Strategies::Direct::Exercise
 
   has_many :exercise_tags, dependent: :destroy
   has_many :tags, through: :exercise_tags
@@ -28,15 +28,10 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
   end
 
   def los
-    tags.to_a.select(&:lo?).collect(&:value)
+    tags.to_a.select(&:lo?)
   end
 
   def aplos
-    tags.to_a.select(&:aplo?).collect(&:value)
-  end
-
-  def tags_with_teks
-    # Include tek tags
-    tags.collect { |t| [t, t.teks_tags] }.flatten.uniq
+    tags.to_a.select(&:aplo?)
   end
 end
