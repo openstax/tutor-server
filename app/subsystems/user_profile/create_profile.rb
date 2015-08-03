@@ -2,7 +2,7 @@ module UserProfile
   class CreateProfile
     lev_routine express_output: :profile
 
-    uses_routine OpenStax::Accounts::CreateTempAccount,
+    uses_routine OpenStax::Accounts::FindOrCreateAccount,
       translations: { outputs: { type: :verbatim } },
       as: :create_account
 
