@@ -2,7 +2,7 @@ module Ecosystem
   class Exercise < Wrapper
 
     def self.find(*args, strategy: ::Ecosystem::Strategies::Direct::Exercise)
-      strategy_class.find(*args).collect do |strategy|
+      [strategy_class.find(*args)].flatten.collect do |strategy|
         new(strategy: strategy)
       end
     end

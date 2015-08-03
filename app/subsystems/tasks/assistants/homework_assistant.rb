@@ -44,7 +44,7 @@ class Tasks::Assistants::HomeworkAssistant
 
   def self.collect_exercises(task_plan:)
     exercises_ids = task_plan.settings['exercise_ids']
-    Ecosystem::Ecosystem.find_exercises(ids: exercise_ids)
+    Ecosystem::Exercise.find(exercise_ids)
   end
 
   def self.build_homework_task(task_plan:, taskee:, exercises:)
