@@ -1,8 +1,12 @@
 module Ecosystem
   class Ecosystem < Wrapper
 
-    def self.create!(strategy: ::Ecosystem::Strategies::Direct)
-      new(strategy: strategy.new(::Ecosystem::Models::Ecosystem.create!))
+    def self.create(*args, strategy_class: ::Ecosystem::Strategies::Direct)
+      new(strategy: strategy_class.create(*args))
+    end
+
+    def self.create!(*args, strategy_class: ::Ecosystem::Strategies::Direct)
+      new(strategy: strategy_class.create!(*args))
     end
 
     def id

@@ -8,6 +8,8 @@ module Ecosystem
         exposes :url, :title, :content, :chapter_section, :book_part,
                 :is_intro?, :fragments, :los, :aplos
 
+        exposes :find, from_class: ::Content::Models::Page
+
         def tags
           repository.tags.collect{ |t| t.value }
         end

@@ -1,5 +1,12 @@
 module Ecosystem
   class Page < Wrapper
+
+    def self.find(*args, strategy_class: ::Ecosystem::Strategies::Direct::Page)
+      strategy_class.find(*args).collect do |strategy|
+        new(strategy: strategy)
+      end
+    end
+
     def url
       url = @strategy.url
 
@@ -99,5 +106,6 @@ module Ecosystem
 
       aplos
     end
+
   end
 end

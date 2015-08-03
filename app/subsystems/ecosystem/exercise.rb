@@ -1,5 +1,12 @@
 module Ecosystem
   class Exercise < Wrapper
+
+    def self.find(*args, strategy: ::Ecosystem::Strategies::Direct::Exercise)
+      strategy_class.find(*args).collect do |strategy|
+        new(strategy: strategy)
+      end
+    end
+
     def uid
       uid = @strategy.uid
 
@@ -83,5 +90,6 @@ module Ecosystem
 
       aplos
     end
+
   end
 end

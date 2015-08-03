@@ -39,10 +39,7 @@ class Tasks::Assistants::IReadingAssistant
 
   def self.collect_pages(task_plan:)
     page_ids = task_plan.settings['page_ids']
-    pages = page_ids.collect do |page_id|
-      Content::GetPage.call(id: page_id).outputs.page
-    end
-    pages
+    Ecosystem::Ecosystem.find_pages(ids: page_ids)
   end
 
   def self.build_ireading_task(task_plan:, taskee:, pages:)
