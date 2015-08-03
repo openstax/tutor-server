@@ -1,6 +1,10 @@
 module Ecosystem
   class Ecosystem < Wrapper
 
+    def self.create!(strategy: ::Ecosystem::Strategies::Direct)
+      new(strategy: strategy.new(::Ecosystem::Models::Ecosystem.create!))
+    end
+
     def id
       id = @strategy.id
 
@@ -10,7 +14,7 @@ module Ecosystem
         error:      ::Ecosystem::StrategyError
       )
 
-      uuid
+      id
     end
 
     def books
