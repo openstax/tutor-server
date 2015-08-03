@@ -10,7 +10,8 @@ class FetchAndImportBook
   # Returns a Cnx::Book based on a CNX ID
   def exec(id:)
     outputs[:cnx_book] = OpenStax::Cnx::V1.book(id: id)
-    run(:import_book, cnx_book: outputs[:cnx_book])
+    outputs[:ecosystem] = Ecosystem::Ecosystem.create!
+    run(:import_book, cnx_book: outputs[:cnx_book], ecosystem: outputs[:ecosystem])
   end
 
 end

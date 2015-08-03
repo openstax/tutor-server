@@ -15,8 +15,8 @@ class Content::ImportBook
 
   # Imports and saves a Cnx::Book as an Content::Models::Book
   # Returns the Book object, Resource object and collection JSON as a hash
-  def exec(cnx_book:)
-    outputs[:book] = Content::Models::Book.create!
+  def exec(cnx_book:, ecosystem:)
+    outputs[:book] = Content::Models::Book.create!(ecosystem_ecosystem_id: ecosystem.id)
 
     run(:import_book_part, cnx_book_part: cnx_book.root_book_part,
                            book: outputs[:book],
