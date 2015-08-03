@@ -37,9 +37,12 @@ ActiveRecord::Schema.define(version: 20150804002246) do
   add_index "content_book_parts", ["url"], name: "index_content_book_parts_on_url", unique: true, using: :btree
 
   create_table "content_books", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "ecosystem_ecosystem_id"
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
   end
+
+  add_index "content_books", ["ecosystem_ecosystem_id"], name: "index_content_books_on_ecosystem_ecosystem_id", using: :btree
 
   create_table "content_exercise_tags", force: :cascade do |t|
     t.integer  "content_exercise_id", null: false
@@ -191,6 +194,11 @@ ActiveRecord::Schema.define(version: 20150804002246) do
   add_index "course_profile_profiles", ["school_district_school_id"], name: "index_course_profile_profiles_on_school_district_school_id", using: :btree
   add_index "course_profile_profiles", ["entity_course_id"], name: "index_course_profile_profiles_on_entity_course_id", unique: true, using: :btree
   add_index "course_profile_profiles", ["name"], name: "index_course_profile_profiles_on_name", using: :btree
+
+  create_table "ecosystem_ecosystems", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "entity_courses", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -582,6 +590,7 @@ ActiveRecord::Schema.define(version: 20150804002246) do
 
   add_foreign_key "content_book_parts", "content_book_parts", column: "parent_book_part_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_book_parts", "content_books", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "content_books", "ecosystem_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_exercise_tags", "content_exercises", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_exercise_tags", "content_tags", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_lo_teks_tags", "content_tags", column: "lo_id"

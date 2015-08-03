@@ -3,6 +3,8 @@ require 'entity'
 class Entity
   class Relation < Entity
 
+    include Enumerable
+
     exposes :any?, :blank?, :eager_loading?, :empty?, :encode_with, :explain, :initialize_copy,
             :joined_includes_values, :load, :many?, :reload, :reset, :scoping, :size, :to_a,
             :to_sql, :uniq_value, :values, :where_values_hash, :exists?, :fifth, :fifth!, :find,
@@ -12,13 +14,18 @@ class Entity
             :eager_load, :extending, :from, :group, :having, :includes, :joins, :limit, :lock,
             :none, :offset, :order, :preload, :references, :reorder, :reverse_order, :rewhere,
             :select, :uniq, :unscope, :where, :find_each, :find_in_batches, :to_xml, :to_yaml,
-            :length, :collect, :map, :each, :all?, :include?, :to_ary, :join, :table_name,
-            :quoted_table_name, :primary_key, :quoted_primary_key, :connection, :columns_hash
+            :length, :to_ary, :join, :table_name, :quoted_table_name, :primary_key,
+            :quoted_primary_key, :connection, :columns_hash
 
     # The constructor for Entity::Relation only accepts an ActiveRecord::Relation object
     # The relation is set as readonly
     def initialize(repository)
       @repository = repository.readonly(true)
+    end
+
+    # Enumerable API
+    def each(&block)
+      to_a.each(&block)
     end
 
     # Wrap ActiveRecord::Relation's inspect and pretty_print methods to use the Entity class names

@@ -1,4 +1,7 @@
 class Content::Models::Page < Tutor::SubSystems::BaseModel
+
+  wrapped_by ::Ecosystem::Strategies::Direct::Page
+
   acts_as_resource(url_not_unique: true)
 
   serialize :chapter_section, Array
@@ -29,4 +32,5 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
   def parser
     OpenStax::Cnx::V1::Page.new(title: title, content: content)
   end
+
 end

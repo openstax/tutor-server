@@ -1,4 +1,7 @@
 class Content::Models::BookPart < Tutor::SubSystems::BaseModel
+
+  wrapped_by ::Ecosystem::Strategies::Direct::Chapter
+
   acts_as_resource allow_nil: true
 
   serialize :chapter_section, Array
