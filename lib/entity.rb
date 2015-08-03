@@ -78,11 +78,10 @@ class Entity
         return wrap_class_proc.call(obj).new(obj) unless wrap_class_proc.nil?
 
         # Handle Enumerables
-        return obj unless obj.respond_to?(:each_with_object) && obj.respond_to?(:clear)
+        return obj unless obj.is_a?(Enumerable)
 
-        obj.each_with_object(obj.dup.clear) do |(k, v), o|
-          v.nil? ? o << _wrap(k) : o[_wrap(k)] = _wrap(v)
-        end
+        wrapped_obj = obj.collect{ |element| _wrap(element) }
+        obj.is_a?(Hash) ? wrapped_obj.to_h : wrapped_obj
       end
     end
 
@@ -93,11 +92,11 @@ class Entity
       when Entity, Entity::Relation
         obj._repository
       else
-        return obj unless obj.respond_to?(:each_with_object)
+        # Handle Enumerables
+        return obj unless obj.is_a?(Enumerable)
 
-        obj.each_with_object(obj.class.new) do |(k, v), o|
-          v.nil? ? o << _unwrap(k) : o[_unwrap(k)] = _unwrap(v)
-        end
+        unwrapped_obj = obj.collect{ |element| _unwrap(element) }
+        obj.is_a?(Hash) ? unwrapped_obj.to_h : unwrapped_obj
       end
     end
   end

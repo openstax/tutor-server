@@ -2,7 +2,7 @@ module Ecosystem
   class Page < Wrapper
 
     def self.find(*args, strategy_class: ::Ecosystem::Strategies::Direct::Page)
-      strategy_class.find(*args).collect do |strategy|
+      [strategy_class.find(*args)].flatten.collect do |strategy|
         new(strategy: strategy)
       end
     end
