@@ -5,16 +5,13 @@ module Ecosystem
       @strategy = strategy
     end
 
-    def uuid
-      uuid = @strategy.uuid
+    def id
+      id = @strategy.id
 
-      raise_collection_class_error(
-        collection: [uuid],
-        klass:      ::Ecosystem::Uuid,
-        error:      ::Ecosystem::StrategyError
-      )
+      raise ::Ecosystem::StrategyError \
+        unless id.is_a?(Integer)
 
-      uuid
+      id
     end
 
     def books

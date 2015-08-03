@@ -3,8 +3,8 @@ require 'rails_helper'
 module Ecosystem
   describe Ecosystem do
 
-    let!(:valid_uuid)   { ::Ecosystem::Uuid.new }
-    let!(:invalid_uuid) { Object.new }
+    let!(:valid_id)   { 42 }
+    let!(:invalid_id) { Object.new }
 
     let!(:valid_book)   { ::Ecosystem::Book.new(strategy: Object.new) }
     let!(:invalid_book) { Object.new }
@@ -17,8 +17,8 @@ module Ecosystem
 
     let(:strategy) {
       double("strategy").tap do |dbl|
-        allow(dbl).to receive(:uuid).with(no_args)
-                     .and_return(strategy_uuid)
+        allow(dbl).to receive(:id).with(no_args)
+                     .and_return(strategy_id)
 
         allow(dbl).to receive(:books).with(no_args)
                      .and_return(strategy_books)
@@ -43,7 +43,7 @@ module Ecosystem
       end
     }
 
-    let(:strategy_uuid)      { valid_uuid }
+    let(:strategy_id)        { valid_id }
     let(:strategy_books)     { [valid_book, valid_book] }
     let(:strategy_exercises) { [valid_exercise, valid_exercise] }
 
@@ -67,27 +67,27 @@ module Ecosystem
     end
 
 
-    context "unique identifier" do
+    context "locally-unique identifier" do
       it "delegates to its strategy" do
-        ecosystem.uuid
-        expect(strategy).to have_received(:uuid)
+        ecosystem.id
+        expect(strategy).to have_received(:id)
       end
 
-      context "strategy returns Ecosystem::Uuid" do
-        let(:strategy_uuid) { valid_uuid }
+      context "strategy returns an Integer" do
+        let(:strategy_id) { valid_id }
 
-        it "returns the strategy's uuid" do
-          uuid = ecosystem.uuid
-          expect(uuid).to eq(strategy_uuid)
+        it "returns the strategy's id" do
+          id = ecosystem.id
+          expect(id).to eq(strategy_id)
         end
       end
 
-      context "strategy doesn't return an Ecosystem::Uuid" do
-        let!(:strategy_uuid) { invalid_uuid }
+      context "strategy doesn't return an Integer" do
+        let!(:strategy_id) { invalid_id }
 
         it "raises Ecosystem::StrategyError" do
           expect{
-            ecosystem.uuid
+            ecosystem.id
           }.to raise_error(::Ecosystem::StrategyError)
         end
       end
