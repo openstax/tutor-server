@@ -24,6 +24,11 @@ RSpec.describe Tasks::Models::TaskedExercise, :type => :model do
     expect(tasked_exercise).to be_valid
   end
 
+  it 'does not accept a blank free response if the free-response format is present' do
+    tasked_exercise.free_response = ' '
+    expect(tasked_exercise).not_to be_valid
+  end
+
   it 'does not accept a multiple choice answer that is not listed' do
     tasked_exercise.free_response = 'abc'
     tasked_exercise.answer_id = SecureRandom.hex

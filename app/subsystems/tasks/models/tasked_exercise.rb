@@ -5,7 +5,8 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
 
   validates :url, presence: true
   validates :content, presence: true
-  validate :valid_state, :valid_answer, :no_feedback
+  validate :free_response_provided, on: :update
+  validate :valid_answer, :no_feedback
 
   delegate :uid, :questions, :question_formats, :question_answers, :question_answer_ids,
            :correct_question_answers, :correct_question_answer_ids, :feedback_map,
@@ -104,16 +105,10 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     task_step.id.to_s
   end
 
-  # Eventually this will be enforced by the exercise substeps
-  def valid_state
-    # Can't answer multiple choice before free response
-    # if question formats includes 'free-response'
-    return if !free_response.blank? || \
-              answer_id.blank? || \
-              !formats.include?('free-response')
-
-    errors.add(:free_response, 'must not be blank before entering a multiple choice answer')
-    false
+  def free_response_provided
+    errors.add(:free_response, 'is required') \
+      if formats.include?('free-response') && free_response.blank?
+    errors.any?
   end
 
   def valid_answer

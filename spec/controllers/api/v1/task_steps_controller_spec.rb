@@ -138,6 +138,13 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
       expect(tasked.reload.answer_id).to be_nil
     end
 
+    it 'returns an error when the free response is blank' do
+      api_put :update, user_1_token,
+              parameters: id_parameters, raw_post_data: { free_response: ' ' }
+
+      expect(response).to have_http_status(:unprocessable_entity)
+    end
+
   end
 
   describe "#recovery" do
