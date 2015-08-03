@@ -6,6 +6,8 @@ module Ecosystem
 
       exposes :books
 
+      exposes :create, :create!, from_class: ::Ecosystem::Models::Ecosystem
+
       alias_method :entity_books, :books
       def books
         entity_books.collect do |entity_book|

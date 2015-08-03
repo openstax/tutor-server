@@ -43,10 +43,8 @@ class Tasks::Assistants::HomeworkAssistant
   end
 
   def self.collect_exercises(task_plan:)
-    exercises = task_plan.settings['exercise_ids'].collect do |exercise_id|
-      Content::GetExercise.call(id: exercise_id).outputs.exercise
-    end
-    exercises
+    exercises_ids = task_plan.settings['exercise_ids']
+    Ecosystem::Ecosystem.find_exercises(ids: exercise_ids)
   end
 
   def self.build_homework_task(task_plan:, taskee:, exercises:)
