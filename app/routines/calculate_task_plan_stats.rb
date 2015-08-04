@@ -97,7 +97,7 @@ class CalculateTaskPlanStats
   end
 
   def get_page_for_tasked_exercise(tasked_exercise)
-    run(:search_pages, tag: tasked_exercise.los + tasked_exercise.aplos).outputs.items.first
+    run(:search_pages, tag: tasked_exercise.los + tasked_exercise.aplos, match_count: 1).outputs.items.first
   end
 
   def group_tasked_exercises_by_pages(tasked_exercises)
