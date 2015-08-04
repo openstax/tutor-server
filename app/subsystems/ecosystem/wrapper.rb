@@ -1,12 +1,8 @@
 module Ecosystem
   module Wrapper
 
-    def self.included(base)
-      base.class_exec do
-        def initialize(strategy:)
-          @strategy = strategy
-        end
-      end
+    def initialize(strategy:)
+      @strategy = strategy
     end
 
     protected
@@ -23,7 +19,8 @@ module Ecosystem
         return object if object.nil?
       end
 
-      raise error if [object].flatten.any?{ |obj| !obj.is_a? klass }
+      raise(error, "Tested argument was not of class '#{klass}' as expected") \
+        if [object].flatten.any?{ |obj| !obj.is_a? klass }
 
       object
     end

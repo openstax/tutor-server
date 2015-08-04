@@ -37,9 +37,16 @@ class Tasks::Assistants::IReadingAssistant
 
   protected
 
+  def self.ecosystem(task_plan:)
+    # We can only handle owners that provide an "ecosystems" method
+    content_ecosystem = task_plan.owner.ecosystems.first
+    strategy = Ecosystem::Strategies::Direct::Ecosystem.new(content_ecosystem)
+    Ecosystem::Ecosystem.new(strategy: strategy)
+  end
+
   def self.collect_pages(task_plan:)
     page_ids = task_plan.settings['page_ids']
-    Ecosystem::Page.find(page_ids)
+    ecosystem(task_plan: task_plan).pages_by_ids(page_ids)
   end
 
   def self.build_ireading_task(task_plan:, taskee:, pages:)

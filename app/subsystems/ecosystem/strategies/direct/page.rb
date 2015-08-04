@@ -8,8 +8,6 @@ module Ecosystem
         exposes :book_part, :url, :title, :content,
                 :chapter_section, :is_intro?, :fragments, :los, :aplos
 
-        exposes :find, from_class: ::Content::Models::Page
-
         def chapter
           ::Ecosystem::Chapter.new(strategy: book_part)
         end

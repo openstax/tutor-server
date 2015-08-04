@@ -3,12 +3,12 @@ module Ecosystem
 
     include Wrapper
 
-    def self.create(*args, strategy_class: ::Ecosystem::Strategies::Direct::Ecosystem)
-      new(strategy: strategy_class.create(*args))
+    def self.create(strategy_class: ::Ecosystem::Strategies::Direct::Ecosystem)
+      new(strategy: strategy_class.create)
     end
 
-    def self.create!(*args, strategy_class: ::Ecosystem::Strategies::Direct::Ecosystem)
-      new(strategy: strategy_class.create!(*args))
+    def self.create!(strategy_class: ::Ecosystem::Strategies::Direct::Ecosystem)
+      new(strategy: strategy_class.create!)
     end
 
     def id
@@ -19,8 +19,20 @@ module Ecosystem
       verify_and_return @strategy.books, klass: ::Ecosystem::Book
     end
 
+    def pages
+      verify_and_return @strategy.pages, klass: ::Ecosystem::Page
+    end
+
+    def pages_by_ids(ids)
+      verify_and_return @strategy.pages_by_ids(ids), klass: ::Ecosystem::Page
+    end
+
     def exercises
       verify_and_return @strategy.exercises, klass: ::Ecosystem::Exercise
+    end
+
+    def exercises_by_ids(ids)
+      verify_and_return @strategy.exercises_by_ids(ids), klass: ::Ecosystem::Exercise
     end
 
     def reading_core_exercises(pages:)

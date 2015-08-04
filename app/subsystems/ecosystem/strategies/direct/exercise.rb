@@ -7,8 +7,6 @@ module Ecosystem
 
         exposes :pages, :url, :title, :content, :uid, :los, :aplos, :tag_hashes
 
-        exposes :find, from_class: ::Content::Models::Exercise
-
         def tags
           repository.tags.collect{ |t| t.value }
         end

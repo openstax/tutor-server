@@ -3,10 +3,8 @@ module Ecosystem
 
     include Wrapper
 
-    def self.find(*args, strategy_class: ::Ecosystem::Strategies::Direct::Exercise)
-      [strategy_class.find(*args)].flatten.collect do |strategy|
-        new(strategy: strategy)
-      end
+    def id
+      verify_and_return @strategy.id, klass: Integer
     end
 
     def uid

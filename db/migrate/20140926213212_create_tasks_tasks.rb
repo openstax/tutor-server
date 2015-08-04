@@ -9,6 +9,7 @@ class CreateTasksTasks < ActiveRecord::Migration
       t.datetime :opens_at, null: false
       t.datetime :due_at
       t.datetime :feedback_at
+      t.datetime :last_worked_at
       t.integer :tasks_taskings_count, null: false, default: 0
 
       t.text :settings, null: false
@@ -31,6 +32,7 @@ class CreateTasksTasks < ActiveRecord::Migration
       t.index :entity_task_id
       t.index :task_type
       t.index [:due_at, :opens_at]
+      t.index :last_worked_at
     end
 
     add_foreign_key :tasks_tasks, :tasks_task_plans,

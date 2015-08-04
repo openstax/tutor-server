@@ -42,9 +42,18 @@ class Tasks::Assistants::HomeworkAssistant
     end
   end
 
+  protected
+
+  def self.ecosystem(task_plan:)
+    # We can only handle owners that provide an ecosystems method
+    content_ecosystem = task_plan.owner.ecosystems.first
+    strategy = Ecosystem::Strategies::Direct::Ecosystem.new(content_ecosystem)
+    Ecosystem::Ecosystem.new(strategy: strategy)
+  end
+
   def self.collect_exercises(task_plan:)
     exercise_ids = task_plan.settings['exercise_ids']
-    Ecosystem::Exercise.find(exercise_ids)
+    ecosystem(task_plan: task_plan).exercises_by_ids(exercise_ids)
   end
 
   def self.build_homework_task(task_plan:, taskee:, exercises:)
