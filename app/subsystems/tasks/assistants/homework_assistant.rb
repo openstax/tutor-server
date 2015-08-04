@@ -43,7 +43,7 @@ class Tasks::Assistants::HomeworkAssistant
   end
 
   def self.collect_exercises(task_plan:)
-    exercises_ids = task_plan.settings['exercise_ids']
+    exercise_ids = task_plan.settings['exercise_ids']
     Ecosystem::Exercise.find(exercise_ids)
   end
 
@@ -70,32 +70,17 @@ class Tasks::Assistants::HomeworkAssistant
   end
 
   def self.set_los(task:, exercises:)
-    urls = exercises.map(&:url)
-
-    exercise_los = Content::Models::Tag.joins{exercise_tags.exercise}
-                                       .where{exercise_tags.exercise.url.in urls}
-                                       .select{|tag| tag.lo? || tag.aplo? }
-                                       .collect{|tag| tag.value}
-
-    pages = Content::Routines::SearchPages[tag: exercise_los, match_count: 1]
-    outs = Content::GetLos.call(page_ids: pages.map(&:id)).outputs
-    los = outs.los
-    aplos = outs.aplos
-
-    task.los = los
-    task.aplos = aplos
+    task.los = exercises.map(&:los).flatten
+    task.aplos = exercises.map(&:aplos).flatten
 
     task
   end
 
   def self.add_core_steps!(task:, exercises:)
     exercises.each do |exercise|
-      related_content = get_related_content_for(exercise)
-
       step = add_exercise_step(task: task, exercise: exercise)
       step.group_type = :core_group
-
-      step.add_related_content(related_content)
+      step.add_related_content(exercise.related_content)
     end
 
     task
@@ -106,22 +91,6 @@ class Tasks::Assistants::HomeworkAssistant
     TaskExercise[task_step: step, exercise: exercise]
     task.task_steps << step
     step
-  end
-
-  def self.get_related_content_for(content_exercise)
-    page = content_exercise_page(content_exercise)
-
-    { title: page.title, chapter_section: page.chapter_section }
-  end
-
-  def self.content_exercise_page(content_exercise)
-    los = content_exercise.los + content_exercise.aplos
-
-    pages = Content::Models::Page.joins{page_tags.tag}
-                                 .where{page_tags.tag.value.in los}
-
-    raise "#{pages.count} pages found for exercise #{content_exercise.url}" unless pages.one?
-    pages.first
   end
 
   def self.add_spaced_practice_exercise_steps!(task_plan:, task:, taskee:)
@@ -152,7 +121,7 @@ class Tasks::Assistants::HomeworkAssistant
         candidate_exercises.delete(chosen_exercise)
         exercise_history.push(chosen_exercise)
 
-        related_content = get_related_content_for(chosen_exercise)
+        related_content = chosen_exercise.related_content
 
         step = add_exercise_step(task: task, exercise: chosen_exercise)
         step.group_type = :spaced_practice_group
@@ -179,14 +148,14 @@ class Tasks::Assistants::HomeworkAssistant
   end
 
   def self.get_exercise_history(tasks:)
-    exercise_history = tasks.collect do |task|
+    # TODO: Do this wrapping somewhere else? Or punt until we have some Task subsystem wrappers?
+    tasks.collect do |task|
       exercise_steps = task.task_steps.select{|task_step| task_step.exercise?}
-      content_exercises = exercise_steps.collect do |ex_step|
-        content_exercise = Content::Models::Exercise.where{url == ex_step.tasked.url}
+      exercise_steps.collect do |step|
+        strategy = Ecosystem::Strategies::Direct::Exercise.new(step.tasked.exercise)
+        Ecosystem::Exercise.new(strategy: strategy)
       end
-      content_exercises
     end.flatten.compact
-    exercise_history
   end
 
   def self.exercises_that_match_one_tag_per_level(levels)
@@ -204,17 +173,18 @@ class Tasks::Assistants::HomeworkAssistant
   end
 
   def self.get_exercise_pools(tasks:)
+    # TODO: Replace with actual exercise pools
     exercise_pools = tasks.collect do |task|
       urls = task.task_steps.select{|task_step| task_step.exercise?}.
                              collect{|task_step| task_step.tasked.url}.
                              uniq
 
-      exercise_los = Content::Models::Tag.joins{exercise_tags.exercise}
-                                         .where{exercise_tags.exercise.url.in urls}
-                                         .select{ |tag| tag.lo? || tag.aplo? }
-                                         .collect{ |tag| tag.value }
-      pages    = Content::Routines::SearchPages[tag: exercise_los, match_count: 1]
-      page_los = Content::GetLos[page_ids: pages.map(&:id)]
+      exercise_lo_tags = Content::Models::Tag.joins{exercise_tags.exercise}
+                                             .where{exercise_tags.exercise.url.in urls}
+                                             .select{ |tag| tag.lo? || tag.aplo? }
+      pages    = exercise_lo_tags.collect{ |tag| tag.page_tags.collect{ |pt| pt.page } }.flatten
+      page_tags = pages.collect{ |page| page.page_tags.collect{ |pt| pt.tag } }.flatten
+      page_los = page_tags.select{ |pt| pt.lo? || pt.aplo? }
 
       phys_tags = [
         page_los,
@@ -237,7 +207,12 @@ class Tasks::Assistants::HomeworkAssistant
       combined = [phys_exercises, bio_exercises].flatten.uniq.to_a
       combined
     end
-    exercise_pools
+    exercise_pools.collect do |exercise_pool|
+      exercise_pool.collect do |content_exercise|
+        strategy = Ecosystem::Strategies::Direct::Exercise.new(content_exercise)
+        Ecosystem::Exercise.new(strategy: strategy)
+      end
+    end
   end
 
   def self.get_num_spaced_practice_exercises(task_plan:)

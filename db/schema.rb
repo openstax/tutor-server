@@ -90,7 +90,7 @@ ActiveRecord::Schema.define(version: 20150804002246) do
   create_table "content_pages", force: :cascade do |t|
     t.string   "url"
     t.text     "content"
-    t.integer  "content_book_part_id"
+    t.integer  "content_book_part_id", null: false
     t.integer  "number",               null: false
     t.string   "title",                null: false
     t.text     "chapter_section"

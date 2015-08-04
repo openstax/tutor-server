@@ -60,7 +60,7 @@ module Ecosystem
 
       raise_collection_class_error(
         collection: chapter_section,
-        klass:      Array,
+        klass:      Integer,
         error:      ::Ecosystem::StrategyError
       )
 
@@ -69,6 +69,10 @@ module Ecosystem
 
     def is_intro?
       !!@strategy.is_intro?
+    end
+
+    def fragments
+      @strategy.fragments
     end
 
     def tags
@@ -105,6 +109,18 @@ module Ecosystem
       )
 
       aplos
+    end
+
+    def related_content(title: nil, chapter_section: nil)
+      related_content = @strategy.related_content(title: title, chapter_section: chapter_section)
+
+      raise_collection_class_error(
+        collection: related_content,
+        klass:      Hash,
+        error:      ::Ecosystem::StrategyError
+      )
+
+      related_content
     end
 
   end

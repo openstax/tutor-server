@@ -118,9 +118,8 @@ class Tasks::Assistants::IReadingAssistant
   def self.add_core_steps!(task:, pages:)
     pages.each do |page|
       # Chapter intro pages get their titles from the chapter instead
-      page_title = page.is_intro? ? page.book_part.title : page.title
-      related_content = related_content_for_page(page: page, title: page_title)
-
+      page_title = page.is_intro? ? page.chapter.title : page.title
+      related_content = page.related_content(title: page_title)
       task_fragments(task, page.fragments, page_title, page, related_content)
     end
 
@@ -141,7 +140,7 @@ class Tasks::Assistants::IReadingAssistant
     self.k_ago_map.each do |k_ago, number|
       break if k_ago >= exercise_pools.count
 
-      candidate_exercises = (exercise_pools[k_ago] - exercise_history).sort_by{|ex| ex.id}.take(10)
+      candidate_exercises = (exercise_pools[k_ago] - exercise_history).sort_by{|ex| ex.uid}
       break if candidate_exercises.count < number
 
       number.times do
@@ -155,7 +154,7 @@ class Tasks::Assistants::IReadingAssistant
         exercise_history.push(chosen_exercise)
 
         step = add_exercise_step(task: task, exercise: chosen_exercise)
-        add_exercise_related_content!(step: step, exercise: chosen_exercise)
+        step.add_related_content(chosen_exercise.related_content)
         step.group_type = :spaced_practice_group
       end
     end
@@ -178,20 +177,21 @@ class Tasks::Assistants::IReadingAssistant
   end
 
   def self.get_exercise_history(tasks:)
-    exercise_history = tasks.collect do |task|
+    # TODO: Do this wrapping somewhere else? Or punt until we have some Task subsystem wrappers?
+    tasks.collect do |task|
       exercise_steps = task.task_steps.select{|task_step| task_step.exercise?}
-      content_exercises = exercise_steps.collect do |ex_step|
-        content_exercise = Content::Models::Exercise.where{url == ex_step.tasked.url}
+      exercise_steps.collect do |step|
+        strategy = Ecosystem::Strategies::Direct::Exercise.new(step.tasked.exercise)
+        Ecosystem::Exercise.new(strategy: strategy)
       end
-      content_exercises
     end.flatten.compact
-    exercise_history
   end
 
   def self.get_exercise_pools(tasks:)
+    # TODO: Replace with actual exercise pools
     exercise_pools = tasks.collect do |task|
-      page_ids = task.task_plan.settings['page_ids']
-      page_los = Content::GetLos[page_ids: page_ids]
+      pages = collect_pages(task_plan: task.task_plan)
+      page_los = pages.collect{ |page| page.los + page.aplos }
 
       page_exercises = Content::Routines::SearchExercises[tag: page_los, match_count: 1]
       page_exercise_ids = page_exercises.pluck(:id)
@@ -210,7 +210,12 @@ class Tasks::Assistants::IReadingAssistant
       combined = [phys_exercises, bio_exercises].flatten.uniq.to_a
       combined
     end
-    exercise_pools
+    exercise_pools.collect do |exercise_pool|
+      exercise_pool.collect do |content_exercise|
+        strategy = Ecosystem::Strategies::Direct::Exercise.new(content_exercise)
+        Ecosystem::Exercise.new(strategy: strategy)
+      end
+    end
   end
 
   def self.k_ago_map
@@ -239,29 +244,8 @@ class Tasks::Assistants::IReadingAssistant
     1
   end
 
-  def self.add_exercise_related_content!(step:, exercise:)
-    related_content = self.get_related_content_for(exercise)
-    step.add_related_content(related_content)
-    step
-  end
-
   def self.related_content_for_page(page:, title: page.title)
     { title: title, chapter_section: page.chapter_section }
-  end
-
-  def self.get_related_content_for(content_exercise)
-    page = content_exercise_page(content_exercise)
-    related_content_for_page(page: page)
-  end
-
-  def self.content_exercise_page(content_exercise)
-    los = content_exercise.los + content_exercise.aplos
-
-    pages = Content::Models::Page.joins{page_tags.tag}
-                                 .where{page_tags.tag.value.in los}
-
-    raise "#{pages.count} pages found for exercise #{content_exercise.url}" unless pages.one?
-    pages.first
   end
 
   def self.add_exercise_step(task:, exercise:)
@@ -304,9 +288,12 @@ class Tasks::Assistants::IReadingAssistant
       return
     end
 
+    # TODO: Replace with actual exercise pools
     # Search local (cached) Exercises for one matching the embed tag
     exercises = Content::Routines::SearchExercises[tag: exercise_fragment.embed_tag]
     if exercise = exercises.first
+      strategy = Ecosystem::Strategies::Direct::Exercise.new(exercise)
+      exercise = Ecosystem::Exercise.new(strategy: strategy)
       TaskExercise[exercise: exercise, title: title,
                    can_be_recovered: can_be_recovered, task_step: step]
     end

@@ -25,5 +25,17 @@ module Ecosystem
       pages
     end
 
+    def chapter_section
+      chapter_section = @strategy.chapter_section
+
+      raise_collection_class_error(
+        collection: chapter_section,
+        klass:      Integer,
+        error:      ::Ecosystem::StrategyError
+      )
+
+      chapter_section
+    end
+
   end
 end
