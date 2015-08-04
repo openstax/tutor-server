@@ -1,0 +1,1229 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://archive-staging-tutor.cnx.org/contents/e26d1433-f8e4-41db-a757-0e061d6d2737
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - text/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 302
+      message: Found
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Tue, 04 Aug 2015 20:02:50 GMT
+      Content-Type:
+      - text/plain
+      Content-Length:
+      - '0'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Headers:
+      - origin,dnt,accept-encoding,accept-language,keep-alive,user-agent,x-requested-with,if-modified-since,cache-control,content-type
+      Access-Control-Allow-Methods:
+      - GET, OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Location:
+      - "/contents/e26d1433-f8e4-41db-a757-0e061d6d2737@29.json"
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Tue, 04 Aug 2015 19:56:59 GMT
+- request:
+    method: get
+    uri: https://archive-staging-tutor.cnx.org/contents/e26d1433-f8e4-41db-a757-0e061d6d2737@29.json
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - text/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Tue, 04 Aug 2015 20:02:51 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '48357'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Headers:
+      - origin,dnt,accept-encoding,accept-language,keep-alive,user-agent,x-requested-with,if-modified-since,cache-control,content-type
+      Access-Control-Allow-Methods:
+      - GET, OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains
+    body:
+      encoding: UTF-8
+      string: '{"googleAnalytics": "UA-30227798-3", "version": "29", "submitlog":
+        "fixed link case 2", "abstract": "<div xmlns=\"http://www.w3.org/1999/xhtml\"
+        xmlns:c=\"http://cnx.rice.edu/cnxml\" xmlns:md=\"http://cnx.rice.edu/mdml\"
+        xmlns:qml=\"http://cnx.rice.edu/qml/1.0\" xmlns:mod=\"http://cnx.rice.edu/#moduleIds\"
+        xmlns:bib=\"http://bibtexml.sf.net/\" xmlns:data=\"http://dev.w3.org/html5/spec/#custom\"/>",
+        "revised": "2015-07-31T16:05:47Z", "printStyle": null, "roles": null, "keywords":
+        ["unicellular", "single-cell organism", "prokaryotic cell", "prokaryote",
+        "nucleoid", "microbiologist", "cell structure", "cell size"], "id": "e26d1433-f8e4-41db-a757-0e061d6d2737",
+        "title": "Prokaryotic Cells", "mediaType": "application/vnd.org.cnx.module",
+        "content": "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head xmlns:c=\"http://cnx.rice.edu/cnxml\"
+        xmlns:md=\"http://cnx.rice.edu/mdml\"><title>Prokaryotic Cells</title><meta
+        name=\"created-time\" content=\"2015/04/21 10:46:57 -0500\"/><meta name=\"revised-time\"
+        content=\"2015/07/31 11:05:47.625 GMT-5\"/><meta name=\"author\" content=\"tutor_apbio\"/><meta
+        name=\"licensor\" content=\"tutor_apbio\"/><meta name=\"license\" content=\"http://creativecommons.org/licenses/by/4.0/\"/><meta
+        name=\"keywords\" content=\"cell size, cell structure, microbiologist, nucleoid,
+        prokaryote, prokaryotic cell, single-cell organism, unicellular\"/><meta name=\"subject\"
+        content=\"Science and Technology\"/></head>\n\n<body xmlns=\"http://www.w3.org/1999/xhtml\"
+        xmlns:c=\"http://cnx.rice.edu/cnxml\" xmlns:md=\"http://cnx.rice.edu/mdml\"
+        xmlns:qml=\"http://cnx.rice.edu/qml/1.0\" xmlns:mod=\"http://cnx.rice.edu/#moduleIds\"
+        xmlns:bib=\"http://bibtexml.sf.net/\" xmlns:data=\"http://dev.w3.org/html5/spec/#custom\"><div
+        data-type=\"document-title\">Prokaryotic Cells</div>\n\n<section data-depth=\"1\"
+        id=\"fs-id1167066169808\" class=\"learning-objectives\">\n<p id=\"fs-id1167065866449\">In
+        this section, you will explore the following questions:</p>\n<ul id=\"fs-id1167066036185\">\n<li
+        class=\"ost-learning-objective-def ost-tag-lo-apbio-ch04-s02-lo01\">What are
+        the major structures of prokaryotic cells?</li>\n<li class=\"ost-learning-objective-def
+        ost-tag-lo-apbio-ch04-s02-lo02\">What limits the size of a cell?</li>\n</ul>\n</section>\n\n<section
+        data-depth=\"1\" id=\"fs-id1167066032022\" class=\"ap-connection\"><h1 data-type=\"title\">Connection
+        for AP<sup>&#174;</sup> Courses</h1><p id=\"fs-id1167065743218\">According
+        to the cell theory, all living organisms, from bacteria to humans, are composed
+        of cells, the smallest units of living matter. Often too small to be seen
+        without a microscope, cells come in all sizes and shapes, and their small
+        size allows for a large surface area-to-volume ratio that enables a more efficient
+        exchange of nutrients and wastes with the environment.</p>\n<p id=\"fs-id1167065839444\">There
+        are three basic types of cells: archaea, bacteria, and eukaryotes. Both archaea
+        and bacteria are classified as prokaryotes, whereas cells of animals, plants,
+        fungi, and protists are eukaryotes. Archaea are a unique group of organisms
+        and likely evolved in the harsh conditions of early Earth and are still prevalent
+        today in extreme environments, such as hot springs and polar regions. All
+        cells share features that reflect their evolution from a common ancestor;
+        these features are 1) a plasma membrane that separates the cell from its environment;
+        2) cytoplasm comprising the jelly-like cytosol inside the cell; 3) ribosomes
+        that are important for the synthesis of proteins, and 4) DNA to store and
+        transmit hereditary information.</p>\n<p id=\"fs-id1167065826065\">Prokaryotes
+        may also have a cell wall that acts as an extra layer of protection against
+        the external environment. The term &#8220;prokaryote&#8221; means &#8220;before
+        nucleus,&#8221; and prokaryotes do not have nuclei. Rather, their DNA exists
+        as a single circular chromosome in the central part of the cell called the
+        nucleoid. Some bacterial cells also have circular DNA plasmids that often
+        carry genes for resistance to antibiotics (Chapter 17). Other common prokaryotic
+        cell features include flagella and pili.</p>\n<p id=\"fs-id1167064876564\"
+        class=\"ost-reading-discard\">The content presented in this section supports
+        the learning objectives outlined in Big Idea 1 and Big Idea 2 of the AP<sup>&#174;</sup>
+        Biology Curriculum Framework. The AP<sup>&#174;</sup> Learning Objectives
+        merge essential knowledge content with one or more of the seven Science Practices.
+        These objectives provide a transparent foundation for the AP<sup>&#174;</sup>
+        Biology course, along with inquiry-based laboratory experiences, instructional
+        activities, and AP<sup>&#174;</sup> exam questions.</p><p id=\"fs-id1167065871779\"
+        class=\"ost-reading-discard ost-standards-def ost-standards-apbio ost-tag-std-apbio-1\">\n<span
+        class=\"ost-standards-name\">\n<strong>Big Idea 1</strong></span>\n<span class=\"ost-standards-description\">The
+        process of evolution drives the diversity and unity of life.</span></p>\n\n<p
+        id=\"fs-id1167064597952\" class=\"ost-reading-discard ost-standards-def ost-standards-apbio
+        ost-tag-std-apbio-1-d\">\n<span class=\"ost-standards-name\"><strong>Enduring
+        Understanding 1.D</strong></span>\n<span class=\"ost-standards-description\">The
+        origin of living systems is explained by natural processes.</span>\n</p>\n\n<table
+        id=\"fs-id1167064854745\" summary=\"Table with two columns and three rows.
+        Top left cell reads: Essential Knowledge. Top right cell reads: 1.D.2 Scientific
+        evidence from many different disciplines supports models of the origin of
+        life. Second left cell reads: Science Practice. Second right cell reads: 4.1
+        The student can justify the selection of the kind of data needed to answer
+        a particular scientific question. Third left cell reads: Learning Objective.
+        Third right cell reads: 1.32 The student is able to justify the selection
+        of geological, physical, chemical, and biological data that reveal early Earth
+        conditions.\" class=\"unnumbered no-title column-header ost-reading-discard\"
+        data-label=\"\"><colgroup><col data-width=\"72pt\"/><col/></colgroup><tbody>\n<tr
+        class=\"ost-standards-def ost-standards-apbio ost-tag-std-apbio-1-d-2\">\n<td><strong>Essential
+        Knowledge</strong>\n</td>\n<td><span class=\"ost-standards-name\">\n<strong>1.D.2</strong></span>\n<span
+        class=\"ost-standards-description\">Scientific evidence from many different
+        disciplines supports models of the origin of life.</span>\n</td></tr>\n<tr
+        class=\"ost-standards-def ost-standards-apbio ost-tag-std-apbio-sciprac-4-1\">\n<td><strong>Science
+        Practice</strong></td>\n<td><span class=\"ost-standards-name\"><strong>4.1</strong></span>\n<span
+        class=\"ost-standards-description\">The student can justify the selection
+        of the kind of data needed to answer a particular scientific question.</span>\n</td></tr>\n<tr
+        class=\"ost-standards-def ost-standards-apbio ost-tag-lo-apbio-ch04-s02-aplo-1-32\">\n<td><strong>Learning
+        Objective</strong>\n</td>\n<td><span class=\"ost-standards-name\"><strong>1.32</strong></span>\n<span
+        class=\"ost-standards-description\">The student is able to justify the selection
+        of geological, physical, chemical, and biological data that reveal early Earth
+        conditions.</span>\n</td>\n</tr>\n</tbody></table>\n\n<table id=\"fs-id1167065845412\"
+        summary=\"Table with two columns and three rows. Top left cell reads: Essential
+        Knowledge. Top right cell reads: 2.A.3 Organisms must exchange matter with
+        the environment to grow, reproduce and maintain organization. Second left
+        cell reads: Science Practice. Second right cell reads: 2.2 The student can
+        apply mathematical routines to quantities that describe natural phenomena.
+        Third left cell reads: Learning Objective. Third right cell reads: 2.6 The
+        student is able to use calculated surface area-to-volume ratios to predict
+        which cell(s) might eliminate wastes or procure nutrients faster by diffusion.\"
+        class=\"unnumbered no-title column-header ost-reading-discard\" data-label=\"\"><colgroup><col
+        data-width=\"72pt\"/><col/></colgroup><tbody>\n<tr class=\"ost-standards-def
+        ost-standards-apbio ost-tag-std-apbio-2-a-3\">\n<td><strong>Essential Knowledge</strong>\n</td>\n<td><span
+        class=\"ost-standards-name\">\n<strong>2.A.3</strong></span>\n<span class=\"ost-standards-description\">Organisms
+        must exchange matter with the environment to grow, reproduce and maintain
+        organization.</span>\n</td></tr>\n<tr class=\"ost-standards-def ost-standards-apbio
+        ost-tag-std-apbio-sciprac-2-2\">\n<td><strong>Science Practice</strong></td>\n<td><span
+        class=\"ost-standards-name\"><strong>2.2</strong></span>\n<span class=\"ost-standards-description\">The
+        student can apply mathematical routines to quantities that describe natural
+        phenomena.</span>\n</td></tr>\n<tr class=\"ost-standards-def ost-standards-apbio
+        ost-tag-lo-apbio-ch04-s02-aplo-2-6\">\n<td><strong>Learning Objective</strong>\n</td>\n<td><span
+        class=\"ost-standards-name\"><strong>2.6</strong></span>\n<span class=\"ost-standards-description\">The
+        student is able to use calculated surface area-to-volume ratios to predict
+        which cell(s) might eliminate wastes or procure nutrients faster by diffusion.</span>\n</td>\n</tr>\n</tbody></table>\n\n\n<table
+        id=\"fs-id1167065980831\" summary=\"Table with two columns and three rows.
+        Top left cell reads: Essential Knowledge. Top right cell reads: 2.A.3 Organisms
+        must exchange matter with the environment to grow, reproduce and maintain
+        organization. Second left cell reads: Science Practice. Second right cell
+        reads: 6.2 The student can construct explanations of phenomena based on evidence
+        produced through scientific practices. Third left cell reads: Learning Objective.
+        Third right cell reads: 2.7 The student will be able to explain how cell sizes
+        and shapes affect the overall rate of nutrient intake and the rate of waste
+        elimination.\" class=\"unnumbered no-title column-header ost-reading-discard\"
+        data-label=\"\"><colgroup><col data-width=\"72pt\"/><col/></colgroup><tbody>\n<tr
+        class=\"ost-standards-def ost-standards-apbio ost-tag-std-apbio-2-a-3\">\n<td><strong>Essential
+        Knowledge</strong>\n</td>\n<td><span class=\"ost-standards-name\">\n<strong>2.A.3</strong></span>\n<span
+        class=\"ost-standards-description\">Organisms must exchange matter with the
+        environment to grow, reproduce and maintain organization.</span>\n</td></tr>\n<tr
+        class=\"ost-standards-def ost-standards-apbio ost-tag-std-apbio-sciprac-6-2\">\n<td><strong>Science
+        Practice</strong></td>\n<td><span class=\"ost-standards-name\"><strong>6.2</strong></span>\n<span
+        class=\"ost-standards-description\">The student can construct explanations
+        of phenomena based on evidence produced through scientific practices.</span>\n</td></tr>\n<tr
+        class=\"ost-standards-def ost-standards-apbio ost-tag-lo-apbio-ch04-s02-aplo-2-7\">\n<td><strong>Learning
+        Objective</strong>\n</td>\n<td><span class=\"ost-standards-name\"><strong>2.7</strong></span>\n<span
+        class=\"ost-standards-description\">The student will be able to explain how
+        cell sizes and shapes affect the overall rate of nutrient intake and the rate
+        of waste elimination.</span>\n</td>\n</tr>\n</tbody></table>\n</section><div
+        data-type=\"note\" data-has-label=\"true\" id=\"fs-id1167064535475\" class=\"note
+        os-teacher\" data-label=\"Teacher Support\">\n<div data-type=\"note\" data-has-label=\"true\"
+        id=\"fs-id1167065772688\" class=\"note ost-background-info\" data-label=\"Background
+        Information\">\n<p id=\"fs-id1167065841232\">The major structures common to
+        all bacteria are depicted in Figure 4.5. The cell wall contains a complex
+        structural component, the peptidoglycan layer, which has yet to be observed
+        in any eukaryotic cell. This peptidoglycan layer is made of a network of alternating
+        modified complex sugar units, the glycans, joined by peptide cross-bridges.
+        This rigid structure contributes to the shape of bacterial cells and protects
+        them against changes in osmotic pressure in the environment. Antibiotics such
+        as penicillin interfere with the synthesis of the peptidoglycan layers and
+        cause bacterial cells to lyse without affecting the human host.</p>\n<p id=\"fs-id1167065024345\">Many
+        bacterial cells contain plasmids: small, extrachromosomal rings of double-stranded
+        DNA which can replicate independently of the bacterial chromosome and often
+        carry genes which confer resistance to antibiotics. Bacteria readily transfer
+        plasmids to other bacterial cells by a mechanism called horizontal gene transfer,
+        thereby spreading antibiotic resistance.</p>\n<p id=\"fs-id1167066035792\">Cells
+        at the lower end of the size spectrum are limited on just how small they can
+        be. To illustrate, compare a bacterial cell to a bag packed for camping in
+        the wilderness. In order to make the camping trip possible, the bag must contain
+        a minimum amount of supplies and equipment. Here, introduce the concept of
+        prokaryotes, bacteria and archaea. Prokaryotes are the most successful organisms
+        on the planet. They probably appeared first during evolution and occupy every
+        possible environment.</p>\n<p id=\"fs-id1167065847278\">Surface area-to-volume
+        ratio limits the maximum size of a cell. Nutrients and intermediates enter
+        the cell by diffusion. As the cell increases in size, the volume increase
+        outpaces the surface area increase, and the cell size exceeds the capacity
+        of the surface area to adequately exchange nutrients and waste with the external
+        environment.</p>\n</div>\n\n<div data-type=\"note\" data-has-label=\"true\"
+        id=\"fs-id1167066097328\" class=\"note ost-misconception\" data-label=\"Misconception
+        Alert\">\n<p id=\"fs-id1167064892531\">&#8220;All bacteria cause disease.&#8221;
+        This misconception started with the germ theory of disease when it became
+        clear that some of the most feared diseases were caused by microorganisms.
+        In fact, very few microorganisms are actually pathogens. The balance between
+        control of infectious diseases and reasonable sanitary standards is often
+        misunderstood. Excess hygiene is thought to have caused an increase in asthma
+        and other immune system imbalances between a human host and the human microbiome.
+        Ask students if one can be &#8220;too clean.&#8221; The notion that improved
+        hygiene has led to increases in the prevalence of allergies and asthma is
+        called the &#8220;hygiene hypothesis.&#8221;</p>\n<p id=\"fs-id1167065721087\">Until
+        recently, surface area-to-volume ratio was considered the main factor in determining
+        the limits of cell sizes. New research opened the possibility that other factors
+        such as avoiding predators, cell division mechanics and environment also contribute
+        to size and shape determination. The topic is reviewed in the following article:</p>\n<p
+        id=\"fs-id1167066023720\">Young, K. D. (2006). The Selective Value of Bacterial
+        Shape. <em data-effect=\"italics\">Microbiology and Molecular Biology Reviews</em>,
+        <em data-effect=\"italics\">70</em>(3), 660&#8211;703. doi:10.1128\t/MMBR.00001-06</p>\n<p
+        id=\"fs-id1167066121906\">Show in class, if possible, the following <a href=\"http://openstaxcollege.org/l/32cellsize_1\"
+        target=\"_window\">video</a> from HHMI on the discovery of microbial life
+        by Leeuwenhoek.</p><p id=\"fs-id1167065879103\">Use the video to discuss what
+        set apart the single lens microscope of Leeuwenhoek. Challenge students by
+        asking them why the rapid development of microbiology, the so-called golden
+        age, happened in the nineteenth century, close to 200 years after the discovery
+        of microbial life. One of the main reasons is the germ theory of disease.
+        Once the connection was made between devastating diseases and microbes, the
+        interest in microorganisms soared.</p>\n<p id=\"fs-id1167064541128\">Ask students
+        if they can think of ways in which bacteria are beneficial and write them
+        on the board. Include the obvious ones such as probiotics; food and fermentation;
+        and the less obvious ones such as to stimulate the immune system, biofuels,
+        bioremediation (here mention cleaning oil spills), and synthesis of useful
+        products (antibiotics).</p>\n<p id=\"fs-id1167065851553\">Ask students if
+        a cell in a 30-meter long blue whale is considerably larger than a cell in
+        a tiny water flea at 3 mm long. Record answers on the board. Cells are similar
+        in size because there are constraints on how large and how small they can
+        be and still be functionally independent entities.</p>\n</div></div>\n\n<p
+        id=\"fs-id1961711\">Cells fall into one of two broad categories: prokaryotic
+        and eukaryotic. Only the predominantly single-celled organisms of the domains
+        Bacteria and Archaea are classified as prokaryotes (pro- = &#8220;before&#8221;;
+        -kary- = &#8220;nucleus&#8221;). Cells of animals, plants, fungi, and protists
+        are all eukaryotes (ceu- = &#8220;true&#8221;) and are made up of eukaryotic
+        cells.</p>\n\n<section data-depth=\"1\" id=\"fs-id2215233\" class=\"ost-tag-lo-apbio-ch04-s02-lo01
+        ost-tag-lo-apbio-ch04-s02-aplo-1-32 ost-get-exercise\"><h1 data-type=\"title\">Components
+        of Prokaryotic Cells</h1>\n<p id=\"fs-id1801596\">All cells share four common
+        components: 1) a plasma membrane, an outer covering that separates the cell&#8217;s
+        interior from its surrounding environment; 2) cytoplasm, consisting of a jelly-like
+        cytosol within the cell in which other cellular components are found; 3) DNA,
+        the genetic material of the cell; and 4) ribosomes, which synthesize proteins.
+        However, prokaryotes differ from eukaryotic cells in several ways.</p>\n<p
+        id=\"fs-id1325738\">A <span data-type=\"term\">prokaryote</span> is a simple,
+        mostly single-celled (unicellular) organism that lacks a nucleus, or any other
+        membrane-bound organelle. We will shortly come to see that this is significantly
+        different in eukaryotes. Prokaryotic DNA is found in a central part of the
+        cell: the <span data-type=\"term\">nucleoid</span> (<a href=\"#fig-ch04-02-01\"
+        class=\"autogenerated-content\">[link]</a>).</p>\n<figure id=\"fig-ch04-02-01\"
+        class=\"ost-tag-lo-apbio-ch04-s02-lo01 ost-tag-lo-apbio-ch04-s02-aplo-1-32\"><figcaption>This
+        figure shows the generalized structure of a prokaryotic cell. All prokaryotes
+        have chromosomal DNA localized in a nucleoid, ribosomes, a cell membrane,
+        and a cell wall. The other structures shown are present in some, but not all,
+        bacteria.</figcaption><span data-type=\"media\" id=\"fs-id1407801\" data-alt=\"In
+        this illustration, the prokaryotic cell has an oval shape. The circular chromosome
+        is concentrated in a region called the nucleoid. The fluid inside the cell
+        is called the cytoplasm. Ribosomes, depicted as small circles, float in the
+        cytoplasm. The cytoplasm is encased by a plasma membrane, which in turn is
+        encased by a cell wall. A capsule surrounds the cell wall. The bacterium depicted
+        has a flagellum protruding from one narrow end. Pili are small protrusions
+        that project from the capsule in all directions.\">\n<img src=\"/resources/50163f8ff80f335574f41bfc10cc49a1e87cf9df/Figure_04_02_01.jpg\"
+        data-media-type=\"image/jpg\" alt=\"In this illustration, the prokaryotic
+        cell has an oval shape. The circular chromosome is concentrated in a region
+        called the nucleoid. The fluid inside the cell is called the cytoplasm. Ribosomes,
+        depicted as small circles, float in the cytoplasm. The cytoplasm is encased
+        by a plasma membrane, which in turn is encased by a cell wall. A capsule surrounds
+        the cell wall. The bacterium depicted has a flagellum protruding from one
+        narrow end. Pili are small protrusions that project from the capsule in all
+        directions.\" width=\"350\"/>\n</span>\n\n</figure>\n\n<div data-type=\"note\"
+        data-has-label=\"true\" id=\"fs-id1167067258968\" class=\"note ap-everyday
+        ost-assessed-feature ost-tag-lo-apbio-ch04-s02-aplo-1-18 ost-tag-lo-apbio-ch04-s02-lo01\"
+        data-label=\"Everyday Connection for AP&#174; Courses\">\n<p id=\"fs-id1167067034733\">While
+        the Earth is approximately 4.6 billion years old, the earliest fossil evidence
+        for life are of microbial mats that date back to 3.5 billion years.</p><div
+        data-type=\"exercise\" id=\"fs-id1167067093122\" class=\"exercise os-exercise
+        unnumbered\" data-label=\"\">\n\n<div data-type=\"problem\" class=\"problem\"
+        id=\"fs-id1167066945805\">\n<p id=\"fs-id1167063772274\">\n<a href=\"#ost/api/ex/apbio-ch04-ex068\"
+        class=\"autogenerated-content\">[link]</a>\n</p>\n</div>\n</div>\n</div>\n<p
+        id=\"fs-id1798051\">Most prokaryotes have a peptidoglycan cell wall and many
+        have a polysaccharide capsule (<a href=\"#fig-ch04-02-01\" class=\"autogenerated-content\">[link]</a>).
+        The cell wall acts as an extra layer of protection, helps the cell maintain
+        its shape, and prevents dehydration. The capsule enables the cell to attach
+        to surfaces in its environment. Some prokaryotes have flagella, pili, or fimbriae.
+        Flagella are used for locomotion. Pili are used to exchange genetic material
+        during a type of reproduction called conjugation. Fimbriae are used by bacteria
+        to attach to a host cell.</p>\n<div data-type=\"note\" data-has-label=\"true\"
+        id=\"fs-id1193831\" class=\"note career ost-feature ost-tag-lo-apbio-ch04-s02-lo01
+        ost-tag-lo-apbio-ch04-s02-aplo-1-32\" data-label=\"\"><div data-type=\"title\"
+        class=\"title\">Career Connection</div>\n\n<p id=\"fs-id1056900\"><span data-type=\"title\">Microbiologist</span>The
+        most effective action anyone can take to prevent the spread of contagious
+        illnesses is to wash his or her hands. Why? Because microbes (organisms so
+        tiny that they can only be seen with microscopes) are ubiquitous. They live
+        on doorknobs, money, your hands, and many other surfaces. If someone sneezes
+        into his hand and touches a doorknob, and afterwards you touch that same doorknob,
+        the microbes from the sneezer&#8217;s mucus are now on your hands. If you
+        touch your hands to your mouth, nose, or eyes, those microbes can enter your
+        body and could make you sick.</p>\n<p id=\"fs-id1627806\">However, not all
+        microbes (also called microorganisms) cause disease; most are actually beneficial.
+        You have microbes in your gut that make vitamin K. Other microorganisms are
+        used to ferment beer and wine.</p>\n<p id=\"fs-id1904890\">Microbiologists
+        are scientists who study microbes. Microbiologists can pursue a number of
+        careers. Not only do they work in the food industry, they are also employed
+        in the veterinary and medical fields. They can work in the pharmaceutical
+        sector, serving key roles in research and development by identifying new sources
+        of antibiotics that could be used to treat bacterial infections.</p>\n<p id=\"fs-id2028947\">Environmental
+        microbiologists may look for new ways to use specially selected or genetically
+        engineered microbes for the removal of pollutants from soil or groundwater,
+        as well as hazardous elements from contaminated sites. These uses of microbes
+        are called bioremediation technologies. Microbiologists can also work in the
+        field of bioinformatics, providing specialized knowledge and insight for the
+        design, development, and specificity of computer models of, for example, bacterial
+        epidemics.</p>\n</div><section data-depth=\"2\" id=\"fs-id1889993\" class=\"ost-tag-lo-apbio-ch04-s02-lo02
+        ost-tag-lo-apbio-ch04-s02-aplo-2-6 ost-get-exercise\"><h2 data-type=\"title\">Cell
+        Size</h2>\n<p id=\"fs-id1775152\">At 0.1 to 5.0 &#956;m in diameter, prokaryotic
+        cells are significantly smaller than eukaryotic cells, which have diameters
+        ranging from 10 to 100 &#956;m (<a href=\"#fig-ch04-02-02\" class=\"autogenerated-content\">[link]</a>).
+        The small size of prokaryotes allows ions and organic molecules that enter
+        them to quickly diffuse to other parts of the cell. Similarly, any wastes
+        produced within a prokaryotic cell can quickly diffuse out. This is not the
+        case in eukaryotic cells, which have developed different structural adaptations
+        to enhance intracellular transport.</p>\n<figure id=\"fig-ch04-02-02\" class=\"ost-tag-lo-apbio-ch04-s02-lo02
+        ost-tag-lo-apbio-ch04-s02-aplo-2-6\"><figcaption>This figure shows relative
+        sizes of microbes on a logarithmic scale (recall that each unit of increase
+        in a logarithmic scale represents a 10-fold increase in the quantity being
+        measured).</figcaption><span data-type=\"media\" id=\"fs-id607795\" data-alt=\"Part
+        a: Relative sizes on a logarithmic scale, from 0.1 nm to 1 m, are shown. Objects
+        are shown from smallest to largest. The smallest object shown, an atom, is
+        about 1 nm in size. The next largest objects shown are lipids and proteins;
+        these molecules are between 1 and 10 nm. Bacteria are about 100 nm, and mitochondria
+        are about 1 greek mu m. Plant and animal cells are both between 10 and 100
+        greek mu m. A human egg is between 100 greek mu m and 1 mm. A frog egg is
+        about 1 mm, A chicken egg and an ostrich egg are both between 10 and 100 mm,
+        but a chicken egg is larger. For comparison, a human is approximately 1 m
+        tall.\">\n<img src=\"/resources/2ddad78745d04b2976471545a9f4c7148d90c02c/Figure_04_02_02.jpg\"
+        data-media-type=\"image/jpg\" alt=\"Part a: Relative sizes on a logarithmic
+        scale, from 0.1 nm to 1 m, are shown. Objects are shown from smallest to largest.
+        The smallest object shown, an atom, is about 1 nm in size. The next largest
+        objects shown are lipids and proteins; these molecules are between 1 and 10
+        nm. Bacteria are about 100 nm, and mitochondria are about 1 greek mu m. Plant
+        and animal cells are both between 10 and 100 greek mu m. A human egg is between
+        100 greek mu m and 1 mm. A frog egg is about 1 mm, A chicken egg and an ostrich
+        egg are both between 10 and 100 mm, but a chicken egg is larger. For comparison,
+        a human is approximately 1 m tall.\" width=\"600\"/>\n</span>\n\n</figure><p
+        id=\"fs-id1443691\">Small size, in general, is necessary for all cells, whether
+        prokaryotic or eukaryotic. Let&#8217;s examine why that is so. First, we&#8217;ll
+        consider the area and volume of a typical cell. Not all cells are spherical
+        in shape, but most tend to approximate a sphere. You may remember from your
+        high school geometry course that the formula for the surface area of a sphere
+        is 4&#960;r<sup>2</sup>, while the formula for its volume is 4&#960;r<sup>3</sup>/3.
+        Thus, as the radius of a cell increases, its surface area increases as the
+        square of its radius, but its volume increases as the cube of its radius (much
+        more rapidly). Therefore, as a cell increases in size, its surface area-to-volume
+        ratio decreases. This same principle would apply if the cell had the shape
+        of a cube (<a href=\"#fig-ch04-02-03\" class=\"has-default-text\">see this
+        figure</a>). If the cell grows too large, the plasma membrane will not have
+        sufficient surface area to support the rate of diffusion required for the
+        increased volume. In other words, as a cell grows, it becomes less efficient.
+        One way to become more efficient is to divide; another way is to develop organelles
+        that perform specific tasks. These adaptations lead to the development of
+        more sophisticated cells called eukaryotic cells.</p>\n    \n<div data-type=\"note\"
+        data-has-label=\"true\" id=\"fs-id1456208\" class=\"note visual-connection
+        ost-assessed-feature\" data-label=\"\"><div data-type=\"title\" class=\"title\">Visual
+        Connections</div>\n<p id=\"fs-id1418460\">\n<figure id=\"fig-ch04-02-03\"><figcaption>Notice
+        that as a cell increases in size, its surface area-to-volume ratio decreases.
+        When there is insufficient surface area to support a cell&#8217;s increasing
+        volume, a cell will either divide or die. The cell on the left has a volume
+        of 1 mm<sup>3</sup> and a surface area of 6 mm<sup>2</sup>, with a surface
+        area-to-volume ratio of 6 to 1, whereas the cell on the right has a volume
+        of 8 mm<sup>3</sup> and a surface area of 24 mm<sup>2</sup>, with a surface
+        area-to-volume ratio of 3 to 1.</figcaption><span data-type=\"media\" id=\"fs-id1322516\"
+        data-alt=\"On the left, a sphere 1 mm in diameter is encased in a box of the
+        same width. On the right, the same sphere is encased in a box 2 mm in diameter.\">\n<img
+        src=\"/resources/14ba36d6303880b2bd0105de67916a279cf2b014/Figure_04_02_03.png\"
+        data-media-type=\"image/png\" alt=\"On the left, a sphere 1 mm in diameter
+        is encased in a box of the same width. On the right, the same sphere is encased
+        in a box 2 mm in diameter.\" width=\"350\"/>\n</span>\n</figure></p>\n<div
+        data-type=\"exercise\" id=\"fs-id1167066091735\" class=\"exercise os-exercise
+        unnumbered\" data-label=\"\">\n<div data-type=\"problem\" class=\"problem\"
+        id=\"fs-id1167065823102\">\n<p id=\"fs-id1167065739658\">\n<a href=\"#ost/api/ex/apbio-ch04-ex011\"
+        class=\"autogenerated-content\">[link]</a>\n</p>\n</div>\n</div>\n</div></section>\n\n\n\n<div
+        data-type=\"note\" data-has-label=\"true\" id=\"fs-id1167064769450\" class=\"note
+        ap-science-practices ost-reading-discard\" data-label=\"Science Practice Connection
+        for AP&#174; Courses\">\n<div data-type=\"note\" data-has-label=\"true\" id=\"fs-id1167065788013\"
+        class=\"note ost-assignable ost-sciprac-activity ost-tag-lo-apbio-ch04-s02-aplo-2-6\"
+        data-label=\"\"><div data-type=\"title\" class=\"title\">Activity</div>\n<p
+        id=\"fs-id1167065893323\">Create an annotated diagram to explain how approximately
+        300 million alveoli in a human lung increases surface area for gas exchange
+        to the size of a tennis court. Use the diagram to explain how the cellular
+        structures of alveoli, capillaries, and red blood cells allow for rapid diffusion
+        of O<sub>2</sub> and CO<sub>2</sub> among them.</p>\n</div>\n\n<div data-type=\"note\"
+        data-has-label=\"true\" id=\"fs-id1167065736777\" class=\"note ost-assignable
+        ost-sciprac-scithink ost-tag-lo-apbio-ch04-s02-aplo-4-4\" data-label=\"\"><div
+        data-type=\"title\" class=\"title\">Think About It</div>\n<div data-type=\"exercise\"
+        id=\"eip-id1167066037315\" class=\"exercise unnumbered\" data-label=\"\">\n<div
+        data-type=\"problem\" class=\"problem\" id=\"eip-id1167065887335\">\n<p id=\"fs-id1167065879973\">Which
+        of the following cells would likely exchange nutrients and wastes with its
+        environment more efficiently: a spherical cell with a diameter of 5 &#956;m
+        or a cubed-shaped cell with a side length of 7&#956;m? Provide a quantitative
+        justification for your answer based on surface area-to-volume ratios.</p>\n</div>\n</div>\n</div>\n\n<!--<exercise
+        id=\"eip-id1167065858933\" class=\"os-exercise unnumbered\"><label/>\n<problem
+        id=\"eip-id1167064948558\">\n<para id=\"eip-id1167064948560\">\n<link class=\"os-embed\"
+        url=\"#ost/api/ex/apbio-ch04-ex068\"/>\n</para>\n</problem>\n</exercise>--></div>\n<div
+        data-type=\"note\" data-has-label=\"true\" id=\"fs-id1167065708388\" class=\"note
+        os-teacher\" data-label=\"Teacher Support\">\n<p id=\"fs-id1167065865264\">This
+        activity is an application of Learning Objective 2.6 and Science Practice
+        6.2 because students are creating a diagram to explain diffusion rates across
+        membranes.</p>\n<p id=\"fs-id1167065961612\">The Think about it question is
+        an application of Learning Objective 2.6 and Science Practice 2.2 and Learning
+        Objective 2.7 and Science Practice 2.2 because they need to calculate surface
+        area-to-volume ratios for two different shapes and sizes of cells to predict
+        which one procures nutrients or eliminates wastes more efficiently.</p>\n<p
+        id=\"fs-id1167065948129\">Cell sizes and shapes can vary. The longest cells
+        are neurons that start at the brain and reach the limbs. Other examples of
+        large cells include bird eggs, skeletal muscle cells, and the marine algae
+        <em data-effect=\"italics\">Caulerpa</em> and <em data-effect=\"italics\">Acetabularia</em>.
+        These are exceptional cells and have unusual solutions to the surface area-to-volume
+        challenge.</p>\n<div data-type=\"note\" class=\"note\" data-has-label=\"true\"
+        id=\"fs-id1167065837761\" data-label=\"Possible answer to activity:\">\n<p
+        id=\"fs-id1167066059077\">The main point is that the alveoli cover a large
+        surface because they are essentially very small beads packed in two large
+        bags, the lungs. The sum of the individual surface areas of these microscopic
+        beads is equivalent to the surface of a tennis court (roughly 200 m<sup>2</sup>
+        for singles). The surface area of a sphere is 4&#960;r<sup>2</sup>. If the
+        average diameter of an alveolus is 300 &#181;m, which is equal to 0.3mm, the
+        average surface area of an alveolus is</p>\n\n<math xmlns=\"http://www.w3.org/1998/Math/MathML\"
+        display=\"block\"><semantics><mrow>\n <mrow>\n  <mn>4</mn><mo>&#215;</mo><mi>&#960;</mi><mo>&#215;</mo><msup>\n   <mrow>\n    <mo
+        stretchy=\"false\">(</mo><mfrac>\n     <mrow>\n      <mn>0.3</mn><mtext>mm</mtext>\n     </mrow>\n     <mn>2</mn>\n    </mfrac>\n    <mo
+        stretchy=\"false\">)</mo>\n   </mrow>\n   <mn>2</mn>\n  </msup>\n  <mo>&#8776;</mo><mn>0</mn><mo>.</mo><mn>3</mn><msup>\n   <mrow>\n    <mtext>mm</mtext>\n   </mrow>\n   <mn>2</mn>\n  </msup>  \n
+        </mrow>\n</mrow><annotation-xml encoding=\"MathML-Content\"><mrow>\n  <mn>4</mn><mo>&#215;</mo><mi>&#960;</mi><mo>&#215;</mo><msup>\n   <mrow>\n    <mo
+        stretchy=\"false\">(</mo><mfrac>\n     <mrow>\n      <mn>0.3</mn><mtext>mm</mtext>\n     </mrow>\n     <mn>2</mn>\n    </mfrac>\n    <mo
+        stretchy=\"false\">)</mo>\n   </mrow>\n   <mn>2</mn>\n  </msup>\n  <mo>&#8776;</mo><mn>0</mn><mo>.</mo><mn>3</mn><msup>\n   <mrow>\n    <mtext>mm</mtext>\n   </mrow>\n   <mn>2</mn>\n  </msup>  \n
+        </mrow></annotation-xml></semantics></math></div>\n\n<p id=\"fs-id1167064986682\">1mm=10<sup>-3</sup>m</p>\n<p
+        id=\"fs-id1167065016051\">1mm<sup>2</sup>=1mm*1mm=10<sup>-3</sup>m*10<sup>-3</sup>m=10<sup>-6</sup>m<sup>2</sup></p>\n<p
+        id=\"fs-id1167065855626\">The surface area of an alveolus in square meters
+        is equal to 0.3 &#215; 10<sup>-6</sup>m<sup>2</sup>. If there are 300 million
+        (300 &#215; 10<sup>6</sup>) alveoli in one lung, the total surface is equal
+        to about 90m<sup>2</sup> which is almost half the area of a tennis court!</p>\n<p
+        id=\"fs-id1167062400308\">Demonstration</p>\n<p id=\"fs-id1167065896660\">Take
+        a piece of paper and crumple it to show how a large surface area can fit in
+        a small volume.</p>\n<p id=\"fs-id1167065827386\">The alveoli are squamous
+        cells, thin and flat; the capillaries have the diameter of a hair (from the
+        Latin <em data-effect=\"italics\">capellus</em>, meaning &#8220;hair&#8221;).
+        Oxygen diffuses through very thin barriers only two cell membranes thick.</p>\n<div
+        data-type=\"note\" class=\"note\" data-has-label=\"true\" id=\"fs-id1167065891557\"
+        data-label=\"Possible answers to Think About It question:\">\n<p id=\"fs-id1167065886789\">Calculate:</p>\n<p
+        id=\"fs-id1167065066627\">The dimension of the sphere given is the diameter.
+        It must be divided by 2 to obtain the value for the radius.</p>\n<p id=\"fs-id1167066091226\">D=5&#181;m
+        and r=D/2=2.5&#181;m</p>\n<p id=\"fs-id1167065771950\">Surface area of sphere:
+        4&#960;r<sup>2 </sup>=78.54&#181;m<sup>2</sup></p>\n<p id=\"fs-id1167064908526\">Volume:
+        4/3&#960;r<sup>3</sup>= 65.45&#181;m<sup>3</sup></p>\n<p id=\"fs-id1167065919841\">Surface
+        area-to-volume ratio=1.2 &#181;m<sup>-1</sup></p>\n<p id=\"fs-id1167065884909\">Cube</p>\n<p
+        id=\"fs-id1167064708663\">Surface area: 6s<sup>2</sup> =294 &#181;m<sup>2</sup></p>\n<p
+        id=\"fs-id1167065794835\">Volume: s<sup>3</sup> = 343 &#181;m<sup>3</sup></p>\n<p
+        id=\"fs-id1167065809243\">Surface area to volume: 294/343 =0.86 &#181;m<sup>-1</sup></p>\n<p
+        id=\"fs-id1167062299486\">The sphere has a larger surface area to volume ratio
+        and would exchange chemicals with the environment more efficiently to support
+        its volume, even though the cube has a larger surface area.</p>\n<p id=\"fs-id1167065878293\">Desai
+        B.V., Harmon, R. M. and Green K. J. (2009). <em data-effect=\"italics\">Desmosomes
+        at a glance</em> Journal of Cell Science 122, 4401-4407</p></div>\n</div>\n\n<section
+        data-depth=\"2\" id=\"fs-id1857265\" class=\"summary\"><h2 data-type=\"title\">Section
+        Summary</h2><p id=\"fs-id1320930\">Prokaryotes are predominantly single-celled
+        organisms of the domains Bacteria and Archaea. All prokaryotes have plasma
+        membranes, cytoplasm, ribosomes, and DNA that is not membrane-bound. Most
+        have peptidoglycan cell walls and many have polysaccharide capsules. Prokaryotic
+        cells range in diameter from 0.1 to 5.0 &#956;m.</p>\n<p id=\"fs-id1320804\">As
+        a cell increases in size, its surface area-to-volume ratio decreases. If the
+        cell grows too large, the plasma membrane will not have sufficient surface
+        area to support the rate of diffusion required for the increased volume.</p>\n</section>\n\n<section
+        data-depth=\"2\" id=\"fs-id1167064928921\" class=\"ost-reading-discard ost-chapter-review
+        review\"><h2 data-type=\"title\">Review Questions</h2>\n<div data-type=\"exercise\"
+        id=\"fs-id1167066121955\" class=\"exercise os-exercise\">\n<div data-type=\"problem\"
+        class=\"problem\" id=\"fs-id1167064824360\">\n<p id=\"fs-id1167063152525\">\n<a
+        href=\"#ost/api/ex/apbio-ch04-ex012\" class=\"autogenerated-content\">[link]</a>\n</p>\n</div>\n</div>\n<div
+        data-type=\"exercise\" id=\"fs-id1167065898749\" class=\"exercise os-exercise\">\n<div
+        data-type=\"problem\" class=\"problem\" id=\"fs-id1167065863471\">\n<p id=\"fs-id1167065826408\">\n<a
+        href=\"#ost/api/ex/apbio-ch04-ex013\" class=\"autogenerated-content\">[link]</a>\n</p>\n</div>\n</div>\n<div
+        data-type=\"exercise\" id=\"fs-id1167065795593\" class=\"exercise os-exercise\">\n<div
+        data-type=\"problem\" class=\"problem\" id=\"fs-id1167065853790\">\n<p id=\"fs-id1167065034105\">\n<a
+        href=\"#ost/api/ex/apbio-ch04-ex014\" class=\"autogenerated-content\">[link]</a>\n</p>\n</div>\n</div>\n<div
+        data-type=\"exercise\" id=\"fs-id1167064744646\" class=\"exercise os-exercise\">\n<div
+        data-type=\"problem\" class=\"problem\" id=\"fs-id1167065770291\">\n<p id=\"fs-id1167065854993\">\n<a
+        href=\"#ost/api/ex/apbio-ch04-ex015\" class=\"autogenerated-content\">[link]</a>\n</p>\n</div>\n</div>\n</section>\n\n<section
+        data-depth=\"2\" id=\"fs-id1167065869733\" class=\"ost-reading-discard ost-chapter-review
+        critical-thinking\"><h2 data-type=\"title\">Critical Thinking Questions</h2>\n<div
+        data-type=\"exercise\" id=\"fs-id1167065841109\" class=\"exercise os-exercise\">\n<div
+        data-type=\"problem\" class=\"problem\" id=\"fs-id1167065722022\">\n<p id=\"fs-id1167065872834\">\n<a
+        href=\"#ost/api/ex/apbio-ch04-ex016\" class=\"autogenerated-content\">[link]</a>\n</p>\n</div>\n</div>\n<div
+        data-type=\"exercise\" id=\"fs-id1167065770877\" class=\"exercise os-exercise\">\n<div
+        data-type=\"problem\" class=\"problem\" id=\"fs-id1167062315552\">\n<p id=\"fs-id1167065770826\">\n<a
+        href=\"#ost/api/ex/apbio-ch04-ex017\" class=\"autogenerated-content\">[link]</a>\n</p>\n</div>\n</div>\n</section>\n\n<section
+        data-depth=\"2\" id=\"fs-id1167065822816\" class=\"ost-chapter-review ost-reading-discard
+        ap-test-prep\"><h2 data-type=\"title\">Test Prep for AP<sup>&#174;</sup> Courses</h2><div
+        data-type=\"exercise\" id=\"fs-id1167066054814\" class=\"exercise os-exercise
+        ost-tag-lo-apbio-ch04-s02-aplo-1-32\">\n<div data-type=\"problem\" class=\"problem\"
+        id=\"fs-id1167065828677\">\n<p id=\"fs-id1167065880148\">\n<a href=\"#ost/api/ex/apbio-ch04-ex018\"
+        class=\"autogenerated-content\">[link]</a>\n</p>\n</div>\n</div>\n<div data-type=\"exercise\"
+        id=\"fs-id1167065714452\" class=\"exercise os-exercise ost-tag-lo-apbio-ch04-s02-aplo-1-32\">\n<div
+        data-type=\"problem\" class=\"problem\" id=\"fs-id1167065807742\">\n<p id=\"fs-id1167065853525\">\n<a
+        href=\"#ost/api/ex/apbio-ch04-ex019\" class=\"autogenerated-content\">[link]</a>\n</p>\n</div>\n</div>\n<div
+        data-type=\"exercise\" id=\"fs-id1167066030326\" class=\"exercise os-exercise
+        ost-tag-lo-apbio-ch04-s02-aplo-2-6\">\n<div data-type=\"problem\" class=\"problem\"
+        id=\"fs-id1167065755627\">\n<p id=\"fs-id1167064906399\">\n<a href=\"#ost/api/ex/apbio-ch04-ex020\"
+        class=\"autogenerated-content\">[link]</a>\n</p>\n</div>\n</div>\n<div data-type=\"exercise\"
+        id=\"fs-id1167065846344\" class=\"exercise os-exercise ost-tag-lo-apbio-ch04-s02-aplo-2-6\">\n<div
+        data-type=\"problem\" class=\"problem\" id=\"fs-id1167065944125\">\n<p id=\"fs-id1167065880029\">\n<a
+        href=\"#ost/api/ex/apbio-ch04-ex021\" class=\"autogenerated-content\">[link]</a>\n</p>\n</div>\n</div>\n<div
+        data-type=\"exercise\" id=\"fs-id1167065851051\" class=\"exercise os-exercise
+        ost-tag-lo-apbio-ch04-s02-aplo-2-6\">\n<div data-type=\"problem\" class=\"problem\"
+        id=\"fs-id1167064910564\">\n<p id=\"fs-id1167065948677\">\n<a href=\"#ost/api/ex/apbio-ch04-ex022\"
+        class=\"autogenerated-content\">[link]</a>\n</p>\n</div>\n</div>\n<div data-type=\"exercise\"
+        id=\"fs-id1167065711686\" class=\"exercise os-exercise ost-tag-lo-apbio-ch04-s02-aplo-2-6\">\n<div
+        data-type=\"problem\" class=\"problem\" id=\"fs-id1167065826660\">\n<p id=\"fs-id1167066020703\">\n<a
+        href=\"#ost/api/ex/apbio-ch04-ex023\" class=\"autogenerated-content\">[link]</a>\n</p>\n</div>\n</div>\n</section></section>\n\n\n<div
+        data-type=\"glossary\"><h2 data-type=\"glossary-title\">Glossary</h2>\n<dl
+        class=\"definition\" id=\"fs-id1330398\"><dt>nucleoid</dt> <dd id=\"fs-id1227229\">central
+        part of a prokaryotic cell in which the chromosome is found</dd></dl>\n<dl
+        class=\"definition\" id=\"fs-id1703590\"><dt>prokaryote</dt> <dd id=\"fs-id1338820\">unicellular
+        organism that lacks a nucleus or any other membrane-bound organelle</dd></dl>\n</div></body>\n\n</html>",
+        "subjects": ["Science and Technology"], "legacy_id": "m42976", "parentId":
+        null, "publishers": [{"surname": "APBio", "suffix": null, "firstname": "Tutor",
+        "title": "", "fullname": "Tutor APBio", "id": "tutor_apbio"}, {"surname":
+        "APBio", "suffix": null, "firstname": "Words", "title": "", "fullname": "Words
+        APBio", "id": "words_apbio"}], "parent": {"authors": [], "version": "", "id":
+        null, "title": null}, "stateid": 1, "parentTitle": null, "authors": [{"surname":
+        "APBio", "suffix": null, "firstname": "Tutor", "title": "", "fullname": "Tutor
+        APBio", "id": "tutor_apbio"}], "parentVersion": "", "legacy_version": "1.29",
+        "licensors": [{"surname": "APBio", "suffix": null, "firstname": "Tutor", "title":
+        "", "fullname": "Tutor APBio", "id": "tutor_apbio"}], "language": "en", "license":
+        {"url": "http://creativecommons.org/licenses/by/4.0/", "code": "by", "version":
+        "4.0", "name": "Attribution"}, "created": "2015-04-21T15:46:57Z", "doctype":
+        "", "buyLink": null, "submitter": {"surname": "APBio", "suffix": null, "firstname":
+        "Words", "title": "", "fullname": "Words APBio", "id": "words_apbio"}, "parentAuthors":
+        [], "history": [{"changes": "fixed link case 2", "version": "29", "revised":
+        "2015-07-31T16:05:47Z", "publisher": {"surname": "APBio", "suffix": null,
+        "firstname": "Words", "title": "", "fullname": "Words APBio", "id": "words_apbio"}},
+        {"changes": "CNXML review", "version": "28", "revised": "2015-07-20T18:44:23Z",
+        "publisher": {"surname": "APBio", "suffix": null, "firstname": "Words", "title":
+        "", "fullname": "Words APBio", "id": "words_apbio"}}, {"changes": "Modified",
+        "version": "27", "revised": "2015-06-27T09:26:57Z", "publisher": {"surname":
+        "APBio", "suffix": null, "firstname": "Words", "title": "", "fullname": "Words
+        APBio", "id": "words_apbio"}}, {"changes": "Modified", "version": "26", "revised":
+        "2015-06-26T12:29:30Z", "publisher": {"surname": "APBio", "suffix": null,
+        "firstname": "Words", "title": "", "fullname": "Words APBio", "id": "words_apbio"}},
+        {"changes": "Modified", "version": "25", "revised": "2015-06-24T15:09:49Z",
+        "publisher": {"surname": "APBio", "suffix": null, "firstname": "Words", "title":
+        "", "fullname": "Words APBio", "id": "words_apbio"}}, {"changes": "Modified",
+        "version": "24", "revised": "2015-06-24T11:12:19Z", "publisher": {"surname":
+        "APBio", "suffix": null, "firstname": "Words", "title": "", "fullname": "Words
+        APBio", "id": "words_apbio"}}, {"changes": "Modified", "version": "23", "revised":
+        "2015-06-24T08:13:22Z", "publisher": {"surname": "APBio", "suffix": null,
+        "firstname": "Words", "title": "", "fullname": "Words APBio", "id": "words_apbio"}},
+        {"changes": "Modified", "version": "22", "revised": "2015-06-23T13:31:38Z",
+        "publisher": {"surname": "APBio", "suffix": null, "firstname": "Words", "title":
+        "", "fullname": "Words APBio", "id": "words_apbio"}}, {"changes": "Modified",
+        "version": "21", "revised": "2015-06-23T11:05:51Z", "publisher": {"surname":
+        "APBio", "suffix": null, "firstname": "Words", "title": "", "fullname": "Words
+        APBio", "id": "words_apbio"}}, {"changes": "Modified", "version": "20", "revised":
+        "2015-06-23T10:42:44Z", "publisher": {"surname": "APBio", "suffix": null,
+        "firstname": "Words", "title": "", "fullname": "Words APBio", "id": "words_apbio"}},
+        {"changes": "Modified", "version": "19", "revised": "2015-06-20T05:21:37Z",
+        "publisher": {"surname": "APBio", "suffix": null, "firstname": "Words", "title":
+        "", "fullname": "Words APBio", "id": "words_apbio"}}, {"changes": "Modified",
+        "version": "18", "revised": "2015-06-19T08:44:59Z", "publisher": {"surname":
+        "APBio", "suffix": null, "firstname": "Words", "title": "", "fullname": "Words
+        APBio", "id": "words_apbio"}}, {"changes": "Modified", "version": "17", "revised":
+        "2015-06-16T15:12:16Z", "publisher": {"surname": "APBio", "suffix": null,
+        "firstname": "Words", "title": "", "fullname": "Words APBio", "id": "words_apbio"}},
+        {"changes": "Modified", "version": "16", "revised": "2015-06-16T10:08:08Z",
+        "publisher": {"surname": "APBio", "suffix": null, "firstname": "Words", "title":
+        "", "fullname": "Words APBio", "id": "words_apbio"}}, {"changes": "Modified",
+        "version": "15", "revised": "2015-06-16T05:38:00Z", "publisher": {"surname":
+        "APBio", "suffix": null, "firstname": "Words", "title": "", "fullname": "Words
+        APBio", "id": "words_apbio"}}, {"changes": "Modified", "version": "14", "revised":
+        "2015-06-16T05:26:25Z", "publisher": {"surname": "APBio", "suffix": null,
+        "firstname": "Words", "title": "", "fullname": "Words APBio", "id": "words_apbio"}},
+        {"changes": "Modified", "version": "13", "revised": "2015-06-15T11:45:50Z",
+        "publisher": {"surname": "APBio", "suffix": null, "firstname": "Words", "title":
+        "", "fullname": "Words APBio", "id": "words_apbio"}}, {"changes": "Modified",
+        "version": "12", "revised": "2015-06-15T10:04:12Z", "publisher": {"surname":
+        "APBio", "suffix": null, "firstname": "Words", "title": "", "fullname": "Words
+        APBio", "id": "words_apbio"}}, {"changes": "Modified", "version": "11", "revised":
+        "2015-06-15T07:59:13Z", "publisher": {"surname": "APBio", "suffix": null,
+        "firstname": "Words", "title": "", "fullname": "Words APBio", "id": "words_apbio"}},
+        {"changes": "Modified", "version": "10", "revised": "2015-06-15T07:20:41Z",
+        "publisher": {"surname": "APBio", "suffix": null, "firstname": "Words", "title":
+        "", "fullname": "Words APBio", "id": "words_apbio"}}, {"changes": "Modified",
+        "version": "9", "revised": "2015-06-15T07:08:55Z", "publisher": {"surname":
+        "APBio", "suffix": null, "firstname": "Words", "title": "", "fullname": "Words
+        APBio", "id": "words_apbio"}}, {"changes": "Modified", "version": "8", "revised":
+        "2015-06-15T06:55:11Z", "publisher": {"surname": "APBio", "suffix": null,
+        "firstname": "Words", "title": "", "fullname": "Words APBio", "id": "words_apbio"}},
+        {"changes": "Modified", "version": "7", "revised": "2015-06-15T05:38:17Z",
+        "publisher": {"surname": "APBio", "suffix": null, "firstname": "Words", "title":
+        "", "fullname": "Words APBio", "id": "words_apbio"}}, {"changes": "Modified",
+        "version": "6", "revised": "2015-06-15T05:19:33Z", "publisher": {"surname":
+        "APBio", "suffix": null, "firstname": "Words", "title": "", "fullname": "Words
+        APBio", "id": "words_apbio"}}, {"changes": "Modified", "version": "5", "revised":
+        "2015-06-15T03:30:32Z", "publisher": {"surname": "APBio", "suffix": null,
+        "firstname": "Words", "title": "", "fullname": "Words APBio", "id": "words_apbio"}},
+        {"changes": "Modified", "version": "4", "revised": "2015-06-04T15:00:14Z",
+        "publisher": {"surname": "APBio", "suffix": null, "firstname": "Words", "title":
+        "", "fullname": "Words APBio", "id": "words_apbio"}}, {"changes": "Modified",
+        "version": "3", "revised": "2015-06-04T01:47:18Z", "publisher": {"surname":
+        "APBio", "suffix": null, "firstname": "Words", "title": "", "fullname": "Words
+        APBio", "id": "words_apbio"}}, {"changes": "words_apbio to maintainer role",
+        "version": "2", "revised": "2015-05-06T20:02:58Z", "publisher": {"surname":
+        "APBio", "suffix": null, "firstname": "Tutor", "title": "", "fullname": "Tutor
+        APBio", "id": "tutor_apbio"}}, {"changes": "Created module", "version": "1",
+        "revised": "2015-04-21T15:47:05Z", "publisher": {"surname": "APBio", "suffix":
+        null, "firstname": "Tutor", "title": "", "fullname": "Tutor APBio", "id":
+        "tutor_apbio"}}]}'
+    http_version: 
+  recorded_at: Tue, 04 Aug 2015 19:57:00 GMT
+- request:
+    method: get
+    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:apbio-ch04-s02-lo01,apbio-ch04-s02-lo02
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Tue, 04 Aug 2015 19:57:01 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Allow-Origin:
+      - "*"
+      Etag:
+      - W/"8cf943e0fca574f2d608c7c5f481165d"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Set-Cookie:
+      - _exercises_session=TGgzUVhQeXVpcnQzT1VIZUxwcUlNTEZJMlY5ajdHakt3eVdzcmtSdWJmY2t1cm9rQzZDT3FwZU5ETVhIdEllR2N2SFBhYnBUa2FBbFF5RlBzUStGdGc9PS0tYUMyWWtWWWRyTlhtTTR2UitDbjVHZz09--7a8786f3702d3daa235382b4cdf77de700379718;
+        path=/; HttpOnly
+      X-Request-Id:
+      - 40f04756-eddd-41ea-8b1d-0de415936004
+      X-Runtime:
+      - '0.275199'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJ0b3RhbF9jb3VudCI6MTMsIml0ZW1zIjpbeyJ1aWQiOiIxMDBAMiIsIm51
+        bWJlciI6MTAwLCJ2ZXJzaW9uIjoyLCJwdWJsaXNoZWRfYXQiOiIyMDE1LTA3
+        LTA4VDE4OjE3OjM2LjA5M1oiLCJlZGl0b3JzIjpbXSwiYXV0aG9ycyI6W3si
+        dXNlcl9pZCI6MSwibmFtZSI6Ik9wZW5TdGF4In1dLCJjb3B5cmlnaHRfaG9s
+        ZGVycyI6W3sidXNlcl9pZCI6MiwibmFtZSI6IlJpY2UgVW5pdmVyc2l0eSJ9
+        XSwiZGVyaXZlZF9mcm9tIjpbXSwiYXR0YWNobWVudHMiOltdLCJ0YWdzIjpb
+        ImluYm9vay15ZXMiLCJkaXNwbGF5LWZyZWUtcmVzcG9uc2UiLCJkaXNwbGF5
+        LXJlYy1zZW5zaXRpdmUiLCJhcGJpbyIsImRvazMiLCJ0aW1lLW1lZGl1bSIs
+        ImJsb29tcy00IiwidmlzdWFsLWNvbm5lY3Rpb24iLCJhcGJpby1jaDA0Iiwi
+        YXBiaW8tY2gwNC1zMDItbG8wMiIsImFwYmlvLWNoMDQtczAyLWFwbG8tMi02
+        IiwiYXBiaW8tY2gwNC1leDAxMSIsImFwYmlvLWNoMDQtczAyIl0sInN0aW11
+        bHVzX2h0bWwiOiIiLCJxdWVzdGlvbnMiOlt7ImlkIjoxMjIzLCJzdGltdWx1
+        c19odG1sIjoiIiwic3RlbV9odG1sIjoiUHJva2FyeW90aWMgY2VsbHMgYXJl
+        IG11Y2ggc21hbGxlciB0aGFuIGV1a2FyeW90aWMgY2VsbHMuIFdoYXQgYWR2
+        YW50YWdlcyBtaWdodCBzbWFsbCBjZWxsIHNpemUgY29uZmVyIG9uIGEgY2Vs
+        bD8gV2hhdCBhZHZhbnRhZ2VzIG1pZ2h0IGxhcmdlIGNlbGwgc2l6ZSBoYXZl
+        PyIsImFuc3dlcnMiOlt7ImlkIjo0ODQwLCJjb250ZW50X2h0bWwiOiJTbWFs
+        bCwgcHJva2FyeW90aWMgY2VsbHMgaGF2ZSBmZXdlciBwaG9zcGhvbGlwaWRz
+        IGluIHRoZWlyIG1lbWJyYW5lLiBMYXJnZSwgZXVrYXJ5b3RpYyBjZWxscyBo
+        YXZlIG1vcmUgdHJhbnNwb3J0IHByb3RlaW5zIGluIHRoZWlyIHBob3NwaG9s
+        aXBpZCBiaWxheWVyLCBzdXBwb3J0aW5nIGVmZmljaWVudCB0cmFuc3BvcnQg
+        b2YgbW9sZWN1bGVzLiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tf
+        aHRtbCI6IlRoZXNlIGFyZSBub3QgdGhlIGFkdmFudGFnZXMgb2YgZGlmZmVy
+        ZW50IGNlbGwgc2l6ZS4ifSx7ImlkIjo0ODM5LCJjb250ZW50X2h0bWwiOiJT
+        bWFsbCwgcHJva2FyeW90aWMgY2VsbHMgZGl2aWRlIGF0IGEgaGlnaGVyIHJh
+        dGUuIExhcmdlLCBldWthcnlvdGljIGNlbGxzIHNob3cgZGl2aXNpb24gd2l0
+        aCBnZW5ldGljIHZhcmlhdGlvbnMuIiwiY29ycmVjdG5lc3MiOiIwLjAiLCJm
+        ZWVkYmFja19odG1sIjoiVGhlIGNhcGFjaXR5IG9mIGxhcmdlIGNlbGxzIHRv
+        IHVuZGVyZ28gZ2VuZXRpYyB2YXJpYXRpb24gZG9lcyBub3QgaGF2ZSBhbnkg
+        cmVsYXRpb24gd2l0aCB0aGVpciBzaXplLiJ9LHsiaWQiOjQ4MzgsImNvbnRl
+        bnRfaHRtbCI6IlNtYWxsLCBwcm9rYXJ5b3RpYyBjZWxscyBlYXNpbHkgZXNj
+        YXBlIHRoZSBzcG9udGFuZW91cyBjaGFuZ2VzIGluIGVudmlyb25tZW50YWwg
+        Y29uZGl0aW9ucy4gTGFyZ2UsIGV1a2FyeW90aWMgY2VsbHMgaGF2ZSBjb21w
+        bGV4IG1lY2hhbmlzbXMgdG8gY29wZSB3aXRoIHN1Y2ggY2hhbmdlcy4iLCJj
+        b3JyZWN0bmVzcyI6IjAuMCIsImZlZWRiYWNrX2h0bWwiOiJUaGUgc21hbGwg
+        c2l6ZSBvZiBjZWxscyBjYW5ub3QgaGVscCB0aGVtIHRvIGVzY2FwZSBzcG9u
+        dGFuZW91cyBjaGFuZ2VzIGluIGVudmlyb25tZW50LiJ9LHsiaWQiOjQ4Mzcs
+        ImNvbnRlbnRfaHRtbCI6IlNtYWxsLCBwcm9rYXJ5b3RpYyBjZWxscyBkbyBu
+        b3QgZXhwZW5kIGVuZXJneSBpbiBpbnRyYWNlbGx1bGFyIHRyYW5zcG9ydCBv
+        ZiBzdWJzdGFuY2VzLiBMYXJnZXIgZXVrYXJ5b3RpYyBjZWxscyBoYXZlIG9y
+        Z2FuZWxsZXMsIHdoaWNoIGVuYWJsZSB0aGVtIHRvIHByb2R1Y2UgY29tcGxl
+        eCBzdWJzdGFuY2VzLiIsImNvcnJlY3RuZXNzIjoiMS4wIiwiZmVlZGJhY2tf
+        aHRtbCI6IlRoZSBzbWFsbCwgcHJva2FyeW90aWMgY2VsbHMgaGF2ZSBhIGhp
+        Z2hlciBzdXJmYWNlIGFyZWEtdG8tdm9sdW1lIHJhdGlvIHRoYW4gbGFyZ2Ug
+        Y2VsbCwgd2hpY2ggZW5hYmxlcyBhIHF1aWNrIGRpZmZ1c2lvbiBvZiBtb2xl
+        Y3VsZXMsIGV4cGVuZGluZyBsZXNzIGVuZXJneS4gVGhlIGxhcmdlciwgZXVr
+        YXJ5b3RpYyBjZWxscyBoYXZlIG9yZ2FuZWxsZXMsIHdoaWNoIGNhbiBzZXBh
+        cmF0ZSBjZWxsdWxhciBwcm9jZXNzZXMsIGVuYWJsaW5nIHRoZW0gdG8gYnVp
+        bGQgbW9sZWN1bGVzIHRoYXQgYXJlIG1vcmUgY29tcGxleC4ifV0sImhpbnRz
+        IjpbXSwiZm9ybWF0cyI6WyJtdWx0aXBsZS1jaG9pY2UiLCJmcmVlLXJlc3Bv
+        bnNlIl0sImNvbWJvX2Nob2ljZXMiOltdfV19LHsidWlkIjoiMTAxQDIiLCJu
+        dW1iZXIiOjEwMSwidmVyc2lvbiI6MiwicHVibGlzaGVkX2F0IjoiMjAxNS0w
+        Ny0wOFQxODoxNzozNi4xMDBaIiwiZWRpdG9ycyI6W10sImF1dGhvcnMiOlt7
+        InVzZXJfaWQiOjEsIm5hbWUiOiJPcGVuU3RheCJ9XSwiY29weXJpZ2h0X2hv
+        bGRlcnMiOlt7InVzZXJfaWQiOjIsIm5hbWUiOiJSaWNlIFVuaXZlcnNpdHki
+        fV0sImRlcml2ZWRfZnJvbSI6W10sImF0dGFjaG1lbnRzIjpbXSwidGFncyI6
+        WyJpbmJvb2steWVzIiwiZGlzcGxheS1mcmVlLXJlc3BvbnNlIiwiZGlzcGxh
+        eS1yZWMtc2Vuc2l0aXZlIiwiYmxvb21zLTIiLCJhcGJpbyIsImRvazIiLCJ0
+        aW1lLW1lZGl1bSIsImFwLWV2ZXJ5ZGF5IiwiYXBiaW8tY2gwNCIsImFwYmlv
+        LWNoMDQtczAyLWxvMDIiLCJhcGJpby1jaDA0LXMwMiIsImFwYmlvLWNoMDQt
+        ZXgwNjgiXSwic3RpbXVsdXNfaHRtbCI6IiIsInF1ZXN0aW9ucyI6W3siaWQi
+        OjEyNzIsInN0aW11bHVzX2h0bWwiOiIiLCJzdGVtX2h0bWwiOiJXaGF0IHR5
+        cGUgb2YgZXZpZGVuY2UgZm9yIGxpZmUgd2FzIG1vc3QgbGlrZWx5IGZvdW5k
+        IGluIGEgMy41IGJpbGxpb24geWVhciBvbGQgcm9jaz8iLCJhbnN3ZXJzIjpb
+        eyJpZCI6NTAzNywiY29udGVudF9odG1sIjoiU2NpZW50aXN0cyBmb3VuZCBm
+        b3NzaWxpemVkIHByb2thcnlvdGljIGNlbGxzIGluIHRoZSByb2NrIHRoYXQg
+        YXJlIGFibGUgdG8gZ3JvdyBhbmQgZGl2aWRlLiIsImNvcnJlY3RuZXNzIjoi
+        MC4wIiwiZmVlZGJhY2tfaHRtbCI6IkZvc3NpbGl6ZWQgY2VsbHMgYXJlIG5v
+        dCBhbGl2ZSBhbmQgY291bGQgbm90IGdyb3cgb3IgZGl2aWRlLiJ9LHsiaWQi
+        OjUwMzYsImNvbnRlbnRfaHRtbCI6IlRoZSBmb3NzaWwgc3VwZXJmaWNpYWxs
+        eSByZXNlbWJsZXMgbGl2aW5nIG1pY3JvYmlhbCBtYXRzIHRoYXQgZXhpc3Qg
+        dG9kYXkuIiwiY29ycmVjdG5lc3MiOiIxLjAiLCJmZWVkYmFja19odG1sIjoi
+        VGhlIHNoYXBlIGFuZCB0ZXh0dXJlIG9mIHRoZSBmb3NzaWwgc3VwZXJmaWNp
+        YWxseSByZXNlbWJsZXMgdGhhdCBvZiBsaXZpbmcgbWljcm9iaWFsIG1hdHMu
+        IEl0IGlzIHVubGlrZWx5IHRoYXQgcmVtYWlucyBvZiBjZWxscyB3b3VsZCBz
+        dGlsbCBiZSBwcmVzZW50IGFmdGVyIDMuNSBiaWxsaW9uIHllYXJzLCBhbmQg
+        dGhlIGVhcmxpZXN0IGxpZmUgd291bGQgaGF2ZSBiZWVuIHZlcnkgc2ltcGxl
+        LCBzbyBpdCB3b3VsZCBub3QgaGF2ZSBib25lcy4ifSx7ImlkIjo1MDM1LCJj
+        b250ZW50X2h0bWwiOiJEZWFkIGNlbGxzIGJ1cmllZCBpbiB0aGUgcm9jayBz
+        dXBlcmZpY2lhbGx5IHJlc2VtYmxlIGxpdmluZyBwcm9rYXJ5b3RpYyBjZWxs
+        cy4iLCJjb3JyZWN0bmVzcyI6IjAuMCIsImZlZWRiYWNrX2h0bWwiOiJSZW1h
+        aW5zIG9mIGNlbGxzIGFyZSB1bmxpa2VseSB0byBiZSBwcmVzZW50IGFmdGVy
+        IDMuNSBiaWxsaW9uIHllYXJzLiJ9LHsiaWQiOjUwMzQsImNvbnRlbnRfaHRt
+        bCI6IlNjaWVudGlzdHMgZm91bmQgYm9uZXMgYnVyaWVkIGluIHRoZSByb2Nr
+        IHJlc2VtYmxlIGJvbmVzIG9mIGxpdmluZyBhbmltYWxzLiIsImNvcnJlY3Ru
+        ZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IlRoZSBlYXJsaWVzdCBsaWZl
+        LCB3aGljaCB3YXMgdW5pY2VsbHVsYXIsIHdvdWxkIG5vdCBoYXZlIGhhZCBi
+        b25lcy4ifV0sImhpbnRzIjpbXSwiZm9ybWF0cyI6WyJtdWx0aXBsZS1jaG9p
+        Y2UiLCJmcmVlLXJlc3BvbnNlIl0sImNvbWJvX2Nob2ljZXMiOltdfV19LHsi
+        dWlkIjoiMTAyQDIiLCJudW1iZXIiOjEwMiwidmVyc2lvbiI6MiwicHVibGlz
+        aGVkX2F0IjoiMjAxNS0wNy0wOFQxODoxNzozNi4xMDZaIiwiZWRpdG9ycyI6
+        W10sImF1dGhvcnMiOlt7InVzZXJfaWQiOjEsIm5hbWUiOiJPcGVuU3RheCJ9
+        XSwiY29weXJpZ2h0X2hvbGRlcnMiOlt7InVzZXJfaWQiOjIsIm5hbWUiOiJS
+        aWNlIFVuaXZlcnNpdHkifV0sImRlcml2ZWRfZnJvbSI6W10sImF0dGFjaG1l
+        bnRzIjpbXSwidGFncyI6WyJvc3QtY2hhcHRlci1yZXZpZXciLCJyZXZpZXci
+        LCJpbmJvb2steWVzIiwidGltZS1zaG9ydCIsImRpc3BsYXktZnJlZS1yZXNw
+        b25zZSIsImRpc3BsYXktcmVjLXNlbnNpdGl2ZSIsImJsb29tcy0yIiwiYXBi
+        aW8iLCJkb2syIiwiYXBiaW8tY2gwNCIsImFwYmlvLWNoMDQtczAyIiwiYXBi
+        aW8tY2gwNC1zMDItbG8wMSIsImFwYmlvLWNoMDQtZXgwMTIiXSwic3RpbXVs
+        dXNfaHRtbCI6IiIsInF1ZXN0aW9ucyI6W3siaWQiOjEyMjQsInN0aW11bHVz
+        X2h0bWwiOiIiLCJzdGVtX2h0bWwiOiJJbiBvcmRlciB0byBvYnRhaW4gc29t
+        ZSBtYXRlcmlhbHMgYXMgd2VsbCBhcyBnZXR0aW5nIHJpZCBvZiB3YXN0ZSwg
+        d2hhdCBkbyBwcm9rYXJ5b3RlcyBkZXBlbmQgb24/IiwiYW5zd2VycyI6W3si
+        aWQiOjQ4NDQsImNvbnRlbnRfaHRtbCI6InJpYm9zb21lcyIsImNvcnJlY3Ru
+        ZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IlJlY2FsbCByaWJvc29tZXMg
+        YXJlIHByb3RlaW4gc3ludGhlc2l6aW5nIG1hY2hpbmVyeS4ifSx7ImlkIjo0
+        ODQzLCJjb250ZW50X2h0bWwiOiJmbGFnZWxsYSIsImNvcnJlY3RuZXNzIjoi
+        MC4wIiwiZmVlZGJhY2tfaHRtbCI6IkZsYWdlbGx1bSBpcyBpbnZvbHZlZCBp
+        biBtb3RpbGl0eSBhbmQgbm90IGZvciBleGNoYW5nZSBvZiBtYXRlcmlhbHMu
+        In0seyJpZCI6NDg0MiwiY29udGVudF9odG1sIjoiZGlmZnVzaW9uIiwiY29y
+        cmVjdG5lc3MiOiIxLjAiLCJmZWVkYmFja19odG1sIjoiVGhlIGNoYW5nZXMg
+        aW4gdGhlIGNvbmNlbnRyYXRpb24gaGVscCB0aGUgbW92ZW1lbnQgb2YgdGhl
+        IHBhcnRpY2xlcyBhbmQgd2FzdGUgYWNyb3NzIHRoZSBwbGFzbWEgbWVtYnJh
+        bmUuIFRoaXMgcHJvY2VzcyBpcyBrbm93biBhcyBkaWZmdXNpb24uIn0seyJp
+        ZCI6NDg0MSwiY29udGVudF9odG1sIjoiY2VsbCBkaXZpc2lvbiIsImNvcnJl
+        Y3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IkNlbGwgZGl2aXNpb24g
+        aXMgYSBwcm9jZXNzIHRvIGRpdmlkZSBjZWxscyBBbmQgaXMgbm90IHJlbGF0
+        ZWQgdG8gb2J0YWluIHNvbWUgbWF0ZXJpYWxzIG9yIHRvIGdldCByaWQgb2Yg
+        d2FzdGUuIn1dLCJoaW50cyI6W10sImZvcm1hdHMiOlsibXVsdGlwbGUtY2hv
+        aWNlIiwiZnJlZS1yZXNwb25zZSJdLCJjb21ib19jaG9pY2VzIjpbXX1dfSx7
+        InVpZCI6IjEwM0AyIiwibnVtYmVyIjoxMDMsInZlcnNpb24iOjIsInB1Ymxp
+        c2hlZF9hdCI6IjIwMTUtMDctMDhUMTg6MTc6MzYuMTEyWiIsImVkaXRvcnMi
+        OltdLCJhdXRob3JzIjpbeyJ1c2VyX2lkIjoxLCJuYW1lIjoiT3BlblN0YXgi
+        fV0sImNvcHlyaWdodF9ob2xkZXJzIjpbeyJ1c2VyX2lkIjoyLCJuYW1lIjoi
+        UmljZSBVbml2ZXJzaXR5In1dLCJkZXJpdmVkX2Zyb20iOltdLCJhdHRhY2ht
+        ZW50cyI6W10sInRhZ3MiOlsib3N0LWNoYXB0ZXItcmV2aWV3IiwicmV2aWV3
+        IiwiaW5ib29rLXllcyIsInRpbWUtc2hvcnQiLCJkaXNwbGF5LWZyZWUtcmVz
+        cG9uc2UiLCJkaXNwbGF5LXJlYy1zZW5zaXRpdmUiLCJhcGJpbyIsImRvazIi
+        LCJibG9vbXMtMyIsImFwYmlvLWNoMDQiLCJhcGJpby1jaDA0LXMwMi1sbzAy
+        IiwiYXBiaW8tY2gwNC1zMDIiLCJhcGJpby1jaDA0LWV4MDEzIl0sInN0aW11
+        bHVzX2h0bWwiOiIiLCJxdWVzdGlvbnMiOlt7ImlkIjoxMjI1LCJzdGltdWx1
+        c19odG1sIjoiIiwic3RlbV9odG1sIjoiV2hlbiBiYWN0ZXJpYSBsYWNrIGZp
+        bWJyaWFlLCB3aGF0IGFyZSB0aGV5IGxlc3MgbGlrZWx5IHRvIGRvPyIsImFu
+        c3dlcnMiOlt7ImlkIjo0ODQ4LCJjb250ZW50X2h0bWwiOiJzeW50aGVzaXpl
+        IHByb3RlaW5zIiwiY29ycmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1s
+        IjoiRmltYnJpYWUgYXJlIG5vdCBpbnZvbHZlZCBpbiBwcm90ZWluIHN5bnRo
+        ZXNpcyBhbmQgYXJlIHVzZWQgdG8gYWRoZXJlIHRvIG9uZSBhbm90aGVyIG9y
+        IHRvIHN1cmZhY2VzLiJ9LHsiaWQiOjQ4NDcsImNvbnRlbnRfaHRtbCI6InN3
+        aW0gdGhyb3VnaCBib2RpbHkgZmx1aWRzIiwiY29ycmVjdG5lc3MiOiIwLjAi
+        LCJmZWVkYmFja19odG1sIjoiRmxhZ2VsbGEgaXMgdXNlZCBmb3Igc3dpbW1p
+        bmcgYnkgYmFjdGVyaWEgYW5kIG5vdCBmaW1icmlhZS4ifSx7ImlkIjo0ODQ2
+        LCJjb250ZW50X2h0bWwiOiJyZXRhaW4gdGhlIGFiaWxpdHkgdG8gZGl2aWRl
+        IiwiY29ycmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiRmltYnJp
+        YWUgYXJlIHVzZWQgZm9yIGFkaGVzaW9uIHB1cnBvc2UgYW5kIGlzIG5vdCBp
+        bnZvbHZlZCBpbiBkaXZpc2lvbi4ifSx7ImlkIjo0ODQ1LCJjb250ZW50X2h0
+        bWwiOiJBZGhlcmUgdG8gY2VsbCBzdXJmYWNlcyIsImNvcnJlY3RuZXNzIjoi
+        MS4wIiwiZmVlZGJhY2tfaHRtbCI6IkZpbWJyaWFlLCB0aGUg4oCYYXR0YWNo
+        bWVudCBwaWxp4oCZIGFyZSB1c2VkIGJ5IGJhY3RlcmlhIHRvIGFkaGVyZSB0
+        byBvbmUgYW5vdGhlciBvciB0byBzdXJmYWNlcy4ifV0sImhpbnRzIjpbXSwi
+        Zm9ybWF0cyI6WyJtdWx0aXBsZS1jaG9pY2UiLCJmcmVlLXJlc3BvbnNlIl0s
+        ImNvbWJvX2Nob2ljZXMiOltdfV19LHsidWlkIjoiMTA0QDIiLCJudW1iZXIi
+        OjEwNCwidmVyc2lvbiI6MiwicHVibGlzaGVkX2F0IjoiMjAxNS0wNy0wOFQx
+        ODoxNzozNi4xMTdaIiwiZWRpdG9ycyI6W10sImF1dGhvcnMiOlt7InVzZXJf
+        aWQiOjEsIm5hbWUiOiJPcGVuU3RheCJ9XSwiY29weXJpZ2h0X2hvbGRlcnMi
+        Olt7InVzZXJfaWQiOjIsIm5hbWUiOiJSaWNlIFVuaXZlcnNpdHkifV0sImRl
+        cml2ZWRfZnJvbSI6W10sImF0dGFjaG1lbnRzIjpbXSwidGFncyI6WyJvc3Qt
+        Y2hhcHRlci1yZXZpZXciLCJyZXZpZXciLCJ0aW1lLXNob3J0IiwiZGlzcGxh
+        eS1mcmVlLXJlc3BvbnNlIiwiZGlzcGxheS1yZWMtc2Vuc2l0aXZlIiwiYXBi
+        aW8iLCJkb2syIiwiYmxvb21zLTMiLCJ0dXRvci1vbmx5IiwiYXBiaW8tY2gw
+        NCIsImFwYmlvLWNoMDQtczAyIiwiYXBiaW8tY2gwNC1zMDItbG8wMSIsImFw
+        YmlvLWNoMDQtb3QwMTAiXSwic3RpbXVsdXNfaHRtbCI6IiIsInF1ZXN0aW9u
+        cyI6W3siaWQiOjEyODIsInN0aW11bHVzX2h0bWwiOiIiLCJzdGVtX2h0bWwi
+        OiJJbiB3aGljaCBvcmRlciB3b3VsZCB5b3UgY3Jvc3MgYWxsIHRoZSBsYXll
+        cnMgc3Vycm91bmRpbmcgYSBiYWN0ZXJpYWwgY2VsbCBpZiB5b3Ugc3RhcnRl
+        ZCBvbiB0aGUgb3V0c2lkZT8iLCJhbnN3ZXJzIjpbeyJpZCI6NTA3NywiY29u
+        dGVudF9odG1sIjoiY2VsbCB3YWxsLCBwbGFzbWEgbWVtYnJhbmUsIGNhcHN1
+        bGUiLCJjb3JyZWN0bmVzcyI6IjAuMCIsImZlZWRiYWNrX2h0bWwiOiJDYXBz
+        dWxlIGlzIHByZXNlbnQgb24gdGhlIG91dHNpZGUgb2YgY2VsbCBzbyB0aGF0
+        IGl0IGNhbiBwcm90ZWN0IHRoZSBiYWN0ZXJpYSBmcm9tIGJlaW5nIGVuZ3Vs
+        ZmVkIGFuZCBhbHNvIHRvIGhlbHAgaW4gY2VsbCBhZGhlcmVuY2UuIn0seyJp
+        ZCI6NTA3NiwiY29udGVudF9odG1sIjoiY2Fwc3VsZSwgY2VsbCB3YWxsLCBw
+        bGFzbWEgbWVtYnJhbmUiLCJjb3JyZWN0bmVzcyI6IjEuMCIsImZlZWRiYWNr
+        X2h0bWwiOiJDYXBzdWxlIGlzIGZvdW5kIGluIHRoZSBvdXRlciBtb3N0IHBh
+        cnQgb2YgdGhlIGNlbGwgZm9sbG93ZWQgYnkgY2VsbCB3YWxsIGFuZCB0aGVu
+        IHRoZSBjeXRvcGxhc21pYyBtZW1icmFuZS4ifSx7ImlkIjo1MDc1LCJjb250
+        ZW50X2h0bWwiOiJwbGFzbWEgbWVtYnJhbmUsIGNhcHN1bGUsIGNlbGwgd2Fs
+        bCIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IlJlY2Fs
+        bCB0aGUgY2Fwc3VsZSBpcyB0aGUgbWFkZSBvZiBwb2x5c2FjY2hhcmlkZSwg
+        cHJvdGVjdHMgdGhlIGJhY3RlcmlhIGZyb20gYmVpbmcgZW5ndWxmZWQsIGFu
+        ZCBoZWxwcyBpbiBjZWxsIGFkaGVyZW5jZS4gVG8gZnVsZmlsbCB0aGVzZSBm
+        dW5jdGlvbnMsIGl0IG11c3QgYmUgdGhlIG91dGVybW9zdCBsYXllci4ifSx7
+        ImlkIjo1MDc0LCJjb250ZW50X2h0bWwiOiJjYXBzdWxlLCBwbGFzbWEgbWVt
+        YnJhbmUsIGNlbGwgd2FsbCIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJh
+        Y2tfaHRtbCI6IlBsYXNtYSBtZW1icmFuZSBpcyBwcmVzZW50IGluc2lkZSB0
+        aGUgY2VsbCB3YWxsLiJ9XSwiaGludHMiOltdLCJmb3JtYXRzIjpbIm11bHRp
+        cGxlLWNob2ljZSIsImZyZWUtcmVzcG9uc2UiXSwiY29tYm9fY2hvaWNlcyI6
+        W119XX0seyJ1aWQiOiIxMDVAMiIsIm51bWJlciI6MTA1LCJ2ZXJzaW9uIjoy
+        LCJwdWJsaXNoZWRfYXQiOiIyMDE1LTA3LTA4VDE4OjE3OjM2LjEyM1oiLCJl
+        ZGl0b3JzIjpbXSwiYXV0aG9ycyI6W3sidXNlcl9pZCI6MSwibmFtZSI6Ik9w
+        ZW5TdGF4In1dLCJjb3B5cmlnaHRfaG9sZGVycyI6W3sidXNlcl9pZCI6Miwi
+        bmFtZSI6IlJpY2UgVW5pdmVyc2l0eSJ9XSwiZGVyaXZlZF9mcm9tIjpbXSwi
+        YXR0YWNobWVudHMiOltdLCJ0YWdzIjpbIm9zdC1jaGFwdGVyLXJldmlldyIs
+        InJldmlldyIsImRvazEiLCJ0aW1lLXNob3J0IiwiZGlzcGxheS1mcmVlLXJl
+        c3BvbnNlIiwiZGlzcGxheS1yZWMtc2Vuc2l0aXZlIiwiYmxvb21zLTIiLCJh
+        cGJpbyIsInR1dG9yLW9ubHkiLCJhcGJpby1jaDA0IiwiYXBiaW8tY2gwNC1z
+        MDItbG8wMiIsImFwYmlvLWNoMDQtczAyIiwiYXBiaW8tY2gwNC1vdDAxMSJd
+        LCJzdGltdWx1c19odG1sIjoiIiwicXVlc3Rpb25zIjpbeyJpZCI6MTI4Mywi
+        c3RpbXVsdXNfaHRtbCI6IiIsInN0ZW1faHRtbCI6IldoYXQgaXMgdGhlIG1h
+        am9yIHJlYXNvbiBjZWxscyBjYW5ub3QgZ3JvdyB0b28gbGFyZ2U/IiwiYW5z
+        d2VycyI6W3siaWQiOjUwODEsImNvbnRlbnRfaHRtbCI6IlRoZSBzdXJmYWNl
+        LXRvLXZvbHVtZSByYXRpbyBkZWNyZWFzZXMgaW4gbGFyZ2UgY2VsbHMsIHNs
+        b3dpbmcgZG93biB0aGUgZXhjaGFuZ2Ugd2l0aCB0aGUgZW52aXJvbm1lbnQu
+        IiwiY29ycmVjdG5lc3MiOiIxLjAiLCJmZWVkYmFja19odG1sIjoiVGhlIGxh
+        cmdlciB0aGUgc2l6ZSBvZiB0aGUgY2VsbCwgdGhlIHNtYWxsZXIgaXRzIHN1
+        cmZhY2UgYXJlYSB0byB2b2x1bWUgcmF0aW8sIHdoaWNoIHNsb3dzIGRvd24g
+        dGhlIGluZmx1eCBhbmQgZWZmbHV4IG9mIG1vbGVjdWxlcyBhY3Jvc3MgdGhl
+        IHBsYXNtYSBtZW1icmFuZS4ifSx7ImlkIjo1MDgwLCJjb250ZW50X2h0bWwi
+        OiJUaGUgdm9sdW1lIGlzIHRvbyBsYXJnZSBmb3IgZGlmZnVzaW9uIHRvIHRh
+        a2UgcGxhY2UgaW4gbGFyZ2UgY2VsbHMuIiwiY29ycmVjdG5lc3MiOiIwLjAi
+        LCJmZWVkYmFja19odG1sIjoiRGlmZnVzaW9uIHRha2VzIHBsYWNlIGFjcm9z
+        cyB0aGUgcGxhc21hIG1lbWJyYW5lIGFuZCB0aGUgYWJpbGl0eSBvZiBhIG1v
+        bGVjdWxlIHRvIGRpZmZ1c2UgaXMgYWZmZWN0ZWQgYnkgdGhlIHNpemUgb2Yg
+        dGhlIG1vbGVjdWxlLCBub3QgdGhlIGNlbGwuIn0seyJpZCI6NTA3OSwiY29u
+        dGVudF9odG1sIjoiQ2VsbHMgZXZlbnR1YWxseSBydW4gb3V0IG9mIG51dHJp
+        ZW50cyBhbmQgc3RhcnZlIGJlY2F1c2UgdGhleSBjYW5ub3Qga2VlcCB1cCB3
+        aXRoIG1ldGFib2xpYyBkZW1hbmRzLiIsImNvcnJlY3RuZXNzIjoiMC4wIiwi
+        ZmVlZGJhY2tfaHRtbCI6IkNlbGxzIGhhdmUgb3JnYW5lbGxlcyB0byBwcm9k
+        dWNlIGZvb2QgYW5kIGFic29yYiB0aGUgbnV0cmllbnRzIGZyb20gdGhlaXIg
+        c3Vycm91bmRpbmdzIGluIGEgc3lzdGVtYXRpYyBtYW5uZXIuIn0seyJpZCI6
+        NTA3OCwiY29udGVudF9odG1sIjoiQSBsYXJnZSBjZWxsIHJlcXVpcmVzIHRv
+        byBtdWNoIGVuZXJneSB0byBtYWludGFpbiBob21lb3N0YXNpcy4iLCJjb3Jy
+        ZWN0bmVzcyI6IjAuMCIsImZlZWRiYWNrX2h0bWwiOiJDZWxscyByZXF1aXJl
+        IGVuZXJneSBmb3IgcHVycG9zZXMgb3RoZXIgdGhhbiBob21lb3N0YXNpcyBh
+        bmQgaXMgbm90IHRoZSBvbmx5IHJlYXNvbiB0byByZXF1aXJlIGVuZXJneS4i
+        fV0sImhpbnRzIjpbXSwiZm9ybWF0cyI6WyJtdWx0aXBsZS1jaG9pY2UiLCJm
+        cmVlLXJlc3BvbnNlIl0sImNvbWJvX2Nob2ljZXMiOltdfV19LHsidWlkIjoi
+        MTA2QDIiLCJudW1iZXIiOjEwNiwidmVyc2lvbiI6MiwicHVibGlzaGVkX2F0
+        IjoiMjAxNS0wNy0wOFQxODoxNzozNi4xMjlaIiwiZWRpdG9ycyI6W10sImF1
+        dGhvcnMiOlt7InVzZXJfaWQiOjEsIm5hbWUiOiJPcGVuU3RheCJ9XSwiY29w
+        eXJpZ2h0X2hvbGRlcnMiOlt7InVzZXJfaWQiOjIsIm5hbWUiOiJSaWNlIFVu
+        aXZlcnNpdHkifV0sImRlcml2ZWRfZnJvbSI6W10sImF0dGFjaG1lbnRzIjpb
+        XSwidGFncyI6WyJvc3QtY2hhcHRlci1yZXZpZXciLCJyZXZpZXciLCJkb2sx
+        IiwidGltZS1zaG9ydCIsImRpc3BsYXktZnJlZS1yZXNwb25zZSIsImRpc3Bs
+        YXktcmVjLXNlbnNpdGl2ZSIsImJsb29tcy0yIiwiYXBiaW8iLCJ0dXRvci1v
+        bmx5IiwiYXBiaW8tY2gwNCIsImFwYmlvLWNoMDQtczAyLWxvMDIiLCJhcGJp
+        by1jaDA0LXMwMiIsImFwYmlvLWNoMDQtb3QwMTIiXSwic3RpbXVsdXNfaHRt
+        bCI6IiIsInF1ZXN0aW9ucyI6W3siaWQiOjEyODQsInN0aW11bHVzX2h0bWwi
+        OiIiLCJzdGVtX2h0bWwiOiJIb3cgZG8gdGhlIGNlbGxzIGxpbmluZyB0aGUg
+        aW50ZXN0aW5hbCB0cmFjdCBpbmNyZWFzZSB0aGVpciBzdXJmYWNlLXRvLXZv
+        bHVtZSByYXRpbz8iLCJhbnN3ZXJzIjpbeyJpZCI6NTA4NSwiY29udGVudF9o
+        dG1sIjoiVGhleSBmbGF0dGVuIG91dCB0byBpbmNyZWFzZSB0aGUgc3VyZmFj
+        ZSBhcmVhLiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6
+        IkFyZSB5b3Ugc3VyZSB0aGUgY2VsbHMgZmxhdHRlbiBvdXQgdG8gaW5jcmVh
+        c2UgdGhlIHN1cmZhY2Ugb2YgaW50ZXN0aW5hbCB0cmFjdD8ifSx7ImlkIjo1
+        MDg0LCJjb250ZW50X2h0bWwiOiJUaGV5IGZvcm0gbnVtZXJvdXMgZm9sZCBj
+        YWxsZWQgbWljcm92aWxsaS4iLCJjb3JyZWN0bmVzcyI6IjEuMCIsImZlZWRi
+        YWNrX2h0bWwiOiJUaGUgbWljcm92aWxsaSBhcmUgc21hbGwgZmluZ2VyLWxp
+        a2UgcHJvamVjdGlvbnMgcHJvdHJ1ZGluZyBvdXQgb2YgdGhlIGVwaXRoZWxp
+        YWwgbGluaW5nIG9mIHRoZSBpbnRlc3RpbmFsIHdhbGwuIFRoZXNlIGhlbHAg
+        aW5jcmVhc2UgdGhlIHN1cmZhY2UgdG8gdm9sdW1lIHJhdGlvLiJ9LHsiaWQi
+        OjUwODMsImNvbnRlbnRfaHRtbCI6IlRoZXkgZm9ybSBwc2V1ZG9wb2RzLCBl
+        eHRlbnNpb25zIG9mIHRoZSBjeXRvcGxhc21pYyBtZW1icmFuZS4iLCJjb3Jy
+        ZWN0bmVzcyI6IjAuMCIsImZlZWRiYWNrX2h0bWwiOiJEbyB5b3UgdGhpbmsg
+        aW50ZXN0aW5lIGNlbGxzIHdvdWxkIGZvcm0gcHNldWRvcG9kaWE/In0seyJp
+        ZCI6NTA4MiwiY29udGVudF9odG1sIjoiVGhleSBhcmUgdmVyeSBzbWFsbC4i
+        LCJjb3JyZWN0bmVzcyI6IjAuMCIsImZlZWRiYWNrX2h0bWwiOiJCZWluZyBz
+        bWFsbCBpbiBzaXplIGRvIG5vdCBhaWQgaW4gaW5jcmVhc2luZyB0aGUgc3Vy
+        ZmFjZSBmb3IgYWRzb3JwdGlvbi4ifV0sImhpbnRzIjpbXSwiZm9ybWF0cyI6
+        WyJtdWx0aXBsZS1jaG9pY2UiLCJmcmVlLXJlc3BvbnNlIl0sImNvbWJvX2No
+        b2ljZXMiOltdfV19LHsidWlkIjoiMTA3QDIiLCJudW1iZXIiOjEwNywidmVy
+        c2lvbiI6MiwicHVibGlzaGVkX2F0IjoiMjAxNS0wNy0wOFQxODoxNzozNi4x
+        MzVaIiwiZWRpdG9ycyI6W10sImF1dGhvcnMiOlt7InVzZXJfaWQiOjEsIm5h
+        bWUiOiJPcGVuU3RheCJ9XSwiY29weXJpZ2h0X2hvbGRlcnMiOlt7InVzZXJf
+        aWQiOjIsIm5hbWUiOiJSaWNlIFVuaXZlcnNpdHkifV0sImRlcml2ZWRfZnJv
+        bSI6W10sImF0dGFjaG1lbnRzIjpbXSwidGFncyI6WyJvc3QtY2hhcHRlci1y
+        ZXZpZXciLCJpbmJvb2steWVzIiwiZGlzcGxheS1mcmVlLXJlc3BvbnNlIiwi
+        ZGlzcGxheS1yZWMtc2Vuc2l0aXZlIiwiYXBiaW8iLCJjcml0aWNhbC10aGlu
+        a2luZyIsInRpbWUtbWVkaXVtIiwiYmxvb21zLTQiLCJkb2s0IiwiYXBiaW8t
+        Y2gwNCIsImFwYmlvLWNoMDQtczAyIiwiYXBiaW8tY2gwNC1zMDItbG8wMSIs
+        ImFwYmlvLWNoMDQtZXgwMTYiXSwic3RpbXVsdXNfaHRtbCI6IiIsInF1ZXN0
+        aW9ucyI6W3siaWQiOjEyMjgsInN0aW11bHVzX2h0bWwiOiIiLCJzdGVtX2h0
+        bWwiOiJUaGUgbWFqb3Igcm9sZSBvZiB0aGUgY2VsbCB3YWxsIGluIGJhY3Rl
+        cmlhIGlzIHByb3RlY3RpbmcgdGhlIGNlbGwgYWdhaW5zdCBjaGFuZ2VzIGlu
+        IG9zbW90aWMgcHJlc3N1cmUsIHByZXNzdXJlIGNhdXNlZCBieSBkaWZmZXJl
+        bnQgc29sdXRlIGNvbmNlbnRyYXRpb24gaW4gdGhlIGVudmlyb25tZW50LiBC
+        YWN0ZXJpYWwgY2VsbHMgc3dlbGwsIGJ1dCBkbyBub3QgYnVyc3QsIGluIGxv
+        dyBzb2x1dGUgY29uY2VudHJhdGlvbnMuIFdoYXQgaGFwcGVucyB0byBiYWN0
+        ZXJpYWwgY2VsbHMgaWYgYSBjb21wb3VuZCB0aGF0IGludGVyZmVyZXMgd2l0
+        aCB0aGUgc3ludGhlc2lzIG9mIHRoZSBjZWxsIHdhbGwgaXMgYWRkZWQgdG8g
+        YW4gZW52aXJvbm1lbnQgd2l0aCBsb3cgc29sdXRlIGNvbmNlbnRyYXRpb25z
+        PyIsImFuc3dlcnMiOlt7ImlkIjo0ODYwLCJjb250ZW50X2h0bWwiOiJCYWN0
+        ZXJpYWwgY2VsbHMgcmVtYWluIG5vcm1hbDsgdGhleSBoYXZlIGFsdGVybmF0
+        aXZlIHBhdGh3YXlzIHRvIHN5bnRoZXNpemUgY2VsbCB3YWxscy4iLCJjb3Jy
+        ZWN0bmVzcyI6IjAuMCIsImZlZWRiYWNrX2h0bWwiOiJBcmUgeW91IHN1cmUg
+        dGhlcmUgYXJlIG51bWVyb3VzIG90aGVyIHBhdGh3YXlzIHRvIHN5bnRoZXNp
+        emUgY2VsbCB3YWxsIGNvbXBvbmVudHM/In0seyJpZCI6NDg1OSwiY29udGVu
+        dF9odG1sIjoiQmFjdGVyaWFsIGNlbGxzIGJ1cnN0IGR1ZSB0byB0aGUgZGlm
+        ZmVyZW5jZSBpbiB0aGUgcHJlc3N1cmUgYWNyb3NzIHRoZSB3YWxsLiIsImNv
+        cnJlY3RuZXNzIjoiMS4wIiwiZmVlZGJhY2tfaHRtbCI6IlRoZSBjZWxscyB3
+        aWxsIGJ1cnN0IGJlY2F1c2Ugb2YgdGhlIG1vdmVtZW50IG9mIHdhdGVyIGlu
+        c2lkZSB0aGUgY2VsbCwgbm90IGNlbGwgd2FsbCBwcm90ZWN0aW9uIGFnYWlu
+        c3QgYnVyc3RpbmcuIn0seyJpZCI6NDg1OCwiY29udGVudF9odG1sIjoiQmFj
+        dGVyaWFsIGNlbGxzIHdpbGwgZ3JvdyBsYXJnZXIgaW4gc2l6ZSBkdWUgdG8g
+        dGhlIGluZmx1eCBvZiB3YXRlci4iLCJjb3JyZWN0bmVzcyI6IjAuMCIsImZl
+        ZWRiYWNrX2h0bWwiOiJDZWxscyB3aWxsIGdyb3cgbGFyZ2VyIGluIHNpemUs
+        IGJ1dCB0aGlzIGlzIG5vdCB0aGUgY29tcGxldGUgYW5zd2VyLiBSZW1lbWJl
+        ciB0aGF0IHRoZXJlIGlzIG5vIGNlbGwgd2FsbCB0byBwcm90ZWN0IHRoZSBj
+        ZWxsIGFnYWluc3QgYnVyc3RpbmcuIn0seyJpZCI6NDg1NywiY29udGVudF9o
+        dG1sIjoiQmFjdGVyaWFsIGNlbGxzIHdpbGwgc2hyaW5rIGR1ZSB0byB0aGUg
+        bGFjayBvZiBjZWxsIHdhbGwgbWF0ZXJpYWwuIiwiY29ycmVjdG5lc3MiOiIw
+        LjAiLCJmZWVkYmFja19odG1sIjoiRG8geW91IHRoaW5rIHRoZSBjZWxscyB3
+        aWxsIHNocmluaz8gV2lsbCBpdCBiZSBlYXN5IGZvciB0aGUgY2VsbHMgdG8g
+        c3Vydml2ZT8ifV0sImhpbnRzIjpbXSwiZm9ybWF0cyI6WyJtdWx0aXBsZS1j
+        aG9pY2UiLCJmcmVlLXJlc3BvbnNlIl0sImNvbWJvX2Nob2ljZXMiOltdfV19
+        LHsidWlkIjoiMTA4QDIiLCJudW1iZXIiOjEwOCwidmVyc2lvbiI6MiwicHVi
+        bGlzaGVkX2F0IjoiMjAxNS0wNy0wOFQxODoxNzozNi4xNDFaIiwiZWRpdG9y
+        cyI6W10sImF1dGhvcnMiOlt7InVzZXJfaWQiOjEsIm5hbWUiOiJPcGVuU3Rh
+        eCJ9XSwiY29weXJpZ2h0X2hvbGRlcnMiOlt7InVzZXJfaWQiOjIsIm5hbWUi
+        OiJSaWNlIFVuaXZlcnNpdHkifV0sImRlcml2ZWRfZnJvbSI6W10sImF0dGFj
+        aG1lbnRzIjpbXSwidGFncyI6WyJvc3QtY2hhcHRlci1yZXZpZXciLCJpbmJv
+        b2steWVzIiwiZGlzcGxheS1mcmVlLXJlc3BvbnNlIiwiZGlzcGxheS1yZWMt
+        c2Vuc2l0aXZlIiwiYXBiaW8iLCJjcml0aWNhbC10aGlua2luZyIsImRvazMi
+        LCJ0aW1lLW1lZGl1bSIsImJsb29tcy0zIiwiYXBiaW8tY2gwNCIsImFwYmlv
+        LWNoMDQtczAyLWxvMDIiLCJhcGJpby1jaDA0LXMwMiIsImFwYmlvLWNoMDQt
+        ZXgwMTciXSwic3RpbXVsdXNfaHRtbCI6IiIsInF1ZXN0aW9ucyI6W3siaWQi
+        OjEyMjksInN0aW11bHVzX2h0bWwiOiIiLCJzdGVtX2h0bWwiOiJXZSBoYXZl
+        IGRpc2N1c3NlZCB0aGUgdXBwZXIgbGltaXRzIG9mIGNlbGwgc2l6ZTsgeWV0
+        LCB0aGVyZSBpcyBhIGxvd2VyIGxpbWl0IHRvIGNlbGwgc2l6ZS4gV2hhdCBk
+        ZXRlcm1pbmVzIGhvdyBzbWFsbCBhIGNlbGwgY2FuIGJlPyIsImFuc3dlcnMi
+        Olt7ImlkIjo0ODY0LCJjb250ZW50X2h0bWwiOiJUaGUgY2VsbCBzaG91bGQg
+        YmUgbGFyZ2UgZW5vdWdoIHRvIGFkYXB0IHRvIHRoZSBjaGFuZ2luZyBlbnZp
+        cm9ubWVudGFsIGNvbmRpdGlvbnMuIiwiY29ycmVjdG5lc3MiOiIwLjAiLCJm
+        ZWVkYmFja19odG1sIjoiSXMgaXQgY29ycmVjdCB0byBzYXkgdGhhdCBhIGNl
+        bGwgc2hvdWxkIGJlIGxhcmdlIGVub3VnaCB0byBhZGFwdCB0byBhIGNoYW5n
+        aW5nIGVudmlyb25tZW50PyJ9LHsiaWQiOjQ4NjMsImNvbnRlbnRfaHRtbCI6
+        IlRoZSBzaXplIG9mIHRoZSBjZWxsIHNob3VsZCBiZSBsYXJnZSBlbm91Z2gg
+        dG8gcmVwcm9kdWNlIGl0c2VsZi4iLCJjb3JyZWN0bmVzcyI6IjAuMCIsImZl
+        ZWRiYWNrX2h0bWwiOiJBcmUgeW91IHN1cmUgb25seSByZXByb2R1Y3Rpb24g
+        aXMgaW1wb3J0YW50PyBEb27igJl0IHlvdSB0aGluayBhIGxhcmdlIGNlbGwg
+        d291bGQgd2FzdGUgZW5lcmd5PyJ9LHsiaWQiOjQ4NjIsImNvbnRlbnRfaHRt
+        bCI6IlRoZSBjZWxsIHNob3VsZCBiZSBhYmxlIHRvIGFjY29tbW9kYXRlIGFs
+        bCB0aGUgc3RydWN0dXJlcyBhbmQgbWV0YWJvbGljIGFjdGl2aXRpZXMgbmVj
+        ZXNzYXJ5IHRvIHN1cnZpdmFsLiIsImNvcnJlY3RuZXNzIjoiMS4wIiwiZmVl
+        ZGJhY2tfaHRtbCI6IkEgY2VsbCBtdXN0IGJlIGxhcmdlIGVub3VnaCB0byBh
+        Y2NvbW1vZGF0ZSBhbGwgdGhlIHN0cnVjdHVyZXMgYW5kIG1ldGFib2xpYyBh
+        Y3Rpdml0aWVzIHRoYXQgYXJlIHJlcXVpcmVkIHRvIHN1c3RhaW4gbGlmZS4g
+        QSBzbWFsbGVyIHNpemUgYWxzbyBmYWNpbGl0YXRlcyBwcmVkYXRpb24gYW5k
+        IHJlZHVjZXMgdGhlIGFiaWxpdHkgdG8gYmluZCB0byBzdXJmYWNlcy4ifSx7
+        ImlkIjo0ODYxLCJjb250ZW50X2h0bWwiOiJUaGUgY2VsbCBzaG91bGQgYmUg
+        bGFyZ2UgZW5vdWdoIHRvIGVzY2FwZSBkZXRlY3Rpb24uIiwiY29ycmVjdG5l
+        c3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiRG8geW91IHRoaW5rIGEgc2lu
+        Z2xlIGxhcmdlIGNlbGwgaXMgZWFzaWVyIHRvIGZpbmQgdGhhbiBhIHNtYWxs
+        ZXIgb25lPyJ9XSwiaGludHMiOltdLCJmb3JtYXRzIjpbIm11bHRpcGxlLWNo
+        b2ljZSIsImZyZWUtcmVzcG9uc2UiXSwiY29tYm9fY2hvaWNlcyI6W119XX0s
+        eyJ1aWQiOiIxMDlAMiIsIm51bWJlciI6MTA5LCJ2ZXJzaW9uIjoyLCJwdWJs
+        aXNoZWRfYXQiOiIyMDE1LTA3LTA4VDE4OjE3OjM2LjE0NloiLCJlZGl0b3Jz
+        IjpbXSwiYXV0aG9ycyI6W3sidXNlcl9pZCI6MSwibmFtZSI6Ik9wZW5TdGF4
+        In1dLCJjb3B5cmlnaHRfaG9sZGVycyI6W3sidXNlcl9pZCI6MiwibmFtZSI6
+        IlJpY2UgVW5pdmVyc2l0eSJ9XSwiZGVyaXZlZF9mcm9tIjpbXSwiYXR0YWNo
+        bWVudHMiOltdLCJ0YWdzIjpbIm9zdC1jaGFwdGVyLXJldmlldyIsImRpc3Bs
+        YXktZnJlZS1yZXNwb25zZSIsImRpc3BsYXktcmVjLXNlbnNpdGl2ZSIsImFw
+        YmlvIiwiY3JpdGljYWwtdGhpbmtpbmciLCJibG9vbXMtNCIsImRvazQiLCJ0
+        aW1lLWxvbmciLCJ0dXRvci1vbmx5IiwiYXBiaW8tY2gwNCIsImFwYmlvLWNo
+        MDQtczAyIiwiYXBiaW8tY2gwNC1zMDItbG8wMSIsImFwYmlvLWNoMDQtb3Qw
+        MTMiXSwic3RpbXVsdXNfaHRtbCI6IiIsInF1ZXN0aW9ucyI6W3siaWQiOjEy
+        ODUsInN0aW11bHVzX2h0bWwiOiIiLCJzdGVtX2h0bWwiOiJXaGF0IGFyZSB0
+        aGUgY29uc3RyYWludHMgdGhhdCBsaW1pdCBob3cgc21hbGwgYSBjZWxsIGNh
+        biBiZT8iLCJhbnN3ZXJzIjpbeyJpZCI6NTA4OSwiY29udGVudF9odG1sIjoi
+        VGhlIGNlbGwgc2hvdWxkIGJlIGxhcmdlIGVub3VnaCB0byBhZGFwdCB0byBj
+        aGFuZ2luZyBlbnZpcm9ubWVudGFsIGNvbmRpdGlvbnMuIiwiY29ycmVjdG5l
+        c3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiSXMgaXQgY29ycmVjdCB0byBz
+        YXkgdGhhdCBhIGNlbGwgc2hvdWxkIGJlIGxhcmdlIGVub3VnaCB0byBhZGFw
+        dCB0byBhIGNoYW5naW5nIGVudmlyb25tZW50PyJ9LHsiaWQiOjUwODgsImNv
+        bnRlbnRfaHRtbCI6IlRoZSBjZWxsIHNob3VsZCBiZSBsYXJnZSBlbm91Z2gg
+        dG8gcmVwcm9kdWNlLiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tf
+        aHRtbCI6IkFyZSB5b3Ugc3VyZSBvbmx5IHJlcHJvZHVjdGlvbiBpcyBpbXBv
+        cnRhbnQ/IERvbuKAmXQgeW91IHRoaW5rIGEgbGFyZ2UgY2VsbCB3b3VsZCB3
+        YXN0ZSBlbmVyZ3k/In0seyJpZCI6NTA4NywiY29udGVudF9odG1sIjoiVGhl
+        IGNlbGwgc2hvdWxkIGJlIGxhcmdlIGVub3VnaCB0byBwcm90ZWN0IGl0c2Vs
+        ZiBmcm9tIGludmFkaW5nIHBhdGhvZ2Vucy4iLCJjb3JyZWN0bmVzcyI6IjAu
+        MCIsImZlZWRiYWNrX2h0bWwiOiJEbyB5b3UgdGhpbmsgYSBzaW5nbGUgbGFy
+        Z2UgY2VsbCBjYW4gcHJvdGVjdCBpdHNlbGY/In0seyJpZCI6NTA4NiwiY29u
+        dGVudF9odG1sIjoiVGhlIGNlbGwgc2hvdWxkIGJlIGFibGUgdG8gYWNjb21t
+        b2RhdGUgYWxsIHRoZSBzdHJ1Y3R1cmVzIGFuZCBtZXRhYm9saWMgYWN0aXZp
+        dGllcyB0byBzdXJ2aXZlLiIsImNvcnJlY3RuZXNzIjoiMS4wIiwiZmVlZGJh
+        Y2tfaHRtbCI6IkEgY2VsbCBtdXN0IGJlIGxhcmdlIGVub3VnaCB0byBhY2Nv
+        bW1vZGF0ZSBhbGwgdGhlIHN0cnVjdHVyZXMgYW5kIG1ldGFib2xpYyBhY3Rp
+        dml0aWVzIHRoYXQgYXJlIHJlcXVpcmVkIHRvIHN1c3RhaW4gbGlmZS4gQSBz
+        bWFsbGVyIHNpemUgYWxzbyBmYWNpbGl0YXRlcyBwcmVkYXRpb24gYW5kIHJl
+        ZHVjZXMgdGhlIGFiaWxpdHkgdG8gYmluZCB0byBzdXJmYWNlcy4ifV0sImhp
+        bnRzIjpbXSwiZm9ybWF0cyI6WyJtdWx0aXBsZS1jaG9pY2UiLCJmcmVlLXJl
+        c3BvbnNlIl0sImNvbWJvX2Nob2ljZXMiOltdfV19LHsidWlkIjoiMTEwQDIi
+        LCJudW1iZXIiOjExMCwidmVyc2lvbiI6MiwicHVibGlzaGVkX2F0IjoiMjAx
+        NS0wNy0wOFQxODoxNzozNi4xNTJaIiwiZWRpdG9ycyI6W10sImF1dGhvcnMi
+        Olt7InVzZXJfaWQiOjEsIm5hbWUiOiJPcGVuU3RheCJ9XSwiY29weXJpZ2h0
+        X2hvbGRlcnMiOlt7InVzZXJfaWQiOjIsIm5hbWUiOiJSaWNlIFVuaXZlcnNp
+        dHkifV0sImRlcml2ZWRfZnJvbSI6W10sImF0dGFjaG1lbnRzIjpbXSwidGFn
+        cyI6WyJvc3QtY2hhcHRlci1yZXZpZXciLCJkaXNwbGF5LWZyZWUtcmVzcG9u
+        c2UiLCJkaXNwbGF5LXJlYy1zZW5zaXRpdmUiLCJhcGJpbyIsImNyaXRpY2Fs
+        LXRoaW5raW5nIiwiYmxvb21zLTQiLCJkb2s0IiwidGltZS1sb25nIiwidHV0
+        b3Itb25seSIsImFwYmlvLWNoMDQiLCJhcGJpby1jaDA0LXMwMi1sbzAyIiwi
+        YXBiaW8tY2gwNC1zMDIiLCJhcGJpby1jaDA0LW90MDE0Il0sInN0aW11bHVz
+        X2h0bWwiOiIiLCJxdWVzdGlvbnMiOlt7ImlkIjoxMjg2LCJzdGltdWx1c19o
+        dG1sIjoiIiwic3RlbV9odG1sIjoiU29tZSB1bnVzdWFsbHkgbGFyZ2UgY2Vs
+        bHMgZG8gZXhpc3QuIEhvdyBtaWdodCBzdWNoIGNlbGxzIHNvbHZlIHRoZSBw
+        cm9ibGVtIG9mIGRpZmZ1c2lvbj8iLCJhbnN3ZXJzIjpbeyJpZCI6NTA5Mywi
+        Y29udGVudF9odG1sIjoiVGhlc2UgY2VsbHMgaGF2ZSBhbiBleHRyYSBjYXBz
+        dWxlIHN1cnJvdW5kaW5nIHRoZSBjZWxsIG1lbWJyYW5lIHRvIGF2b2lkIGV4
+        Y2VzcyBkaWZmdXNpb24uIiwiY29ycmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFj
+        a19odG1sIjoiRG8geW91IHRoaW5rIGEgcG9seXNhY2NoYXJpZGUgY2Fwc3Vs
+        ZSBoYXMgYSByb2xlIGluIGRpZmZ1c2lvbj8gUmVjYWxsIGl0IGhlbHBzIGlu
+        IHByb3RlY3RpbmcgdGhlIGJhY3RlcmlhbCBjZWxsLiJ9LHsiaWQiOjUwOTIs
+        ImNvbnRlbnRfaHRtbCI6IlRoZXNlIGNlbGxzIGhhdmUgYW4gaW50cmFjZWxs
+        dWxhciBtZWNoYW5pc20gdG8gY29tcGVuc2F0ZSBmb3IgdGhlIGNvbnN0YW50
+        IGRpZmZ1c2lvbiB0YWtpbmcgcGxhY2UuIiwiY29ycmVjdG5lc3MiOiIwLjAi
+        LCJmZWVkYmFja19odG1sIjoiV2hpY2ggaW50cmFjZWxsdWxhciBtZWNoYW5p
+        c20gZG8geW91IHRoaW5rIGhlbHBzIGluIGNvbXBlbnNhdGluZyBmb3IgdGhl
+        IGxhcmdlIGNlbGwgc2l6ZT8ifSx7ImlkIjo1MDkxLCJjb250ZW50X2h0bWwi
+        OiJUaGUgbGFyZ2UgY2VsbHMgc2h1dCBvZmYgdGhlaXIgaW9uIHB1bXBzIGFu
+        ZCBtYWludGFpbiBhIHN0YWJsZSBjb25jZW50cmF0aW9uIGdyYWRpZW50IHRv
+        IGF2b2lkIGRpZmZ1c2lvbi4iLCJjb3JyZWN0bmVzcyI6IjAuMCIsImZlZWRi
+        YWNrX2h0bWwiOiJEbyB5b3UgdGhpbmsgaW9uIHB1bXBzIHBsYXkgYSByb2xl
+        IGhlcmU/In0seyJpZCI6NTA5MCwiY29udGVudF9odG1sIjoiVGhlc2UgbGFy
+        Z2UgY2VsbHMgc2hvdyBpbnZhZ2luYXRpb25zIHRvIGluY3JlYXNlIHRoZSBz
+        dXJmYWNlLXRvLXZvbHVtZSByYXRpby4iLCJjb3JyZWN0bmVzcyI6IjEuMCIs
+        ImZlZWRiYWNrX2h0bWwiOiJUaGVzZSBjZWxscyBkaXNwbGF5IG51bWVyb3Vz
+        IGludmFnaW5hdGlvbnMgb2YgdGhlIGN5dG9wbGFzbWljIG1lbWJyYW5lLCBh
+        cmUgdW51c3VhbGx5IGZsYXQsIG9yIGhhdmUgbGFyZ2UgdmFjdW9sZXMgb3Ig
+        b3RoZXIgb3JnYW5lbGxlcywgd2hpY2ggZWZmZWN0aXZlbHkgcmVkdWNlIHRo
+        ZSB2b2x1bWUgb2YgdGhlIGN5dG9wbGFzbSwgbWFraW5nIHRoZWlyIHN1cnZp
+        dmFsIHBvc3NpYmxlIGV2ZW4gd2l0aCBhIGxhcmdlIHZvbHVtZS4ifV0sImhp
+        bnRzIjpbXSwiZm9ybWF0cyI6WyJtdWx0aXBsZS1jaG9pY2UiLCJmcmVlLXJl
+        c3BvbnNlIl0sImNvbWJvX2Nob2ljZXMiOltdfV19LHsidWlkIjoiNzgzQDEi
+        LCJudW1iZXIiOjc4MywidmVyc2lvbiI6MSwicHVibGlzaGVkX2F0IjoiMjAx
+        NS0wNy0wOFQxODoxNzozOS42MTFaIiwiZWRpdG9ycyI6W10sImF1dGhvcnMi
+        Olt7InVzZXJfaWQiOjEsIm5hbWUiOiJPcGVuU3RheCJ9XSwiY29weXJpZ2h0
+        X2hvbGRlcnMiOlt7InVzZXJfaWQiOjIsIm5hbWUiOiJSaWNlIFVuaXZlcnNp
+        dHkifV0sImRlcml2ZWRfZnJvbSI6W10sImF0dGFjaG1lbnRzIjpbXSwidGFn
+        cyI6WyJvc3QtY2hhcHRlci1yZXZpZXciLCJyZXZpZXciLCJpbmJvb2steWVz
+        IiwidGltZS1zaG9ydCIsImRpc3BsYXktZnJlZS1yZXNwb25zZSIsImRpc3Bs
+        YXktcmVjLXNlbnNpdGl2ZSIsImJsb29tcy0yIiwiYXBiaW8iLCJkb2syIiwi
+        YXBiaW8tY2gwNCIsImFwYmlvLWNoMDQtczAyIiwiYXBiaW8tY2gwNC1zMDIt
+        bG8wMSIsImFwYmlvLWNoMDQtZXgwMTQiXSwic3RpbXVsdXNfaHRtbCI6IiIs
+        InF1ZXN0aW9ucyI6W3siaWQiOjEyMjYsInN0aW11bHVzX2h0bWwiOiIiLCJz
+        dGVtX2h0bWwiOiJXaGF0IGFyZSBzb21lIG9mIHRoZSBkaWZmZXJlbmNlcyBi
+        ZXR3ZWVuIGV1a2FyeW90aWMgY2VsbHMgYW5kIHByb2thcnlvdGljIGNlbGxz
+        PyIsImFuc3dlcnMiOlt7ImlkIjo0ODUyLCJjb250ZW50X2h0bWwiOiJCb3Ro
+        IGNlbGxzIGhhdmUgYSBjZWxsIG1lbWJyYW5lIGJ1dCBwcm9rYXJ5b3RpYyBj
+        ZWxscyBsYWNrIEROQS4iLCJjb3JyZWN0bmVzcyI6IjAuMCIsImZlZWRiYWNr
+        X2h0bWwiOiJCb3RoIGNlbGxzIGhhdmUgYSBjZWxsIG1lbWJyYW5lIGJ1dCBw
+        cm9rYXJ5b3RpYyBjZWxscyBhbHNvIGhhdmUgRE5BLiBIb3dldmVyLCBwcm9r
+        YXJ5b3RpYyBjZWxscyBkbyBub3QgY29udGFpbiB0aGVpciBETkEgd2l0aGlu
+        IGEgbnVjbGV1cy4ifSx7ImlkIjo0ODUxLCJjb250ZW50X2h0bWwiOiJCb3Ro
+        IGNlbGxzIGhhdmUgRE5BIGJ1dCBwcm9rYXJ5b3RpYyBjZWxscyBsYWNrIGEg
+        Y2VsbCBtZW1icmFuZS4iLCJjb3JyZWN0bmVzcyI6IjAuMCIsImZlZWRiYWNr
+        X2h0bWwiOiJCb3RoIGNlbGxzIGRvIGhhdmUgRE5BIGJ1dCBib3RoIGNlbGxz
+        IGFsc28gaGF2ZSBhIGNlbGwgbWVtYnJhbmUuIn0seyJpZCI6NDg1MCwiY29u
+        dGVudF9odG1sIjoiQm90aCBjZWxscyBoYXZlIGN5dG9wbGFzbSBidXQgcHJv
+        a2FyeW90aWMgY2VsbHMgbGFjayBhIG51Y2xldXMuIiwiY29ycmVjdG5lc3Mi
+        OiIxLjAiLCJmZWVkYmFja19odG1sIjoiUHJva2FyeW90aWMgY2VsbHMgYXJl
+        IGdlbmVyYWxseSBzbWFsbGVyIHRoYW4gZXVrYXJ5b3RpYyBjZWxscyBhbmQg
+        cHJva2FyeW90aWMgY2VsbHMgYWxzbyBsYWNrIGEgbnVjbGV1cy4gSG93ZXZl
+        ciwgYm90aCB0eXBlcyBvZiBjZWxscyBjb250YWluIGEgY2VsbCBtZW1icmFu
+        ZSwgY3l0b3BsYXNtLCBhbmQgRE5BLiJ9LHsiaWQiOjQ4NDksImNvbnRlbnRf
+        aHRtbCI6IkJvdGggY2VsbHMgaGF2ZSBhIG51Y2xldXMgYnV0IHByb2thcnlv
+        dGljIGNlbGxzIGxhY2sgY3l0b3BsYXNtLiIsImNvcnJlY3RuZXNzIjoiMC4w
+        IiwiZmVlZGJhY2tfaHRtbCI6IlByb2thcnlvdGljIGNlbGxzIGRvIG5vdCBw
+        b3NzZXNzIGEgbnVjbGV1cyBhbmQgYm90aCBjZWxscyBjb250YWluIGN5dG9w
+        bGFzbS4ifV0sImhpbnRzIjpbXSwiZm9ybWF0cyI6WyJtdWx0aXBsZS1jaG9p
+        Y2UiLCJmcmVlLXJlc3BvbnNlIl0sImNvbWJvX2Nob2ljZXMiOltdfV19LHsi
+        dWlkIjoiNzg0QDEiLCJudW1iZXIiOjc4NCwidmVyc2lvbiI6MSwicHVibGlz
+        aGVkX2F0IjoiMjAxNS0wNy0wOFQxODoxNzozOS42MTZaIiwiZWRpdG9ycyI6
+        W10sImF1dGhvcnMiOlt7InVzZXJfaWQiOjEsIm5hbWUiOiJPcGVuU3RheCJ9
+        XSwiY29weXJpZ2h0X2hvbGRlcnMiOlt7InVzZXJfaWQiOjIsIm5hbWUiOiJS
+        aWNlIFVuaXZlcnNpdHkifV0sImRlcml2ZWRfZnJvbSI6W10sImF0dGFjaG1l
+        bnRzIjpbXSwidGFncyI6WyJvc3QtY2hhcHRlci1yZXZpZXciLCJyZXZpZXci
+        LCJpbmJvb2steWVzIiwidGltZS1zaG9ydCIsImRpc3BsYXktZnJlZS1yZXNw
+        b25zZSIsImRpc3BsYXktcmVjLXNlbnNpdGl2ZSIsImFwYmlvIiwiZG9rMiIs
+        ImJsb29tcy0zIiwiYXBiaW8tY2gwNCIsImFwYmlvLWNoMDQtczAyLWxvMDIi
+        LCJhcGJpby1jaDA0LXMwMiIsImFwYmlvLWNoMDQtZXgwMTUiXSwic3RpbXVs
+        dXNfaHRtbCI6IiIsInF1ZXN0aW9ucyI6W3siaWQiOjEyMjcsInN0aW11bHVz
+        X2h0bWwiOiIiLCJzdGVtX2h0bWwiOiJFdWthcnlvdGljIGNlbGxzIGNvbnRh
+        aW4gY29tcGxleCBvcmdhbmVsbGVzIHRoYXQgY2Fycnkgb3V0IHRoZWlyIGNo
+        ZW1pY2FsIHJlYWN0aW9ucy4gUHJva2FyeW90ZXMgbGFjayBtYW55IG9mIHRo
+        ZXNlIGNvbXBsZXggb3JnYW5lbGxlcy4gSG93ZXZlciwgbW9zdCBwcm9rYXJ5
+        b3RpYyBjZWxscyBjYW4gZXhjaGFuZ2UgbnV0cmllbnRzIHdpdGggdGhlIG91
+        dHNpZGUgZW52aXJvbm1lbnQgZmFzdGVyIHRoYW4gbW9zdCBldWthcnlvdGlj
+        IGNlbGxzLiBXaHkgaXMgdGhpcyBzbz8iLCJhbnN3ZXJzIjpbeyJpZCI6NDg1
+        NiwiY29udGVudF9odG1sIjoiUHJva2FyeW90aWMgY2VsbHMgYXJlIGxhcmdl
+        ciBhbmQgaGF2ZSBhIGxvd2VyIHN1cmZhY2UtdG8tdm9sdW1lIHJhdGlvIHRo
+        YW4gZXVrYXJ5b3RpYyBjZWxscy4iLCJjb3JyZWN0bmVzcyI6IjAuMCIsImZl
+        ZWRiYWNrX2h0bWwiOiJQcm9rYXJ5b3RpYyBjZWxscyBhcmUgc21hbGxlciB0
+        aGFuIGV1a2FyeW90aWMgY2VsbHMsIGJ1dCB0aGF0IGNhdXNlcyBwcm9rYXJ5
+        b3RpYyBjZWxscyB0byBoYXZlIGEgaGlnaGVyIHN1cmZhY2UtdG8tdm9sdW1l
+        IHJhdGlvLiJ9LHsiaWQiOjQ4NTUsImNvbnRlbnRfaHRtbCI6Ik1vc3QgcHJv
+        a2FyeW90aWMgY2VsbHMgYXJlIHNtYWxsZXIsIGFuZCBoYXZlIGEgbG93ZXIg
+        c3VyZmFjZS10by12b2x1bWUgcmF0aW8gdGhhbiBldWthcnlvdGljIGNlbGxz
+        LiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IlByb2th
+        cnlvdGljIGNlbGxzIGFyZSBnZW5lcmFsbHkgc21hbGxlciB0aGFuIGV1a2Fy
+        eW90aWMgY2VsbHMsIGJ1dCB0aGF0IGNhdXNlcyBwcm9rYXJ5b3RpYyBjZWxs
+        cyB0byBoYXZlIGEgaGlnaGVyIHN1cmZhY2UtdG8tdm9sdW1lIHJhdGlvLiJ9
+        LHsiaWQiOjQ4NTQsImNvbnRlbnRfaHRtbCI6Ik1vc3QgcHJva2FyeW90aWMg
+        Y2VsbHMgYXJlIGxhcmdlciwgYW5kIGhhdmUgYSBoaWdoZXIgc3VyZmFjZS10
+        by12b2x1bWUgcmF0aW8gdGhhbiBldWthcnlvdGljIGNlbGxzLiIsImNvcnJl
+        Y3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IkluIGdlbmVyYWwsIGV1
+        a2FyeW90aWMgY2VsbHMgYXJlIGxhcmdlciB0aGFuIHByb2thcnlvdGljIGNl
+        bGxzLiJ9LHsiaWQiOjQ4NTMsImNvbnRlbnRfaHRtbCI6Ik1vc3QgcHJva2Fy
+        eW90aWMgY2VsbHMgYXJlIHNtYWxsZXIsIGFuZCBoYXZlIGEgaGlnaGVyIHN1
+        cmZhY2UtdG8tdm9sdW1lIHJhdGlvLCB0aGFuIGV1a2FyeW90aWMgY2VsbHMu
+        IiwiY29ycmVjdG5lc3MiOiIxLjAiLCJmZWVkYmFja19odG1sIjoiVGhpcyBv
+        Y2N1cnMgYmVjYXVzZSBwcm9rYXJ5b3RpYyBjZWxscyBhcmUgZ2VuZXJhbGx5
+        IHNtYWxsZXIgdGhhbiBldWthcnlvdGljIGNlbGxzLiBUaGVyZWZvcmUsIHBy
+        b2thcnlvdGljIGNlbGxzIGdlbmVyYWxseSBoYXZlIGhpZ2hlciBzdXJmYWNl
+        LXRvLXZvbHVtZSByYXRpb3MgdGhhbiBldWthcnlvdGljIGNlbGxzLiBUaGlz
+        IGFsbG93cyBwcm9rYXJ5b3RlcyB0byBtb3JlIHF1aWNrbHkgZXhjaGFuZ2Ug
+        bnV0cmllbnRzIGFjcm9zcyB0aGVpciBjZWxsIG1lbWJyYW5lcyB0aGFuIGxh
+        cmdlciBldWthcnlvdGljIGNlbGxzLiJ9XSwiaGludHMiOltdLCJmb3JtYXRz
+        IjpbIm11bHRpcGxlLWNob2ljZSIsImZyZWUtcmVzcG9uc2UiXSwiY29tYm9f
+        Y2hvaWNlcyI6W119XX1dfQ==
+    http_version: 
+  recorded_at: Tue, 04 Aug 2015 19:57:02 GMT
+recorded_with: VCR 2.9.3

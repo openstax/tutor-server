@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-describe CalculateTaskPlanStats, type: :routine, speed: :slow do
+describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
 
   before(:all) do
     @number_of_students = 8
@@ -40,6 +40,30 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow do
 
       spaced_page = stats.first.spaced_pages[0]
       expect(spaced_page).to eq page
+    end
+
+    it 'does not break if an exercise has more than one tag' do
+      cnx_page = OpenStax::Cnx::V1::Page.new(hash: {
+        'id' => 'e26d1433-f8e4-41db-a757-0e061d6d2737',
+        'title' => 'Prokaryotic Cells'})
+      page = Content::Routines::ImportPage.call(
+        cnx_page: cnx_page, book_part: FactoryGirl.create(:content_book_part)
+      ).outputs.page
+
+      course = CreateCourse[name: 'Biology']
+      student = FactoryGirl.create(:user_profile).entity_user
+      AddUserAsPeriodStudent.call(user: student, period: CreatePeriod[course: course])
+
+      task_plan = FactoryGirl.create(
+        :tasks_task_plan,
+        owner: course,
+        settings: { page_ids: [page.id.to_s] },
+        assistant_code_class_name: 'Tasks::Assistants::IReadingAssistant')
+
+      DistributeTasks.call(task_plan)
+
+      stats = CalculateTaskPlanStats.call(plan: task_plan).outputs.stats
+      expect(stats.first.complete_count).to eq 0
     end
 
   end
