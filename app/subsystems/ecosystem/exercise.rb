@@ -1,8 +1,14 @@
 module Ecosystem
   class Exercise < Wrapper
 
-    def self.find(*args, strategy: ::Ecosystem::Strategies::Direct::Exercise)
+    def self.find(*args, strategy_class: ::Ecosystem::Strategies::Direct::Exercise)
       [strategy_class.find(*args)].flatten.collect do |strategy|
+        new(strategy: strategy)
+      end
+    end
+
+    def self.find_by(*args, strategy_class: ::Ecosystem::Strategies::Direct::Exercise)
+      [strategy_class.find_by(*args)].flatten.collect do |strategy|
         new(strategy: strategy)
       end
     end
@@ -89,6 +95,30 @@ module Ecosystem
       )
 
       aplos
+    end
+
+    def pages
+      pages = @strategy.pages
+
+      raise_collection_class_error(
+        collection: pages,
+        klass:      ::Ecosystem::Page,
+        error:      ::Ecosystem::StrategyError
+      )
+
+      pages
+    end
+
+    def related_content
+      related_content = @strategy.related_content
+
+      raise_collection_class_error(
+        collection: related_content,
+        klass:      Hash,
+        error:      ::Ecosystem::StrategyError
+      )
+
+      related_content
     end
 
   end

@@ -2,7 +2,8 @@ class CreateContentPages < ActiveRecord::Migration
   def change
     create_table :content_pages do |t|
       t.resource
-      t.references :content_book_part
+      t.references :content_book_part, null: false,
+                                       foreign_key: { on_update: :cascade, on_delete: :cascade }
       t.integer :number, null: false
       t.string :title, null: false
       t.text :chapter_section
@@ -15,7 +16,5 @@ class CreateContentPages < ActiveRecord::Migration
       t.index [:content_book_part_id, :url], unique: true
       t.index [:content_book_part_id, :number], unique: true
     end
-
-    add_foreign_key :content_pages, :content_book_parts, on_update: :cascade, on_delete: :cascade
   end
 end

@@ -34,4 +34,10 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
   def aplos
     tags.to_a.select(&:aplo?)
   end
+
+  def pages
+    tags.select{ |tag| tag.lo? || tag.aplo? }.collect do |tag|
+      tag.page_tags.collect{ |pt| pt.page }
+    end.flatten.uniq
+  end
 end
