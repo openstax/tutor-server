@@ -51,7 +51,8 @@ module Tasks
                                      .includes(task: :task, role: {user: {profile: :account}})
                                      .joins(task: :task)
                                      .where(task: {task: {task_type: task_types}})
-                                     .order{[role.user.profile.account.full_name, task.task.due_at]}
+                                     .order{[role.user.profile.account.full_name,
+                                             task.task.due_at.desc]}
     end
 
     def get_data_headings(tasks)
