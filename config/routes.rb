@@ -141,8 +141,6 @@ Rails.application.routes.draw do
     end
   end
 
-  resource :user, only: [:show, :update, :destroy]
-
   match '/*other', via: [:get, :post, :put, :patch, :delete], to: 'webview#index'
 
 end
