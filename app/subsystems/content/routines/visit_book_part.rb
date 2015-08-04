@@ -1,4 +1,4 @@
-class Content::VisitBookPart
+class Content::Routines::VisitBookPart
 
   lev_routine
 
@@ -18,14 +18,14 @@ class Content::VisitBookPart
 
   VISITOR_INFO = {
     toc: {
-      visitor_class: Content::Models::TocVisitor,
+      visitor_class: Content::Visitors::Toc,
       cached_attribute: :toc_cache
     },
-    exercises: {
-      visitor_class: Content::Models::ExerciseVisitor
+    exercise: {
+      visitor_class: Content::Visitors::Exercise
     },
     page_data: {
-      visitor_class: Content::Models::PageDataVisitor,
+      visitor_class: Content::Visitors::PageData,
       cached_attribute: :page_data_cache
     }
   }
@@ -105,7 +105,7 @@ class Content::VisitBookPart
 
   def verify_valid_visitor_names(visitor_names)
     if (VISITOR_INFO.keys & visitor_names).length != visitor_names.length
-      raise "undefined visitor in #{visitor_names}. Try one of toc, exercises, page_data"
+      raise "undefined visitor in #{visitor_names}. Try one of toc, exercise, page_data"
     end
   end
 

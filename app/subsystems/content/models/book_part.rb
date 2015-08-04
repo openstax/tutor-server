@@ -1,11 +1,14 @@
 class Content::Models::BookPart < Tutor::SubSystems::BaseModel
+
+  wrapped_by ::Ecosystem::Strategies::Direct::Chapter
+
   acts_as_resource allow_nil: true
 
   serialize :chapter_section, Array
   serialize :toc_cache, Hash
   serialize :page_data_cache, Array
 
-  belongs_to :book, subsystem: :entity
+  belongs_to :book
 
   sortable_belongs_to :parent_book_part, on: :number,
                                          class_name: '::Content::Models::BookPart',
@@ -28,7 +31,7 @@ class Content::Models::BookPart < Tutor::SubSystems::BaseModel
   validates :book, presence: true
 
   def self.root_for(book_id:)
-    find_by(entity_book_id: book_id, parent_book_part_id: nil)
+    find_by(content_book_id: book_id, parent_book_part_id: nil)
   end
 
 end

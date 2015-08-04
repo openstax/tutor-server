@@ -204,7 +204,7 @@ class DemoBase
   end
 
   def assign_ireading(course:, chapter_sections:, title:)
-    book = CourseContent::GetCourseBooks[course: course].first
+    book = course.ecosystems.first.books.first
     pages = lookup_pages(book: book, chapter_sections: chapter_sections)
 
     raise "No pages to assign" if pages.blank?
@@ -219,7 +219,7 @@ class DemoBase
   end
 
   def assign_homework(course:, chapter_sections:,  num_exercises:, title:)
-    book = CourseContent::GetCourseBooks[course: course].first
+    book = course.ecosystems.first.books.first
     pages = lookup_pages(book: book, chapter_sections: chapter_sections)
 
     page_los = pages.collect(&:los).uniq
@@ -319,10 +319,7 @@ class DemoBase
     chapter_sections = (chapter_sections.first.is_a?(Array) ? \
                         chapter_sections : [chapter_sections]).compact
 
-    @page_data ||= {}
-    @page_data[book.id] ||= Content::VisitBook[book: book, visitor_names: :page_data]
-
-    @page_data[book.id].select{|pd| chapter_sections.include?(pd.chapter_section)}
+    book.pages.select{ |page| chapter_sections.include?(page.chapter_section) }
   end
 
 

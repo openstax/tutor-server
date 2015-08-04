@@ -7,10 +7,10 @@
 #     :exercises - returns all exercises in the book
 #     :page_data - returns page metadata
 #
-class Content::VisitBook
+class Content::Routines::VisitBook
   lev_routine
 
-  uses_routine Content::VisitBookPart,
+  uses_routine Content::Routines::VisitBookPart,
                as: :visit,
                translations: { outputs: { map: {
                  visit_book_part: :visit_book
