@@ -2,7 +2,7 @@ class Content::Models::Book < Tutor::SubSystems::BaseModel
 
   wrapped_by ::Ecosystem::Strategies::Direct::Book
 
-  belongs_to :ecosystem, subsystem: :ecosystem
+  belongs_to :ecosystem
 
   has_one :root_book_part, -> { where(parent_book_part_id: nil) },
                            class_name: '::Content::Models::BookPart'

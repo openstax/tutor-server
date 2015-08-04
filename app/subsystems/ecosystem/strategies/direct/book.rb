@@ -1,6 +1,6 @@
 module Ecosystem
   module Strategies
-    class Direct
+    module Direct
       class Book < Entity
 
         wraps ::Content::Models::Book

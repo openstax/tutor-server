@@ -1,40 +1,18 @@
 module Ecosystem
-  class Book < Wrapper
+  class Book
+
+    include Wrapper
 
     def title
-      title = @strategy.title
-
-      raise_collection_class_error(
-        collection: title,
-        klass:      String,
-        error:      ::Ecosystem::StrategyError
-      )
-
-      title
+      verify_and_return @strategy.title, klass: String
     end
 
     def chapters
-      chapters = @strategy.chapters
-
-      raise_collection_class_error(
-        collection: chapters,
-        klass:      ::Ecosystem::Chapter,
-        error:      ::Ecosystem::StrategyError
-      )
-
-      chapters
+      verify_and_return @strategy.chapters, klass: ::Ecosystem::Chapter
     end
 
     def pages
-      pages = @strategy.pages
-
-      raise_collection_class_error(
-        collection: pages,
-        klass:      ::Ecosystem::Page,
-        error:      ::Ecosystem::StrategyError
-      )
-
-      pages
+      verify_and_return @strategy.pages, klass: ::Ecosystem::Page
     end
 
   end

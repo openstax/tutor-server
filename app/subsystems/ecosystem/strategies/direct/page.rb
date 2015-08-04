@@ -1,6 +1,6 @@
 module Ecosystem
   module Strategies
-    class Direct
+    module Direct
       class Page < Entity
 
         wraps ::Content::Models::Page

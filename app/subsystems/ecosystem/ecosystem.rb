@@ -1,128 +1,50 @@
 module Ecosystem
-  class Ecosystem < Wrapper
+  class Ecosystem
 
-    def self.create(*args, strategy_class: ::Ecosystem::Strategies::Direct)
+    include Wrapper
+
+    def self.create(*args, strategy_class: ::Ecosystem::Strategies::Direct::Ecosystem)
       new(strategy: strategy_class.create(*args))
     end
 
-    def self.create!(*args, strategy_class: ::Ecosystem::Strategies::Direct)
+    def self.create!(*args, strategy_class: ::Ecosystem::Strategies::Direct::Ecosystem)
       new(strategy: strategy_class.create!(*args))
     end
 
     def id
-      id = @strategy.id
-
-      raise_collection_class_error(
-        collection: id,
-        klass:      Integer,
-        error:      ::Ecosystem::StrategyError
-      )
-
-      id
+      verify_and_return @strategy.id, klass: Integer
     end
 
     def books
-      books = @strategy.books
-
-      raise_collection_class_error(
-        collection: books,
-        klass:      ::Ecosystem::Book,
-        error:      ::Ecosystem::StrategyError
-      )
-
-      books
+      verify_and_return @strategy.books, klass: ::Ecosystem::Book
     end
 
     def exercises
-      exercises = @strategy.exercises
-
-      raise_collection_class_error(
-        collection: exercises,
-        klass:      ::Ecosystem::Exercise,
-        error:      ::Ecosystem::StrategyError
-      )
-
-      exercises
+      verify_and_return @strategy.exercises, klass: ::Ecosystem::Exercise
     end
 
     def reading_core_exercises(pages:)
-      pages_arr = Array(pages).flatten.compact
-
-      raise_collection_class_error(
-        collection: pages_arr,
-        klass:      ::Ecosystem::Page,
-        error:      ArgumentError
-      )
-
+      pages_arr = verify_and_return [pages].flatten.compact, klass: ::Ecosystem::Page
       exercises = @strategy.reading_core_exercises(pages: pages_arr)
-
-      raise_collection_class_error(
-        collection: exercises,
-        klass:      ::Ecosystem::Exercise,
-        error:      ::Ecosystem::StrategyError
-      )
-
-      exercises
+      verify_and_return exercises, klass: ::Ecosystem::Exercise
     end
 
     def reading_dynamic_exercises(pages:)
-      pages_arr = Array(pages).flatten.compact
-
-      raise_collection_class_error(
-        collection: pages_arr,
-        klass:      ::Ecosystem::Page,
-        error:      ArgumentError
-      )
-
+      pages_arr = verify_and_return [pages].flatten.compact, klass: ::Ecosystem::Page
       exercises = @strategy.reading_dynamic_exercises(pages: pages_arr)
-
-      raise_collection_class_error(
-        collection: exercises,
-        klass:      ::Ecosystem::Exercise,
-        error:      ::Ecosystem::StrategyError
-      )
-
-      exercises
+      verify_and_return exercises, klass: ::Ecosystem::Exercise
     end
 
     def homework_core_exercises(pages:)
-      pages_arr = Array(pages).flatten.compact
-
-      raise_collection_class_error(
-        collection: pages_arr,
-        klass:      ::Ecosystem::Page,
-        error:      ArgumentError
-      )
-
+      pages_arr = verify_and_return [pages].flatten.compact, klass: ::Ecosystem::Page
       exercises = @strategy.homework_core_exercises(pages: pages_arr)
-
-      raise_collection_class_error(
-        collection: exercises,
-        klass:      ::Ecosystem::Exercise,
-        error:      ::Ecosystem::StrategyError
-      )
-
-      exercises
+      verify_and_return exercises, klass: ::Ecosystem::Exercise
     end
 
     def homework_dynamic_exercises(pages:)
-      pages_arr = Array(pages).flatten.compact
-
-      raise_collection_class_error(
-        collection: pages_arr,
-        klass:      ::Ecosystem::Page,
-        error:      ArgumentError
-      )
-
+      pages_arr = verify_and_return [pages].flatten.compact, klass: ::Ecosystem::Page
       exercises = @strategy.homework_dynamic_exercises(pages: pages_arr)
-
-      raise_collection_class_error(
-        collection: exercises,
-        klass:      ::Ecosystem::Exercise,
-        error:      ::Ecosystem::StrategyError
-      )
-
-      exercises
+      verify_and_return exercises, klass: ::Ecosystem::Exercise
     end
 
   end

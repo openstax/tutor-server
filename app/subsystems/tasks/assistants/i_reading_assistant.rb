@@ -55,10 +55,8 @@ class Tasks::Assistants::IReadingAssistant
   end
 
   def self.set_los(task:, pages:)
-    los = pages.map(&:los).flatten.uniq
-    aplos = pages.map(&:aplos).flatten.uniq
-    task.los = los
-    task.aplos = aplos
+    task.los = pages.map(&:los).flatten.uniq
+    task.aplos = pages.map(&:aplos).flatten.uniq
     task
   end
 

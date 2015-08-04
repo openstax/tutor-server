@@ -70,9 +70,8 @@ class Tasks::Assistants::HomeworkAssistant
   end
 
   def self.set_los(task:, exercises:)
-    task.los = exercises.map(&:los).flatten
-    task.aplos = exercises.map(&:aplos).flatten
-
+    task.los = exercises.map(&:los).flatten.uniq
+    task.aplos = exercises.map(&:aplos).flatten.uniq
     task
   end
 

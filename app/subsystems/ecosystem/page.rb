@@ -1,5 +1,7 @@
 module Ecosystem
-  class Page < Wrapper
+  class Page
+
+    include Wrapper
 
     def self.find(*args, strategy_class: ::Ecosystem::Strategies::Direct::Page)
       [strategy_class.find(*args)].flatten.collect do |strategy|
@@ -8,63 +10,23 @@ module Ecosystem
     end
 
     def url
-      url = @strategy.url
-
-      raise_collection_class_error(
-        collection: url,
-        klass:      String,
-        error:      ::Ecosystem::StrategyError
-      )
-
-      url
+      verify_and_return @strategy.url, klass: String
     end
 
     def title
-      title = @strategy.title
-
-      raise_collection_class_error(
-        collection: title,
-        klass:      String,
-        error:      ::Ecosystem::StrategyError
-      )
-
-      title
+      verify_and_return @strategy.title, klass: String
     end
 
     def content
-      content = @strategy.content
-
-      raise_collection_class_error(
-        collection: content,
-        klass:      String,
-        error:      ::Ecosystem::StrategyError
-      )
-
-      content
+      verify_and_return @strategy.content, klass: String
     end
 
     def chapter
-      chapter = @strategy.chapter
-
-      raise_collection_class_error(
-        collection: chapter,
-        klass:      ::Ecosystem::Chapter,
-        error:      ::Ecosystem::StrategyError
-      )
-
-      chapter
+      verify_and_return @strategy.chapter, klass: ::Ecosystem::Chapter
     end
 
     def chapter_section
-      chapter_section = @strategy.chapter_section
-
-      raise_collection_class_error(
-        collection: chapter_section,
-        klass:      Integer,
-        error:      ::Ecosystem::StrategyError
-      )
-
-      chapter_section
+      verify_and_return @strategy.chapter_section, klass: Integer
     end
 
     def is_intro?
@@ -76,51 +38,20 @@ module Ecosystem
     end
 
     def tags
-      tags = @strategy.tags
-
-      raise_collection_class_error(
-        collection: tags,
-        klass:      String,
-        error:      ::Ecosystem::StrategyError
-      )
-
-      tags
+      verify_and_return @strategy.tags, klass: String
     end
 
     def los
-      los = @strategy.los
-
-      raise_collection_class_error(
-        collection: los,
-        klass:      String,
-        error:      ::Ecosystem::StrategyError
-      )
-
-      los
+      verify_and_return @strategy.los, klass: String
     end
 
     def aplos
-      aplos = @strategy.aplos
-
-      raise_collection_class_error(
-        collection: aplos,
-        klass:      String,
-        error:      ::Ecosystem::StrategyError
-      )
-
-      aplos
+      verify_and_return @strategy.aplos, klass: String
     end
 
     def related_content(title: nil, chapter_section: nil)
       related_content = @strategy.related_content(title: title, chapter_section: chapter_section)
-
-      raise_collection_class_error(
-        collection: related_content,
-        klass:      Hash,
-        error:      ::Ecosystem::StrategyError
-      )
-
-      related_content
+      verify_and_return related_content, klass: Hash
     end
 
   end

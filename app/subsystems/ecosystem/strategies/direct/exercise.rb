@@ -1,13 +1,13 @@
 module Ecosystem
   module Strategies
-    class Direct
+    module Direct
       class Exercise < Entity
 
         wraps ::Content::Models::Exercise
 
         exposes :pages, :url, :title, :content, :uid, :los, :aplos, :tag_hashes
 
-        exposes :find, :find_by, from_class: ::Content::Models::Exercise
+        exposes :find, from_class: ::Content::Models::Exercise
 
         def tags
           repository.tags.collect{ |t| t.value }
