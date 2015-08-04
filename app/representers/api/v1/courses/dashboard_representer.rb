@@ -26,9 +26,8 @@ module Api::V1::Courses
                as: :is_trouble,
                readable: true,
                writeable: false,
-               getter: lambda{|*| rand(0..1)==0 },
+               getter: lambda{|*| false },
                schema_info: { type: 'boolean' }
-        # ^^^^^ REPLACE with real value once spec for calculating it's available
 
       property :type,
                type: String,
