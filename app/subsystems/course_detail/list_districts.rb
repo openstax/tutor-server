@@ -8,6 +8,7 @@ module CourseDetail
       outputs.districts = districts.collect do |district|
         {
           id: district.id,
+          gid: district.to_global_id.to_s,
           name: district.name
         }
       end

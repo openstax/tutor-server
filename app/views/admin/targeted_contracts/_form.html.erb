@@ -1,0 +1,52 @@
+
+<div style="width: 500px">
+  <%= lev_form_for :targeted_contract, url: url, method: method do |f| %>
+
+    <div class='form-group row'>
+      <label class='col-sm-3 control-label'>Contract Name</label>
+      <div class='col-sm-9'>
+        <%= f.select :contract_name,
+                     options_from_collection_for_select(FinePrint::Contract.all,
+                                                        :name,
+                                                        :name),
+                     class: 'form-control' %>
+      </div>
+    </div>
+    <div class='form-group row'>
+      <label class='col-sm-3 control-label'>Target</label>
+      <div class='col-sm-9'>
+        <%= f.select :target,
+                     options_from_collection_for_select(@targets, :value, :name),
+                     class: 'form-control' %>
+      </div>
+    </div>
+    <div class='form-group row'>
+      <label class='col-sm-3 control-label'>Masked Contracts</label>
+      <div class='col-sm-9'>
+        <%= f.select :masked_contract_names,
+                     options_from_collection_for_select(FinePrint::Contract.all, :name, :name),
+                     { class: 'form-control' },
+                     { multiple: true } %>
+      </div>
+    </div>
+    <div class='form-group row'>
+        <label class='col-sm-3 control-label'>Is Proxy Signed?</label>
+        <div class=' col-sm-9'>
+          <%= f.check_box :is_proxy_signed %>
+        </div>
+    </div>
+    <div class='form-group row'>
+        <label class='col-sm-3 control-label'>Can Show Contents?</label>
+        <div class=' col-sm-9'>
+          <%= f.check_box :is_end_user_visible %>
+        </div>
+    </div>
+
+    <div class='form-group row'>
+      <div class='col-sm-offset-3 col-sm-9'>
+        <%= f.submit 'Submit' %>
+      </div>
+    </div>
+
+  <% end %>
+</div>

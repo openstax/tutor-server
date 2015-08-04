@@ -133,6 +133,8 @@ Rails.application.routes.draw do
         post :import
       end
     end
+
+    resources :targeted_contracts
   end
 
   namespace :dev do

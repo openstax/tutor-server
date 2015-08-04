@@ -5,4 +5,8 @@ module ApplicationHelper
                                     alert: 'alert-block',
                                     notice: 'alert-info' })
   end
+
+  def tf_to_yn(bool)
+    bool ? "Yes" : "No"
+  end
 end

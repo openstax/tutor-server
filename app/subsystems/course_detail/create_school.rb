@@ -7,6 +7,8 @@ module CourseDetail
       district ||= NoDistrict.new
       outputs.school = Models::School.create(name: name,
                                              course_detail_district_id: district.id)
+
+      # AddTermableToGroup[termable: outputs.school, group: district]
     end
 
     class NoDistrict

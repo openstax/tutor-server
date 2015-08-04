@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150722052819) do
+ActiveRecord::Schema.define(version: 20150804002246) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -225,13 +225,12 @@ ActiveRecord::Schema.define(version: 20150722052819) do
   add_index "fake_stores", ["name"], name: "index_fake_stores_on_name", unique: true, using: :btree
 
   create_table "fine_print_contracts", force: :cascade do |t|
-    t.string   "name",                               null: false
+    t.string   "name",       null: false
     t.integer  "version"
-    t.string   "title",                              null: false
-    t.text     "content",                            null: false
-    t.datetime "created_at",                         null: false
-    t.datetime "updated_at",                         null: false
-    t.boolean  "is_signed_by_proxy", default: false, null: false
+    t.string   "title",      null: false
+    t.text     "content",    null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   add_index "fine_print_contracts", ["name", "version"], name: "index_fine_print_contracts_on_name_and_version", unique: true, using: :btree
@@ -247,6 +246,29 @@ ActiveRecord::Schema.define(version: 20150722052819) do
 
   add_index "fine_print_signatures", ["contract_id"], name: "index_fine_print_signatures_on_contract_id", using: :btree
   add_index "fine_print_signatures", ["user_id", "user_type", "contract_id"], name: "index_fine_print_signatures_on_u_id_and_u_type_and_c_id", unique: true, using: :btree
+
+  create_table "legal_targeted_contract_relationships", force: :cascade do |t|
+    t.string   "child_gid",  null: false
+    t.string   "parent_gid", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "legal_targeted_contract_relationships", ["child_gid", "parent_gid"], name: "legal_targeted_contracts_rship_child_parent", unique: true, using: :btree
+  add_index "legal_targeted_contract_relationships", ["parent_gid"], name: "legal_targeted_contracts_rship_parent", using: :btree
+
+  create_table "legal_targeted_contracts", force: :cascade do |t|
+    t.string   "target_gid",                            null: false
+    t.string   "target_name",                           null: false
+    t.string   "contract_name",                         null: false
+    t.text     "masked_contract_names"
+    t.boolean  "is_proxy_signed",       default: false
+    t.boolean  "is_end_user_visible",   default: true
+    t.datetime "created_at",                            null: false
+    t.datetime "updated_at",                            null: false
+  end
+
+  add_index "legal_targeted_contracts", ["target_gid"], name: "legal_targeted_contracts_target", using: :btree
 
   create_table "oauth_access_grants", force: :cascade do |t|
     t.integer  "resource_owner_id", null: false

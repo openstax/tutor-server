@@ -1,4 +1,4 @@
-class GetApplicableContracts
+class GetCourseTargetedContractsForUser
 
   lev_routine express_output: :contracts
 
@@ -14,9 +14,7 @@ class GetApplicableContracts
 
   def get_course_contracts(courses)
     contracts = courses.collect do |course|
-      # get contracts
-      # if no contracts add general_terms and privacy_policy
-      # if contracts add them unless blanket signed
+      targeted_contracts = Legal::Api.targeted_contracts(applicable_to: course) # applicable_to:
     end
 
     contracts.compact.uniq
