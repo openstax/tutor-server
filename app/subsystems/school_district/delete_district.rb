@@ -1,4 +1,4 @@
-module CourseDetail
+module SchoolDistrict
   class DeleteDistrict
     lev_routine
 

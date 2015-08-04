@@ -3,11 +3,11 @@ class Admin::SchoolsCreate
 
   paramify :school do
     attribute :name, type: String
-    attribute :course_detail_district_id, type: Integer
+    attribute :school_district_district_id, type: Integer
     validates :name, presence: true
   end
 
-  uses_routine CourseDetail::CreateSchool, as: :create_school
+  uses_routine SchoolDistrict::CreateSchool, as: :create_school
 
   protected
   def authorized?
@@ -15,7 +15,7 @@ class Admin::SchoolsCreate
   end
 
   def handle
-    district = CourseDetail::GetDistrict[id: school_params.course_detail_district_id]
+    district = SchoolDistrict::GetDistrict[id: school_params.school_district_district_id]
     run(:create_school, name: school_params.name, district: district)
   end
 end

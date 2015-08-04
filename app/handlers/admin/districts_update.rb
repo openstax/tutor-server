@@ -6,7 +6,7 @@ class Admin::DistrictsUpdate
     validates :name, presence: true
   end
 
-  uses_routine CourseDetail::UpdateDistrict, as: :update_district
+  uses_routine SchoolDistrict::UpdateDistrict, as: :update_district
 
   protected
   def authorized?

@@ -15,6 +15,6 @@ Tutor::SubSystems.valid_namespaces = %w(
   tasks
   role
   course_membership
-  course_detail
+  school_district
   legal
 )

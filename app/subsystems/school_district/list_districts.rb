@@ -1,4 +1,4 @@
-module CourseDetail
+module SchoolDistrict
   class ListDistricts
     lev_routine express_output: :districts
 

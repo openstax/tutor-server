@@ -1,4 +1,4 @@
-module CourseDetail
+module SchoolDistrict
   class CreateSchool
     lev_routine express_output: :school
 
@@ -6,7 +6,7 @@ module CourseDetail
     def exec(name:, district: nil)
       district ||= NoDistrict.new
       outputs.school = Models::School.create(name: name,
-                                             course_detail_district_id: district.id)
+                                             school_district_district_id: district.id)
 
       # AddTermableToGroup[termable: outputs.school, group: district]
     end

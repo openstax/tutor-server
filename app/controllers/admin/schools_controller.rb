@@ -3,12 +3,12 @@ module Admin
     before_filter :populate_districts, except: [:destroy, :index]
 
     def index
-      @schools = CourseDetail::ListSchools[]
+      @schools = SchoolDistrict::ListSchools[]
       @page_header = "Manage schools"
     end
 
     def edit
-      @school = CourseDetail::GetSchool[id: params[:id]]
+      @school = SchoolDistrict::GetSchool[id: params[:id]]
       @page_header = "Edit school"
     end
 
@@ -24,7 +24,7 @@ module Admin
                                 notice: 'The school has been created.'
                   },
                   failure: -> {
-                    @school = CourseDetail::Models::School.new(school_params)
+                    @school = SchoolDistrict::Models::School.new(school_params)
                     render :new
                   })
     end
@@ -37,7 +37,7 @@ module Admin
                                 notice: 'The school has been updated.'
                   },
                   failure: -> {
-                    @school = CourseDetail::GetSchool[id: params[:id]]
+                    @school = SchoolDistrict::GetSchool[id: params[:id]]
                     @school.attributes.merge!(school_params)
                     render :edit
                   })
@@ -57,7 +57,7 @@ module Admin
 
     private
     def populate_districts
-      @districts = CourseDetail::ListDistricts[]
+      @districts = SchoolDistrict::ListDistricts[]
     end
 
     def school_params

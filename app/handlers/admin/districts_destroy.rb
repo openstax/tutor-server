@@ -1,7 +1,7 @@
 class Admin::DistrictsDestroy
   lev_handler
 
-  uses_routine CourseDetail::DeleteDistrict, as: :delete_district
+  uses_routine SchoolDistrict::DeleteDistrict, as: :delete_district
 
   protected
   def authorized?

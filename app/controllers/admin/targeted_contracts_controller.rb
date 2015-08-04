@@ -22,7 +22,7 @@ class Admin::TargetedContractsController < Admin::BaseController
   end
 
   def new
-    @targets = CourseDetail::ListDistricts[].collect do |district|
+    @targets = SchoolDistrict::ListDistricts[].collect do |district|
       Hashie::Mash.new(value: "#{district.gid}|#{district.name}", name: district.name)
     end
   end

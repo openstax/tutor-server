@@ -10,7 +10,7 @@ class CreateCourse
     outputs[:course] = Entity::Course.create!
     run(:create_course_profile, name: name,
                                 course: outputs.course,
-                                course_detail_school_id: school.id)
+                                school_district_school_id: school.id)
   end
 
   class NoSchool

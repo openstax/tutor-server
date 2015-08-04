@@ -51,7 +51,7 @@ RSpec.describe 'Administration' do
   end
 
   scenario 'attempt destroying a school with courses assigned' do
-    school = CourseDetail::Models::School.last
+    school = SchoolDistrict::Models::School.last
     course = CreateCourse[name: 'Physics', school: school]
 
     click_link 'delete'
