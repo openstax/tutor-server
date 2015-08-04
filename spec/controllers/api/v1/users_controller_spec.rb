@@ -23,14 +23,26 @@ describe Api::V1::UsersController, :type => :controller, :api => true, :version 
         api_get :show, user_1_token
         expect(response.code).to eq('200')
         payload = JSON.parse(response.body)
-        expect(payload).to eq("name" => user_1.name, 'is_admin' => false)
+        expect(payload).to eq(
+          "name" => user_1.name,
+          'is_admin' => false,
+          'profile_url' => Addressable::URI.join(
+            OpenStax::Accounts.configuration.openstax_accounts_url,
+            '/profile').to_s
+        )
       end
 
       it 'returns is_admin flag correctly' do
         api_get :show, admin_token
         expect(response.code).to eq('200')
         payload = JSON.parse(response.body)
-        expect(payload).to eq("name" => admin.name, 'is_admin' => true)
+        expect(payload).to eq(
+          "name" => admin.name,
+          'is_admin' => true,
+          'profile_url' => Addressable::URI.join(
+            OpenStax::Accounts.configuration.openstax_accounts_url,
+            '/profile').to_s
+        )
       end
     end
     context "caller does not have an authorization token" do

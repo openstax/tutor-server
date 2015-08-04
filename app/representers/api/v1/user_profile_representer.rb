@@ -10,5 +10,12 @@ module Api::V1
     property :is_admin?,
              as: :is_admin
 
+    property :profile_url,
+             getter: ->(*) {
+               Addressable::URI.join(
+                 OpenStax::Accounts.configuration.openstax_accounts_url,
+                 '/profile').to_s
+             }
+
   end
 end
