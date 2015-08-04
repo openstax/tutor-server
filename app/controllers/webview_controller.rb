@@ -23,42 +23,27 @@ class WebviewController < ApplicationController
 
   def require_contracts
     # Get contracts that apply to the user's current courses; some of these
-    # have been signed by proxy.  Take care of those first.
+    # have been signed by proxy (and need an implicit signature), while some
+    # don't and need to go through the normal FinePrint process.
 
-    targeted_contracts = GetCourseTargetedContractsForUser[user: current_user]
+    # targeted_contracts = GetCourseTargetedContractsForUser[user: current_user.entity_user]
 
-    proxy_signed_contracts, non_proxy_signed_contracts =
-      targeted_contracts.partition(&:is_proxy_signed)
+    courses = GetUserCourses[user: user]
 
-    proxy_signed_contracts.each do |contract|
-      next if FinePrint.signed_contract?(current_user, contract.contract_name)
+    contract_names = Legal::GetContractNames.call(
+      applicable_to: courses,
+      contract_names_signed_by_everyone: [:general_terms_of_use, :privacy_policy]
+    ).outputs
+
+    contract_names.proxy_signed.each do |name|
+      next if FinePrint.signed_contract?(current_user, name)
 
       FinePrint.sign_contract(current_user,
-                              contract.name,
+                              name,
                               FinePrint::SIGNATURE_IS_IMPLICIT)
     end
 
-    # Figure out which remaining contracts need to be signed and then have
-    # FinePrint take care of it.
-
-    contracts_signed_by_everyone =
-      [:general_terms_of_use, :privacy_policy]
-
-    contracts_masked_by_targeted_contracts =
-      targeted_contracts.collect(&:masked_contract_names)
-                        .flatten.compact.uniq
-
-    targeted_contracts_without_proxy_signature =
-      non_proxy_signed_contracts.collect(&:contract_name)
-                                .flatten.compact.uniq
-
-    fine_print_require *(
-
-      ( contracts_signed_by_everyone -
-        contracts_masked_by_targeted_contracts ) +
-      targeted_contracts_without_proxy_signature
-
-    )
+    fine_print_require *contract_names.non_proxy_signed
   end
 
 end

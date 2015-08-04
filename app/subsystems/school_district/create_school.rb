@@ -4,15 +4,15 @@ module SchoolDistrict
 
     protected
     def exec(name:, district: nil)
-      district ||= NoDistrict.new
       outputs.school = Models::School.create(name: name,
-                                             school_district_district_id: district.id)
+                                             school_district_district_id: district.try(:id))
 
-      # AddTermableToGroup[termable: outputs.school, group: district]
+      transfer_errors_from(outputs.school, {type: :verbatim}, true)
+
+      # TODO find a more appropriate home for this
+      Legal::MakeChildGetParentContracts[child: outputs.school,
+                                         parent: district] if district.present?
     end
 
-    class NoDistrict
-      def id; end
-    end
   end
 end

@@ -5,13 +5,11 @@ module SchoolDistrict
     protected
     def exec(id:)
       school = Models::School.find(id)
+      school.destroy
+      transfer_errors_from(school, {type: :verbatim}, true)
 
-      if school.profiles.empty?
-        school.destroy
-      else
-        fatal_error(code: :resource_has_dependencies,
-                    message: "Cannot delete a school with courses associated.")
-      end
+      # TODO find a more appropriate home for this
+      Legal::ForgetAboutContracts[with_respect_to: school]
     end
   end
 end

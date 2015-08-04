@@ -5,13 +5,11 @@ module SchoolDistrict
     protected
     def exec(id:)
       district = Models::District.find(id)
+      district.destroy
+      transfer_errors_from(district, {type: :verbatim}, true)
 
-      if district.schools.empty?
-        district.destroy
-      else
-        fatal_error(code: :resource_has_dependencies,
-                    message: "Cannot delete a district with schools assigned")
-      end
+      # TODO find a better home for this
+      Legal::ForgetAboutContracts[with_respect_to: school]
     end
   end
 end

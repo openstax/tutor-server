@@ -21,7 +21,7 @@ class Legal::GetTargetedContracts
     parent_gids = Legal::Models::TargetedContractRelationship.all_parent_gids_of(gid)
     potential_target_gids = [gid] + parent_gids
 
-    Legal::Models::TargetedContract.where(target_gid: potential_target_gids).latest.compact
+    Legal::Models::TargetedContract.where(target_gid: potential_target_gids).all
   end
 end
 

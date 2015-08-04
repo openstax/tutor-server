@@ -4,4 +4,8 @@ module Legal::Utils
     object.to_global_id.to_s
   end
 
+  def self.available_contract_names
+    FinePrint::Contract.all.collect(&:name)
+  end
+
 end

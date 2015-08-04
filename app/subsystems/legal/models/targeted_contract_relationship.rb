@@ -4,12 +4,12 @@ class Legal::Models::TargetedContractRelationship < Tutor::SubSystems::BaseModel
                         uniqueness: { scope: :parent_gid }
   validates :parent_gid, presence: true
 
-  def self.all_parents_of(child)
-    immediate_parents = where(child: child).all.collect(&:parent)
+  def self.all_parent_gids_of(child_gid)
+    immediate_parent_gids = where(child_gid: child_gid).all.collect(&:parent_gid)
     [
-      immediate_parents +
-      immediate_parents.collect do |parent|
-        parent.nil? ? nil : all_parents_of(parent)
+      immediate_parent_gids +
+      immediate_parent_gids.collect do |parent_gid|
+        parent_gid.nil? ? nil : all_parent_gids_of(parent_gid)
       end
     ].flatten.compact.uniq
   end
