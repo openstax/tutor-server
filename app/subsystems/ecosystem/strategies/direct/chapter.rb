@@ -5,7 +5,7 @@ module Ecosystem
 
         wraps ::Content::Models::Chapter
 
-        exposes :title, :pages
+        exposes :title, :pages, :book_location
 
         alias_method :entity_pages, :pages
         def pages
