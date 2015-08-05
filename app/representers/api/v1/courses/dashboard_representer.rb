@@ -91,6 +91,11 @@ module Api::V1::Courses
                readable: true,
                writeable: false
 
+      property :description,
+               type: String,
+               readable: true,
+               writeable: false
+
       property :'completed?',
                as: :complete,
                readable: true,
