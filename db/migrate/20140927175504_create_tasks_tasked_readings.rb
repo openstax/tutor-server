@@ -4,7 +4,7 @@ class CreateTasksTaskedReadings < ActiveRecord::Migration
       t.string :url, null: false
       t.text :content, null: false
       t.string :title
-      t.text :chapter_section
+      t.text :book_location
 
       t.timestamps null: false
     end

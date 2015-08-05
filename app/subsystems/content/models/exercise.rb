@@ -3,25 +3,22 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
 
   wrapped_by ::Ecosystem::Strategies::Direct::Exercise
 
-  has_many :exercise_tags, dependent: :destroy
+  belongs_to :page
+
+  has_many :exercise_tags, dependent: :destroy, autosave: true
   has_many :tags, through: :exercise_tags
 
   has_many :tasked_exercises, subsystem: :tasks, primary_key: :url, foreign_key: :url
 
-  # Exercises with the same number as this one, used to find the latest version below
-  has_many :same_number, class_name: "Content::Models::Exercise",
-                         primary_key: :number,
-                         foreign_key: :number
-
   validates :number, presence: true
   validates :version, presence: true, uniqueness: { scope: :number }
 
-  # First, join on the exercises with the same number to create a cartesian product,
-  # then group by the primary key so we can use max()
-  # and finally pick the row whose version matches the value of the max()
-  scope :latest, -> { joins(:same_number)
-                        .group(:id)
-                        .having{version == max(same_number.version)} }
+  # http://stackoverflow.com/a/7745635
+  scope :latest, ->(scope = unscoped) {
+    joins{ scope.as(:later_version).on{ (later_version.number == ~number) & \
+                                        (later_version.version > ~version) }.outer }
+      .where{later_version.id == nil}
+  }
 
   def uid
     "#{number}@#{version}"
@@ -33,11 +30,5 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
 
   def aplos
     tags.to_a.select(&:aplo?)
-  end
-
-  def pages
-    tags.select{ |tag| tag.lo? || tag.aplo? }.collect do |tag|
-      tag.page_tags.collect{ |pt| pt.page }
-    end.flatten.uniq
   end
 end

@@ -3,7 +3,7 @@ module Ecosystem
     module Direct
       class Chapter < Entity
 
-        wraps ::Content::Models::BookPart
+        wraps ::Content::Models::Chapter
 
         exposes :title, :pages
 

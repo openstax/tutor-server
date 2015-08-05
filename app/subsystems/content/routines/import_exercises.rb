@@ -7,26 +7,48 @@ class Content::Routines::ImportExercises
 
   protected
 
-  # TODO: make this import only exercises from trusted authors
+  # TODO: make this routine import only exercises from trusted authors
   #       or in some trusted list (for when OS Exercises is public)
-  def exec(query_hash)
+  # page can be a Content::Models::Page or a block
+  # that takes an OpenStax::Exercises::V1::Exercise
+  # and returns a Content::Models::Page for that exercise
+  def exec(page:, query_hash:)
     outputs[:exercises] = []
-    OpenStax::Exercises::V1.exercises(query_hash)['items'].each do |wrapper|
-      exercise = Content::Models::Exercise.find_or_initialize_by(url: wrapper.url)
+
+    wrappers = OpenStax::Exercises::V1.exercises(query_hash)['items']
+    wrapper_urls = wrappers.collect{ |wrapper| wrapper.url }
+    existing_urls = Content::Models::Exercise.where(url: wrapper_urls).pluck(:url)
+
+    wrapper_tag_hashes = wrappers.collect{ |wrapper| wrapper.tag_hashes }.flatten
+                                 .uniq{ |hash| hash[:value] }
+    tags = run(:find_or_create_tags, input: wrapper_tag_hashes).outputs.tags
+
+    wrappers.each do |wrapper|
+      next if existing_urls.include?(wrapper.url)
+
       uid = wrapper.uid
       number_version = uid.split('@')
-      exercise.number = number_version.first
-      exercise.version = number_version.last
-      exercise.title = wrapper.title
-      exercise.content = wrapper.content
-      exercise.save
+      exercise_page = page.respond_to?(:call) ? page.call(wrapper) : page
+      exercise = Content::Models::Exercise.new(url: wrapper.url,
+                                               number: number_version.first,
+                                               version: number_version.last,
+                                               title: wrapper.title,
+                                               content: wrapper.content,
+                                               page: exercise_page)
       transfer_errors_from(exercise, {type: :verbatim}, true)
 
-      tags = run(:find_or_create_tags, input: wrapper.tag_hashes).outputs.tags
+      relevant_tags = tags.select{ |tag| wrapper.tags.include?(tag.value) }
+      exercise_tags = run(:tag, exercise, relevant_tags,
+                          tagging_class: Content::Models::ExerciseTag,
+                          save: false).outputs.taggings
 
-      run(:tag, exercise, tags, tagging_class: Content::Models::ExerciseTag)
-
+      exercise.exercise_tags << exercise_tags
       outputs[:exercises] << exercise
+    end
+
+    Content::Models::Exercise.import!(outputs[:exercises], recursive: true)
+    outputs[:exercises].each do |exercise|
+      exercise.tags.reset
     end
   end
 end

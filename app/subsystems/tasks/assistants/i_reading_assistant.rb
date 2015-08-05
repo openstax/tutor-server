@@ -26,6 +26,8 @@ class Tasks::Assistants::IReadingAssistant
 
     pages = collect_pages(task_plan: task_plan)
 
+    debugger if pages.blank?
+
     taskees.collect do |taskee|
       build_ireading_task(
         task_plan:    task_plan,
@@ -249,10 +251,6 @@ class Tasks::Assistants::IReadingAssistant
     1
   end
 
-  def self.related_content_for_page(page:, title: page.title)
-    { title: title, chapter_section: page.chapter_section }
-  end
-
   def self.add_exercise_step(task:, exercise:)
     step = Tasks::Models::TaskStep.new(task: task)
     TaskExercise[task_step: step, exercise: exercise]
@@ -263,7 +261,7 @@ class Tasks::Assistants::IReadingAssistant
   def self.tasked_reading(reading_fragment:, page:, step:, title: nil)
     Tasks::Models::TaskedReading.new(task_step: step,
                                      url: page.url,
-                                     chapter_section: page.chapter_section,
+                                     book_location: page.book_location,
                                      title: title,
                                      content: reading_fragment.to_html)
   end

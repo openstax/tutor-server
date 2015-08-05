@@ -25,10 +25,13 @@ module Ecosystem
         def pages_by_ids(ids)
           id_indices = {}
           ids.each_with_index do |id, index|
-            id_indices[id] = index
+            integer_id = Integer(id) rescue nil
+            next if integer_id.nil?
+
+            id_indices[integer_id] = index
           end
 
-          pages.select{ |pg| !indices[pg.id].nil? }.sort_by{ |pg| indices[pg.id] }
+          pages.select{ |pg| !id_indices[pg.id].nil? }.sort_by{ |pg| id_indices[pg.id] }
         end
 
         alias_method :entity_exercises, :exercises
@@ -41,10 +44,13 @@ module Ecosystem
         def exercises_by_ids(ids)
           id_indices = {}
           ids.each_with_index do |id, index|
-            id_indices[id] = index
+            integer_id = Integer(id) rescue nil
+            next if integer_id.nil?
+
+            id_indices[integer_id] = index
           end
 
-          exercises.select{ |ex| !indices[ex.id].nil? }.sort_by{ |ex| indices[ex.id] }
+          exercises.select{ |ex| !id_indices[ex.id].nil? }.sort_by{ |ex| id_indices[ex.id] }
         end
 
       end

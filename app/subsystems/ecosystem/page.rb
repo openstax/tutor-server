@@ -23,8 +23,8 @@ module Ecosystem
       verify_and_return @strategy.chapter, klass: ::Ecosystem::Chapter
     end
 
-    def chapter_section
-      verify_and_return @strategy.chapter_section, klass: Integer
+    def book_location
+      verify_and_return @strategy.book_location, klass: Integer
     end
 
     def is_intro?
@@ -47,8 +47,8 @@ module Ecosystem
       verify_and_return @strategy.aplos, klass: String
     end
 
-    def related_content(title: nil, chapter_section: nil)
-      related_content = @strategy.related_content(title: title, chapter_section: chapter_section)
+    def related_content(title: nil, book_location: nil)
+      related_content = @strategy.related_content(title: title, book_location: book_location)
       verify_and_return related_content, klass: Hash
     end
 

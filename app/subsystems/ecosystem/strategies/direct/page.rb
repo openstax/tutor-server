@@ -5,11 +5,12 @@ module Ecosystem
 
         wraps ::Content::Models::Page
 
-        exposes :book_part, :url, :title, :content,
-                :chapter_section, :is_intro?, :fragments, :los, :aplos
+        exposes :chapter, :url, :title, :content,
+                :book_location, :is_intro?, :fragments, :los, :aplos
 
+        alias_method :entity_chapter, :chapter
         def chapter
-          ::Ecosystem::Chapter.new(strategy: book_part)
+          ::Ecosystem::Chapter.new(strategy: entity_chapter)
         end
 
         def tags
@@ -24,10 +25,10 @@ module Ecosystem
           repository.aplos.collect{ |t| t.value }
         end
 
-        def related_content(title: nil, chapter_section: nil)
+        def related_content(title: nil, book_location: nil)
           title ||= self.title
-          chapter_section ||= self.chapter_section
-          { title: title, chapter_section: chapter_section }
+          book_location ||= self.book_location
+          { title: title, book_location: book_location }
         end
 
       end

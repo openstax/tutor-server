@@ -35,12 +35,8 @@ module Ecosystem
       verify_and_return @strategy.aplos, klass: String
     end
 
-    def pages
-      verify_and_return @strategy.pages, klass: ::Ecosystem::Page
-    end
-
-    def related_content
-      verify_and_return @strategy.related_content, klass: Hash
+    def page
+      verify_and_return @strategy.page, klass: ::Ecosystem::Page
     end
 
   end

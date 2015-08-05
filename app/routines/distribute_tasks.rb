@@ -6,20 +6,6 @@ class DistributeTasks
 
   protected
 
-  def efficiently_save(task)
-    steps = task.task_steps.to_a
-    task.task_steps = []
-    task.save!
-    steps.each do |step|
-      tasked = step.tasked
-      tasked.task_step = nil
-      tasked.save!
-      step.tasked = tasked
-      task.task_steps << step
-      step.save!
-    end
-  end
-
   def exec(task_plan)
     # Lock the TaskPlan to prevent concurrent update/publish
     task_plan.lock!
@@ -49,8 +35,9 @@ class DistributeTasks
       task.opens_at = opens_ats[ii]
       task.due_at = due_ats[ii] || (task.opens_at + 1.week)
       task.feedback_at ||= task.due_at
-      efficiently_save(task)
     end
+
+    Tasks::Models::Task.import tasks, recursive: true
 
     task_plan.update_column(:published_at, Time.now)
 

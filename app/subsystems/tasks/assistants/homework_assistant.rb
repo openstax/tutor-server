@@ -33,6 +33,8 @@ class Tasks::Assistants::HomeworkAssistant
   def self.build_tasks(task_plan:, taskees:)
     exercises = collect_exercises(task_plan: task_plan)
 
+    raise "No exercises selected" if exercises.blank?
+
     taskees.collect do |taskee|
       build_homework_task(
         task_plan:    task_plan,
@@ -88,7 +90,7 @@ class Tasks::Assistants::HomeworkAssistant
     exercises.each do |exercise|
       step = add_exercise_step(task: task, exercise: exercise)
       step.group_type = :core_group
-      step.add_related_content(exercise.related_content)
+      step.add_related_content(exercise.page.related_content)
     end
 
     task

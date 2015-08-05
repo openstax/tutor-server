@@ -2,13 +2,15 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
 
   wrapped_by ::Ecosystem::Strategies::Direct::Page
 
-  acts_as_resource(url_not_unique: true)
+  acts_as_resource
 
-  serialize :chapter_section, Array
+  serialize :book_location, Array
 
-  sortable_belongs_to :book_part, on: :number, inverse_of: :pages
+  sortable_belongs_to :chapter, on: :number, inverse_of: :pages
 
-  has_many :page_tags, dependent: :destroy
+  has_many :exercises, dependent: :destroy
+
+  has_many :page_tags, dependent: :destroy, autosave: true
   has_many :tags, through: :page_tags
 
   validates :title, presence: true

@@ -6,6 +6,8 @@ class CreateContentBooks < ActiveRecord::Migration
                                        index: true,
                                        foreign_key: { on_update: :cascade, on_delete: :cascade }
       t.string :title, null: false
+      t.string :uuid
+      t.string :version
 
       t.timestamps null: false
 

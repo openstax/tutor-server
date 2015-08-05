@@ -6,10 +6,6 @@ class CreateContentChapters < ActiveRecord::Migration
       t.integer :number, null: false
       t.string :title, null: false
       t.text :book_location
-      t.string :uuid
-      t.string :version
-      t.text :toc_cache
-      t.text :page_data_cache
 
       t.timestamps null: false
 

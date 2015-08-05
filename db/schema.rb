@@ -21,6 +21,8 @@ ActiveRecord::Schema.define(version: 20150804002246) do
     t.text     "content"
     t.integer  "content_ecosystem_id", null: false
     t.string   "title",                null: false
+    t.string   "uuid"
+    t.string   "version"
     t.datetime "created_at",           null: false
     t.datetime "updated_at",           null: false
   end
@@ -34,10 +36,6 @@ ActiveRecord::Schema.define(version: 20150804002246) do
     t.integer  "number",          null: false
     t.string   "title",           null: false
     t.text     "book_location"
-    t.string   "uuid"
-    t.string   "version"
-    t.text     "toc_cache"
-    t.text     "page_data_cache"
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
   end
@@ -495,12 +493,12 @@ ActiveRecord::Schema.define(version: 20150804002246) do
   end
 
   create_table "tasks_tasked_readings", force: :cascade do |t|
-    t.string   "url",             null: false
-    t.text     "content",         null: false
+    t.string   "url",           null: false
+    t.text     "content",       null: false
     t.string   "title"
-    t.text     "chapter_section"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.text     "book_location"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
   end
 
   create_table "tasks_tasked_videos", force: :cascade do |t|

@@ -19,11 +19,9 @@ module OpenStax::Cnx::V1
       }
     end
 
-    def is_unit?(has_parent:)
-      # A unit is a part that has other book parts under it (chapters) but is not
-      # the root (and hence has a parent).  From `hash` we can't figure out if this part
-      # has a parent, so that value must be passed in.
-      @is_unit ||= has_parent && contents.any?{ |hash| hash['id'] == 'subcol' }
+    def is_chapter?
+      # A collection is a chapter if it has no subcollections
+      @is_chapter ||= contents.none?{ |hash| hash['id'] == 'subcol' }
     end
 
     def parts

@@ -3,108 +3,82 @@ class Content::Routines::ImportBookPart
   lev_routine
 
   uses_routine Content::Routines::ImportBookPart, as: :import_book_part
-
   uses_routine Content::Routines::ImportPage, as: :import_page
 
   protected
 
-  # Imports and saves a Cnx::BookPart as a Content::BookPart
-  # Returns the Content::BookPart object
-  def exec(cnx_book_part:, parent_book_part: nil, book:,
-           chapter_section_tracker: nil, book_url: nil, uuid: nil, version: nil)
+  # Imports and saves a Cnx::BookPart as a Content::Models::Book or Content::Models::BookPart
+  # Returns the Content::Models::Book or Content::Models::BookPart object
+  def exec(cnx_book_part:, book:, chapter_tracker: nil, save: true)
 
-    chapter_section_tracker ||= ChapterSectionTracker.new
+    chapter_tracker ||= ChapterTracker.new
 
-    if cnx_book_part.is_unit?(has_parent: parent_book_part.present?)
-      # Skip units: don't make a book part
-      book_part = parent_book_part
-    else
-      book_part = Content::Models::BookPart.create(
+    outputs[:chapters] = []
+    outputs[:pages] = []
+    outputs[:page_taggings] = []
+    outputs[:exercises] = []
+
+    if cnx_book_part.is_chapter? # Skip root/units
+      chapter = Content::Models::Chapter.new(
         book: book,
-        parent_book_part: parent_book_part,
+        number: chapter_tracker.value,
         title: cnx_book_part.title,
-        chapter_section: chapter_section_tracker.value,
-        url: book_url,
-        uuid: uuid,
-        version: version
+        book_location: [chapter_tracker.value]
       )
+      chapter.save if save
+      transfer_errors_from(chapter, {type: :verbatim}, true)
 
-      parent_book_part.child_book_parts << book_part unless parent_book_part.nil?
-    end
+      book.chapters << chapter
+      outputs[:chapters] << chapter
 
-    cnx_book_part.parts.each_with_index do |part, index|
-      if part.is_a?(OpenStax::Cnx::V1::BookPart)
+      page_offset = cnx_book_part.parts.first.try(:is_intro?) ? 0 : 1
 
-        chapter_section_tracker.advance_chapter! unless part.is_unit?(has_parent: true)
+      cnx_book_part.parts.each_with_index do |part, index|
+        raise "Unexpected class #{part.class}" unless part.is_a?(OpenStax::Cnx::V1::Page)
 
-        run(:import_book_part,
-            cnx_book_part: part,
-            parent_book_part: book_part,
-            book: book,
-            chapter_section_tracker: chapter_section_tracker)
+        outs = run(:import_page,
+                   cnx_page: part,
+                   chapter: chapter,
+                   number: index + 1,
+                   book_location: [chapter_tracker.value, index + page_offset],
+                   save: save).outputs
 
-      elsif part.is_a?(OpenStax::Cnx::V1::Page)
+        outputs[:pages] << outs.page
+        outputs[:page_taggings] += outs.taggings
+        outputs[:exercises] += outs.exercises
+      end
 
-        chapter_section_tracker.advance_section!(page: part)
+      chapter_tracker.advance!
+    else
+      cnx_book_part.parts.each do |part|
+        raise "Unexpected class #{part.class}" unless part.is_a?(OpenStax::Cnx::V1::BookPart)
 
-        run(:import_page,
-            cnx_page: part,
-            book_part: book_part,
-            chapter_section: chapter_section_tracker.value)
+        outs = run(:import_book_part,
+                   cnx_book_part: part,
+                   book: book,
+                   chapter_tracker: chapter_tracker,
+                   save: save).outputs
 
-      else
-        raise "Unknown class #{part.class}"
+        outputs[:chapters] += outs.chapters
+        outputs[:pages] += outs.pages
+        outputs[:page_taggings] += outs.page_taggings
+        outputs[:exercises] += outs.exercises
       end
     end
 
-    outputs[:book_part] = book_part
   end
 
-  def is_unit?(parent_book_part, cnx_book_part)
-    !parent_book_part.nil? && cnx_book_part.has_child_book_parts?
-  end
-
-  class ChapterSectionTracker
+  class ChapterTracker
     def initialize
-      @chapter = 0
-      @section = nil
+      @chapter = 1
     end
 
     def value
-      return []                   if starting_a_book?    # root value
-      return [@chapter]           if starting_a_chapter? # chapter value
-      return [@chapter, @section]                        # page value
+      @chapter
     end
 
-    def reset_section!(has_intro)
-      # If has an intro, we want first page to be x.0; otherwise x.1.  Start
-      # one below that goal
-      @section = has_intro ? -1 : 0
-    end
-
-    def advance_chapter!
+    def advance!
       @chapter += 1
-      @section = nil
-    end
-
-    def advance_section!(page:)
-      if starting_a_chapter?
-        if page.is_intro?
-          @section = 0
-        else
-          @section = 1
-        end
-      else
-        @section += 1
-      end
-    end
-
-    def starting_a_chapter?
-      @section.nil?
-    end
-
-    def starting_a_book?
-      0 == @chapter
     end
   end
 
