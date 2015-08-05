@@ -3,7 +3,8 @@ class GetUserCourses
   lev_routine express_output: :courses
 
   uses_routine Role::GetUserRoles,
-               as: :get_user_roles
+               as: :get_user_roles,
+               translations: { outputs: { type: :verbatim } }
 
   uses_routine CourseMembership::GetRoleCourses,
                as: :get_role_courses,
