@@ -537,7 +537,7 @@ ActiveRecord::Schema.define(version: 20150804002246) do
 
   create_table "tasks_tasks", force: :cascade do |t|
     t.integer  "tasks_task_plan_id"
-    t.integer  "entity_task_id"
+    t.integer  "entity_task_id",                                null: false
     t.integer  "task_type",                                     null: false
     t.string   "title",                                         null: false
     t.text     "description"

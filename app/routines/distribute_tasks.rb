@@ -6,6 +6,22 @@ class DistributeTasks
 
   protected
 
+  def save(entity_tasks)
+    entity_tasks.each do |entity_task|
+      entity_task.task.task_steps.each_with_index do |task_step, index|
+        tasked = task_step.tasked
+        tasked.task_step = nil
+        tasked.save!
+        task_step.tasked = tasked
+        task_step.number = index + 1
+      end
+
+      entity_task.task.update_step_counts
+    end
+
+    Entity::Task.import! entity_tasks, recursive: true
+  end
+
   def exec(task_plan)
     # Lock the TaskPlan to prevent concurrent update/publish
     task_plan.lock!
@@ -22,26 +38,27 @@ class DistributeTasks
     assistant = task_plan.assistant
 
     # Call the assistant code to create Tasks, then distribute them
-    tasks = assistant.build_tasks(task_plan: task_plan, taskees: taskees)
-    tasks.each_with_index do |task, ii|
+    entity_tasks = assistant.build_tasks(task_plan: task_plan, taskees: taskees)
+    entity_tasks.each_with_index do |entity_task, ii|
       role = taskees[ii]
       tasking = Tasks::Models::Tasking.new(
-        task: task.entity_task,
+        task: entity_task,
         role: role,
         period: role.student.try(:period)
       )
-      task.entity_task.taskings << tasking
+      entity_task.taskings << tasking
 
+      task = entity_task.task
       task.opens_at = opens_ats[ii]
       task.due_at = due_ats[ii] || (task.opens_at + 1.week)
       task.feedback_at ||= task.due_at
     end
 
-    Tasks::Models::Task.import tasks, recursive: true
+    save(entity_tasks)
 
     task_plan.update_column(:published_at, Time.now)
 
-    outputs[:tasks] = tasks
+    outputs[:entity_tasks] = entity_tasks
   end
 
 end

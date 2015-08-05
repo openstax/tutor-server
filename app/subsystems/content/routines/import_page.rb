@@ -37,6 +37,8 @@ class Content::Routines::ImportPage
     run(:find_or_create_tags, input: cnx_page.tags)
     run(:tag, outputs[:page], outputs[:tags], tagging_class: Content::Models::PageTag, save: save)
 
+    outputs[:page].page_tags = outputs[:taggings]
+
     outputs[:exercises] = []
 
     return unless save

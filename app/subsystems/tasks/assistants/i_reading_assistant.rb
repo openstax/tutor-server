@@ -19,21 +19,16 @@ class Tasks::Assistants::IReadingAssistant
   end
 
   def self.build_tasks(task_plan:, taskees:)
-    ## NOTE: This implementation isn't particularly robust: failure to distribute to any taskee will
-    ##       result in failure to distribute to EVERY taskee (because the entire transaction will be
-    ##       rolled back).  Eventually, we will probably want to create an "undistributed" task and
-    ##       have per-taskee workers (with per-taskee transactions) build and distribute the tasks.
-
     pages = collect_pages(task_plan: task_plan)
 
-    debugger if pages.blank?
+    raise "No pages selected" if pages.blank?
 
     taskees.collect do |taskee|
       build_ireading_task(
         task_plan:    task_plan,
         taskee:       taskee,
         pages:        pages
-      )
+      ).entity_task
     end
   end
 
@@ -161,7 +156,7 @@ class Tasks::Assistants::IReadingAssistant
         exercise_history.push(chosen_exercise)
 
         step = add_exercise_step(task: task, exercise: chosen_exercise)
-        step.add_related_content(chosen_exercise.related_content)
+        step.add_related_content(chosen_exercise.page.related_content)
         step.group_type = :spaced_practice_group
       end
     end

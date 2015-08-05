@@ -53,7 +53,7 @@ class Content::ImportBook
     #
 
     biglearn_exercises = outputs[:exercises].collect do |ex|
-      OpenStax::Biglearn::V1::Exercise.new(ex.url, *ex.exercise_tags.collect{ |ex| ex.tag })
+      OpenStax::Biglearn::V1::Exercise.new(ex.url, *ex.exercise_tags.collect{ |ex| ex.tag.value })
     end
     OpenStax::Biglearn::V1.add_exercises(biglearn_exercises)
   end

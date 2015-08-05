@@ -42,7 +42,7 @@ class Content::Routines::ImportExercises
                           tagging_class: Content::Models::ExerciseTag,
                           save: false).outputs.taggings
 
-      exercise.exercise_tags << exercise_tags
+      exercise.exercise_tags = exercise_tags
       outputs[:exercises] << exercise
     end
 

@@ -22,9 +22,9 @@ module Ecosystem
           end
         end
 
-        def pages_by_ids(ids)
+        def pages_by_ids(*ids)
           id_indices = {}
-          ids.each_with_index do |id, index|
+          [ids].flatten.each_with_index do |id, index|
             integer_id = Integer(id) rescue nil
             next if integer_id.nil?
 
@@ -41,9 +41,9 @@ module Ecosystem
           end
         end
 
-        def exercises_by_ids(ids)
+        def exercises_by_ids(*ids)
           id_indices = {}
-          ids.each_with_index do |id, index|
+          [ids].flatten.each_with_index do |id, index|
             integer_id = Integer(id) rescue nil
             next if integer_id.nil?
 

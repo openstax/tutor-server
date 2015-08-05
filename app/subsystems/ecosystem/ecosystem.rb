@@ -23,16 +23,16 @@ module Ecosystem
       verify_and_return @strategy.pages, klass: ::Ecosystem::Page
     end
 
-    def pages_by_ids(ids)
-      verify_and_return @strategy.pages_by_ids(ids), klass: ::Ecosystem::Page
+    def pages_by_ids(*ids)
+      verify_and_return @strategy.pages_by_ids(*ids), klass: ::Ecosystem::Page
     end
 
     def exercises
       verify_and_return @strategy.exercises, klass: ::Ecosystem::Exercise
     end
 
-    def exercises_by_ids(ids)
-      verify_and_return @strategy.exercises_by_ids(ids), klass: ::Ecosystem::Exercise
+    def exercises_by_ids(*ids)
+      verify_and_return @strategy.exercises_by_ids(*ids), klass: ::Ecosystem::Exercise
     end
 
     def reading_core_exercises(pages:)

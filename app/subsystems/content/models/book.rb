@@ -4,9 +4,9 @@ class Content::Models::Book < Tutor::SubSystems::BaseModel
 
   acts_as_resource
 
-  belongs_to :ecosystem
+  belongs_to :ecosystem, inverse_of: :books
 
-  has_many :chapters, dependent: :destroy, autosave: true
+  has_many :chapters, dependent: :destroy, autosave: true, inverse_of: :book
   has_many :pages, through: :chapters
   has_many :exercises, through: :pages
 

@@ -19,8 +19,11 @@ module Ecosystem
         return object if object.nil?
       end
 
-      raise(error, "Tested argument was not of class '#{klass}' as expected") \
-        if [object].flatten.any?{ |obj| !obj.is_a? klass }
+      [object].flatten.each do |obj|
+        raise(
+          error, "Tested argument was of class '#{obj.class}' instead of the expected '#{klass}'."
+        ) unless obj.is_a? klass
+      end
 
       object
     end

@@ -40,7 +40,7 @@ class Tasks::Assistants::HomeworkAssistant
         task_plan:    task_plan,
         taskee:       taskee,
         exercises:    exercises
-      )
+      ).entity_task
     end
   end
 

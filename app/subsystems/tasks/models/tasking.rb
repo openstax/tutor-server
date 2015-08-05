@@ -1,5 +1,5 @@
 class Tasks::Models::Tasking < Tutor::SubSystems::BaseModel
-  belongs_to :task, subsystem: :entity
+  belongs_to :task, subsystem: :entity, inverse_of: :taskings
   belongs_to :role, subsystem: :entity
 
   belongs_to :period, subsystem: :course_membership

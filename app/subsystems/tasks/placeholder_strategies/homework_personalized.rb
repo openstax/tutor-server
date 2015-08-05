@@ -1,6 +1,7 @@
 class Tasks::PlaceholderStrategies::HomeworkPersonalized
 
   def populate_placeholders(task:)
+    # TODO: Replace with Exercise pools
     personalized_placeholder_task_steps = task.personalized_task_steps.select(&:placeholder?)
     return if personalized_placeholder_task_steps.none?
 

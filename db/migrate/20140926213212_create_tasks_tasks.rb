@@ -2,7 +2,7 @@ class CreateTasksTasks < ActiveRecord::Migration
   def change
     create_table :tasks_tasks do |t|
       t.references :tasks_task_plan
-      t.references :entity_task
+      t.references :entity_task, null: false
       t.integer :task_type, null: false
       t.string :title, null: false
       t.text :description

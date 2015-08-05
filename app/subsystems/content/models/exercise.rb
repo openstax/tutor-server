@@ -3,9 +3,9 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
 
   wrapped_by ::Ecosystem::Strategies::Direct::Exercise
 
-  belongs_to :page
+  belongs_to :page, inverse_of: :exercises
 
-  has_many :exercise_tags, dependent: :destroy, autosave: true
+  has_many :exercise_tags, dependent: :destroy, autosave: true, inverse_of: :exercise
   has_many :tags, through: :exercise_tags
 
   has_many :tasked_exercises, subsystem: :tasks, primary_key: :url, foreign_key: :url

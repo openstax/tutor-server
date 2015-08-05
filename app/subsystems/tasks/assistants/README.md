@@ -6,7 +6,7 @@ Assistant Classes must:
      singleton method which:
        - Receives as inputs the TaskPlan being assigned and the taskees (targets)
        - Builds Task objects
-       - Returns an array containing the Tasks to be assigned to the taskees (in order)
+       - Returns an array containing the Entity::Tasks to be assigned to the taskees (in order)
 
   2. Implement the `schema` singleton method which:
        - Receives no arguments
