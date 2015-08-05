@@ -1,8 +1,8 @@
 module ApplicationHelper
   def bootstrap_flash
     HashWithIndifferentAccess.new({ success: 'alert-success',
-                                    error: 'alert-error',
-                                    alert: 'alert-block',
+                                    error: 'alert-danger',
+                                    alert: 'alert-warning',
                                     notice: 'alert-info' })
   end
 

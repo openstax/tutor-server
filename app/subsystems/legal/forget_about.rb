@@ -1,10 +1,10 @@
-class Legal::ForgetAboutContracts
+class Legal::ForgetAbout
   lev_routine
 
   protected
 
-  def exec(with_respect_to:)
-    gid = Legal::Utils.gid(with_respect_to)
+  def exec(item:)
+    gid = Legal::Utils.gid(item)
 
     Legal::Models::TargetedContractRelationship.destroy_all(child_gid: gid)
     Legal::Models::TargetedContractRelationship.destroy_all(parent_gid: gid)

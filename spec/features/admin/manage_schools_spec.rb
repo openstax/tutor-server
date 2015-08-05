@@ -58,7 +58,7 @@ RSpec.describe 'Administration' do
 
     expect(current_path).to eq(admin_schools_path)
     expect(page).to have_css('.flash_alert',
-                             text: "Cannot delete a school with courses associated.")
+                             text: "Cannot delete a school that has courses.")
     expect(page).to have_content('John F Kennedy High')
   end
 end

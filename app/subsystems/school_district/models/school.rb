@@ -17,8 +17,8 @@ module SchoolDistrict
       protected
 
       def check_no_courses
-        errors.add(:profiles, 'must be empty') unless profiles.empty?
-        errors.any?
+        errors.add(:base, 'Cannot delete a school that has courses.') unless profiles.empty?
+        errors.none?
       end
     end
   end

@@ -1,7 +1,7 @@
 module SchoolDistrict
   module Models
     class District < Tutor::SubSystems::BaseModel
-      has_many :schools, subsystem: :school_district
+      has_many :schools
 
       validates :name, presence: true, uniqueness: true
 
@@ -10,8 +10,8 @@ module SchoolDistrict
       protected
 
       def check_no_schools
-        errors.add(:schools, 'must be empty') unless schools.empty?
-        errors.any?
+        errors.add(:base, 'Cannot delete a district that has schools.') unless schools.empty?
+        errors.none?
       end
     end
   end

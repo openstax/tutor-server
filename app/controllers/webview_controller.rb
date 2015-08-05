@@ -28,7 +28,7 @@ class WebviewController < ApplicationController
 
     # targeted_contracts = GetCourseTargetedContractsForUser[user: current_user.entity_user]
 
-    courses = GetUserCourses[user: user]
+    courses = GetUserCourses[user: current_user.entity_user]
 
     contract_names = Legal::GetContractNames.call(
       applicable_to: courses,

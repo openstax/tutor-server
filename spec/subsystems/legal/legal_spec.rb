@@ -75,7 +75,7 @@ RSpec.describe Legal do
       }
 
       it 'can forget about the lowest child' do
-        Legal::ForgetAboutContracts[with_respect_to: 'C']
+        Legal::ForgetAbout[item: 'C']
 
         expect(Legal::GetTargetedContracts[applicable_to: 'C'].size).to eq 0
         expect(Legal::GetTargetedContracts[applicable_to: 'B'].size).to eq 1
@@ -83,7 +83,7 @@ RSpec.describe Legal do
       end
 
       it 'can forget about the middle child' do
-        Legal::ForgetAboutContracts[with_respect_to: 'B']
+        Legal::ForgetAbout[item: 'B']
 
         expect(Legal::GetTargetedContracts[applicable_to: 'C'].size).to eq 0
         expect(Legal::GetTargetedContracts[applicable_to: 'B'].size).to eq 0
@@ -91,7 +91,7 @@ RSpec.describe Legal do
       end
 
       it 'can forget about the top parent' do
-        Legal::ForgetAboutContracts[with_respect_to: 'A']
+        Legal::ForgetAbout[item: 'A']
 
         expect(Legal::GetTargetedContracts[applicable_to: 'C'].size).to eq 0
         expect(Legal::GetTargetedContracts[applicable_to: 'B'].size).to eq 0
@@ -144,11 +144,6 @@ RSpec.describe Legal do
       )
     end
 
-    xit 'can mask contracts' do
-
-    end
-
   end
-
 
 end
