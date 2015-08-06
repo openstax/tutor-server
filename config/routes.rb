@@ -99,6 +99,7 @@ Rails.application.routes.draw do
       end
       resources :periods, shallow: true
       resources :students, only: [:index], shallow: true
+      resources :teachers, only: [:destroy], shallow: true
     end
 
     resources :districts

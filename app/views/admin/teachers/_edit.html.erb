@@ -11,9 +11,18 @@
   <tbody>
   <% @teachers.each do |teacher| %>
     <tr>
-      <td><%= teacher.username %></td>
-      <td><%= teacher.name %></td>
-      <td></td>
+      <td><%= teacher.role.username %></td>
+      <td><%= teacher.role.name %></td>
+      <td>
+        <%= link_to 'Remove from course',
+                    admin_teacher_path(teacher),
+                    method: :delete,
+                    class: 'btn btn-xs btn-primary',
+                    data: {
+                      confirm: "Are you sure you want to remove teacher \"#{teacher.role.name}\" from the course?"
+                    } %>
+
+      </td>
     </tr>
   <% end %>
   </tbody>

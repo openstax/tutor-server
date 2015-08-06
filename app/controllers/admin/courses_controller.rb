@@ -17,8 +17,7 @@ class Admin::CoursesController < Admin::BaseController
     entity_course = Entity::Course.find(params[:id])
     @course = GetCourseProfile[course: entity_course]
     @periods = entity_course.periods
-    teachers = entity_course.teachers.includes(role: { user: { profile: :account } })
-    @teachers = teachers.collect { |t| t.role.user.profile }
+    @teachers = entity_course.teachers.includes(role: { user: { profile: :account } })
     @books = Content::ListBooks[]
     @course_book = entity_course.books.first
   end
