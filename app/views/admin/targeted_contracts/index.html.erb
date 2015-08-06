@@ -18,12 +18,12 @@
       <tr>
         <td><%= contract.target_name %></td>
         <td><%= contract.contract_name.to_s %></td>
-        <td><%= contract.masked_contract_names.count %></td>
+        <td><%= contract.masked_contract_names.join(', ') %></td>
         <td><%= tf_to_yn(contract.is_proxy_signed) %></td>
         <td><%= tf_to_yn(contract.is_end_user_visible) %></td>
         <td>
-          <%= link_to 'edit', edit_admin_targeted_contract_path(contract.id),
-                              class: 'btn btn-xs btn-primary' %>
+          <%= link_to 'edit', '#',
+                              class: 'btn btn-xs btn-primary edit' %>
           <%= link_to 'delete', admin_targeted_contract_path(contract.id),
                                 method: :delete,
                                 data: {
@@ -35,3 +35,13 @@
     <% end %>
   </tbody>
 </table>
+
+
+<script type='text/javascript'>
+$(document).ready(function() {
+  $('.edit').click(function(event){
+    alert('There is no edit yet, only delete and create again (quickly).');
+    event.preventDefault(); // Prevent link from following its href
+  });
+});
+</script>

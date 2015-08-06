@@ -134,7 +134,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :targeted_contracts
+    resources :targeted_contracts, except: [:show, :edit]
   end
 
   namespace :dev do

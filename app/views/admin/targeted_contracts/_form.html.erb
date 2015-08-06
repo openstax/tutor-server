@@ -24,7 +24,8 @@
       <label class='col-sm-3 control-label'>Masked Contracts</label>
       <div class='col-sm-9'>
         <%= f.select :masked_contract_names,
-                     options_from_collection_for_select(FinePrint::Contract.all, :name, :name),
+                     options_from_collection_for_select(FinePrint::Contract.published.latest,
+                                                        :name, :name),
                      { class: 'form-control' },
                      { multiple: true } %>
       </div>

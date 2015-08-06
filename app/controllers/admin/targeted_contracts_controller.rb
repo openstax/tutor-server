@@ -1,11 +1,9 @@
 class Admin::TargetedContractsController < Admin::BaseController
 
+  before_filter :load_district_targets, only: [:new]
+
   def index
     @contracts = Legal::GetTargetedContracts[]
-  end
-
-  def show
-    @contract = Legal::GetTargetedContracts[ids: params[:id]]
   end
 
   def create
@@ -21,7 +19,9 @@ class Admin::TargetedContractsController < Admin::BaseController
     redirect_to admin_targeted_contracts_path
   end
 
-  def new
+  protected
+
+  def load_district_targets
     @targets = SchoolDistrict::ListDistricts[].collect do |district|
       Hashie::Mash.new(value: "#{district.gid}|#{district.name}", name: district.name)
     end
