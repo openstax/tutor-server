@@ -1,12 +1,28 @@
 <% method ||= :post %>
 
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Username</th>
+      <th>Name</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @teachers.each do |teacher| %>
+    <tr>
+      <td><%= teacher.username %></td>
+      <td><%= teacher.name %></td>
+      <td></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+
 <%= form_tag(url, method: method) do |f| %>
   <div class="form-group">
     <%= text_field_tag :course_teacher, nil, class: 'form-control', placeholder: 'Start typing to search for a user...' %>
     <ul id="assigned-teachers">
-    <% @teachers.each do |teacher| %>
-      <li><%= teacher.name %> (<%= teacher.username %>)</li>
-    <% end %>
     <li class="hidden help-block">Click "Save" to assign the following teachers.</li>
     </ul>
   </div>
