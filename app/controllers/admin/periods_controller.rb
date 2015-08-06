@@ -9,7 +9,7 @@ class Admin::PeriodsController < Admin::BaseController
   def create
     period = CreatePeriod[course: @course, name: params[:period][:name]]
     flash[:notice] = "Period \"#{period.name}\" created."
-    redirect_to edit_admin_course_path(@course.id)
+    redirect_to edit_admin_course_path(@course.id, anchor: 'periods')
   end
 
   def edit
@@ -18,7 +18,7 @@ class Admin::PeriodsController < Admin::BaseController
   def update
     @period.update_attributes(name: params[:period][:name])
     flash[:notice] = 'Period updated.'
-    redirect_to edit_admin_course_path(@course.id)
+    redirect_to edit_admin_course_path(@course.id, anchor: 'periods')
   end
 
   def destroy
@@ -27,7 +27,7 @@ class Admin::PeriodsController < Admin::BaseController
     else
       flash[:error] = @period.errors.full_messages
     end
-    redirect_to edit_admin_course_path(@course.id)
+    redirect_to edit_admin_course_path(@course.id, anchor: 'periods')
   end
 
   private

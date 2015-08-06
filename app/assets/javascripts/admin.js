@@ -53,4 +53,10 @@ $(document).ready(function() {
       });
     }
   });
+
+  //========== Course tab selection =============//
+  var tab = window.location.hash;
+  if (tab) {
+    $('a[href="' + tab + '"]').click();
+  }
 });

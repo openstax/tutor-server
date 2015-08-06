@@ -7,6 +7,6 @@ class Admin::TeachersController < Admin::BaseController
     end
 
     flash[:notice] = 'Teachers updated.'
-    redirect_to edit_admin_course_path(course)
+    redirect_to edit_admin_course_path(course, anchor: 'teachers')
   end
 end
