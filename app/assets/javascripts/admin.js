@@ -45,7 +45,7 @@ $(document).ready(function() {
         success: function(data) {
           response($.map(data.items, function(item) {
             return {
-              label: item.full_name + ' (' + item.username + ')',
+              label: item.name + ' (' + item.username + ')',
               value: item.entity_user_id
             };
           }));

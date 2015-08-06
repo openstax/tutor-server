@@ -26,12 +26,14 @@ RSpec.describe UserProfile::SearchProfiles do
       'account_id' => user_2.account.id,
       'entity_user_id' => user_2.entity_user.id,
       'full_name' => 'Stan Dup',
+      'name' => 'Stan Dup',
       'username' => 'teacher'
     }, {
       'id' => user_1.id,
       'account_id' => user_1.account.id,
       'entity_user_id' => user_1.entity_user.id,
       'full_name' => 'Chris Mass',
+      'name' => 'Chris Mass',
       'username' => 'student'
     } ]
   end
@@ -44,12 +46,14 @@ RSpec.describe UserProfile::SearchProfiles do
       'account_id' => user_2.account.id,
       'entity_user_id' => user_2.entity_user.id,
       'full_name' => 'Stan Dup',
+      'name' => 'Stan Dup',
       'username' => 'teacher'
     }, {
       'id' => user_1.id,
       'account_id' => user_1.account.id,
       'entity_user_id' => user_1.entity_user.id,
       'full_name' => 'Chris Mass',
+      'name' => 'Chris Mass',
       'username' => 'student'
     } ]
 
@@ -60,6 +64,7 @@ RSpec.describe UserProfile::SearchProfiles do
       'account_id' => admin.account.id,
       'entity_user_id' => admin.entity_user.id,
       'full_name' => 'Administrator User',
+      'name' => 'Administrator User',
       'username' => 'admin'
     } ]
   end
