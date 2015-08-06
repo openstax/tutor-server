@@ -1,10 +1,10 @@
 require 'rails_helper'
 
-RSpec.describe CourseContent::AddBookToCourse, :type => :routine do
+RSpec.describe CourseContent::AddBookToCourse, type: :routine do
 
   let!(:course) { Entity::Course.create! }
-  let!(:book1)  { Entity::Book.create! }
-  let!(:book2)  { Entity::Book.create! }
+  let!(:book1)  { Content::Models::Book.create! }
+  let!(:book2)  { Content::Models::Book.create! }
 
   it "adds a book to a course when the book is not already there" do
     result = nil

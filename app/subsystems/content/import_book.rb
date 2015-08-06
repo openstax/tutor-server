@@ -9,12 +9,14 @@ class Content::ImportBook
   uses_routine Content::Routines::UpdatePageContent,
                as: :update_page_content
 
+  uses_routine Content::Routines::VisitBook, as: :visit_book
+
   protected
 
-  # Imports and saves a Cnx::Book as an Entity::Book
+  # Imports and saves a Cnx::Book as an Content::Models::Book
   # Returns the Book object, Resource object and collection JSON as a hash
-  def exec(cnx_book:)
-    outputs[:book] = Entity::Book.create!
+  def exec(cnx_book:, ecosystem:)
+    outputs[:book] = Content::Models::Book.create!(ecosystem_ecosystem_id: ecosystem.id)
 
     run(:import_book_part, cnx_book_part: cnx_book.root_book_part,
                            book: outputs[:book],
@@ -34,7 +36,8 @@ class Content::ImportBook
     # TODO this code below should probably be in Domain
     #
 
-    exercise_data = Content::VisitBook[book: outputs[:book], visitor_names: :exercises]
+    exercise_data = run(:visit_book, book: outputs[:book], visitor_names: :exercise)
+                      .outputs.visit_book
 
     biglearn_exercises = exercise_data.values.collect do |ed|
       tags = ed['los'] + ed['tags']

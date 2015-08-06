@@ -29,15 +29,16 @@ class Content::Routines::FindOrCreateTags
   def find_or_create_tags_from_hash_array(hash_array)
     # Find existing tags
     hash_values = hash_array.collect{ |hash| hash[:value] }
-    existing_tags = Content::Models::Tag.where(value: hash_values)
+    existing_tags = Content::Models::Tag.eager_load(:teks_tags).where(value: hash_values)
     existing_tag_values = existing_tags.collect{ |tag| tag.value }
+    existing_teks_tags = existing_tags.collect{ |tag| tag.teks_tags }.flatten
 
     # Exclude existing tags
     new_hash_array = hash_array.select{ |hash| !existing_tag_values.include?(hash[:value]) }
 
     # Create new TEKS tags first
     teks_values = new_hash_array.collect{ |hash| hash[:teks] }.compact.uniq
-    existing_teks_tags = Content::Models::Tag.where(value: teks_values)
+    existing_teks_tags = (existing_teks_tags + Content::Models::Tag.where(value: teks_values)).uniq
     existing_teks_values = existing_teks_tags.collect{ |tag| tag.value }
 
     # Search tag hashes for the TEKS definitions
@@ -79,7 +80,7 @@ class Content::Routines::FindOrCreateTags
       new_tag
     end
 
-    existing_tags + new_teks_tags + new_non_teks_tags
+    (existing_tags + existing_teks_tags + new_teks_tags + new_non_teks_tags).uniq
   end
 
 end
