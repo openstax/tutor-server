@@ -8,6 +8,11 @@
     </a>
   </li>
   <li role="presentation">
+    <a href="#teachers" aria-controls="teachers" role="tab" data-toggle="tab">
+      Teachers
+    </a>
+  </li>
+  <li role="presentation">
     <a href="#books" aria-controls="books" role="tab" data-toggle="tab">
       Course books
     </a>
@@ -29,6 +34,12 @@
     <h3>Course</h3>
 
     <%= render 'form', url: admin_course_path, method: :put %>
+  </div>
+
+  <div role="tabpanel" class="tab-pane" id="teachers">
+    <h3>Assign teachers</h3>
+
+    <%= render 'admin/teachers/edit', url: teachers_admin_course_path(@course.course_id) %>
   </div>
 
   <div role="tabpanel" class="tab-pane" id="books">

@@ -12,10 +12,11 @@ $(document).ready(function() {
 
 //============= Courses =================//
 $(document).ready(function() {
+  //=========== Course teacher auto complete ==============//
   $('#course_teacher').autocomplete({
     minLength: 2,
     select: function(event_, ui) {
-      var hidden = $('<input type="hidden" name="course[teacher_ids][]"/>');
+      var hidden = $('<input type="hidden" name="teacher_ids[]"/>');
       hidden.val(ui.item.value);
       var label = $('<label>');
       label.text(ui.item.label);

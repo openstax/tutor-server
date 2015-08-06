@@ -15,7 +15,7 @@ RSpec.feature 'Admin editing a course' do
 
     expect(page).to have_content('Edit Course')
     fill_in 'Name', with: 'Changed'
-    click_button 'Save'
+    first(:button, 'Save').click
 
     expect(current_path).to eq(admin_courses_path)
     expect(page).to have_css('.flash_notice', text: 'The course has been updated.')
@@ -28,7 +28,7 @@ RSpec.feature 'Admin editing a course' do
     click_link 'Edit'
 
     select 'School name', from: 'School'
-    click_button 'Save'
+    first(:button, 'Save').click
 
     expect(current_path).to eq(admin_courses_path)
     expect(page).to have_css('tr td', text: 'School name')
