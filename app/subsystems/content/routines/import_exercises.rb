@@ -47,6 +47,7 @@ class Content::Routines::ImportExercises
     end
 
     Content::Models::Exercise.import!(outputs[:exercises], recursive: true)
+
     outputs[:exercises].each do |exercise|
       exercise.tags.reset
     end

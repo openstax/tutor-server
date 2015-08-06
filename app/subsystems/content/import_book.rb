@@ -7,6 +7,7 @@ class Content::ImportBook
   uses_routine Content::Routines::ImportExercises, as: :import_exercises,
                                                   translations: { outputs: { type: :verbatim } }
   uses_routine Content::Routines::UpdatePageContent, as: :update_page_content
+  uses_routine Content::Routines::PopulateExercisePools, as: :populate_exercise_pools
 
   protected
 
@@ -27,11 +28,9 @@ class Content::ImportBook
     objective_page_tags = outputs[:page_taggings].select{ |pt| pt.tag.lo? || pt.tag.aplo? }
     query_hash = { tag: objective_page_tags.collect{ |pt| pt.tag.value } }
     page_block = ->(exercise_wrapper) {
-      tags = exercise_wrapper.los + exercise_wrapper.aplos
-      common_tags = objective_page_tags.select{ |pt| tags.include?(pt.tag.value) }
-      pages = common_tags.collect{ |pt| pt.page }
+      tags = Set.new(exercise_wrapper.los + exercise_wrapper.aplos)
       # Assume only one page for now
-      pages.first
+      objective_page_tags.find{ |opt| tags.include?(opt.tag.value) }.try(:page)
     }
 
     if objective_page_tags.empty?
@@ -41,7 +40,13 @@ class Content::ImportBook
       run(:import_exercises, page: page_block, query_hash: query_hash)
     end
 
-    run(:update_page_content, pages: outputs[:pages])
+    # Need a double reload here for it to work for some reason
+    pages = book.reload.pages(true).eager_load(exercises: {exercise_tags: :tag})
+    pages = run(:update_page_content, pages: pages).outputs.pages
+    pages = run(:populate_exercise_pools, pages: pages).outputs.pages
+    # Replace with UPSERT once we have support for it
+    pages.each{ |page| page.save! }
+    outputs[:pages] = pages
 
     #
     # Send exercise and tag info to Biglearn

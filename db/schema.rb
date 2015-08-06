@@ -35,7 +35,7 @@ ActiveRecord::Schema.define(version: 20150804002246) do
     t.integer  "content_book_id", null: false
     t.integer  "number",          null: false
     t.string   "title",           null: false
-    t.text     "book_location"
+    t.text     "book_location",   null: false
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
   end
@@ -94,16 +94,21 @@ ActiveRecord::Schema.define(version: 20150804002246) do
   add_index "content_page_tags", ["content_tag_id"], name: "index_content_page_tags_on_content_tag_id", using: :btree
 
   create_table "content_pages", force: :cascade do |t|
-    t.string   "url",                null: false
+    t.string   "url",                              null: false
     t.text     "content"
-    t.integer  "content_chapter_id", null: false
-    t.integer  "number",             null: false
-    t.string   "title",              null: false
-    t.text     "book_location"
+    t.integer  "content_chapter_id",               null: false
+    t.integer  "number",                           null: false
+    t.string   "title",                            null: false
     t.string   "uuid"
     t.string   "version"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
+    t.text     "book_location",                    null: false
+    t.text     "reading_dynamic_exercise_ids"
+    t.text     "reading_try_another_exercise_ids"
+    t.text     "homework_core_exercise_ids"
+    t.text     "homework_dynamic_exercise_ids"
+    t.text     "practice_widget_exercise_ids"
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
   end
 
   add_index "content_pages", ["content_chapter_id", "number"], name: "index_content_pages_on_content_chapter_id_and_number", unique: true, using: :btree

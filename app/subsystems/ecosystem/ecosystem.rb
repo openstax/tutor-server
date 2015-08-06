@@ -35,15 +35,15 @@ module Ecosystem
       verify_and_return @strategy.exercises_by_ids(*ids), klass: ::Ecosystem::Exercise
     end
 
-    def reading_core_exercises(pages:)
-      pages_arr = verify_and_return [pages].flatten.compact, klass: ::Ecosystem::Page
-      exercises = @strategy.reading_core_exercises(pages: pages_arr)
-      verify_and_return exercises, klass: ::Ecosystem::Exercise
-    end
-
     def reading_dynamic_exercises(pages:)
       pages_arr = verify_and_return [pages].flatten.compact, klass: ::Ecosystem::Page
       exercises = @strategy.reading_dynamic_exercises(pages: pages_arr)
+      verify_and_return exercises, klass: ::Ecosystem::Exercise
+    end
+
+    def reading_try_another_exercises(pages:)
+      pages_arr = verify_and_return [pages].flatten.compact, klass: ::Ecosystem::Page
+      exercises = @strategy.reading_try_another_exercises(pages: pages_arr)
       verify_and_return exercises, klass: ::Ecosystem::Exercise
     end
 
@@ -56,6 +56,12 @@ module Ecosystem
     def homework_dynamic_exercises(pages:)
       pages_arr = verify_and_return [pages].flatten.compact, klass: ::Ecosystem::Page
       exercises = @strategy.homework_dynamic_exercises(pages: pages_arr)
+      verify_and_return exercises, klass: ::Ecosystem::Exercise
+    end
+
+    def practice_widget_exercises(pages:)
+      pages_arr = verify_and_return [pages].flatten.compact, klass: ::Ecosystem::Page
+      exercises = @strategy.practice_widget_exercises(pages: pages_arr)
       verify_and_return exercises, klass: ::Ecosystem::Exercise
     end
 

@@ -6,7 +6,7 @@ class Content::Routines::UpdatePageContent
 
   def exec(pages:)
     # Get all page uuids in this book
-    page_uuids = pages.collect { |page| page.uuid }
+    page_uuids = pages.collect{ |page| page.uuid }
 
     pages.each do |page|
       doc = Nokogiri::HTML(page.content)
@@ -17,8 +17,10 @@ class Content::Routines::UpdatePageContent
         change_page_links(path, page_uuids, attr)
       end
 
-      page.update_attributes(content: doc.to_html)
+      page.content = doc.to_html
     end
+
+    outputs[:pages] = pages
   end
 
   def change_page_links(path, page_uuids, attr)

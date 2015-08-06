@@ -5,7 +5,8 @@ class CreateContentChapters < ActiveRecord::Migration
                                   foreign_key: { on_update: :cascade, on_delete: :cascade }
       t.integer :number, null: false
       t.string :title, null: false
-      t.text :book_location
+
+      t.text :book_location, null: false
 
       t.timestamps null: false
 

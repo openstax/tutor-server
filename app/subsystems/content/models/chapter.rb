@@ -10,5 +10,6 @@ class Content::Models::Chapter < Tutor::SubSystems::BaseModel
 
   validates :book, presence: true
   validates :title, presence: true
+  validates :book_location, presence: true
 
 end
