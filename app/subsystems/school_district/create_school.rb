@@ -2,6 +2,9 @@ module SchoolDistrict
   class CreateSchool
     lev_routine express_output: :school
 
+    uses_routine SchoolDistrict::ProcessDistrictChange,
+                 as: :process_district_change
+
     protected
     def exec(name:, district: nil)
       outputs.school = Models::School.create(name: name,
@@ -9,9 +12,7 @@ module SchoolDistrict
 
       transfer_errors_from(outputs.school, {type: :verbatim}, true)
 
-      # TODO find a more appropriate home for this
-      Legal::MakeChildGetParentContracts[child: outputs.school,
-                                         parent: district] if district.present?
+      run(:process_district_change, school: outputs.school)
     end
 
   end
