@@ -19,15 +19,8 @@
   </tbody>
 </table>
 
-<%= form_tag(url, method: method) do |f| %>
+<%= form_tag(url, method: method, id: 'assign-teachers-form') do |f| %>
   <div class="form-group">
     <%= text_field_tag :course_teacher, nil, class: 'form-control', placeholder: 'Start typing to search for a user...' %>
-    <ul id="assigned-teachers">
-    <li class="hidden help-block">Click "Save" to assign the following teachers.</li>
-    </ul>
-  </div>
-
-  <div class="form-group">
-    <%= submit_tag 'Save', class: 'btn btn-primary' %>
   </div>
 <% end %>
