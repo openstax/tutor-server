@@ -6,7 +6,7 @@ class WebviewController < ApplicationController
 
   skip_before_filter :authenticate_user!, only: :home
 
-  fine_print_skip :general_terms_of_use, :privacy_policy, only: :home
+  before_filter :require_contracts, only: :index
 
   def home
     redirect_to dashboard_path unless current_user.is_anonymous?
@@ -19,6 +19,29 @@ class WebviewController < ApplicationController
 
   def resolve_layout
     'home' == action_name ? false : 'webview'
+  end
+
+  def require_contracts
+    # Get contracts that apply to the user's current courses; some of these
+    # have been signed by proxy (and need an implicit signature), while some
+    # don't and need to go through the normal FinePrint process.
+
+    courses = GetUserCourses[user: current_user.entity_user]
+
+    contract_names = Legal::GetContractNames.call(
+      applicable_to: courses,
+      contract_names_signed_by_everyone: [:general_terms_of_use, :privacy_policy]
+    ).outputs
+
+    contract_names.proxy_signed.each do |name|
+      next if FinePrint.signed_contract?(current_user, name)
+
+      FinePrint.sign_contract(current_user,
+                              name,
+                              FinePrint::SIGNATURE_IS_IMPLICIT)
+    end
+
+    fine_print_require *contract_names.non_proxy_signed
   end
 
 end

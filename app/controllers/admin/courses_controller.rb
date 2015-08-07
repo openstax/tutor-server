@@ -74,12 +74,12 @@ class Admin::CoursesController < Admin::BaseController
   def course_params
     { id: params[:id], course: params.require(:course)
                                      .permit(:name,
-                                             :course_detail_school_id,
+                                             :school_district_school_id,
                                              teacher_ids: []) }
   end
 
   def get_schools
-    @schools = CourseDetail::ListSchools[]
+    @schools = SchoolDistrict::ListSchools[]
   end
 
   def add_students(period, users)

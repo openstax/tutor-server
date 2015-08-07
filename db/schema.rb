@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150716231241) do
+ActiveRecord::Schema.define(version: 20150804002246) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -119,18 +119,18 @@ ActiveRecord::Schema.define(version: 20150716231241) do
   add_index "course_content_course_books", ["entity_book_id"], name: "index_course_content_course_books_on_entity_book_id", using: :btree
   add_index "course_content_course_books", ["entity_course_id", "entity_book_id"], name: "[\"course_books_course_id_on_book_id_unique\"]", unique: true, using: :btree
 
-  create_table "course_detail_districts", force: :cascade do |t|
+  create_table "school_district_districts", force: :cascade do |t|
     t.string "name", null: false
   end
 
-  create_table "course_detail_schools", force: :cascade do |t|
+  create_table "school_district_schools", force: :cascade do |t|
     t.string   "name",                      null: false
-    t.integer  "course_detail_district_id"
+    t.integer  "school_district_district_id"
     t.datetime "created_at",                null: false
     t.datetime "updated_at",                null: false
   end
 
-  add_index "course_detail_schools", ["course_detail_district_id"], name: "index_course_detail_schools_on_course_detail_district_id", using: :btree
+  add_index "school_district_schools", ["school_district_district_id"], name: "index_school_district_schools_on_school_district_district_id", using: :btree
 
   create_table "course_membership_enrollments", force: :cascade do |t|
     t.integer  "course_membership_period_id"
@@ -180,10 +180,10 @@ ActiveRecord::Schema.define(version: 20150716231241) do
     t.string   "timezone",                default: "Central Time (US & Canada)", null: false
     t.datetime "created_at",                                                     null: false
     t.datetime "updated_at",                                                     null: false
-    t.integer  "course_detail_school_id"
+    t.integer  "school_district_school_id"
   end
 
-  add_index "course_profile_profiles", ["course_detail_school_id"], name: "index_course_profile_profiles_on_course_detail_school_id", using: :btree
+  add_index "course_profile_profiles", ["school_district_school_id"], name: "index_course_profile_profiles_on_school_district_school_id", using: :btree
   add_index "course_profile_profiles", ["entity_course_id"], name: "index_course_profile_profiles_on_entity_course_id", unique: true, using: :btree
   add_index "course_profile_profiles", ["name"], name: "index_course_profile_profiles_on_name", using: :btree
 
@@ -236,15 +236,39 @@ ActiveRecord::Schema.define(version: 20150716231241) do
   add_index "fine_print_contracts", ["name", "version"], name: "index_fine_print_contracts_on_name_and_version", unique: true, using: :btree
 
   create_table "fine_print_signatures", force: :cascade do |t|
-    t.integer  "contract_id", null: false
-    t.integer  "user_id",     null: false
-    t.string   "user_type",   null: false
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.integer  "contract_id",                 null: false
+    t.integer  "user_id",                     null: false
+    t.string   "user_type",                   null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+    t.boolean  "is_implicit", default: false, null: false
   end
 
   add_index "fine_print_signatures", ["contract_id"], name: "index_fine_print_signatures_on_contract_id", using: :btree
   add_index "fine_print_signatures", ["user_id", "user_type", "contract_id"], name: "index_fine_print_signatures_on_u_id_and_u_type_and_c_id", unique: true, using: :btree
+
+  create_table "legal_targeted_contract_relationships", force: :cascade do |t|
+    t.string   "child_gid",  null: false
+    t.string   "parent_gid", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "legal_targeted_contract_relationships", ["child_gid", "parent_gid"], name: "legal_targeted_contracts_rship_child_parent", unique: true, using: :btree
+  add_index "legal_targeted_contract_relationships", ["parent_gid"], name: "legal_targeted_contracts_rship_parent", using: :btree
+
+  create_table "legal_targeted_contracts", force: :cascade do |t|
+    t.string   "target_gid",                            null: false
+    t.string   "target_name",                           null: false
+    t.string   "contract_name",                         null: false
+    t.text     "masked_contract_names"
+    t.boolean  "is_proxy_signed",       default: false
+    t.boolean  "is_end_user_visible",   default: true
+    t.datetime "created_at",                            null: false
+    t.datetime "updated_at",                            null: false
+  end
+
+  add_index "legal_targeted_contracts", ["target_gid"], name: "legal_targeted_contracts_target", using: :btree
 
   create_table "oauth_access_grants", force: :cascade do |t|
     t.integer  "resource_owner_id", null: false
@@ -567,7 +591,7 @@ ActiveRecord::Schema.define(version: 20150716231241) do
   add_foreign_key "content_pages", "content_book_parts", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_content_course_books", "entity_books"
   add_foreign_key "course_content_course_books", "entity_courses"
-  add_foreign_key "course_detail_schools", "course_detail_districts"
+  add_foreign_key "school_district_schools", "school_district_districts"
   add_foreign_key "course_membership_enrollments", "course_membership_periods", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_membership_enrollments", "course_membership_students", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_membership_periods", "entity_courses", on_update: :cascade, on_delete: :cascade

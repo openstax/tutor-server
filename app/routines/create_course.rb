@@ -5,15 +5,20 @@ class CreateCourse
     translations: { outputs: { type: :verbatim } },
     as: :create_course_profile
 
+  uses_routine SchoolDistrict::ProcessSchoolChange,
+               as: :process_school_change
+
   def exec(name:, school: nil)
-    school ||= NoSchool.new
+    # TODO eventually, making a course part of a school should be done independently
+    # with separate admin controller interfaces and all work done in the SchoolDistrict
+    # SS
+
     outputs[:course] = Entity::Course.create!
     run(:create_course_profile, name: name,
                                 course: outputs.course,
-                                course_detail_school_id: school.id)
+                                school_district_school_id: school.try(:id))
+
+    run(:process_school_change, course_profile: outputs.profile)
   end
 
-  class NoSchool
-    def id; end
-  end
 end

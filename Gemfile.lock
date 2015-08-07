@@ -184,7 +184,7 @@ GEM
       multipart-post (>= 1.2, < 3)
     fastercsv (1.5.5)
     ffi (1.9.8)
-    fine_print (3.0.0)
+    fine_print (3.1.0)
       action_interceptor (>= 1.0)
       jquery-rails
       rails (>= 3.1)
@@ -678,7 +678,7 @@ DEPENDENCIES
   factory_girl_rails
   faker
   fakeredis
-  fine_print (~> 3.0.0)
+  fine_print (~> 3.1.0)
   fog
   hashie
   httparty

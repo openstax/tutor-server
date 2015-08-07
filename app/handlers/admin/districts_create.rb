@@ -6,7 +6,7 @@ class Admin::DistrictsCreate
     validates :name, presence: true
   end
 
-  uses_routine CourseDetail::CreateDistrict, as: :create_district
+  uses_routine SchoolDistrict::CreateDistrict, as: :create_district
 
   protected
   def authorized?
