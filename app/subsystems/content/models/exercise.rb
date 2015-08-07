@@ -9,7 +9,7 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
   has_many :exercise_tags, dependent: :destroy, autosave: true, inverse_of: :exercise
   has_many :tags, through: :exercise_tags
 
-  has_many :tasked_exercises, subsystem: :tasks, primary_key: :url, foreign_key: :url
+  has_many :tasked_exercises, subsystem: :tasks, dependent: :destroy, inverse_of: :exercise
 
   validates :number, presence: true
   validates :version, presence: true, uniqueness: { scope: :number }

@@ -473,17 +473,18 @@ ActiveRecord::Schema.define(version: 20150804002246) do
   add_index "tasks_task_steps", ["tasks_task_id", "number"], name: "index_tasks_task_steps_on_tasks_task_id_and_number", unique: true, using: :btree
 
   create_table "tasks_tasked_exercises", force: :cascade do |t|
-    t.boolean  "can_be_recovered", default: false, null: false
-    t.string   "url",                              null: false
-    t.text     "content",                          null: false
+    t.integer  "content_exercise_id",                 null: false
+    t.boolean  "can_be_recovered",    default: false, null: false
+    t.string   "url",                                 null: false
+    t.text     "content",                             null: false
     t.string   "title"
     t.text     "free_response"
     t.string   "answer_id"
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
   end
 
-  add_index "tasks_tasked_exercises", ["url"], name: "index_tasks_tasked_exercises_on_url", using: :btree
+  add_index "tasks_tasked_exercises", ["content_exercise_id"], name: "index_tasks_tasked_exercises_on_content_exercise_id", using: :btree
 
   create_table "tasks_tasked_external_urls", force: :cascade do |t|
     t.string   "url",        null: false
@@ -633,6 +634,7 @@ ActiveRecord::Schema.define(version: 20150804002246) do
   add_foreign_key "tasks_performance_report_exports", "entity_roles"
   add_foreign_key "tasks_task_plans", "tasks_assistants", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_steps", "tasks_tasks", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_tasked_exercises", "content_exercises", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasking_plans", "tasks_task_plans", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_taskings", "course_membership_periods", on_update: :cascade, on_delete: :nullify
   add_foreign_key "tasks_taskings", "entity_roles", on_update: :cascade, on_delete: :cascade

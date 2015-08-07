@@ -7,7 +7,7 @@ class GetTasksExerciseHistory
     outputs[:exercise_history] = [tasks].flatten.collect do |task|
       exercise_ids = task.task_steps
                          .select{ |task_step| task_step.exercise? }
-                         .collect{ |task_step| task_step.tasked.exercise.id }
+                         .collect{ |task_step| task_step.tasked.content_exercise_id }
       ecosystem.exercises_by_ids(exercise_ids)
     end
   end
