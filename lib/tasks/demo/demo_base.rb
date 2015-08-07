@@ -140,10 +140,10 @@ class DemoBase
 
     # The password will be set if stubbing is disabled
     profile = run(UserProfile::CreateProfile, username: username,
-                                              password: password).outputs.profile
-
-    # We call update_columns here so this update is not sent to OpenStax Accounts
-    profile.account.update_columns(first_name: first_name, last_name: last_name, full_name: name)
+                                              password: password,
+                                              first_name: first_name,
+                                              last_name: last_name,
+                                              full_name: name).outputs.profile
 
     if sign_contracts
       sign_contract(profile: profile, name: :general_terms_of_use)
