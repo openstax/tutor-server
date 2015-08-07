@@ -61,7 +61,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   end
 
   api :GET, '/courses/:course_id/exercises',
-            "Returns a course\'s exercises, filtered by the page_ids param or the book_part_ids params"
+            "Returns a course\'s exercises, filtered by the page_ids param"
   description <<-EOS
     Returns a list of assignable exercises tagged with LO's matching the pages
     or book_parts with the given ID's.
@@ -73,17 +73,11 @@ class Api::V1::CoursesController < Api::V1::ApiController
     course = Entity::Course.find(params[:id])
     OSU::AccessPolicy.require_action_allowed!(:exercises, current_api_user, course)
 
-    lo_outputs = Content::GetLos.call(params).outputs
-    tags = lo_outputs.los + lo_outputs.aplos
+    ecosystem = GetCourseEcosystem[course: course]
+    pages = ecosystem.pages_by_ids(params[:page_ids])
+    exercises = ecosystem.homework_core_pools(pages: pages).collect{ |pl| pl.exercises }.flatten
 
-    review_exercises = Content::Routines::SearchExercises[tag: 'ost-chapter-review']
-    review_exercise_ids = review_exercises.pluck(:id)
-    review_exercise_relation = Content::Models::Exercise.where(id: review_exercise_ids)
-    search_outputs = SearchLocalExercises.call(relation: review_exercise_relation,
-                                               tag: tags,
-                                               match_count: 1).outputs
-
-    respond_with search_outputs, represent_with: Api::V1::ExerciseSearchRepresenter
+    respond_with exercises, represent_with: Api::V1::ExerciseSearchRepresenter
   end
 
   api :GET, '/courses/:course_id/tasks', 'Gets all course tasks assigned to the role holder making the request'

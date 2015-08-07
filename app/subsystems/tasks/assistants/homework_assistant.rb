@@ -30,14 +30,27 @@ class Tasks::Assistants::HomeworkAssistant
     }'
   end
 
-  def self.build_tasks(task_plan:, taskees:)
-    exercises = collect_exercises(task_plan: task_plan)
+  def initialize(task_plan:, taskees:)
+    @task_plan = task_plan
+    @taskees = taskees
+
+    # For now assume owner is a course
+    @ecosystem = GetCourseEcosystem[course: @task_plan.owner]
+
+    @tag_exercise = {}
+    @exercise_pages = {}
+    @page_pools = {}
+    @pool_exercises = {}
+  end
+
+  def build_tasks
+    
+    exercises = collect_exercises
 
     raise "No exercises selected" if exercises.blank?
 
-    taskees.collect do |taskee|
+    @taskees.collect do |taskee|
       build_homework_task(
-        task_plan:    task_plan,
         taskee:       taskee,
         exercises:    exercises
       ).entity_task
@@ -46,47 +59,32 @@ class Tasks::Assistants::HomeworkAssistant
 
   protected
 
-  def self.ecosystem(task_plan:)
-    # We can only handle owners that provide an ecosystems method
-    content_ecosystem = task_plan.owner.ecosystems.first
-    strategy = Ecosystem::Strategies::Direct::Ecosystem.new(content_ecosystem)
-    Ecosystem::Ecosystem.new(strategy: strategy)
+  def collect_exercises
+    exercise_ids = @task_plan.settings['exercise_ids']
+    @ecosystem.exercises_by_ids(exercise_ids)
   end
 
-  def self.collect_exercises(task_plan:)
-    exercise_ids = task_plan.settings['exercise_ids']
-    ecosystem(task_plan: task_plan).exercises_by_ids(exercise_ids)
-  end
-
-  def self.build_homework_task(task_plan:, taskee:, exercises:)
-    task = build_task(task_plan: task_plan)
-
-    set_los(task: task, exercises: exercises)
+  def build_homework_task(taskee:, exercises:)
+    task = build_task
 
     add_core_steps!(task: task, exercises: exercises)
-    add_spaced_practice_exercise_steps!(task_plan: task_plan, task: task, taskee: taskee)
-    add_personalized_exercise_steps!(task_plan: task_plan, task: task, taskee: taskee)
+    add_spaced_practice_exercise_steps!(task: task, taskee: taskee)
+    add_personalized_exercise_steps!(task: task, taskee: taskee)
   end
 
-  def self.build_task(task_plan:)
-    title    = task_plan.title || 'Homework'
-    description = task_plan.description
+  def build_task
+    title    = @task_plan.title || 'Homework'
+    description = @task_plan.description
 
     Tasks::BuildTask[
-      task_plan:   task_plan,
+      task_plan:   @task_plan,
       task_type:   :homework,
       title:       title,
       description: description
     ]
   end
 
-  def self.set_los(task:, exercises:)
-    task.los = exercises.map(&:los).flatten.uniq
-    task.aplos = exercises.map(&:aplos).flatten.uniq
-    task
-  end
-
-  def self.add_core_steps!(task:, exercises:)
+  def add_core_steps!(task:, exercises:)
     exercises.each do |exercise|
       step = add_exercise_step(task: task, exercise: exercise)
       step.group_type = :core_group
@@ -96,40 +94,42 @@ class Tasks::Assistants::HomeworkAssistant
     task
   end
 
-  def self.add_exercise_step(task:, exercise:)
+  def add_exercise_step(task:, exercise:)
     step = Tasks::Models::TaskStep.new(task: task)
     TaskExercise[task_step: step, exercise: exercise]
     task.task_steps << step
     step
   end
 
-  def self.add_spaced_practice_exercise_steps!(task_plan:, task:, taskee:)
+  def add_spaced_practice_exercise_steps!(task:, taskee:)
     homework_history = get_taskee_homework_history(task: task, taskee: taskee)
     #puts "taskee: #{taskee.inspect}"
     #puts "ireading history:  #{homework_history.inspect}"
 
-    exercise_history = get_exercise_history(tasks: homework_history)
+    exercise_history = GetTasksExerciseHistory[ecosystem: @ecosystem, tasks: homework_history]
     #puts "exercise history:  #{exercise_history.map(&:uid).sort}"
 
-    exercise_pools = get_exercise_pools(tasks: homework_history)
+    exercise_pools = get_exercise_pools(exercise_history: exercise_history)
     #puts "exercise pools:  #{exercise_pools.map{|ep| ep.map(&:uid).sort}}}"
 
-    num_spaced_practice_exercises = get_num_spaced_practice_exercises(task_plan: task_plan)
+    flat_history = exercise_history.flatten
+
+    num_spaced_practice_exercises = get_num_spaced_practice_exercises
     self.k_ago_map(num_spaced_practice_exercises).each do |k_ago, number|
       break if k_ago >= exercise_pools.count
 
-      candidate_exercises = (exercise_pools[k_ago] - exercise_history).sort_by{|ex| ex.uid}.take(10)
-      break if candidate_exercises.count < number
+      candidate_exercises = (exercise_pools[k_ago] - flat_history).uniq
+      break if candidate_exercises.size < number
 
       number.times do
         #puts "candidate_exercises: #{candidate_exercises.map(&:uid).sort}"
         #puts "exercise history:    #{exercise_history.map(&:uid).sort}"
 
-        chosen_exercise = candidate_exercises.sample # .first to aid debug
+        chosen_exercise = candidate_exercises.to_a.sample # .first to aid debug
         #puts "chosen exercise:     #{chosen_exercise.uid}"
 
         candidate_exercises.delete(chosen_exercise)
-        exercise_history.push(chosen_exercise)
+        flat_history.push(chosen_exercise)
 
         related_content = chosen_exercise.related_content
 
@@ -143,95 +143,37 @@ class Tasks::Assistants::HomeworkAssistant
     task
   end
 
-  def self.get_taskee_homework_history(task:, taskee:)
-    tasks = Tasks::Models::Task.joins{taskings}.
-                                where{taskings.entity_role_id == taskee.id}
+  # Get the student's homework assignments
+  def get_taskee_homework_history(task:, taskee:)
+    tasks = taskee.taskings.preload(task: {task: {task_steps: :tasked}})
+                           .collect{ |tasking| tasking.task.task }
 
-    homework_history = tasks.
-                         select{|tt| tt.homework?}.
-                         reject{|tt| tt == task}.
-                         sort_by{|tt| tt.due_at}.
-                         push(task).
-                         reverse
+    homework_history = tasks.select{|tt| tt.homework?}
+                            .reject{|tt| tt == task}
+                            .sort_by{|tt| tt.due_at}
+                            .push(task)
+                            .reverse
 
     homework_history
   end
 
-  def self.get_exercise_history(tasks:)
-    # TODO: Do this wrapping somewhere else? Or punt until we have some Task subsystem wrappers?
-    tasks.collect do |task|
-      exercise_steps = task.task_steps.select{|task_step| task_step.exercise?}
-      exercise_steps.collect do |step|
-        strategy = Ecosystem::Strategies::Direct::Exercise.new(step.tasked.exercise)
-        Ecosystem::Exercise.new(strategy: strategy)
-      end
-    end.flatten.compact
-  end
-
-  def self.exercises_that_match_one_tag_per_level(levels)
-    relation = Content::Models::Exercise.unscoped
-
-    levels.each do |tags|
-      matching_exercises = Content::Routines::SearchExercises[relation: relation,
-                                                              tag: tags,
-                                                              match_count: 1]
-      matching_exercise_ids = matching_exercises.pluck(:id)
-      relation = Content::Models::Exercise.where(id: matching_exercise_ids)
-    end
-
-    relation.preload(exercise_tags: :tag)
-  end
-
-  def self.get_exercise_pools(tasks:)
-    # TODO: Replace with actual exercise pools
-    exercise_pools = tasks.collect do |task|
-      urls = task.task_steps.select{|task_step| task_step.exercise?}.
-                             collect{|task_step| task_step.tasked.url}.
-                             uniq
-
-      exercise_lo_tags = Content::Models::Tag.joins{exercise_tags.exercise}
-                                             .where{exercise_tags.exercise.url.in urls}
-                                             .select{ |tag| tag.lo? || tag.aplo? }
-      pages    = exercise_lo_tags.collect{ |tag| tag.page_tags.collect{ |pt| pt.page } }.flatten
-      page_tags = pages.collect{ |page| page.page_tags.collect{ |pt| pt.tag } }.flatten
-      page_los = page_tags.select{ |pt| pt.lo? || pt.aplo? }
-
-      phys_tags = [
-        page_los,
-        'k12phys',
-        ['os-practice-problems', 'ost-chapter-review'],
-        ['os-practice-problems', 'concept', 'problem', 'critical-thinking']
-      ]
-
-      bio_tags = [
-        page_los,
-        'apbio',
-        'ost-chapter-review',
-        ['critical-thinking', 'ap-test-prep', 'review'],
-        ['critical-thinking', 'ap-test-prep', 'time-medium', 'time-long']
-      ]
-
-      phys_exercises = exercises_that_match_one_tag_per_level(phys_tags).to_a
-      bio_exercises = exercises_that_match_one_tag_per_level(bio_tags).to_a
-
-      combined = [phys_exercises, bio_exercises].flatten.uniq.to_a
-      combined
-    end
-    exercise_pools.collect do |exercise_pool|
-      exercise_pool.collect do |content_exercise|
-        strategy = Ecosystem::Strategies::Direct::Exercise.new(content_exercise)
-        Ecosystem::Exercise.new(strategy: strategy)
-      end
+  # Get the page for each exercise in the student's assignments
+  # From each page, get the pool of dynamic homework problems
+  def get_exercise_pools(exercise_history:)
+    exercise_pools = exercise_history.collect do |exercises|
+      pages = exercises.collect{ |ex| get_exercise_pages(ex) }
+      pools = get_page_pools(pages)
+      pools.collect{ |pool| get_pool_exercises(pool) }
     end
   end
 
-  def self.get_num_spaced_practice_exercises(task_plan:)
-    exercises_count_dynamic = task_plan[:settings]['exercises_count_dynamic']
+  def get_num_spaced_practice_exercises
+    exercises_count_dynamic = @task_plan[:settings]['exercises_count_dynamic']
     num_spaced_practice_exercises = [0, exercises_count_dynamic-1].max
     num_spaced_practice_exercises
   end
 
-  def self.k_ago_map(num_spaced_practice_exercises)
+  def k_ago_map(num_spaced_practice_exercises)
     ## Entries in the list have the form:
     ##   [from-this-many-events-ago, choose-this-many-exercises]
     k_ago_map =
@@ -253,7 +195,7 @@ class Tasks::Assistants::HomeworkAssistant
     k_ago_map
   end
 
-  def self.add_personalized_exercise_steps!(task_plan:, task:, taskee:)
+  def add_personalized_exercise_steps!(task:, taskee:)
     task.personalized_placeholder_strategy = Tasks::PlaceholderStrategies::HomeworkPersonalized.new \
       if num_personalized_exercises > 0
 
@@ -269,8 +211,21 @@ class Tasks::Assistants::HomeworkAssistant
     task
   end
 
-  def self.num_personalized_exercises
+  def num_personalized_exercises
     1
+  end
+
+  def get_exercise_pages(ex)
+    @exercise_pages[ex.id] ||= ex.page
+  end
+
+  def get_page_pools(pages)
+    page_ids = pages.collect{ |pg| pg.id }
+    @page_pools[page_ids] ||= @ecosystem.reading_dynamic_pools(pages: pages)
+  end
+
+  def get_pool_exercises(pool)
+    @pool_exercises[pool.uuid] ||= pool.exercises
   end
 
 end

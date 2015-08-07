@@ -6,11 +6,13 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
 
   serialize :book_location, Array
 
-  serialize :reading_dynamic_exercise_ids, Array
-  serialize :reading_try_another_exercise_ids, Array
-  serialize :homework_core_exercise_ids, Array
-  serialize :homework_dynamic_exercise_ids, Array
-  serialize :practice_widget_exercise_ids, Array
+  has_many :pools, dependent: :destroy, inverse_of: :page
+
+  has_one :reading_dynamic_pool, -> {reading_dynamic}, class_name: 'Content::Models::Pool'
+  has_one :reading_try_another_pool, -> {reading_try_another}, class_name: 'Content::Models::Pool'
+  has_one :homework_core_pool, -> {homework_core}, class_name: 'Content::Models::Pool'
+  has_one :homework_dynamic_pool, -> {homework_dynamic}, class_name: 'Content::Models::Pool'
+  has_one :practice_widget_pool, -> {practice_widget}, class_name: 'Content::Models::Pool'
 
   sortable_belongs_to :chapter, on: :number, inverse_of: :pages
 

@@ -1,15 +1,14 @@
 class OpenStax::Biglearn::V1::Exercise
 
-  attr_reader :url, :tags
+  attr_reader :question_id, :version, :tags
 
-  def initialize(url, *tags)
-    if tags.empty?
-      raise IllegalArgument, 'Must specify at least one tag'
-    end
+  def initialize(question_id, version, *tags)
+    raise IllegalArgument, 'Must specify at least one tag' if tags.empty?
 
     tags = tags.collect{|tag| tag.to_s}
 
-    @url = url
+    @question_id = question_id
+    @version = version
     @tags = tags
   end
 

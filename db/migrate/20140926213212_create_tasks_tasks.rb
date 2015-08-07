@@ -12,7 +12,6 @@ class CreateTasksTasks < ActiveRecord::Migration
       t.datetime :last_worked_at
       t.integer :tasks_taskings_count, null: false, default: 0
 
-      t.text :settings, null: false
       t.text :personalized_placeholder_strategy
 
       t.integer :steps_count,                      null: false, default: 0

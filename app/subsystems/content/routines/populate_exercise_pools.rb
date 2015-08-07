@@ -5,12 +5,23 @@ class Content::Routines::PopulateExercisePools
   protected
 
   def exec(pages:)
-    pages.each do |page|
+    outputs[:pools] = pages.collect do |page|
+      reading_dynamic_pool = Content::Models::Pool.new(page: page,
+                                                       pool_type: :reading_dynamic)
+      reading_try_another_pool = Content::Models::Pool.new(page: page,
+                                                           pool_type: :reading_try_another)
+      homework_core_pool = Content::Models::Pool.new(page: page,
+                                                     pool_type: :homework_core)
+      homework_dynamic_pool = Content::Models::Pool.new(page: page,
+                                                        pool_type: :homework_dynamic)
+      practice_widget_pool = Content::Models::Pool.new(page: page,
+                                                       pool_type: :practice_widget)
+
       page.exercises.each do |exercise|
         tags = Set.new exercise.exercise_tags.collect{ |et| et.tag.value }
 
         # iReading Dynamic (Concept Coach)
-        page.reading_dynamic_exercise_ids << exercise.id \
+        reading_dynamic_pool.content_exercise_ids << exercise.id \
           if (
             tags.include?('k12phys') && tags.include?('os-practice-concepts')
           ) || (
@@ -19,14 +30,15 @@ class Content::Routines::PopulateExercisePools
           )
 
         # iReading Try Another/Refresh my Memory
-        page.reading_try_another_exercise_ids << exercise.id \
+        reading_try_another_pool.content_exercise_ids << exercise.id \
           if tags.include?('os-practice-problems')
 
         # Homework Core (Assignment Builder)
-        page.homework_core_exercise_ids << exercise.id if tags.include?('ost-chapter-review')
+        homework_core_pool.content_exercise_ids << exercise.id \
+          if tags.include?('ost-chapter-review')
 
         # Homework Dynamic
-        page.homework_dynamic_exercise_ids << exercise.id \
+        homework_dynamic_pool.content_exercise_ids << exercise.id \
           if (
             tags.include?('k12phys') && (
               tags.include?('os-practice-problems') || (
@@ -48,10 +60,11 @@ class Content::Routines::PopulateExercisePools
           )
 
         # Practice Widget
-        page.practice_widget_exercise_ids << exercise.id
+        practice_widget_pool.content_exercise_ids << exercise.id
       end
-    end
 
-    outputs[:pages] = pages
+      [reading_dynamic_pool, reading_try_another_pool,
+       homework_core_pool, homework_dynamic_pool, practice_widget_pool]
+    end
   end
 end

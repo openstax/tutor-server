@@ -43,24 +43,37 @@ class Content::ImportBook
     # Need a double reload here for it to work for some reason
     pages = book.reload.pages(true).eager_load(exercises: {exercise_tags: :tag})
     pages = run(:update_page_content, pages: pages).outputs.pages
-    pages = run(:populate_exercise_pools, pages: pages).outputs.pages
-    # Replace with UPSERT once we have support for it
-    pages.each{ |page| page.save! }
+    pools = run(:populate_exercise_pools, pages: pages).outputs.pools.flatten
+
     outputs[:pages] = pages
 
     #
-    # Send exercise and tag info to Biglearn
+    # Send exercise and pool info to Biglearn and get back the pool UUID's
     #
     # First, build up local lists of the exercises and tags, then
     # send those lists all at once to one call each in the BL API.
     #
-    # TODO this code below should probably be in Domain
-    #
 
-    biglearn_exercises = outputs[:exercises].collect do |ex|
-      OpenStax::Biglearn::V1::Exercise.new(ex.url, *ex.exercise_tags.collect{ |ex| ex.tag.value })
+    biglearn_exercises_by_ids = outputs[:exercises].each_with_object({}) do |ex, hash|
+      hash[ex.id] = OpenStax::Biglearn::V1::Exercise.new(
+        ex.url, *ex.exercise_tags.collect{ |ex| ex.tag.value }
+      )
     end
+    biglearn_exercises = biglearn_exercises_by_ids.values
+
     OpenStax::Biglearn::V1.add_exercises(biglearn_exercises)
+
+    biglearn_pools = pools.collect do |pool|
+      exercise_ids = pool.content_exercise_ids
+      exercises = exercise_ids.collect{ |id| biglearn_exercises_by_ids[id] }
+      OpenStax::Biglearn::V1::Pool.new(exercises: exercises)
+    end
+    OpenStax::Biglearn::V1.add_pools(biglearn_pools).each_with_index do |biglearn_pool, ii|
+      pools[ii].uuid = biglearn_pool.uuid
+    end
+
+    Content::Models::Pool.import! pools
+
   end
 
 end

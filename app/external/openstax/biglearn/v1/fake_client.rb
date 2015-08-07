@@ -33,35 +33,64 @@ class OpenStax::Biglearn::V1::FakeClient
     # any with the same ID
 
     [exercises].flatten.each do |exercise|
-      store['exercises'][exercise.url] = exercise.tags
+      store['exercises'][exercise.question_id] ||= {}
+      store['exercises'][exercise.question_id][exercise.version] = exercise
     end
 
     save!
   end
 
-  def get_projection_exercises(role:, tag_search:, count:, difficulty:, allow_repetitions:)
-    # Get the matches (no SPARFA obviously :)
-    matches = store_exercises_copy.select do |uid, tags|
-      tags_match_condition?(tags, tag_search)
+  def add_pools(pools)
+    # Add the given pools to the store, overwriting any with the same UUID
+
+    result = pools.collect do |pool|
+      pool.uuid ||= SecureRandom.uuid
+      store['pools'][pool.uuid] = pool
+      { 'pool_id' => pool.uuid }
     end
 
+    save!
+
+    result
+
+  end
+
+  def combine_pools(pools)
+    # Combine the given pools into one
+
+    exercises = pools.collect{ |pl| pl.exercises }.flatten.uniq
+    new_pool = OpenStax::Biglearn::V1::Pool.new(exercises, SecureRandom.uuid)
+    store['pools'][new_pool.uuid] = new_pool
+
+    save!
+
+    { 'pool_id' => new_pool.uuid }
+  end
+
+  def get_projection_exercises(role:, pool:, count:, difficulty:, allow_repetitions:)
+    # Get the pool
+    stored_pool = store['pools'][pool.uuid]
+
+    # Get the exercises
+    exercises = stored_pool.exercises
+
     # Limit the results to the desired number
-    results = matches.first(count)
+    results = exercises.first(count).collect{ |ex| ex.question_id }
 
     # If we didn't get as many as requested and repetitions are allowed,
     # pad the results, repeat the matches until we have enough, making
     # sure to clip at the desired count in case we go over.
-    while (allow_repetitions && results.length < count && matches.any?)
-      results.push(*matches)
+    while (allow_repetitions && results.length < count && exercises.any?)
+      results += exercises.first(count - results.length)
     end
-    results = results.first(count).collect{|r| r[0]}
+    results.collect{ |ex| ex.question_id }
   end
 
   # Example conditions: { _and: [ { _or: ['a', 'b', 'c'] }, 'd']  }
   def tags_match_condition?(tags, condition)
     case condition
     when Hash
-      if condition.size != 1 then raise IllegalArgument, "too many hash condition" end
+      if condition.size != 1 then raise IllegalArgument, "too many hash conditions" end
       case condition.first[0]
       when :_and
         condition.first[1].all?{|c| tags_match_condition?(tags, c)}
@@ -105,6 +134,7 @@ class OpenStax::Biglearn::V1::FakeClient
     @fake_store.data ||= {}
 
     @fake_store.data['exercises'] ||= {}
+    @fake_store.data['pools'] ||= {}
 
     @fake_store.data
   end

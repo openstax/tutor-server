@@ -17,8 +17,6 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
                                  inverse_of: :task, autosave: true
   has_many :taskings, through: :entity_task
 
-  serialize :settings, Hash
-
   validates :title, presence: true
 
   validates :opens_at, presence: true, timeliness: { type: :date }
@@ -28,26 +26,6 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   validates :due_at, timeliness: { type: :date }, allow_nil: true
 
   validate :due_at_on_or_after_opens_at
-
-  def settings
-    super || {}
-  end
-
-  def los
-    settings['los'] || []
-  end
-
-  def aplos
-    settings['aplos'] || []
-  end
-
-  def los=(new_los)
-    self.settings = settings.merge('los' => new_los)
-  end
-
-  def aplos=(new_aplos)
-    self.settings = settings.merge('aplos' => new_aplos)
-  end
 
   def personalized_placeholder_strategy
     serialized_strategy = read_attribute(:personalized_placeholder_strategy)

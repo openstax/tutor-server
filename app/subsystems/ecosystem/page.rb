@@ -23,6 +23,26 @@ module Ecosystem
       verify_and_return @strategy.chapter, klass: ::Ecosystem::Chapter
     end
 
+    def reading_dynamic_pool
+      verify_and_return @strategy.reading_dynamic_pool, klass: ::Ecosystem::Pool
+    end
+
+    def reading_try_another_pool
+      verify_and_return @strategy.reading_try_another_pool, klass: ::Ecosystem::Pool
+    end
+
+    def homework_core_pool
+      verify_and_return @strategy.homework_core_pool, klass: ::Ecosystem::Pool
+    end
+
+    def homework_dynamic_pool
+      verify_and_return @strategy.homework_dynamic_pool, klass: ::Ecosystem::Pool
+    end
+
+    def practice_widget_pool
+      verify_and_return @strategy.practice_widget_pool, klass: ::Ecosystem::Pool
+    end
+
     def book_location
       verify_and_return @strategy.book_location, klass: Integer
     end

@@ -1,4 +1,4 @@
 module Ecosystem
-  class Uuid
+  class Uuid < String
   end
 end

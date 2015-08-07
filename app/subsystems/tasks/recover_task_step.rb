@@ -10,7 +10,10 @@ class Tasks::RecoverTaskStep
   def exec(task_step:)
     fatal_error(code: :recovery_not_available) unless task_step.can_be_recovered?
 
-    recovery_exercise = get_recovery_exercise_for(task_step: task_step)
+    # We can only handle course owners
+    ecosystem = GetCourseEcosystem[course: task_step.task.task_plan.owner]
+
+    recovery_exercise = get_recovery_exercise_for(ecosystem: ecosystem, task_step: task_step)
 
     fatal_error(code: :recovery_not_found) if recovery_exercise.nil?
 
@@ -38,35 +41,49 @@ class Tasks::RecoverTaskStep
     step
   end
 
+  # Get the student's reading assignments
+  def self.get_taskee_ireading_history(taskee:)
+    taskee.taskings
+          .collect{ |tt| tt.task }
+          .select{ |tt| tt.reading? }
+          .sort_by{ |tt| tt.due_at }
+          .reverse
+  end
+
+  # Get the page for each exercise in the student's assignments
+  # From each page, get the pool of "try another" reading problems
+  def self.get_exercise_pool(ecosystem:, exercises:)
+    pages = exercises.collect{ |ex| ex.page }
+    ecosystem.reading_try_another_pools(pages: pages).collect{ |pl| pl.exercises }.flatten
+  end
+
   # Finds an Exercise with all the required tags and at least one LO
   # Prefers unassigned Exercises
-  def get_recovery_exercise_for(task_step:, required_tag_names: ['os-practice-problems'])
+  def get_recovery_exercise_for(ecosystem:, task_step:)
+    ireading_history = get_taskee_ireading_history(taskee: taskee)
 
-    # Randomize LO order
-    los = (task_step.tasked.los + task_step.tasked.aplos).shuffle
+    flat_history = GetTasksExerciseHistory[ecosystem: ecosystem, tasks: ireading_history].flatten
 
-    # Try to find unassigned exercises first
-    taskees = task_step.task.taskings.collect{|t| t.role}
-    los.each do |lo|
-      exercise = run(:search,
-        not_assigned_to: taskees,
-        tag: required_tag_names + [lo]
-      ).outputs.items.shuffle.first
+    exercise_pool = get_exercise_pool(ecosystem: ecosystem, exercises: flat_history)
 
-      return exercise unless exercise.nil?
+    candidate_exercises = (exercise_pool - flat_history).uniq
+
+    los = task_step.tasked.los
+    aplos = task_step.tasked.aplos
+
+    # Find a random exercise that shares at least one LO with the tasked
+    chosen_exercise = candidate_exercises.shuffle.find do |ex|
+      (ex.los & los).any? || (ex.aplos & aplos).any?
     end
 
-    # No unassigned exercises found, so return a previously assigned exercise
-    los.each do |lo|
-      exercise = run(:search,
-        tag: required_tag_names + [lo]
-      ).outputs.items.shuffle.first
-
-      return exercise unless exercise.nil?
+    if chosen_exercise.nil?
+      # If no exercises found, reuse an old one
+      chosen_exercise = exercise_pool.shuffle.find do |ex|
+        ((ex.los & los).any? || (ex.aplos & aplos).any?) && ex.id != task_step.tasked.exercise.id
+      end
     end
 
-    # Nothing found
-    nil
+    chosen_exercise
   end
 
 end

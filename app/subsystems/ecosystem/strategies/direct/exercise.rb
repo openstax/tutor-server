@@ -5,7 +5,7 @@ module Ecosystem
 
         wraps ::Content::Models::Exercise
 
-        exposes :page, :url, :title, :content, :uid
+        exposes :page, :url, :title, :content, :uid, :number, :version
 
         alias_method :entity_page, :page
         def page
