@@ -203,13 +203,13 @@ class DemoBase
     )
   end
 
-  def ecosystem(course: course)
+  def get_ecosystem(course: course)
     strategy = Ecosystem::Strategies::Direct::Ecosystem.new(course.ecosystems.first)
     Ecosystem::Ecosystem.new(strategy: strategy)
   end
 
   def assign_ireading(course:, book_locations:, title:)
-    book = ecosystem(course: course).books.first
+    book = get_ecosystem(course: course).books.first
     pages = lookup_pages(book: book, book_locations: book_locations)
 
     raise "No pages to assign" if pages.blank?
@@ -224,16 +224,12 @@ class DemoBase
   end
 
   def assign_homework(course:, book_locations:,  num_exercises:, title:)
-    book = ecosystem(course: course).books.first
+    ecosystem = get_ecosystem(course: course)
+    book = ecosystem.books.first
     pages = lookup_pages(book: book, book_locations: book_locations)
-
-    page_los = pages.collect(&:los).flatten.uniq
-
-    exercise_ids = run(SearchLocalExercises, tag: page_los, match_count: 1)
-                       .outputs.items
-                       .shuffle(random: randomizer)
-                       .take(num_exercises)
-                       .collect{ |e| e.id.to_s }
+    pools = ecosystem.homework_core_pools(pages: pages)
+    exercises = pools.collect{ |pl| pl.exercises }.flatten.uniq.shuffle(random: randomizer)
+    exercise_ids = exercises.take(num_exercises).collect{ |e| e.id.to_s }
 
     raise "No exercises to assign" if exercise_ids.blank?
 

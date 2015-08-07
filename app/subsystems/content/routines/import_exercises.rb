@@ -16,16 +16,13 @@ class Content::Routines::ImportExercises
     outputs[:exercises] = []
 
     wrappers = OpenStax::Exercises::V1.exercises(query_hash)['items']
-    wrapper_urls = wrappers.collect{ |wrapper| wrapper.url }
-    existing_urls = Content::Models::Exercise.where(url: wrapper_urls).pluck(:url)
+    wrapper_urls = wrappers.uniq{ |wrapper| wrapper.url }
 
     wrapper_tag_hashes = wrappers.collect{ |wrapper| wrapper.tag_hashes }.flatten
                                  .uniq{ |hash| hash[:value] }
     tags = run(:find_or_create_tags, input: wrapper_tag_hashes).outputs.tags
 
     wrappers.each do |wrapper|
-      next if existing_urls.include?(wrapper.url)
-
       uid = wrapper.uid
       number_version = uid.split('@')
       exercise_page = page.respond_to?(:call) ? page.call(wrapper) : page
@@ -46,7 +43,7 @@ class Content::Routines::ImportExercises
       outputs[:exercises] << exercise
     end
 
-    Content::Models::Exercise.import! outputs[:exercises], recursive: true
+    Content::Models::Exercise.import! outputs[:exercises], recursive: true, validate: false
 
     outputs[:exercises].each do |exercise|
       exercise.tags.reset
