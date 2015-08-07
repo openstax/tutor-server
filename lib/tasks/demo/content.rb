@@ -6,7 +6,7 @@ class DemoContent < DemoBase
 
   lev_routine
 
-  uses_routine FetchAndImportBook, as: :import_book
+  uses_routine ImportBookAndCreateEcosystem, as: :import_book
   uses_routine CreateCourse, as: :create_course
   uses_routine CreatePeriod, as: :create_period
   uses_routine AddEcosystemToCourse, as: :add_ecosystem

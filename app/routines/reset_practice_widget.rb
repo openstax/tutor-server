@@ -17,7 +17,7 @@ class ResetPracticeWidget
 
   protected
 
-  def exec(role:, exercise_source:, page_ids: [], book_part_ids: [], randomize: true)
+  def exec(role:, exercise_source:, page_ids: [], chapter_ids: [], randomize: true)
     page_ids = [page_ids].flatten.compact
     book_part_ids = [book_part_ids].flatten.compact
 
@@ -30,7 +30,7 @@ class ResetPracticeWidget
     ecosystem = run(:get_course_ecosystem, course: role.student.course).outputs.ecosystem
 
     # Gather relevant chapters and pages
-    chapters = ecosystem.chapters_by_ids(book_part_ids)
+    chapters = ecosystem.chapters_by_ids(chapter_ids)
     pages = ecosystem.pages_by_ids(page_ids) + chapters.collect{ |ch| ch.pages }.flatten.uniq
 
     # Gather exercise pool

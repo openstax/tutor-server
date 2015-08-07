@@ -1,4 +1,4 @@
-class CourseEcosystem::Models::CourseEcosystem < Tutor::SubSystems::BaseModel
+class CourseContent::Models::CourseEcosystem < Tutor::SubSystems::BaseModel
 
   belongs_to :course, subsystem: :entity
   belongs_to :ecosystem, subsystem: :content

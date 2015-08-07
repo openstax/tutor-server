@@ -136,16 +136,16 @@ ActiveRecord::Schema.define(version: 20150804002246) do
   add_index "content_tags", ["tag_type"], name: "index_content_tags_on_tag_type", using: :btree
   add_index "content_tags", ["value"], name: "index_content_tags_on_value", unique: true, using: :btree
 
-  create_table "course_ecosystem_course_ecosystems", force: :cascade do |t|
+  create_table "course_content_course_ecosystems", force: :cascade do |t|
     t.integer  "entity_course_id",     null: false
     t.integer  "content_ecosystem_id", null: false
     t.datetime "created_at",           null: false
     t.datetime "updated_at",           null: false
   end
 
-  add_index "course_ecosystem_course_ecosystems", ["content_ecosystem_id"], name: "course_ecosystems_on_ecosystem_id", using: :btree
-  add_index "course_ecosystem_course_ecosystems", ["entity_course_id", "content_ecosystem_id"], name: "course_ecosystems_on_course_id_ecosystem_id_unique", unique: true, using: :btree
-  add_index "course_ecosystem_course_ecosystems", ["entity_course_id", "created_at"], name: "course_ecosystems_on_course_id_created_at", using: :btree
+  add_index "course_content_course_ecosystems", ["content_ecosystem_id"], name: "course_ecosystems_on_ecosystem_id", using: :btree
+  add_index "course_content_course_ecosystems", ["entity_course_id", "content_ecosystem_id"], name: "course_ecosystems_on_course_id_ecosystem_id_unique", unique: true, using: :btree
+  add_index "course_content_course_ecosystems", ["entity_course_id", "created_at"], name: "course_ecosystems_on_course_id_created_at", using: :btree
 
   create_table "course_membership_enrollments", force: :cascade do |t|
     t.integer  "course_membership_period_id"
@@ -614,8 +614,8 @@ ActiveRecord::Schema.define(version: 20150804002246) do
   add_foreign_key "content_page_tags", "content_tags", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_pages", "content_chapters", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_pools", "content_pages", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "course_ecosystem_course_ecosystems", "content_ecosystems", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "course_ecosystem_course_ecosystems", "entity_courses", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "course_content_course_ecosystems", "content_ecosystems", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "course_content_course_ecosystems", "entity_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_membership_enrollments", "course_membership_periods", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_membership_enrollments", "course_membership_students", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_membership_periods", "entity_courses", on_update: :cascade, on_delete: :cascade

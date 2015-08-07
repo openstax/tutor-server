@@ -1,6 +1,6 @@
-class CreateCourseEcosystemCourseEcosystems < ActiveRecord::Migration
+class CreateCourseContentCourseEcosystems < ActiveRecord::Migration
   def change
-    create_table :course_ecosystem_course_ecosystems do |t|
+    create_table :course_content_course_ecosystems do |t|
       t.references :entity_course, null: false,
                                    foreign_key: { on_update: :cascade, on_delete: :cascade }
       t.references :content_ecosystem, null: false,
