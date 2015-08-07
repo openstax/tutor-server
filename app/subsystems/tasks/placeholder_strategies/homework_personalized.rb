@@ -9,7 +9,7 @@ class Tasks::PlaceholderStrategies::HomeworkPersonalized
     # Gather relevant pages
     exercise_ids = task.task_plan.settings['exercise_ids']
     exercises = ecosystem.exercises_by_ids(exercise_ids)
-    pages = exercises.collect{ |ex| ex.pages }.flatten.uniq
+    pages = exercises.collect{ |ex| ex.page }.uniq
 
     # Gather exercise pools
     pools = ecosystem.homework_dynamic_pools(pages: pages)

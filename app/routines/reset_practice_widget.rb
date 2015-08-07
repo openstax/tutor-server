@@ -85,7 +85,7 @@ class ResetPracticeWidget
                      .outputs.exercise_history.flatten
     exercise_pool = pools.collect{ |pl| pl.exercises }.flatten.uniq
     exercise_pool = exercise_pool.shuffle if options[:randomize]
-    candidate_exercises = exercise_pool - flat_history
+    candidate_exercises = (exercise_pool - flat_history)
     exercises = candidate_exercises.first(count)
     num_exercises = exercises.size
 

@@ -7,12 +7,20 @@ module Ecosystem
       verify_and_return @strategy.id, klass: Integer
     end
 
+    def url
+      verify_and_return @strategy.url, klass: String
+    end
+
     def uid
       verify_and_return @strategy.uid, klass: String
     end
 
-    def url
-      verify_and_return @strategy.url, klass: String
+    def number
+      verify_and_return @strategy.number, klass: Integer
+    end
+
+    def version
+      verify_and_return @strategy.version, klass: Integer
     end
 
     def title

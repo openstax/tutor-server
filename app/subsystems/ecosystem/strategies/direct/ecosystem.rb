@@ -91,10 +91,12 @@ module Ecosystem
             number_indices[integer_number] = index
           end
 
-          entity_exercises.latest(entity_exercises.reorder(nil))
-                          .where(number: numbers).collect do |entity_exercise|
-            ::Ecosystem::Exercise.new(strategy: entity_exercise)
-          end.sort_by{ |ex| number_indices[ex.id] }
+          entity_exercises.where(number: numbers)
+                          .group_by{ |ex| ex.number }
+                          .collect do |number, entity_exercises|
+            latest_exercise = entity_exercises.max_by{ |ex| ex.version }
+            ::Ecosystem::Exercise.new(strategy: latest_exercise)
+          end.sort_by{ |ex| number_indices[ex.number] }
         end
 
         def exercises_with_tags(*tags, match_count: tags.size)

@@ -163,7 +163,7 @@ class Tasks::Assistants::HomeworkAssistant
     exercise_pools = exercise_history.collect do |exercises|
       pages = exercises.collect{ |ex| get_exercise_pages(ex) }
       pools = get_page_pools(pages)
-      pools.collect{ |pool| get_pool_exercises(pool) }
+      pools.collect{ |pool| get_pool_exercises(pool) }.flatten
     end
   end
 

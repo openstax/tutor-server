@@ -158,7 +158,7 @@ class Tasks::Assistants::IReadingAssistant
         candidate_exercises.delete(chosen_exercise)
         flat_history.push(chosen_exercise)
 
-        step = add_exercise_step(task: task, exercise: chosen_exercise) rescue debugger
+        step = add_exercise_step(task: task, exercise: chosen_exercise)
         step.add_related_content(chosen_exercise.page.related_content)
         step.group_type = :spaced_practice_group
       end
@@ -187,7 +187,7 @@ class Tasks::Assistants::IReadingAssistant
     exercise_pools = exercise_history.collect do |exercises|
       pages = exercises.collect{ |ex| get_exercise_pages(ex) }
       pools = get_page_pools(pages)
-      pools.collect{ |pool| get_pool_exercises(pool) }
+      pools.collect{ |pool| get_pool_exercises(pool) }.flatten
     end
   end
 

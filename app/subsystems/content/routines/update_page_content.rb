@@ -19,6 +19,7 @@ class Content::Routines::UpdatePageContent
 
       page.content = doc.to_html
       # Maybe replace with UPSERT once we have support for it
+      # https://wiki.postgresql.org/wiki/UPSERT
       page.save!
     end
 

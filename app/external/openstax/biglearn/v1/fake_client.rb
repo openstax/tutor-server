@@ -34,7 +34,7 @@ class OpenStax::Biglearn::V1::FakeClient
 
     [exercises].flatten.each do |exercise|
       store['exercises'][exercise.question_id] ||= {}
-      store['exercises'][exercise.question_id][exercise.version] = exercise
+      store['exercises'][exercise.question_id][exercise.version] = exercise.tags
     end
 
     save!
@@ -44,9 +44,9 @@ class OpenStax::Biglearn::V1::FakeClient
     # Add the given pools to the store, overwriting any with the same UUID
 
     result = pools.collect do |pool|
-      pool.uuid ||= SecureRandom.uuid
-      store['pools'][pool.uuid] = pool
-      { 'pool_id' => pool.uuid }
+      uuid = SecureRandom.uuid
+      store['pools'][uuid] = pool.exercises.collect{ |ex| ex.question_id }
+      { 'pool_id' => uuid }
     end
 
     save!
@@ -58,32 +58,31 @@ class OpenStax::Biglearn::V1::FakeClient
   def combine_pools(pools)
     # Combine the given pools into one
 
-    exercises = pools.collect{ |pl| pl.exercises }.flatten.uniq
-    new_pool = OpenStax::Biglearn::V1::Pool.new(exercises, SecureRandom.uuid)
-    store['pools'][new_pool.uuid] = new_pool
+    pool_uuids = pools.collect{ |pl| pl.uuid }
+    question_ids = pool_uuids.collect{ |uuid| store['pools'][uuid] }.flatten.uniq
+    uuid = SecureRandom.uuid
+
+    store['pools'][uuid] = question_ids
 
     save!
 
-    { 'pool_id' => new_pool.uuid }
+    { 'pool_id' => uuid }
   end
 
-  def get_projection_exercises(role:, pool:, count:, difficulty:, allow_repetitions:)
-    # Get the pool
-    stored_pool = store['pools'][pool.uuid]
-
-    # Get the exercises
-    exercises = stored_pool.exercises
+  def get_projection_exercises(role:, pools:, count:, difficulty:, allow_repetitions:)
+    # Get the pools
+    question_ids = pools.collect{ |pool| store['pools'][pool.uuid] }.flatten.uniq
 
     # Limit the results to the desired number
-    results = exercises.first(count).collect{ |ex| ex.question_id }
+    results = question_ids.first(count)
 
     # If we didn't get as many as requested and repetitions are allowed,
     # pad the results, repeat the matches until we have enough, making
     # sure to clip at the desired count in case we go over.
-    while (allow_repetitions && results.length < count && exercises.any?)
-      results += exercises.first(count - results.length)
+    while (allow_repetitions && results.length < count && question_ids.any?)
+      results += question_ids.first(count - results.length)
     end
-    results.collect{ |ex| ex.question_id }
+    results
   end
 
   # Example conditions: { _and: [ { _or: ['a', 'b', 'c'] }, 'd']  }

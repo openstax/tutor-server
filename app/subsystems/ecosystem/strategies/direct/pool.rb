@@ -11,6 +11,13 @@ module Ecosystem
           ::Ecosystem::Uuid.new(repository.uuid)
         end
 
+        alias_method :entity_exercises, :exercises
+        def exercises
+          entity_exercises.collect do |entity_exercise|
+            ::Ecosystem::Exercise.new(strategy: entity_exercise)
+          end
+        end
+
       end
     end
   end
