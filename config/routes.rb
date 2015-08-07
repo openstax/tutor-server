@@ -95,9 +95,11 @@ Rails.application.routes.draw do
       member do
         post :students
         post :set_book
+        post :teachers, controller: :teachers
       end
       resources :periods, shallow: true
       resources :students, only: [:index], shallow: true
+      resources :teachers, only: [:destroy], shallow: true
     end
 
     resources :districts

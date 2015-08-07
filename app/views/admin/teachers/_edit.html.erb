@@ -1,0 +1,35 @@
+<% method ||= :post %>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Username</th>
+      <th>Name</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @teachers.each do |teacher| %>
+    <tr>
+      <td><%= teacher.role.username %></td>
+      <td><%= teacher.role.name %></td>
+      <td>
+        <%= link_to 'Remove from course',
+                    admin_teacher_path(teacher),
+                    method: :delete,
+                    class: 'btn btn-xs btn-primary',
+                    data: {
+                      confirm: "Are you sure you want to remove teacher \"#{teacher.role.name}\" from the course?"
+                    } %>
+
+      </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<%= form_tag(url, method: method, id: 'assign-teachers-form') do |f| %>
+  <div class="form-group">
+    <%= text_field_tag :course_teacher, nil, class: 'form-control', placeholder: 'Start typing to search for a user...' %>
+  </div>
+<% end %>

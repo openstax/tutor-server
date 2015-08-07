@@ -19,6 +19,7 @@ RSpec.describe Admin::UsersController do
       'account_id' => admin.account.id,
       'entity_user_id' => admin.entity_user.id,
       'full_name' => 'Administrator',
+      'name' => admin.name,
       'username' => 'admin'
     } ]
 
@@ -29,12 +30,14 @@ RSpec.describe Admin::UsersController do
       'account_id' => admin.account.id,
       'entity_user_id' => admin.entity_user.id,
       'full_name' => 'Administrator',
+      'name' => admin.name,
       'username' => 'admin'
     }, {
       'id' => user.id,
       'account_id' => user.account.id,
       'entity_user_id' => user.entity_user.id,
       'full_name' => 'User One',
+      'name' => user.name,
       'username' => 'student'
     } ]
   end

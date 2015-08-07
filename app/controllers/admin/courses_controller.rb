@@ -17,8 +17,7 @@ class Admin::CoursesController < Admin::BaseController
     entity_course = Entity::Course.find(params[:id])
     @course = GetCourseProfile[course: entity_course]
     @periods = entity_course.periods
-    teachers = entity_course.teachers.includes(role: { user: { profile: :account } })
-    @teachers = teachers.collect { |t| t.role.user.profile }
+    @teachers = entity_course.teachers.includes(role: { user: { profile: :account } })
     @books = Content::ListBooks[]
     @course_book = entity_course.books.first
   end
@@ -50,7 +49,7 @@ class Admin::CoursesController < Admin::BaseController
       add_students(period, users)
       flash[:notice] = 'Student roster has been uploaded.'
     end
-    redirect_to edit_admin_course_path(params[:id])
+    redirect_to edit_admin_course_path(params[:id], anchor: 'roster')
   end
 
   def set_book
@@ -67,7 +66,7 @@ class Admin::CoursesController < Admin::BaseController
       CourseContent::AddBookToCourse.call(course: course, book: book, remove_other_books: true)
       flash[:notice] = "Course book \"#{book.root_book_part.title}\" selected for \"#{course.profile.name}\""
     end
-    redirect_to edit_admin_course_path(params[:id])
+    redirect_to edit_admin_course_path(params[:id], anchor: 'books')
   end
 
   private

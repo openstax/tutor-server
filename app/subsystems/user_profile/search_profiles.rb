@@ -23,6 +23,7 @@ module UserProfile
             account_id: profile.account_id,
             entity_user_id: profile.entity_user_id,
             full_name: profile.full_name,
+            name: profile.name,
             username: profile.username
           }
         end

@@ -12,24 +12,15 @@ $(document).ready(function() {
 
 //============= Courses =================//
 $(document).ready(function() {
+  //=========== Course teacher auto complete ==============//
   $('#course_teacher').autocomplete({
     minLength: 2,
     select: function(event_, ui) {
-      var hidden = $('<input type="hidden" name="course[teacher_ids][]"/>');
+      $('#course_teacher').val(ui.item.label);
+      var hidden = $('<input type="hidden" name="teacher_ids[]"/>');
       hidden.val(ui.item.value);
-      var label = $('<label>');
-      label.text(ui.item.label);
-      var remove = $('<button class="btn btn-default btn-xs">');
-      remove.text('remove');
-      remove.click(function() {
-        $(this).parent().detach();
-        return false;
-      });
-      var li = $('<li>');
-      li.append(hidden).append(label).append('&nbsp;&nbsp;').append(remove);
-      $('#assigned-teachers').append(li);
-      $('#assigned-teachers').find('.help-block').removeClass('hidden');
-      $('#course_teacher').val('');
+      $('#course_teacher').after(hidden);
+      $('#assign-teachers-form').submit();
       return false;
     },
     source: function(request, response, url) {
@@ -44,12 +35,18 @@ $(document).ready(function() {
         success: function(data) {
           response($.map(data.items, function(item) {
             return {
-              label: item.full_name + ' (' + item.username + ')',
-              value: item.id
+              label: item.name + ' (' + item.username + ')',
+              value: item.entity_user_id
             };
           }));
         }
       });
     }
   });
+
+  //========== Course tab selection =============//
+  var tab = window.location.hash;
+  if (tab) {
+    $('a[href="' + tab + '"]').click();
+  }
 });
