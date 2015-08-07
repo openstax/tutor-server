@@ -75,8 +75,8 @@ RSpec.feature 'DistrictTermsWork' do
     admin = FactoryGirl.create(:user_profile, :administrator)
     stub_current_user(admin)
 
-    create_targeted_terms('district_a_terms', district_a.name)
-    create_targeted_terms('district_b_terms', district_b.name)
+    create_targeted_terms(contract_name: 'district_a_terms', target_name: district_a.name)
+    create_targeted_terms(contract_name: 'district_b_terms', target_name: district_b.name)
 
     # Basic checks to provide a baseline
     expect(Legal::GetTargetedContracts[applicable_to: course_e]
@@ -102,12 +102,69 @@ RSpec.feature 'DistrictTermsWork' do
           .to eq ['district_a_terms']
   end
 
-  def create_targeted_terms(contract_name, target_name, is_proxy_signed = true)
+  scenario 'blah' do
+    district_a = SchoolDistrict::CreateDistrict[name: 'DistrictA']
+    school_c = SchoolDistrict::CreateSchool[name: 'SchoolC', district: district_a]
+    course_e = CreateCourse[name: 'CourseE', school: school_c]
+    course_f = CreateCourse[name: 'CourseF']
+
+    FinePrint::Contract.create(name: 'district_a_terms', title: 'a', content: 'a').publish
+    FinePrint::Contract.create(name: 'general_terms_of_use', title: 'a', content: 'a').publish
+    FinePrint::Contract.create(name: 'privacy_policy', title: 'a', content: 'a').publish
+
+    user_1   = FactoryGirl.create(:user_profile, skip_terms_agreement: true)
+    user_2   = FactoryGirl.create(:user_profile, skip_terms_agreement:true)
+
+    AddUserAsCourseTeacher[user: user_1.entity_user, course: course_e]
+    AddUserAsCourseTeacher[user: user_2.entity_user, course: course_f]
+
+    admin = FactoryGirl.create(:user_profile, :administrator)
+    stub_current_user(admin)
+
+    create_targeted_terms(contract_name: 'district_a_terms', target_name: district_a.name,
+                          masked_contracts: ['privacy_policy'], is_proxy_signed: true)
+
+    stub_current_user(user_1)
+
+    # User 1 should not have signed district a terms yet
+
+    expect(FinePrint.signed_contract?(user_1, 'district_a_terms')).to be_falsy
+
+    # Want to check that WebviewController receives fine_print_require with certain terms, but can't do it
+    # since also want to do it below for a second request -- so using cheesier expectation on FinePrint
+    # directly here and below.
+    #   Can't do this: expect_any_instance_of(WebviewController).to receive(:fine_print_require).with('general_terms_of_use')
+    expect(FinePrint).to receive(:unsigned_contracts_for).with(user_1, name: ['general_terms_of_use'])
+
+    # Visiting the dashboard path should add an implicit signature for user1 / district_a_terms
+    expect{
+      visit dashboard_path
+    }.to change { FinePrint::Signature.count }.by(1)
+
+    expect(FinePrint.signed_contract?(user_1, 'district_a_terms')).to be_truthy
+    expect(FinePrint::Signature.all.max_by{ |sig| sig.created_at }.is_implicit?).to be_truthy
+
+    # user 2 is not in district A, so should just see normal terms
+    stub_current_user(user_2)
+
+    #   Can't do this: expect_any_instance_of(WebviewController).to receive(:fine_print_require).with('general_terms_of_use', 'privacy_policy')
+    expect(FinePrint).to receive(:unsigned_contracts_for).with(user_2, name: ['general_terms_of_use', 'privacy_policy'])
+
+    # Visiting the dashboard path should add an implicit signature for user1 / district_a_terms
+    expect{
+      visit dashboard_path
+    }.not_to change { FinePrint::Signature.count }
+  end
+
+  def create_targeted_terms(contract_name:, target_name:, is_proxy_signed: true, masked_contracts: [])
     visit admin_targeted_contracts_path
     click_link 'Add Targeted Contract'
     select contract_name, from: 'targeted_contract_contract_name'
     select target_name, from: 'targeted_contract_target'
-    check 'targeted_contract_is_proxy_signed'
+    masked_contracts.each do |masked_contract|
+      select masked_contract, from: 'targeted_contract_masked_contract_names'
+    end
+    check 'targeted_contract_is_proxy_signed' if is_proxy_signed
     click_button 'Submit'
   end
 

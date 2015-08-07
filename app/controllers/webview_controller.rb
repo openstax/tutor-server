@@ -26,8 +26,6 @@ class WebviewController < ApplicationController
     # have been signed by proxy (and need an implicit signature), while some
     # don't and need to go through the normal FinePrint process.
 
-    # targeted_contracts = GetCourseTargetedContractsForUser[user: current_user.entity_user]
-
     courses = GetUserCourses[user: current_user.entity_user]
 
     contract_names = Legal::GetContractNames.call(
