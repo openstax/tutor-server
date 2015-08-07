@@ -46,7 +46,7 @@ $(document).ready(function() {
           response($.map(data.items, function(item) {
             return {
               label: item.full_name + ' (' + item.username + ')',
-              value: item.id
+              value: item.entity_user_id
             };
           }));
         }
