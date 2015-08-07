@@ -5,7 +5,7 @@ class CreateContentPools < ActiveRecord::Migration
                                                               on_delete: :cascade }
       t.string :uuid, null: false
       t.integer :pool_type, null: false
-      t.text :content_exercise_ids, null: false
+      t.text :content_exercise_ids
 
       t.timestamps null: false
 

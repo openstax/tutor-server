@@ -114,7 +114,7 @@ ActiveRecord::Schema.define(version: 20150804002246) do
     t.integer  "content_page_id",      null: false
     t.string   "uuid",                 null: false
     t.integer  "pool_type",            null: false
-    t.text     "content_exercise_ids", null: false
+    t.text     "content_exercise_ids"
     t.datetime "created_at",           null: false
     t.datetime "updated_at",           null: false
   end

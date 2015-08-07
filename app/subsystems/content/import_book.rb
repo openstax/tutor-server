@@ -68,8 +68,11 @@ class Content::ImportBook
       exercises = exercise_ids.collect{ |id| biglearn_exercises_by_ids[id] }
       OpenStax::Biglearn::V1::Pool.new(exercises: exercises)
     end
-    OpenStax::Biglearn::V1.add_pools(biglearn_pools).each_with_index do |biglearn_pool, ii|
-      pools[ii].uuid = biglearn_pool.uuid
+    biglearn_pools_with_uuids = OpenStax::Biglearn::V1.add_pools(biglearn_pools)
+    pools.each_with_index do |pool, ii|
+      pool.uuid = biglearn_pools_with_uuids[ii].uuid
+      # Need to do this to mark the attribute as changed for the import below
+      pool.content_exercise_ids = pool.content_exercise_ids
     end
 
     Content::Models::Pool.import! pools

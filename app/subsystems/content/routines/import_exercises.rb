@@ -38,15 +38,15 @@ class Content::Routines::ImportExercises
       transfer_errors_from(exercise, {type: :verbatim}, true)
 
       relevant_tags = tags.select{ |tag| wrapper.tags.include?(tag.value) }
-      exercise_tags = run(:tag, exercise, relevant_tags,
-                          tagging_class: Content::Models::ExerciseTag,
-                          save: false).outputs.taggings
+      outputs[:taggings] = run(:tag, exercise, relevant_tags,
+                               tagging_class: Content::Models::ExerciseTag,
+                               save: false).outputs.taggings
 
-      exercise.exercise_tags = exercise_tags
+      exercise.exercise_tags = outputs[:taggings]
       outputs[:exercises] << exercise
     end
 
-    Content::Models::Exercise.import!(outputs[:exercises], recursive: true)
+    Content::Models::Exercise.import! outputs[:exercises], recursive: true
 
     outputs[:exercises].each do |exercise|
       exercise.tags.reset

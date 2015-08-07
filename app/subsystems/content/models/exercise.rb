@@ -1,4 +1,5 @@
 class Content::Models::Exercise < Tutor::SubSystems::BaseModel
+
   acts_as_resource
 
   wrapped_by ::Ecosystem::Strategies::Direct::Exercise
@@ -31,4 +32,5 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
   def aplos
     tags.to_a.select(&:aplo?)
   end
+
 end
