@@ -1,6 +1,6 @@
-class Admin::BooksController < Admin::BaseController
+class Admin::EcosystemsController < Admin::BaseController
   def index
-    @books = Content::ListBooks[]
+    @books = Content::ListEcosystems[]
   end
 
   def import
@@ -9,6 +9,7 @@ class Admin::BooksController < Admin::BaseController
   end
 
   protected
+
   def import_book
     archive_url = params[:archive_url].present? ? params[:archive_url] : @default_archive_url
 
@@ -20,16 +21,16 @@ class Admin::BooksController < Admin::BaseController
     end
 
     OpenStax::Cnx::V1.with_archive_url(url: archive_url) do
-      cnx_book = FetchAndImportBook.call(id: params[:cnx_id]).outputs.cnx_book
-      flash[:notice] = "Book \"#{cnx_book.title}\" imported."
+      ecosystem = FetchAndImportBookAndCreateEcosystem.call(id: params[:cnx_id]).outputs.ecosystem
+      flash[:notice] = "Book \"#{ecosystem.books.first.title}\" imported."
     end
-    redirect_to admin_books_path
+    redirect_to admin_ecosystems_path
   end
 
   def get_book(archive_url, cnx_id)
     OpenStax::Cnx::V1.with_archive_url(url: archive_url) do
       url = OpenStax::Cnx::V1.url_for(cnx_id)
-      Content::Models::BookPart.roots.where(url: url).first
+      Content::Models::Book.where(url: url).first
     end
   end
 end

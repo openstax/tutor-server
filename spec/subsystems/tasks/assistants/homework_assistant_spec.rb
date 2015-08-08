@@ -9,8 +9,8 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
     FactoryGirl.create(:tasks_assistant, code_class_name: 'Tasks::Assistants::HomeworkAssistant')
   }
 
-  let!(:book_part) {
-    FactoryGirl.create :content_book_part, title: "Forces and Newton's Laws of Motion"
+  let!(:chapter) {
+    FactoryGirl.create :content_chapter, title: "Forces and Newton's Laws of Motion"
   }
 
   let!(:cnx_page_hashes) { [
@@ -25,8 +25,8 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
   let!(:pages)     { cnx_pages.collect.with_index do |cnx_page, ii|
     Content::Routines::ImportPage.call(
       cnx_page:  cnx_page,
-      book_part: book_part,
-      chapter_section: [8, ii+1]
+      chapter: chapter,
+      book_location: [8, ii+1]
     ).outputs.page
   end }
 

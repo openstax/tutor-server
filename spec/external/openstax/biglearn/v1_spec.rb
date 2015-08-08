@@ -29,7 +29,7 @@ RSpec.describe OpenStax::Biglearn::V1, :type => :external do
     let!(:client)   { OpenStax::Biglearn::V1.send :client }
     let!(:role)     { Entity::Role.create! }
     let!(:tag)      { 'test-tag' }
-    let!(:exercise) { OpenStax::Biglearn::V1::Exercise.new('e42', 'topic') }
+    let!(:exercise) { OpenStax::Biglearn::V1::Exercise.new(question_id: 'e42', tags: 'topic') }
 
     it 'delegates get_clue to the client' do
       clue = OpenStax::Biglearn::V1::FakeClient.instance.get_clue(roles: [role], tags: [tag])

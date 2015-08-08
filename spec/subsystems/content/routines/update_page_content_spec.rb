@@ -3,7 +3,7 @@ require 'vcr_helper'
 
 RSpec.describe Content::Routines::UpdatePageContent, type: :routine, vcr: VCR_OPTS do
 
-  let!(:book_part) { FactoryGirl.create :content_book_part }
+  let!(:chapter) { FactoryGirl.create :content_chapter }
 
   let!(:cnx_page_1) {
     OpenStax::Cnx::V1::Page.new({
@@ -21,13 +21,13 @@ RSpec.describe Content::Routines::UpdatePageContent, type: :routine, vcr: VCR_OP
 
   let!(:page_1) {
     OpenStax::Cnx::V1.with_archive_url(url: 'https://archive.cnx.org/contents/') do
-      Content::Routines::ImportPage.call(cnx_page: cnx_page_1, book_part: book_part).outputs[:page]
+      Content::Routines::ImportPage.call(cnx_page: cnx_page_1, chapter: chapter).outputs[:page]
     end
   }
 
   let!(:page_2) {
     OpenStax::Cnx::V1.with_archive_url(url: 'https://archive.cnx.org/contents/') do
-      Content::Routines::ImportPage.call(cnx_page: cnx_page_2, book_part: book_part).outputs[:page]
+      Content::Routines::ImportPage.call(cnx_page: cnx_page_2, chapter: chapter).outputs[:page]
     end
   }
 
@@ -57,7 +57,7 @@ RSpec.describe Content::Routines::UpdatePageContent, type: :routine, vcr: VCR_OP
       expect(link.attribute('href').value).to eq before_hrefs[i]
     end
 
-    Content::Routines::UpdatePageContent.call(book_part: book_part)
+    Content::Routines::UpdatePageContent.call(pages: chapter.pages)
     page_1.reload
 
     doc = Nokogiri::HTML(page_1.content)

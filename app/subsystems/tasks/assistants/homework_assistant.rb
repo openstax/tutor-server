@@ -115,7 +115,7 @@ class Tasks::Assistants::HomeworkAssistant
     flat_history = exercise_history.flatten
 
     num_spaced_practice_exercises = get_num_spaced_practice_exercises
-    self.k_ago_map(num_spaced_practice_exercises).each do |k_ago, number|
+    self.class.k_ago_map(num_spaced_practice_exercises).each do |k_ago, number|
       break if k_ago >= exercise_pools.count
 
       candidate_exercises = (exercise_pools[k_ago] - flat_history).uniq
@@ -173,33 +173,30 @@ class Tasks::Assistants::HomeworkAssistant
     num_spaced_practice_exercises
   end
 
-  def k_ago_map(num_spaced_practice_exercises)
+  def self.k_ago_map(num_spaced_practice_exercises)
     ## Entries in the list have the form:
     ##   [from-this-many-events-ago, choose-this-many-exercises]
-    k_ago_map =
-      case num_spaced_practice_exercises
-      when 0
-        []
-      when 1
-        [ [2,1] ]
-      when 2
-        [ [2,1], [4,1] ]
-      when 3
-        [ [2,2], [4,1] ]
-      when 4
-        [ [2,2], [4,2] ]
-      else
-        raise "could not determine k-ago map for num_spaced_practice_exercises=#{num_spaced_practice_exercises}"
-      end
-
-    k_ago_map
+    case num_spaced_practice_exercises
+    when 0
+      []
+    when 1
+      [ [2,1] ]
+    when 2
+      [ [2,1], [4,1] ]
+    when 3
+      [ [2,2], [4,1] ]
+    when 4
+      [ [2,2], [4,2] ]
+    else
+      raise "could not determine k-ago map for num_spaced_practice_exercises=#{num_spaced_practice_exercises}"
+    end
   end
 
   def add_personalized_exercise_steps!(task:, taskee:)
     task.personalized_placeholder_strategy = Tasks::PlaceholderStrategies::HomeworkPersonalized.new \
-      if num_personalized_exercises > 0
+      if self.class.num_personalized_exercises > 0
 
-    num_personalized_exercises.times do
+    self.class.num_personalized_exercises.times do
       task_step = Tasks::Models::TaskStep.new(task: task)
       tasked_placeholder = Tasks::Models::TaskedPlaceholder.new(task_step: task_step)
       tasked_placeholder.placeholder_type = :exercise_type
@@ -211,7 +208,7 @@ class Tasks::Assistants::HomeworkAssistant
     task
   end
 
-  def num_personalized_exercises
+  def self.num_personalized_exercises
     1
   end
 

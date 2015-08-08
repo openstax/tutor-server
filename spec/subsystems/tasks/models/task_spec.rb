@@ -154,15 +154,6 @@ RSpec.describe Tasks::Models::Task, :type => :model do
     expect(task.feedback_available?).to eq false
   end
 
-  it 'can store and retrieve LOs' do
-    task = Tasks::Models::Task.new
-    expect(task.los).to be_empty
-    task.los = ['a', 'b', 'c']
-    expect(task.los).to eq(['a', 'b', 'c'])
-    task.los << 'd'
-    expect(task.los).to eq(['a', 'b', 'c', 'd'])
-  end
-
   it 'counts exercise steps' do
     task = FactoryGirl.create(:tasks_task,
                               task_type: :homework,

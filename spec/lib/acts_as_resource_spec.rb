@@ -16,7 +16,7 @@ RSpec.describe ActsAsResource do
   end
 
   context 'book' do
-    subject(:book) { FactoryGirl.create :content_book_part }
+    subject(:book) { FactoryGirl.create :content_book }
 
     it { is_expected.not_to validate_presence_of(:url) }
     it { is_expected.to validate_uniqueness_of(:url).allow_nil }

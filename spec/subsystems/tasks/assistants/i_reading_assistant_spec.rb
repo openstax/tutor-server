@@ -9,8 +9,8 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     FactoryGirl.create(:tasks_assistant, code_class_name: 'Tasks::Assistants::IReadingAssistant')
   }
 
-  let!(:book_part) {
-    FactoryGirl.create :content_book_part, title: "Forces and Newton's Laws of Motion"
+  let!(:chapter) {
+    FactoryGirl.create :content_chapter, title: "Forces and Newton's Laws of Motion"
   }
 
   context "for Introduction and Force" do
@@ -24,11 +24,11 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         { klass: Tasks::Models::TaskedReading,
           title: "Forces and Newton's Laws of Motion",
           related_content: [{title: "Forces and Newton's Laws of Motion",
-                             chapter_section: [8, 1]}] },
+                             book_location: [8, 1]}] },
         { klass: Tasks::Models::TaskedReading,
           title: "Force",
           related_content: [{title: "Force",
-                             chapter_section: [8, 2]}] }
+                             book_location: [8, 2]}] }
       ]
     }
 
@@ -37,11 +37,11 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         { klass: Tasks::Models::TaskedExercise,
           title: nil,
           related_content: [{title: "Force",
-                            chapter_section: [8, 2]}] },
+                            book_location: [8, 2]}] },
         { klass: Tasks::Models::TaskedExercise,
           title: nil,
           related_content: [{title: "Force",
-                             chapter_section: [8, 2]}] },
+                             book_location: [8, 2]}] },
       ]
     }
 
@@ -64,8 +64,8 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     let!(:pages)     { cnx_pages.collect.with_index do |cnx_page, ii|
       Content::Routines::ImportPage.call(
         cnx_page:  cnx_page,
-        book_part: book_part,
-        chapter_section: [8, ii+1]
+        chapter: chapter,
+        book_location: [8, ii+1]
       ).outputs.page
     end }
 
@@ -134,7 +134,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
           end
 
           if task_step.tasked_type.demodulize == 'TaskedReading'
-            expect(task_step.tasked.chapter_section).to eq(page.chapter_section)
+            expect(task_step.tasked.book_location).to eq(page.book_location)
           end
 
           other_task_steps = core_task_steps.reject{|ts| ts == task_step}
@@ -195,7 +195,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     let!(:page) {
       Content::Routines::ImportPage.call(
         cnx_page:  cnx_page,
-        book_part: book_part
+        chapter: chapter
       ).outputs.page
     }
 

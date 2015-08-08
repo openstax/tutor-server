@@ -1,7 +1,11 @@
 require 'rails_helper'
 
-RSpec.describe TaskExercise do
-  let!(:exercise)  { FactoryGirl.create(:exercise) }
+RSpec.describe TaskExercise, type: :routine do
+  let!(:exercise)  do
+    content_exercise = FactoryGirl.create(:content_exercise)
+    strategy = Ecosystem::Strategies::Direct::Exercise.new(content_exercise)
+    Ecosystem::Exercise.new(strategy: strategy)
+  end
   let!(:task_step) { FactoryGirl.build(:tasks_task_step) }
 
   it 'builds but does not save a TaskedExercise for the given exercise and task_step' do

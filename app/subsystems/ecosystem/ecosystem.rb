@@ -3,12 +3,18 @@ module Ecosystem
 
     include Wrapper
 
-    def self.create(strategy_class: ::Ecosystem::Strategies::Direct::Ecosystem)
-      new(strategy: strategy_class.create)
-    end
+    class << self
+      def all(strategy_class: ::Ecosystem::Strategies::Direct::Ecosystem)
+        verify_and_return strategy_class.all, klass: self
+      end
 
-    def self.create!(strategy_class: ::Ecosystem::Strategies::Direct::Ecosystem)
-      new(strategy: strategy_class.create!)
+      def create(strategy_class: ::Ecosystem::Strategies::Direct::Ecosystem)
+        verify_and_return strategy_class.create, klass: self
+      end
+
+      def create!(strategy_class: ::Ecosystem::Strategies::Direct::Ecosystem)
+        verify_and_return strategy_class.create!, klass: self
+      end
     end
 
     def eager_load

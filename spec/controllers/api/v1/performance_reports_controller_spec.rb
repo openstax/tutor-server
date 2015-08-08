@@ -13,12 +13,14 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
       DatabaseCleaner.start
 
       VCR.use_cassette("Api_V1_CoursesController/with_book", VCR_OPTS) do
-        @book = FetchAndImportBook[id: '93e2b09d-261c-4007-a987-0b3062fe154b']
+        @ecosystem = FetchAndImportBookAndCreateEcosystem[
+          id: '93e2b09d-261c-4007-a987-0b3062fe154b'
+        ]
       end
     end
 
     before(:each) do
-      CourseContent::AddBookToCourse.call(course: course, book: @book)
+      CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: @ecosystem)
     end
 
     after(:all) do
@@ -63,7 +65,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
         SetupPerformanceReportData[course: course,
                                    teacher: teacher,
                                    students: [student_1, student_2, student_3, student_4],
-                                   book: @book]
+                                   ecosystem: @ecosystem]
       end
 
       it 'should work on the happy path' do

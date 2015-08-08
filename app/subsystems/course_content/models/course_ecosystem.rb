@@ -9,4 +9,5 @@ class CourseContent::Models::CourseEcosystem < Tutor::SubSystems::BaseModel
   validates :ecosystem, uniqueness: {scope: :entity_course_id}
 
   default_scope -> { order(created_at: :desc) }
+
 end

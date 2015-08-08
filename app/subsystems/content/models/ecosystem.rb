@@ -4,8 +4,8 @@ module Content
 
       wrapped_by ::Ecosystem::Strategies::Direct::Ecosystem
 
-      has_many :course_ecosystems, dependent: :destroy
-      has_many :courses, through: :course_ecosystems
+      has_many :course_ecosystems, dependent: :destroy, subsystem: :course_content
+      has_many :courses, through: :course_ecosystems, subsystem: :entity
 
       has_many :books, dependent: :destroy, inverse_of: :ecosystem
       has_many :chapters, through: :books

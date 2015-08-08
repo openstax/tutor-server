@@ -26,28 +26,21 @@ class ResetPracticeWidget
     existing_practice_task = run(:get_practice_widget, role: role).outputs.task.try(:task)
     existing_practice_task.task_steps.incomplete.destroy_all unless existing_practice_task.nil?
 
-    # We can only handle student roles for now
-    ecosystem = run(:get_course_ecosystem, course: role.student.course).outputs.ecosystem
-
-    # Gather relevant chapters and pages
-    chapters = ecosystem.chapters_by_ids(chapter_ids)
-    pages = ecosystem.pages_by_ids(page_ids) + chapters.collect{ |ch| ch.pages }.flatten.uniq
-
-    # Gather exercise pool
-    pools = ecosystem.practice_widget_pools(pages: pages)
-
     # Gather 5 exercises
     count = 5
     exercises = case exercise_source
+                when :fake
+                  get_fake_exercises(count)
                 when :local
-                  get_local_exercises(count, role, pools, randomize: randomize)
+                  get_local_exercises(count, role, get_pools(role), randomize: randomize)
                 when :biglearn
                   run(:get_ecosystem_exercises_from_biglearn, count: count,
                                                               role: role,
-                                                              pools: pools)
+                                                              pools: get_pools(role))
                     .outputs.ecosystem_exercises
                 else
-                  raise ArgumentError, "exercise_source: must be one of [:local, :biglearn]"
+                  raise ArgumentError,
+                        "exercise_source: must be one of [:fake, :local, :biglearn]"
                 end
 
     num_exercises = exercises.size
@@ -76,6 +69,26 @@ class ResetPracticeWidget
     run(:create_tasking, role: role, task: outputs.task.entity_task)
 
     outputs.task = outputs.task.entity_task
+  end
+
+  def get_fake_exercises(count)
+    count.times.collect do
+      content_exercise = FactoryGirl.build(:content_exercise)
+      strategy = ::Ecosystem::Strategies::Direct::Exercise.new(content_exercise)
+      ::Ecosystem::Exercise.new(strategy: strategy)
+    end
+  end
+
+  def get_pools(role)
+    # We can only handle student roles for now
+    ecosystem = run(:get_course_ecosystem, course: role.student.course).outputs.ecosystem
+
+    # Gather relevant chapters and pages
+    chapters = ecosystem.chapters_by_ids(chapter_ids)
+    pages = ecosystem.pages_by_ids(page_ids) + chapters.collect{ |ch| ch.pages }.flatten.uniq
+
+    # Gather exercise pools
+    ecosystem.practice_widget_pools(pages: pages)
   end
 
   def get_local_exercises(ecosystem, count, role, pools, options = {})

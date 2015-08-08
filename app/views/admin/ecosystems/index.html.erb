@@ -1,0 +1,26 @@
+<% @page_header = 'Ecosystems' %>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>UUID</th>
+      <th>Version</th>
+      <th>Link to Archive</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @ecosystems.each do |ecosystem| %>
+    <tr>
+      <td><%= ecosystem.books.first.title %></td>
+      <td><%= ecosystem.books.first.uuid %></td>
+      <td><%= ecosystem.books.first.version %></td>
+      <td><%= link_to 'Archive', ecosystem.books.first.url, target: '_blank',
+                                                            class: 'btn btn-xs btn-primary' %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<%= link_to 'Import a Book into a new Ecosystem', import_admin_ecosystems_path,
+                                                  class: 'btn btn-primary' %>

@@ -18,8 +18,8 @@ class Admin::CoursesController < Admin::BaseController
     @course = GetCourseProfile[course: entity_course]
     @periods = entity_course.periods
     @teachers = entity_course.teachers.includes(role: { user: { profile: :account } })
-    @books = Content::ListBooks[]
-    @course_book = entity_course.books.first
+    @ecosystems = Content::ListEcosystems[]
+    @course_ecosystem = entity_course.ecosystems.first
   end
 
   def update

@@ -5,7 +5,8 @@ class CreateStudentHistory
   uses_routine AddUserAsPeriodStudent
   uses_routine CreatePeriod
   uses_routine DistributeTasks, translations: { outputs: { type: :verbatim } }
-  uses_routine ImportBookAndCreateEcosystem, translations: { outputs: { type: :verbatim } }
+  uses_routine FetchAndImportBookAndCreateEcosystem,
+               translations: { outputs: { type: :verbatim } }
 
   protected
   def exec(course:, roles: setup_student_role, book_id: '93e2b09d-261c-4007-a987-0b3062fe154b')
@@ -46,7 +47,7 @@ class CreateStudentHistory
 
   def setup_course_book(course, book_id)
     puts "=== Fetch & import book ==="
-    run(:import_book_and_create_ecosystem, id: book_id)
+    run(:fetch_and_import_book_and_create_ecosystem, id: book_id)
 
     puts "=== Add ecosystem to course ==="
     run(:add_ecosystem_to_course, course: course, ecosystem: outputs.ecosystem)
@@ -117,7 +118,7 @@ class CreateStudentHistory
   end
 
   def create_homework_task_plan(ecosystem, course, periods)
-    exercise_ids = ecosystem.exercises.first.id.to_s
+    exercise_ids = [ecosystem.exercises.first.id.to_s]
 
     task_plan = FactoryGirl.build(
       :tasks_task_plan,

@@ -2,8 +2,6 @@ class CalculateTaskPlanStats
 
   lev_routine express_output: :stats
 
-  uses_routine Content::Routines::SearchPages, as: :search_pages
-
   uses_routine Role::GetUsersForRoles, as: :get_users_for_roles
 
   uses_routine UserProfile::GetUserFullNames, as: :get_user_full_names
@@ -89,7 +87,10 @@ class CalculateTaskPlanStats
   end
 
   def get_page_for_tasked_exercise(tasked_exercise)
-    run(:search_pages, tag: tasked_exercise.los + tasked_exercise.aplos, match_count: 1).outputs.items.first
+    content_exercise = tasked_exercise.exercise
+    strategy = ::Ecosystem::Strategies::Direct::Exercise.new(content_exercise)
+    ecosystem_exercise = ::Ecosystem::Exercise.new(strategy: strategy)
+    ecosystem_exercise.page
   end
 
   def group_tasked_exercises_by_pages(tasked_exercises)
