@@ -3,8 +3,8 @@ require 'rails_helper'
 module Ecosystem
   describe Ecosystem do
 
-    let!(:valid_uuid)   { ::Ecosystem::Uuid.new }
-    let!(:invalid_uuid) { Object.new }
+    let!(:valid_id)   { 1 }
+    let!(:invalid_id) { Object.new }
 
     let!(:valid_book)   { ::Ecosystem::Book.new(strategy: Object.new) }
     let!(:invalid_book) { Object.new }
@@ -20,8 +20,8 @@ module Ecosystem
 
     let(:strategy) {
       double("strategy").tap do |dbl|
-        allow(dbl).to receive(:uuid).with(no_args)
-                     .and_return(strategy_uuid)
+        allow(dbl).to receive(:id).with(no_args)
+                     .and_return(strategy_id)
 
         allow(dbl).to receive(:books).with(no_args)
                      .and_return(strategy_books)
@@ -29,34 +29,34 @@ module Ecosystem
         allow(dbl).to receive(:exercises).with(no_args)
                      .and_return(strategy_exercises)
 
-        allow(dbl).to receive(:reading_dynamic_exercises).with(pages: strategy_expected_pages)
-                     .and_return(strategy_reading_dynamic_exercises)
+        allow(dbl).to receive(:reading_dynamic_pools).with(pages: strategy_expected_pages)
+                     .and_return(strategy_reading_dynamic_pools)
 
-        allow(dbl).to receive(:reading_try_another_exercises).with(pages: strategy_expected_pages)
-                     .and_return(strategy_reading_try_another_exercises)
+        allow(dbl).to receive(:reading_try_another_pools).with(pages: strategy_expected_pages)
+                     .and_return(strategy_reading_try_another_pools)
 
-        allow(dbl).to receive(:homework_core_exercises).with(pages: strategy_expected_pages)
-                     .and_return(strategy_homework_core_exercises)
+        allow(dbl).to receive(:homework_core_pools).with(pages: strategy_expected_pages)
+                     .and_return(strategy_homework_core_pools)
 
-        allow(dbl).to receive(:homework_dynamic_exercises).with(pages: strategy_expected_pages)
-                     .and_return(strategy_homework_dynamic_exercises)
+        allow(dbl).to receive(:homework_dynamic_pools).with(pages: strategy_expected_pages)
+                     .and_return(strategy_homework_dynamic_pools)
 
-        allow(dbl).to receive(:practice_widget_exercises).with(pages: strategy_expected_pages)
-                     .and_return(strategy_practice_widget_exercises)
+        allow(dbl).to receive(:practice_widget_pools).with(pages: strategy_expected_pages)
+                     .and_return(strategy_practice_widget_pools)
       end
     }
 
-    let(:strategy_uuid)      { valid_uuid }
+    let(:strategy_id)        { valid_id }
     let(:strategy_books)     { [valid_book, valid_book] }
     let(:strategy_exercises) { [valid_exercise, valid_exercise] }
 
     let(:strategy_expected_pages) { [valid_page, valid_page] }
 
-    let(:strategy_reading_dynamic_exercises)     { [valid_exercise, valid_exercise] }
-    let(:strategy_reading_try_another_exercises)  { [valid_exercise, valid_exercise] }
-    let(:strategy_homework_core_exercises)    { [valid_exercise, valid_exercise] }
-    let(:strategy_homework_dynamic_exercises) { [valid_exercise, valid_exercise] }
-    let(:strategy_practice_widget_exercises)  { [valid_exercise, valid_exercise] }
+    let(:strategy_reading_dynamic_pools)     { [valid_pool, valid_pool] }
+    let(:strategy_reading_try_another_pools) { [valid_pool, valid_pool] }
+    let(:strategy_homework_core_pools)       { [valid_pool, valid_pool] }
+    let(:strategy_homework_dynamic_pools)    { [valid_pool, valid_pool] }
+    let(:strategy_practice_widget_pools)     { [valid_pool, valid_pool] }
 
     let(:ecosystem) { ::Ecosystem::Ecosystem.new(strategy: strategy) }
 
@@ -70,27 +70,27 @@ module Ecosystem
     end
 
 
-    context "unique identifier" do
+    context "id" do
       it "delegates to its strategy" do
-        ecosystem.uuid
-        expect(strategy).to have_received(:uuid)
+        ecosystem.id
+        expect(strategy).to have_received(:id)
       end
 
-      context "strategy returns Ecosystem::Uuid" do
-        let(:strategy_uuid) { valid_uuid }
+      context "strategy returns Integer" do
+        let(:strategy_id) { valid_id }
 
-        it "returns the strategy's uuid" do
-          uuid = ecosystem.uuid
-          expect(uuid).to eq(strategy_uuid)
+        it "returns the strategy's id" do
+          id = ecosystem.id
+          expect(id).to eq(strategy_id)
         end
       end
 
-      context "strategy doesn't return an Ecosystem::Uuid" do
-        let!(:strategy_uuid) { invalid_uuid }
+      context "strategy doesn't return an Integer" do
+        let!(:strategy_uuid) { invalid_id }
 
         it "raises Ecosystem::StrategyError" do
           expect{
-            ecosystem.uuid
+            ecosystem.id
           }.to raise_error(::Ecosystem::StrategyError)
         end
       end

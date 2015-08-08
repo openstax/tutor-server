@@ -56,7 +56,8 @@ class DistributeTasks
 
     save(entity_tasks)
 
-    task_plan.update_column(:published_at, Time.now)
+    task_plan.published_at = Time.now
+    task_plan.save! if task_plan.persisted?
 
     outputs[:entity_tasks] = entity_tasks
   end

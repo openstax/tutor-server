@@ -70,31 +70,36 @@ module Ecosystem
     end
 
     def reading_dynamic_pools(pages:)
-      pages_arr = verify_and_return [pages].flatten.compact, klass: ::Ecosystem::Page
+      pages_arr = verify_and_return [pages].flatten.compact, klass: ::Ecosystem::Page,
+                                                             error: ArgumentError
       pools = @strategy.reading_dynamic_pools(pages: pages_arr)
       verify_and_return pools, klass: ::Ecosystem::Pool
     end
 
     def reading_try_another_pools(pages:)
-      pages_arr = verify_and_return [pages].flatten.compact, klass: ::Ecosystem::Page
+      pages_arr = verify_and_return [pages].flatten.compact, klass: ::Ecosystem::Page,
+                                                             error: ArgumentError
       pools = @strategy.reading_try_another_pools(pages: pages_arr)
       verify_and_return pools, klass: ::Ecosystem::Pool
     end
 
     def homework_core_pools(pages:)
-      pages_arr = verify_and_return [pages].flatten.compact, klass: ::Ecosystem::Page
+      pages_arr = verify_and_return [pages].flatten.compact, klass: ::Ecosystem::Page,
+                                                             error: ArgumentError
       pools = @strategy.homework_core_pools(pages: pages_arr)
       verify_and_return pools, klass: ::Ecosystem::Pool
     end
 
     def homework_dynamic_pools(pages:)
-      pages_arr = verify_and_return [pages].flatten.compact, klass: ::Ecosystem::Page
+      pages_arr = verify_and_return [pages].flatten.compact, klass: ::Ecosystem::Page,
+                                                             error: ArgumentError
       pools = @strategy.homework_dynamic_pools(pages: pages_arr)
       verify_and_return pools, klass: ::Ecosystem::Pool
     end
 
     def practice_widget_pools(pages:)
-      pages_arr = verify_and_return [pages].flatten.compact, klass: ::Ecosystem::Page
+      pages_arr = verify_and_return [pages].flatten.compact, klass: ::Ecosystem::Page,
+                                                             error: ArgumentError
       pools = @strategy.practice_widget_pools(pages: pages_arr)
       verify_and_return pools, klass: ::Ecosystem::Pool
     end

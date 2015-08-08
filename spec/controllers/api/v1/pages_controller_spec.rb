@@ -9,7 +9,9 @@ RSpec.describe Api::V1::PagesController, type: :controller, api: true,
       DatabaseCleaner.start
 
       VCR.use_cassette("Api_V1_PagesController/with_book", VCR_OPTS) do
-        @ecosystem = ImportBookAndCreateEcosystem[id: '93e2b09d-261c-4007-a987-0b3062fe154b']
+        @ecosystem = FetchAndImportBookAndCreateEcosystem[
+          id: '93e2b09d-261c-4007-a987-0b3062fe154b'
+        ]
       end
 
       @page_uuid = '95e61258-2faf-41d4-af92-f62e1414175a'

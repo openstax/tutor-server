@@ -1,9 +1,13 @@
 FactoryGirl.define do
   factory :content_book, class: '::Content::Models::Book' do
+    transient do
+      contents {{}}
+    end
+
     association :ecosystem, factory: :content_ecosystem
     url { Faker::Internet.url }
-    title { Faker::Lorem.words(3) }
-    content { Faker::Lorem.paragraphs(2) }
+    title { contents[:title] || Faker::Lorem.words(3) }
+    content { contents.to_json }
     uuid { SecureRandom.uuid }
     version { Random.rand(1..10) }
 

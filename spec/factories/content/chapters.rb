@@ -4,8 +4,8 @@ FactoryGirl.define do
       contents {{}}
     end
 
-    title { contents[:title] || Faker::Lorem.words(3).join(" ") }
     association :book, factory: :content_book
+    title { Faker::Lorem.words(3).join(" ") }
     book_location [1]
 
     after(:create) do |chapter, evaluator|

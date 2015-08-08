@@ -8,7 +8,7 @@ class DummyAssistant
     @taskees = taskees
   end
 
-  def self.build_tasks
+  def build_tasks
     @taskees.collect do |taskee|
       task = FactoryGirl.create(:tasks_task, task_plan: @task_plan)
       entity_task = task.entity_task

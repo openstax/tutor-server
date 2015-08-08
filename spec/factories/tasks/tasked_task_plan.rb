@@ -18,11 +18,11 @@ FactoryGirl.define do
                 'title' => 'Newton\'s First Law of Motion: Inertia' }
       )
 
-      book_part = FactoryGirl.create :content_book_part
+      chapter = FactoryGirl.create :content_chapter
 
       VCR.use_cassette("TaskedTaskPlan/with_inertia", VCR_OPTS) do
-        @page = Content::Routines::ImportPage[cnx_page: cnx_page, book_part: book_part,
-                                              chapter_section: [1, 1]]
+        @page = Content::Routines::ImportPage[cnx_page: cnx_page, chapter: chapter,
+                                              book_location: [1, 1]]
       end
 
       { page_ids: [@page.id.to_s] }

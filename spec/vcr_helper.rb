@@ -8,6 +8,6 @@ VCR.configure do |c|
 end
 
 VCR_OPTS = {
-  record: :new_episodes, # This should be :none before pushing
+  record: :none, # This should be :none before pushing
   allow_unused_http_interactions: false
 }
