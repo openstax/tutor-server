@@ -1,6 +1,6 @@
-class Admin::EcosystemsController < Admin::BaseController
+class Admin::ContentController < Admin::BaseController
   def index
-    @books = Content::ListEcosystems[]
+    @ecosystems = Content::ListEcosystems[]
   end
 
   def import
@@ -24,7 +24,7 @@ class Admin::EcosystemsController < Admin::BaseController
       ecosystem = FetchAndImportBookAndCreateEcosystem.call(id: params[:cnx_id]).outputs.ecosystem
       flash[:notice] = "Book \"#{ecosystem.books.first.title}\" imported."
     end
-    redirect_to admin_ecosystems_path
+    redirect_to admin_contents_path
   end
 
   def get_book(archive_url, cnx_id)

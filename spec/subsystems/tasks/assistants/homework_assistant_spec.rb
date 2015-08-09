@@ -13,38 +13,39 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
     FactoryGirl.create :content_chapter, title: "Forces and Newton's Laws of Motion"
   }
 
+  let!(:ecosystem) {
+    content_ecosystem = chapter.book.ecosystem
+    strategy = ::Ecosystem::Strategies::Direct::Ecosystem.new(content_ecosystem)
+    ::Ecosystem::Ecosystem.new(strategy: strategy)
+  }
+
   let!(:cnx_page_hashes) { [
     { 'id' => '1bb611e9-0ded-48d6-a107-fbb9bd900851', 'title' => 'Introduction' },
     { 'id' => '95e61258-2faf-41d4-af92-f62e1414175a', 'title' => 'Force' }
   ] }
 
-  let!(:cnx_pages) { cnx_page_hashes.collect do |hash|
-    OpenStax::Cnx::V1::Page.new(hash: hash)
-  end }
+  let!(:cnx_pages) {
+    cnx_page_hashes.collect do |hash|
+      OpenStax::Cnx::V1::Page.new(hash: hash)
+    end
+  }
 
-  let!(:pages)     { cnx_pages.collect.with_index do |cnx_page, ii|
-    Content::Routines::ImportPage.call(
-      cnx_page:  cnx_page,
-      chapter: chapter,
-      book_location: [8, ii+1]
-    ).outputs.page
-  end }
+  let!(:pages)     {
+    cnx_pages.collect.with_index do |cnx_page, ii|
+      content_page = Content::Routines::ImportPage.call(
+        cnx_page:  cnx_page,
+        chapter: chapter,
+        book_location: [8, ii+1]
+      ).outputs.page
+      strategy = ::Ecosystem::Strategies::Direct::Page.new(content_page)
+      ::Ecosystem::Page.new(strategy)
+    end
+  }
 
   let!(:exercises) {
-    page_los = Content::GetLos[page_ids: pages.map(&:id)]
+    pools = ecosystem.homework_core_pools(pages: pages)
 
-    page_exercises = Content::Routines::SearchExercises[tag: page_los, match_count: 1]
-
-    review_exercises = Content::Models::Exercise.joins{exercise_tags.tag}
-                                                .where{exercise_tags.tag.value.eq 'ost-chapter-review'}
-                                                .where{id.in page_exercises.map(&:id)}
-
-    exercises = Content::Models::Exercise.joins{exercise_tags.tag}
-                                         .where{exercise_tags.tag.value.in ['problem', 'concept']}
-                                         .where{id.in review_exercises.map(&:id)}
-
-    exercises = exercises.sort_by{|ex| ex.uid}
-    exercises
+    pools.collect{ |pl| pl.exercises }.flatten.sort_by{|ex| ex.uid}
   }
 
   let!(:teacher_selected_exercises) { exercises[1..5] }
@@ -90,7 +91,11 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
     tps
   }
 
-  let!(:course) { task_plan.owner }
+  let!(:course) {
+    course = task_plan.owner
+    AddEcosystemToCourse[ecosystem: ecosystem, course: course]
+    course
+  }
   let!(:period) { CreatePeriod[course: course] }
 
   it "creates the expected assignments" do

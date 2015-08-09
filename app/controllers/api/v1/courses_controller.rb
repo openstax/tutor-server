@@ -50,14 +50,14 @@ class Api::V1::CoursesController < Api::V1::ApiController
     course = Entity::Course.find(params[:id])
     OSU::AccessPolicy.require_action_allowed!(:readings, current_api_user, course)
 
-    # For the moment, we're assuming just one book per course
-    books = CourseContent::GetCourseBooks.call(course: course).outputs.books
+    # For the moment, we're assuming just one ecosystem per course
+    ecosystems = CourseContent::GetCourseEcosystems.call(course: course).outputs.ecosystems
+    books = ecosystems.collect{ |es| es.books }.flatten
     raise NotYetImplemented if books.count > 1
 
-    toc = Content::VisitBook[book: books.first, visitor_names: :toc]
     # Return [toc] as a list so that in the future we may have toc from more
     # than one book
-    respond_with [toc], represent_with: Api::V1::BookTocRepresenter
+    respond_with [book.toc], represent_with: Api::V1::BookTocRepresenter
   end
 
   api :GET, '/courses/:course_id/exercises',

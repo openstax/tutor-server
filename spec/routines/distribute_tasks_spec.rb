@@ -33,7 +33,7 @@ RSpec.describe DistributeTasks, type: :routine do
     end
 
     it "calls the build_tasks method on the task_plan's assistant" do
-      expect(DummyAssistant).to receive(:build_tasks).and_return([])
+      expect_any_instance_of(DummyAssistant).to receive(:build_tasks).and_return([])
 
       result = DistributeTasks.call(task_plan)
       expect(result.errors).to be_empty

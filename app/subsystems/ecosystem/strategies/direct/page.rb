@@ -52,6 +52,10 @@ module Ecosystem
           repository.aplos.collect{ |t| t.value }
         end
 
+        def toc
+          { url: url, title: title, book_location: book_location, is_intro: is_intro }
+        end
+
         def related_content(title: nil, book_location: nil)
           title ||= self.title
           book_location ||= self.book_location

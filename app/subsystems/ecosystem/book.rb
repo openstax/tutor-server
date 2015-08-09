@@ -3,6 +3,14 @@ module Ecosystem
 
     include Wrapper
 
+    def id
+      verify_and_return @strategy.id, klass: Integer
+    end
+
+    def url
+      verify_and_return @strategy.url, klass: String
+    end
+
     def title
       verify_and_return @strategy.title, klass: String
     end
@@ -13,6 +21,10 @@ module Ecosystem
 
     def pages
       verify_and_return @strategy.pages, klass: ::Ecosystem::Page
+    end
+
+    def toc
+      verify_and_return @strategy.toc, klass: Hash
     end
 
   end

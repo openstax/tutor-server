@@ -3,8 +3,6 @@ require 'vcr_helper'
 
 RSpec.describe Content::Routines::UpdatePageContent, type: :routine, vcr: VCR_OPTS do
 
-  let!(:chapter) { FactoryGirl.create :content_chapter }
-
   let!(:cnx_page_1) {
     OpenStax::Cnx::V1::Page.new({
       id: '102e9604-daa7-4a09-9f9e-232251d1a4ee@7',
@@ -19,17 +17,19 @@ RSpec.describe Content::Routines::UpdatePageContent, type: :routine, vcr: VCR_OP
     })
   }
 
-  let!(:page_1) {
+  let!(:chapter) {
+    chapter = FactoryGirl.create :content_chapter
     OpenStax::Cnx::V1.with_archive_url(url: 'https://archive.cnx.org/contents/') do
-      Content::Routines::ImportPage.call(cnx_page: cnx_page_1, chapter: chapter).outputs[:page]
+      Content::Routines::ImportPage.call(cnx_page: cnx_page_1, chapter: chapter)
     end
+    OpenStax::Cnx::V1.with_archive_url(url: 'https://archive.cnx.org/contents/') do
+      Content::Routines::ImportPage.call(cnx_page: cnx_page_2, chapter: chapter)
+    end
+    chapter.reload
   }
 
-  let!(:page_2) {
-    OpenStax::Cnx::V1.with_archive_url(url: 'https://archive.cnx.org/contents/') do
-      Content::Routines::ImportPage.call(cnx_page: cnx_page_2, chapter: chapter).outputs[:page]
-    end
-  }
+  let!(:page_1) { chapter.pages.first }
+  let!(:page_2) { chapter.pages.second }
 
   let!(:link_text) { [
     "Introduction to Electric Current, Resistance, and Ohm's Law",
@@ -58,7 +58,6 @@ RSpec.describe Content::Routines::UpdatePageContent, type: :routine, vcr: VCR_OP
     end
 
     Content::Routines::UpdatePageContent.call(pages: chapter.pages)
-    page_1.reload
 
     doc = Nokogiri::HTML(page_1.content)
 

@@ -2,7 +2,7 @@ class SetupPerformanceReportData
   lev_routine
 
   protected
-  def exec(course:, teacher:, students: [], book:)
+  def exec(course:, teacher:, students: [], ecosystem:)
     students = [students].flatten
     reading_assistant = FactoryGirl.create(:tasks_assistant,
       code_class_name: 'Tasks::Assistants::IReadingAssistant')
@@ -14,7 +14,7 @@ class SetupPerformanceReportData
       students << FactoryGirl.create(:user_profile)
     end
 
-    CourseContent::AddBookToCourse.call(course: course, book: book)
+    CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
     AddUserAsCourseTeacher[course: course, user: teacher.entity_user]
     period_1 = course.periods.empty? ? CreatePeriod[course: course] : course.periods.first
     period_2 = CreatePeriod[course: course]

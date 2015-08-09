@@ -6,12 +6,12 @@ module OpenStax::Biglearn
     let(:client) { described_class.instance }
 
     it 'allows adding of exercises' do
-      expect{client.add_exercises(V1::Exercise.new(question_id: 'e42', tags: 'topic'))}
+      expect{client.add_exercises(V1::Exercise.new(question_id: 'e42', version: 1, tags: 'topic'))}
         .to change{client.store_exercises_copy.count}.by(1)
 
       client.reload! # make sure data is really saved
 
-      expect(client.store_exercises_copy).to include('e42' => ['topic'])
+      expect(client.store_exercises_copy).to include('e42' => { 1 => ['topic'] })
     end
 
     it 'matches boolean tag searches' do

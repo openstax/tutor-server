@@ -32,10 +32,9 @@ module Ecosystem
         end
 
         [object].flatten.each do |obj|
-          raise(
-            error,
-            "Tested argument was of class '#{obj.class}' instead of the expected '#{klass}'."
-          ) unless obj.is_a? klass
+          raise(error,
+                "Tested argument was of class '#{obj.class}' instead of the expected '#{klass}'.",
+                caller) unless obj.is_a? klass
         end
 
         object

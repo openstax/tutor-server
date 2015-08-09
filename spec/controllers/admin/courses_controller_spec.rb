@@ -142,7 +142,7 @@ RSpec.describe Admin::CoursesController do
     let!(:eco_1)  { FactoryGirl.create(:content_book, title: 'Physics').ecosystem }
     let!(:eco_2)  { FactoryGirl.create(:content_book, title: 'Biology').ecosystem }
     let!(:course_ecosystem) {
-      AddEcosystemToCourse.call(course: course, ecosystem: ecosystem_1)
+      AddEcosystemToCourse.call(course: course, ecosystem: eco_1)
       course.reload.course_ecosystems.first
     }
 

@@ -42,8 +42,13 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
 
     before(:each) do
       OpenStax::Biglearn::V1.add_exercises(
-        [exercise_1, exercise_2, exercise_3, exercise_4, exercise_5]
-          .collect{ |ex| ::Exercise.new(ex) }
+        [exercise_1, exercise_2, exercise_3, exercise_4, exercise_5].collect do |ex|
+          OpenStax::Biglearn::V1::Exercise.new(
+            question_id: ex.number,
+            version: ex.version,
+            tags: ex.tags.collect{ |tt| tt.value }
+          )
+        end
       )
     end
 

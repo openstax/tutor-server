@@ -41,7 +41,7 @@ RSpec.describe Content::ImportBook, type: :routine, speed: :slow, vcr: VCR_OPTS 
     book_import = Content::ImportBook.call(ecosystem: ecosystem, cnx_book: phys_cnx_book)
     book = ecosystem.books.first
 
-    chapters.each_with_index do |chapter, i|
+    book.chapters.each_with_index do |chapter, i|
       expect(chapter.book_location).to eq([i + 1])
 
       page_offset = 1

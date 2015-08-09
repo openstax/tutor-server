@@ -86,7 +86,7 @@ module Ecosystem
       end
 
       context "strategy doesn't return an Integer" do
-        let!(:strategy_uuid) { invalid_id }
+        let!(:strategy_id) { invalid_id }
 
         it "raises Ecosystem::StrategyError" do
           expect{

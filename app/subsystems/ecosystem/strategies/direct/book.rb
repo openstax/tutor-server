@@ -5,7 +5,7 @@ module Ecosystem
 
         wraps ::Content::Models::Book
 
-        exposes :title, :chapters, :pages
+        exposes :url, :title, :chapters, :pages
 
         alias_method :entity_chapters, :chapters
         def chapters
@@ -19,6 +19,10 @@ module Ecosystem
           entity_pages.collect do |entity_page|
             ::Ecosystem::Page.new(strategy: entity_page)
           end
+        end
+
+        def toc
+          { title: title,  chapters: entity_chapters.eager_load(:pages).collect{ |ch| ch.toc } }
         end
 
       end

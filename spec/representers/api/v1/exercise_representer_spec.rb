@@ -26,6 +26,7 @@ RSpec.describe Api::V1::ExerciseRepresenter, type: :representer do
   let!(:lo_teks) { FactoryGirl.create :content_lo_teks_tag, lo: lo, teks: teks }
   let!(:exercise_tag) { FactoryGirl.create :content_exercise_tag, exercise: exercise, tag: lo }
   let!(:exercise_tag_2) { FactoryGirl.create :content_exercise_tag, exercise: exercise, tag: lo2 }
+  let!(:exercise_tag_3) { FactoryGirl.create :content_exercise_tag, exercise: exercise, tag: teks }
 
   it 'represents an exercise with tags' do
     representation = Api::V1::ExerciseRepresenter.new(exercise).as_json

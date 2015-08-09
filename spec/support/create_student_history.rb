@@ -60,7 +60,7 @@ class CreateStudentHistory
     run(:distribute_tasks, create_ireading_task_plan(ecosystem, course, periods))
 
     task_plan = create_homework_task_plan(ecosystem, course, periods)
-    tasks = run(:distribute_tasks, task_plan).outputs.tasks
+    tasks = run(:distribute_tasks, task_plan).outputs.entity_tasks
     tasks.each do |task|
       answer_correctly(task.task_steps, 2)
     end
