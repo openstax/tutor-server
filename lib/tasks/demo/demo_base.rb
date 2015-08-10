@@ -284,7 +284,7 @@ class DemoBase
       work_step(step, responses[index])
     end
 
-    spaced_practice_task_steps = task.spaced_practice_task_steps
+    spaced_practice_task_steps = task.spaced_practice_task_steps(preload_tasked: true)
 
     spaced_practice_task_steps.each_with_index do |step, index|
       work_step(step, responses[index + core_task_steps.size])
