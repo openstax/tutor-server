@@ -4,7 +4,7 @@ class CalculateTaskPlanStats
 
   uses_routine Role::GetUsersForRoles, as: :get_users_for_roles
 
-  uses_routine UserProfile::GetUserFullNames, as: :get_user_full_names
+  uses_routine UserProfile::GetProfiles, as: :get_profiles
 
   protected
 
@@ -29,7 +29,7 @@ class CalculateTaskPlanStats
         answers: completed_tasked_exercises.collect do |te|
           roles = te.task_step.task.taskings.collect{ |ts| ts.role }
           users = run(:get_users_for_roles, roles).outputs.users
-          names = run(:get_user_full_names, users).outputs.full_names.collect{ |fn| fn.full_name }
+          names = run(:get_profiles, users: users).outputs.profiles.collect(&:full_name)
 
           {
             student_names: names,
