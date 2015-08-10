@@ -9,7 +9,7 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
-  <script id="tutor-boostrap-data" type="application/json"><%=raw bootstrap_data.to_json %></script>
+  <script id="tutor-boostrap-data" type="application/json"><%=raw json_escape bootstrap_data.to_json %></script>
   <%= yield %>
 </body>
 </html>
