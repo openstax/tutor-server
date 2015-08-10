@@ -84,20 +84,15 @@ class CalculateTaskPlanStats
 
   def get_tasked_exercises_from_task_steps(task_steps)
     tasked_exercise_ids = task_steps.flatten.select{ |t| t.exercise? }.collect{ |ts| ts.tasked_id }
-    Tasks::Models::TaskedExercise.where(id: tasked_exercise_ids)
+    Tasks::Models::TaskedExercise.joins { task_step }
+                                 .where { id.in tasked_exercise_ids }
+                                 .order { task_step.number }
                                  .eager_load([{exercise: :page},
                                               {task_step: {task: {taskings: :role}}}]).to_a
   end
 
-  def get_page_for_tasked_exercise(tasked_exercise)
-    content_exercise = tasked_exercise.exercise
-    strategy = ::Content::Strategies::Direct::Exercise.new(content_exercise)
-    ecosystem_exercise = ::Content::Exercise.new(strategy: strategy)
-    ecosystem_exercise.page
-  end
-
   def group_tasked_exercises_by_pages(tasked_exercises)
-    tasked_exercises.group_by{ |te| get_page_for_tasked_exercise(te) }
+    tasked_exercises.group_by { |te| te.exercise.page }
   end
 
   def generate_page_stats_for_task_steps(task_steps)
