@@ -3,10 +3,9 @@ class Admin::UsersController < Admin::BaseController
 
   def index
     @per_page = 30
-    @user_search =
-      UserProfile::SearchProfiles[search_term: "%#{params[:search_term]}%",
-                                  page: params[:page] || 1,
-                                  per_page: @per_page]
+    @user_search = UserProfile::SearchProfiles[search: "%#{params[:search_term]}%",
+                                               page: params[:page],
+                                               per_page: @per_page]
 
     respond_to do |format|
       format.html

@@ -5,16 +5,16 @@ class GetTeacherNames
     translations: { outputs: { type: :verbatim } },
     as: :get_teacher_users
 
-  uses_routine UserProfile::GetProfiles,
+  uses_routine UserProfile::SearchProfiles,
     translations: { outputs: { type: :verbatim } },
-    as: :get_profiles
+    as: :search_profiles
 
   protected
 
   def exec(course_id)
     course = Entity::Course.find(course_id)
     run(:get_teacher_users, course)
-    run(:get_profiles, users: outputs[:teachers])
+    run(:search_profiles, search: outputs[:teachers])
     outputs[:teacher_names] = outputs[:profiles].collect(&:full_name).sort
   end
 end

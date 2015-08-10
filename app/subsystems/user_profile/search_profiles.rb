@@ -3,20 +3,12 @@ module UserProfile
     lev_routine express_output: :profiles
 
     protected
-    def exec(search_term:, order: 'last_name', page: nil, per_page: 30)
-      profiles = Models::Profile.joins { account }
-                                .where { (lower(account.username).like search_term) |
-                                         (lower(account.full_name).like search_term) |
-                                         (lower(account.first_name).like search_term) |
-                                         (lower(account.last_name).like search_term) }
-                                .order(order)
-                                .includes { account }
-
-      do_pagination = page.present?
-      profiles = profiles.paginate(page: page, per_page: per_page) if do_pagination
+    def exec(search:, order: 'last_name', page: nil, per_page: 30)
+      profiles = find_profiles(search).order(order).paginate(page: page,
+                                                             per_page: per_page)
 
       outputs[:profiles] = Hashie::Mash.new(
-        total_items: do_pagination ? profiles.total_entries : profiles.count,
+        total_items: profiles.total_entries,
         items: profiles.collect do |profile|
           {
             id: profile.id,
@@ -28,6 +20,32 @@ module UserProfile
           }
         end
       )
+    end
+
+    private
+    def find_profiles(search)
+      case search
+      when String
+        profiles_by_search_term(search)
+      else
+        profiles_by_entity_users(search)
+      end
+    end
+
+    def profiles_by_search_term(term)
+      profiles_query.where{(lower(account.username).like term) |
+                           (lower(account.full_name).like term) |
+                           (lower(account.first_name).like term) |
+                           (lower(account.last_name).like term)}
+    end
+
+    def profiles_by_entity_users(users)
+      users = [users].flatten
+      profiles_query.where{entity_user_id.in users.collect(&:id)}
+    end
+
+    def profiles_query
+      Models::Profile.includes{account}.joins{account}
     end
   end
 end
