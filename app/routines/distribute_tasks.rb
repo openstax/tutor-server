@@ -38,9 +38,9 @@ class DistributeTasks
 
     tasking_plans = run(:get_tasking_plans, task_plan).outputs.tasking_plans
 
-    taskees = tasking_plans.collect{ |tp| tp.target }
-    opens_ats = tasking_plans.collect{ |tp| tp.opens_at }
-    due_ats = tasking_plans.collect{ |tp| tp.due_at }
+    taskees = tasking_plans.collect(&:target)
+    opens_ats = tasking_plans.collect(&:opens_at)
+    due_ats = tasking_plans.collect(&:due_at)
 
     # Exclude students that already had the assignment
     untasked_taskees = taskees - tasked_taskees
