@@ -233,10 +233,9 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
         end
         MarkTaskStepCompleted.call(task_step: ts)
       }
-      roles = first_task.taskings.collect{ |ts| ts.role }
+      roles = first_task.taskings.collect(&:role)
       users = Role::GetUsersForRoles[roles]
-      first_task_names = UserProfile::GetUserFullNames.call(users).outputs
-                                                      .full_names.collect{ |fn| fn.full_name }
+      first_task_names = UserProfile::GetProfiles[users: users].collect(&:full_name)
 
       stats = CalculateTaskPlanStats.call(plan: @task_plan.reload, details: true).outputs.stats
       exercises = stats.first.current_pages.first.exercises
@@ -273,10 +272,9 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
         end
         MarkTaskStepCompleted.call(task_step: ts)
       }
-      roles = second_task.taskings.collect{ |ts| ts.role }
+      roles = second_task.taskings.collect(&:role)
       users = Role::GetUsersForRoles[roles]
-      second_task_names = UserProfile::GetUserFullNames.call(users).outputs
-                                                       .full_names.collect{ |fn| fn.full_name }
+      second_task_names = UserProfile::GetProfiles[users: users].collect(&:full_name)
 
       stats = CalculateTaskPlanStats.call(plan: @task_plan.reload, details: true).outputs.stats
       exercises = stats.first.current_pages.first.exercises
@@ -321,10 +319,9 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
         end
         MarkTaskStepCompleted.call(task_step: ts)
       }
-      roles = third_task.taskings.collect{ |ts| ts.role }
+      roles = third_task.taskings.collect(&:role)
       users = Role::GetUsersForRoles[roles]
-      third_task_names = UserProfile::GetUserFullNames.call(users).outputs
-                                                      .full_names.collect{ |fn| fn.full_name }
+      third_task_names = UserProfile::GetProfiles[users: users].collect(&:full_name)
 
       stats = CalculateTaskPlanStats.call(plan: @task_plan.reload, details: true).outputs.stats
       exercises = stats.first.current_pages.first.exercises
@@ -374,10 +371,9 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
         end
         MarkTaskStepCompleted.call(task_step: ts)
       }
-      roles = fourth_task.taskings.collect{ |ts| ts.role }
+      roles = fourth_task.taskings.collect(&:role)
       users = Role::GetUsersForRoles[roles]
-      fourth_task_names = UserProfile::GetUserFullNames.call(users).outputs
-                                                       .full_names.collect{ |fn| fn.full_name }
+      fourth_task_names = UserProfile::GetProfiles[users: users].collect(&:full_name)
 
       stats = CalculateTaskPlanStats.call(plan: @task_plan.reload, details: true).outputs.stats
       exercises = stats.first.current_pages.first.exercises
