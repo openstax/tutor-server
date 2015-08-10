@@ -278,7 +278,7 @@ class DemoBase
          "Continuing: Any tasks that do not have a response will not be worked" ) \
       if responses.count != task.steps_count
 
-    core_task_steps = task.core_task_steps
+    core_task_steps = task.core_task_steps(preload_tasked: true)
 
     core_task_steps.each_with_index do |step, index|
       work_step(step, responses[index])
