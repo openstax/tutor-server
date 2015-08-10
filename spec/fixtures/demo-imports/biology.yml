@@ -16,7 +16,7 @@ assignments:
 
   - type: reading
     step_types: [ r, r, e, r, r, e, r, r, e, r, r, e, r, e, r, p, e, e, r, r, e ]
-    chapter_sections: [[1, 0], [1, 1], [1, 2]]
+    book_locations: [[1, 0], [1, 1], [1, 2]]
     title: Read Chapter 1. The Study of Life
     periods:
       - id: p1
@@ -31,7 +31,7 @@ assignments:
 
   - type: homework
     step_types: [ e, e, e, e, e, e, e, e, e, e, p ]
-    chapter_sections: [[1, 0], [1, 1], [1, 2]]
+    book_locations: [[1, 0], [1, 1], [1, 2]]
     title: HW The Study of Life
     num_exercises: 10
     periods:

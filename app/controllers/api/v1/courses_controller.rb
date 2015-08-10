@@ -55,9 +55,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     books = ecosystems.collect{ |es| es.books }.flatten
     raise NotYetImplemented if books.count > 1
 
-    # Return [toc] as a list so that in the future we may have toc from more
-    # than one book
-    respond_with [book.toc], represent_with: Api::V1::BookTocRepresenter
+    respond_with books.collect{ |bk| bk.toc }, represent_with: Api::V1::BookTocRepresenter
   end
 
   api :GET, '/courses/:course_id/exercises',

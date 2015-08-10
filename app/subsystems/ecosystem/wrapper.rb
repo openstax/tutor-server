@@ -9,6 +9,21 @@ module Ecosystem
       @strategy = strategy
     end
 
+    # Returns the strategy
+    # For internal use only
+    def _strategy
+      @strategy
+    end
+
+    # Wrappers are equal if the strategies are equal
+    def ==(other)
+      self.class == other.class && _strategy == other._strategy
+    end
+
+    def eql?(other)
+      self.class.eql?(other.class) && _strategy.eql?(other._strategy)
+    end
+
     protected
 
     # Convenience instance method that calls the verify_and_return class method

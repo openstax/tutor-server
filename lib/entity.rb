@@ -126,7 +126,6 @@ class Entity
     repository == self.class._unwrap(other)
   end
 
-  # Entities are equal if the repositories are equal
   def eql?(other)
     repository.eql? self.class._unwrap(other)
   end

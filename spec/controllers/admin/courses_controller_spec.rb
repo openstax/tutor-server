@@ -157,7 +157,7 @@ RSpec.describe Admin::CoursesController do
 
     context 'when a new ecosystem is selected' do
       it 'removes the existing association and creates a new one' do
-        post :set_book, id: course.id, ecosystem_id: eco_2.id
+        post :set_ecosystem, id: course.id, ecosystem_id: eco_2.id
         ecos = course.reload.ecosystems
         expect(ecos).to eq [eco_2]
         expect(flash[:notice]).to eq 'Course ecosystem "Biology" selected for "Physics I"'

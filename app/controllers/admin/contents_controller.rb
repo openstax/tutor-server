@@ -1,4 +1,4 @@
-class Admin::ContentController < Admin::BaseController
+class Admin::ContentsController < Admin::BaseController
   def index
     @ecosystems = Content::ListEcosystems[]
   end

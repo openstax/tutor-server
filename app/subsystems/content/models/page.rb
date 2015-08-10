@@ -21,8 +21,10 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
   has_many :page_tags, dependent: :destroy, autosave: true, inverse_of: :page
   has_many :tags, through: :page_tags
 
-  validates :title, presence: true
   validates :book_location, presence: true
+  validates :title, presence: true
+  validates :uuid, presence: true
+  validates :version, presence: true
 
   delegate :fragments, :is_intro?, to: :parser
 

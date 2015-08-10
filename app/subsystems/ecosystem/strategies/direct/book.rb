@@ -5,7 +5,12 @@ module Ecosystem
 
         wraps ::Content::Models::Book
 
-        exposes :url, :title, :chapters, :pages
+        exposes :url, :uuid, :version, :title, :chapters, :pages
+
+        alias_method :string_uuid, :uuid
+        def uuid
+          ::Ecosystem::Uuid.new(string_uuid)
+        end
 
         alias_method :entity_chapters, :chapters
         def chapters
@@ -22,7 +27,13 @@ module Ecosystem
         end
 
         def toc
-          { title: title,  chapters: entity_chapters.eager_load(:pages).collect{ |ch| ch.toc } }
+          {
+            url: url,
+            uuid: uuid,
+            version: version,
+            title: title,
+            chapters: entity_chapters.eager_load(:pages).collect{ |ch| ch.toc }
+          }
         end
 
       end

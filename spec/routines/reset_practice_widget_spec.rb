@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe ResetPracticeWidget, type: :routine do
 
-  let!(:role)          { Entity::Role.create! }
+  let!(:role)          { FactoryGirl.create(:course_membership_student).role }
   let!(:practice_task) { ResetPracticeWidget[role: role, exercise_source: :fake, page_ids: []] }
 
   it 'creates tasks with 5 exercise steps and feedback immediately available' do
@@ -20,6 +20,9 @@ RSpec.describe ResetPracticeWidget, type: :routine do
   end
 
   it 'errors when biglearn does not return enough' do
+    course = role.student.course
+    ecosystem = Ecosystem::Ecosystem.create!
+    AddEcosystemToCourse[ecosystem: ecosystem, course: course]
     allow(OpenStax::Biglearn::V1).to receive(:get_projection_exercises) { ['dummy_url'] }
     result = ResetPracticeWidget.call(role: role, exercise_source: :biglearn, page_ids: [])
     expect(result.errors.first.code).to eq :missing_local_exercises

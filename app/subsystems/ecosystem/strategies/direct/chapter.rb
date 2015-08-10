@@ -15,9 +15,11 @@ module Ecosystem
         end
 
         def toc
-          { title: title,
+          {
+            title: title,
             book_location: book_location,
-            pages: entity_pages.collect{ |ch| ch.toc } }
+            pages: entity_pages.collect{ |ch| ch.toc }
+          }
         end
 
       end

@@ -15,6 +15,10 @@ module Ecosystem
       def create!(strategy_class: ::Ecosystem::Strategies::Direct::Ecosystem)
         verify_and_return strategy_class.create!, klass: self
       end
+
+      def find(*args, strategy_class: ::Ecosystem::Strategies::Direct::Ecosystem)
+        verify_and_return strategy_class.find(*args), klass: self
+      end
     end
 
     def eager_load

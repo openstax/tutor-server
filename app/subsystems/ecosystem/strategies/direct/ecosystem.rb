@@ -6,7 +6,7 @@ module Ecosystem
         wraps ::Content::Models::Ecosystem
 
         exposes :books, :chapters, :pages, :exercises, :pools
-        exposes :all, :create, :create!, from_class: ::Content::Models::Ecosystem
+        exposes :all, :create, :create!, :find, from_class: ::Content::Models::Ecosystem
 
         class << self
           alias_method :entity_all, :all
@@ -24,6 +24,11 @@ module Ecosystem
           alias_method :entity_create!, :create!
           def create!
             ::Ecosystem::Ecosystem.new(strategy: entity_create!)
+          end
+
+          alias_method :entity_find, :find
+          def find(*args)
+            ::Ecosystem::Ecosystem.new(strategy: entity_find(*args))
           end
         end
 

@@ -59,6 +59,8 @@ class Tasks::RecoverTaskStep
   # Finds an Exercise with all the required tags and at least one LO
   # Prefers unassigned Exercises
   def get_recovery_exercise_for(ecosystem:, task_step:)
+    taskee = task_step.task.entity_task.taskings.first.role
+
     ireading_history = get_taskee_ireading_history(taskee: taskee)
 
     flat_history = GetTasksExerciseHistory[ecosystem: ecosystem, tasks: ireading_history].flatten

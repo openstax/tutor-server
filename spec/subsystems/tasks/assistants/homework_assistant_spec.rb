@@ -38,7 +38,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
         book_location: [8, ii+1]
       ).outputs.page
       strategy = ::Ecosystem::Strategies::Direct::Page.new(content_page)
-      ::Ecosystem::Page.new(strategy)
+      ::Ecosystem::Page.new(strategy: strategy)
     end
   }
 

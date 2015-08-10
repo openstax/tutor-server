@@ -7,8 +7,8 @@ class CreateContentPages < ActiveRecord::Migration
 
       t.integer :number, null: false
       t.string :title, null: false
-      t.string :uuid
-      t.string :version
+      t.string :uuid, null: false
+      t.string :version, null: false
 
       t.text :book_location, null: false
 

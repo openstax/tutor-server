@@ -49,7 +49,7 @@ class ResetPracticeWidget
       # Not enough exercises
       fatal_error(
         code: :not_enough_exercises,
-        message: "Not enough exercises to build the Practice Widget. [los: #{los.inspect}, " +
+        message: "Not enough exercises to build the Practice Widget. [pools: #{pools.inspect}, " +
                  "role: #{role.id}, needed: #{count}, got: #{num_exercises}]"
       )
     end

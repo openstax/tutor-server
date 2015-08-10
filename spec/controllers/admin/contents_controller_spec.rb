@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Admin::ContentController, speed: :slow, vcr: VCR_OPTS do
+RSpec.describe Admin::ContentsController, speed: :slow, vcr: VCR_OPTS do
   let!(:admin) { FactoryGirl.create :user_profile, :administrator }
 
   let!(:book_1) { FactoryGirl.create :content_book, title: 'Physics' }
