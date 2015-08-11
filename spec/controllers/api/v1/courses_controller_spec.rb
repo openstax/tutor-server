@@ -55,7 +55,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
 
     it "should work on the happy path" do
-      content_ecosystem = FactoryGirl.create(:content_book, :standard_contents_1).ecosystem
+      content_ecosystem = FactoryGirl.create(:content_book, :standard_contents_1).ecosystem.reload
       strategy = Ecosystem::Strategies::Direct::Ecosystem.new(content_ecosystem)
       ecosystem = Ecosystem::Ecosystem.new(strategy: strategy)
       CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
@@ -70,13 +70,13 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         chapter_section: [],
         children: [
           {
-            id: ecosystem.chapters.first.id.to_s,
+            id: ecosystem.books.first.chapters.first.id.to_s,
             title: 'chapter 1',
             type: 'part',
             chapter_section: [1],
             children: [
               {
-                id: ecosystem.chapters.first.pages.first.id.to_s,
+                id: ecosystem.books.first.chapters.first.pages.first.id.to_s,
                 cnx_id: Content::Models::Page.find(ecosystem.chapters.first.pages.first.id)
                                              .cnx_id.cnx_id,
                 title: 'first page',
@@ -84,7 +84,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                 type: 'page'
               },
               {
-                id: ecosystem.chapters.first.pages.second.id.to_s,
+                id: ecosystem.books.first.chapters.first.pages.second.id.to_s,
                 cnx_id: Content::Models::Page.find(ecosystem.chapters.first.pages.second.id)
                                              .cnx_id,
                 title: 'second page',
@@ -94,13 +94,13 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
             ]
           },
           {
-            id: ecosystem.chapters.second.id.to_s,
+            id: ecosystem.books.first.chapters.second.id.to_s,
             title: 'chapter 2',
             type: 'part',
             chapter_section: [2],
             children: [
               {
-                id: ecosystem.chapters.second.pages.first.id.to_s,
+                id: ecosystem.books.first.chapters.second.pages.first.id.to_s,
                 cnx_id: Content::Models::Page.find(ecosystem.chapters.second.pages.first.id)
                                              .cnx_id,
                 title: 'third page',
@@ -535,7 +535,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(response).to have_http_status(:success)
         hash = response.body_as_hash
         expect(hash[:total_count]).to eq(70)
-        page_los = Content::GetLos[page_ids: page_ids]
+        page_los = Content::Models::Page.all.map(&:los).flatten.collect(&:value)
         hash[:items].each do |item|
           wrapper = OpenStax::Exercises::V1::Exercise.new(content: item[:content].to_json)
           item_los = wrapper.los

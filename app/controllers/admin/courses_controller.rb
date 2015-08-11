@@ -59,13 +59,12 @@ class Admin::CoursesController < Admin::BaseController
     end
 
     course = Entity::Course.find(params[:id])
-    book = ::Ecosystem::Ecosystem.find(params[:ecosystem_id])
-    if course.ecosystems.include?(ecosystem)
-      flash[:notice] = "Course ecosystem \"#{ecosystem.books.first.title}\" is already selected for \"#{course.profile.name}\""
+    ecosystem = ::Ecosystem::Ecosystem.find(params[:ecosystem_id])
+    if course.ecosystems.first == ecosystem
+      flash[:notice] = "Course ecosystem \"#{ecosystem.title}\" is already selected for \"#{course.profile.name}\""
     else
-      CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: ecosystem,
-                                               remove_other_ecosystems: true)
-      flash[:notice] = "Course ecosystem \"#{ecosystem.books.first.title}\" selected for \"#{course.profile.name}\""
+      CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
+      flash[:notice] = "Course ecosystem \"#{ecosystem.title}\" selected for \"#{course.profile.name}\""
     end
     redirect_to edit_admin_course_path(params[:id], anchor: 'content')
   end

@@ -10,10 +10,7 @@ class DummyAssistant
 
   def build_tasks
     @taskees.collect do |taskee|
-      task = FactoryGirl.create(:tasks_task, task_plan: @task_plan)
-      entity_task = task.entity_task
-      entity_task.taskings << FactoryGirl.create(:tasks_tasking, role: taskee, task: entity_task)
-      entity_task
+      Tasks::BuildTask[task_plan: @task_plan].entity_task
     end
   end
 end

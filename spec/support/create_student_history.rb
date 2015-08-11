@@ -18,8 +18,7 @@ class CreateStudentHistory
       puts "=== Set Role##{role.id} history ==="
 
       # practice widgets assign 5 task steps to the role
-      # i + 1 because i == 0 is often the Introduction
-      practice_steps = create_practice_widget(role, pages: ecosystem.pages[i + 1].id)
+      practice_steps = create_practice_widget(role, pages: ecosystem.pages[3 + (i % 2)].id)
       answer_correctly(practice_steps, 2 + i) # 2 or 3/5
 
       practice_steps = create_practice_widget(role, pages: ecosystem.pages[5].id)
@@ -62,7 +61,7 @@ class CreateStudentHistory
     task_plan = create_homework_task_plan(ecosystem, course, periods)
     tasks = run(:distribute_tasks, task_plan).outputs.entity_tasks
     tasks.each do |task|
-      answer_correctly(task.task_steps, 2)
+      answer_correctly(task.task.task_steps, 2)
     end
   end
 
@@ -75,8 +74,7 @@ class CreateStudentHistory
 
   def answer_correctly(steps, num)
     steps.first(num).each do |step|
-      puts step.id.to_s
-      Hacks::AnswerExercise[task_step: step, is_correct: true]
+      Hacks::AnswerExercise[task_step: step.reload, is_correct: true]
     end
   end
 

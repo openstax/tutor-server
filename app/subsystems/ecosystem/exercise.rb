@@ -32,15 +32,15 @@ module Ecosystem
     end
 
     def tags
-      verify_and_return @strategy.tags, klass: String
+      verify_and_return @strategy.tags, klass: ::Ecosystem::Tag
     end
 
     def los
-      verify_and_return @strategy.los, klass: String
+      verify_and_return @strategy.los, klass: ::Ecosystem::Tag
     end
 
     def aplos
-      verify_and_return @strategy.aplos, klass: String
+      verify_and_return @strategy.aplos, klass: ::Ecosystem::Tag
     end
 
     def page

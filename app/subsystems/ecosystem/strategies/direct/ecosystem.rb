@@ -5,7 +5,7 @@ module Ecosystem
 
         wraps ::Content::Models::Ecosystem
 
-        exposes :books, :chapters, :pages, :exercises, :pools
+        exposes :books, :chapters, :pages, :exercises, :pools, :title
         exposes :all, :create, :create!, :find, from_class: ::Content::Models::Ecosystem
 
         class << self
@@ -17,18 +17,62 @@ module Ecosystem
           end
 
           alias_method :entity_create, :create
-          def create
-            ::Ecosystem::Ecosystem.new(strategy: entity_create)
+          def create(title:)
+            ::Ecosystem::Ecosystem.new(strategy: entity_create(title: title))
           end
 
           alias_method :entity_create!, :create!
-          def create!
-            ::Ecosystem::Ecosystem.new(strategy: entity_create!)
+          def create!(title:)
+            ::Ecosystem::Ecosystem.new(strategy: entity_create!(title: title))
           end
 
           alias_method :entity_find, :find
           def find(*args)
             ::Ecosystem::Ecosystem.new(strategy: entity_find(*args))
+          end
+
+          def find_by_book_ids(*ids)
+            books = ::Content::Models::Book.eager_load(:ecosystem).where(id: ids).to_a
+            return if books.size < ids.size
+
+            content_ecosystems = books.collect{ |bk| bk.ecosystem }.uniq
+            return if content_ecosystems.size != 1
+
+            strategy = new(content_ecosystems.first)
+            ::Ecosystem::Ecosystem.new(strategy: strategy)
+          end
+
+          def find_by_chapter_ids(*ids)
+            chapters = ::Content::Models::Chapter.eager_load(:ecosystem).where(id: ids).to_a
+            return if chapters.size < ids.size
+
+            content_ecosystems = chapters.collect{ |ch| ch.ecosystem }.uniq
+            return if content_ecosystems.size != 1
+
+            strategy = new(content_ecosystems.first)
+            ::Ecosystem::Ecosystem.new(strategy: strategy)
+          end
+
+          def find_by_page_ids(*ids)
+            pages = ::Content::Models::Page.eager_load(:ecosystem).where(id: ids).to_a
+            return if pages.size < ids.size
+
+            content_ecosystems = pages.collect{ |pg| pg.ecosystem }.uniq
+            return if content_ecosystems.size != 1
+
+            strategy = new(content_ecosystems.first)
+            ::Ecosystem::Ecosystem.new(strategy: strategy)
+          end
+
+          def find_by_exercise_ids(*ids)
+            exercises = ::Content::Models::Exercise.eager_load(:ecosystem).where(id: ids).to_a
+            return if exercises.size < ids.size
+
+            content_ecosystems = exercises.collect{ |ex| ex.ecosystem }.uniq
+            return if content_ecosystems.size != 1
+
+            strategy = new(content_ecosystems.first)
+            ::Ecosystem::Ecosystem.new(strategy: strategy)
           end
         end
 

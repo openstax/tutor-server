@@ -126,8 +126,14 @@ class Entity
     repository == self.class._unwrap(other)
   end
 
+  # Hash key equality
   def eql?(other)
     repository.eql? self.class._unwrap(other)
+  end
+
+  # Hash function
+  def hash
+    repository.hash ^ self.class.hash
   end
 
   # Calls the repository's inspect method, but replaces its class name with the Entity's class name

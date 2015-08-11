@@ -18,7 +18,6 @@ RSpec.describe Admin::ContentsController, speed: :slow, vcr: VCR_OPTS do
           'id' => book_2.ecosystem.id,
           'books' => [
             {
-              'id' => book_2.id,
               'title' => 'AP Biology',
               'uuid' => book_2.uuid,
               'version' => book_2.version,
@@ -31,7 +30,6 @@ RSpec.describe Admin::ContentsController, speed: :slow, vcr: VCR_OPTS do
           'id' => book_1.ecosystem.id,
           'books' => [
             {
-              'id' => book_1.id,
               'title' => 'Physics',
               'uuid' => book_1.uuid,
               'version' => book_1.version,

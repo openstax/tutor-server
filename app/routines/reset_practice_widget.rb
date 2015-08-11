@@ -1,5 +1,5 @@
 class ResetPracticeWidget
-  lev_routine express_output: :task
+  lev_routine express_output: :entity_task
 
   uses_routine GetPracticeWidget, as: :get_practice_widget
 
@@ -12,15 +12,12 @@ class ResetPracticeWidget
     as: :create_practice_widget_task
 
   uses_routine GetCourseEcosystem, as: :get_course_ecosystem
-  uses_routine GetTasksExerciseHistory, as: :get_tasks_exercise_history
+  uses_routine GetExerciseHistory, as: :get_exercise_history
   uses_routine GetEcosystemExercisesFromBiglearn, as: :get_ecosystem_exercises_from_biglearn
 
   protected
 
-  def exec(role:, exercise_source:, page_ids: [], chapter_ids: [], randomize: true)
-    page_ids = [page_ids].flatten.compact
-    book_part_ids = [book_part_ids].flatten.compact
-
+  def exec(role:, exercise_source:, page_ids: nil, chapter_ids: nil, randomize: true)
     # Get the existing practice widget and remove incomplete exercises from it
     # so they can be used in later practice
     existing_practice_task = run(:get_practice_widget, role: role).outputs.task.try(:task)
@@ -30,13 +27,17 @@ class ResetPracticeWidget
     count = 5
     exercises = case exercise_source
                 when :fake
+                  pools = []
                   get_fake_exercises(count)
                 when :local
-                  get_local_exercises(count, role, get_pools(role), randomize: randomize)
+                  ecosystem, pools = get_ecosystem_and_pools(page_ids, chapter_ids, role)
+                  get_local_exercises(ecosystem, count, role, pools, randomize: randomize)
                 when :biglearn
-                  run(:get_ecosystem_exercises_from_biglearn, count: count,
+                  ecosystem, pools = get_ecosystem_and_pools(page_ids, chapter_ids, role)
+                  run(:get_ecosystem_exercises_from_biglearn, ecosystem: ecosystem,
+                                                              count: count,
                                                               role: role,
-                                                              pools: get_pools(role))
+                                                              pools: pools)
                     .outputs.ecosystem_exercises
                 else
                   raise ArgumentError,
@@ -56,8 +57,8 @@ class ResetPracticeWidget
 
     # Figure out the type of practice
     task_type = :mixed_practice
-    task_type = :chapter_practice if book_part_ids.count > 0 && page_ids.count == 0
-    task_type = :page_practice if book_part_ids.count == 0 && page_ids.count > 0
+    task_type = :chapter_practice if !chapter_ids.nil? && page_ids.nil?
+    task_type = :page_practice if chapter_ids.nil? && !page_ids.nil?
 
     related_content_array = exercises.collect{ |ex| ex.page.related_content }
 
@@ -68,7 +69,7 @@ class ResetPracticeWidget
 
     run(:create_tasking, role: role, task: outputs.task.entity_task)
 
-    outputs.task = outputs.task.entity_task
+    outputs.entity_task = outputs.task.entity_task
   end
 
   def get_fake_exercises(count)
@@ -79,22 +80,21 @@ class ResetPracticeWidget
     end
   end
 
-  def get_pools(role)
-    # We can only handle student roles for now
-    ecosystem = run(:get_course_ecosystem, course: role.student.course).outputs.ecosystem
+  def get_ecosystem_and_pools(page_ids, chapter_ids, role)
+    ecosystem = GetEcosystemFromIds[page_ids: page_ids, chapter_ids: chapter_ids]
 
     # Gather relevant chapters and pages
     chapters = ecosystem.chapters_by_ids(chapter_ids)
     pages = ecosystem.pages_by_ids(page_ids) + chapters.collect{ |ch| ch.pages }.flatten.uniq
 
     # Gather exercise pools
-    ecosystem.practice_widget_pools(pages: pages)
+    [ecosystem, ecosystem.practice_widget_pools(pages: pages)]
   end
 
   def get_local_exercises(ecosystem, count, role, pools, options = {})
     options = { randomize: true }.merge(options)
-    tasks = role.taskings.collect{ |tt| tt.task }
-    flat_history = run(:get_tasks_exercise_history, ecosystem: ecosystem, tasks: tasks)
+    entity_tasks = role.taskings.collect{ |tt| tt.task }
+    flat_history = run(:get_exercise_history, ecosystem: ecosystem, entity_tasks: entity_tasks)
                      .outputs.exercise_history.flatten
     exercise_pool = pools.collect{ |pl| pl.exercises }.flatten.uniq
     exercise_pool = exercise_pool.shuffle if options[:randomize]

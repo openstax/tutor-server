@@ -39,7 +39,7 @@ module OpenStax::Biglearn
       )
     end
 
-    xit 'calls projection questions well' do
+    it 'calls projection questions well' do
       tag_search = {
         _and: [
           {

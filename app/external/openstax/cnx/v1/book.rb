@@ -32,6 +32,10 @@ module OpenStax::Cnx::V1
       }
     end
 
+    def canonical_url
+      @canonical_url ||= OpenStax::Cnx::V1.url_for("#{uuid}@#{version}")
+    end
+
     def title
       @title ||= hash.fetch('title') { |key|
         raise "Book id=#{id} is missing #{key}"

@@ -111,7 +111,6 @@ RSpec.describe Admin::CoursesController do
           'id' => eco_1.id,
           'books' => [
             {
-              'id' => book_1.id,
               'title' => 'Physics',
               'url' => book_1.url,
               'uuid' => uuid_1,
@@ -124,7 +123,6 @@ RSpec.describe Admin::CoursesController do
           'id' => eco_2.id,
           'books' => [
             {
-              'id' => book_2.id,
               'title' => 'Biology',
               'url' => book_2.url,
               'uuid' => uuid_2,
@@ -150,16 +148,16 @@ RSpec.describe Admin::CoursesController do
       it 'does not recreate the association' do
         post :set_ecosystem, id: course.id, ecosystem_id: eco_1.id
         ce = course.reload.course_ecosystems.first
-        expect(ce.id).to eq course_ecosystem.id
+        expect(ce).to eq course_ecosystem
         expect(flash[:notice]).to eq 'Course ecosystem "Physics" is already selected for "Physics I"'
       end
     end
 
     context 'when a new ecosystem is selected' do
-      it 'removes the existing association and creates a new one' do
+      it 'adds the selected ecosystem as the first ecosystem' do
         post :set_ecosystem, id: course.id, ecosystem_id: eco_2.id
         ecos = course.reload.ecosystems
-        expect(ecos).to eq [eco_2]
+        expect(ecos).to eq [eco_2, eco_1]
         expect(flash[:notice]).to eq 'Course ecosystem "Biology" selected for "Physics I"'
       end
     end

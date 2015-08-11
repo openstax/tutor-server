@@ -54,18 +54,18 @@ RSpec.describe OpenStax::Biglearn::V1, :type => :external do
       )
     end
 
-    xit 'delegates get_projection_exercises to the client' do
+    it 'delegates get_projection_exercises to the client' do
       expect(client).to receive(:get_projection_exercises).twice.with(
-        role: role, tag_search: tag, count: 2, difficulty: 0.6, allow_repetitions: false
+        role: role, pools: nil, tag_search: tag, count: 2, difficulty: 0.6, allow_repetitions: false
       )
       expect(OpenStax::Biglearn::V1.get_projection_exercises(
         role: role, tag_search: tag, count: 2, difficulty: 0.6, allow_repetitions: false
       )).to eq client.get_projection_exercises(
-        role: role, tag_search: tag, count: 2, difficulty: 0.6, allow_repetitions: false
+        role: role, pools: nil, tag_search: tag, count: 2, difficulty: 0.6, allow_repetitions: false
       )
     end
 
-    xit 'logs a warning and does not explode when client does not return expected number of exercises' do
+    it 'logs a warning and does not explode when client does not return expected number of exercises' do
       allow(client).to receive(:get_projection_exercises) { [] }
       expect(Rails.logger).to receive(:warn)
       OpenStax::Biglearn::V1.get_projection_exercises(

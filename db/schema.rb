@@ -21,8 +21,8 @@ ActiveRecord::Schema.define(version: 20150804002246) do
     t.text     "content"
     t.integer  "content_ecosystem_id", null: false
     t.string   "title",                null: false
-    t.string   "uuid"
-    t.string   "version"
+    t.string   "uuid",                 null: false
+    t.string   "version",              null: false
     t.datetime "created_at",           null: false
     t.datetime "updated_at",           null: false
   end
@@ -44,9 +44,12 @@ ActiveRecord::Schema.define(version: 20150804002246) do
   add_index "content_chapters", ["title"], name: "index_content_chapters_on_title", using: :btree
 
   create_table "content_ecosystems", force: :cascade do |t|
+    t.string   "title",      null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  add_index "content_ecosystems", ["title"], name: "index_content_ecosystems_on_title", unique: true, using: :btree
 
   create_table "content_exercise_tags", force: :cascade do |t|
     t.integer  "content_exercise_id", null: false
@@ -99,8 +102,8 @@ ActiveRecord::Schema.define(version: 20150804002246) do
     t.integer  "content_chapter_id", null: false
     t.integer  "number",             null: false
     t.string   "title",              null: false
-    t.string   "uuid"
-    t.string   "version"
+    t.string   "uuid",               null: false
+    t.string   "version",            null: false
     t.text     "book_location",      null: false
     t.datetime "created_at",         null: false
     t.datetime "updated_at",         null: false
@@ -143,8 +146,7 @@ ActiveRecord::Schema.define(version: 20150804002246) do
     t.datetime "updated_at",           null: false
   end
 
-  add_index "course_content_course_ecosystems", ["content_ecosystem_id"], name: "course_ecosystems_on_ecosystem_id", using: :btree
-  add_index "course_content_course_ecosystems", ["entity_course_id", "content_ecosystem_id"], name: "course_ecosystems_on_course_id_ecosystem_id_unique", unique: true, using: :btree
+  add_index "course_content_course_ecosystems", ["content_ecosystem_id", "entity_course_id"], name: "course_ecosystems_on_ecosystem_id_course_id", using: :btree
   add_index "course_content_course_ecosystems", ["entity_course_id", "created_at"], name: "course_ecosystems_on_course_id_created_at", using: :btree
 
   create_table "course_membership_enrollments", force: :cascade do |t|

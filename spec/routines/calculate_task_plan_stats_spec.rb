@@ -47,7 +47,7 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
         'id' => 'e26d1433-f8e4-41db-a757-0e061d6d2737',
         'title' => 'Prokaryotic Cells'})
       page = Content::Routines::ImportPage.call(
-        cnx_page: cnx_page, book_part: FactoryGirl.create(:content_book_part)
+        cnx_page: cnx_page, chapter: FactoryGirl.create(:content_chapter)
       ).outputs.page
 
       course = CreateCourse[name: 'Biology']
@@ -57,7 +57,7 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       task_plan = FactoryGirl.create(
         :tasks_task_plan,
         owner: course,
-        settings: { page_ids: [page.id.to_s] },
+        settings: { 'page_ids' => [page.id.to_s] },
         assistant_code_class_name: 'Tasks::Assistants::IReadingAssistant')
 
       DistributeTasks.call(task_plan)

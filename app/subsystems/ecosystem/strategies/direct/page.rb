@@ -5,9 +5,9 @@ module Ecosystem
 
         wraps ::Content::Models::Page
 
-        exposes :chapter, :url, :uuid, :version, :title, :content, :book_location, :is_intro?,
-                :fragments, :reading_dynamic_pool, :reading_try_another_pool,
-                :homework_core_pool, :homework_dynamic_pool, :practice_widget_pool
+        exposes :chapter, :reading_dynamic_pool, :reading_try_another_pool, :homework_core_pool,
+                :homework_dynamic_pool, :practice_widget_pool, :exercises, :tags, :los, :aplos,
+                :url, :uuid, :version, :title, :content, :book_location, :is_intro?, :fragments
 
         alias_method :entity_chapter, :chapter
         def chapter
@@ -39,16 +39,26 @@ module Ecosystem
           ::Ecosystem::Pool.new(strategy: entity_practice_widget_pool)
         end
 
+        alias_method :entity_exercises, :exercises
+        def exercises
+          entity_exercises.collect do |entity_exercise|
+            ::Ecosystem::Exercise.new(strategy: entity_exercise)
+          end
+        end
+
+        alias_method :entity_tags, :tags
         def tags
-          repository.tags.collect{ |t| t.value }
+          entity_tags.collect{ |et| ::Ecosystem::Tag.new(strategy: et) }
         end
 
+        alias_method :entity_los, :los
         def los
-          repository.los.collect{ |t| t.value }
+          entity_los.collect{ |el| ::Ecosystem::Tag.new(strategy: el) }
         end
 
+        alias_method :entity_aplos, :aplos
         def aplos
-          repository.aplos.collect{ |t| t.value }
+          entity_aplos.collect{ |ea| ::Ecosystem::Tag.new(strategy: ea) }
         end
 
         def toc

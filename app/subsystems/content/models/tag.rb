@@ -22,7 +22,7 @@ class Content::Models::Tag < Tutor::SubSystems::BaseModel
 
   VISIBLE_TAG_TYPES = [:lo, :aplo, :teks, :dok, :blooms, :length]
 
-  def chapter_section
+  def book_location
     matches = /-ch(\d+)-s(\d+)-lo\d+$/.match(value)
     matches.nil? ? [] : [matches[1].to_i, matches[2].to_i]
   end

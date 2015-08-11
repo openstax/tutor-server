@@ -22,8 +22,7 @@ RSpec.describe Api::V1::PagesController, type: :controller, api: true,
     end
 
     it 'returns not found if the version is not found' do
-      api_get :get_page, nil, parameters: { uuid: @page_uuid,
-                                            version: '100' }
+      api_get :get_page, nil, parameters: { uuid: @page_uuid, version: '100' }
       expect(response).to have_http_status(404)
     end
 
@@ -34,8 +33,7 @@ RSpec.describe Api::V1::PagesController, type: :controller, api: true,
     end
 
     it 'returns not found if the version is not a number' do
-      api_get :get_page, nil, parameters: { uuid: @page_uuid,
-                                            version: 'x' }
+      api_get :get_page, nil, parameters: { uuid: @page_uuid, version: 'x' }
       expect(response).to have_http_status(404)
     end
 
@@ -56,7 +54,8 @@ RSpec.describe Api::V1::PagesController, type: :controller, api: true,
         cnx_page = OpenStax::Cnx::V1::Page.new(page_hash)
         VCR.use_cassette("Api_V1_PagesController/with_an_old_version_of_force", VCR_OPTS) do
           @old_page = Content::Routines::ImportPage.call(cnx_page: cnx_page,
-                                                         chapter: chapter).outputs[:page]
+                                                         chapter: chapter,
+                                                         book_location: [1, 1]).outputs[:page]
         end
       end
 

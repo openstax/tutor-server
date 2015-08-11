@@ -22,8 +22,7 @@ class Tasks::Assistants::IReadingAssistant
     @task_plan = task_plan
     @taskees = taskees
 
-    # For now assume owner is a course
-    @ecosystem = GetCourseEcosystem[course: @task_plan.owner]
+    @pages = collect_pages
 
     @tag_exercise = {}
     @exercise_pages = {}
@@ -32,15 +31,10 @@ class Tasks::Assistants::IReadingAssistant
   end
 
   def build_tasks
-    # For now assume owner is a course
-    pages = collect_pages
-
-    raise "No pages selected" if pages.blank?
-
     @taskees.collect do |taskee|
       build_ireading_task(
         taskee: taskee,
-        pages:  pages
+        pages:  @pages
       ).entity_task
     end
   end
@@ -49,6 +43,9 @@ class Tasks::Assistants::IReadingAssistant
 
   def collect_pages
     page_ids = @task_plan.settings['page_ids']
+    raise "No pages selected" if page_ids.blank?
+
+    @ecosystem = GetEcosystemFromIds[page_ids: page_ids]
     @ecosystem.pages_by_ids(page_ids)
   end
 
@@ -134,7 +131,7 @@ class Tasks::Assistants::IReadingAssistant
     #puts "taskee: #{taskee.inspect}"
     #puts "ireading history:  #{ireading_history.inspect}"
 
-    exercise_history = GetTasksExerciseHistory[ecosystem: @ecosystem, tasks: ireading_history]
+    exercise_history = GetExerciseHistory[ecosystem: @ecosystem, entity_tasks: ireading_history]
     #puts "exercise history:  #{exercise_history.map(&:uid).sort}"
 
     exercise_pools = get_exercise_pools(exercise_history: exercise_history)
@@ -177,6 +174,7 @@ class Tasks::Assistants::IReadingAssistant
                             .sort_by{|tt| tt.due_at}
                             .push(task)
                             .reverse
+                            .collect{|tt| tt.entity_task}
 
     ireading_history
   end

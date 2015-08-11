@@ -5,6 +5,9 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
   wrapped_by ::Ecosystem::Strategies::Direct::Exercise
 
   belongs_to :page, inverse_of: :exercises
+  has_one :chapter, through: :page
+  has_one :book, through: :chapter
+  has_one :ecosystem, through: :book
 
   has_many :exercise_tags, dependent: :destroy, autosave: true, inverse_of: :exercise
   has_many :tags, through: :exercise_tags

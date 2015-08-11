@@ -20,7 +20,7 @@ class GetTeacherGuide
 
   def gather_period_stats(period)
     task_steps = task_steps_for_period(period)
-    book = period.course.books.last
+    book = period.course.ecosystems.first.books.first
     { period_id: period.id }.merge(compile_guide(task_steps, book))
   end
 

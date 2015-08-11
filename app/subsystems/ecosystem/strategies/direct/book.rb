@@ -5,11 +5,11 @@ module Ecosystem
 
         wraps ::Content::Models::Book
 
-        exposes :url, :uuid, :version, :title, :chapters, :pages
+        exposes :ecosystem, :chapters, :pages, :url, :uuid, :version, :title
 
-        alias_method :string_uuid, :uuid
-        def uuid
-          ::Ecosystem::Uuid.new(string_uuid)
+        alias_method :entity_ecosystem, :ecosystem
+        def ecosystem
+          ::Ecosystem::Ecosystem.new(strategy: entity_ecosystem)
         end
 
         alias_method :entity_chapters, :chapters
@@ -24,6 +24,11 @@ module Ecosystem
           entity_pages.collect do |entity_page|
             ::Ecosystem::Page.new(strategy: entity_page)
           end
+        end
+
+        alias_method :string_uuid, :uuid
+        def uuid
+          ::Ecosystem::Uuid.new(string_uuid)
         end
 
         def toc

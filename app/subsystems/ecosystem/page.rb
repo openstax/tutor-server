@@ -51,6 +51,10 @@ module Ecosystem
       verify_and_return @strategy.practice_widget_pool, klass: ::Ecosystem::Pool
     end
 
+    def exercises
+      verify_and_return @strategy.exercises, klass: ::Ecosystem::Exercise
+    end
+
     def book_location
       verify_and_return @strategy.book_location, klass: Integer
     end
@@ -64,15 +68,15 @@ module Ecosystem
     end
 
     def tags
-      verify_and_return @strategy.tags, klass: String
+      verify_and_return @strategy.tags, klass: ::Ecosystem::Tag
     end
 
     def los
-      verify_and_return @strategy.los, klass: String
+      verify_and_return @strategy.los, klass: ::Ecosystem::Tag
     end
 
     def aplos
-      verify_and_return @strategy.aplos, klass: String
+      verify_and_return @strategy.aplos, klass: ::Ecosystem::Tag
     end
 
     def related_content(title: nil, book_location: nil)

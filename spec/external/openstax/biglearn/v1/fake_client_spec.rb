@@ -11,7 +11,7 @@ module OpenStax::Biglearn
 
       client.reload! # make sure data is really saved
 
-      expect(client.store_exercises_copy).to include('e42' => { 1 => ['topic'] })
+      expect(client.store_exercises_copy).to include('e42' => { '1' => ['topic'] })
     end
 
     it 'matches boolean tag searches' do
@@ -65,7 +65,7 @@ module OpenStax::Biglearn
         client.add_exercises(V1::Exercise.new(question_id: 'e5', tags: ['lo3', 'concept']))
       end
 
-      xit "works when allow_repetitions is false" do
+      it "works when allow_repetitions is false" do
         exercises = client.get_projection_exercises(
           role: nil,
           tag_search: { _and: [ { _or: ['lo1', 'lo2'] }, 'concept'] },
@@ -77,7 +77,7 @@ module OpenStax::Biglearn
         expect(exercises).to eq(%w(e1 e3 e4))
       end
 
-      xit "works when allow_repetitions is true" do
+      it "works when allow_repetitions is true" do
         exercises = client.get_projection_exercises(
           role: nil,
           tag_search: { _and: [ { _or: ['lo1', 'lo2'] }, 'concept'] },

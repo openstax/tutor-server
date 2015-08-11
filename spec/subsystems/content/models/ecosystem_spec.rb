@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Content::Models::Ecosystem, type: :model do
-  subject(:ecosystem) { Content::Models::Ecosystem.create! }
+  subject(:ecosystem) { Content::Models::Ecosystem.create!(title: 'Ecosystem') }
 
   it { is_expected.to have_many(:course_ecosystems).dependent(:destroy) }
   it { is_expected.to have_many(:courses) }

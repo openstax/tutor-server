@@ -1,6 +1,6 @@
 class Content::Routines::PopulateExercisePools
 
-  lev_routine
+  lev_routine express_output: :pools
 
   protected
 

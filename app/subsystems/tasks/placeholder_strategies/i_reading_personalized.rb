@@ -1,14 +1,12 @@
 class Tasks::PlaceholderStrategies::IReadingPersonalized
 
   def populate_placeholders(task:)
-    # TODO: Replace with Exercise pools
     personalized_placeholder_task_steps = task.personalized_task_steps.select(&:placeholder?)
     return if personalized_placeholder_task_steps.none?
 
-    ecosystem = GetCourseEcosystem[course: task.task_plan.owner]
-
     # Gather relevant pages
     page_ids = task.task_plan.settings['page_ids']
+    ecosystem = GetEcosystemFromIds[page_ids: page_ids]
     pages = ecosystem.pages_by_ids(page_ids)
 
     # Gather exercise pools

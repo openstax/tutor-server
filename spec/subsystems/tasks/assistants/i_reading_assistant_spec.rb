@@ -70,7 +70,8 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     end }
 
     let!(:task_plan) {
-      FactoryGirl.build(:tasks_task_plan,
+      FactoryGirl.build(
+        :tasks_task_plan,
         assistant: assistant,
         settings: { page_ids: pages.collect{ |page| page.id.to_s } },
         num_tasking_plans: 0
@@ -88,7 +89,8 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     let!(:tasking_plans) {
       tps = taskees.collect do |taskee|
         task_plan.tasking_plans <<
-          FactoryGirl.build(:tasks_tasking_plan,
+          FactoryGirl.build(
+            :tasks_tasking_plan,
             task_plan: task_plan,
             target:    taskee
           )
@@ -98,17 +100,23 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       tps
     }
 
-    let!(:course) { task_plan.owner }
+    let!(:course) {
+      course = task_plan.owner
+      AddEcosystemToCourse[course: course, ecosystem: chapter.book.ecosystem]
+      course
+    }
     let!(:period) { CreatePeriod[course: course] }
 
     it 'splits a CNX module into many different steps and assigns them with immediate feedback' do
       allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [[0, 2]]}
 
-      tasks = DistributeTasks.call(task_plan).outputs.tasks
-      expect(tasks.length).to eq num_taskees
+      entity_tasks = DistributeTasks.call(task_plan).outputs.entity_tasks
+      expect(entity_tasks.length).to eq num_taskees
 
-      tasks.each do |task|
-        expect(task.taskings.length).to eq 1
+      entity_tasks.each do |entity_task|
+        expect(entity_task.taskings.length).to eq 1
+
+        task = entity_task.task
         expect(task.feedback_at).to be <= Time.now
 
         task_steps = task.task_steps

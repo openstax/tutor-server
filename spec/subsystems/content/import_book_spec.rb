@@ -7,7 +7,7 @@ RSpec.describe Content::ImportBook, type: :routine, speed: :slow, vcr: VCR_OPTS 
   let!(:phys_cnx_book) { OpenStax::Cnx::V1::Book.new(id: '93e2b09d-261c-4007-a987-0b3062fe154b') }
   let!(:bio_cnx_book)  { OpenStax::Cnx::V1::Book.new(id: 'ccbc51fa-49f3-40bb-98d6-07a15a7ab6b7') }
 
-  let!(:ecosystem)     { Ecosystem::Ecosystem.create! }
+  let!(:ecosystem)     { Ecosystem::Ecosystem.create!(title: 'Ecosystem') }
 
   before(:each)          { OpenStax::Biglearn::V1.use_fake_client }
   let!(:biglearn_client) { OpenStax::Biglearn::V1.fake_client }
@@ -19,18 +19,21 @@ RSpec.describe Content::ImportBook, type: :routine, speed: :slow, vcr: VCR_OPTS 
     }.to change{ Content::Models::Chapter.count }.by(4)
     expect(result.errors).to be_empty
 
+    expect(ecosystem.id).not_to be_nil
+
     book = ecosystem.books.first
-    expect(book.url).to eq phys_cnx_book.url
+    expect(book.id).not_to be_nil
+    expect(book.url).to eq phys_cnx_book.canonical_url
     expect(book.uuid).to eq phys_cnx_book.uuid
     expect(book.version).to eq phys_cnx_book.version
 
     book.chapters.each do |chapter|
-      expect(chapter).to be_persisted
+      expect(chapter.id).not_to be_nil
       expect(chapter.title).not_to be_blank
     end
 
     book.pages.each do |page|
-      expect(page).to be_persisted
+      expect(page.id).not_to be_nil
       expect(page.title).not_to be_blank
     end
 

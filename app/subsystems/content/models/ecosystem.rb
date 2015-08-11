@@ -13,6 +13,8 @@ module Content
       has_many :exercises, through: :pages
       has_many :pools, through: :pages
 
+      validates :title, presence: true, uniqueness: true
+
     end
   end
 end

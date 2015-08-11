@@ -33,9 +33,9 @@ module OpenStax::Biglearn::V1
   #   Ex:
   #     { _and: [ { _or: ['a', 'b', 'c'] }, 'd']  }
   #
-  def self.get_projection_exercises(role:, pools:,
+  def self.get_projection_exercises(role:, pools: nil, tag_search: nil,
                                     count: 1, difficulty: 0.5, allow_repetitions: true)
-    exercises = client.get_projection_exercises(role: role, pools: pools,
+    exercises = client.get_projection_exercises(role: role, pools: pools, tag_search: tag_search,
                                                 count: count, difficulty: difficulty,
                                                 allow_repetitions: allow_repetitions)
 
@@ -44,7 +44,8 @@ module OpenStax::Biglearn::V1
     if num_exercises != count
       Rails.logger.warn {
         "Biglearn.get_projection_exercises only returned #{num_exercises} of #{count} " +
-        "requested exercises [role: #{role}, pool: #{pool.uuid}, difficulty: #{difficulty}, " +
+        "requested exercises [role: #{role}, pools: #{(pools || []).collect{ |pl| pl.uuid }}, " +
+        "tag_search: #{tag_search}, difficulty: #{difficulty}, " +
         "allow_repetitions: #{allow_repetitions}] exercises = #{exercises}"
       }
     end

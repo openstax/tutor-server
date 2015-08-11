@@ -64,7 +64,7 @@ class CalculateTaskPlanStats
     stats = {
       id:              page.id,
       title:           page.title,
-      chapter_section: page.chapter_section
+      chapter_section: page.book_location
     }
 
     stats.merge page_stats_for_tasked_exercises(tasked_exercises)

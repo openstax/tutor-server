@@ -3,8 +3,8 @@ require 'rails_helper'
 RSpec.describe CourseContent::AddEcosystemToCourse, type: :routine do
 
   let!(:course) { Entity::Course.create! }
-  let!(:eco1)   { Ecosystem::Ecosystem.create! }
-  let!(:eco2)   { Ecosystem::Ecosystem.create! }
+  let!(:eco1)   { Ecosystem::Ecosystem.create!(title: 'Eco1') }
+  let!(:eco2)   { Ecosystem::Ecosystem.create!(title: 'Eco2') }
 
   it "adds an ecosystem to a course when the ecosystem is not already there" do
     result = nil

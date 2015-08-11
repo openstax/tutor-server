@@ -4,7 +4,11 @@ class CourseContent::AddEcosystemToCourse
   protected
 
   def exec(course:, ecosystem:, remove_other_ecosystems: false)
-    course.reload.ecosystems.destroy_all if remove_other_ecosystems
+    fatal_error(code: :ecosystem_already_set,
+                message: 'The given ecosystem is already active for the given course') \
+      if course.reload.ecosystems.first == ecosystem
+
+    course.ecosystems.destroy_all if remove_other_ecosystems
     course_ecosystem = CourseContent::Models::CourseEcosystem.create(
       course: course, content_ecosystem_id: ecosystem.id
     )

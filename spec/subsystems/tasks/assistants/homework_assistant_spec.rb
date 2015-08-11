@@ -30,13 +30,23 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
     end
   }
 
-  let!(:pages)     {
+  let!(:content_pages)     {
     cnx_pages.collect.with_index do |cnx_page, ii|
       content_page = Content::Routines::ImportPage.call(
         cnx_page:  cnx_page,
         chapter: chapter,
         book_location: [8, ii+1]
       ).outputs.page
+    end
+  }
+
+  let!(:pools) {
+    pools = Content::Routines::PopulateExercisePools[pages: content_pages].flatten
+    pools.collect{ |pool| pool.save! }
+  }
+
+  let!(:pages)     {
+    content_pages.collect do |content_page|
       strategy = ::Ecosystem::Strategies::Direct::Page.new(content_page)
       ::Ecosystem::Page.new(strategy: strategy)
     end
@@ -45,7 +55,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
   let!(:exercises) {
     pools = ecosystem.homework_core_pools(pages: pages)
 
-    pools.collect{ |pl| pl.exercises }.flatten.sort_by{|ex| ex.uid}
+    pools.collect{ |pool| pool.exercises }.flatten.sort_by{|ex| ex.uid}
   }
 
   let!(:teacher_selected_exercises) { exercises[1..5] }

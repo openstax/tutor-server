@@ -31,9 +31,10 @@ module Api::V1
     collection :tags,
                readable: true,
                writeable: false,
-               getter: -> (*) { tags.select{ |tag| tag.visible } },
+               getter: -> (*) { tags.select { |tag| tag.visible? } },
                decorator: TagRepresenter,
-               schema_info: { required: true, description: 'Tags for this exercise' }
+               schema_info: { required: true,
+                              description: 'Tags for this exercise' }
 
   end
 end

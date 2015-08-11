@@ -33,8 +33,8 @@ class OpenStax::Biglearn::V1::FakeClient
     # any with the same ID
 
     [exercises].flatten.each do |exercise|
-      store['exercises'][exercise.question_id] ||= {}
-      store['exercises'][exercise.question_id][exercise.version] = exercise.tags
+      store['exercises'][exercise.question_id.to_s] ||= {}
+      store['exercises'][exercise.question_id.to_s][exercise.version.to_s] = exercise.tags
     end
 
     save!
@@ -45,7 +45,7 @@ class OpenStax::Biglearn::V1::FakeClient
 
     result = pools.collect do |pool|
       uuid = SecureRandom.uuid
-      store['pools'][uuid] = pool.exercises.collect{ |ex| ex.question_id }
+      store['pools'][uuid] = pool.exercises.collect{ |ex| ex.question_id.to_s }
       { 'pool_id' => uuid }
     end
 
@@ -69,20 +69,35 @@ class OpenStax::Biglearn::V1::FakeClient
     { 'pool_id' => uuid }
   end
 
-  def get_projection_exercises(role:, pools:, count:, difficulty:, allow_repetitions:)
-    # Get the pools
-    question_ids = pools.collect{ |pool| store['pools'][pool.uuid] }.flatten.uniq
+  def get_projection_exercises(role:, pools: nil, tag_search: nil,
+                               count:, difficulty:, allow_repetitions:)
+    exercises = store_exercises_copy
+
+    unless pools.nil?
+      # Get the exercises in the pools
+      question_ids = pools.collect{ |pool| store['pools'][pool.uuid] }.flatten.uniq
+      exercises = exercises.slice(*question_ids)
+    end
+
+    unless tag_search.nil?
+      # Restrict results to those matching the tags
+      exercises = exercises.select do |question_id, version_tags|
+        latest_version = version_tags.keys.max
+        tags_match_condition?(version_tags[latest_version], tag_search)
+      end
+    end
 
     # Limit the results to the desired number
-    results = question_ids.first(count)
+    results = exercises.first(count)
 
     # If we didn't get as many as requested and repetitions are allowed,
     # pad the results, repeat the matches until we have enough, making
     # sure to clip at the desired count in case we go over.
-    while (allow_repetitions && results.length < count && question_ids.any?)
-      results += question_ids.first(count - results.length)
+    while (allow_repetitions && results.length < count && exercises.any?)
+      results += exercises.first(count - results.length)
     end
-    results
+
+    results.collect{ |question_id, version_tags| question_id }
   end
 
   # Example conditions: { _and: [ { _or: ['a', 'b', 'c'] }, 'd']  }

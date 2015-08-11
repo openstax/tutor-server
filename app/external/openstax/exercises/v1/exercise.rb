@@ -25,6 +25,14 @@ class OpenStax::Exercises::V1::Exercise
     @uid ||= content_hash['uid']
   end
 
+  def number
+    @number ||= content_hash['number']
+  end
+
+  def version
+    @version ||= content_hash['version']
+  end
+
   def url
     @url ||= "#{@server_url}/exercises/#{uid}"
   end

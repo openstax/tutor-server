@@ -52,7 +52,7 @@ RSpec.describe GetTeacherGuide do
 
     expect([period_1_chapter_1]).to match a_hash_including(
       "title"=>"Acceleration",
-      "chapter_section"=>[3],
+      "book_location"=>[3],
       "questions_answered_count"=>2,
       "clue" => {
         "value" => kind_of(Float),
@@ -71,7 +71,7 @@ RSpec.describe GetTeacherGuide do
 
     expect([period_2_chapter_1]).to match a_hash_including(
       "title"=>"Acceleration",
-      "chapter_section"=>[3],
+      "book_location"=>[3],
       "questions_answered_count"=>3,
       "clue" => {
         "value" => kind_of(Float),
@@ -92,7 +92,7 @@ RSpec.describe GetTeacherGuide do
 
     expect(period_1_pages).to include(
       a_hash_including("title"=>"Acceleration",
-                       "chapter_section"=>[3, 1],
+                       "book_location"=>[3, 1],
                        "questions_answered_count"=>2,
                        "clue" => {
                          "value" => kind_of(Float),
@@ -110,7 +110,7 @@ RSpec.describe GetTeacherGuide do
 
     expect(period_2_pages).to include(
       a_hash_including("title"=>"Representing Acceleration with Equations and Graphs",
-                       "chapter_section"=>[3, 2],
+                       "book_location"=>[3, 2],
                        "questions_answered_count"=>3,
                        "clue" => {
                          "value" => kind_of(Float),

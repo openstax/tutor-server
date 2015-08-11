@@ -23,6 +23,10 @@ module Ecosystem
       verify_and_return @strategy.title, klass: String
     end
 
+    def ecosystem
+      verify_and_return @strategy.ecosystem, klass: ::Ecosystem::Ecosystem
+    end
+
     def chapters
       verify_and_return @strategy.chapters, klass: ::Ecosystem::Chapter
     end

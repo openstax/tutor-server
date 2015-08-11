@@ -17,7 +17,8 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, speed: :slow, vcr:
 
     expect(result.outputs[:page]).to be_persisted
 
-    uuid, version = cnx_page.id.split('@')
+    uuid = cnx_page.uuid
+    version = cnx_page.version
     expect(result.outputs[:page].uuid).to eq uuid
     expect(result.outputs[:page].version).to eq version
     expect(result.outputs[:page].book_location).to eq book_location

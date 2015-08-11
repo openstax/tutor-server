@@ -14,7 +14,7 @@ class Content::ImportBook
   # Imports and saves a Cnx::Book as an Content::Models::Book
   # Returns the Book object, Resource object and collection JSON as a hash
   def exec(cnx_book:, ecosystem:)
-    book = Content::Models::Book.new(url: cnx_book.url,
+    book = Content::Models::Book.new(url: cnx_book.canonical_url,
                                      uuid: cnx_book.uuid,
                                      version: cnx_book.version,
                                      title: cnx_book.title,

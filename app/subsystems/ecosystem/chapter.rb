@@ -3,8 +3,16 @@ module Ecosystem
 
     include Wrapper
 
+    def id
+      verify_and_return @strategy.id, klass: Integer
+    end
+
     def title
       verify_and_return @strategy.title, klass: String
+    end
+
+    def book
+      verify_and_return @strategy.book, klass: ::Ecosystem::Book
     end
 
     def pages

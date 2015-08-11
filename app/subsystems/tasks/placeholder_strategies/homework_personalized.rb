@@ -4,10 +4,9 @@ class Tasks::PlaceholderStrategies::HomeworkPersonalized
     personalized_placeholder_task_steps = task.personalized_task_steps.select(&:placeholder?)
     return if personalized_placeholder_task_steps.none?
 
-    ecosystem = GetCourseEcosystem[course: task.task_plan.owner]
-
     # Gather relevant pages
     exercise_ids = task.task_plan.settings['exercise_ids']
+    ecosystem = GetEcosystemFromIds[exercise_ids: exercise_ids]
     exercises = ecosystem.exercises_by_ids(exercise_ids)
     pages = exercises.collect{ |ex| ex.page }.uniq
 

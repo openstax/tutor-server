@@ -15,6 +15,8 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
   has_one :practice_widget_pool, -> {practice_widget}, class_name: 'Content::Models::Pool'
 
   sortable_belongs_to :chapter, on: :number, inverse_of: :pages
+  has_one :book, through: :chapter
+  has_one :ecosystem, through: :book
 
   has_many :exercises, dependent: :destroy, inverse_of: :page
 

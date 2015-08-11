@@ -62,6 +62,22 @@ module OpenStax::Cnx::V1
       @full_hash ||= OpenStax::Cnx::V1.fetch(id)
     end
 
+    def uuid
+      @uuid ||= full_hash.fetch('id') { |key|
+        raise "Book id=#{id} is missing #{key}"
+      }
+    end
+
+    def version
+      @version ||= full_hash.fetch('version') { |key|
+        raise "Book id=#{id} is missing #{key}"
+      }
+    end
+
+    def canonical_url
+      @canonical_url ||= OpenStax::Cnx::V1.url_for("#{uuid}@#{version}")
+    end
+
     def content
       @content ||= full_hash.fetch('content') { |key| raise "Page id=#{id} is missing #{key}" }
     end

@@ -40,16 +40,24 @@ class OpenStax::Biglearn::V1::RealClient
                                 .collect{ |p| p.exchange_read_identifier }
   end
 
-  def get_projection_exercises(role:, pools:, count:, difficulty:, allow_repetitions:)
-    # If we have more than one pool, we must first combine them all into a single pool
-    pool = [pool].flatten.size > 1 ? OpenStax::Biglearn::V1.combine_pools(pools) : pools.first
-
+  def get_projection_exercises(role:, pools: nil, tag_search: nil,
+                               count:, difficulty:, allow_repetitions:)
     query = {
       learner_id: get_exchange_read_identifiers_for_roles(roles: role).first,
       number_of_questions: count,
-      pool_id: pool.uuid,
       allow_repetition: allow_repetitions ? 'true' : 'false'
     }
+
+    unless pools.nil?
+      # If we have more than one pool, we must first combine them all into a single pool
+      pool = [pools].flatten.size > 1 ? OpenStax::Biglearn::V1.combine_pools(pools) : pools.first
+
+      query = query.merge(pool_id: pool.uuid)
+    end
+
+    unless tag_search.nil?
+      query = query.merge(tag_query: stringify_tag_search(tag_search))
+    end
 
     response = request(:get, projection_exercises_uri, params: query)
 

@@ -34,8 +34,7 @@ class Tasks::Assistants::HomeworkAssistant
     @task_plan = task_plan
     @taskees = taskees
 
-    # For now assume owner is a course
-    @ecosystem = GetCourseEcosystem[course: @task_plan.owner]
+    @exercises = collect_exercises
 
     @tag_exercise = {}
     @exercise_pages = {}
@@ -44,15 +43,10 @@ class Tasks::Assistants::HomeworkAssistant
   end
 
   def build_tasks
-    
-    exercises = collect_exercises
-
-    raise "No exercises selected" if exercises.blank?
-
     @taskees.collect do |taskee|
       build_homework_task(
         taskee:       taskee,
-        exercises:    exercises
+        exercises:    @exercises
       ).entity_task
     end
   end
@@ -61,6 +55,9 @@ class Tasks::Assistants::HomeworkAssistant
 
   def collect_exercises
     exercise_ids = @task_plan.settings['exercise_ids']
+    raise "No exercises selected" if exercise_ids.blank?
+
+    @ecosystem = GetEcosystemFromIds[exercise_ids: exercise_ids]
     @ecosystem.exercises_by_ids(exercise_ids)
   end
 
@@ -106,7 +103,7 @@ class Tasks::Assistants::HomeworkAssistant
     #puts "taskee: #{taskee.inspect}"
     #puts "ireading history:  #{homework_history.inspect}"
 
-    exercise_history = GetTasksExerciseHistory[ecosystem: @ecosystem, tasks: homework_history]
+    exercise_history = GetExerciseHistory[ecosystem: @ecosystem, entity_tasks: homework_history]
     #puts "exercise history:  #{exercise_history.map(&:uid).sort}"
 
     exercise_pools = get_exercise_pools(exercise_history: exercise_history)
@@ -131,7 +128,7 @@ class Tasks::Assistants::HomeworkAssistant
         candidate_exercises.delete(chosen_exercise)
         flat_history.push(chosen_exercise)
 
-        related_content = chosen_exercise.related_content
+        related_content = chosen_exercise.page.related_content
 
         step = add_exercise_step(task: task, exercise: chosen_exercise)
         step.group_type = :spaced_practice_group
@@ -153,6 +150,7 @@ class Tasks::Assistants::HomeworkAssistant
                             .sort_by{|tt| tt.due_at}
                             .push(task)
                             .reverse
+                            .collect{|tt| tt.entity_task}
 
     homework_history
   end

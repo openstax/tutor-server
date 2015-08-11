@@ -23,12 +23,10 @@ class Content::Routines::ImportExercises
     tags = run(:find_or_create_tags, input: wrapper_tag_hashes).outputs.tags
 
     wrappers.each do |wrapper|
-      uid = wrapper.uid
-      number_version = uid.split('@')
       exercise_page = page.respond_to?(:call) ? page.call(wrapper) : page
       exercise = Content::Models::Exercise.new(url: wrapper.url,
-                                               number: number_version.first,
-                                               version: number_version.last,
+                                               number: wrapper.number,
+                                               version: wrapper.version,
                                                title: wrapper.title,
                                                content: wrapper.content,
                                                page: exercise_page)

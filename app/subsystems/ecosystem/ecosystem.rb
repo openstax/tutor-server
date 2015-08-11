@@ -8,21 +8,33 @@ module Ecosystem
         verify_and_return strategy_class.all, klass: self
       end
 
-      def create(strategy_class: ::Ecosystem::Strategies::Direct::Ecosystem)
-        verify_and_return strategy_class.create, klass: self
+      def create(title:, strategy_class: ::Ecosystem::Strategies::Direct::Ecosystem)
+        verify_and_return strategy_class.create(title: title), klass: self
       end
 
-      def create!(strategy_class: ::Ecosystem::Strategies::Direct::Ecosystem)
-        verify_and_return strategy_class.create!, klass: self
+      def create!(title:, strategy_class: ::Ecosystem::Strategies::Direct::Ecosystem)
+        verify_and_return strategy_class.create!(title: title), klass: self
       end
 
       def find(*args, strategy_class: ::Ecosystem::Strategies::Direct::Ecosystem)
         verify_and_return strategy_class.find(*args), klass: self
       end
-    end
 
-    def eager_load
-      verify_and_return @strategy.eager_load, klass: self.class
+      def find_by_book_ids(*args, strategy_class: ::Ecosystem::Strategies::Direct::Ecosystem)
+        verify_and_return strategy_class.find_by_book_ids(*args), klass: self, allow_nil: true
+      end
+
+      def find_by_chapter_ids(*args, strategy_class: ::Ecosystem::Strategies::Direct::Ecosystem)
+        verify_and_return strategy_class.find_by_chapter_ids(*args), klass: self, allow_nil: true
+      end
+
+      def find_by_page_ids(*args, strategy_class: ::Ecosystem::Strategies::Direct::Ecosystem)
+        verify_and_return strategy_class.find_by_page_ids(*args), klass: self, allow_nil: true
+      end
+
+      def find_by_exercise_ids(*args, strategy_class: ::Ecosystem::Strategies::Direct::Ecosystem)
+        verify_and_return strategy_class.find_by_exercise_ids(*args), klass: self, allow_nil: true
+      end
     end
 
     def id
@@ -106,6 +118,10 @@ module Ecosystem
                                                              error: ArgumentError
       pools = @strategy.practice_widget_pools(pages: pages_arr)
       verify_and_return pools, klass: ::Ecosystem::Pool
+    end
+
+    def title
+      verify_and_return @strategy.title, klass: String
     end
 
   end

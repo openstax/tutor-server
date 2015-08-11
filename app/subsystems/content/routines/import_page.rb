@@ -20,15 +20,14 @@ class Content::Routines::ImportPage
   # into the given Content::Models::Chapter
   # Returns the Content::Models::Page object
   def exec(cnx_page:, chapter:, number: nil, book_location: nil, save: true)
-    uuid, version = cnx_page.id.split('@')
-    outputs[:page] = Content::Models::Page.new(url: cnx_page.url,
+    outputs[:page] = Content::Models::Page.new(url: cnx_page.canonical_url,
                                                title: cnx_page.title,
                                                content: cnx_page.converted_content,
                                                chapter: chapter,
                                                number: number,
                                                book_location: book_location,
-                                               uuid: uuid,
-                                               version: version)
+                                               uuid: cnx_page.uuid,
+                                               version: cnx_page.version)
     outputs[:page].save if save
     transfer_errors_from(outputs[:page], {type: :verbatim}, true)
     chapter.pages << outputs[:page] unless chapter.nil?

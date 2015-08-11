@@ -9,8 +9,9 @@ class Tasks::RecoverTaskStep
   def exec(task_step:)
     fatal_error(code: :recovery_not_available) unless task_step.can_be_recovered?
 
-    # We can only handle course owners
-    ecosystem = GetCourseEcosystem[course: task_step.task.task_plan.owner]
+    # Get the ecosystem from the content_exercise_id
+    exercise_id = task_step.tasked.content_exercise_id
+    ecosystem = GetEcosystemFromIds[exercise_ids: exercise_id]
 
     recovery_exercise = get_recovery_exercise_for(ecosystem: ecosystem, task_step: task_step)
 
@@ -41,17 +42,19 @@ class Tasks::RecoverTaskStep
   end
 
   # Get the student's reading assignments
-  def self.get_taskee_ireading_history(taskee:)
-    taskee.taskings
-          .collect{ |tt| tt.task }
-          .select{ |tt| tt.reading? }
-          .sort_by{ |tt| tt.due_at }
-          .reverse
+  def get_taskees_ireading_histories(taskees:)
+    taskees.collect do |taskee|
+      taskee.taskings
+            .collect{ |tt| tt.task }
+            .select{ |tt| tt.task.reading? }
+            .sort_by{ |tt| tt.task.due_at }
+            .reverse
+    end
   end
 
   # Get the page for each exercise in the student's assignments
   # From each page, get the pool of "try another" reading problems
-  def self.get_exercise_pool(ecosystem:, exercises:)
+  def get_exercise_pool(ecosystem:, exercises:)
     pages = exercises.collect{ |ex| ex.page }
     ecosystem.reading_try_another_pools(pages: pages).collect{ |pl| pl.exercises }.flatten
   end
@@ -59,15 +62,16 @@ class Tasks::RecoverTaskStep
   # Finds an Exercise with all the required tags and at least one LO
   # Prefers unassigned Exercises
   def get_recovery_exercise_for(ecosystem:, task_step:)
-    taskee = task_step.task.entity_task.taskings.first.role
+    taskees = task_step.task.entity_task.taskings.collect{ |tt| tt.role }
 
-    ireading_history = get_taskee_ireading_history(taskee: taskee)
+    ireading_history = get_taskees_ireading_histories(taskees: taskees).flatten.uniq
 
-    flat_history = GetTasksExerciseHistory[ecosystem: ecosystem, tasks: ireading_history].flatten
+    exercise_history = GetExerciseHistory[ecosystem: ecosystem,
+                                          entity_tasks: ireading_history].flatten
 
-    exercise_pool = get_exercise_pool(ecosystem: ecosystem, exercises: flat_history)
+    exercise_pool = get_exercise_pool(ecosystem: ecosystem, exercises: exercise_history)
 
-    candidate_exercises = (exercise_pool - flat_history).uniq
+    candidate_exercises = (exercise_pool - exercise_history).uniq
 
     los = task_step.tasked.los
     aplos = task_step.tasked.aplos

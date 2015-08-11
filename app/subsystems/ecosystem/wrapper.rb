@@ -20,8 +20,14 @@ module Ecosystem
       self.class == other.class && _strategy == other._strategy
     end
 
+    # Hash key equality
     def eql?(other)
       self.class.eql?(other.class) && _strategy.eql?(other._strategy)
+    end
+
+    # Hash function
+    def hash
+      self.class.hash ^ _strategy.hash
     end
 
     protected

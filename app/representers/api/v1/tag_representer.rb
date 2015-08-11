@@ -25,11 +25,12 @@ module Api::V1
              readable: true,
              writeable: false
 
-    property :chapter_section,
+    property :book_location,
+             as: :chapter_section,
              type: Array,
              readable: true,
              writeable: false,
-             if: ->(*) { !chapter_section.blank? },
+             if: ->(*) { !book_location.blank? },
              schema_info: {
                required: false,
                description: 'The chapter and section in the book, e.g. [5, 2]'

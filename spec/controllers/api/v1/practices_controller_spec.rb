@@ -13,30 +13,24 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
 
   let(:userless_token) { FactoryGirl.create :doorkeeper_access_token }
 
-  let(:course) { CreateCourse[name: 'Physics 101'] }
+  let(:course) {
+    course = CreateCourse[name: 'Physics 101']
+
+  }
   let(:period) { CreatePeriod[course: course] }
 
-  describe "POST #create" do
-    let(:lo) { FactoryGirl.create :content_tag, tag_type: :lo, value: 'lo01' }
-    let(:page) { FactoryGirl.create :content_page }
-    let!(:page_tag) { FactoryGirl.create :content_page_tag, page: page, tag: lo }
+  context "POST #create" do
+    let!(:page) {
+      page = FactoryGirl.create :content_page
+      AddEcosystemToCourse[course: course, ecosystem: page.book.ecosystem]
+      page
+    }
 
-    let(:exercise_1) { FactoryGirl.create :content_exercise }
-    let(:exercise_2) { FactoryGirl.create :content_exercise }
-    let(:exercise_3) { FactoryGirl.create :content_exercise }
-    let(:exercise_4) { FactoryGirl.create :content_exercise }
-    let(:exercise_5) { FactoryGirl.create :content_exercise }
-
-    let!(:exercise_tag_1) { FactoryGirl.create :content_exercise_tag,
-                                               exercise: exercise_1, tag: lo }
-    let!(:exercise_tag_2) { FactoryGirl.create :content_exercise_tag,
-                                               exercise: exercise_2, tag: lo }
-    let!(:exercise_tag_3) { FactoryGirl.create :content_exercise_tag,
-                                               exercise: exercise_3, tag: lo }
-    let!(:exercise_tag_4) { FactoryGirl.create :content_exercise_tag,
-                                               exercise: exercise_4, tag: lo }
-    let!(:exercise_tag_5) { FactoryGirl.create :content_exercise_tag,
-                                               exercise: exercise_5, tag: lo }
+    let(:exercise_1) { FactoryGirl.create :content_exercise, page: page }
+    let(:exercise_2) { FactoryGirl.create :content_exercise, page: page }
+    let(:exercise_3) { FactoryGirl.create :content_exercise, page: page }
+    let(:exercise_4) { FactoryGirl.create :content_exercise, page: page }
+    let(:exercise_5) { FactoryGirl.create :content_exercise, page: page }
 
     let!(:role) { AddUserAsPeriodStudent[period: period, user: user_1.entity_user] }
 
@@ -52,51 +46,49 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
       )
     end
 
-    describe "POST #create" do
-      it 'returns the practice task data' do
+    it 'returns the practice task data' do
+      api_post :create,
+               user_1_token,
+               parameters: { course_id: course.id, role_id: role.id },
+               raw_post_data: { page_ids: [page.id.to_s] }.to_json
+
+      hash = response.body_as_hash
+      task = Tasks::Models::Task.last
+
+      expect(hash).to include(id: task.id.to_s,
+                              is_shared: false,
+                              opens_at: DateTimeUtilities.to_api_s(task.opens_at),
+                              title: "Practice",
+                              type: "page_practice",
+                              steps: have(5).items)
+    end
+
+    it 'returns exercise URLs' do
+      api_post :create,
+               user_1_token,
+               parameters: { course_id: course.id, role_id: role.id },
+               raw_post_data: { page_ids: [page.id.to_s] }.to_json
+
+      hash = response.body_as_hash
+
+      step_urls = Set.new(hash[:steps].collect { |s| s[:content_url] })
+      exercises = [exercise_1, exercise_2, exercise_3, exercise_4, exercise_5]
+      exercise_urls = Set.new(exercises.collect(&:url))
+
+      expect(step_urls).to eq exercise_urls
+    end
+
+    it "must be called by a user who belongs to the course" do
+      expect{
         api_post :create,
-                 user_1_token,
+                 user_2_token,
                  parameters: { course_id: course.id, role_id: role.id },
                  raw_post_data: { page_ids: [page.id.to_s] }.to_json
-
-        hash = response.body_as_hash
-        task = Tasks::Models::Task.last
-
-        expect(hash).to include(id: task.id.to_s,
-                                is_shared: false,
-                                opens_at: DateTimeUtilities.to_api_s(task.opens_at),
-                                title: "Practice",
-                                type: "page_practice",
-                                steps: have(5).items)
-      end
-
-      it 'returns exercise URLs' do
-        api_post :create,
-                 user_1_token,
-                 parameters: { course_id: course.id, role_id: role.id },
-                 raw_post_data: { page_ids: [page.id.to_s] }.to_json
-
-        hash = response.body_as_hash
-
-        step_urls = Set.new(hash[:steps].collect { |s| s[:content_url] })
-        exercises = [exercise_1, exercise_2, exercise_3, exercise_4, exercise_5]
-        exercise_urls = Set.new(exercises.collect(&:url))
-
-        expect(step_urls).to eq exercise_urls
-      end
-
-      it "must be called by a user who belongs to the course" do
-        expect{
-          api_post :create,
-                   user_2_token,
-                   parameters: { course_id: course.id, role_id: role.id },
-                   raw_post_data: { page_ids: [page.id.to_s] }.to_json
-        }.to raise_error(IllegalState)
-      end
+      }.to raise_error(IllegalState)
     end
   end
 
-  describe "GET #show" do
+  context "GET #show" do
     it "returns nothing when practice widget not yet set" do
       AddUserAsPeriodStudent.call(period: period, user: user_1.entity_user)
       api_get :show, user_1_token, parameters: { course_id: course.id,
