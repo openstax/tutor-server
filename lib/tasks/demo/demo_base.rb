@@ -350,23 +350,26 @@ class DemoBase
     puts "#{message}\n" if @print_logs
   end
 
-  def print_task(task:)
-    types = task.task_steps.collect do |step|
-      step_code = case step.tasked
-      when Tasks::Models::TaskedExercise
-        "e"
-      when Tasks::Models::TaskedReading
-        'r'
-      when Tasks::Models::TaskedVideo
-        'v'
-      when Tasks::Models::TaskedInteractive
-        'i'
-      when Tasks::Models::TaskedPlaceholder
-        'p'
-      else
-        'o'
-      end
+  def step_code(step)
+    case step.tasked
+    when Tasks::Models::TaskedExercise
+      "e"
+    when Tasks::Models::TaskedReading
+      'r'
+    when Tasks::Models::TaskedVideo
+      'v'
+    when Tasks::Models::TaskedInteractive
+      'i'
+    when Tasks::Models::TaskedPlaceholder
+      'p'
+    else
+      'o'
+    end
+  end
 
+  def print_task(task:)
+
+    types = task.task_steps.collect do |step|
       group_code = if step.default_group?
         'd'
       elsif step.core_group?
@@ -379,10 +382,10 @@ class DemoBase
         'o'
       end
 
-      "#{group_code}#{step.id}#{step_code}"
+      "#{group_code}#{step.id}#{step_code(step)}"
     end
-
-    "Task #{task.id} / #{task.task_type} / #{types.join(' ')}"
+    codes = task.task_steps.collect{ |step| step_code(step) }
+    "Task #{task.id} / #{task.task_type}\n#{codes.join(', ')}\n#{types.join(' ')}"
   end
 
   def randomizer
