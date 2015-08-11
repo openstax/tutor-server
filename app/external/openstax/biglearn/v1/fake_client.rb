@@ -8,14 +8,24 @@ class OpenStax::Biglearn::V1::FakeClient
 
   def get_clue(roles:, tags:)
     aggregate = rand(0.0..1.0)
+    confidence_left  = [aggregate - 0.1, 0.0].max
+    confidence_right = [aggregate + 0.1, 1.0].min
     level = aggregate >= 0.8 ? 'high' : (aggregate >= 0.3 ? 'medium' : 'low')
     confidence = ['good', 'bad'].sample
+    samples = 6
     threshold = 'above'
 
-    { aggregate: aggregate,
-      level: level,
-      confidence: confidence,
-      threshold: threshold }
+    {
+      value: aggregate,
+      value_interpretation: level,
+      confidence_interval: [
+        confidence_left,
+        confidence_right
+      ],
+      confidence_interval_interpretation: confidence,
+      sample_size: samples,
+      sample_size_interpretation: 'above'
+    }
   end
 
   def add_exercises(exercises)

@@ -54,8 +54,14 @@ RSpec.describe GetTeacherGuide do
       "title"=>"Acceleration",
       "chapter_section"=>[3],
       "questions_answered_count"=>2,
-      "current_level"=>kind_of(Float),
-      "interpretation"=>kind_of(String),
+      "clue" => {
+        "value" => kind_of(Float),
+        "value_interpretation" => kind_of(String),
+        "confidence_interval" => kind_of(Array),
+        "confidence_interval_interpretation" => kind_of(String),
+        "sample_size" => kind_of(Integer),
+        "sample_size_interpretation" => kind_of(String)
+      },
       "practice_count"=>0,
       "page_ids"=>[kind_of(Integer)],
       "children" => array_including(kind_of(Hash))
@@ -67,8 +73,14 @@ RSpec.describe GetTeacherGuide do
       "title"=>"Acceleration",
       "chapter_section"=>[3],
       "questions_answered_count"=>3,
-      "current_level"=>kind_of(Float),
-      "interpretation"=>kind_of(String),
+      "clue" => {
+        "value" => kind_of(Float),
+        "value_interpretation" => kind_of(String),
+        "confidence_interval" => kind_of(Array),
+        "confidence_interval_interpretation" => kind_of(String),
+        "sample_size" => kind_of(Integer),
+        "sample_size_interpretation" => kind_of(String)
+      },
       "practice_count"=>0,
       "page_ids"=>[kind_of(Integer)],
       "children" => array_including(kind_of(Hash))
@@ -82,8 +94,14 @@ RSpec.describe GetTeacherGuide do
       a_hash_including("title"=>"Acceleration",
                        "chapter_section"=>[3, 1],
                        "questions_answered_count"=>2,
-                       "current_level"=>kind_of(Float),
-                       "interpretation"=>kind_of(String),
+                       "clue" => {
+                         "value" => kind_of(Float),
+                         "value_interpretation" => kind_of(String),
+                         "confidence_interval" => kind_of(Array),
+                         "confidence_interval_interpretation" => kind_of(String),
+                         "sample_size" => kind_of(Integer),
+                         "sample_size_interpretation" => kind_of(String)
+                       },
                        "practice_count"=>0,
                        "page_ids"=>[kind_of(Integer)])
     )
@@ -94,8 +112,14 @@ RSpec.describe GetTeacherGuide do
       a_hash_including("title"=>"Representing Acceleration with Equations and Graphs",
                        "chapter_section"=>[3, 2],
                        "questions_answered_count"=>3,
-                       "current_level"=>kind_of(Float),
-                       "interpretation"=>kind_of(String),
+                       "clue" => {
+                         "value" => kind_of(Float),
+                         "value_interpretation" => kind_of(String),
+                         "confidence_interval" => kind_of(Array),
+                         "confidence_interval_interpretation" => kind_of(String),
+                         "sample_size" => kind_of(Integer),
+                         "sample_size_interpretation" => kind_of(String)
+                       },
                        "practice_count"=>0,
                        "page_ids"=>[kind_of(Integer)])
     )

@@ -9,22 +9,6 @@ module OpenStax::Biglearn::V1
     roles = [roles].flatten.compact
 
     clue = client.get_clue(roles: roles, tags: tags) || {}
-    clue[:aggregate]
-  end
-
-  # Gets the CLUE value and then determines if it should be displayed or hidden
-  def self.get_filtered_clue(roles:, tags:)
-    tags = [tags].flatten.compact
-    roles = [roles].flatten.compact
-
-    clue = client.get_clue(roles: roles, tags: tags) || {}
-
-    if clue[:threshold] != 'above' && clue[:confidence] != 'good'
-      clue[:aggregate] = nil
-      clue[:level] = nil
-    end
-
-    clue
   end
 
   def self.add_exercises(exercises)

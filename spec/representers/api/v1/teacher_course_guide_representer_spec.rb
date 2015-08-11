@@ -21,8 +21,14 @@ RSpec.describe Api::V1::TeacherCourseGuideRepresenter do
     guide = [Hashie::Mash.new({ children: [{ title: 'my cool title',
                                              chapter_section: [1, 4],
                                              questions_answered_count: 25,
-                                             current_level: 0.89,
-                                             interpretation: 'high',
+                                             clue: {
+                                               value: 0.89,
+                                               value_interpretation: 'high',
+                                               confidence_interval: [0.7, 0.9],
+                                               confidence_interval_interpretation: 'good',
+                                               sample_size: 16,
+                                               sample_size_interpretation: 'above'
+                                             },
                                              practice_count: 3,
                                              page_ids: [4, 5, 6] }] })]
 
@@ -32,8 +38,14 @@ RSpec.describe Api::V1::TeacherCourseGuideRepresenter do
       'title' => 'my cool title',
       'chapter_section' => [1, 4],
       'questions_answered_count' => 25,
-      'current_level' => 0.89,
-      'interpretation' => 'high',
+      "clue" => {
+        "value" => 0.89,
+        "value_interpretation" => 'high',
+        "confidence_interval" => [0.7, 0.9],
+        "confidence_interval_interpretation" => 'good',
+        "sample_size" => 16,
+        "sample_size_interpretation" => 'above'
+      },
       'practice_count' => 3,
       'page_ids' => ['4', '5', '6']
     }])

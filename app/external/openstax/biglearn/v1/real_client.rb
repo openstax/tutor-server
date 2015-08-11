@@ -78,13 +78,21 @@ class OpenStax::Biglearn::V1::RealClient
     # extract the clue using the knowledge that we have a simplified input (only one
     # tag query, so we can just pull out the appropriate value).  It could be that there's
     # no CLUE to give, in which case we return nil.
-    aggregate = result['aggregates'].try(:first) || {}
-    interpretation = aggregate['interpretation'] || {}
+    clue           = result['aggregates'].try(:first) || {}
+    interpretation = clue['interpretation'] || {}
+    confidence     = clue['confidence'] || {}
 
-    { aggregate: aggregate['aggregate'],
-      level: interpretation['level'],
-      confidence: interpretation['confidence'],
-      threshold: interpretation['threshold'] }
+    {
+      value: clue['aggregate'],
+      value_interpretation: interpretation['level'],
+      confidence_interval: [
+        confidence['left'],
+        confidence['right']
+      ],
+      confidence_interval_interpretation: interpretation['confidence'],
+      sample_size: confidence['sample_size'],
+      sample_size_interpretation: interpretation['threshold']
+    }
   end
 
   private
