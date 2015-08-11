@@ -88,8 +88,8 @@ class CalculateTaskPlanStats
 
   def get_page_for_tasked_exercise(tasked_exercise)
     content_exercise = tasked_exercise.exercise
-    strategy = ::Ecosystem::Strategies::Direct::Exercise.new(content_exercise)
-    ecosystem_exercise = ::Ecosystem::Exercise.new(strategy: strategy)
+    strategy = ::Content::Strategies::Direct::Exercise.new(content_exercise)
+    ecosystem_exercise = ::Content::Exercise.new(strategy: strategy)
     ecosystem_exercise.page
   end
 

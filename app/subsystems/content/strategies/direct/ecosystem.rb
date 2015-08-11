@@ -1,4 +1,4 @@
-module Ecosystem
+module Content
   module Strategies
     module Direct
       class Ecosystem < Entity
@@ -12,23 +12,23 @@ module Ecosystem
           alias_method :entity_all, :all
           def all
             entity_all.collect do |entity|
-              ::Ecosystem::Ecosystem.new(strategy: entity)
+              ::Content::Ecosystem.new(strategy: entity)
             end
           end
 
           alias_method :entity_create, :create
           def create(title:)
-            ::Ecosystem::Ecosystem.new(strategy: entity_create(title: title))
+            ::Content::Ecosystem.new(strategy: entity_create(title: title))
           end
 
           alias_method :entity_create!, :create!
           def create!(title:)
-            ::Ecosystem::Ecosystem.new(strategy: entity_create!(title: title))
+            ::Content::Ecosystem.new(strategy: entity_create!(title: title))
           end
 
           alias_method :entity_find, :find
           def find(*args)
-            ::Ecosystem::Ecosystem.new(strategy: entity_find(*args))
+            ::Content::Ecosystem.new(strategy: entity_find(*args))
           end
 
           def find_by_book_ids(*ids)
@@ -39,7 +39,7 @@ module Ecosystem
             return if content_ecosystems.size != 1
 
             strategy = new(content_ecosystems.first)
-            ::Ecosystem::Ecosystem.new(strategy: strategy)
+            ::Content::Ecosystem.new(strategy: strategy)
           end
 
           def find_by_chapter_ids(*ids)
@@ -50,7 +50,7 @@ module Ecosystem
             return if content_ecosystems.size != 1
 
             strategy = new(content_ecosystems.first)
-            ::Ecosystem::Ecosystem.new(strategy: strategy)
+            ::Content::Ecosystem.new(strategy: strategy)
           end
 
           def find_by_page_ids(*ids)
@@ -61,7 +61,7 @@ module Ecosystem
             return if content_ecosystems.size != 1
 
             strategy = new(content_ecosystems.first)
-            ::Ecosystem::Ecosystem.new(strategy: strategy)
+            ::Content::Ecosystem.new(strategy: strategy)
           end
 
           def find_by_exercise_ids(*ids)
@@ -72,21 +72,21 @@ module Ecosystem
             return if content_ecosystems.size != 1
 
             strategy = new(content_ecosystems.first)
-            ::Ecosystem::Ecosystem.new(strategy: strategy)
+            ::Content::Ecosystem.new(strategy: strategy)
           end
         end
 
         alias_method :entity_books, :books
         def books
           entity_books.collect do |entity_book|
-            ::Ecosystem::Book.new(strategy: entity_book)
+            ::Content::Book.new(strategy: entity_book)
           end
         end
 
         alias_method :entity_chapters, :chapters
         def chapters
           entity_chapters.collect do |entity_chapter|
-            ::Ecosystem::Chapter.new(strategy: entity_chapter)
+            ::Content::Chapter.new(strategy: entity_chapter)
           end
         end
 
@@ -101,14 +101,14 @@ module Ecosystem
           end
 
           entity_chapters.where(id: ids).collect do |entity_chapter|
-            ::Ecosystem::Chapter.new(strategy: entity_chapter)
+            ::Content::Chapter.new(strategy: entity_chapter)
           end.sort_by{ |ch| id_indices[ch.id] }
         end
 
         alias_method :entity_pages, :pages
         def pages
           entity_pages.collect do |entity_page|
-            ::Ecosystem::Page.new(strategy: entity_page)
+            ::Content::Page.new(strategy: entity_page)
           end
         end
 
@@ -123,14 +123,14 @@ module Ecosystem
           end
 
           entity_pages.where(id: ids).collect do |entity_page|
-            ::Ecosystem::Page.new(strategy: entity_page)
+            ::Content::Page.new(strategy: entity_page)
           end.sort_by{ |pg| id_indices[pg.id] }
         end
 
         alias_method :entity_exercises, :exercises
         def exercises
           entity_exercises.collect do |entity_exercise|
-            ::Ecosystem::Exercise.new(strategy: entity_exercise)
+            ::Content::Exercise.new(strategy: entity_exercise)
           end
         end
 
@@ -145,7 +145,7 @@ module Ecosystem
           end
 
           entity_exercises.where(id: ids).collect do |entity_exercise|
-            ::Ecosystem::Exercise.new(strategy: entity_exercise)
+            ::Content::Exercise.new(strategy: entity_exercise)
           end.sort_by{ |ex| id_indices[ex.id] }
         end
 
@@ -163,7 +163,7 @@ module Ecosystem
                           .group_by{ |ex| ex.number }
                           .collect do |number, entity_exercises|
             latest_exercise = entity_exercises.max_by{ |ex| ex.version }
-            ::Ecosystem::Exercise.new(strategy: latest_exercise)
+            ::Content::Exercise.new(strategy: latest_exercise)
           end.sort_by{ |ex| number_indices[ex.number] }
         end
 
@@ -175,14 +175,14 @@ module Ecosystem
                           .group(:id).having {
                             count(distinct(exercise_tags.tag.id)).gteq match_count
                           }.collect do |entity_exercise|
-            ::Ecosystem::Exercise.new(strategy: entity_exercise)
+            ::Content::Exercise.new(strategy: entity_exercise)
           end
         end
 
         alias_method :entity_pools, :pools
         def pools
           entity_pools.collect do |entity_pool|
-            ::Ecosystem::Pool.new(strategy: entity_pool)
+            ::Content::Pool.new(strategy: entity_pool)
           end
         end
 
@@ -212,7 +212,7 @@ module Ecosystem
           entity_pools.where(pool_type: Content::Models::Pool.pool_types[type],
                              content_page_id: pages.collect{ |pg| pg.id })
                       .collect do |entity_pool|
-            ::Ecosystem::Pool.new(strategy: entity_pool)
+            ::Content::Pool.new(strategy: entity_pool)
           end
         end
 

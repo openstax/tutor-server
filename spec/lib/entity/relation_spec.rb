@@ -35,7 +35,7 @@ class Entity
       expect(entity_relation.inspect).to(
         eq(relation.inspect.gsub('ActiveRecord::Relation', 'Entity::Relation')
                            .gsub('Content::Models::Exercise',
-                                 'Ecosystem::Strategies::Direct::Exercise'))
+                                 'Content::Strategies::Direct::Exercise'))
       )
     end
   end

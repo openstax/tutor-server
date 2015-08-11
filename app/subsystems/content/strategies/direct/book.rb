@@ -1,4 +1,4 @@
-module Ecosystem
+module Content
   module Strategies
     module Direct
       class Book < Entity
@@ -9,26 +9,26 @@ module Ecosystem
 
         alias_method :entity_ecosystem, :ecosystem
         def ecosystem
-          ::Ecosystem::Ecosystem.new(strategy: entity_ecosystem)
+          ::Content::Ecosystem.new(strategy: entity_ecosystem)
         end
 
         alias_method :entity_chapters, :chapters
         def chapters
           entity_chapters.collect do |entity_chapter|
-            ::Ecosystem::Chapter.new(strategy: entity_chapter)
+            ::Content::Chapter.new(strategy: entity_chapter)
           end
         end
 
         alias_method :entity_pages, :pages
         def pages
           entity_pages.collect do |entity_page|
-            ::Ecosystem::Page.new(strategy: entity_page)
+            ::Content::Page.new(strategy: entity_page)
           end
         end
 
         alias_method :string_uuid, :uuid
         def uuid
-          ::Ecosystem::Uuid.new(string_uuid)
+          ::Content::Uuid.new(string_uuid)
         end
 
       end

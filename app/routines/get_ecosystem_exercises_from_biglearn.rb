@@ -1,4 +1,4 @@
-# Returns Ecosystem::Exercises corresponding to a Biglearn query
+# Returns Content::Exercises corresponding to a Biglearn query
 class GetEcosystemExercisesFromBiglearn
   lev_routine express_output: :ecosystem_exercises
 

@@ -3,8 +3,8 @@ require 'rails_helper'
 RSpec.describe TaskExercise, type: :routine do
   let!(:exercise)  do
     content_exercise = FactoryGirl.create(:content_exercise)
-    strategy = Ecosystem::Strategies::Direct::Exercise.new(content_exercise)
-    Ecosystem::Exercise.new(strategy: strategy)
+    strategy = Content::Strategies::Direct::Exercise.new(content_exercise)
+    Content::Exercise.new(strategy: strategy)
   end
   let!(:task_step) { FactoryGirl.build(:tasks_task_step) }
 

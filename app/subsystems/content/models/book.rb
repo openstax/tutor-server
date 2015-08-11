@@ -1,6 +1,6 @@
 class Content::Models::Book < Tutor::SubSystems::BaseModel
 
-  wrapped_by ::Ecosystem::Strategies::Direct::Book
+  wrapped_by ::Content::Strategies::Direct::Book
 
   acts_as_resource
 

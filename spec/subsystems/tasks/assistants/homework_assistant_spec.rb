@@ -15,8 +15,8 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
 
   let!(:ecosystem) {
     content_ecosystem = chapter.book.ecosystem
-    strategy = ::Ecosystem::Strategies::Direct::Ecosystem.new(content_ecosystem)
-    ::Ecosystem::Ecosystem.new(strategy: strategy)
+    strategy = ::Content::Strategies::Direct::Ecosystem.new(content_ecosystem)
+    ::Content::Ecosystem.new(strategy: strategy)
   }
 
   let!(:cnx_page_hashes) { [
@@ -46,8 +46,8 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
 
   let!(:pages)     {
     content_pages.collect do |content_page|
-      strategy = ::Ecosystem::Strategies::Direct::Page.new(content_page)
-      ::Ecosystem::Page.new(strategy: strategy)
+      strategy = ::Content::Strategies::Direct::Page.new(content_page)
+      ::Content::Page.new(strategy: strategy)
     end
   }
 

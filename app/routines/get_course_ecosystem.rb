@@ -12,7 +12,7 @@ class GetCourseEcosystem
       return
     end
 
-    strategy = ::Ecosystem::Strategies::Direct::Ecosystem.new(content_ecosystem)
-    outputs[:ecosystem] = ::Ecosystem::Ecosystem.new(strategy: strategy)
+    strategy = ::Content::Strategies::Direct::Ecosystem.new(content_ecosystem)
+    outputs[:ecosystem] = ::Content::Ecosystem.new(strategy: strategy)
   end
 end

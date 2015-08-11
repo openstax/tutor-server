@@ -1,4 +1,4 @@
-module Ecosystem
+module Content
   module Strategies
     module Direct
       class Tag < Entity

@@ -1,4 +1,4 @@
-module Ecosystem
+module Content
   module Wrapper
 
     def self.included(base)
@@ -33,7 +33,7 @@ module Ecosystem
     protected
 
     # Convenience instance method that calls the verify_and_return class method
-    def verify_and_return(object, klass:, error: ::Ecosystem::StrategyError,
+    def verify_and_return(object, klass:, error: ::Content::StrategyError,
                           allow_blank: false, allow_nil: false)
       self.class.verify_and_return(object, klass: klass, error: error,
                                    allow_blank: allow_blank, allow_nil: allow_nil)
@@ -42,7 +42,7 @@ module Ecosystem
     module ClassMethods
       # Verifies that the given "object" is of the given "klass"
       # Returns the object or raises the given "error"
-      def verify_and_return(object, klass:, error: ::Ecosystem::StrategyError,
+      def verify_and_return(object, klass:, error: ::Content::StrategyError,
                                  allow_blank: false, allow_nil: false)
         return object if klass == Array && object.is_a?(Array)
 

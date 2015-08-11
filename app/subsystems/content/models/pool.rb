@@ -1,6 +1,6 @@
 class Content::Models::Pool < Tutor::SubSystems::BaseModel
 
-  wrapped_by ::Ecosystem::Strategies::Direct::Pool
+  wrapped_by ::Content::Strategies::Direct::Pool
 
   belongs_to :page, inverse_of: :pools
 

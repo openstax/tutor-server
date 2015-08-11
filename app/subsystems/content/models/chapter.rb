@@ -1,6 +1,6 @@
 class Content::Models::Chapter < Tutor::SubSystems::BaseModel
 
-  wrapped_by ::Ecosystem::Strategies::Direct::Chapter
+  wrapped_by ::Content::Strategies::Direct::Chapter
 
   serialize :book_location, Array
 

@@ -1,4 +1,4 @@
-module Ecosystem
+module Content
   class Chapter
 
     include Wrapper
@@ -12,11 +12,11 @@ module Ecosystem
     end
 
     def book
-      verify_and_return @strategy.book, klass: ::Ecosystem::Book
+      verify_and_return @strategy.book, klass: ::Content::Book
     end
 
     def pages
-      verify_and_return @strategy.pages, klass: ::Ecosystem::Page
+      verify_and_return @strategy.pages, klass: ::Content::Page
     end
 
     def book_location

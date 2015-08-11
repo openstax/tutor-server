@@ -1,4 +1,4 @@
-module Ecosystem
+module Content
   class Exercise
 
     include Wrapper
@@ -32,19 +32,19 @@ module Ecosystem
     end
 
     def tags
-      verify_and_return @strategy.tags, klass: ::Ecosystem::Tag
+      verify_and_return @strategy.tags, klass: ::Content::Tag
     end
 
     def los
-      verify_and_return @strategy.los, klass: ::Ecosystem::Tag
+      verify_and_return @strategy.los, klass: ::Content::Tag
     end
 
     def aplos
-      verify_and_return @strategy.aplos, klass: ::Ecosystem::Tag
+      verify_and_return @strategy.aplos, klass: ::Content::Tag
     end
 
     def page
-      verify_and_return @strategy.page, klass: ::Ecosystem::Page
+      verify_and_return @strategy.page, klass: ::Content::Page
     end
 
   end

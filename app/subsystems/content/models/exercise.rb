@@ -2,7 +2,7 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
 
   acts_as_resource
 
-  wrapped_by ::Ecosystem::Strategies::Direct::Exercise
+  wrapped_by ::Content::Strategies::Direct::Exercise
 
   belongs_to :page, inverse_of: :exercises
   has_one :chapter, through: :page

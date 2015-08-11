@@ -1,6 +1,6 @@
 class Content::Models::Page < Tutor::SubSystems::BaseModel
 
-  wrapped_by ::Ecosystem::Strategies::Direct::Page
+  wrapped_by ::Content::Strategies::Direct::Page
 
   acts_as_resource
 

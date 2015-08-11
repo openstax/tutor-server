@@ -7,7 +7,7 @@ RSpec.describe Content::ImportBook, type: :routine, speed: :slow, vcr: VCR_OPTS 
   let!(:phys_cnx_book) { OpenStax::Cnx::V1::Book.new(id: '93e2b09d-261c-4007-a987-0b3062fe154b') }
   let!(:bio_cnx_book)  { OpenStax::Cnx::V1::Book.new(id: 'ccbc51fa-49f3-40bb-98d6-07a15a7ab6b7') }
 
-  let!(:ecosystem)     { Ecosystem::Ecosystem.create!(title: 'Ecosystem') }
+  let!(:ecosystem)     { Content::Ecosystem.create!(title: 'Ecosystem') }
 
   before(:each)          { OpenStax::Biglearn::V1.use_fake_client }
   let!(:biglearn_client) { OpenStax::Biglearn::V1.fake_client }

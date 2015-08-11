@@ -1,4 +1,4 @@
-module Ecosystem
+module Content
   class Page
 
     include Wrapper
@@ -32,31 +32,31 @@ module Ecosystem
     end
 
     def chapter
-      verify_and_return @strategy.chapter, klass: ::Ecosystem::Chapter
+      verify_and_return @strategy.chapter, klass: ::Content::Chapter
     end
 
     def reading_dynamic_pool
-      verify_and_return @strategy.reading_dynamic_pool, klass: ::Ecosystem::Pool
+      verify_and_return @strategy.reading_dynamic_pool, klass: ::Content::Pool
     end
 
     def reading_try_another_pool
-      verify_and_return @strategy.reading_try_another_pool, klass: ::Ecosystem::Pool
+      verify_and_return @strategy.reading_try_another_pool, klass: ::Content::Pool
     end
 
     def homework_core_pool
-      verify_and_return @strategy.homework_core_pool, klass: ::Ecosystem::Pool
+      verify_and_return @strategy.homework_core_pool, klass: ::Content::Pool
     end
 
     def homework_dynamic_pool
-      verify_and_return @strategy.homework_dynamic_pool, klass: ::Ecosystem::Pool
+      verify_and_return @strategy.homework_dynamic_pool, klass: ::Content::Pool
     end
 
     def practice_widget_pool
-      verify_and_return @strategy.practice_widget_pool, klass: ::Ecosystem::Pool
+      verify_and_return @strategy.practice_widget_pool, klass: ::Content::Pool
     end
 
     def exercises
-      verify_and_return @strategy.exercises, klass: ::Ecosystem::Exercise
+      verify_and_return @strategy.exercises, klass: ::Content::Exercise
     end
 
     def book_location
@@ -72,15 +72,15 @@ module Ecosystem
     end
 
     def tags
-      verify_and_return @strategy.tags, klass: ::Ecosystem::Tag
+      verify_and_return @strategy.tags, klass: ::Content::Tag
     end
 
     def los
-      verify_and_return @strategy.los, klass: ::Ecosystem::Tag
+      verify_and_return @strategy.los, klass: ::Content::Tag
     end
 
     def aplos
-      verify_and_return @strategy.aplos, klass: ::Ecosystem::Tag
+      verify_and_return @strategy.aplos, klass: ::Content::Tag
     end
 
     def related_content(title: nil, book_location: nil)

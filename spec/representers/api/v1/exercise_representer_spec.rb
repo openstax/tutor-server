@@ -28,8 +28,8 @@ RSpec.describe Api::V1::ExerciseRepresenter, type: :representer do
   let!(:exercise_tag_2) { FactoryGirl.create :content_exercise_tag, exercise: exercise, tag: lo2 }
   let!(:exercise_tag_3) { FactoryGirl.create :content_exercise_tag, exercise: exercise, tag: teks }
   let!(:ecosystem_exercise) {
-    strategy = ::Ecosystem::Strategies::Direct::Exercise.new(exercise)
-    ::Ecosystem::Exercise.new(strategy: strategy)
+    strategy = ::Content::Strategies::Direct::Exercise.new(exercise)
+    ::Content::Exercise.new(strategy: strategy)
   }
 
   it 'represents an exercise with tags' do

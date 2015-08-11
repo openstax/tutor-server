@@ -21,8 +21,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   describe "#readings" do
     it 'raises SecurityTransgression if user is anonymous or not in the course' do
       content_ecosystem = FactoryGirl.create(:content_book).ecosystem
-      strategy = Ecosystem::Strategies::Direct::Ecosystem.new(content_ecosystem)
-      ecosystem = Ecosystem::Ecosystem.new(strategy: strategy)
+      strategy = Content::Strategies::Direct::Ecosystem.new(content_ecosystem)
+      ecosystem = Content::Ecosystem.new(strategy: strategy)
       CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
 
       expect {
@@ -37,8 +37,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     it 'works for students in the course' do
       # used in FE for reference view
       content_ecosystem = FactoryGirl.create(:content_book, :standard_contents_1).ecosystem
-      strategy = Ecosystem::Strategies::Direct::Ecosystem.new(content_ecosystem)
-      ecosystem = Ecosystem::Ecosystem.new(strategy: strategy)
+      strategy = Content::Strategies::Direct::Ecosystem.new(content_ecosystem)
+      ecosystem = Content::Ecosystem.new(strategy: strategy)
       CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
       AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
       AddUserAsPeriodStudent.call(period: period, user: user_2.entity_user)
@@ -56,8 +56,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
     it "should work on the happy path" do
       content_ecosystem = FactoryGirl.create(:content_book, :standard_contents_1).ecosystem.reload
-      strategy = Ecosystem::Strategies::Direct::Ecosystem.new(content_ecosystem)
-      ecosystem = Ecosystem::Ecosystem.new(strategy: strategy)
+      strategy = Content::Strategies::Direct::Ecosystem.new(content_ecosystem)
+      ecosystem = Content::Ecosystem.new(strategy: strategy)
       CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
       AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
 

@@ -59,7 +59,7 @@ class Admin::CoursesController < Admin::BaseController
     end
 
     course = Entity::Course.find(params[:id])
-    ecosystem = ::Ecosystem::Ecosystem.find(params[:ecosystem_id])
+    ecosystem = ::Content::Ecosystem.find(params[:ecosystem_id])
     if GetCourseEcosystem[course: course] == ecosystem
       flash[:notice] = "Course ecosystem \"#{ecosystem.title}\" is already selected for \"#{course.profile.name}\""
     else

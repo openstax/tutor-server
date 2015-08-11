@@ -204,8 +204,8 @@ class DemoBase
   end
 
   def get_ecosystem(course: course)
-    strategy = Ecosystem::Strategies::Direct::Ecosystem.new(course.ecosystems.first)
-    Ecosystem::Ecosystem.new(strategy: strategy)
+    strategy = Content::Strategies::Direct::Ecosystem.new(course.ecosystems.first)
+    Content::Ecosystem.new(strategy: strategy)
   end
 
   def assign_ireading(course:, book_locations:, title:)

@@ -1,4 +1,4 @@
-module Ecosystem
+module Content
   class Tag
 
     include Wrapper

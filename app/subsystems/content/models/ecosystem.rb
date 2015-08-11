@@ -2,7 +2,7 @@ module Content
   module Models
     class Ecosystem < Tutor::SubSystems::BaseModel
 
-      wrapped_by ::Ecosystem::Strategies::Direct::Ecosystem
+      wrapped_by ::Content::Strategies::Direct::Ecosystem
 
       has_many :course_ecosystems, dependent: :destroy, subsystem: :course_content
       has_many :courses, through: :course_ecosystems, subsystem: :entity

@@ -11,7 +11,6 @@ Tutor::SubSystems.valid_namespaces = %w(
   content
   course_content
   course_profile
-  ecosystem
   entity
   tasks
   role

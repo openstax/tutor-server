@@ -75,8 +75,8 @@ class ResetPracticeWidget
   def get_fake_exercises(count)
     count.times.collect do
       content_exercise = FactoryGirl.create(:content_exercise)
-      strategy = ::Ecosystem::Strategies::Direct::Exercise.new(content_exercise)
-      ::Ecosystem::Exercise.new(strategy: strategy)
+      strategy = ::Content::Strategies::Direct::Exercise.new(content_exercise)
+      ::Content::Exercise.new(strategy: strategy)
     end
   end
 

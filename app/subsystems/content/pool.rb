@@ -1,10 +1,10 @@
-module Ecosystem
+module Content
   class Pool
 
     include Wrapper
 
     def uuid
-      verify_and_return @strategy.uuid, klass: ::Ecosystem::Uuid
+      verify_and_return @strategy.uuid, klass: ::Content::Uuid
     end
 
     def pool_type
@@ -16,7 +16,7 @@ module Ecosystem
     end
 
     def exercises
-      verify_and_return @strategy.exercises, klass: ::Ecosystem::Exercise
+      verify_and_return @strategy.exercises, klass: ::Content::Exercise
     end
 
   end

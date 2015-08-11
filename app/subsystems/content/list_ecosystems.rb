@@ -4,7 +4,7 @@ class Content::ListEcosystems
   protected
 
   def exec
-    ecosystems = Ecosystem::Ecosystem.all.sort_by{ |es| es.books.first.title.downcase }
+    ecosystems = Content::Ecosystem.all.sort_by{ |es| es.books.first.title.downcase }
     outputs[:ecosystems] = ecosystems.collect do |ecosystem|
       Hashie::Mash.new(
         id: ecosystem.id,
