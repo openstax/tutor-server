@@ -44,7 +44,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     only one book.  Inside each book there can be units or chapters (parts), and eventually
     parts (normally chapters) contain pages that have no children.
 
-    #{json_schema(Api::V1::BookTocRepresenter, include: :readable)}
+    #{json_schema(Api::V1::BookTocsRepresenter, include: :readable)}
   EOS
   def readings
     course = Entity::Course.find(params[:id])
@@ -56,8 +56,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     books = ecosystem.books
     raise NotYetImplemented if books.count > 1
 
-    respond_with books.collect{ |bk| Hashie::Mash.new(bk.toc) },
-                 represent_with: Api::V1::BookTocRepresenter
+    respond_with books, represent_with: Api::V1::BookTocsRepresenter
   end
 
   api :GET, '/courses/:course_id/exercises',

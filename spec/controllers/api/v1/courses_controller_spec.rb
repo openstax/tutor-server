@@ -65,6 +65,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       expect(response).to have_http_status(:success)
       expect(response.body_as_hash).to eq([{
         id: ecosystem.books.first.id.to_s,
+        cnx_id: ecosystem.books.first.cnx_id,
         title: 'book title',
         type: 'part',
         chapter_section: [],
@@ -77,16 +78,14 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
             children: [
               {
                 id: ecosystem.books.first.chapters.first.pages.first.id.to_s,
-                cnx_id: Content::Models::Page.find(ecosystem.chapters.first.pages.first.id)
-                                             .cnx_id,
+                cnx_id: ecosystem.books.first.chapters.first.pages.first.cnx_id,
                 title: 'first page',
                 chapter_section: [1, 1],
                 type: 'page'
               },
               {
                 id: ecosystem.books.first.chapters.first.pages.second.id.to_s,
-                cnx_id: Content::Models::Page.find(ecosystem.chapters.first.pages.second.id)
-                                             .cnx_id,
+                cnx_id: ecosystem.books.first.chapters.first.pages.second.cnx_id,
                 title: 'second page',
                 chapter_section: [1, 2],
                 type: 'page'
@@ -101,8 +100,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
             children: [
               {
                 id: ecosystem.books.first.chapters.second.pages.first.id.to_s,
-                cnx_id: Content::Models::Page.find(ecosystem.chapters.second.pages.first.id)
-                                             .cnx_id,
+                cnx_id: ecosystem.books.first.chapters.second.pages.first.cnx_id,
                 title: 'third page',
                 chapter_section: [2, 1],
                 type: 'page'

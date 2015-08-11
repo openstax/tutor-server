@@ -19,6 +19,10 @@ module Ecosystem
       verify_and_return @strategy.version, klass: String
     end
 
+    def cnx_id
+      verify_and_return @strategy.cnx_id, klass: String
+    end
+
     def title
       verify_and_return @strategy.title, klass: String
     end
@@ -33,10 +37,6 @@ module Ecosystem
 
     def pages
       verify_and_return @strategy.pages, klass: ::Ecosystem::Page
-    end
-
-    def toc
-      verify_and_return @strategy.toc, klass: Hash
     end
 
   end

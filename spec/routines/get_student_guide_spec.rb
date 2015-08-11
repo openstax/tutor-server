@@ -44,7 +44,7 @@ RSpec.describe GetStudentGuide do
     result = described_class[role: @role]
 
     expect(result).to match a_hash_including(
-      "title"=>"Physics",
+      "title"=>"Physics (Demo)",
       "page_ids"=>[kind_of(Integer)]*3,
       "children"=> array_including(kind_of(Hash))
     )

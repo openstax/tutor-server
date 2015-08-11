@@ -18,7 +18,7 @@ class CreateStudentHistory
       puts "=== Set Role##{role.id} history ==="
 
       # practice widgets assign 5 task steps to the role
-      practice_steps = create_practice_widget(role, pages: ecosystem.pages[3 + (i % 2)].id)
+      practice_steps = create_practice_widget(role, pages: ecosystem.pages[2 + (i % 2)].id)
       answer_correctly(practice_steps, 2 + i) # 2 or 3/5
 
       practice_steps = create_practice_widget(role, pages: ecosystem.pages[5].id)

@@ -69,7 +69,8 @@ class Tasks::RecoverTaskStep
     exercise_history = GetExerciseHistory[ecosystem: ecosystem,
                                           entity_tasks: ireading_history].flatten
 
-    recovered_exercise = task_step.tasked.exercise
+    recovered_exercise_id = task_step.tasked.content_exercise_id
+    recovered_exercise = ecosystem.exercises_by_ids(recovered_exercise_id).first
     exercise_pool = get_exercise_pool(ecosystem: ecosystem, exercise: recovered_exercise)
 
     candidate_exercises = (exercise_pool - exercise_history).uniq

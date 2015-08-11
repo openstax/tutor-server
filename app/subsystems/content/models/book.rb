@@ -14,5 +14,9 @@ class Content::Models::Book < Tutor::SubSystems::BaseModel
   validates :uuid, presence: true
   validates :version, presence: true
 
+  def cnx_id
+    "#{uuid}@#{version}"
+  end
+
 end
 

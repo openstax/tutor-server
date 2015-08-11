@@ -19,6 +19,10 @@ module Ecosystem
       verify_and_return @strategy.version, klass: String
     end
 
+    def cnx_id
+      verify_and_return @strategy.cnx_id, klass: String
+    end
+
     def title
       verify_and_return @strategy.title, klass: String
     end

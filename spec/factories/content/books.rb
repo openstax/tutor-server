@@ -31,31 +31,31 @@ FactoryGirl.define do
         chapters: [
           {
             title: 'chapter 1',
-            book_location: [1, 1],
+            book_location: [1],
             pages: [
               {
                 title: 'first page',
                 los: ['ost-tag-lo-topic1-lo1', 'ost-tag-lo-topic2-lo2'],
                 aplos: [],
-                book_location: [1, 1, 1]
+                book_location: [1, 1]
               },
               {
                 title: 'second page',
                 los: ['ost-tag-lo-topic2-lo2', 'ost-tag-lo-topic3-lo3'],
                 aplos: [],
-                book_location: [1, 1, 2]
+                book_location: [1, 2]
               }
             ]
           },
           {
             title: 'chapter 2',
-            book_location: [1, 2],
+            book_location: [2],
             pages: [
               {
                 title: 'third page',
                 los: ['ost-tag-lo-topic4-lo4'],
                 aplos: [],
-                book_location: [1, 2, 1],
+                book_location: [2, 1],
               }
             ]
           }

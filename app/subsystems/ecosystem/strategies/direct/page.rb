@@ -7,7 +7,8 @@ module Ecosystem
 
         exposes :chapter, :reading_dynamic_pool, :reading_try_another_pool, :homework_core_pool,
                 :homework_dynamic_pool, :practice_widget_pool, :exercises, :tags, :los, :aplos,
-                :url, :uuid, :version, :title, :content, :book_location, :is_intro?, :fragments
+                :url, :uuid, :version, :cnx_id, :title, :content, :book_location, :is_intro?,
+                :fragments
 
         alias_method :entity_chapter, :chapter
         def chapter
@@ -59,17 +60,6 @@ module Ecosystem
         alias_method :entity_aplos, :aplos
         def aplos
           entity_aplos.collect{ |ea| ::Ecosystem::Tag.new(strategy: ea) }
-        end
-
-        def toc
-          {
-            url: url,
-            uuid: uuid,
-            version: version,
-            title: title,
-            book_location: book_location,
-            is_intro: is_intro?
-          }
         end
 
         def related_content(title: nil, book_location: nil)

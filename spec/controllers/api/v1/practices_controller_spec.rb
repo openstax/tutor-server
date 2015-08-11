@@ -35,17 +35,28 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
     let!(:role) { AddUserAsPeriodStudent[period: period, user: user_1.entity_user] }
 
     before(:each) do
-      Content::Routines::PopulateExercisePools[pages: page]
+      pools = Content::Routines::PopulateExercisePools[pages: page, save: false].flatten
 
-      OpenStax::Biglearn::V1.add_exercises(
-        [exercise_1, exercise_2, exercise_3, exercise_4, exercise_5].collect do |ex|
-          OpenStax::Biglearn::V1::Exercise.new(
-            question_id: ex.number,
-            version: ex.version,
-            tags: ex.tags.collect{ |tt| tt.value }
-          )
-        end
-      )
+      biglearn_exercises = [exercise_1, exercise_2, exercise_3,
+                            exercise_4, exercise_5].collect do |ex|
+        OpenStax::Biglearn::V1::Exercise.new(
+          question_id: ex.number,
+          version: ex.version,
+          tags: ex.tags.collect{ |tt| tt.value }
+        )
+      end
+      OpenStax::Biglearn::V1.add_exercises(biglearn_exercises)
+
+      biglearn_pools = pools.collect do |pool|
+        question_ids = pool.exercises.collect(&:number)
+        exercises = biglearn_exercises.select{ |ex| question_ids.include?(ex.question_id) }
+        OpenStax::Biglearn::V1::Pool.new(exercises: exercises)
+      end
+      biglearn_pools_with_uuids = OpenStax::Biglearn::V1.add_pools(biglearn_pools)
+      pools.each_with_index do |pool, ii|
+        pool.uuid = biglearn_pools_with_uuids[ii].uuid
+        pool.save!
+      end
     end
 
     it 'returns the practice task data' do

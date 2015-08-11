@@ -31,17 +31,23 @@ RSpec.describe Tasks::RefreshTaskStep, :type => :routine do
 
   let!(:recovery_exercise) { FactoryGirl.create(
     :content_exercise,
+    page: tasked_exercise_with_recovery.exercise.page,
     content: OpenStax::Exercises::V1.fake_client
                                     .new_exercise_hash(
                                       tags: [lo.name, pp.name]
                                     ).to_json
   ) }
   let!(:recovery_tagging_1)   { FactoryGirl.create(
-    :content_exercise_tag, exercise: recovery_exercise, tag: lo
+    :content_exercise_tag, exercise: tasked_exercise_with_recovery.exercise, tag: lo
   ) }
   let!(:recovery_tagging_2)   { FactoryGirl.create(
+    :content_exercise_tag, exercise: recovery_exercise, tag: lo
+  ) }
+  let!(:recovery_tagging_3)   { FactoryGirl.create(
     :content_exercise_tag, exercise: recovery_exercise, tag: pp
   ) }
+
+  let!(:pools) { Content::Routines::PopulateExercisePools[pages: recovery_exercise.page] }
 
   it "cannot be called on taskeds without a recovery step" do
     result = nil
