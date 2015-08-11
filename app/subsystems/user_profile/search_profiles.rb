@@ -40,8 +40,12 @@ module UserProfile
     end
 
     def profiles_by_entity_users(users)
-      users = [users].flatten
-      profiles_query.where{entity_user_id.in users.collect(&:id)}
+      if (users = [users].flatten).all? { |u| u.respond_to?(:profile) &&
+                                                u.respond_to?(:username) }
+        profiles_query.where{entity_user_id.in users.collect(&:id)}
+      else
+        raise IllegalArgument, "Search must be a String or collection of EntityUsers"
+      end
     end
 
     def profiles_query

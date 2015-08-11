@@ -88,4 +88,11 @@ RSpec.describe UserProfile::SearchProfiles do
       'username' => 'admin'
     } ]
   end
+
+  it 'requires that an array search is filled with entity users' do
+    expect {
+      described_class[search: [admin, user_1]]
+    }.to raise_error(IllegalArgument,
+                     "Search must be a String or collection of EntityUsers")
+  end
 end
