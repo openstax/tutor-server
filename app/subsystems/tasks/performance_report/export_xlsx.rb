@@ -55,7 +55,7 @@ module Tasks
 
       def data_headers(data_headings)
         headings = data_headings.collect(&:title)
-        (['Students'] + headings).collect { |header| bold_text(header) }
+        (['First Name', 'Last Name'] + headings).collect { |header| bold_text(header) }
       end
 
       def gather_due_dates(data_headings)
@@ -75,21 +75,23 @@ module Tasks
       end
 
       def cell_styles(data, worksheet)
-        # first entry is nil, first cell in row is the student's name
-        [nil] + data.map { |d| worksheet.styles.add_style bg_color: 'FFFF93' if d.late }
+        # first two cells are student first/last name
+        [nil, nil] + data.map { |d| worksheet.styles.add_style bg_color: 'FFFF93' if d.late }
       end
 
       def add_late_comments(sheet, data, row)
         data.each_with_index do |d, col|
           if d.late
-            ref = "#{('B'..'Z').to_a[col]}#{row + 4}" # forms something like 'D5'
+            ref = "#{('C'..'Z').to_a[col]}#{row + 4}" # forms something like 'D5'
             sheet.add_comment ref: ref, text: 'Late', author: 'OpenStax', visible: false
           end
         end
       end
 
       def student_scores(student)
-        [student.name] + student.data.collect { |data| score(data) }
+        [student.first_name, student.last_name] + student.data.collect do |data|
+          score(data)
+        end
       end
 
       def score(data)
