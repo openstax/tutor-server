@@ -32,11 +32,23 @@ RSpec.describe WebviewController, :type => :controller do
       expect(response).to have_http_status(:found)
     end
 
-    it 'returns http success' do
-      controller.sign_in registered_user
-      get :index
-      expect(response).to have_http_status(:success)
+    context "as a signed in user" do
+      render_views
+
+      it 'sets boostrap data in script tag' do
+        controller.sign_in registered_user
+        get :index
+        expect(response).to have_http_status(:success)
+        doc = Nokogiri::HTML(response.body)
+        data = ::JSON.parse(doc.css('body script#tutor-boostrap-data').inner_text)
+        expect(data).to include({
+          'courses'=> CollectCourseInfo[user: registered_user.entity_user, with: [:roles, :periods]].as_json,
+          'user' => Api::V1::UserProfileRepresenter.new(registered_user).as_json
+        })
+      end
     end
+
   end
+
 
 end
