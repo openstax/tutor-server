@@ -19,15 +19,11 @@ module Api::V1
              writeable: false,
              schema_info: { required: true }
 
-    property :current_level,
-             type: Float,
+    property :clue,
+             decorator: ClueRepresenter,
              readable: true,
-             writeable: false
-
-    property :interpretation,
-             type: String,
-             readable: true,
-             writeable: false
+             writeable: false,
+             schema_info: { required: true }
 
     property :practice_count,
              type: Integer,

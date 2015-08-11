@@ -79,10 +79,12 @@ module OpenStax::Biglearn
       # This assumes that a book has been imported
       clue = client.get_clue(roles: role, tags: 'k12phys-ch04-s02-lo01')
 
-        expect(clue[:aggregate]).to be_a(Float)
-        expect(['high', 'medium', 'low']).to include(clue[:level])
-        expect(['good', 'bad']).to include(clue[:confidence])
-        expect(['above', 'below']).to include(clue[:threshold])
+      expect(clue[:value]).to be_a(Float)
+      expect(['high', 'medium', 'low']).to include(clue[:value_interpretation])
+      expect(clue[:confidence_interval]).to contain_exactly(kind_of(Float), kind_of(Float))
+      expect(['good', 'bad']).to include(clue[:confidence_interval_interpretation])
+      expect(clue[:sample_size]).to be_kind_of(Integer)
+      expect(['above', 'below']).to include(clue[:sample_size_interpretation])
     end
 
   end
