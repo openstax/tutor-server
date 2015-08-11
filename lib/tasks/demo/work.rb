@@ -15,6 +15,7 @@ class DemoWork < DemoBase
 
     ContentConfiguration[book.to_sym].each do | content |
       content.assignments.each do | assignment |
+        next if assignment.draft # Draft plans haven't been distributed so can't be worked
 
         task_plan = Tasks::Models::TaskPlan.where(owner: content.course, title: assignment.title).first!
 
