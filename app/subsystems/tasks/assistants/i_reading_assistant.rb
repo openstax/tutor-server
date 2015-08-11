@@ -134,7 +134,7 @@ class Tasks::Assistants::IReadingAssistant
     exercise_history = GetExerciseHistory[ecosystem: @ecosystem, entity_tasks: ireading_history]
     #puts "exercise history:  #{exercise_history.map(&:uid).sort}"
 
-    exercise_pools = get_exercise_pools(exercise_history: exercise_history)
+    exercise_pools = get_exercise_pools(ireading_history: ireading_history)
     #puts "exercise pools:  #{exercise_pools.map{|ep| ep.map(&:uid).sort}}}"
 
     flat_history = exercise_history.flatten
@@ -181,9 +181,10 @@ class Tasks::Assistants::IReadingAssistant
 
   # Get the page for each exercise in the student's assignments
   # From each page, get the pool of dynamic reading problems
-  def get_exercise_pools(exercise_history:)
-    exercise_pools = exercise_history.collect do |exercises|
-      pages = exercises.collect{ |ex| get_exercise_pages(ex) }
+  def get_exercise_pools(ireading_history:)
+    exercise_pools = ireading_history.collect do |entity_task|
+      page_ids = entity_task.task.task_plan.settings['page_ids']
+      pages = @ecosystem.pages_by_ids(page_ids)
       pools = get_page_pools(pages)
       pools.collect{ |pool| get_pool_exercises(pool) }.flatten
     end

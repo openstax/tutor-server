@@ -4,8 +4,8 @@ class Content::Routines::PopulateExercisePools
 
   protected
 
-  def exec(pages:)
-    outputs[:pools] = pages.collect do |page|
+  def exec(pages:, save: true)
+    outputs[:pools] = [pages].flatten.collect do |page|
       reading_dynamic_pool = Content::Models::Pool.new(page: page,
                                                        pool_type: :reading_dynamic)
       reading_try_another_pool = Content::Models::Pool.new(page: page,
@@ -66,5 +66,11 @@ class Content::Routines::PopulateExercisePools
       [reading_dynamic_pool, reading_try_another_pool,
        homework_core_pool, homework_dynamic_pool, practice_widget_pool]
     end
+
+    return unless save
+
+    pools = outputs[:pools].flatten
+    pools.each{ |pool| pool.uuid = SecureRandom.uuid }
+    Content::Models::Pool.import! pools
   end
 end

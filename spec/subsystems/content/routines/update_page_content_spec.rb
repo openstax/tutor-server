@@ -60,8 +60,9 @@ RSpec.describe Content::Routines::UpdatePageContent, type: :routine, vcr: VCR_OP
     end
 
     Content::Routines::UpdatePageContent.call(pages: chapter.pages)
+    chapter.pages.each{ |page| page.save! }
 
-    doc = Nokogiri::HTML(page_1.content)
+    doc = Nokogiri::HTML(page_1.reload.content)
 
     link_text.each_with_index do |value, i|
       link = doc.xpath("//a[text()=\"#{value}\"]").first

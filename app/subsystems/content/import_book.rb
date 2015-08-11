@@ -43,7 +43,7 @@ class Content::ImportBook
     # Need a double reload here for it to work for some reason
     pages = book.reload.pages(true).eager_load(exercises: {exercise_tags: :tag})
     pages = run(:update_page_content, pages: pages).outputs.pages
-    pools = run(:populate_exercise_pools, pages: pages).outputs.pools.flatten
+    pools = run(:populate_exercise_pools, pages: pages, save: false).outputs.pools.flatten
 
     outputs[:pages] = pages
 

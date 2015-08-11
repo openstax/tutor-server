@@ -34,13 +34,14 @@ module Api::V1
                description: 'The type of the TOC entry, either "part" (for units, chapters, etc), or "page"'
              }
 
-    property :chapter_section,
+    property :book_location,
+             as: :chapter_section,
              type: Array,
              writeable: false,
              readable: true,
              schema_info: {
                required: true,
-               description: 'The chapter and section in the book, e.g. [5, 2]'
+               description: 'The chapter and page in the book, e.g. [5, 2]'
              }
 
     collection :children,

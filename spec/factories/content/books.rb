@@ -4,12 +4,16 @@ FactoryGirl.define do
       contents {{}}
     end
 
-    association :ecosystem, factory: :content_ecosystem
     url { Faker::Internet.url }
     title { contents[:title] || Faker::Lorem.words(3) }
     content { contents.to_json }
     uuid { SecureRandom.uuid }
     version { Random.rand(1..10) }
+
+    after(:build) do |book, evaluator|
+      book.ecosystem ||= FactoryGirl.build(:content_ecosystem,
+                                           title: "#{evaluator.title} v#{evaluator.version}")
+    end
 
     after(:create) do |book, evaluator|
       (evaluator.contents[:chapters] || {}).each do |chapter|
@@ -22,7 +26,7 @@ FactoryGirl.define do
     end
 
     trait :standard_contents_1 do
-      content {{
+      contents {{
         title: 'book title',
         chapters: [
           {

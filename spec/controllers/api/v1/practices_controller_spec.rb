@@ -3,21 +3,21 @@ require 'vcr_helper'
 require 'database_cleaner'
 
 RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
-  let(:user_1) { FactoryGirl.create :user_profile }
-  let(:user_1_token) { FactoryGirl.create :doorkeeper_access_token,
+  let!(:user_1) { FactoryGirl.create :user_profile }
+  let!(:user_1_token) { FactoryGirl.create :doorkeeper_access_token,
                                           resource_owner_id: user_1.id }
 
-  let(:user_2) { FactoryGirl.create :user_profile }
-  let(:user_2_token) { FactoryGirl.create :doorkeeper_access_token,
+  let!(:user_2) { FactoryGirl.create :user_profile }
+  let!(:user_2_token) { FactoryGirl.create :doorkeeper_access_token,
                                           resource_owner_id: user_2.id }
 
-  let(:userless_token) { FactoryGirl.create :doorkeeper_access_token }
+  let!(:userless_token) { FactoryGirl.create :doorkeeper_access_token }
 
-  let(:course) {
+  let!(:course) {
     course = CreateCourse[name: 'Physics 101']
 
   }
-  let(:period) { CreatePeriod[course: course] }
+  let!(:period) { CreatePeriod[course: course] }
 
   context "POST #create" do
     let!(:page) {
@@ -26,15 +26,17 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
       page
     }
 
-    let(:exercise_1) { FactoryGirl.create :content_exercise, page: page }
-    let(:exercise_2) { FactoryGirl.create :content_exercise, page: page }
-    let(:exercise_3) { FactoryGirl.create :content_exercise, page: page }
-    let(:exercise_4) { FactoryGirl.create :content_exercise, page: page }
-    let(:exercise_5) { FactoryGirl.create :content_exercise, page: page }
+    let!(:exercise_1) { FactoryGirl.create :content_exercise, page: page }
+    let!(:exercise_2) { FactoryGirl.create :content_exercise, page: page }
+    let!(:exercise_3) { FactoryGirl.create :content_exercise, page: page }
+    let!(:exercise_4) { FactoryGirl.create :content_exercise, page: page }
+    let!(:exercise_5) { FactoryGirl.create :content_exercise, page: page }
 
     let!(:role) { AddUserAsPeriodStudent[period: period, user: user_1.entity_user] }
 
     before(:each) do
+      Content::Routines::PopulateExercisePools[pages: page]
+
       OpenStax::Biglearn::V1.add_exercises(
         [exercise_1, exercise_2, exercise_3, exercise_4, exercise_5].collect do |ex|
           OpenStax::Biglearn::V1::Exercise.new(

@@ -69,11 +69,13 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       ).outputs.page
     end }
 
+    let!(:pools) { Content::Routines::PopulateExercisePools[pages: pages] }
+
     let!(:task_plan) {
       FactoryGirl.build(
         :tasks_task_plan,
         assistant: assistant,
-        settings: { page_ids: pages.collect{ |page| page.id.to_s } },
+        settings: { 'page_ids' => pages.collect{ |page| page.id.to_s } },
         num_tasking_plans: 0
       )
     }
@@ -114,12 +116,14 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       expect(entity_tasks.length).to eq num_taskees
 
       entity_tasks.each do |entity_task|
+        entity_task.reload.reload
         expect(entity_task.taskings.length).to eq 1
 
         task = entity_task.task
         expect(task.feedback_at).to be <= Time.now
 
         task_steps = task.task_steps
+
         expect(task_steps.count).to eq(task_step_gold_data.count)
         task_steps.each_with_index do |task_step, ii|
           expect(task_step.tasked.class).to eq(task_step_gold_data[ii][:klass])
@@ -160,7 +164,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       end
 
       expected_roles = taskees.collect{ |t| Role::GetDefaultUserRole[t] }
-      expect(tasks.collect{|t| t.taskings.first.role}).to eq expected_roles
+      expect(entity_tasks.collect{|et| et.taskings.first.role}).to eq expected_roles
     end
   end
 
@@ -203,14 +207,17 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     let!(:page) {
       Content::Routines::ImportPage.call(
         cnx_page:  cnx_page,
-        chapter: chapter
+        chapter: chapter,
+        book_location: [1, 1]
       ).outputs.page
     }
+
+    let!(:pools) { Content::Routines::PopulateExercisePools[pages: page] }
 
     let!(:task_plan) {
       FactoryGirl.create(:tasks_task_plan,
         assistant: assistant,
-        settings: { page_ids: [page.id.to_s] }
+        settings: { 'page_ids' => [page.id.to_s] }
       )
     }
 
@@ -239,12 +246,13 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [[0, 2]]}
       allow(Tasks::Assistants::IReadingAssistant).to receive(:num_personalized_exercises) { 0 }
 
-      tasks = DistributeTasks.call(task_plan).outputs.tasks
-      tasks.each do |task|
-        expect(task.taskings.length).to eq 1
-        expect(task.feedback_at).to be <= Time.now
+      entity_tasks = DistributeTasks.call(task_plan).outputs.entity_tasks
+      entity_tasks.each do |entity_task|
+        entity_task.reload.reload
+        expect(entity_task.taskings.length).to eq 1
+        expect(entity_task.task.feedback_at).to be <= Time.now
 
-        task_steps = task.task_steps
+        task_steps = entity_task.task.task_steps
 
         expect(task_steps.count).to eq task_step_gold_data.count
         task_steps.each_with_index do |task_step, ii|

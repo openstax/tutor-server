@@ -41,8 +41,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
   }
 
   let!(:pools) {
-    pools = Content::Routines::PopulateExercisePools[pages: content_pages].flatten
-    pools.collect{ |pool| pool.save! }
+    Content::Routines::PopulateExercisePools[pages: content_pages]
   }
 
   let!(:pages)     {
@@ -97,7 +96,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
         )
     end
 
-    task_plan.save
+    task_plan.save!
     tps
   }
 
@@ -116,33 +115,35 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
     allow(Tasks::Assistants::HomeworkAssistant).
       to receive(:num_personalized_exercises) { personalized_exercise_count }
 
-    tasks = DistributeTasks.call(task_plan).outputs.tasks
+    entity_tasks = DistributeTasks.call(task_plan).outputs.entity_tasks
 
     ## it "sets description, task type, and feedback_at"
-    tasks.each do |task|
+    entity_tasks.each do |entity_task|
+      entity_task.reload.reload
+      task = entity_task.task
       expect(task.description).to eq("Hello!")
       expect(task.homework?).to be_truthy
       expect(task.feedback_at).to eq(task.due_at)
     end
 
     ## it "creates one task per taskee"
-    expect(tasks.count).to eq(taskees.count)
+    expect(entity_tasks.count).to eq(taskees.count)
 
     ## it "assigns each task to one role"
-    tasks.each do |task|
-      expect(task.taskings.count).to eq(1)
+    entity_tasks.each do |entity_task|
+      expect(entity_task.taskings.count).to eq(1)
     end
     expected_roles = taskees.collect{ |taskee| Role::GetDefaultUserRole[taskee] }
-    expect(tasks.collect{|t| t.taskings.first.role}).to eq expected_roles
+    expect(entity_tasks.collect{|t| t.taskings.first.role}).to eq expected_roles
 
     ## it "assigns the correct number of exercises"
-    tasks.each do |task|
-      expect(task.task_steps.count).to eq(assignment_exercise_count)
+    entity_tasks.each do |entity_task|
+      expect(entity_task.task.task_steps.count).to eq(assignment_exercise_count)
     end
 
     ## it "assigns the teacher-selected exercises as the task's core exercises"
-    tasks.each do |task|
-      core_task_steps = task.core_task_steps
+    entity_tasks.each do |entity_task|
+      core_task_steps = entity_task.task.core_task_steps
       expect(core_task_steps.count).to eq(teacher_selected_exercises.count)
 
       core_task_steps.each_with_index do |task_step, ii|
@@ -158,8 +159,8 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
     end
 
     ## it "assigns the tutor-selected spaced practice exercises"
-    tasks.each do |task|
-      spaced_practice_task_steps = task.spaced_practice_task_steps
+    entity_tasks.each do |entity_task|
+      spaced_practice_task_steps = entity_task.task.spaced_practice_task_steps
       expect(spaced_practice_task_steps.count).to eq(tutor_selected_exercise_count)
 
       spaced_practice_task_steps.each do |task_step|
@@ -169,8 +170,8 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
     end
 
     ## it "assigns personalized exericse placeholders"
-    tasks.each do |task|
-      personalized_task_steps = task.personalized_task_steps
+    entity_tasks.each do |entity_task|
+      personalized_task_steps = entity_task.task.personalized_task_steps
       expect(personalized_task_steps.count).to eq(personalized_exercise_count)
 
       personalized_task_steps.each do |task_step|

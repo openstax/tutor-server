@@ -137,8 +137,8 @@ RSpec.describe Admin::CoursesController do
 
   describe 'POST #set_ecosystem' do
     let!(:course) { FactoryGirl.create(:course_profile_profile, name: 'Physics I').course }
-    let!(:eco_1)  { FactoryGirl.create(:content_book, title: 'Physics').ecosystem }
-    let!(:eco_2)  { FactoryGirl.create(:content_book, title: 'Biology').ecosystem }
+    let!(:eco_1)  { FactoryGirl.create(:content_book, title: 'Physics', version: '1').ecosystem }
+    let!(:eco_2)  { FactoryGirl.create(:content_book, title: 'Biology', version: '2').ecosystem }
     let!(:course_ecosystem) {
       AddEcosystemToCourse.call(course: course, ecosystem: eco_1)
       course.reload.course_ecosystems.first
@@ -149,7 +149,7 @@ RSpec.describe Admin::CoursesController do
         post :set_ecosystem, id: course.id, ecosystem_id: eco_1.id
         ce = course.reload.course_ecosystems.first
         expect(ce).to eq course_ecosystem
-        expect(flash[:notice]).to eq 'Course ecosystem "Physics" is already selected for "Physics I"'
+        expect(flash[:notice]).to eq 'Course ecosystem "Physics v1" is already selected for "Physics I"'
       end
     end
 
@@ -158,7 +158,7 @@ RSpec.describe Admin::CoursesController do
         post :set_ecosystem, id: course.id, ecosystem_id: eco_2.id
         ecos = course.reload.ecosystems
         expect(ecos).to eq [eco_2, eco_1]
-        expect(flash[:notice]).to eq 'Course ecosystem "Biology" selected for "Physics I"'
+        expect(flash[:notice]).to eq 'Course ecosystem "Biology v2" selected for "Physics I"'
       end
     end
   end

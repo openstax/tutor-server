@@ -68,12 +68,12 @@ module Ecosystem
             version: version,
             title: title,
             book_location: book_location,
-            is_intro: is_intro
+            is_intro: is_intro?
           }
         end
 
         def related_content(title: nil, book_location: nil)
-          title ||= self.title
+          title ||= is_intro? ? chapter.title : self.title
           book_location ||= self.book_location
           { title: title, book_location: book_location }
         end

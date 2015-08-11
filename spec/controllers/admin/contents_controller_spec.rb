@@ -4,8 +4,8 @@ require 'vcr_helper'
 RSpec.describe Admin::ContentsController, speed: :slow, vcr: VCR_OPTS do
   let!(:admin) { FactoryGirl.create :user_profile, :administrator }
 
-  let!(:book_1) { FactoryGirl.create :content_book, title: 'Physics' }
-  let!(:book_2) { FactoryGirl.create :content_book, title: 'AP Biology' }
+  let!(:book_1) { FactoryGirl.create :content_book, title: 'Physics', version: '1' }
+  let!(:book_2) { FactoryGirl.create :content_book, title: 'AP Biology', version: '2' }
 
   before { controller.sign_in(admin) }
 
@@ -56,7 +56,8 @@ RSpec.describe Admin::ContentsController, speed: :slow, vcr: VCR_OPTS do
     it 'does not import book if the book already exists' do
       FactoryGirl.create(:content_book,
                          title: 'Physics',
-                         url: "#{archive_url}#{cnx_id}")
+                         url: "#{archive_url}#{cnx_id}",
+                         version: '4.4')
 
       expect {
         post :import, archive_url: archive_url, cnx_id: cnx_id
@@ -67,7 +68,8 @@ RSpec.describe Admin::ContentsController, speed: :slow, vcr: VCR_OPTS do
     it 'imports a book with a different version' do
       FactoryGirl.create(:content_book,
                          title: 'Physics',
-                         url: "#{archive_url}#{cnx_id}")
+                         url: "#{archive_url}#{cnx_id}",
+                         version: '4.4')
 
       expect {
         post :import, archive_url: archive_url,

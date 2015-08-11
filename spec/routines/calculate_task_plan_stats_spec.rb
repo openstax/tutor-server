@@ -47,7 +47,8 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
         'id' => 'e26d1433-f8e4-41db-a757-0e061d6d2737',
         'title' => 'Prokaryotic Cells'})
       page = Content::Routines::ImportPage.call(
-        cnx_page: cnx_page, chapter: FactoryGirl.create(:content_chapter)
+        cnx_page: cnx_page, chapter: FactoryGirl.create(:content_chapter),
+        book_location: [1, 1]
       ).outputs.page
 
       course = CreateCourse[name: 'Biology']

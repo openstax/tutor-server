@@ -25,6 +25,8 @@ FactoryGirl.define do
                                               book_location: [1, 1]]
       end
 
+      Content::Routines::PopulateExercisePools[pages: @page]
+
       AddEcosystemToCourse[course: owner, ecosystem: chapter.book.ecosystem]
 
       { page_ids: [@page.id.to_s] }

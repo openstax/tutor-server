@@ -54,9 +54,9 @@ class Tasks::RecoverTaskStep
 
   # Get the page for each exercise in the student's assignments
   # From each page, get the pool of "try another" reading problems
-  def get_exercise_pool(ecosystem:, exercises:)
-    pages = exercises.collect{ |ex| ex.page }
-    ecosystem.reading_try_another_pools(pages: pages).collect{ |pl| pl.exercises }.flatten
+  def get_exercise_pool(ecosystem:, exercise:)
+    page = exercise.page
+    ecosystem.reading_try_another_pools(pages: page).collect{ |pl| pl.exercises }.flatten
   end
 
   # Finds an Exercise with all the required tags and at least one LO
@@ -69,22 +69,25 @@ class Tasks::RecoverTaskStep
     exercise_history = GetExerciseHistory[ecosystem: ecosystem,
                                           entity_tasks: ireading_history].flatten
 
-    exercise_pool = get_exercise_pool(ecosystem: ecosystem, exercises: exercise_history)
+    recovered_exercise = task_step.tasked.exercise
+    exercise_pool = get_exercise_pool(ecosystem: ecosystem, exercise: recovered_exercise)
 
     candidate_exercises = (exercise_pool - exercise_history).uniq
 
-    los = task_step.tasked.los
-    aplos = task_step.tasked.aplos
+    los = recovered_exercise.los.collect{ |tt| tt.id }
+    aplos = recovered_exercise.aplos.collect{ |tt| tt.id }
 
     # Find a random exercise that shares at least one LO with the tasked
     chosen_exercise = candidate_exercises.shuffle.find do |ex|
-      (ex.los & los).any? || (ex.aplos & aplos).any?
+      (ex.los.collect{ |tt| tt.id} & los).any? || \
+      (ex.aplos.collect{ |tt| tt.id} & aplos).any?
     end
 
     if chosen_exercise.nil?
       # If no exercises found, reuse an old one
       chosen_exercise = exercise_pool.shuffle.find do |ex|
-        ((ex.los & los).any? || (ex.aplos & aplos).any?) && ex.id != task_step.tasked.exercise.id
+        ((ex.los.collect{ |tt| tt.id} & los).any? || \
+         (ex.aplos.collect{ |tt| tt.id} & aplos).any?) && ex.id != task_step.tasked.exercise.id
       end
     end
 

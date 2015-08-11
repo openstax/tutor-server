@@ -78,7 +78,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
               {
                 id: ecosystem.books.first.chapters.first.pages.first.id.to_s,
                 cnx_id: Content::Models::Page.find(ecosystem.chapters.first.pages.first.id)
-                                             .cnx_id.cnx_id,
+                                             .cnx_id,
                 title: 'first page',
                 chapter_section: [1, 1],
                 type: 'page'

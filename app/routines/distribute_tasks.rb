@@ -27,7 +27,7 @@ class DistributeTasks
     task_plan.lock!
 
     # Delete pre-existing assignments
-    task_plan.tasks.destroy_all unless task_plan.tasks.empty?
+    task_plan.tasks.each{ |tt| tt.entity_task.destroy } unless task_plan.tasks.empty?
 
     tasking_plans = run(:get_tasking_plans, task_plan).outputs.tasking_plans
 
@@ -56,8 +56,7 @@ class DistributeTasks
 
     save(entity_tasks)
 
-    task_plan.published_at = Time.now
-    task_plan.save! if task_plan.persisted?
+    task_plan.update_column(:published_at, Time.now) if task_plan.persisted?
 
     outputs[:entity_tasks] = entity_tasks
   end
