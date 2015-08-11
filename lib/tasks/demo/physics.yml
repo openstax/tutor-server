@@ -114,7 +114,6 @@ assignments:
     title: HW Chapter 2
     num_exercises: 10
     chapter_sections: [[2, 1], [2, 2], [2, 3], [2, 4]]
-    draft: true
     step_types: [e, e, e, e, e, e, e, e, e, e, p]
     late:
       hp: <%= 4.hours %>
@@ -127,4 +126,20 @@ assignments:
       - id: p2
         opens_at: <%= standard_opens_at school_day_on_or_before 5.days.ago %>
         due_at:   <%= standard_due_at   school_day_on_or_before 1.days.ago %>
+        students: {af: 82, ag: 71, bb: 88, cd: 78, hg: 87, ft: 82, js: 90, ms: 90, nz: i, ra: 100}
+
+  - type: homework
+    title: HW Chapter 4
+    num_exercises: 10
+    draft: true
+    chapter_sections: [[4, 1], [4, 2], [4, 3], [4, 4]]
+    step_types: [e, e, e, e, e, e, e, e, e, e, p]
+    periods:
+      - id: p1
+        opens_at: <%= standard_opens_at school_day_on_or_before 10.days.from_now %>
+        due_at:   <%= standard_due_at   school_day_on_or_before 14.days.from_now %>
+        students: {ak: 98, at: 67, cp: 55, gj: 77, hp: 88, lb: i, lt: 89, ne: 78, sd: 100, vw: 100}
+      - id: p2
+        opens_at: <%= standard_opens_at school_day_on_or_before 10.days.from_now %>
+        due_at:   <%= standard_due_at   school_day_on_or_before 14.days.from_now %>
         students: {af: 82, ag: 71, bb: 88, cd: 78, hg: 87, ft: 82, js: 90, ms: 90, nz: i, ra: 100}
