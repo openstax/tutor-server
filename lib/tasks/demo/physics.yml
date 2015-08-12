@@ -20,12 +20,12 @@ assignments:
     step_types: [r, r, e, r, r, r, r, r, r, r, r, r, i, e, p]
     periods:
       - id: p1
-        opens_at: <%= standard_opens_at school_day_on_or_before 15.days.ago %>
-        due_at:   <%= standard_due_at   school_day_on_or_before 11.days.ago %>
+        opens_at: <%= standard_opens_at school_day_on_or_before 17.days.ago %>
+        due_at:   <%= standard_due_at   school_day_on_or_before 13.days.ago %>
         students: {ak: 98, at: 67, cp: 55, gj: 77, hp: 88, lb: 100, lt: ns, ne: 78, sd: 100, vw: 100}
       - id: p2
-        opens_at: <%= standard_opens_at school_day_on_or_before 15.days.ago %>
-        due_at:   <%= standard_due_at   school_day_on_or_before 11.days.ago %>
+        opens_at: <%= standard_opens_at school_day_on_or_before 17.days.ago %>
+        due_at:   <%= standard_due_at   school_day_on_or_before 13.days.ago %>
         students: {af: 84, ag: 71, bb: 90, cd: 78, hg: 87, ft: 100, js: 80, ms: 90, nz: 85, ra: 88}
 
   - type: reading
@@ -37,12 +37,12 @@ assignments:
       ft: <%= 12.hours %>
     periods:
       - id: p1
-        opens_at: <%= standard_opens_at school_day_on_or_before 10.days.ago %>
-        due_at:   <%= standard_due_at   school_day_on_or_before  6.days.ago %>
+        opens_at: <%= standard_opens_at school_day_on_or_before 12.days.ago %>
+        due_at:   <%= standard_due_at   school_day_on_or_before  8.days.ago %>
         students: {ak: 98, at: 67, cp: 55, gj: 77, hp: 88, lb: i, lt: ns, ne: 78, sd: 75, vw: 82}
       - id: p2
-        opens_at: <%= standard_opens_at school_day_on_or_before 10.days.ago %>
-        due_at:   <%= standard_due_at   school_day_on_or_before    6.days.ago %>
+        opens_at: <%= standard_opens_at school_day_on_or_before 12.days.ago %>
+        due_at:   <%= standard_due_at   school_day_on_or_before  8.days.ago %>
         students: {af: 82, ag: 71, bb: 90, cd: 78, hg: 87, ft: 82, js: i, ms: 90, nz: 85, ra: 100}
 
   - type: reading
@@ -55,12 +55,12 @@ assignments:
       cd: <%= 3.hours %>
     periods:
       - id: p1
-        opens_at: <%= standard_opens_at school_day_on_or_before 5.days.ago %>
-        due_at:   <%= standard_due_at   school_day_on_or_before 1.days.ago %>
+        opens_at: <%= standard_opens_at school_day_on_or_before 7.days.ago %>
+        due_at:   <%= standard_due_at   school_day_on_or_before 4.days.ago %>
         students: {ak: 80, at: 78, cp: 80, gj: 60, hp: 100, lb: i, lt: ns, ne: 78, sd: 100, vw: i}
       - id: p2
-        opens_at: <%= standard_opens_at school_day_on_or_before 5.days.ago %>
-        due_at:   <%= standard_due_at   school_day_on_or_before 1.days.ago %>
+        opens_at: <%= standard_opens_at school_day_on_or_before 7.days.ago %>
+        due_at:   <%= standard_due_at   school_day_on_or_before 4.days.ago %>
         students: {af: 75, ag: 88, bb: i, cd: 81, hg: 87, ft: 82, js: i, ms: 90, nz: 85, ra: 80}
 
   - type: reading
