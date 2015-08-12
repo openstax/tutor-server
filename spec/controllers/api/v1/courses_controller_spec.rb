@@ -20,8 +20,10 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
   describe "#readings" do
     it 'raises SecurityTransgression if user is anonymous or not in the course' do
-      root_book_part = FactoryGirl.create(:content_book_part)
-      CourseContent::AddBookToCourse.call(course: course, book: root_book_part.book)
+      content_ecosystem = FactoryGirl.create(:content_book).ecosystem
+      strategy = Content::Strategies::Direct::Ecosystem.new(content_ecosystem)
+      ecosystem = Content::Ecosystem.new(strategy: strategy)
+      CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
 
       expect {
         api_get :readings, nil, parameters: { id: course.id }
@@ -34,8 +36,10 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
     it 'works for students in the course' do
       # used in FE for reference view
-      root_book_part = FactoryGirl.create(:content_book_part, :standard_contents_1)
-      CourseContent::AddBookToCourse.call(course: course, book: root_book_part.book)
+      content_ecosystem = FactoryGirl.create(:content_book, :standard_contents_1).ecosystem
+      strategy = Content::Strategies::Direct::Ecosystem.new(content_ecosystem)
+      ecosystem = Content::Ecosystem.new(strategy: strategy)
+      CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
       AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
       AddUserAsPeriodStudent.call(period: period, user: user_2.entity_user)
 
@@ -51,62 +55,58 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
 
     it "should work on the happy path" do
-      root_book_part = FactoryGirl.create(:content_book_part, :standard_contents_1)
-      CourseContent::AddBookToCourse.call(course: course, book: root_book_part.book)
-      toc = Content::VisitBook[book: root_book_part.book, visitor_names: :toc]
+      content_ecosystem = FactoryGirl.create(:content_book, :standard_contents_1).ecosystem.reload
+      strategy = Content::Strategies::Direct::Ecosystem.new(content_ecosystem)
+      ecosystem = Content::Ecosystem.new(strategy: strategy)
+      CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
       AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
 
       api_get :readings, user_1_token, parameters: {id: course.id}
       expect(response).to have_http_status(:success)
       expect(response.body_as_hash).to eq([{
-        id: toc.id.to_s,
+        id: ecosystem.books.first.id.to_s,
+        cnx_id: ecosystem.books.first.cnx_id,
         title: 'book title',
         type: 'part',
         chapter_section: [],
         children: [
-          id: toc.children[0].id.to_s,
-          title: 'unit 1',
-          type: 'part',
-          chapter_section: [1],
-          children: [
-            {
-              id: toc.children[0].children[0].id.to_s,
-              title: 'chapter 1',
-              type: 'part',
-              chapter_section: [1, 1],
-              children: [
-                {
-                  id: toc.children[0].children[0].children[0].id.to_s,
-                  cnx_id: Content::Models::Page.find(toc.children[0].children[0].children[0].id).cnx_id,
-                  title: 'first page',
-                  chapter_section: [1, 1, 1],
-                  type: 'page'
-                },
-                {
-                  id: toc.children[0].children[0].children[1].id.to_s,
-                  cnx_id: Content::Models::Page.find(toc.children[0].children[0].children[1].id).cnx_id,
-                  title: 'second page',
-                  chapter_section: [1, 1, 2],
-                  type: 'page'
-                }
-              ]
-            },
-            {
-              id: toc.children[0].children[1].id.to_s,
-              title: 'chapter 2',
-              type: 'part',
-              chapter_section: [1, 2],
-              children: [
-                {
-                  id: toc.children[0].children[1].children[0].id.to_s,
-                  cnx_id: Content::Models::Page.find(toc.children[0].children[1].children[0].id).cnx_id,
-                  title: 'third page',
-                  chapter_section: [1, 2, 1],
-                  type: 'page'
-                }
-              ]
-            }
-          ]
+          {
+            id: ecosystem.books.first.chapters.first.id.to_s,
+            title: 'chapter 1',
+            type: 'part',
+            chapter_section: [1],
+            children: [
+              {
+                id: ecosystem.books.first.chapters.first.pages.first.id.to_s,
+                cnx_id: ecosystem.books.first.chapters.first.pages.first.cnx_id,
+                title: 'first page',
+                chapter_section: [1, 1],
+                type: 'page'
+              },
+              {
+                id: ecosystem.books.first.chapters.first.pages.second.id.to_s,
+                cnx_id: ecosystem.books.first.chapters.first.pages.second.cnx_id,
+                title: 'second page',
+                chapter_section: [1, 2],
+                type: 'page'
+              }
+            ]
+          },
+          {
+            id: ecosystem.books.first.chapters.second.id.to_s,
+            title: 'chapter 2',
+            type: 'part',
+            chapter_section: [2],
+            children: [
+              {
+                id: ecosystem.books.first.chapters.second.pages.first.id.to_s,
+                cnx_id: ecosystem.books.first.chapters.second.pages.first.cnx_id,
+                title: 'third page',
+                chapter_section: [2, 1],
+                type: 'page'
+              }
+            ]
+          }
         ]
       }])
 
@@ -211,7 +211,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           id: course.id.to_s,
           name: course.profile.name,
           roles: [{ id: student.id.to_s, type: 'student', },
-                  { id: teacher.id.to_s, type: 'teacher', }],
+                  { id: teacher.id.to_s, type: 'teacher' }],
           periods: [{ id: zeroth_period.id.to_s, name: zeroth_period.name },
                     { id: period.id.to_s, name: period.name }]
         }.to_json)
@@ -488,12 +488,14 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       DatabaseCleaner.start
 
       VCR.use_cassette("Api_V1_CoursesController/with_book", VCR_OPTS) do
-        @book = FetchAndImportBook[id: '93e2b09d-261c-4007-a987-0b3062fe154b']
+        @ecosystem = FetchAndImportBookAndCreateEcosystem[
+          id: '93e2b09d-261c-4007-a987-0b3062fe154b'
+        ]
       end
     end
 
     before(:each) do
-      CourseContent::AddBookToCourse.call(course: course, book: @book)
+      CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: @ecosystem)
     end
 
     after(:all) do
@@ -531,7 +533,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(response).to have_http_status(:success)
         hash = response.body_as_hash
         expect(hash[:total_count]).to eq(70)
-        page_los = Content::GetLos[page_ids: page_ids]
+        page_los = Content::Models::Page.all.map(&:los).flatten.collect(&:value)
         hash[:items].each do |item|
           wrapper = OpenStax::Exercises::V1::Exercise.new(content: item[:content].to_json)
           item_los = wrapper.los

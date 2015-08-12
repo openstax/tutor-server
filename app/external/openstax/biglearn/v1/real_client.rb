@@ -20,19 +20,44 @@ class OpenStax::Biglearn::V1::RealClient
     handle_response(response)
   end
 
+  def add_pools(pools)
+    pools.each do |pool|
+      options = { body: construct_add_pool_payload(pool).to_json }
+      response = request(:post, add_pools_uri, with_content_type_header(options))
+      handle_response(response)
+    end
+  end
+
+  def combine_pools(pools)
+    options = { body: construct_combine_pool_payload(pools).to_json }
+    response = request(:post, add_pools_uri, with_content_type_header(options))
+    handle_response(response)
+  end
+
   def get_exchange_read_identifiers_for_roles(roles:)
     users = Role::GetUsersForRoles[roles]
     UserProfile::Models::Profile.where(entity_user: users)
                                 .collect{ |p| p.exchange_read_identifier }
   end
 
-  def get_projection_exercises(role:, tag_search:, count:, difficulty:, allow_repetitions:)
+  def get_projection_exercises(role:, pools: nil, tag_search: nil,
+                               count:, difficulty:, allow_repetitions:)
     query = {
       learner_id: get_exchange_read_identifiers_for_roles(roles: role).first,
       number_of_questions: count,
-      tag_query: stringify_tag_search(tag_search),
       allow_repetition: allow_repetitions ? 'true' : 'false'
     }
+
+    unless pools.nil?
+      # If we have more than one pool, we must first combine them all into a single pool
+      pool = [pools].flatten.size > 1 ? OpenStax::Biglearn::V1.combine_pools(pools) : pools.first
+
+      query = query.merge(pool_id: pool.uuid)
+    end
+
+    unless tag_search.nil?
+      query = query.merge(tag_query: stringify_tag_search(tag_search))
+    end
 
     response = request(:get, projection_exercises_uri, params: query)
 
@@ -111,6 +136,10 @@ class OpenStax::Biglearn::V1::RealClient
     Addressable::URI.join(@server_url, '/facts/questions')
   end
 
+  def add_pools_uri
+    Addressable::URI.join(@server_url, '/facts/pools')
+  end
+
   def projection_exercises_uri
     Addressable::URI.join(@server_url, '/projections/questions')
   end
@@ -120,11 +149,19 @@ class OpenStax::Biglearn::V1::RealClient
   end
 
   def construct_exercises_payload(exercises)
-    payload = { question_tags: [] }
-    [exercises].flatten.each do |exercise|
-      payload[:question_tags].push(question_id: exercise.url, tags: exercise.tags)
-    end
-    payload
+    { question_tags: [exercises].flatten.collect do |exercise|
+      { question_id: exercise.question_id, version: exercise.version, tags: exercise.tags }
+    end }
+  end
+
+  def construct_add_pool_payload(pool)
+    { source: { questions: pool.exercises.collect do |exercise|
+      { question_id: exercise.question_id, version: exercise.version }
+    end } }
+  end
+
+  def construct_combine_pools_payload(pools)
+    { source: { pools: pools.collect{ |pl| pl.uuid } } }
   end
 
   def handle_response(response)

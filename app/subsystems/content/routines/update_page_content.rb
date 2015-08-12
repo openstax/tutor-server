@@ -4,11 +4,9 @@ class Content::Routines::UpdatePageContent
 
   protected
 
-  def exec(book_part:)
+  def exec(pages:)
     # Get all page uuids in this book
-    pages = []
-    get_pages(book_part, pages)
-    page_uuids = pages.collect { |page| page.uuid }
+    page_uuids = pages.collect{ |page| page.uuid }
 
     pages.each do |page|
       doc = Nokogiri::HTML(page.content)
@@ -19,8 +17,13 @@ class Content::Routines::UpdatePageContent
         change_page_links(path, page_uuids, attr)
       end
 
-      page.update_attributes(content: doc.to_html)
+      page.content = doc.to_html
+      # Maybe replace with UPSERT once we have support for it
+      # https://wiki.postgresql.org/wiki/UPSERT
+      page.save!
     end
+
+    outputs[:pages] = pages
   end
 
   def change_page_links(path, page_uuids, attr)
@@ -39,15 +42,6 @@ class Content::Routines::UpdatePageContent
         # change the link to a relative link, with just <uuid><rest-of-path>
         attr.value = path.gsub(/^\/contents\//, '')
       end
-    end
-  end
-
-  def get_pages(book_part, result)
-    book_part.pages.each do |page|
-      result << page
-    end
-    book_part.child_book_parts.each do |book_part|
-      get_pages(book_part, result)
     end
   end
 end

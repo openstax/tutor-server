@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'vcr_helper'
 
 module OpenStax::Biglearn
-  RSpec.describe V1::RealClient, :type => :external, :vcr => VCR_OPTS do
+  RSpec.describe V1::RealClient, type: :external, vcr: VCR_OPTS do
 
     let(:configuration) {
       c = OpenStax::Biglearn::V1::Configuration.new

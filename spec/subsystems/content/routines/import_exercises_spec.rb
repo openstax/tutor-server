@@ -3,10 +3,13 @@ require 'vcr_helper'
 
 RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow, vcr: VCR_OPTS do
 
+  let!(:page) { FactoryGirl.create(:content_page) }
+
   it 'imports all exercises with a single tag' do
     result = nil
     expect {
-      result = Content::Routines::ImportExercises.call(tag: 'k12phys-ch04-s01-lo02')
+      result = Content::Routines::ImportExercises.call(page: page,
+                                                       query_hash: {tag: 'k12phys-ch04-s01-lo02'})
     }.to change{ Content::Models::Exercise.count }.by(16)
 
     exercises = Content::Models::Exercise.all.order(:id).to_a
@@ -19,7 +22,8 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
 
   it 'imports all exercises with a set of tags' do
     tags = ['k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02']
-    expect { Content::Routines::ImportExercises.call(tag: tags) }
+    expect { Content::Routines::ImportExercises.call(page: page,
+                                                     query_hash: {tag: tags}) }
       .to change{ Content::Models::Exercise.count }.by(33)
 
     exercises = Content::Models::Exercise.all.order(:id).to_a
@@ -34,7 +38,8 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
     result = nil
     tags = ['k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02']
     expect {
-      result = Content::Routines::ImportExercises.call(tag: tags)
+      result = Content::Routines::ImportExercises.call(page: page,
+                                                       query_hash: {tag: tags})
     }.to change{ Content::Models::Tag.count }.by(59)
 
     exercises = Content::Models::Exercise.all.to_a

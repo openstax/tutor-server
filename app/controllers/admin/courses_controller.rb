@@ -18,8 +18,8 @@ class Admin::CoursesController < Admin::BaseController
     @course = GetCourseProfile[course: entity_course]
     @periods = entity_course.periods
     @teachers = entity_course.teachers.includes(role: { user: { profile: :account } })
-    @books = Content::ListBooks[]
-    @course_book = entity_course.books.first
+    @ecosystems = Content::ListEcosystems[]
+    @course_ecosystem = entity_course.ecosystems.first
   end
 
   def update
@@ -52,21 +52,21 @@ class Admin::CoursesController < Admin::BaseController
     redirect_to edit_admin_course_path(params[:id], anchor: 'roster')
   end
 
-  def set_book
-    if params[:book_id].blank?
-      flash[:error] = 'Please select a course book'
+  def set_ecosystem
+    if params[:ecosystem_id].blank?
+      flash[:error] = 'Please select a course ecosystem'
       return redirect_to edit_admin_course_path(params[:id])
     end
 
     course = Entity::Course.find(params[:id])
-    book = Entity::Book.find(params[:book_id])
-    if course.books.include?(book)
-      flash[:notice] = "Course book \"#{book.root_book_part.title}\" is already selected for \"#{course.profile.name}\""
+    ecosystem = ::Content::Ecosystem.find(params[:ecosystem_id])
+    if GetCourseEcosystem[course: course] == ecosystem
+      flash[:notice] = "Course ecosystem \"#{ecosystem.title}\" is already selected for \"#{course.profile.name}\""
     else
-      CourseContent::AddBookToCourse.call(course: course, book: book, remove_other_books: true)
-      flash[:notice] = "Course book \"#{book.root_book_part.title}\" selected for \"#{course.profile.name}\""
+      CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
+      flash[:notice] = "Course ecosystem \"#{ecosystem.title}\" selected for \"#{course.profile.name}\""
     end
-    redirect_to edit_admin_course_path(params[:id], anchor: 'books')
+    redirect_to edit_admin_course_path(params[:id], anchor: 'content')
   end
 
   private

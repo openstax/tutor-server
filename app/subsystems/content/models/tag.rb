@@ -1,9 +1,8 @@
 class Content::Models::Tag < Tutor::SubSystems::BaseModel
-  has_many :page_tags, dependent: :destroy
-  has_many :exercise_tags, dependent: :destroy
+  has_many :page_tags, dependent: :destroy, inverse_of: :tag
+  has_many :exercise_tags, dependent: :destroy, inverse_of: :tag
   has_many :lo_teks_tags, foreign_key: :lo_id, dependent: :destroy
   has_many :teks_tags, through: :lo_teks_tags, class_name: 'Tag', source: :teks
-  has_many :exercises, through: :exercise_tags
 
   # List the different types of tags
   enum tag_type: [ :generic, :lo, :aplo, :teks, :dok, :blooms, :length ]
@@ -23,7 +22,7 @@ class Content::Models::Tag < Tutor::SubSystems::BaseModel
 
   VISIBLE_TAG_TYPES = [:lo, :aplo, :teks, :dok, :blooms, :length]
 
-  def chapter_section
+  def book_location
     matches = /-ch(\d+)-s(\d+)-lo\d+$/.match(value)
     matches.nil? ? [] : [matches[1].to_i, matches[2].to_i]
   end

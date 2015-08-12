@@ -21,11 +21,11 @@ class DemoTasks < DemoBase
         course = content.course
         task_plan = if assignment.type == 'reading'
                       assign_ireading(course: course,
-                                      chapter_sections: assignment.chapter_sections,
+                                      book_locations: assignment.book_locations,
                                       title: assignment.title)
                     else
                       assign_homework(course: course,
-                                      chapter_sections: assignment.chapter_sections,
+                                      book_locations: assignment.book_locations,
                                       title: assignment.title,
                                       num_exercises: assignment.num_exercises)
                     end

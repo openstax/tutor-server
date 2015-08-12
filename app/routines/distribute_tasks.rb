@@ -6,18 +6,20 @@ class DistributeTasks
 
   protected
 
-  def efficiently_save(task)
-    steps = task.task_steps.to_a
-    task.task_steps = []
-    task.save!
-    steps.each do |step|
-      tasked = step.tasked
-      tasked.task_step = nil
-      tasked.save!
-      step.tasked = tasked
-      task.task_steps << step
-      step.save!
+  def save(entity_tasks)
+    entity_tasks.each do |entity_task|
+      entity_task.task.task_steps.each_with_index do |task_step, index|
+        tasked = task_step.tasked
+        tasked.task_step = nil
+        tasked.save!
+        task_step.tasked = tasked
+        task_step.number = index + 1
+      end
+
+      entity_task.task.update_step_counts
     end
+
+    Entity::Task.import! entity_tasks, recursive: true
   end
 
   def exec(task_plan)
@@ -25,7 +27,7 @@ class DistributeTasks
     task_plan.lock!
 
     # Delete pre-existing assignments
-    task_plan.tasks.destroy_all unless task_plan.tasks.empty?
+    task_plan.tasks.each{ |tt| tt.entity_task.destroy } unless task_plan.tasks.empty?
 
     tasking_plans = run(:get_tasking_plans, task_plan).outputs.tasking_plans
 
@@ -36,25 +38,27 @@ class DistributeTasks
     assistant = task_plan.assistant
 
     # Call the assistant code to create Tasks, then distribute them
-    tasks = assistant.build_tasks(task_plan: task_plan, taskees: taskees)
-    tasks.each_with_index do |task, ii|
+    entity_tasks = assistant.build_tasks(task_plan: task_plan, taskees: taskees)
+    entity_tasks.each_with_index do |entity_task, ii|
       role = taskees[ii]
       tasking = Tasks::Models::Tasking.new(
-        task: task.entity_task,
+        task: entity_task,
         role: role,
         period: role.student.try(:period)
       )
-      task.entity_task.taskings << tasking
+      entity_task.taskings << tasking
 
+      task = entity_task.task
       task.opens_at = opens_ats[ii]
       task.due_at = due_ats[ii] || (task.opens_at + 1.week)
       task.feedback_at ||= task.due_at
-      efficiently_save(task)
     end
 
-    task_plan.update_column(:published_at, Time.now)
+    save(entity_tasks)
 
-    outputs[:tasks] = tasks
+    task_plan.update_column(:published_at, Time.now) if task_plan.persisted?
+
+    outputs[:entity_tasks] = entity_tasks
   end
 
 end

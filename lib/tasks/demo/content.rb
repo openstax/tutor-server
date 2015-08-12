@@ -6,10 +6,10 @@ class DemoContent < DemoBase
 
   lev_routine
 
-  uses_routine FetchAndImportBook, as: :import_book
+  uses_routine FetchAndImportBookAndCreateEcosystem, as: :import_book
   uses_routine CreateCourse, as: :create_course
   uses_routine CreatePeriod, as: :create_period
-  uses_routine AddBookToCourse, as: :add_book
+  uses_routine AddEcosystemToCourse, as: :add_ecosystem
   uses_routine UserProfile::MakeAdministrator, as: :make_administrator
   uses_routine AddUserAsCourseTeacher, as: :add_teacher
 
@@ -46,9 +46,9 @@ class DemoContent < DemoBase
       book = content.cnx_book(version)
       log("Starting book import for #{course.name} #{book} from #{
             OpenStax::Cnx::V1.archive_url_base}.")
-      cnx_book = run(:import_book, id: book).outputs.book
+      ecosystem = run(:import_book, id: book).outputs.ecosystem
       log("Imported book complete.")
-      run(:add_book, book: cnx_book, course: course)
+      run(:add_ecosystem, ecosystem: ecosystem, course: course)
 
       teacher_profile = get_teacher_profile(content.teacher) ||
                         new_user_profile(username: people.teachers[content.teacher].username,

@@ -6,10 +6,9 @@ module ActsAsResource
       end
 
       module ClassMethods
-        def acts_as_resource(options = {})
+        def acts_as_resource
           class_exec do
-            validates :url, presence: true unless options[:allow_nil]
-            validates :url, uniqueness: true, allow_nil: options[:allow_nil] unless options[:url_not_unique]
+            validates :url, presence: true
 
             def content
               # TODO: Caching
@@ -23,14 +22,14 @@ module ActsAsResource
     module ConnectionAdapters
       module TableDefinition
         # Adds resource fields on table creation
-        def resource(options = {})
-          string :url, null: options[:allow_nil]
+        def resource
+          string :url, null: false
           text :content
         end
 
         # Adds resource index after table creation
-        def resource_index(options = {})
-          index :url, unique: true unless options[:url_not_unique]
+        def resource_index
+          index :url
         end
       end
     end

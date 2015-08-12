@@ -2,16 +2,16 @@ class CreateTasksTasks < ActiveRecord::Migration
   def change
     create_table :tasks_tasks do |t|
       t.references :tasks_task_plan
-      t.references :entity_task
+      t.references :entity_task, null: false
       t.integer :task_type, null: false
       t.string :title, null: false
       t.text :description
       t.datetime :opens_at, null: false
       t.datetime :due_at
       t.datetime :feedback_at
+      t.datetime :last_worked_at
       t.integer :tasks_taskings_count, null: false, default: 0
 
-      t.text :settings, null: false
       t.text :personalized_placeholder_strategy
 
       t.integer :steps_count,                      null: false, default: 0
@@ -31,6 +31,7 @@ class CreateTasksTasks < ActiveRecord::Migration
       t.index :entity_task_id
       t.index :task_type
       t.index [:due_at, :opens_at]
+      t.index :last_worked_at
     end
 
     add_foreign_key :tasks_tasks, :tasks_task_plans,

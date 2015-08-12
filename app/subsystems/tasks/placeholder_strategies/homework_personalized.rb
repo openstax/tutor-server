@@ -4,23 +4,25 @@ class Tasks::PlaceholderStrategies::HomeworkPersonalized
     personalized_placeholder_task_steps = task.personalized_task_steps.select(&:placeholder?)
     return if personalized_placeholder_task_steps.none?
 
+    # Gather relevant pages
+    exercise_ids = task.task_plan.settings['exercise_ids']
+    ecosystem = GetEcosystemFromIds[exercise_ids: exercise_ids]
+    exercises = ecosystem.exercises_by_ids(exercise_ids)
+    pages = exercises.collect{ |ex| ex.page }.uniq
+
+    # Gather exercise pools
+    pools = ecosystem.homework_dynamic_pools(pages: pages)
+
     num_placeholders = personalized_placeholder_task_steps.count
 
     taskee = task.taskings.first.role
 
-    los = task.los + task.aplos
-
-    exercise_urls = OpenStax::Biglearn::V1.get_projection_exercises(
-      role:              taskee,
-      tag_search:        biglearn_condition(los),
-      count:             num_placeholders,
-      difficulty:        0.5,
-      allow_repetitions: true
-    )
-
-    chosen_exercises = SearchLocalExercises[url: exercise_urls, extract_numbers_from_urls: true]
-    raise "could not fill all placeholder slots (expected #{num_placeholders} exercises, got #{chosen_exercises.count})" \
-      unless chosen_exercises.count == num_placeholders
+    chosen_exercises = GetEcosystemExercisesFromBiglearn[ecosystem:         ecosystem,
+                                                         role:              taskee,
+                                                         pools:             pools,
+                                                         count:             num_placeholders,
+                                                         difficulty:        0.5,
+                                                         allow_repetitions: true]
 
     chosen_exercise_task_step_pairs = chosen_exercises.zip(personalized_placeholder_task_steps)
     chosen_exercise_task_step_pairs.each do |exercise, step|
@@ -33,54 +35,6 @@ class Tasks::PlaceholderStrategies::HomeworkPersonalized
 
     task.save!
     task
-  end
-
-  def biglearn_condition(los)
-    {
-      _and: [
-        { _or: los },
-        {
-          _or: [
-            {
-              _and: [
-                'k12phys',
-                'ost-chapter-review',
-                {
-                  _or: [
-                    'concept',
-                    'problem',
-                    'critical-thinking'
-                  ]
-                }
-              ]
-            },
-            {
-              _and: [
-                'apbio',
-                'ost-chapter-review',
-                {
-                  _or: [
-                    'critical-thinking',
-                    'ap-test-prep',
-                    {
-                      _and: [
-                        'review',
-                        {
-                          _or: [
-                            'time-medium',
-                            'time-long'
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    }
   end
 
 end

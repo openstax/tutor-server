@@ -7,6 +7,8 @@ FactoryGirl.define do
       uid     { wrapper.uid }
     end
 
+    association :page, factory: :content_page
+
     number    { wrapper.uid.split('@').first }
     version   { wrapper.uid.split('@').last }
     url       { wrapper.url }

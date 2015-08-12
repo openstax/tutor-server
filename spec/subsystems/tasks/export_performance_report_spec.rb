@@ -6,8 +6,8 @@ RSpec.describe Tasks::ExportPerformanceReport, speed: :slow, vcr: VCR_OPTS do
   let(:teacher) { FactoryGirl.create :user_profile }
 
   before(:each) do
-    book = FetchAndImportBook[id: '93e2b09d-261c-4007-a987-0b3062fe154b']
-    SetupPerformanceReportData[course: course, teacher: teacher, book: book]
+    ecosystem = FetchAndImportBookAndCreateEcosystem[id: '93e2b09d-261c-4007-a987-0b3062fe154b']
+    SetupPerformanceReportData[course: course, teacher: teacher, ecosystem: ecosystem]
   end
 
   it 'does not blow up' do

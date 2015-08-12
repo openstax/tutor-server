@@ -1,17 +1,17 @@
 require 'rails_helper'
 
 module OpenStax::Biglearn
-  RSpec.describe V1::FakeClient, :type => :external do
+  RSpec.describe V1::FakeClient, type: :external do
 
     let(:client) { described_class.instance }
 
     it 'allows adding of exercises' do
-      expect{client.add_exercises(V1::Exercise.new('e42', 'topic'))}
+      expect{client.add_exercises(V1::Exercise.new(question_id: 'e42', version: 1, tags: 'topic'))}
         .to change{client.store_exercises_copy.count}.by(1)
 
       client.reload! # make sure data is really saved
 
-      expect(client.store_exercises_copy).to include('e42' => ['topic'])
+      expect(client.store_exercises_copy).to include('e42' => { '1' => ['topic'] })
     end
 
     it 'matches boolean tag searches' do
@@ -58,11 +58,11 @@ module OpenStax::Biglearn
 
     context "get_projection_exercises" do
       before do
-        client.add_exercises(V1::Exercise.new('e1', 'lo1', 'concept'))
-        client.add_exercises(V1::Exercise.new('e2', 'lo1', 'homework'))
-        client.add_exercises(V1::Exercise.new('e3', 'lo2', 'concept'))
-        client.add_exercises(V1::Exercise.new('e4', 'lo2', 'concept'))
-        client.add_exercises(V1::Exercise.new('e5', 'lo3', 'concept'))
+        client.add_exercises(V1::Exercise.new(question_id: 'e1', tags: ['lo1', 'concept']))
+        client.add_exercises(V1::Exercise.new(question_id: 'e2', tags: ['lo1', 'homework']))
+        client.add_exercises(V1::Exercise.new(question_id: 'e3', tags: ['lo2', 'concept']))
+        client.add_exercises(V1::Exercise.new(question_id: 'e4', tags: ['lo2', 'concept']))
+        client.add_exercises(V1::Exercise.new(question_id: 'e5', tags: ['lo3', 'concept']))
       end
 
       it "works when allow_repetitions is false" do

@@ -203,9 +203,14 @@ class DemoBase
     )
   end
 
-  def assign_ireading(course:, chapter_sections:, title:)
-    book = CourseContent::GetCourseBooks[course: course].first
-    pages = lookup_pages(book: book, chapter_sections: chapter_sections)
+  def get_ecosystem(course: course)
+    strategy = Content::Strategies::Direct::Ecosystem.new(course.ecosystems.first)
+    Content::Ecosystem.new(strategy: strategy)
+  end
+
+  def assign_ireading(course:, book_locations:, title:)
+    book = get_ecosystem(course: course).books.first
+    pages = lookup_pages(book: book, book_locations: book_locations)
 
     raise "No pages to assign" if pages.blank?
 
@@ -218,17 +223,15 @@ class DemoBase
     )
   end
 
-  def assign_homework(course:, chapter_sections:,  num_exercises:, title:)
-    book = CourseContent::GetCourseBooks[course: course].first
-    pages = lookup_pages(book: book, chapter_sections: chapter_sections)
+  def assign_homework(course:, book_locations:,  num_exercises:, title:)
+    ecosystem = get_ecosystem(course: course)
+    book = ecosystem.books.first
+    pages = lookup_pages(book: book, book_locations: book_locations)
+    pools = ecosystem.homework_core_pools(pages: pages)
+    exercises = pools.collect{ |pl| pl.exercises }.flatten.uniq.shuffle(random: randomizer)
+    exercise_ids = exercises.take(num_exercises).collect{ |e| e.id.to_s }
 
-    page_los = pages.collect(&:los).uniq
-
-    exercise_ids = run(SearchLocalExercises, tag: page_los, match_count: 1)
-                       .outputs.items
-                       .shuffle(random: randomizer)
-                       .take(num_exercises)
-                       .collect{ |e| e.id.to_s }
+    raise "No exercises to assign" if exercise_ids.blank?
 
     Tasks::Models::TaskPlan.new(
       title: title,
@@ -256,12 +259,13 @@ class DemoBase
   end
 
   def distribute_tasks(task_plan:)
-    tasks = run(DistributeTasks, task_plan).outputs.tasks
+    entity_tasks = run(DistributeTasks, task_plan).outputs.entity_tasks
 
-    log("Assigned #{task_plan.type} #{tasks.count} times")
-    log("One task looks like: " + print_task(task: tasks.first)) if tasks.any?
+    log("Assigned #{task_plan.type} #{entity_tasks.count} times")
+    log("One task looks like: " + print_entity_task(entity_task: entity_tasks.first)) \
+      if entity_tasks.any?
 
-    tasks
+    entity_tasks
   end
 
   # `responses` is an array of 1 (or true), 0 (or false), or nil; nil means
@@ -269,7 +273,7 @@ class DemoBase
   # exercise correctness
   def work_task(task:, responses:[])
     log( "Invalid number of responses for #{task.title}" +
-          "(responses,task_steps) = (#{responses.count}, #{task.task_steps.count})\n" +
+          "(responses,task_steps) = (#{responses.count}, #{task.steps_count})\n" +
          "(task = #{print_task(task: task)}) \n" +
          "Continuing: Any tasks that do not have a response will not be worked" ) \
       if responses.count != task.steps_count
@@ -315,14 +319,11 @@ class DemoBase
     end
   end
 
-  def lookup_pages(book:, chapter_sections:)
-    chapter_sections = (chapter_sections.first.is_a?(Array) ? \
-                        chapter_sections : [chapter_sections]).compact
+  def lookup_pages(book:, book_locations:)
+    book_locations = (book_locations.first.is_a?(Array) ? \
+                      book_locations : [book_locations]).compact
 
-    @page_data ||= {}
-    @page_data[book.id] ||= Content::VisitBook[book: book, visitor_names: :page_data]
-
-    @page_data[book.id].select{|pd| chapter_sections.include?(pd.chapter_section)}
+    book.pages.select{ |page| book_locations.include?(page.book_location) }
   end
 
 
@@ -383,6 +384,10 @@ class DemoBase
     end
 
     "Task #{task.id} / #{task.task_type} / #{types.join(' ')}"
+  end
+
+  def print_entity_task(entity_task:)
+    print_task(task: entity_task.task)
   end
 
   def randomizer

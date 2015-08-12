@@ -7,43 +7,33 @@ module CourseGuideMethods
                                             .collect{ |ts| ts.tasked_id }
     Tasks::Models::TaskedExercise.where(id: tasked_exercise_ids).eager_load(
       [{task_step: {task: {taskings: :role}}},
-       {exercise: {tags: {page_tags: {page: {book_part: :book}}}}}]
+       {exercise: {page: {chapter: :book}}}]
     )
   end
 
   def group_tasked_exercises_by_pages_from_book(tasked_exercises, book)
     tasked_exercises.each_with_object({}) do |te, hash|
-      pages = te.exercise.tags.collect do |tt|
-        tt.page_tags.collect{ |pt| pt.page }
-      end.flatten.uniq
+      page = te.exercise.page
+      next unless page.chapter.book == book
 
-      pages.each do |page|
-        next unless page.book_part.book == book
-        hash[page] ||= []
-        hash[page] << te
-      end
+      hash[page] ||= []
+      hash[page] << te
     end
   end
 
   def group_tasked_exercises_by_chapters_from_book(tasked_exercises, book)
     tasked_exercises.each_with_object({}) do |te, hash|
-      chapters = te.exercise.tags.collect do |tt|
-        tt.page_tags.collect{ |pt| pt.page.book_part }
-      end.flatten.uniq
+      chapter = te.exercise.page.chapter
+      next unless chapter.book == book
 
-      chapters.each do |chapter|
-        next unless chapter.book == book
-        hash[chapter] ||= []
-        hash[chapter] << te
-      end
+      hash[chapter] ||= []
+      hash[chapter] << te
     end
   end
 
   def filter_tasked_exercises_by_book(tasked_exercises, book)
     tasked_exercises.select do |te|
-      te.exercise.tags.any? do |tt|
-        tt.page_tags.any?{ |pt| pt.page.book_part.book == book }
-      end
+      te.exercise.book == book
     end
   end
 
@@ -73,13 +63,13 @@ module CourseGuideMethods
 
       {
         title: page.title,
-        chapter_section: page.chapter_section,
+        book_location: page.book_location,
         questions_answered_count: tasked_exercises.count,
         clue: clue,
         practice_count: practices.count,
         page_ids: [page.id]
       }
-    end.sort_by{ |pg| pg[:chapter_section] }
+    end.sort_by{ |pg| pg[:book_location] }
   end
 
   def compile_chapters(tasked_exercises, book)
@@ -92,14 +82,14 @@ module CourseGuideMethods
 
       {
         title: chapter.title,
-        chapter_section: chapter.chapter_section,
+        book_location: chapter.book_location,
         questions_answered_count: tasked_exercises.count,
         clue: clue,
         practice_count: practices.count,
         page_ids: pages.collect{|pp| pp[:page_ids]}.flatten,
         children: pages
       }
-    end.sort_by{ |ch| ch[:chapter_section] }
+    end.sort_by{ |ch| ch[:book_location] }
   end
 
   def compile_guide(task_steps, book)
@@ -108,7 +98,7 @@ module CourseGuideMethods
     chapters = compile_chapters(filtered_tasked_exercises, book)
 
     {
-      title: book.root_book_part.title,
+      title: book.title,
       page_ids: chapters.collect{ |cc| cc[:page_ids] }.flatten,
       children: chapters
     }

@@ -3,10 +3,10 @@ require 'vcr_helper'
 
 RSpec.describe Content::Routines::ImportPage, type: :routine, speed: :slow, vcr: VCR_OPTS do
 
-  let!(:book_part) { FactoryGirl.create :content_book_part }
+  let!(:chapter) { FactoryGirl.create :content_chapter }
   let!(:cnx_page)  { OpenStax::Cnx::V1::Page.new(id: '95e61258-2faf-41d4-af92-f62e1414175a',
                                                  title: 'Force') }
-  let!(:chapter_section) { [-1] }
+  let!(:book_location) { [-1] }
 
   it 'creates a new Page' do
     result = nil
@@ -17,10 +17,11 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, speed: :slow, vcr:
 
     expect(result.outputs[:page]).to be_persisted
 
-    uuid, version = cnx_page.id.split('@')
+    uuid = cnx_page.uuid
+    version = cnx_page.version
     expect(result.outputs[:page].uuid).to eq uuid
     expect(result.outputs[:page].version).to eq version
-    expect(result.outputs[:page].chapter_section).to eq chapter_section
+    expect(result.outputs[:page].book_location).to eq book_location
   end
 
   it 'converts relative links into absolute links' do
@@ -71,8 +72,8 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, speed: :slow, vcr:
 
   def import_page
     Content::Routines::ImportPage.call(cnx_page: cnx_page,
-                                       book_part: book_part,
-                                       chapter_section: chapter_section)
+                                       chapter: chapter,
+                                       book_location: book_location)
   end
 
 end

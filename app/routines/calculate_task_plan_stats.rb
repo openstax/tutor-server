@@ -2,8 +2,6 @@ class CalculateTaskPlanStats
 
   lev_routine express_output: :stats
 
-  uses_routine Content::Routines::SearchPages, as: :search_pages
-
   uses_routine Role::GetUsersForRoles, as: :get_users_for_roles
 
   uses_routine UserProfile::GetUserFullNames, as: :get_user_full_names
@@ -18,15 +16,15 @@ class CalculateTaskPlanStats
   end
 
   def exercise_stats_for_tasked_exercises(tasked_exercises)
-    urls = Set.new(tasked_exercises.collect{ |te| te.url })
-    urls.collect do |url|
-      selected_tasked_exercises = tasked_exercises.select{ |te| te.url == url }
+    exercises = Set.new(tasked_exercises.collect{ |te| te.exercise })
+    exercises.collect do |exercise|
+      selected_tasked_exercises = tasked_exercises.select{ |te| te.exercise == exercise }
       completed_tasked_exercises = selected_tasked_exercises.select{ |te| te.completed? }
-      exercise = OpenStax::Exercises::V1::Exercise.new(content: selected_tasked_exercises.first.content)
+      exercise_parser = OpenStax::Exercises::V1::Exercise.new(content: exercise.content)
       answer_stats = answer_stats_for_tasked_exercises(selected_tasked_exercises)
 
       {
-        content: exercise.content_with_answer_stats(answer_stats),
+        content: exercise_parser.content_with_answer_stats(answer_stats),
         answered_count: completed_tasked_exercises.count,
         answers: completed_tasked_exercises.collect do |te|
           roles = te.task_step.task.taskings.collect{ |ts| ts.role }
@@ -66,7 +64,7 @@ class CalculateTaskPlanStats
     stats = {
       id:              page.id,
       title:           page.title,
-      chapter_section: page.chapter_section
+      chapter_section: page.book_location
     }
 
     stats.merge page_stats_for_tasked_exercises(tasked_exercises)
@@ -85,11 +83,17 @@ class CalculateTaskPlanStats
   end
 
   def get_tasked_exercises_from_task_steps(task_steps)
-    task_steps.flatten.collect{ |ts| ts.tasked }.select{ |t| t.exercise? }
+    tasked_exercise_ids = task_steps.flatten.select{ |t| t.exercise? }.collect{ |ts| ts.tasked_id }
+    Tasks::Models::TaskedExercise.where(id: tasked_exercise_ids)
+                                 .eager_load([{exercise: :page},
+                                              {task_step: {task: {taskings: :role}}}]).to_a
   end
 
   def get_page_for_tasked_exercise(tasked_exercise)
-    run(:search_pages, tag: tasked_exercise.los + tasked_exercise.aplos, match_count: 1).outputs.items.first
+    content_exercise = tasked_exercise.exercise
+    strategy = ::Content::Strategies::Direct::Exercise.new(content_exercise)
+    ecosystem_exercise = ::Content::Exercise.new(strategy: strategy)
+    ecosystem_exercise.page
   end
 
   def group_tasked_exercises_by_pages(tasked_exercises)
@@ -107,8 +111,7 @@ class CalculateTaskPlanStats
   end
 
   def generate_period_stat_data
-    tasks = @plan.tasks.preload(task_steps: :tasked)
-                       .includes(taskings: :period).to_a
+    tasks = @plan.tasks.eager_load([:task_steps, {taskings: :period}]).to_a
     grouped_tasks = tasks.group_by do |tt|
       tt.taskings.first.try(:period) || no_period
     end

@@ -7,17 +7,18 @@ module Api::V1
                writeable: true,
                readable: false,
                schema_info: {
-                 description: "The page_ids to use for practice",
+                 description: "The page ids to use for practice",
                  items: {
                    type: 'string'
                  }
                }
 
-    collection :book_part_ids,
+    collection :chapter_ids,
+               as: :book_part_ids,
                writeable: true,
                readable: false,
                schema_info: {
-                 description: "The book_part_ids to use for practice",
+                 description: "The chapter ids to use for practice",
                  items: {
                    type: 'string'
                  }

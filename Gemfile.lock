@@ -37,6 +37,8 @@ GEM
       activemodel (= 4.2.1)
       activesupport (= 4.2.1)
       arel (~> 6.0)
+    activerecord-import (0.10.0)
+      activerecord (>= 3.0)
     activesupport (4.2.1)
       i18n (~> 0.7)
       json (~> 1.7, >= 1.7.7)
@@ -46,7 +48,7 @@ GEM
     addressable (2.3.7)
     apipie-rails (0.3.3)
       json
-    arel (6.0.0)
+    arel (6.0.3)
     autoprefixer-rails (5.1.7.1)
       execjs
       json
@@ -652,6 +654,7 @@ PLATFORMS
 
 DEPENDENCIES
   active_record_query_trace
+  activerecord-import
   addressable
   apipie-rails
   autoprefixer-rails

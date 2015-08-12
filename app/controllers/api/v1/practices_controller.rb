@@ -12,7 +12,7 @@ module Api
 
         entity_task = ResetPracticeWidget[
           role: get_practice_role, exercise_source: :biglearn,
-          page_ids: practice.page_ids, book_part_ids: practice.book_part_ids
+          page_ids: practice.page_ids, chapter_ids: practice.chapter_ids
         ]
 
         respond_with entity_task.task,

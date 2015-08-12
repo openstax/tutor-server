@@ -13,8 +13,8 @@
     </a>
   </li>
   <li role="presentation">
-    <a href="#books" aria-controls="books" role="tab" data-toggle="tab">
-      Course books
+    <a href="#content" aria-controls="content" role="tab" data-toggle="tab">
+      Course content
     </a>
   </li>
   <li role="presentation">
@@ -42,10 +42,10 @@
     <%= render 'admin/teachers/edit', url: teachers_admin_course_path(@course.course_id) %>
   </div>
 
-  <div role="tabpanel" class="tab-pane" id="books">
-    <h3>Select a course book</h3>
+  <div role="tabpanel" class="tab-pane" id="content">
+    <h3>Select a course ecosystem</h3>
 
-    <%= render 'set_book', url: set_book_admin_course_path(@course.course_id) %>
+    <%= render 'set_ecosystem', url: set_ecosystem_admin_course_path(@course.course_id) %>
   </div>
 
   <div role="tabpanel" class="tab-pane" id="periods">

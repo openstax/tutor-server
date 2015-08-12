@@ -16,7 +16,8 @@ class DemoWork < DemoBase
     ContentConfiguration[book.to_sym].each do | content |
       content.assignments.each do | assignment |
 
-        task_plan = Tasks::Models::TaskPlan.where(owner: content.course, title: assignment.title).first!
+        task_plan = Tasks::Models::TaskPlan.where(owner: content.course,
+                                                  title: assignment.title).first!
 
         tasks_profile = build_tasks_profile(
           students: assignment.periods.map{|period| period.students.map(&:to_a) }.flatten(1),

@@ -26,9 +26,14 @@ RSpec.describe Api::V1::ExerciseRepresenter, type: :representer do
   let!(:lo_teks) { FactoryGirl.create :content_lo_teks_tag, lo: lo, teks: teks }
   let!(:exercise_tag) { FactoryGirl.create :content_exercise_tag, exercise: exercise, tag: lo }
   let!(:exercise_tag_2) { FactoryGirl.create :content_exercise_tag, exercise: exercise, tag: lo2 }
+  let!(:exercise_tag_3) { FactoryGirl.create :content_exercise_tag, exercise: exercise, tag: teks }
+  let!(:ecosystem_exercise) {
+    strategy = ::Content::Strategies::Direct::Exercise.new(exercise)
+    ::Content::Exercise.new(strategy: strategy)
+  }
 
   it 'represents an exercise with tags' do
-    representation = Api::V1::ExerciseRepresenter.new(exercise).as_json
+    representation = Api::V1::ExerciseRepresenter.new(ecosystem_exercise).as_json
     expect(representation).to eq(
       'id' => exercise.id.to_s,
       'url' => exercise.url,

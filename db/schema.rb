@@ -16,25 +16,40 @@ ActiveRecord::Schema.define(version: 20150804002246) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "content_book_parts", force: :cascade do |t|
-    t.string   "url"
+  create_table "content_books", force: :cascade do |t|
+    t.string   "url",                  null: false
     t.text     "content"
-    t.integer  "parent_book_part_id"
-    t.integer  "entity_book_id",      null: false
-    t.integer  "number",              null: false
-    t.string   "title",               null: false
-    t.text     "chapter_section"
-    t.string   "uuid"
-    t.string   "version"
-    t.datetime "created_at",          null: false
-    t.datetime "updated_at",          null: false
-    t.text     "toc_cache"
-    t.text     "page_data_cache"
+    t.integer  "content_ecosystem_id", null: false
+    t.string   "title",                null: false
+    t.string   "uuid",                 null: false
+    t.string   "version",              null: false
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
   end
 
-  add_index "content_book_parts", ["entity_book_id"], name: "index_content_book_parts_on_entity_book_id", using: :btree
-  add_index "content_book_parts", ["parent_book_part_id", "number"], name: "index_content_book_parts_on_parent_book_part_id_and_number", unique: true, using: :btree
-  add_index "content_book_parts", ["url"], name: "index_content_book_parts_on_url", unique: true, using: :btree
+  add_index "content_books", ["content_ecosystem_id"], name: "index_content_books_on_content_ecosystem_id", using: :btree
+  add_index "content_books", ["title"], name: "index_content_books_on_title", using: :btree
+  add_index "content_books", ["url"], name: "index_content_books_on_url", using: :btree
+
+  create_table "content_chapters", force: :cascade do |t|
+    t.integer  "content_book_id", null: false
+    t.integer  "number",          null: false
+    t.string   "title",           null: false
+    t.text     "book_location",   null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  add_index "content_chapters", ["content_book_id", "number"], name: "index_content_chapters_on_content_book_id_and_number", unique: true, using: :btree
+  add_index "content_chapters", ["title"], name: "index_content_chapters_on_title", using: :btree
+
+  create_table "content_ecosystems", force: :cascade do |t|
+    t.string   "title",      null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "content_ecosystems", ["title"], name: "index_content_ecosystems_on_title", unique: true, using: :btree
 
   create_table "content_exercise_tags", force: :cascade do |t|
     t.integer  "content_exercise_id", null: false
@@ -47,18 +62,20 @@ ActiveRecord::Schema.define(version: 20150804002246) do
   add_index "content_exercise_tags", ["content_tag_id"], name: "index_content_exercise_tags_on_content_tag_id", using: :btree
 
   create_table "content_exercises", force: :cascade do |t|
-    t.string   "url"
+    t.string   "url",             null: false
     t.text     "content"
-    t.integer  "number",     null: false
-    t.integer  "version",    null: false
+    t.integer  "content_page_id", null: false
+    t.integer  "number",          null: false
+    t.integer  "version",         null: false
     t.string   "title"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
   end
 
-  add_index "content_exercises", ["number", "version"], name: "index_content_exercises_on_number_and_version", unique: true, using: :btree
+  add_index "content_exercises", ["content_page_id"], name: "index_content_exercises_on_content_page_id", using: :btree
+  add_index "content_exercises", ["number", "version"], name: "index_content_exercises_on_number_and_version", using: :btree
   add_index "content_exercises", ["title"], name: "index_content_exercises_on_title", using: :btree
-  add_index "content_exercises", ["url"], name: "index_content_exercises_on_url", unique: true, using: :btree
+  add_index "content_exercises", ["url"], name: "index_content_exercises_on_url", using: :btree
 
   create_table "content_lo_teks_tags", force: :cascade do |t|
     t.integer  "lo_id",      null: false
@@ -80,20 +97,33 @@ ActiveRecord::Schema.define(version: 20150804002246) do
   add_index "content_page_tags", ["content_tag_id"], name: "index_content_page_tags_on_content_tag_id", using: :btree
 
   create_table "content_pages", force: :cascade do |t|
-    t.string   "url"
+    t.string   "url",                null: false
     t.text     "content"
-    t.integer  "content_book_part_id"
-    t.integer  "number",               null: false
-    t.string   "title",                null: false
-    t.text     "chapter_section"
-    t.string   "uuid"
-    t.string   "version"
+    t.integer  "content_chapter_id", null: false
+    t.integer  "number",             null: false
+    t.string   "title",              null: false
+    t.string   "uuid",               null: false
+    t.string   "version",            null: false
+    t.text     "book_location",      null: false
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
+  end
+
+  add_index "content_pages", ["content_chapter_id", "number"], name: "index_content_pages_on_content_chapter_id_and_number", unique: true, using: :btree
+  add_index "content_pages", ["title"], name: "index_content_pages_on_title", using: :btree
+  add_index "content_pages", ["url"], name: "index_content_pages_on_url", using: :btree
+
+  create_table "content_pools", force: :cascade do |t|
+    t.integer  "content_page_id",      null: false
+    t.string   "uuid",                 null: false
+    t.integer  "pool_type",            null: false
+    t.text     "content_exercise_ids"
     t.datetime "created_at",           null: false
     t.datetime "updated_at",           null: false
   end
 
-  add_index "content_pages", ["content_book_part_id", "number"], name: "index_content_pages_on_content_book_part_id_and_number", unique: true, using: :btree
-  add_index "content_pages", ["content_book_part_id", "url"], name: "index_content_pages_on_content_book_part_id_and_url", unique: true, using: :btree
+  add_index "content_pools", ["content_page_id", "pool_type"], name: "index_content_pools_on_content_page_id_and_pool_type", unique: true, using: :btree
+  add_index "content_pools", ["uuid"], name: "index_content_pools_on_uuid", unique: true, using: :btree
 
   create_table "content_tags", force: :cascade do |t|
     t.string   "value",                   null: false
@@ -109,28 +139,15 @@ ActiveRecord::Schema.define(version: 20150804002246) do
   add_index "content_tags", ["tag_type"], name: "index_content_tags_on_tag_type", using: :btree
   add_index "content_tags", ["value"], name: "index_content_tags_on_value", unique: true, using: :btree
 
-  create_table "course_content_course_books", force: :cascade do |t|
-    t.integer  "entity_course_id", null: false
-    t.integer  "entity_book_id",   null: false
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+  create_table "course_content_course_ecosystems", force: :cascade do |t|
+    t.integer  "entity_course_id",     null: false
+    t.integer  "content_ecosystem_id", null: false
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
   end
 
-  add_index "course_content_course_books", ["entity_book_id"], name: "index_course_content_course_books_on_entity_book_id", using: :btree
-  add_index "course_content_course_books", ["entity_course_id", "entity_book_id"], name: "[\"course_books_course_id_on_book_id_unique\"]", unique: true, using: :btree
-
-  create_table "school_district_districts", force: :cascade do |t|
-    t.string "name", null: false
-  end
-
-  create_table "school_district_schools", force: :cascade do |t|
-    t.string   "name",                      null: false
-    t.integer  "school_district_district_id"
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
-  end
-
-  add_index "school_district_schools", ["school_district_district_id"], name: "index_school_district_schools_on_school_district_district_id", using: :btree
+  add_index "course_content_course_ecosystems", ["content_ecosystem_id", "entity_course_id"], name: "course_ecosystems_on_ecosystem_id_course_id", using: :btree
+  add_index "course_content_course_ecosystems", ["entity_course_id", "created_at"], name: "course_ecosystems_on_course_id_created_at", using: :btree
 
   create_table "course_membership_enrollments", force: :cascade do |t|
     t.integer  "course_membership_period_id"
@@ -175,22 +192,17 @@ ActiveRecord::Schema.define(version: 20150804002246) do
   add_index "course_membership_teachers", ["entity_role_id"], name: "index_course_membership_teachers_on_entity_role_id", unique: true, using: :btree
 
   create_table "course_profile_profiles", force: :cascade do |t|
-    t.integer  "entity_course_id",                                               null: false
-    t.string   "name",                                                           null: false
-    t.string   "timezone",                default: "Central Time (US & Canada)", null: false
-    t.datetime "created_at",                                                     null: false
-    t.datetime "updated_at",                                                     null: false
     t.integer  "school_district_school_id"
+    t.integer  "entity_course_id",                                                 null: false
+    t.string   "name",                                                             null: false
+    t.string   "timezone",                  default: "Central Time (US & Canada)", null: false
+    t.datetime "created_at",                                                       null: false
+    t.datetime "updated_at",                                                       null: false
   end
 
-  add_index "course_profile_profiles", ["school_district_school_id"], name: "index_course_profile_profiles_on_school_district_school_id", using: :btree
   add_index "course_profile_profiles", ["entity_course_id"], name: "index_course_profile_profiles_on_entity_course_id", unique: true, using: :btree
   add_index "course_profile_profiles", ["name"], name: "index_course_profile_profiles_on_name", using: :btree
-
-  create_table "entity_books", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
+  add_index "course_profile_profiles", ["school_district_school_id"], name: "index_course_profile_profiles_on_school_district_school_id", using: :btree
 
   create_table "entity_courses", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -380,6 +392,19 @@ ActiveRecord::Schema.define(version: 20150804002246) do
 
   add_index "role_role_users", ["entity_user_id", "entity_role_id"], name: "role_role_users_user_role_uniq", unique: true, using: :btree
 
+  create_table "school_district_districts", force: :cascade do |t|
+    t.string "name", null: false
+  end
+
+  create_table "school_district_schools", force: :cascade do |t|
+    t.string   "name",                        null: false
+    t.integer  "school_district_district_id"
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+  end
+
+  add_index "school_district_schools", ["school_district_district_id"], name: "index_school_district_schools_on_school_district_district_id", using: :btree
+
   create_table "tasks_assistants", force: :cascade do |t|
     t.string   "name",            null: false
     t.string   "code_class_name", null: false
@@ -450,17 +475,18 @@ ActiveRecord::Schema.define(version: 20150804002246) do
   add_index "tasks_task_steps", ["tasks_task_id", "number"], name: "index_tasks_task_steps_on_tasks_task_id_and_number", unique: true, using: :btree
 
   create_table "tasks_tasked_exercises", force: :cascade do |t|
-    t.boolean  "can_be_recovered", default: false, null: false
-    t.string   "url",                              null: false
-    t.text     "content",                          null: false
+    t.integer  "content_exercise_id",                 null: false
+    t.boolean  "can_be_recovered",    default: false, null: false
+    t.string   "url",                                 null: false
+    t.text     "content",                             null: false
     t.string   "title"
     t.text     "free_response"
     t.string   "answer_id"
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
   end
 
-  add_index "tasks_tasked_exercises", ["url"], name: "index_tasks_tasked_exercises_on_url", using: :btree
+  add_index "tasks_tasked_exercises", ["content_exercise_id"], name: "index_tasks_tasked_exercises_on_content_exercise_id", using: :btree
 
   create_table "tasks_tasked_external_urls", force: :cascade do |t|
     t.string   "url",        null: false
@@ -482,12 +508,12 @@ ActiveRecord::Schema.define(version: 20150804002246) do
   end
 
   create_table "tasks_tasked_readings", force: :cascade do |t|
-    t.string   "url",             null: false
-    t.text     "content",         null: false
+    t.string   "url",           null: false
+    t.text     "content",       null: false
     t.string   "title"
-    t.text     "chapter_section"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.text     "book_location"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
   end
 
   create_table "tasks_tasked_videos", force: :cascade do |t|
@@ -526,15 +552,15 @@ ActiveRecord::Schema.define(version: 20150804002246) do
 
   create_table "tasks_tasks", force: :cascade do |t|
     t.integer  "tasks_task_plan_id"
-    t.integer  "entity_task_id"
+    t.integer  "entity_task_id",                                null: false
     t.integer  "task_type",                                     null: false
     t.string   "title",                                         null: false
     t.text     "description"
     t.datetime "opens_at",                                      null: false
     t.datetime "due_at"
     t.datetime "feedback_at"
+    t.datetime "last_worked_at"
     t.integer  "tasks_taskings_count",              default: 0, null: false
-    t.text     "settings",                                      null: false
     t.text     "personalized_placeholder_strategy"
     t.integer  "steps_count",                       default: 0, null: false
     t.integer  "completed_steps_count",             default: 0, null: false
@@ -548,7 +574,6 @@ ActiveRecord::Schema.define(version: 20150804002246) do
     t.integer  "placeholder_exercise_steps_count",  default: 0, null: false
     t.datetime "created_at",                                    null: false
     t.datetime "updated_at",                                    null: false
-    t.datetime "last_worked_at"
   end
 
   add_index "tasks_tasks", ["due_at", "opens_at"], name: "index_tasks_tasks_on_due_at_and_opens_at", using: :btree
@@ -580,18 +605,19 @@ ActiveRecord::Schema.define(version: 20150804002246) do
   add_index "user_profile_profiles", ["exchange_read_identifier"], name: "index_user_profile_profiles_on_exchange_read_identifier", unique: true, using: :btree
   add_index "user_profile_profiles", ["exchange_write_identifier"], name: "index_user_profile_profiles_on_exchange_write_identifier", unique: true, using: :btree
 
-  add_foreign_key "content_book_parts", "content_book_parts", column: "parent_book_part_id", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "content_book_parts", "entity_books", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "content_books", "content_ecosystems", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "content_chapters", "content_books", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_exercise_tags", "content_exercises", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_exercise_tags", "content_tags", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "content_exercises", "content_pages", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_lo_teks_tags", "content_tags", column: "lo_id"
   add_foreign_key "content_lo_teks_tags", "content_tags", column: "teks_id"
   add_foreign_key "content_page_tags", "content_pages", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_page_tags", "content_tags", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "content_pages", "content_book_parts", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "course_content_course_books", "entity_books"
-  add_foreign_key "course_content_course_books", "entity_courses"
-  add_foreign_key "school_district_schools", "school_district_districts"
+  add_foreign_key "content_pages", "content_chapters", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "content_pools", "content_pages", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "course_content_course_ecosystems", "content_ecosystems", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "course_content_course_ecosystems", "entity_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_membership_enrollments", "course_membership_periods", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_membership_enrollments", "course_membership_students", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_membership_periods", "entity_courses", on_update: :cascade, on_delete: :cascade
@@ -599,15 +625,18 @@ ActiveRecord::Schema.define(version: 20150804002246) do
   add_foreign_key "course_membership_students", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_membership_teachers", "entity_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_membership_teachers", "entity_roles", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "course_profile_profiles", "entity_courses"
+  add_foreign_key "course_profile_profiles", "entity_courses", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "course_profile_profiles", "school_district_schools", on_update: :cascade, on_delete: :nullify
   add_foreign_key "role_role_users", "entity_roles"
   add_foreign_key "role_role_users", "entity_users"
+  add_foreign_key "school_district_schools", "school_district_districts"
   add_foreign_key "tasks_course_assistants", "entity_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_course_assistants", "tasks_assistants", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_performance_report_exports", "entity_courses"
   add_foreign_key "tasks_performance_report_exports", "entity_roles"
   add_foreign_key "tasks_task_plans", "tasks_assistants", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_steps", "tasks_tasks", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_tasked_exercises", "content_exercises", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasking_plans", "tasks_task_plans", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_taskings", "course_membership_periods", on_update: :cascade, on_delete: :nullify
   add_foreign_key "tasks_taskings", "entity_roles", on_update: :cascade, on_delete: :cascade

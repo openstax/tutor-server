@@ -3,8 +3,6 @@ require 'vcr_helper'
 
 RSpec.describe Content::Routines::UpdatePageContent, type: :routine, vcr: VCR_OPTS do
 
-  let!(:book_part) { FactoryGirl.create :content_book_part }
-
   let!(:cnx_page_1) {
     OpenStax::Cnx::V1::Page.new({
       id: '102e9604-daa7-4a09-9f9e-232251d1a4ee@7',
@@ -19,17 +17,21 @@ RSpec.describe Content::Routines::UpdatePageContent, type: :routine, vcr: VCR_OP
     })
   }
 
-  let!(:page_1) {
+  let!(:chapter) {
+    chapter = FactoryGirl.create :content_chapter
     OpenStax::Cnx::V1.with_archive_url(url: 'https://archive.cnx.org/contents/') do
-      Content::Routines::ImportPage.call(cnx_page: cnx_page_1, book_part: book_part).outputs[:page]
+      res = Content::Routines::ImportPage.call(cnx_page: cnx_page_1, chapter: chapter,
+                                               book_location: [1, 1])
     end
+    OpenStax::Cnx::V1.with_archive_url(url: 'https://archive.cnx.org/contents/') do
+      Content::Routines::ImportPage.call(cnx_page: cnx_page_2, chapter: chapter,
+                                         book_location: [1, 2])
+    end
+    chapter
   }
 
-  let!(:page_2) {
-    OpenStax::Cnx::V1.with_archive_url(url: 'https://archive.cnx.org/contents/') do
-      Content::Routines::ImportPage.call(cnx_page: cnx_page_2, book_part: book_part).outputs[:page]
-    end
-  }
+  let!(:page_1) { chapter.pages.first }
+  let!(:page_2) { chapter.pages.second }
 
   let!(:link_text) { [
     "Introduction to Electric Current, Resistance, and Ohm's Law",
@@ -57,10 +59,10 @@ RSpec.describe Content::Routines::UpdatePageContent, type: :routine, vcr: VCR_OP
       expect(link.attribute('href').value).to eq before_hrefs[i]
     end
 
-    Content::Routines::UpdatePageContent.call(book_part: book_part)
-    page_1.reload
+    Content::Routines::UpdatePageContent.call(pages: chapter.pages)
+    chapter.pages.each{ |page| page.save! }
 
-    doc = Nokogiri::HTML(page_1.content)
+    doc = Nokogiri::HTML(page_1.reload.content)
 
     link_text.each_with_index do |value, i|
       link = doc.xpath("//a[text()=\"#{value}\"]").first

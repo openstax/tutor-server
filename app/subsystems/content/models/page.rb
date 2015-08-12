@@ -1,14 +1,32 @@
 class Content::Models::Page < Tutor::SubSystems::BaseModel
-  acts_as_resource(url_not_unique: true)
 
-  serialize :chapter_section, Array
+  wrapped_by ::Content::Strategies::Direct::Page
 
-  sortable_belongs_to :book_part, on: :number, inverse_of: :pages
+  acts_as_resource
 
-  has_many :page_tags, dependent: :destroy
+  serialize :book_location, Array
+
+  has_many :pools, dependent: :destroy, inverse_of: :page
+
+  has_one :reading_dynamic_pool, -> {reading_dynamic}, class_name: 'Content::Models::Pool'
+  has_one :reading_try_another_pool, -> {reading_try_another}, class_name: 'Content::Models::Pool'
+  has_one :homework_core_pool, -> {homework_core}, class_name: 'Content::Models::Pool'
+  has_one :homework_dynamic_pool, -> {homework_dynamic}, class_name: 'Content::Models::Pool'
+  has_one :practice_widget_pool, -> {practice_widget}, class_name: 'Content::Models::Pool'
+
+  sortable_belongs_to :chapter, on: :number, inverse_of: :pages
+  has_one :book, through: :chapter
+  has_one :ecosystem, through: :book
+
+  has_many :exercises, dependent: :destroy, inverse_of: :page
+
+  has_many :page_tags, dependent: :destroy, autosave: true, inverse_of: :page
   has_many :tags, through: :page_tags
 
+  validates :book_location, presence: true
   validates :title, presence: true
+  validates :uuid, presence: true
+  validates :version, presence: true
 
   delegate :fragments, :is_intro?, to: :parser
 
@@ -17,11 +35,11 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
   end
 
   def los
-    tags.to_a.select(&:lo?).collect(&:value)
+    tags.to_a.select(&:lo?)
   end
 
   def aplos
-    tags.to_a.select(&:aplo?).collect(&:value)
+    tags.to_a.select(&:aplo?)
   end
 
   protected
@@ -29,4 +47,5 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
   def parser
     OpenStax::Cnx::V1::Page.new(title: title, content: content)
   end
+
 end

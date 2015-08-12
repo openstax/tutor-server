@@ -44,24 +44,23 @@ class Api::V1::CoursesController < Api::V1::ApiController
     only one book.  Inside each book there can be units or chapters (parts), and eventually
     parts (normally chapters) contain pages that have no children.
 
-    #{json_schema(Api::V1::BookTocRepresenter, include: :readable)}
+    #{json_schema(Api::V1::BookTocsRepresenter, include: :readable)}
   EOS
   def readings
     course = Entity::Course.find(params[:id])
     OSU::AccessPolicy.require_action_allowed!(:readings, current_api_user, course)
 
-    # For the moment, we're assuming just one book per course
-    books = CourseContent::GetCourseBooks.call(course: course).outputs.books
+    ecosystem = GetCourseEcosystem[course: course]
+
+    # For the moment, we're assuming just one book per ecosystem
+    books = ecosystem.books
     raise NotYetImplemented if books.count > 1
 
-    toc = Content::VisitBook[book: books.first, visitor_names: :toc]
-    # Return [toc] as a list so that in the future we may have toc from more
-    # than one book
-    respond_with [toc], represent_with: Api::V1::BookTocRepresenter
+    respond_with books, represent_with: Api::V1::BookTocsRepresenter
   end
 
   api :GET, '/courses/:course_id/exercises',
-            "Returns a course\'s exercises, filtered by the page_ids param or the book_part_ids params"
+            "Returns a course\'s exercises, filtered by the page_ids param"
   description <<-EOS
     Returns a list of assignable exercises tagged with LO's matching the pages
     or book_parts with the given ID's.
@@ -73,17 +72,11 @@ class Api::V1::CoursesController < Api::V1::ApiController
     course = Entity::Course.find(params[:id])
     OSU::AccessPolicy.require_action_allowed!(:exercises, current_api_user, course)
 
-    lo_outputs = Content::GetLos.call(params).outputs
-    tags = lo_outputs.los + lo_outputs.aplos
+    ecosystem = GetCourseEcosystem[course: course]
+    pages = ecosystem.pages_by_ids(params[:page_ids])
+    exercises = ecosystem.homework_core_pools(pages: pages).collect{ |pl| pl.exercises }.flatten
 
-    review_exercises = Content::Routines::SearchExercises[tag: 'ost-chapter-review']
-    review_exercise_ids = review_exercises.pluck(:id)
-    review_exercise_relation = Content::Models::Exercise.where(id: review_exercise_ids)
-    search_outputs = SearchLocalExercises.call(relation: review_exercise_relation,
-                                               tag: tags,
-                                               match_count: 1).outputs
-
-    respond_with search_outputs, represent_with: Api::V1::ExerciseSearchRepresenter
+    respond_with exercises, represent_with: Api::V1::ExerciseSearchRepresenter
   end
 
   api :GET, '/courses/:course_id/tasks', 'Gets all course tasks assigned to the role holder making the request'

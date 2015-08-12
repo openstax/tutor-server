@@ -53,16 +53,22 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
 
   let!(:recovery_exercise) { FactoryGirl.create(
     :content_exercise,
+    page: tasked_exercise_with_recovery.exercise.page,
     content: OpenStax::Exercises::V1.fake_client
                                     .new_exercise_hash(tags: [lo.value, pp.value])
                                     .to_json
   ) }
   let!(:recovery_tagging_1)   { FactoryGirl.create(
-    :content_exercise_tag, exercise: recovery_exercise, tag: lo
+    :content_exercise_tag, exercise: tasked_exercise_with_recovery.exercise, tag: lo
   ) }
   let!(:recovery_tagging_2)   { FactoryGirl.create(
+    :content_exercise_tag, exercise: recovery_exercise, tag: lo
+  ) }
+  let!(:recovery_tagging_3)   { FactoryGirl.create(
     :content_exercise_tag, exercise: recovery_exercise, tag: pp
   ) }
+
+  let!(:pools) { Content::Routines::PopulateExercisePools[pages: recovery_exercise.page] }
 
   describe "#show" do
     it "should work on the happy path" do
@@ -74,7 +80,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
         task_id: task_step.tasks_task_id.to_s,
         type: 'reading',
         title: 'title',
-        chapter_section: task_step.tasked.chapter_section,
+        chapter_section: task_step.tasked.book_location,
         is_completed: false,
         content_url: 'http://u.rl',
         content_html: 'content',

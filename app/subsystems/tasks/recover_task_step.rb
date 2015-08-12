@@ -3,14 +3,17 @@ class Tasks::RecoverTaskStep
   lev_routine
 
   uses_routine TaskExercise, as: :task_exercise
-  uses_routine SearchLocalExercises, as: :search
 
   protected
 
   def exec(task_step:)
     fatal_error(code: :recovery_not_available) unless task_step.can_be_recovered?
 
-    recovery_exercise = get_recovery_exercise_for(task_step: task_step)
+    # Get the ecosystem from the content_exercise_id
+    exercise_id = task_step.tasked.content_exercise_id
+    ecosystem = GetEcosystemFromIds[exercise_ids: exercise_id]
+
+    recovery_exercise = get_recovery_exercise_for(ecosystem: ecosystem, task_step: task_step)
 
     fatal_error(code: :recovery_not_found) if recovery_exercise.nil?
 
@@ -38,35 +41,58 @@ class Tasks::RecoverTaskStep
     step
   end
 
+  # Get the student's reading assignments
+  def get_taskees_ireading_histories(taskees:)
+    taskees.collect do |taskee|
+      taskee.taskings
+            .collect{ |tt| tt.task }
+            .select{ |tt| tt.task.reading? }
+            .sort_by{ |tt| tt.task.due_at }
+            .reverse
+    end
+  end
+
+  # Get the page for each exercise in the student's assignments
+  # From each page, get the pool of "try another" reading problems
+  def get_exercise_pool(ecosystem:, exercise:)
+    page = exercise.page
+    ecosystem.reading_try_another_pools(pages: page).collect{ |pl| pl.exercises }.flatten
+  end
+
   # Finds an Exercise with all the required tags and at least one LO
   # Prefers unassigned Exercises
-  def get_recovery_exercise_for(task_step:, required_tag_names: ['os-practice-problems'])
+  def get_recovery_exercise_for(ecosystem:, task_step:)
+    taskees = task_step.task.entity_task.taskings.collect{ |tt| tt.role }
 
-    # Randomize LO order
-    los = (task_step.tasked.los + task_step.tasked.aplos).shuffle
+    ireading_history = get_taskees_ireading_histories(taskees: taskees).flatten.uniq
 
-    # Try to find unassigned exercises first
-    taskees = task_step.task.taskings.collect{|t| t.role}
-    los.each do |lo|
-      exercise = run(:search,
-        not_assigned_to: taskees,
-        tag: required_tag_names + [lo]
-      ).outputs.items.shuffle.first
+    exercise_history = GetExerciseHistory[ecosystem: ecosystem,
+                                          entity_tasks: ireading_history].flatten
 
-      return exercise unless exercise.nil?
+    recovered_exercise_id = task_step.tasked.content_exercise_id
+    recovered_exercise = ecosystem.exercises_by_ids(recovered_exercise_id).first
+    exercise_pool = get_exercise_pool(ecosystem: ecosystem, exercise: recovered_exercise)
+
+    candidate_exercises = (exercise_pool - exercise_history).uniq
+
+    los = recovered_exercise.los.collect{ |tt| tt.id }
+    aplos = recovered_exercise.aplos.collect{ |tt| tt.id }
+
+    # Find a random exercise that shares at least one LO with the tasked
+    chosen_exercise = candidate_exercises.shuffle.find do |ex|
+      (ex.los.collect{ |tt| tt.id} & los).any? || \
+      (ex.aplos.collect{ |tt| tt.id} & aplos).any?
     end
 
-    # No unassigned exercises found, so return a previously assigned exercise
-    los.each do |lo|
-      exercise = run(:search,
-        tag: required_tag_names + [lo]
-      ).outputs.items.shuffle.first
-
-      return exercise unless exercise.nil?
+    if chosen_exercise.nil?
+      # If no exercises found, reuse an old one
+      chosen_exercise = exercise_pool.shuffle.find do |ex|
+        ((ex.los.collect{ |tt| tt.id} & los).any? || \
+         (ex.aplos.collect{ |tt| tt.id} & aplos).any?) && ex.id != task_step.tasked.exercise.id
+      end
     end
 
-    # Nothing found
-    nil
+    chosen_exercise
   end
 
 end

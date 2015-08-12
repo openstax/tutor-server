@@ -9,8 +9,14 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
     FactoryGirl.create(:tasks_assistant, code_class_name: 'Tasks::Assistants::HomeworkAssistant')
   }
 
-  let!(:book_part) {
-    FactoryGirl.create :content_book_part, title: "Forces and Newton's Laws of Motion"
+  let!(:chapter) {
+    FactoryGirl.create :content_chapter, title: "Forces and Newton's Laws of Motion"
+  }
+
+  let!(:ecosystem) {
+    content_ecosystem = chapter.book.ecosystem
+    strategy = ::Content::Strategies::Direct::Ecosystem.new(content_ecosystem)
+    ::Content::Ecosystem.new(strategy: strategy)
   }
 
   let!(:cnx_page_hashes) { [
@@ -18,33 +24,37 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
     { 'id' => '95e61258-2faf-41d4-af92-f62e1414175a', 'title' => 'Force' }
   ] }
 
-  let!(:cnx_pages) { cnx_page_hashes.collect do |hash|
-    OpenStax::Cnx::V1::Page.new(hash: hash)
-  end }
+  let!(:cnx_pages) {
+    cnx_page_hashes.collect do |hash|
+      OpenStax::Cnx::V1::Page.new(hash: hash)
+    end
+  }
 
-  let!(:pages)     { cnx_pages.collect.with_index do |cnx_page, ii|
-    Content::Routines::ImportPage.call(
-      cnx_page:  cnx_page,
-      book_part: book_part,
-      chapter_section: [8, ii+1]
-    ).outputs.page
-  end }
+  let!(:content_pages)     {
+    cnx_pages.collect.with_index do |cnx_page, ii|
+      content_page = Content::Routines::ImportPage.call(
+        cnx_page:  cnx_page,
+        chapter: chapter,
+        book_location: [8, ii+1]
+      ).outputs.page
+    end
+  }
+
+  let!(:pools) {
+    Content::Routines::PopulateExercisePools[pages: content_pages]
+  }
+
+  let!(:pages)     {
+    content_pages.collect do |content_page|
+      strategy = ::Content::Strategies::Direct::Page.new(content_page)
+      ::Content::Page.new(strategy: strategy)
+    end
+  }
 
   let!(:exercises) {
-    page_los = Content::GetLos[page_ids: pages.map(&:id)]
+    pools = ecosystem.homework_core_pools(pages: pages)
 
-    page_exercises = Content::Routines::SearchExercises[tag: page_los, match_count: 1]
-
-    review_exercises = Content::Models::Exercise.joins{exercise_tags.tag}
-                                                .where{exercise_tags.tag.value.eq 'ost-chapter-review'}
-                                                .where{id.in page_exercises.map(&:id)}
-
-    exercises = Content::Models::Exercise.joins{exercise_tags.tag}
-                                         .where{exercise_tags.tag.value.in ['problem', 'concept']}
-                                         .where{id.in review_exercises.map(&:id)}
-
-    exercises = exercises.sort_by{|ex| ex.uid}
-    exercises
+    pools.collect{ |pool| pool.exercises }.flatten.sort_by{|ex| ex.uid}
   }
 
   let!(:teacher_selected_exercises) { exercises[1..5] }
@@ -86,11 +96,15 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
         )
     end
 
-    task_plan.save
+    task_plan.save!
     tps
   }
 
-  let!(:course) { task_plan.owner }
+  let!(:course) {
+    course = task_plan.owner
+    AddEcosystemToCourse[ecosystem: ecosystem, course: course]
+    course
+  }
   let!(:period) { CreatePeriod[course: course] }
 
   it "creates the expected assignments" do
@@ -101,33 +115,35 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
     allow(Tasks::Assistants::HomeworkAssistant).
       to receive(:num_personalized_exercises) { personalized_exercise_count }
 
-    tasks = DistributeTasks.call(task_plan).outputs.tasks
+    entity_tasks = DistributeTasks.call(task_plan).outputs.entity_tasks
 
     ## it "sets description, task type, and feedback_at"
-    tasks.each do |task|
+    entity_tasks.each do |entity_task|
+      entity_task.reload.reload
+      task = entity_task.task
       expect(task.description).to eq("Hello!")
       expect(task.homework?).to be_truthy
       expect(task.feedback_at).to eq(task.due_at)
     end
 
     ## it "creates one task per taskee"
-    expect(tasks.count).to eq(taskees.count)
+    expect(entity_tasks.count).to eq(taskees.count)
 
     ## it "assigns each task to one role"
-    tasks.each do |task|
-      expect(task.taskings.count).to eq(1)
+    entity_tasks.each do |entity_task|
+      expect(entity_task.taskings.count).to eq(1)
     end
     expected_roles = taskees.collect{ |taskee| Role::GetDefaultUserRole[taskee] }
-    expect(tasks.collect{|t| t.taskings.first.role}).to eq expected_roles
+    expect(entity_tasks.collect{|t| t.taskings.first.role}).to eq expected_roles
 
     ## it "assigns the correct number of exercises"
-    tasks.each do |task|
-      expect(task.task_steps.count).to eq(assignment_exercise_count)
+    entity_tasks.each do |entity_task|
+      expect(entity_task.task.task_steps.count).to eq(assignment_exercise_count)
     end
 
     ## it "assigns the teacher-selected exercises as the task's core exercises"
-    tasks.each do |task|
-      core_task_steps = task.core_task_steps
+    entity_tasks.each do |entity_task|
+      core_task_steps = entity_task.task.core_task_steps
       expect(core_task_steps.count).to eq(teacher_selected_exercises.count)
 
       core_task_steps.each_with_index do |task_step, ii|
@@ -143,8 +159,8 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
     end
 
     ## it "assigns the tutor-selected spaced practice exercises"
-    tasks.each do |task|
-      spaced_practice_task_steps = task.spaced_practice_task_steps
+    entity_tasks.each do |entity_task|
+      spaced_practice_task_steps = entity_task.task.spaced_practice_task_steps
       expect(spaced_practice_task_steps.count).to eq(tutor_selected_exercise_count)
 
       spaced_practice_task_steps.each do |task_step|
@@ -154,8 +170,8 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
     end
 
     ## it "assigns personalized exericse placeholders"
-    tasks.each do |task|
-      personalized_task_steps = task.personalized_task_steps
+    entity_tasks.each do |entity_task|
+      personalized_task_steps = entity_task.task.personalized_task_steps
       expect(personalized_task_steps.count).to eq(personalized_exercise_count)
 
       personalized_task_steps.each do |task_step|

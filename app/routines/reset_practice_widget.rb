@@ -1,5 +1,5 @@
 class ResetPracticeWidget
-  lev_routine express_output: :task
+  lev_routine express_output: :entity_task
 
   uses_routine GetPracticeWidget, as: :get_practice_widget
 
@@ -11,31 +11,34 @@ class ResetPracticeWidget
     translations: { outputs: { type: :verbatim } },
     as: :create_practice_widget_task
 
+  uses_routine GetCourseEcosystem, as: :get_course_ecosystem
+  uses_routine GetExerciseHistory, as: :get_exercise_history
+  uses_routine GetEcosystemExercisesFromBiglearn, as: :get_ecosystem_exercises_from_biglearn
+
   protected
 
-  BASE_RELATION = Content::Models::Exercise.preload(exercise_tags: {tag: {page_tags: :page}})
-
-  def exec(role:, exercise_source:, page_ids: [], book_part_ids: [], randomize: true)
-    page_ids = [page_ids].flatten.compact
-    book_part_ids = [book_part_ids].flatten.compact
-
+  def exec(role:, exercise_source:, page_ids: nil, chapter_ids: nil, randomize: true)
     # Get the existing practice widget and remove incomplete exercises from it
     # so they can be used in later practice
     existing_practice_task = run(:get_practice_widget, role: role).outputs.task.try(:task)
     existing_practice_task.task_steps.incomplete.destroy_all unless existing_practice_task.nil?
 
-    # Gather relevant LO's from pages and book_parts
-    los = Content::GetLos[page_ids: page_ids, book_part_ids: book_part_ids]
-
     # Gather 5 exercises
     count = 5
     exercises = case exercise_source
                 when :fake
+                  pools = []
                   get_fake_exercises(count)
                 when :local
-                  get_local_exercises(count, role, los, randomize: randomize)
+                  ecosystem, pools = get_ecosystem_and_pools(page_ids, chapter_ids, role)
+                  get_local_exercises(ecosystem, count, role, pools, randomize: randomize)
                 when :biglearn
-                  get_biglearn_exercises(count, role, los)
+                  ecosystem, pools = get_ecosystem_and_pools(page_ids, chapter_ids, role)
+                  run(:get_ecosystem_exercises_from_biglearn, ecosystem: ecosystem,
+                                                              count: count,
+                                                              role: role,
+                                                              pools: pools)
+                    .outputs.ecosystem_exercises
                 else
                   raise ArgumentError,
                         "exercise_source: must be one of [:fake, :local, :biglearn]"
@@ -47,18 +50,17 @@ class ResetPracticeWidget
       # Not enough exercises
       fatal_error(
         code: :not_enough_exercises,
-        message: "Not enough exercises to build the Practice Widget. [los: #{los.inspect}, " +
+        message: "Not enough exercises to build the Practice Widget. [pools: #{pools.inspect}, " +
                  "role: #{role.id}, needed: #{count}, got: #{num_exercises}]"
       )
     end
 
     # Figure out the type of practice
     task_type = :mixed_practice
-    task_type = :chapter_practice if book_part_ids.count > 0 && page_ids.count == 0
-    task_type = :page_practice if book_part_ids.count == 0 && page_ids.count > 0
+    task_type = :chapter_practice if !chapter_ids.nil? && page_ids.nil?
+    task_type = :page_practice if chapter_ids.nil? && !page_ids.nil?
 
-    related_content_array = exercise_source == :fake ? [] : \
-                            exercises.collect{ |ex| get_related_content_for(ex) }
+    related_content_array = exercises.collect{ |ex| ex.page.related_content }
 
     # Create the new practice widget task, and put the exercises into steps
     run(:create_practice_widget_task, exercises: exercises,
@@ -67,72 +69,46 @@ class ResetPracticeWidget
 
     run(:create_tasking, role: role, task: outputs.task.entity_task)
 
-    outputs.task = outputs.task.entity_task
+    outputs.entity_task = outputs.task.entity_task
   end
 
   def get_fake_exercises(count)
     count.times.collect do
-      exercise_content = OpenStax::Exercises::V1.fake_client.new_exercise_hash
-      exercise = OpenStax::Exercises::V1::Exercise.new content: exercise_content.to_json
+      content_exercise = FactoryGirl.create(:content_exercise)
+      strategy = ::Content::Strategies::Direct::Exercise.new(content_exercise)
+      ::Content::Exercise.new(strategy: strategy)
     end
   end
 
-  def get_local_exercises(count, role, tags, options = {})
+  def get_ecosystem_and_pools(page_ids, chapter_ids, role)
+    ecosystem = GetEcosystemFromIds[page_ids: page_ids, chapter_ids: chapter_ids]
+
+    # Gather relevant chapters and pages
+    chapters = ecosystem.chapters_by_ids(chapter_ids)
+    pages = ecosystem.pages_by_ids(page_ids) + chapters.collect{ |ch| ch.pages }.flatten.uniq
+
+    # Gather exercise pools
+    [ecosystem, ecosystem.practice_widget_pools(pages: pages)]
+  end
+
+  def get_local_exercises(ecosystem, count, role, pools, options = {})
     options = { randomize: true }.merge(options)
-    exercise_pool = SearchLocalExercises[relation: BASE_RELATION,
-                                         not_assigned_to: role,
-                                         tag: tags,
-                                         match_count: 1]
+    entity_tasks = role.taskings.collect{ |tt| tt.task }
+    flat_history = run(:get_exercise_history, ecosystem: ecosystem, entity_tasks: entity_tasks)
+                     .outputs.exercise_history.flatten
+    exercise_pool = pools.collect{ |pl| pl.exercises }.flatten.uniq
     exercise_pool = exercise_pool.shuffle if options[:randomize]
-    exercises = exercise_pool.first(count)
+    candidate_exercises = (exercise_pool - flat_history)
+    exercises = candidate_exercises.first(count)
     num_exercises = exercises.size
 
     if num_exercises < count
       # We ran out of exercises, so start repeating them
-      exercise_pool = SearchLocalExercises[relation: BASE_RELATION,
-                                           assigned_to: role,
-                                           tag: tags,
-                                           match_count: 1]
-      exercise_pool = exercise_pool.shuffle if options[:randomize]
-      exercises = exercises + exercise_pool.first(count - num_exercises)
+      candidate_exercises = exercise_pool - exercises
+      exercises = exercises + candidate_exercises.first(count - num_exercises)
     end
 
     exercises
-  end
-
-  def get_biglearn_exercises(count, role, los)
-    urls = OpenStax::Biglearn::V1.get_projection_exercises(
-      role: role , tag_search: { _or: los }, count: 5, difficulty: 0.5, allow_repetitions: true
-    )
-
-    SearchLocalExercises[relation: BASE_RELATION, url: urls,
-                         extract_numbers_from_urls: true].tap do |exercises|
-      if exercises.size != urls.count
-        fatal_error(code: :missing_local_exercises,
-                    message: "Biglearn returned more exercises for the practice widget than " +
-                             "were present locally. [los: #{los}, role: #{role.id}, " +
-                             "requested: #{count}, from_biglearn: #{urls.count}, " +
-                             "local_found: #{exercises.size}] biglearn_urls: #{urls}")
-      end
-    end
-  end
-
-  def get_related_content_for(exercise)
-    page = exercise_page(exercise)
-
-    { title: page.title, chapter_section: page.chapter_section }
-  end
-
-  def exercise_page(exercise)
-    tags = exercise._repository.exercise_tags.collect{ |et| et.tag }
-    los = tags.select{ |tag| tag.lo? || tag.aplo? }
-    pages = los.collect{ |lo| lo.page_tags.collect{ |pt| pt.page } }.flatten.compact
-
-    if pages.one?
-      pages.first
-    else
-      raise "#{pages.count} pages found for exercise #{exercise.url}"
-    end
   end
 
 end

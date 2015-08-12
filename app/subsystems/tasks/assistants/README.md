@@ -2,13 +2,14 @@
 
 Assistant Classes must:
 
-  1. Implement the `build_tasks(task_plan:, taskees:)`
-     singleton method which:
-       - Receives as inputs the TaskPlan being assigned and the taskees (targets)
-       - Builds Task objects
-       - Returns an array containing the Tasks to be assigned to the taskees (in order)
+  1. Implement the `initialize(task_plan:, taskees:)` method which:
+       - Receives as inputs and stores the TaskPlan being assigned and the taskees (targets)
 
-  2. Implement the `schema` singleton method which:
+  2. Implement the `build_tasks` method which:
+       - Builds Task objects for the TaskPlan given during initialization
+       - Returns an array containing the Entity::Tasks to be assigned to the taskees (in order)
+
+  3. Implement the `schema` singleton method which:
        - Receives no arguments
        - Returns a JSON schema for the task_plan settings hash
 
@@ -21,8 +22,13 @@ class AbstractAssistant
     {}
   end
 
-  def self.build_tasks(task_plan:, taskees:)
-    taskees.collect do |taskee|
+  def initialize(task_plan:, taskees:)
+    @task_plan = task_plan
+    @taskees = taskees
+  end
+
+  def build_tasks
+    @taskees.collect do |taskee|
       raise NotImplementedError
     end
   end

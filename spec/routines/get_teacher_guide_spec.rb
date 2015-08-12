@@ -35,14 +35,14 @@ RSpec.describe GetTeacherGuide do
 
     expect(result).to include({
       period_id: @period.id,
-      title: 'Physics',
+      title: 'Physics (Demo)',
       page_ids: [kind_of(Integer)]*3,
       children: array_including(kind_of(Hash))
     },
     {
       period_id: @second_period.id,
-      title: 'Physics',
-      page_ids: [kind_of(Integer)]*3,
+      title: 'Physics (Demo)',
+      page_ids: [kind_of(Integer)]*2,
       children: array_including(kind_of(Hash))
     })
   end
@@ -52,7 +52,7 @@ RSpec.describe GetTeacherGuide do
 
     expect([period_1_chapter_1]).to match a_hash_including(
       "title"=>"Acceleration",
-      "chapter_section"=>[3],
+      "book_location"=>[3],
       "questions_answered_count"=>2,
       "clue" => {
         "value" => kind_of(Float),
@@ -71,8 +71,8 @@ RSpec.describe GetTeacherGuide do
 
     expect([period_2_chapter_1]).to match a_hash_including(
       "title"=>"Acceleration",
-      "chapter_section"=>[3],
-      "questions_answered_count"=>3,
+      "book_location"=>[3],
+      "questions_answered_count"=>5,
       "clue" => {
         "value" => kind_of(Float),
         "value_interpretation" => kind_of(String),
@@ -92,7 +92,7 @@ RSpec.describe GetTeacherGuide do
 
     expect(period_1_pages).to include(
       a_hash_including("title"=>"Acceleration",
-                       "chapter_section"=>[3, 1],
+                       "book_location"=>[3, 1],
                        "questions_answered_count"=>2,
                        "clue" => {
                          "value" => kind_of(Float),
@@ -109,9 +109,9 @@ RSpec.describe GetTeacherGuide do
     period_2_pages = described_class[role: @teacher_role].second['children'].first['children']
 
     expect(period_2_pages).to include(
-      a_hash_including("title"=>"Representing Acceleration with Equations and Graphs",
-                       "chapter_section"=>[3, 2],
-                       "questions_answered_count"=>3,
+      a_hash_including("title"=>"Acceleration",
+                       "book_location"=>[3, 1],
+                       "questions_answered_count"=>5,
                        "clue" => {
                          "value" => kind_of(Float),
                          "value_interpretation" => kind_of(String),

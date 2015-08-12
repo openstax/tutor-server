@@ -78,11 +78,10 @@ class Entity
         return wrap_class_proc.call(obj).new(obj) unless wrap_class_proc.nil?
 
         # Handle Enumerables
-        return obj unless obj.respond_to?(:each_with_object) && obj.respond_to?(:clear)
+        return obj unless obj.is_a?(Enumerable)
 
-        obj.each_with_object(obj.dup.clear) do |(k, v), o|
-          v.nil? ? o << _wrap(k) : o[_wrap(k)] = _wrap(v)
-        end
+        wrapped_obj = obj.collect{ |element| _wrap(element) }
+        obj.is_a?(Hash) ? wrapped_obj.to_h : wrapped_obj
       end
     end
 
@@ -93,11 +92,11 @@ class Entity
       when Entity, Entity::Relation
         obj._repository
       else
-        return obj unless obj.respond_to?(:each_with_object)
+        # Handle Enumerables
+        return obj unless obj.is_a?(Enumerable)
 
-        obj.each_with_object(obj.class.new) do |(k, v), o|
-          v.nil? ? o << _unwrap(k) : o[_unwrap(k)] = _unwrap(v)
-        end
+        unwrapped_obj = obj.collect{ |element| _unwrap(element) }
+        obj.is_a?(Hash) ? unwrapped_obj.to_h : unwrapped_obj
       end
     end
   end
@@ -114,11 +113,11 @@ class Entity
     if self.class._repository_classes.include?(args.class)
       @repository = args
     elsif self.class._repository_classes.empty?
-      raise "#{self.class.name} does not wrap any classes."
+      raise "#{self.class.name} does not wrap any classes.", caller
     else
       raise ArgumentError, "When initializing #{self.class.name}, you must pass either #{
                            self.class._repository_classes.to_a.join(', ')} or another #{
-                           self.class.name} as an argument."
+                           self.class.name} as an argument.", caller
     end
   end
 
@@ -127,9 +126,14 @@ class Entity
     repository == self.class._unwrap(other)
   end
 
-  # Entities are equal if the repositories are equal
+  # Hash key equality
   def eql?(other)
     repository.eql? self.class._unwrap(other)
+  end
+
+  # Hash function
+  def hash
+    repository.hash ^ self.class.hash
   end
 
   # Calls the repository's inspect method, but replaces its class name with the Entity's class name

@@ -9,7 +9,8 @@ module Api::V1
              writeable: false,
              schema_info: { required: true }
 
-    collection :chapter_section,
+    collection :book_location,
+               as: :chapter_section,
                readable: true,
                writeable: false
 

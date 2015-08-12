@@ -2,14 +2,14 @@ require 'rails_helper'
 
 RSpec.describe Tasks::RecoverTaskStep, :type => :routine do
 
-  let!(:lo)              { FactoryGirl.create :content_tag,
-                                              value: 'ost-tag-lo-test-lo01' }
-  let!(:pp)              { FactoryGirl.create :content_tag,
-                                              value: 'os-practice-problems' }
+  let!(:lo)              { FactoryGirl.create :content_tag, value: 'ost-tag-lo-test-lo01' }
+  let!(:pp)              { FactoryGirl.create :content_tag, value: 'os-practice-problems' }
 
   let!(:tasked_reading)  { FactoryGirl.create(:tasks_tasked_reading) }
 
   let!(:task)            { tasked_reading.task_step.task }
+
+  let!(:tasking)         { FactoryGirl.create :tasks_tasking, task: task.entity_task }
 
   let!(:tasked_exercise) {
     te = FactoryGirl.build(:tasks_tasked_exercise)
@@ -21,9 +21,7 @@ RSpec.describe Tasks::RecoverTaskStep, :type => :routine do
     te = FactoryGirl.build(
       :tasks_tasked_exercise,
       can_be_recovered: true,
-      content: OpenStax::Exercises::V1.fake_client
-                                      .new_exercise_hash(tags: [lo.value])
-                                      .to_json
+      content: OpenStax::Exercises::V1.fake_client.new_exercise_hash(tags: [lo.value]).to_json
     )
     te.task_step.task = task.reload
     te.save!
@@ -34,17 +32,23 @@ RSpec.describe Tasks::RecoverTaskStep, :type => :routine do
 
   let!(:recovery_exercise) { FactoryGirl.create(
     :content_exercise,
+    page: tasked_exercise_with_recovery.exercise.page,
     content: OpenStax::Exercises::V1.fake_client
                                     .new_exercise_hash(
                                       tags: [lo.value, pp.value]
                                     ).to_json
   ) }
   let!(:recovery_tagging_1)   { FactoryGirl.create(
-    :content_exercise_tag, exercise: recovery_exercise, tag: lo
+    :content_exercise_tag, exercise: tasked_exercise_with_recovery.exercise, tag: lo
   ) }
   let!(:recovery_tagging_2)   { FactoryGirl.create(
+    :content_exercise_tag, exercise: recovery_exercise, tag: lo
+  ) }
+  let!(:recovery_tagging_3)   { FactoryGirl.create(
     :content_exercise_tag, exercise: recovery_exercise, tag: pp
   ) }
+
+  let!(:pools) { Content::Routines::PopulateExercisePools[pages: recovery_exercise.page] }
 
   it "cannot be called on taskeds without a recovery step" do
     result = nil
@@ -80,7 +84,7 @@ RSpec.describe Tasks::RecoverTaskStep, :type => :routine do
 
   it "returns a recovery step" do
     result = Tasks::RecoverTaskStep.call(
-        task_step: tasked_exercise_with_recovery.task_step.reload
+      task_step: tasked_exercise_with_recovery.task_step.reload
     )
 
     expect(result.errors).to be_empty

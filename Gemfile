@@ -126,6 +126,9 @@ gem 'will_paginate', '~> 3.0.6'
 # Time travel
 gem 'timecop'
 
+# Efficient mass imports
+gem 'activerecord-import'
+
 group :development, :test do
   # SQLite adapter
   gem 'sqlite3'

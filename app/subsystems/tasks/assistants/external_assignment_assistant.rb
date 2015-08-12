@@ -15,21 +15,27 @@ class Tasks::Assistants::ExternalAssignmentAssistant
     }'
   end
 
-  def self.build_tasks(task_plan:, taskees:)
-    students = taskees.collect { |taskee| taskee.student }.compact
+  def initialize(task_plan:, taskees:)
+    @task_plan = task_plan
+    @taskees = taskees
+  end
+
+  def build_tasks
+    students = @taskees.collect { |taskee| taskee.student }.compact
 
     raise StandardError, 'External assignment taskees must all be students'\
-      if students.length != taskees.length
+      if students.length != @taskees.length
 
-    taskees.collect.with_index do |taskee, i|
-      build_external_task(task_plan: task_plan,
+    @taskees.collect.with_index do |taskee, i|
+      build_external_task(task_plan: @task_plan,
                           taskee: taskee,
-                          student: students[i])
+                          student: students[i]).entity_task
     end
   end
 
   protected
-  def self.build_external_task(task_plan:, taskee:, student:)
+
+  def build_external_task(task_plan:, taskee:, student:)
     task = build_task(task_plan: task_plan)
     step = Tasks::Models::TaskStep.new(task: task)
     tasked_external_url(task_step: step, taskee: taskee, student: student,
@@ -38,7 +44,7 @@ class Tasks::Assistants::ExternalAssignmentAssistant
     task
   end
 
-  def self.build_task(task_plan:)
+  def build_task(task_plan:)
     title = task_plan.title || 'External Assignment'
     description = task_plan.description
 
@@ -50,7 +56,7 @@ class Tasks::Assistants::ExternalAssignmentAssistant
     ]
   end
 
-  def self.tasked_external_url(task_step:, taskee:, student:, url:)
+  def tasked_external_url(task_step:, taskee:, student:, url:)
     {
       deidentifier: student.try(:deidentifier)
     }.each do |key, value|

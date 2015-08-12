@@ -9,19 +9,24 @@ RSpec.describe DistributeTasks, type: :routine do
     AddUserAsPeriodStudent.call(user: profile.entity_user, period: period)
     profile
   }
-  let!(:task_plan) { FactoryGirl.create(:tasks_task_plan, owner: course) }
-  let!(:tasking_plan) { FactoryGirl.create(:tasks_tasking_plan, target: user, task_plan: task_plan) }
+  let!(:task_plan) {
+    task_plan = FactoryGirl.build(:tasks_task_plan, owner: course)
+    task_plan.tasking_plans.first.target = user
+    task_plan.save!
+    task_plan
+  }
 
   context 'unpublished task_plan' do
-    it "calls the build_tasks method on the task_plan's assistant" do
-      expect(DummyAssistant).to receive(:build_tasks).and_return([])
-
+    it "creates tasks for the task_plan" do
+      expect(task_plan.tasks).to be_empty
       result = DistributeTasks.call(task_plan)
       expect(result.errors).to be_empty
+      expect(task_plan.tasks.size).to eq 1
     end
 
     it "sets the published_at field" do
-      DistributeTasks.call(task_plan)
+      result = DistributeTasks.call(task_plan)
+      expect(result.errors).to be_empty
       expect(task_plan.reload.published_at).to be_within(1.second).of(Time.now)
     end
   end
@@ -32,15 +37,19 @@ RSpec.describe DistributeTasks, type: :routine do
       task_plan.reload
     end
 
-    it "calls the build_tasks method on the task_plan's assistant" do
-      expect(DummyAssistant).to receive(:build_tasks).and_return([])
+    it "rebuilds the tasks for the task_plan" do
+      expect(task_plan.tasks.size).to eq 1
+      old_task = task_plan.tasks.first
 
       result = DistributeTasks.call(task_plan)
       expect(result.errors).to be_empty
+      expect(task_plan.reload.tasks.size).to eq 1
+      expect(task_plan.tasks.first).not_to eq old_task
     end
 
     it "sets the published_at field" do
-      DistributeTasks.call(task_plan)
+      result = DistributeTasks.call(task_plan)
+      expect(result.errors).to be_empty
       expect(task_plan.reload.published_at).to be_within(1.second).of(Time.now)
     end
   end

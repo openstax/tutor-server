@@ -29,7 +29,7 @@ RSpec.describe OpenStax::Biglearn::V1, :type => :external do
     let!(:client)   { OpenStax::Biglearn::V1.send :client }
     let!(:role)     { Entity::Role.create! }
     let!(:tag)      { 'test-tag' }
-    let!(:exercise) { OpenStax::Biglearn::V1::Exercise.new('e42', 'topic') }
+    let!(:exercise) { OpenStax::Biglearn::V1::Exercise.new(question_id: 'e42', tags: 'topic') }
 
     it 'delegates get_clue to the client' do
       clue = OpenStax::Biglearn::V1::FakeClient.instance.get_clue(roles: [role], tags: [tag])
@@ -56,12 +56,12 @@ RSpec.describe OpenStax::Biglearn::V1, :type => :external do
 
     it 'delegates get_projection_exercises to the client' do
       expect(client).to receive(:get_projection_exercises).twice.with(
-        role: role, tag_search: tag, count: 2, difficulty: 0.6, allow_repetitions: false
+        role: role, pools: nil, tag_search: tag, count: 2, difficulty: 0.6, allow_repetitions: false
       )
       expect(OpenStax::Biglearn::V1.get_projection_exercises(
         role: role, tag_search: tag, count: 2, difficulty: 0.6, allow_repetitions: false
       )).to eq client.get_projection_exercises(
-        role: role, tag_search: tag, count: 2, difficulty: 0.6, allow_repetitions: false
+        role: role, pools: nil, tag_search: tag, count: 2, difficulty: 0.6, allow_repetitions: false
       )
     end
 

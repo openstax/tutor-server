@@ -22,7 +22,8 @@ module Api::V1::Tasks
                description: "The title of this Reading"
              }
 
-    property :chapter_section,
+    property :book_location,
+             as: :chapter_section,
              type: Array,
              writeable: false,
              readable: true,

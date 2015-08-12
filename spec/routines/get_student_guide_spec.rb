@@ -44,7 +44,7 @@ RSpec.describe GetStudentGuide do
     result = described_class[role: @role]
 
     expect(result).to match a_hash_including(
-      "title"=>"Physics",
+      "title"=>"Physics (Demo)",
       "page_ids"=>[kind_of(Integer)]*3,
       "children"=> array_including(kind_of(Hash))
     )
@@ -55,7 +55,7 @@ RSpec.describe GetStudentGuide do
 
     expect([book]).to include(a_hash_including(
       "title"=>"Acceleration",
-      "chapter_section"=>[3],
+      "book_location"=>[3],
       "questions_answered_count"=>2,
       "clue" => {
         "value" => kind_of(Float),
@@ -76,7 +76,7 @@ RSpec.describe GetStudentGuide do
 
     expect(parts).to match a_hash_including(
       "title"=>"Acceleration",
-      "chapter_section"=>[3, 1],
+      "book_location"=>[3, 1],
       "questions_answered_count"=>2,
       "clue" => {
         "value" => kind_of(Float),

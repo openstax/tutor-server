@@ -34,7 +34,8 @@ class Entity
     it 'returns a properly formatted string from inspect' do
       expect(entity_relation.inspect).to(
         eq(relation.inspect.gsub('ActiveRecord::Relation', 'Entity::Relation')
-                           .gsub('Content::Models::Exercise', 'Exercise'))
+                           .gsub('Content::Models::Exercise',
+                                 'Content::Strategies::Direct::Exercise'))
       )
     end
   end

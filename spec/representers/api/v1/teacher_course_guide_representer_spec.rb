@@ -19,7 +19,7 @@ RSpec.describe Api::V1::TeacherCourseGuideRepresenter do
 
   it 'recurses children with the child representer' do
     guide = [Hashie::Mash.new({ children: [{ title: 'my cool title',
-                                             chapter_section: [1, 4],
+                                             book_location: [1, 4],
                                              questions_answered_count: 25,
                                              clue: {
                                                value: 0.89,

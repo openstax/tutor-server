@@ -15,6 +15,16 @@ module OpenStax::Biglearn::V1
     client.add_exercises(exercises)
   end
 
+  def self.add_pools(pools)
+    uuids = client.add_pools(pools).collect{ |rs| rs['pool_id'] }
+    pools.each_with_index{ |pool, ii| pool.uuid = uuids[ii] }
+    pools
+  end
+
+  def self.combine_pools(pools)
+    OpenStax::Biglearn::V1::Pool.new(uuid: client.combine_pools(pools)['pool_id'])
+  end
+
   # Returns recommended exercises
   #
   # tag_search: a hash describing a boolean search on tags;
@@ -23,9 +33,9 @@ module OpenStax::Biglearn::V1
   #   Ex:
   #     { _and: [ { _or: ['a', 'b', 'c'] }, 'd']  }
   #
-  def self.get_projection_exercises(role:, tag_search: {},
+  def self.get_projection_exercises(role:, pools: nil, tag_search: nil,
                                     count: 1, difficulty: 0.5, allow_repetitions: true)
-    exercises = client.get_projection_exercises(role: role, tag_search: tag_search,
+    exercises = client.get_projection_exercises(role: role, pools: pools, tag_search: tag_search,
                                                 count: count, difficulty: difficulty,
                                                 allow_repetitions: allow_repetitions)
 
@@ -34,7 +44,8 @@ module OpenStax::Biglearn::V1
     if num_exercises != count
       Rails.logger.warn {
         "Biglearn.get_projection_exercises only returned #{num_exercises} of #{count} " +
-        "requested exercises [role: #{role}, tag_search: #{tag_search}, difficulty: #{difficulty}, " +
+        "requested exercises [role: #{role}, pools: #{(pools || []).collect{ |pl| pl.uuid }}, " +
+        "tag_search: #{tag_search}, difficulty: #{difficulty}, " +
         "allow_repetitions: #{allow_repetitions}] exercises = #{exercises}"
       }
     end

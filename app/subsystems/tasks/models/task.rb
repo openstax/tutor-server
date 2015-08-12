@@ -7,16 +7,14 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   belongs_to :task_plan
   belongs_to :entity_task, class_name: 'Entity::Task',
-                           dependent: :destroy,
-                           foreign_key: 'entity_task_id'
+                           foreign_key: 'entity_task_id',
+                           inverse_of: :task
 
   sortable_has_many :task_steps, on: :number,
                                  dependent: :destroy,
                                  autosave: true,
-                                 inverse_of: :task
+                                 inverse_of: :task, autosave: true
   has_many :taskings, through: :entity_task
-
-  serialize :settings, JSON
 
   validates :title, presence: true
 
@@ -27,30 +25,6 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   validates :due_at, timeliness: { type: :date }, allow_nil: true
 
   validate :due_at_on_or_after_opens_at
-
-  after_initialize :post_init
-
-  def post_init
-    self.settings ||= {}
-    self.settings['los'] ||= []
-    self.settings['aplos'] ||= []
-  end
-
-  def los
-    settings['los']
-  end
-
-  def los=(new_los)
-    self.settings['los'] = new_los
-  end
-
-  def aplos
-    settings['aplos']
-  end
-
-  def aplos=(new_aplos)
-    self.settings['aplos'] = new_aplos
-  end
 
   def personalized_placeholder_strategy
     serialized_strategy = read_attribute(:personalized_placeholder_strategy)
@@ -147,8 +121,8 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     end
   end
 
-  def update_step_counts!
-    steps = self.task_steps.to_a
+  def update_step_counts
+    steps = task_steps.to_a
 
     update_steps_count(task_steps: steps)
     update_completed_steps_count(task_steps: steps)
@@ -160,9 +134,11 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     update_placeholder_steps_count(task_steps: steps)
     update_placeholder_exercise_steps_count(task_steps: steps)
 
-    save!
-
     self
+  end
+
+  def update_step_counts!
+    update_step_counts.save!
   end
 
   def exercise_count
