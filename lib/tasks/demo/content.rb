@@ -37,7 +37,7 @@ class DemoContent < DemoBase
           student_info = people.students[initials]
           profile = get_student_profile(initials) ||
                     new_user_profile(username: student_info.username, name:  student_info.name)
-          log("    #{initials} (#{student_info.name})")
+                  log("    #{initials} #{student_info.username} (#{student_info.name})")
 
           run(AddUserAsPeriodStudent, period: period, user: profile.entity_user)
         end
