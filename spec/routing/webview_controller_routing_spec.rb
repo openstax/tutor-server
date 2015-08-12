@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Api::V1::WebviewController, :type => :routing do
+describe WebviewController, :type => :routing do
 
   describe "/blahblahblah" do
     it "routes to #index when format is html" do
