@@ -15,7 +15,7 @@ module Content
 
       has_many :tags, dependent: :destroy, inverse_of: :ecosystem
 
-      validates :title, presence: true, uniqueness: true
+      validates :title, presence: true
 
     end
   end

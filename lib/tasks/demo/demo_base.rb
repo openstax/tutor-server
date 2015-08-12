@@ -139,11 +139,11 @@ class DemoBase
     raise "need a full name" if last_name.nil?
 
     # The password will be set if stubbing is disabled
-    profile = run(UserProfile::CreateProfile, username: username,
-                                              password: password,
-                                              first_name: first_name,
-                                              last_name: last_name,
-                                              full_name: name).outputs.profile
+    profile ||= run(UserProfile::CreateProfile, username: username,
+                                                password: password,
+                                                first_name: first_name,
+                                                last_name: last_name,
+                                                full_name: name).outputs.profile
 
     if sign_contracts
       sign_contract(profile: profile, name: :general_terms_of_use)

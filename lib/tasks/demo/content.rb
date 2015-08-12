@@ -22,7 +22,8 @@ class DemoContent < DemoBase
     # By default, choose a fixed seed for repeatability and fewer surprises
     set_random_seed(random_seed)
 
-    admin_profile = new_user_profile(username: 'admin', name: people.admin)
+    admin_profile = user_profile_for_username('admin') || \
+                    new_user_profile(username: 'admin', name: people.admin)
     run(:make_administrator, user: admin_profile.entity_user)
     log("Added an admin user #{admin_profile.account.full_name}")
 
