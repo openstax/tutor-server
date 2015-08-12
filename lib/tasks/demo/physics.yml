@@ -57,7 +57,7 @@ assignments:
       - id: p1
         opens_at: <%= standard_opens_at school_day_on_or_before 5.days.ago %>
         due_at:   <%= standard_due_at   school_day_on_or_before 1.days.ago %>
-        students: {ak: 80, at: 78, cp: 80, gj: ns, hp: 100, lb: i, lt: ns, ne: 78, sd: 100, vw: 100}
+        students: {ak: 80, at: 78, cp: 80, gj: 60, hp: 100, lb: i, lt: ns, ne: 78, sd: 100, vw: i}
       - id: p2
         opens_at: <%= standard_opens_at school_day_on_or_before 5.days.ago %>
         due_at:   <%= standard_due_at   school_day_on_or_before 1.days.ago %>
@@ -67,11 +67,14 @@ assignments:
     title: Read 3.1 Acceleration Pt1
     chapter_sections: [[3,1]]
     step_types: [r, i, e, r, r, r, e, v, e, e, p]
+    late:
+      ak: <%= 3.minutes %>
+      af: <%= 30.minutes %>
     periods:
       - id: p1
         opens_at: <%= today %>
         due_at:   <%= standard_due_at school_day_on_or_after 4.days.from_now %>
-        students: {ak: i, at: i, cp: i, gj: i, hp: 88, lb: i, lt: ns, ne: i, sd: ns, vw: 100}
+        students: {ak: 80, at: i, cp: i, gj: i, hp: 88, lb: i, lt: ns, ne: i, sd: ns, vw: 100}
       - id: p2
         opens_at: <%= today %>
         due_at:   <%= standard_due_at school_day_on_or_after 4.days.from_now %>
