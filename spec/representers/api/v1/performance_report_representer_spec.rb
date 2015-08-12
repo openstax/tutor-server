@@ -20,7 +20,7 @@ RSpec.describe Api::V1::PerformanceReportRepresenter do
                                      id: 5,
                                      last_worked_at: last_worked_at,
                                      due_at: due_at,
-                                     exercise_count: 6,
+                                     actual_and_placeholder_exercise_count: 6,
                                      correct_exercise_count: 6,
                                      recovered_exercise_count: 0 }] }] }
 
