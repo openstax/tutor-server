@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: http://archive.cnx.org/contents/092bbf0d-0729-42ce-87a6-fd96fd87a083@4
+    uri: https://archive-staging-tutor.cnx.org/contents/95e61258-2faf-41d4-af92-f62e1414175a@4
     body:
       encoding: US-ASCII
       string: ''
@@ -18,411 +18,308 @@ http_interactions:
       code: 200
       message: OK
     headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Wed, 12 Aug 2015 17:00:28 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '23624'
+      Connection:
+      - keep-alive
       Access-Control-Allow-Headers:
       - origin,dnt,accept-encoding,accept-language,keep-alive,user-agent,x-requested-with,if-modified-since,cache-control,content-type
       Access-Control-Allow-Methods:
       - GET, OPTIONS
       Access-Control-Allow-Origin:
       - "*"
-      Content-Type:
-      - application/json
-      Server:
-      - waitress
-      X-Varnish-Action:
-      - FETCH (override - archive contents)
-      X-Factor-Ttl:
-      - 'ttl: 604800.000'
-      Content-Length:
-      - '25546'
-      Accept-Ranges:
-      - bytes
-      Date:
-      - Fri, 13 Mar 2015 23:46:37 GMT
-      X-Varnish:
-      - 168902801 168781301
-      Via:
-      - 1.1 varnish
-      Connection:
-      - keep-alive
-      X-Cache:
-      - HIT
-      X-Varnish-Age:
-      - '19595'
-      Age:
-      - '0'
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains
     body:
       encoding: UTF-8
-      string: '{"googleAnalytics": null, "version": "4", "submitlog": "updated to
-        ost-tag-lo-k12phys tag and added <label>Grasp Check</label>", "abstract":
-        null, "revised": "2015-03-06T17:46:23Z", "roles": null, "keywords": [], "id":
-        "092bbf0d-0729-42ce-87a6-fd96fd87a083", "title": "Force", "mediaType": "application/vnd.org.cnx.module",
-        "content": "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head xmlns:c=\"http://cnx.rice.edu/cnxml\"
-        xmlns:md=\"http://cnx.rice.edu/mdml\"><title>Force</title><meta name=\"created-time\"
-        content=\"2015/03/05 14:29:22 -0600\"/><meta name=\"revised-time\" content=\"2015/03/06
-        11:46:23.098 US/Central\"/><meta name=\"author\" content=\"AlinaManager\"/><meta
-        name=\"acl-list\" content=\"AlinaManager\"/><meta name=\"licensor\" content=\"AlinaManager\"/><meta
+      string: '{"googleAnalytics": null, "version": "4", "submitlog": "replaced \"distance\"
+        with \"displacement\" per content proofing", "abstract": "<div xmlns=\"http://www.w3.org/1999/xhtml\"
+        xmlns:c=\"http://cnx.rice.edu/cnxml\" xmlns:md=\"http://cnx.rice.edu/mdml\"
+        xmlns:qml=\"http://cnx.rice.edu/qml/1.0\" xmlns:mod=\"http://cnx.rice.edu/#moduleIds\"
+        xmlns:bib=\"http://bibtexml.sf.net/\" xmlns:data=\"http://dev.w3.org/html5/spec/#custom\"/>",
+        "revised": "2015-06-11T17:32:01Z", "printStyle": null, "roles": null, "keywords":
+        ["velocity", "universal laws", "system", "normal force", "Newton''s laws of
+        motion", "net force", "net external force", "kinematics", "gravitational force",
+        "free-body diagram", "force", "external force", "dynamics", "acceleration"],
+        "id": "95e61258-2faf-41d4-af92-f62e1414175a", "title": "Force", "mediaType":
+        "application/vnd.org.cnx.module", "content": "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head
+        xmlns:c=\"http://cnx.rice.edu/cnxml\" xmlns:md=\"http://cnx.rice.edu/mdml\"><title>Force</title><meta
+        name=\"created-time\" content=\"2015/05/29 14:17:56 -0500\"/><meta name=\"revised-time\"
+        content=\"2015/06/11 12:32:01.179 GMT-5\"/><meta name=\"author\" content=\"tutor_hsphysics\"/><meta
+        name=\"acl-list\" content=\"tutor_hsphysics\"/><meta name=\"licensor\" content=\"tutor_hsphysics\"/><meta
         name=\"license\" content=\"http://creativecommons.org/licenses/by/4.0/\"/><meta
-        name=\"subject\" content=\"Mathematics and Statistics\"/></head>\n\n<body
+        name=\"keywords\" content=\"acceleration, dynamics, external force, force,
+        free-body diagram, gravitational force, kinematics, net external force, net
+        force, Newton''s laws of motion, normal force, system, universal laws, velocity\"/><meta
+        name=\"subject\" content=\"Science and Technology\"/></head>\n\n<body xmlns=\"http://www.w3.org/1999/xhtml\"
         xmlns:c=\"http://cnx.rice.edu/cnxml\" xmlns:md=\"http://cnx.rice.edu/mdml\"
         xmlns:qml=\"http://cnx.rice.edu/qml/1.0\" xmlns:mod=\"http://cnx.rice.edu/#moduleIds\"
         xmlns:bib=\"http://bibtexml.sf.net/\" xmlns:data=\"http://dev.w3.org/html5/spec/#custom\"><div
-        data-type=\"document-title\">Force</div>\n  <section data-depth=\"1\" id=\"fs-idp57791360\"
-        class=\"learning-objectives\"><h1 data-type=\"title\">Section Learning Objectives</h1><p
-        id=\"eip-110\">By the end of this section, you will be able to:</p><ul id=\"eip-idp30262832\"><li
-        class=\"ost-tag-lo-k12phys-ch04-s01-lo01 ost-tag-teks-112-39-c-4c ost-learning-objective-def\">
-        Differentiate between force, net\nforce and dynamics</li><li class=\"ost-tag-lo-k12phys-ch04-s01-lo02
-        ost-tag-teks-112-39-c-4e ost-learning-objective-def\">Draw a free-body diagram</li><li>Learn
-        Newton&#8217;s 1st law: Fnet =0 3</li></ul></section><div data-type=\"note\"
-        id=\"eip-568\" class=\"os-teacher\"><p id=\"eip-idm2236496\">The Learning
-        Objectives in this section will help your students master the following TEKS:
-        (4) Science concepts. The student knows and applies the laws governing motion
-        in a variety of situations. The student is expected to: </p><ul id=\"fs-idm29263984\"><li>(C)
-        <span class=\"ost-tag-teks-112-39-c-4c ost-teks-def\">analyze and describe
-        accelerated motion in two dimensions using equations, including projectile
-        and circular examples</span></li><li> (E) <span class=\"ost-tag-teks-112-39-c-4e
-        ost-teks-def\">develop and interpret free-body diagrams.</span></li></ul><p
-        id=\"eip-idm2196896\"><span class=\"level-below\">[BL]</span> <span class=\"level-on\">[OL]</span>
-        Point out that objects at rest tend to stay at rest. A ball, for example,
-        moves only when pushed or pulled. The action of pushing or pulling is the
-        application of force. Force applied to an object changes its motion.\n<span
-        class=\"level-above\">[AL]</span> Start a discussion about force and motion.
-        Ask students what would happen if more than one force is applied to an object.
-        Take a heavy object such as a desk for demonstration. Ask one student to push
-        it from one side. Explain how force and motion work. Now ask a second student
-        to push it in the opposite direction. Ask students why no motion occurs even
-        though the first student applies the same amount of force. Introduce the concept
-        of adding forces.</p></div><table id=\"eip-838\" summary=\"--\" class=\"key-terms
-        ost-reading-discard\"><caption><span data-type=\"title\">Key Terms</span></caption><tbody>\n  <tr>\n    <td>dynamics</td>\n    <td>external
-        force</td>\n    <td>force</td>\n  </tr>\n  <tr>\n    <td>free body diagram</td>\n    <td>net
-        external force</td>\n    <td>net force</td>\n  </tr>\n</tbody></table><section
-        data-depth=\"1\" id=\"eip-963\" class=\"ost-tag-lo-k12phys-ch04-s01-lo01\"><h1
-        data-type=\"title\">Defining Force and <em data-effect=\"italics\">Dynamics</em></h1><div
-        data-type=\"note\" id=\"eip-752\" class=\"os-teacher\"><p id=\"eip-idm59057616\"><span
-        class=\"level-on\">[OL]</span> Explain that the word dynamics comes from a
-        Greek word meaning power. Also point out that the word &#8220;dynamics&#8221;
-        is singular, like the word &#8220;physics.&#8221; <span class=\"level-below\">[BL]</span>
-        <span class=\"level-on\">[OL]</span> You may want to introduce the terms system,
-        external force, and internal force. <span class=\"level-above\">[AL]</span>
-        Explain that both magnitude and direction must be considered when talking
-        about forces.</p><div data-type=\"note\" id=\"fs-idm58745200\" class=\"teacher-demonstration\"
-        data-label=\"Demonstration\">Demonstrate by using physical objects how different
-        forces acting together can add if they act in the same direction or cancel
-        if they act in opposite directions. Explain the terms \"acting on\" and \"being
-        acted on.\"<figure id=\"eip-idm38910720\"><figcaption/><span data-type=\"media\"
-        id=\"eip-idm8621056\" data-alt=\"Alt text\"><img src=\"/resources/4fd8ef6e594ffd1be3f2871c02b80868/OST_PhysicsTestContent_01_01_01.jpg\"
-        data-media-type=\"image/jpeg\" alt=\"Alt text\"/></span></figure></div></div><p
-        id=\"eip-305\"><span data-type=\"term\">Force</span> is the cause of motion,
-        and motion draws our attention. Motion itself can be beautiful, such as a
-        dolphin jumping out of the water, the flight of a bird, or the orbit of a
-        satellite. The study of motion is called kinematics, but kinematics only describes
-        the way objects move&#8212;their velocity and their acceleration. <span data-type=\"term\">Dynamics</span>
-        considers the forces that affect the motion of moving objects and systems.
-        Newton&#8217;s laws of motion are the foundation of dynamics. These laws describe
-        the way that objects speed up, slow down, stay in motion, and interact with
-        other objects. They are also universal laws in that they apply everywhere
-        on Earth as well as in space.</p><p id=\"eip-832\">A force pushes or pulls
-        an object. The object being moved by a force could be an inanimate object
-        such as a table, or an animate object such as a person. The pushing or pulling
-        may be done by a person, or even the gravitational pull of the earth. Forces
-        have different magnitudes and directions; this means that some forces are
-        stronger than others and can point in different directions. For example, a
-        cannon exerts a strong force on the cannonball that is launched into the air.
-        In contrast, a mosquito landing on your arm exerts only a small force on your
-        arm. </p><p id=\"eip-860\">When multiple forces act on an object, the forces
-        combine. Adding together all of the forces acting on an object gives the total,
-        or <span data-type=\"term\">net force</span>. An <span data-type=\"term\">external
-        force</span> is a force that acts on an object inside of the system from outside
-        of the system. This is different than an internal force, which acts between
-        objects that are both within the system. The <span data-type=\"term\">net
-        external force</span> combines these two definitions; it is the total combined
-        external force. We go into more detail about net force, external force, and
-        net external force in the coming sections. In mathematical terms, two forces
-        acting in opposite directions have opposite signs (positive or negative).
-        By convention, the negative sign is assigned to movement to the left or downward.
-        If two forces pushing in opposite directions are added together, the larger
-        force will be somewhat canceled out by the smaller force pushing in the opposite
-        direction. It is important to be consistent with your chosen coordinate system
-        within a problem; for example, if negative values are assigned to the downward
-        direction for velocity, then distance, force and acceleration should also
-        be designated as negative in the downward direction.</p><div data-type=\"note\"
-        id=\"eip-534\" class=\"ost-assessed-feature work-in-physics ost-tag-lo-k12phys-ch04-s01-lo01\"
-        data-label=\"Work in Physics\"><div data-type=\"title\">Mars Probe Explosion</div><figure
-        id=\"eip-idm3298752\"><figcaption/><span data-type=\"media\" id=\"eip-idp4400944\"
-        data-alt=\"Alt text\"><img src=\"/resources/d27504f8b3a0659c323dca1fa180a761/OST_PhysicsTestContent_01_01_02.jpg\"
-        data-media-type=\"image/jpeg\" alt=\"Alt text\" width=\"350\"/></span></figure>\n  <p
-        id=\"eip-idp1609152\">Physicists make calculations all the time, but they
-        do not always get the right answers. In 1998, NASA, The National Aeronautics
-        and Space Administration (<a href=\"http://www.theguardian.com/technology/blog/2011/jul/13/technology-links-newsbucket\">http://www.theguardian.com/technology/blog/2011/jul/13/technology-links-newsbucket</a>),
-        launched the Mars Climate Orbiter (<a href=\"#eip-idm3298752\" class=\"autogenerated-content\">[link]</a>),
-        a $125 million dollar satellite designed to monitor the Martian atmosphere.
-        It was supposed to orbit the planet and take readings from a safe distance.
-        The American scientists made calculations in English units (feet, inches,
-        pounds . . .) and forgot to convert their answers to the standard Metric SI
-        units. This was a very costly mistake. Instead of orbiting the planet as planned,
-        the Mars Climate Orbiter ended up flying into the Martian atmosphere.  The
-        probe disintegrated. It was one of the biggest embarrassments in NASA&#8217;s
-        history. (<a href=\"/contents/9f74369f-1856-4a4e-be75-212989cb15bb@6#fs-idp30390784\"
-        class=\"autogenerated-content\">[link]</a>) shows the different ways the scientists
-        tried to figure out the formula. They used <math xmlns=\"http://www.w3.org/1998/Math/MathML\"
-        display=\"inline\"><semantics><mrow><mtext>MATH</mtext></mrow><annotation-xml
-        encoding=\"MathML-Content\"><mtext>MATH</mtext></annotation-xml></semantics></math>
-        and <math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><semantics><mrow><mtext>MATH</mtext></mrow><annotation-xml
-        encoding=\"MathML-Content\"><mtext>MATH</mtext></annotation-xml></semantics></math></p><p
-        id=\"eip-idp20916176\">Here&#8217;s list of some of the years of satellite
-        launches:</p><ul id=\"eip-idp8178432\"><li>1969<ol id=\"eip-idm9881952\" data-number-style=\"lower-alpha\"><li>January</li><li>September</li><li>November</li></ol></li><li>1970</li><li>1985</li><li>2012</li></ul><div
-        data-type=\"exercise\" id=\"fs-idp67407840\" class=\"os-exercise grasp-check\"
-        data-label=\"Grasp Check\"><div data-type=\"problem\" id=\"eip-idp37795152\"><p
-        id=\"eip-idp38162784\"><a href=\"#ost/api/ex/k12phys-ch04-ex001\" class=\"autogenerated-content\">[link]</a></p></div></div><div
-        data-type=\"note\" id=\"eip-367\" class=\"os-teacher\"><p id=\"eip-idm61955584\">The
-        text feature describes a real-life miscalculation made by astronomers at NASA.
-        In this case, the Mars Climate Orbiter&#8217;s orbit needed to be calculated
-        precisely because its machinery was only designed to withstand a certain amount
-        of atmospheric pressure. The orbiter had to be close enough to the planet
-        to take measurements and far enough away that it could remain structurally
-        sound. One way to teach this concept would be to pick an orbital distance
-        from Mars and have the students calculate the distance of the path and the
-        height from the surface both in SI units and in English units. Ask why failure
-        to convert might be a problem.</p><div data-type=\"list\" id=\"eip-idm4050496\"><div
-        data-type=\"title\">English vs. SI</div><ol data-number-style=\"lower-alpha\"><li>How
-        do English units and SI units differ?</li><li>Which unit is more common?</li></ol></div><p
-        id=\"eip-idm45200304\">It was a problem because the scientists provided measurements
-        in English units, but the programmers were working in SI units. The conversion
-        error caused the probe to orbit too close to Mars, leading to its destruction.</p></div>\n</div></section><section
-        data-depth=\"1\" id=\"eip-822\" class=\"ost-tag-lo-k12phys-ch04-s01-lo02\"><h1
-        data-type=\"title\">Free-body Diagrams and Examples of Forces</h1><div data-type=\"note\"
-        id=\"eip-150\" class=\"os-teacher\"><p id=\"eip-idm40821888\"><span class=\"level-below\">[BL]</span>
-        Review vectors and how they are represented. Review vector addition. <span
-        class=\"level-above\">[AL]</span> Ask students to give everyday examples of
-        situations where multiple forces act together. Draw free-body diagrams for
-        some of these situations.</p></div><p id=\"eip-177\">For our first example
-        of force, consider an object hanging from a rope. This gives us the opportunity
-        to introduce a useful tool known as a <span data-type=\"term\">free-body diagram</span>.
-        A free-body diagram represents the object being acted upon (or free body)
-        as a single point. Only the forces acting on the body (that is, external forces)
-        are shown and are represented by vectors (which are drawn as arrows). These
-        forces are the only ones shown because only external forces acting on the
-        body affect its motion. We can ignore any internal forces within the body
-        because they cancel each other out, as Newton&#8217;s third law will show.
-        Free-body diagrams are very useful for analyzing forces acting on an object.\n</p><p
-        id=\"eip-824\">Here are some things included in a free-body diagram:</p><ol
-        id=\"eip-idp76729056\" data-number-style=\"lower-alpha\"><li>Forces<ul id=\"eip-idp82357024\"><li>Internal</li><li>External</li><li>Net</li></ul></li><li>Vectors</li><li>Arrows
-        <a href=\"http://www.pa.uky.edu/~kwng/phy211/oldexam/Spring99EvenFinal/Final.htm\">http://www.pa.uky.edu/~kwng/phy211/oldexam/Spring99EvenFinal/Final.htm</a></li><li>Equation</li></ol><figure
-        id=\"eip-idp140653750160320\" class=\"ost-tag-lo-k12phys-ch04-s01-lo02\"><figcaption>An
-        object of mass m held up by the force of tension.</figcaption><span data-type=\"media\"
-        id=\"eip-idp140653750160736\" data-alt=\"Alt text\"><img src=\"/resources/5debf839c1a9d12d8aceb9081e8ef0dc/OST_PhysicsTestContent_01_01_03.jpg\"
-        data-media-type=\"image/jpeg\" alt=\"Alt text\"/></span></figure><p id=\"eip-262\"><a
-        href=\"#eip-idp140653750160320\" class=\"autogenerated-content\">[link]</a>
-        shows the force of tension acting in the upward direction, opposite the force
-        of gravity. These forces are indicated in the free-body diagram by an arrow
-        pointing up, representing tension, and another arrow pointing down, representing
-        gravity. In a free-body diagram, the lengths of the arrows show the relative
-        magnitude (or strength) of the forces. Since forces are vectors, they add
-        just like other vectors. Notice that the two arrows have equal lengths in
-        <a href=\"#eip-idp140653750160320\" class=\"autogenerated-content\">[link]</a>,
-        which means that the forces of tension and weight are of equal magnitude.
-        Since these forces of equal magnitude act in opposite directions, they are
-        perfectly balanced, so they add together to give a net force of zero.</p><p
-        id=\"eip-287\">Not all forces are as noticeable as when you push or pull on
-        something. Some forces act without physical contact, such as the pull of a
-        magnet in the case of magnetic force or the gravitational pull of the earth
-        in the case of gravitational force.</p><p id=\"eip-217\">In the next three
-        sections on Newton&#8217;s laws of motion, we will learn about three specific
-        types of forces&#8212;friction, the normal force, and the gravitational force.
-        To analyze situations involving forces, we will create free-body diagrams
-        to organize the framework of the mathematics for each individual situation.</p><div
-        data-type=\"note\" id=\"eip-774\" class=\"tip tips-for-success\" data-label=\"Tips
-        for Success\">\nCorrectly drawing and labeling a free-body diagram is an important
-        first step for solving a problem. It will help you visualize the problem and
-        correctly apply the mathematics to solve the problem.</div></section><section
-        data-depth=\"1\" id=\"eip-366\" class=\"summary ost-reading-discard\"><h1
-        data-type=\"title\">Section Summary</h1><ul id=\"eip-idp956816\"><li>Dynamics
-        is the study of how forces affect the motion of objects such as:<ul id=\"eip-idm2200992\"
-        data-bullet-style=\"open-circle\"><li>Pushes</li><li>Pulls</li></ul></li><li>Force
-        is a push or pull that can be defined in terms of various <em data-effect=\"italics\">standards</em>.
-        It is a vector and so has both magnitude and direction.</li><li>External forces
-        are any forces from outside of a body that act on the body. A free-body diagram
-        is a drawing of all external forces acting on a body.</li></ul>\n</section><section
-        data-depth=\"1\" id=\"eip-687\" class=\"ost-reading-discard key-equations\"><h1
-        data-type=\"title\">Key Equations</h1><div data-type=\"equation\" id=\"eip-idp16003984\"><math
-        xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><semantics><mrow><msub><mi>F</mi><mtext>net</mtext></msub><mo>=</mo><mn>0</mn><mtext>(or</mtext><mo>&#8721;</mo><mi>F</mi><mo>=</mo><mn>0</mn></mrow><annotation-xml
-        encoding=\"MathML-Content\"><msub><mi>F</mi><mtext>net</mtext></msub><mo>=</mo><mn>0</mn><mtext>(or</mtext><mo>&#8721;</mo><mi>F</mi><mo>=</mo><mn>0</mn></annotation-xml></semantics></math></div><div
-        data-type=\"equation\" id=\"eip-idp40529056\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"
-        display=\"block\"><semantics><mrow><mtext>a</mtext><mo>&#8733;</mo><mfrac><mn>1</mn><mi>m</mi></mfrac></mrow><annotation-xml
-        encoding=\"MathML-Content\"><mtext>a</mtext><mo>&#8733;</mo><mfrac><mn>1</mn><mi>m</mi></mfrac></annotation-xml></semantics></math></div></section><section
-        data-depth=\"1\" id=\"fs-idp80411216\" class=\"practice-concepts ost-reading-discard\"><h1
-        data-type=\"title\">Check Your Understanding</h1><div data-type=\"exercise\"
-        id=\"fs-idp108077920\" class=\"os-exercise\"><div data-type=\"problem\" id=\"eip-idp9870800\"><p
-        id=\"eip-idm47809472\"><a href=\"#ost/api/ex/k12phys-ch04-ex002\" class=\"autogenerated-content\">[link]</a></p></div></div><div
-        data-type=\"exercise\" id=\"fs-idp1312672\" class=\"os-exercise\"><div data-type=\"problem\"
-        id=\"fs-idm12370224\"><p id=\"fs-idm25299168\"><a href=\"#ost/api/ex/k12phys-ch04-ex003\"
-        class=\"autogenerated-content\">[link]</a></p></div></div><div data-type=\"exercise\"
-        id=\"fs-idp69346528\" class=\"os-exercise\"><div data-type=\"problem\" id=\"fs-idp64139984\"><p
-        id=\"fs-idp110205744\"><a href=\"#ost/api/ex/k12phys-ch04-ex004\" class=\"autogenerated-content\">[link]</a></p></div></div><div
-        data-type=\"exercise\" id=\"fs-idp49122304\" class=\"os-exercise\"><div data-type=\"problem\"
-        id=\"fs-idp3590800\"><p id=\"fs-idp83013648\"><a href=\"#ost/api/ex/k12phys-ch04-ex005\"
-        class=\"autogenerated-content\">[link]</a></p></div></div></section><section
-        data-depth=\"1\" id=\"eip-4\" class=\"ost-reading-discard chapter-review concept\"><h1
-        data-type=\"title\">Concept Items</h1><div data-type=\"exercise\" id=\"fs-idm13660032\"
-        class=\"os-exercise\"><div data-type=\"problem\" id=\"eip-idp12573008\"><p
-        id=\"eip-idm2150752\"><a href=\"#ost/api/ex/k12phys-ch04-ex013\" class=\"autogenerated-content\">[link]</a></p></div>\n</div><div
-        data-type=\"exercise\" id=\"fs-idm21677456\" class=\"os-exercise\"><div data-type=\"problem\"
-        id=\"fs-idp4583664\"><p id=\"fs-idp38536176\"><a href=\"#ost/api/ex/k12phys-ch04-ex014\"
-        class=\"autogenerated-content\">[link]</a></p></div></div></section><section
-        data-depth=\"1\" id=\"fs-idm35519920\" class=\"ost-reading-discard chapter-review
-        critical-thinking\"><h1 data-type=\"title\">Critical Thinking Items</h1><div
-        data-type=\"exercise\" id=\"fs-idm2211008\" class=\"os-exerise\"><div data-type=\"problem\"
-        id=\"fs-idm52422080\"><p id=\"fs-idm54435568\"><a href=\"#ost/api/ex/k12phys-ch04-ex019\"
-        class=\"autogenerated-content\">[link]</a></p></div></div><div data-type=\"exercise\"
-        id=\"fs-idm19939584\" class=\"os-exercise\"><div data-type=\"problem\" id=\"fs-idm14249952\"><p
-        id=\"fs-idm22368288\"><a href=\"#ost/api/ex/k12phys-ch04-ex020\" class=\"autogenerated-content\">[link]</a></p></div></div></section><section
-        data-depth=\"1\" id=\"fs-idp3448064\" class=\"ost-reading-discard test-prep
-        multiple-choice\"><h1 data-type=\"title\">Test Prep Multiple Choice</h1><div
-        data-type=\"exercise\" id=\"fs-idp41337120\" class=\"os-exercise\"><div data-type=\"problem\"
-        id=\"fs-idm12913392\"><p id=\"fs-idp20125792\"><a href=\"#ost/api/ex/k12phys-ch04-ex025\"
-        class=\"autogenerated-content\">[link]</a></p></div></div><div data-type=\"exercise\"
-        id=\"fs-idp38903648\" class=\"os-teacher\"><div data-type=\"problem\" id=\"fs-idp53572736\"><p
-        id=\"fs-idm7549184\"><a href=\"#ost/api/ex/k12phys-ch04-ex026\" class=\"autogenerated-content\">[link]</a></p></div></div></section><section
-        data-depth=\"1\" id=\"fs-idp76781504\" class=\"ost-reading-discard test-prep
-        short-answer\"><h1 data-type=\"title\">Test Prep Short Answer</h1><div data-type=\"exercise\"
-        id=\"fs-idp2886592\" class=\"os-exercise\"><div data-type=\"problem\" id=\"fs-idp79808912\"><p
-        id=\"fs-idm20563376\"><a href=\"#ost/api/ex/k12phys-ch04-ex027\" class=\"autogenerated-content\">[link]</a></p></div></div><div
-        data-type=\"exercise\" id=\"fs-idm55848240\" class=\"os-exercise\"><div data-type=\"problem\"
-        id=\"fs-idm20025600\"><p id=\"fs-idm11454800\"><a href=\"#ost/api/ex/k12phys-ch04-ex028\"
-        class=\"autogenerated-content\">[link]</a></p></div></div></section><section
-        data-depth=\"1\" id=\"fs-idp68768336\" class=\"ost-reading-discard test-prep
-        extended-response\"><h1 data-type=\"title\">Test Prep Extended Response</h1><div
-        data-type=\"exercise\" id=\"fs-idm73371088\" class=\"os-exercise\"><div data-type=\"problem\"
-        id=\"fs-idp89965840\"><p id=\"fs-idp82365712\"><a href=\"#ost/api/ex/k12phys-ch04-ex031\"
-        class=\"autogenerated-content\">[link]</a></p></div></div><div data-type=\"exercise\"
-        id=\"fs-idp1057760\" class=\"os-exercise\"><div data-type=\"problem\" id=\"fs-idm43120784\"><p
-        id=\"fs-idp1975632\"><a href=\"#ost/api/ex/k12phys-ch04-ex032\" class=\"autogenerated-content\">[link]</a></p></div></div></section><div
-        data-type=\"glossary\"><h2>Glossary</h2><div data-type=\"definition\" id=\"fs-idp58635552\"><span
-        data-type=\"term\">dynamics</span><div data-type=\"meaning\" id=\"fs-idp72961424\">the
-        study of how forces affect the motion of objects and systems</div></div><div
-        data-type=\"definition\" id=\"fs-idp72838384\"><span data-type=\"term\">external
-        force</span><div data-type=\"meaning\" id=\"fs-idp18928624\">a force acting
-        on an object or system that originates outside of the object or system</div></div><div
-        data-type=\"definition\" id=\"fs-idp70052112\"><span data-type=\"term\">force</span><div
-        data-type=\"meaning\" id=\"fs-idp45464192\">a push or pull on an object with
-        a specific magnitude and direction; can be represented by vectors; can be
-        expressed as a multiple of a standard force</div></div><div data-type=\"definition\"
-        id=\"fs-idp11321744\"><span data-type=\"term\">free-body diagram</span><div
-        data-type=\"meaning\" id=\"fs-idp72312848\">a diagram showing all external
-        forces acting on a body</div></div><div data-type=\"definition\" id=\"fs-idp30189824\"><span
-        data-type=\"term\">net external force</span><div data-type=\"meaning\" id=\"fs-idp68308160\">the
-        sum of all external forces acting on an object or <em data-effect=\"italics\">system</em></div></div><div
-        data-type=\"definition\" id=\"fs-idp42033536\"><span data-type=\"term\">net
-        force</span><div data-type=\"meaning\" id=\"fs-idp12657072\">the sum of all
-        forces acting on an object or system</div></div></div></body>\n\n</html>",
-        "subjects": ["Mathematics and Statistics"], "legacy_id": "m53215", "parentId":
-        null, "stateid": 1, "parentTitle": null, "maintainers": [{"website": "", "surname":
-        "Slavik", "suffix": "", "firstname": "Alina", "title": "", "othername": "",
-        "email": "alinams@rice.edu", "fullname": "Alina Slavik", "id": "AlinaManager"}],
-        "authors": [{"website": "", "surname": "Slavik", "suffix": "", "firstname":
-        "Alina", "title": "", "othername": "", "email": "alinams@rice.edu", "fullname":
-        "Alina Slavik", "id": "AlinaManager"}], "parentVersion": "", "legacy_version":
-        "1.4", "licensors": [{"website": "", "surname": "Slavik", "suffix": "", "firstname":
-        "Alina", "title": "", "othername": "", "email": "alinams@rice.edu", "fullname":
-        "Alina Slavik", "id": "AlinaManager"}], "license": {"url": "http://creativecommons.org/licenses/by/4.0/",
-        "code": "by", "version": "4.0", "name": "Creative Commons Attribution License"},
-        "language": "en", "created": "2015-03-05T20:29:22Z", "doctype": "", "buyLink":
-        null, "submitter": {"website": "", "surname": "Slavik", "suffix": "", "firstname":
-        "Alina", "title": "", "othername": "", "email": "alinams@rice.edu", "fullname":
-        "Alina Slavik", "id": "AlinaManager"}, "parentAuthors": [], "history": [{"changes":
-        "updated to ost-tag-lo-k12phys tag and added <label>Grasp Check</label>",
-        "version": "4", "revised": "2015-03-06T17:46:23Z", "publisher": {"website":
-        "", "surname": "Slavik", "suffix": "", "firstname": "Alina", "title": "",
-        "othername": "", "email": "alinams@rice.edu", "fullname": "Alina Slavik",
-        "id": "AlinaManager"}}, {"changes": "imported updated zip from staging3",
-        "version": "3", "revised": "2015-03-05T21:07:36Z", "publisher": {"website":
-        "", "surname": "Slavik", "suffix": "", "firstname": "Alina", "title": "",
-        "othername": "", "email": "alinams@rice.edu", "fullname": "Alina Slavik",
-        "id": "AlinaManager"}}, {"changes": "imported updated zip from staging3",
-        "version": "2", "revised": "2015-03-05T21:03:51Z", "publisher": {"website":
-        "", "surname": "Slavik", "suffix": "", "firstname": "Alina", "title": "",
-        "othername": "", "email": "alinams@rice.edu", "fullname": "Alina Slavik",
-        "id": "AlinaManager"}}, {"changes": "imported module", "version": "1", "revised":
-        "2015-03-05T20:34:27Z", "publisher": {"website": "", "surname": "Slavik",
-        "suffix": "", "firstname": "Alina", "title": "", "othername": "", "email":
-        "alinams@rice.edu", "fullname": "Alina Slavik", "id": "AlinaManager"}}]}'
+        data-type=\"document-title\">Force</div>\n <section data-depth=\"1\" id=\"fs-idp37165728\"
+        class=\"section-opener\">\n<div data-type=\"note\" data-has-label=\"true\"
+        id=\"fs-idp19882368\" class=\"note learning-objectives\" data-label=\"\"><div
+        data-type=\"title\" class=\"title\">Section Learning Objectives</div>\n<p
+        id=\"fs-idp89347824\">By the end of this section, you will be able to:</p>\n<ul
+        id=\"fs-idp39093408\">\n<li class=\"ost-learning-objective-def ost-tag-lo-k12phys-ch04-s01-lo01
+        ost-tag-teks-112-39-c-4c\">Differentiate between force, net force, and dynamics</li>\n<li
+        class=\"ost-learning-objective-def ost-tag-lo-k12phys-ch04-s01-lo02 ost-tag-teks-112-39-c-4e\">Draw
+        a free-body diagram</li>\n</ul>\n</div>\n\n<div data-type=\"note\" data-has-label=\"true\"
+        id=\"fs-idm14107600\" class=\"note os-teacher\" data-label=\"Teacher Support\">\n<p
+        id=\"fs-idp35685648\">The Learning Objectives in this section will help your
+        students master the following TEKS:</p>\n<ul id=\"fs-idp23952512\">\n<li>(4)
+        Science concepts. The student knows and applies the laws governing motion
+        in a variety of situations. The student is expected to:\n<ul id=\"fs-idp63398192\"><li
+        class=\"ost-standards-def ost-standards-teks ost-tag-teks-112-39-c-4c\"><span
+        class=\"ost-standards-name\">(4C)</span><span class=\"ost-standards-discard\">:</span>
+        <span class=\"ost-standards-description\">analyze and describe accelerated
+        motion in two dimensions using equations, including projectile and circular
+        examples</span></li>\n<li class=\"ost-standards-def ost-standards-teks ost-tag-teks-112-39-c-4e\"><span
+        class=\"ost-standards-name\">(4E)</span><span class=\"ost-standards-discard\">:</span>
+        <span class=\"ost-standards-description\">develop and interpret free-body
+        diagrams</span></li>\n<li><span class=\"ost-level-below\">[BL]</span><span
+        class=\"ost-level-on\">[OL]</span> Point out that objects at rest tend to
+        stay at rest. A ball, for example, moves only when pushed or pulled. The action
+        of pushing or pulling is the application of force. Force applied to an object
+        changes its motion.</li>\n<li><span class=\"ost-level-above\">[AL]</span>
+        Start a discussion about force and motion. Ask students what would happen
+        if more than one force is applied to an object. Take a heavy object such as
+        a desk for demonstration. Ask one student to push it from one side. Explain
+        how force and motion work. Now ask a second student to push it in the opposite
+        direction. Ask students why no motion occurs even though the first student
+        applies the same amount of force. Introduce the concept of adding forces.</li>\n</ul></li>\n</ul>\n</div><table
+        id=\"fs-idp79036064\" summary=\"The list of Key Terms includes: dynamics,
+        external force, force, free-body diagram, net external force, and net force.\"
+        class=\"unnumbered key-terms ost-reading-discard\" data-label=\"\"><caption><span
+        data-type=\"title\">Section Key Terms</span></caption><tbody>\n<tr>\n<td>dynamics</td>\n<td>external
+        force</td>\n<td>force</td>\n</tr>\n<tr>\n<td>free-body diagram</td>\n<td>net
+        external force</td>\n<td>net force</td>\n</tr>\n</tbody></table></section>\n<section
+        data-depth=\"1\" id=\"fs-idp77010448\" class=\"ost-tag-lo-k12phys-ch04-s01-lo01\"><h1
+        data-type=\"title\">Defining Force and Dynamics</h1>\n<div data-type=\"note\"
+        data-has-label=\"true\" id=\"fs-idp21859680\" class=\"note os-teacher\" data-label=\"Teacher
+        Support\">\n<p id=\"fs-idp78457184\"><span class=\"ost-level-on\">[OL]</span>
+        Explain that the word <em data-effect=\"italics\">dynamics</em> comes from
+        a Greek word meaning power. Also point out that the word &#8220;dynamics&#8221;
+        is singular, like the word &#8220;physics.&#8221;</p><p id=\"fs-idp37673664\"><span
+        class=\"ost-level-below\">[BL]</span><span class=\"ost-level-on\">[OL]</span>
+        You may want to introduce the terms system, external force, and internal force.</p>\n<p
+        id=\"fs-idp81793616\"><span class=\"ost-level-above\">[AL]</span> Explain
+        that both magnitude and direction must be considered when talking about forces.</p>\n<div
+        data-type=\"note\" data-has-label=\"true\" id=\"fs-idp38906128\" class=\"note
+        ost-teacher-demonstration\" data-label=\"Teacher Demonstration\">\n<p id=\"fs-idp97512544\">Demonstrate
+        by using physical objects how different forces acting together can add if
+        they act in the same direction or cancel if they act in opposite directions.
+        Explain the terms &#8220;acting on&#8221; and &#8220;being acted on.&#8221;</p>\n</div>\n</div><p
+        id=\"fs-idp9533696\"><span data-type=\"term\">Force</span> is the cause of
+        motion, and motion draws our attention. Motion itself can be beautiful, such
+        as a dolphin jumping out of the water, the flight of a bird, or the orbit
+        of a satellite. The study of motion is called <span data-type=\"term\" class=\"no-emphasis\">kinematics</span>,
+        but kinematics describes only the way objects move&#8212;their <span data-type=\"term\"
+        class=\"no-emphasis\">velocity</span> and their <span data-type=\"term\" class=\"no-emphasis\">acceleration</span>.
+        <span data-type=\"term\">Dynamics</span> considers the forces that affect
+        the motion of moving objects and <span data-type=\"term\" class=\"no-emphasis\">systems</span>.
+        <span data-type=\"term\" class=\"no-emphasis\">Newton&#8217;s laws of motion</span>
+        are the foundation of dynamics. These laws describe the way objects speed
+        up, slow down, stay in motion, and interact with other objects. They are also
+        <span data-type=\"term\" class=\"no-emphasis\">universal laws</span>: they
+        apply everywhere on Earth as well as in space.</p><p id=\"fs-idp7754992\">A
+        force pushes or pulls an object. The object being moved by a force could be
+        an inanimate object, such as a table, or an animate object, such as a person.
+        The pushing or pulling may be done by a person, or even the gravitational
+        pull of Earth. Forces have different magnitudes and directions; this means
+        that some forces are stronger than others and can act in different directions.
+        For example, a cannon exerts a strong force on the cannonball that is launched
+        into the air. In contrast, a mosquito landing on your arm exerts only a small
+        force on your arm.</p>\n<p id=\"fs-idp81273376\">When multiple forces act
+        on an object, the forces combine. Adding together all of the forces acting
+        on an object gives the total force, or <span data-type=\"term\">net force</span>.
+        An <span data-type=\"term\">external force</span> is a force that acts on
+        an object within the system <em data-effect=\"italics\">from outside</em>
+        the system. This type of force is different than an internal force, which
+        acts between two objects that are both within the system. <span data-type=\"term\">The
+        net external force</span> combines these two definitions; it is the total
+        combined external force. We discuss further details about net force, external
+        force, and net external force in the coming sections.</p>\n<p id=\"fs-idp97585392\">In
+        mathematical terms, two forces acting in opposite directions have opposite
+        &#8220;signs&#8221; (positive or negative). By convention, the negative sign
+        is assigned to movement to the left or downward. If two forces pushing in
+        opposite directions are added together, the larger force will be somewhat
+        canceled out by the smaller force pushing in the opposite direction. It is
+        important to be consistent with your chosen coordinate system within a problem;
+        for example, if negative values are assigned to the downward direction for
+        velocity, then displacement, force and acceleration should also be designated
+        as negative in the downward direction.</p></section>\n<section data-depth=\"1\"
+        id=\"fs-idp78620656\" class=\"ost-tag-lo-k12phys-ch04-s01-lo02\"><h1 data-type=\"title\">Free-body
+        Diagrams and Examples of Forces</h1>\n<div data-type=\"note\" data-has-label=\"true\"
+        id=\"fs-idp78697696\" class=\"note os-teacher\" data-label=\"Teacher Support\">\n<p
+        id=\"fs-idp35081616\"><span class=\"ost-level-below\">[BL]</span> Review vectors
+        and how they are represented. Review vector addition.</p>\n<p id=\"fs-idp5779520\"><span
+        class=\"ost-level-above\">[AL]</span> Ask students to give everyday examples
+        of situations where multiple forces act together. Draw free-body diagrams
+        for some of these situations.</p>\n</div><p id=\"fs-idp91670112\">For our
+        first example of force, consider an object hanging from a rope. This example
+        gives us the opportunity to introduce a useful tool known as a <span data-type=\"term\">free-body
+        diagram</span>. A free-body diagram represents the object being acted upon
+        (that is, the free body) as a single point. Only the forces acting <em data-effect=\"italics\">on</em>
+        the body (that is, external forces) are shown and are represented by vectors
+        (which are drawn as arrows). These forces are the only ones shown because
+        only external forces acting on the body affect its motion. We can ignore any
+        internal forces within the body because they cancel each other out, as explained
+        in the section on Newton''s third law of motion. Free-body diagrams are very
+        useful for analyzing forces acting on an object.</p>\n<figure id=\"Figure_04_01_tension\"
+        class=\"ost-tag-lo-phys-ch04-s01-lo02\"><figcaption>An object of mass, <em
+        data-effect=\"italics\">m</em>, is held up by the force of tension.</figcaption>\n<span
+        data-type=\"media\" id=\"fs-idm13112864\" data-alt=\"An object labeled m for
+        mass is attached to a rope. A force vector labeled T for tension is pointing
+        upward from the object and a force vector labeled W for weight of the object
+        is pointing downward from the object. A free body diagram illustrates the
+        T and W force vectors.\">\n<img src=\"/resources/432efb3e3942193b76b747eb8e0e686d3fb1d8a3/CNX_HSPhysics_04_01_tension.jpg\"
+        data-media-type=\"image/jpeg\" alt=\"An object labeled m for mass is attached
+        to a rope. A force vector labeled T for tension is pointing upward from the
+        object and a force vector labeled W for weight of the object is pointing downward
+        from the object. A free body diagram illustrates the T and W force vectors.\"/>\n</span>\n\n</figure>\n<p
+        id=\"fs-idp54443872\">The figure above shows the force of tension in the rope
+        acting in the upward direction, opposite the force of gravity. The forces
+        are indicated in the free-body diagram by an arrow pointing up, representing
+        tension, and another arrow pointing down, representing gravity. In a free-body
+        diagram, the lengths of the arrows show the relative magnitude (or strength)
+        of the forces. Because forces are vectors, they add just like other vectors.
+        Notice that the two arrows have equal lengths in the figure above which means
+        that the forces of tension and weight are of equal magnitude. Because these
+        forces of equal magnitude act in opposite directions, they are perfectly balanced,
+        so they add together to give a net force of zero.</p><p id=\"fs-idp78223856\">Not
+        all forces are as noticeable as when you push or pull on an object. Some forces
+        act without physical contact, such as the pull of a magnet (in the case of
+        magnetic force) or the gravitational pull of Earth (in the case of gravitational
+        force).</p>\n<p id=\"fs-idp97728880\">In the next three sections discussing
+        Newton&#8217;s laws of motion, we will learn about three specific types of
+        forces: friction, the <span data-type=\"term\" class=\"no-emphasis\">normal
+        force</span>, and the <span data-type=\"term\" class=\"no-emphasis\">gravitational
+        force</span>. To analyze situations involving forces, we will create free-body
+        diagrams to organize the framework of the mathematics for each individual
+        situation.</p><div data-type=\"note\" data-has-label=\"true\" id=\"fs-idp19085904\"
+        class=\"note tips-for-success\" data-label=\"Tips for Success\">\n<p id=\"fs-idm1533328\">Correctly
+        drawing and labeling a free-body diagram is an important first step for solving
+        a problem. It will help you visualize the problem and correctly apply the
+        mathematics to solve the problem.</p>\n</div>\n</section>\n<section data-depth=\"1\"
+        id=\"fs-idp41640128\" class=\"summary ost-reading-discard\"><h1 data-type=\"title\">Section
+        Summary</h1>\n<ul id=\"fs-idp5999440\">\n<li>Dynamics is the study of how
+        forces affect the motion of objects and systems.</li>\n<li>Force is a push
+        or pull that can be defined in terms of various standards. It is a vector
+        and so has both magnitude and direction.</li>\n<li>External forces are any
+        forces outside of a body that act on the body. A free-body diagram is a drawing
+        of all external forces acting on a body.</li>\n</ul>\n</section>\n<section
+        data-depth=\"1\" id=\"fs-idp62123392\" class=\"os-practice-concepts ost-reading-discard\"><h1
+        data-type=\"title\">Check Your Understanding</h1>\n<div data-type=\"note\"
+        data-has-label=\"true\" id=\"fs-idp30301824\" class=\"note os-teacher\" data-label=\"Teacher
+        Support\">\n<p id=\"fs-idp30324640\">Use the questions in Check Your Understanding
+        to assess whether students master the learning objectives of this section.
+        If students are struggling with a specific objective, the assessment through
+        Check Your Understanding will help identify which objective is causing the
+        problem and direct students to the relevant content.</p>\n</div><div data-type=\"exercise\"
+        id=\"fs-idp149776\" class=\"exercise os-exercise\"><div data-type=\"problem\"
+        class=\"problem\" id=\"fs-idp4092784\"><p id=\"fs-idm53453472\"><a href=\"#ost/api/ex/k12phys-ch04-ex001\"
+        class=\"autogenerated-content\">[link]</a></p></div></div>\n<div data-type=\"exercise\"
+        id=\"fs-idp86096448\" class=\"exercise os-exercise\"><div data-type=\"problem\"
+        class=\"problem\" id=\"fs-idp78703056\"><p id=\"fs-idp39774416\"><a href=\"#ost/api/ex/k12phys-ch04-ex002\"
+        class=\"autogenerated-content\">[link]</a></p></div></div>\n<div data-type=\"exercise\"
+        id=\"fs-idp63678384\" class=\"exercise os-exercise\"><div data-type=\"problem\"
+        class=\"problem\" id=\"fs-idm249888\"><p id=\"fs-idp40584624\"><a href=\"#ost/api/ex/k12phys-ch04-ex003\"
+        class=\"autogenerated-content\">[link]</a></p></div></div>\n<div data-type=\"exercise\"
+        id=\"fs-idp41989680\" class=\"exercise os-exercise\"><div data-type=\"problem\"
+        class=\"problem\" id=\"fs-idp48326400\"><p id=\"fs-idm17177312\"><a href=\"#ost/api/ex/k12phys-ch04-ex004\"
+        class=\"autogenerated-content\">[link]</a></p></div></div>\n</section>\n<section
+        data-depth=\"1\" id=\"fs-idp40417728\" class=\"ost-reading-discard ost-chapter-review
+        concept\"><h1 data-type=\"title\">Concept Items</h1>\n<div data-type=\"exercise\"
+        id=\"fs-idp98963232\" class=\"exercise os-exercise\"><div data-type=\"problem\"
+        class=\"problem\" id=\"fs-idp30917232\"><p id=\"fs-idm10674272\"><a href=\"#ost/api/ex/k12phys-ch04-ex005\"
+        class=\"autogenerated-content\">[link]</a></p></div></div>\n<div data-type=\"exercise\"
+        id=\"fs-idm5179520\" class=\"exercise os-exercise\"><div data-type=\"problem\"
+        class=\"problem\" id=\"fs-idp79016048\"><p id=\"fs-idp12524624\"><a href=\"#ost/api/ex/k12phys-ch04-ex006\"
+        class=\"autogenerated-content\">[link]</a></p></div></div>\n</section>\n<section
+        data-depth=\"1\" id=\"fs-idp13561424\" class=\"ost-reading-discard ost-chapter-review
+        critical-thinking\"><h1 data-type=\"title\">Critical Thinking Items</h1>\n<div
+        data-type=\"exercise\" id=\"fs-idp41742048\" class=\"exercise os-exercise\"><div
+        data-type=\"problem\" class=\"problem\" id=\"fs-idm13192464\"><p id=\"fs-idm19480496\"><a
+        href=\"#ost/api/ex/k12phys-ch04-ex007\" class=\"autogenerated-content\">[link]</a></p></div></div>\n<div
+        data-type=\"exercise\" id=\"fs-idp36032720\" class=\"exercise os-exercise\"><div
+        data-type=\"problem\" class=\"problem\" id=\"fs-idp85774192\"><p id=\"fs-idp22242944\"><a
+        href=\"#ost/api/ex/k12phys-ch04-ex008\" class=\"autogenerated-content\">[link]</a></p></div></div>\n</section>\n<section
+        data-depth=\"1\" id=\"fs-idp78449424\" class=\"ost-reading-discard ost-test-prep
+        multiple-choice\"><h1 data-type=\"title\">Test Prep Multiple Choice</h1>\n<div
+        data-type=\"exercise\" id=\"fs-idp7481504\" class=\"exercise os-exercise\"><div
+        data-type=\"problem\" class=\"problem\" id=\"fs-idp91815472\"><p id=\"fs-idp31682480\"><a
+        href=\"#ost/api/ex/k12phys-ch04-ex009\" class=\"autogenerated-content\">[link]</a></p></div></div>\n<div
+        data-type=\"exercise\" id=\"fs-idp54387872\" class=\"exercise os-exercise\"><div
+        data-type=\"problem\" class=\"problem\" id=\"fs-idp38674288\"><p id=\"fs-idp73261264\"><a
+        href=\"#ost/api/ex/k12phys-ch04-ex010\" class=\"autogenerated-content\">[link]</a></p></div></div>\n</section>\n<section
+        data-depth=\"1\" id=\"fs-idm8453488\" class=\"ost-reading-discard ost-test-prep
+        short-answer\"><h1 data-type=\"title\">Test Prep Short Answer</h1>\n<div data-type=\"exercise\"
+        id=\"fs-idp54306832\" class=\"exercise os-exercise\"><div data-type=\"problem\"
+        class=\"problem\" id=\"fs-idp3928224\"><p id=\"fs-idp36899824\"><a href=\"#ost/api/ex/k12phys-ch04-ex011\"
+        class=\"autogenerated-content\">[link]</a></p></div></div>\n<div data-type=\"exercise\"
+        id=\"fs-idp2156448\" class=\"exercise os-exercise\"><div data-type=\"problem\"
+        class=\"problem\" id=\"fs-idp91666064\"><p id=\"fs-idp18289424\"><a href=\"#ost/api/ex/k12phys-ch04-ex012\"
+        class=\"autogenerated-content\">[link]</a></p></div></div>\n<div data-type=\"exercise\"
+        id=\"fs-idp5719552\" class=\"exercise os-exercise\"><div data-type=\"problem\"
+        class=\"problem\" id=\"fs-idp19377520\"><p id=\"fs-idm15096208\"><a href=\"#ost/api/ex/k12phys-ch04-ex013\"
+        class=\"autogenerated-content\">[link]</a></p></div></div>\n<div data-type=\"exercise\"
+        id=\"fs-idp19848160\" class=\"exercise os-exercise\"><div data-type=\"problem\"
+        class=\"problem\" id=\"fs-idp95823120\"><p id=\"fs-idp79051728\"><a href=\"#ost/api/ex/k12phys-ch04-ex014\"
+        class=\"autogenerated-content\">[link]</a></p></div></div>\n</section>\n<section
+        data-depth=\"1\" id=\"fs-idp112026304\" class=\"ost-reading-discard ost-test-prep
+        extended-response\"><h1 data-type=\"title\">Test Prep Extended Response</h1>\n<div
+        data-type=\"exercise\" id=\"fs-idp19716928\" class=\"exercise os-exercise\"><div
+        data-type=\"problem\" class=\"problem\" id=\"fs-idp19836816\"><p id=\"fs-idp12659840\"><a
+        href=\"#ost/api/ex/k12phys-ch04-ex015\" class=\"autogenerated-content\">[link]</a></p></div></div>\n<div
+        data-type=\"exercise\" id=\"fs-idm10865536\" class=\"exercise os-exercise\"><div
+        data-type=\"problem\" class=\"problem\" id=\"fs-idp16755696\"><p id=\"fs-idp45638624\"><a
+        href=\"#ost/api/ex/k12phys-ch04-ex016\" class=\"autogenerated-content\">[link]</a></p></div></div>\n</section>\n<div
+        data-type=\"glossary\"><h2 data-type=\"glossary-title\">Glossary</h2>\n<dl
+        class=\"definition\" id=\"fs-idp3273600\"><dt>dynamics</dt> <dd id=\"fs-idm1032784\">the
+        study of how forces affect the motion of objects and systems</dd></dl>\n<dl
+        class=\"definition\" id=\"fs-idp19824016\"><dt>external force</dt> <dd id=\"fs-idp19277920\">a
+        force acting on an object or system that originates outside of the object
+        or system</dd></dl>\n<dl class=\"definition\" id=\"fs-idp48410960\"><dt>force</dt>
+        <dd id=\"fs-idm6605664\">a push or pull on an object with a specific magnitude
+        and direction; can be represented by vectors; can be expressed as a multiple
+        of a standard force</dd></dl>\n<dl class=\"definition\" id=\"fs-idp22194096\"><dt>free-body
+        diagram</dt> <dd id=\"fs-idp55222432\">a diagram showing all external forces
+        acting on a body</dd></dl>\n<dl class=\"definition\" id=\"fs-idp23442656\"><dt>net
+        external force</dt> <dd id=\"fs-idp6847456\">the sum of all external forces
+        acting on an object or system</dd></dl>\n<dl class=\"definition\" id=\"fs-idp38628416\"><dt>net
+        force</dt> <dd id=\"fs-idp51119856\">the sum of all forces acting on an object
+        or system</dd></dl>\n</div></body>\n\n</html>", "subjects": ["Science and
+        Technology"], "legacy_id": "m43252", "parentId": null, "publishers": [{"surname":
+        "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "", "fullname":
+        "Tutor HSPhysics", "id": "tutor_hsphysics"}], "parent": {"authors": [], "version":
+        "", "id": null, "title": null}, "stateid": 1, "parentTitle": null, "authors":
+        [{"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
+        "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}], "parentVersion":
+        "", "legacy_version": "1.4", "licensors": [{"surname": "HSPhysics", "suffix":
+        null, "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id":
+        "tutor_hsphysics"}], "language": "en", "license": {"url": "http://creativecommons.org/licenses/by/4.0/",
+        "code": "by", "version": "4.0", "name": "Attribution"}, "created": "2015-05-29T19:17:56Z",
+        "doctype": "", "buyLink": null, "submitter": {"surname": "HSPhysics", "suffix":
+        null, "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id":
+        "tutor_hsphysics"}, "parentAuthors": [], "history": [{"changes": "replaced
+        \"distance\" with \"displacement\" per content proofing", "version": "4",
+        "revised": "2015-06-11T17:32:01Z", "publisher": {"surname": "HSPhysics", "suffix":
+        null, "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id":
+        "tutor_hsphysics"}}, {"changes": "Nothing", "version": "3", "revised": "2015-06-01T16:33:27Z",
+        "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
+        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
+        "Removed links to figures", "version": "2", "revised": "2015-06-01T15:55:28Z",
+        "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
+        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
+        "Created, imported module for editing", "version": "1", "revised": "2015-05-29T19:18:52Z",
+        "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
+        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Fri, 13 Mar 2015 23:46:50 GMT
-- request:
-    method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/092bbf0d-0729-42ce-87a6-fd96fd87a083@4
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      Accept:
-      - text/json
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      User-Agent:
-      - Ruby
-  response:
-    status:
-      code: 404
-      message: Not Found
-    headers:
-      Server:
-      - nginx/1.4.6 (Ubuntu)
-      Date:
-      - Thu, 11 Jun 2015 21:19:57 GMT
-      Content-Type:
-      - text/plain
-      Content-Length:
-      - '9'
-      Connection:
-      - keep-alive
-      Access-Control-Allow-Headers:
-      - origin,dnt,accept-encoding,accept-language,keep-alive,user-agent,x-requested-with,if-modified-since,cache-control,content-type
-      Access-Control-Allow-Methods:
-      - GET, OPTIONS
-      Access-Control-Allow-Origin:
-      - "*"
-    body:
-      encoding: UTF-8
-      string: Not Found
-    http_version: 
-  recorded_at: Thu, 11 Jun 2015 21:17:01 GMT
-- request:
-    method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/092bbf0d-0729-42ce-87a6-fd96fd87a083@4
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      Accept:
-      - text/json
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      User-Agent:
-      - Ruby
-  response:
-    status:
-      code: 404
-      message: Not Found
-    headers:
-      Server:
-      - nginx/1.4.6 (Ubuntu)
-      Date:
-      - Thu, 11 Jun 2015 21:28:14 GMT
-      Content-Type:
-      - text/plain
-      Content-Length:
-      - '9'
-      Connection:
-      - keep-alive
-      Access-Control-Allow-Headers:
-      - origin,dnt,accept-encoding,accept-language,keep-alive,user-agent,x-requested-with,if-modified-since,cache-control,content-type
-      Access-Control-Allow-Methods:
-      - GET, OPTIONS
-      Access-Control-Allow-Origin:
-      - "*"
-    body:
-      encoding: UTF-8
-      string: Not Found
-    http_version: 
-  recorded_at: Thu, 11 Jun 2015 21:25:18 GMT
+  recorded_at: Wed, 12 Aug 2015 16:54:12 GMT
 recorded_with: VCR 2.9.3

@@ -130,15 +130,6 @@ gem 'timecop'
 gem 'activerecord-import'
 
 group :development, :test do
-  # SQLite adapter
-  gem 'sqlite3'
-
-  # Allows the use of the in-memory SQLite3 database in Rails tests
-  gem 'memory_test_fix'
-
-  # Resque in test mode
-  gem 'resque_spec'
-
   # Get env variables from .env file
   gem 'dotenv-rails'
 
@@ -214,8 +205,11 @@ group :development do
 end
 
 group :test do
-  # Fake in-memory Redis for development and testing
+  # Fake in-memory Redis for testing
   gem 'fakeredis'
+
+  # Resque in test mode
+  gem 'resque_spec'
 
   gem 'shoulda-matchers', require: false
   gem 'capybara-webkit'

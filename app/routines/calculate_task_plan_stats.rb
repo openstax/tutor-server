@@ -16,12 +16,10 @@ class CalculateTaskPlanStats
   end
 
   def exercise_stats_for_tasked_exercises(tasked_exercises)
-    exercises = Set.new(tasked_exercises.collect{ |te| te.exercise })
-    exercises.collect do |exercise|
-      selected_tasked_exercises = tasked_exercises.select{ |te| te.exercise == exercise }
-      completed_tasked_exercises = selected_tasked_exercises.select{ |te| te.completed? }
+    tasked_exercises.group_by{ |te| te.exercise }.collect do |exercise, tasked_exercises|
+      completed_tasked_exercises = tasked_exercises.select{ |te| te.completed? }
       exercise_parser = OpenStax::Exercises::V1::Exercise.new(content: exercise.content)
-      answer_stats = answer_stats_for_tasked_exercises(selected_tasked_exercises)
+      answer_stats = answer_stats_for_tasked_exercises(tasked_exercises)
 
       {
         content: exercise_parser.content_with_answer_stats(answer_stats),
