@@ -5,7 +5,12 @@ module Content
 
         wraps ::Content::Models::Tag
 
-        exposes :value, :tag_type, :name, :description, :book_location, :data, :visible?
+        exposes :ecosystem, :value, :tag_type, :name, :description, :book_location, :data, :visible?
+
+        alias_method :entity_ecosystem, :ecosystem
+        def ecosystem
+          ::Content::Ecosystem.new(strategy: entity_ecosystem)
+        end
 
       end
     end

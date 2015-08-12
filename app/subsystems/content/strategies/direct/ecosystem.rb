@@ -5,7 +5,7 @@ module Content
 
         wraps ::Content::Models::Ecosystem
 
-        exposes :books, :chapters, :pages, :exercises, :pools, :title
+        exposes :books, :chapters, :pages, :exercises, :pools, :tags, :title
         exposes :all, :create, :create!, :find, from_class: ::Content::Models::Ecosystem
 
         class << self
@@ -204,6 +204,25 @@ module Content
 
         def practice_widget_pools(pages:)
           find_content_pools(pages: pages, type: :practice_widget)
+        end
+
+        alias_method :entity_tags, :tags
+        def tags
+          entity_tags.collect do |entity_tag|
+            ::Content::Tag.new(strategy: entity_tag)
+          end
+        end
+
+        def tags_by_values(*values)
+          value_indices = {}
+          values = values.flatten
+          values.each_with_index do |value, index|
+            value_indices[value.to_s] = index
+          end
+
+          entity_tags.where(value: values).collect do |entity_tag|
+            ::Content::Tag.new(strategy: entity_tag)
+          end.sort_by{ |tag| value_indices[tag.value.to_s] }
         end
 
         protected

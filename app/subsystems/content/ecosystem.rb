@@ -120,6 +120,14 @@ module Content
       verify_and_return pools, klass: ::Content::Pool
     end
 
+    def tags
+      verify_and_return @strategy.tags, klass: ::Content::Tag
+    end
+
+    def tags_by_values(*values)
+      verify_and_return @strategy.tags_by_values(*values), klass: ::Content::Tag
+    end
+
     def title
       verify_and_return @strategy.title, klass: String
     end

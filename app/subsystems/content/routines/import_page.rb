@@ -20,6 +20,7 @@ class Content::Routines::ImportPage
   # into the given Content::Models::Chapter
   # Returns the Content::Models::Page object
   def exec(cnx_page:, chapter:, number: nil, book_location: nil, save: true)
+    ecosystem = chapter.book.ecosystem
     outputs[:page] = Content::Models::Page.new(url: cnx_page.canonical_url,
                                                title: cnx_page.title,
                                                content: cnx_page.converted_content,
@@ -33,7 +34,7 @@ class Content::Routines::ImportPage
     chapter.pages << outputs[:page] unless chapter.nil?
 
     # Tag the Page
-    run(:find_or_create_tags, input: cnx_page.tags)
+    run(:find_or_create_tags, ecosystem: ecosystem, input: cnx_page.tags)
     run(:tag, outputs[:page], outputs[:tags], tagging_class: Content::Models::PageTag, save: save)
 
     outputs[:page].page_tags = outputs[:taggings]
@@ -46,7 +47,8 @@ class Content::Routines::ImportPage
     objective_tags = outputs[:tags].select{ |tag| tag.lo? || tag.aplo? }.collect{ |tag| tag.value }
     return if objective_tags.empty?
 
-    run(:import_exercises, page: outputs[:page], query_hash: {tag: objective_tags})
+    run(:import_exercises, ecosystem: ecosystem, page: outputs[:page],
+                           query_hash: {tag: objective_tags})
   end
 
 end

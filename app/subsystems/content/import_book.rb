@@ -37,7 +37,7 @@ class Content::ImportBook
       outputs[:exercises] = []
     else
       outputs[:exercises] = nil
-      run(:import_exercises, page: page_block, query_hash: query_hash)
+      run(:import_exercises, ecosystem: ecosystem, page: page_block, query_hash: query_hash)
     end
 
     # Need a double reload here for it to work for some reason

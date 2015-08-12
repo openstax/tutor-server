@@ -13,6 +13,8 @@ module Content
       has_many :exercises, through: :pages
       has_many :pools, through: :pages
 
+      has_many :tags, dependent: :destroy, inverse_of: :ecosystem
+
       validates :title, presence: true, uniqueness: true
 
     end
