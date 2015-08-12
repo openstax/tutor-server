@@ -17,6 +17,7 @@ class Admin::TagsController < Admin::BaseController
   end
 
   private
+
   def get_tag
     @tag = Content::Models::Tag.find(params[:id])
   end

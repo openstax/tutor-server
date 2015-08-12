@@ -137,8 +137,9 @@ ActiveRecord::Schema.define(version: 20150804002246) do
     t.datetime "updated_at",                       null: false
   end
 
-  add_index "content_tags", ["content_ecosystem_id", "value"], name: "index_content_tags_on_content_ecosystem_id_and_value", unique: true, using: :btree
+  add_index "content_tags", ["content_ecosystem_id"], name: "index_content_tags_on_content_ecosystem_id", using: :btree
   add_index "content_tags", ["tag_type"], name: "index_content_tags_on_tag_type", using: :btree
+  add_index "content_tags", ["value", "content_ecosystem_id"], name: "index_content_tags_on_value_and_content_ecosystem_id", unique: true, using: :btree
 
   create_table "course_content_course_ecosystems", force: :cascade do |t|
     t.integer  "entity_course_id",     null: false
