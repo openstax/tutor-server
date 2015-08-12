@@ -145,6 +145,8 @@ Rails.application.routes.draw do
     end
   end
 
-  match '/*other', via: [:get, :post, :put, :patch, :delete], to: 'webview#index'
+  scope :format => true, :constraints => { :format => 'html' } do
+    match '/*other', via: [:get, :post, :put, :patch, :delete], to: 'webview#index'
+  end
 
 end
