@@ -130,9 +130,6 @@ gem 'timecop'
 gem 'activerecord-import'
 
 group :development, :test do
-  # SQLite adapter
-  gem 'sqlite3'
-
   # Get env variables from .env file
   gem 'dotenv-rails'
 

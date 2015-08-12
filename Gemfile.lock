@@ -570,7 +570,6 @@ GEM
       actionpack (>= 3.0)
       activesupport (>= 3.0)
       sprockets (>= 2.8, < 4.0)
-    sqlite3 (1.3.10)
     squeel (1.2.3)
       activerecord (>= 3.0)
       activesupport (>= 3.0)
@@ -717,7 +716,6 @@ DEPENDENCIES
   sass-rails (~> 5.0.0)
   shoulda-matchers
   sortability
-  sqlite3
   squeel
   therubyracer
   thin
