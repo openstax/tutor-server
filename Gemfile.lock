@@ -337,9 +337,6 @@ GEM
     mail (2.6.3)
       mime-types (>= 1.16, < 3)
     maruku (0.7.2)
-    memory_test_fix (1.2.2)
-      activerecord (>= 3.2.0, < 4.99.0)
-      railties (>= 3.2.0, < 4.99.0)
     method_source (0.8.2)
     mime-types (2.6.1)
     mini_magick (4.2.0)
@@ -692,7 +689,6 @@ DEPENDENCIES
   lev (~> 5.0.0)
   lograge
   maruku
-  memory_test_fix
   mini_magick
   newrelic_rpm
   nifty-generators

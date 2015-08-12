@@ -2,12 +2,8 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe OpenStax::Cnx::V1::Fragment::ExerciseChoice, type: :external, vcr: VCR_OPTS do
-  let!(:cnx_page_id)    { 'd60a912c-83cf-443a-a6c2-3dd95545e7d4@1' }
-  let!(:cnx_page)       {
-    OpenStax::Cnx::V1.with_archive_url(url: 'https://archive.cnx.org/contents/') do
-      OpenStax::Cnx::V1::Page.new(id: cnx_page_id)
-    end
-  }
+  let!(:cnx_page_id)               { '548a8717-71e1-4d65-80f0-7b8c6ed4b4c0@3' }
+  let!(:cnx_page)                  { OpenStax::Cnx::V1::Page.new(id: cnx_page_id) }
   let!(:exercise_choice_fragments) {
     cnx_page.fragments.select do |f|
       f.is_a? OpenStax::Cnx::V1::Fragment::ExerciseChoice

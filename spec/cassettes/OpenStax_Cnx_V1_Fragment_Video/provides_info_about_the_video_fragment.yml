@@ -21,7 +21,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Wed, 12 Aug 2015 17:11:40 GMT
+      - Wed, 12 Aug 2015 17:04:38 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -443,5 +443,5 @@ http_interactions:
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Wed, 12 Aug 2015 17:05:24 GMT
+  recorded_at: Wed, 12 Aug 2015 16:58:22 GMT
 recorded_with: VCR 2.9.3

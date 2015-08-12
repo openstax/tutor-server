@@ -12,10 +12,8 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  adapter: <%= ENV['OXT_TEST_DB'] == ':memory:' ? 'sqlite3' : 'postgresql' %>
   database: '<%= ENV['OXT_TEST_DB'] || 'ox_tutor_test' %><%= \
                  "_#{ENV['TEST_ENV_NUMBER']}" if !ENV['TEST_ENV_NUMBER'].blank? && \
                                                  ENV['OXT_TEST_DB'] != ':memory:' %>'
-  verbosity: <%= 'quiet' if ENV['OXT_TEST_DB'] == ':memory:' %>
 
 # Production database is intentionally left unconfigured
