@@ -34,6 +34,8 @@ ActionController::Base.class_exec do
     when ActionController::InvalidAuthenticityToken,
          Apipie::ParamMissing
       [:unprocessable_entity, false]
+     when ActionView::MissingTemplate
+      [:bad_request, false]
     else
       [:internal_server_error, true]
     end
