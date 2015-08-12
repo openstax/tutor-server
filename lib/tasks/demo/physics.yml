@@ -106,8 +106,8 @@ assignments:
         due_at:   <%= standard_due_at   school_day_on_or_before 11.days.ago %>
         students: {ak: 98, at: 67, cp: 55, gj: 77, hp: 88, lb: 55, lt: 89, ne: 78, sd: 100, vw: 100}
       - id: p2
-        opens_at: <%= open_today %>
-        due_at: <%= due_tomorrow %>
+        opens_at: <%= standard_opens_at school_day_on_or_before 15.days.ago %>
+        due_at:   <%= standard_due_at   school_day_on_or_before 11.days.ago %>
         students: {af: 82, ag: 71, bb: 88, cd: 78, hg: 87, ft: 82, js: 90, ms: 90, nz: 85, ra: 100}
 
   - type: homework
