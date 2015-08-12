@@ -205,7 +205,7 @@ group :development do
 end
 
 group :test do
-  # Fake in-memory Redis for development and testing
+  # Fake in-memory Redis for testing
   gem 'fakeredis'
 
   # Resque in test mode
