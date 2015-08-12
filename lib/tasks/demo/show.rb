@@ -1,0 +1,58 @@
+require_relative 'demo_base'
+require_relative 'content_configuration'
+
+# This is ugly and really needs cleaned up.
+# Forgive me for I wrote it under deadline...
+class DemoShow < DemoBase
+
+  lev_routine
+
+  protected
+
+  def exec(book: :all, print_logs: true)
+    set_print_logs(print_logs)
+
+    students = {}
+    ContentConfiguration[book.to_sym].each do | content |
+
+      content.periods.each do | period |
+        period.students.each do | initials |
+          person = people.students[initials]
+          unless student = students[person.username]
+            student = students[person.username] = OpenStruct.new(
+              courses: {}, initials: initials, username: person.username, name: person.name
+            )
+          end
+          unless course = student.courses[content.course_name]
+            course = student.courses[content.course_name] = OpenStruct.new(assignments: [])
+          end
+
+          content.assignments.each do | assignment |
+            assignment.periods.each do | ap |
+              if ap.students[initials]
+                period = content.periods.find{|pr| pr.id == ap.id }
+                course.assignments.push(
+                  OpenStruct.new(
+                  title: assignment.title, period: period.name, score: ap.students[initials]
+                ))
+              end
+            end
+          end
+        end
+      end
+    end
+
+    students.keys.sort.each do | username |
+      data = students[username]
+      log "#{username} - #{data.name}"
+      data.courses.each do | name, cdata |
+        log "    #{name}"
+        cdata.assignments.each do |a|
+          log "        #{a.period} : #{a.score} : #{a.title}"
+        end
+      end
+    end
+
+  end
+
+end
