@@ -97,7 +97,7 @@ module Tasks
       def score(data)
         case data.type
         when 'homework'
-          '%.2f' % (data.correct_exercise_count/data.exercise_count.to_f)
+          '%.2f' % (data.correct_exercise_count/data.actual_and_placeholder_exercise_count.to_f)
         when 'reading'
           data.status.humanize
         when 'external'

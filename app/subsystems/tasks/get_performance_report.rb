@@ -86,7 +86,7 @@ module Tasks
           }
 
           if task.task_type == 'homework'
-            data.merge!(exercise_count(task, index))
+            data.merge!(exercise_counts(task, index))
           end
 
           data
@@ -94,8 +94,8 @@ module Tasks
       }
     end
 
-    def exercise_count(task, index)
-      exercise_count  = task.exercise_steps_count
+    def exercise_counts(task, index)
+      exercise_count  = task.actual_and_placeholder_exercise_count
       attempted_count = task.completed_exercise_steps_count
       correct_count   = task.correct_exercise_steps_count
       recovered_count = task.recovered_exercise_steps_count
@@ -105,7 +105,7 @@ module Tasks
       end
 
       {
-        exercise_count: exercise_count,
+        actual_and_placeholder_exercise_count: exercise_count,
         correct_exercise_count: correct_count,
         recovered_exercise_count: recovered_count
       }

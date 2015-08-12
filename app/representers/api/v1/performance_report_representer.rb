@@ -19,7 +19,8 @@ module Api::V1
                type: String,
                readable: true
 
-      property :exercise_count,
+      property :actual_and_placeholder_exercise_count,
+               as: :exercise_count,
                type: Integer,
                readable: true
 
