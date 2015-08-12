@@ -35,7 +35,6 @@ class DemoWork < DemoBase
             raise "#{assignment.title} period #{period.id} has no responses for task #{index} for user #{user.profile.id} #{user.username}"
           end
           lateness = assignment.late ? assignment.late[profile.initials] : nil
-          log("  Work #{profile.initials}")
           worked_at = task.due_at + (lateness ? lateness : -60)
 
           Timecop.freeze(worked_at) do
