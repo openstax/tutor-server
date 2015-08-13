@@ -62,9 +62,8 @@ class Api::V1::CoursesController < Api::V1::ApiController
   api :GET, '/courses/:course_id/exercises',
             "Returns a course\'s exercises, filtered by the page_ids param"
   description <<-EOS
-    Returns a list of assignable exercises tagged with LO's matching the pages
-    or book_parts with the given ID's.
-    If no page_ids or book_part_ids are specified, returns an empty array.
+    Returns a list of assignable exercises tagged with LO's matching the pages with the given ID's.
+    If no page_ids are specified, returns an empty array.
 
     #{json_schema(Api::V1::ExerciseSearchRepresenter, include: :readable)}
   EOS

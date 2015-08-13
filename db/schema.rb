@@ -49,6 +49,7 @@ ActiveRecord::Schema.define(version: 20150804002246) do
     t.datetime "updated_at", null: false
   end
 
+  add_index "content_ecosystems", ["created_at"], name: "index_content_ecosystems_on_created_at", using: :btree
   add_index "content_ecosystems", ["title"], name: "index_content_ecosystems_on_title", using: :btree
 
   create_table "content_exercise_tags", force: :cascade do |t|

@@ -6,6 +6,7 @@ class CreateContentEcosystems < ActiveRecord::Migration
       t.timestamps null: false
 
       t.index :title
+      t.index :created_at
     end
   end
 end
