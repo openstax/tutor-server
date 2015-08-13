@@ -16,6 +16,9 @@ class CollectCourseInfo
   uses_routine CourseMembership::GetCoursePeriods,
                translations: { outputs: { type: :verbatim } },
                as: :get_course_periods
+  uses_routine GetCourseEcosystem,
+               translations: { outputs: { type: :verbatim } },
+               as: :get_course_ecosystem
 
   protected
 
@@ -57,6 +60,8 @@ class CollectCourseInfo
         set_roles_on_courses(user)
       when :periods
         set_periods_on_courses
+      when :book
+        set_book_on_courses
       end
     end
   end
@@ -81,6 +86,16 @@ class CollectCourseInfo
     outputs.courses.each do |course|
       routine = run(:get_course_periods, course: Entity::Course.find(course.id))
       course.periods = routine.outputs.periods
+    end
+  end
+
+  def set_book_on_courses
+    outputs.courses.each do |course|
+      routine = run(:get_course_ecosystem, course: Entity::Course.find(course.id))
+      books = routine.outputs.ecosystem.try(:books)
+      next if books.nil?
+      raise(IllegalState, "More than one book is not supported") if books.size > 1
+      course.book = books.first
     end
   end
 

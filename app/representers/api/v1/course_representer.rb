@@ -16,6 +16,17 @@ module Api::V1
              writeable: false,
              schema_info: { required: true }
 
+    property :book_id,
+             type: String,
+             readable: true,
+             writeable: false,
+             if: ->(*) { respond_to?(:roles) },
+             getter: ->(*) { book.id }
+             schema_info: {
+              description: "The ID of the course's book, if available."
+              required: false
+             }
+
     collection :roles,
                extend: Api::V1::RoleRepresenter,
                readable: true,
