@@ -21,9 +21,9 @@ module Api::V1
              readable: true,
              writeable: false,
              if: ->(*) { respond_to?(:book) },
-             getter: ->(*) { book.id }
+             getter: ->(*) { book.id },
              schema_info: {
-              description: "The ID of the course's book, if available."
+              description: "The ID of the course's book, if available.",
               required: false
              }
 

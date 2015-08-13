@@ -18,12 +18,20 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   let!(:course)          { CreateCourse[name: 'Physics 101'] }
   let!(:period)          { CreatePeriod[course: course] }
 
+
+  def add_book_to_course(course: course)
+    book = FactoryGirl.create(:content_book, :standard_contents_1)
+    content_ecosystem = book.ecosystem.reload
+    strategy = Content::Strategies::Direct::Ecosystem.new(content_ecosystem)
+    ecosystem = Content::Ecosystem.new(strategy: strategy)
+    CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
+
+    { book: book, ecosystem: ecosystem }
+  end
+
   describe "#readings" do
     it 'raises SecurityTransgression if user is anonymous or not in the course' do
-      content_ecosystem = FactoryGirl.create(:content_book).ecosystem
-      strategy = Content::Strategies::Direct::Ecosystem.new(content_ecosystem)
-      ecosystem = Content::Ecosystem.new(strategy: strategy)
-      CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
+      add_book_to_course(course: course)
 
       expect {
         api_get :readings, nil, parameters: { id: course.id }
@@ -36,10 +44,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
     it 'works for students in the course' do
       # used in FE for reference view
-      content_ecosystem = FactoryGirl.create(:content_book, :standard_contents_1).ecosystem
-      strategy = Content::Strategies::Direct::Ecosystem.new(content_ecosystem)
-      ecosystem = Content::Ecosystem.new(strategy: strategy)
-      CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
+      add_book_to_course(course: course)
       AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
       AddUserAsPeriodStudent.call(period: period, user: user_2.entity_user)
 
@@ -55,9 +60,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
 
     it "should work on the happy path" do
-      content_ecosystem = FactoryGirl.create(:content_book, :standard_contents_1).ecosystem.reload
-      strategy = Content::Strategies::Direct::Ecosystem.new(content_ecosystem)
-      ecosystem = Content::Ecosystem.new(strategy: strategy)
+      ecosystem = add_book_to_course(course: course)[:ecosystem]
       CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
       AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
 
@@ -153,11 +156,14 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
       end
 
-      it 'includes the periods for the course' do
+      it 'includes the periods and book_id for the course' do
+        book = add_book_to_course(course: course)[:book]
+
         api_get :index, user_1_token
         expect(response.body).to include({
           id: course.id.to_s,
           name: course.profile.name,
+          book_id: "#{book.id}",
           roles: [{ id: teacher.id.to_s, type: 'teacher' }],
           periods: [{ id: zeroth_period.id.to_s, name: zeroth_period.name },
                     { id: period.id.to_s, name: period.name }]
