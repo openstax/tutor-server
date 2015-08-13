@@ -115,6 +115,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   def handle_task_step_completion!(completion_time: Time.current)
     set_last_worked_at(time: completion_time)
     update_step_counts!
+    notify_biglearn!
 
     if core_task_steps_completed? && placeholder_steps_count > 0
       strategy = personalized_placeholder_strategy
@@ -167,6 +168,9 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   protected
+  def notify_biglearn!
+    OpenStax::Biglearn::V1.exercise_completed(roles: [Entity::Role.last])
+  end
 
   def due_at_on_or_after_opens_at
     return if due_at.nil? || opens_at.nil? || due_at >= opens_at

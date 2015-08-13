@@ -25,6 +25,9 @@ module OpenStax::Biglearn::V1
     OpenStax::Biglearn::V1::Pool.new(uuid: client.combine_pools(pools))
   end
 
+  def self.exercise_completed(roles:)
+  end
+
   # Returns recommended exercises
   #
   # tag_search: a hash describing a boolean search on tags;
