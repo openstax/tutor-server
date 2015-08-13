@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::PerformanceReportRepresenter do
   it 'includes the due_at, last_worked_at properties for student data' do
-    period = FactoryGirl.create(:period)
+    period = FactoryGirl.create(:course_membership_period)
     last_worked_at = Time.current
     due_at = Time.current + 1.week
     api_last_worked_at = DateTimeUtilities.to_api_s(last_worked_at)

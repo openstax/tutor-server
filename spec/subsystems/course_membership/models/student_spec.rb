@@ -18,7 +18,7 @@ RSpec.describe CourseMembership::Models::Student, type: :model do
 
   context 'deidentifier' do
     let!(:user) { FactoryGirl.create(:user_profile).entity_user }
-    let!(:period) { FactoryGirl.create(:period) }
+    let!(:period) { FactoryGirl.create(:course_membership_period) }
     let!(:student) {
       AddUserAsPeriodStudent.call(period: period, user: user).outputs.student
     }

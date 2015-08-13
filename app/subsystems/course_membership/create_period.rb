@@ -6,6 +6,6 @@ class CourseMembership::CreatePeriod
   def exec(course:, name:)
     period = CourseMembership::Models::Period.create(course: course, name: name)
     transfer_errors_from(period, {type: :verbatim}, true)
-    outputs[:period] = ::Period.new(period)
+    outputs[:period] = CourseMembership::Period.new(period)
   end
 end

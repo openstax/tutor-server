@@ -16,7 +16,7 @@ describe MoveStudent, type: :routine do
       expect(result.errors).to be_empty
 
       expect(student.reload.course).to eq course
-      expect(::Period.new(student.period)).to eq period_2
+      expect(CourseMembership::Period.new(student.period)).to eq period_2
 
       expect {
         result = MoveStudent.call(period: period_1, student: student)
@@ -24,7 +24,7 @@ describe MoveStudent, type: :routine do
       expect(result.errors).to be_empty
 
       expect(student.reload.course).to eq course
-      expect(::Period.new(student.period)).to eq period_1
+      expect(CourseMembership::Period.new(student.period)).to eq period_1
     end
   end
 
@@ -44,7 +44,7 @@ describe MoveStudent, type: :routine do
       expect(result.errors).not_to be_empty
 
       expect(student.reload.course).to eq course_1
-      expect(::Period.new(student.period)).to eq period_1
+      expect(CourseMembership::Period.new(student.period)).to eq period_1
     end
   end
 end

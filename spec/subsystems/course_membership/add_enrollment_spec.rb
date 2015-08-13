@@ -31,7 +31,7 @@ describe CourseMembership::AddEnrollment, type: :routine do
       expect(result.errors).to be_empty
 
       expect(student.reload.course).to eq course
-      expect(::Period.new(student.period)).to eq period_2
+      expect(CourseMembership::Period.new(student.period)).to eq period_2
 
       expect {
         result = CourseMembership::AddEnrollment.call(period: period_1, student: student)
@@ -39,7 +39,7 @@ describe CourseMembership::AddEnrollment, type: :routine do
       expect(result.errors).to be_empty
 
       expect(student.reload.course).to eq course
-      expect(::Period.new(student.period)).to eq period_1
+      expect(CourseMembership::Period.new(student.period)).to eq period_1
     end
   end
 
@@ -59,7 +59,7 @@ describe CourseMembership::AddEnrollment, type: :routine do
       expect(result.errors).not_to be_empty
 
       expect(student.reload.course).to eq course_1
-      expect(::Period.new(student.period)).to eq period_1
+      expect(CourseMembership::Period.new(student.period)).to eq period_1
     end
   end
 end
