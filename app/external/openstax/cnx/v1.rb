@@ -6,8 +6,8 @@ module OpenStax::Cnx::V1
   # Sets the archive URL base.  'url' is nominally the non-SSL URL,
   # tho may be SSL. An explicit SSL URL can be passed in `ssl`, or
   # by default the SSL URL will be guessed from the URL.
-  def self.set_archive_url_base(url:, ssl: nil)
-    uri = Addressable::URI.parse(url)
+  def self.set_archive_url_base(url: nil, ssl: nil)
+    uri = Addressable::URI.parse(url || ssl)
     uri.scheme = 'http'
     @archive_url_base = uri.to_s
     uri = Addressable::URI.parse(ssl) unless ssl.nil?

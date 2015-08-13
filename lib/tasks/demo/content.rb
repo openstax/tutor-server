@@ -27,7 +27,7 @@ class DemoContent < DemoBase
 
     admin_profile = user_profile_for_username('admin') || \
                     new_user_profile(username: 'admin', name: people.admin)
-    run(:make_administrator, user: admin_profile.entity_user)
+    run(:make_administrator, user: admin_profile.entity_user) unless admin_profile.is_admin?
     log("Admin user: #{admin_profile.account.full_name}")
 
     ContentConfiguration[book.to_sym].each do | content |

@@ -107,6 +107,7 @@ module OpenStax::Cnx::V1
           uri.scheme = "https"
           src.value = uri.to_s
         else
+          # Skip the special anchor-only exercise tags
           next if uri.path.blank?
 
           # Relative link: make secure and absolute
