@@ -109,25 +109,25 @@ RSpec.describe Admin::CoursesController do
       expect(assigns[:ecosystems].sort { |a, b| a.id <=> b.id }).to eq([
         {
           'id' => eco_1.id,
+          'title' => eco_1.title,
           'books' => [
             {
               'title' => 'Physics',
               'url' => book_1.url,
               'uuid' => uuid_1,
-              'version' => version_1,
-              'title_with_id' => "Physics (#{uuid_1}@#{version_1})"
+              'version' => version_1
             }
           ]
         },
         {
           'id' => eco_2.id,
+          'title' => eco_2.title,
           'books' => [
             {
               'title' => 'Biology',
               'url' => book_2.url,
               'uuid' => uuid_2,
-              'version' => version_2,
-              'title_with_id' => "Biology (#{uuid_2}@#{version_2})"
+              'version' => version_2
             }
           ]
         }
@@ -149,7 +149,7 @@ RSpec.describe Admin::CoursesController do
         post :set_ecosystem, id: course.id, ecosystem_id: eco_1.id
         ce = course.reload.course_ecosystems.first
         expect(ce).to eq course_ecosystem
-        expect(flash[:notice]).to eq 'Course ecosystem "Physics v1" is already selected for "Physics I"'
+        expect(flash[:notice]).to eq "Course ecosystem \"#{eco_1.title}\" is already selected for \"Physics I\""
       end
     end
 
@@ -158,7 +158,7 @@ RSpec.describe Admin::CoursesController do
         post :set_ecosystem, id: course.id, ecosystem_id: eco_2.id
         ecos = course.reload.ecosystems
         expect(ecos).to eq [eco_2, eco_1]
-        expect(flash[:notice]).to eq 'Course ecosystem "Biology v2" selected for "Physics I"'
+        expect(flash[:notice]).to eq "Course ecosystem \"#{eco_2.title}\" selected for \"Physics I\""
       end
     end
   end

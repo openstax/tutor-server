@@ -16,25 +16,25 @@ RSpec.describe Admin::ContentsController, speed: :slow, vcr: VCR_OPTS do
       expect(assigns[:ecosystems]).to eq([
         {
           'id' => book_2.ecosystem.id,
+          'title' => book_2.ecosystem.title,
           'books' => [
             {
               'title' => 'AP Biology',
               'uuid' => book_2.uuid,
               'version' => book_2.version,
-              'url' => book_2.url,
-              'title_with_id' => "AP Biology (#{book_2.uuid}@#{book_2.version})"
+              'url' => book_2.url
             }
           ]
         },
         {
           'id' => book_1.ecosystem.id,
+          'title' => book_1.ecosystem.title,
           'books' => [
             {
               'title' => 'Physics',
               'uuid' => book_1.uuid,
               'version' => book_1.version,
-              'url' => book_1.url,
-              'title_with_id' => "Physics (#{book_1.uuid}@#{book_1.version})"
+              'url' => book_1.url
             }
           ]
         }
