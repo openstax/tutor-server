@@ -326,6 +326,9 @@ class DemoBase
     book.pages.select{ |page| book_locations.include?(page.book_location) }
   end
 
+  def find_course(name:)
+    CourseProfile::Models::Profile.where(name: name).first.try(:course)
+  end
 
   def create_course(name:)
     course = run(:create_course, name: name).outputs.course
@@ -346,6 +349,9 @@ class DemoBase
     course
   end
 
+  def find_period(course:, name:)
+    Entity::Relation.new(CourseMembership::Models::Period.where(course: course, name: name)).first
+  end
 
   def log(message)
     puts "#{message}\n" if @print_logs

@@ -18,7 +18,7 @@ class MarkTaskStepCompleted
     task_step.task.handle_task_step_completion!(completion_time: completion_time)
     transfer_errors_from(task, {type: :verbatim}, true)
 
-    task.reload
+    task.task_steps.reset
   end
 
 end

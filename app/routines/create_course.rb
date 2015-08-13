@@ -2,8 +2,8 @@ class CreateCourse
   lev_routine express_output: :course
 
   uses_routine CourseProfile::Routines::CreateCourseProfile,
-    translations: { outputs: { type: :verbatim } },
-    as: :create_course_profile
+               translations: { outputs: { type: :verbatim } },
+               as: :create_course_profile
 
   uses_routine SchoolDistrict::ProcessSchoolChange,
                as: :process_school_change
