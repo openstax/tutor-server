@@ -13,7 +13,7 @@ RSpec.describe CourseAccessPolicy, :type => :access_policy do
   end
 
   # action, requestor are set in contexts
-  subject(:allowed) { CourseAccessPolicy.action_allowed?(action, requestor, course) }
+  subject(:allowed) { described_class.action_allowed?(action, requestor, course) }
 
   context 'anonymous users' do
     let(:requestor) { UserProfile::Models::AnonymousUser.instance }
