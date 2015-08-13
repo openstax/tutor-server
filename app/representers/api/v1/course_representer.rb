@@ -20,7 +20,7 @@ module Api::V1
              type: String,
              readable: true,
              writeable: false,
-             if: ->(*) { respond_to?(:roles) },
+             if: ->(*) { respond_to?(:book) },
              getter: ->(*) { book.id }
              schema_info: {
               description: "The ID of the course's book, if available."
