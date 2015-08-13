@@ -150,13 +150,13 @@ class OpenStax::Biglearn::V1::RealClient
 
   def construct_exercises_payload(exercises)
     { question_tags: [exercises].flatten.collect do |exercise|
-      { question_id: exercise.question_id, version: exercise.version, tags: exercise.tags }
+      { question_id: exercise.question_id.to_s, version: exercise.version.to_s, tags: exercise.tags }
     end }
   end
 
   def construct_add_pool_payload(pool)
     { sources: [{ questions: pool.exercises.collect do |exercise|
-      { question_id: exercise.question_id, version: exercise.version }
+      { question_id: exercise.question_id.to_s, version: exercise.version.to_s }
     end }] }
   end
 
