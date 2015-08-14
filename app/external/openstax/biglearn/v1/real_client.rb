@@ -21,11 +21,9 @@ class OpenStax::Biglearn::V1::RealClient
   end
 
   def add_pools(pools)
-    pools.each do |pool|
-      options = { body: construct_add_pool_payload(pool).to_json }
-      response = request(:post, add_pools_uri, with_content_type_header(options))
-      handle_response(response)
-    end
+    options = { body: construct_add_pools_payload(pools).to_json }
+    response = request(:post, add_pools_uri, with_content_type_header(options))
+    handle_response(response)
   end
 
   def combine_pools(pools)
@@ -154,10 +152,13 @@ class OpenStax::Biglearn::V1::RealClient
     end }
   end
 
-  def construct_add_pool_payload(pool)
-    { sources: { questions: pool.exercises.collect do |exercise|
-      { question_id: exercise.question_id.to_s, version: Integer(exercise.version) }
-    end }] }
+  def construct_add_pools_payload(pools)
+    { sources: pools.collect do |pool|
+      { questions: pool.exercises.collect do |exercise|
+        { question_id: exercise.question_id.to_s,
+          version:     Integer(exercise.version) }
+      end }
+    end }
   end
 
   def construct_combine_pools_payload(pools)
