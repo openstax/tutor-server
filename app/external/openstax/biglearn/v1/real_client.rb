@@ -22,8 +22,15 @@ class OpenStax::Biglearn::V1::RealClient
 
   def add_pools(pools)
     options = { body: construct_add_pools_payload(pools).to_json }
+
     response = request(:post, add_pools_uri, with_content_type_header(options))
-    handle_response(response)
+    body_hash = handle_response(response)
+
+    uuids = body_hash['pool_ids'].map do |uuid|
+      uuid == "None" ? "#{SecureRandom::uuid}-None" : uuid
+    end
+
+    uuids
   end
 
   def combine_pools(pools)
