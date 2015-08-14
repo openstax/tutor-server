@@ -6,10 +6,10 @@ cnx_book_version: 4.5
 teacher: cm
 periods:
   - id: p1
-    name: Period 1
+    name: 1st
     students: [ak,at,cp,gj,hp,lb,lt,ne,sd,vw]
   - id: p2
-    name: Period 2
+    name: 2nd
     students: [af,ag,bb,cd,eh,ft,js,ms,nz,ra]
 
 assignments:
