@@ -132,5 +132,9 @@ module Content
       verify_and_return @strategy.title, klass: String
     end
 
+    def imported_at
+      verify_and_return @strategy.imported_at, klass: ActiveSupport::TimeWithZone
+    end
+
   end
 end

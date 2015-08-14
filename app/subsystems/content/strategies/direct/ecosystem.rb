@@ -5,7 +5,7 @@ module Content
 
         wraps ::Content::Models::Ecosystem
 
-        exposes :books, :chapters, :pages, :exercises, :pools, :tags, :title
+        exposes :books, :chapters, :pages, :exercises, :pools, :tags, :title, :created_at
         exposes :all, :create, :create!, :find, from_class: ::Content::Models::Ecosystem
 
         class << self
@@ -224,6 +224,8 @@ module Content
             ::Content::Tag.new(strategy: entity_tag)
           end.sort_by{ |tag| value_indices[tag.value.to_s] }
         end
+
+        alias_method :imported_at, :created_at
 
         protected
 
