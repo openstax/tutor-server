@@ -1,5 +1,7 @@
 module UserProfile
   class SearchProfiles
+    include ::VerifiedCollections
+
     lev_routine express_output: :profiles
 
     protected
@@ -40,12 +42,8 @@ module UserProfile
     end
 
     def profiles_by_entity_users(users)
-      if (users = [users].flatten).all? { |u| u.respond_to?(:profile) &&
-                                                u.respond_to?(:username) }
-        profiles_query.where{entity_user_id.in users.collect(&:id)}
-      else
-        raise IllegalArgument, "Search must be a String or collection of EntityUsers"
-      end
+      users = verify_and_return([users].flatten, klass: Entity::User)
+      profiles_query.where{entity_user_id.in users.collect(&:id)}
     end
 
     def profiles_query
