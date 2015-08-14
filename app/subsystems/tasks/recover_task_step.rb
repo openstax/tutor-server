@@ -3,6 +3,7 @@ class Tasks::RecoverTaskStep
   lev_routine
 
   uses_routine TaskExercise, as: :task_exercise
+  uses_routine GetEcosystemFromIds, as: :get_ecosystem
 
   protected
 
@@ -11,7 +12,7 @@ class Tasks::RecoverTaskStep
 
     # Get the ecosystem from the content_exercise_id
     exercise_id = task_step.tasked.content_exercise_id
-    ecosystem = GetEcosystemFromIds[exercise_ids: exercise_id]
+    ecosystem = run(:get_ecosystem, exercise_ids: exercise_id).outputs.ecosystem
 
     recovery_exercise = get_recovery_exercise_for(ecosystem: ecosystem, task_step: task_step)
 
@@ -45,6 +46,7 @@ class Tasks::RecoverTaskStep
   def get_taskees_ireading_histories(taskees:)
     taskees.collect do |taskee|
       taskee.taskings
+            .preload(task: {task: {task_steps: :tasked}})
             .collect{ |tt| tt.task }
             .select{ |tt| tt.task.reading? }
             .sort_by{ |tt| tt.task.due_at }
@@ -88,7 +90,8 @@ class Tasks::RecoverTaskStep
       # If no exercises found, reuse an old one
       chosen_exercise = exercise_pool.shuffle.find do |ex|
         ((ex.los.collect{ |tt| tt.id} & los).any? || \
-         (ex.aplos.collect{ |tt| tt.id} & aplos).any?) && ex.id != task_step.tasked.exercise.id
+         (ex.aplos.collect{ |tt| tt.id} & aplos).any?) && \
+        ex.id != task_step.tasked.exercise.id
       end
     end
 

@@ -93,7 +93,8 @@ class ResetPracticeWidget
 
   def get_local_exercises(ecosystem, count, role, pools, options = {})
     options = { randomize: true }.merge(options)
-    entity_tasks = role.taskings.collect{ |tt| tt.task }
+    entity_tasks = role.taskings.preload(task: {task: {task_steps: :tasked}})
+                                .collect{ |tt| tt.task }
     flat_history = run(:get_exercise_history, ecosystem: ecosystem, entity_tasks: entity_tasks)
                      .outputs.exercise_history.flatten
     exercise_pool = pools.collect{ |pl| pl.exercises }.flatten.uniq
