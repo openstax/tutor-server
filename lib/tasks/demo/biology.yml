@@ -2,7 +2,7 @@
 # The fixture at spec/fixtures/demo-imports/biology.yml must also be updated
 course_name: Biology I
 cnx_book_id: d52e93f4-8653-4273-86da-3850001c0786
-cnx_book_version: 2.13
+cnx_book_version: 2.15
 teacher: cm
 periods:
   - id: p1
