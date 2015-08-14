@@ -40,7 +40,7 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
       biglearn_exercises = [exercise_1, exercise_2, exercise_3,
                             exercise_4, exercise_5].collect do |ex|
         OpenStax::Biglearn::V1::Exercise.new(
-          question_id: ex.number,
+          question_id: ex.number.to_s,
           version: ex.version,
           tags: ex.tags.collect{ |tt| tt.value }
         )
@@ -48,7 +48,7 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
       OpenStax::Biglearn::V1.add_exercises(biglearn_exercises)
 
       biglearn_pools = pools.collect do |pool|
-        question_ids = pool.exercises.collect(&:number)
+        question_ids = pool.exercises.collect { |ex| ex.number.to_s }
         exercises = biglearn_exercises.select{ |ex| question_ids.include?(ex.question_id) }
         OpenStax::Biglearn::V1::Pool.new(exercises: exercises)
       end

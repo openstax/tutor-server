@@ -56,7 +56,7 @@ class Content::ImportBook
 
     biglearn_exercises_by_ids = outputs[:exercises].each_with_object({}) do |ex, hash|
       hash[ex.id] = OpenStax::Biglearn::V1::Exercise.new(
-        question_id: ex.number,
+        question_id: ex.number.to_s,
         version: ex.version,
         tags: ex.exercise_tags.collect{ |ex| ex.tag.value }
       )
