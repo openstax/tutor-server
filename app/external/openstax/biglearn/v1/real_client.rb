@@ -26,7 +26,18 @@ class OpenStax::Biglearn::V1::RealClient
     response = request(:post, add_pools_uri, with_content_type_header(options))
     body_hash = handle_response(response)
 
-    uuids = body_hash['pool_ids'].map do |uuid|
+    orig_uuids = body_hash['pool_ids']
+    raise "BigLearn returned wrong number of uuids " \
+          "(#pools != #uuids) (#{pools.count} != #{uuids.count})" \
+      unless orig_uuids.count == pools.count
+
+    nil_uuid_count = orig_uuids.count(&:nil?)
+    raise "BigLearn returned #{nil_uuid_count} nil uuids" if nil_uuid_count > 0
+
+    blank_uuid_count = orig_uuids.count(&:blank?)
+    raise "BigLearn returned #{blank_uuid_count} blank uuids" if blank_uuid_count > 0
+
+    uuids = orig_uuids.map do |uuid|
       uuid == "None" ? "#{SecureRandom::uuid}-None" : uuid
     end
 

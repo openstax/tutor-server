@@ -16,7 +16,7 @@ module OpenStax::Biglearn::V1
   end
 
   def self.add_pools(pools)
-    uuids = client.add_pools(pools).collect{ |rs| rs['pool_id'] }
+    uuids = client.add_pools(pools)
     pools.each_with_index{ |pool, ii| pool.uuid = uuids[ii] }
     pools
   end
