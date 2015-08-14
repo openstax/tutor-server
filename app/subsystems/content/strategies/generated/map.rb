@@ -32,22 +32,41 @@ module Content
 
         def group_exercises_by_pages(exercises:)
           all_pages = @to_ecosystem.pages
-
-          content_exercises = Content::Models::Exercise.where(id: exercise_ids)
-                                                       .eager_load(tags: :pages)
-                                                       .to_a
-
-          content_pages_arrays = content_exercises.collect do |ce|
-            objective_tags = ce.tags.select{ |tag| tag.lo? || tag.aplo? }
-            objective_tags.collect{ |tag| tag.pages }.flatten.compact.uniq
+          page_map = all_pages.each_with_object({}) do |page, hash|
+            hash[page.id] = page
           end
 
-          content_pages_arrays.each_with_index.each_with_object({}) do |(content_pages, idx), hash|
-            exercise = exercises.find{ |ex| ex.id == ce.id }
-            pages = content_pages.collect{ |cp| all_pages.find{ |pg| pg.id == cp.id } }.compact
-            pages.each do |page|
-              hash[page] ||= []
-              hash[page] << exercise
+          exercise_map = exercises.each_with_object({}) do |exercise, hash|
+            hash[exercise.id] = exercise
+          end
+          exercise_ids = exercise_map.keys
+
+          content_exercises = Content::Models::Exercise
+                                .joins(tags: :same_value_tags)
+                                .eager_load(tags: {same_value_tags: :pages})
+                                .where(id: exercise_ids,
+                                       tags: {
+                                         content_ecosystem_id: @from_ecosystems.collect(&:id),
+                                         tag_type: Content::Models::Tag::OBJECTIVE_TAG_TYPES,
+                                         same_value_tags: {
+                                           content_ecosystem_id: @to_ecosystem.id,
+                                           tag_type: Content::Models::Tag::OBJECTIVE_TAG_TYPES,
+                                         }
+                                       })
+                                .to_a
+                                
+
+          content_exercises.each_with_object({}) do |content_exercise, hash|
+            objective_tags = content_exercise.tags.select{ |tag| tag.lo? || tag.aplo? }
+            tags_across_ecosystems = objective_tags.collect(&:same_value_tags).flatten
+                                                   .select{ |tag| tag.lo? || tag.aplo? }
+            content_pages = tags_across_ecosystems.collect{ |tag| tag.pages }.flatten.uniq
+
+            ecosystem_exercise = exercise_map[content_exercise.id]
+            ecosystem_pages = content_pages.collect{ |cp| page_map[cp.id] }.compact
+            ecosystem_pages.each do |ecosystem_page|
+              hash[ecosystem_page] ||= []
+              hash[ecosystem_page] << ecosystem_exercise
             end
           end
         end
@@ -55,17 +74,21 @@ module Content
         def valid?
           return @valid unless @valid.nil?
 
-          all_exercises_set = Set.new @from_ecosystems.collect{ |es| es.exercises }.flatten
+          all_exercises = @from_ecosystems.collect{ |es| es.exercises }.flatten
+          all_exercises_set = Set.new all_exercises
           all_pages_set = Set.new @to_ecosystem.pages
 
-          all_map = map_exercises_to_pages(exercises: all_exercises)
+          all_map = group_exercises_by_pages(exercises: all_exercises)
           all_keys_set = Set.new all_map.keys
           all_values = all_map.values.flatten
           all_values_set = Set.new all_values
 
-          @valid = all_keys_set.subset?(all_pages_set) && \ # All pages belong to the to_ecosystem
-                   all_values_set == all_exercises_set && \ # All exercises in the set are included
-                   all_values.size == all_values_set.size   # No exercise is in 2 different pages
+          # All pages returned belong to the to_ecosystem
+          # All exercises given in the set are included (no orphans)
+          # No exercise is in 2 different pages
+          @valid = all_keys_set.subset?(all_pages_set) && \
+                   all_values_set == all_exercises_set && \
+                   all_values.size == all_values_set.size
         end
 
       end

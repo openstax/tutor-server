@@ -51,8 +51,7 @@ module Content
     def group_exercises_by_pages(exercises:)
       ex_arr = verify_and_return [exercises].flatten.compact, klass: ::Content::Exercise,
                                                               error: ArgumentError
-      verify_and_return @strategy.group_exercises_by_pages(exercises: ex_arr),
-                        klass: ::Content::Page
+      verify_and_return @strategy.group_exercises_by_pages(exercises: ex_arr), klass: Hash
     end
 
     def valid?

@@ -11,6 +11,8 @@ class Content::Models::Tag < Tutor::SubSystems::BaseModel
   has_many :lo_teks_tags, foreign_key: :lo_id, dependent: :destroy
   has_many :teks_tags, through: :lo_teks_tags, class_name: 'Tag', source: :teks
 
+  has_many :same_value_tags, class_name: 'Tag', primary_key: 'value', foreign_key: 'value'
+
   # List the different types of tags
   enum tag_type: [ :generic, :lo, :aplo, :teks, :dok, :blooms, :length ]
 
@@ -18,6 +20,8 @@ class Content::Models::Tag < Tutor::SubSystems::BaseModel
   validates :tag_type, presence: true
 
   before_save :update_tag_type_data_and_visible
+
+  OBJECTIVE_TAG_TYPES = ['lo', 'aplo'].collect{ |type| tag_types[type] }
 
   TAG_TYPE_REGEX = {
     dok: /^dok(\d+)$/,

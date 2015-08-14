@@ -29,8 +29,15 @@ class Content::ImportBook
     query_hash = { tag: objective_page_tags.collect{ |pt| pt.tag.value } }
     page_block = ->(exercise_wrapper) {
       tags = Set.new(exercise_wrapper.los + exercise_wrapper.aplos)
-      # Assume only one page for now
-      objective_page_tags.find{ |opt| tags.include?(opt.tag.value) }.try(:page)
+      pages = objective_page_tags.select{ |opt| tags.include?(opt.tag.value) }
+                                 .collect{ |opt| opt.page }
+
+      # Blow up if there is more than one page for an exercise
+      fatal_error(code: :multiple_pages_for_one_exercise,
+                  message: "Multiple pages were found for an exercise.\nExercise: #{
+                    exercise_wrapper.uid}\nPages:\n#{pages.collect{ |pg| pg.url }.join("\n")}") \
+        if pages.size != 1
+      pages.first
     }
 
     if objective_page_tags.empty?

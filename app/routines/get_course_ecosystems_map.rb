@@ -1,5 +1,5 @@
-class GetCourseEcosystemMap
-  lev_routine express_output: :map
+class GetCourseEcosystemsMap
+  lev_routine express_output: :ecosystems_map
 
   protected
 
@@ -18,10 +18,8 @@ class GetCourseEcosystemMap
     map_attributes = { from_ecosystems: from_ecosystems,
                        to_ecosystem: to_ecosystem,
                        strategy_class: map_strategy_class }
-    map = ::Content::Map.find(map_attributes) || ::Content::Map.create(map_attributes)
-    fatal_error(code: :invalid_map,
-                message: 'Could not map ecosystems to each other') if map.nil? || !map.valid?
 
-    outputs[:map] = map
+    outputs[:ecosystems_map] = ::Content::Map.find(map_attributes) || \
+                               ::Content::Map.create!(map_attributes)
   end
 end
