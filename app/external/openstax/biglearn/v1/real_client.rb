@@ -155,13 +155,13 @@ class OpenStax::Biglearn::V1::RealClient
   end
 
   def construct_add_pool_payload(pool)
-    { source: { questions: pool.exercises.collect do |exercise|
+    { sources: [{ questions: pool.exercises.collect do |exercise|
       { question_id: exercise.question_id, version: exercise.version }
-    end } }
+    end }] }
   end
 
   def construct_combine_pools_payload(pools)
-    { source: { pools: pools.collect{ |pl| pl.uuid } } }
+    { sources: [{ pools: pools.collect{ |pl| pl.uuid } }] }
   end
 
   def handle_response(response)
