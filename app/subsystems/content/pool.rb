@@ -4,7 +4,7 @@ module Content
     include Wrapper
 
     def uuid
-      verify_and_return @strategy.uuid, klass: ::Content::Uuid
+      verify_and_return @strategy.uuid, klass: ::Content::Uuid, allow_nil: true
     end
 
     def pool_type

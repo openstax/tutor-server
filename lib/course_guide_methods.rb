@@ -18,16 +18,20 @@ module CourseGuideMethods
       hash[::Content::Exercise.new(strategy: strategy)] = te
     end
 
-    page_to_exercises_map = ecosystems_map.group_exercises_by_pages(tasked_exercise_map.keys)
+    page_to_exercises_map = ecosystems_map.group_exercises_by_pages(
+      exercises: exercise_to_tasked_exercise_map.keys
+    )
 
-    page_to_exercises_map.each_with_object({}) do |(page, exercises)|
+    page_to_exercises_map.each_with_object({}) do |(page, exercises), hash|
       hash[page] = exercises.collect{ |ex| exercise_to_tasked_exercise_map[ex] }
     end
   end
 
   def group_tasked_exercises_by_chapters(tasked_exercises, ecosystems_map)
     page_grouping = group_tasked_exercises_by_pages(tasked_exercises, ecosystems_map)
-    page_grouping.group_by{ |page, exercises| page.chapter }
+    page_grouping.each_with_object({}) do |(page, exercises), hash|
+      hash[page.chapter] = (hash[page.chapter] || {}).merge(page => exercises)
+    end
   end
 
   def completed_practices(tasked_exercises)

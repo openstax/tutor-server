@@ -36,7 +36,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
         cnx_page:  cnx_page,
         chapter: chapter,
         book_location: [8, ii+1]
-      ).outputs.page
+      ).outputs.page.reload
     end
   }
 

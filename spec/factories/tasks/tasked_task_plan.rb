@@ -25,7 +25,7 @@ FactoryGirl.define do
                                               book_location: [1, 1]]
       end
 
-      Content::Routines::PopulateExercisePools[pages: @page]
+      Content::Routines::PopulateExercisePools[pages: @page.reload]
 
       AddEcosystemToCourse[course: owner, ecosystem: chapter.book.ecosystem]
 

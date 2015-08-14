@@ -4,7 +4,7 @@ class Content::Routines::UpdatePageContent
 
   protected
 
-  def exec(pages:)
+  def exec(pages:, save: true)
     # Get all page cnx_ids in this book
     page_cnx_ids = pages.collect{ |page| page.cnx_id }
 
@@ -18,7 +18,7 @@ class Content::Routines::UpdatePageContent
       page.content = doc.to_html
       # Maybe replace with UPSERT once we have support for it
       # https://wiki.postgresql.org/wiki/UPSERT
-      page.save!
+      page.save! if save
     end
 
     outputs[:pages] = pages

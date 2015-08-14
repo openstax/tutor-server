@@ -20,7 +20,7 @@ class GetStudentGuide
   def gather_role_stats(role)
     task_steps = task_steps_for_role(role)
     period = role.student.period
-    book = role.student.course.ecosystems.first.books.first
-    { period_id: period.id }.merge(compile_guide(task_steps, book))
+    course = role.student.course
+    { period_id: period.id }.merge(compile_course_guide(task_steps, course))
   end
 end

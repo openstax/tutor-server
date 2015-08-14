@@ -187,23 +187,23 @@ module Content
         end
 
         def reading_dynamic_pools(pages:)
-          find_content_pools(pages: pages, type: :reading_dynamic)
+          find_pools(pages: pages, type: :reading_dynamic)
         end
 
         def reading_try_another_pools(pages:)
-          find_content_pools(pages: pages, type: :reading_try_another)
+          find_pools(pages: pages, type: :reading_try_another)
         end
 
         def homework_core_pools(pages:)
-          find_content_pools(pages: pages, type: :homework_core)
+          find_pools(pages: pages, type: :homework_core)
         end
 
         def homework_dynamic_pools(pages:)
-          find_content_pools(pages: pages, type: :homework_dynamic)
+          find_pools(pages: pages, type: :homework_dynamic)
         end
 
         def practice_widget_pools(pages:)
-          find_content_pools(pages: pages, type: :practice_widget)
+          find_pools(pages: pages, type: :practice_widget)
         end
 
         alias_method :entity_tags, :tags
@@ -227,10 +227,14 @@ module Content
 
         protected
 
-        def find_content_pools(pages:, type:)
-          entity_pools.where(pool_type: Content::Models::Pool.pool_types[type],
-                             content_page_id: pages.collect{ |pg| pg.id })
-                      .collect do |entity_pool|
+        def find_pools(pages:, type:)
+          page_ids = pages.collect(&:id)
+          pool_method_name = "#{type.to_s}_pool".to_sym
+
+          entity_pages.where(id: page_ids)
+                      .joins(pool_method_name)
+                      .eager_load(pool_method_name).collect do |entity_page|
+            entity_pool = entity_page.send(pool_method_name)
             ::Content::Pool.new(strategy: entity_pool)
           end
         end

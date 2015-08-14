@@ -49,8 +49,10 @@ class Content::ImportBook
 
     # Need a double reload here for it to work for some reason
     pages = book.reload.pages(true).eager_load(exercises: {exercise_tags: :tag})
-    pages = run(:update_page_content, pages: pages).outputs.pages
-    pools = run(:populate_exercise_pools, pages: pages, save: false).outputs.pools.flatten
+    pages = run(:update_page_content, pages: pages, save: false).outputs.pages
+    outs = run(:populate_exercise_pools, pages: pages, save: false).outputs
+    pages = outs.pages
+    pools = outs.pools.flatten
 
     outputs[:pages] = pages
 
@@ -83,7 +85,8 @@ class Content::ImportBook
     end
 
     Content::Models::Pool.import! pools
-
+    # Replace with UPSERT once we support it
+    pages.each{ |page| page.save! }
   end
 
 end

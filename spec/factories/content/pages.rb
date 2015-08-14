@@ -7,5 +7,11 @@ FactoryGirl.define do
     uuid { SecureRandom.uuid }
     version { Random.rand(1..10) }
     book_location [1, 1]
+
+    association :reading_dynamic_pool, factory: :content_pool
+    association :reading_try_another_pool, factory: :content_pool
+    association :homework_core_pool, factory: :content_pool
+    association :homework_dynamic_pool, factory: :content_pool
+    association :practice_widget_pool, factory: :content_pool
   end
 end

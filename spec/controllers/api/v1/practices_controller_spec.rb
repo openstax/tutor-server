@@ -55,8 +55,10 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
       biglearn_pools_with_uuids = OpenStax::Biglearn::V1.add_pools(biglearn_pools)
       pools.each_with_index do |pool, ii|
         pool.uuid = biglearn_pools_with_uuids[ii].uuid
-        pool.save!
       end
+
+      Content::Models::Pool.import! pools
+      page.save!
     end
 
     it 'returns the practice task data' do

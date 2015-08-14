@@ -11,7 +11,8 @@ module Content
       has_many :chapters, through: :books
       has_many :pages, through: :chapters
       has_many :exercises, through: :pages
-      has_many :pools, through: :pages
+
+      has_many :pools, dependent: :destroy, inverse_of: :ecosystem
 
       has_many :tags, dependent: :destroy, inverse_of: :ecosystem
 
