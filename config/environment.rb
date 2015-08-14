@@ -12,6 +12,7 @@ require 'representable/coercion'
 require 'env_utilities'
 require 'settings'
 require 'course_guide_methods'
+require 'verified_collections'
 
 SITE_NAME = "OpenStax Tutor"
 COPYRIGHT_HOLDER = "Rice University"
