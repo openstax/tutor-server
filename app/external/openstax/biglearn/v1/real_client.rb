@@ -29,7 +29,7 @@ class OpenStax::Biglearn::V1::RealClient
   end
 
   def combine_pools(pools)
-    options = { body: construct_combine_pool_payload(pools).to_json }
+    options = { body: construct_combine_pools_payload(pools).to_json }
     response = request(:post, add_pools_uri, with_content_type_header(options))
     handle_response(response)
   end
