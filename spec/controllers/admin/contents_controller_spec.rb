@@ -13,32 +13,11 @@ RSpec.describe Admin::ContentsController, speed: :slow, vcr: VCR_OPTS do
     it 'lists ecosystems' do
       get :index
 
-      expect(assigns[:ecosystems]).to eq([
-        {
-          'id' => book_2.ecosystem.id,
-          'title' => book_2.ecosystem.title,
-          'books' => [
-            {
-              'title' => 'AP Biology',
-              'uuid' => book_2.uuid,
-              'version' => book_2.version,
-              'url' => book_2.url
-            }
-          ]
-        },
-        {
-          'id' => book_1.ecosystem.id,
-          'title' => book_1.ecosystem.title,
-          'books' => [
-            {
-              'title' => 'Physics',
-              'uuid' => book_1.uuid,
-              'version' => book_1.version,
-              'url' => book_1.url
-            }
-          ]
-        }
-      ])
+      expected_ecosystems = [book_2.ecosystem, book_1.ecosystem].collect do |content_ecosystem|
+        strategy = ::Content::Strategies::Direct::Ecosystem.new(content_ecosystem)
+        ::Content::Ecosystem.new(strategy: strategy)
+      end
+      expect(assigns[:ecosystems]).to eq expected_ecosystems
     end
   end
 

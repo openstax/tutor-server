@@ -106,32 +106,12 @@ RSpec.describe Admin::CoursesController do
     it 'selects the correct ecosystem' do
       get :edit, id: course.id
       expect(assigns[:course_ecosystem]).to eq eco_1
-      expect(assigns[:ecosystems].sort { |a, b| a.id <=> b.id }).to eq([
-        {
-          'id' => eco_1.id,
-          'title' => eco_1.title,
-          'books' => [
-            {
-              'title' => 'Physics',
-              'url' => book_1.url,
-              'uuid' => uuid_1,
-              'version' => version_1
-            }
-          ]
-        },
-        {
-          'id' => eco_2.id,
-          'title' => eco_2.title,
-          'books' => [
-            {
-              'title' => 'Biology',
-              'url' => book_2.url,
-              'uuid' => uuid_2,
-              'version' => version_2
-            }
-          ]
-        }
-      ])
+
+      expected_ecosystems = [eco_2, eco_1].collect do |content_ecosystem|
+        strategy = ::Content::Strategies::Direct::Ecosystem.new(content_ecosystem)
+        ::Content::Ecosystem.new(strategy: strategy)
+      end
+      expect(assigns[:ecosystems]).to eq expected_ecosystems
     end
   end
 
