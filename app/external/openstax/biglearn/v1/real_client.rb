@@ -180,7 +180,9 @@ class OpenStax::Biglearn::V1::RealClient
   end
 
   def construct_combine_pools_payload(pools)
-    { sources: { pools: pools.collect{ |pl| pl.uuid } } }
+    { sources: [
+      { pools: pools.collect{ |pl| pl.uuid } }
+    ] }
   end
 
   def handle_response(response)
