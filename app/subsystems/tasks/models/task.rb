@@ -5,9 +5,12 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   enum task_type: [:homework, :reading, :chapter_practice,
                    :page_practice, :mixed_practice, :external]
 
-  belongs_to :task_plan
+  belongs_to :task_plan, inverse_of: :tasks
+
+  # dependent: :destroy will cause and infinite loop and stack overflow
   belongs_to :entity_task, class_name: 'Entity::Task',
                            foreign_key: 'entity_task_id',
+                           dependent: :delete,
                            inverse_of: :task
 
   sortable_has_many :task_steps, on: :number,
