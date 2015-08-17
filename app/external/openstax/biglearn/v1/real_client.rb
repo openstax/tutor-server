@@ -116,7 +116,7 @@ class OpenStax::Biglearn::V1::RealClient
     tag_search = stringify_tag_search(:_or => tags)
 
     query = {
-      learners: get_exchange_read_identifiers_for_roles(roles: roles), aggregations: tag_search
+      learners: get_exchange_read_identifiers_for_roles(roles: roles), tag_queries: tag_search
     }
 
     response = request(:get, clue_uri, params: query)
