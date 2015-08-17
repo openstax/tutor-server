@@ -4,7 +4,7 @@ module UserProfile
 
     uses_routine OpenStax::Accounts::FindOrCreateAccount,
       translations: { outputs: { type: :verbatim } },
-      as: :create_account
+      as: :find_or_create_account
 
     protected
 
@@ -14,15 +14,17 @@ module UserProfile
       raise ArgumentError, 'Requires either an email, a username or an account_id' \
         if email.nil? && username.nil? && account_id.nil?
 
+      account_id ||= find_or_create_account_id(
+        email: email, username: username, password: password,
+        first_name: first_name, last_name: last_name,
+        full_name: full_name, title: title
+      )
+
       outputs[:profile] = Models::Profile.create!(
         exchange_read_identifier: (exchange_identifiers || new_identifiers).read,
         exchange_write_identifier: (exchange_identifiers || new_identifiers).write,
         entity_user_id: entity_user_id || new_entity_user_id,
-        account_id: account_id || new_account_id(
-          email: email, username: username, password: password,
-          first_name: first_name, last_name: last_name,
-          full_name: full_name, title: title
-        )
+        account_id: account_id
       )
     end
 
@@ -37,8 +39,8 @@ module UserProfile
       entity_user.id
     end
 
-    def new_account_id(attrs)
-      run(:create_account, attrs).outputs.account.id
+    def find_or_create_account_id(attrs)
+      run(:find_or_create_account, attrs).outputs.account.id
     end
   end
 end

@@ -29,21 +29,30 @@ class Content::ImportBook
     query_hash = { tag: objective_page_tags.collect{ |pt| pt.tag.value } }
     page_block = ->(exercise_wrapper) {
       tags = Set.new(exercise_wrapper.los + exercise_wrapper.aplos)
-      # Assume only one page for now
-      objective_page_tags.find{ |opt| tags.include?(opt.tag.value) }.try(:page)
+      pages = objective_page_tags.select{ |opt| tags.include?(opt.tag.value) }
+                                 .collect{ |opt| opt.page }
+
+      # Blow up if there is more than one page for an exercise
+      fatal_error(code: :multiple_pages_for_one_exercise,
+                  message: "Multiple pages were found for an exercise.\nExercise: #{
+                    exercise_wrapper.uid}\nPages:\n#{pages.collect{ |pg| pg.url }.join("\n")}") \
+        if pages.size != 1
+      pages.first
     }
 
     if objective_page_tags.empty?
       outputs[:exercises] = []
     else
       outputs[:exercises] = nil
-      run(:import_exercises, page: page_block, query_hash: query_hash)
+      run(:import_exercises, ecosystem: ecosystem, page: page_block, query_hash: query_hash)
     end
 
     # Need a double reload here for it to work for some reason
     pages = book.reload.pages(true).eager_load(exercises: {exercise_tags: :tag})
-    pages = run(:update_page_content, pages: pages).outputs.pages
-    pools = run(:populate_exercise_pools, pages: pages, save: false).outputs.pools.flatten
+    pages = run(:update_page_content, pages: pages, save: false).outputs.pages
+    outs = run(:populate_exercise_pools, pages: pages, save: false).outputs
+    pages = outs.pages
+    pools = outs.pools.flatten
 
     outputs[:pages] = pages
 
@@ -76,7 +85,8 @@ class Content::ImportBook
     end
 
     Content::Models::Pool.import! pools
-
+    # Replace with UPSERT once we support it
+    pages.each{ |page| page.save! }
   end
 
 end

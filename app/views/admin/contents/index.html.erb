@@ -7,6 +7,7 @@
       <th>UUID</th>
       <th>Version</th>
       <th>Link to Archive</th>
+      <th>Import Date</th>
     </tr>
   </thead>
   <tbody>
@@ -17,6 +18,7 @@
       <td><%= ecosystem.books.first.version %></td>
       <td><%= link_to 'Archive', ecosystem.books.first.url, target: '_blank',
                                                             class: 'btn btn-xs btn-primary' %></td>
+      <td><%= ecosystem.imported_at %></td>
     </tr>
   <% end %>
   </tbody>

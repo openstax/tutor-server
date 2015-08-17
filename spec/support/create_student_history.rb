@@ -59,9 +59,10 @@ class CreateStudentHistory
     run(:distribute_tasks, create_ireading_task_plan(ecosystem, course, periods))
 
     task_plan = create_homework_task_plan(ecosystem, course, periods)
-    tasks = run(:distribute_tasks, task_plan).outputs.entity_tasks
-    tasks.each do |task|
-      answer_correctly(task.task.task_steps, 2)
+    entity_tasks = run(:distribute_tasks, task_plan).outputs.entity_tasks
+    entity_tasks.each do |entity_task|
+      task = entity_task.task.reload
+      answer_correctly(task.task_steps(true), 2)
     end
   end
 

@@ -12,7 +12,7 @@ class Content::Routines::ImportExercises
   # page can be a Content::Models::Page or a block
   # that takes an OpenStax::Exercises::V1::Exercise
   # and returns a Content::Models::Page for that exercise
-  def exec(page:, query_hash:)
+  def exec(ecosystem:, page:, query_hash:)
     outputs[:exercises] = []
 
     wrappers = OpenStax::Exercises::V1.exercises(query_hash)['items']
@@ -20,7 +20,7 @@ class Content::Routines::ImportExercises
 
     wrapper_tag_hashes = wrappers.collect{ |wrapper| wrapper.tag_hashes }.flatten
                                  .uniq{ |hash| hash[:value] }
-    tags = run(:find_or_create_tags, input: wrapper_tag_hashes).outputs.tags
+    tags = run(:find_or_create_tags, ecosystem: ecosystem, input: wrapper_tag_hashes).outputs.tags
 
     wrappers.each do |wrapper|
       exercise_page = page.respond_to?(:call) ? page.call(wrapper) : page

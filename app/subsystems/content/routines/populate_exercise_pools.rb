@@ -5,23 +5,26 @@ class Content::Routines::PopulateExercisePools
   protected
 
   def exec(pages:, save: true)
-    outputs[:pools] = [pages].flatten.collect do |page|
-      reading_dynamic_pool = Content::Models::Pool.new(page: page,
-                                                       pool_type: :reading_dynamic)
-      reading_try_another_pool = Content::Models::Pool.new(page: page,
-                                                           pool_type: :reading_try_another)
-      homework_core_pool = Content::Models::Pool.new(page: page,
-                                                     pool_type: :homework_core)
-      homework_dynamic_pool = Content::Models::Pool.new(page: page,
-                                                        pool_type: :homework_dynamic)
-      practice_widget_pool = Content::Models::Pool.new(page: page,
-                                                       pool_type: :practice_widget)
+    pages = [pages].flatten
+    outputs[:pools] = pages.collect do |page|
+      ecosystem = page.ecosystem
+
+      page.reading_dynamic_pool = Content::Models::Pool.new(ecosystem: ecosystem,
+                                                            pool_type: :reading_dynamic)
+      page.reading_try_another_pool = Content::Models::Pool.new(ecosystem: ecosystem,
+                                                                pool_type: :reading_try_another)
+      page.homework_core_pool = Content::Models::Pool.new(ecosystem: ecosystem,
+                                                          pool_type: :homework_core)
+      page.homework_dynamic_pool = Content::Models::Pool.new(ecosystem: ecosystem,
+                                                             pool_type: :homework_dynamic)
+      page.practice_widget_pool = Content::Models::Pool.new(ecosystem: ecosystem,
+                                                            pool_type: :practice_widget)
 
       page.exercises.each do |exercise|
         tags = Set.new exercise.exercise_tags.collect{ |et| et.tag.value }
 
         # iReading Dynamic (Concept Coach)
-        reading_dynamic_pool.content_exercise_ids << exercise.id \
+        page.reading_dynamic_pool.content_exercise_ids << exercise.id \
           if (
             tags.include?('k12phys') && tags.include?('os-practice-concepts')
           ) || (
@@ -30,15 +33,15 @@ class Content::Routines::PopulateExercisePools
           )
 
         # iReading Try Another/Refresh my Memory
-        reading_try_another_pool.content_exercise_ids << exercise.id \
+        page.reading_try_another_pool.content_exercise_ids << exercise.id \
           if tags.include?('os-practice-problems')
 
         # Homework Core (Assignment Builder)
-        homework_core_pool.content_exercise_ids << exercise.id \
+        page.homework_core_pool.content_exercise_ids << exercise.id \
           if tags.include?('ost-chapter-review')
 
         # Homework Dynamic
-        homework_dynamic_pool.content_exercise_ids << exercise.id \
+        page.homework_dynamic_pool.content_exercise_ids << exercise.id \
           if (
             tags.include?('k12phys') && (
               tags.include?('os-practice-problems') || (
@@ -60,17 +63,20 @@ class Content::Routines::PopulateExercisePools
           )
 
         # Practice Widget
-        practice_widget_pool.content_exercise_ids << exercise.id
+        page.practice_widget_pool.content_exercise_ids << exercise.id
       end
 
-      [reading_dynamic_pool, reading_try_another_pool,
-       homework_core_pool, homework_dynamic_pool, practice_widget_pool]
+      [page.reading_dynamic_pool, page.reading_try_another_pool,
+       page.homework_core_pool, page.homework_dynamic_pool, page.practice_widget_pool]
     end
+
+    outputs[:pages] = pages
 
     return unless save
 
     pools = outputs[:pools].flatten
     pools.each{ |pool| pool.uuid = SecureRandom.uuid }
     Content::Models::Pool.import! pools
+    pages.each{ |page| page.save! }
   end
 end

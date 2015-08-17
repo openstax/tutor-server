@@ -139,11 +139,11 @@ class DemoBase
     raise "need a full name" if last_name.nil?
 
     # The password will be set if stubbing is disabled
-    profile = run(UserProfile::CreateProfile, username: username,
-                                              password: password,
-                                              first_name: first_name,
-                                              last_name: last_name,
-                                              full_name: name).outputs.profile
+    profile ||= run(UserProfile::CreateProfile, username: username,
+                                                password: password,
+                                                first_name: first_name,
+                                                last_name: last_name,
+                                                full_name: name).outputs.profile
 
     if sign_contracts
       sign_contract(profile: profile, name: :general_terms_of_use)
@@ -326,6 +326,9 @@ class DemoBase
     book.pages.select{ |page| book_locations.include?(page.book_location) }
   end
 
+  def find_course(name:)
+    CourseProfile::Models::Profile.where(name: name).first.try(:course)
+  end
 
   def create_course(name:)
     course = run(:create_course, name: name).outputs.course
@@ -346,6 +349,9 @@ class DemoBase
     course
   end
 
+  def find_period(course:, name:)
+    Entity::Relation.new(CourseMembership::Models::Period.where(course: course, name: name)).first
+  end
 
   def log(message)
     puts "#{message}\n" if @print_logs

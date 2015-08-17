@@ -11,8 +11,9 @@ FactoryGirl.define do
     version { Random.rand(1..10) }
 
     after(:build) do |book, evaluator|
-      book.ecosystem ||= FactoryGirl.build(:content_ecosystem,
-                                           title: "#{evaluator.title} v#{evaluator.version}")
+      book.ecosystem ||= FactoryGirl.build(
+        :content_ecosystem, title: "#{evaluator.title} (#{evaluator.uuid}@#{evaluator.version})"
+      )
     end
 
     after(:create) do |book, evaluator|

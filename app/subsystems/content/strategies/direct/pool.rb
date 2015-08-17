@@ -8,7 +8,7 @@ module Content
         exposes :type, :exercise_ids, :exercises
 
         def uuid
-          ::Content::Uuid.new(repository.uuid)
+          repository.uuid.nil? ? nil : ::Content::Uuid.new(repository.uuid)
         end
 
         alias_method :entity_exercises, :exercises

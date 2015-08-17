@@ -66,7 +66,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         cnx_page:  cnx_page,
         chapter: chapter,
         book_location: [8, ii+1]
-      ).outputs.page
+      ).outputs.page.reload
     end }
 
     let!(:pools) { Content::Routines::PopulateExercisePools[pages: pages] }
@@ -212,7 +212,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       ).outputs.page
     }
 
-    let!(:pools) { Content::Routines::PopulateExercisePools[pages: page] }
+    let!(:pools) { Content::Routines::PopulateExercisePools[pages: page.reload] }
 
     let!(:task_plan) {
       FactoryGirl.create(:tasks_task_plan,

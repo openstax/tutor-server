@@ -1,5 +1,5 @@
 class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
-  wrapped_by ::Period
+  wrapped_by CourseMembership::Period
 
   belongs_to :course, subsystem: :entity
 

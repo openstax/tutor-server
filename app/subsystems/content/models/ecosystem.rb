@@ -11,9 +11,14 @@ module Content
       has_many :chapters, through: :books
       has_many :pages, through: :chapters
       has_many :exercises, through: :pages
-      has_many :pools, through: :pages
 
-      validates :title, presence: true, uniqueness: true
+      has_many :pools, dependent: :destroy, inverse_of: :ecosystem
+
+      has_many :tags, dependent: :destroy, inverse_of: :ecosystem
+
+      validates :title, presence: true
+
+      default_scope -> { order(created_at: :desc) }
 
     end
   end

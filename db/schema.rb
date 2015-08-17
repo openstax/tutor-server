@@ -49,7 +49,8 @@ ActiveRecord::Schema.define(version: 20150804002246) do
     t.datetime "updated_at", null: false
   end
 
-  add_index "content_ecosystems", ["title"], name: "index_content_ecosystems_on_title", unique: true, using: :btree
+  add_index "content_ecosystems", ["created_at"], name: "index_content_ecosystems_on_created_at", using: :btree
+  add_index "content_ecosystems", ["title"], name: "index_content_ecosystems_on_title", using: :btree
 
   create_table "content_exercise_tags", force: :cascade do |t|
     t.integer  "content_exercise_id", null: false
@@ -97,16 +98,21 @@ ActiveRecord::Schema.define(version: 20150804002246) do
   add_index "content_page_tags", ["content_tag_id"], name: "index_content_page_tags_on_content_tag_id", using: :btree
 
   create_table "content_pages", force: :cascade do |t|
-    t.string   "url",                null: false
+    t.string   "url",                                 null: false
     t.text     "content"
-    t.integer  "content_chapter_id", null: false
-    t.integer  "number",             null: false
-    t.string   "title",              null: false
-    t.string   "uuid",               null: false
-    t.string   "version",            null: false
-    t.text     "book_location",      null: false
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
+    t.integer  "content_chapter_id",                  null: false
+    t.integer  "content_reading_dynamic_pool_id"
+    t.integer  "content_reading_try_another_pool_id"
+    t.integer  "content_homework_core_pool_id"
+    t.integer  "content_homework_dynamic_pool_id"
+    t.integer  "content_practice_widget_pool_id"
+    t.integer  "number",                              null: false
+    t.string   "title",                               null: false
+    t.string   "uuid",                                null: false
+    t.string   "version",                             null: false
+    t.text     "book_location",                       null: false
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
   end
 
   add_index "content_pages", ["content_chapter_id", "number"], name: "index_content_pages_on_content_chapter_id_and_number", unique: true, using: :btree
@@ -114,7 +120,7 @@ ActiveRecord::Schema.define(version: 20150804002246) do
   add_index "content_pages", ["url"], name: "index_content_pages_on_url", using: :btree
 
   create_table "content_pools", force: :cascade do |t|
-    t.integer  "content_page_id",      null: false
+    t.integer  "content_ecosystem_id", null: false
     t.string   "uuid",                 null: false
     t.integer  "pool_type",            null: false
     t.text     "content_exercise_ids"
@@ -122,22 +128,25 @@ ActiveRecord::Schema.define(version: 20150804002246) do
     t.datetime "updated_at",           null: false
   end
 
-  add_index "content_pools", ["content_page_id", "pool_type"], name: "index_content_pools_on_content_page_id_and_pool_type", unique: true, using: :btree
+  add_index "content_pools", ["content_ecosystem_id"], name: "index_content_pools_on_content_ecosystem_id", using: :btree
+  add_index "content_pools", ["pool_type"], name: "index_content_pools_on_pool_type", using: :btree
   add_index "content_pools", ["uuid"], name: "index_content_pools_on_uuid", unique: true, using: :btree
 
   create_table "content_tags", force: :cascade do |t|
-    t.string   "value",                   null: false
-    t.integer  "tag_type",    default: 0, null: false
+    t.integer  "content_ecosystem_id",             null: false
+    t.string   "value",                            null: false
+    t.integer  "tag_type",             default: 0, null: false
     t.string   "name"
     t.text     "description"
     t.string   "data"
     t.boolean  "visible"
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
   end
 
+  add_index "content_tags", ["content_ecosystem_id"], name: "index_content_tags_on_content_ecosystem_id", using: :btree
   add_index "content_tags", ["tag_type"], name: "index_content_tags_on_tag_type", using: :btree
-  add_index "content_tags", ["value"], name: "index_content_tags_on_value", unique: true, using: :btree
+  add_index "content_tags", ["value", "content_ecosystem_id"], name: "index_content_tags_on_value_and_content_ecosystem_id", unique: true, using: :btree
 
   create_table "course_content_course_ecosystems", force: :cascade do |t|
     t.integer  "entity_course_id",     null: false
@@ -615,7 +624,12 @@ ActiveRecord::Schema.define(version: 20150804002246) do
   add_foreign_key "content_page_tags", "content_pages", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_page_tags", "content_tags", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_pages", "content_chapters", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "content_pools", "content_pages", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "content_pages", "content_pools", column: "content_homework_core_pool_id", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "content_pages", "content_pools", column: "content_homework_dynamic_pool_id", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "content_pages", "content_pools", column: "content_practice_widget_pool_id", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "content_pages", "content_pools", column: "content_reading_dynamic_pool_id", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "content_pages", "content_pools", column: "content_reading_try_another_pool_id", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "content_pools", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_content_course_ecosystems", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_content_course_ecosystems", "entity_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_membership_enrollments", "course_membership_periods", on_update: :cascade, on_delete: :cascade

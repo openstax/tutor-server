@@ -3,12 +3,13 @@ require 'vcr_helper'
 
 RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow, vcr: VCR_OPTS do
 
-  let!(:page) { FactoryGirl.create(:content_page) }
+  let!(:page)      { FactoryGirl.create(:content_page) }
+  let!(:ecosystem) { page.book.ecosystem }
 
   it 'imports all exercises with a single tag' do
     result = nil
     expect {
-      result = Content::Routines::ImportExercises.call(page: page,
+      result = Content::Routines::ImportExercises.call(ecosystem: ecosystem, page: page,
                                                        query_hash: {tag: 'k12phys-ch04-s01-lo02'})
     }.to change{ Content::Models::Exercise.count }.by(16)
 
@@ -22,7 +23,7 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
 
   it 'imports all exercises with a set of tags' do
     tags = ['k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02']
-    expect { Content::Routines::ImportExercises.call(page: page,
+    expect { Content::Routines::ImportExercises.call(ecosystem: ecosystem, page: page,
                                                      query_hash: {tag: tags}) }
       .to change{ Content::Models::Exercise.count }.by(33)
 
@@ -38,7 +39,7 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
     result = nil
     tags = ['k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02']
     expect {
-      result = Content::Routines::ImportExercises.call(page: page,
+      result = Content::Routines::ImportExercises.call(ecosystem: ecosystem, page: page,
                                                        query_hash: {tag: tags})
     }.to change{ Content::Models::Tag.count }.by(59)
 

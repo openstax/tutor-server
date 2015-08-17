@@ -17,24 +17,24 @@ module Content
 
     # Wrappers are equal if the strategies are equal
     def ==(other)
-      self.class == other.class && _strategy == other._strategy
+      self.class == other.class && @strategy == other._strategy
     end
 
     # Hash key equality
     def eql?(other)
-      self.class.eql?(other.class) && _strategy.eql?(other._strategy)
+      self.class.eql?(other.class) && @strategy.eql?(other._strategy)
     end
 
     # Hash function
     def hash
-      self.class.hash ^ _strategy.hash
+      self.class.hash ^ @strategy.hash
     end
 
     protected
 
     # Convenience instance method that calls the verify_and_return class method
     def verify_and_return(object, klass:, error: ::Content::StrategyError,
-                          allow_blank: false, allow_nil: false)
+                                  allow_blank: false, allow_nil: false)
       self.class.verify_and_return(object, klass: klass, error: error,
                                    allow_blank: allow_blank, allow_nil: allow_nil)
     end
@@ -43,7 +43,7 @@ module Content
       # Verifies that the given "object" is of the given "klass"
       # Returns the object or raises the given "error"
       def verify_and_return(object, klass:, error: ::Content::StrategyError,
-                                 allow_blank: false, allow_nil: false)
+                                    allow_blank: false, allow_nil: false)
         return object if klass == Array && object.is_a?(Array)
 
         if allow_blank

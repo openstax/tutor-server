@@ -6,7 +6,7 @@ class UserProfile::Models::Profile < Tutor::SubSystems::BaseModel
   has_many :groups_as_owner, through: :account
 
   has_one :administrator, dependent: :destroy, inverse_of: :profile,
-    class_name: 'UserProfile::Models::Administrator'
+                          class_name: 'UserProfile::Models::Administrator'
 
   validates :account, :entity_user, presence: true, uniqueness: true
   validates :exchange_read_identifier, presence: true

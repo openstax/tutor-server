@@ -3,7 +3,7 @@ class GetCourseEcosystem
 
   protected
 
-  def exec(course:)
+  def exec(course:, strategy_class: ::Content::Strategies::Direct::Ecosystem)
     # The first ecosystem is the latest
     content_ecosystem = course.ecosystems.first
 
@@ -12,7 +12,7 @@ class GetCourseEcosystem
       return
     end
 
-    strategy = ::Content::Strategies::Direct::Ecosystem.new(content_ecosystem)
+    strategy = strategy_class.new(content_ecosystem)
     outputs[:ecosystem] = ::Content::Ecosystem.new(strategy: strategy)
   end
 end

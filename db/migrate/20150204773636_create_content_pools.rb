@@ -1,8 +1,8 @@
 class CreateContentPools < ActiveRecord::Migration
   def change
     create_table :content_pools do |t|
-      t.references :content_page, null: false, foreign_key: { on_update: :cascade,
-                                                              on_delete: :cascade }
+      t.references :content_ecosystem, null: false, index: true,
+                                       foreign_key: { on_update: :cascade, on_delete: :cascade }
       t.string :uuid, null: false
       t.integer :pool_type, null: false
       t.text :content_exercise_ids
@@ -10,7 +10,7 @@ class CreateContentPools < ActiveRecord::Migration
       t.timestamps null: false
 
       t.index :uuid, unique: true
-      t.index [:content_page_id, :pool_type], unique: true
+      t.index :pool_type
     end
   end
 end

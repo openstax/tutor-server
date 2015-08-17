@@ -18,13 +18,12 @@ class GetTeacherGuide
     ).collect{ |en| en.student.role.taskings.collect{ |ts| ts.task.task.task_steps } }.flatten
   end
 
-  def gather_period_stats(period)
+  def gather_period_stats(period, course)
     task_steps = task_steps_for_period(period)
-    book = period.course.ecosystems.first.books.first
-    { period_id: period.id }.merge(compile_guide(task_steps, book))
+    { period_id: period.id }.merge(compile_course_guide(task_steps, course))
   end
 
   def gather_course_stats(course)
-    course.periods.collect{ |period| gather_period_stats(period) }
+    course.periods.collect{ |period| gather_period_stats(period, course) }
   end
 end

@@ -14,10 +14,10 @@ class Content::Routines::FindOrCreateTags
   #       teks:        a raw value of a (possibly non-existent) TEKS tag to link
   #                    to (type must be "lo")
   #
-  def exec(input:)
+  def exec(ecosystem:, input:)
     tag_objects, hashes = partition_content_tags(input)
     tag_objects.each{ |tag| tag.save! unless tag.persisted? }
-    outputs[:tags] = tag_objects + find_or_create_tags_from_hash_array(hashes)
+    outputs[:tags] = tag_objects + find_or_create_ecosystem_tags_from_hash_array(ecosystem, hashes)
   end
 
   private
@@ -26,34 +26,37 @@ class Content::Routines::FindOrCreateTags
     [input].flatten.partition{ |obj| obj.is_a?(Content::Models::Tag) }
   end
 
-  def find_or_create_tags_from_hash_array(hash_array)
+  def find_or_create_ecosystem_tags_from_hash_array(ecosystem, hash_array)
     # Find existing tags
     hash_values = hash_array.collect{ |hash| hash[:value] }
-    existing_tags = Content::Models::Tag.eager_load(:teks_tags).where(value: hash_values)
+    hash_values = (hash_values + hash_array.collect{ |hash| hash[:teks] }.compact).uniq
+    existing_tags = Content::Models::Tag.where(content_ecosystem_id: ecosystem.id,
+                                               value: hash_values).to_a
     existing_tag_values = existing_tags.collect{ |tag| tag.value }
-    existing_teks_tags = existing_tags.collect{ |tag| tag.teks_tags }.flatten
 
     # Exclude existing tags
     new_hash_array = hash_array.select{ |hash| !existing_tag_values.include?(hash[:value]) }
 
     # Create new TEKS tags first
-    teks_values = new_hash_array.collect{ |hash| hash[:teks] }.compact.uniq
-    existing_teks_tags = (existing_teks_tags + Content::Models::Tag.where(value: teks_values)).uniq
+    new_hash_teks = new_hash_array.collect{ |hash| hash[:teks] }.compact.uniq
+    existing_teks_tags = existing_tags.select{ |tag| new_hash_teks.include?(tag.value) }
     existing_teks_values = existing_teks_tags.collect{ |tag| tag.value }
 
     # Search tag hashes for the TEKS definitions
-    new_teks_values = teks_values.select{ |value| !existing_teks_values.include?(value) }
+    new_teks_values = new_hash_teks - existing_teks_values
     new_teks_hashes = new_hash_array.select{ |hash| new_teks_values.include?(hash[:value]) }
 
     # Some TEKS was found that did not previously exist and is not defined in the content
     hashless_teks = new_teks_values - new_teks_hashes.collect{ |hash| hash[:value] }
     Rails.logger.warn "TEKS with no definition found: #{hashless_teks.join(', ')}" \
       unless hashless_teks.empty?
-    missing_teks_hashes = hashless_teks.collect{ |teks| {value: teks} }
+    missing_teks_hashes = hashless_teks.collect{ |teks| { value: teks } }
 
     # Create new tags for TEKS
     new_teks_tags = (new_teks_hashes + missing_teks_hashes).collect do |hash|
-      Content::Models::Tag.create!(hash.slice(:value, :name, :description).merge(tag_type: :teks))
+      attributes = hash.slice(:value, :name, :description)
+                       .merge(content_ecosystem_id: ecosystem.id, tag_type: :teks)
+      Content::Models::Tag.create!(attributes)
     end
     teks_tags = existing_teks_tags + new_teks_tags
     teks_map = teks_tags.each_with_object({}) do |tag, hash|
@@ -66,7 +69,9 @@ class Content::Routines::FindOrCreateTags
     # Create non-TEKS tags
     new_non_teks_tags = new_hash_array.collect do |hash|
       hash[:tag_type] = hash[:type]
-      new_tag = Content::Models::Tag.create!(hash.slice(:value, :name, :description, :tag_type))
+      attributes = hash.slice(:value, :name, :description, :tag_type)
+                       .merge(content_ecosystem_id: ecosystem.id)
+      new_tag = Content::Models::Tag.create!(attributes)
       teks_value = hash[:teks]
 
       # If the hash mentions a TEKS tag, link it

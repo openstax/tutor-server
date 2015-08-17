@@ -40,8 +40,9 @@ class DemoTasks < DemoBase
         end
 
         log("  Distributing tasks")
-        task_plan = Tasks::Models::TaskPlan.where(owner: content.course, title: assignment.title).first!
-        distribute_tasks(task_plan:task_plan)
+        task_plan = Tasks::Models::TaskPlan.where(owner: content.course, title: assignment.title)
+                                           .order(created_at: :desc).first!
+        distribute_tasks(task_plan: task_plan)
 
       end
     end
