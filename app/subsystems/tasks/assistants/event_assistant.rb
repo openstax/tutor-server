@@ -21,12 +21,12 @@ module Tasks
         if students.length != taskees.length
           raise StandardError, 'Event assignment taskees must all be students'
         else
-          taskees.map do
+          taskees.collect {
             Tasks::BuildTask[task_plan: task_plan,
                              task_type: :event,
                              title: task_plan.title || 'Event',
                              description: task_plan.description]
-          end
+          }.flat_map(&:entity_task)
         end
       end
 
