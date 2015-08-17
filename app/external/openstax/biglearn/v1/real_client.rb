@@ -46,8 +46,7 @@ class OpenStax::Biglearn::V1::RealClient
     body_hash = handle_response(response)
 
     uuids = body_hash['pool_ids']
-    raise "BigLearn returned (#{uuids.count} != 1) uuids "
-      unless uuids.count == 1
+    raise "BigLearn returned (#{uuids.count} != 1) uuids " unless uuids.count == 1
 
     nil_uuid_count = uuids.count(&:nil?)
     raise "BigLearn returned #{nil_uuid_count} nil uuids" if nil_uuid_count > 0
