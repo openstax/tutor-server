@@ -19,7 +19,7 @@ module Tasks
         students = taskees.flat_map(&:student).compact
 
         if students.length != taskees.length
-          raise StandardError, 'External assignment taskees must all be students'
+          raise StandardError, 'Event assignment taskees must all be students'
         else
           taskees.collect.with_index do |taskee, i|
             build_event_task(task_plan: task_plan,
