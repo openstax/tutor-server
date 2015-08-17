@@ -129,6 +129,11 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, vcr: VCR_OPTS do
     ]
   }
 
+  let!(:the_scientific_method_hash) {
+    { id: '9545b9a2-c371-4a31-abb9-3a4a1fff497b@8',
+      title: 'The Scientific Method' }
+  }
+
   def page_for(hash)
     OpenStax::Cnx::V1::Page.new(hash: HashWithIndifferentAccess.new(hash).except(:expected))
   end
@@ -200,6 +205,20 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, vcr: VCR_OPTS do
 
       expect(Set.new page.tags).to eq Set.new(hash[:expected][:tags])
     end
+  end
+
+  it 'extracts snap lab notes' do
+    page = page_for(the_scientific_method_hash)
+
+    snap_labs = page.snap_labs
+    expect(snap_labs.length).to eq 1
+    expect(snap_labs.first[:id]).to eq 'fs-id1164355841632'
+    expect(snap_labs.first[:title]).to eq(
+      'Using Models and the Scientific Processes')
+    expect(snap_labs.first[:fragments].collect(&:class)).to eq([
+      OpenStax::Cnx::V1::Fragment::Feature,
+      OpenStax::Cnx::V1::Fragment::Exercise
+    ])
   end
 
 end
