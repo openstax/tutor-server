@@ -22,7 +22,7 @@ module OpenStax::Biglearn::V1
   end
 
   def self.combine_pools(pools)
-    OpenStax::Biglearn::V1::Pool.new(uuid: client.combine_pools(pools)['pool_id'])
+    OpenStax::Biglearn::V1::Pool.new(uuid: client.combine_pools(pools))
   end
 
   # Returns recommended exercises

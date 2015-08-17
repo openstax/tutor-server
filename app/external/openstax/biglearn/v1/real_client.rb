@@ -26,20 +26,16 @@ class OpenStax::Biglearn::V1::RealClient
     response = request(:post, add_pools_uri, with_content_type_header(options))
     body_hash = handle_response(response)
 
-    orig_uuids = body_hash['pool_ids']
+    uuids = body_hash['pool_ids']
     raise "BigLearn returned wrong number of uuids " \
           "(#pools != #uuids) (#{pools.count} != #{uuids.count})" \
-      unless orig_uuids.count == pools.count
+      unless uuids.count == pools.count
 
-    nil_uuid_count = orig_uuids.count(&:nil?)
+    nil_uuid_count = uuids.count(&:nil?)
     raise "BigLearn returned #{nil_uuid_count} nil uuids" if nil_uuid_count > 0
 
-    blank_uuid_count = orig_uuids.count(&:blank?)
+    blank_uuid_count = uuids.count(&:blank?)
     raise "BigLearn returned #{blank_uuid_count} blank uuids" if blank_uuid_count > 0
-
-    uuids = orig_uuids.map do |uuid|
-      uuid == "None" ? "#{SecureRandom::uuid}-None" : uuid
-    end
 
     uuids
   end
@@ -47,7 +43,19 @@ class OpenStax::Biglearn::V1::RealClient
   def combine_pools(pools)
     options = { body: construct_combine_pools_payload(pools).to_json }
     response = request(:post, add_pools_uri, with_content_type_header(options))
-    handle_response(response)
+    body_hash = handle_response(response)
+
+    uuids = body_hash['pool_ids']
+    raise "BigLearn returned (#{uuids.count} != 1) uuids "
+      unless uuids.count == 1
+
+    nil_uuid_count = uuids.count(&:nil?)
+    raise "BigLearn returned #{nil_uuid_count} nil uuids" if nil_uuid_count > 0
+
+    blank_uuid_count = uuids.count(&:blank?)
+    raise "BigLearn returned #{blank_uuid_count} blank uuids" if blank_uuid_count > 0
+
+    uuids.first
   end
 
   def get_exchange_read_identifiers_for_roles(roles:)
