@@ -7,6 +7,4 @@ RSpec.describe Content::Models::Exercise, :type => :model do
 
   it { is_expected.to validate_presence_of(:number) }
   it { is_expected.to validate_presence_of(:version) }
-
-  it { is_expected.to validate_uniqueness_of(:version).scoped_to(:number) }
 end

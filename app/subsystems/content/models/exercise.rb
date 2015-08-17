@@ -15,7 +15,7 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
   has_many :tasked_exercises, subsystem: :tasks, dependent: :destroy, inverse_of: :exercise
 
   validates :number, presence: true
-  validates :version, presence: true, uniqueness: { scope: :number }
+  validates :version, presence: true
 
   # http://stackoverflow.com/a/7745635
   scope :latest, ->(scope = unscoped) {
