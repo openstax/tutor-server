@@ -41,6 +41,12 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
     tags.to_a.select(&:aplo?)
   end
 
+  def snap_labs
+    parser.snap_labs.collect do |snap_lab|
+      snap_lab.update(id: "#{self.id}:#{snap_lab[:id]}")
+    end
+  end
+
   protected
 
   def parser

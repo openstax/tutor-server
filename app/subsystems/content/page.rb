@@ -96,5 +96,9 @@ module Content
       verify_and_return related_content, klass: Hash, error: StrategyError
     end
 
+    def snap_labs
+      @strategy.snap_labs
+    end
+
   end
 end
