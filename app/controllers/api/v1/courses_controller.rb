@@ -34,7 +34,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     # we can gather extra information
     course_info = CollectCourseInfo[course: course,
                                     user: current_human_user.entity_user,
-                                    with: [:roles, :periods]].first
+                                    with: [:roles, :periods, :book]].first
     respond_with course_info, represent_with: Api::V1::CourseRepresenter
   end
 
