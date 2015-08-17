@@ -1,4 +1,4 @@
-module VerifiedCollections
+module TypeVerification
   def self.included(base)
     base.extend ClassMethods
   end

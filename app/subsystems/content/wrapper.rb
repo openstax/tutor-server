@@ -2,7 +2,7 @@ module Content
   module Wrapper
 
     def self.included(base)
-      base.send(:include, VerifiedCollections)
+      base.send(:include, TypeVerification)
     end
 
     def initialize(strategy:)
