@@ -25,7 +25,7 @@ RSpec.describe Tasks::Assistants::EventAssistant, type: :assistant do
                                   num_tasking_plans: 0)
     FactoryGirl.create(:tasks_tasking_plan, task_plan: task_plan, target: course)
 
-    tasks = DistributeTasks.call(task_plan).outputs.entity_tasks.collect(&:task)
+    tasks = DistributeTasks.call(task_plan).outputs.entity_tasks.flat_map(&:task)
     expect(tasks.length).to eq 3
 
     tasks.each do |task|
