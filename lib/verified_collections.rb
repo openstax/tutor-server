@@ -30,7 +30,4 @@ module VerifiedCollections
       object
     end
   end
-
-  class TypeError < StandardError
-  end
 end
