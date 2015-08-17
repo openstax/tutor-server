@@ -92,7 +92,7 @@ RSpec.describe UserProfile::SearchProfiles do
   it 'requires that an array search is filled with entity users' do
     expect {
       described_class[search: [admin, user_1]]
-    }.to raise_error(VerifiedCollections::TypeError,
+    }.to raise_error(TypeError,
                      "Tested argument was of class 'UserProfile::Models::Profile' instead of the expected 'Entity::User'.")
   end
 end
