@@ -13,7 +13,7 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
   belongs_to :owner, polymorphic: true
 
   has_many :tasking_plans, dependent: :destroy, inverse_of: :task_plan
-  has_many :tasks, dependent: :destroy
+  has_many :tasks, dependent: :destroy, inverse_of: :task_plan
 
   serialize :settings, JSON
 

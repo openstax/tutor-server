@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Api::V1::TaskPlansController, :type => :controller, :api => true, :version => :v1 do
+describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v1 do
 
   let!(:course) { CreateCourse[name: 'Anything'] }
   let!(:period) { CreatePeriod[course: course] }
@@ -331,6 +331,20 @@ describe Api::V1::TaskPlansController, :type => :controller, :api => true, :vers
     it 'does not allow an anonymous user to destroy a task_plan' do
       expect { api_delete :destroy, nil, parameters: { course_id: course.id, id: task_plan.id } }
         .to raise_error(SecurityTransgression)
+    end
+
+    it 'does not leave orphaned entity_tasks behind' do
+      # Change the opens_at dates for the tasks so we can delete them
+      published_task_plan.tasks.each do |task|
+        task.opens_at = Time.now + 1.day
+        task.save!
+      end
+
+      controller.sign_in teacher
+      expect{ api_delete :destroy, nil, parameters: { course_id: course.id,
+                                                      id: published_task_plan.id } }
+        .to change{ ::Entity::Task.count }.by(-1)
+      ::Entity::Task.all.each{ |entity_task| expect(entity_task.task).not_to be_nil }
     end
   end
 
