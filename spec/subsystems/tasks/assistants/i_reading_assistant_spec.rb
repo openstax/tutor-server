@@ -104,7 +104,9 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
     let!(:course) {
       course = task_plan.owner
-      AddEcosystemToCourse[course: course, ecosystem: chapter.book.ecosystem]
+      ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(chapter.book.ecosystem)
+      ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
+      AddEcosystemToCourse[course: course, ecosystem: ecosystem]
       course
     }
     let!(:period) { CreatePeriod[course: course] }

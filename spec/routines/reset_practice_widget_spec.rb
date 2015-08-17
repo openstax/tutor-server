@@ -22,7 +22,8 @@ RSpec.describe ResetPracticeWidget, type: :routine do
   it 'errors when biglearn does not return enough' do
     course = role.student.course
     page = FactoryGirl.create(:content_page)
-    ecosystem = page.ecosystem
+    ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(page.ecosystem)
+    ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
     AddEcosystemToCourse[ecosystem: ecosystem, course: course]
     allow(OpenStax::Biglearn::V1).to receive(:get_projection_exercises) { ['dummy_id'] }
     result = ResetPracticeWidget.call(role: role, exercise_source: :biglearn, page_ids: [page.id])

@@ -23,16 +23,9 @@ class CourseContent::AddEcosystemToCourse
       strategy = ecosystem_strategy_class.new(course_ecosystem.ecosystem)
       ::Content::Ecosystem.new(strategy: strategy)
     end
-    to_ecosystem = case ecosystem
-    when ::Content::Ecosystem
-      ecosystem
-    else
-      strategy = ecosystem_strategy_class.new(ecosystem)
-      ::Content::Ecosystem.new(strategy: strategy)
-    end
 
     outputs[:ecosystem_map] = ::Content::Map.create!(from_ecosystems: from_ecosystems,
-                                                     to_ecosystem: to_ecosystem,
+                                                     to_ecosystem: ecosystem,
                                                      strategy_class: map_strategy_class)
   end
 

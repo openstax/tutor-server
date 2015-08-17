@@ -88,11 +88,19 @@ RSpec.describe Admin::CoursesController do
 
   describe 'GET #edit' do
     let!(:course)    { FactoryGirl.create(:course_profile_profile, name: 'Physics I').course }
-    let!(:eco_1)     { FactoryGirl.create(:content_book, title: 'Physics').ecosystem }
+    let!(:eco_1)     {
+      model = FactoryGirl.create(:content_book, title: 'Physics').ecosystem
+      strategy = ::Content::Strategies::Direct::Ecosystem.new(model)
+      ::Content::Ecosystem.new(strategy: strategy)
+    }
     let!(:book_1)    { eco_1.books.first }
     let!(:uuid_1)    { book_1.uuid }
     let!(:version_1) { book_1.version }
-    let!(:eco_2)     { FactoryGirl.create(:content_book, title: 'Biology').ecosystem }
+    let!(:eco_2)     {
+      model = FactoryGirl.create(:content_book, title: 'Biology').ecosystem
+      strategy = ::Content::Strategies::Direct::Ecosystem.new(model)
+      ::Content::Ecosystem.new(strategy: strategy)
+    }
     let!(:book_2)    { eco_2.books.first }
     let!(:uuid_2)    { book_2.uuid }
     let!(:version_2) { book_2.version }
@@ -106,19 +114,22 @@ RSpec.describe Admin::CoursesController do
     it 'selects the correct ecosystem' do
       get :edit, id: course.id
       expect(assigns[:course_ecosystem]).to eq eco_1
-
-      expected_ecosystems = [eco_2, eco_1].collect do |content_ecosystem|
-        strategy = ::Content::Strategies::Direct::Ecosystem.new(content_ecosystem)
-        ::Content::Ecosystem.new(strategy: strategy)
-      end
-      expect(assigns[:ecosystems]).to eq expected_ecosystems
+      expect(assigns[:ecosystems]).to eq [eco_2, eco_1]
     end
   end
 
   describe 'POST #set_ecosystem' do
     let!(:course) { FactoryGirl.create(:course_profile_profile, name: 'Physics I').course }
-    let!(:eco_1)  { FactoryGirl.create(:content_book, title: 'Physics', version: '1').ecosystem }
-    let!(:eco_2)  { FactoryGirl.create(:content_book, title: 'Biology', version: '2').ecosystem }
+    let!(:eco_1)     {
+      model = FactoryGirl.create(:content_book, title: 'Physics', version: '1').ecosystem
+      strategy = ::Content::Strategies::Direct::Ecosystem.new(model)
+      ::Content::Ecosystem.new(strategy: strategy)
+    }
+    let!(:eco_2)     {
+      model = FactoryGirl.create(:content_book, title: 'Biology', version: '2').ecosystem
+      strategy = ::Content::Strategies::Direct::Ecosystem.new(model)
+      ::Content::Ecosystem.new(strategy: strategy)
+    }
     let!(:course_ecosystem) {
       AddEcosystemToCourse.call(course: course, ecosystem: eco_1)
       course.reload.course_ecosystems.first
@@ -136,8 +147,11 @@ RSpec.describe Admin::CoursesController do
     context 'when a new ecosystem is selected' do
       it 'adds the selected ecosystem as the first ecosystem' do
         post :set_ecosystem, id: course.id, ecosystem_id: eco_2.id
-        ecos = course.reload.ecosystems
-        expect(ecos).to eq [eco_2, eco_1]
+        ecosystems = course.reload.ecosystems.collect do |ecosystem_model|
+          strategy = ::Content::Strategies::Direct::Ecosystem.new(ecosystem_model)
+          ::Content::Ecosystem.new(strategy: strategy)
+        end
+        expect(ecosystems).to eq [eco_2, eco_1]
         expect(flash[:notice]).to eq "Course ecosystem \"#{eco_2.title}\" selected for \"Physics I\""
       end
     end

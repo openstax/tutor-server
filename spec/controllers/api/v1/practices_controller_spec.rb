@@ -22,7 +22,9 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
   context "POST #create" do
     let!(:page) {
       page = FactoryGirl.create :content_page
-      AddEcosystemToCourse[course: course, ecosystem: page.book.ecosystem]
+      ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(page.book.ecosystem)
+      ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
+      AddEcosystemToCourse[course: course, ecosystem: ecosystem]
       page
     }
 
