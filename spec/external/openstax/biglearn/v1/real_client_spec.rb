@@ -71,7 +71,7 @@ module OpenStax::Biglearn
       )
     end
 
-    it 'calls clue well' do
+    xit 'calls clue well' do
       profile = UserProfile::CreateProfile.call(username: SecureRandom.hex).outputs.profile
       profile.update_attribute(:exchange_read_identifier, '0edbe5f8f30abc5ba56b5b890bddbbe2')
       role = Role::CreateUserRole[profile.entity_user]
