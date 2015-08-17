@@ -18,10 +18,12 @@ class CreateStudentHistory
       puts "=== Set Role##{role.id} history ==="
 
       # practice widgets assign 5 task steps to the role
-      practice_steps = create_practice_widget(role, pages: ecosystem.pages[2 + (i % 2)].id)
+      practice_steps = create_practice_widget(
+        role, pages: ecosystem.chapters[3 - (i % 2)].pages[1].id
+      )
       answer_correctly(practice_steps, 2 + i) # 2 or 3/5
 
-      practice_steps = create_practice_widget(role, pages: ecosystem.pages[5].id)
+      practice_steps = create_practice_widget(role, pages: ecosystem.chapters[3].pages[2].id)
       answer_correctly(practice_steps, 5) # 5/5
 
       practice_steps = create_practice_widget(role, chapters: ecosystem.chapters[3].id)
@@ -85,7 +87,7 @@ class CreateStudentHistory
   end
 
   def create_ireading_task_plan(ecosystem, course, periods)
-    page_ids = ecosystem.pages.from(1).collect{ |pg| pg.id.to_s } # 0 is preface
+    page_ids = ecosystem.pages.collect{ |pg| pg.id.to_s }
     task_plan = FactoryGirl.build(
       :tasks_task_plan,
       owner: course,
@@ -117,7 +119,7 @@ class CreateStudentHistory
   end
 
   def create_homework_task_plan(ecosystem, course, periods)
-    exercise_ids = [ecosystem.exercises.first.id.to_s]
+    exercise_ids = [ecosystem.chapters[2].pages[1].exercises[0].id.to_s]
 
     task_plan = FactoryGirl.build(
       :tasks_task_plan,
