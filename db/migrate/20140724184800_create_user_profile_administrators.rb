@@ -1,11 +1,9 @@
 class CreateUserProfileAdministrators < ActiveRecord::Migration
   def change
     create_table :user_profile_administrators do |t|
-      t.references :profile, null: false
+      t.references :profile, null: false, index: { unique: true }
 
       t.timestamps null: false
-
-      t.index :profile_id, unique: true
     end
 
     add_foreign_key :user_profile_administrators, :user_profile_profiles,
