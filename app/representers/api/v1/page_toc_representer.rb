@@ -45,5 +45,16 @@ module Api::V1
                description: 'The chapter and page in the book, e.g. [5, 2]'
              }
 
+    collection :snap_labs,
+               getter: -> (*) { snap_labs.collect { |snap_lab| Hashie::Mash.new(snap_lab) } },
+               readable: true,
+               writeable: false,
+               decorator: Api::V1::SnapLabRepresenter,
+               if: lambda { |args| snap_labs.present? },
+               schema_info: {
+                 required: false,
+                 description: 'Snap lab notes on this page'
+               }
+
   end
 end
