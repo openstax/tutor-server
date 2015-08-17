@@ -21,17 +21,40 @@ class OpenStax::Biglearn::V1::RealClient
   end
 
   def add_pools(pools)
-    pools.each do |pool|
-      options = { body: construct_add_pool_payload(pool).to_json }
-      response = request(:post, add_pools_uri, with_content_type_header(options))
-      handle_response(response)
-    end
+    options = { body: construct_add_pools_payload(pools).to_json }
+
+    response = request(:post, add_pools_uri, with_content_type_header(options))
+    body_hash = handle_response(response)
+
+    uuids = body_hash['pool_ids']
+    raise "BigLearn returned wrong number of uuids " \
+          "(#pools != #uuids) (#{pools.count} != #{uuids.count})" \
+      unless uuids.count == pools.count
+
+    nil_uuid_count = uuids.count(&:nil?)
+    raise "BigLearn returned #{nil_uuid_count} nil uuids" if nil_uuid_count > 0
+
+    blank_uuid_count = uuids.count(&:blank?)
+    raise "BigLearn returned #{blank_uuid_count} blank uuids" if blank_uuid_count > 0
+
+    uuids
   end
 
   def combine_pools(pools)
-    options = { body: construct_combine_pool_payload(pools).to_json }
+    options = { body: construct_combine_pools_payload(pools).to_json }
     response = request(:post, add_pools_uri, with_content_type_header(options))
-    handle_response(response)
+    body_hash = handle_response(response)
+
+    uuids = body_hash['pool_ids']
+    raise "BigLearn returned (#{uuids.count} != 1) uuids " unless uuids.count == 1
+
+    nil_uuid_count = uuids.count(&:nil?)
+    raise "BigLearn returned #{nil_uuid_count} nil uuids" if nil_uuid_count > 0
+
+    blank_uuid_count = uuids.count(&:blank?)
+    raise "BigLearn returned #{blank_uuid_count} blank uuids" if blank_uuid_count > 0
+
+    uuids.first
   end
 
   def get_exchange_read_identifiers_for_roles(roles:)
@@ -150,18 +173,23 @@ class OpenStax::Biglearn::V1::RealClient
 
   def construct_exercises_payload(exercises)
     { question_tags: [exercises].flatten.collect do |exercise|
-      { question_id: exercise.question_id, version: exercise.version, tags: exercise.tags }
+      { question_id: exercise.question_id.to_s, version: Integer(exercise.version), tags: exercise.tags }
     end }
   end
 
-  def construct_add_pool_payload(pool)
-    { sources: [{ questions: pool.exercises.collect do |exercise|
-      { question_id: exercise.question_id, version: exercise.version }
-    end }] }
+  def construct_add_pools_payload(pools)
+    { sources: pools.collect do |pool|
+      { questions: pool.exercises.collect do |exercise|
+        { question_id: exercise.question_id.to_s,
+          version:     Integer(exercise.version) }
+      end }
+    end }
   end
 
   def construct_combine_pools_payload(pools)
-    { sources: [{ pools: pools.collect{ |pl| pl.uuid } }] }
+    { sources: [
+      { pools: pools.collect{ |pl| pl.uuid } }
+    ] }
   end
 
   def handle_response(response)

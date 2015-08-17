@@ -46,13 +46,12 @@ class OpenStax::Biglearn::V1::FakeClient
     result = pools.collect do |pool|
       uuid = SecureRandom.uuid
       store['pools'][uuid] = pool.exercises.collect{ |ex| ex.question_id.to_s }
-      { 'pool_id' => uuid }
+      uuid
     end
 
     save!
 
     result
-
   end
 
   def combine_pools(pools)
@@ -66,7 +65,7 @@ class OpenStax::Biglearn::V1::FakeClient
 
     save!
 
-    { 'pool_id' => uuid }
+    uuid
   end
 
   def get_projection_exercises(role:, pools: nil, tag_search: nil,

@@ -16,13 +16,13 @@ module OpenStax::Biglearn::V1
   end
 
   def self.add_pools(pools)
-    uuids = client.add_pools(pools).collect{ |rs| rs['pool_id'] }
+    uuids = client.add_pools(pools)
     pools.each_with_index{ |pool, ii| pool.uuid = uuids[ii] }
     pools
   end
 
   def self.combine_pools(pools)
-    OpenStax::Biglearn::V1::Pool.new(uuid: client.combine_pools(pools)['pool_id'])
+    OpenStax::Biglearn::V1::Pool.new(uuid: client.combine_pools(pools))
   end
 
   # Returns recommended exercises
