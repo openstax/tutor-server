@@ -27,7 +27,10 @@ FactoryGirl.define do
 
       Content::Routines::PopulateExercisePools[pages: @page.reload]
 
-      AddEcosystemToCourse[course: owner, ecosystem: chapter.book.ecosystem]
+      ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(chapter.book.ecosystem)
+      ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
+
+      AddEcosystemToCourse[course: owner, ecosystem: ecosystem]
 
       { page_ids: [@page.id.to_s] }
     end

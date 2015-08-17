@@ -19,7 +19,13 @@ class Admin::CoursesController < Admin::BaseController
     @periods = entity_course.periods
     @teachers = entity_course.teachers.includes(role: { user: { profile: :account } })
     @ecosystems = Content::ListEcosystems[]
-    @course_ecosystem = entity_course.ecosystems.first
+
+    @course_ecosystem = nil
+    ecosystem_model = entity_course.ecosystems.first
+    return if ecosystem_model.nil?
+
+    ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(ecosystem_model)
+    @course_ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
   end
 
   def update
