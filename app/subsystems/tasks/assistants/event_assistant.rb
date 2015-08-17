@@ -21,32 +21,17 @@ module Tasks
         if students.length != taskees.length
           raise StandardError, 'Event assignment taskees must all be students'
         else
-          taskees.collect.with_index do |taskee, i|
-            build_event_task(task_plan: task_plan,
-                             taskee: taskee,
-                             student: students[i]).entity_task
+          taskees.map do
+            Tasks::BuildTask[task_plan: task_plan,
+                             task_type: :event,
+                             title: task_plan.title || 'Event',
+                             description: task_plan.description]
           end
         end
       end
 
       private
       attr_reader :task_plan, :taskees
-
-      def build_event_task(task_plan:, taskee:, student:)
-        task = build_task(task_plan: task_plan)
-        task.task_steps << Tasks::Models::TaskStep.new(task: task)
-        task
-      end
-
-      def build_task(task_plan:)
-        title = task_plan.title || 'Event'
-        description = task_plan.description
-
-        Tasks::BuildTask[task_plan: task_plan,
-                         task_type: :event,
-                         title: title,
-                         description: description]
-      end
     end
   end
 end
