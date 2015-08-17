@@ -1,6 +1,6 @@
 module UserProfile
   class SearchProfiles
-    include ::VerifiedCollections
+    include ::TypeVerification
 
     lev_routine express_output: :profiles
 
