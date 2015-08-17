@@ -52,6 +52,6 @@ RSpec.describe Tasks::Assistants::EventAssistant, type: :assistant do
 
     expect {
       DistributeTasks.call(task_plan)
-    }.to raise_error(StandardError, 'External assignment taskees must all be students')
+    }.to raise_error(StandardError, 'Event assignment taskees must all be students')
   end
 end
