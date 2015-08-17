@@ -1,8 +1,10 @@
 class CreateTasksTasks < ActiveRecord::Migration
   def change
     create_table :tasks_tasks do |t|
-      t.references :tasks_task_plan
-      t.references :entity_task, null: false
+      t.references :tasks_task_plan, index: true,
+                                     foreign_key: { on_update: :cascade, on_delete: :cascade }
+      t.references :entity_task, null: false, index: { unique: true },
+                                 foreign_key: { on_update: :cascade, on_delete: :cascade }
       t.integer :task_type, null: false
       t.string :title, null: false
       t.text :description
@@ -27,16 +29,9 @@ class CreateTasksTasks < ActiveRecord::Migration
 
       t.timestamps null: false
 
-      t.index :tasks_task_plan_id
-      t.index :entity_task_id
       t.index :task_type
       t.index [:due_at, :opens_at]
       t.index :last_worked_at
     end
-
-    add_foreign_key :tasks_tasks, :tasks_task_plans,
-                    on_update: :cascade, on_delete: :cascade
-    add_foreign_key :tasks_tasks, :entity_tasks,
-                    on_update: :cascade, on_delete: :cascade
   end
 end

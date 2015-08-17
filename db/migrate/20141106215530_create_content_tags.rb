@@ -1,7 +1,8 @@
 class CreateContentTags < ActiveRecord::Migration
   def change
     create_table :content_tags do |t|
-      t.references :content_ecosystem, null: false, index: true
+      t.references :content_ecosystem, null: false, index: true,
+                                       foreign_key: { on_update: :cascade, on_delete: :cascade }
       t.string :value, null: false
       t.integer :tag_type, null: false, default: 0
       t.string :name

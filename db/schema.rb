@@ -159,8 +159,8 @@ ActiveRecord::Schema.define(version: 20150804002246) do
   add_index "course_content_course_ecosystems", ["entity_course_id", "created_at"], name: "course_ecosystems_on_course_id_created_at", using: :btree
 
   create_table "course_membership_enrollments", force: :cascade do |t|
-    t.integer  "course_membership_period_id"
-    t.integer  "course_membership_student_id"
+    t.integer  "course_membership_period_id",  null: false
+    t.integer  "course_membership_student_id", null: false
     t.datetime "created_at",                   null: false
     t.datetime "updated_at",                   null: false
   end
@@ -438,15 +438,15 @@ ActiveRecord::Schema.define(version: 20150804002246) do
   add_index "tasks_course_assistants", ["tasks_assistant_id", "entity_course_id"], name: "index_tasks_course_assistants_on_assistant_id_and_course_id", using: :btree
 
   create_table "tasks_performance_report_exports", force: :cascade do |t|
-    t.integer  "entity_course_id"
-    t.integer  "entity_role_id"
+    t.integer  "entity_course_id", null: false
+    t.integer  "entity_role_id",   null: false
     t.string   "export"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   add_index "tasks_performance_report_exports", ["entity_course_id"], name: "index_tasks_performance_report_exports_on_entity_course_id", using: :btree
-  add_index "tasks_performance_report_exports", ["entity_role_id"], name: "index_tasks_performance_report_exports_on_entity_role_id", using: :btree
+  add_index "tasks_performance_report_exports", ["entity_role_id", "entity_course_id"], name: "index_performance_report_exports_on_role_and_course", using: :btree
 
   create_table "tasks_task_plans", force: :cascade do |t|
     t.integer  "tasks_assistant_id",        null: false
@@ -586,7 +586,7 @@ ActiveRecord::Schema.define(version: 20150804002246) do
   end
 
   add_index "tasks_tasks", ["due_at", "opens_at"], name: "index_tasks_tasks_on_due_at_and_opens_at", using: :btree
-  add_index "tasks_tasks", ["entity_task_id"], name: "index_tasks_tasks_on_entity_task_id", using: :btree
+  add_index "tasks_tasks", ["entity_task_id"], name: "index_tasks_tasks_on_entity_task_id", unique: true, using: :btree
   add_index "tasks_tasks", ["last_worked_at"], name: "index_tasks_tasks_on_last_worked_at", using: :btree
   add_index "tasks_tasks", ["task_type"], name: "index_tasks_tasks_on_task_type", using: :btree
   add_index "tasks_tasks", ["tasks_task_plan_id"], name: "index_tasks_tasks_on_tasks_task_plan_id", using: :btree
@@ -611,6 +611,7 @@ ActiveRecord::Schema.define(version: 20150804002246) do
 
   add_index "user_profile_profiles", ["account_id"], name: "index_user_profile_profiles_on_account_id", unique: true, using: :btree
   add_index "user_profile_profiles", ["deleted_at"], name: "index_user_profile_profiles_on_deleted_at", using: :btree
+  add_index "user_profile_profiles", ["entity_user_id"], name: "index_user_profile_profiles_on_entity_user_id", unique: true, using: :btree
   add_index "user_profile_profiles", ["exchange_read_identifier"], name: "index_user_profile_profiles_on_exchange_read_identifier", unique: true, using: :btree
   add_index "user_profile_profiles", ["exchange_write_identifier"], name: "index_user_profile_profiles_on_exchange_write_identifier", unique: true, using: :btree
 
@@ -619,8 +620,8 @@ ActiveRecord::Schema.define(version: 20150804002246) do
   add_foreign_key "content_exercise_tags", "content_exercises", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_exercise_tags", "content_tags", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_exercises", "content_pages", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "content_lo_teks_tags", "content_tags", column: "lo_id"
-  add_foreign_key "content_lo_teks_tags", "content_tags", column: "teks_id"
+  add_foreign_key "content_lo_teks_tags", "content_tags", column: "lo_id", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "content_lo_teks_tags", "content_tags", column: "teks_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_page_tags", "content_pages", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_page_tags", "content_tags", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_pages", "content_chapters", on_update: :cascade, on_delete: :cascade
@@ -630,6 +631,7 @@ ActiveRecord::Schema.define(version: 20150804002246) do
   add_foreign_key "content_pages", "content_pools", column: "content_reading_dynamic_pool_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "content_pages", "content_pools", column: "content_reading_try_another_pool_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "content_pools", "content_ecosystems", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "content_tags", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_content_course_ecosystems", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_content_course_ecosystems", "entity_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_membership_enrollments", "course_membership_periods", on_update: :cascade, on_delete: :cascade
@@ -641,13 +643,13 @@ ActiveRecord::Schema.define(version: 20150804002246) do
   add_foreign_key "course_membership_teachers", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_profile_profiles", "entity_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_profile_profiles", "school_district_schools", on_update: :cascade, on_delete: :nullify
-  add_foreign_key "role_role_users", "entity_roles"
-  add_foreign_key "role_role_users", "entity_users"
-  add_foreign_key "school_district_schools", "school_district_districts"
+  add_foreign_key "role_role_users", "entity_roles", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "role_role_users", "entity_users", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "school_district_schools", "school_district_districts", on_update: :cascade, on_delete: :nullify
   add_foreign_key "tasks_course_assistants", "entity_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_course_assistants", "tasks_assistants", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "tasks_performance_report_exports", "entity_courses"
-  add_foreign_key "tasks_performance_report_exports", "entity_roles"
+  add_foreign_key "tasks_performance_report_exports", "entity_courses", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_performance_report_exports", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_plans", "tasks_assistants", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_steps", "tasks_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasked_exercises", "content_exercises", on_update: :cascade, on_delete: :cascade
@@ -658,4 +660,6 @@ ActiveRecord::Schema.define(version: 20150804002246) do
   add_foreign_key "tasks_tasks", "entity_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasks", "tasks_task_plans", on_update: :cascade, on_delete: :cascade
   add_foreign_key "user_profile_administrators", "user_profile_profiles", column: "profile_id", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "user_profile_profiles", "entity_users", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "user_profile_profiles", "openstax_accounts_accounts", column: "account_id", on_update: :cascade, on_delete: :cascade
 end

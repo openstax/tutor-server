@@ -2,8 +2,10 @@ class CreateCourseMembershipEnrollments < ActiveRecord::Migration
   def change
     create_table :course_membership_enrollments do |t|
       t.references :course_membership_period,
+                   null: false,
                    foreign_key: { on_update: :cascade, on_delete: :cascade }
       t.references :course_membership_student,
+                   null: false,
                    foreign_key: { on_update: :cascade, on_delete: :cascade }
 
       t.timestamps null: false
