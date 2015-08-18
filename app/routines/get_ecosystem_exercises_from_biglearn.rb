@@ -7,13 +7,14 @@ class GetEcosystemExercisesFromBiglearn
   def exec(ecosystem:, role:, pools:, count:, difficulty: 0.5, allow_repetitions: true)
     biglearn_pools = pools.collect{ |pl| OpenStax::Biglearn::V1::Pool.new(uuid: pl.uuid) }
 
-    numbers = OpenStax::Biglearn::V1.get_projection_exercises(
+    urls = OpenStax::Biglearn::V1.get_projection_exercises(
       role:              role,
       pools:             biglearn_pools,
       count:             count,
       difficulty:        difficulty,
       allow_repetitions: allow_repetitions
     )
+    numbers = urls.collect{ |url| url.chomp('/').split('/').last.split('@').first }
 
     exercises = ecosystem.exercises_by_numbers(numbers)
     fatal_error(code: :missing_local_exercises,

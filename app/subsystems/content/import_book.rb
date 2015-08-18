@@ -65,8 +65,11 @@ class Content::ImportBook
     #
 
     biglearn_exercises_by_ids = outputs[:exercises].each_with_object({}) do |ex, hash|
+      exercise_url = Addressable::URI.parse(ex.url)
+      exercise_url.scheme = nil
+      exercise_url.path = exercise_url.path.split('@').first
       hash[ex.id] = OpenStax::Biglearn::V1::Exercise.new(
-        question_id: ex.number.to_s,
+        question_id: exercise_url.to_s,
         version: ex.version,
         tags: ex.exercise_tags.collect{ |ex| ex.tag.value }
       )
