@@ -26,13 +26,9 @@ RSpec.describe Tasks::Assistants::EventAssistant, type: :assistant do
     FactoryGirl.create(:tasks_tasking_plan, task_plan: task_plan, target: course)
 
     tasks = DistributeTasks.call(task_plan).outputs.entity_tasks.flat_map(&:task)
-    expect(tasks.length).to eq 3
 
-    tasks.each do |task|
-      expect(task.task_type).to eq 'event'
-      expect(task.task_steps.length).to eq 1
-      expect(task.task_steps.first.tasked.url).to eq url
-    end
+    expect(tasks.length).to eq 3
+    expect(tasks.flat_map(&:task_type).uniq).to eq(['event'])
   end
 
   it 'raises an error if taskees are not students' do
