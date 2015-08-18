@@ -47,11 +47,12 @@ module Content
       end
     end
 
-    # Returns a hash that groups the given exercises by their equivalent pages in the to_ecosystem
-    def group_exercises_by_pages(exercises:)
+    # Returns an array of ::Content::Page's that correspond to the given array of
+    # ::Content::Exercises, mapped to the to_ecosystem
+    def map_exercises_to_pages(exercises:)
       ex_arr = verify_and_return [exercises].flatten.compact, klass: ::Content::Exercise,
                                                               error: ArgumentError
-      verify_and_return @strategy.group_exercises_by_pages(exercises: ex_arr), klass: Hash
+      verify_and_return @strategy.map_exercises_to_pages(exercises: ex_arr), klass: ::Content::Page
     end
 
     def valid?
