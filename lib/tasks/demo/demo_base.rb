@@ -306,8 +306,8 @@ class DemoBase
   def work_step(step, response)
     return if response.nil? || response == 'n'
 
-    raise "cannot complete a TaskedPlaceholder (Task: #{print_task(task: step.task)}, Step: #{step.id})" \
-      if step.tasked.placeholder?
+    raise "cannot complete a TaskedPlaceholder (Task: #{
+            print_task(task: step.task)}, Step: #{step.id})" if step.tasked.placeholder?
 
     response = (response.zero? ? false : true) if response.is_a?(Integer)
     response = (response == '0' ? false : true) if response.is_a?(String)
