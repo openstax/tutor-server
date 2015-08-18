@@ -147,7 +147,7 @@ class Tasks::Assistants::HomeworkAssistant
 
     homework_history = tasks.select{|tt| tt.homework?}
                             .reject{|tt| tt == task}
-                            .sort_by{|tt| tt.due_at}
+                            .sort_by{|tt| [tt.due_at, tt.created_at]}
                             .push(task)
                             .reverse
                             .collect{|tt| tt.entity_task}
