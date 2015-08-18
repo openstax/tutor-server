@@ -94,9 +94,12 @@ class CalculateTaskPlanStats
   end
 
   def generate_page_stats_for_task_steps(task_steps)
-    tasked_exercises = get_tasked_exercises_from_task_steps(task_steps)
-    page_hash = group_tasked_exercises_by_pages(tasked_exercises)
-    page_hash.collect{ |page, tasked_exercises| generate_page_stats(page, tasked_exercises) }
+    page_hash = group_tasked_exercises_by_pages(
+      get_tasked_exercises_from_task_steps(task_steps)
+    )
+    page_hash
+      .sort_by{ |page, _| page.number }
+      .collect{ |page, tasked_exercises| generate_page_stats(page, tasked_exercises) }
   end
 
   def no_period
