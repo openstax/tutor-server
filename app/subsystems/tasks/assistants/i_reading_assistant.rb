@@ -171,7 +171,7 @@ class Tasks::Assistants::IReadingAssistant
 
     ireading_history = tasks.select{|tt| tt.reading?}
                             .reject{|tt| tt == task}
-                            .sort_by{|tt| [tt.due_at, tt.created_at]}
+                            .sort_by{|tt| [tt.due_at, tt.task_plan.created_at]}
                             .push(task)
                             .reverse
                             .collect{|tt| tt.entity_task}
