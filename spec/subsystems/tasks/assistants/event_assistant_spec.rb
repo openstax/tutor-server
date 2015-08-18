@@ -1,13 +1,13 @@
 require 'rails_helper'
 
 RSpec.describe Tasks::Assistants::EventAssistant, type: :assistant do
-  let(:assistant) do
+  let(:course) { Entity::Course.create }
+  let(:period) { CourseMembership::Models::Period.last }
+
+  subject(:event_assistant) do
     FactoryGirl.create(:tasks_assistant,
                        code_class_name: 'Tasks::Assistants::EventAssistant')
   end
-
-  let(:course) { Entity::Course.create }
-  let(:period) { CourseMembership::Models::Period.last }
 
   before do
     CreatePeriod[course: course]
@@ -20,24 +20,24 @@ RSpec.describe Tasks::Assistants::EventAssistant, type: :assistant do
 
   it 'assigns tasked events to students' do
     task_plan = FactoryGirl.build(:tasks_task_plan,
-                                  assistant: assistant,
-                                  owner: course,
-                                  num_tasking_plans: 0)
-    FactoryGirl.create(:tasks_tasking_plan, task_plan: task_plan, target: course)
+                                  assistant: event_assistant,
+                                  title: 'No class',
+                                  description: 'No class today, kiddos',
+                                  owner: course)
 
     tasks = DistributeTasks.call(task_plan).outputs.entity_tasks.flat_map(&:task)
 
     expect(tasks.length).to eq 3
     expect(tasks.flat_map(&:task_type).uniq).to eq(['event'])
+    expect(tasks.flat_map(&:title).uniq).to eq(['No class'])
+    expect(tasks.flat_map(&:description).uniq).to eq(['No class today, kiddos'])
   end
 
   it 'raises an error if taskees are not students' do
     task_plan = FactoryGirl.build(:tasks_task_plan,
-                                  assistant: assistant,
+                                  assistant: event_assistant,
                                   owner: course,
                                   num_tasking_plans: 0)
-
-    FactoryGirl.create(:tasks_tasking_plan, task_plan: task_plan, target: course)
 
     # If the target of a tasking plan is an entity user,
     # taskee will be the user's default role,
