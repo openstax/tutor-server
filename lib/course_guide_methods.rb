@@ -44,17 +44,16 @@ module CourseGuideMethods
     [tasked_exercises].flatten.collect{ |te| te.los + te.aplos }.flatten.uniq
   end
 
-  def get_clue(tasked_exercises)
-    tags = get_los_and_aplos(tasked_exercises)
+  def get_clue(tasked_exercises, pages)
     roles = tasked_exercises.collect{ |ts| ts.task_step.task.taskings.collect{ |tg| tg.role } }
                             .flatten
-    OpenStax::Biglearn::V1.get_clue(roles: roles, tags: tags)
+    OpenStax::Biglearn::V1.get_clue(roles: roles, pages: pages)
   end
 
   def compile_pages(page_groupings)
     page_groupings.collect do |page, tasked_exercises|
       practices = completed_practices(tasked_exercises)
-      clue = get_clue(tasked_exercises)
+      clue = get_clue(tasked_exercises, page)
 
       {
         title: page.title,
@@ -74,7 +73,7 @@ module CourseGuideMethods
       pages = compile_pages(page_groupings)
       tasked_exercises = page_groupings.values.flatten
       practices = completed_practices(tasked_exercises)
-      clue = get_clue(tasked_exercises)
+      clue = get_clue(tasked_exercises, pages)
 
       {
         title: chapter.title,

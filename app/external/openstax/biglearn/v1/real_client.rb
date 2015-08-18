@@ -102,21 +102,17 @@ class OpenStax::Biglearn::V1::RealClient
     end
   end
 
-  # Return a CLUE value for the specified set of roles and the group of tags.  May return
-  # nil if no CLUE is available (e.g. no exercises attached to these tags or confidence too low).
-  #
-  # Biglearn can actually take multiple sets of tag queries at once and return a CLUE
-  # for each; we're not using that capability yet. When we do we'll probably rename the
-  # `tags` argument to `tag_sets` or something (or we'll make a first class `TagSearch`
-  # citizen inside this module and accept an array of those into this method).
-  def get_clue(roles:, tags:)
-    raise "Some tags must be specified when getting a CLUE" if tags.blank?
+  # Return a CLUE value for the specified set of roles and the group of pages.
+  # May return nil if no CLUE is available (e.g. no exercises attached to
+  # these pages or confidence too low).
+  def get_clue(roles:, pages:)
     raise "At least one role must be specified when getting a CLUE" if roles.blank?
 
-    tag_search = stringify_tag_search(:_or => tags)
+    pool_ids = pages.collect(&:pool_ids).flatten.compact
 
     query = {
-      learners: get_exchange_read_identifiers_for_roles(roles: roles), tag_queries: tag_search
+      learners: get_exchange_read_identifiers_for_roles(roles: roles),
+      pool_ids: pool_ids
     }
 
     response = request(:get, clue_uri, params: query)
