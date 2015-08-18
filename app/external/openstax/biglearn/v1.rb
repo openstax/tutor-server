@@ -4,11 +4,11 @@ module OpenStax::Biglearn::V1
   # API Wrappers
   #
 
-  def self.get_clue(roles:, tags:)
-    tags = [tags].flatten.compact
+  def self.get_clue(roles:, pages:)
+    pages = [pages].flatten.compact
     roles = [roles].flatten.compact
 
-    clue = client.get_clue(roles: roles, tags: tags) || {}
+    clue = client.get_clue(roles: roles, pages: pages) || {}
   end
 
   def self.add_exercises(exercises)

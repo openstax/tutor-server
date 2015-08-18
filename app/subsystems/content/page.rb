@@ -55,6 +55,14 @@ module Content
       verify_and_return @strategy.practice_widget_pool, klass: ::Content::Pool
     end
 
+    def pool_ids
+      [reading_dynamic_pool,
+       reading_try_another_pool,
+       homework_core_pool,
+       homework_dynamic_pool,
+       practice_widget_pool].compact.collect(&:uuid)
+    end
+
     def exercises
       verify_and_return @strategy.exercises, klass: ::Content::Exercise
     end
