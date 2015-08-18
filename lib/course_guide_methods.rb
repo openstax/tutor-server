@@ -70,10 +70,10 @@ module CourseGuideMethods
     group_tasked_exercises_by_chapters(tasked_exercises, ecosystems_map)
       .collect do |chapter, page_groupings|
 
-      pages = compile_pages(page_groupings)
+      page_hashes = compile_pages(page_groupings)
       tasked_exercises = page_groupings.values.flatten
       practices = completed_practices(tasked_exercises)
-      clue = get_clue(tasked_exercises, pages)
+      clue = get_clue(tasked_exercises, page_groupings.collect{|pg, te| pg})
 
       {
         title: chapter.title,
@@ -81,8 +81,8 @@ module CourseGuideMethods
         questions_answered_count: tasked_exercises.count,
         clue: clue,
         practice_count: practices.count,
-        page_ids: pages.collect{|pp| pp[:page_ids]}.flatten,
-        children: pages
+        page_ids: page_hashes.collect{|pp| pp[:page_ids]}.flatten,
+        children: page_hashes
       }
     end.sort_by{ |ch| ch[:book_location] }
   end
