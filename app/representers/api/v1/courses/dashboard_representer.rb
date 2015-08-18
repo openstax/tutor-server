@@ -177,7 +177,7 @@ module Api::V1::Courses
                readable: true,
                writeable: false,
                skip_render: -> (object, options) {
-                 !['reading','homework','external'].include?(object.task_type.to_s)
+                 !['reading','homework','external','event'].include?(object.task_type.to_s)
                },
                decorator: -> (task, *) {
                  case task.task_type.to_s

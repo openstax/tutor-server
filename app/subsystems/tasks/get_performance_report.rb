@@ -64,7 +64,7 @@ module Tasks
     end
 
     def get_taskings(period)
-      task_types = Models::Task.task_types.values_at(:reading, :homework, :external)
+      task_types = Models::Task.task_types.values_at(:reading, :homework, :external, :event)
       # Return reading, homework and external tasks for a student ordered by due date
       period.taskings.eager_load(task: {task: {task_plan: :tasking_plans}},
                                  role: {user: {profile: :account}})
