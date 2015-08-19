@@ -77,21 +77,19 @@ class Tasks::RecoverTaskStep
 
     candidate_exercises = (exercise_pool - exercise_history).uniq
 
-    los = recovered_exercise.los.collect{ |tt| tt.id }
-    aplos = recovered_exercise.aplos.collect{ |tt| tt.id }
+    los = Set.new(recovered_exercise.los)
+    aplos = Set.new(recovered_exercise.aplos)
 
     # Find a random exercise that shares at least one LO with the tasked
     chosen_exercise = candidate_exercises.shuffle.find do |ex|
-      (ex.los.collect{ |tt| tt.id} & los).any? || \
-      (ex.aplos.collect{ |tt| tt.id} & aplos).any?
+      ex.los.any?{ |tt| los.include?(tt) } || ex.aplos.any?{ |tt| aplos.include?(tt) }
     end
 
     if chosen_exercise.nil?
       # If no exercises found, reuse an old one
       chosen_exercise = exercise_pool.shuffle.find do |ex|
-        ((ex.los.collect{ |tt| tt.id} & los).any? || \
-         (ex.aplos.collect{ |tt| tt.id} & aplos).any?) && \
-        ex.id != task_step.tasked.exercise.id
+        ex != recovered_exercise && \
+        (ex.los.any?{ |tt| los.include?(tt) } || ex.aplos.any?{ |tt| aplos.include?(tt) })
       end
     end
 

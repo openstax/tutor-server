@@ -258,7 +258,21 @@ class Tasks::Assistants::IReadingAssistant
 
     # Search Ecosystem Exercises for one matching the embed tag
     exercise = get_first_tag_exercise(exercise_fragment.embed_tag)
+
     unless exercise.nil?
+      if can_be_recovered
+        # Disable recovery if no exercises that can be used for it are found
+        pool = exercise.page.reading_try_another_pool
+        los = Set.new exercise.los
+        aplos = Set.new exercise.aplos
+        candidate_exercises = pool.exercises.select do |ex|
+          ex != exercise && \
+          (ex.los.any?{ |tt| los.include?(tt) } || ex.aplos.any?{ |tt| aplos.include?(tt) })
+        end
+        can_be_recovered = false if candidate_exercises.empty?
+      end
+
+      # Assign the exercise
       TaskExercise[exercise: exercise, title: title,
                    can_be_recovered: can_be_recovered, task_step: step]
     end
