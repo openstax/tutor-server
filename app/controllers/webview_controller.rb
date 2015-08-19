@@ -41,7 +41,9 @@ class WebviewController < ApplicationController
                               FinePrint::SIGNATURE_IS_IMPLICIT)
     end
 
-    fine_print_require *contract_names.non_proxy_signed
+    if contract_names.non_proxy_signed.any?
+      fine_print_require *contract_names.non_proxy_signed
+    end
   end
 
 end
