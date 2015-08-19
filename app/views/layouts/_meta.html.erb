@@ -1,0 +1,17 @@
+<% production_url = 'https://tutor.openstax.org/' %>
+<% logo_url = "#{production_url}logo-openstax-tutor-vert.png" %>
+
+<meta property="og:title" content="OpenStax Tutor" />
+<meta property="og:description" content="Personalized learning from a tutor that adapts to you." />
+<meta property="og:image" content="<%= logo_url %>" />
+<meta property="og:image:secure_url" content="<%= logo_url %>" />
+<meta property="og:url" content="<%= production_url %>"/>
+<meta property="og:site_name" content="<%= SITE_NAME %>"/>
+
+<% if current_page?('/') %>
+  <meta property="og:type" content="website"/>
+<% end %>
+
+<meta name="Description" content="<%= @page_description ? @page_description : 'Personalized learning from a tutor that adapts to you.' %>">
+
+<link rel="shortcut icon" href="/favicon.ico" type="image/ico"/>
