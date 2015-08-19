@@ -14,8 +14,11 @@ Rails.application.routes.draw do
     get 'privacy'
     get 'share'
     get 'status'
-    get 'terms'
   end
+
+  get "terms/pose", to: "terms#pose", as: "pose_terms"
+  post "terms/agree", to: "terms#agree", as: "agree_to_terms"
+  get 'terms', to: 'terms#index'
 
   mount OpenStax::Accounts::Engine, at: "/accounts"
   mount FinePrint::Engine => "/fine_print"

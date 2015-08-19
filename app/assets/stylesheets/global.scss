@@ -1,0 +1,332 @@
+
+
+
+@mixin tutor-button(){
+  @extend .btn-lg;
+  @extend .btn-primary;
+  border-radius: 4px;
+  background-color: $os_orange;
+  color: white;
+  &:hover{
+    background-color: darken( $os-orange, 5% );
+  }
+}
+
+$standard-spacing: 40px;
+
+/*-------------------------------------------------------------
+                    GLOBAL STYLES
+---------------------------------------------------------------*/
+
+body,html {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: "Lato", sans-serif;
+  font-weight: 300;
+  font-family: Lato;
+  color: #424242;
+}
+
+.body {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+h1,h2,h3,h4,h5,h6 {
+  font-family: Lato;
+  font-weight: 900;
+}
+
+a {
+  color: #27ae60;
+}
+
+.no-padding {
+  padding: 0 !important;
+}
+
+.space10 {
+  margin-bottom: 10px;
+}
+
+.space15 {
+  margin-bottom: 15px;
+}
+
+.space20 {
+  margin-bottom: 20px;
+}
+
+.space25 {
+  margin-bottom: 25px;
+}
+
+.space30 {
+  margin-bottom: 30px;
+}
+
+.space35 {
+  margin-bottom: 35px;
+}
+
+.space40 {
+  margin-bottom: $standard-spacing;
+}
+
+.space50 {
+  margin-bottom: 50px;
+}
+
+.space60 {
+  margin-bottom: 60px;
+}
+
+.space70 {
+  margin-bottom: 70px;
+}
+
+.space80 {
+  margin-bottom: 80px;
+}
+
+.space90 {
+  margin-bottom: 90px;
+}
+
+.space100 {
+  margin-bottom: 100px;
+}
+
+/*-------------------------------------------------------------
+                    HEADER STYLES
+---------------------------------------------------------------*/
+
+header {
+
+  .navbar-default {
+    background: rgba(255,255,255,.9);
+    border: none;
+    border-bottom: 1px solid #e5e5e5;
+    padding: 10px;
+    -webkit-transition: all .3s ease-in-out;
+    -moz-transition: all .3s ease-in-out;
+    -o-transition: all .3s ease-in-out;
+    transition: all .3s ease-in-out;
+
+    > .container {
+      width: 100%;
+      padding: 0 10px;
+    }
+
+    .navbar-nav > li > a {
+      font-size: 15px;
+      margin-top: 5px;
+    }
+
+    .nav > li > a {
+      position: relative;
+      display: block;
+      padding: 10px 20px;
+    }
+
+    .topnav-pages {
+      background: #fff;
+    }
+
+    .navbar-brand {
+      display: block;
+      height: 30px;
+      width: 217px;
+      margin: 5px 0 !important;
+      background: image-url("OST-Horiz-TM-CMYK.svg") no-repeat;
+      background-size: 100%;
+    }
+
+    .navbar-brand-rice {
+      display: block;
+      float: right;
+      margin: 5px 0 0 30px;
+      background: image-url("rice-logo.png") no-repeat;
+      background-size: 100%;
+      height: 30px;
+      width: 85px;
+    }
+
+    .navbar-default {
+
+      .sign-in { @include tutor-button(); }
+
+    }
+
+    .navbar-nav.links {
+
+      li a {
+        // enforce uniform size for all navbar links
+        font-size: 16px;
+        line-height: 1.4;
+        padding: 9px 18px;
+        margin: 0 10px;
+      }
+
+    }
+
+  }
+
+}
+
+/*-------------------------------------------------------------
+                    BUTTON STYLES
+---------------------------------------------------------------*/
+
+.btn {
+  border: 1px solid rgba(66,66,66,.1);
+  background: rgba(245,245,245,.4);
+  -webkit-transition: all .1s ease-in-out;
+  -moz-transition: all .1s ease-in-out;
+  -o-transition: all .1s ease-in-out;
+  transition: all .1s ease-in-out;
+
+  &:hover {
+    box-shadow: 0 0 15px rgba(0,0,0,.2);
+  }
+
+}
+
+
+.btn-primary, .btn-primary:focus {
+  color: #ffffff;
+  border-radius: 6px;
+  padding: 18px 40px;
+  font-size: 28px;
+  font-weight: 600;
+  border: none;
+  background: #f47642;
+  -webkit-transition: all .15s ease-in-out;
+  -moz-transition: all .15s ease-in-out;
+  -o-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+}
+
+.btn-primary:hover, .btn-primary:active {
+  border: none;
+  background: #fa804d;
+  box-shadow: 0 0 20px rgba(0,0,0,.4);
+}
+
+/*-------------------------------------------------------------
+                   FOOTER STYLES
+---------------------------------------------------------------*/
+
+.social {
+  padding: 0;
+  margin: 0 auto;
+  display: table;
+}
+
+.social li {
+  float: left;
+  list-style: none;
+  margin: 10px 7px 5px;
+}
+
+.social li a {
+  width: 40px;
+  height: 40px;
+  color: #000;
+  text-align: center;
+  line-height: 40px;
+  background: #fff;
+  border-radius: 50%;
+  display: table;
+  font-size: 18px;
+  -webkit-transition: all .3s ease-in-out;
+  -moz-transition: all .3s ease-in-out;
+  -o-transition: all .3s ease-in-out;
+  transition: all .3s ease-in-out;
+}
+
+.social li a:hover {
+  background: #727272;
+  color: #fff;
+  -webkit-transition: all .3s ease-in-out;
+  -moz-transition: all .3s ease-in-out;
+  -o-transition: all .3s ease-in-out;
+  transition: all .3s ease-in-out;
+}
+
+footer {
+  background: #ffffff;
+  border-top: 1px solid #e5e5e5;
+  padding: 35px 0;
+}
+
+footer p {
+  color: #4f4f4f;
+  font-size: 16px;
+  margin: 0;
+  padding: 0 20px;
+}
+
+footer p a {
+  color: #424242;
+}
+
+footer p a:hover {
+  color: #424242;
+  text-decoration: underline;
+}
+
+
+/* #large screen
+================================================== */
+
+@media only screen and (min-width: 1500px) {}
+
+/* #medium screen
+================================================== */
+
+@media only screen and (min-width: 1021px) and (max-width: 1210px) {}
+
+/* #Tablet (Portrait)
+================================================== */
+
+@media only screen and (min-width: 681px) and (max-width: 1020px) {}
+
+/* #header fix
+================================================== */
+
+@media only screen and (min-width: 768px) and (max-width: 1020px) {}
+
+/*  #Mobile (Portrait)
+================================================== */
+
+@media only screen and (max-width: 480px) {
+
+  .navbar-collapse.in {
+    overflow-y: visible;
+    display: table;
+    width: 100%;
+  }
+
+  .btn-primary, .btn-primary:focus {
+    padding: 14px 20px;
+    font-size: 16px;
+  }
+
+}
+
+/* #Mobile (Landscape)
+================================================== */
+
+@media only screen and (min-width: 480px) and (max-width: 680px) {
+
+  .btn-primary, .btn-primary:focus {
+    padding: 14px 20px;
+    font-size: 24px;
+  }
+
+}

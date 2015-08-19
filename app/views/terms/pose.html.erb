@@ -1,0 +1,38 @@
+<div class='container'>
+  <div class='row'>
+    <h2><%= @contract.title %></h2>
+  </div>
+
+  <div class='row'>
+    <% if FinePrint.signed_any_version_of_contract?(current_user, @contract) %>
+      <p>There have been changes to the <%= @contract.title %>.  Please review them and then click "I Agree" at the bottom of this page to continue.</p>
+    <% else %>
+      <p>To continue, please review and agree to the following site terms by clicking "I Agree" at the bottom of this page.</p>
+    <% end %>
+  </div>
+
+  <div class='row'>
+      <div class="well">
+        <%= @contract.content.html_safe %>
+      </div>
+  </div>
+
+  <div class='row'>
+    <%= form_tag(agree_to_terms_path, method: :post) do %>
+      <div class="checkbox">
+        <label>
+          <%= check_box_tag :i_agree %> I have read the terms listed above and I agree to be bound by their terms
+        </label>
+      </div>
+
+      <%= hidden_field_tag :contract_id, @contract.id %>
+      <%= submit_tag "I Agree", id: "agreement_submit", class: 'btn' %>
+    <% end %>
+  </div>
+</div>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+    Tutor.Ui.enableOnChecked('#agreement_submit', '#i_agree');
+  </script>
+<% end %>

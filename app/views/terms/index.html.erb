@@ -1,0 +1,22 @@
+<div class='container'>
+  <div class='row'>
+    <h2>Site Terms</h2>
+  </div>
+
+  <div class='row'>
+    The following site terms generally apply to visitors to this site.  However, if you are affiliated with one of our partner institutions, you may be covered by a different set of terms.
+  </div>
+
+  <% @contracts.each do |contract| %>
+    <div class='row'>
+      <h3><%= contract.title %></h3>
+    </div>
+
+    <div class='row'>
+      <div class="well">
+        <%= contract.content.html_safe %>
+      </div>
+    </div>
+  <% end %>
+
+</div>

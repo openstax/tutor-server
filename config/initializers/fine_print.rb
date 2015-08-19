@@ -55,8 +55,8 @@ FinePrint.configure do |config|
   config.redirect_to_contracts_proc = lambda do |user, contracts|
     respond_to do |format|
       format.html do
-        redirect_to(fine_print.new_contract_signature_path(
-          contract_id: contracts.first.id
+        redirect_to(pose_terms_path(
+          id: contracts.first.id
         ))
       end
 

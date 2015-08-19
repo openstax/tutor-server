@@ -25,15 +25,6 @@ $(window).scroll( function() {
         $(".navbar-brand").css("font-size", "42px");
 });
 
-//==================== Project Slider ========================//
-$(document).ready(function(){
-	  $('#project-slider').flexslider({
-	    animation: "slide",
-	    controlNav: "false",
-	    DirectionNav: "true"
-	  });
-});
-
 
 //==================== Portfolio ========================//
 $(function () {
@@ -48,29 +39,11 @@ $(function () {
 				easing: 'snap',
 				// call the hover effect
 				onMixEnd: filterList.hoverEffect()
-			});				
+			});
 		},
 		hoverEffect: function () {
 		}
 	};
 	// Run the show!
 	filterList.init();
-});	
-
-    $(document).ready(function() {
-      $("#owl-demo").owlCarousel({
-
-      navigation : false,
-      slideSpeed : 300,
-      paginationSpeed : 400,
-      singleItem : true
-
-      // "singleItem:true" is a shortcut for:
-      // items : 1, 
-      // itemsDesktop : false,
-      // itemsDesktopSmall : false,
-      // itemsTablet: false,
-      // itemsMobile : false
-
-      });
-    });
+});
