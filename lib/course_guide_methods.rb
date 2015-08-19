@@ -12,18 +12,17 @@ module CourseGuideMethods
   end
 
   def group_tasked_exercises_by_pages(tasked_exercises, ecosystems_map)
-    exercise_to_tasked_exercise_map = tasked_exercises.each_with_object({}) do |te, hash|
-      content_exercise = te.exercise
+    exercises = tasked_exercises.collect do |tasked_exercise|
+      content_exercise = tasked_exercise.exercise
       strategy = ::Content::Strategies::Direct::Exercise.new(content_exercise)
-      hash[::Content::Exercise.new(strategy: strategy)] = te
+      ::Content::Exercise.new(strategy: strategy)
     end
+    exercise_pages = ecosystems_map.map_exercises_to_pages(exercises: exercises)
 
-    page_to_exercises_map = ecosystems_map.group_exercises_by_pages(
-      exercises: exercise_to_tasked_exercise_map.keys
-    )
-
-    page_to_exercises_map.each_with_object({}) do |(page, exercises), hash|
-      hash[page] = exercises.collect{ |ex| exercise_to_tasked_exercise_map[ex] }
+    tasked_exercises.each_with_index.each_with_object({}) do |(tasked_exercise, index), hash|
+      page = exercise_pages[index]
+      hash[page] ||= []
+      hash[page] << tasked_exercise
     end
   end
 
