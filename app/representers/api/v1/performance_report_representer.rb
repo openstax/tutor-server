@@ -3,6 +3,20 @@ module Api::V1
 
     include Representable::JSON::Collection
 
+    class Null < Roar::Decorator
+
+      include Roar::JSON
+
+      def to_hash(*args)
+        nil
+      end
+
+      def to_json(*args)
+        'null'
+      end
+
+    end
+
     class StudentData < Roar::Decorator
 
       include Roar::JSON
@@ -67,7 +81,7 @@ module Api::V1
 
       collection :data,
                  readable: true,
-                 decorator: StudentData
+                 decorator: ->(object, *) { object.nil? ? Null : StudentData }
 
     end
 
