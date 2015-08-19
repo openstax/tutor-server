@@ -1,14 +1,40 @@
 <!DOCTYPE html>
 <html>
+
   <head>
-    <title>Tutor</title>
+    <title>OpenStax Tutor</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF8" />
+
     <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
     <%= csrf_meta_tags %>
   </head>
-  <body>
-    <%= render 'layouts/authentication' %>
-    <%= render 'layouts/flash_messages' %>
-    <%= yield %>
+
+  <body id="home">
+    <div class="body">
+
+      <%= render 'layouts/header' %>
+
+      <%= render 'layouts/flash_messages' %>
+
+      <div class="container" style="margin: 60px auto 20px">
+        <div class="row">
+          <%= yield %>
+        </div>
+      </div>
+
+      <%= render 'layouts/footer' %>
+
+    </div>
+
+    <%= yield :javascript %>
   </body>
+
 </html>
+
+
+
+
+
+
+

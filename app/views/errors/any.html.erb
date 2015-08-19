@@ -16,5 +16,4 @@
 
 <h3><%= message %></h3>
 
-<p>We're sorry this <%= code %> error occurred.  If you need help, please contact OpenStax
-  and reference error <%= @error_id %>.</p>
+<p>We're sorry this <%= code %> error occurred.  If you need help, please contact OpenStax<%= " and reference error #{@error_id}" if @error_id %>.</p>

@@ -1,0 +1,22 @@
+<div class='container'>
+  <div class='row'>
+    <h2>Site Terms &amp; Policies</h2>
+  </div>
+
+  <div class='row'>
+    Unless otherwise noted, your use of this site is goverened by the following agreements.  Please familiarize yourself with their contents.  If you do not agree with their conditions, please refrain from using this site.  If you are affiliated with one of our partner institutions, you may be covered by a different set of terms.
+  </div>
+
+  <% @contracts.each do |contract| %>
+    <div class='row'>
+      <h3><%= contract.title %></h3>
+    </div>
+
+    <div class='row'>
+      <div class="well">
+        <%= contract.content.html_safe %>
+      </div>
+    </div>
+  <% end %>
+
+</div>
