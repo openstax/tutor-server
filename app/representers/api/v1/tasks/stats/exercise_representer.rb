@@ -20,6 +20,11 @@ module Api::V1
                    readable: true,
                    decorator: Api::V1::Tasks::Stats::AnswerRepresenter
 
+        property :average_step_number,
+                 type: Float,
+                 writeable: false,
+                 readable: true
+
       end
     end
   end
