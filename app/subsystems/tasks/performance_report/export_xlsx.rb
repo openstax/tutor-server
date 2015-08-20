@@ -76,21 +76,22 @@ module Tasks
 
       def cell_styles(data, worksheet)
         # first two cells are student first/last name
-        [nil, nil] + data.map { |d| worksheet.styles.add_style bg_color: 'FFFF93' if d.late }
+        [nil, nil] + data.map do |d|
+          worksheet.styles.add_style bg_color: 'FFFF93' if !d.nil? && d.late
+        end
       end
 
       def add_late_comments(sheet, data, row)
         data.each_with_index do |d, col|
-          if d.late
-            ref = "#{('C'..'Z').to_a[col]}#{row + 4}" # forms something like 'D5'
-            sheet.add_comment ref: ref, text: 'Late', author: 'OpenStax', visible: false
-          end
+          next if d.nil? || !d.late
+          ref = "#{('C'..'Z').to_a[col]}#{row + 4}" # forms something like 'D5'
+          sheet.add_comment ref: ref, text: 'Late', author: 'OpenStax', visible: false
         end
       end
 
       def student_scores(student)
         [student.first_name, student.last_name] + student.data.collect do |data|
-          score(data)
+          data.nil? ? nil : score(data)
         end
       end
 

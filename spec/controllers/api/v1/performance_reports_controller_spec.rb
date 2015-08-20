@@ -56,9 +56,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
                                            full_name: 'Student Four' }
 
       before do
-
-      allow(Tasks::Assistants::HomeworkAssistant)
-        .to receive(:k_ago_map).with(1) {
+        allow(Tasks::Assistants::HomeworkAssistant).to receive(:k_ago_map).with(1) {
           [ [1,1] ]
         }
 
@@ -73,23 +71,23 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
 
         expect(response).to have_http_status :success
         resp = response.body_as_hash
-        expect(resp).to eq([{
+        expect(resp).to include({
           period_id: course.periods.first.id.to_s,
           data_headings: [
-            { title: 'Homework 2 task plan',
+            { title: 'Homework task plan',
               plan_id: resp[0][:data_headings][0][:plan_id],
               type: 'homework',
               due_at: resp[0][:data_headings][0][:due_at],
-              average: 87.5 },
+              average: 70.0 },
             { title: 'Reading task plan',
               plan_id: resp[0][:data_headings][1][:plan_id],
               type: 'reading',
               due_at: resp[0][:data_headings][1][:due_at] },
-            { title: 'Homework task plan',
+            { title: 'Homework 2 task plan',
               plan_id: resp[0][:data_headings][2][:plan_id],
               type: 'homework',
               due_at: resp[0][:data_headings][2][:due_at],
-              average: 75.0 }
+              average: within(0.01).of(54.16) }
           ],
           students: [{
             name: 'Student One',
@@ -101,8 +99,8 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
                 type: 'homework',
                 id: resp[0][:students][0][:data][0][:id],
                 status: 'completed',
-                exercise_count: 4,
-                correct_exercise_count: 3,
+                exercise_count: 6,
+                correct_exercise_count: 6,
                 recovered_exercise_count: 0,
                 due_at: resp[0][:students][0][:data][0][:due_at],
                 last_worked_at: resp[0][:students][0][:data][0][:last_worked_at]
@@ -118,8 +116,8 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
                 type: 'homework',
                 id: resp[0][:students][0][:data][2][:id],
                 status: 'completed',
-                exercise_count: 6,
-                correct_exercise_count: 6,
+                exercise_count: 4,
+                correct_exercise_count: 3,
                 recovered_exercise_count: 0,
                 due_at: resp[0][:students][0][:data][2][:due_at],
                 last_worked_at: resp[0][:students][0][:data][2][:last_worked_at]
@@ -135,8 +133,8 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
                 type: 'homework',
                 id: resp[0][:students][1][:data][0][:id],
                 status: 'in_progress',
-                exercise_count: 4,
-                correct_exercise_count: 1,
+                exercise_count: 6,
+                correct_exercise_count: 2,
                 recovered_exercise_count: 0,
                 due_at: resp[0][:students][1][:data][0][:due_at],
                 last_worked_at: resp[0][:students][1][:data][0][:last_worked_at]
@@ -152,8 +150,8 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
                 type: 'homework',
                 id: resp[0][:students][1][:data][2][:id],
                 status: 'in_progress',
-                exercise_count: 6,
-                correct_exercise_count: 2,
+                exercise_count: 4,
+                correct_exercise_count: 1,
                 recovered_exercise_count: 0,
                 due_at: resp[0][:students][1][:data][2][:due_at],
                 last_worked_at: resp[0][:students][1][:data][2][:last_worked_at]
@@ -163,21 +161,21 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
         }, {
           period_id: course.periods.order(:id).last.id.to_s,
           data_headings: [
-            { title: 'Homework 2 task plan',
+            { title: 'Homework task plan',
               plan_id: resp[1][:data_headings][0][:plan_id],
-              due_at: resp[1][:data_headings][0][:due_at],
               type: 'homework',
+              due_at: resp[1][:data_headings][0][:due_at],
+              average: 100.0
             },
             { title: 'Reading task plan',
               plan_id: resp[1][:data_headings][1][:plan_id],
               type: 'reading',
               due_at: resp[1][:data_headings][1][:due_at]
             },
-            { title: 'Homework task plan',
+            { title: 'Homework 2 task plan',
               plan_id: resp[1][:data_headings][2][:plan_id],
               type: 'homework',
-              due_at: resp[1][:data_headings][2][:due_at],
-              average: 100.0
+              due_at: resp[1][:data_headings][2][:due_at]
             }
           ],
           students: [{
@@ -190,7 +188,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
                 type: 'homework',
                 id: resp[1][:students][0][:data][0][:id],
                 status: 'not_started',
-                exercise_count: 4,
+                exercise_count: 6,
                 correct_exercise_count: 0,
                 recovered_exercise_count: 0,
                 due_at: resp[1][:students][0][:data][0][:due_at]
@@ -205,7 +203,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
                 type: 'homework',
                 id: resp[1][:students][0][:data][2][:id],
                 status: 'not_started',
-                exercise_count: 6,
+                exercise_count: 4,
                 correct_exercise_count: 0,
                 recovered_exercise_count: 0,
                 due_at: resp[1][:students][0][:data][2][:due_at]
@@ -221,11 +219,12 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
               {
                 type: 'homework',
                 id: resp[1][:students][1][:data][0][:id],
-                status: 'not_started',
-                exercise_count: 4,
-                correct_exercise_count: 0,
+                status: 'completed',
+                exercise_count: 6,
+                correct_exercise_count: 6,
                 recovered_exercise_count: 0,
                 due_at: resp[1][:students][1][:data][0][:due_at],
+                last_worked_at: resp[1][:students][1][:data][0][:last_worked_at]
               },
               {
                 type: 'reading',
@@ -236,16 +235,15 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
               {
                 type: 'homework',
                 id: resp[1][:students][1][:data][2][:id],
-                status: 'completed',
-                exercise_count: 6,
-                correct_exercise_count: 6,
+                status: 'not_started',
+                exercise_count: 4,
+                correct_exercise_count: 0,
                 recovered_exercise_count: 0,
-                due_at: resp[1][:students][1][:data][2][:due_at],
-                last_worked_at: resp[1][:students][1][:data][2][:last_worked_at]
+                due_at: resp[1][:students][1][:data][2][:due_at]
               }
             ]
           }]
-        }])
+        })
       end
 
       it 'raises error for users not in the course' do
@@ -271,31 +269,41 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
       AddUserAsCourseTeacher[course: course, user: teacher.entity_user]
     end
 
-    it 'returns 202 for authorized teachers' do
-      api_post :export, teacher_token, parameters: { id: course.id }
-      expect(response.status).to eq(202)
-      expect(response.body_as_hash[:job]).to match(%r{/api/jobs/[a-z0-9-]+})
+    context 'success' do
+      after(:each) do
+        Tasks::Models::PerformanceReportExport.all.each do |performance_report_export|
+          performance_report_export.try(:export).try(:file).try(:delete)
+        end
+      end
+
+      it 'returns 202 for authorized teachers' do
+        api_post :export, teacher_token, parameters: { id: course.id }
+        expect(response.status).to eq(202)
+        expect(response.body_as_hash[:job]).to match(%r{/api/jobs/[a-z0-9-]+})
+      end
+
+      it 'returns the job path for the performance book export for authorized teachers' do
+        api_post :export, teacher_token, parameters: { id: course.id }
+        expect(response.body_as_hash[:job]).to match(%r{/jobs/[a-f0-9-]+})
+      end
     end
 
-    it 'returns the job path for the performance book export for authorized teachers' do
-      api_post :export, teacher_token, parameters: { id: course.id }
-      expect(response.body_as_hash[:job]).to match(%r{/jobs/[a-f0-9-]+})
-    end
+    context 'failure' do
+      it 'returns 403 unauthorized users' do
+        unknown = FactoryGirl.create :user_profile
+        unknown_token = FactoryGirl.create :doorkeeper_access_token,
+                                           resource_owner_id: unknown.id
 
-    it 'returns 403 unauthorized users' do
-      unknown = FactoryGirl.create :user_profile
-      unknown_token = FactoryGirl.create :doorkeeper_access_token,
-                                         resource_owner_id: unknown.id
+        expect {
+          api_post :export, unknown_token, parameters: { id: course.id }
+        }.to raise_error(SecurityTransgression)
+      end
 
-      expect {
-        api_post :export, unknown_token, parameters: { id: course.id }
-      }.to raise_error(SecurityTransgression)
-    end
-
-    it 'returns 404 for non-existent courses' do
-      expect {
-        api_post :export, teacher_token, parameters: { id: 'nope' }
-      }.to raise_error(ActiveRecord::RecordNotFound)
+      it 'returns 404 for non-existent courses' do
+        expect {
+          api_post :export, teacher_token, parameters: { id: 'nope' }
+        }.to raise_error(ActiveRecord::RecordNotFound)
+      end
     end
   end
 
@@ -304,45 +312,54 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
     let(:teacher_token) { FactoryGirl.create :doorkeeper_access_token,
                            resource_owner_id: teacher.id }
 
-    before do
+    before(:each) do
       AddUserAsCourseTeacher[course: course, user: teacher.entity_user]
     end
 
-    it 'returns the filename, url, timestamp of all exports for the course' do
-      role = ChooseCourseRole[user: teacher.entity_user,
-                              course: course,
-                              allowed_role_type: :teacher]
+    context 'success' do
+      before(:each) do
+        role = ChooseCourseRole[user: teacher.entity_user,
+                                course: course,
+                                allowed_role_type: :teacher]
 
-      export = Tempfile.open(['test_export', '.xls']) do |file|
-        FactoryGirl.create(:performance_report_export,
-                           export: file,
-                           course: course,
-                           role: role)
+        @export = Tempfile.open(['test_export', '.xls']) do |file|
+          FactoryGirl.create(:performance_report_export, export: file, course: course, role: role)
+        end
       end
 
-      api_get :exports, teacher_token, parameters: { id: course.id }
+      after(:each) do
+        Tasks::Models::PerformanceReportExport.all.each do |performance_report_export|
+          performance_report_export.try(:export).try(:file).try(:delete)
+        end
+      end
 
-      expect(response.status).to eq(200)
-      expect(response.body_as_hash.last[:filename]).not_to include('test_export')
-      expect(response.body_as_hash.last[:filename]).to include('.xls')
-      expect(response.body_as_hash.last[:url]).to eq(export.url)
-      expect(response.body_as_hash.last[:created_at]).not_to be_nil
+      it 'returns the filename, url, timestamp of all exports for the course' do
+        api_get :exports, teacher_token, parameters: { id: course.id }
+
+        expect(response.status).to eq(200)
+        expect(response.body_as_hash.last[:filename]).not_to include('test_export')
+        expect(response.body_as_hash.last[:filename]).to include('.xls')
+        expect(response.body_as_hash.last[:url]).to eq(@export.url)
+        expect(response.body_as_hash.last[:created_at]).not_to be_nil
+      end
     end
 
-    it 'returns 403 for users who are not teachers of the course' do
-      unknown = FactoryGirl.create :user_profile
-      unknown_token = FactoryGirl.create :doorkeeper_access_token,
-                                         resource_owner_id: unknown.id
+    context 'failure' do
+      it 'returns 403 for users who are not teachers of the course' do
+        unknown = FactoryGirl.create :user_profile
+        unknown_token = FactoryGirl.create :doorkeeper_access_token,
+                                           resource_owner_id: unknown.id
 
-      expect {
-        api_get :exports, unknown_token, parameters: { id: course.id }
-      }.to raise_error(SecurityTransgression)
-    end
+        expect {
+          api_get :exports, unknown_token, parameters: { id: course.id }
+        }.to raise_error(SecurityTransgression)
+      end
 
-    it 'returns 404 for non-existent courses' do
-      expect {
-        api_get :exports, teacher_token, parameters: { id: 'nope' }
-      }.to raise_error(ActiveRecord::RecordNotFound)
+      it 'returns 404 for non-existent courses' do
+        expect {
+          api_get :exports, teacher_token, parameters: { id: 'nope' }
+        }.to raise_error(ActiveRecord::RecordNotFound)
+      end
     end
   end
 end

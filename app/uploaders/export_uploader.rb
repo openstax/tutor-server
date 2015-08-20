@@ -23,8 +23,8 @@ class ExportUploader < CarrierWave::Uploader::Base
     # Reuse hashed filename for other versions of the same file
     return model.read_attribute(mounted_as) unless version_name.blank?
 
-    # Don't try to hash uncached files
-    return super unless cached?
+    # Don't try to hash development files and uncached files
+    return super if Rails.env.development? || !cached?
 
     "#{content_hash}.#{file.extension}"
   end
