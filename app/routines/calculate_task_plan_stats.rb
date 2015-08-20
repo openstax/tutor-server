@@ -16,9 +16,9 @@ class CalculateTaskPlanStats
   end
 
   def exercise_stats_for_tasked_exercises(tasked_exercises)
-    tasked_exercises.group_by{ |te| te.exercise }.sort_by do |exercise, tasked_exercises|
-      tasked_exercises.map{ |te| te.task_step.number }.reduce(:+)/tasked_exercises.size
-    end.collect do |exercise, tasked_exercises|
+    tasked_exercises.group_by{ |te| te.exercise }.collect do |exercise, tasked_exercises|
+      average_step_number = tasked_exercises.map{ |te| te.task_step.number }
+                                            .reduce(:+)/Float(tasked_exercises.size)
       completed_tasked_exercises = tasked_exercises.select{ |te| te.completed? }
       exercise_parser = OpenStax::Exercises::V1::Exercise.new(content: exercise.content)
       answer_stats = answer_stats_for_tasked_exercises(tasked_exercises)
@@ -36,8 +36,11 @@ class CalculateTaskPlanStats
             free_response: te.free_response,
             answer_id: te.answer_id
           }
-        end
+        end,
+        average_step_number: average_step_number
       }
+    end.sort_by do |exercise_stats|
+      exercise_stats[:average_step_number]
     end
   end
 
@@ -97,8 +100,8 @@ class CalculateTaskPlanStats
       get_tasked_exercises_from_task_steps(task_steps)
     )
 
-    page_hash.sort_by{ |page, tasked_exercises| page.book_location }
-             .collect{ |page, tasked_exercises| generate_page_stats(page, tasked_exercises) }
+    page_hash.collect{ |page, tasked_exercises| generate_page_stats(page, tasked_exercises) }
+             .sort_by{ |page_stats| page_stats[:chapter_section] }
   end
 
   def no_period
