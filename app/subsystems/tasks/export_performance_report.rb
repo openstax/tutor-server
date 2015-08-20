@@ -15,19 +15,29 @@ module Tasks
       run(:get_course_profile, course: course)
       run(:get_performance_report, course: course, role: role)
 
-      outputs.filepath = generate_export_file!(format)
+      begin
+        @temp_filepath = generate_temp_export_file!(format)
 
-      export = Models::PerformanceReportExport.create!(
-        course: course,
-        role: role,
-        export: File.open(outputs.filepath)
-      )
+        export = File.open(@temp_filepath) do |file|
+          Models::PerformanceReportExport.create!(
+            course: course,
+            role: role,
+            export: file
+          )
+        end
+
+        outputs.filepath = export.export.path
+      ensure
+        # Cleanup the temp file after it has been moved to the uploads folder
+        File.delete(@temp_filepath) unless @temp_filepath.nil? || \
+                                           @temp_filepath == outputs.filepath
+      end
 
       job.save(url: export.url)
     end
 
     private
-    def generate_export_file!(format)
+    def generate_temp_export_file!(format)
       klass = "Tasks::PerformanceReport::Export#{format.to_s.camelize}"
       exporter = klass.constantize
       filename = [outputs.profile.name,

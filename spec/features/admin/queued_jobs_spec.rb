@@ -16,9 +16,15 @@ RSpec.feature 'Administration of queued jobs' do
     ActiveJob::Base.queue_adapter = :inline
   end
 
-  before do
+  before(:each) do
     stub_current_user(admin)
     Tasks::ExportPerformanceReport.perform_later(course: course, role: role)
+  end
+
+  after(:each) do
+    Tasks::Models::PerformanceReportExport.all.each do |performance_report_export|
+      performance_report_export.try(:export).try(:file).try(:delete)
+    end
   end
 
   scenario 'Viewing the status of jobs' do
