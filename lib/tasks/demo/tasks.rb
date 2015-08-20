@@ -38,12 +38,14 @@ class DemoTasks < DemoBase
                            opens_at: period.opens_at,
                            due_at: period.due_at)
         end
-
-        log("  Distributing tasks")
-        task_plan = Tasks::Models::TaskPlan.where(owner: content.course, title: assignment.title)
-                                           .order(created_at: :desc).first!
-        distribute_tasks(task_plan: task_plan)
-
+        # Draft plans do not undergo distribution
+        if assignment.draft
+          log("  Is a draft, skipping distributing")
+        else
+          log("  Distributing tasks")
+          task_plan = Tasks::Models::TaskPlan.where(owner: content.course, title: assignment.title).first!
+          distribute_tasks(task_plan:task_plan)
+        end
       end
     end
 

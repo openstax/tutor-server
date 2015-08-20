@@ -1,5 +1,5 @@
 desc 'Initializes data for the deployment demo (run all demo:* tasks), book can be either all, bio or phy.'
-task :demo, [:book, :version, :random_seed] => ['demo:content', 'demo:tasks'] do |tt, args|
+task :demo, [:book, :version, :random_seed] => ['demo:content', 'demo:tasks', 'demo:show'] do |tt, args|
   Rake::Task[:"demo:work"].invoke(args[:book],args[:random_seed]) unless ENV['NOWORK']
   puts 'All demo tasks completed'
 end
@@ -30,7 +30,7 @@ namespace :demo do
     end
   end
 
-  desc 'Works student assignments '
+  desc 'Works student assignments'
   task :work, [:book, :version, :random_seed] => :environment do |tt, args|
     require_relative 'demo/work'
     result = DemoWork.call(args.to_h.merge(print_logs: true))
@@ -42,4 +42,9 @@ namespace :demo do
     end
   end
 
+  desc 'Output student assignments'
+  task :show, [:book, :version, :random_seed] => :environment do |tt, args|
+    require_relative 'demo/show'
+    DemoShow.call(args.to_h.merge(print_logs: true))
+  end
 end
