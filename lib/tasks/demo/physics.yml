@@ -10,7 +10,7 @@ periods:
     students: [ak,at,cp,gj,hp,lb,lt,ne,sd,vw]
   - id: p2
     name: 2nd
-    students: [af,ag,bb,cd,eh,ft,js,ms,nz,ra]
+    students: [af,ag,bb,cd,hg,ft,js,ms,nz,ra]
 
 assignments:
 
