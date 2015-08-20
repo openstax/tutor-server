@@ -15,6 +15,7 @@ class DemoWork < DemoBase
 
     ContentConfiguration[book.to_sym].each do | content |
       content.assignments.each do | assignment |
+        next if assignment.draft # Draft plans haven't been distributed so can't be worked
 
         task_plan = Tasks::Models::TaskPlan.where(owner: content.course, title: assignment.title)
                                            .order(created_at: :desc).first!
@@ -35,7 +36,6 @@ class DemoWork < DemoBase
             raise "#{assignment.title} period #{period.id} has no responses for task #{index} for user #{user.profile.id} #{user.username}"
           end
           lateness = assignment.late ? assignment.late[profile.initials] : nil
-          log("  Work #{profile.initials}")
           worked_at = task.due_at + (lateness ? lateness : -60)
 
           Timecop.freeze(worked_at) do
