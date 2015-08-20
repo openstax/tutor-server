@@ -16,7 +16,9 @@ class CalculateTaskPlanStats
   end
 
   def exercise_stats_for_tasked_exercises(tasked_exercises)
-    tasked_exercises.group_by{ |te| te.exercise }.collect do |exercise, tasked_exercises|
+    tasked_exercises.group_by{ |te| te.exercise }.sort_by do |exercise, tasked_exercises|
+      tasked_exercises.map{ |te| te.task_step.number }.reduce(:+)/tasked_exercises.size
+    end.collect do |exercise, tasked_exercises|
       completed_tasked_exercises = tasked_exercises.select{ |te| te.completed? }
       exercise_parser = OpenStax::Exercises::V1::Exercise.new(content: exercise.content)
       answer_stats = answer_stats_for_tasked_exercises(tasked_exercises)
@@ -40,13 +42,11 @@ class CalculateTaskPlanStats
   end
 
   def page_stats_for_tasked_exercises(tasked_exercises)
-    completed = tasked_exercises.select { |te| te.completed? }
+    completed = tasked_exercises.select{ |te| te.completed? }
 
-    some_completed_role_ids = completed.each_with_object([]){ |tasked_exercise, collection|
-      tasked_exercise.task_step.task.taskings.each{ |tasking|
-        collection << tasking.entity_role_id
-      }
-    }.uniq
+    some_completed_role_ids = completed.collect do |tasked_exercise|
+      tasked_exercise.task_step.task.taskings.collect{ |tasking| tasking.entity_role_id }
+    end.flatten.uniq
 
     correct_count = completed.count{ |te| te.is_correct? }
     stats = {
@@ -84,22 +84,21 @@ class CalculateTaskPlanStats
     tasked_exercise_ids = task_steps.flatten.select{ |t| t.exercise? }.collect{ |ts| ts.tasked_id }
     Tasks::Models::TaskedExercise.joins { task_step }
                                  .where { id.in tasked_exercise_ids }
-                                 .order { task_step.number }
                                  .eager_load([{exercise: :page},
                                               {task_step: {task: {taskings: :role}}}]).to_a
   end
 
   def group_tasked_exercises_by_pages(tasked_exercises)
-    tasked_exercises.group_by { |te| te.exercise.page }
+    tasked_exercises.group_by{ |te| te.exercise.page }
   end
 
   def generate_page_stats_for_task_steps(task_steps)
     page_hash = group_tasked_exercises_by_pages(
       get_tasked_exercises_from_task_steps(task_steps)
     )
-    page_hash
-      .sort_by{ |page, _| page.number }
-      .collect{ |page, tasked_exercises| generate_page_stats(page, tasked_exercises) }
+
+    page_hash.sort_by{ |page, tasked_exercises| page.book_location }
+             .collect{ |page, tasked_exercises| generate_page_stats(page, tasked_exercises) }
   end
 
   def no_period
