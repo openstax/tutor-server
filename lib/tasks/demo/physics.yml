@@ -66,7 +66,7 @@ assignments:
   - type: reading
     title: Read 3.1 Acceleration Pt1
     book_locations: [[3, 0], [3, 1]]
-    step_types: [ r, r, i, e, r, r, r, e, v, e, p ]
+    step_types: [ r, r, i, e, r, r, r, e, v, e, e, p ]
     late:
       ak: <%= 3.minutes %>
       af: <%= 30.minutes %>
@@ -83,7 +83,7 @@ assignments:
   - type: reading
     title: Read 3.2 Acceleration Pt2
     book_locations: [[3, 2]]
-    step_types: [ r, i, e, r, r, e, r, r, r, e, r, e, p ]
+    step_types: [ r, i, e, r, r, e, r, e, r, r, e, r, e, e, e, p ]
     periods:
       - id: p1
         opens_at: <%= standard_opens_at school_day_on_or_before 10.days.from_now %>
@@ -117,7 +117,7 @@ assignments:
     book_locations: [[4, 0], [4, 1], [4, 2]]
     num_exercises: 10
     book_locations: [[2, 1], [2, 2], [2, 3], [2, 4]]
-    step_types: [e, e, e, e, e, e, e, e, e, e, p]
+    step_types: [r, r, e, r, v, e, r, r, e, r, r, e, r, v, e, r, r, r, e, r, r, r, r, e, r, i, e, r, r, r, r, e, e, e, p]
     late:
       hp: <%= 4.hours %>
       hg: <%= 10.minutes %>
