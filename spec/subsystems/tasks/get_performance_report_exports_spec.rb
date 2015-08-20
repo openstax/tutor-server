@@ -38,5 +38,8 @@ RSpec.describe Tasks::GetPerformanceReportExports do
     expect(export[1].url).to eq physics_export.url
     expect(export[1].created_at).to be_the_same_time_as physics_export.created_at
 
+    Tasks::Models::PerformanceReportExport.all.each do |performance_report_export|
+      performance_report_export.try(:export).try(:file).try(:delete)
+    end
   end
 end

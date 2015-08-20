@@ -269,31 +269,41 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
       AddUserAsCourseTeacher[course: course, user: teacher.entity_user]
     end
 
-    it 'returns 202 for authorized teachers' do
-      api_post :export, teacher_token, parameters: { id: course.id }
-      expect(response.status).to eq(202)
-      expect(response.body_as_hash[:job]).to match(%r{/api/jobs/[a-z0-9-]+})
+    context 'success' do
+      after(:each) do
+        Tasks::Models::PerformanceReportExport.all.each do |performance_report_export|
+          performance_report_export.try(:export).try(:file).try(:delete)
+        end
+      end
+
+      it 'returns 202 for authorized teachers' do
+        api_post :export, teacher_token, parameters: { id: course.id }
+        expect(response.status).to eq(202)
+        expect(response.body_as_hash[:job]).to match(%r{/api/jobs/[a-z0-9-]+})
+      end
+
+      it 'returns the job path for the performance book export for authorized teachers' do
+        api_post :export, teacher_token, parameters: { id: course.id }
+        expect(response.body_as_hash[:job]).to match(%r{/jobs/[a-f0-9-]+})
+      end
     end
 
-    it 'returns the job path for the performance book export for authorized teachers' do
-      api_post :export, teacher_token, parameters: { id: course.id }
-      expect(response.body_as_hash[:job]).to match(%r{/jobs/[a-f0-9-]+})
-    end
+    context 'failure' do
+      it 'returns 403 unauthorized users' do
+        unknown = FactoryGirl.create :user_profile
+        unknown_token = FactoryGirl.create :doorkeeper_access_token,
+                                           resource_owner_id: unknown.id
 
-    it 'returns 403 unauthorized users' do
-      unknown = FactoryGirl.create :user_profile
-      unknown_token = FactoryGirl.create :doorkeeper_access_token,
-                                         resource_owner_id: unknown.id
+        expect {
+          api_post :export, unknown_token, parameters: { id: course.id }
+        }.to raise_error(SecurityTransgression)
+      end
 
-      expect {
-        api_post :export, unknown_token, parameters: { id: course.id }
-      }.to raise_error(SecurityTransgression)
-    end
-
-    it 'returns 404 for non-existent courses' do
-      expect {
-        api_post :export, teacher_token, parameters: { id: 'nope' }
-      }.to raise_error(ActiveRecord::RecordNotFound)
+      it 'returns 404 for non-existent courses' do
+        expect {
+          api_post :export, teacher_token, parameters: { id: 'nope' }
+        }.to raise_error(ActiveRecord::RecordNotFound)
+      end
     end
   end
 
@@ -302,45 +312,54 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
     let(:teacher_token) { FactoryGirl.create :doorkeeper_access_token,
                            resource_owner_id: teacher.id }
 
-    before do
+    before(:each) do
       AddUserAsCourseTeacher[course: course, user: teacher.entity_user]
     end
 
-    it 'returns the filename, url, timestamp of all exports for the course' do
-      role = ChooseCourseRole[user: teacher.entity_user,
-                              course: course,
-                              allowed_role_type: :teacher]
+    context 'success' do
+      before(:each) do
+        role = ChooseCourseRole[user: teacher.entity_user,
+                                course: course,
+                                allowed_role_type: :teacher]
 
-      export = Tempfile.open(['test_export', '.xls']) do |file|
-        FactoryGirl.create(:performance_report_export,
-                           export: file,
-                           course: course,
-                           role: role)
+        @export = Tempfile.open(['test_export', '.xls']) do |file|
+          FactoryGirl.create(:performance_report_export, export: file, course: course, role: role)
+        end
       end
 
-      api_get :exports, teacher_token, parameters: { id: course.id }
+      after(:each) do
+        Tasks::Models::PerformanceReportExport.all.each do |performance_report_export|
+          performance_report_export.try(:export).try(:file).try(:delete)
+        end
+      end
 
-      expect(response.status).to eq(200)
-      expect(response.body_as_hash.last[:filename]).not_to include('test_export')
-      expect(response.body_as_hash.last[:filename]).to include('.xls')
-      expect(response.body_as_hash.last[:url]).to eq(export.url)
-      expect(response.body_as_hash.last[:created_at]).not_to be_nil
+      it 'returns the filename, url, timestamp of all exports for the course' do
+        api_get :exports, teacher_token, parameters: { id: course.id }
+
+        expect(response.status).to eq(200)
+        expect(response.body_as_hash.last[:filename]).not_to include('test_export')
+        expect(response.body_as_hash.last[:filename]).to include('.xls')
+        expect(response.body_as_hash.last[:url]).to eq(@export.url)
+        expect(response.body_as_hash.last[:created_at]).not_to be_nil
+      end
     end
 
-    it 'returns 403 for users who are not teachers of the course' do
-      unknown = FactoryGirl.create :user_profile
-      unknown_token = FactoryGirl.create :doorkeeper_access_token,
-                                         resource_owner_id: unknown.id
+    context 'failure' do
+      it 'returns 403 for users who are not teachers of the course' do
+        unknown = FactoryGirl.create :user_profile
+        unknown_token = FactoryGirl.create :doorkeeper_access_token,
+                                           resource_owner_id: unknown.id
 
-      expect {
-        api_get :exports, unknown_token, parameters: { id: course.id }
-      }.to raise_error(SecurityTransgression)
-    end
+        expect {
+          api_get :exports, unknown_token, parameters: { id: course.id }
+        }.to raise_error(SecurityTransgression)
+      end
 
-    it 'returns 404 for non-existent courses' do
-      expect {
-        api_get :exports, teacher_token, parameters: { id: 'nope' }
-      }.to raise_error(ActiveRecord::RecordNotFound)
+      it 'returns 404 for non-existent courses' do
+        expect {
+          api_get :exports, teacher_token, parameters: { id: 'nope' }
+        }.to raise_error(ActiveRecord::RecordNotFound)
+      end
     end
   end
 end
