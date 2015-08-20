@@ -1,8 +1,8 @@
 require_relative 'demo_base'
 require_relative 'content_configuration'
 
-# This is ugly and really needs cleaned up.
-# Forgive me for I wrote it under deadline...
+# Loops through the courses and periods that are to be created and worked.
+# Logs the student's assignments for review
 class DemoShow < DemoBase
 
   lev_routine
@@ -18,11 +18,13 @@ class DemoShow < DemoBase
       content.periods.each do | period |
         period.students.each do | initials |
           person = people.students[initials]
+
           unless student = students[person.username]
             student = students[person.username] = OpenStruct.new(
               courses: {}, initials: initials, username: person.username, name: person.name
             )
           end
+
           unless course = student.courses[content.course_name]
             course = student.courses[content.course_name] = OpenStruct.new(assignments: [])
           end
@@ -33,8 +35,9 @@ class DemoShow < DemoBase
                 period = content.periods.find{|pr| pr.id == ap.id }
                 course.assignments.push(
                   OpenStruct.new(
-                  title: assignment.title, period: period.name, score: ap.students[initials]
-                ))
+                    title: assignment.title, period: period.name, score: ap.students[initials]
+                  )
+                )
               end
             end
           end
@@ -46,9 +49,10 @@ class DemoShow < DemoBase
       data = students[username]
       log "#{username} - #{data.name}"
       data.courses.each do | name, cdata |
-        log "    #{name}"
-        cdata.assignments.each do |a|
-          log "        #{a.period} : #{a.score} : #{a.title}"
+        period_name = cdata.assignments.group_by{|assignment| assignment.period}.keys.first
+        log "    #{name},  Period: #{period_name}"
+        cdata.assignments.each do |assignment|
+          log "        #{assignment.title} : #{assignment.score}"
         end
       end
     end
