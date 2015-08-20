@@ -63,12 +63,14 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
                     "free_response" => "a sentence not explaining anything",
                     "answer_id" => incorrect_answer_ids.first
                   }
-                )
+                ),
+                "average_step_number" => 3.0
               },
               {
                 "content" => a_kind_of(Hash),
                 "answered_count" => 0,
-                "answers" => []
+                "answers" => [],
+                "average_step_number" => 5.0
               }
             )
           ),
