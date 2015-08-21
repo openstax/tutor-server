@@ -332,20 +332,7 @@ class DemoBase
 
   def create_course(name:)
     course = run(:create_course, name: name).outputs.course
-
-    # Add assistants to course so teacher can create assignments
-    Tasks::Models::CourseAssistant.create!(course: course,
-                                           assistant: reading_assistant,
-                                           tasks_task_plan_type: 'reading')
-    Tasks::Models::CourseAssistant.create!(course: course,
-                                           assistant: hw_assistant,
-                                           tasks_task_plan_type: 'homework')
-    Tasks::Models::CourseAssistant.create!(course: course,
-                                           assistant: external_assignment_assistant,
-                                           tasks_task_plan_type: 'external')
-
     log("Created a course named '#{name}'.")
-
     course
   end
 
