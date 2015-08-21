@@ -5,15 +5,6 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
   let!(:course) { CreateCourse[name: 'Anything'] }
   let!(:period) { CreatePeriod[course: course] }
 
-  let!(:assistant) { FactoryGirl.create(
-    :tasks_assistant, code_class_name: "Tasks::Assistants::IReadingAssistant"
-  ) }
-
-  let!(:course_assistant) { FactoryGirl.create :tasks_course_assistant,
-                                               course: course,
-                                               assistant: assistant,
-                                               tasks_task_plan_type: 'test' }
-
   let!(:user) { FactoryGirl.create :user_profile }
   let!(:teacher) { FactoryGirl.create :user_profile }
   let!(:student) { FactoryGirl.create :user_profile }
@@ -21,9 +12,10 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
   let!(:page) { FactoryGirl.create :content_page }
   let!(:task_plan) { FactoryGirl.build(:tasks_task_plan,
                                        owner: course,
-                                       assistant: assistant,
+                                       assistant: get_assistant(course: course,
+                                                                task_plan_type: 'reading'),
                                        settings: { page_ids: [page.id.to_s] },
-                                       type: 'test',
+                                       type: 'reading',
                                        num_tasking_plans: 0) }
   let!(:tasking_plan) { FactoryGirl.create :tasks_tasking_plan,
                                            task_plan: task_plan,
@@ -33,7 +25,8 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
   let!(:published_task_plan) { FactoryGirl.create(:tasked_task_plan,
                                                   number_of_students: 1,
                                                   owner: course,
-                                                  assistant: assistant,
+                                                  assistant: get_assistant(course: course,
+                                                                           task_plan_type: 'reading'),
                                                   settings: { page_ids: [page.id.to_s] },
                                                   published_at: Time.now) }
 
@@ -132,7 +125,7 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
       }.to raise_error(SecurityTransgression)
     end
 
-    it 'fails with 422 Unprocessable Entity if no Assistant found' do
+    it 'fails if no Assistant found' do
       controller.sign_in teacher
       result = nil
       expect {
@@ -142,8 +135,7 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
                           raw_post_data: Api::V1::TaskPlanRepresenter
                                            .new(task_plan).to_hash
                                            .except('type').to_json
-      }.not_to change{ Tasks::Models::TaskPlan.count }
-      expect(response).to have_http_status(:unprocessable_entity)
+      }.to raise_error(IllegalState).and change{ Tasks::Models::TaskPlan.count }.by 0
     end
 
     context 'when is_publish_requested is set' do
@@ -398,6 +390,10 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
       expect(body['stats']).to be_a(Array)
     end
 
+  end
+
+  def get_assistant(course:, task_plan_type:)
+    course.course_assistants.where{tasks_task_plan_type == task_plan_type}.first.assistant
   end
 
 end

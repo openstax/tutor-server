@@ -59,7 +59,8 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
         :tasks_task_plan,
         owner: course,
         settings: { 'page_ids' => [page.id.to_s] },
-        assistant_code_class_name: 'Tasks::Assistants::IReadingAssistant')
+        assistant: get_assistant(course: course, task_plan_type: 'reading')
+      )
 
       DistributeTasks.call(task_plan)
 
@@ -498,6 +499,10 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       end
     end
 
+  end
+
+  def get_assistant(course:, task_plan_type:)
+    course.course_assistants.where{tasks_task_plan_type == task_plan_type}.first.assistant
   end
 
 end

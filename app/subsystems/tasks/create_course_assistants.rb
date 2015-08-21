@@ -27,10 +27,11 @@ class Tasks::CreateCourseAssistants
   end
 
   def create_course_assistant(course:, assistant_name:, code_class_name:, task_plan_type:)
-    assistant = Tasks::Models::Assistant.find_or_create_by!(
-      name: assistant_name,
-      code_class_name: code_class_name
-    )
+    assistant = Tasks::Models::Assistant.where(code_class_name: code_class_name).first ||
+                Tasks::Models::Assistant.create!(
+                  name: assistant_name,
+                  code_class_name: code_class_name
+                )
 
     Tasks::Models::CourseAssistant.create!(course: course,
                                            assistant: assistant,
