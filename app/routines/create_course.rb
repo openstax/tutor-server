@@ -8,7 +8,7 @@ class CreateCourse
   uses_routine SchoolDistrict::ProcessSchoolChange,
                as: :process_school_change
 
-  uses_routine Tasks::CreateCourseAssistants
+  uses_routine Tasks::CreateCourseAssistants,
                as: :create_course_assistants
 
   def exec(name:, school: nil)
