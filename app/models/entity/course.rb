@@ -8,5 +8,7 @@ class Entity::Course < Tutor::SubSystems::BaseModel
   has_many :course_ecosystems, subsystem: :course_content
   has_many :ecosystems, through: :course_ecosystems, subsystem: :content
 
+  has_many :course_assistants, subsystem: :tasks
+
   delegate :name, to: :profile
 end

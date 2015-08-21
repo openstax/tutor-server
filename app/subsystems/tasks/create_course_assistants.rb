@@ -14,7 +14,7 @@ class Tasks::CreateCourseAssistants
     create_course_assistant(
       course: course,
       assistant_name: "Reading Assistant",
-      code_class_name: "Tasks::Assistants::ReadingAssistant",
+      code_class_name: "Tasks::Assistants::IReadingAssistant",
       task_plan_type: 'reading'
     )
 
