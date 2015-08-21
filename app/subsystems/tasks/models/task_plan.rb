@@ -11,6 +11,7 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
 
   belongs_to :assistant
   belongs_to :owner, polymorphic: true
+  belongs_to :ecosystem, subsystem: :content
 
   has_many :tasking_plans, dependent: :destroy, inverse_of: :task_plan
   has_many :tasks, dependent: :destroy, inverse_of: :task_plan

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, :type => :representer do
+RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
   let!(:task_step) {
     step = instance_double(Tasks::Models::TaskStep)
     allow(step).to receive(:id).and_return(15)
@@ -201,7 +201,8 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, :type => :representer 
   context "with related content" do
 
     before(:each) do
-      allow(task_step).to receive(:related_content).and_return([{title: "Some title", chapter_section: "4.2"}])
+      allow(task_step).to receive(:related_content).and_return([{title: "Some title",
+                                                                 book_location: "4.2"}])
     end
 
     it_behaves_like "a good exercise representation should"
