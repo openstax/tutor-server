@@ -182,25 +182,8 @@ class DemoBase
   #   # end
   # end
 
-  def hw_assistant
-    @hw_assistant ||= Tasks::Models::Assistant.find_or_create_by!(
-      name: "Homework Assistant",
-      code_class_name: "Tasks::Assistants::HomeworkAssistant"
-    )
-  end
-
-  def reading_assistant
-    @reading_assistant ||= Tasks::Models::Assistant.find_or_create_by!(
-      name: "iReading Assistant",
-      code_class_name: "Tasks::Assistants::IReadingAssistant"
-    )
-  end
-
-  def external_assignment_assistant
-    @external_assignment_assistant ||= Tasks::Models::Assistant.find_or_create_by!(
-      name: "External Assignment Assistant",
-      code_class_name: "Tasks::Assistants::ExternalAssignmentAssistant"
-    )
+  def get_assistant(course:, task_plan_type:)
+    course.course_assistants.where{tasks_task_plan_type == task_plan_type}.first.assistant
   end
 
   def get_ecosystem(course: course)
@@ -218,7 +201,7 @@ class DemoBase
       title: title,
       owner: course,
       type: 'reading',
-      assistant: reading_assistant,
+      assistant: get_assistant(course: course, task_plan_type: 'reading'),
       settings: { page_ids: pages.collect{|page| page.id.to_s} }
     )
   end
@@ -237,7 +220,7 @@ class DemoBase
       title: title,
       owner: course,
       type: 'homework',
-      assistant: hw_assistant,
+      assistant: get_assistant(course: course, task_plan_type: 'homework'),
       settings: {
         page_ids: pages.collect{|page| page.id.to_s},
         exercise_ids: exercise_ids,
@@ -332,20 +315,7 @@ class DemoBase
 
   def create_course(name:)
     course = run(:create_course, name: name).outputs.course
-
-    # Add assistants to course so teacher can create assignments
-    Tasks::Models::CourseAssistant.create!(course: course,
-                                           assistant: reading_assistant,
-                                           tasks_task_plan_type: 'reading')
-    Tasks::Models::CourseAssistant.create!(course: course,
-                                           assistant: hw_assistant,
-                                           tasks_task_plan_type: 'homework')
-    Tasks::Models::CourseAssistant.create!(course: course,
-                                           assistant: external_assignment_assistant,
-                                           tasks_task_plan_type: 'external')
-
     log("Created a course named '#{name}'.")
-
     course
   end
 

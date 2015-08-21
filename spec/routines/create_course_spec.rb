@@ -4,7 +4,10 @@ describe CreateCourse do
   it "creates a new course" do
     result = CreateCourse.call(name: 'Unnamed')
     expect(result.errors).to be_empty
-    expect(result.outputs.course).to_not be_nil
-    expect(result.outputs.course.class).to eq(Entity::Course)
+
+    course = result.outputs.course
+
+    expect(course).to be_a Entity::Course
+    expect(course.course_assistants.count).to eq 3
   end
 end

@@ -4,10 +4,8 @@ class SetupPerformanceReportData
   protected
   def exec(course:, teacher:, students: [], ecosystem:)
     students = [students].flatten
-    reading_assistant = FactoryGirl.create(:tasks_assistant,
-      code_class_name: 'Tasks::Assistants::IReadingAssistant')
-    homework_assistant = FactoryGirl.create :tasks_assistant,
-      code_class_name: 'Tasks::Assistants::HomeworkAssistant'
+    reading_assistant = get_assistant(course: course, task_plan_type: 'reading')
+    homework_assistant = get_assistant(course: course, task_plan_type: 'homework')
 
     # There should be at least 4 students
     (students.length + 1..4).each do |extra_student|
@@ -155,5 +153,9 @@ class SetupPerformanceReportData
       .where { task_type.in my { task_types } }
       .order { due_at }
       .includes { task_steps.tasked }
+  end
+
+  def get_assistant(course:, task_plan_type:)
+    course.course_assistants.where{tasks_task_plan_type == task_plan_type}.first.assistant
   end
 end
