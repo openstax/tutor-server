@@ -22,7 +22,7 @@ class Tasks::Assistants::IReadingAssistant
     @task_plan = task_plan
     @taskees = taskees
 
-    @pages = collect_pages
+    collect_pages
 
     @tag_exercise = {}
     @exercise_pages = {}
@@ -42,11 +42,18 @@ class Tasks::Assistants::IReadingAssistant
   protected
 
   def collect_pages
-    page_ids = @task_plan.settings['page_ids']
-    raise "No pages selected" if page_ids.blank?
+    @page_ids = @task_plan.settings['page_ids']
+    raise "No pages selected" if @page_ids.blank?
 
-    @ecosystem = GetEcosystemFromIds[page_ids: page_ids]
-    @ecosystem.pages_by_ids(page_ids)
+    if @task_plan.ecosystem.nil?
+      @ecosystem = GetEcosystemFromIds[page_ids: @page_ids]
+      @task_plan.update_attribute(:content_ecosystem_id, @ecosystem.id)
+    else
+      ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(@task_plan.ecosystem)
+      @ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
+    end
+
+    @pages = @ecosystem.pages_by_ids(@page_ids)
   end
 
   def build_ireading_task(pages:, taskee:)

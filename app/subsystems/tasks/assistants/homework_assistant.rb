@@ -34,7 +34,7 @@ class Tasks::Assistants::HomeworkAssistant
     @task_plan = task_plan
     @taskees = taskees
 
-    @exercises = collect_exercises
+    collect_exercises
 
     @tag_exercise = {}
     @exercise_pages = {}
@@ -54,11 +54,18 @@ class Tasks::Assistants::HomeworkAssistant
   protected
 
   def collect_exercises
-    exercise_ids = @task_plan.settings['exercise_ids']
-    raise "No exercises selected" if exercise_ids.blank?
+    @exercise_ids = @task_plan.settings['exercise_ids']
+    raise "No exercises selected" if @exercise_ids.blank?
 
-    @ecosystem = GetEcosystemFromIds[exercise_ids: exercise_ids]
-    @ecosystem.exercises_by_ids(exercise_ids)
+    if @task_plan.ecosystem.nil?
+      @ecosystem = GetEcosystemFromIds[exercise_ids: @exercise_ids]
+      @task_plan.update_attribute(:content_ecosystem_id, @ecosystem.id)
+    else
+      ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(@task_plan.ecosystem)
+      @ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
+    end
+
+    @exercises = @ecosystem.exercises_by_ids(@exercise_ids)
   end
 
   def build_homework_task(taskee:, exercises:)
