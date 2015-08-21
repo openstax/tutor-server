@@ -6,7 +6,7 @@
       <label class='col-sm-3 control-label'>Contract Name</label>
       <div class='col-sm-9'>
         <%= f.select :contract_name,
-                     options_from_collection_for_select(FinePrint::Contract.all,
+                     options_from_collection_for_select(FinePrint::Contract.published.latest,
                                                         :name,
                                                         :name),
                      class: 'form-control' %>
