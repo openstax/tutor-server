@@ -32,11 +32,7 @@ module Api::V1
              readable: true,
              writeable: true,
              getter: ->(*) { DateTimeUtilities.to_api_s(opens_at) },
-             setter: ->(val, *) {
-               orig_time = DateTimeUtilities.from_api_s(val)
-               new_time  = orig_time.nil? ? nil : orig_time.in_time_zone.midnight + 1.minute
-               self.opens_at = new_time
-             },
+             setter: ->(val, *) { self.opens_at = DateTimeUtilities.opens_at_from_api_s(val) },
              schema_info: {
                required: true
              }
@@ -46,11 +42,7 @@ module Api::V1
              readable: true,
              writeable: true,
              getter: ->(*) { DateTimeUtilities.to_api_s(due_at) },
-             setter: ->(val, *) {
-               orig_time = DateTimeUtilities.from_api_s(val)
-               new_time  = orig_time.nil? ? nil : orig_time.in_time_zone.midnight + 7.hours
-               self.due_at = new_time
-             },
+             setter: ->(val, *) { self.due_at = DateTimeUtilities.due_at_from_api_s(val) },
              schema_info: {
                required: true
              }
