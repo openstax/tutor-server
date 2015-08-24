@@ -44,7 +44,7 @@ module Tasks
           end
 
           {
-            name: student_role.full_name,
+            name: student_role.name,
             first_name: student_role.first_name,
             last_name: student_role.last_name,
             role: student_role.id,

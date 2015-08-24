@@ -15,6 +15,6 @@ class GetTeacherNames
     course = Entity::Course.find(course_id)
     run(:get_teacher_users, course)
     run(:search_profiles, search: outputs[:teachers])
-    outputs[:teacher_names] = outputs[:profiles].items.collect(&:full_name).sort
+    outputs[:teacher_names] = outputs[:profiles].items.collect(&:name).sort
   end
 end

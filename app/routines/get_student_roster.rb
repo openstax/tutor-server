@@ -11,7 +11,6 @@ class GetStudentRoster
         id: student.id,
         first_name: student.first_name,
         last_name: student.last_name,
-        full_name: student.full_name,
         name: student.name,
         course_membership_period_id: student.course_membership_period_id,
         entity_role_id: student.entity_role_id,
