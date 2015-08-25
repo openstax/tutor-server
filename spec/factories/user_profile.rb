@@ -7,7 +7,7 @@ FactoryGirl.define do
       username { SecureRandom.hex.to_s }
       first_name { SecureRandom.hex.to_s }
       last_name { SecureRandom.hex.to_s }
-      full_name { SecureRandom.hex.to_s }
+      full_name { [first_name, last_name].join(' ') || SecureRandom.hex.to_s }
       skip_terms_agreement { false }
       title nil
     end
