@@ -3,12 +3,10 @@ require 'rails_helper'
 RSpec.describe Api::V1::TaskingPlanRepresenter, type: :representer do
 
   let!(:tasking_plan) {
-    instance_spy(Tasks::Models::TaskingPlan) do |dbl|
-      # set defaults for represented properties
-      allow(dbl).to receive(:target_id).and_return(nil)
-      allow(dbl).to receive(:target_type).and_return(nil)
-      allow(dbl).to receive(:opens_at).and_return(nil)
-      allow(dbl).to receive(:due_at).and_return(nil)
+    instance_spy(Tasks::Models::TaskingPlan).tap do |dbl|
+      ## bug work-around, see:
+      ##   https://github.com/rspec/rspec-rails/issues/1309#issuecomment-118971828
+      allow(dbl).to receive(:as_json).and_return(dbl)
     end
   }
 
@@ -169,8 +167,6 @@ RSpec.describe Api::V1::TaskingPlanRepresenter, type: :representer do
       representer1 =
         Api::V1::TaskingPlanRepresenter.new(tasking_plan)
                                        .from_json({"due_at" => course_timezone_due_at.to_s}.to_json)
-
-      expect(tasking_plan).to have_received(:due_at=).with(standard_due_at)
 
       noncourse_timezone_due_at = noncourse_timezone.parse("#{standard_due_at} 16:12:43")
       representer2 =
