@@ -88,8 +88,15 @@ RSpec.describe Api::V1::TaskingPlanRepresenter, type: :representer do
       expect(tasking_plan).to have_received(:opens_at=).with(standard_opens_at)
     end
 
-    it "timezone is ignored" do
-      noncourse_timezone_opens_at = noncourse_timezone.parse("#{standard_date_str}T16:12:43")
+    it "time and timezone are ignored (upper edge)" do
+      noncourse_timezone_opens_at = noncourse_timezone.parse("#{standard_date_str}T23:59:59")
+      Api::V1::TaskingPlanRepresenter.new(tasking_plan)
+                                     .from_json({"opens_at" => noncourse_timezone_opens_at.to_s}.to_json)
+      expect(tasking_plan).to have_received(:opens_at=).with(standard_opens_at)
+    end
+
+    it "time and timezone are ignored (lower edge)" do
+      noncourse_timezone_opens_at = noncourse_timezone.parse("#{standard_date_str}T00:00:00")
       Api::V1::TaskingPlanRepresenter.new(tasking_plan)
                                      .from_json({"opens_at" => noncourse_timezone_opens_at.to_s}.to_json)
       expect(tasking_plan).to have_received(:opens_at=).with(standard_opens_at)
@@ -130,8 +137,15 @@ RSpec.describe Api::V1::TaskingPlanRepresenter, type: :representer do
       expect(tasking_plan).to have_received(:due_at=).with(standard_due_at)
     end
 
-    it "only date is used; timezone is ignored" do
-      noncourse_timezone_due_at = noncourse_timezone.parse("#{standard_date_str}T16:12:43")
+    it "time and timezone are ignored (upper edge)" do
+      noncourse_timezone_due_at = noncourse_timezone.parse("#{standard_date_str}T23:59:59")
+      Api::V1::TaskingPlanRepresenter.new(tasking_plan)
+                                     .from_json({"due_at" => noncourse_timezone_due_at.to_s}.to_json)
+      expect(tasking_plan).to have_received(:due_at=).with(standard_due_at)
+    end
+
+    it "time and timezone are ignored (lower edge)" do
+      noncourse_timezone_due_at = noncourse_timezone.parse("#{standard_date_str}T00:00:00")
       Api::V1::TaskingPlanRepresenter.new(tasking_plan)
                                      .from_json({"due_at" => noncourse_timezone_due_at.to_s}.to_json)
       expect(tasking_plan).to have_received(:due_at=).with(standard_due_at)
