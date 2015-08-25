@@ -26,6 +26,7 @@ branches:
   only:
     - master
     - alpha
+    - beta
 before_script:
   - export OXT_DB_USER=postgres
   - export OXT_DB_PASS=
