@@ -379,7 +379,7 @@ GEM
       representable (>= 2.0)
       roar (>= 1.0)
       squeel (>= 0.5.0)
-    openstax_api (5.4.5)
+    openstax_api (5.5.4)
       doorkeeper (>= 2.0)
       exception_notification (>= 4.0)
       lev (>= 1.0.0)
@@ -692,7 +692,7 @@ DEPENDENCIES
   newrelic_rpm
   nifty-generators
   openstax_accounts (~> 6.0.0)
-  openstax_api (~> 5.4.5)
+  openstax_api (~> 5.5.4)
   openstax_exchange (~> 0.2.1)
   openstax_utilities (~> 4.2.0)
   parallel_tests
