@@ -88,10 +88,10 @@ module Content
       context "strategy doesn't return an Integer" do
         let!(:strategy_id) { invalid_id }
 
-        it "raises TypeError" do
+        it "raises Content::StrategyError" do
           expect{
             ecosystem.id
-          }.to raise_error(::TypeError)
+          }.to raise_error(::Content::StrategyError)
         end
       end
     end
@@ -115,10 +115,10 @@ module Content
       context "strategy doesn't return Content::Books" do
         let(:strategy_books) { [ valid_book, invalid_book, valid_book ] }
 
-        it "raises TypeError" do
+        it "raises Content::StrategyError" do
           expect{
             ecosystem.books
-          }.to raise_error(::TypeError)
+          }.to raise_error(::Content::StrategyError)
         end
       end
     end
@@ -142,10 +142,10 @@ module Content
       context "strategy doesn't return Content::Exercises" do
         let(:strategy_exercises) { [ valid_exercise, invalid_exercise, valid_exercise ] }
 
-        it "raises TypeError" do
+        it "raises Content::StrategyError" do
           expect{
             ecosystem.exercises
-          }.to raise_error(::TypeError)
+          }.to raise_error(::Content::StrategyError)
         end
       end
     end
@@ -189,10 +189,10 @@ module Content
         context "strategy doesn't return Content::Exercises" do
           let(:strategy_reading_dynamic_pools) { [ valid_pool, invalid_pool, valid_pool ] }
 
-          it "raises TypeError" do
+          it "raises Content::StrategyError" do
             expect{
               ecosystem.reading_dynamic_pools(pages: pages)
-            }.to raise_error(::TypeError)
+            }.to raise_error(::Content::StrategyError)
           end
         end
       end
@@ -200,10 +200,10 @@ module Content
       context "invalid pages:" do
         let(:pages) { [valid_page, invalid_page, valid_page] }
 
-        it "raises ArgumentError" do
+        it "raises TypeError" do
           expect{
             ecosystem.reading_dynamic_pools(pages: pages)
-          }.to raise_error(ArgumentError)
+          }.to raise_error(TypeError)
         end
       end
     end
@@ -247,10 +247,10 @@ module Content
         context "strategy doesn't return Content::Exercises" do
           let(:strategy_reading_try_another_pools) { [ valid_pool, invalid_pool, valid_pool ] }
 
-          it "raises TypeError" do
+          it "raises Content::StrategyError" do
             expect{
               ecosystem.reading_try_another_pools(pages: pages)
-            }.to raise_error(::TypeError)
+            }.to raise_error(::Content::StrategyError)
           end
         end
       end
@@ -258,10 +258,10 @@ module Content
       context "invalid pages:" do
         let(:pages) { [valid_page, invalid_page, valid_page] }
 
-        it "raises ArgumentError" do
+        it "raises TypeError" do
           expect{
             ecosystem.reading_try_another_pools(pages: pages)
-          }.to raise_error(ArgumentError)
+          }.to raise_error(TypeError)
         end
       end
     end
@@ -305,10 +305,10 @@ module Content
         context "strategy doesn't return Content::Exercises" do
           let(:strategy_homework_core_pools) { [ valid_pool, invalid_pool, valid_pool ] }
 
-          it "raises TypeError" do
+          it "raises Content::StrategyError" do
             expect{
               ecosystem.homework_core_pools(pages: pages)
-            }.to raise_error(::TypeError)
+            }.to raise_error(::Content::StrategyError)
           end
         end
       end
@@ -316,10 +316,10 @@ module Content
       context "invalid pages:" do
         let(:pages) { [valid_page, invalid_page, valid_page] }
 
-        it "raises ArgumentError" do
+        it "raises TypeError" do
           expect{
             ecosystem.homework_core_pools(pages: pages)
-          }.to raise_error(ArgumentError)
+          }.to raise_error(TypeError)
         end
       end
     end
@@ -363,10 +363,10 @@ module Content
         context "strategy doesn't return Content::Exercises" do
           let(:strategy_homework_dynamic_pools) { [ valid_pool, invalid_pool, valid_pool ] }
 
-          it "raises TypeError" do
+          it "raises Content::StrategyError" do
             expect{
               ecosystem.homework_dynamic_pools(pages: pages)
-            }.to raise_error(::TypeError)
+            }.to raise_error(::Content::StrategyError)
           end
         end
       end
@@ -374,10 +374,10 @@ module Content
       context "invalid pages:" do
         let(:pages) { [valid_page, invalid_page, valid_page] }
 
-        it "raises ArgumentError" do
+        it "raises TypeError" do
           expect{
             ecosystem.homework_dynamic_pools(pages: pages)
-          }.to raise_error(ArgumentError)
+          }.to raise_error(TypeError)
         end
       end
     end
@@ -421,10 +421,10 @@ module Content
         context "strategy doesn't return Content::Exercises" do
           let(:strategy_practice_widget_pools) { [ valid_pool, invalid_pool, valid_pool ] }
 
-          it "raises TypeError" do
+          it "raises Content::StrategyError" do
             expect{
               ecosystem.practice_widget_pools(pages: pages)
-            }.to raise_error(::TypeError)
+            }.to raise_error(::Content::StrategyError)
           end
         end
       end
@@ -432,10 +432,10 @@ module Content
       context "invalid pages:" do
         let(:pages) { [valid_page, invalid_page, valid_page] }
 
-        it "raises ArgumentError" do
+        it "raises TypeError" do
           expect{
             ecosystem.practice_widget_pools(pages: pages)
-          }.to raise_error(ArgumentError)
+          }.to raise_error(TypeError)
         end
       end
     end
