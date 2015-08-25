@@ -200,10 +200,10 @@ module Content
       context "invalid pages:" do
         let(:pages) { [valid_page, invalid_page, valid_page] }
 
-        it "raises ArgumentError" do
+        it "raises TypeError" do
           expect{
             ecosystem.reading_dynamic_pools(pages: pages)
-          }.to raise_error(ArgumentError)
+          }.to raise_error(TypeError)
         end
       end
     end
@@ -258,10 +258,10 @@ module Content
       context "invalid pages:" do
         let(:pages) { [valid_page, invalid_page, valid_page] }
 
-        it "raises ArgumentError" do
+        it "raises TypeError" do
           expect{
             ecosystem.reading_try_another_pools(pages: pages)
-          }.to raise_error(ArgumentError)
+          }.to raise_error(TypeError)
         end
       end
     end
@@ -316,10 +316,10 @@ module Content
       context "invalid pages:" do
         let(:pages) { [valid_page, invalid_page, valid_page] }
 
-        it "raises ArgumentError" do
+        it "raises TypeError" do
           expect{
             ecosystem.homework_core_pools(pages: pages)
-          }.to raise_error(ArgumentError)
+          }.to raise_error(TypeError)
         end
       end
     end
@@ -374,10 +374,10 @@ module Content
       context "invalid pages:" do
         let(:pages) { [valid_page, invalid_page, valid_page] }
 
-        it "raises ArgumentError" do
+        it "raises TypeError" do
           expect{
             ecosystem.homework_dynamic_pools(pages: pages)
-          }.to raise_error(ArgumentError)
+          }.to raise_error(TypeError)
         end
       end
     end
@@ -432,10 +432,10 @@ module Content
       context "invalid pages:" do
         let(:pages) { [valid_page, invalid_page, valid_page] }
 
-        it "raises ArgumentError" do
+        it "raises TypeError" do
           expect{
             ecosystem.practice_widget_pools(pages: pages)
-          }.to raise_error(ArgumentError)
+          }.to raise_error(TypeError)
         end
       end
     end

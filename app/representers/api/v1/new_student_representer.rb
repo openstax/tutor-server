@@ -56,7 +56,7 @@ module Api::V1
              writeable: true,
              readable: true
 
-    property :full_name,
+    property :name,
              type: String,
              writeable: true,
              readable: true
