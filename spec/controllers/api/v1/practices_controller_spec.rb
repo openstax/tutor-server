@@ -101,7 +101,7 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
                  user_2_token,
                  parameters: { course_id: course.id, role_id: role.id },
                  raw_post_data: { page_ids: [page.id.to_s] }.to_json
-      }.to raise_error(IllegalState)
+      }.to raise_error(SecurityTransgression)
     end
   end
 
@@ -141,20 +141,20 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
       expect(response).to have_http_status(:success)
     end
 
-    it 'raises IllegalState if user is anonymous or not in the course or is not a student' do
+    it 'raises SecurityTransgression if user is anonymous or not in the course as a student' do
       expect {
         api_get :show, nil, parameters: { course_id: course.id }
-      }.to raise_error(IllegalState)
+      }.to raise_error(SecurityTransgression)
 
       expect {
         api_get :show, user_1_token, parameters: { course_id: course.id }
-      }.to raise_error(IllegalState)
+      }.to raise_error(SecurityTransgression)
 
       AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
 
       expect {
         api_get :show, user_1_token, parameters: { course_id: course.id }
-      }.to raise_error(IllegalState)
+      }.to raise_error(SecurityTransgression)
     end
   end
 end

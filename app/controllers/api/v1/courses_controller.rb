@@ -111,7 +111,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
                                    allowed_role_type: types,
                                    role_id: params[:role_id])
     if result.errors.any?
-      raise(IllegalState, result.errors.map(&:message).to_sentence)
+      raise(SecurityTransgression, result.errors.map(&:message).to_sentence)
     end
     result.outputs.role
   end
