@@ -244,7 +244,7 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
         published_at = task_plan.published_at
         publish_job_uuid = task_plan.publish_job_uuid
 
-        valid_json_hash['tasking_plans'].first['opens_at'] = Time.now
+        valid_json_hash['tasking_plans'].first['opens_at'] = Time.zone.now.yesterday
 
         api_put :update, nil, parameters: { course_id: course.id, id: task_plan.id },
                               raw_post_data: valid_json_hash.to_json
