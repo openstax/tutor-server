@@ -18,39 +18,42 @@ module Tasks
     def get_performance_report_for_teacher(course)
       course.periods.collect do |period|
         taskings = get_taskings(period)
-        tasking_plans = taskings.collect do |tg|
+        tasking_plans = taskings.flat_map { |tg|
           tg.task.task.task_plan.tasking_plans.select do |tp|
             tp.target == period  || tp.target == course
           end
-        end.flatten.uniq.sort_by{ |tasking_plan| [tasking_plan.due_at, tasking_plan.created_at] }
+        }.uniq.sort_by { |tasking_plan| [tasking_plan.due_at, tasking_plan.created_at] }
         task_plan_indices = tasking_plans.each_with_index
                                          .each_with_object({}) do |(tasking_plan, index), hash|
           hash[tasking_plan.task_plan] = index
         end
 
-        role_taskings = taskings.to_a.group_by{ |tg| tg.role }
-        student_data = role_taskings.to_a.sort_by do |student_role, taskings|
-          student_role.user.profile.account.last_name
-        end.collect do |student_role, taskings|
-          # Populate the student_tasks array but leave empty spaces (nils)
-          # for assignments the student hasn't done
-          student_tasks = Array.new(tasking_plans.size)
-          taskings.each do |tg|
-            index = task_plan_indices[tg.task.task.task_plan]
-            # skip if task not assigned to current period
-            # could be individual, like practice widget, or assigned to a different period
-            next if index.nil?
-            student_tasks[index] = tg.task.task
-          end
+        role_taskings = taskings.to_a.group_by(&:role)
 
-          {
-            name: student_role.name,
-            first_name: student_role.first_name,
-            last_name: student_role.last_name,
-            role: student_role.id,
-            data: get_student_data(student_tasks)
-          }
-        end
+        sorted_student_data = role_taskings.to_a.sort_by { |student_role, _|
+                                student_role.user.profile.account.last_name.downcase
+                              }
+        student_data = sorted_student_data.collect do |student_role, taskings|
+                         # Populate the student_tasks array but leave empty spaces (nils)
+                         # for assignments the student hasn't done
+                         student_tasks = Array.new(tasking_plans.size)
+                         taskings.each do |tg|
+                           index = task_plan_indices[tg.task.task.task_plan]
+                           # skip if task not assigned to current period
+                           # could be individual, like practice widget,
+                           # or assigned to a different period
+                           next if index.nil?
+                           student_tasks[index] = tg.task.task
+                         end
+
+                         {
+                           name: student_role.name,
+                           first_name: student_role.first_name,
+                           last_name: student_role.last_name,
+                           role: student_role.id,
+                           data: get_student_data(student_tasks)
+                         }
+                       end
 
         Hashie::Mash.new({
           period: period,
