@@ -27,15 +27,15 @@ class OpenStax::Biglearn::V1::RealClient
     body_hash = handle_response(response)
 
     uuids = body_hash['pool_ids']
-    raise "BigLearn returned wrong number of uuids " \
+    raise "Biglearn returned wrong number of uuids " \
           "(#pools != #uuids) (#{pools.count} != #{uuids.count})" \
       unless uuids.count == pools.count
 
     nil_uuid_count = uuids.count(&:nil?)
-    raise "BigLearn returned #{nil_uuid_count} nil uuids" if nil_uuid_count > 0
+    raise "Biglearn returned #{nil_uuid_count} nil uuids" if nil_uuid_count > 0
 
     blank_uuid_count = uuids.count(&:blank?)
-    raise "BigLearn returned #{blank_uuid_count} blank uuids" if blank_uuid_count > 0
+    raise "Biglearn returned #{blank_uuid_count} blank uuids" if blank_uuid_count > 0
 
     uuids
   end
@@ -46,13 +46,13 @@ class OpenStax::Biglearn::V1::RealClient
     body_hash = handle_response(response)
 
     uuids = body_hash['pool_ids']
-    raise "BigLearn returned (#{uuids.count} != 1) uuids " unless uuids.count == 1
+    raise "Biglearn returned (#{uuids.count} != 1) uuids " unless uuids.count == 1
 
     nil_uuid_count = uuids.count(&:nil?)
-    raise "BigLearn returned #{nil_uuid_count} nil uuids" if nil_uuid_count > 0
+    raise "Biglearn returned #{nil_uuid_count} nil uuids" if nil_uuid_count > 0
 
     blank_uuid_count = uuids.count(&:blank?)
-    raise "BigLearn returned #{blank_uuid_count} blank uuids" if blank_uuid_count > 0
+    raise "Biglearn returned #{blank_uuid_count} blank uuids" if blank_uuid_count > 0
 
     uuids.first
   end
