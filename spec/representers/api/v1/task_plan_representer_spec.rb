@@ -28,6 +28,18 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
     end
   end
 
+  context "ecosystem_id" do
+    it "can be read" do
+      allow(task_plan).to receive(:content_ecosystem_id).and_return(12)
+      expect(representation).to include("ecosystem_id" => 12.to_s)
+    end
+
+    it "cannot be written (attempts are silently ignored)" do
+      Api::V1::TaskPlanRepresenter.new(task_plan).from_json({"ecosystem_id" => 42}.to_json)
+      expect(task_plan).to_not have_received(:content_ecosystem_id=)
+    end
+  end
+
   context "type" do
     it "can be read" do
       allow(task_plan).to receive(:type).and_return('Some type')
