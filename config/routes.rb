@@ -57,11 +57,14 @@ Rails.application.routes.draw do
 
     resources :courses, only: [:show] do
       member do
-        get 'readings'
-        get 'exercises'
         get 'plans'
         get 'tasks'
         get 'dashboard(/role/:role_id)', action: :dashboard
+
+        scope controller: :contents do
+          get 'readings', action: :course_readings
+          get 'exercises', action: :course_exercises
+        end
 
         scope :performance, controller: :performance_reports do
           get '(/role/:role_id)', action: :index
@@ -81,6 +84,13 @@ Rails.application.routes.draw do
       end
 
       resources :students, shallow: true, except: :create
+    end
+
+    resources :ecosystems, controller: :contents, only: [] do
+      member do
+        get 'readings', action: :ecosystem_readings
+        get 'exercises', action: :ecosystem_exercises
+      end
     end
 
     scope 'pages', controller: :pages, action: :get_page do
