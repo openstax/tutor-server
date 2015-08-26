@@ -57,9 +57,9 @@ Rails.application.routes.draw do
 
     resources :courses, only: [:show] do
       member do
+        get 'dashboard(/role/:role_id)', action: :dashboard
         get 'plans'
         get 'tasks'
-        get 'dashboard(/role/:role_id)', action: :dashboard
 
         scope controller: :contents do
           get 'readings', action: :course_readings
@@ -73,8 +73,10 @@ Rails.application.routes.draw do
         end
       end
 
-      post 'practice(/role/:role_id)' => 'practices#create'
-      get 'practice(/role/:role_id)' => 'practices#show'
+      scope :practice, controller: :practices do
+        post '(/role/:role_id)', action: :create
+        get '(/role/:role_id)', action: :show
+      end
 
       resources :task_plans, path: '/plans', shallow: true, except: [:index, :new, :edit] do
         member do

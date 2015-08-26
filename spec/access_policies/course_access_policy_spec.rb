@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe CourseAccessPolicy, :type => :access_policy do
+RSpec.describe CourseAccessPolicy, type: :access_policy do
   let(:course) { CreateCourse[name: 'Physics 401'] }
   let(:period) { CreatePeriod[course: course] }
 
@@ -18,8 +18,7 @@ RSpec.describe CourseAccessPolicy, :type => :access_policy do
   context 'anonymous users' do
     let(:requestor) { UserProfile::Models::AnonymousUser.instance }
 
-    [:index, :read, :readings, :task_plans,
-     :exercises, :export, :roster].each do |test_action|
+    [:index, :read, :task_plans, :export, :roster].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
         it { should be false }
@@ -35,8 +34,7 @@ RSpec.describe CourseAccessPolicy, :type => :access_policy do
       it { should be true }
     end
 
-    [:read, :readings, :task_plans,
-     :exercises, :export, :roster].each do |test_action|
+    [:read, :task_plans, :export, :roster].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
         it { should be false }
@@ -47,14 +45,14 @@ RSpec.describe CourseAccessPolicy, :type => :access_policy do
   context 'students' do
     let(:requestor) { student }
 
-    [:index, :read, :readings, :task_plans].each do |test_action|
+    [:index, :read, :task_plans].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
         it { should be true }
       end
     end
 
-    [:exercises, :export, :roster].each do |test_action|
+    [:export, :roster].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
         it { should be false }
@@ -65,8 +63,7 @@ RSpec.describe CourseAccessPolicy, :type => :access_policy do
   context 'teachers' do
     let(:requestor) { teacher }
 
-    [:index, :read, :readings, :task_plans,
-     :exercises, :export, :roster].each do |test_action|
+    [:index, :read, :task_plans, :export, :roster].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
         it { should be true }
