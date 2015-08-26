@@ -36,7 +36,7 @@ module Api
                                        allowed_role_type: :student,
                                        role_id: params[:role_id])
         if result.errors.any?
-          raise(IllegalState, result.errors.map(&:message).to_sentence)
+          raise(SecurityTransgression, result.errors.map(&:message).to_sentence)
         else
           result.outputs.role
         end

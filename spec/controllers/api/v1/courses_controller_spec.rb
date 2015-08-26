@@ -362,14 +362,14 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     let!(:plan) { FactoryGirl.create(:tasks_task_plan, owner: course,
                                                        published_at: Time.now - 1.week)}
 
-    it 'raises IllegalState if user is anonymous or not in course' do
+    it 'raises SecurityTransgression if user is anonymous or not in course' do
       expect {
         api_get :dashboard, nil, parameters: { id: course.id }
-      }.to raise_error(IllegalState)
+      }.to raise_error(SecurityTransgression)
 
       expect {
         api_get :dashboard, user_1_token, parameters: { id: course.id }
-      }.to raise_error(IllegalState)
+      }.to raise_error(SecurityTransgression)
     end
 
     it "works for a student without a role specified" do
