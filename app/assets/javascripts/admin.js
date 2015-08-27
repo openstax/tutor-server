@@ -53,17 +53,20 @@ $(document).ready(function() {
 
 // === Admin/Jobs === //
 $(function(){
-  $(document).on('click', '#toggle_completed_jobs', function(e) {
-    e.preventDefault();
+  $(document).on('click', '.filter_job_status', function(e) {
+    var desiredStatus = this.href.replace(/^\S+#/, ''),
+        $showRows = $('.' + desiredStatus),
+        $hideRows = $('#jobs tr').not('.' + desiredStatus);
 
-    $completedJobRows = $('.completed');
-    $completedJobRows.toggle();
-    $verb = $(this).find('span');
-
-    if($completedJobRows.is(':visible')) {
-      $verb.text('Hide');
-    } else {
-      $verb.text('Show');
+    if (desiredStatus === 'all') {
+      $showRows = $('#jobs tr');
+      $hideRows = $();
+    } else if (desiredStatus === 'incomplete') {
+      $showRows = $('#jobs tr').not('.completed');
+      $hideRows = $('.completed');
     }
+
+    $showRows.show();
+    $hideRows.hide();
   });
 });

@@ -61,10 +61,81 @@ RSpec.feature 'Administration of queued jobs', :js do
 
     expect(page).not_to have_css('.completed')
 
-    click_link 'Show completed jobs'
+    click_link 'all'
     expect(page).to have_css('.completed')
 
-    click_link 'Hide completed jobs'
+    click_link 'incomplete'
     expect(page).not_to have_css('.completed')
+  end
+
+  scenario 'statuses are filterable' do
+    job.queued!
+
+    visit admin_root_path
+    click_link 'Jobs'
+
+    click_link 'killed'
+    expect(page).not_to have_css('.queued')
+
+    click_link 'queued'
+    expect(page).to have_css('.queued')
+
+
+    job.working!
+
+    visit admin_root_path
+    click_link 'Jobs'
+
+    click_link 'killed'
+    expect(page).not_to have_css('.working')
+
+    click_link 'working'
+    expect(page).to have_css('.working')
+
+
+    job.failed!
+
+    visit admin_root_path
+    click_link 'Jobs'
+
+    click_link 'killed'
+    expect(page).not_to have_css('.failed')
+
+    click_link 'failed'
+    expect(page).to have_css('.failed')
+
+
+    job.killed!
+
+    visit admin_root_path
+    click_link 'Jobs'
+
+    click_link 'failed'
+    expect(page).not_to have_css('.killed')
+
+    click_link 'killed'
+    expect(page).to have_css('.killed')
+
+
+    job.unknown!
+
+    visit admin_root_path
+    click_link 'Jobs'
+
+    click_link 'killed'
+    expect(page).not_to have_css('.unknown')
+
+    click_link 'unknown'
+    expect(page).to have_css('.unknown')
+
+
+    job.queued!
+
+    visit admin_root_path
+    click_link 'Jobs'
+
+    click_link 'all'
+    click_link 'incomplete'
+    expect(page).to have_css('.queued')
   end
 end
