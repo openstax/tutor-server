@@ -70,72 +70,65 @@ RSpec.feature 'Administration of queued jobs', :js do
 
   scenario 'statuses are filterable' do
     job.queued!
-
-    visit admin_root_path
-    click_link 'Jobs'
+    visit admin_jobs_path
 
     click_link 'killed'
     expect(page).not_to have_css('.queued')
-
     click_link 'queued'
     expect(page).to have_css('.queued')
 
 
     job.working!
-
-    visit admin_root_path
-    click_link 'Jobs'
+    visit admin_jobs_path
 
     click_link 'killed'
     expect(page).not_to have_css('.working')
-
     click_link 'working'
     expect(page).to have_css('.working')
 
 
     job.failed!
-
-    visit admin_root_path
-    click_link 'Jobs'
+    visit admin_jobs_path
 
     click_link 'killed'
     expect(page).not_to have_css('.failed')
-
     click_link 'failed'
     expect(page).to have_css('.failed')
 
 
     job.killed!
-
-    visit admin_root_path
-    click_link 'Jobs'
+    visit admin_jobs_path
 
     click_link 'failed'
     expect(page).not_to have_css('.killed')
-
     click_link 'killed'
     expect(page).to have_css('.killed')
 
 
     job.unknown!
-
-    visit admin_root_path
-    click_link 'Jobs'
+    visit admin_jobs_path
 
     click_link 'killed'
     expect(page).not_to have_css('.unknown')
-
     click_link 'unknown'
     expect(page).to have_css('.unknown')
 
 
     job.queued!
-
-    visit admin_root_path
-    click_link 'Jobs'
+    visit admin_jobs_path
 
     click_link 'all'
     click_link 'incomplete'
     expect(page).to have_css('.queued')
+  end
+
+  scenario 'search by id' do
+    visit admin_jobs_path
+
+    fill_in 'filter_id', with: 'not-here'
+    expect(page).not_to have_css('#jobs tbody tr')
+
+    fill_in 'filter_id', with: 'abc'
+    expect(page).to have_css('#jobs tr', text: 'abc123')
   end
 end

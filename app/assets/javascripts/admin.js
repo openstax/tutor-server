@@ -76,5 +76,21 @@ $(function(){
     $(this).replaceWith($plainTxt);
     $showRows.show();
     $hideRows.hide();
+  }).on('keyup', '#filter_id', function(e) {
+    var span = $(this).siblings('span')[0];
+
+    if ($(this).val() !== '' && span === undefined) {
+      var placeholder = $(this).attr('placeholder'),
+          $label = $('<span/>').text(placeholder);
+
+      $('#search_by_id').prepend($label);
+    }
+
+    if ($(this).val() === '') {
+      $(span).remove();
+    }
+
+    $('#jobs tbody tr').hide();
+    $("#jobs tbody tr:contains('" + $(this).val() + "')").show();
   });
 });

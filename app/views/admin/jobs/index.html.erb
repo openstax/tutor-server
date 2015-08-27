@@ -1,12 +1,21 @@
-Show:
-<%= link_to 'all', '#all', class: 'filter_job_status' %>&nbsp;|
-<span>incomplete</span>&nbsp;|
-<%= link_to 'completed', '#completed', class: 'filter_job_status' %>&nbsp;|
-<%= link_to 'queued', '#queued', class: 'filter_job_status' %>&nbsp;|
-<%= link_to 'working', '#working', class: 'filter_job_status' %>&nbsp;|
-<%= link_to 'failed', '#failed', class: 'filter_job_status' %>&nbsp;|
-<%= link_to 'killed', '#killed', class: 'filter_job_status' %>&nbsp;|
-<%= link_to 'unknown', '#unknown', class: 'filter_job_status' %>
+<div class='row'>
+  <div class='col-xs-7'>
+    Show:
+    <%= link_to 'all', '#all', class: 'filter_job_status' %>&nbsp;|
+    <span>incomplete</span>&nbsp;|
+    <%= link_to 'completed', '#completed', class: 'filter_job_status' %>&nbsp;|
+    <%= link_to 'queued', '#queued', class: 'filter_job_status' %>&nbsp;|
+    <%= link_to 'working', '#working', class: 'filter_job_status' %>&nbsp;|
+    <%= link_to 'failed', '#failed', class: 'filter_job_status' %>&nbsp;|
+    <%= link_to 'killed', '#killed', class: 'filter_job_status' %>&nbsp;|
+    <%= link_to 'unknown', '#unknown', class: 'filter_job_status' %>
+  </div>
+
+  <div id='search_by_id' class='col-xs-5'>
+    <%= text_field_tag :filter_id, nil, placeholder: 'Search by ID, Status, or Progress',
+                                        class: 'form-control' %>
+  </div>
+</div>
 
 <table id='jobs' class="table table-striped">
   <thead>
