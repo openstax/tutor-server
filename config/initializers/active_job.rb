@@ -16,6 +16,8 @@ module ActiveJob
         "A background job exception occurred: #{exception.class.name} [#{@error_id}] " +
         "#{exception.message}\n\n#{exception.backtrace.join("\n")}"
       }
+
+      raise
     end
 
   end
