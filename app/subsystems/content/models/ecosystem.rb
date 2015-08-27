@@ -7,6 +7,8 @@ module Content
       has_many :course_ecosystems, dependent: :destroy, subsystem: :course_content
       has_many :courses, through: :course_ecosystems, subsystem: :entity
 
+      has_many :task_plans, subsystem: :tasks, dependent: :destroy
+
       has_many :books, dependent: :destroy, inverse_of: :ecosystem
       has_many :chapters, through: :books
       has_many :pages, through: :chapters

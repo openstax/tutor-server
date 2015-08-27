@@ -12,8 +12,9 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
   it { is_expected.to have_many(:tasks).dependent(:destroy) }
 
   it { is_expected.to validate_presence_of(:title) }
-  it { is_expected.to validate_presence_of(:owner) }
   it { is_expected.to validate_presence_of(:assistant) }
+  it { is_expected.to validate_presence_of(:ecosystem) }
+  it { is_expected.to validate_presence_of(:owner) }
   it { is_expected.to validate_presence_of(:tasking_plans) }
 
   it "validates settings against the assistant's schema" do

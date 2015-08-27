@@ -57,13 +57,8 @@ class Tasks::Assistants::HomeworkAssistant
     @exercise_ids = @task_plan.settings['exercise_ids']
     raise "No exercises selected" if @exercise_ids.blank?
 
-    if @task_plan.ecosystem.nil?
-      @ecosystem = GetEcosystemFromIds[exercise_ids: @exercise_ids]
-      @task_plan.update_attribute(:content_ecosystem_id, @ecosystem.id)
-    else
-      ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(@task_plan.ecosystem)
-      @ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
-    end
+    ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(@task_plan.ecosystem)
+    @ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
 
     @exercises = @ecosystem.exercises_by_ids(@exercise_ids)
   end

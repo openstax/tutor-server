@@ -43,8 +43,7 @@ class DemoTasks < DemoBase
           log("  Is a draft, skipping distributing")
         else
           log("  Distributing tasks")
-          task_plan = Tasks::Models::TaskPlan.where(owner: content.course, title: assignment.title).first!
-          distribute_tasks(task_plan:task_plan)
+          distribute_tasks(task_plan: task_plan)
         end
       end
     end
