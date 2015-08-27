@@ -4,13 +4,7 @@ module Admin
   class JobsController < BaseController
     def index
       @page_header = "Queued jobs"
-      @jobs = Lev::BackgroundJob.incomplete.paginate(pagination_options)
-    end
-
-    def all
-      @page_header = "All jobs"
-      @jobs = Lev::BackgroundJob.all.paginate(pagination_options)
-      render :index
+      @jobs = Lev::BackgroundJob.all
     end
 
     def show
@@ -20,11 +14,6 @@ module Admin
       end
 
       @page_header = "#{@job.status.titleize} job : #{@job.id}"
-    end
-
-    private
-    def pagination_options
-      { page: params[:page], per_page: 20 }
     end
   end
 end

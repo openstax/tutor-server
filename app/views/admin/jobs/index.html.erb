@@ -1,12 +1,7 @@
-<% if action_name == 'index' %>
-  <%= link_to 'Show completed jobs', all_admin_jobs_path %>
-<% else %>
-  <%= link_to 'Hide completed jobs', admin_jobs_path %>
-<% end %>
+<%= link_to '<span>Show</span> completed jobs'.html_safe, '#',
+            id: 'toggle_completed_jobs' %>
 
-<%= will_paginate @jobs %>
-
-<table class="table table-striped">
+<table id='jobs' class="table table-striped">
   <thead>
     <tr>
       <th>ID</th>
@@ -17,7 +12,7 @@
 
   <tbody>
     <% @jobs.each do |job| %>
-      <tr>
+      <tr class='<%= job.status %>'>
         <td class='job_id'><%= link_to job.id, admin_job_path(job.id) %></td>
         <td class='job_status'><%= job.status %></td>
         <td class='job_progress'><%= number_to_percentage(job.progress.to_f * 100, precision: 0) %></td>
@@ -25,5 +20,3 @@
     <% end %>
   </tbody>
 </table>
-
-<%= will_paginate @jobs %>

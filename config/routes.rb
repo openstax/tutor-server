@@ -122,9 +122,7 @@ Rails.application.routes.draw do
 
     resources :licenses
 
-    resources :jobs, only: [:index, :show] do
-      get :all, on: :collection
-    end
+    resources :jobs, only: [:index, :show]
 
     resources :users, except: :destroy do
       member do

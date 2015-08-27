@@ -8,3 +8,9 @@
 .flash_error {
   color: red;
 }
+
+#jobs {
+  .completed {
+    display: none;
+  }
+}

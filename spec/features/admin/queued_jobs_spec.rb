@@ -1,6 +1,7 @@
 require 'rails_helper'
+require 'feature_js_helper'
 
-RSpec.feature 'Administration of queued jobs' do
+RSpec.feature 'Administration of queued jobs', :js do
   let(:course) { CreateCourse[name: 'course time'] }
   let(:admin) { FactoryGirl.create(:user_profile, :administrator) }
   let(:user) { Entity::User.create! }
@@ -58,14 +59,12 @@ RSpec.feature 'Administration of queued jobs' do
     visit admin_root_path
     click_link 'Jobs'
 
-    expect(page).not_to have_css('.job_id', text: job.id)
+    expect(page).to have_css('.job_id', visible: false, text: job.id)
 
     click_link 'Show completed jobs'
-
-    expect(page).to have_css('.job_id', text: job.id)
+    expect(page).to have_css('.job_id', visible: true, text: job.id)
 
     click_link 'Hide completed jobs'
-
-    expect(page).not_to have_css('.job_id', text: job.id)
+    expect(page).to have_css('.job_id', visible: false, text: job.id)
   end
 end

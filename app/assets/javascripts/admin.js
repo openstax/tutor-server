@@ -50,3 +50,20 @@ $(document).ready(function() {
     $('a[href="' + tab + '"]').click();
   }
 });
+
+// === Admin/Jobs === //
+$(function(){
+  $(document).on('click', '#toggle_completed_jobs', function(e) {
+    e.preventDefault();
+
+    $completedJobRows = $('.completed');
+    $completedJobRows.toggle();
+    $verb = $(this).find('span');
+
+    if($completedJobRows.is(':visible')) {
+      $verb.text('Hide');
+    } else {
+      $verb.text('Show');
+    }
+  });
+});
