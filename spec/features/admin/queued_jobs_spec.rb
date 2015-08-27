@@ -59,12 +59,12 @@ RSpec.feature 'Administration of queued jobs', :js do
     visit admin_root_path
     click_link 'Jobs'
 
-    expect(page).to have_css('.job_id', visible: false, text: job.id)
+    expect(page).not_to have_css('.completed')
 
     click_link 'Show completed jobs'
-    expect(page).to have_css('.job_id', visible: true, text: job.id)
+    expect(page).to have_css('.completed')
 
     click_link 'Hide completed jobs'
-    expect(page).to have_css('.job_id', visible: false, text: job.id)
+    expect(page).not_to have_css('.completed')
   end
 end
