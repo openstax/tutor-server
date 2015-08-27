@@ -48,6 +48,24 @@ RSpec.feature 'Administration of queued jobs' do
 
     expect(current_path).to eq(admin_job_path(job.id))
     expect(page).to have_css('.job_errors', text: 'bad - awful')
-    expect(page).to have_css('.job_something_spectacular', text: 'For all the good children')
+    expect(page).to have_css('.job_something_spectacular',
+                             text: 'For all the good children')
+  end
+
+  scenario 'completed jobs are hidden' do
+    job.completed!
+
+    visit admin_root_path
+    click_link 'Jobs'
+
+    expect(page).not_to have_css('.job_id', text: job.id)
+
+    click_link 'Show completed jobs'
+
+    expect(page).to have_css('.job_id', text: job.id)
+
+    click_link 'Hide completed jobs'
+
+    expect(page).not_to have_css('.job_id', text: job.id)
   end
 end

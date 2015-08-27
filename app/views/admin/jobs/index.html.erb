@@ -1,3 +1,9 @@
+<% if action_name == 'index' %>
+  <%= link_to 'Show completed jobs', all_admin_jobs_path %>
+<% else %>
+  <%= link_to 'Hide completed jobs', admin_jobs_path %>
+<% end %>
+
 <%= will_paginate @jobs %>
 
 <table class="table table-striped">

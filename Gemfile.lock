@@ -1,3 +1,17 @@
+GIT
+  remote: git://github.com/lml/lev.git
+  revision: 9992e236f8ee26e7a90885c21221b34edc882a59
+  branch: unprotect-ha-methods
+  specs:
+    lev (6.0.0)
+      actionpack (>= 3.0)
+      active_attr
+      activemodel (>= 3.0)
+      activerecord (>= 3.0)
+      hashie
+      transaction_isolation
+      transaction_retry
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -319,14 +333,6 @@ GEM
     kgio (2.9.3)
     launchy (2.4.3)
       addressable (~> 2.3)
-    lev (6.0.0)
-      actionpack (>= 3.0)
-      active_attr
-      activemodel (>= 3.0)
-      activerecord (>= 3.0)
-      hashie
-      transaction_isolation
-      transaction_retry
     libv8 (3.16.14.7)
     lograge (0.3.1)
       actionpack (>= 3)
@@ -685,7 +691,7 @@ DEPENDENCIES
   json-schema
   keyword_search
   launchy
-  lev (~> 6.0.0)
+  lev!
   lograge
   maruku
   mini_magick
