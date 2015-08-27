@@ -56,7 +56,13 @@ $(function(){
   $(document).on('click', '.filter_job_status', function(e) {
     var desiredStatus = this.href.replace(/^\S+#/, ''),
         $showRows = $('.' + desiredStatus),
-        $hideRows = $('#jobs tr').not('.' + desiredStatus);
+        $hideRows = $('#jobs tr').not('.' + desiredStatus),
+        $plainTxt = $('<span/>').text(desiredStatus),
+        $prevSpan = $($(this).siblings('span')[0]),
+        prevSpanTxt = $prevSpan.text(),
+        $linkedTxt = $('<a/>').addClass('filter_job_status')
+                              .text(prevSpanTxt)
+                              .attr('href', '#' + prevSpanTxt);
 
     if (desiredStatus === 'all') {
       $showRows = $('#jobs tr');
@@ -66,6 +72,8 @@ $(function(){
       $hideRows = $('.completed');
     }
 
+    $prevSpan.replaceWith($linkedTxt);
+    $(this).replaceWith($plainTxt);
     $showRows.show();
     $hideRows.hide();
   });
