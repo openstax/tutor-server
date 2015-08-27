@@ -60,7 +60,7 @@ gem 'apipie-rails'
 gem 'maruku'
 
 # Lev framework
-gem 'lev', '~> 5.0.0'
+gem 'lev', '~> 6.0.0'
 
 # Ruby dsl for SQL queries
 gem 'squeel'
