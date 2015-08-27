@@ -125,10 +125,12 @@ RSpec.feature 'Administration of queued jobs', :js do
   scenario 'search by id' do
     visit admin_jobs_path
 
+    expect(page).to have_css('#jobs tbody tr')
+
     fill_in 'filter_id', with: 'not-here'
     expect(page).not_to have_css('#jobs tbody tr')
 
-    fill_in 'filter_id', with: 'abc'
-    expect(page).to have_css('#jobs tr', text: 'abc123')
+    fill_in 'filter_id', with: job.id[4..7] # partial matching works
+    expect(page).to have_css('.job_id', text: job.id)
   end
 end
