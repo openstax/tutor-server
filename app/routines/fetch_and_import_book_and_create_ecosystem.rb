@@ -8,12 +8,13 @@ class FetchAndImportBookAndCreateEcosystem
   protected
 
   # Returns a Content::Ecosystem containing a book obtained from the given CNX id
-  def exec(id:)
+  def exec(id:, ecosystem_title: nil, exercise_uids: nil)
     cnx_book = OpenStax::Cnx::V1.book(id: id)
-    outputs[:ecosystem] = Content::Ecosystem.create!(
-      title: "#{cnx_book.title} (#{cnx_book.uuid}@#{cnx_book.version})"
-    )
-    run(:import_book, cnx_book: cnx_book, ecosystem: outputs[:ecosystem])
+    ecosystem_title ||= "#{cnx_book.title} (#{cnx_book.uuid}@#{cnx_book.version}) - #{Time.now}"
+    outputs[:ecosystem] = Content::Ecosystem.create!(title: ecosystem_title)
+    run(:import_book, cnx_book: cnx_book,
+                      ecosystem: outputs[:ecosystem],
+                      exercise_uids: exercise_uids)
   end
 
 end

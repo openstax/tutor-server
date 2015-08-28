@@ -10,19 +10,14 @@ module Content
           end
 
           def create!(from_ecosystems:, to_ecosystem:)
-            strategy = new(from_ecosystems: from_ecosystems, to_ecosystem: to_ecosystem)
-            map = ::Content::Map.new(strategy: strategy)
-            raise StrategyError unless map.valid?
+            map = create(from_ecosystems: from_ecosystems, to_ecosystem: to_ecosystem)
+            raise ::Content::StrategyError unless map.valid?
             map
           end
 
-          def find(from_ecosystems:, to_ecosystem:)
-            create(from_ecosystems: from_ecosystems, to_ecosystem: to_ecosystem)
-          end
+          alias_method :find, :create
 
-          def find!(from_ecosystems:, to_ecosystem:)
-            create!(from_ecosystems: from_ecosystems, to_ecosystem: to_ecosystem)
-          end
+          alias_method :find!, :create!
         end
 
         def initialize(from_ecosystems:, to_ecosystem:)

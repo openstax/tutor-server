@@ -76,6 +76,18 @@ module Content
           end
         end
 
+        def manifest
+          hash = {
+            ecosystem_title: ecosystem_title,
+            book_uuids: books.collect(&:uuid),
+            book_versions: books.collect(&:version),
+            exercise_numbers: exercises.collect(&:number),
+            exercise_versions: exercises.collect(&:version)
+          }
+          strategy = ::Content::Strategies::Generated::Manifest.new(hash: hash)
+          ::Content::Manifest.new(strategy: strategy)
+        end
+
         alias_method :entity_books, :books
         def books
           entity_books.collect do |entity_book|
