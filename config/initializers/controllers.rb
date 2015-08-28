@@ -48,8 +48,10 @@ ActionController::Base.class_exec do
         env: request.env,
         data: {
           error_id: @error_id,
-          message: "An exception occurred"
-        }
+          message: "An exception occurred",
+          dns_name: Resolv.getname(request.remote_ip)
+        },
+        sections: %w(data request session environment backtrace)
       )
 
       Rails.logger.error {
