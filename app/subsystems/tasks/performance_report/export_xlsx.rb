@@ -10,8 +10,8 @@ module Tasks
         Axlsx::Package.new do |axlsx|
           axlsx.use_shared_strings = true # OS X Numbers interoperability
           axlsx.workbook.styles.fonts.first.name = 'Helvetica Neue'
-          create_summary_worksheet(profile.name, axlsx)
           create_data_worksheets(report, axlsx)
+          create_summary_worksheet(profile.name, axlsx)
 
           if axlsx.serialize(filepath)
             outputs.filepath = filepath
