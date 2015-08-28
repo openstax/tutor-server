@@ -42,5 +42,11 @@ Rails.application.configure do
 
   OpenStax::Cnx::V1.set_archive_url_base(url: 'https://archive-staging-tutor.cnx.org/contents/')
 
+  config.middleware.use ExceptionNotification::Rack, email: {
+    email_prefix: "[Tutor] (TEST) ",
+    sender_address: %{"OpenStax Tutor" <noreply@openstax.org>},
+    exception_recipients: %w{tutor-notifications@openstax.org}
+  }
+
   config.active_job.queue_adapter = :inline
 end
