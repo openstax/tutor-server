@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe ApplicationController do
+RSpec.describe ApplicationController, type: :controller do
   let!(:controller) {
     cc = ApplicationController.new
     cc.response = ActionController::TestResponse.new
@@ -120,6 +120,22 @@ RSpec.describe ApplicationController do
       controller.send :set_app_date_header
       header_time = Time.parse(controller.response.headers['X-App-Date'])
       expect(header_time).to be_within(1.second).of(t)
+    end
+  end
+
+  context 'rescuing exceptions' do
+    it 'fires off an email' do
+      ActionMailer::Base.deliveries.clear
+
+      def controller.bad_action
+        RaiseUnknownConstantException
+      end
+
+      expect {
+        controller.bad_action
+      }.to raise_error(Exception)
+
+      expect(ActionMailer::Base.deliveries.size).to eq(1)
     end
   end
 end
