@@ -60,7 +60,7 @@ gem 'apipie-rails'
 gem 'maruku'
 
 # Lev framework
-gem 'lev', github: 'lml/lev', branch: 'unprotect-ha-methods' #'~> 6.0.0'
+gem 'lev', github: 'lml/lev' #'~> 6.0.0'
 
 # Ruby dsl for SQL queries
 gem 'squeel'

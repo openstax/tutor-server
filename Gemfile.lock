@@ -1,7 +1,6 @@
 GIT
   remote: git://github.com/lml/lev.git
-  revision: 9992e236f8ee26e7a90885c21221b34edc882a59
-  branch: unprotect-ha-methods
+  revision: a03a9f10a86b4999230f083e470840812e0dcc12
   specs:
     lev (6.0.0)
       actionpack (>= 3.0)
