@@ -126,8 +126,11 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
     end
 
     it 'fails if no Assistant found' do
+      allow(request).to receive(:remote_ip) { '96.21.0.39' }
+
       controller.sign_in teacher
       result = nil
+
       expect {
         result = api_post :create,
                           nil,
