@@ -8,7 +8,7 @@ RSpec.describe Tasks::ExportPerformanceReport, speed: :slow do
 
     VCR.use_cassette("Tasks_ExportPerformanceReport/with_book", VCR_OPTS) do
       @ecosystem = FetchAndImportBookAndCreateEcosystem[
-        id: '93e2b09d-261c-4007-a987-0b3062fe154b'
+        book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
       ]
     end
     @course = CreateCourse[name: 'Physics']
