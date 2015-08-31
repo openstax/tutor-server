@@ -31,6 +31,18 @@ RSpec.describe Tasks::Models::Task, :type => :model do
 
       expect(task.last_worked_at).to eq(time)
     end
+
+    it 'tells biglearn about its completion' do
+      task = FactoryGirl.create(:tasks_task)
+      roles = [Entity::Role.last]
+
+      allow(OpenStax::Biglearn::V1).to receive(:exercise_completed)
+
+      task.handle_task_step_completion!
+
+      expect(OpenStax::Biglearn::V1).to have_received(:exercise_completed)
+                                        .with(roles: roles)
+    end
   end
 
   it "requires non-nil due_at to be after opens_at" do
