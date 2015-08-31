@@ -17,9 +17,9 @@ module Content
       verify_and_return @strategy.exercise_ids, klass: Integer, error: ::Content::StrategyError
     end
 
-    def exercises
-      verify_and_return @strategy.exercises, klass: ::Content::Exercise,
-                                             error: ::Content::StrategyError
+    def exercises(preload_tags: false)
+      verify_and_return @strategy.exercises(preload_tags: preload_tags),
+                        klass: ::Content::Exercise, error: ::Content::StrategyError
     end
 
   end

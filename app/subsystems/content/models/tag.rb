@@ -1,5 +1,7 @@
 class Content::Models::Tag < Tutor::SubSystems::BaseModel
 
+  wrapped_by ::Content::Strategies::Direct::Tag
+
   belongs_to :ecosystem, inverse_of: :tags
 
   has_many :page_tags, dependent: :destroy, inverse_of: :tag
