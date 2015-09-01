@@ -1,6 +1,8 @@
 module Tasks
   module PerformanceReport
     class ExportXlsx
+      include ActionView::Helpers::DateHelper
+
       lev_routine express_output: :filepath
 
       protected
@@ -85,7 +87,10 @@ module Tasks
         data.each_with_index do |d, col|
           next if d.nil? || !d.late
           ref = "#{('C'..'Z').to_a[col]}#{row + 4}" # forms something like 'D5'
-          sheet.add_comment ref: ref, text: 'Late', author: 'OpenStax', visible: false
+          sheet.add_comment ref: ref,
+            text: "Homework was worked #{time_ago_in_words(d.last_worked_at)} late",
+            author: 'OpenStax',
+            visible: false
         end
       end
 
