@@ -18,6 +18,9 @@ module Content
     let!(:valid_pool)   { ::Content::Pool.new(strategy: Object.new) }
     let!(:invalid_pool) { Object.new }
 
+    let!(:valid_manifest)   { ::Content::Manifest.new(strategy: Object.new) }
+    let!(:invalid_manifest) { Object.new }
+
     let(:strategy) {
       double("strategy").tap do |dbl|
         allow(dbl).to receive(:id).with(no_args)
@@ -43,6 +46,9 @@ module Content
 
         allow(dbl).to receive(:practice_widget_pools).with(pages: strategy_expected_pages)
                      .and_return(strategy_practice_widget_pools)
+
+        allow(dbl).to receive(:manifest).with(no_args)
+                     .and_return(strategy_manifest)
       end
     }
 
@@ -57,6 +63,7 @@ module Content
     let(:strategy_homework_core_pools)       { [valid_pool, valid_pool] }
     let(:strategy_homework_dynamic_pools)    { [valid_pool, valid_pool] }
     let(:strategy_practice_widget_pools)     { [valid_pool, valid_pool] }
+    let(:strategy_manifest)     { valid_manifest }
 
     let(:ecosystem) { ::Content::Ecosystem.new(strategy: strategy) }
 
@@ -436,6 +443,38 @@ module Content
           expect{
             ecosystem.practice_widget_pools(pages: pages)
           }.to raise_error(TypeError)
+        end
+      end
+    end
+
+
+    context "generating a manifest" do
+      context "delegation" do
+        let(:manifest) { valid_manifest }
+        let(:strategy_expected_manifest) { manifest }
+
+        it "delegates to its strategy" do
+          ecosystem.manifest
+          expect(strategy).to have_received(:manifest)
+        end
+      end
+
+      context "strategy returns Content::Manifest" do
+        let(:strategy_manifest) { valid_manifest }
+
+        it "returns the strategy's manifest" do
+          manifest = ecosystem.manifest
+          expect(manifest).to eq(strategy_manifest)
+        end
+      end
+
+      context "strategy doesn't return Content::Manifest" do
+        let(:strategy_manifest) { invalid_manifest }
+
+        it "raises Content::StrategyError" do
+          expect{
+            ecosystem.manifest
+          }.to raise_error(::Content::StrategyError)
         end
       end
     end
