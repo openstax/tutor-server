@@ -36,7 +36,8 @@ RSpec.describe DistributeTasks, type: :routine do
     before(:each) do
       DistributeTasks.call(task_plan)
       task_plan.reload
-      AddUserAsPeriodStudent.call(user: new_user.entity_user, period: period)
+      AddUserAsPeriodStudent.call(user: new_user.entity_user, period: period,
+                                  assign_published_task_plans: false)
     end
 
     context 'before the open date' do
