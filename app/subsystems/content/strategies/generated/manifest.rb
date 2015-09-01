@@ -43,7 +43,7 @@ module Content
 
         def book_cnx_ids
           versions = book_versions
-          @hash[:book_uuids].with_index.collect{ |uuid, idx| "#{uuid}@#{versions[idx]}" }
+          book_uuids.each_with_index.collect{ |uuid, idx| "#{uuid}@#{versions[idx]}" }
         end
 
         def exercise_numbers
@@ -56,7 +56,7 @@ module Content
 
         def exercise_uids
           versions = exercise_versions
-          @hash[:exercise_numbers].with_index.collect{ |number, idx| "#{number}@#{versions[idx]}" }
+          exercise_numbers.each_with_index.collect{ |number, idx| "#{number}@#{versions[idx]}" }
         end
 
       end

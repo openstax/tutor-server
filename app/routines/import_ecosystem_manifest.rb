@@ -12,8 +12,8 @@ class ImportEcosystemManifest
   def exec(manifest:)
     # Handle only 1 book per ecosystem for now
     raise IllegalState if manifest.book_cnx_ids.size != 1
-    book_cnx_ids = manifest.book_cnx_ids.first
-    run(:fetch_and_import, id: book_cnx_ids,
+
+    run(:fetch_and_import, book_cnx_id: manifest.book_cnx_ids.first,
                            ecosystem_title: manifest.ecosystem_title,
                            exercise_uids: manifest.exercise_uids)
   end

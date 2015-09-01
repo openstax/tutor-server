@@ -78,7 +78,7 @@ module Content
 
         def manifest
           hash = {
-            ecosystem_title: ecosystem_title,
+            ecosystem_title: title,
             book_uuids: books.collect(&:uuid),
             book_versions: books.collect(&:version),
             exercise_numbers: exercises.collect(&:number),
