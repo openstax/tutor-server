@@ -1,5 +1,3 @@
-require_relative '../../vcr_helper'
-
 FactoryGirl.define do
   factory :tasked_task_plan, parent: :tasks_task_plan do
 
@@ -24,6 +22,8 @@ FactoryGirl.define do
       )
 
       chapter = FactoryGirl.create :content_chapter
+
+      require File.expand_path('../../../vcr_helper', __FILE__)
 
       VCR.use_cassette("TaskedTaskPlan/with_inertia", VCR_OPTS) do
         @page = Content::Routines::ImportPage[cnx_page: cnx_page, chapter: chapter,
