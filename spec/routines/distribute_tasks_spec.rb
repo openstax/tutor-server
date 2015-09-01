@@ -18,7 +18,7 @@ RSpec.describe DistributeTasks, type: :routine do
   let!(:new_user)  { FactoryGirl.create :user_profile }
 
   context 'unpublished task_plan' do
-    it "creates tasks for the task_plan" do
+    it 'creates tasks for the task_plan' do
       expect(task_plan.tasks).to be_empty
       result = DistributeTasks.call(task_plan)
       expect(result.errors).to be_empty
@@ -46,7 +46,7 @@ RSpec.describe DistributeTasks, type: :routine do
         task_plan.tasks.each{ |tt| tt.update_attribute(:opens_at, opens_at) }
       end
 
-      it "rebuilds the tasks for the task_plan" do
+      it 'rebuilds the tasks for the task_plan' do
         expect(task_plan.tasks.size).to eq 1
         old_task = task_plan.tasks.first
 
