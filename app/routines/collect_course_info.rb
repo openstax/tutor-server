@@ -60,8 +60,8 @@ class CollectCourseInfo
         set_roles_on_courses(user)
       when :periods
         set_periods_on_courses
-      when :book
-        set_book_on_courses
+      when :ecosystem
+        set_ecosystem_on_courses
       end
     end
   end
@@ -89,13 +89,10 @@ class CollectCourseInfo
     end
   end
 
-  def set_book_on_courses
+  def set_ecosystem_on_courses
     outputs.courses.each do |course|
       routine = run(:get_course_ecosystem, course: Entity::Course.find(course.id))
-      books = routine.outputs.ecosystem.try(:books)
-      next if books.nil?
-      raise(IllegalState, "More than one book is not supported") if books.size > 1
-      course.book = books.first
+      course.ecosystem = routine.outputs.ecosystem
     end
   end
 

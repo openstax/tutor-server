@@ -69,14 +69,14 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
       end
 
-      it 'includes the periods and book_id for the course' do
-        book = add_book_to_course(course: course)[:book]
+      it 'includes the periods and ecosystem_id for the course' do
+        ecosystem = add_book_to_course(course: course)[:ecosystem]
 
         api_get :index, user_1_token
         expect(response.body).to include({
           id: course.id.to_s,
           name: course.profile.name,
-          book_id: "#{book.id}",
+          ecosystem_id: "#{ecosystem.id}",
           roles: [{ id: teacher.id.to_s, type: 'teacher' }],
           periods: [{ id: zeroth_period.id.to_s, name: zeroth_period.name },
                     { id: period.id.to_s, name: period.name }]

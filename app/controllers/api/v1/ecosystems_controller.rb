@@ -1,4 +1,4 @@
-class Api::V1::ContentsController < Api::V1::ApiController
+class Api::V1::EcosystemsController < Api::V1::ApiController
 
   resource_description do
     api_versions "v1"
@@ -9,36 +9,6 @@ class Api::V1::ContentsController < Api::V1::ApiController
     EOS
   end
 
-  api :GET, '/courses/:course_id/readings', 'Returns readings for a course\'s current ecosystem'
-  description <<-EOS
-    Returns a hierarchical listing of a course's readings.
-    A course is currently limited to only one book.
-    Inside each book there can be chapters and pages.
-
-    #{json_schema(Api::V1::BookTocsRepresenter, include: :readable)}
-  EOS
-  def course_readings
-    course = Entity::Course.find(params[:id])
-    ecosystem = GetCourseEcosystem[course: course]
-
-    respond_with_ecosystem_readings(ecosystem)
-  end
-
-  api :GET, '/courses/:course_id/exercises',
-            "Returns exercises for a course\'s current ecosystem, filtered by the page_ids param"
-  description <<-EOS
-    Returns a list of assignable exercises associated with the pages with the given ID's.
-    If no page_ids are specified, returns an empty array.
-
-    #{json_schema(Api::V1::ExerciseSearchRepresenter, include: :readable)}
-  EOS
-  def course_exercises
-    course = Entity::Course.find(params[:id])
-    ecosystem = GetCourseEcosystem[course: course]
-
-    respond_with_ecosystem_exercises(ecosystem)
-  end
-
   api :GET, '/ecosystems/:ecosystem_id/readings', 'Returns readings for a given ecosystem'
   description <<-EOS
     Returns a hierarchical listing of an ecosystem's readings.
@@ -47,7 +17,7 @@ class Api::V1::ContentsController < Api::V1::ApiController
 
     #{json_schema(Api::V1::BookTocsRepresenter, include: :readable)}
   EOS
-  def ecosystem_readings
+  def readings
     ecosystem = ::Content::Ecosystem.find(params[:id])
 
     respond_with_ecosystem_readings(ecosystem)
@@ -61,7 +31,7 @@ class Api::V1::ContentsController < Api::V1::ApiController
 
     #{json_schema(Api::V1::ExerciseSearchRepresenter, include: :readable)}
   EOS
-  def ecosystem_exercises
+  def exercises
     ecosystem = ::Content::Ecosystem.find(params[:id])
 
     respond_with_ecosystem_exercises(ecosystem)
