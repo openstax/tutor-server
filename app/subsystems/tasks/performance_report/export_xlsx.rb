@@ -57,7 +57,7 @@ module Tasks
 
       def data_headers(data_headings)
         headings = data_headings.collect(&:title)
-        (['First Name', 'Last Name'] + headings).collect { |header| bold_text(header) }
+        (non_data_headings + headings).collect { |header| bold_text(header) }
       end
 
       def gather_due_dates(data_headings)
@@ -77,26 +77,28 @@ module Tasks
       end
 
       def cell_styles(data, worksheet)
-        # first two cells are student first/last name
-        [nil, nil] + data.map do |d|
-          worksheet.styles.add_style bg_color: 'FFFF93' if !d.nil? && d.late
+        (non_data_headings.map { nil } + data).map do |d|
+          worksheet.styles.add_style bg_color: 'FFFF93' if d && d.late
         end
       end
 
       def add_late_comments(sheet, data, row)
         data.each_with_index do |d, col|
-          next if d.nil? || !d.late
-          ref = "#{('C'..'Z').to_a[col]}#{row + 4}" # forms something like 'D5'
-          sheet.add_comment ref: ref,
-            text: "Homework was worked #{time_ago_in_words(d.last_worked_at)} late",
-            author: 'OpenStax',
-            visible: false
+          if d && d.late
+            start_col = ('A'..'Z').to_a[non_data_headings.size]
+            row += 4 # offset 4 header rows
+
+            sheet.add_comment(ref: "#{(start_col..'Z').to_a[col]}#{row}", # 'D5', etc...
+              text: "Homework was worked #{time_ago_in_words(d.last_worked_at)} late",
+              author: 'OpenStax',
+              visible: false)
+          end
         end
       end
 
       def student_scores(student)
         [student.first_name, student.last_name] + student.data.collect do |data|
-          data.nil? ? nil : score(data)
+          data ? score(data) : nil
         end
       end
 
@@ -125,6 +127,10 @@ module Tasks
         text = Axlsx::RichText.new
         text.add_run(content, i: true)
         text
+      end
+
+      def non_data_headings
+        ['First Name', 'Last Name']
       end
     end
   end
