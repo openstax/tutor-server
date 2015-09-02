@@ -9,6 +9,11 @@ RSpec.describe ReassignPublishedPeriodTaskPlans, type: :routine do
     AddUserAsPeriodStudent.call(user: profile.entity_user, period: period)
     profile
   }
+  let!(:new_user)      {
+    profile = FactoryGirl.create :user_profile
+    AddUserAsPeriodStudent.call(user: profile.entity_user, period: period)
+    profile
+  }
   let!(:task_plan_1) {
     task_plan = FactoryGirl.build(:tasks_task_plan, owner: course)
     task_plan.tasking_plans.first.target = period.to_model
@@ -21,12 +26,10 @@ RSpec.describe ReassignPublishedPeriodTaskPlans, type: :routine do
     task_plan.save!
     task_plan
   }
-  let!(:new_user)  { FactoryGirl.create :user_profile }
 
   before(:each) {
     DistributeTasks.call(task_plan_1)
-    AddUserAsPeriodStudent.call(user: new_user.entity_user, period: period,
-                                assign_published_task_plans: false)
+    new_user.entity_user.roles.each{ |role| role.taskings.each{ |tasking| tasking.task.destroy } }
   }
 
   context 'unpublished task_plan' do

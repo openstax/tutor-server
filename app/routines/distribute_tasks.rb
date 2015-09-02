@@ -22,17 +22,16 @@ class DistributeTasks
     Entity::Task.import! entity_tasks, recursive: true
   end
 
-  def exec(task_plan, publish_time = Time.now)
+  def exec(task_plan, publish_time = Time.now, protect_unopened_tasks = false)
     # Lock the TaskPlan to prevent concurrent update/publish
     task_plan.lock!
 
     tasks = task_plan.tasks.preload(:entity_task, { taskings: :role })
 
-    # Delete pre-existing (unopened) assignments
-    tasks.each do |tt|
-      next if tt.opens_at <= publish_time
-      tt.entity_task.destroy
-    end
+    # Delete pre-existing assignments only if
+    # no assignments are open and protect_unopened_tasks is false
+    tasks.each{ |tt| tt.entity_task.destroy } if !protect_unopened_tasks && \
+                                                 tasks.none?{ |tt| tt.opens_at <= publish_time }
 
     tasked_taskees = tasks.select{ |tt| !tt.destroyed? }
                           .flat_map{ |tt| tt.taskings.collect{ |tk| tk.role } }

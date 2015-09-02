@@ -9,20 +9,28 @@ RSpec.describe DistributeTasks, type: :routine do
     AddUserAsPeriodStudent.call(user: profile.entity_user, period: period)
     profile
   }
+  let!(:new_user)      {
+    profile = FactoryGirl.create :user_profile
+    AddUserAsPeriodStudent.call(user: profile.entity_user, period: period)
+    profile
+  }
   let!(:task_plan) {
     task_plan = FactoryGirl.build(:tasks_task_plan, owner: course)
     task_plan.tasking_plans.first.target = period.to_model
     task_plan.save!
     task_plan
   }
-  let!(:new_user)  { FactoryGirl.create :user_profile }
+
+  before(:each) do
+    
+  end
 
   context 'unpublished task_plan' do
     it 'creates tasks for the task_plan' do
       expect(task_plan.tasks).to be_empty
       result = DistributeTasks.call(task_plan)
       expect(result.errors).to be_empty
-      expect(task_plan.tasks.size).to eq 1
+      expect(task_plan.tasks.size).to eq 2
     end
 
     it 'sets the published_at field' do
@@ -35,9 +43,10 @@ RSpec.describe DistributeTasks, type: :routine do
   context 'published task_plan' do
     before(:each) do
       DistributeTasks.call(task_plan)
+      new_user.entity_user.roles.each do |role|
+        role.taskings.each{ |tasking| tasking.task.destroy }
+      end
       task_plan.reload
-      AddUserAsPeriodStudent.call(user: new_user.entity_user, period: period,
-                                  assign_published_task_plans: false)
     end
 
     context 'before the open date' do
