@@ -139,7 +139,7 @@ Rails.application.routes.draw do
     post :freeze_time, controller: :timecop
     post :time_travel, controller: :timecop
 
-    resources :contents, only: [:index] do
+    resources :ecosystems, only: [:index] do
       collection do
         get :import
         post :import

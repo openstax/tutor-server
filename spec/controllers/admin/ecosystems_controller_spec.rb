@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Admin::ContentsController, speed: :slow, vcr: VCR_OPTS do
+RSpec.describe Admin::EcosystemsController, speed: :slow, vcr: VCR_OPTS do
   let!(:admin) { FactoryGirl.create :user_profile, :administrator }
 
   let!(:book_1) { FactoryGirl.create :content_book, title: 'Physics', version: '1' }
@@ -25,14 +25,14 @@ RSpec.describe Admin::ContentsController, speed: :slow, vcr: VCR_OPTS do
     let!(:archive_url) { 'https://archive-staging-tutor.cnx.org/contents/' }
     let!(:cnx_id) { '93e2b09d-261c-4007-a987-0b3062fe154b@4.4' }
 
-    it 'imports books into ecosystems' do
+    it 'imports books and exercises as ecosystems' do
       expect {
         post :import, archive_url: archive_url, cnx_id: cnx_id
       }.to change { Content::Models::Book.count }.by(1)
-      expect(flash[:notice]).to eq 'Book "Physics" imported.'
+      expect(flash[:notice]).to include 'Ecosystem "Physics (93e2b09d-261c-4007-a987-0b3062fe154b@4.4)" imported.'
     end
 
-    it 'does not import book if the book already exists' do
+    it 'imports a book even if the book already exists' do
       FactoryGirl.create(:content_book,
                          title: 'Physics',
                          url: "#{archive_url}#{cnx_id}",
@@ -40,8 +40,8 @@ RSpec.describe Admin::ContentsController, speed: :slow, vcr: VCR_OPTS do
 
       expect {
         post :import, archive_url: archive_url, cnx_id: cnx_id
-      }.not_to change { Content::Models::Book.count }
-      expect(flash[:error]).to eq 'Book "Physics" already imported.'
+      }.to change { Content::Models::Book.count }.by(1)
+      expect(flash[:notice]).to include 'Ecosystem "Physics (93e2b09d-261c-4007-a987-0b3062fe154b@4.4)" imported.'
     end
 
     it 'imports a book with a different version' do
@@ -51,10 +51,9 @@ RSpec.describe Admin::ContentsController, speed: :slow, vcr: VCR_OPTS do
                          version: '4.4')
 
       expect {
-        post :import, archive_url: archive_url,
-                      cnx_id: cnx_id.sub('@4.4', '@4.3')
+        post :import, archive_url: archive_url, cnx_id: cnx_id.sub('@4.4', '@4.3')
       }.to change { Content::Models::Book.count }.by(1)
-      expect(flash[:notice]).to eq 'Book "Physics" imported.'
+      expect(flash[:notice]).to include 'Ecosystem "Physics (93e2b09d-261c-4007-a987-0b3062fe154b@4.3)" imported.'
     end
   end
 end
