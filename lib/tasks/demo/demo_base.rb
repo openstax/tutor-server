@@ -142,8 +142,7 @@ class DemoBase
     profile ||= run(UserProfile::CreateProfile, username: username,
                                                 password: password,
                                                 first_name: first_name,
-                                                last_name: last_name,
-                                                full_name: name).outputs.profile
+                                                last_name: last_name).outputs.profile
 
     if sign_contracts
       sign_contract(profile: profile, name: :general_terms_of_use)
@@ -273,7 +272,7 @@ class DemoBase
       work_step(step, responses[index + core_task_steps.size])
     end
 
-    return unless task.core_task_steps_completed?
+    return unless task.reload.core_task_steps_completed?
 
     personalized_task_steps = task.personalized_task_steps
 
