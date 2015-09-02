@@ -13,5 +13,4 @@ class OpenStax::Biglearn::V1::Exercise
     @tags = tags
   end
 
-
 end
