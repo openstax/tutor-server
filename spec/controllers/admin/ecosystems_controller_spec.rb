@@ -29,7 +29,8 @@ RSpec.describe Admin::EcosystemsController, speed: :slow, vcr: VCR_OPTS do
       expect {
         post :import, archive_url: archive_url, cnx_id: cnx_id
       }.to change { Content::Models::Book.count }.by(1)
-      expect(flash[:notice]).to include 'Ecosystem "Physics (93e2b09d-261c-4007-a987-0b3062fe154b@4.4)" imported.'
+      expect(flash[:notice]).to include 'Ecosystem "Physics (93e2b09d-261c-4007-a987-0b3062fe154b@4.4) - '
+      expect(flash[:notice]).to include '" imported.'
     end
 
     it 'imports a book even if the book already exists' do
@@ -41,7 +42,8 @@ RSpec.describe Admin::EcosystemsController, speed: :slow, vcr: VCR_OPTS do
       expect {
         post :import, archive_url: archive_url, cnx_id: cnx_id
       }.to change { Content::Models::Book.count }.by(1)
-      expect(flash[:notice]).to include 'Ecosystem "Physics (93e2b09d-261c-4007-a987-0b3062fe154b@4.4)" imported.'
+      expect(flash[:notice]).to include 'Ecosystem "Physics (93e2b09d-261c-4007-a987-0b3062fe154b@4.4) - '
+      expect(flash[:notice]).to include '" imported.'
     end
 
     it 'imports a book with a different version' do
@@ -53,7 +55,8 @@ RSpec.describe Admin::EcosystemsController, speed: :slow, vcr: VCR_OPTS do
       expect {
         post :import, archive_url: archive_url, cnx_id: cnx_id.sub('@4.4', '@4.3')
       }.to change { Content::Models::Book.count }.by(1)
-      expect(flash[:notice]).to include 'Ecosystem "Physics (93e2b09d-261c-4007-a987-0b3062fe154b@4.3)" imported.'
+      expect(flash[:notice]).to include 'Ecosystem "Physics (93e2b09d-261c-4007-a987-0b3062fe154b@4.3) - '
+      expect(flash[:notice]).to include '" imported.'
     end
   end
 end
