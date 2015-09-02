@@ -252,7 +252,7 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
         # Need to reload the task_plan since publishing it will set the
         # publication dates and change the representation
         expect(task_plan.reload.publish_last_requested_at).not_to eq publish_last_requested_at
-        expect(task_plan.published_at).not_to eq published_at
+        expect(task_plan.published_at).to eq published_at
         expect(task_plan.publish_job_uuid).not_to eq publish_job_uuid
 
         # Revert task_plan to its state when the job was queued
