@@ -62,8 +62,9 @@ module Tasks
 
       def gather_due_dates(data_headings)
         due_dates = data_headings.collect(&:due_at)
-        offset_cells = non_data_headings.map { nil }
-        offset_cells.delete_at(offset_cells.index(nil)) # minus 1 for 'Due Date'
+        offset_cells = offset_columns.slice!(offset_columns.index(nil), 1)
+          # subtract one cell for 'Due Date'
+          # #slice!(index, length) returns new_ary
 
         [italic_text('Due Date')] + offset_cells + due_dates.collect do |due_date|
           italic_text(due_date.strftime("%m/%d/%Y"))
@@ -79,7 +80,7 @@ module Tasks
       end
 
       def cell_styles(data, worksheet)
-        (non_data_headings.map { nil } + data).map do |d|
+        (offset_columns + data).map do |d|
           worksheet.styles.add_style bg_color: 'FFFF93' if d && d.late
         end
       end
@@ -133,6 +134,10 @@ module Tasks
 
       def non_data_headings
         ['First Name', 'Last Name']
+      end
+
+      def offset_columns
+        non_data_headings.map { nil }
       end
     end
   end
