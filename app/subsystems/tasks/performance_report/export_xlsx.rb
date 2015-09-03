@@ -62,8 +62,10 @@ module Tasks
 
       def gather_due_dates(data_headings)
         due_dates = data_headings.collect(&:due_at)
+        offset_cells = non_data_headings.map { nil }
+        offset_cells.delete_at(offset_cells.index(nil)) # minus 1 for 'Due Date'
 
-        [italic_text('Due Date')] + due_dates.collect do |due_date|
+        [italic_text('Due Date')] + offset_cells + due_dates.collect do |due_date|
           italic_text(due_date.strftime("%m/%d/%Y"))
         end
       end
