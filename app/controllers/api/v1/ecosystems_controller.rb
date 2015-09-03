@@ -23,8 +23,8 @@ class Api::V1::EcosystemsController < Api::V1::ApiController
     respond_with_ecosystem_readings(ecosystem)
   end
 
-  api :GET, '/ecosystems/:ecosystem_id/exercises',
-            "Returns exercises for a given ecosystem, filtered by the page_ids param"
+  api :GET, '/ecosystems/:ecosystem_id/exercises(/:pool_types)',
+            "Returns exercises for a given ecosystem, filtered by the page_ids param and optionally an array of pool_types"
   description <<-EOS
     Returns a list of assignable exercises associated with the pages with the given ID's.
     If no page_ids are specified, returns an empty array.
@@ -34,7 +34,7 @@ class Api::V1::EcosystemsController < Api::V1::ApiController
   def exercises
     ecosystem = ::Content::Ecosystem.find(params[:id])
 
-    respond_with_ecosystem_exercises(ecosystem)
+    respond_with_ecosystem_exercises(ecosystem, params[:pool_types])
   end
 
   protected
@@ -49,15 +49,45 @@ class Api::V1::EcosystemsController < Api::V1::ApiController
     respond_with books, represent_with: Api::V1::BookTocsRepresenter
   end
 
-  def respond_with_ecosystem_exercises(ecosystem)
+  def respond_with_ecosystem_exercises(ecosystem, pool_types = nil)
     OSU::AccessPolicy.require_action_allowed!(:exercises, current_api_user, ecosystem)
 
     pages = ecosystem.pages_by_ids(params[:page_ids])
-    exercises = ecosystem.homework_core_pools(pages: pages).flat_map do |pool|
-      pool.exercises(preload_tags: true)
+
+    pool_types = [pool_types].flatten.compact
+
+    # Default types
+    pool_types = ['reading_dynamic', 'reading_try_another',
+                  'homework_core', 'homework_dynamic', 'practice_widget'] if pool_types.empty?
+
+    # Convert to set
+    pool_types = Set.new pool_types
+
+    # Build map of pool types to exercises
+    pools = {}
+    pools['reading_dynamic'] = ecosystem.reading_dynamic_pools(pages: pages) \
+      if pool_types.include?('reading_dynamic')
+    pools['reading_try_another'] = ecosystem.reading_try_another_pools(pages: pages) \
+      if pool_types.include?('reading_try_another')
+    pools['homework_core'] = ecosystem.homework_core_pools(pages: pages) \
+      if pool_types.include?('homework_core')
+    pools['homework_dynamic'] = ecosystem.homework_dynamic_pools(pages: pages) \
+      if pool_types.include?('homework_dynamic')
+    pools['practice_widget'] = ecosystem.practice_widget_pools(pages: pages) \
+      if pool_types.include?('practice_widget')
+
+    # Build map of exercise uids to representations, with pool type
+    exercise_representations = pools.each_with_object({}) do |(pool_type, pools), hash|
+      pools.flat_map{ |pool| pool.exercises(preload_tags: true) }.each do |exercise|
+        hash[exercise.uid] ||= Api::V1::ExerciseRepresenter.new(exercise).to_hash
+        hash[exercise.uid]['pool_types'] ||= []
+        hash[exercise.uid]['pool_types'] << pool_type
+      end
     end
 
-    respond_with exercises, represent_with: Api::V1::ExerciseSearchRepresenter
+    results = Hashie::Mash.new(items: exercise_representations.values)
+
+    respond_with results, represent_with: Api::V1::ExerciseSearchRepresenter
   end
 
 end

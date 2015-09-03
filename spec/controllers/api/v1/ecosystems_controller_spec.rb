@@ -21,10 +21,10 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
   let!(:user_2_token)       { FactoryGirl.create :doorkeeper_access_token,
                                                  resource_owner_id: user_2.id }
 
-  let!(:userless_token)  { FactoryGirl.create :doorkeeper_access_token }
+  let!(:userless_token)    { FactoryGirl.create :doorkeeper_access_token }
 
-  let!(:course)          { CreateCourse[name: 'Physics 101'] }
-  let!(:period)          { CreatePeriod[course: course] }
+  let!(:course)            { CreateCourse[name: 'Physics 101'] }
+  let!(:period)            { CreatePeriod[course: course] }
 
   context 'with a fake book' do
     let!(:book)            { FactoryGirl.create(:content_book, :standard_contents_1) }
@@ -61,7 +61,7 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
         expect(teacher_response).to eq(student_response)
       end
 
-      it "should work on the happy path" do
+      it "works for teachers in the course" do
         AddUserAsCourseTeacher.call(course: course, user: user_1)
 
         api_get :readings, user_1_token, parameters: {id: ecosystem.id}
@@ -157,15 +157,37 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
         expect(response.body_as_hash).to eq({total_count: 0, items: []})
       end
 
-      it "should work on the happy path" do
+      it "works for teachers in the course" do
         page_ids = Content::Models::Page.all.map(&:id)
         api_get :exercises, user_1_token, parameters: { id: @ecosystem.id, page_ids: page_ids}
+
+        expect(response).to have_http_status(:success)
+        hash = response.body_as_hash
+        expect(hash[:total_count]).to eq(219)
+        page_los = Content::Models::Page.all.map(&:los).flatten.collect(&:value)
+        hash[:items].each do |item|
+          expect(item[:pool_types]).not_to be_empty
+          wrapper = OpenStax::Exercises::V1::Exercise.new(content: item[:content].to_json)
+          item_los = wrapper.los
+          expect(item_los).not_to be_empty
+          item_los.each do |item_lo|
+            expect(page_los).to include(item_lo)
+          end
+        end
+      end
+
+      it "returns only exercises in certain pools if pool_types are given" do
+        page_ids = Content::Models::Page.all.map(&:id)
+        api_get :exercises, user_1_token, parameters: {
+          id: @ecosystem.id, page_ids: page_ids, pool_types: 'homework_core'
+        }
 
         expect(response).to have_http_status(:success)
         hash = response.body_as_hash
         expect(hash[:total_count]).to eq(70)
         page_los = Content::Models::Page.all.map(&:los).flatten.collect(&:value)
         hash[:items].each do |item|
+          expect(item[:pool_types]).to eq ['homework_core']
           wrapper = OpenStax::Exercises::V1::Exercise.new(content: item[:content].to_json)
           item_los = wrapper.los
           expect(item_los).not_to be_empty
