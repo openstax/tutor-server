@@ -96,8 +96,7 @@ module OpenStax::Biglearn
         profile.update_attribute(:exchange_read_identifier, '0edbe5f8f30abc5ba56b5b890bddbbe2')
         role = Role::CreateUserRole[profile.entity_user]
 
-        # This assumes that a book has been imported
-        clue = client.get_clue(roles: role, tags: 'k12phys-ch04-s02-lo01')
+        clue = client.get_clue(roles: role, pages: 'ignored-in-fake-client')
 
         expect(clue[:value]).to be_a(Float)
         expect(['high', 'medium', 'low']).to include(clue[:value_interpretation])

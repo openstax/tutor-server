@@ -43,17 +43,16 @@ module CourseGuideMethods
     [tasked_exercises].flatten.collect{ |te| te.los + te.aplos }.flatten.uniq
   end
 
-  def get_clue(tasked_exercises)
-    tags = get_los_and_aplos(tasked_exercises)
+  def get_clue(tasked_exercises, pages)
     roles = tasked_exercises.collect{ |ts| ts.task_step.task.taskings.collect{ |tg| tg.role } }
                             .flatten
-    OpenStax::Biglearn::V1.get_clue(roles: roles, tags: tags)
+    OpenStax::Biglearn::V1.get_clue(roles: roles, pages: pages)
   end
 
   def compile_pages(page_groupings)
     page_groupings.collect do |page, tasked_exercises|
       practices = completed_practices(tasked_exercises)
-      clue = get_clue(tasked_exercises)
+      clue = get_clue(tasked_exercises, page)
 
       {
         title: page.title,
@@ -70,10 +69,10 @@ module CourseGuideMethods
     group_tasked_exercises_by_chapters(tasked_exercises, ecosystems_map)
       .collect do |chapter, page_groupings|
 
-      pages = compile_pages(page_groupings)
+      page_hashes = compile_pages(page_groupings)
       tasked_exercises = page_groupings.values.flatten
       practices = completed_practices(tasked_exercises)
-      clue = get_clue(tasked_exercises)
+      clue = get_clue(tasked_exercises, page_groupings.collect{|pg, te| pg})
 
       {
         title: chapter.title,
@@ -81,8 +80,8 @@ module CourseGuideMethods
         questions_answered_count: tasked_exercises.count,
         clue: clue,
         practice_count: practices.count,
-        page_ids: pages.collect{|pp| pp[:page_ids]}.flatten,
-        children: pages
+        page_ids: page_hashes.collect{|pp| pp[:page_ids]}.flatten,
+        children: page_hashes
       }
     end.sort_by{ |ch| ch[:book_location] }
   end

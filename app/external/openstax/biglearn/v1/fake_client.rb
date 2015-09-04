@@ -6,7 +6,7 @@ class OpenStax::Biglearn::V1::FakeClient
   # API methods
   #
 
-  def get_clue(roles:, tags:)
+  def get_clue(roles:, pages:)
     aggregate = rand(0.0..1.0)
     confidence_left  = [aggregate - 0.1, 0.0].max
     confidence_right = [aggregate + 0.1, 1.0].min
