@@ -41,7 +41,7 @@ module Tasks
             sheet.add_row(gather_averages(report[:data_headings]))
 
             report.students.each_with_index do |student, row|
-              styles = cell_styles(student.data, sheet)
+              styles = lateness_styles(student.data, sheet)
               sheet.add_row(student_scores(student), style: styles)
               add_late_comments(sheet, student.data, row)
             end
@@ -79,7 +79,7 @@ module Tasks
         (['Average'] + averages).collect { |average| italic_text(average) }
       end
 
-      def cell_styles(data, worksheet)
+      def lateness_styles(data, worksheet)
         (offset_columns + data).map do |d|
           worksheet.styles.add_style bg_color: 'FFFF93' if d && d.late
         end
