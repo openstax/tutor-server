@@ -62,12 +62,10 @@ module Tasks
 
       def gather_due_dates(data_headings)
         due_dates = data_headings.collect(&:due_at)
-        offset_cells = offset_columns.slice!(offset_columns.index(nil), 1)
-          # subtract one cell for 'Due Date'
-          # #slice!(index, length) returns new_ary
 
-        [italic_text('Due Date')] + offset_cells + due_dates.collect do |due_date|
-          italic_text(due_date.strftime("%m/%d/%Y"))
+        collect_columns(due_dates, 'Due Date') do |d|
+          d = d.respond_to?(:strftime) ? d.strftime("%m/%d/%Y") : d
+          italic_text(d)
         end
       end
 
@@ -76,11 +74,11 @@ module Tasks
           '%.2f' % heading.average if heading.average
         end
 
-        (['Average'] + averages).collect { |average| italic_text(average) }
+        collect_columns(averages, 'Average') { |average| italic_text(average) }
       end
 
       def lateness_styles(data, worksheet)
-        (offset_columns + data).map do |d|
+        collect_columns(data) do |d|
           worksheet.styles.add_style bg_color: 'FFFF93' if d && d.late
         end
       end
@@ -89,9 +87,9 @@ module Tasks
         data.each_with_index do |d, col|
           if d && d.late
             start_col = ('A'..'Z').to_a[non_data_headings.size]
-            row += 4 # offset 4 header rows
+            offset_row = row + 4 # offset 4 header rows
 
-            sheet.add_comment(ref: "#{(start_col..'Z').to_a[col]}#{row}", # 'D5', etc...
+            sheet.add_comment(ref: "#{(start_col..'Z').to_a[col]}#{offset_row}", # 'D5', etc...
               text: "Homework was worked #{time_ago_in_words(d.last_worked_at)} late",
               author: 'OpenStax',
               visible: false)
@@ -136,8 +134,27 @@ module Tasks
         ['First Name', 'Last Name']
       end
 
-      def offset_columns
-        non_data_headings.map { nil }
+      def collect_columns(collection, labels = nil, &block)
+        labels = [labels].flatten.compact
+
+        (labels + offset_columns(labels.size) + collection).collect do |item|
+          yield(item)
+        end
+      end
+
+      def offset_columns(subtract_amt)
+        # some cases need to subtract offset
+        # because they add their own columns
+        # to the set
+
+        offset_cells = non_data_headings.map { nil }
+
+        if subtract_amt.zero?
+          offset_cells
+        else
+          # #slice(index, length) returns new_ary
+          offset_cells.slice(offset_cells.index(nil), subtract_amt)
+        end
       end
     end
   end
