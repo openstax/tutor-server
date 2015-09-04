@@ -134,8 +134,8 @@ module Tasks
         ['First Name', 'Last Name']
       end
 
-      def collect_columns(collection, labels = nil, &block)
-        labels = [labels].flatten.compact
+      def collect_columns(collection, *labels, &block)
+        labels = *labels.flatten.compact
 
         (labels + offset_columns(labels.size) + collection).collect do |item|
           yield(item)
