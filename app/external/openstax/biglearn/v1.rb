@@ -4,38 +4,30 @@ module OpenStax::Biglearn::V1
   # API Wrappers
   #
 
-  def self.get_clue(roles:, pages:)
-    pages = [pages].flatten.compact
-    roles = [roles].flatten.compact
-
-    clue = client.get_clue(roles: roles, pages: pages) || {}
-  end
-
+  # Adds the given array of OpenStax::Biglearn::V1::Exercise to Biglearn
   def self.add_exercises(exercises)
     client.add_exercises(exercises)
   end
 
+  # Adds the given array of OpenStax::Biglearn::V1::Pool to Biglearn
   def self.add_pools(pools)
     uuids = client.add_pools(pools)
     pools.each_with_index{ |pool, ii| pool.uuid = uuids[ii] }
     pools
   end
 
+  # Creates a new OpenStax::Biglearn::V1::Pool in Biglearn
+  # by combining the exercises in all of the given pools
   def self.combine_pools(pools)
     OpenStax::Biglearn::V1::Pool.new(uuid: client.combine_pools(pools))
   end
 
-  # Returns recommended exercises
-  #
-  # tag_search: a hash describing a boolean search on tags;
-  #             exercises that match this search are candidates
-  #             to be returned.
-  #   Ex:
-  #     { _and: [ { _or: ['a', 'b', 'c'] }, 'd']  }
-  #
-  def self.get_projection_exercises(role:, pools: nil, tag_search: nil,
-                                    count: 1, difficulty: 0.5, allow_repetitions: true)
-    exercises = client.get_projection_exercises(role: role, pools: pools, tag_search: tag_search,
+  # Returns a number of recommended exercises for the given role and pools.
+  # Pools are combined into a single pool before the call to Biglearn.
+  # May return less than the desired number if allow_repetitions is false.
+  def self.get_projection_exercises(role:, pools:, count: 1,
+                                    difficulty: 0.5, allow_repetitions: true)
+    exercises = client.get_projection_exercises(role: role, pools: pools,
                                                 count: count, difficulty: difficulty,
                                                 allow_repetitions: allow_repetitions)
 
@@ -45,12 +37,24 @@ module OpenStax::Biglearn::V1
       Rails.logger.warn {
         "Biglearn.get_projection_exercises only returned #{num_exercises} of #{count} " +
         "requested exercises [role: #{role}, pools: #{(pools || []).collect{ |pl| pl.uuid }}, " +
-        "tag_search: #{tag_search}, difficulty: #{difficulty}, " +
+        "difficulty: #{difficulty}, " +
         "allow_repetitions: #{allow_repetitions}] exercises = #{exercises}"
       }
     end
 
     exercises
+  end
+
+  # Return a CLUE value for the specified set of roles and pools.
+  # One clue is returned for each pool given.
+  # Each clue refers to one specific pool (in order), but uses all roles given.
+  # May return nil if no CLUE is available
+  # (e.g. no exercises in the pools or confidence too low).
+  def self.get_clues(roles:, pools:)
+    pools = [pools].flatten.compact
+    roles = [roles].flatten.compact
+
+    clue = client.get_clues(roles: roles, pools: pools) || []
   end
 
   #

@@ -12,7 +12,7 @@ module Content
     end
 
     def uuid
-      verify_and_return @strategy.uuid, klass: String, error: ::Content::StrategyError
+      verify_and_return @strategy.uuid, klass: ::Content::Uuid, error: ::Content::StrategyError
     end
 
     def version
@@ -61,12 +61,9 @@ module Content
                                                         error: ::Content::StrategyError
     end
 
-    def pool_ids
-      [reading_dynamic_pool,
-       reading_try_another_pool,
-       homework_core_pool,
-       homework_dynamic_pool,
-       practice_widget_pool].compact.collect(&:uuid)
+    def all_exercises_pool
+      verify_and_return @strategy.all_exercises_pool, klass: ::Content::Pool,
+                                                      error: ::Content::StrategyError
     end
 
     def exercises

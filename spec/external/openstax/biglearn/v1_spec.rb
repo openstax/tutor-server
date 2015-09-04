@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe OpenStax::Biglearn::V1, :type => :external do
+RSpec.describe OpenStax::Biglearn::V1, type: :external do
   before(:each) do
     @initial_client = OpenStax::Biglearn::V1.send :client
   end
@@ -30,22 +30,19 @@ RSpec.describe OpenStax::Biglearn::V1, :type => :external do
   end
 
   context 'api calls' do
-    let!(:dummy_roles) { 'some roles' }
-    let!(:dummy_pages) { 'some pages' }
-    let!(:dummy_exercises) { 'some exercises' }
-
-    let!(:dummy_role)               { ['some role'] }
-    let!(:dummy_pools)              { [ double(uuid: 'some uuid') ] }
-    let!(:dummy_tag_search)         { 'some tag search' }
-    let!(:dummy_count)              { 'some count' }
-    let!(:dummy_difficulty)         { 'some difficulty' }
-    let!(:dummy_allow_repetitions)  { 'some allow repetitions' }
+    let!(:dummy_role)              { 'some role' }
+    let!(:dummy_roles)             { [dummy_role] }
+    let!(:dummy_exercises)         { ['some exercises'] }
+    let!(:dummy_pools)             { [double(uuid: 'some uuid')] }
+    let!(:dummy_count)             { 'some count' }
+    let!(:dummy_difficulty)        { 'some difficulty' }
+    let!(:dummy_allow_repetitions) { 'some allow repetitions' }
 
     let!(:client_double) {
       double.tap do |dbl|
-        allow(dbl).to receive(:get_clue)
-                  .with(roles: [dummy_roles], pages: [dummy_pages])
-                  .and_return('client get_clue response')
+        allow(dbl).to receive(:get_clues)
+                  .with(roles: dummy_roles, pools: dummy_pools)
+                  .and_return('client get_clues response')
         allow(dbl).to receive(:add_exercises)
                   .with(exercises: dummy_exercises)
                   .and_return('client add_exercises response')
@@ -53,11 +50,10 @@ RSpec.describe OpenStax::Biglearn::V1, :type => :external do
                   .with(
                     role:              dummy_role,
                     pools:             dummy_pools,
-                    tag_search:        dummy_tag_search,
                     count:             dummy_count,
                     difficulty:        dummy_difficulty,
                     allow_repetitions: dummy_allow_repetitions
-                  ).and_return(['some exercises'])
+                  ).and_return(dummy_exercises)
       end
     }
 
@@ -65,9 +61,9 @@ RSpec.describe OpenStax::Biglearn::V1, :type => :external do
       OpenStax::Biglearn::V1.instance_variable_set('@client', client_double)
     end
 
-    it 'delegates get_clue to the client' do
-      response = OpenStax::Biglearn::V1.get_clue(roles: dummy_roles, pages: dummy_pages)
-      expect(response).to eq('client get_clue response')
+    it 'delegates get_clues to the client' do
+      response = OpenStax::Biglearn::V1.get_clues(roles: dummy_roles, pools: dummy_pools)
+      expect(response).to eq('client get_clues response')
     end
 
     it 'delegates add_exercises to the client' do
@@ -79,12 +75,11 @@ RSpec.describe OpenStax::Biglearn::V1, :type => :external do
       response = OpenStax::Biglearn::V1.get_projection_exercises(
         role:              dummy_role,
         pools:             dummy_pools,
-        tag_search:        dummy_tag_search,
         count:             dummy_count,
         difficulty:        dummy_difficulty,
         allow_repetitions: dummy_allow_repetitions
       )
-      expect(response).to eq(['some exercises'])
+      expect(response).to eq(dummy_exercises)
     end
 
     it 'logs a warning and does not explode when client does not return expected number of exercises' do
@@ -93,7 +88,6 @@ RSpec.describe OpenStax::Biglearn::V1, :type => :external do
       response = OpenStax::Biglearn::V1.get_projection_exercises(
         role:              dummy_role,
         pools:             dummy_pools,
-        tag_search:        dummy_tag_search,
         count:             2,
         difficulty:        dummy_difficulty,
         allow_repetitions: dummy_allow_repetitions

@@ -207,7 +207,7 @@ class DemoBase
     )
   end
 
-  def assign_homework(course:, book_locations:,  num_exercises:, title:)
+  def assign_homework(course:, book_locations:, num_exercises:, title:)
     ecosystem = get_ecosystem(course: course)
     book = ecosystem.books.first
     pages = lookup_pages(book: book, book_locations: book_locations)

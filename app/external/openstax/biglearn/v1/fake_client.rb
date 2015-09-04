@@ -6,28 +6,6 @@ class OpenStax::Biglearn::V1::FakeClient
   # API methods
   #
 
-  def get_clue(roles:, pages:)
-    aggregate = rand(0.0..1.0)
-    confidence_left  = [aggregate - 0.1, 0.0].max
-    confidence_right = [aggregate + 0.1, 1.0].min
-    level = aggregate >= 0.8 ? 'high' : (aggregate >= 0.3 ? 'medium' : 'low')
-    confidence = ['good', 'bad'].sample
-    samples = 6
-    threshold = 'above'
-
-    {
-      value: aggregate,
-      value_interpretation: level,
-      confidence_interval: [
-        confidence_left,
-        confidence_right
-      ],
-      confidence_interval_interpretation: confidence,
-      sample_size: samples,
-      sample_size_interpretation: 'above'
-    }
-  end
-
   def add_exercises(exercises)
     # Iterate through the exercises, storing each in the store, overwriting
     # any with the same ID
@@ -68,23 +46,12 @@ class OpenStax::Biglearn::V1::FakeClient
     uuid
   end
 
-  def get_projection_exercises(role:, pools: nil, tag_search: nil,
-                               count:, difficulty:, allow_repetitions:)
+  def get_projection_exercises(role:, pools:, count:, difficulty:, allow_repetitions:)
     exercises = store_exercises_copy
 
-    unless pools.nil?
-      # Get the exercises in the pools
-      question_ids = pools.collect{ |pool| store['pools'][pool.uuid] }.flatten.uniq
-      exercises = exercises.slice(*question_ids)
-    end
-
-    unless tag_search.nil?
-      # Restrict results to those matching the tags
-      exercises = exercises.select do |question_id, version_tags|
-        latest_version = version_tags.keys.max
-        tags_match_condition?(version_tags[latest_version], tag_search)
-      end
-    end
+    # Get the exercises in the pools
+    question_ids = pools.flat_map{ |pool| store_pools_copy[pool.uuid] }.uniq
+    exercises = exercises.slice(*question_ids)
 
     # Limit the results to the desired number
     results = exercises.first(count)
@@ -99,21 +66,27 @@ class OpenStax::Biglearn::V1::FakeClient
     results.collect{ |question_id, version_tags| question_id }
   end
 
-  # Example conditions: { _and: [ { _or: ['a', 'b', 'c'] }, 'd']  }
-  def tags_match_condition?(tags, condition)
-    case condition
-    when Hash
-      if condition.size != 1 then raise IllegalArgument, "too many hash conditions" end
-      case condition.first[0]
-      when :_and
-        condition.first[1].all?{|c| tags_match_condition?(tags, c)}
-      when :_or
-        condition.first[1].any?{|c| tags_match_condition?(tags, c)}
-      else raise NotYetImplemented, "Unknown boolean symbol #{condition.first[0]}"
-      end
-    when String
-      tags.include?(condition)
-    else raise IllegalArgument
+  def get_clues(roles:, pools:)
+    pools.size.times.collect do
+      aggregate = rand(0.0..1.0)
+      confidence_left  = [aggregate - 0.1, 0.0].max
+      confidence_right = [aggregate + 0.1, 1.0].min
+      level = aggregate >= 0.8 ? 'high' : (aggregate >= 0.3 ? 'medium' : 'low')
+      confidence = ['good', 'bad'].sample
+      samples = 6
+      threshold = 'above'
+
+      {
+        value: aggregate,
+        value_interpretation: level,
+        confidence_interval: [
+          confidence_left,
+          confidence_right
+        ],
+        confidence_interval_interpretation: confidence,
+        sample_size: samples,
+        sample_size_interpretation: 'above'
+      }
     end
   end
 
@@ -123,6 +96,10 @@ class OpenStax::Biglearn::V1::FakeClient
 
   def store_exercises_copy
     store['exercises'].clone
+  end
+
+  def store_pools_copy
+    store['pools'].clone
   end
 
   def reload!

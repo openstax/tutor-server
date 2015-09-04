@@ -63,24 +63,17 @@ class OpenStax::Biglearn::V1::RealClient
                                 .collect{ |p| p.exchange_read_identifier }
   end
 
-  def get_projection_exercises(role:, pools: nil, tag_search: nil,
-                               count:, difficulty:, allow_repetitions:)
+  def get_projection_exercises(role:, pools:, count:, difficulty:, allow_repetitions:)
     query = {
       learner_id: get_exchange_read_identifiers_for_roles(roles: role).first,
       number_of_questions: count,
       allow_repetition: allow_repetitions ? 'true' : 'false'
     }
 
-    unless pools.nil?
-      # If we have more than one pool, we must first combine them all into a single pool
-      pool = [pools].flatten.size > 1 ? OpenStax::Biglearn::V1.combine_pools(pools) : pools.first
+    # If we have more than one pool, we must first combine them all into a single pool
+    pool = [pools].flatten.size > 1 ? OpenStax::Biglearn::V1.combine_pools(pools) : pools.first
 
-      query = query.merge(pool_id: pool.uuid)
-    end
-
-    unless tag_search.nil?
-      query = query.merge(tag_query: stringify_tag_search(tag_search))
-    end
+    query = query.merge(pool_id: pool.uuid)
 
     response = request(:get, projection_exercises_uri, params: query)
 
@@ -90,53 +83,40 @@ class OpenStax::Biglearn::V1::RealClient
     result["questions"].collect { |q| q["question"] }
   end
 
-  def stringify_tag_search(tag_search)
-    case tag_search
-    when Hash
-      raise IllegalArgument, "too many hash conditions" if tag_search.size != 1
-      stringify_tag_search_hash(tag_search.first)
-    when String
-      '"' + tag_search + '"'
-    else
-      raise IllegalArgument
-    end
-  end
-
-  # Return a CLUE value for the specified set of roles and the group of pages.
-  # May return nil if no CLUE is available (e.g. no exercises attached to
-  # these pages or confidence too low).
-  def get_clue(roles:, pages:)
+  def get_clues(roles:, pools:)
     raise "At least one role must be specified when getting a CLUE" if roles.blank?
-
-    pool_ids = pages.collect(&:pool_ids).flatten.compact
+    raise "At least one pool_id must be specified when getting a CLUE" if pools.blank?
 
     query = {
       learners: get_exchange_read_identifiers_for_roles(roles: roles),
-      pool_ids: pool_ids
+      pool_ids: pools.collect(&:uuid)
     }
 
     response = request(:get, clue_uri, params: query)
 
     result = handle_response(response) || {}
 
-    # extract the clue using the knowledge that we have a simplified input (only one
-    # tag query, so we can just pull out the appropriate value).  It could be that there's
-    # no CLUE to give, in which case we return nil.
-    clue           = result['aggregates'].try(:first) || {}
-    interpretation = clue['interpretation'] || {}
-    confidence     = clue['confidence'] || {}
+    clues = result['aggregates'] || []
 
-    {
-      value: clue['aggregate'],
-      value_interpretation: interpretation['level'],
-      confidence_interval: [
-        confidence['left'],
-        confidence['right']
-      ],
-      confidence_interval_interpretation: interpretation['confidence'],
-      sample_size: confidence['sample_size'],
-      sample_size_interpretation: interpretation['threshold']
-    }
+    clues.collect do |clue|
+      next if clue.blank?
+
+      aggregate      = clue['aggregate']
+      interpretation = clue['interpretation'] || {}
+      confidence     = clue['confidence'] || {}
+
+      {
+        value: aggregate,
+        value_interpretation: interpretation['level'],
+        confidence_interval: [
+          confidence['left'],
+          confidence['right']
+        ],
+        confidence_interval_interpretation: interpretation['confidence'],
+        sample_size: confidence['sample_size'],
+        sample_size_interpretation: interpretation['threshold']
+      }
+    end
   end
 
   private
@@ -169,7 +149,9 @@ class OpenStax::Biglearn::V1::RealClient
 
   def construct_exercises_payload(exercises)
     { question_tags: [exercises].flatten.collect do |exercise|
-      { question_id: exercise.question_id.to_s, version: Integer(exercise.version), tags: exercise.tags }
+      { question_id: exercise.question_id.to_s,
+        version: Integer(exercise.version),
+        tags: exercise.tags }
     end }
   end
 
@@ -192,25 +174,6 @@ class OpenStax::Biglearn::V1::RealClient
     raise "BiglearnError #{response.status}:\n#{response.body}" if response.status != 200
 
     JSON.parse(response.body)
-  end
-
-  def stringify_tag_search_hash(conditions)
-    case conditions[0]
-    when :_and
-      str = '('
-      str += join_tag_searches(conditions[1], 'AND')
-      str += ')'
-    when :_or
-      str = '('
-      str += join_tag_searches(conditions[1], 'OR')
-      str += ')'
-    else
-      raise NotYetImplemented, "Unknown boolean symbol #{conditions[0]}"
-    end
-  end
-
-  def join_tag_searches(tag_searches, op)
-    [tag_searches].flatten.collect { |ts| stringify_tag_search(ts) }.join(" #{op} ")
   end
 
 end
