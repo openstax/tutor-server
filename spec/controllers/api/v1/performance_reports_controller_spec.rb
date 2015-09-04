@@ -71,7 +71,6 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
 
         expect(response).to have_http_status :success
         resp = response.body_as_hash
-        binding.pry
         expect(resp).to include({
           period_id: course.periods.first.id.to_s,
           data_headings: [
