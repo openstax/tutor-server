@@ -5,7 +5,7 @@ class Content::Routines::UpdatePageContent
   protected
 
   def exec(pages:, save: true)
-    # Get all page cnx_ids in this book
+    # Get all page cnx_ids given
     page_cnx_ids = pages.collect{ |page| page.cnx_id }
 
     pages.each do |page|

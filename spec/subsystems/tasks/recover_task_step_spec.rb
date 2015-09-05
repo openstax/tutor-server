@@ -48,7 +48,7 @@ RSpec.describe Tasks::RecoverTaskStep, :type => :routine do
     :content_exercise_tag, exercise: recovery_exercise, tag: pp
   ) }
 
-  let!(:pools) { Content::Routines::PopulateExercisePools[pages: recovery_exercise.page] }
+  let!(:pools) { Content::Routines::PopulateExercisePools[book: recovery_exercise.book] }
 
   it "cannot be called on taskeds without a recovery step" do
     result = nil

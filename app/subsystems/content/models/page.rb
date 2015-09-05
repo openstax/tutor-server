@@ -11,11 +11,7 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
   belongs_to :homework_core_pool, class_name: 'Content::Models::Pool', dependent: :destroy
   belongs_to :homework_dynamic_pool, class_name: 'Content::Models::Pool', dependent: :destroy
   belongs_to :practice_widget_pool, class_name: 'Content::Models::Pool', dependent: :destroy
-  #belongs_to :all_exercises_pool, class_name: 'Content::Models::Pool', dependent: :destroy
-  #Hack
-  def all_exercises_pool
-    practice_widget_pool
-  end
+  belongs_to :all_exercises_pool, class_name: 'Content::Models::Pool', dependent: :destroy
 
   sortable_belongs_to :chapter, on: :number, inverse_of: :pages
   has_one :book, through: :chapter

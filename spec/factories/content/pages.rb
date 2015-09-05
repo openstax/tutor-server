@@ -13,5 +13,6 @@ FactoryGirl.define do
     association :homework_core_pool, factory: :content_pool
     association :homework_dynamic_pool, factory: :content_pool
     association :practice_widget_pool, factory: :content_pool
+    association :all_exercises_pool, factory: :content_pool
   end
 end

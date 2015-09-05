@@ -156,8 +156,8 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
           .to change{ Tasks::Models::TaskPlan.count }.by(1)
         expect(response).to have_http_status(:success)
         new_task_plan = Tasks::Models::TaskPlan.find(JSON.parse(response.body)['id'])
+        expect(new_task_plan.published_at).to be_within(3.seconds).of(Time.now)
         expect(new_task_plan.publish_last_requested_at).to be_within(10.seconds).of(Time.now)
-        expect(new_task_plan.published_at).to be_within(1.second).of(Time.now)
 
         # Revert task_plan to its state when the job was queued
         new_task_plan.is_publish_requested = true

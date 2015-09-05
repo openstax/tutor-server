@@ -41,7 +41,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
   }
 
   let!(:pools) {
-    Content::Routines::PopulateExercisePools[pages: content_pages]
+    Content::Routines::PopulateExercisePools[book: chapter.book]
   }
 
   let!(:pages)     {
