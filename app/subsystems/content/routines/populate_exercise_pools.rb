@@ -82,7 +82,7 @@ class Content::Routines::PopulateExercisePools
       end
 
       # Populate chapter pools
-      all_exercise_ids = pages.flat_map{ |page| page.all_exercises_pool.content_exercise_ids }
+      all_exercise_ids = pages.flat_map{ |page| page.all_exercises_pool.content_exercise_ids }.uniq
       chapter.all_exercises_pool = Content::Models::Pool.new(
         ecosystem: ecosystem, pool_type: :all_exercises, content_exercise_ids: all_exercise_ids
       )
