@@ -29,6 +29,9 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     grade = is_correct? ? 1 : 0
     grader = 'tutor'
     OpenStax::Exchange.record_grade(identifiers.first, url, trial, grade, grader)
+
+    # Invalidate the CLUE cache for the associated roles
+    OpenStax::Biglearn::V1.invalidate_clue_caches(roles: roles)
   end
 
   def has_correctness?
@@ -94,8 +97,11 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
 
   protected
 
+  def roles
+    task_step.task.taskings.collect{ |t| t.role }
+  end
+
   def identifiers
-    roles = task_step.task.taskings.collect{ |t| t.role }
     users = Role::GetUsersForRoles[roles]
     UserProfile::Models::Profile.where(entity_user: users)
                                 .collect{ |p| p.exchange_write_identifier }

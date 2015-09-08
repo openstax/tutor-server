@@ -119,6 +119,10 @@ class OpenStax::Biglearn::V1::RealClient
     end
   end
 
+  def invalidate_clue_caches(roles:)
+    # noop
+  end
+
   private
 
   def with_content_type_header(options = {})

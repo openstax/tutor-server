@@ -90,6 +90,10 @@ class OpenStax::Biglearn::V1::FakeClient
     end
   end
 
+  def invalidate_clue_caches(roles:)
+    # noop
+  end
+
   #
   # Debugging methods
   #
