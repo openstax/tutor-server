@@ -13,6 +13,11 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     FactoryGirl.create :content_chapter, title: "Forces and Newton's Laws of Motion"
   }
 
+  let!(:ecosystem) {
+    ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(chapter.book.ecosystem)
+    ::Content::Ecosystem.new(strategy: ecosystem_strategy)
+  }
+
   context "for Introduction and Force" do
     let!(:cnx_page_hashes) { [
       { 'id' => '1bb611e9-0ded-48d6-a107-fbb9bd900851', 'title' => 'Introduction' },
@@ -75,18 +80,29 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       FactoryGirl.build(
         :tasks_task_plan,
         assistant: assistant,
+        content_ecosystem_id: ecosystem.id,
         settings: { 'page_ids' => pages.collect{ |page| page.id.to_s } },
         num_tasking_plans: 0
       )
     }
 
+    let!(:course) {
+      course = task_plan.owner
+      AddEcosystemToCourse[course: course, ecosystem: ecosystem]
+      course
+    }
+
+    let!(:period) { CreatePeriod[course: course] }
+
     let!(:num_taskees) { 3 }
 
-    let!(:taskees) { num_taskees.times.collect do
-      user = Entity::User.create
-      AddUserAsPeriodStudent.call(user: user, period: period)
-      user
-    end }
+    let!(:taskees) {
+      num_taskees.times.collect do
+        user = Entity::User.create
+        AddUserAsPeriodStudent.call(user: user, period: period)
+        user
+      end
+    }
 
     let!(:tasking_plans) {
       tps = taskees.collect do |taskee|
@@ -101,15 +117,6 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       task_plan.save
       tps
     }
-
-    let!(:course) {
-      course = task_plan.owner
-      ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(chapter.book.ecosystem)
-      ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
-      AddEcosystemToCourse[course: course, ecosystem: ecosystem]
-      course
-    }
-    let!(:period) { CreatePeriod[course: course] }
 
     it 'splits a CNX module into many different steps and assigns them with immediate feedback' do
       allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [[0, 2]]}
@@ -217,29 +224,39 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     let!(:pools) { Content::Routines::PopulateExercisePools[pages: page.reload] }
 
     let!(:task_plan) {
-      FactoryGirl.create(:tasks_task_plan,
+      FactoryGirl.build(:tasks_task_plan,
         assistant: assistant,
-        settings: { 'page_ids' => [page.id.to_s] }
+        content_ecosystem_id: ecosystem.id,
+        settings: { 'page_ids' => [page.id.to_s] },
+        num_tasking_plans: 0
       )
     }
 
-    let!(:course) { task_plan.owner }
+    let!(:course) {
+      course = task_plan.owner
+      AddEcosystemToCourse[course: course, ecosystem: ecosystem]
+      course
+    }
+
     let!(:period) { CreatePeriod[course: course] }
 
     let!(:num_taskees) { 3 }
 
-    let!(:taskees) { num_taskees.times.collect do
-      user = Entity::User.create
-      AddUserAsPeriodStudent.call(user: user, period: period)
-      user
-    end }
+    let!(:taskees) {
+      num_taskees.times.collect do
+        user = Entity::User.create
+        AddUserAsPeriodStudent.call(user: user, period: period)
+        user
+      end
+    }
 
     let!(:tasking_plans) {
-      tps = taskees.collect{ |t|
+      tps = taskees.collect do |taskee|
         task_plan.tasking_plans << FactoryGirl.build(
-          :tasks_tasking_plan, task_plan: task_plan, target: t
+          :tasks_tasking_plan, task_plan: task_plan, target: taskee
         )
-      }
+      end
+
       task_plan.save!
       tps
     }

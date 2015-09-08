@@ -33,6 +33,7 @@ class SetupPerformanceReportData
       owner: course,
       type: 'reading',
       assistant: reading_assistant,
+      content_ecosystem_id: ecosystem.id,
       settings: { page_ids: page_ids.first(2).collect(&:to_s) }
     )
 
@@ -49,6 +50,7 @@ class SetupPerformanceReportData
       owner: course,
       type: 'homework',
       assistant: homework_assistant,
+      content_ecosystem_id: ecosystem.id,
       settings: {
         exercise_ids: Content::Models::Exercise.first(5).collect(&:id).map(&:to_s),
         exercises_count_dynamic: 2
@@ -68,6 +70,7 @@ class SetupPerformanceReportData
       owner: course,
       type: 'homework',
       assistant: homework_assistant,
+      content_ecosystem_id: ecosystem.id,
       settings: {
         exercise_ids: Content::Models::Exercise.last(2).collect(&:id).map(&:to_s),
         exercises_count_dynamic: 2

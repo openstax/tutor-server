@@ -1,11 +1,11 @@
-<% @page_header = 'Content' %>
+<% @page_header = 'Ecosystems' %>
 
 <table class="table table-striped">
   <thead>
     <tr>
-      <th>Title</th>
-      <th>UUID</th>
-      <th>Version</th>
+      <th>Book Title</th>
+      <th>Book UUID</th>
+      <th>Book Version</th>
       <th>Link to Archive</th>
       <th>Import Date</th>
     </tr>
@@ -24,5 +24,4 @@
   </tbody>
 </table>
 
-<%= link_to 'Import a Book into a new Ecosystem', import_admin_contents_path,
-                                                  class: 'btn btn-primary' %>
+<%= link_to 'Import a new Ecosystem', import_admin_ecosystems_path, class: 'btn btn-primary' %>

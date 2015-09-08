@@ -3,13 +3,11 @@ class CourseAccessPolicy
     case action
     when :index
       !requestor.is_anonymous?
-    when :read, :readings, :task_plans
-      # readings should be readable by course teachers and students because FE
-      # uses it for the reference view
+    when :read, :task_plans
       requestor.is_human? && \
       (UserIsCourseStudent[user: requestor.entity_user, course: course] || \
        UserIsCourseTeacher[user: requestor.entity_user, course: course])
-    when :exercises, :export, :roster
+    when :export, :roster
       requestor.is_human? && UserIsCourseTeacher[user: requestor.entity_user, course: course]
     else
       false

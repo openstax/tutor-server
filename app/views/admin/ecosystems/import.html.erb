@@ -1,4 +1,4 @@
-<% @page_header = 'Import a Book into a new Ecosystem' %>
+<% @page_header = 'Import a new Ecosystem' %>
 
 <%= form_tag '', method: :post do %>
   <div class="form-group">
@@ -6,7 +6,7 @@
     <%= text_field_tag :archive_url, params[:archive_url], class: 'form-control', placeholder: @default_archive_url %>
   </div>
   <div class="form-group">
-    <%= label_tag :cnx_id, 'CNX id' %>
+    <%= label_tag :cnx_id, 'Book CNX id' %>
     <%= text_field_tag :cnx_id, params[:cnx_id], class: 'form-control' %>
   </div>
   <%= button_tag 'Import', class: 'btn btn-default', data: { disable_with: 'Import will likely take a while...' } %>

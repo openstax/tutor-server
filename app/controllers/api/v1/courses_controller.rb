@@ -17,7 +17,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   def index
     OSU::AccessPolicy.require_action_allowed!(:index, current_api_user, Entity::Course)
     courses_info = CollectCourseInfo[user: current_human_user.entity_user,
-                                     with: [:roles, :periods, :book]]
+                                     with: [:roles, :periods, :ecosystem]]
     respond_with courses_info, represent_with: Api::V1::CoursesRepresenter
   end
 
@@ -34,48 +34,8 @@ class Api::V1::CoursesController < Api::V1::ApiController
     # we can gather extra information
     course_info = CollectCourseInfo[course: course,
                                     user: current_human_user.entity_user,
-                                    with: [:roles, :periods, :book]].first
+                                    with: [:roles, :periods, :ecosystem]].first
     respond_with course_info, represent_with: Api::V1::CourseRepresenter
-  end
-
-  api :GET, '/courses/:course_id/readings', 'Returns a course\'s readings'
-  description <<-EOS
-    Returns a hierarchical listing of a course's readings.  A course is currently limited to
-    only one book.  Inside each book there can be units or chapters (parts), and eventually
-    parts (normally chapters) contain pages that have no children.
-
-    #{json_schema(Api::V1::BookTocsRepresenter, include: :readable)}
-  EOS
-  def readings
-    course = Entity::Course.find(params[:id])
-    OSU::AccessPolicy.require_action_allowed!(:readings, current_api_user, course)
-
-    ecosystem = GetCourseEcosystem[course: course]
-
-    # For the moment, we're assuming just one book per ecosystem
-    books = ecosystem.books
-    raise NotYetImplemented if books.count > 1
-
-    respond_with books, represent_with: Api::V1::BookTocsRepresenter
-  end
-
-  api :GET, '/courses/:course_id/exercises',
-            "Returns a course\'s exercises, filtered by the page_ids param"
-  description <<-EOS
-    Returns a list of assignable exercises tagged with LO's matching the pages with the given ID's.
-    If no page_ids are specified, returns an empty array.
-
-    #{json_schema(Api::V1::ExerciseSearchRepresenter, include: :readable)}
-  EOS
-  def exercises
-    course = Entity::Course.find(params[:id])
-    OSU::AccessPolicy.require_action_allowed!(:exercises, current_api_user, course)
-
-    ecosystem = GetCourseEcosystem[course: course]
-    pages = ecosystem.pages_by_ids(params[:page_ids])
-    exercises = ecosystem.homework_core_pools(pages: pages).collect{ |pl| pl.exercises }.flatten
-
-    respond_with exercises, represent_with: Api::V1::ExerciseSearchRepresenter
   end
 
   api :GET, '/courses/:course_id/tasks', 'Gets all course tasks assigned to the role holder making the request'

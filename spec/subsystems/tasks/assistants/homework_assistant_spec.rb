@@ -70,6 +70,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
   let!(:task_plan) {
     FactoryGirl.build(:tasks_task_plan,
       assistant: assistant,
+      content_ecosystem_id: ecosystem.id,
       description: "Hello!",
       settings: {
         exercise_ids: teacher_selected_exercise_ids,

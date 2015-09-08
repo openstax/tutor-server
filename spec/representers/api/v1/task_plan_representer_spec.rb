@@ -3,21 +3,13 @@ require 'rails_helper'
 RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
 
   let!(:task_plan) {
-    tmp = instance_spy(Tasks::Models::TaskPlan)
+    instance_spy(Tasks::Models::TaskPlan).tap do |dbl|
+      ## bug work-around, see:
+      ##   https://github.com/rspec/rspec-rails/issues/1309#issuecomment-118971828
+      allow(dbl).to receive(:as_json).and_return(dbl)
 
-    # set defaults for represented properties
-    allow(tmp).to receive(:id).and_return(nil)
-    allow(tmp).to receive(:type).and_return(nil)
-    allow(tmp).to receive(:title).and_return(nil)
-    allow(tmp).to receive(:description).and_return(nil)
-    allow(tmp).to receive(:is_publish_requested?).and_return(nil)
-    allow(tmp).to receive(:publish_job_uuid).and_return(nil)
-    allow(tmp).to receive(:publish_last_requested_at).and_return(nil)
-    allow(tmp).to receive(:published_at).and_return(nil)
-    allow(tmp).to receive(:settings).and_return(nil)
-    allow(tmp).to receive(:tasking_plans).and_return(nil)
-
-    tmp
+      allow(dbl).to receive(:tasking_plans).and_return([])
+    end
   }
 
   let(:representation) { ## NOTE: This is lazily-evaluated on purpose!
@@ -33,6 +25,18 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
     it "cannot be written (attempts are silently ignored)" do
       Api::V1::TaskPlanRepresenter.new(task_plan).from_json({"id" => 42}.to_json)
       expect(task_plan).to_not have_received(:id=)
+    end
+  end
+
+  context "ecosystem_id" do
+    it "can be read" do
+      allow(task_plan).to receive(:content_ecosystem_id).and_return(12)
+      expect(representation).to include("ecosystem_id" => 12.to_s)
+    end
+
+    it "cannot be written (attempts are silently ignored)" do
+      Api::V1::TaskPlanRepresenter.new(task_plan).from_json({"ecosystem_id" => 42}.to_json)
+      expect(task_plan).to_not have_received(:content_ecosystem_id=)
     end
   end
 

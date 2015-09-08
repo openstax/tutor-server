@@ -16,14 +16,14 @@ module Api::V1
              writeable: false,
              schema_info: { required: true }
 
-    property :book_id,
+    property :ecosystem_id,
              type: String,
              readable: true,
              writeable: false,
-             if: ->(*) { respond_to?(:book) },
-             getter: ->(*) { book.id },
+             if: ->(*) { respond_to?(:ecosystem) },
+             getter: ->(*) { ecosystem.try(:id) },
              schema_info: {
-              description: "The ID of the course's book, if available.",
+              description: "The ID of the course's content ecosystem, if available.",
               required: false
              }
 

@@ -92,6 +92,7 @@ class CreateStudentHistory
       :tasks_task_plan,
       owner: course,
       assistant: ireading_assistant,
+      content_ecosystem_id: ecosystem.id,
       title: 'Reading',
       settings: {
         page_ids: page_ids
@@ -125,6 +126,7 @@ class CreateStudentHistory
       :tasks_task_plan,
       owner: course,
       assistant: homework_assistant,
+      content_ecosystem_id: ecosystem.id,
       title: 'Homework',
       settings: {
         exercise_ids: exercise_ids,

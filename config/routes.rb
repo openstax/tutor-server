@@ -57,11 +57,9 @@ Rails.application.routes.draw do
 
     resources :courses, only: [:show] do
       member do
-        get 'readings'
-        get 'exercises'
+        get 'dashboard(/role/:role_id)', action: :dashboard
         get 'plans'
         get 'tasks'
-        get 'dashboard(/role/:role_id)', action: :dashboard
 
         scope :performance, controller: :performance_reports do
           get '(/role/:role_id)', action: :index
@@ -70,8 +68,10 @@ Rails.application.routes.draw do
         end
       end
 
-      post 'practice(/role/:role_id)' => 'practices#create'
-      get 'practice(/role/:role_id)' => 'practices#show'
+      scope :practice, controller: :practices do
+        post '(/role/:role_id)', action: :create
+        get '(/role/:role_id)', action: :show
+      end
 
       resources :task_plans, path: '/plans', shallow: true, except: [:index, :new, :edit] do
         member do
@@ -81,6 +81,13 @@ Rails.application.routes.draw do
       end
 
       resources :students, shallow: true, except: :create
+    end
+
+    resources :ecosystems, only: [] do
+      member do
+        get 'readings'
+        get 'exercises'
+      end
     end
 
     scope 'pages', controller: :pages, action: :get_page do
@@ -132,7 +139,7 @@ Rails.application.routes.draw do
     post :freeze_time, controller: :timecop
     post :time_travel, controller: :timecop
 
-    resources :contents, only: [:index] do
+    resources :ecosystems, only: [:index] do
       collection do
         get :import
         post :import

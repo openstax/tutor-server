@@ -20,6 +20,7 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
 
   validates :title, presence: true
   validates :assistant, presence: true
+  validates :ecosystem, presence: true
   validates :owner, presence: true
   validates :type, presence: true
   validates :tasking_plans, presence: true

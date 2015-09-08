@@ -2,23 +2,28 @@ FactoryGirl.define do
   factory :tasked_task_plan, parent: :tasks_task_plan do
 
     type 'reading'
-    assistant { Tasks::Models::Assistant.find_by(
-                  code_class_name: 'Tasks::Assistants::IReadingAssistant'
-                ) || FactoryGirl.create(
-                  :tasks_assistant, code_class_name: 'Tasks::Assistants::IReadingAssistant'
-                ) }
+
+    assistant do
+      Tasks::Models::Assistant.find_by(
+        code_class_name: 'Tasks::Assistants::IReadingAssistant'
+      ) || FactoryGirl.create(
+        :tasks_assistant, code_class_name: 'Tasks::Assistants::IReadingAssistant'
+      )
+    end
 
     transient do
       number_of_students 10
     end
 
-    settings do
+    ecosystem do
       cnx_page = OpenStax::Cnx::V1::Page.new(
         hash: { 'id' => '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6',
                 'title' => 'Newton\'s First Law of Motion: Inertia' }
       )
 
       chapter = FactoryGirl.create :content_chapter
+
+      require File.expand_path('../../../vcr_helper', __FILE__)
 
       VCR.use_cassette("TaskedTaskPlan/with_inertia", VCR_OPTS) do
         @page = Content::Routines::ImportPage[cnx_page: cnx_page, chapter: chapter,
@@ -27,13 +32,16 @@ FactoryGirl.define do
 
       Content::Routines::PopulateExercisePools[pages: @page.reload]
 
-      ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(chapter.book.ecosystem)
+      ecosystem_model = chapter.book.ecosystem
+      ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(ecosystem_model)
       ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
 
       AddEcosystemToCourse[course: owner, ecosystem: ecosystem]
 
-      { page_ids: [@page.id.to_s] }
+      ecosystem_model
     end
+
+    settings { { page_ids: [@page.id.to_s] } }
 
     after(:create) do |task_plan, evaluator|
       course = task_plan.owner

@@ -9,6 +9,12 @@ module Api::V1
              readable: true,
              writeable: false
 
+    property :content_ecosystem_id,
+             as: :ecosystem_id,
+             type: String,
+             readable: true,
+             writeable: false
+
     property :type,
              type: String,
              readable: true,

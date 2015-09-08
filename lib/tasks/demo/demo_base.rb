@@ -192,7 +192,8 @@ class DemoBase
   end
 
   def assign_ireading(course:, book_locations:, title:)
-    book = get_ecosystem(course: course).books.first
+    ecosystem = get_ecosystem(course: course)
+    book = ecosystem.books.first
     pages = lookup_pages(book: book, book_locations: book_locations)
 
     raise "No pages to assign" if pages.blank?
@@ -200,6 +201,7 @@ class DemoBase
     Tasks::Models::TaskPlan.new(
       title: title,
       owner: course,
+      content_ecosystem_id: ecosystem.id,
       type: 'reading',
       assistant: get_assistant(course: course, task_plan_type: 'reading'),
       settings: { page_ids: pages.collect{|page| page.id.to_s} }
@@ -219,6 +221,7 @@ class DemoBase
     Tasks::Models::TaskPlan.new(
       title: title,
       owner: course,
+      content_ecosystem_id: ecosystem.id,
       type: 'homework',
       assistant: get_assistant(course: course, task_plan_type: 'homework'),
       settings: {
