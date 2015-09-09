@@ -7,10 +7,10 @@ teacher: cm
 periods:
   - id: p1
     name: 1st
-    students: [ak,at,cp,gj,hp,lb,lt,ne,sd,vw]
+    students: [ak,at,cp]
   - id: p2
     name: 2nd
-    students: [af,ag,bb,cd,hg,ft,js,ms,nz,ra]
+    students: [af,ag,bb]
 
 assignments:
 
@@ -22,11 +22,11 @@ assignments:
       - id: p1
         opens_at: <%= standard_opens_at school_day_on_or_before 17.days.ago %>
         due_at:   <%= standard_due_at   school_day_on_or_before 14.days.ago %>
-        students: {ak: 98, at: 67, cp: 55, gj: 77, hp: 88, lb: 100, lt: ns, ne: 78, sd: 100, vw: 100}
+        students: {ak: 98, at: 67, cp: 55}
       - id: p2
         opens_at: <%= standard_opens_at school_day_on_or_before 17.days.ago %>
         due_at:   <%= standard_due_at   school_day_on_or_before 14.days.ago %>
-        students: {af: 84, ag: 71, bb: 90, cd: 78, hg: 87, ft: 100, js: 80, ms: 90, nz: 85, ra: 88}
+        students: {af: 84, ag: 71, bb: 90}
 
 
   - type: homework
@@ -36,33 +36,33 @@ assignments:
     step_types: [ e, e, e, e, e, e, e, e, e, e, p ]
     late:
       ak: <%= 2.hours %>
-      lb: <%= 1.day %>
+      bb: <%= 1.day %>
     periods:
       - id: p1
         opens_at: <%= standard_opens_at school_day_on_or_before 15.days.ago %>
         due_at:   <%= standard_due_at   school_day_on_or_before 11.days.ago %>
-        students: {ak: 98, at: 67, cp: 55, gj: 77, hp: 88, lb: 55, lt: 89, ne: 78, sd: 100, vw: 100}
+        students: {ak: 98, at: 67, cp: 55}
       - id: p2
         opens_at: <%= standard_opens_at school_day_on_or_before 15.days.ago %>
         due_at:   <%= standard_due_at   school_day_on_or_before 11.days.ago %>
-        students: {af: 82, ag: 71, bb: 88, cd: 78, hg: 87, ft: 82, js: 90, ms: 90, nz: 85, ra: 100}
+        students: {af: 82, ag: 71, bb: 88}
 
   - type: reading
     title: Read Chapter 2.1-2.2 Motion-1D Pt1
     book_locations: [[2,1], [2,2]]
     step_types: [r, r, e, r, v, e, r, r, e, r, r, e, r, v, e, r, r, r, e, p]
     late:
-      gj: <%= 1.hours %>
-      ft: <%= 12.hours %>
+      at: <%= 1.hours %>
+      ag: <%= 12.hours %>
     periods:
       - id: p1
         opens_at: <%= standard_opens_at school_day_on_or_before 12.days.ago %>
         due_at:   <%= standard_due_at   school_day_on_or_before  8.days.ago %>
-        students: {ak: 98, at: 67, cp: 55, gj: 77, hp: 88, lb: i, lt: ns, ne: 78, sd: 75, vw: 82}
+        students: {ak: 98, at: 67, cp: 55}
       - id: p2
         opens_at: <%= standard_opens_at school_day_on_or_before 12.days.ago %>
         due_at:   <%= standard_due_at   school_day_on_or_before  8.days.ago %>
-        students: {af: 82, ag: 71, bb: 90, cd: 78, hg: 87, ft: 82, js: i, ms: 90, nz: 85, ra: 100}
+        students: {af: 82, ag: 71, bb: 90}
 
   - type: reading
     title: Read 2.3-2.4 Motion-1D Pt1
@@ -70,17 +70,17 @@ assignments:
     step_types: [r, r, r, r, e, r, i, e, r, r, r, r, e, e, p]
     late:
       at: <%= 20.minutes %>
-      gj: <%= 8.minutes %>
-      cd: <%= 3.hours %>
+      af: <%= 8.minutes %>
+      bb: <%= 3.hours %>
     periods:
       - id: p1
         opens_at: <%= standard_opens_at school_day_on_or_before 7.days.ago %>
         due_at:   <%= standard_due_at   school_day_on_or_before 4.days.ago %>
-        students: {ak: 80, at: 78, cp: 80, gj: 60, hp: 100, lb: i, lt: ns, ne: 78, sd: 100, vw: i}
+        students: {ak: 80, at: 78, cp: 80}
       - id: p2
         opens_at: <%= standard_opens_at school_day_on_or_before 7.days.ago %>
         due_at:   <%= standard_due_at   school_day_on_or_before 4.days.ago %>
-        students: {af: 75, ag: 88, bb: i, cd: 81, hg: 87, ft: 82, js: i, ms: 90, nz: 85, ra: 80}
+        students: {af: 75, ag: 88, bb: i}
 
   - type: homework
     title: HW Chapter 2
@@ -88,17 +88,17 @@ assignments:
     book_locations: [[2, 1], [2, 2], [2, 3], [2, 4]]
     step_types: [e, e, e, e, e, e, e, e, e, e, p]
     late:
-      hp: <%= 4.hours %>
-      hg: <%= 10.minutes %>
+      at: <%= 4.hours %>
+      ag: <%= 10.minutes %>
     periods:
       - id: p1
         opens_at: <%= standard_opens_at school_day_on_or_before 5.days.ago %>
         due_at:   <%= standard_due_at   school_day_on_or_before 1.days.ago %>
-        students: {ak: 98, at: 67, cp: 55, gj: 77, hp: 88, lb: i, lt: 89, ne: 78, sd: 100, vw: 100}
+        students: {ak: 98, at: 67, cp: 55}
       - id: p2
         opens_at: <%= standard_opens_at school_day_on_or_before 5.days.ago %>
         due_at:   <%= standard_due_at   school_day_on_or_before 1.days.ago %>
-        students: {af: 82, ag: 71, bb: 88, cd: 78, hg: 87, ft: 82, js: 90, ms: 90, nz: i, ra: 100}
+        students: {af: 82, ag: 71, bb: 88}
 
   - type: reading
     title: Read 3.1 Acceleration Pt1
@@ -106,16 +106,16 @@ assignments:
     step_types: [ r, r, i, e, r, r, r, e, v, e, e, p ]
     late:
       ak: <%= 3.minutes %>
-      af: <%= 30.minutes %>
+      ag: <%= 30.minutes %>
     periods:
       - id: p1
         opens_at: <%= standard_opens_at  school_day_on_or_before 4.days.ago %>
         due_at:   <%= today %>
-        students: {ak: 80, at: i, cp: i, gj: i, hp: 88, lb: i, lt: ns, ne: i, sd: ns, vw: 100}
+        students: {ak: 80, at: i, cp: i}
       - id: p2
         opens_at: <%= standard_opens_at  school_day_on_or_before 4.days.ago %>
         due_at:   <%= today %>
-        students: {af: 82, ag: i, bb: i, cd: i, hg: 87, ft: i, js: i, ms: 90, nz: 85, ra: ns}
+        students: {af: 82, ag: i, bb: i}
 
   - type: reading
     title: Read 3.2 Acceleration Pt2
@@ -125,11 +125,11 @@ assignments:
       - id: p1
         opens_at: <%= standard_opens_at  school_day_on_or_before 4.days.ago %>
         due_at:   <%= today %>
-        students: {ak: ns, at: ns, cp: ns, gj: ns, hp: ns, lb: ns, lt: ns, ne: ns, sd: ns, vw: ns}
+        students: {ak: ns, at: ns, cp: ns}
       - id: p2
         opens_at: <%= standard_opens_at  school_day_on_or_before 4.days.ago %>
         due_at:   <%= today %>
-        students: {af: ns, ag: ns, bb: ns, cd: ns, hg: ns, ft: ns, js: ns, ms: ns, nz: ns, ra: ns}
+        students: {af: ns, ag: ns, bb: ns}
 
   - type: homework
     title: HW Chapter 3
@@ -138,16 +138,16 @@ assignments:
     step_types: [ e, e, e, e, e, e, e, e, e, e, e, p ]
     late:
       ak: <%= 2.hours %>
-      lb: <%= 1.day %>
+      cp: <%= 1.day %>
     periods:
       - id: p1
         opens_at: <%= standard_opens_at  school_day_on_or_before 2.days.ago %>
         due_at:   <%= standard_due_at   school_day_on_or_before 3.days.from_now %>
-        students: {ak: 98, at: 67, cp: 55, gj: 77, hp: 88, lb: 55, lt: 89, ne: 78, sd: 100, vw: 100}
+        students: {ak: 98, at: 67, cp: 55}
       - id: p2
         opens_at: <%= standard_opens_at  school_day_on_or_before 2.days.ago %>
         due_at:   <%= standard_due_at   school_day_on_or_before 3.days.from_now %>
-        students: {af: 82, ag: 71, bb: 88, cd: 78, hg: 87, ft: 82, js: 90, ms: 90, nz: 85, ra: 100}
+        students: {af: 82, ag: 71, bb: 88}
 
   - type: reading
     title: Read 4.1-4.2 Force & Motion Pt1
@@ -156,17 +156,17 @@ assignments:
     book_locations: [[2, 1], [2, 2], [2, 3], [2, 4]]
     step_types: [r, r, e, r, v, e, r, r, e, r, r, e, r, v, e, r, r, r, e, r, r, r, r, e, r, i, e, r, r, r, r, e, e, e, p]
     late:
-      hp: <%= 4.hours %>
-      hg: <%= 10.minutes %>
+      at: <%= 4.hours %>
+      ag: <%= 10.minutes %>
     periods:
       - id: p1
         opens_at: <%= standard_opens_at school_day_on_or_before 5.days.ago %>
         due_at:   <%= standard_due_at   school_day_on_or_before 1.days.ago %>
-        students: {ak: 98, at: 67, cp: 55, gj: 77, hp: 88, lb: i, lt: 89, ne: 78, sd: 100, vw: 100}
+        students: {ak: 98, at: 67, cp: 55}
       - id: p2
         opens_at: <%= standard_opens_at school_day_on_or_before 5.days.ago %>
         due_at:   <%= standard_due_at   school_day_on_or_before 1.days.ago %>
-        students: {af: 82, ag: 71, bb: 88, cd: 78, hg: 87, ft: 82, js: 90, ms: 90, nz: i, ra: 100}
+        students: {af: 82, ag: 71, bb: 88}
 
   - type: homework
     title: HW Chapter 4
@@ -178,8 +178,8 @@ assignments:
       - id: p1
         opens_at: <%= standard_opens_at school_day_on_or_before 10.days.from_now %>
         due_at:   <%= standard_due_at   school_day_on_or_before 14.days.from_now %>
-        students: {ak: 98, at: 67, cp: 55, gj: 77, hp: 88, lb: i, lt: 89, ne: 78, sd: 100, vw: 100}
+        students: {ak: 98, at: 67, cp: 55}
       - id: p2
         opens_at: <%= standard_opens_at school_day_on_or_before 10.days.from_now %>
         due_at:   <%= standard_due_at   school_day_on_or_before 14.days.from_now %>
-        students: {af: 82, ag: 71, bb: 88, cd: 78, hg: 87, ft: 82, js: 90, ms: 90, nz: i, ra: 100}
+        students: {af: 82, ag: 71, bb: 88}
