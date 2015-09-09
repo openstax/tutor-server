@@ -41,7 +41,7 @@ module Tasks
       klass = "Tasks::PerformanceReport::Export#{format.to_s.camelize}"
       exporter = klass.constantize
       filename = [outputs.profile.name,
-                  'Performance',
+                  'Scores',
                   Time.current.strftime("%Y%m%d-%H%M%S")].join('_')
 
       exporter[profile: outputs.profile,
