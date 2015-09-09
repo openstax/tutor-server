@@ -1,6 +1,8 @@
 module Tasks
   module PerformanceReport
     class ExportXlsx
+      include ActionView::Helpers::DateHelper
+
       lev_routine express_output: :filepath
 
       protected
@@ -10,8 +12,8 @@ module Tasks
         Axlsx::Package.new do |axlsx|
           axlsx.use_shared_strings = true # OS X Numbers interoperability
           axlsx.workbook.styles.fonts.first.name = 'Helvetica Neue'
-          create_summary_worksheet(profile.name, axlsx)
           create_data_worksheets(report, axlsx)
+          create_summary_worksheet(profile.name, axlsx)
 
           if axlsx.serialize(filepath)
             outputs.filepath = filepath
@@ -39,7 +41,7 @@ module Tasks
             sheet.add_row(gather_averages(report[:data_headings]))
 
             report.students.each_with_index do |student, row|
-              styles = cell_styles(student.data, sheet)
+              styles = lateness_styles(student.data, sheet)
               sheet.add_row(student_scores(student), style: styles)
               add_late_comments(sheet, student.data, row)
             end
@@ -55,14 +57,15 @@ module Tasks
 
       def data_headers(data_headings)
         headings = data_headings.collect(&:title)
-        (['First Name', 'Last Name'] + headings).collect { |header| bold_text(header) }
+        (non_data_headings + headings).collect { |header| bold_text(header) }
       end
 
       def gather_due_dates(data_headings)
         due_dates = data_headings.collect(&:due_at)
 
-        [italic_text('Due Date')] + due_dates.collect do |due_date|
-          italic_text(due_date.strftime("%m/%d/%Y"))
+        collect_columns(due_dates, 'Due Date') do |d|
+          d = d.respond_to?(:strftime) ? d.strftime("%m/%d/%Y") : d
+          italic_text(d)
         end
       end
 
@@ -71,27 +74,32 @@ module Tasks
           '%.2f' % heading.average if heading.average
         end
 
-        (['Average'] + averages).collect { |average| italic_text(average) }
+        collect_columns(averages, 'Average') { |average| italic_text(average) }
       end
 
-      def cell_styles(data, worksheet)
-        # first two cells are student first/last name
-        [nil, nil] + data.map do |d|
-          worksheet.styles.add_style bg_color: 'FFFF93' if !d.nil? && d.late
+      def lateness_styles(data, worksheet)
+        collect_columns(data) do |d|
+          worksheet.styles.add_style bg_color: 'FFFF93' if d && d.late
         end
       end
 
       def add_late_comments(sheet, data, row)
         data.each_with_index do |d, col|
-          next if d.nil? || !d.late
-          ref = "#{('C'..'Z').to_a[col]}#{row + 4}" # forms something like 'D5'
-          sheet.add_comment ref: ref, text: 'Late', author: 'OpenStax', visible: false
+          if d && d.late
+            start_col = ('A'..'Z').to_a[non_data_headings.size]
+            offset_row = row + 4 # offset 4 header rows
+
+            sheet.add_comment(ref: "#{(start_col..'Z').to_a[col]}#{offset_row}", # 'D5', etc...
+              text: "Homework was worked #{time_ago_in_words(d.last_worked_at)} late",
+              author: 'OpenStax',
+              visible: false)
+          end
         end
       end
 
       def student_scores(student)
         [student.first_name, student.last_name] + student.data.collect do |data|
-          data.nil? ? nil : score(data)
+          data ? score(data) : nil
         end
       end
 
@@ -120,6 +128,33 @@ module Tasks
         text = Axlsx::RichText.new
         text.add_run(content, i: true)
         text
+      end
+
+      def non_data_headings
+        ['First Name', 'Last Name']
+      end
+
+      def collect_columns(collection, *labels, &block)
+        labels = *labels.flatten.compact
+
+        (labels + offset_columns(labels.size) + collection).collect do |item|
+          yield(item)
+        end
+      end
+
+      def offset_columns(subtract_amt)
+        # some cases need to subtract offset
+        # because they add their own columns
+        # to the set
+
+        offset_cells = non_data_headings.map { nil }
+
+        if subtract_amt.zero?
+          offset_cells
+        else
+          # #slice(index, length) returns new_ary
+          offset_cells.slice(offset_cells.index(nil), subtract_amt)
+        end
       end
     end
   end

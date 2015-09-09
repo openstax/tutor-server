@@ -18,18 +18,12 @@ module Tasks
     def get_performance_report_for_teacher(course)
       course.periods.collect do |period|
         taskings = get_taskings(period)
-        tasking_plans = taskings.flat_map { |tg|
-          tg.task.task.task_plan.tasking_plans.select do |tp|
-            tp.target == period  || tp.target == course
-          end
-        }.uniq.sort_by { |tasking_plan| [tasking_plan.due_at, tasking_plan.created_at] }
+        tasking_plans = sort_tasking_plans(taskings, course, period)
         task_plan_indices = tasking_plans.each_with_index
-                                         .each_with_object({}) do |(tasking_plan, index), hash|
-          hash[tasking_plan.task_plan] = index
-        end
-
+                                         .each_with_object({}) { |(tasking_plan, index), hash|
+                                           hash[tasking_plan.task_plan] = index
+                                         }
         role_taskings = taskings.to_a.group_by(&:role)
-
         sorted_student_data = role_taskings.to_a.sort_by { |student_role, _|
                                 student_role.user.profile.account.last_name.downcase
                               }
@@ -61,6 +55,16 @@ module Tasks
           students: student_data
         })
       end
+    end
+
+    def sort_tasking_plans(taskings, course, period)
+      taskings.flat_map { |tg|
+        tg.task.task.task_plan.tasking_plans.select do |tp|
+          tp.target == period  || tp.target == course
+        end
+      }.uniq.sort { |a, b|
+        [b.due_at, b.created_at] <=> [a.due_at, a.created_at]
+      }
     end
 
     def get_taskings(period)
