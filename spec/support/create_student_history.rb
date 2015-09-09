@@ -3,13 +3,18 @@ class CreateStudentHistory
 
   uses_routine AddEcosystemToCourse
   uses_routine AddUserAsPeriodStudent
-  uses_routine CreatePeriod
-  uses_routine DistributeTasks, translations: { outputs: { type: :verbatim } }
+
+  uses_routine CreatePeriod,
+               translations: { outputs: { type: :verbatim } }
+  uses_routine DistributeTasks,
+               translations: { outputs: { type: :verbatim } }
   uses_routine FetchAndImportBookAndCreateEcosystem,
                translations: { outputs: { type: :verbatim } }
 
   protected
-  def exec(course:, roles: setup_student_role, book_id: '93e2b09d-261c-4007-a987-0b3062fe154b')
+  def exec(course:,
+           roles: setup_student_role(course),
+           book_id: '93e2b09d-261c-4007-a987-0b3062fe154b')
     ecosystem = setup_course_book(course, book_id)
 
     create_assignments(ecosystem, course, course.periods.reload)
@@ -33,7 +38,7 @@ class CreateStudentHistory
 
   private
 
-  def setup_student_role
+  def setup_student_role(course)
     puts "=== Creating a course period ==="
     run(:create_period, course: course)
 
@@ -81,9 +86,17 @@ class CreateStudentHistory
     end
   end
 
-  def ireading_assistant
-    @ireading_assistant ||= FactoryGirl.create(:tasks_assistant,
-      code_class_name: 'Tasks::Assistants::IReadingAssistant')
+  def ireading_assistant(course)
+    return @ireading_assistant if defined?(@ireading_assistant)
+
+    @ireading_assistant = if course_assistant = course.course_assistants.select { |ca|
+                                                  ca.tasks_task_plan_type == 'reading'
+                                                }.first
+                            course_assistant.assistant
+                          else
+                            FactoryGirl.create(:tasks_assistant,
+                              code_class_name: 'Tasks::Assistants::IReadingAssistant')
+                          end
   end
 
   def create_ireading_task_plan(ecosystem, course, periods)
@@ -91,8 +104,8 @@ class CreateStudentHistory
     task_plan = FactoryGirl.build(
       :tasks_task_plan,
       owner: course,
-      assistant: ireading_assistant,
       content_ecosystem_id: ecosystem.id,
+      assistant: ireading_assistant(course),
       title: 'Reading',
       settings: {
         page_ids: page_ids
@@ -114,9 +127,17 @@ class CreateStudentHistory
     task_plan
   end
 
-  def homework_assistant
-    @homework_assistant ||= FactoryGirl.create(:tasks_assistant,
-      code_class_name: 'Tasks::Assistants::HomeworkAssistant')
+  def homework_assistant(course)
+    return @homework_assistant if defined?(@homework_assistant)
+
+    @ireading_assistant = if course_assistant = course.course_assistants.select { |ca|
+                                                  ca.tasks_task_plan_type == 'homework'
+                                                }.first
+                            course_assistant.assistant
+                          else
+                            FactoryGirl.create(:tasks_assistant,
+                              code_class_name: 'Tasks::Assistants::HomeworkAssistant')
+                          end
   end
 
   def create_homework_task_plan(ecosystem, course, periods)
@@ -125,8 +146,8 @@ class CreateStudentHistory
     task_plan = FactoryGirl.build(
       :tasks_task_plan,
       owner: course,
-      assistant: homework_assistant,
       content_ecosystem_id: ecosystem.id,
+      assistant: homework_assistant(course),
       title: 'Homework',
       settings: {
         exercise_ids: exercise_ids,
