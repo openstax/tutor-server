@@ -15,7 +15,7 @@
 sudo: false
 language: ruby
 rvm:
-  - "2.1.2"
+  - "2.2.3"
 cache: bundler
 bundler_args: --without production --retry=6
 addons:
