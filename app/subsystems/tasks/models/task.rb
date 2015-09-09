@@ -15,8 +15,8 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   sortable_has_many :task_steps, on: :number,
                                  dependent: :destroy,
-                                 autosave: true,
-                                 inverse_of: :task, autosave: true
+                                 inverse_of: :task,
+                                 autosave: true
   has_many :taskings, through: :entity_task
 
   validates :title, presence: true

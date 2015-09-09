@@ -186,7 +186,7 @@ class DemoBase
     course.course_assistants.where{tasks_task_plan_type == task_plan_type}.first.assistant
   end
 
-  def get_ecosystem(course: course)
+  def get_ecosystem(course:)
     strategy = Content::Strategies::Direct::Ecosystem.new(course.ecosystems.first)
     Content::Ecosystem.new(strategy: strategy)
   end
