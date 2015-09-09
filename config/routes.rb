@@ -106,6 +106,7 @@ Rails.application.routes.draw do
         post :students
         post :set_ecosystem
         post :teachers, controller: :teachers
+        post :export_activity
       end
       resources :periods, shallow: true
       resources :students, only: [:index], shallow: true
