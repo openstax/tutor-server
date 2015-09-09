@@ -13,7 +13,7 @@ class GetTeacherGuide
   private
 
   def task_steps_for_period(period)
-    period.enrollments.latest.active.eager_load(
+    period.enrollments.latest.active.preload(
       student: {role: {taskings: {task: {task: :task_steps}}}}
     ).collect{ |en| en.student.role.taskings.collect{ |ts| ts.task.task.task_steps } }.flatten
   end

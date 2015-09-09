@@ -40,7 +40,6 @@ module Content
 
           content_exercises = Content::Models::Exercise
                                 .joins(tags: :same_value_tags)
-                                .eager_load(tags: {same_value_tags: :pages})
                                 .where(id: exercise_ids,
                                        tags: {
                                          content_ecosystem_id: @from_ecosystems.collect(&:id),
@@ -50,6 +49,7 @@ module Content
                                            tag_type: Content::Models::Tag::OBJECTIVE_TAG_TYPES,
                                          }
                                        })
+                                .preload(tags: {same_value_tags: :pages})
           exercise_map = content_exercises.each_with_object({}) do |content_exercise, hash|
             objective_tags = content_exercise.tags.select{ |tag| tag.lo? || tag.aplo? }
             tags_across_ecosystems = objective_tags.collect(&:same_value_tags).flatten

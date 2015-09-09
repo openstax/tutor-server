@@ -5,7 +5,8 @@ module CourseGuideMethods
   def get_completed_tasked_exercises_from_task_steps(task_steps)
     tasked_exercise_ids = task_steps.flatten.select{ |ts| ts.exercise? && ts.completed? }
                                             .collect{ |ts| ts.tasked_id }
-    Tasks::Models::TaskedExercise.where(id: tasked_exercise_ids).eager_load(
+    Tasks::Models::TaskedExercise.where(id: tasked_exercise_ids)
+                                 .preload(
       [{task_step: {task: {taskings: :role}}},
        {exercise: {page: :chapter}}]
     )
