@@ -53,7 +53,9 @@ class Api::V1::EcosystemsController < Api::V1::ApiController
     OSU::AccessPolicy.require_action_allowed!(:exercises, current_api_user, ecosystem)
 
     pages = ecosystem.pages_by_ids(params[:page_ids])
-    exercises = ecosystem.homework_core_pools(pages: pages).flat_map(&:exercises)
+    exercises = ecosystem.homework_core_pools(pages: pages).flat_map do |pool|
+      pool.exercises(preload_tags: true)
+    end
 
     respond_with exercises, represent_with: Api::V1::ExerciseSearchRepresenter
   end

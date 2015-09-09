@@ -12,8 +12,10 @@ module Content
         end
 
         alias_method :entity_exercises, :exercises
-        def exercises
-          entity_exercises.collect do |entity_exercise|
+        def exercises(preload_tags: false)
+          ex = entity_exercises
+          ex = ex.preload(tags: :teks_tags) if preload_tags
+          ex.collect do |entity_exercise|
             ::Content::Exercise.new(strategy: entity_exercise)
           end
         end

@@ -27,9 +27,12 @@ class Content::Routines::FindOrCreateTags
   end
 
   def find_or_create_ecosystem_tags_from_hash_array(ecosystem, hash_array)
-    # Find existing tags
+    # Collect existing tag values
     hash_values = hash_array.collect{ |hash| hash[:value] }
-    hash_values = (hash_values + hash_array.collect{ |hash| hash[:teks] }.compact).uniq
+    hash_values = hash_values + hash_array.collect{ |hash| hash[:teks] }.compact
+    hash_values = hash_values.uniq
+
+    # Find existing tags
     existing_tags = Content::Models::Tag.where(content_ecosystem_id: ecosystem.id,
                                                value: hash_values).to_a
     existing_tag_values = existing_tags.collect{ |tag| tag.value }

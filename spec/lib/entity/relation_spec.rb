@@ -25,12 +25,6 @@ class Entity
 
     end
 
-    it 'sets its repository to readonly' do
-      expect{ entity_relation._repository.destroy_all }.to(
-        raise_error ::ActiveRecord::ReadOnlyRecord
-      )
-    end
-
     it 'returns a properly formatted string from inspect' do
       expect(entity_relation.inspect).to(
         eq(relation.inspect.gsub('ActiveRecord::Relation', 'Entity::Relation')

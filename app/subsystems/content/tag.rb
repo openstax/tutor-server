@@ -45,5 +45,9 @@ module Content
       value
     end
 
+    def teks_tags
+      verify_and_return @strategy.teks_tags, klass: ::Content::Tag, error: ::Content::StrategyError
+    end
+
   end
 end

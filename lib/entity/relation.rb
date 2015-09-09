@@ -18,9 +18,9 @@ class Entity
             :quoted_primary_key, :connection, :columns_hash
 
     # The constructor for Entity::Relation only accepts an ActiveRecord::Relation object
-    # The relation is set as readonly
     def initialize(repository)
-      @repository = repository.readonly(true)
+      # Don't dup the repository relation, since that's a huge performance hit
+      @repository = repository
     end
 
     # Enumerable API
