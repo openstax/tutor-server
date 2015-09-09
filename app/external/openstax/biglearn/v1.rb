@@ -57,13 +57,6 @@ module OpenStax::Biglearn::V1
     clue = client.get_clues(roles: roles, pools: pools) || []
   end
 
-  # Invalidates all clue caches for the given roles, if applicable
-  # Call whenever a new student response is sent to Biglearn
-  def self.invalidate_clue_caches(roles:)
-    roles = [roles].flatten.compact
-    client.invalidate_clue_caches(roles: roles)
-  end
-
   #
   # Configuration
   #

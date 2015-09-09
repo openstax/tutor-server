@@ -21,6 +21,7 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     # TODO: Do this somewhere else, it does not belong here
 
     # Currently assuming only one question per tasked_exercise, see also correct_answer_id
+    # Also assuming no group tasks
     question = questions.first
     # "trial" is set to only "1" for now. When multiple
     # attempts are supported, it will be incremented to indicate the attempt #
@@ -29,9 +30,6 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     grade = is_correct? ? 1 : 0
     grader = 'tutor'
     OpenStax::Exchange.record_grade(identifiers.first, url, trial, grade, grader)
-
-    # Invalidate the CLUE cache for the associated roles
-    OpenStax::Biglearn::V1.invalidate_clue_caches(roles: roles)
   end
 
   def has_correctness?
