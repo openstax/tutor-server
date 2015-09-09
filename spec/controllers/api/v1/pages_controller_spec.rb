@@ -10,7 +10,7 @@ RSpec.describe Api::V1::PagesController, type: :controller, api: true,
 
       VCR.use_cassette("Api_V1_PagesController/with_book", VCR_OPTS) do
         @ecosystem = FetchAndImportBookAndCreateEcosystem[
-          id: '93e2b09d-261c-4007-a987-0b3062fe154b'
+          book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
         ]
       end
 

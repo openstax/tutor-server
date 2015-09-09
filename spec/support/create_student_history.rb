@@ -48,7 +48,7 @@ class CreateStudentHistory
 
   def setup_course_book(course, book_id)
     puts "=== Fetch & import book ==="
-    run(:fetch_and_import_book_and_create_ecosystem, id: book_id)
+    run(:fetch_and_import_book_and_create_ecosystem, book_cnx_id: book_id)
 
     puts "=== Add ecosystem to course ==="
     run(:add_ecosystem_to_course, course: course, ecosystem: outputs.ecosystem)

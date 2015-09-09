@@ -9,18 +9,19 @@ module Content
       end
 
       def create(title:, strategy_class: ::Content::Strategies::Direct::Ecosystem)
+        title = verify_and_return title, klass: String
         verify_and_return strategy_class.create(title: title),
                           klass: self, error: ::Content::StrategyError
       end
 
       def create!(title:, strategy_class: ::Content::Strategies::Direct::Ecosystem)
+        title = verify_and_return title, klass: String
         verify_and_return strategy_class.create!(title: title),
                           klass: self, error: ::Content::StrategyError
       end
 
       def find(*args, strategy_class: ::Content::Strategies::Direct::Ecosystem)
-        verify_and_return strategy_class.find(*args),
-                          klass: self, error: ::Content::StrategyError
+        verify_and_return strategy_class.find(*args), klass: self, error: ::Content::StrategyError
       end
 
       def find_by_book_ids(*args, strategy_class: ::Content::Strategies::Direct::Ecosystem)
@@ -46,6 +47,11 @@ module Content
 
     def id
       verify_and_return @strategy.id, klass: Integer, error: ::Content::StrategyError
+    end
+
+    def manifest
+      verify_and_return @strategy.manifest, klass: ::Content::Manifest,
+                                            error: ::Content::StrategyError
     end
 
     def books

@@ -76,6 +76,20 @@ module Content
           end
         end
 
+        def manifest
+          sorted_books = books.sort_by{ |bk| [bk.uuid, bk.version] }
+          sorted_exercises = exercises.sort_by{ |ex| [ex.number, ex.version] }
+          hash = {
+            ecosystem_title: title,
+            book_uuids: sorted_books.collect(&:uuid),
+            book_versions: sorted_books.collect(&:version),
+            exercise_numbers: sorted_exercises.collect(&:number),
+            exercise_versions: sorted_exercises.collect(&:version)
+          }
+          strategy = ::Content::Strategies::Generated::Manifest.new(hash: hash)
+          ::Content::Manifest.new(strategy: strategy)
+        end
+
         alias_method :entity_books, :books
         def books
           entity_books.collect do |entity_book|

@@ -12,7 +12,7 @@ class Content::Models::Pool < Tutor::SubSystems::BaseModel
 
   validates :ecosystem, presence: true
   validates :pool_type, presence: true
-  validates :uuid, uniqueness: { allow_nil: true }
+  validates :uuid, presence: true, uniqueness: true
 
   def exercises
     Content::Models::Exercise.where(id: content_exercise_ids)

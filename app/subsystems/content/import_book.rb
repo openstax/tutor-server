@@ -13,7 +13,7 @@ class Content::ImportBook
 
   # Imports and saves a Cnx::Book as an Content::Models::Book
   # Returns the Book object, Resource object and collection JSON as a hash
-  def exec(cnx_book:, ecosystem:)
+  def exec(cnx_book:, ecosystem:, exercise_uids: nil)
     book = Content::Models::Book.new(url: cnx_book.canonical_url,
                                      uuid: cnx_book.uuid,
                                      version: cnx_book.version,
@@ -26,24 +26,28 @@ class Content::ImportBook
     Content::Models::Book.import! [book], recursive: true
 
     objective_page_tags = outputs[:page_taggings].select{ |pt| pt.tag.lo? || pt.tag.aplo? }
-    query_hash = { tag: objective_page_tags.collect{ |pt| pt.tag.value } }
-    page_block = ->(exercise_wrapper) {
-      tags = Set.new(exercise_wrapper.los + exercise_wrapper.aplos)
-      pages = objective_page_tags.select{ |opt| tags.include?(opt.tag.value) }
-                                 .collect{ |opt| opt.page }
-
-      # Blow up if there is more than one page for an exercise
-      fatal_error(code: :multiple_pages_for_one_exercise,
-                  message: "Multiple pages were found for an exercise.\nExercise: #{
-                    exercise_wrapper.uid}\nPages:\n#{pages.collect{ |pg| pg.url }.join("\n")}") \
-        if pages.size != 1
-      pages.first
-    }
 
     if objective_page_tags.empty?
       outputs[:exercises] = []
+      Rails.logger.warn "Imported book (#{cnx_book.uuid}@#{cnx_book.version}) has no LO's."
     else
       outputs[:exercises] = nil
+      query_hash = exercise_uids.nil? ? \
+                     { tag: objective_page_tags.collect{ |pt| pt.tag.value } } : \
+                     { id: exercise_uids }
+      page_block = ->(exercise_wrapper) {
+        tags = Set.new(exercise_wrapper.los + exercise_wrapper.aplos)
+        pages = objective_page_tags.select{ |opt| tags.include?(opt.tag.value) }
+                                   .collect{ |opt| opt.page }
+
+        # Blow up if there is more than one page for an exercise
+        fatal_error(code: :multiple_pages_for_one_exercise,
+                    message: "Multiple pages were found for an exercise.\nExercise: #{
+                      exercise_wrapper.uid}\nPages:\n#{pages.collect{ |pg| pg.url }.join("\n")}") \
+          if pages.size != 1
+        pages.first
+      }
+
       run(:import_exercises, ecosystem: ecosystem, page: page_block, query_hash: query_hash)
     end
 

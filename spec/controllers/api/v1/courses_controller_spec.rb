@@ -401,4 +401,5 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       expect(response_body['plans']).to be_nil
     end
   end
+
 end
