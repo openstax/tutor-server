@@ -8,3 +8,22 @@
 .flash_error {
   color: red;
 }
+
+#jobs {
+  .completed {
+    display: none;
+  }
+}
+
+#search_by_id {
+  position: relative;
+  span {
+    display: block;
+    position: absolute;
+    top: -2.3em;
+    left: 1em;
+    background: #4b3725;
+    color: #fff;
+    padding: 0.5em 1em;
+  }
+}
