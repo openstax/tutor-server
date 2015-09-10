@@ -88,7 +88,7 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
 
   # Send email to developers when users encounter exceptions
-  deployed_to = Rails.application.secrets.server_name
+  deployed_to = Rails.application.secrets.server_name || '%SERVER_NAME%'
   config.middleware.use ExceptionNotification::Rack,
     :email => {
       :email_prefix => "[Tutor] (#{deployed_to}) ",
