@@ -1,7 +1,9 @@
 require 'rails_helper'
+require 'vcr_helper'
 require 'feature_js_helper'
 
-RSpec.feature 'Administration: export student task step activity per course', js: true do
+RSpec.feature 'Administration: export student task step activity per course',
+              vcr: VCR_OPTS, js: true do
   scenario 'obtain CSV for a single course' do
     admin = FactoryGirl.create(:user_profile, :administrator)
     stub_current_user(admin)

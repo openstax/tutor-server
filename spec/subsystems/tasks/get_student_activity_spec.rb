@@ -1,7 +1,8 @@
 require 'rails_helper'
+require 'vcr_helper'
 
 module Tasks
-  RSpec.describe GetStudentActivity do
+  RSpec.describe GetStudentActivity, vcr: VCR_OPTS do
     it 'returns all the student task step activity' do
       course = CreateCourse[name: 'Biology I']
       CreateStudentHistory[course: course]
