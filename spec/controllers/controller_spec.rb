@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-class TestController < ApplicationController
+class TestController < ActionController::Base
   skip_before_filter :authenticate_user!
 
   def bad_action

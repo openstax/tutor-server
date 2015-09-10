@@ -156,6 +156,4 @@ Rails.application.routes.draw do
   end
 
   match '/*other', via: [:get, :post, :put, :patch, :delete], to: 'webview#index'
-
-  get 'bad_action' => 'test#bad_action'
 end
