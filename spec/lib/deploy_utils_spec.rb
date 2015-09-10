@@ -8,7 +8,7 @@ RSpec.describe DeployUtils do
       expect(DeployUtils.server_nickname).to eq('test')
 
       Rails.application.secrets.mail_site_url = 'tutor-multi-word-cname.openstax.org'
-      expect(DeployUtils.server_nickname).to eq('multi word cname')
+      expect(DeployUtils.server_nickname).to eq('multi-word-cname')
     end
 
     it 'recognizes production' do
@@ -19,6 +19,11 @@ RSpec.describe DeployUtils do
     it 'fallsback to non-conventional urls' do
       Rails.application.secrets.mail_site_url = 'something-wild.com'
       expect(DeployUtils.server_nickname).to eq('something-wild.com')
+    end
+
+    it 'copes when mail_site_url nil' do
+      Rails.application.secrets.mail_site_url = nil
+      expect(DeployUtils.server_nickname).to eq('unknown deploy')
     end
   end
 end

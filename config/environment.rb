@@ -13,6 +13,7 @@ require 'env_utilities'
 require 'settings'
 require 'course_guide_methods'
 require 'type_verification'
+require 'deploy_utils'
 
 SITE_NAME = "OpenStax Tutor"
 COPYRIGHT_HOLDER = "Rice University"
