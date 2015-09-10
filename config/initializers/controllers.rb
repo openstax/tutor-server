@@ -25,21 +25,21 @@ ActionController::Base.class_exec do
     # See https://github.com/rack/rack/blob/master/lib/rack/utils.rb#L453
     # for error names/symbols
     @status, notify = case exception
-                      when SecurityTransgression
-                        [:forbidden, false]
-                      when ActiveRecord::RecordNotFound,
-                           ActionController::RoutingError,
-                           ActionController::UnknownController,
-                           AbstractController::ActionNotFound
-                        [:not_found, false]
-                      when ActionController::InvalidAuthenticityToken,
-                           Apipie::ParamMissing
-                        [:unprocessable_entity, false]
-                       when ActionView::MissingTemplate
-                        [:bad_request, false]
-                      else
-                        [:internal_server_error, true]
-                      end
+    when SecurityTransgression
+      [:forbidden, false]
+    when ActiveRecord::RecordNotFound,
+         ActionController::RoutingError,
+         ActionController::UnknownController,
+         AbstractController::ActionNotFound
+      [:not_found, false]
+    when ActionController::InvalidAuthenticityToken,
+         Apipie::ParamMissing
+      [:unprocessable_entity, false]
+     when ActionView::MissingTemplate
+      [:bad_request, false]
+    else
+      [:internal_server_error, true]
+    end
 
     if notify
       @error_id = "%06d" % SecureRandom.random_number(10**6)
