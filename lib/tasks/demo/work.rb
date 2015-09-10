@@ -21,13 +21,13 @@ class DemoWork < DemoBase
                                            .order(created_at: :desc).first!
 
         tasks_profile = build_tasks_profile(
-          students: assignment.periods.map{|period| period.students.map(&:to_a) }.flatten(1),
+          students: assignment.periods.flat_map{ |period| period.students.map(&:to_a) },
           assignment_type: assignment.type.to_sym,
           step_types: assignment.step_types,
         )
         log("Working assignment: #{assignment.title}")
-        task_plan.tasks.eager_load({taskings: {role: {user: {profile: :account}}}})
-                       .preload({task_steps: [:tasked, :task]})
+        task_plan.tasks.preload([{taskings: {role: {user: {profile: :account}}}},
+                                 {task_steps: [:tasked, :task]}])
                        .each_with_index do | task, index |
           user = task.taskings.first.role.user
           profile = tasks_profile[ user.profile.id ]

@@ -52,7 +52,6 @@ class Content::ImportBook
     end
 
     # Need a double reload here for it to work for some reason
-    # Use preload instead of eager_load here to avoid a memory usage spike
     pages = book.reload.pages(true).preload(exercises: {exercise_tags: :tag})
     pages = run(:update_page_content, pages: pages, save: false).outputs.pages
     outs = run(:populate_exercise_pools, pages: pages, save: false).outputs

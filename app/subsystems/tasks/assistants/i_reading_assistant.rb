@@ -198,7 +198,7 @@ class Tasks::Assistants::IReadingAssistant
     [ [2,1], [4,1] ]
   end
 
-  def add_personalized_exercise_steps!(task: task, taskee: taskee)
+  def add_personalized_exercise_steps!(task:, taskee:)
     task.personalized_placeholder_strategy = Tasks::PlaceholderStrategies::IReadingPersonalized.new \
       if self.class.num_personalized_exercises > 0
 

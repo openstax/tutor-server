@@ -19,7 +19,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   let!(:period)          { CreatePeriod[course: course] }
 
 
-  def add_book_to_course(course: course)
+  def add_book_to_course(course:)
     book = FactoryGirl.create(:content_book, :standard_contents_1)
     content_ecosystem = book.ecosystem.reload
     strategy = Content::Strategies::Direct::Ecosystem.new(content_ecosystem)

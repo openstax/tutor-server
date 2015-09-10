@@ -13,7 +13,7 @@ class GetStudentGuide
   private
 
   def task_steps_for_role(role)
-    role.taskings.eager_load(task: {task: :task_steps})
+    role.taskings.preload(task: {task: :task_steps})
         .collect{ |tasking| tasking.task.task.task_steps }.flatten
   end
 

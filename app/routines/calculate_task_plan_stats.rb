@@ -87,8 +87,8 @@ class CalculateTaskPlanStats
     tasked_exercise_ids = task_steps.flatten.select{ |t| t.exercise? }.collect{ |ts| ts.tasked_id }
     Tasks::Models::TaskedExercise.joins { task_step }
                                  .where { id.in tasked_exercise_ids }
-                                 .eager_load([{exercise: :page},
-                                              {task_step: {task: {taskings: :role}}}]).to_a
+                                 .preload([{exercise: :page},
+                                           {task_step: {task: {taskings: :role}}}]).to_a
   end
 
   def group_tasked_exercises_by_pages(tasked_exercises)
@@ -109,7 +109,7 @@ class CalculateTaskPlanStats
   end
 
   def generate_period_stat_data
-    tasks = @plan.tasks.eager_load([:task_steps, {taskings: :period}]).to_a
+    tasks = @plan.tasks.preload([:task_steps, {taskings: :period}]).to_a
     grouped_tasks = tasks.group_by do |tt|
       tt.taskings.first.try(:period) || no_period
     end
