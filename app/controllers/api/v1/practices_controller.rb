@@ -32,7 +32,7 @@ module Api
       private
       def get_practice_role
         result = ChooseCourseRole.call(user: current_human_user.entity_user,
-                                       course: Entity::Course.find(params[:course_id]),
+                                       course: Entity::Course.find(params[:id]),
                                        allowed_role_type: :student,
                                        role_id: params[:role_id])
         if result.errors.any?

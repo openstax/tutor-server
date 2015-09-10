@@ -66,11 +66,11 @@ Rails.application.routes.draw do
           post 'export'
           get 'exports'
         end
-      end
 
-      scope :practice, controller: :practices do
-        post '(/role/:role_id)', action: :create
-        get '(/role/:role_id)', action: :show
+        scope :practice, controller: :practices do
+          post '(/role/:role_id)', action: :create
+          get '(/role/:role_id)', action: :show
+        end
       end
 
       resources :task_plans, path: '/plans', shallow: true, except: [:index, :new, :edit] do
