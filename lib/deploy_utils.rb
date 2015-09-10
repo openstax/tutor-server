@@ -3,9 +3,9 @@ class DeployUtils
     url = Rails.application.secrets.mail_site_url
     match = url.match(/\Atutor-(.+)\.openstax/)
 
-    return 'production' if url == 'tutor.openstax.org'
-
-    if match && match[1]
+    if url == 'tutor.openstax.org'
+      'production'
+    elsif match && match[1]
       match[1].gsub('-', ' ')
     else
       url
