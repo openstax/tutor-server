@@ -9,7 +9,7 @@ RSpec.feature 'Administration: export student task step activity per course',
     stub_current_user(admin)
 
     course = CreateCourse[name: 'Good Course']
-    CreateStudentHistory[course: course]
+    capture_stdout { CreateStudentHistory[course: course] }
 
     visit admin_root_path
     click_link 'Courses'
