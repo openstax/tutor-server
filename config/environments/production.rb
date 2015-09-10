@@ -88,10 +88,10 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
 
   # Send email to developers when users encounter exceptions
-  env = Rails.application.secrets.mail_site_url.match(/tutor-(\w+)\./)[1]
+  deployed_to = Rails.application.secrets.server_name
   config.middleware.use ExceptionNotification::Rack,
     :email => {
-      :email_prefix => "[Tutor] (#{env.upcase}) ",
+      :email_prefix => "[Tutor] (#{deployed_to}) ",
       :sender_address => %{"OpenStax Tutor" <noreply@openstax.org>},
       :exception_recipients => %w{tutor-notifications@openstax.org}
     }
