@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe ApplicationController do
+RSpec.describe ApplicationController, type: :controller do
   let!(:controller) {
     cc = ApplicationController.new
     cc.response = ActionController::TestResponse.new

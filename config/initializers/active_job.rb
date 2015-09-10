@@ -9,7 +9,8 @@ module ActiveJob
         data: {
           error_id: @error_id,
           message: "A background job exception occurred"
-        }
+        },
+        sections: %w(data request session environment backtrace)
       )
 
       Rails.logger.error {

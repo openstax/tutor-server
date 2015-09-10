@@ -90,7 +90,7 @@ Rails.application.configure do
   # Send email to developers when users encounter exceptions
   config.middleware.use ExceptionNotification::Rack,
     :email => {
-      :email_prefix => "[Tutor] ",
+      :email_prefix => "[Tutor] (#{DeployUtils.server_nickname}) ",
       :sender_address => %{"OpenStax Tutor" <noreply@openstax.org>},
       :exception_recipients => %w{tutor-notifications@openstax.org}
     }

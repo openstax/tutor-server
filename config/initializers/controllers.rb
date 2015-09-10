@@ -22,7 +22,8 @@ ActionController::Base.class_exec do
   end
 
   def rescue_from_exception(exception)
-    # See https://github.com/rack/rack/blob/master/lib/rack/utils.rb#L453 for error names/symbols
+    # See https://github.com/rack/rack/blob/master/lib/rack/utils.rb#L453
+    # for error names/symbols
     @status, notify = case exception
     when SecurityTransgression
       [:forbidden, false]
@@ -48,8 +49,10 @@ ActionController::Base.class_exec do
         env: request.env,
         data: {
           error_id: @error_id,
-          message: "An exception occurred"
-        }
+          message: "An exception occurred",
+          dns_name: Resolv.getname(request.remote_ip)
+        },
+        sections: %w(data request session environment backtrace)
       )
 
       Rails.logger.error {
