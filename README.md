@@ -24,6 +24,12 @@ And then create the development and test databases:
 
 `createdb --username ox_tutor ox_tutor_test`
 
+## Configuring database for Development and Testing
+
+You will need a Redis server running in order to use tutor-server.
+If you have Homebrew, `brew install redis` will usually take care of that.
+If the server is not running on localhost, it can be configured in config/secrets.yml.
+
 ## Error Pages/Responses
 
 By default, the development and test environments see different error responses than the production environment does.
@@ -47,7 +53,7 @@ Tutor in production runs background jobs using resque and redis.  In the develop
 
 ## Bullet
 
-Bullet is a gem for finding N+1 queries and the like.  To enable it in development, set an `ENABLE_BULLET` environment variable to `true`.  Then you can tail `log/bullet.log`.
+Bullet is a gem for finding N+1 queries and the like.  To enable it in development, set an `ENABLE_BULLET` environment variable to `true`.  Then you can tail `log/bullet.log`.  Beware that this will slow down the server considerably.
 
 ## Testing with capybara
 
