@@ -44,13 +44,19 @@ ActionController::Base.class_exec do
     if notify
       @error_id = "%06d" % SecureRandom.random_number(10**6)
 
+      dns_name = begin
+        Resolv.getname(request.remote_ip)
+      rescue StandardError => e
+        "unknown"
+      end
+
       ExceptionNotifier.notify_exception(
         exception,
         env: request.env,
         data: {
           error_id: @error_id,
           message: "An exception occurred",
-          dns_name: Resolv.getname(request.remote_ip)
+          dns_name: dns_name
         },
         sections: %w(data request session environment backtrace)
       )
