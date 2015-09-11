@@ -94,48 +94,58 @@ class OpenStax::Biglearn::V1::RealClient
 
     learners = get_exchange_read_identifiers_for_roles(roles: roles)
     pool_ids = pools.collect(&:uuid)
-    last_answer_time = get_last_answer_time(roles: roles, pools: pools)
+    last_answer_times = get_last_answer_times(roles: roles, pools: pools)
 
-    fetch_clues(learners: learners, pool_ids: pool_ids, last_answer_time: last_answer_time)
+    fetch_clues(learners: learners, pool_ids: pool_ids, last_answer_times: last_answer_times)
   end
 
   private
 
-  def get_last_answer_time(roles:, pools:)
+  # Returns the last answer time for all roles for each pool given
+  def get_last_answer_times(roles:, pools:)
     role_ids = roles.collect(&:id)
-    exercise_ids = pools.flat_map{ |pool| pool.exercises.collect(&:id) }
 
-    Tasks::Models::TaskedExercise
-      .joins(task_step: { task: :taskings })
-      .where(id: exercise_ids, task_step: { task: { taskings: { entity_role_id: role_ids } } })
-      .maximum(:last_completed_at)
+    pools.collect do |pool|
+      # Ignore exercise versions, since Biglearn also ignores them
+      exercise_numbers = pool.exercises.collect(&:number)
+
+      last_completed_at = Tasks::Models::TaskedExercise
+                            .joins({ task_step: { task: :taskings } }, :exercise)
+                            .where(exercise: { number: exercise_numbers },
+                                   task_step: { task: { taskings: { entity_role_id: role_ids } } })
+                            .maximum(:last_completed_at)
+      next if last_completed_at.nil?
+      last_completed_at.utc.to_s(:number)
+    end
   end
 
   # Get all the CLUEs from the cache, calling Biglearn only once if needed
-  def fetch_clues(learners:, pool_ids:, last_answer_time:)
+  def fetch_clues(learners:, pool_ids:, last_answer_times:)
     # Hash the learners so that the key size remains manageable
     # Sort learners to ensure consistent ordering when digesting
     learner_digest = Digest::SHA256.new
     learners.sort.each do |learner|
       learner_digest << learner.to_s
     end
+    learner_digest = learner_digest.to_s
+
+    key_prefix = 'biglearn/clues'
 
     # The CLUEs returned refer to all given learners at once
-    # The last_answer_time is used for key expiration
-    key_prefix = 'biglearn/clues'
-    key_suffix = "#{learner_digest.to_s}-#{last_answer_time.to_s}"
-
     # Each CLUE refers to a single pool, so each pool corresponds to a different cache key
-    cache_keys = pool_ids.collect{ |pool_id| "#{key_prefix}/#{pool_id}/#{key_suffix}" }
+    # The last_answer_times are used for key expiration when someone answers a new question
+    cache_keys = pool_ids.each_with_index.collect do |pool_id, index|
+      "#{key_prefix}/#{pool_id}/#{learner_digest}-#{last_answer_times[index]}"
+    end
 
     # Read CLUEs for all pools from the cache
     cache_key_clues_map = Rails.cache.read_multi(*cache_keys)
 
     # Figure out which pools we missed in the cache and create a map
-    missed_pool_id_cache_key_map = {}
-    cache_keys.each_with_index do |cache_key, index|
+    missed_pool_id_cache_key_map = cache_keys.each_with_index
+                                             .each_with_object({}) do |(cache_key, index), hash|
       clue = cache_key_clues_map[cache_key]
-      missed_pool_id_cache_key_map[pool_ids[index]] = cache_key if clue.blank?
+      hash[pool_ids[index]] = cache_key if clue.blank?
     end
 
     if missed_pool_id_cache_key_map.empty?
