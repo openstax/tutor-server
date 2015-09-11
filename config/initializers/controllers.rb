@@ -24,7 +24,7 @@ ActionController::Base.class_exec do
   def rescue_from_exception(exception)
     # See https://github.com/rack/rack/blob/master/lib/rack/utils.rb#L453
     # for error names/symbols
-    @status, notify = case exception
+    @status, notify, extras = case exception
     when SecurityTransgression
       [:forbidden, false]
     when ActiveRecord::RecordNotFound,
@@ -35,8 +35,18 @@ ActionController::Base.class_exec do
     when ActionController::InvalidAuthenticityToken,
          Apipie::ParamMissing
       [:unprocessable_entity, false]
-     when ActionView::MissingTemplate
+    when ActionView::MissingTemplate
       [:bad_request, false]
+    when OAuth2::Error
+      [
+        :internal_server_error,
+        true,
+        {
+          headers: exception.response.headers,
+          status: exception.response.status,
+          body: exception.response.body
+        }
+      ]
     else
       [:internal_server_error, true]
     end
@@ -50,20 +60,23 @@ ActionController::Base.class_exec do
         "unknown"
       end
 
+      extras = (extras || {}).inspect
+
       ExceptionNotifier.notify_exception(
         exception,
         env: request.env,
         data: {
           error_id: @error_id,
-          message: "An exception occurred",
-          dns_name: dns_name
+          message: exception.message,
+          dns_name: dns_name,
+          extras: extras
         },
         sections: %w(data request session environment backtrace)
       )
 
       Rails.logger.error {
         "An exception occurred: #{exception.class.name} [#{@error_id}] " +
-        "#{exception.message}\n\n#{exception.backtrace.join("\n")}"
+        "<#{exception.message}> {#{extras}}\n\n#{exception.backtrace.join("\n")}"
       }
     end
 
