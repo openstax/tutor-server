@@ -131,33 +131,28 @@ class OpenStax::Biglearn::V1::RealClient
     # Read CLUEs for all pools from the cache
     cache_key_clues_map = Rails.cache.read_multi(*cache_keys)
 
-    # Figure out which pools we missed in the cache and add them to an array
-    missed_pool_ids = []
-    missed_cache_keys = []
-    cache_keys.each do |cache_key|
+    # Figure out which pools we missed in the cache and create a map
+    missed_pool_id_cache_key_map = {}
+    cache_keys.each_with_index do |cache_key, index|
       clue = cache_key_clues_map[cache_key]
-      if clue.blank?
-        missed_pool_ids << pool_ids[index]
-        missed_cache_keys << cache_key
-      end
+      missed_pool_id_cache_key_map[pool_ids[index]] = cache_key if clue.blank?
     end
 
-    if missed_pool_ids.empty?
+    if missed_pool_id_cache_key_map.empty?
       # Cache hit for all CLUEs: Don't call Biglearn
       missed_clues = []
     else
       # Call Biglearn (once) to get the missing CLUEs
-      query = { learners: learners, pool_ids: missed_pool_ids }
+      query = { learners: learners, pool_ids: missed_pool_id_cache_key_map.keys }
       response = request(:get, clue_uri, params: query)
       result = handle_response(response) || {}
       missed_clues = result['aggregates'] || []
 
       # Iterate to the CLUEs returned, filling in the cache and the cache_key_clues_map
-      missed_clues.each_with_index do |clue, index|
+      missed_clues.each do |clue|
         next if clue.blank?
 
-        cache_key = missed_cache_keys[index]
-
+        pool_id = clue['pool_id']
         aggregate      = clue['aggregate']
         interpretation = clue['interpretation'] || {}
         confidence     = clue['confidence'] || {}
@@ -173,6 +168,8 @@ class OpenStax::Biglearn::V1::RealClient
           sample_size: confidence['sample_size'],
           sample_size_interpretation: interpretation['threshold']
         }
+
+        cache_key = missed_pool_id_cache_key_map[pool_id]
 
         Rails.cache.write(cache_key, clue_hash, expires_in: CLUE_CACHE_DURATION)
 

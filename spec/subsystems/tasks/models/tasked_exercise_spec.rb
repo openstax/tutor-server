@@ -65,7 +65,13 @@ RSpec.describe Tasks::Models::TaskedExercise, :type => :model do
     expect(tasked_exercise.reload).not_to be_valid
   end
 
-  it 'records answers and grade in exchange and invalidates the clue cache when the task_step is completed' do
+  it "invalidates task's cache when updated" do
+    tasked_exercise.free_response = 'abc'
+    tasked_exercise.answer_id = tasked_exercise.answer_ids.first
+    expect { tasked_exercise.save! }.to change{ tasked_exercise.task_step.task.cache_key }
+  end
+
+  it 'records answers and grade in exchange when the task_step is completed' do
     roles = [Entity::Role.create!]
     exchange_identifier = 42
     correct_answer_id = tasked_exercise.correct_answer_id
@@ -84,7 +90,6 @@ RSpec.describe Tasks::Models::TaskedExercise, :type => :model do
                                           tasked_exercise.task_step.id.to_s,
                                           1,
                                           'tutor')
-    expect(OpenStax::Biglearn::V1).to receive(:invalidate_clue_caches).with(roles: roles)
     tasked_exercise.handle_task_step_completion!
   end
 end

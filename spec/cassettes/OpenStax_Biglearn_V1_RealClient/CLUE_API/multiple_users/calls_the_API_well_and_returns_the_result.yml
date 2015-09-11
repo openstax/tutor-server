@@ -1,0 +1,49 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://biglearn-dev.openstax.org/knowledge/clue?learners=8e79ebcd72d5061496ad94b471686015dccd126e6a42a3dd122bf15590abe8b7&pool_ids=5e816a18-9fdb-4430-9cb8-de2661940b3b
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Thu, 10 Sep 2015 23:31:51 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '803'
+      Connection:
+      - keep-alive
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains
+    body:
+      encoding: UTF-8
+      string: "{\n  \"aggregates\": [\n    {\n      \"aggregate\": 0.5, \n      \"confidence\":
+        {\n        \"left\": 0.0001032959608441861, \n        \"right\": 0.99989670403915609,
+        \n        \"sample_size\": 0, \n        \"unique_learner_count\": 0\n      },
+        \n      \"interpretation\": {\n        \"confidence\": \"bad\", \n        \"level\":
+        \"medium\", \n        \"threshold\": \"below\"\n      }, \n      \"pool_id\":
+        \"c8183974-c247-41a0-ad38-e69b72159b76\"\n    }, \n    {\n      \"aggregate\":
+        0.5, \n      \"confidence\": {\n        \"left\": 9.9618095980814734e-05,
+        \n        \"right\": 0.9999003819040192, \n        \"sample_size\": 0, \n
+        \       \"unique_learner_count\": 0\n      }, \n      \"interpretation\":
+        {\n        \"confidence\": \"bad\", \n        \"level\": \"medium\", \n        \"threshold\":
+        \"below\"\n      }, \n      \"pool_id\": \"5e816a18-9fdb-4430-9cb8-de2661940b3b\"\n
+        \   }\n  ]\n}"
+    http_version: 
+  recorded_at: Thu, 10 Sep 2015 23:31:51 GMT
+recorded_with: VCR 2.9.3
