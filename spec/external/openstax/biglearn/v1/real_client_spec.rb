@@ -114,7 +114,13 @@ module OpenStax::Biglearn
     end
 
     context 'CLUE API' do
-      before(:each) { Rails.cache.clear }
+      # Use an empty cache for the following examples
+      before(:each) {
+        @original_cache = Rails.cache
+        Rails.cache = ActiveSupport::Cache::MemoryStore.new
+      }
+      # Restore the original cache
+      after(:each) { Rails.cache = @original_cache }
 
       context 'single user' do
         it 'calls the API well and returns the result' do
