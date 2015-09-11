@@ -41,20 +41,26 @@ class Admin::CoursesController < Admin::BaseController
     # Upload a csv file with columns: first_name, last_name, username, password
     period = CourseMembership::Models::Period.find(params[:course][:period])
     roster_file = params[:student_roster]
-    csv_reader = CSV.new(roster_file.read, headers: true)
-    users = []
-    errors = []
-    csv_reader.each do |row|
-      users << row
-      errors << "On line #{csv_reader.lineno}, username is missing." unless row['username'].present?
-      errors << "On line #{csv_reader.lineno}, password is missing." unless row['password'].present?
+
+    begin
+      csv_reader = CSV.new(roster_file.read, headers: true)
+      users = []
+      errors = []
+      csv_reader.each do |row|
+        users << row
+        errors << "On line #{csv_reader.lineno}, username is missing." unless row['username'].present?
+        errors << "On line #{csv_reader.lineno}, password is missing." unless row['password'].present?
+      end
+      if errors.present?
+        flash[:error] = ['Error uploading student roster'] + errors
+      else
+        add_students(period, users)
+        flash[:notice] = 'Student roster has been uploaded.'
+      end
+    rescue CSV::MalformedCSVError => e
+      flash[:error] = e.message
     end
-    if errors.present?
-      flash[:error] = ['Error uploading student roster'] + errors
-    else
-      add_students(period, users)
-      flash[:notice] = 'Student roster has been uploaded.'
-    end
+
     redirect_to edit_admin_course_path(params[:id], anchor: 'roster')
   end
 

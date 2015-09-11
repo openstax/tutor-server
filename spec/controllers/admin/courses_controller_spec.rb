@@ -42,6 +42,7 @@ RSpec.describe Admin::CoursesController do
 
     let!(:file_1) { fixture_file_upload('files/test_courses_post_students_1.csv', 'text/csv') }
     let!(:file_2) { fixture_file_upload('files/test_courses_post_students_2.csv', 'text/csv') }
+    let!(:file_blankness) { fixture_file_upload('files/test_courses_post_students_blankness.csv', 'text/csv') }
     let!(:incomplete_file) { fixture_file_upload('files/test_courses_post_students_incomplete.csv', 'text/csv') }
 
     it 'adds students to a course period' do
@@ -84,6 +85,15 @@ RSpec.describe Admin::CoursesController do
         'On line 4, password is missing.'
       ])
     end
+
+    it 'gives a nice error and no exception if has funky characters' do
+      expect {
+        post :students, id: physics.id, course: { period: physics_period.id }, student_roster: file_blankness
+      }.not_to raise_error
+
+      expect(flash[:error]).to eq 'Unquoted fields do not allow \r or \n (line 2).'
+    end
+
   end
 
   describe 'GET #edit' do
