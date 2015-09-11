@@ -155,6 +155,17 @@ RSpec.describe Admin::CoursesController do
         expect(flash[:notice]).to eq "Course ecosystem \"#{eco_2.title}\" selected for \"Physics I\""
       end
     end
+
+    context 'when the mapping is valid' do
+      it 'errors out with a flash instead of an exception' do
+        allow_any_instance_of(Content::Strategies::Generated::Map).to receive(:valid?).and_return(false)
+        expect{
+          post :set_ecosystem, id: course.id, ecosystem_id: eco_2.id
+        }.not_to raise_error
+        expect(course.reload.ecosystems.count).to eq 1
+        expect(flash[:error]).not_to be_empty
+      end
+    end
   end
 
   context 'disallowing baddies' do
