@@ -10,9 +10,12 @@ module Content
           end
 
           def create!(from_ecosystems:, to_ecosystem:)
-            map = create(from_ecosystems: from_ecosystems, to_ecosystem: to_ecosystem)
-            raise ::Content::StrategyError unless map.valid?
-            map
+            create(from_ecosystems: from_ecosystems, to_ecosystem: to_ecosystem).tap do |map|
+              raise(
+                Content::MapInvalidError, "Cannot generate a valid ecosystem map from " +
+                "[#{from_ecosystems.collect(&:title).join(', ')}] to #{to_ecosystem.title}"
+              ) unless map.valid?
+            end
           end
 
           alias_method :find, :create
