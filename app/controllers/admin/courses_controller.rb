@@ -69,8 +69,12 @@ class Admin::CoursesController < Admin::BaseController
     if GetCourseEcosystem[course: course] == ecosystem
       flash[:notice] = "Course ecosystem \"#{ecosystem.title}\" is already selected for \"#{course.profile.name}\""
     else
-      CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
-      flash[:notice] = "Course ecosystem \"#{ecosystem.title}\" selected for \"#{course.profile.name}\""
+      begin
+        CourseContent::AddEcosystemToCourse[course: course, ecosystem: ecosystem]
+        flash[:notice] = "Course ecosystem \"#{ecosystem.title}\" selected for \"#{course.profile.name}\""
+      rescue Content::MapInvalidError => e
+        flash[:error] = e.message
+      end
     end
     redirect_to edit_admin_course_path(params[:id], anchor: 'content')
   end
