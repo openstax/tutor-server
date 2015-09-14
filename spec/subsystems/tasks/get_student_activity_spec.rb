@@ -1,18 +1,69 @@
 require 'rails_helper'
 require 'vcr_helper'
+VCR_OPTS.merge!(record: :all)
 
 module Tasks
   RSpec.describe GetStudentActivity, vcr: VCR_OPTS do
-    it 'returns all the student task step activity' do
-      course = CreateCourse[name: 'Biology I']
-      capture_stdout { CreateStudentHistory[course: course] }
+    let!(:course) { CreateCourse[name: 'Physics 101'] }
+    let!(:period) { CreatePeriod[course: course] }
 
+    let(:time) { Time.current }
+    let(:reading_due_at) { time + 1.week }
+    let(:homework1_due_at) { time + 1.day }
+    let(:homework2_due_at) { time + 2.weeks }
+
+    let(:student_1) { FactoryGirl.create :user_profile,
+                                         first_name: 'Student',
+                                         last_name: 'One',
+                                         full_name: 'Student One' }
+
+    let(:student_2) { FactoryGirl.create :user_profile,
+                                         first_name: 'Student',
+                                         last_name: 'Two',
+                                         full_name: 'Student Two' }
+
+    before(:all) do
+      DatabaseCleaner.start
+
+      VCR.use_cassette("GetStudentActivity", VCR_OPTS) do
+        @ecosystem = FetchAndImportBookAndCreateEcosystem[
+          book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
+        ]
+      end
+    end
+
+    after(:all) do
+      DatabaseCleaner.clean
+    end
+
+    before do
+      allow(Tasks::Assistants::HomeworkAssistant).to receive(:k_ago_map).with(1) {
+        [ [1,1] ]
+      }
+
+      CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: @ecosystem)
+
+      Timecop.freeze(time) do
+        SetupPerformanceReportData[course: course,
+                                   teacher: FactoryGirl.create(:user_profile),
+                                   students: [student_1, student_2],
+                                   ecosystem: @ecosystem]
+      end
+    end
+
+
+    it 'returns all the student task step activity' do
       results = GetStudentActivity[course: course]
 
       expect(results).to include({
         headers: ['title', 'type', 'status', 'exercise count', 'recovered exercise count',
-                 'due at', 'last worked', 'first name', 'last name']
+                  'due at', 'last worked', 'first name', 'last name']
       })
+
+      expect(results['data']).to include(
+        ['Homework task plan', 'homework', 'completed', 6, 0, homework1_due_at.to_s, nil,
+          'Student', 'One']
+      )
     end
         #period_id: course.periods.first.id.to_s,
         #data_headings: [

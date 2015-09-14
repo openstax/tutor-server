@@ -1,26 +1,45 @@
 module Tasks
   class GetStudentActivity
+    HEADERS = ['title', 'type', 'status', 'exercise_count', 'recovered_exercise_count',
+               'due_at', 'last_worked', 'first_name', 'last_name']
+
     lev_routine express_output: :activity
 
     protected
     def exec(course:)
-      course.periods.collect do |period|
-        task_steps = get_task_steps(period)
-        # to be continued...
-      end
-
-      outputs.activity = {
-        headers: ['title', 'type', 'status', 'exercise count', 'recovered exercise count',
-                  'due at', 'last worked', 'first name', 'last name']
-      }
+      outputs.activity = { headers: humanized_headers, data: [] }
+      task_steps(course).each { |ts| outputs.activity[:data] << task_step_values(ts) }
     end
 
     private
-    def get_task_steps(period)
+    def humanized_headers
+      HEADERS.map { |h| h.gsub('_', ' ') }
+    end
+
+    def task_steps(course)
+      course.periods.flat_map { |p| get_functional_task_steps(p) }
+    end
+
+    def get_functional_task_steps(period)
       task_types = Models::Task.task_types.values_at(:reading, :homework, :external)
       taskings = period.taskings.eager_load(task: {task: :task_steps})
                                 .where(task: {task: {task_type: task_types}})
-      taskings.flat_map { |tg| tg.task.task.task_steps }
+      taskings.flat_map do |tasking|
+        task = tasking.task.task
+        OpenStruct.new(title: task.task_plan.title,
+                       type: task.task_type,
+                       status: task.status,
+                       exercise_count: task.actual_and_placeholder_exercise_count,
+                       recovered_exercise_count: task.recovered_exercise_steps_count,
+                       due_at: task.due_at.to_s,
+                       worked_at: task.last_worked_at.to_s,
+                       first_name: tasking.role.user.profile.account.first_name,
+                       last_name: tasking.role.user.profile.account.last_name)
+      end
+    end
+
+    def task_step_values(task_step)
+      HEADERS.flat_map { |h| task_step.send(h) }
     end
   end
 end
