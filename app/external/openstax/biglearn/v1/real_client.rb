@@ -185,7 +185,9 @@ class OpenStax::Biglearn::V1::RealClient
     end
 
     # Return all the CLUEs in the proper order
-    cache_keys.collect{ |cache_key| cache_key_clues_map[cache_key] }
+    cache_keys.each_with_index.each_with_object({}) do |(cache_key, index), hash|
+      hash[pool_ids[index]] = cache_key_clues_map[cache_key]
+    end
   end
 
   def with_content_type_header(options = {})

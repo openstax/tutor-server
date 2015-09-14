@@ -67,7 +67,7 @@ class OpenStax::Biglearn::V1::FakeClient
   end
 
   def get_clues(roles:, pools:)
-    pools.size.times.collect do
+    pools.each_with_object({}) do |pool, hash|
       aggregate = rand(0.0..1.0)
       confidence_left  = [aggregate - 0.1, 0.0].max
       confidence_right = [aggregate + 0.1, 1.0].min
@@ -76,7 +76,7 @@ class OpenStax::Biglearn::V1::FakeClient
       samples = 6
       threshold = 'above'
 
-      {
+      hash[pool.uuid] = {
         value: aggregate,
         value_interpretation: level,
         confidence_interval: [

@@ -51,26 +51,17 @@ module CourseGuideMethods
       te.task_step.task.taskings.collect{ |tg| tg.role }
     end.uniq
 
-    pools = []
-
     # Flatten the array of pools so we can send it to Biglearn
-    sorted_chapter_groupings.each do |chapter, sorted_page_groupings|
-      pools << chapter.all_exercises_pool
-
-      sorted_page_groupings.each do |page, tasked_exercises|
-        pools << page.all_exercises_pool
+    pools = sorted_chapter_groupings.flat_map do |chapter, sorted_page_groupings|
+      [chapter.all_exercises_pool] + sorted_page_groupings.collect do |page, tasked_exercises|
+        page.all_exercises_pool
       end
     end
 
-    sorted_clues = OpenStax::Biglearn::V1.get_clues(roles: roles, pools: pools)
-
-    # Unflatten the returned CLUE's
-    sorted_chapter_groupings.collect do |chapter, sorted_page_groupings|
-      [sorted_clues.shift, sorted_page_groupings.size.times.collect{ sorted_clues.shift }]
-    end
+    OpenStax::Biglearn::V1.get_clues(roles: roles, pools: pools)
   end
 
-  def compile_pages(sorted_page_groupings, sorted_page_clues)
+  def compile_pages(sorted_page_groupings, clues_map)
     tasked_exercises = sorted_page_groupings.flat_map{ |page, tasked_exercises| tasked_exercises }
     roles = tasked_exercises.flat_map do |te|
       te.task_step.task.taskings.collect{ |tg| tg.role }
@@ -83,7 +74,7 @@ module CourseGuideMethods
         title: page.title,
         book_location: page.book_location,
         questions_answered_count: tasked_exercises.size,
-        clue: sorted_page_clues[index],
+        clue: clues_map[page.all_exercises_pool.uuid],
         practice_count: practices.size,
         page_ids: [page.id]
       }
@@ -97,13 +88,11 @@ module CourseGuideMethods
       [chapter, page_groupings.to_a.sort_by{ |page, tasked_exercises| page.book_location }]
     end.sort_by{ |chapter, sorted_page_groupings| chapter.book_location }
 
-    sorted_chapter_clues = get_chapter_clues(sorted_chapter_groupings)
+    clues_map = get_chapter_clues(sorted_chapter_groupings)
 
     sorted_chapter_groupings.each_with_index.collect do |(chapter, sorted_page_groupings), index|
 
-      chapter_clues = sorted_chapter_clues[index]
-
-      page_hashes = compile_pages(sorted_page_groupings, chapter_clues.last)
+      page_hashes = compile_pages(sorted_page_groupings, clues_map)
       tasked_exercises = sorted_page_groupings.flat_map do |page, tasked_exercises|
         tasked_exercises
       end
@@ -113,7 +102,7 @@ module CourseGuideMethods
         title: chapter.title,
         book_location: chapter.book_location,
         questions_answered_count: tasked_exercises.size,
-        clue: chapter_clues.first,
+        clue: clues_map[chapter.all_exercises_pool.uuid],
         practice_count: practices.size,
         page_ids: page_hashes.collect{|pp| pp[:page_ids]}.flatten,
         children: page_hashes

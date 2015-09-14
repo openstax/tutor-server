@@ -65,16 +65,23 @@ module OpenStax::Biglearn
     end
 
     context "get_clues" do
+      before(:each) do
+        pool_1.uuid = SecureRandom.hex
+        pool_2.uuid = SecureRandom.hex
+      end
+
       it 'returns a well-formatted array of clues' do
         profile = UserProfile::CreateProfile.call(username: SecureRandom.hex).outputs.profile
         profile.update_attribute(:exchange_read_identifier, '0edbe5f8f30abc5ba56b5b890bddbbe2')
         role = Role::CreateUserRole[profile.entity_user]
-        pools = ['ignored-in-fake-client', 'only-the-size-of-the-array-matters']
+        pools = [pool_1, pool_2]
+        pool_uuids = pools.collect(&:uuid)
 
         clues = client.get_clues(roles: role, pools: pools)
-        expect(clues.size).to eq pools.size
+        expect(clues.keys.size).to eq pools.size
 
-        clues.each do |clue|
+        clues.each do |pool_uuid, clue|
+          expect(pool_uuids).to include pool_uuid
           expect(clue[:value]).to be_a(Float)
           expect(['high', 'medium', 'low']).to include(clue[:value_interpretation])
           expect(clue[:confidence_interval]).to contain_exactly(kind_of(Float), kind_of(Float))

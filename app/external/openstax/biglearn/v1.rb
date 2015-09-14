@@ -45,10 +45,10 @@ module OpenStax::Biglearn::V1
     exercises
   end
 
-  # Return a CLUE value for the specified set of roles and pools.
-  # One clue is returned for each pool given.
-  # Each clue refers to one specific pool (in order), but uses all roles given.
-  # May return nil if no CLUE is available
+  # Return a CLUe value for the specified set of roles and pools.
+  # A map of pool uuids to CLUe values is returned. Each pool is associated with one CLUe.
+  # Each CLUe refers to one specific pool, but uses all roles given.
+  # May return nil if no CLUe is available
   # (e.g. no exercises in the pools or confidence too low).
   def self.get_clues(roles:, pools:)
     pools = [pools].flatten.compact
