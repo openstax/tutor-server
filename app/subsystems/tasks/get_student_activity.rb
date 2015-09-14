@@ -9,7 +9,7 @@ module Tasks
     def exec(course:)
       outputs.activity = {
         headers: humanized_headers,
-        data: task_steps(course).map { |ts| task_step_values(ts) }
+        data: task_data(course)
       }
     end
 
@@ -18,13 +18,14 @@ module Tasks
       HEADERS.map { |h| h.gsub('_', ' ') }
     end
 
-    def task_steps(course)
-      course.periods.flat_map { |p| get_functional_tasks(p) }
+    def task_data(course)
+      tasks = course.periods.flat_map { |p| get_functional_tasks(p) }
+      tasks.map { |t| task_values(t) }
     end
 
     def get_functional_tasks(period)
       task_types = Models::Task.task_types.values_at(:reading, :homework, :external)
-      taskings = period.taskings.eager_load(task: {task: :task_steps})
+      taskings = period.taskings.eager_load(task: :task)
                                 .where(task: {task: {task_type: task_types}})
       taskings.flat_map { |tasking| functionalized_task(tasking) }
     end
@@ -42,8 +43,8 @@ module Tasks
                      last_name: tasking.role.user.profile.account.last_name)
     end
 
-    def task_step_values(task_step)
-      HEADERS.flat_map { |h| task_step.send(h) }
+    def task_values(task)
+      HEADERS.flat_map { |h| task.send(h) }
     end
   end
 end
