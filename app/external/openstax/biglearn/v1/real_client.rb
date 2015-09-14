@@ -89,9 +89,6 @@ class OpenStax::Biglearn::V1::RealClient
   end
 
   def get_clues(roles:, pools:)
-    raise "At least one role must be specified when getting a CLUE" if roles.blank?
-    raise "At least one pool must be specified when getting a CLUE" if pools.blank?
-
     learners = get_exchange_read_identifiers_for_roles(roles: roles)
     pool_ids = pools.collect(&:uuid)
     last_answer_times = get_last_answer_times(roles: roles, pools: pools)

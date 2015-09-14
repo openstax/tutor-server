@@ -54,6 +54,9 @@ module OpenStax::Biglearn::V1
     pools = [pools].flatten.compact
     roles = [roles].flatten.compact
 
+    raise "At least one role must be specified when getting a CLUE" if roles.blank?
+    raise "At least one pool must be specified when getting a CLUE" if pools.blank?
+
     clue = client.get_clues(roles: roles, pools: pools) || []
   end
 
