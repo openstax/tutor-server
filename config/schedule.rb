@@ -1,4 +1,5 @@
+set :bundle_command, '/usr/local/bin/rbenv exec bundle exec'
+
 every 1.minute do
-  runner "OpenStax::Accounts::SyncAccounts.call"
-  runner "OpenStax::Accounts::SyncGroups.call"
+  rake 'openstax:accounts:sync:all'
 end
