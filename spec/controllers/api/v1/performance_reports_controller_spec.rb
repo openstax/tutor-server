@@ -29,31 +29,28 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
 
     describe '#index' do
       let(:teacher) { FactoryGirl.create :user_profile }
+
       let(:teacher_token) { FactoryGirl.create :doorkeeper_access_token,
                               resource_owner_id: teacher.id }
+
       let(:student_1) { FactoryGirl.create :user_profile,
                                            first_name: 'Student',
-                                           last_name: 'One',
-                                           full_name: 'Student One' }
+                                           last_name: 'One' }
+
       let(:student_1_token) { FactoryGirl.create :doorkeeper_access_token,
                                 resource_owner_id: student_1.id }
-      let(:student_2) { FactoryGirl.create :user_profile,
-                                           first_name: 'Student',
-                                           last_name: 'Two',
-                                           full_name: 'Student Two' }
 
       let(:student_2) { FactoryGirl.create :user_profile,
                                            first_name: 'Student',
-                                           last_name: 'Two',
-                                           full_name: 'Student Two' }
+                                           last_name: 'Two' }
+
       let(:student_3) { FactoryGirl.create :user_profile,
                                            first_name: 'Student',
-                                           last_name: 'Three',
-                                           full_name: 'Student Three' }
+                                           last_name: 'Three' }
+
       let(:student_4) { FactoryGirl.create :user_profile,
                                            first_name: 'Student',
-                                           last_name: 'Four',
-                                           full_name: 'Student Four' }
+                                           last_name: 'Four' }
 
       before do
         allow(Tasks::Assistants::HomeworkAssistant).to receive(:k_ago_map).with(1) {
