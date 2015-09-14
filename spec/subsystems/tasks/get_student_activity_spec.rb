@@ -2,8 +2,9 @@ require 'rails_helper'
 require 'vcr_helper'
 require 'database_cleaner'
 
+
 module Tasks
-  RSpec.describe GetStudentActivity, vcr: VCR_OPTS do
+  RSpec.describe GetStudentActivity do
     let!(:course) { CreateCourse[name: 'Physics 101'] }
     let!(:period) { CreatePeriod[course: course] }
 
@@ -25,7 +26,9 @@ module Tasks
     before(:all) do
       DatabaseCleaner.start
 
-      VCR.use_cassette("GetStudentActivity", VCR_OPTS) do
+      vcr_opts = { allow_unused_http_interactions: true }
+
+      VCR.use_cassette("GetStudentActivity", VCR_OPTS.merge(vcr_opts)) do
         @ecosystem = FetchAndImportBookAndCreateEcosystem[
           book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
         ]
