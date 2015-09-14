@@ -21,6 +21,17 @@ ActionController::Base.class_exec do
     response.header['X-App-Date'] = Time.now.httpdate
   end
 
+  def get_exception_cause(exception)
+    cause = exception.cause
+    return if cause.nil?
+
+    {
+      class: cause.class.name,
+      message: cause.message,
+      cause: get_exception_cause(cause)
+    }
+  end
+
   def rescue_from_exception(exception)
     # See https://github.com/rack/rack/blob/master/lib/rack/utils.rb#L453
     # for error names/symbols
@@ -67,7 +78,9 @@ ActionController::Base.class_exec do
         env: request.env,
         data: {
           error_id: @error_id,
+          class: exception.class.name,
           message: exception.message,
+          cause: get_exception_cause(exception),
           dns_name: dns_name,
           extras: extras
         },
