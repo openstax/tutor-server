@@ -1,6 +1,6 @@
 require 'rails_helper'
 require 'vcr_helper'
-VCR_OPTS.merge!(record: :all)
+require 'database_cleaner'
 
 module Tasks
   RSpec.describe GetStudentActivity, vcr: VCR_OPTS do
