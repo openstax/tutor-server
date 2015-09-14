@@ -7,8 +7,10 @@ module Tasks
 
     protected
     def exec(course:)
-      outputs.activity = { headers: humanized_headers, data: [] }
-      task_steps(course).each { |ts| outputs.activity[:data] << task_step_values(ts) }
+      outputs.activity = {
+        headers: humanized_headers,
+        data: task_steps(course).map { |ts| task_step_values(ts) }
+      }
     end
 
     private
