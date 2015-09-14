@@ -146,10 +146,10 @@ RSpec.describe ApplicationController, type: :controller do
         raise StandardError, 'Test Wrapped'
       rescue StandardError => exception
         begin
-          raise StandardError, 'Test Wrapper 1', cause: exception
+          raise StandardError, 'Test Wrapper 1'
         rescue StandardError => exception
           begin
-            raise StandardError, 'Test Wrapper 2', cause: exception
+            raise StandardError, 'Test Wrapper 2'
           rescue StandardError => exception
             exception
           end
