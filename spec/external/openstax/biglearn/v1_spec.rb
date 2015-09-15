@@ -66,6 +66,16 @@ RSpec.describe OpenStax::Biglearn::V1, type: :external do
       expect(response).to eq('client get_clues response')
     end
 
+    it 'returns an empty hash if pools is empty' do
+      response = OpenStax::Biglearn::V1.get_clues(roles: dummy_roles, pools: [])
+      expect(response).to eq({})
+    end
+
+    it 'returns a hash that maps all given pool uuids to nil if roles is empty' do
+      response = OpenStax::Biglearn::V1.get_clues(roles: [], pools: dummy_pools)
+      expect(response).to eq({'some uuid' => nil})
+    end
+
     it 'delegates add_exercises to the client' do
       response = OpenStax::Biglearn::V1.add_exercises(exercises: dummy_exercises)
       expect(response).to eq('client add_exercises response')
