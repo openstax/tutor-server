@@ -125,10 +125,14 @@ RSpec.describe ApplicationController, type: :controller do
 
   context 'rescue_from_exception' do
     let(:non_notifying_exception) {
-      SecurityTransgression.new('Test Non-notifying').tap{ |ex| ex.set_backtrace([]) }
+      SecurityTransgression.new('Test Non-notifying').tap do |ex|
+        ex.set_backtrace(['test.rb:42:in `raise!\''])
+      end
     }
     let(:notifying_exception)     {
-      StandardError.new('Test Notifying').tap{ |ex| ex.set_backtrace([]) }
+      StandardError.new('Test Notifying').tap do |ex|
+        ex.set_backtrace(['test.rb:42:in `notify!\''])
+      end
     }
 
     let(:oauth2_headers) { {} }
@@ -138,7 +142,7 @@ RSpec.describe ApplicationController, type: :controller do
       OpenStruct.new(headers: oauth2_headers, status: oauth2_status, body: oauth2_body)
     }
     let(:oauth2_exception)     {
-      OAuth2::Error.new(oauth2_request).tap{ |ex| ex.set_backtrace([]) }
+      OAuth2::Error.new(oauth2_request).tap{ |ex| ex.set_backtrace(['oauth2.rb:42:in `test!\'']) }
     }
 
     let(:nested_exception)        {
@@ -176,6 +180,7 @@ RSpec.describe ApplicationController, type: :controller do
           error_id: a_kind_of(String),
           class: 'StandardError',
           message: 'Test Notifying',
+          first_line_of_backtrace: 'test.rb:42:in `notify!\'',
           cause: nil,
           dns_name: 'unknown',
           extras: {}.inspect
@@ -202,6 +207,7 @@ RSpec.describe ApplicationController, type: :controller do
           error_id: a_kind_of(String),
           class: 'OAuth2::Error',
           message: '',
+          first_line_of_backtrace: 'oauth2.rb:42:in `test!\'',
           cause: nil,
           dns_name: 'unknown',
           extras: {
@@ -225,12 +231,15 @@ RSpec.describe ApplicationController, type: :controller do
           error_id: a_kind_of(String),
           class: 'StandardError',
           message: 'Test Wrapper 2',
+          first_line_of_backtrace: a_kind_of(String),
           cause: {
             class: 'StandardError',
             message: 'Test Wrapper 1',
+            first_line_of_backtrace: a_kind_of(String),
             cause: {
               class: 'StandardError',
               message: 'Test Wrapped',
+              first_line_of_backtrace: a_kind_of(String),
               cause: nil
             }
           },
