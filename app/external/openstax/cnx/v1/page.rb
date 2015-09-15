@@ -22,7 +22,7 @@ module OpenStax::Cnx::V1
     LO_REGEX = /ost-tag-lo-([\w+-]+)/
     STD_REGEX = /ost-tag-std-([\w+-]+)/
     TEKS_REGEX = /ost-tag-(teks-[\w+-]+)/
-    APLO_REGEX = /ost-tag-std-apbio-lo-([\w+-]+)/
+    APLO_REGEX = /ost-tag-std-apbio-([\w+-]+)/
 
     def initialize(hash: {}, id: nil, title: nil, content: nil)
       @hash            = hash
