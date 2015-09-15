@@ -62,12 +62,6 @@ class OpenStax::Biglearn::V1::RealClient
     uuids.first
   end
 
-  def get_exchange_read_identifiers_for_roles(roles:)
-    users = Role::GetUsersForRoles[roles]
-    UserProfile::Models::Profile.where(entity_user: users)
-                                .collect{ |p| p.exchange_read_identifier }
-  end
-
   def get_projection_exercises(role:, pools:, count:, difficulty:, allow_repetitions:)
     query = {
       learner_id: get_exchange_read_identifiers_for_roles(roles: role).first,
@@ -97,6 +91,12 @@ class OpenStax::Biglearn::V1::RealClient
   end
 
   private
+
+  def get_exchange_read_identifiers_for_roles(roles:)
+    users = Role::GetUsersForRoles[roles]
+    UserProfile::Models::Profile.where(entity_user: users)
+                                .collect{ |p| p.exchange_read_identifier }
+  end
 
   # Returns the last answer time for all roles for each pool given
   def get_answer_times_map(roles:, pools:)
@@ -166,7 +166,7 @@ class OpenStax::Biglearn::V1::RealClient
     missed_clues = result['aggregates'] || []
 
     # Iterate to the CLUes returned, filling in the cache and the result map
-    rr = missed_clues.each_with_object(pool_id_to_clue_map) do |clue, result|
+    missed_clues.each_with_object(pool_id_to_clue_map) do |clue, result|
       next if clue.blank? # Ignore blank CLUes
 
       pool_id   = clue['pool_id']
