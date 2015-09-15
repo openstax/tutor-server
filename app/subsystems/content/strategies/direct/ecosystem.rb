@@ -220,6 +220,10 @@ module Content
           find_pools(pages: pages, type: :practice_widget)
         end
 
+        def all_exercises_pools(pages:)
+          find_pools(pages: pages, type: :all_exercises)
+        end
+
         alias_method :entity_tags, :tags
         def tags
           entity_tags.collect do |entity_tag|

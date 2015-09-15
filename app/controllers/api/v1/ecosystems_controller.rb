@@ -57,8 +57,8 @@ class Api::V1::EcosystemsController < Api::V1::ApiController
     pool_types = [pool_types].flatten.compact
 
     # Default types
-    pool_types = ['reading_dynamic', 'reading_try_another',
-                  'homework_core', 'homework_dynamic', 'practice_widget'] if pool_types.empty?
+    pool_types = ['reading_dynamic', 'reading_try_another', 'homework_core',
+                  'homework_dynamic', 'practice_widget', 'all_exercises'] if pool_types.empty?
 
     # Convert to set
     pool_types = Set.new pool_types
@@ -75,6 +75,8 @@ class Api::V1::EcosystemsController < Api::V1::ApiController
       if pool_types.include?('homework_dynamic')
     pools['practice_widget'] = ecosystem.practice_widget_pools(pages: pages) \
       if pool_types.include?('practice_widget')
+    pools['all_exercises'] = ecosystem.all_exercises_pools(pages: pages) \
+      if pool_types.include?('all_exercises')
 
     # Build map of exercise uids to representations, with pool type
     exercise_representations = pools.each_with_object({}) do |(pool_type, pools), hash|
