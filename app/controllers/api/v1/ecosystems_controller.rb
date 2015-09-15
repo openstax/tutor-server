@@ -57,26 +57,16 @@ class Api::V1::EcosystemsController < Api::V1::ApiController
     pool_types = [pool_types].flatten.compact
 
     # Default types
-    pool_types = ['reading_dynamic', 'reading_try_another', 'homework_core',
-                  'homework_dynamic', 'practice_widget', 'all_exercises'] if pool_types.empty?
+    pool_types = Content::Pool.pool_types if pool_types.empty?
 
     # Convert to set
     pool_types = Set.new pool_types
 
     # Build map of pool types to exercises
-    pools = {}
-    pools['reading_dynamic'] = ecosystem.reading_dynamic_pools(pages: pages) \
-      if pool_types.include?('reading_dynamic')
-    pools['reading_try_another'] = ecosystem.reading_try_another_pools(pages: pages) \
-      if pool_types.include?('reading_try_another')
-    pools['homework_core'] = ecosystem.homework_core_pools(pages: pages) \
-      if pool_types.include?('homework_core')
-    pools['homework_dynamic'] = ecosystem.homework_dynamic_pools(pages: pages) \
-      if pool_types.include?('homework_dynamic')
-    pools['practice_widget'] = ecosystem.practice_widget_pools(pages: pages) \
-      if pool_types.include?('practice_widget')
-    pools['all_exercises'] = ecosystem.all_exercises_pools(pages: pages) \
-      if pool_types.include?('all_exercises')
+    pools = pool_types.each_with_object({}) do |pool_type, pools|
+      pool_method_name = "#{pool_type}_pools".to_sym
+      pools[pool_type] = ecosystem.send(pool_method_name, pages: pages)
+    end
 
     # Build map of exercise uids to representations, with pool type
     exercise_representations = pools.each_with_object({}) do |(pool_type, pools), hash|

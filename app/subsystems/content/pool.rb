@@ -13,6 +13,10 @@ module Content
       verify_and_return @strategy.pool_type, klass: Symbol, error: StrategyError
     end
 
+    def pool_types
+      verify_and_return @strategy.pool_types, klass: Symbol, error: ::Content::StrategyError
+    end
+
     def exercise_ids
       verify_and_return @strategy.exercise_ids, klass: Integer, error: StrategyError
     end

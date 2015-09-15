@@ -5,7 +5,7 @@ module Content
 
         wraps ::Content::Models::Pool
 
-        exposes :type, :exercise_ids, :exercises
+        exposes :pool_type, :pool_types, :exercise_ids, :exercises
 
         def uuid
           repository.uuid.nil? ? nil : ::Content::Uuid.new(repository.uuid)
