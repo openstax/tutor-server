@@ -26,9 +26,7 @@ module Tasks
     before(:all) do
       DatabaseCleaner.start
 
-      vcr_opts = { allow_unused_http_interactions: true }
-
-      VCR.use_cassette("GetStudentActivity", VCR_OPTS.merge(vcr_opts)) do
+      VCR.use_cassette("GetStudentActivity", VCR_OPTS) do
         @ecosystem = FetchAndImportBookAndCreateEcosystem[
           book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
         ]
@@ -81,8 +79,8 @@ module Tasks
 
       expect(results['data']).to include(
         [nil, nil, nil, nil, nil, "", nil, false,
-         "https://exercises-dev.openstax.org/exercises/234@1",
-         "A sentence explaining all the things!", "1804", nil, nil, nil]
+         "https://exercises-dev.openstax.org/exercises/152@2",
+         "A sentence explaining all the things!", "23094", nil, nil, nil]
       )
     end
   end

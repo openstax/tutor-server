@@ -3,8 +3,7 @@ require 'vcr_helper'
 require 'feature_js_helper'
 require 'database_cleaner'
 
-RSpec.feature 'Administration: export student task step activity per course',
-              vcr: VCR_OPTS, js: true do
+RSpec.feature 'Administration: export student task step activity per course', js: true do
   let!(:course) { CreateCourse[name: 'Physics 101'] }
   let!(:period) { CreatePeriod[course: course] }
 
@@ -23,9 +22,7 @@ RSpec.feature 'Administration: export student task step activity per course',
   before(:all) do
     DatabaseCleaner.start
 
-    vcr_opts = { allow_unused_http_interactions: true }
-
-    VCR.use_cassette("Admin/ExportStudentActivity", VCR_OPTS.merge(vcr_opts)) do
+    VCR.use_cassette("Admin/ExportStudentActivity", VCR_OPTS) do
       @ecosystem = FetchAndImportBookAndCreateEcosystem[
         book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
       ]
