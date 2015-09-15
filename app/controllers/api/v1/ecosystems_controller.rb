@@ -20,7 +20,13 @@ class Api::V1::EcosystemsController < Api::V1::ApiController
   def readings
     ecosystem = ::Content::Ecosystem.find(params[:id])
 
-    respond_with_ecosystem_readings(ecosystem)
+    OSU::AccessPolicy.require_action_allowed!(:readings, current_api_user, ecosystem)
+
+    # For the moment, we're assuming just one book per ecosystem
+    books = ecosystem.books
+    raise NotYetImplemented if books.count > 1
+
+    respond_with books, represent_with: Api::V1::BookTocsRepresenter
   end
 
   api :GET, '/ecosystems/:ecosystem_id/exercises(/:pool_types)',
@@ -34,42 +40,14 @@ class Api::V1::EcosystemsController < Api::V1::ApiController
   def exercises
     ecosystem = ::Content::Ecosystem.find(params[:id])
 
-    respond_with_ecosystem_exercises(ecosystem, params[:pool_types])
-  end
-
-  protected
-
-  def respond_with_ecosystem_readings(ecosystem)
-    OSU::AccessPolicy.require_action_allowed!(:readings, current_api_user, ecosystem)
-
-    # For the moment, we're assuming just one book per ecosystem
-    books = ecosystem.books
-    raise NotYetImplemented if books.count > 1
-
-    respond_with books, represent_with: Api::V1::BookTocsRepresenter
-  end
-
-  def respond_with_ecosystem_exercises(ecosystem, pool_types = nil)
     OSU::AccessPolicy.require_action_allowed!(:exercises, current_api_user, ecosystem)
 
-    pages = ecosystem.pages_by_ids(params[:page_ids])
-
-    pool_types = [pool_types].flatten.compact
-
-    # Default types
-    pool_types = Content::Pool.pool_types if pool_types.empty?
-
-    # Convert to set
-    pool_types = Set.new pool_types
-
-    # Build map of pool types to exercises
-    pools = pool_types.each_with_object({}) do |pool_type, pools|
-      pool_method_name = "#{pool_type}_pools".to_sym
-      pools[pool_type] = ecosystem.send(pool_method_name, pages: pages)
-    end
+    pools_map = GetEcosystemPoolsByPageIdsAndPoolTypes[ecosystem: ecosystem,
+                                                       page_ids: params[:page_ids],
+                                                       pool_types: params[:pool_types]]
 
     # Build map of exercise uids to representations, with pool type
-    exercise_representations = pools.each_with_object({}) do |(pool_type, pools), hash|
+    exercise_representations = pools_map.each_with_object({}) do |(pool_type, pools), hash|
       pools.flat_map{ |pool| pool.exercises(preload_tags: true) }.each do |exercise|
         hash[exercise.uid] ||= Api::V1::ExerciseRepresenter.new(exercise).to_hash
         hash[exercise.uid]['pool_types'] ||= []
