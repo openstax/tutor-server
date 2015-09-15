@@ -1,15 +1,57 @@
 require 'rails_helper'
 require 'vcr_helper'
 require 'feature_js_helper'
+require 'database_cleaner'
 
 RSpec.feature 'Administration: export student task step activity per course',
               vcr: VCR_OPTS, js: true do
+  let!(:course) { CreateCourse[name: 'Physics 101'] }
+  let!(:period) { CreatePeriod[course: course] }
+
+  let(:student_1) { FactoryGirl.create :user_profile,
+                                       first_name: 'Student',
+                                       last_name: 'One',
+                                       full_name: 'Student One' }
+
+  let(:student_2) { FactoryGirl.create :user_profile,
+                                       first_name: 'Student',
+                                       last_name: 'Two',
+                                       full_name: 'Student Two' }
+
+  before(:all) do
+    DatabaseCleaner.start
+
+    vcr_opts = { allow_unused_http_interactions: true }
+
+    VCR.use_cassette("Admin/ExportStudentActivity", VCR_OPTS.merge(vcr_opts)) do
+      @ecosystem = FetchAndImportBookAndCreateEcosystem[
+        book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
+      ]
+    end
+  end
+
+  after(:all) do
+    DatabaseCleaner.clean
+  end
+
+  before do
+    allow(Tasks::Assistants::HomeworkAssistant).to receive(:k_ago_map).with(1) {
+      [ [1,1] ]
+    }
+
+    CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: @ecosystem)
+
+    Timecop.freeze(time) do
+      SetupPerformanceReportData[course: course,
+                                 teacher: FactoryGirl.create(:user_profile),
+                                 students: [student_1, student_2],
+                                 ecosystem: @ecosystem]
+    end
+  end
+
   scenario 'obtain CSV for a single course' do
     admin = FactoryGirl.create(:user_profile, :administrator)
     stub_current_user(admin)
-
-    course = CreateCourse[name: 'Good Course']
-    capture_stdout { CreateStudentHistory[course: course] }
 
     visit admin_root_path
     click_link 'Courses'
