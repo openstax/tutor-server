@@ -6,7 +6,7 @@ class Content::Models::Book < Tutor::SubSystems::BaseModel
 
   belongs_to :ecosystem, inverse_of: :books
 
-  has_many :chapters, dependent: :destroy, autosave: true, inverse_of: :book
+  sortable_has_many :chapters, on: :number, dependent: :destroy, autosave: true, inverse_of: :book
   has_many :pages, through: :chapters
   has_many :exercises, through: :pages
 
