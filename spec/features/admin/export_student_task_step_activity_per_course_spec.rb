@@ -18,6 +18,8 @@ RSpec.feature 'Administration: export student task step activity per course',
                                        last_name: 'Two',
                                        full_name: 'Student Two' }
 
+  let(:time) { Time.current }
+
   before(:all) do
     DatabaseCleaner.start
 
@@ -56,7 +58,6 @@ RSpec.feature 'Administration: export student task step activity per course',
     visit admin_root_path
     click_link 'Courses'
 
-    time = Time.current
     formatted_time = time.strftime('%Y-%m-%d-%H-%M-%S-%L')
       # year - month - day - 24-hour clock hour - minute - second - millisecond
     allow(Time).to receive(:current) { time }
