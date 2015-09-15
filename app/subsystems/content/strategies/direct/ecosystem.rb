@@ -254,8 +254,7 @@ module Content
           entity_pages.where(id: page_ids)
                       .joins(pool_method_name)
                       .eager_load(pool_method_name).collect do |entity_page|
-            entity_pool = entity_page.send(pool_method_name)
-            ::Content::Pool.new(strategy: entity_pool)
+            entity_page.send(pool_method_name)
           end
         end
 

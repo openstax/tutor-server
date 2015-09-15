@@ -11,7 +11,7 @@ module Content
         class << self
           alias_method :pool_types_map, :pool_types
           def pool_types
-            pool_types.keys.collect(&:to_sym)
+            pool_types_map.keys
           end
         end
 

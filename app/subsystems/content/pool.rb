@@ -3,8 +3,8 @@ module Content
 
     include Wrapper
 
-    def self.pool_types(strategy_class: ::Content::Strategies::Direct::Ecosystem)
-      verify_and_return strategy_class.pool_types, klass: Symbol, error: ::Content::StrategyError
+    def self.pool_types(strategy_class: ::Content::Strategies::Direct::Pool)
+      verify_and_return strategy_class.pool_types, klass: String, error: StrategyError
     end
 
     def uuid
@@ -14,7 +14,7 @@ module Content
     end
 
     def pool_type
-      verify_and_return @strategy.pool_type, klass: Symbol, error: StrategyError
+      verify_and_return @strategy.pool_type, klass: String, error: StrategyError
     end
 
     def exercise_ids
