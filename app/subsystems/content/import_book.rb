@@ -1,11 +1,13 @@
 class Content::ImportBook
 
+  MAX_TAG_QUERY_SIZE = 64
+  MAX_UID_QUERY_SIZE = 128
+
   lev_routine
 
   uses_routine Content::Routines::ImportBookPart, as: :import_book_part,
                                                   translations: { outputs: { type: :verbatim } }
-  uses_routine Content::Routines::ImportExercises, as: :import_exercises,
-                                                  translations: { outputs: { type: :verbatim } }
+  uses_routine Content::Routines::ImportExercises, as: :import_exercises
   uses_routine Content::Routines::UpdatePageContent, as: :update_page_content
   uses_routine Content::Routines::PopulateExercisePools, as: :populate_exercise_pools
 
@@ -31,10 +33,7 @@ class Content::ImportBook
       outputs[:exercises] = []
       Rails.logger.warn "Imported book (#{cnx_book.uuid}@#{cnx_book.version}) has no LO's."
     else
-      outputs[:exercises] = nil
-      query_hash = exercise_uids.nil? ? \
-                     { tag: objective_page_tags.collect{ |pt| pt.tag.value } } : \
-                     { id: exercise_uids }
+      outputs[:exercises] = []
       page_block = ->(exercise_wrapper) {
         tags = Set.new(exercise_wrapper.los + exercise_wrapper.aplos)
         pages = objective_page_tags.select{ |opt| tags.include?(opt.tag.value) }
@@ -48,7 +47,23 @@ class Content::ImportBook
         pages.first
       }
 
-      run(:import_exercises, ecosystem: ecosystem, page: page_block, query_hash: query_hash)
+      if exercise_uids.nil?
+        # Split the tag queries into sets of MAX_TAG_QUERY_SIZE to avoid exceeding the URL limit
+        objective_page_tags.each_slice(MAX_TAG_QUERY_SIZE) do |page_tags|
+          query_hash = { tag: page_tags.collect{ |pt| pt.tag.value } }
+          outputs[:exercises] += run(:import_exercises, ecosystem: ecosystem,
+                                                        page: page_block,
+                                                        query_hash: query_hash).outputs.exercises
+        end
+      else
+        # Split the uid queries into sets of MAX_UID_QUERY_SIZE to avoid exceeding the URL limit
+        exercise_uids.each_slice(MAX_UID_QUERY_SIZE) do |uids|
+          query_hash = { id: uids }
+          outputs[:exercises] += run(:import_exercises, ecosystem: ecosystem,
+                                                        page: page_block,
+                                                        query_hash: query_hash).outputs.exercises
+        end
+      end
     end
 
     # Need a double reload here for it to work for some reason
