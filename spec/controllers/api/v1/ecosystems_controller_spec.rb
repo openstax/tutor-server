@@ -150,8 +150,15 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
         }.to raise_error(SecurityTransgression)
       end
 
-      it "should return an empty result if no page_ids specified" do
+      it "should return all exercises if page_ids is ommitted" do
         api_get :exercises, user_1_token, parameters: { id: @ecosystem.id }
+
+        expect(response).to have_http_status(:success)
+        expect(response.body_as_hash[:total_count]).to eq(@ecosystem.exercises.size)
+      end
+
+      it "should return an empty result if page_ids is empty" do
+        api_get :exercises, user_1_token, parameters: { id: @ecosystem.id, page_ids: [] }
 
         expect(response).to have_http_status(:success)
         expect(response.body_as_hash).to eq({total_count: 0, items: []})
