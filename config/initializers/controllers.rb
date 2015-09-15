@@ -77,7 +77,7 @@ ActionController::Base.class_exec do
 
     Rails.logger.error {
       "#{header}: #{exception.class.name} [#{@error_id}] " +
-      "<#{exception.message}> #{extras}\n\n#{exception.backtrace.join("\n")}"
+      "<#{exception.message}> #{extras}\n\n#{backtrace}"
     }
 
     cause = exception.cause
