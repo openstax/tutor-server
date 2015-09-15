@@ -91,18 +91,18 @@ class OpenStax::Biglearn::V1::RealClient
   def get_clues(roles:, pools:)
     learners = get_exchange_read_identifiers_for_roles(roles: roles)
     pool_ids = pools.collect(&:uuid)
-    last_answer_times = get_last_answer_times(roles: roles, pools: pools)
+    answer_times_map = get_answer_times_map(roles: roles, pools: pools)
 
-    fetch_clues(learners: learners, pool_ids: pool_ids, last_answer_times: last_answer_times)
+    fetch_clues(learners: learners, pool_ids: pool_ids, answer_times_map: answer_times_map)
   end
 
   private
 
   # Returns the last answer time for all roles for each pool given
-  def get_last_answer_times(roles:, pools:)
+  def get_answer_times_map(roles:, pools:)
     role_ids = roles.collect(&:id)
 
-    pools.collect do |pool|
+    pools.each_with_object({}) do |pool, hash|
       # Ignore exercise versions, since Biglearn also ignores them
       exercise_numbers = pool.exercises.collect(&:number)
 
@@ -112,12 +112,12 @@ class OpenStax::Biglearn::V1::RealClient
                                    task_step: { task: { taskings: { entity_role_id: role_ids } } })
                             .maximum(:last_completed_at)
       next if last_completed_at.nil?
-      last_completed_at.utc.to_s(:number)
+      hash[pool.uuid] = last_completed_at.utc.to_s(:number)
     end
   end
 
   # Get all the CLUEs from the cache, calling Biglearn only once if needed
-  def fetch_clues(learners:, pool_ids:, last_answer_times:)
+  def fetch_clues(learners:, pool_ids:, answer_times_map:)
     # Hash the learners so that the key size remains manageable
     # Sort learners to ensure consistent ordering when digesting
     learner_digest = Digest::SHA256.new
@@ -131,62 +131,68 @@ class OpenStax::Biglearn::V1::RealClient
     # The CLUEs returned refer to all given learners at once
     # Each CLUE refers to a single pool, so each pool corresponds to a different cache key
     # The last_answer_times are used for key expiration when someone answers a new question
-    cache_keys = pool_ids.each_with_index.collect do |pool_id, index|
-      "#{key_prefix}/#{pool_id}/#{learner_digest}-#{last_answer_times[index]}"
+    cache_key_to_pool_id_map = pool_ids.each_with_object({}) do |pool_id, hash|
+      cache_key = "#{key_prefix}/#{pool_id}/#{learner_digest}-#{answer_times_map[pool_id]}"
+      hash[cache_key] = pool_id
     end
+    cache_keys = cache_key_to_pool_id_map.keys
 
     # Read CLUEs for all pools from the cache
-    cache_key_clues_map = Rails.cache.read_multi(*cache_keys)
+    cache_key_to_clue_map = Rails.cache.read_multi(*cache_keys)
 
-    # Figure out which pools we missed in the cache and create a map
-    missed_pool_id_cache_key_map = cache_keys.each_with_index
-                                             .each_with_object({}) do |(cache_key, index), hash|
-      clue = cache_key_clues_map[cache_key]
-      hash[pool_ids[index]] = cache_key if clue.blank?
+    # Initialize result set for all cache hits
+    pool_id_to_clue_map = cache_key_to_clue_map.each_with_object({}) do |(cache_key, clue), hash|
+      pool_id = cache_key_to_pool_id_map[cache_key]
+      hash[pool_id] = clue
     end
 
-    if missed_pool_id_cache_key_map.empty?
-      # Cache hit for all CLUEs: Don't call Biglearn
-      missed_clues = []
-    else
-      # Call Biglearn (once) to get the missing CLUEs
-      query = { learners: learners, pool_ids: missed_pool_id_cache_key_map.keys }
-      response = request(:get, clue_uri, params: query)
-      result = handle_response(response) || {}
-      missed_clues = result['aggregates'] || []
+    # Figure out which cache keys we missed in the cache
+    missed_cache_keys = cache_keys - cache_key_to_clue_map.keys
 
-      # Iterate to the CLUEs returned, filling in the cache and the cache_key_clues_map
-      missed_clues.each do |clue|
-        next if clue.blank?
+    # Don't call Biglearn if we hit the cache for all the CLUes
+    return pool_id_to_clue_map if missed_cache_keys.empty?
 
-        pool_id = clue['pool_id']
-        aggregate      = clue['aggregate']
-        interpretation = clue['interpretation'] || {}
-        confidence     = clue['confidence'] || {}
-
-        clue_hash = {
-          value: aggregate,
-          value_interpretation: interpretation['level'],
-          confidence_interval: [
-            confidence['left'],
-            confidence['right']
-          ],
-          confidence_interval_interpretation: interpretation['confidence'],
-          sample_size: confidence['sample_size'],
-          sample_size_interpretation: interpretation['threshold']
-        }
-
-        cache_key = missed_pool_id_cache_key_map[pool_id]
-
-        Rails.cache.write(cache_key, clue_hash, expires_in: CLUE_CACHE_DURATION)
-
-        cache_key_clues_map[cache_key] = clue_hash
-      end
+    # Figure out which pools we missed in the cache
+    missed_pool_id_to_cache_key_map = missed_cache_keys.each_with_object({}) do |cache_key, hash|
+      pool_id = cache_key_to_pool_id_map[cache_key]
+      hash[pool_id] = cache_key
     end
+    missed_pool_ids = missed_pool_id_to_cache_key_map.keys
 
-    # Return all the CLUEs in the proper order
-    cache_keys.each_with_index.each_with_object({}) do |(cache_key, index), hash|
-      hash[pool_ids[index]] = cache_key_clues_map[cache_key]
+    # Call Biglearn (once) to get the missing CLUEs
+    query = { learners: learners, pool_ids: missed_pool_ids }
+    response = request(:get, clue_uri, params: query)
+    result = handle_response(response) || {}
+    missed_clues = result['aggregates'] || []
+
+    # Iterate to the CLUes returned, filling in the cache and the result map
+    rr = missed_clues.each_with_object(pool_id_to_clue_map) do |clue, result|
+      next if clue.blank? # Ignore blank CLUes
+
+      pool_id   = clue['pool_id']
+      cache_key = missed_pool_id_to_cache_key_map[pool_id]
+
+      next if cache_key.blank? # Ignore unknown pool_ids
+
+      aggregate      = clue['aggregate']
+      interpretation = clue['interpretation'] || {}
+      confidence     = clue['confidence'] || {}
+
+      clue_hash = {
+        value: aggregate,
+        value_interpretation: interpretation['level'],
+        confidence_interval: [
+          confidence['left'],
+          confidence['right']
+        ],
+        confidence_interval_interpretation: interpretation['confidence'],
+        sample_size: confidence['sample_size'],
+        sample_size_interpretation: interpretation['threshold']
+      }
+
+      Rails.cache.write(cache_key, clue_hash, expires_in: CLUE_CACHE_DURATION)
+
+      result[pool_id] = clue_hash
     end
   end
 
