@@ -22,7 +22,6 @@ module OpenStax::Cnx::V1
     LO_REGEX = /ost-tag-lo-([\w+-]+)/
     STD_REGEX = /ost-tag-std-([\w+-]+)/
     TEKS_REGEX = /ost-tag-(teks-[\w+-]+)/
-    APLO_REGEX = /ost-tag-std-apbio-([\w+-]+)/
 
     def initialize(hash: {}, id: nil, title: nil, content: nil)
       @hash            = hash
@@ -194,11 +193,7 @@ module OpenStax::Cnx::V1
           value = TEKS_REGEX.match(klass).try(:[], 1)
           type = :teks
         elsif node.matches?(APBIO_DEF_NODE_CSS)
-          # Hack - Remove when we have another way to determine chapter/section for AP LO's
-          # Get book, chapter and section from first LO (for bio)
-          hack = /([\w+-]+)-lo[\d]+/.match(@tags.values.first[:value]).try(:[], 1) || 'apbio'
-          value = APLO_REGEX.match(klass).try(:[], 1)
-          value = "#{hack}-aplo-#{value}" unless value.nil?
+          value = LO_REGEX.match(klass).try(:[], 1)
           type = :aplo
         end
 
