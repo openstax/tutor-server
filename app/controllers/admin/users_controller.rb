@@ -15,10 +15,15 @@ class Admin::UsersController < Admin::BaseController
 
   def create
     handle_with(Admin::UsersCreate,
-                complete: -> (*) {
-                  update_account(@handler_result.outputs[:profile], [:full_name])
+                success: ->(*) {
                   flash[:notice] = 'The user has been added.'
-                  redirect_to admin_users_path(search_term: @handler_result.outputs[:profile].username)
+                  redirect_to admin_users_path(
+                    search_term: @handler_result.outputs[:profile].username
+                  )
+                },
+                failure: ->(*) {
+                  flash[:error] = 'Invalid user information.'
+                  redirect_to new_admin_user_path
                 })
   end
 

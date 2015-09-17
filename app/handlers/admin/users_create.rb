@@ -5,14 +5,28 @@ class Admin::UsersCreate
     translations: { outputs: { type: :verbatim } },
     as: :create_profile
 
+  paramify :user do
+    attribute :username, type: String
+    attribute :password, type: String
+    attribute :first_name, type: String
+    attribute :last_name, type: String
+    attribute :full_name, type: String
+    attribute :title, type: String
+    attribute :email, type: String
+
+    validates :username, presence: true
+    validates :password, presence: true
+    validates :first_name, presence: true
+    validates :last_name, presence: true
+  end
+
   protected
+
   def authorized?
     true
   end
 
   def handle
-    user_params = params[:user]
-    run(:create_profile, username: user_params[:username],
-                         password: user_params[:password])
+    run(:create_profile, **user_params.attributes.symbolize_keys)
   end
 end

@@ -3,21 +3,41 @@
 <%= lev_form_for :user, url: url, method: method, html: {class: 'form-horizontal'} do |f| %>
 
   <div class='form-group'>
-    <%= f.label :username, class: 'col-sm-2 control-label' %>
+    <%= f.label 'Username*', for: 'user_username', class: 'col-sm-2 control-label' %>
     <%= f.text_field :username %>
   </div>
 
   <% if @user.nil? %>
     <div class='form-group'>
-      <%= f.label :password, class: 'col-sm-2 control-label' %>
+      <%= f.label 'Password*', for: 'user_password', class: 'col-sm-2 control-label' %>
       <%= f.password_field :password %>
     </div>
   <% end %>
 
   <div class='form-group'>
-    <%= f.label :full_name, class: 'col-sm-2 control-label' %>
+    <%= f.label 'First name*', for: 'user_first_name', class: 'col-sm-2 control-label' %>
+    <%= f.text_field :first_name %>
+  </div class='form-group'>
+
+  <div class='form-group'>
+    <%= f.label 'Last name*', for: 'user_last_name', class: 'col-sm-2 control-label' %>
+    <%= f.text_field :last_name %>
+  </div class='form-group'>
+
+  <div class='form-group'>
+    <%= f.label 'Full name override', for: 'user_full_name', class: 'col-sm-2 control-label' %>
     <%= f.text_field :full_name %>
   </div class='form-group'>
+
+  <div class='form-group'>
+    <%= f.label :title, class: 'col-sm-2 control-label' %>
+    <%= f.text_field :title %>
+  </div>
+
+  <div class='form-group'>
+    <%= f.label :email, class: 'col-sm-2 control-label' %>
+    <%= f.text_field :email %>
+  </div>
 
   <div>
     <%= f.submit 'Save', class: 'btn btn-primary' %>
