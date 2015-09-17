@@ -23,6 +23,8 @@ RSpec.feature 'Administration', vcr: VCR_OPTS do
 
     fill_in 'Username', with: 'superwoman'
     fill_in 'Password', with: 'goldenlasso25'
+    fill_in 'First name', with: 'Super'
+    fill_in 'Last name', with: 'Woman'
     click_button 'Save'
 
     expect(current_path).to eq(admin_users_path)
