@@ -10,6 +10,9 @@ class CollectCourseInfo
   uses_routine GetTeacherNames,
                translations: { outputs: { type: :verbatim } },
                as: :get_teacher_names
+  uses_routine GetUserCourses,
+               translations: { outputs: { type: :verbatim } },
+               as: :get_courses
   uses_routine GetUserCourseRoles,
                translations: { outputs: { type: :verbatim } },
                as: :get_course_roles
@@ -32,12 +35,8 @@ class CollectCourseInfo
     profiles = if course
                  CourseProfile::Models::Profile.where(entity_course_id: course.id) || []
                elsif user
-                 CourseProfile::Models::Profile.all.select do |p|
-                   run(:is_student, user: user, course: p.course)
-                       .outputs.user_is_course_student ||
-                   run(:is_teacher, user: user, course: p.course)
-                       .outputs.user_is_course_teacher
-                 end
+                 courses = run(:get_courses, user: user).outputs.courses
+                 CourseProfile::Models::Profile.where(entity_course_id: courses.collect(&:id))
                else
                  CourseProfile::Models::Profile.all
                end
