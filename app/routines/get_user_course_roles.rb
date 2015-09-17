@@ -18,12 +18,14 @@ class GetUserCourseRoles
 
   protected
 
-  def exec(course:, user:, types: :any)
-    run(:get_user_roles, user)
-    run(:get_course_roles, course: course, types: types)
+  def exec(course:, user:, types: :any, include_inactive_students: false)
+    user_roles = run(:get_user_roles, user).outputs.roles
+    course_roles = run(:get_course_roles, course: course,
+                                          types: types,
+                                          include_inactive_students: include_inactive_students)
+                     .outputs.roles
 
     # Intersect the results from above
-    outputs[:roles] = outputs["[:get_user_roles, :roles]"] &
-                      outputs["[:get_course_roles, :roles]"]
+    outputs[:roles] = user_roles & course_roles
   end
 end

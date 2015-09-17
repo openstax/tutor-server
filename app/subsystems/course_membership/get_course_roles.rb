@@ -7,7 +7,9 @@ class CourseMembership::GetCourseRoles
 
   protected
 
-  def exec(course:, types: :any)
-    run(:get_period_roles, periods: course.periods, types: types)
+  def exec(course:, types: :any, include_inactive_students: false)
+    run(:get_period_roles, periods: course.periods,
+                           types: types,
+                           include_inactive_students: include_inactive_students)
   end
 end

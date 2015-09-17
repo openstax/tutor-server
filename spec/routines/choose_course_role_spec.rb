@@ -109,12 +109,25 @@ describe ChooseCourseRole do
     end
 
     context "and the role is a course student and the user is a teacher" do
-      subject {
-        ChooseCourseRole.call(user: teacher, course: course, role_id: student_role.id)
-      }
+      context "and the student is active" do
+        subject {
+          ChooseCourseRole.call(user: teacher, course: course, role_id: student_role.id)
+        }
 
-      it "returns the provided role" do
-        expect(subject.outputs.role).to eq(student_role)
+        it "returns the provided role" do
+          expect(subject.outputs.role).to eq(student_role)
+        end
+      end
+
+      context "and the student is inactive" do
+        subject do
+          student_role.student.inactivate.save!
+          ChooseCourseRole.call(user: teacher, course: course, role_id: student_role.id)
+        end
+
+        it "returns the provided role" do
+          expect(subject.outputs.role).to eq(student_role)
+        end
       end
     end
 
