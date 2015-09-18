@@ -1,7 +1,6 @@
 <% method ||= :post %>
 
 <%= lev_form_for :user, url: url, method: method, html: {class: 'form-horizontal'} do |f| %>
-
   <div class='form-group'>
     <%= f.label 'Username*', for: 'user_username', class: 'col-sm-2 control-label' %>
     <%= f.text_field :username %>
@@ -34,9 +33,21 @@
     <%= f.text_field :title %>
   </div>
 
+  <% if @user.nil? %>
+    <div class='form-group'>
+      <%= f.label :email, class: 'col-sm-2 control-label' %>
+      <%= f.text_field :email %>
+    </div>
+  <% end %>
+
   <div class='form-group'>
-    <%= f.label :email, class: 'col-sm-2 control-label' %>
-    <%= f.text_field :email %>
+    <%= f.label :administrator, class: 'col-sm-2 control-label' %>
+    <%= f.check_box :administrator %>
+  </div>
+
+  <div class='form-group'>
+    <%= f.label :content_analyst, class: 'col-sm-2 control-label' %>
+    <%= f.check_box :content_analyst %>
   </div>
 
   <div>

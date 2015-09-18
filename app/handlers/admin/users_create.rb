@@ -5,6 +5,9 @@ class Admin::UsersCreate
     translations: { outputs: { type: :verbatim } },
     as: :create_profile
 
+  ALLOWED_ATTRIBUTES = ['username', 'password', 'first_name', 'last_name',
+                        'full_name', 'title', 'email']
+
   paramify :user do
     attribute :username, type: String
     attribute :password, type: String
@@ -27,6 +30,6 @@ class Admin::UsersCreate
   end
 
   def handle
-    run(:create_profile, **user_params.attributes.symbolize_keys)
+    run(:create_profile, **user_params.attributes.slice(ALLOWED_ATTRIBUTES).symbolize_keys)
   end
 end

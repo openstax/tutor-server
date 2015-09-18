@@ -31,9 +31,17 @@ class Admin::UsersController < Admin::BaseController
   end
 
   def update
-    update_account(@user, [:username, :full_name])
-    flash[:notice] = 'The user has been updated.'
-    redirect_to admin_users_path
+    handle_with(Admin::UsersUpdate,
+                success: ->(*) {
+                  flash[:notice] = 'The user has been updated.'
+                  redirect_to admin_users_path(
+                    search_term: @handler_result.outputs[:profile].username
+                  )
+                },
+                failure: ->(*) {
+                  flash[:error] = 'Invalid user information.'
+                  redirect_to new_admin_user_path
+                })
   end
 
   def become
