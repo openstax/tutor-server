@@ -65,8 +65,7 @@ RSpec.describe Admin::UsersController do
       full_name: 'Updated Name'
     }
 
-    user.reload
-    expect(user.username).to eq 'updated'
+    expect(user.reload.username).to eq 'updated'
     expect(user.full_name).to eq 'Updated Name'
   end
 end

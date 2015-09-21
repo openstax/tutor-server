@@ -4,16 +4,11 @@ class Admin::UsersUpdate
   ALLOWED_ATTRIBUTES = ['username', 'first_name', 'last_name', 'full_name', 'title']
 
   paramify :user do
-    attribute :id, type: Integer
     attribute :username, type: String
     attribute :first_name, type: String
     attribute :last_name, type: String
     attribute :full_name, type: String
     attribute :title, type: String
-
-    validates :username, presence: true
-    validates :first_name, presence: true
-    validates :last_name, presence: true
   end
 
   protected
@@ -22,10 +17,16 @@ class Admin::UsersUpdate
     true
   end
 
+  # The :profile option is required
   def handle
-    profile = UserProfile::Models::Profile.find(user_params.id)
-    account = profile.account
+    account = options[:profile].account
+    outputs[:account] = account
+
+    # Validate the account but do not call save
     # Use update_columns to prevent save callbacks that would send updates to Accounts
-    account.update_columns(user_params.attributes.slice(ALLOWED_ATTRIBUTES))
+    account.assign_attributes(user_params.attributes.slice(*ALLOWED_ATTRIBUTES))
+    account.valid?
+    transfer_errors_from account, {type: :verbatim}, true
+    account.update_columns(user_params.attributes.slice(*ALLOWED_ATTRIBUTES))
   end
 end

@@ -30,6 +30,6 @@ class Admin::UsersCreate
   end
 
   def handle
-    run(:create_profile, **user_params.attributes.slice(ALLOWED_ATTRIBUTES).symbolize_keys)
+    run(:create_profile, **user_params.attributes.slice(*ALLOWED_ATTRIBUTES).symbolize_keys)
   end
 end
