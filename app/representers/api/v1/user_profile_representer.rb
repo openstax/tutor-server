@@ -10,6 +10,9 @@ module Api::V1
     property :is_admin?,
              as: :is_admin
 
+    property :is_content_analyst?,
+             as: :is_content_analyst
+
     property :profile_url,
              getter: ->(*) {
                Addressable::URI.join(
