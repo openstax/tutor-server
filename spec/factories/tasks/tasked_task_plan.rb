@@ -48,8 +48,8 @@ FactoryGirl.define do
       period = course.periods.first || CreatePeriod[course: course]
 
       task_plan.tasking_plans = evaluator.number_of_students.times.collect do |ii|
-        user = create :user_profile
-        role = Role::GetDefaultUserRole[user.entity_user]
+        profile = create :user_profile_profile
+        role = Role::GetDefaultUserRole[profile.user]
         CourseMembership::AddStudent.call(period: period, role: role)
         build :tasks_tasking_plan, task_plan: task_plan, target: role
       end

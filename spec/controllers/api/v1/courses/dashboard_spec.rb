@@ -1,19 +1,19 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-describe Api::V1::Courses::Dashboard, :type => :routine, :vcr => VCR_OPTS do
+describe Api::V1::Courses::Dashboard, type: :routine, vcr: VCR_OPTS do
 
   let!(:course)         { CreateCourse[name: 'Physics 101'] }
   let!(:period)         { CreatePeriod[course: course] }
 
-  let!(:student_user)   { FactoryGirl.create(:user_profile).entity_user }
+  let!(:student_user)   { FactoryGirl.create(:user_profile_profile).user }
   let!(:student_role)   { AddUserAsPeriodStudent.call(user: student_user,
                                                       period: period).outputs.role }
 
-  let!(:teacher_user)   { FactoryGirl.create(:user_profile,
+  let!(:teacher_user)   { FactoryGirl.create(:user_profile_profile,
                                              first_name: 'Bob',
                                              last_name: 'Newhart',
-                                             full_name: 'Bob Newhart').entity_user }
+                                             full_name: 'Bob Newhart').user }
   let!(:teacher_role)   { AddUserAsCourseTeacher.call(user: teacher_user,
                                                       course: course)
                                                 .outputs.role }

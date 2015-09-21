@@ -28,29 +28,29 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
     end
 
     describe '#index' do
-      let(:teacher) { FactoryGirl.create :user_profile }
+      let(:teacher) { FactoryGirl.create :user_profile_profile }
       let(:teacher_token) { FactoryGirl.create :doorkeeper_access_token,
                               resource_owner_id: teacher.id }
-      let(:student_1) { FactoryGirl.create :user_profile,
+      let(:student_1) { FactoryGirl.create :user_profile_profile,
                                            first_name: 'Student',
                                            last_name: 'One',
                                            full_name: 'Student One' }
       let(:student_1_token) { FactoryGirl.create :doorkeeper_access_token,
                                 resource_owner_id: student_1.id }
-      let(:student_2) { FactoryGirl.create :user_profile,
+      let(:student_2) { FactoryGirl.create :user_profile_profile,
                                            first_name: 'Student',
                                            last_name: 'Two',
                                            full_name: 'Student Two' }
 
-      let(:student_2) { FactoryGirl.create :user_profile,
+      let(:student_2) { FactoryGirl.create :user_profile_profile,
                                            first_name: 'Student',
                                            last_name: 'Two',
                                            full_name: 'Student Two' }
-      let(:student_3) { FactoryGirl.create :user_profile,
+      let(:student_3) { FactoryGirl.create :user_profile_profile,
                                            first_name: 'Student',
                                            last_name: 'Three',
                                            full_name: 'Student Three' }
-      let(:student_4) { FactoryGirl.create :user_profile,
+      let(:student_4) { FactoryGirl.create :user_profile_profile,
                                            first_name: 'Student',
                                            last_name: 'Four',
                                            full_name: 'Student Four' }
@@ -261,12 +261,12 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
   end
 
   describe 'POST #export' do
-    let(:teacher) { FactoryGirl.create :user_profile }
+    let(:teacher) { FactoryGirl.create :user_profile_profile }
     let(:teacher_token) { FactoryGirl.create :doorkeeper_access_token,
                            resource_owner_id: teacher.id }
 
     before do
-      AddUserAsCourseTeacher[course: course, user: teacher.entity_user]
+      AddUserAsCourseTeacher[course: course, user: teacher.user]
     end
 
     context 'success' do
@@ -290,7 +290,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
 
     context 'failure' do
       it 'returns 403 unauthorized users' do
-        unknown = FactoryGirl.create :user_profile
+        unknown = FactoryGirl.create :user_profile_profile
         unknown_token = FactoryGirl.create :doorkeeper_access_token,
                                            resource_owner_id: unknown.id
 
@@ -308,22 +308,23 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
   end
 
   describe 'GET #exports' do
-    let(:teacher) { FactoryGirl.create :user_profile }
+    let(:teacher) { FactoryGirl.create :user_profile_profile }
     let(:teacher_token) { FactoryGirl.create :doorkeeper_access_token,
                            resource_owner_id: teacher.id }
 
     before(:each) do
-      AddUserAsCourseTeacher[course: course, user: teacher.entity_user]
+      AddUserAsCourseTeacher[course: course, user: teacher.user]
     end
 
     context 'success' do
       before(:each) do
-        role = ChooseCourseRole[user: teacher.entity_user,
+        role = ChooseCourseRole[user: teacher.user,
                                 course: course,
                                 allowed_role_type: :teacher]
 
         @export = Tempfile.open(['test_export', '.xls']) do |file|
-          FactoryGirl.create(:performance_report_export, export: file, course: course, role: role)
+          FactoryGirl.create(:tasks_performance_report_export,
+                             export: file, course: course, role: role)
         end
       end
 
@@ -346,7 +347,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
 
     context 'failure' do
       it 'returns 403 for users who are not teachers of the course' do
-        unknown = FactoryGirl.create :user_profile
+        unknown = FactoryGirl.create :user_profile_profile
         unknown_token = FactoryGirl.create :doorkeeper_access_token,
                                            resource_owner_id: unknown.id
 

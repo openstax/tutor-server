@@ -2,14 +2,14 @@ require "rails_helper"
 
 describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v1 do
 
-  let!(:course) { CreateCourse[name: 'Anything'] }
-  let!(:period) { CreatePeriod[course: course] }
+  let!(:course)    { CreateCourse[name: 'Anything'] }
+  let!(:period)    { CreatePeriod[course: course] }
 
-  let!(:user) { FactoryGirl.create :user_profile }
-  let!(:teacher) { FactoryGirl.create :user_profile }
-  let!(:student) { FactoryGirl.create :user_profile }
+  let!(:user)      { FactoryGirl.create :user_profile_profile }
+  let!(:teacher)   { FactoryGirl.create :user_profile_profile }
+  let!(:student)   { FactoryGirl.create :user_profile_profile }
 
-  let!(:page) { FactoryGirl.create :content_page }
+  let!(:page)      { FactoryGirl.create :content_page }
   let!(:task_plan) { FactoryGirl.build(:tasks_task_plan,
                                        owner: course,
                                        assistant: get_assistant(course: course,
@@ -30,11 +30,11 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
                                                   settings: { page_ids: [page.id.to_s] },
                                                   published_at: Time.now) }
 
-  let(:unaffiliated_teacher) { FactoryGirl.create :user_profile }
+  let(:unaffiliated_teacher) { FactoryGirl.create :user_profile_profile }
 
   before do
-    AddUserAsCourseTeacher.call(course: course, user: teacher.entity_user)
-    AddUserAsPeriodStudent.call(period: period, user: student.entity_user)
+    AddUserAsCourseTeacher.call(course: course, user: teacher.user)
+    AddUserAsPeriodStudent.call(period: period, user: student.user)
   end
 
   context 'show' do

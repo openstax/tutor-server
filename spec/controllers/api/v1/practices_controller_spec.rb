@@ -3,13 +3,13 @@ require 'vcr_helper'
 require 'database_cleaner'
 
 RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
-  let!(:user_1) { FactoryGirl.create :user_profile }
+  let!(:profile_1)    { FactoryGirl.create :user_profile_profile }
   let!(:user_1_token) { FactoryGirl.create :doorkeeper_access_token,
-                                           resource_owner_id: user_1.id }
+                                           resource_owner_id: profile_1.id }
 
-  let!(:user_2) { FactoryGirl.create :user_profile }
+  let!(:profile_2)    { FactoryGirl.create :user_profile_profile }
   let!(:user_2_token) { FactoryGirl.create :doorkeeper_access_token,
-                                           resource_owner_id: user_2.id }
+                                           resource_owner_id: profile_2.id }
 
   let!(:userless_token) { FactoryGirl.create :doorkeeper_access_token }
 
@@ -34,7 +34,7 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
     let!(:exercise_4) { FactoryGirl.create :content_exercise, page: page }
     let!(:exercise_5) { FactoryGirl.create :content_exercise, page: page }
 
-    let!(:role) { AddUserAsPeriodStudent[period: period, user: user_1.entity_user] }
+    let!(:role) { AddUserAsPeriodStudent[period: period, user: profile_1.user] }
 
     before(:each) do
       outs = Content::Routines::PopulateExercisePools.call(book: page.book, save: false).outputs
@@ -111,7 +111,7 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
 
   context "GET #show" do
     it "returns nothing when practice widget not yet set" do
-      AddUserAsPeriodStudent.call(period: period, user: user_1.entity_user)
+      AddUserAsPeriodStudent.call(period: period, user: profile_1.user)
       api_get :show, user_1_token, parameters: { id: course.id,
                                                  role_id: Entity::Role.last.id }
 
@@ -119,7 +119,7 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
     end
 
     it "returns a practice widget" do
-      AddUserAsPeriodStudent.call(period: period, user: user_1.entity_user)
+      AddUserAsPeriodStudent.call(period: period, user: profile_1.user)
       ResetPracticeWidget.call(role: Entity::Role.last, exercise_source: :fake)
       ResetPracticeWidget.call(role: Entity::Role.last, exercise_source: :fake)
 
@@ -135,8 +135,8 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
     end
 
     it "can be called by a teacher using a student role" do
-      AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
-      student_role = AddUserAsPeriodStudent[period: period, user: user_2.entity_user]
+      AddUserAsCourseTeacher.call(course: course, user: profile_1.user)
+      student_role = AddUserAsPeriodStudent[period: period, user: profile_2.user]
       ResetPracticeWidget.call(role: student_role, exercise_source: :fake)
 
       api_get :show, user_1_token, parameters: { id: course.id,
@@ -154,7 +154,7 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
         api_get :show, user_1_token, parameters: { id: course.id }
       }.to raise_error(SecurityTransgression)
 
-      AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
+      AddUserAsCourseTeacher.call(course: course, user: profile_1.user)
 
       expect {
         api_get :show, user_1_token, parameters: { id: course.id }

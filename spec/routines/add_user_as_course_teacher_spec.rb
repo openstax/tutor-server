@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe AddUserAsCourseTeacher do
+describe AddUserAsCourseTeacher, type: :routine do
   context "when the given user is not a teacher in the given course" do
     it "returns the user's new teacher role" do
       user   = Entity::User.create!

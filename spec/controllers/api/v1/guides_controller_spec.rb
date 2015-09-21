@@ -4,21 +4,20 @@ require 'database_cleaner'
 
 RSpec.describe Api::V1::GuidesController, type: :controller, api: true,
                                           version: :v1, vcr: VCR_OPTS do
-  let!(:user_1)          { FactoryGirl.create :user_profile }
-  let!(:user_1_token)    { FactoryGirl.create :doorkeeper_access_token,
-                                              resource_owner_id: user_1.id }
+  let!(:profile_1)          { FactoryGirl.create :user_profile_profile }
+  let!(:user_1_token)       { FactoryGirl.create :doorkeeper_access_token,
+                                                 resource_owner_id: profile_1.id }
 
-  let!(:user_2)          { FactoryGirl.create :user_profile }
-  let!(:user_2_token)    { FactoryGirl.create :doorkeeper_access_token,
-                                              resource_owner_id: user_2.id }
+  let!(:profile_2)          { FactoryGirl.create :user_profile_profile }
+  let!(:user_2_token)       { FactoryGirl.create :doorkeeper_access_token,
+                                                 resource_owner_id: profile_2.id }
 
   let!(:course) { CreateCourse[name: 'Physics 101'] }
   let!(:period) { CreatePeriod[course: course] }
 
   describe 'Learning guides' do
     let!(:teacher_role) {
-      AddUserAsCourseTeacher.call(course: course,
-                                  user: user_1.entity_user).outputs[:role]
+      AddUserAsCourseTeacher.call(course: course, user: profile_1.user).outputs[:role]
     }
 
     let!(:course_guide) {
@@ -27,15 +26,13 @@ RSpec.describe Api::V1::GuidesController, type: :controller, api: true,
 
     describe '#student' do
       let!(:student_role) {
-        AddUserAsPeriodStudent.call(period: period,
-                                    user: user_2.entity_user).outputs[:role]
+        AddUserAsPeriodStudent.call(period: period, user: profile_2.user).outputs[:role]
       }
 
-      let!(:user_3) { FactoryGirl.create :user_profile }
+      let!(:profile_3) { FactoryGirl.create :user_profile_profile }
 
       let!(:student_3_role) {
-        AddUserAsPeriodStudent.call(period: period,
-                                    user: user_3.entity_user).outputs[:role]
+        AddUserAsPeriodStudent.call(period: period, user: profile_3.user).outputs[:role]
       }
 
       it 'returns the student guide for the logged in user' do
@@ -51,8 +48,7 @@ RSpec.describe Api::V1::GuidesController, type: :controller, api: true,
                                .with(role: student_3_role)
                                .and_return(course_guide)
 
-        api_get :student, user_1_token, parameters: { id: course.id,
-                                                      role_id: student_3_role.id }
+        api_get :student, user_1_token, parameters: { id: course.id, role_id: student_3_role.id }
       end
     end
 

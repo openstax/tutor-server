@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150904230607) do
+ActiveRecord::Schema.define(version: 20150921185020) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -596,12 +596,20 @@ ActiveRecord::Schema.define(version: 20150904230607) do
   add_index "tasks_tasks", ["tasks_task_plan_id"], name: "index_tasks_tasks_on_tasks_task_plan_id", using: :btree
 
   create_table "user_profile_administrators", force: :cascade do |t|
-    t.integer  "profile_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "user_profile_profile_id", null: false
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
   end
 
-  add_index "user_profile_administrators", ["profile_id"], name: "index_user_profile_administrators_on_profile_id", unique: true, using: :btree
+  add_index "user_profile_administrators", ["user_profile_profile_id"], name: "index_user_profile_administrators_on_user_profile_profile_id", unique: true, using: :btree
+
+  create_table "user_profile_content_analysts", force: :cascade do |t|
+    t.integer  "user_profile_profile_id", null: false
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+  end
+
+  add_index "user_profile_content_analysts", ["user_profile_profile_id"], name: "index_user_profile_content_analysts_on_user_profile_profile_id", unique: true, using: :btree
 
   create_table "user_profile_profiles", force: :cascade do |t|
     t.integer  "entity_user_id",            null: false
@@ -666,7 +674,8 @@ ActiveRecord::Schema.define(version: 20150904230607) do
   add_foreign_key "tasks_taskings", "entity_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasks", "entity_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasks", "tasks_task_plans", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "user_profile_administrators", "user_profile_profiles", column: "profile_id", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "user_profile_administrators", "user_profile_profiles", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "user_profile_content_analysts", "user_profile_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "user_profile_profiles", "entity_users", on_update: :cascade, on_delete: :cascade
   add_foreign_key "user_profile_profiles", "openstax_accounts_accounts", column: "account_id", on_update: :cascade, on_delete: :cascade
 end

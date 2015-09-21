@@ -4,8 +4,8 @@ RSpec.describe EcosystemAccessPolicy, type: :access_policy do
   let(:course)    { CreateCourse[name: 'Physics 401'] }
   let(:period)    { CreatePeriod[course: course] }
 
-  let(:student)   { FactoryGirl.create(:user_profile) }
-  let(:teacher)   { FactoryGirl.create(:user_profile) }
+  let(:student)   { FactoryGirl.create(:user_profile_profile) }
+  let(:teacher)   { FactoryGirl.create(:user_profile_profile) }
 
   let(:ecosystem) {
     content_ecosystem = FactoryGirl.create(:content_ecosystem)
@@ -14,8 +14,8 @@ RSpec.describe EcosystemAccessPolicy, type: :access_policy do
   }
 
   before(:each) do
-    AddUserAsCourseTeacher[course: course, user: teacher.entity_user]
-    AddUserAsPeriodStudent[period: period, user: student.entity_user]
+    AddUserAsCourseTeacher[course: course, user: teacher.user]
+    AddUserAsPeriodStudent[period: period, user: student.user]
     AddEcosystemToCourse[ecosystem: ecosystem, course: course]
   end
 
@@ -34,7 +34,7 @@ RSpec.describe EcosystemAccessPolicy, type: :access_policy do
   end
 
   context 'regular users' do
-    let(:requestor) { FactoryGirl.create(:user_profile) }
+    let(:requestor) { FactoryGirl.create(:user_profile_profile) }
 
     [:readings, :exercises].each do |test_action|
       context "#{test_action}" do

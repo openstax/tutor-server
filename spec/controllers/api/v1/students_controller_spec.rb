@@ -8,8 +8,8 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
   let!(:period)            { CreatePeriod[course: course] }
   let!(:period_2)          { CreatePeriod[course: course] }
 
-  let!(:student_profile)   { FactoryGirl.create(:user_profile) }
-  let!(:student_user)      { student_profile.entity_user }
+  let!(:student_profile)   { FactoryGirl.create(:user_profile_profile) }
+  let!(:student_user)      { student_profile.user }
   let!(:student_role)      {
     role = Entity::Role.create
     Role::Models::RoleUser.create!(user: student_user, role: role)
@@ -20,8 +20,8 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
                                                 application: application,
                                                 resource_owner_id: student_profile.id }
 
-  let!(:teacher_profile)   { FactoryGirl.create(:user_profile) }
-  let!(:teacher_user)      { teacher_profile.entity_user }
+  let!(:teacher_profile)   { FactoryGirl.create(:user_profile_profile) }
+  let!(:teacher_user)      { teacher_profile.user }
   let!(:teacher_role)      {
     role = Entity::Role.create
     Role::Models::RoleUser.create!(user: teacher_user, role: role)
@@ -32,8 +32,8 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
                                                 application: application,
                                                 resource_owner_id: teacher_profile.id }
 
-  let!(:student_profile_2) { FactoryGirl.create(:user_profile) }
-  let!(:student_user_2)    { student_profile_2.entity_user }
+  let!(:student_profile_2) { FactoryGirl.create(:user_profile_profile) }
+  let!(:student_user_2)    { student_profile_2.user }
   let!(:student_role_2)    {
     role = Entity::Role.create
     Role::Models::RoleUser.create!(user: student_user_2, role: role)
@@ -41,8 +41,8 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
   }
   let!(:student_2)         { CourseMembership::AddStudent[role: student_role_2, period: period] }
 
-  let!(:student_profile_3) { FactoryGirl.create(:user_profile) }
-  let!(:student_user_3)    { student_profile_3.entity_user }
+  let!(:student_profile_3) { FactoryGirl.create(:user_profile_profile) }
+  let!(:student_user_3)    { student_profile_3.user }
   let!(:student_role_3)    {
     role = Entity::Role.create
     Role::Models::RoleUser.create!(user: student_user_3, role: role)

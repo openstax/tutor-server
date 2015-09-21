@@ -3,14 +3,14 @@ require 'rails_helper'
 RSpec.describe "Exercise update progression", type: :request, api: true, version: :v1 do
 
   let!(:application)     { FactoryGirl.create :doorkeeper_application }
-  let!(:user_1)          { FactoryGirl.create :user_profile }
+  let!(:profile_1)       { FactoryGirl.create :user_profile_profile }
   let!(:user_1_token)    { FactoryGirl.create :doorkeeper_access_token,
                                               application: application,
-                                              resource_owner_id: user_1.id }
+                                              resource_owner_id: profile_1.id }
 
   let!(:tasked) { FactoryGirl.create(:tasks_tasked_exercise,
                                      :with_tasking,
-                                     tasked_to: Role::GetDefaultUserRole[user_1.entity_user]) }
+                                     tasked_to: Role::GetDefaultUserRole[profile_1.user]) }
 
   let!(:step_route_base) { "/api/steps/#{tasked.task_step.id}" }
 

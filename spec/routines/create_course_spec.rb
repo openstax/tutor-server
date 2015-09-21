@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe CreateCourse do
+describe CreateCourse, type: :routine do
   it "creates a new course" do
     result = CreateCourse.call(name: 'Unnamed')
     expect(result.errors).to be_empty

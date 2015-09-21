@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe UserProfile::Models::Profile, :type => :model do
+RSpec.describe UserProfile::Models::Profile, type: :model do
   it { is_expected.to belong_to(:account) }
   it { is_expected.to have_many(:groups_as_member) }
   it { is_expected.to have_many(:groups_as_owner) }
@@ -11,10 +11,10 @@ RSpec.describe UserProfile::Models::Profile, :type => :model do
   it { is_expected.to validate_presence_of(:exchange_write_identifier) }
 
   it 'must enforce that one account is only used by one user' do
-    user1 = FactoryGirl.create(:user_profile)
-    user2 = FactoryGirl.create(:user_profile)
-    user2.account = user1.account
-    expect(user2).to_not be_valid
+    profile_1 = FactoryGirl.create(:user_profile_profile)
+    profile_2 = FactoryGirl.create(:user_profile_profile)
+    profile_2.account = profile_1.account
+    expect(profile_2).to_not be_valid
   end
 
   [:username, :first_name, :last_name, :full_name, :title, :name, :casual_name].each do |method|
@@ -30,7 +30,7 @@ RSpec.describe UserProfile::Models::Profile, :type => :model do
   it 'doesn\'t start deleted' do expect(described_class.new.is_deleted?).to be_falsy end
 
   it 'still exists after deletion' do
-    user1 = FactoryGirl.create(:user_profile)
+    user1 = FactoryGirl.create(:user_profile_profile)
     id = user1.id
     user1.delete
     expect(described_class.where(id: id).one?).to be_truthy
@@ -38,7 +38,7 @@ RSpec.describe UserProfile::Models::Profile, :type => :model do
   end
 
   it 'still exists after destroy' do
-    user1 = FactoryGirl.create(:user_profile)
+    user1 = FactoryGirl.create(:user_profile_profile)
     id = user1.id
     user1.destroy
     expect(described_class.where(id: id).one?).to be_truthy
@@ -46,7 +46,7 @@ RSpec.describe UserProfile::Models::Profile, :type => :model do
   end
 
   it 'can be undeleted' do
-    user1 = FactoryGirl.create(:user_profile)
+    user1 = FactoryGirl.create(:user_profile_profile)
     id = user1.id
     user1.destroy
     expect(user1.is_deleted?).to be_truthy

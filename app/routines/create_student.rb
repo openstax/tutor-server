@@ -15,7 +15,7 @@ class CreateStudent
       :create_user_profile,
       email: email, username: username, password: password,
       first_name: first_name, last_name: last_name, full_name: full_name
-    ).outputs.profile.entity_user
+    ).outputs.profile.user
     run(:add_student, user: user, period: period.to_model)
   end
 end

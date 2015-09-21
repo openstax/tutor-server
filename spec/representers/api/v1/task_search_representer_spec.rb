@@ -1,10 +1,10 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::TaskSearchRepresenter, :type => :representer do
+RSpec.describe Api::V1::TaskSearchRepresenter, type: :representer do
 
   context "a user" do
 
-    let!(:user)           { FactoryGirl.create(:user_profile).entity_user }
+    let!(:user)           { FactoryGirl.create(:user_profile_profile).user }
     let!(:course)         { FactoryGirl.create(:entity_course) }
     let!(:period)         { CreatePeriod[course: course] }
     let!(:role)           { AddUserAsPeriodStudent.call(user: user, period: period).outputs.role }

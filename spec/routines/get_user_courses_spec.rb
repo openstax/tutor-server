@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe GetUserCourses, :type => :routine do
+RSpec.describe GetUserCourses, type: :routine do
 
   it 'gets courses, not duped' do
     user   = Entity::User.create!

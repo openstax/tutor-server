@@ -1,20 +1,20 @@
 class UserProfile::Models::Profile < Tutor::SubSystems::BaseModel
 
-  belongs_to :account, class_name: "OpenStax::Accounts::Account"
-  belongs_to :entity_user, class_name: "::Entity::User"
-  has_many :groups_as_member, through: :account
-  has_many :groups_as_owner, through: :account
+  belongs_to :account, class_name: "OpenStax::Accounts::Account", subsystem: 'none'
 
-  has_one :administrator, dependent: :destroy, inverse_of: :profile,
-                          class_name: 'UserProfile::Models::Administrator'
+  has_many :groups_as_member, through: :account, subsystem: 'none'
+  has_many :groups_as_owner, through: :account, subsystem: 'none'
 
-  validates :account, :entity_user, presence: true, uniqueness: true
+  belongs_to :user, subsystem: :entity
+
+  has_one :administrator, dependent: :destroy, inverse_of: :profile
+
+  validates :account, :user, presence: true, uniqueness: true
   validates :exchange_read_identifier, presence: true
   validates :exchange_write_identifier, presence: true
 
-  delegate :username, :first_name, :last_name, :full_name, :title,
-           :name, :casual_name, :first_name=, :last_name=, :full_name=,
-           :title=, to: :account
+  delegate :username, :first_name, :last_name, :full_name, :title, :name, :casual_name,
+           :first_name=, :last_name=, :full_name=, :title=, to: :account
 
   def self.anonymous
     UserProfile::Models::AnonymousUser.instance
@@ -51,9 +51,5 @@ class UserProfile::Models::Profile < Tutor::SubSystems::BaseModel
   def undelete
     update_column(:deleted_at, nil)
   end
-
-  # So users can be treated like roles
-  alias_method :user_id, :id
-  def user; self; end
 
 end

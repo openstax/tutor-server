@@ -3,8 +3,8 @@ require 'rails_helper'
 RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :v1 do
   include ActiveJob::TestHelper
 
-  let(:user) { FactoryGirl.create(:user_profile) }
-  let(:admin) { FactoryGirl.create(:user_profile, :administrator) }
+  let(:user) { FactoryGirl.create(:user_profile_profile) }
+  let(:admin) { FactoryGirl.create(:user_profile_profile, :administrator) }
 
   let(:user_token) { FactoryGirl.create(:doorkeeper_access_token,
                                         resource_owner_id: user.id) }

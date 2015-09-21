@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe MapUsersAccounts do
+RSpec.describe MapUsersAccounts, type: :routine do
   describe '.account_to_user' do
     let(:profile) { MapUsersAccounts.account_to_user(account) }
 
@@ -17,7 +17,7 @@ RSpec.describe MapUsersAccounts do
     end
 
     context 'when the account can find a matching profile' do
-      let!(:found) { FactoryGirl.create(:profile) }
+      let!(:found)  { FactoryGirl.create(:user_profile_profile) }
       let(:account) { found.account }
 
       it 'returns the profile' do
@@ -44,7 +44,7 @@ RSpec.describe MapUsersAccounts do
 
   describe '.user_to_account' do
     it 'returns the associated profile account' do
-      user = FactoryGirl.create(:user_profile)
+      user = FactoryGirl.create(:user_profile_profile)
       expected = user.account
 
       result = MapUsersAccounts.user_to_account(user)

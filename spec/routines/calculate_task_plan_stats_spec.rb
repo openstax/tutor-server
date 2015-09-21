@@ -52,7 +52,7 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       ).outputs.page
 
       course = CreateCourse[name: 'Biology']
-      student = FactoryGirl.create(:user_profile).entity_user
+      student = FactoryGirl.create(:user_profile_profile).user
       AddUserAsPeriodStudent.call(user: student, period: CreatePeriod[course: course])
 
       task_plan = FactoryGirl.create(

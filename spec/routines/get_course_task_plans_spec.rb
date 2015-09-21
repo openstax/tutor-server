@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe GetCourseTaskPlans, :type => :routine do
+RSpec.describe GetCourseTaskPlans, type: :routine do
   let!(:course)      { CreateCourse[name: 'Unnamed'] }
   let!(:task_plan_1) { FactoryGirl.create :tasks_task_plan, owner: course }
   let!(:task_plan_2) { FactoryGirl.create :tasks_task_plan, owner: course }

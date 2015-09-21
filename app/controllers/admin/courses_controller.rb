@@ -101,7 +101,7 @@ class Admin::CoursesController < Admin::BaseController
   def add_students(period, users)
     users.each do |user|
       profile = find_or_create(user)
-      AddUserAsPeriodStudent.call(period: period, user: profile.entity_user)
+      AddUserAsPeriodStudent.call(period: period, user: profile.user)
     end
   end
 

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe "domain: course roles" do
+describe "domain: course roles", type: :integration do
 
   context "adding teachers to courses" do
     let(:target_user)   { Entity::User.create! }

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe UserProfile::Models::Administrator, :type => :model do
+RSpec.describe UserProfile::Models::Administrator, type: :model do
 
   it { is_expected.to belong_to(:profile) }
 
@@ -9,8 +9,8 @@ RSpec.describe UserProfile::Models::Administrator, :type => :model do
   it { is_expected.to validate_uniqueness_of(:profile) }
 
   let!(:anon) { UserProfile::Models::AnonymousUser.instance }
-  let!(:profile) { FactoryGirl.create(:profile) }
-  let!(:admin1) { FactoryGirl.create(:administrator) }
+  let!(:profile) { FactoryGirl.create(:user_profile_profile) }
+  let!(:admin1) { FactoryGirl.create(:user_profile_administrator) }
 
   it 'cannot refer to the anonymous profile' do
     expect{described_class.create(profile: anon)}.to raise_error(ActiveRecord::StatementInvalid)

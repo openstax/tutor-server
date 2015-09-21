@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe StudentAccessPolicy, type: :access_policy do
-  let(:requestor)    { FactoryGirl.create :user_profile }
+  let(:requestor)    { FactoryGirl.create :user_profile_profile }
   let(:course)       { Entity::Course.create }
   let(:period)       { CreatePeriod[course: course] }
-  let(:student_user) { FactoryGirl.create(:user_profile).entity_user }
+  let(:student_user) { FactoryGirl.create(:user_profile_profile).user }
   let(:student_role) {
     role = Entity::Role.create
     Role::Models::RoleUser.create!(user: student_user, role: role)

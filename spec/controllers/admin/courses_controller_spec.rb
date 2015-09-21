@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Admin::CoursesController do
-  let(:admin) { FactoryGirl.create(:user_profile, :administrator) }
+  let(:admin) { FactoryGirl.create(:user_profile_profile, :administrator) }
 
   before { controller.sign_in(admin) }
 
@@ -59,7 +59,7 @@ RSpec.describe Admin::CoursesController do
     end
 
     it 'reuses existing users for existing usernames' do
-      # FactoryGirl.create :user_profile, username: 'alexh'
+      # FactoryGirl.create :user_profile_profile, username: 'alexh'
       expect {
         post :students, id: physics.id, course: { period: physics_period.id }, student_roster: file_1
       }.to change { OpenStax::Accounts::Account.count }.by(3)
@@ -197,7 +197,7 @@ RSpec.describe Admin::CoursesController do
     end
 
     it 'disallows non-admin authenticated visitors' do
-      non_admin = FactoryGirl.create(:user_profile)
+      non_admin = FactoryGirl.create(:user_profile_profile)
       controller.sign_in(non_admin)
 
       expect { get :index }.to raise_error(SecurityTransgression)

@@ -1,44 +1,44 @@
 require "rails_helper"
 
-describe Api::V1::TaskStepsController, :type => :controller, :api => true, :version => :v1 do
+describe Api::V1::TaskStepsController, type: :controller, api: true, version: :v1 do
 
-  let!(:application)     { FactoryGirl.create :doorkeeper_application }
-  let!(:user_1)          { FactoryGirl.create :user_profile }
-  let!(:user_1_token)    { FactoryGirl.create :doorkeeper_access_token,
-                                              application: application,
-                                              resource_owner_id: user_1.id }
-  let!(:user_1_role)     { Role::GetDefaultUserRole[user_1.entity_user] }
+  let!(:application)        { FactoryGirl.create :doorkeeper_application }
+  let!(:profile_1)          { FactoryGirl.create :user_profile_profile }
+  let!(:user_1_token)       { FactoryGirl.create :doorkeeper_access_token,
+                                                 application: application,
+                                                 resource_owner_id: profile_1.id }
+  let!(:user_1_role)        { Role::GetDefaultUserRole[profile_1.user] }
 
-  let!(:user_2)          { FactoryGirl.create :user_profile }
-  let!(:user_2_token)    { FactoryGirl.create :doorkeeper_access_token,
-                                              application: application,
-                                              resource_owner_id: user_2.id }
+  let!(:profile_2)          { FactoryGirl.create :user_profile_profile }
+  let!(:user_2_token)       { FactoryGirl.create :doorkeeper_access_token,
+                                                 application: application,
+                                                 resource_owner_id: profile_2.id }
 
-  let!(:userless_token)  { FactoryGirl.create :doorkeeper_access_token,
-                                              application: application }
+  let!(:userless_token)     { FactoryGirl.create :doorkeeper_access_token,
+                                                 application: application }
 
-  let!(:task_step)       { FactoryGirl.create :tasks_task_step,
-                                              title: 'title',
-                                              url: 'http://u.rl',
-                                              content: 'content' }
+  let!(:task_step)          { FactoryGirl.create :tasks_task_step,
+                                                 title: 'title',
+                                                 url: 'http://u.rl',
+                                                 content: 'content' }
 
-  let!(:task)            { task_step.task.reload }
+  let!(:task)               { task_step.task.reload }
 
-  let!(:tasking)         { FactoryGirl.create :tasks_tasking, role: user_1_role,
-                                                              task: task.entity_task }
+  let!(:tasking)            { FactoryGirl.create :tasks_tasking, role: user_1_role,
+                                                                 task: task.entity_task }
 
-  let!(:tasked_exercise) {
+  let!(:tasked_exercise)    {
     te = FactoryGirl.build :tasks_tasked_exercise
     te.task_step.task = task
     te.save!
     te
   }
 
-  let!(:course)          { Entity::Course.create }
-  let!(:period)          { CreatePeriod[course: course] }
+  let!(:course)             { Entity::Course.create }
+  let!(:period)             { CreatePeriod[course: course] }
 
-  let!(:lo)              { FactoryGirl.create :content_tag, value: 'ost-tag-lo-test-lo01' }
-  let!(:pp)              { FactoryGirl.create :content_tag, value: 'os-practice-problems' }
+  let!(:lo)                 { FactoryGirl.create :content_tag, value: 'ost-tag-lo-test-lo01' }
+  let!(:pp)                 { FactoryGirl.create :content_tag, value: 'os-practice-problems' }
 
   let!(:tasked_exercise_with_recovery) {
     te = FactoryGirl.build(
@@ -51,7 +51,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
     te
   }
 
-  let!(:recovery_exercise) { FactoryGirl.create(
+  let!(:recovery_exercise)    { FactoryGirl.create(
     :content_exercise,
     page: tasked_exercise_with_recovery.exercise.page,
     content: OpenStax::Exercises::V1.fake_client
@@ -294,7 +294,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
 
   describe "practice task update step" do
     it "allows updating of a step (needed to test access to legacy and SS taskings)" do
-      AddUserAsPeriodStudent[period: period, user: user_1.entity_user]
+      AddUserAsPeriodStudent[period: period, user: profile_1.user]
       task = ResetPracticeWidget[role: Entity::Role.last, exercise_source: :fake]
 
       step = task.task.task_steps.first

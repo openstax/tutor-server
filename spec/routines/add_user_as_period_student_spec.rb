@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe AddUserAsPeriodStudent do
+describe AddUserAsPeriodStudent, type: :routine do
   context "when the given user is not a teacher of the course" do
     let(:user)   { Entity::User.create! }
     let(:course) { Entity::Course.create! }

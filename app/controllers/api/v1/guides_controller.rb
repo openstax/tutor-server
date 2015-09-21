@@ -34,7 +34,7 @@ module Api
       private
 
       def role(course, types = :any)
-        result = ChooseCourseRole.call(user: current_human_user.entity_user,
+        result = ChooseCourseRole.call(user: current_human_user.user,
                                        course: course,
                                        allowed_role_type: types,
                                        role_id: params[:role_id])
