@@ -1,7 +1,10 @@
 class Admin::UsersUpdate
+  ALLOWED_ATTRIBUTES = ['username', 'first_name', 'last_name', 'full_name', 'title']
+
   lev_handler
 
-  ALLOWED_ATTRIBUTES = ['username', 'first_name', 'last_name', 'full_name', 'title']
+  uses_routine UserProfile::Routines::SetAdministratorState, as: :set_administrator
+  uses_routine UserProfile::Routines::SetContentAnalystState, as: :set_content_analyst
 
   paramify :user do
     attribute :username, type: String
@@ -9,6 +12,8 @@ class Admin::UsersUpdate
     attribute :last_name, type: String
     attribute :full_name, type: String
     attribute :title, type: String
+    attribute :administrator, type: boolean
+    attribute :content_analyst, type: boolean
   end
 
   protected
@@ -19,7 +24,9 @@ class Admin::UsersUpdate
 
   # The :profile option is required
   def handle
-    account = options[:profile].account
+    profile = options[:profile]
+    outputs[:profile] = profile
+    account = profile.account
     outputs[:account] = account
 
     # Validate the account but do not call save
@@ -28,5 +35,8 @@ class Admin::UsersUpdate
     account.valid?
     transfer_errors_from account, {type: :verbatim}, true
     account.update_columns(user_params.attributes.slice(*ALLOWED_ATTRIBUTES))
+
+    run(:set_administrator, profile: profile, administrator: user_params.administrator)
+    run(:set_content_analyst, profile: profile, content_analyst: user_params.content_analyst)
   end
 end

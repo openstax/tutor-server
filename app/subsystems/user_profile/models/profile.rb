@@ -8,6 +8,7 @@ class UserProfile::Models::Profile < Tutor::SubSystems::BaseModel
   belongs_to :user, subsystem: :entity
 
   has_one :administrator, dependent: :destroy, inverse_of: :profile
+  has_one :content_analyst, dependent: :destroy, inverse_of: :profile
 
   validates :account, :user, presence: true, uniqueness: true
   validates :exchange_read_identifier, presence: true
@@ -38,6 +39,10 @@ class UserProfile::Models::Profile < Tutor::SubSystems::BaseModel
 
   def is_admin?
     !administrator.nil?
+  end
+
+  def is_content_analyst?
+    !content_analyst.nil?
   end
 
   def destroy

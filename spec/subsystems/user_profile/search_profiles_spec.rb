@@ -27,14 +27,18 @@ RSpec.describe UserProfile::SearchProfiles, type: :routine do
       'entity_user_id' => profile_2.entity_user_id,
       'full_name' => 'Stan Dup',
       'name' => 'Stan Dup',
-      'username' => 'teacher'
+      'username' => 'teacher',
+      'is_admin' => false,
+      'is_content_analyst' => false
     }, {
       'id' => profile_1.id,
       'account_id' => profile_1.account.id,
       'entity_user_id' => profile_1.entity_user_id,
       'full_name' => 'Chris Mass',
       'name' => 'Chris Mass',
-      'username' => 'student'
+      'username' => 'student',
+      'is_admin' => false,
+      'is_content_analyst' => false
     } ]
   end
 
@@ -47,14 +51,18 @@ RSpec.describe UserProfile::SearchProfiles, type: :routine do
       'entity_user_id' => profile_2.entity_user_id,
       'full_name' => 'Stan Dup',
       'name' => 'Stan Dup',
-      'username' => 'teacher'
+      'username' => 'teacher',
+      'is_admin' => false,
+      'is_content_analyst' => false
     }, {
       'id' => profile_1.id,
       'account_id' => profile_1.account.id,
       'entity_user_id' => profile_1.entity_user_id,
       'full_name' => 'Chris Mass',
       'name' => 'Chris Mass',
-      'username' => 'student'
+      'username' => 'student',
+      'is_admin' => false,
+      'is_content_analyst' => false
     } ]
 
     results = described_class[search: '%', per_page: 2, page: 2]
@@ -65,7 +73,9 @@ RSpec.describe UserProfile::SearchProfiles, type: :routine do
       'entity_user_id' => admin.entity_user_id,
       'full_name' => 'Administrator User',
       'name' => 'Administrator User',
-      'username' => 'admin'
+      'username' => 'admin',
+      'is_admin' => true,
+      'is_content_analyst' => false
     } ]
   end
 
@@ -78,14 +88,18 @@ RSpec.describe UserProfile::SearchProfiles, type: :routine do
       'entity_user_id' => profile_1.entity_user_id,
       'full_name' => 'Chris Mass',
       'name' => 'Chris Mass',
-      'username' => 'student'
+      'username' => 'student',
+      'is_admin' => false,
+      'is_content_analyst' => false
     }, {
       'id' => admin.id,
       'account_id' => admin.account.id,
       'entity_user_id' => admin.entity_user_id,
       'full_name' => 'Administrator User',
       'name' => 'Administrator User',
-      'username' => 'admin'
+      'username' => 'admin',
+      'is_admin' => true,
+      'is_content_analyst' => false
     } ]
   end
 
