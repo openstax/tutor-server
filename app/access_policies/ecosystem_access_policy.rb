@@ -2,6 +2,9 @@ class EcosystemAccessPolicy
   def self.action_allowed?(action, requestor, ecosystem)
     return false unless requestor.is_human?
 
+    # Content Analysts can read all things content
+    return true if requestor.is_content_analyst?
+
     case action
     when :readings
       # readings should be readable by course teachers and students

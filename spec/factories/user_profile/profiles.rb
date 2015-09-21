@@ -29,6 +29,13 @@ FactoryGirl.define do
       end
     end
 
+    trait :content_analyst do
+      after(:build) do |profile|
+        profile.content_analyst = FactoryGirl.build(:user_profile_content_analyst,
+                                                    profile: profile)
+      end
+    end
+
     after(:create) do |profile, evaluator|
       unless evaluator.skip_terms_agreement
         FinePrint::Contract.all.each do |contract|
