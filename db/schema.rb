@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150826233318) do
+ActiveRecord::Schema.define(version: 20150904230607) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -32,12 +32,13 @@ ActiveRecord::Schema.define(version: 20150826233318) do
   add_index "content_books", ["url"], name: "index_content_books_on_url", using: :btree
 
   create_table "content_chapters", force: :cascade do |t|
-    t.integer  "content_book_id", null: false
-    t.integer  "number",          null: false
-    t.string   "title",           null: false
-    t.text     "book_location",   null: false
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.integer  "content_book_id",               null: false
+    t.integer  "number",                        null: false
+    t.string   "title",                         null: false
+    t.text     "book_location",                 null: false
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+    t.integer  "content_all_exercises_pool_id"
   end
 
   add_index "content_chapters", ["content_book_id", "number"], name: "index_content_chapters_on_content_book_id_and_number", unique: true, using: :btree
@@ -113,6 +114,7 @@ ActiveRecord::Schema.define(version: 20150826233318) do
     t.text     "book_location",                       null: false
     t.datetime "created_at",                          null: false
     t.datetime "updated_at",                          null: false
+    t.integer  "content_all_exercises_pool_id"
   end
 
   add_index "content_pages", ["content_chapter_id", "number"], name: "index_content_pages_on_content_chapter_id_and_number", unique: true, using: :btree
@@ -619,6 +621,7 @@ ActiveRecord::Schema.define(version: 20150826233318) do
 
   add_foreign_key "content_books", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_chapters", "content_books", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "content_chapters", "content_pools", column: "content_all_exercises_pool_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "content_exercise_tags", "content_exercises", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_exercise_tags", "content_tags", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_exercises", "content_pages", on_update: :cascade, on_delete: :cascade
@@ -627,6 +630,7 @@ ActiveRecord::Schema.define(version: 20150826233318) do
   add_foreign_key "content_page_tags", "content_pages", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_page_tags", "content_tags", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_pages", "content_chapters", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "content_pages", "content_pools", column: "content_all_exercises_pool_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "content_pages", "content_pools", column: "content_homework_core_pool_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "content_pages", "content_pools", column: "content_homework_dynamic_pool_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "content_pages", "content_pools", column: "content_practice_widget_pool_id", on_update: :cascade, on_delete: :nullify

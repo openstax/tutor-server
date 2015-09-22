@@ -8,5 +8,4 @@ class OpenStax::Biglearn::V1::Pool
     @uuid = uuid
   end
 
-
 end

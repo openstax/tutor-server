@@ -1,5 +1,10 @@
 class OpenStax::Biglearn::V1::RealClient
 
+  # Since we don't know which flavor of SPARFA generated the CLUE,
+  # be safe and assume mini SPARFAC, which should expire after 3 minutes (when fast SPARFA runs)
+  # All cached CLUEs will expire after the given duration, even if nobody answered any questions
+  CLUE_CACHE_DURATION = 3.minutes
+
   def initialize(biglearn_configuration)
     @server_url   = biglearn_configuration.server_url
     @client_id    = biglearn_configuration.client_id
@@ -57,30 +62,17 @@ class OpenStax::Biglearn::V1::RealClient
     uuids.first
   end
 
-  def get_exchange_read_identifiers_for_roles(roles:)
-    users = Role::GetUsersForRoles[roles]
-    UserProfile::Models::Profile.where(entity_user: users)
-                                .collect{ |p| p.exchange_read_identifier }
-  end
-
-  def get_projection_exercises(role:, pools: nil, tag_search: nil,
-                               count:, difficulty:, allow_repetitions:)
+  def get_projection_exercises(role:, pools:, count:, difficulty:, allow_repetitions:)
     query = {
       learner_id: get_exchange_read_identifiers_for_roles(roles: role).first,
       number_of_questions: count,
       allow_repetition: allow_repetitions ? 'true' : 'false'
     }
 
-    unless pools.nil?
-      # If we have more than one pool, we must first combine them all into a single pool
-      pool = [pools].flatten.size > 1 ? OpenStax::Biglearn::V1.combine_pools(pools) : pools.first
+    # If we have more than one pool, we must first combine them all into a single pool
+    pool = [pools].flatten.size > 1 ? OpenStax::Biglearn::V1.combine_pools(pools) : pools.first
 
-      query = query.merge(pool_id: pool.uuid)
-    end
-
-    unless tag_search.nil?
-      query = query.merge(tag_query: stringify_tag_search(tag_search))
-    end
+    query = query.merge(pool_id: pool.uuid)
 
     response = request(:get, projection_exercises_uri, params: query)
 
@@ -90,60 +82,119 @@ class OpenStax::Biglearn::V1::RealClient
     result["questions"].collect { |q| q["question"] }
   end
 
-  def stringify_tag_search(tag_search)
-    case tag_search
-    when Hash
-      raise IllegalArgument, "too many hash conditions" if tag_search.size != 1
-      stringify_tag_search_hash(tag_search.first)
-    when String
-      '"' + tag_search + '"'
-    else
-      raise IllegalArgument
-    end
-  end
+  def get_clues(roles:, pools:)
+    learners = get_exchange_read_identifiers_for_roles(roles: roles)
+    pool_ids = pools.collect(&:uuid)
+    answer_times_map = get_answer_times_map(roles: roles, pools: pools)
 
-  # Return a CLUE value for the specified set of roles and the group of tags.  May return
-  # nil if no CLUE is available (e.g. no exercises attached to these tags or confidence too low).
-  #
-  # Biglearn can actually take multiple sets of tag queries at once and return a CLUE
-  # for each; we're not using that capability yet. When we do we'll probably rename the
-  # `tags` argument to `tag_sets` or something (or we'll make a first class `TagSearch`
-  # citizen inside this module and accept an array of those into this method).
-  def get_clue(roles:, tags:)
-    raise "Some tags must be specified when getting a CLUE" if tags.blank?
-    raise "At least one role must be specified when getting a CLUE" if roles.blank?
-
-    tag_search = stringify_tag_search(:_or => tags)
-
-    query = {
-      learners: get_exchange_read_identifiers_for_roles(roles: roles), tag_queries: tag_search
-    }
-
-    response = request(:get, clue_uri, params: query)
-
-    result = handle_response(response) || {}
-
-    # extract the clue using the knowledge that we have a simplified input (only one
-    # tag query, so we can just pull out the appropriate value).  It could be that there's
-    # no CLUE to give, in which case we return nil.
-    clue           = result['aggregates'].try(:first) || {}
-    interpretation = clue['interpretation'] || {}
-    confidence     = clue['confidence'] || {}
-
-    {
-      value: clue['aggregate'],
-      value_interpretation: interpretation['level'],
-      confidence_interval: [
-        confidence['left'],
-        confidence['right']
-      ],
-      confidence_interval_interpretation: interpretation['confidence'],
-      sample_size: confidence['sample_size'],
-      sample_size_interpretation: interpretation['threshold']
-    }
+    fetch_clues(learners: learners, pool_ids: pool_ids, answer_times_map: answer_times_map)
   end
 
   private
+
+  def get_exchange_read_identifiers_for_roles(roles:)
+    users = Role::GetUsersForRoles[roles]
+    UserProfile::Models::Profile.where(entity_user: users)
+                                .collect{ |p| p.exchange_read_identifier }
+  end
+
+  # Returns the last answer time for all roles for each pool given
+  def get_answer_times_map(roles:, pools:)
+    role_ids = roles.collect(&:id)
+
+    pools.each_with_object({}) do |pool, hash|
+      # Ignore exercise versions, since Biglearn also ignores them
+      exercise_numbers = pool.exercises.collect(&:number)
+
+      last_completed_at = Tasks::Models::TaskedExercise
+                            .joins({ task_step: { task: :taskings } }, :exercise)
+                            .where(exercise: { number: exercise_numbers },
+                                   task_step: { task: { taskings: { entity_role_id: role_ids } } })
+                            .maximum(:last_completed_at)
+      next if last_completed_at.nil?
+      hash[pool.uuid] = last_completed_at.utc.to_s(:number)
+    end
+  end
+
+  # Get all the CLUEs from the cache, calling Biglearn only once if needed
+  def fetch_clues(learners:, pool_ids:, answer_times_map:)
+    # Hash the learners so that the key size remains manageable
+    # Sort learners to ensure consistent ordering when digesting
+    learner_digest = Digest::SHA256.new
+    learners.sort.each do |learner|
+      learner_digest << learner.to_s
+    end
+    learner_digest = learner_digest.to_s
+
+    key_prefix = 'biglearn/clues'
+
+    # The CLUEs returned refer to all given learners at once
+    # Each CLUE refers to a single pool, so each pool corresponds to a different cache key
+    # The last_answer_times are used for key expiration when someone answers a new question
+    cache_key_to_pool_id_map = pool_ids.each_with_object({}) do |pool_id, hash|
+      cache_key = "#{key_prefix}/#{pool_id}/#{learner_digest}-#{answer_times_map[pool_id]}"
+      hash[cache_key] = pool_id
+    end
+    cache_keys = cache_key_to_pool_id_map.keys
+
+    # Read CLUEs for all pools from the cache
+    cache_key_to_clue_map = Rails.cache.read_multi(*cache_keys)
+
+    # Initialize result set for all cache hits
+    pool_id_to_clue_map = cache_key_to_clue_map.each_with_object({}) do |(cache_key, clue), hash|
+      pool_id = cache_key_to_pool_id_map[cache_key]
+      hash[pool_id] = clue
+    end
+
+    # Figure out which cache keys we missed in the cache
+    missed_cache_keys = cache_keys - cache_key_to_clue_map.keys
+
+    # Don't call Biglearn if we hit the cache for all the CLUes
+    return pool_id_to_clue_map if missed_cache_keys.empty?
+
+    # Figure out which pools we missed in the cache
+    missed_pool_id_to_cache_key_map = missed_cache_keys.each_with_object({}) do |cache_key, hash|
+      pool_id = cache_key_to_pool_id_map[cache_key]
+      hash[pool_id] = cache_key
+    end
+    missed_pool_ids = missed_pool_id_to_cache_key_map.keys
+
+    # Call Biglearn (once) to get the missing CLUEs
+    query = { learners: learners, pool_ids: missed_pool_ids }
+    response = request(:get, clue_uri, params: query)
+    result = handle_response(response) || {}
+    missed_clues = result['aggregates'] || []
+
+    # Iterate to the CLUes returned, filling in the cache and the result map
+    missed_clues.each_with_object(pool_id_to_clue_map) do |clue, result|
+      next if clue.blank? # Ignore blank CLUes
+
+      pool_id   = clue['pool_id']
+      cache_key = missed_pool_id_to_cache_key_map[pool_id]
+
+      next if cache_key.blank? # Ignore unknown pool_ids
+
+      aggregate      = clue['aggregate']
+      interpretation = clue['interpretation'] || {}
+      confidence     = clue['confidence'] || {}
+
+      clue_hash = {
+        value: aggregate,
+        value_interpretation: interpretation['level'],
+        confidence_interval: [
+          confidence['left'],
+          confidence['right']
+        ],
+        confidence_interval_interpretation: interpretation['confidence'],
+        sample_size: confidence['sample_size'],
+        sample_size_interpretation: interpretation['threshold']
+      }
+
+      Rails.cache.write(cache_key, clue_hash, expires_in: CLUE_CACHE_DURATION)
+
+      result[pool_id] = clue_hash
+    end
+  end
 
   def with_content_type_header(options = {})
     options[:headers] ||= {}
@@ -173,7 +224,9 @@ class OpenStax::Biglearn::V1::RealClient
 
   def construct_exercises_payload(exercises)
     { question_tags: [exercises].flatten.collect do |exercise|
-      { question_id: exercise.question_id.to_s, version: Integer(exercise.version), tags: exercise.tags }
+      { question_id: exercise.question_id.to_s,
+        version: Integer(exercise.version),
+        tags: exercise.tags }
     end }
   end
 
@@ -196,25 +249,6 @@ class OpenStax::Biglearn::V1::RealClient
     raise "BiglearnError #{response.status}:\n#{response.body}" if response.status != 200
 
     JSON.parse(response.body)
-  end
-
-  def stringify_tag_search_hash(conditions)
-    case conditions[0]
-    when :_and
-      str = '('
-      str += join_tag_searches(conditions[1], 'AND')
-      str += ')'
-    when :_or
-      str = '('
-      str += join_tag_searches(conditions[1], 'OR')
-      str += ')'
-    else
-      raise NotYetImplemented, "Unknown boolean symbol #{conditions[0]}"
-    end
-  end
-
-  def join_tag_searches(tag_searches, op)
-    [tag_searches].flatten.collect { |ts| stringify_tag_search(ts) }.join(" #{op} ")
   end
 
 end

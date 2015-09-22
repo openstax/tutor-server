@@ -21,6 +21,7 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     # TODO: Do this somewhere else, it does not belong here
 
     # Currently assuming only one question per tasked_exercise, see also correct_answer_id
+    # Also assuming no group tasks
     question = questions.first
     # "trial" is set to only "1" for now. When multiple
     # attempts are supported, it will be incremented to indicate the attempt #
@@ -94,8 +95,11 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
 
   protected
 
+  def roles
+    task_step.task.taskings.collect{ |t| t.role }
+  end
+
   def identifiers
-    roles = task_step.task.taskings.collect{ |t| t.role }
     users = Role::GetUsersForRoles[roles]
     UserProfile::Models::Profile.where(entity_user: users)
                                 .collect{ |p| p.exchange_write_identifier }

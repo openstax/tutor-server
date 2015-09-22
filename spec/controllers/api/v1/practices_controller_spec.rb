@@ -5,11 +5,11 @@ require 'database_cleaner'
 RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
   let!(:user_1) { FactoryGirl.create :user_profile }
   let!(:user_1_token) { FactoryGirl.create :doorkeeper_access_token,
-                                          resource_owner_id: user_1.id }
+                                           resource_owner_id: user_1.id }
 
   let!(:user_2) { FactoryGirl.create :user_profile }
   let!(:user_2_token) { FactoryGirl.create :doorkeeper_access_token,
-                                          resource_owner_id: user_2.id }
+                                           resource_owner_id: user_2.id }
 
   let!(:userless_token) { FactoryGirl.create :doorkeeper_access_token }
 
@@ -22,7 +22,7 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
   context "POST #create" do
     let!(:page) {
       page = FactoryGirl.create :content_page
-      ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(page.book.ecosystem)
+      ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(page.ecosystem)
       ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
       AddEcosystemToCourse[course: course, ecosystem: ecosystem]
       page
@@ -37,7 +37,10 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
     let!(:role) { AddUserAsPeriodStudent[period: period, user: user_1.entity_user] }
 
     before(:each) do
-      pools = Content::Routines::PopulateExercisePools[pages: page, save: false].flatten
+      outs = Content::Routines::PopulateExercisePools.call(book: page.book, save: false).outputs
+      chapters = outs.chapters
+      pages = outs.pages
+      pools = outs.pools
 
       biglearn_exercises = [exercise_1, exercise_2, exercise_3,
                             exercise_4, exercise_5].collect do |ex|
@@ -60,7 +63,8 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
       end
 
       Content::Models::Pool.import! pools
-      page.save!
+      pages.each{ |page| page.save! }
+      chapters.each{ |chapter| chapter.save! }
     end
 
     it 'returns the practice task data' do

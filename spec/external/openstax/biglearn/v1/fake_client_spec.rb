@@ -5,70 +5,44 @@ module OpenStax::Biglearn
 
     let(:client) { described_class.instance }
 
+    let(:exercise_1) { V1::Exercise.new(question_id: 'e1', tags: ['lo1', 'concept']) }
+    let(:exercise_2) { V1::Exercise.new(question_id: 'e2', tags: ['lo1', 'homework']) }
+    let(:exercise_3) { V1::Exercise.new(question_id: 'e3', tags: ['lo2', 'concept']) }
+    let(:exercise_4) { V1::Exercise.new(question_id: 'e4', tags: ['lo2', 'concept']) }
+    let(:exercise_5) { V1::Exercise.new(question_id: 'e5', tags: ['lo3', 'concept']) }
+
+    let(:pool_1)     { V1::Pool.new(exercises: [exercise_1, exercise_3, exercise_4]) }
+    let(:pool_2)     { V1::Pool.new(exercises: [exercise_2]) }
+    let(:pool_3)     { V1::Pool.new(exercises: [exercise_5]) }
+
     it 'allows adding of exercises' do
-      expect{client.add_exercises(V1::Exercise.new(question_id: 'e42', version: 1, tags: 'topic'))}
-        .to change{client.store_exercises_copy.count}.by(1)
+      expect{client.add_exercises([exercise_1, exercise_2])}
+        .to change{client.store_exercises_copy.count}.by(2)
 
       client.reload! # make sure data is really saved
 
-      expect(client.store_exercises_copy).to include('e42' => { '1' => ['topic'] })
+      expect(client.store_exercises_copy).to include('e1' => { '' => ['lo1', 'concept'] })
+      expect(client.store_exercises_copy).to include('e2' => { '' => ['lo1', 'homework'] })
     end
 
-    it 'matches boolean tag searches' do
+    it 'allows adding of pools' do
+      expect{client.add_pools([pool_1])}.to change{client.store_pools_copy.count}.by(1)
 
-      scenarios = [
-        {
-          tags: ['a'],
-          condition: 'a',
-          succeeds: true
-        },
-        {
-          tags: ['a'],
-          condition: { _or: ['b','a'] },
-          succeeds: true
-        },
-        {
-          tags: ['c'],
-          condition: { _or: ['b','a'] },
-          succeeds: false
-        },
-        {
-          tags: ['c','b'],
-          condition: { _or: ['b','a'] },
-          succeeds: true
-        },
-        {
-          tags: ['c', 'a'],
-          condition: { _and: [ { _or: ['b','a'] }, 'c' ] },
-          succeeds: true
-        },
-        {
-          tags: ['c', 'd'],
-          condition: { _and: [ { _or: ['b','a'] }, 'c' ] },
-          succeeds: false
-        }
-      ]
+      client.reload! # make sure data is really saved
 
-      scenarios.each do |scenario|
-        expect(client.tags_match_condition?(
-                                 scenario[:tags],
-                                 scenario[:condition])).to eq scenario[:succeeds]
-      end
+      expect(client.store_pools_copy.values).to include(['e1', 'e3', 'e4'])
     end
 
     context "get_projection_exercises" do
-      before do
-        client.add_exercises(V1::Exercise.new(question_id: 'e1', tags: ['lo1', 'concept']))
-        client.add_exercises(V1::Exercise.new(question_id: 'e2', tags: ['lo1', 'homework']))
-        client.add_exercises(V1::Exercise.new(question_id: 'e3', tags: ['lo2', 'concept']))
-        client.add_exercises(V1::Exercise.new(question_id: 'e4', tags: ['lo2', 'concept']))
-        client.add_exercises(V1::Exercise.new(question_id: 'e5', tags: ['lo3', 'concept']))
+      before(:each) do
+        V1.add_exercises([exercise_1, exercise_2, exercise_3, exercise_4, exercise_5])
+        V1.add_pools([pool_1, pool_2, pool_3])
       end
 
       it "works when allow_repetitions is false" do
         exercises = client.get_projection_exercises(
           role: nil,
-          tag_search: { _and: [ { _or: ['lo1', 'lo2'] }, 'concept'] },
+          pools: [pool_1],
           count: 5,
           difficulty: 0.5,
           allow_repetitions: false
@@ -80,7 +54,7 @@ module OpenStax::Biglearn
       it "works when allow_repetitions is true" do
         exercises = client.get_projection_exercises(
           role: nil,
-          tag_search: { _and: [ { _or: ['lo1', 'lo2'] }, 'concept'] },
+          pools: [pool_1],
           count: 5,
           difficulty: 0.5,
           allow_repetitions: true
@@ -90,21 +64,31 @@ module OpenStax::Biglearn
       end
     end
 
-    context "get_clue" do
-      it 'returns a well-formatted clue' do
+    context "get_clues" do
+      before(:each) do
+        pool_1.uuid = SecureRandom.hex
+        pool_2.uuid = SecureRandom.hex
+      end
+
+      it 'returns a well-formatted array of clues' do
         profile = UserProfile::CreateProfile.call(username: SecureRandom.hex).outputs.profile
         profile.update_attribute(:exchange_read_identifier, '0edbe5f8f30abc5ba56b5b890bddbbe2')
         role = Role::CreateUserRole[profile.entity_user]
+        pools = [pool_1, pool_2]
+        pool_uuids = pools.collect(&:uuid)
 
-        # This assumes that a book has been imported
-        clue = client.get_clue(roles: role, tags: 'k12phys-ch04-s02-lo01')
+        clues = client.get_clues(roles: role, pools: pools)
+        expect(clues.keys.size).to eq pools.size
 
-        expect(clue[:value]).to be_a(Float)
-        expect(['high', 'medium', 'low']).to include(clue[:value_interpretation])
-        expect(clue[:confidence_interval]).to contain_exactly(kind_of(Float), kind_of(Float))
-        expect(['good', 'bad']).to include(clue[:confidence_interval_interpretation])
-        expect(clue[:sample_size]).to be_kind_of(Integer)
-        expect(['above', 'below']).to include(clue[:sample_size_interpretation])
+        clues.each do |pool_uuid, clue|
+          expect(pool_uuids).to include pool_uuid
+          expect(clue[:value]).to be_a(Float)
+          expect(['high', 'medium', 'low']).to include(clue[:value_interpretation])
+          expect(clue[:confidence_interval]).to contain_exactly(kind_of(Float), kind_of(Float))
+          expect(['good', 'bad']).to include(clue[:confidence_interval_interpretation])
+          expect(clue[:sample_size]).to be_kind_of(Integer)
+          expect(['above', 'below']).to include(clue[:sample_size_interpretation])
+        end
       end
     end
 

@@ -19,6 +19,11 @@ module Content
       verify_and_return @strategy.pages, klass: ::Content::Page, error: ::Content::StrategyError
     end
 
+    def all_exercises_pool
+      verify_and_return @strategy.all_exercises_pool, klass: ::Content::Pool,
+                                                      error: ::Content::StrategyError
+    end
+
     def book_location
       verify_and_return @strategy.book_location, klass: Integer, error: ::Content::StrategyError
     end

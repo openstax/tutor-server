@@ -30,7 +30,7 @@ FactoryGirl.define do
                                               book_location: [1, 1]]
       end
 
-      Content::Routines::PopulateExercisePools[pages: @page.reload]
+      Content::Routines::PopulateExercisePools[book: chapter.book]
 
       ecosystem_model = chapter.book.ecosystem
       ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(ecosystem_model)

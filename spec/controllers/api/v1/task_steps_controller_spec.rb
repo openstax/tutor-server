@@ -68,7 +68,7 @@ describe Api::V1::TaskStepsController, :type => :controller, :api => true, :vers
     :content_exercise_tag, exercise: recovery_exercise, tag: pp
   ) }
 
-  let!(:pools) { Content::Routines::PopulateExercisePools[pages: recovery_exercise.page] }
+  let!(:pools) { Content::Routines::PopulateExercisePools[book: recovery_exercise.book] }
 
   describe "#show" do
     it "should work on the happy path" do

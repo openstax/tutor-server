@@ -5,6 +5,8 @@ FactoryGirl.define do
     end
 
     association :book, factory: :content_book
+    association :all_exercises_pool, factory: :content_pool
+
     title { Faker::Lorem.words(3).join(" ") }
     book_location [1]
 

@@ -13,4 +13,8 @@ class OpenStax::Biglearn::V1::Exercise
     @tags = tags
   end
 
+  def number
+    question_id.chomp('/').split('/').last
+  end
+
 end

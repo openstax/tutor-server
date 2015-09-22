@@ -5,10 +5,8 @@ module CourseGuideMethods
   def get_completed_tasked_exercises_from_task_steps(task_steps)
     tasked_exercise_ids = task_steps.flatten.select{ |ts| ts.exercise? && ts.completed? }
                                             .collect{ |ts| ts.tasked_id }
-    Tasks::Models::TaskedExercise.where(id: tasked_exercise_ids)
-                                 .preload(
-      [{task_step: {task: {taskings: :role}}},
-       {exercise: {page: :chapter}}]
+    Tasks::Models::TaskedExercise.where(id: tasked_exercise_ids).preload(
+      [{task_step: {task: {taskings: :role}}}, {exercise: {page: :chapter}}]
     )
   end
 
@@ -44,48 +42,72 @@ module CourseGuideMethods
     [tasked_exercises].flatten.collect{ |te| te.los + te.aplos }.flatten.uniq
   end
 
-  def get_clue(tasked_exercises)
-    tags = get_los_and_aplos(tasked_exercises)
-    roles = tasked_exercises.collect{ |ts| ts.task_step.task.taskings.collect{ |tg| tg.role } }
-                            .flatten
-    OpenStax::Biglearn::V1.get_clue(roles: roles, tags: tags)
+  def get_chapter_clues(sorted_chapter_groupings)
+    tasked_exercises = sorted_chapter_groupings.flat_map do |chapter, page_groupings|
+      page_groupings.flat_map{ |page, tasked_exercises| tasked_exercises }
+    end
+
+    roles = tasked_exercises.flat_map do |te|
+      te.task_step.task.taskings.collect{ |tg| tg.role }
+    end.uniq
+
+    # Flatten the array of pools so we can send it to Biglearn
+    pools = sorted_chapter_groupings.flat_map do |chapter, sorted_page_groupings|
+      [chapter.all_exercises_pool] + sorted_page_groupings.collect do |page, tasked_exercises|
+        page.all_exercises_pool
+      end
+    end
+
+    OpenStax::Biglearn::V1.get_clues(roles: roles, pools: pools)
   end
 
-  def compile_pages(page_groupings)
-    page_groupings.collect do |page, tasked_exercises|
+  def compile_pages(sorted_page_groupings, clues_map)
+    tasked_exercises = sorted_page_groupings.flat_map{ |page, tasked_exercises| tasked_exercises }
+    roles = tasked_exercises.flat_map do |te|
+      te.task_step.task.taskings.collect{ |tg| tg.role }
+    end.uniq
+
+    sorted_page_groupings.each_with_index.collect do |(page, tasked_exercises), index|
       practices = completed_practices(tasked_exercises)
-      clue = get_clue(tasked_exercises)
 
       {
         title: page.title,
         book_location: page.book_location,
-        questions_answered_count: tasked_exercises.count,
-        clue: clue,
-        practice_count: practices.count,
+        questions_answered_count: tasked_exercises.size,
+        clue: clues_map[page.all_exercises_pool.uuid],
+        practice_count: practices.size,
         page_ids: [page.id]
       }
-    end.sort_by{ |pg| pg[:book_location] }
+    end
   end
 
   def compile_chapters(tasked_exercises, ecosystems_map)
-    group_tasked_exercises_by_chapters(tasked_exercises, ecosystems_map)
-      .collect do |chapter, page_groupings|
+    chapter_groupings = group_tasked_exercises_by_chapters(tasked_exercises, ecosystems_map)
 
-      pages = compile_pages(page_groupings)
-      tasked_exercises = page_groupings.values.flatten
+    sorted_chapter_groupings = chapter_groupings.to_a.collect do |chapter, page_groupings|
+      [chapter, page_groupings.to_a.sort_by{ |page, tasked_exercises| page.book_location }]
+    end.sort_by{ |chapter, sorted_page_groupings| chapter.book_location }
+
+    clues_map = get_chapter_clues(sorted_chapter_groupings)
+
+    sorted_chapter_groupings.each_with_index.collect do |(chapter, sorted_page_groupings), index|
+
+      page_hashes = compile_pages(sorted_page_groupings, clues_map)
+      tasked_exercises = sorted_page_groupings.flat_map do |page, tasked_exercises|
+        tasked_exercises
+      end
       practices = completed_practices(tasked_exercises)
-      clue = get_clue(tasked_exercises)
 
       {
         title: chapter.title,
         book_location: chapter.book_location,
-        questions_answered_count: tasked_exercises.count,
-        clue: clue,
-        practice_count: practices.count,
-        page_ids: pages.collect{|pp| pp[:page_ids]}.flatten,
-        children: pages
+        questions_answered_count: tasked_exercises.size,
+        clue: clues_map[chapter.all_exercises_pool.uuid],
+        practice_count: practices.size,
+        page_ids: page_hashes.collect{|pp| pp[:page_ids]}.flatten,
+        children: page_hashes
       }
-    end.sort_by{ |ch| ch[:book_location] }
+    end
   end
 
   def compile_course_guide(task_steps, course)
@@ -95,6 +117,7 @@ module CourseGuideMethods
     chapters = compile_chapters(tasked_exercises, ecosystems_map)
 
     {
+      # Assuming only 1 book per ecosystem
       title: current_ecosystem.books.first.title,
       page_ids: chapters.collect{ |cc| cc[:page_ids] }.flatten,
       children: chapters

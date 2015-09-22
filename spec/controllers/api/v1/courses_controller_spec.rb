@@ -209,8 +209,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           name: course.profile.name,
           periods: [{ id: zeroth_period.id.to_s, name: zeroth_period.name },
                     { id: period.id.to_s, name: period.name }],
-          roles: [{ id: student.id.to_s, type: 'student' },
-                  { id: teacher.id.to_s, type: 'teacher' }],
+          roles: a_collection_containing_exactly({ id: student.id.to_s, type: 'student' },
+                                                 { id: teacher.id.to_s, type: 'teacher' }),
         )
       end
     end

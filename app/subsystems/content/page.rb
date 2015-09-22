@@ -12,7 +12,7 @@ module Content
     end
 
     def uuid
-      verify_and_return @strategy.uuid, klass: String, error: ::Content::StrategyError
+      verify_and_return @strategy.uuid, klass: ::Content::Uuid, error: ::Content::StrategyError
     end
 
     def version
@@ -59,6 +59,11 @@ module Content
     def practice_widget_pool
       verify_and_return @strategy.practice_widget_pool, klass: ::Content::Pool,
                                                         error: ::Content::StrategyError
+    end
+
+    def all_exercises_pool
+      verify_and_return @strategy.all_exercises_pool, klass: ::Content::Pool,
+                                                      error: ::Content::StrategyError
     end
 
     def exercises
