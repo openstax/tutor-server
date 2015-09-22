@@ -8,7 +8,7 @@ module WebviewHelper
       courses: Api::V1::CoursesRepresenter.new(
         CollectCourseInfo[user: current_user, with: [:roles, :periods, :ecosystem]]
       )
-    }).to_json
+    }.to_json)
   end
 
   # Returns the script/stylesheet tags needed to load the front-end app
