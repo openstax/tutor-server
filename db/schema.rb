@@ -233,11 +233,6 @@ ActiveRecord::Schema.define(version: 20150922200112) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "entity_users", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "fake_stores", force: :cascade do |t|
     t.text     "data"
     t.string   "name",       null: false
@@ -395,13 +390,13 @@ ActiveRecord::Schema.define(version: 20150922200112) do
   add_index "openstax_accounts_groups", ["openstax_uid"], name: "index_openstax_accounts_groups_on_openstax_uid", unique: true, using: :btree
 
   create_table "role_role_users", force: :cascade do |t|
-    t.integer  "entity_user_id", null: false
-    t.integer  "entity_role_id", null: false
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
+    t.integer  "user_profile_id", null: false
+    t.integer  "entity_role_id",  null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
   end
 
-  add_index "role_role_users", ["entity_user_id", "entity_role_id"], name: "role_role_users_user_role_uniq", unique: true, using: :btree
+  add_index "role_role_users", ["user_profile_id", "entity_role_id"], name: "role_role_users_user_role_uniq", unique: true, using: :btree
 
   create_table "school_district_districts", force: :cascade do |t|
     t.string "name", null: false
@@ -656,7 +651,7 @@ ActiveRecord::Schema.define(version: 20150922200112) do
   add_foreign_key "course_profile_profiles", "entity_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_profile_profiles", "school_district_schools", on_update: :cascade, on_delete: :nullify
   add_foreign_key "role_role_users", "entity_roles", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "role_role_users", "entity_users", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "role_role_users", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "school_district_schools", "school_district_districts", on_update: :cascade, on_delete: :nullify
   add_foreign_key "tasks_course_assistants", "entity_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_course_assistants", "tasks_assistants", on_update: :cascade, on_delete: :cascade

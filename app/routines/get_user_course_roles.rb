@@ -3,18 +3,16 @@
 # Parameters:
 #
 #   course: an Entity::Course
-#   user: an Entity::User
+#   user: a User::User
 #   types: can be `:any` or an array including one
 #     or more of `:student`, `:teacher`, `:any`
 #
 class GetUserCourseRoles
   lev_routine express_output: :roles
 
-  uses_routine Role::GetUserRoles,
-               as: :get_user_roles
+  uses_routine Role::GetUserRoles, as: :get_user_roles
 
-  uses_routine CourseMembership::GetCourseRoles,
-               as: :get_course_roles
+  uses_routine CourseMembership::GetCourseRoles, as: :get_course_roles
 
   protected
 

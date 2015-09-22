@@ -36,7 +36,7 @@ $(document).ready(function() {
           response($.map(data.items, function(item) {
             return {
               label: item.name + ' (' + item.username + ')',
-              value: item.entity_user_id
+              value: item.id
             };
           }));
         }
