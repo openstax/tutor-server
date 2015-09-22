@@ -42,7 +42,7 @@ class Content::Routines::UpdatePageContent
         # change the link to a relative link, with just <uuid><rest-of-path>
         url.scheme = nil
         url.host = nil
-        url.path = path.gsub(/\A\/contents\//, '/')
+        url.path = path.gsub(/\A\/contents\//, '')
         href_attr.value = url.to_s
       end
     end
