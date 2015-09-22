@@ -29,5 +29,15 @@ module Tutor
     # Temporary fix until we update openstax_api
     # to include this for JSON responses
     ActiveSupport.escape_html_entities_in_json = false
+
+    # Set the default cache store to Redis
+    # This setting cannot be set from an initializer
+    # See https://github.com/rails/rails/issues/10908
+    redis_secrets = secrets['redis']
+    config.cache_store = :redis_store, {
+      url: redis_secrets['url'],
+      namespace: redis_secrets['namespaces']['cache'],
+      expires_in: 90.minutes
+    }
   end
 end
