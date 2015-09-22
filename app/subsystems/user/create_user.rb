@@ -1,5 +1,5 @@
-module UserProfile
-  class CreateProfile
+module User
+  class CreateUser
     lev_routine express_output: :profile
 
     uses_routine OpenStax::Accounts::FindOrCreateAccount,
@@ -8,7 +8,7 @@ module UserProfile
 
     protected
 
-    def exec(entity_user_id: nil, account_id: nil, exchange_identifiers: nil,
+    def exec(account_id: nil, exchange_identifiers: nil,
              email: nil, username: nil, password: nil,
              first_name: nil, last_name: nil, full_name: nil, title: nil)
       raise ArgumentError, 'Requires either an email, a username or an account_id' \
@@ -20,10 +20,9 @@ module UserProfile
         full_name: full_name, title: title
       )
 
-      outputs[:profile] = Models::Profile.create!(
+      outputs[:user] = User::User.create!(
         exchange_read_identifier: (exchange_identifiers || new_identifiers).read,
         exchange_write_identifier: (exchange_identifiers || new_identifiers).write,
-        entity_user_id: entity_user_id || new_entity_user_id,
         account_id: account_id
       )
     end
@@ -32,11 +31,6 @@ module UserProfile
 
     def new_identifiers
       @identifiers ||= OpenStax::Exchange.create_identifiers
-    end
-
-    def new_entity_user_id
-      entity_user = Entity::User.create!
-      entity_user.id
     end
 
     def find_or_create_account_id(attrs)

@@ -3,37 +3,29 @@ module MapUsersAccounts
   class << self
     def account_to_user(account)
       @account = account
-      anonymous_profile || find_profile || create_profile
+      anonymous_user || find_user || create_user
     end
 
-    def user_to_account(profile)
-      profile.account
+    def user_to_account(user)
+      user._account
     end
 
     private
-    def anonymous_profile
-      UserProfile::Models::Profile.anonymous if @account.is_anonymous?
+
+    def anonymous_user
+      User::User.anonymous if @account.is_anonymous?
     end
 
-    def find_profile
-      UserProfile::Models::Profile.find_by(account_id: @account.id)
+    def find_user
+      User::User.find_by_account_ids(@account.id)
     end
 
-    def create_profile
-      create_profile = UserProfile::CreateProfile.call(
-        account_id: @account.id,
-        exchange_identifiers: identifiers
-      )
+    def create_user
+      result = User::CreateUser.call(account_id: @account.id)
 
-      if error = create_profile.errors.first
-        raise error.message
-      else
-        create_profile.outputs.profile
-      end
-    end
+      raise error.message if error = result.errors.first
 
-    def identifiers
-      OpenStax::Exchange.create_identifiers
+      result.outputs.user
     end
   end
 

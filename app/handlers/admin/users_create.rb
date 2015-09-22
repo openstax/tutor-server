@@ -4,10 +4,9 @@ class Admin::UsersCreate
 
   lev_handler
 
-  uses_routine UserProfile::CreateProfile, translations: { outputs: { type: :verbatim } },
-                                           as: :create_profile
-  uses_routine UserProfile::Routines::SetAdministratorState, as: :set_administrator
-  uses_routine UserProfile::Routines::SetContentAnalystState, as: :set_content_analyst
+  uses_routine User::CreateUser, translations: { outputs: { type: :verbatim } }, as: :create_user
+  uses_routine User::SetAdministratorState, as: :set_administrator
+  uses_routine User::SetContentAnalystState, as: :set_content_analyst
 
   paramify :user do
     attribute :username, type: String
@@ -33,10 +32,10 @@ class Admin::UsersCreate
   end
 
   def handle
-    run(:create_profile, **user_params.attributes.slice(*ALLOWED_ATTRIBUTES).symbolize_keys)
+    run(:create_user, **user_params.attributes.slice(*ALLOWED_ATTRIBUTES).symbolize_keys)
 
-    profile = outputs[:profile]
-    run(:set_administrator, profile: profile, administrator: user_params.administrator)
-    run(:set_content_analyst, profile: profile, content_analyst: user_params.content_analyst)
+    user = outputs[:user]
+    run(:set_administrator, user: user, administrator: user_params.administrator)
+    run(:set_content_analyst, user: user, content_analyst: user_params.content_analyst)
   end
 end

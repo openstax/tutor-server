@@ -1,0 +1,26 @@
+class RenameUserProfileTables < ActiveRecord::Migration
+  def up
+    # Rename tables
+    rename_table :user_profile_profiles, :user_profiles
+    rename_table :user_profile_administrators, :user_administrators
+    rename_table :user_profile_content_analysts, :user_content_analysts
+
+    # Rename columns
+    rename_column :user_administrators, :user_profile_profile_id, :user_profile_id
+    rename_column :user_content_analysts, :user_profile_profile_id, :user_profile_id
+
+    # Change administrator and content analyst records to point to the entity_user_id field instead of the id
+    execute 'UPDATE user_administrators SET user_profile_id = (SELECT entity_user_id FROM user_profiles WHERE user_profile_id = user_profiles.id);'
+    execute 'UPDATE user_content_analysts SET user_profile_id = (SELECT entity_user_id FROM user_profiles WHERE user_profile_id = user_profiles.id);'
+
+    # Change profile id to match the entity_user_id
+    execute 'UPDATE user_profiles SET id = entity_user_id;'
+
+    # Drop the entity_user_id column
+    remove_column :user_profiles, :entity_user_id
+  end
+
+  def down
+    raise ActiveRecord::IrreversibleMigration
+  end
+end

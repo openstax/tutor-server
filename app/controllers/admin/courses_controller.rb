@@ -44,17 +44,17 @@ class Admin::CoursesController < Admin::BaseController
 
     begin
       csv_reader = CSV.new(roster_file.read, headers: true)
-      users = []
+      users_attributes = []
       errors = []
       csv_reader.each do |row|
-        users << row
+        users_attributes << row
         errors << "On line #{csv_reader.lineno}, username is missing." unless row['username'].present?
         errors << "On line #{csv_reader.lineno}, password is missing." unless row['password'].present?
       end
       if errors.present?
         flash[:error] = ['Error uploading student roster'] + errors
       else
-        add_students(period, users)
+        add_students(period, users_attributes)
         flash[:notice] = 'Student roster has been uploaded.'
       end
     rescue CSV::MalformedCSVError => e
@@ -98,10 +98,10 @@ class Admin::CoursesController < Admin::BaseController
     @schools = SchoolDistrict::ListSchools[]
   end
 
-  def add_students(period, users)
-    users.each do |user|
-      profile = find_or_create(user)
-      AddUserAsPeriodStudent.call(period: period, user: profile.user)
+  def add_students(period, users_attributes)
+    users_attributes.each do |user_attributes|
+      user = find_or_create(user_attributes)
+      AddUserAsPeriodStudent.call(period: period, user: user)
     end
   end
 
@@ -109,9 +109,9 @@ class Admin::CoursesController < Admin::BaseController
     username = user['username']
     first_name = user['first_name']
     last_name = user['last_name']
-    UserProfile::FindOrCreateProfile[username: user['username'],
-                                     password: user['password'],
-                                     first_name: first_name,
-                                     last_name: last_name]
+    User::FindOrCreateUser[username: user['username'],
+                           password: user['password'],
+                           first_name: first_name,
+                           last_name: last_name]
   end
 end

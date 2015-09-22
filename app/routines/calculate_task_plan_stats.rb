@@ -4,8 +4,6 @@ class CalculateTaskPlanStats
 
   uses_routine Role::GetUsersForRoles, as: :get_users_for_roles
 
-  uses_routine UserProfile::SearchProfiles, as: :search_profiles
-
   protected
 
   def answer_stats_for_tasked_exercises(tasked_exercises)
@@ -29,7 +27,7 @@ class CalculateTaskPlanStats
         answers: completed_tasked_exercises.collect do |te|
           roles = te.task_step.task.taskings.collect{ |ts| ts.role }
           users = run(:get_users_for_roles, roles).outputs.users
-          names = run(:search_profiles, search: users).outputs.profiles.items.collect(&:name)
+          names = users.collect(&:name)
 
           {
             student_names: names,

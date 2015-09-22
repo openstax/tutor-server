@@ -10,7 +10,7 @@ class DemoContent < DemoBase
   uses_routine CreateCourse, as: :create_course
   uses_routine CreatePeriod, as: :create_period
   uses_routine AddEcosystemToCourse, as: :add_ecosystem
-  uses_routine UserProfile::MakeAdministrator, as: :make_administrator
+  uses_routine User::MakeAdministrator, as: :make_administrator
   uses_routine AddUserAsCourseTeacher, as: :add_teacher
   uses_routine AddUserAsPeriodStudent, as: :add_student
   uses_routine UserIsCourseStudent, as: :is_student
@@ -25,10 +25,9 @@ class DemoContent < DemoBase
     # By default, choose a fixed seed for repeatability and fewer surprises
     set_random_seed(random_seed)
 
-    admin_profile = user_profile_for_username('admin') || \
-                    new_user_profile(username: 'admin', name: people.admin)
-    run(:make_administrator, user: admin_profile.user) unless admin_profile.is_admin?
-    log("Admin user: #{admin_profile.account.full_name}")
+    admin_user = user_for_username('admin') || new_user(username: 'admin', name: people.admin)
+    run(:make_administrator, user: admin_user) unless admin_user.is_admin?
+    log("Admin user: #{admin_user.name}")
 
     ContentConfiguration[book.to_sym].each do | content |
 
@@ -36,10 +35,9 @@ class DemoContent < DemoBase
       course = find_course(name: course_name) || create_course(name: course_name)
       log("Course: #{course_name}")
 
-      teacher_profile = get_teacher_profile(content.teacher) ||
-                        new_user_profile(username: people.teachers[content.teacher].username,
-                                         name: people.teachers[content.teacher].name)
-      teacher_user = teacher_profile.user
+      teacher_user = get_teacher_user(content.teacher) ||
+                     new_user(username: people.teachers[content.teacher].username,
+                              name: people.teachers[content.teacher].name)
       log("Teacher: #{people.teachers[content.teacher].name}")
 
       run(:add_teacher, course: course, user: teacher_user) \
@@ -52,9 +50,8 @@ class DemoContent < DemoBase
         log("  Period: #{period_content.name}")
         period_content.students.each do | initials |
           student_info = people.students[initials]
-          profile = get_student_profile(initials) ||
-                    new_user_profile(username: student_info.username, name:  student_info.name)
-          user = profile.user
+          user = get_student_user(initials) ||
+                 new_user(username: student_info.username, name:  student_info.name)
           log("    #{initials} #{student_info.username} (#{student_info.name})")
           run(:add_student, period: period, user: user) \
             unless run(:is_student, user: user, course: course).outputs.user_is_course_student

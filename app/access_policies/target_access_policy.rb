@@ -12,9 +12,7 @@ class TargetAccessPolicy
       case target
       when Entity::Role
         CourseMembership::IsCourseStudent[roles: target, course: course]
-      when UserProfile::Models::Profile
-        UserIsCourseStudent[user: target.user, course: course]
-      when Entity::User
+      when User::User
         UserIsCourseStudent[user: target, course: course]
       when Entity::Course
         target == course
