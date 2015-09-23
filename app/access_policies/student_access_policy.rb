@@ -3,7 +3,7 @@ class StudentAccessPolicy
     case action
     when :create, :update, :destroy
       requestor.is_human? && 
-      UserIsCourseTeacher[user: requestor.user, course: student.course]
+      UserIsCourseTeacher[user: requestor, course: student.course]
     else
       false
     end

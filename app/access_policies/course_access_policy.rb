@@ -5,10 +5,10 @@ class CourseAccessPolicy
       !requestor.is_anonymous?
     when :read, :task_plans
       requestor.is_human? && \
-      (UserIsCourseStudent[user: requestor.user, course: course] || \
-       UserIsCourseTeacher[user: requestor.user, course: course])
+      (UserIsCourseStudent[user: requestor, course: course] || \
+       UserIsCourseTeacher[user: requestor, course: course])
     when :export, :roster
-      requestor.is_human? && UserIsCourseTeacher[user: requestor.user, course: course]
+      requestor.is_human? && UserIsCourseTeacher[user: requestor, course: course]
     else
       false
     end
