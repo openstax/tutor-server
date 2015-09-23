@@ -25,7 +25,7 @@ gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails', '~> 4.0.0'
 
 # JavaScript asset compiler
-gem 'therubyracer', platforms: :ruby
+gem 'therubyracer', '~> 0.12.2', platforms: :ruby
 
 # jQuery library
 gem 'jquery-rails'

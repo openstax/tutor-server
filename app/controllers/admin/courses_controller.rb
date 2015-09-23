@@ -86,6 +86,14 @@ class Admin::CoursesController < Admin::BaseController
     redirect_to edit_admin_course_path(params[:id], anchor: 'content')
   end
 
+  def export_activity
+    @course = Entity::Course.find(params[:id])
+    formatted_name = @course.name.downcase.gsub(' ', '_')
+    formatted_time = Time.current.strftime('%Y-%m-%d-%H-%M-%S-%L')
+      # year - month - day - 24-hour clock hour - minute - second - millisecond
+    @filepath = "/admin/exports/#{formatted_name}_#{formatted_time}.csv"
+  end
+
   private
   def course_params
     { id: params[:id], course: params.require(:course)

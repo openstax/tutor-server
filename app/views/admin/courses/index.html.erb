@@ -20,6 +20,11 @@
                               class: "btn btn-xs btn-primary" %>
           <%= link_to 'List Students', students_admin_course_path(course.id),
                                        class: 'btn btn-xs btn-primary' %>
+          <%= link_to 'Export activity', export_activity_admin_course_path(course.id),
+                                         id: "export_activity_course_#{course.id}",
+                                         class: 'btn btn-xs btn-secondary',
+                                         method: :post,
+                                         remote: true %>
         </td>
       </tr>
     <% end %>
