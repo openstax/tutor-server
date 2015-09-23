@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Role::GetUsersForRoles do
+describe Role::GetUsersForRoles, type: :routine do
   context "when there are no users for the given roles" do
     let(:role1) { Entity::Role.create! }
     let(:role2) { Entity::Role.create! }
@@ -14,8 +14,16 @@ describe Role::GetUsersForRoles do
   end
 
   context "when there is one user for the given roles" do
-    let(:target_user)  { Entity::User.create! }
-    let(:other_user)   { Entity::User.create! }
+    let(:target_user)  {
+      profile = FactoryGirl.create(:user_profile)
+      strategy = User::Strategies::Direct::User.new(profile)
+      User::User.new(strategy: strategy)
+    }
+    let(:other_user)   {
+      profile = FactoryGirl.create(:user_profile)
+      strategy = User::Strategies::Direct::User.new(profile)
+      User::User.new(strategy: strategy)
+    }
     let(:target_role1) { Entity::Role.create! }
     let(:target_role2) { Entity::Role.create! }
     let(:other_role)   { Entity::Role.create! }
@@ -37,9 +45,21 @@ describe Role::GetUsersForRoles do
   end
 
   context "when there are multiple users for the given roles" do
-    let(:target_user1) { Entity::User.create! }
-    let(:target_user2) { Entity::User.create! }
-    let(:other_user)   { Entity::User.create! }
+    let(:target_user1) {
+      profile = FactoryGirl.create(:user_profile)
+      strategy = User::Strategies::Direct::User.new(profile)
+      User::User.new(strategy: strategy)
+    }
+    let(:target_user2) {
+      profile = FactoryGirl.create(:user_profile)
+      strategy = User::Strategies::Direct::User.new(profile)
+      User::User.new(strategy: strategy)
+    }
+    let(:other_user)   {
+      profile = FactoryGirl.create(:user_profile)
+      strategy = User::Strategies::Direct::User.new(profile)
+      User::User.new(strategy: strategy)
+    }
     let(:target_role1) { Entity::Role.create! }
     let(:target_role2) { Entity::Role.create! }
     let(:other_role)   { Entity::Role.create! }

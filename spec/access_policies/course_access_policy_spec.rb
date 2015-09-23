@@ -4,19 +4,31 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
   let(:course) { CreateCourse[name: 'Physics 401'] }
   let(:period) { CreatePeriod[course: course] }
 
-  let(:student) { FactoryGirl.create(:user_profile_profile) }
-  let(:teacher) { FactoryGirl.create(:user_profile_profile) }
+  let(:student) {
+    profile = FactoryGirl.create(:user_profile)
+    strategy = User::Strategies::Direct::User.new(profile)
+    User::User.new(strategy: strategy)
+  }
+  let(:teacher) {
+    profile = FactoryGirl.create(:user_profile)
+    strategy = User::Strategies::Direct::User.new(profile)
+    User::User.new(strategy: strategy)
+  }
 
   before do
-    AddUserAsCourseTeacher[course: course, user: teacher.user]
-    AddUserAsPeriodStudent[period: period, user: student.user]
+    AddUserAsCourseTeacher[course: course, user: teacher]
+    AddUserAsPeriodStudent[period: period, user: student]
   end
 
   # action, requestor are set in contexts
   subject(:allowed) { described_class.action_allowed?(action, requestor, course) }
 
   context 'anonymous users' do
-    let(:requestor) { UserProfile::Models::AnonymousUser.instance }
+    let(:requestor) {
+      profile = User::Models::AnonymousProfile.instance
+      strategy = User::Strategies::Direct::AnonymousUser.new(profile)
+      User::User.new(strategy)
+    }
 
     [:index, :read, :task_plans, :export, :roster].each do |test_action|
       context "#{test_action}" do
@@ -27,7 +39,11 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
   end
 
   context 'regular users' do
-    let(:requestor) { FactoryGirl.create(:user_profile_profile) }
+    let(:requestor) {
+      profile = FactoryGirl.create(:user_profile)
+      strategy = User::Strategies::Direct::AnonymousUser.new(profile)
+      User::User.new(strategy)
+    }
 
     context ":index" do
       let(:action) { :index }

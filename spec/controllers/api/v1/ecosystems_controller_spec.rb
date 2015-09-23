@@ -5,13 +5,21 @@ require 'database_cleaner'
 RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
                                               version: :v1, speed: :slow, vcr: VCR_OPTS do
 
-  let!(:profile_1)          { FactoryGirl.create :user_profile_profile }
+  let!(:user_1)             {
+    profile = FactoryGirl.create(:user_profile)
+    strategy = User::Strategies::Direct::User.new(profile)
+    User::User.new(strategy: strategy)
+  }
   let!(:user_1_token)       { FactoryGirl.create :doorkeeper_access_token,
-                                                 resource_owner_id: profile_1.id }
+                                                 resource_owner_id: user_1.id }
 
-  let!(:profile_2)          { FactoryGirl.create :user_profile_profile }
+  let!(:user_2)             {
+    profile = FactoryGirl.create(:user_profile)
+    strategy = User::Strategies::Direct::User.new(profile)
+    User::User.new(strategy: strategy)
+  }
   let!(:user_2_token)       { FactoryGirl.create :doorkeeper_access_token,
-                                                 resource_owner_id: profile_2.id }
+                                                 resource_owner_id: user_2.id }
 
   let!(:userless_token)  { FactoryGirl.create :doorkeeper_access_token }
 
@@ -39,8 +47,8 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
       end
 
       it 'works for students in the course' do
-        AddUserAsCourseTeacher.call(course: course, user: profile_1.user)
-        AddUserAsPeriodStudent.call(period: period, user: profile_2.user)
+        AddUserAsCourseTeacher.call(course: course, user: user_1)
+        AddUserAsPeriodStudent.call(period: period, user: user_2)
 
         api_get :readings, user_1_token, parameters: { id: ecosystem.id }
         expect(response).to have_http_status(:success)
@@ -54,7 +62,7 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
       end
 
       it "should work on the happy path" do
-        AddUserAsCourseTeacher.call(course: course, user: profile_1.user)
+        AddUserAsCourseTeacher.call(course: course, user: user_1)
 
         api_get :readings, user_1_token, parameters: {id: ecosystem.id}
         expect(response).to have_http_status(:success)
@@ -122,7 +130,7 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
 
     before(:each) do
       CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: @ecosystem)
-      AddUserAsCourseTeacher.call(course: course, user: profile_1.user)
+      AddUserAsCourseTeacher.call(course: course, user: user_1)
     end
 
     after(:all) do

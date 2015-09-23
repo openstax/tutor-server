@@ -3,7 +3,9 @@ require 'rails_helper'
 describe AddUserAsCourseTeacher, type: :routine do
   context "when the given user is not a teacher in the given course" do
     it "returns the user's new teacher role" do
-      user   = Entity::User.create!
+      profile = FactoryGirl.create(:user_profile)
+      strategy = User::Strategies::Direct::User.new(profile)
+      user = User::User.new(strategy: strategy)
       course = Entity::Course.create!
 
       result = AddUserAsCourseTeacher.call(user: user, course: course)
@@ -13,7 +15,9 @@ describe AddUserAsCourseTeacher, type: :routine do
   end
   context "when the given user is a teacher in the given course" do
     it "has errors" do
-      user   = Entity::User.create!
+      profile = FactoryGirl.create(:user_profile)
+      strategy = User::Strategies::Direct::User.new(profile)
+      user = User::User.new(strategy: strategy)
       course = Entity::Course.create!
 
       result = AddUserAsCourseTeacher.call(user: user, course: course)

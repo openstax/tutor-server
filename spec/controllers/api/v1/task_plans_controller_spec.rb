@@ -5,9 +5,21 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
   let!(:course)    { CreateCourse[name: 'Anything'] }
   let!(:period)    { CreatePeriod[course: course] }
 
-  let!(:user)      { FactoryGirl.create :user_profile_profile }
-  let!(:teacher)   { FactoryGirl.create :user_profile_profile }
-  let!(:student)   { FactoryGirl.create :user_profile_profile }
+  let!(:user)      {
+    profile = FactoryGirl.create(:user_profile)
+    strategy = User::Strategies::Direct::User.new(profile)
+    User::User.new(strategy: strategy)
+  }
+  let!(:teacher)   {
+    profile = FactoryGirl.create(:user_profile)
+    strategy = User::Strategies::Direct::User.new(profile)
+    User::User.new(strategy: strategy)
+  }
+  let!(:student)   {
+    profile = FactoryGirl.create(:user_profile)
+    strategy = User::Strategies::Direct::User.new(profile)
+    User::User.new(strategy: strategy)
+  }
 
   let!(:page)      { FactoryGirl.create :content_page }
   let!(:task_plan) { FactoryGirl.build(:tasks_task_plan,
@@ -30,11 +42,15 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
                                                   settings: { page_ids: [page.id.to_s] },
                                                   published_at: Time.now) }
 
-  let(:unaffiliated_teacher) { FactoryGirl.create :user_profile_profile }
+  let!(:unaffiliated_teacher) {
+    profile = FactoryGirl.create(:user_profile)
+    strategy = User::Strategies::Direct::User.new(profile)
+    User::User.new(strategy: strategy)
+  }
 
   before do
-    AddUserAsCourseTeacher.call(course: course, user: teacher.user)
-    AddUserAsPeriodStudent.call(period: period, user: student.user)
+    AddUserAsCourseTeacher.call(course: course, user: teacher)
+    AddUserAsPeriodStudent.call(period: period, user: student)
   end
 
   context 'show' do

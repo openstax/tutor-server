@@ -2,9 +2,13 @@ require 'rails_helper'
 
 describe AddUserAsPeriodStudent, type: :routine do
   context "when the given user is not a teacher of the course" do
-    let(:user)   { Entity::User.create! }
-    let(:course) { Entity::Course.create! }
-    let(:period) { CreatePeriod[course: course] }
+    let!(:user)   {
+      profile = FactoryGirl.create(:user_profile)
+      strategy = User::Strategies::Direct::User.new(profile)
+      User::User.new(strategy: strategy)
+    }
+    let!(:course) { Entity::Course.create! }
+    let!(:period) { CreatePeriod[course: course] }
 
     context "and not already a student of the course" do
       it "succeeds and returns the user's new student role" do
@@ -28,9 +32,13 @@ describe AddUserAsPeriodStudent, type: :routine do
   end
 
   context "when the given user is a teacher in the given course" do
-    let(:user)   { Entity::User.create! }
-    let(:course) { Entity::Course.create! }
-    let(:period) { CreatePeriod[course: course] }
+    let!(:user)   {
+      profile = FactoryGirl.create(:user_profile)
+      strategy = User::Strategies::Direct::User.new(profile)
+      User::User.new(strategy: strategy)
+    }
+    let!(:course) { Entity::Course.create! }
+    let!(:period) { CreatePeriod[course: course] }
 
     before(:each) do
       result = AddUserAsCourseTeacher.call(user: user, course: course)

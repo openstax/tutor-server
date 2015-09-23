@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe UserProfile::Models::Administrator, type: :model do
+RSpec.describe User::Models::ContentAnalyst, type: :model do
 
   it { is_expected.to belong_to(:profile) }
 
@@ -8,19 +8,19 @@ RSpec.describe UserProfile::Models::Administrator, type: :model do
 
   it { is_expected.to validate_uniqueness_of(:profile) }
 
-  let!(:anon) { UserProfile::Models::AnonymousUser.instance }
-  let!(:profile) { FactoryGirl.create(:user_profile_profile) }
-  let!(:admin1) { FactoryGirl.create(:user_profile_administrator) }
+  let!(:anon) { User::Models::AnonymousProfile.instance }
+  let!(:profile) { FactoryGirl.create(:user_profile) }
+  let!(:content_analyst) { FactoryGirl.create(:user_content_analyst) }
 
   it 'cannot refer to the anonymous profile' do
     expect{described_class.create(profile: anon)}.to raise_error(ActiveRecord::StatementInvalid)
   end
 
   it 'cannot exist twice for the same profile' do
-    expect(described_class.new(profile: admin1.profile)).to_not be_valid
+    expect(described_class.new(profile: content_analyst.profile)).to_not be_valid
   end
 
-  it 'can be added for a non-admin' do
+  it 'can be added for a non-content-analyst' do
     expect(described_class.create(profile: profile)).to be_valid
   end
 end

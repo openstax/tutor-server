@@ -2,7 +2,9 @@ require 'rails_helper'
 
 RSpec.feature 'DistrictTermsWork' do
   scenario 'normal creation, no deletion or editing' do
-    admin = FactoryGirl.create(:user_profile_profile, :administrator)
+    admin_profile = FactoryGirl.create(:user_profile, :administrator)
+    admin_strategy = User::Strategies::Direct::User.new(admin_profile)
+    admin = User::User.new(strategy: admin_strategy)
     stub_current_user(admin)
 
     visit admin_districts_path
@@ -40,7 +42,9 @@ RSpec.feature 'DistrictTermsWork' do
     check 'targeted_contract_is_proxy_signed'
     click_button 'Submit'
 
-    user = Entity::User.create!
+    profile = FactoryGirl.create(:user_profile)
+    strategy = User::Strategies::Direct::User.new(profile)
+    user = User::User.new(strategy: strategy)
     course = Entity::Course.first
     period = CreatePeriod[course: course]
 
@@ -72,7 +76,9 @@ RSpec.feature 'DistrictTermsWork' do
       content: 'blah'
     ).publish
 
-    admin = FactoryGirl.create(:user_profile_profile, :administrator)
+    admin_profile = FactoryGirl.create(:user_profile, :administrator)
+    admin_strategy = User::Strategies::Direct::User.new(admin_profile)
+    admin = User::User.new(strategy: admin_strategy)
     stub_current_user(admin)
 
     create_targeted_terms(contract_name: 'district_a_terms', target_name: district_a.name)
@@ -112,45 +118,51 @@ RSpec.feature 'DistrictTermsWork' do
     FinePrint::Contract.create(name: 'general_terms_of_use', title: 'a', content: 'a').publish
     FinePrint::Contract.create(name: 'privacy_policy', title: 'a', content: 'a').publish
 
-    profile_1   = FactoryGirl.create(:user_profile_profile, skip_terms_agreement: true)
-    profile_2   = FactoryGirl.create(:user_profile_profile, skip_terms_agreement:true)
+    profile_1 = FactoryGirl.create(:user_profile, skip_terms_agreement: true)
+    stategy_1 = User::Stategies::Direct::User.new(profile_1)
+    user_1 = User::User.new(strategy: strategy_1)
+    profile_2 = FactoryGirl.create(:user_profile, skip_terms_agreement:true)
+    stategy_2 = User::Stategies::Direct::User.new(profile_2)
+    user_2 = User::User.new(strategy: strategy_2)
 
-    AddUserAsCourseTeacher[user: profile_1.user, course: course_e]
-    AddUserAsCourseTeacher[user: profile_2.user, course: course_f]
+    AddUserAsCourseTeacher[user: user_1, course: course_e]
+    AddUserAsCourseTeacher[user: user_2, course: course_f]
 
-    admin = FactoryGirl.create(:user_profile_profile, :administrator)
+    admin_profile = FactoryGirl.create(:user_profile, :administrator)
+    admin_strategy = User::Strategies::Direct::User.new(admin_profile)
+    admin = User::User.new(strategy: admin_strategy)
     stub_current_user(admin)
 
     create_targeted_terms(contract_name: 'district_a_terms', target_name: district_a.name,
                           masked_contracts: ['privacy_policy'], is_proxy_signed: true)
 
-    stub_current_user(profile_1)
+    stub_current_user(user_1)
 
     # User 1 should not have signed district a terms yet
 
-    expect(FinePrint.signed_contract?(profile_1, 'district_a_terms')).to be_falsy
+    expect(FinePrint.signed_contract?(user_1, 'district_a_terms')).to be_falsy
 
     # Want to check that WebviewController receives fine_print_require with certain terms, but can't do it
     # since also want to do it below for a second request -- so using cheesier expectation on FinePrint
     # directly here and below.
     #   Can't do this: expect_any_instance_of(WebviewController).to receive(:fine_print_require).with('general_terms_of_use')
     expect(FinePrint).to receive(:unsigned_contracts_for)
-                           .with(profile_1, name: ['general_terms_of_use'])
+                           .with(user_1, name: ['general_terms_of_use'])
 
     # Visiting the dashboard path should add an implicit signature for user1 / district_a_terms
     expect{
       visit dashboard_path
     }.to change { FinePrint::Signature.count }.by(1)
 
-    expect(FinePrint.signed_contract?(profile_1, 'district_a_terms')).to be_truthy
+    expect(FinePrint.signed_contract?(user_1, 'district_a_terms')).to be_truthy
     expect(FinePrint::Signature.all.max_by{ |sig| sig.created_at }.is_implicit?).to be_truthy
 
     # user 2 is not in district A, so should just see normal terms
-    stub_current_user(profile_2)
+    stub_current_user(user_2)
 
     #   Can't do this: expect_any_instance_of(WebviewController).to receive(:fine_print_require).with('general_terms_of_use', 'privacy_policy')
     expect(FinePrint).to receive(:unsigned_contracts_for)
-                           .with(profile_2, name: ['general_terms_of_use', 'privacy_policy'])
+                           .with(user_2, name: ['general_terms_of_use', 'privacy_policy'])
 
     # Visiting the dashboard path should add an implicit signature for user1 / district_a_terms
     expect{

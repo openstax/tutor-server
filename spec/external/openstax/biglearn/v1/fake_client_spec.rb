@@ -71,9 +71,11 @@ module OpenStax::Biglearn
       end
 
       it 'returns a well-formatted array of clues' do
-        profile = UserProfile::CreateProfile.call(username: SecureRandom.hex).outputs.profile
-        profile.update_attribute(:exchange_read_identifier, '0edbe5f8f30abc5ba56b5b890bddbbe2')
-        role = Role::CreateUserRole[profile.user]
+        user = User::CreateUser.call(
+          username: SecureRandom.hex,
+          exchange_read_identifier: '0edbe5f8f30abc5ba56b5b890bddbbe2'
+        ).outputs.user
+        role = Role::CreateUserRole[user]
         pools = [pool_1, pool_2]
         pool_uuids = pools.collect(&:uuid)
 

@@ -9,20 +9,22 @@ class SetupPerformanceReportData
 
     # There should be at least 4 students
     (students.length + 1..4).each do |extra_student|
-      students << FactoryGirl.create(:user_profile_profile)
+      profile = FactoryGirl.create(:user_profile)
+      strategy = User::Strategies::Direct::User.new(profile)
+      students << User::User.new(strategy: strategy)
     end
 
     CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
-    AddUserAsCourseTeacher[course: course, user: teacher.user]
+    AddUserAsCourseTeacher[course: course, user: teacher]
     period_1 = course.periods.empty? ? CreatePeriod[course: course] : course.periods.first
     period_2 = CreatePeriod[course: course]
     # Add first 2 students to period 1
     students[0..1].each do |student|
-      AddUserAsPeriodStudent[period: period_1, user: student.user]
+      AddUserAsPeriodStudent[period: period_1, user: student]
     end
     # Add the rest of the students to period 2
     students[2..-1].each do |student|
-      AddUserAsPeriodStudent[period: period_2, user: student.user]
+      AddUserAsPeriodStudent[period: period_2, user: student]
     end
 
     # Exclude introduction pages b/c they don't have LOs
@@ -86,7 +88,7 @@ class SetupPerformanceReportData
     DistributeTasks[homework2_taskplan]
 
     student_roles = students.collect do |student|
-      GetUserCourseRoles[course: course, user: student.user].first
+      GetUserCourseRoles[course: course, user: student].first
     end
     student_tasks = student_roles.collect do |student_role|
       get_student_tasks(student_role)

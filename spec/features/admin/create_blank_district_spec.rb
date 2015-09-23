@@ -2,7 +2,9 @@ require 'rails_helper'
 
 RSpec.describe 'Administration' do
   before do
-    admin = FactoryGirl.create(:user_profile_profile, :administrator)
+    admin_profile = FactoryGirl.create(:user_profile, :administrator)
+    admin_strategy = User::Strategies::Direct::User.new(admin_profile)
+    admin = User::User.new(strategy: admin_strategy)
     stub_current_user(admin)
 
     visit admin_districts_path

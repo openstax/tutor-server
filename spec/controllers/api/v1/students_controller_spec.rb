@@ -8,47 +8,39 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
   let!(:period)            { CreatePeriod[course: course] }
   let!(:period_2)          { CreatePeriod[course: course] }
 
-  let!(:student_profile)   { FactoryGirl.create(:user_profile_profile) }
-  let!(:student_user)      { student_profile.user }
-  let!(:student_role)      {
-    role = Entity::Role.create
-    Role::Models::RoleUser.create!(user: student_user, role: role)
-    role
+  let!(:student_user)      {
+    profile = FactoryGirl.create(:user_profile)
+    strategy = User::Strategies::Direct::User.new(profile)
+    User::User.new(strategy: strategy)
   }
-  let!(:student)           { CourseMembership::AddStudent[role: student_role, period: period] }
+  let!(:student)           { AddUserAsPeriodStudent[user: student_user, period: period] }
   let!(:student_token)     { FactoryGirl.create :doorkeeper_access_token,
                                                 application: application,
-                                                resource_owner_id: student_profile.id }
+                                                resource_owner_id: student_user.id }
 
-  let!(:teacher_profile)   { FactoryGirl.create(:user_profile_profile) }
-  let!(:teacher_user)      { teacher_profile.user }
-  let!(:teacher_role)      {
-    role = Entity::Role.create
-    Role::Models::RoleUser.create!(user: teacher_user, role: role)
-    role
+  let!(:teacher_user)      {
+    profile = FactoryGirl.create(:user_profile)
+    strategy = User::Strategies::Direct::User.new(profile)
+    User::User.new(strategy: strategy)
   }
-  let!(:teacher)           { CourseMembership::AddTeacher[role: teacher_role, course: course] }
+  let!(:teacher)           { AddUserAsCourseTeacher[user: teacher_user, course: course] }
   let!(:teacher_token)     { FactoryGirl.create :doorkeeper_access_token,
                                                 application: application,
-                                                resource_owner_id: teacher_profile.id }
+                                                resource_owner_id: teacher_user.id }
 
-  let!(:student_profile_2) { FactoryGirl.create(:user_profile_profile) }
-  let!(:student_user_2)    { student_profile_2.user }
-  let!(:student_role_2)    {
-    role = Entity::Role.create
-    Role::Models::RoleUser.create!(user: student_user_2, role: role)
-    role
+  let!(:student_user_2)    {
+    profile = FactoryGirl.create(:user_profile)
+    strategy = User::Strategies::Direct::User.new(profile)
+    User::User.new(strategy: strategy)
   }
-  let!(:student_2)         { CourseMembership::AddStudent[role: student_role_2, period: period] }
+  let!(:student_2)           { AddUserAsPeriodStudent[user: student_user_2, period: period] }
 
-  let!(:student_profile_3) { FactoryGirl.create(:user_profile_profile) }
-  let!(:student_user_3)    { student_profile_3.user }
-  let!(:student_role_3)    {
-    role = Entity::Role.create
-    Role::Models::RoleUser.create!(user: student_user_3, role: role)
-    role
+  let!(:student_user_3)    {
+    profile = FactoryGirl.create(:user_profile)
+    strategy = User::Strategies::Direct::User.new(profile)
+    User::User.new(strategy: strategy)
   }
-  let!(:student_3)         { CourseMembership::AddStudent[role: student_role_3, period: period_2] }
+  let!(:student_3)           { AddUserAsPeriodStudent[user: student_user_3, period: period] }
 
   let!(:userless_token)    { FactoryGirl.create :doorkeeper_access_token,
                                                 application: application,
@@ -145,7 +137,7 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
   #       it 'creates a new student' do
   #         expect {
   #           api_post :create, teacher_token, parameters: valid_params, raw_post_data: valid_body
-  #         }.to change{ UserProfile::Models::Profile.count }.by(1)
+  #         }.to change{ User::Models::Profile.count }.by(1)
   #         expect(response).to have_http_status(:created)
   #         new_student = CourseMembership::Models::Student.find(response.body_as_hash[:id])
   #         expect(response.body_as_hash).to eq({

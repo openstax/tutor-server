@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :user_profile_profile, aliases: [:profile], class: 'UserProfile::Models::Profile' do
+  factory :user_profile, aliases: [:profile], class: 'User::Models::Profile' do
     exchange_read_identifier  { SecureRandom.hex.to_s }
     exchange_write_identifier { SecureRandom.hex.to_s }
 
@@ -12,8 +12,6 @@ FactoryGirl.define do
       title nil
     end
 
-    association :user, factory: :entity_user
-
     after(:build) do |profile, evaluator|
       profile.account ||= FactoryGirl.build(:openstax_accounts_account,
                                             username: evaluator.username,
@@ -25,14 +23,13 @@ FactoryGirl.define do
 
     trait :administrator do
       after(:build) do |profile|
-        profile.administrator = FactoryGirl.build(:user_profile_administrator, profile: profile)
+        profile.administrator = FactoryGirl.build(:user_administrator, profile: profile)
       end
     end
 
     trait :content_analyst do
       after(:build) do |profile|
-        profile.content_analyst = FactoryGirl.build(:user_profile_content_analyst,
-                                                    profile: profile)
+        profile.content_analyst = FactoryGirl.build(:user_content_analyst, profile: profile)
       end
     end
 

@@ -98,7 +98,9 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
     let!(:taskees) {
       num_taskees.times.collect do
-        user = Entity::User.create
+        profile = FactoryGirl.create(:user_profile)
+        strategy = User::Strategies::Direct::User.new(profile)
+        user = User::User.new(strategy: strategy)
         AddUserAsPeriodStudent.call(user: user, period: period)
         user
       end
@@ -244,7 +246,9 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
     let!(:taskees) {
       num_taskees.times.collect do
-        user = Entity::User.create
+        profile = FactoryGirl.create(:user_profile)
+        strategy = User::Strategies::Direct::User.new(profile)
+        user = User::User.new(strategy: strategy)
         AddUserAsPeriodStudent.call(user: user, period: period)
         user
       end

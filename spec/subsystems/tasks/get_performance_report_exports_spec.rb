@@ -2,11 +2,13 @@ require 'rails_helper'
 
 RSpec.describe Tasks::GetPerformanceReportExports, type: :routine do
   it 'returns the export info related to courses' do
-    AddUserAsCourseTeacher[course: Entity::Course.create!,
-                           user: Entity::User.create!]
+    course = Entity::Course.create!
 
-    course = Entity::Course.last
-    role = Entity::Role.last
+    profile = FactoryGirl.create(:user_profile)
+    strategy = User::Strategies::Direct::User.new(profile)
+    user = User::User.new(strategy: strategy)
+
+    role = AddUserAsCourseTeacher[course: course, user: user]
 
     physics_export = Tempfile.open(['Physics_I_Performance', '.xlsx']) do |physics_file|
       FactoryGirl.create(:tasks_performance_report_export,

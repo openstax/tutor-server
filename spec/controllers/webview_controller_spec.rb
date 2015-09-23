@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe WebviewController, :type => :controller do
+RSpec.describe WebviewController, type: :controller do
 
   let!(:contract)          {
     FinePrint::Contract.create!(
@@ -10,9 +10,16 @@ RSpec.describe WebviewController, :type => :controller do
       version: 10
     )
   }
-  let!(:new_profile)        { FactoryGirl.create(:user_profile_profile,
-                                                 skip_terms_agreement: true) }
-  let!(:registered_profile) { FactoryGirl.create(:user_profile_profile) }
+  let!(:new_user)           {
+    profile = FactoryGirl.create(:user_profile, skip_terms_agreement: true)
+    strategy = User::Strategies::Direct::User.new(profile)
+    User::User.new(strategy: strategy)
+  }
+  let!(:registered_user) {
+    profile = FactoryGirl.create(:user_profile)
+    strategy = User::Strategies::Direct::User.new(profile)
+    User::User.new(strategy: strategy)
+  }
 
   describe 'GET home' do
     it 'renders a static page for anonymous' do
@@ -21,7 +28,7 @@ RSpec.describe WebviewController, :type => :controller do
     end
 
     it 'redirects logged in users to the dashboard' do
-      controller.sign_in new_profile
+      controller.sign_in new_user
       get :home
       expect(response).to have_http_status(:found)
       expect(response).to redirect_to(dashboard_path)
@@ -35,7 +42,7 @@ RSpec.describe WebviewController, :type => :controller do
     end
 
     it 'requires agreement to contracts' do
-      controller.sign_in new_profile
+      controller.sign_in new_user
       get :index
       expect(response).to have_http_status(:found)
     end
@@ -44,15 +51,14 @@ RSpec.describe WebviewController, :type => :controller do
       render_views
 
       it 'sets boostrap data in script tag' do
-        controller.sign_in registered_profile
+        controller.sign_in registered_user
         get :index
         expect(response).to have_http_status(:success)
         doc = Nokogiri::HTML(response.body)
         data = ::JSON.parse(doc.css('body script#tutor-boostrap-data').inner_text)
         expect(data).to include({
-          'courses'=> CollectCourseInfo[user: registered_profile.user,
-                                        with: [:roles, :periods]].as_json,
-          'user' => Api::V1::UserProfileRepresenter.new(registered_profile).as_json
+          'courses'=> CollectCourseInfo[user: registered_user, with: [:roles, :periods]].as_json,
+          'user' => Api::V1::UserRepresenter.new(registered_user).as_json
         })
       end
     end

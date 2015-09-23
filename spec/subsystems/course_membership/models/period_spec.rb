@@ -16,8 +16,10 @@ RSpec.describe CourseMembership::Models::Period, type: :model do
   it { is_expected.to validate_uniqueness_of(:name).scoped_to(:entity_course_id) }
 
   it 'cannot be deleted if it has any active students' do
-    student_profile = FactoryGirl.create(:user_profile_profile)
-    AddUserAsPeriodStudent[period: period, user: student_profile.user]
+    student_profile = FactoryGirl.create(:user_profile)
+    student_strategy = User::Strategies::Direct::User.new(student_profile)
+    student_user = User::User.new(strategy: student_strategy)
+    AddUserAsPeriodStudent[period: period, user: student_user]
     expect { period.destroy }.not_to change{CourseMembership::Models::Period.count}
     expect(period.errors).not_to be_empty
     period.enrollments.each{ |en| en.student.inactivate.save! }

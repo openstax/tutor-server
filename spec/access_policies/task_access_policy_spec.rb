@@ -1,8 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe TaskAccessPolicy, type: :access_policy do
-  let(:requestor) { FactoryGirl.create(:user_profile_profile) }
-  let(:task) { FactoryGirl.create(:tasks_task) }
+  let(:requestor) {
+    profile = FactoryGirl.create(:user_profile)
+    strategy = User::Strategies::Direct::User.new(profile)
+    User::User.new(strategy: strategy)
+  }
+  let(:task)      { FactoryGirl.create(:tasks_task) }
 
   subject(:action_allowed) do
     TaskAccessPolicy.action_allowed?(action, requestor, task)

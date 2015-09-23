@@ -4,20 +4,28 @@ require 'database_cleaner'
 
 RSpec.describe Api::V1::GuidesController, type: :controller, api: true,
                                           version: :v1, vcr: VCR_OPTS do
-  let!(:profile_1)          { FactoryGirl.create :user_profile_profile }
+  let!(:user_1)          {
+    profile = FactoryGirl.create(:user_profile)
+    strategy = User::Strategies::Direct::User.new(profile)
+    User::User.new(strategy: strategy)
+  }
   let!(:user_1_token)       { FactoryGirl.create :doorkeeper_access_token,
-                                                 resource_owner_id: profile_1.id }
+                                                 resource_owner_id: user_1.id }
 
-  let!(:profile_2)          { FactoryGirl.create :user_profile_profile }
+  let!(:user_2)          {
+    profile = FactoryGirl.create(:user_profile)
+    strategy = User::Strategies::Direct::User.new(profile)
+    User::User.new(strategy: strategy)
+  }
   let!(:user_2_token)       { FactoryGirl.create :doorkeeper_access_token,
-                                                 resource_owner_id: profile_2.id }
+                                                 resource_owner_id: user_2.id }
 
   let!(:course) { CreateCourse[name: 'Physics 101'] }
   let!(:period) { CreatePeriod[course: course] }
 
   describe 'Learning guides' do
     let!(:teacher_role) {
-      AddUserAsCourseTeacher.call(course: course, user: profile_1.user).outputs[:role]
+      AddUserAsCourseTeacher.call(course: course, user: user_1).outputs[:role]
     }
 
     let!(:course_guide) {
@@ -26,13 +34,17 @@ RSpec.describe Api::V1::GuidesController, type: :controller, api: true,
 
     describe '#student' do
       let!(:student_role) {
-        AddUserAsPeriodStudent.call(period: period, user: profile_2.user).outputs[:role]
+        AddUserAsPeriodStudent.call(period: period, user: user_2).outputs[:role]
       }
 
-      let!(:profile_3) { FactoryGirl.create :user_profile_profile }
+      let!(:user_3)          {
+        profile = FactoryGirl.create(:user_profile)
+        strategy = User::Strategies::Direct::User.new(profile)
+        User::User.new(strategy: strategy)
+      }
 
       let!(:student_3_role) {
-        AddUserAsPeriodStudent.call(period: period, user: profile_3.user).outputs[:role]
+        AddUserAsPeriodStudent.call(period: period, user: user_3).outputs[:role]
       }
 
       it 'returns the student guide for the logged in user' do

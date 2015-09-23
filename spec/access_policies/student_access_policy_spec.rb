@@ -1,16 +1,19 @@
 require 'rails_helper'
 
 RSpec.describe StudentAccessPolicy, type: :access_policy do
-  let(:requestor)    { FactoryGirl.create :user_profile_profile }
+  let(:requestor)    {
+    profile = FactoryGirl.create(:user_profile)
+    strategy = User::Strategies::Direct::User.new(profile)
+    User::User.new(strategy: strategy)
+  }
   let(:course)       { Entity::Course.create }
   let(:period)       { CreatePeriod[course: course] }
-  let(:student_user) { FactoryGirl.create(:user_profile_profile).user }
-  let(:student_role) {
-    role = Entity::Role.create
-    Role::Models::RoleUser.create!(user: student_user, role: role)
-    role
+  let(:student_user) {
+    profile = FactoryGirl.create(:user_profile)
+    strategy = User::Strategies::Direct::User.new(profile)
+    User::User.new(strategy: strategy)
   }
-  let(:student)      { CourseMembership::AddStudent[role: student_role, period: period] }
+  let(:student)      { AddUserAsPeriodStudent[user: student_user, period: period] }
 
   subject(:action_allowed) do
     StudentAccessPolicy.action_allowed?(action, requestor, student)

@@ -1,7 +1,11 @@
 require 'rails_helper'
 
-RSpec.describe Admin::CoursesController do
-  let(:admin) { FactoryGirl.create(:user_profile_profile, :administrator) }
+RSpec.describe Admin::CoursesController, type: :controller do
+  let(:admin) {
+    profile = FactoryGirl.create(:user_profile, :administrator)
+    strategy = User::Strategies::Direct::User.new(profile)
+    User::User.new(strategy: strategy)
+  }
 
   before { controller.sign_in(admin) }
 
@@ -59,7 +63,6 @@ RSpec.describe Admin::CoursesController do
     end
 
     it 'reuses existing users for existing usernames' do
-      # FactoryGirl.create :user_profile_profile, username: 'alexh'
       expect {
         post :students, id: physics.id, course: { period: physics_period.id }, student_roster: file_1
       }.to change { OpenStax::Accounts::Account.count }.by(3)
@@ -69,8 +72,9 @@ RSpec.describe Admin::CoursesController do
       }.to change { OpenStax::Accounts::Account.count }.by(1) # 2 in file but 1 reused
 
       # Carol B should be in both courses
-      expect(UserIsCourseStudent[user: Entity::User.second, course: physics]).to eq true
-      expect(UserIsCourseStudent[user: Entity::User.second, course: biology]).to eq true
+      carol_b = User::User.find_by_username('carolb')
+      expect(UserIsCourseStudent[user: carol_b, course: physics]).to eq true
+      expect(UserIsCourseStudent[user: carol_b, course: biology]).to eq true
     end
 
     it 'does not add any students if username or password is missing' do
@@ -197,7 +201,9 @@ RSpec.describe Admin::CoursesController do
     end
 
     it 'disallows non-admin authenticated visitors' do
-      non_admin = FactoryGirl.create(:user_profile_profile)
+      profile = FactoryGirl.create(:user_profile)
+      strategy = User::Strategies::Direct::User.new(profile)
+      non_admin = User::User.new(strategy: strategy)
       controller.sign_in(non_admin)
 
       expect { get :index }.to raise_error(SecurityTransgression)

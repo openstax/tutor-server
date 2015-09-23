@@ -9,7 +9,7 @@ describe CreateStudent, type: :routine do
     expect {
       result = CreateStudent.call(period: period, username: 'dummyuser', password: 'pass',
                                   first_name: 'Dummy', last_name: 'User', full_name: 'Dummy User')
-    }.to change{ UserProfile::Models::Profile.count }.by(1)
+    }.to change{ User::Models::Profile.count }.by(1)
     expect(result.errors).to be_empty
 
     student = result.outputs.student
@@ -25,7 +25,7 @@ describe CreateStudent, type: :routine do
     expect {
       result = CreateStudent.call(period: period, email: 'dummy@example.com',
                                   first_name: 'Dummy', last_name: 'User', full_name: 'Dummy User')
-    }.to change{ UserProfile::Models::Profile.count }.by(1)
+    }.to change{ User::Models::Profile.count }.by(1)
     expect(result.errors).to be_empty
 
     student = result.outputs.student

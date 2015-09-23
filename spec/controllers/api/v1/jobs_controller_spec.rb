@@ -3,13 +3,19 @@ require 'rails_helper'
 RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :v1 do
   include ActiveJob::TestHelper
 
-  let(:user) { FactoryGirl.create(:user_profile_profile) }
-  let(:admin) { FactoryGirl.create(:user_profile_profile, :administrator) }
+  let(:user) {
+    profile = FactoryGirl.create(:user_profile)
+    strategy = User::Stategies::Direct::User.new(profile)
+    User::User.new(strategy: strategy)
+  }
+  let(:admin) {
+    profile = FactoryGirl.create(:user_profile, :administrator)
+    strategy = User::Stategies::Direct::User.new(profile)
+    User::User.new(strategy: strategy)
+  }
 
-  let(:user_token) { FactoryGirl.create(:doorkeeper_access_token,
-                                        resource_owner_id: user.id) }
-  let(:admin_token) { FactoryGirl.create(:doorkeeper_access_token,
-                                         resource_owner_id: admin.id) }
+  let(:user_token) { FactoryGirl.create(:doorkeeper_access_token, resource_owner_id: user.id) }
+  let(:admin_token) { FactoryGirl.create(:doorkeeper_access_token, resource_owner_id: admin.id) }
 
   before do
     stub_const 'TestRoutine', Class.new
@@ -67,10 +73,11 @@ RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :
       end
 
       it 'works end-2-end for ExportPerformanceReport' do
-        user = Entity::User.create!
+        profile = FactoryGirl.create(:user_profile)
+        strategy = User::Strategies::Direct::User.new(profile)
+        user = User::User.new(strategy: strategy)
         course = CreateCourse[name: 'Physics']
-        user_token = FactoryGirl.create :doorkeeper_access_token,
-                                        resource_owner_id: user.id
+        user_token = FactoryGirl.create :doorkeeper_access_token, resource_owner_id: user.id
 
         AddUserAsCourseTeacher[course: course, user: user]
 

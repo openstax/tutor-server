@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe UserProfile::Models::AnonymousUser, type: :model do
+RSpec.describe User::Models::AnonymousProfile, type: :model do
   subject(:anon) { described_class.instance }
 
   it 'uses an anonymous account' do

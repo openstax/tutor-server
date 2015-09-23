@@ -4,14 +4,23 @@ describe UserIsCourseStudent, type: :routine do
 
   context "when the user is not a student for the given course" do
     it "returns false" do
-      target_user         = Entity::User.create!
+      target_profile = FactoryGirl.create(:user_profile)
+      target_strategy = User::Strategies::Direct::User.new(target_profile)
+      target_user = User::User.new(strategy: target_strategy)
+
       target_student_role = Entity::Role.create!
       target_teacher_role = Entity::Role.create!
-      other_user          = Entity::User.create!
+
+      other_profile = FactoryGirl.create(:user_profile)
+      other_strategy = User::Strategies::Direct::User.new(other_profile)
+      other_user = User::User.new(strategy: other_strategy)
+
       other_student_role  = Entity::Role.create!
+
       target_course       = Entity::Course.create!
-      other_course        = Entity::Course.create!
       target_period       = CreatePeriod[course: target_course]
+
+      other_course        = Entity::Course.create!
       other_period       = CreatePeriod[course: other_course]
 
       Role::AddUserRole.call(user: target_user, role: target_student_role)
@@ -34,8 +43,12 @@ describe UserIsCourseStudent, type: :routine do
   context "when the user is a student for the given course" do
     it "returns true" do
       ## Make the target user a student for the target course
-      target_user         = Entity::User.create!
+      target_profile = FactoryGirl.create(:user_profile)
+      target_strategy = User::Strategies::Direct::User.new(target_profile)
+      target_user = User::User.new(strategy: target_strategy)
+
       target_student_role = Entity::Role.create!
+
       target_course       = Entity::Course.create!
       target_period       = CreatePeriod[course: target_course]
 

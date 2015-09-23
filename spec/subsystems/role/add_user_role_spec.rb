@@ -1,10 +1,12 @@
 require 'rails_helper'
 
-describe Role::AddUserRole do
+describe Role::AddUserRole, type: :routine do
   context "when adding a new user role" do
     it "succeeds" do
       role = Entity::Role.create!
-      user = Entity::User.create!
+      profile = FactoryGirl.create(:user_profile)
+      strategy = User::Strategies::Direct::User.new(profile)
+      user = User::User.new(strategy: strategy)
 
       result = nil
       expect {
@@ -16,7 +18,9 @@ describe Role::AddUserRole do
   context "when adding a existing user role" do
     it "fails" do
       role = Entity::Role.create!
-      user = Entity::User.create!
+      profile = FactoryGirl.create(:user_profile)
+      strategy = User::Strategies::Direct::User.new(profile)
+      user = User::User.new(strategy: strategy)
 
       result = nil
       expect {
