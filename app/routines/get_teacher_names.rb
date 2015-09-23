@@ -5,10 +5,6 @@ class GetTeacherNames
     translations: { outputs: { type: :verbatim } },
     as: :get_teacher_users
 
-  uses_routine User::SearchProfiles,
-    translations: { outputs: { type: :verbatim } },
-    as: :search_profiles
-
   protected
 
   def exec(course_id)

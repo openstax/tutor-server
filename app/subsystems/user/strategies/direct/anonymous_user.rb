@@ -2,10 +2,10 @@ module User
   module Strategies
     module Direct
       class AnonymousUser < Entity
-        wraps User::Models::AnonymousProfile
+        wraps ::User::Models::AnonymousProfile
 
         exposes :username, :first_name, :last_name, :full_name, :title, :name, :casual_name
-        exposes :instance, :anonymous, from_class: User::Models::AnonymousProfile
+        exposes :instance, :anonymous, from_class: ::User::Models::AnonymousProfile
 
         class << self
           alias_method :entity_instance, :instance

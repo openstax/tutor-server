@@ -110,7 +110,7 @@ RSpec.describe User::SearchUsers, type: :routine do
 
   it 'requires that an array search is filled with User::User' do
     expect {
-      described_class[search: [admin, FactoryGirl.create :user_profile]]
+      described_class[search: [admin, FactoryGirl.create(:user_profile)]]
     }.to raise_error(TypeError,
                      "Tested argument was of class 'User::Models::Profile' instead of the expected 'User::User'.")
   end

@@ -2,7 +2,7 @@ module User
   class MakeAdministrator
     lev_routine
 
-    uses_routine User::Routines::SetAdministratorState, as: :set_admin
+    uses_routine User::SetAdministratorState, as: :set_admin
 
     protected
     def exec(user:)
