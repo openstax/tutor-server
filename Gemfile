@@ -231,7 +231,7 @@ group :production do
   gem 'fog', require: 'fog/aws'
 
   # Notify developers of Exceptions in production
-  gem 'exception_notification'
+  gem 'openstax_rescue_from', github: 'openstax/rescue_from', branch: 'install-generator'
 
   # Lograge for consistent logging
   gem 'lograge'
