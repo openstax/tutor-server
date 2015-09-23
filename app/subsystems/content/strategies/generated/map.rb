@@ -77,7 +77,7 @@ module Content
 
           all_map = map_exercises_to_pages(exercises: all_exercises)
 
-          # The hash returned has all exercises given as keys
+          # The hash returned has all given exercise ids as keys
           # All values in the hash are ::Content::Page's from the to_ecosystem
           @valid = Set.new(all_map.keys) == Set.new(all_exercises.collect(&:id)) && \
                    Set.new(all_map.values).subset?(Set.new(@to_ecosystem.pages))
