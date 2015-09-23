@@ -73,9 +73,7 @@ module Api::V1
     property :ecosystem_title,
              type: String,
              readable: true,
-             getter: ->(*) {
-      binding.pry
-      task_plan ? task_plan.ecosystem.title : '' },
+             getter: ->(*) { ecosystem.title },
              writeable: false
   end
 end

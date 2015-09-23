@@ -7,6 +7,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
                    :event]
 
   belongs_to :task_plan, inverse_of: :tasks
+  belongs_to :ecosystem, subsystem: :content
 
   # dependent: :destroy will cause and infinite loop and stack overflow
   belongs_to :entity_task, class_name: 'Entity::Task',

@@ -70,7 +70,8 @@ class Tasks::Assistants::IReadingAssistant
       task_type: :reading,
       title:     title,
       description: description,
-      feedback_at: Time.now
+      feedback_at: Time.now,
+      content_ecosystem_id: @ecosystem.id
     ]
   end
 
