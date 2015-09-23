@@ -22,13 +22,13 @@ module OpenStax::Biglearn
     let!(:user_1_role) {
       profile = UserProfile::CreateProfile.call(username: SecureRandom.hex).outputs.profile
       profile.update_attribute(:exchange_read_identifier, USER_1_IDENTIFIER)
-      Role::CreateUserRole[profile.entity_user]
+      Role::CreateUserRole[profile.user]
     }
 
     let!(:user_2_role) {
       profile = UserProfile::CreateProfile.call(username: SecureRandom.hex).outputs.profile
       profile.update_attribute(:exchange_read_identifier, USER_2_IDENTIFIER)
-      Role::CreateUserRole[profile.entity_user]
+      Role::CreateUserRole[profile.user]
     }
 
     let!(:content_exercise)  { FactoryGirl.create :content_exercise }
