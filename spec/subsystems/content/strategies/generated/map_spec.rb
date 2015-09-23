@@ -122,14 +122,29 @@ module Content
 
         it 'can map from_ecosystems exercise ids to to_ecosystem pages' do
           mapping = map.map_exercises_to_pages(exercises: [
-            old_exercise, new_exercise, another_old_exercise, another_new_exercise
+            old_exercise, new_exercise
           ])
           [old_exercise, new_exercise].each do |exercise|
             expect(mapping[exercise.id]).to eq new_exercise.page
           end
 
+          mapping_2 = map.map_exercises_to_pages(exercises: [
+            another_old_exercise, another_new_exercise
+          ])
           [another_old_exercise, another_new_exercise].each do |exercise|
-            expect(mapping[exercise.id]).to eq another_new_exercise.page
+            expect(mapping_2[exercise.id]).to eq another_new_exercise.page
+          end
+
+          # Try again to see that we get the same results with the cached mapping
+          mapping_3 = map.map_exercises_to_pages(exercises: [
+            old_exercise, new_exercise, another_old_exercise, another_new_exercise
+          ])
+          [old_exercise, new_exercise].each do |exercise|
+            expect(mapping_3[exercise.id]).to eq new_exercise.page
+          end
+
+          [another_old_exercise, another_new_exercise].each do |exercise|
+            expect(mapping_3[exercise.id]).to eq another_new_exercise.page
           end
         end
 
