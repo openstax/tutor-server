@@ -1,21 +1,22 @@
 require 'rails_helper'
 
 RSpec.describe EcosystemAccessPolicy, type: :access_policy do
-  let(:course)    { CreateCourse[name: 'Physics 401'] }
-  let(:period)    { CreatePeriod[course: course] }
+  let(:course)            { CreateCourse[name: 'Physics 401'] }
+  let(:period)            { CreatePeriod[course: course] }
 
-  let(:student)   { FactoryGirl.create(:user_profile) }
-  let(:teacher)   { FactoryGirl.create(:user_profile) }
+  let(:student)           { FactoryGirl.create(:user_profile_profile) }
+  let(:teacher)           { FactoryGirl.create(:user_profile_profile) }
+  let(:content_analyst)   { FactoryGirl.create(:user_profile_profile, :content_analyst) }
 
-  let(:ecosystem) {
+  let(:ecosystem)         {
     content_ecosystem = FactoryGirl.create(:content_ecosystem)
     ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(content_ecosystem)
     ::Content::Ecosystem.new(strategy: ecosystem_strategy)
   }
 
   before(:each) do
-    AddUserAsCourseTeacher[course: course, user: teacher.entity_user]
-    AddUserAsPeriodStudent[period: period, user: student.entity_user]
+    AddUserAsCourseTeacher[course: course, user: teacher.user]
+    AddUserAsPeriodStudent[period: period, user: student.user]
     AddEcosystemToCourse[ecosystem: ecosystem, course: course]
   end
 
@@ -25,7 +26,7 @@ RSpec.describe EcosystemAccessPolicy, type: :access_policy do
   context 'anonymous users' do
     let(:requestor) { UserProfile::Models::AnonymousUser.instance }
 
-    [:readings, :exercises].each do |test_action|
+    [:index, :readings, :exercises].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
         it { should be false }
@@ -34,9 +35,9 @@ RSpec.describe EcosystemAccessPolicy, type: :access_policy do
   end
 
   context 'regular users' do
-    let(:requestor) { FactoryGirl.create(:user_profile) }
+    let(:requestor) { FactoryGirl.create(:user_profile_profile) }
 
-    [:readings, :exercises].each do |test_action|
+    [:index, :readings, :exercises].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
         it { should be false }
@@ -52,9 +53,11 @@ RSpec.describe EcosystemAccessPolicy, type: :access_policy do
       it { should be true }
     end
 
-    context 'exercises' do
-      let(:action) { :exercises }
-      it { should be false }
+    [:index, :exercises].each do |test_action|
+      context "#{test_action}" do
+        let(:action) { test_action }
+        it { should be false }
+      end
     end
   end
 
@@ -62,6 +65,22 @@ RSpec.describe EcosystemAccessPolicy, type: :access_policy do
     let(:requestor) { teacher }
 
     [:readings, :exercises].each do |test_action|
+      context "#{test_action}" do
+        let(:action) { test_action }
+        it { should be true }
+      end
+    end
+
+    context 'index' do
+      let(:action) { :index }
+      it { should be false }
+    end
+  end
+
+  context 'content analysts' do
+    let(:requestor) { content_analyst }
+
+    [:index, :readings, :exercises].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
         it { should be true }

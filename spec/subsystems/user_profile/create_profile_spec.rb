@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe UserProfile::CreateProfile do
+RSpec.describe UserProfile::CreateProfile, type: :routine do
   it 'requires a username' do
     expect {
       described_class[]

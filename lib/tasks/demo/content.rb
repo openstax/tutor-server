@@ -27,7 +27,7 @@ class DemoContent < DemoBase
 
     admin_profile = user_profile_for_username('admin') || \
                     new_user_profile(username: 'admin', name: people.admin)
-    run(:make_administrator, user: admin_profile.entity_user) unless admin_profile.is_admin?
+    run(:make_administrator, user: admin_profile.user) unless admin_profile.is_admin?
     log("Admin user: #{admin_profile.account.full_name}")
 
     ContentConfiguration[book.to_sym].each do | content |
@@ -39,7 +39,7 @@ class DemoContent < DemoBase
       teacher_profile = get_teacher_profile(content.teacher) ||
                         new_user_profile(username: people.teachers[content.teacher].username,
                                          name: people.teachers[content.teacher].name)
-      teacher_user = teacher_profile.entity_user
+      teacher_user = teacher_profile.user
       log("Teacher: #{people.teachers[content.teacher].name}")
 
       run(:add_teacher, course: course, user: teacher_user) \
@@ -54,7 +54,7 @@ class DemoContent < DemoBase
           student_info = people.students[initials]
           profile = get_student_profile(initials) ||
                     new_user_profile(username: student_info.username, name:  student_info.name)
-          user = profile.entity_user
+          user = profile.user
           log("    #{initials} #{student_info.username} (#{student_info.name})")
           run(:add_student, period: period, user: user) \
             unless run(:is_student, user: user, course: course).outputs.user_is_course_student

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::PerformanceReportRepresenter do
+RSpec.describe Api::V1::PerformanceReportRepresenter, type: :representer do
   it 'includes the due_at, last_worked_at properties for student data' do
     period = FactoryGirl.create(:course_membership_period)
     last_worked_at = Time.current

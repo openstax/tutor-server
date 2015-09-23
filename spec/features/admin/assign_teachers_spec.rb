@@ -4,12 +4,12 @@ require 'feature_js_helper'
 RSpec.describe 'Administration', js: true do
   before do
     # Log in as admin
-    admin = FactoryGirl.create(:user_profile, :administrator)
+    admin = FactoryGirl.create(:user_profile_profile, :administrator)
     stub_current_user(admin)
 
     # Create a user to add as a teacher
     FactoryGirl.create(
-      :user_profile, username: 'imateacher', first_name: 'Ima',
+      :user_profile_profile, username: 'imateacher', first_name: 'Ima',
       last_name: 'Teacher', full_name: 'Ima Teacher')
 
     # Create a course

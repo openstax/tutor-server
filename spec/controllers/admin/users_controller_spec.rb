@@ -1,13 +1,13 @@
 require 'rails_helper'
 
 RSpec.describe Admin::UsersController do
-  let!(:admin) { FactoryGirl.create :user_profile,
+  let!(:admin) { FactoryGirl.create :user_profile_profile,
                                     :administrator,
                                     username: 'admin',
                                     full_name: 'Administrator' }
-  let!(:user) { FactoryGirl.create :user_profile,
-                                   username: 'student',
-                                   full_name: 'User One' }
+  let!(:profile) { FactoryGirl.create :user_profile_profile,
+                                      username: 'student',
+                                      full_name: 'User One' }
 
   before { controller.sign_in(admin) }
 
@@ -17,10 +17,12 @@ RSpec.describe Admin::UsersController do
     expect(assigns[:user_search].items).to eq [ {
       'id' => admin.id,
       'account_id' => admin.account.id,
-      'entity_user_id' => admin.entity_user.id,
+      'entity_user_id' => admin.entity_user_id,
       'full_name' => 'Administrator',
       'name' => admin.name,
-      'username' => 'admin'
+      'username' => 'admin',
+      'is_admin' => true,
+      'is_content_analyst' => false
     } ]
 
     get :index, search_term: 'st'
@@ -28,17 +30,21 @@ RSpec.describe Admin::UsersController do
     expect(assigns[:user_search].items.sort_by { |a| a[:id] }).to eq [ {
       'id' => admin.id,
       'account_id' => admin.account.id,
-      'entity_user_id' => admin.entity_user.id,
+      'entity_user_id' => admin.entity_user_id,
       'full_name' => 'Administrator',
       'name' => admin.name,
-      'username' => 'admin'
+      'username' => 'admin',
+      'is_admin' => true,
+      'is_content_analyst' => false
     }, {
-      'id' => user.id,
-      'account_id' => user.account.id,
-      'entity_user_id' => user.entity_user.id,
+      'id' => profile.id,
+      'account_id' => profile.account.id,
+      'entity_user_id' => profile.entity_user_id,
       'full_name' => 'User One',
-      'name' => user.name,
-      'username' => 'student'
+      'name' => profile.name,
+      'username' => 'student',
+      'is_admin' => false,
+      'is_content_analyst' => false
     } ]
   end
 
@@ -48,7 +54,8 @@ RSpec.describe Admin::UsersController do
       password: 'password',
       first_name: 'New',
       last_name: 'User',
-      full_name: 'Overriden!'
+      full_name: 'Overriden!',
+      content_analyst: true
     }
 
     get :index, search_term: 'new'
@@ -56,17 +63,21 @@ RSpec.describe Admin::UsersController do
     expect(assigns[:user_search].items.first).to include(
       username: 'new',
       name: 'New User',
-      full_name: 'Overriden!')
+      full_name: 'Overriden!',
+      is_admin: false,
+      is_content_analyst: true)
   end
 
   it 'updates a user' do
-    put :update, id: user.id, user: {
+    put :update, id: profile.id, user: {
       username: 'updated',
-      full_name: 'Updated Name'
+      full_name: 'Updated Name',
+      content_analyst: true
     }
 
-    user.reload
-    expect(user.username).to eq 'updated'
-    expect(user.full_name).to eq 'Updated Name'
+    expect(profile.reload.username).to eq 'updated'
+    expect(profile.full_name).to eq 'Updated Name'
+    expect(profile.is_admin?).to eq false
+    expect(profile.is_content_analyst?).to eq true
   end
 end

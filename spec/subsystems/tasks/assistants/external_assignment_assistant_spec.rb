@@ -31,7 +31,7 @@ RSpec.describe Tasks::Assistants::ExternalAssignmentAssistant, type: :assistant 
 
   let!(:students) {
     num_taskees.times.collect do
-      user = FactoryGirl.create(:user_profile).entity_user
+      user = FactoryGirl.create(:user_profile_profile).user
       AddUserAsPeriodStudent.call(user: user, period: period).outputs.student
     end
   }

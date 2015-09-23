@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe GetStudentRoster do
+describe GetStudentRoster, type: :routine do
   let!(:course) { CreateCourse[name: 'Physics 101'] }
   let!(:period_1) { CreatePeriod[course: course] }
   let!(:period_2) { CreatePeriod[course: course] }
@@ -8,31 +8,31 @@ describe GetStudentRoster do
   let!(:other_course) { CreateCourse[name: 'Other Course'] }
   let!(:other_period) { CreatePeriod[course: other_course] }
 
-  let!(:student_1) { FactoryGirl.create :user_profile }
+  let!(:student_1) { FactoryGirl.create :user_profile_profile }
   let!(:student_1_role) {
     AddUserAsPeriodStudent.call(
-      period: period_1, user: student_1.entity_user
+      period: period_1, user: student_1.user
     ).outputs[:role]
   }
 
-  let(:student_2) { FactoryGirl.create :user_profile }
+  let(:student_2) { FactoryGirl.create :user_profile_profile }
   let!(:student_2_role) {
     AddUserAsPeriodStudent.call(
-      period: period_1, user: student_2.entity_user
+      period: period_1, user: student_2.user
     ).outputs[:role]
   }
 
-  let(:student_3) { FactoryGirl.create :user_profile }
+  let(:student_3) { FactoryGirl.create :user_profile_profile }
   let!(:student_3_role) {
     AddUserAsPeriodStudent.call(
-      period: period_2, user: student_3.entity_user
+      period: period_2, user: student_3.user
     ).outputs[:role]
   }
 
-  let!(:student_4) { FactoryGirl.create :user_profile }
+  let!(:student_4) { FactoryGirl.create :user_profile_profile }
   let!(:student_4_role) {
     AddUserAsPeriodStudent.call(
-      period: other_period, user: student_4.entity_user
+      period: other_period, user: student_4.user
     ).outputs[:role]
   }
 

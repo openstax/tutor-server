@@ -5,13 +5,13 @@ require 'database_cleaner'
 RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                            version: :v1, speed: :slow, vcr: VCR_OPTS do
 
-  let!(:user_1)          { FactoryGirl.create :user_profile }
-  let!(:user_1_token)    { FactoryGirl.create :doorkeeper_access_token,
-                                              resource_owner_id: user_1.id }
+  let!(:profile_1)          { FactoryGirl.create :user_profile_profile }
+  let!(:user_1_token)       { FactoryGirl.create :doorkeeper_access_token,
+                                                 resource_owner_id: profile_1.id }
 
-  let!(:user_2)          { FactoryGirl.create :user_profile }
-  let!(:user_2_token)    { FactoryGirl.create :doorkeeper_access_token,
-                                              resource_owner_id: user_2.id }
+  let!(:profile_2)          { FactoryGirl.create :user_profile_profile }
+  let!(:user_2_token)       { FactoryGirl.create :doorkeeper_access_token,
+                                                 resource_owner_id: profile_2.id }
 
   let!(:userless_token)  { FactoryGirl.create :doorkeeper_access_token }
 
@@ -45,7 +45,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   end
 
   describe "index" do
-    let(:roles)          { Role::GetUserRoles.call(user_1.entity_user).outputs.roles }
+    let(:roles)          { Role::GetUserRoles.call(profile_1.user).outputs.roles }
     let(:teacher)        { roles.select(&:teacher?).first }
     let(:student)        { roles.select(&:student?).first }
     let!(:zeroth_period) { CreatePeriod[course: course, name: '0th'] }
@@ -66,7 +66,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
     context 'user is a teacher or student in the course' do
       before do
-        AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
+        AddUserAsCourseTeacher.call(course: course, user: profile_1.user)
       end
 
       it 'includes the periods and ecosystem_id for the course' do
@@ -86,7 +86,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
     context 'user is a teacher' do
       before do
-        AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
+        AddUserAsCourseTeacher.call(course: course, user: profile_1.user)
       end
 
       it 'returns the teacher roles with the course' do
@@ -103,7 +103,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
     context 'user is a student' do
       before(:each) do
-        AddUserAsPeriodStudent.call(period: period, user: user_1.entity_user)
+        AddUserAsPeriodStudent.call(period: period, user: profile_1.user)
       end
 
       it 'returns the student roles with the course' do
@@ -120,8 +120,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
     context 'user is both a teacher and student' do
       before(:each) do
-        AddUserAsPeriodStudent.call(period: period, user: user_1.entity_user)
-        AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user)
+        AddUserAsPeriodStudent.call(period: period, user: profile_1.user)
+        AddUserAsCourseTeacher.call(course: course, user: profile_1.user)
       end
 
       it 'returns both roles with the course' do
@@ -139,7 +139,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   end
 
   describe "show" do
-    let(:roles)          { Role::GetUserRoles.call(user_1.entity_user).outputs.roles }
+    let(:roles)          { Role::GetUserRoles.call(profile_1.user).outputs.roles }
     let(:teacher)        { roles.select(&:teacher?).first }
     let(:student)        { roles.select(&:student?).first }
     let!(:zeroth_period) { CreatePeriod[course: course, name: '0th'] }
@@ -169,7 +169,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
 
     context 'user is a teacher' do
-      let!(:teacher) { AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user).outputs.role }
+      let!(:teacher) { AddUserAsCourseTeacher.call(course: course, user: profile_1.user).outputs.role }
 
       it 'returns the teacher roles with the course' do
         api_get :show, user_1_token, parameters: { id: course.id }
@@ -184,7 +184,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
 
     context 'user is a student' do
-      let!(:student) { AddUserAsPeriodStudent.call(period: period, user: user_1.entity_user).outputs.role }
+      let!(:student) { AddUserAsPeriodStudent.call(period: period, user: profile_1.user).outputs.role }
 
       it 'returns the student roles with the course' do
         api_get :show, user_1_token, parameters: { id: course.id }
@@ -199,8 +199,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
 
     context 'user is both a teacher and student' do
-      let!(:student) { AddUserAsPeriodStudent.call(period: period, user: user_1.entity_user).outputs.role }
-      let!(:teacher) { AddUserAsCourseTeacher.call(course: course, user: user_1.entity_user).outputs.role }
+      let!(:student) { AddUserAsPeriodStudent.call(period: period, user: profile_1.user).outputs.role }
+      let!(:teacher) { AddUserAsCourseTeacher.call(course: course, user: profile_1.user).outputs.role }
 
       it 'returns both roles with the course' do
         api_get :show, user_1_token, parameters: { id: course.id }
@@ -217,19 +217,19 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   end
 
   describe "dashboard" do
-    let!(:student_profile){ FactoryGirl.create(:user_profile) }
-    let!(:student_user)   { student_profile.entity_user }
+    let!(:student_profile){ FactoryGirl.create(:user_profile_profile) }
+    let!(:student_user)   { student_profile.user }
     let!(:student_role)   { AddUserAsPeriodStudent.call(user: student_user,
                                                         period: period)
                                                   .outputs.role }
     let!(:student_token)  { FactoryGirl.create :doorkeeper_access_token,
                                                resource_owner_id: student_profile.id }
 
-    let!(:teacher_profile){ FactoryGirl.create(:user_profile,
+    let!(:teacher_profile){ FactoryGirl.create(:user_profile_profile,
                                                first_name: 'Bob',
                                                last_name: 'Newhart',
                                                full_name: 'Bob Newhart') }
-    let!(:teacher_user)   { teacher_profile.entity_user }
+    let!(:teacher_user)   { teacher_profile.user }
     let!(:teacher_role)   { AddUserAsCourseTeacher.call(user: teacher_user,
                                                         course: course)
                                                   .outputs.role }

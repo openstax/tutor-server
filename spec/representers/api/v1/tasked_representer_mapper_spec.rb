@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::TaskedRepresenterMapper do
+RSpec.describe Api::V1::TaskedRepresenterMapper, type: :representer do
   let(:mapper) { Api::V1::TaskedRepresenterMapper }
 
   describe '.models' do

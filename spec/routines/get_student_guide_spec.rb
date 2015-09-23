@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'vcr_helper'
 require 'database_cleaner'
 
-RSpec.describe GetStudentGuide do
+RSpec.describe GetStudentGuide, type: :routine do
 
   before(:all) do
     DatabaseCleaner.start

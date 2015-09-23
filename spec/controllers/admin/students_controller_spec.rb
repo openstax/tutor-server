@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Admin::StudentsController do
-  let!(:admin) { FactoryGirl.create(:user_profile, :administrator) }
+  let!(:admin) { FactoryGirl.create(:user_profile_profile, :administrator) }
 
   before { controller.sign_in(admin) }
 
@@ -16,29 +16,29 @@ RSpec.describe Admin::StudentsController do
     let!(:periods_2) { [CreatePeriod[course: course_2]] }
 
     let!(:profile_1) {
-      FactoryGirl.create(:user_profile, username: 'benjamin')
+      FactoryGirl.create(:user_profile_profile, username: 'benjamin')
     }
     let!(:profile_2) {
-      FactoryGirl.create(:user_profile, username: 'nicolai')
+      FactoryGirl.create(:user_profile_profile, username: 'nicolai')
     }
     let!(:profile_3) {
-      FactoryGirl.create(:user_profile, username: 'freja')
+      FactoryGirl.create(:user_profile_profile, username: 'freja')
     }
     let!(:profile_4) {
-      FactoryGirl.create(:user_profile, username: 'oskar')
+      FactoryGirl.create(:user_profile_profile, username: 'oskar')
     }
 
     let!(:student_1) {
-      AddUserAsPeriodStudent.call(user: profile_1.entity_user, period: periods[0]).outputs.student
+      AddUserAsPeriodStudent.call(user: profile_1.user, period: periods[0]).outputs.student
     }
     let!(:student_2) {
-      AddUserAsPeriodStudent.call(user: profile_2.entity_user, period: periods[0]).outputs.student
+      AddUserAsPeriodStudent.call(user: profile_2.user, period: periods[0]).outputs.student
     }
     let!(:student_3) {
-      AddUserAsPeriodStudent.call(user: profile_3.entity_user, period: periods[1]).outputs.student
+      AddUserAsPeriodStudent.call(user: profile_3.user, period: periods[1]).outputs.student
     }
     let!(:student_4) {
-      AddUserAsPeriodStudent.call(user: profile_4.entity_user, period: periods_2[0]).outputs.student
+      AddUserAsPeriodStudent.call(user: profile_4.user, period: periods_2[0]).outputs.student
     }
 
     it 'returns all the students in a course' do

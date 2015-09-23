@@ -18,7 +18,9 @@ module UserProfile
             entity_user_id: profile.entity_user_id,
             full_name: profile.full_name,
             name: profile.name,
-            username: profile.username
+            username: profile.username,
+            is_admin: profile.is_admin?,
+            is_content_analyst: profile.is_content_analyst?
           }
         end
       )

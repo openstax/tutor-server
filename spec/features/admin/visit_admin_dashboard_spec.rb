@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe 'Admnistration' do
   scenario 'visit the admin dashboard' do
-    admin = FactoryGirl.create(:user_profile, :administrator)
+    admin = FactoryGirl.create(:user_profile_profile, :administrator)
     stub_current_user(admin)
 
     visit admin_root_path

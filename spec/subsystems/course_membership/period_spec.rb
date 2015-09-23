@@ -4,9 +4,9 @@ module CourseMembership
   RSpec.describe Period, type: :model do
     subject(:period) { CourseMembership::Period.new(FactoryGirl.create :course_membership_period) }
 
-    let!(:student_1_user) { FactoryGirl.create(:user_profile).entity_user }
-    let!(:student_2_user) { FactoryGirl.create(:user_profile).entity_user }
-    let!(:teacher_user)   { FactoryGirl.create(:user_profile).entity_user }
+    let!(:student_1_user) { FactoryGirl.create(:user_profile_profile).user }
+    let!(:student_2_user) { FactoryGirl.create(:user_profile_profile).user }
+    let!(:teacher_user)   { FactoryGirl.create(:user_profile_profile).user }
 
     let!(:student_1) { AddUserAsPeriodStudent.call(user: student_1_user,
                                                    period: period).outputs.role }

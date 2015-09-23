@@ -1,14 +1,14 @@
 require "rails_helper"
 
-describe Api::V1::UsersController, :type => :controller, :api => true, :version => :v1 do
+describe Api::V1::UsersController, type: :controller, api: true, version: :v1 do
 
   let!(:application)     { FactoryGirl.create :doorkeeper_application }
-  let!(:user_1)          { FactoryGirl.create :user_profile }
+  let!(:profile_1)       { FactoryGirl.create :user_profile_profile }
   let!(:user_1_token)    { FactoryGirl.create :doorkeeper_access_token,
                                               application: application,
-                                              resource_owner_id: user_1.id }
+                                              resource_owner_id: profile_1.id }
 
-  let!(:admin)           { FactoryGirl.create :user_profile, :administrator }
+  let!(:admin)           { FactoryGirl.create :user_profile_profile, :administrator }
   let!(:admin_token)     { FactoryGirl.create :doorkeeper_access_token,
                                               application: application,
                                               resource_owner_id: admin.id }
@@ -24,8 +24,9 @@ describe Api::V1::UsersController, :type => :controller, :api => true, :version 
         expect(response.code).to eq('200')
         payload = JSON.parse(response.body)
         expect(payload).to eq(
-          "name" => user_1.name,
+          "name" => profile_1.name,
           'is_admin' => false,
+          'is_content_analyst' => false,
           'profile_url' => Addressable::URI.join(
             OpenStax::Accounts.configuration.openstax_accounts_url,
             '/profile').to_s
@@ -39,6 +40,7 @@ describe Api::V1::UsersController, :type => :controller, :api => true, :version 
         expect(payload).to eq(
           "name" => admin.name,
           'is_admin' => true,
+          'is_content_analyst' => false,
           'profile_url' => Addressable::URI.join(
             OpenStax::Accounts.configuration.openstax_accounts_url,
             '/profile').to_s

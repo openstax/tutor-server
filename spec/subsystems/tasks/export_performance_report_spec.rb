@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Tasks::ExportPerformanceReport, speed: :slow do
+RSpec.describe Tasks::ExportPerformanceReport, type: :routine, speed: :slow do
 
   before(:all) do
     DatabaseCleaner.start
@@ -14,9 +14,9 @@ RSpec.describe Tasks::ExportPerformanceReport, speed: :slow do
     @course = CreateCourse[name: 'Physics']
     CourseContent::AddEcosystemToCourse.call(course: @course, ecosystem: @ecosystem)
 
-    @teacher = FactoryGirl.create :user_profile
+    @teacher = FactoryGirl.create :user_profile_profile
     SetupPerformanceReportData[course: @course, teacher: @teacher, ecosystem: @ecosystem]
-    @role = GetUserCourseRoles[course: @course, user: @teacher.entity_user].first
+    @role = GetUserCourseRoles[course: @course, user: @teacher.user].first
   end
 
   after(:each) do

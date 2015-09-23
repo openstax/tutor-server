@@ -5,7 +5,7 @@ module WebviewHelper
     {
       user: Api::V1::UserProfileRepresenter.new(current_user),
       courses: Api::V1::CoursesRepresenter.new(
-        CollectCourseInfo[user: current_user.entity_user, with: [:roles, :periods, :ecosystem]]
+        CollectCourseInfo[user: current_user.user, with: [:roles, :periods, :ecosystem]]
       )
     }
   end

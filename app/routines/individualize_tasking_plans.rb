@@ -12,7 +12,7 @@ class IndividualizeTaskingPlans
       when Entity::Role
         target
       when UserProfile::Models::Profile
-        Role::GetDefaultUserRole[target.entity_user]
+        Role::GetDefaultUserRole[target.user]
       when Entity::User
         Role::GetDefaultUserRole[target]
       when Entity::Course

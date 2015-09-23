@@ -94,7 +94,7 @@ class OpenStax::Biglearn::V1::RealClient
 
   def get_exchange_read_identifiers_for_roles(roles:)
     users = Role::GetUsersForRoles[roles]
-    UserProfile::Models::Profile.where(entity_user: users)
+    UserProfile::Models::Profile.where(user: users)
                                 .collect{ |p| p.exchange_read_identifier }
   end
 

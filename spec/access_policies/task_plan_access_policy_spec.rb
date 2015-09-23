@@ -4,13 +4,13 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
   let(:task_plan) { FactoryGirl.create(:tasks_task_plan) }
 
   let(:course) { CreateCourse[name: 'Biology 201'] }
-  let(:teacher) { FactoryGirl.create(:user_profile) }
-  let(:not_teaching) { FactoryGirl.create(:user_profile) }
-  let(:owner) { FactoryGirl.create(:user_profile) }
-  let(:non_owner) { FactoryGirl.create(:user_profile) }
+  let(:teacher) { FactoryGirl.create(:user_profile_profile) }
+  let(:not_teaching) { FactoryGirl.create(:user_profile_profile) }
+  let(:owner) { FactoryGirl.create(:user_profile_profile) }
+  let(:non_owner) { FactoryGirl.create(:user_profile_profile) }
 
   before do
-    AddUserAsCourseTeacher[course: course, user: teacher.entity_user]
+    AddUserAsCourseTeacher[course: course, user: teacher.user]
   end
 
   # action, requestor are set in contexts

@@ -1,9 +1,9 @@
 require 'rails_helper'
 
-RSpec.describe UserProfile::MakeAdministrator do
+RSpec.describe UserProfile::MakeAdministrator, type: :routine do
   it 'makes a user an administrator' do
     user = Entity::User.create!
-    profile = FactoryGirl.create(:user_profile, entity_user: user)
+    profile = FactoryGirl.create(:user_profile_profile, user: user)
 
     expect(profile.administrator).to be_nil
 

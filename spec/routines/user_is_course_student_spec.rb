@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe UserIsCourseStudent do
+describe UserIsCourseStudent, type: :routine do
 
   context "when the user is not a student for the given course" do
     it "returns false" do

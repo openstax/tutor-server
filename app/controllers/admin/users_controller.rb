@@ -14,26 +14,39 @@ class Admin::UsersController < Admin::BaseController
   end
 
   def create
-    handle_with(Admin::UsersCreate,
-                success: ->(*) {
-                  flash[:notice] = 'The user has been added.'
-                  redirect_to admin_users_path(
-                    search_term: @handler_result.outputs[:profile].username
-                  )
-                },
-                failure: ->(*) {
-                  flash[:error] = 'Invalid user information.'
-                  redirect_to new_admin_user_path
-                })
+    handle_with(
+      Admin::UsersCreate,
+      success: ->(*) {
+        flash[:notice] = 'The user has been added.'
+        redirect_to admin_users_path(
+          search_term: @handler_result.outputs[:profile].username
+        )
+      },
+      failure: ->(*) {
+        flash[:error] = 'Invalid user information.'
+        redirect_to new_admin_user_path
+      }
+    )
   end
 
   def edit
   end
 
   def update
-    update_account(@user, [:username, :full_name])
-    flash[:notice] = 'The user has been updated.'
-    redirect_to admin_users_path
+    handle_with(
+      Admin::UsersUpdate,
+      profile: @user,
+      success: ->(*) {
+        flash[:notice] = 'The user has been updated.'
+        redirect_to admin_users_path(
+          search_term: @handler_result.outputs[:account].username
+        )
+      },
+      failure: ->(*) {
+        flash[:error] = 'Invalid user information.'
+        redirect_to new_admin_user_path
+      }
+    )
   end
 
   def become
@@ -43,16 +56,8 @@ class Admin::UsersController < Admin::BaseController
   end
 
   private
+
   def get_user
     @user = UserProfile::Models::Profile.find(params[:id])
-  end
-
-  def update_account(profile, fields)
-    attributes = {}
-    fields.each do |field|
-      attributes[field] = params[:user][field] if params[:user][field].present?
-    end
-
-    profile.account.update_attributes(attributes) if attributes.present?
   end
 end

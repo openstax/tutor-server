@@ -17,4 +17,5 @@ Tutor::SubSystems.valid_namespaces = %w(
   course_membership
   school_district
   legal
+  user_profile
 )

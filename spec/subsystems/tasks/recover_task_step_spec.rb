@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Tasks::RecoverTaskStep, :type => :routine do
+RSpec.describe Tasks::RecoverTaskStep, type: :routine do
 
   let!(:lo)              { FactoryGirl.create :content_tag, value: 'ost-tag-lo-test-lo01' }
   let!(:pp)              { FactoryGirl.create :content_tag, value: 'os-practice-problems' }

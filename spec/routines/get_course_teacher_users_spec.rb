@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe GetCourseTeacherUsers do
+describe GetCourseTeacherUsers, type: :routine do
 
   context "when a course has no teachers" do
     let(:target_course) { CreateCourse[name: 'target'] }

@@ -9,7 +9,7 @@ class DoesTaskingExist
   protected
 
   def exec(task_component:, user:)
-    run(Role::GetUserRoles, user.entity_user)
+    run(Role::GetUserRoles, user)
     # Hack until all Task components are wrapped
     tc = task_component.respond_to?(:_repository) ? task_component._repository : task_component
     run(Tasks::DoesTaskingExist, task_component: tc, roles: outputs.roles)

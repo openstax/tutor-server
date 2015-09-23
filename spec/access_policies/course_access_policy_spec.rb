@@ -4,12 +4,12 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
   let(:course) { CreateCourse[name: 'Physics 401'] }
   let(:period) { CreatePeriod[course: course] }
 
-  let(:student) { FactoryGirl.create(:user_profile) }
-  let(:teacher) { FactoryGirl.create(:user_profile) }
+  let(:student) { FactoryGirl.create(:user_profile_profile) }
+  let(:teacher) { FactoryGirl.create(:user_profile_profile) }
 
   before do
-    AddUserAsCourseTeacher[course: course, user: teacher.entity_user]
-    AddUserAsPeriodStudent[period: period, user: student.entity_user]
+    AddUserAsCourseTeacher[course: course, user: teacher.user]
+    AddUserAsPeriodStudent[period: period, user: student.user]
   end
 
   # action, requestor are set in contexts
@@ -27,7 +27,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
   end
 
   context 'regular users' do
-    let(:requestor) { FactoryGirl.create(:user_profile) }
+    let(:requestor) { FactoryGirl.create(:user_profile_profile) }
 
     context ":index" do
       let(:action) { :index }

@@ -17,7 +17,7 @@ RSpec.describe CourseMembership::Models::Student, type: :model do
   end
 
   context 'deidentifier' do
-    let!(:user) { FactoryGirl.create(:user_profile).entity_user }
+    let!(:user) { FactoryGirl.create(:user_profile_profile).user }
     let!(:period) { FactoryGirl.create(:course_membership_period) }
     let!(:student) {
       AddUserAsPeriodStudent.call(period: period, user: user).outputs.student
@@ -34,7 +34,7 @@ RSpec.describe CourseMembership::Models::Student, type: :model do
     end
 
     it 'must be unique' do
-      user2 = FactoryGirl.create(:user_profile).entity_user
+      user2 = FactoryGirl.create(:user_profile_profile).user
       student_2 = AddUserAsPeriodStudent.call(period: period, user: user2).outputs.student
       student_2.deidentifier = student.deidentifier
       expect(student_2).not_to be_valid

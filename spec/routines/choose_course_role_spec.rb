@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe ChooseCourseRole do
+describe ChooseCourseRole, type: :routine do
 
   let(:teacher) { Entity::User.create! }
   let(:student) { Entity::User.create! }

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::TaskStepRepresenter do
+RSpec.describe Api::V1::TaskStepRepresenter, type: :representer do
   it 'includes the *complete_at fields' do
     last_time = Time.current
     first_time = last_time - 1.week

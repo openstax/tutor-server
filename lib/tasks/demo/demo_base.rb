@@ -160,7 +160,7 @@ class DemoBase
 
   def new_period_student(period:, username: nil, name: nil, password: nil)
     profile = new_user_profile(username: username, name: name, password: password)
-    user = profile.entity_user
+    user = profile.user
     role = run(AddUserAsPeriodStudent, period: period, user: user).outputs.role
 
     {

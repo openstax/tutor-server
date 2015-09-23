@@ -4,7 +4,7 @@ require 'vcr_helper'
 RSpec.describe 'Administration', speed: :slow, vcr: VCR_OPTS do
   before do
     # Log in as admin
-    admin = FactoryGirl.create(:user_profile, :administrator)
+    admin = FactoryGirl.create(:user_profile_profile, :administrator)
     stub_current_user(admin)
 
     # Go to the admin console

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Tasks::RefreshTaskStep, :type => :routine do
+RSpec.describe Tasks::RefreshTaskStep, type: :routine do
 
   let!(:lo)              { FactoryGirl.create :content_tag,
                                               value: 'ost-tag-lo-test-lo01' }
