@@ -18,7 +18,7 @@ RSpec.describe Api::V1::TaskRepresenter, type: :representer do
 
   it 'includes ecosystem information' do
     represented = described_class.new(task).to_hash
-    expect(represented).to include('ecosystem_info' => task.task_plan.ecosystem.title)
+    expect(represented).to include('ecosystem_title' => task.task_plan.ecosystem.title)
   end
 
 end

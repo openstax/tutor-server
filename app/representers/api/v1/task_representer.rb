@@ -70,10 +70,12 @@ module Api::V1
                  description: "The steps which this Task is composed of"
                }
 
-    property :ecosystem_info,
+    property :ecosystem_title,
              type: String,
              readable: true,
-             getter: ->(*) { task_plan ? task_plan.ecosystem.title : '' },
+             getter: ->(*) {
+      binding.pry
+      task_plan ? task_plan.ecosystem.title : '' },
              writeable: false
   end
 end
