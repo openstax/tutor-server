@@ -45,12 +45,15 @@ module Content
       end
     end
 
-    # Returns an array of ::Content::Page's that correspond to the given array of
-    # ::Content::Exercises, mapped to the to_ecosystem
+    # Returns a hash that maps the given ::Content::Exercises' ids
+    # to ::Content::Pages in the to_ecosystem
     def map_exercises_to_pages(exercises:)
       ex_arr = verify_and_return [exercises].flatten.compact, klass: ::Content::Exercise
-      verify_and_return @strategy.map_exercises_to_pages(exercises: ex_arr),
-                        klass: ::Content::Page, error: ::Content::StrategyError
+      map = verify_and_return @strategy.map_exercises_to_pages(exercises: ex_arr),
+                              klass: Hash, error: ::Content::StrategyError
+      verify_and_return map.keys, klass: Integer, error: ::Content::StrategyError
+      verify_and_return map.values, klass: ::Content::Page, error: ::Content::StrategyError
+      map
     end
 
     def valid?

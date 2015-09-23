@@ -16,10 +16,10 @@ module CourseGuideMethods
       strategy = ::Content::Strategies::Direct::Exercise.new(content_exercise)
       ::Content::Exercise.new(strategy: strategy)
     end
-    exercise_pages = ecosystems_map.map_exercises_to_pages(exercises: exercises)
+    exercise_id_to_page_map = ecosystems_map.map_exercises_to_pages(exercises: exercises)
 
-    tasked_exercises.each_with_index.each_with_object({}) do |(tasked_exercise, index), hash|
-      page = exercise_pages[index]
+    tasked_exercises.each_with_object({}) do |tasked_exercise, hash|
+      page = exercise_id_to_page_map[tasked_exercise.content_exercise_id]
       hash[page] ||= []
       hash[page] << tasked_exercise
     end
