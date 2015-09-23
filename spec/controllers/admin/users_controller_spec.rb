@@ -46,14 +46,17 @@ RSpec.describe Admin::UsersController do
     post :create, user: {
       username: 'new',
       password: 'password',
-      full_name: 'New User'
+      first_name: 'New',
+      last_name: 'User',
+      full_name: 'Overriden!'
     }
 
     get :index, search_term: 'new'
     expect(assigns[:user_search].items.length).to eq 1
     expect(assigns[:user_search].items.first).to include(
       username: 'new',
-      full_name: 'New User')
+      name: 'New User',
+      full_name: 'Overriden!')
   end
 
   it 'updates a user' do
