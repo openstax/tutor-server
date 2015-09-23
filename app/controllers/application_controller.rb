@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::Base
+  openstax_exception_rescue
 
   respond_to :html, :js
 
