@@ -40,6 +40,21 @@ module User
       verify_and_return @strategy.id, klass: Integer, error: ::Content::StrategyError
     end
 
+    def account
+      verify_and_return @strategy.account, klass: OpenStax::Accounts::Account,
+                                           error: ::Content::StrategyError
+    end
+
+    def exchange_read_identifier
+      verify_and_return @strategy.exchange_read_identifier, klass: String,
+                                                            error: ::Content::StrategyError
+    end
+
+    def exchange_write_identifier
+      verify_and_return @strategy.exchange_write_identifier, klass: String,
+                                                             error: ::Content::StrategyError
+    end
+
     def username
       verify_and_return @strategy.username, klass: String, error: ::Content::StrategyError
     end

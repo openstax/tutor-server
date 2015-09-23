@@ -7,7 +7,7 @@ module MapUsersAccounts
     end
 
     def user_to_account(user)
-      user._account
+      user.account
     end
 
     private
