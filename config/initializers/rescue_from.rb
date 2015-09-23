@@ -1,4 +1,4 @@
-require 'openstax_rescue_from'
+require 'rescue_from'
 
 OpenStax::RescueFrom.configure do |config|
   config.raise_exceptions = !Rails.application.config.consider_all_requests_local
