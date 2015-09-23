@@ -1,4 +1,9 @@
 Rails.application.configure do
+  config.middleware.use ExceptionNotification::Rack, email: {
+    email_prefix: "[Tutor] (DEV) ",
+    sender_address: %{"OpenStax Tutor" <noreply@openstax.org>},
+    exception_recipients: %w{tutor-notifications@openstax.org}
+  }
   # Settings specified here will take precedence over those in config/application.rb.
 
   # In the development environment your application's code is reloaded on
