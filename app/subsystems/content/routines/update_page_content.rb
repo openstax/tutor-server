@@ -26,7 +26,8 @@ class Content::Routines::UpdatePageContent
 
   def change_page_link(href_attr, page_cnx_ids)
     # if the link goes to a page in the book, change the link to just <uuid><rest-of-path>
-    path = URI.parse(href_attr.value).path
+    url = Addressable::URI.parse(href_attr.value)
+    path = url.path
 
     # if the path starts with /contents/
     if path.starts_with?('/contents/')
@@ -34,12 +35,15 @@ class Content::Routines::UpdatePageContent
       #   /contents/127f63f7-d67f-4710-8625-2b1d4128ef6b@2
       #   /contents/127f63f7-d67f-4710-8625-2b1d4128ef6b
       #   /contents/127f63f7-d67f-4710-8625-2b1d4128ef6b@2#figure-1
-      cnx_id = path.split(/\/|#/)[2]
+      cnx_id = path.split('/')[2]
 
       # and the uuid is in the book
       if page_cnx_ids.include?(cnx_id)
         # change the link to a relative link, with just <uuid><rest-of-path>
-        href_attr.value = path.gsub(/\A\/contents\//, '')
+        url.scheme = nil
+        url.host = nil
+        url.path = path.gsub(/\A\/contents\//, '')
+        href_attr.value = url.to_s
       end
     end
   end
