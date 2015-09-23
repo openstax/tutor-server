@@ -1,5 +1,6 @@
 # If role_id provided:
 #   make sure it belongs to user; fatal :invalid_role if not
+#   teachers can choose roles belonging to any student in their course (impersonation)
 #
 # If role_id is not specified:
 #   Get the users set of roles for the given course, restricted to
@@ -21,8 +22,11 @@ class ChooseCourseRole
     as: :get_roles
 
   protected
+
   def exec(user:, course:, allowed_role_type: :any, role_id: nil)
-    run(:get_roles, course: course, user: user, types: allowed_role_type)
+    # Don't include the user's own inactive student roles
+    run(:get_roles, course: course, user: user, types: allowed_role_type,
+                    include_inactive_students: false)
 
     if role_id
       extra_roles = get_course_student_roles(course: course, user: user)
@@ -98,7 +102,9 @@ class ChooseCourseRole
     user_roles = Role::GetUserRoles.call(user).outputs[:roles]
     is_teacher = CourseMembership::IsCourseTeacher[course: course, roles: user_roles]
     if is_teacher
-      CourseMembership::GetCourseRoles.call(course: course, types: :student).outputs[:roles]
+      # Teachers can impersonate any student, even inactive ones
+      CourseMembership::GetCourseRoles.call(course: course, types: :student,
+                                            include_inactive_students: true).outputs[:roles]
     else
       []
     end

@@ -4,7 +4,7 @@ class CourseMembership::GetPeriodRoles
   ROLE_TYPES = [:student, :teacher, :any]
 
   protected
-  def exec(periods:, types: :any)
+  def exec(periods:, types: :any, include_inactive_students: false)
     periods = [periods].flatten.uniq
     types = [types].flatten.uniq
 
@@ -15,7 +15,9 @@ class CourseMembership::GetPeriodRoles
     outputs[:roles] = types.collect do |type|
       case type
       when :student
-        periods.collect(&:student_roles)
+        periods.collect do |period|
+          period.student_roles(include_inactive_students: include_inactive_students)
+        end
       when :teacher
         periods.collect(&:teacher_roles)
       else
