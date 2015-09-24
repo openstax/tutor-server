@@ -2,12 +2,15 @@ module CourseGuideMethods
 
   private
 
-  def get_completed_tasked_exercises_from_task_steps(task_steps)
-    tasked_exercise_ids = task_steps.flatten.select{ |ts| ts.exercise? && ts.completed? }
-                                            .collect{ |ts| ts.tasked_id }
+  def get_completed_exercise_task_steps(task_steps)
+    task_steps.select{ |ts| ts.exercise? && ts.completed? }
+  end
+
+  def get_tasked_exercises_map_from_completed_exercise_task_steps(completed_exercise_task_steps)
+    tasked_exercise_ids = completed_exercise_task_steps.collect{ |ts| ts.tasked_id }
     Tasks::Models::TaskedExercise.where(id: tasked_exercise_ids).preload(
       [{task_step: {task: {taskings: :role}}}, {exercise: {page: :chapter}}]
-    )
+    ).to_a.group_by{ |te| te.task_step.id }
   end
 
   def group_tasked_exercises_by_pages(tasked_exercises, ecosystems_map)
@@ -39,7 +42,7 @@ module CourseGuideMethods
   end
 
   def get_los_and_aplos(tasked_exercises)
-    [tasked_exercises].flatten.collect{ |te| te.los + te.aplos }.flatten.uniq
+    [tasked_exercises].flatten.flat_map{ |te| te.los + te.aplos }.uniq
   end
 
   def get_chapter_clues(sorted_chapter_groupings)
@@ -104,22 +107,21 @@ module CourseGuideMethods
         questions_answered_count: tasked_exercises.size,
         clue: clues_map[chapter.all_exercises_pool.uuid],
         practice_count: practices.size,
-        page_ids: page_hashes.collect{|pp| pp[:page_ids]}.flatten,
+        page_ids: page_hashes.flat_map{|pp| pp[:page_ids]},
         children: page_hashes
       }
     end
   end
 
-  def compile_course_guide(task_steps, course)
+  def compile_course_guide(tasked_exercises, course)
     current_ecosystem = GetCourseEcosystem[course: course]
     ecosystems_map = GetCourseEcosystemsMap[course: course]
-    tasked_exercises = get_completed_tasked_exercises_from_task_steps(task_steps)
     chapters = compile_chapters(tasked_exercises, ecosystems_map)
 
     {
       # Assuming only 1 book per ecosystem
       title: current_ecosystem.books.first.title,
-      page_ids: chapters.collect{ |cc| cc[:page_ids] }.flatten,
+      page_ids: chapters.flat_map{ |cc| cc[:page_ids] },
       children: chapters
     }
   end

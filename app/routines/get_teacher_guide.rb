@@ -12,18 +12,35 @@ class GetTeacherGuide
 
   private
 
-  def task_steps_for_period(period)
-    period.enrollments.latest.active.preload(
-      student: {role: {taskings: {task: {task: :task_steps}}}}
-    ).collect{ |en| en.student.role.taskings.collect{ |ts| ts.task.task.task_steps } }.flatten
+  def completed_exercise_task_steps_for_course_by_period(course)
+    course.periods.preload(
+      active_enrollments: {student: {role: {taskings: {task: {task: :task_steps}}}}}
+    ).to_a.each_with_object({}) do |period, hash|
+      hash[period.id] = get_completed_exercise_task_steps(
+        period.active_enrollments.flat_map do |ae|
+          ae.student.role.taskings.flat_map{ |ts| ts.task.task.task_steps }
+        end
+      )
+    end
   end
 
-  def gather_period_stats(period, course)
-    task_steps = task_steps_for_period(period)
-    { period_id: period.id }.merge(compile_course_guide(task_steps, course))
+  def gather_period_stats(tasked_exercises, period_id, course)
+    { period_id: period_id }.merge(compile_course_guide(tasked_exercises, course))
   end
 
   def gather_course_stats(course)
-    course.periods.collect{ |period| gather_period_stats(period, course) }
+    completed_exercise_task_steps_map = completed_exercise_task_steps_for_course_by_period(course)
+    tasked_exercises_map = get_tasked_exercises_map_from_completed_exercise_task_steps(
+      completed_exercise_task_steps_map.values.flatten
+    )
+
+    course.periods.collect do |period|
+      period_id = period.id
+      completed_exercise_task_steps = completed_exercise_task_steps_map[period_id]
+      tasked_exercises = completed_exercise_task_steps.flat_map do |ts|
+        tasked_exercises_map[ts.id]
+      end
+      gather_period_stats(tasked_exercises, period_id, course)
+    end
   end
 end

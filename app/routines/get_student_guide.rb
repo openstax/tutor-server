@@ -12,15 +12,21 @@ class GetStudentGuide
 
   private
 
-  def task_steps_for_role(role)
-    role.taskings.preload(task: {task: :task_steps})
-        .collect{ |tasking| tasking.task.task.task_steps }.flatten
+  def completed_exercise_task_steps_for_role(role)
+    get_completed_exercise_task_steps(
+      role.taskings
+        .preload(task: {task: :task_steps})
+        .flat_map{ |tasking| tasking.task.task.task_steps }
+    )
   end
 
   def gather_role_stats(role)
-    task_steps = task_steps_for_role(role)
+    completed_exercise_task_steps = completed_exercise_task_steps_for_role(role)
+    tasked_exercises = get_tasked_exercises_map_from_completed_exercise_task_steps(
+      completed_exercise_task_steps
+    ).values.flatten
     period = role.student.period
     course = role.student.course
-    { period_id: period.id }.merge(compile_course_guide(task_steps, course))
+    { period_id: period.id }.merge(compile_course_guide(tasked_exercises, course))
   end
 end
