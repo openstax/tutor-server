@@ -36,6 +36,7 @@ RSpec.describe Api::V1::TaskSearchRepresenter, type: :representer do
             json['due_at']    = DateTimeUtilities.to_api_s(task.due_at)
             json['is_shared'] = task.is_shared?
             json['steps']     = task.task_steps.as_json
+            json['ecosystem_title'] = task.ecosystem.title
             json
           }
         )
