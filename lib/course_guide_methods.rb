@@ -9,7 +9,7 @@ module CourseGuideMethods
   def get_tasked_exercises_map_from_completed_exercise_task_steps(completed_exercise_task_steps)
     tasked_exercise_ids = completed_exercise_task_steps.collect{ |ts| ts.tasked_id }
     Tasks::Models::TaskedExercise.where(id: tasked_exercise_ids).preload(
-      [{task_step: {task: {taskings: :role}}}, {exercise: {page: :chapter}}]
+      [{task_step: {task: {taskings: :role}}}, :exercise]
     ).to_a.group_by{ |te| te.task_step.id }
   end
 
@@ -115,7 +115,7 @@ module CourseGuideMethods
 
   def compile_course_guide(tasked_exercises, course)
     current_ecosystem = GetCourseEcosystem[course: course]
-    ecosystems_map = GetCourseEcosystemsMap[course: course]
+    ecosystems_map = GetCourseEcosystemsMap[course: course, preload: :for_clues]
     chapters = compile_chapters(tasked_exercises, ecosystems_map)
 
     {

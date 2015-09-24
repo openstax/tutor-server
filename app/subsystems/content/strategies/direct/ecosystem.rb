@@ -120,8 +120,16 @@ module Content
         end
 
         alias_method :entity_pages, :pages
-        def pages
-          entity_pages.collect do |entity_page|
+        def pages(preload: nil)
+          preload_args = case preload
+                         when :for_clues
+                           [:all_exercises_pool, {chapter: :all_exercises_pool}]
+                         else
+                           nil
+                         end
+          ep = entity_pages
+          ep = ep.preload(preload_args) unless preload_args.nil?
+          ep.collect do |entity_page|
             ::Content::Page.new(strategy: entity_page)
           end
         end

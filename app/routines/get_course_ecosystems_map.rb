@@ -3,7 +3,8 @@ class GetCourseEcosystemsMap
 
   protected
 
-  def exec(course:, ecosystem_strategy_class: ::Content::Strategies::Direct::Ecosystem,
+  def exec(course:, preload: nil,
+                    ecosystem_strategy_class: ::Content::Strategies::Direct::Ecosystem,
                     map_strategy_class: ::Content::Strategies::Generated::Map)
     # The first ecosystem is the latest
     to_content_ecosystem = course.ecosystems.first
@@ -17,6 +18,7 @@ class GetCourseEcosystemsMap
 
     map_attributes = { from_ecosystems: from_ecosystems,
                        to_ecosystem: to_ecosystem,
+                       preload: preload,
                        strategy_class: map_strategy_class }
 
     outputs[:ecosystems_map] = ::Content::Map.find(map_attributes) || \
