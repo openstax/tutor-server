@@ -6,21 +6,25 @@ module CourseGuideMethods
     task_steps.select{ |ts| ts.exercise? && ts.completed? }
   end
 
-  def get_tasked_exercises_map_from_completed_exercise_task_steps(completed_exercise_task_steps)
+  def get_tasked_exercises_from_completed_exercise_task_steps(completed_exercise_task_steps)
     tasked_exercise_ids = completed_exercise_task_steps.collect{ |ts| ts.tasked_id }
     Tasks::Models::TaskedExercise.where(id: tasked_exercise_ids).preload(
       [{task_step: {task: {taskings: :role}}}, :exercise]
     ).to_a.group_by{ |te| te.task_step.id }
   end
 
-  def group_tasked_exercises_by_pages(tasked_exercises, ecosystems_map)
+  def map_tasked_exercise_exercise_ids_to_latest_pages(tasked_exercises, course)
     exercises = tasked_exercises.collect do |tasked_exercise|
       content_exercise = tasked_exercise.exercise
       strategy = ::Content::Strategies::Direct::Exercise.new(content_exercise)
       ::Content::Exercise.new(strategy: strategy)
     end
-    exercise_id_to_page_map = ecosystems_map.map_exercises_to_pages(exercises: exercises)
+    ecosystems_map = GetCourseEcosystemsMap[course: course, preload: :for_clues]
 
+    ecosystems_map.map_exercises_to_pages(exercises: exercises)
+  end
+
+  def group_tasked_exercises_by_pages(tasked_exercises, exercise_id_to_page_map)
     tasked_exercises.each_with_object({}) do |tasked_exercise, hash|
       page = exercise_id_to_page_map[tasked_exercise.content_exercise_id]
       hash[page] ||= []
@@ -28,8 +32,8 @@ module CourseGuideMethods
     end
   end
 
-  def group_tasked_exercises_by_chapters(tasked_exercises, ecosystems_map)
-    page_grouping = group_tasked_exercises_by_pages(tasked_exercises, ecosystems_map)
+  def group_tasked_exercises_by_chapters(tasked_exercises, exercise_id_to_page_map)
+    page_grouping = group_tasked_exercises_by_pages(tasked_exercises, exercise_id_to_page_map)
     page_grouping.each_with_object({}) do |(page, exercises), hash|
       hash[page.chapter] = (hash[page.chapter] || {}).merge(page => exercises)
     end
@@ -84,8 +88,9 @@ module CourseGuideMethods
     end
   end
 
-  def compile_chapters(tasked_exercises, ecosystems_map)
-    chapter_groupings = group_tasked_exercises_by_chapters(tasked_exercises, ecosystems_map)
+  def compile_chapters(tasked_exercises, exercise_id_to_page_map)
+    chapter_groupings = group_tasked_exercises_by_chapters(tasked_exercises,
+                                                           exercise_id_to_page_map)
 
     sorted_chapter_groupings = chapter_groupings.to_a.collect do |chapter, page_groupings|
       [chapter, page_groupings.to_a.sort_by{ |page, tasked_exercises| page.book_location }]
@@ -113,10 +118,9 @@ module CourseGuideMethods
     end
   end
 
-  def compile_course_guide(tasked_exercises, course)
+  def compile_course_guide(course, tasked_exercises, exercise_id_to_page_map)
     current_ecosystem = GetCourseEcosystem[course: course]
-    ecosystems_map = GetCourseEcosystemsMap[course: course, preload: :for_clues]
-    chapters = compile_chapters(tasked_exercises, ecosystems_map)
+    chapters = compile_chapters(tasked_exercises, exercise_id_to_page_map)
 
     {
       # Assuming only 1 book per ecosystem
