@@ -13,7 +13,8 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
     strategy = User::Strategies::Direct::User.new(profile)
     User::User.new(strategy: strategy)
   }
-  let!(:student)           { AddUserAsPeriodStudent[user: student_user, period: period] }
+  let!(:student_role)      { AddUserAsPeriodStudent[user: student_user, period: period] }
+  let!(:student)           { student_role.student }
   let!(:student_token)     { FactoryGirl.create :doorkeeper_access_token,
                                                 application: application,
                                                 resource_owner_id: student_user.id }
@@ -33,14 +34,16 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
     strategy = User::Strategies::Direct::User.new(profile)
     User::User.new(strategy: strategy)
   }
-  let!(:student_2)           { AddUserAsPeriodStudent[user: student_user_2, period: period] }
+  let!(:student_role_2)    { AddUserAsPeriodStudent[user: student_user_2, period: period] }
+  let!(:student_2)         { student_role_2.student }
 
   let!(:student_user_3)    {
     profile = FactoryGirl.create(:user_profile)
     strategy = User::Strategies::Direct::User.new(profile)
     User::User.new(strategy: strategy)
   }
-  let!(:student_3)           { AddUserAsPeriodStudent[user: student_user_3, period: period] }
+  let!(:student_role_3)    { AddUserAsPeriodStudent[user: student_user_3, period: period_2] }
+  let!(:student_3)         { student_role_3.student }
 
   let!(:userless_token)    { FactoryGirl.create :doorkeeper_access_token,
                                                 application: application,

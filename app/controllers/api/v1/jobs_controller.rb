@@ -27,6 +27,7 @@ class Api::V1::JobsController < Api::V1::ApiController
   EOS
   def show
     job = Lev::BackgroundJob.find(params[:id])
+    OSU::AccessPolicy.require_action_allowed!(:read, current_api_user, job)
     code = http_status_code(job.status)
     respond_with job, represent_with: Api::V1::JobRepresenter, status: code
   end

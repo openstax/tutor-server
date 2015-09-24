@@ -2,13 +2,12 @@ module User
   class MakeAdministrator
     lev_routine
 
-    uses_routine User::SetAdministratorState, as: :set_admin
+    uses_routine ::User::SetAdministratorState, as: :set_admin
 
     protected
     def exec(user:)
-      profile = User::Models::Profile.find(user.id)
-      raise 'The given user is already an administrator' if profile.administrator.present?
-      run(:set_admin, profile: profile, administrator: true)
+      raise 'The given user is already an administrator' if user.is_admin?
+      run(:set_admin, user: user, administrator: true)
     end
   end
 end

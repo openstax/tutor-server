@@ -11,9 +11,9 @@ RSpec.describe ReassignPublishedPeriodTaskPlans, type: :routine do
     AddUserAsPeriodStudent.call(user: user, period: period)
     user
   }
+  let!(:new_profile)      { FactoryGirl.create(:user_profile) }
   let!(:new_user)      {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
+    strategy = User::Strategies::Direct::User.new(new_profile)
     user = User::User.new(strategy: strategy)
     AddUserAsPeriodStudent.call(user: user, period: period)
     user
@@ -33,7 +33,7 @@ RSpec.describe ReassignPublishedPeriodTaskPlans, type: :routine do
 
   before(:each) {
     DistributeTasks.call(task_plan_1)
-    new_user.roles.each{ |role| role.taskings.each{ |tasking| tasking.task.destroy } }
+    new_profile.roles.each{ |role| role.taskings.each{ |tasking| tasking.task.destroy } }
   }
 
   context 'unpublished task_plan' do
@@ -59,7 +59,7 @@ RSpec.describe ReassignPublishedPeriodTaskPlans, type: :routine do
       expect(task_plan_1.tasks.size).to eq 2
       expect(task_plan_1.tasks).to include old_task
       new_task = task_plan_1.tasks.reject{ |tt| tt == old_task }.first
-      expect(new_task.taskings.first.role.user).to eq new_user
+      expect(new_task.taskings.first.role.profile).to eq new_profile
     end
   end
 end

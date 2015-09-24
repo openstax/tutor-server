@@ -1,12 +1,12 @@
 module User
   module Models
-    class AnonymousProfile < User::Models::Profile
+    class AnonymousProfile < ::User::Models::Profile
 
       include Singleton
 
-      before_save { false }
+      wrapped_by ::User::Strategies::Direct::AnonymousUser
 
-      wrapped_by User::Strategies::Direct::AnonymousUser
+      before_save { false }
 
       def account
         OpenStax::Accounts::AnonymousAccount.instance

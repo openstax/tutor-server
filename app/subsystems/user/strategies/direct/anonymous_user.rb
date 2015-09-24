@@ -4,8 +4,9 @@ module User
       class AnonymousUser < Entity
         wraps ::User::Models::AnonymousProfile
 
-        exposes :username, :first_name, :last_name, :full_name, :title, :name, :casual_name
         exposes :instance, :anonymous, from_class: ::User::Models::AnonymousProfile
+        exposes :account, :exchange_read_identifier, :exchange_write_identifier,
+                :username, :first_name, :last_name, :full_name, :title, :name, :casual_name
 
         class << self
           alias_method :entity_instance, :instance

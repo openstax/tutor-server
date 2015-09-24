@@ -25,7 +25,7 @@ RSpec.describe Admin::StudentsController do
       User::User.new(strategy: strategy)
     }
     let!(:user_2) {
-      profile = FactoryGirl.create(:user_profile, username: 'nikolai')
+      profile = FactoryGirl.create(:user_profile, username: 'nicolai')
       strategy = User::Strategies::Direct::User.new(profile)
       User::User.new(strategy: strategy)
     }

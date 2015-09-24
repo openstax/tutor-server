@@ -1,6 +1,6 @@
 module User
   class CreateUser
-    lev_routine express_output: :profile
+    lev_routine express_output: :user
 
     uses_routine OpenStax::Accounts::FindOrCreateAccount,
       translations: { outputs: { type: :verbatim } },
@@ -20,7 +20,7 @@ module User
         full_name: full_name, title: title
       )
 
-      outputs[:user] = User::User.create!(
+      outputs[:user] = ::User::User.create!(
         exchange_read_identifier: (exchange_identifiers || new_identifiers).read,
         exchange_write_identifier: (exchange_identifiers || new_identifiers).write,
         account_id: account_id

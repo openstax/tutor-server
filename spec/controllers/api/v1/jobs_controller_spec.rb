@@ -5,12 +5,12 @@ RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :
 
   let(:user) {
     profile = FactoryGirl.create(:user_profile)
-    strategy = User::Stategies::Direct::User.new(profile)
+    strategy = User::Strategies::Direct::User.new(profile)
     User::User.new(strategy: strategy)
   }
   let(:admin) {
     profile = FactoryGirl.create(:user_profile, :administrator)
-    strategy = User::Stategies::Direct::User.new(profile)
+    strategy = User::Strategies::Direct::User.new(profile)
     User::User.new(strategy: strategy)
   }
 

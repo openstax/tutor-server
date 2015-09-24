@@ -18,7 +18,7 @@ class DemoBase
   end
 
   def user_for_username(username)
-    User::User.find_by_username(username).first
+    User::User.find_by_username(username)
   end
 
   def get_teacher_user(initials)
@@ -34,20 +34,20 @@ class DemoBase
   end
 
   def build_tasks_profile(assignment_type:, students:, step_types:)
-    profile_responses = students.map do | initials, score |
-      profile = get_student_profile(initials) ||
+    user_responses = students.map do | initials, score |
+      user = get_student_user(initials) ||
                 raise("Unable to find student for initials #{initials}")
-      [initials, profile, score]
+      [initials, user, score]
     end
 
     TasksProfile.new(assignment_type: assignment_type,
-                      profile_responses: profile_responses,
+                      user_responses: user_responses,
                       step_types: step_types,
                       randomizer: randomizer)
   end
 
   class TasksProfile
-    def initialize(assignment_type:, profile_responses:, step_types:, randomizer:)
+    def initialize(assignment_type:, user_responses:, step_types:, randomizer:)
 
       raise ":assignment_type (#{assignment_type}) must be one of {:homework,:reading}" \
         unless [:homework,:reading].include?(assignment_type)
@@ -56,19 +56,19 @@ class DemoBase
       @assignment_type = assignment_type
 
       @step_types = step_types
-      @profiles = {}
+      @users = {}
       @randomizer = randomizer
 
-      profile_responses.each do |initials, profile, responses|
-        @profiles[profile.id] = OpenStruct.new(
+      user_responses.each do |initials, user, responses|
+        @users[user.id] = OpenStruct.new(
           responses:  get_explicit_responses(responses),
           initials: initials
         )
       end
     end
 
-    def [](profile_id)
-      @profiles[profile_id]
+    def [](user_id)
+      @users[user_id]
     end
 
     private
@@ -148,13 +148,14 @@ class DemoBase
       sign_contract(user: user, name: :privacy_policy)
     end
 
-    profile
+    user
   end
 
   def sign_contract(user:, name:)
     string_name = name.to_s
     return if FinePrint::Contract.where{name == string_name}.none?
-    FinePrint.sign_contract(user, string_name)
+    profile = User::Models::Profile.find(user.id)
+    FinePrint.sign_contract(profile, string_name)
   end
 
   def new_period_student(period:, username: nil, name: nil, password: nil)

@@ -13,7 +13,7 @@ RSpec.describe StudentAccessPolicy, type: :access_policy do
     strategy = User::Strategies::Direct::User.new(profile)
     User::User.new(strategy: strategy)
   }
-  let(:student)      { AddUserAsPeriodStudent[user: student_user, period: period] }
+  let(:student)      { AddUserAsPeriodStudent[user: student_user, period: period].student }
 
   subject(:action_allowed) do
     StudentAccessPolicy.action_allowed?(action, requestor, student)

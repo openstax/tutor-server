@@ -17,7 +17,7 @@ class Admin::CoursesController < Admin::BaseController
     entity_course = Entity::Course.find(params[:id])
     @course = GetCourseProfile[course: entity_course]
     @periods = entity_course.periods
-    @teachers = entity_course.teachers.includes(role: { user: { profile: :account } })
+    @teachers = entity_course.teachers.includes(role: { profile: :account })
     @ecosystems = Content::ListEcosystems[]
 
     @course_ecosystem = nil

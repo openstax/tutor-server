@@ -18,7 +18,7 @@ RSpec.describe Tasks::ExportPerformanceReport, type: :routine, speed: :slow do
     teacher_strategy = User::Strategies::Direct::User.new(teacher_profile)
     @teacher = User::User.new(strategy: teacher_strategy)
     SetupPerformanceReportData[course: @course, teacher: @teacher, ecosystem: @ecosystem]
-    @role = GetUserCourseRoles[course: @course, user: @teacher.user].first
+    @role = GetUserCourseRoles[course: @course, user: @teacher].first
   end
 
   after(:each) do

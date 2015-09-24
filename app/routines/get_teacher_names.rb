@@ -10,6 +10,6 @@ class GetTeacherNames
   def exec(course_id)
     course = Entity::Course.find(course_id)
     run(:get_teacher_users, course)
-    outputs[:teachers].collect(&:name).sort
+    outputs[:teacher_names] = outputs[:teachers].collect(&:name).sort
   end
 end

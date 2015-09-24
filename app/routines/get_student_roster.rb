@@ -4,7 +4,7 @@ class GetStudentRoster
   protected
 
   def exec(course:)
-    students = course.students.includes(:enrollments, role: { user: { profile: :account } })
+    students = course.students.includes(:enrollments, role: { profile: :account })
 
     outputs[:students] = students.collect do |student|
       Hashie::Mash.new({

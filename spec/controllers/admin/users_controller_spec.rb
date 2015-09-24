@@ -9,10 +9,12 @@ RSpec.describe Admin::UsersController, type: :controller do
     strategy = User::Strategies::Direct::User.new(profile)
     User::User.new(strategy: strategy)
   }
+  let!(:profile) {
+    FactoryGirl.create :user_profile,
+                       username: 'student',
+                       full_name: 'User One'
+  }
   let!(:user) {
-    profile = FactoryGirl.create :user_profile,
-                                 username: 'student',
-                                 full_name: 'User One'
     strategy = User::Strategies::Direct::User.new(profile)
     User::User.new(strategy: strategy)
   }
@@ -41,12 +43,13 @@ RSpec.describe Admin::UsersController, type: :controller do
 
     get :index, search_term: 'new'
     expect(assigns[:user_search].items.length).to eq 1
-    expect(assigns[:user_search].items.first.attributes).to include(
-      username: 'new',
-      name: 'New User',
-      full_name: 'Overriden!',
-      is_admin: false,
-      is_content_analyst: true)
+    user = assigns[:user_search].items.first
+    expect(user.username).to eq 'new'
+    expect(user.first_name).to eq 'New'
+    expect(user.last_name).to eq 'User'
+    expect(user.name).to eq 'Overriden!'
+    expect(user.is_admin?).to eq false
+    expect(user.is_content_analyst?).to eq true
   end
 
   it 'updates a user' do
@@ -56,9 +59,12 @@ RSpec.describe Admin::UsersController, type: :controller do
       content_analyst: true
     }
 
-    expect(user.reload.username).to eq 'updated'
-    expect(user.name).to eq 'Updated Name'
-    expect(user.is_admin?).to eq false
-    expect(user.is_content_analyst?).to eq true
+    strategy = ::User::Strategies::Direct::User.new(profile.reload)
+    reloaded_user = ::User::User.new(strategy: strategy)
+
+    expect(reloaded_user.username).to eq 'updated'
+    expect(reloaded_user.name).to eq 'Updated Name'
+    expect(reloaded_user.is_admin?).to eq false
+    expect(reloaded_user.is_content_analyst?).to eq true
   end
 end

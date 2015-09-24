@@ -17,3 +17,11 @@ end
 OpenStax::Accounts::ApplicationController.class_exec do
   helper ApplicationHelper, OpenStax::Utilities::OsuHelper
 end
+
+# TODO: Move this to accounts-rails
+OpenStax::Accounts::Account.class_exec do
+  def name
+    full_name.present? ? \
+      full_name : ((first_name || last_name) ? [first_name, last_name].compact.join(" ") : username)
+  end
+end

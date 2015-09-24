@@ -27,8 +27,8 @@ RSpec.describe EcosystemAccessPolicy, type: :access_policy do
   }
 
   before(:each) do
-    AddUserAsCourseTeacher[course: course, user: teacher.user]
-    AddUserAsPeriodStudent[period: period, user: student.user]
+    AddUserAsCourseTeacher[course: course, user: teacher]
+    AddUserAsPeriodStudent[period: period, user: student]
     AddEcosystemToCourse[ecosystem: ecosystem, course: course]
   end
 

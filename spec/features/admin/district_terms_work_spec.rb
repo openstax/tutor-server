@@ -119,10 +119,10 @@ RSpec.feature 'DistrictTermsWork' do
     FinePrint::Contract.create(name: 'privacy_policy', title: 'a', content: 'a').publish
 
     profile_1 = FactoryGirl.create(:user_profile, skip_terms_agreement: true)
-    stategy_1 = User::Stategies::Direct::User.new(profile_1)
+    strategy_1 = User::Strategies::Direct::User.new(profile_1)
     user_1 = User::User.new(strategy: strategy_1)
     profile_2 = FactoryGirl.create(:user_profile, skip_terms_agreement:true)
-    stategy_2 = User::Stategies::Direct::User.new(profile_2)
+    strategy_2 = User::Strategies::Direct::User.new(profile_2)
     user_2 = User::User.new(strategy: strategy_2)
 
     AddUserAsCourseTeacher[user: user_1, course: course_e]
@@ -140,21 +140,21 @@ RSpec.feature 'DistrictTermsWork' do
 
     # User 1 should not have signed district a terms yet
 
-    expect(FinePrint.signed_contract?(user_1, 'district_a_terms')).to be_falsy
+    expect(FinePrint.signed_contract?(profile_1, 'district_a_terms')).to be_falsy
 
     # Want to check that WebviewController receives fine_print_require with certain terms, but can't do it
     # since also want to do it below for a second request -- so using cheesier expectation on FinePrint
     # directly here and below.
     #   Can't do this: expect_any_instance_of(WebviewController).to receive(:fine_print_require).with('general_terms_of_use')
     expect(FinePrint).to receive(:unsigned_contracts_for)
-                           .with(user_1, name: ['general_terms_of_use'])
+                           .with(profile_1, name: ['general_terms_of_use'])
 
     # Visiting the dashboard path should add an implicit signature for user1 / district_a_terms
     expect{
       visit dashboard_path
     }.to change { FinePrint::Signature.count }.by(1)
 
-    expect(FinePrint.signed_contract?(user_1, 'district_a_terms')).to be_truthy
+    expect(FinePrint.signed_contract?(profile_1, 'district_a_terms')).to be_truthy
     expect(FinePrint::Signature.all.max_by{ |sig| sig.created_at }.is_implicit?).to be_truthy
 
     # user 2 is not in district A, so should just see normal terms
@@ -162,7 +162,7 @@ RSpec.feature 'DistrictTermsWork' do
 
     #   Can't do this: expect_any_instance_of(WebviewController).to receive(:fine_print_require).with('general_terms_of_use', 'privacy_policy')
     expect(FinePrint).to receive(:unsigned_contracts_for)
-                           .with(user_2, name: ['general_terms_of_use', 'privacy_policy'])
+                           .with(profile_2, name: ['general_terms_of_use', 'privacy_policy'])
 
     # Visiting the dashboard path should add an implicit signature for user1 / district_a_terms
     expect{

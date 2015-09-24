@@ -87,27 +87,30 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     }
 
     let!(:course) {
-      course = task_plan.owner
-      AddEcosystemToCourse[course: course, ecosystem: ecosystem]
-      course
+      task_plan.owner.tap do |course|
+        AddEcosystemToCourse[course: course, ecosystem: ecosystem]
+      end
     }
 
     let!(:period) { CreatePeriod[course: course] }
 
     let!(:num_taskees) { 3 }
 
-    let!(:taskees) {
-      num_taskees.times.collect do
-        profile = FactoryGirl.create(:user_profile)
+    let!(:taskee_profiles) {
+      num_taskees.times.collect{ FactoryGirl.create(:user_profile) }
+    }
+
+    let!(:taskee_users) {
+      taskee_profiles.collect do |profile|
         strategy = User::Strategies::Direct::User.new(profile)
-        user = User::User.new(strategy: strategy)
-        AddUserAsPeriodStudent.call(user: user, period: period)
-        user
+        User::User.new(strategy: strategy).tap do |user|
+          AddUserAsPeriodStudent.call(user: user, period: period)
+        end
       end
     }
 
     let!(:tasking_plans) {
-      tps = taskees.collect do |taskee|
+      tps = taskee_profiles.collect do |taskee|
         task_plan.tasking_plans <<
           FactoryGirl.build(
             :tasks_tasking_plan,
@@ -174,7 +177,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         expect(task.personalized_task_steps.count).to eq(personalized_step_gold_data.count)
       end
 
-      expected_roles = taskees.collect{ |t| Role::GetDefaultUserRole[t] }
+      expected_roles = taskee_users.collect{ |tu| Role::GetDefaultUserRole[tu] }
       expect(entity_tasks.collect{|et| et.taskings.first.role}).to eq expected_roles
     end
   end
@@ -235,27 +238,27 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     }
 
     let!(:course) {
-      course = task_plan.owner
-      AddEcosystemToCourse[course: course, ecosystem: ecosystem]
-      course
+      task_plan.owner.tap do |course|
+        AddEcosystemToCourse[course: course, ecosystem: ecosystem]
+      end
     }
 
     let!(:period) { CreatePeriod[course: course] }
 
     let!(:num_taskees) { 3 }
 
-    let!(:taskees) {
+    let!(:taskee_profiles) {
       num_taskees.times.collect do
-        profile = FactoryGirl.create(:user_profile)
-        strategy = User::Strategies::Direct::User.new(profile)
-        user = User::User.new(strategy: strategy)
-        AddUserAsPeriodStudent.call(user: user, period: period)
-        user
+        FactoryGirl.create(:user_profile).tap do |profile|
+          strategy = User::Strategies::Direct::User.new(profile)
+          user = User::User.new(strategy: strategy)
+          AddUserAsPeriodStudent.call(user: user, period: period)
+        end
       end
     }
 
     let!(:tasking_plans) {
-      tps = taskees.collect do |taskee|
+      tps = taskee_profiles.collect do |taskee|
         task_plan.tasking_plans << FactoryGirl.build(
           :tasks_tasking_plan, task_plan: task_plan, target: taskee
         )

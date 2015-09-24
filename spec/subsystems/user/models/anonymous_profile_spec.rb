@@ -10,8 +10,4 @@ RSpec.describe User::Models::AnonymousProfile, type: :model do
   it 'has no account id' do
     expect(anon.account_id).to be_nil
   end
-
-  it 'is anonymous' do
-    expect(anon).to be_is_anonymous
-  end
 end

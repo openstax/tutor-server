@@ -27,7 +27,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
     let(:requestor) {
       profile = User::Models::AnonymousProfile.instance
       strategy = User::Strategies::Direct::AnonymousUser.new(profile)
-      User::User.new(strategy)
+      User::User.new(strategy: strategy)
     }
 
     [:index, :read, :task_plans, :export, :roster].each do |test_action|
@@ -41,8 +41,8 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
   context 'regular users' do
     let(:requestor) {
       profile = FactoryGirl.create(:user_profile)
-      strategy = User::Strategies::Direct::AnonymousUser.new(profile)
-      User::User.new(strategy)
+      strategy = User::Strategies::Direct::User.new(profile)
+      User::User.new(strategy: strategy)
     }
 
     context ":index" do

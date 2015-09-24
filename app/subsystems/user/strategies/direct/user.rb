@@ -31,23 +31,21 @@ module User
             ::User::User.new(strategy: entity_find(*args))
           end
 
-          def find_by_account_ids(*account_ids)
-            profiles = ::User::Models::Profile.where(account_id: account_ids).to_a
+          def find_by_account_id(account_id)
+            profile = ::User::Models::Profile.find_by(account_id: account_id)
+            return if profile.nil?
 
-            profiles.collect do |profile|
-              strategy = self.class.new(profile)
-              ::User::User.new(strategy: strategy)
-            end
+            strategy = new(profile)
+            ::User::User.new(strategy: strategy)
           end
 
-          def find_by_usernames(*usernames)
-            profiles = ::User::Models::Profile.joins(:account)
-                                              .where(account: { username: usernames }).to_a
+          def find_by_username(username)
+            profile = ::User::Models::Profile.joins(:account)
+                                             .where(account: { username: username }).take
+            return if profile.nil?
 
-            profiles.collect do |profile|
-              strategy = self.class.new(profile)
-              ::User::User.new(strategy: strategy)
-            end
+            strategy = new(profile)
+            ::User::User.new(strategy: strategy)
           end
 
           alias_method :entity_anonymous, :anonymous

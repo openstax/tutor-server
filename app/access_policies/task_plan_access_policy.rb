@@ -15,8 +15,14 @@ class TaskPlanAccessPolicy
   end
 
   private
+
   def self.requestor_is_task_plan_owner?(requestor, owner)
-    requestor == owner
+    return true if requestor == owner
+
+    # Check if the owner is the requestor's profile
+    requestor.is_a?(::User::User) && \
+    owner.is_a?(::User::Models::Profile) && \
+    requestor.id == owner.id
   end
 
 end

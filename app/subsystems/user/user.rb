@@ -7,28 +7,50 @@ module User
         verify_and_return strategy_class.all, klass: self, error: ::Content::StrategyError
       end
 
-      def create(*args, strategy_class: ::User::Strategies::Direct::User)
-        verify_and_return strategy_class.create(*args),
-                          klass: self, error: ::Content::StrategyError
+      def create(account_id:,
+                 exchange_read_identifier:,
+                 exchange_write_identifier:,
+                 strategy_class: ::User::Strategies::Direct::User)
+        account_id = verify_and_return account_id, klass: Integer
+        exchange_read_identifier = verify_and_return exchange_read_identifier, klass: String
+        exchange_write_identifier = verify_and_return exchange_write_identifier, klass: String
+
+        verify_and_return strategy_class.create(
+          account_id: account_id,
+          exchange_read_identifier: exchange_read_identifier,
+          exchange_write_identifier: exchange_write_identifier
+        ), klass: self, error: ::Content::StrategyError
       end
 
-      def create!(*args, strategy_class: ::User::Strategies::Direct::User)
-        verify_and_return strategy_class.create!(*args),
-                          klass: self, error: ::Content::StrategyError
+      def create!(account_id:,
+                  exchange_read_identifier:,
+                  exchange_write_identifier:,
+                  strategy_class: ::User::Strategies::Direct::User)
+        account_id = verify_and_return account_id, klass: Integer
+        exchange_read_identifier = verify_and_return exchange_read_identifier, klass: String
+        exchange_write_identifier = verify_and_return exchange_write_identifier, klass: String
+
+        verify_and_return strategy_class.create!(
+          account_id: account_id,
+          exchange_read_identifier: exchange_read_identifier,
+          exchange_write_identifier: exchange_write_identifier
+        ), klass: self, error: ::Content::StrategyError
       end
 
       def find(*args, strategy_class: ::User::Strategies::Direct::User)
         verify_and_return strategy_class.find(*args), klass: self, error: ::Content::StrategyError
       end
 
-      def find_by_account_ids(*account_ids, strategy_class: ::User::Strategies::Direct::User)
-        verify_and_return strategy_class.find_by_account_ids(*account_ids),
-                          klass: self, error: ::Content::StrategyError
+      def find_by_account_id(account_id, strategy_class: ::User::Strategies::Direct::User)
+        account_id = verify_and_return account_id, klass: Integer
+        verify_and_return strategy_class.find_by_account_id(account_id),
+                          klass: self, allow_nil: true, error: ::Content::StrategyError
       end
 
-      def find_by_usernames(*usernames, strategy_class: ::User::Strategies::Direct::User)
-        verify_and_return strategy_class.find_by_usernames(*usernames),
-                          klass: self, error: ::Content::StrategyError
+      def find_by_username(username, strategy_class: ::User::Strategies::Direct::User)
+        username = verify_and_return username, klass: String
+        verify_and_return strategy_class.find_by_username(username),
+                          klass: self, allow_nil: true, error: ::Content::StrategyError
       end
 
       def anonymous(strategy_class: ::User::Strategies::Direct::AnonymousUser)
@@ -37,7 +59,9 @@ module User
     end
 
     def id
-      verify_and_return @strategy.id, klass: Integer, error: ::Content::StrategyError
+      verify_and_return @strategy.id, klass: Integer,
+                                      allow_nil: true,
+                                      error: ::Content::StrategyError
     end
 
     def account
@@ -47,11 +71,13 @@ module User
 
     def exchange_read_identifier
       verify_and_return @strategy.exchange_read_identifier, klass: String,
+                                                            allow_nil: true,
                                                             error: ::Content::StrategyError
     end
 
     def exchange_write_identifier
       verify_and_return @strategy.exchange_write_identifier, klass: String,
+                                                             allow_nil: true,
                                                              error: ::Content::StrategyError
     end
 

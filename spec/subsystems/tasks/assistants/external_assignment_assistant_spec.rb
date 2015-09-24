@@ -86,7 +86,7 @@ RSpec.describe Tasks::Assistants::ExternalAssignmentAssistant, type: :assistant 
     # user's default role, which is not a student role
     FactoryGirl.create(:tasks_tasking_plan,
                        task_plan: task_plan_2,
-                       target: students[0].role.user)
+                       target: students[0].role.profile)
 
     expect {
       DistributeTasks.call(task_plan_2)

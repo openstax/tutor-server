@@ -113,7 +113,7 @@ class Entity
     if self.class._repository_classes.include?(args.class)
       @repository = args
     elsif self.class._repository_classes.empty?
-      raise "#{self.class.name} does not wrap any classes.", caller
+      raise IllegalState, "#{self.class.name} does not wrap any classes.", caller
     else
       raise ArgumentError, "When initializing #{self.class.name}, you must pass either #{
                            self.class._repository_classes.to_a.join(', ')} or another #{

@@ -5,7 +5,7 @@ module Doorkeeper
       return false unless requestor.is_human?
       case action
       when :index, :create, :read, :update, :destroy
-        !!requestor.administrator
+        requestor.is_admin?
       else
         false
       end

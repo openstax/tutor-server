@@ -11,9 +11,11 @@ RSpec.describe DistributeTasks, type: :routine do
     AddUserAsPeriodStudent.call(user: user, period: period)
     user
   }
-  let!(:new_profile)      {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
+  let!(:new_profile)   {
+    FactoryGirl.create(:user_profile)
+  }
+  let!(:new_user)      {
+    strategy = User::Strategies::Direct::User.new(new_profile)
     user = User::User.new(strategy: strategy)
     AddUserAsPeriodStudent.call(user: user, period: period)
     user
@@ -43,7 +45,7 @@ RSpec.describe DistributeTasks, type: :routine do
   context 'published task_plan' do
     before(:each) do
       DistributeTasks.call(task_plan)
-      new_profile.user.roles.each do |role|
+      new_profile.roles.each do |role|
         role.taskings.each{ |tasking| tasking.task.destroy }
       end
       task_plan.reload

@@ -17,7 +17,7 @@ module MapUsersAccounts
     end
 
     def find_user
-      User::User.find_by_account_ids(@account.id)
+      User::User.find_by_account_id(@account.id)
     end
 
     def create_user

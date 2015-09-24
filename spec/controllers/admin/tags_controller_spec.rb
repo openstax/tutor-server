@@ -62,7 +62,7 @@ RSpec.describe Admin::TagsController do
     end
 
     it 'disallows non-admin authenticated visitors' do
-      profile = FactoryGirl.create(:user_profile, :administrator)
+      profile = FactoryGirl.create(:user_profile)
       strategy = User::Strategies::Direct::User.new(profile)
       non_admin = User::User.new(strategy: strategy)
       controller.sign_in(non_admin)
