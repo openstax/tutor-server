@@ -1,14 +1,14 @@
 require 'rails_helper'
 
 describe CollectCourseInfo, type: :routine do
-  let!(:user_1)    { Entity::User.create! }
-  let!(:user_2)    { Entity::User.create! }
+  let!(:profile_1) { FactoryGirl.create :user_profile }
+  let!(:profile_2) { FactoryGirl.create :user_profile }
 
-  let!(:role_1)    { FactoryGirl.create :entity_role, user: user_1 }
-  let!(:role_2)    { FactoryGirl.create :entity_role, user: user_2 }
+  let!(:role_1)    { FactoryGirl.create :entity_role, profile: profile_1 }
+  let!(:role_2)    { FactoryGirl.create :entity_role, profile: profile_2 }
 
-  let!(:course_1) { FactoryGirl.create(:course_profile_profile).course }
-  let!(:course_2) { FactoryGirl.create(:course_profile_profile).course }
+  let!(:course_1)  { FactoryGirl.create(:course_profile_profile).course }
+  let!(:course_2)  { FactoryGirl.create(:course_profile_profile).course }
 
   let!(:student_1) { FactoryGirl.create :course_membership_student, role: role_1, course: course_1 }
   let!(:student_2) { FactoryGirl.create :course_membership_student, role: role_2, course: course_2 }
@@ -27,8 +27,13 @@ describe CollectCourseInfo, type: :routine do
   end
 
   context "when a user is given" do
+    let!(:user) {
+      strategy = User::Strategies::Direct::User.new(profile_1)
+      User::User.new(strategy: strategy)
+    }
+
     it "returns information about the user's active courses" do
-      result = described_class[user: user_1]
+      result = described_class[user: user]
       expect(result).to contain_exactly(
         {
           id: course_1.id,
