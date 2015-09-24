@@ -1,0 +1,2 @@
+class StrategyError < StandardError
+end

@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 module Content
-  describe Ecosystem do
+  describe Ecosystem, type: :wrapper do
 
     let!(:valid_id)   { 1 }
     let!(:invalid_id) { Object.new }
@@ -95,10 +95,10 @@ module Content
       context "strategy doesn't return an Integer" do
         let!(:strategy_id) { invalid_id }
 
-        it "raises Content::StrategyError" do
+        it "raises StrategyError" do
           expect{
             ecosystem.id
-          }.to raise_error(::Content::StrategyError)
+          }.to raise_error(StrategyError)
         end
       end
     end
@@ -122,10 +122,10 @@ module Content
       context "strategy doesn't return Content::Books" do
         let(:strategy_books) { [ valid_book, invalid_book, valid_book ] }
 
-        it "raises Content::StrategyError" do
+        it "raises StrategyError" do
           expect{
             ecosystem.books
-          }.to raise_error(::Content::StrategyError)
+          }.to raise_error(StrategyError)
         end
       end
     end
@@ -149,10 +149,10 @@ module Content
       context "strategy doesn't return Content::Exercises" do
         let(:strategy_exercises) { [ valid_exercise, invalid_exercise, valid_exercise ] }
 
-        it "raises Content::StrategyError" do
+        it "raises StrategyError" do
           expect{
             ecosystem.exercises
-          }.to raise_error(::Content::StrategyError)
+          }.to raise_error(StrategyError)
         end
       end
     end
@@ -196,10 +196,10 @@ module Content
         context "strategy doesn't return Content::Exercises" do
           let(:strategy_reading_dynamic_pools) { [ valid_pool, invalid_pool, valid_pool ] }
 
-          it "raises Content::StrategyError" do
+          it "raises StrategyError" do
             expect{
               ecosystem.reading_dynamic_pools(pages: pages)
-            }.to raise_error(::Content::StrategyError)
+            }.to raise_error(StrategyError)
           end
         end
       end
@@ -254,10 +254,10 @@ module Content
         context "strategy doesn't return Content::Exercises" do
           let(:strategy_reading_try_another_pools) { [ valid_pool, invalid_pool, valid_pool ] }
 
-          it "raises Content::StrategyError" do
+          it "raises StrategyError" do
             expect{
               ecosystem.reading_try_another_pools(pages: pages)
-            }.to raise_error(::Content::StrategyError)
+            }.to raise_error(StrategyError)
           end
         end
       end
@@ -312,10 +312,10 @@ module Content
         context "strategy doesn't return Content::Exercises" do
           let(:strategy_homework_core_pools) { [ valid_pool, invalid_pool, valid_pool ] }
 
-          it "raises Content::StrategyError" do
+          it "raises StrategyError" do
             expect{
               ecosystem.homework_core_pools(pages: pages)
-            }.to raise_error(::Content::StrategyError)
+            }.to raise_error(StrategyError)
           end
         end
       end
@@ -370,10 +370,10 @@ module Content
         context "strategy doesn't return Content::Exercises" do
           let(:strategy_homework_dynamic_pools) { [ valid_pool, invalid_pool, valid_pool ] }
 
-          it "raises Content::StrategyError" do
+          it "raises StrategyError" do
             expect{
               ecosystem.homework_dynamic_pools(pages: pages)
-            }.to raise_error(::Content::StrategyError)
+            }.to raise_error(StrategyError)
           end
         end
       end
@@ -428,10 +428,10 @@ module Content
         context "strategy doesn't return Content::Exercises" do
           let(:strategy_practice_widget_pools) { [ valid_pool, invalid_pool, valid_pool ] }
 
-          it "raises Content::StrategyError" do
+          it "raises StrategyError" do
             expect{
               ecosystem.practice_widget_pools(pages: pages)
-            }.to raise_error(::Content::StrategyError)
+            }.to raise_error(StrategyError)
           end
         end
       end
@@ -471,10 +471,10 @@ module Content
       context "strategy doesn't return Content::Manifest" do
         let(:strategy_manifest) { invalid_manifest }
 
-        it "raises Content::StrategyError" do
+        it "raises StrategyError" do
           expect{
             ecosystem.manifest
-          }.to raise_error(::Content::StrategyError)
+          }.to raise_error(StrategyError)
         end
       end
     end
