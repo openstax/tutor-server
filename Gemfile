@@ -130,7 +130,8 @@ gem 'timecop'
 gem 'activerecord-import'
 
 # Notify developers of Exceptions in production
-gem 'rescue_from', github: 'openstax/rescue_from', branch: 'install-generator'
+gem 'openstax_rescue_from', github: 'openstax/rescue_from',
+                            branch: 'implement-the-whole-kit-n-kaboodle'
 
 group :development, :test do
   # Get env variables from .env file

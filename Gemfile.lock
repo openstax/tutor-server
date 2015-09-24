@@ -14,12 +14,12 @@ GIT
 
 GIT
   remote: git://github.com/openstax/rescue_from.git
-  revision: 9ef054044d9cee4767c243caa03da6a93d878ee3
-  branch: install-generator
+  revision: c76c1ce311fc124dc2914f9e28b674b1cbfce22b
+  branch: implement-the-whole-kit-n-kaboodle
   specs:
-    rescue_from (0.0.1)
-      exception_notification (~> 4.1.1)
-      rails (~> 4.2.4)
+    openstax_rescue_from (0.0.1)
+      exception_notification (>= 4.1, < 5.0)
+      rails (>= 3.1, < 5.0)
 
 GEM
   remote: https://rubygems.org/
@@ -708,6 +708,7 @@ DEPENDENCIES
   openstax_accounts (~> 6.1.3)
   openstax_api (~> 5.5.5)
   openstax_exchange (~> 0.2.1)
+  openstax_rescue_from!
   openstax_utilities (~> 4.2.0)
   parallel_tests
   pg
@@ -723,7 +724,6 @@ DEPENDENCIES
   rails-html-sanitizer (~> 1.0)
   redis-rails
   remotipart
-  rescue_from!
   resque (~> 1.24.1)
   resque_spec
   rspec-collection_matchers
