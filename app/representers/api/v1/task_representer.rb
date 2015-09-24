@@ -73,7 +73,7 @@ module Api::V1
     property :ecosystem_title,
              type: String,
              readable: true,
-             getter: ->(*) { ecosystem.title },
+             getter: ->(*) { ecosystem.try(:title) },
              writeable: false
   end
 end
