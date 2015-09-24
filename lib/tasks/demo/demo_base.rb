@@ -154,8 +154,7 @@ class DemoBase
   def sign_contract(user:, name:)
     string_name = name.to_s
     return if FinePrint::Contract.where{name == string_name}.none?
-    profile = User::Models::Profile.find(user.id)
-    FinePrint.sign_contract(profile, string_name)
+    FinePrint.sign_contract(user.to_model, string_name)
   end
 
   def new_period_student(period:, username: nil, name: nil, password: nil)

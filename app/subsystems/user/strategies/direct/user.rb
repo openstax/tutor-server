@@ -77,6 +77,10 @@ module User
         def is_content_analyst?
           !repository.content_analyst.nil?
         end
+
+        def to_model
+          repository
+        end
       end
     end
   end

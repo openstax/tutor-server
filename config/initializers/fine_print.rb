@@ -14,7 +14,7 @@ FinePrint.configure do |config|
   # Default: lambda { current_user }
   config.current_user_proc = lambda {
     # FinePrint does not understand how to read/write contract signatures for wrappers
-    User::Models::Profile.find(current_user.id)
+    current_user.to_model
   }
 
   # Proc called with a user as argument and a controller as self.
@@ -37,7 +37,7 @@ FinePrint.configure do |config|
   # checks all others for contracts to be signed.
   # Default: lambda { |user| !user.nil? || head(:unauthorized) }
   config.authenticate_user_proc = lambda { |user|
-    user.is_a?(::User::Models::Profile) || authenticate_user!
+    user.class == ::User::Models::Profile || authenticate_user!
   }
 
   # Controller Configuration

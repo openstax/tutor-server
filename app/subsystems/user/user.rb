@@ -124,5 +124,12 @@ module User
     def is_content_analyst?
       !!@strategy.is_content_analyst?
     end
+
+    # Necessary, at least temporarily, so we can assign users to external polymorphics,
+    # like task_plan owner, tasking_plan target and FinePrint signatures
+    def to_model
+      verify_and_return @strategy.to_model, klass: ::User::Models::Profile,
+                                            error: ::Content::StrategyError
+    end
   end
 end

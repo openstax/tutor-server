@@ -33,14 +33,12 @@ class WebviewController < ApplicationController
       contract_names_signed_by_everyone: [:general_terms_of_use, :privacy_policy]
     ).outputs
 
-    profile = User::Models::Profile.find(current_user.id)
+    profile = current_user.to_model
 
     contract_names.proxy_signed.each do |name|
       next if FinePrint.signed_contract?(profile, name)
 
-      FinePrint.sign_contract(profile,
-                              name,
-                              FinePrint::SIGNATURE_IS_IMPLICIT)
+      FinePrint.sign_contract(profile, name, FinePrint::SIGNATURE_IS_IMPLICIT)
     end
 
     if contract_names.non_proxy_signed.any?
