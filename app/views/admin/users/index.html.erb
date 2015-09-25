@@ -36,6 +36,7 @@
         <th>Name</th>
         <th>Actions</th>
         <th>Admin?</th>
+        <th>Customer Service?</th>
         <th>Content Analyst?</th>
       </tr>
     </thead>
@@ -51,6 +52,7 @@
                                         method: :post, class: "btn btn-xs btn-primary" %>
           </td>
           <td><%= tf_to_yn user.is_admin? %></td>
+          <td><%= tf_to_yn user.is_customer_service? %></td>
           <td><%= tf_to_yn user.is_content_analyst? %></td>
         </tr>
       <% end %>

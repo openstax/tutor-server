@@ -1,0 +1,53 @@
+<% @page_header = @course.title %>
+
+<div>
+  <h3>School</h3>
+  <div><%= @course.school_name %></div>
+</div>
+
+<div>
+  <h3>Content</h3>
+  <div><%= @course_ecosystem.title %></div>
+</div>
+
+<div>
+  <h3>Periods</h3>
+  <div>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @periods.each do |period| %>
+          <tr>
+            <td><%= period.name %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div>
+  <h3>Teachers</h3>
+  <div>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @teachers.each do |teacher| %>
+          <tr>
+            <td><%= teacher.username %></td>
+            <td><%= teacher.name %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

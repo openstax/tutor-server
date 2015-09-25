@@ -16,8 +16,13 @@
         <td><%= course.teacher_names.to_sentence %></td>
         <td><%= course.school_name %></td>
         <td>
-          <%= link_to 'Edit', edit_admin_course_path(course.id),
-                              class: "btn btn-xs btn-primary" %>
+          <% if current_user.is_admin? %>
+            <%= link_to 'Edit', edit_admin_course_path(course.id),
+                                class: "btn btn-xs btn-primary" %>
+          <% else %>
+            <%= link_to 'Show', admin_course_path(course.id),
+                                class: "btn btn-xs btn-primary" %>
+          <% end %>
           <%= link_to 'List Students', students_admin_course_path(course.id),
                                        class: 'btn btn-xs btn-primary' %>
         </td>

@@ -118,6 +118,10 @@ module User
       !!@strategy.is_admin?
     end
 
+    def is_customer_service?
+      !!@strategy.is_customer_service?
+    end
+
     def is_content_analyst?
       !!@strategy.is_content_analyst?
     end

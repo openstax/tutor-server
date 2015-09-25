@@ -74,6 +74,10 @@ module User
           !repository.administrator.nil?
         end
 
+        def is_customer_service?
+          !repository.customer_service.nil?
+        end
+
         def is_content_analyst?
           !repository.content_analyst.nil?
         end
