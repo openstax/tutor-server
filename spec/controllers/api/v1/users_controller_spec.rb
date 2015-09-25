@@ -34,6 +34,7 @@ describe Api::V1::UsersController, type: :controller, api: true, version: :v1 do
         expect(payload).to eq(
           "name" => user_1.name,
           'is_admin' => false,
+          'is_customer_service' => false,
           'is_content_analyst' => false,
           'profile_url' => Addressable::URI.join(
             OpenStax::Accounts.configuration.openstax_accounts_url,
@@ -48,6 +49,7 @@ describe Api::V1::UsersController, type: :controller, api: true, version: :v1 do
         expect(payload).to eq(
           "name" => admin.name,
           'is_admin' => true,
+          'is_customer_service' => false,
           'is_content_analyst' => false,
           'profile_url' => Addressable::URI.join(
             OpenStax::Accounts.configuration.openstax_accounts_url,
