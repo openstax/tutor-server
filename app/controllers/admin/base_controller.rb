@@ -7,7 +7,7 @@ class Admin::BaseController < ApplicationController
 
   def authenticate_admin!
     raise SecurityTransgression unless current_user.is_admin? || \
-                                       (current_user.is_customer_support? && \
+                                       (current_user.is_customer_service? && \
                                         CUSTOMER_SUPPORT_ACTIONS.include?(action_name))
   end
 end
