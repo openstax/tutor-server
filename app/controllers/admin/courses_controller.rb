@@ -1,5 +1,5 @@
 class Admin::CoursesController < Admin::BaseController
-  before_action :get_schools, only: [:edit]
+  before_action :get_schools, only: [:new, :edit]
 
   def index
     @courses = CollectCourseInfo[with: :teacher_names]
