@@ -6,7 +6,9 @@ class GetCourseEcosystemsMap
   def exec(course:, ecosystem_strategy_class: ::Content::Strategies::Direct::Ecosystem,
                     map_strategy_class: ::Content::Strategies::Generated::Map)
     # The first ecosystem is the latest
-    to_content_ecosystem = course.ecosystems.first
+    to_content_ecosystem = course.ecosystems.preload(
+      pages: [ :all_exercises_pool, { chapter: :all_exercises_pool } ]
+    ).first
     to_ecosystem_strategy = ecosystem_strategy_class.new(to_content_ecosystem)
     to_ecosystem = ::Content::Ecosystem.new(strategy: to_ecosystem_strategy)
 

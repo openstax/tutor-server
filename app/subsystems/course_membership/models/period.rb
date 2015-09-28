@@ -8,10 +8,10 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
 
   has_many :enrollments, dependent: :destroy
   has_many :latest_enrollments,
-           -> (period) { period.enrollments.latest },
+           -> { latest },
            class_name: '::CourseMembership::Models::Enrollment'
   has_many :active_enrollments,
-           -> (period) { period.enrollments.latest.active },
+           -> { latest.active },
            class_name: '::CourseMembership::Models::Enrollment'
 
   has_many :taskings, subsystem: :tasks, dependent: :nullify

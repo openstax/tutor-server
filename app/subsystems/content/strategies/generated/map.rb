@@ -27,7 +27,8 @@ module Content
           @from_ecosystems = from_ecosystems
           @to_ecosystem = to_ecosystem
 
-          @page_id_to_page_map = to_ecosystem.pages.each_with_object({}) do |page, hash|
+          pages = to_ecosystem.pages
+          @page_id_to_page_map = pages.each_with_object({}) do |page, hash|
             hash[page.id] = page
           end
           @exercise_id_to_page_map = {}
