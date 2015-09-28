@@ -97,7 +97,8 @@ module OpenStax::Biglearn
         confidence_interval: [ 0.0, 1.0 ],
         confidence_interval_interpretation: "bad",
         sample_size: 0,
-        sample_size_interpretation: "below"
+        sample_size_interpretation: "below",
+        unique_learner_count: 0
       }
     }
     let!(:pool_2_clue) {
@@ -107,7 +108,8 @@ module OpenStax::Biglearn
         confidence_interval: [ 0.8, 1.0 ],
         confidence_interval_interpretation: "good",
         sample_size: 100,
-        sample_size_interpretation: "above"
+        sample_size_interpretation: "above",
+        unique_learner_count: 50
       }
     }
 

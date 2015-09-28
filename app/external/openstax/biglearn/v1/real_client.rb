@@ -186,7 +186,8 @@ class OpenStax::Biglearn::V1::RealClient
         ],
         confidence_interval_interpretation: interpretation['confidence'],
         sample_size: confidence['sample_size'],
-        sample_size_interpretation: interpretation['threshold']
+        sample_size_interpretation: interpretation['threshold'],
+        unique_learner_count: confidence['unique_learner_count']
       }
 
       Rails.cache.write(cache_key, clue_hash, expires_in: CLUE_CACHE_DURATION)
