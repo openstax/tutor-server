@@ -131,7 +131,9 @@ class CalculateTaskPlanStats
 
         spaced_pages: generate_page_stats_for_task_steps(
                         period_tasks.collect{ |t| t.spaced_practice_task_steps }
-                      )
+                      ),
+
+        trouble: false
       )
     end
   end

@@ -55,7 +55,6 @@ module Api::V1
                  as: :is_trouble,
                  readable: true,
                  writeable: false,
-                 getter: lambda{|*| false },
                  schema_info: { type: 'boolean' }
 
       end
