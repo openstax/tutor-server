@@ -51,6 +51,13 @@ module Api::V1
                    writable: false,
                    decorator: Api::V1::Tasks::Stats::PageRepresenter
 
+        property :trouble,
+                 as: :is_trouble,
+                 readable: true,
+                 writeable: false,
+                 getter: lambda{|*| false },
+                 schema_info: { type: 'boolean' }
+
       end
     end
   end
