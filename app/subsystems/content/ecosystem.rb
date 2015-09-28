@@ -73,9 +73,8 @@ module Content
                         klass: ::Content::Chapter, error: ::Content::StrategyError
     end
 
-    def pages(preload: nil)
-      verify_and_return @strategy.pages(preload: preload),
-                        klass: ::Content::Page, error: ::Content::StrategyError
+    def pages
+      verify_and_return @strategy.pages, klass: ::Content::Page, error: ::Content::StrategyError
     end
 
     def pages_by_ids(*ids)

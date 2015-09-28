@@ -4,17 +4,13 @@ module Content
       class Map
 
         class << self
-          def create(from_ecosystems:, to_ecosystem:, preload: nil)
-            strategy = new(from_ecosystems: from_ecosystems,
-                           to_ecosystem: to_ecosystem,
-                           preload: preload)
+          def create(from_ecosystems:, to_ecosystem:)
+            strategy = new(from_ecosystems: from_ecosystems, to_ecosystem: to_ecosystem)
             ::Content::Map.new(strategy: strategy)
           end
 
-          def create!(from_ecosystems:, to_ecosystem:, preload: nil)
-            create(from_ecosystems: from_ecosystems,
-                   to_ecosystem: to_ecosystem,
-                   preload: preload).tap do |map|
+          def create!(from_ecosystems:, to_ecosystem:)
+            create(from_ecosystems: from_ecosystems, to_ecosystem: to_ecosystem).tap do |map|
               raise(
                 Content::MapInvalidError, "Cannot generate a valid ecosystem map from " +
                 "[#{from_ecosystems.collect(&:title).join(', ')}] to #{to_ecosystem.title}"
@@ -27,11 +23,11 @@ module Content
           alias_method :find!, :create!
         end
 
-        def initialize(from_ecosystems:, to_ecosystem:, preload: nil)
+        def initialize(from_ecosystems:, to_ecosystem:)
           @from_ecosystems = from_ecosystems
           @to_ecosystem = to_ecosystem
 
-          pages = to_ecosystem.pages(preload: preload)
+          pages = to_ecosystem.pages
           @page_id_to_page_map = pages.each_with_object({}) do |page, hash|
             hash[page.id] = page
           end

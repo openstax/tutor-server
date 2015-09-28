@@ -19,7 +19,7 @@ module CourseGuideMethods
       strategy = ::Content::Strategies::Direct::Exercise.new(content_exercise)
       ::Content::Exercise.new(strategy: strategy)
     end
-    ecosystems_map = GetCourseEcosystemsMap[course: course, preload: :for_clues]
+    ecosystems_map = GetCourseEcosystemsMap[course: course]
 
     ecosystems_map.map_exercises_to_pages(exercises: exercises)
   end
