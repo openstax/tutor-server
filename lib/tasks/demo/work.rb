@@ -13,20 +13,27 @@ class DemoWork < DemoBase
     set_print_logs(print_logs)
     set_random_seed(random_seed)
 
+    Thread::abort_on_exception = true
+
     ContentConfiguration[book.to_sym].each do | content |
 
-      content.assignments.each do | assignment |
-        next if assignment.draft # Draft plans haven't been distributed so can't be worked
-        work_assignment(content, assignment)
-      end
-
-      content.auto_assign.each do | settings |
-        each_from_auto_assignment(content, settings) do | assignment |
+      in_parallel(content.assignments.reject(&:draft)) do | assignments, initial_index |
+        assignments.each do | assignment |
           work_assignment(content, assignment)
         end
       end
 
+      in_parallel(content.auto_assign) do | auto_assigns, initial_index |
+        auto_assigns.each do | settings |
+          each_from_auto_assignment(content, settings) do | assignment |
+            work_assignment(content, assignment)
+          end
+        end
+      end
+
     end
+
+    wait_for_parallel_completion
 
   end
 
