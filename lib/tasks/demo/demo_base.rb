@@ -62,7 +62,7 @@ class DemoBase
 
   def get_auto_assignments(content)
 
-    content.auto_assignments.collect do | settings |
+    content.auto_assign.collect do | settings |
       book_locations = content.course.ecosystems.first.pages.map(&:book_location)
                                                             .sample(settings.steps)
       step_types = if settings.type == 'homework'
@@ -98,11 +98,12 @@ class DemoBase
     arg_size = args.first.size
     raise 'Arguments must have the same size' unless args.all?{ |arg| arg.size == arg_size }
 
+    # This is merely the maximum number of threads spawned per call to this method
     max_threads = Integer(ENV['DEMO_MAX_THREADS']) rescue 8
 
     if arg_size == 0 || max_threads < 1
-      log("Threads: Doing processing inline") if max_threads < 1
-      log("Threads: Returning immediately: No elements") if arg_size == 0
+      log("Threads: 0 (inline processing) - Slice size: #{arg_size}")
+
       return yield *[args + [0]]
     end
 
@@ -122,7 +123,7 @@ class DemoBase
       sliced_args.collect{ |sliced_arg| sliced_arg.next } + [thread_index*slice_size]
     end
 
-    log("Threads: Spawning #{num_threads} threads to process up to #{slice_size} element(s) each")
+    log("Threads: #{num_threads} - Slice size: #{slice_size}")
 
     @threads = 0.upto(num_threads - 1).collect do |thread_index|
       Thread.new do
