@@ -88,6 +88,23 @@ class DemoBase
 
   end
 
+  def in_parallel
+    thread = Thread.new do
+      ActiveRecord::Base.connection_pool.with_connection do
+        yield
+      end
+    end
+    @threads||=[]
+    @threads.push(thread)
+    thread
+  end
+
+  def wait_for_parellel_completion!
+    return unless @threads
+    @threads.map(&:join)
+  end
+
+
   class TasksProfile
     def initialize(assignment_type:, profile_responses:, step_types:, randomizer:)
 
