@@ -19,7 +19,6 @@ class DemoContent < DemoBase
   protected
 
   def exec(book: :all, print_logs: true, random_seed: nil, version: :defined)
-
     set_print_logs(print_logs)
 
     # By default, choose a fixed seed for repeatability and fewer surprises
@@ -30,10 +29,18 @@ class DemoContent < DemoBase
     run(:make_administrator, user: admin_profile.user) unless admin_profile.is_admin?
     log("Admin user: #{admin_profile.account.full_name}")
 
-    ContentConfiguration[book.to_sym].each do | content |
+    # Abort execution if any of the threads blow up
+    Thread::abort_on_exception = true
 
+    # Disable threading for now: Exercises times out with multiple requests...
+    ENV['DEMO_MAX_THREADS'] = "0"
+
+    # Serial step
+    courses = []
+    ContentConfiguration[book.to_sym].each do | content |
       course_name = content.course_name
       course = find_course(name: course_name) || create_course(name: course_name)
+      courses << course
       log("Course: #{course_name}")
 
       teacher_profile = get_teacher_profile(content.teacher) ||
@@ -60,15 +67,30 @@ class DemoContent < DemoBase
             unless run(:is_student, user: user, course: course).outputs.user_is_course_student
         end
       end
+    end
 
-      book = content.cnx_book(version)
-      log("Starting book import for #{course.name} #{book} from #{
-            OpenStax::Cnx::V1.archive_url_base}.")
-      ecosystem = run(:import_book, book_cnx_id: book).outputs.ecosystem
-      log("Book import complete")
-      run(:add_ecosystem, ecosystem: ecosystem, course: course)
+     # Parallel step
+    in_parallel(ContentConfiguration[book.to_sym]) do | contents, initial_index |
 
-    end # book
+      index = initial_index
+
+      contents.each do | content |
+
+        book = content.cnx_book(version)
+        course = courses[index]
+        log("Starting book import for #{course.name} #{book} from #{
+              OpenStax::Cnx::V1.archive_url_base}.")
+        ecosystem = run(:import_book, book_cnx_id: book).outputs.ecosystem
+        log("Book import complete")
+        run(:add_ecosystem, ecosystem: ecosystem, course: course)
+
+        index += 1
+
+      end # book
+
+    end # thread
+
+    wait_for_parallel_completion
 
   end
 end

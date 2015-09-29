@@ -20,22 +20,27 @@ class DemoTasks < DemoBase
     set_print_logs(print_logs)
     set_random_seed(random_seed)
 
+    Thread::abort_on_exception = true
+
     ContentConfiguration[book.to_sym].each do | content |
 
-      Thread::abort_on_exception=true
-
-      content.assignments.each do | assignment |
-        self.in_parallel{ create_assignment(content, assignment) }
-      end
-
-      content.auto_assign.each do | settings |
-        each_from_auto_assignment(content, settings) do | assignment |
-          self.in_parallel{ create_assignment(content, assignment) }
+      in_parallel(content.assignments) do | assignments, initial_index |
+        assignments.each do | assignment |
+          create_assignment(content, assignment)
         end
       end
+
+      in_parallel(content.auto_assign) do | auto_assigns, initial_index |
+        auto_assigns.each do | settings |
+          each_from_auto_assignment(content, settings) do | assignment |
+            create_assignment(content, assignment)
+          end
+        end
+      end
+
     end
 
-    wait_for_parellel_completion!
+    wait_for_parallel_completion
 
     Timecop.return_all
   end

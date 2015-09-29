@@ -88,19 +88,43 @@ class DemoBase
 
   end
 
-  def in_parallel
-    thread = Thread.new do
-      ActiveRecord::Base.connection_pool.with_connection do
-        yield
+  # Args should be Enumerables and will be passed to the given block in properly-sized slices
+  # You will still have to iterate through the yielded values
+  # The index for the first element in the original array is also provided
+  def in_parallel(*args)
+    arg_size = args.first.size
+    raise 'Arguments must have the same size' unless args.all?{ |arg| arg.size == arg_size }
+
+    max_threads = Integer(ENV['DEMO_MAX_THREADS']) rescue 8
+    return yield *[args + [0]] if arg_size == 0 || max_threads < 1
+
+    Rails.application.eager_load!
+
+    # Use max_threads unless too few args given
+    num_threads = [arg_size, max_threads].min
+
+    # Calculate slice_size
+    slice_size = (arg_size/num_threads.to_f).ceil
+
+    # Adjust number of threads again if some thread would receive an empty array
+    num_threads = (arg_size/slice_size.to_f).ceil
+
+    sliced_args = args.collect{ |arg| arg.each_slice(slice_size) }
+
+    @threads = 0.upto(num_threads - 1).collect do |thread_index|
+      thread_args = sliced_args.collect{ |sliced_arg| sliced_arg.next } + [thread_index*slice_size]
+
+      Thread.new do
+        ActiveRecord::Base.connection_pool.with_connection do
+          yield *thread_args
+        end
       end
     end
-    @threads||=[]
-    @threads.push(thread)
-    thread
   end
 
-  def wait_for_parellel_completion!
-    return unless @threads
+  def wait_for_parallel_completion
+    return if @threads.nil?
+
     @threads.map(&:join)
   end
 
