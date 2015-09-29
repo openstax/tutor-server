@@ -44,11 +44,18 @@ class ContentConfiguration
       .map{|file| self.new(file) }
   end
 
-  def_delegators :@configuration, :course_name, :assignments, :teacher, :periods
+  def_delegators :@configuration, :course_name, :teacher, :periods
 
   def initialize(config_file)
     @configuration = Hashie::Mash.load(config_file, parser: ConfigFileParser)
     validate_config
+  end
+
+  def assignments
+    @configuration.assignments || []
+  end
+  def auto_assign
+    @configuration.auto_assign || []
   end
 
   def cnx_book(book_version=:defined)
@@ -63,7 +70,7 @@ class ContentConfiguration
   end
 
   def course
-    @course ||= CourseProfile::Models::Profile.where(name: @configuration.course_name)
+    @course ||= CourseProfile::Models::Profile.where(name: course_name)
                                               .order{created_at.desc}.first!.course
   end
 
@@ -82,18 +89,18 @@ class ContentConfiguration
 
   def validate_config
     # make sure the titles for assignments are unique
-    titles = @configuration.assignments.map(&:title)
+    titles = assignments.map(&:title)
     duplicate = titles.detect {|e| titles.rindex(e) != titles.index(e) }
-    raise "Assignment #{duplicate} for #{@configuration.course_name} is listed more than once" if duplicate
+    raise "Assignment #{duplicate} for #{course_name} is listed more than once" if duplicate
     # loop through each assignment and verify that the students match the roster for the period
-    @configuration.assignments.each do | assignment |
+    assignments.each do | assignment |
       assignment.periods.each_with_index do | period, index |
         period_config = get_period(period.id)
         if period_config.nil?
           raise "Unable to find period # #{index} id #{period.id} for assignment #{assignment.title}"
         end
         if period_config.students.sort != period.students.keys.sort
-          raise "Students assignments for #{@configuration.course_name} period #{period_config.name} do not match for assignment #{assignment.title}"
+          raise "Students assignments for #{course_name} period #{period_config.name} do not match for assignment #{assignment.title}"
         end
       end
     end

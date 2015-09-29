@@ -47,6 +47,47 @@ class DemoBase
                       randomizer: randomizer)
   end
 
+  def auto_assign_students_for_period(period)
+    Hash[
+      period.students.map.with_index{ |initials, i|
+        score = if 0 == i%5 then 'i'
+                elsif 0 == i%10 then 'ns'
+                else
+                  70 + rand(30)
+                end
+        [initials, score]
+      }
+    ]
+  end
+
+  def each_from_auto_assignment(content, settings)
+
+    book_locations = content.course.ecosystems.first.pages.map(&:book_location).sample(settings.steps)
+    step_types = if settings.type == 'homework'
+                   (['e'] * settings.steps) + ['p']
+                 else
+                   1.upto(settings.steps).map.with_index{ |step, i| 0==i%3 ? 'e' : 'r' }
+                 end
+
+    1.upto(settings.generate) do | number |
+      yield Hashie::Mash.new( type: settings.type,
+                              title: "#{settings.type.titleize} #{number}",
+                              num_exercises: settings.steps,
+                              step_types: step_types,
+                              book_locations: book_locations,
+                              periods: content.periods.map do | period |
+                                {
+                                  id: period.id,
+                                  opens_at: (number + 3).days.ago,
+                                  due_at:  (number).days.ago,
+                                  students: auto_assign_students_for_period(period)
+                                }
+                              end
+                            )
+    end
+
+  end
+
   class TasksProfile
     def initialize(assignment_type:, profile_responses:, step_types:, randomizer:)
 
