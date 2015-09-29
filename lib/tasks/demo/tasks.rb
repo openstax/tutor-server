@@ -30,11 +30,9 @@ class DemoTasks < DemoBase
         end
       end
 
-      in_parallel(content.auto_assign) do | auto_assigns, initial_index |
-        auto_assigns.each do | settings |
-          each_from_auto_assignment(content, settings) do | assignment |
-            create_assignment(content, assignment)
-          end
+      in_parallel(get_auto_assignments(content).flatten) do | auto_assignments, initial_index |
+        auto_assignments.each do | auto_assignment |
+          create_assignment(content, auto_assignment)
         end
       end
 
