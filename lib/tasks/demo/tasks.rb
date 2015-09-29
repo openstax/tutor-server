@@ -3,6 +3,13 @@ require_relative 'content_configuration'
 
 # Adds students to the course periods, assigns Sets up the periods and students for a course
 # and then generates activity for them
+
+# Dead ends to fixing circular dependancy errors
+
+# require 'content/pool'
+# require 'course_membership/models/period'
+# require 'content/models/exercise'
+
 class DemoTasks < DemoBase
 
   lev_routine
@@ -15,16 +22,20 @@ class DemoTasks < DemoBase
 
     ContentConfiguration[book.to_sym].each do | content |
 
+      Thread::abort_on_exception=true
+
       content.assignments.each do | assignment |
-        create_assignment(content, assignment)
+        self.in_parallel{ create_assignment(content, assignment) }
       end
 
       content.auto_assign.each do | settings |
         each_from_auto_assignment(content, settings) do | assignment |
-          create_assignment(content, assignment)
+          self.in_parallel{ create_assignment(content, assignment) }
         end
       end
     end
+
+    wait_for_parellel_completion!
 
     Timecop.return_all
   end
