@@ -1,0 +1,34 @@
+course_name: Physics LG
+cnx_book_id: 334f8b61-30eb-4475-8e05-5260a4866b4b
+cnx_book_version: 4.61
+teacher: cm
+periods:
+  - id: p1
+    name: 1st
+    students: [af,ag,ak,am,an,ap,at,bb,bh,bs,cd,cg,cm,cp,dp,eh,fa,ft,gj,gs,hc,hg,hp,hs,ir,iu,iw,jb,jr,js]
+  - id: p2
+    name: 2nd
+    students: [kl,lb,lt,lh,mb,mu,mh,mr,ms,ne,nz,ra,rb,rh,rl,sd,sg,sk,vw,wh,HC1,SM2,GD3,JH4,SP5,SW6,JM7,KY8,SH9,KS10]
+  - id: p3
+    name: 3rd
+    students: [BS11,LA12,MM13,LC14,TM15,AR16,LH17,LV18,CG19,AL20,GJ21,LP22,LS23,AB24,DG25,MT26,TA27,BJ28,RP29,KE30,JS31,MR32,EW33,JL34,KS35,BR36,AT37,TB38,CC39,SH40]
+  - id: p4
+    name: 4th
+    students: [RO41,AK42,AI43,DC44,RH45,CS46,CS47,LR48,DP49,LA50,LH51,GG52,AP53,GS54,JO55,EG56,LK57,JB58,JL59,AS60,IE61,GM62,KF63,BS64,KP65,CM66,LT67,CS68,CC69,LM70]
+  - id: p5
+    name: 5th
+    students: [LS71,JL72,CP73,NA74,DB75,CY76,KB77,CC78,SB79,LP80,KP81,LK82,KC83,BC84,IA85,JM86,QK87,MJ88,JT89,SL90,NH91,MC92,TM93,SB94,AB95,MU96,BV97,MS98,DC99,CS100]
+
+auto_assign:
+  - type: homework
+    generate: 30
+    steps: 10
+  - type: homework
+    generate: 30
+    steps: 50
+  - type: reading
+    generate: 10
+    steps: 5
+  - type: reading
+    generate: 10
+    steps: 10
