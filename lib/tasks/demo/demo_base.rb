@@ -90,13 +90,17 @@ class DemoBase
 
   # Args should be Enumerables and will be passed to the given block in properly-sized slices
   # You will still have to iterate through the yielded values
-  # The index for the first element in the original array is also provided
+  # The index for the first element in the original array is also passed in as the last argument
   def in_parallel(*args)
     arg_size = args.first.size
     raise 'Arguments must have the same size' unless args.all?{ |arg| arg.size == arg_size }
 
     max_threads = Integer(ENV['DEMO_MAX_THREADS']) rescue 8
-    return yield *[args + [0]] if arg_size == 0 || max_threads < 1
+
+    if arg_size == 0 || max_threads < 1
+      log("Doing processing inline")
+      return yield *[args + [0]]
+    end
 
     Rails.application.eager_load!
 
@@ -110,6 +114,8 @@ class DemoBase
     num_threads = (arg_size/slice_size.to_f).ceil
 
     sliced_args = args.collect{ |arg| arg.each_slice(slice_size) }
+
+    log("Spawning #{num_threads} threads to process arrays of up to #{slice_size} elements")
 
     @threads = 0.upto(num_threads - 1).collect do |thread_index|
       thread_args = sliced_args.collect{ |sliced_arg| sliced_arg.next } + [thread_index*slice_size]
