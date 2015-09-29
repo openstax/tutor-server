@@ -98,7 +98,8 @@ class DemoBase
     max_threads = Integer(ENV['DEMO_MAX_THREADS']) rescue 8
 
     if arg_size == 0 || max_threads < 1
-      log("Doing processing inline")
+      log("Threads: Doing processing inline") if max_threads < 1
+      log("Threads: Returning immediately: No elements") if arg_size == 0
       return yield *[args + [0]]
     end
 
@@ -115,7 +116,7 @@ class DemoBase
 
     sliced_args = args.collect{ |arg| arg.each_slice(slice_size) }
 
-    log("Spawning #{num_threads} threads to process arrays of up to #{slice_size} elements")
+    log("Threads: Spawning #{num_threads} threads to process up to #{slice_size} element(s) each")
 
     @threads = 0.upto(num_threads - 1).collect do |thread_index|
       thread_args = sliced_args.collect{ |sliced_arg| sliced_arg.next } + [thread_index*slice_size]
