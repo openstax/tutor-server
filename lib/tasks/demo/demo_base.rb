@@ -60,30 +60,33 @@ class DemoBase
     ]
   end
 
-  def each_from_auto_assignment(content, settings)
+  def get_auto_assignments(content)
 
-    book_locations = content.course.ecosystems.first.pages.map(&:book_location).sample(settings.steps)
-    step_types = if settings.type == 'homework'
-                   (['e'] * settings.steps) + ['p']
-                 else
-                   1.upto(settings.steps).map.with_index{ |step, i| 0==i%3 ? 'e' : 'r' }
-                 end
+    content.auto_assignments.collect do | settings |
+      book_locations = content.course.ecosystems.first.pages.map(&:book_location)
+                                                            .sample(settings.steps)
+      step_types = if settings.type == 'homework'
+                     (['e'] * settings.steps) + ['p']
+                   else
+                     1.upto(settings.steps).map.with_index{ |step, i| 0==i%3 ? 'e' : 'r' }
+                   end
 
-    1.upto(settings.generate) do | number |
-      yield Hashie::Mash.new( type: settings.type,
-                              title: "#{settings.type.titleize} #{number}",
-                              num_exercises: settings.steps,
-                              step_types: step_types,
-                              book_locations: book_locations,
-                              periods: content.periods.map do | period |
-                                {
-                                  id: period.id,
-                                  opens_at: (number + 3).days.ago,
-                                  due_at:  (number).days.ago,
-                                  students: auto_assign_students_for_period(period)
-                                }
-                              end
-                            )
+      1.upto(settings.generate).collect do | number |
+        Hashie::Mash.new( type: settings.type,
+                          title: "#{settings.type.titleize} #{number}",
+                          num_exercises: settings.steps,
+                          step_types: step_types,
+                          book_locations: book_locations,
+                          periods: content.periods.map do | period |
+                            {
+                              id: period.id,
+                              opens_at: (number + 3).days.ago,
+                              due_at:  (number).days.ago,
+                              students: auto_assign_students_for_period(period)
+                            }
+                          end
+                        )
+      end
     end
 
   end
@@ -115,15 +118,16 @@ class DemoBase
     num_threads = (arg_size/slice_size.to_f).ceil
 
     sliced_args = args.collect{ |arg| arg.each_slice(slice_size) }
+    thread_args = 0.upto(num_threads - 1).collect do |thread_index|
+      sliced_args.collect{ |sliced_arg| sliced_arg.next } + [thread_index*slice_size]
+    end
 
     log("Threads: Spawning #{num_threads} threads to process up to #{slice_size} element(s) each")
 
     @threads = 0.upto(num_threads - 1).collect do |thread_index|
-      thread_args = sliced_args.collect{ |sliced_arg| sliced_arg.next } + [thread_index*slice_size]
-
       Thread.new do
         ActiveRecord::Base.connection_pool.with_connection do
-          yield *thread_args
+          yield *thread_args[thread_index]
         end
       end
     end
