@@ -23,8 +23,13 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
 
   let!(:userless_token)    { FactoryGirl.create :doorkeeper_access_token }
 
-  let!(:course)            { CreateCourse[name: 'Physics 101'] }
-  let!(:period)            { CreatePeriod[course: course] }
+  let(:content_analyst)   { FactoryGirl.create(:user_profile, :content_analyst) }
+
+  let(:ca_user_token)    { FactoryGirl.create :doorkeeper_access_token,
+                                               resource_owner_id: content_analyst.id }
+
+  let!(:course)          { CreateCourse[name: 'Physics 101'] }
+  let!(:period)          { CreatePeriod[course: course] }
 
   context 'with a fake book' do
     let!(:book)            { FactoryGirl.create(:content_book, :standard_contents_1) }
@@ -34,6 +39,24 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
       CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
       ecosystem
     }
+
+    describe '#index' do
+      it 'raises SecurityTransgression unless user is a content analyst' do
+        expect {
+          api_get :index, nil
+        }.to raise_error(SecurityTransgression)
+
+        expect {
+          api_get :index, user_2_token
+        }.to raise_error(SecurityTransgression)
+      end
+
+      it 'allows a content analyst to access' do
+        expect {
+          api_get :index, ca_user_token
+        }.not_to raise_error
+      end
+    end
 
     describe "#readings" do
       it 'raises SecurityTransgression if user is anonymous or not in the course' do

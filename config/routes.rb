@@ -83,7 +83,7 @@ Rails.application.routes.draw do
       resources :students, shallow: true, except: :create
     end
 
-    resources :ecosystems, only: [] do
+    resources :ecosystems, only: [:index] do
       member do
         get 'readings'
         get 'exercises(/:pool_types)', action: :exercises

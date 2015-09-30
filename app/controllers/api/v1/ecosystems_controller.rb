@@ -9,6 +9,18 @@ class Api::V1::EcosystemsController < Api::V1::ApiController
     EOS
   end
 
+  api :GET, '/ecosystems', 'Returns all available ecosystems'
+  description <<-EOS
+    Returns a listing of all the ecosytems in that have been created
+
+    #{json_schema(Api::V1::EcosystemsRepresenter, include: :readable)}
+  EOS
+  def index
+    OSU::AccessPolicy.require_action_allowed!(:ecosystems, current_human_user, Content::Ecosystem)
+    ecosystems = Content::ListEcosystems[]
+    respond_with ecosystems, represent_with: Api::V1::EcosystemsRepresenter
+  end
+
   api :GET, '/ecosystems/:ecosystem_id/readings', 'Returns readings for a given ecosystem'
   description <<-EOS
     Returns a hierarchical listing of an ecosystem's readings.
