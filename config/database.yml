@@ -5,7 +5,7 @@ default: &default
 
 development:
   <<: *default
-  pool: 20
+  pool: 100
   database: <%= ENV['OXT_DEV_DB'] || 'ox_tutor_dev' %>
 
 # Warning: The database defined as "test" will be erased and
