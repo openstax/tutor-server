@@ -7,6 +7,8 @@ class DemoWork < DemoBase
 
   lev_routine
 
+  disable_automatic_lev_transactions
+
   protected
 
   def exec(book: :all, print_logs: true, random_seed: nil)
@@ -15,13 +17,15 @@ class DemoWork < DemoBase
 
     ContentConfiguration[book.to_sym].each do | content |
 
-      in_parallel(content.assignments.reject(&:draft)) do | assignments, initial_index |
+      in_parallel(content.assignments.reject(&:draft),
+                  transaction: true) do | assignments, initial_index |
         assignments.each do | assignment |
           work_assignment(content, assignment)
         end
       end
 
-      in_parallel(get_auto_assignments(content).flatten) do | auto_assignments, initial_index |
+      in_parallel(get_auto_assignments(content).flatten,
+                  transaction: true) do | auto_assignments, initial_index |
         auto_assignments.each do | auto_assignment |
           work_assignment(content, auto_assignment)
         end
@@ -35,7 +39,7 @@ class DemoWork < DemoBase
 
   def work_assignment(content, assignment)
     task_plan = Tasks::Models::TaskPlan.where(owner: content.course, title: assignment.title)
-                .order(created_at: :desc).first!
+                  .order(created_at: :desc).first!
 
     tasks_profile = build_tasks_profile(
       students: assignment.periods.flat_map{ |period| period.students.map(&:to_a) },
