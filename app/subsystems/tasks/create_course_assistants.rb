@@ -24,6 +24,13 @@ class Tasks::CreateCourseAssistants
       code_class_name: "Tasks::Assistants::ExternalAssignmentAssistant",
       task_plan_type: 'external'
     )
+
+    create_course_assistant(
+      course: course,
+      assistant_name: "Event Assignment Assistant",
+      code_class_name: "Tasks::Assistants::EventAssistant",
+      task_plan_type: 'event'
+    )
   end
 
   def create_course_assistant(course:, assistant_name:, code_class_name:, task_plan_type:)

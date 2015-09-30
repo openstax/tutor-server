@@ -57,6 +57,12 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
 #{Tasks::Assistants::ExternalAssignmentAssistant.schema}
 </pre>
 
+### Event assignment settings:
+
+<pre class="code">
+#{Tasks::Assistants::EventAssistant.schema}
+</pre>
+
     #{json_schema(Api::V1::TaskPlanRepresenter, include: :writeable)}
   EOS
   def create
