@@ -9,10 +9,18 @@ RSpec.describe Tasks::GetAssistant, type: :routine do
                                                 tasks_task_plan_type: 'dummy'
   }
   let!(:task_plan)        { FactoryGirl.build :tasks_task_plan, type: 'dummy' }
+  let!(:hw_task_plan)     { FactoryGirl.build :tasks_task_plan, type: 'homework' }
 
   it 'finds an assistant by entity course id and task plan type' do
-    course_assistant = Tasks::GetAssistant[course: course, task_plan: task_plan]
+    resulting_assistant = Tasks::GetAssistant[course: course, task_plan: task_plan]
 
-    expect(course_assistant).to eq(assistant)
+    expect(resulting_assistant).to eq(assistant)
+  end
+
+  it 'finds a default assistant even if it has not been explicitly added' do
+    resulting_assistant = Tasks::GetAssistant[course: course, task_plan: hw_task_plan]
+    resulting_assistant.destroy! # pretend it wasn't there
+    resulting_assistant = Tasks::GetAssistant[course: course, task_plan: hw_task_plan]
+    expect(resulting_assistant.code_class_name).to eq 'Tasks::Assistants::HomeworkAssistant'
   end
 end
