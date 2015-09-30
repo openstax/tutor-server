@@ -91,10 +91,21 @@ class DemoBase
 
   end
 
+  # Lev override to prevent automatic transactions while still allowing other routines to be called
+  def self.disable_automatic_lev_transactions
+    define_method(:transaction_run_by?) do |who|
+      return false if who == self
+      super
+    end
+  end
+
+  # Runs the given code in parallel processes
+  # Calling process must not be in a transaction
   # Args should be Enumerables and will be passed to the given block in properly-sized slices
   # You will still have to iterate through the yielded values
   # The index for the first element in the original array is also passed in as the last argument
-  def in_parallel(*args, max_processes: nil)
+  # Returns the PID's for the spawned processes
+  def in_parallel(*args, max_processes: nil, transaction: false)
     arg_size = args.first.size
     raise 'Arguments must have the same size' unless args.all?{ |arg| arg.size == arg_size }
 
@@ -125,34 +136,46 @@ class DemoBase
 
     log("Processes: #{num_processes} - Slice size: #{slice_size}")
 
-    @processes ||= []
-    @processes += 0.upto(num_processes - 1).collect do |process_index|
+    # We have to clear all connections before forking (and open a new connection after forking)
+    # because the different processes cannot share connections
+    ActiveRecord::Base.clear_all_connections!
+
+    child_processes = 0.upto(num_processes - 1).collect do |process_index|
       # Start a new process
       # Threading does not work well with MRI due to the GIL
       fork do
-        # Since this is a new process, we need a new DB connection
-        ActiveRecord::Base.connection_pool.with_connection do
-          # Since this is a new connection, we need a new transaction
+        if transaction
           ActiveRecord::Base.transaction do
             yield *process_args[process_index]
           end
+        else
+          yield *process_args[process_index]
         end
       end
     end
+
+    @processes ||= []
+    @processes += child_processes
   end
 
-  # Waits for processes from in_parallel to finish
-  # Returns the PID's for the processes we had to wait on
+  # Waits for all child processes to finish
+  # Returns the PID/Status pairs for the processes we had to wait on
   def wait_for_parallel_completion
     return [] if @processes.nil?
 
-    @processes.each do |process|
-      Process.wait process
+    log('Waiting for child processes to exit...')
+
+    results = @processes.collect{ |pid| Process.wait2(pid) }
+
+    @processes = []
+
+    results.each do |result|
+      log("PID: #{result.first} - Status: #{result.last.exitstatus}")
     end
 
-    return_value = @processes
-    @processes = []
-    return_value
+    log('All child processes exited')
+
+    results
   end
 
 
