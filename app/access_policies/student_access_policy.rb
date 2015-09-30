@@ -1,9 +1,10 @@
 class StudentAccessPolicy
   def self.action_allowed?(action, requestor, student)
+    return false if !requestor.is_human? || requestor.is_anonymous?
+
     case action
     when :create, :update, :destroy
-      requestor.is_human? && 
-      UserIsCourseTeacher[user: requestor.user, course: student.course]
+      UserIsCourseTeacher[user: requestor, course: student.course]
     else
       false
     end

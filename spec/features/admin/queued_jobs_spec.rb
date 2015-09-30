@@ -3,8 +3,16 @@ require 'feature_js_helper'
 
 RSpec.feature 'Administration of queued jobs', :js do
   let(:course) { CreateCourse[name: 'course time'] }
-  let(:admin) { FactoryGirl.create(:user_profile_profile, :administrator) }
-  let(:user) { Entity::User.create! }
+  let(:admin) {
+    profile = FactoryGirl.create(:user_profile, :administrator)
+    strategy = User::Strategies::Direct::User.new(profile)
+    User::User.new(strategy: strategy)
+  }
+  let(:user) {
+    profile = FactoryGirl.create(:user_profile)
+    strategy = User::Strategies::Direct::User.new(profile)
+    User::User.new(strategy: strategy)
+  }
   let(:role) { AddUserAsCourseTeacher[course: course, user: user] }
 
   let(:job) { Lev::BackgroundJob.all.last }

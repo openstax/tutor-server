@@ -45,7 +45,7 @@ class Api::V1::PerformanceReportsController < Api::V1::ApiController
 
   protected
   def get_course_role(types: :any)
-    result = ChooseCourseRole.call(user: current_human_user.user,
+    result = ChooseCourseRole.call(user: current_human_user,
                                    course: Entity::Course.find(params[:id]),
                                    allowed_role_type: types,
                                    role_id: params[:role_id])

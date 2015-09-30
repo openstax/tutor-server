@@ -26,19 +26,19 @@ class WebviewController < ApplicationController
     # have been signed by proxy (and need an implicit signature), while some
     # don't and need to go through the normal FinePrint process.
 
-    courses = GetUserCourses[user: current_user.user]
+    courses = GetUserCourses[user: current_user]
 
     contract_names = Legal::GetContractNames.call(
       applicable_to: courses,
       contract_names_signed_by_everyone: [:general_terms_of_use, :privacy_policy]
     ).outputs
 
-    contract_names.proxy_signed.each do |name|
-      next if FinePrint.signed_contract?(current_user, name)
+    profile = current_user.to_model
 
-      FinePrint.sign_contract(current_user,
-                              name,
-                              FinePrint::SIGNATURE_IS_IMPLICIT)
+    contract_names.proxy_signed.each do |name|
+      next if FinePrint.signed_contract?(profile, name)
+
+      FinePrint.sign_contract(profile, name, FinePrint::SIGNATURE_IS_IMPLICIT)
     end
 
     if contract_names.non_proxy_signed.any?

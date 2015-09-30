@@ -5,7 +5,11 @@ class Role::GetUsersForRoles
 
   def exec(roles)
     role_ids = [roles].flatten.compact.collect(&:id)
-    ss_maps = Role::Models::RoleUser.includes(:user).where{entity_role_id.in role_ids}
-    outputs[:users] = ss_maps.collect(&:user).uniq
+    role_users = Role::Models::RoleUser.includes(:profile).where{entity_role_id.in role_ids}
+    outputs[:users] = role_users.collect do |role_user|
+      profile = role_user.profile
+      strategy = ::User::Strategies::Direct::User.new(profile)
+      ::User::User.new(strategy: strategy)
+    end.uniq
   end
 end

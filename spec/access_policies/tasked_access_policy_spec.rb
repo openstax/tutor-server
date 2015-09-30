@@ -1,8 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe TaskedAccessPolicy, type: :access_policy do
-  let(:requestor) { FactoryGirl.create(:user_profile_profile) }
-  let(:tasked) { FactoryGirl.create(:tasks_tasked_exercise) }
+  let(:requestor) {
+    profile = FactoryGirl.create(:user_profile)
+    strategy = User::Strategies::Direct::User.new(profile)
+    User::User.new(strategy: strategy)
+  }
+  let(:tasked)    { FactoryGirl.create(:tasks_tasked_exercise) }
 
   subject(:action_allowed) do
     TaskedAccessPolicy.action_allowed?(action, requestor, tasked)
@@ -61,7 +65,7 @@ RSpec.describe TaskedAccessPolicy, type: :access_policy do
 
   context 'when the tasking is in the tasks subsystem' do
     it 'allows access for the taskee' do
-      role = Role::CreateUserRole[requestor.user]
+      role = Role::CreateUserRole[requestor]
       Tasks::CreateTasking.call(task: tasked.task_step.task, role: role)
 
       [:read, :update, :mark_completed].each do |allowed_action|

@@ -31,7 +31,9 @@ RSpec.describe Tasks::Assistants::ExternalAssignmentAssistant, type: :assistant 
 
   let!(:students) {
     num_taskees.times.collect do
-      user = FactoryGirl.create(:user_profile_profile).user
+      profile = FactoryGirl.create(:user_profile)
+      strategy = User::Strategies::Direct::User.new(profile)
+      user = User::User.new(strategy: strategy)
       AddUserAsPeriodStudent.call(user: user, period: period).outputs.student
     end
   }
@@ -84,7 +86,7 @@ RSpec.describe Tasks::Assistants::ExternalAssignmentAssistant, type: :assistant 
     # user's default role, which is not a student role
     FactoryGirl.create(:tasks_tasking_plan,
                        task_plan: task_plan_2,
-                       target: students[0].role.user)
+                       target: students[0].role.profile)
 
     expect {
       DistributeTasks.call(task_plan_2)

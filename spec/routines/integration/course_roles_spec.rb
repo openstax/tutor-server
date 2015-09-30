@@ -3,7 +3,11 @@ require 'rails_helper'
 describe "domain: course roles", type: :integration do
 
   context "adding teachers to courses" do
-    let(:target_user)   { Entity::User.create! }
+    let(:target_user)   {
+      profile = FactoryGirl.create(:user_profile)
+      strategy = User::Strategies::Direct::User.new(profile)
+      User::User.new(strategy: strategy)
+    }
     let(:target_course) { CreateCourse[name: 'Target'] }
 
     context "when a user is not a teacher of a course" do
@@ -31,8 +35,16 @@ describe "domain: course roles", type: :integration do
       end
     end
     context "courses with multiple teachers" do
-      let(:target_user1)  { Entity::User.create! }
-      let(:target_user2)  { Entity::User.create! }
+      let(:target_user1)  {
+        profile = FactoryGirl.create(:user_profile)
+        strategy = User::Strategies::Direct::User.new(profile)
+        User::User.new(strategy: strategy)
+      }
+      let(:target_user2)  {
+        profile = FactoryGirl.create(:user_profile)
+        strategy = User::Strategies::Direct::User.new(profile)
+        User::User.new(strategy: strategy)
+      }
       let(:target_course) { CreateCourse[name: 'unnamed'] }
 
       it "are allowed" do
@@ -54,7 +66,11 @@ describe "domain: course roles", type: :integration do
   end
 
   context "adding students to courses" do
-    let(:target_user)   { Entity::User.create! }
+    let(:target_user)   {
+      profile = FactoryGirl.create(:user_profile)
+      strategy = User::Strategies::Direct::User.new(profile)
+      User::User.new(strategy: strategy)
+    }
     let(:target_course) { CreateCourse[name: 'Cool course'] }
     let(:target_period) { CreatePeriod[course: target_course] }
 

@@ -2,7 +2,11 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe Admin::EcosystemsController, speed: :slow, vcr: VCR_OPTS do
-  let!(:admin) { FactoryGirl.create :user_profile_profile, :administrator }
+  let!(:admin) {
+    profile = FactoryGirl.create(:user_profile, :administrator)
+    strategy = User::Strategies::Direct::User.new(profile)
+    User::User.new(strategy: strategy)
+  }
 
   let!(:book_1) { FactoryGirl.create :content_book, title: 'Physics', version: '1' }
   let!(:book_2) { FactoryGirl.create :content_book, title: 'AP Biology', version: '2' }

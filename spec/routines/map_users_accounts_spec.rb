@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe MapUsersAccounts, type: :routine do
   describe '.account_to_user' do
-    let(:profile) { MapUsersAccounts.account_to_user(account) }
+    let(:user) { MapUsersAccounts.account_to_user(account) }
 
     context 'when the account is anonymous' do
       let(:account) do
@@ -12,44 +12,49 @@ RSpec.describe MapUsersAccounts, type: :routine do
       before { allow(account).to receive(:is_anonymous?) { true } }
 
       it 'returns an anonymous instance' do
-        expect(profile).to be_a(UserProfile::Models::AnonymousUser)
+        expect(user.is_anonymous?).to be true
       end
     end
 
-    context 'when the account can find a matching profile' do
-      let!(:found)  { FactoryGirl.create(:user_profile_profile) }
+    context 'when the account can find a matching user' do
+      let!(:found)  {
+        profile = FactoryGirl.create(:user_profile)
+        strategy = User::Strategies::Direct::User.new(profile)
+        User::User.new(strategy: strategy)
+      }
       let(:account) { found.account }
 
-      it 'returns the profile' do
-        expect(profile).to eq(found)
+      it 'returns the user' do
+        expect(user).to eq(found)
       end
     end
 
-    context 'when a profile can be created successfully' do
+    context 'when a user can be created successfully' do
       let(:account) do
         OpenStax::Accounts::FindOrCreateAccount.call(username: 'account').outputs.account
       end
 
-      it 'returns the created profile for the account' do
-        expect(profile).to be_a(UserProfile::Models::Profile)
-        expect(profile.account_id).to eq(account.id)
+      it 'returns the created user for the account' do
+        expect(user).to be_a(User::User)
+        expect(user.account).to eq(account)
       end
 
-      it "sets the profile's exchange identifiers" do
-        expect(profile.exchange_read_identifier).to match(/^[a-fA-F0-9]+$/)
-        expect(profile.exchange_write_identifier).to match(/^[a-fA-F0-9]+$/)
+      it "sets the user's exchange identifiers" do
+        expect(user.exchange_read_identifier).to match(/^[a-fA-F0-9]+$/)
+        expect(user.exchange_write_identifier).to match(/^[a-fA-F0-9]+$/)
       end
     end
   end
 
   describe '.user_to_account' do
-    it 'returns the associated profile account' do
-      user = FactoryGirl.create(:user_profile_profile)
-      expected = user.account
+    it 'returns the associated user account' do
+      profile = FactoryGirl.create(:user_profile)
+      strategy = User::Strategies::Direct::User.new(profile)
+      user = User::User.new(strategy: strategy)
 
-      result = MapUsersAccounts.user_to_account(user)
+      account = MapUsersAccounts.user_to_account(user)
 
-      expect(result.username).to eq(expected.username)
+      expect(account).to eq(user.account)
     end
   end
 end

@@ -13,13 +13,13 @@ class Api::V1::UsersController < Api::V1::ApiController
     If requested by a session/OAuth user,
     returns a JSON object containing only information that the user should be able to view.
     Otherwise returns header forbidden (403).
-    #{json_schema(Api::V1::UserProfileRepresenter, include: :readable)}
+    #{json_schema(Api::V1::UserRepresenter, include: :readable)}
   EOS
   def show
     if current_human_user.nil? || current_human_user.is_anonymous?
       head :forbidden
     else
-      respond_with current_human_user, represent_with: Api::V1::UserProfileRepresenter
+      respond_with current_human_user, represent_with: Api::V1::UserRepresenter
     end
   end
 

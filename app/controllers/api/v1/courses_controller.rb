@@ -16,7 +16,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   EOS
   def index
     OSU::AccessPolicy.require_action_allowed!(:index, current_api_user, Entity::Course)
-    courses_info = CollectCourseInfo[user: current_human_user.user,
+    courses_info = CollectCourseInfo[user: current_human_user,
                                      with: [:roles, :periods, :ecosystem]]
     respond_with courses_info, represent_with: Api::V1::CoursesRepresenter
   end
@@ -33,7 +33,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     # Use CollectCourseInfo instead of just representing the entity course so
     # we can gather extra information
     course_info = CollectCourseInfo[course: course,
-                                    user: current_human_user.user,
+                                    user: current_human_user,
                                     with: [:roles, :periods, :ecosystem]].first
     respond_with course_info, represent_with: Api::V1::CourseRepresenter
   end
@@ -46,7 +46,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     # No authorization is necessary because if the user isn't authorized, they'll just get
     # back an empty list of tasks
     course = Entity::Course.find(params[:id])
-    tasks = GetCourseUserTasks[course: course, user: current_human_user.user]
+    tasks = GetCourseUserTasks[course: course, user: current_human_user]
     output = Hashie::Mash.new('items' => tasks.collect{|t| t.task})
     respond_with output, represent_with: Api::V1::TaskSearchRepresenter
   end
@@ -66,7 +66,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
   protected
   def get_course_role(types: :any)
-    result = ChooseCourseRole.call(user: current_human_user.user,
+    result = ChooseCourseRole.call(user: current_human_user,
                                    course: Entity::Course.find(params[:id]),
                                    allowed_role_type: types,
                                    role_id: params[:role_id])

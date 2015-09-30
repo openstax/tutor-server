@@ -3,20 +3,27 @@ require "rails_helper"
 describe Api::V1::TasksController, type: :controller, api: true, version: :v1 do
 
   let!(:application)     { FactoryGirl.create :doorkeeper_application }
-  let!(:profile_1)       { FactoryGirl.create :user_profile_profile }
+  let!(:user_1)          {
+    profile = FactoryGirl.create(:user_profile)
+    strategy = User::Strategies::Direct::User.new(profile)
+    User::User.new(strategy: strategy)
+  }
   let!(:user_1_token)    { FactoryGirl.create :doorkeeper_access_token,
                                               application: application,
-                                              resource_owner_id: profile_1.id }
+                                              resource_owner_id: user_1.id }
 
-  let!(:user_1_role)     { Role::GetDefaultUserRole[profile_1.user] }
+  let!(:user_1_role)     { Role::GetDefaultUserRole[user_1] }
 
-  let!(:profile_2)       { FactoryGirl.create :user_profile_profile }
+  let!(:user_2)          {
+    profile = FactoryGirl.create(:user_profile)
+    strategy = User::Strategies::Direct::User.new(profile)
+    User::User.new(strategy: strategy)
+  }
   let!(:user_2_token)    { FactoryGirl.create :doorkeeper_access_token,
                                               application: application,
-                                              resource_owner_id: profile_2.id }
+                                              resource_owner_id: user_2.id }
 
-  let!(:userless_token)  { FactoryGirl.create :doorkeeper_access_token,
-                                              application: application }
+  let!(:userless_token)  { FactoryGirl.create :doorkeeper_access_token, application: application }
 
   let!(:task_1)          { FactoryGirl.create :tasks_task, title: 'A Task Title',
                                               step_types: [:tasks_tasked_reading,

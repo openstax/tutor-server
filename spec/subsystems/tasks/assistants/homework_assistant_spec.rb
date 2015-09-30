@@ -82,14 +82,23 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
 
   let!(:num_taskees) { 3 }
 
-  let!(:taskees) { num_taskees.times.collect do
-    user = Entity::User.create
-    AddUserAsPeriodStudent.call(user: user, period: period)
-    user
-  end }
+  let!(:taskee_profiles) {
+    num_taskees.times.collect do
+      FactoryGirl.create(:user_profile)
+    end
+  }
+
+  let!(:taskee_users) {
+    taskee_profiles.collect do |profile|
+      strategy = User::Strategies::Direct::User.new(profile)
+      User::User.new(strategy: strategy).tap do |user|
+        AddUserAsPeriodStudent.call(user: user, period: period)
+      end
+    end
+  }
 
   let!(:tasking_plans) {
-    tps = taskees.collect do |taskee|
+    tps = taskee_profiles.collect do |taskee|
       task_plan.tasking_plans <<
         FactoryGirl.create(:tasks_tasking_plan,
           task_plan: task_plan,
@@ -102,9 +111,9 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
   }
 
   let!(:course) {
-    course = task_plan.owner
-    AddEcosystemToCourse[ecosystem: ecosystem, course: course]
-    course
+    task_plan.owner.tap do |course|
+      AddEcosystemToCourse[course: course, ecosystem: ecosystem]
+    end
   }
   let!(:period) { CreatePeriod[course: course] }
 
@@ -128,13 +137,13 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
     end
 
     ## it "creates one task per taskee"
-    expect(entity_tasks.count).to eq(taskees.count)
+    expect(entity_tasks.count).to eq(taskee_profiles.count)
 
     ## it "assigns each task to one role"
     entity_tasks.each do |entity_task|
       expect(entity_task.taskings.count).to eq(1)
     end
-    expected_roles = taskees.collect{ |taskee| Role::GetDefaultUserRole[taskee] }
+    expected_roles = taskee_users.collect{ |taskee| Role::GetDefaultUserRole[taskee] }
     expect(entity_tasks.collect{|t| t.taskings.first.role}).to eq expected_roles
 
     ## it "assigns the correct number of exercises"

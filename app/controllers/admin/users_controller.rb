@@ -1,15 +1,15 @@
 class Admin::UsersController < Admin::BaseController
-  before_action :get_user, only: [:edit, :update]
+  before_action :get_user, only: [:edit, :update, :become]
 
   def index
     @per_page = 30
-    @user_search = UserProfile::SearchProfiles[search: "%#{params[:search_term]}%",
-                                               page: params[:page],
-                                               per_page: @per_page]
+    @user_search = User::SearchUsers[search: "%#{params[:search_term]}%",
+                                     page: params[:page],
+                                     per_page: @per_page]
 
     respond_to do |format|
       format.html
-      format.json { render json: @user_search }
+      format.json { render json: Api::V1::Admin::UserSearchRepresenter.new(@user_search).to_json }
     end
   end
 
@@ -19,7 +19,7 @@ class Admin::UsersController < Admin::BaseController
       success: ->(*) {
         flash[:notice] = 'The user has been added.'
         redirect_to admin_users_path(
-          search_term: @handler_result.outputs[:profile].username
+          search_term: @handler_result.outputs[:user].username
         )
       },
       failure: ->(*) {
@@ -35,11 +35,11 @@ class Admin::UsersController < Admin::BaseController
   def update
     handle_with(
       Admin::UsersUpdate,
-      profile: @user,
+      user: @user,
       success: ->(*) {
         flash[:notice] = 'The user has been updated.'
         redirect_to admin_users_path(
-          search_term: @handler_result.outputs[:account].username
+          search_term: @handler_result.outputs[:user].username
         )
       },
       failure: ->(*) {
@@ -50,14 +50,13 @@ class Admin::UsersController < Admin::BaseController
   end
 
   def become
-    account = GetAccount[id: params[:id]]
-    sign_in(account)
+    sign_in(@user.account)
     redirect_to root_path
   end
 
   private
 
   def get_user
-    @user = UserProfile::Models::Profile.find(params[:id])
+    @user = User::User.find(params[:id])
   end
 end

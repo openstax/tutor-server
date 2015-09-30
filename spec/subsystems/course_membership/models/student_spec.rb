@@ -1,8 +1,13 @@
 require 'rails_helper'
 
 RSpec.describe CourseMembership::Models::Student, type: :model do
-  let!(:period) { CreatePeriod[course: Entity::Course.create!].to_model }
-  subject(:student) { AddUserAsPeriodStudent[user: Entity::User.create!, period: period].student }
+  let!(:period)     { CreatePeriod[course: Entity::Course.create!].to_model }
+  let!(:user)       {
+    profile = FactoryGirl.create(:user_profile)
+    strategy = User::Strategies::Direct::User.new(profile)
+    User::User.new(strategy: strategy)
+  }
+  subject(:student) { AddUserAsPeriodStudent[user: user, period: period].student }
 
   it { is_expected.to belong_to(:course) }
   it { is_expected.to belong_to(:role) }
@@ -17,12 +22,6 @@ RSpec.describe CourseMembership::Models::Student, type: :model do
   end
 
   context 'deidentifier' do
-    let!(:user) { FactoryGirl.create(:user_profile_profile).user }
-    let!(:period) { FactoryGirl.create(:course_membership_period) }
-    let!(:student) {
-      AddUserAsPeriodStudent.call(period: period, user: user).outputs.student
-    }
-
     it 'is generated before save and is 8 characters long' do
       expect(student.deidentifier.length).to eq 8
     end
@@ -34,7 +33,9 @@ RSpec.describe CourseMembership::Models::Student, type: :model do
     end
 
     it 'must be unique' do
-      user2 = FactoryGirl.create(:user_profile_profile).user
+      profile2 = FactoryGirl.create(:user_profile)
+      strategy2 = User::Strategies::Direct::User.new(profile2)
+      user2 = User::User.new(strategy: strategy2)
       student_2 = AddUserAsPeriodStudent.call(period: period, user: user2).outputs.student
       student_2.deidentifier = student.deidentifier
       expect(student_2).not_to be_valid

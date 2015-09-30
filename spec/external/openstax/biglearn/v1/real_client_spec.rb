@@ -20,15 +20,17 @@ module OpenStax::Biglearn
     let(:client) { described_class.new(configuration) }
 
     let!(:user_1_role) {
-      profile = UserProfile::CreateProfile.call(username: SecureRandom.hex).outputs.profile
-      profile.update_attribute(:exchange_read_identifier, USER_1_IDENTIFIER)
-      Role::CreateUserRole[profile.user]
+      user = User::CreateUser[username: SecureRandom.hex,
+                              exchange_identifiers: Hashie::Mash.new(read: USER_1_IDENTIFIER,
+                                                                     write: SecureRandom.hex)]
+      Role::CreateUserRole[user]
     }
 
     let!(:user_2_role) {
-      profile = UserProfile::CreateProfile.call(username: SecureRandom.hex).outputs.profile
-      profile.update_attribute(:exchange_read_identifier, USER_2_IDENTIFIER)
-      Role::CreateUserRole[profile.user]
+      user = User::CreateUser[username: SecureRandom.hex,
+                              exchange_identifiers: Hashie::Mash.new(read: USER_2_IDENTIFIER,
+                                                                     write: SecureRandom.hex)]
+      Role::CreateUserRole[user]
     }
 
     let!(:content_exercise)  { FactoryGirl.create :content_exercise }

@@ -101,8 +101,7 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
 
   def identifiers
     users = Role::GetUsersForRoles[roles]
-    UserProfile::Models::Profile.where(user: users)
-                                .collect{ |p| p.exchange_write_identifier }
+    users.collect{ |user| user.exchange_write_identifier }
   end
 
   def trial

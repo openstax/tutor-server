@@ -17,38 +17,37 @@ class DemoBase
     @people ||= Hashie::Mash.load(File.dirname(__FILE__)+'/people.yml')
   end
 
-  def user_profile_for_username(username)
-    UserProfile::Models::Profile.joins(:account)
-      .where(account: { username: username }).first
+  def user_for_username(username)
+    User::User.find_by_username(username)
   end
 
-  def get_teacher_profile(initials)
+  def get_teacher_user(initials)
     teacher_info = people.teachers[initials]
     raise "Unable to find teacher for #{initials}" unless teacher_info
-    user_profile_for_username teacher_info.username
+    user_for_username teacher_info.username
   end
 
-  def get_student_profile(initials)
+  def get_student_user(initials)
     student_info = people.students[initials]
     raise "Unable to find student for #{initials}" unless student_info
-    user_profile_for_username student_info.username
+    user_for_username student_info.username
   end
 
   def build_tasks_profile(assignment_type:, students:, step_types:)
-    profile_responses = students.map do | initials, score |
-      profile = get_student_profile(initials) ||
+    user_responses = students.map do | initials, score |
+      user = get_student_user(initials) ||
                 raise("Unable to find student for initials #{initials}")
-      [initials, profile, score]
+      [initials, user, score]
     end
 
     TasksProfile.new(assignment_type: assignment_type,
-                      profile_responses: profile_responses,
+                      user_responses: user_responses,
                       step_types: step_types,
                       randomizer: randomizer)
   end
 
   class TasksProfile
-    def initialize(assignment_type:, profile_responses:, step_types:, randomizer:)
+    def initialize(assignment_type:, user_responses:, step_types:, randomizer:)
 
       raise ":assignment_type (#{assignment_type}) must be one of {:homework,:reading}" \
         unless [:homework,:reading].include?(assignment_type)
@@ -57,19 +56,19 @@ class DemoBase
       @assignment_type = assignment_type
 
       @step_types = step_types
-      @profiles = {}
+      @users = {}
       @randomizer = randomizer
 
-      profile_responses.each do |initials, profile, responses|
-        @profiles[profile.id] = OpenStruct.new(
+      user_responses.each do |initials, user, responses|
+        @users[user.id] = OpenStruct.new(
           responses:  get_explicit_responses(responses),
           initials: initials
         )
       end
     end
 
-    def [](profile_id)
-      @profiles[profile_id]
+    def [](user_id)
+      @users[user_id]
     end
 
     private
@@ -132,39 +131,37 @@ class DemoBase
     end
   end
 
-  def new_user_profile(username:, name: nil, password: nil, sign_contracts: true)
+  def new_user(username:, name: nil, password: nil, sign_contracts: true)
     password ||= 'password'
 
     first_name, last_name = name.split(' ')
     raise "need a full name" if last_name.nil?
 
     # The password will be set if stubbing is disabled
-    profile ||= run(UserProfile::CreateProfile, username: username,
-                                                password: password,
-                                                first_name: first_name,
-                                                last_name: last_name).outputs.profile
+    user ||= run(User::CreateUser, username: username,
+                                   password: password,
+                                   first_name: first_name,
+                                   last_name: last_name).outputs.user
 
     if sign_contracts
-      sign_contract(profile: profile, name: :general_terms_of_use)
-      sign_contract(profile: profile, name: :privacy_policy)
+      sign_contract(user: user, name: :general_terms_of_use)
+      sign_contract(user: user, name: :privacy_policy)
     end
 
-    profile
+    user
   end
 
-  def sign_contract(profile:, name:)
+  def sign_contract(user:, name:)
     string_name = name.to_s
     return if FinePrint::Contract.where{name == string_name}.none?
-    FinePrint.sign_contract(profile, string_name)
+    FinePrint.sign_contract(user.to_model, string_name)
   end
 
   def new_period_student(period:, username: nil, name: nil, password: nil)
-    profile = new_user_profile(username: username, name: name, password: password)
-    user = profile.user
+    user = new_user(username: username, name: name, password: password)
     role = run(AddUserAsPeriodStudent, period: period, user: user).outputs.role
 
     {
-      profile: profile,
       user: user,
       role: role,
     }

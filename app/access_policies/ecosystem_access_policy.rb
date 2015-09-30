@@ -9,12 +9,12 @@ class EcosystemAccessPolicy
     when :readings
       # readings should be readable by course teachers and students
       # because FE uses it for the reference view
-      courses = GetUserCourses[user: requestor.user]
+      courses = GetUserCourses[user: requestor]
       courses.any?{ |course| course.ecosystems.collect(&:id).include?(ecosystem.id) }
     when :exercises
       # exercises should be readable by course teachers only
       # because it includes solutions, etc
-      courses = GetUserCourses[user: requestor.user, types: :teacher]
+      courses = GetUserCourses[user: requestor, types: :teacher]
       courses.any?{ |course| course.ecosystems.collect(&:id).include?(ecosystem.id) }
     else
       false

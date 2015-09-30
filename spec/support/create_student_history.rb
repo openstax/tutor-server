@@ -38,10 +38,12 @@ class CreateStudentHistory
     run(:create_period, course: course)
 
     puts "=== Creating a student ==="
-    student = FactoryGirl.create(:user_profile_profile, username: 'student')
+    profile = FactoryGirl.create(:user_profile)
+    strategy = User::Strategies::Direct::User.new(profile)
+    student = User::User.new(strategy: strategy)
 
     puts "=== Add student to course ==="
-    run(:add_user_as_period_student, period: outputs.period, user: student.user)
+    run(:add_user_as_period_student, period: outputs.period, user: student)
 
     Entity::Role.last
   end

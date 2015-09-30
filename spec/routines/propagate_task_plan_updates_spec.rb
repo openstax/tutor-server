@@ -3,10 +3,12 @@ require 'rails_helper'
 RSpec.describe PropagateTaskPlanUpdates, type: :routine do
   let!(:course)          { Entity::Course.create! }
   let!(:period)          { CreatePeriod[course: course] }
-  let!(:profile)            {
-    profile = FactoryGirl.create :user_profile_profile
-    AddUserAsPeriodStudent.call(user: profile.user, period: period)
-    profile
+  let!(:profile)         { FactoryGirl.create(:user_profile) }
+  let!(:user)            {
+    strategy = User::Strategies::Direct::User.new(profile)
+    user = User::User.new(strategy: strategy)
+    AddUserAsPeriodStudent.call(user: user, period: period)
+    user
   }
 
   let!(:old_title)       { 'Old Title' }
