@@ -19,6 +19,19 @@ RSpec.describe Admin::CoursesController, type: :controller do
     end
   end
 
+  describe 'GET #edit' do
+    it 'assigns extra course info' do
+      course = CreateCourse[name: 'Hello World']
+      get :edit, id: course.id
+
+      expect(assigns[:course].course_id).to eq course.id
+      expect(Set.new assigns[:periods]).to eq Set.new course.periods
+      expect(Set.new assigns[:teachers]).to eq Set.new course.teachers
+      expect(Set.new assigns[:ecosystems]).to eq Set.new Content::ListEcosystems[]
+      expect(assigns[:course_ecosystem]).to be_nil
+    end
+  end
+
   describe 'POST #create' do
     before do
       post :create, course: { name: 'Hello World' }
