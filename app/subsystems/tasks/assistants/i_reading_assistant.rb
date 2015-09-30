@@ -66,12 +66,12 @@ class Tasks::Assistants::IReadingAssistant
     description = @task_plan.description
 
     Tasks::BuildTask[
+      ecosystem: @ecosystem,
       task_plan: @task_plan,
       task_type: :reading,
       title:     title,
       description: description,
-      feedback_at: Time.now,
-      content_ecosystem_id: @ecosystem.id
+      feedback_at: Time.now
     ]
   end
 

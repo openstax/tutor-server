@@ -9,10 +9,10 @@ module Api::V1
              readable: true,
              writeabel: false
 
-    property :ecosystem_title,
-             type: String,
+    property :spy,
+             type: Object,
              readable: true,
-             getter: ->(*) { ecosystem.title },
+             getter: ->(*) { {title: ecosystem.title} },
              writeable: false
   end
 end

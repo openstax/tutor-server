@@ -76,11 +76,11 @@ class Tasks::Assistants::HomeworkAssistant
     description = @task_plan.description
 
     Tasks::BuildTask[
+      ecosystem:   @ecosystem,
       task_plan:   @task_plan,
       task_type:   :homework,
       title:       title,
-      description: description,
-      content_ecosystem_id: @ecosystem.id
+      description: description
     ]
   end
 

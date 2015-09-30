@@ -583,7 +583,7 @@ ActiveRecord::Schema.define(version: 20150923202225) do
     t.integer  "placeholder_exercise_steps_count",  default: 0, null: false
     t.datetime "created_at",                                    null: false
     t.datetime "updated_at",                                    null: false
-    t.integer  "content_ecosystem_id"
+    t.hstore   "spy"
   end
 
   add_index "tasks_tasks", ["due_at", "opens_at"], name: "index_tasks_tasks_on_due_at_and_opens_at", using: :btree
@@ -667,7 +667,6 @@ ActiveRecord::Schema.define(version: 20150923202225) do
   add_foreign_key "tasks_taskings", "course_membership_periods", on_update: :cascade, on_delete: :nullify
   add_foreign_key "tasks_taskings", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_taskings", "entity_tasks", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "tasks_tasks", "content_ecosystems", on_update: :cascade, on_delete: :nullify
   add_foreign_key "tasks_tasks", "entity_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasks", "tasks_task_plans", on_update: :cascade, on_delete: :cascade
   add_foreign_key "user_administrators", "user_profiles", on_update: :cascade, on_delete: :cascade

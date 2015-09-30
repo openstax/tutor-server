@@ -70,10 +70,9 @@ module Api::V1
                  description: "The steps which this Task is composed of"
                }
 
-    property :ecosystem_title,
-             type: String,
+    property :spy,
+             type: Object,
              readable: true,
-             getter: ->(*) { ecosystem.try(:title) },
              writeable: false
   end
 end

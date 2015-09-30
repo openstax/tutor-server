@@ -16,10 +16,10 @@ module Tasks
       # but for now HACK it by setting it to open in the near past.
       task_time = 10.minutes.ago
 
-      run(:build_task, task_type: task_type,
-                       title: 'Practice',
-                       opens_at: task_time,
-                       content_ecosystem_id: ecosystem.id,
+      run(:build_task, ecosystem:   ecosystem,
+                       task_type:   task_type,
+                       title:       'Practice',
+                       opens_at:    task_time,
                        feedback_at: task_time)
 
       exercises.each_with_index do |exercise, ii|
