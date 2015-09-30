@@ -101,7 +101,7 @@ Rails.application.routes.draw do
 
     resources :administrators, only: [:index, :create, :destroy]
 
-    resources :courses, except: :destroy do
+    resources :courses, except: [:show, :destroy] do
       member do
         post :students
         post :set_ecosystem
@@ -147,6 +147,27 @@ Rails.application.routes.draw do
     end
 
     resources :targeted_contracts, except: [:show, :edit]
+  end
+
+  namespace 'customer_service' do
+    root to: 'console#index'
+
+    resources :courses, only: [:index, :show] do
+      resources :periods, only: [:index], shallow: true
+      resources :students, only: [:index], shallow: true
+    end
+
+    resources :licenses, only: :index
+
+    resources :jobs, only: [:index, :show]
+
+    resources :users, only: :index
+
+    resources :tags, only: [:index, :show]
+
+    resources :ecosystems, only: [:index]
+
+    resources :targeted_contracts, only: :index
   end
 
   namespace :dev do

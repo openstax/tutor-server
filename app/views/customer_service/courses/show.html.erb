@@ -13,20 +13,7 @@
 <div>
   <h3>Periods</h3>
   <div>
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>Name</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @periods.each do |period| %>
-          <tr>
-            <td><%= period.name %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
+    <%= render 'periods' %>
   </div>
 </div>
 
@@ -43,8 +30,8 @@
       <tbody>
         <% @teachers.each do |teacher| %>
           <tr>
-            <td><%= teacher.username %></td>
-            <td><%= teacher.name %></td>
+            <td><%= teacher.role.username %></td>
+            <td><%= teacher.role.name %></td>
           </tr>
         <% end %>
       </tbody>

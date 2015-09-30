@@ -5,10 +5,6 @@ class Admin::CoursesController < Admin::BaseController
     @courses = CollectCourseInfo[with: :teacher_names]
   end
 
-  def show
-    get_course_details
-  end
-
   def create
     handle_with(Admin::CoursesCreate,
                 complete: -> (*) {

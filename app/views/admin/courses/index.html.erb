@@ -23,7 +23,7 @@
             <%= link_to 'Show', admin_course_path(course.id),
                                 class: "btn btn-xs btn-primary" %>
           <% end %>
-          <%= link_to 'List Students', students_admin_course_path(course.id),
+          <%= link_to 'List Students', admin_course_students_path(course.id),
                                        class: 'btn btn-xs btn-primary' %>
         </td>
       </tr>

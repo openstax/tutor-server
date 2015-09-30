@@ -1,0 +1,26 @@
+<% @page_header = "Courses" %>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Teacher(s)</th>
+      <th>School</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @courses.each do |course| %>
+      <tr>
+        <td><%= course.name %></td>
+        <td><%= course.teacher_names.to_sentence %></td>
+        <td><%= course.school_name %></td>
+        <td>
+          <%= link_to 'Show', customer_service_course_path(course.id),
+                              class: "btn btn-xs btn-primary" %>
+          <%= link_to 'List Students', customer_service_course_students_path(course.id),
+                                       class: 'btn btn-xs btn-primary' %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

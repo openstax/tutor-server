@@ -1,0 +1,14 @@
+<table class='table table-striped'>
+  <thead>
+    <tr>
+      <th>Name</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @periods.each do |period| %>
+    <tr>
+      <td><%= period.name %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
