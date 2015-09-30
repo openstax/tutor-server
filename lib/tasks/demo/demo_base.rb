@@ -93,50 +93,65 @@ class DemoBase
   # Args should be Enumerables and will be passed to the given block in properly-sized slices
   # You will still have to iterate through the yielded values
   # The index for the first element in the original array is also passed in as the last argument
-  def in_parallel(*args)
+  def in_parallel(*args, max_processes: nil)
     arg_size = args.first.size
     raise 'Arguments must have the same size' unless args.all?{ |arg| arg.size == arg_size }
 
-    # This is merely the maximum number of threads spawned per call to this method
-    max_threads = Integer(ENV['DEMO_MAX_THREADS']) rescue 8
+    # This is merely the maximum number of processes spawned for each call to this method
+    max_processes ||= Integer(ENV['DEMO_MAX_PROCESSES']) rescue 8
 
-    if arg_size == 0 || max_threads < 1
-      log("Threads: 0 (inline processing) - Slice size: #{arg_size}")
+    if arg_size == 0 || max_processes < 1
+      log("Processes: 0 (inline processing) - Slice size: #{arg_size}")
 
       return yield *[args + [0]]
     end
 
     Rails.application.eager_load!
 
-    # Use max_threads unless too few args given
-    num_threads = [arg_size, max_threads].min
+    # Use max_processes unless too few args given
+    num_processes = [arg_size, max_processes].min
 
     # Calculate slice_size
-    slice_size = (arg_size/num_threads.to_f).ceil
+    slice_size = (arg_size/num_processes.to_f).ceil
 
-    # Adjust number of threads again if some thread would receive an empty array
-    num_threads = (arg_size/slice_size.to_f).ceil
+    # Adjust number of processes again if some process would receive an empty array
+    num_processes = (arg_size/slice_size.to_f).ceil
 
     sliced_args = args.collect{ |arg| arg.each_slice(slice_size) }
-    thread_args = 0.upto(num_threads - 1).collect do |thread_index|
-      sliced_args.collect{ |sliced_arg| sliced_arg.next } + [thread_index*slice_size]
+    process_args = 0.upto(num_processes - 1).collect do |process_index|
+      sliced_args.collect{ |sliced_arg| sliced_arg.next } + [process_index*slice_size]
     end
 
-    log("Threads: #{num_threads} - Slice size: #{slice_size}")
+    log("Processes: #{num_processes} - Slice size: #{slice_size}")
 
-    @threads = 0.upto(num_threads - 1).collect do |thread_index|
-      Thread.new do
+    @processes ||= []
+    @processes += 0.upto(num_processes - 1).collect do |process_index|
+      # Start a new process
+      # Threading does not work well with MRI due to the GIL
+      fork do
+        # Since this is a new process, we need a new DB connection
         ActiveRecord::Base.connection_pool.with_connection do
-          yield *thread_args[thread_index]
+          # Since this is a new connection, we need a new transaction
+          ActiveRecord::Base.transaction do
+            yield *process_args[process_index]
+          end
         end
       end
     end
   end
 
+  # Waits for processes from in_parallel to finish
+  # Returns the PID's for the processes we had to wait on
   def wait_for_parallel_completion
-    return if @threads.nil?
+    return [] if @processes.nil?
 
-    @threads.map(&:join)
+    @processes.each do |process|
+      Process.wait process
+    end
+
+    return_value = @processes
+    @processes = []
+    return_value
   end
 
 

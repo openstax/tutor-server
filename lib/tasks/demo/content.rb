@@ -33,12 +33,6 @@ class DemoContent < DemoBase
     run(:set_content_analyst, user: ca_user, content_analyst: true)
     log("Content Analyst user: #{ca_user.name}")
 
-    # Abort execution if any of the threads blow up
-    Thread::abort_on_exception = true
-
-    # Disable threading for now: Exercises times out with multiple requests...
-    ENV['DEMO_MAX_THREADS'] = "0"
-
     # Serial step
     courses = []
     ContentConfiguration[book.to_sym].each do | content |
@@ -71,8 +65,9 @@ class DemoContent < DemoBase
       end
     end
 
-     # Parallel step
-    in_parallel(ContentConfiguration[book.to_sym]) do | contents, initial_index |
+    # Parallel step
+    # Disable multiple processes for now: Exercises (dev) times out with multiple requests...
+    in_parallel(ContentConfiguration[book.to_sym], max_processes: 0) do | contents, initial_index |
 
       index = initial_index
 

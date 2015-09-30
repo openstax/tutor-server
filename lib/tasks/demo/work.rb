@@ -13,8 +13,6 @@ class DemoWork < DemoBase
     set_print_logs(print_logs)
     set_random_seed(random_seed)
 
-    Thread::abort_on_exception = true
-
     ContentConfiguration[book.to_sym].each do | content |
 
       in_parallel(content.assignments.reject(&:draft)) do | assignments, initial_index |
