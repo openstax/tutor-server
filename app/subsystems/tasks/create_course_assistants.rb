@@ -27,7 +27,7 @@ class Tasks::CreateCourseAssistants
 
     create_course_assistant(
       course: course,
-      assistant_name: "Event Assignment Assistant",
+      assistant_name: "Event Assistant",
       code_class_name: "Tasks::Assistants::EventAssistant",
       task_plan_type: 'event'
     )
