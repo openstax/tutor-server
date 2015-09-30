@@ -24,6 +24,7 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
   let!(:userless_token)    { FactoryGirl.create :doorkeeper_access_token }
 
   let(:content_analyst)   { FactoryGirl.create(:user_profile, :content_analyst) }
+
   let(:ca_user_token)    { FactoryGirl.create :doorkeeper_access_token,
                                                resource_owner_id: content_analyst.id }
 
@@ -51,7 +52,6 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
       end
 
       it 'allows a content analyst to access' do
-        expect(content_analyst.is_content_analyst?).to be true
         expect {
           api_get :index, ca_user_token
         }.not_to raise_error
