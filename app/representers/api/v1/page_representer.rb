@@ -12,7 +12,7 @@ module Api::V1
     property :spy,
              type: Object,
              readable: true,
-             getter: ->(*) { {title: ecosystem.title} },
+             getter: ->(*) { {ecosystem_title: ecosystem.title} },
              writeable: false
   end
 end
