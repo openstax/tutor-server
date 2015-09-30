@@ -85,7 +85,8 @@ class OpenStax::Biglearn::V1::FakeClient
         ],
         confidence_interval_interpretation: confidence,
         sample_size: samples,
-        sample_size_interpretation: 'above'
+        sample_size_interpretation: 'above',
+        unique_learner_count: roles.size
       }
     end
   end

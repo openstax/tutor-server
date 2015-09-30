@@ -57,5 +57,14 @@ module Api::V1
                description: "Returns 'above' or 'below' depending on if the sample size is above or below an internal threshold"
              }
 
+    property :unique_learner_count,
+             type: Integer,
+             readable: true,
+             writeable: false,
+             schema_info: {
+               required: true,
+               description: "The number of learners that contributed to the data points considered"
+             }
+
   end
 end

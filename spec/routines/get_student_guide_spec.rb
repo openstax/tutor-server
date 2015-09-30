@@ -71,7 +71,8 @@ RSpec.describe GetStudentGuide, type: :routine do
         "confidence_interval" => kind_of(Array),
         "confidence_interval_interpretation" => kind_of(String),
         "sample_size" => kind_of(Integer),
-        "sample_size_interpretation" => kind_of(String)
+        "sample_size_interpretation" => kind_of(String),
+        "unique_learner_count" => kind_of(Integer)
       },
       "practice_count"=>0,
       "page_ids"=>[kind_of(Integer)],
@@ -92,7 +93,8 @@ RSpec.describe GetStudentGuide, type: :routine do
         "confidence_interval" => kind_of(Array),
         "confidence_interval_interpretation" => kind_of(String),
         "sample_size" => kind_of(Integer),
-        "sample_size_interpretation" => kind_of(String)
+        "sample_size_interpretation" => kind_of(String),
+        "unique_learner_count" => kind_of(Integer)
       },
       "practice_count"=>0,
       "page_ids"=>[kind_of(Integer)]
