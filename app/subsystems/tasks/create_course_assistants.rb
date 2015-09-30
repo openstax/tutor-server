@@ -33,8 +33,10 @@ class Tasks::CreateCourseAssistants
                   code_class_name: code_class_name
                 )
 
-    Tasks::Models::CourseAssistant.create!(course: course,
-                                           assistant: assistant,
-                                           tasks_task_plan_type: task_plan_type)
+    Tasks::Models::CourseAssistant.find_or_create_by!(
+      course: course,
+      assistant: assistant,
+      tasks_task_plan_type: task_plan_type
+    )
   end
 end
