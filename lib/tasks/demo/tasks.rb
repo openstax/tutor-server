@@ -3,13 +3,6 @@ require_relative 'content_configuration'
 
 # Adds students to the course periods, assigns Sets up the periods and students for a course
 # and then generates activity for them
-
-# Dead ends to fixing circular dependancy errors
-
-# require 'content/pool'
-# require 'course_membership/models/period'
-# require 'content/models/exercise'
-
 class DemoTasks < DemoBase
 
   lev_routine
