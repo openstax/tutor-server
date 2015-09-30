@@ -16,7 +16,8 @@ class Api::V1::EcosystemsController < Api::V1::ApiController
     #{json_schema(Api::V1::EcosystemsRepresenter, include: :readable)}
   EOS
   def index
-    ecosystems = ::Content::ListEcosystems[]
+    OSU::AccessPolicy.require_action_allowed!(:ecosystems, current_human_user, Content::Ecosystem)
+    ecosystems = Content::ListEcosystems[]
     respond_with ecosystems, represent_with: Api::V1::EcosystemsRepresenter
   end
 
