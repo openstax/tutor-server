@@ -68,7 +68,7 @@ module Tasks
     end
 
     def get_taskings(period)
-      task_types = Models::Task.task_types.values_at(:reading, :homework, :external)
+      task_types = Models::Task.task_types.values_at(:reading, :homework, :external, :event)
       # Return reading, homework and external tasks for a student
       period.taskings.preload(task: {task: {task_plan: :tasking_plans}},
                               role: {profile: :account})
