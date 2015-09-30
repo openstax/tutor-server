@@ -86,7 +86,7 @@ Rails.application.routes.draw do
     resources :ecosystems, only: [] do
       member do
         get 'readings'
-        get 'exercises'
+        get 'exercises(/:pool_types)', action: :exercises
       end
     end
 

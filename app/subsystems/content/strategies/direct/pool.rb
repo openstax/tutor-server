@@ -5,7 +5,15 @@ module Content
 
         wraps ::Content::Models::Pool
 
-        exposes :type, :exercise_ids, :exercises
+        exposes :pool_types, from_class: ::Content::Models::Pool
+        exposes :pool_type, :exercise_ids, :exercises
+
+        class << self
+          alias_method :pool_types_map, :pool_types
+          def pool_types
+            pool_types_map.keys
+          end
+        end
 
         def uuid
           repository.uuid.nil? ? nil : ::Content::Uuid.new(repository.uuid)

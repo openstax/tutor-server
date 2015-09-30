@@ -220,6 +220,10 @@ module Content
           find_pools(pages: pages, type: :practice_widget)
         end
 
+        def all_exercises_pools(pages:)
+          find_pools(pages: pages, type: :all_exercises)
+        end
+
         alias_method :entity_tags, :tags
         def tags
           entity_tags.collect do |entity_tag|
@@ -250,8 +254,7 @@ module Content
           entity_pages.where(id: page_ids)
                       .joins(pool_method_name)
                       .eager_load(pool_method_name).collect do |entity_page|
-            entity_pool = entity_page.send(pool_method_name)
-            ::Content::Pool.new(strategy: entity_pool)
+            entity_page.send(pool_method_name)
           end
         end
 

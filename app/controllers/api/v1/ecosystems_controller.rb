@@ -20,26 +20,6 @@ class Api::V1::EcosystemsController < Api::V1::ApiController
   def readings
     ecosystem = ::Content::Ecosystem.find(params[:id])
 
-    respond_with_ecosystem_readings(ecosystem)
-  end
-
-  api :GET, '/ecosystems/:ecosystem_id/exercises',
-            "Returns exercises for a given ecosystem, filtered by the page_ids param"
-  description <<-EOS
-    Returns a list of assignable exercises associated with the pages with the given ID's.
-    If no page_ids are specified, returns an empty array.
-
-    #{json_schema(Api::V1::ExerciseSearchRepresenter, include: :readable)}
-  EOS
-  def exercises
-    ecosystem = ::Content::Ecosystem.find(params[:id])
-
-    respond_with_ecosystem_exercises(ecosystem)
-  end
-
-  protected
-
-  def respond_with_ecosystem_readings(ecosystem)
     OSU::AccessPolicy.require_action_allowed!(:readings, current_api_user, ecosystem)
 
     # For the moment, we're assuming just one book per ecosystem
@@ -49,15 +29,35 @@ class Api::V1::EcosystemsController < Api::V1::ApiController
     respond_with books, represent_with: Api::V1::BookTocsRepresenter
   end
 
-  def respond_with_ecosystem_exercises(ecosystem)
+  api :GET, '/ecosystems/:ecosystem_id/exercises(/:pool_types)',
+            "Returns exercises for a given ecosystem, filtered by the page_ids param and optionally an array of pool_types"
+  description <<-EOS
+    Returns a list of assignable exercises associated with the pages with the given ID's.
+    If no page_ids are specified, returns an empty array.
+
+    #{json_schema(Api::V1::ExerciseSearchRepresenter, include: :readable)}
+  EOS
+  def exercises
+    ecosystem = ::Content::Ecosystem.find(params[:id])
+
     OSU::AccessPolicy.require_action_allowed!(:exercises, current_api_user, ecosystem)
 
-    pages = ecosystem.pages_by_ids(params[:page_ids])
-    exercises = ecosystem.homework_core_pools(pages: pages).flat_map do |pool|
-      pool.exercises(preload_tags: true)
+    pools_map = GetEcosystemPoolsByPageIdsAndPoolTypes[ecosystem: ecosystem,
+                                                       page_ids: params[:page_ids],
+                                                       pool_types: params[:pool_types]]
+
+    # Build map of exercise uids to representations, with pool type
+    exercise_representations = pools_map.each_with_object({}) do |(pool_type, pools), hash|
+      pools.flat_map{ |pool| pool.exercises(preload_tags: true) }.each do |exercise|
+        hash[exercise.uid] ||= Api::V1::ExerciseRepresenter.new(exercise).to_hash
+        hash[exercise.uid]['pool_types'] ||= []
+        hash[exercise.uid]['pool_types'] << pool_type
+      end
     end
 
-    respond_with exercises, represent_with: Api::V1::ExerciseSearchRepresenter
+    results = Hashie::Mash.new(items: exercise_representations.values)
+
+    respond_with results, represent_with: Api::V1::ExerciseSearchRepresenter
   end
 
 end

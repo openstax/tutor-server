@@ -13,7 +13,9 @@ RSpec.describe Tasks::Assistants::EventAssistant, type: :assistant do
     CreatePeriod[course: course]
 
     3.times do
-      user = FactoryGirl.create(:user_profile_profile).user
+      profile = FactoryGirl.create(:user_profile)
+      strategy = User::Strategies::Direct::User.new(profile)
+      user = User::User.new(strategy: strategy)
       AddUserAsPeriodStudent[user: user, period: period]
     end
   end
