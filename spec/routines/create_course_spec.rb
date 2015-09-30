@@ -8,6 +8,6 @@ describe CreateCourse, type: :routine do
     course = result.outputs.course
 
     expect(course).to be_a Entity::Course
-    expect(course.course_assistants.count).to eq 3
+    expect(course.course_assistants.count).to eq 4
   end
 end
