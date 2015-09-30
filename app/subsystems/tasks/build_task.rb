@@ -3,12 +3,12 @@ class Tasks::BuildTask
 
   protected
 
-  def exec(ecosystem: , **attributes)
+  def exec(attributes)
     attributes[:entity_task] ||= Entity::Task.new
-#    ecosystem = attributes.delete(:ecosystem)
+    ecosystem = attributes.delete(:ecosystem)
     task = Tasks::Models::Task.new(attributes)
+    task.spy = { title: ecosystem.title } if ecosystem
     task.entity_task.task = task
-    task.spy = { title: ecosystem.title }
     outputs[:task] = task
   end
 end
