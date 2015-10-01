@@ -1,3 +1,4 @@
+ca: Content Analyst
 admin: Administrator User
 teachers:
   cm: {name: Charles Morris,     username: teacher01 }

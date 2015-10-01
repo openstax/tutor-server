@@ -11,6 +11,7 @@ class DemoContent < DemoBase
   uses_routine CreatePeriod, as: :create_period
   uses_routine AddEcosystemToCourse, as: :add_ecosystem
   uses_routine User::MakeAdministrator, as: :make_administrator
+  uses_routine User::SetContentAnalystState, as: :set_content_analyst
   uses_routine AddUserAsCourseTeacher, as: :add_teacher
   uses_routine AddUserAsPeriodStudent, as: :add_student
   uses_routine UserIsCourseStudent, as: :is_student
@@ -28,6 +29,10 @@ class DemoContent < DemoBase
     admin_user = user_for_username('admin') || new_user(username: 'admin', name: people.admin)
     run(:make_administrator, user: admin_user) unless admin_user.is_admin?
     log("Admin user: #{admin_user.name}")
+
+    ca_user = user_for_username('ca') || new_user(username: 'ca', name: people.ca)
+    run(:set_content_analyst, user: ca_user, content_analyst: true)
+    log("Content Analyst user: #{ca_user.name}")
 
     ContentConfiguration[book.to_sym].each do | content |
 
