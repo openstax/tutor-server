@@ -65,14 +65,14 @@ class Tasks::Assistants::IReadingAssistant
     title    = @task_plan.title || 'iReading'
     description = @task_plan.description
 
-    Tasks::BuildTask[
-      ecosystem: @ecosystem,
+    task = Tasks::BuildTask[
       task_plan: @task_plan,
       task_type: :reading,
       title:     title,
       description: description,
       feedback_at: Time.now
     ]
+    AddSpyInfo[to: task, from: @ecosystem]
   end
 
   def task_fragments(task:, fragments:, fragment_title:, page:, related_content:)

@@ -75,13 +75,13 @@ class Tasks::Assistants::HomeworkAssistant
     title    = @task_plan.title || 'Homework'
     description = @task_plan.description
 
-    Tasks::BuildTask[
-      ecosystem:   @ecosystem,
+    task = Tasks::BuildTask[
       task_plan:   @task_plan,
       task_type:   :homework,
       title:       title,
       description: description
     ]
+    AddSpyInfo[to: task, from: @ecosystem]
   end
 
   def add_core_steps!(task:, exercises:)

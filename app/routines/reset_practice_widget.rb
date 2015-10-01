@@ -3,6 +3,8 @@ class ResetPracticeWidget
 
   uses_routine GetPracticeWidget, as: :get_practice_widget
 
+  uses_routine AddSpyInfo, as: :add_spy_info
+
   uses_routine Tasks::CreateTasking,
     translations: { outputs: { type: :verbatim } },
     as: :create_tasking
@@ -67,8 +69,8 @@ class ResetPracticeWidget
     # Create the new practice widget task, and put the exercises into steps
     run(:create_practice_widget_task, exercises: exercises,
                                       task_type: task_type,
-                                      ecosystem: ecosystem,
                                       related_content_array: related_content_array)
+    run(:add_spy_info, to: outputs.task, from: ecosystem)
 
     run(:create_tasking, role: role, task: outputs.task.entity_task)
 
