@@ -5,19 +5,19 @@ teacher: cm
 periods:
   - id: p1
     name: 1st
-    students: [af,ag,ak,am,an,ap,at,bb,bh,bs,cd,cg,cm,cp,dp,eh,fa,ft,gj,gs,hc,hg,hp,hs,ir,iu,iw,jb,jr,js]
+    students: [ sg,ak1,bh,kp,mu,at1,hc,cp1,mu1,ke,ms1,an,tm1,jl1,kp1,ne,gj,sb,kl,cg1,dc1,lh1,la,jl2,lk,jt,dg,na,mh,ak ]
   - id: p2
     name: 2nd
-    students: [kl,lb,lt,lh,mb,mu,mh,mr,ms,ne,nz,ra,rb,rh,rl,sd,sg,sk,vw,wh,HC1,SM2,GD3,JH4,SP5,SW6,JM7,KY8,SH9,KS10]
+    students: [ kf,gj1,ir,js1,cd,hc1,bb,gs1,al,bs1,cc1,ew,wh,mr1,ap1,sm,sp,gs,lt,nz,lr,ks,bv,jm1,iw,lt1,jb,ab1,hp,gd ]
   - id: p3
     name: 3rd
-    students: [BS11,LA12,MM13,LC14,TM15,AR16,LH17,LV18,CG19,AL20,GJ21,LP22,LS23,AB24,DG25,MT26,TA27,BJ28,RP29,KE30,JS31,MR32,EW33,JL34,KS35,BR36,AT37,TB38,CC39,SH40]
+    students: [ fa,iu,cc2,ai,af,rp,ky,ls,jl,sh1,rl,lk1,cs3,lh,js,cs2,mr,lv,lb,cg,jb1,bs2,sh,jr,bj,cy,ls1,bs,la1,gg ]
   - id: p4
     name: 4th
-    students: [RO41,AK42,AI43,DC44,RH45,CS46,CS47,LR48,DP49,LA50,LH51,GG52,AP53,GS54,JO55,EG56,LK57,JB58,JL59,AS60,IE61,GM62,KF63,BS64,KP65,CM66,LT67,CS68,CC69,LM70]
+    students: [ cs1,rh,lh2,db,cs,dc,sk,mj,ag,ft,dp,jo,jh,bc,cc,eg,ks1,qk,mb,cm1,tm,cp,br,ar,hg,lm,mt,mc,am,ie ]
   - id: p5
     name: 5th
-    students: [LS71,JL72,CP73,NA74,DB75,CY76,KB77,CC78,SB79,LP80,KP81,LK82,KC83,BC84,IA85,JM86,QK87,MJ88,JT89,SL90,NH91,MC92,TM93,SB94,AB95,MU96,BV97,MS98,DC99,CS100]
+    students: [ ia,gm,sw,sb1,sd,ab,vw,lc,nh,as,kb,cm,eh,jm,ro,tb,rh1,at,sl,dp1,lp1,kc,lp,mm,ta,ms,hs,rb,ra,ap ]
 
 auto_assign:
   - type: homework
