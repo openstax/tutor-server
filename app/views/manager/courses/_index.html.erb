@@ -1,0 +1,25 @@
+<% extra_headers ||= [] %>
+<% extra_fields_proc ||= nil %>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>School</th>
+      <th>Teacher(s)</th>
+      <% [extra_headers].flatten.each do |extra_header| %>
+      <th><%= extra_header %></th>
+      <% end %>
+    </tr>
+  </thead>
+  <tbody>
+    <% @courses.each do |course| %>
+      <tr>
+        <td><%= course.name %></td>
+        <td><%= course.school_name %></td>
+        <td><%= course.teacher_names.to_sentence %></td>
+        <%= capture(course, &extra_fields_proc) unless extra_fields_proc.nil? %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

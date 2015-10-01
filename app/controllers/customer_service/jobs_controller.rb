@@ -5,6 +5,7 @@ module CustomerService
     def index
       @page_header = "Queued jobs"
       @jobs = Lev::BackgroundJob.all
+      render 'manager/jobs/index'
     end
 
     def show
@@ -14,6 +15,7 @@ module CustomerService
       end
 
       @page_header = "#{@job.status.titleize} job : #{@job.id}"
+      render 'manager/jobs/show'
     end
   end
 end

@@ -1,57 +1,8 @@
 <% @page_header = "Users" %>
 
-
-<%= form_tag '', method: :get do %>
-
-<div class="input-group form-group">
-   <%= text_field_tag :search_term, params[:search_term], class: 'form-control', placeholder: 'Search here' %>
-   <span class="input-group-btn">
-        <%= submit_tag 'Search', class: "btn btn-primary"  %>
-   </span>
-</div>
-
-
-<% end %>
-
-<% if params[:search_term].present? && @user_search.empty? %>
-  <p>No users found.</p>
-<% end %>
-
-<% if @user_search.present? %>
-
-  <%
-    pagination = will_paginate(
-      WillPaginate::Collection.create(params[:page] || 1, @per_page, @user_search.total_items) do |pager|
-        pager.replace @user_search.items
-      end
-    )
-  %>
-
-  <%= pagination %>
-
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Username</th>
-        <th>Name</th>
-        <th>Admin?</th>
-        <th>Customer Service?</th>
-        <th>Content Analyst?</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @user_search.items.each do |user| %>
-        <tr>
-          <td><%= user.username %></td>
-          <td><%= user.name %></td>
-          <td><%= tf_to_yn user.is_admin? %></td>
-          <td><%= tf_to_yn user.is_customer_service? %></td>
-          <td><%= tf_to_yn user.is_content_analyst? %></td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-
-  <%= pagination %>
-
-<% end %>
+<%= render partial: 'manager/users/index',
+           locals: { query: params[:query],
+                     items: @user_search.items,
+                     total_count: @user_search.total_count,
+                     page: params[:page],
+                     per_page: @per_page } %>

@@ -1,0 +1,23 @@
+<% extra_headers ||= [] %>
+<% extra_fields_proc ||= nil %>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Username</th>
+      <th>Name</th>
+      <% [extra_headers].flatten.each do |extra_header| %>
+      <th><%= extra_header %></th>
+      <% end %>
+    </tr>
+  </thead>
+  <tbody>
+    <% teachers.each do |teacher| %>
+      <tr>
+        <td><%= teacher.role.username %></td>
+        <td><%= teacher.role.name %></td>
+        <%= capture(teacher, &extra_fields_proc) unless extra_fields_proc.nil? %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

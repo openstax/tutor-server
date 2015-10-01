@@ -2,7 +2,8 @@ class Admin::TagsController < Admin::BaseController
   before_action :get_tag, except: [:index]
 
   def index
-    @tags = Content::SearchTags[tag_value: "%#{params[:value]}%"].paginate(page: params[:page], per_page: 100) if params[:value].present?
+    @tags = Content::SearchTags[tag_value: "%#{params[:query]}%"]
+              .paginate(page: params[:page], per_page: 100) if params[:query].present?
   end
 
   def edit

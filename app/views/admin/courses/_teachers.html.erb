@@ -1,18 +1,9 @@
 <% method ||= :post %>
 
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th>Username</th>
-      <th>Name</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-  <% @teachers.each do |teacher| %>
-    <tr>
-      <td><%= teacher.role.username %></td>
-      <td><%= teacher.role.name %></td>
+<%= render partial: 'manager/teachers/index',
+           locals: { teachers: @teachers,
+                     extra_headers: 'Actions',
+                     extra_fields_proc: lambda do |teacher| %>
       <td>
         <%= link_to 'Remove from course',
                     admin_teacher_path(teacher),
@@ -23,10 +14,7 @@
                     } %>
 
       </td>
-    </tr>
-  <% end %>
-  </tbody>
-</table>
+<% end } %>
 
 <%= form_tag(url, method: method, id: 'assign-teachers-form') do |f| %>
   <div class="form-group">

@@ -4,6 +4,7 @@ class Admin::StudentsController < Admin::BaseController
   def index
     @students = GetStudentRoster[course: @entity_course]
     @students.sort! { |a, b| a.username <=> b.username }
+    render 'manager/students/index'
   end
 
   protected

@@ -3,7 +3,7 @@ class Admin::UsersController < Admin::BaseController
 
   def index
     @per_page = 30
-    @user_search = User::SearchUsers[search: "%#{params[:search_term]}%",
+    @user_search = User::SearchUsers[search: "%#{params[:query]}%",
                                      page: params[:page],
                                      per_page: @per_page]
 
