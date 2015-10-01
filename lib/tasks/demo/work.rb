@@ -47,20 +47,23 @@ class DemoWork < DemoBase
       step_types: assignment.step_types,
     )
     log("Working assignment: #{assignment.title}")
-    task_plan.tasks.preload([{taskings: {role: {user: {profile: :account}}}},
+    task_plan.tasks.preload([{taskings: {role: {profile: :account}}},
                              {task_steps: [:tasked, :task]}])
       .each_with_index do | task, index |
-      user = task.taskings.first.role.user
-      profile = tasks_profile[ user.profile.id ]
 
-      unless profile
-        raise "#{assignment.title} period #{period.id} has no responses for task #{index} for user #{user.profile.id} #{user.username}"
+      profile = task.taskings.first.role.profile
+      strategy = ::User::Strategies::Direct::User.new(profile)
+      user = ::User::User.new(strategy: strategy)
+      task_profile = tasks_profile[user.id]
+
+      unless task_profile
+        raise "#{assignment.title} period #{period.id} has no responses for task #{index} for user #{user.id} #{user.username}"
       end
-      lateness = assignment.late ? assignment.late[profile.initials] : nil
+      lateness = assignment.late ? assignment.late[task_profile.initials] : nil
       worked_at = task.due_at + (lateness ? lateness : -60)
 
       Timecop.freeze(worked_at) do
-        work_task(task: task, responses: profile.responses)
+        work_task(task: task, responses: task_profile.responses)
       end
     end
   end

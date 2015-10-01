@@ -30,10 +30,13 @@ class DemoContent < DemoBase
     # Serial step
     courses = []
     ActiveRecord::Base.transaction do
-      admin_profile = user_profile_for_username('admin') || \
-                      new_user_profile(username: 'admin', name: people.admin)
-      run(:make_administrator, user: admin_profile.user) unless admin_profile.is_admin?
-      log("Admin user: #{admin_profile.account.full_name}")
+      admin_user = user_for_username('admin') || new_user(username: 'admin', name: people.admin)
+      run(:make_administrator, user: admin_user) unless admin_user.is_admin?
+      log("Admin user: #{admin_user.name}")
+
+      ca_user = user_for_username('ca') || new_user(username: 'ca', name: people.ca)
+      run(:set_content_analyst, user: ca_user, content_analyst: true)
+      log("Content Analyst user: #{ca_user.name}")
 
       ContentConfiguration[book.to_sym].each do | content |
         course_name = content.course_name
@@ -41,14 +44,14 @@ class DemoContent < DemoBase
         courses << course
         log("Course: #{course_name}")
 
-        teacher_profile = get_teacher_profile(content.teacher) ||
-                          new_user_profile(username: people.teachers[content.teacher].username,
-                                           name: people.teachers[content.teacher].name)
-        teacher_user = teacher_profile.user
+        teacher_user = get_teacher_user(content.teacher) ||
+                       new_user(username: people.teachers[content.teacher].username,
+                                name: people.teachers[content.teacher].name)
         log("Teacher: #{people.teachers[content.teacher].name}")
 
+
         run(:add_teacher, course: course, user: teacher_user) \
-          unless run(:is_teacher, user: teacher_user, course: course).outputs.user_is_course_teacher
+           unless run(:is_teacher, user: teacher_user, course: course).outputs.user_is_course_teacher
 
         content.periods.each_with_index do | period_content, index |
           period_name = period_content.name
@@ -57,12 +60,11 @@ class DemoContent < DemoBase
           log("  Period: #{period_content.name}")
           period_content.students.each do | initials |
             student_info = people.students[initials]
-            profile = get_student_profile(initials) ||
-                      new_user_profile(username: student_info.username, name:  student_info.name)
-            user = profile.user
+            user = get_student_user(initials) ||
+                   new_user(username: student_info.username, name:  student_info.name)
             log("    #{initials} #{student_info.username} (#{student_info.name})")
             run(:add_student, period: period, user: user) \
-              unless run(:is_student, user: user, course: course).outputs.user_is_course_student
+               unless run(:is_student, user: user, course: course).outputs.user_is_course_student
           end
         end
       end
