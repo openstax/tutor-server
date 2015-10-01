@@ -120,8 +120,6 @@ Rails.application.routes.draw do
 
     resources :exceptions, only: [:show]
 
-    resources :licenses
-
     resources :jobs, only: [:index, :show]
 
     resources :users, except: :destroy do
@@ -156,8 +154,6 @@ Rails.application.routes.draw do
       resources :periods, only: [:index], shallow: true
       resources :students, only: [:index], shallow: true
     end
-
-    resources :licenses, only: :index
 
     resources :jobs, only: [:index, :show]
 
