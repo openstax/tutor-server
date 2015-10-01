@@ -16,7 +16,7 @@ class AddSpyInfo
 
   def values_from(value)
     case value
-    when Content::Models::Ecosystem
+    when Content::Models::Ecosystem, Content::Ecosystem
       { ecosystem_id: value.id, ecosystem_title: value.title }
     else
       { "#{value.class.name.demodulize.underscore}_id" => value.id }
