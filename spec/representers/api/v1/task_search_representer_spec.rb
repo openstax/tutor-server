@@ -14,7 +14,11 @@ RSpec.describe Api::V1::TaskSearchRepresenter, type: :representer do
     let!(:role)           { AddUserAsPeriodStudent.call(user: user, period: period).outputs.role }
     let!(:default_task)   { FactoryGirl.create(:tasks_task) }
     let!(:task_count)     { rand(5..10) }
-    let!(:tasks)          { task_count.times.collect { FactoryGirl.create(:tasks_task) } }
+    let!(:ecosystem)      { FactoryGirl.build(:content_ecosystem) }
+    let!(:tasks)          { task_count.times.collect {
+                              FactoryGirl.create(:tasks_task, ecosystem: ecosystem)
+                           } }
+
     let!(:taskings)       { tasks.collect { |t| FactoryGirl.create(
       :tasks_tasking, task: t.entity_task, role: role
     ) } }
@@ -36,6 +40,7 @@ RSpec.describe Api::V1::TaskSearchRepresenter, type: :representer do
             json['due_at']    = DateTimeUtilities.to_api_s(task.due_at)
             json['is_shared'] = task.is_shared?
             json['steps']     = task.task_steps.as_json
+            json['spy']       = {'ecosystem_id' => ecosystem.id, 'ecosystem_title' => ecosystem.title}
             json
           }
         )

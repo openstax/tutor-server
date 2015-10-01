@@ -1,9 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::TaskRepresenter, type: :representer do
+  let(:ecosystem)      { FactoryGirl.build(:content_ecosystem) }
+
+  let(:task) {FactoryGirl.create(:tasks_task, ecosystem: ecosystem)}
+
   it 'includes the last_worked_at property' do
     time = Time.current
-    task = FactoryGirl.create(:tasks_task)
     formatted_time = DateTimeUtilities.to_api_s(time)
 
     task.set_last_worked_at(time: time)
@@ -13,4 +16,13 @@ RSpec.describe Api::V1::TaskRepresenter, type: :representer do
 
     expect(represented).to include('last_worked_at' => formatted_time)
   end
+
+  it 'includes ecosystem information in the spy' do
+    represented = described_class.new(task).to_hash
+    # the factory uses lipsum for title so just check for words
+    expect(represented['spy']).to eq({ecosystem_id: ecosystem.id,
+                                      ecosystem_title: ecosystem.title})
+
+  end
+
 end

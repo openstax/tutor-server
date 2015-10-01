@@ -3,6 +3,8 @@ class ResetPracticeWidget
 
   uses_routine GetPracticeWidget, as: :get_practice_widget
 
+  uses_routine AddSpyInfo, as: :add_spy_info
+
   uses_routine Tasks::CreateTasking,
     translations: { outputs: { type: :verbatim } },
     as: :create_tasking
@@ -25,24 +27,26 @@ class ResetPracticeWidget
 
     # Gather 5 exercises
     count = 5
-    exercises = case exercise_source
-                when :fake
-                  pools = []
-                  get_fake_exercises(count)
-                when :local
-                  ecosystem, pools = get_ecosystem_and_pools(page_ids, chapter_ids, role)
-                  get_local_exercises(ecosystem, count, role, pools, randomize: randomize)
-                when :biglearn
-                  ecosystem, pools = get_ecosystem_and_pools(page_ids, chapter_ids, role)
-                  run(:get_ecosystem_exercises_from_biglearn, ecosystem: ecosystem,
-                                                              count: count,
-                                                              role: role,
-                                                              pools: pools)
-                    .outputs.ecosystem_exercises
-                else
-                  raise ArgumentError,
-                        "exercise_source: must be one of [:fake, :local, :biglearn]"
-                end
+
+    case exercise_source
+    when :fake
+      pools = []
+      exercises = get_fake_exercises(count)
+      ecosystem = Content::Ecosystem.find_by_exercise_ids(exercises.first.id) if exercises.any?
+    when :local
+      ecosystem, pools = get_ecosystem_and_pools(page_ids, chapter_ids, role)
+      exercises = get_local_exercises(ecosystem, count, role, pools, randomize: randomize)
+    when :biglearn
+      ecosystem, pools = get_ecosystem_and_pools(page_ids, chapter_ids, role)
+      exercises = run(:get_ecosystem_exercises_from_biglearn, ecosystem: ecosystem,
+                      count: count,
+                      role: role,
+                      pools: pools)
+                  .outputs.ecosystem_exercises
+    else
+      raise ArgumentError,
+            "exercise_source: must be one of [:fake, :local, :biglearn]"
+    end
 
     num_exercises = exercises.size
 
@@ -66,6 +70,7 @@ class ResetPracticeWidget
     run(:create_practice_widget_task, exercises: exercises,
                                       task_type: task_type,
                                       related_content_array: related_content_array)
+    run(:add_spy_info, to: outputs.task, from: ecosystem)
 
     run(:create_tasking, role: role, task: outputs.task.entity_task)
 

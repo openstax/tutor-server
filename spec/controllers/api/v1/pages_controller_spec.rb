@@ -63,6 +63,7 @@ RSpec.describe Api::V1::PagesController, type: :controller, api: true,
         api_get :get_page, nil, parameters: { uuid: @page_uuid, version: '2' }
         expect(response).to have_http_status(200)
         expect(response.body_as_hash).to eq({
+          spy: { ecosystem_title: @old_page.ecosystem.title },
           content_html: @old_page.content
         })
       end
@@ -72,6 +73,7 @@ RSpec.describe Api::V1::PagesController, type: :controller, api: true,
         page = Content::Models::Page.where(uuid: @page_uuid).order(version: :desc).first
         expect(response).to have_http_status(200)
         expect(response.body_as_hash).to eq({
+          spy: { ecosystem_title: page.ecosystem.title },
           content_html: page.content
         })
       end

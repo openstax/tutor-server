@@ -11,10 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150922200112) do
+ActiveRecord::Schema.define(version: 20150923202225) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "hstore"
 
   create_table "content_books", force: :cascade do |t|
     t.string   "url",                  null: false
@@ -582,6 +583,7 @@ ActiveRecord::Schema.define(version: 20150922200112) do
     t.integer  "placeholder_exercise_steps_count",  default: 0, null: false
     t.datetime "created_at",                                    null: false
     t.datetime "updated_at",                                    null: false
+    t.hstore   "spy"
   end
 
   add_index "tasks_tasks", ["due_at", "opens_at"], name: "index_tasks_tasks_on_due_at_and_opens_at", using: :btree

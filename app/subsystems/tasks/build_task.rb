@@ -3,7 +3,7 @@ class Tasks::BuildTask
 
   protected
 
-  def exec(attributes={})
+  def exec(attributes)
     attributes[:entity_task] ||= Entity::Task.new
     task = Tasks::Models::Task.new(attributes)
     task.entity_task.task = task

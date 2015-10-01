@@ -70,5 +70,9 @@ module Api::V1
                  description: "The steps which this Task is composed of"
                }
 
+    property :spy,
+             type: Object,
+             readable: true,
+             writeable: false
   end
 end
