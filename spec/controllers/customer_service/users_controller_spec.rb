@@ -21,11 +21,11 @@ RSpec.describe CustomerService::UsersController, type: :controller do
   before { controller.sign_in(customer_service) }
 
   it 'searches users by username and full name' do
-    get :index, search_term: 'RVI'
+    get :index, query: 'RVI'
     expect(assigns[:user_search].items.length).to eq 1
     expect(assigns[:user_search].items).to eq [ customer_service ]
 
-    get :index, search_term: 's'
+    get :index, query: 's'
     expect(assigns[:user_search].items.length).to eq 2
     expect(assigns[:user_search].items.sort_by { |a| a.id }).to eq [ customer_service, user ]
   end

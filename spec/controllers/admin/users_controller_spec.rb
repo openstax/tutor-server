@@ -22,11 +22,11 @@ RSpec.describe Admin::UsersController, type: :controller do
   before { controller.sign_in(admin) }
 
   it 'searches users by username and full name' do
-    get :index, search_term: 'STR'
+    get :index, query: 'STR'
     expect(assigns[:user_search].items.length).to eq 1
     expect(assigns[:user_search].items).to eq [ admin ]
 
-    get :index, search_term: 'st'
+    get :index, query: 'st'
     expect(assigns[:user_search].items.length).to eq 2
     expect(assigns[:user_search].items.sort_by { |a| a.id }).to eq [ admin, user ]
   end
@@ -42,7 +42,7 @@ RSpec.describe Admin::UsersController, type: :controller do
       content_analyst: true
     }
 
-    get :index, search_term: 'new'
+    get :index, query: 'new'
     expect(assigns[:user_search].items.length).to eq 1
     user = assigns[:user_search].items.first
     expect(user.username).to eq 'new'

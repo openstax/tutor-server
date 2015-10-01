@@ -20,13 +20,13 @@ RSpec.describe CustomerService::TagsController do
     end
 
     it 'returns a list of tags that matches tag value' do
-      get :index, value: 'k12phys'
+      get :index, query: 'k12phys'
 
       expect(assigns[:tags].order(:id)).to eq [tag_1, tag_2]
     end
 
     it 'returns nothing if there are no matches' do
-      get :index, value: 'time-short'
+      get :index, query: 'time-short'
 
       expect(assigns[:tags]).to eq []
     end
