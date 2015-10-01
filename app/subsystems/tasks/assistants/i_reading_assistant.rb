@@ -73,6 +73,7 @@ class Tasks::Assistants::IReadingAssistant
       feedback_at: Time.now
     ]
     AddSpyInfo[to: task, from: @ecosystem]
+    return task
   end
 
   def task_fragments(task:, fragments:, fragment_title:, page:, related_content:)
