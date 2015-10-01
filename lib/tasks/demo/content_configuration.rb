@@ -33,14 +33,15 @@ class ContentConfiguration
     # config_directory block (which sets it's value using Thread.current),
     # the CONFIG environmental variable or the default
     config_directory = Thread.current[:config_directory] || ENV['CONFIG'] || DEFAULT_CONFIG_DIR
-
     files = if :all == name
               Dir[File.join(config_directory, '*.yml')]
             else
               [ File.join(config_directory, "#{name}.yml") ]
             end
+    ignored_files = ['people.yml']
+    ignored_files << 'large.yml' unless :large == name
     files
-      .reject{|path| File.basename(path) == "people.yml" }
+      .reject{|path| ignored_files.include?(File.basename(path)) }
       .map{|file| self.new(file) }
   end
 
