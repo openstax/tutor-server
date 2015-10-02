@@ -52,6 +52,12 @@ module Api::V1
                  readable: true,
                  decorator: self
 
+        property :trouble,
+                 as: :is_trouble,
+                 readable: true,
+                 writeable: false,
+                 schema_info: { type: 'boolean' }
+
       end
     end
   end

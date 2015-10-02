@@ -32,11 +32,13 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(stats.first.total_count).to eq(@task_plan.tasks.length)
       expect(stats.first.complete_count).to eq(0)
       expect(stats.first.partially_complete_count).to eq(0)
+      expect(stats.first.trouble).to eq false
 
       page = stats.first.current_pages[0]
       expect(page.student_count).to eq(0) # no students have worked yet
       expect(page.incorrect_count).to eq(0)
       expect(page.correct_count).to eq(0)
+      expect(page.trouble).to eq false
 
       spaced_page = stats.first.spaced_pages[0]
       expect(spaced_page).to eq page
@@ -86,6 +88,7 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(stats.first.mean_grade_percent).to be_nil
       expect(stats.first.complete_count).to eq(0)
       expect(stats.first.partially_complete_count).to eq(1)
+      expect(stats.first.trouble).to eq false
 
       first_task.task_steps.each do |ts|
         MarkTaskStepCompleted.call(task_step: ts) unless ts.completed?
@@ -95,6 +98,7 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(stats.first.mean_grade_percent).to eq (0)
       expect(stats.first.complete_count).to eq(1)
       expect(stats.first.partially_complete_count).to eq(0)
+      expect(stats.first.trouble).to eq false
 
       last_task = tasks.last
       MarkTaskStepCompleted.call(task_step: last_task.task_steps.first)
@@ -102,6 +106,7 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(stats.first.mean_grade_percent).to eq (0)
       expect(stats.first.complete_count).to eq(1)
       expect(stats.first.partially_complete_count).to eq(1)
+      expect(stats.first.trouble).to eq false
     end
 
   end
@@ -123,18 +128,21 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(stats.first.mean_grade_percent).to eq (100)
       expect(stats.first.complete_count).to eq(1)
       expect(stats.first.partially_complete_count).to eq(0)
+      expect(stats.first.trouble).to eq false
 
       page = stats.first.current_pages.first
       expect(page['title']).to eq("Newton's First Law of Motion: Inertia")
       expect(page['student_count']).to eq(1) # num students with completed task steps
       expect(page['correct_count']).to eq(2)
       expect(page['incorrect_count']).to eq(0)
+      expect(page['trouble']).to eq false
 
       spaced_page = stats.first.spaced_pages.first
       expect(spaced_page['title']).to eq("Newton's First Law of Motion: Inertia")
       expect(spaced_page['student_count']).to eq(1)
       expect(spaced_page['correct_count']).to eq(2)
       expect(spaced_page['incorrect_count']).to eq(0)
+      expect(spaced_page['trouble']).to eq false
 
       second_task = tasks.second
       second_task.task_steps.each{ |ts|
@@ -148,6 +156,7 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(stats.first.mean_grade_percent).to eq (50)
       expect(stats.first.complete_count).to eq(2)
       expect(stats.first.partially_complete_count).to eq(0)
+      expect(stats.first.trouble).to eq false
 
       page = stats.first.current_pages.first
       expect(page['title']).to eq("Newton's First Law of Motion: Inertia")
@@ -155,6 +164,7 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(page['correct_count']).to eq(2)
       expect(page['incorrect_count']).to eq(2)
       expect(page['chapter_section']).to eq([1, 1])
+      expect(page['trouble']).to eq false
 
       spaced_page = stats.first.spaced_pages.first
       expect(spaced_page['title']).to eq("Newton's First Law of Motion: Inertia")
@@ -162,6 +172,7 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(spaced_page['correct_count']).to eq(2)
       expect(spaced_page['incorrect_count']).to eq(2)
       expect(spaced_page['chapter_section']).to eq([1, 1])
+      expect(spaced_page['trouble']).to eq false
 
       third_task = tasks.third
       third_task.task_steps.each{ |ts|
@@ -176,6 +187,7 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(stats.first.mean_grade_percent).to eq (67)
       expect(stats.first.complete_count).to eq(3)
       expect(stats.first.partially_complete_count).to eq(0)
+      expect(stats.first.trouble).to eq false
 
       page = stats.first.current_pages.first
       expect(page['title']).to eq("Newton's First Law of Motion: Inertia")
@@ -183,6 +195,7 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(page['correct_count']).to eq(4)
       expect(page['incorrect_count']).to eq(2)
       expect(page['chapter_section']).to eq([1, 1])
+      expect(page['trouble']).to eq false
 
       spaced_page = stats.first.spaced_pages.first
       expect(spaced_page['title']).to eq("Newton's First Law of Motion: Inertia")
@@ -190,6 +203,7 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(spaced_page['correct_count']).to eq(4)
       expect(spaced_page['incorrect_count']).to eq(2)
       expect(spaced_page['chapter_section']).to eq([1, 1])
+      expect(spaced_page['trouble']).to eq false
 
       fourth_task = tasks.fourth
       fourth_task.task_steps.each{ |ts|
@@ -204,6 +218,7 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(stats.first.mean_grade_percent).to eq (75)
       expect(stats.first.complete_count).to eq(4)
       expect(stats.first.partially_complete_count).to eq(0)
+      expect(stats.first.trouble).to eq false
 
       page = stats.first.current_pages.first
       expect(page['title']).to eq("Newton's First Law of Motion: Inertia")
@@ -211,6 +226,7 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(page['correct_count']).to eq(6)
       expect(page['incorrect_count']).to eq(2)
       expect(page['chapter_section']).to eq([1, 1])
+      expect(page['trouble']).to eq false
 
       spaced_page = stats.first.spaced_pages.first
       expect(spaced_page['title']).to eq("Newton's First Law of Motion: Inertia")
@@ -218,6 +234,136 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(spaced_page['correct_count']).to eq(6)
       expect(spaced_page['incorrect_count']).to eq(2)
       expect(spaced_page['chapter_section']).to eq([1, 1])
+      expect(spaced_page['trouble']).to eq false
+    end
+
+    # This test assumes that all of these tasks have the same numbers of steps,
+    # which is true at least for now
+    it "sets trouble to true if >50% incorrect and >25% completed" do
+      stats = CalculateTaskPlanStats.call(plan: @task_plan.reload).outputs.stats
+      expect(stats.first.trouble).to eq false
+
+      page = stats.first.current_pages.first
+      expect(page.trouble).to eq false
+
+      spaced_page = stats.first.spaced_pages.first
+      expect(spaced_page.trouble).to eq false
+
+      tasks = @task_plan.tasks.to_a
+      tasks.first(2).each do |task|
+        task.task_steps.each do |ts|
+          if ts.tasked.exercise?
+            ts.tasked.free_response = 'a sentence not explaining anything'
+            ts.tasked.save!
+          end
+          MarkTaskStepCompleted.call(task_step: ts)
+        end
+      end
+
+      # Only 25% done: no trouble
+      stats = CalculateTaskPlanStats.call(plan: @task_plan.reload).outputs.stats
+      expect(stats.first.trouble).to eq false
+
+      page = stats.first.current_pages.first
+      expect(page.trouble).to eq false
+
+      spaced_page = stats.first.spaced_pages.first
+      expect(spaced_page.trouble).to eq false
+
+      tasks.third.task_steps.each do |ts|
+        if ts.tasked.exercise?
+          ts.tasked.free_response = 'a sentence not explaining anything'
+          ts.tasked.save!
+        end
+        MarkTaskStepCompleted.call(task_step: ts)
+      end
+
+      # Over 25% done: trouble
+      stats = CalculateTaskPlanStats.call(plan: @task_plan.reload).outputs.stats
+      expect(stats.first.trouble).to eq true
+
+      page = stats.first.current_pages.first
+      expect(page.trouble).to eq true
+
+      spaced_page = stats.first.spaced_pages.first
+      expect(spaced_page.trouble).to eq true
+
+      tasks[3..4].each do |task|
+        task.task_steps.each do |ts|
+          if ts.tasked.exercise?
+            ts.tasked.answer_id = ts.tasked.correct_answer_id
+            ts.tasked.free_response = 'a sentence explaining all the things'
+            ts.tasked.save!
+          end
+          MarkTaskStepCompleted.call(task_step: ts)
+        end
+      end
+
+      # 40% correct: still trouble
+      stats = CalculateTaskPlanStats.call(plan: @task_plan.reload).outputs.stats
+      expect(stats.first.trouble).to eq true
+
+      page = stats.first.current_pages.first
+      expect(page.trouble).to eq true
+
+      spaced_page = stats.first.spaced_pages.first
+      expect(spaced_page.trouble).to eq true
+
+      tasks[5].task_steps.each do |ts|
+        if ts.tasked.exercise?
+          ts.tasked.answer_id = ts.tasked.correct_answer_id
+          ts.tasked.free_response = 'a sentence explaining all the things'
+          ts.tasked.save!
+        end
+        MarkTaskStepCompleted.call(task_step: ts)
+      end
+
+      # 50% correct: no more trouble
+      stats = CalculateTaskPlanStats.call(plan: @task_plan.reload).outputs.stats
+      expect(stats.first.trouble).to eq false
+
+      page = stats.first.current_pages.first
+      expect(page.trouble).to eq false
+
+      spaced_page = stats.first.spaced_pages.first
+      expect(spaced_page.trouble).to eq false
+
+      tasks[6].task_steps.each do |ts|
+        if ts.tasked.exercise?
+          ts.tasked.free_response = 'a sentence not explaining anything'
+          ts.tasked.save!
+        end
+        MarkTaskStepCompleted.call(task_step: ts)
+      end
+
+      # 3 out of 7 correct: trouble again
+      stats = CalculateTaskPlanStats.call(plan: @task_plan.reload).outputs.stats
+      expect(stats.first.trouble).to eq true
+
+      page = stats.first.current_pages.first
+      expect(page.trouble).to eq true
+
+      spaced_page = stats.first.spaced_pages.first
+      expect(spaced_page.trouble).to eq true
+
+      tasks[7].task_steps.each do |ts|
+        if ts.tasked.exercise?
+          ts.tasked.answer_id = ts.tasked.correct_answer_id
+          ts.tasked.free_response = 'a sentence explaining all the things'
+          ts.tasked.save!
+        end
+        MarkTaskStepCompleted.call(task_step: ts)
+      end
+
+      # 50% correct: no more trouble
+      stats = CalculateTaskPlanStats.call(plan: @task_plan.reload).outputs.stats
+      expect(stats.first.trouble).to eq false
+
+      page = stats.first.current_pages.first
+      expect(page.trouble).to eq false
+
+      spaced_page = stats.first.spaced_pages.first
+      expect(spaced_page.trouble).to eq false
     end
 
     it "returns detailed stats if :details is true" do
@@ -452,11 +598,13 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
         expect(stats.first.total_count).to eq(@task_plan.tasks.length/2)
         expect(stats.first.complete_count).to eq(0)
         expect(stats.first.partially_complete_count).to eq(0)
+        expect(stats.first.trouble).to eq false
 
         page = stats.first.current_pages[0]
         expect(page.student_count).to eq(0)
         expect(page.incorrect_count).to eq(0)
         expect(page.correct_count).to eq(0)
+        expect(page.trouble).to eq false
 
         spaced_page = stats.first.spaced_pages[0]
         expect(spaced_page).to eq page
@@ -465,11 +613,13 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
         expect(stats.second.total_count).to eq(@task_plan.tasks.length/2)
         expect(stats.second.complete_count).to eq(0)
         expect(stats.second.partially_complete_count).to eq(0)
+        expect(stats.second.trouble).to eq false
 
         page = stats.second.current_pages[0]
         expect(page.student_count).to eq(0)
         expect(page.incorrect_count).to eq(0)
         expect(page.correct_count).to eq(0)
+        expect(page.trouble).to eq false
 
         spaced_page = stats.second.spaced_pages[0]
         expect(spaced_page).to eq page
@@ -484,11 +634,13 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
         expect(stats.first.total_count).to eq(@task_plan.tasks.length)
         expect(stats.first.complete_count).to eq(0)
         expect(stats.first.partially_complete_count).to eq(0)
+        expect(stats.first.trouble).to eq false
 
         page = stats.first.current_pages[0]
         expect(page.student_count).to eq(0)
         expect(page.incorrect_count).to eq(0)
         expect(page.correct_count).to eq(0)
+        expect(page.trouble).to eq false
 
         spaced_page = stats.first.spaced_pages[0]
         expect(spaced_page).to eq page

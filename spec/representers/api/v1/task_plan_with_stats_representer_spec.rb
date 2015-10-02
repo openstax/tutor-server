@@ -31,7 +31,8 @@ RSpec.describe Api::V1::TaskPlanWithStatsRepresenter, type: :representer, speed:
               "student_count"   => 0,
               "correct_count"   => 0,
               "incorrect_count" => 0,
-              "chapter_section" => [1, 1]
+              "chapter_section" => [1, 1],
+              "is_trouble" => false
             )
           ),
           "spaced_pages" => a_collection_containing_exactly(
@@ -41,9 +42,11 @@ RSpec.describe Api::V1::TaskPlanWithStatsRepresenter, type: :representer, speed:
               "student_count"   => 0,
               "correct_count"   => 0,
               "incorrect_count" => 0,
-              "chapter_section" => [1, 1]
+              "chapter_section" => [1, 1],
+              "is_trouble" => false
             )
-          )
+          ),
+          "is_trouble" => false
         }
       ]
     )

@@ -50,10 +50,15 @@ class CalculateTaskPlanStats
     end.flatten.uniq
 
     correct_count = completed.count{ |te| te.is_correct? }
+    incorrect_count = completed.length - correct_count
+
+    trouble = (incorrect_count > correct_count) && (completed.size > 0.25*tasked_exercises.size)
+
     stats = {
       student_count: some_completed_role_ids.length,
       correct_count: correct_count,
-      incorrect_count: completed.length - correct_count
+      incorrect_count: incorrect_count,
+      trouble: trouble
     }
     stats[:exercises] = exercise_stats_for_tasked_exercises(tasked_exercises) if @details
     stats
@@ -112,6 +117,13 @@ class CalculateTaskPlanStats
       tt.taskings.first.try(:period) || no_period
     end
     grouped_tasks.collect do |period, period_tasks|
+      current_page_stats = generate_page_stats_for_task_steps(
+                             period_tasks.collect{ |t| t.core_task_steps }
+                           )
+      spaced_page_stats = generate_page_stats_for_task_steps(
+                            period_tasks.collect{ |t| t.spaced_practice_task_steps }
+                          )
+
       Hashie::Mash.new(
         period_id: period.id,
 
@@ -125,13 +137,11 @@ class CalculateTaskPlanStats
 
         partially_complete_count: period_tasks.count(&:in_progress?),
 
-        current_pages: generate_page_stats_for_task_steps(
-                         period_tasks.collect{ |t| t.core_task_steps }
-                       ),
+        current_pages: current_page_stats,
 
-        spaced_pages: generate_page_stats_for_task_steps(
-                        period_tasks.collect{ |t| t.spaced_practice_task_steps }
-                      )
+        spaced_pages: spaced_page_stats,
+
+        trouble: (current_page_stats + spaced_page_stats).any?{ |page_stats| page_stats[:trouble] }
       )
     end
   end

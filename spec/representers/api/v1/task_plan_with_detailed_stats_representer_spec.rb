@@ -48,6 +48,7 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
             "correct_count"   => 1,
             "incorrect_count" => 1,
             "chapter_section" => [1, 1],
+            "is_trouble" => false,
             "exercises" => a_collection_containing_exactly(
               {
                 "content" => a_kind_of(Hash),
@@ -81,8 +82,10 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
             "correct_count"   => 0,
             "incorrect_count" => 0,
             "chapter_section" => [1, 1],
+            "is_trouble" => false,
             "exercises" => a_kind_of(Array)
-          )
+          ),
+          "is_trouble" => false
         }
       ]
     )

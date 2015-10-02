@@ -17,7 +17,6 @@ module Api::V1::Courses
                type: String,
                readable: true,
                writeable: false
-
     end
 
     class Plan < Base
@@ -62,11 +61,9 @@ module Api::V1::Courses
                  readable: true,
                  writeable: false,
                  decorator: Api::V1::TaskingPlanRepresenter
-
     end
 
     class TaskBase < Base
-
       property :opens_at,
                type: String,
                readable: true,
@@ -199,7 +196,6 @@ module Api::V1::Courses
              readable: true,
              writeable: false,
              decorator: Course
-
 
   end
 
