@@ -99,7 +99,7 @@ class SetupPerformanceReportData
     student_1_tasks[0].core_task_steps.each do |ts|
       Hacks::AnswerExercise[task_step: ts, is_correct: true]
     end
-    student_1_tasks[0].non_core_task_steps.each do |ts|
+    student_1_tasks[0].reload.non_core_task_steps.each do |ts|
       Hacks::AnswerExercise[task_step: ts, is_correct: true]
     end
 
@@ -107,7 +107,7 @@ class SetupPerformanceReportData
     student_1_tasks[1].core_task_steps.each do |ts|
       MarkTaskStepCompleted[task_step: ts]
     end
-    student_1_tasks[1].non_core_task_steps.each do |ts|
+    student_1_tasks[1].reload.non_core_task_steps.each do |ts|
       MarkTaskStepCompleted[task_step: ts]
     end
 
@@ -115,6 +115,7 @@ class SetupPerformanceReportData
     student_1_tasks[2].core_task_steps.each do |ts|
       Hacks::AnswerExercise[task_step: ts, is_correct: true]
     end
+    student_1_tasks[2].reload
     Hacks::AnswerExercise[task_step: student_1_tasks[2].non_core_task_steps.first,
                           is_correct: true]
     Hacks::AnswerExercise[task_step: student_1_tasks[2].non_core_task_steps.last,
@@ -144,7 +145,7 @@ class SetupPerformanceReportData
     student_3_tasks[0].core_task_steps.each do |ts|
       Hacks::AnswerExercise[task_step: ts, is_correct: true]
     end
-    student_3_tasks[0].non_core_task_steps.each do |ts|
+    student_3_tasks[0].reload.non_core_task_steps.each do |ts|
       Hacks::AnswerExercise[task_step: ts, is_correct: true]
     end
   end
