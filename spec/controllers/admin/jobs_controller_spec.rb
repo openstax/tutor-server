@@ -7,7 +7,7 @@ RSpec.describe Admin::JobsController, type: :controller do
       profile = FactoryGirl.create(:user_profile, :administrator)
       strategy = User::Strategies::Direct::User.new(profile)
       admin = User::User.new(strategy: strategy)
-      stub_current_user(admin)
+      controller.sign_in(admin)
 
       get :index
       expect(response).to have_http_status(:success)

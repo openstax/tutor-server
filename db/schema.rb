@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150923202225) do
+ActiveRecord::Schema.define(version: 20150925164029) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -608,6 +608,14 @@ ActiveRecord::Schema.define(version: 20150923202225) do
 
   add_index "user_content_analysts", ["user_profile_id"], name: "index_user_content_analysts_on_user_profile_id", unique: true, using: :btree
 
+  create_table "user_customer_services", force: :cascade do |t|
+    t.integer  "user_profile_id", null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  add_index "user_customer_services", ["user_profile_id"], name: "index_user_customer_services_on_user_profile_id", unique: true, using: :btree
+
   create_table "user_profiles", force: :cascade do |t|
     t.integer  "account_id",                null: false
     t.string   "exchange_read_identifier",  null: false
@@ -671,5 +679,6 @@ ActiveRecord::Schema.define(version: 20150923202225) do
   add_foreign_key "tasks_tasks", "tasks_task_plans", on_update: :cascade, on_delete: :cascade
   add_foreign_key "user_administrators", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "user_content_analysts", "user_profiles", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "user_customer_services", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "user_profiles", "openstax_accounts_accounts", column: "account_id", on_update: :cascade, on_delete: :cascade
 end

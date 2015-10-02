@@ -1,30 +1,14 @@
 <% @page_header = "Courses" %>
 
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Teacher(s)</th>
-      <th>School</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @courses.each do |course| %>
-      <tr>
-        <td><%= course.name %></td>
-        <td><%= course.teacher_names.to_sentence %></td>
-        <td><%= course.school_name %></td>
-        <td>
-          <%= link_to 'Edit', edit_admin_course_path(course.id),
-                              class: "btn btn-xs btn-primary" %>
-          <%= link_to 'List Students', students_admin_course_path(course.id),
-                                       class: 'btn btn-xs btn-primary' %>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
+<%= render partial: 'manager/courses/index',
+           locals: { courses: @courses,
+                     extra_headers: 'Actions',
+                     extra_fields_proc: lambda do |course| %>
+  <td>
+    <%= link_to 'List Students', admin_course_students_path(course.id),
+                                 class: 'btn btn-xs btn-primary' %>
+    <%= link_to 'Edit', edit_admin_course_path(course.id), class: "btn btn-xs btn-primary" %>
+  </td>
+<% end } %>
 
 <%= link_to 'Add Course', new_admin_course_path, class: "btn btn-primary" %>

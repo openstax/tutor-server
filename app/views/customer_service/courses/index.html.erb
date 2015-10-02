@@ -1,0 +1,12 @@
+<% @page_header = "Courses" %>
+
+<%= render partial: 'manager/courses/index',
+           locals: { courses: @courses,
+                     extra_headers: 'Actions',
+                     extra_fields_proc: lambda do |course| %>
+  <td>
+    <%= link_to 'List Students', customer_service_course_students_path(course.id),
+                                 class: 'btn btn-xs btn-primary' %>
+    <%= link_to 'Show', customer_service_course_path(course.id), class: "btn btn-xs btn-primary" %>
+  </td>
+<% end } %>

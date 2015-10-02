@@ -13,6 +13,7 @@ module User
       has_many :roles, through: :role_users, subsystem: :entity
 
       has_one :administrator, dependent: :destroy, inverse_of: :profile
+      has_one :customer_service, dependent: :destroy, inverse_of: :profile
       has_one :content_analyst, dependent: :destroy, inverse_of: :profile
 
       validates :account, presence: true, uniqueness: true

@@ -11,7 +11,7 @@ module User
       profiles = find_profiles(search).order(order).paginate(page: page, per_page: per_page)
 
       outputs[:users] = Hashie::Mash.new(
-        total_items: profiles.total_entries,
+        total_count: profiles.total_entries,
         items: profiles.collect do |profile|
           strategy = strategy_class.new(profile)
           ::User::User.new(strategy: strategy)

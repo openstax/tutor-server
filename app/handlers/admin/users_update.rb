@@ -4,6 +4,7 @@ class Admin::UsersUpdate
   lev_handler
 
   uses_routine User::SetAdministratorState, as: :set_administrator
+  uses_routine User::SetCustomerServiceState, as: :set_customer_service
   uses_routine User::SetContentAnalystState, as: :set_content_analyst
 
   paramify :user do
@@ -13,6 +14,7 @@ class Admin::UsersUpdate
     attribute :full_name, type: String
     attribute :title, type: String
     attribute :administrator, type: boolean
+    attribute :customer_service, type: boolean
     attribute :content_analyst, type: boolean
   end
 
@@ -37,6 +39,7 @@ class Admin::UsersUpdate
     account.update_columns(user_params.attributes.slice(*ALLOWED_ATTRIBUTES))
 
     run(:set_administrator, user: user, administrator: user_params.administrator)
+    run(:set_customer_service, user: user, customer_service: user_params.customer_service)
     run(:set_content_analyst, user: user, content_analyst: user_params.content_analyst)
   end
 end

@@ -1,0 +1,65 @@
+<% query ||= nil
+   items ||= []
+   total_count ||= items.size
+   page ||= 1
+   per_page ||= 20
+   extra_headers ||= []
+   extra_fields_proc ||= nil %>
+
+<%= form_tag '', method: :get do %>
+
+<div class="input-group form-group">
+   <%= text_field_tag :query, query, class: 'form-control', placeholder: 'Search here' %>
+   <span class="input-group-btn">
+     <%= submit_tag 'Search', class: "btn btn-primary"  %>
+   </span>
+</div>
+
+<% end %>
+
+<% if query.present? && items.empty? %>
+  <p>No users found.</p>
+<% end %>
+
+<% if items.present? %>
+
+  <%
+    pagination = will_paginate(
+      WillPaginate::Collection.create(page, per_page, total_count) do |pager|
+        pager.replace items
+      end
+    )
+  %>
+
+  <%= pagination %>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Name</th>
+        <th>Admin?</th>
+        <th>Customer Service?</th>
+        <th>Content Analyst?</th>
+        <% [extra_headers].flatten.each do |extra_header| %>
+        <th><%= extra_header %></th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% items.each do |user| %>
+        <tr>
+          <td><%= user.username %></td>
+          <td><%= user.name %></td>
+          <td><%= tf_to_yn user.is_admin? %></td>
+          <td><%= tf_to_yn user.is_customer_service? %></td>
+          <td><%= tf_to_yn user.is_content_analyst? %></td>
+          <%= capture(user, &extra_fields_proc) unless extra_fields_proc.nil? %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <%= pagination %>
+
+<% end %>

@@ -1,0 +1,25 @@
+<% @page_header = @course.title %>
+
+<div>
+  <h3>School</h3>
+  <div><%= @course.school_name %></div>
+</div>
+
+<div>
+  <h3>Content</h3>
+  <div><%= @course_ecosystem.title %></div>
+</div>
+
+<div>
+  <h3>Periods</h3>
+  <div>
+    <%= render partial: 'manager/periods/index', locals: { periods: @periods } %>
+  </div>
+</div>
+
+<div>
+  <h3>Teachers</h3>
+  <div>
+    <%= render partial: 'manager/teachers/index', locals: { teachers: @teachers } %>
+  </div>
+</div>

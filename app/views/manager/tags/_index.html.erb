@@ -1,0 +1,60 @@
+<% query ||= nil
+   items ||= []
+   total_count ||= items.size
+   page ||= 1
+   per_page ||= 20
+   extra_headers ||= []
+   extra_fields_proc ||= nil %>
+
+<%= form_tag '', method: :get do %>
+
+<div class="input-group form-group">
+   <%= text_field_tag :query, query, class: 'form-control', placeholder: 'Search here' %>
+   <span class="input-group-btn">
+      <%= submit_tag 'Search', class: "btn btn-primary"  %>
+   </span>
+</div>
+
+
+<% end %>
+
+<% if query.present? && items.empty? %>
+  <p>No tags found.</p>
+<% end %>
+
+<% if items.present? %>
+
+  <%
+    pagination = will_paginate(
+      WillPaginate::Collection.create(page, per_page, total_count) do |pager|
+        pager.replace items
+      end
+    )
+  %>
+
+  <%= pagination %>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <% [extra_headers].flatten.each do |extra_header| %>
+        <th><%= extra_header %></th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% items.each do |tag| %>
+        <tr>
+          <td><%= tag.value %></td>
+          <td><%= tag.name %></td>
+          <%= capture(tag, &extra_fields_proc) unless extra_fields_proc.nil? %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <%= pagination %>
+
+<% end %>

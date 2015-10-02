@@ -3,6 +3,8 @@ class Admin::BaseController < ApplicationController
 
   layout 'admin'
 
+  protected
+
   def authenticate_admin!
     raise SecurityTransgression unless current_user.is_admin?
   end

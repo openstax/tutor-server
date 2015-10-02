@@ -22,11 +22,11 @@ RSpec.describe Admin::UsersController, type: :controller do
   before { controller.sign_in(admin) }
 
   it 'searches users by username and full name' do
-    get :index, search_term: 'STR'
+    get :index, query: 'STR'
     expect(assigns[:user_search].items.length).to eq 1
     expect(assigns[:user_search].items).to eq [ admin ]
 
-    get :index, search_term: 'st'
+    get :index, query: 'st'
     expect(assigns[:user_search].items.length).to eq 2
     expect(assigns[:user_search].items.sort_by { |a| a.id }).to eq [ admin, user ]
   end
@@ -38,10 +38,11 @@ RSpec.describe Admin::UsersController, type: :controller do
       first_name: 'New',
       last_name: 'User',
       full_name: 'Overriden!',
+      customer_service: true,
       content_analyst: true
     }
 
-    get :index, search_term: 'new'
+    get :index, query: 'new'
     expect(assigns[:user_search].items.length).to eq 1
     user = assigns[:user_search].items.first
     expect(user.username).to eq 'new'
@@ -49,6 +50,7 @@ RSpec.describe Admin::UsersController, type: :controller do
     expect(user.last_name).to eq 'User'
     expect(user.name).to eq 'Overriden!'
     expect(user.is_admin?).to eq false
+    expect(user.is_customer_service?).to eq true
     expect(user.is_content_analyst?).to eq true
   end
 
@@ -56,6 +58,7 @@ RSpec.describe Admin::UsersController, type: :controller do
     put :update, id: user.id, user: {
       username: 'updated',
       full_name: 'Updated Name',
+      customer_service: true,
       content_analyst: true
     }
 
@@ -65,6 +68,7 @@ RSpec.describe Admin::UsersController, type: :controller do
     expect(reloaded_user.username).to eq 'updated'
     expect(reloaded_user.name).to eq 'Updated Name'
     expect(reloaded_user.is_admin?).to eq false
+    expect(reloaded_user.is_customer_service?).to eq true
     expect(reloaded_user.is_content_analyst?).to eq true
   end
 end

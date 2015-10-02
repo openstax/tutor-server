@@ -27,6 +27,12 @@ FactoryGirl.define do
       end
     end
 
+    trait :customer_service do
+      after(:build) do |profile|
+        profile.customer_service = FactoryGirl.build(:user_customer_service, profile: profile)
+      end
+    end
+
     trait :content_analyst do
       after(:build) do |profile|
         profile.content_analyst = FactoryGirl.build(:user_content_analyst, profile: profile)

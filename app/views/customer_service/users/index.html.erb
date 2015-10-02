@@ -1,0 +1,8 @@
+<% @page_header = "Users" %>
+
+<%= render partial: 'manager/users/index',
+           locals: { query: params[:query],
+                     items: @user_search.items,
+                     total_count: @user_search.total_count,
+                     page: params[:page],
+                     per_page: @per_page } %>

@@ -1,0 +1,21 @@
+<% extra_headers ||= [] %>
+<% extra_fields_proc ||= nil %>
+
+<table class='table table-striped'>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <% [extra_headers].flatten.each do |extra_header| %>
+      <th><%= extra_header %></th>
+      <% end %>
+    </tr>
+  </thead>
+  <tbody>
+  <% periods.each do |period| %>
+    <tr>
+      <td><%= period.name %></td>
+      <%= capture(period, &extra_fields_proc) unless extra_fields_proc.nil? %>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

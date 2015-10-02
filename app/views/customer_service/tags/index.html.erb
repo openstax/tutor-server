@@ -1,0 +1,7 @@
+<% @page_header = "Tags" %>
+
+<%= render partial: 'manager/tags/index',
+           locals: { query: params[:query],
+                     items: @tags,
+                     page: params[:page],
+                     per_page: @per_page } %>

@@ -1,0 +1,23 @@
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Book Title</th>
+      <th>Book UUID</th>
+      <th>Book Version</th>
+      <th>Link to Archive</th>
+      <th>Import Date</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% ecosystems.each do |ecosystem| %>
+    <tr>
+      <td><%= ecosystem.books.first.title %></td>
+      <td><%= ecosystem.books.first.uuid %></td>
+      <td><%= ecosystem.books.first.version %></td>
+      <td><%= link_to 'Archive', ecosystem.books.first.url, target: '_blank',
+                                                            class: 'btn btn-xs btn-primary' %></td>
+      <td><%= ecosystem.imported_at %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

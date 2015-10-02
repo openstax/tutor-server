@@ -17,7 +17,7 @@ RSpec.feature 'Administrator' do
 
     visit admin_root_path
     click_link 'Users'
-    fill_in 'search_term', with: 'a_user'
+    fill_in 'query', with: 'a_user'
     click_button 'Search'
     click_link 'Sign in as', match: :first
 

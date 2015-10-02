@@ -83,11 +83,15 @@ module User
     end
 
     def first_name
-      verify_and_return @strategy.first_name, klass: String, error: StrategyError
+      verify_and_return @strategy.first_name, klass: String, allow_nil: true, error: StrategyError
     end
 
     def last_name
-      verify_and_return @strategy.last_name, klass: String, error: StrategyError
+      verify_and_return @strategy.last_name, klass: String, allow_nil: true, error: StrategyError
+    end
+
+    def full_name
+      verify_and_return @strategy.full_name, klass: String, allow_nil: true, error: StrategyError
     end
 
     def name
@@ -95,7 +99,7 @@ module User
     end
 
     def title
-      verify_and_return @strategy.title, klass: String, error: StrategyError
+      verify_and_return @strategy.title, klass: String, allow_nil: true, error: StrategyError
     end
 
     def is_human?
@@ -116,6 +120,10 @@ module User
 
     def is_admin?
       !!@strategy.is_admin?
+    end
+
+    def is_customer_service?
+      !!@strategy.is_customer_service?
     end
 
     def is_content_analyst?
