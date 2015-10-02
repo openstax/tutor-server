@@ -14,10 +14,9 @@ GIT
 
 GIT
   remote: git://github.com/openstax/rescue_from.git
-  revision: c76c1ce311fc124dc2914f9e28b674b1cbfce22b
-  branch: implement-the-whole-kit-n-kaboodle
+  revision: b243e10e3642f5c468f1ec08def64f3fc09784f0
   specs:
-    openstax_rescue_from (0.0.1)
+    openstax_rescue_from (1.0.0)
       exception_notification (>= 4.1, < 5.0)
       rails (>= 3.1, < 5.0)
 
