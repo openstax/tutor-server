@@ -57,4 +57,3 @@ Rails.application.configure do
                                                        default: false)
   config.active_job.queue_adapter = use_real_background_jobs ? :resque : :inline
 end
-

@@ -46,6 +46,138 @@ class DemoBase
                       randomizer: randomizer)
   end
 
+  def auto_assign_students_for_period(period)
+    Hash[
+      period.students.map.with_index{ |initials, i|
+        score = if 0 == i%5 then 'i'
+                elsif 0 == i%10 then 'ns'
+                else
+                  70 + rand(30)
+                end
+        [initials, score]
+      }
+    ]
+  end
+
+  def get_auto_assignments(content)
+
+    content.auto_assign.collect do | settings |
+      book_locations = content.course.ecosystems.first.pages.map(&:book_location)
+                                                            .sample(settings.steps)
+      step_types = if settings.type == 'homework'
+                     (['e'] * settings.steps) + ['p']
+                   else
+                     1.upto(settings.steps).map.with_index{ |step, i| 0==i%3 ? 'e' : 'r' }
+                   end
+
+      1.upto(settings.generate).collect do | number |
+        Hashie::Mash.new( type: settings.type,
+                          title: "#{settings.type.titleize} #{number}",
+                          num_exercises: settings.steps,
+                          step_types: step_types,
+                          book_locations: book_locations,
+                          periods: content.periods.map do | period |
+                            {
+                              id: period.id,
+                              opens_at: (number + 3).days.ago,
+                              due_at:  (number).days.ago,
+                              students: auto_assign_students_for_period(period)
+                            }
+                          end
+                        )
+      end
+    end
+
+  end
+
+  # Lev override to prevent automatic transactions while still allowing other routines to be called
+  def self.disable_automatic_lev_transactions
+    define_method(:transaction_run_by?) do |who|
+      return false if who == self
+      super
+    end
+  end
+
+  # Runs the given code in parallel processes
+  # Calling process must not be in a transaction
+  # Args should be Enumerables and will be passed to the given block in properly-sized slices
+  # You will still have to iterate through the yielded values
+  # The index for the first element in the original array is also passed in as the last argument
+  # Returns the PID's for the spawned processes
+  def in_parallel(*args, max_processes: nil, transaction: false)
+    arg_size = args.first.size
+    raise 'Arguments must have the same size' unless args.all?{ |arg| arg.size == arg_size }
+
+    # This is merely the maximum number of processes spawned for each call to this method
+    max_processes ||= Integer(ENV['DEMO_MAX_PROCESSES']) rescue 8
+
+    if arg_size == 0 || max_processes < 1
+      log("Processes: 0 (inline processing) - Slice size: #{arg_size}")
+
+      return yield *[args + [0]]
+    end
+
+    Rails.application.eager_load!
+
+    # Use max_processes unless too few args given
+    num_processes = [arg_size, max_processes].min
+
+    # Calculate slice_size
+    slice_size = (arg_size/num_processes.to_f).ceil
+
+    # Adjust number of processes again if some process would receive an empty array
+    num_processes = (arg_size/slice_size.to_f).ceil
+
+    sliced_args = args.collect{ |arg| arg.each_slice(slice_size) }
+    process_args = 0.upto(num_processes - 1).collect do |process_index|
+      sliced_args.collect{ |sliced_arg| sliced_arg.next } + [process_index*slice_size]
+    end
+
+    log("Processes: #{num_processes} - Slice size: #{slice_size}")
+
+    # We have to clear all connections before forking (and open a new connection after forking)
+    # because the different processes cannot share connections
+    ActiveRecord::Base.clear_all_connections!
+
+    child_processes = 0.upto(num_processes - 1).collect do |process_index|
+      # Start a new process
+      # Threading does not work well with MRI due to the GIL
+      fork do
+        if transaction
+          ActiveRecord::Base.transaction do
+            yield *process_args[process_index]
+          end
+        else
+          yield *process_args[process_index]
+        end
+      end
+    end
+
+    @processes ||= []
+    @processes += child_processes
+  end
+
+  # Waits for all child processes to finish
+  # Returns the PID/Status pairs for the processes we had to wait on
+  def wait_for_parallel_completion
+    return [] if @processes.nil?
+
+    log('Waiting for child processes to exit...')
+
+    results = @processes.collect{ |pid| Process.wait2(pid) }
+
+    @processes = []
+
+    results.each do |result|
+      log("PID: #{result.first} - Status: #{result.last.exitstatus}")
+    end
+
+    log('All child processes exited')
+
+    results
+  end
+
+
   class TasksProfile
     def initialize(assignment_type:, user_responses:, step_types:, randomizer:)
 
@@ -254,11 +386,6 @@ class DemoBase
   # not completed; any non-nil means completed. 1/0 (true/false) is for
   # exercise correctness
   def work_task(task:, responses:[])
-    log( "Invalid number of responses for #{task.title}" +
-          "(responses,task_steps) = (#{responses.count}, #{task.steps_count})\n" +
-         "(task = #{print_task(task: task)}) \n" +
-         "Continuing: Any tasks that do not have a response will not be worked" ) \
-      if responses.count != task.steps_count
 
     core_task_steps = task.core_task_steps(preload_tasked: true)
 
