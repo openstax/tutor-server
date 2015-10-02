@@ -123,6 +123,9 @@ class CalculateTaskPlanStats
       spaced_page_stats = generate_page_stats_for_task_steps(
                             period_tasks.collect{ |t| t.spaced_practice_task_steps }
                           )
+      personalized_page_stats = generate_page_stats_for_task_steps(
+                                  period_tasks.collect{ |t| t.personalized_task_steps }
+                                )
 
       Hashie::Mash.new(
         period_id: period.id,
@@ -137,10 +140,11 @@ class CalculateTaskPlanStats
 
         partially_complete_count: period_tasks.count(&:in_progress?),
 
-        current_pages: current_page_stats,
+        current_pages: current_page_stats + personalized_page_stats,
 
         spaced_pages: spaced_page_stats,
 
+        # We ignore trouble in personalized pages because they may be different for each student
         trouble: (current_page_stats + spaced_page_stats).any?{ |page_stats| page_stats[:trouble] }
       )
     end

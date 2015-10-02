@@ -1,7 +1,8 @@
 class Tasks::PlaceholderStrategies::IReadingPersonalized
 
   def populate_placeholders(task:)
-    personalized_placeholder_task_steps = task.personalized_task_steps.select(&:placeholder?)
+    personalized_placeholder_task_steps = task.personalized_task_steps(preload_tasked: true)
+                                              .select(&:placeholder?)
     return if personalized_placeholder_task_steps.none?
 
     # Gather relevant pages

@@ -96,8 +96,9 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     task_steps.to_a.select(&:core_group?)
   end
 
-  def non_core_task_steps
-    self.task_steps.preload(:tasked).to_a - self.core_task_steps
+  def non_core_task_steps(preload_tasked: false)
+    task_steps = preload_tasked ? self.task_steps.preload(:tasked) : self.task_steps
+    task_steps.to_a - self.core_task_steps
   end
 
   def spaced_practice_task_steps(preload_tasked: false)
@@ -105,8 +106,9 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     task_steps.to_a.select(&:spaced_practice_group?)
   end
 
-  def personalized_task_steps
-    self.task_steps.preload(:tasked).to_a.select(&:personalized_group?)
+  def personalized_task_steps(preload_tasked: false)
+    task_steps = preload_tasked ? self.task_steps.preload(:tasked) : self.task_steps
+    task_steps.to_a.select(&:personalized_group?)
   end
 
   def core_task_steps_completed?
