@@ -20,6 +20,14 @@ module Api::V1::Courses
     end
 
     class Plan < Base
+
+      property :trouble,
+               as: :is_trouble,
+               readable: true,
+               writeable: false,
+               getter: lambda{|*| false },
+               schema_info: { type: 'boolean' }
+
       property :type,
                type: String,
                readable: true,
