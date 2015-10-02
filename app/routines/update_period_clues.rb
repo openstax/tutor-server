@@ -1,5 +1,5 @@
 # Make sure the Content::Uuid class is loaded to avoid errors in dev/test when threads are spawned
-require_dependency 'app/subsystems/content/uuid'
+require_dependency './app/subsystems/content/uuid'
 
 class UpdatePeriodClues
   lev_routine

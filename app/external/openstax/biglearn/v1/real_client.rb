@@ -93,6 +93,10 @@ class OpenStax::Biglearn::V1::RealClient
                 force_cache_miss: false, ignore_answer_times: period.present?)
     roles = period.present? ? period.active_enrollments.collect{ |en| en.student.role } : [role]
     learners = get_exchange_read_identifiers_for_roles(roles: roles)
+
+    # No learners: map all pools to nil
+    return pools.each_with_object({}) { |pool, hash| hash[pool.uuid] = nil } if learners.empty?
+
     learner_cache_key = period.present? ? period.id : learners.first
     pool_ids = pools.collect(&:uuid)
     answer_times_map = ignore_answer_times ? {} : get_answer_times_map(roles: roles, pools: pools)
@@ -104,8 +108,7 @@ class OpenStax::Biglearn::V1::RealClient
   private
 
   def get_exchange_read_identifiers_for_roles(roles:)
-    users = Role::GetUsersForRoles[roles]
-    users.collect{ |user| user.exchange_read_identifier }
+    roles.collect{ |role| role.profile.exchange_read_identifier }
   end
 
   # Returns the last answer time for all roles for each pool given
@@ -168,24 +171,24 @@ class OpenStax::Biglearn::V1::RealClient
       # Make several requests to Biglearn in parallel
       threads = missed_pool_ids.each_slice(max_pools_per_request).collect do |pool_ids|
         Thread.new do
-          request_biglearn_clue(learners: learners, pool_ids: pool_ids,
-                                pool_id_to_cache_key_map: missed_pool_id_to_cache_key_map,
-                                result_map: pool_id_to_clue_map)
+          request_clues(learners: learners, pool_ids: pool_ids,
+                        pool_id_to_cache_key_map: missed_pool_id_to_cache_key_map,
+                        result_map: pool_id_to_clue_map)
         end
       end
 
       threads.each(&:join)
     else
       # Just make one inline request
-      request_biglearn_clue(learners: learners, pool_ids: missed_pool_ids,
-                            pool_id_to_cache_key_map: missed_pool_id_to_cache_key_map,
-                            result_map: pool_id_to_clue_map)
+      request_clues(learners: learners, pool_ids: missed_pool_ids,
+                    pool_id_to_cache_key_map: missed_pool_id_to_cache_key_map,
+                    result_map: pool_id_to_clue_map)
     end
 
     pool_id_to_clue_map
   end
 
-  def request_biglearn_clue(learners:, pool_ids:, pool_id_to_cache_key_map:, result_map:)
+  def request_clues(learners:, pool_ids:, pool_id_to_cache_key_map:, result_map:)
     query = { learners: learners, pool_ids: pool_ids }
     response = request(:get, clue_uri, params: query)
     result = handle_response(response) || {}
