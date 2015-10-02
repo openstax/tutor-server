@@ -9,7 +9,7 @@ module CourseGuideMethods
   def get_tasked_exercises_from_completed_exercise_task_steps(completed_exercise_task_steps)
     tasked_exercise_ids = completed_exercise_task_steps.collect{ |ts| ts.tasked_id }
     Tasks::Models::TaskedExercise.where(id: tasked_exercise_ids).preload(
-      [{task_step: {task: {taskings: :role}}}, :exercise]
+      [{task_step: {task: {taskings: {role: {student: :period}}}}}, :exercise]
     ).to_a.group_by{ |te| te.task_step.id }
   end
 
@@ -54,10 +54,6 @@ module CourseGuideMethods
       page_groupings.flat_map{ |page, tasked_exercises| tasked_exercises }
     end
 
-    roles = tasked_exercises.flat_map do |te|
-      te.task_step.task.taskings.collect{ |tg| tg.role }
-    end.uniq
-
     # Flatten the array of pools so we can send it to Biglearn
     pools = sorted_chapter_groupings.flat_map do |chapter, sorted_page_groupings|
       [chapter.all_exercises_pool] + sorted_page_groupings.collect do |page, tasked_exercises|
@@ -65,7 +61,20 @@ module CourseGuideMethods
       end
     end
 
-    OpenStax::Biglearn::V1.get_clues(roles: roles, pools: pools)
+    roles = tasked_exercises.flat_map do |te|
+      te.task_step.task.taskings.collect{ |tg| tg.role }
+    end.uniq
+
+    if roles.size > 1
+      # Teacher guide: query by period
+      periods = roles.collect{ |role| role.student.period }.uniq
+      raise 'Multiple periods not allowed in one call to get_clues' if periods.size > 1
+      OpenStax::Biglearn::V1.get_clues(period: periods.first, pools: pools,
+                                       ignore_answer_times: true)
+    else
+      # Student guide: query by role
+      OpenStax::Biglearn::V1.get_clues(role: roles.first, pools: pools)
+    end
   end
 
   def compile_pages(sorted_page_groupings, clues_map)

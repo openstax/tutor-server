@@ -66,7 +66,8 @@ class OpenStax::Biglearn::V1::FakeClient
     results.collect{ |question_id, version_tags| question_id }
   end
 
-  def get_clues(roles:, pools:)
+  def get_clues(pools:, period: nil, role: 'ignored',
+                force_cache_miss: 'ignored', ignore_answer_times: 'ignored')
     pools.each_with_object({}) do |pool, hash|
       aggregate = rand(0.0..1.0)
       confidence_left  = [aggregate - 0.1, 0.0].max
@@ -86,7 +87,7 @@ class OpenStax::Biglearn::V1::FakeClient
         confidence_interval_interpretation: confidence,
         sample_size: samples,
         sample_size_interpretation: 'above',
-        unique_learner_count: roles.size
+        unique_learner_count: period.present? ? period.active_enrollments.size : 1
       }
     end
   end
