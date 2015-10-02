@@ -19,23 +19,19 @@ module OpenStax::Biglearn
 
     let(:client) { described_class.new(configuration) }
 
-    let!(:period) {
-      FactoryGirl.create(:course_membership_period)
+    let!(:user_1_role) {
+      user = User::CreateUser[username: SecureRandom.hex,
+                              exchange_identifiers: Hashie::Mash.new(read: USER_1_IDENTIFIER,
+                                                                     write: SecureRandom.hex)]
+      Role::CreateUserRole[user]
     }
 
-    let!(:user_1) {
-      User::CreateUser[username: SecureRandom.hex,
-                       exchange_identifiers: Hashie::Mash.new(read: USER_1_IDENTIFIER,
-                                                              write: SecureRandom.hex)]
+    let!(:user_2_role) {
+      user = User::CreateUser[username: SecureRandom.hex,
+                              exchange_identifiers: Hashie::Mash.new(read: USER_2_IDENTIFIER,
+                                                                     write: SecureRandom.hex)]
+      Role::CreateUserRole[user]
     }
-    let!(:user_1_role) { AddUserAsPeriodStudent[user: user_1, period: period] }
-
-    let!(:user_2) {
-      User::CreateUser[username: SecureRandom.hex,
-                       exchange_identifiers: Hashie::Mash.new(read: USER_2_IDENTIFIER,
-                                                              write: SecureRandom.hex)]
-    }
-    let!(:user_2_role) { AddUserAsPeriodStudent[user: user_2, period: period] }
 
     let!(:content_exercise)  { FactoryGirl.create :content_exercise }
     let!(:biglearn_exercise) {
@@ -144,9 +140,9 @@ module OpenStax::Biglearn
       # Restore the original cache
       after(:each) { Rails.cache = @original_cache }
 
-      context 'role' do
+      context 'single role' do
         it 'calls the API well and returns the result' do
-          clues = client.get_clues(role: user_1_role, pools: [pool_1, pool_2])
+          clues = client.get_clues(roles: [user_1_role], pools: [pool_1, pool_2])
 
           expect(clues.size).to eq 2
           clues.each do |pool_uuid, clue|
@@ -166,19 +162,19 @@ module OpenStax::Biglearn
           expect(client).to receive(:request).twice
 
           # Miss
-          clues = client.get_clues(role: user_1_role, pools: [pool_1, pool_2])
+          clues = client.get_clues(roles: [user_1_role], pools: [pool_1, pool_2])
           expect(clues).to eq({ pool_1.uuid => pool_1_clue, pool_2.uuid => pool_2_clue })
 
           # Miss
-          clues = client.get_clues(role: user_2_role, pools: [pool_1, pool_2])
+          clues = client.get_clues(roles: [user_2_role], pools: [pool_1, pool_2])
           expect(clues).to eq({ pool_1.uuid => pool_1_clue, pool_2.uuid => pool_2_clue })
 
           # Hit
-          clues = client.get_clues(role: user_2_role, pools: [pool_2, pool_1])
+          clues = client.get_clues(roles: [user_2_role], pools: [pool_2, pool_1])
           expect(clues).to eq({ pool_1.uuid => pool_1_clue, pool_2.uuid => pool_2_clue })
 
           # Hit
-          clues = client.get_clues(role: user_1_role, pools: [pool_1, pool_2])
+          clues = client.get_clues(roles: [user_1_role], pools: [pool_1, pool_2])
           expect(clues).to eq({ pool_1.uuid => pool_1_clue, pool_2.uuid => pool_2_clue })
         end
 
@@ -193,37 +189,37 @@ module OpenStax::Biglearn
           expect(client).to receive(:request).twice
 
           # Miss
-          clues = client.get_clues(role: user_1_role, pools: [pool_1, pool_2])
+          clues = client.get_clues(roles: [user_1_role], pools: [pool_1, pool_2])
           expect(clues).to eq({ pool_1.uuid => pool_1_clue, pool_2.uuid => pool_2_clue })
 
           # Hit
-          clues = client.get_clues(role: user_1_role, pools: [pool_1])
+          clues = client.get_clues(roles: [user_1_role], pools: [pool_1])
           expect(clues).to eq({ pool_1.uuid => pool_1_clue })
 
           # Hit
-          clues = client.get_clues(role: user_1_role, pools: [pool_2])
+          clues = client.get_clues(roles: [user_1_role], pools: [pool_2])
           expect(clues).to eq({ pool_2.uuid => pool_2_clue })
 
           # Pretend user_1 answered some exercise in pool_1
           tasked_exercise.task_step.complete.save!
 
           # Miss
-          clues = client.get_clues(role: user_1_role, pools: [pool_1])
+          clues = client.get_clues(roles: [user_1_role], pools: [pool_1])
           expect(clues).to eq({ pool_1.uuid => pool_1_clue })
 
           # Hit
-          clues = client.get_clues(role: user_1_role, pools: [pool_2])
+          clues = client.get_clues(roles: [user_1_role], pools: [pool_2])
           expect(clues).to eq({ pool_2.uuid => pool_2_clue })
 
           # Hit
-          clues = client.get_clues(role: user_1_role, pools: [pool_1, pool_2])
+          clues = client.get_clues(roles: [user_1_role], pools: [pool_1, pool_2])
           expect(clues).to eq({ pool_1.uuid => pool_1_clue, pool_2.uuid => pool_2_clue })
         end
       end
 
-      context 'period' do
+      context 'multiple roles' do
         it 'calls the API well and returns the result' do
-          clues = client.get_clues(period: period, pools: [pool_1, pool_2])
+          clues = client.get_clues(roles: [user_1_role, user_2_role], pools: [pool_1, pool_2])
 
           expect(clues.size).to eq 2
           clues.each do |pool_uuid, clue|
@@ -240,30 +236,68 @@ module OpenStax::Biglearn
         it 'caches recent CLUe calls' do
           allow(client).to receive(:request).and_return(valid_response)
 
+          expect(client).to receive(:request).exactly(3).times
+
+          # Miss
+          clues = client.get_clues(roles: [user_1_role], pools: [pool_1, pool_2])
+          expect(clues).to eq({ pool_1.uuid => pool_1_clue, pool_2.uuid => pool_2_clue })
+
+          # Miss
+          clues = client.get_clues(roles: [user_2_role], pools: [pool_2, pool_1])
+          expect(clues).to eq({ pool_1.uuid => pool_1_clue, pool_2.uuid => pool_2_clue })
+
+          # Miss
+          clues = client.get_clues(roles: [user_1_role, user_2_role], pools: [pool_1, pool_2])
+          expect(clues).to eq({ pool_1.uuid => pool_1_clue, pool_2.uuid => pool_2_clue })
+
+          # Hit
+          clues = client.get_clues(roles: [user_2_role, user_1_role], pools: [pool_2, pool_1])
+          expect(clues).to eq({ pool_1.uuid => pool_1_clue, pool_2.uuid => pool_2_clue })
+
+          # Hit
+          clues = client.get_clues(roles: [user_2_role], pools: [pool_2, pool_1])
+          expect(clues).to eq({ pool_1.uuid => pool_1_clue, pool_2.uuid => pool_2_clue })
+
+          # Hit
+          clues = client.get_clues(roles: [user_1_role], pools: [pool_1, pool_2])
+          expect(clues).to eq({ pool_1.uuid => pool_1_clue, pool_2.uuid => pool_2_clue })
+        end
+
+        it 'invalidates cached CLUes when a new question is answered' do
+          tasked_exercise = FactoryGirl.create :tasks_tasked_exercise,
+                                               :with_tasking,
+                                               exercise: content_exercise,
+                                               tasked_to: user_1_role
+
+          allow(client).to receive(:request).and_return(valid_response)
+
           expect(client).to receive(:request).twice
 
           # Miss
-          clues = client.get_clues(period: period, pools: [pool_1])
+          clues = client.get_clues(roles: [user_1_role, user_2_role], pools: [pool_1, pool_2])
+          expect(clues).to eq({ pool_1.uuid => pool_1_clue, pool_2.uuid => pool_2_clue })
+
+          # Hit
+          clues = client.get_clues(roles: [user_1_role, user_2_role], pools: [pool_1])
           expect(clues).to eq({ pool_1.uuid => pool_1_clue })
 
+          # Hit
+          clues = client.get_clues(roles: [user_2_role, user_1_role], pools: [pool_2])
+          expect(clues).to eq({ pool_2.uuid => pool_2_clue })
+
+          # Pretend user_1 answered some exercise in pool_1
+          tasked_exercise.task_step.complete.save!
+
+          # Hit
+          clues = client.get_clues(roles: [user_1_role, user_2_role], pools: [pool_2])
+          expect(clues).to eq({ pool_2.uuid => pool_2_clue })
+
           # Miss
-          clues = client.get_clues(period: period, pools: [pool_2])
-          expect(clues).to eq({ pool_2.uuid => pool_2_clue })
-
-          # Hit
-          clues = client.get_clues(period: period, pools: [pool_1, pool_2])
+          clues = client.get_clues(roles: [user_2_role, user_1_role], pools: [pool_2, pool_1])
           expect(clues).to eq({ pool_1.uuid => pool_1_clue, pool_2.uuid => pool_2_clue })
 
           # Hit
-          clues = client.get_clues(period: period, pools: [pool_2, pool_1])
-          expect(clues).to eq({ pool_1.uuid => pool_1_clue, pool_2.uuid => pool_2_clue })
-
-          # Hit
-          clues = client.get_clues(period: period, pools: [pool_2])
-          expect(clues).to eq({ pool_2.uuid => pool_2_clue })
-
-          # Hit
-          clues = client.get_clues(period: period, pools: [pool_1])
+          clues = client.get_clues(roles: [user_1_role, user_2_role], pools: [pool_1])
           expect(clues).to eq({ pool_1.uuid => pool_1_clue })
         end
       end

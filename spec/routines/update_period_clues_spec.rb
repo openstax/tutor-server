@@ -21,6 +21,8 @@ RSpec.describe UpdatePeriodClues, type: :routine, vcr: VCR_OPTS do
                         '3c60e622-9b4f-4e32-97c7-9278f7199013']
 
   before(:all) do
+    DatabaseCleaner.start
+
     @course = Entity::Course.create!
 
     @period = CreatePeriod[course: @course]
@@ -63,13 +65,19 @@ RSpec.describe UpdatePeriodClues, type: :routine, vcr: VCR_OPTS do
   after(:all) do
     OpenStax::Biglearn::V1.instance_variable_set :@client, @original_client
 
-    # Transaction database cleaning causes weird behavior in this spec
-    DatabaseCleaner.clean_with :truncation
+    DatabaseCleaner.clean
   end
 
   before(:each) do
     @original_cache = Rails.cache
     Rails.cache = ActiveSupport::Cache::MemoryStore.new
+
+    # VCR is not threadsafe, so stub out thread creation
+    # Return an OpenStruct so we can call .join safely
+    allow(Thread).to receive(:new) do |&block|
+      block.call
+      OpenStruct.new
+    end
   end
 
   after(:each) { Rails.cache = @original_cache }

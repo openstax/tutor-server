@@ -68,11 +68,13 @@ module CourseGuideMethods
     case type
     when :student
       # Student guide: query by role
-      OpenStax::Biglearn::V1.get_clues(role: roles.first, pools: pools)
+      Rails.logger.warn('get_chapter_clues called for more than one role') if roles.size > 1
+      OpenStax::Biglearn::V1.get_clues(roles: roles.first, pools: pools)
     when :teacher
       # Teacher guide: query by period
       periods = roles.collect{ |role| role.student.period }.uniq
-      OpenStax::Biglearn::V1.get_clues(period: periods.first, pools: pools,
+      Rails.logger.warn('get_chapter_clues called for more than one period') if periods.size > 1
+      OpenStax::Biglearn::V1.get_clues(roles: roles, pools: pools, cache_for: periods.first,
                                        ignore_answer_times: true)
     else
       raise 'Course guide type must be either :student or :teacher'

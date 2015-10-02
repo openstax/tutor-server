@@ -1,7 +1,15 @@
 class OpenStax::Biglearn::V1::RealClient
 
-  # All cached CLUEs will expire after the given duration, even if nobody answered any questions
-  CLUE_CACHE_DURATION = 1.year
+  # CLUes for students
+  # Since we don't know which flavor of SPARFA generated the CLUE,
+  # be safe and assume mini SPARFAC, which should expire after 3 minutes (when fast SPARFA runs)
+  # The CLUe will expire whenever the student answers a new question or
+  # after the given duration, even if they didn't answer any questions
+  LEARNER_CLUE_CACHE_DURATION = 3.minutes
+
+  # CLUes for teachers
+  # We update those in the background every minute, so we let the cache basically last forever
+  OTHER_CLUE_CACHE_DURATION = 1.year
 
   # The maximum number of (pools*students) allowed to be sent in each CLUe call to Biglearn
   # At least one pool will always be sent in each request, regardless of this value
@@ -87,22 +95,29 @@ class OpenStax::Biglearn::V1::RealClient
     result["questions"].collect { |q| q["question"] }
   end
 
-  def get_clues(pools:, role: nil, period: nil,
-                force_cache_miss: false, ignore_answer_times: period.present?)
-    roles = period.present? ? period.active_enrollments.collect{ |en| en.student.role } : [role]
+  def get_clues(roles:, pools:, cache_for: nil,
+                force_cache_miss: false, ignore_answer_times: false)
     learners = get_exchange_read_identifiers_for_roles(roles: roles).sort
 
-    # Sort the learners for predictability (mostly the cassettes...)
+    # Sort the learners for predictability (mostly for the cassettes...)
     learners = learners.sort
 
     # No learners: map all pools to nil
     return pools.each_with_object({}) { |pool, hash| hash[pool.uuid] = nil } if learners.empty?
 
-    learner_cache_key = period.present? ? period.id : learners.first
+    # Use cache_for's cache_key if present or else XOR the learner hashes
+    learner_cache_key = cache_for.present? ? \
+                          cache_for.cache_key.split('-').first : \
+                          learners.map{ |learner| Integer(learner, 16) }.reduce(:^).to_s(16)
+
+    clue_cache_duration = cache_for.nil? ? LEARNER_CLUE_CACHE_DURATION : OTHER_CLUE_CACHE_DURATION
+
     pool_ids = pools.collect(&:uuid)
+
     answer_times_map = ignore_answer_times ? {} : get_answer_times_map(roles: roles, pools: pools)
 
-    fetch_clues(learners: learners, learner_cache_key: learner_cache_key, pool_ids: pool_ids,
+    fetch_clues(learners: learners, pool_ids: pool_ids,
+                learner_cache_key: learner_cache_key, clue_cache_duration: clue_cache_duration,
                 answer_times_map: answer_times_map, force_cache_miss: force_cache_miss)
   end
 
@@ -131,7 +146,9 @@ class OpenStax::Biglearn::V1::RealClient
   end
 
   # Get all the CLUEs from the cache, calling Biglearn only if needed
-  def fetch_clues(learners:, learner_cache_key:, pool_ids:, answer_times_map:, force_cache_miss:)
+  def fetch_clues(learners:, pool_ids:,
+                  learner_cache_key:, clue_cache_duration:,
+                  answer_times_map:, force_cache_miss:)
     key_prefix = 'biglearn/clues'
 
     # The CLUEs returned refer to all given learners at once
@@ -174,7 +191,8 @@ class OpenStax::Biglearn::V1::RealClient
         Thread.new do
           request_clues(learners: learners, pool_ids: pool_ids,
                         pool_id_to_cache_key_map: missed_pool_id_to_cache_key_map,
-                        result_map: pool_id_to_clue_map)
+                        result_map: pool_id_to_clue_map,
+                        clue_cache_duration: clue_cache_duration)
         end
       end
 
@@ -183,13 +201,17 @@ class OpenStax::Biglearn::V1::RealClient
       # Just make one inline request
       request_clues(learners: learners, pool_ids: missed_pool_ids,
                     pool_id_to_cache_key_map: missed_pool_id_to_cache_key_map,
-                    result_map: pool_id_to_clue_map)
+                    result_map: pool_id_to_clue_map,
+                    clue_cache_duration: clue_cache_duration)
     end
 
     pool_id_to_clue_map
   end
 
-  def request_clues(learners:, pool_ids:, pool_id_to_cache_key_map:, result_map:)
+  def request_clues(learners:, pool_ids:,
+                    pool_id_to_cache_key_map:,
+                    result_map:,
+                    clue_cache_duration:)
     query = { learners: learners, pool_ids: pool_ids }
     response = request(:get, clue_uri, params: query)
     result = handle_response(response) || {}
@@ -221,7 +243,7 @@ class OpenStax::Biglearn::V1::RealClient
         unique_learner_count: confidence['unique_learner_count']
       }
 
-      Rails.cache.write(cache_key, clue_hash, expires_in: CLUE_CACHE_DURATION)
+      Rails.cache.write(cache_key, clue_hash, expires_in: clue_cache_duration)
 
       result_map[pool_id] = clue_hash
     end

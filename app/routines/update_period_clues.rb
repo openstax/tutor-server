@@ -18,12 +18,15 @@ class UpdatePeriodClues
       pools = ecosystem.chapters.collect(&:all_exercises_pool) + \
               ecosystem.pages.collect(&:all_exercises_pool)
 
-      course.periods.collect{ |period| [period, pools] }
+      course.periods.collect do |period|
+        roles = period.active_enrollments.collect{ |ae| ae.student.role }
+        [roles, pools, period]
+      end
     end
 
-    threads = clue_queries.collect do |period, pools|
+    threads = clue_queries.collect do |roles, pools, period|
       Thread.new do
-        OpenStax::Biglearn::V1.get_clues(pools: pools, period: period,
+        OpenStax::Biglearn::V1.get_clues(roles: roles, pools: pools, cache_for: period,
                                          force_cache_miss: true, ignore_answer_times: true)
       end
     end
