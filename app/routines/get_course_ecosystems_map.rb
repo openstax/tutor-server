@@ -9,6 +9,9 @@ class GetCourseEcosystemsMap
     to_content_ecosystem = course.ecosystems.preload(
       pages: [ :all_exercises_pool, { chapter: :all_exercises_pool } ]
     ).first
+
+    raise 'The given course has no ecosystems' if to_content_ecosystem.nil?
+
     to_ecosystem_strategy = ecosystem_strategy_class.new(to_content_ecosystem)
     to_ecosystem = ::Content::Ecosystem.new(strategy: to_ecosystem_strategy)
 

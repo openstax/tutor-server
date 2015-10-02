@@ -26,7 +26,7 @@ class GetTeacherGuide
 
   def gather_period_stats(period_id, course, tasked_exercises, exercise_id_to_page_map)
     { period_id: period_id }.merge(
-      compile_course_guide(course, tasked_exercises, exercise_id_to_page_map)
+      compile_course_guide(course, tasked_exercises, exercise_id_to_page_map, :teacher)
     )
   end
 

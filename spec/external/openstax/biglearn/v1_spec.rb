@@ -41,7 +41,8 @@ RSpec.describe OpenStax::Biglearn::V1, type: :external do
     let!(:client_double) {
       double.tap do |dbl|
         allow(dbl).to receive(:get_clues)
-                  .with(roles: dummy_roles, pools: dummy_pools)
+                  .with(roles: dummy_roles, pools: dummy_pools, cache_for: nil,
+                        force_cache_miss: false, ignore_answer_times: false)
                   .and_return('client get_clues response')
         allow(dbl).to receive(:add_exercises)
                   .with(exercises: dummy_exercises)

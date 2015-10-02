@@ -9,7 +9,7 @@ module CourseGuideMethods
   def get_tasked_exercises_from_completed_exercise_task_steps(completed_exercise_task_steps)
     tasked_exercise_ids = completed_exercise_task_steps.collect{ |ts| ts.tasked_id }
     Tasks::Models::TaskedExercise.where(id: tasked_exercise_ids).preload(
-      [{task_step: {task: {taskings: :role}}}, :exercise]
+      [{task_step: {task: {taskings: {role: {student: {enrollments: :period}}}}}}, :exercise]
     ).to_a.group_by{ |te| te.task_step.id }
   end
 
@@ -49,14 +49,10 @@ module CourseGuideMethods
     [tasked_exercises].flatten.flat_map{ |te| te.los + te.aplos }.uniq
   end
 
-  def get_chapter_clues(sorted_chapter_groupings)
+  def get_chapter_clues(sorted_chapter_groupings, type)
     tasked_exercises = sorted_chapter_groupings.flat_map do |chapter, page_groupings|
       page_groupings.flat_map{ |page, tasked_exercises| tasked_exercises }
     end
-
-    roles = tasked_exercises.flat_map do |te|
-      te.task_step.task.taskings.collect{ |tg| tg.role }
-    end.uniq
 
     # Flatten the array of pools so we can send it to Biglearn
     pools = sorted_chapter_groupings.flat_map do |chapter, sorted_page_groupings|
@@ -65,7 +61,24 @@ module CourseGuideMethods
       end
     end
 
-    OpenStax::Biglearn::V1.get_clues(roles: roles, pools: pools)
+    roles = tasked_exercises.flat_map do |te|
+      te.task_step.task.taskings.collect{ |tg| tg.role }
+    end.uniq
+
+    case type
+    when :student
+      # Student guide: query by role
+      Rails.logger.warn('get_chapter_clues called for more than one role') if roles.size > 1
+      OpenStax::Biglearn::V1.get_clues(roles: roles.first, pools: pools)
+    when :teacher
+      # Teacher guide: query by period
+      periods = roles.collect{ |role| role.student.period }.uniq
+      Rails.logger.warn('get_chapter_clues called for more than one period') if periods.size > 1
+      OpenStax::Biglearn::V1.get_clues(roles: roles, pools: pools, cache_for: periods.first,
+                                       ignore_answer_times: true)
+    else
+      raise 'Course guide type must be either :student or :teacher'
+    end
   end
 
   def compile_pages(sorted_page_groupings, clues_map)
@@ -88,7 +101,7 @@ module CourseGuideMethods
     end
   end
 
-  def compile_chapters(tasked_exercises, exercise_id_to_page_map)
+  def compile_chapters(tasked_exercises, exercise_id_to_page_map, type)
     chapter_groupings = group_tasked_exercises_by_chapters(tasked_exercises,
                                                            exercise_id_to_page_map)
 
@@ -96,7 +109,7 @@ module CourseGuideMethods
       [chapter, page_groupings.to_a.sort_by{ |page, tasked_exercises| page.book_location }]
     end.sort_by{ |chapter, sorted_page_groupings| chapter.book_location }
 
-    clues_map = get_chapter_clues(sorted_chapter_groupings)
+    clues_map = get_chapter_clues(sorted_chapter_groupings, type)
 
     sorted_chapter_groupings.each_with_index.collect do |(chapter, sorted_page_groupings), index|
 
@@ -118,9 +131,9 @@ module CourseGuideMethods
     end
   end
 
-  def compile_course_guide(course, tasked_exercises, exercise_id_to_page_map)
+  def compile_course_guide(course, tasked_exercises, exercise_id_to_page_map, type = :student)
     current_ecosystem = GetCourseEcosystem[course: course]
-    chapters = compile_chapters(tasked_exercises, exercise_id_to_page_map)
+    chapters = compile_chapters(tasked_exercises, exercise_id_to_page_map, type)
 
     {
       # Assuming only 1 book per ecosystem

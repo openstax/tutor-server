@@ -140,7 +140,7 @@ module OpenStax::Biglearn
       # Restore the original cache
       after(:each) { Rails.cache = @original_cache }
 
-      context 'single user' do
+      context 'single role' do
         it 'calls the API well and returns the result' do
           clues = client.get_clues(roles: [user_1_role], pools: [pool_1, pool_2])
 
@@ -217,7 +217,7 @@ module OpenStax::Biglearn
         end
       end
 
-      context 'multiple users' do
+      context 'multiple roles' do
         it 'calls the API well and returns the result' do
           clues = client.get_clues(roles: [user_1_role, user_2_role], pools: [pool_1, pool_2])
 
