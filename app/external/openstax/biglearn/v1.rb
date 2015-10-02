@@ -52,7 +52,7 @@ module OpenStax::Biglearn::V1
   # (e.g. no exercises in the pools or confidence too low).
   def self.get_clues(pools:, period: nil, role: nil,
                      force_cache_miss: false, ignore_answer_times: period.present?)
-    raise ArgumentError, 'You must provide either a period or a role but not both', caller \
+    raise ArgumentError, 'You cannot provide both a period and a role', caller \
       if period.present? && role.present?
 
     pools = [pools].flatten.compact
