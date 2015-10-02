@@ -1,9 +1,7 @@
 class OpenStax::Biglearn::V1::RealClient
 
-  # Since we don't know which flavor of SPARFA generated the CLUE,
-  # be safe and assume mini-sparfa-c, which should expire after 3 minutes (when fast SPARFA runs)
   # All cached CLUEs will expire after the given duration, even if nobody answered any questions
-  CLUE_CACHE_DURATION = 3.minutes
+  CLUE_CACHE_DURATION = 1.year
 
   # The maximum number of (pools*students) allowed to be sent in each CLUe call to Biglearn
   # At least one pool will always be sent in each request, regardless of this value
