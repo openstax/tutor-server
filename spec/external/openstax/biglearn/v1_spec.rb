@@ -31,7 +31,6 @@ RSpec.describe OpenStax::Biglearn::V1, type: :external do
 
   context 'api calls' do
     let!(:dummy_role)              { 'some role' }
-    let!(:dummy_roles)             { [dummy_role] }
     let!(:dummy_exercises)         { ['some exercises'] }
     let!(:dummy_pools)             { [double(uuid: 'some uuid')] }
     let!(:dummy_count)             { 'some count' }
@@ -41,7 +40,8 @@ RSpec.describe OpenStax::Biglearn::V1, type: :external do
     let!(:client_double) {
       double.tap do |dbl|
         allow(dbl).to receive(:get_clues)
-                  .with(roles: dummy_roles, pools: dummy_pools)
+                  .with(pools: dummy_pools, role: dummy_role, period: nil,
+                        force_cache_miss: false, ignore_answer_times: false)
                   .and_return('client get_clues response')
         allow(dbl).to receive(:add_exercises)
                   .with(exercises: dummy_exercises)
@@ -62,17 +62,17 @@ RSpec.describe OpenStax::Biglearn::V1, type: :external do
     end
 
     it 'delegates get_clues to the client' do
-      response = OpenStax::Biglearn::V1.get_clues(roles: dummy_roles, pools: dummy_pools)
+      response = OpenStax::Biglearn::V1.get_clues(role: dummy_role, pools: dummy_pools)
       expect(response).to eq('client get_clues response')
     end
 
     it 'returns an empty hash if pools is empty' do
-      response = OpenStax::Biglearn::V1.get_clues(roles: dummy_roles, pools: [])
+      response = OpenStax::Biglearn::V1.get_clues(role: dummy_role, pools: [])
       expect(response).to eq({})
     end
 
-    it 'returns a hash that maps all given pool uuids to nil if roles is empty' do
-      response = OpenStax::Biglearn::V1.get_clues(roles: [], pools: dummy_pools)
+    it 'returns a hash that maps all given pool uuids to nil if no role is given' do
+      response = OpenStax::Biglearn::V1.get_clues(pools: dummy_pools)
       expect(response).to eq({'some uuid' => nil})
     end
 

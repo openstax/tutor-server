@@ -87,7 +87,7 @@ class OpenStax::Biglearn::V1::FakeClient
         confidence_interval_interpretation: confidence,
         sample_size: samples,
         sample_size_interpretation: 'above',
-        unique_learner_count: period.present? ? period.active_enrollments.size : 1
+        unique_learner_count: period.present? ? period.active_enrollments.length : 1
       }
     end
   end

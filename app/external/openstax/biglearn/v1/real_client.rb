@@ -92,7 +92,10 @@ class OpenStax::Biglearn::V1::RealClient
   def get_clues(pools:, role: nil, period: nil,
                 force_cache_miss: false, ignore_answer_times: period.present?)
     roles = period.present? ? period.active_enrollments.collect{ |en| en.student.role } : [role]
-    learners = get_exchange_read_identifiers_for_roles(roles: roles)
+    learners = get_exchange_read_identifiers_for_roles(roles: roles).sort
+
+    # Sort the learners for predictability (mostly the cassettes...)
+    learners = learners.sort
 
     # No learners: map all pools to nil
     return pools.each_with_object({}) { |pool, hash| hash[pool.uuid] = nil } if learners.empty?
@@ -108,7 +111,7 @@ class OpenStax::Biglearn::V1::RealClient
   private
 
   def get_exchange_read_identifiers_for_roles(roles:)
-    roles.collect{ |role| role.profile.exchange_read_identifier }
+    [roles].flatten.compact.collect{ |role| role.profile.exchange_read_identifier }
   end
 
   # Returns the last answer time for all roles for each pool given

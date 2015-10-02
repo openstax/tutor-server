@@ -72,11 +72,11 @@ module OpenStax::Biglearn
 
       it 'returns a well-formatted array of clues' do
         user = User::CreateUser.call(username: SecureRandom.hex).outputs.user
-        roles = [Role::CreateUserRole[user]]
+        role = Role::CreateUserRole[user]
         pools = [pool_1, pool_2]
         pool_uuids = pools.collect(&:uuid)
 
-        clues = client.get_clues(roles: roles, pools: pools)
+        clues = client.get_clues(role: role, pools: pools)
         expect(clues.keys.size).to eq pools.size
 
         clues.each do |pool_uuid, clue|
