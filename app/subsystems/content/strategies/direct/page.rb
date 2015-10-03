@@ -8,7 +8,7 @@ module Content
         exposes :chapter, :reading_dynamic_pool, :reading_try_another_pool, :homework_core_pool,
                 :homework_dynamic_pool, :practice_widget_pool, :all_exercises_pool,
                 :exercises, :tags, :los, :aplos, :url, :uuid, :version, :cnx_id, :title, :content,
-                :book_location, :is_intro?, :fragments
+                :book_location, :is_intro?, :fragments, :snap_labs
 
         alias_method :entity_chapter, :chapter
         def chapter

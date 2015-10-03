@@ -9,6 +9,10 @@ module OpenStax::Cnx::V1
     # Remove completely
     DISCARD_CSS = '.ost-reading-discard, .os-teacher, [data-type="glossary"]'
 
+    # Find snap lab notes
+    SNAP_LAB_CSS = '.snap-lab'
+    SNAP_LAB_TITLE_CSS = '[data-type="title"]'
+
     # Find nodes that define relevant tags
     LO_DEF_NODE_CSS = '.ost-learning-objective-def'
     STD_DEF_NODE_CSS = '.ost-standards-def'
@@ -148,6 +152,16 @@ module OpenStax::Cnx::V1
       root_copy.css(DISCARD_CSS).remove
 
       @fragments = split_into_fragments(root_copy)
+    end
+
+    def snap_labs
+      converted_root.css(SNAP_LAB_CSS).collect { |snap_lab|
+        {
+          id: snap_lab.attr('id'),
+          title: snap_lab.at_css(SNAP_LAB_TITLE_CSS).try(:text),
+          fragments: split_into_fragments(snap_lab)
+        }
+      }
     end
 
     def los
