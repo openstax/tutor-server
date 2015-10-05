@@ -12,14 +12,6 @@ GIT
       transaction_isolation
       transaction_retry
 
-GIT
-  remote: git://github.com/openstax/rescue_from.git
-  revision: b243e10e3642f5c468f1ec08def64f3fc09784f0
-  specs:
-    openstax_rescue_from (1.0.0)
-      exception_notification (>= 4.1, < 5.0)
-      rails (>= 3.1, < 5.0)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -406,6 +398,9 @@ GEM
     openstax_exchange (0.2.1)
       hashie
       oauth2 (>= 0.5.0)
+    openstax_rescue_from (1.1.0)
+      exception_notification (>= 4.1, < 5.0)
+      rails (>= 3.1, < 5.0)
     openstax_utilities (4.2.1)
       keyword_search
       lev
@@ -707,7 +702,7 @@ DEPENDENCIES
   openstax_accounts (~> 6.1.3)
   openstax_api (~> 5.5.5)
   openstax_exchange (~> 0.2.1)
-  openstax_rescue_from!
+  openstax_rescue_from (~> 1.1.0)
   openstax_utilities (~> 4.2.0)
   parallel_tests
   pg

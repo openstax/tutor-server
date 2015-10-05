@@ -5,7 +5,7 @@ class TestController < ActionController::Base
 end
 
 test_routes = Proc.new do
-  get 'bad_action' => 'test#bad_action'
+  get 'bad_action' => 'test_exceptions#bad_action'
 end
 
 Rails.application.routes.send(:eval_block, test_routes)
