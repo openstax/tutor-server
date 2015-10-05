@@ -130,7 +130,7 @@ gem 'timecop'
 gem 'activerecord-import'
 
 # Notify developers of Exceptions in production
-gem 'openstax_rescue_from', '~> 1.1.0'
+gem 'openstax_rescue_from', '~> 1.1.1'
 
 group :development, :test do
   # Get env variables from .env file
