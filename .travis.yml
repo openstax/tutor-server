@@ -27,14 +27,12 @@ branches:
     - master
     - alpha
     - beta
-env:
-  - DEMO_MAX_PROCESSES=0
 before_script:
   - export OXT_DB_USER=postgres
   - export OXT_DB_PASS=
   - export OXT_TEST_DB=travis_ci_test
   - export PARALLEL_TEST_PROCESSORS=2
-  - export DEMO_MAX_PROCESSES=1
+  - export DEMO_MAX_PROCESSES=0
   - bundle exec rake --trace parallel:create parallel:load_schema parallel:seed
 before_install:
   - "export DISPLAY=:99.0"
