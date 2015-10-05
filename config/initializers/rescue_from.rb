@@ -18,11 +18,6 @@ OpenStax::RescueFrom.configure do |config|
   # config.exception_recipients = ENV['EXCEPTION_RECIPIENTS']
 end
 
-OpenStax::RescueFrom.translate_status_codes({
-  forbidden: "You are not allowed to access this.",
-  :not_found => "We couldn't find what you asked for.",
-})
-
 # OpenStax::RescueFrom.register_exception('ExampleException',
 #                                         status: :not_found,
 #                                         notify: true,
