@@ -51,11 +51,15 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
       end
     end
 
-    CHAPTER_POOL_UUIDS.each_with_index do |uuid, index|
-      @course.ecosystems.first.chapters[index].all_exercises_pool.update_attribute(:uuid, uuid)
-    end
-    PAGE_POOL_UUIDS.each_with_index do |uuid, index|
-      @course.ecosystems.first.pages[index].all_exercises_pool.update_attribute(:uuid, uuid)
+    page_index = 0
+    @course.ecosystems.first.chapters.each_with_index do |chapter, index|
+      uuid = CHAPTER_POOL_UUIDS[index]
+      chapter.all_exercises_pool.update_attribute(:uuid, uuid)
+      chapter.pages.each do |page|
+        uuid = PAGE_POOL_UUIDS[page_index]
+        page.all_exercises_pool.update_attribute(:uuid, uuid)
+        page_index += 1
+      end
     end
 
     @original_client = OpenStax::Biglearn::V1.send :client
@@ -82,39 +86,117 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
 
   after(:each) { Rails.cache = @original_cache }
 
-  it 'causes a request to biglearn for every period and every user for every call' do
-    expect(@real_client).to receive(:request_clues).exactly(8).times.and_call_original
+  context 'all clues' do
+    let(:described_args) { { type: :all } }
 
-    described_class[]
+    it 'causes a request to biglearn for every period and every user for every call' do
+      expect(@real_client).to receive(:request_clues).exactly(8).times.and_call_original
 
-    described_class[]
+      described_class[described_args] # 4 requests
+
+      described_class[described_args] # 4 requests
+    end
+
+    it 'causes requests to biglearn even if called after the teacher guide' do
+      expect(@real_client).to receive(:request_clues).exactly(6).times.and_call_original
+
+      teacher_guide = GetTeacherGuide[role: @teacher_role] # 2 requests
+      expect(teacher_guide.size).to eq 2
+
+      described_class[described_args] # 4 requests
+    end
+
+    it 'warms up the cache for the teacher guide for an arbitrary course' do
+      expect(@real_client).to receive(:request_clues).exactly(4).times.and_call_original
+
+      described_class[described_args] # 4 requests
+
+      teacher_guide = GetTeacherGuide[role: @teacher_role] # 0 requests (cached)
+      expect(teacher_guide.size).to eq 2
+    end
+
+    it 'causes requests to biglearn even if called after the student guide' do
+      expect(@real_client).to receive(:request_clues).exactly(5).times.and_call_original
+
+      student_guide = GetStudentGuide[role: @role] # 1 request
+      expect(student_guide).to be_present
+
+      described_class[described_args] # 4 requests
+    end
+
+    it 'warms up the cache for the student guide for an arbitrary student' do
+      expect(@real_client).to receive(:request_clues).exactly(4).times.and_call_original
+
+      described_class[described_args] # 4 requests
+
+      student_guide = GetStudentGuide[role: @role] # 0 requests (cached)
+      expect(student_guide).to be_present
+
+      student_guide_2 = GetStudentGuide[role: @second_role] # 0 requests (cached)
+      expect(student_guide_2).to be_present
+    end
   end
 
-  it 'causes requests to biglearn even if called after the teacher guide' do
-    expect(@real_client).to receive(:request_clues).exactly(8).times.and_call_original
+  context 'recent clues' do
+    let(:described_args) { { type: :recent } }
 
-    teacher_guide = GetTeacherGuide[role: @teacher_role]
-    expect(teacher_guide.size).to eq 2
+    context 'with recent work' do
+      it 'requests recently worked clues from biglearn' do
+        expect(@real_client).to receive(:request_clues).exactly(4).times.and_call_original
 
-    described_class[]
-  end
+        described_class[described_args] # 4 requests
+      end
 
-  it 'warms up the cache for the teacher guide for an arbitrary course' do
-    expect(@real_client).to receive(:request_clues).exactly(4).times.and_call_original
+      it 'causes requests to biglearn even if called after the teacher guide' do
+        expect(@real_client).to receive(:request_clues).exactly(6).times.and_call_original
 
-    described_class[]
+        teacher_guide = GetTeacherGuide[role: @teacher_role] # 2 requests
+        expect(teacher_guide.size).to eq 2
 
-    teacher_guide = GetTeacherGuide[role: @teacher_role]
-    expect(teacher_guide.size).to eq 2
-  end
+        described_class[described_args] # 4 requests
+      end
 
-  it 'warms up the cache for the student guide for an arbitrary student' do
-    expect(@real_client).to receive(:request_clues).exactly(4).times.and_call_original
+      it 'warms up the cache for the teacher guide for an arbitrary course' do
+        expect(@real_client).to receive(:request_clues).exactly(4).times.and_call_original
 
-    described_class[]
+        described_class[described_args] # 4 requests
 
-    student_guide = GetStudentGuide[role: @role]
-    expect(student_guide).to be_present
+        teacher_guide = GetTeacherGuide[role: @teacher_role] # 0 requests (cached)
+        expect(teacher_guide.size).to eq 2
+      end
+
+      it 'causes requests to biglearn even if called after the student guide' do
+        expect(@real_client).to receive(:request_clues).exactly(5).times.and_call_original
+
+        student_guide = GetStudentGuide[role: @role] # 1 request
+        expect(student_guide).to be_present
+
+        described_class[described_args] # 4 requests
+      end
+
+      it 'warms up the cache for the student guide for an arbitrary student' do
+        expect(@real_client).to receive(:request_clues).exactly(4).times.and_call_original
+
+        described_class[described_args] # 4 requests
+
+        student_guide = GetStudentGuide[role: @role] # 0 requests (cached)
+        expect(student_guide).to be_present
+
+        student_guide_2 = GetStudentGuide[role: @second_role] # 0 requests (cached)
+        expect(student_guide_2).to be_present
+      end
+    end
+
+    context 'without recent work' do
+      before(:all) { Timecop.freeze(Time.now + 5.minutes) }
+      after(:all)  { Timecop.return }
+
+      it 'does not cause requests to biglearn' do
+        expect(@real_client).not_to receive(:request_clues)
+
+        described_class[described_args] # 0 requests (no recent work)
+      end
+    end
   end
 
 end

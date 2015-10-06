@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://biglearn-dev.openstax.org/knowledge/clue?learners=8e79ebcd72d5061496ad94b471686015dccd126e6a42a3dd122bf15590abe8b7&pool_ids=3c60e622-9b4f-4e32-97c7-9278f7199013
+    uri: https://biglearn-dev.openstax.org/knowledge/clue?learners=21332ca231a015a11df464d759dd7de0da971bd48334ebb050540ec683f548fe&pool_ids=b30ce2b3-fd5f-4f11-954b-57dd985c2dae
     body:
       encoding: US-ASCII
       string: ''
@@ -21,11 +21,11 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Fri, 02 Oct 2015 02:34:28 GMT
+      - Tue, 06 Oct 2015 16:38:52 GMT
       Content-Type:
       - application/json
       Content-Length:
-      - '4187'
+      - '2799'
       Connection:
       - keep-alive
       Strict-Transport-Security:
@@ -36,27 +36,12 @@ http_interactions:
         {\n        \"left\": 0, \n        \"right\": 0, \n        \"sample_size\":
         0, \n        \"unique_learner_count\": 0\n      }, \n      \"interpretation\":
         {\n        \"confidence\": \"bad\", \n        \"level\": \"low\", \n        \"threshold\":
-        \"below\"\n      }, \n      \"pool_id\": \"a4b27cdd-93e3-43a2-bcb5-482bfb1a57f7\"\n
+        \"below\"\n      }, \n      \"pool_id\": \"508e4ee4-851d-4648-b130-9bacd4efbaab\"\n
         \   }, \n    {\n      \"aggregate\": 0, \n      \"confidence\": {\n        \"left\":
         0, \n        \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
         0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
         \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
-        \n      \"pool_id\": \"98da2330-310e-400f-aa28-49b4c89cb48d\"\n    }, \n    {\n
-        \     \"aggregate\": 0, \n      \"confidence\": {\n        \"left\": 0, \n
-        \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
-        0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
-        \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
-        \n      \"pool_id\": \"508e4ee4-851d-4648-b130-9bacd4efbaab\"\n    }, \n    {\n
-        \     \"aggregate\": 0, \n      \"confidence\": {\n        \"left\": 0, \n
-        \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
-        0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
-        \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
         \n      \"pool_id\": \"1cb673ca-f75b-4424-a94a-920d34817819\"\n    }, \n    {\n
-        \     \"aggregate\": 0, \n      \"confidence\": {\n        \"left\": 0, \n
-        \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
-        0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
-        \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
-        \n      \"pool_id\": \"16cdcb35-a47e-4967-93c3-a841e7b05e6d\"\n    }, \n    {\n
         \     \"aggregate\": 0, \n      \"confidence\": {\n        \"left\": 0, \n
         \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
         0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
@@ -71,16 +56,6 @@ http_interactions:
         \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
         0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
         \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
-        \n      \"pool_id\": \"0e5f74dd-204c-4122-a1ab-ca67b2e3519b\"\n    }, \n    {\n
-        \     \"aggregate\": 0, \n      \"confidence\": {\n        \"left\": 0, \n
-        \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
-        0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
-        \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
-        \n      \"pool_id\": \"b30ce2b3-fd5f-4f11-954b-57dd985c2dae\"\n    }, \n    {\n
-        \     \"aggregate\": 0, \n      \"confidence\": {\n        \"left\": 0, \n
-        \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
-        0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
-        \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
         \n      \"pool_id\": \"8c21ea7d-2462-431b-aa7e-49184c7e09f6\"\n    }, \n    {\n
         \     \"aggregate\": 0, \n      \"confidence\": {\n        \"left\": 0, \n
         \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
@@ -91,12 +66,17 @@ http_interactions:
         \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
         0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
         \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
-        \n      \"pool_id\": \"3c60e622-9b4f-4e32-97c7-9278f7199013\"\n    }\n  ]\n}"
+        \n      \"pool_id\": \"3c60e622-9b4f-4e32-97c7-9278f7199013\"\n    }, \n    {\n
+        \     \"aggregate\": 0, \n      \"confidence\": {\n        \"left\": 0, \n
+        \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
+        0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
+        \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
+        \n      \"pool_id\": \"b30ce2b3-fd5f-4f11-954b-57dd985c2dae\"\n    }\n  ]\n}"
     http_version: 
-  recorded_at: Fri, 02 Oct 2015 02:34:28 GMT
+  recorded_at: Tue, 06 Oct 2015 16:38:52 GMT
 - request:
     method: get
-    uri: https://biglearn-dev.openstax.org/knowledge/clue?learners=21332ca231a015a11df464d759dd7de0da971bd48334ebb050540ec683f548fe&pool_ids=3c60e622-9b4f-4e32-97c7-9278f7199013
+    uri: https://biglearn-dev.openstax.org/knowledge/clue?learners=21332ca231a015a11df464d759dd7de0da971bd48334ebb050540ec683f548fe&pool_ids=b30ce2b3-fd5f-4f11-954b-57dd985c2dae
     body:
       encoding: US-ASCII
       string: ''
@@ -115,11 +95,11 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Fri, 02 Oct 2015 02:34:28 GMT
+      - Tue, 06 Oct 2015 16:38:52 GMT
       Content-Type:
       - application/json
       Content-Length:
-      - '4187'
+      - '2799'
       Connection:
       - keep-alive
       Strict-Transport-Security:
@@ -130,27 +110,12 @@ http_interactions:
         {\n        \"left\": 0, \n        \"right\": 0, \n        \"sample_size\":
         0, \n        \"unique_learner_count\": 0\n      }, \n      \"interpretation\":
         {\n        \"confidence\": \"bad\", \n        \"level\": \"low\", \n        \"threshold\":
-        \"below\"\n      }, \n      \"pool_id\": \"a4b27cdd-93e3-43a2-bcb5-482bfb1a57f7\"\n
+        \"below\"\n      }, \n      \"pool_id\": \"508e4ee4-851d-4648-b130-9bacd4efbaab\"\n
         \   }, \n    {\n      \"aggregate\": 0, \n      \"confidence\": {\n        \"left\":
         0, \n        \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
         0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
         \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
-        \n      \"pool_id\": \"98da2330-310e-400f-aa28-49b4c89cb48d\"\n    }, \n    {\n
-        \     \"aggregate\": 0, \n      \"confidence\": {\n        \"left\": 0, \n
-        \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
-        0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
-        \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
-        \n      \"pool_id\": \"508e4ee4-851d-4648-b130-9bacd4efbaab\"\n    }, \n    {\n
-        \     \"aggregate\": 0, \n      \"confidence\": {\n        \"left\": 0, \n
-        \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
-        0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
-        \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
         \n      \"pool_id\": \"1cb673ca-f75b-4424-a94a-920d34817819\"\n    }, \n    {\n
-        \     \"aggregate\": 0, \n      \"confidence\": {\n        \"left\": 0, \n
-        \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
-        0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
-        \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
-        \n      \"pool_id\": \"16cdcb35-a47e-4967-93c3-a841e7b05e6d\"\n    }, \n    {\n
         \     \"aggregate\": 0, \n      \"confidence\": {\n        \"left\": 0, \n
         \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
         0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
@@ -165,16 +130,6 @@ http_interactions:
         \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
         0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
         \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
-        \n      \"pool_id\": \"0e5f74dd-204c-4122-a1ab-ca67b2e3519b\"\n    }, \n    {\n
-        \     \"aggregate\": 0, \n      \"confidence\": {\n        \"left\": 0, \n
-        \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
-        0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
-        \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
-        \n      \"pool_id\": \"b30ce2b3-fd5f-4f11-954b-57dd985c2dae\"\n    }, \n    {\n
-        \     \"aggregate\": 0, \n      \"confidence\": {\n        \"left\": 0, \n
-        \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
-        0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
-        \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
         \n      \"pool_id\": \"8c21ea7d-2462-431b-aa7e-49184c7e09f6\"\n    }, \n    {\n
         \     \"aggregate\": 0, \n      \"confidence\": {\n        \"left\": 0, \n
         \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
@@ -185,12 +140,17 @@ http_interactions:
         \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
         0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
         \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
-        \n      \"pool_id\": \"3c60e622-9b4f-4e32-97c7-9278f7199013\"\n    }\n  ]\n}"
+        \n      \"pool_id\": \"3c60e622-9b4f-4e32-97c7-9278f7199013\"\n    }, \n    {\n
+        \     \"aggregate\": 0, \n      \"confidence\": {\n        \"left\": 0, \n
+        \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
+        0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
+        \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
+        \n      \"pool_id\": \"b30ce2b3-fd5f-4f11-954b-57dd985c2dae\"\n    }\n  ]\n}"
     http_version: 
-  recorded_at: Fri, 02 Oct 2015 02:34:28 GMT
+  recorded_at: Tue, 06 Oct 2015 16:38:52 GMT
 - request:
     method: get
-    uri: https://biglearn-dev.openstax.org/knowledge/clue?learners=8e79ebcd72d5061496ad94b471686015dccd126e6a42a3dd122bf15590abe8b7&pool_ids=3c60e622-9b4f-4e32-97c7-9278f7199013
+    uri: https://biglearn-dev.openstax.org/knowledge/clue?learners=8e79ebcd72d5061496ad94b471686015dccd126e6a42a3dd122bf15590abe8b7&pool_ids=b30ce2b3-fd5f-4f11-954b-57dd985c2dae
     body:
       encoding: US-ASCII
       string: ''
@@ -209,11 +169,11 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Fri, 02 Oct 2015 02:34:28 GMT
+      - Tue, 06 Oct 2015 16:38:53 GMT
       Content-Type:
       - application/json
       Content-Length:
-      - '4187'
+      - '2799'
       Connection:
       - keep-alive
       Strict-Transport-Security:
@@ -224,27 +184,12 @@ http_interactions:
         {\n        \"left\": 0, \n        \"right\": 0, \n        \"sample_size\":
         0, \n        \"unique_learner_count\": 0\n      }, \n      \"interpretation\":
         {\n        \"confidence\": \"bad\", \n        \"level\": \"low\", \n        \"threshold\":
-        \"below\"\n      }, \n      \"pool_id\": \"a4b27cdd-93e3-43a2-bcb5-482bfb1a57f7\"\n
+        \"below\"\n      }, \n      \"pool_id\": \"508e4ee4-851d-4648-b130-9bacd4efbaab\"\n
         \   }, \n    {\n      \"aggregate\": 0, \n      \"confidence\": {\n        \"left\":
         0, \n        \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
         0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
         \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
-        \n      \"pool_id\": \"98da2330-310e-400f-aa28-49b4c89cb48d\"\n    }, \n    {\n
-        \     \"aggregate\": 0, \n      \"confidence\": {\n        \"left\": 0, \n
-        \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
-        0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
-        \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
-        \n      \"pool_id\": \"508e4ee4-851d-4648-b130-9bacd4efbaab\"\n    }, \n    {\n
-        \     \"aggregate\": 0, \n      \"confidence\": {\n        \"left\": 0, \n
-        \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
-        0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
-        \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
         \n      \"pool_id\": \"1cb673ca-f75b-4424-a94a-920d34817819\"\n    }, \n    {\n
-        \     \"aggregate\": 0, \n      \"confidence\": {\n        \"left\": 0, \n
-        \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
-        0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
-        \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
-        \n      \"pool_id\": \"16cdcb35-a47e-4967-93c3-a841e7b05e6d\"\n    }, \n    {\n
         \     \"aggregate\": 0, \n      \"confidence\": {\n        \"left\": 0, \n
         \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
         0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
@@ -259,16 +204,6 @@ http_interactions:
         \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
         0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
         \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
-        \n      \"pool_id\": \"0e5f74dd-204c-4122-a1ab-ca67b2e3519b\"\n    }, \n    {\n
-        \     \"aggregate\": 0, \n      \"confidence\": {\n        \"left\": 0, \n
-        \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
-        0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
-        \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
-        \n      \"pool_id\": \"b30ce2b3-fd5f-4f11-954b-57dd985c2dae\"\n    }, \n    {\n
-        \     \"aggregate\": 0, \n      \"confidence\": {\n        \"left\": 0, \n
-        \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
-        0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
-        \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
         \n      \"pool_id\": \"8c21ea7d-2462-431b-aa7e-49184c7e09f6\"\n    }, \n    {\n
         \     \"aggregate\": 0, \n      \"confidence\": {\n        \"left\": 0, \n
         \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
@@ -279,12 +214,17 @@ http_interactions:
         \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
         0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
         \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
-        \n      \"pool_id\": \"3c60e622-9b4f-4e32-97c7-9278f7199013\"\n    }\n  ]\n}"
+        \n      \"pool_id\": \"3c60e622-9b4f-4e32-97c7-9278f7199013\"\n    }, \n    {\n
+        \     \"aggregate\": 0, \n      \"confidence\": {\n        \"left\": 0, \n
+        \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
+        0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
+        \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
+        \n      \"pool_id\": \"b30ce2b3-fd5f-4f11-954b-57dd985c2dae\"\n    }\n  ]\n}"
     http_version: 
-  recorded_at: Fri, 02 Oct 2015 02:34:28 GMT
+  recorded_at: Tue, 06 Oct 2015 16:38:53 GMT
 - request:
     method: get
-    uri: https://biglearn-dev.openstax.org/knowledge/clue?learners=21332ca231a015a11df464d759dd7de0da971bd48334ebb050540ec683f548fe&pool_ids=3c60e622-9b4f-4e32-97c7-9278f7199013
+    uri: https://biglearn-dev.openstax.org/knowledge/clue?learners=8e79ebcd72d5061496ad94b471686015dccd126e6a42a3dd122bf15590abe8b7&pool_ids=b30ce2b3-fd5f-4f11-954b-57dd985c2dae
     body:
       encoding: US-ASCII
       string: ''
@@ -303,11 +243,11 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Fri, 02 Oct 2015 02:34:28 GMT
+      - Tue, 06 Oct 2015 16:38:53 GMT
       Content-Type:
       - application/json
       Content-Length:
-      - '4187'
+      - '2799'
       Connection:
       - keep-alive
       Strict-Transport-Security:
@@ -318,27 +258,12 @@ http_interactions:
         {\n        \"left\": 0, \n        \"right\": 0, \n        \"sample_size\":
         0, \n        \"unique_learner_count\": 0\n      }, \n      \"interpretation\":
         {\n        \"confidence\": \"bad\", \n        \"level\": \"low\", \n        \"threshold\":
-        \"below\"\n      }, \n      \"pool_id\": \"a4b27cdd-93e3-43a2-bcb5-482bfb1a57f7\"\n
+        \"below\"\n      }, \n      \"pool_id\": \"508e4ee4-851d-4648-b130-9bacd4efbaab\"\n
         \   }, \n    {\n      \"aggregate\": 0, \n      \"confidence\": {\n        \"left\":
         0, \n        \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
         0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
         \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
-        \n      \"pool_id\": \"98da2330-310e-400f-aa28-49b4c89cb48d\"\n    }, \n    {\n
-        \     \"aggregate\": 0, \n      \"confidence\": {\n        \"left\": 0, \n
-        \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
-        0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
-        \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
-        \n      \"pool_id\": \"508e4ee4-851d-4648-b130-9bacd4efbaab\"\n    }, \n    {\n
-        \     \"aggregate\": 0, \n      \"confidence\": {\n        \"left\": 0, \n
-        \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
-        0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
-        \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
         \n      \"pool_id\": \"1cb673ca-f75b-4424-a94a-920d34817819\"\n    }, \n    {\n
-        \     \"aggregate\": 0, \n      \"confidence\": {\n        \"left\": 0, \n
-        \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
-        0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
-        \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
-        \n      \"pool_id\": \"16cdcb35-a47e-4967-93c3-a841e7b05e6d\"\n    }, \n    {\n
         \     \"aggregate\": 0, \n      \"confidence\": {\n        \"left\": 0, \n
         \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
         0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
@@ -353,16 +278,6 @@ http_interactions:
         \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
         0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
         \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
-        \n      \"pool_id\": \"0e5f74dd-204c-4122-a1ab-ca67b2e3519b\"\n    }, \n    {\n
-        \     \"aggregate\": 0, \n      \"confidence\": {\n        \"left\": 0, \n
-        \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
-        0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
-        \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
-        \n      \"pool_id\": \"b30ce2b3-fd5f-4f11-954b-57dd985c2dae\"\n    }, \n    {\n
-        \     \"aggregate\": 0, \n      \"confidence\": {\n        \"left\": 0, \n
-        \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
-        0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
-        \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
         \n      \"pool_id\": \"8c21ea7d-2462-431b-aa7e-49184c7e09f6\"\n    }, \n    {\n
         \     \"aggregate\": 0, \n      \"confidence\": {\n        \"left\": 0, \n
         \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
@@ -373,7 +288,12 @@ http_interactions:
         \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
         0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
         \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
-        \n      \"pool_id\": \"3c60e622-9b4f-4e32-97c7-9278f7199013\"\n    }\n  ]\n}"
+        \n      \"pool_id\": \"3c60e622-9b4f-4e32-97c7-9278f7199013\"\n    }, \n    {\n
+        \     \"aggregate\": 0, \n      \"confidence\": {\n        \"left\": 0, \n
+        \       \"right\": 0, \n        \"sample_size\": 0, \n        \"unique_learner_count\":
+        0\n      }, \n      \"interpretation\": {\n        \"confidence\": \"bad\",
+        \n        \"level\": \"low\", \n        \"threshold\": \"below\"\n      },
+        \n      \"pool_id\": \"b30ce2b3-fd5f-4f11-954b-57dd985c2dae\"\n    }\n  ]\n}"
     http_version: 
-  recorded_at: Fri, 02 Oct 2015 02:34:28 GMT
+  recorded_at: Tue, 06 Oct 2015 16:38:53 GMT
 recorded_with: VCR 2.9.3

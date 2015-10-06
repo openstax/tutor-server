@@ -89,20 +89,23 @@ class UpdateClues
     end
 
     num_queries = split_clue_queries.size
-    slice_size = (num_queries/CONCURRENT_BIGLEARN_REQUESTS.to_f).ceil
 
-    threads = split_clue_queries.each_slice(slice_size).collect do |queries|
-      Thread.new do
-        queries.collect do |roles, pools, cache_for|
-          OpenStax::Biglearn::V1.get_clues(roles: roles, pools: pools,
-                                           cache_for: cache_for, force_cache_miss: true)
+    if num_queries > 0
+      slice_size = (num_queries/CONCURRENT_BIGLEARN_REQUESTS.to_f).ceil
+
+      threads = split_clue_queries.each_slice(slice_size).collect do |queries|
+        Thread.new do
+          queries.collect do |roles, pools, cache_for|
+            OpenStax::Biglearn::V1.get_clues(roles: roles, pools: pools,
+                                             cache_for: cache_for, force_cache_miss: true)
+          end
         end
       end
+
+      log type, "Making #{num_queries} requests to Biglearn using #{threads.size} threads"
+
+      threads.each(&:join)
     end
-
-    log type, "Making #{num_queries} requests to Biglearn using #{threads.size} threads"
-
-    threads.each(&:join)
 
     log type, "Done after #{Time.now - start_time} seconds"
   end
