@@ -89,10 +89,7 @@ class OpenStax::Biglearn::V1::RealClient
   end
 
   def get_clues(roles:, pools:, cache_for: nil, force_cache_miss: false)
-    learners = get_exchange_read_identifiers_for_roles(roles: roles).sort
-
-    # Sort the learners for predictability (mostly for the cassettes...)
-    learners = learners.sort
+    learners = get_exchange_read_identifiers_for_roles(roles: roles)
 
     # No learners: map all pools to nil
     return pools.each_with_object({}) { |pool, hash| hash[pool.uuid] = nil } if learners.empty?

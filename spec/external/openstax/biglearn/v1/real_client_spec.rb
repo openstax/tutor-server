@@ -1,5 +1,6 @@
 require 'rails_helper'
 require 'vcr_helper'
+require 'support/biglearn_real_client_vcr_helper'
 
 module OpenStax::Biglearn
   RSpec.describe V1::RealClient, type: :external, vcr: VCR_OPTS do
