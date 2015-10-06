@@ -43,8 +43,8 @@ module Tasks
                          end
 
                          # gather the task into the results for use in calulating header stats
-                         student_tasks.each_with_index do | task, index |
-                             task_plan_results[task.task_plan] << task
+                         student_tasks.each do | task |
+                           task_plan_results[task.task_plan] << task
                          end
 
                          {
@@ -111,9 +111,9 @@ module Tasks
       # skip if no tasks meet the display requirements
       return if valid_tasks.none?
 
-      valid_tasks.map{ |task|
-        task.correct_exercise_steps_count * 100.0/task.exercise_steps_count
-      }.reduce(:+)/valid_tasks.size
+      valid_tasks.reduce(0){ |sum, task|
+        sum + ( task.correct_exercise_steps_count * 100.0 / task.exercise_steps_count )
+      } / valid_tasks.size
     end
 
     def get_student_data(tasks)
