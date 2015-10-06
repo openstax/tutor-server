@@ -1,12 +1,12 @@
 require 'openstax_rescue_from'
 
 OpenStax::RescueFrom.configure do |config|
-  config.raise_exceptions = Rails.application.secrets['rescue_from']['raise_exceptions'] ||
+  config.raise_exceptions = Rails.application.secrets['exceptions']['raise'] ||
                               Rails.application.config.consider_all_requests_local
 
-  config.app_name = Rails.application.secrets['rescue_from']['app_name']
-  config.app_env = Rails.application.secrets['rescue_from']['app_env']
-  config.contact_name = Rails.application.secrets['rescue_from']['contact_name']
+  config.app_name = 'Tutor'
+  config.app_env = ENV['APP_ENV']
+  config.contact_name = Rails.application.secrets['exceptions']['contact_name']
 
   # config.notifier = ExceptionNotifier
 
@@ -14,9 +14,9 @@ OpenStax::RescueFrom.configure do |config|
   # config.html_error_template_layout_name = 'application'
 
   # config.email_prefix = "[#{app_name}] (#{app_env}) "
-  config.sender_address = Rails.application.secrets['rescue_from']['sender_address']
+  config.sender_address = Rails.application.secrets['exceptions']['sender']
   config.exception_recipients = Rails.application
-                                     .secrets['rescue_from']['exception_recipients']
+                                     .secrets['exceptions']['recipients']
 end
 
 # OpenStax::RescueFrom.register_exception('ExampleException',
