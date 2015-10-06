@@ -26,24 +26,30 @@ class UpdateClues
 
     start_time = Time.now
 
-    # Make a list of all exercises being considered according to the :type parameter
-    all_exercise_models = case type
-    when :all
-      # All exercises ever assigned are considered for the CLUe update
-      Content::Models::Exercise.joins(:tasked_exercises)
-    when :recent
-      # Recently worked exercises are considered for the CLUe update
-      recent_cutoff = start_time - RECENT_EXERCISE_DURATION
+    tasked_exercise_relation = Tasks::Models::TaskedExercise.joins(:task_step).preload(
+      [ { task_step: { task: { taskings: :role } } }, :exercise ]
+    )
 
-      Content::Models::Exercise
-        .joins(tasked_exercises: :task_step)
-        .where{ tasked_exercises.task_step.last_completed_at > recent_cutoff }
+    # Make a list of all tasked exercises being considered according to the :type parameter
+    active_tasked_exercises = case type
+    when :all
+      # All tasked exercises are considered for the CLUe update
+      tasked_exercise_relation
+    when :recent
+      # Recently worked tasked exercises are considered for the CLUe update
+      recent_cutoff = start_time - RECENT_EXERCISE_DURATION
+      tasked_exercise_relation.where{ task_step.last_completed_at > recent_cutoff }
     else
       raise ArgumentError, ':type must be either :all or :recent', caller
     end
 
-    all_exercises = all_exercise_models.collect do |exercise_model|
-      strategy = Content::Strategies::Direct::Exercise.new(exercise_model)
+    active_roles = active_tasked_exercises.flat_map do |tasked_exercise|
+      tasked_exercise.task_step.task.taskings.collect{ |tg| tg.role }
+    end
+
+    active_exercises = active_tasked_exercises.collect do |tasked_exercise|
+      model = tasked_exercise.exercise
+      strategy = Content::Strategies::Direct::Exercise.new(model)
       Content::Exercise.new(strategy: strategy)
     end
 
@@ -56,18 +62,28 @@ class UpdateClues
 
       # Map all the exercises being considered to pages in the current ecosystem
       # Clues are always requested based on the current ecosystem
-      pages = ecosystems_map.map_exercises_to_pages(exercises: all_exercises).values.compact.uniq
-      chapters = pages.collect(&:chapter).uniq
+      pages = ecosystems_map.map_exercises_to_pages(exercises: active_exercises)
+                            .values.compact.uniq
 
+      # Skip if no exercises that map to the current ecosystem got worked
+      next [] if pages.empty?
+
+      chapters = pages.collect(&:chapter).uniq
       pools = chapters.collect(&:all_exercises_pool) + pages.collect(&:all_exercises_pool)
 
-      next if pools.empty?
-
       course.periods.flat_map do |period|
-        roles = period.active_enrollments.collect{ |ae| ae.student.role }
-        [[roles, pools, period]] + roles.collect{ |role| [[role], pools, role] }
+        period_roles = period.active_enrollments.collect{ |ae| ae.student.role }
+        # The & operator acts like #uniq (see documentation)
+        active_period_roles = active_roles & period_roles 
+
+        # No need to update period CLUes if nobody in the period worked any problems
+        next [] if active_period_roles.empty?
+
+        # Update CLUes for the entire period, plus CLUes for individual students that did work
+        [[period_roles, pools, period]] + \
+        active_period_roles.collect{ |role| [[role], pools, role] }
       end
-    end.compact
+    end
 
     # Split queries that are too big
     # We do this here instead of relying on the RealClient so we can
