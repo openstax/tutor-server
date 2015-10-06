@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'vcr_helper'
 require 'database_cleaner'
 
-RSpec.describe UpdatePeriodClues, type: :routine, vcr: VCR_OPTS do
+RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
 
   # These strings have to match whatever values are in the cassettes for this file
   USER_1_IDENTIFIER  =  '21332ca231a015a11df464d759dd7de0da971bd48334ebb050540ec683f548fe'
@@ -72,7 +72,7 @@ RSpec.describe UpdatePeriodClues, type: :routine, vcr: VCR_OPTS do
     @original_cache = Rails.cache
     Rails.cache = ActiveSupport::Cache::MemoryStore.new
 
-    # VCR is not threadsafe, so stub out thread creation
+    # VCR is not threadsafe, so stub out thread creation and process requests inline
     # Return an OpenStruct so we can call .join safely
     allow(Thread).to receive(:new) do |&block|
       block.call
@@ -82,16 +82,16 @@ RSpec.describe UpdatePeriodClues, type: :routine, vcr: VCR_OPTS do
 
   after(:each) { Rails.cache = @original_cache }
 
-  it 'causes a request to biglearn for every period for every call' do
-    expect(@real_client).to receive(:request_clues).exactly(4).times.and_call_original
+  it 'causes a request to biglearn for every period and every user for every call' do
+    expect(@real_client).to receive(:request_clues).exactly(8).times.and_call_original
 
     described_class[]
 
     described_class[]
   end
 
-  it 'causes a request to biglearn for every period even if called after the teacher guide' do
-    expect(@real_client).to receive(:request_clues).exactly(4).times.and_call_original
+  it 'causes requests to biglearn even if called after the teacher guide' do
+    expect(@real_client).to receive(:request_clues).exactly(8).times.and_call_original
 
     teacher_guide = GetTeacherGuide[role: @teacher_role]
     expect(teacher_guide.size).to eq 2
@@ -100,12 +100,21 @@ RSpec.describe UpdatePeriodClues, type: :routine, vcr: VCR_OPTS do
   end
 
   it 'warms up the cache for the teacher guide for an arbitrary course' do
-    expect(@real_client).to receive(:request_clues).twice.and_call_original
+    expect(@real_client).to receive(:request_clues).exactly(4).times.and_call_original
 
     described_class[]
 
     teacher_guide = GetTeacherGuide[role: @teacher_role]
     expect(teacher_guide.size).to eq 2
+  end
+
+  it 'warms up the cache for the student guide for an arbitrary student' do
+    expect(@real_client).to receive(:request_clues).exactly(4).times.and_call_original
+
+    described_class[]
+
+    student_guide = GetStudentGuide[role: @role]
+    expect(student_guide).to be_present
   end
 
 end
