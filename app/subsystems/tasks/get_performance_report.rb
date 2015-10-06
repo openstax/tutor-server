@@ -24,20 +24,28 @@ module Tasks
                                            hash[tasking_plan.task_plan] = index
                                          }
         role_taskings = taskings.to_a.group_by(&:role)
-        sorted_student_data = role_taskings.to_a.sort_by { |student_role, _|
+        sorted_student_data = role_taskings.sort_by { |student_role, _|
                                 student_role.profile.account.last_name.downcase
-                              }
-        student_data = sorted_student_data.collect do |student_role, taskings|
+        }
+        task_plan_results = Hash.new{|h, key|h[key] = []}
+
+        student_data = sorted_student_data.collect do |student_role, student_taskings|
                          # Populate the student_tasks array but leave empty spaces (nils)
                          # for assignments the student hasn't done
                          student_tasks = Array.new(tasking_plans.size)
-                         taskings.each do |tg|
+                         student_taskings.each do |tg|
                            index = task_plan_indices[tg.task.task.task_plan]
                            # skip if task not assigned to current period
                            # could be individual, like practice widget,
                            # or assigned to a different period
                            next if index.nil?
                            student_tasks[index] = tg.task.task
+                         end
+
+                         # gather the task into the results for use in calulating header stats
+                         student_tasks.each do | task |
+                           next unless task
+                           task_plan_results[task.task_plan] << task
                          end
 
                          {
@@ -51,7 +59,7 @@ module Tasks
 
         Hashie::Mash.new({
           period: period,
-          data_headings: get_data_headings(tasking_plans, period),
+          data_headings: get_data_headings(tasking_plans, task_plan_results),
           students: student_data
         })
       end
@@ -70,44 +78,43 @@ module Tasks
     def get_taskings(period)
       task_types = Models::Task.task_types.values_at(:reading, :homework, :external)
       # Return reading, homework and external tasks for a student
-      period.taskings.preload(task: {task: {task_plan: :tasking_plans}},
+      period.taskings.preload(task: {task: {task_plan: {tasking_plans: :target} }},
                               role: {profile: :account})
                      .joins(task: :task)
                      .where(task: {task: {task_type: task_types}})
     end
 
-    def get_data_headings(tasking_plans, period)
-      tasking_plans.collect.with_index do |tasking_plan, i|
+    def get_data_headings(tasking_plans, task_plan_results)
+      tasking_plans.map do |tasking_plan|
         task_plan = tasking_plan.task_plan
         {
           title: task_plan.title,
           plan_id: task_plan.id,
           type: task_plan.type,
           due_at: tasking_plan.due_at,
-          average: average(task_plan, period)
+          average: average(task_plan, task_plan_results[task_plan])
         }
       end
     end
 
-    def average(task_plan, period)
-      # skip if not a homework
+    # returns the average for the task_plan
+    def average(task_plan, tasks)
+      # skip if not a homework.
       return unless task_plan.type == 'homework'
 
-      # tasks must have more than 0 exercises
-      # someone must have started the task or it must be past due
-      # tasks must be assigned to students in the given period
-      period_tasks = task_plan.tasks.select do |task|
+      # tasks must have more than 0 exercises and
+      # have been started or it must be past due
+      valid_tasks = tasks.select do |task|
         task.exercise_steps_count > 0 && \
-        (task.completed_exercise_steps_count > 0 || task.past_due?) && \
-        task.taskings.any?{ |tg| tg.period == period }
+        (task.completed_exercise_steps_count > 0 || task.past_due?)
       end
 
       # skip if no tasks meet the display requirements
-      return if period_tasks.empty?
+      return if valid_tasks.none?
 
-      period_tasks.map do |task|
-        task.correct_exercise_steps_count * 100.0/task.exercise_steps_count
-      end.reduce(:+)/period_tasks.size
+      valid_tasks.reduce(0){ |sum, task|
+        sum + ( task.correct_exercise_steps_count * 100.0 / task.exercise_steps_count )
+      } / valid_tasks.size
     end
 
     def get_student_data(tasks)
