@@ -24,7 +24,6 @@ module Tasks
                                            hash[tasking_plan.task_plan] = index
                                          }
         role_taskings = taskings.to_a.group_by(&:role)
-
         sorted_student_data = role_taskings.sort_by { |student_role, _|
                                 student_role.profile.account.last_name.downcase
         }
@@ -59,7 +58,7 @@ module Tasks
 
         Hashie::Mash.new({
           period: period,
-          data_headings: get_data_headings(task_plan_results), #student_data, tasking_plans, period),
+          data_headings: get_data_headings(tasking_plans, task_plan_results),
           students: student_data
         })
       end
@@ -84,22 +83,23 @@ module Tasks
                      .where(task: {task: {task_type: task_types}})
     end
 
-    def get_data_headings(task_plan_results)
-      task_plan_results.map do | task_plan, tasks |
+    def get_data_headings(tasking_plans, task_plan_results)
+      tasking_plans.map do |tasking_plan|
+        task_plan = tasking_plan.task_plan
         {
           title: task_plan.title,
           plan_id: task_plan.id,
           type: task_plan.type,
-          due_at: tasks.find{|task| task }.try(:due_at), # HACK because tasks can be nil
-          average: average(tasks)
+          due_at: tasking_plan.due_at,
+          average: average(task_plan, task_plan_results[task_plan])
         }
       end
     end
 
     # returns the average for the task_plan
-    def average(tasks) #task_plan, period)
-      # skip if not a homework.  Use find because it'll break on first match
-      return unless not tasks.find{|task| task.task_type == 'homework' }
+    def average(task_plan, tasks)
+      # skip if not a homework.
+      return unless task_plan.type == 'homework'
 
       # tasks must have more than 0 exercises and
       # have been started or it must be past due
@@ -111,9 +111,9 @@ module Tasks
       # skip if no tasks meet the display requirements
       return if valid_tasks.none?
 
-      valid_tasks.map do |task|
+      valid_tasks.map{ |task|
         task.correct_exercise_steps_count * 100.0/task.exercise_steps_count
-      end.reduce(:+)/tasks.size
+      }.reduce(:+)/valid_tasks.size
     end
 
     def get_student_data(tasks)
