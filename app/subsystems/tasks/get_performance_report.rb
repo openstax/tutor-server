@@ -98,7 +98,7 @@ module Tasks
       # tasks must have more than 0 exercises
       # someone must have started the task or it must be past due
       # tasks must be assigned to students in the given period
-      period_tasks = task_plan.tasks.select do |task|
+      period_tasks = task_plan.tasks.preload(:taskings).select do |task|
         task.exercise_steps_count > 0 && \
         (task.completed_exercise_steps_count > 0 || task.past_due?) && \
         task.taskings.any?{ |tg| tg.course_membership_period_id == period.id }
