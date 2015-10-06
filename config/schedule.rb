@@ -5,6 +5,6 @@ every 1.minute do
   rake 'openstax:biglearn:clues:update:recent'
 end
 
-every 1.day do
+every 1.day, at: '3:00 AM' do
   rake 'openstax:biglearn:clues:update:all'
 end
