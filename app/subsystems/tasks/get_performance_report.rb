@@ -28,6 +28,7 @@ module Tasks
         sorted_student_data = role_taskings.sort_by { |student_role, _|
                                 student_role.profile.account.last_name.downcase
         }
+        task_plan_results = Hash.new{|h, key|h[key] = []}
 
         student_data = sorted_student_data.collect do |student_role, student_taskings|
                          # Populate the student_tasks array but leave empty spaces (nils)
@@ -42,6 +43,11 @@ module Tasks
                            student_tasks[index] = tg.task.task
                          end
 
+                         # gather the task into the results for use in calulating header stats
+                         student_tasks.each_with_index do | task, index |
+                             task_plan_results[task.task_plan] << task
+                         end
+
                          {
                            name: student_role.name,
                            first_name: student_role.first_name,
@@ -53,7 +59,7 @@ module Tasks
 
         Hashie::Mash.new({
           period: period,
-          data_headings: get_data_headings(tasking_plans, tasking_plans),
+          data_headings: get_data_headings(task_plan_results), #student_data, tasking_plans, period),
           students: student_data
         })
       end
@@ -78,29 +84,26 @@ module Tasks
                      .where(task: {task: {task_type: task_types}})
     end
 
-    def get_data_headings(tasking_plans, taskings)
-      tasking_plans.map do | tasking_plan |
-        # use the plan from taskings, it has preloaded associations
-        task_plan = taskings.find{|tasking| task_plan = tasking_plan.task_plan }.task_plan
+    def get_data_headings(task_plan_results)
+      task_plan_results.map do | task_plan, tasks |
         {
           title: task_plan.title,
           plan_id: task_plan.id,
           type: task_plan.type,
-          due_at: tasking_plan.due_at,
-          average: average(task_plan)
+          due_at: tasks.find{|task| task }.try(:due_at), # HACK because tasks can be nil
+          average: average(tasks)
         }
       end
     end
 
     # returns the average for the task_plan
-    def average(task_plan)
-      # skip if not a homework
-      return unless task_plan.type == 'homework'
+    def average(tasks) #task_plan, period)
+      # skip if not a homework.  Use find because it'll break on first match
+      return unless not tasks.find{|task| task.task_type == 'homework' }
 
-      # tasks must have more than 0 exercises
-      # someone must have started the task or it must be past due
-      # tasks must be assigned to students in the given period
-      valid_tasks = task_plan.tasks.select do |task|
+      # tasks must have more than 0 exercises and
+      # have been started or it must be past due
+      valid_tasks = tasks.select do |task|
         task.exercise_steps_count > 0 && \
         (task.completed_exercise_steps_count > 0 || task.past_due?)
       end
@@ -110,7 +113,7 @@ module Tasks
 
       valid_tasks.map do |task|
         task.correct_exercise_steps_count * 100.0/task.exercise_steps_count
-      end.reduce(:+)/valid_tasks.size
+      end.reduce(:+)/tasks.size
     end
 
     def get_student_data(tasks)
