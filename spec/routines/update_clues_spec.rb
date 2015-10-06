@@ -141,7 +141,7 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
   context 'recent clues' do
     let(:described_args) { { type: :recent } }
 
-    context 'with recent work' do
+    context 'with all recent work' do
       it 'requests recently worked clues from biglearn' do
         expect(@real_client).to receive(:request_clues).exactly(4).times.and_call_original
 
@@ -185,6 +185,52 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
 
         student_guide_2 = GetStudentGuide[role: @second_role] # 0 requests (cached)
         expect(student_guide_2).to be_present
+      end
+    end
+
+    context 'with some recent work' do
+      before(:all) { Timecop.freeze(Time.now + 5.minutes) }
+      after(:all)  { Timecop.return }
+
+      before(:each) do
+        @role.taskings.each do |tasking|
+          tasking.task.task.task_steps.select{ |ts| ts.completed? }.each do |ts|
+            MarkTaskStepCompleted[task_step: ts]
+          end
+        end
+      end
+
+      it 'causes requests to biglearn only for the recent work' do
+        expect(@real_client).to receive(:request_clues).twice.and_call_original
+
+        described_class[described_args] # 2 request (relevant student + period)
+      end
+
+      it 'causes requests to biglearn even if called after the student guide' do
+        expect(@real_client).to receive(:request_clues).exactly(3).times.and_call_original
+
+        student_guide = GetStudentGuide[role: @role] # 1 request
+        expect(student_guide).to be_present
+
+        described_class[described_args] # 2 requests
+      end
+
+      it 'warms up the cache for the student guide for students that recently worked problems' do
+        expect(@real_client).to receive(:request_clues).twice.and_call_original
+
+        described_class[described_args] # 2 requests
+
+        student_guide = GetStudentGuide[role: @role] # 0 requests (cached)
+        expect(student_guide).to be_present
+      end
+
+      it 'does not cache clues for students that have not recently worked problems' do
+        expect(@real_client).to receive(:request_clues).exactly(3).times.and_call_original
+
+        described_class[described_args] # 2 requests
+
+        student_guide = GetStudentGuide[role: @second_role] # 1 request
+        expect(student_guide).to be_present
       end
     end
 
