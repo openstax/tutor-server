@@ -44,6 +44,7 @@ module Tasks
 
                          # gather the task into the results for use in calulating header stats
                          student_tasks.each do | task |
+                           next unless task
                            task_plan_results[task.task_plan] << task
                          end
 
