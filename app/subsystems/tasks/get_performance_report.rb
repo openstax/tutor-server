@@ -53,7 +53,7 @@ module Tasks
 
         Hashie::Mash.new({
           period: period,
-          data_headings: get_data_headings(tasking_plans, period),
+          data_headings: get_data_headings(tasking_plans, tasking_plans),
           students: student_data
         })
       end
@@ -78,38 +78,39 @@ module Tasks
                      .where(task: {task: {task_type: task_types}})
     end
 
-    def get_data_headings(tasking_plans, period)
-      tasking_plans.collect.with_index do |tasking_plan, i|
-        task_plan = tasking_plan.task_plan
+    def get_data_headings(tasking_plans, taskings)
+      tasking_plans.map do | tasking_plan |
+        # use the plan from taskings, it has preloaded associations
+        task_plan = taskings.find{|tasking| task_plan = tasking_plan.task_plan }.task_plan
         {
           title: task_plan.title,
           plan_id: task_plan.id,
           type: task_plan.type,
           due_at: tasking_plan.due_at,
-          average: average(task_plan, period)
+          average: average(task_plan)
         }
       end
     end
 
-    def average(task_plan, period)
+    # returns the average for the task_plan
+    def average(task_plan)
       # skip if not a homework
       return unless task_plan.type == 'homework'
 
       # tasks must have more than 0 exercises
       # someone must have started the task or it must be past due
       # tasks must be assigned to students in the given period
-      period_tasks = task_plan.tasks.preload(:taskings).select do |task|
+      valid_tasks = task_plan.tasks.select do |task|
         task.exercise_steps_count > 0 && \
-        (task.completed_exercise_steps_count > 0 || task.past_due?) && \
-        task.taskings.any?{ |tg| tg.course_membership_period_id == period.id }
+        (task.completed_exercise_steps_count > 0 || task.past_due?)
       end
 
       # skip if no tasks meet the display requirements
-      return if period_tasks.empty?
+      return if valid_tasks.none?
 
-      period_tasks.map do |task|
+      valid_tasks.map do |task|
         task.correct_exercise_steps_count * 100.0/task.exercise_steps_count
-      end.reduce(:+)/period_tasks.size
+      end.reduce(:+)/valid_tasks.size
     end
 
     def get_student_data(tasks)
