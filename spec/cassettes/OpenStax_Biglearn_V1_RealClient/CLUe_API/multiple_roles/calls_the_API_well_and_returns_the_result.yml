@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://biglearn-dev.openstax.org/knowledge/clue?learners=8e79ebcd72d5061496ad94b471686015dccd126e6a42a3dd122bf15590abe8b7&pool_ids=5e816a18-9fdb-4430-9cb8-de2661940b3b
+    uri: https://biglearn-dev.openstax.org/knowledge/clue?learners=8e79ebcd72d5061496ad94b471686015dccd126e6a42a3dd122bf15590abe8b7&pool_ids=c8183974-c247-41a0-ad38-e69b72159b76
     body:
       encoding: US-ASCII
       string: ''

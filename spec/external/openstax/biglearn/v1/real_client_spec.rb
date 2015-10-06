@@ -1,5 +1,6 @@
 require 'rails_helper'
 require 'vcr_helper'
+require 'support/biglearn_real_client_vcr_helper'
 
 module OpenStax::Biglearn
   RSpec.describe V1::RealClient, type: :external, vcr: VCR_OPTS do
@@ -177,44 +178,6 @@ module OpenStax::Biglearn
           clues = client.get_clues(roles: [user_1_role], pools: [pool_1, pool_2])
           expect(clues).to eq({ pool_1.uuid => pool_1_clue, pool_2.uuid => pool_2_clue })
         end
-
-        it 'invalidates cached CLUes when a new question is answered' do
-          tasked_exercise = FactoryGirl.create :tasks_tasked_exercise,
-                                               :with_tasking,
-                                               exercise: content_exercise,
-                                               tasked_to: user_1_role
-
-          allow(client).to receive(:request).and_return(valid_response)
-
-          expect(client).to receive(:request).twice
-
-          # Miss
-          clues = client.get_clues(roles: [user_1_role], pools: [pool_1, pool_2])
-          expect(clues).to eq({ pool_1.uuid => pool_1_clue, pool_2.uuid => pool_2_clue })
-
-          # Hit
-          clues = client.get_clues(roles: [user_1_role], pools: [pool_1])
-          expect(clues).to eq({ pool_1.uuid => pool_1_clue })
-
-          # Hit
-          clues = client.get_clues(roles: [user_1_role], pools: [pool_2])
-          expect(clues).to eq({ pool_2.uuid => pool_2_clue })
-
-          # Pretend user_1 answered some exercise in pool_1
-          tasked_exercise.task_step.complete.save!
-
-          # Miss
-          clues = client.get_clues(roles: [user_1_role], pools: [pool_1])
-          expect(clues).to eq({ pool_1.uuid => pool_1_clue })
-
-          # Hit
-          clues = client.get_clues(roles: [user_1_role], pools: [pool_2])
-          expect(clues).to eq({ pool_2.uuid => pool_2_clue })
-
-          # Hit
-          clues = client.get_clues(roles: [user_1_role], pools: [pool_1, pool_2])
-          expect(clues).to eq({ pool_1.uuid => pool_1_clue, pool_2.uuid => pool_2_clue })
-        end
       end
 
       context 'multiple roles' do
@@ -261,44 +224,6 @@ module OpenStax::Biglearn
           # Hit
           clues = client.get_clues(roles: [user_1_role], pools: [pool_1, pool_2])
           expect(clues).to eq({ pool_1.uuid => pool_1_clue, pool_2.uuid => pool_2_clue })
-        end
-
-        it 'invalidates cached CLUes when a new question is answered' do
-          tasked_exercise = FactoryGirl.create :tasks_tasked_exercise,
-                                               :with_tasking,
-                                               exercise: content_exercise,
-                                               tasked_to: user_1_role
-
-          allow(client).to receive(:request).and_return(valid_response)
-
-          expect(client).to receive(:request).twice
-
-          # Miss
-          clues = client.get_clues(roles: [user_1_role, user_2_role], pools: [pool_1, pool_2])
-          expect(clues).to eq({ pool_1.uuid => pool_1_clue, pool_2.uuid => pool_2_clue })
-
-          # Hit
-          clues = client.get_clues(roles: [user_1_role, user_2_role], pools: [pool_1])
-          expect(clues).to eq({ pool_1.uuid => pool_1_clue })
-
-          # Hit
-          clues = client.get_clues(roles: [user_2_role, user_1_role], pools: [pool_2])
-          expect(clues).to eq({ pool_2.uuid => pool_2_clue })
-
-          # Pretend user_1 answered some exercise in pool_1
-          tasked_exercise.task_step.complete.save!
-
-          # Hit
-          clues = client.get_clues(roles: [user_1_role, user_2_role], pools: [pool_2])
-          expect(clues).to eq({ pool_2.uuid => pool_2_clue })
-
-          # Miss
-          clues = client.get_clues(roles: [user_2_role, user_1_role], pools: [pool_2, pool_1])
-          expect(clues).to eq({ pool_1.uuid => pool_1_clue, pool_2.uuid => pool_2_clue })
-
-          # Hit
-          clues = client.get_clues(roles: [user_1_role, user_2_role], pools: [pool_1])
-          expect(clues).to eq({ pool_1.uuid => pool_1_clue })
         end
       end
     end
