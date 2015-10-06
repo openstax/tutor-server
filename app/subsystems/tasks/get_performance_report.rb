@@ -24,14 +24,16 @@ module Tasks
                                            hash[tasking_plan.task_plan] = index
                                          }
         role_taskings = taskings.to_a.group_by(&:role)
-        sorted_student_data = role_taskings.to_a.sort_by { |student_role, _|
+
+        sorted_student_data = role_taskings.sort_by { |student_role, _|
                                 student_role.profile.account.last_name.downcase
-                              }
-        student_data = sorted_student_data.collect do |student_role, taskings|
+        }
+
+        student_data = sorted_student_data.collect do |student_role, student_taskings|
                          # Populate the student_tasks array but leave empty spaces (nils)
                          # for assignments the student hasn't done
                          student_tasks = Array.new(tasking_plans.size)
-                         taskings.each do |tg|
+                         student_taskings.each do |tg|
                            index = task_plan_indices[tg.task.task.task_plan]
                            # skip if task not assigned to current period
                            # could be individual, like practice widget,
@@ -70,7 +72,7 @@ module Tasks
     def get_taskings(period)
       task_types = Models::Task.task_types.values_at(:reading, :homework, :external)
       # Return reading, homework and external tasks for a student
-      period.taskings.preload(task: {task: {task_plan: :tasking_plans}},
+      period.taskings.preload(task: {task: {task_plan: {tasking_plans: :target} }},
                               role: {profile: :account})
                      .joins(task: :task)
                      .where(task: {task: {task_type: task_types}})
