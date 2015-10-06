@@ -29,10 +29,10 @@ class UpdateClues
     # Make a list of all exercises being considered according to the :type parameter
     all_exercise_models = case type
     when :all
-      # All exercises ever assigned are valid
+      # All exercises ever assigned are considered for the CLUe update
       Content::Models::Exercise.joins(:tasked_exercises)
     when :recent
-      # Recently worked exercises are valid
+      # Recently worked exercises are considered for the CLUe update
       recent_cutoff = start_time - RECENT_EXERCISE_DURATION
 
       Content::Models::Exercise
@@ -55,8 +55,8 @@ class UpdateClues
       ecosystems_map = run(:get_map, course: course).outputs.ecosystems_map
 
       # Map all the exercises being considered to pages in the current ecosystem
-      # Clues are always requested based on the pages of the current ecosystem
-      pages = ecosystems_map.map_exercises_to_pages(exercises: all_exercises).values
+      # Clues are always requested based on the current ecosystem
+      pages = ecosystems_map.map_exercises_to_pages(exercises: all_exercises).values.compact.uniq
       chapters = pages.collect(&:chapter).uniq
 
       pools = chapters.collect(&:all_exercises_pool) + pages.collect(&:all_exercises_pool)
