@@ -101,7 +101,7 @@ module Tasks
       period_tasks = task_plan.tasks.select do |task|
         task.exercise_steps_count > 0 && \
         (task.completed_exercise_steps_count > 0 || task.past_due?) && \
-        task.taskings.any?{ |tg| tg.period == period }
+        task.taskings.any?{ |tg| tg.course_membership_period_id == period.id }
       end
 
       # skip if no tasks meet the display requirements
