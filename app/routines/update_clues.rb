@@ -31,7 +31,7 @@ class UpdateClues
     )
 
     # Make a list of all tasked exercises being considered according to the :type parameter
-    active_tasked_exercises = case type
+    worked_tasked_exercises = case type
     when :all
       # All tasked exercises are considered for the CLUe update
       tasked_exercise_relation
@@ -43,45 +43,77 @@ class UpdateClues
       raise ArgumentError, ':type must be either :all or :recent', caller
     end
 
-    active_roles = active_tasked_exercises.flat_map do |tasked_exercise|
-      tasked_exercise.task_step.task.taskings.collect{ |tg| tg.role }
-    end
-
-    active_exercises = active_tasked_exercises.collect do |tasked_exercise|
+    role_ids_to_worked_exercises_map = worked_tasked_exercises
+                                         .each_with_object({}) do |tasked_exercise, hash|
       model = tasked_exercise.exercise
       strategy = Content::Strategies::Direct::Exercise.new(model)
-      Content::Exercise.new(strategy: strategy)
+      exercise = Content::Exercise.new(strategy: strategy)
+
+      tasked_exercise.task_step.task.taskings.collect{ |tg| tg.role }.each do |role|
+        hash[role.id] ||= []
+        hash[role.id] << exercise
+      end
     end
 
     # Collect CLUe queries for the most recent ecosystem in each course
     clue_queries = Entity::Course.all.preload(
       periods: { active_enrollments: { student: { role: :profile } } }
     ).flat_map do |course|
+      # Get all student roles in the course
+      course_roles = course.periods.flat_map do |period|
+        period.active_enrollments.collect{ |ae| ae.student.role }
+      end
+
+      # Get all exercises worked by students in the course
+      course_worked_exercises = course_roles.flat_map do |role|
+        role_ids_to_worked_exercises_map[role.id]
+      end
+
+      # Skip if no exercises got worked in the course
+      next [] if course_worked_exercises.empty?
+
       # Get the Ecosystems map
       ecosystems_map = run(:get_map, course: course).outputs.ecosystems_map
 
-      # Map all the exercises being considered to pages in the current ecosystem
+      # Map all worked exercises to pages in the current ecosystem
       # Clues are always requested based on the current ecosystem
-      pages = ecosystems_map.map_exercises_to_pages(exercises: active_exercises)
-                            .values.compact.uniq
-
-      # Skip if no exercises that map to the current ecosystem got worked
-      next [] if pages.empty?
-
-      chapters = pages.collect(&:chapter).uniq
-      pools = chapters.collect(&:all_exercises_pool) + pages.collect(&:all_exercises_pool)
+      worked_exercise_id_to_page_map = ecosystems_map.map_exercises_to_pages(
+        exercises: course_worked_exercises
+      )
 
       course.periods.flat_map do |period|
+        # Get all students in the period
         period_roles = period.active_enrollments.collect{ |ae| ae.student.role }
-        # The & operator acts like #uniq (see documentation)
-        active_period_roles = active_roles & period_roles 
+
+        # Make a map of who worked what pools
+        period_roles_to_worked_pools_map = period_roles.each_with_object({}) do |role, hash|
+          worked_exercises = role_ids_to_worked_exercises_map[role.id]
+
+          # Skip if we didn't work anything
+          next if worked_exercises.nil?
+
+          worked_pages = worked_exercises.collect do |exercise|
+            worked_exercise_id_to_page_map[exercise.id]
+          end.compact.uniq
+
+          # Skip if we worked something, but it somehow did not map to the current ecosystem
+          next if worked_pages.empty?
+
+          worked_chapters = worked_pages.collect(&:chapter).uniq
+          worked_pools = worked_chapters.collect(&:all_exercises_pool) + \
+                         worked_pages.collect(&:all_exercises_pool)
+          hash[role] = worked_pools
+        end
+
+        # All worked pools are included in the period-wide CLUe update
+        period_worked_pools = period_roles_to_worked_pools_map.values.uniq
 
         # No need to update period CLUes if nobody in the period worked any problems
-        next [] if active_period_roles.empty?
+        next [] if period_worked_pools.empty?
 
         # Update CLUes for the entire period, plus CLUes for individual students that did work
-        [[period_roles, pools, period]] + \
-        active_period_roles.collect{ |role| [[role], pools, role] }
+        [[period_roles, period_worked_pools, period]] + \
+        period_roles_to_worked_pools_map.collect{ |role, pools| [[role], pools, role] }
       end
     end
 
