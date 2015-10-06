@@ -99,6 +99,8 @@ Rails.application.routes.draw do
   namespace 'admin' do
     root to: 'console#index'
 
+    get 'raise(/:type)', to: 'console#test_raise', as: "raise"
+
     resources :administrators, only: [:index, :create, :destroy]
 
     resources :courses, except: [:show, :destroy] do

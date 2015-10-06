@@ -1,3 +1,7 @@
 <% @page_header = "Admin Console" %>
 
-<%= render 'manager/console/index' %>
+<ul>
+  <li><%= link_to "Raise a test StandardError", admin_raise_path %></li>
+  <li><%= link_to "Raise a test ActiveRecord::RecordNotFound", admin_raise_path('record_not_found') %></li>
+  <li><%= link_to "Raise a test ArgumentError", admin_raise_path('argument_error') %></li>
+</ul>
