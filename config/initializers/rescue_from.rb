@@ -15,8 +15,7 @@ OpenStax::RescueFrom.configure do |config|
 
   # config.email_prefix = "[#{app_name}] (#{app_env}) "
   config.sender_address = Rails.application.secrets['exceptions']['sender']
-  config.exception_recipients = Rails.application
-                                     .secrets['exceptions']['recipients']
+  config.exception_recipients = Rails.application.secrets['exceptions']['recipients']
 end
 
 # OpenStax::RescueFrom.register_exception('ExampleException',
