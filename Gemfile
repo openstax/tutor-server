@@ -129,6 +129,9 @@ gem 'timecop'
 # Efficient mass imports
 gem 'activerecord-import'
 
+# Notify developers of Exceptions in production
+gem 'openstax_rescue_from', '~> 1.3.0'
+
 group :development, :test do
   # Get env variables from .env file
   gem 'dotenv-rails'
@@ -229,9 +232,6 @@ group :production do
 
   # Fog
   gem 'fog', require: 'fog/aws'
-
-  # Notify developers of Exceptions in production
-  gem 'exception_notification'
 
   # Lograge for consistent logging
   gem 'lograge'
