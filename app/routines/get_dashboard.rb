@@ -1,4 +1,4 @@
-class Api::V1::Courses::Dashboard
+class GetDashboard
   lev_routine
 
   uses_routine GetCourseTaskPlans,
@@ -36,14 +36,16 @@ class Api::V1::Courses::Dashboard
     run(:get_tasks, roles: role)
     entity_task_ids = outputs["[:get_tasks, :tasks]"].collect{|entity_task| entity_task.id}
     tasks = Tasks::Models::Task.where{entity_task_id.in entity_task_ids}
-    if :student == role_type
-      tasks = tasks.where{ opens_at.lt Time.now }
-    end
+    tasks = tasks.where{ opens_at.lt Time.now } if :student == role_type
     outputs[:tasks] = tasks
   end
 
   def load_plans(course)
     run(:get_plans, course: course)
+    outputs[:trouble_plan_ids] = Set.new Tasks::Models::TaskPlan.joins(:tasks).group(:id).having{
+      (sum(tasks.completed_exercise_steps_count) > sum(tasks.exercise_steps_count)/4) & \
+      (sum(tasks.correct_exercise_steps_count) < sum(tasks.completed_exercise_steps_count)/2)
+    }.pluck(:id)
   end
 
   def load_course(course, role_type)

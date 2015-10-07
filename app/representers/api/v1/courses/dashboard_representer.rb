@@ -25,7 +25,7 @@ module Api::V1::Courses
                as: :is_trouble,
                readable: true,
                writeable: false,
-               getter: lambda{|*| false },
+               getter: lambda{ |*| trouble_plan_ids.include?(id) },
                schema_info: { type: 'boolean' }
 
       property :type,

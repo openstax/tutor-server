@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-describe Api::V1::Courses::Dashboard, type: :routine, vcr: VCR_OPTS do
+describe GetDashboard, type: :routine do
 
   let!(:course)         { CreateCourse[name: 'Physics 101'] }
   let!(:period)         { CreatePeriod[course: course] }
@@ -43,7 +43,7 @@ describe Api::V1::Courses::Dashboard, type: :routine, vcr: VCR_OPTS do
   let!(:plan) { FactoryGirl.create(:tasks_task_plan, owner: course)}
 
   it "works for a student" do
-    outputs = Api::V1::Courses::Dashboard.call(course: course, role: student_role).outputs
+    outputs = described_class.call(course: course, role: student_role).outputs
 
     expect(HashWithIndifferentAccess[outputs]).to include(
       course: {
@@ -62,7 +62,7 @@ describe Api::V1::Courses::Dashboard, type: :routine, vcr: VCR_OPTS do
   end
 
   it "works for a teacher" do
-    outputs = Api::V1::Courses::Dashboard.call(course: course, role: teacher_role).outputs
+    outputs = described_class.call(course: course, role: teacher_role).outputs
 
     expect(HashWithIndifferentAccess[outputs]).to include(
       course: {
@@ -75,7 +75,8 @@ describe Api::V1::Courses::Dashboard, type: :routine, vcr: VCR_OPTS do
         type: 'teacher'
       },
       tasks: [],
-      plans: [plan]
+      plans: [plan],
+      trouble_plan_ids: Set.new
     )
   end
 
