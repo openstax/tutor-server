@@ -7,7 +7,7 @@ OpenStax::RescueFrom.configure do |config|
 
   config.app_name = 'Tutor'
   config.app_env = secrets.environment_name
-  config.contact_name = secrets.exception[:contact_name]
+  config.contact_name = secrets.exception['contact_name']
 
   # config.notifier = ExceptionNotifier
 
@@ -15,8 +15,8 @@ OpenStax::RescueFrom.configure do |config|
   # config.html_error_template_layout_name = 'application'
 
   # config.email_prefix = "[#{app_name}] (#{app_env}) "
-  config.sender_address = secrets.exception[:sender]
-  config.exception_recipients = secrets.exception[:recipients]
+  config.sender_address = secrets.exception['sender']
+  config.exception_recipients = secrets.exception['recipients']
 end
 
 # OpenStax::RescueFrom.register_exception('ExampleException',
