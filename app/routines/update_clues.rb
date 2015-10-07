@@ -106,7 +106,7 @@ class UpdateClues
         end
 
         # All worked pools are included in the period-wide CLUe update
-        period_worked_pools = period_roles_to_worked_pools_map.values.uniq
+        period_worked_pools = period_roles_to_worked_pools_map.values.flatten.uniq
 
         # No need to update period CLUes if nobody in the period worked any problems
         next [] if period_worked_pools.empty?
