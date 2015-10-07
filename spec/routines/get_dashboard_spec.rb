@@ -75,8 +75,19 @@ describe GetDashboard, type: :routine do
         type: 'teacher'
       },
       tasks: [],
-      plans: [plan],
-      trouble_plan_ids: Set.new
+      plans: [
+        {
+          id: plan.id,
+          title: plan.title,
+          type: plan.type,
+          is_publish_requested: false,
+          published_at: nil,
+          publish_last_requested_at: nil,
+          publish_job_uuid: nil,
+          tasking_plans: plan.tasking_plans,
+          is_trouble: false
+        }
+      ]
     )
   end
 

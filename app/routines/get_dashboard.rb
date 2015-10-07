@@ -2,8 +2,7 @@ class GetDashboard
   lev_routine
 
   uses_routine GetCourseTaskPlans,
-               as: :get_plans,
-               translations: { outputs: { map: { items: :plans } } }
+               as: :get_plans
   uses_routine ::Tasks::GetTasks,
                as: :get_tasks
   uses_routine GetCourseProfile,
@@ -41,11 +40,20 @@ class GetDashboard
   end
 
   def load_plans(course)
-    run(:get_plans, course: course)
-    outputs[:trouble_plan_ids] = Set.new Tasks::Models::TaskPlan.joins(:tasks).group(:id).having{
-      (sum(tasks.completed_exercise_steps_count) > sum(tasks.exercise_steps_count)/4) & \
-      (sum(tasks.correct_exercise_steps_count) < sum(tasks.completed_exercise_steps_count)/2)
-    }.pluck(:id)
+    out = run(:get_plans, course: course, include_trouble_flags: true).outputs
+    outputs[:plans] = out[:plans].collect do |task_plan|
+      {
+        id: task_plan.id,
+        title: task_plan.title,
+        type: task_plan.type,
+        is_publish_requested: task_plan.is_publish_requested?,
+        published_at: task_plan.published_at,
+        publish_last_requested_at: task_plan.publish_last_requested_at,
+        publish_job_uuid: task_plan.publish_job_uuid,
+        tasking_plans: task_plan.tasking_plans,
+        is_trouble: out[:trouble_plan_ids].include?(task_plan.id)
+      }
+    end
   end
 
   def load_course(course, role_type)

@@ -21,11 +21,9 @@ module Api::V1::Courses
 
     class Plan < Base
 
-      property :trouble,
-               as: :is_trouble,
+      property :is_trouble,
                readable: true,
                writeable: false,
-               getter: lambda{ |*| trouble_plan_ids.include?(id) },
                schema_info: { type: 'boolean' }
 
       property :type,
@@ -33,11 +31,9 @@ module Api::V1::Courses
                readable: true,
                writeable: false
 
-
       property :is_publish_requested,
                readable: true,
                writeable: true,
-               getter: ->(*) { is_publish_requested? },
                schema_info: { type: 'boolean' }
 
       property :published_at,

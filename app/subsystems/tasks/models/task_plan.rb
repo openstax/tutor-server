@@ -34,7 +34,7 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
   end
 
   def is_publish_requested?
-    !published_at.nil? || @is_publish_requested
+    !published_at.nil? || !!@is_publish_requested
   end
 
   protected
