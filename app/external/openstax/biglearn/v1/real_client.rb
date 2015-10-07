@@ -8,8 +8,8 @@ class OpenStax::Biglearn::V1::RealClient
   # At least one pool will always be sent in each request, regardless of this value
   # Setting this value too low will make requests slower.
   # Setting this value too high will cause timeouts.
-  # Default is 250 (for example, 25 students and 10 pools on each request)
-  CLUE_MAX_POOL_STUDENT_PRODUCT = 250
+  # Default is 100 (for example, 25 students and 4 pools on each request)
+  CLUE_MAX_POOL_STUDENT_PRODUCT = 100
 
   def initialize(biglearn_configuration)
     @server_url   = biglearn_configuration.server_url

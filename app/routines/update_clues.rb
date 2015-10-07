@@ -44,7 +44,7 @@ class UpdateClues
     end
 
     role_ids_to_worked_exercises_map = worked_tasked_exercises
-                                         .each_with_object({}) do |tasked_exercise, hash|
+                                         .find_each.each_with_object({}) do |tasked_exercise, hash|
       model = tasked_exercise.exercise
       strategy = Content::Strategies::Direct::Exercise.new(model)
       exercise = Content::Exercise.new(strategy: strategy)
