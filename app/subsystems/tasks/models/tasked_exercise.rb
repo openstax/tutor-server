@@ -18,18 +18,7 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
   end
 
   def handle_task_step_completion!
-    # TODO: Do this somewhere else, it does not belong here
-
-    # Currently assuming only one question per tasked_exercise, see also correct_answer_id
-    # Also assuming no group tasks
-    question = questions.first
-    # "trial" is set to only "1" for now. When multiple
-    # attempts are supported, it will be incremented to indicate the attempt #
-    OpenStax::Exchange.record_multiple_choice_answer(identifiers.first, url, trial, answer_id)
-
-    grade = is_correct? ? 1 : 0
-    grader = 'tutor'
-    OpenStax::Exchange.record_grade(identifiers.first, url, trial, grade, grader)
+    SendTaskedExerciseAnswerToExchange[]
   end
 
   def has_correctness?
