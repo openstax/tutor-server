@@ -132,6 +132,9 @@ gem 'activerecord-import'
 # Notify developers of Exceptions in production
 gem 'openstax_rescue_from', '~> 1.3.0'
 
+# Generate memorable codes
+gem 'babbler', '~> 1.0.1'
+
 group :development, :test do
   # Get env variables from .env file
   gem 'dotenv-rails'
