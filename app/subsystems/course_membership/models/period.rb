@@ -40,6 +40,8 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
   end
 
   def generate_enrollment_code
-    self.enrollment_code ||= Babbler.babble
+    begin
+      self.enrollment_code ||= Babbler.babble
+    end while self.class.exists?(enrollment_code: self[:enrollment_code])
   end
 end
