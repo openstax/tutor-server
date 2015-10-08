@@ -86,8 +86,12 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           name: course.profile.name,
           ecosystem_id: "#{ecosystem.id}",
           roles: [{ id: teacher.id.to_s, type: 'teacher' }],
-          periods: [{ id: zeroth_period.id.to_s, name: zeroth_period.name },
-                    { id: period.id.to_s, name: period.name }]
+          periods: [{ id: zeroth_period.id.to_s,
+                      name: zeroth_period.name,
+                      enrollment_code: zeroth_period.enrollment_code },
+                    { id: period.id.to_s,
+                      name: period.name,
+                      enrollment_code: period.enrollment_code }]
         }.to_json)
       end
     end
@@ -99,13 +103,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
       it 'returns the teacher roles with the course' do
         api_get :index, user_1_token
-        expect(response.body).to include({
-          id: course.id.to_s,
-          name: course.profile.name,
-          roles: [{ id: teacher.id.to_s, type: 'teacher' }],
-          periods: [{ id: zeroth_period.id.to_s, name: zeroth_period.name },
-                    { id: period.id.to_s, name: period.name }]
-        }.to_json)
+        expect(response.body_as_hash.first).to match a_hash_including(
+          roles: a_collection_containing_exactly({ id: teacher.id.to_s, type: 'teacher' })
+        )
       end
     end
 
@@ -116,13 +116,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
       it 'returns the student roles with the course' do
         api_get :index, user_1_token
-        expect(response.body).to include({
-          id: course.id.to_s,
-          name: course.profile.name,
-          roles: [{ id: student.id.to_s, type: 'student' }],
-          periods: [{ id: zeroth_period.id.to_s, name: zeroth_period.name },
-                    { id: period.id.to_s, name: period.name }]
-        }.to_json)
+        expect(response.body_as_hash.first).to match a_hash_including(
+          roles: a_collection_containing_exactly({ id: student.id.to_s, type: 'student' }),
+        )
       end
     end
 
@@ -134,14 +130,10 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
       it 'returns both roles with the course' do
         api_get :index, user_1_token
-        expect(response.body).to include({
-          id: course.id.to_s,
-          name: course.profile.name,
-          roles: [{ id: student.id.to_s, type: 'student', },
-                  { id: teacher.id.to_s, type: 'teacher' }],
-          periods: [{ id: zeroth_period.id.to_s, name: zeroth_period.name },
-                    { id: period.id.to_s, name: period.name }]
-        }.to_json)
+        expect(response.body_as_hash.first).to match a_hash_including(
+          roles: a_collection_containing_exactly({ id: student.id.to_s, type: 'student', },
+                                                 { id: teacher.id.to_s, type: 'teacher' }),
+        )
       end
     end
   end
@@ -182,11 +174,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       it 'returns the teacher roles with the course' do
         api_get :show, user_1_token, parameters: { id: course.id }
         expect(response.body_as_hash).to match a_hash_including(
-          id: course.id.to_s,
-          name: course.profile.name,
-          periods: [{ id: zeroth_period.id.to_s, name: zeroth_period.name },
-                    { id: period.id.to_s, name: period.name }],
-          roles: [{ id: teacher.id.to_s, type: 'teacher' }],
+          roles: a_collection_containing_exactly({ id: teacher.id.to_s, type: 'teacher' }),
         )
       end
     end
@@ -197,11 +185,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       it 'returns the student roles with the course' do
         api_get :show, user_1_token, parameters: { id: course.id }
         expect(response.body_as_hash).to match a_hash_including(
-          id: course.id.to_s,
-          name: course.profile.name,
-          periods: [{ id: zeroth_period.id.to_s, name: zeroth_period.name },
-                    { id: period.id.to_s, name: period.name }],
-          roles: [{ id: student.id.to_s, type: 'student' }],
+          roles: a_collection_containing_exactly({ id: student.id.to_s, type: 'student' }),
         )
       end
     end
@@ -213,10 +197,6 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       it 'returns both roles with the course' do
         api_get :show, user_1_token, parameters: { id: course.id }
         expect(response.body_as_hash).to match a_hash_including(
-          id: course.id.to_s,
-          name: course.profile.name,
-          periods: [{ id: zeroth_period.id.to_s, name: zeroth_period.name },
-                    { id: period.id.to_s, name: period.name }],
           roles: a_collection_containing_exactly({ id: student.id.to_s, type: 'student' },
                                                  { id: teacher.id.to_s, type: 'teacher' }),
         )
