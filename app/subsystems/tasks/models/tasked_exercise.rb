@@ -18,7 +18,7 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
   end
 
   def handle_task_step_completion!
-    SendTaskedExerciseAnswerToExchange[]
+    SendTaskedExerciseAnswerToExchange[tasked_exercise: self]
   end
 
   def has_correctness?
@@ -83,19 +83,6 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
   end
 
   protected
-
-  def roles
-    task_step.task.taskings.collect{ |t| t.role }
-  end
-
-  def identifiers
-    users = Role::GetUsersForRoles[roles]
-    users.collect{ |user| user.exchange_write_identifier }
-  end
-
-  def trial
-    task_step.id.to_s
-  end
 
   def free_response_provided
     errors.add(:free_response, 'is required') \
