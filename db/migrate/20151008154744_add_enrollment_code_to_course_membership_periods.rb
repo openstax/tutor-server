@@ -3,8 +3,8 @@ class AddEnrollmentCodeToCourseMembershipPeriods < ActiveRecord::Migration
     add_column :course_membership_periods, :enrollment_code, :string
     add_index :course_membership_periods, :enrollment_code, unique: true
 
-    reversible do |dir|
-      dir.up do
+    reversible do |direction|
+      direction.up do
         CourseMembership::Models::Period.where(enrollment_code: nil).find_each do |period|
           period.send(:generate_enrollment_code)
           period.save!
