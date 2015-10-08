@@ -1,18 +1,27 @@
 require 'rails_helper'
 
 RSpec.describe SendTaskedExerciseAnswerToExchange, type: :routine do
-  let!(:tasked_exercise)    { FactoryGirl.create(:tasks_tasked_exercise, free_response: 'abc') }
+  let(:exchange_identifier) { '42' }
+  let(:free_response)       { 'abc' }
 
-  let(:exchange_identifier) { 42 }
-  let(:answer_id)           { tasked_exercise.correct_answer_id }
-  let(:free_response)
+  let!(:period)             { FactoryGirl.create :course_membership_period }
+  let!(:user)               {
+    profile = FactoryGirl.create :user_profile, exchange_write_identifier: exchange_identifier
+    strategy = User::Strategies::Direct::User.new(profile)
+    User::User.new(strategy: strategy)
+  }
+  let!(:role)               { AddUserAsPeriodStudent[user: user, period: period] }
+  let!(:tasked_exercise)    { FactoryGirl.create :tasks_tasked_exercise,
+                                                 :with_tasking,
+                                                 tasked_to: role,
+                                                 free_response: free_response }
+  let!(:answer_id)          { tasked_exercise.correct_answer_id }
+
+  before(:each) do
+    tasked_exercise.update_attribute(:answer_id, answer_id)
+  end
 
   it 'records answers and grade in exchange when the task_step is completed' do
-    roles = tasked_exercise.task_step.task.taskings.collect{ |tasking| tasking.role }
-    users = Role::GetUsersForRoles[roles]
-    users.each{ |user| allow(user).to receive(:identifier).and_return(exchange_identifier) }
-
-    tasked_exercise.answer_id = answer_id
     expect(OpenStax::Exchange).to receive(:record_multiple_choice_answer)
                                     .with(exchange_identifier,
                                           tasked_exercise.url,

@@ -13,9 +13,8 @@ class SendTaskedExerciseAnswerToExchange
     # Currently assuming no group tasks
     identifier = identifiers.first
 
-    # "trial" is set to only "1" for now. When multiple
-    # attempts are supported, it will be incremented to indicate the attempt #
-    trial = 1
+    # "trial" is currently set to the id of the task_step being answered
+    trial = tasked_exercise.task_step.id.to_s
 
     # Currently assuming only one question per tasked_exercise (see also correct_answer_id)
     answer_id = tasked_exercise.answer_id
