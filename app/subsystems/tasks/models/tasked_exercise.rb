@@ -5,7 +5,7 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
 
   validates :url, presence: true
   validates :content, presence: true
-  validate :free_response_provided, on: :update
+  validate :free_response_required, on: :update
   validate :valid_answer, :no_feedback
 
   delegate :uid, :questions, :question_formats, :question_answers, :question_answer_ids,
@@ -18,7 +18,9 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
   end
 
   def handle_task_step_completion!
-    SendTaskedExerciseAnswerToExchange.perform_later(tasked_exercise: self)
+    free_response_required
+    answer_id_required
+    SendTaskedExerciseAnswerToExchange.perform_later(tasked_exercise: self) if errors.empty?
   end
 
   def has_correctness?
@@ -84,10 +86,16 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
 
   protected
 
-  def free_response_provided
-    errors.add(:free_response, 'is required') \
-      if formats.include?('free-response') && free_response.blank?
-    errors.any?
+  def free_response_required
+    return true unless formats.include?('free-response') && free_response.blank?
+    errors.add(:free_response, 'is required')
+    false
+  end
+
+  def answer_id_required
+    return true unless answer_id.blank?
+    errors.add(:answer_id, 'is required')
+    false
   end
 
   def valid_answer

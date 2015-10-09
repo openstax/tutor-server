@@ -82,7 +82,7 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       step = first_task.task_steps.where(
         tasked_type: "Tasks::Models::TaskedReading"
       ).first
-      MarkTaskStepCompleted.call(task_step: step)
+      MarkTaskStepCompleted[task_step: step]
 
       stats = CalculateTaskPlanStats.call(plan: @task_plan).outputs.stats
       expect(stats.first.mean_grade_percent).to be_nil
@@ -91,7 +91,9 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(stats.first.trouble).to eq false
 
       first_task.task_steps.each do |ts|
-        MarkTaskStepCompleted.call(task_step: ts) unless ts.completed?
+        next if ts.completed?
+        ts.exercise? ? Hacks::AnswerExercise[task_step: ts, is_correct: false] : \
+                       MarkTaskStepCompleted[task_step: ts]
       end
       stats = CalculateTaskPlanStats.call(plan: @task_plan.reload).outputs.stats
 
@@ -101,7 +103,7 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(stats.first.trouble).to eq false
 
       last_task = tasks.last
-      MarkTaskStepCompleted.call(task_step: last_task.task_steps.first)
+      MarkTaskStepCompleted[task_step: last_task.task_steps.first]
       stats = CalculateTaskPlanStats.call(plan: @task_plan.reload).outputs.stats
       expect(stats.first.mean_grade_percent).to eq (0)
       expect(stats.first.complete_count).to eq(1)
@@ -116,14 +118,10 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
     it "records them" do
       tasks = @task_plan.tasks.to_a
       first_task = tasks.first
-      first_task.task_steps.each{ |ts|
-        if ts.tasked.exercise?
-          ts.tasked.answer_id = ts.tasked.correct_answer_id
-          ts.tasked.free_response = 'a sentence explaining all the things'
-          ts.tasked.save!
-        end
-        MarkTaskStepCompleted.call(task_step: ts)
-      }
+      first_task.task_steps.each do |ts|
+        ts.exercise? ? Hacks::AnswerExercise[task_step: ts, is_correct: true] : \
+                       MarkTaskStepCompleted[task_step: ts]
+      end
       stats = CalculateTaskPlanStats.call(plan: @task_plan.reload).outputs.stats
       expect(stats.first.mean_grade_percent).to eq (100)
       expect(stats.first.complete_count).to eq(1)
@@ -145,13 +143,10 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(spaced_page['trouble']).to eq false
 
       second_task = tasks.second
-      second_task.task_steps.each{ |ts|
-        if ts.tasked.exercise?
-          ts.tasked.free_response = 'a sentence not explaining anything'
-          ts.tasked.save!
-        end
-        MarkTaskStepCompleted.call(task_step: ts)
-      }
+      second_task.task_steps.each do |ts|
+        ts.exercise? ? Hacks::AnswerExercise[task_step: ts, is_correct: false] : \
+                       MarkTaskStepCompleted[task_step: ts]
+      end
       stats = CalculateTaskPlanStats.call(plan: @task_plan.reload).outputs.stats
       expect(stats.first.mean_grade_percent).to eq (50)
       expect(stats.first.complete_count).to eq(2)
@@ -175,14 +170,10 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(spaced_page['trouble']).to eq false
 
       third_task = tasks.third
-      third_task.task_steps.each{ |ts|
-        if ts.tasked.exercise?
-          ts.tasked.answer_id = ts.tasked.correct_answer_id
-          ts.tasked.free_response = 'a sentence explaining all the things'
-          ts.tasked.save!
-        end
-        MarkTaskStepCompleted.call(task_step: ts)
-      }
+      third_task.task_steps.each do |ts|
+        ts.exercise? ? Hacks::AnswerExercise[task_step: ts, is_correct: true] : \
+                       MarkTaskStepCompleted[task_step: ts]
+      end
       stats = CalculateTaskPlanStats.call(plan: @task_plan.reload).outputs.stats
       expect(stats.first.mean_grade_percent).to eq (67)
       expect(stats.first.complete_count).to eq(3)
@@ -206,14 +197,10 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(spaced_page['trouble']).to eq false
 
       fourth_task = tasks.fourth
-      fourth_task.task_steps.each{ |ts|
-        if ts.tasked.exercise?
-          ts.tasked.answer_id = ts.tasked.correct_answer_id
-          ts.tasked.free_response = 'a sentence explaining all the things'
-          ts.tasked.save!
-        end
-        MarkTaskStepCompleted.call(task_step: ts)
-      }
+      fourth_task.task_steps.each do |ts|
+        ts.exercise? ? Hacks::AnswerExercise[task_step: ts, is_correct: true] : \
+                       MarkTaskStepCompleted[task_step: ts]
+      end
       stats = CalculateTaskPlanStats.call(plan: @task_plan.reload).outputs.stats
       expect(stats.first.mean_grade_percent).to eq (75)
       expect(stats.first.complete_count).to eq(4)
@@ -252,11 +239,8 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       tasks = @task_plan.tasks.to_a
       tasks.first(2).each do |task|
         task.task_steps.each do |ts|
-          if ts.tasked.exercise?
-            ts.tasked.free_response = 'a sentence not explaining anything'
-            ts.tasked.save!
-          end
-          MarkTaskStepCompleted.call(task_step: ts)
+          ts.exercise? ? Hacks::AnswerExercise[task_step: ts, is_correct: false] : \
+                         MarkTaskStepCompleted[task_step: ts]
         end
       end
 
@@ -271,11 +255,8 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(spaced_page.trouble).to eq false
 
       tasks.third.task_steps.each do |ts|
-        if ts.tasked.exercise?
-          ts.tasked.free_response = 'a sentence not explaining anything'
-          ts.tasked.save!
-        end
-        MarkTaskStepCompleted.call(task_step: ts)
+        ts.exercise? ? Hacks::AnswerExercise[task_step: ts, is_correct: false] : \
+                       MarkTaskStepCompleted[task_step: ts]
       end
 
       # Over 25% done: trouble
@@ -290,12 +271,8 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
 
       tasks[3..4].each do |task|
         task.task_steps.each do |ts|
-          if ts.tasked.exercise?
-            ts.tasked.answer_id = ts.tasked.correct_answer_id
-            ts.tasked.free_response = 'a sentence explaining all the things'
-            ts.tasked.save!
-          end
-          MarkTaskStepCompleted.call(task_step: ts)
+          ts.exercise? ? Hacks::AnswerExercise[task_step: ts, is_correct: true] : \
+                         MarkTaskStepCompleted[task_step: ts]
         end
       end
 
@@ -310,12 +287,8 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(spaced_page.trouble).to eq true
 
       tasks[5].task_steps.each do |ts|
-        if ts.tasked.exercise?
-          ts.tasked.answer_id = ts.tasked.correct_answer_id
-          ts.tasked.free_response = 'a sentence explaining all the things'
-          ts.tasked.save!
-        end
-        MarkTaskStepCompleted.call(task_step: ts)
+        ts.exercise? ? Hacks::AnswerExercise[task_step: ts, is_correct: true] : \
+                       MarkTaskStepCompleted[task_step: ts]
       end
 
       # 50% correct: no more trouble
@@ -329,11 +302,8 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(spaced_page.trouble).to eq false
 
       tasks[6].task_steps.each do |ts|
-        if ts.tasked.exercise?
-          ts.tasked.free_response = 'a sentence not explaining anything'
-          ts.tasked.save!
-        end
-        MarkTaskStepCompleted.call(task_step: ts)
+        ts.exercise? ? Hacks::AnswerExercise[task_step: ts, is_correct: false] : \
+                       MarkTaskStepCompleted[task_step: ts]
       end
 
       # 3 out of 7 correct: trouble again
@@ -347,12 +317,8 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(spaced_page.trouble).to eq true
 
       tasks[7].task_steps.each do |ts|
-        if ts.tasked.exercise?
-          ts.tasked.answer_id = ts.tasked.correct_answer_id
-          ts.tasked.free_response = 'a sentence explaining all the things'
-          ts.tasked.save!
-        end
-        MarkTaskStepCompleted.call(task_step: ts)
+        ts.exercise? ? Hacks::AnswerExercise[task_step: ts, is_correct: true] : \
+                       MarkTaskStepCompleted[task_step: ts]
       end
 
       # 50% correct: no more trouble
@@ -372,15 +338,14 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       first_tasked_exercise = first_task.task_steps.select{ |ts| ts.tasked.exercise? }.first.tasked
 
       selected_answers = [[], [], [], []]
-      first_task.task_steps.each { |ts|
-        if ts.tasked.exercise?
-          ts.tasked.answer_id = ts.tasked.correct_answer_id
-          ts.tasked.free_response = 'a sentence explaining all the things'
-          ts.tasked.save!
+      first_task.task_steps.each do |ts|
+        if ts.exercise?
+          Hacks::AnswerExercise[task_step: ts, is_correct: true]
           selected_answers[0] << ts.tasked.answer_id
+        else
+          MarkTaskStepCompleted[task_step: ts]
         end
-        MarkTaskStepCompleted.call(task_step: ts)
-      }
+      end
       roles = first_task.taskings.collect(&:role)
       users = Role::GetUsersForRoles[roles]
       first_task_names = users.collect(&:name)
@@ -392,7 +357,7 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
         expect(exercise.answers.length).to eq 1
         expect(exercise.answers[0]).to eq(
           'student_names' => first_task_names,
-          'free_response' => 'a sentence explaining all the things',
+          'free_response' => 'A sentence explaining all the things!',
           'answer_id' => selected_answers[0][ii]
         )
       end
@@ -412,14 +377,14 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(correct_answer['selected_count']).to eq 1
 
       second_task = tasks.second
-      second_task.task_steps.each{ |ts|
-        if ts.tasked.exercise?
-          ts.tasked.free_response = 'a sentence not explaining anything'
-          ts.tasked.save!
+      second_task.task_steps.each do |ts|
+        if ts.exercise?
+          Hacks::AnswerExercise[task_step: ts, is_correct: false]
           selected_answers[1] << ts.tasked.answer_id
+        else
+          MarkTaskStepCompleted[task_step: ts]
         end
-        MarkTaskStepCompleted.call(task_step: ts)
-      }
+      end
       roles = second_task.taskings.collect(&:role)
       users = Role::GetUsersForRoles[roles]
       second_task_names = users.collect(&:name)
@@ -432,12 +397,12 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
         expect(Set.new exercise.answers).to eq(Set.new [
           {
             'student_names' => first_task_names,
-            'free_response' => 'a sentence explaining all the things',
+            'free_response' => 'A sentence explaining all the things!',
             'answer_id' => selected_answers[0][ii]
           },
           {
             'student_names' => second_task_names,
-            'free_response' => 'a sentence not explaining anything',
+            'free_response' => 'A sentence explaining all the wrong things...',
             'answer_id' => selected_answers[1][ii]
           }
         ])
@@ -458,15 +423,14 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(correct_answer['selected_count']).to eq 1
 
       third_task = tasks.third
-      third_task.task_steps.each{ |ts|
-        if ts.tasked.exercise?
-          ts.tasked.answer_id = ts.tasked.correct_answer_id
-          ts.tasked.free_response = 'a sentence explaining all the things'
-          ts.tasked.save!
+      third_task.task_steps.each do |ts|
+        if ts.exercise?
+          Hacks::AnswerExercise[task_step: ts, is_correct: true]
           selected_answers[2] << ts.tasked.answer_id
+        else
+          MarkTaskStepCompleted[task_step: ts]
         end
-        MarkTaskStepCompleted.call(task_step: ts)
-      }
+      end
       roles = third_task.taskings.collect(&:role)
       users = Role::GetUsersForRoles[roles]
       third_task_names = users.collect(&:name)
@@ -479,17 +443,17 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
         expect(Set.new exercise.answers).to eq(Set.new [
           {
             'student_names' => first_task_names,
-            'free_response' => 'a sentence explaining all the things',
+            'free_response' => 'A sentence explaining all the things!',
             'answer_id' => selected_answers[0][ii]
           },
           {
             'student_names' => second_task_names,
-            'free_response' => 'a sentence not explaining anything',
+            'free_response' => 'A sentence explaining all the wrong things...',
             'answer_id' => selected_answers[1][ii]
           },
           {
             'student_names' => third_task_names,
-            'free_response' => 'a sentence explaining all the things',
+            'free_response' => 'A sentence explaining all the things!',
             'answer_id' => selected_answers[2][ii]
           }
         ])
@@ -510,15 +474,14 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(correct_answer['selected_count']).to eq 2
 
       fourth_task = tasks.fourth
-      fourth_task.task_steps.each{ |ts|
-        if ts.tasked.exercise?
-          ts.tasked.answer_id = ts.tasked.correct_answer_id
-          ts.tasked.free_response = 'a sentence explaining all the things'
-          ts.tasked.save!
+      fourth_task.task_steps.each do |ts|
+        if ts.exercise?
+          Hacks::AnswerExercise[task_step: ts, is_correct: true]
           selected_answers[3] << ts.tasked.answer_id
+        else
+          MarkTaskStepCompleted[task_step: ts]
         end
-        MarkTaskStepCompleted.call(task_step: ts)
-      }
+      end
       roles = fourth_task.taskings.collect(&:role)
       users = Role::GetUsersForRoles[roles]
       fourth_task_names = users.collect(&:name)
@@ -531,22 +494,22 @@ describe CalculateTaskPlanStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
         expect(Set.new exercise.answers).to eq(Set.new [
           {
             'student_names' => first_task_names,
-            'free_response' => 'a sentence explaining all the things',
+            'free_response' => 'A sentence explaining all the things!',
             'answer_id' => selected_answers[0][ii]
           },
           {
             'student_names' => second_task_names,
-            'free_response' => 'a sentence not explaining anything',
+            'free_response' => 'A sentence explaining all the wrong things...',
             'answer_id' => selected_answers[1][ii]
           },
           {
             'student_names' => third_task_names,
-            'free_response' => 'a sentence explaining all the things',
+            'free_response' => 'A sentence explaining all the things!',
             'answer_id' => selected_answers[2][ii]
           },
           {
             'student_names' => fourth_task_names,
-            'free_response' => 'a sentence explaining all the things',
+            'free_response' => 'A sentence explaining all the things!',
             'answer_id' => selected_answers[3][ii]
           }
         ])

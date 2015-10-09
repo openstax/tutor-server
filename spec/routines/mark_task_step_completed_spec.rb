@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe MarkTaskStepCompleted, type: :routine do
 
-  let!(:tasked_reading) { FactoryGirl.create(:tasks_tasked_reading) }
+  let!(:tasked_reading)  { FactoryGirl.create(:tasks_tasked_reading) }
   let!(:tasked_exercise) { FactoryGirl.create(:tasks_tasked_exercise) }
 
   it 'can mark a reading step as completed' do
@@ -10,14 +10,6 @@ RSpec.describe MarkTaskStepCompleted, type: :routine do
     expect(result.errors).to be_empty
     expect(tasked_reading.task_step).to be_completed
   end
-
-  # For the moment, exercise steps can be marked as completed, but this may change in the near term
-  #
-  # it 'cannot mark an exercise step as completed' do
-  #   result = MarkTaskStepCompleted.call(task_step: tasked_exercise.task_step)
-  #   expect(result.errors.collect{|error| error.code}).to eq [:step_type_cannot_be_marked_completed]
-  #   expect(tasked_exercise.task_step).not_to be_completed
-  # end
 
   it 'can mark an exercise step as completed' do
     expect_any_instance_of(tasked_exercise.class).to receive(:handle_task_step_completion!)
@@ -43,9 +35,19 @@ RSpec.describe MarkTaskStepCompleted, type: :routine do
 
   it 'instructs the associated Tasked to handle completion-related activities' do
     # lock! calls reload, which reloads the instances of task_step's associations
-    expect_any_instance_of(Tasks::Models::TaskedExercise).to receive(:handle_task_step_completion!)
+    expect_any_instance_of(tasked_exercise.class).to receive(:handle_task_step_completion!)
     result = MarkTaskStepCompleted.call(task_step: tasked_exercise.task_step)
     expect(result.errors).to be_empty
+  end
+
+  it 'returns an error if the free_response or answer_id are missing for an exercise' do
+    result = MarkTaskStepCompleted.call(task_step: tasked_exercise.task_step)
+    expect(result.errors).not_to be_empty
+    expect(result.errors).to have_offending_input :free_response
+    expect(result.errors).to have_offending_input :answer_id
+    expect(result.errors.collect{ |err| err.code }).to eq [:'is required', :'is required']
+
+    expect(tasked_exercise.reload.task_step).not_to be_completed
   end
 
 end
