@@ -18,7 +18,7 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
   end
 
   def handle_task_step_completion!
-    SendTaskedExerciseAnswerToExchange[tasked_exercise: self]
+    SendTaskedExerciseAnswerToExchange.perform_later(tasked_exercise: self)
   end
 
   def has_correctness?

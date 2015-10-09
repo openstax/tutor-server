@@ -17,6 +17,8 @@ RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :
   let(:user_token) { FactoryGirl.create(:doorkeeper_access_token, resource_owner_id: user.id) }
   let(:admin_token) { FactoryGirl.create(:doorkeeper_access_token, resource_owner_id: admin.id) }
 
+  before(:all) { Lev.configuration.job_store.clear }
+
   before do
     stub_const 'TestRoutine', Class.new
     TestRoutine.class_eval {

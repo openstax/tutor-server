@@ -73,7 +73,7 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
 
   it 'calls SendTaskedExerciseAnswerToExchange when completed' do
     expect(SendTaskedExerciseAnswerToExchange).to(
-      receive(:[]).with(tasked_exercise: tasked_exercise)
+      receive(:perform_later).with(tasked_exercise: tasked_exercise)
     )
     tasked_exercise.handle_task_step_completion!
   end
