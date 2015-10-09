@@ -18,11 +18,11 @@ RSpec.feature 'Viewing queued jobs as Customer Service', :js do
   let(:job) { Lev::BackgroundJob.all.last }
 
   before(:all) do
-    ActiveJob::Base.queue_adapter = :resque
+    Delayed::Worker.delay_jobs = true
   end
 
   after(:all) do
-    ActiveJob::Base.queue_adapter = :inline
+    Delayed::Worker.delay_jobs = false
   end
 
   before(:each) do

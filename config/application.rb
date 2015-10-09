@@ -39,5 +39,8 @@ module Tutor
       namespace: redis_secrets['namespaces']['cache'],
       expires_in: 90.minutes
     }
+
+    # Use delayed_job for background jobs
+    config.active_job.queue_adapter = :delayed_job
   end
 end

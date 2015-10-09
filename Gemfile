@@ -108,11 +108,12 @@ gem 'pg'
 # Lorem Ipsum
 gem 'faker'
 
-# Key-value store for caching and job queuing
+# Key-value store for caching
 gem 'redis-rails'
 
 # Background job queueing
-gem 'resque', '~> 1.24.1'
+gem 'delayed_job_active_record'
+gem 'daemons'
 
 # Type coercion for Representable
 gem 'virtus'
@@ -213,9 +214,6 @@ end
 group :test do
   # Fake in-memory Redis for testing
   gem 'fakeredis'
-
-  # Resque in test mode
-  gem 'resque_spec'
 
   gem 'shoulda-matchers', require: false
   gem 'capybara-webkit'

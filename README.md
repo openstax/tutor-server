@@ -57,7 +57,7 @@ behavior is to do this and then only switch to a `true` setting if you need to d
 
 ## Background Jobs
 
-Tutor in production runs background jobs using resque and redis.  In the development environment, however, background jobs are run "inline", i.e. not in the background.  To actually run these jobs in the background in the development environment, set the environment variable `USE_REAL_BACKGROUND_JOBS` to `true`.
+Tutor in production runs background jobs using delayed_job.  In the development environment, however, background jobs are run "inline", i.e. not in the background.  To actually run these jobs in the background in the development environment, start the delayed_job daemon and set the environment variable `USE_REAL_BACKGROUND_JOBS` to `true`.
 
 ## Bullet
 
