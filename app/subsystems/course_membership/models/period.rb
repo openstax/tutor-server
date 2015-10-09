@@ -40,8 +40,10 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
   end
 
   def generate_enrollment_code
+    return true unless enrollment_code.blank?
+
     begin
-      self.enrollment_code ||= Babbler.babble
+      self.enrollment_code = Babbler.babble
     end while self.class.exists?(enrollment_code: self[:enrollment_code])
   end
 end
