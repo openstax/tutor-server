@@ -5,6 +5,8 @@ module ConceptCoach
     end
 
     def generate(book_location)
+      return [] if @cc_string.blank?
+
       chapter_string = "#{@cc_string}-ch#{"%02d" % book_location.first}"
       section_string = "#{chapter_string}-s#{"%02d" % book_location.last}"
 

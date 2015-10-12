@@ -7,7 +7,7 @@ class OpenStax::Exercises::V1::Exercise
   APLO_REGEX = /[\w-]+-aplo-[\w-]+/
 
   # This Regex finds the CC section tag within the exercise tags
-  APLO_REGEX = /[\w-]+-ch\d{2}-s\d{2}/
+  CC_REGEX = /[\w-]+-ch\d{2}-s\d{2}/
 
   attr_reader :content
 

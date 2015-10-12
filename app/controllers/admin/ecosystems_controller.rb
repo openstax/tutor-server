@@ -15,7 +15,8 @@ class Admin::EcosystemsController < Admin::BaseController
 
     OpenStax::Cnx::V1.with_archive_url(url: archive_url) do
       ecosystem = FetchAndImportBookAndCreateEcosystem[
-        book_cnx_id: params[:cnx_id], tag_generator: ConceptCoach::TagGenerator.new params[:cc_tag]
+        book_cnx_id: params[:cnx_id],
+        tag_generator: ConceptCoach::TagGenerator.new(params[:cc_tag])
       ]
       flash[:notice] = "Ecosystem \"#{ecosystem.title}\" imported."
     end
