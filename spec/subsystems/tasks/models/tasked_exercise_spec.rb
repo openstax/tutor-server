@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Tasks::Models::TaskedExercise, :type => :model do
+RSpec.describe Tasks::Models::TaskedExercise, type: :model do
   it { is_expected.to validate_presence_of(:content) }
 
   let!(:hash) { OpenStax::Exercises::V1.fake_client.new_exercise_hash }
@@ -71,25 +71,19 @@ RSpec.describe Tasks::Models::TaskedExercise, :type => :model do
     expect { tasked_exercise.save! }.to change{ tasked_exercise.task_step.task.cache_key }
   end
 
-  it 'records answers and grade in exchange when the task_step is completed' do
-    roles = [Entity::Role.create!]
-    exchange_identifier = 42
-    correct_answer_id = tasked_exercise.correct_answer_id
-    allow(tasked_exercise).to receive(:roles).and_return(roles)
-    allow(tasked_exercise).to receive(:identifiers).and_return([exchange_identifier])
+  it 'calls SendTaskedExerciseAnswerToExchange when completed' do
+    expect(SendTaskedExerciseAnswerToExchange).to(
+      receive(:perform_later).with(tasked_exercise: tasked_exercise)
+    )
     tasked_exercise.free_response = 'abc'
-    tasked_exercise.answer_id = correct_answer_id
-    expect(OpenStax::Exchange).to receive(:record_multiple_choice_answer)
-                                    .with(exchange_identifier,
-                                          tasked_exercise.url,
-                                          tasked_exercise.task_step.id.to_s,
-                                          correct_answer_id)
-    expect(OpenStax::Exchange).to receive(:record_grade)
-                                    .with(exchange_identifier,
-                                          tasked_exercise.url,
-                                          tasked_exercise.task_step.id.to_s,
-                                          1,
-                                          'tutor')
+    tasked_exercise.answer_id = tasked_exercise.answer_ids.last
     tasked_exercise.handle_task_step_completion!
+  end
+
+  it 'does not call SendTaskedExerciseAnswerToExchange when attributes are missing' do
+    expect(SendTaskedExerciseAnswerToExchange).not_to receive(:perform_later)
+    tasked_exercise.handle_task_step_completion!
+    expect(Set.new tasked_exercise.errors).to eq Set.new [[:free_response, 'is required'],
+                                                          [:answer_id, 'is required']]
   end
 end

@@ -143,6 +143,9 @@ class DemoBase
       # Start a new process
       # Threading does not work well with MRI due to the GIL
       fork do
+        # Reconnect to Redis (demo work now uses jobs to send info to Exchange)
+        Lev.configuration.job_store.reconnect
+
         if transaction
           ActiveRecord::Base.transaction do
             yield *process_args[process_index]

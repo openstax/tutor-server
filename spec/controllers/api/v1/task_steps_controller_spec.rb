@@ -286,8 +286,11 @@ describe Api::V1::TaskStepsController, type: :controller, api: true, version: :v
       expect(tasked.task_step(true).completed?).to be_falsy
     end
 
-    it "should allow marking completion of exercise steps" do
-      tasked = create_tasked(:tasked_exercise, user_1_role).reload
+    it "should allow marking completion of exercise steps with free_response and answer_id" do
+      tasked = create_tasked(:tasked_exercise, user_1_role)
+      tasked.free_response = 'abc'
+      tasked.answer_id = tasked.correct_answer_id
+      tasked.save!
       api_put :completed, user_1_token, parameters: { id: tasked.task_step.id }
 
       expect(response).to have_http_status(:success)
@@ -297,6 +300,21 @@ describe Api::V1::TaskStepsController, type: :controller, api: true, version: :v
       )
 
       expect(tasked.task_step(true).completed?).to be_truthy
+    end
+
+    it "should not allow marking completion of exercise steps missing free_response or answer_id" do
+      tasked = create_tasked(:tasked_exercise, user_1_role).reload
+      api_put :completed, user_1_token, parameters: { id: tasked.task_step.id }
+
+      expect(response).to have_http_status(:unprocessable_entity)
+
+      errors = response.body_as_hash[:errors]
+      expect(errors.size).to eq 2
+      errors.each do |error|
+        expect(error[:code]).to eq 'is required'
+      end
+
+      expect(tasked.task_step(true).completed?).to be_falsy
     end
   end
 

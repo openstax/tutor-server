@@ -105,10 +105,11 @@ class SetupPerformanceReportData
 
     # User 1 completed the reading task plan
     student_1_tasks[1].core_task_steps.each do |ts|
-      MarkTaskStepCompleted[task_step: ts]
+      ts.exercise? ? Hacks::AnswerExercise[task_step: ts, is_correct: false] : \
+                     MarkTaskStepCompleted[task_step: ts]
     end
     student_1_tasks[1].reload.non_core_task_steps.each do |ts|
-      MarkTaskStepCompleted[task_step: ts]
+      Hacks::AnswerExercise[task_step: ts, is_correct: false]
     end
 
     # User 1 answered 3 correct, 1 incorrect in 2nd homework

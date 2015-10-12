@@ -5,7 +5,7 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
 
   validates :url, presence: true
   validates :content, presence: true
-  validate :free_response_provided, on: :update
+  validate :free_response_required, on: :update
   validate :valid_answer, :no_feedback
 
   delegate :uid, :questions, :question_formats, :question_answers, :question_answer_ids,
@@ -18,18 +18,9 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
   end
 
   def handle_task_step_completion!
-    # TODO: Do this somewhere else, it does not belong here
-
-    # Currently assuming only one question per tasked_exercise, see also correct_answer_id
-    # Also assuming no group tasks
-    question = questions.first
-    # "trial" is set to only "1" for now. When multiple
-    # attempts are supported, it will be incremented to indicate the attempt #
-    OpenStax::Exchange.record_multiple_choice_answer(identifiers.first, url, trial, answer_id)
-
-    grade = is_correct? ? 1 : 0
-    grader = 'tutor'
-    OpenStax::Exchange.record_grade(identifiers.first, url, trial, grade, grader)
+    free_response_required
+    answer_id_required
+    SendTaskedExerciseAnswerToExchange.perform_later(tasked_exercise: self) if errors.empty?
   end
 
   def has_correctness?
@@ -95,23 +86,16 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
 
   protected
 
-  def roles
-    task_step.task.taskings.collect{ |t| t.role }
+  def free_response_required
+    return true unless formats.include?('free-response') && free_response.blank?
+    errors.add(:free_response, 'is required')
+    false
   end
 
-  def identifiers
-    users = Role::GetUsersForRoles[roles]
-    users.collect{ |user| user.exchange_write_identifier }
-  end
-
-  def trial
-    task_step.id.to_s
-  end
-
-  def free_response_provided
-    errors.add(:free_response, 'is required') \
-      if formats.include?('free-response') && free_response.blank?
-    errors.any?
+  def answer_id_required
+    return true unless answer_id.blank?
+    errors.add(:answer_id, 'is required')
+    false
   end
 
   def valid_answer

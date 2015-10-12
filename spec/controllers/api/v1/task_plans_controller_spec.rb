@@ -165,15 +165,18 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
 
       it 'allows a teacher to publish a task_plan for their course' do
         controller.sign_in teacher
+        start_time = Time.now
         expect { api_post :create,
                           nil,
                           parameters: { course_id: course.id },
                           raw_post_data: valid_json_hash.to_json }
           .to change{ Tasks::Models::TaskPlan.count }.by(1)
+        end_time = Time.now
         expect(response).to have_http_status(:success)
         new_task_plan = Tasks::Models::TaskPlan.find(JSON.parse(response.body)['id'])
-        expect(new_task_plan.published_at).to be_within(3.seconds).of(Time.now)
-        expect(new_task_plan.publish_last_requested_at).to be_within(10.seconds).of(Time.now)
+        expect(new_task_plan.publish_last_requested_at).to be > start_time
+        expect(new_task_plan.published_at).to be > new_task_plan.publish_last_requested_at
+        expect(new_task_plan.published_at).to be < end_time
 
         # Revert task_plan to its state when the job was queued
         new_task_plan.is_publish_requested = true
@@ -242,13 +245,17 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
 
       it 'allows a teacher to publish a task_plan for their course' do
         controller.sign_in teacher
+        start_time = Time.now
         api_put :update, nil, parameters: { course_id: course.id, id: task_plan.id },
                               raw_post_data: valid_json_hash.to_json
+        end_time = Time.now
         expect(response).to have_http_status(:accepted)
         # Need to reload the task_plan since publishing it will set the
         # publication dates and change the representation
-        expect(task_plan.reload.publish_last_requested_at).to be_within(10.seconds).of(Time.now)
-        expect(task_plan.published_at).to be_within(1.second).of(Time.now)
+        task_plan.reload
+        expect(task_plan.publish_last_requested_at).to be > start_time
+        expect(task_plan.published_at).to be > task_plan.publish_last_requested_at
+        expect(task_plan.published_at).to be < end_time
 
         # Revert task_plan to its state when the job was queued
         task_plan.published_at = nil
