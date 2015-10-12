@@ -57,7 +57,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   EOS
   def dashboard
     course = Entity::Course.find(params[:id])
-    data = Api::V1::Courses::Dashboard.call(
+    data = GetDashboard.call(
              course: course,
              role: get_course_role
            ).outputs

@@ -18,6 +18,8 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
                                  dependent: :destroy,
                                  inverse_of: :task,
                                  autosave: true
+  has_many :tasked_exercises, through: :task_steps, source: :tasked,
+                                                    source_type: 'Tasks::Models::TaskedExercise'
   has_many :taskings, through: :entity_task
 
   validates :title, presence: true

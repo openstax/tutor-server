@@ -1,9 +1,8 @@
-class Api::V1::Courses::Dashboard
+class GetDashboard
   lev_routine
 
   uses_routine GetCourseTaskPlans,
-               as: :get_plans,
-               translations: { outputs: { map: { items: :plans } } }
+               as: :get_plans
   uses_routine ::Tasks::GetTasks,
                as: :get_tasks
   uses_routine GetCourseProfile,
@@ -36,14 +35,25 @@ class Api::V1::Courses::Dashboard
     run(:get_tasks, roles: role)
     entity_task_ids = outputs["[:get_tasks, :tasks]"].collect{|entity_task| entity_task.id}
     tasks = Tasks::Models::Task.where{entity_task_id.in entity_task_ids}
-    if :student == role_type
-      tasks = tasks.where{ opens_at.lt Time.now }
-    end
+    tasks = tasks.where{ opens_at.lt Time.now } if :student == role_type
     outputs[:tasks] = tasks
   end
 
   def load_plans(course)
-    run(:get_plans, course: course)
+    out = run(:get_plans, course: course, include_trouble_flags: true).outputs
+    outputs[:plans] = out[:plans].collect do |task_plan|
+      {
+        id: task_plan.id,
+        title: task_plan.title,
+        type: task_plan.type,
+        is_publish_requested: task_plan.is_publish_requested?,
+        published_at: task_plan.published_at,
+        publish_last_requested_at: task_plan.publish_last_requested_at,
+        publish_job_uuid: task_plan.publish_job_uuid,
+        tasking_plans: task_plan.tasking_plans,
+        is_trouble: out[:trouble_plan_ids].include?(task_plan.id)
+      }
+    end
   end
 
   def load_course(course, role_type)
