@@ -69,10 +69,10 @@ RSpec.describe Admin::CoursesController, type: :controller do
       expect(flash[:notice]).to eq('Student roster has been uploaded.')
 
       student_roster = GetStudentRoster[course: physics]
-      expect(student_roster.length).to eq(3)
-      expect(student_roster[0].first_name).to eq('Carol')
-      expect(student_roster[1].first_name).to eq('Melissa')
-      expect(student_roster[2].first_name).to eq('Alexander')
+      csv = CSV.parse(file_1.open)
+      names = csv[1..-1].flat_map(&:first)
+
+      expect(student_roster.flat_map(&:first_name)).to match_array(names)
     end
 
     it 'reuses existing users for existing usernames' do

@@ -20,5 +20,14 @@ module Api::V1
                description: "The period's name"
              }
 
+    property :enrollment_code,
+             type: String,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               description: "The period's enrollment code"
+             }
+
+
   end
 end

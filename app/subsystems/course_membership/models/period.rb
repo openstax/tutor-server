@@ -17,10 +17,12 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
   has_many :taskings, subsystem: :tasks, dependent: :nullify
   has_many :tasks, through: :taskings
 
+  before_validation :generate_enrollment_code
   before_destroy :no_active_students, prepend: true
 
   validates :course, presence: true
   validates :name, presence: true, uniqueness: { scope: :entity_course_id }
+  validates :enrollment_code, presence: true, uniqueness: true
 
   default_scope { order(:name) }
 
@@ -35,5 +37,13 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
     return unless enrollments.latest.active.exists?
     errors.add(:students, 'must be moved to another period before this period can be deleted')
     false
+  end
+
+  def generate_enrollment_code
+    return true unless enrollment_code.blank?
+
+    begin
+      self.enrollment_code = Babbler.babble
+    end while self.class.exists?(enrollment_code: self[:enrollment_code])
   end
 end
