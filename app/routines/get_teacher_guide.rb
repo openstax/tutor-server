@@ -13,18 +13,21 @@ class GetTeacherGuide
   private
 
   def completed_exercise_task_steps_for_course_by_period(course)
-    course.periods.each_with_object({}) do | period,hash |
+    course.periods.each_with_object({}) do | period, hash |
       hash[period.id] = Tasks::Models::TaskStep.exercises.complete
         .preload([
           {tasked: :exercise},
           {task: {taskings: {role: {student: {enrollments: :period}}}}}
-        ])
-        .joins(
-          task: {taskings: {role: {student:  {enrollments: :period}}}}
-        )
-        .where(
-          task: {taskings:{ role: {student: {enrollments: {period: {id: period.id}}}}}}
-        ).to_a
+        ]).joins(
+          task: {taskings: {role: {student: :enrollments}}}
+        ).where(
+          task: {taskings: {role: {student: {enrollments: {
+            course_membership_period_id: period.id
+          }}}}}
+        ).joins{CourseMembership::Models::Enrollment.unscoped.as(:newer_enrollment).on{
+          (newer_enrollment.course_membership_student_id == ~task.taskings.role.student.enrollments.course_membership_student_id) & \
+          (newer_enrollment.created_at > ~task.taskings.role.student.enrollments.created_at)
+        }.outer}.where(newer_enrollment: {id: nil}).to_a
     end
   end
 
