@@ -142,7 +142,7 @@ class CalculateTaskPlanStats
 
         spaced_pages: spaced_page_stats,
 
-        # We ignore trouble in personalized pages because they may be different for each student
+        # For now personalized pages are the same as current pages, so it's fine to include them
         trouble: (current_page_stats + spaced_page_stats).any?{ |page_stats| page_stats[:trouble] }
       )
     end
