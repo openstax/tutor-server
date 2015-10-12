@@ -6,6 +6,9 @@ class OpenStax::Exercises::V1::Exercise
   # This Regex finds the AP LO's within the exercise tags
   APLO_REGEX = /[\w-]+-aplo-[\w-]+/
 
+  # This Regex finds the CC section tag within the exercise tags
+  APLO_REGEX = /[\w-]+-ch\d{2}-s\d{2}/
+
   attr_reader :content
 
   def initialize(content: '{}', server_url: OpenStax::Exercises::V1.server_url)
@@ -50,7 +53,8 @@ class OpenStax::Exercises::V1::Exercise
       {
         value: tag,
         type: !LO_REGEX.match(tag).nil? ? :lo : \
-             (!APLO_REGEX.match(tag).nil? ? :aplo : :generic)
+             (!APLO_REGEX.match(tag).nil? ? :aplo : \
+             (CC_REGEX.match(tag).nil? ? :cc : :generic))
       }
     end
   end
@@ -63,12 +67,20 @@ class OpenStax::Exercises::V1::Exercise
     @aplo_hashes ||= tag_hashes.select{ |hash| hash[:type] == :aplo }
   end
 
+  def cc_hashes
+    @cc_hashes ||= tag_hashes.select{ |hash| hash[:type] == :cc }
+  end
+
   def los
     @los ||= lo_hashes.collect{ |hash| hash[:value] }
   end
 
   def aplos
     @aplos ||= aplo_hashes.collect{ |hash| hash[:value] }
+  end
+
+  def ccs
+    @ccs ||= cc_hashes.collect{ |hash| hash[:value] }
   end
 
   def questions

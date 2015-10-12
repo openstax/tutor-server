@@ -19,7 +19,7 @@ class Content::Routines::ImportPage
   # Imports and saves a Cnx::Page as a Content::Models::Page
   # into the given Content::Models::Chapter
   # Returns the Content::Models::Page object
-  def exec(cnx_page:, chapter:, number: nil, book_location: nil, save: true, concept_coach_tag: nil)
+  def exec(cnx_page:, chapter:, number: nil, book_location: nil, save: true, concept_coach_str: nil)
     ecosystem = chapter.book.ecosystem
 
     outputs[:page] = Content::Models::Page.new(url: cnx_page.canonical_url,
@@ -36,11 +36,13 @@ class Content::Routines::ImportPage
 
     tags = cnx_page.tags
 
-    if concept_coach_tag.present?
-      chapter_tag = "#{concept_coach_tag}-ch#{"%02d" % book_location.first}"
-      section_tag = "#{chapter_tag}-s#{"%02d" % book_location.last}"
-      concept_coach_tags = [concept_coach_tag, chapter_tag, section_tag]
-      tags += concept_coach_tags
+    if concept_coach_str.present?
+      chapter_str = "#{concept_coach_str}-ch#{"%02d" % book_location.first}"
+      section_str = "#{chapter_str}-s#{"%02d" % book_location.last}"
+      tags << {
+        value: section_str,
+        type: :cc
+      }
     end
 
     # Tag the Page
@@ -53,8 +55,11 @@ class Content::Routines::ImportPage
 
     return unless save
 
-    # Get Exercises from OpenStax Exercises that match the LO's and AP LO's
-    objective_tags = outputs[:tags].select{ |tag| tag.lo? || tag.aplo? }.collect{ |tag| tag.value }
+    # Get Exercises from OpenStax Exercises that match the LO's or AP LO's, plus CC tags
+    objective_tags = outputs[:tags].select do |tag|
+      tag.lo? || tag.aplo? || tag.cc?
+    end.collect{ |tag| tag.value }
+
     return if objective_tags.empty?
 
     run(:import_exercises, ecosystem: ecosystem, page: outputs[:page],

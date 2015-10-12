@@ -15,7 +15,7 @@ class Content::ImportBook
 
   # Imports and saves a Cnx::Book as an Content::Models::Book
   # Returns the Book object, Resource object and collection JSON as a hash
-  def exec(cnx_book:, ecosystem:, exercise_uids: nil, concept_coach_tag: nil)
+  def exec(cnx_book:, ecosystem:, exercise_uids: nil, concept_coach_str: nil)
     book = Content::Models::Book.new(url: cnx_book.canonical_url,
                                      uuid: cnx_book.uuid,
                                      version: cnx_book.version,
@@ -24,11 +24,13 @@ class Content::ImportBook
                                      content_ecosystem_id: ecosystem.id)
 
     run(:import_book_part, cnx_book_part: cnx_book.root_book_part, book: book,
-                           save: false, concept_coach_tag: concept_coach_tag)
+                           save: false, concept_coach_str: concept_coach_str)
 
     Content::Models::Book.import! [book], recursive: true
 
-    objective_page_tags = outputs[:page_taggings].select{ |pt| pt.tag.lo? || pt.tag.aplo? }
+    objective_page_tags = outputs[:page_taggings].select do |pt|
+      pt.tag.lo? || pt.tag.aplo? || pt.tag.cc?
+    end
 
     if objective_page_tags.empty?
       outputs[:exercises] = []
@@ -36,7 +38,7 @@ class Content::ImportBook
     else
       outputs[:exercises] = []
       page_block = ->(exercise_wrapper) {
-        tags = Set.new(exercise_wrapper.los + exercise_wrapper.aplos)
+        tags = Set.new(exercise_wrapper.los + exercise_wrapper.aplos + exercise_wrapper.ccs)
         pages = objective_page_tags.select{ |opt| tags.include?(opt.tag.value) }
                                    .collect{ |opt| opt.page }.uniq
 

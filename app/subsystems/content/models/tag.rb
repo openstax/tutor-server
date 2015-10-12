@@ -16,7 +16,7 @@ class Content::Models::Tag < Tutor::SubSystems::BaseModel
   has_many :same_value_tags, class_name: 'Tag', primary_key: 'value', foreign_key: 'value'
 
   # List the different types of tags
-  enum tag_type: [ :generic, :lo, :aplo, :teks, :dok, :blooms, :length ]
+  enum tag_type: [ :generic, :lo, :aplo, :teks, :dok, :blooms, :length, :cc ]
 
   validates :value, presence: true
   validates :tag_type, presence: true
