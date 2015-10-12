@@ -23,7 +23,7 @@ class Content::Models::Tag < Tutor::SubSystems::BaseModel
 
   before_save :update_tag_type_data_and_visible
 
-  OBJECTIVE_TAG_TYPES = ['lo', 'aplo'].collect{ |type| tag_types[type] }
+  OBJECTIVE_TAG_TYPES = ['lo', 'aplo', 'cc'].collect{ |type| tag_types[type] }
 
   TAG_TYPE_REGEX = {
     dok: /^dok(\d+)$/,

@@ -6,7 +6,7 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, speed: :slow, vcr:
   let!(:chapter) { FactoryGirl.create :content_chapter }
   let!(:cnx_page)  { OpenStax::Cnx::V1::Page.new(id: '95e61258-2faf-41d4-af92-f62e1414175a',
                                                  title: 'Force') }
-  let!(:book_location) { [-1] }
+  let!(:book_location) { [4, 1] }
 
   it 'creates a new Page' do
     result = nil
@@ -66,14 +66,25 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, speed: :slow, vcr:
     expect {
       result = import_page
     }.to change{ Content::Models::Exercise.count }.by(33)
-
-    exercises = Content::Models::Exercise.all.order(:id).to_a
   end
 
-  def import_page
+  it 'adds cc tags to the page if a proper TagGenerator is given' do
+    tag_generator = ConceptCoach::TagGenerator.new('k12phys')
+
+    result = nil
+    expect {
+      result = import_page(tag_generator: tag_generator)
+    }.to change{ Content::Models::Tag.cc.count }.by(1)
+
+    tag = Content::Models::Tag.find_by(value: 'k12phys-ch04-s01')
+    expect(tag.cc?).to eq true
+  end
+
+  def import_page(tag_generator: nil)
     Content::Routines::ImportPage.call(cnx_page: cnx_page,
                                        chapter: chapter,
-                                       book_location: book_location)
+                                       book_location: book_location,
+                                       tag_generator: tag_generator)
   end
 
 end

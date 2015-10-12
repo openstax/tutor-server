@@ -54,7 +54,7 @@ class OpenStax::Exercises::V1::Exercise
         value: tag,
         type: !LO_REGEX.match(tag).nil? ? :lo : \
              (!APLO_REGEX.match(tag).nil? ? :aplo : \
-             (CC_REGEX.match(tag).nil? ? :cc : :generic))
+             (!CC_REGEX.match(tag).nil? ? :cc : :generic))
       }
     end
   end
