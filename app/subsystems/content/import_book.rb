@@ -15,7 +15,7 @@ class Content::ImportBook
 
   # Imports and saves a Cnx::Book as an Content::Models::Book
   # Returns the Book object, Resource object and collection JSON as a hash
-  def exec(cnx_book:, ecosystem:, exercise_uids: nil, concept_coach_str: nil)
+  def exec(cnx_book:, ecosystem:, exercise_uids: nil, tag_generator: nil)
     book = Content::Models::Book.new(url: cnx_book.canonical_url,
                                      uuid: cnx_book.uuid,
                                      version: cnx_book.version,
@@ -24,7 +24,7 @@ class Content::ImportBook
                                      content_ecosystem_id: ecosystem.id)
 
     run(:import_book_part, cnx_book_part: cnx_book.root_book_part, book: book,
-                           save: false, concept_coach_str: concept_coach_str)
+                           save: false, tag_generator: tag_generator)
 
     Content::Models::Book.import! [book], recursive: true
 

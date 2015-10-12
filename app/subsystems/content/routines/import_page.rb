@@ -19,7 +19,7 @@ class Content::Routines::ImportPage
   # Imports and saves a Cnx::Page as a Content::Models::Page
   # into the given Content::Models::Chapter
   # Returns the Content::Models::Page object
-  def exec(cnx_page:, chapter:, number: nil, book_location: nil, save: true, concept_coach_str: nil)
+  def exec(cnx_page:, chapter:, number: nil, book_location: nil, save: true, tag_generator: nil)
     ecosystem = chapter.book.ecosystem
 
     outputs[:page] = Content::Models::Page.new(url: cnx_page.canonical_url,
@@ -35,15 +35,7 @@ class Content::Routines::ImportPage
     chapter.pages << outputs[:page] unless chapter.nil?
 
     tags = cnx_page.tags
-
-    if concept_coach_str.present?
-      chapter_str = "#{concept_coach_str}-ch#{"%02d" % book_location.first}"
-      section_str = "#{chapter_str}-s#{"%02d" % book_location.last}"
-      tags << {
-        value: section_str,
-        type: :cc
-      }
-    end
+    tags += tag_generator.generate(book_location) if tag_generator.present?
 
     # Tag the Page
     run(:find_or_create_tags, ecosystem: ecosystem, input: tags)
