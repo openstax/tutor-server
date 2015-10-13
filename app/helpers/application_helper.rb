@@ -14,4 +14,7 @@ module ApplicationHelper
     request.host == 'tutor.openstax.org'
   end
 
+  def accounts_access_script_url
+    Rails.application.secrets.openstax['accounts']['url'] + '/assets/ox-account.js'
+  end
 end
