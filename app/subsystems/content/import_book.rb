@@ -28,19 +28,19 @@ class Content::ImportBook
 
     Content::Models::Book.import! [book], recursive: true
 
-    objective_page_tags = outputs[:page_taggings].select do |pt|
+    import_page_tags = outputs[:page_taggings].select do |pt|
       pt.tag.lo? || pt.tag.aplo? || pt.tag.cc?
     end
 
-    if objective_page_tags.empty?
+    if import_page_tags.empty?
       outputs[:exercises] = []
-      Rails.logger.warn "Imported book (#{cnx_book.uuid}@#{cnx_book.version}) has no LO's."
+      Rails.logger.warn "Imported book (#{cnx_book.uuid}@#{cnx_book.version}) has no LO's, APLO's or CC tags."
     else
       outputs[:exercises] = []
       page_block = ->(exercise_wrapper) {
         tags = Set.new(exercise_wrapper.los + exercise_wrapper.aplos + exercise_wrapper.ccs)
-        pages = objective_page_tags.select{ |opt| tags.include?(opt.tag.value) }
-                                   .collect{ |opt| opt.page }.uniq
+        pages = import_page_tags.select{ |opt| tags.include?(opt.tag.value) }
+                                .collect{ |opt| opt.page }.uniq
 
         # Blow up if there is more than one page for an exercise
         fatal_error(code: :multiple_pages_for_one_exercise,
@@ -52,7 +52,7 @@ class Content::ImportBook
 
       if exercise_uids.nil?
         # Split the tag queries into sets of MAX_TAG_QUERY_SIZE to avoid exceeding the URL limit
-        objective_page_tags.each_slice(MAX_TAG_QUERY_SIZE) do |page_tags|
+        import_page_tags.each_slice(MAX_TAG_QUERY_SIZE) do |page_tags|
           query_hash = { tag: page_tags.collect{ |pt| pt.tag.value } }
           outputs[:exercises] += run(:import_exercises, ecosystem: ecosystem,
                                                         page: page_block,
