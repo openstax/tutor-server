@@ -21,29 +21,28 @@ class Content::Models::Tag < Tutor::SubSystems::BaseModel
   validates :value, presence: true
   validates :tag_type, presence: true
 
-  before_save :update_tag_data_and_visible
+  before_save :update_tag_type_data_and_visible
 
   MAPPING_TAG_TYPES = [:lo, :aplo, :cc].collect{ |type| tag_types[type] }
   VISIBLE_TAG_TYPES = [:lo, :aplo, :teks, :dok, :blooms, :length]
 
   def book_location
-    matches = /[\w-]+-ch([\d-]{2})-s([\d-]{2})/.match(value)
-    matches.nil? ? [] : [matches[1].to_i, matches[2].to_i]
+    Tagger.get_book_location(value)
+  end
+
+  def name
+    read_attribute(:name) || Tagger.get_name(tag_type, data)
   end
 
   protected
 
-  def update_tag_data_and_visible
-    self.data = get_data if data.nil?
+  def update_tag_type_data_and_visible
+    self.tag_type = Tagger.get_type(value) if tag_type.nil? || generic?
+    self.data = Tagger.get_data(tag_type, value) if data.nil?
     self.visible = VISIBLE_TAG_TYPES.include?(tag_type.to_sym) if visible.nil?
     # need to return true here because if self.visible evaluates to false, the
     # record does not get saved
     true
-  end
-
-  def get_data
-    m = value.match(TAG_TYPE_REGEX[tag_type.to_sym] || //)
-    return m && m[1]
   end
 
 end
