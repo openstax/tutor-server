@@ -23,6 +23,9 @@ Rails.application.routes.draw do
   mount OpenStax::Accounts::Engine, at: "/accounts"
   mount FinePrint::Engine => "/fine_print"
 
+  # Intended to eventually move to openstax_accounts gem
+  get '/accounts/remote/v1', :to => 'remote#loader', :as=>'remote_js_loader'
+
   use_doorkeeper
 
   apipie
