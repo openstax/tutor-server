@@ -45,7 +45,7 @@ FactoryGirl.define do
 
     after(:build) do |task_plan, evaluator|
       course = task_plan.owner
-      period = course.periods.first || CreatePeriod[course: course]
+      period = course.periods.first || CreatePeriod[course: course].to_model
 
       evaluator.number_of_students.times do
         profile = create :user_profile
