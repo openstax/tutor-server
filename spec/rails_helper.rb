@@ -33,6 +33,7 @@ ActiveRecord::Migration.maintain_test_schema!
 
 RSpec.configure do |config|
   config.include CaptureStdoutHelper
+  config.include WithoutException
   config.include SigninHelper
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
