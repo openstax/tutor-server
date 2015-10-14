@@ -1,5 +1,7 @@
 class Api::V1::PeriodsController < Api::V1::ApiController
-  before_filter :find_course, :ensure_requestor_is_course_teacher
+  before_filter :find_course, only: :create
+  before_filter :find_period, only: :update
+  before_filter :ensure_requestor_is_course_teacher
 
   resource_description do
     api_versions "v1"
@@ -25,8 +27,7 @@ class Api::V1::PeriodsController < Api::V1::ApiController
     #{json_schema(Api::V1::PeriodRepresenter, include: :readable)}
   EOS
   def update
-    period = CourseMembership::Models::Period.find(params[:id])
-    updated_period = UpdatePeriod[period: period, name: period_params[:name]]
+    updated_period = UpdatePeriod[period: @period, name: period_params[:name]]
     respond_with updated_period, represent_with: Api::V1::PeriodRepresenter, location: nil
   end
 
@@ -35,8 +36,13 @@ class Api::V1::PeriodsController < Api::V1::ApiController
     @course = Entity::Course.find(params[:course_id])
   end
 
+  def find_period
+    @period = GetPeriod[id: params[:id]].to_model
+  end
+
   def ensure_requestor_is_course_teacher
-    unless UserIsCourseTeacher[course: @course, user: current_human_user]
+    unless UserIsCourseTeacher[course: @course || @period.course,
+                               user: current_human_user]
       raise SecurityTransgression
     end
   end
