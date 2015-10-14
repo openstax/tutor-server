@@ -1,5 +1,5 @@
 module Tagger
-  BOOK_LOCATION_REGEX = /\A[\w-]+-ch([\d-]{2})-s([\d-]{2})/
+  BOOK_LOCATION_REGEX = /\A[\w-]+-ch([\d]+)-s([\d]+)/
 
   # If the tag string matches, it is considered to be of that type
   # This map is used to determine tag types for Exercises
