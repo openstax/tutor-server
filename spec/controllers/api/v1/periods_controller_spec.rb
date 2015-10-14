@@ -41,4 +41,21 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
       expect(response).to have_http_status(403)
     end
   end
+
+  describe '#update' do
+    let(:period) { CreatePeriod[course: course, name: '8th Period'] }
+
+    it 'allows teachers to rename periods'
+
+    it 'ensures the person is a teacher of the course' do
+      other_course = CreateCourse[name: 'Other course']
+
+      rescuing_exceptions do
+        api_put :update, teacher_token, parameters: { id: period.id,
+                                                      period: { name: '7th Period' } }
+      end
+
+      expect(response).to have_http_status(403)
+    end
+  end
 end

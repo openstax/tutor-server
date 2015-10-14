@@ -19,6 +19,17 @@ class Api::V1::PeriodsController < Api::V1::ApiController
     respond_with period, represent_with: Api::V1::PeriodRepresenter, location: nil
   end
 
+  api :PATCH, '/periods/:id(/role/:role_id)',
+              'Returns an updated period for the given course'
+  description <<-EOS
+    #{json_schema(Api::V1::PeriodRepresenter, include: :readable)}
+  EOS
+  def update
+    period = CourseMembership::Models::Period.find(params[:id])
+    updated_period = UpdatePeriod[period: period, name: period_params[:name]]
+    respond_with updated_period, represent_with: Api::V1::PeriodRepresenter, location: nil
+  end
+
   private
   def find_course
     @course = Entity::Course.find(params[:course_id])
