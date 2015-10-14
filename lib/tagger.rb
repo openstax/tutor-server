@@ -1,5 +1,5 @@
 module Tagger
-  BOOK_LOCATION_REGEX = /\A[\w-]+-ch([\d]+)-s([\d]+)/
+  BOOK_LOCATION_REGEX = /\A[\w-]+-ch(\d+)-s(\d+)/
 
   # If the tag string matches, it is considered to be of that type
   # This map is used to determine tag types for Exercises
@@ -7,7 +7,7 @@ module Tagger
   # We do not automatically assign CC tags or else
   # they would match the section tags in non-CC books
   TAG_TYPE_REGEXES = HashWithIndifferentAccess.new({
-    lo: /\A[\w-]+-lo[\d]+\z/,
+    lo: /\A[\w-]+-lo\d+\z/,
     aplo: /\A[\w-]+-aplo-[\w-]+\z/,
     dok: /\Adok(\d+)\z/,
     blooms: /\Ablooms-(\d+)\z/,
