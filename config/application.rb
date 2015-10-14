@@ -43,8 +43,8 @@ module Tutor
     # Use delayed_job for background jobs
     config.active_job.queue_adapter = :delayed_job
 
+    # Skip helper, asset and view spec generation when generating scaffolds
     config.generators do |g|
-      g.skip_routes true
       g.helper false
       g.assets false
       g.view_specs false
