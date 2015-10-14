@@ -17,16 +17,33 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
     allow(Babbler).to receive(:babble) { 'awesome programmer' }
   end
 
+  before(:all) do
+    OpenStax::RescueFrom.configure { |c| c.raise_exceptions = false }
+  end
+
+  after(:all) do
+    OpenStax::RescueFrom.configure { |c| c.raise_exceptions = true }
+  end
+
   describe '#create' do
     it 'allows teachers to create periods' do
       api_post :create, teacher_token, parameters: { course_id: course.id,
                                                      period: { name: '7th Period' } }
 
       expect(response.body_as_hash).to eq({
-        id: CourseMembership::Models::Period.last.id,
+        id: CourseMembership::Models::Period.last.id.to_s,
         name: '7th Period',
         enrollment_code: 'awesome programmer'
       })
+    end
+
+    it 'ensures the person is a teacher of the course' do
+      other_course = CreateCourse[name: 'Other course']
+
+      api_post :create, teacher_token, parameters: { course_id: other_course.id,
+                                                     period: { name: '7th Period' } }
+
+      expect(response).to have_http_status(403)
     end
   end
 end
