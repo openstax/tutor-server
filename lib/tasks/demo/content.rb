@@ -34,7 +34,7 @@ class DemoContent < DemoBase
       run(:make_administrator, user: admin_user) unless admin_user.is_admin?
       log("Admin user: #{admin_user.name}")
 
-      ca_user = user_for_username('ca') || new_user(username: 'ca', name: people.ca)
+      ca_user = user_for_username('content') || new_user(username: 'content', name: people.content)
       run(:set_content_analyst, user: ca_user, content_analyst: true)
       log("Content Analyst user: #{ca_user.name}")
 
