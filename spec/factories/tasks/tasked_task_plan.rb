@@ -43,20 +43,22 @@ FactoryGirl.define do
 
     settings { { page_ids: [@page.id.to_s] } }
 
-    after(:create) do |task_plan, evaluator|
+    after(:build) do |task_plan, evaluator|
       course = task_plan.owner
       period = course.periods.first || CreatePeriod[course: course]
 
-      task_plan.tasking_plans = evaluator.number_of_students.times.collect do |ii|
+      evaluator.number_of_students.times do
         profile = create :user_profile
         strategy = User::Strategies::Direct::User.new(profile)
         user = User::User.new(strategy: strategy)
         role = Role::GetDefaultUserRole[user]
         CourseMembership::AddStudent.call(period: period, role: role)
-        build :tasks_tasking_plan, task_plan: task_plan, target: role
       end
-      task_plan.save!
 
+      task_plan.tasking_plans = [build(:tasks_tasking_plan, task_plan: task_plan, target: period)]
+    end
+
+    after(:create) do |task_plan, evaluator|
       DistributeTasks.call(task_plan)
       task_plan.reload
     end
