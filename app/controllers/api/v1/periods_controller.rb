@@ -28,7 +28,9 @@ class Api::V1::PeriodsController < Api::V1::ApiController
   EOS
   def update
     updated_period = UpdatePeriod[period: @period, name: period_params[:name]]
-    respond_with updated_period, represent_with: Api::V1::PeriodRepresenter, location: nil
+    respond_with updated_period, represent_with: Api::V1::PeriodRepresenter,
+                                 location: nil,
+                                 responder: ResponderWithPutContent
   end
 
   private
