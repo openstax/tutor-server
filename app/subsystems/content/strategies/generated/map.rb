@@ -47,10 +47,10 @@ module Content
             .where(id: unmapped_exercise_ids,
                    tags: {
                      content_ecosystem_id: @from_ecosystems.collect(&:id),
-                     tag_type: Content::Models::Tag::OBJECTIVE_TAG_TYPES,
+                     tag_type: Content::Models::Tag::MAPPING_TAG_TYPES,
                      same_value_tags: {
                        content_ecosystem_id: @to_ecosystem.id,
-                       tag_type: Content::Models::Tag::OBJECTIVE_TAG_TYPES
+                       tag_type: Content::Models::Tag::MAPPING_TAG_TYPES
                      }
                    })
             .preload(tags: {same_value_tags: :pages})
@@ -90,10 +90,10 @@ module Content
             .where(id: unmapped_page_ids,
                    tags: {
                      content_ecosystem_id: @from_ecosystems.collect(&:id),
-                     tag_type: Content::Models::Tag::OBJECTIVE_TAG_TYPES,
+                     tag_type: Content::Models::Tag::MAPPING_TAG_TYPES,
                      same_value_tags: {
                        content_ecosystem_id: @to_ecosystem.id,
-                       tag_type: Content::Models::Tag::OBJECTIVE_TAG_TYPES
+                       tag_type: Content::Models::Tag::MAPPING_TAG_TYPES
                      }
                    })
             .preload(tags: {same_value_tags: [:exercises, { pages: pool_method }]})

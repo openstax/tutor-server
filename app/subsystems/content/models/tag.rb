@@ -23,6 +23,7 @@ class Content::Models::Tag < Tutor::SubSystems::BaseModel
 
   before_save :update_tag_data_and_visible
 
+  MAPPING_TAG_TYPES = [:lo, :aplo, :cc].collect{ |type| tag_types[type] }
   VISIBLE_TAG_TYPES = [:lo, :aplo, :teks, :dok, :blooms, :length]
 
   def book_location
