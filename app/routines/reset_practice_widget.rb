@@ -14,7 +14,7 @@ class ResetPracticeWidget
     as: :create_practice_widget_task
 
   uses_routine GetCourseEcosystem, as: :get_course_ecosystem
-  uses_routine GetExerciseHistory, as: :get_exercise_history
+  uses_routine GetHistory, as: :get_history
   uses_routine GetEcosystemExercisesFromBiglearn, as: :get_ecosystem_exercises_from_biglearn
 
   protected
@@ -100,11 +100,10 @@ class ResetPracticeWidget
     options = { randomize: true }.merge(options)
     entity_tasks = role.taskings.preload(task: {task: {task_steps: :tasked}})
                                 .collect{ |tt| tt.task }
-    flat_history = run(:get_exercise_history, ecosystem: ecosystem, entity_tasks: entity_tasks)
-                     .outputs.exercise_history.flatten
+    all_worked_exercises = run(:get_history, role: role, type: :all).outputs.exercises.flatten.uniq
     exercise_pool = pools.collect{ |pl| pl.exercises }.flatten.uniq
     exercise_pool = exercise_pool.shuffle if options[:randomize]
-    candidate_exercises = (exercise_pool - flat_history)
+    candidate_exercises = (exercise_pool - all_worked_exercises)
     exercises = candidate_exercises.first(count)
     num_exercises = exercises.size
 

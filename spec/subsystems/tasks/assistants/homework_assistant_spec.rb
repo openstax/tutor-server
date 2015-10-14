@@ -179,7 +179,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
       end
     end
 
-    ## it "assigns personalized exericse placeholders"
+    ## it "assigns personalized exercise placeholders"
     entity_tasks.each do |entity_task|
       personalized_task_steps = entity_task.task.personalized_task_steps
       expect(personalized_task_steps.count).to eq(personalized_exercise_count)
