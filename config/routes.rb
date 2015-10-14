@@ -81,6 +81,8 @@ Rails.application.routes.draw do
       end
 
       resources :students, shallow: true, except: :create
+
+      resources :periods, shallow: true, only: [:create]
     end
 
     resources :ecosystems, only: [:index] do
