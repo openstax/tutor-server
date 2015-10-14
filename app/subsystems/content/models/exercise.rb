@@ -36,4 +36,8 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
     tags.to_a.select(&:aplo?)
   end
 
+  def ccs
+    tags.to_a.select(&:cc?)
+  end
+
 end

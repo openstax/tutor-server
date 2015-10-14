@@ -48,15 +48,13 @@ class Content::Routines::ImportPage
     return unless save
 
     # Get Exercises from OpenStax Exercises that match the LO's or AP LO's, plus CC tags
-    import_tags = outputs[:tags].select do |tag|
-      tag.lo? || tag.aplo? || tag.cc?
-    end.collect{ |tag| tag.value }
+    mapping_tags = outputs[:tags].select(&:mapping?).collect{ |tag| tag.value }
 
-    return if import_tags.empty?
+    return if mapping_tags.empty?
 
     run(:import_exercises, ecosystem: ecosystem,
                            page: outputs[:page],
-                           query_hash: {tag: import_tags})
+                           query_hash: {tag: mapping_tags})
   end
 
 end
