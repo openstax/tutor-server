@@ -21,62 +21,23 @@ class Content::Models::Tag < Tutor::SubSystems::BaseModel
   validates :value, presence: true
   validates :tag_type, presence: true
 
-  before_save :update_tag_type_data_and_visible
-
-  TAG_TYPE_REGEX = {
-    dok: /^dok(\d+)$/,
-    blooms: /^blooms-(\d+)$/,
-    length: /^time-(.+)$/,
-    teks: /^ost-tag-teks-.*-(.+)$/,
-    lo: /-lo\d+$/
-  }
+  before_save :update_tag_data_and_visible
 
   VISIBLE_TAG_TYPES = [:lo, :aplo, :teks, :dok, :blooms, :length]
 
   def book_location
-    matches = /-ch(\d+)-s(\d+)-lo\d+$/.match(value)
+    matches = /[\w-]+-ch([\d-]{2})-s([\d-]{2})/.match(value)
     matches.nil? ? [] : [matches[1].to_i, matches[2].to_i]
-  end
-
-  def name
-    read_attribute(:name) || (
-      convert(/dok(\d+)/, "DOK: $1") ||
-      convert(/blooms\-(\d+)/, "Blooms: $1") ||
-      convert(/time-short/, "Length: S") ||
-      convert(/time-med/, "Length: M") ||
-      convert(/time-long/, "Length: L")
-    )
   end
 
   protected
 
-  def convert(regex, template)
-    match_data = value.match(regex)
-    return nil if match_data.nil?
-
-    (1..match_data.length-1).each do |match_index|
-      template.gsub!("$#{match_index}", match_data[match_index])
-    end
-
-    template
-  end
-
-  def update_tag_type_data_and_visible
-    self.tag_type = get_tag_type if tag_type.nil? || tag_type == 'generic'
+  def update_tag_data_and_visible
     self.data = get_data if data.nil?
     self.visible = VISIBLE_TAG_TYPES.include?(tag_type.to_sym) if visible.nil?
     # need to return true here because if self.visible evaluates to false, the
     # record does not get saved
     true
-  end
-
-  def get_tag_type
-    TAG_TYPE_REGEX.each do |type, regex|
-      if value.match(regex)
-        return type
-      end
-    end
-    return :generic
   end
 
   def get_data

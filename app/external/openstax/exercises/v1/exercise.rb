@@ -40,12 +40,7 @@ class OpenStax::Exercises::V1::Exercise
   end
 
   def tag_hashes
-    @tag_hashes ||= tags.collect do |tag|
-      {
-        value: tag,
-        type: Tagger.get_type(tag)
-      }
-    end
+    @tag_hashes ||= tags.collect{ |tag| Tagger.get_hash(tag) }
   end
 
   def lo_hashes

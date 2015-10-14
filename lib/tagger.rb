@@ -1,23 +1,42 @@
 module Tagger
-  # This Regex matches LO's
-  LO_REGEX = /[\w-]+-lo[\d-]+/
+  # If the tag string matches, it is considered to be of that type
+  TAG_TYPE_REGEXES = {
+    lo: /[\w-]+-lo[\d-]+/,
+    aplo: /[\w-]+-aplo-[\w-]+/,
+    cc: /[\w-]+-ch[\d-]{2}-s[\d-]{2}/,
+    dok: /^dok(\d+)$/,
+    blooms: /^blooms-(\d+)$/,
+    length: /^time-(\w+)$/,
+    teks: /^ost-tag-teks-.*-(.+)$/
+  }
 
-  # This Regex matches AP LO's
-  APLO_REGEX = /[\w-]+-aplo-[\w-]+/
-
-  # This Regex matches Concept Coach section tags
-  CC_REGEX = /[\w-]+-ch[\d-]{2}-s[\d-]{2}/
+  # The capture from the regex above is substituted into the template to form the tag name
+  TAG_NAME_TEMPLATES = {
+    dok: "DOK: %d",
+    blooms: "Blooms: %d",
+    length: "Length: %.1s"
+  }
 
   def self.get_type(tag_string)
-    case tag_string
-    when LO_REGEX
-      :lo
-    when APLO_REGEX
-      :aplo
-    when CC_REGEX
-      :cc
-    else
-      :generic
-    end
+    TAG_TYPE_REGEXES.each{ |type, regex| return type if regex.match?(tag_string) }
+    :generic
+  end
+
+  def self.get_name(tag_string, type)
+    template = TAG_NAME_TEMPLATES[type]
+    return tag_string if template.nil?
+
+    capture = TAG_TYPE_REGEXES[type].match(tag_string)[1]
+    template % capture.capitalize
+  end
+
+  def self.get_hash(tag_string)
+    type = get_type(tag_string)
+    name = get_name(tag_string, type)
+    {
+      value: tag_string,
+      name: name,
+      type: type
+    }
   end
 end
