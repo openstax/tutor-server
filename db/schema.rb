@@ -228,6 +228,7 @@ ActiveRecord::Schema.define(version: 20151023175052) do
     t.string   "timezone",                    default: "Central Time (US & Canada)", null: false
     t.datetime "created_at",                                                         null: false
     t.datetime "updated_at",                                                         null: false
+    t.boolean  "is_concept_coach",                                                   null: false
     t.string   "catalog_offering_identifier"
   end
 

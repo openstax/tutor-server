@@ -5,7 +5,7 @@ class AddEnrollmentCodeToCourseMembershipPeriods < ActiveRecord::Migration
 
     reversible do |direction|
       direction.up do
-        CourseMembership::Models::Period.where(enrollment_code: nil).find_each do |period|
+        CourseMembership::Models::Period.unscoped.where(enrollment_code: nil).find_each do |period|
           period.send(:generate_enrollment_code)
           period.save!
         end
