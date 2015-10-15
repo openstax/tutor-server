@@ -1,9 +1,13 @@
 class Api::V1::PeriodsController < Api::V1::ApiController
-  before_filter :find_course
+  before_filter :find_period_and_course
 
   before_filter -> {
-    OSU::AccessPolicy.require_action_allowed!(action_name, current_human_user, @course)
-  }
+    OSU::AccessPolicy.require_action_allowed!(:add_period, current_human_user, @course)
+  }, only: :create
+
+  before_filter -> {
+    OSU::AccessPolicy.require_action_allowed!(:update, current_human_user, @period)
+  }, only: :update
 
   resource_description do
     api_versions "v1"
@@ -37,7 +41,7 @@ class Api::V1::PeriodsController < Api::V1::ApiController
   end
 
   private
-  def find_course
+  def find_period_and_course
     if params[:course_id]
       @course = Entity::Course.find(params[:course_id])
     elsif params[:id]
