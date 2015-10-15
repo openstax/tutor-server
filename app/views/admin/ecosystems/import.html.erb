@@ -9,5 +9,9 @@
     <%= label_tag :cnx_id, 'Book CNX id' %>
     <%= text_field_tag :cnx_id, params[:cnx_id], class: 'form-control' %>
   </div>
+  <div class="form-group">
+    <%= label_tag :cc_tag, 'Concept Coach tag (leave blank if this is not a CC book)' %>
+    <%= text_field_tag :cc_tag, params[:cc_tag], class: 'form-control' %>
+  </div>
   <%= button_tag 'Import', class: 'btn btn-default', data: { disable_with: 'Import will likely take a while...' } %>
 <% end %>

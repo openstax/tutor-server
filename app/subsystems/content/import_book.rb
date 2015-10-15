@@ -15,7 +15,7 @@ class Content::ImportBook
 
   # Imports and saves a Cnx::Book as an Content::Models::Book
   # Returns the Book object, Resource object and collection JSON as a hash
-  def exec(cnx_book:, ecosystem:, exercise_uids: nil)
+  def exec(cnx_book:, ecosystem:, exercise_uids: nil, tag_generator: nil)
     book = Content::Models::Book.new(url: cnx_book.canonical_url,
                                      uuid: cnx_book.uuid,
                                      version: cnx_book.version,
@@ -23,21 +23,22 @@ class Content::ImportBook
                                      content: cnx_book.root_book_part.contents,
                                      content_ecosystem_id: ecosystem.id)
 
-    run(:import_book_part, cnx_book_part: cnx_book.root_book_part, book: book, save: false)
+    run(:import_book_part, cnx_book_part: cnx_book.root_book_part, book: book,
+                           save: false, tag_generator: tag_generator)
 
     Content::Models::Book.import! [book], recursive: true
 
-    objective_page_tags = outputs[:page_taggings].select{ |pt| pt.tag.lo? || pt.tag.aplo? }
+    mapping_page_tags = outputs[:page_taggings].select{ |pt| pt.tag.mapping? }
 
-    if objective_page_tags.empty?
+    if mapping_page_tags.empty?
       outputs[:exercises] = []
-      Rails.logger.warn "Imported book (#{cnx_book.uuid}@#{cnx_book.version}) has no LO's."
+      Rails.logger.warn "Imported book (#{cnx_book.uuid}@#{cnx_book.version}) has no LO's, APLO's or CC tags."
     else
       outputs[:exercises] = []
       page_block = ->(exercise_wrapper) {
-        tags = Set.new(exercise_wrapper.los + exercise_wrapper.aplos)
-        pages = objective_page_tags.select{ |opt| tags.include?(opt.tag.value) }
-                                   .collect{ |opt| opt.page }.uniq
+        tags = Set.new(exercise_wrapper.los + exercise_wrapper.aplos + exercise_wrapper.ccs)
+        pages = mapping_page_tags.select{ |pt| tags.include?(pt.tag.value) }
+                                 .collect{ |pt| pt.page }.uniq
 
         # Blow up if there is more than one page for an exercise
         fatal_error(code: :multiple_pages_for_one_exercise,
@@ -49,7 +50,7 @@ class Content::ImportBook
 
       if exercise_uids.nil?
         # Split the tag queries into sets of MAX_TAG_QUERY_SIZE to avoid exceeding the URL limit
-        objective_page_tags.each_slice(MAX_TAG_QUERY_SIZE) do |page_tags|
+        mapping_page_tags.each_slice(MAX_TAG_QUERY_SIZE) do |page_tags|
           query_hash = { tag: page_tags.collect{ |pt| pt.tag.value } }
           outputs[:exercises] += run(:import_exercises, ecosystem: ecosystem,
                                                         page: page_block,

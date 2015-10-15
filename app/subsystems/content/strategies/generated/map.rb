@@ -47,10 +47,10 @@ module Content
             .where(id: unmapped_exercise_ids,
                    tags: {
                      content_ecosystem_id: @from_ecosystems.collect(&:id),
-                     tag_type: Content::Models::Tag::OBJECTIVE_TAG_TYPES,
+                     tag_type: mapping_tag_types,
                      same_value_tags: {
                        content_ecosystem_id: @to_ecosystem.id,
-                       tag_type: Content::Models::Tag::OBJECTIVE_TAG_TYPES
+                       tag_type: mapping_tag_types
                      }
                    })
             .preload(tags: {same_value_tags: :pages})
@@ -58,9 +58,8 @@ module Content
           @exercise_id_to_page_map = unmapped_exercise_models
             .each_with_object(@exercise_id_to_page_map) do |exercise_model, hash|
 
-            mapping_tags = exercise_model.tags.select{ |tag| tag.lo? || tag.aplo? }
-            tags_across_ecosystems = mapping_tags.flat_map(&:same_value_tags)
-                                                 .select{ |tag| tag.lo? || tag.aplo? }
+            mapping_tags = exercise_model.tags.select(&:mapping?)
+            tags_across_ecosystems = mapping_tags.flat_map(&:same_value_tags).select(&:mapping?)
             page_models = tags_across_ecosystems.flat_map{ |tag| tag.pages }.uniq
             ecosystem_pages = page_models.collect{ |cp| @page_id_to_page_map[cp.id] }.compact
 
@@ -90,10 +89,10 @@ module Content
             .where(id: unmapped_page_ids,
                    tags: {
                      content_ecosystem_id: @from_ecosystems.collect(&:id),
-                     tag_type: Content::Models::Tag::OBJECTIVE_TAG_TYPES,
+                     tag_type: mapping_tag_types,
                      same_value_tags: {
                        content_ecosystem_id: @to_ecosystem.id,
-                       tag_type: Content::Models::Tag::OBJECTIVE_TAG_TYPES
+                       tag_type: mapping_tag_types
                      }
                    })
             .preload(tags: {same_value_tags: [:exercises, { pages: pool_method }]})
@@ -101,9 +100,8 @@ module Content
           @page_id_to_pool_exercises_map[pool_type] = unmapped_page_models
             .each_with_object(@page_id_to_pool_exercises_map[pool_type]) do |page_model, hash|
 
-            mapping_tags = page_model.tags.select{ |tag| tag.lo? || tag.aplo? }
-            tags_across_ecosystems = mapping_tags.flat_map(&:same_value_tags)
-                                                 .select{ |tag| tag.lo? || tag.aplo? }
+            mapping_tags = page_model.tags.select(&:mapping?)
+            tags_across_ecosystems = mapping_tags.flat_map(&:same_value_tags).select(&:mapping?)
 
             tag_exercises = tags_across_ecosystems.flat_map{ |tag| tag.exercises }.uniq
             tag_pages = tags_across_ecosystems.flat_map{ |tag| tag.pages }.uniq
@@ -147,6 +145,14 @@ module Content
                    Set.new(all_exercises_map.values).subset?(Set.new(@to_ecosystem.pages)) && \
                    Set.new(all_pages_map.keys) == Set.new(all_pages.collect(&:id)) && \
                    Set.new(all_pages_map.values.flatten).subset?(Set.new(@to_ecosystem.exercises))
+        end
+
+        protected
+
+        def mapping_tag_types
+          @mapping_tag_types ||= Content::Models::Tag::MAPPING_TAG_TYPES.collect do |type|
+            Content::Models::Tag.tag_types[type]
+          end
         end
 
       end

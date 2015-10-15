@@ -62,5 +62,15 @@ RSpec.describe Admin::EcosystemsController, speed: :slow, vcr: VCR_OPTS do
       expect(flash[:notice]).to include 'Ecosystem "Physics (93e2b09d-261c-4007-a987-0b3062fe154b@4.3) - '
       expect(flash[:notice]).to include '" imported.'
     end
+
+    it 'creates a proper TagGenerator if the cc_tag param is given' do
+      expect(ConceptCoach::TagGenerator).to receive(:new).with('test').and_call_original
+      expect(FetchAndImportBookAndCreateEcosystem).to receive(:[]).with(
+        book_cnx_id: cnx_id,
+        tag_generator: instance_of(ConceptCoach::TagGenerator)
+      ).and_call_original
+
+      post :import, archive_url: archive_url, cnx_id: cnx_id, cc_tag: 'test'
+    end
   end
 end
