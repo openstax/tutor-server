@@ -4,6 +4,7 @@ class Tasks::RecoverTaskStep
 
   uses_routine TaskExercise, as: :task_exercise
   uses_routine GetEcosystemFromIds, as: :get_ecosystem
+  uses_routine GetHistory, as: :get_history
 
   protected
 
@@ -42,18 +43,6 @@ class Tasks::RecoverTaskStep
     step
   end
 
-  # Get the student's reading assignments
-  def get_taskees_ireading_histories(taskees:)
-    taskees.collect do |taskee|
-      taskee.taskings
-            .preload(task: {task: {task_steps: :tasked}})
-            .collect{ |tt| tt.task }
-            .select{ |tt| tt.task.reading? }
-            .sort_by{ |tt| tt.task.due_at }
-            .reverse
-    end
-  end
-
   # Get the page for each exercise in the student's assignments
   # From each page, get the pool of "try another" reading problems
   def get_exercise_pool(ecosystem:, exercise:)
@@ -64,18 +53,16 @@ class Tasks::RecoverTaskStep
   # Finds an Exercise with all the required tags and at least one LO
   # Prefers unassigned Exercises
   def get_recovery_exercise_for(ecosystem:, task_step:)
-    taskees = task_step.task.entity_task.taskings.collect{ |tt| tt.role }
+    # Assume only 1 taskee for now
+    role = task_step.task.entity_task.taskings.collect{ |tt| tt.role }.first
 
-    ireading_history = get_taskees_ireading_histories(taskees: taskees).flatten.uniq
-
-    exercise_history = GetExerciseHistory[ecosystem: ecosystem,
-                                          entity_tasks: ireading_history].flatten
+    all_worked_exercises = run(:get_history, role: role, type: :all).outputs.exercises.flatten.uniq
 
     recovered_exercise_id = task_step.tasked.content_exercise_id
     recovered_exercise = ecosystem.exercises_by_ids(recovered_exercise_id).first
     exercise_pool = get_exercise_pool(ecosystem: ecosystem, exercise: recovered_exercise)
 
-    candidate_exercises = (exercise_pool - exercise_history).uniq
+    candidate_exercises = (exercise_pool - all_worked_exercises).uniq
 
     los = Set.new(recovered_exercise.los)
     aplos = Set.new(recovered_exercise.aplos)

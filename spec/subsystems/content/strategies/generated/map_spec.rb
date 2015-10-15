@@ -5,7 +5,18 @@ module Content
     module Generated
       RSpec.describe Map do
         let!(:old_content_exercise)         { FactoryGirl.create :content_exercise }
+        let!(:old_content_pool) do
+          pool = old_content_exercise.page.all_exercises_pool
+          pool.update_attribute(:content_exercise_ids, [old_content_exercise.id])
+          pool
+        end
+
         let!(:new_content_exercise)         { FactoryGirl.create :content_exercise }
+        let!(:new_content_pool) do
+          pool = old_content_exercise.page.all_exercises_pool
+          pool.update_attribute(:content_exercise_ids, [new_content_exercise.id])
+          pool
+        end
 
         let!(:another_old_content_chapter)  {
           FactoryGirl.create :content_chapter, book: old_content_exercise.book
@@ -19,6 +30,11 @@ module Content
         let!(:another_old_content_page_2)   {
           FactoryGirl.create :content_page, chapter: old_content_exercise.chapter
         }
+        let!(:another_old_content_pool) do
+          pool = another_old_content_exercise.page.all_exercises_pool
+          pool.update_attribute(:content_exercise_ids, [another_old_content_exercise.id])
+          pool
+        end
 
         let!(:another_new_content_chapter)  {
           FactoryGirl.create :content_chapter, book: new_content_exercise.book
@@ -32,6 +48,11 @@ module Content
         let!(:another_new_content_page_2)   {
           FactoryGirl.create :content_page, chapter: new_content_exercise.chapter
         }
+        let!(:another_new_content_pool) do
+          pool = another_new_content_exercise.page.all_exercises_pool
+          pool.update_attribute(:content_exercise_ids, [another_new_content_exercise.id])
+          pool
+        end
 
         let!(:old_lo_tag)                   {
           FactoryGirl.create :content_tag, ecosystem: old_content_exercise.ecosystem,
@@ -89,30 +110,38 @@ module Content
                                                 tag: another_new_lo_tag
         }
 
-        let!(:old_exercise)                 {
+        let!(:old_exercise)                 do
           model = old_content_exercise
           strategy = ::Content::Strategies::Direct::Exercise.new(model)
           ::Content::Exercise.new(strategy: strategy)
-        }
-        let!(:new_exercise)                 {
+        end
+        let!(:new_exercise)                 do
           model = new_content_exercise
           strategy = ::Content::Strategies::Direct::Exercise.new(model)
           ::Content::Exercise.new(strategy: strategy)
-        }
+        end
 
-        let!(:old_ecosystem)                { old_exercise.page.chapter.book.ecosystem }
-        let!(:new_ecosystem)                { new_exercise.page.chapter.book.ecosystem }
+        let!(:old_page)                     { old_exercise.page }
+        let!(:new_page)                     { new_exercise.page }
 
-        let!(:another_old_exercise)         {
+        let!(:old_pool)                     {  }
+
+        let!(:old_ecosystem)                { old_page.chapter.book.ecosystem }
+        let!(:new_ecosystem)                { new_page.chapter.book.ecosystem }
+
+        let!(:another_old_exercise)                 do
           model = another_old_content_exercise
           strategy = ::Content::Strategies::Direct::Exercise.new(model)
           ::Content::Exercise.new(strategy: strategy)
-        }
-        let!(:another_new_exercise)         {
+        end
+        let!(:another_new_exercise)                 do
           model = another_new_content_exercise
           strategy = ::Content::Strategies::Direct::Exercise.new(model)
           ::Content::Exercise.new(strategy: strategy)
-        }
+        end
+
+        let!(:another_old_page)             { another_old_exercise.page }
+        let!(:another_new_page)             { another_new_exercise.page }
 
         subject(:map)                       {
           Content::Map.create!(from_ecosystems: [old_ecosystem, new_ecosystem],
@@ -120,19 +149,19 @@ module Content
                                strategy_class: described_class)
         }
 
-        it 'can map from_ecosystems exercise ids to to_ecosystem pages' do
+        it 'can map from_ecosystems exercises to to_ecosystem pages' do
           mapping = map.map_exercises_to_pages(exercises: [
             old_exercise, new_exercise
           ])
           [old_exercise, new_exercise].each do |exercise|
-            expect(mapping[exercise.id]).to eq new_exercise.page
+            expect(mapping[exercise.id]).to eq new_page
           end
 
           mapping_2 = map.map_exercises_to_pages(exercises: [
             another_old_exercise, another_new_exercise
           ])
           [another_old_exercise, another_new_exercise].each do |exercise|
-            expect(mapping_2[exercise.id]).to eq another_new_exercise.page
+            expect(mapping_2[exercise.id]).to eq another_new_page
           end
 
           # Try again to see that we get the same results with the cached mapping
@@ -140,11 +169,55 @@ module Content
             old_exercise, new_exercise, another_old_exercise, another_new_exercise
           ])
           [old_exercise, new_exercise].each do |exercise|
-            expect(mapping_3[exercise.id]).to eq new_exercise.page
+            expect(mapping_3[exercise.id]).to eq new_page
           end
 
           [another_old_exercise, another_new_exercise].each do |exercise|
-            expect(mapping_3[exercise.id]).to eq another_new_exercise.page
+            expect(mapping_3[exercise.id]).to eq another_new_page
+          end
+        end
+
+        it 'can map from_ecosystems pages to to_ecosystem exercises' do
+          mapping = map.map_pages_to_exercises(pages: [
+            old_page, new_page
+          ])
+          [old_page, new_page].each do |page|
+            expect(mapping[page.id]).to eq [new_exercise]
+          end
+
+          mapping_2 = map.map_pages_to_exercises(pages: [
+            another_old_page, another_new_page
+          ])
+          [another_old_page, another_new_page].each do |page|
+            expect(mapping_2[page.id]).to eq [another_new_exercise]
+          end
+
+          # Try again to see that we get the same results with the cached mapping
+          mapping_3 = map.map_pages_to_exercises(pages: [
+            old_page, new_page, another_old_page, another_new_page
+          ])
+          [old_page, new_page].each do |page|
+            expect(mapping_3[page.id]).to eq [new_exercise]
+          end
+
+          [another_old_page, another_new_page].each do |page|
+            expect(mapping_3[page.id]).to eq [another_new_exercise]
+          end
+        end
+
+        it 'does not return exercises in other pools' do
+          mapping = map.map_pages_to_exercises(pages: [
+            old_page, new_page
+          ], pool_type: :practice_widget)
+          [old_page, new_page].each do |page|
+            expect(mapping[page.id]).to eq []
+          end
+
+          mapping_2 = map.map_pages_to_exercises(pages: [
+            another_old_page, another_new_page
+          ], pool_type: :practice_widget)
+          [another_old_page, another_new_page].each do |page|
+            expect(mapping_2[page.id]).to eq []
           end
         end
 

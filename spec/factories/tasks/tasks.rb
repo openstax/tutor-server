@@ -24,11 +24,12 @@ FactoryGirl.define do
       end
 
       evaluator.num_random_taskings.times do
-        task.taskings << FactoryGirl.build(:tasks_tasking, task: task.entity_task)
+        task.entity_task.taskings << FactoryGirl.build(:tasks_tasking, task: task.entity_task)
       end
 
       [evaluator.tasked_to].flatten.each do |role|
-        FactoryGirl.create(:tasks_tasking, task: task.entity_task, role: role)
+        task.entity_task.taskings << FactoryGirl.build(:tasks_tasking, task: task.entity_task,
+                                                                       role: role)
       end
     end
   end

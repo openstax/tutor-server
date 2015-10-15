@@ -28,6 +28,7 @@ class Tasks::Assistants::IReadingAssistant
     @exercise_pages = {}
     @page_pools = {}
     @pool_exercises = {}
+    @ecosystems_map = {}
   end
 
   def build_tasks
@@ -131,67 +132,55 @@ class Tasks::Assistants::IReadingAssistant
   end
 
   def add_spaced_practice_exercise_steps!(task:, taskee:)
-    ireading_history = get_taskee_ireading_history(task: task, taskee: taskee)
-    #puts "taskee: #{taskee.inspect}"
-    #puts "ireading history:  #{ireading_history.inspect}"
+    # Get taskee's reading history
+    history = GetHistory.call(role: taskee, type: :reading, current_task: task).outputs
 
-    exercise_history = GetExerciseHistory[ecosystem: @ecosystem, entity_tasks: ireading_history]
-    #puts "exercise history:  #{exercise_history.map(&:uid).sort}"
-
-    exercise_pools = get_exercise_pools(ireading_history: ireading_history)
-    #puts "exercise pools:  #{exercise_pools.map{|ep| ep.map(&:uid).sort}}}"
-
-    flat_history = exercise_history.flatten
+    all_worked_exercise_numbers = history.exercises.flatten.collect{ |ex| ex.number }
 
     self.class.k_ago_map.each do |k_ago, number|
-      break if k_ago >= exercise_pools.count
+      # Not enough history
+      break if k_ago >= history.tasks.size
 
-      candidate_exercises = (exercise_pools[k_ago] - flat_history).uniq
+      spaced_ecosystem = history.ecosystems[k_ago]
+
+      # Get pages from the TaskPlan settings
+      spaced_task = history.tasks[k_ago]
+      page_ids = spaced_task.task_plan.settings['page_ids']
+      spaced_pages = spaced_ecosystem.pages_by_ids(page_ids)
+
+      # Reuse Ecosystems map when possible
+      @ecosystems_map[spaced_ecosystem.id] ||= Content::Map.find(
+        from_ecosystems: [spaced_ecosystem, @ecosystem].uniq, to_ecosystem: @ecosystem
+      )
+
+      # Map the pages to exercises in the new ecosystem
+      spaced_exercises = @ecosystems_map[spaced_ecosystem.id].map_pages_to_exercises(
+        pages: spaced_pages, pool_type: :reading_dynamic
+      )
+
+      # Exclude exercises already worked (by number)
+      candidate_exercises = spaced_exercises.values.flatten.uniq.reject do |ex|
+        all_worked_exercise_numbers.include?(ex.number)
+      end
+
+      # Not enough exercises
       break if candidate_exercises.size < number
 
-      number.times do
-        #puts "candidate_exercises: #{candidate_exercises.map(&:uid).sort}"
-        #puts "exercise history:    #{exercise_history.map(&:uid).sort}"
+      # Randomize and grab the required number of exercises
+      chosen_exercises = candidate_exercises.shuffle.first(number)
 
-        chosen_exercise = candidate_exercises.to_a.sample # .first to aid debug
-        #puts "chosen exercise:     #{chosen_exercise.uid}"
-
-        candidate_exercises.delete(chosen_exercise)
-        flat_history.push(chosen_exercise)
+      # Set related_content and add the exercise to the task
+      chosen_exercises.each do |chosen_exercise|
+        related_content = chosen_exercise.page.related_content
 
         step = add_exercise_step(task: task, exercise: chosen_exercise)
-        step.add_related_content(chosen_exercise.page.related_content)
         step.group_type = :spaced_practice_group
+
+        step.add_related_content(related_content)
       end
     end
 
     task
-  end
-
-  # Get the student's reading assignments
-  def get_taskee_ireading_history(task:, taskee:)
-    tasks = taskee.taskings.preload(task: {task: {task_steps: :tasked}})
-                           .collect{ |tasking| tasking.task.task }
-
-    ireading_history = tasks.select{|tt| tt.reading?}
-                            .reject{|tt| tt == task}
-                            .sort_by{|tt| [tt.due_at, tt.task_plan.created_at]}
-                            .push(task)
-                            .reverse
-                            .collect{|tt| tt.entity_task}
-
-    ireading_history
-  end
-
-  # Get the page for each exercise in the student's assignments
-  # From each page, get the pool of dynamic reading problems
-  def get_exercise_pools(ireading_history:)
-    exercise_pools = ireading_history.collect do |entity_task|
-      page_ids = entity_task.task.task_plan.settings['page_ids']
-      pages = @ecosystem.pages_by_ids(page_ids)
-      pools = get_page_pools(pages)
-      pools.collect{ |pool| get_pool_exercises(pool) }.flatten
-    end
   end
 
   def self.k_ago_map
@@ -308,19 +297,6 @@ class Tasks::Assistants::IReadingAssistant
 
   def get_first_tag_exercise(tag)
     @tag_exercise[tag] ||= @ecosystem.exercises_with_tags(tag).first
-  end
-
-  def get_exercise_pages(ex)
-    @exercise_pages[ex.id] ||= ex.page
-  end
-
-  def get_page_pools(pages)
-    page_ids = pages.collect{ |pg| pg.id }
-    @page_pools[page_ids] ||= @ecosystem.reading_dynamic_pools(pages: pages)
-  end
-
-  def get_pool_exercises(pool)
-    @pool_exercises[pool.uuid] ||= pool.exercises
   end
 
   def logger

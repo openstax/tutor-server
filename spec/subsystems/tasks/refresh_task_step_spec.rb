@@ -2,13 +2,15 @@ require 'rails_helper'
 
 RSpec.describe Tasks::RefreshTaskStep, type: :routine do
 
-  let!(:lo)              { FactoryGirl.create :content_tag,
-                                              value: 'ost-tag-lo-test-lo01' }
-  let!(:pp)              { FactoryGirl.create :content_tag,
-                                              value: 'os-practice-problems' }
+  let!(:lo)              { FactoryGirl.create :content_tag, value: 'ost-tag-lo-test-lo01' }
+  let!(:pp)              { FactoryGirl.create :content_tag, value: 'os-practice-problems' }
 
   let!(:tasked_reading)  { FactoryGirl.create(:tasks_tasked_reading) }
+
   let!(:task)            { tasked_reading.task_step.task }
+
+  let!(:tasking)         { FactoryGirl.create :tasks_tasking, task: task.entity_task }
+
   let!(:tasked_exercise) {
     te = FactoryGirl.build(:tasks_tasked_exercise)
     te.task_step.task = task

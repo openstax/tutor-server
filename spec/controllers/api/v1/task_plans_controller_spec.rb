@@ -35,7 +35,7 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
                                            opens_at: Time.now + 1.day }
 
   let!(:published_task_plan) { FactoryGirl.create(:tasked_task_plan,
-                                                  number_of_students: 1,
+                                                  number_of_students: 0,
                                                   owner: course,
                                                   assistant: get_assistant(course: course,
                                                                            task_plan_type: 'reading'),
