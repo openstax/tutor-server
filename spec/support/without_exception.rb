@@ -1,7 +1,11 @@
 module WithoutException
   def rescuing_exceptions(&block)
-    OpenStax::RescueFrom.configure { |c| c.raise_exceptions = false }
-    yield
-    OpenStax::RescueFrom.configure { |c| c.raise_exceptions = true }
+    original_raise_exceptions = OpenStax::RescueFrom.configuration.raise_exceptions
+    begin
+      OpenStax::RescueFrom.configuration.raise_exceptions = false
+      yield
+    ensure
+      OpenStax::RescueFrom.configuration.raise_exceptions = original_raise_exceptions
+    end
   end
 end
