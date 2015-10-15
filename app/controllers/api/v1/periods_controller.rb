@@ -1,7 +1,9 @@
 class Api::V1::PeriodsController < Api::V1::ApiController
-  before_filter :find_course, only: :create
-  before_filter :find_period, only: :update
-  before_filter :ensure_requestor_is_course_teacher
+  before_filter :find_course
+
+  before_filter -> {
+    OSU::AccessPolicy.require_action_allowed!(action_name, current_human_user, @course)
+  }
 
   resource_description do
     api_versions "v1"
@@ -35,17 +37,11 @@ class Api::V1::PeriodsController < Api::V1::ApiController
 
   private
   def find_course
-    @course = Entity::Course.find(params[:course_id])
-  end
-
-  def find_period
-    @period = GetPeriod[id: params[:id]].to_model
-  end
-
-  def ensure_requestor_is_course_teacher
-    unless UserIsCourseTeacher[course: @course || @period.course,
-                               user: current_human_user]
-      raise SecurityTransgression
+    if params[:course_id]
+      @course = Entity::Course.find(params[:course_id])
+    elsif params[:id]
+      @period = GetPeriod[id: params[:id]].to_model
+      @course = @period.course
     end
   end
 
