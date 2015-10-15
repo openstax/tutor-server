@@ -6,9 +6,7 @@
   <% unless is_real_production_site? # Keep google away from -dev etc %>
     <meta name="robots" content="noindex">
   <% end %>
-
-  <%= javascript_include_tag remote_js_loader_url(format: :js)  %>
-
+  <%= javascript_include_tag remote_js_loader_url  %>
   <meta http-equiv="content-type" content="text/html; charset=UTF8" />
   <%= render 'layouts/meta' %>
   <%= stylesheet_link_tag 'home', media: 'all' %>
