@@ -11,7 +11,7 @@ class Api::V1::PeriodsController < Api::V1::ApiController
     EOS
   end
 
-  api :POST, '/courses/:course_id/periods(/role/:role_id)',
+  api :POST, '/courses/:course_id/periods',
              'Returns a new course period for given course'
   description <<-EOS
     #{json_schema(Api::V1::PeriodRepresenter, include: :readable)}
@@ -21,7 +21,7 @@ class Api::V1::PeriodsController < Api::V1::ApiController
     respond_with period, represent_with: Api::V1::PeriodRepresenter, location: nil
   end
 
-  api :PATCH, '/periods/:id(/role/:role_id)',
+  api :PATCH, '/periods/:id',
               'Returns an updated period for the given course'
   description <<-EOS
     #{json_schema(Api::V1::PeriodRepresenter, include: :readable)}
