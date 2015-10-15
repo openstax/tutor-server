@@ -29,7 +29,8 @@ class Api::V1::PeriodsController < Api::V1::ApiController
     #{json_schema(Api::V1::PeriodRepresenter, include: :readable)}
   EOS
   def update
-    updated_period = UpdatePeriod[period: @period, name: period_params[:name]]
+    updated_period = CourseMembership::UpdatePeriod[period: @period,
+                                                    name: period_params[:name]]
     respond_with updated_period, represent_with: Api::V1::PeriodRepresenter,
                                  location: nil,
                                  responder: ResponderWithPutContent
@@ -40,7 +41,7 @@ class Api::V1::PeriodsController < Api::V1::ApiController
     if params[:course_id]
       @course = Entity::Course.find(params[:course_id])
     elsif params[:id]
-      @period = GetPeriod[id: params[:id]].to_model
+      @period = CourseMembership::GetPeriod[id: params[:id]].to_model
       @course = @period.course
     end
   end
