@@ -1,28 +1,27 @@
 window.OxAccount = (window.OxAccount || {});
 
-OxAccount.isAvailable = function(){
-   // use jquery as a sentinel since it's loaded dynamically
-   return !!window.OxAccount.$;
-}
-OxAccount.serverAddress = function(){
-  if (this._serverAddress){
-      return this._serverAddress;
-  }
-  var scriptTags = document.querySelectorAll('script');
-  for (var i=0; i<scriptTags.length; i++){
-    var matchesSelf = scriptTags[i].src.match(/(.*)\/remote\/v1.js$/);
-    if (matchesSelf){
-      return this._serverAddress = matchesSelf[ matchesSelf.length-1 ];
-    }
-  }
-  return '';
-}
-
 <% if current_user.is_anonymous? %>
 OxAccount.current_user = false;
 <% else -%>
 OxAccount.current_user = <%=raw Api::V1::UserRepresenter.new(current_user).to_json %>;
 <% end %>
+
+// Ideally we could use the openstax_accounts.login_path helper
+// But it returns as just http://<host>:<port>/login, when it needs to be /accounts/login
+OxAccount.login_path = '<%= "#{request.protocol}#{request.host}:#{request.port}/accounts/login" %>';
+
+OxAccount.isAvailable = function(){
+   // use jquery as a sentinel since it's loaded dynamically
+   return !!window.OxAccount.$;
+}
+
+OxAccount.serverAddress = function(){
+  return "<%= Rails.application.secrets.openstax['accounts']['url'] %>";
+}
+
+OxAccount.isLoggedIn = function(){
+  return !!OxAccount.current_user;
+}
 
 window.OxAccount.onAvailable = function(callback, scope){
   finished = function(){ callback.call(scope||OxAccount, !!window.OxAccount.$); };
