@@ -41,7 +41,7 @@ class Api::V1::PeriodsController < Api::V1::ApiController
     if params[:course_id]
       @course = Entity::Course.find(params[:course_id])
     elsif params[:id]
-      @period = CourseMembership::GetPeriod[id: params[:id]].to_model
+      @period = CourseMembership::GetPeriod[id: params[:id]]
       @course = @period.course
     end
   end

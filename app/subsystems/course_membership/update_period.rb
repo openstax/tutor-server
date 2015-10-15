@@ -3,7 +3,8 @@ class CourseMembership::UpdatePeriod
 
   protected
   def exec(period:, name:)
-    period.update_attributes(name: name)
-    outputs.period = CourseMembership::Period.new(period.reload)
+    model = period.to_model
+    model.update_attributes(name: name)
+    outputs.period = CourseMembership::Period.new(model)
   end
 end
