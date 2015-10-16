@@ -27,6 +27,18 @@ module Api::V1
               required: false
              }
 
+    property :metadata,
+             type: String,
+             readable: true,
+             writeable: false,
+             if: ->(*) { respond_to?(:metadata) },
+             getter: ->(*) { metadata },
+             schema_info: {
+              description: "Metadata for the course, if available.",
+              required: false
+             }
+
+
     collection :roles,
                extend: Api::V1::RoleRepresenter,
                readable: true,

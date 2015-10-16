@@ -17,7 +17,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   def index
     OSU::AccessPolicy.require_action_allowed!(:index, current_api_user, Entity::Course)
     courses_info = CollectCourseInfo[user: current_human_user,
-                                     with: [:roles, :periods, :ecosystem]]
+                                     with: [:roles, :periods, :ecosystem, :metadata]]
     respond_with courses_info, represent_with: Api::V1::CoursesRepresenter
   end
 
@@ -34,7 +34,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     # we can gather extra information
     course_info = CollectCourseInfo[course: course,
                                     user: current_human_user,
-                                    with: [:roles, :periods, :ecosystem]].first
+                                    with: [:roles, :periods, :ecosystem, :metadata]].first
     respond_with course_info, represent_with: Api::V1::CourseRepresenter
   end
 

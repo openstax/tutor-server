@@ -22,6 +22,9 @@ class CollectCourseInfo
   uses_routine GetCourseEcosystem,
                translations: { outputs: { type: :verbatim } },
                as: :get_course_ecosystem
+  uses_routine GetCourseMetadata,
+               translations: { outputs: { type: :verbatim } },
+               as: :get_course_metadata
 
   protected
 
@@ -61,6 +64,8 @@ class CollectCourseInfo
         set_periods_on_courses
       when :ecosystem
         set_ecosystem_on_courses
+      when :metadata
+        set_metadata_on_courses
       end
     end
   end
@@ -92,6 +97,13 @@ class CollectCourseInfo
     outputs.courses.each do |course|
       routine = run(:get_course_ecosystem, course: Entity::Course.find(course.id))
       course.ecosystem = routine.outputs.ecosystem
+    end
+  end
+
+  def set_metadata_on_courses
+    outputs.courses.each do |course|
+      routine = run(:get_course_metadata, course: Entity::Course.find(course.id))
+      course.metadata = routine.outputs.metadata
     end
   end
 
