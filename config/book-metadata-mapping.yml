@@ -1,0 +1,15 @@
+# This file contains a mapping between a books UUID and the type of content it contains
+# The information is used to indicate to the FE how courses that use the book should be styled
+# Read
+
+# Concept coach derived copy
+7ce75839-d694-4bdf-be1f-ec330b083735:
+  type: 'physics'
+
+# HS Biology
+d52e93f4-8653-4273-86da-3850001c0786:
+  type: 'biology'
+
+# HS Physics
+334f8b61-30eb-4475-8e05-5260a4866b4b:
+  type: 'physics'
