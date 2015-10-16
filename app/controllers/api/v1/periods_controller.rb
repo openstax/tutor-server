@@ -1,14 +1,6 @@
 class Api::V1::PeriodsController < Api::V1::ApiController
   before_filter :find_period_and_course
 
-  before_filter -> {
-    OSU::AccessPolicy.require_action_allowed!(:add_period, current_human_user, @course)
-  }, only: :create
-
-  before_filter -> {
-    OSU::AccessPolicy.require_action_allowed!(:update, current_human_user, @period)
-  }, only: :update
-
   resource_description do
     api_versions "v1"
     short_description 'Represents course periods in the system'
@@ -23,6 +15,7 @@ class Api::V1::PeriodsController < Api::V1::ApiController
     #{json_schema(Api::V1::PeriodRepresenter, include: :readable)}
   EOS
   def create
+    OSU::AccessPolicy.require_action_allowed!(:add_period, current_human_user, @course)
     period = CreatePeriod[course: @course, name: period_params[:name]]
     respond_with period, represent_with: Api::V1::PeriodRepresenter, location: nil
   end
@@ -33,6 +26,7 @@ class Api::V1::PeriodsController < Api::V1::ApiController
     #{json_schema(Api::V1::PeriodRepresenter, include: :readable)}
   EOS
   def update
+    OSU::AccessPolicy.require_action_allowed!(:update, current_human_user, @period)
     updated_period = CourseMembership::UpdatePeriod[period: @period,
                                                     name: period_params[:name]]
     respond_with updated_period, represent_with: Api::V1::PeriodRepresenter,
