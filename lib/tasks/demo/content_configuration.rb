@@ -52,6 +52,10 @@ class ContentConfiguration
     validate_config
   end
 
+  def url_base
+    @configuration.url_base || OpenStax::Cnx::V1.archive_url_base
+  end
+
   def assignments
     @configuration.assignments || []
   end
