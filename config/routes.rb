@@ -46,6 +46,10 @@ Rails.application.routes.draw do
       end
     end
 
+    namespace 'cc' do
+      get 'tasks/:cnx_book_id/:cnx_page_id', to: 'tasks#show', as: :task
+    end
+
     get 'user/courses', to: 'courses#index', as: :courses
 
     resources :guides, path: 'courses', only: [] do
