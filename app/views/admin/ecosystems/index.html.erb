@@ -3,3 +3,7 @@
 <%= render partial: 'manager/ecosystems/index', locals: { ecosystems: @ecosystems } %>
 
 <%= link_to 'Import a new Ecosystem', import_admin_ecosystems_path, class: 'btn btn-primary' %>
+
+<% unless @incomplete_jobs.empty? %>
+  <%= render partial: 'manager/ecosystems/incomplete', locals: { incomplete_jobs: @incomplete_jobs } %>
+<% end %>

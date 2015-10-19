@@ -1,6 +1,9 @@
 class Admin::EcosystemsController < Admin::BaseController
   def index
     @ecosystems = Content::ListEcosystems[]
+    @incomplete_jobs = Lev::BackgroundJob.incomplete.select do |job|
+      job.respond_to?(:ecosystem_import_url)
+    end
   end
 
   def import
