@@ -11,6 +11,7 @@ class FetchAndImportBookAndCreateEcosystem
   def exec(book_cnx_id:, ecosystem_title: nil, exercise_uids: nil, tag_generator: nil)
     cnx_book = OpenStax::Cnx::V1.book(id: book_cnx_id)
     eco_title ||= "#{cnx_book.title} (#{cnx_book.uuid}@#{cnx_book.version}) - #{Time.now.utc}"
+    tag_generator = Marshal.load(tag_generator) if tag_generator.is_a?(String)
     outputs[:ecosystem] = Content::Ecosystem.create!(title: eco_title)
     run(:import_book, cnx_book: cnx_book,
                       ecosystem: outputs[:ecosystem],

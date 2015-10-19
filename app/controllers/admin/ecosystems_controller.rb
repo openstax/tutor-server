@@ -14,11 +14,11 @@ class Admin::EcosystemsController < Admin::BaseController
     archive_url = params[:archive_url].present? ? params[:archive_url] : @default_archive_url
 
     OpenStax::Cnx::V1.with_archive_url(url: archive_url) do
-      ecosystem = FetchAndImportBookAndCreateEcosystem[
+      job_id = FetchAndImportBookAndCreateEcosystem.perform_later(
         book_cnx_id: params[:cnx_id],
-        tag_generator: ConceptCoach::TagGenerator.new(params[:cc_tag])
-      ]
-      flash[:notice] = "Ecosystem \"#{ecosystem.title}\" imported."
+        tag_generator: Marshal.dump(ConceptCoach::TagGenerator.new(params[:cc_tag]))
+      )
+      flash[:notice] = 'Ecosystem import job queued.'
     end
     redirect_to admin_ecosystems_path
   end

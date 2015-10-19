@@ -23,8 +23,7 @@ RSpec.describe 'Administration', speed: :slow, vcr: VCR_OPTS do
     fill_in 'Book CNX id', with: '93e2b09d-261c-4007-a987-0b3062fe154b@4.4'
     click_button 'Import'
 
-    expect(page).to have_css('.flash_notice', text: 'Ecosystem "Physics (93e2b09d-261c-4007-a987-0b3062fe154b@4.4)')
-    expect(page).to have_css('.flash_notice', text: '" imported.')
+    expect(page).to have_css('.flash_notice', text: 'Ecosystem import job queued.')
     expect(page).to have_css('td', text: 'Physics')
     expect(page).to have_css('td', text: '93e2b09d-261c-4007-a987-0b3062fe154b')
     expect(page).to have_css('td', text: '4.4')
