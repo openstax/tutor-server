@@ -18,6 +18,9 @@ class Admin::EcosystemsController < Admin::BaseController
         book_cnx_id: params[:cnx_id],
         tag_generator: Marshal.dump(ConceptCoach::TagGenerator.new(params[:cc_tag]))
       )
+      job = Lev::BackgroundJob.find(job_id)
+      import_url = OpenStax::Cnx::V1.url_for(params[:cnx_id])
+      job.save(ecosystem_import_url: import_url)
       flash[:notice] = 'Ecosystem import job queued.'
     end
     redirect_to admin_ecosystems_path
