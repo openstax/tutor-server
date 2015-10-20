@@ -1,7 +1,18 @@
 require 'addressable/uri'
 require 'open-uri'
 
-module OpenStax::Cnx::V1
+
+
+module OpenStax::Cnx
+module V1
+
+%w(acts_as_fragment embedded exercise exercise_choice feature interactive text video).each do |f|
+  require_relative "./v1/fragment/#{f}"
+end
+
+%w(book book_part book_to_string_visitor book_visitor fragment_splitter page).each do |f|
+  require_relative "./v1/#{f}"
+end
 
   # Sets the archive URL base.  'url' is nominally the non-SSL URL,
   # tho may be SSL. An explicit SSL URL can be passed in `ssl`, or
@@ -46,4 +57,5 @@ module OpenStax::Cnx::V1
     OpenStax::Cnx::V1::Book.new(options)
   end
 
+end
 end

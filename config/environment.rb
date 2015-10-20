@@ -18,6 +18,14 @@ require 'type_verification'
 require 'tagger'
 require 'concept_coach/tag_generator'
 
+%w(
+  biglearn
+  cnx
+  exercises
+).each do |folder|
+  Dir[Rails.root.join("lib/openstax/#{folder}/requires.rb")].each { |f| require f }
+end
+
 SITE_NAME = "OpenStax Tutor"
 COPYRIGHT_HOLDER = "Rice University"
 
