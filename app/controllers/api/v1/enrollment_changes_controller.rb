@@ -32,7 +32,7 @@ class EnrollmentChangesController < ApplicationController
       ecosystem = GetCourseEcosystem[course: period.course]
 
       if ecosystem.books.first.cnx_id != enrollment_params.cnx_book_id
-        render_api_errors('enrollment_code_does_not_match_book')
+        render_api_errors(:enrollment_code_does_not_match_book)
         return
       end
     end

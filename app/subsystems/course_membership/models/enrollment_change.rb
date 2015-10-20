@@ -20,13 +20,13 @@ class CourseMembership::Models::EnrollmentChange < Tutor::SubSystems::BaseModel
 
   def same_profile
     return if profile.nil? || enrollment.nil? || enrollment.student.role.profile == profile
-    errors.add(:base, 'cannot have an enrollment that belongs to a different user profile')
+    errors.add(:base, 'the given user does not match the given enrollment')
     false
   end
 
   def different_period
     return if enrollment.nil? || period.nil? || enrollment.period != period
-    errors.add(:base, 'cannot have an enrollment that belongs to the same period')
+    errors.add(:base, 'the given user is already enrolled in the given period')
     false
   end
 end
