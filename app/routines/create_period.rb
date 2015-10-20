@@ -6,7 +6,6 @@ class CreatePeriod
     as: :create_period
 
   uses_routine Tasks::AssignCoursewideTaskingPlans,
-    translations: { outputs: { type: :verbatim } },
     as: :assign_coursewide_tasking_plans
 
   def exec(course:, name: nil)
