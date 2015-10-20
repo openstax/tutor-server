@@ -1,0 +1,22 @@
+<%= link_to new_admin_catalog_offering_path, class: 'btn btn-primary pull-right' do %>
+  <span class="glyphicon glyphicon-plus" aria-hidden="true" /> Add offering
+<% end %>
+
+<table class='table table-striped'>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Description</th>
+      <th>Ecosystem</th>
+      <th>Tutor?</th>
+      <th>CC?</th>
+      <th>PDF Url</th>
+      <th colspan="2">WebView URL</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @offerings.each do |offering| %>
+      <%= render :partial => 'display_row', locals: {offering: offering} %>
+    <% end -%>
+  </tbody>
+</table>

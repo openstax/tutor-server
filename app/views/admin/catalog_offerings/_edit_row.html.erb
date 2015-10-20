@@ -1,0 +1,18 @@
+<tr>
+  <td><%= form.text_field :identifier %></td>
+  <td><%= form.text_field :description %></td>
+
+  <td>
+    <%= select_tag :content_ecosystem_id,
+        options_from_collection_for_select(
+          @ecosystems, :id, :title,
+          params[:ecosystem_id] || offering.ecosystem.try(:id)
+        ), include_blank: true, class: 'form-control' %>
+  </td>
+
+  <td><%= form.check_box :is_tutor? %></td>
+  <td><%= form.check_box :is_concept_coach? %></td>
+  <td><%= form.text_field :pdf_url %></td>
+  <td><%= form.text_field :webview_url %></td>
+  <td><%= form.submit class: 'btn btn-primary', value:'Save' %></td>
+</tr>

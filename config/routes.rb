@@ -125,6 +125,7 @@ Rails.application.routes.draw do
     resources :exceptions, only: [:show]
 
     resources :jobs, only: [:index, :show]
+    resources :catalog_offerings, except: [:show]
 
     resources :users, except: :destroy do
       member do

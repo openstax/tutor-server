@@ -1,0 +1,25 @@
+<%= lev_form_for :offering, url: admin_catalog_offering_path(@offering), method: @offering.new_record? ? 'post' : 'put' do |form| %>
+
+<table class='table table-striped'>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Description</th>
+      <th>Ecosystem</th>
+      <th>Tutor?</th>
+      <th>CC?</th>
+      <th>PDF Url</th>
+      <th colspan="2">WebView URL</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @offerings.each do |offering| %>
+
+      <%= render :partial => (offering == @offering) ? 'edit_row' : 'display_row',
+      locals: {offering: offering, form: form } %>
+
+    <% end -%>
+  </tbody>
+</table>
+
+<% end %>
