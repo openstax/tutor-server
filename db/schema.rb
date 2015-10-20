@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(version: 20151016170440) do
     t.hstore   "flags",                default: {}, null: false
     t.string   "description",                       null: false
     t.string   "webview_url",                       null: false
+    t.string   "pdf_url",                           null: false
     t.datetime "created_at",                        null: false
     t.datetime "updated_at",                        null: false
   end

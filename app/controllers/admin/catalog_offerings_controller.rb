@@ -1,12 +1,13 @@
 module Admin
   class CatalogOfferingsController < BaseController
 
-    before_filter :read_offerings
+    before_filter :set_template_variables
     def index
 
     end
 
     def new
+      @offering =
       @offerings.unshift @offering
       render action: 'index'
     end
@@ -32,15 +33,15 @@ module Admin
                     redirect_to admin_catalog_offerings_path, notice: 'The offering has been created.'
                   },
                   failure: -> {
-                     flash[:error] = @handler_result.errors.map(&:translate).to_sentence
-                     render :edit
+                    flash[:error] = @handler_result.errors.map(&:translate).to_sentence
+                    render :new
                   }
                  )
     end
 
     private
 
-    def read_offerings
+    def set_template_variables
       @offerings = Catalog::ListOfferings[]
       @offering = if params[:id]
                     @offerings.detect{|offering| offering.id.to_s == params[:id] }

@@ -5,7 +5,7 @@ class CreateCatalogOfferings < ActiveRecord::Migration
       t.string :identifier, null: false, index: { unique: true }
       t.references :content_ecosystem, null: true, index: true
       t.hstore :flags, null: false, default: {}
-      t.string :description, :webview_url, null: false
+      t.string :description, :webview_url, :pdf_url, null: false
       t.timestamps null: false
     end
 
