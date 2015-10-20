@@ -1,0 +1,19 @@
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Job ID</th>
+      <th>Status</th>
+      <th>Link to Archive</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% incomplete_jobs.each do |job| %>
+    <tr>
+      <td><%= link_to(job.id, admin_job_path(job.id)) %></td>
+      <td><%= job.status %></td>
+      <td><%= link_to(job.ecosystem_import_url, job.ecosystem_import_url, target: '_blank') %></td>
+    </tr>
+  <% end %>
+</table>
+
+<p><strong>Note:</strong> This table does not automatically refresh.</p>

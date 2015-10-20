@@ -1,5 +1,31 @@
 <% @page_header = 'Ecosystems' %>
 
-<%= render partial: 'manager/ecosystems/index', locals: { ecosystems: @ecosystems } %>
+<ul class="nav nav-tabs" role="tablist">
+  <li role="presentation" class="active">
+    <a href="#main" aria-controls="main" role="tab" data-toggle="tab">
+      List of Books
+    </a>
+  </li>
+  <% unless @incomplete_jobs.empty? %>
+    <li role="presentation">
+      <a href="#incomplete" aria-controls="main" role="tab" data-toggle="tab">
+        Incomplete Imports
+      </a>
+    </li>
+  <% end %>
+</ul>
 
-<%= link_to 'Import a new Ecosystem', import_admin_ecosystems_path, class: 'btn btn-primary' %>
+
+<div class="tab-content">
+  <div role="tabpanel" class="tab-pane active" id="main">
+    <%= render partial: 'manager/ecosystems/index', locals: { ecosystems: @ecosystems } %>
+
+    <%= link_to 'Import a new Ecosystem', import_admin_ecosystems_path, class: 'btn btn-primary' %>
+  </div>
+
+  <% unless @incomplete_jobs.empty? %>
+    <div role="tabpanel" class="tab-pane" id="incomplete">
+      <%= render partial: 'manager/ecosystems/incomplete', locals: { incomplete_jobs: @incomplete_jobs } %>
+    </div>
+  <% end %>
+</div>

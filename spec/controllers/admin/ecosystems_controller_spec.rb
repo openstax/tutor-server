@@ -33,8 +33,7 @@ RSpec.describe Admin::EcosystemsController, speed: :slow, vcr: VCR_OPTS do
       expect {
         post :import, archive_url: archive_url, cnx_id: cnx_id
       }.to change { Content::Models::Book.count }.by(1)
-      expect(flash[:notice]).to include 'Ecosystem "Physics (93e2b09d-261c-4007-a987-0b3062fe154b@4.4) - '
-      expect(flash[:notice]).to include '" imported.'
+      expect(flash[:notice]).to include 'Ecosystem import job queued.'
     end
 
     it 'imports a book even if the book already exists' do
@@ -46,8 +45,7 @@ RSpec.describe Admin::EcosystemsController, speed: :slow, vcr: VCR_OPTS do
       expect {
         post :import, archive_url: archive_url, cnx_id: cnx_id
       }.to change { Content::Models::Book.count }.by(1)
-      expect(flash[:notice]).to include 'Ecosystem "Physics (93e2b09d-261c-4007-a987-0b3062fe154b@4.4) - '
-      expect(flash[:notice]).to include '" imported.'
+      expect(flash[:notice]).to include 'Ecosystem import job queued.'
     end
 
     it 'imports a book with a different version' do
@@ -59,15 +57,15 @@ RSpec.describe Admin::EcosystemsController, speed: :slow, vcr: VCR_OPTS do
       expect {
         post :import, archive_url: archive_url, cnx_id: cnx_id.sub('@4.4', '@4.3')
       }.to change { Content::Models::Book.count }.by(1)
-      expect(flash[:notice]).to include 'Ecosystem "Physics (93e2b09d-261c-4007-a987-0b3062fe154b@4.3) - '
-      expect(flash[:notice]).to include '" imported.'
+      expect(flash[:notice]).to include 'Ecosystem import job queued.'
     end
 
     it 'creates a proper TagGenerator if the cc_tag param is given' do
-      expect(ConceptCoach::TagGenerator).to receive(:new).with('test').and_call_original
-      expect(FetchAndImportBookAndCreateEcosystem).to receive(:[]).with(
+      tag_generator = ConceptCoach::TagGenerator.new('test')
+      expect(ConceptCoach::TagGenerator).to receive(:new).with('test').and_return(tag_generator)
+      expect(FetchAndImportBookAndCreateEcosystem).to receive(:perform_later).with(
         book_cnx_id: cnx_id,
-        tag_generator: instance_of(ConceptCoach::TagGenerator)
+        tag_generator: Marshal.dump(tag_generator)
       ).and_call_original
 
       post :import, archive_url: archive_url, cnx_id: cnx_id, cc_tag: 'test'
