@@ -11,8 +11,8 @@ describe Api::V1::EnrollmentChangesController, type: :routing, api: true, versio
 
   context '/api/enrollment_changes/:enrollment_change_id/approve' do
     it 'routes to #approve' do
-      expect(post '/api/enrollment_changes/42/approve').to(
-        route_to('api/v1/enrollment_changes#approve', format: 'json', id: "42")
+      expect(put '/api/enrollment_changes/42/approve').to(
+        route_to('api/v1/enrollment_changes#approve', format: 'json', id: '42')
       )
     end
   end
