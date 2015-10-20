@@ -30,7 +30,13 @@ Once Tutor is up and running the database superuser role can be safely removed f
 
 and then run command: `alter user ox_tutor nosuperuser;`
 
-Exit the psql database shell by typeing `\q` and hitting enter.
+Exit the psql database shell by typing `\q` and hitting enter.
+
+If you have already created your database and need to add the `superuser` status, log in as a super user (if you installed on a mac with brew, this is probably your mac username), then 
+
+`alter user ox_tutor superuser;`
+
+Don't forget the semicolon!
 
 ## Configuring database for Development and Testing
 
