@@ -1,4 +1,4 @@
-class CourseMembership::Models::EnrollmentChange < ActiveRecord::Base
+class CourseMembership::Models::EnrollmentChange < Tutor::SubSystems::BaseModel
   belongs_to :enrollment
   belongs_to :period
 
