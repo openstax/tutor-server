@@ -1,3 +1,9 @@
+require_relative './v1/configuration'
+require_relative './v1/exceptions'
+require_relative './v1/exercise'
+require_relative './v1/fake_client'
+require_relative './v1/real_client'
+
 module OpenStax::Exercises::V1
 
   #

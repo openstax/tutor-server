@@ -1,6 +1,21 @@
 require 'addressable/uri'
 require 'open-uri'
 
+require_relative './v1/fragment_splitter'
+require_relative './v1/fragment/acts_as_fragment'
+require_relative './v1/fragment/embedded'
+require_relative './v1/fragment/exercise'
+require_relative './v1/fragment/exercise_choice'
+require_relative './v1/fragment/feature'
+require_relative './v1/fragment/interactive'
+require_relative './v1/fragment/text'
+require_relative './v1/fragment/video'
+require_relative './v1/book'
+require_relative './v1/book_part'
+require_relative './v1/page'
+require_relative './v1/book_visitor'
+require_relative './v1/book_to_string_visitor'
+
 module OpenStax::Cnx::V1
 
   # Sets the archive URL base.  'url' is nominally the non-SSL URL,

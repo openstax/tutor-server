@@ -18,6 +18,14 @@ require 'type_verification'
 require 'tagger'
 require 'concept_coach/tag_generator'
 
+%w(
+  biglearn
+  cnx
+  exercises
+).each do |oxlib|
+  Dir[Rails.root.join("lib/openstax/#{oxlib}/#{oxlib}.rb")].each { |f| require f }
+end
+
 SITE_NAME = "OpenStax Tutor"
 COPYRIGHT_HOLDER = "Rice University"
 
