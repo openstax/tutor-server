@@ -40,7 +40,10 @@ class SetupPerformanceReportData
     )
 
     reading_taskplan.tasking_plans << Tasks::Models::TaskingPlan.new(
-      target: course, task_plan: reading_taskplan, opens_at: Time.now, due_at: Time.now + 1.week
+      target: course,
+      task_plan: reading_taskplan,
+      opens_at: Time.now,
+      due_at: Time.now + 1.week
     )
 
     reading_taskplan.save!
@@ -60,7 +63,10 @@ class SetupPerformanceReportData
     )
 
     homework_taskplan.tasking_plans << Tasks::Models::TaskingPlan.new(
-      target: course, task_plan: homework_taskplan, opens_at: Time.now, due_at: Time.now + 1.day
+      target: course,
+      task_plan: homework_taskplan,
+      opens_at: Time.now,
+      due_at: Time.now + 1.day
     )
 
     homework_taskplan.save!
@@ -80,7 +86,10 @@ class SetupPerformanceReportData
     )
 
     homework2_taskplan.tasking_plans << Tasks::Models::TaskingPlan.new(
-      target: course, task_plan: homework2_taskplan, opens_at: Time.now, due_at: Time.now + 2.week
+      target: course,
+      task_plan: homework2_taskplan,
+      opens_at: Time.now,
+      due_at: Time.now + 2.week
     )
 
     homework2_taskplan.save!
