@@ -18,14 +18,15 @@ ActiveRecord::Schema.define(version: 20151016170440) do
   enable_extension "hstore"
 
   create_table "catalog_offerings", force: :cascade do |t|
-    t.string   "identifier",                        null: false
+    t.string   "identifier",                           null: false
     t.integer  "content_ecosystem_id"
-    t.hstore   "flags",                default: {}, null: false
-    t.string   "description",                       null: false
-    t.string   "webview_url",                       null: false
-    t.string   "pdf_url",                           null: false
-    t.datetime "created_at",                        null: false
-    t.datetime "updated_at",                        null: false
+    t.boolean  "is_tutor",             default: false, null: false
+    t.boolean  "is_concept_coach",     default: false, null: false
+    t.string   "description",                          null: false
+    t.string   "webview_url",                          null: false
+    t.string   "pdf_url",                              null: false
+    t.datetime "created_at",                           null: false
+    t.datetime "updated_at",                           null: false
   end
 
   add_index "catalog_offerings", ["content_ecosystem_id"], name: "index_catalog_offerings_on_content_ecosystem_id", using: :btree
