@@ -21,4 +21,5 @@ Tutor::SubSystems.valid_namespaces = %w(
   school_district
   legal
   user
+  catalog
 )
