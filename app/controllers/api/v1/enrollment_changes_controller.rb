@@ -1,4 +1,4 @@
-class EnrollmentChangesController < ApplicationController
+class Api::V1::EnrollmentChangesController < Api::V1::ApiController
 
   resource_description do
     api_versions "v1"
