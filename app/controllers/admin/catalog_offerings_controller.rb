@@ -2,17 +2,10 @@ module Admin
   class CatalogOfferingsController < BaseController
 
     before_filter :set_template_variables
-    def index
-
-    end
 
     def new
-      @offering =
       @offerings.unshift @offering
-      render action: 'index'
-    end
-
-    def edit
+      render action: :edit
     end
 
     def update
@@ -34,7 +27,8 @@ module Admin
                   },
                   failure: -> {
                     flash[:error] = @handler_result.errors.map(&:translate).to_sentence
-                    render :new
+                    @offerings.unshift @offering
+                    render :edit
                   }
                  )
     end
@@ -46,7 +40,7 @@ module Admin
       @offering = if params[:id]
                     @offerings.detect{|offering| offering.id.to_s == params[:id] }
                   else
-                    false
+                    Catalog::Models::Offering.new
                   end
       @ecosystems = Content::ListEcosystems[]
     end
