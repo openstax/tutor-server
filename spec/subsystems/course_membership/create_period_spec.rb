@@ -13,19 +13,7 @@ RSpec.describe CourseMembership::CreatePeriod do
   it 'copies existing "whole course" task plans to the new period' do
     other_period = described_class[course: course, name: 'Other period']
 
-    expected_task_plan = FactoryGirl.build(
-      :tasks_task_plan,
-      owner: course,
-      num_tasking_plans: 0
-    )
-
-    other_expected_task_plan = FactoryGirl.build(
-      :tasks_task_plan,
-      owner: course,
-      num_tasking_plans: 0
-    )
-
-    unexpected_task_plan = FactoryGirl.build(
+    task_plan = FactoryGirl.build(
       :tasks_task_plan,
       owner: course,
       num_tasking_plans: 0
@@ -33,20 +21,19 @@ RSpec.describe CourseMembership::CreatePeriod do
 
     expected_tasking_plan = FactoryGirl.create(
       :tasks_tasking_plan,
-      task_plan: expected_task_plan,
+      task_plan: task_plan,
       target: period.to_model
     )
 
     other_expected_tasking_plan = FactoryGirl.create(
       :tasks_tasking_plan,
-      task_plan: other_expected_task_plan,
+      task_plan: task_plan,
       target: other_period.to_model
     )
 
     unexpected_tasking_plan = FactoryGirl.create(
       :tasks_tasking_plan,
-      task_plan: unexpected_task_plan,
-      due_at: expected_tasking_plan.due_at + 1.day,
+      task_plan: FactoryGirl.build(:tasks_task_plan, owner: course, num_tasking_plans: 0),
       target: other_period.to_model
     )
 
