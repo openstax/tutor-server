@@ -16,6 +16,8 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
            -> { latest.active },
            class_name: '::CourseMembership::Models::Enrollment'
 
+  has_many :enrollment_changes, dependent: :destroy
+
   has_many :taskings, subsystem: :tasks, dependent: :nullify
   has_many :tasks, through: :taskings
 
