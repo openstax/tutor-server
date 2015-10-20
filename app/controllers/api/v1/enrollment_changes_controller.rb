@@ -14,7 +14,6 @@ class EnrollmentChangesController < ApplicationController
   description <<-EOS
     Creates a new EnrollmentChange object, indicating the user's intention to enroll in a course
     or to switch periods.
-    If a pending EnrollmentChange already exists, that record is updated instead.
 
     Input:
     #{json_schema(Api::V1::NewEnrollmentChangeRepresenter, include: :writeable)}
@@ -25,10 +24,27 @@ class EnrollmentChangesController < ApplicationController
   def create
     enrollment_params = OpenStruct.new
     consume!(enrollment_params, represent_with: Api::V1::NewEnrollmentChangeRepresenter)
+    period = CourseMembership::Models::Period.find_by(
+      enrollment_code: enrollment_params.enrollment_code
+    )
 
-    CreateEnrollmentChange[user: current_human_user,
-                           enrollment_code: enrollment_params.enrollment_code,
-                           book_cnx_id: enrollment_params.book_cnx_id]
+    if enrollment_params.cnx_book_id.present?
+      ecosystem = GetCourseEcosystem[course: period.course]
+
+      if ecosystem.books.first.cnx_id != enrollment_params.cnx_book_id
+        render_api_errors('enrollment_code_does_not_match_book')
+        return
+      end
+    end
+
+    enrollment_change = CreateEnrollmentChange.call(user: current_human_user, period: period)
+
+    if result.errors.empty?
+      respond_with result.outputs.enrollment_change,
+                   represent_with: Api::V1::EnrollmentChangeRepresenter
+    else
+      render_api_errors('already_enrolled')
+    end
   end
 
   api :PUT, '/enrollment_changes/:enrollment_change_id/approve',
@@ -42,7 +58,10 @@ class EnrollmentChangesController < ApplicationController
   def approve
     enrollment_change = CourseMembership::Models::EnrollmentChange.find(params[:id])
 
-    ApproveEnrollmentChange[enrollment_change: enrollment_change, approved_by: current_human_user]
+    enrollment_change = ApproveEnrollmentChange[enrollment_change: enrollment_change,
+                                                approved_by: current_human_user]
+
+    respond_with enrollment_change, represent_with: Api::V1::EnrollmentChangeRepresenter
   end
 
 end
