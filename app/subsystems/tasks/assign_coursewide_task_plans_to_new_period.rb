@@ -1,5 +1,5 @@
 module Tasks
-  class AssignCoursewideTaskingPlans
+  class AssignCoursewideTaskPlansToNewPeriod
     lev_routine
 
     protected
