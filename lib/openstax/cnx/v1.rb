@@ -1,24 +1,20 @@
 require 'addressable/uri'
 require 'open-uri'
 
-%w(
-  fragment_splitter
-  fragment/acts_as_fragment
-  fragment/embedded
-  fragment/exercise
-  fragment/exercise_choice
-  fragment/feature
-  fragment/interactive
-  fragment/text
-  fragment/video
-  book
-  book_part
-  page
-  book_visitor
-  book_to_string_visitor
-).each do |f|
-  require_relative "./v1/#{f}"
-end
+require_relative './v1/fragment_splitter'
+require_relative './v1/fragment/acts_as_fragment'
+require_relative './v1/fragment/embedded'
+require_relative './v1/fragment/exercise'
+require_relative './v1/fragment/exercise_choice'
+require_relative './v1/fragment/feature'
+require_relative './v1/fragment/interactive'
+require_relative './v1/fragment/text'
+require_relative './v1/fragment/video'
+require_relative './v1/book'
+require_relative './v1/book_part'
+require_relative './v1/page'
+require_relative './v1/book_visitor'
+require_relative './v1/book_to_string_visitor'
 
 module OpenStax::Cnx::V1
 

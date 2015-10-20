@@ -1,12 +1,8 @@
-%w(
-  configuration
-  exceptions
-  exercise
-  fake_client
-  real_client
-).each do |f|
-  require_relative "./v1/#{f}"
-end
+require_relative './v1/configuration'
+require_relative './v1/exceptions'
+require_relative './v1/exercise'
+require_relative './v1/fake_client'
+require_relative './v1/real_client'
 
 module OpenStax::Exercises::V1
 
