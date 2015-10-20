@@ -22,6 +22,9 @@ class Api::V1::EnrollmentChangesController < Api::V1::ApiController
     #{json_schema(Api::V1::EnrollmentChangeRepresenter, include: :readable)}
   EOS
   def create
+    OSU::AccessPolicy.require_action_allowed!(:create, current_api_user,
+                                              CourseMembership::Models::EnrollmentChange)
+
     enrollment_params = OpenStruct.new
     consume!(enrollment_params, represent_with: Api::V1::NewEnrollmentChangeRepresenter)
     period = CourseMembership::Models::Period.find_by(
@@ -37,7 +40,8 @@ class Api::V1::EnrollmentChangesController < Api::V1::ApiController
       end
     end
 
-    enrollment_change = CreateEnrollmentChange.call(user: current_human_user, period: period)
+    result = CourseMembership::CreateEnrollmentChange.call(user: current_human_user,
+                                                           period: period)
 
     if result.errors.empty?
       respond_with result.outputs.enrollment_change,
@@ -57,9 +61,10 @@ class Api::V1::EnrollmentChangesController < Api::V1::ApiController
   EOS
   def approve
     enrollment_change = CourseMembership::Models::EnrollmentChange.find(params[:id])
+    OSU::AccessPolicy.require_action_allowed!(:approve, current_api_user, enrollment_change)
 
-    result = ApproveEnrollmentChange.call(enrollment_change: enrollment_change,
-                                          approved_by: current_human_user)
+    result = CourseMembership::ApproveEnrollmentChange.call(enrollment_change: enrollment_change,
+                                                            approved_by: current_human_user)
 
     if result.errors.empty?
       respond_with result.outputs.enrollment_change,
