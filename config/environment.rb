@@ -22,8 +22,8 @@ require 'concept_coach/tag_generator'
   biglearn
   cnx
   exercises
-).each do |folder|
-  Dir[Rails.root.join("lib/openstax/#{folder}/requires.rb")].each { |f| require f }
+).each do |oxlib|
+  Dir[Rails.root.join("lib/openstax/#{oxlib}/#{oxlib}.rb")].each { |f| require f }
 end
 
 SITE_NAME = "OpenStax Tutor"

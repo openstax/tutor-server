@@ -1,3 +1,13 @@
+%w(
+  configuration
+  pool
+  exercise
+  fake_client
+  real_client
+).each do |f|
+  require_relative "./v1/#{f}"
+end
+
 module OpenStax::Biglearn::V1
 
   #

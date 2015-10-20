@@ -1,6 +1,25 @@
 require 'addressable/uri'
 require 'open-uri'
 
+%w(
+  fragment_splitter
+  fragment/acts_as_fragment
+  fragment/embedded
+  fragment/exercise
+  fragment/exercise_choice
+  fragment/feature
+  fragment/interactive
+  fragment/text
+  fragment/video
+  book
+  book_part
+  page
+  book_visitor
+  book_to_string_visitor
+).each do |f|
+  require_relative "./v1/#{f}"
+end
+
 module OpenStax::Cnx::V1
 
   # Sets the archive URL base.  'url' is nominally the non-SSL URL,
