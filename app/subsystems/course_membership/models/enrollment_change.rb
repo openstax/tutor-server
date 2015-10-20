@@ -3,7 +3,7 @@ class CourseMembership::Models::EnrollmentChange < Tutor::SubSystems::BaseModel
   belongs_to :enrollment # from
   belongs_to :period     # to
 
-  enum status: [ :pending, :succeeded, :failed ]
+  enum status: [ :pending, :approved, :rejected ]
 
   validates :profile, presence: true
   validates :enrollment, uniqueness: { allow_nil: true }
@@ -15,6 +15,13 @@ class CourseMembership::Models::EnrollmentChange < Tutor::SubSystems::BaseModel
   end
 
   alias_method :to_period, :period
+
+  def approve_by(user, time = Time.now)
+    # User is ignored for now
+    self.enrollee_approved_at = time
+    self.status = :approved
+    self
+  end
 
   protected
 

@@ -2,6 +2,7 @@ class CourseMembership::CreateEnrollmentChange
   lev_routine express_output: :enrollment_change
 
   uses_routine Role::GetUserRoles, as: :get_roles
+  uses_routine CourseMembership::ApproveEnrollmentChange, as: :approve
 
   def exec(user:, period:, requires_enrollee_approval: true)
     role_ids = run(:get_roles, user: user, type: :student).collect(&:id)
@@ -24,9 +25,15 @@ class CourseMembership::CreateEnrollmentChange
                 message: 'You cannot re-enroll in a course from which you were dropped') \
       if !enrollment.nil? && !enrollment.student.active?
 
-    outputs[:enrollment_change] = CourseMembership::Models::EnrollmentChange.create(
-      user: user, enrollment: enrollment, period: period
+    enrollment_change = CourseMembership::Models::EnrollmentChange.create(
+      user: user, enrollment: enrollment, period: period,
+      requires_enrollee_approval: requires_enrollee_approval
     )
-    transfer_errors_from(outputs[:enrollment_change], type: :verbatim)
+    transfer_errors_from(enrollment_change, {type: :verbatim}, true)
+
+    run(:approve, enrollment_change: enrollment_change, approved_by: user) \
+      unless requires_enrollee_approval
+
+    outputs[:enrollment_change] = enrollment_change
   end
 end

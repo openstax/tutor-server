@@ -43,7 +43,7 @@ class EnrollmentChangesController < ApplicationController
       respond_with result.outputs.enrollment_change,
                    represent_with: Api::V1::EnrollmentChangeRepresenter
     else
-      render_api_errors('already_enrolled')
+      render_api_errors(:already_enrolled)
     end
   end
 
@@ -58,10 +58,15 @@ class EnrollmentChangesController < ApplicationController
   def approve
     enrollment_change = CourseMembership::Models::EnrollmentChange.find(params[:id])
 
-    enrollment_change = ApproveEnrollmentChange[enrollment_change: enrollment_change,
-                                                approved_by: current_human_user]
+    result = ApproveEnrollmentChange.call(enrollment_change: enrollment_change,
+                                          approved_by: current_human_user)
 
-    respond_with enrollment_change, represent_with: Api::V1::EnrollmentChangeRepresenter
+    if result.errors.empty?
+      respond_with result.outputs.enrollment_change,
+                   represent_with: Api::V1::EnrollmentChangeRepresenter
+    else
+      render_api_errors(:already_approved)
+    end
   end
 
 end
