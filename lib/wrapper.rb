@@ -2,6 +2,7 @@ module Wrapper
 
   def self.included(base)
     base.send(:include, TypeVerification)
+     base.extend ClassMethods
   end
 
   def initialize(strategy:)
@@ -29,4 +30,25 @@ module Wrapper
     self.class.hash ^ @strategy.hash
   end
 
+  module ClassMethods
+    def _define_dynamic_wrapping(name, type)
+        define_method(name) do
+          verify_and_return @strategy.send(name), klass: type, error: StrategyError
+        end
+    end
+
+    def wrap_attributes(model, *attributes)
+      attributes.map.each do | attr |
+        col = model.columns.find{|column| column.name == attr.to_s }
+        type = case col.cast_type.type
+               when :integer then Integer
+               when :string  then String
+               when :boolean then :boolean
+               else
+                 raise "Unable to determine type of attribute #{attr}, sql type was #{col.cast_type.type}"
+               end
+        _define_dynamic_wrapping(attr.to_sym, type)
+      end
+    end
+  end
 end
