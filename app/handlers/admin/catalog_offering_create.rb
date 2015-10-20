@@ -19,7 +19,6 @@ class Admin::CatalogOfferingCreate
   end
 
   def handle
-    debugger
     run(:create_offering, offering_params.as_json)
   end
 end
