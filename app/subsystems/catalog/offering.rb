@@ -3,13 +3,8 @@ module Catalog
 
     include Wrapper
 
-    def id
-      verify_and_return @strategy.id, klass: Integer, error: StrategyError
-    end
-
-    def identifier
-      verify_and_return @strategy.identifier, klass: Integer, error: StrategyError
-    end
+    wrap_attributes ::Catalog::Models::Offering,
+       :id, :identifier, :is_tutor, :is_concept_coach, :description, :webview_url, :pdf_url
 
   end
 end
