@@ -177,17 +177,18 @@ ActiveRecord::Schema.define(version: 20151023175052) do
   add_index "course_content_course_ecosystems", ["entity_course_id", "created_at"], name: "course_ecosystems_on_course_id_created_at", using: :btree
 
   create_table "course_membership_enrollment_changes", force: :cascade do |t|
-    t.integer  "course_membership_enrollment_id"
-    t.integer  "course_membership_period_id",                    null: false
-    t.integer  "status",                          default: 0,    null: false
-    t.boolean  "requires_enrollee_approval",      default: true, null: false
+    t.integer  "user_profile_id",                            null: false
+    t.integer  "course_membership_period_id",                null: false
+    t.integer  "status",                      default: 0,    null: false
+    t.boolean  "requires_enrollee_approval",  default: true, null: false
     t.datetime "enrollee_approved_at"
-    t.datetime "created_at",                                     null: false
-    t.datetime "updated_at",                                     null: false
+    t.datetime "created_at",                                 null: false
+    t.datetime "updated_at",                                 null: false
   end
 
-  add_index "course_membership_enrollment_changes", ["course_membership_enrollment_id"], name: "index_course_membership_enrollments_on_enrollment_id", unique: true, using: :btree
-  add_index "course_membership_enrollment_changes", ["course_membership_period_id"], name: "index_course_membership_enrollments_on_period_id", using: :btree
+  add_index "course_membership_enrollment_changes", ["course_membership_period_id"], name: "index_course_membership_enrollment_changes_on_period_id", using: :btree
+  add_index "course_membership_enrollment_changes", ["user_profile_id", "created_at"], name: "index_course_membership_enrollment_changes_on_p_id_and_c_at", unique: true, using: :btree
+  add_index "course_membership_enrollment_changes", ["user_profile_id"], name: "index_course_membership_enrollment_changes_on_user_profile_id", using: :btree
 
   create_table "course_membership_enrollments", force: :cascade do |t|
     t.integer  "course_membership_period_id",  null: false
@@ -701,8 +702,8 @@ ActiveRecord::Schema.define(version: 20151023175052) do
   add_foreign_key "content_tags", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_content_course_ecosystems", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_content_course_ecosystems", "entity_courses", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "course_membership_enrollment_changes", "course_membership_enrollments", on_update: :cascade, on_delete: :nullify
   add_foreign_key "course_membership_enrollment_changes", "course_membership_periods", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "course_membership_enrollment_changes", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_membership_enrollments", "course_membership_periods", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_membership_enrollments", "course_membership_students", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_membership_periods", "entity_courses", on_update: :cascade, on_delete: :cascade

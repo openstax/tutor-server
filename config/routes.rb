@@ -107,7 +107,7 @@ Rails.application.routes.draw do
       get ':uuid'
     end
 
-    resouces :enrollment_changes, only: :create do
+    resources :enrollment_changes, only: :create do
       put 'approve', on: :member
     end
   end

@@ -15,20 +15,34 @@ class EnrollmentChangesController < ApplicationController
     Creates a new EnrollmentChange object, indicating the user's intention to enroll in a course
     or to switch periods.
     If a pending EnrollmentChange already exists, that record is updated instead.
+
+    Input:
+    #{json_schema(Api::V1::NewEnrollmentChangeRepresenter, include: :writeable)}
+
+    Output:
     #{json_schema(Api::V1::EnrollmentChangeRepresenter, include: :readable)}
   EOS
   def create
-    raise NotImplementedError
+    enrollment_params = OpenStruct.new
+    consume!(enrollment_params, represent_with: Api::V1::NewEnrollmentChangeRepresenter)
+
+    CreateEnrollmentChange[user: current_human_user,
+                           enrollment_code: enrollment_params.enrollment_code,
+                           book_cnx_id: enrollment_params.book_cnx_id]
   end
 
   api :PUT, '/enrollment_changes/:enrollment_change_id/approve',
             'Approves an EnrollmentChange request'
   description <<-EOS
     Approves an EnrollmentChange object, causing the user's enrollment status to update.
+
+    Output:
     #{json_schema(Api::V1::EnrollmentChangeRepresenter, include: :readable)}
   EOS
   def approve
-    raise NotImplementedError
+    enrollment_change = CourseMembership::Models::EnrollmentChange.find(params[:id])
+
+    ApproveEnrollmentChange[enrollment_change: enrollment_change, approved_by: current_human_user]
   end
 
 end
