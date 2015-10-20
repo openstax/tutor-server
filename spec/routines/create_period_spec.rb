@@ -16,7 +16,6 @@ RSpec.describe CreatePeriod do
 
   before(:all) { DatabaseCleaner.start }
   after(:all) { DatabaseCleaner.clean }
-  before { course.reload } # course.periods is cached in the routine
 
   it 'copies existing "coursewide" task plans to the new period' do
     Timecop.freeze do
