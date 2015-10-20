@@ -3,17 +3,7 @@
 <% end %>
 
 <table class='table table-striped'>
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Description</th>
-      <th>Ecosystem</th>
-      <th>Tutor?</th>
-      <th>CC?</th>
-      <th>PDF Url</th>
-      <th colspan="2">WebView URL</th>
-    </tr>
-  </thead>
+  <%= render partial: 'table_header' %>
   <tbody>
     <% @offerings.each do |offering| %>
       <%= render :partial => 'display_row', locals: {offering: offering} %>
