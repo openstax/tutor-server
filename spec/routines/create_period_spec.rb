@@ -7,12 +7,12 @@ RSpec.describe CreatePeriod do
 
   let(:new_period) { described_class[course: course, name: 'New period'] }
   let(:task_plan_ids) { Tasks::Models::TaskPlan.joins(:tasking_plans)
-                        .preload(:tasking_plans)
-                        .where(tasking_plans: {
-                          target_id: new_period.id,
-                          target_type: 'CourseMembership::Models::Period'
-                        })
-                        .collect(&:id) }
+                          .preload(:tasking_plans)
+                          .where(tasking_plans: {
+                            target_id: new_period.id,
+                            target_type: 'CourseMembership::Models::Period'
+                          })
+                          .collect(&:id) }
 
   before { course.reload } # course.periods is cached in the routine
 
