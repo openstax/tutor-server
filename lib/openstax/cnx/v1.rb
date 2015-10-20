@@ -47,4 +47,3 @@ module OpenStax::Cnx::V1
   end
 
 end
-end
