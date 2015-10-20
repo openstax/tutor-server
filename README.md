@@ -38,7 +38,7 @@ If you have already created your database and need to add the `superuser` status
 
 Don't forget the semicolon!
 
-## Configuring database for Development and Testing
+## Configuring redis server for Development and Testing
 
 You will need a Redis server running in order to use tutor-server.
 If you have Homebrew, `brew install redis` will usually take care of that.
