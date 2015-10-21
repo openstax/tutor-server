@@ -1,34 +1,16 @@
 require 'rails_helper'
 
 RSpec.describe User::SearchUsers, type: :routine do
-  let!(:admin) {
-    profile = FactoryGirl.create :user_profile,
-                                 :administrator,
-                                 username: 'admin',
-                                 first_name: 'Administrator',
-                                 last_name: 'User',
-                                 full_name: 'Administrator User'
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
-  let!(:user_1) {
-    profile = FactoryGirl.create :user_profile,
-                                 username: 'student',
-                                 first_name: 'Chris',
-                                 last_name: 'Mass',
-                                 full_name: 'Chris Mass'
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
-  let!(:user_2) {
-    profile = FactoryGirl.create :user_profile,
-                                 username: 'teacher',
-                                 first_name: 'Stan',
-                                 last_name: 'Dup',
-                                 full_name: 'Stan Dup'
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
+  let!(:admin) { FactoryGirl.create :user, :administrator,
+                                           username: 'admin',
+                                           first_name: 'Administrator',
+                                           last_name: 'User' }
+  let!(:user_1) { FactoryGirl.create :user, username: 'student',
+                                            first_name: 'Chris',
+                                            last_name: 'Mass' }
+  let!(:user_2) { FactoryGirl.create :user, username: 'teacher',
+                                            first_name: 'Stan',
+                                            last_name: 'Dup' }
 
   it 'searches username and name' do
     results = described_class[search: '%ch%']

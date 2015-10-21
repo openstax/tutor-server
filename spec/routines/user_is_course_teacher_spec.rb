@@ -4,16 +4,12 @@ describe UserIsCourseTeacher, type: :routine do
 
   context "when the user is not a teacher for the given course" do
     it "returns false" do
-      target_profile = FactoryGirl.create(:user_profile)
-      target_strategy = User::Strategies::Direct::User.new(target_profile)
-      target_user = User::User.new(strategy: target_strategy)
+      target_user = FactoryGirl.create(:user)
 
       target_student_role = Entity::Role.create!
       target_teacher_role = Entity::Role.create!
 
-      other_profile = FactoryGirl.create(:user_profile)
-      other_strategy = User::Strategies::Direct::User.new(other_profile)
-      other_user = User::User.new(strategy: other_strategy)
+      other_user = FactoryGirl.create(:user)
 
       other_teacher_role  = Entity::Role.create!
 
@@ -43,9 +39,7 @@ describe UserIsCourseTeacher, type: :routine do
   context "when the user a teacher for the given course" do
     it "returns true" do
       ## Make the target user a teacher for the target course
-      target_profile = FactoryGirl.create(:user_profile)
-      target_strategy = User::Strategies::Direct::User.new(target_profile)
-      target_user = User::User.new(strategy: target_strategy)
+      target_user = FactoryGirl.create(:user)
 
       target_teacher_role = Entity::Role.create!
 

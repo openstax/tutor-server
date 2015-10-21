@@ -1,11 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Admin::TagsController do
-  let!(:admin) {
-    profile = FactoryGirl.create(:user_profile, :administrator)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
+  let!(:admin) { FactoryGirl.create(:user, :administrator) }
 
   let!(:tag_1) { FactoryGirl.create :content_tag, value: 'k12phys-ch04-ex003' }
   let!(:tag_2) { FactoryGirl.create :content_tag, value: 'k12phys-ch04-s03-lo01' }
@@ -62,10 +58,7 @@ RSpec.describe Admin::TagsController do
     end
 
     it 'disallows non-admin authenticated visitors' do
-      profile = FactoryGirl.create(:user_profile)
-      strategy = User::Strategies::Direct::User.new(profile)
-      non_admin = User::User.new(strategy: strategy)
-      controller.sign_in(non_admin)
+      controller.sign_in(FactoryGirl.create(:user))
 
       expect { get :index }.to raise_error(SecurityTransgression)
       expect { put :update, id: tag_1.id }.to raise_error(SecurityTransgression)

@@ -9,9 +9,7 @@ class SetupPerformanceReportData
 
     # There should be at least 4 students
     (students.length + 1..4).each do |extra_student|
-      profile = FactoryGirl.create(:user_profile)
-      strategy = User::Strategies::Direct::User.new(profile)
-      students << User::User.new(strategy: strategy)
+      students << FactoryGirl.create(:user)
     end
 
     CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)

@@ -96,26 +96,21 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
     let!(:num_taskees) { 3 }
 
-    let!(:taskee_profiles) {
-      num_taskees.times.collect{ FactoryGirl.create(:user_profile) }
-    }
-
     let!(:taskee_users) {
-      taskee_profiles.collect do |profile|
-        strategy = User::Strategies::Direct::User.new(profile)
-        User::User.new(strategy: strategy).tap do |user|
-          AddUserAsPeriodStudent.call(user: user, period: period)
-        end
-      end
+      num_taskees.times.collect {
+        user = FactoryGirl.create(:user)
+        AddUserAsPeriodStudent.call(user: user, period: period)
+        user
+      }
     }
 
     let!(:tasking_plans) {
-      tps = taskee_profiles.collect do |taskee|
+      tps = taskee_users.collect do |taskee|
         task_plan.tasking_plans <<
           FactoryGirl.build(
             :tasks_tasking_plan,
             task_plan: task_plan,
-            target:    taskee
+            target:    taskee.to_model
           )
       end
 
@@ -247,18 +242,19 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
     let!(:num_taskees) { 3 }
 
-    let!(:taskee_profiles) {
+    let!(:taskee_users) {
       num_taskees.times.collect do
         FactoryGirl.create(:user_profile).tap do |profile|
           strategy = User::Strategies::Direct::User.new(profile)
           user = User::User.new(strategy: strategy)
           AddUserAsPeriodStudent.call(user: user, period: period)
+          user
         end
       end
     }
 
     let!(:tasking_plans) {
-      tps = taskee_profiles.collect do |taskee|
+      tps = taskee_users.collect do |taskee|
         task_plan.tasking_plans << FactoryGirl.build(
           :tasks_tasking_plan, task_plan: task_plan, target: taskee
         )

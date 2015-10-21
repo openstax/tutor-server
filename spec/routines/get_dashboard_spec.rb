@@ -6,22 +6,13 @@ describe GetDashboard, type: :routine do
   let!(:course)         { CreateCourse[name: 'Physics 101'] }
   let!(:period)         { CreatePeriod[course: course] }
 
-  let!(:student_user)   {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
+  let!(:student_user)   { FactoryGirl.create(:user) }
   let!(:student_role)   { AddUserAsPeriodStudent.call(user: student_user, period: period)
                                                 .outputs.role }
 
-  let!(:teacher_user)   {
-    profile = FactoryGirl.create(:user_profile,
-                                 first_name: 'Bob',
-                                 last_name: 'Newhart',
-                                 full_name: 'Bob Newhart')
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
+  let!(:teacher_user)   { FactoryGirl.create(:user, first_name: 'Bob',
+                                                    last_name: 'Newhart',
+                                                    full_name: 'Bob Newhart') }
   let!(:teacher_role)   { AddUserAsCourseTeacher.call(user: teacher_user, course: course)
                                                 .outputs.role }
 

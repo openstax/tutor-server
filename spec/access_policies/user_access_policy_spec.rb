@@ -2,11 +2,7 @@ require 'rails_helper'
 
 RSpec.describe UserAccessPolicy, type: :access_policy do
   let!(:anon)        { User::User.anonymous }
-  let!(:user)        {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
+  let!(:user)        { FactoryGirl.create(:user) }
   let!(:application) { FactoryGirl.create(:doorkeeper_application) }
 
   context 'index' do

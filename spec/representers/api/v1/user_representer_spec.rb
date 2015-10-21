@@ -3,11 +3,7 @@ require 'rails_helper'
 RSpec.describe Api::V1::UserRepresenter, type: :representer do
 
 
-  let(:user)           {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
+  let(:user)           { FactoryGirl.create(:user) }
   let(:representation) { Api::V1::UserRepresenter.new(user).as_json }
 
   it "generates a JSON representation of a user" do

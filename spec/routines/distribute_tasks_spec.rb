@@ -5,18 +5,12 @@ RSpec.describe DistributeTasks, type: :routine do
   let!(:course)    { Entity::Course.create! }
   let!(:period)    { CreatePeriod[course: course] }
   let!(:user)      {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    user = User::User.new(strategy: strategy)
+    user = FactoryGirl.create(:user)
     AddUserAsPeriodStudent.call(user: user, period: period)
     user
   }
-  let!(:new_profile)   {
-    FactoryGirl.create(:user_profile)
-  }
   let!(:new_user)      {
-    strategy = User::Strategies::Direct::User.new(new_profile)
-    user = User::User.new(strategy: strategy)
+    user = FactoryGirl.create(:user)
     AddUserAsPeriodStudent.call(user: user, period: period)
     user
   }
@@ -45,7 +39,7 @@ RSpec.describe DistributeTasks, type: :routine do
   context 'published task_plan' do
     before(:each) do
       DistributeTasks.call(task_plan)
-      new_profile.roles.each do |role|
+      new_user.to_model.roles.each do |role|
         role.taskings.each{ |tasking| tasking.task.destroy }
       end
       task_plan.reload

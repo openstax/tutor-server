@@ -3,9 +3,7 @@ require 'rails_helper'
 RSpec.describe GetUserCourses, type: :routine do
 
   it 'gets courses, not duped' do
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    user = User::User.new(strategy: strategy)
+    user = FactoryGirl.create(:user)
 
     course = Entity::Course.create!
     period = CreatePeriod[course: course]
@@ -19,9 +17,7 @@ RSpec.describe GetUserCourses, type: :routine do
   end
 
   it 'gets multiple courses for a user' do
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    user = User::User.new(strategy: strategy)
+    user = FactoryGirl.create(:user)
 
     course_1 = Entity::Course.create!
     course_1_period = CreatePeriod[course: course_1]
@@ -39,9 +35,7 @@ RSpec.describe GetUserCourses, type: :routine do
   end
 
   it 'does not return courses where the user is an inactive student' do
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    user = User::User.new(strategy: strategy)
+    user = FactoryGirl.create(:user)
 
     course_1 = Entity::Course.create!
     course_1_period = CreatePeriod[course: course_1]

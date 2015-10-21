@@ -3,13 +3,8 @@ require 'rails_helper'
 describe Role::GetUserRoles, type: :routine do
   context "there are no roles for the given user" do
     it "returns an empty array" do
-      target_profile = FactoryGirl.create(:user_profile)
-      target_strategy = User::Strategies::Direct::User.new(target_profile)
-      target_user = User::User.new(strategy: target_strategy)
-
-      other_profile = FactoryGirl.create(:user_profile)
-      other_strategy = User::Strategies::Direct::User.new(other_profile)
-      other_user = User::User.new(strategy: other_strategy)
+      target_user = FactoryGirl.create(:user)
+      other_user = FactoryGirl.create(:user)
 
       role   = Entity::Role.create!
 
@@ -23,16 +18,9 @@ describe Role::GetUserRoles, type: :routine do
   end
   context "there is one role for the given user" do
     it "returns that role" do
-      target_profile = FactoryGirl.create(:user_profile)
-      target_strategy = User::Strategies::Direct::User.new(target_profile)
-      target_user = User::User.new(strategy: target_strategy)
-
+      target_user = FactoryGirl.create(:user)
       target_role = Entity::Role.create!
-
-      other_profile = FactoryGirl.create(:user_profile)
-      other_strategy = User::Strategies::Direct::User.new(other_profile)
-      other_user = User::User.new(strategy: other_strategy)
-
+      other_user = FactoryGirl.create(:user)
       other_role  = Entity::Role.create!
 
       Role::AddUserRole.call(user: target_user, role: target_role)
@@ -47,18 +35,12 @@ describe Role::GetUserRoles, type: :routine do
   end
   context "there are multiple roles for the given user" do
     it "returns all user roles" do
-      target_profile = FactoryGirl.create(:user_profile)
-      target_strategy = User::Strategies::Direct::User.new(target_profile)
-      target_user = User::User.new(strategy: target_strategy)
-
+      target_user = FactoryGirl.create(:user)
       target_role1 = Entity::Role.create!
       target_role2 = Entity::Role.create!
 
-      other_profile = FactoryGirl.create(:user_profile)
-      other_strategy = User::Strategies::Direct::User.new(other_profile)
-      other_user = User::User.new(strategy: other_strategy)
-
-      other_role   = Entity::Role.create!
+      other_user = FactoryGirl.create(:user)
+      other_role = Entity::Role.create!
 
       Role::AddUserRole.call(user: target_user, role: target_role1)
       Role::AddUserRole.call(user: target_user, role: target_role2)

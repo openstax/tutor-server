@@ -8,38 +8,22 @@ describe GetStudentRoster, type: :routine do
   let!(:other_course) { CreateCourse[name: 'Other Course'] }
   let!(:other_period) { CreatePeriod[course: other_course] }
 
-  let!(:student_1) {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
+  let!(:student_1) { FactoryGirl.create(:user) }
   let!(:student_1_role) {
     AddUserAsPeriodStudent.call(period: period_1, user: student_1).outputs[:role]
   }
 
-  let(:student_2) {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
+  let(:student_2) { FactoryGirl.create(:user) }
   let!(:student_2_role) {
     AddUserAsPeriodStudent.call(period: period_1, user: student_2).outputs[:role]
   }
 
-  let(:student_3) {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
+  let(:student_3) { FactoryGirl.create(:user) }
   let!(:student_3_role) {
     AddUserAsPeriodStudent.call(period: period_2, user: student_3).outputs[:role]
   }
 
-  let!(:student_4) {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
+  let!(:student_4) { FactoryGirl.create(:user) }
   let!(:student_4_role) {
     AddUserAsPeriodStudent.call(period: other_period, user: student_4).outputs[:role]
   }

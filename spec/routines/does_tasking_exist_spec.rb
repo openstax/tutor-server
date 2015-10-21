@@ -1,16 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe DoesTaskingExist, type: :routine do
-  let(:nontaskee) {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
-  let(:taskee)    {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
+  let(:nontaskee) { FactoryGirl.create(:user) }
+  let(:taskee)    { FactoryGirl.create(:user) }
   let(:tasked)    { FactoryGirl.create(:tasks_tasked_exercise) }
   let!(:tasking)  { FactoryGirl.create(:tasks_tasking,
                                        role: Role::GetDefaultUserRole[taskee],

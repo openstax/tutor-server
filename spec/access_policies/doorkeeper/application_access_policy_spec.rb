@@ -3,16 +3,8 @@ require 'rails_helper'
 module Doorkeeper
   RSpec.describe ApplicationAccessPolicy, type: :access_policy do
     let!(:anon)        { User::User.anonymous }
-    let!(:user)        {
-      profile = FactoryGirl.create(:user_profile)
-      strategy = User::Strategies::Direct::User.new(profile)
-      User::User.new(strategy: strategy)
-    }
-    let!(:admin)       {
-      profile = FactoryGirl.create(:user_profile, :administrator)
-      strategy = User::Strategies::Direct::User.new(profile)
-      User::User.new(strategy: strategy)
-    }
+    let!(:user)        { FactoryGirl.create(:user) }
+    let!(:admin)       { FactoryGirl.create(:user, :administrator) }
     let!(:application) { FactoryGirl.create(:doorkeeper_application) }
 
     context 'index, read, create, update, destroy' do

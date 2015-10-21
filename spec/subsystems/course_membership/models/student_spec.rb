@@ -2,11 +2,7 @@ require 'rails_helper'
 
 RSpec.describe CourseMembership::Models::Student, type: :model do
   let!(:period)     { CreatePeriod[course: Entity::Course.create!].to_model }
-  let!(:user)       {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
+  let!(:user)       { FactoryGirl.create(:user) }
   subject(:student) { AddUserAsPeriodStudent[user: user, period: period].student }
 
   it { is_expected.to belong_to(:course) }
@@ -33,9 +29,7 @@ RSpec.describe CourseMembership::Models::Student, type: :model do
     end
 
     it 'must be unique' do
-      profile2 = FactoryGirl.create(:user_profile)
-      strategy2 = User::Strategies::Direct::User.new(profile2)
-      user2 = User::User.new(strategy: strategy2)
+      user2 = FactoryGirl.create(:user)
       student_2 = AddUserAsPeriodStudent.call(period: period, user: user2).outputs.student
       student_2.deidentifier = student.deidentifier
       expect(student_2).not_to be_valid

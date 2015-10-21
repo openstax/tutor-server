@@ -4,19 +4,11 @@ require 'database_cleaner'
 
 RSpec.describe Api::V1::GuidesController, type: :controller, api: true,
                                           version: :v1, vcr: VCR_OPTS do
-  let!(:user_1)          {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
+  let!(:user_1)          { FactoryGirl.create(:user) }
   let!(:user_1_token)       { FactoryGirl.create :doorkeeper_access_token,
                                                  resource_owner_id: user_1.id }
 
-  let!(:user_2)          {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
+  let!(:user_2)          { FactoryGirl.create(:user) }
   let!(:user_2_token)       { FactoryGirl.create :doorkeeper_access_token,
                                                  resource_owner_id: user_2.id }
 
@@ -37,11 +29,7 @@ RSpec.describe Api::V1::GuidesController, type: :controller, api: true,
         AddUserAsPeriodStudent.call(period: period, user: user_2).outputs[:role]
       }
 
-      let!(:user_3)          {
-        profile = FactoryGirl.create(:user_profile)
-        strategy = User::Strategies::Direct::User.new(profile)
-        User::User.new(strategy: strategy)
-      }
+      let!(:user_3)          { FactoryGirl.create(:user) }
 
       let!(:student_3_role) {
         AddUserAsPeriodStudent.call(period: period, user: user_3).outputs[:role]
