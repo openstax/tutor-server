@@ -3,6 +3,7 @@
 course_name: Physics I
 cnx_book_id: 334f8b61-30eb-4475-8e05-5260a4866b4b
 cnx_book_version: 4.61
+catalog_offering_identifier: physics
 teacher: cm
 periods:
   - id: p1

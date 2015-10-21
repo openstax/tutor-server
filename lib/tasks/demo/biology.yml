@@ -3,6 +3,7 @@
 course_name: Biology I
 cnx_book_id: d52e93f4-8653-4273-86da-3850001c0786
 cnx_book_version: 3.14
+catalog_offering_identifier: biology
 teacher: cm
 periods:
   - id: p1
