@@ -5,25 +5,27 @@ class CourseMembership::CreateEnrollmentChange
   uses_routine CourseMembership::ApproveEnrollmentChange, as: :approve
 
   def exec(user:, period:, requires_enrollee_approval: true)
-    role_ids = run(:get_roles, user, 'student').outputs.roles.collect(&:id)
+    user_student_role_ids = run(:get_roles, user, 'student').outputs.roles.map(&:id)
+    user_course_students = CourseMembership::Models::Student.where(
+      entity_course_id: period.course.id,  entity_role_id: user_student_role_ids
+    ).to_a
 
-    enrollments = CourseMembership::Models::Enrollment
-                    .joins(:student)
-                    .preload(:student)
-                    .where(course_membership_period_id: period.id,
-                           student: {entity_role_id: role_ids})
-                    .to_a
-
-    # This code does NOT support users with multiple roles (teachers) trying to change periods
+    # This code does NOT support users with multiple "students" (teachers) trying to change periods
     fatal_error(code: :multiple_roles,
                 message: 'Users with multiple roles in a course cannot use self-enrollment') \
-      if enrollments.size > 1
+      if user_course_students.size > 1
 
-    enrollment = enrollments.first
+    student = user_course_students.first
 
-    fatal_error(code: :dropped_student,
-                message: 'You cannot re-enroll in a course from which you were dropped') \
-      if !enrollment.nil? && !enrollment.student.active?
+    if student.nil?
+      enrollment = nil
+    else
+      fatal_error(code: :dropped_student,
+                  message: 'You cannot re-enroll in a course from which you were dropped') \
+        unless student.active?
+
+      enrollment = student.latest_enrollment
+    end
 
     enrollment_change = CourseMembership::Models::EnrollmentChange.create(
       user_profile_id: user.id, enrollment: enrollment, period: period.to_model,

@@ -26,7 +26,7 @@ class CourseMembership::Models::EnrollmentChange < Tutor::SubSystems::BaseModel
   protected
 
   def same_profile
-    return if profile.nil? || enrollment.nil? || enrollment.student.role.profile == profile
+    return if enrollment.nil? || profile.nil? || enrollment.student.role.profile == profile
     errors.add(:base, 'the given user does not match the given enrollment')
     false
   end
