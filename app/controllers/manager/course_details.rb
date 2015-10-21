@@ -14,5 +14,7 @@ module Manager::CourseDetails
 
     ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(ecosystem_model)
     @course_ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
+
+    @catalog_offerings = Catalog::ListOfferings[]
   end
 end

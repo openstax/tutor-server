@@ -1,0 +1,13 @@
+<% method ||= :post %>
+
+<%= form_tag(url, method: method, class: 'form-inline') do |f| %>
+  <div class="form-group">
+    <%= label_tag 'Offering' %>
+    <%= select_tag :catalog_offering_identifier,
+        options_from_collection_for_select(@catalog_offerings || [], :identifier, :description,
+        params[:catalog_offering_identifier] || @course.catalog_offering_identifier),
+        include_blank: true, class: 'form-control' %>
+  </div>
+
+  <%= submit_tag 'Submit', class: 'btn btn-primary' %>
+<% end %>

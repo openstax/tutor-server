@@ -222,11 +222,12 @@ ActiveRecord::Schema.define(version: 20151016170440) do
 
   create_table "course_profile_profiles", force: :cascade do |t|
     t.integer  "school_district_school_id"
-    t.integer  "entity_course_id",                                                 null: false
-    t.string   "name",                                                             null: false
-    t.string   "timezone",                  default: "Central Time (US & Canada)", null: false
-    t.datetime "created_at",                                                       null: false
-    t.datetime "updated_at",                                                       null: false
+    t.integer  "entity_course_id",                                                   null: false
+    t.string   "name",                                                               null: false
+    t.string   "timezone",                    default: "Central Time (US & Canada)", null: false
+    t.datetime "created_at",                                                         null: false
+    t.datetime "updated_at",                                                         null: false
+    t.string   "catalog_offering_identifier"
   end
 
   add_index "course_profile_profiles", ["entity_course_id"], name: "index_course_profile_profiles_on_entity_course_id", unique: true, using: :btree

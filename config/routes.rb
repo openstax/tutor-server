@@ -109,6 +109,7 @@ Rails.application.routes.draw do
       member do
         post :students
         post :set_ecosystem
+        post :set_catalog_offering
         post :teachers, controller: :teachers
       end
       resources :periods, shallow: true

@@ -77,6 +77,18 @@ class Admin::CoursesController < Admin::BaseController
     redirect_to edit_admin_course_path(params[:id], anchor: 'content')
   end
 
+  def set_catalog_offering
+    identifier = params[:catalog_offering_identifier]
+    if identifier.blank?
+      flash[:error] = 'Please select a catalog identifier'
+    else
+      course = Entity::Course.find(params[:id])
+      CourseProfile::SetCatalogIdentifier[ entity_course: course, identifier: identifier ]
+      flash[:notice] = "Catalog offering identifier \"#{identifier}\" selected for \"#{course.name}\""
+    end
+    redirect_to edit_admin_course_path(params[:id], anchor: 'content')
+  end
+
   private
 
   def course_params

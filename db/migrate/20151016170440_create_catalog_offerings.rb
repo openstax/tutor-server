@@ -10,6 +10,8 @@ class CreateCatalogOfferings < ActiveRecord::Migration
     end
 
     add_foreign_key :catalog_offerings, :content_ecosystems, on_update: :cascade, on_delete: :cascade
+
+    add_column :course_profile_profiles, :catalog_offering_identifier, :string
   end
 
 end
