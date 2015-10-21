@@ -1,11 +1,12 @@
 module OpenStax::Cnx::V1
   class BookPart
 
-    def initialize(hash: {})
+    def initialize(hash: {}, is_root: false)
       @hash = hash
+      @is_root = is_root
     end
 
-    attr_reader :hash
+    attr_reader :hash, :is_root
 
     def title
       @title ||= hash.fetch('title') { |key|
