@@ -1,6 +1,6 @@
 <%= lev_form_for( :offering,
-    url: @offering.new_record? ? admin_catalog_offerings_path : admin_catalog_offering_path(@offering),
-    method: @offering.new_record? ? 'post' : 'put') do |form| %>
+    url: @offering.id ? admin_catalog_offering_path(@offering.id) : admin_catalog_offerings_path,
+    method: @offering.id ? 'put' : 'post') do |form| %>
 
 <table class='table table-striped'>
   <%= render partial: 'table_header' %>
