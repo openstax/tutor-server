@@ -8,6 +8,9 @@ class CourseMembership::ApproveEnrollmentChange
     fatal_error(code: :already_approved,
                 message: 'The given enrollment change request has already been approved') \
       if enrollment_change.approved?
+    fatal_error(code: :already_rejected,
+                message: 'The given enrollment change request has already been rejected') \
+      if enrollment_change.rejected?
 
     enrollment = enrollment_change.enrollment
     if enrollment.nil?
@@ -23,6 +26,14 @@ class CourseMembership::ApproveEnrollmentChange
     end
 
     enrollment_change.approve_by(approved_by).save!
+
+    # Mark other pending EnrollmentChange records as rejected
+    CourseMembership::Models::EnrollmentChange.where(
+      user_profile_id: enrollment_change.user_profile_id,
+      status: CourseMembership::Models::EnrollmentChange.statuses[:pending],
+      course_membership_period_id: enrollment_change.period.course.periods.map(&:id)
+    ).update_all(status: CourseMembership::Models::EnrollmentChange.statuses[:rejected])
+
     outputs[:enrollment_change] = enrollment_change
   end
 end

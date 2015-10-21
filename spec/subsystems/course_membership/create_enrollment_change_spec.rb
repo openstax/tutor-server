@@ -1,16 +1,16 @@
 require 'rails_helper'
 
 describe CourseMembership::CreateEnrollmentChange, type: :routine do
-  let!(:period_1)             { CreatePeriod[course: Entity::Course.create!] }
-  let!(:period_2)             { CreatePeriod[course: period_1.course] }
+  let!(:period_1) { CreatePeriod[course: Entity::Course.create!] }
+  let!(:period_2) { CreatePeriod[course: period_1.course] }
 
-  let!(:user)                 do
+  let!(:user)     do
     profile = FactoryGirl.create :user_profile
     strategy = ::User::Strategies::Direct::User.new(profile)
     ::User::User.new(strategy: strategy)
   end
 
-  let!(:args) { { user: user, period: period_1 } }
+  let!(:args)     { { user: user, period: period_1 } }
 
   context 'with no existing enrollments' do
     it 'creates an EnrollmentChange' do
