@@ -53,7 +53,7 @@ class ContentConfiguration
   end
 
   def url_base
-    @configuration.url_base || OpenStax::Cnx::V1.archive_url_base
+    @configuration.url_base || Rails.application.secrets.openstax['cnx']['archive_url']
   end
 
   def assignments
