@@ -8,7 +8,8 @@ describe CollectCourseInfo, type: :routine do
   let!(:role_2)    { FactoryGirl.create :entity_role, profile: profile_2 }
 
   let!(:course_1)  { FactoryGirl.create(:course_profile_profile).course }
-  let!(:course_2)  { FactoryGirl.create(:course_profile_profile).course }
+  let!(:course_2)  { FactoryGirl.create(:course_profile_profile,
+                                        catalog_offering_identifier: 'tutorcourse').course }
 
   let!(:student_1) { FactoryGirl.create :course_membership_student, role: role_1, course: course_1 }
   let!(:student_2) { FactoryGirl.create :course_membership_student, role: role_2, course: course_2 }
@@ -20,7 +21,8 @@ describe CollectCourseInfo, type: :routine do
         {
           id: course_1.id,
           name: course_1.profile.name,
-          school_name: course_1.profile.school_name
+          school_name: course_1.profile.school_name,
+          catalog_offering_identifier: nil
         }
       )
     end
@@ -38,7 +40,8 @@ describe CollectCourseInfo, type: :routine do
         {
           id: course_1.id,
           name: course_1.profile.name,
-          school_name: course_1.profile.school_name
+          school_name: course_1.profile.school_name,
+          catalog_offering_identifier: nil
         }
       )
     end
@@ -51,12 +54,14 @@ describe CollectCourseInfo, type: :routine do
         {
           id: course_1.id,
           name: course_1.profile.name,
-          school_name: course_1.profile.school_name
+          school_name: course_1.profile.school_name,
+          catalog_offering_identifier: nil
         },
         {
           id: course_2.id,
           name: course_2.profile.name,
-          school_name: course_2.profile.school_name
+          school_name: course_2.profile.school_name,
+          catalog_offering_identifier: 'tutorcourse'
         }
       )
     end

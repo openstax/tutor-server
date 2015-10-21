@@ -45,7 +45,8 @@ class CollectCourseInfo
       {
         id: p.entity_course_id,
         name: p.name,
-        school_name: p.school_name
+        school_name: p.school_name,
+        catalog_offering_identifier: p.catalog_offering_identifier
       }
     end
   end
