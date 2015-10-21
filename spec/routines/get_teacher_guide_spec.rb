@@ -11,9 +11,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
     @period = CreatePeriod[course: @course]
     @second_period = CreatePeriod[course: @course]
 
-    teacher_profile = FactoryGirl.create(:user_profile)
-    teacher_strategy = User::Strategies::Direct::User.new(teacher_profile)
-    @teacher = User::User.new(strategy: teacher_strategy)
+    @teacher = FactoryGirl.create(:user)
 
     student_profile = FactoryGirl.create(:user_profile)
     student_strategy = User::Strategies::Direct::User.new(student_profile)
