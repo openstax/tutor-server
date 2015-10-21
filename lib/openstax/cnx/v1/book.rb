@@ -49,7 +49,7 @@ module OpenStax::Cnx::V1
     end
 
     def root_book_part
-      @root_book_part ||= BookPart.new(hash: tree)
+      @root_book_part ||= BookPart.new(hash: tree, is_root: true)
     end
 
     def visit(visitor:, depth: 0)
