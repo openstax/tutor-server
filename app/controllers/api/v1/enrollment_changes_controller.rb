@@ -27,9 +27,17 @@ class Api::V1::EnrollmentChangesController < Api::V1::ApiController
 
     enrollment_params = OpenStruct.new
     consume!(enrollment_params, represent_with: Api::V1::NewEnrollmentChangeRepresenter)
-    period = CourseMembership::Models::Period.find_by(
-      enrollment_code: enrollment_params.enrollment_code
+
+    # Find only CC periods
+    period = CourseMembership::Models::Period.joins(course: :profile).find_by(
+      enrollment_code: enrollment_params.enrollment_code,
+      course: { profile: { is_concept_coach: true } }
     )
+
+    if period.nil?
+      render_api_errors(:invalid_enrollment_code)
+      return
+    end
 
     if enrollment_params.cnx_book_id.present?
       ecosystem = GetCourseEcosystem[course: period.course]
@@ -45,7 +53,8 @@ class Api::V1::EnrollmentChangesController < Api::V1::ApiController
 
     if result.errors.empty?
       respond_with result.outputs.enrollment_change,
-                   represent_with: Api::V1::EnrollmentChangeRepresenter
+                   represent_with: Api::V1::EnrollmentChangeRepresenter,
+                   location: nil
     else
       render_api_errors(:already_enrolled)
     end
@@ -68,7 +77,8 @@ class Api::V1::EnrollmentChangesController < Api::V1::ApiController
 
     if result.errors.empty?
       respond_with result.outputs.enrollment_change,
-                   represent_with: Api::V1::EnrollmentChangeRepresenter
+                   represent_with: Api::V1::EnrollmentChangeRepresenter,
+                   responder: ResponderWithPutContent
     else
       render_api_errors(:already_approved)
     end
