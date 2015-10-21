@@ -2,9 +2,8 @@ FactoryGirl.define do
   factory :user, class: 'User::User' do
     skip_create
 
-    profile { create(:user_profile) }
-
     transient do
+      profile create(:user_profile)
       strategy User::Strategies::Direct::User.new(profile)
     end
 
