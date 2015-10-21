@@ -6,6 +6,6 @@ class Catalog::ListOfferings
 
   def exec
     outputs.offerings = Catalog::Models::Offering.all
-
   end
+
 end
