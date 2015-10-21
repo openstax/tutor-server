@@ -1,11 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe CustomerService::CoursesController, type: :controller do
-  let(:customer_service) {
-    profile = FactoryGirl.create(:user_profile, :customer_service)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
+  let(:customer_service) { FactoryGirl.create(:user, :customer_service) }
 
   before { controller.sign_in(customer_service) }
 
@@ -45,10 +41,7 @@ RSpec.describe CustomerService::CoursesController, type: :controller do
     end
 
     it 'disallows non-customer-service authenticated visitors' do
-      profile = FactoryGirl.create(:user_profile)
-      strategy = User::Strategies::Direct::User.new(profile)
-      non_customer_service = User::User.new(strategy: strategy)
-      controller.sign_in(non_customer_service)
+      controller.sign_in(FactoryGirl.create(:user))
 
       expect { get :index }.to raise_error(SecurityTransgression)
       expect { get :show, id: 1 }.to raise_error(SecurityTransgression)

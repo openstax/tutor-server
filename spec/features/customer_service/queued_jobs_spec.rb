@@ -3,16 +3,8 @@ require 'feature_js_helper'
 
 RSpec.feature 'Viewing queued jobs as Customer Service', :js do
   let(:course) { CreateCourse[name: 'course time'] }
-  let(:customer_service) {
-    profile = FactoryGirl.create(:user_profile, :customer_service)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
-  let(:user) {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
+  let(:customer_service) { FactoryGirl.create(:user, :customer_service) }
+  let(:user) { FactoryGirl.create(:user) }
   let(:role) { AddUserAsCourseTeacher[course: course, user: user] }
 
   let(:job) { Lev::BackgroundJob.all.last }

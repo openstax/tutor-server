@@ -4,21 +4,9 @@ module CourseMembership
   RSpec.describe Period, type: :model do
     subject(:period) { CourseMembership::Period.new(FactoryGirl.create :course_membership_period) }
 
-    let!(:student_1_user) {
-      profile = FactoryGirl.create(:user_profile)
-      strategy = User::Strategies::Direct::User.new(profile)
-      User::User.new(strategy: strategy)
-    }
-    let!(:student_2_user) {
-      profile = FactoryGirl.create(:user_profile)
-      strategy = User::Strategies::Direct::User.new(profile)
-      User::User.new(strategy: strategy)
-    }
-    let!(:teacher_user)   {
-      profile = FactoryGirl.create(:user_profile)
-      strategy = User::Strategies::Direct::User.new(profile)
-      User::User.new(strategy: strategy)
-    }
+    let!(:student_1_user) { FactoryGirl.create(:user) }
+    let!(:student_2_user) { FactoryGirl.create(:user) }
+    let!(:teacher_user)   { FactoryGirl.create(:user) }
 
     let!(:student_1) { AddUserAsPeriodStudent.call(user: student_1_user,
                                                    period: period).outputs.role }

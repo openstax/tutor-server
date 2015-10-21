@@ -4,20 +4,12 @@ RSpec.describe ReassignPublishedPeriodTaskPlans, type: :routine do
 
   let!(:course)    { Entity::Course.create! }
   let!(:period)    { CreatePeriod[course: course] }
-  let!(:user)      {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    user = User::User.new(strategy: strategy)
-    AddUserAsPeriodStudent.call(user: user, period: period)
-    user
-  }
-  let!(:new_profile)      { FactoryGirl.create(:user_profile) }
-  let!(:new_user)      {
-    strategy = User::Strategies::Direct::User.new(new_profile)
-    user = User::User.new(strategy: strategy)
-    AddUserAsPeriodStudent.call(user: user, period: period)
-    user
-  }
+  let!(:user)      { user = FactoryGirl.create(:user)
+                     AddUserAsPeriodStudent.call(user: user, period: period)
+                     user }
+  let!(:new_user)      { user = FactoryGirl.create(:user)
+                         AddUserAsPeriodStudent.call(user: user, period: period)
+                         user }
   let!(:task_plan_1) {
     task_plan = FactoryGirl.build(:tasks_task_plan, owner: course)
     task_plan.tasking_plans.first.target = period.to_model
@@ -33,7 +25,9 @@ RSpec.describe ReassignPublishedPeriodTaskPlans, type: :routine do
 
   before(:each) {
     DistributeTasks.call(task_plan_1)
-    new_profile.roles.each{ |role| role.taskings.each{ |tasking| tasking.task.destroy } }
+    new_user.to_model.roles.each{ |role|
+      role.taskings.each{ |tasking| tasking.task.destroy }
+    }
   }
 
   context 'unpublished task_plan' do
@@ -59,7 +53,7 @@ RSpec.describe ReassignPublishedPeriodTaskPlans, type: :routine do
       expect(task_plan_1.tasks.size).to eq 2
       expect(task_plan_1.tasks).to include old_task
       new_task = task_plan_1.tasks.reject{ |tt| tt == old_task }.first
-      expect(new_task.taskings.first.role.profile).to eq new_profile
+      expect(new_task.taskings.first.role.profile).to eq new_user.to_model
     end
   end
 end

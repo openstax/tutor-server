@@ -4,9 +4,12 @@ module User
       class User < Entity
         wraps ::User::Models::Profile
 
-        exposes :all, :create, :create!, :find, :anonymous, from_class: ::User::Models::Profile
+        exposes :all, :create, :create!, :find, :anonymous,
+          from_class: ::User::Models::Profile
+
         exposes :account, :exchange_read_identifier, :exchange_write_identifier,
-                :username, :first_name, :last_name, :full_name, :title, :name, :casual_name
+                :username, :first_name, :last_name, :full_name, :title, :name,
+                :casual_name
 
         class << self
           alias_method :entity_all, :all

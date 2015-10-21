@@ -1,23 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe Admin::UsersController, type: :controller do
-  let!(:admin) {
-    profile = FactoryGirl.create :user_profile,
-                                 :administrator,
-                                 username: 'admin',
-                                 full_name: 'Administrator'
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
-  let!(:profile) {
-    FactoryGirl.create :user_profile,
-                       username: 'student',
-                       full_name: 'User One'
-  }
-  let!(:user) {
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
+  let!(:admin) { FactoryGirl.create :user, :administrator,
+                                           username: 'admin',
+                                           full_name: 'Administrator' }
+  let!(:user) { FactoryGirl.create :user, username: 'student', full_name: 'User One' }
 
   before { controller.sign_in(admin) }
 
@@ -62,13 +49,12 @@ RSpec.describe Admin::UsersController, type: :controller do
       content_analyst: true
     }
 
-    strategy = ::User::Strategies::Direct::User.new(profile.reload)
-    reloaded_user = ::User::User.new(strategy: strategy)
+    user.to_model.reload
 
-    expect(reloaded_user.username).to eq 'updated'
-    expect(reloaded_user.name).to eq 'Updated Name'
-    expect(reloaded_user.is_admin?).to eq false
-    expect(reloaded_user.is_customer_service?).to eq true
-    expect(reloaded_user.is_content_analyst?).to eq true
+    expect(user.username).to eq 'updated'
+    expect(user.name).to eq 'Updated Name'
+    expect(user.is_admin?).to eq false
+    expect(user.is_customer_service?).to eq true
+    expect(user.is_content_analyst?).to eq true
   end
 end

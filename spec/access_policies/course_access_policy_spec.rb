@@ -4,16 +4,8 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
   let(:course) { CreateCourse[name: 'Physics 401'] }
   let(:period) { CreatePeriod[course: course] }
 
-  let(:student) {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
-  let(:teacher) {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
+  let(:student) { FactoryGirl.create(:user) }
+  let(:teacher) { FactoryGirl.create(:user) }
 
   before do
     AddUserAsCourseTeacher[course: course, user: teacher]
@@ -39,11 +31,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
   end
 
   context 'regular users' do
-    let(:requestor) {
-      profile = FactoryGirl.create(:user_profile)
-      strategy = User::Strategies::Direct::User.new(profile)
-      User::User.new(strategy: strategy)
-    }
+    let(:requestor) { FactoryGirl.create(:user) }
 
     context ":index" do
       let(:action) { :index }

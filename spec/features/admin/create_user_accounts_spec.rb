@@ -14,9 +14,7 @@ RSpec.feature 'Administration', vcr: VCR_OPTS do
       'bc9d18e693334b40c67b28fb93eff30bbfc9f1aca161e33bd5b097b00b304608'
     OpenStax::Accounts.configuration.enable_stubbing = false
 
-    admin_profile = FactoryGirl.create(:user_profile, :administrator)
-    admin_strategy = User::Strategies::Direct::User.new(admin_profile)
-    admin = User::User.new(strategy: admin_strategy)
+    admin = FactoryGirl.create(:user, :administrator)
     stub_current_user(admin)
 
     visit admin_root_path

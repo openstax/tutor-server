@@ -29,18 +29,12 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
     @period = CreatePeriod[course: @course]
     @second_period = CreatePeriod[course: @course]
 
-    teacher_profile = FactoryGirl.create(:user_profile)
-    teacher_strategy = User::Strategies::Direct::User.new(teacher_profile)
-    @teacher = User::User.new(strategy: teacher_strategy)
+    @teacher = FactoryGirl.create(:user)
 
-    student_profile = FactoryGirl.create(:user_profile, exchange_read_identifier: USER_1_IDENTIFIER)
-    student_strategy = User::Strategies::Direct::User.new(student_profile)
-    @student = User::User.new(strategy: student_strategy)
+    @student = FactoryGirl.create(:user, exchange_read_identifier: USER_1_IDENTIFIER)
 
-    student_profile_2 = FactoryGirl.create(:user_profile,
-                                           exchange_read_identifier: USER_2_IDENTIFIER)
-    student_strategy_2 = User::Strategies::Direct::User.new(student_profile_2)
-    @second_student = User::User.new(strategy: student_strategy_2)
+    @second_student = FactoryGirl.create(:user,
+                                         exchange_read_identifier: USER_2_IDENTIFIER)
 
     @role = AddUserAsPeriodStudent[period: @period, user: @student]
     @second_role = AddUserAsPeriodStudent[period: @second_period, user: @second_student]

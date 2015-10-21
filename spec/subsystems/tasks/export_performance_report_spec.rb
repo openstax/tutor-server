@@ -14,9 +14,7 @@ RSpec.describe Tasks::ExportPerformanceReport, type: :routine, speed: :slow do
     @course = CreateCourse[name: 'Physics']
     CourseContent::AddEcosystemToCourse.call(course: @course, ecosystem: @ecosystem)
 
-    teacher_profile = FactoryGirl.create(:user_profile)
-    teacher_strategy = User::Strategies::Direct::User.new(teacher_profile)
-    @teacher = User::User.new(strategy: teacher_strategy)
+    @teacher = FactoryGirl.create(:user)
     SetupPerformanceReportData[course: @course, teacher: @teacher, ecosystem: @ecosystem]
     @role = GetUserCourseRoles[course: @course, user: @teacher].first
   end

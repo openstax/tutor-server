@@ -48,9 +48,7 @@ FactoryGirl.define do
       period = course.periods.first || CreatePeriod[course: course].to_model
 
       evaluator.number_of_students.times do
-        profile = create :user_profile
-        strategy = User::Strategies::Direct::User.new(profile)
-        user = User::User.new(strategy: strategy)
+        user = create :user
         role = Role::GetDefaultUserRole[user]
         CourseMembership::AddStudent.call(period: period, role: role)
       end

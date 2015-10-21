@@ -17,11 +17,7 @@ RSpec.describe MapUsersAccounts, type: :routine do
     end
 
     context 'when the account can find a matching user' do
-      let!(:found)  {
-        profile = FactoryGirl.create(:user_profile)
-        strategy = User::Strategies::Direct::User.new(profile)
-        User::User.new(strategy: strategy)
-      }
+      let!(:found)  { FactoryGirl.create(:user) }
       let(:account) { found.account }
 
       it 'returns the user' do
@@ -48,9 +44,7 @@ RSpec.describe MapUsersAccounts, type: :routine do
 
   describe '.user_to_account' do
     it 'returns the associated user account' do
-      profile = FactoryGirl.create(:user_profile)
-      strategy = User::Strategies::Direct::User.new(profile)
-      user = User::User.new(strategy: strategy)
+      user = FactoryGirl.create(:user)
 
       account = MapUsersAccounts.user_to_account(user)
 

@@ -28,50 +28,26 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
     end
 
     describe '#index' do
-      let(:teacher) {
-        profile = FactoryGirl.create(:user_profile)
-        strategy = User::Strategies::Direct::User.new(profile)
-        User::User.new(strategy: strategy)
-      }
+      let(:teacher) { FactoryGirl.create(:user) }
       let(:teacher_token) { FactoryGirl.create :doorkeeper_access_token,
                                                resource_owner_id: teacher.id }
-      let(:student_1) {
-        profile = FactoryGirl.create(:user_profile,
-                                     first_name: 'Student',
-                                     last_name: 'One',
-                                     full_name: 'Student One')
-        strategy = User::Strategies::Direct::User.new(profile)
-        User::User.new(strategy: strategy)
-      }
+      let(:student_1) { FactoryGirl.create(:user, first_name: 'Student',
+                                                  last_name: 'One',
+                                                  full_name: 'Student One') }
       let(:student_1_token) { FactoryGirl.create :doorkeeper_access_token,
                                 resource_owner_id: student_1.id }
 
-      let(:student_2) {
-        profile = FactoryGirl.create(:user_profile,
-                                     first_name: 'Student',
-                                     last_name: 'Two',
-                                     full_name: 'Student Two')
-        strategy = User::Strategies::Direct::User.new(profile)
-        User::User.new(strategy: strategy)
-      }
+      let(:student_2) { FactoryGirl.create(:user, first_name: 'Student',
+                                                  last_name: 'Two',
+                                                  full_name: 'Student Two') }
 
-      let(:student_3) {
-        profile = FactoryGirl.create(:user_profile,
-                                     first_name: 'Student',
-                                     last_name: 'Three',
-                                     full_name: 'Student Three')
-        strategy = User::Strategies::Direct::User.new(profile)
-        User::User.new(strategy: strategy)
-      }
+      let(:student_3) { FactoryGirl.create(:user, first_name: 'Student',
+                                                  last_name: 'Three',
+                                                  full_name: 'Student Three') }
 
-      let(:student_4) {
-        profile = FactoryGirl.create(:user_profile,
-                                     first_name: 'Student',
-                                     last_name: 'Four',
-                                     full_name: 'Student Four')
-        strategy = User::Strategies::Direct::User.new(profile)
-        User::User.new(strategy: strategy)
-      }
+      let(:student_4) { FactoryGirl.create(:user, first_name: 'Student',
+                                                  last_name: 'Four',
+                                                  full_name: 'Student Four') }
 
       before do
         allow(Tasks::Assistants::HomeworkAssistant).to receive(:k_ago_map).with(1) {
@@ -279,11 +255,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
   end
 
   describe 'POST #export' do
-    let(:teacher) {
-      profile = FactoryGirl.create(:user_profile)
-      strategy = User::Strategies::Direct::User.new(profile)
-      User::User.new(strategy: strategy)
-    }
+    let(:teacher) { FactoryGirl.create(:user) }
     let(:teacher_token) { FactoryGirl.create :doorkeeper_access_token,
                            resource_owner_id: teacher.id }
 
@@ -312,9 +284,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
 
     context 'failure' do
       it 'returns 403 unauthorized users' do
-        unknown_profile = FactoryGirl.create(:user_profile)
-        unknown_strategy = User::Strategies::Direct::User.new(unknown_profile)
-        unknown = User::User.new(strategy: unknown_strategy)
+        unknown = FactoryGirl.create(:user)
         unknown_token = FactoryGirl.create :doorkeeper_access_token,
                                            resource_owner_id: unknown.id
 
@@ -332,11 +302,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
   end
 
   describe 'GET #exports' do
-    let(:teacher) {
-      profile = FactoryGirl.create(:user_profile)
-      strategy = User::Strategies::Direct::User.new(profile)
-      User::User.new(strategy: strategy)
-    }
+    let(:teacher) { FactoryGirl.create(:user) }
     let(:teacher_token) { FactoryGirl.create :doorkeeper_access_token,
                            resource_owner_id: teacher.id }
 
@@ -373,9 +339,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
 
     context 'failure' do
       it 'returns 403 for users who are not teachers of the course' do
-        unknown_profile = FactoryGirl.create(:user_profile)
-        unknown_strategy = User::Strategies::Direct::User.new(unknown_profile)
-        unknown = User::User.new(strategy: unknown_strategy)
+        unknown = FactoryGirl.create(:user)
         unknown_token = FactoryGirl.create :doorkeeper_access_token,
                                            resource_owner_id: unknown.id
 

@@ -5,19 +5,11 @@ require 'database_cleaner'
 RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                            version: :v1, speed: :slow, vcr: VCR_OPTS do
 
-  let!(:user_1)             {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
+  let!(:user_1)             { FactoryGirl.create(:user) }
   let!(:user_1_token)       { FactoryGirl.create :doorkeeper_access_token,
                                                  resource_owner_id: user_1.id }
 
-  let!(:user_2)             {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
+  let!(:user_2)             { FactoryGirl.create(:user) }
   let!(:user_2_token)       { FactoryGirl.create :doorkeeper_access_token,
                                                  resource_owner_id: user_2.id }
 
@@ -205,24 +197,15 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   end
 
   describe "dashboard" do
-    let!(:student_user) {
-      profile = FactoryGirl.create(:user_profile)
-      strategy = User::Strategies::Direct::User.new(profile)
-      User::User.new(strategy: strategy)
-    }
+    let!(:student_user) { FactoryGirl.create(:user) }
     let!(:student_role)    { AddUserAsPeriodStudent.call(user: student_user, period: period)
                                                    .outputs.role }
     let!(:student_token)   { FactoryGirl.create :doorkeeper_access_token,
                                                 resource_owner_id: student_user.id }
 
-    let!(:teacher_user) {
-      profile = FactoryGirl.create(:user_profile,
-                                   first_name: 'Bob',
-                                   last_name: 'Newhart',
-                                   full_name: 'Bob Newhart')
-      strategy = User::Strategies::Direct::User.new(profile)
-      User::User.new(strategy: strategy)
-    }
+    let!(:teacher_user) { FactoryGirl.create(:user, first_name: 'Bob',
+                                                    last_name: 'Newhart',
+                                                    full_name: 'Bob Newhart') }
     let!(:teacher_role)   { AddUserAsCourseTeacher.call(user: teacher_user,
                                                         course: course)
                                                   .outputs.role }

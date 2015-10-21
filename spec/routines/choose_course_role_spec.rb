@@ -2,23 +2,9 @@ require 'rails_helper'
 
 describe ChooseCourseRole, type: :routine do
 
-  let(:teacher) {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
-  let(:student) {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
-
-  let(:interloper){
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
-
+  let(:teacher) { FactoryGirl.create(:user) }
+  let(:student) { FactoryGirl.create(:user) }
+  let(:interloper){ FactoryGirl.create(:user) }
   let(:course){ Entity::Course.create! }
   let(:period){ CreatePeriod[course: course] }
 
@@ -38,11 +24,7 @@ describe ChooseCourseRole, type: :routine do
 
   context "when the user is both a teacher and a student" do
 
-    let(:user) {
-      profile = FactoryGirl.create(:user_profile)
-      strategy = User::Strategies::Direct::User.new(profile)
-      User::User.new(strategy: strategy)
-    }
+    let(:user) { FactoryGirl.create(:user) }
 
     let!(:user_teacher_role) {
       role = Entity::Role.create!

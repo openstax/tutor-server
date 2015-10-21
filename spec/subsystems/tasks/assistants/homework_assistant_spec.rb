@@ -82,27 +82,20 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
 
   let!(:num_taskees) { 3 }
 
-  let!(:taskee_profiles) {
-    num_taskees.times.collect do
-      FactoryGirl.create(:user_profile)
-    end
-  }
-
   let!(:taskee_users) {
-    taskee_profiles.collect do |profile|
-      strategy = User::Strategies::Direct::User.new(profile)
-      User::User.new(strategy: strategy).tap do |user|
-        AddUserAsPeriodStudent.call(user: user, period: period)
-      end
+    num_taskees.times.collect do
+      user = FactoryGirl.create(:user)
+      AddUserAsPeriodStudent.call(user: user, period: period)
+      user
     end
   }
 
   let!(:tasking_plans) {
-    tps = taskee_profiles.collect do |taskee|
+    tps = taskee_users.collect do |taskee|
       task_plan.tasking_plans <<
         FactoryGirl.create(:tasks_tasking_plan,
           task_plan: task_plan,
-          target:    taskee
+          target:    taskee.to_model
         )
     end
 
@@ -137,7 +130,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
     end
 
     ## it "creates one task per taskee"
-    expect(entity_tasks.count).to eq(taskee_profiles.count)
+    expect(entity_tasks.count).to eq(taskee_users.count)
 
     ## it "assigns each task to one role"
     entity_tasks.each do |entity_task|

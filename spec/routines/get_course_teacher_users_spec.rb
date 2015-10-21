@@ -5,11 +5,7 @@ describe GetCourseTeacherUsers, type: :routine do
   context "when a course has no teachers" do
     let(:target_course) { CreateCourse[name: 'target'] }
     let(:other_course)  { CreateCourse[name: 'other'] }
-    let(:other_user)    {
-      profile = FactoryGirl.create(:user_profile)
-      strategy = User::Strategies::Direct::User.new(profile)
-      User::User.new(strategy: strategy)
-    }
+    let(:other_user)    { FactoryGirl.create(:user) }
 
     before(:each) do
       result = AddUserAsCourseTeacher.call(course: other_course, user: other_user)
@@ -26,16 +22,8 @@ describe GetCourseTeacherUsers, type: :routine do
   context "when a course has one teacher" do
     let(:target_course) { CreateCourse[name: 'target 2'] }
     let(:other_course)  { CreateCourse[name: 'other 2'] }
-    let(:target_user)   {
-      profile = FactoryGirl.create(:user_profile)
-      strategy = User::Strategies::Direct::User.new(profile)
-      User::User.new(strategy: strategy)
-    }
-    let(:other_user)    {
-      profile = FactoryGirl.create(:user_profile)
-      strategy = User::Strategies::Direct::User.new(profile)
-      User::User.new(strategy: strategy)
-    }
+    let(:target_user)   { FactoryGirl.create(:user) }
+    let(:other_user)    { FactoryGirl.create(:user) }
 
     before(:each) do
       result = AddUserAsCourseTeacher.call(course: other_course, user: other_user)
@@ -55,21 +43,9 @@ describe GetCourseTeacherUsers, type: :routine do
   context "when a course has multiple teachers" do
     let(:target_course) { CreateCourse[name: 'target 3'] }
     let(:other_course)  { CreateCourse[name: 'other 3'] }
-    let(:target_user1)  {
-      profile = FactoryGirl.create(:user_profile)
-      strategy = User::Strategies::Direct::User.new(profile)
-      User::User.new(strategy: strategy)
-    }
-    let(:target_user2)  {
-      profile = FactoryGirl.create(:user_profile)
-      strategy = User::Strategies::Direct::User.new(profile)
-      User::User.new(strategy: strategy)
-    }
-    let(:other_user)    {
-      profile = FactoryGirl.create(:user_profile)
-      strategy = User::Strategies::Direct::User.new(profile)
-      User::User.new(strategy: strategy)
-    }
+    let(:target_user1)  { FactoryGirl.create(:user) }
+    let(:target_user2)  { FactoryGirl.create(:user) }
+    let(:other_user)    { FactoryGirl.create(:user) }
 
     before(:each) do
       result = AddUserAsCourseTeacher.call(course: other_course, user: other_user)

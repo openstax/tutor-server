@@ -5,11 +5,8 @@ RSpec.describe SendTaskedExerciseAnswerToExchange, type: :routine do
   let(:free_response)       { 'abc' }
 
   let!(:period)             { FactoryGirl.create :course_membership_period }
-  let!(:user)               {
-    profile = FactoryGirl.create :user_profile, exchange_write_identifier: exchange_identifier
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
+  let!(:user)               { FactoryGirl.create :user,
+                                         exchange_write_identifier: exchange_identifier }
   let!(:role)               { AddUserAsPeriodStudent[user: user, period: period] }
   let!(:tasked_exercise)    { FactoryGirl.create :tasks_tasked_exercise,
                                                  :with_tasking,

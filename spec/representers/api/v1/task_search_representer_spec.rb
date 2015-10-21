@@ -4,11 +4,7 @@ RSpec.describe Api::V1::TaskSearchRepresenter, type: :representer do
 
   context "a user" do
 
-    let!(:user)           {
-      profile = FactoryGirl.create(:user_profile)
-      strategy = User::Strategies::Direct::User.new(profile)
-      User::User.new(strategy: strategy)
-    }
+    let!(:user)           { FactoryGirl.create(:user) }
     let!(:course)         { FactoryGirl.create(:entity_course) }
     let!(:period)         { CreatePeriod[course: course] }
     let!(:role)           { AddUserAsPeriodStudent.call(user: user, period: period).outputs.role }

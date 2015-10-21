@@ -11,9 +11,7 @@ describe GetHistory, type: :routine do
     period = FactoryGirl.create :course_membership_period
     course = period.course
 
-    profile = FactoryGirl.create :user_profile
-    strategy = User::Strategies::Direct::User.new(profile)
-    user = User::User.new(strategy: strategy)
+    user = FactoryGirl.create :user
 
     @role = AddUserAsPeriodStudent[user: user, period: period]
 

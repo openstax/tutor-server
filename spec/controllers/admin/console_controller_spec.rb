@@ -3,9 +3,7 @@ require 'rails_helper'
 RSpec.describe Admin::ConsoleController do
   describe 'GET #index' do
     it 'responds with success' do
-      profile = FactoryGirl.create(:user_profile, :administrator)
-      strategy = User::Strategies::Direct::User.new(profile)
-      admin = User::User.new(strategy: strategy)
+      admin = FactoryGirl.create(:user, :administrator)
 
       controller.sign_in(admin)
 

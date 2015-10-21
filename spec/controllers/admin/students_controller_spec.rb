@@ -1,11 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Admin::StudentsController do
-  let!(:admin) {
-    profile = FactoryGirl.create(:user_profile, :administrator)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
+  let!(:admin) { FactoryGirl.create(:user, :administrator) }
 
   before { controller.sign_in(admin) }
 
@@ -19,26 +15,10 @@ RSpec.describe Admin::StudentsController do
     ] }
     let!(:periods_2) { [CreatePeriod[course: course_2]] }
 
-    let!(:user_1) {
-      profile = FactoryGirl.create(:user_profile, username: 'benjamin')
-      strategy = User::Strategies::Direct::User.new(profile)
-      User::User.new(strategy: strategy)
-    }
-    let!(:user_2) {
-      profile = FactoryGirl.create(:user_profile, username: 'nicolai')
-      strategy = User::Strategies::Direct::User.new(profile)
-      User::User.new(strategy: strategy)
-    }
-    let!(:user_3) {
-      profile = FactoryGirl.create(:user_profile, username: 'freja')
-      strategy = User::Strategies::Direct::User.new(profile)
-      User::User.new(strategy: strategy)
-    }
-    let!(:user_4) {
-      profile = FactoryGirl.create(:user_profile, username: 'oskar')
-      strategy = User::Strategies::Direct::User.new(profile)
-      User::User.new(strategy: strategy)
-    }
+    let!(:user_1) { FactoryGirl.create(:user, username: 'benjamin') }
+    let!(:user_2) { FactoryGirl.create(:user, username: 'nicolai') }
+    let!(:user_3) { FactoryGirl.create(:user, username: 'freja') }
+    let!(:user_4) { FactoryGirl.create(:user, username: 'oskar') }
 
     let!(:student_1) {
       AddUserAsPeriodStudent.call(user: user_1, period: periods[0]).outputs.student

@@ -2,11 +2,7 @@ require 'rails_helper'
 
 describe AddUserAsPeriodStudent, type: :routine do
   context "when the given user is not a teacher of the course" do
-    let!(:user)   {
-      profile = FactoryGirl.create(:user_profile)
-      strategy = User::Strategies::Direct::User.new(profile)
-      User::User.new(strategy: strategy)
-    }
+    let!(:user)   { FactoryGirl.create(:user) }
     let!(:course) { Entity::Course.create! }
     let!(:period) { CreatePeriod[course: course] }
 
@@ -32,11 +28,7 @@ describe AddUserAsPeriodStudent, type: :routine do
   end
 
   context "when the given user is a teacher in the given course" do
-    let!(:user)   {
-      profile = FactoryGirl.create(:user_profile)
-      strategy = User::Strategies::Direct::User.new(profile)
-      User::User.new(strategy: strategy)
-    }
+    let!(:user)   { FactoryGirl.create(:user) }
     let!(:course) { Entity::Course.create! }
     let!(:period) { CreatePeriod[course: course] }
 

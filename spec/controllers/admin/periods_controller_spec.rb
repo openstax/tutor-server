@@ -1,11 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Admin::PeriodsController do
-  let!(:admin) {
-    profile = FactoryGirl.create(:user_profile, :administrator)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
+  let!(:admin) { FactoryGirl.create(:user, :administrator) }
 
   let!(:course) { Entity::Course.create }
   let!(:period) { CreatePeriod[course: course, name: '1st'] }
@@ -23,11 +19,7 @@ RSpec.describe Admin::PeriodsController do
     end
 
     context 'when there are students' do
-      let!(:student) {
-        profile = FactoryGirl.create(:user_profile)
-        strategy = User::Strategies::Direct::User.new(profile)
-        User::User.new(strategy: strategy)
-      }
+      let!(:student) { FactoryGirl.create(:user) }
       let!(:add_student) { AddUserAsPeriodStudent.call(user: student, period: period) }
 
       it 'displays an error message' do

@@ -4,21 +4,9 @@ RSpec.describe EcosystemAccessPolicy, type: :access_policy do
   let(:course)            { CreateCourse[name: 'Physics 401'] }
   let(:period)            { CreatePeriod[course: course] }
 
-  let(:student)           {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
-  let(:teacher)           {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
-  let(:content_analyst)   {
-    profile = FactoryGirl.create(:user_profile, :content_analyst)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
+  let(:student)           { FactoryGirl.create(:user) }
+  let(:teacher)           { FactoryGirl.create(:user) }
+  let(:content_analyst)   { FactoryGirl.create(:user, :content_analyst) }
 
   let(:ecosystem)         {
     content_ecosystem = FactoryGirl.create(:content_ecosystem)
@@ -47,11 +35,7 @@ RSpec.describe EcosystemAccessPolicy, type: :access_policy do
   end
 
   context 'regular users' do
-    let(:requestor) {
-      profile = FactoryGirl.create(:user_profile)
-      strategy = User::Strategies::Direct::User.new(profile)
-      User::User.new(strategy: strategy)
-    }
+    let(:requestor) { FactoryGirl.create(:user) }
 
     [:index, :readings, :exercises].each do |test_action|
       context "#{test_action}" do

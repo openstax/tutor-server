@@ -4,28 +4,10 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
   let!(:task_plan)     { FactoryGirl.create(:tasks_task_plan) }
 
   let!(:course)        { CreateCourse[name: 'Biology 201'] }
-  let!(:teacher)       {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
-  let!(:not_teaching)  {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
-  let!(:owner_profile) {
-    FactoryGirl.create(:user_profile)
-  }
-  let!(:owner)         {
-    strategy = User::Strategies::Direct::User.new(owner_profile)
-    User::User.new(strategy: strategy)
-  }
-  let!(:non_owner)     {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
+  let!(:teacher)       { FactoryGirl.create(:user) }
+  let!(:not_teaching)  { FactoryGirl.create(:user) }
+  let!(:owner)         { FactoryGirl.create(:user) }
+  let!(:non_owner)     { FactoryGirl.create(:user) }
 
   before do
     AddUserAsCourseTeacher[course: course, user: teacher]
@@ -81,7 +63,7 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
     let(:requestor) { owner }
 
     before do
-      task_plan.owner = owner_profile
+      task_plan.owner = owner.to_model
       task_plan.save!
     end
 

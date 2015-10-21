@@ -2,9 +2,7 @@ require 'rails_helper'
 
 describe Role::CreateUserRole, type: :routine do
   it "creates and returns a new role for the given user" do
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    user = User::User.new(strategy: strategy)
+    user = FactoryGirl.create(:user)
 
     result = nil
     expect {

@@ -38,9 +38,7 @@ class CreateStudentHistory
     run(:create_period, course: course)
 
     puts "=== Creating a student ==="
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    student = User::User.new(strategy: strategy)
+    student = FactoryGirl.create(:user)
 
     puts "=== Add student to course ==="
     run(:add_user_as_period_student, period: outputs.period, user: student)

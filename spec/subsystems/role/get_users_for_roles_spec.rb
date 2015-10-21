@@ -14,16 +14,8 @@ describe Role::GetUsersForRoles, type: :routine do
   end
 
   context "when there is one user for the given roles" do
-    let(:target_user)  {
-      profile = FactoryGirl.create(:user_profile)
-      strategy = User::Strategies::Direct::User.new(profile)
-      User::User.new(strategy: strategy)
-    }
-    let(:other_user)   {
-      profile = FactoryGirl.create(:user_profile)
-      strategy = User::Strategies::Direct::User.new(profile)
-      User::User.new(strategy: strategy)
-    }
+    let(:target_user)  { FactoryGirl.create(:user) }
+    let(:other_user)   { FactoryGirl.create(:user) }
     let(:target_role1) { Entity::Role.create! }
     let(:target_role2) { Entity::Role.create! }
     let(:other_role)   { Entity::Role.create! }
@@ -45,21 +37,9 @@ describe Role::GetUsersForRoles, type: :routine do
   end
 
   context "when there are multiple users for the given roles" do
-    let(:target_user1) {
-      profile = FactoryGirl.create(:user_profile)
-      strategy = User::Strategies::Direct::User.new(profile)
-      User::User.new(strategy: strategy)
-    }
-    let(:target_user2) {
-      profile = FactoryGirl.create(:user_profile)
-      strategy = User::Strategies::Direct::User.new(profile)
-      User::User.new(strategy: strategy)
-    }
-    let(:other_user)   {
-      profile = FactoryGirl.create(:user_profile)
-      strategy = User::Strategies::Direct::User.new(profile)
-      User::User.new(strategy: strategy)
-    }
+    let(:target_user1) { FactoryGirl.create(:user) }
+    let(:target_user2) { FactoryGirl.create(:user) }
+    let(:other_user)   { FactoryGirl.create(:user) }
     let(:target_role1) { Entity::Role.create! }
     let(:target_role2) { Entity::Role.create! }
     let(:other_role)   { Entity::Role.create! }

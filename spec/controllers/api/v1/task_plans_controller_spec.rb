@@ -5,21 +5,9 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
   let!(:course)    { CreateCourse[name: 'Anything'] }
   let!(:period)    { CreatePeriod[course: course] }
 
-  let!(:user)      {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
-  let!(:teacher)   {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
-  let!(:student)   {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
+  let!(:user)      { FactoryGirl.create(:user) }
+  let!(:teacher)   { FactoryGirl.create(:user) }
+  let!(:student)   { FactoryGirl.create(:user) }
 
   let!(:page)      { FactoryGirl.create :content_page }
   let!(:task_plan) { FactoryGirl.build(:tasks_task_plan,
@@ -42,11 +30,7 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
                                                   settings: { page_ids: [page.id.to_s] },
                                                   published_at: Time.now) }
 
-  let!(:unaffiliated_teacher) {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
+  let!(:unaffiliated_teacher) { FactoryGirl.create(:user) }
 
   before do
     AddUserAsCourseTeacher.call(course: course, user: teacher)

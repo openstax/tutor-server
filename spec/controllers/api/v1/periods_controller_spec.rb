@@ -4,11 +4,7 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
   let(:course) { CreateCourse[name: 'Biology I'] }
   let(:other_course) { CreateCourse[name: 'Other course'] }
 
-  let(:teacher_profile) { FactoryGirl.create(:user_profile) }
-
-  let(:teacher_user) {
-    User::User.new(strategy: User::Strategies::Direct::User.new(teacher_profile))
-  }
+  let(:teacher_user) { FactoryGirl.create(:user) }
 
   let(:teacher_token) { FactoryGirl.create(:doorkeeper_access_token,
                                            resource_owner_id: teacher_user.id) }

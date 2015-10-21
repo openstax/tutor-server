@@ -2,11 +2,9 @@ require 'rails_helper'
 
 RSpec.feature 'Administrator' do
   scenario 'signs in as another user' do
-    profile = FactoryGirl.create(:user_profile, username: 'a_user')
+    FactoryGirl.create(:user_profile, username: 'a_user')
 
-    admin_profile = FactoryGirl.create(:user_profile, :administrator)
-    admin_strategy = User::Strategies::Direct::User.new(admin_profile)
-    admin = User::User.new(strategy: admin_strategy)
+    admin = FactoryGirl.create(:user, :administrator)
 
     # Not logged in
     visit dashboard_path

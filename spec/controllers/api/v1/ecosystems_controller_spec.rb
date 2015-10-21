@@ -5,25 +5,17 @@ require 'database_cleaner'
 RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
                                               version: :v1, speed: :slow, vcr: VCR_OPTS do
 
-  let!(:user_1)             {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
+  let!(:user_1)             { FactoryGirl.create(:user) }
   let!(:user_1_token)       { FactoryGirl.create :doorkeeper_access_token,
                                                  resource_owner_id: user_1.id }
 
-  let!(:user_2)             {
-    profile = FactoryGirl.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
+  let!(:user_2)             { FactoryGirl.create(:user) }
   let!(:user_2_token)       { FactoryGirl.create :doorkeeper_access_token,
                                                  resource_owner_id: user_2.id }
 
   let!(:userless_token)    { FactoryGirl.create :doorkeeper_access_token }
 
-  let(:content_analyst)   { FactoryGirl.create(:user_profile, :content_analyst) }
+  let(:content_analyst)   { FactoryGirl.create(:user, :content_analyst) }
 
   let(:ca_user_token)    { FactoryGirl.create :doorkeeper_access_token,
                                                resource_owner_id: content_analyst.id }

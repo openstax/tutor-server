@@ -1,22 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe CustomerService::UsersController, type: :controller do
-  let!(:customer_service) {
-    profile = FactoryGirl.create :user_profile, :customer_service,
-                                                username: 'cs',
-                                                full_name: 'Customer Service'
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
-  let!(:profile) {
-    FactoryGirl.create :user_profile,
-                       username: 'student',
-                       full_name: 'User One'
-  }
-  let!(:user) {
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  }
+  let!(:customer_service) { FactoryGirl.create :user, :customer_service,
+                                                      username: 'cs',
+                                                      full_name: 'Customer Service' }
+  let!(:user) { FactoryGirl.create :user, username: 'student', full_name: 'User One' }
 
   before { controller.sign_in(customer_service) }
 
