@@ -6,4 +6,6 @@ class Catalog::Models::Offering < Tutor::SubSystems::BaseModel
   validates :webview_url, presence: true
   validates :description, presence: true
 
+  wrapped_by ::Catalog::Strategies::Direct::Offering
+
 end
