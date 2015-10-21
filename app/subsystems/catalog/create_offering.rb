@@ -5,7 +5,9 @@ module Catalog
     protected
 
     def exec(attributes)
-      outputs.offering = Models::Offering.create!(attributes)
+      offering = Models::Offering.create!(attributes)
+      strategy = Strategies::Direct::Offering.new(offering)
+      outputs.offering = Offering.new(strategy: strategy)
     end
 
   end

@@ -5,7 +5,8 @@ module Catalog
     protected
 
     def exec(query)
-      outputs.offering = Models::Offering.where(query).first
+      offering = Models::Offering.where(query).first!
+      outputs.offering = Catalog::Offering.new(strategy: Catalog::Strategies::Direct::Offering.new(offering) )
     end
 
   end
