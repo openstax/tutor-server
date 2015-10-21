@@ -5,6 +5,8 @@ class Admin::CatalogOfferingCreate
     attribute :identifier, type: String
     attribute :description, type: String
     attribute :content_ecosystem_id, type: Integer
+    attribute :is_tutor, type: boolean
+    attribute :is_concept_coach, type: boolean
     attribute :webview_url, type: String
     attribute :pdf_url, type: String
 
