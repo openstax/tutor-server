@@ -58,7 +58,7 @@ assignments:
       - id: p1
         opens_at: <%= standard_opens_at school_day_on_or_before 9.days.ago %>
         due_at:   <%= standard_due_at   school_day_on_or_before  6.days.ago %>
-        students: {ak: 98, at: 67, cp: 55, gj: 77, hp: 88, lb: i, lt: ns, ne: 78, sd: 75, vw: 82}
+        students: {ak: 75, at: 67, cp: 55, gj: 77, hp: 88, lb: i, lt: ns, ne: 78, sd: 75, vw: 82}
       - id: p2
         opens_at: <%= standard_opens_at school_day_on_or_before 12.days.ago %>
         due_at:   <%= standard_due_at   school_day_on_or_before  8.days.ago %>
@@ -111,11 +111,11 @@ assignments:
       - id: p1
         opens_at: <%= standard_opens_at  school_day_on_or_before 4.days.ago %>
         due_at:   <%= today %>
-        students: {ak: 80, at: i, cp: i, gj: i, hp: 88, lb: i, lt: ns, ne: i, sd: ns, vw: 100}
+        students: {ak: 60, at: 80, cp: 50, gj: 90, hp: 40, lb: 60, lt: 80, ne: 55, sd: 70, vw: 55}
       - id: p2
         opens_at: <%= standard_opens_at  school_day_on_or_before 4.days.ago %>
         due_at:   <%= today %>
-        students: {af: 82, ag: i, bb: i, cd: i, hg: 87, ft: i, js: i, ms: 90, nz: 85, ra: ns}
+        students: {af: 62, ag: 80, bb: 40, cd: 35, hg: 50, ft: 40, js: 80, ms: 60, nz: 70, ra: 50}
 
   - type: reading
     title: Read 3.2 Acceleration Pt2
@@ -125,11 +125,11 @@ assignments:
       - id: p1
         opens_at: <%= standard_opens_at  school_day_on_or_before 4.days.ago %>
         due_at:   <%= today %>
-        students: {ak: ns, at: ns, cp: ns, gj: ns, hp: ns, lb: ns, lt: ns, ne: ns, sd: ns, vw: ns}
+        students: {ak: 50, at: 30, cp: 50, gj: 70, hp: 50, lb: 40, lt: 80, ne: 60, sd: 40, vw: 80}
       - id: p2
         opens_at: <%= standard_opens_at  school_day_on_or_before 4.days.ago %>
         due_at:   <%= today %>
-        students: {af: ns, ag: ns, bb: ns, cd: ns, hg: ns, ft: ns, js: ns, ms: ns, nz: ns, ra: ns}
+        students: {af: 30, ag: 70, bb: 60, cd: 80, hg: 65, ft: 60, js: 40, ms: 55, nz: 70, ra: 80}
 
   - type: homework
     title: HW Chapter 3
@@ -143,11 +143,11 @@ assignments:
       - id: p1
         opens_at: <%= standard_opens_at  school_day_on_or_before 2.days.ago %>
         due_at:   <%= standard_due_at   school_day_on_or_before 3.days.from_now %>
-        students: {ak: 98, at: 67, cp: 55, gj: 77, hp: 88, lb: 55, lt: 89, ne: 78, sd: 100, vw: 100}
+        students: {ak: 80, at: 67, cp: 55, gj: 40, hp: 85, lb: 55, lt: 45, ne: 80, sd: 55, vw: 85}
       - id: p2
         opens_at: <%= standard_opens_at  school_day_on_or_before 2.days.ago %>
         due_at:   <%= standard_due_at   school_day_on_or_before 3.days.from_now %>
-        students: {af: 82, ag: 71, bb: 88, cd: 78, hg: 87, ft: 82, js: 90, ms: 90, nz: 85, ra: 100}
+        students: {af: 82, ag: 50, bb: 70, cd: 60, hg: 55, ft: 45, js: 60, ms: 75, nz: 55, ra: 45}
 
   - type: reading
     title: Read 4.1-4.2 Force & Motion Pt1
