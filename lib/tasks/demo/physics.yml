@@ -56,8 +56,8 @@ assignments:
       ft: <%= 12.hours %>
     periods:
       - id: p1
-        opens_at: <%= standard_opens_at school_day_on_or_before 12.days.ago %>
-        due_at:   <%= standard_due_at   school_day_on_or_before  8.days.ago %>
+        opens_at: <%= standard_opens_at school_day_on_or_before 9.days.ago %>
+        due_at:   <%= standard_due_at   school_day_on_or_before  6.days.ago %>
         students: {ak: 98, at: 67, cp: 55, gj: 77, hp: 88, lb: i, lt: ns, ne: 78, sd: 75, vw: 82}
       - id: p2
         opens_at: <%= standard_opens_at school_day_on_or_before 12.days.ago %>
