@@ -30,10 +30,9 @@ module Api::V1
              schema_info: { required: true }
 
     property :requires_enrollee_approval,
-             type: 'boolean',
              readable: true,
              writeable: false,
-             schema_info: { required: true }
+             schema_info: { required: true, type: 'boolean' }
 
   end
 end
