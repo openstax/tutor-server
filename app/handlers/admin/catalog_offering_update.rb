@@ -4,7 +4,7 @@ class Admin::CatalogOfferingUpdate
   paramify :offering do
     attribute :identifier, type: String
     attribute :description, type: String
-    attribute :content_ecosystem_id, type: Integer
+    attribute :content_ecosystem_id
     attribute :is_tutor, type: boolean
     attribute :is_concept_coach, type: boolean
     attribute :webview_url, type: String
@@ -22,8 +22,6 @@ class Admin::CatalogOfferingUpdate
 
   def handle
     attributes = offering_params.as_json
-    # Allow removing an ecosystem from the offering.  A blank Integer param is converted to 0
-    attributes['content_ecosystem_id'] = nil if attributes['content_ecosystem_id'].zero?
     run(:update_offering, params[:id], attributes)
   end
 end
