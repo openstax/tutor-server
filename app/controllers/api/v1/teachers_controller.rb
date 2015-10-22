@@ -15,7 +15,7 @@ class Api::V1::TeachersController < Api::V1::ApiController
   EOS
   def destroy
     OSU::AccessPolicy.require_action_allowed!(:destroy, current_api_user, @teacher)
-    head :no_content
+    standard_destroy(@teacher)
   end
 
   protected

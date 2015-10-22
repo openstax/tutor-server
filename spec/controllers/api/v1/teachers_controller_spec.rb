@@ -26,6 +26,7 @@ describe Api::V1::TeachersController, type: :controller, api: true, version: :v1
         expect {
           api_delete :destroy, nil, parameters: { id: teacher.id }
         }.to raise_error(SecurityTransgression)
+        expect(UserIsCourseTeacher[course: course, user: teacher_user]).to be true
       end
     end
 
@@ -34,13 +35,14 @@ describe Api::V1::TeachersController, type: :controller, api: true, version: :v1
         expect {
           api_delete :destroy, student_token, parameters: { id: teacher.id }
         }.to raise_error(SecurityTransgression)
+        expect(UserIsCourseTeacher[course: course, user: teacher_user]).to be true
       end
     end
 
     context 'user is a teacher' do
       it 'removes the teacher' do
         api_delete :destroy, teacher_token, parameters: { id: teacher.id }
-        # TODO assert the teacher has been removed
+        expect(UserIsCourseTeacher[course: course, user: teacher_user]).to be false
       end
     end
   end
