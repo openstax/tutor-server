@@ -209,6 +209,9 @@ end
 group :development do
   # Trace AR queries
   gem 'active_record_query_trace'
+  # Restart rails in development when files are modified
+  gem 'guard'
+  gem 'guard-rails'
 end
 
 group :test do
