@@ -86,6 +86,8 @@ Rails.application.routes.draw do
 
       resources :students, shallow: true, except: :create
 
+      resources :teachers, shallow: true, only: [:destroy]
+
       resources :periods, shallow: true, only: [:create, :update]
     end
 
