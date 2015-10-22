@@ -6,7 +6,11 @@ module Catalog
 
     def exec(query)
       offering = Models::Offering.where(query).first
-      outputs.offering = Catalog::Offering.new(strategy: Catalog::Strategies::Direct::Offering.new(offering) )
+      if offering
+        outputs.offering = Catalog::Offering.new(
+          strategy: Catalog::Strategies::Direct::Offering.new(offering)
+        )
+      end
     end
 
   end
