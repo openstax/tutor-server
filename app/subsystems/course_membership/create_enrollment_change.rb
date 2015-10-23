@@ -27,11 +27,14 @@ class CourseMembership::CreateEnrollmentChange
       enrollment = student.latest_enrollment
     end
 
-    enrollment_change = CourseMembership::Models::EnrollmentChange.create(
+    enrollment_change_model = CourseMembership::Models::EnrollmentChange.create(
       user_profile_id: user.id, enrollment: enrollment, period: period.to_model,
       requires_enrollee_approval: requires_enrollee_approval
     )
-    transfer_errors_from(enrollment_change, {type: :verbatim}, true)
+    transfer_errors_from(enrollment_change_model, {type: :verbatim}, true)
+
+    strategy = CourseMembership::Strategies::Direct::EnrollmentChange.new(enrollment_change_model)
+    enrollment_change = CourseMembership::EnrollmentChange.new(strategy: strategy)
 
     run(:approve, enrollment_change: enrollment_change, approved_by: user) \
       unless requires_enrollee_approval

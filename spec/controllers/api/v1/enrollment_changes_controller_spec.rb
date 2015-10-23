@@ -1,22 +1,16 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: true, version: :v1 do
-  let!(:user)                do
-    profile = FactoryGirl.create :user_profile
-    strategy = ::User::Strategies::Direct::User.new(profile)
-    ::User::User.new(strategy: strategy)
-  end
+  let!(:user)                { FactoryGirl.create :user }
 
-  let!(:user_2)                do
-    profile = FactoryGirl.create :user_profile
-    strategy = ::User::Strategies::Direct::User.new(profile)
-    ::User::User.new(strategy: strategy)
-  end
+  let!(:user_2)              { FactoryGirl.create :user }
 
-  let!(:period)              { FactoryGirl.create :course_membership_period }
   let!(:course)              do
-    period.course.tap{ |course| course.profile.update_attribute(:is_concept_coach, true) }
+    FactoryGirl.create(:entity_course).tap do |course|
+      course.profile.update_attribute(:is_concept_coach, true)
+    end
   end
+  let!(:period)              { ::CreatePeriod[course: course] }
 
   let!(:book)                { FactoryGirl.create :content_book }
 

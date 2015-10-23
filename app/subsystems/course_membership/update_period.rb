@@ -5,6 +5,6 @@ class CourseMembership::UpdatePeriod
   def exec(period:, name:)
     model = period.to_model
     model.update_attributes(name: name)
-    outputs.period = CourseMembership::Period.new(model)
+    outputs.period = period
   end
 end

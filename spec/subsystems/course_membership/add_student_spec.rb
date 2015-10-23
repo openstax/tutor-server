@@ -29,14 +29,14 @@ describe CourseMembership::AddStudent, type: :routine do
       expect(result.errors).to be_empty
       student = CourseMembership::Models::Student.order(:created_at).last
       expect(student.course).to eq course
-      expect(CourseMembership::Period.new(student.period)).to eq period_1
+      expect(student.period.id).to eq period_1.id
 
       expect {
         result = CourseMembership::AddStudent.call(period: period_2, role: role)
       }.to_not change{ CourseMembership::Models::Student.count }
       expect(result.errors).to_not be_empty
       expect(student.reload.course).to eq course
-      expect(CourseMembership::Period.new(student.period)).to eq period_1
+      expect(student.period.id).to eq period_1.id
     end
   end
 end

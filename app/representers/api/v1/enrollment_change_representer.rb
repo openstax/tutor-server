@@ -29,7 +29,8 @@ module Api::V1
              writeable: false,
              schema_info: { required: true }
 
-    property :requires_enrollee_approval,
+    property :requires_enrollee_approval?,
+             as: :requires_enrollee_approval,
              readable: true,
              writeable: false,
              schema_info: { required: true, type: 'boolean' }

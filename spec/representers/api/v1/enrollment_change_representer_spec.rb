@@ -7,7 +7,8 @@ RSpec.describe Api::V1::EnrollmentChangeRepresenter, type: :representer do
     ::User::User.new(strategy: strategy)
   end
 
-  let!(:period)            { FactoryGirl.create :course_membership_period }
+  let!(:course)              { FactoryGirl.create(:entity_course) }
+  let!(:period)              { ::CreatePeriod[course: course] }
 
   let!(:enrollment_change) { CourseMembership::CreateEnrollmentChange[
     user: user, period: period, requires_enrollee_approval: false
@@ -22,7 +23,7 @@ RSpec.describe Api::V1::EnrollmentChangeRepresenter, type: :representer do
     expect(representation['to']['course']['name']).to eq period.course.name
     expect(representation['to']['period']['id']).to eq period.id.to_s
     expect(representation['to']['period']['name']).to eq period.name
-    expect(representation['status']).to eq enrollment_change.status
+    expect(representation['status']).to eq enrollment_change.status.to_s
     expect(representation['requires_enrollee_approval']).to eq false
   end
 end

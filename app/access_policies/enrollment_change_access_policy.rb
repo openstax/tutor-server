@@ -6,7 +6,7 @@ class EnrollmentChangeAccessPolicy
     when :create
       true # A (normal) user is always allowed to create EnrollmentChanges for themselves
     when :approve
-      requestor == enrollment_change.profile || requestor.to_model == enrollment_change.profile
+      requestor == enrollment_change.user
     else
       false
     end

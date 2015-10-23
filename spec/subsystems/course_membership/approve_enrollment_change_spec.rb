@@ -19,7 +19,7 @@ describe CourseMembership::ApproveEnrollmentChange, type: :routine do
     expect{ result = described_class.call(args) }
       .to change{ CourseMembership::Models::Enrollment.count }.by(1)
     expect(result.errors).to be_empty
-    expect(result.outputs.enrollment_change.status).to eq 'approved'
+    expect(result.outputs.enrollment_change.status).to eq :approved
     expect(result.outputs.enrollment_change.enrollee_approved_at).to be_present
   end
 
@@ -31,11 +31,14 @@ describe CourseMembership::ApproveEnrollmentChange, type: :routine do
     expect{ result = described_class.call(args) }
       .to change{ CourseMembership::Models::Enrollment.count }.by(1)
     expect(result.errors).to be_empty
-    expect(result.outputs.enrollment_change.status).to eq 'approved'
+    expect(result.outputs.enrollment_change.status).to eq :approved
     expect(result.outputs.enrollment_change.enrollee_approved_at).to be_present
 
-    expect(enrollment_change_2.reload.status).to eq 'rejected'
-    expect(enrollment_change_3.reload.status).to eq 'rejected'
+    enrollment_change_2.to_model.reload
+    enrollment_change_3.to_model.reload
+
+    expect(enrollment_change_2.status).to eq :rejected
+    expect(enrollment_change_3.status).to eq :rejected
   end
 
   it 'returns an error if the EnrollmentChange has already been approved' do
@@ -44,13 +47,13 @@ describe CourseMembership::ApproveEnrollmentChange, type: :routine do
     result = nil
     expect{ result = described_class.call(args) }
       .not_to change{ CourseMembership::Models::Enrollment.count }
-    expect(result.errors).not_to be_empty
-    expect(enrollment_change.reload.status).to eq 'approved'
-    expect(enrollment_change.enrollee_approved_at).to be_present
+    enrollment_change.to_model.reload
+    expect(enrollment_change.status).to eq :approved
+    expect(enrollment_change.enrollee_approved_at).not_to be_nil
   end
 
   it 'returns an error if the EnrollmentChange has already been rejected' do
-    enrollment_change.update_attribute(
+    enrollment_change.to_model.update_attribute(
       :status, CourseMembership::Models::EnrollmentChange.statuses[:rejected]
     )
 
@@ -58,7 +61,8 @@ describe CourseMembership::ApproveEnrollmentChange, type: :routine do
     expect{ result = described_class.call(args) }
       .not_to change{ CourseMembership::Models::Enrollment.count }
     expect(result.errors).not_to be_empty
-    expect(enrollment_change.reload.status).to eq 'rejected'
+    enrollment_change.to_model.reload
+    expect(enrollment_change.status).to eq :rejected
     expect(enrollment_change.enrollee_approved_at).to be_nil
   end
 end

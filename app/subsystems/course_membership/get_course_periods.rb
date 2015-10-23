@@ -9,14 +9,12 @@ module CourseMembership
     def exec(course:, roles: [])
       roles = [roles].flatten
 
-      outputs[:periods] = if roles.any?
-                            periods_for_roles(course, roles)
-                          else
-                            Entity::Relation.new(course.periods)
-                          end
+      models = roles.any? ? periods_for_roles(course, roles) : course.periods
+      outputs[:periods] = models.collect do |model|
+        strategy = CourseMembership::Strategies::Direct::Period.new(model)
+        CourseMembership::Period.new(strategy: strategy)
+      end
     end
-
-    private
 
     def periods_for_roles(course, roles)
       is_teacher = run(:is_teacher, course: course, roles: roles).outputs.is_course_teacher

@@ -1,7 +1,7 @@
 class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
   acts_as_paranoid
 
-  wrapped_by CourseMembership::Period
+  wrapped_by CourseMembership::Strategies::Direct::Period
 
   belongs_to :course, subsystem: :entity
 

@@ -1,4 +1,6 @@
 class CourseMembership::Models::EnrollmentChange < Tutor::SubSystems::BaseModel
+  wrapped_by CourseMembership::Strategies::Direct::EnrollmentChange
+
   belongs_to :profile, subsystem: :user
   belongs_to :enrollment # from
   belongs_to :period     # to

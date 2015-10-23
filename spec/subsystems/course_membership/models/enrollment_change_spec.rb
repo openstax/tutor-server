@@ -17,7 +17,7 @@ RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model do
   let!(:enrollment)           { role.student.latest_enrollment }
 
   subject(:enrollment_change) {
-    CourseMembership::CreateEnrollmentChange[user: user, period: period_2]
+    CourseMembership::CreateEnrollmentChange[user: user, period: period_2].to_model
   }
 
   it { is_expected.to belong_to(:profile) }

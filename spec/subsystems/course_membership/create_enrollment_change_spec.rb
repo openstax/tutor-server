@@ -18,7 +18,7 @@ describe CourseMembership::CreateEnrollmentChange, type: :routine do
       expect{ result = described_class.call(args) }
         .to change{ CourseMembership::Models::EnrollmentChange.count }.by(1)
       expect(result.errors).to be_empty
-      expect(result.outputs.enrollment_change.status).to eq 'pending'
+      expect(result.outputs.enrollment_change.status).to eq :pending
       expect(result.outputs.enrollment_change.enrollee_approved_at).to be_nil
     end
 
@@ -31,7 +31,7 @@ describe CourseMembership::CreateEnrollmentChange, type: :routine do
       expect{ result = described_class.call(args.merge(requires_enrollee_approval: false)) }
         .to change{ CourseMembership::Models::EnrollmentChange.count }.by(1)
       expect(result.errors).to be_empty
-      expect(result.outputs.enrollment_change.status).to eq 'approved'
+      expect(result.outputs.enrollment_change.status).to eq :approved
       expect(result.outputs.enrollment_change.enrollee_approved_at).not_to be_nil
     end
   end
@@ -48,7 +48,7 @@ describe CourseMembership::CreateEnrollmentChange, type: :routine do
       expect{ result = described_class.call(args) }
         .to change{ CourseMembership::Models::EnrollmentChange.count }.by(1)
       expect(result.errors).to be_empty
-      expect(result.outputs.enrollment_change.status).to eq 'pending'
+      expect(result.outputs.enrollment_change.status).to eq :pending
       expect(result.outputs.enrollment_change.enrollee_approved_at).to be_nil
     end
 
@@ -61,7 +61,7 @@ describe CourseMembership::CreateEnrollmentChange, type: :routine do
       expect{ result = described_class.call(args.merge(requires_enrollee_approval: false)) }
         .to change{ CourseMembership::Models::EnrollmentChange.count }.by(1)
       expect(result.errors).to be_empty
-      expect(result.outputs.enrollment_change.status).to eq 'approved'
+      expect(result.outputs.enrollment_change.status).to eq :approved
       expect(result.outputs.enrollment_change.enrollee_approved_at).not_to be_nil
     end
 

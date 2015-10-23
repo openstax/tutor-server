@@ -12,26 +12,25 @@ class CourseMembership::ApproveEnrollmentChange
                 message: 'The given enrollment change request has already been rejected') \
       if enrollment_change.rejected?
 
-    enrollment = enrollment_change.enrollment
+    enrollment_change_model = enrollment_change.to_model
+
+    enrollment = enrollment_change_model.enrollment
     if enrollment.nil?
       # New student
-      profile = enrollment_change.profile
-      strategy = ::User::Strategies::Direct::User.new(profile)
-      user = ::User::User.new(strategy: strategy)
-      run(:add_student, user: user, period: enrollment_change.period)
+      run(:add_student, user: enrollment_change.user, period: enrollment_change.to_period)
     else
       # Existing student
       student = enrollment.student
-      run(:add_enrollment, student: student, period: enrollment_change.period)
+      run(:add_enrollment, student: student, period: enrollment_change.to_period)
     end
 
-    enrollment_change.approve_by(approved_by).save!
+    enrollment_change_model.approve_by(approved_by).save!
 
     # Mark other pending EnrollmentChange records as rejected
     CourseMembership::Models::EnrollmentChange.where(
-      user_profile_id: enrollment_change.user_profile_id,
+      user_profile_id: enrollment_change_model.user_profile_id,
       status: CourseMembership::Models::EnrollmentChange.statuses[:pending],
-      course_membership_period_id: enrollment_change.period.course.periods.map(&:id)
+      course_membership_period_id: enrollment_change_model.period.course.periods.map(&:id)
     ).update_all(status: CourseMembership::Models::EnrollmentChange.statuses[:rejected])
 
     outputs[:enrollment_change] = enrollment_change

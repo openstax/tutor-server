@@ -1,7 +1,5 @@
 FactoryGirl.define do
-  factory :user, class: 'User::User' do
-    skip_create
-
+  factory :user, class: '::User::User' do
     transient do
       username { SecureRandom.hex.to_s }
       full_name { [first_name, last_name].join(' ') }
@@ -22,6 +20,7 @@ FactoryGirl.define do
       strategy { User::Strategies::Direct::User.new(profile) }
     end
 
+    skip_create
     initialize_with { new(strategy: strategy) }
 
     trait :administrator do
