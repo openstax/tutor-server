@@ -229,7 +229,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       it 'renames the course' do
         api_patch :update, user_1_token, parameters: { id: course.id,
                                                        course: { name: 'Renamed' } }
-        # TODO assert the course has been renamed
+        expect(course.reload.name).to eq 'Renamed'
+        expect(response.body_as_hash[:name]).to eq 'Renamed'
       end
     end
   end
