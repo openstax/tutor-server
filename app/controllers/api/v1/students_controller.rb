@@ -1,6 +1,6 @@
 class Api::V1::StudentsController < Api::V1::ApiController
 
-  before_filter :get_student, only: [:update, :destroy]
+  before_filter :get_student, only: [:update, :destroy, :undrop]
 
   resource_description do
     api_versions "v1"
@@ -93,6 +93,23 @@ class Api::V1::StudentsController < Api::V1::ApiController
       render_api_errors(result.errors)
     else
       head :no_content
+    end
+  end
+
+  api :PUT, '/students/:student_id/undrop', 'Undrop a student from their course'
+  description <<-EOS
+    Undrop a student from their course.
+  EOS
+  def undrop
+    OSU::AccessPolicy.require_action_allowed!(:destroy, current_api_user, @student)
+    result = ActivateStudent.call(student: @student)
+
+    if result.errors.any?
+      render_api_errors(result.errors)
+    else
+      respond_with result.outputs.student,
+                   represent_with: Api::V1::StudentRepresenter,
+                   responder: ResponderWithPutContent
     end
   end
 

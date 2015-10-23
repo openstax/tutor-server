@@ -84,7 +84,11 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :students, shallow: true, except: :create
+      resources :students, shallow: true, except: :create do
+        member do
+          put 'undrop'
+        end
+      end
 
       resources :teachers, shallow: true, only: [:destroy]
 
