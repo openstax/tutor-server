@@ -2,7 +2,7 @@ module User
   module Models
     class Profile < Tutor::SubSystems::BaseModel
 
-      wrapped_by User::Strategies::Direct::User
+      wrapped_by Strategies::Direct::User
 
       belongs_to :account, class_name: "OpenStax::Accounts::Account", subsystem: 'none'
 
