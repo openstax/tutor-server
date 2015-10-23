@@ -38,6 +38,27 @@ class Api::V1::CoursesController < Api::V1::ApiController
     respond_with course_info, represent_with: Api::V1::CourseRepresenter
   end
 
+  api :PATCH, '/courses/:course_id', 'Update course details'
+  description <<-EOS
+    Update course details and return information about the updated course
+    #{json_schema(Api::V1::CourseRepresenter, include: :readable)}
+  EOS
+  def update
+    course = Entity::Course.find(params[:id])
+    OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, course)
+
+    UpdateCourse.call(params[:id], { name: params[:course][:name] })
+
+    # Use CollectCourseInfo instead of just representing the entity course so
+    # we can gather extra information
+    course_info = CollectCourseInfo[course: course,
+                                    user: current_human_user,
+                                    with: [:roles, :periods, :ecosystem]].first
+    respond_with course_info, represent_with: Api::V1::CourseRepresenter,
+                              location: nil,
+                              responder: ResponderWithPutContent
+  end
+
   api :GET, '/courses/:course_id/tasks', 'Gets all course tasks assigned to the role holder making the request'
   description <<-EOS
     #{json_schema(Api::V1::TaskSearchRepresenter, include: :readable)}
