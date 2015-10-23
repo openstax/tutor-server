@@ -59,7 +59,7 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
   end
 
   describe '#destroy' do
-    it 'allows teachers to rename periods' do
+    it 'allows teachers to delete periods' do
       period = CreatePeriod[course: course, name: '8th Period']
 
       api_delete :destroy, teacher_token, parameters: { id: period.id }
@@ -67,6 +67,20 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
       expect(response).to have_http_status(204)
       expect(response.body).to be_empty
       expect(CourseMembership::Models::Period.all).to be_empty
+    end
+
+    it 'will not delete periods with active enrollments' do
+      period = CreatePeriod[course: course, name: '8th Period']
+      student = FactoryGirl.create(:user)
+      AddUserAsPeriodStudent[period: period, user: student]
+
+      api_delete :destroy, teacher_token, parameters: { id: period.id }
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body_as_hash[:students]).to eq([
+        'must be moved to another period before this period can be deleted'
+      ])
+      expect(CourseMembership::Models::Period.all).not_to be_empty
     end
 
     it 'ensures the person is a teacher of the course' do

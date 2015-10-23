@@ -38,8 +38,13 @@ class Api::V1::PeriodsController < Api::V1::ApiController
                'Deletes a period for authorized teachers'
   def destroy
     OSU::AccessPolicy.require_action_allowed!(:destroy, current_human_user, @period)
-    CourseMembership::DeletePeriod[period: @period]
-    head status: 204
+    delete_period = CourseMembership::DeletePeriod.call(period: @period).outputs
+
+    if delete_period.deleted
+      head status: 204
+    else
+      render json: delete_period.errors.messages, status: :unprocessable_entity
+    end
   end
 
   private
