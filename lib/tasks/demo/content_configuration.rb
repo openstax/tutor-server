@@ -45,7 +45,7 @@ class ContentConfiguration
       .map{|file| self.new(file) }
   end
 
-  def_delegators :@configuration, :course_name, :teacher, :periods
+  def_delegators :@configuration, :course_name, :teacher, :periods, :catalog_offering_identifier
 
   def initialize(config_file)
     @configuration = Hashie::Mash.load(config_file, parser: ConfigFileParser)

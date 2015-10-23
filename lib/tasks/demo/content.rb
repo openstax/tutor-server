@@ -40,7 +40,9 @@ class DemoContent < DemoBase
 
       ContentConfiguration[book.to_sym].each do | content |
         course_name = content.course_name
-        course = find_course(name: course_name) || create_course(name: course_name)
+        course = find_course(name: course_name) ||
+                 create_course( name: course_name,
+                                catalog_offering: find_or_create_catalog_offering(content) )
         courses << course
         log("Course: #{course_name}")
 
@@ -84,6 +86,7 @@ class DemoContent < DemoBase
         OpenStax::Cnx::V1.set_archive_url_base( url: content.url_base )
         log("Starting book import for #{course.name} #{book} from #{content.url_base}.")
         ecosystem = run(:import_book, book_cnx_id: book).outputs.ecosystem
+
         log("Book import complete")
         run(:add_ecosystem, ecosystem: ecosystem, course: course)
 

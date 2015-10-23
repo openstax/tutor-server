@@ -46,6 +46,9 @@
     <h3>Select a course ecosystem</h3>
 
     <%= render 'set_ecosystem', url: set_ecosystem_admin_course_path(@course.course_id) %>
+
+    <h3>Select a catalog offering</h3>
+    <%= render 'set_catalog_offering', url: set_catalog_offering_admin_course_path(@course.course_id) %>
   </div>
 
   <div role="tabpanel" class="tab-pane" id="periods">

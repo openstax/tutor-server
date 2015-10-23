@@ -11,11 +11,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151009223317) do
+ActiveRecord::Schema.define(version: 20151016170440) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "hstore"
+
+  create_table "catalog_offerings", force: :cascade do |t|
+    t.string   "identifier",                           null: false
+    t.integer  "content_ecosystem_id"
+    t.boolean  "is_tutor",             default: false, null: false
+    t.boolean  "is_concept_coach",     default: false, null: false
+    t.string   "description",                          null: false
+    t.string   "webview_url",                          null: false
+    t.string   "pdf_url",                              null: false
+    t.datetime "created_at",                           null: false
+    t.datetime "updated_at",                           null: false
+  end
+
+  add_index "catalog_offerings", ["content_ecosystem_id"], name: "index_catalog_offerings_on_content_ecosystem_id", using: :btree
+  add_index "catalog_offerings", ["identifier"], name: "index_catalog_offerings_on_identifier", unique: true, using: :btree
 
   create_table "content_books", force: :cascade do |t|
     t.string   "url",                  null: false
@@ -207,11 +222,12 @@ ActiveRecord::Schema.define(version: 20151009223317) do
 
   create_table "course_profile_profiles", force: :cascade do |t|
     t.integer  "school_district_school_id"
-    t.integer  "entity_course_id",                                                 null: false
-    t.string   "name",                                                             null: false
-    t.string   "timezone",                  default: "Central Time (US & Canada)", null: false
-    t.datetime "created_at",                                                       null: false
-    t.datetime "updated_at",                                                       null: false
+    t.integer  "entity_course_id",                                                   null: false
+    t.string   "name",                                                               null: false
+    t.string   "timezone",                    default: "Central Time (US & Canada)", null: false
+    t.datetime "created_at",                                                         null: false
+    t.datetime "updated_at",                                                         null: false
+    t.string   "catalog_offering_identifier"
   end
 
   add_index "course_profile_profiles", ["entity_course_id"], name: "index_course_profile_profiles_on_entity_course_id", unique: true, using: :btree
@@ -648,6 +664,7 @@ ActiveRecord::Schema.define(version: 20151009223317) do
   add_index "user_profiles", ["exchange_read_identifier"], name: "index_user_profiles_on_exchange_read_identifier", unique: true, using: :btree
   add_index "user_profiles", ["exchange_write_identifier"], name: "index_user_profiles_on_exchange_write_identifier", unique: true, using: :btree
 
+  add_foreign_key "catalog_offerings", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_books", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_chapters", "content_books", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_chapters", "content_pools", column: "content_all_exercises_pool_id", on_update: :cascade, on_delete: :nullify

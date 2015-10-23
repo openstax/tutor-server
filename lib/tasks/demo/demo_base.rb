@@ -98,6 +98,16 @@ class DemoBase
     end
   end
 
+  def find_or_create_catalog_offering( content )
+    Catalog::GetOffering[ identifier: content.catalog_offering_identifier ] ||
+      Catalog::CreateOffering[
+        identifier:  content.catalog_offering_identifier,
+        description: content.course_name,
+        webview_url: content.url_base + content.cnx_book,
+        pdf_url: content.url_base.sub(%r{contents/$}, 'exports/') + content.cnx_book + '.pdf'
+      ]
+  end
+
   # Runs the given code in parallel processes
   # Calling process must not be in a transaction
   # Args should be Enumerables and will be passed to the given block in properly-sized slices
@@ -442,8 +452,8 @@ class DemoBase
     CourseProfile::Models::Profile.where(name: name).first.try(:course)
   end
 
-  def create_course(name:)
-    course = run(:create_course, name: name).outputs.course
+  def create_course(name:, catalog_offering:)
+    course = run(:create_course, name: name, catalog_offering: catalog_offering).outputs.course
     log("Created a course named '#{name}'.")
     course
   end

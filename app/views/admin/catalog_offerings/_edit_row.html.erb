@@ -1,0 +1,13 @@
+<tr>
+  <td><%= form.text_field :identifier,  {class: 'form-control'} %></td>
+  <td><%= form.text_field :description, {class: 'form-control', style: 'min-width: 300px'} %></td>
+  <td>
+    <%= form.collection_select :content_ecosystem_id,
+        @ecosystems, :id, :title, { include_blank: true }, {class: 'form-control'} %>
+  </td>
+  <td><%= form.check_box :is_tutor,  {class: 'form-control'}%></td>
+  <td><%= form.check_box :is_concept_coach,  {class: 'form-control'} %></td>
+  <td><%= form.text_field :pdf_url,  {class: 'form-control'} %></td>
+  <td><%= form.text_field :webview_url,  {class: 'form-control'} %></td>
+  <td><%= form.submit class: 'btn btn-primary', value:'Save' %></td>
+</tr>

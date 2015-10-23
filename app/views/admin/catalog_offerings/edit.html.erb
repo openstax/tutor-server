@@ -1,0 +1,17 @@
+<%= lev_form_for( :offering,
+    url: @offering.id ? admin_catalog_offering_path(@offering.id) : admin_catalog_offerings_path,
+    method: @offering.id ? 'put' : 'post') do |form| %>
+
+<table class='table table-striped'>
+  <%= render partial: 'table_header' %>
+  <tbody>
+    <% @offerings.each do |offering| %>
+
+      <%= render :partial => (offering == @offering) ? 'edit_row' : 'display_row',
+      locals: {offering: offering, form: form } %>
+
+    <% end -%>
+  </tbody>
+</table>
+
+<% end %>

@@ -1,0 +1,10 @@
+<tr>
+  <td><%= offering.identifier %></td>
+  <td><%= offering.description %></td>
+  <td><%= offering.ecosystem ? offering.ecosystem.title : 'not set' %></td>
+  <td><span class="glyphicon glyphicon-<%= offering.is_tutor ? 'check' : 'unchecked' %>" /></td>
+  <td><span class="glyphicon glyphicon-<%= offering.is_concept_coach ? 'check' : 'unchecked' %>" /></td>
+  <td><%= link_to offering.pdf_url, offering.pdf_url %></td>
+  <td><%= link_to offering.webview_url, offering.webview_url %></td>
+  <td><%= link_to 'Edit', edit_admin_catalog_offering_url(offering.id) %></td>
+</tr>

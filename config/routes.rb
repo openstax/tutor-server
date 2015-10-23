@@ -115,6 +115,7 @@ Rails.application.routes.draw do
       member do
         post :students
         post :set_ecosystem
+        post :set_catalog_offering
         post :teachers, controller: :teachers
       end
       resources :periods, shallow: true
@@ -131,6 +132,7 @@ Rails.application.routes.draw do
     resources :exceptions, only: [:show]
 
     resources :jobs, only: [:index, :show]
+    resources :catalog_offerings, except: [:show]
 
     resources :users, except: :destroy do
       member do

@@ -24,10 +24,11 @@ module TypeVerification
       [object].flatten.each do |obj|
         raise(error,
               "Tested argument was of class '#{obj.class}' instead of the expected '#{klass}'.",
-              caller) unless obj.is_a? klass
+              caller) unless (klass == :boolean) ? [true, false].include?(obj) : obj.is_a?(klass)
       end
 
       object
     end
+
   end
 end

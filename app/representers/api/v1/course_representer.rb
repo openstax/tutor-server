@@ -16,6 +16,11 @@ module Api::V1
              writeable: false,
              schema_info: { required: true }
 
+    property :catalog_offering_identifier,
+             type: String,
+             readable: true,
+             writeable: false
+
     property :ecosystem_id,
              type: String,
              readable: true,
