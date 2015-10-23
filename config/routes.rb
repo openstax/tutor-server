@@ -59,7 +59,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :courses, only: [:show] do
+    resources :courses, only: [:show, :update] do
       member do
         get 'dashboard(/role/:role_id)', action: :dashboard
         get 'plans'

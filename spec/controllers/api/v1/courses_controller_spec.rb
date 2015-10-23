@@ -196,6 +196,44 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
   end
 
+  describe "update" do
+    context 'anonymous user' do
+      it 'raises SecurityTransgression' do
+        expect {
+          api_patch :update, nil, parameters: { id: course.id,
+                                                course: { name: 'Renamed' } }
+        }.to raise_error(SecurityTransgression)
+        expect(course.reload.name).to eq 'Physics 101'
+      end
+    end
+
+    context 'user is a student' do
+      before do
+        AddUserAsPeriodStudent.call(user: user_1, period: period)
+      end
+
+      it 'raises SecurityTrangression' do
+        expect {
+          api_patch :update, user_1_token, parameters: { id: course.id,
+                                                         course: { name: 'Renamed' } }
+        }.to raise_error(SecurityTransgression)
+        expect(course.reload.name).to eq 'Physics 101'
+      end
+    end
+
+    context 'user is a teacher' do
+      before do
+        AddUserAsCourseTeacher.call(user: user_1, course: course)
+      end
+
+      it 'renames the course' do
+        api_patch :update, user_1_token, parameters: { id: course.id,
+                                                       course: { name: 'Renamed' } }
+        # TODO assert the course has been renamed
+      end
+    end
+  end
+
   describe "dashboard" do
     let!(:student_user) { FactoryGirl.create(:user) }
     let!(:student_role)    { AddUserAsPeriodStudent.call(user: student_user, period: period)
