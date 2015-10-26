@@ -17,10 +17,7 @@ class Admin::EcosystemsController < Admin::BaseController
     archive_url = params[:archive_url].present? ? params[:archive_url] : @default_archive_url
 
     OpenStax::Cnx::V1.with_archive_url(url: archive_url) do
-      job_id = FetchAndImportBookAndCreateEcosystem.perform_later(
-        book_cnx_id: params[:cnx_id],
-        tag_generator: Marshal.dump(ConceptCoach::TagGenerator.new(params[:cc_tag]))
-      )
+      job_id = FetchAndImportBookAndCreateEcosystem.perform_later(book_cnx_id: params[:cnx_id])
       job = Lev::BackgroundJob.find(job_id)
       import_url = OpenStax::Cnx::V1.url_for(params[:cnx_id])
       job.save(ecosystem_import_url: import_url)

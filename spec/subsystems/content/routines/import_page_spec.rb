@@ -68,23 +68,10 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, speed: :slow, vcr:
     }.to change{ Content::Models::Exercise.count }.by(33)
   end
 
-  it 'adds cc tags to the page if a proper TagGenerator is given' do
-    tag_generator = ConceptCoach::TagGenerator.new('k12phys')
-
-    result = nil
-    expect {
-      result = import_page(tag_generator: tag_generator)
-    }.to change{ Content::Models::Tag.cc.count }.by(1)
-
-    tag = Content::Models::Tag.find_by(value: 'k12phys-ch04-s01')
-    expect(tag.cc?).to eq true
-  end
-
-  def import_page(tag_generator: nil)
+  def import_page
     Content::Routines::ImportPage.call(cnx_page: cnx_page,
                                        chapter: chapter,
-                                       book_location: book_location,
-                                       tag_generator: tag_generator)
+                                       book_location: book_location)
   end
 
 end

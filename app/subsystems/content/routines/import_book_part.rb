@@ -9,7 +9,7 @@ class Content::Routines::ImportBookPart
 
   # Imports and saves a Cnx::BookPart as a Content::Models::Book or Content::Models::BookPart
   # Returns the Content::Models::Book or Content::Models::BookPart object
-  def exec(cnx_book_part:, book:, chapter_tracker: nil, save: true, tag_generator: nil)
+  def exec(cnx_book_part:, book:, chapter_tracker: nil, save: true)
 
     chapter_tracker ||= ChapterTracker.new
 
@@ -41,8 +41,7 @@ class Content::Routines::ImportBookPart
                    chapter: chapter,
                    number: index + 1,
                    book_location: [chapter_tracker.value, index + page_offset],
-                   save: save,
-                   tag_generator: tag_generator).outputs
+                   save: save).outputs
 
         outputs[:pages] << outs.page
         outputs[:page_taggings] += outs.taggings
@@ -61,8 +60,7 @@ class Content::Routines::ImportBookPart
                    cnx_book_part: part,
                    book: book,
                    chapter_tracker: chapter_tracker,
-                   save: save,
-                   tag_generator: tag_generator).outputs
+                   save: save).outputs
 
         outputs[:chapters] += outs.chapters
         outputs[:pages] += outs.pages
