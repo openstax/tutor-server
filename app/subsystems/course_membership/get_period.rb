@@ -3,7 +3,7 @@ class CourseMembership::GetPeriod
 
   protected
   def exec(id:)
-    period = CourseMembership::Models::Period.find(id)
-    outputs.period = CourseMembership::Period.new(period)
+    model = CourseMembership::Models::Period.find(id)
+    outputs.period = CourseMembership::Period.new(strategy: model.wrap)
   end
 end

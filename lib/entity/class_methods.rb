@@ -9,6 +9,10 @@ class Entity
     # Required for automatic wrapping
     def wrapped_by(entity_class = nil, &block)
       Entity._wrap_class_procs[self.name] = block || lambda { |instance| entity_class }
+
+      define_method :wrap do
+        Entity._wrap(self)
+      end
     end
 
   end

@@ -27,7 +27,7 @@ Rails.application.routes.draw do
 
   apipie
 
-  api :v1, :default => true do
+  api :v1, default: true do
     resources :jobs, only: [:index, :show]
 
     resources :users, only: [:index]
@@ -105,6 +105,10 @@ Rails.application.routes.draw do
     scope 'pages', controller: :pages, action: :get_page do
       get ':uuid@:version'
       get ':uuid'
+    end
+
+    resources :enrollment_changes, only: :create do
+      put 'approve', on: :member
     end
   end
 

@@ -2,6 +2,8 @@ class CourseMembership::Models::Enrollment < Tutor::SubSystems::BaseModel
   belongs_to :period
   belongs_to :student
 
+  has_one :enrollment_change, dependent: :destroy
+
   validates :period, presence: true
   validates :student, presence: true
   validate :same_course

@@ -1,7 +1,7 @@
 class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
   acts_as_paranoid
 
-  wrapped_by CourseMembership::Period
+  wrapped_by CourseMembership::Strategies::Direct::Period
 
   belongs_to :course, subsystem: :entity
 
@@ -15,6 +15,8 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
   has_many :active_enrollments,
            -> { latest.active },
            class_name: '::CourseMembership::Models::Enrollment'
+
+  has_many :enrollment_changes, dependent: :destroy
 
   has_many :taskings, subsystem: :tasks, dependent: :nullify
   has_many :tasks, through: :taskings
