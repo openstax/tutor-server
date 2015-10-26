@@ -44,7 +44,7 @@ class Content::ImportBook
 
     if exercise_uids.nil?
       # Split the tag queries to avoid exceeding the URL limit
-      max_tag_length = import_page_tags.maximum{ |pt| pt.tag.value.size }
+      max_tag_length = import_page_tags.map{ |pt| pt.tag.value.size }.max
       tags_per_query = MAX_URL_LENGTH/max_tag_length
       import_page_tags.each_slice(tags_per_query) do |page_tags|
         query_hash = { tag: page_tags.collect{ |pt| pt.tag.value } }
@@ -54,7 +54,7 @@ class Content::ImportBook
       end
     else
       # Split the uid queries to avoid exceeding the URL limit
-      max_uid_length = exercise_uids.maximum(&:size)
+      max_uid_length = exercise_uids.map(&:size).max
       uids_per_query = MAX_URL_LENGTH/max_uid_length
       exercise_uids.each_slice(uids_per_query) do |uids|
         query_hash = { id: uids }

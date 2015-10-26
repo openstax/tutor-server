@@ -61,7 +61,7 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, vcr: VCR_OPTS do
           los: [],
           tags: [
             {
-              value: '3005b86b-d993-4048-aff0-500256001f42',
+              value: '1bb611e9-0ded-48d6-a107-fbb9bd900851',
               type: :uuid
             }
           ],
@@ -114,6 +114,10 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, vcr: VCR_OPTS do
         expected: {
           los: ['k12phys-ch04-s02-lo01', 'k12phys-ch04-s02-lo02'],
           tags: [
+            {
+              value: '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6',
+              type: :uuid
+            },
             {
               value: 'k12phys-ch04-s02-lo01',
               type: :lo,
