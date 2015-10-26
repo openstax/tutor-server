@@ -1,7 +1,6 @@
 class Content::ImportBook
 
-  MAX_TAG_QUERY_SIZE = 32
-  MAX_UID_QUERY_SIZE = 128
+  MAX_URL_LENGTH = 2020
 
   lev_routine
 
@@ -44,16 +43,20 @@ class Content::ImportBook
     }
 
     if exercise_uids.nil?
-      # Split the tag queries into sets of MAX_TAG_QUERY_SIZE to avoid exceeding the URL limit
-      import_page_tags.each_slice(MAX_TAG_QUERY_SIZE) do |page_tags|
+      # Split the tag queries to avoid exceeding the URL limit
+      max_tag_length = import_page_tags.maximum{ |pt| pt.tag.value.size }
+      tags_per_query = MAX_URL_LENGTH/max_tag_length
+      import_page_tags.each_slice(tags_per_query) do |page_tags|
         query_hash = { tag: page_tags.collect{ |pt| pt.tag.value } }
         outputs[:exercises] += run(:import_exercises, ecosystem: ecosystem,
                                                       page: page_block,
                                                       query_hash: query_hash).outputs.exercises
       end
     else
-      # Split the uid queries into sets of MAX_UID_QUERY_SIZE to avoid exceeding the URL limit
-      exercise_uids.each_slice(MAX_UID_QUERY_SIZE) do |uids|
+      # Split the uid queries to avoid exceeding the URL limit
+      max_uid_length = exercise_uids.maximum(&:size)
+      uids_per_query = MAX_URL_LENGTH/max_uid_length
+      exercise_uids.each_slice(uids_per_query) do |uids|
         query_hash = { id: uids }
         outputs[:exercises] += run(:import_exercises, ecosystem: ecosystem,
                                                       page: page_block,

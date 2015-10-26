@@ -12,10 +12,11 @@ class Content::Routines::TagResource
 
     tags = [tags].flatten.compact
 
+    # Avoid duplicate tags
     if resource.persisted?
       existing_tag_ids = tagging_class.where(tag: tags, resource_field => resource)
                                       .pluck(:content_tag_id)
-      tags = tags.select{ |tag| !existing_tag_ids.include?(tag.id) }
+      tags = tags.reject{ |tag| existing_tag_ids.include?(tag.id) }
     end
 
     outputs[:taggings] = tags.collect do |tag|

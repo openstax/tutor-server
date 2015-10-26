@@ -41,8 +41,8 @@ class Content::Routines::ImportExercises
 
       outputs[:exercises] << exercise
 
-      new_lo_tags = relevant_tags.select{ |tag| tag.lo? && !tag.pages.include?(exercise_page) }
-      page_taggings += run(:tag, page, new_lo_tags,
+      lo_tags = relevant_tags.select{ |tag| tag.lo? }
+      page_taggings += run(:tag, page, lo_tags,
                            tagging_class: Content::Models::PageTag,
                            save: false).outputs.taggings
     end
