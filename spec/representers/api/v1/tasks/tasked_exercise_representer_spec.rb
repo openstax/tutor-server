@@ -24,7 +24,7 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
     ## TaskedExercise-specific properties
     allow(exercise).to receive(:url).and_return('Some url')
     allow(exercise).to receive(:title).and_return('Some title')
-    allow(exercise).to receive(:content_hash_without_correctness).and_return('Some content')
+    allow(exercise).to receive(:content_hash_without_correct_answer).and_return('Some content')
     allow(exercise).to receive(:feedback).and_return('Some feedback')
     allow(exercise).to receive(:correct_answer_id).and_return('456')
     allow(exercise).to receive(:can_be_recovered?).and_return(false)
@@ -66,7 +66,9 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
     end
 
     it "has the correct 'content'" do
-      allow(tasked_exercise).to receive(:content_hash_without_correctness).and_return('Some content')
+      allow(tasked_exercise).to(
+        receive(:content_hash_without_correct_answer).and_return('Some content')
+      )
       expect(representation).to include("content" => 'Some content')
     end
 

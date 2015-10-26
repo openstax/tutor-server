@@ -109,21 +109,21 @@ class OpenStax::Exercises::V1::Exercise
     @feedback_map
   end
 
-  def question_answers_without_correctness
-    @question_answers_without_correctness ||= question_answers.collect do |qa|
-      qa.collect { |ans| ans.except('correctness', 'feedback_html') }
+  def question_answers_without_correct_answer
+    @question_answers_without_correct ||= question_answers.collect do |qa|
+      qa.collect{ |ans| ans.except('correctness', 'feedback_html') }
     end
   end
 
-  def questions_without_correctness
-    @questions_without_correctness ||= questions.each_with_index.collect do |qq, ii|
-      qq.merge('answers' => question_answers_without_correctness[ii])
+  def questions_without_correct_answer
+    @questions_without_correct ||= questions.each_with_index.collect do |qq, ii|
+      qq.merge('answers' => question_answers_without_correct_answer[ii]).except('solutions')
     end
   end
 
-  def content_hash_without_correctness
-    @content_hash_without_correctness ||= content_hash.merge(
-      'questions' => questions_without_correctness
+  def content_hash_without_correct_answer
+    @content_hash_without_correct ||= content_hash.merge(
+      'questions' => questions_without_correct_answer
     )
   end
 
