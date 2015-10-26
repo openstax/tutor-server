@@ -24,7 +24,7 @@ module Manager::EcosystemsActions
       job.save(ecosystem_import_url: import_url)
       flash[:notice] = 'Ecosystem import job queued.'
     end
-    redirect_to admin_ecosystems_path
+    redirect_to ecosystems_path
   end
 
 end

@@ -188,6 +188,13 @@ Rails.application.routes.draw do
 
   namespace :content_analyst do
     root to: 'console#index'
+
+    resources :ecosystems, only: [:index] do
+      collection do
+        get :import
+        post :import
+      end
+    end
   end
 
   namespace :dev do
