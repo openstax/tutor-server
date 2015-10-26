@@ -4,7 +4,6 @@ class CourseMembership::GetPeriod
   protected
   def exec(id:)
     model = CourseMembership::Models::Period.find(id)
-    strategy = CourseMembership::Strategies::Direct::Period.new(model)
-    outputs.period = CourseMembership::Period.new(strategy: strategy)
+    outputs.period = CourseMembership::Period.new(strategy: model.wrap)
   end
 end

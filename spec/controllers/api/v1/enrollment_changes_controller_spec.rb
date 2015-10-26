@@ -11,6 +11,7 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
     end
   end
   let!(:period)              { ::CreatePeriod[course: course] }
+  let!(:period_2)            { ::CreatePeriod[course: course] }
 
   let!(:book)                { FactoryGirl.create :content_book }
 
@@ -35,7 +36,16 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
       before(:each) { controller.sign_in user }
 
       context 'book_cnx_id given' do
-        it 'creates the EnrollmentChange if there are no errors' do
+        it 'creates the EnrollmentChange if there are no errors for a new student' do
+          expect{ api_post :create, nil, raw_post_data: {
+            enrollment_code: period.enrollment_code, book_cnx_id: book.cnx_id
+          }.to_json }.to change{ CourseMembership::Models::EnrollmentChange.count }.by(1)
+          expect(response).to have_http_status(:created)
+        end
+
+        it 'creates the EnrollmentChange if there are no errors for an existing student' do
+          AddUserAsPeriodStudent[user: user, period: period_2]
+
           expect{ api_post :create, nil, raw_post_data: {
             enrollment_code: period.enrollment_code, book_cnx_id: book.cnx_id
           }.to_json }.to change{ CourseMembership::Models::EnrollmentChange.count }.by(1)
@@ -47,6 +57,7 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
             enrollment_code: SecureRandom.hex, book_cnx_id: book.cnx_id
           }.to_json }.not_to change{ CourseMembership::Models::EnrollmentChange.count }
           expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.body_as_hash[:errors].first[:code]).to eq 'invalid_enrollment_code'
         end
 
         it 'returns an error if the enrollment code\'s course is not a CC course' do
@@ -56,13 +67,17 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
             enrollment_code: period.enrollment_code, book_cnx_id: book.cnx_id
           }.to_json }.not_to change{ CourseMembership::Models::EnrollmentChange.count }
           expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.body_as_hash[:errors].first[:code]).to eq 'invalid_enrollment_code'
         end
 
         it 'returns an error if the book_cnx_id does not match the course\'s book' do
           expect{ api_post :create, nil, raw_post_data: {
             enrollment_code: period.enrollment_code, book_cnx_id: SecureRandom.hex
-          }.to_json }.to change{ CourseMembership::Models::EnrollmentChange.count }.by(1)
-          expect(response).to have_http_status(:created)
+          }.to_json }.not_to change{ CourseMembership::Models::EnrollmentChange.count }
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.body_as_hash[:errors].first[:code]).to(
+            eq 'enrollment_code_does_not_match_book'
+          )
         end
 
         it 'returns an error if the user is already enrolled in the given period' do
@@ -72,11 +87,43 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
             enrollment_code: period.enrollment_code, book_cnx_id: book.cnx_id
           }.to_json }.not_to change{ CourseMembership::Models::EnrollmentChange.count }
           expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.body_as_hash[:errors].first[:code]).to eq 'already_enrolled'
+        end
+
+        it 'returns an error if the user has multiple student roles in the course' do
+          AddUserAsCourseTeacher[user: user, course: course]
+          AddUserAsPeriodStudent[user: user, period: period]
+          AddUserAsPeriodStudent[user: user, period: period_2]
+
+          expect{ api_post :create, nil, raw_post_data: {
+            enrollment_code: period.enrollment_code, book_cnx_id: book.cnx_id
+          }.to_json }.not_to change{ CourseMembership::Models::EnrollmentChange.count }
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.body_as_hash[:errors].first[:code]).to eq 'multiple_roles'
+        end
+
+        it 'returns an error if the user has been dropped from the course' do
+          AddUserAsPeriodStudent[user: user, period: period_2].student.inactivate.save!
+
+          expect{ api_post :create, nil, raw_post_data: {
+            enrollment_code: period.enrollment_code, book_cnx_id: book.cnx_id
+          }.to_json }.not_to change{ CourseMembership::Models::EnrollmentChange.count }
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.body_as_hash[:errors].first[:code]).to eq 'dropped_student'
         end
       end
 
       context 'book_cnx_id not given' do
-        it 'creates the EnrollmentChange if there are no errors' do
+        it 'creates the EnrollmentChange if there are no errors for a new student' do
+          expect{ api_post :create, nil, raw_post_data: {
+            enrollment_code: period.enrollment_code
+          }.to_json }.to change{ CourseMembership::Models::EnrollmentChange.count }.by(1)
+          expect(response).to have_http_status(:created)
+        end
+
+        it 'creates the EnrollmentChange if there are no errors for an existing student' do
+          AddUserAsPeriodStudent[user: user, period: period_2]
+
           expect{ api_post :create, nil, raw_post_data: {
             enrollment_code: period.enrollment_code
           }.to_json }.to change{ CourseMembership::Models::EnrollmentChange.count }.by(1)
@@ -88,6 +135,7 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
             enrollment_code: SecureRandom.hex
           }.to_json }.not_to change{ CourseMembership::Models::EnrollmentChange.count }
           expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.body_as_hash[:errors].first[:code]).to eq 'invalid_enrollment_code'
         end
 
         it 'returns an error if the enrollment code\'s course is not a CC course' do
@@ -97,6 +145,7 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
             enrollment_code: period.enrollment_code
           }.to_json }.not_to change{ CourseMembership::Models::EnrollmentChange.count }
           expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.body_as_hash[:errors].first[:code]).to eq 'invalid_enrollment_code'
         end
 
         it 'returns an error if the user is already enrolled in the given period' do
@@ -106,6 +155,29 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
             enrollment_code: period.enrollment_code
           }.to_json }.not_to change{ CourseMembership::Models::EnrollmentChange.count }
           expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.body_as_hash[:errors].first[:code]).to eq 'already_enrolled'
+        end
+
+        it 'returns an error if the user has multiple roles in the course' do
+          AddUserAsCourseTeacher[user: user, course: course]
+          AddUserAsPeriodStudent[user: user, period: period]
+          AddUserAsPeriodStudent[user: user, period: period_2]
+
+          expect{ api_post :create, nil, raw_post_data: {
+            enrollment_code: period.enrollment_code
+          }.to_json }.not_to change{ CourseMembership::Models::EnrollmentChange.count }
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.body_as_hash[:errors].first[:code]).to eq 'multiple_roles'
+        end
+
+        it 'returns an error if the user has been dropped from the course' do
+          AddUserAsPeriodStudent[user: user, period: period_2].student.inactivate.save!
+
+          expect{ api_post :create, nil, raw_post_data: {
+            enrollment_code: period.enrollment_code
+          }.to_json }.not_to change{ CourseMembership::Models::EnrollmentChange.count }
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.body_as_hash[:errors].first[:code]).to eq 'dropped_student'
         end
       end
     end
@@ -141,13 +213,32 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
         expect(response).to have_http_status(:ok)
       end
 
-      it 'returns an error if the EnrollmentChange request has already been approved' do
-        CourseMembership::ApproveEnrollmentChange[enrollment_change: enrollment_change,
-                                                  approved_by: user]
+      it 'processes an approved EnrollmentChange request' do
+        enrollment_change.to_model.approve_by(user).save!
+
+        expect{ api_put :approve, nil, parameters: { id: enrollment_change.id } }
+          .to change{ CourseMembership::Models::Enrollment.count }.by(1)
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'returns an error if the EnrollmentChange request has already been rejected' do
+        enrollment_change.to_model.status = :rejected
+        enrollment_change.to_model.save!
 
         expect{ api_put :approve, nil, parameters: { id: enrollment_change.id } }
           .not_to change{ CourseMembership::Models::Enrollment.count }
         expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body_as_hash[:errors].first[:code]).to eq 'already_rejected'
+      end
+
+      it 'returns an error if the EnrollmentChange request has already been processed' do
+        enrollment_change.to_model.status = :processed
+        enrollment_change.to_model.save!
+
+        expect{ api_put :approve, nil, parameters: { id: enrollment_change.id } }
+          .not_to change{ CourseMembership::Models::Enrollment.count }
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body_as_hash[:errors].first[:code]).to eq 'already_processed'
       end
     end
   end

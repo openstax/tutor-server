@@ -1,16 +1,19 @@
-class CourseMembership::ApproveEnrollmentChange
+class CourseMembership::ProcessEnrollmentChange
   lev_routine express_output: :enrollment_change
 
   uses_routine AddUserAsPeriodStudent, as: :add_student
   uses_routine CourseMembership::AddEnrollment, as: :add_enrollment
 
-  def exec(enrollment_change:, approved_by:)
-    fatal_error(code: :already_approved,
-                message: 'The given enrollment change request has already been approved') \
-      if enrollment_change.approved?
+  def exec(enrollment_change:)
+    fatal_error(code: :already_processed,
+                message: 'The given enrollment change request has already been processed') \
+      if enrollment_change.processed?
     fatal_error(code: :already_rejected,
                 message: 'The given enrollment change request has already been rejected') \
       if enrollment_change.rejected?
+    fatal_error(code: :not_approved,
+                message: 'The given enrollment change request has not yet been approved') \
+      if !enrollment_change.approved?
 
     enrollment_change_model = enrollment_change.to_model
 
@@ -24,7 +27,8 @@ class CourseMembership::ApproveEnrollmentChange
       run(:add_enrollment, student: student, period: enrollment_change.to_period)
     end
 
-    enrollment_change_model.approve_by(approved_by).save!
+    # Mark the enrollment_change as processed
+    enrollment_change_model.process.save!
 
     # Mark other pending EnrollmentChange records as rejected
     CourseMembership::Models::EnrollmentChange.where(

@@ -36,6 +36,10 @@ module CourseMembership
       !!@strategy.rejected?
     end
 
+    def processed?
+      !!@strategy.processed?
+    end
+
     def requires_enrollee_approval?
       !!@strategy.requires_enrollee_approval
     end

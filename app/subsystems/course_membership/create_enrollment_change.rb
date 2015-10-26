@@ -2,7 +2,6 @@ class CourseMembership::CreateEnrollmentChange
   lev_routine express_output: :enrollment_change
 
   uses_routine Role::GetUserRoles, as: :get_roles
-  uses_routine CourseMembership::ApproveEnrollmentChange, as: :approve
 
   def exec(user:, period:, requires_enrollee_approval: true)
     user_student_role_ids = run(:get_roles, user, 'student').outputs.roles.map(&:id)
@@ -21,10 +20,14 @@ class CourseMembership::CreateEnrollmentChange
       enrollment = nil
     else
       fatal_error(code: :dropped_student,
-                  message: 'You cannot re-enroll in a course from which you were dropped') \
+                  message: 'User cannot re-enroll in a course from which they were dropped') \
         unless student.active?
 
       enrollment = student.latest_enrollment
+
+      fatal_error(code: :already_enrolled,
+                  message: 'User is already enrolled in the course') \
+        if enrollment.period.id == period.id
     end
 
     enrollment_change_model = CourseMembership::Models::EnrollmentChange.create(
@@ -33,12 +36,9 @@ class CourseMembership::CreateEnrollmentChange
     )
     transfer_errors_from(enrollment_change_model, {type: :verbatim}, true)
 
-    strategy = CourseMembership::Strategies::Direct::EnrollmentChange.new(enrollment_change_model)
-    enrollment_change = CourseMembership::EnrollmentChange.new(strategy: strategy)
-
-    run(:approve, enrollment_change: enrollment_change, approved_by: user) \
-      unless requires_enrollee_approval
-
+    enrollment_change = CourseMembership::EnrollmentChange.new(
+      strategy: enrollment_change_model.wrap
+    )
     outputs[:enrollment_change] = enrollment_change
   end
 end

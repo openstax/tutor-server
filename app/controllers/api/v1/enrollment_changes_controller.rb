@@ -20,6 +20,13 @@ class Api::V1::EnrollmentChangesController < Api::V1::ApiController
 
     Output:
     #{json_schema(Api::V1::EnrollmentChangeRepresenter, include: :readable)}
+
+    Possible error codes:
+      invalid_enrollment_code
+      enrollment_code_does_not_match_book
+      already_enrolled
+      multiple_roles (The user is a teacher with multiple roles - not supported)
+      dropped_student (Dropped students cannot re-enroll by themselves)
   EOS
   def create
     OSU::AccessPolicy.require_action_allowed!(:create, current_api_user,
@@ -39,10 +46,10 @@ class Api::V1::EnrollmentChangesController < Api::V1::ApiController
       return
     end
 
-    if enrollment_params.cnx_book_id.present?
+    if enrollment_params.book_cnx_id.present?
       ecosystem = GetCourseEcosystem[course: period.course]
 
-      if ecosystem.books.first.cnx_id != enrollment_params.cnx_book_id
+      if ecosystem.books.first.cnx_id != enrollment_params.book_cnx_id
         render_api_errors(:enrollment_code_does_not_match_book)
         return
       end
@@ -56,7 +63,7 @@ class Api::V1::EnrollmentChangesController < Api::V1::ApiController
                    represent_with: Api::V1::EnrollmentChangeRepresenter,
                    location: nil
     else
-      render_api_errors(:already_enrolled)
+      render_api_errors(result.errors.first.code)
     end
   end
 
@@ -67,22 +74,29 @@ class Api::V1::EnrollmentChangesController < Api::V1::ApiController
 
     Output:
     #{json_schema(Api::V1::EnrollmentChangeRepresenter, include: :readable)}
+
+    Possible error codes:
+      already_approved
+      already_rejected
+      already_processed
   EOS
   def approve
-    model = CourseMembership::Models::EnrollmentChange.find(params[:id])
-    strategy = CourseMembership::Strategies::Direct::EnrollmentChange.new(model)
-    enrollment_change = CourseMembership::EnrollmentChange.new(strategy: strategy)
-    OSU::AccessPolicy.require_action_allowed!(:approve, current_api_user, enrollment_change)
+    CourseMembership::Models::EnrollmentChange.transaction do
+      model = CourseMembership::Models::EnrollmentChange.lock.find(params[:id])
+      enrollment_change = CourseMembership::EnrollmentChange.new(strategy: model.wrap)
+      OSU::AccessPolicy.require_action_allowed!(:approve, current_api_user, enrollment_change)
 
-    result = CourseMembership::ApproveEnrollmentChange.call(enrollment_change: enrollment_change,
-                                                            approved_by: current_human_user)
+      model.approve_by(current_human_user).save if enrollment_change.pending?
 
-    if result.errors.empty?
-      respond_with result.outputs.enrollment_change,
-                   represent_with: Api::V1::EnrollmentChangeRepresenter,
-                   responder: ResponderWithPutContent
-    else
-      render_api_errors(:already_approved)
+      result = CourseMembership::ProcessEnrollmentChange.call(enrollment_change: enrollment_change)
+
+      if result.errors.empty?
+        respond_with result.outputs.enrollment_change,
+                     represent_with: Api::V1::EnrollmentChangeRepresenter,
+                     responder: ResponderWithPutContent
+      else
+        render_api_errors(result.errors.first.code)
+      end
     end
   end
 
