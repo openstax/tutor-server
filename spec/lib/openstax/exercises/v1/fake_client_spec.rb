@@ -28,6 +28,9 @@ RSpec.describe OpenStax::Exercises::V1::FakeClient, :type => :external do
               answers: [
                 { id: "-2", content_html: "10 N", correctness: 1.0, feedback_html: 'Right!' },
                 { id: "-3", content_html: "1 N", correctness: 0.0, feedback_html: 'Wrong!' }
+              ],
+              solutions: [
+                content_html: 'The first one.'
               ]
             }
           ]
@@ -65,6 +68,9 @@ RSpec.describe OpenStax::Exercises::V1::FakeClient, :type => :external do
                   correctness: 1.0, feedback_html: 'Right!' },
                 { id: "-6", content_html: "1 N",
                   correctness: 0.0, feedback_html: 'Wrong!' }
+              ],
+              solutions: [
+                content_html: 'The first one.'
               ]
             }
           ]
