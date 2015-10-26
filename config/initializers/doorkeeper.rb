@@ -9,6 +9,10 @@ Doorkeeper.configure do
     authenticate_user!
   end
 
+  resource_owner_from_session do
+    current_user.is_anonymous? ? nil : current_user
+  end
+
   # If you want to restrict access to the web interface for adding oauth authorized applications, you need to declare the block below.
   admin_authenticator do
     raise SecurityTransgression if Rails.env.production? && !current_user.administrator
@@ -84,3 +88,28 @@ end
 
 OSU::AccessPolicy.register(Doorkeeper::Application,
                            Doorkeeper::ApplicationAccessPolicy)
+
+Doorkeeper.configuration.token_grant_types << "session"
+
+
+module Doorkeeper
+  module Extras
+    def self.included(base)
+      base.include ActionController::Helpers
+      base.include ActionController::Cookies
+    end
+
+    def current_user
+      current_user_manager.current_user
+    end
+
+    protected
+
+    def current_user_manager
+      @current_user_manager ||= \
+         OpenStax::Accounts::CurrentUserManager.new(request, session, cookies)
+    end
+  end
+end
+
+Doorkeeper::TokensController.send(:include, Doorkeeper::Extras)
