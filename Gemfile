@@ -136,6 +136,9 @@ gem 'openstax_rescue_from', '~> 1.5.0'
 # Generate memorable codes
 gem 'babbler', '~> 1.0.1'
 
+# Soft-deletion
+gem 'paranoia', '~> 2.1.3'
+
 group :development, :test do
   # Get env variables from .env file
   gem 'dotenv-rails'

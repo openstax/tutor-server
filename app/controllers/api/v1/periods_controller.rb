@@ -34,6 +34,19 @@ class Api::V1::PeriodsController < Api::V1::ApiController
                                  responder: ResponderWithPutContent
   end
 
+  api :DELETE, '/periods/:id',
+               'Deletes a period for authorized teachers'
+  def destroy
+    OSU::AccessPolicy.require_action_allowed!(:destroy, current_human_user, @period)
+    result = CourseMembership::DeletePeriod.call(period: @period)
+
+    if result.errors.any?
+      render_api_errors(result.errors)
+    else
+      head :no_content
+    end
+  end
+
   private
   def find_period_and_course
     if params[:course_id]

@@ -88,7 +88,7 @@ Rails.application.routes.draw do
 
       resources :teachers, shallow: true, only: [:destroy]
 
-      resources :periods, shallow: true, only: [:create, :update]
+      resources :periods, shallow: true, only: [:create, :update, :destroy]
     end
 
     resources :ecosystems, only: [:index] do
