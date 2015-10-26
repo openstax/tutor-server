@@ -76,10 +76,13 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
 
       api_delete :destroy, teacher_token, parameters: { id: period.id }
 
+      errors = response.body_as_hash[:errors][0]
+
       expect(response).to have_http_status(:unprocessable_entity)
-      expect(response.body_as_hash[:students]).to eq([
+      expect(errors[:data][:attribute]).to eq('students')
+      expect(errors[:message]).to eq(
         'must be moved to another period before this period can be deleted'
-      ])
+      )
       expect(CourseMembership::Models::Period.all).not_to be_empty
     end
 

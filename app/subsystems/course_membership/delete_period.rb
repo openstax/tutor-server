@@ -1,11 +1,11 @@
 module CourseMembership
   class DeletePeriod
-    lev_routine express_output: :deleted
+    lev_routine express_output: :is_deleted
 
     protected
     def exec(period:)
-      outputs.deleted = period.to_model.destroy
-      outputs.errors = period.to_model.errors
+      outputs.is_deleted = period.to_model.destroy
+      transfer_errors_from(period.to_model, { type: :verbatim }, false)
     end
   end
 end
