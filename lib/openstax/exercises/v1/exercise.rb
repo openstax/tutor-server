@@ -99,6 +99,10 @@ class OpenStax::Exercises::V1::Exercise
     end
   end
 
+  def solutions
+    @solutions ||= questions.collect{ |qq| qq['solutions'] }
+  end
+
   def feedback_map
     return @feedback_map unless @feedback_map.nil?
 

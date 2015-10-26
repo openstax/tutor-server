@@ -60,6 +60,15 @@ module Api::V1::Tasks
                description: "The student's free response"
              }
 
+    property :solution,
+             type: String,
+             writeable: false,
+             readable: true,
+             if: -> (*) { task_step.feedback_available? },
+             schema_info: {
+               description: "A detailed solution that explains the correct choice"
+             }
+
     property :feedback,
              as: :feedback_html,
              type: String,

@@ -9,7 +9,7 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
   validate :valid_answer, :no_feedback
 
   delegate :uid, :questions, :question_formats, :question_answers, :question_answer_ids,
-           :correct_question_answers, :correct_question_answer_ids, :feedback_map,
+           :correct_question_answers, :correct_question_answer_ids, :feedback_map, :solutions,
            :content_hash_without_correct_answer, :tags, :los, :aplos, to: :parser
 
   # We depend on the parser because we do not save the parsed content
@@ -55,7 +55,7 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     self.content = json_hash.to_json
   end
 
-  # The following 3 methods assume only 1 Question
+  # The following 4 methods assume only 1 Question
   def formats
     question_formats[0]
   end
@@ -66,6 +66,10 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
 
   def correct_answer_id
     correct_question_answer_ids[0].first
+  end
+
+  def solution
+    solutions[0].try(:first)
   end
 
   def feedback
