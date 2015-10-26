@@ -44,7 +44,12 @@ class Api::V1::Cc::TasksController < Api::V1::ApiController
 
       session[hash.to_sym] = task.id
 
-      respond_with task, represent_with: Api::V1::TaskRepresenter
+      respond_to do |format|
+        format.js do
+          render :json => Api::V1::TaskRepresenter.new(task).to_json, :callback => params[:callback]
+        end
+      end
+
     end
   end
 
