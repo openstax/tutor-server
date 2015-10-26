@@ -264,4 +264,59 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
     end
   end
 
+  describe '#undrop' do
+    let!(:valid_params) { { id: student.id } }
+
+    before do
+      # Remove the student from the course
+      InactivateStudent.call(student: student)
+
+      student.reload
+      expect(student.persisted?).to eq true
+      expect(student.active?).to eq false
+    end
+
+    context 'caller has an authorization token' do
+      context 'caller is a course teacher' do
+        it 'undrops the student from the course' do
+
+          api_put :undrop, teacher_token, parameters: valid_params
+          expect(response).to have_http_status(:ok)
+          expect(response.body_as_hash[:is_active]).to be true
+
+          student.reload
+          expect(student.persisted?).to eq true
+          expect(student.active?).to eq true
+        end
+      end
+
+      context 'caller is not a course teacher' do
+        it 'raises SecurityTransgression' do
+          expect{
+            api_put :undrop, student_token, parameters: valid_params
+          }.to raise_error(SecurityTransgression)
+          expect(student.reload.active?).to eq false
+        end
+      end
+    end
+
+    context 'caller has an application/client credentials authorization token' do
+      it 'raises SecurityTransgression' do
+        expect{
+          api_put :undrop, userless_token, parameters: valid_params
+        }.to raise_error(SecurityTransgression)
+        expect(student.reload.active?).to eq false
+      end
+    end
+
+    context 'caller does not have an authorization token' do
+      it 'raises SecurityTransgression' do
+        expect{
+          api_put :undrop, nil, parameters: valid_params
+        }.to raise_error(SecurityTransgression)
+        expect(student.reload.active?).to eq false
+      end
+    end
+  end
+
 end
