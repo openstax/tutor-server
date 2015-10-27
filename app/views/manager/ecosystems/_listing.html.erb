@@ -2,6 +2,7 @@
   <thead>
     <tr>
       <th>Book Title</th>
+      <th>Comments</th>
       <th>Book Version</th>
       <th>Import Date</th>
       <th>Link to Archive</th>
@@ -14,6 +15,7 @@
 
     <tr>
       <td><%= book.title %></td>
+      <td><%= ecosystem.comments %></td>
       <td><%= book.version %></td>
       <td><%= ecosystem.imported_at %></td>
       <td><%= link_to 'Archive', book.url, target: '_blank',

@@ -5,7 +5,8 @@ module Content
 
         wraps ::Content::Models::Ecosystem
 
-        exposes :books, :chapters, :pages, :exercises, :pools, :tags, :title, :created_at
+        exposes :books, :chapters, :pages, :exercises, :pools, :tags, :title, :comments,
+          :created_at
         exposes :all, :create, :create!, :find, from_class: ::Content::Models::Ecosystem
 
         class << self
@@ -17,13 +18,15 @@ module Content
           end
 
           alias_method :entity_create, :create
-          def create(title:)
-            ::Content::Ecosystem.new(strategy: entity_create(title: title))
+          def create(title:, comments:)
+            ::Content::Ecosystem.new(strategy: entity_create(title: title,
+                                                             comments: comments))
           end
 
           alias_method :entity_create!, :create!
-          def create!(title:)
-            ::Content::Ecosystem.new(strategy: entity_create!(title: title))
+          def create!(title:, comments:)
+            ::Content::Ecosystem.new(strategy: entity_create!(title: title,
+                                                              comments: comments))
           end
 
           alias_method :entity_find, :find

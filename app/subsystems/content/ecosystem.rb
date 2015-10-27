@@ -8,15 +8,18 @@ module Content
         verify_and_return strategy_class.all, klass: self, error: StrategyError
       end
 
-      def create(title:, strategy_class: ::Content::Strategies::Direct::Ecosystem)
+      def create(title:, comments: nil, strategy_class: ::Content::Strategies::Direct::Ecosystem)
         title = verify_and_return title, klass: String
-        verify_and_return strategy_class.create(title: title),
+        comments = verify_and_return comments, klass: String
+        verify_and_return strategy_class.create(title: title, comments: comments),
                           klass: self, error: StrategyError
       end
 
-      def create!(title:, strategy_class: ::Content::Strategies::Direct::Ecosystem)
+      def create!(title:, comments: nil,
+                  strategy_class: ::Content::Strategies::Direct::Ecosystem)
         title = verify_and_return title, klass: String
-        verify_and_return strategy_class.create!(title: title),
+        comments = verify_and_return comments, klass: String
+        verify_and_return strategy_class.create!(title: title, comments: comments),
                           klass: self, error: StrategyError
       end
 
@@ -153,6 +156,10 @@ module Content
 
     def title
       verify_and_return @strategy.title, klass: String, error: StrategyError
+    end
+
+    def comments
+      verify_and_return @strategy.comments, klass: String, error: StrategyError
     end
 
     def imported_at
