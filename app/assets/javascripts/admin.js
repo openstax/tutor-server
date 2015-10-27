@@ -50,4 +50,6 @@ $(document).ready(function() {
   if (tab) {
     $('a[href="' + tab + '"]').click();
   }
+
+  $('[data-toggle="popover"]').popover();
 });

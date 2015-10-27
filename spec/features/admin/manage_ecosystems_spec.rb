@@ -23,7 +23,7 @@ RSpec.describe 'Administration', speed: :slow, vcr: VCR_OPTS do
 
     expect(page).to have_css('.flash_notice', text: 'Ecosystem import job queued.')
     expect(page).to have_css('td', text: 'Physics')
-    expect(page).to have_css('td', text: '93e2b09d-261c-4007-a987-0b3062fe154b')
     expect(page).to have_css('td', text: '4.4')
+    expect(page).to have_css('[data-content="93e2b09d-261c-4007-a987-0b3062fe154b"]')
   end
 end
