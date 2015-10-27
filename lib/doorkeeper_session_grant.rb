@@ -40,16 +40,14 @@ module Doorkeeper
       def request
         return @request if @request
 
-        # This controller is the TokensController
-        controller = @server.context
-        resource_owner = controller.instance_eval do
-          current_user.is_anonymous? ? nil : current_user
-        end
+        tokens_controller = @server.context
+        current_user = tokens_controller.current_user
+        current_user = nil if current_user.is_anonymous?
 
         @request = OAuth::PasswordAccessTokenRequest.new(
                        Doorkeeper.configuration,
                        nil, # 'credentials', unused
-                       resource_owner,
+                       current_user,
                        @server.parameters)
       end
 
