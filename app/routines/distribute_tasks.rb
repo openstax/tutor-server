@@ -20,6 +20,7 @@ class DistributeTasks
     end
 
     Entity::Task.import! entity_tasks, recursive: true
+    entity_tasks.each(&:clear_association_cache)
   end
 
   def exec(task_plan, publish_time = Time.now, protect_unopened_tasks = false)

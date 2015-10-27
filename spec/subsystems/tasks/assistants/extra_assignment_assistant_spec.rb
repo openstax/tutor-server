@@ -74,7 +74,7 @@ RSpec.describe Tasks::Assistants::ExtraAssignmentAssistant, type: :assistant, vc
       expect(content[0]).to include(
         'if the acceleration of a moving bicycle is constant')
       expect(content[1]).to include(
-        'On a graph the average velocity versus the elapsed time')
+        'If you graph the average velocity (x-axis) vs. the elapsed time (y-axis)')
       expect(content[2]).to include(
         'What do bathroom scales measure?')
       expect(content[3]).to include(

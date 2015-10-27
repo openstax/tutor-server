@@ -99,7 +99,15 @@ class Content::Routines::PopulateExercisePools
     pools = outputs[:pools].flatten
     pools.each{ |pool| pool.uuid = SecureRandom.uuid }
     Content::Models::Pool.import! pools
-    outputs[:pages].each{ |page| page.save! }
-    chapters.each{ |chapter| chapter.save! }
+
+    # Save ids in page/chapter tables and clear associations so pools get reloaded next time
+    outputs[:pages].each do |page|
+      page.save!
+      page.clear_association_cache
+    end
+    chapters.each do |chapter|
+      chapter.save!
+      chapter.clear_association_cache
+    end
   end
 end

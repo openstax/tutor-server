@@ -42,7 +42,7 @@ class Content::Routines::ImportExercises
       outputs[:exercises] << exercise
 
       lo_tags = relevant_tags.select{ |tag| tag.lo? }
-      page_taggings += run(:tag, page, lo_tags,
+      page_taggings += run(:tag, exercise_page, lo_tags,
                            tagging_class: Content::Models::PageTag,
                            save: false).outputs.taggings
     end
@@ -52,6 +52,20 @@ class Content::Routines::ImportExercises
     Content::Models::Exercise.import! outputs[:exercises], recursive: true
     Content::Models::PageTag.import! outputs[:page_taggings]
 
-    outputs[:exercises].each{ |exercise| exercise.tags.reset }
+    # Reset associations so they get reloaded the next time they are used
+    outputs[:page_taggings].map(&:page).uniq.each do |page|
+      page.exercises.reset
+      page.page_tags.reset
+      page.tags.reset
+    end
+    outputs[:exercises].each do |exercise|
+      exercise.exercise_tags.reset
+      exercise.tags.reset
+    end
+    if page.is_a?(Content::Models::Page)
+      page.exercises.reset
+      page.page_tags.reset
+      page.tags.reset
+    end
   end
 end

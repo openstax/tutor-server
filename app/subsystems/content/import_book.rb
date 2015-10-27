@@ -26,7 +26,11 @@ class Content::ImportBook
 
     Content::Models::Book.import! [book], recursive: true
 
+    # Reload book and reset associations so they get reloaded the next time they are used
+    book.reload.clear_association_cache
+
     import_page_tags = outputs[:page_taggings].select{ |pt| pt.tag.import? }
+    import_page_tags.each(&:reload)
 
     outputs[:exercises] = []
     page_block = ->(exercise_wrapper) {
@@ -64,8 +68,7 @@ class Content::ImportBook
       end
     end
 
-    # Need a double reload here to fully load the newly imported book
-    outs = run(:populate_exercise_pools, book: book.reload.reload, save: false).outputs
+    outs = run(:populate_exercise_pools, book: book, save: false).outputs
     pools = outs.pools
     chapters = outs.chapters
     pages = outs.pages
@@ -107,9 +110,16 @@ class Content::ImportBook
     end
 
     Content::Models::Pool.import! pools
-    # Replace with UPSERT once we support it
-    pages.each{ |page| page.save! }
-    chapters.each{ |chapter| chapter.save! }
+
+    # Save ids in page/chapter tables and clear associations so pools get reloaded next time
+    pages.each do |page|
+      page.save!
+      page.clear_association_cache
+    end
+    chapters.each do |chapter|
+      chapter.save!
+      chapter.clear_association_cache
+    end
   end
 
 end
