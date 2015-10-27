@@ -17,7 +17,7 @@ require 'course_guide_methods'
 require 'type_verification'
 require 'tagger'
 require 'concept_coach/tag_generator'
-require 'doorkeeper/request/session'
+require 'doorkeeper_session_grant'
 
 %w(
   biglearn

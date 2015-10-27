@@ -2,23 +2,15 @@ module Doorkeeper
 
   class Config
     option :resource_owner_from_session, default: (lambda do |routes|
-        warn(I18n.t("doorkeeper.errors.messages.session_flow_not_configured"))
+        warn("Session flow not configured")
         nil
       end)
   end
 
-
-  module GrantsAssertion
-    def resource_owner_from_session
-      instance_eval(&Doorkeeper.configuration.resource_owner_from_session)
-    end
-  end
-
-  Doorkeeper::Helpers::Controller.send :include, Doorkeeper::GrantsAssertion
-
   class Server
     def resource_owner_from_session
-      context.send :resource_owner_from_session
+      #context.send :resource_owner_from_session
+      context.instance_eval(&Doorkeeper.configuration.resource_owner_from_session)
     end
   end
 
@@ -35,7 +27,11 @@ module Doorkeeper
       end
 
       def request
-        @request ||= OAuth::PasswordAccessTokenRequest.new(Doorkeeper.configuration, credentials, resource_owner, server.parameters)
+        @request ||= OAuth::PasswordAccessTokenRequest.new(
+                       Doorkeeper.configuration,
+                       credentials,
+                       resource_owner,
+                       server.parameters)
       end
 
       def authorize
