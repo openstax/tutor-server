@@ -22,6 +22,10 @@ module Content
 
       default_scope -> { order(created_at: :desc) }
 
+      def deletable?
+        courses.empty?
+      end
+
     end
   end
 end
