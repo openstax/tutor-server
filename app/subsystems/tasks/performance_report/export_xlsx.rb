@@ -86,13 +86,15 @@ module Tasks
       def add_late_comments(sheet, data, row)
         data.each_with_index do |d, col|
           if d && d.late
-            start_col = ('A'..'Z').to_a[non_data_headings.size]
-            offset_row = row + 4 # offset 4 header rows
+            column = col + non_data_headings.size
+            row_offset  = row + 4 # there are 4 rows of headings
 
-            sheet.add_comment(ref: "#{(start_col..'Z').to_a[col]}#{offset_row}", # 'D5', etc...
+            sheet.add_comment(
+              ref: TwoDMatrixHelper.find_cell(row: row_offset, column: column),
               text: "Homework was worked #{time_ago_in_words(d.last_worked_at)} late",
               author: 'OpenStax',
-              visible: false)
+              visible: false
+            )
           end
         end
       end

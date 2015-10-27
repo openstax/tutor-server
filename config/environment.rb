@@ -3,6 +3,7 @@ require File.expand_path('../application', __FILE__)
 
 require 'date_time_utilities'
 require 'acts_as_resource'
+require 'two_d_matrix_helper'
 require 'acts_as_tasked'
 require 'html_tree_operations'
 require 'fake_store'
