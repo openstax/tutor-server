@@ -1,16 +1,27 @@
 module Doorkeeper
 
-  class Config
-    option :resource_owner_from_session, default: (lambda do |routes|
-        warn("Session flow not configured")
-        nil
-      end)
+  configuration.token_grant_types << "session"
+
+  module SessionGrantExtensions
+    def self.included(base)
+      base.include ActionController::Helpers
+      base.include ActionController::Cookies
+    end
+
+    def current_user
+      @current_user_manager ||= \
+         OpenStax::Accounts::CurrentUserManager.new(request, session, cookies)
+      @current_user_manager.current_user
+    end
   end
+
+  TokensController.send(:include, SessionGrantExtensions)
 
   class Server
     def resource_owner_from_session
-      #context.send :resource_owner_from_session
-      context.instance_eval(&Doorkeeper.configuration.resource_owner_from_session)
+      context.instance_eval do
+        current_user.is_anonymous? ? nil : current_user
+      end
     end
   end
 
@@ -39,4 +50,8 @@ module Doorkeeper
       end
     end
   end
+
 end
+
+
+
