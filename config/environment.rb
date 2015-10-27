@@ -18,7 +18,6 @@ require 'course_guide_methods'
 require 'type_verification'
 require 'tagger'
 require 'concept_coach/tag_generator'
-require 'doorkeeper_session_grant'
 
 %w(
   biglearn
@@ -33,3 +32,5 @@ COPYRIGHT_HOLDER = "Rice University"
 
 # Initialize the Rails application.
 Rails.application.initialize!
+
+require 'doorkeeper_session_grant'
