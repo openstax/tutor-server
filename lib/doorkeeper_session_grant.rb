@@ -1,8 +1,13 @@
 module Doorkeeper
 
+  # Let Doorkeeper accept a custom grant type of "session"
+
   configuration.token_grant_types << "session"
 
-  module SessionGrantExtensions
+  # The TokensController is bare bones; add knowledge of helpers and cookies
+  # as well as how to get the session user
+
+  module TokensControllerExtensions
     def self.included(base)
       base.include ActionController::Helpers
       base.include ActionController::Cookies
@@ -15,34 +20,37 @@ module Doorkeeper
     end
   end
 
-  TokensController.send(:include, SessionGrantExtensions)
+  TokensController.send(:include, TokensControllerExtensions)
 
-  class Server
-    def resource_owner_from_session
-      context.instance_eval do
-        current_user.is_anonymous? ? nil : current_user
-      end
-    end
-  end
+  # The new grant type of "session" is used by Doorkeeper to infer the
+  # existence of a Doorkeeper::Request::Session object that handles this
+  # grant type.  This implementation is a stripped-down version of the
+  # code in https://github.com/doorkeeper-gem/doorkeeper-grants_assertion
 
   module Request
     class Session
       def self.build(server)
-        new(server.credentials, server.resource_owner_from_session, server)
+        new(server)
       end
 
-      attr_accessor :credentials, :resource_owner, :server
-
-      def initialize(credentials, resource_owner, server)
-        @credentials, @resource_owner, @server = credentials, resource_owner, server
+      def initialize(server)
+        @server = server
       end
 
       def request
-        @request ||= OAuth::PasswordAccessTokenRequest.new(
+        return @request if @request
+
+        # This controller is the TokensController
+        controller = @server.context
+        resource_owner = controller.instance_eval do
+          current_user.is_anonymous? ? nil : current_user
+        end
+
+        @request = OAuth::PasswordAccessTokenRequest.new(
                        Doorkeeper.configuration,
-                       credentials,
+                       nil, # 'credentials', unused
                        resource_owner,
-                       server.parameters)
+                       @server.parameters)
       end
 
       def authorize
@@ -52,6 +60,3 @@ module Doorkeeper
   end
 
 end
-
-
-
