@@ -19,7 +19,7 @@ class Content::Routines::ImportPage
   # Imports and saves a Cnx::Page as a Content::Models::Page
   # into the given Content::Models::Chapter
   # Returns the Content::Models::Page object
-  def exec(cnx_page:, chapter:, number: nil, book_location: nil, save: true, tag_generator: nil)
+  def exec(cnx_page:, chapter:, number: nil, book_location: nil, save: true)
     ecosystem = chapter.book.ecosystem
 
     outputs[:page] = Content::Models::Page.new(url: cnx_page.canonical_url,
@@ -35,7 +35,6 @@ class Content::Routines::ImportPage
     chapter.pages << outputs[:page] unless chapter.nil?
 
     tags = cnx_page.tags
-    tags += tag_generator.generate(book_location) if tag_generator.present?
 
     # Tag the Page
     run(:find_or_create_tags, ecosystem: ecosystem, input: tags)
@@ -47,14 +46,14 @@ class Content::Routines::ImportPage
 
     return unless save
 
-    # Get Exercises from OpenStax Exercises that match the LO's or AP LO's, plus CC tags
-    mapping_tags = outputs[:tags].select(&:mapping?).collect{ |tag| tag.value }
+    # Get Exercises from OpenStax Exercises that match the LO, AP LO or UUID tags
+    import_tags = outputs[:tags].select(&:import?).collect{ |tag| tag.value }
 
-    return if mapping_tags.empty?
+    return if import_tags.empty?
 
     run(:import_exercises, ecosystem: ecosystem,
                            page: outputs[:page],
-                           query_hash: {tag: mapping_tags})
+                           query_hash: {tag: import_tags})
   end
 
 end

@@ -185,7 +185,7 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
 
         expect(response).to have_http_status(:success)
         hash = response.body_as_hash
-        expect(hash[:total_count]).to eq(219)
+        expect(hash[:total_count]).to eq(215)
         page_los = Content::Models::Page.all.map(&:los).flatten.collect(&:value)
         hash[:items].each do |item|
           expect(item[:pool_types]).not_to be_empty

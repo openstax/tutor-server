@@ -51,8 +51,8 @@ class OpenStax::Exercises::V1::Exercise
     @aplo_hashes ||= tag_hashes.select{ |hash| hash[:type] == :aplo }
   end
 
-  def cc_hashes
-    @cc_hashes ||= tag_hashes.select{ |hash| hash[:type] == :cc }
+  def uuid_hashes
+    @uuid_hashes ||= tag_hashes.select{ |hash| hash[:type] == :uuid }
   end
 
   def los
@@ -63,8 +63,8 @@ class OpenStax::Exercises::V1::Exercise
     @aplos ||= aplo_hashes.collect{ |hash| hash[:value] }
   end
 
-  def ccs
-    @ccs ||= cc_hashes.collect{ |hash| hash[:value] }
+  def uuids
+    @uuids ||= uuid_hashes.collect{ |hash| hash[:value] }
   end
 
   def questions

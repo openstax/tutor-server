@@ -3,10 +3,11 @@ module Tagger
 
   # If the tag string matches, it is considered to be of that type
   # This map is used to determine tag types for Exercises
-  # Pages do not use this map (instead, they infer the tag type from where it appears in the page)
-  # We do not automatically assign CC tags or else
-  # they would match the section tags in non-CC books
+  # Non-CC Pages do not use this map
+  # (instead, they infer the tag type from where it appears in the page)
   TAG_TYPE_REGEXES = HashWithIndifferentAccess.new({
+    # http://stackoverflow.com/a/12843265
+    uuid: /\A[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\z/,
     lo: /\A[\w-]+-lo\d+\z/,
     aplo: /\A[\w-]+-aplo-[\w-]+\z/,
     dok: /\Adok(\d+)\z/,

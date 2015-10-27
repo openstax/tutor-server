@@ -16,15 +16,16 @@ class Content::Models::Tag < Tutor::SubSystems::BaseModel
   has_many :same_value_tags, class_name: 'Tag', primary_key: 'value', foreign_key: 'value'
 
   # List the different types of tags
-  enum tag_type: [ :generic, :lo, :aplo, :teks, :dok, :blooms, :length, :cc ]
+  enum tag_type: [ :generic, :lo, :aplo, :teks, :dok, :blooms, :length, :uuid ]
 
   validates :value, presence: true
   validates :tag_type, presence: true
 
   before_save :update_tag_type_data_and_visible
 
-  MAPPING_TAG_TYPES = [:lo, :aplo, :cc]
-  VISIBLE_TAG_TYPES = [:lo, :aplo, :teks, :dok, :blooms, :length]
+  IMPORT_TAG_TYPES  = [ :lo, :aplo, :uuid ]
+  MAPPING_TAG_TYPES = [ :lo, :aplo ]
+  VISIBLE_TAG_TYPES = [ :lo, :aplo, :teks, :dok, :blooms, :length ]
 
   def book_location
     Tagger.get_book_location(value)
@@ -32,6 +33,10 @@ class Content::Models::Tag < Tutor::SubSystems::BaseModel
 
   def name
     read_attribute(:name) || Tagger.get_name(tag_type, data)
+  end
+
+  def import?
+    IMPORT_TAG_TYPES.include?(tag_type.to_sym)
   end
 
   def mapping?

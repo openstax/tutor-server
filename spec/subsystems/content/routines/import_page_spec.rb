@@ -49,7 +49,8 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, speed: :slow, vcr:
     expect(Set.new tagged_tags.collect{|t| t.value}).to(
       eq Set.new(Content::Models::Page.last.page_tags.collect{|pt| pt.tag.value})
     )
-    expected_tagged_tags = ['k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02',
+    expected_tagged_tags = ['95e61258-2faf-41d4-af92-f62e1414175a',
+                            'k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02',
                             'teks-112-39-c-4c', 'teks-112-39-c-4e']
     expect(Set.new tagged_tags.collect{|t| t.value}).to eq Set.new(expected_tagged_tags)
   end
@@ -65,26 +66,13 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, speed: :slow, vcr:
     result = nil
     expect {
       result = import_page
-    }.to change{ Content::Models::Exercise.count }.by(33)
+    }.to change{ Content::Models::Exercise.count }.by(32)
   end
 
-  it 'adds cc tags to the page if a proper TagGenerator is given' do
-    tag_generator = ConceptCoach::TagGenerator.new('k12phys')
-
-    result = nil
-    expect {
-      result = import_page(tag_generator: tag_generator)
-    }.to change{ Content::Models::Tag.cc.count }.by(1)
-
-    tag = Content::Models::Tag.find_by(value: 'k12phys-ch04-s01')
-    expect(tag.cc?).to eq true
-  end
-
-  def import_page(tag_generator: nil)
+  def import_page
     Content::Routines::ImportPage.call(cnx_page: cnx_page,
                                        chapter: chapter,
-                                       book_location: book_location,
-                                       tag_generator: tag_generator)
+                                       book_location: book_location)
   end
 
 end

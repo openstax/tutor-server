@@ -21,7 +21,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 31 Jul 2015 18:47:47 GMT
+      - Mon, 26 Oct 2015 22:56:19 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -41,7 +41,7 @@ http_interactions:
       Accept-Ranges:
       - bytes
       X-Varnish:
-      - '1317043078'
+      - '1413910353'
       Via:
       - 1.1 varnish
       X-Cache:
@@ -1178,17 +1178,17 @@ http_interactions:
         factor</dt><dd id=\"fs-id1434398\"> a ratio expressing how many of one unit
         are equal to another unit</dd></dl>\n</div></body>\n\n</html>", "subjects":
         ["Mathematics and Statistics"], "legacy_id": "m42091", "parentId": null, "publishers":
-        [{"surname": "Physics", "suffix": "", "firstname": "College", "title": "",
-        "fullname": "OSC Physics Maintainer", "id": "cnxcap"}, {"surname": "OpenStax
-        College", "suffix": "", "firstname": "", "title": "", "fullname": "OpenStax
-        College", "id": "OpenStaxCollege"}], "parent": {"authors": [], "version":
-        "", "id": null, "title": null}, "stateid": 1, "parentTitle": null, "authors":
         [{"surname": "OpenStax College", "suffix": "", "firstname": "", "title": "",
-        "fullname": "OpenStax College", "id": "OpenStaxCollege"}], "parentVersion":
-        "", "legacy_version": "1.7", "licensors": [{"surname": "University", "suffix":
-        "", "firstname": "Rice", "title": "", "fullname": "Rice University", "id":
-        "OSCRiceUniversity"}], "language": "en", "license": {"url": "http://creativecommons.org/licenses/by/3.0/",
-        "version": "3.0", "abbr": "by", "name": "Creative Commons Attribution License"},
+        "fullname": "OpenStax College", "id": "OpenStaxCollege"}, {"surname": "Physics",
+        "suffix": "", "firstname": "College", "title": "", "fullname": "OSC Physics
+        Maintainer", "id": "cnxcap"}], "parent": {"authors": [], "version": "", "id":
+        null, "title": null}, "stateid": 1, "parentTitle": null, "authors": [{"surname":
+        "OpenStax College", "suffix": "", "firstname": "", "title": "", "fullname":
+        "OpenStax College", "id": "OpenStaxCollege"}], "parentVersion": "", "legacy_version":
+        "1.7", "licensors": [{"surname": "University", "suffix": "", "firstname":
+        "Rice", "title": "", "fullname": "Rice University", "id": "OSCRiceUniversity"}],
+        "language": "en", "license": {"url": "http://creativecommons.org/licenses/by/3.0/",
+        "code": "by", "version": "3.0", "name": "Creative Commons Attribution License"},
         "created": "2011-12-21T16:59:22Z", "doctype": "", "buyLink": null, "submitter":
         {"surname": "Physics", "suffix": "", "firstname": "College", "title": "",
         "fullname": "OSC Physics Maintainer", "id": "cnxcap"}, "parentAuthors": [],
@@ -1214,7 +1214,63 @@ http_interactions:
         {"surname": "Williamson", "suffix": "", "firstname": "Collins", "title": "",
         "fullname": "Collins Williamson", "id": "dcwillman"}}]}'
     http_version: 
-  recorded_at: Fri, 31 Jul 2015 18:47:42 GMT
+  recorded_at: Mon, 26 Oct 2015 22:56:19 GMT
+- request:
+    method: get
+    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:102e9604-daa7-4a09-9f9e-232251d1a4ee
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Mon, 26 Oct 2015 22:56:20 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Allow-Origin:
+      - "*"
+      Etag:
+      - W/"7d677de0cf405de24f0f10b68258ceb0"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Set-Cookie:
+      - _exercises_session=QVpLbk8ra0xzaVdvM1FqMFNUT2xGaU9VUE93enc4alhYQXV1UDYwUlB5QTRoUSs0REVUUDF4a0ZuWERxWEdIdXo4dU1zNG02TzkzNGxvc3JuTnIzMmc9PS0ta3JyTmtlaTZOdTF3SCtpQ2kwdm13Zz09--bac52a52f6fc0f7844faad0b2067a448d2453565;
+        path=/; HttpOnly
+      X-Request-Id:
+      - 831e808e-be9e-4a37-b37b-adf3b11ed784
+      X-Runtime:
+      - '0.102981'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains
+    body:
+      encoding: UTF-8
+      string: '{"total_count":0,"items":[]}'
+    http_version: 
+  recorded_at: Mon, 26 Oct 2015 22:56:19 GMT
 - request:
     method: get
     uri: https://archive.cnx.org/contents/127f63f7-d67f-4710-8625-2b1d4128ef6b@2
@@ -1236,7 +1292,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Fri, 31 Jul 2015 18:47:48 GMT
+      - Mon, 26 Oct 2015 22:56:20 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -1256,7 +1312,7 @@ http_interactions:
       Accept-Ranges:
       - bytes
       X-Varnish:
-      - '1317043084'
+      - '1413910358'
       Via:
       - 1.1 varnish
       X-Cache:
@@ -1339,7 +1395,7 @@ http_interactions:
         "", "legacy_version": "1.2", "licensors": [{"surname": "University", "suffix":
         "", "firstname": "Rice", "title": "", "fullname": "Rice University", "id":
         "OSCRiceUniversity"}], "language": "en", "license": {"url": "http://creativecommons.org/licenses/by/3.0/",
-        "version": "3.0", "abbr": "by", "name": "Creative Commons Attribution License"},
+        "code": "by", "version": "3.0", "name": "Creative Commons Attribution License"},
         "created": "2012-01-17T20:52:08Z", "doctype": "", "buyLink": null, "submitter":
         {"surname": "Physics", "suffix": "", "firstname": "College", "title": "",
         "fullname": "OSC Physics Maintainer", "id": "cnxcap"}, "parentAuthors": [],
@@ -1351,5 +1407,61 @@ http_interactions:
         "firstname": "College", "title": "", "fullname": "OSC Physics Maintainer",
         "id": "cnxcap"}}]}'
     http_version: 
-  recorded_at: Fri, 31 Jul 2015 18:47:43 GMT
+  recorded_at: Mon, 26 Oct 2015 22:56:20 GMT
+- request:
+    method: get
+    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:127f63f7-d67f-4710-8625-2b1d4128ef6b
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Mon, 26 Oct 2015 22:56:20 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Allow-Origin:
+      - "*"
+      Etag:
+      - W/"7d677de0cf405de24f0f10b68258ceb0"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Set-Cookie:
+      - _exercises_session=ZjM3bmY2UDd4WUpuNW9RS29CM1V6R05EQTlBMFdHUlM0UFI1dmNobTJ4N0JCTTJYZlNYWGtUQkQyeGxkUUhrRzEyR2IxSnhaNEZEbnRhQXgrTUNCTVE9PS0tQUNJa1ZjZC9zd3k4M0JCOURFMmlOQT09--8ad703c1d56047890b01bec889eebe0484cfbc09;
+        path=/; HttpOnly
+      X-Request-Id:
+      - bdc6f77c-4db3-4777-a4d9-be1d0942d434
+      X-Runtime:
+      - '0.116689'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains
+    body:
+      encoding: UTF-8
+      string: '{"total_count":0,"items":[]}'
+    http_version: 
+  recorded_at: Mon, 26 Oct 2015 22:56:20 GMT
 recorded_with: VCR 2.9.3

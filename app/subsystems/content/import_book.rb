@@ -1,7 +1,6 @@
 class Content::ImportBook
 
-  MAX_TAG_QUERY_SIZE = 64
-  MAX_UID_QUERY_SIZE = 128
+  MAX_URL_LENGTH = 2020
 
   lev_routine
 
@@ -13,9 +12,9 @@ class Content::ImportBook
 
   protected
 
-  # Imports and saves a Cnx::Book as an Content::Models::Book
+  # Imports and saves a Cnx::Book as a Content::Models::Book
   # Returns the Book object, Resource object and collection JSON as a hash
-  def exec(cnx_book:, ecosystem:, exercise_uids: nil, tag_generator: nil)
+  def exec(cnx_book:, ecosystem:, exercise_uids: nil)
     book = Content::Models::Book.new(url: cnx_book.canonical_url,
                                      uuid: cnx_book.uuid,
                                      version: cnx_book.version,
@@ -23,52 +22,53 @@ class Content::ImportBook
                                      content: cnx_book.root_book_part.contents,
                                      content_ecosystem_id: ecosystem.id)
 
-    run(:import_book_part, cnx_book_part: cnx_book.root_book_part, book: book,
-                           save: false, tag_generator: tag_generator)
+    run(:import_book_part, cnx_book_part: cnx_book.root_book_part, book: book, save: false)
 
     Content::Models::Book.import! [book], recursive: true
 
-    mapping_page_tags = outputs[:page_taggings].select{ |pt| pt.tag.mapping? }
+    # Reload book and reset associations so they get reloaded the next time they are used
+    book.reload.clear_association_cache
 
-    if mapping_page_tags.empty?
-      outputs[:exercises] = []
-      Rails.logger.warn "Imported book (#{cnx_book.uuid}@#{cnx_book.version}) has no LO's, APLO's or CC tags."
+    import_page_tags = outputs[:page_taggings].select{ |pt| pt.tag.import? }
+    import_page_tags.each(&:reload)
+
+    outputs[:exercises] = []
+    page_block = ->(exercise_wrapper) {
+      tags = Set.new(exercise_wrapper.los + exercise_wrapper.aplos + exercise_wrapper.uuids)
+      pages = import_page_tags.select{ |pt| tags.include?(pt.tag.value) }
+                              .collect{ |pt| pt.page }.uniq
+
+      # Blow up if there is more than one page for an exercise
+      fatal_error(code: :multiple_pages_for_one_exercise,
+                  message: "Multiple pages were found for an exercise.\nExercise: #{
+                    exercise_wrapper.uid}\nPages:\n#{pages.collect{ |pg| pg.url }.join("\n")}") \
+        if pages.size != 1
+      pages.first
+    }
+
+    if exercise_uids.nil?
+      # Split the tag queries to avoid exceeding the URL limit
+      max_tag_length = import_page_tags.map{ |pt| pt.tag.value.size }.max
+      tags_per_query = MAX_URL_LENGTH/max_tag_length
+      import_page_tags.each_slice(tags_per_query) do |page_tags|
+        query_hash = { tag: page_tags.collect{ |pt| pt.tag.value } }
+        outputs[:exercises] += run(:import_exercises, ecosystem: ecosystem,
+                                                      page: page_block,
+                                                      query_hash: query_hash).outputs.exercises
+      end
     else
-      outputs[:exercises] = []
-      page_block = ->(exercise_wrapper) {
-        tags = Set.new(exercise_wrapper.los + exercise_wrapper.aplos + exercise_wrapper.ccs)
-        pages = mapping_page_tags.select{ |pt| tags.include?(pt.tag.value) }
-                                 .collect{ |pt| pt.page }.uniq
-
-        # Blow up if there is more than one page for an exercise
-        fatal_error(code: :multiple_pages_for_one_exercise,
-                    message: "Multiple pages were found for an exercise.\nExercise: #{
-                      exercise_wrapper.uid}\nPages:\n#{pages.collect{ |pg| pg.url }.join("\n")}") \
-          if pages.size != 1
-        pages.first
-      }
-
-      if exercise_uids.nil?
-        # Split the tag queries into sets of MAX_TAG_QUERY_SIZE to avoid exceeding the URL limit
-        mapping_page_tags.each_slice(MAX_TAG_QUERY_SIZE) do |page_tags|
-          query_hash = { tag: page_tags.collect{ |pt| pt.tag.value } }
-          outputs[:exercises] += run(:import_exercises, ecosystem: ecosystem,
-                                                        page: page_block,
-                                                        query_hash: query_hash).outputs.exercises
-        end
-      else
-        # Split the uid queries into sets of MAX_UID_QUERY_SIZE to avoid exceeding the URL limit
-        exercise_uids.each_slice(MAX_UID_QUERY_SIZE) do |uids|
-          query_hash = { id: uids }
-          outputs[:exercises] += run(:import_exercises, ecosystem: ecosystem,
-                                                        page: page_block,
-                                                        query_hash: query_hash).outputs.exercises
-        end
+      # Split the uid queries to avoid exceeding the URL limit
+      max_uid_length = exercise_uids.map(&:size).max
+      uids_per_query = MAX_URL_LENGTH/max_uid_length
+      exercise_uids.each_slice(uids_per_query) do |uids|
+        query_hash = { id: uids }
+        outputs[:exercises] += run(:import_exercises, ecosystem: ecosystem,
+                                                      page: page_block,
+                                                      query_hash: query_hash).outputs.exercises
       end
     end
 
-    # Need a double reload here to fully load the newly imported book
-    outs = run(:populate_exercise_pools, book: book.reload.reload, save: false).outputs
+    outs = run(:populate_exercise_pools, book: book, save: false).outputs
     pools = outs.pools
     chapters = outs.chapters
     pages = outs.pages
@@ -110,9 +110,16 @@ class Content::ImportBook
     end
 
     Content::Models::Pool.import! pools
-    # Replace with UPSERT once we support it
-    pages.each{ |page| page.save! }
-    chapters.each{ |chapter| chapter.save! }
+
+    # Save ids in page/chapter tables and clear associations so pools get reloaded next time
+    pages.each do |page|
+      page.save!
+      page.clear_association_cache
+    end
+    chapters.each do |chapter|
+      chapter.save!
+      chapter.clear_association_cache
+    end
   end
 
 end

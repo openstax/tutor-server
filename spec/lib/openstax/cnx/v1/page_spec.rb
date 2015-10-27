@@ -12,6 +12,10 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, vcr: VCR_OPTS do
           los: ['k12phys-ch03-s02-lo01', 'k12phys-ch03-s02-lo02'],
           tags: [
             {
+              value: '3005b86b-d993-4048-aff0-500256001f42',
+              type: :uuid
+            },
+            {
               value: 'teks-112-39-c-4a',
               type: :teks,
               name: '(4A)',
@@ -55,7 +59,12 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, vcr: VCR_OPTS do
         title: 'Introduction',
         expected: {
           los: [],
-          tags: [],
+          tags: [
+            {
+              value: '1bb611e9-0ded-48d6-a107-fbb9bd900851',
+              type: :uuid
+            }
+          ],
           fragment_classes: [OpenStax::Cnx::V1::Fragment::Text],
           is_intro: true
         }
@@ -66,6 +75,10 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, vcr: VCR_OPTS do
         expected: {
           los: ['k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02'],
           tags: [
+            {
+              value: '95e61258-2faf-41d4-af92-f62e1414175a',
+              type: :uuid
+            },
             {
               value: 'k12phys-ch04-s01-lo01',
               type: :lo,
@@ -101,6 +114,10 @@ RSpec.describe OpenStax::Cnx::V1::Page, :type => :external, vcr: VCR_OPTS do
         expected: {
           los: ['k12phys-ch04-s02-lo01', 'k12phys-ch04-s02-lo02'],
           tags: [
+            {
+              value: '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6',
+              type: :uuid
+            },
             {
               value: 'k12phys-ch04-s02-lo01',
               type: :lo,
