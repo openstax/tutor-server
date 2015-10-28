@@ -34,8 +34,11 @@ class Api::V1::PeriodsController < Api::V1::ApiController
   EOS
   def update
     OSU::AccessPolicy.require_action_allowed!(:update, current_human_user, @period)
-    updated_period = CourseMembership::UpdatePeriod[period: @period,
-                                                    name: period_params[:name]]
+    updated_period = CourseMembership::UpdatePeriod[
+      period: @period,
+      name: period_params[:name],
+      enrollment_code: period_params[:enrollment_code]
+    ]
     respond_with updated_period, represent_with: Api::V1::PeriodRepresenter,
                                  location: nil,
                                  responder: ResponderWithPutContent
@@ -65,6 +68,6 @@ class Api::V1::PeriodsController < Api::V1::ApiController
   end
 
   def period_params
-    params.require(:period).permit(:name)
+    params.require(:period).permit(:name, :enrollment_code)
   end
 end
