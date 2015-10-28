@@ -4,42 +4,35 @@ class Tasks::CreateCourseAssistants
   protected
 
   def exec(course:)
-    if course.profile.is_concept_coach
-      create_course_assistant(
-        course: course,
-        assistant_name: "Concept Coach Assistant",
-        code_class_name: "Tasks::Assistants::ConceptCoachAssistant",
-        task_plan_type: 'concept_coach'
-      )
-    else
-      create_course_assistant(
-        course: course,
-        assistant_name: "Homework Assistant",
-        code_class_name: "Tasks::Assistants::HomeworkAssistant",
-        task_plan_type: 'homework'
-      )
+    return if course.profile.is_concept_coach
 
-      create_course_assistant(
-        course: course,
-        assistant_name: "Reading Assistant",
-        code_class_name: "Tasks::Assistants::IReadingAssistant",
-        task_plan_type: 'reading'
-      )
+    create_course_assistant(
+      course: course,
+      assistant_name: "Homework Assistant",
+      code_class_name: "Tasks::Assistants::HomeworkAssistant",
+      task_plan_type: 'homework'
+    )
 
-      create_course_assistant(
-        course: course,
-        assistant_name: "External Assignment Assistant",
-        code_class_name: "Tasks::Assistants::ExternalAssignmentAssistant",
-        task_plan_type: 'external'
-      )
+    create_course_assistant(
+      course: course,
+      assistant_name: "Reading Assistant",
+      code_class_name: "Tasks::Assistants::IReadingAssistant",
+      task_plan_type: 'reading'
+    )
 
-      create_course_assistant(
-        course: course,
-        assistant_name: "Event Assistant",
-        code_class_name: "Tasks::Assistants::EventAssistant",
-        task_plan_type: 'event'
-      )
-    end
+    create_course_assistant(
+      course: course,
+      assistant_name: "External Assignment Assistant",
+      code_class_name: "Tasks::Assistants::ExternalAssignmentAssistant",
+      task_plan_type: 'external'
+    )
+
+    create_course_assistant(
+      course: course,
+      assistant_name: "Event Assistant",
+      code_class_name: "Tasks::Assistants::EventAssistant",
+      task_plan_type: 'event'
+    )
   end
 
   def create_course_assistant(course:, assistant_name:, code_class_name:, task_plan_type:)
