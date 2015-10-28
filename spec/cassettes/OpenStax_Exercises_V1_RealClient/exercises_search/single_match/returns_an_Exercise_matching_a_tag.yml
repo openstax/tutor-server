@@ -2,44 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: http://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex002
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Faraday v0.9.1
-      Accept:
-      - application/vnd.openstax.v1
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-  response:
-    status:
-      code: 301
-      message: Moved Permanently
-    headers:
-      Server:
-      - nginx/1.4.6 (Ubuntu)
-      Date:
-      - Fri, 13 Mar 2015 21:02:01 GMT
-      Content-Type:
-      - text/html
-      Content-Length:
-      - '193'
-      Connection:
-      - keep-alive
-      Location:
-      - https://exercises-dev1.openstax.org/api/exercises?q=tag%3Ak12phys-ch04-ex002
-    body:
-      encoding: UTF-8
-      string: "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n<body
-        bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
-        (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
-    http_version: 
-  recorded_at: Fri, 13 Mar 2015 21:02:07 GMT
-- request:
-    method: get
-    uri: https://exercises-dev1.openstax.org/api/exercises?q=tag:k12phys-ch04-ex002
+    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:k12phys-ch04-ex002
     body:
       encoding: US-ASCII
       string: ''
@@ -56,9 +19,9 @@ http_interactions:
       message: OK
     headers:
       Server:
-      - nginx/1.4.6 (Ubuntu)
+      - nginx
       Date:
-      - Fri, 13 Mar 2015 21:02:01 GMT
+      - Wed, 28 Oct 2015 20:06:38 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -73,37 +36,42 @@ http_interactions:
       - 1; mode=block
       X-Content-Type-Options:
       - nosniff
+      Access-Control-Allow-Origin:
+      - "*"
       Etag:
-      - W/"4be5e27104d569155fe93797f4f60e9d"
+      - W/"5ee795708b282a9f416cfd9106efef18"
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=TDlyZVU3YWFmanVlc0cvZ04wWnpTUmNKbFY5ZzRKdXQwc0FwVmFzcXpBYTlqSXh5ZkNHdTNNOWNNQ0JRNHI1ak1JVHZrT0xqZ3pDMnJMU0gyZVNsUkE9PS0tNmRKTkJ0czV5ZHlYQTl6WlIydzIxUT09--5c18c20a0da01fe56fc1f65b5eb80432f70876cb;
+      - _exercises_session=R3Q0YUZHU3EvQUV5TU1ndGdxOXBzQy93WnJnWXdxUnNidWMwZmhVYVI3S01aM3R3NDlBWVF3K1psdFJIRjRNSmZVY2VrUW9zSFEwS0g0N3A2UVZZc1E9PS0tQTE3Qyt4TDZWM01rQXN1bXRvTThLQT09--39a3b8c0a39a57ad267b893b3216847001611798;
         path=/; HttpOnly
       X-Request-Id:
-      - 5ef2c411-b800-4935-8e97-27040226bc57
+      - 880fe44b-0f16-43ff-ba15-ffc05e48dd4d
       X-Runtime:
-      - '0.045466'
+      - '0.163332'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
       encoding: UTF-8
-      string: '{"total_count":1,"items":[{"uid":"2@1","number":2,"version":1,"published_at":"2015-03-10T19:49:17.840Z","editors":[],"authors":[{"user_id":1}],"copyright_holders":[{"user_id":2}],"derived_from":[],"attachments":[],"tags":["k12phys-ch04-s01-lo01","k12phys-ch04-ex002","practice-concepts","inbook-yes","dok2","time-short","display-free-response","display-rec-sensitive"],"stimulus_html":"","questions":[{"id":80,"stimulus_html":"","stem_html":"Do
-        two bodies have to be in contact to exert force on one another? Explain with
-        examples.","answers":[{"id":290,"content_html":"Yes, gravitational force is
-        a contact force and requires physical contact to exert force.","correctness":"0.0","feedback_html":"Are
-        you sure that gravitational force is a contact force? Can you differentiate
-        between field and contact forces?"},{"id":289,"content_html":"Yes, gravitational
-        force is a field force and requires physical contact to exert force.","correctness":"0.0","feedback_html":"It
-        is correct that the gravitational force is a field force but do you think
-        field forces require physical contact to exert force?"},{"id":288,"content_html":"No,
-        gravitational force is a contact force and does not require physical contact
-        to exert force.","correctness":"0.0","feedback_html":"Do you think gravitational
-        force is a contact force? Also, can the contact force act without physical
-        contact?"},{"id":287,"content_html":"No, gravitational force is a field force
-        and does not requires physical contact to exert force.","correctness":"1.0","feedback_html":"Correct!
-        Gravitational force can exist between two objects as it is a field force and
-        does not require physical contact."}],"hints":[],"formats":["multiple-choice","free-response"],"combo_choices":[]}]}]}'
+      string: '{"total_count":1,"items":[{"uid":"2061@1","number":2061,"version":1,"published_at":"2015-09-16T20:13:57.264Z","editors":[],"authors":[{"user_id":1,"name":"OpenStax"}],"copyright_holders":[{"user_id":2,"name":"Rice
+        University"}],"derived_from":[],"attachments":[],"tags":["inbook-yes","display-free-response","display-rec-sensitive","dok2","time-short","blooms-2","k12phys","os-practice-concepts","k12phys-ch04","k12phys-ch04-s01","k12phys-ch04-s01-lo01","k12phys-ch04-ex002"],"stimulus_html":"","questions":[{"id":2061,"stimulus_html":"","stem_html":"Do
+        two bodies have to be in physical contact to exert a force upon one another?
+        Explain with an example.","answers":[{"id":8182,"content_html":"Yes, the gravitational
+        force is a contact force and requires physical contact to exert a force.","correctness":"0.0","feedback_html":"Contact
+        forces require physical contact to exert a force."},{"id":8181,"content_html":"Yes,
+        the gravitational force is a field force and requires physical contact to
+        exert a force.","correctness":"0.0","feedback_html":"A field force produces
+        an action at a distance without physical contact between the interacting bodies."},{"id":8180,"content_html":"No,
+        the gravitational force is a contact force and does not require physical contact
+        to exert a force.","correctness":"0.0","feedback_html":"The gravitational
+        force is a field force. Can a contact force act without physical contact?"},{"id":8179,"content_html":"No,
+        the gravitational force is a field force and does not require physical contact
+        to exert a force.","correctness":"1.0","feedback_html":"The gravitational
+        force exists between two objects at a distance from each other because it
+        is a field force and does not require physical contact."}],"solutions":[{"uid":"2061@1","number":2061,"version":1,"published_at":"2015-09-16T20:13:57.259Z","editors":[],"authors":[{"user_id":1,"name":"OpenStax"}],"copyright_holders":[{"user_id":2,"name":"Rice
+        University"}],"derived_from":[],"attachments":[],"solution_type":"detailed","content_html":"No.
+        The gravitational force can act between objects without the objects touching
+        each other."}],"hints":[],"formats":["free-response","multiple-choice"],"combo_choices":[]}]}]}'
     http_version: 
-  recorded_at: Fri, 13 Mar 2015 21:02:07 GMT
+  recorded_at: Wed, 28 Oct 2015 20:06:38 GMT
 recorded_with: VCR 2.9.3

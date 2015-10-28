@@ -176,7 +176,7 @@ module OpenStax::Cnx::V1
       return @tags.values unless @tags.nil?
 
       # Start with default UUID tag
-      @tags = { uuid: { value: uuid, type: :uuid } }
+      @tags = { uuid: { value: "cnxmod:#{uuid}", type: :uuid } }
 
       # Extract tag name and description from .ost-standards-def and .os-learning-objective-def.
 

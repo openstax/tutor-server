@@ -1,9 +1,9 @@
 require 'rails_helper'
 
-RSpec.describe OpenStax::Exercises::V1::FakeClient, :type => :external do
+RSpec.describe OpenStax::Exercises::V1::FakeClient, type: :external do
 
-  let(:fake_client) {OpenStax::Exercises::V1.fake_client}
-  before(:each) {fake_client.reset!}
+  let(:fake_client) { OpenStax::Exercises::V1.fake_client }
+  before(:each) { fake_client.reset! }
 
   it 'allows adding of exercises' do
     expect{fake_client.add_exercise}.to change{fake_client.exercises_array.count}.by(1)
