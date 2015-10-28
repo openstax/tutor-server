@@ -18,5 +18,6 @@ RSpec.describe 'Customer Service' do
   scenario 'views the ecosystems' do
     expect(page).to have_css('td', text: 'Test book')
     expect(page).to_not have_link('Import a new Ecosystem')
+    expect(page).to_not have_link('Delete')
   end
 end
