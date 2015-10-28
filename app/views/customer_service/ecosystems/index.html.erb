@@ -1,3 +1,4 @@
 <% @page_header = 'Ecosystems' %>
 
-<%= render partial: 'manager/ecosystems/index', locals: { ecosystems: @ecosystems } %>
+<%= render partial: 'manager/ecosystems/index',
+           locals: { ecosystems: @ecosystems, incomplete_jobs: @incomplete_jobs } %>

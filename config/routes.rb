@@ -186,6 +186,17 @@ Rails.application.routes.draw do
     resources :targeted_contracts, only: :index
   end
 
+  namespace :content_analyst do
+    root to: 'console#index'
+
+    resources :ecosystems, only: [:index] do
+      collection do
+        get :import
+        post :import
+      end
+    end
+  end
+
   namespace :dev do
     resources :users, only: [:create] do
       post 'generate', on: :collection

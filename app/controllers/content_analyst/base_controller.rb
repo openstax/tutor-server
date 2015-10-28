@@ -1,0 +1,11 @@
+class ContentAnalyst::BaseController < ApplicationController
+  before_filter :authenticate_content_analyst!
+
+  layout 'content_analyst'
+
+  protected
+
+  def authenticate_content_analyst!
+    raise SecurityTransgression unless current_user.is_content_analyst?
+  end
+end
