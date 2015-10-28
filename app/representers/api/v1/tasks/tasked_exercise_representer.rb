@@ -23,14 +23,14 @@ module Api::V1::Tasks
                description: "The title of this Exercise"
              }
 
-    property :content_hash_without_correctness,
+    property :content_hash_without_correct_answer,
              as: :content,
              type: String,
              writeable: false,
              readable: true,
              schema_info: {
                required: false,
-               description: "The Exercise's content without correctness and feedback info"
+               description: "The Exercise's content without correctness, feedback or solutions"
              }
 
     property :can_be_recovered?,
@@ -58,6 +58,15 @@ module Api::V1::Tasks
              readable: true,
              schema_info: {
                description: "The student's free response"
+             }
+
+    property :solution,
+             type: String,
+             writeable: false,
+             readable: true,
+             if: -> (*) { task_step.feedback_available? },
+             schema_info: {
+               description: "A detailed solution that explains the correct choice"
              }
 
     property :feedback,

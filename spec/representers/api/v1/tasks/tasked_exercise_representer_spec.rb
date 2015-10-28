@@ -24,7 +24,8 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
     ## TaskedExercise-specific properties
     allow(exercise).to receive(:url).and_return('Some url')
     allow(exercise).to receive(:title).and_return('Some title')
-    allow(exercise).to receive(:content_hash_without_correctness).and_return('Some content')
+    allow(exercise).to receive(:content_hash_without_correct_answer).and_return('Some content')
+    allow(exercise).to receive(:solution).and_return('Some solution')
     allow(exercise).to receive(:feedback).and_return('Some feedback')
     allow(exercise).to receive(:correct_answer_id).and_return('456')
     allow(exercise).to receive(:can_be_recovered?).and_return(false)
@@ -66,7 +67,9 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
     end
 
     it "has the correct 'content'" do
-      allow(tasked_exercise).to receive(:content_hash_without_correctness).and_return('Some content')
+      allow(tasked_exercise).to(
+        receive(:content_hash_without_correct_answer).and_return('Some content')
+      )
       expect(representation).to include("content" => 'Some content')
     end
 
@@ -107,6 +110,10 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
       expect(representation).to_not include("has_recovery")
     end
 
+    it "'solution' is not included" do
+      expect(representation).to_not include("solution")
+    end
+
     it "'feedback_html' is not included" do
       expect(representation).to_not include("feedback_html")
     end
@@ -140,6 +147,10 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
 
       it "has correct 'has_recovery'" do
         expect(representation).to include("has_recovery" => false)
+      end
+
+      it "has correct 'solution'" do
+        expect(representation).to include("solution" => 'Some solution')
       end
 
       it "has correct 'feedback_html'" do

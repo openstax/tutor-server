@@ -66,11 +66,16 @@ class OpenStax::Exercises::V1::FakeClient
           id: "#{next_uid}",
           formats: ["multiple-choice", "free-response"],
           stem_html: "Select 10 N.",
-          answers:[
+          answers: [
             { id: "#{next_uid}", content_html: "10 N",
               correctness: 1.0, feedback_html: "Right!" },
             { id: "#{next_uid}", content_html: "1 N",
               correctness: 0.0, feedback_html: "Wrong!" }
+          ],
+          solutions: [
+            {
+              content_html: "The first one."
+            }
           ]
         }
       ]

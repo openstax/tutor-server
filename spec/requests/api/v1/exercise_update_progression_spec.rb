@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe "Exercise update progression", type: :request, api: true, version: :v1 do
 
   let!(:application)     { FactoryGirl.create :doorkeeper_application }
-  let!(:user_1)       { FactoryGirl.create(:user) }
+  let!(:user_1)          { FactoryGirl.create(:user) }
   let!(:user_1_token)    { FactoryGirl.create :doorkeeper_access_token,
                                               application: application,
                                               resource_owner_id: user_1.id }
@@ -18,6 +18,7 @@ RSpec.describe "Exercise update progression", type: :request, api: true, version
 
     api_get(step_route_base, user_1_token)
 
+    expect(response.body_as_hash).not_to have_key(:solution)
     expect(response.body_as_hash).not_to have_key(:feedback_html)
     expect(response.body_as_hash).not_to have_key(:correct_answer_id)
 
@@ -26,6 +27,7 @@ RSpec.describe "Exercise update progression", type: :request, api: true, version
 
     api_get(step_route_base, user_1_token)
 
+    expect(response.body_as_hash).not_to have_key(:solution)
     expect(response.body_as_hash).not_to have_key(:feedback_html)
     expect(response.body_as_hash).not_to have_key(:correct_answer_id)
 
@@ -35,17 +37,20 @@ RSpec.describe "Exercise update progression", type: :request, api: true, version
 
     api_get(step_route_base, user_1_token)
 
+    expect(response.body_as_hash).not_to have_key(:solution)
     expect(response.body_as_hash).not_to have_key(:feedback_html)
     expect(response.body_as_hash).not_to have_key(:correct_answer_id)
 
     # Mark it as complete and then get it again
     api_put("#{step_route_base}/completed", user_1_token)
 
+    expect(response.body_as_hash).not_to have_key(:solution)
     expect(response.body_as_hash).not_to have_key(:feedback_html)
     expect(response.body_as_hash).not_to have_key(:correct_answer_id)
 
     api_get(step_route_base, user_1_token)
 
+    expect(response.body_as_hash).not_to have_key(:solution)
     expect(response.body_as_hash).not_to have_key(:feedback_html)
     expect(response.body_as_hash).not_to have_key(:correct_answer_id)
 
@@ -55,6 +60,7 @@ RSpec.describe "Exercise update progression", type: :request, api: true, version
 
     api_get(step_route_base, user_1_token)
 
+    expect(response.body_as_hash).to include(solution: { content_html: "The first one." })
     expect(response.body_as_hash).to include(feedback_html: 'Right!')
     expect(response.body_as_hash).to include(correct_answer_id: correct_answer_id)
   end
@@ -83,6 +89,7 @@ RSpec.describe "Exercise update progression", type: :request, api: true, version
     expect(response).to have_http_status(:success)
 
     # No feedback yet because feedback date has not been reached
+    expect(response.body_as_hash).not_to include(:solution)
     expect(response.body_as_hash).not_to include(:correct_answer_id)
     expect(response.body_as_hash).not_to include(:feedback_html)
 
