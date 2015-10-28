@@ -1,4 +1,6 @@
 module ModifiedWrapper
+  attr_reader :strategy
+
   def self.included(base)
     base.send(:include, TypeVerification)
     base.extend ClassMethods
@@ -62,7 +64,4 @@ module ModifiedWrapper
       end
     end
   end
-
-  private
-  attr_reader :strategy
 end
