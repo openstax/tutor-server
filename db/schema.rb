@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151023175052) do
+ActiveRecord::Schema.define(version: 20151028012241) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -59,6 +59,11 @@ ActiveRecord::Schema.define(version: 20151023175052) do
 
   add_index "content_chapters", ["content_book_id", "number"], name: "index_content_chapters_on_content_book_id_and_number", unique: true, using: :btree
   add_index "content_chapters", ["title"], name: "index_content_chapters_on_title", using: :btree
+
+  create_table "content_ecosystem_jobs", force: :cascade do |t|
+    t.string  "import_job_uuid",                 null: false
+    t.boolean "completed",       default: false
+  end
 
   create_table "content_ecosystems", force: :cascade do |t|
     t.string   "title",      null: false
