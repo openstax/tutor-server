@@ -24,6 +24,8 @@ module ModifiedWrapper
   end
 
   module ClassMethods
+    attr_reader :strategy_class
+
     def use_strategy(klass, options = {})
       @strategy_class = klass
       define_instance_methods(options[:instance_methods])
