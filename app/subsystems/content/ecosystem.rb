@@ -159,7 +159,7 @@ module Content
     end
 
     def comments
-      verify_and_return @strategy.comments, klass: String
+      verify_and_return @strategy.comments, klass: String,
                                             allow_blank: true,
                                             allow_nil: true,
                                             error: StrategyError
