@@ -10,7 +10,7 @@ module Content
 
       def create(title:, comments: nil, strategy_class: ::Content::Strategies::Direct::Ecosystem)
         title = verify_and_return title, klass: String
-        comments = verify_and_return comments, klass: String
+        comments = verify_and_return comments, allow_nil: true, allow_blank: true, klass: String
         verify_and_return strategy_class.create(title: title, comments: comments),
                           klass: self, error: StrategyError
       end
@@ -18,7 +18,7 @@ module Content
       def create!(title:, comments: nil,
                   strategy_class: ::Content::Strategies::Direct::Ecosystem)
         title = verify_and_return title, klass: String
-        comments = verify_and_return comments, klass: String
+        comments = verify_and_return comments, allow_nil: true, allow_blank: true, klass: String
         verify_and_return strategy_class.create!(title: title, comments: comments),
                           klass: self, error: StrategyError
       end
