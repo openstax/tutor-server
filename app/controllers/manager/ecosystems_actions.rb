@@ -2,8 +2,9 @@ module Manager::EcosystemsActions
 
   def index
     @ecosystems = Content::ListEcosystems[]
-    @incomplete_jobs = Lev::BackgroundJob.incomplete.select do |job|
-      job.respond_to?(:ecosystem_import_url)
+    Content::Models::EcosystemJob.update_status
+    @incomplete_jobs = Content::Models::EcosystemJob.incomplete.collect do |job|
+      Lev::BackgroundJob.find(job.import_job_uuid)
     end
   end
 
@@ -22,6 +23,7 @@ module Manager::EcosystemsActions
       job = Lev::BackgroundJob.find(job_id)
       import_url = OpenStax::Cnx::V1.url_for(params[:cnx_id])
       job.save(ecosystem_import_url: import_url)
+      Content::Models::EcosystemJob.create(import_job_uuid: job_id)
       flash[:notice] = 'Ecosystem import job queued.'
     end
     redirect_to ecosystems_path
