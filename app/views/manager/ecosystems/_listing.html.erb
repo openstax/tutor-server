@@ -7,6 +7,7 @@
       <th>Import Date</th>
       <th>Link to Archive</th>
       <th>Book UUID</th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
@@ -28,6 +29,16 @@
                                                 content: book.uuid,
                                                 container: 'body' },
                                         class: 'btn btn-xs btn-secondary' %></td>
+      <td>
+        <% if !destroy_path.nil? && ecosystem.deletable? %>
+          <%= link_to 'Delete', destroy_path.call(ecosystem.id),
+                                method: :delete,
+                                data: {
+                                  confirm: "Are you sure you want to delete #{ecosystem.books.first.title}?"
+                                },
+                                class: 'btn btn-xs btn-primary' %>
+        <% end %>
+      </td>
     </tr>
   <% end %>
   </tbody>

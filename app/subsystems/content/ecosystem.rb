@@ -170,5 +170,9 @@ module Content
                         klass: ActiveSupport::TimeWithZone, error: StrategyError
     end
 
+    def deletable?
+      @strategy.deletable?
+    end
+
   end
 end

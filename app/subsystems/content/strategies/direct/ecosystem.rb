@@ -6,8 +6,9 @@ module Content
         wraps ::Content::Models::Ecosystem
 
         exposes :books, :chapters, :pages, :exercises, :pools, :tags, :title, :comments,
-          :created_at
-        exposes :all, :create, :create!, :find, from_class: ::Content::Models::Ecosystem
+          :created_at, :deletable?
+        exposes :all, :create, :create!, :find, :deletable?,
+          from_class: ::Content::Models::Ecosystem
 
         class << self
           alias_method :entity_all, :all
