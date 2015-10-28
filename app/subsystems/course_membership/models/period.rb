@@ -25,7 +25,9 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
   before_destroy :no_active_students, prepend: true
 
   validates :course, presence: true
-  validates :name, presence: true, uniqueness: { scope: :entity_course_id }
+  validates :name, presence: true
+  validates_uniqueness_of :name, scope: :entity_course_id,
+                                 conditions: -> { where(deleted_at: nil) }
   validates :enrollment_code, presence: true, uniqueness: true
 
   default_scope { order(:name) }

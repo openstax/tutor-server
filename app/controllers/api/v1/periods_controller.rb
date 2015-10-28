@@ -16,8 +16,15 @@ class Api::V1::PeriodsController < Api::V1::ApiController
   EOS
   def create
     OSU::AccessPolicy.require_action_allowed!(:add_period, current_human_user, @course)
-    period = CreatePeriod[course: @course, name: period_params[:name]]
-    respond_with period, represent_with: Api::V1::PeriodRepresenter, location: nil
+    result = CreatePeriod.call(course: @course, name: period_params[:name])
+
+    if result.errors.any?
+      render_api_errors(result.errors)
+    else
+      respond_with result.outputs.period,
+                   represent_with: Api::V1::PeriodRepresenter,
+                   location: nil
+    end
   end
 
   api :PATCH, '/periods/:id',

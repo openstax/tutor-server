@@ -11,11 +11,12 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
 
   before do
     AddUserAsCourseTeacher[course: course, user: teacher_user]
-    allow(Babbler).to receive(:babble) { 'awesome programmer' }
   end
 
   describe '#create' do
     it 'allows teachers to create periods' do
+      allow(Babbler).to receive(:babble) { 'awesome programmer' }
+
       api_post :create, teacher_token, parameters: { course_id: course.id,
                                                      period: { name: '7th Period' } }
 
@@ -33,6 +34,17 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
       end
 
       expect(response).to have_http_status(403)
+    end
+
+    it "allows same name on periods if the previous one was deleted" do
+      period = CreatePeriod[course: course, name: '8th Period']
+      CourseMembership::DeletePeriod[period: period]
+
+      api_post :create, teacher_token, parameters: { course_id: course.id,
+                                                     period: { name: '8th Period' } }
+
+      expect(response).to have_http_status(201)
+      expect(response.body_as_hash[:name]).to eq('8th Period')
     end
   end
 
@@ -95,6 +107,17 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
 
       expect(response).to have_http_status(403)
       expect(CourseMembership::Models::Period.all).to include(other_period.to_model)
+    end
+
+    it "does not delete periods already deleted" do
+      period = CreatePeriod[course: course, name: '8th Period']
+      CourseMembership::DeletePeriod[period: period]
+
+      rescuing_exceptions do
+        api_delete :destroy, teacher_token, parameters: { id: period.id }
+      end
+
+      expect(response).to have_http_status(404)
     end
   end
 end
