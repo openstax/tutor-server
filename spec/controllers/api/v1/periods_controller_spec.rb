@@ -37,13 +37,21 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
   end
 
   describe '#update' do
-    it 'allows teachers to rename periods' do
-      period = CreatePeriod[course: course, name: '8th Period']
+    let(:period) { CreatePeriod[course: course, name: '8th Period'] }
 
+    it 'allows teachers to rename periods' do
       api_patch :update, teacher_token, parameters: { id: period.id,
                                                       period: { name: 'Skip class!!!' } }
 
       expect(response.body_as_hash[:name]).to eq('Skip class!!!')
+    end
+
+    it 'allows teachers to change the enrollment code' do
+      api_patch :update, teacher_token,
+        parameters: { id: period.id, period: { enrollment_code: 'handsome programmer' } }
+
+      expect(response).to have_http_status(200)
+      expect(response.body_as_hash[:enrollment_code]).to eq('handsome programmer')
     end
 
     it 'ensures the person is a teacher of the course' do
