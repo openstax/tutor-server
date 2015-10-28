@@ -139,6 +139,10 @@ gem 'babbler', '~> 1.0.1'
 # Soft-deletion
 gem 'paranoia', '~> 2.1.3'
 
+# Salesforce
+gem 'restforce'
+gem 'omniauth-salesforce'
+
 group :development, :test do
   # Get env variables from .env file
   gem 'dotenv-rails'

@@ -455,6 +455,14 @@ ActiveRecord::Schema.define(version: 20151105162348) do
 
   add_index "role_role_users", ["user_profile_id", "entity_role_id"], name: "role_role_users_user_role_uniq", unique: true, using: :btree
 
+  create_table "salesforce_users", force: :cascade do |t|
+    t.string "name"
+    t.string "uid"
+    t.string "oauth_token"
+    t.string "refresh_token"
+    t.string "instance_url"
+  end
+
   create_table "school_district_districts", force: :cascade do |t|
     t.string "name", null: false
   end
