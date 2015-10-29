@@ -1,13 +1,20 @@
 require 'rails_helper'
 
 RSpec.describe Tasks::Models::TaskedExercise, type: :model do
-  it { is_expected.to validate_presence_of(:content) }
-
   let!(:hash) { OpenStax::Exercises::V1.fake_client.new_exercise_hash }
   let!(:content_exercise) { FactoryGirl.create :content_exercise,
                                                content: hash.to_json }
-  let!(:tasked_exercise)  { FactoryGirl.create(:tasks_tasked_exercise,
-                                               exercise: content_exercise) }
+  subject(:tasked_exercise)  { FactoryGirl.create(:tasks_tasked_exercise,
+                                                  exercise: content_exercise) }
+
+  it { is_expected.to validate_presence_of(:content) }
+  it { is_expected.to validate_presence_of(:correct_answer_id) }
+
+  it 'auto assigns the correct_answer_id on create' do
+    expect(tasked_exercise.correct_answer_id).to(
+      eq tasked_exercise.correct_question_answer_ids[0].first
+    )
+  end
 
   it 'does not accept a multiple choice answer before a free response unless the free-response format is not present' do
     tasked_exercise.answer_id = tasked_exercise.answer_ids.last

@@ -3,8 +3,12 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
 
   belongs_to :exercise, subsystem: :content, inverse_of: :tasked_exercises
 
+  before_validation :set_correct_answer_id, on: :create
+
   validates :url, presence: true
   validates :content, presence: true
+  validates :correct_answer_id, presence: true
+
   validate :free_response_required, on: :update
   validate :valid_answer, :no_feedback
 
@@ -64,10 +68,6 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     question_answer_ids[0]
   end
 
-  def correct_answer_id
-    correct_question_answer_ids[0].first
-  end
-
   def solution
     solutions[0].try(:first)
   end
@@ -77,7 +77,7 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
   end
 
   def is_correct?
-    correct_question_answer_ids.flatten.include?(answer_id)
+    correct_answer_id == answer_id
   end
 
   def can_be_recovered?
@@ -89,6 +89,10 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
   end
 
   protected
+
+  def set_correct_answer_id
+    self.correct_answer_id = correct_question_answer_ids[0].first
+  end
 
   def free_response_required
     return true unless formats.include?('free-response') && free_response.blank?
