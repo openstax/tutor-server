@@ -1,6 +1,6 @@
 class Api::V1::Cc::TasksController < Api::V1::ApiController
 
-  after_filter :set_cors_headers
+  before_filter :set_cors_headers
   skip_before_action :verify_authenticity_token, only: :show
 
   resource_description do
@@ -27,11 +27,6 @@ class Api::V1::Cc::TasksController < Api::V1::ApiController
     #   1) Error out if the user isn't in a course with the provided book/page ID
     #   2) return 4xx error if IDs contain versions, e.g. UUID@42
 
-    # FIXME
-    # OpenstaxAPI calls User::User.where().first which fails since User::User is a proxy and lacks .where
-    # https://github.com/openstax/openstax_api/pull/36
-    # current_human_user = User::User.find(doorkeeper_token.resource_owner_id) if doorkeeper_token
-
     if current_human_user.nil? || current_human_user.is_anonymous?
       head :forbidden
     elsif params[:cnx_book_id].blank? || params[:cnx_page_id].blank?
@@ -57,10 +52,9 @@ class Api::V1::Cc::TasksController < Api::V1::ApiController
   end
 
   # requested by an OPTIONS request type
-  def cors_preflight_check
-    set_cors_headers
+  def cors_preflight_check # the other CORS headers are set by the before_filter
     headers['Access-Control-Max-Age'] = '1728000'
-    render :text => '', :content_type => 'text/plain'
+    render text: '', :content_type => 'text/plain'
   end
 
   protected
@@ -89,7 +83,7 @@ class Api::V1::Cc::TasksController < Api::V1::ApiController
 
   def set_cors_headers
     headers['Access-Control-Allow-Origin']   = validated_cors_origin
-    headers['Access-Control-Allow-Methods']  = 'POST, PUT, DELETE, GET, OPTIONS'
+    headers['Access-Control-Allow-Methods']  = 'GET, OPTIONS' # PUT/POST will be added when tasks are created
     headers['Access-Control-Request-Method'] = '*'
     headers['Access-Control-Allow-Credentials'] = 'true'
     headers['Access-Control-Allow-Headers']  = 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
