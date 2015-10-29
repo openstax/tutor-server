@@ -1,5 +1,5 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::Tasks::TaskStepProperties, type: :representer do
+RSpec.describe Tasks::Models::ConceptCoachTask, type: :model do
   pending "add some examples to (or delete) #{__FILE__}"
 end
