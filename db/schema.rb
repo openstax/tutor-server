@@ -244,8 +244,8 @@ ActiveRecord::Schema.define(version: 20151028163225) do
     t.string   "timezone",                    default: "Central Time (US & Canada)", null: false
     t.datetime "created_at",                                                         null: false
     t.datetime "updated_at",                                                         null: false
-    t.string   "catalog_offering_identifier"
     t.boolean  "is_concept_coach",                                                   null: false
+    t.string   "catalog_offering_identifier"
   end
 
   add_index "course_profile_profiles", ["entity_course_id"], name: "index_course_profile_profiles_on_entity_course_id", unique: true, using: :btree

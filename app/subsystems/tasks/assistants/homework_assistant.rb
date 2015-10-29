@@ -116,17 +116,24 @@ class Tasks::Assistants::HomeworkAssistant
 
       spaced_ecosystem = history.ecosystems[k_ago]
 
-      # Get pages from the exercise steps
-      spaced_pages = history.exercises[k_ago].collect(&:page).uniq
+      # Get pages from the exercise steps selected by the teacher in the spaced assignment
+      spaced_tasked_exercises = history.tasked_exercises[k_ago]
+      spaced_core_tasked_exercises = spaced_tasked_exercises.select do |tasked_exercise|
+        tasked_exercise.task_step.core_group?
+      end
+      spaced_core_pages = spaced_core_tasked_exercises.collect do |tasked_exercise|
+        model = tasked_exercise.exercise.page
+        Content::Page.new(strategy: model.wrap)
+      end.uniq
 
       # Reuse Ecosystems map when possible
       @ecosystems_map[spaced_ecosystem.id] ||= Content::Map.find(
         from_ecosystems: [spaced_ecosystem, @ecosystem].uniq, to_ecosystem: @ecosystem
       )
 
-      # Map the page to exercises in the new ecosystem
+      # Map the core pages to exercises in the new ecosystem
       spaced_exercises = @ecosystems_map[spaced_ecosystem.id].map_pages_to_exercises(
-        pages: spaced_pages, pool_type: :homework_dynamic
+        pages: spaced_core_pages, pool_type: :homework_dynamic
       )
 
       # Exclude exercises already worked (by number)
