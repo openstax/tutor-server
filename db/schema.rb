@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151028163225) do
+ActiveRecord::Schema.define(version: 20151029184944) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -244,8 +244,8 @@ ActiveRecord::Schema.define(version: 20151028163225) do
     t.string   "timezone",                    default: "Central Time (US & Canada)", null: false
     t.datetime "created_at",                                                         null: false
     t.datetime "updated_at",                                                         null: false
-    t.string   "catalog_offering_identifier"
     t.boolean  "is_concept_coach",                                                   null: false
+    t.string   "catalog_offering_identifier"
   end
 
   add_index "course_profile_profiles", ["entity_course_id"], name: "index_course_profile_profiles_on_entity_course_id", unique: true, using: :btree
@@ -545,6 +545,7 @@ ActiveRecord::Schema.define(version: 20151028163225) do
     t.string   "answer_id"
     t.datetime "created_at",                          null: false
     t.datetime "updated_at",                          null: false
+    t.string   "correct_answer_id",                   null: false
   end
 
   add_index "tasks_tasked_exercises", ["content_exercise_id"], name: "index_tasks_tasked_exercises_on_content_exercise_id", using: :btree
