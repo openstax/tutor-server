@@ -2,7 +2,7 @@ module Wrapper
 
   def self.included(base)
     base.send(:include, TypeVerification)
-     base.extend ClassMethods
+    base.extend ClassMethods
   end
 
   def initialize(strategy:)
@@ -50,5 +50,16 @@ module Wrapper
         _define_dynamic_wrapping(attr.to_sym, type)
       end
     end
+
+    cattr_accessor :strategy_class
+
+    def self.with_strategy_class(strategy_class, &block)
+      original_strategy_class = self.strategy_class
+      self.strategy_class = strategy_class
+      result = yield
+      self.strategy_class = original_strategy_class
+      result
+    end
+
   end
 end

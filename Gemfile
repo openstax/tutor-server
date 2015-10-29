@@ -142,6 +142,7 @@ gem 'paranoia', '~> 2.1.3'
 # Salesforce
 gem 'restforce'
 gem 'omniauth-salesforce'
+gem 'active_force', git: 'https://github.com/maddijoyce/active_force', ref: '9695896f5'
 
 group :development, :test do
   # Get env variables from .env file

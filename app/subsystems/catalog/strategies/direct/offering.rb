@@ -12,6 +12,12 @@ module Catalog
           entity_ecosystem ? ::Content::Ecosystem.new(strategy: entity_ecosystem) : nil
         end
 
+        def self.find_by(*args)
+          ::Catalog::Models::Offering.where(*args).collect do |model|
+            ::Catalog::Offering.new(strategy: new(model))
+          end
+        end
+
       end
     end
   end

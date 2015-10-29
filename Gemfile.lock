@@ -12,6 +12,15 @@ GIT
       transaction_isolation
       transaction_retry
 
+GIT
+  remote: https://github.com/maddijoyce/active_force
+  revision: 9695896f576ea850d6ca60fb7b8af9c0dd07e8ea
+  ref: 9695896f5
+  specs:
+    active_force (0.7.1)
+      active_attr (~> 0.8)
+      restforce (~> 2.1.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -654,6 +663,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  active_force!
   active_record_query_trace
   activerecord-import
   addressable

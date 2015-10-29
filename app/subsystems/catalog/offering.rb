@@ -3,6 +3,8 @@ module Catalog
 
     include Wrapper
 
+    self.strategy_class = Catalog::Strategies::Direct::Offering
+
     wrap_attributes ::Catalog::Models::Offering,
        :id, :identifier, :is_tutor, :is_concept_coach, :description, :webview_url, :pdf_url
 
@@ -14,6 +16,9 @@ module Catalog
       verify_and_return @strategy.content_ecosystem_id, allow_nil: true, klass: Integer, error: StrategyError
     end
 
+    def self.find_by(*args)
+      verify_and_return strategy_class.find_by(*args), klass: self, error: StrategyError
+    end
 
   end
 end
