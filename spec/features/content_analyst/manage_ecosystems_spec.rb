@@ -28,4 +28,18 @@ RSpec.describe 'Content Analyst', speed: :slow, vcr: VCR_OPTS do
     expect(page).to have_css('td', text: 'This version includes typo fixes to quantum equations')
     expect(page).to have_css('[data-content="93e2b09d-261c-4007-a987-0b3062fe154b"]')
   end
+
+  scenario 'imports a book without explicit archive url' do
+    click_link 'Import a new Ecosystem'
+
+    fill_in 'Book CNX id', with: '93e2b09d-261c-4007-a987-0b3062fe154b@4.4'
+    fill_in 'Comments', with: 'This version includes typo fixes to quantum equations'
+    click_button 'Import'
+
+    expect(page).to have_css('.flash_notice', text: 'Ecosystem import job queued.')
+    expect(page).to have_css('td', text: 'Physics')
+    expect(page).to have_css('td', text: '4.4')
+    expect(page).to have_css('td', text: 'This version includes typo fixes to quantum equations')
+    expect(page).to have_css('[data-content="93e2b09d-261c-4007-a987-0b3062fe154b"]')
+  end
 end
