@@ -31,3 +31,5 @@ COPYRIGHT_HOLDER = "Rice University"
 
 # Initialize the Rails application.
 Rails.application.initialize!
+
+require 'doorkeeper_session_grant'
