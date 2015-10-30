@@ -6,7 +6,8 @@ module Catalog
     self.strategy_class = Catalog::Strategies::Direct::Offering
 
     wrap_attributes ::Catalog::Models::Offering,
-       :id, :identifier, :is_tutor, :is_concept_coach, :description, :webview_url, :pdf_url
+       :id, :identifier, :is_tutor, :is_concept_coach, :description,
+       :webview_url, :pdf_url, :default_course_name
 
     def ecosystem
       verify_and_return @strategy.ecosystem, allow_nil: true, klass: ::Content::Ecosystem, error: StrategyError

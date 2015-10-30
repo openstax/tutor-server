@@ -36,21 +36,42 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav">
-            <li><%= link_to 'Districts', admin_districts_path %></li>
-            <li><%= link_to 'Schools', admin_schools_path %></li>
-            <li><%= link_to 'Courses', admin_courses_path %></li>
+
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Course Organization<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><%= link_to 'Catalog Offerings', admin_catalog_offerings_path %></li>
+                <li><%= link_to 'Courses', admin_courses_path %></li>
+                <li><%= link_to 'Schools', admin_schools_path %></li>
+                <li><%= link_to 'Districts', admin_districts_path %></li>
+              </ul>
+            </li>
+
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Content<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><%= link_to 'Tags', admin_tags_path %></li>
+                <li><%= link_to 'Ecosystems', admin_ecosystems_path %></li>
+              </ul>
+            </li>
+
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Legal<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><%= link_to 'Terms', fine_print_path %></li>
+                <li><%= link_to 'Targeted Contracts', admin_targeted_contracts_path %></li>
+              </ul>
+            </li>
+
             <li><%= link_to 'Users', admin_users_path %></li>
-            <li><%= link_to 'Tags', admin_tags_path %></li>
-            <li><%= link_to 'Ecosystems', admin_ecosystems_path %></li>
             <li><%= link_to 'Jobs', admin_jobs_path %></li>
-            <li><%= link_to 'Targeted Contracts', admin_targeted_contracts_path %></li>
+
             <li><%= link_to 'Salesforce', admin_salesforce_path %></li>
 
             <% if Timecop.enabled? %>
               <li><%= link_to 'Time Travel', admin_timecop_path %></li>
             <% end %>
-            <li><%= link_to 'Terms', fine_print_path %></li>
-            <li><%= link_to 'Catalog Offerings', admin_catalog_offerings_path %></li>
+
           </ul>
 
           <ul class="nav navbar-nav navbar-right">

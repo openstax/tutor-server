@@ -27,6 +27,7 @@ ActiveRecord::Schema.define(version: 20151105162348) do
     t.string   "pdf_url",                              null: false
     t.datetime "created_at",                           null: false
     t.datetime "updated_at",                           null: false
+    t.string   "default_course_name"
   end
 
   add_index "catalog_offerings", ["content_ecosystem_id"], name: "index_catalog_offerings_on_content_ecosystem_id", using: :btree

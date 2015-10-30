@@ -5,7 +5,9 @@ module Catalog
 
         wraps ::Catalog::Models::Offering
 
-        exposes :id, :identifier, :is_tutor, :is_concept_coach, :description, :webview_url, :pdf_url, :ecosystem, :content_ecosystem_id
+        exposes :id, :identifier, :is_tutor, :is_concept_coach, :description,
+                :webview_url, :pdf_url, :ecosystem, :content_ecosystem_id,
+                :default_course_name
 
         alias_method :entity_ecosystem, :ecosystem
         def ecosystem
