@@ -14,10 +14,16 @@ module Manager::EcosystemsActions
 
   protected
 
-  def import_ecosystem
-    url = params[:archive_url] || @default_archive_url
+  def archive_url
+    if params[:archive_url].present?
+      params[:archive_url]
+    else
+      @default_archive_url
+    end
+  end
 
-    OpenStax::Cnx::V1.with_archive_url(url: url) do
+  def import_ecosystem
+    OpenStax::Cnx::V1.with_archive_url(url: archive_url) do
       job = create_book_import_job
       import_url = OpenStax::Cnx::V1.url_for(params[:cnx_id])
 
