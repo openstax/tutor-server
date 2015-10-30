@@ -663,7 +663,7 @@ http_interactions:
   recorded_at: Mon, 26 Oct 2015 23:01:45 GMT
 - request:
     method: get
-    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:e26d1433-f8e4-41db-a757-0e061d6d2737,apbio-ch04-s02-lo01,apbio-ch04-s02-lo02,apbio-ch04-s02-aplo-1-32,apbio-ch04-s02-aplo-2-6,apbio-ch04-s02-aplo-2-7
+    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:%22cnxmod:e26d1433-f8e4-41db-a757-0e061d6d2737,apbio-ch04-s02-lo01,apbio-ch04-s02-lo02,apbio-ch04-s02-aplo-1-32,apbio-ch04-s02-aplo-2-6,apbio-ch04-s02-aplo-2-7%22
     body:
       encoding: US-ASCII
       string: ''

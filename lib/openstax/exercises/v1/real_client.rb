@@ -20,10 +20,20 @@ class OpenStax::Exercises::V1::RealClient
     (@oauth_token || @oauth_client).request(*args)
   end
 
+  def sanitize(vals)
+    vals = [vals].flatten
+
+    # Remove , and "
+    value_str = vals.map{ |val| val.gsub(/(?:,|"|%2C|%22)/, '') }.join(',')
+
+    # If : or spaces present, quote all the values
+    vals.any?{ |val| /[\s:]/.match(val) } ? "\"#{value_str}\"" : value_str
+  end
+
   def exercises(params = {}, options = {})
     params = params.stringify_keys
     query_hash = params.except(*NON_QUERY_PARAMS)
-    query = query_hash.collect{ |k,v| "#{k}:#{[v].flatten.join(',')}" }.join(' ')
+    query = query_hash.collect{ |key, vals| "#{key}:#{sanitize(vals)}" }.join(' ')
     uri = Addressable::URI.parse(@server_url)
     uri.path = "/api/exercises"
     uri.query = {q: query}.merge(params.slice(*NON_QUERY_PARAMS)).to_query

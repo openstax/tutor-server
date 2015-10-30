@@ -489,7 +489,7 @@ http_interactions:
   recorded_at: Mon, 26 Oct 2015 22:55:02 GMT
 - request:
     method: get
-    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:640e3e84-09a5-4033-b2a7-b7fe5ec29dc6,k12phys-ch04-s02-lo01,k12phys-ch04-s02-lo02
+    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:%22cnxmod:640e3e84-09a5-4033-b2a7-b7fe5ec29dc6,k12phys-ch04-s02-lo01,k12phys-ch04-s02-lo02%22
     body:
       encoding: US-ASCII
       string: ''

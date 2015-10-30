@@ -1217,7 +1217,7 @@ http_interactions:
   recorded_at: Mon, 26 Oct 2015 22:56:19 GMT
 - request:
     method: get
-    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:102e9604-daa7-4a09-9f9e-232251d1a4ee
+    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:%22cnxmod:102e9604-daa7-4a09-9f9e-232251d1a4ee%22
     body:
       encoding: US-ASCII
       string: ''
@@ -1410,7 +1410,7 @@ http_interactions:
   recorded_at: Mon, 26 Oct 2015 22:56:20 GMT
 - request:
     method: get
-    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:127f63f7-d67f-4710-8625-2b1d4128ef6b
+    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:%22cnxmod:127f63f7-d67f-4710-8625-2b1d4128ef6b%22
     body:
       encoding: US-ASCII
       string: ''

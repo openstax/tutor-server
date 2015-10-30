@@ -1,15 +1,10 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe OpenStax::Exercises::V1::RealClient, :type => :external,
-                                                    :vcr => VCR_OPTS do
+RSpec.describe OpenStax::Exercises::V1::RealClient, type: :external,
+                                                    vcr: VCR_OPTS do
 
-  let!(:configuration) {
-    c = OpenStax::Exercises::V1::Configuration.new
-    c.server_url = 'http://exercises-dev1.openstax.org'
-    c
-  }
-  let!(:client) { OpenStax::Exercises::V1::RealClient.new configuration }
+  let!(:client) { OpenStax::Exercises::V1.real_client }
 
   context "exercises search" do
 
@@ -33,8 +28,8 @@ RSpec.describe OpenStax::Exercises::V1::RealClient, :type => :external,
       it "returns Exercises matching some content" do
         results = JSON.parse(client.exercises(content: 'FoRcE'))
 
-        expect(results['total_count']).to eq 87
-        expect(results['items'].length).to eq 87
+        expect(results['total_count']).to eq 298
+        expect(results['items'].length).to eq 298
       end
 
       it "returns Exercises matching a tag" do
@@ -50,8 +45,8 @@ RSpec.describe OpenStax::Exercises::V1::RealClient, :type => :external,
         content: 'fOrCe', order_by: 'number DESC, version ASC'
       ))
 
-      expect(results['total_count']).to eq 87
-      expect(results['items'].length).to eq 87
+      expect(results['total_count']).to eq 298
+      expect(results['items'].length).to eq 298
       previous_number = Float::INFINITY
       results['items'].each do |item|
         current_number = item['number']

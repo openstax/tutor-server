@@ -2,44 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: http://exercises-dev1.openstax.org/api/exercises?q=content:WhAt%20Is%20KiNeMaTiCs?
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Faraday v0.9.1
-      Accept:
-      - application/vnd.openstax.v1
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-  response:
-    status:
-      code: 301
-      message: Moved Permanently
-    headers:
-      Server:
-      - nginx/1.4.6 (Ubuntu)
-      Date:
-      - Fri, 13 Mar 2015 21:02:00 GMT
-      Content-Type:
-      - text/html
-      Content-Length:
-      - '193'
-      Connection:
-      - keep-alive
-      Location:
-      - https://exercises-dev1.openstax.org/api/exercises?q=content%3AWhAt+Is+KiNeMaTiCs%3F
-    body:
-      encoding: UTF-8
-      string: "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n<body
-        bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.4.6
-        (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
-    http_version: 
-  recorded_at: Fri, 13 Mar 2015 21:02:06 GMT
-- request:
-    method: get
-    uri: https://exercises-dev1.openstax.org/api/exercises?q=content:WhAt%20Is%20KiNeMaTiCs?
+    uri: https://exercises-dev.openstax.org/api/exercises?q=content:%22WhAt%20Is%20KiNeMaTiCs?%22
     body:
       encoding: US-ASCII
       string: ''
@@ -56,9 +19,9 @@ http_interactions:
       message: OK
     headers:
       Server:
-      - nginx/1.4.6 (Ubuntu)
+      - nginx
       Date:
-      - Fri, 13 Mar 2015 21:02:01 GMT
+      - Wed, 28 Oct 2015 20:06:38 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -73,32 +36,36 @@ http_interactions:
       - 1; mode=block
       X-Content-Type-Options:
       - nosniff
+      Access-Control-Allow-Origin:
+      - "*"
       Etag:
-      - W/"bf2c7ac26e2897c791614ee3b8dbe8e2"
+      - W/"cecc5091065ddb34595c5dd1df36624b"
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=blJ3OUJjYWtHZzVVMHFvZUNDaDRiRnBjZDErcWFhV1I5VXJHUWNWWHJPd09EeUs3ZUpWcjl6ckpMT3lVUzJQaVRzd2ZDekE2T0htU1M3WUVmdTk1SkE9PS0tQWxiSlFmUSsxRm05c0xXZzYwOTVoZz09--4c4837fb629723686c05b9a19839b9d5538c603e;
+      - _exercises_session=Wm1qbzFURG4zTkhlTzRwR2IzZXhETHNYTUw3WGk2VHZnd2VtcDg3SkcwNzErQVVCRVpjMWRCWXlIS25NWi9QRjRTWkE0SlRrUjk0RFVrNWgrTllqK0E9PS0tanpZVjVucnlYc21uTmhVM1pXa2NrZz09--e9f5cc6bedc2789485c56740faa526c79ce07911;
         path=/; HttpOnly
       X-Request-Id:
-      - 00409aae-7b64-4083-903b-0e86808c1ed9
+      - f565213f-c424-4565-925a-ebda01a33f71
       X-Runtime:
-      - '0.057202'
+      - '0.473695'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
       encoding: UTF-8
-      string: '{"total_count":1,"items":[{"uid":"1@1","number":1,"version":1,"published_at":"2015-03-10T19:49:17.810Z","editors":[],"authors":[{"user_id":1}],"copyright_holders":[{"user_id":2}],"derived_from":[],"attachments":[],"tags":["k12phys-ch04-s01-lo01","k12phys-ch04-ex001","practice-concepts","inbook-yes","dok1","time-short","display-free-response","display-rec-sensitive"],"stimulus_html":"","questions":[{"id":79,"stimulus_html":"","stem_html":"What
-        is kinematics?","answers":[{"id":283,"content_html":"Kinematics is the study
-        of motion","correctness":"1.0","feedback_html":"Correct! Motion of a body
-        is studied under kinematics"},{"id":284,"content_html":"Kinematics is the
-        study of cause of motion","correctness":"0.0","feedback_html":"Do you think
-        cause of motion is studied under kinematics? What about the study of force
-        and its effect on a body. Is that kinematics?"},{"id":285,"content_html":"Kinematics
-        is the study of dimensions","correctness":"0.0","feedback_html":"Is it correct
-        to say that dimensional analysis is done in kinematics?"},{"id":286,"content_html":"Kinematics
-        is the study of atomic structure","correctness":"0.0","feedback_html":"Are
-        you sure that the study of atomic structures is a part of kinematics?"}],"hints":[],"formats":["multiple-choice","free-response"],"combo_choices":[]}]}]}'
+      string: '{"total_count":1,"items":[{"uid":"2060@1","number":2060,"version":1,"published_at":"2015-09-16T20:13:57.247Z","editors":[],"authors":[{"user_id":1,"name":"OpenStax"}],"copyright_holders":[{"user_id":2,"name":"Rice
+        University"}],"derived_from":[],"attachments":[],"tags":["inbook-yes","display-free-response","display-rec-sensitive","dok1","time-short","blooms-1","k12phys","os-practice-concepts","k12phys-ch04","k12phys-ch04-s01","k12phys-ch04-s01-lo01","k12phys-ch04-ex001"],"stimulus_html":"","questions":[{"id":2060,"stimulus_html":"","stem_html":"What
+        is kinematics?","answers":[{"id":8178,"content_html":"Kinematics is the study
+        of atomic structures.","correctness":"0.0","feedback_html":"Atomic structure
+        is studied under atomic physics, not classical mechanics."},{"id":8177,"content_html":"Kinematics
+        is the study of dimensions.","correctness":"0.0","feedback_html":"Dimensions
+        are studied under theoretical physics, not classical mechanics."},{"id":8176,"content_html":"Kinematics
+        is the study of the cause of motion.","correctness":"0.0","feedback_html":"Force
+        and its effects are studied under dynamics."},{"id":8175,"content_html":"Kinematics
+        is the study of motion.","correctness":"1.0","feedback_html":"The motion of
+        a body is studied under kinematics."}],"solutions":[{"uid":"2060@1","number":2060,"version":1,"published_at":"2015-09-16T20:13:57.253Z","editors":[],"authors":[{"user_id":1,"name":"OpenStax"}],"copyright_holders":[{"user_id":2,"name":"Rice
+        University"}],"derived_from":[],"attachments":[],"solution_type":"detailed","content_html":"Kinematics
+        is the study of motion."}],"hints":[],"formats":["free-response","multiple-choice"],"combo_choices":[]}]}]}'
     http_version: 
-  recorded_at: Fri, 13 Mar 2015 21:02:07 GMT
+  recorded_at: Wed, 28 Oct 2015 20:06:38 GMT
 recorded_with: VCR 2.9.3

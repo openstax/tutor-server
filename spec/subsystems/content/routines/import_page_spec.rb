@@ -49,7 +49,7 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, speed: :slow, vcr:
     expect(Set.new tagged_tags.collect{|t| t.value}).to(
       eq Set.new(Content::Models::Page.last.page_tags.collect{|pt| pt.tag.value})
     )
-    expected_tagged_tags = ['95e61258-2faf-41d4-af92-f62e1414175a',
+    expected_tagged_tags = ['cnxmod:95e61258-2faf-41d4-af92-f62e1414175a',
                             'k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02',
                             'teks-112-39-c-4c', 'teks-112-39-c-4e']
     expect(Set.new tagged_tags.collect{|t| t.value}).to eq Set.new(expected_tagged_tags)
