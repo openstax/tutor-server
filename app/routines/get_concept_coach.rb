@@ -22,14 +22,14 @@ class GetConceptCoach
 
   protected
 
-  def exec(role:, page_id:)
-    existing_cc_task = run(:get_cc_task, role: role, page_id: page_id).outputs.entity_task
+  def exec(role:, page:)
+    existing_cc_task = run(:get_cc_task, role: role, page: page).outputs.entity_task
     unless existing_cc_task.nil?
       outputs.entity_task = existing_cc_task
       return
     end
 
-    ecosystem, pool = get_ecosystem_and_pool(page_id)
+    ecosystem, pool = get_ecosystem_and_pool(page)
     history = run(:get_history, role: role, type: :concept_coach).outputs
     all_worked_exercises = history.exercises
     all_worked_exercise_numbers = all_worked_exercises.map(&:number)
@@ -39,8 +39,10 @@ class GetConceptCoach
     ecosystems_map = {}
 
     spaced_exercises = (TOTAL_EXERCISES_COUNT - core_exercises.size).times.collect do
-      task = history.tasks.slice(1..-1).sample
-      spaced_ecosystem, spaced_page = get_ecosystem_and_pool(task.concept_coach_task.page_id)
+      spaced_task = history.tasks.slice(1..-1).sample
+      spaced_page_model = task.concept_coach_task.page
+      spaced_page = Content::Page.new(strategy: spaced_page_model.wrap)
+      spaced_ecosystem, spaced_page = get_ecosystem_and_pool(spaced_page)
       ecosystems_map[spaced_ecosystem.id] ||= Content::Map.find(
         from_ecosystems: [spaced_ecosystem, ecosystem].uniq, to_ecosystem: ecosystem
       )
@@ -90,10 +92,9 @@ class GetConceptCoach
     outputs.entity_task = outputs.task.entity_task
   end
 
-  def get_ecosystem_and_pool(page_id)
-    ecosystem = GetEcosystemFromIds[page_ids: page_id]
-    page = ecosystem.pages_by_ids(page_id).first
-    [ecosystem, ecosystem.all_exercises_pools(pages: page).first]
+  def get_ecosystem_and_pool(page)
+    ecosystem = page.ecosystem
+    [ecosystem, page.all_exercises_pool]
   end
 
   def get_local_exercises(count, pool, exercise_history)
