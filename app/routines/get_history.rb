@@ -23,12 +23,15 @@ class GetHistory
       Content::Ecosystem.new(strategy: strategy)
     end
 
-    outputs[:exercises] = tasks.collect do |task|
+    tasked_exercises_array = tasks.collect do |task|
       # Handle 0-ago spaced practice
-      tasked_exercises = task.persisted? ? \
-                           task.tasked_exercises : \
-                           task.task_steps.select(&:exercise?).collect(&:tasked)
+      task.persisted? ? task.tasked_exercises : \
+                        task.task_steps.select(&:exercise?).collect(&:tasked)
+    end
 
+    outputs[:tasked_exercises] = tasked_exercises_array
+
+    outputs[:exercises] = tasked_exercises_array.collect do |tasked_exercises|
       tasked_exercises.collect do |tasked_exercise|
         model = tasked_exercise.exercise
         strategy = Content::Strategies::Direct::Exercise.new(model)
