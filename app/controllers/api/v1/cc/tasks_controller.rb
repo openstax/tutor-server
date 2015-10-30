@@ -1,5 +1,8 @@
 class Api::V1::Cc::TasksController < Api::V1::ApiController
 
+  before_filter :set_cors_headers
+  skip_before_action :verify_authenticity_token, only: :show
+
   resource_description do
     api_versions "v1"
     short_description 'Represents a concept coach task'
@@ -40,7 +43,7 @@ class Api::V1::Cc::TasksController < Api::V1::ApiController
 
       task = task_id.nil? ?
                create_fake_concept_coach_task :
-               Tasks::Models::Task.find(task_id)
+               ::Tasks::Models::Task.find(task_id)
 
       session[hash.to_sym] = task.id
 
@@ -48,10 +51,16 @@ class Api::V1::Cc::TasksController < Api::V1::ApiController
     end
   end
 
+  # requested by an OPTIONS request type
+  def cors_preflight_check # the other CORS headers are set by the before_filter
+    headers['Access-Control-Max-Age'] = '1728000'
+    render text: '', :content_type => 'text/plain'
+  end
+
   protected
 
   def create_fake_concept_coach_task
-    task =  Tasks::BuildTask[
+    task =  ::Tasks::BuildTask[
               task_type: :concept_coach,
               title: 'Dummy task title',
               description: 'Dummy task description',
@@ -72,4 +81,20 @@ class Api::V1::Cc::TasksController < Api::V1::ApiController
     task
   end
 
+  def set_cors_headers
+    headers['Access-Control-Allow-Origin']   = validated_cors_origin
+    headers['Access-Control-Allow-Methods']  = 'GET, OPTIONS' # PUT/POST will be added when tasks are created
+    headers['Access-Control-Request-Method'] = '*'
+    headers['Access-Control-Allow-Credentials'] = 'true'
+    headers['Access-Control-Allow-Headers']  = 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  end
+
+  def validated_cors_origin
+    origin = request.headers["HTTP_ORIGIN"]
+    return '' if origin.blank?
+    Rails.application.secrets.cc_origins.each do | host |
+      return origin if origin.match(/^#{host}/)
+    end
+    '' # an empty string will disallow any access
+  end
 end
