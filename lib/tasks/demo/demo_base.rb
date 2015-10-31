@@ -277,7 +277,7 @@ class DemoBase
   end
 
   def new_user(username:, name: nil, password: nil, sign_contracts: true)
-    password ||= 'password'
+    password ||= Rails.application.secrets.demo_user_password
 
     first_name, last_name = name.split(' ')
     raise "need a full name" if last_name.nil?
