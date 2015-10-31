@@ -9,6 +9,6 @@ class Admin::CatalogOfferingUpdate
   end
 
   def handle
-    run(:update_offering, params[:id], params[:offering])
+    run(:update_offering, params[:id], params[:offering].permit!)
   end
 end

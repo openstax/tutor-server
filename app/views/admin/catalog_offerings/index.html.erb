@@ -1,12 +1,12 @@
+<% @page_header = "Catalog Offerings" %>
+
 <%= link_to new_admin_catalog_offering_path, class: 'btn btn-primary pull-right' do %>
   <span class="glyphicon glyphicon-plus" aria-hidden="true" /> Add offering
 <% end %>
 
-<table class='table table-striped'>
-  <%= render partial: 'table_header' %>
-  <tbody>
-    <% @offerings.each do |offering| %>
-      <%= render :partial => 'display_row', locals: {offering: offering} %>
-    <% end -%>
-  </tbody>
-</table>
+<div style="clear:both; padding: 10px"></div>
+
+<% @offerings.each do |offering| %>
+  <%= render :partial => 'display_row', locals: {offering: offering} %>
+<% end -%>
+

@@ -9,6 +9,7 @@ class Salesforce::Remote::ClassSize < ActiveForce::SObject
   field :teacher_registration_url,  from: "Teacher_Registration_URL__c"
   field :error,                     from: "Tutor_Error__c"
   field :offering_uid,              from: "Book_Name__c"
+  field :school,                    from: "School__c"
 
   self.table_name = 'Class_Size__c'
 

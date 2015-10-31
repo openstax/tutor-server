@@ -1,14 +1,45 @@
-<tr>
-  <td><%= form.text_field :identifier,  {class: 'form-control'} %></td>
-  <td><%= form.text_field :description, {class: 'form-control', style: 'min-width: 300px'} %></td>
-  <td>
+<style type='text/css'>
+  .checkbox-label {
+    display: inline-block;
+    margin: 11px 0 0 10px;
+  }
+</style>
+
+
+<div class='offering-row'>
+  <div class="form-group">
+    <%= form.label :identifier %>
+    <%= form.text_field :identifier,  {class: 'form-control'} %>
+  </div>
+  <div class="form-group">
+    <%= form.label :description %>
+    <%= form.text_area :description, {class: 'form-control', style: 'min-width: 300px'} %>
+  </div>
+  <div class="form-group">
+    <%= form.label "Ecosystem" %>
     <%= form.collection_select :content_ecosystem_id,
         @ecosystems, :id, :title, { include_blank: true }, {class: 'form-control'} %>
-  </td>
-  <td><%= form.check_box :is_tutor,  {class: 'form-control'}%></td>
-  <td><%= form.check_box :is_concept_coach,  {class: 'form-control'} %></td>
-  <td><%= form.text_field :pdf_url,  {class: 'form-control'} %></td>
-  <td><%= form.text_field :webview_url,  {class: 'form-control'} %></td>
-  <td><%= form.text_field :default_course_name,  {class: 'form-control'} %></td>
-  <td><%= form.submit class: 'btn btn-primary', value:'Save' %></td>
-</tr>
+  </div>
+  <div class="checkbox">
+    <label><%= form.check_box :is_tutor,  {class: 'form-control'}%><span class="checkbox-label">Works for full Tutor?</span></label>
+  </div>
+  <div class="checkbox">
+    <label style="vertical-align:middle"><%= form.check_box :is_concept_coach,  {class: 'form-control'}%><span class="checkbox-label"> Works for Concept Coach?</span></label>
+  </div>
+  <div class="form-group">
+    <%= form.label :pdf_url %>
+    <%= form.text_field :pdf_url,  {class: 'form-control'} %>
+  </div>
+  <div class="form-group">
+    <%= form.label :webview_url %>
+    <%= form.text_field :webview_url,  {class: 'form-control'} %>
+  </div>
+    <div class="form-group">
+    <%= form.label :default_course_name %>
+    <%= form.text_field :default_course_name,  {class: 'form-control'} %>
+  </div>
+
+  <%= form.submit class: 'btn btn-primary', value:'Save' %>
+
+  <button type="submit" class="btn btn-default">Submit</button>
+</div>

@@ -456,6 +456,13 @@ ActiveRecord::Schema.define(version: 20151105162348) do
 
   add_index "role_role_users", ["user_profile_id", "entity_role_id"], name: "role_role_users_user_role_uniq", unique: true, using: :btree
 
+  create_table "salesforce_course_class_sizes", force: :cascade do |t|
+    t.integer "entity_course_id", null: false
+    t.string  "class_size_id"
+  end
+
+  add_index "salesforce_course_class_sizes", ["entity_course_id"], name: "index_salesforce_course_class_sizes_on_entity_course_id", using: :btree
+
   create_table "salesforce_users", force: :cascade do |t|
     t.string "name"
     t.string "uid"
@@ -742,6 +749,7 @@ ActiveRecord::Schema.define(version: 20151105162348) do
   add_foreign_key "course_profile_profiles", "school_district_schools", on_update: :cascade, on_delete: :nullify
   add_foreign_key "role_role_users", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "role_role_users", "user_profiles", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "salesforce_course_class_sizes", "entity_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "school_district_schools", "school_district_districts", on_update: :cascade, on_delete: :nullify
   add_foreign_key "tasks_concept_coach_tasks", "content_pages", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_concept_coach_tasks", "entity_tasks", on_update: :cascade, on_delete: :cascade
