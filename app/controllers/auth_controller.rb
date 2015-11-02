@@ -1,11 +1,10 @@
 class AuthController < ApplicationController
 
   skip_before_action :verify_authenticity_token, only: :status
-
-  VALID_CALLBACK_PATTERN = /^[a-zA-Z0-9\._]+$/
+  before_filter :set_cors_headers
+  skip_before_filter :authenticate_user!, only: [:status, :cors_preflight_check]
 
   def status
-    render :not_acceptable and return unless valid_jsonp_request?
 
     body = strategy.authorize.body.slice('access_token')
     body[:current_user] = if current_user.is_anonymous?
@@ -14,26 +13,28 @@ class AuthController < ApplicationController
                             Api::V1::UserRepresenter.new(current_user)
                           end
 
-    respond_to do |format|
-      format.js do
-        render json: body, callback: '/**/' + params[:callback]
-      end
-    end
 
+    render json: body
   end
 
+  # requested by an OPTIONS request type
+  def cors_preflight_check # the other CORS headers are set by the before_filter
+    headers['Access-Control-Max-Age'] = '1728000'
+    render text: '', :content_type => 'text/plain'
+  end
 
   private
 
-  # Checks if the callback function name is safe/valid.
-  # There's a SWF based attack vector that uses jsonp callbacks
-  # https://miki.it/blog/2014/7/8/abusing-jsonp-with-rosetta-flash/
-  def valid_jsonp_request?
-    params[:callback] && params[:callback].match(VALID_CALLBACK_PATTERN)
+  def set_cors_headers
+    headers['Access-Control-Allow-Origin']   = validated_cors_origin
+    headers['Access-Control-Allow-Methods']  = 'GET, OPTIONS' # No PUT/POST access
+    headers['Access-Control-Request-Method'] = '*'
+    headers['Access-Control-Allow-Credentials'] = 'true'
+    headers['Access-Control-Allow-Headers']  = 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
   end
 
   def strategy
-    @strategy ||= server.token_request params[:grant_type]
+    @strategy ||= server.token_request 'session'
   end
 
   def authorize_response
@@ -42,6 +43,15 @@ class AuthController < ApplicationController
 
   def server
     @server ||= Doorkeeper::Server.new(self)
+  end
+
+  def validated_cors_origin
+    origin = request.headers["HTTP_ORIGIN"]
+    return '' if origin.blank?
+    Rails.application.secrets.cc_origins.each do | host |
+      return origin if origin.match(%r{^#{host}})
+    end
+    '' # an empty string will disallow any access
   end
 
 end

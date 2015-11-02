@@ -23,7 +23,10 @@ Rails.application.routes.draw do
   mount OpenStax::Accounts::Engine, at: "/accounts"
   mount FinePrint::Engine => "/fine_print"
 
+
   get '/auth/status', :to => 'auth#status'
+  match "/auth/status", to: "auth#cors_preflight_check", via: [:options]
+
 
   use_doorkeeper
 
