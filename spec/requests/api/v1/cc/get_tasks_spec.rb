@@ -1,6 +1,7 @@
-require "rails_helper"
+require 'rails_helper'
+require 'vcr_helper'
 
-describe "Get CC Tasks", type: :request, api: true, version: :v1 do
+describe 'Get CC Tasks', type: :request, api: true, version: :v1 do
 
   before(:all) do
     DatabaseCleaner.start
@@ -9,9 +10,12 @@ describe "Get CC Tasks", type: :request, api: true, version: :v1 do
     cnx_page = OpenStax::Cnx::V1::Page.new(id: '95e61258-2faf-41d4-af92-f62e1414175a',
                                            title: 'Force')
     book_location = [4, 1]
-    page_model = Content::Routines::ImportPage[chapter: chapter,
-                                               cnx_page: cnx_page,
-                                               book_location: book_location]
+
+    page_model = VCR.use_cassette('Cc/Get_CC_Tasks', VCR_OPTS) do
+      Content::Routines::ImportPage[chapter: chapter,
+                                    cnx_page: cnx_page,
+                                    book_location: book_location]
+    end
 
     book = chapter.book
     Content::Routines::PopulateExercisePools[book: book]
