@@ -12,7 +12,7 @@ describe CreateCourse, type: :routine do
   end
 
   it 'adds a unique registration code for the teacher' do
-    allow(SecureRandom).to receive(:urlsafe_base64) { 'abc123' }
+    allow(SecureRandom).to receive(:hex) { 'abc123' }
 
     course = CreateCourse[name: 'Reg Code Course']
 
