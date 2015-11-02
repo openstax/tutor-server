@@ -17,7 +17,6 @@ require 'settings'
 require 'course_guide_methods'
 require 'type_verification'
 require 'tagger'
-require 'concept_coach/tag_generator'
 
 %w(
   biglearn
