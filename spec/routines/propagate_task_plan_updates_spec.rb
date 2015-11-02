@@ -3,9 +3,11 @@ require 'rails_helper'
 RSpec.describe PropagateTaskPlanUpdates, type: :routine do
   let!(:course)          { Entity::Course.create! }
   let!(:period)          { CreatePeriod[course: course] }
-  let!(:user)            { user = FactoryGirl.create(:user)
-                           AddUserAsPeriodStudent.call(user: user, period: period)
-                           user }
+  let!(:user)            do
+    FactoryGirl.create(:user).tap do |user|
+      AddUserAsPeriodStudent.call(user: user, period: period)
+    end
+  end
 
   let!(:old_title)       { 'Old Title' }
   let!(:old_description) { 'Old description' }
@@ -13,11 +15,20 @@ RSpec.describe PropagateTaskPlanUpdates, type: :routine do
   let!(:task_plan)       { FactoryGirl.create(:tasks_task_plan, owner: course,
                                                                 title: old_title,
                                                                 description: old_description) }
-  let!(:tasking_plan)    { FactoryGirl.create(:tasks_tasking_plan, target: user.to_model,
-                                                                   task_plan: task_plan) }
+  let!(:tasking_plan)    do
+    task_plan.tasking_plans.first.tap do |tasking_plan|
+      tasking_plan.update_attribute(:target, period.to_model)
+    end
+  end
+
+  let!(:old_opens_at)    { tasking_plan.opens_at }
+  let!(:old_due_at)      { tasking_plan.due_at }
 
   let!(:new_title)       { 'New Title' }
   let!(:new_description) { 'New description' }
+
+  let!(:new_opens_at)    { Time.now.utc + 10.seconds }
+  let!(:new_due_at)      { Time.now.utc + 1.week + 10.seconds }
 
   context 'unpublished task_plan' do
     before(:each) do
@@ -40,9 +51,14 @@ RSpec.describe PropagateTaskPlanUpdates, type: :routine do
   context 'published task_plan' do
     before(:each) do
       DistributeTasks.call(task_plan)
+
       task_plan.reload
       task_plan.title = new_title
       task_plan.description = new_description
+      tasking_plan = task_plan.tasking_plans.first
+      tasking_plan.opens_at = new_opens_at
+      tasking_plan.due_at = new_due_at
+      tasking_plan.save!
       task_plan.save!
     end
 
@@ -51,6 +67,8 @@ RSpec.describe PropagateTaskPlanUpdates, type: :routine do
       task_plan.tasks.each do |task|
         expect(task.title).to       eq old_title
         expect(task.description).to eq old_description
+        expect(task.opens_at).to    be_within(1.second).of(old_opens_at)
+        expect(task.due_at).to      be_within(1.second).of(old_due_at)
       end
 
       expect {
@@ -61,6 +79,8 @@ RSpec.describe PropagateTaskPlanUpdates, type: :routine do
       task_plan.tasks.each do |task|
         expect(task.title).to       eq new_title
         expect(task.description).to eq new_description
+        expect(task.opens_at).to    be_within(1.second).of(new_opens_at)
+        expect(task.due_at).to      be_within(1.second).of(new_due_at)
       end
     end
   end
