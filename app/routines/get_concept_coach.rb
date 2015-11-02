@@ -39,9 +39,10 @@ class GetConceptCoach
     ecosystems_map = {}
 
     spaced_tasks = history.tasks.slice(1..-1) || []
+    eligible_spaced_tasks = spaced_tasks.select{ |task| task.completed_exercise_steps_count > 0 }
 
     spaced_exercises = spaced_tasks.empty? ? [] : SPACED_EXERCISES_COUNT.times.collect do
-      spaced_task = spaced_tasks.sample
+      spaced_task = eligible_spaced_tasks.sample
       spaced_page_model = task.concept_coach_task.page
       spaced_page = Content::Page.new(strategy: spaced_page_model.wrap)
       spaced_ecosystem, spaced_page = get_ecosystem_and_pool(spaced_page)
