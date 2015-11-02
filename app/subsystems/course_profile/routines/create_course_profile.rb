@@ -3,6 +3,8 @@ class CourseProfile::Routines::CreateCourseProfile
 
   protected
   def exec(attrs = {})
-    outputs[:profile] = CourseProfile::Models::Profile.create(attrs)
+    profile = CourseProfile::Models::Profile.new(attrs)
+    GenerateToken.apply!(profile, :registration_token)
+    outputs.profile = profile
   end
 end
