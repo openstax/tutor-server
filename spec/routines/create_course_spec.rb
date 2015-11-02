@@ -16,6 +16,6 @@ describe CreateCourse, type: :routine do
 
     course = CreateCourse[name: 'Reg Code Course']
 
-    expect(course.registration_token).to eq('abc123')
+    expect(course.teacher_access_token).to eq('abc123')
   end
 end

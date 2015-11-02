@@ -10,19 +10,19 @@ RSpec.describe GenerateToken do
     it 'saves a random hex to a record' do
       allow(SecureRandom).to receive(:hex) { '123987' }
 
-      described_class.apply!(record: profile, attribute: :registration_token)
+      described_class.apply!(record: profile, attribute: :teacher_access_token)
 
-      expect(profile.reload.registration_token).to eq('123987')
+      expect(profile.reload.teacher_access_token).to eq('123987')
     end
 
     it 'allows the caller to change the mode' do
       allow(SecureRandom).to receive(:urlsafe_base64) { 'abc_12-3' }
 
       described_class.apply!(record: profile,
-                             attribute: :registration_token,
+                             attribute: :teacher_access_token,
                              mode: :urlsafe_base64)
 
-      expect(profile.reload.registration_token).to eq('abc_12-3')
+      expect(profile.reload.teacher_access_token).to eq('abc_12-3')
     end
   end
 
@@ -30,9 +30,9 @@ RSpec.describe GenerateToken do
     it 'does not save the record' do
       allow(SecureRandom).to receive(:hex) { '321789' }
 
-      described_class.apply(record: profile, attribute: :registration_token)
+      described_class.apply(record: profile, attribute: :teacher_access_token)
 
-      expect(profile.registration_token).to eq('321789')
+      expect(profile.teacher_access_token).to eq('321789')
       expect(profile.id).to be_blank
     end
   end
