@@ -35,7 +35,7 @@ module Tasks
       outputs.task.save!
 
       outputs.concept_coach_task = Tasks::Models::ConceptCoachTask.create!(
-        task: outputs.entity_task, content_page_id: page.id
+        task: outputs.task.entity_task, content_page_id: page.id
       )
     end
 

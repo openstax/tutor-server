@@ -41,7 +41,7 @@ class Api::V1::Cc::TasksController < Api::V1::ApiController
     return head(:unprocessable_entity) if page_model.blank?
 
     page = Content::Page.new(strategy: page_model.wrap)
-    ecosystem_id = page.ecosystem.id
+    ecosystem_id = page_model.ecosystem.id
 
     roles = ecosystem_id_role_map[ecosystem_id]
 

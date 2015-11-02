@@ -1,7 +1,7 @@
 class GetConceptCoach
 
   CORE_EXERCISES_COUNT = 4
-  TOTAL_EXERCISES_COUNT = 7
+  SPACED_EXERCISES_COUNT = 3
 
   lev_routine express_output: :entity_task
 
@@ -38,8 +38,10 @@ class GetConceptCoach
     current_exercise_numbers = core_exercises.map(&:number)
     ecosystems_map = {}
 
-    spaced_exercises = (TOTAL_EXERCISES_COUNT - core_exercises.size).times.collect do
-      spaced_task = history.tasks.slice(1..-1).sample
+    spaced_tasks = history.tasks.slice(1..-1) || []
+
+    spaced_exercises = spaced_tasks.empty? ? [] : SPACED_EXERCISES_COUNT.times.collect do
+      spaced_task = spaced_tasks.sample
       spaced_page_model = task.concept_coach_task.page
       spaced_page = Content::Page.new(strategy: spaced_page_model.wrap)
       spaced_ecosystem, spaced_page = get_ecosystem_and_pool(spaced_page)
@@ -82,8 +84,8 @@ class GetConceptCoach
     related_content_array = exercises.collect{ |ex| ex.page.related_content }
 
     # Create the new concept coach task, and put the exercises into steps
-    run(:create_concept_coach_task, exercises: exercises,
-                                    related_content_array: related_content_array)
+    run(:create_cc_task, page: page, exercises: exercises,
+                         related_content_array: related_content_array)
 
     run(:add_spy_info, to: outputs.task, from: ecosystem)
 
@@ -93,7 +95,7 @@ class GetConceptCoach
   end
 
   def get_ecosystem_and_pool(page)
-    ecosystem = page.ecosystem
+    ecosystem = Content::Ecosystem.find_by_page_ids(page.id)
     [ecosystem, page.all_exercises_pool]
   end
 
