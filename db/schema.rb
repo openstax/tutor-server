@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151029222530) do
+ActiveRecord::Schema.define(version: 20151102161939) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -244,8 +244,9 @@ ActiveRecord::Schema.define(version: 20151029222530) do
     t.string   "timezone",                    default: "Central Time (US & Canada)", null: false
     t.datetime "created_at",                                                         null: false
     t.datetime "updated_at",                                                         null: false
-    t.boolean  "is_concept_coach",                                                   null: false
     t.string   "catalog_offering_identifier"
+    t.boolean  "is_concept_coach",                                                   null: false
+    t.string   "teacher_access_token",                                               null: false
   end
 
   add_index "course_profile_profiles", ["entity_course_id"], name: "index_course_profile_profiles_on_entity_course_id", unique: true, using: :btree
