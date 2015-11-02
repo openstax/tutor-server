@@ -53,8 +53,6 @@ Rails.application.routes.draw do
 
     namespace 'cc' do
       get 'tasks/:cnx_book_id/:cnx_page_id', to: 'tasks#show', as: :task
-      # ConceptCoach loads via CORS and needs preflight OPTIONS requests
-      match "*path", to: "tasks#cors_preflight_check", via: [:options]
     end
 
     get 'user/courses', to: 'courses#index', as: :courses
