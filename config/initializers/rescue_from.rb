@@ -23,3 +23,7 @@ end
 #                                         status: :not_found,
 #                                         notify: true,
 #                                         extras: ->(e) { {} })
+#
+OpenStax::RescueFrom.register_exception('InvalidTeacherAccessToken',
+                                        status: :not_found,
+                                        notify: false)
