@@ -1,19 +1,19 @@
 class AuthController < ApplicationController
 
-  skip_before_action :verify_authenticity_token, only: :status
   before_filter :set_cors_headers
+
+  # this endpoint should always return 200 response regardless of login status
   skip_before_filter :authenticate_user!, only: [:status, :cors_preflight_check]
+  # Since it's loaded from foreign sites via cors, CRSF tokens can't be used
+  skip_before_action :verify_authenticity_token, only: [:status, :cors_preflight_check]
 
   def status
-
     body = strategy.authorize.body.slice('access_token')
     body[:current_user] = if current_user.is_anonymous?
                             false
                           else
                             Api::V1::UserRepresenter.new(current_user)
                           end
-
-
     render json: body
   end
 
@@ -35,10 +35,6 @@ class AuthController < ApplicationController
 
   def strategy
     @strategy ||= server.token_request 'session'
-  end
-
-  def authorize_response
-    @authorize_response ||= strategy.authorize
   end
 
   def server
