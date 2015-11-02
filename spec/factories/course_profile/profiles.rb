@@ -3,6 +3,7 @@ FactoryGirl.define do
     name { Faker::Lorem.words.join(' ') }
     timezone { ActiveSupport::TimeZone.all.collect(&:name).sample }
     is_concept_coach false
+    registration_token SecureRandom.hex
 
     after(:build) do |profile, evaluator|
       profile.course ||= build(:entity_course, profile: profile)
