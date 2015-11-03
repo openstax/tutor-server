@@ -67,6 +67,11 @@ module Content
           entity_aplos.collect{ |ea| ::Content::Tag.new(strategy: ea) }
         end
 
+        alias_method :string_uuid, :uuid
+        def uuid
+          ::Content::Uuid.new(string_uuid)
+        end
+
         def related_content(title: nil, book_location: nil)
           title ||= is_intro? ? chapter.title : self.title
           book_location ||= self.book_location
