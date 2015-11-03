@@ -2,11 +2,7 @@ class TokenGenerator
   @@token_generators = {}
 
   def self.generator_for(mode)
-    if generator = @@token_generators[mode]
-      generator
-    else
-      raise UnhandledTokenGeneratorMode
-    end
+    @@token_generators[mode] || (raise UnhandledTokenGeneratorMode)
   end
 
   def self.register(generator)
