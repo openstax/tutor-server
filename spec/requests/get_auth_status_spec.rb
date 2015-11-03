@@ -23,15 +23,15 @@ describe "Get authentication status", type: :request, version: :v1 do
       }.to change{Doorkeeper::AccessToken.count}.by(1)
       expect(response).to have_http_status(:ok)
       token = Doorkeeper::AccessToken.find_by(resource_owner_id: user.id).token
-      expect(response.body_as_hash).to eq({
-                                            :access_token => token,
-                                            :current_user => {
-                                              :name=>user.name,
-                                              :is_admin=>false,
-                                              :is_customer_service=>false,
-                                              :is_content_analyst=>false,
-                                              :profile_url=>"http://localhost:2999/profile"
-                                            }})
+      expect(response.body_as_hash).to match(
+                                         :access_token => token,
+                                         :current_user => {
+                                           :name=>user.name,
+                                           :is_admin=>false,
+                                           :is_customer_service=>false,
+                                           :is_content_analyst=>false,
+                                           :profile_url=>a_string_starting_with("http")
+                                         })
     end
 
     it 'sets cors headers' do
