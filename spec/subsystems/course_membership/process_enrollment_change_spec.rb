@@ -25,6 +25,18 @@ describe CourseMembership::ProcessEnrollmentChange, type: :routine do
       expect(result.outputs.enrollment_change.status).to eq :processed
     end
 
+    it 'sets the student_identifier if given' do
+      sid = 'N0B0DY'
+      result = nil
+      expect{ result = described_class.call(args.merge(student_identifier: sid)) }
+        .to change{ CourseMembership::Models::Enrollment.count }.by(1)
+      expect(result.errors).to be_empty
+      expect(result.outputs.enrollment_change.status).to eq :processed
+
+      student = CourseMembership::Models::Enrollment.order(:created_at).last.student
+      expect(student.student_identifier).to eq sid
+    end
+
     it 'rejects other pending EnrollmentChanges for the same user and course' do
       enrollment_change_2 = CourseMembership::CreateEnrollmentChange[user: user, period: period]
       enrollment_change_3 = CourseMembership::CreateEnrollmentChange[user: user, period: period_2]
