@@ -49,6 +49,6 @@ RSpec.describe UniqueTokenable do
     expect(dummy).to be_valid
 
     dummy = DummyModel.new(enrollment_code: "dontCopyMe!")
-    expect(dummy.to_model).not_to be_valid
+    expect(dummy).not_to be_valid
   end
 end
