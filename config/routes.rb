@@ -27,6 +27,10 @@ Rails.application.routes.draw do
 
   apipie
 
+  # Fetch user information and a doorkeepr access token via a CORS request from whitelisted hosts
+  get '/auth/status', :to => 'auth#status'
+  match "/auth/status", to: "auth#cors_preflight_check", via: [:options]
+
   api :v1, default: true do
     resources :jobs, only: [:index, :show]
 
@@ -49,6 +53,7 @@ Rails.application.routes.draw do
     namespace 'cc' do
       get 'tasks/:cnx_book_id/:cnx_page_id', to: 'tasks#show', as: :task
     end
+
 
     get 'user/courses', to: 'courses#index', as: :courses
 

@@ -1,21 +1,21 @@
 module SigninHelper
-  def stub_current_user(user)
-    allow_any_instance_of(ApplicationController)
+  def stub_current_user(user, recipient=ApplicationController)
+    allow_any_instance_of(recipient)
       .to receive(:current_account)
-      .and_return(user.account)
+      .and_return(user.account) if recipient.method_defined?(:current_account)
 
-    allow_any_instance_of(ApplicationController)
+    allow_any_instance_of(recipient)
       .to receive(:current_user)
-      .and_return(user)
+      .and_return(user) if recipient.method_defined?(:current_user)
   end
 
-  def unstub_current_user
-    allow_any_instance_of(ApplicationController)
+  def unstub_current_user(recipient=ApplicationController)
+    allow_any_instance_of(recipient)
       .to receive(:current_account)
-      .and_call_original
+      .and_call_original if recipient.method_defined?(:current_account)
 
-    allow_any_instance_of(ApplicationController)
+    allow_any_instance_of(recipient)
       .to receive(:current_user)
-      .and_call_original
+      .and_call_original if recipient.method_defined?(:current_user)
   end
 end
