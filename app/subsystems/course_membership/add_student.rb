@@ -8,7 +8,7 @@ class CourseMembership::AddStudent
 
   protected
 
-  def exec(period:, role:)
+  def exec(period:, role:, student_identifier: nil)
     student = CourseMembership::Models::Student.find_by(role: role)
     fatal_error(
       code: :already_a_student, message: "The provided role is already a student in #{
@@ -16,7 +16,8 @@ class CourseMembership::AddStudent
       }."
     ) unless student.nil?
 
-    student = CourseMembership::Models::Student.create(role: role, course: period.course)
+    student = CourseMembership::Models::Student.create(role: role, course: period.course,
+                                                       student_identifier: student_identifier)
     transfer_errors_from(student, {type: :verbatim}, true)
 
     run(:add_enrollment, period: period, student: student)
