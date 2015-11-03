@@ -31,28 +31,28 @@ class GetConceptCoach
 
     ecosystem, pool = get_ecosystem_and_pool(page)
     history = run(:get_history, role: role, type: :concept_coach).outputs
-    all_worked_exercises = history.exercises
+    all_worked_exercises = history.exercises.flatten
     all_worked_exercise_numbers = all_worked_exercises.map(&:number)
-    core_exercises = get_local_exercises(CORE_EXERCISES_COUNT, pool, history.exercises)
+    core_exercises = get_local_exercises(CORE_EXERCISES_COUNT, pool, all_worked_exercises)
 
     current_exercise_numbers = core_exercises.map(&:number)
     ecosystems_map = {}
 
-    spaced_tasks = history.tasks.slice(1..-1) || []
+    spaced_tasks = history.tasks || []
     eligible_spaced_tasks = spaced_tasks.select{ |task| task.completed_exercise_steps_count > 0 }
 
-    spaced_exercises = spaced_tasks.empty? ? [] : SPACED_EXERCISES_COUNT.times.collect do
+    spaced_exercises = eligible_spaced_tasks.empty? ? [] : SPACED_EXERCISES_COUNT.times.collect do
       spaced_task = eligible_spaced_tasks.sample
-      spaced_page_model = task.concept_coach_task.page
+      spaced_page_model = spaced_task.concept_coach_task.page
       spaced_page = Content::Page.new(strategy: spaced_page_model.wrap)
-      spaced_ecosystem, spaced_page = get_ecosystem_and_pool(spaced_page)
+      spaced_ecosystem = Content::Ecosystem.find_by_page_ids(spaced_page.id)
       ecosystems_map[spaced_ecosystem.id] ||= Content::Map.find(
         from_ecosystems: [spaced_ecosystem, ecosystem].uniq, to_ecosystem: ecosystem
       )
 
       # Map the spaced page to exercises in the current ecosystem
       spaced_exercises = ecosystems_map[spaced_ecosystem.id].map_pages_to_exercises(
-        pages: spaced_pages, pool_type: :all_exercises
+        pages: spaced_page, pool_type: :all_exercises
       )
 
       # Exclude exercises already worked (by number)
@@ -63,7 +63,7 @@ class GetConceptCoach
       # Randomize and grab one exercise
       chosen_exercise = candidate_exercises.shuffle.first
 
-      if chosen._exercise.nil?
+      if chosen_exercise.nil?
         # Try again allowing repeats (but not from the current task)
         candidate_exercises = spaced_exercises.values.flatten.uniq.reject do |ex|
           current_exercise_numbers.include?(ex.number)
@@ -100,8 +100,7 @@ class GetConceptCoach
     [ecosystem, page.all_exercises_pool]
   end
 
-  def get_local_exercises(count, pool, exercise_history)
-    all_worked_exercises = exercise_history.flatten.uniq
+  def get_local_exercises(count, pool, all_worked_exercises)
     exercise_pool = pool.exercises.uniq.shuffle
     candidate_exercises = exercise_pool - all_worked_exercises
     candidate_exercises.first(count)

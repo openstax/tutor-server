@@ -100,6 +100,21 @@ RSpec.describe GetConceptCoach, type: :routine do
         change{ Tasks::Models::Task.count }.by(1)
       )
       expect(task).not_to eq existing_task
+      expect(task.task_steps.size).to eq described_class::CORE_EXERCISES_COUNT
+      task.task_steps.each do |task_step|
+        expect(task_step.tasked.exercise.page.id).to eq @page_2.id
+      end
+    end
+
+    it 'should properly assign spaced practice' do
+      existing_task.task_steps.first.complete.save!
+      existing_task.task_steps.second.complete.save!
+
+      task = nil
+      expect{ task = described_class[role: @role_1, page: @page_2].task }.to(
+        change{ Tasks::Models::Task.count }.by(1)
+      )
+      expect(task).not_to eq existing_task
       expect(task.task_steps.size).to eq described_class::CORE_EXERCISES_COUNT + \
                                          described_class::SPACED_EXERCISES_COUNT
       task.task_steps.first(described_class::CORE_EXERCISES_COUNT).each do |task_step|

@@ -23,6 +23,7 @@ RSpec.describe Tasks::CreateConceptCoachTask, type: :routine do
     expect{ task = described_class[page: page, exercises: exercises] }.to(
       change{ Tasks::Models::Task.count }.by(1)
     )
+    expect(task.concept_coach?).to eq true
     expect(task.tasked_exercises.map(&:content_exercise_id)).to eq exercises.map(&:id)
   end
 
