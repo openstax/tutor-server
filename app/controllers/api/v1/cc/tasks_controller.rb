@@ -33,21 +33,20 @@ class Api::V1::Cc::TasksController < Api::V1::ApiController
     page_models = Content::Models::Page
       .joins(:book)
       .where(book: { uuid: params[:cnx_book_id],
-             content_ecosystem_id: ecosystem_id_role_map.keys },
+                     content_ecosystem_id: ecosystem_id_role_map.keys },
              uuid: params[:cnx_page_id])
 
     # If page_models.size > 1, the user is in 2 courses with the same CC book (not allowed)
     page_model = page_models.order(:created_at).last
     return head(:unprocessable_entity) if page_model.blank?
 
-    page = Content::Page.new(strategy: page_model.wrap)
-    ecosystem_id = page_model.ecosystem.id
-
+    ecosystem_id = page_model.book.content_ecosystem_id
     roles = ecosystem_id_role_map[ecosystem_id]
-
     # If roles.size > 1, the user is in 2 courses with the same CC book (not allowed)
+    # We are guaranteed to have at least one role here, since we already filtered the page above
     role = roles.first
-    return head(:unprocessable_entity) if role.blank?
+
+    page = Content::Page.new(strategy: page_model.wrap)
 
     task = GetConceptCoach[role: role, page: page].task
 
