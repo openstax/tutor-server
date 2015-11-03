@@ -10,7 +10,8 @@ class PropagateTaskPlanUpdates
     # For now we only handle tasking_plans that point to periods
     task_plan.tasking_plans.each do |tasking_plan|
       period = tasking_plan.target
-      next unless period.is_a?(CourseMembership::Models::Period)
+      raise 'Cannot propagate plan changes for plan not assigned to a period' \
+        unless period.is_a?(CourseMembership::Models::Period)
 
       feedback_at = task_plan.type == 'homework' ? tasking_plan.due_at : Time.now
 
