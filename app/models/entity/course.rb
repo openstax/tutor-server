@@ -10,5 +10,7 @@ class Entity::Course < Tutor::SubSystems::BaseModel
 
   has_many :course_assistants, subsystem: :tasks
 
+  has_many :taskings, through: :periods, subsystem: :tasks
+
   delegate :name, to: :profile
 end

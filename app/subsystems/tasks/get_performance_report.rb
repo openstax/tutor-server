@@ -16,8 +16,8 @@ module Tasks
     private
 
     def get_performance_report_for_teacher(course)
+      taskings = get_taskings(course)
       course.periods.collect do |period|
-        taskings = get_taskings(period)
         tasking_plans = sort_tasking_plans(taskings, course, period)
         task_plan_indices = tasking_plans.each_with_index
                                          .each_with_object({}) { |(tasking_plan, index), hash|
@@ -30,6 +30,9 @@ module Tasks
         task_plan_results = Hash.new{|h, key|h[key] = []}
 
         student_data = sorted_student_data.collect do |student_role, student_taskings|
+                         # skip if student is no longer in the current period
+                         next if student_role.student.period != period
+
                          # Populate the student_tasks array but leave empty spaces (nils)
                          # for assignments the student hasn't done
                          student_tasks = Array.new(tasking_plans.size)
@@ -55,7 +58,7 @@ module Tasks
                            role: student_role.id,
                            data: get_student_data(student_tasks)
                          }
-                       end
+                       end.compact
 
         Hashie::Mash.new({
           period: period,
@@ -75,11 +78,12 @@ module Tasks
       }
     end
 
-    def get_taskings(period)
+    def get_taskings(course)
       task_types = Models::Task.task_types.values_at(:reading, :homework, :external)
       # Return reading, homework and external tasks for a student
-      period.taskings.preload(task: {task: {task_plan: {tasking_plans: :target} }},
-                              role: {profile: :account})
+      course.taskings.preload(task: {task: {task_plan: {tasking_plans: :target} }},
+                              role: [{student: {enrollments: :period}},
+                                     {profile: :account}])
                      .joins(task: :task)
                      .where(task: {task: {task_type: task_types}})
     end
