@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe UniqueTokenable do
-  let(:course) { Entity::Course.create! }
   let(:period) { CourseMembership::Models::Period.new }
 
   it 'sets a random hex on a tokenable model' do
