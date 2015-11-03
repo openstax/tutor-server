@@ -18,6 +18,10 @@ class CourseMembership::Models::EnrollmentChange < Tutor::SubSystems::BaseModel
 
   alias_method :to_period, :period
 
+  def student_identifier
+    enrollment.nil? ? nil : enrollment.student.student_identifier
+  end
+
   def approve_by(user, time = Time.now)
     # User is ignored for now
     self.enrollee_approved_at = time

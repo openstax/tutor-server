@@ -20,6 +20,11 @@ module CourseMembership
                                              error: StrategyError
     end
 
+    def student_identifier
+      verify_and_return @strategy.student_identifier, klass: String,
+                                                      error: StrategyError, allow_nil: true
+    end
+
     def status
       verify_and_return @strategy.status, klass: Symbol, error: StrategyError
     end

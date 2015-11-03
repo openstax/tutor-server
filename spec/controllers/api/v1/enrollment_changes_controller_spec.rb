@@ -221,6 +221,18 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
         expect(response).to have_http_status(:ok)
       end
 
+      it 'sets the student_identifier, if given' do
+        new_sid = 'N0B0DY'
+
+        expect{ api_put :approve, nil, parameters: { id: enrollment_change.id },
+                                       raw_post_data: { student_identifier: new_sid } }
+          .to change{ CourseMembership::Models::Enrollment.count }.by(1)
+        expect(response).to have_http_status(:ok)
+
+        enrollment = CourseMembership::Models::Enrollment.order(:created_at).last
+        expect(enrollment.student.student_identifier).to eq new_sid
+      end
+
       it 'returns an error if the EnrollmentChange request has already been rejected' do
         enrollment_change.to_model.status = :rejected
         enrollment_change.to_model.save!
