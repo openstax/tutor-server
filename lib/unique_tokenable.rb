@@ -16,3 +16,7 @@ module UniqueTokenable
     GenerateToken.apply(record: record, attribute: field, mode: options[:mode])
   end
 end
+
+ActiveRecord::Base.class_eval do
+  include UniqueTokenable
+end
