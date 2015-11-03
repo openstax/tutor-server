@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151102161939) do
+ActiveRecord::Schema.define(version: 20151103171830) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -215,17 +215,19 @@ ActiveRecord::Schema.define(version: 20151102161939) do
   add_index "course_membership_periods", ["entity_course_id", "name"], name: "index_course_membership_periods_on_entity_course_id_and_name", unique: true, where: "(deleted_at IS NULL)", using: :btree
 
   create_table "course_membership_students", force: :cascade do |t|
-    t.integer  "entity_course_id", null: false
-    t.integer  "entity_role_id",   null: false
-    t.string   "deidentifier",     null: false
+    t.integer  "entity_course_id",   null: false
+    t.integer  "entity_role_id",     null: false
+    t.string   "deidentifier",       null: false
     t.datetime "inactive_at"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
+    t.string   "student_identifier"
   end
 
   add_index "course_membership_students", ["deidentifier"], name: "index_course_membership_students_on_deidentifier", unique: true, using: :btree
   add_index "course_membership_students", ["entity_course_id", "inactive_at"], name: "course_membership_students_course_inactive", using: :btree
   add_index "course_membership_students", ["entity_role_id"], name: "index_course_membership_students_on_entity_role_id", unique: true, using: :btree
+  add_index "course_membership_students", ["student_identifier"], name: "index_course_membership_students_on_student_identifier", using: :btree
 
   create_table "course_membership_teachers", force: :cascade do |t|
     t.integer  "entity_course_id", null: false

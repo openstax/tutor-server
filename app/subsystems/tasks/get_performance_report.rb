@@ -55,6 +55,7 @@ module Tasks
                            name: student_role.name,
                            first_name: student_role.first_name,
                            last_name: student_role.last_name,
+                           student_identifier: student_role.student.student_identifier,
                            role: student_role.id,
                            data: get_student_data(student_tasks)
                          }

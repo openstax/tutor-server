@@ -18,8 +18,7 @@ module Tasks
           if axlsx.serialize(filepath)
             outputs.filepath = filepath
           else
-            fatal_error(code: :export_failed,
-                        message: "PerformanceReport::ExportXlsx failed")
+            fatal_error(code: :export_failed, message: "PerformanceReport::ExportXlsx failed")
           end
         end
       end
@@ -100,9 +99,10 @@ module Tasks
       end
 
       def student_scores(student)
-        [student.first_name, student.last_name] + student.data.collect do |data|
-          data ? score(data) : nil
-        end
+        [student.first_name, student.last_name, student.student_identifier] + \
+         student.data.collect do |data|
+           data ? score(data) : nil
+         end
       end
 
       def score(data)
@@ -133,7 +133,7 @@ module Tasks
       end
 
       def non_data_headings
-        ['First Name', 'Last Name']
+        ['First Name', 'Last Name', 'Student ID']
       end
 
       def collect_columns(collection, *labels, &block)
