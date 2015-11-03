@@ -5,8 +5,8 @@ class TokenGenerator
     @@token_generators << base
   end
 
-  def self.selected_generator(mode)
-    if generator = @@token_generators.select { |g| g.handles_mode?(mode) }.first
+  def self.generator_for(mode)
+    if generator = @@token_generators.select { |g| g.handled_modes.include?(mode) }.first
       generator
     else
       raise UnhandledTokenGeneratorMode

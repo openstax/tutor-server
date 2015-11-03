@@ -1,7 +1,6 @@
 class SecureRandomTokenGenerator < TokenGenerator
-  def self.handles_mode?(mode)
-    [:hex, :urlsafe_base64, :base64,
-     :random_bytes, :random_number, :uuid].include?(mode.to_sym)
+  def self.handled_modes
+    [:hex, :urlsafe_base64, :base64, :random_bytes, :random_number, :uuid]
   end
 
   def self.generate_with(mode)

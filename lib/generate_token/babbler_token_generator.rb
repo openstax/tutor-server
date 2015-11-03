@@ -1,6 +1,6 @@
 class BabblerTokenGenerator < TokenGenerator
-  def self.handles_mode?(mode)
-    mode.to_sym == :memorable
+  def self.handled_modes
+    [:memorable, :babble, :babbler]
   end
 
   def self.generate_with(mode)
