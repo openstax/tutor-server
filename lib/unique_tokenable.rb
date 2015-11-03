@@ -10,7 +10,7 @@ module UniqueTokenable
   module ClassMethods
     def unique_token(token_field, options = {})
       @unique_token_mode = options[:mode] ||= :hex
-      before_validation -> { generate_unique_token(self, token_field, options) }
+      before_validation -> { generate_unique_token(token_field, options) }
       validates token_field, uniqueness: true
     end
 
@@ -20,14 +20,14 @@ module UniqueTokenable
   end
 
   private
-  def generate_unique_token(record, field, options)
-    return unless record.send(field).blank?
+  def generate_unique_token(field, options)
+    return unless send(field).blank?
 
-    generator = TokenGenerator.generator_for(record.class.unique_token_mode)
+    generator = TokenGenerator.generator_for(self.class.unique_token_mode)
 
     begin
-      record[field] = generator.generate_with(record.class.unique_token_mode)
-    end while record.class.exists?(field => record[field])
+      self[field] = generator.generate_with(self.class.unique_token_mode)
+    end while self.class.exists?(field => self[field])
   end
 end
 
