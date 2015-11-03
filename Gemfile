@@ -140,6 +140,9 @@ gem 'babbler', '~> 1.0.1'
 gem 'paranoia', '~> 2.1.3'
 
 group :development, :test do
+  # for any inmemory db tests
+  gem 'sqlite3'
+
   # Get env variables from .env file
   gem 'dotenv-rails'
 
