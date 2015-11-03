@@ -141,7 +141,7 @@ gem 'paranoia', '~> 2.1.3'
 
 group :development, :test do
   # for any inmemory db tests
-  gem 'sqlite3'
+  gem 'activerecord-nulldb-adapter'
 
   # Get env variables from .env file
   gem 'dotenv-rails'
