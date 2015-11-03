@@ -12,8 +12,12 @@ class PropagateTaskPlanUpdates
       period = tasking_plan.target
       next unless period.is_a?(CourseMembership::Models::Period)
 
+      feedback_at = task_plan.type == 'homework' ? tasking_plan.due_at : Time.now
+
       task_plan.tasks.joins(:taskings).where(taskings: { course_membership_period_id: period.id })
-                     .update_all(opens_at: tasking_plan.opens_at, due_at: tasking_plan.due_at)
+                     .update_all(opens_at: tasking_plan.opens_at,
+                                 due_at: tasking_plan.due_at,
+                                 feedback_at: feedback_at)
     end
 
     task_plan.tasks.reset

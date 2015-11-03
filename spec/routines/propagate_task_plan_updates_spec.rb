@@ -62,25 +62,55 @@ RSpec.describe PropagateTaskPlanUpdates, type: :routine do
       task_plan.save!
     end
 
-    it 'propagates task_plan changes to all of its tasks' do
-      expect(task_plan.tasks).not_to be_empty
-      task_plan.tasks.each do |task|
-        expect(task.title).to       eq old_title
-        expect(task.description).to eq old_description
-        expect(task.opens_at).to    be_within(1.second).of(old_opens_at)
-        expect(task.due_at).to      be_within(1.second).of(old_due_at)
+    context 'homework' do
+      it 'propagates task_plan changes to all of its tasks' do
+        task_plan.update_attribute(:type, 'homework')
+        expect(task_plan.tasks).not_to be_empty
+        task_plan.tasks.each do |task|
+          expect(task.title).to       eq old_title
+          expect(task.description).to eq old_description
+          expect(task.opens_at).to    be_within(1.second).of(old_opens_at)
+          expect(task.due_at).to      be_within(1.second).of(old_due_at)
+        end
+
+        expect {
+          PropagateTaskPlanUpdates.call(task_plan: task_plan)
+        }.not_to change{ Tasks::Models::Task.count }
+
+        expect(task_plan.tasks).not_to be_empty
+        task_plan.tasks.each do |task|
+          expect(task.title).to       eq new_title
+          expect(task.description).to eq new_description
+          expect(task.opens_at).to    be_within(1.second).of(new_opens_at)
+          expect(task.due_at).to      be_within(1.second).of(new_due_at)
+          expect(task.feedback_at).to eq task.due_at
+        end
       end
+    end
 
-      expect {
-        PropagateTaskPlanUpdates.call(task_plan: task_plan)
-      }.not_to change{ Tasks::Models::Task.count }
+    context 'reading' do
+      it 'propagates task_plan changes to all of its tasks' do
+        task_plan.update_attribute(:type, 'reading')
+        expect(task_plan.tasks).not_to be_empty
+        task_plan.tasks.each do |task|
+          expect(task.title).to       eq old_title
+          expect(task.description).to eq old_description
+          expect(task.opens_at).to    be_within(1.second).of(old_opens_at)
+          expect(task.due_at).to      be_within(1.second).of(old_due_at)
+        end
 
-      expect(task_plan.tasks).not_to be_empty
-      task_plan.tasks.each do |task|
-        expect(task.title).to       eq new_title
-        expect(task.description).to eq new_description
-        expect(task.opens_at).to    be_within(1.second).of(new_opens_at)
-        expect(task.due_at).to      be_within(1.second).of(new_due_at)
+        expect {
+          PropagateTaskPlanUpdates.call(task_plan: task_plan)
+        }.not_to change{ Tasks::Models::Task.count }
+
+        expect(task_plan.tasks).not_to be_empty
+        task_plan.tasks.each do |task|
+          expect(task.title).to       eq new_title
+          expect(task.description).to eq new_description
+          expect(task.opens_at).to    be_within(1.second).of(new_opens_at)
+          expect(task.due_at).to      be_within(1.second).of(new_due_at)
+          expect(task.feedback_at).to be < Time.now
+        end
       end
     end
   end
