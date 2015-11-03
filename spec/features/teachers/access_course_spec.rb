@@ -7,7 +7,7 @@ RSpec.describe 'Teachers' do
   describe 'accessing their courses' do
     context 'unauthenticated' do
       it 'redirects to login' do
-        visit access_course_path(course, course.teacher_access_token)
+        visit access_course_path(course.teacher_access_token)
         expect(current_path).to eq(openstax_accounts.dev_accounts_path)
       end
     end
@@ -16,7 +16,7 @@ RSpec.describe 'Teachers' do
       before { stub_current_user(teacher) }
 
       context 'valid access token' do
-        before { visit access_course_path(course, course.teacher_access_token) }
+        before { visit access_course_path(course.teacher_access_token) }
 
         it 'adds the user as the teacher' do
           expect(UserIsCourseTeacher[course: course, user: teacher]).to be true
@@ -30,7 +30,7 @@ RSpec.describe 'Teachers' do
       context 'invalid access token' do
         it 'renders an error page' do
           rescuing_exceptions do
-            visit access_course_path(course, 'invalid-no-way-it-will-work')
+            visit access_course_path('invalid-no-way-it-will-work')
           end
 
           expect(page).to have_css('.flash_error', text: 'You are trying to join a class as a teacher, but the information you provided is either out of date or does not correspond to an existing course.')
