@@ -17,7 +17,6 @@ require 'settings'
 require 'course_guide_methods'
 require 'type_verification'
 require 'tagger'
-require 'unique_tokenable'
 
 %w(
   biglearn

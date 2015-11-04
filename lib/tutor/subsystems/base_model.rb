@@ -23,8 +23,6 @@ module Tutor
         end
       end
 
-      include UniqueTokenable
-
     end
 
   end
