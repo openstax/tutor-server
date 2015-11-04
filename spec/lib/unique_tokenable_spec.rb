@@ -1,12 +1,16 @@
 require 'rails_helper'
-require 'nulldb_rspec'
 
-class DummyModel < ActiveRecord::Base
-  establish_connection({ adapter: :nulldb, schema: './spec/support/test_schema.rb' })
-end
 
 RSpec.describe UniqueTokenable do
-  include NullDB::RSpec::NullifiedDatabase
+  class DummyModel < ActiveRecord::Base; end
+
+  before(:all) do
+    ActiveRecord::Schema.define do
+      create_table :dummy_models do |t|
+        t.string :enrollment_code
+      end unless table_exists?(:dummy_models)
+    end
+  end
 
   it 'sets a random hex on a tokenable model by default' do
     DummyModel.unique_token :enrollment_code

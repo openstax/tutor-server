@@ -10,7 +10,7 @@ module UniqueTokenable
   module ClassMethods
     def unique_token(token_field, options = {})
       options[:mode] ||= :hex
-      before_validation -> { generate_unique_token(token_field, options) }
+      before_validation -> { generate_unique_token(token_field, options) }, prepend: true
       validates token_field, uniqueness: true
     end
 
