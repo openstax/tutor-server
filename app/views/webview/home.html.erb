@@ -6,7 +6,7 @@
   <% unless is_real_production_site? # Keep google away from -dev etc %>
     <meta name="robots" content="noindex">
   <% end %>
-
+  <%= javascript_include_tag remote_js_loader_url  %>
   <meta http-equiv="content-type" content="text/html; charset=UTF8" />
   <%= render 'layouts/meta' %>
   <%= stylesheet_link_tag 'home', media: 'all' %>
@@ -35,7 +35,7 @@
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse navbar-right navbar-ex1-collapse">
         <ul class="nav navbar-nav links">
-          <li><%= link_to 'Login', openstax_accounts.login_path, class: 'btn' %></li>
+          <li><%= link_to 'Login', openstax_accounts.login_path, id: 'login', class: 'btn' %></li>
           <li><a href="http://openstaxtutor.zendesk.com" target="_blank">Help</a></li>
         </ul>
         <a class="navbar-brand-rice" href="http://www.rice.edu" target="_blank"></a>
