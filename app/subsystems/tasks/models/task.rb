@@ -22,6 +22,8 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
                                                     source_type: 'Tasks::Models::TaskedExercise'
   has_many :taskings, through: :entity_task
 
+  has_one :concept_coach_task, through: :entity_task
+
   validates :title, presence: true
 
   validates :opens_at, presence: true, timeliness: { type: :date }

@@ -4,7 +4,7 @@ class GetHistory
   protected
 
   def exec(role:, type: :all, current_task: nil)
-    tasks = Tasks::Models::Task.joins(:task_plan, :taskings)
+    tasks = Tasks::Models::Task.joins{[task_plan.outer, taskings]}
                                .where(taskings: { entity_role_id: role.id })
                                .order{[due_at.desc, task_plan.created_at.desc]}
                                .preload([{task_plan: :ecosystem},
@@ -18,7 +18,8 @@ class GetHistory
     outputs[:tasks] = tasks.to_a
 
     outputs[:ecosystems] = tasks.collect do |task|
-      model = task.task_plan.ecosystem
+      model = task.task_plan.try(:ecosystem)
+      next if model.nil?
       strategy = Content::Strategies::Direct::Ecosystem.new(model)
       Content::Ecosystem.new(strategy: strategy)
     end

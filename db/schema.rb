@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151029184944) do
+ActiveRecord::Schema.define(version: 20151029222530) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -474,6 +474,16 @@ ActiveRecord::Schema.define(version: 20151029184944) do
   add_index "tasks_assistants", ["code_class_name"], name: "index_tasks_assistants_on_code_class_name", unique: true, using: :btree
   add_index "tasks_assistants", ["name"], name: "index_tasks_assistants_on_name", unique: true, using: :btree
 
+  create_table "tasks_concept_coach_tasks", force: :cascade do |t|
+    t.integer  "entity_task_id",  null: false
+    t.integer  "content_page_id", null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  add_index "tasks_concept_coach_tasks", ["content_page_id"], name: "index_tasks_concept_coach_tasks_on_content_page_id", using: :btree
+  add_index "tasks_concept_coach_tasks", ["entity_task_id"], name: "index_tasks_concept_coach_tasks_on_entity_task_id", unique: true, using: :btree
+
   create_table "tasks_course_assistants", force: :cascade do |t|
     t.integer  "entity_course_id",     null: false
     t.integer  "tasks_assistant_id",   null: false
@@ -720,6 +730,8 @@ ActiveRecord::Schema.define(version: 20151029184944) do
   add_foreign_key "role_role_users", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "role_role_users", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "school_district_schools", "school_district_districts", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "tasks_concept_coach_tasks", "content_pages", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_concept_coach_tasks", "entity_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_course_assistants", "entity_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_course_assistants", "tasks_assistants", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_performance_report_exports", "entity_courses", on_update: :cascade, on_delete: :cascade

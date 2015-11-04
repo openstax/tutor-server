@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Tasks::Models::Task, :type => :model do
+RSpec.describe Tasks::Models::Task, type: :model do
   it { is_expected.to belong_to(:task_plan) }
 
   it { is_expected.to have_many(:task_steps).dependent(:destroy) }
