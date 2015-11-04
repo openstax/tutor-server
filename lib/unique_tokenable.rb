@@ -1,6 +1,6 @@
-require 'generate_token/token_generator'
-require 'generate_token/secure_random_token_generator'
-require 'generate_token/babbler_token_generator'
+require 'token_generator'
+require 'token_generator/secure_random_token_generator'
+require 'token_generator/babbler_token_generator'
 
 module UniqueTokenable
   def self.included(base)
