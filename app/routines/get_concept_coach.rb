@@ -17,7 +17,6 @@ class GetConceptCoach
 
   uses_routine AddSpyInfo, as: :add_spy_info
 
-  uses_routine GetCourseEcosystem, as: :get_course_ecosystem
   uses_routine GetHistory, as: :get_history
 
   protected
