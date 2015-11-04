@@ -5,8 +5,11 @@ class AuthController < ApplicationController
   # iframe_start doesn't need to clear the headers since doesn't render, it only redirects
   before_filter :allow_iframe_access, only: :iframe_finish
 
+  #before_filter :forbid_access
   # these should always return 200 response regardless of login status
-  skip_before_filter :authenticate_user!, only: [:status, :cors_preflight_check]
+  skip_before_filter :authenticate_user!, only: [:status, :cors_preflight_check, :iframe_start, :iframe_finish]
+
+
 
   # Since these endpoints are loaded from foreign sites via cors or iframe, CRSF tokens can't be used
   skip_before_action :verify_authenticity_token
@@ -22,11 +25,13 @@ class AuthController < ApplicationController
   end
 
   def iframe_start
+    head :forbidden and return if current_user.is_anonymous?
     session[:accounts_return_to] = after_iframe_authentication_url
-    redirect_to openstax_accounts.login_url(host_only:false)
+    redirect_to openstax_accounts.login_url #(host_only:false)
   end
 
   def iframe_finish
+    head :forbidden and return if current_user.is_anonymous?
     # the view will deliver the status data using postMessage out of the iframe
     @status = user_status_update
   end
