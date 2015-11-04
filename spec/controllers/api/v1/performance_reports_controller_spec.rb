@@ -245,7 +245,6 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
         role = GetUserCourseRoles[user: student_1, course: course].first
         student = CourseMembership::Models::Student.find_by(role: role)
         MoveStudent.call(period: period_2, student: student)
-        puts GetStudentRoster[course: course]
 
         api_get :index, teacher_token, parameters: { id: course.id }
 

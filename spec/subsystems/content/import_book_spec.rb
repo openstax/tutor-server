@@ -3,9 +3,9 @@ require 'vcr_helper'
 
 RSpec.describe Content::ImportBook, type: :routine, speed: :slow, vcr: VCR_OPTS do
 
-  # Store version differences in this hash
   let!(:phys_cnx_book) { OpenStax::Cnx::V1::Book.new(id: '93e2b09d-261c-4007-a987-0b3062fe154b') }
   let!(:bio_cnx_book)  { OpenStax::Cnx::V1::Book.new(id: 'ccbc51fa-49f3-40bb-98d6-07a15a7ab6b7') }
+  let!(:bio_cc_book)   { OpenStax::Cnx::V1::Book.new(id: 'f10533ca-f803-490d-b935-88899941197f') }
 
   let!(:ecosystem)     { Content::Ecosystem.create!(title: 'Ecosystem') }
 
@@ -59,7 +59,7 @@ RSpec.describe Content::ImportBook, type: :routine, speed: :slow, vcr: VCR_OPTS 
     Content::ImportBook.call(ecosystem: ecosystem, cnx_book: bio_cnx_book)
     book = ecosystem.books.first
 
-    # The first child should be a chapter not a Unit
+    # Units are ignored
 
     part = book.chapters.first
     expect(part.title).to eq "The Study of Life"
@@ -88,4 +88,36 @@ RSpec.describe Content::ImportBook, type: :routine, speed: :slow, vcr: VCR_OPTS 
     expect(part.book_location).to eq [6]
   end
 
+  it 'handles the bio cc book correctly' do
+    Content::ImportBook.call(ecosystem: ecosystem, cnx_book: bio_cc_book)
+    book = ecosystem.books.first
+
+    # Units are ignored
+
+    part = book.chapters.first
+    expect(part.title).to eq "The Study of Life"
+    expect(part.book_location).to eq [1]
+
+    page = part.pages.first
+    expect(page.title).to eq "Introduction"
+    expect(page.book_location).to eq [1, 0]
+
+    page = part.pages.second
+    expect(page.title).to eq "The Science of Biology"
+    expect(page.book_location).to eq [1, 1]
+
+    # Jump to 3rd chapter
+
+    part = book.chapters.third
+    expect(part.title).to eq "Cell Structure"
+    expect(part.book_location).to eq [3]
+
+    page = part.pages.first
+    expect(page.title).to eq "Introduction"
+    expect(page.book_location).to eq [3, 0]
+
+    page = part.pages.second
+    expect(page.title).to eq "Studying Cells"
+    expect(page.book_location).to eq [3, 1]
+  end
 end
