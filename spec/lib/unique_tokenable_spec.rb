@@ -95,4 +95,20 @@ RSpec.describe UniqueTokenable do
     dummy.valid?
     expect(dummy.enrollment_code).not_to be_blank
   end
+
+  it "lets you know when a mode is already handled" do
+    expect {
+      class DummyTokenGenerator
+        def self.handled_modes; [:hex]; end
+        TokenGenerator.register(self)
+      end
+    }.to raise_error(TokenGenerator::TokenGeneratorModeAlreadyHandled, "hex")
+  end
+
+  it "lets you know when a mode is unhandled" do
+    expect {
+      DummyModel.unique_token :enrollment_code, mode: :nope
+      DummyModel.create
+    }.to raise_error(TokenGenerator::UnhandledTokenGeneratorMode, "nope")
+  end
 end
