@@ -8,7 +8,7 @@ class CourseMembership::Models::Student < Tutor::SubSystems::BaseModel
   validates :role, presence: true, uniqueness: true
   validates :deidentifier, uniqueness: true
 
-  before_save :generate_deidentifier
+  unique_token :deidentifier
 
   delegate :username, :first_name, :last_name, :full_name, :name, to: :role
   delegate :period, :course_membership_period_id, to: :latest_enrollment
@@ -31,14 +31,5 @@ class CourseMembership::Models::Student < Tutor::SubSystems::BaseModel
 
   def latest_enrollment
     enrollments.last
-  end
-
-  protected
-
-  def generate_deidentifier
-    begin
-      deidentifier = SecureRandom.hex(4)
-    end while CourseMembership::Models::Student.exists?(deidentifier: deidentifier)
-    self.deidentifier ||= deidentifier
   end
 end
