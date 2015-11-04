@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      var msg = <%=raw json_escape @status.to_json %>;
+      window.parent.postMessage(JSON.stringify({data: { onLogin: msg}}), msg.endpoints.accounts_iframe);
+    </script>
+  </head>
+  <body>
+  </body>
+</html>
