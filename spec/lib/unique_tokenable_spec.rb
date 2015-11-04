@@ -1,6 +1,5 @@
 require 'rails_helper'
 
-
 RSpec.describe UniqueTokenable do
   class DummyModel < ActiveRecord::Base; end
 
@@ -88,5 +87,12 @@ RSpec.describe UniqueTokenable do
     dummy = DummyModel.new
     dummy.valid?
     expect(dummy.enrollment_code).to match(/=\z/)
+  end
+
+  it 'cannot be nil' do
+    DummyModel.unique_token :enrollment_code
+    dummy = DummyModel.new(enrollment_code: nil)
+    dummy.valid?
+    expect(dummy.enrollment_code).not_to be_blank
   end
 end

@@ -26,7 +26,7 @@ module UniqueTokenable
     generator = TokenGenerator.generator_for(options[:mode])
 
     begin
-      self[field] = generator.generate_with(options[:mode])
+      self[field] = generator.run
     end while self.class.exists?(field => self[field])
   end
 end
