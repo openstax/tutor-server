@@ -145,6 +145,30 @@ module Api::V1::Courses
                type: String
     end
 
+    class Teacher < Roar::Decorator
+      include Roar::JSON
+
+      property :id,
+               readable: true,
+               writeable: false,
+               type: String
+
+      property :role_id,
+               readable: true,
+               writeable: false,
+               type: String
+
+      property :first_name,
+               readable: true,
+               writeable: false,
+               type: String
+
+      property :last_name,
+               readable: true,
+               writeable: false,
+               type: String
+    end
+
     class Course < Roar::Decorator
       include Roar::JSON
 
@@ -153,10 +177,10 @@ module Api::V1::Courses
                writeable: false,
                type: String
 
-      collection :teacher_names,
+      collection :teachers,
                  readable: true,
                  writeable: false,
-                 type: String
+                 decorator: Teacher
     end
 
     # Actual attributes below

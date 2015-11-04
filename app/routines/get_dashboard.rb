@@ -7,8 +7,8 @@ class GetDashboard
                as: :get_tasks
   uses_routine GetCourseProfile,
                as: :get_course_profile
-  uses_routine GetTeacherNames,
-               as: :get_teacher_names
+  uses_routine GetCourseTeachers,
+               as: :get_course_teachers
 
   protected
 
@@ -58,12 +58,12 @@ class GetDashboard
 
   def load_course(course, role_type)
     run(:get_course_profile, course: course)
-    run(:get_teacher_names, course.id)
+    run(:get_course_teachers, course)
 
     outputs[:course] = {
       id: course.id,
       name: outputs["[:get_course_profile, :profile]"].name,
-      teacher_names: outputs["[:get_teacher_names, :teacher_names]"]
+      teachers: outputs["[:get_course_teachers, :teachers]"]
     }
   end
 

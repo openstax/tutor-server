@@ -86,7 +86,20 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
       mash.course = {
         course_id: 2,
         name: 'Physics 101',
-        teacher_names: ['Andrew Garcia', 'Bob Newhart']
+        teachers: [
+          Hashie::Mash.new({
+            id: '42',
+            role_id: '43',
+            first_name: 'Andrew',
+            last_name: 'Garcia'
+          }),
+          Hashie::Mash.new({
+            id: '44',
+            role_id: '45',
+            first_name: 'Bob',
+            last_name: 'Newhart'
+          })
+        ]
       }
       mash.role = {
         id: 34,
@@ -169,7 +182,16 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, :type => :representer do
       },
       "course" => {
         "name" => "Physics 101",
-        "teacher_names" => a_collection_containing_exactly( "Andrew Garcia", "Bob Newhart" )
+        "teachers" => [
+          { "id" => "42",
+            "role_id" => "43",
+            "first_name" => "Andrew",
+            "last_name" => "Garcia" },
+          { "id" => "44",
+            "role_id" => "45",
+            "first_name" => "Bob",
+            "last_name" => "Newhart" }
+        ]
       }
     )
 

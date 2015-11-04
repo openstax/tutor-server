@@ -365,7 +365,12 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         },
         "course" => {
           "name" => "Physics 101",
-          "teacher_names" => [ "Bob Newhart" ]
+          "teachers" => [
+            { 'id' => teacher_role.teacher.id.to_s,
+              'role_id' => teacher_role.id.to_s,
+              'first_name' => 'Bob',
+              'last_name' => 'Newhart' }
+          ]
         }
       )
     end
@@ -380,7 +385,12 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         },
         "course" => {
           "name" => "Physics 101",
-          "teacher_names" => [ "Bob Newhart" ]
+          "teachers" => [
+            { 'id' => teacher_role.teacher.id.to_s,
+              'role_id' => teacher_role.id.to_s,
+              'first_name' => 'Bob',
+              'last_name' => 'Newhart' }
+          ]
         },
         "tasks" => [],
         "plans" => a_collection_including(
@@ -410,7 +420,12 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       })
       expect(response_body['course']).to eq({
         'name' => 'Physics 101',
-        'teacher_names' => ['Bob Newhart']
+        'teachers' => [
+          { 'id' => teacher_role.teacher.id.to_s,
+            'role_id' => teacher_role.id.to_s,
+            'first_name' => 'Bob',
+            'last_name' => 'Newhart' }
+        ]
       })
       expect(response_body['tasks']).not_to be_empty
       expect(response_body['plans']).to be_nil

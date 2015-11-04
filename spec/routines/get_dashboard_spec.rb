@@ -40,7 +40,12 @@ describe GetDashboard, type: :routine do
       course: {
         id: course.id,
         name: "Physics 101",
-        teacher_names: ['Bob Newhart']
+        teachers: [
+          { id: teacher_role.teacher.id.to_s,
+            role_id: teacher_role.id.to_s,
+            first_name: 'Bob',
+            last_name: 'Newhart' }
+        ]
       },
       role: {
         id: student_role.id,
@@ -59,7 +64,12 @@ describe GetDashboard, type: :routine do
       course: {
         id: course.id,
         name: "Physics 101",
-        teacher_names: ['Bob Newhart']
+        teachers: [
+          { id: teacher_role.teacher.id.to_s,
+            role_id: teacher_role.id.to_s,
+            first_name: 'Bob',
+            last_name: 'Newhart' }
+        ]
       },
       role: {
         id: teacher_role.id,
