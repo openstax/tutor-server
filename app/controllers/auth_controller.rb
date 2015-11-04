@@ -67,12 +67,7 @@ class AuthController < ApplicationController
   end
 
   def validated_cors_origin
-    origin = request.headers["HTTP_ORIGIN"]
-    return '' if origin.blank?
-    Rails.application.secrets.cc_origins.each do | host |
-      return origin if origin.match(%r{^#{host}})
-    end
-    '' # an empty string will disallow any access
+    OpenStax::Api.configuration.validate_cors_origin[ request ] ? request.headers["HTTP_ORIGIN"] : ''
   end
 
 end
