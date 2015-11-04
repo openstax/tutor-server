@@ -1,5 +1,5 @@
 class Role::GetUserRoles
-  lev_routine
+  lev_routine express_output: :roles
 
   include VerifyAndGetIdArray
 
