@@ -191,6 +191,8 @@ Rails.application.routes.draw do
     resources :targeted_contracts, only: :index
   end
 
+  get '/courses/access/:access_token' => 'courses#access', as: :access_course
+
   namespace :content_analyst do
     root to: 'console#index'
 

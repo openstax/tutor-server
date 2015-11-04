@@ -1,4 +1,6 @@
 class CourseProfile::Models::Profile < Tutor::SubSystems::BaseModel
+  unique_token :teacher_access_token
+
   belongs_to :school, subsystem: :school_district
   belongs_to :course, subsystem: :entity
 
