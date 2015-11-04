@@ -2,7 +2,8 @@ class TokenGenerator
   @@token_generators = {}
 
   def self.generator_for(mode)
-    @@token_generators[mode] || (raise UnhandledTokenGeneratorMode)
+    mode = mode.keys.first if mode.respond_to?(:keys)
+    @@token_generators[mode] || (raise UnhandledTokenGeneratorMode, mode)
   end
 
   def self.register(generator)

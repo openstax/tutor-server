@@ -55,4 +55,38 @@ RSpec.describe UniqueTokenable do
     dummy = DummyModel.new(enrollment_code: "dontCopyMe!")
     expect(dummy).not_to be_valid
   end
+
+  it 'allows for a length option on secure random modes' do
+    DummyModel.unique_token :enrollment_code, mode: { hex: { length: 10 } }
+    dummy = DummyModel.new
+    dummy.valid?
+    expect(dummy.enrollment_code.length).to be(20)
+    # hex length is twice the value passed in
+
+    DummyModel.unique_token :enrollment_code, mode: { urlsafe_base64: { length: 9 } }
+    dummy = DummyModel.new
+    dummy.valid?
+    expect(dummy.enrollment_code.length).to be(12)
+    # result of urlsafe_base64 is about 4/3 of n
+
+    DummyModel.unique_token :enrollment_code, mode: { base64: { length: 9 } }
+    dummy = DummyModel.new
+    dummy.valid?
+    expect(dummy.enrollment_code.length).to be(12)
+    # result of base64 is about 4/3 of n
+  end
+
+  it 'allows for a max value of random number mode' do
+    DummyModel.unique_token :enrollment_code, mode: { random_number: { maximum: 9 } }
+    dummy = DummyModel.new
+    dummy.valid?
+    expect(dummy.enrollment_code.to_i < 9).to be true
+  end
+
+  it 'allows for a padding option on urlsafe_base64 mode' do
+    DummyModel.unique_token :enrollment_code, mode: { urlsafe_base64: { padding: true } }
+    dummy = DummyModel.new
+    dummy.valid?
+    expect(dummy.enrollment_code).to match(/=\z/)
+  end
 end
