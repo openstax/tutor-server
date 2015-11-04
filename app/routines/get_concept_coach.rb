@@ -21,10 +21,13 @@ class GetConceptCoach
 
   protected
 
-  def exec(role:, page:)
+  def exec(user:, cnx_book_id:, cnx_page_id:)
+    role, page = get_role_and_page(user: user, cnx_book_id: cnx_book_id, cnx_page_id: cnx_page_id)
+
     existing_cc_task = run(:get_cc_task, role: role, page: page).outputs.entity_task
     unless existing_cc_task.nil?
       outputs.entity_task = existing_cc_task
+      outputs.task = existing_cc_task.task
       return
     end
 
@@ -92,6 +95,55 @@ class GetConceptCoach
     run(:create_tasking, role: role, task: outputs.task.entity_task)
 
     outputs.entity_task = outputs.task.entity_task
+  end
+
+  def get_role_and_page(user:, cnx_book_id:, cnx_page_id:)
+    roles = Role::GetUserRoles[user, :student]
+    ecosystem_id_role_map = roles.each_with_object({}) do |role, hash|
+      ecosystem_id = role.student.course.course_ecosystems.first.content_ecosystem_id
+      hash[ecosystem_id] ||= []
+      hash[ecosystem_id] << role
+    end
+
+    page_models = Content::Models::Page
+      .joins(:book)
+      .where(book: { uuid: cnx_book_id, content_ecosystem_id: ecosystem_id_role_map.keys },
+             uuid: cnx_page_id)
+
+    # If page_models.size > 1, the user is in 2 courses with the same CC book (not allowed)
+    page_model = page_models.order(:created_at).last
+
+    if page_model.blank?
+      valid_books = Content::Models::Book.where(content_ecosystem_id: ecosystem_id_role_map.keys)
+                                         .to_a
+      valid_book_with_cnx_book_id = valid_books.select{ |book| book.uuid == cnx_book_id }.first
+
+      if !valid_book_with_cnx_book_id.nil?
+        # Book is valid for the user, but page is invalid
+        outputs.valid_book_urls = [valid_book_with_cnx_book_id].map(&:url)
+        fatal_error(code: :invalid_page)
+      elsif !valid_books.empty?
+        # Book is invalid for the user, but there are other valid books
+        outputs.valid_book_urls = valid_books.map(&:url)
+        fatal_error(code: :invalid_book)
+      else
+        # Not a CC student
+        outputs.valid_book_urls = []
+        fatal_error(code: :not_a_cc_student)
+      end
+
+      return [nil, nil]
+    end
+
+    ecosystem_id = page_model.book.content_ecosystem_id
+    roles = ecosystem_id_role_map[ecosystem_id]
+    # If roles.size > 1, the user is in 2 courses with the same CC book (not allowed)
+    # We are guaranteed to have at least one role here, since we already filtered the page above
+    role = roles.first
+
+    page = Content::Page.new(strategy: page_model.wrap)
+
+    [role, page]
   end
 
   def get_ecosystem_and_pool(page)

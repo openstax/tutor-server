@@ -28,55 +28,16 @@ class Api::V1::Cc::TasksController < Api::V1::ApiController
       :show, current_human_user, Tasks::Models::ConceptCoachTask
     )
 
-    roles = Role::GetUserRoles[current_human_user, :student]
-    ecosystem_id_role_map = roles.each_with_object({}) do |role, hash|
-      ecosystem_id = role.student.course.course_ecosystems.first.content_ecosystem_id
-      hash[ecosystem_id] ||= []
-      hash[ecosystem_id] << role
+    result = GetConceptCoach.call(user: current_human_user,
+                                  cnx_book_id: params[:cnx_book_id],
+                                  cnx_page_id: params[:cnx_page_id])
+
+    if result.errors.any?
+      json_hash = { errors: result.errors, valid_books: result.outputs.valid_book_urls }
+      render json: json_hash, status: :unprocessable_entity
+    else
+      respond_with result.outputs.task, represent_with: Api::V1::TaskRepresenter
     end
-
-    page_models = Content::Models::Page
-      .joins(:book)
-      .where(book: { uuid: params[:cnx_book_id],
-                     content_ecosystem_id: ecosystem_id_role_map.keys },
-             uuid: params[:cnx_page_id])
-
-    # If page_models.size > 1, the user is in 2 courses with the same CC book (not allowed)
-    page_model = page_models.order(:created_at).last
-
-    if page_model.blank?
-      valid_books = Content::Models::Book.where(content_ecosystem_id: ecosystem_id_role_map.keys)
-                                         .to_a
-      valid_book_with_cnx_book_id = valid_books.select{ |book| book.uuid == params[:cnx_book_id] }
-                                               .first
-
-      if !valid_book_with_cnx_book_id.nil?
-        # Book is valid for the user, but page is invalid
-        code = :invalid_page
-        valid_books = [valid_book_with_cnx_book_id]
-      elsif !valid_books.empty?
-        # Book is invalid for the user, but there are other valid books
-        code = :invalid_book
-      else
-        # Not a CC student
-        code = :not_a_cc_student
-      end
-      
-      json_hash = { errors: [{code: code}], valid_books: valid_books.map(&:url) }
-      return render(json: json_hash, status: :unprocessable_entity)
-    end
-
-    ecosystem_id = page_model.book.content_ecosystem_id
-    roles = ecosystem_id_role_map[ecosystem_id]
-    # If roles.size > 1, the user is in 2 courses with the same CC book (not allowed)
-    # We are guaranteed to have at least one role here, since we already filtered the page above
-    role = roles.first
-
-    page = Content::Page.new(strategy: page_model.wrap)
-
-    task = GetConceptCoach[role: role, page: page].task
-
-    respond_with task, represent_with: Api::V1::TaskRepresenter
   end
 
 end

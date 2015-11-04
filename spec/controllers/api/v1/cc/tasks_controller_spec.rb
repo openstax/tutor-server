@@ -33,22 +33,19 @@ RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, versi
 
     application = FactoryGirl.create :doorkeeper_application
 
-    user_1 = FactoryGirl.create(:user)
-    user_2 = FactoryGirl.create(:user)
+    @user_1 = FactoryGirl.create(:user)
+    @user_2 = FactoryGirl.create(:user)
     anon_user = User::User.anonymous
 
-    @role_1 = AddUserAsPeriodStudent[user: user_1, period: period]
-    @role_2 = AddUserAsPeriodStudent[user: user_2, period: period]
-
-    @book_uuid = @book.uuid
-    @page_uuid = @page.uuid
+    @role_1 = AddUserAsPeriodStudent[user: @user_1, period: period]
+    @role_2 = AddUserAsPeriodStudent[user: @user_2, period: period]
 
     @user_1_token = FactoryGirl.create :doorkeeper_access_token,
                                        application: application,
-                                       resource_owner_id: user_1.id
+                                       resource_owner_id: @user_1.id
     @user_2_token = FactoryGirl.create :doorkeeper_access_token,
                                        application: application,
-                                       resource_owner_id: user_2.id
+                                       resource_owner_id: @user_2.id
     @userless_token = FactoryGirl.create :doorkeeper_access_token,
                                          application: application,
                                          resource_owner_id: nil
@@ -59,7 +56,7 @@ RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, versi
     DatabaseCleaner.clean
   end
 
-  def api_call(token, cnx_book_id: @book_uuid, cnx_page_id: @page_uuid)
+  def api_call(token, cnx_book_id: @book.uuid, cnx_page_id: @page.uuid)
     api_get :show, token, parameters: { cnx_book_id: cnx_book_id, cnx_page_id: cnx_page_id }
   end
 
@@ -110,7 +107,9 @@ RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, versi
     end
 
     context 'existing task' do
-      let!(:cc_task) { GetConceptCoach[role: @role_1, page: @page].task }
+      let!(:cc_task) { GetConceptCoach[user: @user_1,
+                                       cnx_book_id: @book.uuid,
+                                       cnx_page_id: @page.uuid].task }
 
       it 'should not create a new task for the same user' do
         expect{ api_call(@user_1_token) }.not_to change{ Tasks::Models::Task.count }

@@ -24,13 +24,13 @@ RSpec.describe GetConceptCoach, type: :routine do
                                      book_location: book_location_2]]
     end
 
-    book = chapter.book
-    Content::Routines::PopulateExercisePools[book: book]
+    @book = chapter.book
+    Content::Routines::PopulateExercisePools[book: @book]
 
     @page_1 = Content::Page.new(strategy: page_model_1.reload.wrap)
     @page_2 = Content::Page.new(strategy: page_model_2.reload.wrap)
 
-    ecosystem_model = book.ecosystem
+    ecosystem_model = @book.ecosystem
     ecosystem = Content::Ecosystem.new(strategy: ecosystem_model.wrap)
 
     period_model = FactoryGirl.create(:course_membership_period)
@@ -38,11 +38,11 @@ RSpec.describe GetConceptCoach, type: :routine do
 
     AddEcosystemToCourse[ecosystem: ecosystem, course: period.course]
 
-    user_1 = FactoryGirl.create(:user)
-    user_2 = FactoryGirl.create(:user)
+    @user_1 = FactoryGirl.create(:user)
+    @user_2 = FactoryGirl.create(:user)
 
-    @role_1 = AddUserAsPeriodStudent[user: user_1, period: period]
-    @role_2 = AddUserAsPeriodStudent[user: user_2, period: period]
+    AddUserAsPeriodStudent[user: @user_1, period: period]
+    AddUserAsPeriodStudent[user: @user_2, period: period]
   end
 
   after(:all) do
@@ -52,9 +52,9 @@ RSpec.describe GetConceptCoach, type: :routine do
   context 'no existing task' do
     it 'creates a new Task' do
       task = nil
-      expect{ task = described_class[role: @role_1, page: @page_1].task }.to(
-        change{ Tasks::Models::Task.count }.by(1)
-      )
+      expect{ task = described_class[
+        user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
+      ].task }.to change{ Tasks::Models::Task.count }.by(1)
       expect(task.task_steps.size).to eq described_class::CORE_EXERCISES_COUNT
       task.task_steps.each do |task_step|
         expect(task_step.tasked.exercise.page.id).to eq @page_1.id
@@ -63,30 +63,32 @@ RSpec.describe GetConceptCoach, type: :routine do
 
     it 'creates a new ConceptCoachTask' do
       task = nil
-      expect{ task = described_class[role: @role_1, page: @page_1].task }.to(
-        change{ Tasks::Models::ConceptCoachTask.count }.by(1)
-      )
+      expect{ task = described_class[
+        user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
+      ].task }.to change{ Tasks::Models::ConceptCoachTask.count }.by(1)
       cc_task = Tasks::Models::ConceptCoachTask.order(:created_at).last
       expect(cc_task.task).to eq task.entity_task
     end
   end
 
   context 'existing task' do
-    let!(:existing_task) { described_class[role: @role_1, page: @page_1].task }
+    let!(:existing_task) { described_class[user: @user_1,
+                                           cnx_book_id: @book.uuid,
+                                           cnx_page_id: @page_1.uuid].task }
 
     it 'should not create a new task for the same user and page' do
       task = nil
-      expect{ task = described_class[role: @role_1, page: @page_1].task }.not_to(
-        change{ Tasks::Models::Task.count }
-      )
+      expect{ task = described_class[
+        user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
+      ].task }.not_to change{ Tasks::Models::ConceptCoachTask.count }
       expect(task).to eq existing_task
     end
 
     it 'should create a new task for a different user' do
       task = nil
-      expect{ task = described_class[role: @role_2, page: @page_1].task }.to(
-        change{ Tasks::Models::Task.count }.by(1)
-      )
+      expect{ task = described_class[
+        user: @user_2, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
+      ].task }.to change{ Tasks::Models::ConceptCoachTask.count }.by(1)
       expect(task).not_to eq existing_task
       expect(task.task_steps.size).to eq described_class::CORE_EXERCISES_COUNT
       task.task_steps.each do |task_step|
@@ -96,9 +98,9 @@ RSpec.describe GetConceptCoach, type: :routine do
 
     it 'should create a new task for a different page' do
       task = nil
-      expect{ task = described_class[role: @role_1, page: @page_2].task }.to(
-        change{ Tasks::Models::Task.count }.by(1)
-      )
+      expect{ task = described_class[
+        user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: @page_2.uuid
+      ].task }.to change{ Tasks::Models::ConceptCoachTask.count }.by(1)
       expect(task).not_to eq existing_task
       expect(task.task_steps.size).to eq described_class::CORE_EXERCISES_COUNT
       task.task_steps.each do |task_step|
@@ -111,9 +113,9 @@ RSpec.describe GetConceptCoach, type: :routine do
       existing_task.task_steps.second.complete.save!
 
       task = nil
-      expect{ task = described_class[role: @role_1, page: @page_2].task }.to(
-        change{ Tasks::Models::Task.count }.by(1)
-      )
+      expect{ task = described_class[
+        user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: @page_2.uuid
+      ].task }.to change{ Tasks::Models::ConceptCoachTask.count }.by(1)
       expect(task).not_to eq existing_task
       expect(task.task_steps.size).to eq described_class::CORE_EXERCISES_COUNT + \
                                          described_class::SPACED_EXERCISES_COUNT
