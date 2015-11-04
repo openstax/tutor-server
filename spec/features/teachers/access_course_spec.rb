@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe 'Teachers' do
   let(:course) { CreateCourse[name: 'Access me'] }
-  let(:teacher) { FactoryGirl.create(:user) }
+  let(:user) { FactoryGirl.create(:user) }
 
   describe 'accessing their courses' do
     context 'unauthenticated' do
@@ -13,13 +13,13 @@ RSpec.describe 'Teachers' do
     end
 
     context 'authenticated' do
-      before { stub_current_user(teacher) }
+      before { stub_current_user(user) }
 
       context 'valid access token' do
         before { visit access_course_path(course.teacher_access_token) }
 
         it 'adds the user as the teacher' do
-          expect(UserIsCourseTeacher[course: course, user: teacher]).to be true
+          expect(UserIsCourseTeacher[course: course, user: user]).to be true
         end
 
         it 'redirects the user to the dashboard' do

@@ -13,10 +13,6 @@ module UniqueTokenable
       before_validation -> { generate_unique_token(token_field, options) }, prepend: true
       validates token_field, uniqueness: true
     end
-
-    def unique_token_mode
-      @unique_token_mode
-    end
   end
 
   private

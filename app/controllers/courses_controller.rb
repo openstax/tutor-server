@@ -1,7 +1,7 @@
 class CoursesController < ApplicationController
   def access
     begin
-      course = find_course
+      course = find_course_by_access_token
       AddUserAsCourseTeacher[course: course, user: current_user]
       redirect_to dashboard_path
     rescue
@@ -11,7 +11,7 @@ class CoursesController < ApplicationController
   end
 
   private
-  def find_course
+  def find_course_by_access_token
     profile = GetCourseProfile[attrs: {
       teacher_access_token: params[:access_token]
     }]
