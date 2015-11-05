@@ -7,7 +7,9 @@ class ImportSalesforceCourses
   uses_routine CourseContent::AddEcosystemToCourse, as: :set_ecosystem
   uses_routine Salesforce::AttachRecord, as: :attach_record
 
-  def exec
+  def exec(run_on_test_data_only: true)
+    @run_on_test_data_only = run_on_test_data_only
+
     candidate_sf_records.each do |candidate|
       create_course_for_candidate(candidate)
       candidate.save if candidate.changed?
@@ -15,14 +17,29 @@ class ImportSalesforceCourses
   end
 
   def candidate_sf_records
-    Salesforce::Remote::ClassSize.where(using_concept_coach: true, course_id: nil)
+    search_criteria = {
+      concept_coach_approved: true,
+      course_id: nil
+    }
+
+    if @run_on_test_data_only
+      search_criteria[:school] = 'Denver University'
+      Rails.logger.info { "Starting Salesforce course import using test data only" }
+    end
+
+    Salesforce::Remote::ClassSize.where(search_criteria)
   end
 
   def create_course_for_candidate(candidate)
-    offering = Catalog::Offering.find_by(identifier: candidate.offering_uid).first
+    offering = Catalog::Offering.find_by(identifier: candidate.book_name).first
 
-    if offering.nil? || !offering.is_concept_coach
-      candidate.error = "Book Name does not match a CC offering in Tutor."
+    if offering.nil?
+      candidate.error = "Book Name does not match an offering in Tutor."
+      return
+    end
+
+    if !offering.is_concept_coach
+      candidate.error = "Book Name matches a Tutor offering but it isn't for CC."
       return
     end
 
@@ -41,18 +58,26 @@ class ImportSalesforceCourses
       name: candidate.course_name,
       school: school,
       catalog_offering: offering,
+      is_concept_coach: true
     ).outputs.course
 
     candidate.course_id = course.id
     candidate.created_at = course.created_at.iso8601
     candidate.num_students = 0
     candidate.num_teachers = 0
-    # TODO set the teacher registration URL
+    candidate.teacher_join_url =
+      UrlGenerator.new.access_course_url(access_token: course.teacher_access_token)
 
     run(:set_ecosystem, course: course, ecosystem: offering.ecosystem)
 
     # Remember the candidate obj ID so we can write stats later
     run(:attach_record, record: candidate, to: course)
+
+    Rails.logger.info {
+      "Created course '#{course.name}' (#{course.id}) based on Salesforce record " +
+      "#{candidate.id} using offering '#{offering.identifier}' (#{offering.id}) " +
+      "and ecosystem '#{offering.ecosystem.title}'."
+    }
 
     # clear any existing error message
     candidate.error = nil

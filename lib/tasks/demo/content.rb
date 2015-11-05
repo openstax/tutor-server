@@ -18,6 +18,7 @@ class DemoContent < DemoBase
   uses_routine AddUserAsPeriodStudent, as: :add_student
   uses_routine UserIsCourseStudent, as: :is_student
   uses_routine UserIsCourseTeacher, as: :is_teacher
+  uses_routine CourseProfile::SetCatalogIdentifier, as: :set_offering
 
   protected
 
@@ -42,9 +43,8 @@ class DemoContent < DemoBase
         course_name = content.course_name
         is_concept_coach = content.is_concept_coach || false
         course = find_course(name: course_name) ||
-                 create_course( name: course_name,
+                 create_course(name: course_name)
                                 is_concept_coach: is_concept_coach,
-                                catalog_offering: find_or_create_catalog_offering(content) )
         courses << course
         log("Course: #{course_name}")
 
@@ -91,6 +91,9 @@ class DemoContent < DemoBase
 
         log("Book import complete")
         run(:add_ecosystem, ecosystem: ecosystem, course: course)
+
+        offering = find_or_create_catalog_offering(content, ecosystem)
+        run(:set_offering, entity_course: course, identifier: offering.identifier)
 
         index += 1
 

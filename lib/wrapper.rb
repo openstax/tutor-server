@@ -33,7 +33,7 @@ module Wrapper
   module ClassMethods
     def _define_dynamic_wrapping(name, type)
         define_method(name) do
-          verify_and_return @strategy.send(name), klass: type, error: StrategyError
+          verify_and_return @strategy.send(name), klass: type, error: StrategyError, allow_nil: true
         end
     end
 

@@ -5,6 +5,7 @@ FactoryGirl.define do
     description { Faker::Company.bs   }
     webview_url { Faker::Internet.url }
     pdf_url     { Faker::Internet.url }
+    association :ecosystem, factory: :content_ecosystem
 
   end
 end

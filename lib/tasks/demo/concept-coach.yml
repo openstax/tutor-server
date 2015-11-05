@@ -3,7 +3,8 @@ is_concept_coach: true
 cnx_book_id: f10533ca-f803-490d-b935-88899941197f
 cnx_book_version: 3.1
 url_base: https://archive.cnx.org/contents/
-catalog_offering_identifier: biology
+catalog_offering_identifier: Biology
+catalog_offering_is_concept_coach: true
 teacher: cm
 periods:
   - id: p1
