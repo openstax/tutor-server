@@ -6,18 +6,39 @@ RSpec.describe AuthController, type: :controller do
 
   context "as an non-signed in user" do
 
-    it 'allows access to iframe start and redirects to accounts' do
-      get :iframe_start
-      expect(session[:accounts_return_to]).to eq(after_iframe_authentication_url)
-      expect(response).to redirect_to(controller.openstax_accounts.login_url)
-    end
-
     it 'disallows access to iframe finish' do
       get :iframe_finish
       expect(response).to have_http_status(:forbidden)
     end
 
+    context "when not using stubbed authentication" do
+
+      before(:each) {
+        @stubbing_value = OpenStax::Accounts.configuration.enable_stubbing
+        OpenStax::Accounts.configuration.enable_stubbing = false
+      }
+      after(:each) {
+        OpenStax::Accounts.configuration.enable_stubbing = @stubbing_value
+      }
+
+      it 'allows access to iframe start and redirects to accounts' do
+        get :iframe_start
+        expect(session[:accounts_return_to]).to eq(after_iframe_authentication_url)
+        expect(response).to redirect_to(controller.openstax_accounts.login_url)
+      end
+
+    end
+
+    context "when using stubbing" do
+      it 'allows access to iframe start and redirects to stub url' do
+        get :iframe_start
+        expect(session[:accounts_return_to]).to eq(after_iframe_authentication_url)
+        expect(response).to redirect_to(controller.openstax_accounts.dev_accounts_url)
+      end
+    end
+
   end
+
 
   context "as an signed in user" do
     render_views
@@ -25,6 +46,7 @@ RSpec.describe AuthController, type: :controller do
     it 'allows access to iframe start and simply renders status info' do
       controller.sign_in user
       get :iframe_start
+      expect(response.header['X-Frame-Options']).to be_nil
       expect(session[:accounts_return_to]).to be_nil
       expect(assigns(:status)).not_to be_nil
       expect(response.body).to include('window.parent.postMessage')
@@ -33,6 +55,7 @@ RSpec.describe AuthController, type: :controller do
     it 'allows access to iframe finish and sets status info' do
       controller.sign_in user
       get :iframe_finish
+      expect(response.header['X-Frame-Options']).to be_nil
       expect(response).to have_http_status(:ok)
       expect(assigns(:status)).not_to be_nil
       expect(response.body).to include('window.parent.postMessage')
