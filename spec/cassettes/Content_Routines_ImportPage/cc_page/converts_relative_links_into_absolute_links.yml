@@ -1,0 +1,2066 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://archive.cnx.org/contents/6a0568d8-23d7-439b-9a01-16e4e73886b3
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - text/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 302
+      message: Found
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Thu, 05 Nov 2015 17:56:31 GMT
+      Content-Type:
+      - text/plain
+      Content-Length:
+      - '0'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Headers:
+      - origin,dnt,accept-encoding,accept-language,keep-alive,user-agent,x-requested-with,if-modified-since,cache-control,content-type
+      Access-Control-Allow-Methods:
+      - GET, OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Location:
+      - "/contents/6a0568d8-23d7-439b-9a01-16e4e73886b3@12.json"
+      X-Varnish-Action:
+      - FETCH (pass - status > 300, not content)
+      Accept-Ranges:
+      - bytes
+      X-Varnish:
+      - '548670291'
+      Via:
+      - 1.1 varnish
+      X-Cache:
+      - MISS
+      X-Varnish-Age:
+      - '0'
+      Age:
+      - '0'
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Thu, 05 Nov 2015 17:56:31 GMT
+- request:
+    method: get
+    uri: https://archive.cnx.org/contents/6a0568d8-23d7-439b-9a01-16e4e73886b3@12.json
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - text/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Thu, 05 Nov 2015 17:56:31 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '61769'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Headers:
+      - origin,dnt,accept-encoding,accept-language,keep-alive,user-agent,x-requested-with,if-modified-since,cache-control,content-type
+      Access-Control-Allow-Methods:
+      - GET, OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Varnish-Action:
+      - FETCH (override - archive contents)
+      X-Factor-Ttl:
+      - 'ttl: 604800.000'
+      Accept-Ranges:
+      - bytes
+      X-Varnish:
+      - 548670293 545556947
+      Via:
+      - 1.1 varnish
+      X-Cache:
+      - HIT
+      X-Varnish-Age:
+      - '184487'
+      Age:
+      - '0'
+    body:
+      encoding: UTF-8
+      string: '{"googleAnalytics": "UA-30227798-3", "version": "12", "submitlog":
+        "errata report 797", "abstract": "<div xmlns=\"http://www.w3.org/1999/xhtml\"
+        xmlns:c=\"http://cnx.rice.edu/cnxml\" xmlns:md=\"http://cnx.rice.edu/mdml\"
+        xmlns:qml=\"http://cnx.rice.edu/qml/1.0\" xmlns:mod=\"http://cnx.rice.edu/#moduleIds\"
+        xmlns:bib=\"http://bibtexml.sf.net/\" xmlns:data=\"http://dev.w3.org/html5/spec/#custom\">By
+        the end of this section, you will be able to:\n<ul>\n<li>Identify the shared
+        characteristics of the natural sciences</li>\n<li>Summarize the steps of the
+        scientific method</li>\n<li>Compare inductive reasoning with deductive reasoning</li>\n<li>Describe
+        the goals of basic science and applied science</li>\n</ul></div>", "revised":
+        "2015-05-13T17:57:57Z", "printStyle": null, "roles": null, "keywords": ["variable",
+        "theory", "serendipity", "scientific reasoning", "scientific method", "science",
+        "review article", "results", "plagiarism", "physical science", "peer-reviewed",
+        "natural sciences", "materials and methods", "life science", "life", "introduction",
+        "inductive reasoning", "hypothesis-based science", "hypothesis", "falsifiable",
+        "experiment", "discussion", "descriptive science", "deductive reasoning",
+        "control", "conclusion", "biology", "basic science", "applied science", "abstract"],
+        "id": "6a0568d8-23d7-439b-9a01-16e4e73886b3", "title": "The Science of Biology",
+        "mediaType": "application/vnd.org.cnx.module", "content": "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head
+        xmlns:c=\"http://cnx.rice.edu/cnxml\" xmlns:md=\"http://cnx.rice.edu/mdml\"><title>The
+        Science of Biology</title><meta name=\"created-time\" content=\"2012/08/22
+        14:06:58 -0500\"/><meta name=\"revised-time\" content=\"2015/05/13 12:57:57.339
+        GMT-5\"/><meta name=\"author\" content=\"OpenStaxCollege\"/><meta name=\"licensor\"
+        content=\"OSCRiceUniversity\"/><meta name=\"license\" content=\"http://creativecommons.org/licenses/by/4.0/\"/><meta
+        name=\"keywords\" content=\"abstract, applied science, basic science, biology,
+        conclusion, control, deductive reasoning, descriptive science, discussion,
+        experiment, falsifiable, hypothesis, hypothesis-based science, inductive reasoning,
+        introduction, life, life science, materials and methods, natural sciences,
+        peer-reviewed, physical science, plagiarism, results, review article, science,
+        scientific method, scientific reasoning, serendipity, theory, variable\"/><meta
+        name=\"subject\" content=\"Science and Technology\"/></head>\n\n<body xmlns=\"http://www.w3.org/1999/xhtml\"
+        xmlns:c=\"http://cnx.rice.edu/cnxml\" xmlns:md=\"http://cnx.rice.edu/mdml\"
+        xmlns:qml=\"http://cnx.rice.edu/qml/1.0\" xmlns:mod=\"http://cnx.rice.edu/#moduleIds\"
+        xmlns:bib=\"http://bibtexml.sf.net/\" xmlns:data=\"http://dev.w3.org/html5/spec/#custom\"><div
+        data-type=\"document-title\">The Science of Biology</div><div data-type=\"abstract\">By
+        the end of this section, you will be able to:\n<ul>\n<li>Identify the shared
+        characteristics of the natural sciences</li>\n<li>Summarize the steps of the
+        scientific method</li>\n<li>Compare inductive reasoning with deductive reasoning</li>\n<li>Describe
+        the goals of basic science and applied science</li>\n</ul></div>\n<figure
+        id=\"fig-ch01_01_01\"><figcaption>Formerly called blue-green algae, these
+        (a) cyanobacteria, shown here at 300x magnification under a light microscope,
+        are some of Earth&#8217;s oldest life forms. These (b) stromatolites along
+        the shores of Lake Thetis in Western Australia are ancient structures formed
+        by the layering of cyanobacteria in shallow waters. (credit a: modification
+        of work by NASA; credit b: modification of work by Ruth Ellison; scale-bar
+        data from Matt Russell)</figcaption><figure id=\"fig-ch01_01_01a\">\n<span
+        data-type=\"media\" id=\"fig-ch01-01_01a\" data-alt=\"Photo A depicts round
+        colonies of blue-green algae. Each algae cell is about 5 microns across.\">\n<img
+        src=\"/resources/056f990961a18ec8e6163eb8733226ca1d78a294/Figure_01_01_01a.jpg\"
+        data-media-type=\"image/jpg\" alt=\"Photo A depicts round colonies of blue-green
+        algae. Each algae cell is about 5 microns across.\" width=\"250\"/>\n</span>\n</figure>\n<figure
+        id=\"fig-ch01_01_01b\">\n<span data-type=\"media\" id=\"fig-ch01-01_01b\"
+        data-alt=\"Photo B depicts round fossil structures called stromatalites along
+        a watery shoreline.\">\n<img src=\"/resources/d4191e7ebe68ddce8facae8c338a762fca9b241c/Figure_01_01_01b.jpg\"
+        data-media-type=\"image/jpg\" alt=\"Photo B depicts round fossil structures
+        called stromatalites along a watery shoreline.\" width=\"250\"/>\n</span>\n</figure>\n\n</figure><p
+        id=\"fs-id2299671\">What is biology? In simple terms, <span data-type=\"term\">biology</span>
+        is the study of living organisms and their interactions with one another and
+        their environments. This is a very broad definition because the scope of biology
+        is vast. Biologists may study anything from the microscopic or submicroscopic
+        view of a cell to ecosystems and the whole living planet (<a href=\"#fig-ch01_01_01\"
+        class=\"autogenerated-content\">[link]</a>). Listening to the daily news,
+        you will quickly realize how many aspects of biology are discussed every day.
+        For example, recent news topics include <em data-effect=\"italics\">Escherichia
+        coli</em> (<a href=\"#fig-ch01_01_02\" class=\"autogenerated-content\">[link]</a>)
+        outbreaks in spinach and <em data-effect=\"italics\">Salmonella</em> contamination
+        in peanut butter. Other subjects include efforts toward finding a cure for
+        AIDS, Alzheimer&#8217;s disease, and cancer. On a global scale, many researchers
+        are committed to finding ways to protect the planet, solve environmental issues,
+        and reduce the effects of climate change. All of these diverse endeavors are
+        related to different facets of the discipline of biology.</p><figure id=\"fig-ch01_01_02\"><figcaption><em
+        data-effect=\"italics\">Escherichia coli</em> (<em data-effect=\"italics\">E.
+        coli</em>) bacteria, seen in this scanning electron micrograph, are normal
+        residents of our digestive tracts that aid in the absorption of vitamin K
+        and other nutrients. However, virulent strains are sometimes responsible for
+        disease outbreaks. (credit: Eric Erbe, digital colorization by Christopher
+        Pooley, both of USDA, ARS, EMU)</figcaption>\n<span data-type=\"media\" id=\"fs-id2054143\"
+        data-alt=\"Photo depicts E. coli bacteria aggregated together.\">\n<img src=\"/resources/db218f5f324fad143aff1f7f3a3f2476185ca8c1/Figure_01_01_02.jpg\"
+        data-media-type=\"image/jpg\" alt=\"Photo depicts E. coli bacteria aggregated
+        together.\" width=\"320\"/>\n</span>\n\n</figure>\n<section data-depth=\"1\"
+        id=\"fs-id932855\"><h1 data-type=\"title\">The Process of Science</h1>\n<p
+        id=\"fs-id2739621\">Biology is a science, but what exactly is science? What
+        does the study of biology share with other scientific disciplines? <span data-type=\"term\">Science</span>
+        (from the Latin <em data-effect=\"italics\">scientia</em>, meaning &#8220;knowledge&#8221;)
+        can be defined as knowledge that covers general truths or the operation of
+        general laws, especially when acquired and tested by the scientific method.
+        It becomes clear from this definition that the application of the scientific
+        method plays a major role in science. The <span data-type=\"term\">scientific
+        method</span> is a method of research with defined steps that include experiments
+        and careful observation.</p>\n<p id=\"fs-id1787324\">The steps of the scientific
+        method will be examined in detail later, but one of the most important aspects
+        of this method is the testing of hypotheses by means of repeatable experiments.
+        A <span data-type=\"term\">hypothesis</span> is a suggested explanation for
+        an event, which can be tested. Although using the scientific method is inherent
+        to science, it is inadequate in determining what science is. This is because
+        it is relatively easy to apply the scientific method to disciplines such as
+        physics and chemistry, but when it comes to disciplines like archaeology,
+        psychology, and geology, the scientific method becomes less applicable as
+        it becomes more difficult to repeat experiments.</p>\n<p id=\"fs-id2186987\">These
+        areas of study are still sciences, however. Consider archeology&#8212;even
+        though one cannot perform repeatable experiments, hypotheses may still be
+        supported. For instance, an archeologist can hypothesize that an ancient culture
+        existed based on finding a piece of pottery. Further hypotheses could be made
+        about various characteristics of this culture, and these hypotheses may be
+        found to be correct or false through continued support or contradictions from
+        other findings. A hypothesis may become a verified theory. A <span data-type=\"term\">theory</span>
+        is a tested and confirmed explanation for observations or phenomena. Science
+        may be better defined as fields of study that attempt to comprehend the nature
+        of the universe.</p>\n<section data-depth=\"2\" id=\"fs-id1876646\"><h2 data-type=\"title\">Natural
+        Sciences</h2>\n<p id=\"fs-id1626542\">What would you expect to see in a museum
+        of natural sciences? Frogs? Plants? Dinosaur skeletons? Exhibits about how
+        the brain functions? A planetarium? Gems and minerals? Or, maybe all of the
+        above? Science includes such diverse fields as astronomy, biology, computer
+        sciences, geology, logic, physics, chemistry, and mathematics (<a href=\"#fig-ch01_01_03\"
+        class=\"autogenerated-content\">[link]</a>). However, those fields of science
+        related to the physical world and its phenomena and processes are considered
+        <span data-type=\"term\">natural sciences</span>. Thus, a museum of natural
+        sciences might contain any of the items listed above.</p>\n<figure id=\"fig-ch01_01_03\"><figcaption>The
+        diversity of scientific fields includes astronomy, biology, computer science,
+        geology, logic, physics, chemistry, mathematics, and many other fields. (credit:
+        &#8220;Image Editor&#8221;/Flickr)</figcaption><span data-type=\"media\" id=\"fs-id3078523\"
+        data-alt=\"A collage includes a photo of planets in our solar system, a DNA
+        molecule, scientific equipment, a cross-section of the ocean floor, scientific
+        symbols, a magnetic field, beakers of fluid, and a geometry problem.\">\n<img
+        src=\"/resources/411c4c52152482467024ad1597ddad8af08049f5/Figure_01_01_03.jpg\"
+        data-media-type=\"image/jpg\" alt=\"A collage includes a photo of planets
+        in our solar system, a DNA molecule, scientific equipment, a cross-section
+        of the ocean floor, scientific symbols, a magnetic field, beakers of fluid,
+        and a geometry problem.\" width=\"400\"/>\n</span>\n\n</figure><p id=\"fs-id1879663\">There
+        is no complete agreement when it comes to defining what the natural sciences
+        include, however. For some experts, the natural sciences are astronomy, biology,
+        chemistry, earth science, and physics. Other scholars choose to divide natural
+        sciences into <span data-type=\"term\">life sciences</span>, which study living
+        things and include biology, and <span data-type=\"term\">physical sciences</span>,
+        which study nonliving matter and include astronomy, geology, physics, and
+        chemistry. Some disciplines such as biophysics and biochemistry build on both
+        life and physical sciences and are interdisciplinary. Natural sciences are
+        sometimes referred to as &#8220;hard science&#8221; because they rely on the
+        use of quantitative data; social sciences that study society and human behavior
+        are more likely to use qualitative assessments to drive investigations and
+        findings.</p>\n<p id=\"fs-id1780952\">Not surprisingly, the natural science
+        of biology has many branches or subdisciplines. Cell biologists study cell
+        structure and function, while biologists who study anatomy investigate the
+        structure of an entire organism. Those biologists studying physiology, however,
+        focus on the internal functioning of an organism. Some areas of biology focus
+        on only particular types of living things. For example, botanists explore
+        plants, while zoologists specialize in animals.</p>\n</section>\n<section
+        data-depth=\"2\" id=\"fs-id1470518\"><h2 data-type=\"title\">Scientific Reasoning</h2>\n<p
+        id=\"fs-id1422041\">One thing is common to all forms of science: an ultimate
+        goal &#8220;to know.&#8221; Curiosity and inquiry are the driving forces for
+        the development of science. Scientists seek to understand the world and the
+        way it operates. To do this, they use two methods of logical thinking: inductive
+        reasoning and deductive reasoning.</p>\n<p id=\"fs-id1727981\"><span data-type=\"term\">Inductive
+        reasoning</span> is a form of logical thinking that uses related observations
+        to arrive at a general conclusion. This type of reasoning is common in descriptive
+        science. A life scientist such as a biologist makes observations and records
+        them. These data can be qualitative or quantitative, and the raw data can
+        be supplemented with drawings, pictures, photos, or videos. From many observations,
+        the scientist can infer conclusions (inductions) based on evidence. Inductive
+        reasoning involves formulating generalizations inferred from careful observation
+        and the analysis of a large amount of data. Brain studies provide an example.
+        In this type of research, many live brains are observed while people are doing
+        a specific activity, such as viewing images of food. The part of the brain
+        that &#8220;lights up&#8221; during this activity is then predicted to be
+        the part controlling the response to the selected stimulus, in this case,
+        images of food. The &#8220;lighting up&#8221; of the various areas of the
+        brain is caused by excess absorption of radioactive sugar derivatives by active
+        areas of the brain. The resultant increase in radioactivity is observed by
+        a scanner. Then, researchers can stimulate that part of the brain to see if
+        similar responses result.</p>\n<p id=\"fs-id2979121\">Deductive reasoning
+        or deduction is the type of logic used in hypothesis-based science. In deductive
+        reason, the pattern of thinking moves in the opposite direction as compared
+        to inductive reasoning. <span data-type=\"term\">Deductive reasoning</span>
+        is a form of logical thinking that uses a general principle or law to forecast
+        specific results. From those general principles, a scientist can extrapolate
+        and predict the specific results that would be valid as long as the general
+        principles are valid. Studies in climate change can illustrate this type of
+        reasoning. For example, scientists may predict that if the climate becomes
+        warmer in a particular region, then the distribution of plants and animals
+        should change. These predictions have been made and tested, and many such
+        changes have been found, such as the modification of arable areas for agriculture,
+        with change based on temperature averages.</p>\n<p id=\"fs-id1786661\">Both
+        types of logical thinking are related to the two main pathways of scientific
+        study: descriptive science and hypothesis-based science. <span data-type=\"term\">Descriptive
+        (or discovery) science</span>, which is usually inductive, aims to observe,
+        explore, and discover, while <span data-type=\"term\">hypothesis-based science</span>,
+        which is usually deductive, begins with a specific question or problem and
+        a potential answer or solution that can be tested. The boundary between these
+        two forms of study is often blurred, and most scientific endeavors combine
+        both approaches. The fuzzy boundary becomes apparent when thinking about how
+        easily observation can lead to specific questions. For example, a gentleman
+        in the 1940s observed that the burr seeds that stuck to his clothes and his
+        dog&#8217;s fur had a tiny hook structure. On closer inspection, he discovered
+        that the burrs&#8217; gripping device was more reliable than a zipper. He
+        eventually developed a company and produced the hook-and-loop fastener popularly
+        known today as Velcro. Descriptive science and hypothesis-based science are
+        in continuous dialogue.</p>\n</section>\n</section>\n<section data-depth=\"1\"
+        id=\"fs-id2318184\"><h1 data-type=\"title\">The Scientific Method</h1>\n<p
+        id=\"fs-id1870503\">Biologists study the living world by posing questions
+        about it and seeking science-based responses. This approach is common to other
+        sciences as well and is often referred to as the scientific method. The scientific
+        method was used even in ancient times, but it was first documented by England&#8217;s
+        Sir Francis Bacon (1561&#8211;1626) (<a href=\"#fig-ch01_01_04\" class=\"autogenerated-content\">[link]</a>),
+        who set up inductive methods for scientific inquiry. The scientific method
+        is not exclusively used by biologists but can be applied to almost all fields
+        of study as a logical, rational problem-solving method.</p>\n<figure id=\"fig-ch01_01_04\"><figcaption>Sir
+        Francis Bacon (1561&#8211;1626) is credited with being the first to define
+        the scientific method. (credit: Paul van Somer)</figcaption><span data-type=\"media\"
+        id=\"fs-id2569068\" data-alt=\"Painting depicts Sir Francis Bacon in a long
+        robe.\">\n<img src=\"/resources/8ef92f8bfbdda77c876312e09717875709a35fcc/Figure_01_01_04.jpg\"
+        data-media-type=\"image/jpg\" alt=\"Painting depicts Sir Francis Bacon in
+        a long robe.\" width=\"200\"/>\n</span>\n\n</figure><p id=\"fs-id1695658\">The
+        scientific process typically starts with an observation (often a problem to
+        be solved) that leads to a question. Let&#8217;s think about a simple problem
+        that starts with an observation and apply the scientific method to solve the
+        problem. One Monday morning, a student arrives at class and quickly discovers
+        that the classroom is too warm. That is an observation that also describes
+        a problem: the classroom is too warm. The student then asks a question: &#8220;Why
+        is the classroom so warm?&#8221;</p>\n<section data-depth=\"2\" id=\"fs-id1568706\"><h2
+        data-type=\"title\">Proposing a Hypothesis</h2>\n<p id=\"fs-id1812636\">Recall
+        that a hypothesis is a suggested explanation that can be tested. To solve
+        a problem, several hypotheses may be proposed. For example, one hypothesis
+        might be, &#8220;The classroom is warm because no one turned on the air conditioning.&#8221;
+        But there could be other responses to the question, and therefore other hypotheses
+        may be proposed. A second hypothesis might be, &#8220;The classroom is warm
+        because there is a power failure, and so the air conditioning doesn&#8217;t
+        work.&#8221;</p>\n<p id=\"fs-id1966007\">Once a hypothesis has been selected,
+        the student can make a prediction. A prediction is similar to a hypothesis
+        but it typically has the format &#8220;If . . . then . . . .&#8221; For example,
+        the prediction for the first hypothesis might be, &#8220;<em data-effect=\"italics\">If</em>
+        the student turns on the air conditioning, <em data-effect=\"italics\">then</em>
+        the classroom will no longer be too warm.&#8221;</p>\n</section>\n<section
+        data-depth=\"2\" id=\"fs-id2186799\"><h2 data-type=\"title\">Testing a Hypothesis</h2>\n<p
+        id=\"fs-id1428118\">A valid hypothesis must be testable. It should also be
+        <span data-type=\"term\">falsifiable</span>, meaning that it can be disproven
+        by experimental results. Importantly, science does not claim to &#8220;prove&#8221;
+        anything because scientific understandings are always subject to modification
+        with further information. This step&#8212;openness to disproving ideas&#8212;is
+        what distinguishes sciences from non-sciences. The presence of the supernatural,
+        for instance, is neither testable nor falsifiable. To test a hypothesis, a
+        researcher will conduct one or more experiments designed to eliminate one
+        or more of the hypotheses. Each experiment will have one or more variables
+        and one or more controls. A <span data-type=\"term\">variable</span> is any
+        part of the experiment that can vary or change during the experiment. The
+        <span data-type=\"term\">control group</span> contains every feature of the
+        experimental group except it is not given the manipulation that is hypothesized
+        about. Therefore, if the results of the experimental group differ from the
+        control group, the difference must be due to the hypothesized manipulation,
+        rather than some outside factor. Look for the variables and controls in the
+        examples that follow. To test the first hypothesis, the student would find
+        out if the air conditioning is on. If the air conditioning is turned on but
+        does not work, there should be another reason, and this hypothesis should
+        be rejected. To test the second hypothesis, the student could check if the
+        lights in the classroom are functional. If so, there is no power failure and
+        this hypothesis should be rejected. Each hypothesis should be tested by carrying
+        out appropriate experiments. Be aware that rejecting one hypothesis does not
+        determine whether or not the other hypotheses can be accepted; it simply eliminates
+        one hypothesis that is not valid (<a href=\"#fig-ch01_01_05\" class=\"autogenerated-content\">[link]</a>).
+        Using the scientific method, the hypotheses that are inconsistent with experimental
+        data are rejected.</p><p id=\"fs-id2000920\">While this &#8220;warm classroom&#8221;
+        example is based on observational results, other hypotheses and experiments
+        might have clearer controls. For instance, a student might attend class on
+        Monday and realize she had difficulty concentrating on the lecture. One observation
+        to explain this occurrence might be, &#8220;When I eat breakfast before class,
+        I am better able to pay attention.&#8221; The student could then design an
+        experiment with a control to test this hypothesis.</p>\n<p id=\"fs-id1473946\">In
+        hypothesis-based science, specific results are predicted from a general premise.
+        This type of reasoning is called deductive reasoning: deduction proceeds from
+        the general to the particular. But the reverse of the process is also possible:
+        sometimes, scientists reach a general conclusion from a number of specific
+        observations. This type of reasoning is called inductive reasoning, and it
+        proceeds from the particular to the general. Inductive and deductive reasoning
+        are often used in tandem to advance scientific knowledge (<a href=\"#fig-ch01_01_06\"
+        class=\"autogenerated-content\">[link]</a>).</p>\n<div data-type=\"note\"
+        data-has-label=\"true\" id=\"fs-id2215787\" class=\"note art-connection\"
+        data-label=\"\"><div data-type=\"title\" class=\"title\">Art Connection</div>\n<p
+        id=\"fs-id2862440\">\n<figure id=\"fig-ch01_01_05\"><figcaption>The scientific
+        method consists of a series of well-defined steps. If a hypothesis is not
+        supported by experimental data, a new hypothesis can be proposed.</figcaption>\n<span
+        data-type=\"media\" id=\"fs-id1454763\" data-alt=\"A flow chart shows the
+        steps in the scientific method. In step 1, an observation is made. In step
+        2, a question is asked about the observation. In step 3, an answer to the
+        question, called a hypothesis, is proposed. In step 4, a prediction is made
+        based on the hypothesis. In step 5, an experiment is done to test the prediction.
+        In step 6, the results are analyzed to determine whether or not the hypothesis
+        is correct. If the hypothesis is incorrect, another hypothesis is made. In
+        either case, the results are reported.\">\n<img src=\"/resources/7cae44f5197466069c4f7e68a0c28fe10450bade/Figure_01_01_05.png\"
+        data-media-type=\"image/png\" alt=\"A flow chart shows the steps in the scientific
+        method. In step 1, an observation is made. In step 2, a question is asked
+        about the observation. In step 3, an answer to the question, called a hypothesis,
+        is proposed. In step 4, a prediction is made based on the hypothesis. In step
+        5, an experiment is done to test the prediction. In step 6, the results are
+        analyzed to determine whether or not the hypothesis is correct. If the hypothesis
+        is incorrect, another hypothesis is made. In either case, the results are
+        reported.\" width=\"300\"/>\n</span>\n\n</figure>\n</p>\n<p id=\"fs-id2012342\">In
+        the example below, the scientific method is used to solve an everyday problem.
+        Order the scientific method steps (numbered items) with the process of solving
+        the everyday problem (lettered items). Based on the results of the experiment,
+        is the hypothesis correct? If it is incorrect, propose some alternative hypotheses.</p>\n<ol
+        id=\"fs-id1770098\">\n<li>Observation</li>\n<li>Question</li>\n<li>Hypothesis
+        (answer)</li>\n<li>Prediction</li>\n<li>Experiment</li>\n<li>Result</li>\n</ol>\n<ol
+        id=\"fs-id1813318\" data-number-style=\"lower-alpha\"><li>There is something
+        wrong with the electrical outlet.</li>\n<li>If something is wrong with the
+        outlet, my coffeemaker also won&#8217;t work when plugged into it.</li>\n<li>My
+        toaster doesn&#8217;t toast my bread.</li>\n<li>I plug my coffee maker into
+        the outlet.</li>\n<li>My coffeemaker works.</li>\n<li>Why doesn&#8217;t my
+        toaster work?</li>\n</ol></div><div data-type=\"note\" data-has-label=\"true\"
+        id=\"fs-id2348759\" class=\"note art-connection\" data-label=\"\"><div data-type=\"title\"
+        class=\"title\">Art Connection</div>\n<p id=\"fs-id1511076\">\n<figure id=\"fig-ch01_01_06\"><figcaption>Scientists
+        use two types of reasoning, inductive and deductive reasoning, to advance
+        scientific knowledge. As is the case in this example, the conclusion from
+        inductive reasoning can often become the premise for inductive reasoning.</figcaption><span
+        data-type=\"media\" id=\"fs-id1712432\" data-alt=\"Diagram defines two types
+        of reasoning. In inductive reasoning, a general conclusion is drawn from a
+        number of observations. In deductive reasoning, specific results are predicted
+        from a general premise. An example of inductive reasoning is given. In this
+        example, three observations are made: (1) Members of a species are not all
+        the same. (2) Individuals compete for resources. (3) Species are generally
+        adapted to their environment. From these observations, the following conclusion
+        is drawn: Individuals most adapted to their environment are more likely to
+        survive and pass their traits on to the next generation. An example of deductive
+        reasoning is also given. In this example, the general premise is that individuals
+        most adapted to their environment are more likely to survive and pass their
+        traits on to the next generation. From this premise, it is predicted that,
+        if global climate change causes the temperature in an ecosystem to increase,
+        those individuals better adapted to a warmer climate will outcompete those
+        that are not.\">\n<img src=\"/resources/74d85631b95b42ac995c6271adb22206df437606/Figure_01_01_09new.png\"
+        data-media-type=\"image/png\" alt=\"Diagram defines two types of reasoning.
+        In inductive reasoning, a general conclusion is drawn from a number of observations.
+        In deductive reasoning, specific results are predicted from a general premise.
+        An example of inductive reasoning is given. In this example, three observations
+        are made: (1) Members of a species are not all the same. (2) Individuals compete
+        for resources. (3) Species are generally adapted to their environment. From
+        these observations, the following conclusion is drawn: Individuals most adapted
+        to their environment are more likely to survive and pass their traits on to
+        the next generation. An example of deductive reasoning is also given. In this
+        example, the general premise is that individuals most adapted to their environment
+        are more likely to survive and pass their traits on to the next generation.
+        From this premise, it is predicted that, if global climate change causes the
+        temperature in an ecosystem to increase, those individuals better adapted
+        to a warmer climate will outcompete those that are not.\" width=\"300\"/>\n</span>\n\n</figure></p>\n<p
+        id=\"fs-id1596510\">Decide if each of the following is an example of inductive
+        or deductive reasoning.</p>\n<ol id=\"fs-id2073222\">\n<li> All flying birds
+        and insects have wings. Birds and insects flap their wings as they move through
+        the air. Therefore, wings enable flight.</li>\n<li>Insects generally survive
+        mild winters better than harsh ones. Therefore, insect pests will become more
+        problematic if global temperatures increase.</li>\n<li>Chromosomes, the carriers
+        of DNA, separate into daughter cells during cell division. Therefore, DNA
+        is the genetic material.</li>\n<li>Animals as diverse as humans, insects,
+        and wolves all exhibit social behavior. Therefore, social behavior must have
+        an evolutionary advantage.</li>\n</ol>\n</div><p id=\"fs-id1386450\">The scientific
+        method may seem too rigid and structured. It is important to keep in mind
+        that, although scientists often follow this sequence, there is flexibility.
+        Sometimes an experiment leads to conclusions that favor a change in approach;
+        often, an experiment brings entirely new scientific questions to the puzzle.
+        Many times, science does not operate in a linear fashion; instead, scientists
+        continually draw inferences and make generalizations, finding patterns as
+        their research proceeds. Scientific reasoning is more complex than the scientific
+        method alone suggests. Notice, too, that the scientific method can be applied
+        to solving problems that aren&#8217;t necessarily scientific in nature.</p>\n</section>\n</section>\n<section
+        data-depth=\"1\" id=\"fs-id2984399\"><h1 data-type=\"title\">Two Types of
+        Science: Basic Science and Applied Science</h1>\n<p id=\"fs-id1983427\">The
+        scientific community has been debating for the last few decades about the
+        value of different types of science. Is it valuable to pursue science for
+        the sake of simply gaining knowledge, or does scientific knowledge only have
+        worth if we can apply it to solving a specific problem or to bettering our
+        lives? This question focuses on the differences between two types of science:
+        basic science and applied science.</p>\n<p id=\"fs-id1980540\"><span data-type=\"term\">Basic
+        science</span> or &#8220;pure&#8221; science seeks to expand knowledge regardless
+        of the short-term application of that knowledge. It is not focused on developing
+        a product or a service of immediate public or commercial value. The immediate
+        goal of basic science is knowledge for knowledge&#8217;s sake, though this
+        does not mean that, in the end, it may not result in a practical application.</p>\n<p
+        id=\"fs-id2164078\">In contrast, <span data-type=\"term\">applied science</span>
+        or &#8220;technology,&#8221; aims to use science to solve real-world problems,
+        making it possible, for example, to improve a crop yield, find a cure for
+        a particular disease, or save animals threatened by a natural disaster (<a
+        href=\"#fig-ch01_01_07\" class=\"autogenerated-content\">[link]</a>). In applied
+        science, the problem is usually defined for the researcher.</p>\n<figure id=\"fig-ch01_01_07\"><figcaption>After
+        Hurricane Ike struck the Gulf Coast in 2008, the U.S. Fish and Wildlife Service
+        rescued this brown pelican. Thanks to applied science, scientists knew how
+        to rehabilitate the bird. (credit: FEMA)</figcaption>\n<span data-type=\"media\"
+        id=\"fs-id2317257\" data-alt=\"A photo shows a rescue worker holding a brown
+        pelican with a broken wing wrapped in a red cast.\">\n<img src=\"/resources/514f7d3180629d259877b03cfca32c6aa9dd7636/Figure_01_01_06.jpg\"
+        data-media-type=\"image/jpg\" alt=\"A photo shows a rescue worker holding
+        a brown pelican with a broken wing wrapped in a red cast.\" width=\"320\"/>\n</span>\n\n</figure>\n<p
+        id=\"fs-id3662284\">Some individuals may perceive applied science as &#8220;useful&#8221;
+        and basic science as &#8220;useless.&#8221; A question these people might
+        pose to a scientist advocating knowledge acquisition would be, &#8220;What
+        for?&#8221; A careful look at the history of science, however, reveals that
+        basic knowledge has resulted in many remarkable applications of great value.
+        Many scientists think that a basic understanding of science is necessary before
+        an application is developed; therefore, applied science relies on the results
+        generated through basic science. Other scientists think that it is time to
+        move on from basic science and instead to find solutions to actual problems.
+        Both approaches are valid. It is true that there are problems that demand
+        immediate attention; however, few solutions would be found without the help
+        of the wide knowledge foundation generated through basic science.</p>\n<p
+        id=\"fs-id1803917\">One example of how basic and applied science can work
+        together to solve practical problems occurred after the discovery of DNA structure
+        led to an understanding of the molecular mechanisms governing DNA replication.
+        Strands of DNA, unique in every human, are found in our cells, where they
+        provide the instructions necessary for life. During DNA replication, DNA makes
+        new copies of itself, shortly before a cell divides. Understanding the mechanisms
+        of DNA replication enabled scientists to develop laboratory techniques that
+        are now used to identify genetic diseases, pinpoint individuals who were at
+        a crime scene, and determine paternity. Without basic science, it is unlikely
+        that applied science would exist.</p>\n<p id=\"fs-id2690084\">Another example
+        of the link between basic and applied research is the Human Genome Project,
+        a study in which each human chromosome was analyzed and mapped to determine
+        the precise sequence of DNA subunits and the exact location of each gene.
+        (The gene is the basic unit of heredity; an individual&#8217;s complete collection
+        of genes is his or her genome.) Other less complex organisms have also been
+        studied as part of this project in order to gain a better understanding of
+        human chromosomes. The Human Genome Project (<a href=\"#fig-ch01_01_08\" class=\"autogenerated-content\">[link]</a>)
+        relied on basic research carried out with simple organisms and, later, with
+        the human genome. An important end goal eventually became using the data for
+        applied research, seeking cures and early diagnoses for genetically related
+        diseases.</p>\n<figure id=\"fig-ch01_01_08\"><figcaption>The Human Genome
+        Project was a 13-year collaborative effort among researchers working in several
+        different fields of science. The project, which sequenced the entire human
+        genome, was completed in 2003. (credit: the U.S. Department of Energy Genome
+        Programs (http://genomics.energy.gov))</figcaption><span data-type=\"media\"
+        id=\"fs-id1396854\" data-alt=\"The human genome project&#8217;s logo is shown,
+        depicting a human being inside a DNA double helix. The words chemistry, biology,
+        physics, ethics, informatics, and engineering surround the circular image.\">\n<img
+        src=\"/resources/ee9122ab3b2c6a5533420999dc05161786f17e98/Figure_01_01_07.jpg\"
+        data-media-type=\"image/jpg\" alt=\"The human genome project&#8217;s logo
+        is shown, depicting a human being inside a DNA double helix. The words chemistry,
+        biology, physics, ethics, informatics, and engineering surround the circular
+        image.\" width=\"300\"/>\n</span>\n\n</figure><p id=\"fs-id3241178\">While
+        research efforts in both basic science and applied science are usually carefully
+        planned, it is important to note that some discoveries are made by <span data-type=\"term\">serendipity</span>,
+        that is, by means of a fortunate accident or a lucky surprise. Penicillin
+        was discovered when biologist Alexander Fleming accidentally left a petri
+        dish of <em data-effect=\"italics\">Staphylococcus</em> bacteria open. An
+        unwanted mold grew on the dish, killing the bacteria. The mold turned out
+        to be <em data-effect=\"italics\">Penicillium</em>, and a new antibiotic was
+        discovered. Even in the highly organized world of science, luck&#8212;when
+        combined with an observant, curious mind&#8212;can lead to unexpected breakthroughs.</p>\n</section>\n<section
+        data-depth=\"1\" id=\"fs-id1467930\"><h1 data-type=\"title\">Reporting Scientific
+        Work</h1>\n<p id=\"fs-id3019610\">Whether scientific research is basic science
+        or applied science, scientists must share their findings in order for other
+        researchers to expand and build upon their discoveries. Collaboration with
+        other scientists&#8212;when planning, conducting, and analyzing results&#8212;are
+        all important for scientific research. For this reason, important aspects
+        of a scientist&#8217;s work are communicating with peers and disseminating
+        results to peers. Scientists can share results by presenting them at a scientific
+        meeting or conference, but this approach can reach only the select few who
+        are present. Instead, most scientists present their results in peer-reviewed
+        manuscripts that are published in scientific journals. <span data-type=\"term\">Peer-reviewed
+        manuscripts</span> are scientific papers that are reviewed by a scientist&#8217;s
+        colleagues, or peers. These colleagues are qualified individuals, often experts
+        in the same research area, who judge whether or not the scientist&#8217;s
+        work is suitable for publication. The process of peer review helps to ensure
+        that the research described in a scientific paper or grant proposal is original,
+        significant, logical, and thorough. Grant proposals, which are requests for
+        research funding, are also subject to peer review. Scientists publish their
+        work so other scientists can reproduce their experiments under similar or
+        different conditions to expand on the findings. The experimental results must
+        be consistent with the findings of other scientists.</p>\n<p id=\"fs-id2979084\">A
+        scientific paper is very different from creative writing. Although creativity
+        is required to design experiments, there are fixed guidelines when it comes
+        to presenting scientific results. First, scientific writing must be brief,
+        concise, and accurate. A scientific paper needs to be succinct but detailed
+        enough to allow peers to reproduce the experiments.</p>\n<p id=\"fs-id2954730\">The
+        scientific paper consists of several specific sections&#8212;introduction,
+        materials and methods, results, and discussion. This structure is sometimes
+        called the &#8220;IMRaD&#8221; format. There are usually acknowledgment and
+        reference sections as well as an <span data-type=\"term\">abstract</span>
+        (a concise summary) at the beginning of the paper. There might be additional
+        sections depending on the type of paper and the journal where it will be published;
+        for example, some review papers require an outline.</p>\n<p id=\"fs-id1292278\">The
+        <span data-type=\"term\">introduction</span> starts with brief, but broad,
+        background information about what is known in the field. A good introduction
+        also gives the rationale of the work; it justifies the work carried out and
+        also briefly mentions the end of the paper, where the hypothesis or research
+        question driving the research will be presented. The introduction refers to
+        the published scientific work of others and therefore requires citations following
+        the style of the journal. Using the work or ideas of others without proper
+        citation is considered <span data-type=\"term\">plagiarism</span>.</p>\n<p
+        id=\"fs-id2279649\">The <span data-type=\"term\">materials and methods</span>
+        section includes a complete and accurate description of the substances used,
+        and the method and techniques used by the researchers to gather data. The
+        description should be thorough enough to allow another researcher to repeat
+        the experiment and obtain similar results, but it does not have to be verbose.
+        This section will also include information on how measurements were made and
+        what types of calculations and statistical analyses were used to examine raw
+        data. Although the materials and methods section gives an accurate description
+        of the experiments, it does not discuss them.</p>\n<p id=\"fs-id1790931\">Some
+        journals require a results section followed by a discussion section, but it
+        is more common to combine both. If the journal does not allow the combination
+        of both sections, the <span data-type=\"term\">results</span> section simply
+        narrates the findings without any further interpretation. The results are
+        presented by means of tables or graphs, but no duplicate information should
+        be presented. In the <span data-type=\"term\">discussion</span> section, the
+        researcher will interpret the results, describe how variables may be related,
+        and attempt to explain the observations. It is indispensable to conduct an
+        extensive literature search to put the results in the context of previously
+        published scientific research. Therefore, proper citations are included in
+        this section as well.</p>\n<p id=\"fs-id2967146\">Finally, the <span data-type=\"term\">conclusion</span>
+        section summarizes the importance of the experimental findings. While the
+        scientific paper almost certainly answered one or more scientific questions
+        that were stated, any good research should lead to more questions. Therefore,
+        a well-done scientific paper leaves doors open for the researcher and others
+        to continue and expand on the findings.</p>\n<p id=\"fs-id1318474\"><span
+        data-type=\"term\">Review articles</span> do not follow the IMRAD format because
+        they do not present original scientific findings, or primary literature; instead,
+        they summarize and comment on findings that were published as primary literature
+        and typically include extensive reference sections.</p>\n</section>\n<section
+        data-depth=\"1\" id=\"fs-id2433529\" class=\"summary\"><h1 data-type=\"title\">Section
+        Summary</h1><p id=\"fs-id2261646\">Biology is the science that studies living
+        organisms and their interactions with one another and their environments.
+        Science attempts to describe and understand the nature of the universe in
+        whole or in part by rational means. Science has many fields; those fields
+        related to the physical world and its phenomena are considered natural sciences.</p>\n<p
+        id=\"fs-id1836512\">Science can be basic or applied. The main goal of basic
+        science is to expand knowledge without any expectation of short-term practical
+        application of that knowledge. The primary goal of applied research, however,
+        is to solve practical problems.</p>\n<p id=\"fs-id2909561\">Two types of logical
+        reasoning are used in science. Inductive reasoning uses particular results
+        to produce general scientific principles. Deductive reasoning is a form of
+        logical thinking that predicts results by applying general principles. The
+        common thread throughout scientific research is the use of the scientific
+        method, a step-based process that consists of making observations, defining
+        a problem, posing hypotheses, testing these hypotheses, and drawing one or
+        more conclusions. The testing uses proper controls. Scientists present their
+        results in peer-reviewed scientific papers published in scientific journals.
+        A scientific research paper consists of several well-defined sections: introduction,
+        materials and methods, results, and, finally, a concluding discussion. Review
+        papers summarize the research done in a particular field over a period of
+        time.</p>\n</section>\n\n<section data-depth=\"1\" id=\"fs-id2959003\" class=\"art-exercise\"><h1
+        data-type=\"title\">Art Connections</h1>\n<div data-type=\"exercise\" class=\"exercise\"
+        id=\"fs-id1889238\">\n<div data-type=\"problem\" class=\"problem\" id=\"fs-id2315303\">\n<p
+        id=\"fs-id1723972\"><a href=\"#fig-ch01_01_05\" class=\"autogenerated-content\">[link]</a>
+        In the example below, the scientific method is used to solve an everyday problem.
+        Order the scientific method steps (numbered items) with the process of solving
+        the everyday problem (lettered items). Based on the results of the experiment,
+        is the hypothesis correct? If it is incorrect, propose some alternative hypotheses.</p>\n<ol
+        id=\"fs-id2195533\">\n<li>Observation</li>\n<li>Question</li>\n<li>Hypothesis
+        (answer)</li>\n<li>Prediction</li>\n<li>Experiment</li>\n<li>Result</li>\n</ol>\n<ol
+        id=\"fs-id2854021\" data-number-style=\"lower-alpha\"><li>There is something
+        wrong with the electrical outlet.</li>\n<li>If something is wrong with the
+        outlet, my coffeemaker also won&#8217;t work when plugged into it.</li>\n<li>My
+        toaster doesn&#8217;t toast my bread.</li>\n<li>I plug my coffee maker into
+        the outlet.</li>\n<li>My coffeemaker works.</li>\n<li>Why doesn&#8217;t my
+        toaster work?</li>\n</ol></div>\n<div data-type=\"solution\" class=\"solution\"
+        id=\"fs-id1470941\" data-label=\"\">\n<p id=\"fs-id632727\"><a href=\"#fig-ch01_01_05\"
+        class=\"autogenerated-content\">[link]</a> 1: C; 2: F; 3: A; 4: B; 5: D; 6:
+        E. The original hypothesis is incorrect, as the coffeemaker works when plugged
+        into the outlet. Alternative hypotheses include that the toaster might be
+        broken or that the toaster wasn''t turned on.</p></div>\n</div>\n\n<div data-type=\"exercise\"
+        class=\"exercise\" id=\"fs-id1595691\">\n<div data-type=\"problem\" class=\"problem\"
+        id=\"fs-id2106459\">\n<p id=\"fs-id1926555\"><a href=\"#fig-ch01_01_06\" class=\"autogenerated-content\">[link]</a>
+        Decide if each of the following is an example of inductive or deductive reasoning.</p>\n<ol
+        id=\"fs-id3103692\">\n<li>All flying birds and insects have wings. Birds and
+        insects flap their\nwings as they move through the air. Therefore, wings enable\nflight.</li>\n<li>Insects
+        generally survive mild winters better than harsh ones. Therefore, insect pests
+        will become more problematic if global temperatures increase.</li>\n<li>Chromosomes,
+        the carriers of DNA, separate into daughter cells during cell division. Therefore,
+        DNA is the genetic material.</li>\n<li>Animals as diverse as humans, insects,
+        and wolves all exhibit social behavior. Therefore, social behavior must have
+        an evolutionary advantage.</li>\n</ol>\n</div>\n<div data-type=\"solution\"
+        class=\"solution\" id=\"fs-id1770938\" data-label=\"\">\n<p id=\"fs-id1977874\"><a
+        href=\"#fig-ch01_01_06\" class=\"autogenerated-content\">[link]</a> 1: inductive;
+        2: deductive; 3: deductive; 4: inductive.</p>\n</div>\n</div>\n</section>\n\n<section
+        data-depth=\"1\" id=\"fs-id1458151\" class=\"multiple-choice\"><h1 data-type=\"title\">Review
+        Questions</h1><div data-type=\"exercise\" class=\"exercise\" id=\"fs-id2197874\">\n<div
+        data-type=\"problem\" class=\"problem\" id=\"fs-id1723827\">\n<p id=\"fs-id2115858\">The
+        first forms of life on Earth were ________.</p>\n<ol id=\"fs-id1442893\" data-number-style=\"lower-alpha\">\n<li>plants</li>\n<li>microorganisms</li>\n<li>birds</li>\n<li>dinosaurs</li>\n</ol>\n</div>\n<div
+        data-type=\"solution\" class=\"solution\" id=\"fs-id1268735\" data-label=\"\">\n<p
+        id=\"fs-id1461234\">B</p>\n</div>\n</div>\n<div data-type=\"exercise\" class=\"exercise\"
+        id=\"fs-id1260889\">\n<div data-type=\"problem\" class=\"problem\" id=\"fs-id2196372\">\n<p
+        id=\"fs-id1429764\">A suggested and testable explanation for an event is called
+        a ________.</p>\n<ol id=\"fs-id1387702\" data-number-style=\"lower-alpha\">\n<li>hypothesis</li>\n<li>variable</li>\n<li>theory</li>\n<li>control</li>\n</ol>\n</div>\n<div
+        data-type=\"solution\" class=\"solution\" id=\"fs-id2310226\" data-label=\"\">\n<p
+        id=\"fs-id1808532\">A</p>\n</div>\n</div>\n<div data-type=\"exercise\" class=\"exercise\"
+        id=\"fs-id1512007\">\n<div data-type=\"problem\" class=\"problem\" id=\"fs-id1671466\">\n<p
+        id=\"fs-id1342801\">Which of the following sciences is not considered a natural
+        science?</p>\n<ol id=\"fs-id1387087\" data-number-style=\"lower-alpha\">\n<li>biology</li>\n<li>astronomy</li>\n<li>physics</li>\n<li>computer
+        science</li>\n</ol>\n</div>\n<div data-type=\"solution\" class=\"solution\"
+        id=\"fs-id1481452\" data-label=\"\">\n<p id=\"fs-id1309957\">D</p>\n</div>\n</div>\n<div
+        data-type=\"exercise\" class=\"exercise\" id=\"fs-id1967894\">\n<div data-type=\"problem\"
+        class=\"problem\" id=\"fs-id2338606\">\n<p id=\"fs-id1600108\">The type of
+        logical thinking that uses related observations to arrive at a general conclusion
+        is called ________.</p>\n<ol id=\"fs-id1962149\" data-number-style=\"lower-alpha\">\n<li>deductive
+        reasoning</li>\n<li>the scientific method</li>\n<li>hypothesis-based science</li>\n<li>inductive
+        reasoning</li>\n</ol>\n</div>\n<div data-type=\"solution\" class=\"solution\"
+        id=\"fs-id2433534\" data-label=\"\">\n<p id=\"fs-id1242629\">D</p>\n</div>\n</div>\n<div
+        data-type=\"exercise\" class=\"exercise\" id=\"fs-id1694297\">\n<div data-type=\"problem\"
+        class=\"problem\" id=\"fs-id1420107\">\n<p id=\"fs-id1964679\">The process
+        of ________ helps to ensure that a scientist&#8217;s research is original,
+        significant, logical, and thorough.</p>\n<ol id=\"fs-id1777919\" data-number-style=\"lower-alpha\">\n<li>publication</li>\n<li>public
+        speaking</li>\n<li>peer review</li>\n<li>the scientific method</li>\n</ol>\n</div>\n<div
+        data-type=\"solution\" class=\"solution\" id=\"fs-id3116612\" data-label=\"\">\n<p
+        id=\"fs-id1236812\">C</p>\n</div>\n</div>\n<div data-type=\"exercise\" class=\"exercise\"
+        id=\"fs-id2739507\">\n<div data-type=\"problem\" class=\"problem\" id=\"fs-id2918383\">\n<p
+        id=\"fs-id2989543\">A person notices that her houseplants that are regularly
+        exposed to music seem to grow more quickly than those in rooms with no music.
+        As a result, she determines that plants grow better when exposed to music.
+        This example most closely resembles which type of reasoning?</p>\n<ol id=\"fs-id2011712\"
+        data-number-style=\"lower-alpha\">\n<li>inductive reasoning</li>\n<li>deductive
+        reasoning</li>\n<li>neither, because no hypothesis was made</li>\n<li>both
+        inductive and deductive reasoning</li>\n</ol>\n</div>\n<div data-type=\"solution\"
+        class=\"solution\" id=\"fs-id1812931\" data-label=\"\">\n<p id=\"fs-id913366\">A</p>\n</div>\n</div>\n</section>\n\n<section
+        data-depth=\"1\" id=\"fs-id1780484\" class=\"free-response\"><h1 data-type=\"title\">Free
+        Response</h1>\n<div data-type=\"exercise\" class=\"exercise\" id=\"fs-id2171449\">\n<div
+        data-type=\"problem\" class=\"problem\" id=\"fs-id2660628\">\n<p id=\"fs-id1704974\">Although
+        the scientific method is used by most of the sciences, it can also be applied
+        to everyday situations. Think about a problem that you may have at home, at
+        school, or with your car, and apply the scientific method to solve it.</p>\n</div>\n<div
+        data-type=\"solution\" class=\"solution\" id=\"fs-id1687414\" data-label=\"\">\n<p
+        id=\"fs-id1650865\">Answers will vary, but should apply the steps of the scientific
+        method. One possibility could be a car which doesn&#8217;t start. The hypothesis
+        could be that the car doesn&#8217;t start because the battery is dead. The
+        experiment would be to change the battery or to charge the battery and then
+        check whether the car starts or not. If it starts, the problem was due to
+        the battery, and the hypothesis is accepted.</p>\n</div>\n</div>\n<div data-type=\"exercise\"
+        class=\"exercise\" id=\"fs-id2273326\">\n<div data-type=\"problem\" class=\"problem\"
+        id=\"fs-id2874067\">\n<p id=\"fs-id2307444\">Give an example of how applied
+        science has had a direct\neffect on your daily life.</p>\n</div>\n<div data-type=\"solution\"
+        class=\"solution\" id=\"fs-id2022725\" data-label=\"\">\n<p id=\"fs-id1281610\">Answers
+        will vary. One example of how applied science has had a direct effect on daily
+        life is the presence of vaccines. Vaccines to prevent diseases such polio,
+        measles, tetanus, and even influenza affect daily life by contributing to
+        individual and societal health.</p>\n</div>\n</div>\n<div data-type=\"exercise\"
+        class=\"exercise\" id=\"fs-id2062496\">\n<div data-type=\"problem\" class=\"problem\"
+        id=\"fs-id2021222\">\n<p id=\"fs-id1477110\">Name two topics that are likely
+        to be studied by biologists, and two areas of scientific study that would
+        fall outside the realm of biology.</p>\n</div>\n<div data-type=\"solution\"
+        class=\"solution\" id=\"fs-id1298633\" data-label=\"\">\n<p id=\"fs-id1854526\">Answers
+        will vary. Topics that fall inside the area of biological study include how
+        diseases affect human bodies, how pollution impacts a species&#8217; habitat,
+        and how plants respond to their environments. Topics that fall outside of
+        biology (the &#8220;study of life&#8221;) include how metamorphic rock is
+        formed and how planetary orbits function.</p>\n</div>\n</div>\n<div data-type=\"exercise\"
+        class=\"exercise\" id=\"fs-id2862427\">\n<div data-type=\"problem\" class=\"problem\"
+        id=\"fs-id1506066\">\n<p id=\"fs-id2571526\">Thinking about the topic of cancer,
+        write a basic science question and an applied science question that a researcher
+        interested in this topic might ask</p>\n</div>\n<div data-type=\"solution\"
+        class=\"solution\" id=\"fs-id1967739\" data-label=\"\">\n<p id=\"fs-id1912025\">Answers
+        will vary. Basic science: What evolutionary purpose might cancer serve? Applied
+        science: What strategies might be found to prevent cancer from reproducing
+        at the cellular level?</p>\n</div>\n</div>\n</section>\n<div data-type=\"glossary\"><h2
+        data-type=\"glossary-title\">Glossary</h2>\n<dl class=\"definition\" id=\"fs-id2198786\">\n<dt>abstract</dt>\n<dd
+        id=\"fs-id1720782\">opening section of a scientific paper that summarizes
+        the research and conclusions</dd>\n</dl>\n<dl class=\"definition\" id=\"fs-id1847057\">\n<dt>applied
+        science</dt>\n<dd id=\"fs-id1472439\">form of science that aims to solve real-world
+        problems</dd>\n</dl>\n<dl class=\"definition\" id=\"fs-id2138632\">\n<dt>basic
+        science</dt>\n<dd id=\"fs-id1926567\">science that seeks to expand knowledge
+        and understanding regardless of the short-term application of that knowledge</dd>\n</dl>\n<dl
+        class=\"definition\" id=\"fs-id1395651\">\n<dt>biology</dt>\n<dd id=\"fs-id2934264\">the
+        study of living organisms and their interactions with one another and their
+        environments</dd>\n</dl>\n<dl class=\"definition\" id=\"fs-id2701346\">\n<dt>conclusion</dt>\n<dd
+        id=\"fs-id2894085\">section of a scientific paper that summarizes the importance
+        of the experimental findings</dd>\n</dl>\n<dl class=\"definition\" id=\"fs-id1803173\">\n<dt>control</dt>\n<dd
+        id=\"fs-id2569005\">part of an experiment that does not change during the
+        experiment</dd>\n</dl>\n<dl class=\"definition\" id=\"fs-id2896512\">\n<dt>deductive
+        reasoning</dt>\n<dd id=\"fs-id1482493\">form of logical thinking that uses
+        a general inclusive statement to forecast specific results</dd>\n</dl>\n<dl
+        class=\"definition\" id=\"fs-id1671263\">\n<dt>descriptive science</dt>\n<dd
+        id=\"fs-id2590672\">(also, discovery science) form of science that aims to
+        observe, explore, and investigate</dd>\n</dl>\n<dl class=\"definition\" id=\"fs-id3096267\">\n<dt>discussion</dt>\n<dd
+        id=\"fs-id2000439\">section of a scientific paper in which the author interprets
+        experimental results, describes how variables may be related, and attempts
+        to explain the phenomenon in question</dd>\n</dl>\n<dl class=\"definition\"
+        id=\"fs-id2026060\">\n<dt>falsifiable</dt>\n<dd id=\"fs-id1418108\">able to
+        be disproven by experimental results</dd>\n</dl>\n<dl class=\"definition\"
+        id=\"fs-id2229260\">\n<dt>hypothesis</dt>\n<dd id=\"fs-id1594345\">suggested
+        explanation for an observation, which can be tested</dd>\n</dl>\n<dl class=\"definition\"
+        id=\"fs-id1768946\">\n<dt>hypothesis-based science</dt>\n<dd id=\"fs-id919193\">form
+        of science that begins with a specific question and potential testable answers</dd>\n</dl>\n<dl
+        class=\"definition\" id=\"fs-id1361209\">\n<dt>inductive reasoning</dt>\n<dd
+        id=\"fs-id1987203\">form of logical thinking that uses related observations
+        to arrive at a general conclusion</dd>\n</dl>\n<dl class=\"definition\" id=\"fs-id3032550\">\n<dt>introduction</dt>\n<dd
+        id=\"fs-id1770864\">opening section of a scientific paper, which provides
+        background information about what was known in the field prior to the research
+        reported in the paper</dd>\n</dl>\n<dl class=\"definition\" id=\"fs-id2344953\">\n<dt>life
+        science</dt>\n<dd id=\"fs-id2273192\">field of science, such as biology, that
+        studies living things</dd>\n</dl>\n<dl class=\"definition\" id=\"fs-id2348170\">\n<dt>materials
+        and methods</dt>\n<dd id=\"fs-id2318009\">section of a scientific paper that
+        includes a complete description of the substances, methods, and techniques
+        used by the researchers to gather data</dd>\n</dl>\n<dl class=\"definition\"
+        id=\"fs-id2918248\">\n<dt>natural science</dt>\n<dd id=\"fs-id1340807\">field
+        of science that is related to the physical world and its phenomena and processes</dd>\n</dl>\n<dl
+        class=\"definition\" id=\"fs-id2321593\">\n<dt>peer-reviewed manuscript</dt>\n<dd
+        id=\"fs-id2248830\">scientific paper that is reviewed by a scientist&#8217;s
+        colleagues who are experts in the field of study</dd>\n</dl>\n<dl class=\"definition\"
+        id=\"fs-id2134807\">\n<dt>physical science</dt>\n<dd id=\"fs-id2962905\">field
+        of science, such as geology, astronomy, physics, and chemistry, that studies
+        nonliving matter</dd>\n</dl>\n<dl class=\"definition\" id=\"fs-id2227932\">\n<dt>plagiarism</dt>\n<dd
+        id=\"fs-id2023354\">using other people&#8217;s work or ideas without proper
+        citation, creating the false impression that those are the author&#8217;s
+        original ideas</dd>\n</dl>\n<dl class=\"definition\" id=\"fs-id2468605\">\n<dt>results</dt>\n<dd
+        id=\"fs-id2681858\">section of a scientific paper in which the author narrates
+        the experimental findings and presents relevant figures, pictures, diagrams,
+        graphs, and tables, without any further interpretation</dd>\n</dl>\n<dl class=\"definition\"
+        id=\"fs-id1912438\">\n<dt>review article</dt>\n<dd id=\"fs-id1707988\">paper
+        that summarizes and comments on findings that were published as primary literature</dd>\n</dl>\n<dl
+        class=\"definition\" id=\"fs-id2065865\">\n<dt>science</dt>\n<dd id=\"fs-id1256328\">knowledge
+        that covers general truths or the operation of general laws, especially when
+        acquired and tested by the scientific method</dd>\n</dl>\n<dl class=\"definition\"
+        id=\"fs-id1313718\">\n<dt>scientific method</dt>\n<dd id=\"fs-id1463426\">method
+        of research with defined steps that include observation, formulation of a
+        hypothesis, testing, and confirming or falsifying the hypothesis</dd>\n</dl>\n<dl
+        class=\"definition\" id=\"fs-id1428966\">\n<dt>serendipity</dt>\n<dd id=\"fs-id1728037\">fortunate
+        accident or a lucky surprise</dd>\n</dl>\n<dl class=\"definition\" id=\"fs-id1473748\">\n<dt>theory</dt>\n<dd
+        id=\"fs-id991969\">tested and confirmed explanation for observations or\nphenomena</dd>\n</dl>\n<dl
+        class=\"definition\" id=\"fs-id1239096\">\n<dt>variable</dt>\n<dd id=\"fs-id2154999\">part
+        of an experiment that the experimenter can vary or\nchange</dd>\n</dl>\n</div></body>\n\n</html>",
+        "subjects": ["Science and Technology"], "legacy_id": "m44387", "parentId":
+        null, "publishers": [{"surname": "OpenStax College", "suffix": "", "firstname":
+        "", "title": "", "fullname": "OpenStax College", "id": "OpenStaxCollege"},
+        {"surname": "Biology", "suffix": "", "firstname": "Cnx", "title": "", "fullname":
+        "Cnx Biology", "id": "cnxbio"}], "parent": {"authors": [], "version": "",
+        "id": null, "title": null}, "stateid": 1, "parentTitle": null, "authors":
+        [{"surname": "OpenStax College", "suffix": "", "firstname": "", "title": "",
+        "fullname": "OpenStax College", "id": "OpenStaxCollege"}], "parentVersion":
+        "", "legacy_version": "1.12", "licensors": [{"surname": "University", "suffix":
+        "", "firstname": "Rice", "title": "", "fullname": "Rice University", "id":
+        "OSCRiceUniversity"}], "language": "en", "license": {"url": "http://creativecommons.org/licenses/by/4.0/",
+        "code": "by", "version": "4.0", "name": "Creative Commons Attribution License"},
+        "created": "2012-08-22T19:06:58Z", "doctype": "", "buyLink": null, "submitter":
+        {"surname": "Biology", "suffix": "", "firstname": "Cnx", "title": "", "fullname":
+        "Cnx Biology", "id": "cnxbio"}, "parentAuthors": [], "history": [{"changes":
+        "errata report 797", "version": "12", "revised": "2015-05-13T17:57:57Z", "publisher":
+        {"surname": "Biology", "suffix": "", "firstname": "Cnx", "title": "", "fullname":
+        "Cnx Biology", "id": "cnxbio"}}, {"changes": "fixed typo (work work)", "version":
+        "11", "revised": "2014-04-16T19:02:48Z", "publisher": {"surname": "Biology",
+        "suffix": "", "firstname": "Cnx", "title": "", "fullname": "Cnx Biology",
+        "id": "cnxbio"}}, {"changes": "OSC Team review", "version": "10", "revised":
+        "2013-07-08T18:37:01Z", "publisher": {"surname": "Biology", "suffix": "",
+        "firstname": "Cnx", "title": "", "fullname": "Cnx Biology", "id": "cnxbio"}},
+        {"changes": "wiley changes round 2", "version": "9", "revised": "2013-05-10T16:36:09Z",
+        "publisher": {"surname": "Biology", "suffix": "", "firstname": "Cnx", "title":
+        "", "fullname": "Cnx Biology", "id": "cnxbio"}}, {"changes": "changed \"multiple
+        choice\" to \"review questions\"", "version": "8", "revised": "2013-04-04T19:26:37Z",
+        "publisher": {"surname": "Biology", "suffix": "", "firstname": "Cnx", "title":
+        "", "fullname": "Cnx Biology", "id": "cnxbio"}}, {"changes": "fixed summary",
+        "version": "7", "revised": "2013-03-06T16:49:18Z", "publisher": {"surname":
+        "Biology", "suffix": "", "firstname": "Cnx", "title": "", "fullname": "Cnx
+        Biology", "id": "cnxbio"}}, {"changes": "Fixed intramodule new-window links",
+        "version": "6", "revised": "2013-02-25T21:37:36Z", "publisher": {"surname":
+        "Biology", "suffix": "", "firstname": "Cnx", "title": "", "fullname": "Cnx
+        Biology", "id": "cnxbio"}}, {"changes": "section summary title", "version":
+        "5", "revised": "2013-01-28T16:44:25Z", "publisher": {"surname": "Biology",
+        "suffix": "", "firstname": "Cnx", "title": "", "fullname": "Cnx Biology",
+        "id": "cnxbio"}}, {"changes": "suppressed note label for art connections",
+        "version": "4", "revised": "2013-01-25T21:23:42Z", "publisher": {"surname":
+        "Biology", "suffix": "", "firstname": "Cnx", "title": "", "fullname": "Cnx
+        Biology", "id": "cnxbio"}}, {"changes": "published with art connection feature
+        title in place for webview", "version": "3", "revised": "2013-01-25T21:11:25Z",
+        "publisher": {"surname": "Biology", "suffix": "", "firstname": "Cnx", "title":
+        "", "fullname": "Cnx Biology", "id": "cnxbio"}}, {"changes": "initial publication",
+        "version": "2", "revised": "2013-01-25T20:48:12Z", "publisher": {"surname":
+        "Biology", "suffix": "", "firstname": "Cnx", "title": "", "fullname": "Cnx
+        Biology", "id": "cnxbio"}}, {"changes": "Created module", "version": "1",
+        "revised": "2012-08-28T16:00:38Z", "publisher": {"surname": "Biology", "suffix":
+        "", "firstname": "Cnx", "title": "", "fullname": "Cnx Biology", "id": "cnxbio"}}]}'
+    http_version: 
+  recorded_at: Thu, 05 Nov 2015 17:56:31 GMT
+- request:
+    method: get
+    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:%22cnxmod:6a0568d8-23d7-439b-9a01-16e4e73886b3%22
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.openstax.v1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Thu, 05 Nov 2015 17:56:32 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      Access-Control-Allow-Origin:
+      - "*"
+      Etag:
+      - W/"b34ffa16b39f58c98acf25ffdd691e40"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Set-Cookie:
+      - _exercises_session=QjVkT2psMlA4VDlwTCtkM0ZtS1RtY0F2STdvTW12eHl4cjIxRGZEb08rU1NFUm9XbUpIRVk0R2daSkQyU0tQSHR2Zy92T0RsRTJDbEJvNzY3NkZiWlE9PS0tTTdHNVdLdU5UL1ZkbTUvUDhuRHloUT09--f9f03376e563a37101594ba7666b8d63e25b0e25;
+        path=/; HttpOnly
+      X-Request-Id:
+      - ee704246-9f2d-466b-84f8-cb2b6a5f6181
+      X-Runtime:
+      - '0.839103'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJ0b3RhbF9jb3VudCI6MjYsIml0ZW1zIjpbeyJ1aWQiOiIyOTM1QDIiLCJu
+        dW1iZXIiOjI5MzUsInZlcnNpb24iOjIsInB1Ymxpc2hlZF9hdCI6IjIwMTUt
+        MTEtMDVUMTc6MjI6MzkuMzQ4WiIsImVkaXRvcnMiOltdLCJhdXRob3JzIjpb
+        eyJ1c2VyX2lkIjoxLCJuYW1lIjoiT3BlblN0YXgifV0sImNvcHlyaWdodF9o
+        b2xkZXJzIjpbeyJ1c2VyX2lkIjoyLCJuYW1lIjoiUmljZSBVbml2ZXJzaXR5
+        In1dLCJkZXJpdmVkX2Zyb20iOltdLCJhdHRhY2htZW50cyI6W10sInRhZ3Mi
+        OlsiYm9vazpzdGF4LWJpbyIsIm9zdC10eXBlOmNvbmNlcHQtY29hY2giLCJi
+        bG9vbXM6MiIsImRpc3BsYXk6bXVsdGlwbGUtY2hvaWNlIiwicmVxdWlyZXMt
+        Y2hvaWNlczpuIiwibG86c3RheC1iaW86MS0yLTQiLCJpZDpzdGF4LWJpbzo2
+        IiwiZG9rOjMiLCJ0aW1lOmxvbmciLCJjbnhtb2Q6NmEwNTY4ZDgtMjNkNy00
+        MzliLTlhMDEtMTZlNGU3Mzg4NmIzIl0sInN0aW11bHVzX2h0bWwiOiIiLCJx
+        dWVzdGlvbnMiOlt7ImlkIjozMDE0LCJzdGltdWx1c19odG1sIjoiIiwic3Rl
+        bV9odG1sIjoiTmFtZSB0d28gdG9waWNzIHRoYXQgYXJlIGxpa2VseSB0byBi
+        ZSBzdHVkaWVkIGJ5IGJpb2xvZ2lzdHMsIGFuZCB0d28gYXJlYXMgb2Ygc2Np
+        ZW50aWZpYyBzdHVkeSB0aGF0IHdvdWxkIGZhbGwgb3V0c2lkZSB0aGUgcmVh
+        bG0gb2YgYmlvbG9neS4iLCJhbnN3ZXJzIjpbeyJpZCI6MTE3ODUsImNvbnRl
+        bnRfaHRtbCI6InBsYW50IHJlc3BvbnNlcyB0byBleHRlcm5hbCBzdGltdWxp
+        LCBzdHVkeSBvZiB0aGUgc2hhcGUgYW5kIG1vdGlvbiBvZiBwaHlzaWNhbCBv
+        YmplY3RzLCBmb3JtYXRpb24gb2YgbWV0YW1vcnBoaWMgcm9ja3MsIGdhbGF4
+        eSBmb3JtYXRpb24gYW5kIGV2b2x1dGlvbiIsImNvcnJlY3RuZXNzIjoiMC4w
+        IiwiZmVlZGJhY2tfaHRtbCI6IkFsbCBvZiB0aGVzZSBhcmUgb3V0c2lkZSB0
+        aGUgcmVhbG0gb2YgYmlvbG9neSBleGNlcHQgZm9yIHBsYW50IHJlc3BvbnNl
+        cyB0byBleHRlcm5hbCBzdGltdWxpLiJ9LHsiaWQiOjExNzg0LCJjb250ZW50
+        X2h0bWwiOiJwbGFudCByZXNwb25zZXMgdG8gZXh0ZXJuYWwgc3RpbXVsaSwg
+        ZnVuY3Rpb25pbmcgb2YgcGxhbmV0YXJ5IG9yYml0YWxzLCBmb3JtYXRpb24g
+        b2YgbWV0YW1vcnBoaWMgcm9ja3MsIGdhbGF4eSBmb3JtYXRpb24gYW5kIGV2
+        b2x1dGlvbiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6
+        IkFsbCBvZiB0aGVzZSBhcmUgb3V0c2lkZSB0aGUgcmVhbG0gb2YgYmlvbG9n
+        eSBleGNlcHQgZm9yIHBsYW50IHJlc3BvbnNlcyB0byBleHRlcm5hbCBzdGlt
+        dWxpLiJ9LHsiaWQiOjExNzgzLCJjb250ZW50X2h0bWwiOiJjYWxjdWxhdGlu
+        ZyBzdXJmYWNlIGFyZWEgb2YgcmVjdGFuZ3VsYXIgZ3JvdW5kLCBmdW5jdGlv
+        bmluZyBvZiBwbGFuZXRhcnkgb3JiaXRhbHMsIEZvcm1hdGlvbiBvZiBtZXRh
+        bW9ycGhpYyByb2NrcywgZ2FsYXh5IGZvcm1hdGlvbiBhbmQgZXZvbHV0aW9u
+        IiwiY29ycmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiQWxsIG9m
+        IHRoZXNlIGFyZSBvdXRzaWRlIHRoZSByZWFsbSBvZiBiaW9sb2d5LiJ9LHsi
+        aWQiOjExNzgyLCJjb250ZW50X2h0bWwiOiJkaXNlYXNlcyBhZmZlY3Rpbmcg
+        aHVtYW5zLCBwb2xsdXRpb24gYWZmZWN0aW5nIHNwZWNpZXMgaGFiaXRhdCwg
+        Y2FsY3VsYXRpbmcgc3VyZmFjZSBhcmVhIG9mIHJlY3Rhbmd1bGFyIGdyb3Vu
+        ZCwgZnVuY3Rpb25pbmcgb2YgcGxhbmV0YXJ5IG9yYml0YWxzIiwiY29ycmVj
+        dG5lc3MiOiIxLjAiLCJmZWVkYmFja19odG1sIjoiRGlzZWFzZXMgYWZmZWN0
+        aW5nIGh1bWFucyBhbmQgcG9sbHV0aW9uIGFmZmVjdGluZyBzcGVjaWVzIGhh
+        Yml0YXQgYXJlIHRoZSB0d28gdG9waWNzIHRoYXQgY2FuIGJlIHN0dWRpZWQg
+        YnkgYmlvbG9naXN0cyB3aGlsZSBjYWxjdWxhdGluZyBzdXJmYWNlIGFyZWEg
+        b2YgcmVjdGFuZ3VsYXIgZ3JvdW5kIGFuZCB0aGUgZnVuY3Rpb25pbmcgb2Yg
+        cGxhbmV0YXJ5IG9yYml0YWxzIGFyZSB0d28gdG9waWNzIHRoYXQgZmFsbCBv
+        dXRzaWRlIG9mIHRoZSByZWFsbSBvZiBiaW9sb2d5LiJ9XSwic29sdXRpb25z
+        IjpbeyJ1aWQiOiIzMDE0QDEiLCJudW1iZXIiOjMwMTQsInZlcnNpb24iOjEs
+        InB1Ymxpc2hlZF9hdCI6IjIwMTUtMTEtMDVUMTc6MjI6MzkuNjQ5WiIsImVk
+        aXRvcnMiOltdLCJhdXRob3JzIjpbeyJ1c2VyX2lkIjoxLCJuYW1lIjoiT3Bl
+        blN0YXgifV0sImNvcHlyaWdodF9ob2xkZXJzIjpbeyJ1c2VyX2lkIjoyLCJu
+        YW1lIjoiUmljZSBVbml2ZXJzaXR5In1dLCJkZXJpdmVkX2Zyb20iOltdLCJh
+        dHRhY2htZW50cyI6W10sInNvbHV0aW9uX3R5cGUiOiJkZXRhaWxlZCIsImNv
+        bnRlbnRfaHRtbCI6ImRpc2Vhc2VzIGFmZmVjdGluZyBodW1hbnMsIHBvbGx1
+        dGlvbiBhZmZlY3Rpbmcgc3BlY2llcyBoYWJpdGF0LCBjYWxjdWxhdGluZyBz
+        dXJmYWNlIGFyZWEgb2YgcmVjdGFuZ3VsYXIgZ3JvdW5kLCBmdW5jdGlvbmlu
+        ZyBvZiBwbGFuZXRhcnkgb3JiaXRhbHMifV0sImhpbnRzIjpbXSwiZm9ybWF0
+        cyI6WyJtdWx0aXBsZS1jaG9pY2UiLCJmcmVlLXJlc3BvbnNlIl0sImNvbWJv
+        X2Nob2ljZXMiOltdfV19LHsidWlkIjoiMjk0MUAyIiwibnVtYmVyIjoyOTQx
+        LCJ2ZXJzaW9uIjoyLCJwdWJsaXNoZWRfYXQiOiIyMDE1LTExLTA1VDE3OjIy
+        OjM5LjM4M1oiLCJlZGl0b3JzIjpbXSwiYXV0aG9ycyI6W3sidXNlcl9pZCI6
+        MSwibmFtZSI6Ik9wZW5TdGF4In1dLCJjb3B5cmlnaHRfaG9sZGVycyI6W3si
+        dXNlcl9pZCI6MiwibmFtZSI6IlJpY2UgVW5pdmVyc2l0eSJ9XSwiZGVyaXZl
+        ZF9mcm9tIjpbXSwiYXR0YWNobWVudHMiOltdLCJ0YWdzIjpbImJvb2s6c3Rh
+        eC1iaW8iLCJvc3QtdHlwZTpjb25jZXB0LWNvYWNoIiwiZGlzcGxheTptdWx0
+        aXBsZS1jaG9pY2UiLCJyZXF1aXJlcy1jaG9pY2VzOm4iLCJ0aW1lOmxvbmci
+        LCJibG9vbXM6NCIsImRvazo0IiwibG86c3RheC1iaW86MS0yLTEiLCJpZDpz
+        dGF4LWJpbzoxMyIsImNueG1vZDo2YTA1NjhkOC0yM2Q3LTQzOWItOWEwMS0x
+        NmU0ZTczODg2YjMiXSwic3RpbXVsdXNfaHRtbCI6IiIsInF1ZXN0aW9ucyI6
+        W3siaWQiOjMwMjAsInN0aW11bHVzX2h0bWwiOiIiLCJzdGVtX2h0bWwiOiJU
+        aGUgRnJlbmNoIHNjaWVudGlzdCBKYWNxdWVzIE1vbm9kIGZhbW91c2x5IHNh
+        aWQsIOKAnFdoYXTigJlzIHRydWUgZm9yIEUgY29saSBpcyB0cnVlIG9mIGFu
+        IGVsZXBoYW50LuKAnSBIb3cgaXMgdGhpcyBzdGF0ZW1lbnQgYmFzZWQgb24g
+        dGhlIG5vdGlvbiBsaXZpbmcgb3JnYW5pc21zIHNoYXJlIGEgY29tbW9uIGFu
+        Y2VzdG9yPyIsImFuc3dlcnMiOlt7ImlkIjoxMTgwOSwiY29udGVudF9odG1s
+        IjoiRS5jb2xpIGlzIGEgcHJva2FyeW90ZSBhbmQgcmVwcm9kdWNlcyB0aHJv
+        dWdoIGJpbmFyeSBmaXNzaW9uLCBhIHByb2Nlc3MgY29tbW9uIHRvIG1vc3Qg
+        bGl2aW5nIG9yZ2FuaXNtcy4iLCJjb3JyZWN0bmVzcyI6IjAuMCIsImZlZWRi
+        YWNrX2h0bWwiOiJFLmNvbGkgaXMgYSBwcm9rYXJ5b3RlLCBidXQgaGlnaGVy
+        IG9yZ2FuaXNtcyBkbyBub3QgcmVwcm9kdWNlIGJ5IGJpbmFyeSBmaXNzaW9u
+        LiJ9LHsiaWQiOjExODA4LCJjb250ZW50X2h0bWwiOiJFLmNvbGkgY29udGFp
+        bnMgYSBudWNsZXVzIGFuZCBtZW1icmFuZSBib3VuZCBjZWxsIG9yZ2FuZWxs
+        ZXMsIHRyYWl0cyBzaGFyZWQgYnkgYWxsIHRoZSBsaXZpbmcgb3JnYW5pc21z
+        LiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IkUuY29s
+        aSBkb2VzIG5vdCBjb250YWluIG1lbWJyYW5lIGJvdW5kIGNlbGwgb3JnYW5l
+        bGxlcy4ifSx7ImlkIjoxMTgwNywiY29udGVudF9odG1sIjoiRS5jb2xpIGlz
+        IGEgcHJva2FyeW90ZS4gVGhlIHZhcmlvdXMgbWV0YWJvbGljIHByb2Nlc3Nl
+        cyBhbmQgY29yZSBmdW5jdGlvbnMgaW4gRS5jb2xpIGFyZSBob21vbG9nb3Vz
+        IHdpdGggaGlnaGVyIG9yZ2FuaXNtcy4iLCJjb3JyZWN0bmVzcyI6IjEuMCIs
+        ImZlZWRiYWNrX2h0bWwiOiJFLmNvbGkgaXMgYSBwcm9rYXJ5b3RlIGFuZCB0
+        aGUgdmFyaW91cyBtZXRhYm9saWMgcHJvY2Vzc2VzLCBzdHJ1Y3R1cmVzIGFu
+        ZCBmdW5jdGlvbnMgYXJlIGFwcGxpY2FibGUgdG8gaGlnaGVyIG9yZ2FuaXNt
+        cy4ifSx7ImlkIjoxMTgwNiwiY29udGVudF9odG1sIjoiRS5jb2xpIGlzIGEg
+        ZXVrYXJ5b3RlIGFuZCBzaGFyZSBzaW1pbGFyaXRpZXMgd2l0aCBtb3N0IG9m
+        IHRoZSBsaXZpbmcgb3JnYW5pc21zLiIsImNvcnJlY3RuZXNzIjoiMC4wIiwi
+        ZmVlZGJhY2tfaHRtbCI6IkUuY29saSBpcyBub3QgYSBldWthcnlvdGUuIEl0
+        IGlzIGEgcHJva2FyeW90ZS4ifV0sInNvbHV0aW9ucyI6W3sidWlkIjoiMzAy
+        MEAxIiwibnVtYmVyIjozMDIwLCJ2ZXJzaW9uIjoxLCJwdWJsaXNoZWRfYXQi
+        OiIyMDE1LTExLTA1VDE3OjIyOjM5LjY5NFoiLCJlZGl0b3JzIjpbXSwiYXV0
+        aG9ycyI6W3sidXNlcl9pZCI6MSwibmFtZSI6Ik9wZW5TdGF4In1dLCJjb3B5
+        cmlnaHRfaG9sZGVycyI6W3sidXNlcl9pZCI6MiwibmFtZSI6IlJpY2UgVW5p
+        dmVyc2l0eSJ9XSwiZGVyaXZlZF9mcm9tIjpbXSwiYXR0YWNobWVudHMiOltd
+        LCJzb2x1dGlvbl90eXBlIjoiZGV0YWlsZWQiLCJjb250ZW50X2h0bWwiOiJB
+        bGwgb3JnYW5pc21zIHNoYXJlIGNvcmUgc3RydWN0dXJlcyBhbmQgZnVuY3Rp
+        b25zOyB0aGVyZWZvcmUsIGJhc2ljIHJlc2VhcmNoIGRvbmUgb24gRS4gY29s
+        aSBhcHBsaWVzIHRvIGhpZ2hlciBvcmdhbmlzbXM6IG1ldGFib2xpYyBwYXRo
+        d2F5LCBtb2xlY3VsYXIgYmlvbG9neSBtYWpvciBwcm9jZXNzZXMsIGFuZCBz
+        byBvbi4ifV0sImhpbnRzIjpbXSwiZm9ybWF0cyI6WyJtdWx0aXBsZS1jaG9p
+        Y2UiLCJmcmVlLXJlc3BvbnNlIl0sImNvbWJvX2Nob2ljZXMiOltdfV19LHsi
+        dWlkIjoiMjk0MkAyIiwibnVtYmVyIjoyOTQyLCJ2ZXJzaW9uIjoyLCJwdWJs
+        aXNoZWRfYXQiOiIyMDE1LTExLTA1VDE3OjIyOjM5LjM4OVoiLCJlZGl0b3Jz
+        IjpbXSwiYXV0aG9ycyI6W3sidXNlcl9pZCI6MSwibmFtZSI6Ik9wZW5TdGF4
+        In1dLCJjb3B5cmlnaHRfaG9sZGVycyI6W3sidXNlcl9pZCI6MiwibmFtZSI6
+        IlJpY2UgVW5pdmVyc2l0eSJ9XSwiZGVyaXZlZF9mcm9tIjpbXSwiYXR0YWNo
+        bWVudHMiOltdLCJ0YWdzIjpbImJvb2s6c3RheC1iaW8iLCJvc3QtdHlwZTpj
+        b25jZXB0LWNvYWNoIiwiZG9rOjIiLCJkaXNwbGF5Om11bHRpcGxlLWNob2lj
+        ZSIsImJsb29tczozIiwicmVxdWlyZXMtY2hvaWNlczpuIiwibG86c3RheC1i
+        aW86MS0yLTEiLCJpZDpzdGF4LWJpbzoxNSIsInRpbWU6bWVkaXVtIiwiY254
+        bW9kOjZhMDU2OGQ4LTIzZDctNDM5Yi05YTAxLTE2ZTRlNzM4ODZiMyJdLCJz
+        dGltdWx1c19odG1sIjoiIiwicXVlc3Rpb25zIjpbeyJpZCI6MzAyMSwic3Rp
+        bXVsdXNfaHRtbCI6IiIsInN0ZW1faHRtbCI6IkV4cGxhaW4gdGhyZWUgd2F5
+        cyB0aGUgaHVtYW4gYm9keSByZXNwb25kcyB0byBleHRlcm5hbCBzdGltdWxp
+        LiIsImFuc3dlcnMiOlt7ImlkIjoxMTgxMywiY29udGVudF9odG1sIjoiSW5j
+        cmVhc2luZyBicmVhdGhpbmcgcmF0ZSBpbiBzdHJlc3MsIGRlY3JlYXNpbmcg
+        aGVhcnQgcmF0ZSBpbiBzdHJlc3MsIHJldHJhY3RpbmcgaGFuZCBvbiB0b3Vj
+        aGluZyBhIHNoYXJwIG9iamVjdC4iLCJjb3JyZWN0bmVzcyI6IjAuMCIsImZl
+        ZWRiYWNrX2h0bWwiOiJSZXRyYWN0aW5nIG9mIGhhbmQgb24gdG91Y2hpbmcg
+        YSBzaGFycCBvYmplY3QgaXMgb3VyIG5hdHVyYWwgcmVmbGV4IGFuZCBoZWFy
+        dCByYXRlIGluY3JlYXNlcyB1bmRlciBzdHJlc3MuIn0seyJpZCI6MTE4MTIs
+        ImNvbnRlbnRfaHRtbCI6IkRlY3JlYXNpbmcgYnJlYXRoaW5nIHJhdGUgaW4g
+        c3RyZXNzLCBpbmNyZWFzaW5nIGhlYXJ0IHJhdGUgaW4gc3RyZXNzLCByZXRy
+        YWN0aW5nIGhhbmQgb24gdG91Y2hpbmcgYSBzaGFycCBvYmplY3QuIiwiY29y
+        cmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiSGVhcnQgcmF0ZSBp
+        bmNyZWFzZXMgYnV0IGJyZWF0aGluZyByYXRlIGRvZXMgbm90IGRlY3JlYXNl
+        IHVuZGVyIHN0cmVzcy4ifSx7ImlkIjoxMTgxMSwiY29udGVudF9odG1sIjoi
+        SW5jcmVhc2luZyBicmVhdGhpbmcgcmF0ZSBpbiBzdHJlc3MsIGluY3JlYXNp
+        bmcgaGVhcnQgcmF0ZSBpbiBzdHJlc3MsIHJldHJhY3RpbmcgaGFuZCBvbiB0
+        b3VjaGluZyBob3Qgb2JqZWN0LiIsImNvcnJlY3RuZXNzIjoiMS4wIiwiZmVl
+        ZGJhY2tfaHRtbCI6IkJyZWF0aGluZyByYXRlIGFuZCBoZWFydCByYXRlIGlu
+        Y3JlYXNlcyBkdWUgdG8gZXh0ZXJuYWwgc3RpbXVsdXMgb2Ygc3RyZXNzZnVs
+        IGNvbmRpdGlvbnMsIG91ciBuYXR1cmFsIHJlZmxleCBzaWduYWxzIHVzIHRv
+        IHJldHJhY3QgaGFuZCBvbiB0b3VjaGluZyBhIGhvdCBvYmplY3QuIn0seyJp
+        ZCI6MTE4MTAsImNvbnRlbnRfaHRtbCI6IkRlY3JlYXNpbmcgYnJlYXRoaW5n
+        IHJhdGUgaW4gc3RyZXNzLCAgZGVjcmVhc2luZyBoZWFydCByYXRlIGluIHN0
+        cmVzcywgcmV0cmFjdGluZyBoYW5kIG9uIHRvdWNoaW5nIGhvdCBvYmplY3Qu
+        IiwiY29ycmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiQnJlYXRo
+        aW5nIHJhdGUgYW5kIGhlYXJ0IHJhdGUgYXJlIG5vdCBkZWNyZWFzZWQgIGR1
+        ZSB0byBleHRlcm5hbCBzdGltdWx1cyBvZiBzdHJlc3MuIn1dLCJzb2x1dGlv
+        bnMiOlt7InVpZCI6IjMwMjFAMSIsIm51bWJlciI6MzAyMSwidmVyc2lvbiI6
+        MSwicHVibGlzaGVkX2F0IjoiMjAxNS0xMS0wNVQxNzoyMjozOS43MDBaIiwi
+        ZWRpdG9ycyI6W10sImF1dGhvcnMiOlt7InVzZXJfaWQiOjEsIm5hbWUiOiJP
+        cGVuU3RheCJ9XSwiY29weXJpZ2h0X2hvbGRlcnMiOlt7InVzZXJfaWQiOjIs
+        Im5hbWUiOiJSaWNlIFVuaXZlcnNpdHkifV0sImRlcml2ZWRfZnJvbSI6W10s
+        ImF0dGFjaG1lbnRzIjpbXSwic29sdXRpb25fdHlwZSI6ImRldGFpbGVkIiwi
+        Y29udGVudF9odG1sIjoiPG9sPlxuICA8bGk+T3VyIGJvZHnigJlzIHJlYWN0
+        IHRvIHRlbXBlcmF0dXJlIChzaGl2ZXJpbmcgd2hlbiB3ZSBhcmUgY29sZCBh
+        bmQgc3dlYXRpbmcgd2hlbiB3ZSBhcmUgaG90Lik8L2xpPlxuICA8bGk+V2Ug
+        aGF2ZSBuYXR1cmFsIHJlZmxleGVzIHRvIHByZXZlbnQgb3IgbGltaXQgaGFy
+        bSB0byBvdXIgYm9keS4gV2UgcHVsbCBvdXIgaGFuZCBhd2F5IHdoZW4gd2Ug
+        dG91Y2ggc29tZXRoaW5nIGhvdCwgb3IgeWFuayBvdXIgZmluZ2VyIGF3YXkg
+        ZnJvbSBhIHNoYXJwIG9iamVjdCB3aGVuIGl0IHByaWNrcyBvdXIgZmluZ2Vy
+        LjwvbGk+XG4gIDxsaT5PdXIgYm9keSByZWFjdHMgdG8gc3RyZXNzZnVsIHNp
+        dHVhdGlvbnMgYnkgaW5jcmVhc2luZyBvdXIgaGVhcnQgYW5kIGJyZWF0aGlu
+        ZyByYXRlLjwvbGk+XG4gIDxsaT5XZSBhcmUgc3RhcnRsZWQgYnkgbG91ZCBu
+        b2lzZXMgYW5kIGNvdmVyIG91ciBlYXJzLjwvbGk+XG4gIDxsaT5XZSByZWFj
+        dCBwb3NpdGl2ZWx5IGFuZCBuZWdhdGl2ZWx5IHRvIGNlcnRhaW4gdGFzdGVz
+        IGFuZCBzbWVsbHMuPC9saT5cbjwvb2w+XG4ifV0sImhpbnRzIjpbXSwiZm9y
+        bWF0cyI6WyJtdWx0aXBsZS1jaG9pY2UiLCJmcmVlLXJlc3BvbnNlIl0sImNv
+        bWJvX2Nob2ljZXMiOltdfV19LHsidWlkIjoiMjk0M0AyIiwibnVtYmVyIjoy
+        OTQzLCJ2ZXJzaW9uIjoyLCJwdWJsaXNoZWRfYXQiOiIyMDE1LTExLTA1VDE3
+        OjIyOjM5LjM5NVoiLCJlZGl0b3JzIjpbXSwiYXV0aG9ycyI6W3sidXNlcl9p
+        ZCI6MSwibmFtZSI6Ik9wZW5TdGF4In1dLCJjb3B5cmlnaHRfaG9sZGVycyI6
+        W3sidXNlcl9pZCI6MiwibmFtZSI6IlJpY2UgVW5pdmVyc2l0eSJ9XSwiZGVy
+        aXZlZF9mcm9tIjpbXSwiYXR0YWNobWVudHMiOltdLCJ0YWdzIjpbImJvb2s6
+        c3RheC1iaW8iLCJvc3QtdHlwZTpjb25jZXB0LWNvYWNoIiwidGltZTpzaG9y
+        dCIsImRpc3BsYXk6bXVsdGlwbGUtY2hvaWNlIiwiYmxvb21zOjMiLCJyZXF1
+        aXJlcy1jaG9pY2VzOm4iLCJkb2s6MyIsImxvOnN0YXgtYmlvOjEtMi0yIiwi
+        aWQ6c3RheC1iaW86MTYiLCJjbnhtb2Q6NmEwNTY4ZDgtMjNkNy00MzliLTlh
+        MDEtMTZlNGU3Mzg4NmIzIl0sInN0aW11bHVzX2h0bWwiOiIiLCJxdWVzdGlv
+        bnMiOlt7ImlkIjozMDIyLCJzdGltdWx1c19odG1sIjoiIiwic3RlbV9odG1s
+        IjoiVGhlIHdvcmQgaGVsaXggbWVhbnMgc3BpcmFsLiBXaGF0IGRvZXMgdGhp
+        cyB0ZWxsIHlvdSBhYm91dCB0aGUgc3RydWN0dXJlIG9mIEROQSwgd2hpY2gg
+        aXMgYSBkb3VibGUgaGVsaXggbWFjcm9tb2xlY3VsZT8iLCJhbnN3ZXJzIjpb
+        eyJpZCI6MTE4MTcsImNvbnRlbnRfaHRtbCI6Ikl0IGhhcyB0d28gc3BpcmFs
+        IHN0cmFuZHMgd291bmQgdG9nZXRoZXIgYW5kIGl0IGlzIGEgbGFyZ2UgbW9s
+        ZWN1bGUgbWFkZSB1cCBvZiBkaWZmZXJlbnQgbW9ub21lcnMuIiwiY29ycmVj
+        dG5lc3MiOiIxLjAiLCJmZWVkYmFja19odG1sIjoiRE5BIGlzIGEgZG91Ymxl
+        IGhlbGl4IG1vbGVjdWxlIGhhdmluZyB0d28gc3BpcmFsIHN0cmFuZHMgdGhh
+        dCB3b3VuZCB0b2dldGhlciBsaWtlIGEgc3BpcmFsIHN0YWlyY2FzZS4gSXQg
+        aXMgYSBtYWNyb21vbGVjdWxlIGFuZCBpcyBsYXJnZSBpbiBzaXplIG1hZGUg
+        dXAgb2YgbWFueSBkaWZmZXJlbnQgbW9ub21lcnMuIn0seyJpZCI6MTE4MTYs
+        ImNvbnRlbnRfaHRtbCI6Ikl0IGhhcyB0d28gc3BpcmFsIHN0cmFuZHMgd291
+        bmQgdG9nZXRoZXIgYW5kIGl0IGlzIGEgbGFyZ2UgbW9sZWN1bGUgbWFkZSB1
+        cCBvZiBzaW5nbGUgbW9ub21lciB1bml0cy4iLCJjb3JyZWN0bmVzcyI6IjAu
+        MCIsImZlZWRiYWNrX2h0bWwiOiJETkEgaXMgYSBtYWNyb21vbGVjdWxlIHRo
+        YXQgaXMgbWFkZSB1cCBvZiBtb3JlIHRoYW4gb25lIG1vbm9tZXIgdW5pdC4i
+        fSx7ImlkIjoxMTgxNSwiY29udGVudF9odG1sIjoiSXQgaGFzIHR3byBzcGly
+        YWwgc3RyYW5kcyB3b3VuZCB0b2dldGhlciBhbmQgaXQgaXMgYSBzbWFsbCBt
+        b2xlY3VsZSBtYWRlIHVwIG9mIHNpbmdsZSBtb25vbWVyIHVuaXRzLiIsImNv
+        cnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IkROQSBpcyBhIG1h
+        Y3JvbW9sZWN1bGUgd2hpY2ggaXMgbGFyZ2UgaW4gc2l6ZSBhbmQgaXMgbWFk
+        ZSB1cCBvZiBtb3JlIHRoYW4gb25lIG1vbm9tZXIgdW5pdC4ifSx7ImlkIjox
+        MTgxNCwiY29udGVudF9odG1sIjoiSXQgaGFzIGEgc3BpcmFsIHN0cmFuZCBh
+        bmQgaXQgaXMgYSBzbWFsbCBtb2xlY3VsZSBtYWRlIHVwIG9mIGRpZmZlcmVu
+        dCBtb25vbWVyIHVuaXRzLiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJh
+        Y2tfaHRtbCI6IkROQSBoYXMgbW9yZSB0aGFuIG9uZSBzcGlyYWwgc3RyYW5k
+        IGFuZCBpdCBpcyBub3QgYSBzbWFsbCBtb2xlY3VsZS4ifV0sInNvbHV0aW9u
+        cyI6W3sidWlkIjoiMzAyMkAxIiwibnVtYmVyIjozMDIyLCJ2ZXJzaW9uIjox
+        LCJwdWJsaXNoZWRfYXQiOiIyMDE1LTExLTA1VDE3OjIyOjM5LjcwNVoiLCJl
+        ZGl0b3JzIjpbXSwiYXV0aG9ycyI6W3sidXNlcl9pZCI6MSwibmFtZSI6Ik9w
+        ZW5TdGF4In1dLCJjb3B5cmlnaHRfaG9sZGVycyI6W3sidXNlcl9pZCI6Miwi
+        bmFtZSI6IlJpY2UgVW5pdmVyc2l0eSJ9XSwiZGVyaXZlZF9mcm9tIjpbXSwi
+        YXR0YWNobWVudHMiOltdLCJzb2x1dGlvbl90eXBlIjoiZGV0YWlsZWQiLCJj
+        b250ZW50X2h0bWwiOiJETkEgaXMgYSBkb3VibGUgaGVsaXgsIGJlY2F1c2Ug
+        aXQgaGFzIHR3byBzcGlyYWwgc3RyYW5kcyBoZWxkIHRvZ2V0aGVyIGxpa2Ug
+        YSBzcGlyYWwgc3RhaXJjYXNlLiBJdCBpcyBhIG1hY3JvbW9sZWN1bGUsIGJl
+        Y2F1c2UgaXQgaXMgYSBsYXJnZSBtb2xlY3VsZSBtYWRlIHVwIG9mIG1hbnkg
+        ZGlmZmVyZW50IG1vbm9tZXJzLiJ9XSwiaGludHMiOltdLCJmb3JtYXRzIjpb
+        Im11bHRpcGxlLWNob2ljZSIsImZyZWUtcmVzcG9uc2UiXSwiY29tYm9fY2hv
+        aWNlcyI6W119XX0seyJ1aWQiOiIyOTQ0QDIiLCJudW1iZXIiOjI5NDQsInZl
+        cnNpb24iOjIsInB1Ymxpc2hlZF9hdCI6IjIwMTUtMTEtMDVUMTc6MjI6Mzku
+        NDAwWiIsImVkaXRvcnMiOltdLCJhdXRob3JzIjpbeyJ1c2VyX2lkIjoxLCJu
+        YW1lIjoiT3BlblN0YXgifV0sImNvcHlyaWdodF9ob2xkZXJzIjpbeyJ1c2Vy
+        X2lkIjoyLCJuYW1lIjoiUmljZSBVbml2ZXJzaXR5In1dLCJkZXJpdmVkX2Zy
+        b20iOltdLCJhdHRhY2htZW50cyI6W10sInRhZ3MiOlsiYm9vazpzdGF4LWJp
+        byIsIm9zdC10eXBlOmNvbmNlcHQtY29hY2giLCJkb2s6MiIsInRpbWU6c2hv
+        cnQiLCJkaXNwbGF5Om11bHRpcGxlLWNob2ljZSIsInJlcXVpcmVzLWNob2lj
+        ZXM6eSIsImJsb29tczozIiwibG86c3RheC1iaW86MS0yLTIiLCJpZDpzdGF4
+        LWJpbzoxNyIsImNueG1vZDo2YTA1NjhkOC0yM2Q3LTQzOWItOWEwMS0xNmU0
+        ZTczODg2YjMiXSwic3RpbXVsdXNfaHRtbCI6IiIsInF1ZXN0aW9ucyI6W3si
+        aWQiOjMwMjMsInN0aW11bHVzX2h0bWwiOiIiLCJzdGVtX2h0bWwiOiJXaGlj
+        aCBvZiB0aGUgZm9sbG93aW5nIHN0YXRlbWVudHMgaXMgZmFsc2U/IiwiYW5z
+        d2VycyI6W3siaWQiOjExODIxLCJjb250ZW50X2h0bWwiOiJDb21tdW5pdGll
+        cyBleGlzdCB3aXRoaW4gZWNvc3lzdGVtcyB3aGljaCBleGlzdCBpbiB0aGUg
+        Ymlvc3BoZXJlLiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRt
+        bCI6IlRyeSB0byByZWNhbGwgdGhlIGVjb3N5c3RlbSBweXJhbWlkIGRlc2Ny
+        aWJpbmcgdGhlIGxldmVscyBvZiBvcmdhbml6YXRpb24uIn0seyJpZCI6MTE4
+        MjAsImNvbnRlbnRfaHRtbCI6Ik9yZ2FuZWxsZXMgZXhpc3Qgd2l0aGluIGNl
+        bGxzIHdoaWNoIGV4aXN0IHdpdGhpbiB0aXNzdWVzLiIsImNvcnJlY3RuZXNz
+        IjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IlRoaXMgaXMgdHJ1ZSwgYXMgb3Jn
+        YW5lbGxlcyBhcmUgY29tcG9uZW50cyBvZiBjZWxscy4ifSx7ImlkIjoxMTgx
+        OSwiY29udGVudF9odG1sIjoiQ29tbXVuaXRpZXMgZXhpc3Qgd2l0aGluIHBv
+        cHVsYXRpb25zIHdoaWNoIGV4aXN0IHdpdGhpbiBlY29zeXN0ZW1zLiIsImNv
+        cnJlY3RuZXNzIjoiMS4wIiwiZmVlZGJhY2tfaHRtbCI6IlRoZSBzdGF0ZW1l
+        bnQgaXMgZmFsc2UgYmVjYXVzZSBhIGNvbW11bml0eSBpcyB0aGUgc3VtIG9m
+        IHBvcHVsYXRpb25zLCBub3QgdGhlIG90aGVyIHdheSBhcm91bmQuIn0seyJp
+        ZCI6MTE4MTgsImNvbnRlbnRfaHRtbCI6IlRpc3N1ZXMgZXhpc3Qgd2l0aGlu
+        IG9yZ2FucyB3aGljaCBleGlzdCB3aXRoaW4gb3JnYW4gc3lzdGVtcyIsImNv
+        cnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IlRoaXMgaXMgYSBj
+        b3JyZWN0IGRlc2NyaXB0aW9uIG9mIHRoZSBvcmdhbml6YXRpb24gb2YgY29t
+        cGxleCBsaXZpbmcgdGhpbmdzIn1dLCJzb2x1dGlvbnMiOlt7InVpZCI6IjMw
+        MjNAMSIsIm51bWJlciI6MzAyMywidmVyc2lvbiI6MSwicHVibGlzaGVkX2F0
+        IjoiMjAxNS0xMS0wNVQxNzoyMjozOS43MTJaIiwiZWRpdG9ycyI6W10sImF1
+        dGhvcnMiOlt7InVzZXJfaWQiOjEsIm5hbWUiOiJPcGVuU3RheCJ9XSwiY29w
+        eXJpZ2h0X2hvbGRlcnMiOlt7InVzZXJfaWQiOjIsIm5hbWUiOiJSaWNlIFVu
+        aXZlcnNpdHkifV0sImRlcml2ZWRfZnJvbSI6W10sImF0dGFjaG1lbnRzIjpb
+        XSwic29sdXRpb25fdHlwZSI6ImRldGFpbGVkIiwiY29udGVudF9odG1sIjoi
+        Q29tbXVuaXRpZXMgZXhpc3Qgd2l0aGluIHBvcHVsYXRpb25zIHdoaWNoIGV4
+        aXN0IHdpdGhpbiBlY29zeXN0ZW1zLiJ9XSwiaGludHMiOltdLCJmb3JtYXRz
+        IjpbIm11bHRpcGxlLWNob2ljZSIsImZyZWUtcmVzcG9uc2UiXSwiY29tYm9f
+        Y2hvaWNlcyI6W119XX0seyJ1aWQiOiIyOTQ1QDIiLCJudW1iZXIiOjI5NDUs
+        InZlcnNpb24iOjIsInB1Ymxpc2hlZF9hdCI6IjIwMTUtMTEtMDVUMTc6MjI6
+        MzkuNDA2WiIsImVkaXRvcnMiOltdLCJhdXRob3JzIjpbeyJ1c2VyX2lkIjox
+        LCJuYW1lIjoiT3BlblN0YXgifV0sImNvcHlyaWdodF9ob2xkZXJzIjpbeyJ1
+        c2VyX2lkIjoyLCJuYW1lIjoiUmljZSBVbml2ZXJzaXR5In1dLCJkZXJpdmVk
+        X2Zyb20iOltdLCJhdHRhY2htZW50cyI6W10sInRhZ3MiOlsiYm9vazpzdGF4
+        LWJpbyIsIm9zdC10eXBlOmNvbmNlcHQtY29hY2giLCJkb2s6MiIsImJsb29t
+        czoyIiwidGltZTpzaG9ydCIsImRpc3BsYXk6bXVsdGlwbGUtY2hvaWNlIiwi
+        cmVxdWlyZXMtY2hvaWNlczpuIiwibG86c3RheC1iaW86MS0yLTMiLCJpZDpz
+        dGF4LWJpbzoxOCIsImNueG1vZDo2YTA1NjhkOC0yM2Q3LTQzOWItOWEwMS0x
+        NmU0ZTczODg2YjMiXSwic3RpbXVsdXNfaHRtbCI6IiIsInF1ZXN0aW9ucyI6
+        W3siaWQiOjMwMjQsInN0aW11bHVzX2h0bWwiOiIiLCJzdGVtX2h0bWwiOiJJ
+        biB3aGljaCBkb21haW4gd291bGQgYSBmaXNoIGJlIGNsYXNzaWZpZWQsIGFu
+        ZCB3aHk/IiwiYW5zd2VycyI6W3siaWQiOjExODI1LCJjb250ZW50X2h0bWwi
+        OiJFdWthcnlhIGJlY2F1c2UgZmlzaCBhcmUgc2luZ2xlLWNlbGxlZC4iLCJj
+        b3JyZWN0bmVzcyI6IjAuMCIsImZlZWRiYWNrX2h0bWwiOiJGaXNoIGFyZSBj
+        bGFzc2lmaWVkIHdpdGggdGhlIEV1a2FyeWEsIGJ1dCBmaXNoIGFyZSBub3Qg
+        c2luZ2xlLWNlbGxlZC4ifSx7ImlkIjoxMTgyNCwiY29udGVudF9odG1sIjoi
+        QXJjaGFlYSwgYmVjYXVzZSBmaXNoIGFyZSBzaW5nbGUtY2VsbGVkLiIsImNv
+        cnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IkZpc2ggYXJlIG11
+        bHRpY2VsbHVsYXIsIG5vdCBzaW5nbGUtY2VsbGVkLiBUaGVyZWZvcmUsIHRo
+        ZXkgd291bGQgbm90IGJlIGNsYXNzaWZpZWQgd2l0aCB0aGUgQXJjaGFlYS4i
+        fSx7ImlkIjoxMTgyMywiY29udGVudF9odG1sIjoiRXVrYXJ5YSwgYmVjYXVz
+        ZSBmaXNoIGFyZSBtdWx0aWNlbGx1bGFyLiIsImNvcnJlY3RuZXNzIjoiMS4w
+        IiwiZmVlZGJhY2tfaHRtbCI6IkZpc2ggYXJlIG11bHRpY2VsbHVsYXIsIG1l
+        YW5pbmcgdGhleSBhcmUgY2xhc3NpZmllZCBpbiB0aGUgZG9tYWluIHRoYXQg
+        Y29udGFpbnMgYWxsIG11bHRpY2VsbHVsYXIgb3JnYW5pc21zOiBFdWthcnlh
+        In0seyJpZCI6MTE4MjIsImNvbnRlbnRfaHRtbCI6IkFyY2hhZWEsIGJlY2F1
+        c2UgZmlzaCBhcmUgbXVsdGljZWxsdWxhci4iLCJjb3JyZWN0bmVzcyI6IjAu
+        MCIsImZlZWRiYWNrX2h0bWwiOiJUaG91Z2ggZmlzaCBhcmUgbXVsdGljZWxs
+        dWxhciwgYnV0IHRoZXkgd291bGQgbm90IGJlIGNsYXNzaWZpZWQgd2l0aCB0
+        aGUgc2luZ2xlLWNlbGxlZCBBcmNoYWVhLiJ9XSwic29sdXRpb25zIjpbeyJ1
+        aWQiOiIzMDI0QDEiLCJudW1iZXIiOjMwMjQsInZlcnNpb24iOjEsInB1Ymxp
+        c2hlZF9hdCI6IjIwMTUtMTEtMDVUMTc6MjI6MzkuNzE3WiIsImVkaXRvcnMi
+        OltdLCJhdXRob3JzIjpbeyJ1c2VyX2lkIjoxLCJuYW1lIjoiT3BlblN0YXgi
+        fV0sImNvcHlyaWdodF9ob2xkZXJzIjpbeyJ1c2VyX2lkIjoyLCJuYW1lIjoi
+        UmljZSBVbml2ZXJzaXR5In1dLCJkZXJpdmVkX2Zyb20iOltdLCJhdHRhY2ht
+        ZW50cyI6W10sInNvbHV0aW9uX3R5cGUiOiJkZXRhaWxlZCIsImNvbnRlbnRf
+        aHRtbCI6IkV1a2FyeWEsIGJlY2F1c2UgZmlzaCBhcmUgbXVsdGljZWxsdWxh
+        ci4ifV0sImhpbnRzIjpbXSwiZm9ybWF0cyI6WyJtdWx0aXBsZS1jaG9pY2Ui
+        LCJmcmVlLXJlc3BvbnNlIl0sImNvbWJvX2Nob2ljZXMiOltdfV19LHsidWlk
+        IjoiMjk0NkAyIiwibnVtYmVyIjoyOTQ2LCJ2ZXJzaW9uIjoyLCJwdWJsaXNo
+        ZWRfYXQiOiIyMDE1LTExLTA1VDE3OjIyOjM5LjQxMloiLCJlZGl0b3JzIjpb
+        XSwiYXV0aG9ycyI6W3sidXNlcl9pZCI6MSwibmFtZSI6Ik9wZW5TdGF4In1d
+        LCJjb3B5cmlnaHRfaG9sZGVycyI6W3sidXNlcl9pZCI6MiwibmFtZSI6IlJp
+        Y2UgVW5pdmVyc2l0eSJ9XSwiZGVyaXZlZF9mcm9tIjpbXSwiYXR0YWNobWVu
+        dHMiOltdLCJ0YWdzIjpbImJvb2s6c3RheC1iaW8iLCJvc3QtdHlwZTpjb25j
+        ZXB0LWNvYWNoIiwidGltZTpzaG9ydCIsImRpc3BsYXk6bXVsdGlwbGUtY2hv
+        aWNlIiwiYmxvb21zOjMiLCJyZXF1aXJlcy1jaG9pY2VzOm4iLCJkb2s6MSIs
+        ImxvOnN0YXgtYmlvOjEtMi0zIiwiaWQ6c3RheC1iaW86MTkiLCJjbnhtb2Q6
+        NmEwNTY4ZDgtMjNkNy00MzliLTlhMDEtMTZlNGU3Mzg4NmIzIl0sInN0aW11
+        bHVzX2h0bWwiOiIiLCJxdWVzdGlvbnMiOlt7ImlkIjozMDI1LCJzdGltdWx1
+        c19odG1sIjoiIiwic3RlbV9odG1sIjoiUGh5bG9nZW5ldGljIHRyZWVzIGNh
+        biByZXByZXNlbnQgdHJhaXRzIHRoYXQgYXJlIGRlcml2ZWQgb3IgbG9zdCBk
+        dWUgdG8gZXZvbHV0aW9uLiBPbmUgZXhhbXBsZSBpcyB0aGUgYWJzZW5jZSBv
+        ZiBsZWdzIGluIHNvbWUgbWFyaW5lIG1hbW1hbHMuIE9uZSBzdWNoIGdyb3Vw
+        IGlzIHRoZSBDZXRhY2VhbnMsIHdoaWNoIGluY2x1ZGVzIHRvb3RoZWQgd2hh
+        bGVzLCBzdWNoIGFzIGRvbHBoaW5zIGFuZCBraWxsZXIgd2hhbGVzLCBhbmQg
+        YmFsZWVuIHdoYWxlcywgc3VjaCBhcyBodW1wYmFjayB3aGFsZXMuIENldGFj
+        ZWFucyBhcmUgZGVzY2VuZGVkIGZyb20gZXZlbi10b2VkIHVuZ3VsYXRlcyBh
+        bmQgc2hhcmUgYSBjb21tb24gYW5jZXN0cnkgd2l0aCB0aGUgaGlwcG9wb3Rh
+        bXVzLCBjb3dzLCBzaGVlcCwgY2FtZWwsIGFuZCBwaWcuQmFzZWQgb24gdGhp
+        cyBwaHlsb2dlbmV0aWMgdHJlZSwgd2hpY2ggYW5pbWFscyBhcmUgdGhlIG1v
+        c3QgY2xvc2VseSByZWxhdGVkPyIsImFuc3dlcnMiOlt7ImlkIjoxMTgyOSwi
+        Y29udGVudF9odG1sIjoiYSBob3JzZSBhbmQgYSBjYXQiLCJjb3JyZWN0bmVz
+        cyI6IjEuMCIsImZlZWRiYWNrX2h0bWwiOiJDbG9zZWx5LXJlbGF0ZWQgb3Jn
+        YW5pc21zIHNoYXJlIHRoZSBzbWFsbGVzdCBhbmQgcmlnaHQtbW9zdCBicmFj
+        a2V0cyBvbiB0aGUgdHJlZS4gT2YgdGhlIGFuaW1hbHMgbGlzdGVkLCB0aGUg
+        aG9yc2UgaXMgY2xvc2VzdCB0byBhIGNhdCBvbiB0aGUgcGh5bG9nZW5ldGlj
+        IHRyZWUsIGFzIHRoZXkgYXJlIGNvbm5lY3RlZCBieSB0aGUgc21hbGxlc3Qg
+        b2YgdGhlIGJyYWNrZXRzLiJ9LHsiaWQiOjExODI4LCJjb250ZW50X2h0bWwi
+        OiJhIGhvcnNlIGFuZCBhIGJhdCIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVl
+        ZGJhY2tfaHRtbCI6IkNsb3NlbHktcmVsYXRlZCBvcmdhbmlzbXMgc2hhcmUg
+        dGhlIHNtYWxsZXN0IGFuZCByaWdodC1tb3N0IGJyYWNrZXRzIG9uIHRoZSB0
+        cmVlLiBPdGhlciBhbmltYWxzIGFyZSBjbG9zZXIgdG8gdGhlIGhvcnNlIG9u
+        IHRoZSBwaHlsb2dlbmV0aWMgdHJlZSB0aGFuIHRoZSBiYXQuIn0seyJpZCI6
+        MTE4MjcsImNvbnRlbnRfaHRtbCI6ImEgaG9yc2UgYW5kIGEgY2FtZWwiLCJj
+        b3JyZWN0bmVzcyI6IjAuMCIsImZlZWRiYWNrX2h0bWwiOiJDbG9zZWx5LXJl
+        bGF0ZWQgb3JnYW5pc21zIHNoYXJlIHRoZSBzbWFsbGVzdCBhbmQgcmlnaHQt
+        bW9zdCBicmFja2V0cyBvbiB0aGUgdHJlZS4gQW5vdGhlciBhbmltYWwgaXMg
+        Y2xvc2VyIHRvIHRoZSBob3JzZSBvbiB0aGUgcGh5bG9nZW5ldGljIHRyZWUg
+        dGhhbiB0aGUgY2FtZWwuIn0seyJpZCI6MTE4MjYsImNvbnRlbnRfaHRtbCI6
+        ImEgaG9yc2UgYW5kIGFuIGFybWFkaWxsbyIsImNvcnJlY3RuZXNzIjoiMC4w
+        IiwiZmVlZGJhY2tfaHRtbCI6IkNsb3NlbHktcmVsYXRlZCBvcmdhbmlzbXMg
+        c2hhcmUgdGhlIHNtYWxsZXN0IGFuZCByaWdodC1tb3N0IGJyYWNrZXRzIG9u
+        IHRoZSB0cmVlLiBBbm90aGVyIGFuaW1hbCBpcyBjbG9zZXIgdG8gdGhlIGhv
+        cnNlIG9uIHRoZSBwaHlsb2dlbmV0aWMgdHJlZSB0aGFuIHRoZSBhcm1hZGls
+        bG8uIn1dLCJzb2x1dGlvbnMiOlt7InVpZCI6IjMwMjVAMSIsIm51bWJlciI6
+        MzAyNSwidmVyc2lvbiI6MSwicHVibGlzaGVkX2F0IjoiMjAxNS0xMS0wNVQx
+        NzoyMjozOS43MjNaIiwiZWRpdG9ycyI6W10sImF1dGhvcnMiOlt7InVzZXJf
+        aWQiOjEsIm5hbWUiOiJPcGVuU3RheCJ9XSwiY29weXJpZ2h0X2hvbGRlcnMi
+        Olt7InVzZXJfaWQiOjIsIm5hbWUiOiJSaWNlIFVuaXZlcnNpdHkifV0sImRl
+        cml2ZWRfZnJvbSI6W10sImF0dGFjaG1lbnRzIjpbXSwic29sdXRpb25fdHlw
+        ZSI6ImRldGFpbGVkIiwiY29udGVudF9odG1sIjoiYSBob3JzZSBhbmQgYSBj
+        YXQifV0sImhpbnRzIjpbXSwiZm9ybWF0cyI6WyJtdWx0aXBsZS1jaG9pY2Ui
+        LCJmcmVlLXJlc3BvbnNlIl0sImNvbWJvX2Nob2ljZXMiOltdfV19LHsidWlk
+        IjoiMjk0N0AyIiwibnVtYmVyIjoyOTQ3LCJ2ZXJzaW9uIjoyLCJwdWJsaXNo
+        ZWRfYXQiOiIyMDE1LTExLTA1VDE3OjIyOjM5LjQyOFoiLCJlZGl0b3JzIjpb
+        XSwiYXV0aG9ycyI6W3sidXNlcl9pZCI6MSwibmFtZSI6Ik9wZW5TdGF4In1d
+        LCJjb3B5cmlnaHRfaG9sZGVycyI6W3sidXNlcl9pZCI6MiwibmFtZSI6IlJp
+        Y2UgVW5pdmVyc2l0eSJ9XSwiZGVyaXZlZF9mcm9tIjpbXSwiYXR0YWNobWVu
+        dHMiOltdLCJ0YWdzIjpbImJvb2s6c3RheC1iaW8iLCJvc3QtdHlwZTpjb25j
+        ZXB0LWNvYWNoIiwiZG9rOjIiLCJ0aW1lOnNob3J0IiwiZGlzcGxheTptdWx0
+        aXBsZS1jaG9pY2UiLCJibG9vbXM6MyIsInJlcXVpcmVzLWNob2ljZXM6biIs
+        ImxvOnN0YXgtYmlvOjEtMi0yIiwiaWQ6c3RheC1iaW86MjAiLCJjbnhtb2Q6
+        NmEwNTY4ZDgtMjNkNy00MzliLTlhMDEtMTZlNGU3Mzg4NmIzIl0sInN0aW11
+        bHVzX2h0bWwiOiIiLCJxdWVzdGlvbnMiOlt7ImlkIjozMDI2LCJzdGltdWx1
+        c19odG1sIjoiIiwic3RlbV9odG1sIjoiVmlydXNlcyBhcmUgbm90IGNvbnNp
+        ZGVyZWQgbGl2aW5nIGJlY2F1c2UgdGhleSIsImFuc3dlcnMiOlt7ImlkIjox
+        MTgzMywiY29udGVudF9odG1sIjoibGFjayBjZWxsIG1lbWJyYW5lIiwiY29y
+        cmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiTWFueSB2aXJ1c2Vz
+        IGhhdmUgbGlwaWQgZW52ZWxvcGVzLCB3aGljaCBhcmUgbm90IHRoZSBzYW1l
+        IGFzIGxhY2sgY2VsbCBtZW1icmFuZS4gVmlydXNlcyBhcmUgbm90IG1hZGUg
+        dXAgb2YgbGl2aW5nIGNlbGxzIGFuZCB0aGlzIGRpZmZlcmVudGlhdGVzIHRo
+        ZW0gZnJvbSBsaXZpbmcgYmVpbmdzLiJ9LHsiaWQiOjExODMyLCJjb250ZW50
+        X2h0bWwiOiJkbyBub3QgY29udGFpbiBETkEgb3IgUk5BIiwiY29ycmVjdG5l
+        c3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiVmlydXNlcyBhcmUgbWFkZSB1
+        cCBvZiAgIEROQSBvciBSTkEuIn0seyJpZCI6MTE4MzEsImNvbnRlbnRfaHRt
+        bCI6ImNhbm5vdCByZXBsaWNhdGUiLCJjb3JyZWN0bmVzcyI6IjAuMCIsImZl
+        ZWRiYWNrX2h0bWwiOiJWaXJ1c2VzIGNhbm5vdCByZXBsaWNhdGUgd2l0aG91
+        dCBhIGhvc3QuIFRoZXkgYXJlIG5vdCBjb25zaWRlcmVkIGxpdmluZyBiZWNh
+        dXNlIHRoZXkgYXJlIG5vdCBtYWRlIHVwIG9mIGNlbGxzLiJ9LHsiaWQiOjEx
+        ODMwLCJjb250ZW50X2h0bWwiOiJhcmUgbm90IG1hZGUgb2YgY2VsbHMiLCJj
+        b3JyZWN0bmVzcyI6IjEuMCIsImZlZWRiYWNrX2h0bWwiOiJWaXJ1c2VzIGFy
+        ZSBub3QgbWFkZSB1cCBvZiBjZWxscy4gVGhleSBhcmUgbWFkZSB1cCBvZiBE
+        TkEgb3IgUk5BIHN1cnJvdW5kZWQgYnkgYSBwcm90ZWluIGNvYXQuIn1dLCJz
+        b2x1dGlvbnMiOlt7InVpZCI6IjMwMjZAMSIsIm51bWJlciI6MzAyNiwidmVy
+        c2lvbiI6MSwicHVibGlzaGVkX2F0IjoiMjAxNS0xMS0wNVQxNzoyMjozOS43
+        MjlaIiwiZWRpdG9ycyI6W10sImF1dGhvcnMiOlt7InVzZXJfaWQiOjEsIm5h
+        bWUiOiJPcGVuU3RheCJ9XSwiY29weXJpZ2h0X2hvbGRlcnMiOlt7InVzZXJf
+        aWQiOjIsIm5hbWUiOiJSaWNlIFVuaXZlcnNpdHkifV0sImRlcml2ZWRfZnJv
+        bSI6W10sImF0dGFjaG1lbnRzIjpbXSwic29sdXRpb25fdHlwZSI6ImRldGFp
+        bGVkIiwiY29udGVudF9odG1sIjoiYXJlIG5vdCBtYWRlIG9mIGNlbGxzLiJ9
+        XSwiaGludHMiOltdLCJmb3JtYXRzIjpbIm11bHRpcGxlLWNob2ljZSIsImZy
+        ZWUtcmVzcG9uc2UiXSwiY29tYm9fY2hvaWNlcyI6W119XX0seyJ1aWQiOiIy
+        OTQ4QDIiLCJudW1iZXIiOjI5NDgsInZlcnNpb24iOjIsInB1Ymxpc2hlZF9h
+        dCI6IjIwMTUtMTEtMDVUMTc6MjI6MzkuNDM1WiIsImVkaXRvcnMiOltdLCJh
+        dXRob3JzIjpbeyJ1c2VyX2lkIjoxLCJuYW1lIjoiT3BlblN0YXgifV0sImNv
+        cHlyaWdodF9ob2xkZXJzIjpbeyJ1c2VyX2lkIjoyLCJuYW1lIjoiUmljZSBV
+        bml2ZXJzaXR5In1dLCJkZXJpdmVkX2Zyb20iOltdLCJhdHRhY2htZW50cyI6
+        W10sInRhZ3MiOlsiYm9vazpzdGF4LWJpbyIsIm9zdC10eXBlOmNvbmNlcHQt
+        Y29hY2giLCJkb2s6MiIsInRpbWU6c2hvcnQiLCJkaXNwbGF5Om11bHRpcGxl
+        LWNob2ljZSIsInJlcXVpcmVzLWNob2ljZXM6eSIsImJsb29tczozIiwibG86
+        c3RheC1iaW86MS0yLTIiLCJpZDpzdGF4LWJpbzoyMyIsImNueG1vZDo2YTA1
+        NjhkOC0yM2Q3LTQzOWItOWEwMS0xNmU0ZTczODg2YjMiXSwic3RpbXVsdXNf
+        aHRtbCI6IiIsInF1ZXN0aW9ucyI6W3siaWQiOjMwMjcsInN0aW11bHVzX2h0
+        bWwiOiIiLCJzdGVtX2h0bWwiOiJXaGljaCBvZiB0aGUgZm9sbG93aW5nIHNl
+        cXVlbmNlcyByZXByZXNlbnRzIHRoZSBoaWVyYXJjaHkgb2YgYmlvbG9naWNh
+        bCBvcmdhbml6YXRpb24gZnJvbSB0aGUgbW9zdCBpbmNsdXNpdmUgdG8gdGhl
+        IGxlYXN0IGNvbXBsZXggbGV2ZWw/IiwiYW5zd2VycyI6W3siaWQiOjExODM3
+        LCJjb250ZW50X2h0bWwiOiJvcmdhbmlzbSwgY29tbXVuaXR5LCBiaW9zcGhl
+        cmUsIG1vbGVjdWxlLCB0aXNzdWUsIG9yZ2FuIiwiY29ycmVjdG5lc3MiOiIw
+        LjAiLCJmZWVkYmFja19odG1sIjoiTW9sZWN1bGUgaXMgdGhlIGxlYXN0IGNv
+        bXBsZXggbGV2ZWwgaW4gdGhlIHNlcXVlbmNlIG9mIGhpZXJhcmNoeS4ifSx7
+        ImlkIjoxMTgzNiwiY29udGVudF9odG1sIjoib3JnYW5pc20sIG9yZ2FuLCB0
+        aXNzdWUsIG9yZ2FuZWxsZSwgbW9sZWN1bGUiLCJjb3JyZWN0bmVzcyI6IjAu
+        MCIsImZlZWRiYWNrX2h0bWwiOiJBcmUgeW91IHN1cmUgb3JnYW5pc20gaXMg
+        dGhlIGxlYXN0IGNvbXBsZXggbGV2ZWwgaW4gdGhlIGdpdmVuIHNlcXVlbmNl
+        IG9mIGhpZXJhcmNoeS4ifSx7ImlkIjoxMTgzNSwiY29udGVudF9odG1sIjoi
+        b3JnYW5lbGxlLCB0aXNzdWUsIGJpb3NwaGVyZSwgZWNvc3lzdGVtLCBwb3B1
+        bGF0aW9uIiwiY29ycmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoi
+        Qmlvc3BoZXJlIGFuZCBlY29zeXN0ZW0gYXJlIGFtb25nc3QgdGhlIG1vc3Qg
+        aW5jbHVzaXZlICBhbmQgYSB0aXNzdWUgaXMgdGhlIGxlYXN0IGNvbXBsZXgg
+        bGV2ZWwuIn0seyJpZCI6MTE4MzQsImNvbnRlbnRfaHRtbCI6ImJpb3NwaGVy
+        ZSwgZWNvc3lzdGVtLCBjb21tdW5pdHksIHBvcHVsYXRpb24sIG9yZ2FuaXNt
+        IiwiY29ycmVjdG5lc3MiOiIxLjAiLCJmZWVkYmFja19odG1sIjoiQmlvc3Bo
+        ZXJlIGlzIHRoZSBtb3N0IGluY2x1c2l2ZSBhbmQgb3JnYW5pc20gaXMgdGhl
+        IGxlYXN0IGNvbXBsZXggbGV2ZWwgaW4gdGhlIGdpdmVuIHNlcXVlbmNlIG9m
+        IGhpZXJhcmNoeS4ifV0sInNvbHV0aW9ucyI6W3sidWlkIjoiMzAyN0AxIiwi
+        bnVtYmVyIjozMDI3LCJ2ZXJzaW9uIjoxLCJwdWJsaXNoZWRfYXQiOiIyMDE1
+        LTExLTA1VDE3OjIyOjM5LjczNFoiLCJlZGl0b3JzIjpbXSwiYXV0aG9ycyI6
+        W3sidXNlcl9pZCI6MSwibmFtZSI6Ik9wZW5TdGF4In1dLCJjb3B5cmlnaHRf
+        aG9sZGVycyI6W3sidXNlcl9pZCI6MiwibmFtZSI6IlJpY2UgVW5pdmVyc2l0
+        eSJ9XSwiZGVyaXZlZF9mcm9tIjpbXSwiYXR0YWNobWVudHMiOltdLCJzb2x1
+        dGlvbl90eXBlIjoiZGV0YWlsZWQiLCJjb250ZW50X2h0bWwiOiJiaW9zcGhl
+        cmUsIGVjb3N5c3RlbSwgY29tbXVuaXR5LCBwb3B1bGF0aW9uLCBvcmdhbmlz
+        bSJ9XSwiaGludHMiOltdLCJmb3JtYXRzIjpbIm11bHRpcGxlLWNob2ljZSIs
+        ImZyZWUtcmVzcG9uc2UiXSwiY29tYm9fY2hvaWNlcyI6W119XX0seyJ1aWQi
+        OiIyOTQ5QDIiLCJudW1iZXIiOjI5NDksInZlcnNpb24iOjIsInB1Ymxpc2hl
+        ZF9hdCI6IjIwMTUtMTEtMDVUMTc6MjI6MzkuNDQxWiIsImVkaXRvcnMiOltd
+        LCJhdXRob3JzIjpbeyJ1c2VyX2lkIjoxLCJuYW1lIjoiT3BlblN0YXgifV0s
+        ImNvcHlyaWdodF9ob2xkZXJzIjpbeyJ1c2VyX2lkIjoyLCJuYW1lIjoiUmlj
+        ZSBVbml2ZXJzaXR5In1dLCJkZXJpdmVkX2Zyb20iOltdLCJhdHRhY2htZW50
+        cyI6W10sInRhZ3MiOlsiYm9vazpzdGF4LWJpbyIsIm9zdC10eXBlOmNvbmNl
+        cHQtY29hY2giLCJkb2s6MiIsInRpbWU6c2hvcnQiLCJkaXNwbGF5Om11bHRp
+        cGxlLWNob2ljZSIsImJsb29tczozIiwicmVxdWlyZXMtY2hvaWNlczpuIiwi
+        bG86c3RheC1iaW86MS0yLTMiLCJpZDpzdGF4LWJpbzoyNCIsImNueG1vZDo2
+        YTA1NjhkOC0yM2Q3LTQzOWItOWEwMS0xNmU0ZTczODg2YjMiXSwic3RpbXVs
+        dXNfaHRtbCI6IiIsInF1ZXN0aW9ucyI6W3siaWQiOjMwMjgsInN0aW11bHVz
+        X2h0bWwiOiIiLCJzdGVtX2h0bWwiOiJXaGVyZSBpbiBhIHBoeWxvZ2VuZXRp
+        YyB0cmVlIHdvdWxkIHlvdSBleHBlY3QgdG8gZmluZCB0aGUgb3JnYW5pc20g
+        dGhhdCBoYWQgZXZvbHZlZCBtb3N0IHJlY2VudGx5PyIsImFuc3dlcnMiOlt7
+        ImlkIjoxMTg0MSwiY29udGVudF9odG1sIjoid2l0aGluIHRoZSBicmFuY2hl
+        cyIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6Ik9yZ2Fu
+        aXNtIGV2b2x2ZWQgbW9zdCByZWNlbnRseSBjYW4gYmUgZm91bmQgYXQgdGhl
+        IGJyYW5jaCB0aXBzLiJ9LHsiaWQiOjExODQwLCJjb250ZW50X2h0bWwiOiJh
+        dCB0aGUgYnJhbmNoIHRpcHMiLCJjb3JyZWN0bmVzcyI6IjEuMCIsImZlZWRi
+        YWNrX2h0bWwiOiLigJxUaXBz4oCdIG9mIHRoZSB0cmVlIGJyYW5jaGVzIHJl
+        cHJlc2VudCB0aGUgcmVjZW50bHkgZXZvbHZlZCB0YXhhLiJ9LHsiaWQiOjEx
+        ODM5LCJjb250ZW50X2h0bWwiOiJhdCB0aGUgbm9kZXMiLCJjb3JyZWN0bmVz
+        cyI6IjAuMCIsImZlZWRiYWNrX2h0bWwiOiJOb2RlcyBjb25uZWN0IGJyYW5j
+        aGVzLiBSZWNlbnRseSBldm9sdmVkIG9yZ2FuaXNtcyBhcmUgbm90IHBsYWNl
+        ZCBhdCB0aGUgbm9kZXMuIn0seyJpZCI6MTE4MzgsImNvbnRlbnRfaHRtbCI6
+        ImF0IHRoZSBiYXNlIiwiY29ycmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19o
+        dG1sIjoiUmVjZW50bHkgZXZvbHZlZCBvcmdhbmlzbXMgYXJlIG5vdCBwbGFj
+        ZWQgYXQgdGhlIGJhc2UuIn1dLCJzb2x1dGlvbnMiOlt7InVpZCI6IjMwMjhA
+        MSIsIm51bWJlciI6MzAyOCwidmVyc2lvbiI6MSwicHVibGlzaGVkX2F0Ijoi
+        MjAxNS0xMS0wNVQxNzoyMjozOS43NDBaIiwiZWRpdG9ycyI6W10sImF1dGhv
+        cnMiOlt7InVzZXJfaWQiOjEsIm5hbWUiOiJPcGVuU3RheCJ9XSwiY29weXJp
+        Z2h0X2hvbGRlcnMiOlt7InVzZXJfaWQiOjIsIm5hbWUiOiJSaWNlIFVuaXZl
+        cnNpdHkifV0sImRlcml2ZWRfZnJvbSI6W10sImF0dGFjaG1lbnRzIjpbXSwi
+        c29sdXRpb25fdHlwZSI6ImRldGFpbGVkIiwiY29udGVudF9odG1sIjoiYXQg
+        dGhlIGJyYW5jaCB0aXBzIn1dLCJoaW50cyI6W10sImZvcm1hdHMiOlsibXVs
+        dGlwbGUtY2hvaWNlIiwiZnJlZS1yZXNwb25zZSJdLCJjb21ib19jaG9pY2Vz
+        IjpbXX1dfSx7InVpZCI6IjI5NTBAMiIsIm51bWJlciI6Mjk1MCwidmVyc2lv
+        biI6MiwicHVibGlzaGVkX2F0IjoiMjAxNS0xMS0wNVQxNzoyMjozOS40NDZa
+        IiwiZWRpdG9ycyI6W10sImF1dGhvcnMiOlt7InVzZXJfaWQiOjEsIm5hbWUi
+        OiJPcGVuU3RheCJ9XSwiY29weXJpZ2h0X2hvbGRlcnMiOlt7InVzZXJfaWQi
+        OjIsIm5hbWUiOiJSaWNlIFVuaXZlcnNpdHkifV0sImRlcml2ZWRfZnJvbSI6
+        W10sImF0dGFjaG1lbnRzIjpbXSwidGFncyI6WyJib29rOnN0YXgtYmlvIiwi
+        b3N0LXR5cGU6Y29uY2VwdC1jb2FjaCIsInRpbWU6c2hvcnQiLCJkaXNwbGF5
+        Om11bHRpcGxlLWNob2ljZSIsInJlcXVpcmVzLWNob2ljZXM6eSIsImRvazox
+        IiwibG86c3RheC1iaW86MS0yLTEiLCJpZDpzdGF4LWJpbzoyNiIsImJsb29t
+        czoxIiwiY254bW9kOjZhMDU2OGQ4LTIzZDctNDM5Yi05YTAxLTE2ZTRlNzM4
+        ODZiMyJdLCJzdGltdWx1c19odG1sIjoiIiwicXVlc3Rpb25zIjpbeyJpZCI6
+        MzAyOSwic3RpbXVsdXNfaHRtbCI6IiIsInN0ZW1faHRtbCI6IldoaWNoIG9m
+        IHRoZSBmb2xsb3dpbmcgc3RhdGVtZW50cyBkb2VzIG5vdCByZXByZXNlbnQg
+        YSBjaGFyYWN0ZXJpc3RpYyBzaGFyZWQgYnkgYWxsIGxpdmluZyBvcmdhbmlz
+        bXM/IiwiYW5zd2VycyI6W3siaWQiOjExODQ1LCJjb250ZW50X2h0bWwiOiJS
+        ZXByb2R1Y3Rpb24iLCJjb3JyZWN0bmVzcyI6IjAuMCIsImZlZWRiYWNrX2h0
+        bWwiOiJBbGwgbGl2aW5nIG9yZ2FuaXNtcyByZXByb2R1Y2UuIn0seyJpZCI6
+        MTE4NDQsImNvbnRlbnRfaHRtbCI6IlBob3Rvc3ludGhlc2lzIiwiY29ycmVj
+        dG5lc3MiOiIxLjAiLCJmZWVkYmFja19odG1sIjoiT25seSBzb21lIGxpdmlu
+        ZyBvcmdhbmlzbXMgaGF2ZSB0aGUgY2FwYWJpbGl0eSB0byBwaG90b3N5bnRo
+        ZXNpemUuIFRoZXJlZm9yZSwgcGhvdG9zeW50aGVzaXMgZG9lc27igJl0IHJl
+        cHJlc2VudCBhIGNoYXJhY3RlcmlzdGljIHNoYXJlZCBieSBhbGwgbGl2aW5n
+        IG9yZ2FuaXNtcy4ifSx7ImlkIjoxMTg0MywiY29udGVudF9odG1sIjoiTWV0
+        YWJvbGlzbSIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6
+        Ik1ldGFib2xpc20gaXMgYSBjaGFyYWN0ZXJpc3RpYyBvZiBhbGwgbGl2aW5n
+        IG9yZ2FuaXNtcy4ifSx7ImlkIjoxMTg0MiwiY29udGVudF9odG1sIjoiR3Jv
+        d3RoIiwiY29ycmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiR3Jv
+        d3RoIGlzIGEgY2hhcmFjdGVyaXN0aWMgc2hhcmVkIGJ5IGFsbCBsaXZpbmcg
+        b3JnYW5pc21zLiJ9XSwic29sdXRpb25zIjpbeyJ1aWQiOiIzMDI5QDEiLCJu
+        dW1iZXIiOjMwMjksInZlcnNpb24iOjEsInB1Ymxpc2hlZF9hdCI6IjIwMTUt
+        MTEtMDVUMTc6MjI6MzkuNzQ2WiIsImVkaXRvcnMiOltdLCJhdXRob3JzIjpb
+        eyJ1c2VyX2lkIjoxLCJuYW1lIjoiT3BlblN0YXgifV0sImNvcHlyaWdodF9o
+        b2xkZXJzIjpbeyJ1c2VyX2lkIjoyLCJuYW1lIjoiUmljZSBVbml2ZXJzaXR5
+        In1dLCJkZXJpdmVkX2Zyb20iOltdLCJhdHRhY2htZW50cyI6W10sInNvbHV0
+        aW9uX3R5cGUiOiJkZXRhaWxlZCIsImNvbnRlbnRfaHRtbCI6IlBob3Rvc3lu
+        dGhlc2lzIn1dLCJoaW50cyI6W10sImZvcm1hdHMiOlsibXVsdGlwbGUtY2hv
+        aWNlIiwiZnJlZS1yZXNwb25zZSJdLCJjb21ib19jaG9pY2VzIjpbXX1dfSx7
+        InVpZCI6IjI5NTFAMiIsIm51bWJlciI6Mjk1MSwidmVyc2lvbiI6MiwicHVi
+        bGlzaGVkX2F0IjoiMjAxNS0xMS0wNVQxNzoyMjozOS40NTJaIiwiZWRpdG9y
+        cyI6W10sImF1dGhvcnMiOlt7InVzZXJfaWQiOjEsIm5hbWUiOiJPcGVuU3Rh
+        eCJ9XSwiY29weXJpZ2h0X2hvbGRlcnMiOlt7InVzZXJfaWQiOjIsIm5hbWUi
+        OiJSaWNlIFVuaXZlcnNpdHkifV0sImRlcml2ZWRfZnJvbSI6W10sImF0dGFj
+        aG1lbnRzIjpbXSwidGFncyI6WyJib29rOnN0YXgtYmlvIiwib3N0LXR5cGU6
+        Y29uY2VwdC1jb2FjaCIsImRvazoyIiwidGltZTpzaG9ydCIsImRpc3BsYXk6
+        bXVsdGlwbGUtY2hvaWNlIiwicmVxdWlyZXMtY2hvaWNlczp5IiwiYmxvb21z
+        OjMiLCJsbzpzdGF4LWJpbzoxLTItMSIsImlkOnN0YXgtYmlvOjI3IiwiY254
+        bW9kOjZhMDU2OGQ4LTIzZDctNDM5Yi05YTAxLTE2ZTRlNzM4ODZiMyJdLCJz
+        dGltdWx1c19odG1sIjoiIiwicXVlc3Rpb25zIjpbeyJpZCI6MzAzMCwic3Rp
+        bXVsdXNfaHRtbCI6IiIsInN0ZW1faHRtbCI6IlBsYW50cyBncm93biBpbmRv
+        b3JzIGJlbmQgdG93YXJkcyB0aGUgbGlnaHQuIFRoaXMgaXMgYW4gZXhhbXBs
+        ZSBvZiB0aGUgZm9sbG93aW5nIGNoYXJhY3RlcmlzdGljIG9mIGxpZmUuIiwi
+        YW5zd2VycyI6W3siaWQiOjExODQ5LCJjb250ZW50X2h0bWwiOiJyZXNwb25z
+        ZSB0byB0aGUgZW52aXJvbm1lbnQiLCJjb3JyZWN0bmVzcyI6IjEuMCIsImZl
+        ZWRiYWNrX2h0bWwiOiJCZW5kaW5nIG9mIHBsYW50IHRvd2FyZHMgbGlnaHQg
+        aXMgYW4gZXhhbXBsZSBvZiBhIHBsYW504oCZcyByZXNwb25zZSB0byBleHRl
+        cm5hbCBzdGltdWxpIHRoYXQgaXMgZW52aXJvbm1lbnQuIn0seyJpZCI6MTE4
+        NDgsImNvbnRlbnRfaHRtbCI6IlJlZ3VsYXRpb24iLCJjb3JyZWN0bmVzcyI6
+        IjAuMCIsImZlZWRiYWNrX2h0bWwiOiJQcm9jZXNzIG9mIGJlbmRpbmcgbWF5
+        IGJlIHJlZ3VsYXRlZCBkdWUgdG8gZXh0ZXJuYWwgZmFjdG9ycyBsaWtlIHJl
+        c3BvbnNlIHRvIHRoZSBlbnZpcm9ubWVudC4ifSx7ImlkIjoxMTg0NywiY29u
+        dGVudF9odG1sIjoiTWV0YWJvbGlzbSIsImNvcnJlY3RuZXNzIjoiMC4wIiwi
+        ZmVlZGJhY2tfaHRtbCI6IkJlbmRpbmcgdG93YXJkcyBsaWdodCBpcyBub3Qg
+        YW4gZXhhbXBsZSBvZiBtZXRhYm9saXNtLiJ9LHsiaWQiOjExODQ2LCJjb250
+        ZW50X2h0bWwiOiJhZGFwdGF0aW9uIHRvIHRoZSBlbnZpcm9ubWVudCIsImNv
+        cnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IkFkYXB0YXRpb24g
+        ZW5oYW5jZXMgdGhlIHN1cnZpdmFsIGZpdG5lc3Mgb2YgYW4gaW5kaXZpZHVh
+        bC4gSXQgaXMgdGhlIHJlc3BvbnNlIHRvIHRoZSBlbnZpcm9ubWVudC4ifV0s
+        InNvbHV0aW9ucyI6W3sidWlkIjoiMzAzMEAxIiwibnVtYmVyIjozMDMwLCJ2
+        ZXJzaW9uIjoxLCJwdWJsaXNoZWRfYXQiOiIyMDE1LTExLTA1VDE3OjIyOjM5
+        Ljc1MloiLCJlZGl0b3JzIjpbXSwiYXV0aG9ycyI6W3sidXNlcl9pZCI6MSwi
+        bmFtZSI6Ik9wZW5TdGF4In1dLCJjb3B5cmlnaHRfaG9sZGVycyI6W3sidXNl
+        cl9pZCI6MiwibmFtZSI6IlJpY2UgVW5pdmVyc2l0eSJ9XSwiZGVyaXZlZF9m
+        cm9tIjpbXSwiYXR0YWNobWVudHMiOltdLCJzb2x1dGlvbl90eXBlIjoiZGV0
+        YWlsZWQiLCJjb250ZW50X2h0bWwiOiJyZXNwb25zZSB0byB0aGUgZW52aXJv
+        bm1lbnQifV0sImhpbnRzIjpbXSwiZm9ybWF0cyI6WyJtdWx0aXBsZS1jaG9p
+        Y2UiLCJmcmVlLXJlc3BvbnNlIl0sImNvbWJvX2Nob2ljZXMiOltdfV19LHsi
+        dWlkIjoiMjk1MkAyIiwibnVtYmVyIjoyOTUyLCJ2ZXJzaW9uIjoyLCJwdWJs
+        aXNoZWRfYXQiOiIyMDE1LTExLTA1VDE3OjIyOjM5LjQ1OFoiLCJlZGl0b3Jz
+        IjpbXSwiYXV0aG9ycyI6W3sidXNlcl9pZCI6MSwibmFtZSI6Ik9wZW5TdGF4
+        In1dLCJjb3B5cmlnaHRfaG9sZGVycyI6W3sidXNlcl9pZCI6MiwibmFtZSI6
+        IlJpY2UgVW5pdmVyc2l0eSJ9XSwiZGVyaXZlZF9mcm9tIjpbXSwiYXR0YWNo
+        bWVudHMiOltdLCJ0YWdzIjpbImJvb2s6c3RheC1iaW8iLCJvc3QtdHlwZTpj
+        b25jZXB0LWNvYWNoIiwidGltZTpzaG9ydCIsImRpc3BsYXk6bXVsdGlwbGUt
+        Y2hvaWNlIiwicmVxdWlyZXMtY2hvaWNlczp5IiwiYmxvb21zOjMiLCJkb2s6
+        MSIsImxvOnN0YXgtYmlvOjEtMi0yIiwiaWQ6c3RheC1iaW86MjgiLCJjbnht
+        b2Q6NmEwNTY4ZDgtMjNkNy00MzliLTlhMDEtMTZlNGU3Mzg4NmIzIl0sInN0
+        aW11bHVzX2h0bWwiOiIiLCJxdWVzdGlvbnMiOlt7ImlkIjozMDMxLCJzdGlt
+        dWx1c19odG1sIjoiIiwic3RlbV9odG1sIjoiVGhlIGxvbmdlc3QgdW5pdCBv
+        ZiBsaWZlIGluIHRoZSBmb2xsb3dpbmcgaGllcmFyY2h5IGlzIHRoZSIsImFu
+        c3dlcnMiOlt7ImlkIjoxMTg1MywiY29udGVudF9odG1sIjoiU3RvbWFjaCIs
+        ImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IlN0b21hY2gg
+        aXMgYSBwYXJ0IG9mIGdhc3Ryb2ludGVzdGluYWwgdHJhY3QsIHdoaWNoIGZv
+        cm1zIHRoZSBsb25nZXN0IHVuaXQgb2YgbGlmZSBpbiB0aGUgZ2l2ZW4gc2Vx
+        dWVuY2UuIn0seyJpZCI6MTE4NTIsImNvbnRlbnRfaHRtbCI6Ikdhc3Ryb2lu
+        dGVzdGluYWwgdHJhY3QiLCJjb3JyZWN0bmVzcyI6IjEuMCIsImZlZWRiYWNr
+        X2h0bWwiOiJHYXN0cm9pbnRlc3RpbmFsIHRyYWN0IGlzIHRoZSBsb25nc3Qg
+        dW5pdCBvZiBsaWZlIGluIHRoZSBoaWVyYXJjaHkgZ2l2ZW4uIEl0IGluY2x1
+        ZGVzIHBhcnRzIG9mIHN0b21hY2ggYW5kIGxvbmcgaW50ZXN0aW5lLiJ9LHsi
+        aWQiOjExODUxLCJjb250ZW50X2h0bWwiOiJETkEiLCJjb3JyZWN0bmVzcyI6
+        IjAuMCIsImZlZWRiYWNrX2h0bWwiOiJETkEgaXMgdGhlIHNtYWxsZXN0IHVu
+        aXQgaW4gdGhlIGhpZXJhcmNoeSBnaXZlbi4ifSx7ImlkIjoxMTg1MCwiY29u
+        dGVudF9odG1sIjoiQ2VsbCIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJh
+        Y2tfaHRtbCI6IkNlbGwgaXMgdGhlIGJhc2ljIHVuaXQgb2YgbGlmZSBhbmQg
+        bm90IHRoZSBsb25nc3QgdW5pdCBvZiBsaWZlLiJ9XSwic29sdXRpb25zIjpb
+        eyJ1aWQiOiIzMDMxQDEiLCJudW1iZXIiOjMwMzEsInZlcnNpb24iOjEsInB1
+        Ymxpc2hlZF9hdCI6IjIwMTUtMTEtMDVUMTc6MjI6MzkuNzU4WiIsImVkaXRv
+        cnMiOltdLCJhdXRob3JzIjpbeyJ1c2VyX2lkIjoxLCJuYW1lIjoiT3BlblN0
+        YXgifV0sImNvcHlyaWdodF9ob2xkZXJzIjpbeyJ1c2VyX2lkIjoyLCJuYW1l
+        IjoiUmljZSBVbml2ZXJzaXR5In1dLCJkZXJpdmVkX2Zyb20iOltdLCJhdHRh
+        Y2htZW50cyI6W10sInNvbHV0aW9uX3R5cGUiOiJkZXRhaWxlZCIsImNvbnRl
+        bnRfaHRtbCI6Ikdhc3Ryb2ludGVzdGluYWwgdHJhY3QifV0sImhpbnRzIjpb
+        XSwiZm9ybWF0cyI6WyJtdWx0aXBsZS1jaG9pY2UiLCJmcmVlLXJlc3BvbnNl
+        Il0sImNvbWJvX2Nob2ljZXMiOltdfV19LHsidWlkIjoiMjk1M0AyIiwibnVt
+        YmVyIjoyOTUzLCJ2ZXJzaW9uIjoyLCJwdWJsaXNoZWRfYXQiOiIyMDE1LTEx
+        LTA1VDE3OjIyOjM5LjQ2NFoiLCJlZGl0b3JzIjpbXSwiYXV0aG9ycyI6W3si
+        dXNlcl9pZCI6MSwibmFtZSI6Ik9wZW5TdGF4In1dLCJjb3B5cmlnaHRfaG9s
+        ZGVycyI6W3sidXNlcl9pZCI6MiwibmFtZSI6IlJpY2UgVW5pdmVyc2l0eSJ9
+        XSwiZGVyaXZlZF9mcm9tIjpbXSwiYXR0YWNobWVudHMiOltdLCJ0YWdzIjpb
+        ImJvb2s6c3RheC1iaW8iLCJvc3QtdHlwZTpjb25jZXB0LWNvYWNoIiwiZG9r
+        OjIiLCJibG9vbXM6MiIsInRpbWU6c2hvcnQiLCJkaXNwbGF5Om11bHRpcGxl
+        LWNob2ljZSIsInJlcXVpcmVzLWNob2ljZXM6eSIsImxvOnN0YXgtYmlvOjEt
+        Mi0yIiwiaWQ6c3RheC1iaW86MjkiLCJjbnhtb2Q6NmEwNTY4ZDgtMjNkNy00
+        MzliLTlhMDEtMTZlNGU3Mzg4NmIzIl0sInN0aW11bHVzX2h0bWwiOiIiLCJx
+        dWVzdGlvbnMiOlt7ImlkIjozMDMyLCJzdGltdWx1c19odG1sIjoiIiwic3Rl
+        bV9odG1sIjoiV2hpY2ggb2YgdGhlIGZvbGxvd2luZyB1bml0IG9mIGxpZmUg
+        aW5jbHVkZXMgbm9uLWJpb2xvZ2ljYWwgKGFiaW90aWMpIGVsZW1lbnRzPyIs
+        ImFuc3dlcnMiOlt7ImlkIjoxMTg1NywiY29udGVudF9odG1sIjoiUG9wdWxh
+        dGlvbiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IkEg
+        cG9wdWxhdGlvbiBpbmNsdWRlcyBzYW1lIGdyb3VwIG9mIHNwZWNpZXMgbGl2
+        aW5nIGluIGEgYmlvIGdlb2dyYXBoaWNhbCBhcmVhLiBJdCBkb2VzIG5vdCBp
+        bmNsdWRlIGFueSBub24tYmlvbG9naWNhbCBlbGVtZW50LiJ9LHsiaWQiOjEx
+        ODU2LCJjb250ZW50X2h0bWwiOiJPcmdhbmlzbSIsImNvcnJlY3RuZXNzIjoi
+        MC4wIiwiZmVlZGJhY2tfaHRtbCI6Ik9yZ2FuaXNtcyBkbyBub3QgaW5jbHVk
+        ZSBhYmlvdGljIGVsZW1lbnRzLiJ9LHsiaWQiOjExODU1LCJjb250ZW50X2h0
+        bWwiOiJFY29zeXN0ZW0iLCJjb3JyZWN0bmVzcyI6IjEuMCIsImZlZWRiYWNr
+        X2h0bWwiOiJFY29zeXN0ZW0gaXMgdGhlIHVuaXQgb2YgbGlmZSB0aGF0IGlu
+        Y2x1ZGVzIGJvdGggYmlvdGljIGFuZCBhYmlvdGljIGVsZW1lbnRzLiJ9LHsi
+        aWQiOjExODU0LCJjb250ZW50X2h0bWwiOiJDb21tdW5pdHkiLCJjb3JyZWN0
+        bmVzcyI6IjAuMCIsImZlZWRiYWNrX2h0bWwiOiJBIGNvbW11bml0eSBkb2Vz
+        IG5vdCBpbmNsdWRlIG5vbi1iaW9sb2dpY2FsIGVsZW1lbnRzLiJ9XSwic29s
+        dXRpb25zIjpbeyJ1aWQiOiIzMDMyQDEiLCJudW1iZXIiOjMwMzIsInZlcnNp
+        b24iOjEsInB1Ymxpc2hlZF9hdCI6IjIwMTUtMTEtMDVUMTc6MjI6MzkuNzY0
+        WiIsImVkaXRvcnMiOltdLCJhdXRob3JzIjpbeyJ1c2VyX2lkIjoxLCJuYW1l
+        IjoiT3BlblN0YXgifV0sImNvcHlyaWdodF9ob2xkZXJzIjpbeyJ1c2VyX2lk
+        IjoyLCJuYW1lIjoiUmljZSBVbml2ZXJzaXR5In1dLCJkZXJpdmVkX2Zyb20i
+        OltdLCJhdHRhY2htZW50cyI6W10sInNvbHV0aW9uX3R5cGUiOiJkZXRhaWxl
+        ZCIsImNvbnRlbnRfaHRtbCI6IkNvbW11bml0eSJ9XSwiaGludHMiOltdLCJm
+        b3JtYXRzIjpbIm11bHRpcGxlLWNob2ljZSIsImZyZWUtcmVzcG9uc2UiXSwi
+        Y29tYm9fY2hvaWNlcyI6W119XX0seyJ1aWQiOiIyOTU0QDIiLCJudW1iZXIi
+        OjI5NTQsInZlcnNpb24iOjIsInB1Ymxpc2hlZF9hdCI6IjIwMTUtMTEtMDVU
+        MTc6MjI6MzkuNDcwWiIsImVkaXRvcnMiOltdLCJhdXRob3JzIjpbeyJ1c2Vy
+        X2lkIjoxLCJuYW1lIjoiT3BlblN0YXgifV0sImNvcHlyaWdodF9ob2xkZXJz
+        IjpbeyJ1c2VyX2lkIjoyLCJuYW1lIjoiUmljZSBVbml2ZXJzaXR5In1dLCJk
+        ZXJpdmVkX2Zyb20iOltdLCJhdHRhY2htZW50cyI6W10sInRhZ3MiOlsiYm9v
+        azpzdGF4LWJpbyIsIm9zdC10eXBlOmNvbmNlcHQtY29hY2giLCJkb2s6MiIs
+        ImJsb29tczoyIiwiZGlzcGxheTptdWx0aXBsZS1jaG9pY2UiLCJyZXF1aXJl
+        cy1jaG9pY2VzOnkiLCJ0aW1lOm1lZGl1bSIsImxvOnN0YXgtYmlvOjEtMi0z
+        IiwiaWQ6c3RheC1iaW86MzEiLCJjbnhtb2Q6NmEwNTY4ZDgtMjNkNy00Mzli
+        LTlhMDEtMTZlNGU3Mzg4NmIzIl0sInN0aW11bHVzX2h0bWwiOiIiLCJxdWVz
+        dGlvbnMiOlt7ImlkIjozMDMzLCJzdGltdWx1c19odG1sIjoiIiwic3RlbV9o
+        dG1sIjoiV2hpY2ggb2YgdGhlIGZvbGxvd2luZyBkb21haW5zIGNvbnRhaW5z
+        IHByb2thcnlvdGVzPyIsImFuc3dlcnMiOlt7ImlkIjoxMTg2MSwiY29udGVu
+        dF9odG1sIjoiMiwzIiwiY29ycmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19o
+        dG1sIjoiQmFjdGVyaWEgY29udGFpbiBwcm9rYXJ5b3Rlcy4gVGhlIHByb2th
+        cnlvdGVzIGNhbm5vdCBjbGFzc2lmeSB1bmRlciB0aGUgZXVrYXJ5YSBkb21h
+        aW4sIHNpbmNlIHRoZXkgYXJlIGVudWNsZWF0ZWQuIn0seyJpZCI6MTE4NjAs
+        ImNvbnRlbnRfaHRtbCI6IjEsMiIsImNvcnJlY3RuZXNzIjoiMS4wIiwiZmVl
+        ZGJhY2tfaHRtbCI6IkJvdGggQXJjaGFlYSBhbmQgQmFjdGVyaWEgY29udGFp
+        bnMgcHJva2FyeW90ZXMuIn0seyJpZCI6MTE4NTksImNvbnRlbnRfaHRtbCI6
+        IjMgb25seSIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6
+        IlByb2thcnlvdGVzIGRvIG5vdCBjb21lIHVuZGVyIHRoZSBkb21haW4gRXVr
+        YXJ5YS4ifSx7ImlkIjoxMTg1OCwiY29udGVudF9odG1sIjoiMiBvbmx5Iiwi
+        Y29ycmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiUHJva2FyeW90
+        ZXMgIGFsc28gY29tZSB1bmRlciB0aGUgZG9tYWluIEFyY2hhZWEuIn1dLCJz
+        b2x1dGlvbnMiOlt7InVpZCI6IjMwMzNAMSIsIm51bWJlciI6MzAzMywidmVy
+        c2lvbiI6MSwicHVibGlzaGVkX2F0IjoiMjAxNS0xMS0wNVQxNzoyMjozOS43
+        NzBaIiwiZWRpdG9ycyI6W10sImF1dGhvcnMiOlt7InVzZXJfaWQiOjEsIm5h
+        bWUiOiJPcGVuU3RheCJ9XSwiY29weXJpZ2h0X2hvbGRlcnMiOlt7InVzZXJf
+        aWQiOjIsIm5hbWUiOiJSaWNlIFVuaXZlcnNpdHkifV0sImRlcml2ZWRfZnJv
+        bSI6W10sImF0dGFjaG1lbnRzIjpbXSwic29sdXRpb25fdHlwZSI6ImRldGFp
+        bGVkIiwiY29udGVudF9odG1sIjoiMSwyIn1dLCJoaW50cyI6W10sImZvcm1h
+        dHMiOlsibXVsdGlwbGUtY2hvaWNlIiwiZnJlZS1yZXNwb25zZSJdLCJjb21i
+        b19jaG9pY2VzIjpbXX1dfSx7InVpZCI6IjI5NTVAMiIsIm51bWJlciI6Mjk1
+        NSwidmVyc2lvbiI6MiwicHVibGlzaGVkX2F0IjoiMjAxNS0xMS0wNVQxNzoy
+        MjozOS40NzVaIiwiZWRpdG9ycyI6W10sImF1dGhvcnMiOlt7InVzZXJfaWQi
+        OjEsIm5hbWUiOiJPcGVuU3RheCJ9XSwiY29weXJpZ2h0X2hvbGRlcnMiOlt7
+        InVzZXJfaWQiOjIsIm5hbWUiOiJSaWNlIFVuaXZlcnNpdHkifV0sImRlcml2
+        ZWRfZnJvbSI6W10sImF0dGFjaG1lbnRzIjpbXSwidGFncyI6WyJib29rOnN0
+        YXgtYmlvIiwib3N0LXR5cGU6Y29uY2VwdC1jb2FjaCIsImRpc3BsYXk6bXVs
+        dGlwbGUtY2hvaWNlIiwiYmxvb21zOjMiLCJyZXF1aXJlcy1jaG9pY2VzOm4i
+        LCJkb2s6MyIsInRpbWU6bWVkaXVtIiwibG86c3RheC1iaW86MS0yLTIiLCJp
+        ZDpzdGF4LWJpbzozMiIsImNueG1vZDo2YTA1NjhkOC0yM2Q3LTQzOWItOWEw
+        MS0xNmU0ZTczODg2YjMiXSwic3RpbXVsdXNfaHRtbCI6IiIsInF1ZXN0aW9u
+        cyI6W3siaWQiOjMwMzQsInN0aW11bHVzX2h0bWwiOiIiLCJzdGVtX2h0bWwi
+        OiJDb25zaWRlciB0aGUgbGV2ZWxzIG9mIG9yZ2FuaXphdGlvbiBvZiB0aGUg
+        YmlvbG9naWNhbCB3b3JsZCwgYW5kIHBsYWNlIGVhY2ggb2YgdGhlc2UgaXRl
+        bXMgaW4gb3JkZXIgZnJvbSBzbWFsbGVzdCBsZXZlbCBvZiBvcmdhbml6YXRp
+        b24gdG8gbW9zdCBlbmNvbXBhc3Npbmc6IHNraW4gY2VsbCwgZWxlcGhhbnQs
+        IHdhdGVyIG1vbGVjdWxlLCBwbGFuZXQgRWFydGgsIHRyb3BpY2FsIHJhaW5m
+        b3Jlc3QsIGh5ZHJvZ2VuIGF0b20sIHdvbGYgcGFjaywgbGl2ZXIuIiwiYW5z
+        d2VycyI6W3siaWQiOjExODY1LCJjb250ZW50X2h0bWwiOiJIeWRyb2dlbiBh
+        dG9tLCB3YXRlciBtb2xlY3VsZSwgc2tpbiBjZWxsLCBsaXZlciwgZWxlcGhh
+        bnQsIHdvbGYgcGFjaywgdHJvcGljYWwgcmFpbmZvcmVzdCwgcGxhbmV0IEVh
+        cnRoIGlzIHRoZSBjb3JyZWN0IG9yZGVyIGZyb20gc21hbGxlc3QgbGV2ZWwg
+        b2Ygb3JnYW5pemF0aW9uIHRvIG1vc3QgZW5jb21wYXNzaW5nLiIsImNvcnJl
+        Y3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IkEgd2F0ZXIgbW9sZWN1
+        bGUgaXMgbm90IHRoZSBzbWFsbGVzdCBsZXZlbCBvZiBvcmdhbml6YXRpb24s
+        IGh5ZHJvZ2VuIGF0b20gaXMuIn0seyJpZCI6MTE4NjQsImNvbnRlbnRfaHRt
+        bCI6Imh5ZHJvZ2VuIGF0b20sIHNraW4gY2VsbCwgd2F0ZXIgbW9sZWN1bGUs
+        IGxpdmVyLCB3b2xmIHBhY2ssIGVsZXBoYW50LCB0cm9waWNhbCByYWluZm9y
+        ZXN0LCBwbGFuZXQgRWFydGgiLCJjb3JyZWN0bmVzcyI6IjAuMCIsImZlZWRi
+        YWNrX2h0bWwiOiJUcnkgdG8gY2FyZWZ1bGx5IHZpc3VhbGl6ZSB0aGUgbGlz
+        dCBnaXZlbiBhbmQgYXJyYW5nZSB0aGVtIGZyb20gdGhlIHNtYWxsZXN0IHRv
+        IHRoZSBsb25nc3QgbGV2ZWwgb2Ygb3JnYW5pemF0aW9uLiJ9LHsiaWQiOjEx
+        ODYzLCJjb250ZW50X2h0bWwiOiJoeWRyb2dlbiBhdG9tLCBza2luIGNlbGws
+        IHdhdGVyIG1vbGVjdWxlLCBsaXZlciwgZWxlcGhhbnQsIHdvbGYgcGFjaywg
+        dHJvcGljYWwgcmFpbmZvcmVzdCwgcGxhbmV0IEVhcnRoIiwiY29ycmVjdG5l
+        c3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiQSBza2luIGNlbGwgaXMgbW9y
+        ZSBlbmNvbXBhc3NpbmcgdGhhbiBhIHdhdGVyIG1vbGVjdWxlLiJ9LHsiaWQi
+        OjExODYyLCJjb250ZW50X2h0bWwiOiJoeWRyb2dlbiBhdG9tLCB3YXRlciBt
+        b2xlY3VsZSwgc2tpbiBjZWxsLCBsaXZlciwgZWxlcGhhbnQsIHdvbGYgcGFj
+        aywgdHJvcGljYWwgcmFpbmZvcmVzdCwgcGxhbmV0IEVhcnRoIiwiY29ycmVj
+        dG5lc3MiOiIxLjAiLCJmZWVkYmFja19odG1sIjoiSHlkcm9nZW4gYXRvbSwg
+        d2F0ZXIgbW9sZWN1bGUsIHNraW4gY2VsbCwgbGl2ZXIsIGVsZXBoYW50LCB3
+        b2xmIHBhY2ssIHRyb3BpY2FsIHJhaW5mb3Jlc3QsIHBsYW5ldCBFYXJ0aCBp
+        cyB0aGUgY29ycmVjdCBvcmRlciBmcm9tIHNtYWxsZXN0IGxldmVsIG9mIG9y
+        Z2FuaXphdGlvbiB0byBtb3N0IGVuY29tcGFzc2luZy4ifV0sInNvbHV0aW9u
+        cyI6W3sidWlkIjoiMzAzNEAxIiwibnVtYmVyIjozMDM0LCJ2ZXJzaW9uIjox
+        LCJwdWJsaXNoZWRfYXQiOiIyMDE1LTExLTA1VDE3OjIyOjM5Ljc3NloiLCJl
+        ZGl0b3JzIjpbXSwiYXV0aG9ycyI6W3sidXNlcl9pZCI6MSwibmFtZSI6Ik9w
+        ZW5TdGF4In1dLCJjb3B5cmlnaHRfaG9sZGVycyI6W3sidXNlcl9pZCI6Miwi
+        bmFtZSI6IlJpY2UgVW5pdmVyc2l0eSJ9XSwiZGVyaXZlZF9mcm9tIjpbXSwi
+        YXR0YWNobWVudHMiOltdLCJzb2x1dGlvbl90eXBlIjoiZGV0YWlsZWQiLCJj
+        b250ZW50X2h0bWwiOiJTbWFsbGVzdCBsZXZlbCBvZiBvcmdhbml6YXRpb24g
+        dG8gbG9uZ2VzdDogaHlkcm9nZW4gYXRvbSwgd2F0ZXIgbW9sZWN1bGUsIHNr
+        aW4gY2VsbCwgbGl2ZXIsIGVsZXBoYW50LCB3b2xmIHBhY2ssIHRyb3BpY2Fs
+        IHJhaW5mb3Jlc3QsIHBsYW5ldCBFYXJ0aCJ9XSwiaGludHMiOltdLCJmb3Jt
+        YXRzIjpbIm11bHRpcGxlLWNob2ljZSIsImZyZWUtcmVzcG9uc2UiXSwiY29t
+        Ym9fY2hvaWNlcyI6W119XX0seyJ1aWQiOiIyOTU2QDIiLCJudW1iZXIiOjI5
+        NTYsInZlcnNpb24iOjIsInB1Ymxpc2hlZF9hdCI6IjIwMTUtMTEtMDVUMTc6
+        MjI6MzkuNDgxWiIsImVkaXRvcnMiOltdLCJhdXRob3JzIjpbeyJ1c2VyX2lk
+        IjoxLCJuYW1lIjoiT3BlblN0YXgifV0sImNvcHlyaWdodF9ob2xkZXJzIjpb
+        eyJ1c2VyX2lkIjoyLCJuYW1lIjoiUmljZSBVbml2ZXJzaXR5In1dLCJkZXJp
+        dmVkX2Zyb20iOltdLCJhdHRhY2htZW50cyI6W10sInRhZ3MiOlsiYm9vazpz
+        dGF4LWJpbyIsIm9zdC10eXBlOmNvbmNlcHQtY29hY2giLCJkaXNwbGF5Om11
+        bHRpcGxlLWNob2ljZSIsInJlcXVpcmVzLWNob2ljZXM6biIsInRpbWU6bG9u
+        ZyIsImJsb29tczo0IiwiZG9rOjQiLCJsbzpzdGF4LWJpbzoxLTItMyIsImlk
+        OnN0YXgtYmlvOjMzIiwiY254bW9kOjZhMDU2OGQ4LTIzZDctNDM5Yi05YTAx
+        LTE2ZTRlNzM4ODZiMyJdLCJzdGltdWx1c19odG1sIjoiIiwicXVlc3Rpb25z
+        IjpbeyJpZCI6MzAzNSwic3RpbXVsdXNfaHRtbCI6IiIsInN0ZW1faHRtbCI6
+        IldoYXQgc2NpZW50aWZpYyBldmlkZW5jZSB3YXMgdXNlZCBieSBDYXJsIFdv
+        ZXNlIHRvIGRldGVybWluZSB0aGVyZSBzaG91bGQgYmUgYSBzZXBhcmF0ZSBk
+        b21haW4gZm9yIEFyY2hhZWE/IiwiYW5zd2VycyI6W3siaWQiOjExODY5LCJj
+        b250ZW50X2h0bWwiOiJzZXF1ZW5jZSBvZiB0Uk5BLiIsImNvcnJlY3RuZXNz
+        IjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6InJSTkEgd2FzIHVzZWQgYXMgYSBz
+        Y2llbnRpZmljIGV2aWRlbmNlIGJ5IENhcmwgV29lc2UuIn0seyJpZCI6MTE4
+        NjgsImNvbnRlbnRfaHRtbCI6InNlcXVlbmNlIG9mIG1STkEuIiwiY29ycmVj
+        dG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiU2VxdWVuY2Ugb2YgbVJO
+        QSB3YXMgbm90IHVzZWQsIHJSTkEgd2FzIHVzZWQuIn0seyJpZCI6MTE4Njcs
+        ImNvbnRlbnRfaHRtbCI6InNlcXVlbmNlIG9mIHJSTkEuIiwiY29ycmVjdG5l
+        c3MiOiIxLjAiLCJmZWVkYmFja19odG1sIjoiV29lc2UgdXNlZCBzZXF1ZW5j
+        ZSBvZiByUk5BIGFzIGV2aWRlbmNlIHRvIGRldGVybWluZSB0aGF0IHRoZXJl
+        IHNob3VsZCBiZSBhIHNlcGFyYXRlIGRvbWFpbiBmb3IgQXJjaGFlYS4ifSx7
+        ImlkIjoxMTg2NiwiY29udGVudF9odG1sIjoic2VxdWVuY2Ugb2YgRE5BIiwi
+        Y29ycmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiV29lc2UgZGlk
+        IG5vdCB1c2Ugc2VxdWVuY2Ugb2YgRE5BLiBIZSB1c2VkIGEgc2VxdWVuY2Ug
+        b2YgclJOQS4ifV0sInNvbHV0aW9ucyI6W3sidWlkIjoiMzAzNUAxIiwibnVt
+        YmVyIjozMDM1LCJ2ZXJzaW9uIjoxLCJwdWJsaXNoZWRfYXQiOiIyMDE1LTEx
+        LTA1VDE3OjIyOjM5Ljc4MVoiLCJlZGl0b3JzIjpbXSwiYXV0aG9ycyI6W3si
+        dXNlcl9pZCI6MSwibmFtZSI6Ik9wZW5TdGF4In1dLCJjb3B5cmlnaHRfaG9s
+        ZGVycyI6W3sidXNlcl9pZCI6MiwibmFtZSI6IlJpY2UgVW5pdmVyc2l0eSJ9
+        XSwiZGVyaXZlZF9mcm9tIjpbXSwiYXR0YWNobWVudHMiOltdLCJzb2x1dGlv
+        bl90eXBlIjoiZGV0YWlsZWQiLCJjb250ZW50X2h0bWwiOiJXb2VzZSBtYWlu
+        bHkgdXNlZCB0aGUgc2VxdWVuY2Ugb2Ygcmlib3NvbWFsIFJOQSBzdWJ1bml0
+        cy4ifV0sImhpbnRzIjpbXSwiZm9ybWF0cyI6WyJtdWx0aXBsZS1jaG9pY2Ui
+        LCJmcmVlLXJlc3BvbnNlIl0sImNvbWJvX2Nob2ljZXMiOltdfV19LHsidWlk
+        IjoiMjk1N0AyIiwibnVtYmVyIjoyOTU3LCJ2ZXJzaW9uIjoyLCJwdWJsaXNo
+        ZWRfYXQiOiIyMDE1LTExLTA1VDE3OjIyOjM5LjQ4NloiLCJlZGl0b3JzIjpb
+        XSwiYXV0aG9ycyI6W3sidXNlcl9pZCI6MSwibmFtZSI6Ik9wZW5TdGF4In1d
+        LCJjb3B5cmlnaHRfaG9sZGVycyI6W3sidXNlcl9pZCI6MiwibmFtZSI6IlJp
+        Y2UgVW5pdmVyc2l0eSJ9XSwiZGVyaXZlZF9mcm9tIjpbXSwiYXR0YWNobWVu
+        dHMiOltdLCJ0YWdzIjpbImJvb2s6c3RheC1iaW8iLCJvc3QtdHlwZTpjb25j
+        ZXB0LWNvYWNoIiwiZGlzcGxheTptdWx0aXBsZS1jaG9pY2UiLCJyZXF1aXJl
+        cy1jaG9pY2VzOm4iLCJ0aW1lOmxvbmciLCJkb2s6NCIsImxvOnN0YXgtYmlv
+        OjEtMi0zIiwiaWQ6c3RheC1iaW86MzUiLCJibG9vbXM6NSIsImNueG1vZDo2
+        YTA1NjhkOC0yM2Q3LTQzOWItOWEwMS0xNmU0ZTczODg2YjMiXSwic3RpbXVs
+        dXNfaHRtbCI6IiIsInF1ZXN0aW9ucyI6W3siaWQiOjMwMzYsInN0aW11bHVz
+        X2h0bWwiOiIiLCJzdGVtX2h0bWwiOiJCaXJkcyBoYXZlIGJlZW4gcmVjbGFz
+        c2lmaWVkIGFzIHJlcHRpbGVzLiBXaGljaCBsaW5lcyBvZiBldmlkZW5jZSBo
+        YXZlIGxlZCB0byB0aGlzIHJlY2xhc3NpZmljYXRpb24/IiwiYW5zd2VycyI6
+        W3siaWQiOjExODczLCJjb250ZW50X2h0bWwiOiJCaXJkcyBhbmQgcmVwdGls
+        ZXMgaGF2ZSBzaW1pbGFyIGFuYXRvbWljYWwgYW5kIG1vcnBob2xvZ2ljYWwg
+        ZmVhdHVyZXMuIiwiY29ycmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1s
+        IjoiQmlyZHMgYW5kIHJlcHRpbGVzIGhhdmUgZGlmZmVyZW50IGFuYXRvbWlj
+        YWwgYW5kIG1vcnBob2xvZ2ljYWwgZmVhdHVyZXMuIn0seyJpZCI6MTE4NzIs
+        ImNvbnRlbnRfaHRtbCI6IkJpcmRzIGFuZCByZXB0aWxlcyBoYXZlIHNhbWUg
+        Y2lyY3VsYXRvcnkgYW5kIGV4Y3JldG9yeSBzeXN0ZW1zLiBCb3RoIGFyZSBl
+        Z2cgbGF5aW5nIGFuaW1hbHMuIiwiY29ycmVjdG5lc3MiOiIwLjAiLCJmZWVk
+        YmFja19odG1sIjoiQmlyZHMgYW5kIHJlcHRpbGVzIGRvIG5vdCBzaGFyZSBo
+        b21vbG9neSBpbiBjaXJjdWxhdG9yeSBhbmQgZXhjcmV0b3J5IHN5c3RlbXMu
+        In0seyJpZCI6MTE4NzEsImNvbnRlbnRfaHRtbCI6IkJpcmRzIGhhdmUgbW9k
+        aWZpZWQgc2NhbGVzLCBjYWxsZWQgZmVhdGhlcnMsIHN1Z2dlc3RpbmcgdGhl
+        eSBoYXZlIHRoZSBzYW1lIG9yaWdpbiBhcyB0aGF0IG9mIHJlcHRpbGVzLiIs
+        ImNvcnJlY3RuZXNzIjoiMS4wIiwiZmVlZGJhY2tfaHRtbCI6IkJpcmRzIGhh
+        dmUgZmVhdGhlcnMgd2hpY2ggYXJlIHNhaWQgdG8gYmUgbW9kaWZpZWQgc2Nh
+        bGVzLiBCaXJkcyBoYXZlIHNjYWxlcyBvbiB0aGVpciBmZWV0LiBUaGV5IHNo
+        b3cgc29tZSBza2VsZXRhbCBzaW1pbGFyaXR5IHdoaWNoIHByb3ZpZGVzIGFu
+        IGV2aWRlbmNlIGZvciByZWNsYXNzaWZpY2F0aW9uIG9mIGJpcmRzIGFzIHJl
+        cHRpbGVzLiJ9LHsiaWQiOjExODcwLCJjb250ZW50X2h0bWwiOiJBcmNoZW9w
+        dGVyeXggaXMgdGhlIGNvbm5lY3RpbmcgbGluayBiZXR3ZWVuIGJpcmRzIGFu
+        ZCByZXB0aWxlcyB3aGljaCBzaG93cyB0aGF0IGJpcmRzIGFuZCByZXB0aWxl
+        cyBhcmUgcmVsYXRlZC4iLCJjb3JyZWN0bmVzcyI6IjAuMCIsImZlZWRiYWNr
+        X2h0bWwiOiJBcmNoZW9wdGVyeXggaXMgYSBjb25uZWN0aW5nIGxpbmsgYmV0
+        d2VlbiBiaXJkcyBhbmQgcmVwdGlsZXMuIEJ1dCB0aGlzIGRvZXMgbm90IGZv
+        cm0gIHRoZSBiYXNpcyBmb3IgcmVjbGFzc2lmeWluZyBiaXJkcyBhcyByZXB0
+        aWxlcy4ifV0sInNvbHV0aW9ucyI6W3sidWlkIjoiMzAzNkAxIiwibnVtYmVy
+        IjozMDM2LCJ2ZXJzaW9uIjoxLCJwdWJsaXNoZWRfYXQiOiIyMDE1LTExLTA1
+        VDE3OjIyOjM5Ljc4N1oiLCJlZGl0b3JzIjpbXSwiYXV0aG9ycyI6W3sidXNl
+        cl9pZCI6MSwibmFtZSI6Ik9wZW5TdGF4In1dLCJjb3B5cmlnaHRfaG9sZGVy
+        cyI6W3sidXNlcl9pZCI6MiwibmFtZSI6IlJpY2UgVW5pdmVyc2l0eSJ9XSwi
+        ZGVyaXZlZF9mcm9tIjpbXSwiYXR0YWNobWVudHMiOltdLCJzb2x1dGlvbl90
+        eXBlIjoiZGV0YWlsZWQiLCJjb250ZW50X2h0bWwiOiJCaXJkcyBoYXZlIHNj
+        YWxlcyAoU2ltaWxhciB0aXNzdWVzIHByb2R1Y2Ugc2NhbGVzIGFuZCBmZWF0
+        aGVycywgYW5kIGJpcmRzIGhhdmUgc2NhbGVzIG9uIHRoZWlyIGZlZXQpLiBG
+        b3NzaWxzIHNob3cgdGhlIG1hbnkgYnJhbmNoZXMgb2YgdGhlIGF2aWFuIHBo
+        eWxvZ2VuZXRpYyB0cmVlIHNoYXJlIGEgY29tbW9uIGFuY2VzdG9yIHdpdGgg
+        bW9kZXJuIHJlcHRpbGVzLiJ9XSwiaGludHMiOltdLCJmb3JtYXRzIjpbIm11
+        bHRpcGxlLWNob2ljZSIsImZyZWUtcmVzcG9uc2UiXSwiY29tYm9fY2hvaWNl
+        cyI6W119XX0seyJ1aWQiOiIyOTU4QDIiLCJudW1iZXIiOjI5NTgsInZlcnNp
+        b24iOjIsInB1Ymxpc2hlZF9hdCI6IjIwMTUtMTEtMDVUMTc6MjI6MzkuNDky
+        WiIsImVkaXRvcnMiOltdLCJhdXRob3JzIjpbeyJ1c2VyX2lkIjoxLCJuYW1l
+        IjoiT3BlblN0YXgifV0sImNvcHlyaWdodF9ob2xkZXJzIjpbeyJ1c2VyX2lk
+        IjoyLCJuYW1lIjoiUmljZSBVbml2ZXJzaXR5In1dLCJkZXJpdmVkX2Zyb20i
+        OltdLCJhdHRhY2htZW50cyI6W10sInRhZ3MiOlsiYm9vazpzdGF4LWJpbyIs
+        Im9zdC10eXBlOmNvbmNlcHQtY29hY2giLCJkaXNwbGF5Om11bHRpcGxlLWNo
+        b2ljZSIsInJlcXVpcmVzLWNob2ljZXM6biIsInRpbWU6bG9uZyIsImRvazo0
+        IiwibG86c3RheC1iaW86MS0yLTEiLCJibG9vbXM6NSIsImlkOnN0YXgtYmlv
+        OjM2IiwiY254bW9kOjZhMDU2OGQ4LTIzZDctNDM5Yi05YTAxLTE2ZTRlNzM4
+        ODZiMyJdLCJzdGltdWx1c19odG1sIjoiIiwicXVlc3Rpb25zIjpbeyJpZCI6
+        MzAzNywic3RpbXVsdXNfaHRtbCI6IiIsInN0ZW1faHRtbCI6IlNvbWUgcGxh
+        bnRzIGNhbGxlZCBsaXRob3BzIGdyb3cgaW4gdGhlIFNvdXRoIEFmcmljYW4g
+        ZGVzZXJ0IGFuZCBsb29rIGxpa2Ugc3RvbmVzLiBIb3cgd2VyZSBzY2llbnRp
+        c3RzIGFibGUgdG8gZGV0ZXJtaW5lIHRoZXkgYXJlIGxpdmluZyBvcmdhbmlz
+        bXM/IiwiYW5zd2VycyI6W3siaWQiOjExODc3LCJjb250ZW50X2h0bWwiOiJM
+        aXRob3BzIGFyZSBhdXRvdHJvcGhpYy4gVGhleSBzaG93IGdyb3d0aCBhbmQg
+        cmVwcm9kdWN0aW9uLiIsImNvcnJlY3RuZXNzIjoiMS4wIiwiZmVlZGJhY2tf
+        aHRtbCI6IkxpdGhvcHMgYXJlIHN1Y2N1bGVudCBwbGFudHMgd2hpY2ggY2Fu
+        IHBob3Rvc3ludGhlc2l6ZSB0aGVpciBvd24gZm9vZCBhbmQgcHJvZHVjZSBz
+        ZWVkcy4ifSx7ImlkIjoxMTg3NiwiY29udGVudF9odG1sIjoiTGl0aG9wcyBh
+        cmUgc3VjY3VsZW50IHBsYW50cyBhbmQgc2hvdyBoZXRlcm90cm9waGljIG1v
+        ZGUgb2YgbnV0cml0aW9uLiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJh
+        Y2tfaHRtbCI6IkxpdGhvcHMgYXJlIHN1Y2N1bGVudCBwbGFudHMsIGJ1dHRo
+        ZXkgZG8gbm90IHNob3cgaGV0ZXJvdHJvcGhpYyBtb2RlIG9mIG51dHJpdGlv
+        bi4ifSx7ImlkIjoxMTg3NSwiY29udGVudF9odG1sIjoiTGl0aG9wcyBhcmUg
+        bGl0aG90cm9waGljIGFuZCB0aGV5IHJlcHJvZHVjZS4iLCJjb3JyZWN0bmVz
+        cyI6IjAuMCIsImZlZWRiYWNrX2h0bWwiOiJMaXRob3BzIGFyZSBub3QgbGl0
+        aG90cm9waGljLCB0aGV5IGFyZSBhdXRvdHJvcGhpYy4ifSx7ImlkIjoxMTg3
+        NCwiY29udGVudF9odG1sIjoiTGl0aG9wcyByZXByb2R1Y2UgYW5kIGFyZSBo
+        ZXRlcm90cm9waGljLiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tf
+        aHRtbCI6IkxpdGhvcHMgYXJlIGF1dG90cm9waGljIGFuZCBub3QgaGV0ZXJv
+        dHJvcGhpYy4ifV0sInNvbHV0aW9ucyI6W3sidWlkIjoiMzAzN0AxIiwibnVt
+        YmVyIjozMDM3LCJ2ZXJzaW9uIjoxLCJwdWJsaXNoZWRfYXQiOiIyMDE1LTEx
+        LTA1VDE3OjIyOjM5Ljc5M1oiLCJlZGl0b3JzIjpbXSwiYXV0aG9ycyI6W3si
+        dXNlcl9pZCI6MSwibmFtZSI6Ik9wZW5TdGF4In1dLCJjb3B5cmlnaHRfaG9s
+        ZGVycyI6W3sidXNlcl9pZCI6MiwibmFtZSI6IlJpY2UgVW5pdmVyc2l0eSJ9
+        XSwiZGVyaXZlZF9mcm9tIjpbXSwiYXR0YWNobWVudHMiOltdLCJzb2x1dGlv
+        bl90eXBlIjoiZGV0YWlsZWQiLCJjb250ZW50X2h0bWwiOiJMaXRob3BzIGdy
+        b3csIHBlcmZvcm0gcGhvdG9zeW50aGVzaXMsIGFuZCBwcm9kdWNlIHNlZWRz
+        LiJ9XSwiaGludHMiOltdLCJmb3JtYXRzIjpbIm11bHRpcGxlLWNob2ljZSIs
+        ImZyZWUtcmVzcG9uc2UiXSwiY29tYm9fY2hvaWNlcyI6W119XX0seyJ1aWQi
+        OiIyOTU5QDIiLCJudW1iZXIiOjI5NTksInZlcnNpb24iOjIsInB1Ymxpc2hl
+        ZF9hdCI6IjIwMTUtMTEtMDVUMTc6MjI6MzkuNDk4WiIsImVkaXRvcnMiOltd
+        LCJhdXRob3JzIjpbeyJ1c2VyX2lkIjoxLCJuYW1lIjoiT3BlblN0YXgifV0s
+        ImNvcHlyaWdodF9ob2xkZXJzIjpbeyJ1c2VyX2lkIjoyLCJuYW1lIjoiUmlj
+        ZSBVbml2ZXJzaXR5In1dLCJkZXJpdmVkX2Zyb20iOltdLCJhdHRhY2htZW50
+        cyI6W10sInRhZ3MiOlsiYm9vazpzdGF4LWJpbyIsIm9zdC10eXBlOmNvbmNl
+        cHQtY29hY2giLCJkaXNwbGF5Om11bHRpcGxlLWNob2ljZSIsInJlcXVpcmVz
+        LWNob2ljZXM6biIsImRvazozIiwidGltZTpsb25nIiwiYmxvb21zOjQiLCJs
+        bzpzdGF4LWJpbzoxLTItMiIsImlkOnN0YXgtYmlvOjM3IiwiY254bW9kOjZh
+        MDU2OGQ4LTIzZDctNDM5Yi05YTAxLTE2ZTRlNzM4ODZiMyJdLCJzdGltdWx1
+        c19odG1sIjoiIiwicXVlc3Rpb25zIjpbeyJpZCI6MzAzOCwic3RpbXVsdXNf
+        aHRtbCI6IiIsInN0ZW1faHRtbCI6IkNvbnNpZGVyIHRoZSBjYXJkaW92YXNj
+        dWxhciBzeXN0ZW0uIFJhbmsgaW4gb3JkZXIgb24gaW5jcmVhc2luZyBjb21w
+        bGV4aXR5IGFsbCBpdHMgbGV2ZWxzIG9mIG9yZ2FuaXphdGlvbiBzdGFydGlu
+        ZyB3aXRoIHRoZSBoZW1vZ2xvYmluLiIsImFuc3dlcnMiOlt7ImlkIjoxMTg4
+        MSwiY29udGVudF9odG1sIjoiT3h5Z2VuLCBjYXJib24gZGlveGlkZSwgUmVk
+        IGJsb29kIGNlbGxzLCBoZW1vZ2xvYmluLCBibG9vZCwgYXJ0ZXJ5LCBjYXJk
+        aW92YXNjdWxhciBzeXN0ZW0uIiwiY29ycmVjdG5lc3MiOiIwLjAiLCJmZWVk
+        YmFja19odG1sIjoiT3h5Z2VuIGFuZCBjYXJib24gZGlveGlkZSBhcmUgbm90
+        IHBhcnQgb2YgdGhlIGNhcmRpb3Zhc2N1bGFyIHN5c3RlbS4ifSx7ImlkIjox
+        MTg4MCwiY29udGVudF9odG1sIjoiUmVkIGJsb29kIGNlbGxzLCBoZW1vZ2xv
+        YmluLCBibG9vZCwgdmVpbnMsIGNhcGlsbGFyaWVzLCBjYXJkaW92YXNjdWxh
+        ciBzeXN0ZW0uIiwiY29ycmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1s
+        IjoiUkJD4oCZcyBoYXZlIGhpZ2hlciBjb21wbGV4aXR5IHRoYW4gaGVtb2ds
+        b2Jpbi4ifSx7ImlkIjoxMTg3OSwiY29udGVudF9odG1sIjoiSGVtb2dsb2Jp
+        biwgcmVkIGJsb29kIGNlbGxzLCBibG9vZCwgYXJ0ZXJ5LCB2ZWlucywgY2Fy
+        ZGlvdmFzY3VsYXIgc3lzdGVtLiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVl
+        ZGJhY2tfaHRtbCI6IkNhcGlsbGFyaWVzIGFyZSBhIHBhcnQgb2YgY2FyZGlv
+        dmFzY3VsYXIgc3lzdGVtLiBUaGV5IHdpbGwgYmUgcGxhY2VkIGFmdGVyIHRo
+        ZSBhcnRlcnkgYW5kIGJlZm9yZSB2ZWlucy4ifSx7ImlkIjoxMTg3OCwiY29u
+        dGVudF9odG1sIjoiSGVtb2dsb2JpbiwgcmVkIGJsb29kIGNlbGxzLCBibG9v
+        ZCwgYXJ0ZXJ5LCBjYXBpbGxhcmllcywgdmVpbnMsIGNhcmRpb3Zhc2N1bGFy
+        IHN5c3RlbS4iLCJjb3JyZWN0bmVzcyI6IjEuMCIsImZlZWRiYWNrX2h0bWwi
+        OiJUaGUgY29ycmVjdCByYW5raW5nIHdpdGggcmVzcGVjdCB0byBpbmNyZWFz
+        aW5nIGNvbXBsZXhpdHkgaXMgaGVtb2dsb2JpbiwgcmVkIGJsb29kIGNlbGxz
+        LCBibG9vZCwgYXJ0ZXJ5LCBjYXBpbGxhcmllcywgdmVpbnMsIGNhcmRpb3Zh
+        c2N1bGFyIHN5c3RlbS4ifV0sInNvbHV0aW9ucyI6W3sidWlkIjoiMzAzOEAx
+        IiwibnVtYmVyIjozMDM4LCJ2ZXJzaW9uIjoxLCJwdWJsaXNoZWRfYXQiOiIy
+        MDE1LTExLTA1VDE3OjIyOjM5Ljc5OVoiLCJlZGl0b3JzIjpbXSwiYXV0aG9y
+        cyI6W3sidXNlcl9pZCI6MSwibmFtZSI6Ik9wZW5TdGF4In1dLCJjb3B5cmln
+        aHRfaG9sZGVycyI6W3sidXNlcl9pZCI6MiwibmFtZSI6IlJpY2UgVW5pdmVy
+        c2l0eSJ9XSwiZGVyaXZlZF9mcm9tIjpbXSwiYXR0YWNobWVudHMiOltdLCJz
+        b2x1dGlvbl90eXBlIjoiZGV0YWlsZWQiLCJjb250ZW50X2h0bWwiOiJPbmUg
+        ZXhhbXBsZTogaGVtb2dsb2JpbiwgcmVkIGJsb29kIGNlbGxzLCBibG9vZCwg
+        YXJ0ZXJ5LCB2ZWlucywgY2FwaWxsYXJpZXMsIGNhcmRpb3Zhc2N1bGFyIHN5
+        c3RlbS4ifV0sImhpbnRzIjpbXSwiZm9ybWF0cyI6WyJtdWx0aXBsZS1jaG9p
+        Y2UiLCJmcmVlLXJlc3BvbnNlIl0sImNvbWJvX2Nob2ljZXMiOltdfV19LHsi
+        dWlkIjoiMjk2MEAyIiwibnVtYmVyIjoyOTYwLCJ2ZXJzaW9uIjoyLCJwdWJs
+        aXNoZWRfYXQiOiIyMDE1LTExLTA1VDE3OjIyOjM5LjUwM1oiLCJlZGl0b3Jz
+        IjpbXSwiYXV0aG9ycyI6W3sidXNlcl9pZCI6MSwibmFtZSI6Ik9wZW5TdGF4
+        In1dLCJjb3B5cmlnaHRfaG9sZGVycyI6W3sidXNlcl9pZCI6MiwibmFtZSI6
+        IlJpY2UgVW5pdmVyc2l0eSJ9XSwiZGVyaXZlZF9mcm9tIjpbXSwiYXR0YWNo
+        bWVudHMiOltdLCJ0YWdzIjpbImJvb2s6c3RheC1iaW8iLCJvc3QtdHlwZTpj
+        b25jZXB0LWNvYWNoIiwidGltZTpzaG9ydCIsImRpc3BsYXk6bXVsdGlwbGUt
+        Y2hvaWNlIiwicmVxdWlyZXMtY2hvaWNlczp5IiwiYmxvb21zOjMiLCJkb2s6
+        MSIsImxvOnN0YXgtYmlvOjEtMi0xIiwiaWQ6c3RheC1iaW86MzgiLCJjbnht
+        b2Q6NmEwNTY4ZDgtMjNkNy00MzliLTlhMDEtMTZlNGU3Mzg4NmIzIl0sInN0
+        aW11bHVzX2h0bWwiOiIiLCJxdWVzdGlvbnMiOlt7ImlkIjozMDM5LCJzdGlt
+        dWx1c19odG1sIjoiIiwic3RlbV9odG1sIjoiV2hpY2ggb2YgdGhlIGZvbGxv
+        d2luZyBzdHJ1Y3R1cmVzIGlzIGNvbnNlcnZlZCBpbiBhbGwgbGl2aW5nIG9y
+        Z2FuaXNtcyBhbmQgcG9pbnRzIHRvIGEgY29tbW9uIG9yaWdpbj8iLCJhbnN3
+        ZXJzIjpbeyJpZCI6MTE4ODUsImNvbnRlbnRfaHRtbCI6IkFsbCBsaXZpbmcg
+        b3JnYW5pc21zIGhhdmUgYSBudWNsZXVzLiIsImNvcnJlY3RuZXNzIjoiMC4w
+        IiwiZmVlZGJhY2tfaHRtbCI6IkFsbCBsaXZpbmcgb3JnYW5pc21zIGRvIG5v
+        dCBoYXZlIGEgbnVjbGV1cy4ifSx7ImlkIjoxMTg4NCwiY29udGVudF9odG1s
+        IjoiQWxsIGxpdmluZyBvcmdhbmlzbXMgdXNlIHRoZSBlbmVyZ3kgZnJvbSBz
+        dW5saWdodC4iLCJjb3JyZWN0bmVzcyI6IjAuMCIsImZlZWRiYWNrX2h0bWwi
+        OiJBbGwgbGl2aW5nIG9yZ2FuaXNtcyBkbyBub3Qgb2J0YWluIGVuZXJneSBm
+        cm9tIHN1bmxpZ2h0LiJ9LHsiaWQiOjExODgzLCJjb250ZW50X2h0bWwiOiJB
+        bGwgbGl2aW5nIG9yZ2FuaXNtcyBzdG9yZSBnZW5ldGljIG1hdGVyaWFsIGlu
+        IEROQS9STkEuIiwiY29ycmVjdG5lc3MiOiIxLjAiLCJmZWVkYmFja19odG1s
+        IjoiQWxsIGxpdmluZyBvcmdhbmlzbXMgc3RvcmUgZ2VuZXRpYyBpbmZvcm1h
+        dGlvbiB1c2luZyB0aGUgc2FtZSBtb2xlY3VsZXM6IEROQSBhbmQgUk5BLiJ9
+        LHsiaWQiOjExODgyLCJjb250ZW50X2h0bWwiOiJBbGwgbGl2aW5nIG9yZ2Fu
+        aXNtcyBoYXZlIG1pdG9jaG9uZHJpYSB0aGF0IHByb2R1Y2UgZW5lcmd5Iiwi
+        Y29ycmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiQWxsIGxpdmlu
+        ZyBvcmdhbmlzbXMgZG8gbm90IGhhdmUgbWl0b2Nob25kcmlhLiJ9XSwic29s
+        dXRpb25zIjpbeyJ1aWQiOiIzMDM5QDEiLCJudW1iZXIiOjMwMzksInZlcnNp
+        b24iOjEsInB1Ymxpc2hlZF9hdCI6IjIwMTUtMTEtMDVUMTc6MjI6MzkuODA0
+        WiIsImVkaXRvcnMiOltdLCJhdXRob3JzIjpbeyJ1c2VyX2lkIjoxLCJuYW1l
+        IjoiT3BlblN0YXgifV0sImNvcHlyaWdodF9ob2xkZXJzIjpbeyJ1c2VyX2lk
+        IjoyLCJuYW1lIjoiUmljZSBVbml2ZXJzaXR5In1dLCJkZXJpdmVkX2Zyb20i
+        OltdLCJhdHRhY2htZW50cyI6W10sInNvbHV0aW9uX3R5cGUiOiJkZXRhaWxl
+        ZCIsImNvbnRlbnRfaHRtbCI6IkFsbCBsaXZpbmcgb3JnYW5pc21zIHN0b3Jl
+        IGdlbmV0aWMgbWF0ZXJpYWwgaW4gRE5BL1JOQS4ifV0sImhpbnRzIjpbXSwi
+        Zm9ybWF0cyI6WyJtdWx0aXBsZS1jaG9pY2UiLCJmcmVlLXJlc3BvbnNlIl0s
+        ImNvbWJvX2Nob2ljZXMiOltdfV19LHsidWlkIjoiMjk2MUAyIiwibnVtYmVy
+        IjoyOTYxLCJ2ZXJzaW9uIjoyLCJwdWJsaXNoZWRfYXQiOiIyMDE1LTExLTA1
+        VDE3OjIyOjM5LjUwOVoiLCJlZGl0b3JzIjpbXSwiYXV0aG9ycyI6W3sidXNl
+        cl9pZCI6MSwibmFtZSI6Ik9wZW5TdGF4In1dLCJjb3B5cmlnaHRfaG9sZGVy
+        cyI6W3sidXNlcl9pZCI6MiwibmFtZSI6IlJpY2UgVW5pdmVyc2l0eSJ9XSwi
+        ZGVyaXZlZF9mcm9tIjpbXSwiYXR0YWNobWVudHMiOltdLCJ0YWdzIjpbImJv
+        b2s6c3RheC1iaW8iLCJvc3QtdHlwZTpjb25jZXB0LWNvYWNoIiwiYmxvb21z
+        OjIiLCJ0aW1lOnNob3J0IiwiZGlzcGxheTptdWx0aXBsZS1jaG9pY2UiLCJy
+        ZXF1aXJlcy1jaG9pY2VzOnkiLCJkb2s6MyIsImxvOnN0YXgtYmlvOjEtMi0z
+        IiwiaWQ6c3RheC1iaW86MzkiLCJjbnhtb2Q6NmEwNTY4ZDgtMjNkNy00Mzli
+        LTlhMDEtMTZlNGU3Mzg4NmIzIl0sInN0aW11bHVzX2h0bWwiOiIiLCJxdWVz
+        dGlvbnMiOlt7ImlkIjozMDQwLCJzdGltdWx1c19odG1sIjoiIiwic3RlbV9o
+        dG1sIjoiV2hpY2ggb2YgdGhlIGZvbGxvd2luZyBzdGF0ZW1lbnQgaXMgdGhl
+        IHN0cm9uZ2VzdCBhcmd1bWVudCBpbiBmYXZvciBvZiB0d28gb3JnYW5pc21z
+        LCBBIGFuZCBCLCBiZWluZyBldm9sdXRpb25hcnkgY2xvc2VseSByZWxhdGVk
+        PyIsImFuc3dlcnMiOlt7ImlkIjoxMTg4OSwiY29udGVudF9odG1sIjoiVGhl
+        IEROQSBzZXF1ZW5jZXMgb2YgQSBhbmQgQiBhcmUgaGlnaGx5IGhvbW9sb2dv
+        dXMuIiwiY29ycmVjdG5lc3MiOiIxLjAiLCJmZWVkYmFja19odG1sIjoiSWYg
+        dGhlIEROQSBzZXF1ZW5jZXMgb2YgdGhlIHR3byBvcmdhbmlzbXMgc2hhcmUg
+        aG9tb2xvZ3ksIHRoZW4gdGhleSBjYW4gYmUgZXZvbHV0aW9uYXJ5IGNsb3Nl
+        bHkgcmVsYXRlZC4ifSx7ImlkIjoxMTg4OCwiY29udGVudF9odG1sIjoiQSBh
+        bmQgQiB1c2UgdGhlIHNhbWUgbWV0YWJvbGljIHBhdGh3YXlzLiIsImNvcnJl
+        Y3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6Ik1ldGFib2xpYyBwYXRo
+        d2F5cyBvZiBsaXZpbmcgb3JnYW5pc21zIGNhbiBiZSBzaW1pbGFyLiBUaGlz
+        IGRvZXMgbm90IHNlcnZlIGFzIGJhc2lzIHRvIGNvbmNsdWRlIHRoYXQgdHdv
+        IG9yZ2FuaXNtcyBhcmUgY2xvc2VseSByZWxhdGVkLiJ9LHsiaWQiOjExODg3
+        LCJjb250ZW50X2h0bWwiOiJBIGFuZCBCIGxpdmUgaW4gdGhlIHNhbWUgZWNv
+        c3lzdGVtLiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6
+        IkVjb3N5c3RlbSBpbmNsdWRlcyBtYW55IHNwZWNpZXMgbGl2aW5nIHRvZ2V0
+        aGVyLiBKdXN0IGJ5IHNoYXJpbmcgdGhlIHNhbWUgZWNvc3lzdGVtIHR3byBv
+        cmdhbmlzbXMgY2Fubm90IGJlIGNsb3NlbHkgcmVsYXRlZC4ifSx7ImlkIjox
+        MTg4NiwiY29udGVudF9odG1sIjoiQSBhbmQgQiBsb29rIGFsaWtlLiIsImNv
+        cnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6Ik9ubHkgbW9ycGhv
+        bG9naWNhbCBzaW1pbGFyaXR5IGNhbm5vdCBiZSB0aGUgYmFzaXMgZm9yIGNv
+        bmNsdWRpbmcgdGhhdCB0d28gb3JnYW5pc21zIGFyZSBjbG9zZWx5IHJlbGF0
+        ZWQuIn1dLCJzb2x1dGlvbnMiOlt7InVpZCI6IjMwNDBAMSIsIm51bWJlciI6
+        MzA0MCwidmVyc2lvbiI6MSwicHVibGlzaGVkX2F0IjoiMjAxNS0xMS0wNVQx
+        NzoyMjozOS44MTBaIiwiZWRpdG9ycyI6W10sImF1dGhvcnMiOlt7InVzZXJf
+        aWQiOjEsIm5hbWUiOiJPcGVuU3RheCJ9XSwiY29weXJpZ2h0X2hvbGRlcnMi
+        Olt7InVzZXJfaWQiOjIsIm5hbWUiOiJSaWNlIFVuaXZlcnNpdHkifV0sImRl
+        cml2ZWRfZnJvbSI6W10sImF0dGFjaG1lbnRzIjpbXSwic29sdXRpb25fdHlw
+        ZSI6ImRldGFpbGVkIiwiY29udGVudF9odG1sIjoiVGhlIEROQSBzZXF1ZW5j
+        ZXMgb2YgQSBhbmQgQiBhcmUgaGlnaGx5IGhvbW9sb2dvdXMuIn1dLCJoaW50
+        cyI6W10sImZvcm1hdHMiOlsibXVsdGlwbGUtY2hvaWNlIiwiZnJlZS1yZXNw
+        b25zZSJdLCJjb21ib19jaG9pY2VzIjpbXX1dfSx7InVpZCI6IjI5NjJAMiIs
+        Im51bWJlciI6Mjk2MiwidmVyc2lvbiI6MiwicHVibGlzaGVkX2F0IjoiMjAx
+        NS0xMS0wNVQxNzoyMjozOS41MTVaIiwiZWRpdG9ycyI6W10sImF1dGhvcnMi
+        Olt7InVzZXJfaWQiOjEsIm5hbWUiOiJPcGVuU3RheCJ9XSwiY29weXJpZ2h0
+        X2hvbGRlcnMiOlt7InVzZXJfaWQiOjIsIm5hbWUiOiJSaWNlIFVuaXZlcnNp
+        dHkifV0sImRlcml2ZWRfZnJvbSI6W10sImF0dGFjaG1lbnRzIjpbXSwidGFn
+        cyI6WyJib29rOnN0YXgtYmlvIiwib3N0LXR5cGU6Y29uY2VwdC1jb2FjaCIs
+        InRpbWU6c2hvcnQiLCJkaXNwbGF5Om11bHRpcGxlLWNob2ljZSIsImJsb29t
+        czozIiwicmVxdWlyZXMtY2hvaWNlczpuIiwiZG9rOjEiLCJsbzpzdGF4LWJp
+        bzoxLTItMyIsImlkOnN0YXgtYmlvOjQwIiwiY254bW9kOjZhMDU2OGQ4LTIz
+        ZDctNDM5Yi05YTAxLTE2ZTRlNzM4ODZiMyJdLCJzdGltdWx1c19odG1sIjoi
+        IiwicXVlc3Rpb25zIjpbeyJpZCI6MzA0MSwic3RpbXVsdXNfaHRtbCI6IiIs
+        InN0ZW1faHRtbCI6IkluIHRoZSBmb2xsb3dpbmcgcGh5bG9nZW5ldGljIHRy
+        ZWUgd2hpY2ggb3JnYW5pc20gaXMgbW9zdCBkaXN0YW50bHkgcmVsYXRlZCB0
+        byAyPyIsImFuc3dlcnMiOlt7ImlkIjoxMTg5MywiY29udGVudF9odG1sIjoi
+        NSIsImNvcnJlY3RuZXNzIjoiMS4wIiwiZmVlZGJhY2tfaHRtbCI6IjUgaXMg
+        bW9zdCBkaXN0YW50bHkgcmVsYXRlZCB0byAyIGFzIGl0IGlzIGV2aWRlbnQg
+        aW4gdGhlIHBoeWxvZ2VuZXRpYyB0cmVlIHRoYXQgNSBkaXZlcmdlZCBmcm9t
+        IHRoZSBtYWluIGJyYW5jaCBtdWNoIGVhcmxpZXIgdGhhbiByZXN0IG9mIHRo
+        ZSBvcmdhbmlzbXMuIn0seyJpZCI6MTE4OTIsImNvbnRlbnRfaHRtbCI6IjQi
+        LCJjb3JyZWN0bmVzcyI6IjAuMCIsImZlZWRiYWNrX2h0bWwiOiJCcmFuY2gg
+        NSBpcyBtb3N0IGRpc3RhbnRseSByZWxhdGVkIHRvIGJyYW5jaCAyLiJ9LHsi
+        aWQiOjExODkxLCJjb250ZW50X2h0bWwiOiIzIiwiY29ycmVjdG5lc3MiOiIw
+        LjAiLCJmZWVkYmFja19odG1sIjoiQnJhbmNoIDMgaXMgIG5vdCBtb3N0IGRp
+        c3RhbnRseSByZWxhdGVkIHRvIDIuIn0seyJpZCI6MTE4OTAsImNvbnRlbnRf
+        aHRtbCI6IjEiLCJjb3JyZWN0bmVzcyI6IjAuMCIsImZlZWRiYWNrX2h0bWwi
+        OiJCcmFuY2hlcyAxIGFuZCAyIGV2b2x2ZWQgYXQgdGhlIHNhbWUgdGltZSBh
+        bmQgc2hhcmUgc2ltaWxhcml0aWVzLiJ9XSwic29sdXRpb25zIjpbeyJ1aWQi
+        OiIzMDQxQDEiLCJudW1iZXIiOjMwNDEsInZlcnNpb24iOjEsInB1Ymxpc2hl
+        ZF9hdCI6IjIwMTUtMTEtMDVUMTc6MjI6MzkuODE2WiIsImVkaXRvcnMiOltd
+        LCJhdXRob3JzIjpbeyJ1c2VyX2lkIjoxLCJuYW1lIjoiT3BlblN0YXgifV0s
+        ImNvcHlyaWdodF9ob2xkZXJzIjpbeyJ1c2VyX2lkIjoyLCJuYW1lIjoiUmlj
+        ZSBVbml2ZXJzaXR5In1dLCJkZXJpdmVkX2Zyb20iOltdLCJhdHRhY2htZW50
+        cyI6W10sInNvbHV0aW9uX3R5cGUiOiJkZXRhaWxlZCIsImNvbnRlbnRfaHRt
+        bCI6IjUifV0sImhpbnRzIjpbXSwiZm9ybWF0cyI6WyJtdWx0aXBsZS1jaG9p
+        Y2UiLCJmcmVlLXJlc3BvbnNlIl0sImNvbWJvX2Nob2ljZXMiOltdfV19LHsi
+        dWlkIjoiMjk2M0AyIiwibnVtYmVyIjoyOTYzLCJ2ZXJzaW9uIjoyLCJwdWJs
+        aXNoZWRfYXQiOiIyMDE1LTExLTA1VDE3OjIyOjM5LjUyMVoiLCJlZGl0b3Jz
+        IjpbXSwiYXV0aG9ycyI6W3sidXNlcl9pZCI6MSwibmFtZSI6Ik9wZW5TdGF4
+        In1dLCJjb3B5cmlnaHRfaG9sZGVycyI6W3sidXNlcl9pZCI6MiwibmFtZSI6
+        IlJpY2UgVW5pdmVyc2l0eSJ9XSwiZGVyaXZlZF9mcm9tIjpbXSwiYXR0YWNo
+        bWVudHMiOltdLCJ0YWdzIjpbImJvb2s6c3RheC1iaW8iLCJvc3QtdHlwZTpj
+        b25jZXB0LWNvYWNoIiwiZG9rOjIiLCJ0aW1lOnNob3J0IiwiZGlzcGxheTpt
+        dWx0aXBsZS1jaG9pY2UiLCJibG9vbXM6MyIsInJlcXVpcmVzLWNob2ljZXM6
+        biIsImxvOnN0YXgtYmlvOjEtMi0zIiwiaWQ6c3RheC1iaW86NDEiLCJjbnht
+        b2Q6NmEwNTY4ZDgtMjNkNy00MzliLTlhMDEtMTZlNGU3Mzg4NmIzIl0sInN0
+        aW11bHVzX2h0bWwiOiIiLCJxdWVzdGlvbnMiOlt7ImlkIjozMDQyLCJzdGlt
+        dWx1c19odG1sIjoiIiwic3RlbV9odG1sIjoiSW4gdGhlIGRpYWdyYW0gYWJv
+        dmUgd2hpY2ggaXMgdGhlIG1vc3QgcmVjZW50IGNvbW1vbiBhbmNlc3RvciBv
+        ZiAxIGFuZCAzPyIsImFuc3dlcnMiOlt7ImlkIjoxMTg5NywiY29udGVudF9o
+        dG1sIjoiRCIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6
+        IkQgaXMgbm90IHRoZSBtb3N0IHJlY2VudCBjb21tb24gYW5jZXN0b3Igb2Yg
+        Ym90aCAxIGFuZCAzLiJ9LHsiaWQiOjExODk2LCJjb250ZW50X2h0bWwiOiJD
+        IiwiY29ycmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiVGhlIG1v
+        c3QgcmVjZW50IGNvbW1vbiBhbmNlc3RvciBvZiAxIGFuZCAzIGluIHRoZSBw
+        aHlsb2dlbmV0aWMgdHJlZSBpcyBCLiJ9LHsiaWQiOjExODk1LCJjb250ZW50
+        X2h0bWwiOiJCIiwiY29ycmVjdG5lc3MiOiIxLjAiLCJmZWVkYmFja19odG1s
+        IjoiQiBpcyB0aGUgcmVjZW50IGNvbW1vbiBhbmNlc3RvciBvZiAxIGFuZCAz
+        LiJ9LHsiaWQiOjExODk0LCJjb250ZW50X2h0bWwiOiJBIiwiY29ycmVjdG5l
+        c3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiQSBjYW5ub3QgYmUgYSBjb21t
+        b24gYW5jZXN0b3Igb2YgMSBhbmQgMy4ifV0sInNvbHV0aW9ucyI6W3sidWlk
+        IjoiMzA0MkAxIiwibnVtYmVyIjozMDQyLCJ2ZXJzaW9uIjoxLCJwdWJsaXNo
+        ZWRfYXQiOiIyMDE1LTExLTA1VDE3OjIyOjM5LjgyMloiLCJlZGl0b3JzIjpb
+        XSwiYXV0aG9ycyI6W3sidXNlcl9pZCI6MSwibmFtZSI6Ik9wZW5TdGF4In1d
+        LCJjb3B5cmlnaHRfaG9sZGVycyI6W3sidXNlcl9pZCI6MiwibmFtZSI6IlJp
+        Y2UgVW5pdmVyc2l0eSJ9XSwiZGVyaXZlZF9mcm9tIjpbXSwiYXR0YWNobWVu
+        dHMiOltdLCJzb2x1dGlvbl90eXBlIjoiZGV0YWlsZWQiLCJjb250ZW50X2h0
+        bWwiOiJCIn1dLCJoaW50cyI6W10sImZvcm1hdHMiOlsibXVsdGlwbGUtY2hv
+        aWNlIiwiZnJlZS1yZXNwb25zZSJdLCJjb21ib19jaG9pY2VzIjpbXX1dfSx7
+        InVpZCI6IjI5NjRAMiIsIm51bWJlciI6Mjk2NCwidmVyc2lvbiI6MiwicHVi
+        bGlzaGVkX2F0IjoiMjAxNS0xMS0wNVQxNzoyMjozOS41MjZaIiwiZWRpdG9y
+        cyI6W10sImF1dGhvcnMiOlt7InVzZXJfaWQiOjEsIm5hbWUiOiJPcGVuU3Rh
+        eCJ9XSwiY29weXJpZ2h0X2hvbGRlcnMiOlt7InVzZXJfaWQiOjIsIm5hbWUi
+        OiJSaWNlIFVuaXZlcnNpdHkifV0sImRlcml2ZWRfZnJvbSI6W10sImF0dGFj
+        aG1lbnRzIjpbXSwidGFncyI6WyJib29rOnN0YXgtYmlvIiwib3N0LXR5cGU6
+        Y29uY2VwdC1jb2FjaCIsImRpc3BsYXk6bXVsdGlwbGUtY2hvaWNlIiwicmVx
+        dWlyZXMtY2hvaWNlczpuIiwidGltZTpsb25nIiwiZG9rOjQiLCJsbzpzdGF4
+        LWJpbzoxLTItMSIsImJsb29tczo1IiwiaWQ6c3RheC1iaW86NDIiLCJjbnht
+        b2Q6NmEwNTY4ZDgtMjNkNy00MzliLTlhMDEtMTZlNGU3Mzg4NmIzIl0sInN0
+        aW11bHVzX2h0bWwiOiIiLCJxdWVzdGlvbnMiOlt7ImlkIjozMDQzLCJzdGlt
+        dWx1c19odG1sIjoiIiwic3RlbV9odG1sIjoiQmlyZHMgaGF2ZSBiZWVuIHJl
+        Y2xhc3NpZmllZCBhcyByZXB0aWxlcy4gV2hpY2ggbGluZXMgb2YgZXZpZGVu
+        Y2UgaGF2ZSBsZWQgdG8gdGhpcyByZWNsYXNzaWZpY2F0aW9uPyIsImFuc3dl
+        cnMiOlt7ImlkIjoxMTkwMSwiY29udGVudF9odG1sIjoiQmlyZHMgYW5kIHJl
+        cHRpbGVzIGhhdmUgc2ltaWxhciBhbmF0b21pY2FsIGFuZCBtb3JwaG9sb2dp
+        Y2FsIGZlYXR1cmVzLiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tf
+        aHRtbCI6IkJpcmRzIGFuZCByZXB0aWxlcyBkb2VzIG5vdCBoYXZlIHNpbWls
+        YXIgYW5hdG9taWNhbCBhbmQgbW9ycGhvbG9naWNhbCBmZWF0dXJlcy4ifSx7
+        ImlkIjoxMTkwMCwiY29udGVudF9odG1sIjoiQmlyZHMgYW5kIHJlcHRpbGVz
+        IGhhdmUgc2FtZSBjaXJjdWxhdG9yeSBhbmQgZXhjcmV0b3J5IHN5c3RlbXMu
+        IEJvdGggYXJlIGVnZyBsYXlpbmcgYW5pbWFscy4iLCJjb3JyZWN0bmVzcyI6
+        IjAuMCIsImZlZWRiYWNrX2h0bWwiOiJCaXJkcyBhbmQgcmVwdGlsZXMgZG8g
+        bm90IHNoYXJlIGhvbW9sb2d5IGluIGNpcmN1bGF0b3J5IGFuZCBleGNyZXRv
+        cnkgc3lzdGVtcy4ifSx7ImlkIjoxMTg5OSwiY29udGVudF9odG1sIjoiQmly
+        ZHMgaGF2ZSBzY2FsZXMsIGhhdmluZyBzYW1lIG9yaWdpbiBhcyB0aGF0IG9m
+        IHJlcHRpbGVzLiIsImNvcnJlY3RuZXNzIjoiMS4wIiwiZmVlZGJhY2tfaHRt
+        bCI6IkJpcmRzIGhhdmUgZmVhdGhlcnMgd2hpY2ggYXJlIHNhaWQgdG8gYmUg
+        bW9kaWZpZWQgc2NhbGVzLiBCaXJkcyBoYXZlIHNjYWxlcyBvbiB0aGVpciBm
+        ZWV0LiBUaGV5IHNob3cgc29tZSBza2VsZXRhbCBzaW1pbGFyaXR5IHdoaWNo
+        IHByb3ZpZGVzIGFuIGV2aWRlbmNlIGZvciByZWNsYXNzaWZpY2F0aW9uIG9m
+        IGJpcmRzIGFzIHJlcHRpbGVzLiJ9LHsiaWQiOjExODk4LCJjb250ZW50X2h0
+        bWwiOiJBcmNoZW9wdGVyeXggaXMgdGhlIGNvbm5lY3RpbmcgbGluayBiZXR3
+        ZWVuIGJpcmRzIGFuZCByZXB0aWxlcyB3aGljaCBzaG93cyB0aGF0IGJpcmRz
+        IGFuZCByZXB0aWxlcyBhcmUgcmVsYXRlZC4iLCJjb3JyZWN0bmVzcyI6IjAu
+        MCIsImZlZWRiYWNrX2h0bWwiOiJBcmNoZW9wdGVyeXggaXMgYSBjb25uZWN0
+        aW5nIGxpbmsgYmV0d2VlbiBiaXJkcyBhbmQgcmVwdGlsZXMsIGJ1dCB0aGlz
+        IGlzIG5vdCB0aGUgYmFzaXMgZm9yIHJlY2xhc3NpZnlpbmcgYmlyZHMgYXMg
+        cmVwdGlsZXMuIn1dLCJzb2x1dGlvbnMiOlt7InVpZCI6IjMwNDNAMSIsIm51
+        bWJlciI6MzA0MywidmVyc2lvbiI6MSwicHVibGlzaGVkX2F0IjoiMjAxNS0x
+        MS0wNVQxNzoyMjozOS44MjhaIiwiZWRpdG9ycyI6W10sImF1dGhvcnMiOlt7
+        InVzZXJfaWQiOjEsIm5hbWUiOiJPcGVuU3RheCJ9XSwiY29weXJpZ2h0X2hv
+        bGRlcnMiOlt7InVzZXJfaWQiOjIsIm5hbWUiOiJSaWNlIFVuaXZlcnNpdHki
+        fV0sImRlcml2ZWRfZnJvbSI6W10sImF0dGFjaG1lbnRzIjpbXSwic29sdXRp
+        b25fdHlwZSI6ImRldGFpbGVkIiwiY29udGVudF9odG1sIjoiQmlyZHMgaGF2
+        ZSBzY2FsZXMgKFNpbWlsYXIgdGlzc3VlcyBwcm9kdWNlIHNjYWxlcyBhbmQg
+        ZmVhdGhlcnMsIGFuZCBiaXJkcyBoYXZlIHNjYWxlcyBvbiB0aGVpciBmZWV0
+        KS4gRm9zc2lscyBzaG93IHRoZSBtYW55IGJyYW5jaGVzIG9mIGJpcmQgcGh5
+        bG9nZW5ldGljIHRyZWUuIn1dLCJoaW50cyI6W10sImZvcm1hdHMiOlsibXVs
+        dGlwbGUtY2hvaWNlIiwiZnJlZS1yZXNwb25zZSJdLCJjb21ib19jaG9pY2Vz
+        IjpbXX1dfSx7InVpZCI6IjI5NjVAMiIsIm51bWJlciI6Mjk2NSwidmVyc2lv
+        biI6MiwicHVibGlzaGVkX2F0IjoiMjAxNS0xMS0wNVQxNzoyMjozOS41MzJa
+        IiwiZWRpdG9ycyI6W10sImF1dGhvcnMiOlt7InVzZXJfaWQiOjEsIm5hbWUi
+        OiJPcGVuU3RheCJ9XSwiY29weXJpZ2h0X2hvbGRlcnMiOlt7InVzZXJfaWQi
+        OjIsIm5hbWUiOiJSaWNlIFVuaXZlcnNpdHkifV0sImRlcml2ZWRfZnJvbSI6
+        W10sImF0dGFjaG1lbnRzIjpbXSwidGFncyI6WyJib29rOnN0YXgtYmlvIiwi
+        b3N0LXR5cGU6Y29uY2VwdC1jb2FjaCIsImRvazoyIiwidGltZTpzaG9ydCIs
+        ImRpc3BsYXk6bXVsdGlwbGUtY2hvaWNlIiwiYmxvb21zOjMiLCJyZXF1aXJl
+        cy1jaG9pY2VzOm4iLCJsbzpzdGF4LWJpbzoxLTItMSIsImlkOnN0YXgtYmlv
+        OjQzIiwiY254bW9kOjZhMDU2OGQ4LTIzZDctNDM5Yi05YTAxLTE2ZTRlNzM4
+        ODZiMyJdLCJzdGltdWx1c19odG1sIjoiIiwicXVlc3Rpb25zIjpbeyJpZCI6
+        MzA0NCwic3RpbXVsdXNfaHRtbCI6IiIsInN0ZW1faHRtbCI6IkhvdyBtYW55
+        IG5ldXRyb25zIGRvIGNhcmJvbi0xMiBhbmQgY2FyYm9uLTEzIGhhdmUsIHJl
+        c3BlY3RpdmVseT8iLCJhbnN3ZXJzIjpbeyJpZCI6MTE5MDUsImNvbnRlbnRf
+        aHRtbCI6IkNhcmJvbi0xMiBjb250YWlucyB0aGlydGVlbiBuZXV0cm9ucyB3
+        aGlsZSBjYXJib24tMTMgY29udGFpbnMgdHdlbHZlIG5ldXRyb25zLiIsImNv
+        cnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IlJlY2FsbCB0aGUg
+        bWFzcyBudW1iZXIgb2YgY2FyYm9uLTEyIGFuZCBjYXJib24gMTMuIEFsc28s
+        IGNhbGN1bGF0ZSB0aGVpciBudW1iZXIgb2YgbmV1dHJvbnMuIn0seyJpZCI6
+        MTE5MDQsImNvbnRlbnRfaHRtbCI6IkNhcmJvbi0xMiBjb250YWlucyB0d2Vs
+        dmUgbmV1dHJvbnMgd2hpbGUgY2FyYm9uIDEzIGNvbnRhaW5zIHRoaXJ0ZWVu
+        IG5ldXRyb25zLiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRt
+        bCI6Ikl0IGlzIHRoZSBtYXNzIG51bWJlciBhbmQgbm90IHRoZSBudW1iZXIg
+        b2YgbmV1dHJvbnMgaW4gY2FyYm9uIGF0b20uIn0seyJpZCI6MTE5MDMsImNv
+        bnRlbnRfaHRtbCI6IkNhcmJvbi0xMiBjb250YWlucyBzZXZlbiBuZXV0cm9u
+        cyB3aGlsZSBjYXJib24tMTMgY29udGFpbnMgc2l4IG5ldXRyb25zLiIsImNv
+        cnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IkNhcmJvbi0xMiBk
+        b2VzIG5vdCBjb250YWluIHNldmVuIG5ldXRyb25zLCBub3IgZG9lcyBjYXJi
+        b24tMTMgY29udGFpbiBzaXggbmV1dHJvbnMuIn0seyJpZCI6MTE5MDIsImNv
+        bnRlbnRfaHRtbCI6IkNhcmJvbi0xMiBjb250YWlucyBzaXggbmV1dHJvbnMg
+        d2hpbGUgY2FyYm9uLTEzIGNvbnRhaW5zIHNldmVuIG5ldXRyb25zLiIsImNv
+        cnJlY3RuZXNzIjoiMS4wIiwiZmVlZGJhY2tfaHRtbCI6IkNhcmJvbiBoYXMg
+        dHdvIHN0YWJsZSBpc290b3BlcyB3aXRoIG1hc3MgbnVtYmVycyB0d2VsdmUg
+        YW5kIHRoaXJ0ZWVuLiBUaGUgYXRvbWljIG51bWJlciBvZiBjYXJib24gaXMg
+        Ni4gTnVtYmVyIG9mIG5ldXRyb25zIGNhbiBiZSBjYWxjdWxhdGVkIGJ5IGRl
+        ZHVjdGluZyBudW1iZXIgb2YgcHJvdG9ucyBmcm9tIG1hc3MgbnVtYmVyLiBU
+        aGVyZWZvcmUsIGNhcmJvbiAxMiBjb250YWlucyBzaXggbmV1dHJvbnMsIHdo
+        aWxlIGNhcmJvbiAxMyBjb250YWlucyBzZXZlbiBuZXV0cm9ucy4ifV0sInNv
+        bHV0aW9ucyI6W3sidWlkIjoiMzA0NEAxIiwibnVtYmVyIjozMDQ0LCJ2ZXJz
+        aW9uIjoxLCJwdWJsaXNoZWRfYXQiOiIyMDE1LTExLTA1VDE3OjIyOjM5Ljgz
+        NFoiLCJlZGl0b3JzIjpbXSwiYXV0aG9ycyI6W3sidXNlcl9pZCI6MSwibmFt
+        ZSI6Ik9wZW5TdGF4In1dLCJjb3B5cmlnaHRfaG9sZGVycyI6W3sidXNlcl9p
+        ZCI6MiwibmFtZSI6IlJpY2UgVW5pdmVyc2l0eSJ9XSwiZGVyaXZlZF9mcm9t
+        IjpbXSwiYXR0YWNobWVudHMiOltdLCJzb2x1dGlvbl90eXBlIjoiZGV0YWls
+        ZWQiLCJjb250ZW50X2h0bWwiOiJDYXJib24tMTIgaGFzIHNpeCBuZXV0cm9u
+        cy4gQ2FyYm9uLTEzIGhhcyBzZXZlbiBuZXV0cm9ucy4ifV0sImhpbnRzIjpb
+        XSwiZm9ybWF0cyI6WyJtdWx0aXBsZS1jaG9pY2UiLCJmcmVlLXJlc3BvbnNl
+        Il0sImNvbWJvX2Nob2ljZXMiOltdfV19XX0=
+    http_version: 
+  recorded_at: Thu, 05 Nov 2015 17:56:32 GMT
+recorded_with: VCR 2.9.3

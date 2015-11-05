@@ -22,38 +22,76 @@ RSpec.describe Admin::EcosystemsController, speed: :slow, vcr: VCR_OPTS do
   end
 
   describe 'POST #import' do
-    let!(:archive_url) { 'https://archive-staging-tutor.cnx.org/contents/' }
-    let!(:cnx_id) { '93e2b09d-261c-4007-a987-0b3062fe154b@4.4' }
+    context 'tutor book' do
+      let!(:archive_url) { 'https://archive-staging-tutor.cnx.org/contents/' }
+      let!(:cnx_id) { '93e2b09d-261c-4007-a987-0b3062fe154b@4.4' }
 
-    it 'imports books and exercises as ecosystems' do
-      expect {
-        post :import, archive_url: archive_url, cnx_id: cnx_id
-      }.to change { Content::Models::Book.count }.by(1)
-      expect(flash[:notice]).to include 'Ecosystem import job queued.'
+      it 'imports books and exercises as ecosystems' do
+        expect {
+          post :import, archive_url: archive_url, cnx_id: cnx_id
+        }.to change { Content::Models::Book.count }.by(1)
+        expect(flash[:notice]).to include 'Ecosystem import job queued.'
+      end
+
+      it 'imports a book even if the book already exists' do
+        FactoryGirl.create(:content_book,
+                           title: 'Physics',
+                           url: "#{archive_url}#{cnx_id}",
+                           version: '4.4')
+
+        expect {
+          post :import, archive_url: archive_url, cnx_id: cnx_id
+        }.to change { Content::Models::Book.count }.by(1)
+        expect(flash[:notice]).to include 'Ecosystem import job queued.'
+      end
+
+      it 'imports a book with a different version' do
+        FactoryGirl.create(:content_book,
+                           title: 'Physics',
+                           url: "#{archive_url}#{cnx_id}",
+                           version: '4.4')
+
+        expect {
+          post :import, archive_url: archive_url, cnx_id: cnx_id.sub('@4.4', '@4.3')
+        }.to change { Content::Models::Book.count }.by(1)
+        expect(flash[:notice]).to include 'Ecosystem import job queued.'
+      end
     end
 
-    it 'imports a book even if the book already exists' do
-      FactoryGirl.create(:content_book,
-                         title: 'Physics',
-                         url: "#{archive_url}#{cnx_id}",
-                         version: '4.4')
+    context 'cc book' do
+      let!(:archive_url) { 'https://archive.cnx.org/contents/' }
+      let!(:cnx_id) { 'f10533ca-f803-490d-b935-88899941197f@2.1' }
 
-      expect {
-        post :import, archive_url: archive_url, cnx_id: cnx_id
-      }.to change { Content::Models::Book.count }.by(1)
-      expect(flash[:notice]).to include 'Ecosystem import job queued.'
-    end
+      it 'imports books and exercises as ecosystems' do
+        expect {
+          post :import, archive_url: archive_url, cnx_id: cnx_id
+        }.to change { Content::Models::Book.count }.by(1)
+        expect(flash[:notice]).to include 'Ecosystem import job queued.'
+      end
 
-    it 'imports a book with a different version' do
-      FactoryGirl.create(:content_book,
-                         title: 'Physics',
-                         url: "#{archive_url}#{cnx_id}",
-                         version: '4.4')
+      it 'imports a book even if the book already exists' do
+        FactoryGirl.create(:content_book,
+                           title: 'Derived copy of Biology',
+                           url: "#{archive_url}#{cnx_id}",
+                           version: '2.1')
 
-      expect {
-        post :import, archive_url: archive_url, cnx_id: cnx_id.sub('@4.4', '@4.3')
-      }.to change { Content::Models::Book.count }.by(1)
-      expect(flash[:notice]).to include 'Ecosystem import job queued.'
+        expect {
+          post :import, archive_url: archive_url, cnx_id: cnx_id
+        }.to change { Content::Models::Book.count }.by(1)
+        expect(flash[:notice]).to include 'Ecosystem import job queued.'
+      end
+
+      it 'imports a book with a different version' do
+        FactoryGirl.create(:content_book,
+                           title: 'Derived copy of Biology',
+                           url: "#{archive_url}#{cnx_id}",
+                           version: '2.1')
+
+        expect {
+          post :import, archive_url: archive_url, cnx_id: cnx_id.sub('@2.1', '@1.1')
+        }.to change { Content::Models::Book.count }.by(1)
+        expect(flash[:notice]).to include 'Ecosystem import job queued.'
+      end
     end
   end
 end

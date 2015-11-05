@@ -1,10 +1,8 @@
-# If any substantial changes are made to this file such as book_id or version
-# The fixture at spec/fixtures/demo-imports/physics.yml must also be updated
 course_name: Concept Coach
-cnx_book_id: 185cbf87-c72e-48f5-b51e-f14f21b5eabd
-cnx_book_version: 9.87
+cnx_book_id: f10533ca-f803-490d-b935-88899941197f
+cnx_book_version: 3.1
 url_base: https://archive.cnx.org/contents/
-catalog_offering_identifier: physics
+catalog_offering_identifier: biology
 teacher: cm
 periods:
   - id: p1

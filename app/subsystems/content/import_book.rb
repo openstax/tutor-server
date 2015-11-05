@@ -34,7 +34,7 @@ class Content::ImportBook
 
     outputs[:exercises] = []
     page_block = ->(exercise_wrapper) {
-      tags = Set.new(exercise_wrapper.los + exercise_wrapper.aplos + exercise_wrapper.uuids)
+      tags = Set.new(exercise_wrapper.los + exercise_wrapper.aplos + exercise_wrapper.cnxmods)
       pages = import_page_tags.select{ |pt| tags.include?(pt.tag.value) }
                               .collect{ |pt| pt.page }.uniq
 
