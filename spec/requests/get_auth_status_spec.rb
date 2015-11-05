@@ -13,7 +13,7 @@ describe "Get authentication status", type: :request, version: :v1 do
       stub_current_user(anon_user)
       get("/auth/status")
       expect(response).to have_http_status(:ok)
-      expect(response.body_as_hash).to eq({current_user: false})
+      expect(response.body_as_hash.stringify_keys.keys).not_to include('current_user')
     end
 
     it 'returns a token and current_user when user is logged in' do
@@ -25,6 +25,11 @@ describe "Get authentication status", type: :request, version: :v1 do
       token = Doorkeeper::AccessToken.find_by(resource_owner_id: user.id).token
       expect(response.body_as_hash).to match(
                                          :access_token => token,
+                                         :endpoints => {
+                                           :login=>a_string_starting_with("http"),
+                                           :iframe_login=>a_string_starting_with("http"),
+                                           :accounts_iframe=>a_string_starting_with("http")
+                                         },
                                          :current_user => {
                                            :name=>user.name,
                                            :is_admin=>false,

@@ -3,6 +3,11 @@ OpenStax::Api.configure do |config|
   config.current_user_method = 'current_user'
   config.routing_error_app = lambda { |env|
     [404, {"Content-Type" => 'application/json'}, ['']] }
+  config.validate_cors_origin = lambda{ |request|
+    Rails.application.secrets.cc_origins.any? do | origin |
+      /^#{origin}/.match(request.headers["HTTP_ORIGIN"])
+    end
+  }
 end
 
 # Override the human_user method so it can properly return a User::User
