@@ -82,7 +82,7 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, speed: :slow, vcr:
     it 'creates a new Page' do
       result = nil
       expect {
-        result = import_page
+        result = import_page(archive_url: 'https://archive.cnx.org/contents/')
       }.to change{ Content::Models::Page.count }.by(1)
       expect(result.errors).to be_empty
 
@@ -96,7 +96,7 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, speed: :slow, vcr:
     end
 
     it 'converts relative links into absolute links' do
-      page = import_page.outputs[:page]
+      page = import_page(archive_url: 'https://archive.cnx.org/contents/').outputs[:page]
       doc = Nokogiri::HTML(page.content)
 
       doc.css('[src]').each do |tag|
@@ -108,7 +108,7 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, speed: :slow, vcr:
     it 'finds cnxmod tags in the content' do
       result = nil
       expect {
-        result = import_page
+        result = import_page(archive_url: 'https://archive.cnx.org/contents/')
       }.to change{ Content::Models::Tag.cnxmod.count }.by(1)
 
       tag = Content::Models::Tag.cnxmod.order(:created_at).last
@@ -126,15 +126,17 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, speed: :slow, vcr:
     it 'gets exercises with the page\'s cnxmod tag' do
       result = nil
       expect {
-        result = import_page
-      }.to change{ Content::Models::Exercise.count }.by(10)
+        result = import_page(archive_url: 'https://archive.cnx.org/contents/')
+      }.to change{ Content::Models::Exercise.count }.by(26)
     end
   end
 
-  def import_page
-    Content::Routines::ImportPage.call(cnx_page: cnx_page,
-                                       chapter: chapter,
-                                       book_location: book_location)
+  def import_page(archive_url: OpenStax::Cnx::V1.archive_url_base(ssl: true))
+    OpenStax::Cnx::V1.with_archive_url(url: archive_url) do
+      Content::Routines::ImportPage.call(cnx_page: cnx_page,
+                                         chapter: chapter,
+                                         book_location: book_location)
+    end
   end
 
 end

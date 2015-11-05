@@ -89,7 +89,9 @@ RSpec.describe Content::ImportBook, type: :routine, speed: :slow, vcr: VCR_OPTS 
   end
 
   it 'handles the bio cc book correctly' do
-    Content::ImportBook.call(ecosystem: ecosystem, cnx_book: bio_cc_book)
+    OpenStax::Cnx::V1.with_archive_url(url: 'https://archive.cnx.org/contents/') do
+      Content::ImportBook.call(ecosystem: ecosystem, cnx_book: bio_cc_book)
+    end
     book = ecosystem.books.first
 
     # Units are ignored
@@ -99,7 +101,7 @@ RSpec.describe Content::ImportBook, type: :routine, speed: :slow, vcr: VCR_OPTS 
     expect(part.book_location).to eq [1]
 
     page = part.pages.first
-    expect(page.title).to eq "Introduction"
+    expect(page.title).to eq "Sample module 1"
     expect(page.book_location).to eq [1, 0]
 
     page = part.pages.second
@@ -113,7 +115,7 @@ RSpec.describe Content::ImportBook, type: :routine, speed: :slow, vcr: VCR_OPTS 
     expect(part.book_location).to eq [3]
 
     page = part.pages.first
-    expect(page.title).to eq "Introduction"
+    expect(page.title).to eq "Sample module 2"
     expect(page.book_location).to eq [3, 0]
 
     page = part.pages.second
