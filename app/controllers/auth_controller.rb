@@ -27,7 +27,7 @@ class AuthController < ApplicationController
 
   def iframe_start
     if current_user.is_anonymous?
-      redirect_to_login_path
+      redirect_to_login_url
     else
       @status = user_status_update
       render action: :iframe_finish
@@ -83,10 +83,10 @@ class AuthController < ApplicationController
     OpenStax::Api.configuration.validate_cors_origin[ request ] ? request.headers["HTTP_ORIGIN"] : ''
   end
 
-  def redirect_to_login_path
+  def redirect_to_login_url
     session[:accounts_return_to] = after_iframe_authentication_url
     if OpenStax::Accounts.configuration.enable_stubbing?
-      redirect_to openstax_accounts.dev_accounts_path
+      redirect_to openstax_accounts.dev_accounts_url
       session[:parent] = params[:parent]
     else
       redirect_to openstax_accounts.login_url
