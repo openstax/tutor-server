@@ -4,10 +4,10 @@ RSpec.describe 'Teachers' do
   let(:course) { CreateCourse[name: 'Access me'] }
   let(:user) { FactoryGirl.create(:user) }
 
-  describe 'accessing their courses' do
+  describe 'joining their courses' do
     context 'unauthenticated' do
       it 'redirects to login' do
-        visit access_course_path(course.teacher_access_token)
+        visit join_course_path(course.teacher_join_token)
         expect(current_path).to eq(openstax_accounts.dev_accounts_path)
       end
     end
@@ -15,8 +15,8 @@ RSpec.describe 'Teachers' do
     context 'authenticated' do
       before { stub_current_user(user) }
 
-      context 'valid access token' do
-        before { visit access_course_path(course.teacher_access_token) }
+      context 'valid join token' do
+        before { visit join_course_path(course.teacher_join_token) }
 
         it 'adds the user as the teacher' do
           expect(UserIsCourseTeacher[course: course, user: user]).to be true
@@ -27,10 +27,10 @@ RSpec.describe 'Teachers' do
         end
       end
 
-      context 'invalid access token' do
+      context 'invalid join token' do
         it 'renders an error page' do
           rescuing_exceptions do
-            visit access_course_path('invalid-no-way-it-will-work')
+            visit join_course_path('invalid-no-way-it-will-work')
           end
 
           expect(page).to have_css('.flash_error', text: 'You are trying to join a class as a teacher, but the information you provided is either out of date or does not correspond to an existing course.')

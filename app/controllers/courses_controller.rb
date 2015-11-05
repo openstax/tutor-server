@@ -1,23 +1,20 @@
 class CoursesController < ApplicationController
-  def access
+  def join
     begin
-      course = find_course_by_access_token
+      course = find_course_by_join_token
       AddUserAsCourseTeacher[course: course, user: current_user]
       redirect_to dashboard_path
     rescue
       flash[:error] = "You are trying to join a class as a teacher, but the information you provided is either out of date or does not correspond to an existing course."
-      raise InvalidTeacherAccessToken
+      raise InvalidTeacherJoinToken
     end
   end
 
   private
-  def find_course_by_access_token
-    profile = GetCourseProfile[attrs: {
-      teacher_access_token: params[:access_token]
-    }]
-
+  def find_course_by_join_token
+    profile = GetCourseProfile[attrs: { teacher_join_token: params[:join_token] }]
     Entity::Course.find(profile.course_id)
   end
 end
 
-class InvalidTeacherAccessToken < StandardError; end
+class InvalidTeacherJoinToken < StandardError; end
