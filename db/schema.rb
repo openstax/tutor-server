@@ -227,7 +227,7 @@ ActiveRecord::Schema.define(version: 20151103171830) do
   add_index "course_membership_students", ["deidentifier"], name: "index_course_membership_students_on_deidentifier", unique: true, using: :btree
   add_index "course_membership_students", ["entity_course_id", "inactive_at"], name: "course_membership_students_course_inactive", using: :btree
   add_index "course_membership_students", ["entity_role_id"], name: "index_course_membership_students_on_entity_role_id", unique: true, using: :btree
-  add_index "course_membership_students", ["student_identifier"], name: "index_course_membership_students_on_student_identifier", using: :btree
+  add_index "course_membership_students", ["student_identifier", "entity_course_id"], name: "index_course_membership_students_on_s_identifier_and_e_c_id", unique: true, using: :btree
 
   create_table "course_membership_teachers", force: :cascade do |t|
     t.integer  "entity_course_id", null: false

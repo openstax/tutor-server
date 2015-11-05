@@ -82,6 +82,7 @@ class Api::V1::EnrollmentChangesController < Api::V1::ApiController
       already_approved
       already_rejected
       already_processed
+      taken (The provided student identifier is already present in the same course)
   EOS
   def approve
     CourseMembership::Models::EnrollmentChange.transaction do
