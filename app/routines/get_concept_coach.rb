@@ -19,6 +19,8 @@ class GetConceptCoach
 
   uses_routine GetHistory, as: :get_history
 
+  uses_routine GetCourseEcosystem, as: :get_ecosystem
+
   protected
 
   def exec(user:, cnx_book_id:, cnx_page_id:)
@@ -100,7 +102,10 @@ class GetConceptCoach
   def get_role_and_page(user:, cnx_book_id:, cnx_page_id:)
     roles = Role::GetUserRoles[user, :student]
     ecosystem_id_role_map = roles.each_with_object({}) do |role, hash|
-      ecosystem_id = role.student.course.course_ecosystems.first.content_ecosystem_id
+      course = role.student.course
+      next unless course.is_concept_coach
+
+      ecosystem_id = run(:get_ecosystem, course: course).outputs.ecosystem.id
       hash[ecosystem_id] ||= []
       hash[ecosystem_id] << role
     end

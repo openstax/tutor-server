@@ -35,8 +35,10 @@ RSpec.describe GetConceptCoach, type: :routine do
 
     period_model = FactoryGirl.create(:course_membership_period)
     period = CourseMembership::Period.new(strategy: period_model.wrap)
+    @course = period.course
+    @course.profile.update_attribute(:is_concept_coach, true)
 
-    AddEcosystemToCourse[ecosystem: ecosystem, course: period.course]
+    AddEcosystemToCourse[ecosystem: ecosystem, course: @course]
 
     @user_1 = FactoryGirl.create(:user)
     @user_2 = FactoryGirl.create(:user)
@@ -68,6 +70,34 @@ RSpec.describe GetConceptCoach, type: :routine do
       ].task }.to change{ Tasks::Models::ConceptCoachTask.count }.by(1)
       cc_task = Tasks::Models::ConceptCoachTask.order(:created_at).last
       expect(cc_task.task).to eq task.entity_task
+    end
+
+    it 'returns an error if the book is invalid' do
+      result = nil
+      expect{ result = described_class.call(
+        user: @user_1, cnx_book_id: 'invalid', cnx_page_id: @page_1.uuid
+      ) }.not_to change{ Tasks::Models::ConceptCoachTask.count }
+      expect(result.errors.map(&:code)).to eq [:invalid_book]
+      expect(result.outputs.valid_book_urls).to eq [@book.url]
+    end
+
+    it 'returns an error if the page is invalid' do
+      result = nil
+      expect{ result = described_class.call(
+        user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: 'invalid'
+      ) }.not_to change{ Tasks::Models::ConceptCoachTask.count }
+      expect(result.errors.map(&:code)).to eq [:invalid_page]
+      expect(result.outputs.valid_book_urls).to eq [@book.url]
+    end
+
+    it 'does not include non-cc courses' do
+      @course.profile.update_attribute(:is_concept_coach, false)
+
+      result = nil
+      expect{ result = described_class.call(
+        user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
+      ) }.not_to change{ Tasks::Models::ConceptCoachTask.count }
+      expect(result.errors.map(&:code)).to eq [:not_a_cc_student]
     end
   end
 
@@ -125,6 +155,24 @@ RSpec.describe GetConceptCoach, type: :routine do
       task.task_steps.last(described_class::SPACED_EXERCISES_COUNT).each do |task_step|
         expect(task_step.tasked.exercise.page.id).to eq @page_1.id
       end
+    end
+
+    it 'returns an error if the book is invalid' do
+      result = nil
+      expect{ result = described_class.call(
+        user: @user_1, cnx_book_id: 'invalid', cnx_page_id: @page_1.uuid
+      ) }.not_to change{ Tasks::Models::ConceptCoachTask.count }
+      expect(result.errors.map(&:code)).to eq [:invalid_book]
+      expect(result.outputs.valid_book_urls).to eq [@book.url]
+    end
+
+    it 'returns an error if the page is invalid' do
+      result = nil
+      expect{ result = described_class.call(
+        user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: 'invalid'
+      ) }.not_to change{ Tasks::Models::ConceptCoachTask.count }
+      expect(result.errors.map(&:code)).to eq [:invalid_page]
+      expect(result.outputs.valid_book_urls).to eq [@book.url]
     end
   end
 
