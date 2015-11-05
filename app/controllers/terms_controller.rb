@@ -1,6 +1,9 @@
 class TermsController < ApplicationController
   skip_before_filter :authenticate_user!, only: [:index, :show]
 
+  # Allow accessing from within iframes
+  before_filter :allow_iframe_access, only: [:index, :pose, :agree]
+
   def index
     @contracts = [ FinePrint.get_contract(:general_terms_of_use),
                    FinePrint.get_contract(:privacy_policy) ]
