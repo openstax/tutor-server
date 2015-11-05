@@ -102,11 +102,11 @@ RSpec.describe Content::ImportBook, type: :routine, speed: :slow, vcr: VCR_OPTS 
 
     page = part.pages.first
     expect(page.title).to eq "Sample module 1"
-    expect(page.book_location).to eq [1, 0]
+    expect(page.book_location).to eq [1, 1]
 
     page = part.pages.second
     expect(page.title).to eq "The Science of Biology"
-    expect(page.book_location).to eq [1, 1]
+    expect(page.book_location).to eq [1, 2]
 
     # Jump to 3rd chapter
 
@@ -115,11 +115,11 @@ RSpec.describe Content::ImportBook, type: :routine, speed: :slow, vcr: VCR_OPTS 
     expect(part.book_location).to eq [3]
 
     page = part.pages.first
-    expect(page.title).to eq "Sample module 2"
-    expect(page.book_location).to eq [3, 0]
+    expect(page.title).to eq "Sample module 3"
+    expect(page.book_location).to eq [3, 1]
 
     page = part.pages.second
     expect(page.title).to eq "Studying Cells"
-    expect(page.book_location).to eq [3, 1]
+    expect(page.book_location).to eq [3, 2]
   end
 end
