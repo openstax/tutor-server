@@ -1,6 +1,7 @@
 class AddTeacherAccessTokenToCourseProfileProfiles < ActiveRecord::Migration
   def change
     add_column :course_profile_profiles, :teacher_access_token, :string
+    add_index :course_profile_profiles, :teacher_access_token, unique: true
 
     reversible do |direction|
       direction.up do
