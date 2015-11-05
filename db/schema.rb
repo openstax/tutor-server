@@ -252,6 +252,7 @@ ActiveRecord::Schema.define(version: 20151102161939) do
   add_index "course_profile_profiles", ["entity_course_id"], name: "index_course_profile_profiles_on_entity_course_id", unique: true, using: :btree
   add_index "course_profile_profiles", ["name"], name: "index_course_profile_profiles_on_name", using: :btree
   add_index "course_profile_profiles", ["school_district_school_id"], name: "index_course_profile_profiles_on_school_district_school_id", using: :btree
+  add_index "course_profile_profiles", ["teacher_access_token"], name: "index_course_profile_profiles_on_teacher_access_token", unique: true, using: :btree
 
   create_table "delayed_jobs", force: :cascade do |t|
     t.integer  "priority",   default: 0, null: false
