@@ -3,7 +3,7 @@ class AuthController < ApplicationController
   before_filter :set_cors_headers, only: [:status, :cors_preflight_check]
 
   # iframe_start doesn't need to clear the headers since doesn't render, it only redirects
-  before_filter :allow_iframe_access, only: :iframe_finish
+  before_filter :allow_iframe_access, only: [:iframe_start, :iframe_finish]
 
   #before_filter :forbid_access
   # these should always return 200 response regardless of login status
@@ -25,9 +25,13 @@ class AuthController < ApplicationController
   end
 
   def iframe_start
-    head :forbidden and return if current_user.is_anonymous?
-    session[:accounts_return_to] = after_iframe_authentication_url
-    redirect_to openstax_accounts.login_url #(host_only:false)
+    if current_user.is_anonymous?
+      session[:accounts_return_to] = after_iframe_authentication_url
+      redirect_to openstax_accounts.login_url #(host_only:false)
+    else
+      @status = user_status_update
+      render action: :iframe_finish
+    end
   end
 
   def iframe_finish
