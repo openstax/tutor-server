@@ -40,7 +40,7 @@ class AuthController < ApplicationController
     head :forbidden and return if current_user.is_anonymous?
     # the view will deliver the status data using postMessage out of the iframe
     @status = user_status_update
-    @iframe_origin = stubbed_auth? ? session[:parent] : @status[:endpoints].accounts_iframe
+    @iframe_origin = stubbed_auth? ? session[:parent] : @status[:endpoints][:accounts_iframe]
   end
 
   private
