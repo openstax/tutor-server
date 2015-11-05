@@ -1,18 +1,19 @@
 class AuthController < ApplicationController
 
+  # Unlike other controllers, these cors headers allows cookies via the
+  # Access-Control-Allow-Credentials header
   before_filter :set_cors_headers, only: [:status, :cors_preflight_check]
 
-  # iframe_start doesn't need to clear the headers since doesn't render, it only redirects
+  # Allow accessing iframe methods from inside an iframe
   before_filter :allow_iframe_access, only: [:iframe_start, :iframe_finish]
 
-  #before_filter :forbid_access
-  # these should always return 200 response regardless of login status
-  skip_before_filter :authenticate_user!, only: [:status, :cors_preflight_check, :iframe_start, :iframe_finish]
+  # Methods handle returning login status differently than the standard authenticate_user! filter
+  skip_before_filter :authenticate_user!,
+                     only: [:status, :cors_preflight_check, :iframe_start, :iframe_finish]
 
-
-
-  # Since these endpoints are loaded from foreign sites via cors or iframe, CRSF tokens can't be used
-  skip_before_action :verify_authenticity_token
+  # CRSF tokens can't be used since these endpoints are loaded from foreign sites via cors or iframe
+  skip_before_action :verify_authenticity_token,
+                     only: [:status, :cors_preflight_check, :iframe_start,:iframe_finish]
 
   def status
     render json: user_status_update
