@@ -1,6 +1,6 @@
 class AuthController < ApplicationController
 
-  before_filter :require_contracts, only: :iframe_finish#, unless: -> { current_user.is_anonymous? }
+  before_filter :require_contracts, only: :iframe_finish, unless: -> { current_user.is_anonymous? }
 
   # Unlike other controllers, these cors headers allows cookies via the
   # Access-Control-Allow-Credentials header
