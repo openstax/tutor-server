@@ -59,10 +59,6 @@ class AuthController < ApplicationController
     status
   end
 
-  def allow_iframe_access
-    response.headers.except! 'X-Frame-Options'
-  end
-
   def set_cors_headers
     headers['Access-Control-Allow-Origin']   = validated_cors_origin
     headers['Access-Control-Allow-Methods']  = 'GET, OPTIONS' # No PUT/POST access
