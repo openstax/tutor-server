@@ -270,6 +270,10 @@ ActiveRecord::Schema.define(version: 20151102161939) do
 
   add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
 
+  create_table "dummy_models", force: :cascade do |t|
+    t.string "enrollment_code"
+  end
+
   create_table "entity_courses", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
