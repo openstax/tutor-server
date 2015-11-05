@@ -3,7 +3,7 @@
   <head>
     <script>
       var msg = <%=raw json_escape @status.to_json %>;
-      window.parent.postMessage(JSON.stringify({data: { onLogin: msg}}), msg.endpoints.accounts_iframe);
+      window.parent.postMessage( JSON.stringify({ data: { onLogin: msg}}), '<%= @iframe_origin %>' );
     </script>
   </head>
   <body>

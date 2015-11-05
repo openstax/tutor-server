@@ -27,8 +27,7 @@ class AuthController < ApplicationController
 
   def iframe_start
     if current_user.is_anonymous?
-      session[:accounts_return_to] = after_iframe_authentication_url
-      redirect_to openstax_accounts.login_url #(host_only:false)
+      redirect_to_login_path
     else
       @status = user_status_update
       render action: :iframe_finish
@@ -39,6 +38,8 @@ class AuthController < ApplicationController
     head :forbidden and return if current_user.is_anonymous?
     # the view will deliver the status data using postMessage out of the iframe
     @status = user_status_update
+    @iframe_origin = OpenStax::Accounts.configuration.enable_stubbing? ?
+                      session[:parent] : @status[:endpoints].accounts_iframe
   end
 
   private
@@ -51,7 +52,9 @@ class AuthController < ApplicationController
     status[:endpoints] = {
       login: openstax_accounts.login_url,
       iframe_login: authenticate_via_iframe_url,
-      accounts_iframe: Rails.application.secrets.openstax['accounts']['url'] + "/remote/iframe"
+      accounts_iframe: OpenStax::Accounts.configuration.enable_stubbing? ?
+        authenticate_via_iframe_url :
+        Rails.application.secrets.openstax['accounts']['url'] + "/remote/iframe"
     }
     status
   end
@@ -78,6 +81,16 @@ class AuthController < ApplicationController
 
   def validated_cors_origin
     OpenStax::Api.configuration.validate_cors_origin[ request ] ? request.headers["HTTP_ORIGIN"] : ''
+  end
+
+  def redirect_to_login_path
+    session[:accounts_return_to] = after_iframe_authentication_url
+    if OpenStax::Accounts.configuration.enable_stubbing?
+      redirect_to openstax_accounts.dev_accounts_path
+      session[:parent] = params[:parent]
+    else
+      redirect_to openstax_accounts.login_url
+    end
   end
 
 end
