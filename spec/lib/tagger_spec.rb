@@ -4,8 +4,8 @@ RSpec.describe Tagger, type: :lib do
   context 'old tags' do
     let(:tag_hashes)    do
       [
-        { value: 'stax-phys-ch01-s02-lo03', name: nil, type: :lo },
-        { value: 'stax-bio-ch04-s05-aplo-06', name: nil, type: :aplo },
+        { value: 'k12phys-ch01-s02-lo03', name: nil, type: :lo },
+        { value: 'apbio-ch04-s05-aplo-06', name: nil, type: :aplo },
         { value: 'dok7', name: 'DOK: 7', type: :dok },
         { value: 'blooms-8', name: 'Blooms: 8', type: :blooms },
         { value: 'time-short', name: 'Length: S', type: :length },
@@ -59,17 +59,18 @@ RSpec.describe Tagger, type: :lib do
         { value: 'blooms:8', name: 'Blooms: 8', type: :blooms },
         { value: 'time:short', name: 'Length: S', type: :length },
         { value: 'teks:dont-care-9a', name: nil, type: :teks },
-        { value: 'cnxmod:6a0568d8-23d7-439b-9a01-16e4e73886b3', name: nil, type: :uuid },
+        { value: 'cnxmod:6a0568d8-23d7-439b-9a01-16e4e73886b3', name: nil, type: :cnxmod },
+        { value: 'id:stax-econ:101', name: nil, type: :id },
         { value: 'dont-care', name: nil, type: :generic }
       ]
     end
 
     let(:correct_data) do
-      [ nil, nil, '7', '8', 'short', '9a', '6a0568d8-23d7-439b-9a01-16e4e73886b3', nil ]
+      [ nil, nil, '7', '8', 'short', '9a', '6a0568d8-23d7-439b-9a01-16e4e73886b3', '101', nil ]
     end
 
     let(:correct_book_locations) do
-      [ [1, 2], [4, 5], [], [], [], [], [], [] ]
+      [ [1, 2], [4, 5], [], [], [], [], [], [], [] ]
     end
 
     it 'generates correct tag types' do

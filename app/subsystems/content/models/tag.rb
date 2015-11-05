@@ -16,14 +16,14 @@ class Content::Models::Tag < Tutor::SubSystems::BaseModel
   has_many :same_value_tags, class_name: 'Tag', primary_key: 'value', foreign_key: 'value'
 
   # List the different types of tags
-  enum tag_type: [ :generic, :lo, :aplo, :teks, :dok, :blooms, :length, :uuid ]
+  enum tag_type: [ :generic, :lo, :aplo, :teks, :dok, :blooms, :length, :cnxmod, :id ]
 
   validates :value, presence: true
   validates :tag_type, presence: true
 
   before_save :update_tag_type_data_and_visible
 
-  IMPORT_TAG_TYPES  = [ :lo, :aplo, :uuid ]
+  IMPORT_TAG_TYPES  = [ :lo, :aplo, :cnxmod ]
   MAPPING_TAG_TYPES = [ :lo, :aplo ]
   VISIBLE_TAG_TYPES = [ :lo, :aplo, :teks, :dok, :blooms, :length ]
 

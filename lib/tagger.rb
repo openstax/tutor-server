@@ -1,5 +1,7 @@
 module Tagger
-  BOOK_LOCATION_REGEX = /\A[\w-]+-ch(\d+)-s(\d+)/
+  # Since we no longer have the explicit "ch" and "s", better be safe and require lo or aplo
+  BOOK_LOCATION_REGEX = /\A(?:ap)?lo:[\w-]+:(\d+)-(\d+)-[\w-]+\z/
+  OLD_BOOK_LOCATION_REGEX = /ch(\d+)-s(\d+)/
 
   # If the tag string matches, it is considered to be of that type
   # This map is used to determine tag types for Exercises
@@ -7,13 +9,14 @@ module Tagger
   # (instead, they infer the tag type from where it appears in the page)
   TAG_TYPE_REGEXES = HashWithIndifferentAccess.new({
     # http://stackoverflow.com/a/12843265
-    uuid: /\A[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\z/,
-    lo: /\A[\w-]+-lo\d+\z/,
-    aplo: /\A[\w-]+-aplo-[\w-]+\z/,
-    dok: /\Adok(\d+)\z/,
-    blooms: /\Ablooms-(\d+)\z/,
-    length: /\Atime-(\w+)\z/,
-    teks: /\Aost-tag-teks-[\w-]+-(\w+)\z/
+    id: /\Aid:[\w-]+:(\d+)\z/,
+    cnxmod: /\Acnxmod:([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})\z/,
+    lo: /\A(?:lo:[\w-]+:\d+-\d+-\d+|[\w-]+-lo\d+)\z/,
+    aplo: /\A(?:aplo:[\w-]+:\d+-\d+-\d+|[\w-]+-aplo-[\w-]+)\z/,
+    dok: /\Adok:?(\d+)\z/,
+    blooms: /\Ablooms[:-](\d+)\z/,
+    length: /\Atime[:-](\w+)\z/,
+    teks: /\A(?:teks:|ost-tag-teks-)[\w-]+-(\w+)\z/
   })
 
   # The capture from the regex above is substituted into the template to form the tag name
@@ -55,6 +58,7 @@ module Tagger
 
   def self.get_book_location(value)
     matches = BOOK_LOCATION_REGEX.match(value)
+    matches ||= OLD_BOOK_LOCATION_REGEX.match(value)
     matches.nil? ? [] : [matches[1].to_i, matches[2].to_i]
   end
 end

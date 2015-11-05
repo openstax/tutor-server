@@ -105,13 +105,13 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, speed: :slow, vcr:
       end
     end
 
-    it 'finds UUID tags in the content' do
+    it 'finds cnxmod tags in the content' do
       result = nil
       expect {
         result = import_page
-      }.to change{ Content::Models::Tag.uuid.count }.by(1)
+      }.to change{ Content::Models::Tag.cnxmod.count }.by(1)
 
-      tag = Content::Models::Tag.uuid.order(:created_at).last
+      tag = Content::Models::Tag.cnxmod.order(:created_at).last
       expect(tag.value).to eq 'cnxmod:6a0568d8-23d7-439b-9a01-16e4e73886b3'
 
       tagged_tags = result.outputs[:tags]
@@ -123,7 +123,7 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, speed: :slow, vcr:
       expect(Set.new tagged_tags.collect{|t| t.value}).to eq Set.new(expected_tagged_tags)
     end
 
-    it 'gets exercises with the page\'s UUID tag' do
+    it 'gets exercises with the page\'s cnxmod tag' do
       result = nil
       expect {
         result = import_page

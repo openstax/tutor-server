@@ -13,7 +13,7 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
           tags: [
             {
               value: 'cnxmod:3005b86b-d993-4048-aff0-500256001f42',
-              type: :uuid
+              type: :cnxmod
             },
             {
               value: 'teks-112-39-c-4a',
@@ -62,7 +62,7 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
           tags: [
             {
               value: 'cnxmod:1bb611e9-0ded-48d6-a107-fbb9bd900851',
-              type: :uuid
+              type: :cnxmod
             }
           ],
           fragment_classes: [OpenStax::Cnx::V1::Fragment::Text],
@@ -77,7 +77,7 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
           tags: [
             {
               value: 'cnxmod:95e61258-2faf-41d4-af92-f62e1414175a',
-              type: :uuid
+              type: :cnxmod
             },
             {
               value: 'k12phys-ch04-s01-lo01',
@@ -116,7 +116,7 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
           tags: [
             {
               value: 'cnxmod:640e3e84-09a5-4033-b2a7-b7fe5ec29dc6',
-              type: :uuid
+              type: :cnxmod
             },
             {
               value: 'k12phys-ch04-s02-lo01',
