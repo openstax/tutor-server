@@ -2,7 +2,13 @@ require 'rails_helper'
 
 RSpec.describe AuthController, type: :controller do
 
-  let(:user)        { FactoryGirl.create(:user) }
+  let(:user)     { FactoryGirl.create(:user) }
+  let(:new_user) {  FinePrint::Contract.create!(name: 'general_terms_of_use',
+                                                title: 'General Terms of Use',
+                                                content: Faker::Lorem.paragraphs,
+                                                version: 10)
+    FactoryGirl.create(:user, skip_terms_agreement: true)
+  }
 
   context "as an non-signed in user" do
 
@@ -59,6 +65,12 @@ RSpec.describe AuthController, type: :controller do
       expect(response).to have_http_status(:ok)
       expect(assigns(:status)).not_to be_nil
       expect(response.body).to include('window.parent.postMessage')
+    end
+
+    it 'requires agreeing to terms' do
+      controller.sign_in new_user
+      get :iframe_finish
+      expect(response).to redirect_to(/#{pose_terms_path}/)
     end
 
   end
