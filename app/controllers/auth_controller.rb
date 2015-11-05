@@ -73,11 +73,7 @@ class AuthController < ApplicationController
   end
 
   def strategy
-    @strategy ||= server.token_request 'session'
-  end
-
-  def server
-    @server ||= Doorkeeper::Server.new(self)
+    @strategy ||= Doorkeeper::Server.new(self).token_request 'session'
   end
 
   def validated_cors_origin
