@@ -5,6 +5,7 @@ class ImportSalesforceCourses
   uses_routine SchoolDistrict::GetSchool, as: :get_school
   uses_routine SchoolDistrict::CreateSchool, as: :create_school
   uses_routine CourseContent::AddEcosystemToCourse, as: :set_ecosystem
+  uses_routine Salesforce::AttachRecord, as: :attach_record
 
   def exec
     candidate_sf_records.each do |candidate|
@@ -51,7 +52,7 @@ class ImportSalesforceCourses
     run(:set_ecosystem, course: course, ecosystem: offering.ecosystem)
 
     # Remember the candidate obj ID so we can write stats later
-    Salesforce::Models::CourseClassSize.create!(course: course, class_size_id: candidate.id)
+    run(:attach_record, record: candidate, to: course)
 
     # clear any existing error message
     candidate.error = nil
