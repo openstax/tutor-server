@@ -96,7 +96,7 @@ Rails.application.routes.draw do
         end
       end
 
-      get 'roster' => 'courses#roster'
+      get 'roster'
 
       resources :students, shallow: true, except: [:index, :create] do
         member do
