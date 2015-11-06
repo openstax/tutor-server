@@ -4,7 +4,7 @@ class StaticPagesController < ApplicationController
 
   skip_before_filter :authenticate_user!,
                      only: [:about, :contact, :contact_form, :copyright, :developers,
-                            :help, :privacy, :share, :status, :terms]
+                            :help, :privacy, :share, :status, :terms, :omniauth_failure]
 
   # GET /status
   # Used by AWS (and others) to make sure the site is still up
