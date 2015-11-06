@@ -1,5 +1,6 @@
 module Tasks
   class CreateConceptCoachTask
+
     lev_routine express_output: :task
 
     uses_routine BuildTask,
@@ -10,7 +11,7 @@ module Tasks
 
     def exec(page:, exercises:, related_content_array: [])
       # In a multi-web server environment, it is possible for one server to create
-      # the practice task and another to request it very quickly and if the server
+      # the cc task and another to request it very quickly and if the server
       # times are not completely sync'd the request can be reject because the task
       # looks non open.  When we have ConceptCoachTasks maybe they can not have an opens_at
       # but for now HACK it by setting it to open in the near past.
@@ -22,7 +23,9 @@ module Tasks
                        feedback_at: task_time)
 
       exercises.each_with_index do |exercise, ii|
-        step = Tasks::Models::TaskStep.new(task: outputs.task)
+        group_type = ii > Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT ? \
+                       :core_group : :spaced_practice_group
+        step = Tasks::Models::TaskStep.new(task: outputs.task, group_type: group_type)
 
         step.tasked = TaskExercise[exercise: exercise, task_step: step]
 

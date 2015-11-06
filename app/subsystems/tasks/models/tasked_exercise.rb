@@ -21,18 +21,26 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     @parser ||= OpenStax::Exercises::V1::Exercise.new(content: content)
   end
 
-  def handle_task_step_completion!
-    free_response_required
-    answer_id_required
-    SendTaskedExerciseAnswerToExchange.perform_later(tasked_exercise: self) if errors.empty?
-  end
-
   def has_correctness?
     true
   end
 
   def is_correct?
     correct_answer_id == answer_id
+  end
+
+  def can_be_recovered?
+    can_be_recovered
+  end
+
+  def exercise?
+    true
+  end
+
+  def handle_task_step_completion!
+    free_response_required
+    answer_id_required
+    SendTaskedExerciseAnswerToExchange.perform_later(tasked_exercise: self) if errors.empty?
   end
 
   def make_correct!
@@ -74,18 +82,6 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
 
   def feedback
     feedback_map[answer_id] || ''
-  end
-
-  def is_correct?
-    correct_answer_id == answer_id
-  end
-
-  def can_be_recovered?
-    can_be_recovered
-  end
-
-  def exercise?
-    true
   end
 
   protected

@@ -1,8 +1,5 @@
 class GetConceptCoach
 
-  CORE_EXERCISES_COUNT = 4
-  SPACED_EXERCISES_COUNT = 3
-
   lev_routine express_output: :entity_task
 
   uses_routine Tasks::GetConceptCoachTask, as: :get_cc_task
@@ -37,14 +34,17 @@ class GetConceptCoach
     history = run(:get_history, role: role, type: :concept_coach).outputs
     all_worked_exercises = history.exercises.flatten
     all_worked_exercise_numbers = all_worked_exercises.map(&:number)
-    core_exercises = get_local_exercises(CORE_EXERCISES_COUNT, pool, all_worked_exercises)
+    core_exercises = get_local_exercises(
+      Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT, pool, all_worked_exercises
+    )
 
     current_exercise_numbers = core_exercises.map(&:number)
     ecosystems_map = {}
 
     spaced_tasks = history.tasks || []
 
-    spaced_exercises = spaced_tasks.empty? ? [] : SPACED_EXERCISES_COUNT.times.collect do
+    spaced_exercises = spaced_tasks.empty? ? \
+      [] : Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_COUNT.times.collect do
       spaced_task = spaced_tasks.sample
       spaced_page_model = spaced_task.concept_coach_task.page
       spaced_page = Content::Page.new(strategy: spaced_page_model.wrap)
