@@ -17,8 +17,8 @@ $(function(){
       $showRows = $('#jobs tbody tr');
       $hideRows = $();
     } else if (desiredStatus === 'incomplete') {
-      $showRows = $('#jobs tbody tr').not('.completed');
-      $hideRows = $('.completed');
+      $showRows = $('#jobs tbody tr').not('.succeeded');
+      $hideRows = $('.succeeded');
     }
 
     $prevSpan.replaceWith($linkedTxt);

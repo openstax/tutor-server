@@ -53,19 +53,19 @@ RSpec.feature 'Administration of queued jobs', :js do
                              text: 'For all the good children')
   end
 
-  scenario 'completed jobs are hidden' do
-    job.completed!
+  scenario 'succeeded jobs are hidden' do
+    job.succeeded!
 
     visit admin_root_path
     click_link 'Jobs'
 
-    expect(page).not_to have_css('.completed')
+    expect(page).not_to have_css('.succeeded')
 
     click_link 'all'
-    expect(page).to have_css('.completed')
+    expect(page).to have_css('.succeeded')
 
     click_link 'incomplete'
-    expect(page).not_to have_css('.completed')
+    expect(page).not_to have_css('.succeeded')
   end
 
   scenario 'statuses are filterable' do
