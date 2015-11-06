@@ -5,10 +5,10 @@ class GetDashboard
                as: :get_plans
   uses_routine ::Tasks::GetTasks,
                as: :get_tasks
-  uses_routine GetCourseProfile,
-               as: :get_course_profile
   uses_routine GetCourseTeachers,
                as: :get_course_teachers
+  uses_routine CourseMembership::IsCourseTeacher
+  uses_routine CourseMembership::IsCourseStudent
 
   protected
 
@@ -32,10 +32,10 @@ class GetDashboard
   end
 
   def load_tasks(role, role_type)
-    run(:get_tasks, roles: role)
-    entity_task_ids = outputs["[:get_tasks, :tasks]"].collect{|entity_task| entity_task.id}
-    tasks = Tasks::Models::Task.where{entity_task_id.in entity_task_ids}
-    tasks = tasks.where{ opens_at.lt Time.now } if :student == role_type
+    entity_tasks = run(:get_tasks, roles: role).outputs.tasks
+    entity_tasks = entity_tasks.joins(:task).preload(:task)
+    entity_tasks = entity_tasks.where{ task.opens_at < Time.now } if :student == role_type
+    tasks = entity_tasks.collect{ |entity_task| entity_task.task }
     outputs[:tasks] = tasks
   end
 
@@ -57,13 +57,12 @@ class GetDashboard
   end
 
   def load_course(course, role_type)
-    run(:get_course_profile, course: course)
-    run(:get_course_teachers, course)
+    teachers = run(:get_course_teachers, course).outputs.teachers
 
     outputs[:course] = {
       id: course.id,
-      name: outputs["[:get_course_profile, :profile]"].name,
-      teachers: outputs["[:get_course_teachers, :teachers]"]
+      name: course.name,
+      teachers: teachers
     }
   end
 
