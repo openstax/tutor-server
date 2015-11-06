@@ -28,8 +28,10 @@ RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, versi
 
     period_model = FactoryGirl.create(:course_membership_period)
     period = CourseMembership::Period.new(strategy: period_model.wrap)
+    @course = period.course
+    @course.profile.update_attribute(:is_concept_coach, true)
 
-    AddEcosystemToCourse[ecosystem: ecosystem, course: period.course]
+    AddEcosystemToCourse[ecosystem: ecosystem, course: @course]
 
     application = FactoryGirl.create :doorkeeper_application
 
@@ -95,7 +97,8 @@ RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, versi
       end
 
       it 'should return 422 with code :not_a_cc_student if the user is not in a CC course' do
-        @role_1.destroy
+        @course.profile.update_attribute(:is_concept_coach, false)
+
         expect{ api_call(@user_1_token) }.not_to(
           change{ Tasks::Models::Task.count }
         )
@@ -126,6 +129,26 @@ RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, versi
         expect(response.body_as_hash).to include(id: cc_task2.id.to_s)
 
         expect(cc_task2.id).not_to eq cc_task.id
+      end
+
+      it 'should return 422 with code :invalid_book if the book is invalid' do
+        expect{ api_call(@user_1_token, cnx_book_id: 'invalid') }.not_to(
+          change{ Tasks::Models::Task.count }
+        )
+        expect(response).to have_http_status(:unprocessable_entity)
+        body = response.body_as_hash
+        expect(body[:errors].map{ |error| error[:code] }).to eq ['invalid_book']
+        expect(body[:valid_books]).to eq [@book.url]
+      end
+
+      it 'should return 422 with code :invalid_page if the page is invalid' do
+        expect{ api_call(@user_1_token, cnx_page_id: 'invalid') }.not_to(
+          change{ Tasks::Models::Task.count }
+        )
+        expect(response).to have_http_status(:unprocessable_entity)
+        body = response.body_as_hash
+        expect(body[:errors].map{ |error| error[:code] }).to eq ['invalid_page']
+        expect(body[:valid_books]).to eq [@book.url]
       end
     end
 

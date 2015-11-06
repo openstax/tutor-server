@@ -40,8 +40,10 @@ class DemoContent < DemoBase
 
       ContentConfiguration[book.to_sym].each do | content |
         course_name = content.course_name
+        is_concept_coach = content.is_concept_coach || false
         course = find_course(name: course_name) ||
                  create_course( name: course_name,
+                                is_concept_coach: is_concept_coach,
                                 catalog_offering: find_or_create_catalog_offering(content) )
         courses << course
         log("Course: #{course_name}")
