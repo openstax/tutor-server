@@ -179,6 +179,7 @@ Rails.application.routes.draw do
     namespace :salesforce do
       get '', action: :index
       delete :destroy_user
+      post :import_courses
     end
   end
 

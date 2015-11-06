@@ -7,6 +7,11 @@ class ImportSalesforceCourses
   uses_routine CourseContent::AddEcosystemToCourse, as: :set_ecosystem
   uses_routine Salesforce::AttachRecord, as: :attach_record
 
+  def initialize
+    outputs.num_failures = 0
+    outputs.num_successes = 0
+  end
+
   def exec(run_on_test_data_only: true)
     @run_on_test_data_only = run_on_test_data_only
 
@@ -31,15 +36,17 @@ class ImportSalesforceCourses
   end
 
   def create_course_for_candidate(candidate)
+    assume_success(candidate)
+
     offering = Catalog::Offering.find_by(identifier: candidate.book_name).first
 
     if offering.nil?
-      candidate.error = "Book Name does not match an offering in Tutor."
+      error(candidate, "Book Name does not match an offering in Tutor.")
       return
     end
 
     if !offering.is_concept_coach
-      candidate.error = "Book Name matches a Tutor offering but it isn't for CC."
+      error(candidate, "Book Name matches a Tutor offering but it isn't for CC.")
       return
     end
 
@@ -49,7 +56,7 @@ class ImportSalesforceCourses
     candidate.course_name ||= offering.default_course_name
 
     if candidate.course_name.blank?
-      candidate.error = "A course name is needed and no default is available in Tutor."
+      error(candidate, "A course name is needed and no default is available in Tutor.")
       return
     end
 
@@ -78,9 +85,17 @@ class ImportSalesforceCourses
       "#{candidate.id} using offering '#{offering.identifier}' (#{offering.id}) " +
       "and ecosystem '#{offering.ecosystem.title}'."
     }
+  end
 
-    # clear any existing error message
+  def assume_success(candidate)
     candidate.error = nil
+    outputs.num_successes += 1
+  end
+
+  def error(candidate, message)
+    candidate.error = message
+    outputs.num_successes -= 1
+    outputs.num_failures += 1
   end
 
 end
