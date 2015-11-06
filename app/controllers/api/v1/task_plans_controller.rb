@@ -82,7 +82,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
         OSU::AccessPolicy.require_action_allowed!(:create, current_api_user, task_plan)
         uuid = distribute_or_update_tasks(task_plan)
 
-        if task_plan.save
+        if task_plan.errors.empty?
           respond_with task_plan, represent_with: Api::V1::TaskPlanRepresenter,
                                   status: uuid.nil? ? :ok : :accepted,
                                   location: nil
@@ -113,7 +113,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
         OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, task_plan)
         uuid = distribute_or_update_tasks(task_plan)
 
-        if task_plan.save
+        if task_plan.errors.empty?
           # http://stackoverflow.com/a/27413178
           respond_with task_plan, represent_with: Api::V1::TaskPlanRepresenter,
                                   responder: ResponderWithPutContent,
@@ -317,21 +317,23 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   protected
 
   # Distributes or updates distributed tasks for the given task_plan
-  # Returns the job uuid, if any
+  # Returns the job uuid, if any, or nil if the request was completed inline
   def distribute_or_update_tasks(task_plan)
+    task_plan.publish_last_requested_at = Time.now \
+      if !task_plan.tasks_past_open? && task_plan.is_publish_requested?
+    task_plan.save
+    return unless task_plan.errors.empty?
+
     if task_plan.tasks_past_open?
       # Tasks already open: propagate updates
       PropagateTaskPlanUpdates.call(task_plan: task_plan)
       nil
     elsif task_plan.is_publish_requested?
       # Publish requested or already published but tasks not open: trigger publish
-      task_plan.publish_last_requested_at = Time.now
-      task_plan.save # Save before sending it out
-      return unless task_plan.errors.empty?
-
-      task_plan.publish_job_uuid = DistributeTasks.perform_later(task_plan)
+      uuid = DistributeTasks.perform_later(task_plan)
+      task_plan.update_attribute(:publish_job_uuid, uuid)
+      uuid
     end
-    # Not published and publish not requested: do nothing
   end
 
 end

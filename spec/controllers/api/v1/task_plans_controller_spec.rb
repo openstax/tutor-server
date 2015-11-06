@@ -228,72 +228,86 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
       }
 
       it 'allows a teacher to publish a task_plan for their course' do
-        controller.sign_in teacher
-        start_time = Time.now
-        api_put :update, nil, parameters: { course_id: course.id, id: task_plan.id },
-                              raw_post_data: valid_json_hash.to_json
-        end_time = Time.now
-        expect(response).to have_http_status(:accepted)
-        # Need to reload the task_plan since publishing it will set the
-        # publication dates and change the representation
-        task_plan.reload
-        expect(task_plan.publish_last_requested_at).to be > start_time
-        expect(task_plan.published_at).to be > task_plan.publish_last_requested_at
-        expect(task_plan.published_at).to be < end_time
-
-        # Revert task_plan to its state when the job was queued
-        task_plan.published_at = nil
-        expect(response.body).to eq Api::V1::TaskPlanRepresenter.new(task_plan).to_json
-
-        response_hash = JSON.parse(response.body)
-        expect(response_hash['publish_job_url']).to include("/api/jobs/")
-
-        task_plan.reload
-
-        publish_last_requested_at = task_plan.publish_last_requested_at
-        published_at = task_plan.published_at
-        publish_job_uuid = task_plan.publish_job_uuid
-
-        valid_json_hash['tasking_plans'].first['opens_at'] = Time.zone.now.yesterday
-
-        api_put :update, nil, parameters: { course_id: course.id, id: task_plan.id },
-                              raw_post_data: valid_json_hash.to_json
-        expect(response).to have_http_status(:accepted)
-        # Need to reload the task_plan since publishing it will set the
-        # publication dates and change the representation
-        expect(task_plan.reload.publish_last_requested_at).not_to eq publish_last_requested_at
-        expect(task_plan.published_at).to eq published_at
-        expect(task_plan.publish_job_uuid).not_to eq publish_job_uuid
-
-        # Revert task_plan to its state when the job was queued
-        task_plan.published_at = published_at
-        expect(response.body).to eq Api::V1::TaskPlanRepresenter.new(task_plan).to_json
-
-        response_hash = JSON.parse(response.body)
-        expect(response_hash['publish_job_url']).to include("/api/jobs/")
-
-        task_plan.reload
-
-        publish_last_requested_at = task_plan.publish_last_requested_at
-        published_at = task_plan.published_at
-        publish_job_uuid = task_plan.publish_job_uuid
-
-        valid_json_hash['title'] = 'Canceled'
-
-        # Since the task_plan opens_at is now in the past,
-        # further publish requests should be ignored
-        expect {
+        Time.use_zone('Central Time (US & Canada)') do
+          controller.sign_in teacher
+          start_time = Time.zone.now
           api_put :update, nil, parameters: { course_id: course.id, id: task_plan.id },
                                 raw_post_data: valid_json_hash.to_json
-        }.not_to change{ task_plan.reload.tasks }
-        expect(response).to have_http_status(:ok)
+          end_time = Time.zone.now
+          expect(response).to have_http_status(:accepted)
+          # Need to reload the task_plan since publishing it will set the
+          # publication dates and change the representation
+          task_plan.reload
+          expect(task_plan.publish_last_requested_at).to be > start_time
+          expect(task_plan.published_at).to be > task_plan.publish_last_requested_at
+          expect(task_plan.published_at).to be < end_time
 
-        expect(task_plan.publish_last_requested_at).to eq publish_last_requested_at
-        expect(task_plan.published_at).to eq published_at
-        expect(task_plan.publish_job_uuid).to eq publish_job_uuid
-        expect(task_plan.title).to eq 'Canceled'
+          # Revert task_plan to its state when the job was queued
+          task_plan.published_at = nil
+          expect(response.body).to eq Api::V1::TaskPlanRepresenter.new(task_plan).to_json
 
-        expect(response.body).to eq Api::V1::TaskPlanRepresenter.new(task_plan).to_json
+          response_hash = JSON.parse(response.body)
+          expect(response_hash['publish_job_url']).to include("/api/jobs/")
+
+          task_plan.reload
+
+          publish_last_requested_at = task_plan.publish_last_requested_at
+          published_at = task_plan.published_at
+          publish_job_uuid = task_plan.publish_job_uuid
+
+          valid_json_hash['tasking_plans'].first['opens_at'] = Time.zone.now.yesterday
+
+          api_put :update, nil, parameters: { course_id: course.id, id: task_plan.id },
+                                raw_post_data: valid_json_hash.to_json
+          expect(response).to have_http_status(:accepted)
+          # Need to reload the task_plan since publishing it will set the
+          # publication dates and change the representation
+          expect(task_plan.reload.publish_last_requested_at).not_to eq publish_last_requested_at
+          expect(task_plan.published_at).to eq published_at
+          expect(task_plan.publish_job_uuid).not_to eq publish_job_uuid
+
+          # Revert task_plan to its state when the job was queued
+          task_plan.published_at = published_at
+          expect(response.body).to eq Api::V1::TaskPlanRepresenter.new(task_plan).to_json
+
+          response_hash = JSON.parse(response.body)
+          expect(response_hash['publish_job_url']).to include("/api/jobs/")
+
+          task_plan.reload
+
+          publish_last_requested_at = task_plan.publish_last_requested_at
+          published_at = task_plan.published_at
+          publish_job_uuid = task_plan.publish_job_uuid
+
+          valid_json_hash['title'] = 'Canceled'
+          valid_json_hash['description'] = 'Canceled Assignment'
+
+          new_opens_at = Time.zone.now.tomorrow
+          new_due_at = Time.zone.now.tomorrow + 1.week
+
+          valid_json_hash['tasking_plans'].first['opens_at'] = new_opens_at
+          valid_json_hash['tasking_plans'].first['due_at'] = new_due_at
+
+          # Since the task_plan opens_at is now in the past,
+          # further publish requests should be ignored
+          expect {
+            api_put :update, nil, parameters: { course_id: course.id, id: task_plan.id },
+                                  raw_post_data: valid_json_hash.to_json
+          }.not_to change{ task_plan.reload.tasks }
+          expect(response).to have_http_status(:ok)
+
+          expect(task_plan.publish_last_requested_at).to eq publish_last_requested_at
+          expect(task_plan.published_at).to eq published_at
+          expect(task_plan.publish_job_uuid).to eq publish_job_uuid
+          expect(task_plan.title).to eq 'Canceled'
+          expect(task_plan.description).to eq 'Canceled Assignment'
+          task_plan.tasks.each do |task|
+            expect(task.opens_at).to eq new_opens_at.midnight + 1.minute
+            expect(task.due_at).to eq new_due_at.midnight + 7.hours
+          end
+
+          expect(response.body).to eq Api::V1::TaskPlanRepresenter.new(task_plan).to_json
+        end
       end
 
       it 'returns an error message if the task_plan settings are invalid' do
