@@ -7,7 +7,7 @@
     </tr>
   </thead>
   <tbody>
-  <% incomplete_jobs.each do |job| %>
+  <% jobs.each do |job| %>
     <tr>
       <td><%= link_to(job.id, admin_job_path(job.id)) %></td>
       <td><%= job.status %></td>

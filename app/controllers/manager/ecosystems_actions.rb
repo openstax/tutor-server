@@ -5,6 +5,9 @@ module Manager::EcosystemsActions
     @incomplete_jobs = Lev::BackgroundJob.incomplete.select do |job|
       job.respond_to?(:ecosystem_import_url)
     end
+    @failed_jobs = Lev::BackgroundJob.failed.select do |job|
+      job.respond_to?(:ecosystem_import_url)
+    end
   end
 
   def import
