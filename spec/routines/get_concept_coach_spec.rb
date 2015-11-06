@@ -96,22 +96,7 @@ RSpec.describe GetConceptCoach, type: :routine do
       end
     end
 
-    it 'should create a new task for a different page' do
-      task = nil
-      expect{ task = described_class[
-        user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: @page_2.uuid
-      ].task }.to change{ Tasks::Models::ConceptCoachTask.count }.by(1)
-      expect(task).not_to eq existing_task
-      expect(task.task_steps.size).to eq described_class::CORE_EXERCISES_COUNT
-      task.task_steps.each do |task_step|
-        expect(task_step.tasked.exercise.page.id).to eq @page_2.id
-      end
-    end
-
-    it 'should properly assign spaced practice' do
-      existing_task.task_steps.first.complete.save!
-      existing_task.task_steps.second.complete.save!
-
+    it 'should create a new task for a different page and properly assign spaced practice' do
       task = nil
       expect{ task = described_class[
         user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: @page_2.uuid
