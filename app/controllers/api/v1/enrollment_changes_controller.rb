@@ -72,6 +72,9 @@ class Api::V1::EnrollmentChangesController < Api::V1::ApiController
   description <<-EOS
     Approves an EnrollmentChange object, causing the user's enrollment status to update.
 
+    Input:
+    #{json_schema(Api::V1::ApproveEnrollmentChangeRepresenter, include: :writeable)}
+
     Output:
     #{json_schema(Api::V1::EnrollmentChangeRepresenter, include: :readable)}
 
@@ -79,6 +82,7 @@ class Api::V1::EnrollmentChangesController < Api::V1::ApiController
       already_approved
       already_rejected
       already_processed
+      taken (The provided student identifier is already present in the same course)
   EOS
   def approve
     CourseMembership::Models::EnrollmentChange.transaction do
@@ -86,9 +90,14 @@ class Api::V1::EnrollmentChangesController < Api::V1::ApiController
       enrollment_change = CourseMembership::EnrollmentChange.new(strategy: model.wrap)
       OSU::AccessPolicy.require_action_allowed!(:approve, current_api_user, enrollment_change)
 
+      approve_params = OpenStruct.new
+      consume!(approve_params, represent_with: Api::V1::ApproveEnrollmentChangeRepresenter)
+
       model.approve_by(current_human_user).save if enrollment_change.pending?
 
-      result = CourseMembership::ProcessEnrollmentChange.call(enrollment_change: enrollment_change)
+      result = CourseMembership::ProcessEnrollmentChange.call(
+        enrollment_change: enrollment_change, student_identifier: approve_params.student_identifier
+      )
 
       if result.errors.empty?
         respond_with result.outputs.enrollment_change,

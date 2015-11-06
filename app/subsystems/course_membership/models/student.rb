@@ -6,6 +6,8 @@ class CourseMembership::Models::Student < Tutor::SubSystems::BaseModel
 
   validates :course, presence: true
   validates :role, presence: true, uniqueness: true
+  validates :deidentifier, uniqueness: true
+  validates :student_identifier, uniqueness: { scope: :course, allow_nil: true }
 
   unique_token :deidentifier, mode: { hex: { length: 4 } }
 

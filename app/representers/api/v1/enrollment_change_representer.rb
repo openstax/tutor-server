@@ -10,6 +10,11 @@ module Api::V1
              writeable: false,
              schema_info: { required: true }
 
+    property :student_identifier,
+             type: String,
+             readable: true,
+             writeable: false
+
     property :from_period,
              as: :from,
              decorator: Api::V1::Enrollment::PeriodWithCourseRepresenter,

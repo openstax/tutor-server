@@ -4,7 +4,7 @@ class CourseMembership::ProcessEnrollmentChange
   uses_routine AddUserAsPeriodStudent, as: :add_student
   uses_routine CourseMembership::AddEnrollment, as: :add_enrollment
 
-  def exec(enrollment_change:)
+  def exec(enrollment_change:, student_identifier: nil)
     fatal_error(code: :already_processed,
                 message: 'The given enrollment change request has already been processed') \
       if enrollment_change.processed?
@@ -20,10 +20,14 @@ class CourseMembership::ProcessEnrollmentChange
     enrollment = enrollment_change_model.enrollment
     if enrollment.nil?
       # New student
-      run(:add_student, user: enrollment_change.user, period: enrollment_change.to_period)
+      run(:add_student, user: enrollment_change.user,
+                        period: enrollment_change.to_period,
+                        student_identifier: student_identifier)
     else
       # Existing student
       student = enrollment.student
+      student.update_attribute(:student_identifier, student_identifier) \
+        unless student_identifier.nil?
       run(:add_enrollment, student: student, period: enrollment_change.to_period)
     end
 

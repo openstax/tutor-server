@@ -12,6 +12,13 @@ describe AddUserAsPeriodStudent, type: :routine do
         expect(result.errors).to be_empty
         expect(result.outputs.role).to_not be_nil
       end
+
+      it "allows a student_identifier to be specified" do
+        sid = 'N0B0DY'
+        result = AddUserAsPeriodStudent.call(user: user, period: period, student_identifier: sid)
+        expect(result.errors).to be_empty
+        expect(result.outputs.role.student.student_identifier).to eq sid
+      end
     end
 
     context "and already a student in the given course" do

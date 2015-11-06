@@ -10,7 +10,7 @@ class AddUserAsPeriodStudent
 
   protected
 
-  def exec(user:, period:)
+  def exec(user:, period:, student_identifier: nil)
     course = period.course
     result = run(UserIsCourseTeacher, user: user, course: course)
 
@@ -24,6 +24,7 @@ class AddUserAsPeriodStudent
     end
 
     run(Role::CreateUserRole, user, :student)
-    run(CourseMembership::AddStudent, period: period, role: outputs.role)
+    run(CourseMembership::AddStudent, period: period, role: outputs.role,
+                                      student_identifier: student_identifier)
   end
 end

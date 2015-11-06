@@ -17,12 +17,12 @@ class SetupPerformanceReportData
     period_1 = course.periods.empty? ? CreatePeriod[course: course] : course.periods.first
     period_2 = CreatePeriod[course: course]
     # Add first 2 students to period 1
-    students[0..1].each do |student|
-      AddUserAsPeriodStudent[period: period_1, user: student]
+    students[0..1].each_with_index do |student, index|
+      AddUserAsPeriodStudent[period: period_1, user: student, student_identifier: "S#{index + 1}"]
     end
     # Add the rest of the students to period 2
-    students[2..-1].each do |student|
-      AddUserAsPeriodStudent[period: period_2, user: student]
+    students[2..-1].each_with_index do |student, index|
+      AddUserAsPeriodStudent[period: period_2, user: student, student_identifier: "S#{index + 3}"]
     end
 
     # Exclude introduction pages b/c they don't have LOs

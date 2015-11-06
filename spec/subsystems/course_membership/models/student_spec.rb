@@ -3,7 +3,8 @@ require 'rails_helper'
 RSpec.describe CourseMembership::Models::Student, type: :model do
   let!(:period)     { CreatePeriod[course: Entity::Course.create!].to_model }
   let!(:user)       { FactoryGirl.create(:user) }
-  subject(:student) { AddUserAsPeriodStudent[user: user, period: period].student }
+  subject(:student) { AddUserAsPeriodStudent[user: user, period: period,
+                                             student_identifier: 'N0B0DY'].student }
 
   it { is_expected.to belong_to(:course) }
   it { is_expected.to belong_to(:role) }
@@ -12,6 +13,9 @@ RSpec.describe CourseMembership::Models::Student, type: :model do
   it { is_expected.to validate_presence_of(:role) }
 
   it { is_expected.to validate_uniqueness_of(:role) }
+  it { is_expected.to validate_uniqueness_of(:deidentifier) }
+  it { is_expected.to validate_uniqueness_of(:student_identifier)
+                        .scoped_to(:entity_course_id).allow_nil }
 
   [:username, :first_name, :last_name, :full_name].each do |method|
     it { is_expected.to delegate_method(method).to(:role) }
@@ -26,16 +30,6 @@ RSpec.describe CourseMembership::Models::Student, type: :model do
       old_deidentifier = student.deidentifier
       student.save
       expect(student.deidentifier).to eq old_deidentifier
-    end
-
-    it 'must be unique' do
-      user2 = FactoryGirl.create(:user)
-      student_2 = AddUserAsPeriodStudent.call(period: period, user: user2).outputs.student
-      student_2.deidentifier = student.deidentifier
-      expect(student_2).not_to be_valid
-      expect(student_2.errors.messages).to eq({
-        deidentifier: ['has already been taken']
-      })
     end
   end
 end
