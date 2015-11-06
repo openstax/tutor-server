@@ -30,10 +30,10 @@ Rails.application.routes.draw do
   # Fetch user information and logging in remotely
   scope 'auth', controller: 'auth' do
     # Request user info and doorkeeper access token via a CORS request
-    get 'status',   to: 'auth#status'
+    get 'status'
     match 'status', to: 'auth#cors_preflight_check', via: [:options]
     # Relay user tokens inside an iframe.
-    get 'iframe', to: 'auth#iframe', as: 'authenticate_via_iframe'
+    get 'iframe', as: 'authenticate_via_iframe'
   end
 
   api :v1, default: true do
