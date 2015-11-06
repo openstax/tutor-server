@@ -96,7 +96,9 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :students, shallow: true, except: :create do
+      get 'roster' => 'courses#roster'
+
+      resources :students, shallow: true, except: [:index, :create] do
         member do
           put 'undrop'
         end
