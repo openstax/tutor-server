@@ -4,10 +4,12 @@ RSpec.describe UniqueTokenable do
   class DummyModel < ActiveRecord::Base; end
 
   before(:all) do
-    ActiveRecord::Schema.define do
-      create_table :dummy_models do |t|
-        t.string :enrollment_code
-      end unless table_exists?(:dummy_models)
+    capture_stdout do
+      ActiveRecord::Schema.define do
+        create_table :dummy_models do |t|
+          t.string :enrollment_code
+        end unless table_exists?(:dummy_models)
+      end
     end
   end
 
