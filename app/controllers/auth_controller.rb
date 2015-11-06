@@ -1,21 +1,21 @@
 class AuthController < ApplicationController
 
-  before_filter :require_contracts, only: :iframe_finish, unless: -> { current_user.is_anonymous? }
+  before_filter :require_contracts, only: :iframe, unless: -> { current_user.is_anonymous? }
 
   # Unlike other controllers, these cors headers allows cookies via the
   # Access-Control-Allow-Credentials header
   before_filter :set_cors_headers, only: [:status, :cors_preflight_check]
 
   # Allow accessing iframe methods from inside an iframe
-  before_filter :allow_iframe_access, only: [:iframe_start, :iframe_finish]
+  before_filter :allow_iframe_access, only: [:iframe]
 
   # Methods handle returning login status differently than the standard authenticate_user! filter
   skip_before_filter :authenticate_user!,
-                     only: [:status, :cors_preflight_check, :iframe_start, :iframe_finish]
+                     only: [:status, :cors_preflight_check, :iframe]
 
   # CRSF tokens can't be used since these endpoints are loaded from foreign sites via cors or iframe
   skip_before_action :verify_authenticity_token,
-                     only: [:status, :cors_preflight_check, :iframe_start,:iframe_finish]
+                     only: [:status, :cors_preflight_check, :iframe]
 
   def status
     render json: user_status_update
@@ -27,20 +27,13 @@ class AuthController < ApplicationController
     render text: '', :content_type => 'text/plain'
   end
 
-  def iframe_start
+  def iframe
     if current_user.is_anonymous?
       redirect_to_login_url
     else
       @status = user_status_update
-      render action: :iframe_finish
+      @iframe_origin = stubbed_auth? ? session[:parent] : @status[:endpoints][:accounts_iframe]
     end
-  end
-
-  def iframe_finish
-    head :forbidden and return if current_user.is_anonymous?
-    # the view will deliver the status data using postMessage out of the iframe
-    @status = user_status_update
-    @iframe_origin = stubbed_auth? ? session[:parent] : @status[:endpoints][:accounts_iframe]
   end
 
   private
@@ -81,7 +74,7 @@ class AuthController < ApplicationController
   end
 
   def redirect_to_login_url
-    session[:accounts_return_to] = after_iframe_authentication_url
+    store_url key: :accounts_return_to, strategies: [:session]
     if stubbed_auth?
       redirect_to openstax_accounts.dev_accounts_url
       session[:parent] = params[:parent]

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <title></title>
     <script>
       var msg = <%=raw json_escape @status.to_json %>;
       window.parent.postMessage( JSON.stringify({ data: { onLogin: msg}}), '<%= @iframe_origin %>' );
