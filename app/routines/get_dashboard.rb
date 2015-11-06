@@ -17,12 +17,12 @@ class GetDashboard
 
     raise SecurityTransgression if role_type.nil?
 
+    load_role(role, role_type)
+    load_course(course, role_type)
     load_tasks(role, role_type)
     if :teacher == role_type
       course.is_concept_coach ? load_cc_stats(course) : load_plans(course)
     end
-    load_course(course, role_type)
-    load_role(role, role_type)
   end
 
   def get_role_type(course, role)
@@ -83,16 +83,17 @@ class GetDashboard
 
   def load_cc_stats(course)
     cc_tasks = Tasks::Models::ConceptCoachTask
-      .joins([{task: [:task, {tasking: :period}]}])
+      .joins([{task: [:task, {taskings: :period}]}])
       .preload([{task: [{task: {tasked_exercises: [:task_step, {exercise: :page}]}},
-                {tasking: {period: :students}}]},
+                {taskings: {period: :students}}]},
                 {page: :chapter}])
-      .where(task: {tasking: {period: {entity_course_id: course.id}}})
+      .where(task: {taskings: {period: {entity_course_id: course.id}}})
       .where{task.task.completed_exercise_steps_count > 0}
       .distinct.to_a
 
-    outputs.concept_coach_stats = cc_tasks.group_by{ |cc_task| cc_task.task.task.tasking.period }
-                                          .map do |period, cc_tasks|
+    outputs.course.periods = cc_tasks.group_by do |cc_task|
+      cc_task.task.task.taskings.first.period
+    end.map do |period, cc_tasks|
       num_students = period.students.size
       performance_map = get_period_performance_map_from_cc_tasks(cc_tasks)
 
