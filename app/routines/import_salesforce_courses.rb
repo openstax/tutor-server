@@ -50,15 +50,15 @@ class ImportSalesforceCourses
       return
     end
 
-    school = run(:get_school, name: candidate.school).outputs.school ||
-             run(:create_school, name: candidate.school).outputs.school
-
     candidate.course_name ||= offering.default_course_name
 
     if candidate.course_name.blank?
       error(candidate, "A course name is needed and no default is available in Tutor.")
       return
     end
+
+    school = run(:get_school, name: candidate.school).outputs.school ||
+             run(:create_school, name: candidate.school).outputs.school
 
     course = run(
       :create_course,
