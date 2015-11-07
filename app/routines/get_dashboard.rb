@@ -93,7 +93,7 @@ class GetDashboard
 
     outputs.course.periods = cc_tasks.group_by do |cc_task|
       # Does not support group work
-      cc_task.task.task.taskings.first.period
+      cc_task.task.taskings.first.period
     end.map do |period, cc_tasks|
       num_students = period.active_enrollments.length
       performance_map = get_period_performance_map_from_cc_tasks(cc_tasks)
