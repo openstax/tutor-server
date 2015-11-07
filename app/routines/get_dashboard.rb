@@ -60,10 +60,10 @@ class GetDashboard
 
   def get_period_performance_map_from_cc_tasks(cc_tasks)
     all_tasked_exercises = cc_tasks.flat_map{ |cc_task| cc_task.task.task.tasked_exercises }
-    completed_tasked_exercises = all_tasked_exercises.map{ |te| te.task_step.completed? }
+    completed_tasked_exercises = all_tasked_exercises.select{ |te| te.task_step.completed? }
 
     completed_tasked_exercises.group_by{ |te| te.exercise.page }
-                                                .each_with_object({}) do |hash, (page, tes)|
+                                                .each_with_object({}) do |(page, tes), hash|
       orig_completed_tes = tes.select{ |te| te.task_step.core_group? }
       orig_correct_tes = orig_completed_tes.select(&:is_correct?)
       orig_performance = orig_completed_tes.size == 0 ? nil : \
@@ -85,16 +85,17 @@ class GetDashboard
     cc_tasks = Tasks::Models::ConceptCoachTask
       .joins([{task: [:task, {taskings: :period}]}])
       .preload([{task: [{task: {tasked_exercises: [:task_step, {exercise: :page}]}},
-                {taskings: {period: :students}}]},
+                {taskings: {period: :active_enrollments}}]},
                 {page: :chapter}])
       .where(task: {taskings: {period: {entity_course_id: course.id}}})
       .where{task.task.completed_exercise_steps_count > 0}
       .distinct.to_a
 
     outputs.course.periods = cc_tasks.group_by do |cc_task|
+      # Does not support group work
       cc_task.task.task.taskings.first.period
     end.map do |period, cc_tasks|
-      num_students = period.students.size
+      num_students = period.active_enrollments.length
       performance_map = get_period_performance_map_from_cc_tasks(cc_tasks)
 
       {
@@ -105,6 +106,7 @@ class GetDashboard
           {
             id: chapter.id,
             title: chapter.title,
+            book_location: chapter.book_location,
             pages: cc_tasks.group_by(&:page).map do |page, cc_tasks|
               tasks = cc_tasks.map{ |cc_task| cc_task.task.task }
 
@@ -117,15 +119,16 @@ class GetDashboard
               {
                 id: page.id,
                 title: page.title,
+                book_location: page.book_location,
                 completed: completed,
                 in_progress: in_progress,
-                not_started: not_stated,
+                not_started: not_started,
                 original_performance: performance[:original],
                 spaced_practice_performance: performance[:spaced_practice]
               }
-            end
+            end.sort{ |a, b| b[:book_location] <=> a[:book_location] }
           }
-        end
+        end.sort{ |a, b| b[:book_location] <=> a[:book_location] }
       }
     end
   end

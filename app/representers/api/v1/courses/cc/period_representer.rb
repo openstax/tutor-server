@@ -8,17 +8,26 @@ module Api::V1::Courses::Cc
     property :id,
              type: String,
              readable: true,
-             writeable: false
+             writeable: false,
+             schema_info: {
+               required: true
+             }
 
     property :name,
              type: String,
              readable: true,
-             writeable: false
+             writeable: false,
+             schema_info: {
+               required: true
+             }
 
     collection :chapters,
                readable: true,
                writeable: false,
-               decorator: Api::V1::Courses::Cc::ChapterRepresenter
+               decorator: Api::V1::Courses::Cc::ChapterRepresenter,
+               schema_info: {
+                 required: true
+               }
 
   end
 
