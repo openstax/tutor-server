@@ -43,8 +43,8 @@ class DemoContent < DemoBase
         course_name = content.course_name
         is_concept_coach = content.is_concept_coach || false
         course = find_course(name: course_name) ||
-                 create_course(name: course_name)
-                                is_concept_coach: is_concept_coach,
+                 create_course(name: course_name,
+                               is_concept_coach: is_concept_coach)
         courses << course
         log("Course: #{course_name}")
 
