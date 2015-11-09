@@ -1,24 +1,12 @@
 class CoursesController < ApplicationController
-  def join
-    begin
-      course = find_course_by_join_token
-      AddUserAsCourseTeacher[course: course, user: current_user]
-      redirect_to dashboard_path
-    rescue => e
-      if e.message == 'user_is_already_teacher_of_course'
-        raise UserAlreadyCourseTeacher
-      else
-        raise InvalidTeacherJoinToken
-      end
-    end
-  end
+  include Lev::HandleWith
 
-  private
-  def find_course_by_join_token
-    profile = GetCourseProfile[attrs: { teacher_join_token: params[:join_token] }]
-    Entity::Course.find(profile.course_id)
+  def join
+    handle_with(CoursesJoin, success: -> { redirect_to dashboard_path },
+                             failure: -> {
+                               @handler_result.errors.each do |e|
+                                 CoursesJoin.handle_error(e)
+                               end
+                             })
   end
 end
-
-class InvalidTeacherJoinToken < StandardError; end
-class UserAlreadyCourseTeacher < StandardError; end

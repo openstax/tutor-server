@@ -9,8 +9,7 @@ class AddUserAsCourseTeacher
 
   def exec(user:, course:)
     if run(:is_teacher, user: user, course: course).outputs.user_is_course_teacher
-      fatal_error(code: :already_teacher,
-                  message: :user_is_already_teacher_of_course,
+      fatal_error(code: :user_is_already_teacher_of_course,
                   offending_inputs: [user, course])
     else
       run(Role::CreateUserRole, user, :teacher)
