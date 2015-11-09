@@ -131,7 +131,7 @@ gem 'timecop'
 gem 'activerecord-import'
 
 # Notify developers of Exceptions in production
-gem 'openstax_rescue_from', '~> 1.5.0'
+gem 'openstax_rescue_from', '~> 1.6.0'
 
 # Generate memorable codes
 gem 'babbler', '~> 1.0.1'
