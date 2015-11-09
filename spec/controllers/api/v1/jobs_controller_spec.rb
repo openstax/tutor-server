@@ -64,11 +64,11 @@ RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :
         ActiveJob::Base.queue_adapter = :test
       end
 
-      it 'returns the status of completed jobs' do
+      it 'returns the status of succeeded jobs' do
         api_get :show, user_token, parameters: { id: job_id }
 
         expect(response).to have_http_status(200)
-        expect(response.body_as_hash).to include({ status: 'completed' })
+        expect(response.body_as_hash).to include({ status: 'succeeded' })
       end
 
       it 'works end-2-end for ExportPerformanceReport' do

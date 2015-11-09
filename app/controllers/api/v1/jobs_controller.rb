@@ -35,7 +35,7 @@ class Api::V1::JobsController < Api::V1::ApiController
   private
   def http_status_code(status)
     case status
-    when Lev::BackgroundJob::STATE_COMPLETED
+    when Lev::BackgroundJob::STATE_SUCCEEDED
       200
     when Lev::BackgroundJob::STATE_FAILED
       500

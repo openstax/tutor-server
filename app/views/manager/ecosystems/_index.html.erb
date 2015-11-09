@@ -11,6 +11,13 @@
       </a>
     </li>
   <% end %>
+  <% unless failed_jobs.empty? %>
+    <li role="presentation">
+      <a href="#failed" aria-controls="main" role="tab" data-toggle="tab">
+        Failed Imports
+      </a>
+    </li>
+  <% end %>
 </ul>
 
 
@@ -25,7 +32,12 @@
 
   <% unless incomplete_jobs.empty? %>
     <div role="tabpanel" class="tab-pane" id="incomplete">
-      <%= render partial: 'manager/ecosystems/incomplete', locals: { incomplete_jobs: incomplete_jobs } %>
+      <%= render partial: 'manager/ecosystems/incomplete', locals: { jobs: incomplete_jobs } %>
+    </div>
+  <% end %>
+  <% unless failed_jobs.empty? %>
+    <div role="tabpanel" class="tab-pane" id="failed">
+      <%= render partial: 'manager/ecosystems/incomplete', locals: { jobs: failed_jobs } %>
     </div>
   <% end %>
 </div>
