@@ -58,35 +58,56 @@ class GetDashboard
     end
   end
 
-  def get_period_performance_map_from_cc_tasks(cc_tasks)
-    all_tasked_exercises = cc_tasks.flat_map{ |cc_task| cc_task.task.task.tasked_exercises }
-    completed_tasked_exercises = all_tasked_exercises.select{ |te| te.task_step.completed? }
+  def get_period_performance_maps_from_cc_tasks(cc_tasks)
+    all_task_ids = cc_tasks.map{ |cc_task| cc_task.task.task.id }
+    completed_tasked_exercises = Tasks::Models::TaskedExercise
+      .joins(:task_step, :exercise)
+      .where{(task_step.first_completed_at != nil) & (task_step.tasks_task_id.in all_task_ids)}
+      .group(exercise: :content_page_id)
+    completed_core_tasked_exercises = completed_tasked_exercises.where(
+      task_step: { group_type: Tasks::Models::TaskStep.group_types[:core_group] }
+    )
+    correct_core_tasked_exercises = completed_core_tasked_exercises.where{
+      answer_id == correct_answer_id
+    }
+    completed_spaced_tasked_exercises = completed_tasked_exercises.where(
+      task_step: { group_type: Tasks::Models::TaskStep.group_types[:spaced_practice_group] }
+    )
+    correct_spaced_tasked_exercises = completed_spaced_tasked_exercises.where{
+      answer_id == correct_answer_id
+    }
 
-    completed_tasked_exercises.group_by{ |te| te.exercise.page }
-                                                .each_with_object({}) do |(page, tes), hash|
-      orig_completed_tes = tes.select{ |te| te.task_step.core_group? }
-      orig_correct_tes = orig_completed_tes.select(&:is_correct?)
-      orig_performance = orig_completed_tes.size == 0 ? nil : \
-                           orig_correct_tes.size/orig_completed_tes.size.to_f
+    original_performance_map = {}
 
-      sp_completed_tes = tes.select{ |te| te.task_step.spaced_practice_group? }
-      sp_correct_tes = sp_completed_tes.select(&:is_correct?)
-      sp_performance = sp_completed_tes.size == 0 ? nil : \
-                         sp_correct_tes.size/sp_completed_tes.size.to_f
+    completed_core_counts = completed_core_tasked_exercises
+                              .count('DISTINCT tasks_tasked_exercises.id')
+    correct_core_counts = correct_core_tasked_exercises
+                            .count('DISTINCT tasks_tasked_exercises.id')
 
-      hash[page.id] = {
-        original: orig_performance,
-        spaced_practice: sp_performance
-      }
+    completed_core_counts.each do |page_id, completed_core_count|
+      correct_core_count = correct_core_counts[page_id] || 0
+      original_performance_map[page_id] = correct_core_count/completed_core_count.to_f
     end
+
+    spaced_performance_map = {}
+
+    completed_spaced_counts = completed_spaced_tasked_exercises
+                                .count('DISTINCT tasks_tasked_exercises.id')
+    correct_spaced_counts = correct_spaced_tasked_exercises
+                              .count('DISTINCT tasks_tasked_exercises.id')
+
+    completed_spaced_counts.each do |page_id, completed_spaced_count|
+      correct_spaced_count = correct_spaced_counts[page_id] || 0
+      spaced_performance_map[page_id] = correct_spaced_count/completed_spaced_count.to_f
+    end
+
+    [original_performance_map, spaced_performance_map]
   end
 
   def load_cc_stats(course)
     cc_tasks = Tasks::Models::ConceptCoachTask
       .joins([{task: [:task, {taskings: :period}]}])
-      .preload([{task: [{task: {tasked_exercises: [:task_step, {exercise: :page}]}},
-                {taskings: {period: :active_enrollments}}]},
-                {page: :chapter}])
+      .preload([{task: [:task, {taskings: {period: :active_enrollments}}]}, {page: :chapter}])
       .where(task: {taskings: {period: {entity_course_id: course.id}}})
       .where{task.task.completed_exercise_steps_count > 0}
       .distinct.to_a
@@ -96,7 +117,7 @@ class GetDashboard
       cc_task.task.taskings.first.period
     end.map do |period, cc_tasks|
       num_students = period.active_enrollments.length
-      performance_map = get_period_performance_map_from_cc_tasks(cc_tasks)
+      orig_map, spaced_map = get_period_performance_maps_from_cc_tasks(cc_tasks)
 
       {
         id: period.id,
@@ -114,8 +135,6 @@ class GetDashboard
               in_progress = tasks.select(&:in_progress?).size
               not_started = num_students - (completed + in_progress)
 
-              performance = performance_map[page.id] || {}
-
               {
                 id: page.id,
                 title: page.title,
@@ -123,8 +142,8 @@ class GetDashboard
                 completed: completed,
                 in_progress: in_progress,
                 not_started: not_started,
-                original_performance: performance[:original],
-                spaced_practice_performance: performance[:spaced_practice]
+                original_performance: orig_map[page.id],
+                spaced_practice_performance: spaced_map[page.id]
               }
             end.sort{ |a, b| b[:book_location] <=> a[:book_location] }
           }
