@@ -133,7 +133,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   describe '#roster' do
     let!(:application)       { FactoryGirl.create :doorkeeper_application }
 
-    let!(:course)            { Entity::Course.create }
+    let!(:course)            { CreateCourse[name: 'Rosterify'] }
     let!(:period_2)          { CreatePeriod[course: course] }
 
     let!(:student_user)      { FactoryGirl.create(:user) }
@@ -168,39 +168,42 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         it 'returns the course roster' do
           api_get :roster, teacher_token, parameters: valid_params
           expect(response).to have_http_status(:ok)
-          students = response.body_as_hash
-          expect(Set.new students).to eq Set.new [
-            {
-              id: student.id.to_s,
-              first_name: student.first_name,
-              last_name: student.last_name,
-              name: student.name,
-              period_id: period.id.to_s,
-              role_id: student_role.id.to_s,
-              deidentifier: student.deidentifier,
-              is_active: true
-            },
-            {
-              id: student_2.id.to_s,
-              first_name: student_2.first_name,
-              last_name: student_2.last_name,
-              name: student_2.name,
-              period_id: period.id.to_s,
-              role_id: student_role_2.id.to_s,
-              deidentifier: student_2.deidentifier,
-              is_active: true
-            },
-            {
-              id: student_3.id.to_s,
-              first_name: student_3.first_name,
-              last_name: student_3.last_name,
-              name: student_3.name,
-              period_id: period_2.id.to_s,
-              role_id: student_role_3.id.to_s,
-              deidentifier: student_3.deidentifier,
-              is_active: true
-            }
-          ]
+          roster = response.body_as_hash
+          expect(roster).to eq({
+            teacher_join_url: join_course_url(course.teacher_join_token),
+            students: [
+              {
+                id: student.id.to_s,
+                first_name: student.first_name,
+                last_name: student.last_name,
+                name: student.name,
+                period_id: period.id.to_s,
+                role_id: student_role.id.to_s,
+                deidentifier: student.deidentifier,
+                is_active: true
+              },
+              {
+                id: student_2.id.to_s,
+                first_name: student_2.first_name,
+                last_name: student_2.last_name,
+                name: student_2.name,
+                period_id: period.id.to_s,
+                role_id: student_role_2.id.to_s,
+                deidentifier: student_2.deidentifier,
+                is_active: true
+              },
+              {
+                id: student_3.id.to_s,
+                first_name: student_3.first_name,
+                last_name: student_3.last_name,
+                name: student_3.name,
+                period_id: period_2.id.to_s,
+                role_id: student_role_3.id.to_s,
+                deidentifier: student_3.deidentifier,
+                is_active: true
+              }
+            ]
+          })
         end
       end
 

@@ -21,17 +21,17 @@ class Api::V1::CoursesController < Api::V1::ApiController
     respond_with courses_info, represent_with: Api::V1::CoursesRepresenter
   end
 
-  api :GET, '/courses/:course_id/roster', 'Returns all students in the given course'
+  api :GET, '/courses/:course_id/roster', 'Returns the roster for a given course'
   description <<-EOS
-    Returns all students in the given course.
-    #{json_schema(Api::V1::StudentsRepresenter, include: :readable)}
+    Returns the roster for a given course
+    #{json_schema(Api::V1::RosterRepresenter, include: :readable)}
   EOS
   def roster
     course = Entity::Course.find(params[:course_id])
     OSU::AccessPolicy.require_action_allowed!(:roster, current_api_user, course)
 
-    roster = GetStudentRoster[course: course]
-    respond_with(roster, represent_with: Api::V1::StudentsRepresenter)
+    roster = GetCourseRoster[course: course]
+    respond_with(roster, represent_with: Api::V1::RosterRepresenter)
   end
 
 
