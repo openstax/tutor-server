@@ -4,9 +4,12 @@ class CoursesController < ApplicationController
       course = find_course_by_join_token
       AddUserAsCourseTeacher[course: course, user: current_user]
       redirect_to dashboard_path
-    rescue
-      flash[:error] = "You are trying to join a class as a teacher, but the information you provided is either out of date or does not correspond to an existing course."
-      raise InvalidTeacherJoinToken
+    rescue => e
+      if e.message == 'user_is_already_teacher_of_course'
+        raise UserAlreadyCourseTeacher
+      else
+        raise InvalidTeacherJoinToken
+      end
     end
   end
 
@@ -18,3 +21,4 @@ class CoursesController < ApplicationController
 end
 
 class InvalidTeacherJoinToken < StandardError; end
+class UserAlreadyCourseTeacher < StandardError; end
