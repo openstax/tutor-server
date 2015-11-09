@@ -23,7 +23,7 @@ module Tasks
                        feedback_at: task_time)
 
       exercises.each_with_index do |exercise, ii|
-        group_type = ii > Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT ? \
+        group_type = ii < Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT ? \
                        :core_group : :spaced_practice_group
         step = Tasks::Models::TaskStep.new(task: outputs.task, group_type: group_type)
 
