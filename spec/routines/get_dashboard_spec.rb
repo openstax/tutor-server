@@ -166,7 +166,7 @@ describe GetDashboard, type: :routine do
               last_name: 'Newhart'
             }
           ],
-          periods: [
+          periods: a_collection_containing_exactly(
             {
               id: period.id,
               name: period.name,
@@ -223,7 +223,7 @@ describe GetDashboard, type: :routine do
                 }
               ]
             }
-          ]
+          )
         },
         role: {
           id: teacher_role.id,
