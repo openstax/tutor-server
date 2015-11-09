@@ -1,5 +1,5 @@
 VALID_IFRAME_ORIGINS = Rails.application.secrets.cc_origins ?
-  Rails.application.secrets.cc_origins.map{|origin| Regexp.new("^#{origin}") } : []
+  Rails.application.secrets.cc_origins.map{|origin| Regexp.new("\A#{origin}") } : []
 
 OpenStax::Api.configure do |config|
   config.user_class_name = 'User::User'
