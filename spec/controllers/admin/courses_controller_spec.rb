@@ -104,7 +104,15 @@ RSpec.describe Admin::CoursesController, type: :controller do
         post :students, id: physics.id, course: { period: physics_period.id }, student_roster: file_blankness
       }.not_to raise_error
 
-      expect(flash[:error]).to eq 'Unquoted fields do not allow \r or \n (line 2).'
+      expect(flash[:error]).to include 'Unquoted fields do not allow \r or \n (line 2).'
+    end
+
+    it 'gives a nice error if the file is blank' do
+      expect {
+        post :students, id: physics.id, course: { period: physics_period.id }
+      }.not_to raise_error
+
+      expect(flash[:error]).to include 'You must attach a file to upload.'
     end
 
   end

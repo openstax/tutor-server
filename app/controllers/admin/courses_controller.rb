@@ -1,5 +1,6 @@
 class Admin::CoursesController < Admin::BaseController
   include Manager::CourseDetails
+  include Lev::HandleWith
 
   before_action :get_schools, only: [:new, :edit]
 
@@ -29,30 +30,16 @@ class Admin::CoursesController < Admin::BaseController
   end
 
   def students
-    # Upload a csv file with columns: first_name, last_name, username, password
-    period = CourseMembership::Models::Period.find(params[:course][:period])
-    roster_file = params[:student_roster]
-
-    begin
-      csv_reader = CSV.new(roster_file.read, headers: true)
-      users_attributes = []
-      errors = []
-      csv_reader.each do |row|
-        users_attributes << row
-        errors << "On line #{csv_reader.lineno}, username is missing." unless row['username'].present?
-        errors << "On line #{csv_reader.lineno}, password is missing." unless row['password'].present?
-      end
-      if errors.present?
-        flash[:error] = ['Error uploading student roster'] + errors
-      else
-        add_students(period, users_attributes)
-        flash[:notice] = 'Student roster has been uploaded.'
-      end
-    rescue CSV::MalformedCSVError => e
-      flash[:error] = e.message
-    end
-
-    redirect_to edit_admin_course_path(params[:id], anchor: 'roster')
+    handle_with(Admin::CoursesStudents, success: -> {
+      add_students(@handler_result.outputs.period,
+                   @handler_result.outputs.users_attributes)
+      flash[:notice] = 'Student roster has been uploaded.'
+      redirect_to edit_admin_course_path(params[:id], anchor: 'roster')
+    },
+    failure: -> {
+      flash[:error] = @handler_result.errors.collect(&:message).compact
+      redirect_to edit_admin_course_path(params[:id], anchor: 'roster')
+    })
   end
 
   def set_ecosystem
