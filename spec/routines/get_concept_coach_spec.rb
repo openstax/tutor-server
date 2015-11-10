@@ -57,7 +57,7 @@ RSpec.describe GetConceptCoach, type: :routine do
       expect{ task = described_class[
         user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
       ].task }.to change{ Tasks::Models::Task.count }.by(1)
-      expect(task.task_steps.size).to eq described_class::CORE_EXERCISES_COUNT
+      expect(task.task_steps.size).to eq Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT
       task.task_steps.each do |task_step|
         expect(task_step.tasked.exercise.page.id).to eq @page_1.id
       end
@@ -120,7 +120,7 @@ RSpec.describe GetConceptCoach, type: :routine do
         user: @user_2, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
       ].task }.to change{ Tasks::Models::ConceptCoachTask.count }.by(1)
       expect(task).not_to eq existing_task
-      expect(task.task_steps.size).to eq described_class::CORE_EXERCISES_COUNT
+      expect(task.task_steps.size).to eq Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT
       task.task_steps.each do |task_step|
         expect(task_step.tasked.exercise.page.id).to eq @page_1.id
       end
@@ -132,12 +132,16 @@ RSpec.describe GetConceptCoach, type: :routine do
         user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: @page_2.uuid
       ].task }.to change{ Tasks::Models::ConceptCoachTask.count }.by(1)
       expect(task).not_to eq existing_task
-      expect(task.task_steps.size).to eq described_class::CORE_EXERCISES_COUNT + \
-                                         described_class::SPACED_EXERCISES_COUNT
-      task.task_steps.first(described_class::CORE_EXERCISES_COUNT).each do |task_step|
+      expect(task.task_steps.size).to eq Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT + \
+                                         Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_COUNT
+      task.task_steps.first(
+        Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT
+      ).each do |task_step|
         expect(task_step.tasked.exercise.page.id).to eq @page_2.id
       end
-      task.task_steps.last(described_class::SPACED_EXERCISES_COUNT).each do |task_step|
+      task.task_steps.last(
+        Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_COUNT
+      ).each do |task_step|
         expect(task_step.tasked.exercise.page.id).to eq @page_1.id
       end
     end
