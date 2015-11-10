@@ -36,8 +36,8 @@ module Api::V1
              type: String,
              readable: true,
              writeable: false,
-             if: ->(*) { respond_to?(:ecosystem) },
-             getter: ->(*) { ecosystem.try(:books).first.uuid },
+             if: ->(*) { respond_to?(:ecosystem_book) },
+             getter: ->(*) { ecosystem_book.uuid },
              schema_info: {
                description: "The UUID of the book for the course's content ecosystem, if available.",
                required: false
