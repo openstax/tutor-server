@@ -63,6 +63,8 @@ class CollectCourseInfo
         set_periods_on_courses
       when :ecosystem
         set_ecosystem_on_courses
+      when :ecosystem_book
+        set_ecosystem_book_on_courses
       end
     end
   end
@@ -92,8 +94,17 @@ class CollectCourseInfo
 
   def set_ecosystem_on_courses
     outputs.courses.each do |course|
-      routine = run(:get_course_ecosystem, course: Entity::Course.find(course.id))
-      course.ecosystem = routine.outputs.ecosystem
+      ecosystem = run(:get_course_ecosystem, course: Entity::Course.find(course.id)).outputs.ecosystem
+      course.ecosystem = ecosystem
+    end
+  end
+
+  def set_ecosystem_book_on_courses
+    outputs.courses.each do |course|
+      # attempt to use a pre-set ecosystem on the course before loading it
+      ecosystem = course.ecosystem ||
+                  run(:get_course_ecosystem, course: Entity::Course.find(course.id)).outputs.ecosystem
+      course.ecosystem_book = ecosystem.books.first
     end
   end
 
