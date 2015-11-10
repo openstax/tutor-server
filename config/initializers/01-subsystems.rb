@@ -22,4 +22,5 @@ Tutor::SubSystems.valid_namespaces = %w(
   legal
   user
   catalog
+  salesforce
 )

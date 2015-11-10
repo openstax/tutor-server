@@ -12,6 +12,15 @@ GIT
       transaction_isolation
       transaction_retry
 
+GIT
+  remote: https://github.com/maddijoyce/active_force
+  revision: 9695896f576ea850d6ca60fb7b8af9c0dd07e8ea
+  ref: 9695896f5
+  specs:
+    active_force (0.7.1)
+      active_attr (~> 0.8)
+      restforce (~> 2.1.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -204,6 +213,8 @@ GEM
       redis (~> 3.0)
     faraday (0.9.1)
       multipart-post (>= 1.2, < 3)
+    faraday_middleware (0.10.0)
+      faraday (>= 0.7.4, < 0.10)
     fastercsv (1.5.5)
     ffi (1.9.8)
     fine_print (3.1.0)
@@ -377,6 +388,9 @@ GEM
     omniauth-oauth2 (1.3.1)
       oauth2 (~> 1.0)
       omniauth (~> 1.2)
+    omniauth-salesforce (1.0.5)
+      omniauth (~> 1.0)
+      omniauth-oauth2 (~> 1.0)
     openstax_accounts (6.1.3)
       action_interceptor (>= 1.0)
       keyword_search (>= 1.0.0)
@@ -503,6 +517,11 @@ GEM
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 3.0)
       netrc (~> 0.7)
+    restforce (2.1.1)
+      faraday (~> 0.9.0)
+      faraday_middleware (>= 0.8.8)
+      hashie (>= 1.2.0, < 4.0)
+      json (>= 1.7.5, < 1.9.0)
     roar (1.0.1)
       representable (>= 2.0.1, <= 3.0.0)
     roar-rails (1.0.1)
@@ -644,6 +663,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  active_force!
   active_record_query_trace
   activerecord-import
   addressable
@@ -688,6 +708,7 @@ DEPENDENCIES
   mini_magick
   newrelic_rpm
   nifty-generators
+  omniauth-salesforce
   openstax_accounts (~> 6.1.3)
   openstax_api (~> 6.0.0)
   openstax_exchange (~> 0.2.1)
@@ -708,6 +729,7 @@ DEPENDENCIES
   rails-html-sanitizer (~> 1.0)
   redis-rails
   remotipart
+  restforce
   rspec-collection_matchers
   rspec-rails
   sass-rails (~> 5.0.0)

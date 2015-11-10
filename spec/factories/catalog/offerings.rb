@@ -5,6 +5,10 @@ FactoryGirl.define do
     description { Faker::Company.bs   }
     webview_url { Faker::Internet.url }
     pdf_url     { Faker::Internet.url }
+    default_course_name { Faker::Lorem.words(2) }
+    is_concept_coach { false }
+    is_tutor { false }
+    association :ecosystem, factory: :content_ecosystem
 
   end
 end

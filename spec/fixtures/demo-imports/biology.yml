@@ -1,9 +1,11 @@
 # This is a stripped down verion of lib/tasks/demo/biology.yml
 # It's only used by the demo spec
 course_name: Biology I
+is_concept_coach: false
 cnx_book_id: ccbc51fa-49f3-40bb-98d6-07a15a7ab6b7
 cnx_book_version: 5.63
 catalog_offering_identifier: biology
+catalog_offering_is_concept_coach: false
 teacher: cm
 periods:
   - id: p1

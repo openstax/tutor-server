@@ -9,4 +9,12 @@ RSpec.describe StaticPagesController, :type => :controller do
     end
   end
 
+  describe "GET omniauth_failure" do
+    it 'sets flash and redirects to root' do
+      get :omniauth_failure, message: "blah"
+      expect(flash[:error]).to include "blah"
+      expect(response).to redirect_to(root_path)
+    end
+  end
+
 end

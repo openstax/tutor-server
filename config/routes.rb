@@ -175,7 +175,17 @@ Rails.application.routes.draw do
     end
 
     resources :targeted_contracts, except: [:show, :edit]
+
+    namespace :salesforce do
+      get '', action: :index
+      delete :destroy_user
+      post :import_courses
+    end
   end
+
+  match '/auth/salesforce/callback', to: 'admin/salesforce#callback',
+                                     via: [:get, :post]
+  get '/auth/failure', to: 'static_pages#omniauth_failure'
 
   namespace 'customer_service' do
     root to: 'console#index'

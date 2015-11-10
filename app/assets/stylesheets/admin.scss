@@ -6,3 +6,9 @@
 @import "jquery-ui-1.11.4.custom.min";
 @import "admin_navbar";
 @import "manager";
+
+ .offering-row {
+   border-bottom: 1px solid gray;
+   padding-bottom: 20px;
+   margin-bottom: 20px
+ }

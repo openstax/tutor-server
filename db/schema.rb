@@ -27,6 +27,7 @@ ActiveRecord::Schema.define(version: 20151105162348) do
     t.string   "pdf_url",                              null: false
     t.datetime "created_at",                           null: false
     t.datetime "updated_at",                           null: false
+    t.string   "default_course_name"
   end
 
   add_index "catalog_offerings", ["content_ecosystem_id"], name: "index_catalog_offerings_on_content_ecosystem_id", using: :btree
@@ -454,6 +455,23 @@ ActiveRecord::Schema.define(version: 20151105162348) do
   end
 
   add_index "role_role_users", ["user_profile_id", "entity_role_id"], name: "role_role_users_user_role_uniq", unique: true, using: :btree
+
+  create_table "salesforce_attached_records", force: :cascade do |t|
+    t.string "tutor_gid"
+    t.string "salesforce_class_name"
+    t.string "salesforce_id"
+  end
+
+  add_index "salesforce_attached_records", ["salesforce_id", "salesforce_class_name", "tutor_gid"], name: "salesforce_attached_record_tutor_gid", unique: true, using: :btree
+  add_index "salesforce_attached_records", ["tutor_gid"], name: "index_salesforce_attached_records_on_tutor_gid", using: :btree
+
+  create_table "salesforce_users", force: :cascade do |t|
+    t.string "name"
+    t.string "uid"
+    t.string "oauth_token"
+    t.string "refresh_token"
+    t.string "instance_url"
+  end
 
   create_table "school_district_districts", force: :cascade do |t|
     t.string "name", null: false
