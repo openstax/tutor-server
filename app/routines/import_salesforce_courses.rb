@@ -70,8 +70,7 @@ class ImportSalesforceCourses
     candidate.created_at = course.created_at.iso8601
     candidate.num_students = 0
     candidate.num_teachers = 0
-    candidate.teacher_join_url =
-      UrlGenerator.new.join_course_url(join_token: course.teacher_join_token)
+    candidate.teacher_join_url = UrlGenerator.new.join_course_url(course.teacher_join_token)
 
     run(:set_ecosystem, course: course, ecosystem: offering.ecosystem)
 

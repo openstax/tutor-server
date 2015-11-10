@@ -170,7 +170,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           expect(response).to have_http_status(:ok)
           roster = response.body_as_hash
           expect(roster).to eq({
-            teacher_join_url: join_course_url(course.teacher_join_token),
+            teacher_join_url: UrlGenerator.new.join_course_url(course.teacher_join_token),
             students: [
               {
                 id: student.id.to_s,

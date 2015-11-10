@@ -7,7 +7,7 @@ class GetCourseRoster
     students = course.students.includes(:enrollments, role: { profile: :account })
 
     outputs.roster = {
-      teacher_join_url: join_course_url(course.teacher_join_token),
+      teacher_join_url: UrlGenerator.new.join_course_url(course.teacher_join_token),
       students: students.collect do |student|
         Hashie::Mash.new({
           id: student.id,
