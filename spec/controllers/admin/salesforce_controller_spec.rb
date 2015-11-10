@@ -64,7 +64,7 @@ RSpec.describe Admin::SalesforceController do
           name: 'Bobby Thomas',
         },
         credentials: {
-          oauth_token: 'oauth_token',
+          token: 'oauth_token',
           refresh_token: 'refresh_token',
           instance_url: 'http://blah.com/'
         }
