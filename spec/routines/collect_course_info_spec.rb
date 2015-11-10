@@ -22,7 +22,8 @@ describe CollectCourseInfo, type: :routine do
           id: course_1.id,
           name: course_1.profile.name,
           school_name: course_1.profile.school_name,
-          catalog_offering_identifier: nil
+          catalog_offering_identifier: nil,
+          is_concept_coach: false
         }
       )
     end
@@ -41,7 +42,8 @@ describe CollectCourseInfo, type: :routine do
           id: course_1.id,
           name: course_1.profile.name,
           school_name: course_1.profile.school_name,
-          catalog_offering_identifier: nil
+          catalog_offering_identifier: nil,
+          is_concept_coach: false
         }
       )
     end
@@ -55,13 +57,15 @@ describe CollectCourseInfo, type: :routine do
           id: course_1.id,
           name: course_1.profile.name,
           school_name: course_1.profile.school_name,
-          catalog_offering_identifier: nil
+          catalog_offering_identifier: nil,
+          is_concept_coach: false
         },
         {
           id: course_2.id,
           name: course_2.profile.name,
           school_name: course_2.profile.school_name,
-          catalog_offering_identifier: 'tutorcourse'
+          catalog_offering_identifier: 'tutorcourse',
+          is_concept_coach: false
         }
       )
     end

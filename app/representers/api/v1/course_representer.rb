@@ -32,6 +32,14 @@ module Api::V1
               required: false
              }
 
+    property :is_concept_coach,
+             readable: true,
+             writeable: false,
+             schema_info: {
+               required: true,
+               type: 'boolean'
+             }
+
     collection :roles,
                extend: Api::V1::RoleRepresenter,
                readable: true,
