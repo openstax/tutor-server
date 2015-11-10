@@ -45,6 +45,7 @@ class CollectCourseInfo
       {
         id: p.entity_course_id,
         name: p.name,
+        is_concept_coach: p.is_concept_coach,
         school_name: p.school_name,
         catalog_offering_identifier: p.catalog_offering_identifier
       }
