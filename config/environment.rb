@@ -18,6 +18,7 @@ require 'course_guide_methods'
 require 'type_verification'
 require 'tagger'
 require 'unique_tokenable'
+require 'url_generator'
 
 %w(
   biglearn

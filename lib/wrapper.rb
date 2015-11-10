@@ -2,7 +2,7 @@ module Wrapper
 
   def self.included(base)
     base.send(:include, TypeVerification)
-     base.extend ClassMethods
+    base.extend ClassMethods
   end
 
   def initialize(strategy:)
@@ -33,7 +33,7 @@ module Wrapper
   module ClassMethods
     def _define_dynamic_wrapping(name, type)
         define_method(name) do
-          verify_and_return @strategy.send(name), klass: type, error: StrategyError
+          verify_and_return @strategy.send(name), klass: type, error: StrategyError, allow_nil: true
         end
     end
 
@@ -50,5 +50,16 @@ module Wrapper
         _define_dynamic_wrapping(attr.to_sym, type)
       end
     end
+
+    cattr_accessor :strategy_class
+
+    def self.with_strategy_class(strategy_class, &block)
+      original_strategy_class = self.strategy_class
+      self.strategy_class = strategy_class
+      result = yield
+      self.strategy_class = original_strategy_class
+      result
+    end
+
   end
 end

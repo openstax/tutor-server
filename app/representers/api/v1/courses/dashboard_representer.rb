@@ -181,6 +181,11 @@ module Api::V1::Courses
                  readable: true,
                  writeable: false,
                  decorator: Teacher
+
+      collection :periods,
+                 readable: true,
+                 writeable: false,
+                 decorator: Api::V1::Courses::Cc::PeriodRepresenter
     end
 
     # Actual attributes below

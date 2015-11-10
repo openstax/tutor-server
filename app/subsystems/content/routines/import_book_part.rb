@@ -54,7 +54,7 @@ class Content::Routines::ImportBookPart
         # skip all the pages at the book level
         next if cnx_book_part.is_root && part.is_a?(OpenStax::Cnx::V1::Page)
 
-        raise "Unexpected class #{part.class}" unless part.is_a?(OpenStax::Cnx::V1::BookPart) rescue debugger
+        raise "Unexpected class #{part.class}" unless part.is_a?(OpenStax::Cnx::V1::BookPart)
 
         outs = run(:import_book_part,
                    cnx_book_part: part,
