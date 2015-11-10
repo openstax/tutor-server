@@ -1,8 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
-VCR_OPTS.merge!({ record: :new_episodes })
 
-RSpec.feature 'Administration', vcr: VCR_OPTS do
+RSpec.feature 'Administration', vcr: VCR_OPTS.merge({ record: :new_episodes }) do
   before(:all) do
     @previous_url = OpenStax::Accounts.configuration.openstax_accounts_url
     @previous_client_id = OpenStax::Accounts.configuration.openstax_application_id
