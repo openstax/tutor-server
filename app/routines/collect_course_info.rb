@@ -104,7 +104,7 @@ class CollectCourseInfo
       # attempt to use a pre-set ecosystem on the course before loading it
       ecosystem = course.ecosystem ||
                   run(:get_course_ecosystem, course: Entity::Course.find(course.id)).outputs.ecosystem
-      course.ecosystem_book = ecosystem.books.first
+      course.ecosystem_book = ecosystem.try(:books).try(:first)
     end
   end
 
