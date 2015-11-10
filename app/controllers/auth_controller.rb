@@ -4,16 +4,13 @@ class AuthController < ApplicationController
   # Access-Control-Allow-Credentials header
   before_filter :set_cors_headers, only: [:status, :cors_preflight_check]
 
-  # Allow accessing iframe methods from inside an iframe
-  before_filter :allow_iframe_access, only: [:iframe_start, :iframe_finish]
-
   # Methods handle returning login status differently than the standard authenticate_user! filter
   skip_before_filter :authenticate_user!,
-                     only: [:status, :cors_preflight_check, :iframe_start, :iframe_finish]
+                     only: [:status, :cors_preflight_check, :login]
 
-  # CRSF tokens can't be used since these endpoints are loaded from foreign sites via cors or iframe
+  # CRSF tokens can't be used since these endpoints are loaded from foreign sites via cors
   skip_before_action :verify_authenticity_token,
-                     only: [:status, :cors_preflight_check, :iframe_start,:iframe_finish]
+                     only: [:status, :cors_preflight_check, :login]
 
   def status
     render json: user_status_update
@@ -25,20 +22,18 @@ class AuthController < ApplicationController
     render text: '', :content_type => 'text/plain'
   end
 
-  def iframe_start
+  def login
     if current_user.is_anonymous?
-      session[:accounts_return_to] = after_iframe_authentication_url
-      redirect_to openstax_accounts.login_url #(host_only:false)
+      unless params[:back]
+        render status: :bad_request, :text => "Missing back paramter"
+        return
+      end
+      # Use action_interceptor to remember and retrieve back url
+      store_url(url: params[:back])
+      redirect_to openstax_accounts.login_url
     else
-      @status = user_status_update
-      render action: :iframe_finish
+      redirect_back
     end
-  end
-
-  def iframe_finish
-    head :forbidden and return if current_user.is_anonymous?
-    # the view will deliver the status data using postMessage out of the iframe
-    @status = user_status_update
   end
 
   private
@@ -49,15 +44,10 @@ class AuthController < ApplicationController
       status[:current_user] = Api::V1::UserRepresenter.new(current_user)
     end
     status[:endpoints] = {
-      login: openstax_accounts.login_url,
-      iframe_login: authenticate_via_iframe_url,
+      login: auth_start_login_url,
       accounts_iframe: Rails.application.secrets.openstax['accounts']['url'] + "/remote/iframe"
     }
     status
-  end
-
-  def allow_iframe_access
-    response.headers.except! 'X-Frame-Options'
   end
 
   def set_cors_headers

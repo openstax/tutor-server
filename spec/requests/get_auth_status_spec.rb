@@ -27,7 +27,6 @@ describe "Get authentication status", type: :request, version: :v1 do
                                          :access_token => token,
                                          :endpoints => {
                                            :login=>a_string_starting_with("http"),
-                                           :iframe_login=>a_string_starting_with("http"),
                                            :accounts_iframe=>a_string_starting_with("http")
                                          },
                                          :current_user => {

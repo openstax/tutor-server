@@ -28,13 +28,12 @@ Rails.application.routes.draw do
   apipie
 
   # Fetch user information and a doorkeepr access token via a CORS request from whitelisted hosts
-  get '/auth/status', :to => 'auth#status'
-  match "/auth/status", to: "auth#cors_preflight_check", via: [:options]
-  # Relay user tokens inside an iframe.
-  get '/auth/iframe/start', :to => 'auth#iframe_start',  as: 'authenticate_via_iframe'
-  get '/auth/iframe/finish',:to => 'auth#iframe_finish', as: 'after_iframe_authentication'
-
-
+  scope 'auth', controller: 'auth' do
+    get 'status'
+    match "status", to: "auth#cors_preflight_check", via: [:options]
+    # start a login session, will redirect to accounts and then back once complete
+    get 'login', :to => 'auth#login',  as: 'auth_start_login'
+  end
 
   api :v1, default: true do
     resources :jobs, only: [:index, :show]
