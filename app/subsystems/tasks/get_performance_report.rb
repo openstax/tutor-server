@@ -7,7 +7,8 @@ module Tasks
     def exec(course:, role:)
       outputs[:performance_report] = \
         if CourseMembership::IsCourseTeacher[course: course, roles: [role]]
-          get_performance_report_for_teacher(course)
+          course.is_concept_coach ? get_cc_performance_report_for_teacher(course) : \
+                                    get_performance_report_for_teacher(course)
         else
           raise(SecurityTransgression, 'The caller is not a teacher in this course')
         end
@@ -45,7 +46,7 @@ module Tasks
                            student_tasks[index] = tg.task.task
                          end
 
-                         # gather the task into the results for use in calulating header stats
+                         # gather the task into the results for use in calculating header stats
                          student_tasks.each do | task |
                            next unless task
                            task_plan_results[task.task_plan] << task
@@ -122,6 +123,93 @@ module Tasks
       } / valid_tasks.size
     end
 
+    def get_cc_performance_report_for_teacher(course)
+      taskings = get_cc_taskings(course)
+      cc_tasks_map = get_cc_tasks_map(taskings)
+
+      course.periods.collect do |period|
+        period_cc_tasks_map = cc_tasks_map[period]
+        sorted_period_pages = period_cc_tasks_map
+          .values.flat_map(&:keys).uniq.sort{ |a, b| b.book_location <=> a.book_location }
+
+        period_student_roles = period.active_enrollments
+                                     .preload(student: {role: {profile: :account}})
+                                     .map(&:student)
+
+        data_headings = get_cc_data_headings(period_cc_tasks_map.values, sorted_period_pages)
+
+        student_data = period_students.collect do |student|
+          {
+            name: student.role.name,
+            first_name: student.role.first_name,
+            last_name: student.role.last_name,
+            student_identifier: student.student_identifier,
+            role: student.role.id,
+            data: get_student_cc_data(period_cc_tasks_map[role], sorted_period_pages)
+          }
+        end.sort_by{ |hash| [hash[:last_name].downcase, hash[:first_name].downcase] }
+
+        Hashie::Mash.new({
+          period: period,
+          data_headings: data_headings,
+          students: student_data
+        })
+      end
+    end
+
+    def get_cc_taskings(course)
+      # Return cc tasks for a student, ignoring not_started tasks
+      course.taskings.preload(task: {concept_coach_task: :page},
+                              role: [{student: {enrollments: :period}},
+                                     {profile: :account}])
+                     .joins(task: [:task, :concept_coach_task])
+                     .where{task.task.completed_steps_count > 0}
+                     .to_a
+    end
+
+    def get_cc_tasks_map(taskings)
+      taskings.group_by{ |tasking| tasking.role.student.period }
+              .each_with_index({}) do |(period, taskings), hash|
+        hash[period] = taskings.group_by{ |tasking| tasking.role }
+                               .each_with_index({}) do |(role, taskings), hash|
+          hash[role] = taskings.group_by{ |tasking| tasking.task.concept_coach_task.page }
+                               .each_with_index({}) do |(page, taskings), hash|
+            hash[page] = taskings.map{ |tasking| tasking.task.concept_coach_task }
+          end
+        end
+      end
+    end
+
+    def get_cc_data_headings(period_cc_tasks_map_array, sorted_period_pages)
+      sorted_period_pages.map do |page|
+        page_cc_tasks = period_cc_tasks_map_array.flat_map{ |hash| hash[page] }
+
+        {
+          title: page.title,
+          type: 'concept_coach',
+          average: cc_average(page_cc_tasks)
+        }
+      end
+    end
+
+    # returns the average for the page
+    def cc_average(page_cc_tasks)
+      page_tasks = page_cc_tasks.compact.map{ |cc_task| cc_task.task.task }
+      correct_count = page_tasks.map(&:correct_exercise_count).reduce(:+)
+      completed_count = page_tasks.map(&:completed_exercise_count).reduce(:+)
+      correct_count/completed_count.to_f
+    end
+
+    def get_student_cc_data(page_cc_tasks_map_for_role, sorted_pages)
+      tasks = sorted_pages.collect do |page|
+        cc_task = page_cc_tasks_map_for_role[page]
+        next if cc_task.nil?
+
+        cc_task.task.task
+      end
+      get_student_data(tasks)
+    end
+
     def get_student_data(tasks)
       tasks.collect do |task|
         # skip if the student hasn't worked this particular task_plan
@@ -136,7 +224,7 @@ module Tasks
           last_worked_at: task.last_worked_at
         }
 
-        if task.task_type == 'homework'
+        if task.task_type == 'homework' || task.task_type == 'concept_coach'
           data.merge!(exercise_counts(task))
         end
 
