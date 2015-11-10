@@ -10,7 +10,7 @@
 <div style="margin: 30px 0px">
 <p>
 <% if @user.present? %>
-  The current Salesforce user is <b><%= @user.name %></b>.
+  The current Salesforce user is <b><%= @user.name || "[Unknown Name]" %></b>.
 <% else %>
   There <b>is no</b> Salesforce user currently set.
 <% end %>

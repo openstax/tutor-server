@@ -36,24 +36,22 @@ class ImportSalesforceCourses
   end
 
   def create_course_for_candidate(candidate)
-    assume_success(candidate)
-
     offering = Catalog::Offering.find_by(identifier: candidate.book_name).first
 
     if offering.nil?
-      error(candidate, "Book Name does not match an offering in Tutor.")
+      error!(candidate, "Book Name does not match an offering in Tutor.")
       return
     end
 
     if !offering.is_concept_coach
-      error(candidate, "Book Name matches a Tutor offering but it isn't for CC.")
+      error!(candidate, "Book Name matches a Tutor offering but it isn't for CC.")
       return
     end
 
     candidate.course_name ||= offering.default_course_name
 
     if candidate.course_name.blank?
-      error(candidate, "A course name is needed and no default is available in Tutor.")
+      error!(candidate, "A course name is needed and no default is available in Tutor.")
       return
     end
 
@@ -85,16 +83,17 @@ class ImportSalesforceCourses
       "#{candidate.id} using offering '#{offering.identifier}' (#{offering.id}) " +
       "and ecosystem '#{offering.ecosystem.title}'."
     }
+
+    success!(candidate)
   end
 
-  def assume_success(candidate)
+  def success!(candidate)
     candidate.error = nil
     outputs.num_successes += 1
   end
 
-  def error(candidate, message)
+  def error!(candidate, message)
     candidate.error = message
-    outputs.num_successes -= 1
     outputs.num_failures += 1
   end
 

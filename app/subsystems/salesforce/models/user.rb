@@ -1,6 +1,11 @@
 module Salesforce
   module Models
     class User < Tutor::SubSystems::BaseModel
+      validates :uid, presence: true
+      validates :oauth_token, presence: true
+      validates :refresh_token, presence: true
+      validates :instance_url, presence: true
+
       def self.save_from_omniauth!(auth)
         where(auth.slice(:uid).permit!).first_or_initialize.tap do |user|
           user.uid = auth.uid
