@@ -6,36 +6,25 @@ RSpec.describe AuthController, type: :controller do
 
   context "as an non-signed in user" do
 
-    it 'allows access to iframe start and redirects to accounts' do
-      get :iframe_start
-      expect(session[:accounts_return_to]).to eq(after_iframe_authentication_url)
-      expect(response).to redirect_to(controller.openstax_accounts.login_url)
+    it 'requires back paramter to be present' do
+      get :login
+      expect(response).to have_http_status(:bad_request)
     end
 
-    it 'disallows access to iframe finish' do
-      get :iframe_finish
-      expect(response).to have_http_status(:forbidden)
+    it 'allows access to login and redirects to accounts' do
+      get :login, back: 'http://test.com/'
+      expect(session[:r]).to eq('http://test.com/')
+      expect(response).to redirect_to(controller.openstax_accounts.login_url)
     end
 
   end
 
   context "as an signed in user" do
-    render_views
 
-    it 'allows access to iframe start and simply renders status info' do
+    it 'allows access to login and redirects back to return url' do
       controller.sign_in user
-      get :iframe_start
-      expect(session[:accounts_return_to]).to be_nil
-      expect(assigns(:status)).not_to be_nil
-      expect(response.body).to include('window.parent.postMessage')
-    end
-
-    it 'allows access to iframe finish and sets status info' do
-      controller.sign_in user
-      get :iframe_finish
-      expect(response).to have_http_status(:ok)
-      expect(assigns(:status)).not_to be_nil
-      expect(response.body).to include('window.parent.postMessage')
+      get :login, {}, {r: 'http://cnx.org/a-good-book'}
+      expect(response).to redirect_to('http://cnx.org/a-good-book')
     end
 
   end
