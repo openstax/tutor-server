@@ -128,13 +128,13 @@ module Tasks
       cc_tasks_map = get_cc_tasks_map(taskings)
 
       course.periods.collect do |period|
-        period_cc_tasks_map = cc_tasks_map[period]
+        period_cc_tasks_map = cc_tasks_map[period] || {}
         sorted_period_pages = period_cc_tasks_map
           .values.flat_map(&:keys).uniq.sort{ |a, b| b.book_location <=> a.book_location }
 
-        period_student_roles = period.active_enrollments
-                                     .preload(student: {role: {profile: :account}})
-                                     .map(&:student)
+        period_students = period.active_enrollments
+                                .preload(student: {role: {profile: :account}})
+                                .map(&:student)
 
         data_headings = get_cc_data_headings(period_cc_tasks_map.values, sorted_period_pages)
 
@@ -145,7 +145,7 @@ module Tasks
             last_name: student.role.last_name,
             student_identifier: student.student_identifier,
             role: student.role.id,
-            data: get_student_cc_data(period_cc_tasks_map[role], sorted_period_pages)
+            data: get_student_cc_data(period_cc_tasks_map[student.role], sorted_period_pages)
           }
         end.sort_by{ |hash| [hash[:last_name].downcase, hash[:first_name].downcase] }
 
@@ -169,11 +169,11 @@ module Tasks
 
     def get_cc_tasks_map(taskings)
       taskings.group_by{ |tasking| tasking.role.student.period }
-              .each_with_index({}) do |(period, taskings), hash|
+              .each_with_object({}) do |(period, taskings), hash|
         hash[period] = taskings.group_by{ |tasking| tasking.role }
-                               .each_with_index({}) do |(role, taskings), hash|
+                               .each_with_object({}) do |(role, taskings), hash|
           hash[role] = taskings.group_by{ |tasking| tasking.task.concept_coach_task.page }
-                               .each_with_index({}) do |(page, taskings), hash|
+                               .each_with_object({}) do |(page, taskings), hash|
             hash[page] = taskings.map{ |tasking| tasking.task.concept_coach_task }
           end
         end
@@ -197,15 +197,18 @@ module Tasks
       page_tasks = page_cc_tasks.compact.map{ |cc_task| cc_task.task.task }
       correct_count = page_tasks.map(&:correct_exercise_count).reduce(:+)
       completed_count = page_tasks.map(&:completed_exercise_count).reduce(:+)
-      correct_count/completed_count.to_f
+      correct_count * 100.0/completed_count
     end
 
     def get_student_cc_data(page_cc_tasks_map_for_role, sorted_pages)
-      tasks = sorted_pages.collect do |page|
-        cc_task = page_cc_tasks_map_for_role[page]
-        next if cc_task.nil?
+      return [] if page_cc_tasks_map_for_role.nil?
 
-        cc_task.task.task
+      tasks = sorted_pages.map do |page|
+        cc_tasks = page_cc_tasks_map_for_role[page]
+        next if cc_tasks.nil?
+
+        # Here we assume only 1 CC task per student per page
+        cc_tasks.first.task.task
       end
       get_student_data(tasks)
     end
