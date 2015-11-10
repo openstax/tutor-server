@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::Courses::Cc::ChapterRepresenter, type: :representer do
+RSpec.describe Api::V1::Courses::Cc::Teacher::ChapterRepresenter, type: :representer do
   let!(:chapter)          {
     Hashie::Mash.new({
       id: 42,

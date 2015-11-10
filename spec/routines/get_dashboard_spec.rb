@@ -131,24 +131,92 @@ describe GetDashboard, type: :routine do
 
       AddEcosystemToCourse[ecosystem: ecosystem, course: course]
 
-      GetConceptCoach[
+      @task_1 = GetConceptCoach[
         user: student_user, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
-      ].task.task_steps.each do |ts|
+      ].task
+      @task_1.task_steps.each do |ts|
         Hacks::AnswerExercise[task_step: ts, is_correct: true]
       end
-      GetConceptCoach[
+      @task_2 = GetConceptCoach[
         user: student_user, cnx_book_id: @book.uuid, cnx_page_id: @page_2.uuid
-      ].task.task_steps.each do |ts|
+      ].task
+      @task_2.task_steps.each do |ts|
         Hacks::AnswerExercise[task_step: ts, is_correct: ts.core_group?]
       end
-      GetConceptCoach[
+      @task_3 = GetConceptCoach[
         user: student_user_2, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
-      ].task.task_steps.select(&:core_group?).first(2).each_with_index do |ts, ii|
+      ].task
+      @task_3.task_steps.select(&:core_group?).first(2).each_with_index do |ts, ii|
         Hacks::AnswerExercise[task_step: ts, is_correct: ii == 0]
       end
-      GetConceptCoach[user: student_user_2,
-                      cnx_book_id: @book.uuid,
-                      cnx_page_id: @page_2.uuid]
+      @task_4 = GetConceptCoach[
+        user: student_user_2, cnx_book_id: @book.uuid, cnx_page_id: @page_2.uuid
+      ].task
+    end
+
+    it "works for a student" do
+      outputs = described_class.call(course: course, role: student_role).outputs
+
+      expect(HashWithIndifferentAccess[outputs]).to include(
+        course: {
+          id: course.id,
+          name: "Physics 101",
+          teachers: [
+            { id: teacher_role.teacher.id.to_s,
+              role_id: teacher_role.id.to_s,
+              first_name: 'Bob',
+              last_name: 'Newhart' }
+          ]
+        },
+        role: {
+          id: student_role.id,
+          type: 'student'
+        },
+        tasks: a_collection_including(
+          @task_1, @task_2
+        ),
+        chapters: [
+          {
+            id: @chapter.id,
+            title: @chapter.title,
+            book_location: @chapter.book_location,
+            pages: [
+              {
+                id: @page_2.id,
+                title: @page_2.title,
+                book_location: @page_2.book_location,
+                last_worked_at: a_kind_of(Time),
+                exercises: Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT.times.map do
+                  {
+                    id: a_kind_of(Integer),
+                    is_completed: true,
+                    is_correct: true
+                  }
+                end + Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_COUNT.times.map do
+                  {
+                    id: a_kind_of(Integer),
+                    is_completed: true,
+                    is_correct: false
+                  }
+                end
+              },
+              {
+                id: @page_1.id,
+                title: @page_1.title,
+                book_location: @page_1.book_location,
+                last_worked_at: a_kind_of(Time),
+                exercises: Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT.times.map do
+                  {
+                    id: a_kind_of(Integer),
+                    is_completed: true,
+                    is_correct: true
+                  }
+                end
+              }
+            ]
+          }
+        ]
+      )
     end
 
     it "works for a teacher" do

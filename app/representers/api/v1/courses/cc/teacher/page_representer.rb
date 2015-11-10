@@ -1,4 +1,4 @@
-module Api::V1::Courses::Cc
+module Api::V1::Courses::Cc::Teacher
 
   class PageRepresenter < ::Roar::Decorator
 

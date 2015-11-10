@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::Courses::Cc::PageRepresenter, type: :representer do
+RSpec.describe Api::V1::Courses::Cc::Teacher::PageRepresenter, type: :representer do
   let!(:page)          {
     Hashie::Mash.new({
       id: 42,

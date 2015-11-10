@@ -20,9 +20,8 @@ class GetDashboard
     load_role(role, role_type)
     load_course(course, role_type)
     load_tasks(role, role_type)
-    if :teacher == role_type
-      course.is_concept_coach ? load_cc_stats(course) : load_plans(course)
-    end
+    load_plans(course) if :teacher == role_type
+    load_cc_stats(role, role_type) if course.is_concept_coach
   end
 
   def get_role_type(course, role)
@@ -104,11 +103,22 @@ class GetDashboard
     [original_performance_map, spaced_performance_map]
   end
 
-  def load_cc_stats(course)
+  def load_cc_stats(role, role_type)
+    case role_type
+    when :teacher
+      load_cc_teacher_stats(role)
+    when :student
+      load_cc_student_stats(role)
+    end
+  end
+
+  def load_cc_teacher_stats(role)
+    course_id = role.teacher.entity_course_id
+
     cc_tasks = Tasks::Models::ConceptCoachTask
-      .joins([{task: [:task, {taskings: :period}]}])
-      .preload([{task: [:task, {taskings: {period: :active_enrollments}}]}, {page: :chapter}])
-      .where(task: {taskings: {period: {entity_course_id: course.id}}})
+      .joins(task: [:task, {taskings: :period}])
+      .preload(task: [:task, {taskings: {period: :active_enrollments}}], page: :chapter)
+      .where(task: {taskings: {period: {entity_course_id: course_id}}})
       .where{task.task.completed_exercise_steps_count > 0}
       .distinct.to_a
 
@@ -150,6 +160,42 @@ class GetDashboard
         end.sort{ |a, b| b[:book_location] <=> a[:book_location] }
       }
     end
+  end
+
+  def load_cc_student_stats(role)
+    cc_tasks = Tasks::Models::ConceptCoachTask
+      .joins(task: [:task, :taskings])
+      .preload(task: {task: {tasked_exercises: :task_step}}, page: :chapter)
+      .where(task: {taskings: {entity_role_id: role.id}})
+      .where{task.task.completed_exercise_steps_count > 0}
+      .distinct.to_a
+
+    outputs.chapters = cc_tasks.group_by{ |cc_task| cc_task.page.chapter }
+                               .map do |chapter, cc_tasks|
+      {
+        id: chapter.id,
+        title: chapter.title,
+        book_location: chapter.book_location,
+        pages: cc_tasks.group_by(&:page).map do |page, cc_tasks|
+          tasks = cc_tasks.map{ |cc_task| cc_task.task.task }
+          tasked_exercises = tasks.flat_map(&:tasked_exercises)
+
+          {
+            id: page.id,
+            title: page.title,
+            book_location: page.book_location,
+            last_worked_at: tasks.max_by(&:last_worked_at).last_worked_at,
+            exercises: tasked_exercises.map do |te|
+              {
+                id: te.content_exercise_id,
+                is_completed: te.task_step.completed?,
+                is_correct: te.is_correct?
+              }
+            end
+          }
+        end.sort{ |a, b| b[:book_location] <=> a[:book_location] }
+      }
+    end.sort{ |a, b| b[:book_location] <=> a[:book_location] }
   end
 
   def load_course(course, role_type)
