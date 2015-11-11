@@ -19,15 +19,15 @@ class Admin::CoursesStudents
   private
   def add_students_from_roster_file
     begin
-      add_students(parse_attributes_from_roster_file)
+      parse_attributes_from_roster_file
     rescue CSV::MalformedCSVError => e
       fatal_error(code: :malformed_csv, message: e.message)
     end
   end
 
   def parse_attributes_from_roster_file
+    period = CourseMembership::Models::Period.find(params[:course][:period])
     csv_reader = CSV.new(params[:student_roster].read, headers: true)
-    users_attributes = []
     parse_errors = []
 
     csv_reader.each do |row|
@@ -35,28 +35,16 @@ class Admin::CoursesStudents
       parse_errors << validate_csv_row(row, csv_reader.lineno, :password)
       parse_errors.compact!
       next if parse_errors.any?
-      users_attributes << row
-    end
 
-    if parse_errors.any?
-      fatal_error(code: :parse_errors, message: parse_errors)
-    else
-      users_attributes
-    end
-  end
+      user = run(:find_or_create_user, username: row['username'],
+                                       password: row['password'],
+                                       first_name: row['first_name'],
+                                       last_name: row['last_name']).outputs.user
 
-  def add_students(users_attributes)
-    period = CourseMembership::Models::Period.find(params[:course][:period])
-
-    users_attributes.each do |attrs|
-      run(:find_or_create_user, username: attrs['username'],
-                                password: attrs['password'],
-                                first_name: attrs['first_name'],
-                                last_name: attrs['last_name'])
-
-      user = [outputs.user].flatten.last # blame it on nested routines
       run(:add_user_as_period_student, period: period, user: user)
     end
+
+    fatal_error(code: :parse_errors, message: parse_errors) if parse_errors.any?
   end
 
   def validate_csv_row(row, lineno, attr)
