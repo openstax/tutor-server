@@ -4,7 +4,9 @@
     <title></title>
     <script>
       var msg = <%=raw json_escape @status.to_json %>;
-      window.parent.postMessage( JSON.stringify({ data: { onLogin: msg}}), '<%= @iframe_origin %>' );
+      window.parent.postMessage( JSON.stringify({
+        sourceWindowName: 'OxAccountIframe', data: { onLogin: msg}
+      }), '<%= @iframe_origin %>' );
     </script>
   </head>
   <body>
