@@ -4,7 +4,7 @@ OpenStax::Api.configure do |config|
   config.routing_error_app = lambda { |env|
     [404, {"Content-Type" => 'application/json'}, ['']] }
   config.validate_cors_origin = lambda{ |request|
-    Rails.application.secrets.cc_origins.any? do | origin |
+    (Rails.application.secrets.cc_origins || []).any? do | origin |
       /^#{origin}/.match(request.headers["HTTP_ORIGIN"])
     end
   }
