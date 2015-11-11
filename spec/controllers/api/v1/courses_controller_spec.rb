@@ -542,22 +542,17 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
             "id" => @task_1.id.to_s,
             "title" => @task_1.title,
             "opens_at" => be_kind_of(String),
-            "due_at" => be_kind_of(String),
+            "last_worked_at" => be_kind_of(String),
             "type" => "concept_coach",
-            "complete" => false,
-            "exercise_count" => 3,
-            "complete_exercise_count" => 2
+            "complete" => true
           ),
           a_hash_including(
             "id" => @task_2.id.to_s,
             "title" => @task_2.title,
             "opens_at" => be_kind_of(String),
-            "due_at" => be_kind_of(String),
+            "last_worked_at" => be_kind_of(String),
             "type" => "concept_coach",
-            "complete" => true,
-            "exercise_count" => 3,
-            "complete_exercise_count" => 3,
-            "correct_exercise_count" => 2
+            "complete" => true
           )
         ),
         "role" => {
@@ -583,13 +578,33 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                 "id" => @page_2.id.to_s,
                 "title" => @page_2.title,
                 "chapter_section" => [4, 2],
-                "exercises" => []
+                "last_worked_at" => be_kind_of(String),
+                "exercises" => Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT.times.map do
+                  {
+                    "id" => a_kind_of(String),
+                    "is_completed" => true,
+                    "is_correct" => true
+                  }
+                end + Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_COUNT.times.map do
+                  {
+                    "id" => a_kind_of(String),
+                    "is_completed" => true,
+                    "is_correct" => false
+                  }
+                end
               },
               {
                 "id" => @page_1.id.to_s,
                 "title" => @page_1.title,
                 "chapter_section" => [4, 1],
-                "exercises" => []
+                "last_worked_at" => be_kind_of(String),
+                "exercises" => Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT.times.map do
+                  {
+                    "id" => a_kind_of(String),
+                    "is_completed" => true,
+                    "is_correct" => true
+                  }
+                end
               }
             ]
           }

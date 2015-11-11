@@ -56,40 +56,6 @@ module Api::V1::Courses::Cc
                schema_info: { type: 'boolean' }
     end
 
-    class ReadingTask < TaskBase
-      property :actual_and_placeholder_exercise_count,
-               as: :exercise_count,
-               type: Integer,
-               readable: true,
-               writeable: false
-
-      property :completed_exercise_count,
-               as: :complete_exercise_count,
-               type: Integer,
-               readable: true,
-               writeable: false
-    end
-
-    class HomeworkTask < TaskBase
-      property :actual_and_placeholder_exercise_count,
-               as: :exercise_count,
-               type: Integer,
-               readable: true,
-               writeable: false
-
-      property :completed_exercise_count,
-               as: :complete_exercise_count,
-               type: Integer,
-               readable: true,
-               writeable: false
-
-      property :correct_exercise_count,
-               type: Integer,
-               readable: true,
-               writeable: false,
-               if: -> (*) { past_due? && completed? }
-    end
-
     class Role < Roar::Decorator
       include Roar::JSON
       include Representable::Coercion
@@ -154,18 +120,9 @@ module Api::V1::Courses::Cc
                readable: true,
                writeable: false,
                skip_render: -> (object, options) {
-                 !['reading','homework','external','event'].include?(object.task_type.to_s)
+                 object.task_type.to_s != 'concept_coach'
                },
-               decorator: -> (task, *) {
-                 case task.task_type.to_s
-                 when 'reading'
-                   ReadingTask
-                 when 'homework'
-                   HomeworkTask
-                 else
-                   TaskBase
-                 end
-               }
+               decorator: TaskBase
 
     property :role,
              readable: true,

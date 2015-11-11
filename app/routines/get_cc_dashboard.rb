@@ -16,7 +16,7 @@ class GetCcDashboard
     load_role(role, role_type)
     load_course(course, role_type)
     load_tasks(role, role_type)
-    load_cc_stats(role, role_type) if :teacher == role_type
+    load_cc_stats(role, role_type)
   end
 
   def load_cc_stats(role, role_type)
@@ -101,7 +101,7 @@ class GetCcDashboard
             title: page.title,
             book_location: page.book_location,
             last_worked_at: tasks.max_by(&:last_worked_at).last_worked_at,
-            exercises: tasked_exercises.map do |te|
+            exercises: tasked_exercises.sort_by{ |te| te.task_step.number }.map do |te|
               {
                 id: te.content_exercise_id,
                 is_completed: te.task_step.completed?,
