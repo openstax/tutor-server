@@ -31,15 +31,15 @@ class Admin::CoursesController < Admin::BaseController
 
   def students
     handle_with(Admin::CoursesStudents, success: -> {
-      add_students(@handler_result.outputs.period,
-                   @handler_result.outputs.users_attributes)
       flash[:notice] = 'Student roster has been uploaded.'
-      redirect_to edit_admin_course_path(params[:id], anchor: 'roster')
     },
     failure: -> {
-      flash[:error] = @handler_result.errors.collect(&:message).compact
-      redirect_to edit_admin_course_path(params[:id], anchor: 'roster')
+      flash[:error] = ['Error uploading student roster'] +
+                        @handler_result.errors.collect(&:message).flatten
+
     })
+
+    redirect_to edit_admin_course_path(params[:id], anchor: 'roster')
   end
 
   def set_ecosystem
@@ -87,22 +87,5 @@ class Admin::CoursesController < Admin::BaseController
 
   def get_schools
     @schools = SchoolDistrict::ListSchools[]
-  end
-
-  def add_students(period, users_attributes)
-    users_attributes.each do |user_attributes|
-      user = find_or_create(user_attributes)
-      AddUserAsPeriodStudent.call(period: period, user: user)
-    end
-  end
-
-  def find_or_create(user)
-    username = user['username']
-    first_name = user['first_name']
-    last_name = user['last_name']
-    User::FindOrCreateUser[username: user['username'],
-                           password: user['password'],
-                           first_name: first_name,
-                           last_name: last_name]
   end
 end

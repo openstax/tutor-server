@@ -1,41 +1,65 @@
 class Admin::CoursesStudents
   lev_handler
 
+  uses_routine AddUserAsPeriodStudent
+  uses_routine User::FindOrCreateUser, as: :find_or_create_user,
+                                       translations: { outputs: { type: :verbatim } }
+
   protected
   def authorized?; true; end
 
   def handle
-    outputs.period = CourseMembership::Models::Period.find(params[:course][:period])
-    outputs.users_attributes = []
-
-    if params[:student_roster].blank?
-      fatal_error(code: :no_file_attached, message: 'You must attach a file to upload.')
+    if params[:student_roster].present?
+      add_students_from_roster_file
+    else
+      fatal_error(code: :blank_file, message: "You must attach a file to upload.")
     end
+  end
 
+  private
+  def add_students_from_roster_file
     begin
-      csv_reader = CSV.new(params[:student_roster].read, headers: true)
-
-      csv_reader.each do |row|
-        outputs.users_attributes << row
-
-        unless row['username'].present?
-          nonfatal_error(code: :username_missing,
-                      message: "On line #{csv_reader.lineno}, username is missing.")
-        end
-
-        unless row['password'].present?
-          nonfatal_error(code: :password_missing,
-                      message: "On line #{csv_reader.lineno}, password is missing.")
-        end
-      end
+      add_students(parse_attributes_from_roster_file)
     rescue CSV::MalformedCSVError => e
-      nonfatal_error(code: :malformed_csv, message: e.message)
+      fatal_error(code: :malformed_csv, message: e.message)
+    end
+  end
+
+  def parse_attributes_from_roster_file
+    csv_reader = CSV.new(params[:student_roster].read, headers: true)
+    users_attributes = []
+    parse_errors = []
+
+    csv_reader.each do |row|
+      parse_errors << validate_csv_row(row, csv_reader.lineno, :username)
+      parse_errors << validate_csv_row(row, csv_reader.lineno, :password)
+      parse_errors.compact!
+      next if parse_errors.any?
+      users_attributes << row
     end
 
-    if errors.any?
-      errors.insert(0, Lev::Error.new(code: :error_uploading,
-                                      message: 'Error uploading student roster'))
-      fatal_error(code: :fatal_errors)
+    if parse_errors.any?
+      fatal_error(code: :parse_errors, message: parse_errors)
+    else
+      users_attributes
     end
+  end
+
+  def add_students(users_attributes)
+    period = CourseMembership::Models::Period.find(params[:course][:period])
+
+    users_attributes.each do |attrs|
+      run(:find_or_create_user, username: attrs['username'],
+                                password: attrs['password'],
+                                first_name: attrs['first_name'],
+                                last_name: attrs['last_name'])
+
+      user = [outputs.user].flatten.last # blame it on nested routines
+      run(:add_user_as_period_student, period: period, user: user)
+    end
+  end
+
+  def validate_csv_row(row, lineno, attr)
+    "On line #{lineno}, #{attr} is missing." if row[attr.to_s].blank?
   end
 end
