@@ -72,6 +72,7 @@ Rails.application.routes.draw do
     resources :courses, only: [:show, :update] do
       member do
         get 'dashboard(/role/:role_id)', action: :dashboard
+        get 'cc/dashboard(/role/:role_id)', action: :cc_dashboard
         get 'plans'
         get 'tasks'
 

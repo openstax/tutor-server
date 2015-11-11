@@ -72,17 +72,42 @@ class Api::V1::CoursesController < Api::V1::ApiController
     respond_with output, represent_with: Api::V1::TaskSearchRepresenter
   end
 
-  api :GET, '/courses/:course_id/dashboard(/role/:role_id)', 'Gets dashboard information for a given course'
+  api :GET, '/courses/:course_id/dashboard(/role/:role_id)',
+            'Gets dashboard information for a given non-CC course'
   description <<-EOS
+    Possible error codes:
+      - cc_course
+
     #{json_schema(Api::V1::Courses::DashboardRepresenter, include: :readable)}
   EOS
   def dashboard
     course = Entity::Course.find(params[:id])
-    data = GetDashboard.call(
-             course: course,
-             role: get_course_role
-           ).outputs
-    respond_with data, represent_with: Api::V1::Courses::DashboardRepresenter
+    result = GetNonCcDashboard.call(course: course, role: get_course_role)
+
+    if result.errors.any?
+      render_api_errors(result.errors)
+    else
+      respond_with result.outputs, represent_with: Api::V1::Courses::DashboardRepresenter
+    end
+  end
+
+  api :GET, '/courses/:course_id/cc/dashboard(/role/:role_id)',
+            'Gets dashboard information for a given CC course'
+  description <<-EOS
+    Possible error codes:
+      - non_cc_course
+
+    #{json_schema(Api::V1::Courses::Cc::DashboardRepresenter, include: :readable)}
+  EOS
+  def cc_dashboard
+    course = Entity::Course.find(params[:id])
+    result = GetCcDashboard.call(course: course, role: get_course_role)
+
+    if result.errors.any?
+      render_api_errors(result.errors)
+    else
+      respond_with result.outputs, represent_with: Api::V1::Courses::Cc::DashboardRepresenter
+    end
   end
 
   protected

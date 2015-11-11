@@ -1,4 +1,4 @@
-module Api::V1::Courses
+module Api::V1::Courses::Cc
 
   class DashboardRepresenter < ::Roar::Decorator
 
@@ -17,46 +17,6 @@ module Api::V1::Courses
                type: String,
                readable: true,
                writeable: false
-    end
-
-    class Plan < Base
-
-      property :is_trouble,
-               readable: true,
-               writeable: false,
-               schema_info: { type: 'boolean' }
-
-      property :type,
-               type: String,
-               readable: true,
-               writeable: false
-
-      property :is_publish_requested,
-               readable: true,
-               writeable: true,
-               schema_info: { type: 'boolean' }
-
-      property :published_at,
-               type: String,
-               readable: true,
-               writeable: false,
-               getter: ->(*) { DateTimeUtilities.to_api_s(published_at) }
-
-      property :publish_last_requested_at,
-               type: String,
-               readable: true,
-               writeable: false,
-               getter: ->(*) { DateTimeUtilities.to_api_s(publish_last_requested_at) }
-
-      property :publish_job_uuid,
-               type: String,
-               readable: true,
-               writeable: false
-
-      collection :tasking_plans,
-                 readable: true,
-                 writeable: false,
-                 decorator: Api::V1::TaskingPlanRepresenter
     end
 
     class TaskBase < Base
@@ -181,14 +141,14 @@ module Api::V1::Courses
                  readable: true,
                  writeable: false,
                  decorator: Teacher
+
+      collection :periods,
+                 readable: true,
+                 writeable: false,
+                 decorator: Api::V1::Courses::Cc::Teacher::PeriodRepresenter
     end
 
     # Actual attributes below
-
-    collection :plans,
-               readable: true,
-               writeable: false,
-               decorator: Plan
 
     collection :tasks,
                readable: true,
@@ -216,6 +176,11 @@ module Api::V1::Courses
              readable: true,
              writeable: false,
              decorator: Course
+
+    collection :chapters,
+               readable: true,
+               writeable: false,
+               decorator: Api::V1::Courses::Cc::Student::ChapterRepresenter
 
   end
 

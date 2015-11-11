@@ -13,11 +13,10 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   let!(:user_2_token)       { FactoryGirl.create :doorkeeper_access_token,
                                                  resource_owner_id: user_2.id }
 
-  let!(:userless_token)  { FactoryGirl.create :doorkeeper_access_token }
+  let!(:userless_token)     { FactoryGirl.create :doorkeeper_access_token }
 
-  let!(:course)          { CreateCourse[name: 'Physics 101'] }
-  let!(:period)          { CreatePeriod[course: course] }
-
+  let!(:course)             { CreateCourse[name: 'Physics 101'] }
+  let!(:period)             { CreatePeriod[course: course] }
 
   def add_book_to_course(course:)
     book = FactoryGirl.create(:content_book, :standard_contents_1)
@@ -237,18 +236,15 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   end
 
   describe "dashboard" do
-    let!(:student_user) { FactoryGirl.create(:user) }
-    let!(:student_role)    { AddUserAsPeriodStudent.call(user: student_user, period: period)
-                                                   .outputs.role }
-    let!(:student_token)   { FactoryGirl.create :doorkeeper_access_token,
-                                                resource_owner_id: student_user.id }
+    let!(:student_user)   { FactoryGirl.create(:user) }
+    let!(:student_role)   { AddUserAsPeriodStudent[user: student_user, period: period] }
+    let!(:student_token)  { FactoryGirl.create :doorkeeper_access_token,
+                                               resource_owner_id: student_user.id }
 
-    let!(:teacher_user) { FactoryGirl.create(:user, first_name: 'Bob',
-                                                    last_name: 'Newhart',
-                                                    full_name: 'Bob Newhart') }
-    let!(:teacher_role)   { AddUserAsCourseTeacher.call(user: teacher_user,
-                                                        course: course)
-                                                  .outputs.role }
+    let!(:teacher_user)   { FactoryGirl.create(:user, first_name: 'Bob',
+                                                      last_name: 'Newhart',
+                                                      full_name: 'Bob Newhart') }
+    let!(:teacher_role)   { AddUserAsCourseTeacher[user: teacher_user, course: course] }
     let!(:teacher_token)  { FactoryGirl.create :doorkeeper_access_token,
                                                resource_owner_id: teacher_user.id }
 
@@ -299,6 +295,13 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       expect {
         api_get :dashboard, user_1_token, parameters: { id: course.id }
       }.to raise_error(SecurityTransgression)
+    end
+
+    it 'returns an error if the course is a CC course' do
+      course.profile.update_attribute(:is_concept_coach, true)
+      api_get :dashboard, student_token, parameters: {id: course.id}
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body_as_hash[:errors].first[:code]).to eq 'cc_course'
     end
 
     it "works for a student without a role specified" do
@@ -430,6 +433,244 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       })
       expect(response_body['tasks']).not_to be_empty
       expect(response_body['plans']).to be_nil
+    end
+  end
+
+  describe "cc_dashboard" do
+    let!(:student_user)   { FactoryGirl.create(:user) }
+    let!(:student_role)   { AddUserAsPeriodStudent[user: student_user, period: period] }
+    let!(:student_token)  { FactoryGirl.create :doorkeeper_access_token,
+                                               resource_owner_id: student_user.id }
+
+    let!(:student_user_2) { FactoryGirl.create(:user) }
+    let!(:student_role_2) { AddUserAsPeriodStudent[user: student_user_2, period: period] }
+
+    let!(:teacher_user)   { FactoryGirl.create(:user, first_name: 'Bob',
+                                                    last_name: 'Newhart',
+                                                    full_name: 'Bob Newhart') }
+    let!(:teacher_role)   { AddUserAsCourseTeacher[user: teacher_user, course: course] }
+    let!(:teacher_token)  { FactoryGirl.create :doorkeeper_access_token,
+                                               resource_owner_id: teacher_user.id }
+
+    before(:all)         do
+      DatabaseCleaner.start
+
+      @chapter = FactoryGirl.create :content_chapter, book_location: [4]
+      cnx_page_1 = OpenStax::Cnx::V1::Page.new(id: '95e61258-2faf-41d4-af92-f62e1414175a',
+                                               title: 'Force')
+      cnx_page_2 = OpenStax::Cnx::V1::Page.new(id: '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6',
+                                               title: "Newton's First Law of Motion: Inertia")
+      book_location_1 = [4, 1]
+      book_location_2 = [4, 2]
+
+      page_model_1, page_model_2 = VCR.use_cassette('Api_V1_CoursesController/with_pages',
+                                                    VCR_OPTS) do
+        [Content::Routines::ImportPage[chapter: @chapter,
+                                       cnx_page: cnx_page_1,
+                                       book_location: book_location_1],
+         Content::Routines::ImportPage[chapter: @chapter,
+                                       cnx_page: cnx_page_2,
+                                       book_location: book_location_2]]
+      end
+
+      @book = @chapter.book
+      Content::Routines::PopulateExercisePools[book: @book]
+
+      @page_1 = Content::Page.new(strategy: page_model_1.reload.wrap)
+      @page_2 = Content::Page.new(strategy: page_model_2.reload.wrap)
+
+      ecosystem_model = @book.ecosystem
+      @ecosystem = Content::Ecosystem.new(strategy: ecosystem_model.wrap)
+    end
+
+    before(:each) do
+      course.profile.update_attribute(:is_concept_coach, true)
+
+      AddEcosystemToCourse[ecosystem: @ecosystem, course: course]
+
+      @task_1 = GetConceptCoach[
+        user: student_user, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
+      ].task
+      @task_1.task_steps.each do |ts|
+        Hacks::AnswerExercise[task_step: ts, is_correct: true]
+      end
+      @task_2 = GetConceptCoach[
+        user: student_user, cnx_book_id: @book.uuid, cnx_page_id: @page_2.uuid
+      ].task
+      @task_2.task_steps.each do |ts|
+        Hacks::AnswerExercise[task_step: ts, is_correct: ts.core_group?]
+      end
+      @task_3 = GetConceptCoach[
+        user: student_user_2, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
+      ].task
+      @task_3.task_steps.select(&:core_group?).first(2).each_with_index do |ts, ii|
+        Hacks::AnswerExercise[task_step: ts, is_correct: ii == 0]
+      end
+      @task_4 = GetConceptCoach[
+        user: student_user_2, cnx_book_id: @book.uuid, cnx_page_id: @page_2.uuid
+      ].task
+    end
+
+    after(:all) do
+      DatabaseCleaner.clean
+    end
+
+    it 'raises SecurityTransgression if user is anonymous or not in course' do
+      expect {
+        api_get :cc_dashboard, nil, parameters: { id: course.id }
+      }.to raise_error(SecurityTransgression)
+
+      expect {
+        api_get :cc_dashboard, user_1_token, parameters: { id: course.id }
+      }.to raise_error(SecurityTransgression)
+    end
+
+    it 'returns an error if the course is a non-CC course' do
+      course.profile.update_attribute(:is_concept_coach, false)
+      api_get :cc_dashboard, student_token, parameters: {id: course.id}
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body_as_hash[:errors].first[:code]).to eq 'non_cc_course'
+    end
+
+    it "works for a student without a role specified" do
+      api_get :cc_dashboard, student_token, parameters: {id: course.id}
+
+      expect(HashWithIndifferentAccess[response.body_as_hash]).to include(
+
+        "tasks" => a_collection_including(
+          a_hash_including(
+            "id" => @task_1.id.to_s,
+            "title" => @task_1.title,
+            "opens_at" => be_kind_of(String),
+            "due_at" => be_kind_of(String),
+            "type" => "concept_coach",
+            "complete" => false,
+            "exercise_count" => 3,
+            "complete_exercise_count" => 2
+          ),
+          a_hash_including(
+            "id" => @task_2.id.to_s,
+            "title" => @task_2.title,
+            "opens_at" => be_kind_of(String),
+            "due_at" => be_kind_of(String),
+            "type" => "concept_coach",
+            "complete" => true,
+            "exercise_count" => 3,
+            "complete_exercise_count" => 3,
+            "correct_exercise_count" => 2
+          )
+        ),
+        "role" => {
+          "id" => student_role.id.to_s,
+          "type" => "student"
+        },
+        "course" => {
+          "name" => "Physics 101",
+          "teachers" => [
+            { 'id' => teacher_role.teacher.id.to_s,
+              'role_id' => teacher_role.id.to_s,
+              'first_name' => 'Bob',
+              'last_name' => 'Newhart' }
+          ]
+        },
+        "chapters" => [
+          {
+            "id" => @chapter.id.to_s,
+            "title" => @chapter.title,
+            "chapter_section" => [4],
+            "pages" => [
+              {
+                "id" => @page_2.id.to_s,
+                "title" => @page_2.title,
+                "chapter_section" => [4, 2],
+                "exercises" => []
+              },
+              {
+                "id" => @page_1.id.to_s,
+                "title" => @page_1.title,
+                "chapter_section" => [4, 1],
+                "exercises" => []
+              }
+            ]
+          }
+        ]
+      )
+    end
+
+    it "works for a teacher without a role specified" do
+      api_get :cc_dashboard, teacher_token, parameters: {id: course.id}
+
+      expect(HashWithIndifferentAccess[response.body_as_hash]).to include(
+        "role" => {
+          "id" => teacher_role.id.to_s,
+          "type" => "teacher"
+        },
+        "course" => {
+          "name" => "Physics 101",
+          "teachers" => [
+            { 'id' => teacher_role.teacher.id.to_s,
+              'role_id' => teacher_role.id.to_s,
+              'first_name' => 'Bob',
+              'last_name' => 'Newhart' }
+          ],
+          "periods" => [
+            {
+              "id" => period.id.to_s,
+              "name" => period.name,
+              "chapters" => [
+                {
+                  "id" => @chapter.id.to_s,
+                  "title" => @chapter.title,
+                  "chapter_section" => [4],
+                  "pages" => [
+                    {
+                      "id" => @page_2.id.to_s,
+                      "title" => @page_2.title,
+                      "chapter_section" => [4, 2],
+                      "completed" => 1,
+                      "in_progress" => 0,
+                      "not_started" => 1,
+                      "original_performance" => 1.0
+                    },
+                    {
+                      "id" => @page_1.id.to_s,
+                      "title" => @page_1.title,
+                      "chapter_section" => [4, 1],
+                      "completed" => 1,
+                      "in_progress" => 1,
+                      "not_started" => 0,
+                      "original_performance" => 5/6.to_f,
+                      "spaced_practice_performance" => 0.0
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "tasks" => []
+      )
+    end
+
+    it "works for a teacher with student role specified" do
+      api_get :cc_dashboard, teacher_token, parameters: { id: course.id, role_id: student_role }
+
+      response_body = HashWithIndifferentAccess[response.body_as_hash]
+      expect(response_body['role']).to eq({
+        'id' => student_role.id.to_s,
+        'type' => 'student'
+      })
+      expect(response_body['course']).to eq({
+        'name' => 'Physics 101',
+        'teachers' => [
+          { 'id' => teacher_role.teacher.id.to_s,
+            'role_id' => teacher_role.id.to_s,
+            'first_name' => 'Bob',
+            'last_name' => 'Newhart' }
+        ]
+      })
+      expect(response_body['chapters']).not_to be_empty
+      expect(response_body['tasks']).not_to be_empty
     end
   end
 
