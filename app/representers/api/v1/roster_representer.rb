@@ -1,7 +1,6 @@
 module Api::V1
   class RosterRepresenter < Roar::Decorator
     include Roar::JSON
-    include Representable::JSON::Collection
 
     property :teacher_join_url,
              type: String,
