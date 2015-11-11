@@ -1,5 +1,6 @@
 class Admin::CoursesController < Admin::BaseController
   include Manager::CourseDetails
+  include Lev::HandleWith
 
   before_action :get_schools, only: [:new, :edit]
 
@@ -29,28 +30,14 @@ class Admin::CoursesController < Admin::BaseController
   end
 
   def students
-    # Upload a csv file with columns: first_name, last_name, username, password
-    period = CourseMembership::Models::Period.find(params[:course][:period])
-    roster_file = params[:student_roster]
+    handle_with(Admin::CoursesStudents, success: -> {
+      flash[:notice] = 'Student roster has been uploaded.'
+    },
+    failure: -> {
+      flash[:error] = ['Error uploading student roster'] +
+                        @handler_result.errors.collect(&:message).flatten
 
-    begin
-      csv_reader = CSV.new(roster_file.read, headers: true)
-      users_attributes = []
-      errors = []
-      csv_reader.each do |row|
-        users_attributes << row
-        errors << "On line #{csv_reader.lineno}, username is missing." unless row['username'].present?
-        errors << "On line #{csv_reader.lineno}, password is missing." unless row['password'].present?
-      end
-      if errors.present?
-        flash[:error] = ['Error uploading student roster'] + errors
-      else
-        add_students(period, users_attributes)
-        flash[:notice] = 'Student roster has been uploaded.'
-      end
-    rescue CSV::MalformedCSVError => e
-      flash[:error] = e.message
-    end
+    })
 
     redirect_to edit_admin_course_path(params[:id], anchor: 'roster')
   end
@@ -100,22 +87,5 @@ class Admin::CoursesController < Admin::BaseController
 
   def get_schools
     @schools = SchoolDistrict::ListSchools[]
-  end
-
-  def add_students(period, users_attributes)
-    users_attributes.each do |user_attributes|
-      user = find_or_create(user_attributes)
-      AddUserAsPeriodStudent.call(period: period, user: user)
-    end
-  end
-
-  def find_or_create(user)
-    username = user['username']
-    first_name = user['first_name']
-    last_name = user['last_name']
-    User::FindOrCreateUser[username: user['username'],
-                           password: user['password'],
-                           first_name: first_name,
-                           last_name: last_name]
   end
 end

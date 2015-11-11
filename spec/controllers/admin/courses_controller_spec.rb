@@ -53,14 +53,27 @@ RSpec.describe Admin::CoursesController, type: :controller do
     let!(:biology) { CreateCourse[name: 'Biology'] }
     let!(:biology_period) { CreatePeriod[course: biology, name: '3rd'] }
 
-    let!(:file_1) { fixture_file_upload('files/test_courses_post_students_1.csv', 'text/csv') }
-    let!(:file_2) { fixture_file_upload('files/test_courses_post_students_2.csv', 'text/csv') }
-    let!(:file_blankness) { fixture_file_upload('files/test_courses_post_students_blankness.csv', 'text/csv') }
-    let!(:incomplete_file) { fixture_file_upload('files/test_courses_post_students_incomplete.csv', 'text/csv') }
+    let!(:file_1) do
+      fixture_file_upload('files/test_courses_post_students_1.csv', 'text/csv')
+    end
+
+    let!(:file_2) do
+      fixture_file_upload('files/test_courses_post_students_2.csv', 'text/csv')
+    end
+
+    let!(:file_blankness) do
+      fixture_file_upload('files/test_courses_post_students_blankness.csv', 'text/csv')
+    end
+
+    let!(:incomplete_file) do
+      fixture_file_upload('files/test_courses_post_students_incomplete.csv', 'text/csv')
+    end
 
     it 'adds students to a course period' do
       expect {
-        post :students, id: physics.id, course: { period: physics_period.id }, student_roster: file_1
+        post :students, id: physics.id,
+                        course: { period: physics_period.id },
+                        student_roster: file_1
       }.to change { OpenStax::Accounts::Account.count }.by(3)
       expect(flash[:notice]).to eq('Student roster has been uploaded.')
 
@@ -73,11 +86,15 @@ RSpec.describe Admin::CoursesController, type: :controller do
 
     it 'reuses existing users for existing usernames' do
       expect {
-        post :students, id: physics.id, course: { period: physics_period.id }, student_roster: file_1
+        post :students, id: physics.id,
+                        course: { period: physics_period.id },
+                        student_roster: file_1
       }.to change { OpenStax::Accounts::Account.count }.by(3)
 
       expect {
-        post :students, id: biology.id, course: { period: biology_period.id }, student_roster: file_2
+        post :students, id: biology.id,
+                        course: { period: biology_period.id },
+                        student_roster: file_2
       }.to change { OpenStax::Accounts::Account.count }.by(1) # 2 in file but 1 reused
 
       # Carol B should be in both courses
@@ -88,7 +105,9 @@ RSpec.describe Admin::CoursesController, type: :controller do
 
     it 'does not add any students if username or password is missing' do
       expect {
-        post :students, id: physics.id, course: { period: physics_period.id }, student_roster: incomplete_file
+        post :students, id: physics.id,
+                        course: { period: physics_period.id },
+                        student_roster: incomplete_file
       }.to change { OpenStax::Accounts::Account.count }.by(0)
       expect(flash[:error]).to eq([
         'Error uploading student roster',
@@ -101,12 +120,21 @@ RSpec.describe Admin::CoursesController, type: :controller do
 
     it 'gives a nice error and no exception if has funky characters' do
       expect {
-        post :students, id: physics.id, course: { period: physics_period.id }, student_roster: file_blankness
+        post :students, id: physics.id,
+                        course: { period: physics_period.id },
+                        student_roster: file_blankness
       }.not_to raise_error
 
-      expect(flash[:error]).to eq 'Unquoted fields do not allow \r or \n (line 2).'
+      expect(flash[:error]).to include 'Unquoted fields do not allow \r or \n (line 2).'
     end
 
+    it 'gives a nice error if the file is blank' do
+      expect {
+        post :students, id: physics.id, course: { period: physics_period.id }
+      }.not_to raise_error
+
+      expect(flash[:error]).to include 'You must attach a file to upload.'
+    end
   end
 
   describe 'GET #edit' do
