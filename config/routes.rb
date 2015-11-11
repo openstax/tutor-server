@@ -21,6 +21,7 @@ Rails.application.routes.draw do
   get 'terms', to: 'terms#index'
 
   mount OpenStax::Accounts::Engine, at: "/accounts"
+  mount OpenStax::Api::Engine, at: '/'
   mount FinePrint::Engine => "/fine_print"
 
   use_doorkeeper
