@@ -46,10 +46,10 @@ class Api::V1::EnrollmentChangesController < Api::V1::ApiController
       return
     end
 
-    if enrollment_params.book_cnx_id.present?
+    if enrollment_params.book_uuid.present?
       ecosystem = GetCourseEcosystem[course: period.course]
 
-      if ecosystem.books.first.cnx_id != enrollment_params.book_cnx_id
+      if ecosystem.books.first.uuid != enrollment_params.book_uuid
         render_api_errors(:enrollment_code_does_not_match_book)
         return
       end

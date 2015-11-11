@@ -9,7 +9,7 @@ module Api::V1
              writeable: true,
              schema_info: { required: true }
 
-    property :book_cnx_id,
+    property :book_uuid,
              type: String,
              readable: false,
              writeable: true
