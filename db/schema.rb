@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151105162348) do
+ActiveRecord::Schema.define(version: 20151103171830) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -457,9 +457,11 @@ ActiveRecord::Schema.define(version: 20151105162348) do
   add_index "role_role_users", ["user_profile_id", "entity_role_id"], name: "role_role_users_user_role_uniq", unique: true, using: :btree
 
   create_table "salesforce_attached_records", force: :cascade do |t|
-    t.string "tutor_gid"
-    t.string "salesforce_class_name"
-    t.string "salesforce_id"
+    t.string   "tutor_gid",             null: false
+    t.string   "salesforce_class_name", null: false
+    t.string   "salesforce_id",         null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "salesforce_attached_records", ["salesforce_id", "salesforce_class_name", "tutor_gid"], name: "salesforce_attached_record_tutor_gid", unique: true, using: :btree
@@ -467,10 +469,10 @@ ActiveRecord::Schema.define(version: 20151105162348) do
 
   create_table "salesforce_users", force: :cascade do |t|
     t.string "name"
-    t.string "uid"
-    t.string "oauth_token"
-    t.string "refresh_token"
-    t.string "instance_url"
+    t.string "uid",           null: false
+    t.string "oauth_token",   null: false
+    t.string "refresh_token", null: false
+    t.string "instance_url",  null: false
   end
 
   create_table "school_district_districts", force: :cascade do |t|
