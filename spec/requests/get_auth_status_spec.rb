@@ -30,13 +30,15 @@ describe "Get authentication status", type: :request, version: :v1 do
                                            :iframe_login=>a_string_starting_with("http"),
                                            :accounts_iframe=>a_string_starting_with("http")
                                          },
-                                         :current_user => {
+                                         :user => {
                                            :name=>user.name,
                                            :is_admin=>false,
                                            :is_customer_service=>false,
                                            :is_content_analyst=>false,
                                            :profile_url=>a_string_starting_with("http")
-                                         })
+                                         },
+                                         :courses => []
+                                       )
     end
 
     it 'sets cors headers' do

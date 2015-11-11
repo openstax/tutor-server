@@ -46,7 +46,7 @@ class AuthController < ApplicationController
   def user_status_update
     status = strategy.authorize.body.slice('access_token')
     unless current_user.is_anonymous?
-      status[:current_user] = Api::V1::UserRepresenter.new(current_user)
+      status.merge! Api::V1::UserBootstrapDataRepresenter.new(current_user)
     end
     status[:endpoints] = {
       login: openstax_accounts.login_url,

@@ -25,11 +25,22 @@ module Api::V1
              type: String,
              readable: true,
              writeable: false,
-             if: ->(*) { respond_to?(:ecosystem) },
+             if: ->(*) { respond_to?(:ecosystem) and ecosystem },
              getter: ->(*) { ecosystem.try(:id) },
              schema_info: {
               description: "The ID of the course's content ecosystem, if available.",
               required: false
+             }
+
+    property :ecosystem_book_uuid,
+             type: String,
+             readable: true,
+             writeable: false,
+             if: ->(*) { respond_to?(:ecosystem_book) and ecosystem_book },
+             getter: ->(*) { ecosystem_book.uuid },
+             schema_info: {
+               description: "The UUID of the book for the course's content ecosystem, if available.",
+               required: false
              }
 
     property :is_concept_coach,
@@ -39,7 +50,6 @@ module Api::V1
                required: true,
                type: 'boolean'
              }
-
     collection :roles,
                extend: Api::V1::RoleRepresenter,
                readable: true,
