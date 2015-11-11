@@ -14,8 +14,6 @@ module Tasks
         end
     end
 
-    private
-
     def get_performance_report_for_teacher(course)
       taskings = get_taskings(course)
       course.periods.collect do |period|
@@ -98,29 +96,9 @@ module Tasks
           plan_id: task_plan.id,
           type: task_plan.type,
           due_at: tasking_plan.due_at,
-          average: average(task_plan, task_plan_results[task_plan])
+          average: average(task_plan_results[task_plan])
         }
       end
-    end
-
-    # returns the average for the task_plan
-    def average(task_plan, tasks)
-      # skip if not a homework.
-      return unless task_plan.type == 'homework'
-
-      # tasks must have more than 0 exercises and
-      # have been started or it must be past due
-      valid_tasks = tasks.select do |task|
-        task.exercise_steps_count > 0 && \
-        (task.completed_exercise_steps_count > 0 || task.past_due?)
-      end
-
-      # skip if no tasks meet the display requirements
-      return if valid_tasks.none?
-
-      valid_tasks.reduce(0){ |sum, task|
-        sum + ( task.correct_exercise_steps_count * 100.0 / task.exercise_steps_count )
-      } / valid_tasks.size
     end
 
     def get_cc_performance_report_for_teacher(course)
@@ -182,22 +160,15 @@ module Tasks
 
     def get_cc_data_headings(period_cc_tasks_map_array, sorted_period_pages)
       sorted_period_pages.map do |page|
-        page_cc_tasks = period_cc_tasks_map_array.flat_map{ |hash| hash[page] }
+        page_tasks = period_cc_tasks_map_array.flat_map{ |hash| hash[page] }
+                                              .map{ |cc_task| cc_task.task.task }
 
         {
           title: page.title,
           type: 'concept_coach',
-          average: cc_average(page_cc_tasks)
+          average: average(page_tasks)
         }
       end
-    end
-
-    # returns the average for the page
-    def cc_average(page_cc_tasks)
-      page_tasks = page_cc_tasks.compact.map{ |cc_task| cc_task.task.task }
-      correct_count = page_tasks.map(&:correct_exercise_count).reduce(:+)
-      completed_count = page_tasks.map(&:completed_exercise_count).reduce(:+)
-      correct_count * 100.0/completed_count
     end
 
     def get_student_cc_data(page_cc_tasks_map_for_role, sorted_pages)
@@ -210,12 +181,31 @@ module Tasks
         # Here we assume only 1 CC task per student per page
         cc_tasks.first.task.task
       end
+
       get_student_data(tasks)
+    end
+
+    # returns the average for the given tasks
+    def average(tasks)
+      # tasks must have more than 0 exercises and
+      # have been started or it must be past due
+      valid_tasks = tasks.select do |task|
+        (task.task_type == 'homework' || task.task_type == 'concept_coach') &&
+        task.exercise_steps_count > 0 &&
+        (task.completed_exercise_steps_count > 0 || task.past_due?)
+      end
+
+      # skip if no tasks meet the display requirements
+      return if valid_tasks.none?
+
+      valid_tasks.reduce(0) do |sum, task|
+        sum + ( task.correct_exercise_steps_count * 100.0 / task.exercise_steps_count )
+      end / valid_tasks.size
     end
 
     def get_student_data(tasks)
       tasks.collect do |task|
-        # skip if the student hasn't worked this particular task_plan
+        # skip if the student hasn't worked this particular task_plan/page
         next if task.nil?
 
         data = {
