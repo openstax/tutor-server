@@ -17,6 +17,8 @@ class AuthController < ApplicationController
   skip_before_action :verify_authenticity_token,
                      only: [:status, :cors_preflight_check, :iframe]
 
+  layout false
+
   def status
     render json: user_status_update
   end
