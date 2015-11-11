@@ -4,9 +4,8 @@ class CoursesController < ApplicationController
   def join
     handle_with(CoursesJoin, success: -> { redirect_to dashboard_path },
                              failure: -> {
-                               @handler_result.errors.each do |e|
-                                 CoursesJoin.handle_error(e)
-                               end
+                               error_code = @handler_result.errors.first.code
+                               raise CoursesJoin.handled_exceptions[error_code]
                              })
   end
 end

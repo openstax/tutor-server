@@ -4,8 +4,11 @@ class CoursesJoin
   uses_routine AddUserAsCourseTeacher, as: :add_teacher
   uses_routine GetCourseProfile
 
-  def self.handle_error(error)
-    raise handled_exceptions[error.code]
+  def self.handled_exceptions
+    @@handled_exceptions ||= {
+      profile_not_found: InvalidTeacherJoinToken,
+      user_is_already_teacher_of_course: UserAlreadyCourseTeacher
+    }
   end
 
   protected
@@ -23,13 +26,6 @@ class CoursesJoin
     }).outputs.profile
 
     Entity::Course.find(profile.course_id)
-  end
-
-  def self.handled_exceptions
-    @@handled_exceptions ||= {
-      profile_not_found: InvalidTeacherJoinToken,
-      user_is_already_teacher_of_course: UserAlreadyCourseTeacher
-    }
   end
 end
 
