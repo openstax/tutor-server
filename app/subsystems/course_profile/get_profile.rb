@@ -18,10 +18,6 @@ class CourseProfile::GetProfile
   end
 
   def get_profile_by_attrs(attrs)
-    if profile = CourseProfile::Models::Profile.find_by(attrs)
-      profile
-    else
-      fatal_error(code: :profile_not_found)
-    end
+    CourseProfile::Models::Profile.find_by(attrs) || fatal_error(code: :profile_not_found)
   end
 end
