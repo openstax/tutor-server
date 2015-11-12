@@ -43,6 +43,18 @@ module Api::V1
                required: false
              }
 
+    property :book_pdf_url,
+             type: String,
+             readable: true,
+             writeable: false,
+             if: ->(*) { catalog_offering_identifier.present? },
+             getter: ->(*) do
+               Catalog::Offering.find_by(identifier: catalog_offering_identifier).try(:pdf_url)
+             end,
+             schema_info: {
+               description: "The book's PDF url, if available."
+             }
+
     property :is_concept_coach,
              readable: true,
              writeable: false,
