@@ -99,101 +99,6 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
             first_name: 'Bob',
             last_name: 'Newhart'
           })
-        ],
-        periods: [
-          Hashie::Mash.new({
-            id: '46',
-            name: '1st',
-            chapters: [
-              Hashie::Mash.new({
-                id: '47',
-                title: 'Ch 1',
-                book_location: [1],
-                pages: [
-                  Hashie::Mash.new({
-                    id: '48',
-                    title: 'Pg 1',
-                    book_location: [1, 1],
-                    completed: 0,
-                    in_progress: 1,
-                    not_started: 2,
-                    original_performance: 0.0,
-                    spaced_practice_performance: 0.1
-                  }),
-                  Hashie::Mash.new({
-                    id: '49',
-                    title: 'Pg 2',
-                    book_location: [1, 2],
-                    completed: 3,
-                    in_progress: 4,
-                    not_started: 5,
-                    original_performance: 0.2,
-                    spaced_practice_performance: 0.3
-                  })
-                ]
-              }),
-              Hashie::Mash.new({
-                id: '50',
-                title: 'Ch 2',
-                book_location: [2],
-                pages: [
-                  Hashie::Mash.new({
-                    id: '51',
-                    title: 'Pg 3',
-                    book_location: [2, 1],
-                    completed: 6,
-                    in_progress: 7,
-                    not_started: 8,
-                    original_performance: 0.4,
-                    spaced_practice_performance: 0.5
-                  }),
-                  Hashie::Mash.new({
-                    id: '52',
-                    title: 'Pg 4',
-                    book_location: [2, 2],
-                    completed: 9,
-                    in_progress: 10,
-                    not_started: 11,
-                    original_performance: 0.6,
-                    spaced_practice_performance: 0.7
-                  })
-                ]
-              })
-            ]
-          }),
-          Hashie::Mash.new({
-            id: '53',
-            name: '2nd',
-            chapters: [
-              Hashie::Mash.new({
-                id: '47',
-                title: 'Ch 1',
-                book_location: [1],
-                pages: [
-                  Hashie::Mash.new({
-                    id: '48',
-                    title: 'Pg 1',
-                    book_location: [1, 1],
-                    completed: 12,
-                    in_progress: 13,
-                    not_started: 14,
-                    original_performance: 0.7,
-                    spaced_practice_performance: 0.8
-                  }),
-                  Hashie::Mash.new({
-                    id: '49',
-                    title: 'Pg 2',
-                    book_location: [1, 2],
-                    completed: 15,
-                    in_progress: 16,
-                    not_started: 17,
-                    original_performance: 0.9,
-                    spaced_practice_performance: 1.0
-                  })
-                ]
-              })
-            ]
-          })
         ]
       }
       mash.role = {
@@ -204,7 +109,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
   }
 
   it "represents dashboard output" do
-    representation = Api::V1::Courses::DashboardRepresenter.new(data).as_json
+    representation = described_class.new(data).as_json
 
     expect(representation).to include(
       "plans" => [
@@ -286,101 +191,6 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
             "role_id" => "45",
             "first_name" => "Bob",
             "last_name" => "Newhart" }
-        ],
-        "periods" => [
-          {
-            "id" => "46",
-            "name" => "1st",
-            "chapters" => [
-              {
-                "id" => "47",
-                "title" => "Ch 1",
-                "chapter_section" => [1],
-                "pages" => [
-                  {
-                    "id" => "48",
-                    "title" => "Pg 1",
-                    "chapter_section" => [1, 1],
-                    "completed" => 0,
-                    "in_progress" => 1,
-                    "not_started" => 2,
-                    "original_performance" => 0.0,
-                    "spaced_practice_performance" => 0.1
-                  },
-                  {
-                    "id" => "49",
-                    "title" => "Pg 2",
-                    "chapter_section" => [1, 2],
-                    "completed" => 3,
-                    "in_progress" => 4,
-                    "not_started" => 5,
-                    "original_performance" => 0.2,
-                    "spaced_practice_performance" => 0.3
-                  }
-                ]
-              },
-              {
-                "id" => "50",
-                "title" => "Ch 2",
-                "chapter_section" => [2],
-                "pages" => [
-                  {
-                    "id" => "51",
-                    "title" => "Pg 3",
-                    "chapter_section" => [2, 1],
-                    "completed" => 6,
-                    "in_progress" => 7,
-                    "not_started" => 8,
-                    "original_performance" => 0.4,
-                    "spaced_practice_performance" => 0.5
-                  },
-                  {
-                    "id" => "52",
-                    "title" => "Pg 4",
-                    "chapter_section" => [2, 2],
-                    "completed" => 9,
-                    "in_progress" => 10,
-                    "not_started" => 11,
-                    "original_performance" => 0.6,
-                    "spaced_practice_performance" => 0.7
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "id" => "53",
-            "name" => "2nd",
-            "chapters" => [
-              {
-                "id" => "47",
-                "title" => "Ch 1",
-                "chapter_section" => [1],
-                "pages" => [
-                  {
-                    "id" => "48",
-                    "title" => "Pg 1",
-                    "chapter_section" => [1, 1],
-                    "completed" => 12,
-                    "in_progress" => 13,
-                    "not_started" => 14,
-                    "original_performance" => 0.7,
-                    "spaced_practice_performance" => 0.8
-                  },
-                  {
-                    "id" => "49",
-                    "title" => "Pg 2",
-                    "chapter_section" => [1, 2],
-                    "completed" => 15,
-                    "in_progress" => 16,
-                    "not_started" => 17,
-                    "original_performance" => 0.9,
-                    "spaced_practice_performance" => 1.0
-                  }
-                ]
-              }
-            ]
-          }
         ]
       }
     )

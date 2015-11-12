@@ -9,6 +9,13 @@ describe Api::V1::CoursesController, type: :routing, api: true, version: :v1 do
     end
   end
 
+  describe "/api/courses/:course_id/cc/dashboard" do
+    it "routes to #cc_dashboard" do
+      expect(get '/api/courses/42/cc/dashboard').to route_to('api/v1/courses#cc_dashboard',
+                                                             format: 'json', id: "42")
+    end
+  end
+
   describe "/api/courses/:course_id/plans" do
     it "routes to #plans" do
       expect(get '/api/courses/42/plans').to route_to('api/v1/courses#plans',

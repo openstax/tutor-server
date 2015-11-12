@@ -1,6 +1,6 @@
-module Api::V1::Courses::Cc
+module Api::V1::Courses::Cc::Student
 
-  class ChapterRepresenter < ::Roar::Decorator
+  class ExerciseRepresenter < ::Roar::Decorator
 
     include ::Roar::JSON
     include Representable::Coercion
@@ -13,30 +13,21 @@ module Api::V1::Courses::Cc
                required: true
              }
 
-    property :title,
-             type: String,
-             readable: true,
-             writeable: false,
-             schema_info: {
-               required: true
-             }
-
-    property :book_location,
-             as: :chapter_section,
-             type: Array,
+    property :is_completed,
              writeable: false,
              readable: true,
              schema_info: {
+               type: 'boolean',
                required: true
              }
 
-    collection :pages,
-               readable: true,
-               writeable: false,
-               decorator: Api::V1::Courses::Cc::PageRepresenter,
-               schema_info: {
-                 required: true
-               }
+    property :is_correct,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               type: 'boolean',
+               required: true
+             }
 
   end
 

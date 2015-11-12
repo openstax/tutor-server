@@ -1,4 +1,4 @@
-module Api::V1::Courses::Cc
+module Api::V1::Courses::Cc::Teacher
 
   class PageRepresenter < ::Roar::Decorator
 
@@ -20,6 +20,16 @@ module Api::V1::Courses::Cc
              schema_info: {
                required: true
              }
+
+    property :uuid,
+             type: String,
+             readable: true,
+             writeable: false
+
+    property :version,
+             type: String,
+             readable: true,
+             writeable: false
 
     property :book_location,
              as: :chapter_section,

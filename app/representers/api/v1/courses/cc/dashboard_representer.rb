@@ -1,4 +1,4 @@
-module Api::V1::Courses
+module Api::V1::Courses::Cc
 
   class DashboardRepresenter < ::Roar::Decorator
 
@@ -19,58 +19,12 @@ module Api::V1::Courses
                writeable: false
     end
 
-    class Plan < Base
-
-      property :is_trouble,
-               readable: true,
-               writeable: false,
-               schema_info: { type: 'boolean' }
-
-      property :type,
-               type: String,
-               readable: true,
-               writeable: false
-
-      property :is_publish_requested,
-               readable: true,
-               writeable: true,
-               schema_info: { type: 'boolean' }
-
-      property :published_at,
-               type: String,
-               readable: true,
-               writeable: false,
-               getter: ->(*) { DateTimeUtilities.to_api_s(published_at) }
-
-      property :publish_last_requested_at,
-               type: String,
-               readable: true,
-               writeable: false,
-               getter: ->(*) { DateTimeUtilities.to_api_s(publish_last_requested_at) }
-
-      property :publish_job_uuid,
-               type: String,
-               readable: true,
-               writeable: false
-
-      collection :tasking_plans,
-                 readable: true,
-                 writeable: false,
-                 decorator: Api::V1::TaskingPlanRepresenter
-    end
-
     class TaskBase < Base
       property :opens_at,
                type: String,
                readable: true,
                writeable: false,
                getter: ->(*) { DateTimeUtilities.to_api_s(opens_at) }
-
-      property :due_at,
-               type: String,
-               readable: true,
-               writeable: false,
-               getter: ->(*) { DateTimeUtilities.to_api_s(due_at) }
 
       property :last_worked_at,
                type: String,
@@ -94,40 +48,6 @@ module Api::V1::Courses
                readable: true,
                writeable: false,
                schema_info: { type: 'boolean' }
-    end
-
-    class ReadingTask < TaskBase
-      property :actual_and_placeholder_exercise_count,
-               as: :exercise_count,
-               type: Integer,
-               readable: true,
-               writeable: false
-
-      property :completed_exercise_count,
-               as: :complete_exercise_count,
-               type: Integer,
-               readable: true,
-               writeable: false
-    end
-
-    class HomeworkTask < TaskBase
-      property :actual_and_placeholder_exercise_count,
-               as: :exercise_count,
-               type: Integer,
-               readable: true,
-               writeable: false
-
-      property :completed_exercise_count,
-               as: :complete_exercise_count,
-               type: Integer,
-               readable: true,
-               writeable: false
-
-      property :correct_exercise_count,
-               type: Integer,
-               readable: true,
-               writeable: false,
-               if: -> (*) { past_due? && completed? }
     end
 
     class Role < Roar::Decorator
@@ -181,31 +101,22 @@ module Api::V1::Courses
                  readable: true,
                  writeable: false,
                  decorator: Teacher
+
+      collection :periods,
+                 readable: true,
+                 writeable: false,
+                 decorator: Api::V1::Courses::Cc::Teacher::PeriodRepresenter
     end
 
     # Actual attributes below
-
-    collection :plans,
-               readable: true,
-               writeable: false,
-               decorator: Plan
 
     collection :tasks,
                readable: true,
                writeable: false,
                skip_render: -> (object, options) {
-                 !['reading','homework','external','event'].include?(object.task_type.to_s)
+                 object.task_type.to_s != 'concept_coach'
                },
-               decorator: -> (task, *) {
-                 case task.task_type.to_s
-                 when 'reading'
-                   ReadingTask
-                 when 'homework'
-                   HomeworkTask
-                 else
-                   TaskBase
-                 end
-               }
+               decorator: TaskBase
 
     property :role,
              readable: true,
@@ -216,6 +127,11 @@ module Api::V1::Courses
              readable: true,
              writeable: false,
              decorator: Course
+
+    collection :chapters,
+               readable: true,
+               writeable: false,
+               decorator: Api::V1::Courses::Cc::Student::ChapterRepresenter
 
   end
 

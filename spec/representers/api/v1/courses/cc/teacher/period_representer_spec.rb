@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::Courses::Cc::PeriodRepresenter, type: :representer do
+RSpec.describe Api::V1::Courses::Cc::Teacher::PeriodRepresenter, type: :representer do
   let!(:period)          {
     Hashie::Mash.new({
       id: 42,

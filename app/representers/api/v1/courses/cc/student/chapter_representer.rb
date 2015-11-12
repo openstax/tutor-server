@@ -1,6 +1,6 @@
-module Api::V1::Courses::Cc
+module Api::V1::Courses::Cc::Student
 
-  class PeriodRepresenter < ::Roar::Decorator
+  class ChapterRepresenter < ::Roar::Decorator
 
     include ::Roar::JSON
     include Representable::Coercion
@@ -13,7 +13,7 @@ module Api::V1::Courses::Cc
                required: true
              }
 
-    property :name,
+    property :title,
              type: String,
              readable: true,
              writeable: false,
@@ -21,10 +21,19 @@ module Api::V1::Courses::Cc
                required: true
              }
 
-    collection :chapters,
+    property :book_location,
+             as: :chapter_section,
+             type: Array,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               required: true
+             }
+
+    collection :pages,
                readable: true,
                writeable: false,
-               decorator: Api::V1::Courses::Cc::ChapterRepresenter,
+               decorator: Api::V1::Courses::Cc::Student::PageRepresenter,
                schema_info: {
                  required: true
                }
