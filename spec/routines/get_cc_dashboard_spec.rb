@@ -104,6 +104,8 @@ describe GetCcDashboard, type: :routine do
             {
               id: @page_2.id,
               title: @page_2.title,
+              uuid: @page_2.uuid,
+              version: @page_2.version,
               book_location: @page_2.book_location,
               last_worked_at: a_kind_of(Time),
               exercises: Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT.times.map do
@@ -123,6 +125,8 @@ describe GetCcDashboard, type: :routine do
             {
               id: @page_1.id,
               title: @page_1.title,
+              uuid: @page_1.uuid,
+              version: @page_1.version,
               book_location: @page_1.book_location,
               last_worked_at: a_kind_of(Time),
               exercises: Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT.times.map do
@@ -167,6 +171,8 @@ describe GetCcDashboard, type: :routine do
                   {
                     id: @page_2.id,
                     title: @page_2.title,
+                    uuid: @page_2.uuid,
+                    version: @page_2.version,
                     book_location: @page_2.book_location,
                     completed: 1,
                     in_progress: 0,
@@ -177,6 +183,8 @@ describe GetCcDashboard, type: :routine do
                   {
                     id: @page_1.id,
                     title: @page_1.title,
+                    uuid: @page_1.uuid,
+                    version: @page_1.version,
                     book_location: @page_1.book_location,
                     completed: 1,
                     in_progress: 0,
@@ -200,6 +208,8 @@ describe GetCcDashboard, type: :routine do
                   {
                     id: @page_1.id,
                     title: @page_1.title,
+                    uuid: @page_1.uuid,
+                    version: @page_1.version,
                     book_location: @page_1.book_location,
                     completed: 0,
                     in_progress: 1,
