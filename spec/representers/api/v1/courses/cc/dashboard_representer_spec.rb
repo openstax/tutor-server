@@ -18,49 +18,34 @@ RSpec.describe Api::V1::Courses::Cc::DashboardRepresenter, type: :representer do
       mash.tasks = [
         Hashie::Mash.new({
           id: 34,
-          title: 'HW2',
+          title: 'CC2',
           opens_at: opens_at,
-          due_at: due_at,
           last_worked_at: last_worked_at,
-          task_type: :homework,
-          completed?: false,
-          past_due?: false,
-          actual_and_placeholder_exercise_count: 5,
-          completed_exercise_count: 4,
-          correct_exercise_count: 3
+          task_type: :concept_coach,
+          completed?: false
         }),
         Hashie::Mash.new({
           id: 37,
-          title: 'Reading 1',
-          due_at: due_at,
+          title: 'CC1',
           last_worked_at: last_worked_at,
-          task_type: :reading,
-          completed?: false,
-          actual_and_placeholder_exercise_count: 7,
-          completed_exercise_count: 6,
+          task_type: :concept_coach,
+          completed?: false
         }),
         Hashie::Mash.new({
           id: 89,
-          title: 'HW3',
+          title: 'CC3',
           opens_at: opens_at,
-          due_at: due_at,
           last_worked_at: last_worked_at,
-          task_type: :homework,
-          completed?: true,
-          past_due?: true,
-          actual_and_placeholder_exercise_count: 8,
-          completed_exercise_count: 8,
-          correct_exercise_count: 3
+          task_type: :concept_coach,
+          completed?: true
         }),
         Hashie::Mash.new({
           id: 99,
-          title: 'Ext1',
+          title: 'CC4',
           opens_at: opens_at,
-          due_at: due_at,
           last_worked_at: last_worked_at,
-          task_type: :external,
-          completed?: true,
-          past_due?: true
+          task_type: :concept_coach,
+          completed?: true
         }),
       ]
       mash.course = {
@@ -93,6 +78,8 @@ RSpec.describe Api::V1::Courses::Cc::DashboardRepresenter, type: :representer do
                   Hashie::Mash.new({
                     id: '48',
                     title: 'Pg 1',
+                    uuid: 'u48',
+                    version: 'v1',
                     book_location: [1, 1],
                     completed: 0,
                     in_progress: 1,
@@ -103,6 +90,8 @@ RSpec.describe Api::V1::Courses::Cc::DashboardRepresenter, type: :representer do
                   Hashie::Mash.new({
                     id: '49',
                     title: 'Pg 2',
+                    uuid: 'u49',
+                    version: 'v2',
                     book_location: [1, 2],
                     completed: 3,
                     in_progress: 4,
@@ -120,6 +109,8 @@ RSpec.describe Api::V1::Courses::Cc::DashboardRepresenter, type: :representer do
                   Hashie::Mash.new({
                     id: '51',
                     title: 'Pg 3',
+                    uuid: 'u51',
+                    version: 'v3',
                     book_location: [2, 1],
                     completed: 6,
                     in_progress: 7,
@@ -130,6 +121,8 @@ RSpec.describe Api::V1::Courses::Cc::DashboardRepresenter, type: :representer do
                   Hashie::Mash.new({
                     id: '52',
                     title: 'Pg 4',
+                    uuid: 'u52',
+                    version: 'v4',
                     book_location: [2, 2],
                     completed: 9,
                     in_progress: 10,
@@ -153,6 +146,8 @@ RSpec.describe Api::V1::Courses::Cc::DashboardRepresenter, type: :representer do
                   Hashie::Mash.new({
                     id: '48',
                     title: 'Pg 1',
+                    uuid: 'u48',
+                    version: 'v1',
                     book_location: [1, 1],
                     completed: 12,
                     in_progress: 13,
@@ -163,6 +158,8 @@ RSpec.describe Api::V1::Courses::Cc::DashboardRepresenter, type: :representer do
                   Hashie::Mash.new({
                     id: '49',
                     title: 'Pg 2',
+                    uuid: 'u49',
+                    version: 'v2',
                     book_location: [1, 2],
                     completed: 15,
                     in_progress: 16,
@@ -190,44 +187,33 @@ RSpec.describe Api::V1::Courses::Cc::DashboardRepresenter, type: :representer do
       "tasks" => a_collection_containing_exactly(
         a_hash_including(
           "id" => '34',
-          "title" => "HW2",
+          "title" => "CC2",
           "opens_at" => api_opens_at,
-          "due_at" => api_due_at,
           "last_worked_at" => api_last_worked_at,
-          "type" => "homework",
-          "complete" => false,
-          "exercise_count" => 5,
-          "complete_exercise_count" => 4
+          "type" => "concept_coach",
+          "complete" => false
         ),
         a_hash_including(
           "id" => '37',
-          "title" => "Reading 1",
-          "due_at" => api_due_at,
+          "title" => "CC1",
           "last_worked_at" => api_last_worked_at,
-          "type" => "reading",
-          "complete" => false,
-          "exercise_count" => 7,
-          "complete_exercise_count" => 6
+          "type" => "concept_coach",
+          "complete" => false
         ),
         a_hash_including(
           "id" => '89',
-          "title" => "HW3",
+          "title" => "CC3",
           "opens_at" => api_opens_at,
-          "due_at" => api_due_at,
           "last_worked_at" => api_last_worked_at,
-          "type" => "homework",
-          "complete" => true,
-          "exercise_count" => 8,
-          "complete_exercise_count" => 8,
-          "correct_exercise_count" => 3
+          "type" => "concept_coach",
+          "complete" => true
         ),
         a_hash_including(
           "id" => '99',
-          "title" => "Ext1",
+          "title" => "CC4",
           "opens_at" => api_opens_at,
-          "due_at" => api_due_at,
           "last_worked_at" => api_last_worked_at,
-          "type" => "external",
+          "type" => "concept_coach",
           "complete" => true
         ),
       ),
@@ -260,6 +246,8 @@ RSpec.describe Api::V1::Courses::Cc::DashboardRepresenter, type: :representer do
                   {
                     "id" => "48",
                     "title" => "Pg 1",
+                    "uuid" => "u48",
+                    "version" => "v1",
                     "chapter_section" => [1, 1],
                     "completed" => 0,
                     "in_progress" => 1,
@@ -270,6 +258,8 @@ RSpec.describe Api::V1::Courses::Cc::DashboardRepresenter, type: :representer do
                   {
                     "id" => "49",
                     "title" => "Pg 2",
+                    "uuid" => "u49",
+                    "version" => "v2",
                     "chapter_section" => [1, 2],
                     "completed" => 3,
                     "in_progress" => 4,
@@ -287,6 +277,8 @@ RSpec.describe Api::V1::Courses::Cc::DashboardRepresenter, type: :representer do
                   {
                     "id" => "51",
                     "title" => "Pg 3",
+                    "uuid" => "u51",
+                    "version" => "v3",
                     "chapter_section" => [2, 1],
                     "completed" => 6,
                     "in_progress" => 7,
@@ -297,6 +289,8 @@ RSpec.describe Api::V1::Courses::Cc::DashboardRepresenter, type: :representer do
                   {
                     "id" => "52",
                     "title" => "Pg 4",
+                    "uuid" => "u52",
+                    "version" => "v4",
                     "chapter_section" => [2, 2],
                     "completed" => 9,
                     "in_progress" => 10,
@@ -320,6 +314,8 @@ RSpec.describe Api::V1::Courses::Cc::DashboardRepresenter, type: :representer do
                   {
                     "id" => "48",
                     "title" => "Pg 1",
+                    "uuid" => "u48",
+                    "version" => "v1",
                     "chapter_section" => [1, 1],
                     "completed" => 12,
                     "in_progress" => 13,
@@ -330,6 +326,8 @@ RSpec.describe Api::V1::Courses::Cc::DashboardRepresenter, type: :representer do
                   {
                     "id" => "49",
                     "title" => "Pg 2",
+                    "uuid" => "u49",
+                    "version" => "v2",
                     "chapter_section" => [1, 2],
                     "completed" => 15,
                     "in_progress" => 16,
@@ -344,10 +342,6 @@ RSpec.describe Api::V1::Courses::Cc::DashboardRepresenter, type: :representer do
         ]
       }
     )
-
-    expect(representation["tasks"][0]).to_not have_key "correct_exercise_count"
-    expect(representation["tasks"][1]).to_not have_key "correct_exercise_count"
-    expect(representation["tasks"][2]).to     have_key "correct_exercise_count"
   end
 
 end

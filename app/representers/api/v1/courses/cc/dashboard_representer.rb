@@ -26,12 +26,6 @@ module Api::V1::Courses::Cc
                writeable: false,
                getter: ->(*) { DateTimeUtilities.to_api_s(opens_at) }
 
-      property :due_at,
-               type: String,
-               readable: true,
-               writeable: false,
-               getter: ->(*) { DateTimeUtilities.to_api_s(due_at) }
-
       property :last_worked_at,
                type: String,
                readable: true,

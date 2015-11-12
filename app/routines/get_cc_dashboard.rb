@@ -64,6 +64,8 @@ class GetCcDashboard
               {
                 id: page.id,
                 title: page.title,
+                uuid: page.uuid,
+                version: page.version,
                 book_location: page.book_location,
                 completed: completed,
                 in_progress: in_progress,
@@ -99,6 +101,8 @@ class GetCcDashboard
           {
             id: page.id,
             title: page.title,
+            uuid: page.uuid,
+            version: page.version,
             book_location: page.book_location,
             last_worked_at: tasks.max_by(&:last_worked_at).last_worked_at,
             exercises: tasked_exercises.sort_by{ |te| te.task_step.number }.map do |te|

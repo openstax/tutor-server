@@ -5,6 +5,8 @@ RSpec.describe Api::V1::Courses::Cc::Teacher::PageRepresenter, type: :represente
     Hashie::Mash.new({
       id: 42,
       title: 'A page',
+      uuid: 'uuid',
+      version: 'version',
       book_location: [42, 42],
       completed: 0,
       in_progress: 1,
@@ -19,6 +21,8 @@ RSpec.describe Api::V1::Courses::Cc::Teacher::PageRepresenter, type: :represente
   it 'represents page stats' do
     expect(representation['id']).to eq '42'
     expect(representation['title']).to eq 'A page'
+    expect(representation['uuid']).to eq 'uuid'
+    expect(representation['version']).to eq 'version'
     expect(representation['chapter_section']).to eq [42, 42]
     expect(representation['completed']).to eq 0
     expect(representation['in_progress']).to eq 1

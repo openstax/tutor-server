@@ -6,6 +6,8 @@ RSpec.describe Api::V1::Courses::Cc::Student::PageRepresenter, type: :represente
     Hashie::Mash.new({
       id: 42,
       title: 'A page',
+      uuid: 'uuid',
+      version: 'version',
       book_location: [42, 42],
       last_worked_at: worked_at_time,
       exercises: []
@@ -17,6 +19,8 @@ RSpec.describe Api::V1::Courses::Cc::Student::PageRepresenter, type: :represente
   it 'represents page stats' do
     expect(representation['id']).to eq '42'
     expect(representation['title']).to eq 'A page'
+    expect(representation['uuid']).to eq 'uuid'
+    expect(representation['version']).to eq 'version'
     expect(representation['chapter_section']).to eq [42, 42]
     expect(representation['last_worked_at']).to eq DateTimeUtilities.to_api_s(worked_at_time)
     expect(representation['exercises']).to eq []

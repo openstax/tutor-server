@@ -21,6 +21,16 @@ module Api::V1::Courses::Cc::Teacher
                required: true
              }
 
+    property :uuid,
+             type: String,
+             readable: true,
+             writeable: false
+
+    property :version,
+             type: String,
+             readable: true,
+             writeable: false
+
     property :book_location,
              as: :chapter_section,
              type: Array,
