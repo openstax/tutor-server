@@ -4,18 +4,18 @@ class AuthController < ApplicationController
 
   # Unlike other controllers, these cors headers allows cookies via the
   # Access-Control-Allow-Credentials header
-  before_filter :set_cors_headers, only: [:status, :cors_preflight_check]
+  before_filter :set_cors_headers, only: [:status, :cors_preflight_check, :logout]
 
   # Allow accessing iframe methods from inside an iframe
   before_filter :allow_iframe_access, only: [:iframe]
 
   # Methods handle returning login status differently than the standard authenticate_user! filter
   skip_before_filter :authenticate_user!,
-                     only: [:status, :cors_preflight_check, :iframe]
+                     only: [:status, :cors_preflight_check, :iframe, :logout]
 
   # CRSF tokens can't be used since these endpoints are loaded from foreign sites via cors or iframe
   skip_before_action :verify_authenticity_token,
-                     only: [:status, :cors_preflight_check, :iframe]
+                     only: [:status, :cors_preflight_check, :iframe, :logout]
 
   layout false
 
@@ -35,6 +35,15 @@ class AuthController < ApplicationController
     else
       @status = user_status_update
       @iframe_origin = stubbed_auth? ? session[:parent] : @status[:endpoints][:accounts_iframe]
+    end
+  end
+
+  def logout
+    if current_user.is_anonymous?
+      render status: :forbidden, text: 'You must be logged in to logout'
+    else
+      sign_out!
+      render json: { logout: true }
     end
   end
 
@@ -61,7 +70,7 @@ class AuthController < ApplicationController
 
   def set_cors_headers
     headers['Access-Control-Allow-Origin']   = validated_cors_origin
-    headers['Access-Control-Allow-Methods']  = 'GET, OPTIONS' # No PUT/POST access
+    headers['Access-Control-Allow-Methods']  = 'GET, OPTIONS, DELETE' # No PUT/POST access
     headers['Access-Control-Request-Method'] = '*'
     headers['Access-Control-Allow-Credentials'] = 'true'
     headers['Access-Control-Allow-Headers']  = 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
