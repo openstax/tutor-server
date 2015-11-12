@@ -36,7 +36,7 @@ class ImportSalesforceCourses
   end
 
   def create_course_for_candidate(candidate)
-    offering = Catalog::Offering.find_by(identifier: candidate.book_name).first
+    offering = Catalog::Offering.find_by(identifier: candidate.book_name)
 
     if offering.nil?
       error!(candidate, "Book Name does not match an offering in Tutor.")

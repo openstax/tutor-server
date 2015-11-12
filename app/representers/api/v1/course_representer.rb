@@ -47,9 +47,7 @@ module Api::V1
              writeable: false,
              if: ->(*) { catalog_offering_identifier.present? },
              getter: ->(*) do
-               Catalog::Offering.find_by(
-                 identifier: catalog_offering_identifier
-               ).first.try(:pdf_url)
+               Catalog::Offering.find_by(identifier: catalog_offering_identifier).try(:pdf_url)
              end,
              schema_info: {
                description: "The book's PDF url, if available."
