@@ -28,8 +28,7 @@ module Api::V1
              if: ->(*) { respond_to?(:ecosystem) and ecosystem },
              getter: ->(*) { ecosystem.try(:id) },
              schema_info: {
-              description: "The ID of the course's content ecosystem, if available.",
-              required: false
+              description: "The ID of the course's content ecosystem, if available."
              }
 
     property :ecosystem_book_uuid,
@@ -39,8 +38,7 @@ module Api::V1
              if: ->(*) { respond_to?(:ecosystem_book) and ecosystem_book },
              getter: ->(*) { ecosystem_book.uuid },
              schema_info: {
-               description: "The UUID of the book for the course's content ecosystem, if available.",
-               required: false
+               description: "The UUID of the book for the course's content ecosystem, if available."
              }
 
     property :book_pdf_url,
@@ -49,7 +47,9 @@ module Api::V1
              writeable: false,
              if: ->(*) { catalog_offering_identifier.present? },
              getter: ->(*) do
-               Catalog::Offering.find_by(identifier: catalog_offering_identifier).try(:pdf_url)
+               Catalog::Offering.find_by(
+                 identifier: catalog_offering_identifier
+               ).first.try(:pdf_url)
              end,
              schema_info: {
                description: "The book's PDF url, if available."
