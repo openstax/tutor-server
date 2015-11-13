@@ -2,10 +2,9 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.feature 'Administration', vcr: VCR_OPTS do
+  set_vcr_config_around(:all, ignore_localhost: false)
+
   before(:all) do
-    @previous_vcr_config = VCR.request_ignorer
-                              .instance_variable_get('@ignored_hosts')
-                              .include?('localhost')
     @previous_client_id = OpenStax::Accounts.configuration.openstax_application_id
     @previous_secret = OpenStax::Accounts.configuration.openstax_application_secret
     @previous_enable_stubbing = OpenStax::Accounts.configuration.enable_stubbing
@@ -15,15 +14,12 @@ RSpec.feature 'Administration', vcr: VCR_OPTS do
     OpenStax::Accounts.configuration.openstax_application_secret = \
       '8d3527f95bd7c96a4abde8f0146c04a6033c11c27fff5f591142d45f0bff69fc'
     OpenStax::Accounts.configuration.enable_stubbing = false
-
-    VCR.configure { |c| c.ignore_localhost = false }
   end
 
   after(:all) do
     OpenStax::Accounts.configuration.openstax_application_id = @previous_client_id
     OpenStax::Accounts.configuration.openstax_application_secret = @previous_secret
     OpenStax::Accounts.configuration.enable_stubbing = @previous_enable_stubbing
-    VCR.configure { |c| c.ignore_localhost = @previous_vcr_config }
   end
 
   before do
