@@ -5,10 +5,12 @@ RSpec.feature 'Administration', vcr: VCR_OPTS do
   set_vcr_config_around(:all, ignore_localhost: false)
 
   before(:all) do
+    @previous_url = OpenStax::Accounts.configuration.openstax_accounts_url
     @previous_client_id = OpenStax::Accounts.configuration.openstax_application_id
     @previous_secret = OpenStax::Accounts.configuration.openstax_application_secret
     @previous_enable_stubbing = OpenStax::Accounts.configuration.enable_stubbing
 
+    OpenStax::Accounts.configuration.openstax_accounts_url = 'http://localhost:2999'
     OpenStax::Accounts.configuration.openstax_application_id = \
       '2ca11daee85d79b0e392c840a0c65ccf592782f0d30e73099687b5b27d761452'
     OpenStax::Accounts.configuration.openstax_application_secret = \
@@ -17,6 +19,7 @@ RSpec.feature 'Administration', vcr: VCR_OPTS do
   end
 
   after(:all) do
+    OpenStax::Accounts.configuration.openstax_accounts_url = @previous_url
     OpenStax::Accounts.configuration.openstax_application_id = @previous_client_id
     OpenStax::Accounts.configuration.openstax_application_secret = @previous_secret
     OpenStax::Accounts.configuration.enable_stubbing = @previous_enable_stubbing
