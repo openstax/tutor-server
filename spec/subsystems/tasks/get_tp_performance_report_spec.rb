@@ -1,12 +1,12 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Tasks::GetPerformanceReport, type: :routine, speed: :slow do
+RSpec.describe Tasks::GetTpPerformanceReport, type: :routine, speed: :slow do
 
   before(:all) do
     DatabaseCleaner.start
 
-    VCR.use_cassette("Tasks_GetPerformanceReport/with_book", VCR_OPTS) do
+    VCR.use_cassette("Tasks_GetTpPerformanceReport/with_book", VCR_OPTS) do
       @ecosystem = FetchAndImportBookAndCreateEcosystem[
         book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
       ]
@@ -16,11 +16,6 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine, speed: :slow do
 
     @teacher = FactoryGirl.create(:user)
     SetupPerformanceReportData[course: @course, teacher: @teacher, ecosystem: @ecosystem]
-    @role = GetUserCourseRoles[course: @course, user: @teacher].first
-  end
-
-  after(:each) do
-    File.delete(@output_filename) if !@output_filename.nil? && File.exist?(@output_filename)
   end
 
   after(:all) do
@@ -28,12 +23,13 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine, speed: :slow do
   end
 
   let(:expected_periods)    { 2 }
-  let(:expected_tasks)      { 3 }
   let(:expected_students)   { 2 }
+
+  let(:expected_tasks)      { 3 }
   let(:expected_task_types) { ['homework', 'reading', 'homework'] }
 
   it 'has the proper structure' do
-    reports = described_class[role: @role, course: @course]
+    reports = described_class[course: @course]
     expect(reports.size).to eq expected_periods
     reports.each_with_index do |report, rindex|
       expect(report.data_headings.size).to eq expected_tasks
@@ -55,7 +51,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine, speed: :slow do
   it 'does not blow up when a student was not assigned a particular task' do
     @course.students.first.role.taskings.first.task.destroy
     expect {
-      described_class[role: @role, course: @course]
+      described_class[course: @course]
     }.not_to raise_error
   end
 

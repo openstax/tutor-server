@@ -1,23 +1,15 @@
 module Tasks
-  class GetPerformanceReport
+  class GetTpPerformanceReport
+    include PerformanceReportMethods
+
     lev_routine express_output: :performance_report
 
     protected
 
-    def exec(course:, role:)
-      outputs[:performance_report] = \
-        if CourseMembership::IsCourseTeacher[course: course, roles: [role]]
-          get_performance_report_for_teacher(course)
-        else
-          raise(SecurityTransgression, 'The caller is not a teacher in this course')
-        end
-    end
-
-    private
-
-    def get_performance_report_for_teacher(course)
+    def exec(course:)
       taskings = get_taskings(course)
-      course.periods.collect do |period|
+
+      outputs[:performance_report] = course.periods.collect do |period|
         tasking_plans = sort_tasking_plans(taskings, course, period)
         task_plan_indices = tasking_plans.each_with_index
                                          .each_with_object({}) { |(tasking_plan, index), hash|
@@ -45,7 +37,7 @@ module Tasks
                            student_tasks[index] = tg.task.task
                          end
 
-                         # gather the task into the results for use in calulating header stats
+                         # gather the task into the results for use in calculating header stats
                          student_tasks.each do | task |
                            next unless task
                            task_plan_results[task.task_plan] << task
@@ -97,63 +89,9 @@ module Tasks
           plan_id: task_plan.id,
           type: task_plan.type,
           due_at: tasking_plan.due_at,
-          average: average(task_plan, task_plan_results[task_plan])
+          average: average(task_plan_results[task_plan])
         }
       end
-    end
-
-    # returns the average for the task_plan
-    def average(task_plan, tasks)
-      # skip if not a homework.
-      return unless task_plan.type == 'homework'
-
-      # tasks must have more than 0 exercises and
-      # have been started or it must be past due
-      valid_tasks = tasks.select do |task|
-        task.exercise_steps_count > 0 && \
-        (task.completed_exercise_steps_count > 0 || task.past_due?)
-      end
-
-      # skip if no tasks meet the display requirements
-      return if valid_tasks.none?
-
-      valid_tasks.reduce(0){ |sum, task|
-        sum + ( task.correct_exercise_steps_count * 100.0 / task.exercise_steps_count )
-      } / valid_tasks.size
-    end
-
-    def get_student_data(tasks)
-      tasks.collect do |task|
-        # skip if the student hasn't worked this particular task_plan
-        next if task.nil?
-
-        data = {
-          late: task.late?,
-          status: task.status,
-          type: task.task_type,
-          id: task.id,
-          due_at: task.due_at,
-          last_worked_at: task.last_worked_at
-        }
-
-        if task.task_type == 'homework'
-          data.merge!(exercise_counts(task))
-        end
-
-        data
-      end
-    end
-
-    def exercise_counts(task)
-      exercise_count  = task.actual_and_placeholder_exercise_count
-      correct_count   = task.correct_exercise_steps_count
-      recovered_count = task.recovered_exercise_steps_count
-
-      {
-        actual_and_placeholder_exercise_count: exercise_count,
-        correct_exercise_count: correct_count,
-        recovered_exercise_count: recovered_count
-      }
     end
   end
 end
