@@ -9,4 +9,5 @@ teacher: cm
 periods:
   - id: p1
     name: 1st
-    students: [ak,at,cp,gj,hp,lb,lt,ne,sd,vw]
+    enrollment_code: coach awesome
+    students: [af,ag,ak,am,an,ap,at,bb,bh,bs,hp,hg,lb,lt,ne,sd,vw]

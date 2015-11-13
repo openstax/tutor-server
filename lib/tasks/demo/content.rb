@@ -11,6 +11,7 @@ class DemoContent < DemoBase
   uses_routine FetchAndImportBookAndCreateEcosystem, as: :import_book
   uses_routine CreateCourse, as: :create_course
   uses_routine CreatePeriod, as: :create_period
+  uses_routine CourseMembership::UpdatePeriod, as: :update_period
   uses_routine AddEcosystemToCourse, as: :add_ecosystem
   uses_routine User::MakeAdministrator, as: :make_administrator
   uses_routine User::SetContentAnalystState, as: :set_content_analyst
@@ -62,6 +63,8 @@ class DemoContent < DemoBase
           period = find_period(course: course, name: period_name) || \
                    run(:create_period, course: course, name: period_name).outputs.period
           log("  Period: #{period_content.name}")
+          run(:update_period, period:period, enrollment_code: period_content.enrollment_code) \
+             if period_content.enrollment_code
           period_content.students.each do | initials |
             student_info = people.students[initials]
             user = get_student_user(initials) ||
