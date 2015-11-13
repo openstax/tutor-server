@@ -15,9 +15,10 @@ module Catalog
         end
 
         def self.find_by(*args)
-          ::Catalog::Models::Offering.where(*args).collect do |model|
-            ::Catalog::Offering.new(strategy: new(model))
-          end
+          model = ::Catalog::Models::Offering.where(*args).take
+          return if model.nil?
+
+          ::Catalog::Offering.new(strategy: new(model))
         end
 
       end

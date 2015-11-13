@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Catalog::Models::Offering, :type => :model do
+RSpec.describe Catalog::Models::Offering, type: :model do
   subject{ FactoryGirl.create :catalog_offering }
 
   it { is_expected.to validate_presence_of(:identifier) }

@@ -18,7 +18,9 @@ module Catalog
     end
 
     def self.find_by(*args)
-      verify_and_return strategy_class.find_by(*args), klass: self, error: StrategyError
+      verify_and_return strategy_class.find_by(*args), klass: self,
+                                                       error: StrategyError,
+                                                       allow_nil: true
     end
 
   end
