@@ -29,20 +29,20 @@ http_interactions:
       X-Ua-Compatible:
       - IE=Edge
       Etag:
-      - '"f6189c2d7523eb380ec3517a14bf32b4"'
+      - '"7321d6102433559d69601c5bfb7bc52b"'
       X-Request-Id:
-      - b86da3fda4ac89afab6f65b34029fba2
+      - a53b20ba0b84dc91f4afee49d45adebf
       X-Runtime:
-      - '0.020792'
+      - '0.037258'
       Connection:
       - close
       Server:
       - thin 1.5.1 codename Straight Razor
     body:
       encoding: UTF-8
-      string: '{"access_token":"2143ffdd1f2e63085db9bd69ea8a0541f32252d843a7e3e7bcef4f643f8e70bb","token_type":"bearer"}'
+      string: '{"access_token":"ac34beb69b5282f60675b209a6fb9d9ceafd8c00476f52768681d82670119f58","token_type":"bearer"}'
     http_version: 
-  recorded_at: Fri, 13 Nov 2015 15:24:14 GMT
+  recorded_at: Fri, 13 Nov 2015 16:59:39 GMT
 - request:
     method: post
     uri: http://localhost:2999/api/user/find-or-create
@@ -56,7 +56,7 @@ http_interactions:
       Accept:
       - application/vnd.accounts.openstax.v1
       Authorization:
-      - Bearer 2143ffdd1f2e63085db9bd69ea8a0541f32252d843a7e3e7bcef4f643f8e70bb
+      - Bearer ac34beb69b5282f60675b209a6fb9d9ceafd8c00476f52768681d82670119f58
       Content-Type:
       - application/x-www-form-urlencoded
       Accept-Encoding:
@@ -75,9 +75,9 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       X-Request-Id:
-      - 0927d2942807a121c766e43922227340
+      - 193ff88b58de1b4afe23202e4a4d6955
       X-Runtime:
-      - '0.033677'
+      - '0.063979'
       Connection:
       - close
       Server:
@@ -86,7 +86,7 @@ http_interactions:
       encoding: UTF-8
       string: '{"id":2}'
     http_version: 
-  recorded_at: Fri, 13 Nov 2015 15:24:14 GMT
+  recorded_at: Fri, 13 Nov 2015 16:59:39 GMT
 - request:
     method: post
     uri: http://2ca11daee85d79b0e392c840a0c65ccf592782f0d30e73099687b5b27d761452:8d3527f95bd7c96a4abde8f0146c04a6033c11c27fff5f591142d45f0bff69fc@localhost:2999/oauth/token
@@ -116,20 +116,20 @@ http_interactions:
       X-Ua-Compatible:
       - IE=Edge
       Etag:
-      - '"635d5d3f07c60e88439541228a293fc7"'
+      - '"4b4d9382c51948e14969efe35b480c0e"'
       X-Request-Id:
-      - cd4a02e2522345fb9c8598244a768fac
+      - 6287ea8f6cd9ce8f5a714eb11cf7ea7b
       X-Runtime:
-      - '0.022269'
+      - '0.036890'
       Connection:
       - close
       Server:
       - thin 1.5.1 codename Straight Razor
     body:
       encoding: UTF-8
-      string: '{"access_token":"db11fce431b590cd35a0942520064a6b90a9fab478837bb4be3cf6150c9f26db","token_type":"bearer"}'
+      string: '{"access_token":"87e627f8aac12c15ee9cde5c74c263eac67b6db5923443deae8fd2da60e4d0cd","token_type":"bearer"}'
     http_version: 
-  recorded_at: Fri, 13 Nov 2015 15:24:14 GMT
+  recorded_at: Fri, 13 Nov 2015 16:59:39 GMT
 - request:
     method: post
     uri: http://localhost:2999/api/user/find-or-create
@@ -143,7 +143,7 @@ http_interactions:
       Accept:
       - application/vnd.accounts.openstax.v1
       Authorization:
-      - Bearer db11fce431b590cd35a0942520064a6b90a9fab478837bb4be3cf6150c9f26db
+      - Bearer 87e627f8aac12c15ee9cde5c74c263eac67b6db5923443deae8fd2da60e4d0cd
       Content-Type:
       - application/x-www-form-urlencoded
       Accept-Encoding:
@@ -162,9 +162,9 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       X-Request-Id:
-      - 72fff5f5264fc69be087c26075f44275
+      - 8158f7ae8398c22cabba71b423b3ce8f
       X-Runtime:
-      - '0.030177'
+      - '0.063837'
       Connection:
       - close
       Server:
@@ -173,5 +173,5 @@ http_interactions:
       encoding: UTF-8
       string: '{"id":2}'
     http_version: 
-  recorded_at: Fri, 13 Nov 2015 15:24:14 GMT
+  recorded_at: Fri, 13 Nov 2015 16:59:39 GMT
 recorded_with: VCR 2.9.3
