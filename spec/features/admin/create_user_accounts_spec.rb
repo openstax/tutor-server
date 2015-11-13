@@ -1,27 +1,29 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.feature 'Administration', vcr: VCR_OPTS.merge({ record: :new_episodes }) do
+RSpec.feature 'Administration', vcr: VCR_OPTS do
   before(:all) do
-    @previous_url = OpenStax::Accounts.configuration.openstax_accounts_url
+    @previous_vcr_config = VCR.request_ignorer
+                              .instance_variable_get('@ignored_hosts')
+                              .include?('localhost')
     @previous_client_id = OpenStax::Accounts.configuration.openstax_application_id
     @previous_secret = OpenStax::Accounts.configuration.openstax_application_secret
     @previous_enable_stubbing = OpenStax::Accounts.configuration.enable_stubbing
 
-    OpenStax::Accounts.configuration.openstax_accounts_url = \
-      'http://accounts-dev1.openstax.org'
     OpenStax::Accounts.configuration.openstax_application_id = \
-      'bafcf3ed42cbfc87fcfc63e2a444eacb8ece508f5f69208d745e12eff3825135'
+      '2ca11daee85d79b0e392c840a0c65ccf592782f0d30e73099687b5b27d761452'
     OpenStax::Accounts.configuration.openstax_application_secret = \
-      'bc9d18e693334b40c67b28fb93eff30bbfc9f1aca161e33bd5b097b00b304608'
+      '8d3527f95bd7c96a4abde8f0146c04a6033c11c27fff5f591142d45f0bff69fc'
     OpenStax::Accounts.configuration.enable_stubbing = false
+
+    VCR.configure { |c| c.ignore_localhost = false }
   end
 
   after(:all) do
-    OpenStax::Accounts.configuration.openstax_accounts_url = @previous_url
     OpenStax::Accounts.configuration.openstax_application_id = @previous_client_id
     OpenStax::Accounts.configuration.openstax_application_secret = @previous_secret
     OpenStax::Accounts.configuration.enable_stubbing = @previous_enable_stubbing
+    VCR.configure { |c| c.ignore_localhost = @previous_vcr_config }
   end
 
   before do
@@ -46,17 +48,27 @@ RSpec.feature 'Administration', vcr: VCR_OPTS.merge({ record: :new_episodes }) d
   end
 
   scenario 'create a user with an existing account' do
-    User::CreateUser[email: 'any@one.com']
+    user = User::CreateUser[username: 'superwoman',
+                            password: 'goldenlasso25',
+                            first_name: 'Super',
+                            last_name: 'Woman',
+                            full_name: 'Super Woman',
+                            title: 'Justice Prevailer',
+                            email: 'match@me.com']
 
     visit new_admin_user_path
 
-    fill_in 'Username', with: 'superwoman2'
+    fill_in 'Username', with: user.username
     fill_in 'Password', with: 'goldenlasso25'
-    fill_in 'First name', with: 'Super'
-    fill_in 'Last name', with: 'Woman'
+    fill_in 'First name', with: user.first_name
+    fill_in 'Last name', with: user.last_name
+    fill_in 'Full name override', with: user.full_name
+    fill_in 'Email', with: 'match@me.com'
+    fill_in 'Title', with: user.title
     click_button 'Save'
 
     expect(current_path).to eq(new_admin_user_path)
-    expect(page).to have_css('.errors', text: 'Account has already been taken')
+    expect(page).to have_css('.flash_error',
+                         text: 'Invalid user information. Account has already been taken')
   end
 end

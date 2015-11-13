@@ -1,0 +1,177 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://2ca11daee85d79b0e392c840a0c65ccf592782f0d30e73099687b5b27d761452:8d3527f95bd7c96a4abde8f0146c04a6033c11c27fff5f591142d45f0bff69fc@localhost:2999/oauth/token
+    body:
+      encoding: UTF-8
+      string: grant_type=client_credentials
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Cache-Control:
+      - no-store
+      Pragma:
+      - no-cache
+      Content-Type:
+      - application/json; charset=utf-8
+      X-Ua-Compatible:
+      - IE=Edge
+      Etag:
+      - '"f6189c2d7523eb380ec3517a14bf32b4"'
+      X-Request-Id:
+      - b86da3fda4ac89afab6f65b34029fba2
+      X-Runtime:
+      - '0.020792'
+      Connection:
+      - close
+      Server:
+      - thin 1.5.1 codename Straight Razor
+    body:
+      encoding: UTF-8
+      string: '{"access_token":"2143ffdd1f2e63085db9bd69ea8a0541f32252d843a7e3e7bcef4f643f8e70bb","token_type":"bearer"}'
+    http_version: 
+  recorded_at: Fri, 13 Nov 2015 15:24:14 GMT
+- request:
+    method: post
+    uri: http://localhost:2999/api/user/find-or-create
+    body:
+      encoding: UTF-8
+      string: '{"email":"match@me.com","username":"superwoman","password":"goldenlasso25","first_name":"Super","last_name":"Woman","full_name":"Super
+        Woman"}'
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.accounts.openstax.v1
+      Authorization:
+      - Bearer 2143ffdd1f2e63085db9bd69ea8a0541f32252d843a7e3e7bcef4f643f8e70bb
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+      X-Ua-Compatible:
+      - IE=Edge
+      Etag:
+      - '"4f56edcb1558d4df2f77295f86059006"'
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      X-Request-Id:
+      - 0927d2942807a121c766e43922227340
+      X-Runtime:
+      - '0.033677'
+      Connection:
+      - close
+      Server:
+      - thin 1.5.1 codename Straight Razor
+    body:
+      encoding: UTF-8
+      string: '{"id":2}'
+    http_version: 
+  recorded_at: Fri, 13 Nov 2015 15:24:14 GMT
+- request:
+    method: post
+    uri: http://2ca11daee85d79b0e392c840a0c65ccf592782f0d30e73099687b5b27d761452:8d3527f95bd7c96a4abde8f0146c04a6033c11c27fff5f591142d45f0bff69fc@localhost:2999/oauth/token
+    body:
+      encoding: UTF-8
+      string: grant_type=client_credentials
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Cache-Control:
+      - no-store
+      Pragma:
+      - no-cache
+      Content-Type:
+      - application/json; charset=utf-8
+      X-Ua-Compatible:
+      - IE=Edge
+      Etag:
+      - '"635d5d3f07c60e88439541228a293fc7"'
+      X-Request-Id:
+      - cd4a02e2522345fb9c8598244a768fac
+      X-Runtime:
+      - '0.022269'
+      Connection:
+      - close
+      Server:
+      - thin 1.5.1 codename Straight Razor
+    body:
+      encoding: UTF-8
+      string: '{"access_token":"db11fce431b590cd35a0942520064a6b90a9fab478837bb4be3cf6150c9f26db","token_type":"bearer"}'
+    http_version: 
+  recorded_at: Fri, 13 Nov 2015 15:24:14 GMT
+- request:
+    method: post
+    uri: http://localhost:2999/api/user/find-or-create
+    body:
+      encoding: UTF-8
+      string: '{"email":"match@me.com","username":"superwoman","password":"goldenlasso25","first_name":"Super","last_name":"Woman","full_name":"Super
+        Woman"}'
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept:
+      - application/vnd.accounts.openstax.v1
+      Authorization:
+      - Bearer db11fce431b590cd35a0942520064a6b90a9fab478837bb4be3cf6150c9f26db
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+      X-Ua-Compatible:
+      - IE=Edge
+      Etag:
+      - '"4f56edcb1558d4df2f77295f86059006"'
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      X-Request-Id:
+      - 72fff5f5264fc69be087c26075f44275
+      X-Runtime:
+      - '0.030177'
+      Connection:
+      - close
+      Server:
+      - thin 1.5.1 codename Straight Razor
+    body:
+      encoding: UTF-8
+      string: '{"id":2}'
+    http_version: 
+  recorded_at: Fri, 13 Nov 2015 15:24:14 GMT
+recorded_with: VCR 2.9.3

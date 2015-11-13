@@ -23,7 +23,8 @@ class Admin::UsersController < Admin::BaseController
         )
       },
       failure: ->(*) {
-        flash[:error] = 'Invalid user information.'
+        flash[:error] = 'Invalid user information. ' +
+                          @handler_result.errors.first.message
         redirect_to new_admin_user_path
       }
     )
