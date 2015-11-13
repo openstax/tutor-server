@@ -27,13 +27,26 @@ RSpec.describe 'Teachers' do
         end
       end
 
+      context 'already added as a teacher' do
+        it 'renders an error page' do
+          rescuing_exceptions do
+            visit join_course_path(course.teacher_join_token)
+            visit join_course_path(course.teacher_join_token)
+          end
+
+          expect(page).to have_css('.rescue-from',
+                                   text: 'You are already a teacher of this course.')
+        end
+      end
+
       context 'invalid join token' do
         it 'renders an error page' do
           rescuing_exceptions do
             visit join_course_path('invalid-no-way-it-will-work')
           end
 
-          expect(page).to have_css('.flash_error', text: 'You are trying to join a class as a teacher, but the information you provided is either out of date or does not correspond to an existing course.')
+          expect(page).to have_css('.rescue-from',
+                                   text: 'You are trying to join a class as a teacher, but the information you provided is either out of date or does not correspond to an existing course.')
         end
       end
     end

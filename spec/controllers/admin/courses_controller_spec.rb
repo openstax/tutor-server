@@ -77,7 +77,7 @@ RSpec.describe Admin::CoursesController, type: :controller do
       }.to change { OpenStax::Accounts::Account.count }.by(3)
       expect(flash[:notice]).to eq('Student roster has been uploaded.')
 
-      student_roster = GetStudentRoster[course: physics]
+      student_roster = GetCourseRoster.call(course: physics).outputs.roster[:students]
       csv = CSV.parse(file_1.open)
       names = csv[1..-1].flat_map(&:first)
 

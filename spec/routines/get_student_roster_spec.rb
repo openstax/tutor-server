@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe GetStudentRoster, type: :routine do
+describe GetCourseRoster, type: :routine do
   let!(:course) { CreateCourse[name: 'Physics 101'] }
   let!(:period_1) { CreatePeriod[course: course] }
   let!(:period_2) { CreatePeriod[course: course] }
@@ -29,7 +29,7 @@ describe GetStudentRoster, type: :routine do
   }
 
   it 'returns all the students in the course' do
-    students = GetStudentRoster[course: course]
+    students = GetCourseRoster.call(course: course).outputs.roster[:students]
     students.sort! { |a, b| a.id <=> b.id }
     expect(students).to eq([
       {

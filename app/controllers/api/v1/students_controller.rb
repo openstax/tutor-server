@@ -11,19 +11,6 @@ class Api::V1::StudentsController < Api::V1::ApiController
     EOS
   end
 
-  api :GET, '/courses/:course_id/students', 'Returns all students in the given course'
-  description <<-EOS
-    Returns all students in the given course.
-    #{json_schema(Api::V1::StudentsRepresenter, include: :readable)}
-  EOS
-  def index
-    course = Entity::Course.find(params[:course_id])
-    OSU::AccessPolicy.require_action_allowed!(:roster, current_api_user, course)
-
-    roster = GetStudentRoster[course: course]
-    respond_with(roster, represent_with: Api::V1::StudentsRepresenter)
-  end
-
   # TEMPORARILY REMOVED THIS ABILITY FOR END USERS TO ADD STUDENTS, AS THE WORKFLOW IS
   # MORE COMPLEX THAN ORIGINALLY THOUGHT (UX NEEDS TO STUDY IT).  ONLY MECHANISM FOR
   # ADDING STUDENTS WILL BE THROUGH THE ADMIN CONSOLE

@@ -130,6 +130,109 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
   end
 
+  describe '#roster' do
+    let!(:application)       { FactoryGirl.create :doorkeeper_application }
+
+    let!(:course)            { CreateCourse[name: 'Rosterify'] }
+    let!(:period_2)          { CreatePeriod[course: course] }
+
+    let!(:student_user)      { FactoryGirl.create(:user) }
+    let!(:student_role)      { AddUserAsPeriodStudent[user: student_user,
+                                                      period: period] }
+    let!(:student)           { student_role.student }
+    let!(:student_token)     { FactoryGirl.create :doorkeeper_access_token,
+                                                  application: application,
+                                                  resource_owner_id: student_user.id }
+
+    let!(:student_user_2)    { FactoryGirl.create(:user) }
+    let!(:student_role_2)    { AddUserAsPeriodStudent[user: student_user_2,
+                                                      period: period] }
+    let!(:student_2)         { student_role_2.student }
+
+    let!(:teacher_user)      { FactoryGirl.create(:user) }
+    let!(:teacher)           { AddUserAsCourseTeacher[user: teacher_user,
+                                                      course: course] }
+    let!(:teacher_token)     { FactoryGirl.create :doorkeeper_access_token,
+                                                  application: application,
+                                                  resource_owner_id: teacher_user.id }
+
+    let!(:student_user_3)    { FactoryGirl.create(:user) }
+    let!(:student_role_3)    { AddUserAsPeriodStudent[user: student_user_3,
+                                                      period: period_2] }
+    let!(:student_3)         { student_role_3.student }
+
+    let!(:valid_params) { { course_id: course.id } }
+
+    context 'caller has an authorization token' do
+      context 'caller is a course teacher' do
+        it 'returns the course roster' do
+          api_get :roster, teacher_token, parameters: valid_params
+          expect(response).to have_http_status(:ok)
+          roster = response.body_as_hash
+          expect(roster).to eq({
+            teacher_join_url: UrlGenerator.new.join_course_url(course.teacher_join_token),
+            students: [
+              {
+                id: student.id.to_s,
+                first_name: student.first_name,
+                last_name: student.last_name,
+                name: student.name,
+                period_id: period.id.to_s,
+                role_id: student_role.id.to_s,
+                deidentifier: student.deidentifier,
+                is_active: true
+              },
+              {
+                id: student_2.id.to_s,
+                first_name: student_2.first_name,
+                last_name: student_2.last_name,
+                name: student_2.name,
+                period_id: period.id.to_s,
+                role_id: student_role_2.id.to_s,
+                deidentifier: student_2.deidentifier,
+                is_active: true
+              },
+              {
+                id: student_3.id.to_s,
+                first_name: student_3.first_name,
+                last_name: student_3.last_name,
+                name: student_3.name,
+                period_id: period_2.id.to_s,
+                role_id: student_role_3.id.to_s,
+                deidentifier: student_3.deidentifier,
+                is_active: true
+              }
+            ]
+          })
+        end
+      end
+
+      context 'caller is not a course teacher' do
+        it 'raises SecurityTransgression' do
+          expect{
+            api_get :roster, student_token, parameters: valid_params
+          }.to raise_error(SecurityTransgression)
+        end
+      end
+    end
+
+    context 'caller has an application/client credentials authorization token' do
+      it 'raises SecurityTransgression' do
+        expect{
+          api_get :roster, userless_token, parameters: valid_params
+        }.to raise_error(SecurityTransgression)
+      end
+    end
+
+    context 'caller does not have an authorization token' do
+      it 'raises SecurityTransgression' do
+        expect{
+          api_get :roster, nil, parameters: valid_params
+        }.to raise_error(SecurityTransgression)
+      end
+    end
+  end
+
   describe "show" do
     let(:roles)          { Role::GetUserRoles.call(user_1).outputs.roles }
     let(:teacher)        { roles.select(&:teacher?).first }

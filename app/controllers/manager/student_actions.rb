@@ -4,7 +4,7 @@ module Manager::StudentActions
   end
 
   def index
-    @students = GetStudentRoster[course: @entity_course]
+    @students = GetCourseRoster.call(course: @entity_course).outputs.roster[:students]
     @students.sort! { |a, b| a.username <=> b.username }
     render 'manager/students/index'
   end
