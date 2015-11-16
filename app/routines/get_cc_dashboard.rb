@@ -16,40 +16,38 @@ class GetCcDashboard
     load_role(role, role_type)
     load_course(course, role_type)
     load_tasks(role, role_type)
-    load_cc_stats(role, role_type)
+    load_cc_stats(course, role, role_type)
   end
 
-  def load_cc_stats(role, role_type)
+  def load_cc_stats(course, role, role_type)
     case role_type
     when :teacher
-      load_cc_teacher_stats(role)
+      load_cc_teacher_stats(course, role)
     when :student
       load_cc_student_stats(role)
     end
   end
 
-  def load_cc_teacher_stats(role)
-    course_id = role.teacher.entity_course_id
-
+  def load_cc_teacher_stats(course, role)
     cc_tasks = Tasks::Models::ConceptCoachTask
       .joins(task: [:task, {taskings: :period}])
       .preload(task: [:task, {taskings: {period: :active_enrollments}}], page: :chapter)
-      .where(task: {taskings: {period: {entity_course_id: course_id}}})
+      .where(task: {taskings: {period: {entity_course_id: course.id}}})
       .where{task.task.completed_exercise_steps_count > 0}
       .distinct.to_a
 
-    outputs.course.periods = cc_tasks.group_by do |cc_task|
-      # Does not support group work
-      cc_task.task.taskings.first.period
-    end.map do |period, cc_tasks|
+    # Does not support group work
+    period_id_cc_tasks_map = cc_tasks.group_by{ |cc_task| cc_task.task.taskings.first.period.id }
+
+    outputs.course.periods = course.periods.map do |period|
+      cc_tasks = period_id_cc_tasks_map[period.id] || []
       num_students = period.active_enrollments.length
       orig_map, spaced_map = get_period_performance_maps_from_cc_tasks(cc_tasks)
 
       {
         id: period.id,
         name: period.name,
-        chapters: cc_tasks.group_by{ |cc_task| cc_task.page.chapter }
-                          .map do |chapter, cc_tasks|
+        chapters: cc_tasks.group_by{ |cc_task| cc_task.page.chapter }.map do |chapter, cc_tasks|
           {
             id: chapter.id,
             title: chapter.title,
