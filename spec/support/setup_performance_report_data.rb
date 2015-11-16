@@ -85,6 +85,29 @@ class SetupPerformanceReportData
 
     DistributeTasks[homework2_taskplan]
 
+    future_homework_taskplan = Tasks::Models::TaskPlan.new(
+      title: 'Future Homework task plan',
+      owner: course,
+      type: 'homework',
+      assistant: homework_assistant,
+      content_ecosystem_id: ecosystem.id,
+      settings: {
+        exercise_ids: Content::Models::Exercise.first(5).collect(&:id).map(&:to_s),
+        exercises_count_dynamic: 2
+      }
+    )
+
+    future_homework_taskplan.tasking_plans << Tasks::Models::TaskingPlan.new(
+      target: course,
+      task_plan: future_homework_taskplan,
+      opens_at: Time.now + 1.day,
+      due_at: Time.now + 2.days
+    )
+
+    future_homework_taskplan.save!
+
+    DistributeTasks[future_homework_taskplan]
+
     student_roles = students.collect do |student|
       GetUserCourseRoles[course: course, user: student].first
     end
@@ -155,6 +178,7 @@ class SetupPerformanceReportData
       .joins { taskings }
       .where { taskings.entity_role_id == my { role.id } }
       .where { task_type.in my { task_types } }
+      .where { opens_at <= Time.now }
       .order { due_at }
       .includes { task_steps.tasked }
   end
