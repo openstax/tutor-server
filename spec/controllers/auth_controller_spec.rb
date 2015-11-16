@@ -53,6 +53,13 @@ RSpec.describe AuthController, type: :controller do
       expect(response.body).to include('window.parent.postMessage')
     end
 
+    it 'can sign out' do
+      controller.sign_in user
+      get :logout
+      expect(session[:account_id]).to be_nil
+      expect(response).to redirect_to(authenticate_via_iframe_url)
+    end
+
     it 'requires agreeing to terms' do
       controller.sign_in new_user
       get :iframe

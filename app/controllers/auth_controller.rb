@@ -39,15 +39,18 @@ class AuthController < ApplicationController
   end
 
   def logout
-    if current_user.is_anonymous?
-      render status: :forbidden, text: 'You must be logged in to logout'
-    else
-      sign_out!
-      render json: { logout: true }
-    end
+    sign_out!
+    redirect_to stubbed_auth? ? authenticate_via_iframe_url :
+                  OpenStax::Utilities.generate_url(
+                    OpenStax::Accounts.configuration.openstax_accounts_url,
+                    "remote/iframe", parent: params[:parent]
+                  )
   end
 
   private
+
+  def accounts_url_to(page)
+  end
 
   def stubbed_auth?
     OpenStax::Accounts.configuration.enable_stubbing?
@@ -59,11 +62,14 @@ class AuthController < ApplicationController
       status.merge! Api::V1::UserBootstrapDataRepresenter.new(current_user)
     end
     status[:endpoints] = {
+      is_stubbed: stubbed_auth?,
       login: openstax_accounts.login_url,
       iframe_login: authenticate_via_iframe_url,
-      accounts_iframe: stubbed_auth? ?
-        authenticate_via_iframe_url :
-        Rails.application.secrets.openstax['accounts']['url'] + "/remote/iframe"
+      iframe_logout: logout_via_iframe_url,
+      accounts_iframe: stubbed_auth? ? authenticate_via_iframe_url :
+        OpenStax::Utilities.generate_url(
+          OpenStax::Accounts.configuration.openstax_accounts_url, "remote/iframe"
+        )
     }
     status
   end

@@ -33,10 +33,9 @@ Rails.application.routes.draw do
   scope 'auth', controller: 'auth' do
     scope to: 'auth#cors_preflight_check', via: [:options] do
       match 'status'
-      match 'logout'
     end
     get 'status'
-    delete 'logout'
+    get 'logout', as: 'logout_via_iframe'
     # Relay user tokens inside an iframe.
     get 'iframe', as: 'authenticate_via_iframe'
   end
