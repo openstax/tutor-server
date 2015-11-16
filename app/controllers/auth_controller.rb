@@ -34,7 +34,7 @@ class AuthController < ApplicationController
       redirect_to_login_url
     else
       @status = user_status_update
-      @iframe_origin = stubbed_auth? ? session[:parent] : @status[:endpoints][:accounts_iframe]
+      @iframe_origin = stubbed_auth? ? session[:parent] || '*' : @status[:endpoints][:accounts_iframe]
     end
   end
 
