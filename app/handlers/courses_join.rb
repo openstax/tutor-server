@@ -8,32 +8,28 @@ class CoursesJoin
   def authorized?; true; end
 
   def handle
-    after_transaction { raise_handled_exceptions! }
+    after_transaction { cause_fatal_error if errors.any? }
 
-    course = find_course_by_join_token
-    run(:add_teacher, course: course, user: caller)
+    outputs.course = find_course_by_join_token
+    run(:add_teacher, course: outputs.course, user: caller)
   end
 
   private
   def find_course_by_join_token
-    profile = run(:get_course_profile, attrs: {
-      teacher_join_token: params[:join_token]
-    }).outputs.profile
+    profile = nil
+    profile_attrs = { teacher_join_token: params[:join_token] }
+    profile_routine = run(:get_course_profile, attrs: profile_attrs)
 
-    Entity::Course.find(profile.course_id)
+    if profile_routine.errors.any?
+      fatal_error(code: :invalid_token, message: 'You are trying to join a class as a teacher, but the information you provided is either out of date or does not correspond to an existing course.')
+    else
+      profile = profile_routine.outputs.profile
+    end
+
+    Entity::Course.find_by(id: profile.course_id)
   end
 
-  def raise_handled_exceptions!
-    raise self.class.handled_exceptions[errors.first.code] if errors.any?
-  end
-
-  def self.handled_exceptions
-    @@handled_exceptions ||= {
-      profile_not_found: InvalidTeacherJoinToken,
-      user_is_already_teacher_of_course: UserAlreadyCourseTeacher
-    }
+  def cause_fatal_error
+    fatal_error(code: :subroutine_errors, message: errors.first.message)
   end
 end
-
-class InvalidTeacherJoinToken < StandardError; end
-class UserAlreadyCourseTeacher < StandardError; end
