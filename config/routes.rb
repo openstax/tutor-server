@@ -28,11 +28,14 @@ Rails.application.routes.draw do
 
   apipie
 
-  # Fetch user information and logging in remotely
+
+  # Fetch user information and log in/out in remotely
   scope 'auth', controller: 'auth' do
-    # Request user info and doorkeeper access token via a CORS request
+    scope to: 'auth#cors_preflight_check', via: [:options] do
+      match 'status'
+    end
     get 'status'
-    match 'status', to: 'auth#cors_preflight_check', via: [:options]
+    get 'logout', as: 'logout_via_iframe'
     # Relay user tokens inside an iframe.
     get 'iframe', as: 'authenticate_via_iframe'
   end
