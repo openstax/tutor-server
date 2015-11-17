@@ -73,7 +73,7 @@ class AuthController < ApplicationController
 
   def set_cors_headers
     headers['Access-Control-Allow-Origin']   = validated_cors_origin
-    headers['Access-Control-Allow-Methods']  = 'GET, OPTIONS, DELETE' # No PUT/POST access
+    headers['Access-Control-Allow-Methods']  = 'GET, OPTIONS' # No PUT/POST/DELETE access
     headers['Access-Control-Request-Method'] = '*'
     headers['Access-Control-Allow-Credentials'] = 'true'
     headers['Access-Control-Allow-Headers']  = 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
