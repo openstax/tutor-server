@@ -11,7 +11,7 @@ class OpenStax::Exercises::V1::RealClient
     @client_id    = exercises_configuration.client_id
     @secret       = exercises_configuration.secret
 
-    @oauth_client = OAuth2::Client.new(@client_id, @secret, site: @url)
+    @oauth_client = OAuth2::Client.new(@client_id, @secret, site: @server_url)
 
     @oauth_token  = @oauth_client.client_credentials.get_token unless @client_id.nil?
   end
