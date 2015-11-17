@@ -10,6 +10,9 @@ RSpec.describe Api::V1::EnrollmentChangeRepresenter, type: :representer do
   let!(:course)              { FactoryGirl.create(:entity_course) }
   let!(:period)              { ::CreatePeriod[course: course] }
 
+  let!(:teacher_user)        { FactoryGirl.create(:user) }
+  let!(:teacher_role)        { AddUserAsCourseTeacher[user: teacher_user, course: course] }
+
   let!(:enrollment_change) { CourseMembership::CreateEnrollmentChange[
     user: user, period: period, requires_enrollee_approval: false
   ] }
@@ -25,5 +28,13 @@ RSpec.describe Api::V1::EnrollmentChangeRepresenter, type: :representer do
     expect(representation['to']['period']['name']).to eq period.name
     expect(representation['status']).to eq enrollment_change.status.to_s
     expect(representation['requires_enrollee_approval']).to eq false
+  end
+
+  it 'includes teacher names in enrollment change' do
+    expect(representation['to']['course']['teachers']).to eq([{
+          'name' => teacher_role.name,
+          'first_name' => teacher_role.first_name,
+          'last_name'  => teacher_role.last_name
+        }])
   end
 end
