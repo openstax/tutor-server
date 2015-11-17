@@ -1,4 +1,24 @@
 module Api::V1::Enrollment
+
+  class Teacher < Roar::Decorator
+    include Roar::JSON
+
+    property :name,
+             readable: true,
+             writeable: false,
+             type: String
+
+    property :first_name,
+             readable: true,
+             writeable: false,
+             type: String
+
+    property :last_name,
+             readable: true,
+             writeable: false,
+             type: String
+  end
+
   class PeriodWithCourseRepresenter < Roar::Decorator
 
     include Roar::JSON
@@ -18,6 +38,12 @@ module Api::V1::Enrollment
                readable: true,
                writeable: false,
                schema_info: { required: true }
+
+      collection :teachers,
+                 readable: true,
+                 getter: ->(*) { teacher_roles.map{|role| role} },
+                 writeable: false,
+                 decorator: Teacher
     end
 
     nested :period do
