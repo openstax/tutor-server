@@ -153,7 +153,8 @@ describe GetCcDashboard, type: :routine do
                     is_completed: true,
                     is_correct: true
                   }
-                end + Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_COUNT.times.map do
+                end + Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP
+                        .map{ |k_ago, ex_count| ex_count }.reduce(:+).times.map do
                   {
                     id: a_kind_of(Integer),
                     is_completed: true,

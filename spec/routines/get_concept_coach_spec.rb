@@ -133,14 +133,16 @@ RSpec.describe GetConceptCoach, type: :routine do
       ].task }.to change{ Tasks::Models::ConceptCoachTask.count }.by(1)
       expect(task).not_to eq existing_task
       expect(task.task_steps.size).to eq Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT + \
-                                         Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_COUNT
+                                         Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP
+                                           .map{ |k_ago, ex_count| ex_count }.reduce(:+)
       task.task_steps.first(
         Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT
       ).each do |task_step|
         expect(task_step.tasked.exercise.page.id).to eq @page_2.id
       end
       task.task_steps.last(
-        Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_COUNT
+        Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP
+          .map{ |k_ago, ex_count| ex_count }.reduce(:+)
       ).each do |task_step|
         expect(task_step.tasked.exercise.page.id).to eq @page_1.id
       end

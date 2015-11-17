@@ -45,8 +45,13 @@ class GetConceptCoach
     spaced_tasks = history.tasks || []
 
     spaced_exercises = spaced_tasks.empty? ? \
-      [] : Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_COUNT.times.collect do
-      spaced_task = spaced_tasks.sample
+      [] : Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP.flat_map do |k_ago, ex_count|
+      # Subtract 1 from k_ago because this history does not include the current task (0-ago)
+      spaced_task = k_ago.nil? ? spaced_tasks.sample : spaced_tasks[k_ago - 1]
+
+      # If no k_ago task, pick a random one
+      spaced_task ||= spaced_tasks.sample
+
       spaced_page_model = spaced_task.concept_coach_task.page
       spaced_page = Content::Page.new(strategy: spaced_page_model.wrap)
       spaced_ecosystem = Content::Ecosystem.find_by_page_ids(spaced_page.id)
@@ -64,24 +69,26 @@ class GetConceptCoach
         all_worked_exercise_numbers.include?(ex.number)
       end
 
-      # Randomize and grab one exercise
-      chosen_exercise = candidate_exercises.shuffle.first
-
-      if chosen_exercise.nil?
-        # Try again allowing repeats (but not from the current task)
-        candidate_exercises = spaced_exercises.values.flatten.uniq.reject do |ex|
-          current_exercise_numbers.include?(ex.number)
-        end
-
+      # Randomize and grab ex_count exercises
+      ex_count.times.map do
         chosen_exercise = candidate_exercises.shuffle.first
 
-        next if chosen_exercise.nil?
+        if chosen_exercise.nil?
+          # Try again allowing repeats (but not from the current task)
+          candidate_exercises = spaced_exercises.values.flatten.uniq.reject do |ex|
+            current_exercise_numbers.include?(ex.number)
+          end
+
+          chosen_exercise = candidate_exercises.shuffle.first
+
+          next if chosen_exercise.nil?
+        end
+
+        all_worked_exercise_numbers << chosen_exercise.number
+        current_exercise_numbers << chosen_exercise.number
+
+        chosen_exercise
       end
-
-      all_worked_exercise_numbers << chosen_exercise.number
-      current_exercise_numbers << chosen_exercise.number
-
-      chosen_exercise
     end.compact
 
     exercises = core_exercises + spaced_exercises
