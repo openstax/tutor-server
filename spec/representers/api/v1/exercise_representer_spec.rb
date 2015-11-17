@@ -34,22 +34,25 @@ RSpec.describe Api::V1::ExerciseRepresenter, type: :representer do
 
   it 'represents an exercise with tags' do
     representation = Api::V1::ExerciseRepresenter.new(ecosystem_exercise).as_json
-    expect(representation).to eq(
+    expect(representation).to include(
       'id' => exercise.id.to_s,
       'url' => exercise.url,
       'content' => JSON.parse(exercise.content),
-      'tags' => [{
-        'id' => 'ost-tag-lo-k12phys-ch04-s02-lo01',
-        'type' => 'lo',
-        'description' => 'Describe Newton\'s first law and friction',
-        'chapter_section' => [4,2],
-      }, {
-        'id' => 'ost-tag-teks-112-39-c-4d',
-        'type' => 'teks',
-        'name' => '(D)',
-        'description' => 'calculate the effect of forces on objects',
-        'data' => '4d'
-      }]
+      'tags' => a_collection_containing_exactly(
+        {
+          'id' => 'ost-tag-lo-k12phys-ch04-s02-lo01',
+          'type' => 'lo',
+          'description' => 'Describe Newton\'s first law and friction',
+          'chapter_section' => [4,2],
+        },
+        {
+          'id' => 'ost-tag-teks-112-39-c-4d',
+          'type' => 'teks',
+          'name' => '(D)',
+          'description' => 'calculate the effect of forces on objects',
+          'data' => '4d'
+        }
+      )
     )
   end
 end
