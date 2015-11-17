@@ -49,9 +49,6 @@ class AuthController < ApplicationController
 
   private
 
-  def accounts_url_to(page)
-  end
-
   def stubbed_auth?
     OpenStax::Accounts.configuration.enable_stubbing?
   end
