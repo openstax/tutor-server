@@ -2,7 +2,7 @@ module VcrConfigurationHelper
   def set_vcr_config_around(group, config = {})
     before(group) do
       config.each do |k, v|
-        instance_variable_set("@pervious_#{k}", VcrConfiguration.current_config(k))
+        instance_variable_set("@previous_#{k}", VcrConfiguration.current_config(k))
         VCR.configure { |c| c.send("#{k}=", v) }
       end
     end
