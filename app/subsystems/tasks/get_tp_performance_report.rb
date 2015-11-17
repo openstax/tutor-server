@@ -77,8 +77,9 @@ module Tasks
       course.taskings.preload(task: {task: {task_plan: {tasking_plans: :target} }},
                               role: [{student: {enrollments: :period}},
                                      {profile: :account}])
-                     .joins(task: :task)
+                     .joins(task: { task: { task_plan: :tasking_plans } })
                      .where(task: {task: {task_type: task_types}})
+                     .where("tasks_tasking_plans.opens_at <= ?", Time.current)
     end
 
     def get_data_headings(tasking_plans, task_plan_results)
