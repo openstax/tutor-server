@@ -91,7 +91,7 @@ class GetConceptCoach
     run(:create_cc_task, page: page, exercises: exercises,
                          related_content_array: related_content_array)
 
-    run(:add_spy_info, to: outputs.task, from: ecosystem)
+    run(:add_spy_info, to: outputs.task, from: [ecosystem, history.tasks])
 
     run(:create_tasking, role: role, task: outputs.task.entity_task, period: role.student.period)
 
