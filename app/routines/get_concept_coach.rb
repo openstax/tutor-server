@@ -23,15 +23,16 @@ class GetConceptCoach
   def exec(user:, cnx_book_id:, cnx_page_id:)
     role, page = get_role_and_page(user: user, cnx_book_id: cnx_book_id, cnx_page_id: cnx_page_id)
 
+    ecosystem, pool = get_ecosystem_and_pool(page)
+    history = run(:get_history, role: role, type: :concept_coach).outputs
     existing_cc_task = run(:get_cc_task, role: role, page: page).outputs.entity_task
     unless existing_cc_task.nil?
       outputs.entity_task = existing_cc_task
       outputs.task = existing_cc_task.task
+      run(:add_spy_info, to: outputs.task, from: [ecosystem, history.tasks])
       return
     end
 
-    ecosystem, pool = get_ecosystem_and_pool(page)
-    history = run(:get_history, role: role, type: :concept_coach).outputs
     all_worked_exercises = history.exercises.flatten
     all_worked_exercise_numbers = all_worked_exercises.map(&:number)
     core_exercises = get_local_exercises(
