@@ -24,3 +24,7 @@ end
 #                                         notify: true,
 #                                         extras: ->(e) { {} })
 #
+OpenStax::RescueFrom.register_exception('InvalidTeacherJoinToken',
+                                       message: 'You are trying to join a class as a teacher, but the information you provided is either out of date or does not correspond to an existing course.',
+                                       status: :not_found,
+                                       notify: false)
