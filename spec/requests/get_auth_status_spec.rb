@@ -26,6 +26,8 @@ describe "Get authentication status", type: :request, version: :v1 do
       expect(response.body_as_hash).to match(
                                          :access_token => token,
                                          :endpoints => {
+                                           :is_stubbed=>true,
+                                           :iframe_logout=>a_string_starting_with("http"),
                                            :login=>a_string_starting_with("http"),
                                            :iframe_login=>a_string_starting_with("http"),
                                            :accounts_iframe=>a_string_starting_with("http")
