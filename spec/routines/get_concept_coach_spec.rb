@@ -7,31 +7,16 @@ RSpec.describe GetConceptCoach, type: :routine do
   before(:all) do
     DatabaseCleaner.start
 
-    chapter = FactoryGirl.create :content_chapter
-    cnx_page_1 = OpenStax::Cnx::V1::Page.new(id: '95e61258-2faf-41d4-af92-f62e1414175a',
-                                             title: 'Force')
-    cnx_page_2 = OpenStax::Cnx::V1::Page.new(id: '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6',
-                                             title: "Newton's First Law of Motion: Inertia")
-    book_location_1 = [4, 1]
-    book_location_2 = [4, 2]
-
-    page_model_1, page_model_2 = VCR.use_cassette('GetConceptCoach/with_pages', VCR_OPTS) do
-      [Content::Routines::ImportPage[chapter: chapter,
-                                     cnx_page: cnx_page_1,
-                                     book_location: book_location_1],
-       Content::Routines::ImportPage[chapter: chapter,
-                                     cnx_page: cnx_page_2,
-                                     book_location: book_location_2]]
+    ecosystem = VCR.use_cassette('GetConceptCoach/with_book', VCR_OPTS) do
+      FetchAndImportBookAndCreateEcosystem[book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b']
     end
 
-    @book = chapter.book
-    Content::Routines::PopulateExercisePools[book: @book]
+    @book = ecosystem.books.first
 
+    page_model_1 = Content::Models::Page.find_by(title: 'Force')
+    page_model_2 = Content::Models::Page.find_by(title: 'Newton\'s First Law of Motion: Inertia')
     @page_1 = Content::Page.new(strategy: page_model_1.reload.wrap)
     @page_2 = Content::Page.new(strategy: page_model_2.reload.wrap)
-
-    ecosystem_model = @book.ecosystem
-    ecosystem = Content::Ecosystem.new(strategy: ecosystem_model.wrap)
 
     period_model = FactoryGirl.create(:course_membership_period)
     period = CourseMembership::Period.new(strategy: period_model.wrap)
