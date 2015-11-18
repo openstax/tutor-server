@@ -23,7 +23,7 @@ RSpec.describe 'Teachers' do
         end
 
         it 'redirects the user to the course page' do
-          expect(current_path).to eq("/courses/#{course.id}")
+          expect(current_path).to eq(course_dashboard_path(course))
         end
       end
 
@@ -34,7 +34,7 @@ RSpec.describe 'Teachers' do
             visit join_course_path(course.teacher_join_token)
           end
 
-          expect(current_path).to eq("/courses/#{course.id}")
+          expect(current_path).to eq(course_dashboard_path(course))
         end
       end
 
