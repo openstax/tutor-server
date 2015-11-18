@@ -4,6 +4,8 @@ class TermsController < ApplicationController
   # Allow accessing from within iframes
   before_filter :allow_iframe_access, only: [:index, :pose, :agree]
 
+  before_filter :use_openstax_logo
+
   def index
     @contracts = [ FinePrint.get_contract(:general_terms_of_use),
                    FinePrint.get_contract(:privacy_policy) ]
@@ -23,6 +25,10 @@ class TermsController < ApplicationController
       flash.now[:alert] = 'There was an error when trying to agree to these terms.'
       render 'pose'
     end
+  end
+
+  def use_openstax_logo
+    @use_openstax_logo = true
   end
 
 end

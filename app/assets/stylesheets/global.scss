@@ -139,11 +139,20 @@ header {
 
     .navbar-brand {
       display: block;
-      height: 30px;
-      width: 217px;
       margin: 5px 0 !important;
-      background: image-url("OST-Horiz-TM-CMYK.svg") no-repeat;
-      background-size: 100%;
+      height: 30px;
+
+      &, &.tutor {
+        width: 217px;
+        background: image-url("OST-Horiz-TM-CMYK.svg") no-repeat;
+        background-size: 100%;
+      }
+
+      &.openstax {
+        width: 148px;
+        background: image-url("OS-Horiz-TM-CMYK.svg") no-repeat;
+        background-size: 103%;
+      }
     }
 
     .navbar-brand-rice {
