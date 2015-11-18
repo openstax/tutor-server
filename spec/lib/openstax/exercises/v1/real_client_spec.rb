@@ -1,8 +1,20 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe OpenStax::Exercises::V1::RealClient, type: :external,
-                                                    vcr: VCR_OPTS do
+RSpec.describe OpenStax::Exercises::V1::RealClient, type: :external, vcr: VCR_OPTS do
+
+  before(:all) do
+    @config = OpenStax::Exercises::V1.configuration
+    @client_id = @config.client_id
+    @secret = @config.secret
+    @config.client_id = nil
+    @config.secret = nil
+  end
+
+  after(:all) do
+    @config.client_id = @client_id
+    @config.secret = @secret
+  end
 
   let!(:client) { OpenStax::Exercises::V1.real_client }
 
