@@ -45,6 +45,9 @@ gem 'openstax_utilities', '~> 4.2.0'
 # Cron job scheduling
 gem 'whenever'
 
+# Talks to Accounts (latest version is broken)
+gem 'omniauth-oauth2', '~> 1.3.1'
+
 # OpenStax Accounts integration
 gem 'openstax_accounts', '~> 6.1.4'
 
