@@ -68,6 +68,6 @@ RSpec.feature 'Administration', vcr: VCR_OPTS do
 
     expect(current_path).to eq(new_admin_user_path)
     expect(page).to have_css('.flash_error',
-                         text: 'Invalid user information. Account has already been taken')
+                         text: 'Invalid user information. has already been taken')
   end
 end

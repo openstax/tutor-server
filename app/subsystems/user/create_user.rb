@@ -20,18 +20,13 @@ module User
         full_name: full_name, title: title
       )
 
-      user = ::User::User.create(
+      outputs.user = ::User::User.create(
         exchange_read_identifier: (exchange_identifiers || new_identifiers).read,
         exchange_write_identifier: (exchange_identifiers || new_identifiers).write,
         account_id: account_id
       )
 
-      if user.to_model.valid?
-        outputs.user = user
-      else
-        fatal_error(code: :could_not_create_user,
-                    message: user.to_model.errors.first.join(' ').capitalize)
-      end
+      transfer_errors_from(outputs.user.to_model, type: :verbatim)
     end
 
     private
