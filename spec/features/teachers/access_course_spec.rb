@@ -22,20 +22,19 @@ RSpec.describe 'Teachers' do
           expect(UserIsCourseTeacher[course: course, user: user]).to be true
         end
 
-        it 'redirects the user to the dashboard' do
-          expect(current_path).to eq(dashboard_path)
+        it 'redirects the user to the course page' do
+          expect(current_path).to eq(course_dashboard_path(course))
         end
       end
 
       context 'already added as a teacher' do
-        it 'renders an error page' do
+        it 'redirects them to the course page' do
           rescuing_exceptions do
             visit join_course_path(course.teacher_join_token)
             visit join_course_path(course.teacher_join_token)
           end
 
-          expect(page).to have_css('.rescue-from',
-                                   text: 'You are already a teacher of this course.')
+          expect(current_path).to eq(course_dashboard_path(course))
         end
       end
 

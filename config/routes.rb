@@ -214,6 +214,7 @@ Rails.application.routes.draw do
   end
 
   get '/courses/join/:join_token' => 'courses#join', as: :join_course
+  get '/courses/:id', to: 'webview#index', as: :course_dashboard
 
   namespace :content_analyst do
     root to: 'console#index'
