@@ -4,34 +4,32 @@ require 'database_cleaner'
 
 RSpec.describe GetConceptCoach, type: :routine do
 
+  CORE_EXERCISES_COUNT = Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT
+  SPACED_EXERCISES_COUNT = Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP
+                             .map{ |k_ago, ex_count| ex_count }.reduce(:+)
+
   before(:all) do
     DatabaseCleaner.start
 
-    chapter = FactoryGirl.create :content_chapter
-    cnx_page_1 = OpenStax::Cnx::V1::Page.new(id: '95e61258-2faf-41d4-af92-f62e1414175a',
-                                             title: 'Force')
-    cnx_page_2 = OpenStax::Cnx::V1::Page.new(id: '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6',
-                                             title: "Newton's First Law of Motion: Inertia")
-    book_location_1 = [4, 1]
-    book_location_2 = [4, 2]
-
-    page_model_1, page_model_2 = VCR.use_cassette('GetConceptCoach/with_pages', VCR_OPTS) do
-      [Content::Routines::ImportPage[chapter: chapter,
-                                     cnx_page: cnx_page_1,
-                                     book_location: book_location_1],
-       Content::Routines::ImportPage[chapter: chapter,
-                                     cnx_page: cnx_page_2,
-                                     book_location: book_location_2]]
+    ecosystem = VCR.use_cassette('GetConceptCoach/with_book', VCR_OPTS) do
+      FetchAndImportBookAndCreateEcosystem[book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b']
     end
 
-    @book = chapter.book
-    Content::Routines::PopulateExercisePools[book: @book]
+    @book = ecosystem.books.first
+
+    page_model_1 = Content::Models::Page.find_by(title: 'Acceleration')
+    page_model_2 = Content::Models::Page.find_by(title: 'Representing Acceleration with Equations and Graphs')
+    page_model_3 = Content::Models::Page.find_by(title: 'Force')
+    page_model_4 = Content::Models::Page.find_by(title: 'Newton\'s First Law of Motion: Inertia')
+    page_model_5 = Content::Models::Page.find_by(title: 'Newton\'s Second Law of Motion')
+    page_model_6 = Content::Models::Page.find_by(title: 'Newton\'s Third Law of Motion')
 
     @page_1 = Content::Page.new(strategy: page_model_1.reload.wrap)
     @page_2 = Content::Page.new(strategy: page_model_2.reload.wrap)
-
-    ecosystem_model = @book.ecosystem
-    ecosystem = Content::Ecosystem.new(strategy: ecosystem_model.wrap)
+    @page_3 = Content::Page.new(strategy: page_model_3.reload.wrap)
+    @page_4 = Content::Page.new(strategy: page_model_4.reload.wrap)
+    @page_5 = Content::Page.new(strategy: page_model_5.reload.wrap)
+    @page_6 = Content::Page.new(strategy: page_model_6.reload.wrap)
 
     period_model = FactoryGirl.create(:course_membership_period)
     period = CourseMembership::Period.new(strategy: period_model.wrap)
@@ -57,7 +55,7 @@ RSpec.describe GetConceptCoach, type: :routine do
       expect{ task = described_class[
         user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
       ].task }.to change{ Tasks::Models::Task.count }.by(1)
-      expect(task.task_steps.size).to eq Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT
+      expect(task.task_steps.size).to eq CORE_EXERCISES_COUNT
       task.task_steps.each do |task_step|
         expect(task_step.tasked.exercise.page.id).to eq @page_1.id
       end
@@ -120,29 +118,65 @@ RSpec.describe GetConceptCoach, type: :routine do
         user: @user_2, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
       ].task }.to change{ Tasks::Models::ConceptCoachTask.count }.by(1)
       expect(task).not_to eq existing_task
-      expect(task.task_steps.size).to eq Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT
+      expect(task.task_steps.size).to eq CORE_EXERCISES_COUNT
       task.task_steps.each do |task_step|
         expect(task_step.tasked.exercise.page.id).to eq @page_1.id
       end
     end
 
-    it 'should create a new task for a different page and properly assign spaced practice' do
+it 'should create a new task for a different page and properly assign spaced practice' do
       task = nil
       expect{ task = described_class[
         user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: @page_2.uuid
       ].task }.to change{ Tasks::Models::ConceptCoachTask.count }.by(1)
       expect(task).not_to eq existing_task
-      expect(task.task_steps.size).to eq Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT + \
-                                         Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_COUNT
-      task.task_steps.first(
-        Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT
-      ).each do |task_step|
+      expect(task.task_steps.size).to eq CORE_EXERCISES_COUNT + SPACED_EXERCISES_COUNT
+      task.task_steps.first(CORE_EXERCISES_COUNT).each do |task_step|
         expect(task_step.tasked.exercise.page.id).to eq @page_2.id
       end
-      task.task_steps.last(
-        Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_COUNT
-      ).each do |task_step|
+      task.task_steps.last(SPACED_EXERCISES_COUNT).each do |task_step|
         expect(task_step.tasked.exercise.page.id).to eq @page_1.id
+      end
+    end
+
+    it 'should assign spaced practice according to the k-ago map' do
+      task_pages = [@page_1, @page_2, @page_3, @page_4, @page_5, @page_6]
+      tasks = task_pages.map do |page|
+        described_class[
+          user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: page.uuid
+        ].task
+      end
+
+      tasks.each_with_index do |task, ii|
+        page = task_pages[ii]
+
+        expected_num_exercises = ii == 0 ? CORE_EXERCISES_COUNT : \
+                                           CORE_EXERCISES_COUNT + SPACED_EXERCISES_COUNT
+
+        expect(task.tasked_exercises.count).to eq expected_num_exercises
+
+        task.tasked_exercises.first(CORE_EXERCISES_COUNT).each do |te|
+          expect(te.exercise.page.id).to eq page.id
+        end
+      end
+
+      tasks.slice(1..-1).each_with_index do |task, ii|
+        task_index = ii + 1
+        spaced_page_ids = task.tasked_exercises.last(SPACED_EXERCISES_COUNT).map do |te|
+          te.exercise.page.id
+        end
+        available_random_page_ids = task_pages.slice(0..ii).map(&:id)
+
+        Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP.each do |k_ago, count|
+          current_page_ids = spaced_page_ids.shift(count)
+          current_page_ids.each do |page_id|
+            if k_ago.nil? || task_index - k_ago < 0
+              expect(available_random_page_ids).to include(page_id)
+            else
+              expect(page_id).to eq task_pages[task_index - k_ago].id
+            end
+          end
+        end
       end
     end
 

@@ -18,6 +18,10 @@ class AddSpyInfo
     case value
     when Content::Models::Ecosystem, Content::Ecosystem
       { ecosystem_id: value.id, ecosystem_title: value.title }
+    when Array
+      { history: value.map do |task|
+        { task_id: task.id, task_title: task.title }
+      end }
     else
       { "#{value.class.name.demodulize.underscore}_id" => value.id }
     end
