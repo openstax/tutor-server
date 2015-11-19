@@ -42,7 +42,7 @@ class GetCcDashboard
     outputs.course.periods = course.periods.map do |period|
       cc_tasks = period_id_cc_tasks_map[period.id] || []
       num_students = period.active_enrollments.length
-      orig_map, spaced_map = get_period_performance_maps_from_cc_tasks(cc_tasks)
+      orig_map, spaced_map = get_period_performance_maps_from_cc_tasks(period, cc_tasks)
 
       {
         id: period.id,
@@ -116,47 +116,84 @@ class GetCcDashboard
     end.sort{ |a, b| b[:book_location] <=> a[:book_location] }
   end
 
-  def get_period_performance_maps_from_cc_tasks(cc_tasks)
+  def get_period_performance_maps_from_cc_tasks(period, cc_tasks)
     all_task_ids = cc_tasks.map{ |cc_task| cc_task.task.task.id }
+    all_page_ids = cc_tasks.map{ |cc_task| cc_task.page.id }.uniq
+
     completed_tasked_exercises = Tasks::Models::TaskedExercise
       .joins(:task_step, :exercise)
       .where{(task_step.first_completed_at != nil) & (task_step.tasks_task_id.in all_task_ids)}
       .group(exercise: :content_page_id)
-    completed_core_tasked_exercises = completed_tasked_exercises.where(
-      task_step: { group_type: Tasks::Models::TaskStep.group_types[:core_group] }
-    )
-    correct_core_tasked_exercises = completed_core_tasked_exercises.where{
-      answer_id == correct_answer_id
-    }
-    completed_spaced_tasked_exercises = completed_tasked_exercises.where(
-      task_step: { group_type: Tasks::Models::TaskStep.group_types[:spaced_practice_group] }
-    )
-    correct_spaced_tasked_exercises = completed_spaced_tasked_exercises.where{
-      answer_id == correct_answer_id
-    }
+    last_answer_times = completed_tasked_exercises.maximum('tasks_task_steps.last_completed_at')
 
-    original_performance_map = {}
-
-    completed_core_counts = completed_core_tasked_exercises
-                              .count('DISTINCT tasks_tasked_exercises.id')
-    correct_core_counts = correct_core_tasked_exercises
-                            .count('DISTINCT tasks_tasked_exercises.id')
-
-    completed_core_counts.each do |page_id, completed_core_count|
-      correct_core_count = correct_core_counts[page_id] || 0
-      original_performance_map[page_id] = correct_core_count/completed_core_count.to_f
+    cache_key_to_page_id_map = all_page_ids.each_with_object({}) do |page_id, hash|
+      cache_key = "dashboard/cc/teacher/#{period.id}/#{page_id}-#{last_answer_times[page_id]}"
+      hash[cache_key] = page_id
     end
 
+    all_cache_keys = cache_key_to_page_id_map.keys
+    cache_key_performance_map = all_cache_keys.empty? ? {} : \
+                                                        Rails.cache.read_multi(*all_cache_keys)
+
+    original_performance_map = {}
     spaced_performance_map = {}
 
-    completed_spaced_counts = completed_spaced_tasked_exercises
-                                .count('DISTINCT tasks_tasked_exercises.id')
-    correct_spaced_counts = correct_spaced_tasked_exercises
-                              .count('DISTINCT tasks_tasked_exercises.id')
+    cache_key_performance_map.each do |cache_key, performance|
+      page_id = cache_key_to_page_id_map[cache_key]
+      original_performance_map[page_id] = performance[:original]
+      spaced_performance_map[page_id] = performance[:spaced]
+    end
 
-    completed_spaced_counts.each do |page_id, completed_spaced_count|
-      correct_spaced_count = correct_spaced_counts[page_id] || 0
-      spaced_performance_map[page_id] = correct_spaced_count/completed_spaced_count.to_f
+    missed_cache_keys = all_cache_keys - cache_key_performance_map.keys
+
+    unless missed_cache_keys.empty?
+      missed_page_id_to_cache_key_map = missed_cache_keys.each_with_object({}) do |cache_key, hash|
+        page_id = cache_key_to_page_id_map[cache_key]
+        hash[page_id] = cache_key
+      end
+      missed_page_ids = missed_page_id_to_cache_key_map.keys
+
+      missed_completed_tasked_exercises = completed_tasked_exercises.where(
+        exercise: { content_page_id: missed_page_ids }
+      )
+      missed_completed_core_tasked_exercises = missed_completed_tasked_exercises.where(
+        task_step: { group_type: Tasks::Models::TaskStep.group_types[:core_group] }
+      )
+      missed_correct_core_tasked_exercises = missed_completed_core_tasked_exercises.where{
+        answer_id == correct_answer_id
+      }
+      missed_completed_spaced_tasked_exercises = missed_completed_tasked_exercises.where(
+        task_step: { group_type: Tasks::Models::TaskStep.group_types[:spaced_practice_group] }
+      )
+      missed_correct_spaced_tasked_exercises = missed_completed_spaced_tasked_exercises.where{
+        answer_id == correct_answer_id
+      }
+
+      missed_completed_core_counts = missed_completed_core_tasked_exercises
+                                       .count('DISTINCT tasks_tasked_exercises.id')
+      missed_correct_core_counts = missed_correct_core_tasked_exercises
+                                     .count('DISTINCT tasks_tasked_exercises.id')
+      missed_completed_spaced_counts = missed_completed_spaced_tasked_exercises
+                                         .count('DISTINCT tasks_tasked_exercises.id')
+      missed_correct_spaced_counts = missed_correct_spaced_tasked_exercises
+                                       .count('DISTINCT tasks_tasked_exercises.id')
+
+      missed_page_id_to_cache_key_map.each do |page_id, cache_key|
+        completed_core_count = missed_completed_core_counts[page_id] || 0
+        completed_spaced_count = missed_completed_spaced_counts[page_id] || 0
+        correct_core_count = missed_correct_core_counts[page_id] || 0
+        correct_spaced_count = missed_correct_spaced_counts[page_id] || 0
+        original_performance = completed_core_count == 0 ? \
+                                 nil : correct_core_count/completed_core_count.to_f
+        spaced_performance = completed_spaced_count == 0 ? \
+                               nil : correct_spaced_count/completed_spaced_count.to_f
+        performance = { original: original_performance, spaced: spaced_performance }
+
+        Rails.cache.write(cache_key, performance)
+
+        original_performance_map[page_id] = performance[:original]
+        spaced_performance_map[page_id] = performance[:spaced]
+      end
     end
 
     [original_performance_map, spaced_performance_map]
