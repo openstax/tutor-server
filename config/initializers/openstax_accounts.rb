@@ -12,6 +12,9 @@ OpenStax::Accounts.configure do |config|
   config.enable_stubbing = stub
   config.logout_via = :delete
   config.account_user_mapper = MapUsersAccounts
+  config.logout_redirect_url = ->(request) {
+    LogoutRedirectChooser.new(request.url).choose(default: config.default_logout_redirect_url)
+  }
 end
 
 OpenStax::Accounts::ApplicationController.class_exec do

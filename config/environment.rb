@@ -19,6 +19,7 @@ require 'type_verification'
 require 'tagger'
 require 'unique_tokenable'
 require 'url_generator'
+require 'logout_redirect_chooser'
 
 %w(
   biglearn

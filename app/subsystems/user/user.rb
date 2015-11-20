@@ -110,6 +110,10 @@ module User
       !!@strategy.is_application?
     end
 
+    def is_signed_in?
+      !is_anonymous?
+    end
+
     def is_anonymous?
       !!@strategy.is_anonymous?
     end
