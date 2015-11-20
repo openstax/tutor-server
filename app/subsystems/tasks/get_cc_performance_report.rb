@@ -30,7 +30,10 @@ module Tasks
             role: student.role.id,
             data: get_student_cc_data(period_cc_tasks_map[student.role], sorted_period_pages)
           }
-        end.sort_by{ |hash| [hash[:last_name].downcase, hash[:first_name].downcase] }
+        end.sort_by do |hash|
+          sort_name = "#{hash[:last_name]} #{hash[:first_name]}"
+          (sort_name.blank? ? name : sort_name).downcase
+        end
 
         Hashie::Mash.new({
           period: period,

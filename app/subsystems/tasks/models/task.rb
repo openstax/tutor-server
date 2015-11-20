@@ -84,7 +84,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def late?
-    worked_on? && last_worked_at > due_at
+    worked_on? && due_at.present? && last_worked_at > due_at
   end
 
   def worked_on?

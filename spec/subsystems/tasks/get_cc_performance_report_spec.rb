@@ -74,4 +74,18 @@ RSpec.describe Tasks::GetCcPerformanceReport, type: :routine, speed: :slow do
     }.not_to raise_error
   end
 
+  it 'does not blow up when a student has no first_name' do
+    @course.students.first.role.profile.account.update_attribute(:first_name, nil)
+    expect {
+      described_class[course: @course]
+    }.not_to raise_error
+  end
+
+  it 'does not blow up when a student has no last_name' do
+    @course.students.first.role.profile.account.update_attribute(:last_name, nil)
+    expect {
+      described_class[course: @course]
+    }.not_to raise_error
+  end
+
 end

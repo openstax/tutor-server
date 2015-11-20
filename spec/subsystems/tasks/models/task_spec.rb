@@ -22,6 +22,17 @@ RSpec.describe Tasks::Models::Task, type: :model do
     expect(task).to be_late
   end
 
+  it 'is never late if due_at is nil' do
+    task = FactoryGirl.create(:tasks_task, opens_at: Time.current - 1.week, due_at: nil)
+
+    expect(task).not_to be_late
+
+    task.set_last_worked_at(time: Time.current)
+    task.save
+
+    expect(task).not_to be_late
+  end
+
   describe '#handle_task_step_completion!' do
     it 'marks #last_worked_at to the completion_time' do
       time = Time.current

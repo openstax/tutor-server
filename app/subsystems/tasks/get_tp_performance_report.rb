@@ -16,10 +16,11 @@ module Tasks
                                            hash[tasking_plan.task_plan] = index
                                          }
         role_taskings = taskings.to_a.group_by(&:role)
-        sorted_student_data = role_taskings.sort_by { |student_role, _|
-                                student_role.profile.account.last_name.downcase
-        }
-        task_plan_results = Hash.new{|h, key|h[key] = []}
+        sorted_student_data = role_taskings.sort_by do |student_role, _|
+          sort_name = "#{student_role.last_name} #{student_role.first_name}"
+          (sort_name.blank? ? student_role.name : sort_name).downcase
+        end
+        task_plan_results = Hash.new{ |h, key| h[key] = [] }
 
         student_data = sorted_student_data.collect do |student_role, student_taskings|
                          # skip if student is no longer in the current period
