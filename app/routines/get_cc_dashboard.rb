@@ -1,4 +1,9 @@
 class GetCcDashboard
+  # CC dashboard cache duration
+  # The dashboard cache is invalidated each time a new exercise is answered
+  # Otherwise, it will have the duration specified below
+  DASHBOARD_CACHE_DURATION = 1.year
+
   include DashboardRoutineMethods
 
   protected
@@ -189,7 +194,7 @@ class GetCcDashboard
                                nil : correct_spaced_count/completed_spaced_count.to_f
         performance = { original: original_performance, spaced: spaced_performance }
 
-        Rails.cache.write(cache_key, performance)
+        Rails.cache.write(cache_key, performance, expires_in: DASHBOARD_CACHE_DURATION)
 
         original_performance_map[page_id] = performance[:original]
         spaced_performance_map[page_id] = performance[:spaced]
