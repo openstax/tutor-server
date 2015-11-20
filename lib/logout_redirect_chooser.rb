@@ -7,27 +7,12 @@ class LogoutRedirectChooser
     @url = request_url
   end
 
-  def choose(default: nil)
+  def choose(default:)
     if url_indicates_concept_coach?
-      cc_redirect_url
+      URI.join(default, "?cc=1").to_s
     else
       default
     end
-  end
-
-  def cc_redirect_url
-    subdomain = uri.host.split('.')[0]
-
-    suffix = case subdomain
-             when /localhost/
-               "-localhost"
-             when /-(\w+)/
-               "-" + $1
-             else
-               ""
-             end
-
-    "http://cc.openstax.org/logout#{suffix}"
   end
 
   private

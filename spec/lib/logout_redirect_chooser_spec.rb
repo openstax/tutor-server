@@ -2,64 +2,31 @@ require 'rails_helper'
 
 RSpec.describe LogoutRedirectChooser do
 
-  it "computes the CC redirect for the dev env" do
-    expect(
-      LogoutRedirectChooser.new("http://tutor-dev.openstax.org/blah/blah-qa").cc_redirect_url
-    ).to eq "http://cc.openstax.org/logout-dev"
-  end
+  let!(:default) { "http://accounts.openstax.org/logout/" }
+  let!(:cc_logout) { default + "?cc=1" }
 
-  it "computes the CC redirect for the qa env" do
-    expect(
-      LogoutRedirectChooser.new("http://tutor-qa.openstax.org/blah/blah-qa").cc_redirect_url
-    ).to eq "http://cc.openstax.org/logout-qa"
-  end
-
-  it "computes the CC redirect for the staging env" do
-    expect(
-      LogoutRedirectChooser.new("http://tutor-staging.openstax.org/blah/blah-dev").cc_redirect_url
-    ).to eq "http://cc.openstax.org/logout-staging"
-  end
-
-  it "computes the CC redirect for the production env" do
-    expect(
-      LogoutRedirectChooser.new("http://tutor.openstax.org/blah/blah-qa").cc_redirect_url
-    ).to eq "http://cc.openstax.org/logout"
-  end
-
-  it "computes the CC redirect for the localhost env" do
-    expect(
-      LogoutRedirectChooser.new("http://localhost:3001/blah/blah-qa").cc_redirect_url
-    ).to eq "http://cc.openstax.org/logout-localhost"
+  def choose_for(url)
+    LogoutRedirectChooser.new(url).choose(default: default)
   end
 
   it "returns the CC redirect when the request URL has conceptcoach in it" do
-    expect(
-      LogoutRedirectChooser.new("http://tutor.openstax.org/conCepTcoacH/blah-qa").choose
-    ).to eq "http://cc.openstax.org/logout"
+    expect(choose_for("http://tutor.openstax.org/conCepTcoacH/blah-qa")).to eq cc_logout
   end
 
   it "returns the CC redirect when the request URL has a truthy 'cc' param" do
-    expect(
-      LogoutRedirectChooser.new("http://tutor.openstax.org/yadda/blah-qa?cc=1").choose
-    ).to eq "http://cc.openstax.org/logout"
+    expect(choose_for("http://tutor.openstax.org/yadda/blah-qa?cc=1")).to eq cc_logout
   end
 
   it "returns the default when the request URL has a falsy 'cc' param" do
-    expect(
-      LogoutRedirectChooser.new("http://tutor.openstax.org/yadda/blah-qa?cc=false").choose(default: 42)
-    ).to eq 42
+    expect(choose_for("http://tutor.openstax.org/yadda/blah-qa?cc=false")).to eq default
   end
 
-  it "returns the nil when there's no CC-ness to the URL" do
-    expect(
-      LogoutRedirectChooser.new("http://tutor.openstax.org/yadda/blah-qa?howdy=false").choose()
-    ).to eq nil
+  it "returns the default when there's no CC-ness to the URL" do
+    expect(choose_for("http://tutor.openstax.org/yadda/blah-qa?howdy=false")).to eq default
   end
 
-  it "returns the nil when there's no CC-ness to the URL (and no params)" do
-    expect(
-      LogoutRedirectChooser.new("http://tutor.openstax.org/yadda/blah-qa").choose()
-    ).to eq nil
+  it "returns the default when there's no CC-ness to the URL (and no params)" do
+    expect(choose_for("http://tutor.openstax.org/yadda/blah-qa")).to eq default
   end
 
 end

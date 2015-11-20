@@ -9,7 +9,11 @@ class WebviewController < ApplicationController
   before_filter :require_contracts, only: :index
 
   def home
-    redirect_to dashboard_path unless current_user.is_anonymous?
+    if params[:cc] == "1"
+      redirect_to 'http://cc.openstax.org'
+    elsif current_user.is_signed_in?
+      redirect_to dashboard_path
+    end
   end
 
   def index
