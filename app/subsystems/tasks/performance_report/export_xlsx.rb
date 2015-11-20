@@ -107,7 +107,7 @@ module Tasks
 
       def score(data)
         case data.type
-        when 'homework'
+        when 'homework', 'concept_coach'
           '%.2f' % (data.correct_exercise_count/data.actual_and_placeholder_exercise_count.to_f)
         when 'reading'
           data.status.humanize
@@ -116,7 +116,7 @@ module Tasks
         else
           raise "Undefined case for data.type #{data.type} " +
                 "please define it here, or use one of " +
-                "homework, reading, external"
+                "homework, concept_coach, reading, external"
         end
       end
 
