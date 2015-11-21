@@ -14,4 +14,11 @@ module ActiveForce
     end
   end
 
+  class SObject
+    # Save that precious SF API call count!
+    def save_if_changed
+      save if changed?
+    end
+  end
+
 end

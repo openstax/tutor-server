@@ -17,7 +17,7 @@ class ImportSalesforceCourses
 
     candidate_sf_records.each do |candidate|
       create_course_for_candidate(candidate)
-      candidate.save if candidate.changed?
+      candidate.save_if_changed
     end
   end
 
@@ -70,6 +70,7 @@ class ImportSalesforceCourses
     candidate.created_at = course.created_at.iso8601
     candidate.num_students = 0
     candidate.num_teachers = 0
+    candidate.num_sections = 0
     candidate.teacher_join_url = UrlGenerator.new.join_course_url(course.teacher_join_token)
 
     run(:set_ecosystem, course: course, ecosystem: offering.ecosystem)
