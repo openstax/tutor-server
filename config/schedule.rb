@@ -10,7 +10,7 @@ every 1.day, at: '3:00 AM' do
 end
 
 every 1.hour do
-  runner "ImportSalesforceCourses.call()"
+  runner "ImportSalesforceCourses.call"
 end
 
 every 1.day, at: '2:00 AM' do

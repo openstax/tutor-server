@@ -20,4 +20,8 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
+  settings:
+    attributes:
+      import_real_salesforce_courses:
+        name: 'Import real Salesforce courses?'
+        help_block: 'Unchecked: limits to Denver University'

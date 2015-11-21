@@ -149,6 +149,10 @@ gem 'omniauth-salesforce'
 # Fork that supports Ruby >= 2.1
 gem 'active_force', git: 'https://github.com/maddijoyce/active_force', ref: '9695896f5'
 
+# Global settings
+gem 'rails-settings-cached', '~> 0.4.0'
+gem 'rails-settings-ui'
+
 group :development, :test do
   # Get env variables from .env file
   gem 'dotenv-rails'

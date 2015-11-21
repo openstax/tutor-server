@@ -12,8 +12,14 @@ class ImportSalesforceCourses
     outputs.num_successes = 0
   end
 
-  def exec(run_on_test_data_only: true)
-    @run_on_test_data_only = run_on_test_data_only
+  def exec(include_real_salesforce_data: nil)
+    # The "include real" parameter to this routine is used if set; if not set,
+    # fall back to the GlobalSettings value.  If that not set, don't import real
+
+    @include_real_salesforce_data =
+      include_real_salesforce_data.present? ?
+        include_real_salesforce_data :
+        GlobalSettings.import_real_salesforce_courses || false
 
     candidate_sf_records.each do |candidate|
       create_course_for_candidate(candidate)
@@ -27,7 +33,7 @@ class ImportSalesforceCourses
       course_id: nil
     }
 
-    if @run_on_test_data_only
+    if !@include_real_salesforce_data
       search_criteria[:school] = 'Denver University'
       Rails.logger.info { "Starting Salesforce course import using test data only" }
     end
