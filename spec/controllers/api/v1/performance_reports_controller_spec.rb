@@ -72,7 +72,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
               plan_id: resp[0][:data_headings][0][:plan_id],
               type: 'homework',
               due_at: resp[0][:data_headings][0][:due_at],
-              average: 54.16666666666667 },
+              average: 0.5416666666666666 },
             { title: 'Reading task plan',
               plan_id: resp[0][:data_headings][1][:plan_id],
               type: 'reading',
@@ -81,7 +81,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
               plan_id: resp[0][:data_headings][2][:plan_id],
               type: 'homework',
               due_at: resp[0][:data_headings][2][:due_at],
-              average: 70.0 }
+              average: 0.7 }
           ],
           students: [{
             name: 'Student One',
@@ -169,7 +169,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
               plan_id: resp[1][:data_headings][2][:plan_id],
               type: 'homework',
               due_at: resp[1][:data_headings][2][:due_at],
-              average: 100.0
+              average: 1.0
             }
           ],
           students: [{
@@ -257,7 +257,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
               plan_id: resp[0][:data_headings][0][:plan_id],
               type: 'homework',
               due_at: resp[0][:data_headings][0][:due_at],
-              average: 33.333333333333336 },
+              average: 0.3333333333333333 },
             { title: 'Reading task plan',
               plan_id: resp[0][:data_headings][1][:plan_id],
               type: 'reading',
@@ -266,7 +266,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
               plan_id: resp[0][:data_headings][2][:plan_id],
               type: 'homework',
               due_at: resp[0][:data_headings][2][:due_at],
-              average: 40.0 }
+              average: 0.4 }
           ],
           students: [{
             name: 'Student Two',
@@ -310,7 +310,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
               plan_id: resp[1][:data_headings][0][:plan_id],
               type: 'homework',
               due_at: resp[1][:data_headings][0][:due_at],
-              average: 75.0
+              average: 0.75
             },
             { title: 'Reading task plan',
               plan_id: resp[1][:data_headings][1][:plan_id],
@@ -321,7 +321,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
               plan_id: resp[1][:data_headings][2][:plan_id],
               type: 'homework',
               due_at: resp[1][:data_headings][2][:due_at],
-              average: 100.0
+              average: 1.0
             }
           ],
           students: [{
