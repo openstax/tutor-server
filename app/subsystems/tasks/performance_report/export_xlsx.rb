@@ -26,7 +26,8 @@ module Tasks
       private
       def create_summary_worksheet(name, package)
         package.workbook.add_worksheet(name: 'Summary') do |sheet|
-          sheet.add_row [bold_text("#{name} Performance Report")]
+          bold = sheet.styles.add_style b: true
+          sheet.add_row ["#{name} Performance Report"], style: bold
           sheet.add_row [Date.today]
         end
       end
@@ -34,21 +35,22 @@ module Tasks
       def create_data_worksheets(performance_report, package)
         performance_report.each do |report|
           package.workbook.add_worksheet(name: report[:period][:name]) do |sheet|
-            sheet.add_row(data_headers(report[:data_headings]))
-            sheet.add_row(gather_due_dates(report[:data_headings]))
+            bold = sheet.styles.add_style b: true
+            italic = sheet.styles.add_style i: true
+            pct = sheet.styles.add_style num_fmt: Axlsx::NUM_FMT_PERCENT
+            italic_pct = sheet.styles.add_style num_fmt: Axlsx::NUM_FMT_PERCENT, i: true
+            yellow_pct = sheet.styles.add_style num_fmt: Axlsx::NUM_FMT_PERCENT, bg_color: 'FFFF93'
 
-            sheet.add_row(gather_averages(report[:data_headings]))
+            sheet.add_row(data_headers(report[:data_headings]), style: bold)
+            sheet.add_row(gather_due_dates(report[:data_headings]), style: italic) \
+              unless report[:period].course.is_concept_coach
 
-            report.students.each_with_index do |student, row|
-              styles = lateness_styles(student.data, sheet)
-              sheet.add_row(student_scores(student), style: styles)
+            sheet.add_row(gather_averages(report[:data_headings]), style: italic_pct)
+
+            report.students.each do |student|
+              styles = lateness_styles(student.data, pct, yellow_pct)
+              row = sheet.add_row(student_scores(student), style: styles)
               add_late_comments(sheet, student.data, row)
-            end
-
-            percent = sheet.styles.add_style num_fmt: Axlsx::NUM_FMT_PERCENT
-
-            report[:data_headings].each.with_index do |heading, i|
-              sheet.col_style(i + 1, percent, row_offset: 2) if heading.average
             end
           end
         end
@@ -56,15 +58,14 @@ module Tasks
 
       def data_headers(data_headings)
         headings = data_headings.collect(&:title)
-        (non_data_headings + headings).collect { |header| bold_text(header) }
+        non_data_headings + headings
       end
 
       def gather_due_dates(data_headings)
         due_dates = data_headings.collect(&:due_at)
 
         collect_columns(due_dates, 'Due Date') do |d|
-          d = d.respond_to?(:strftime) ? d.strftime("%m/%d/%Y") : d
-          italic_text(d)
+          d.respond_to?(:strftime) ? d.strftime("%m/%d/%Y") : d
         end
       end
 
@@ -73,23 +74,20 @@ module Tasks
           '%.2f' % heading.average if heading.average
         end
 
-        collect_columns(averages, 'Average') { |average| italic_text(average) }
+        collect_columns(averages, 'Average')
       end
 
-      def lateness_styles(data, worksheet)
-        collect_columns(data) do |d|
-          worksheet.styles.add_style bg_color: 'FFFF93' if d && d.late
-        end
+      def lateness_styles(data, normal, late)
+        collect_columns(data) { |d| d && d.late ? late : normal }
       end
 
       def add_late_comments(sheet, data, row)
         data.each_with_index do |d, col|
           if d && d.late
             column = col + non_data_headings.size
-            row_offset  = row + 4 # there are 4 rows of headings
 
             sheet.add_comment(
-              ref: TwoDMatrixHelper.find_cell(row: row_offset, column: column),
+              ref: TwoDMatrixHelper.find_cell(row: row.row_index + 1, column: column),
               text: "Homework was worked #{time_ago_in_words(d.last_worked_at)} late",
               author: 'OpenStax',
               visible: false
@@ -120,18 +118,6 @@ module Tasks
         end
       end
 
-      def bold_text(content)
-        text = Axlsx::RichText.new
-        text.add_run(content, b: true)
-        text
-      end
-
-      def italic_text(content)
-        text = Axlsx::RichText.new
-        text.add_run(content, i: true)
-        text
-      end
-
       def non_data_headings
         ['First Name', 'Last Name', 'Student ID']
       end
@@ -140,7 +126,7 @@ module Tasks
         labels = *labels.flatten.compact
 
         (labels + offset_columns(labels.size) + collection).collect do |item|
-          yield(item)
+          block_given? ? yield(item) : item
         end
       end
 
@@ -155,7 +141,7 @@ module Tasks
           offset_cells
         else
           # #slice(index, length) returns new_ary
-          offset_cells.slice(offset_cells.index(nil), subtract_amt)
+          offset_cells.first(non_data_headings.size - subtract_amt)
         end
       end
     end
