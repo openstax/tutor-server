@@ -1,12 +1,11 @@
 class CreateStudentHistory
-  lev_routine
-
-  uses_routine AddEcosystemToCourse
-  uses_routine AddUserAsPeriodStudent
-  uses_routine CreatePeriod
-  uses_routine DistributeTasks, translations: { outputs: { type: :verbatim } }
-  uses_routine FetchAndImportBookAndCreateEcosystem,
-               translations: { outputs: { type: :verbatim } }
+  lev_routine uses: [{ name: CourseContent::AddEcosystemToCourse,
+                       as: :add_ecosystem_to_course },
+                     :add_user_as_period_student],
+              outputs: {
+                period: :create_period,
+                _verbatim: [:distribute_tasks, :fetch_and_import_book_and_create_ecosystem]
+              }
 
   protected
   def exec(course:, roles: setup_student_role, book_id: '93e2b09d-261c-4007-a987-0b3062fe154b')

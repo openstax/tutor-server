@@ -1,20 +1,12 @@
 class UserIsCourseTeacher
-  lev_routine
-
-  uses_routine Role::GetUserRoles, translations: {outputs: {type: :verbatim}}
-  uses_routine CourseMembership::IsCourseTeacher,
-               translations: {
-                 outputs: {
-                   map: {
-                     is_course_teacher: :user_is_course_teacher
-                   }
-                 }
-               }
+  lev_routine outputs: {
+    _verbatim: Role::GetUserRoles,
+    is_course_teacher: CourseMembership::IsCourseTeacher
+  }
 
   protected
-
   def exec(user:, course:)
-    run(Role::GetUserRoles, user)
-    run(CourseMembership::IsCourseTeacher,roles: outputs.roles, course: course)
+    run(:role_get_user_roles, user)
+    run(:course_membership_is_course_teacher, roles: result.roles, course: course)
   end
 end

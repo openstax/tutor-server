@@ -1,16 +1,10 @@
 GIT
   remote: git://github.com/lml/lev.git
-  revision: cdc00db5fd94f20e55032e04c08910c8fa20df26
-  ref: cdc00db5fd94
+  revision: af2d5716c72681d383a4d87f56b5dc5447e23cfb
+  branch: ground-up-exercise
   specs:
-    lev (6.0.0)
-      actionpack (>= 3.0)
-      active_attr
-      activemodel (>= 3.0)
+    lev (7.0.0)
       activerecord (>= 3.0)
-      hashie
-      transaction_isolation
-      transaction_retry
 
 GIT
   remote: https://github.com/maddijoyce/active_force
@@ -376,7 +370,7 @@ GEM
     mime-types (2.6.2)
     mini_magick (4.2.0)
     mini_portile (0.6.2)
-    minitest (5.8.0)
+    minitest (5.8.3)
     multi_json (1.11.2)
     multi_xml (0.5.5)
     multipart-post (2.0.0)
@@ -643,11 +637,6 @@ GEM
     timecop (0.7.3)
     timeliness (0.3.7)
     tins (1.3.5)
-    transaction_isolation (1.0.3)
-      activerecord (>= 3.0.11)
-    transaction_retry (1.0.2)
-      activerecord (>= 3.0.11)
-      transaction_isolation (>= 1.0.2)
     turbolinks (2.5.3)
       coffee-rails
     tzinfo (1.2.2)
