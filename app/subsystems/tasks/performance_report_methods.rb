@@ -16,7 +16,7 @@ module Tasks
       return if valid_tasks.none?
 
       valid_tasks.reduce(0) do |sum, task|
-        sum + ( task.correct_exercise_steps_count * 100.0 / task.exercise_steps_count )
+        sum + (task.correct_exercise_steps_count/task.exercise_steps_count.to_f)
       end / valid_tasks.size
     end
 
