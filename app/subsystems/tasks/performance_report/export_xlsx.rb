@@ -87,7 +87,7 @@ module Tasks
             column = col + non_data_headings.size
 
             sheet.add_comment(
-              ref: TwoDMatrixHelper.find_cell(row: row.row_index + 1, column: column),
+              ref: sheet[row.row_index][column],
               text: "Homework was worked #{time_ago_in_words(d.last_worked_at)} late",
               author: 'OpenStax',
               visible: false
