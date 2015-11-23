@@ -7,6 +7,7 @@
       <th>Name</th>
       <th>School</th>
       <th>Teacher(s)</th>
+      <th>Ecosystem</th>
       <% [extra_headers].flatten.each do |extra_header| %>
       <th><%= extra_header %></th>
       <% end %>
@@ -18,6 +19,17 @@
         <td><%= course_info.name %></td>
         <td><%= course_info.school_name %></td>
         <td><%= course_info.teacher_names.to_sentence %></td>
+        <td>
+          <% book = course_info.ecosystem_book %>
+          <% title = "#{book.title} (#{book.uuid}@#{book.version})" unless book.nil? %>
+          <%= link_to truncate(title), '#',
+                        role: 'button',
+                        data: { toggle: 'popover',
+                                trigger: 'focus',
+                                placement: 'top',
+                                content: title,
+                                container: 'body' },
+                        class: 'btn btn-xs btn-secondary' %></td>
         <%= capture(course_info, &extra_fields_proc) unless extra_fields_proc.nil? %>
       </tr>
     <% end %>
