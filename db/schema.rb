@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151103171830) do
+ActiveRecord::Schema.define(version: 20151124165753) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -503,9 +503,11 @@ ActiveRecord::Schema.define(version: 20151103171830) do
     t.integer  "content_page_id", null: false
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
+    t.integer  "entity_role_id",  null: false
   end
 
   add_index "tasks_concept_coach_tasks", ["content_page_id"], name: "index_tasks_concept_coach_tasks_on_content_page_id", using: :btree
+  add_index "tasks_concept_coach_tasks", ["entity_role_id", "content_page_id"], name: "index_tasks_concept_coach_tasks_on_e_r_id_and_c_p_id", unique: true, using: :btree
   add_index "tasks_concept_coach_tasks", ["entity_task_id"], name: "index_tasks_concept_coach_tasks_on_entity_task_id", unique: true, using: :btree
 
   create_table "tasks_course_assistants", force: :cascade do |t|
@@ -755,6 +757,7 @@ ActiveRecord::Schema.define(version: 20151103171830) do
   add_foreign_key "role_role_users", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "school_district_schools", "school_district_districts", on_update: :cascade, on_delete: :nullify
   add_foreign_key "tasks_concept_coach_tasks", "content_pages", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_concept_coach_tasks", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_concept_coach_tasks", "entity_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_course_assistants", "entity_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_course_assistants", "tasks_assistants", on_update: :cascade, on_delete: :cascade

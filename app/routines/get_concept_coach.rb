@@ -8,10 +8,6 @@ class GetConceptCoach
     translations: { outputs: { type: :verbatim } },
     as: :create_cc_task
 
-  uses_routine Tasks::CreateTasking,
-    translations: { outputs: { type: :verbatim } },
-    as: :create_tasking
-
   uses_routine AddSpyInfo, as: :add_spy_info
 
   uses_routine GetHistory, as: :get_history
@@ -96,12 +92,10 @@ class GetConceptCoach
     related_content_array = exercises.collect{ |ex| ex.page.related_content }
 
     # Create the new concept coach task, and put the exercises into steps
-    run(:create_cc_task, page: page, exercises: exercises,
+    run(:create_cc_task, role: role, page: page, exercises: exercises,
                          related_content_array: related_content_array)
 
     run(:add_spy_info, to: outputs.task, from: [ecosystem, history.tasks])
-
-    run(:create_tasking, role: role, task: outputs.task.entity_task, period: role.student.period)
 
     outputs.entity_task = outputs.task.entity_task
   end

@@ -7,9 +7,13 @@ module Tasks
       translations: { outputs: { type: :verbatim } },
       as: :build_task
 
+    uses_routine Tasks::CreateTasking,
+      translations: { outputs: { type: :verbatim } },
+      as: :create_tasking
+
     protected
 
-    def exec(page:, exercises:, related_content_array: [])
+    def exec(role:, page:, exercises:, related_content_array: [])
       # In a multi-web server environment, it is possible for one server to create
       # the cc task and another to request it very quickly and if the server
       # times are not completely sync'd the request can be reject because the task
@@ -37,8 +41,10 @@ module Tasks
 
       outputs.task.save!
 
+      run(:create_tasking, role: role, task: outputs.task.entity_task, period: role.student.period)
+
       outputs.concept_coach_task = Tasks::Models::ConceptCoachTask.create!(
-        task: outputs.task.entity_task, content_page_id: page.id
+        content_page_id: page.id, entity_role_id: role.id, task: outputs.task.entity_task
       )
     end
 
