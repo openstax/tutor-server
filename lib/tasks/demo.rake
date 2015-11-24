@@ -11,7 +11,7 @@ namespace :demo do
     require_relative 'demo/content'
     result = DemoContent.call(args.to_h.merge(print_logs: true))
     if result.errors.none?
-      puts "Content Success!"
+      puts "Content success!"
     else
       result.errors.each{ |error| puts "Content Error: " + Lev::ErrorTranslator.translate(error) }
       fail "demo content failed"
