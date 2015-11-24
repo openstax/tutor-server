@@ -1,10 +1,12 @@
 <table class="table table-striped">
   <thead>
     <tr>
-      <th class="col-md-2">Book Title</th>
-      <th class="col-md-2">Import Date</th>
-      <th class="col-md-4">UUID @ Version (link to archive)</th>
-      <th class="col-md-4">Comments</th>
+      <th>Book Title</th>
+      <th>Comments</th>
+      <th>Book Version</th>
+      <th>Import Date</th>
+      <th>Link to Archive</th>
+      <th>Book UUID</th>
     </tr>
   </thead>
   <tbody>
@@ -13,9 +15,18 @@
 
     <tr>
       <td><%= book.title %></td>
-      <td><small><%= ecosystem.imported_at %></small></td>
-      <td><small><%= link_to "#{book.uuid} @ #{book.version}", book.url, target: '_blank'%></small></td>
       <td><%= ecosystem.comments %></td>
+      <td><%= book.version %></td>
+      <td><%= ecosystem.imported_at %></td>
+      <td><%= link_to 'Archive', book.url, target: '_blank',
+                                           class: 'btn btn-xs btn-primary' %></td>
+      <td><%= link_to 'Show UUID', '#', role: 'button',
+                                        tabindex: 0,
+                                        data: { toggle: 'popover',
+                                                placement: 'top',
+                                                content: book.uuid,
+                                                container: 'body' },
+                                        class: 'btn btn-xs btn-secondary' %></td>
     </tr>
   <% end %>
   </tbody>
