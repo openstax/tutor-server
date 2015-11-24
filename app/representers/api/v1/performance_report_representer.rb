@@ -79,6 +79,10 @@ module Api::V1
                type: String,
                readable: true
 
+      property :student_identifier,
+               type: String,
+               readable: true
+
       collection :data,
                  readable: true,
                  decorator: ->(object, *) { object.nil? ? Null : StudentData }
