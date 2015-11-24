@@ -199,7 +199,8 @@ it 'should create a new task for a different page and properly assign spaced pra
     end
 
     it 'returns an error if the page has no exercises' do
-      page = FactoryGirl.create :content_page, chapter: @book.chapters.first
+      chapter_model = Content::Models::Chapter.find(@book.chapters.first.id)
+      page = FactoryGirl.create :content_page, chapter: chapter_model
       result = nil
       expect{ result = described_class.call(
         user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: page.uuid
