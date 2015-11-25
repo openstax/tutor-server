@@ -21,13 +21,17 @@ class UpdateSalesforceStats
 
       rescue Exception => e
         num_errors += 1
-        record.error = "Unable to update stats #{e.message}"
+        record.error = "Unable to update stats: #{e.message}" if record.present?
         OpenStax::RescueFrom.perform_rescue(e)
       end
 
       begin
-        num_updates += 1 if record.changed?
-        record.save_if_changed
+        if record.present?
+          if record.changed?
+            record.save
+            num_updates +=1
+          end
+        end
       rescue Exception => e
         num_errors += 1
         OpenStax::RescueFrom.perform_rescue(e)
@@ -35,7 +39,8 @@ class UpdateSalesforceStats
     end
 
     Rails.logger.info {
-      "UpdateSalesforceStats ran for #{num_records} record(s); Made #{num_updates} update(s);#{num_errors} error(s) occurred."
+      "UpdateSalesforceStats ran for #{num_records} record(s); Made #{num_updates} " +
+      "update(s);#{num_errors} error(s) occurred."
     }
 
     {num_records: num_records, num_errors: num_errors, num_updates: num_updates}
