@@ -87,6 +87,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
             name: 'Student One',
             first_name: 'Student',
             last_name: 'One',
+            student_identifier: 'S1',
             role: resp[0][:students][0][:role],
             data: [
               {
@@ -121,6 +122,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
             name: 'Student Two',
             first_name: 'Student',
             last_name: 'Two',
+            student_identifier: 'S2',
             role: resp[0][:students][1][:role],
             data: [
               {
@@ -176,6 +178,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
             name: 'Student Four',
             first_name: 'Student',
             last_name: 'Four',
+            student_identifier: 'S4',
             role: resp[1][:students][0][:role],
             data: [
               {
@@ -208,6 +211,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
             name: 'Student Three',
             first_name: 'Student',
             last_name: 'Three',
+            student_identifier: 'S3',
             role: resp[1][:students][1][:role],
             data: [
               {
@@ -272,6 +276,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
             name: 'Student Two',
             first_name: 'Student',
             last_name: 'Two',
+            student_identifier: 'S2',
             role: resp[0][:students][0][:role],
             data: [
               {
@@ -328,6 +333,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
             name: 'Student Four',
             first_name: 'Student',
             last_name: 'Four',
+            student_identifier: 'S4',
             role: resp[1][:students][0][:role],
             data: [
               {
@@ -360,6 +366,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
             name: 'Student One',
             first_name: 'Student',
             last_name: 'One',
+            student_identifier: 'S1',
             role: resp[1][:students][1][:role],
             data: [
               {
@@ -395,6 +402,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
             name: 'Student Three',
             first_name: 'Student',
             last_name: 'Three',
+            student_identifier: 'S3',
             role: resp[1][:students][2][:role],
             data: [
               {
