@@ -188,6 +188,7 @@ Rails.application.routes.draw do
       get '', action: :index
       delete :destroy_user
       post :import_courses
+      put :update_salesforce
     end
 
     mount RailsSettingsUi::Engine, at: 'settings'

@@ -1,10 +1,13 @@
 class UpdateSalesforceStats
 
+  # not a routine!
+
   def self.call
     attached_records = Salesforce::AttachedRecord.all
 
     num_records = attached_records.count
     num_errors = 0
+    num_updates = 0
 
     attached_records.each do |attached_record|
       begin
@@ -23,6 +26,7 @@ class UpdateSalesforceStats
       end
 
       begin
+        num_updates += 1 if record.changed?
         record.save_if_changed
       rescue Exception => e
         num_errors += 1
@@ -31,8 +35,10 @@ class UpdateSalesforceStats
     end
 
     Rails.logger.info {
-      "UpdateSalesforceStats ran for #{num_records} record(s); #{num_errors} error(s) occurred."
+      "UpdateSalesforceStats ran for #{num_records} record(s); Made #{num_updates} update(s);#{num_errors} error(s) occurred."
     }
+
+    {num_records: num_records, num_errors: num_errors, num_updates: num_updates}
   end
 
   def self.update_class_size_stats(class_size, course)
