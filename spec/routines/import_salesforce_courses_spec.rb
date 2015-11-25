@@ -14,8 +14,22 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
     ImportSalesforceCourses[include_real_salesforce_data: false]
   end
 
+  it 'restricts to Denver University when told to include real data but global secrets flag false' do
+    allow(Salesforce::Remote::ClassSize).to receive(:where).and_return([])
+    allow(Rails.application.secrets.salesforce).to receive(:[]).with('allow_use_of_real_data').and_return false
+
+    expect(Salesforce::Remote::ClassSize).to receive(:where).with(
+      concept_coach_approved: true,
+      course_id: nil,
+      school: 'Denver University'
+    )
+
+    ImportSalesforceCourses[include_real_salesforce_data: true]
+  end
+
   it 'does not restrict to Denver University when told to include real data' do
     allow(Salesforce::Remote::ClassSize).to receive(:where).and_return([])
+    allow(Rails.application.secrets.salesforce).to receive(:[]).with('allow_use_of_real_data').and_return true
 
     expect(Salesforce::Remote::ClassSize).to receive(:where).with(
       concept_coach_approved: true,
