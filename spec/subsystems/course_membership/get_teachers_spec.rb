@@ -34,6 +34,10 @@ describe CourseMembership::GetTeachers do
       expect(result.outputs.teachers.size).to eq(1)
       expect(result.outputs.teachers).to include(target_role)
     end
+
+    it "also works when called expressly" do
+      expect(CourseMembership::GetTeachers[target_course]).to include(target_role)
+    end
   end
 
   context "when there are multiple teachers for the given course" do
