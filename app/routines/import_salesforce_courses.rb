@@ -30,9 +30,8 @@ class ImportSalesforceCourses
 
     (@include_real_salesforce_data_preference.present? ?
       @include_real_salesforce_data_preference :
-      GlobalSettings.import_real_salesforce_courses || false)
-    &&
-    Rails.application.secrets['salesforce'].allow_use_of_real_data
+      GlobalSettings.import_real_salesforce_courses || false) &&
+    Rails.application.secrets['salesforce']['allow_use_of_real_data']
   end
 
   def candidate_sf_records

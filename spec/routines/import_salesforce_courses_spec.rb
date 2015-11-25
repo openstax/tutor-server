@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe ImportSalesforceCourses, type: :routine do
 
-  it 'restricts to Denver University when asked to run on test data only' do
+  it 'restricts to Denver University when asked to not run on real data' do
     allow(Salesforce::Remote::ClassSize).to receive(:where).and_return([])
 
     expect(Salesforce::Remote::ClassSize).to receive(:where).with(
@@ -11,10 +11,10 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
       school: 'Denver University'
     )
 
-    ImportSalesforceCourses[run_on_test_data_only: true]
+    ImportSalesforceCourses[include_real_salesforce_data: false]
   end
 
-  it 'does not restrict to Denver University when not asked to run on test data only' do
+  it 'does not restrict to Denver University when told to include real data' do
     allow(Salesforce::Remote::ClassSize).to receive(:where).and_return([])
 
     expect(Salesforce::Remote::ClassSize).to receive(:where).with(
@@ -22,7 +22,7 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
       course_id: nil
     )
 
-    ImportSalesforceCourses[run_on_test_data_only: false]
+    ImportSalesforceCourses[include_real_salesforce_data: true]
   end
 
   it 'errors when the book name does not match an offering in tutor' do
