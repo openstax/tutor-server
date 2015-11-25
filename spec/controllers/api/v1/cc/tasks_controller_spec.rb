@@ -131,7 +131,7 @@ RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, versi
         expect(cc_task2.id).not_to eq cc_task.id
       end
 
-      it 'should return 422 with code :invalid_book if the book is invalid' do
+      it 'should return 422 with code invalid_book if the book is invalid' do
         expect{ api_call(@user_1_token, cnx_book_id: 'invalid') }.not_to(
           change{ Tasks::Models::Task.count }
         )
@@ -141,13 +141,24 @@ RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, versi
         expect(body[:valid_books]).to eq [@book.url]
       end
 
-      it 'should return 422 with code :invalid_page if the page is invalid' do
+      it 'should return 422 with code invalid_page if the page is invalid' do
         expect{ api_call(@user_1_token, cnx_page_id: 'invalid') }.not_to(
           change{ Tasks::Models::Task.count }
         )
         expect(response).to have_http_status(:unprocessable_entity)
         body = response.body_as_hash
         expect(body[:errors].map{ |error| error[:code] }).to eq ['invalid_page']
+        expect(body[:valid_books]).to eq [@book.url]
+      end
+
+      it 'should return 422 with code page_has_no_exercises if the page has no exercises' do
+        page = FactoryGirl.create :content_page, chapter: @book.chapters.first
+        expect{ api_call(@user_1_token, cnx_page_id: page.uuid) }.not_to(
+          change{ Tasks::Models::Task.count }
+        )
+        expect(response).to have_http_status(:unprocessable_entity)
+        body = response.body_as_hash
+        expect(body[:errors].map{ |error| error[:code] }).to eq ['page_has_no_exercises']
         expect(body[:valid_books]).to eq [@book.url]
       end
     end

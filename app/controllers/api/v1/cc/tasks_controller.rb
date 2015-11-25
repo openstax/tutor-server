@@ -21,6 +21,7 @@ class Api::V1::Cc::TasksController < Api::V1::ApiController
       invalid_book
       invalid_page
       not_a_cc_student
+      page_has_no_exercises
     #{json_schema(Api::V1::TaskRepresenter, include: :readable)}
   EOS
   def show

@@ -39,6 +39,11 @@ class GetConceptCoach
       Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT, pool, all_worked_exercises
     )
 
+    if core_exercises.empty?
+      outputs.valid_book_urls = ecosystem.books.map(&:url)
+      fatal_error(code: :page_has_no_exercises)
+    end
+
     current_exercise_numbers = core_exercises.map(&:number)
     ecosystems_map = {}
 
@@ -126,8 +131,9 @@ class GetConceptCoach
     page_model = page_models.order(:created_at).last
 
     if page_model.blank?
-      valid_books = Content::Models::Book.where(content_ecosystem_id: ecosystem_id_role_map.keys)
-                                         .to_a
+      valid_books = Content::Models::Book.where(
+        content_ecosystem_id: ecosystem_id_role_map.keys
+      ).to_a
       valid_book_with_cnx_book_id = valid_books.select{ |book| book.uuid == cnx_book_id }.first
 
       if !valid_book_with_cnx_book_id.nil?

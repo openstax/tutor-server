@@ -197,6 +197,17 @@ it 'should create a new task for a different page and properly assign spaced pra
       expect(result.errors.map(&:code)).to eq [:invalid_page]
       expect(result.outputs.valid_book_urls).to eq [@book.url]
     end
+
+    it 'returns an error if the page has no exercises' do
+      chapter_model = Content::Models::Chapter.find(@book.chapters.first.id)
+      page = FactoryGirl.create :content_page, chapter: chapter_model
+      result = nil
+      expect{ result = described_class.call(
+        user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: page.uuid
+      ) }.not_to change{ Tasks::Models::ConceptCoachTask.count }
+      expect(result.errors.map(&:code)).to eq [:page_has_no_exercises]
+      expect(result.outputs.valid_book_urls).to eq [@book.url]
+    end
   end
 
 end
