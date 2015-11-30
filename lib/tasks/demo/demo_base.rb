@@ -14,7 +14,7 @@ class DemoBase
 
 
   def people
-    @people ||= Hashie::Mash.load(File.dirname(__FILE__)+'/people.yml')
+    @people ||= Hashie::Mash.load(File.dirname(__FILE__) + '/people.yml')
   end
 
   def user_for_username(username)
@@ -392,8 +392,8 @@ class DemoBase
     course.students.each do |student|
       user = User::User.new(strategy: student.role.profile.wrap)
       task = GetConceptCoach[user: user,
-                      cnx_book_id: book.uuid,
-                      cnx_page_id: acceptable_pages.sample.uuid]
+                             cnx_book_id: book.uuid,
+                             cnx_page_id: acceptable_pages.sample.uuid]
     end
   end
 
