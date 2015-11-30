@@ -7,14 +7,18 @@ class TaskAccessPolicy
           DoesTaskingExist[task_component: task, user: requestor] &&
           task.past_open?
         ) || (
-          (course = task.task_plan.try(:owner)).is_a?(Entity::Course) &&
-          UserIsCourseTeacher[user: requestor, course: course]
-        ) || (
-          CourseMembership::IsConceptCoachTaskTeacher[task: task, user: requestor]
+          (course = get_entity_course(task)) && UserIsCourseTeacher[user: requestor, course: course]
         )
       )
     else
       false
     end
   end
+
+  def self.get_entity_course(task)
+    course = task.task_plan.try(:owner) ||  # normal course
+             task.concept_coach_task.task.taskings.first.try(:period).try(:course) # cc course
+    course.is_a?(Entity::Course) ? course : nil
+  end
+
 end
