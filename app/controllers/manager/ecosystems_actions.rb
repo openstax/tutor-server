@@ -15,6 +15,18 @@ module Manager::EcosystemsActions
     import_ecosystem if request.post?
   end
 
+  def destroy
+    ecosystem = Content::Ecosystem.find(params[:id])
+    OSU::AccessPolicy.require_action_allowed!(:destroy, current_user, ecosystem)
+    output = Content::DeleteEcosystem.call(id: params[:id])
+    if output.errors.empty?
+      flash[:notice] = 'Ecosystem deleted.'
+    else
+      flash[:error] = output.errors.first.message
+    end
+    redirect_to ecosystems_path
+  end
+
   protected
 
   def archive_url

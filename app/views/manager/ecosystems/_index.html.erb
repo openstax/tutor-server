@@ -23,7 +23,8 @@
 
 <div class="tab-content">
   <div role="tabpanel" class="tab-pane active" id="main">
-    <%= render partial: 'manager/ecosystems/listing', locals: { ecosystems: ecosystems } %>
+    <%= render partial: 'manager/ecosystems/listing', locals: { ecosystems: ecosystems,
+                                                                destroy_path: defined?(destroy_path) ? destroy_path : nil } %>
 
     <% if defined?(import_path) %>
       <%= link_to 'Import a new Ecosystem', import_path, class: 'btn btn-primary' %>

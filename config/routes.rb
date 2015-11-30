@@ -174,7 +174,7 @@ Rails.application.routes.draw do
     post :freeze_time, controller: :timecop
     post :time_travel, controller: :timecop
 
-    resources :ecosystems, only: [:index] do
+    resources :ecosystems, only: [:index, :destroy] do
       collection do
         get :import
         post :import
@@ -219,7 +219,7 @@ Rails.application.routes.draw do
   namespace :content_analyst do
     root to: 'console#index'
 
-    resources :ecosystems, only: [:index] do
+    resources :ecosystems, only: [:index, :destroy] do
       collection do
         get :import
         post :import

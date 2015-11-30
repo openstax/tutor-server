@@ -42,4 +42,15 @@ RSpec.describe 'Content Analyst', speed: :slow, vcr: VCR_OPTS do
     expect(page).to have_css('td', text: 'This version includes typo fixes to quantum equations')
     expect(page).to have_css('[data-content="93e2b09d-261c-4007-a987-0b3062fe154b"]')
   end
+
+  scenario 'deletes an ecosystem' do
+    FactoryGirl.create(:content_book, title: 'Test Book')
+
+    click_link 'Ecosystems'
+    expect(page).to have_css('td', text: 'Test Book')
+
+    click_link 'Delete'
+    expect(page).to have_css('.flash_notice', text: 'Ecosystem deleted.')
+    expect(page).to_not have_css('td', text: 'Test Book')
+  end
 end
