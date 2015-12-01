@@ -9,8 +9,8 @@ module Salesforce
         class << self
           alias_method :entity_all, :all
           def all
-            entity_all.collect do |entity|
-              ::Salesforce::AttachedRecord.new(strategy: entity)
+            Salesforce::Models::AttachedRecord.all.load_salesforce_objects.collect do |entity|
+              ::Salesforce::AttachedRecord.new(strategy: entity.wrap)
             end
           end
 
@@ -21,11 +21,11 @@ module Salesforce
         end
 
         def record
-          repository.salesforce_class_name.constantize.find(repository.salesforce_id)
+          repository.salesforce_object
         end
 
         def attached_to
-          GlobalID::Locator.locate repository.tutor_gid
+          @attached_to ||= GlobalID::Locator.locate repository.tutor_gid
         end
 
       end

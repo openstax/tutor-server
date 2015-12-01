@@ -1,5 +1,5 @@
 class CourseMembership::GetTeachers
-  lev_routine
+  lev_routine express_output: :teachers
 
   protected
 

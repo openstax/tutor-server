@@ -5,6 +5,10 @@ module Salesforce
 
     self.strategy_class = ::Salesforce::Strategies::Direct::AttachedRecord
 
+    def self.all
+      verify_and_return strategy_class.all, klass: self, error: StrategyError
+    end
+
     def record
       @strategy.record
     end

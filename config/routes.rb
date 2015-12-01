@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+
   root 'webview#home'
 
   get '/dashboard', to: 'webview#index'
@@ -187,7 +188,10 @@ Rails.application.routes.draw do
       get '', action: :index
       delete :destroy_user
       post :import_courses
+      put :update_salesforce
     end
+
+    mount RailsSettingsUi::Engine, at: 'settings'
   end
 
   match '/auth/salesforce/callback', to: 'admin/salesforce#callback',
