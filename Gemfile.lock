@@ -195,6 +195,7 @@ GEM
     dotenv-rails (2.0.1)
       dotenv (= 2.0.1)
     equalizer (0.0.11)
+    error_page_assets (0.3)
     erubis (2.7.0)
     eventmachine (1.0.7)
     exception_notification (4.1.1)
@@ -536,6 +537,8 @@ GEM
       redis (>= 2.2)
     ref (1.0.5)
     remotipart (1.2.1)
+    render_anywhere (0.0.12)
+      rails (>= 3.0.7)
     representable (2.2.2)
       multi_json
       nokogiri
@@ -720,6 +723,7 @@ DEPENDENCIES
   deep_cloneable
   delayed_job_active_record
   dotenv-rails
+  error_page_assets
   factory_girl_rails
   faker
   fakeredis
@@ -761,6 +765,7 @@ DEPENDENCIES
   rails-settings-ui
   redis-rails
   remotipart
+  render_anywhere
   restforce
   rspec-collection_matchers
   rspec-rails
