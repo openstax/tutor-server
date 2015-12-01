@@ -9,6 +9,7 @@ RSpec.describe Api::V1::EcosystemRepresenter, type: :representer do
   it 'can represent an ecosystem' do
     expect(represented).to eq({
       'id' => book.ecosystem.id,
+      'comments' => book.ecosystem.comments,
       'books' => [{
         'id'      => book.id,
         'uuid'    => book.uuid,
