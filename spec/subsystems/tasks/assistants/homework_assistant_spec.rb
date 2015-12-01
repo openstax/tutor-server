@@ -137,7 +137,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
       expect(entity_task.taskings.count).to eq(1)
     end
     expected_roles = taskee_users.collect{ |taskee| Role::GetDefaultUserRole[taskee] }
-    expect(entity_tasks.collect{|t| t.taskings.first.role}).to eq expected_roles
+    expect(entity_tasks.collect{|t| t.taskings.first.role}).to match_array expected_roles
 
     ## it "assigns the correct number of exercises"
     entity_tasks.each do |entity_task|
