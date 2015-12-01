@@ -1,4 +1,4 @@
-<%= File.read(File.join(File.dirname(__FILE__), 'base','small.yml')) %>
+<%= File.read(File.join(File.dirname(__FILE__), 'base')) %>
 course_name: Principles of Economics
 catalog_offering_identifier: economics
 cnx_book_id: d2fbadca-e4f3-4432-a074-2438c216b62a

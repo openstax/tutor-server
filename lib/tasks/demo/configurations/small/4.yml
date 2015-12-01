@@ -1,4 +1,4 @@
-<%= File.read(File.join(File.dirname(__FILE__), 'base','small.yml')) %>
+<%= File.read(File.join(File.dirname(__FILE__), 'base')) %>
 course_name: Micro Economics
 catalog_offering_identifier: economics
 cnx_book_id: 08df2bee-3db4-4243-bd76-ee032da173e8

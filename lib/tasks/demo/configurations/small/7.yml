@@ -1,4 +1,4 @@
-<%= File.read(File.join(File.dirname(__FILE__), 'base','small.yml')) %>
+<%= File.read(File.join(File.dirname(__FILE__), 'base')) %>
 course_name: Biology
 catalog_offering_identifier: biology
 cnx_book_id: f10533ca-f803-490d-b935-88899941197f
