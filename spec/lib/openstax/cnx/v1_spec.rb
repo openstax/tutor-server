@@ -29,4 +29,11 @@ RSpec.describe OpenStax::Cnx::V1, :type => :external, :vcr => VCR_OPTS do
 
     expect(book).to be_a OpenStax::Cnx::V1::Book
   end
+
+  it 'rescues OpenURI::HTTPError for intended URL clarification' do
+    expect {
+      OpenStax::Cnx::V1.fetch('no-exist')
+    }.to raise_error(OpenStax::HTTPError,
+                     "No route https://archive-staging-tutor.cnx.org/contents/no-exist")
+  end
 end
