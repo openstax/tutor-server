@@ -40,7 +40,7 @@ class DemoContent < DemoBase
       run(:set_content_analyst, user: ca_user, content_analyst: true)
       log("Content Analyst user: #{ca_user.name}")
 
-      ContentConfiguration[book.to_sym].each do | content |
+      ContentConfiguration[book].each do | content |
         course_name = content.course_name
         is_concept_coach = content.is_concept_coach || false
         course = find_course(name: course_name) ||
@@ -48,14 +48,16 @@ class DemoContent < DemoBase
         courses << course
         log("Course: #{course_name}")
 
-        teacher_user = get_teacher_user(content.teacher) ||
-                       new_user(username: people.teachers[content.teacher].username,
-                                name: people.teachers[content.teacher].name)
-        log("Teacher: #{people.teachers[content.teacher].name}")
+        content.teachers.each do |teacher|
+          teacher_user = get_teacher_user(teacher) ||
+                         new_user(username: people.teachers[teacher].username,
+                                  name: people.teachers[teacher].name)
+          log("Teacher: #{people.teachers[teacher].name}")
+          run(:add_teacher, course: course, user: teacher_user) \
+             unless run(:is_teacher, user: teacher_user, course: course).outputs.user_is_course_teacher
+        end
 
 
-        run(:add_teacher, course: course, user: teacher_user) \
-           unless run(:is_teacher, user: teacher_user, course: course).outputs.user_is_course_teacher
 
         content.periods.each_with_index do | period_content, index |
           period_name = period_content.name
