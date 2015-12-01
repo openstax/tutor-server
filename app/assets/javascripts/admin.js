@@ -51,5 +51,4 @@ $(document).ready(function() {
     $('a[href="' + tab + '"]').click();
   }
 
-  $('[data-toggle="popover"]').popover();
 });

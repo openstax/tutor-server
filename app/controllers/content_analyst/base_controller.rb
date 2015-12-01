@@ -6,6 +6,6 @@ class ContentAnalyst::BaseController < ApplicationController
   protected
 
   def authenticate_content_analyst!
-    raise SecurityTransgression unless current_user.is_content_analyst?
+    raise SecurityTransgression unless current_user.is_content_analyst? || current_user.is_admin?
   end
 end
