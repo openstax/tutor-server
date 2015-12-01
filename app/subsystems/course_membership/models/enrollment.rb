@@ -1,8 +1,10 @@
 class CourseMembership::Models::Enrollment < Tutor::SubSystems::BaseModel
-  belongs_to :period
+  acts_as_paranoid
+
+  belongs_to :period, -> { with_deleted }
   belongs_to :student
 
-  has_one :enrollment_change, dependent: :destroy
+  has_one :enrollment_change, -> { with_deleted }, dependent: :destroy
 
   validates :period, presence: true
   validates :student, presence: true
