@@ -1,7 +1,7 @@
 module Api::V1
   class ErrorRepresenter < Roar::Decorator
 
-    include Roar::JSON
+    include Representable::JSON::Hash
     include Representable::Coercion
 
     property :is_fatal,
