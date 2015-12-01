@@ -9,6 +9,10 @@ module Api::V1
              readable: true,
              schema_info: { required: true }
 
+    property :comments,
+             type: String,
+             readable: true
+
     collection :books,
                readable: true,
                writable: false,

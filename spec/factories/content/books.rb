@@ -12,7 +12,9 @@ FactoryGirl.define do
 
     after(:build) do |book, evaluator|
       book.ecosystem ||= FactoryGirl.build(
-        :content_ecosystem, title: "#{evaluator.title} (#{evaluator.uuid}@#{evaluator.version})"
+        :content_ecosystem,
+        comments: Faker::Lorem.words(2),
+        title: "#{evaluator.title} (#{evaluator.uuid}@#{evaluator.version})"
       )
     end
 
