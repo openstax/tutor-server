@@ -53,6 +53,18 @@ module Api::V1
                description: "The book's PDF url, if available."
              }
 
+    property :webview_url,
+             type: String,
+             readable: true,
+             writeable: false,
+             if: ->(*) { catalog_offering_identifier.present? },
+             getter: ->(*) do
+               Catalog::Offering.find_by(identifier: catalog_offering_identifier).try(:webview_url)
+             end,
+             schema_info: {
+               description: "The book's webview url, if available."
+             }
+
     property :is_concept_coach,
              readable: true,
              writeable: false,
