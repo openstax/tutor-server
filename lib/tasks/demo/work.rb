@@ -15,7 +15,7 @@ class DemoWork < DemoBase
     set_print_logs(print_logs)
     set_random_seed(random_seed)
 
-    ContentConfiguration[book.to_sym].each do | content |
+    ContentConfiguration[book].each do | content |
 
       in_parallel(content.assignments.reject(&:draft),
                   transaction: true) do | assignments, initial_index |
