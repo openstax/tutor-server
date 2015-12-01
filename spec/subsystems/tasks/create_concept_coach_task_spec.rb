@@ -2,6 +2,9 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe Tasks::CreateConceptCoachTask, type: :routine do
+  let!(:user)             { FactoryGirl.create :user }
+  let!(:period)           { FactoryGirl.create :course_membership_period }
+  let!(:role)             { AddUserAsPeriodStudent[user: user, period: period] }
   let!(:page_model)       { FactoryGirl.create :content_page }
   let!(:page)             { Content::Page.new(strategy: page_model.wrap) }
 
@@ -20,7 +23,7 @@ RSpec.describe Tasks::CreateConceptCoachTask, type: :routine do
 
   it 'creates a task containing the given exercises in the proper order' do
     task = nil
-    expect{ task = described_class[page: page, exercises: exercises] }.to(
+    expect{ task = described_class[role: role, page: page, exercises: exercises] }.to(
       change{ Tasks::Models::Task.count }.by(1)
     )
     expect(task.concept_coach?).to eq true
@@ -29,11 +32,13 @@ RSpec.describe Tasks::CreateConceptCoachTask, type: :routine do
 
   it 'creates a ConceptCoachTask object' do
     task = nil
-    expect{ task = described_class[page: page, exercises: exercises] }.to(
+    expect{ task = described_class[role: role, page: page, exercises: exercises] }.to(
       change{ Tasks::Models::ConceptCoachTask.count }.by(1)
     )
     cc_task = Tasks::Models::ConceptCoachTask.order(:created_at).last
-    expect(cc_task.task).to eq task.entity_task
     expect(cc_task.page).to eq page_model
+    expect(cc_task.role).to eq role
+    expect(cc_task.task).to eq task.entity_task
+    expect(task.taskings.first.role).to eq role
   end
 end

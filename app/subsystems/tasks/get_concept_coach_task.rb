@@ -5,8 +5,8 @@ class Tasks::GetConceptCoachTask
 
   def exec(role:, page:)
     outputs[:entity_task] = Tasks::Models::ConceptCoachTask
-      .joins(task: :taskings)
-      .where(content_page_id: page.id, task: { taskings: { entity_role_id: role.id } })
-      .take.try(:task)
+      .joins(:page)
+      .where(page: { uuid: page.uuid }, entity_role_id: role.id)
+      .lock.take.try(:task)
   end
 end
