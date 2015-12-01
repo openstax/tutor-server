@@ -40,6 +40,7 @@ class ContentConfiguration
             end
     ignored_files = ['people.yml']
     ignored_files << 'large.yml' unless :large == name
+    ignored_files << 'ludicrous.yml' unless :ludicrous == name
     files
       .reject{|path| ignored_files.include?(File.basename(path)) }
       .map{|file| self.new(file) }

@@ -16,7 +16,7 @@ class DemoShow < DemoBase
     ContentConfiguration[book.to_sym].each do | content |
 
       content.periods.each do | period |
-        period.students.each do | initials |
+        (period.students || []).each do | initials |
           person = people.students[initials]
 
           unless student = students[person.username]

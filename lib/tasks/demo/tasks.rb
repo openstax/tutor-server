@@ -49,6 +49,9 @@ class DemoTasks < DemoBase
     log("Creating #{assignment.type} #{assignment.title} for course #{content.course_name}")
 
     course = content.course
+
+    return assign_concept_coach(course: course) if assignment.type == 'concept_coach'
+
     task_plan = if assignment.type == 'reading'
                   assign_ireading(course: course,
                                   book_locations: assignment.book_locations,

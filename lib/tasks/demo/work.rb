@@ -20,24 +20,30 @@ class DemoWork < DemoBase
       in_parallel(content.assignments.reject(&:draft),
                   transaction: true) do | assignments, initial_index |
         assignments.each do | assignment |
-          work_assignment(content, assignment)
+          work_tp_assignment(content, assignment) unless assignment.type == 'concept_coach'
         end
       end
 
       in_parallel(get_auto_assignments(content).flatten,
                   transaction: true) do | auto_assignments, initial_index |
         auto_assignments.each do | auto_assignment |
-          work_assignment(content, auto_assignment)
+          work_tp_assignment(content, auto_assignment) \
+            unless auto_assignment.type == 'concept_coach'
         end
       end
 
+      in_parallel(content.course.students, transaction: true) do |students, initial_index|
+        students.each do |student|
+          work_cc_assignments(student)
+        end
+      end
     end
 
     wait_for_parallel_completion
 
   end
 
-  def work_assignment(content, assignment)
+  def work_tp_assignment(content, assignment)
     task_plan = Tasks::Models::TaskPlan.where(owner: content.course, title: assignment.title)
                   .order(created_at: :desc).first!
 
@@ -68,5 +74,16 @@ class DemoWork < DemoBase
     end
   end
 
+  def work_cc_assignments(student)
+    user = User::User.new(strategy: student.role.profile.wrap)
+    log("Working concept coach assignments for: #{user.name}")
+    student.role.taskings.preload(task: { task: { task_steps: :tasked } }).each do |tasking|
+      task = tasking.task.task
+      next unless task.concept_coach?
 
+      task.task_steps.each do |task_step|
+        work_step(task_step, Random.rand < 0.5)
+      end
+    end
+  end
 end

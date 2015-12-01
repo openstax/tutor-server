@@ -14,7 +14,7 @@ class DemoBase
 
 
   def people
-    @people ||= Hashie::Mash.load(File.dirname(__FILE__)+'/people.yml')
+    @people ||= Hashie::Mash.load(File.dirname(__FILE__) + '/people.yml')
   end
 
   def user_for_username(username)
@@ -48,7 +48,7 @@ class DemoBase
 
   def auto_assign_students_for_period(period)
     Hash[
-      period.students.map.with_index{ |initials, i|
+      (period.students || []).map.with_index{ |initials, i|
         score = if 0 == i%5 then 'i'
                 elsif 0 == i%10 then 'ns'
                 else
@@ -62,6 +62,10 @@ class DemoBase
   def get_auto_assignments(content)
 
     content.auto_assign.collect do | settings |
+      if settings.type == 'concept_coach'
+        book_locations = nil
+        step_types = nil
+      else
       book_locations = content.course.ecosystems.first.pages.map(&:book_location)
                                                             .sample(settings.steps)
       step_types = if settings.type == 'homework'
@@ -69,6 +73,7 @@ class DemoBase
                    else
                      1.upto(settings.steps).map.with_index{ |step, i| 0==i%3 ? 'e' : 'r' }
                    end
+      end
 
       1.upto(settings.generate).collect do | number |
         Hashie::Mash.new( type: settings.type,
@@ -185,6 +190,7 @@ class DemoBase
 
     results.each do |result|
       log("PID: #{result.first} - Status: #{result.last.exitstatus}")
+      nonfatal_error(code: :process_failed) if result.last.exitstatus != 0
     end
 
     log('All child processes exited')
@@ -376,6 +382,21 @@ class DemoBase
 
   end
 
+  def assign_concept_coach(course:)
+    ecosystem = get_ecosystem(course: course)
+    book = ecosystem.books.first
+    acceptable_pages = book.pages.select{ |page| !page.exercises.empty? }
+
+    raise "None of the pages in the ecosystem have exercises" if acceptable_pages.empty?
+
+    course.students.each do |student|
+      user = User::User.new(strategy: student.role.profile.wrap)
+      task = GetConceptCoach[user: user,
+                             cnx_book_id: book.uuid,
+                             cnx_page_id: acceptable_pages.sample.uuid]
+    end
+  end
+
   def add_tasking_plan(task_plan:, to:, opens_at:, due_at:, message: nil)
     targets = [to].flatten
     targets.each do |target|
@@ -473,7 +494,7 @@ class DemoBase
   def step_code(step)
     case step.tasked
     when Tasks::Models::TaskedExercise
-      "e"
+      'e'
     when Tasks::Models::TaskedReading
       'r'
     when Tasks::Models::TaskedVideo
