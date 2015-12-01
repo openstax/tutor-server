@@ -43,3 +43,7 @@ $(function(){
     $("#jobs tbody tr:contains('" + $(this).val() + "')").show();
   });
 });
+
+$(document).ready(function() {
+  $('[data-toggle="popover"]').popover();
+});
