@@ -2,7 +2,7 @@ class CourseMembership::Models::Student < Tutor::SubSystems::BaseModel
   belongs_to :course, subsystem: :entity
   belongs_to :role, subsystem: :entity
 
-  has_many :enrollments, dependent: :destroy
+  has_many :enrollments, -> { with_deleted }, dependent: :destroy
 
   validates :course, presence: true
   validates :role, presence: true, uniqueness: true
