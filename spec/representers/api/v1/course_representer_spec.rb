@@ -29,6 +29,10 @@ RSpec.describe Api::V1::CourseRepresenter, type: :representer do
     expect(represented['book_pdf_url']).to eq 'pdf_url'
   end
 
+  it 'shows the webview_url if avail' do
+    expect(represented['webview_url']).to eq 'web_url'
+  end
+
   it 'shows whether or not the course is a concept coach course' do
     expect(represented['is_concept_coach']).to eq true
   end
