@@ -5,7 +5,8 @@ cnx_book_version: 9.87
 url_base: https://archive.cnx.org/contents/
 catalog_offering_identifier: Biology
 catalog_offering_is_concept_coach: true
-teacher: cm
+teachers:
+  - cm
 periods:
   - id: p1
     name: 1st
