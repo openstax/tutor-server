@@ -53,7 +53,7 @@ class Api::V1::Cc::TasksController < Api::V1::ApiController
     #{json_schema(Api::V1::ConceptCoachStatsRepresenter, include: :readable)}
   EOS
   def stats
-    course = Entity::Course.find(params[:id])
+    course = Entity::Course.find(params[:course_id])
     OSU::AccessPolicy.require_action_allowed!(:stats, current_human_user, course)
 
     ecosystem_id = GetCourseEcosystem[course: course].id
@@ -61,7 +61,7 @@ class Api::V1::Cc::TasksController < Api::V1::ApiController
                                       .where(book: {content_ecosystem_id: ecosystem_id},
                                              uuid: params[:cnx_page_id])
                                       .pluck(:title).first
-    student_roles = CourseMembership::GetCourseRoles[course: course, types: :student]
+    student_role_ids = CourseMembership::GetCourseRoles[course: course, types: :student].map(&:id)
     tasks = Tasks::Models::Task.joins(concept_coach_task: :page)
                                .where(concept_coach_task: { entity_role_id: student_role_ids,
                                                             page: { uuid: params[:cnx_page_id] } })
