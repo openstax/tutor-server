@@ -4,5 +4,6 @@
            locals: { ecosystems: @ecosystems,
                      incomplete_jobs: @incomplete_jobs,
                      failed_jobs: @failed_jobs,
+                     job_path_proc: ->(job) { content_analyst_job_path(job.id) },
                      import_path: import_content_analyst_ecosystems_path,
                      destroy_path: Proc.new { |*args| content_analyst_ecosystem_path(args) } } %>
