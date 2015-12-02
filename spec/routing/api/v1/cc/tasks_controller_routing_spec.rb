@@ -10,4 +10,12 @@ describe Api::V1::Cc::TasksController, type: :routing, api: true, version: :v1 d
     end
   end
 
+  describe '/api/cc/tasks/:course_id/:cnx_page_id/stats' do
+    it "routes to #stats" do
+      expect(get '/api/cc/tasks/42/123/stats').to(
+        route_to('api/v1/cc/tasks#stats', format: 'json', course_id: '42', cnx_page_id: '123')
+      )
+    end
+  end
+
 end

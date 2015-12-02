@@ -45,19 +45,21 @@ RSpec.describe Tasks::GetCcPerformanceReport, type: :routine, speed: :slow do
     DatabaseCleaner.clean
   end
 
-  let(:expected_periods)    { 2 }
-  let(:expected_students)   { 2 }
+  let(:expected_periods)   { 2 }
+  let(:expected_students)  { 2 }
 
-  let(:expected_tasks)      { [2, 1] }
+  let(:expected_tasks)     { [2, 1] }
   let(:expected_task_type) { 'concept_coach' }
 
   it 'has the proper structure' do
     reports = described_class[course: @course]
     expect(reports.size).to eq expected_periods
+    valid_page_uuids = @ecosystem.books.first.pages.map(&:uuid)
     reports.each_with_index do |report, rindex|
       expect(report.data_headings.size).to eq expected_tasks[rindex]
-      report.data_headings.map(&:type).each do |data_heading_type|
-        expect(data_heading_type).to eq expected_task_type
+      report.data_headings.each do |data_heading|
+        expect(valid_page_uuids).to include(data_heading.cnx_page_id)
+        expect(data_heading.type).to eq expected_task_type
       end
 
       expect(report.students.size).to eq expected_students

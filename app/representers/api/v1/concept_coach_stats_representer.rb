@@ -1,32 +1,22 @@
 module Api::V1
-  class TaskPlanWithStatsRepresenter < ::Roar::Decorator
+  class ConceptCoachStatsRepresenter < Roar::Decorator
 
     include Roar::JSON
     include Representable::Coercion
-
-    property :id,
-             type: String,
-             readable: true,
-             writeable: false
-
-    property :type,
-             type: String,
-             readable: true,
-             writeable: true
 
     property :title,
              type: String,
              readable: true,
              writeable: true
 
-    property :description,
+    property :type,
              type: String,
              readable: true,
-             writeable: true
+             writeable: true,
+             getter: ->(*) { 'concept_coach' }
 
     collection :stats,
                decorator: Api::V1::Tasks::Stats::StatRepresenter,
-               getter: ->(args) { CalculateTaskStats[tasks: tasks] },
                readable: true,
                writable: false
 

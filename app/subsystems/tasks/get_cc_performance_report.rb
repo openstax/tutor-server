@@ -72,6 +72,7 @@ module Tasks
                                               .map{ |cc_task| cc_task.task.task }
 
         {
+          cnx_page_id: page.uuid,
           title: page.title,
           type: 'concept_coach',
           average: average(page_tasks)

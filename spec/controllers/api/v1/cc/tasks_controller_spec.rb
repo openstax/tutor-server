@@ -58,14 +58,18 @@ RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, versi
     DatabaseCleaner.clean
   end
 
-  def api_call(token, cnx_book_id: @book.uuid, cnx_page_id: @page.uuid)
+  def show_api_call(token, cnx_book_id: @book.uuid, cnx_page_id: @page.uuid)
     api_get :show, token, parameters: { cnx_book_id: cnx_book_id, cnx_page_id: cnx_page_id }
   end
 
-  describe "#show" do
+  def stats_api_call(token, course_id: @course.id, cnx_page_id: @page.uuid)
+    api_get :stats, token, parameters: { course_id: course_id, cnx_page_id: cnx_page_id }
+  end
+
+  context "#show" do
     context 'no existing task' do
       it 'should create a new task if params are valid' do
-        expect{ api_call(@user_1_token) }.to change{ Tasks::Models::Task.count }.by(1)
+        expect{ show_api_call(@user_1_token) }.to change{ Tasks::Models::Task.count }.by(1)
         expect(response).to have_http_status(:ok)
 
         cc_task = Tasks::Models::Task.order(created_at: :desc).first
@@ -77,7 +81,7 @@ RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, versi
       end
 
       it 'should return 422 with code :invalid_book if the book is invalid' do
-        expect{ api_call(@user_1_token, cnx_book_id: 'invalid') }.not_to(
+        expect{ show_api_call(@user_1_token, cnx_book_id: 'invalid') }.not_to(
           change{ Tasks::Models::Task.count }
         )
         expect(response).to have_http_status(:unprocessable_entity)
@@ -87,7 +91,7 @@ RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, versi
       end
 
       it 'should return 422 with code :invalid_page if the page is invalid' do
-        expect{ api_call(@user_1_token, cnx_page_id: 'invalid') }.not_to(
+        expect{ show_api_call(@user_1_token, cnx_page_id: 'invalid') }.not_to(
           change{ Tasks::Models::Task.count }
         )
         expect(response).to have_http_status(:unprocessable_entity)
@@ -99,7 +103,7 @@ RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, versi
       it 'should return 422 with code :not_a_cc_student if the user is not in a CC course' do
         @course.profile.update_attribute(:is_concept_coach, false)
 
-        expect{ api_call(@user_1_token) }.not_to(
+        expect{ show_api_call(@user_1_token) }.not_to(
           change{ Tasks::Models::Task.count }
         )
         expect(response).to have_http_status(:unprocessable_entity)
@@ -115,14 +119,14 @@ RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, versi
                                        cnx_page_id: @page.uuid].task }
 
       it 'should not create a new task for the same user' do
-        expect{ api_call(@user_1_token) }.not_to change{ Tasks::Models::Task.count }
+        expect{ show_api_call(@user_1_token) }.not_to change{ Tasks::Models::Task.count }
         expect(response).to have_http_status(:ok)
 
         expect(response.body_as_hash).to include(id: cc_task.id.to_s)
       end
 
       it 'should create a new task for a different user' do
-        expect{ api_call(@user_2_token) }.to change{ Tasks::Models::Task.count }.by(1)
+        expect{ show_api_call(@user_2_token) }.to change{ Tasks::Models::Task.count }.by(1)
         expect(response).to have_http_status(:ok)
 
         cc_task2 = Tasks::Models::Task.order{created_at.desc}.first
@@ -132,7 +136,7 @@ RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, versi
       end
 
       it 'should return 422 with code invalid_book if the book is invalid' do
-        expect{ api_call(@user_1_token, cnx_book_id: 'invalid') }.not_to(
+        expect{ show_api_call(@user_1_token, cnx_book_id: 'invalid') }.not_to(
           change{ Tasks::Models::Task.count }
         )
         expect(response).to have_http_status(:unprocessable_entity)
@@ -142,7 +146,7 @@ RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, versi
       end
 
       it 'should return 422 with code invalid_page if the page is invalid' do
-        expect{ api_call(@user_1_token, cnx_page_id: 'invalid') }.not_to(
+        expect{ show_api_call(@user_1_token, cnx_page_id: 'invalid') }.not_to(
           change{ Tasks::Models::Task.count }
         )
         expect(response).to have_http_status(:unprocessable_entity)
@@ -153,7 +157,7 @@ RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, versi
 
       it 'should return 422 with code page_has_no_exercises if the page has no exercises' do
         page = FactoryGirl.create :content_page, chapter: @book.chapters.first
-        expect{ api_call(@user_1_token, cnx_page_id: page.uuid) }.not_to(
+        expect{ show_api_call(@user_1_token, cnx_page_id: page.uuid) }.not_to(
           change{ Tasks::Models::Task.count }
         )
         expect(response).to have_http_status(:unprocessable_entity)
@@ -165,14 +169,36 @@ RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, versi
 
     it 'returns 403 when user is not a human' do
       task_count = Tasks::Models::Task.count
-      expect{ api_call(@userless_token) }.to raise_error(SecurityTransgression)
+      expect{ show_api_call(@userless_token) }.to raise_error(SecurityTransgression)
       expect(Tasks::Models::Task.count).to eq task_count
     end
 
     it 'returns 403 when user is anonymous' do
       task_count = Tasks::Models::Task.count
-      expect{ api_call(@anon_user_token) }.to raise_error(SecurityTransgression)
+      expect{ show_api_call(@anon_user_token) }.to raise_error(SecurityTransgression)
       expect(Tasks::Models::Task.count).to eq task_count
+    end
+  end
+
+  context '#stats' do
+    it 'includes stats' do
+      AddUserAsCourseTeacher[user: @user_1, course: @course]
+      stats_api_call(@user_1_token)
+      body = JSON.parse(response.body)
+      # The representer spec does validate the json so we'll rely on it and just check presense
+      expect(body['stats']).to be_a(Array)
+    end
+
+    it 'returns 403 when user is not a human' do
+      expect{ stats_api_call(@userless_token) }.to raise_error(SecurityTransgression)
+    end
+
+    it 'returns 403 when user is anonymous' do
+      expect{ stats_api_call(@anon_user_token) }.to raise_error(SecurityTransgression)
+    end
+
+    it 'returns 403 when user is not a course teacher' do
+      expect{ stats_api_call(@user_1_token) }.to raise_error(SecurityTransgression)
     end
   end
 

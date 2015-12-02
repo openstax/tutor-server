@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'vcr_helper'
 require 'database_cleaner'
 
-RSpec.describe GetConceptCoach, type: :routine do
+RSpec.describe GetConceptCoach, type: :routine, speed: :medium do
 
   CORE_EXERCISES_COUNT = Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT
   SPACED_EXERCISES_COUNT = Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP

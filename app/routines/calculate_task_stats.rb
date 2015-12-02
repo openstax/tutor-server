@@ -1,4 +1,4 @@
-class CalculateTaskPlanStats
+class CalculateTaskStats
 
   lev_routine express_output: :stats
 
@@ -112,7 +112,7 @@ class CalculateTaskPlanStats
   end
 
   def generate_period_stat_data
-    tasks = @plan.tasks.preload([:task_steps, {taskings: :period}]).to_a
+    tasks = @tasks.preload([:task_steps, {taskings: :period}]).to_a
     grouped_tasks = tasks.group_by do |tt|
       tt.taskings.first.try(:period) || no_period
     end
@@ -148,8 +148,8 @@ class CalculateTaskPlanStats
     end
   end
 
-  def exec(plan:, details: false)
-    @plan = plan
+  def exec(tasks:, details: false)
+    @tasks = tasks
     @details = details
 
     outputs[:stats] = generate_period_stat_data
