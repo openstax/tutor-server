@@ -6,18 +6,10 @@ class ApplicationController < ActionController::Base
 
   before_filter :authenticate_user!
 
+  protected
+
   def require_contracts
-    # Get contracts that apply to the user's current courses; some of these
-    # have been signed by proxy (and need an implicit signature), while some
-    # don't and need to go through the normal FinePrint process.
-
-    courses = GetUserCourses[user: current_user]
-
-    contract_names = Legal::GetContractNames.call(
-      applicable_to: courses,
-      contract_names_signed_by_everyone: [:general_terms_of_use, :privacy_policy]
-    ).outputs
-
+    contract_names = current_users_contracts
     profile = current_user.to_model
 
     contract_names.proxy_signed.each do |name|
@@ -31,6 +23,16 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def current_users_contracts
+    # Get contracts that apply to the user's current courses; some of these
+    # have been signed by proxy (and need an implicit signature), while some
+    # don't and need to go through the normal FinePrint process.
+    courses = GetUserCourses[user: current_user]
+    Legal::GetContractNames.call(
+      applicable_to: courses,
+      contract_names_signed_by_everyone: [:general_terms_of_use, :privacy_policy]
+    ).outputs
+  end
 
   def allow_iframe_access
     response.headers.except! 'X-Frame-Options'
