@@ -1,7 +1,10 @@
 content: Content Analyst
 admin: Administrator User
 teachers:
-  cm: {name: Charles Morris,     username: teacher01 }
+  cm: {name: Charles Morris, username: teacher01 }
+  rb: {name: Redmond Blake,  username: teacher02 }
+  ct: {name: C. E. Tripp,    username: teacher03 }
+  jb: {name: J. D. Ballard,  username: teacher04 }
 
 students:
   af:  { name: Atticus Finch,          username: student01  }

@@ -15,7 +15,7 @@ class DemoTasks < DemoBase
     set_print_logs(print_logs)
     set_random_seed(random_seed)
 
-    in_parallel(ContentConfiguration[book.to_sym]) do | contents, initial_index |
+    in_parallel(ContentConfiguration[book]) do | contents, initial_index |
 
       contents.each do |content|
 
