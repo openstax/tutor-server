@@ -7,7 +7,7 @@ class CourseAccessPolicy
       requestor.is_human? && \
       (UserIsCourseStudent[user: requestor, course: course] || \
        UserIsCourseTeacher[user: requestor, course: course])
-    when :export, :roster, :add_period, :update
+    when :export, :roster, :add_period, :update, :stats
       requestor.is_human? && UserIsCourseTeacher[user: requestor, course: course]
     else
       false

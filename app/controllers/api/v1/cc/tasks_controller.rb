@@ -41,4 +41,34 @@ class Api::V1::Cc::TasksController < Api::V1::ApiController
     end
   end
 
+  ###############################################################
+  # stats
+  ###############################################################
+
+  api :GET, 'cc/tasks/:course_id/:cnx_page_id/stats',
+            'Gets the Concept Coach Task stats for the given CNX page'
+  description <<-EOS
+    The `cnx_page_id` should not contain version information.
+
+    #{json_schema(Api::V1::ConceptCoachStatsRepresenter, include: :readable)}
+  EOS
+  def stats
+    course = Entity::Course.find(params[:id])
+    OSU::AccessPolicy.require_action_allowed!(:stats, current_human_user, course)
+
+    ecosystem_id = GetCourseEcosystem[course: course].id
+    page_title = Content::Models::Page.joins(:book)
+                                      .where(book: {content_ecosystem_id: ecosystem_id},
+                                             uuid: params[:cnx_page_id])
+                                      .pluck(:title).first
+    student_roles = CourseMembership::GetCourseRoles[course: course, types: :student]
+    tasks = Tasks::Models::Task.joins(concept_coach_task: :page)
+                               .where(concept_coach_task: { entity_role_id: student_role_ids,
+                                                            page: { uuid: params[:cnx_page_id] } })
+
+    cc_stats = Hashie::Mash.new(title: page_title, stats: CalculateTaskStats[tasks: tasks])
+
+    respond_with cc_stats, represent_with: Api::V1::ConceptCoachStatsRepresenter
+  end
+
 end
