@@ -33,7 +33,9 @@ RSpec.describe OpenStax::Cnx::V1, :type => :external, :vcr => VCR_OPTS do
   it 'rescues OpenURI::HTTPError for intended URL clarification' do
     expect {
       OpenStax::Cnx::V1.fetch('no-exist')
-    }.to raise_error(OpenStax::HTTPError,
-                     "No route https://archive-staging-tutor.cnx.org/contents/no-exist")
+    }.to raise_error(
+      OpenStax::HTTPError,
+      "404 Not Found for URL https://archive-staging-tutor.cnx.org/contents/no-exist"
+    )
   end
 end

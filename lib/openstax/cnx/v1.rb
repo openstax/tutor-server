@@ -58,21 +58,12 @@ module OpenStax::Cnx::V1
       Rails.logger.debug { "Fetching #{url}" }
       JSON.parse open(url, 'ACCEPT' => 'text/json').read
     rescue OpenURI::HTTPError => e
-      handle_not_found(e, url)
+      raise OpenStax::HTTPError, "#{e.message} for URL #{url}"
     end
   end
 
   def self.book(options = {})
     OpenStax::Cnx::V1::Book.new(options)
-  end
-
-  private
-  def self.handle_not_found(e, attempted_url)
-    if e.message.include?("404")
-      raise OpenStax::HTTPError, "No route #{attempted_url}"
-    else
-      raise e
-    end
   end
 
 end
