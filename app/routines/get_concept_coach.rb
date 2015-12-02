@@ -1,6 +1,6 @@
 class GetConceptCoach
 
-  lev_routine express_output: :entity_task
+  lev_routine express_output: :entity_task, transaction: :serializable
 
   uses_routine Tasks::GetConceptCoachTask, as: :get_cc_task
 
