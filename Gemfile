@@ -153,6 +153,10 @@ gem 'active_force', git: 'https://github.com/maddijoyce/active_force', ref: '969
 gem 'rails-settings-cached', '~> 0.4.0'
 gem 'rails-settings-ui'
 
+# Nicely-styled static error pages
+gem 'error_page_assets'
+gem 'render_anywhere', :require => false
+
 group :development, :test do
   # Get env variables from .env file
   gem 'dotenv-rails'

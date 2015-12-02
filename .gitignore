@@ -57,3 +57,6 @@ doc
 
 # Ignore profiling logs from Pilfer
 pilfer.log
+
+# Ignore asset stuff
+public/assets/**
