@@ -55,7 +55,7 @@ class AuthController < ApplicationController
 
   def user_status_update
     status = strategy.authorize.body.slice('access_token')
-    unless current_user.is_anonymous?
+    if !current_user.is_anonymous? && ( stubbed_auth? || terms_agreed? )
       status.merge! Api::V1::UserBootstrapDataRepresenter.new(current_user)
     end
     status[:endpoints] = {
@@ -69,6 +69,12 @@ class AuthController < ApplicationController
         )
     }
     status
+  end
+
+  def terms_agreed?
+    FinePrint.unsigned_contracts_for(
+      current_user.to_model, name: current_users_contracts.non_proxy_signed
+    ).none?
   end
 
   def set_cors_headers
