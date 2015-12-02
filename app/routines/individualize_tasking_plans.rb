@@ -18,7 +18,7 @@ class IndividualizeTaskingPlans
       when Entity::Course
         CourseMembership::GetCourseRoles.call(course: target, types: :student).outputs.roles
       when CourseMembership::Models::Period
-        CourseMembership::GetPeriodRoles.call(periods: target, types: :student).outputs.roles
+        CourseMembership::GetPeriodStudentRoles.call(periods: target).outputs.roles
       else
         raise NotYetImplemented
       end
