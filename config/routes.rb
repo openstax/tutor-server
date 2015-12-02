@@ -222,7 +222,7 @@ Rails.application.routes.draw do
   namespace :content_analyst do
     root to: 'console#index'
 
-    resources :jobs, only: [:index, :show]
+    resources :jobs, only: [:show]
 
     resources :ecosystems, only: [:index, :destroy] do
       collection do
