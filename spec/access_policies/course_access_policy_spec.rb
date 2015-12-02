@@ -22,7 +22,8 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
       User::User.new(strategy: strategy)
     }
 
-    [:index, :read, :task_plans, :export, :roster].each do |test_action|
+    [:index, :read, :task_plans, :export,
+     :roster, :add_period, :update, :stats].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
         it { should be false }
@@ -38,7 +39,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
       it { should be true }
     end
 
-    [:read, :task_plans, :export, :roster].each do |test_action|
+    [:read, :task_plans, :export, :roster, :add_period, :update, :stats].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
         it { should be false }
@@ -56,7 +57,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
       end
     end
 
-    [:export, :roster].each do |test_action|
+    [:export, :roster, :add_period, :update, :stats].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
         it { should be false }
@@ -67,7 +68,8 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
   context 'teachers' do
     let(:requestor) { teacher }
 
-    [:index, :read, :task_plans, :export, :roster].each do |test_action|
+    [:index, :read, :task_plans, :export,
+     :roster, :add_period, :update, :stats].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
         it { should be true }
