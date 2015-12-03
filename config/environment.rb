@@ -20,6 +20,7 @@ require 'unique_tokenable'
 require 'url_generator'
 require 'logout_redirect_chooser'
 require 'global_settings'
+require 'openstax_rescue_from_this'
 
 %w(
   biglearn
