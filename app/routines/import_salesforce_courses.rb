@@ -49,7 +49,7 @@ class ImportSalesforceCourses
   end
 
   def create_course_for_candidate(candidate)
-    offering = Catalog::Offering.find_by(identifier: candidate.book_name)
+    offering = Catalog::Offering.find_by(salesforce_book_name: candidate.book_name)
 
     if offering.nil?
       error!(candidate, "Book Name does not match an offering in Tutor.")
@@ -93,7 +93,7 @@ class ImportSalesforceCourses
 
     Rails.logger.info {
       "Created course '#{course.name}' (#{course.id}) based on Salesforce record " +
-      "#{candidate.id} using offering '#{offering.identifier}' (#{offering.id}) " +
+      "#{candidate.id} using offering '#{offering.salesforce_book_name}' (#{offering.id}) " +
       "and ecosystem '#{offering.ecosystem.title}'."
     }
 
