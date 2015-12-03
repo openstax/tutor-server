@@ -119,7 +119,7 @@ class ImportSalesforceCourses
   end
 
   def log(&block)
-    Rails.logger.info { "[#{class.name}] #{block.call}" }
+    Rails.logger.info { "[ImportSalesforceCourses] #{block.call}" }
   end
 
 end

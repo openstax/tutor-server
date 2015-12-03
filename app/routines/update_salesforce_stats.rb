@@ -54,8 +54,8 @@ class UpdateSalesforceStats
     class_size.num_sections = CourseMembership::GetCoursePeriods[course: course].count
   end
 
-  def log(&block)
-    Rails.logger.info { "[#{class.name}] #{block.call}" }
+  def self.log(&block)
+    Rails.logger.info { "[UpdateSalesforceStats] #{block.call}" }
   end
 
 end
