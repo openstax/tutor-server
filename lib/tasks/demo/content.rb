@@ -72,7 +72,7 @@ class DemoContent < DemoBase
             user = get_student_user(initials) ||
                    new_user(username: student_info.username, name: student_info.name)
             log("    #{initials} #{student_info.username} (#{student_info.name})")
-            run(:add_student, period: period, user: user) \
+            run(:add_student, period: period, user: user, student_identifier: "#{rand(100000)+10000}") \
                unless run(:is_student, user: user, course: course).outputs.user_is_course_student
           end
 
