@@ -1,7 +1,7 @@
 <%= File.read(File.join(File.dirname(__FILE__), 'base')) %>
-course_name: Biology
+course_name: Anatomy & Physiology
 catalog_offering_identifier: biology
-cnx_book_id: 3402dc53-113d-45f3-954e-8d2ad1e73659
+cnx_book_id: 99e127f8-f722-4907-a6b3-2d62fca135d6
 cnx_book_version: 1.1
 teachers:
   - ct
