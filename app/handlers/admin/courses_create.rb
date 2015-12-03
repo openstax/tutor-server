@@ -4,6 +4,8 @@ class Admin::CoursesCreate
   paramify :course do
     attribute :name, type: String
     attribute :school_district_school_id, type: Integer
+    attribute :catalog_offering_id, type: Integer
+    attribute :is_concept_coach, type: ActiveAttr::Typecasting::Boolean
     validates :name, presence: true
   end
 
@@ -16,7 +18,12 @@ class Admin::CoursesCreate
   end
 
   def handle
-    school = SchoolDistrict::GetSchool[id: course_params.school_district_school_id]
-    run(:create_course, name: course_params.name, school: school)
+    school = SchoolDistrict::GetSchool[id: course_params.school_district_school_id] \
+      unless course_params.school_district_school_id.blank?
+    offering = Catalog::GetOffering[id: course_params.catalog_offering_id] \
+      unless course_params.catalog_offering_id.blank?
+    is_concept_coach = offering.nil? ? course_params.is_concept_coach : offering.is_concept_coach
+    run(:create_course, name: course_params.name, school: school,
+                        catalog_offering: offering, is_concept_coach: is_concept_coach)
   end
 end

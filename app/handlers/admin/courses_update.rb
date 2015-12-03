@@ -10,6 +10,10 @@ class Admin::CoursesUpdate
   end
 
   def handle
+    catalog_offering_id = params[:course].delete(:catalog_offering_id)
+    offering = Catalog::GetOffering[id: catalog_offering_id] unless catalog_offering_id.blank?
+    params[:course][:catalog_offering_identifier] = offering.nil? ? nil : offering.identifier
+    params[:course][:is_concept_coach] = offering.is_concept_coach unless offering.nil?
     run(:update_course, params[:id], params[:course])
   end
 end

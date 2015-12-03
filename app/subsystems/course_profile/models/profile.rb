@@ -3,6 +3,7 @@ class CourseProfile::Models::Profile < Tutor::SubSystems::BaseModel
 
   belongs_to :school, subsystem: :school_district
   belongs_to :course, subsystem: :entity
+  belongs_to :offering, subsystem: :catalog
 
   validates :name, presence: true
   validates :timezone, presence: true,

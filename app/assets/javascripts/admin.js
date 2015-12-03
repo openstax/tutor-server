@@ -51,4 +51,18 @@ $(document).ready(function() {
     $('a[href="' + tab + '"]').click();
   }
 
+  //========== Disable is_concept_coach checkbox when a course offering is selected ==========//
+  function updateIsConceptCoachCheckbox() {
+    $('#course_is_concept_coach').prop('disabled', false);
+    $('#course_catalog_offering_id option:selected').each(function() {
+      if ($(this).prop('value')) {
+        $('#course_is_concept_coach').prop('disabled', true);
+        $('#course_is_concept_coach').prop('checked',
+                                           $(this).attr('data-is_concept_coach') == '1');
+      }
+    });
+  }
+  $('#course_catalog_offering_id').change(updateIsConceptCoachCheckbox);
+  $(updateIsConceptCoachCheckbox);
+
 });

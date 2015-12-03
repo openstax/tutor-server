@@ -3,9 +3,13 @@ class Admin::CoursesController < Admin::BaseController
   include Lev::HandleWith
 
   before_action :get_schools, only: [:new, :edit]
+  before_action :get_catalog_offerings, only: [:new, :edit]
 
   def index
     @courses = CollectCourseInfo[with: :teacher_names]
+  end
+
+  def new
   end
 
   def create
@@ -82,10 +86,16 @@ class Admin::CoursesController < Admin::BaseController
     { id: params[:id], course: params.require(:course)
                                      .permit(:name,
                                              :school_district_school_id,
+                                             :catalog_offering_id,
+                                             :is_concept_coach,
                                              teacher_ids: []) }
   end
 
   def get_schools
     @schools = SchoolDistrict::ListSchools[]
+  end
+
+  def get_catalog_offerings
+    @catalog_offerings = Catalog::ListOfferings[]
   end
 end
