@@ -11,7 +11,8 @@ class CreateCourse
   uses_routine Tasks::CreateCourseAssistants,
                as: :create_course_assistants
 
-  def exec(name:, school: nil, catalog_offering: nil, is_concept_coach: false)
+  def exec(name:, appearance_code: nil, school: nil,
+           catalog_offering: nil, is_concept_coach: false)
     # TODO eventually, making a course part of a school should be done independently
     # with separate admin controller interfaces and all work done in the SchoolDistrict
     # SS
@@ -19,6 +20,7 @@ class CreateCourse
     outputs[:course] = Entity::Course.create!
     run(:create_course_profile,
         name: name,
+        appearance_code: appearance_code,
         course: outputs.course,
         catalog_offering_id: catalog_offering.try(:id),
         school_district_school_id: school.try(:id),

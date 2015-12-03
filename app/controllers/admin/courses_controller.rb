@@ -85,6 +85,7 @@ class Admin::CoursesController < Admin::BaseController
   def course_params
     { id: params[:id], course: params.require(:course)
                                      .permit(:name,
+                                             :appearance_code,
                                              :school_district_school_id,
                                              :catalog_offering_id,
                                              :is_concept_coach,

@@ -27,8 +27,8 @@ module Api::V1
              type: String,
              readable: true,
              writeable: false,
-             if: ->(*) { offering.present? },
-             getter: ->(*) { offering.appearance_code }
+             getter: ->(*) { appearance_code.blank? ? offering.try(:appearance_code) : \
+                                                      appearance_code }
 
     property :ecosystem_id,
              type: String,
@@ -37,7 +37,7 @@ module Api::V1
              if: ->(*) { respond_to?(:ecosystem) and ecosystem },
              getter: ->(*) { ecosystem.id },
              schema_info: {
-              description: "The ID of the course's content ecosystem, if available."
+               description: "The ID of the course's content ecosystem, if available."
              }
 
     property :ecosystem_book_uuid,
