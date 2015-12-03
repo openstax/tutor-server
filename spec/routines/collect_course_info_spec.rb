@@ -7,8 +7,8 @@ describe CollectCourseInfo, type: :routine do
   let!(:role_1)    { FactoryGirl.create :entity_role, profile: profile_1 }
   let!(:role_2)    { FactoryGirl.create :entity_role, profile: profile_2 }
 
-  let!(:course_1)  { FactoryGirl.create(:course_profile_profile).course }
-  let!(:course_2)  { FactoryGirl.create(:course_profile_profile).course }
+  let!(:course_1)  { FactoryGirl.create(:course_profile_profile, :with_offering).course }
+  let!(:course_2)  { FactoryGirl.create(:course_profile_profile, :with_offering).course }
 
   let!(:student_1) { FactoryGirl.create :course_membership_student, role: role_1, course: course_1 }
   let!(:student_2) { FactoryGirl.create :course_membership_student, role: role_2, course: course_2 }
