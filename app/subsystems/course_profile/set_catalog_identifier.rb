@@ -4,9 +4,9 @@ class CourseProfile::SetCatalogIdentifier
 
   protected
 
-  def exec(entity_course:, identifier:)
+  def exec(entity_course:, catalog_offering_id:)
     profile = CourseProfile::Models::Profile.find_by(entity_course_id: entity_course.id)
-    profile.update_attributes!(catalog_offering_identifier: identifier)
+    profile.update_attributes!(catalog_offering_id: catalog_offering_id)
   end
 
 end

@@ -12,6 +12,5 @@ class Entity::Course < Tutor::SubSystems::BaseModel
 
   has_many :taskings, through: :periods, subsystem: :tasks
 
-  delegate :name, :is_concept_coach, :catalog_offering_identifier, :teacher_join_token,
-           to: :profile
+  delegate :name, :is_concept_coach, :offering, :teacher_join_token, to: :profile
 end

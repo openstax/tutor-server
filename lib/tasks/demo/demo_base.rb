@@ -104,9 +104,10 @@ class DemoBase
   end
 
   def find_or_create_catalog_offering( content, ecosystem )
-    Catalog::GetOffering[ identifier: content.catalog_offering_identifier ] ||
+    Catalog::GetOffering[ salesforce_book_name: content.catalog_offering_salesforce_book_name ] ||
       Catalog::CreateOffering[
-        identifier:  content.catalog_offering_identifier,
+        salesforce_book_name: content.catalog_offering_salesforce_book_name,
+        appearance_code: content.catalog_offering_salesforce_book_name,
         description: content.course_name,
         webview_url: content.url_base + content.cnx_book,
         pdf_url: content.url_base.sub(%r{contents/$}, 'exports/') + content.cnx_book + '.pdf',

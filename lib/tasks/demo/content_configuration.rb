@@ -44,7 +44,7 @@ class ContentConfiguration
   end
 
   def_delegators :@configuration, :course_name, :teachers, :periods, :is_concept_coach,
-                 :catalog_offering_identifier, :catalog_offering_is_concept_coach
+                 :catalog_offering_salesforce_book_name, :catalog_offering_is_concept_coach
 
   def initialize(config_file)
     @configuration = Hashie::Mash.load(config_file, parser: ConfigFileParser)

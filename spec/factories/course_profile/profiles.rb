@@ -3,6 +3,7 @@ FactoryGirl.define do
     name { Faker::Lorem.words.join(' ') }
     timezone { ActiveSupport::TimeZone.all.collect(&:name).sample }
     is_concept_coach false
+    association :offering, factory: :catalog_offering
 
     after(:build) do |profile, evaluator|
       profile.course ||= build(:entity_course, profile: profile)

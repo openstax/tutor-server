@@ -2,7 +2,8 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::CourseRepresenter, type: :representer do
   let!(:ecosystem)        { Content::Models::Ecosystem.create!(title: 'Test eco') }
-  let!(:catalog_offering) { Catalog::CreateOffering[identifier: 'identifier',
+  let!(:catalog_offering) { Catalog::CreateOffering[salesforce_book_name: 'book',
+                                                    appearance_code: 'appearance',
                                                     webview_url: 'web_url',
                                                     pdf_url: 'pdf_url',
                                                     description: 'desc',
@@ -21,8 +22,12 @@ RSpec.describe Api::V1::CourseRepresenter, type: :representer do
     expect(represented['name']).to eq 'Test course'
   end
 
-  it 'shows the catalog_offering_identifier' do
-    expect(represented['catalog_offering_identifier']).to eq 'identifier'
+  it 'shows the salesforce_book_name' do
+    expect(represented['salesforce_book_name']).to eq 'book'
+  end
+
+  it 'shows the appearance_code' do
+    expect(represented['appearance_code']).to eq 'appearance'
   end
 
   it 'shows the book_pdf_url if available' do
