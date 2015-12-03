@@ -20,7 +20,7 @@ class CreateCourse
     run(:create_course_profile,
         name: name,
         course: outputs.course,
-        catalog_offering_identifier: catalog_offering.try(:identifier),
+        catalog_offering_id: catalog_offering.try(:id),
         school_district_school_id: school.try(:id),
         is_concept_coach: is_concept_coach)
 
