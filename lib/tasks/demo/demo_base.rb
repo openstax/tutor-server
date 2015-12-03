@@ -109,7 +109,7 @@ class DemoBase
         salesforce_book_name: content.catalog_offering_salesforce_book_name,
         appearance_code: content.catalog_offering_salesforce_book_name,
         description: content.course_name,
-        webview_url: content.url_base + content.cnx_book,
+        webview_url: (content.webview_url_base || content.url_base.sub(/archive\./,'')) + content.cnx_book,
         pdf_url: content.url_base.sub(%r{contents/$}, 'exports/') + content.cnx_book + '.pdf',
         is_concept_coach: content.catalog_offering_is_concept_coach,
         content_ecosystem_id: ecosystem.id
