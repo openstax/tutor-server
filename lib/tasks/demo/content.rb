@@ -75,13 +75,12 @@ class DemoContent < DemoBase
   end
 
   def configure_course(content)
-    course_name = content.course_name
-    is_concept_coach = content.is_concept_coach || false
+     course = find_course(name: content.course_name) ||
+             create_course(name: content.course_name,
+                           appearance_code: content.appearance_code,
+                           is_concept_coach: content.is_concept_coach || false)
 
-    course = find_course(name: course_name) ||
-             create_course(name: course_name, is_concept_coach: is_concept_coach)
-
-    log("Course: #{course_name}")
+    log("Course: #{content.course_name}")
 
     content.teachers.each do |teacher|
       configure_course_teacher(course, teacher)
@@ -102,9 +101,7 @@ class DemoContent < DemoBase
     # Serial step
     courses = []
     ActiveRecord::Base.transaction do
-
       setup_staff_user_accounts
-
       ContentConfiguration[book].each do | content |
         courses.push configure_course(content)
       end
