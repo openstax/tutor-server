@@ -5,22 +5,24 @@ require_relative 'content_configuration'
 class DemoContent < DemoBase
   POSSIBLE_CHARS = ('0'...'9').to_a+('A'..'Z').to_a
 
-  lev_routine
+  lev_routine uses: [
+    { name: FetchAndImportBookAndCreateEcosystem, as: :import_book },
+    { name: CreateCourse, as: :create_course },
+    { name: CreatePeriod, as: :create_period },
+    { name: CourseMembership::UpdatePeriod, as: :update_period },
+    { name: AddEcosystemToCourse, as: :add_ecosystem },
+    { name: User::MakeAdministrator, as: :make_administrator },
+    { name: User::SetContentAnalystState, as: :set_content_analyst },
+    { name: AddUserAsCourseTeacher, as: :add_teacher },
+    { name: AddUserAsPeriodStudent, as: :add_student },
+    { name: UserIsCourseStudent, as: :is_student },
+    { name: UserIsCourseTeacher, as: :is_teacher },
+    { name: CourseProfile::SetCatalogOffering, as: :set_offering },
+    { name: User::CreateUser, as: :create_user }
+  ]
 
   disable_automatic_lev_transactions
 
-  uses_routine FetchAndImportBookAndCreateEcosystem, as: :import_book
-  uses_routine CreateCourse, as: :create_course
-  uses_routine CreatePeriod, as: :create_period
-  uses_routine CourseMembership::UpdatePeriod, as: :update_period
-  uses_routine AddEcosystemToCourse, as: :add_ecosystem
-  uses_routine User::MakeAdministrator, as: :make_administrator
-  uses_routine User::SetContentAnalystState, as: :set_content_analyst
-  uses_routine AddUserAsCourseTeacher, as: :add_teacher
-  uses_routine AddUserAsPeriodStudent, as: :add_student
-  uses_routine UserIsCourseStudent, as: :is_student
-  uses_routine UserIsCourseTeacher, as: :is_teacher
-  uses_routine CourseProfile::SetCatalogOffering, as: :set_offering
 
   protected
 
@@ -118,9 +120,12 @@ class DemoContent < DemoBase
 
         book = content.cnx_book(version)
         course = courses[index]
+
         OpenStax::Cnx::V1.set_archive_url_base( url: content.url_base )
+
         log("Starting book import for #{course.name} #{book} from #{content.url_base}.")
-        ecosystem = run(:import_book, book_cnx_id: book).outputs.ecosystem
+
+        ecosystem = run(:import_book, book_cnx_id: book).ecosystem
 
         log("Book import complete")
         run(:add_ecosystem, ecosystem: ecosystem, course: course)
@@ -129,12 +134,9 @@ class DemoContent < DemoBase
         run(:set_offering, entity_course: course, catalog_offering: offering)
 
         index += 1
-
       end # book
-
     end # thread
 
     wait_for_parallel_completion
-
   end
 end
