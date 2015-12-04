@@ -10,6 +10,7 @@ class Admin::CoursesController < Admin::BaseController
   end
 
   def new
+    @profile = CourseProfile::Models::Profile.new
   end
 
   def create
@@ -71,7 +72,7 @@ class Admin::CoursesController < Admin::BaseController
   private
 
   def course_params
-    { id: params[:id], course: params.require(:profile)
+    { id: params[:id], course: params.require(:course)
                                      .permit(:name,
                                              :appearance_code,
                                              :school_district_school_id,

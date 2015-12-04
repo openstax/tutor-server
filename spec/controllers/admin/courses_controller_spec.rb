@@ -20,7 +20,7 @@ RSpec.describe Admin::CoursesController, type: :controller do
       course = CreateCourse[name: 'Hello World']
       get :edit, id: course.id
 
-      expect(assigns[:course].course_id).to eq course.id
+      expect(assigns[:profile].entity_course_id).to eq course.id
       expect(Set.new assigns[:periods]).to eq Set.new course.periods
       expect(Set.new assigns[:teachers]).to eq Set.new course.teachers
       expect(Set.new assigns[:ecosystems]).to eq Set.new Content::ListEcosystems[]

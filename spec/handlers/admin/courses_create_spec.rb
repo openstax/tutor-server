@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Admin::CoursesCreate, :type => :handler do
+RSpec.describe Admin::CoursesCreate, type: :handler do
   subject(:course_profile) { CourseProfile::Models::Profile.last }
 
   it 'names the course' do
