@@ -3,6 +3,8 @@ class UpdateSalesforceStats
   # not a routine!
 
   def self.call
+    log { "Starting." }
+
     attached_records = Salesforce::AttachedRecord.all
 
     num_records = attached_records.count
@@ -38,9 +40,9 @@ class UpdateSalesforceStats
       end
     end
 
-    Rails.logger.info {
-      "UpdateSalesforceStats ran for #{num_records} record(s); Made #{num_updates} " +
-      "update(s);#{num_errors} error(s) occurred."
+    log {
+      "Ran for #{num_records} record(s); Made #{num_updates} " +
+      "update(s); #{num_errors} error(s) occurred."
     }
 
     {num_records: num_records, num_errors: num_errors, num_updates: num_updates}
@@ -50,6 +52,10 @@ class UpdateSalesforceStats
     class_size.num_teachers = CourseMembership::GetTeachers[course].count
     class_size.num_students = CourseMembership::GetCourseRoles[course: course, types: :student].count
     class_size.num_sections = CourseMembership::GetCoursePeriods[course: course].count
+  end
+
+  def self.log(&block)
+    Rails.logger.info { "[UpdateSalesforceStats] #{block.call}" }
   end
 
 end

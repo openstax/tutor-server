@@ -13,12 +13,19 @@ class ImportSalesforceCourses
   end
 
   def exec(include_real_salesforce_data: nil)
+    log { "Starting." }
+
     @include_real_salesforce_data_preference = include_real_salesforce_data
 
     candidate_sf_records.each do |candidate|
       create_course_for_candidate(candidate)
       candidate.save_if_changed
     end
+
+    log {
+      "#{outputs.num_failures + outputs.num_successes} candidate record(s); " +
+      "#{outputs.num_successes} success(es) and #{outputs.num_failures} failure(s)."
+    }
   end
 
   def include_real_salesforce_data?
@@ -42,7 +49,7 @@ class ImportSalesforceCourses
 
     if !include_real_salesforce_data?
       search_criteria[:school] = 'Denver University'
-      Rails.logger.info { "Starting Salesforce course import using test data only" }
+      log { "Using test data only." }
     end
 
     Salesforce::Remote::ClassSize.where(search_criteria)
@@ -91,7 +98,7 @@ class ImportSalesforceCourses
     # Remember the candidate obj ID so we can write stats later
     run(:attach_record, record: candidate, to: course)
 
-    Rails.logger.info {
+    log {
       "Created course '#{course.name}' (#{course.id}) based on Salesforce record " +
       "#{candidate.id} using offering '#{offering.salesforce_book_name}' (#{offering.id}) " +
       "and ecosystem '#{offering.ecosystem.title}'."
@@ -108,6 +115,11 @@ class ImportSalesforceCourses
   def error!(candidate, message)
     candidate.error = message
     outputs.num_failures += 1
+    log { "Error! candidate: #{candidate.id}; message: #{message}." }
+  end
+
+  def log(&block)
+    Rails.logger.info { "[ImportSalesforceCourses] #{block.call}" }
   end
 
 end
