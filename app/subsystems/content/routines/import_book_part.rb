@@ -22,7 +22,7 @@ class Content::Routines::ImportBookPart
                                              title: cnx_book_part.title,
                                              book_location: [chapter_tracker.value])
       chapter.save if save
-      #transfer_errors_from(chapter, {type: :verbatim}, true)
+      transfer_errors_from(chapter, {type: :verbatim}, true)
       book.chapters << chapter
       result.chapters << chapter
       page_offset = cnx_book_part.parts.first.try(:is_intro?) ? 0 : 1

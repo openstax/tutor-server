@@ -23,7 +23,7 @@ class Content::Routines::ImportPage
                                         uuid: cnx_page.uuid,
                                         version: cnx_page.version))
     result.page.save if save
-    #transfer_errors_from(outputs[:page], {type: :verbatim}, true)
+    transfer_errors_from(outputs[:page], {type: :verbatim}, true)
     chapter.pages << result.page unless chapter.nil?
 
     tags = cnx_page.tags
