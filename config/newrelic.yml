@@ -1,0 +1,8 @@
+development:
+  agent_enabled: false
+
+test:
+  agent_enabled: false
+
+production:
+  agent_enabled: false
