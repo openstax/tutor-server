@@ -68,22 +68,10 @@ class Admin::CoursesController < Admin::BaseController
     redirect_to edit_admin_course_path(params[:id], anchor: 'content')
   end
 
-  def set_catalog_offering
-    offering = Catalog::Offering.find_by(id: params[:catalog_offering_id])
-    if offering.blank?
-      flash[:error] = 'Please select a catalog offering'
-    else
-      course = Entity::Course.find(params[:id])
-      CourseProfile::SetCatalogOffering[ entity_course: course, catalog_offering: offering ]
-      flash[:notice] = "Catalog offering \"#{offering.salesforce_book_name}\" selected for \"#{course.name}\""
-    end
-    redirect_to edit_admin_course_path(params[:id], anchor: 'content')
-  end
-
   private
 
   def course_params
-    { id: params[:id], course: params.require(:course)
+    { id: params[:id], course: params.require(:profile)
                                      .permit(:name,
                                              :appearance_code,
                                              :school_district_school_id,

@@ -53,16 +53,18 @@ $(document).ready(function() {
 
   //========== Disable is_concept_coach checkbox when a course offering is selected ==========//
   function updateIsConceptCoachCheckbox() {
-    $('#course_is_concept_coach').prop('disabled', false);
-    $('#course_catalog_offering_id option:selected').each(function() {
-      if ($(this).prop('value')) {
-        $('#course_is_concept_coach').prop('disabled', true);
-        $('#course_is_concept_coach').prop('checked',
-                                           $(this).attr('data-is_concept_coach') == '1');
-      }
-    });
+    selected = $('#profile_catalog_offering_id option:selected').first();
+    if (selected.prop('value')) {
+      $('#profile_appearance_code').prop('placeholder', selected.attr('data-appearance_code'));
+      $('#profile_is_concept_coach').prop('disabled', true);
+      $('#profile_is_concept_coach').prop('checked',
+                                         selected.attr('data-is_concept_coach') == '1');
+    }
+    else {
+      $('#profile_appearance_code').prop('placeholder', '');
+      $('#profile_is_concept_coach').prop('disabled', false);
+    }
   }
-  $('#course_catalog_offering_id').change(updateIsConceptCoachCheckbox);
-  $(updateIsConceptCoachCheckbox);
-
+  $('#profile_catalog_offering_id').change(updateIsConceptCoachCheckbox);
+  updateIsConceptCoachCheckbox();
 });

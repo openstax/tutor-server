@@ -9,6 +9,7 @@ RSpec.describe Api::V1::CourseRepresenter, type: :representer do
                                                     description: 'desc',
                                                     ecosystem: ecosystem] }
   let!(:course)           { CreateCourse[name: 'Test course',
+                                         appearance_code: 'appearance override',
                                          catalog_offering: catalog_offering,
                                          is_concept_coach: true] }
 
@@ -22,11 +23,16 @@ RSpec.describe Api::V1::CourseRepresenter, type: :representer do
     expect(represented['name']).to eq 'Test course'
   end
 
-  it 'shows the salesforce_book_name' do
+  it 'shows the offering salesforce_book_name' do
     expect(represented['salesforce_book_name']).to eq 'book'
   end
 
-  it 'shows the appearance_code' do
+  it 'shows the profile appearance_code' do
+    expect(represented['appearance_code']).to eq 'appearance override'
+  end
+
+  it 'shows the offering appearance_code if the profile appearance_code is blank' do
+    course.profile.update_attribute(:appearance_code, nil)
     expect(represented['appearance_code']).to eq 'appearance'
   end
 

@@ -9,4 +9,5 @@
   </td>
 <% end } %>
 
-<%= link_to 'Add period', new_admin_course_period_path(@course.course_id), class: "btn btn-primary", style: 'margin-bottom:0px' %>
+<%= link_to 'Add period', new_admin_course_period_path(@course.id),
+                          class: "btn btn-primary", style: 'margin-bottom:0px' %>

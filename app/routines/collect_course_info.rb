@@ -48,7 +48,8 @@ class CollectCourseInfo
         is_concept_coach: p.is_concept_coach,
         school_name: p.school_name,
         salesforce_book_name: p.offering.try(:salesforce_book_name),
-        appearance_code: p.offering.try(:appearance_code)
+        appearance_code: p.appearance_code.blank? ? p.offering.try(:appearance_code) : \
+                                                    p.appearance_code
       }
     end
   end

@@ -39,16 +39,13 @@
   <div role="tabpanel" class="tab-pane" id="teachers">
     <h3>Assign teachers</h3>
 
-    <%= render 'teachers', url: teachers_admin_course_path(@course.course_id) %>
+    <%= render 'teachers', url: teachers_admin_course_path(@course.id) %>
   </div>
 
   <div role="tabpanel" class="tab-pane" id="content">
     <h3>Select a course ecosystem</h3>
 
-    <%= render 'set_ecosystem', url: set_ecosystem_admin_course_path(@course.course_id) %>
-
-    <h3>Select a catalog offering</h3>
-    <%= render 'set_catalog_offering', url: set_catalog_offering_admin_course_path(@course.course_id) %>
+    <%= render 'set_ecosystem', url: set_ecosystem_admin_course_path(@course.id) %>
   </div>
 
   <div role="tabpanel" class="tab-pane" id="periods">
@@ -60,6 +57,6 @@
   <div role="tabpanel" class="tab-pane" id="roster">
     <h3>Upload Student Roster</h3>
 
-    <%= render 'students', url: students_admin_course_path(@course.course_id) %>
+    <%= render 'students', url: students_admin_course_path(@course.id) %>
   </div>
 </div>

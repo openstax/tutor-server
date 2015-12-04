@@ -219,19 +219,6 @@ RSpec.describe Admin::CoursesController, type: :controller do
     end
   end
 
-  describe 'POST #set_catalog_offering' do
-    let!(:course)   { FactoryGirl.create(:course_profile_profile, name: 'Physics I').course }
-    let!(:offering) { FactoryGirl.create(:catalog_offering) }
-
-    it 'sets the offering catalog_offering_id' do
-      post :set_catalog_offering, id: course.id, catalog_offering_id: offering.id
-      expect{
-        post :set_catalog_offering, id: course.id, catalog_offering_id: offering.id
-      }.not_to raise_error
-      expect(course.profile.reload.catalog_offering_id).to eq(offering.id)
-    end
-  end
-
   context 'disallowing baddies' do
     it 'disallows unauthenticated visitors' do
       allow(controller).to receive(:current_account) { nil }
