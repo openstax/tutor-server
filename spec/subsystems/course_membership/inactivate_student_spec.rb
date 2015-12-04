@@ -2,10 +2,17 @@ require 'rails_helper'
 
 describe CourseMembership::InactivateStudent, type: :routine do
   let!(:student) { FactoryGirl.create(:course_membership_student) }
+  let!(:course)  { student.course }
 
   context "active student" do
-    it "inactivates the student" do
-      described_class[student: student]
+    it "inactivates but does not delete the given student" do
+      result = nil
+      expect {
+        result = described_class.call(student: student)
+      }.not_to change{ CourseMembership::Models::Student.count }
+      expect(result.errors).to be_empty
+
+      expect(student.reload.course).to eq course
       expect(student).not_to be_active
     end
   end
