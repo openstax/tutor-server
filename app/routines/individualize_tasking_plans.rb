@@ -1,9 +1,11 @@
 class IndividualizeTaskingPlans
-  lev_routine uses: [{ name: CourseMembership::GetCourseRoles, as: :get_course_roles },
-                     { name: CourseMembership::GetPeriodRoles, as: :get_period_roles }],
-              outputs: {
-                tasking_plans: :_self
-              }
+  lev_routine uses: [{ name: CourseMembership::GetCourseRoles,
+                       as: :get_course_roles },
+
+                     { name: CourseMembership::GetPeriodStudentRoles,
+                       as: :get_period_roles }],
+
+              outputs: { tasking_plans: :_self }
 
   protected
   def exec(task_plan)

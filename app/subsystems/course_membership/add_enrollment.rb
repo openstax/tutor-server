@@ -9,7 +9,7 @@ class CourseMembership::AddEnrollment
 
   protected
   def exec(period:, student:)
-    set(enrollment: = CourseMembership::Models::Enrollment.create(
+    set(enrollment: CourseMembership::Models::Enrollment.create(
       student: student, period: period.to_model
     ))
 
