@@ -3,6 +3,7 @@ require_relative 'content_configuration'
 
 ## Imports a book from CNX and creates a course with periods from it's data
 class DemoContent < DemoBase
+  POSSIBLE_CHARS = ('0'...'9').to_a+('A'..'Z').to_a
 
   lev_routine
 
@@ -71,8 +72,9 @@ class DemoContent < DemoBase
             student_info = people.students[initials]
             user = get_student_user(initials) ||
                    new_user(username: student_info.username, name: student_info.name)
+            student_identifier = POSSIBLE_CHARS.shuffle.take(10).join()
             log("    #{initials} #{student_info.username} (#{student_info.name})")
-            run(:add_student, period: period, user: user, student_identifier: "#{rand(100000)+10000}") \
+            run(:add_student, period: period, user: user, student_identifier: "#{student_identifier}") \
                unless run(:is_student, user: user, course: course).outputs.user_is_course_student
           end
 
