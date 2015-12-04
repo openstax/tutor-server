@@ -43,7 +43,7 @@ class ContentConfiguration
     files.map{|file| self.new(file) }
   end
 
-  def_delegators :@configuration, :course_name, :teachers, :periods, :is_concept_coach,
+  def_delegators :@configuration, :course_name, :teachers, :periods, :is_concept_coach, :appearance_code,
                  :catalog_offering_salesforce_book_name, :catalog_offering_is_concept_coach
 
   def initialize(config_file)

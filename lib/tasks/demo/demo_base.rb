@@ -476,10 +476,11 @@ class DemoBase
     CourseProfile::Models::Profile.where(name: name).first.try(:course)
   end
 
-  def create_course(name:, catalog_offering: nil, is_concept_coach: false)
+  def create_course(name:, catalog_offering: nil, appearance_code:nil, is_concept_coach: false)
     course = run(:create_course, name: name,
-                                 catalog_offering: catalog_offering,
-                                 is_concept_coach: is_concept_coach).outputs.course
+                 catalog_offering: catalog_offering,
+                 appearance_code: appearance_code,
+                 is_concept_coach: is_concept_coach).outputs.course
     log("Created a course named '#{name}'.")
     course
   end
