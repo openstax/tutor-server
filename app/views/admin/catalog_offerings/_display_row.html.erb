@@ -1,8 +1,11 @@
 <div class='offering-row'>
-  <b>ID:</b> <%= offering.identifier %>
+  <b>Book name:</b> <%= offering.salesforce_book_name %>
   <span style='float: right'>
     <%= link_to 'Edit', edit_admin_catalog_offering_url(offering.id) %>
   </span>
+  <div style='clear:both'>
+    <b>Appearance code:</b> <%= offering.appearance_code || 'not set' %>
+  </div>
   <div style='clear:both'>
     <b>Ecosystem:</b> <%= offering.ecosystem ? offering.ecosystem.title : 'not set' %>
   </div>

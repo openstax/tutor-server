@@ -11,14 +11,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151201181307) do
+ActiveRecord::Schema.define(version: 20151203221809) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "hstore"
 
   create_table "catalog_offerings", force: :cascade do |t|
-    t.string   "identifier",                           null: false
+    t.string   "salesforce_book_name",                 null: false
     t.integer  "content_ecosystem_id"
     t.boolean  "is_tutor",             default: false, null: false
     t.boolean  "is_concept_coach",     default: false, null: false
@@ -28,10 +28,11 @@ ActiveRecord::Schema.define(version: 20151201181307) do
     t.datetime "created_at",                           null: false
     t.datetime "updated_at",                           null: false
     t.string   "default_course_name"
+    t.string   "appearance_code"
   end
 
   add_index "catalog_offerings", ["content_ecosystem_id"], name: "index_catalog_offerings_on_content_ecosystem_id", using: :btree
-  add_index "catalog_offerings", ["identifier"], name: "index_catalog_offerings_on_identifier", unique: true, using: :btree
+  add_index "catalog_offerings", ["salesforce_book_name"], name: "index_catalog_offerings_on_salesforce_book_name", unique: true, using: :btree
 
   create_table "content_books", force: :cascade do |t|
     t.string   "url",                  null: false
@@ -244,16 +245,18 @@ ActiveRecord::Schema.define(version: 20151201181307) do
 
   create_table "course_profile_profiles", force: :cascade do |t|
     t.integer  "school_district_school_id"
-    t.integer  "entity_course_id",                                                   null: false
-    t.string   "name",                                                               null: false
-    t.string   "timezone",                    default: "Central Time (US & Canada)", null: false
-    t.datetime "created_at",                                                         null: false
-    t.datetime "updated_at",                                                         null: false
-    t.boolean  "is_concept_coach",                                                   null: false
-    t.string   "catalog_offering_identifier"
-    t.string   "teacher_join_token",                                                 null: false
+    t.integer  "entity_course_id",                                                 null: false
+    t.string   "name",                                                             null: false
+    t.string   "timezone",                  default: "Central Time (US & Canada)", null: false
+    t.datetime "created_at",                                                       null: false
+    t.datetime "updated_at",                                                       null: false
+    t.boolean  "is_concept_coach",                                                 null: false
+    t.string   "teacher_join_token",                                               null: false
+    t.integer  "catalog_offering_id"
+    t.string   "appearance_code"
   end
 
+  add_index "course_profile_profiles", ["catalog_offering_id"], name: "index_course_profile_profiles_on_catalog_offering_id", using: :btree
   add_index "course_profile_profiles", ["entity_course_id"], name: "index_course_profile_profiles_on_entity_course_id", unique: true, using: :btree
   add_index "course_profile_profiles", ["name"], name: "index_course_profile_profiles_on_name", using: :btree
   add_index "course_profile_profiles", ["school_district_school_id"], name: "index_course_profile_profiles_on_school_district_school_id", using: :btree
@@ -764,6 +767,7 @@ ActiveRecord::Schema.define(version: 20151201181307) do
   add_foreign_key "course_membership_students", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_membership_teachers", "entity_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_membership_teachers", "entity_roles", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "course_profile_profiles", "catalog_offerings", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_profile_profiles", "entity_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_profile_profiles", "school_district_schools", on_update: :cascade, on_delete: :nullify
   add_foreign_key "role_role_users", "entity_roles", on_update: :cascade, on_delete: :cascade

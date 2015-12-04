@@ -19,7 +19,7 @@ class DemoContent < DemoBase
   uses_routine AddUserAsPeriodStudent, as: :add_student
   uses_routine UserIsCourseStudent, as: :is_student
   uses_routine UserIsCourseTeacher, as: :is_teacher
-  uses_routine CourseProfile::SetCatalogIdentifier, as: :set_offering
+  uses_routine CourseProfile::SetCatalogOffering, as: :set_offering
 
   protected
 
@@ -106,7 +106,7 @@ class DemoContent < DemoBase
         run(:add_ecosystem, ecosystem: ecosystem, course: course)
 
         offering = find_or_create_catalog_offering(content, ecosystem)
-        run(:set_offering, entity_course: course, identifier: offering.identifier)
+        run(:set_offering, entity_course: course, catalog_offering: offering)
 
         index += 1
 

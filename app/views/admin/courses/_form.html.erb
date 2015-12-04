@@ -1,6 +1,6 @@
 <% method ||= :post %>
 
-<%= lev_form_for :course, url: url, method: method do |f| %>
+<%= form_for @profile, as: :course, url: url, method: method do |f| %>
   <div class="form-group">
     <%= f.label :name %>
     <%= f.text_field :name, class: 'form-control' %>
@@ -13,6 +13,30 @@
                             :id, :name,
                             { include_blank: true },
                             class: 'form-control' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :catalog_offering_id, 'Catalog Offering' %>
+    <%= f.select :catalog_offering_id,
+                 @catalog_offerings.map { |co|
+                   attrs = [co.salesforce_book_name, co.id,
+                            {'data-appearance_code' => co.appearance_code}]
+                   attrs.last.merge!('data-is_concept_coach' => 1) if co.is_concept_coach
+                   attrs
+                 },
+                 { include_blank: true },
+                 class: 'form-control' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :appearance_code,
+                'Appearance Code (leave blank for Catalog Offering\'s default)' %>
+    <%= f.text_field :appearance_code, class: 'form-control' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :is_concept_coach %>
+    <%= f.check_box :is_concept_coach, class: 'form-control' %>
   </div>
 
   <%= f.submit 'Save', class: 'btn btn-primary' %>

@@ -4,12 +4,7 @@ class CourseProfile::GetProfile
   protected
   def exec(course: nil, attrs: {})
     profile = course ? get_profile_by_course(course) : get_profile_by_attrs(attrs)
-
-    outputs.profile = {
-      course_id: profile.entity_course_id,
-      catalog_offering_identifier: profile.catalog_offering_identifier,
-      name: profile.name
-    }
+    outputs.profile = profile
   end
 
   private

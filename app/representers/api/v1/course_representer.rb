@@ -16,19 +16,28 @@ module Api::V1
              writeable: false,
              schema_info: { required: true }
 
-    property :catalog_offering_identifier,
+    property :salesforce_book_name,
              type: String,
              readable: true,
-             writeable: false
+             writeable: false,
+             if: ->(*) { offering.present? },
+             getter: ->(*) { offering.salesforce_book_name }
+
+    property :appearance_code,
+             type: String,
+             readable: true,
+             writeable: false,
+             getter: ->(*) { appearance_code.blank? ? offering.try(:appearance_code) : \
+                                                      appearance_code }
 
     property :ecosystem_id,
              type: String,
              readable: true,
              writeable: false,
              if: ->(*) { respond_to?(:ecosystem) and ecosystem },
-             getter: ->(*) { ecosystem.try(:id) },
+             getter: ->(*) { ecosystem.id },
              schema_info: {
-              description: "The ID of the course's content ecosystem, if available."
+               description: "The ID of the course's content ecosystem, if available."
              }
 
     property :ecosystem_book_uuid,
@@ -45,10 +54,8 @@ module Api::V1
              type: String,
              readable: true,
              writeable: false,
-             if: ->(*) { catalog_offering_identifier.present? },
-             getter: ->(*) do
-               Catalog::Offering.find_by(identifier: catalog_offering_identifier).try(:pdf_url)
-             end,
+             if: ->(*) { offering.present? },
+             getter: ->(*) { offering.pdf_url },
              schema_info: {
                description: "The book's PDF url, if available."
              }
@@ -57,10 +64,8 @@ module Api::V1
              type: String,
              readable: true,
              writeable: false,
-             if: ->(*) { catalog_offering_identifier.present? },
-             getter: ->(*) do
-               Catalog::Offering.find_by(identifier: catalog_offering_identifier).try(:webview_url)
-             end,
+             if: ->(*) { offering.present? },
+             getter: ->(*) { offering.webview_url },
              schema_info: {
                description: "The book's webview url, if available."
              }

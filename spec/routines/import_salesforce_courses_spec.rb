@@ -59,7 +59,7 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
     disable_sfdc_client
 
     class_size = Salesforce::Remote::ClassSize.new(book_name: "jimmy")
-    FactoryGirl.create(:catalog_offering, identifier: "jimmy")
+    FactoryGirl.create(:catalog_offering, salesforce_book_name: "jimmy")
 
     allow_any_instance_of(described_class)
       .to receive(:candidate_sf_records)
@@ -75,7 +75,7 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
 
     class_size = Salesforce::Remote::ClassSize.new(book_name: "jimmy", course_name: nil)
     FactoryGirl.create(:catalog_offering,
-      identifier: "jimmy", default_course_name: nil, is_concept_coach: true)
+      salesforce_book_name: "jimmy", default_course_name: nil, is_concept_coach: true)
 
     allow_any_instance_of(described_class)
       .to receive(:candidate_sf_records)
@@ -92,7 +92,7 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
     class_size = Salesforce::Remote::ClassSize.new(
       book_name: "jimmy", course_name: "Jimmyness 101", school: "Jimmy U", id: 'booyah')
     offering = FactoryGirl.create(:catalog_offering,
-      identifier: "jimmy", default_course_name: nil, is_concept_coach: true)
+      salesforce_book_name: "jimmy", default_course_name: nil, is_concept_coach: true)
     FactoryGirl.create(:school, name: "Jimmy U")
 
     allow_any_instance_of(described_class)

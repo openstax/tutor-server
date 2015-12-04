@@ -13,7 +13,7 @@ class CoursesJoin
     after_transaction { raise_handled_exceptions! }
 
     run(:get_course_profile, attrs: { teacher_join_token: params[:join_token] })
-    outputs.course = Entity::Course.find(outputs.profile.course_id)
+    outputs.course = Entity::Course.find(outputs.profile.entity_course_id)
     run(:add_teacher, course: outputs.course, user: caller)
   end
 

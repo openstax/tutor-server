@@ -3,9 +3,14 @@ class Admin::CoursesController < Admin::BaseController
   include Lev::HandleWith
 
   before_action :get_schools, only: [:new, :edit]
+  before_action :get_catalog_offerings, only: [:new, :edit]
 
   def index
     @courses = CollectCourseInfo[with: :teacher_names]
+  end
+
+  def new
+    @profile = CourseProfile::Models::Profile.new
   end
 
   def create
@@ -64,28 +69,23 @@ class Admin::CoursesController < Admin::BaseController
     redirect_to edit_admin_course_path(params[:id], anchor: 'content')
   end
 
-  def set_catalog_offering
-    identifier = params[:catalog_offering_identifier]
-    if identifier.blank?
-      flash[:error] = 'Please select a catalog identifier'
-    else
-      course = Entity::Course.find(params[:id])
-      CourseProfile::SetCatalogIdentifier[ entity_course: course, identifier: identifier ]
-      flash[:notice] = "Catalog offering identifier \"#{identifier}\" selected for \"#{course.name}\""
-    end
-    redirect_to edit_admin_course_path(params[:id], anchor: 'content')
-  end
-
   private
 
   def course_params
     { id: params[:id], course: params.require(:course)
                                      .permit(:name,
+                                             :appearance_code,
                                              :school_district_school_id,
+                                             :catalog_offering_id,
+                                             :is_concept_coach,
                                              teacher_ids: []) }
   end
 
   def get_schools
     @schools = SchoolDistrict::ListSchools[]
+  end
+
+  def get_catalog_offerings
+    @catalog_offerings = Catalog::ListOfferings[]
   end
 end

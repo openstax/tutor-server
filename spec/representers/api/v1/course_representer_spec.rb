@@ -2,12 +2,14 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::CourseRepresenter, type: :representer do
   let!(:ecosystem)        { Content::Models::Ecosystem.create!(title: 'Test eco') }
-  let!(:catalog_offering) { Catalog::CreateOffering[identifier: 'identifier',
+  let!(:catalog_offering) { Catalog::CreateOffering[salesforce_book_name: 'book',
+                                                    appearance_code: 'appearance',
                                                     webview_url: 'web_url',
                                                     pdf_url: 'pdf_url',
                                                     description: 'desc',
                                                     ecosystem: ecosystem] }
   let!(:course)           { CreateCourse[name: 'Test course',
+                                         appearance_code: 'appearance override',
                                          catalog_offering: catalog_offering,
                                          is_concept_coach: true] }
 
@@ -21,8 +23,17 @@ RSpec.describe Api::V1::CourseRepresenter, type: :representer do
     expect(represented['name']).to eq 'Test course'
   end
 
-  it 'shows the catalog_offering_identifier' do
-    expect(represented['catalog_offering_identifier']).to eq 'identifier'
+  it 'shows the offering salesforce_book_name' do
+    expect(represented['salesforce_book_name']).to eq 'book'
+  end
+
+  it 'shows the profile appearance_code' do
+    expect(represented['appearance_code']).to eq 'appearance override'
+  end
+
+  it 'shows the offering appearance_code if the profile appearance_code is blank' do
+    course.profile.update_attribute(:appearance_code, nil)
+    expect(represented['appearance_code']).to eq 'appearance'
   end
 
   it 'shows the book_pdf_url if available' do

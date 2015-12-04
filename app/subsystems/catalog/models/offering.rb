@@ -2,7 +2,7 @@ class Catalog::Models::Offering < Tutor::SubSystems::BaseModel
 
   belongs_to :ecosystem, subsystem: :content
 
-  validates :identifier,  presence: true, uniqueness: true
+  validates :salesforce_book_name,  presence: true, uniqueness: true
   validates :webview_url, presence: true
   validates :description, presence: true
   validates :ecosystem, presence: true

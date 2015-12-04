@@ -7,9 +7,8 @@ describe CollectCourseInfo, type: :routine do
   let!(:role_1)    { FactoryGirl.create :entity_role, profile: profile_1 }
   let!(:role_2)    { FactoryGirl.create :entity_role, profile: profile_2 }
 
-  let!(:course_1)  { FactoryGirl.create(:course_profile_profile).course }
-  let!(:course_2)  { FactoryGirl.create(:course_profile_profile,
-                                        catalog_offering_identifier: 'tutorcourse').course }
+  let!(:course_1)  { FactoryGirl.create(:course_profile_profile, :with_offering).course }
+  let!(:course_2)  { FactoryGirl.create(:course_profile_profile, :with_offering).course }
 
   let!(:student_1) { FactoryGirl.create :course_membership_student, role: role_1, course: course_1 }
   let!(:student_2) { FactoryGirl.create :course_membership_student, role: role_2, course: course_2 }
@@ -22,7 +21,8 @@ describe CollectCourseInfo, type: :routine do
           id: course_1.id,
           name: course_1.profile.name,
           school_name: course_1.profile.school_name,
-          catalog_offering_identifier: nil,
+          salesforce_book_name: course_1.profile.offering.salesforce_book_name,
+          appearance_code: course_1.profile.offering.appearance_code,
           is_concept_coach: false
         }
       )
@@ -42,7 +42,8 @@ describe CollectCourseInfo, type: :routine do
           id: course_1.id,
           name: course_1.profile.name,
           school_name: course_1.profile.school_name,
-          catalog_offering_identifier: nil,
+          salesforce_book_name: course_1.profile.offering.salesforce_book_name,
+          appearance_code: course_1.profile.offering.appearance_code,
           is_concept_coach: false
         }
       )
@@ -57,14 +58,16 @@ describe CollectCourseInfo, type: :routine do
           id: course_1.id,
           name: course_1.profile.name,
           school_name: course_1.profile.school_name,
-          catalog_offering_identifier: nil,
+          salesforce_book_name: course_1.profile.offering.salesforce_book_name,
+          appearance_code: course_1.profile.offering.appearance_code,
           is_concept_coach: false
         },
         {
           id: course_2.id,
           name: course_2.profile.name,
           school_name: course_2.profile.school_name,
-          catalog_offering_identifier: 'tutorcourse',
+          salesforce_book_name: course_2.profile.offering.salesforce_book_name,
+          appearance_code: course_2.profile.offering.appearance_code,
           is_concept_coach: false
         }
       )
