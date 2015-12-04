@@ -1,5 +1,7 @@
 class Content::Routines::ImportPage
   lev_routine outputs: {
+                page: :_self,
+                exercises: :_self,
                 _verbatim: [{ name: Content::Routines::FindOrCreateTags,
                               as: :find_or_create_tags },
                             { name: Content::Routines::TagResource, as: :tag },
@@ -23,7 +25,9 @@ class Content::Routines::ImportPage
                                         uuid: cnx_page.uuid,
                                         version: cnx_page.version))
     result.page.save if save
-    transfer_errors_from(outputs[:page], {type: :verbatim}, true)
+
+    transfer_errors_from(result.page)
+
     chapter.pages << result.page unless chapter.nil?
 
     tags = cnx_page.tags

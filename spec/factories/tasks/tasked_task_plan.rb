@@ -26,8 +26,8 @@ FactoryGirl.define do
       require File.expand_path('../../../vcr_helper', __FILE__)
 
       VCR.use_cassette("TaskedTaskPlan/with_inertia", VCR_OPTS) do
-        @page = Content::Routines::ImportPage[cnx_page: cnx_page, chapter: chapter,
-                                              book_location: [1, 1]]
+        @page = Content::Routines::ImportPage.call(cnx_page: cnx_page, chapter: chapter,
+                                                   book_location: [1, 1]).page
       end
 
       Content::Routines::PopulateExercisePools[book: chapter.book]
