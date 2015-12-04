@@ -1,7 +1,7 @@
 <% @page_header = "Courses" %>
 
 <%= render partial: 'manager/courses/index',
-           locals: { courses: @courses,
+           locals: { course_infos: @course_infos,
                      extra_headers: 'Actions',
                      extra_fields_proc: lambda do |course| %>
   <td>

@@ -4,7 +4,8 @@ class CustomerService::CoursesController < CustomerService::BaseController
   before_action :get_schools, only: [:new, :edit]
 
   def index
-    @courses = CollectCourseInfo[with: :teacher_names]
+    courses = SearchCourses[query: params[:q]]
+    @course_infos = CollectCourseInfo[courses: courses, with: :teacher_names]
   end
 
   def show

@@ -25,21 +25,17 @@ class CollectCourseInfo
 
   protected
 
-  def exec(course: nil, user: nil, with: [])
-    outputs[:courses] = collect_basic_course_info(course, user)
+  def exec(courses: nil, user: nil, with: [])
+    courses = [courses].flatten unless courses.nil?
+    outputs[:courses] = collect_basic_course_info(courses, user)
     collect_extended_course_info(user, with)
   end
 
   private
-  def collect_basic_course_info(course, user)
-    profiles = if course
-                 CourseProfile::Models::Profile.where(entity_course_id: course.id) || []
-               elsif user
-                 courses = run(:get_courses, user: user).outputs.courses
-                 CourseProfile::Models::Profile.where(entity_course_id: courses.collect(&:id))
-               else
-                 CourseProfile::Models::Profile.all
-               end
+  def collect_basic_course_info(courses, user)
+    courses ||= run(:get_courses, user: user).outputs.courses unless user.nil?
+    profiles = CourseProfile::Models::Profile.all
+    profiles = profiles.where(entity_course_id: courses.map(&:id)) unless courses.nil?
 
     profiles.collect do |p|
       {

@@ -16,9 +16,9 @@ class Api::V1::CoursesController < Api::V1::ApiController
   EOS
   def index
     OSU::AccessPolicy.require_action_allowed!(:index, current_api_user, Entity::Course)
-    courses_info = CollectCourseInfo[user: current_human_user,
+    course_infos = CollectCourseInfo[user: current_human_user,
                                      with: [:roles, :periods, :ecosystem]]
-    respond_with courses_info, represent_with: Api::V1::CoursesRepresenter
+    respond_with course_infos, represent_with: Api::V1::CoursesRepresenter
   end
 
   api :GET, '/courses/:course_id/roster', 'Returns the roster for a given course'
@@ -46,7 +46,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
     # Use CollectCourseInfo instead of just representing the entity course so
     # we can gather extra information
-    course_info = CollectCourseInfo[course: course,
+    course_info = CollectCourseInfo[courses: course,
                                     user: current_human_user,
                                     with: [:roles, :periods, :ecosystem]].first
     respond_with course_info, represent_with: Api::V1::CourseRepresenter
@@ -65,7 +65,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
     # Use CollectCourseInfo instead of just representing the entity course so
     # we can gather extra information
-    course_info = CollectCourseInfo[course: course,
+    course_info = CollectCourseInfo[courses: course,
                                     user: current_human_user,
                                     with: [:roles, :periods, :ecosystem]].first
     respond_with course_info, represent_with: Api::V1::CourseRepresenter,

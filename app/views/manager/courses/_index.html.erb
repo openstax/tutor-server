@@ -13,12 +13,12 @@
     </tr>
   </thead>
   <tbody>
-    <% @courses.each do |course| %>
+    <% course_infos.each do |course_info| %>
       <tr>
-        <td><%= course.name %></td>
-        <td><%= course.school_name %></td>
-        <td><%= course.teacher_names.to_sentence %></td>
-        <%= capture(course, &extra_fields_proc) unless extra_fields_proc.nil? %>
+        <td><%= course_info.name %></td>
+        <td><%= course_info.school_name %></td>
+        <td><%= course_info.teacher_names.to_sentence %></td>
+        <%= capture(course_info, &extra_fields_proc) unless extra_fields_proc.nil? %>
       </tr>
     <% end %>
   </tbody>
