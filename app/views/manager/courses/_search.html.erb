@@ -1,0 +1,10 @@
+<%= form_tag '', method: :get do %>
+
+<div class="input-group form-group">
+   <%= text_field_tag :query, query, class: 'form-control', placeholder: 'Search here' %>
+   <span class="input-group-btn">
+     <%= submit_tag 'Search', class: "btn btn-primary"  %>
+   </span>
+</div>
+
+<% end %>

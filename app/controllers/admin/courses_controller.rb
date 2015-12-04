@@ -6,7 +6,8 @@ class Admin::CoursesController < Admin::BaseController
   before_action :get_catalog_offerings, only: [:new, :edit]
 
   def index
-    courses = SearchCourses[query: params[:q]]
+    @query = params[:query]
+    courses = SearchCourses[query: @query]
     @course_infos = CollectCourseInfo[courses: courses, with: :teacher_names]
   end
 
