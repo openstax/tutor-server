@@ -55,6 +55,10 @@ class ContentConfiguration
     @configuration.url_base || Rails.application.secrets.openstax['cnx']['archive_url']
   end
 
+  def webview_url_base
+    @configuration.webview_url_base
+  end
+
   def assignments
     @configuration.assignments || []
   end
