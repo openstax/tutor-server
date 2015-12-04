@@ -68,9 +68,11 @@ class Api::V1::StudentsController < Api::V1::ApiController
     end
   end
 
-  api :DELETE, '/students/:student_id', 'Removes a student from their course'
+  api :DELETE, '/students/:student_id', 'Drops a student from their course'
   description <<-EOS
-    Removes a student from their course.
+    Drops a student from their course.
+
+    Possible error code: already_inactive
   EOS
   def destroy
     OSU::AccessPolicy.require_action_allowed!(:destroy, current_api_user, @student)
@@ -83,9 +85,11 @@ class Api::V1::StudentsController < Api::V1::ApiController
     end
   end
 
-  api :PUT, '/students/:student_id/undrop', 'Undrop a student from their course'
+  api :PUT, '/students/:student_id/undrop', 'Undrops a student from their course'
   description <<-EOS
-    Undrop a student from their course.
+    Undrops a student from their course.
+
+    Possible error code: already_active
   EOS
   def undrop
     OSU::AccessPolicy.require_action_allowed!(:destroy, current_api_user, @student)

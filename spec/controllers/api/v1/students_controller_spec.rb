@@ -155,13 +155,29 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
 
     context 'caller has an authorization token' do
       context 'caller is a course teacher' do
-        it 'removes the student from the course' do
-          api_delete :destroy, teacher_token, parameters: valid_params
-          expect(response).to have_http_status(:no_content)
+        context 'student is active' do
+          it 'removes the student from the course' do
+            api_delete :destroy, teacher_token, parameters: valid_params
+            expect(response).to have_http_status(:no_content)
 
-          student.reload
-          expect(student.persisted?).to eq true
-          expect(student.active?).to eq false
+            student.reload
+            expect(student.persisted?).to eq true
+            expect(student.active?).to eq false
+          end
+        end
+
+        context 'student is inactive' do
+          before { InactivateStudent[student: student] }
+
+          it 'returns an error' do
+            api_delete :destroy, teacher_token, parameters: valid_params
+            expect(response).to have_http_status(:unprocessable_entity)
+            expect(response.body_as_hash[:errors].first[:code]).to eq 'already_inactive'
+
+            student.reload
+            expect(student.persisted?).to eq true
+            expect(student.active?).to eq false
+          end
         end
       end
 
@@ -208,15 +224,30 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
 
     context 'caller has an authorization token' do
       context 'caller is a course teacher' do
-        it 'undrops the student from the course' do
+        context 'student is inactive' do
+          it 'undrops the student from the course' do
+            api_put :undrop, teacher_token, parameters: valid_params
+            expect(response).to have_http_status(:ok)
+            expect(response.body_as_hash[:is_active]).to be true
 
-          api_put :undrop, teacher_token, parameters: valid_params
-          expect(response).to have_http_status(:ok)
-          expect(response.body_as_hash[:is_active]).to be true
+            student.reload
+            expect(student.persisted?).to eq true
+            expect(student.active?).to eq true
+          end
+        end
 
-          student.reload
-          expect(student.persisted?).to eq true
-          expect(student.active?).to eq true
+        context 'student is active' do
+          before { ActivateStudent[student: student] }
+
+          it 'returns an error' do
+            api_put :undrop, teacher_token, parameters: valid_params
+            expect(response).to have_http_status(:unprocessable_entity)
+            expect(response.body_as_hash[:errors].first[:code]).to eq 'already_active'
+
+            student.reload
+            expect(student.persisted?).to eq true
+            expect(student.active?).to eq true
+          end
         end
       end
 
