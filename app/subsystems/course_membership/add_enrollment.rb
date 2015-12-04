@@ -3,8 +3,6 @@ class CourseMembership::AddEnrollment
 
   lev_routine
 
-  uses_routine ReassignPublishedPeriodTaskPlans, as: :reassign_period_task_plans
-
   protected
 
   def exec(period:, student:)
@@ -17,6 +15,6 @@ class CourseMembership::AddEnrollment
     student.activate.save! unless student.active?
     outputs[:student] = student
 
-    run(:reassign_period_task_plans, period: period)
+    ReassignPublishedPeriodTaskPlans.perform_later(period: period.to_model)
   end
 end
