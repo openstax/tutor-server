@@ -1,4 +1,7 @@
-set :bundle_command, ENV['BUNDLE_COMMAND'] || 'bundle exec'
+bundle_command = ENV['BUNDLE_COMMAND'] || 'bundle exec'
+
+set :bundle_command, bundle_command
+set :runner_command, "#{bundle_command} rails runner"
 
 every 1.minute do
   rake 'openstax:accounts:sync:all'
