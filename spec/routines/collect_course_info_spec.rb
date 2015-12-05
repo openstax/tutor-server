@@ -15,7 +15,7 @@ describe CollectCourseInfo, type: :routine do
 
   context "when a course is given" do
     it "returns information about the course" do
-      result = described_class[course: course_1]
+      result = described_class[courses: course_1]
       expect(result).to contain_exactly(
         {
           id: course_1.id,
@@ -23,6 +23,30 @@ describe CollectCourseInfo, type: :routine do
           school_name: course_1.profile.school_name,
           salesforce_book_name: course_1.profile.offering.salesforce_book_name,
           appearance_code: course_1.profile.offering.appearance_code,
+          is_concept_coach: false
+        }
+      )
+    end
+  end
+
+  context "when multiple courses are given" do
+    it "returns information about all given courses" do
+      result = described_class[courses: [course_1, course_2]]
+      expect(result).to contain_exactly(
+        {
+          id: course_1.id,
+          name: course_1.profile.name,
+          school_name: course_1.profile.school_name,
+          salesforce_book_name: course_1.profile.offering.salesforce_book_name,
+          appearance_code: course_1.profile.offering.appearance_code,
+          is_concept_coach: false
+        },
+        {
+          id: course_2.id,
+          name: course_2.profile.name,
+          school_name: course_2.profile.school_name,
+          salesforce_book_name: course_2.profile.offering.salesforce_book_name,
+          appearance_code: course_2.profile.offering.appearance_code,
           is_concept_coach: false
         }
       )

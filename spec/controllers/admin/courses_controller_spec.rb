@@ -6,12 +6,17 @@ RSpec.describe Admin::CoursesController, type: :controller do
   before { controller.sign_in(admin) }
 
   describe 'GET #index' do
-    it 'assigns all CollectCourseInfo output to @courses' do
+    it 'assigns all CollectCourseInfo output to @course_infos' do
       CreateCourse[name: 'Hello World']
       get :index
 
-      expect(assigns[:courses].count).to eq(1)
-      expect(assigns[:courses].first.name).to eq('Hello World')
+      expect(assigns[:course_infos].count).to eq(1)
+      expect(assigns[:course_infos].first.name).to eq('Hello World')
+    end
+
+    it 'passes the query param to SearchCourses' do
+      expect(SearchCourses).to receive(:[]).with(query: 'test').once
+      get :index, query: 'test'
     end
   end
 
