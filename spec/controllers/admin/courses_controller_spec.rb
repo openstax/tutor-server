@@ -13,6 +13,11 @@ RSpec.describe Admin::CoursesController, type: :controller do
       expect(assigns[:course_infos].count).to eq(1)
       expect(assigns[:course_infos].first.name).to eq('Hello World')
     end
+
+    it 'passes the query param to SearchCourses' do
+      expect(SearchCourses).to receive(:[]).with(query: 'test').once
+      get :index, query: 'test'
+    end
   end
 
   describe 'GET #edit' do
