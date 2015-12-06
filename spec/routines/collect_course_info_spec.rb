@@ -20,6 +20,7 @@ describe CollectCourseInfo, type: :routine do
         {
           id: course_1.id,
           name: course_1.profile.name,
+          offering: course_1.profile.offering,
           school_name: course_1.profile.school_name,
           salesforce_book_name: course_1.profile.offering.salesforce_book_name,
           appearance_code: course_1.profile.offering.appearance_code,
@@ -36,6 +37,7 @@ describe CollectCourseInfo, type: :routine do
         {
           id: course_1.id,
           name: course_1.profile.name,
+          offering: course_1.profile.offering,
           school_name: course_1.profile.school_name,
           salesforce_book_name: course_1.profile.offering.salesforce_book_name,
           appearance_code: course_1.profile.offering.appearance_code,
@@ -44,6 +46,7 @@ describe CollectCourseInfo, type: :routine do
         {
           id: course_2.id,
           name: course_2.profile.name,
+          offering: course_2.profile.offering,
           school_name: course_2.profile.school_name,
           salesforce_book_name: course_2.profile.offering.salesforce_book_name,
           appearance_code: course_2.profile.offering.appearance_code,
@@ -65,6 +68,7 @@ describe CollectCourseInfo, type: :routine do
         {
           id: course_1.id,
           name: course_1.profile.name,
+          offering: course_1.profile.offering,
           school_name: course_1.profile.school_name,
           salesforce_book_name: course_1.profile.offering.salesforce_book_name,
           appearance_code: course_1.profile.offering.appearance_code,
@@ -81,6 +85,7 @@ describe CollectCourseInfo, type: :routine do
         {
           id: course_1.id,
           name: course_1.profile.name,
+          offering: course_1.profile.offering,
           school_name: course_1.profile.school_name,
           salesforce_book_name: course_1.profile.offering.salesforce_book_name,
           appearance_code: course_1.profile.offering.appearance_code,
@@ -89,6 +94,7 @@ describe CollectCourseInfo, type: :routine do
         {
           id: course_2.id,
           name: course_2.profile.name,
+          offering: course_2.profile.offering,
           school_name: course_2.profile.school_name,
           salesforce_book_name: course_2.profile.offering.salesforce_book_name,
           appearance_code: course_2.profile.offering.appearance_code,
