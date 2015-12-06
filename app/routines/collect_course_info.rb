@@ -41,6 +41,7 @@ class CollectCourseInfo
       {
         id: p.entity_course_id,
         name: p.name,
+        offering: p.offering,
         is_concept_coach: p.is_concept_coach,
         school_name: p.school_name,
         salesforce_book_name: p.offering.try(:salesforce_book_name),
