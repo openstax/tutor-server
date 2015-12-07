@@ -36,29 +36,21 @@ class Content::Routines::FindOrCreateTags
     existing_tag_values = existing_tags.collect{ |tag| tag.value }
 
     # Exclude existing tags
-    new_hash_array = hash_array.select do |hash|
-      !existing_tag_values.include?(hash[:value])
-    end
+    new_hash_array = hash_array.select{ |hash| !existing_tag_values.include?(hash[:value]) }
 
     # Create new TEKS tags first
     new_hash_teks = new_hash_array.collect{ |hash| hash[:teks] }.compact.uniq
     existing_teks_tags = existing_tags.select{ |tag| new_hash_teks.include?(tag.value) }
-    existing_teks_values = existing_teks_tags.collect(&:value)
+    existing_teks_values = existing_teks_tags.collect{ |tag| tag.value }
 
     # Search tag hashes for the TEKS definitions
     new_teks_values = new_hash_teks - existing_teks_values
-
-    new_teks_hashes = new_hash_array.select do |hash|
-      new_teks_values.include?(hash[:value])
-    end
+    new_teks_hashes = new_hash_array.select{ |hash| new_teks_values.include?(hash[:value]) }
 
     # Some TEKS was found that did not previously exist and is not defined in the content
     hashless_teks = new_teks_values - new_teks_hashes.collect { |hash| hash[:value] }
-
-    unless hashless_teks.empty?
-      Rails.logger.warn "TEKS with no definition found: #{hashless_teks.join(', ')}"
-    end
-
+    Rails.logger.warn "TEKS with no definition found: #{hashless_teks.join(', ')}" \
+      unless hashless_teks.empty?
     missing_teks_hashes = hashless_teks.collect { |teks| { value: teks } }
 
     # Create new tags for TEKS
