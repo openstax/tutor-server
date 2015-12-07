@@ -3,12 +3,6 @@ class CalculateTaskStats
               uses: { name: Role::GetUsersForRoles, as: :get_users_for_roles }
 
   protected
-  def exec(tasks:, details: false)
-    @tasks = tasks
-    @details = details
-
-    set(stats: generate_period_stat_data)
-  end
 
   def answer_stats_for_tasked_exercises(tasked_exercises)
     tasked_exercises.first.answer_ids.each_with_object({}) do |answer_id, hash|
@@ -151,4 +145,12 @@ class CalculateTaskStats
       )
     end
   end
+
+  def exec(tasks:, details: false)
+    @tasks = tasks
+    @details = details
+
+    set(stats: generate_period_stat_data)
+  end
+
 end
