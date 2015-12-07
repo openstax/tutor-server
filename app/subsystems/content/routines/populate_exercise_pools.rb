@@ -1,6 +1,6 @@
 class Content::Routines::PopulateExercisePools
 
-  lev_routine outputs: { pools: _self,
+  lev_routine outputs: { pools: :_self,
                          book: :_self,
                          chapters: :_self,
                          pages: :_self }
@@ -91,7 +91,7 @@ class Content::Routines::PopulateExercisePools
       )
 
       [chapter.all_exercises_pool] + page_pools
-    end
+    end)
 
     set(book: book)
     set(chapters: chapters)

@@ -15,7 +15,7 @@ class Content::Routines::FindOrCreateTags
   def exec(ecosystem:, input:)
     tag_objects, hashes = partition_content_tags(input)
     tag_objects.each { |tag| tag.save! unless tag.persisted? }
-    tags = tag_objects + find_or_create_ecosystem_tags_from_hash_array(ecosystem, hashes))
+    tags = tag_objects + find_or_create_ecosystem_tags_from_hash_array(ecosystem, hashes)
     set(tags: tags)
   end
 

@@ -32,6 +32,6 @@ class IndividualizeTaskingPlans
                                        opens_at: tasking_plan.opens_at,
                                        due_at: tasking_plan.due_at)
       end
-    end.flatten.uniq { |ii| ii.target }
+    end.flatten.uniq { |ii| ii.target })
   end
 end
