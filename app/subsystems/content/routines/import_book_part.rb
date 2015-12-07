@@ -17,10 +17,12 @@ class Content::Routines::ImportBookPart
     set(chapters: [], pages: [], page_taggings: [], exercises: [])
 
     if cnx_book_part.is_chapter? # Skip root/units
-      chapter = Content::Models::Chapter.new(book: book,
-                                             number: chapter_tracker.value,
-                                             title: cnx_book_part.title,
-                                             book_location: [chapter_tracker.value])
+      chapter = Content::Models::Chapter.new(
+        book: book,
+        number: chapter_tracker.value,
+        title: cnx_book_part.title,
+        book_location: [chapter_tracker.value]
+      )
       chapter.save if save
       transfer_errors_from(chapter, {type: :verbatim}, true)
       book.chapters << chapter
