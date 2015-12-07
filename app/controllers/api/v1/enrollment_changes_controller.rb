@@ -105,6 +105,7 @@ class Api::V1::EnrollmentChangesController < Api::V1::ApiController
                      responder: ResponderWithPutContent
       else
         render_api_errors(result.errors.first.code)
+        raise ActiveRecord::Rollback
       end
     end
   end
