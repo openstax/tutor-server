@@ -1,16 +1,15 @@
 class Content::Routines::UpdatePageContent
-  lev_routine outputs: {
-    pages: :_self
-  }
+
+  lev_routine
 
   protected
+
   def exec(pages:, save: true)
     # Get all page cnx_ids given
-    page_cnx_ids = pages.collect(&:cnx_id)
+    page_cnx_ids = pages.collect{ |page| page.cnx_id }
 
     pages.each do |page|
       doc = Nokogiri::HTML(page.content)
-
       doc.css('[href]').each do |link|
         href_attr = link.attribute('href')
         change_page_link(href_attr, page_cnx_ids)
@@ -22,7 +21,7 @@ class Content::Routines::UpdatePageContent
       page.save! if save
     end
 
-    set(pages: pages)
+    outputs[:pages] = pages
   end
 
   def change_page_link(href_attr, page_cnx_ids)
