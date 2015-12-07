@@ -26,7 +26,7 @@ class Content::ImportBook
 
     run(:import_book_part, cnx_book_part: cnx_book.root_book_part, book: book, save: false)
 
-    Content::Models::Book.import!([book], recursive: true)
+    Content::Models::Book.import! [book], recursive: true
 
     # Reload book and reset associations so they get reloaded the next time they are used
     book.reload.clear_association_cache
@@ -36,7 +36,8 @@ class Content::ImportBook
 
     page_block = ->(exercise_wrapper) {
       tags = Set.new(exercise_wrapper.los + exercise_wrapper.aplos + exercise_wrapper.cnxmods)
-      pages = import_page_tags.select { |pt| tags.include?(pt.tag.value) }.collect(&:page).uniq
+      pages = import_page_tags.select{ |pt| tags.include?(pt.tag.value) }
+                              .collect{ |pt| pt.paage }.uniq
 
       # Blow up if there is more than one page for an exercise
       fatal_error(code: :multiple_pages_for_one_exercise,
