@@ -5,6 +5,10 @@ teachers:
   rb: {name: Redmond Blake,  username: teacher02 }
   ct: {name: C. E. Tripp,    username: teacher03 }
   jb: {name: J. D. Ballard,  username: teacher04 }
+  td: {name: Trent Deckow,   username: teacher05 }
+  ak: {name: Adah Kuhn,      username: teacher06 }
+  yr: {name: Yoshiko Roob,   username: teacher07 }
+  og: {name: Okey Gottlieb,  username: teacher08 }
 
 students:
   af:  { name: Atticus Finch,          username: student01  }
