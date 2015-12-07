@@ -1,10 +1,7 @@
 # Adds the given role to the given period
 class CourseMembership::AddStudent
-  lev_routine express_output: :student
-
-  uses_routine CourseMembership::AddEnrollment,
-               as: :add_enrollment,
-               translations: { outputs: { type: :verbatim } }
+  lev_routine outputs: { _verbatim: { name: CourseMembership::AddEnrollment,
+                                      as: :add_enrollment } }
 
   protected
 
