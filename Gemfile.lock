@@ -1,9 +1,10 @@
 GIT
   remote: git://github.com/lml/lev.git
-  revision: 191ccfc14820b6428e21ccab4cd42f569ce8935c
+  revision: f7876d15784c247b7430ad64faaf42555e9a89a7
   branch: ground-up-exercise
   specs:
     lev (7.0.0)
+      active_attr (~> 0.8.5)
       activerecord (>= 3.0)
 
 GIT
