@@ -1,5 +1,5 @@
 class Admin::CoursesCreate
-  lev_handler
+  lev_handler uses: CreateCourse
 
   paramify :course do
     attribute :name, type: String
@@ -9,8 +9,6 @@ class Admin::CoursesCreate
     attribute :is_concept_coach, type: ActiveAttr::Typecasting::Boolean
     validates :name, presence: true
   end
-
-  uses_routine CreateCourse
 
   protected
 

@@ -1,16 +1,17 @@
 class BuildTaskPlan
-
-  lev_routine express_output: :task_plan
-
-  uses_routine GetCourseEcosystem, as: :get_ecosystem
+  lev_routine outputs: { task_plan: :_self },
+              uses: GetCourseEcosystem
 
   protected
 
   def exec(course:, assistant: nil)
-    ecosystem = run(:get_ecosystem, course: course).outputs.ecosystem
-    tp = Tasks::Models::TaskPlan.new(owner: course, assistant: assistant,
-                                     content_ecosystem_id: ecosystem.try(:id))
-    outputs[:task_plan] = tp
+    run(:get_course_ecosystem, course: course).tap do |result|
+      set(task_plan: Tasks::Models::TaskPlan.new(
+        owner: course,
+        assistant: assistant,
+        content_ecosystem_id: result.ecosystem.try(:id)
+      ))
+    end
   end
 
 end
