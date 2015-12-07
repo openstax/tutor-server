@@ -17,7 +17,7 @@ class Content::Routines::ImportExercises
     set(exercises: [])
 
     wrappers = OpenStax::Exercises::V1.exercises(query_hash)['items']
-    wrapper_urls = wrappers.uniq(&:url)
+    wrapper_urls = wrappers.uniq{ |wrapper| wrapper.url }
 
     wrapper_tag_hashes = wrappers.collect(&:tag_hashes).flatten.uniq { |h| h[:value] }
     tags = run(:find_or_create_tags, ecosystem: ecosystem, input: wrapper_tag_hashes).tags
@@ -32,16 +32,16 @@ class Content::Routines::ImportExercises
                                                title: wrapper.title,
                                                content: wrapper.content,
                                                page: exercise_page)
-      # transfer_errors_from(exercise, { type: :verbatim }, true)
+      transfer_errors_from(exercise, { type: :verbatim }, true)
 
-      relevant_tags = tags.select { |tag| wrapper.tags.include?(tag.value) }
+      relevant_tags = tags.select{ |tag| wrapper.tags.include?(tag.value) }
       exercise.exercise_tags = run(:tag, exercise, relevant_tags,
                                    tagging_class: Content::Models::ExerciseTag,
                                    save: false).outputs.taggings
 
       result.exercises << exercise
 
-      lo_tags = relevant_tags.select(&:lo?)
+      lo_tags = relevant_tags.select{ |tag| tag.lo? }
       page_taggings += run(:tag, exercise_page, lo_tags,
                            tagging_class: Content::Models::PageTag,
                            save: false).outputs.taggings
