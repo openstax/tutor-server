@@ -4,7 +4,7 @@
 
 class CourseMembership::GetRoleCourses
 
-  lev_routine express_output: :courses
+  lev_routine outputs: { courses: :_self }
 
   protected
 
@@ -27,7 +27,7 @@ class CourseMembership::GetRoleCourses
       courses += Entity::Course.joins{teachers}.where{teachers.entity_role_id.in role_ids}
     end
 
-    outputs.courses = courses.uniq
+    set(courses: courses.uniq)
   end
 
 end

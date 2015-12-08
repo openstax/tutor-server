@@ -15,8 +15,8 @@ describe CollectCourseInfo, type: :routine do
 
   context "when a course is given" do
     it "returns information about the course" do
-      result = described_class[courses: course_1]
-      expect(result).to contain_exactly(
+      courses = described_class.call(courses: course_1).courses
+      expect(courses).to contain_exactly(
         {
           id: course_1.id,
           name: course_1.profile.name,
@@ -32,8 +32,8 @@ describe CollectCourseInfo, type: :routine do
 
   context "when multiple courses are given" do
     it "returns information about all given courses" do
-      result = described_class[courses: [course_1, course_2]]
-      expect(result).to contain_exactly(
+      courses = described_class.call(courses: [course_1, course_2]).courses
+      expect(courses).to contain_exactly(
         {
           id: course_1.id,
           name: course_1.profile.name,
@@ -63,8 +63,8 @@ describe CollectCourseInfo, type: :routine do
     }
 
     it "returns information about the user's active courses" do
-      result = described_class[user: user]
-      expect(result).to contain_exactly(
+      courses = described_class.call(user: user).courses
+      expect(courses).to contain_exactly(
         {
           id: course_1.id,
           name: course_1.profile.name,
@@ -80,8 +80,7 @@ describe CollectCourseInfo, type: :routine do
 
   context "when neither is given" do
     it "returns information about all courses" do
-      result = described_class[]
-      expect(result).to contain_exactly(
+      expect(described_class.call.courses).to contain_exactly(
         {
           id: course_1.id,
           name: course_1.profile.name,
