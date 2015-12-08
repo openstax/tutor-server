@@ -48,7 +48,7 @@ module Tasks
             sheet.add_row(gather_averages(report[:data_headings]), style: italic_pct)
 
             report.students.each do |student|
-              styles = lateness_styles(student.data, pct, yellow_pct)
+              styles = lateness_styles(student.data, nil, pct, yellow_pct)
               row = sheet.add_row(student_scores(student), style: styles)
               add_late_comments(sheet, student.data, row)
             end
@@ -77,8 +77,8 @@ module Tasks
         collect_columns(averages, 'Average')
       end
 
-      def lateness_styles(data, normal, late)
-        collect_columns(data) { |d| d && d.late ? late : normal }
+      def lateness_styles(data, text, normal, late)
+        collect_columns(data) { |d| d.nil? ? text : (d.late ? late : normal) }
       end
 
       def add_late_comments(sheet, data, row)
