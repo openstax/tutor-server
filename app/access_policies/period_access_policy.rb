@@ -5,11 +5,11 @@ class PeriodAccessPolicy
     case action.to_sym
     when :read
       requestor.is_human? &&
-        (UserIsCourseStudent[user: requestor, course: course] ||
-           UserIsCourseTeacher[user: requestor, course: course])
+        (UserIsCourseStudent.call(user: requestor, course: course) ||
+           UserIsCourseTeacher.call(user: requestor, course: course))
     when :update, :destroy
       requestor.is_human? &&
-       UserIsCourseTeacher[user: requestor, course: course]
+       UserIsCourseTeacher.call(user: requestor, course: course)
     else
       false
     end

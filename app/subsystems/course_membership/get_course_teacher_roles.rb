@@ -1,8 +1,8 @@
 class CourseMembership::GetCourseTeacherRoles
-  lev_routine express_output: :roles
+  lev_routine outputs: { roles: :_self }
 
   protected
   def exec(course:)
-    outputs[:roles] = course.teachers.map(&:role)
+    set(roles: course.teachers.map(&:role))
   end
 end

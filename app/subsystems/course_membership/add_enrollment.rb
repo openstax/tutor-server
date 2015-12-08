@@ -13,9 +13,9 @@ class CourseMembership::AddEnrollment
       student: student, period: period.to_model
     ))
 
-    # transfer_errors_from(outputs[:enrollment], {type: :verbatim}, true)
+    transfer_errors_from(result.enrollment, {type: :verbatim}, true)
 
-    student.enrollments << outputs[:enrollment]
+    student.enrollments << result.enrollment
     student.activate.save! unless student.active?
     set(student: student)
 

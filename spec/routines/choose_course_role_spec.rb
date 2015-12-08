@@ -6,19 +6,19 @@ describe ChooseCourseRole, type: :routine do
   let(:student) { FactoryGirl.create(:user) }
   let(:interloper){ FactoryGirl.create(:user) }
   let(:course){ Entity::Course.create! }
-  let(:period){ CreatePeriod[course: course] }
+  let(:period){ CreatePeriod.call(course: course).period }
 
   let!(:teacher_role) {
     role = Entity::Role.create!(role_type: :teacher)
-    Role::AddUserRole[user: teacher, role: role]
-    CourseMembership::AddTeacher[course: course, role: role]
+    Role::AddUserRole.call(user: teacher, role: role)
+    CourseMembership::AddTeacher.call(course: course, role: role)
     role
   }
 
   let!(:student_role) {
     role = Entity::Role.create!
-    Role::AddUserRole[user: student, role: role]
-    CourseMembership::AddStudent[period: period, role: role]
+    Role::AddUserRole.call(user: student, role: role)
+    CourseMembership::AddStudent.call(period: period, role: role)
     role
   }
 
@@ -28,15 +28,15 @@ describe ChooseCourseRole, type: :routine do
 
     let!(:user_teacher_role) {
       role = Entity::Role.create!
-      Role::AddUserRole[user: user, role: role]
-      CourseMembership::AddTeacher[course: course, role: role]
+      Role::AddUserRole.call(user: user, role: role)
+      CourseMembership::AddTeacher.call(course: course, role: role)
       role
     }
 
     let!(:user_student_role) {
       role = Entity::Role.create!
-      Role::AddUserRole[user: user, role: role]
-      CourseMembership::AddStudent[period: period, role: role]
+      Role::AddUserRole.call(user: user, role: role)
+      CourseMembership::AddStudent.call(period: period, role: role)
       role
     }
 
@@ -50,7 +50,7 @@ describe ChooseCourseRole, type: :routine do
           )
         }
         it "returns the user's teacher role" do
-          expect(subject.outputs.role).to eq(user_teacher_role)
+          expect(subject.role).to eq(user_teacher_role)
         end
       end
       context "and allowed_role_type: :teacher" do
@@ -62,7 +62,7 @@ describe ChooseCourseRole, type: :routine do
           )
         }
         it "returns the user's teacher role" do
-          expect(subject.outputs.role).to eq(user_teacher_role)
+          expect(subject.role).to eq(user_teacher_role)
         end
       end
       context "and allowed_role_type: :student" do
@@ -74,7 +74,7 @@ describe ChooseCourseRole, type: :routine do
           )
         }
         it "returns the user's student role" do
-          expect(subject.outputs.role).to eq(user_student_role)
+          expect(subject.role).to eq(user_student_role)
         end
       end
     end
@@ -85,7 +85,7 @@ describe ChooseCourseRole, type: :routine do
     context "and the user has it" do
       subject { ChooseCourseRole.call(user: student, course: course, role_id: student_role.id) }
       it "returns the user's role" do
-        expect(subject.outputs.role).to eq(student_role)
+        expect(subject.role).to eq(student_role)
       end
     end
 
@@ -101,7 +101,7 @@ describe ChooseCourseRole, type: :routine do
       end
 
       describe "output" do
-        subject{ result.outputs.role }
+        subject{ result.role }
         it { should be_nil }
       end
     end
@@ -113,7 +113,7 @@ describe ChooseCourseRole, type: :routine do
         }
 
         it "returns the provided role" do
-          expect(subject.outputs.role).to eq(student_role)
+          expect(subject.role).to eq(student_role)
         end
       end
 
@@ -124,7 +124,7 @@ describe ChooseCourseRole, type: :routine do
         end
 
         it "returns the provided role" do
-          expect(subject.outputs.role).to eq(student_role)
+          expect(subject.role).to eq(student_role)
         end
       end
     end
@@ -145,7 +145,7 @@ describe ChooseCourseRole, type: :routine do
       end
 
       describe "output" do
-        subject{ result.outputs.role }
+        subject{ result.role }
         it { should be_nil }
       end
     end
@@ -161,7 +161,7 @@ describe ChooseCourseRole, type: :routine do
       end
 
       describe "output" do
-        subject{ result.outputs.role }
+        subject{ result.role }
         it { should eq(teacher_role) }
       end
     end
@@ -171,11 +171,11 @@ describe ChooseCourseRole, type: :routine do
         let(:role_type) { :any }
         subject(:found) {
           role = Entity::Role.create!(role_type: :student)
-          Role::AddUserRole[user: teacher, role: role]
-          CourseMembership::AddStudent[period: period, role: role]
+          Role::AddUserRole.call(user: teacher, role: role)
+          CourseMembership::AddStudent.call(period: period, role: role)
           ChooseCourseRole.call(
             user: teacher, course: course, allowed_role_type: role_type
-          ).outputs.role
+          ).role
         }
 
         it "returns the teacher role if one is present" do
@@ -190,8 +190,8 @@ describe ChooseCourseRole, type: :routine do
 
       it "fails with an error if one is not a teacher" do
         role = Entity::Role.create(role_type: :student)
-        Role::AddUserRole[user: student, role: role]
-        CourseMembership::AddStudent[period: period, role: role]
+        Role::AddUserRole.call(user: student, role: role)
+        CourseMembership::AddStudent.call(period: period, role: role)
 
         errors = ChooseCourseRole.call(user: student, course: course).errors
         expect(errors).not_to be_empty

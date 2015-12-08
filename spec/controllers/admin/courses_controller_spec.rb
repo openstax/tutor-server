@@ -104,8 +104,8 @@ RSpec.describe Admin::CoursesController, type: :controller do
 
       # Carol B should be in both courses
       carol_b = User::User.find_by_username('carolb')
-      expect(UserIsCourseStudent[user: carol_b, course: physics]).to eq true
-      expect(UserIsCourseStudent[user: carol_b, course: biology]).to eq true
+      expect(UserIsCourseStudent.call(user: carol_b, course: physics)).to eq true
+      expect(UserIsCourseStudent.call(user: carol_b, course: biology)).to eq true
     end
 
     it 'does not add any students if username or password is missing' do

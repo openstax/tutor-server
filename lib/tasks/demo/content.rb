@@ -41,7 +41,7 @@ class DemoContent < DemoBase
                    new_user(username: people.teachers[teacher].username,
                             name: people.teachers[teacher].name)
     log("Teacher: #{people.teachers[teacher].name}")
-    unless run(:is_teacher, user: teacher_user, course: course).outputs.user_is_course_teacher
+    unless run(:is_teacher, user: teacher_user, course: course)
       run(:add_teacher, course: course, user: teacher_user)
     end
   end
@@ -61,7 +61,7 @@ class DemoContent < DemoBase
              new_user(username: student_info.username, name: student_info.name)
       student_identifier = POSSIBLE_CHARS.shuffle.take(10).join()
       log("    #{initials} #{student_info.username} (#{student_info.name})")
-      unless run(:is_student, user: user, course: course).outputs.user_is_course_student
+      unless run(:is_student, user: user, course: course)
         run(:add_student, period: period, user: user, student_identifier: "#{student_identifier}")
       end
 
