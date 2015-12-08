@@ -40,7 +40,7 @@ gem 'rails-html-sanitizer', '~> 1.0'
 gem 'addressable'
 
 # Utilities for OpenStax websites
-gem 'openstax_utilities', '~> 4.2.0'
+gem 'openstax_utilities', github: 'openstax/openstax_utilities', branch: 'new-lev' #'~> 4.2.0'
 
 # Cron job scheduling
 gem 'whenever'
@@ -49,7 +49,7 @@ gem 'whenever'
 gem 'omniauth-oauth2', '~> 1.3.1'
 
 # OpenStax Accounts integration
-gem 'openstax_accounts', '~> 6.2.0'
+gem 'openstax_accounts', github: 'openstax/accounts-rails', branch: 'new-lev' # '~> 6.2.0'
 
 # OpenStax Exchange integration
 gem 'openstax_exchange', '~> 0.2.1'

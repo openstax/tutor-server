@@ -1,5 +1,6 @@
 class Role::CreateUserRole
-  lev_routine uses: Role::AddUserRole
+  lev_routine outputs: { role: :_self },
+              uses: Role::AddUserRole
 
   protected
   def exec(user, role_type = :unassigned)
