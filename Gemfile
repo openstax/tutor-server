@@ -157,6 +157,9 @@ gem 'rails-settings-ui'
 gem 'error_page_assets'
 gem 'render_anywhere', :require => false
 
+# Add P3P headers for IE
+gem 'p3p'
+
 group :development, :test do
   # Get env variables from .env file
   gem 'dotenv-rails'
