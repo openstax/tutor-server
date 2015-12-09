@@ -75,6 +75,8 @@ module Tasks
     def get_taskings(course)
       task_types = Models::Task.task_types.values_at(:reading, :homework, :external)
       # Return reading, homework and external tasks for a student
+      # .reorder(nil) removes the ordering from the period default scope so .uniq won't blow up
+      # .uniq is necessary for the preloading to work...
       course.taskings.joins(task: { task: { task_plan: :tasking_plans } })
                      .where(task: {task: {task_type: task_types}})
                      .where{task.task.task_plan.tasking_plans.opens_at <= Time.current}
