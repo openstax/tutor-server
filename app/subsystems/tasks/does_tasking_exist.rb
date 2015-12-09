@@ -1,9 +1,9 @@
 class Tasks::DoesTaskingExist
-  lev_routine
+  lev_query
 
   protected
 
-  def exec(task_component:, roles:)
+  def query(task_component:, roles:)
 
     task = case task_component
     when Entity::Task
@@ -18,8 +18,7 @@ class Tasks::DoesTaskingExist
 
     role_ids = roles.collect{|r| r.id}
 
-    outputs[:does_tasking_exist] =
-      Tasks::Models::Tasking.where{entity_task_id == my{task.id}}
-                            .where{entity_role_id.in role_ids}.any?
+    Tasks::Models::Tasking.where{entity_task_id == my{task.id}}
+                          .where{entity_role_id.in role_ids}.any?
   end
 end
