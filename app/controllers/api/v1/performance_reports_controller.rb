@@ -49,9 +49,7 @@ class Api::V1::PerformanceReportsController < Api::V1::ApiController
                                    course: Entity::Course.find(params[:id]),
                                    allowed_role_type: types,
                                    role_id: params[:role_id])
-    if result.errors.any?
-      raise(IllegalState, result.errors.map(&:message).to_sentence)
-    end
+    raise(SecurityTransgression, :invalid_role) if result.errors.any?
     result.outputs.role
   end
 end
