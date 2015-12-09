@@ -1,17 +1,11 @@
 class GetCourseUserTasks
-  lev_routine express_output: :tasks
-
-  uses_routine GetUserCourseRoles,
-               as: :get_roles,
-               translations: { outputs: { type: :verbatim } }
-  uses_routine Tasks::GetTasks,
-               as: :get_tasks,
-               translations: { outputs: { type: :verbatim } }
+  lev_routine outputs: { tasks: { name: Tasks::GetTasks, as: :get_tasks } },
+              uses: { name: GetUserCourseRoles, as: :get_roles }
 
   protected
 
   def exec(course:, user:)
-    run(:get_roles, course: course, user: user)
-    run(:get_tasks, roles: outputs[:roles])
+    roles = run(:get_roles, course: course, user: user).roles
+    run(:get_tasks, roles: roles)
   end
 end

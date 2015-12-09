@@ -1,10 +1,9 @@
 class CourseMembership::CreateEnrollmentChange
-  lev_routine express_output: :enrollment_change
-
-  uses_routine Role::GetUserRoles, as: :get_roles
+  lev_routine outputs: { enrollment_change: :_self },
+              uses: { name: Role::GetUserRoles, as: :get_roles }
 
   def exec(user:, period:, requires_enrollee_approval: true)
-    user_student_role_ids = run(:get_roles, user, 'student').outputs.roles.map(&:id)
+    user_student_role_ids = run(:get_roles, user, 'student').roles.map(&:id)
     user_course_students = CourseMembership::Models::Student.where(
       entity_course_id: period.course.id,  entity_role_id: user_student_role_ids
     ).to_a
@@ -39,6 +38,6 @@ class CourseMembership::CreateEnrollmentChange
     enrollment_change = CourseMembership::EnrollmentChange.new(
       strategy: enrollment_change_model.wrap
     )
-    outputs[:enrollment_change] = enrollment_change
+    set(enrollment_change: enrollment_change)
   end
 end

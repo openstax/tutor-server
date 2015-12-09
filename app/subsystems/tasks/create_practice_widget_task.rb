@@ -1,10 +1,6 @@
 module Tasks
   class CreatePracticeWidgetTask
-    lev_routine express_output: :task
-
-    uses_routine BuildTask,
-      translations: { outputs: { type: :verbatim } },
-      as: :build_task
+    lev_routine outputs: { task: BuildTask }
 
     protected
 
@@ -22,17 +18,17 @@ module Tasks
                        feedback_at: task_time)
 
       exercises.each_with_index do |exercise, ii|
-        step = Tasks::Models::TaskStep.new(task: outputs.task)
+        step = Tasks::Models::TaskStep.new(task: result.task)
 
         step.tasked = TaskExercise[exercise: exercise, task_step: step]
 
         related_content = related_content_array[ii]
         step.add_related_content(related_content) unless related_content.nil?
 
-        outputs.task.task_steps << step
+        result.task.task_steps << step
       end
 
-      outputs.task.save!
+      result.task.save!
     end
 
   end

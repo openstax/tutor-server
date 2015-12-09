@@ -1,18 +1,14 @@
 class GetConceptCoach
 
-  lev_routine express_output: :entity_task, transaction: :serializable
-
-  uses_routine Tasks::GetConceptCoachTask, as: :get_cc_task
-
-  uses_routine Tasks::CreateConceptCoachTask,
-    translations: { outputs: { type: :verbatim } },
-    as: :create_cc_task
-
-  uses_routine AddSpyInfo, as: :add_spy_info
-
-  uses_routine GetHistory, as: :get_history
-
-  uses_routine GetCourseEcosystem, as: :get_ecosystem
+  lev_routine outputs: { tasks: :_self,
+                         valid_book_urls: :_self,
+                         entity_task: :_self },
+              uses: [{ name: Tasks::GetConceptCoachTask, as: :get_cc_task },
+                     { name: Tasks::CreateConceptCoachTask, as: :create_cc_task },
+                     { name: AddSpyInfo, as: :add_spy_info },
+                     { name: GetHistory, as: :get_history },
+                     { name: GetCourseEcosystem, as: :get_ecosystem }],
+              transaction: :serializable
 
   protected
 
@@ -20,12 +16,11 @@ class GetConceptCoach
     role, page = get_role_and_page(user: user, cnx_book_id: cnx_book_id, cnx_page_id: cnx_page_id)
 
     ecosystem, pool = get_ecosystem_and_pool(page)
-    history = run(:get_history, role: role, type: :concept_coach).outputs
-    existing_cc_task = run(:get_cc_task, role: role, page: page).outputs.entity_task
+    history = run(:get_history, role: role, type: :concept_coach)
+    existing_cc_task = run(:get_cc_task, role: role, page: page).entity_task
     unless existing_cc_task.nil?
-      outputs.entity_task = existing_cc_task
-      outputs.task = existing_cc_task.task
-      run(:add_spy_info, to: outputs.task, from: [ecosystem, history.tasks])
+      set(entity_task: existing_cc_task, task: existing_cc_task.task)
+      run(:add_spy_info, to: result.task, from: [ecosystem, history.tasks])
       return
     end
 
@@ -36,7 +31,7 @@ class GetConceptCoach
     )
 
     if core_exercises.empty?
-      outputs.valid_book_urls = ecosystem.books.map(&:url)
+      set(valid_book_urls: ecosystem.books.map(&:url))
       fatal_error(code: :page_has_no_exercises)
     end
 
@@ -100,9 +95,9 @@ class GetConceptCoach
     run(:create_cc_task, role: role, page: page, exercises: exercises,
                          related_content_array: related_content_array)
 
-    run(:add_spy_info, to: outputs.task, from: [ecosystem, history.tasks])
+    run(:add_spy_info, to: result.task, from: [ecosystem, history.tasks])
 
-    outputs.entity_task = outputs.task.entity_task
+    set(entity_task: result.task.entity_task)
   end
 
   def get_role_and_page(user:, cnx_book_id:, cnx_page_id:)
@@ -111,7 +106,7 @@ class GetConceptCoach
       course = role.student.course
       next unless course.is_concept_coach
 
-      ecosystem_id = run(:get_ecosystem, course: course).outputs.ecosystem.id
+      ecosystem_id = run(:get_ecosystem, course: course).ecosystem.id
       hash[ecosystem_id] ||= []
       hash[ecosystem_id] << role
     end
@@ -132,15 +127,15 @@ class GetConceptCoach
 
       if !valid_book_with_cnx_book_id.nil?
         # Book is valid for the user, but page is invalid
-        outputs.valid_book_urls = [valid_book_with_cnx_book_id].map(&:url)
+        set(valid_book_urls: [valid_book_with_cnx_book_id].map(&:url))
         fatal_error(code: :invalid_page)
       elsif !valid_books.empty?
         # Book is invalid for the user, but there are other valid books
-        outputs.valid_book_urls = valid_books.map(&:url)
+        set(valid_book_urls: valid_books.map(&:url))
         fatal_error(code: :invalid_book)
       else
         # Not a CC student
-        outputs.valid_book_urls = []
+        set(valid_book_urls: [])
         fatal_error(code: :not_a_cc_student)
       end
 

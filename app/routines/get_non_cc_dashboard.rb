@@ -1,7 +1,8 @@
 class GetNonCcDashboard
   include DashboardRoutineMethods
 
-  uses_routine GetCourseTaskPlans, as: :get_plans
+  lev_routine outputs: { plans: :_self },
+              uses: { name: GetCourseTaskPlans, as: :get_plans }
 
   protected
 
@@ -22,8 +23,8 @@ class GetNonCcDashboard
   end
 
   def load_plans(course)
-    out = run(:get_plans, course: course, include_trouble_flags: true).outputs
-    outputs[:plans] = out[:plans].map do |task_plan|
+    plans_result = run(:get_plans, course: course, include_trouble_flags: true)
+    set(plans: plans_result.plans.map do |task_plan|
       {
         id: task_plan.id,
         title: task_plan.title,
@@ -33,8 +34,8 @@ class GetNonCcDashboard
         publish_last_requested_at: task_plan.publish_last_requested_at,
         publish_job_uuid: task_plan.publish_job_uuid,
         tasking_plans: task_plan.tasking_plans,
-        is_trouble: out[:trouble_plan_ids].include?(task_plan.id)
+        is_trouble: plans_result.trouble_plan_ids.include?(task_plan.id)
       }
-    end
+    end)
   end
 end

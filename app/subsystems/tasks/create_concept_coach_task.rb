@@ -1,15 +1,9 @@
 module Tasks
   class CreateConceptCoachTask
 
-    lev_routine express_output: :task
-
-    uses_routine BuildTask,
-      translations: { outputs: { type: :verbatim } },
-      as: :build_task
-
-    uses_routine Tasks::CreateTasking,
-      translations: { outputs: { type: :verbatim } },
-      as: :create_tasking
+    lev_routine outputs: { task: BuildTask,
+                           concept_coach_task: :_self },
+                uses: { name: Tasks::CreateTasking, as: :create_tasking }
 
     protected
 
@@ -29,23 +23,23 @@ module Tasks
       exercises.each_with_index do |exercise, ii|
         group_type = ii < Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT ? \
                        :core_group : :spaced_practice_group
-        step = Tasks::Models::TaskStep.new(task: outputs.task, group_type: group_type)
+        step = Tasks::Models::TaskStep.new(task: result.task, group_type: group_type)
 
         step.tasked = TaskExercise[exercise: exercise, task_step: step]
 
         related_content = related_content_array[ii]
         step.add_related_content(related_content) unless related_content.nil?
 
-        outputs.task.task_steps << step
+        result.task.task_steps << step
       end
 
-      outputs.task.save!
+      result.task.save!
 
-      run(:create_tasking, role: role, task: outputs.task.entity_task, period: role.student.period)
+      run(:create_tasking, role: role, task: result.task.entity_task, period: role.student.period)
 
-      outputs.concept_coach_task = Tasks::Models::ConceptCoachTask.create!(
-        content_page_id: page.id, entity_role_id: role.id, task: outputs.task.entity_task
-      )
+      set(concept_coach_task: Tasks::Models::ConceptCoachTask.create!(
+        content_page_id: page.id, entity_role_id: role.id, task: result.task.entity_task
+      ))
     end
 
   end

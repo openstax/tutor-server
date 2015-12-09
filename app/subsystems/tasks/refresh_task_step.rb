@@ -1,16 +1,14 @@
 class Tasks::RefreshTaskStep
 
-  lev_routine
-
-  uses_routine Tasks::RecoverTaskStep,
-               as: :recover, translations: { outputs: { type: :verbatim } }
+  lev_routine outputs: { refresh_step: :_self },
+              uses: { name: Tasks::RecoverTaskStep, as: :recover }
 
   protected
 
   def exec(task_step:)
     run(:recover, task_step: task_step)
 
-    outputs[:refresh_step] = refresh_step_for(task_step: task_step)
+    set(refresh_step: refresh_step_for(task_step: task_step))
   end
 
   private

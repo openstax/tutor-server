@@ -1,7 +1,5 @@
 class Admin::CoursesUpdate
-  lev_handler
-
-  uses_routine UpdateCourse, as: :update_course
+  lev_handler uses: { name: UpdateCourse, as: :update_course }
 
   protected
 

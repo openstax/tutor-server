@@ -1,7 +1,5 @@
 class UpdateCourse
-  lev_routine
-
-  uses_routine CourseProfile::UpdateProfile, as: :update_profile
+  lev_routine uses: { name: CourseProfile::UpdateProfile, as: :update_profile }
 
   protected
 

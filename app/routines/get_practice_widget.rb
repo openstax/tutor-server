@@ -1,12 +1,9 @@
 class GetPracticeWidget
-  lev_routine express_output: :task
-
-  uses_routine Tasks::GetPracticeTask,
-               translations: { outputs: { type: :verbatim } }
+  lev_routine outputs: { task: Tasks::GetPracticeTask }
 
   protected
 
   def exec(role:)
-    run(Tasks::GetPracticeTask, role: role)
+    run(:tasks_get_practice_task, role: role)
   end
 end

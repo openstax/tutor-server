@@ -11,9 +11,7 @@ class UpdateClues
   # Default is 4 minutes because "fast" sparfa runs every 3 minutes, plus 1 minute slack
   RECENT_EXERCISE_DURATION = 4.minutes
 
-  lev_routine
-
-  uses_routine GetCourseEcosystemsMap, as: :get_map
+  lev_routine uses: { name: GetCourseEcosystemsMap, as: :get_map }
 
   protected
 
@@ -73,7 +71,7 @@ class UpdateClues
       next [] if course_worked_exercises.empty?
 
       # Get the Ecosystems map
-      ecosystems_map = run(:get_map, course: course).outputs.ecosystems_map
+      ecosystems_map = run(:get_map, course: course).ecosystems_map
 
       # Map all worked exercises to pages in the current ecosystem
       # Clues are always requested based on the current ecosystem

@@ -1,7 +1,5 @@
 class Admin::CatalogOfferingUpdate
-  lev_handler
-
-  uses_routine Catalog::UpdateOffering, as: :update_offering
+  lev_handler uses: { name: Catalog::UpdateOffering, as: :update_offering }
 
   protected
   def authorized?
