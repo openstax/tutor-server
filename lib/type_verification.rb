@@ -4,15 +4,13 @@ module TypeVerification
   end
 
   # Convenience instance method that calls the verify_and_return class method
-  def verify_and_return(object, klass:, error: TypeError,
-                        allow_blank: false, allow_nil: false)
+  def verify_and_return(object, klass:, error: TypeError, allow_blank: false, allow_nil: false)
     self.class.verify_and_return(object, klass: klass, error: error,
                                  allow_blank: allow_blank, allow_nil: allow_nil)
   end
 
   module ClassMethods
-    def verify_and_return(object, klass:, error: TypeError,
-                               allow_blank: false, allow_nil: false)
+    def verify_and_return(object, klass:, error: TypeError, allow_blank: false, allow_nil: false)
       return object if klass == Array && object.is_a?(Array)
 
       if allow_blank

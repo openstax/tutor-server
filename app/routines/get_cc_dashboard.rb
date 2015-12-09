@@ -33,6 +33,11 @@ class GetCcDashboard
     end
   end
 
+  def map_cc_task_to_page(page_id_to_page_map, cc_task)
+    # Map the cc_task page to a new page, but default to the original if the mapping failed
+    page_id_to_page_map[cc_task.page.id] || Content::Page.new(strategy: cc_task.page.wrap)
+  end
+
   def load_cc_teacher_stats(course, role)
     cc_tasks = Tasks::Models::ConceptCoachTask
       .joins(task: [:task, {taskings: :period}])
@@ -44,6 +49,10 @@ class GetCcDashboard
     # Does not support group work
     period_id_cc_tasks_map = cc_tasks.group_by{ |cc_task| cc_task.task.taskings.first.period.id }
 
+    ecosystems_map = GetCourseEcosystemsMap[course: course]
+    cc_task_pages = cc_tasks.map{ |cc_task| Content::Page.new(strategy: cc_task.page.wrap) }
+    page_id_to_page_map = ecosystems_map.map_pages_to_pages(pages: cc_task_pages)
+
     outputs.course.periods = course.periods.map do |period|
       cc_tasks = period_id_cc_tasks_map[period.id] || []
       num_students = period.active_enrollments.length
@@ -52,12 +61,16 @@ class GetCcDashboard
       {
         id: period.id,
         name: period.name,
-        chapters: cc_tasks.group_by{ |cc_task| cc_task.page.chapter }.map do |chapter, cc_tasks|
+        chapters: cc_tasks.group_by do |cc_task|
+          map_cc_task_to_page(page_id_to_page_map, cc_task).chapter
+        end.map do |chapter, cc_tasks|
           {
             id: chapter.id,
             title: chapter.title,
             book_location: chapter.book_location,
-            pages: cc_tasks.group_by(&:page).map do |page, cc_tasks|
+            pages: cc_tasks.group_by do |cc_task|
+              map_cc_task_to_page(page_id_to_page_map, cc_task)
+            end.map do |page, cc_tasks|
               tasks = cc_tasks.map{ |cc_task| cc_task.task.task }
 
               completed = tasks.select(&:completed?).size

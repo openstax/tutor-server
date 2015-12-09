@@ -45,6 +45,17 @@ module Content
       end
     end
 
+    # Returns a hash that maps the given Content::Pages' ids
+    # to Content::Pages in the to_ecosystem
+    def map_pages_to_pages(pages:)
+      pg_arr = verify_and_return [pages].flatten.compact, klass: ::Content::Page
+      map = verify_and_return @strategy.map_pages_to_pages(pages: pg_arr),
+                              klass: Hash, error: StrategyError
+      verify_and_return map.keys, klass: Integer, error: StrategyError
+      verify_and_return map.values.compact, klass: ::Content::Page, error: StrategyError
+      map
+    end
+
     # Returns a hash that maps the given Content::Exercises' ids
     # to Content::Pages in the to_ecosystem
     def map_exercises_to_pages(exercises:)
@@ -52,15 +63,15 @@ module Content
       map = verify_and_return @strategy.map_exercises_to_pages(exercises: ex_arr),
                               klass: Hash, error: StrategyError
       verify_and_return map.keys, klass: Integer, error: StrategyError
-      verify_and_return map.values, klass: ::Content::Page, error: StrategyError
+      verify_and_return map.values.compact, klass: ::Content::Page, error: StrategyError
       map
     end
 
     # Returns a hash that maps the given Content::Pages' ids
     # to Content::Exercises in the to_ecosystem that are in a Content::Pool of the given type
     def map_pages_to_exercises(pages:, pool_type: :all_exercises)
-      pages_arr = verify_and_return [pages].flatten.compact, klass: ::Content::Page
-      map = verify_and_return @strategy.map_pages_to_exercises(pages: pages_arr,
+      pg_arr = verify_and_return [pages].flatten.compact, klass: ::Content::Page
+      map = verify_and_return @strategy.map_pages_to_exercises(pages: pg_arr,
                                                                pool_type: pool_type),
                               klass: Hash, error: StrategyError
       verify_and_return map.keys, klass: Integer, error: StrategyError
