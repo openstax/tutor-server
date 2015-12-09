@@ -127,7 +127,7 @@ class DemoBase
     raise 'Arguments must have the same size' unless args.all?{ |arg| arg.size == arg_size }
 
     # This is merely the maximum number of processes spawned for each call to this method
-    max_processes ||= Integer(ENV['DEMO_MAX_PROCESSES']) rescue 8
+    max_processes ||= Integer(ENV['DEMO_MAX_PROCESSES']) rescue 1
 
     if arg_size == 0 || max_processes < 1
       log("Processes: 0 (inline processing) - Slice size: #{arg_size}")
