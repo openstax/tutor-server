@@ -5,7 +5,7 @@ class AddUserAsCourseTeacher
 
   protected
   def exec(user:, course:)
-    if run(:is_teacher, user: user, course: course).user_is_course_teacher
+    if run(:is_teacher, user: user, course: course)
       fatal_error(code: :user_is_already_teacher_of_course,
                   message: 'You are already a teacher of this course.',
                   offending_inputs: [user, course])

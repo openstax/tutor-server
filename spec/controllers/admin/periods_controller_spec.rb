@@ -19,9 +19,9 @@ RSpec.describe Admin::PeriodsController do
     end
 
     context 'when there are students' do
-      let!(:student) { FactoryGirl.create(:user) }
 
-      before
+      before do
+        student = FactoryGirl.create(:user)
         AddUserAsPeriodStudent.call(user: student, period: period)
       end
 
