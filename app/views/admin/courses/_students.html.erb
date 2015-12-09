@@ -3,8 +3,8 @@
 <%= form_for(:course, url: url, method: method, html: { multipart: true }) do |f| %>
   <div class='form-group'>
     <%= f.label :period %>
-    <%= select_tag 'course[:period]', options_from_collection_for_select(@periods, :id, :name),
-                                      class: 'form-control' %>
+    <%= select_tag 'course[period]', options_from_collection_for_select(@periods, :id, :name),
+                                     class: 'form-control' %>
   </div>
 
   <div class='form-group'>
