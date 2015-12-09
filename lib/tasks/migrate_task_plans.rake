@@ -7,7 +7,7 @@ task :migrate_task_plans => :environment do |tt, args|
       # If owner is not a course, abort
       raise 'TaskPlan with no ecosystem and no course found' unless owner.is_a?(Entity::Course)
 
-      ecosystem = GetCourseEcosystem[course: owner]
+      ecosystem = GetCourseEcosystem.call(course: owner)
       # If the course has no ecosystems, abort
       raise 'TaskPlan found for a course with no ecosystem' if ecosystem.nil?
 

@@ -4,9 +4,9 @@ describe CourseMembership::IsCourseStudent do
 
   context "when not a student of the given course" do
     let(:target_course)       { Entity::Course.create! }
-    let(:target_period)       { CreatePeriod[course: target_course] }
+    let(:target_period)       { CreatePeriod.call(course: target_course).period }
     let(:other_course)        { Entity::Course.create! }
-    let(:other_period)        { CreatePeriod[course: other_course] }
+    let(:other_period)        { CreatePeriod.call(course: other_course).period }
     let(:target_student_role) { Entity::Role.create! }
     let(:other_student_role)  { Entity::Role.create! }
 
@@ -19,7 +19,7 @@ describe CourseMembership::IsCourseStudent do
       it "returns false" do
         result = CourseMembership::IsCourseStudent.call(course: target_course, roles: target_student_role)
         expect(result.errors).to be_empty
-        expect(result.outputs.is_course_student).to be_falsey
+        expect(result.is_course_student).to be_falsey
       end
     end
     context "multiple roles are given" do
@@ -30,7 +30,7 @@ describe CourseMembership::IsCourseStudent do
 
         result = CourseMembership::IsCourseStudent.call(course: target_course, roles: roles)
         expect(result.errors).to be_empty
-        expect(result.outputs.is_course_student).to be_falsey
+        expect(result.is_course_student).to be_falsey
       end
     end
     context "when expressed called" do
@@ -46,7 +46,7 @@ describe CourseMembership::IsCourseStudent do
 
   context "when a student of the given course" do
     let(:target_course)       { Entity::Course.create! }
-    let(:target_period)       { CreatePeriod[course: target_course] }
+    let(:target_period)       { CreatePeriod.call(course: target_course).period }
     let(:target_student_role) { Entity::Role.create! }
 
     before(:each) do
@@ -57,7 +57,7 @@ describe CourseMembership::IsCourseStudent do
       it "returns true" do
         result = CourseMembership::IsCourseStudent.call(course: target_course, roles: target_student_role)
         expect(result.errors).to be_empty
-        expect(result.outputs.is_course_student).to be_truthy
+        expect(result.is_course_student).to be_truthy
       end
     end
     context "multiple roles are given" do
@@ -68,7 +68,7 @@ describe CourseMembership::IsCourseStudent do
 
         result = CourseMembership::IsCourseStudent.call(course: target_course, roles: roles)
         expect(result.errors).to be_empty
-        expect(result.outputs.is_course_student).to be_truthy
+        expect(result.is_course_student).to be_truthy
       end
     end
     context "when expressed called" do

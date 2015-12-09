@@ -37,14 +37,14 @@ class Content::Routines::ImportExercises
       relevant_tags = tags.select{ |tag| wrapper.tags.include?(tag.value) }
       exercise.exercise_tags = run(:tag, exercise, relevant_tags,
                                    tagging_class: Content::Models::ExerciseTag,
-                                   save: false).outputs.taggings
+                                   save: false).taggings
 
       result.exercises << exercise
 
       lo_tags = relevant_tags.select{ |tag| tag.lo? }
       page_taggings += run(:tag, exercise_page, lo_tags,
                            tagging_class: Content::Models::PageTag,
-                           save: false).outputs.taggings
+                           save: false).taggings
     end
 
     set(page_taggings: page_taggings.uniq { |pt| [pt.content_page_id, pt.content_tag_id] })

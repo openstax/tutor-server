@@ -13,13 +13,13 @@ RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, versi
     book_location = [4, 1]
 
     page_model = VCR.use_cassette('Api_V1_Cc_TasksController/with_page', VCR_OPTS) do
-      Content::Routines::ImportPage[chapter: chapter,
-                                    cnx_page: cnx_page,
-                                    book_location: book_location]
+      Content::Routines::ImportPage.call(chapter: chapter,
+                                         cnx_page: cnx_page,
+                                         book_location: book_location)
     end
 
     @book = chapter.book
-    Content::Routines::PopulateExercisePools[book: @book]
+    Content::Routines::PopulateExercisePools.call(book: @book)
 
     @page = Content::Page.new(strategy: page_model.reload.wrap)
 
@@ -31,7 +31,7 @@ RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, versi
     @course = period.course
     @course.profile.update_attribute(:is_concept_coach, true)
 
-    AddEcosystemToCourse[ecosystem: ecosystem, course: @course]
+    AddEcosystemToCourse.call(ecosystem: ecosystem, course: @course)
 
     application = FactoryGirl.create :doorkeeper_application
 
@@ -39,8 +39,8 @@ RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, versi
     @user_2 = FactoryGirl.create(:user)
     anon_user = User::User.anonymous
 
-    @role_1 = AddUserAsPeriodStudent[user: @user_1, period: period]
-    @role_2 = AddUserAsPeriodStudent[user: @user_2, period: period]
+    @role_1 = AddUserAsPeriodStudent.call(user: @user_1, period: period)
+    @role_2 = AddUserAsPeriodStudent.call(user: @user_2, period: period)
 
     @user_1_token = FactoryGirl.create :doorkeeper_access_token,
                                        application: application,
@@ -114,9 +114,9 @@ RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, versi
     end
 
     context 'existing task' do
-      let!(:cc_task) { GetConceptCoach[user: @user_1,
-                                       cnx_book_id: @book.uuid,
-                                       cnx_page_id: @page.uuid].task }
+      let!(:cc_task) { GetConceptCoach.call(user: @user_1,
+                                            cnx_book_id: @book.uuid,
+                                            cnx_page_id: @page.uuid).task }
 
       it 'should not create a new task for the same user' do
         expect{ show_api_call(@user_1_token) }.not_to change{ Tasks::Models::Task.count }
@@ -182,7 +182,7 @@ RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, versi
 
   context '#stats' do
     it 'includes stats' do
-      AddUserAsCourseTeacher[user: @user_1, course: @course]
+      AddUserAsCourseTeacher.call(user: @user_1, course: @course)
       stats_api_call(@user_1_token)
       body = JSON.parse(response.body)
       # The representer spec does validate the json so we'll rely on it and just check presense

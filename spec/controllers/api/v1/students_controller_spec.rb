@@ -5,28 +5,28 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
   let!(:application)       { FactoryGirl.create :doorkeeper_application }
 
   let!(:course)            { Entity::Course.create }
-  let!(:period)            { CreatePeriod[course: course] }
-  let!(:period_2)          { CreatePeriod[course: course] }
+  let!(:period)            { CreatePeriod.call(course: course).period }
+  let!(:period_2)          { CreatePeriod.call(course: course).period }
 
   let!(:student_user)      { FactoryGirl.create(:user) }
-  let!(:student_role)      { AddUserAsPeriodStudent[user: student_user, period: period] }
+  let!(:student_role)      { AddUserAsPeriodStudent.call(user: student_user, period: period).role }
   let!(:student)           { student_role.student }
   let!(:student_token)     { FactoryGirl.create :doorkeeper_access_token,
                                                 application: application,
                                                 resource_owner_id: student_user.id }
 
   let!(:teacher_user)      { FactoryGirl.create(:user) }
-  let!(:teacher)           { AddUserAsCourseTeacher[user: teacher_user, course: course] }
+  let!(:teacher)           { AddUserAsCourseTeacher.call(user: teacher_user, course: course).role }
   let!(:teacher_token)     { FactoryGirl.create :doorkeeper_access_token,
                                                 application: application,
                                                 resource_owner_id: teacher_user.id }
 
   let!(:student_user_2)    { FactoryGirl.create(:user) }
-  let!(:student_role_2)    { AddUserAsPeriodStudent[user: student_user_2, period: period] }
+  let!(:student_role_2)    { AddUserAsPeriodStudent.call(user: student_user_2, period: period).role }
   let!(:student_2)         { student_role_2.student }
 
   let!(:student_user_3)    { FactoryGirl.create(:user) }
-  let!(:student_role_3)    { AddUserAsPeriodStudent[user: student_user_3, period: period_2] }
+  let!(:student_role_3)    { AddUserAsPeriodStudent.call(user: student_user_3, period: period_2).role }
   let!(:student_3)         { student_role_3.student }
 
   let!(:userless_token)    { FactoryGirl.create :doorkeeper_access_token,
@@ -196,7 +196,7 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
     end
 
     context 'student is inactive' do
-      before { CourseMembership::InactivateStudent[student: student] }
+      before { CourseMembership::InactivateStudent.call(student: student) }
 
       it 'returns an error' do
         api_delete :destroy, teacher_token, parameters: valid_params
@@ -214,7 +214,7 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
     let!(:valid_params) { { id: student.id } }
 
     context 'student is inactive' do
-      before { CourseMembership::InactivateStudent[student: student] }
+      before { CourseMembership::InactivateStudent.call(student: student) }
 
       context 'caller has an authorization token' do
         context 'caller is a course teacher' do

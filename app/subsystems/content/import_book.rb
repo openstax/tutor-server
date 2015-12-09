@@ -79,7 +79,7 @@ class Content::ImportBook
     # send those lists all at once to one call each in the BL API.
     #
 
-    biglearn_exercises_by_ids = outputs[:exercises].each_with_object({}) do |ex, hash|
+    biglearn_exercises_by_ids = result.exercises.each_with_object({}) do |ex, hash|
       exercise_url = Addressable::URI.parse(ex.url)
       exercise_url.scheme = nil
       exercise_url.path = exercise_url.path.split('@').first

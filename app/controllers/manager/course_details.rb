@@ -3,10 +3,10 @@ module Manager::CourseDetails
 
   def get_course_details
     @course = Entity::Course.find(params[:id])
-    @profile = GetCourseProfile[course: @course]
+    @profile = GetCourseProfile.call(course: @course)
     @periods = @course.periods
     @teachers = @course.teachers.includes(role: { profile: :account })
-    @ecosystems = Content::ListEcosystems[]
+    @ecosystems = Content::ListEcosystems.call
 
     @course_ecosystem = nil
     ecosystem_model = @course.ecosystems.first
@@ -15,6 +15,6 @@ module Manager::CourseDetails
     ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(ecosystem_model)
     @course_ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
 
-    @catalog_offerings = Catalog::ListOfferings[]
+    @catalog_offerings = Catalog::ListOfferings.call
   end
 end

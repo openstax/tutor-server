@@ -71,10 +71,10 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         cnx_page:  cnx_page,
         chapter: chapter,
         book_location: [8, ii+1]
-      ).outputs.page.reload
+      ).page.reload
     end }
 
-    let!(:pools) { Content::Routines::PopulateExercisePools[book: chapter.book] }
+    let!(:pools) { Content::Routines::PopulateExercisePools.call(book: chapter.book).pools }
 
     let!(:task_plan) {
       FactoryGirl.build(
@@ -88,11 +88,11 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
     let!(:course) {
       task_plan.owner.tap do |course|
-        AddEcosystemToCourse[course: course, ecosystem: ecosystem]
+        AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
       end
     }
 
-    let!(:period) { CreatePeriod[course: course] }
+    let!(:period) { CreatePeriod.call(course: course).period }
 
     let!(:num_taskees) { 3 }
 
@@ -121,7 +121,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     it 'splits a CNX module into many different steps and assigns them with immediate feedback' do
       allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [[0, 2]]}
 
-      entity_tasks = DistributeTasks.call(task_plan).outputs.entity_tasks
+      entity_tasks = DistributeTasks.call(task_plan).entity_tasks
       expect(entity_tasks.length).to eq num_taskees
 
       entity_tasks.each do |entity_task|
@@ -211,17 +211,17 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       core_step_gold_data + spaced_practice_step_gold_data
     }
 
-    let!(:cnx_page) { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash) }
+    let!(:cnx_page) { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash).page }
 
     let!(:page) {
       Content::Routines::ImportPage.call(
         cnx_page:  cnx_page,
         chapter: chapter,
         book_location: [1, 1]
-      ).outputs.page.reload
+      ).page.reload
     }
 
-    let!(:pools) { Content::Routines::PopulateExercisePools[book: page.book] }
+    let!(:pools) { Content::Routines::PopulateExercisePools.call(book: page.book).pools }
 
     let!(:task_plan) {
       FactoryGirl.build(:tasks_task_plan,
@@ -234,11 +234,11 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
     let!(:course) {
       task_plan.owner.tap do |course|
-        AddEcosystemToCourse[course: course, ecosystem: ecosystem]
+        AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
       end
     }
 
-    let!(:period) { CreatePeriod[course: course] }
+    let!(:period) { CreatePeriod.call(course: course).period }
 
     let!(:num_taskees) { 3 }
 
@@ -268,7 +268,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [[0, 2]]}
       allow(Tasks::Assistants::IReadingAssistant).to receive(:num_personalized_exercises) { 0 }
 
-      entity_tasks = DistributeTasks.call(task_plan).outputs.entity_tasks
+      entity_tasks = DistributeTasks.call(task_plan).entity_tasks
       entity_tasks.each do |entity_task|
         entity_task.reload.reload
         expect(entity_task.taskings.length).to eq 1

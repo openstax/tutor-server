@@ -7,7 +7,7 @@ RSpec.describe CustomerService::CoursesController, type: :controller do
 
   describe 'GET #index' do
     it 'assigns all CollectCourseInfo output to @course_infos' do
-      CreateCourse[name: 'Hello World']
+      CreateCourse.call(name: 'Hello World')
       get :index
 
       expect(assigns[:course_infos].count).to eq(1)
@@ -22,7 +22,7 @@ RSpec.describe CustomerService::CoursesController, type: :controller do
 
   describe 'GET #show' do
     it 'assigns extra course info' do
-      course = CreateCourse[name: 'Hello World']
+      course = CreateCourse.call(name: 'Hello World')
       get :show, id: course.id
 
       expect(assigns[:profile].entity_course_id).to eq course.id

@@ -27,7 +27,7 @@ class Api::V1::PerformanceReportsController < Api::V1::ApiController
 
     OSU::AccessPolicy.require_action_allowed!(:export, current_api_user, course)
 
-    exports = Tasks::GetPerformanceReportExports[course: course, role: get_course_role]
+    exports = Tasks::GetPerformanceReportExports.call(course: course, role: get_course_role)
 
     respond_with exports, represent_with: Api::V1::PerformanceReportExportsRepresenter
   end
@@ -38,7 +38,7 @@ class Api::V1::PerformanceReportsController < Api::V1::ApiController
   EOS
   def index
     course = Entity::Course.find(params[:id])
-    preport = GetPerformanceReport[course: course, role: get_course_role]
+    preport = GetPerformanceReport.call(course: course, role: get_course_role)
 
     respond_with(preport, represent_with: Api::V1::PerformanceReportRepresenter)
   end

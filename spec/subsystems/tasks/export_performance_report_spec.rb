@@ -11,12 +11,12 @@ RSpec.describe Tasks::ExportPerformanceReport, type: :routine, speed: :slow do
         book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
       ]
     end
-    @course = CreateCourse[name: 'Physics']
+    @course = CreateCourse.call(name: 'Physics')
     CourseContent::AddEcosystemToCourse.call(course: @course, ecosystem: @ecosystem)
 
     @teacher = FactoryGirl.create(:user)
-    SetupPerformanceReportData[course: @course, teacher: @teacher, ecosystem: @ecosystem]
-    @role = GetUserCourseRoles[course: @course, user: @teacher].first
+    SetupPerformanceReportData.call(course: @course, teacher: @teacher, ecosystem: @ecosystem)
+    @role = GetUserCourseRoles.call(course: @course, user: @teacher).first
   end
 
   after(:each) do
@@ -29,14 +29,14 @@ RSpec.describe Tasks::ExportPerformanceReport, type: :routine, speed: :slow do
 
   it 'does not blow up' do
     expect {
-      @output_filename = described_class[role: @role, course: @course]
+      @output_filename = described_class.call(role: @role, course: @course)
     }.not_to raise_error
   end
 
   it 'does not blow up when a student was not assigned a particular task' do
     @course.students.first.role.taskings.first.task.destroy
     expect {
-      @output_filename = described_class[role: @role, course: @course]
+      @output_filename = described_class.call(role: @role, course: @course)
     }.not_to raise_error
   end
 

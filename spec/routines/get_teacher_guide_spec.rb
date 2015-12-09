@@ -8,20 +8,20 @@ RSpec.describe GetTeacherGuide, type: :routine do
     DatabaseCleaner.start
     @course = Entity::Course.create!
 
-    @period = CreatePeriod[course: @course]
-    @second_period = CreatePeriod[course: @course]
+    @period = CreatePeriod.call(course: @course)
+    @second_period = CreatePeriod.call(course: @course)
 
     @teacher = FactoryGirl.create(:user)
     @student = FactoryGirl.create(:user)
     @second_student = FactoryGirl.create(:user)
 
-    @role = AddUserAsPeriodStudent[period: @period, user: @student]
-    @second_role = AddUserAsPeriodStudent[period: @second_period, user: @second_student]
-    @teacher_role = AddUserAsCourseTeacher[course: @course, user: @teacher]
+    @role = AddUserAsPeriodStudent.call(period: @period, user: @student)
+    @second_role = AddUserAsPeriodStudent.call(period: @second_period, user: @second_student)
+    @teacher_role = AddUserAsCourseTeacher.call(course: @course, user: @teacher)
 
     VCR.use_cassette("GetCourseGuide/setup_course_guide", VCR_OPTS) do
       capture_stdout do
-        CreateStudentHistory[course: @course, roles: [@role, @second_role]]
+        CreateStudentHistory.call(course: @course, roles: [@role, @second_role])
       end
     end
   end
@@ -31,7 +31,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
   end
 
   it 'returns all course guide periods for teachers' do
-    result = described_class[role: @teacher_role]
+    result = described_class.call(role: @teacher_role)
 
     expect(result).to include({
       period_id: @period.id,
@@ -48,7 +48,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
   end
 
   it 'includes the chapter stats for the periods' do
-    period_1_chapter_1 = described_class[role: @teacher_role].first['children'].first
+    period_1_chapter_1 = described_class.call(role: @teacher_role).first['children'].first
 
     expect([period_1_chapter_1]).to match a_hash_including(
       "title"=>"Acceleration",
@@ -68,7 +68,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
       "children" => array_including(kind_of(Hash))
     )
 
-    period_2_chapter_1 = described_class[role: @teacher_role].second['children'].first
+    period_2_chapter_1 = described_class.call(role: @teacher_role).second['children'].first
 
     expect([period_2_chapter_1]).to match a_hash_including(
       "title"=>"Acceleration",
@@ -90,7 +90,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
   end
 
   it 'includes the page stats for the periods' do
-    period_1_pages = described_class[role: @teacher_role].first['children'].first['children']
+    period_1_pages = described_class.call(role: @teacher_role).first['children'].first['children']
 
     expect(period_1_pages).to include(
       a_hash_including("title"=>"Acceleration",
@@ -109,7 +109,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
                        "page_ids"=>[kind_of(Integer)])
     )
 
-    period_2_pages = described_class[role: @teacher_role].second['children'].first['children']
+    period_2_pages = described_class.call(role: @teacher_role).second['children'].first['children']
 
     expect(period_2_pages).to include(
       a_hash_including("title"=>"Acceleration",

@@ -17,9 +17,9 @@ class Admin::CoursesCreate
   end
 
   def handle
-    school = SchoolDistrict::GetSchool[id: course_params.school_district_school_id] \
+    school = SchoolDistrict::GetSchool.call(id: course_params.school_district_school_id) \
       unless course_params.school_district_school_id.blank?
-    offering = Catalog::GetOffering[id: course_params.catalog_offering_id] \
+    offering = Catalog::GetOffering.call(id: course_params.catalog_offering_id) \
       unless course_params.catalog_offering_id.blank?
     is_concept_coach = offering.nil? ? course_params.is_concept_coach : offering.is_concept_coach
     run(:create_course, name: course_params.name, appearance_code: course_params.appearance_code,

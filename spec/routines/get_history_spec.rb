@@ -13,7 +13,7 @@ describe GetHistory, type: :routine do
 
     user = FactoryGirl.create :user
 
-    @role = AddUserAsPeriodStudent[user: user, period: period]
+    @role = AddUserAsPeriodStudent.call(user: user, period: period)
 
     reading_plan_1 = FactoryGirl.create(:tasked_task_plan, owner: course)
     page_ids_1 = reading_plan_1.settings['page_ids']
@@ -90,7 +90,7 @@ describe GetHistory, type: :routine do
     let(:correct_tasks)      { [new_task, @reading_task_3, @reading_task_2, @reading_task_1] }
 
     it 'returns the correct history' do
-      history = described_class.call(role: @role, type: :reading, current_task: new_task).outputs
+      history = described_class.call(role: @role, type: :reading, current_task: new_task)
       expect(history.tasks).to eq correct_tasks
       expect(history.ecosystems).to eq correct_ecosystems
       history_exercise_sets = history.exercises.collect{ |exercises| Set.new exercises }
@@ -104,7 +104,7 @@ describe GetHistory, type: :routine do
     let(:correct_tasks)      { [new_task, @homework_task_3, @homework_task_2, @homework_task_1] }
 
     it 'returns the correct history' do
-      history = described_class.call(role: @role, type: :homework, current_task: new_task).outputs
+      history = described_class.call(role: @role, type: :homework, current_task: new_task)
       expect(history.tasks).to eq correct_tasks
       expect(history.ecosystems).to eq correct_ecosystems
       history_exercise_sets = history.exercises.collect{ |exercises| Set.new exercises }
@@ -119,7 +119,7 @@ describe GetHistory, type: :routine do
                                 @reading_task_2, @homework_task_1, @reading_task_1] }
 
     it 'returns the correct history' do
-      history = described_class.call(role: @role, type: :all, current_task: new_task).outputs
+      history = described_class.call(role: @role, type: :all, current_task: new_task)
       expect(history.tasks).to eq correct_tasks
       expect(history.ecosystems).to eq correct_ecosystems
       history_exercise_sets = history.exercises.collect{ |exercises| Set.new exercises }
@@ -132,7 +132,7 @@ describe GetHistory, type: :routine do
                                 @reading_task_2, @homework_task_1, @reading_task_1] }
 
     it 'returns the correct history' do
-      history = described_class.call(role: @role, type: :all).outputs
+      history = described_class.call(role: @role, type: :all)
       expect(history.tasks).to eq correct_tasks
       expect(history.ecosystems).to eq correct_ecosystems
       history_exercise_sets = history.exercises.collect{ |exercises| Set.new exercises }

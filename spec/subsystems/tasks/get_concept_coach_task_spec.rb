@@ -16,7 +16,7 @@ RSpec.describe Tasks::GetConceptCoachTask, type: :routine do
   context 'with an existing ConceptCoachTask' do
     it 'retrieves the existing task' do
       task = nil
-      expect{ task = described_class[role: role, page: page] }.not_to(
+      expect{ task = described_class.call(role: role, page: page) }.not_to(
         change{ Tasks::Models::ConceptCoachTask.count }
       )
       expect(task.taskings.any?{ |ts| ts.role == role }).to eq true
@@ -26,12 +26,12 @@ RSpec.describe Tasks::GetConceptCoachTask, type: :routine do
   context 'with no matching ConceptCoachTask' do
     it 'returns nil' do
       task = nil
-      expect{ task = described_class[role: another_role, page: page] }.not_to(
+      expect{ task = described_class.call(role: another_role, page: page) }.not_to(
         change{ Tasks::Models::ConceptCoachTask.count }
       )
       expect(task).to be_nil
 
-      expect{ task = described_class[role: role, page: another_page] }.not_to(
+      expect{ task = described_class.call(role: role, page: another_page) }.not_to(
         change{ Tasks::Models::ConceptCoachTask.count }
       )
       expect(task).to be_nil

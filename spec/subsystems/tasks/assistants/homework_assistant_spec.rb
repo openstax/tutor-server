@@ -36,12 +36,12 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
         cnx_page:  cnx_page,
         chapter: chapter,
         book_location: [8, ii+1]
-      ).outputs.page.reload
+      ).page.reload
     end
   }
 
   let!(:pools) {
-    Content::Routines::PopulateExercisePools[book: chapter.book]
+    Content::Routines::PopulateExercisePools.call(book: chapter.book)
   }
 
   let!(:pages)     {
@@ -105,10 +105,10 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
 
   let!(:course) {
     task_plan.owner.tap do |course|
-      AddEcosystemToCourse[course: course, ecosystem: ecosystem]
+      AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
     end
   }
-  let!(:period) { CreatePeriod[course: course] }
+  let!(:period) { CreatePeriod.call(course: course).period }
 
   it "creates the expected assignments" do
     #puts "teacher_selected_exercises = #{teacher_selected_exercises.collect{|ex| ex.uid}}"
@@ -118,7 +118,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
     allow(Tasks::Assistants::HomeworkAssistant).
       to receive(:num_personalized_exercises) { personalized_exercise_count }
 
-    entity_tasks = DistributeTasks.call(task_plan).outputs.entity_tasks
+    entity_tasks = DistributeTasks.call(task_plan).entity_tasks
 
     ## it "sets description, task type, and feedback_at"
     entity_tasks.each do |entity_task|

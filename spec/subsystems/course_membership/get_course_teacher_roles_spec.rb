@@ -2,10 +2,10 @@ require 'rails_helper'
 
 describe CourseMembership::GetCourseTeacherRoles do
   let!(:target_course) { Entity::Course.create! }
-  let!(:course_period) { CreatePeriod[course: target_course] }
+  let!(:course_period) { CreatePeriod.call(course: target_course).period }
 
   let!(:other_course) { Entity::Course.create! }
-  let!(:other_period) { CreatePeriod[course: other_course] }
+  let!(:other_period) { CreatePeriod.call(course: other_course).period }
 
   let!(:other_student_role) {
     other_role = Entity::Role.create!
@@ -29,7 +29,7 @@ describe CourseMembership::GetCourseTeacherRoles do
     it "returns an empty enumerable" do
       result = described_class.call(course: target_course)
       expect(result.errors).to be_empty
-      expect(result.outputs.roles).to be_empty
+      expect(result.roles).to be_empty
     end
   end
 
@@ -46,7 +46,7 @@ describe CourseMembership::GetCourseTeacherRoles do
     it "returns an empty enumerable" do
       result = described_class.call(course: target_course)
       expect(result.errors).to be_empty
-      expect(result.outputs.roles).to be_empty
+      expect(result.roles).to be_empty
     end
   end
 
@@ -63,8 +63,8 @@ describe CourseMembership::GetCourseTeacherRoles do
     it "returns an enumerable containing that role" do
       result = described_class.call(course: target_course)
       expect(result.errors).to be_empty
-      expect(result.outputs.roles.count).to eq(1)
-      expect(result.outputs.roles).to include(target_teacher_role)
+      expect(result.roles.count).to eq(1)
+      expect(result.roles).to include(target_teacher_role)
     end
   end
 
@@ -93,9 +93,9 @@ describe CourseMembership::GetCourseTeacherRoles do
     it "returns an enumerable containing only the teacher roles" do
       result = described_class.call(course: target_course)
       expect(result.errors).to be_empty
-      expect(result.outputs.roles.count).to eq(target_roles.count)
+      expect(result.roles.count).to eq(target_roles.count)
       target_roles.each do |target_role|
-        expect(result.outputs.roles).to include(target_role)
+        expect(result.roles).to include(target_role)
       end
     end
   end

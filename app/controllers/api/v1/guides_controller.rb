@@ -16,7 +16,7 @@ module Api
       EOS
       def student
         course = Entity::Course.find(params[:id])
-        guide = GetStudentGuide[role: role(course, :student)]
+        guide = GetStudentGuide.call(role: role(course, :student))
         respond_with guide, represent_with: Api::V1::CourseGuidePeriodRepresenter
       end
 
@@ -27,7 +27,7 @@ module Api
       EOS
       def teacher
         course = Entity::Course.find(params[:id])
-        guide = GetTeacherGuide[role: role(course, :teacher)]
+        guide = GetTeacherGuide.call(role: role(course, :teacher))
         respond_with guide, represent_with: Api::V1::TeacherCourseGuideRepresenter
       end
 
@@ -41,7 +41,7 @@ module Api
         if result.errors.any?
           raise(SecurityTransgression, :invalid_role)
         else
-          result.outputs.role
+          result.role
         end
       end
     end

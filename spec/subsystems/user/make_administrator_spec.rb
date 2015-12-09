@@ -6,7 +6,7 @@ RSpec.describe User::MakeAdministrator, type: :routine do
 
     expect(user.is_admin?).to be false
 
-    described_class[user: user]
+    described_class.call(user: user)
     user.to_model.reload
 
     expect(user.is_admin?).to be true

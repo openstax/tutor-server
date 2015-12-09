@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe ReassignPublishedPeriodTaskPlans, type: :routine do
 
   let!(:course)    { Entity::Course.create! }
-  let!(:period)    { CreatePeriod[course: course] }
+  let!(:period)    { CreatePeriod.call(course: course).period }
   let!(:user)      { user = FactoryGirl.create(:user)
                      AddUserAsPeriodStudent.call(user: user, period: period)
                      user }

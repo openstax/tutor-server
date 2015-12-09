@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe EnrollmentChangeAccessPolicy, type: :access_policy do
-  let!(:course)            { CreateCourse[name: 'Physics 401'] }
-  let!(:period)            { CreatePeriod[course: course] }
+  let!(:course)            { CreateCourse.call(name: 'Physics 401').course }
+  let!(:period)            { CreatePeriod.call(course: course).period }
 
   let!(:user)              {
     profile = FactoryGirl.create(:user_profile)
@@ -16,7 +16,7 @@ RSpec.describe EnrollmentChangeAccessPolicy, type: :access_policy do
   }
 
   let!(:enrollment_change) {
-    CourseMembership::CreateEnrollmentChange[user: user, period: period]
+    CourseMembership::CreateEnrollmentChange.call(user: user, period: period)
   }
 
   # action, requestor are set in contexts

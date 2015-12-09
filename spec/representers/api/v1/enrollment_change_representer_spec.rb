@@ -8,10 +8,10 @@ RSpec.describe Api::V1::EnrollmentChangeRepresenter, type: :representer do
   end
 
   let!(:course)              { FactoryGirl.create(:entity_course) }
-  let!(:period)              { ::CreatePeriod[course: course] }
+  let!(:period)              { ::CreatePeriod.call(course: course).period }
 
   let!(:teacher_user)        { FactoryGirl.create(:user) }
-  let!(:teacher_role)        { AddUserAsCourseTeacher[user: teacher_user, course: course] }
+  let!(:teacher_role)        { AddUserAsCourseTeacher.call(user: teacher_user, course: course).role }
 
   let!(:enrollment_change) { CourseMembership::CreateEnrollmentChange[
     user: user, period: period, requires_enrollee_approval: false

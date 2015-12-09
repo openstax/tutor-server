@@ -8,7 +8,7 @@ module Admin
     end
 
     def edit
-      @school = SchoolDistrict::GetSchool[id: params[:id]]
+      @school = SchoolDistrict::GetSchool.call(id: params[:id])
       @page_header = "Edit school"
     end
 
@@ -37,7 +37,7 @@ module Admin
                                 notice: 'The school has been updated.'
                   },
                   failure: -> {
-                    @school = SchoolDistrict::GetSchool[id: params[:id]]
+                    @school = SchoolDistrict::GetSchool.call(id: params[:id])
                     @school.attributes.merge!(school_params)
                     render :edit
                   })

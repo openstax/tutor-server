@@ -7,7 +7,7 @@ RSpec.describe Admin::CoursesController, type: :controller do
 
   describe 'GET #index' do
     it 'assigns all CollectCourseInfo output to @course_infos' do
-      CreateCourse[name: 'Hello World']
+      CreateCourse.call(name: 'Hello World')
       get :index
 
       expect(assigns[:course_infos].count).to eq(1)
@@ -22,7 +22,7 @@ RSpec.describe Admin::CoursesController, type: :controller do
 
   describe 'GET #edit' do
     it 'assigns extra course info' do
-      course = CreateCourse[name: 'Hello World']
+      course = CreateCourse.call(name: 'Hello World')
       get :edit, id: course.id
 
       expect(assigns[:profile].entity_course_id).to eq course.id
@@ -52,11 +52,11 @@ RSpec.describe Admin::CoursesController, type: :controller do
   end
 
   describe 'POST #students' do
-    let!(:physics) { CreateCourse[name: 'Physics'] }
-    let!(:physics_period) { CreatePeriod[course: physics, name: '1st'] }
+    let!(:physics) { CreateCourse.call(name: 'Physics').course }
+    let!(:physics_period) { CreatePeriod.call(course: physics, name: '1st').period }
 
-    let!(:biology) { CreateCourse[name: 'Biology'] }
-    let!(:biology_period) { CreatePeriod[course: biology, name: '3rd'] }
+    let!(:biology) { CreateCourse.call(name: 'Biology').course }
+    let!(:biology_period) { CreatePeriod.call(course: biology, name: '3rd').period }
 
     let!(:file_1) do
       fixture_file_upload('files/test_courses_post_students_1.csv', 'text/csv')
@@ -82,7 +82,7 @@ RSpec.describe Admin::CoursesController, type: :controller do
       }.to change { OpenStax::Accounts::Account.count }.by(3)
       expect(flash[:notice]).to eq('Student roster has been uploaded.')
 
-      student_roster = GetCourseRoster.call(course: physics).outputs.roster[:students]
+      student_roster = GetCourseRoster.call(course: physics).roster[:students]
       csv = CSV.parse(file_1.open)
       names = csv[1..-1].flat_map(&:first)
 

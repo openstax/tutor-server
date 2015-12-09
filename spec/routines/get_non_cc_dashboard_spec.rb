@@ -3,18 +3,18 @@ require 'vcr_helper'
 
 describe GetNonCcDashboard, type: :routine do
 
-  let!(:course)         { CreateCourse[name: 'Physics 101'] }
-  let!(:period)         { CreatePeriod[course: course] }
+  let!(:course)         { CreateCourse.call(name: 'Physics 101').course }
+  let!(:period)         { CreatePeriod.call(course: course).period }
 
   let!(:student_user)   { FactoryGirl.create(:user) }
   let!(:student_role)   { AddUserAsPeriodStudent.call(user: student_user, period: period)
-                                                .outputs.role }
+                                                .role }
 
   let!(:teacher_user)   { FactoryGirl.create(:user, first_name: 'Bob',
                                                     last_name: 'Newhart',
                                                     full_name: 'Bob Newhart') }
   let!(:teacher_role)   { AddUserAsCourseTeacher.call(user: teacher_user, course: course)
-                                                .outputs.role }
+                                                .role }
 
   let!(:reading_task)   { FactoryGirl.create(:tasks_task,
                                              task_type: :reading,
@@ -34,7 +34,7 @@ describe GetNonCcDashboard, type: :routine do
   let!(:plan) { FactoryGirl.create(:tasks_task_plan, owner: course) }
 
   it "works for a student" do
-    outputs = described_class.call(course: course, role: student_role).outputs
+    outputs = described_class.call(course: course, role: student_role)
 
     expect(HashWithIndifferentAccess[outputs]).to include(
       course: {
@@ -58,7 +58,7 @@ describe GetNonCcDashboard, type: :routine do
   end
 
   it "works for a teacher" do
-    outputs = described_class.call(course: course, role: teacher_role).outputs
+    outputs = described_class.call(course: course, role: teacher_role)
 
     expect(HashWithIndifferentAccess[outputs]).to include(
       course: {

@@ -13,7 +13,7 @@ describe Role::GetUserRoles, type: :routine do
       result = Role::GetUserRoles.call(target_user)
 
       expect(result.errors).to be_empty
-      expect(result.outputs.roles).to be_empty
+      expect(result.roles).to be_empty
     end
   end
   context "there is one role for the given user" do
@@ -29,8 +29,8 @@ describe Role::GetUserRoles, type: :routine do
       result = Role::GetUserRoles.call(target_user)
 
       expect(result.errors).to be_empty
-      expect(result.outputs.roles.size).to eq(1)
-      expect(result.outputs.roles).to include(target_role)
+      expect(result.roles.size).to eq(1)
+      expect(result.roles).to include(target_role)
     end
   end
   context "there are multiple roles for the given user" do
@@ -49,9 +49,9 @@ describe Role::GetUserRoles, type: :routine do
       result = Role::GetUserRoles.call(target_user)
 
       expect(result.errors).to be_empty
-      expect(result.outputs.roles.size).to eq(2)
-      expect(result.outputs.roles).to include(target_role1)
-      expect(result.outputs.roles).to include(target_role2)
+      expect(result.roles.size).to eq(2)
+      expect(result.roles).to include(target_role1)
+      expect(result.roles).to include(target_role2)
     end
 
     xit "returns limited types when requested" do

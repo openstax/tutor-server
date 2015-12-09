@@ -15,8 +15,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
   let!(:userless_token)     { FactoryGirl.create :doorkeeper_access_token }
 
-  let!(:course)             { CreateCourse[name: 'Physics 101'] }
-  let!(:period)             { CreatePeriod[course: course] }
+  let!(:course)             { CreateCourse.call(name: 'Physics 101').course }
+  let!(:period)             { CreatePeriod.call(course: course).period }
 
   def add_book_to_course(course:)
     book = FactoryGirl.create(:content_book, :standard_contents_1)
@@ -44,10 +44,10 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   end
 
   describe "index" do
-    let(:roles)          { Role::GetUserRoles.call(user_1).outputs.roles }
+    let(:roles)          { Role::GetUserRoles.call(user_1).roles }
     let(:teacher)        { roles.select(&:teacher?).first }
     let(:student)        { roles.select(&:student?).first }
-    let!(:zeroth_period) { CreatePeriod[course: course, name: '0th'] }
+    let!(:zeroth_period) { CreatePeriod.call(course: course, name: '0th').period }
 
     context 'anonymous user' do
       it 'raises SecurityTransgression' do
@@ -133,32 +133,32 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   describe '#roster' do
     let!(:application)       { FactoryGirl.create :doorkeeper_application }
 
-    let!(:course)            { CreateCourse[name: 'Rosterify'] }
-    let!(:period_2)          { CreatePeriod[course: course] }
+    let!(:course)            { CreateCourse.call(name: 'Rosterify').course }
+    let!(:period_2)          { CreatePeriod.call(course: course).period }
 
     let!(:student_user)      { FactoryGirl.create(:user) }
-    let!(:student_role)      { AddUserAsPeriodStudent[user: student_user,
-                                                      period: period] }
+    let!(:student_role)      { AddUserAsPeriodStudent.call(user: student_user,
+                                                           period: period).role }
     let!(:student)           { student_role.student }
     let!(:student_token)     { FactoryGirl.create :doorkeeper_access_token,
                                                   application: application,
                                                   resource_owner_id: student_user.id }
 
     let!(:student_user_2)    { FactoryGirl.create(:user) }
-    let!(:student_role_2)    { AddUserAsPeriodStudent[user: student_user_2,
-                                                      period: period] }
+    let!(:student_role_2)    { AddUserAsPeriodStudent.call(user: student_user_2,
+                                                           period: period).role }
     let!(:student_2)         { student_role_2.student }
 
     let!(:teacher_user)      { FactoryGirl.create(:user) }
-    let!(:teacher)           { AddUserAsCourseTeacher[user: teacher_user,
-                                                      course: course] }
+    let!(:teacher)           { AddUserAsCourseTeacher.call(user: teacher_user,
+                                                           course: course).role }
     let!(:teacher_token)     { FactoryGirl.create :doorkeeper_access_token,
                                                   application: application,
                                                   resource_owner_id: teacher_user.id }
 
     let!(:student_user_3)    { FactoryGirl.create(:user) }
-    let!(:student_role_3)    { AddUserAsPeriodStudent[user: student_user_3,
-                                                      period: period_2] }
+    let!(:student_role_3)    { AddUserAsPeriodStudent.call(user: student_user_3,
+                                                           period: period_2).role }
     let!(:student_3)         { student_role_3.student }
 
     let!(:valid_params) { { course_id: course.id } }
@@ -234,10 +234,10 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
   end
 
   describe "show" do
-    let(:roles)          { Role::GetUserRoles.call(user_1).outputs.roles }
+    let(:roles)          { Role::GetUserRoles.call(user_1).roles }
     let(:teacher)        { roles.select(&:teacher?).first }
     let(:student)        { roles.select(&:student?).first }
-    let!(:zeroth_period) { CreatePeriod[course: course, name: '0th'] }
+    let!(:zeroth_period) { CreatePeriod.call(course: course, name: '0th').period }
 
     context 'course does not exist' do
       it 'raises RecordNotFound' do
@@ -264,7 +264,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
 
     context 'user is a teacher' do
-      let!(:teacher) { AddUserAsCourseTeacher.call(course: course, user: user_1).outputs.role }
+      let!(:teacher) { AddUserAsCourseTeacher.call(course: course, user: user_1).role }
 
       it 'returns the teacher roles with the course' do
         api_get :show, user_1_token, parameters: { id: course.id }
@@ -275,7 +275,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
 
     context 'user is a student' do
-      let!(:student) { AddUserAsPeriodStudent.call(period: period, user: user_1).outputs.role }
+      let!(:student) { AddUserAsPeriodStudent.call(period: period, user: user_1).role }
 
       it 'returns the student roles with the course' do
         api_get :show, user_1_token, parameters: { id: course.id }
@@ -286,8 +286,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
 
     context 'user is both a teacher and student' do
-      let!(:student) { AddUserAsPeriodStudent.call(period: period, user: user_1).outputs.role }
-      let!(:teacher) { AddUserAsCourseTeacher.call(course: course, user: user_1).outputs.role }
+      let!(:student) { AddUserAsPeriodStudent.call(period: period, user: user_1).role }
+      let!(:teacher) { AddUserAsCourseTeacher.call(course: course, user: user_1).role }
 
       it 'returns both roles with the course' do
         api_get :show, user_1_token, parameters: { id: course.id }
@@ -340,14 +340,14 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
   describe "dashboard" do
     let!(:student_user)   { FactoryGirl.create(:user) }
-    let!(:student_role)   { AddUserAsPeriodStudent[user: student_user, period: period] }
+    let!(:student_role)   { AddUserAsPeriodStudent.call(user: student_user, period: period).role }
     let!(:student_token)  { FactoryGirl.create :doorkeeper_access_token,
                                                resource_owner_id: student_user.id }
 
     let!(:teacher_user)   { FactoryGirl.create(:user, first_name: 'Bob',
                                                       last_name: 'Newhart',
                                                       full_name: 'Bob Newhart') }
-    let!(:teacher_role)   { AddUserAsCourseTeacher[user: teacher_user, course: course] }
+    let!(:teacher_role)   { AddUserAsCourseTeacher.call(user: teacher_user, course: course).role }
     let!(:teacher_token)  { FactoryGirl.create :doorkeeper_access_token,
                                                resource_owner_id: teacher_user.id }
 
@@ -408,16 +408,16 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
 
     it "works for a student without a role specified" do
-      Hacks::AnswerExercise[task_step: hw1_task.task_steps[0], is_correct: true]
-      Hacks::AnswerExercise[task_step: hw1_task.task_steps[2], is_correct: false]
+      Hacks::AnswerExercise.call(task_step: hw1_task.task_steps[0], is_correct: true)
+      Hacks::AnswerExercise.call(task_step: hw1_task.task_steps[2], is_correct: false)
 
-      Hacks::AnswerExercise[task_step: hw2_task.task_steps[0], is_correct: true]
-      Hacks::AnswerExercise[task_step: hw2_task.task_steps[1], is_correct: true]
-      Hacks::AnswerExercise[task_step: hw2_task.task_steps[2], is_correct: false]
+      Hacks::AnswerExercise.call(task_step: hw2_task.task_steps[0], is_correct: true)
+      Hacks::AnswerExercise.call(task_step: hw2_task.task_steps[1], is_correct: true)
+      Hacks::AnswerExercise.call(task_step: hw2_task.task_steps[2], is_correct: false)
 
-      Hacks::AnswerExercise[task_step: hw3_task.task_steps[0], is_correct: false]
-      Hacks::AnswerExercise[task_step: hw3_task.task_steps[1], is_correct: false]
-      Hacks::AnswerExercise[task_step: hw3_task.task_steps[2], is_correct: false]
+      Hacks::AnswerExercise.call(task_step: hw3_task.task_steps[0], is_correct: false)
+      Hacks::AnswerExercise.call(task_step: hw3_task.task_steps[1], is_correct: false)
+      Hacks::AnswerExercise.call(task_step: hw3_task.task_steps[2], is_correct: false)
 
 
       api_get :dashboard, student_token, parameters: {id: course.id}
@@ -541,17 +541,17 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
   describe "cc_dashboard" do
     let!(:student_user)   { FactoryGirl.create(:user) }
-    let!(:student_role)   { AddUserAsPeriodStudent[user: student_user, period: period] }
+    let!(:student_role)   { AddUserAsPeriodStudent.call(user: student_user, period: period).role }
     let!(:student_token)  { FactoryGirl.create :doorkeeper_access_token,
                                                resource_owner_id: student_user.id }
 
     let!(:student_user_2) { FactoryGirl.create(:user) }
-    let!(:student_role_2) { AddUserAsPeriodStudent[user: student_user_2, period: period] }
+    let!(:student_role_2) { AddUserAsPeriodStudent.call(user: student_user_2, period: period).role }
 
     let!(:teacher_user)   { FactoryGirl.create(:user, first_name: 'Bob',
                                                     last_name: 'Newhart',
                                                     full_name: 'Bob Newhart') }
-    let!(:teacher_role)   { AddUserAsCourseTeacher[user: teacher_user, course: course] }
+    let!(:teacher_role)   { AddUserAsCourseTeacher.call(user: teacher_user, course: course).role }
     let!(:teacher_token)  { FactoryGirl.create :doorkeeper_access_token,
                                                resource_owner_id: teacher_user.id }
 
@@ -568,16 +568,16 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
       page_model_1, page_model_2 = VCR.use_cassette('Api_V1_CoursesController/with_pages',
                                                     VCR_OPTS) do
-        [Content::Routines::ImportPage[chapter: @chapter,
-                                       cnx_page: cnx_page_1,
-                                       book_location: book_location_1],
-         Content::Routines::ImportPage[chapter: @chapter,
-                                       cnx_page: cnx_page_2,
-                                       book_location: book_location_2]]
+        [Content::Routines::ImportPage.call(chapter: @chapter,
+                                            cnx_page: cnx_page_1,
+                                            book_location: book_location_1),
+         Content::Routines::ImportPage.call(chapter: @chapter,
+                                            cnx_page: cnx_page_2,
+                                            book_location: book_location_2)]
       end
 
       @book = @chapter.book
-      Content::Routines::PopulateExercisePools[book: @book]
+      Content::Routines::PopulateExercisePools.call(book: @book)
 
       @page_1 = Content::Page.new(strategy: page_model_1.reload.wrap)
       @page_2 = Content::Page.new(strategy: page_model_2.reload.wrap)
@@ -589,25 +589,25 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     before(:each) do
       course.profile.update_attribute(:is_concept_coach, true)
 
-      AddEcosystemToCourse[ecosystem: @ecosystem, course: course]
+      AddEcosystemToCourse.call(ecosystem: @ecosystem, course: course)
 
       @task_1 = GetConceptCoach[
         user: student_user, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
       ].task
       @task_1.task_steps.each do |ts|
-        Hacks::AnswerExercise[task_step: ts, is_correct: true]
+        Hacks::AnswerExercise.call(task_step: ts, is_correct: true)
       end
       @task_2 = GetConceptCoach[
         user: student_user, cnx_book_id: @book.uuid, cnx_page_id: @page_2.uuid
       ].task
       @task_2.task_steps.each do |ts|
-        Hacks::AnswerExercise[task_step: ts, is_correct: ts.core_group?]
+        Hacks::AnswerExercise.call(task_step: ts, is_correct: ts.core_group?)
       end
       @task_3 = GetConceptCoach[
         user: student_user_2, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
       ].task
       @task_3.task_steps.select(&:core_group?).first(2).each_with_index do |ts, ii|
-        Hacks::AnswerExercise[task_step: ts, is_correct: ii == 0]
+        Hacks::AnswerExercise.call(task_step: ts, is_correct: ii == 0)
       end
       @task_4 = GetConceptCoach[
         user: student_user_2, cnx_book_id: @book.uuid, cnx_page_id: @page_2.uuid

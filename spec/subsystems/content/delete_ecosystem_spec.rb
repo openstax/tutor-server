@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Content::DeleteEcosystem, type: :routine do
-  let!(:course) { CreateCourse[name: 'A Course'] }
+  let!(:course) { CreateCourse.call(name: 'A Course').course }
   let!(:ecosystem_1) {
     Content::Ecosystem.find(FactoryGirl.create(:content_ecosystem).id)
   }
@@ -16,7 +16,7 @@ RSpec.describe Content::DeleteEcosystem, type: :routine do
   end
 
   it 'raises an error if the ecosystem is currently linked to a course' do
-    AddEcosystemToCourse[course: course, ecosystem: ecosystem_1]
+    AddEcosystemToCourse.call(course: course, ecosystem: ecosystem_1)
     output = Content::DeleteEcosystem.call(id: ecosystem_1.id)
     expect(output.errors.first.code).to eq(:ecosystem_cannot_be_deleted)
     expect(output.errors.first.message).to eq(
@@ -25,11 +25,11 @@ RSpec.describe Content::DeleteEcosystem, type: :routine do
   end
 
   it 'raises an error if the ecosystem was linked to a course in the past' do
-    AddEcosystemToCourse[course: course, ecosystem: ecosystem_1]
-    AddEcosystemToCourse[course: course, ecosystem: ecosystem_2]
+    AddEcosystemToCourse.call(course: course, ecosystem: ecosystem_1)
+    AddEcosystemToCourse.call(course: course, ecosystem: ecosystem_2)
 
     # The current ecosystem for the course is ecosystem_2
-    expect(GetCourseEcosystem[course: course]).to eq(ecosystem_2)
+    expect(GetCourseEcosystem.call(course: course)).to eq(ecosystem_2)
 
     # but ecosystem_1 should not be deletable
     output = Content::DeleteEcosystem.call(id: ecosystem_1.id)

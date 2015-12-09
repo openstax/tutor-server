@@ -14,10 +14,10 @@ describe UserIsCourseStudent, type: :routine do
       other_student_role  = Entity::Role.create!
 
       target_course       = Entity::Course.create!
-      target_period       = CreatePeriod[course: target_course]
+      target_period       = CreatePeriod.call(course: target_course)
 
       other_course        = Entity::Course.create!
-      other_period       = CreatePeriod[course: other_course]
+      other_period       = CreatePeriod.call(course: other_course)
 
       Role::AddUserRole.call(user: target_user, role: target_student_role)
       Role::AddUserRole.call(user: target_user, role: target_teacher_role)
@@ -33,7 +33,7 @@ describe UserIsCourseStudent, type: :routine do
       ## Perform test
       result = UserIsCourseStudent.call(user: target_user, course: target_course)
       expect(result.errors).to be_empty
-      expect(result.outputs.user_is_course_teacher).to be_falsey
+      expect(result.user_is_course_teacher).to be_falsey
     end
   end
   context "when the user is a student for the given course" do
@@ -44,7 +44,7 @@ describe UserIsCourseStudent, type: :routine do
       target_student_role = Entity::Role.create!
 
       target_course       = Entity::Course.create!
-      target_period       = CreatePeriod[course: target_course]
+      target_period       = CreatePeriod.call(course: target_course)
 
       Role::AddUserRole.call(user: target_user, role: target_student_role)
       CourseMembership::AddStudent.call(period: target_period, role: target_student_role)
@@ -52,7 +52,7 @@ describe UserIsCourseStudent, type: :routine do
       ## Perform test
       result = UserIsCourseStudent.call(user: target_user, course: target_course)
       expect(result.errors).to be_empty
-      expect(result.outputs.user_is_course_student).to be_truthy
+      expect(result.user_is_course_student).to be_truthy
     end
   end
 end

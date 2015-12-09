@@ -6,8 +6,8 @@ RSpec.describe Api::V1::TaskSearchRepresenter, type: :representer do
 
     let!(:user)           { FactoryGirl.create(:user) }
     let!(:course)         { FactoryGirl.create(:entity_course) }
-    let!(:period)         { CreatePeriod[course: course] }
-    let!(:role)           { AddUserAsPeriodStudent.call(user: user, period: period).outputs.role }
+    let!(:period)         { CreatePeriod.call(course: course).period }
+    let!(:role)           { AddUserAsPeriodStudent.call(user: user, period: period).role }
     let!(:default_task)   { FactoryGirl.create(:tasks_task) }
     let!(:task_count)     { rand(5..10) }
     let!(:ecosystem)      { FactoryGirl.build(:content_ecosystem) }
@@ -20,7 +20,7 @@ RSpec.describe Api::V1::TaskSearchRepresenter, type: :representer do
     ) } }
 
     let!(:output)         { Hashie::Mash.new(
-      'items' => GetCourseUserTasks[course: course, user: user].collect{|t| t.task}
+      'items' => GetCourseUserTasks.call(course: course, user: user).collect{|t| t.task}
     ) }
     let!(:representation) { Api::V1::TaskSearchRepresenter.new(output).as_json }
 

@@ -6,20 +6,20 @@ describe GetCcDashboard, type: :routine do
   before(:all) do
     DatabaseCleaner.start
 
-    @course   = CreateCourse[name: 'Physics 101', is_concept_coach: true]
-    @period   = CreatePeriod[course: @course]
-    @period_2 = CreatePeriod[course: @course]
+    @course   = CreateCourse[name: 'Physics 101', is_concept_coach: true].course
+    @period   = CreatePeriod[course: @course].period
+    @period_2 = CreatePeriod[course: @course].period
 
     @student_user = FactoryGirl.create(:user)
-    @student_role = AddUserAsPeriodStudent[user: @student_user, period: @period]
+    @student_role = AddUserAsPeriodStudent[user: @student_user, period: @period].role
 
     @student_user_2 = FactoryGirl.create(:user)
-    @student_role_2 = AddUserAsPeriodStudent[user: @student_user_2, period: @period_2]
+    @student_role_2 = AddUserAsPeriodStudent[user: @student_user_2, period: @period_2].role
 
     @teacher_user = FactoryGirl.create(:user, first_name: 'Bob',
                                               last_name: 'Newhart',
                                               full_name: 'Bob Newhart')
-    @teacher_role = AddUserAsCourseTeacher[user: @teacher_user, course: @course]
+    @teacher_role = AddUserAsCourseTeacher[user: @teacher_user, course: @course].role
 
     @chapter = FactoryGirl.create :content_chapter, book_location: [4]
     cnx_page_1 = OpenStax::Cnx::V1::Page.new(id: '95e61258-2faf-41d4-af92-f62e1414175a',
@@ -32,10 +32,10 @@ describe GetCcDashboard, type: :routine do
     page_model_1, page_model_2 = VCR.use_cassette('GetCcDashboard/with_book', VCR_OPTS) do
       [Content::Routines::ImportPage[chapter: @chapter,
                                      cnx_page: cnx_page_1,
-                                     book_location: book_location_1],
+                                     book_location: book_location_1].page,
        Content::Routines::ImportPage[chapter: @chapter,
                                      cnx_page: cnx_page_2,
-                                     book_location: book_location_2]]
+                                     book_location: book_location_2].page]
     end
 
     @book = @chapter.book
@@ -96,19 +96,19 @@ describe GetCcDashboard, type: :routine do
         user: @student_user, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
       ].task
       @task_1.task_steps.each do |ts|
-        Hacks::AnswerExercise[task_step: ts, is_correct: true]
+        Hacks::AnswerExercise.call(task_step: ts, is_correct: true)
       end
       @task_2 = GetConceptCoach[
         user: @student_user, cnx_book_id: @book.uuid, cnx_page_id: @page_2.uuid
       ].task
       @task_2.task_steps.each do |ts|
-        Hacks::AnswerExercise[task_step: ts, is_correct: ts.core_group?]
+        Hacks::AnswerExercise.call(task_step: ts, is_correct: ts.core_group?)
       end
       @task_3 = GetConceptCoach[
         user: @student_user_2, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
       ].task
       @task_3.task_steps.select(&:core_group?).first(2).each_with_index do |ts, ii|
-        Hacks::AnswerExercise[task_step: ts, is_correct: ii == 0]
+        Hacks::AnswerExercise.call(task_step: ts, is_correct: ii == 0)
       end
       @task_4 = GetConceptCoach[
         user: @student_user_2, cnx_book_id: @book.uuid, cnx_page_id: @page_2.uuid
@@ -116,7 +116,7 @@ describe GetCcDashboard, type: :routine do
     end
 
     it "works for a student" do
-      outputs = described_class.call(course: @course, role: @student_role).outputs
+      outputs = described_class.call(course: @course, role: @student_role)
 
       expect(HashWithIndifferentAccess[outputs]).to include(
         course: {
@@ -186,7 +186,7 @@ describe GetCcDashboard, type: :routine do
     end
 
     it "works for a teacher" do
-      outputs = described_class.call(course: @course, role: @teacher_role).outputs
+      outputs = described_class.call(course: @course, role: @teacher_role)
 
       expect(HashWithIndifferentAccess[outputs]).to include(
         course: {
@@ -289,7 +289,7 @@ describe GetCcDashboard, type: :routine do
 
       teacher_user_2 = FactoryGirl.create(:user)
       teacher_role_2 = AddUserAsCourseTeacher.call(user: teacher_user_2, course: @course)
-                                             .outputs.role
+                                             .role
 
       # Hit
       described_class[course: @course, role: teacher_role_2]

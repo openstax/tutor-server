@@ -30,13 +30,13 @@ FactoryGirl.define do
                                                    book_location: [1, 1]).page
       end
 
-      Content::Routines::PopulateExercisePools[book: chapter.book]
+      Content::Routines::PopulateExercisePools.call(book: chapter.book)
 
       ecosystem_model = chapter.book.ecosystem
       ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(ecosystem_model)
       ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
 
-      AddEcosystemToCourse[course: owner, ecosystem: ecosystem]
+      AddEcosystemToCourse.call(course: owner, ecosystem: ecosystem)
 
       ecosystem_model
     end
@@ -45,7 +45,7 @@ FactoryGirl.define do
 
     after(:build) do |task_plan, evaluator|
       course = task_plan.owner
-      period = course.periods.first || CreatePeriod[course: course].to_model
+      period = course.periods.first || CreatePeriod.call(course: course).period.to_model
 
       evaluator.number_of_students.times do
         user = create :user

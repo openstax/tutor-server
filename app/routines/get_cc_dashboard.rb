@@ -53,7 +53,7 @@ class GetCcDashboard
     cc_task_pages = cc_tasks.map{ |cc_task| Content::Page.new(strategy: cc_task.page.wrap) }
     page_id_to_page_map = ecosystems_map.map_pages_to_pages(pages: cc_task_pages)
 
-    outputs.course.periods = course.periods.map do |period|
+    result.course.periods = course.periods.map do |period|
       cc_tasks = period_id_cc_tasks_map[period.id] || []
       num_students = period.active_enrollments.length
       orig_map, spaced_map = get_period_performance_maps_from_cc_tasks(period, cc_tasks)
@@ -104,8 +104,7 @@ class GetCcDashboard
       .where{task.task.completed_exercise_steps_count > 0}
       .distinct.to_a
 
-    outputs.chapters = cc_tasks.group_by{ |cc_task| cc_task.page.chapter }
-                               .map do |chapter, cc_tasks|
+    set(chapters: cc_tasks.group_by{ |cc_task| cc_task.page.chapter }.map do |chapter, cc_tasks|
       {
         id: chapter.id,
         title: chapter.title,
@@ -131,7 +130,7 @@ class GetCcDashboard
           }
         end.sort{ |a, b| b[:book_location] <=> a[:book_location] }
       }
-    end.sort{ |a, b| b[:book_location] <=> a[:book_location] }
+    end.sort{ |a, b| b[:book_location] <=> a[:book_location] })
   end
 
   def get_period_performance_maps_from_cc_tasks(period, cc_tasks)

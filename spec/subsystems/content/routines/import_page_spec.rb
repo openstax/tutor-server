@@ -18,17 +18,17 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, speed: :slow, vcr:
       }.to change{ Content::Models::Page.count }.by(1)
       expect(result.errors).to be_empty
 
-      expect(result.outputs[:page]).to be_persisted
+      expect(result[:page]).to be_persisted
 
       uuid = cnx_page.uuid
       version = cnx_page.version
-      expect(result.outputs[:page].uuid).to eq uuid
-      expect(result.outputs[:page].version).to eq version
-      expect(result.outputs[:page].book_location).to eq book_location
+      expect(result[:page].uuid).to eq uuid
+      expect(result[:page].version).to eq version
+      expect(result[:page].book_location).to eq book_location
     end
 
     it 'converts relative links into absolute links' do
-      page = import_page.outputs[:page]
+      page = import_page[:page]
       doc = Nokogiri::HTML(page.content)
 
       doc.css('[src]').each do |tag|
@@ -51,7 +51,7 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, speed: :slow, vcr:
       expect(tags[-2].value).to eq 'k12phys-ch04-s01-lo01'
       expect(tags[-1].value).to eq 'k12phys-ch04-s01-lo02'
 
-      routine_tags = result.outputs[:tags]
+      routine_tags = result[:tags]
       routine_tags_value_set = Set.new routine_tags.collect(&:value)
       expect(routine_tags_value_set).to eq Set.new(expected_page_tags)
 
@@ -88,17 +88,17 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, speed: :slow, vcr:
       }.to change{ Content::Models::Page.count }.by(1)
       expect(result.errors).to be_empty
 
-      expect(result.outputs[:page]).to be_persisted
+      expect(result[:page]).to be_persisted
 
       uuid = cnx_page.uuid
       version = cnx_page.version
-      expect(result.outputs[:page].uuid).to eq uuid
-      expect(result.outputs[:page].version).to eq version
-      expect(result.outputs[:page].book_location).to eq book_location
+      expect(result[:page].uuid).to eq uuid
+      expect(result[:page].version).to eq version
+      expect(result[:page].book_location).to eq book_location
     end
 
     it 'converts relative links into absolute links' do
-      page = import_page(archive_url: 'https://archive.cnx.org/contents/').outputs[:page]
+      page = import_page(archive_url: 'https://archive.cnx.org/contents/')[:page]
       doc = Nokogiri::HTML(page.content)
 
       doc.css('[src]').each do |tag|
@@ -118,7 +118,7 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, speed: :slow, vcr:
       tag = Content::Models::Tag.cnxmod.order(:created_at).last
       expect(tag.value).to eq expected_page_tag
 
-      routine_tags = result.outputs[:tags]
+      routine_tags = result[:tags]
       expect(routine_tags.map(&:value)).to eq [expected_page_tag]
 
       page_tag_values = Content::Models::Page.order(:created_at).last.page_tags

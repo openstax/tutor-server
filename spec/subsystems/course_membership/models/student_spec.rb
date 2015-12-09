@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe CourseMembership::Models::Student, type: :model do
-  let!(:period)     { CreatePeriod[course: Entity::Course.create!].to_model }
+  let!(:period)     { CreatePeriod.call(course: Entity::Course.create!).period.to_model }
   let!(:user)       { FactoryGirl.create(:user) }
-  subject(:student) { AddUserAsPeriodStudent[user: user, period: period,
-                                             student_identifier: 'N0B0DY'].student }
+  subject(:student) { AddUserAsPeriodStudent.call(user: user, period: period,
+                                                  student_identifier: 'N0B0DY').student }
 
   it { is_expected.to belong_to(:course) }
   it { is_expected.to belong_to(:role) }

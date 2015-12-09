@@ -17,21 +17,21 @@ module Admin
     end
 
     def import_courses
-      outputs = ImportSalesforceCourses.call(
+      import_salesforce = ImportSalesforceCourses.call(
         include_real_salesforce_data: params[:use_real_data]
-      ).outputs
+      )
 
-      flash[:notice] = "Of #{outputs.num_failures + outputs.num_successes} candidate records in Salesforce, " +
-        "#{outputs.num_successes} were successfully imported and #{outputs.num_failures} failed."
+      flash[:notice] = "Of #{import_salesforce.num_failures + import_salesforce.num_successes} candidate records in Salesforce, " +
+        "#{import_salesforce.num_successes} were successfully imported and #{import_salesforce.num_failures} failed."
 
       redirect_to admin_salesforce_path
     end
 
     def update_salesforce
-      outputs = UpdateSalesforceStats.call
+      update_salesforce = UpdateSalesforceStats.call
 
-      flash[:notice] = "Ran on #{outputs[:num_records]} record(s); " +
-                       "updated #{outputs[:num_updates]} record(s); #{outputs[:num_errors]} error(s) occurred."
+      flash[:notice] = "Ran on #{update_salesforce.num_records} record(s); " +
+                       "updated #{update_salesforce.num_updates} record(s); #{update_salesforce.num_errors} error(s) occurred."
 
       redirect_to admin_salesforce_path
     end

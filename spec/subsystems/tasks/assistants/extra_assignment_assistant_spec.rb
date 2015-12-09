@@ -9,7 +9,7 @@ RSpec.describe Tasks::Assistants::ExtraAssignmentAssistant, type: :assistant, vc
   }
 
   let!(:course) { Entity::Course.create }
-  let!(:period) { CreatePeriod[course: course] }
+  let!(:period) { CreatePeriod.call(course: course).period }
 
   let!(:ecosystem) {
     es = nil
@@ -40,7 +40,7 @@ RSpec.describe Tasks::Assistants::ExtraAssignmentAssistant, type: :assistant, vc
   let!(:students) {
     num_taskees.times.collect do
       user = FactoryGirl.create(:user)
-      AddUserAsPeriodStudent.call(user: user, period: period).outputs.student
+      AddUserAsPeriodStudent.call(user: user, period: period).student
     end
   }
 
@@ -51,7 +51,7 @@ RSpec.describe Tasks::Assistants::ExtraAssignmentAssistant, type: :assistant, vc
   }
 
   it 'assigns tasked readings and exercises to students' do
-    tasks = DistributeTasks.call(task_plan).outputs.entity_tasks.collect(&:task)
+    tasks = DistributeTasks.call(task_plan).entity_tasks.collect(&:task)
     expect(tasks.length).to eq(num_taskees)
     tasks.each do |task|
       # We added 2 snap lab notes:

@@ -73,7 +73,7 @@ class Tasks::Assistants::IReadingAssistant
       description: description,
       feedback_at: Time.now
     ]
-    AddSpyInfo[to: task, from: @ecosystem]
+    AddSpyInfo.call(to: task, from: @ecosystem)
     return task
   end
 
@@ -133,7 +133,7 @@ class Tasks::Assistants::IReadingAssistant
 
   def add_spaced_practice_exercise_steps!(task:, taskee:)
     # Get taskee's reading history
-    history = GetHistory.call(role: taskee, type: :reading, current_task: task).outputs
+    history = GetHistory.call(role: taskee, type: :reading, current_task: task)
 
     all_worked_exercise_numbers = history.exercises.flatten.collect{ |ex| ex.number }
 
@@ -211,7 +211,7 @@ class Tasks::Assistants::IReadingAssistant
 
   def add_exercise_step(task:, exercise:)
     step = Tasks::Models::TaskStep.new(task: task)
-    TaskExercise[task_step: step, exercise: exercise]
+    TaskExercise.call(task_step: step, exercise: exercise)
     task.task_steps << step
     step
   end
@@ -266,8 +266,8 @@ class Tasks::Assistants::IReadingAssistant
       end
 
       # Assign the exercise
-      TaskExercise[exercise: exercise, title: title,
-                   can_be_recovered: can_be_recovered, task_step: step]
+      TaskExercise.call(exercise: exercise, title: title,
+                        can_be_recovered: can_be_recovered, task_step: step)
     end
   end
 

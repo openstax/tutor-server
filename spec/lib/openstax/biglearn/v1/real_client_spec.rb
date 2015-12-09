@@ -21,16 +21,16 @@ module OpenStax::Biglearn
     let(:client) { described_class.new(configuration) }
 
     let!(:user_1_role) {
-      user = User::CreateUser[username: SecureRandom.hex,
-                              exchange_identifiers: Hashie::Mash.new(read: USER_1_IDENTIFIER,
-                                                                     write: SecureRandom.hex)]
+      user = User::CreateUser.call(username: SecureRandom.hex,
+                                   exchange_identifiers: Hashie::Mash.new(read: USER_1_IDENTIFIER,
+                                                                          write: SecureRandom.hex))
       Role::CreateUserRole[user]
     }
 
     let!(:user_2_role) {
-      user = User::CreateUser[username: SecureRandom.hex,
-                              exchange_identifiers: Hashie::Mash.new(read: USER_2_IDENTIFIER,
-                                                                     write: SecureRandom.hex)]
+      user = User::CreateUser.call(username: SecureRandom.hex,
+                                   exchange_identifiers: Hashie::Mash.new(read: USER_2_IDENTIFIER,
+                                                                          write: SecureRandom.hex))
       Role::CreateUserRole[user]
     }
 

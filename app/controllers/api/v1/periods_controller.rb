@@ -21,7 +21,7 @@ class Api::V1::PeriodsController < Api::V1::ApiController
     if result.errors.any?
       render_api_errors(result.errors)
     else
-      respond_with result.outputs.period,
+      respond_with result.period,
                    represent_with: Api::V1::PeriodRepresenter,
                    location: nil
     end
@@ -62,7 +62,7 @@ class Api::V1::PeriodsController < Api::V1::ApiController
     if params[:course_id]
       @course = Entity::Course.find(params[:course_id])
     elsif params[:id]
-      @period = CourseMembership::GetPeriod[id: params[:id]]
+      @period = CourseMembership::GetPeriod.call(id: params[:id])
       @course = @period.course
     end
   end

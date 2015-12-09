@@ -49,7 +49,7 @@ RSpec.describe Tasks::RefreshTaskStep, type: :routine do
     :content_exercise_tag, exercise: recovery_exercise, tag: pp
   ) }
 
-  let!(:pools) { Content::Routines::PopulateExercisePools[book: recovery_exercise.book] }
+  let!(:pools) { Content::Routines::PopulateExercisePools.call(book: recovery_exercise.book).pools }
 
   it "cannot be called on taskeds without a recovery step" do
     result = nil
@@ -90,11 +90,10 @@ RSpec.describe Tasks::RefreshTaskStep, type: :routine do
 
     expect(result.errors).to be_empty
 
-    outputs = result.outputs
-    expect(outputs.refresh_step.url).to eq tasked_reading.url
-    expect(outputs.recovery_step.tasked.url).to eq recovery_exercise.url
-    expect(outputs.recovery_step.tasked.title).to eq recovery_exercise.title
-    expect(outputs.recovery_step.tasked.content).to eq recovery_exercise.content
+    expect(result.refresh_step.url).to eq tasked_reading.url
+    expect(result.recovery_step.tasked.url).to eq recovery_exercise.url
+    expect(result.recovery_step.tasked.title).to eq recovery_exercise.title
+    expect(result.recovery_step.tasked.content).to eq recovery_exercise.content
   end
 
 end

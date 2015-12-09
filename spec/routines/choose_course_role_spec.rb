@@ -83,7 +83,7 @@ describe ChooseCourseRole, type: :routine do
   context "when a role is provided" do
 
     context "and the user has it" do
-      subject { ChooseCourseRole.call(user: student, course: course, role_id: student_role.id) }
+      subject { ChooseCourseRole.call(user: student, course: course, role_id: student_role.id).role }
       it "returns the user's role" do
         expect(subject.role).to eq(student_role)
       end

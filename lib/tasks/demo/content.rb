@@ -49,7 +49,7 @@ class DemoContent < DemoBase
   def configure_course_period(course, period_content, index)
     period_name = period_content.name
     period = find_period(course: course, name: period_name) || \
-             run(:create_period, course: course, name: period_name).outputs.period
+             run(:create_period, course: course, name: period_name).period
     log("  Period: #{period_content.name}")
     if period_content.enrollment_code
       run(:update_period, period: period, enrollment_code: period_content.enrollment_code)

@@ -47,7 +47,7 @@ class Api::V1::EnrollmentChangesController < Api::V1::ApiController
     end
 
     if enrollment_params.book_uuid.present?
-      ecosystem = GetCourseEcosystem[course: period.course]
+      ecosystem = GetCourseEcosystem.call(course: period.course)
 
       if ecosystem.books.first.uuid != enrollment_params.book_uuid
         render_api_errors(:enrollment_code_does_not_match_book)
@@ -59,7 +59,7 @@ class Api::V1::EnrollmentChangesController < Api::V1::ApiController
                                                            period: period)
 
     if result.errors.empty?
-      respond_with result.outputs.enrollment_change,
+      respond_with result.enrollment_change,
                    represent_with: Api::V1::EnrollmentChangeRepresenter,
                    location: nil
     else
@@ -100,7 +100,7 @@ class Api::V1::EnrollmentChangesController < Api::V1::ApiController
       )
 
       if result.errors.empty?
-        respond_with result.outputs.enrollment_change,
+        respond_with result.enrollment_change,
                      represent_with: Api::V1::EnrollmentChangeRepresenter,
                      responder: ResponderWithPutContent
       else

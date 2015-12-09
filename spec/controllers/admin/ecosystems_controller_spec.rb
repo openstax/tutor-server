@@ -9,7 +9,7 @@ RSpec.describe Admin::EcosystemsController, speed: :slow, vcr: VCR_OPTS do
   let!(:book_2) { FactoryGirl.create :content_book, title: 'AP Biology', version: '2' }
   let!(:ecosystem_2) { Content::Ecosystem.find(book_2.ecosystem.id) }
 
-  let!(:course) { CreateCourse[name: 'AP Biology'] }
+  let!(:course) { CreateCourse.call(name: 'AP Biology').course }
 
   before { controller.sign_in(admin) }
 
@@ -109,7 +109,7 @@ RSpec.describe Admin::EcosystemsController, speed: :slow, vcr: VCR_OPTS do
     end
 
     it 'returns an error if the ecosystem is linked to a course' do
-      AddEcosystemToCourse[course: course, ecosystem: ecosystem_2]
+      AddEcosystemToCourse.call(course: course, ecosystem: ecosystem_2)
       expect {
         delete :destroy, id: ecosystem_2.id
       }.to_not change { Content::Models::Ecosystem.count }

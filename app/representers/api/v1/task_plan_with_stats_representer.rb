@@ -26,7 +26,7 @@ module Api::V1
 
     collection :stats,
                decorator: Api::V1::Tasks::Stats::StatRepresenter,
-               getter: ->(args) { CalculateTaskStats[tasks: tasks] },
+               getter: ->(args) { CalculateTaskStats.call(tasks: tasks) },
                readable: true,
                writable: false
 

@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 describe CourseMembership::ProcessEnrollmentChange, type: :routine do
-  let!(:period)            { CreatePeriod[course: Entity::Course.create!] }
-  let!(:period_2)          { CreatePeriod[course: period.course] }
+  let!(:period)            { CreatePeriod.call(course: Entity::Course.create!).period }
+  let!(:period_2)          { CreatePeriod.call(course: period.course).period }
 
   let!(:user)              do
     profile = FactoryGirl.create :user_profile
@@ -10,7 +10,7 @@ describe CourseMembership::ProcessEnrollmentChange, type: :routine do
     ::User::User.new(strategy: strategy)
   end
 
-  let!(:enrollment_change) { CourseMembership::CreateEnrollmentChange[user: user, period: period] }
+  let!(:enrollment_change) { CourseMembership::CreateEnrollmentChange.call(user: user, period: period).enrollement_change }
 
   let!(:args)              { { enrollment_change: enrollment_change } }
 
@@ -22,7 +22,7 @@ describe CourseMembership::ProcessEnrollmentChange, type: :routine do
       expect{ result = described_class.call(args) }
         .to change{ CourseMembership::Models::Enrollment.count }.by(1)
       expect(result.errors).to be_empty
-      expect(result.outputs.enrollment_change.status).to eq :processed
+      expect(result.enrollment_change.status).to eq :processed
     end
 
     it 'sets the student_identifier if given' do
@@ -31,21 +31,21 @@ describe CourseMembership::ProcessEnrollmentChange, type: :routine do
       expect{ result = described_class.call(args.merge(student_identifier: sid)) }
         .to change{ CourseMembership::Models::Enrollment.count }.by(1)
       expect(result.errors).to be_empty
-      expect(result.outputs.enrollment_change.status).to eq :processed
+      expect(result.enrollment_change.status).to eq :processed
 
       student = CourseMembership::Models::Enrollment.order(:created_at).last.student
       expect(student.student_identifier).to eq sid
     end
 
     it 'rejects other pending EnrollmentChanges for the same user and course' do
-      enrollment_change_2 = CourseMembership::CreateEnrollmentChange[user: user, period: period]
-      enrollment_change_3 = CourseMembership::CreateEnrollmentChange[user: user, period: period_2]
+      enrollment_change_2 = CourseMembership::CreateEnrollmentChange.call(user: user, period: period)
+      enrollment_change_3 = CourseMembership::CreateEnrollmentChange.call(user: user, period: period_2)
 
       result = nil
       expect{ result = described_class.call(args) }
         .to change{ CourseMembership::Models::Enrollment.count }.by(1)
       expect(result.errors).to be_empty
-      expect(result.outputs.enrollment_change.status).to eq :processed
+      expect(result.enrollment_change.status).to eq :processed
 
       enrollment_change_2.to_model.reload
       enrollment_change_3.to_model.reload

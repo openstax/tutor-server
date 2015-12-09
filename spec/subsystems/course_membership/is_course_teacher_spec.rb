@@ -17,7 +17,7 @@ describe CourseMembership::IsCourseTeacher do
       it "returns false" do
         result = CourseMembership::IsCourseTeacher.call(course: target_course, roles: target_teacher_role)
         expect(result.errors).to be_empty
-        expect(result.outputs.is_course_teacher).to be_falsey
+        expect(result.is_course_teacher).to be_falsey
       end
     end
     context "multiple roles are given" do
@@ -28,12 +28,12 @@ describe CourseMembership::IsCourseTeacher do
 
         result = CourseMembership::IsCourseTeacher.call(course: target_course, roles: roles)
         expect(result.errors).to be_empty
-        expect(result.outputs.is_course_teacher).to be_falsey
+        expect(result.is_course_teacher).to be_falsey
       end
     end
     context "when expressed called" do
       it "returns false" do
-        is_course_teacher = CourseMembership::IsCourseTeacher[course: target_course, roles: target_teacher_role]
+        is_course_teacher = CourseMembership::IsCourseTeacher.call(course: target_course, roles: target_teacher_role)
         expect(is_course_teacher).to be_falsey
       end
     end
@@ -51,7 +51,7 @@ describe CourseMembership::IsCourseTeacher do
       it "returns true" do
         result = CourseMembership::IsCourseTeacher.call(course: target_course, roles: target_teacher_role)
         expect(result.errors).to be_empty
-        expect(result.outputs.is_course_teacher).to be_truthy
+        expect(result.is_course_teacher).to be_truthy
       end
     end
     context "multiple roles are given" do
@@ -62,12 +62,12 @@ describe CourseMembership::IsCourseTeacher do
 
         result = CourseMembership::IsCourseTeacher.call(course: target_course, roles: roles)
         expect(result.errors).to be_empty
-        expect(result.outputs.is_course_teacher).to be_truthy
+        expect(result.is_course_teacher).to be_truthy
       end
     end
     context "when expressed called" do
       it "returns true" do
-        is_course_teacher = CourseMembership::IsCourseTeacher[course: target_course, roles: target_teacher_role]
+        is_course_teacher = CourseMembership::IsCourseTeacher.call(course: target_course, roles: target_teacher_role)
         expect(is_course_teacher).to be_truthy
       end
     end

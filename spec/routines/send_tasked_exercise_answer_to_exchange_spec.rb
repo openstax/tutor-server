@@ -7,7 +7,7 @@ RSpec.describe SendTaskedExerciseAnswerToExchange, type: :routine do
   let!(:period)             { FactoryGirl.create :course_membership_period }
   let!(:user)               { FactoryGirl.create :user,
                                          exchange_write_identifier: exchange_identifier }
-  let!(:role)               { AddUserAsPeriodStudent[user: user, period: period] }
+  let!(:role)               { AddUserAsPeriodStudent.call(user: user, period: period).role }
   let!(:tasked_exercise)    { FactoryGirl.create :tasks_tasked_exercise,
                                                  :with_tasking,
                                                  tasked_to: role,
@@ -30,6 +30,6 @@ RSpec.describe SendTaskedExerciseAnswerToExchange, type: :routine do
                                           tasked_exercise.task_step.id.to_s,
                                           1,
                                           'tutor')
-    described_class[tasked_exercise: tasked_exercise]
+    described_class.call(tasked_exercise: tasked_exercise)
   end
 end

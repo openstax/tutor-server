@@ -71,7 +71,7 @@ module OpenStax::Biglearn
       end
 
       it 'returns a well-formatted array of clues' do
-        user = User::CreateUser.call(username: SecureRandom.hex).outputs.user
+        user = User::CreateUser.call(username: SecureRandom.hex).user
         roles = [Role::CreateUserRole[user]]
         pools = [pool_1, pool_2]
         pool_uuids = pools.collect(&:uuid)

@@ -11,11 +11,11 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine, speed: :slow do
         book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
       ]
     end
-    @course = CreateCourse[name: 'Physics']
+    @course = CreateCourse.call(name: 'Physics')
     CourseContent::AddEcosystemToCourse.call(course: @course, ecosystem: @ecosystem)
 
     @teacher = FactoryGirl.create(:user)
-    SetupPerformanceReportData[course: @course, teacher: @teacher, ecosystem: @ecosystem]
+    SetupPerformanceReportData.call(course: @course, teacher: @teacher, ecosystem: @ecosystem)
   end
 
   after(:all) do
@@ -29,7 +29,7 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine, speed: :slow do
   let(:expected_task_types) { ['homework', 'reading', 'homework'] }
 
   it 'has the proper structure' do
-    reports = described_class[course: @course]
+    reports = described_class.call(course: @course)
     expect(reports.size).to eq expected_periods
     reports.each_with_index do |report, rindex|
       expect(report.data_headings.size).to eq expected_tasks
@@ -51,21 +51,21 @@ RSpec.describe Tasks::GetTpPerformanceReport, type: :routine, speed: :slow do
   it 'does not blow up when a student was not assigned a particular task' do
     @course.students.first.role.taskings.first.task.destroy
     expect {
-      described_class[course: @course]
+      described_class.call(course: @course)
     }.not_to raise_error
   end
 
   it 'does not blow up when a student has no first_name' do
     @course.students.first.role.profile.account.update_attribute(:first_name, nil)
     expect {
-      described_class[course: @course]
+      described_class.call(course: @course)
     }.not_to raise_error
   end
 
   it 'does not blow up when a student has no last_name' do
     @course.students.first.role.profile.account.update_attribute(:last_name, nil)
     expect {
-      described_class[course: @course]
+      described_class.call(course: @course)
     }.not_to raise_error
   end
 

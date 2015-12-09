@@ -2,18 +2,18 @@ require 'rails_helper'
 
 module CourseMembership
   RSpec.describe Period, type: :wrapper do
-    subject(:period)      { ::CreatePeriod[course: Entity::Course.create!] }
+    subject(:period)      { ::CreatePeriod.call(course: Entity::Course.create!).period }
 
     let!(:student_1_user) { FactoryGirl.create(:user) }
     let!(:student_2_user) { FactoryGirl.create(:user) }
     let!(:teacher_user)   { FactoryGirl.create(:user) }
 
     let!(:student_1)      { AddUserAsPeriodStudent.call(user: student_1_user,
-                                                        period: period).outputs.role }
+                                                        period: period).role }
     let!(:student_2)      { AddUserAsPeriodStudent.call(user: student_2_user,
-                                                        period: period).outputs.role }
+                                                        period: period).role }
     let!(:teacher)        { AddUserAsCourseTeacher.call(user: teacher_user,
-                                                        course: period.course).outputs.role }
+                                                        course: period.course).role }
 
     it 'exposes course, name, student_roles, teacher_roles, enrollment_code and to_model' do
       [:course, :name, :student_roles, :teacher_roles,

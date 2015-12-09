@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version: :v1 do
-  let(:course) { CreateCourse[name: 'Biology I'] }
-  let(:other_course) { CreateCourse[name: 'Other course'] }
+  let(:course) { CreateCourse.call(name: 'Biology I').course }
+  let(:other_course) { CreateCourse.call(name: 'Other course').course }
 
   let(:teacher_user) { FactoryGirl.create(:user) }
 
@@ -10,7 +10,7 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
                                            resource_owner_id: teacher_user.id) }
 
   before do
-    AddUserAsCourseTeacher[course: course, user: teacher_user]
+    AddUserAsCourseTeacher.call(course: course, user: teacher_user)
   end
 
   describe '#create' do
@@ -37,8 +37,8 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
     end
 
     it "allows same name on periods if the previous one was deleted" do
-      period = CreatePeriod[course: course, name: '8th Period']
-      CourseMembership::DeletePeriod[period: period]
+      period = CreatePeriod.call(course: course, name: '8th Period')
+      CourseMembership::DeletePeriod.call(period: period)
 
       api_post :create, teacher_token, parameters: { course_id: course.id,
                                                      period: { name: '8th Period' } }
@@ -49,7 +49,7 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
   end
 
   describe '#update' do
-    let(:period) { CreatePeriod[course: course, name: '8th Period'] }
+    let(:period) { CreatePeriod.call(course: course, name: '8th Period').period }
 
     it 'allows teachers to rename periods' do
       api_patch :update, teacher_token, parameters: { id: period.id,
@@ -67,7 +67,7 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
     end
 
     it 'ensures the person is a teacher of the course' do
-      other_period = CreatePeriod[course: other_course]
+      other_period = CreatePeriod.call(course: other_course)
 
       rescuing_exceptions do
         api_put :update, teacher_token, parameters: { id: other_period.id,
@@ -80,7 +80,7 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
 
   describe '#destroy' do
     it 'allows teachers to delete periods' do
-      period = CreatePeriod[course: course, name: '8th Period']
+      period = CreatePeriod.call(course: course, name: '8th Period')
 
       api_delete :destroy, teacher_token, parameters: { id: period.id }
 
@@ -90,9 +90,9 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
     end
 
     it 'will not delete periods with active enrollments' do
-      period = CreatePeriod[course: course, name: '8th Period']
+      period = CreatePeriod.call(course: course, name: '8th Period')
       student = FactoryGirl.create(:user)
-      AddUserAsPeriodStudent[period: period, user: student]
+      AddUserAsPeriodStudent.call(period: period, user: student)
 
       api_delete :destroy, teacher_token, parameters: { id: period.id }
 
@@ -107,7 +107,7 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
     end
 
     it 'ensures the person is a teacher of the course' do
-      other_period = CreatePeriod[course: other_course]
+      other_period = CreatePeriod.call(course: other_course)
 
       rescuing_exceptions do
         api_delete :destroy, teacher_token, parameters: { id: other_period.id }
@@ -118,8 +118,8 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
     end
 
     it "does not delete periods already deleted" do
-      period = CreatePeriod[course: course, name: '8th Period']
-      CourseMembership::DeletePeriod[period: period]
+      period = CreatePeriod.call(course: course, name: '8th Period')
+      CourseMembership::DeletePeriod.call(period: period)
 
       rescuing_exceptions do
         api_delete :destroy, teacher_token, parameters: { id: period.id }

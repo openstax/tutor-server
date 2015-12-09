@@ -5,8 +5,8 @@ require 'database_cleaner'
 RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: true,
                                                       version: :v1, speed: :slow, vcr: VCR_OPTS do
 
-  let!(:course) { CreateCourse[name: 'Physics 101'] }
-  let!(:period) { CreatePeriod[course: course] }
+  let!(:course) { CreateCourse.call(name: 'Physics 101').course }
+  let!(:period) { CreatePeriod.call(course: course).period }
 
   context 'with book' do
     before(:all) do
@@ -54,10 +54,10 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
           [ [1,1] ]
         }
 
-        SetupPerformanceReportData[course: course,
-                                   teacher: teacher,
-                                   students: [student_1, student_2, student_3, student_4],
-                                   ecosystem: @ecosystem]
+        SetupPerformanceReportData.call(course: course,
+                                        teacher: teacher,
+                                        students: [student_1, student_2, student_3, student_4],
+                                        ecosystem: @ecosystem)
       end
 
       it 'should work on the happy path' do
@@ -246,7 +246,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
 
       it 'works after a student has moved period' do
         period_2 = course.periods.order(:id).last
-        role = GetUserCourseRoles[user: student_1, course: course].first
+        role = GetUserCourseRoles.call(user: student_1, course: course).first
         student = CourseMembership::Models::Student.find_by(role: role)
         MoveStudent.call(period: period_2, student: student)
 
@@ -459,7 +459,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
                            resource_owner_id: teacher.id }
 
     before do
-      AddUserAsCourseTeacher[course: course, user: teacher]
+      AddUserAsCourseTeacher.call(course: course, user: teacher)
     end
 
     context 'success' do
@@ -517,12 +517,12 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
                            resource_owner_id: teacher.id }
 
     before(:each) do
-      AddUserAsCourseTeacher[course: course, user: teacher]
+      AddUserAsCourseTeacher.call(course: course, user: teacher)
     end
 
     context 'success' do
       before(:each) do
-        role = ChooseCourseRole[user: teacher, course: course, allowed_role_type: :teacher]
+        role = ChooseCourseRole.call(user: teacher, course: course, allowed_role_type: :teacher)
 
         @export = Tempfile.open(['test_export', '.xls']) do |file|
           FactoryGirl.create(:tasks_performance_report_export,

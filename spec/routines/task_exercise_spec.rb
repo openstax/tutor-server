@@ -9,9 +9,9 @@ RSpec.describe TaskExercise, type: :routine do
   let!(:task_step) { FactoryGirl.build(:tasks_task_step) }
 
   it 'builds but does not save a TaskedExercise for the given exercise and task_step' do
-    tasked_exercise = TaskExercise[exercise: exercise,
-                                   can_be_recovered: true,
-                                   task_step: task_step]
+    tasked_exercise = TaskExercise.call(exercise: exercise,
+                                        can_be_recovered: true,
+                                        task_step: task_step)
     expect(tasked_exercise).to be_a(Tasks::Models::TaskedExercise)
     expect(tasked_exercise).not_to be_persisted
     expect(tasked_exercise.can_be_recovered).to eq true

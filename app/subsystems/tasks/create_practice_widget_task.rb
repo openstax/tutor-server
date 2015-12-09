@@ -20,7 +20,7 @@ module Tasks
       exercises.each_with_index do |exercise, ii|
         step = Tasks::Models::TaskStep.new(task: result.task)
 
-        step.tasked = TaskExercise[exercise: exercise, task_step: step]
+        step.tasked = TaskExercise.call(exercise: exercise, task_step: step)
 
         related_content = related_content_array[ii]
         step.add_related_content(related_content) unless related_content.nil?

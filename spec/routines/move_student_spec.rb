@@ -5,9 +5,9 @@ describe MoveStudent, type: :routine do
     it "succeeds" do
       role = Entity::Role.create!
       course = Entity::Course.create!
-      period_1 = CreatePeriod[course: course]
-      period_2 = CreatePeriod[course: course]
-      student = CourseMembership::AddStudent[period: period_1, role: role]
+      period_1 = CreatePeriod.call(course: course)
+      period_2 = CreatePeriod.call(course: course)
+      student = CourseMembership::AddStudent.call(period: period_1, role: role)
 
       result = nil
       expect {
@@ -33,9 +33,9 @@ describe MoveStudent, type: :routine do
       role = Entity::Role.create!
       course_1 = Entity::Course.create!
       course_2 = Entity::Course.create!
-      period_1 = CreatePeriod[course: course_1]
-      period_2 = CreatePeriod[course: course_2]
-      student = CourseMembership::AddStudent[period: period_1, role: role]
+      period_1 = CreatePeriod.call(course: course_1)
+      period_2 = CreatePeriod.call(course: course_2)
+      student = CourseMembership::AddStudent.call(period: period_1, role: role)
 
       result = nil
       expect {

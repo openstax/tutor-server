@@ -11,7 +11,7 @@ class AddUserAsCourseTeacher
                   offending_inputs: [user, course])
     else
       run(:create_role, user, :teacher)
-      run(:add_teacher, course: course, role: outputs.role)
+      run(:add_teacher, course: course, role: result.role)
     end
   end
 end

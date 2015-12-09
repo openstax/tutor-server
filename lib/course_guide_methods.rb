@@ -19,7 +19,7 @@ module CourseGuideMethods
       strategy = ::Content::Strategies::Direct::Exercise.new(content_exercise)
       ::Content::Exercise.new(strategy: strategy)
     end
-    ecosystems_map = GetCourseEcosystemsMap[course: course]
+    ecosystems_map = GetCourseEcosystemsMap.call(course: course)
 
     ecosystems_map.map_exercises_to_pages(exercises: exercises)
   end
@@ -131,7 +131,7 @@ module CourseGuideMethods
   end
 
   def compile_course_guide(course, tasked_exercises, exercise_id_to_page_map, type = :student)
-    current_ecosystem = GetCourseEcosystem[course: course]
+    current_ecosystem = GetCourseEcosystem.call(course: course)
     chapters = compile_chapters(tasked_exercises, exercise_id_to_page_map, type)
 
     {

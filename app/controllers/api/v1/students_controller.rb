@@ -28,7 +28,7 @@ class Api::V1::StudentsController < Api::V1::ApiController
   #     period = CourseMembership::Models::Period.find(@payload.delete 'course_membership_period_id')
   #     args = @payload.to_hash.symbolize_keys.merge(period: period)
   #     @result = CreateStudent.call(args)
-  #     @student = @result.outputs[:student]
+  #     @student = @result[:student]
   #     OSU::AccessPolicy.require_action_allowed!(:create, current_api_user, @student)
   #     raise SecurityTransgression \
   #       unless @student.period.entity_course_id.to_s == params[:course_id].to_s
@@ -62,7 +62,7 @@ class Api::V1::StudentsController < Api::V1::ApiController
     if @result.errors.any?
       render_api_errors(@result.errors)
     else
-      respond_with @result.outputs.student,
+      respond_with @result.student,
                    represent_with: Api::V1::StudentRepresenter,
                    responder: ResponderWithPutContent
     end
@@ -98,7 +98,7 @@ class Api::V1::StudentsController < Api::V1::ApiController
     if result.errors.any?
       render_api_errors(result.errors)
     else
-      respond_with result.outputs.student,
+      respond_with result.student,
                    represent_with: Api::V1::StudentRepresenter,
                    responder: ResponderWithPutContent
     end

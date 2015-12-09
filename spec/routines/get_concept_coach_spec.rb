@@ -12,7 +12,7 @@ RSpec.describe GetConceptCoach, type: :routine, speed: :medium do
     DatabaseCleaner.start
 
     ecosystem = VCR.use_cassette('GetConceptCoach/with_book', VCR_OPTS) do
-      FetchAndImportBookAndCreateEcosystem[book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b']
+      FetchAndImportBookAndCreateEcosystem.call(book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b')
     end
 
     @book = ecosystem.books.first
@@ -36,13 +36,13 @@ RSpec.describe GetConceptCoach, type: :routine, speed: :medium do
     @course = period.course
     @course.profile.update_attribute(:is_concept_coach, true)
 
-    AddEcosystemToCourse[ecosystem: ecosystem, course: @course]
+    AddEcosystemToCourse.call(ecosystem: ecosystem, course: @course)
 
     @user_1 = FactoryGirl.create(:user)
     @user_2 = FactoryGirl.create(:user)
 
-    AddUserAsPeriodStudent[user: @user_1, period: period]
-    AddUserAsPeriodStudent[user: @user_2, period: period]
+    AddUserAsPeriodStudent.call(user: @user_1, period: period)
+    AddUserAsPeriodStudent.call(user: @user_2, period: period)
   end
 
   after(:all) do
@@ -76,7 +76,7 @@ RSpec.describe GetConceptCoach, type: :routine, speed: :medium do
         user: @user_1, cnx_book_id: 'invalid', cnx_page_id: @page_1.uuid
       ) }.not_to change{ Tasks::Models::ConceptCoachTask.count }
       expect(result.errors.map(&:code)).to eq [:invalid_book]
-      expect(result.outputs.valid_book_urls).to eq [@book.url]
+      expect(result.valid_book_urls).to eq [@book.url]
     end
 
     it 'returns an error if the page is invalid' do
@@ -85,7 +85,7 @@ RSpec.describe GetConceptCoach, type: :routine, speed: :medium do
         user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: 'invalid'
       ) }.not_to change{ Tasks::Models::ConceptCoachTask.count }
       expect(result.errors.map(&:code)).to eq [:invalid_page]
-      expect(result.outputs.valid_book_urls).to eq [@book.url]
+      expect(result.valid_book_urls).to eq [@book.url]
     end
 
     it 'does not include non-cc courses' do
@@ -100,9 +100,9 @@ RSpec.describe GetConceptCoach, type: :routine, speed: :medium do
   end
 
   context 'existing task' do
-    let!(:existing_task) { described_class[user: @user_1,
-                                           cnx_book_id: @book.uuid,
-                                           cnx_page_id: @page_1.uuid].task }
+    let!(:existing_task) { described_class.call(user: @user_1,
+                                                cnx_book_id: @book.uuid,
+                                                cnx_page_id: @page_1.uuid).task }
 
     it 'should not create a new task for the same user and page' do
       task = nil
@@ -186,7 +186,7 @@ it 'should create a new task for a different page and properly assign spaced pra
         user: @user_1, cnx_book_id: 'invalid', cnx_page_id: @page_1.uuid
       ) }.not_to change{ Tasks::Models::ConceptCoachTask.count }
       expect(result.errors.map(&:code)).to eq [:invalid_book]
-      expect(result.outputs.valid_book_urls).to eq [@book.url]
+      expect(result.valid_book_urls).to eq [@book.url]
     end
 
     it 'returns an error if the page is invalid' do
@@ -195,7 +195,7 @@ it 'should create a new task for a different page and properly assign spaced pra
         user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: 'invalid'
       ) }.not_to change{ Tasks::Models::ConceptCoachTask.count }
       expect(result.errors.map(&:code)).to eq [:invalid_page]
-      expect(result.outputs.valid_book_urls).to eq [@book.url]
+      expect(result.valid_book_urls).to eq [@book.url]
     end
 
     it 'returns an error if the page has no exercises' do
@@ -206,7 +206,7 @@ it 'should create a new task for a different page and properly assign spaced pra
         user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: page.uuid
       ) }.not_to change{ Tasks::Models::ConceptCoachTask.count }
       expect(result.errors.map(&:code)).to eq [:page_has_no_exercises]
-      expect(result.outputs.valid_book_urls).to eq [@book.url]
+      expect(result.valid_book_urls).to eq [@book.url]
     end
   end
 

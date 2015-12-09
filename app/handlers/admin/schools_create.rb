@@ -13,7 +13,7 @@ class Admin::SchoolsCreate
   end
 
   def handle
-    district = SchoolDistrict::GetDistrict[id: school_params.school_district_district_id]
+    district = SchoolDistrict::GetDistrict.call(id: school_params.school_district_district_id)
     run(:create_school, name: school_params.name, district: district)
   end
 end

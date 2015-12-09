@@ -1,35 +1,35 @@
 require 'rails_helper'
 
 describe GetCourseRoster, type: :routine do
-  let!(:course) { CreateCourse[name: 'Physics 101'] }
-  let!(:period_1) { CreatePeriod[course: course] }
-  let!(:period_2) { CreatePeriod[course: course] }
+  let!(:course) { CreateCourse.call(name: 'Physics 101').course }
+  let!(:period_1) { CreatePeriod.call(course: course).period }
+  let!(:period_2) { CreatePeriod.call(course: course).period }
 
-  let!(:other_course) { CreateCourse[name: 'Other Course'] }
-  let!(:other_period) { CreatePeriod[course: other_course] }
+  let!(:other_course) { CreateCourse.call(name: 'Other Course').course }
+  let!(:other_period) { CreatePeriod.call(course: other_course).period }
 
   let!(:student_1) { FactoryGirl.create(:user) }
   let!(:student_1_role) {
-    AddUserAsPeriodStudent.call(period: period_1, user: student_1).outputs[:role]
+    AddUserAsPeriodStudent.call(period: period_1, user: student_1)[:role]
   }
 
   let(:student_2) { FactoryGirl.create(:user) }
   let!(:student_2_role) {
-    AddUserAsPeriodStudent.call(period: period_1, user: student_2).outputs[:role]
+    AddUserAsPeriodStudent.call(period: period_1, user: student_2)[:role]
   }
 
   let(:student_3) { FactoryGirl.create(:user) }
   let!(:student_3_role) {
-    AddUserAsPeriodStudent.call(period: period_2, user: student_3).outputs[:role]
+    AddUserAsPeriodStudent.call(period: period_2, user: student_3)[:role]
   }
 
   let!(:student_4) { FactoryGirl.create(:user) }
   let!(:student_4_role) {
-    AddUserAsPeriodStudent.call(period: other_period, user: student_4).outputs[:role]
+    AddUserAsPeriodStudent.call(period: other_period, user: student_4)[:role]
   }
 
   it 'returns all the students in the course' do
-    students = GetCourseRoster.call(course: course).outputs.roster[:students]
+    students = GetCourseRoster.call(course: course).roster[:students]
     students.sort! { |a, b| a.id <=> b.id }
     expect(students).to eq([
       {
@@ -70,11 +70,11 @@ describe GetCourseRoster, type: :routine do
 
   it 'does not blow up when a period has been deleted' do
     period_2.to_model.enrollments.each{ |en| en.student.inactivate.save! }
-    expect{ CourseMembership::DeletePeriod[period: period_2] }.to(
+    expect{ CourseMembership::DeletePeriod.call(period: period_2) }.to(
       change{ CourseMembership::Models::Period.count }.by(-1)
     )
 
-    students = GetCourseRoster.call(course: course).outputs.roster[:students]
+    students = GetCourseRoster.call(course: course).roster[:students]
     students.sort! { |a, b| a.id <=> b.id }
     expect(students).to eq([
       {

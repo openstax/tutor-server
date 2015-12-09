@@ -10,8 +10,8 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
       course.profile.update_attribute(:is_concept_coach, true)
     end
   end
-  let!(:period)              { ::CreatePeriod[course: course] }
-  let!(:period_2)            { ::CreatePeriod[course: course] }
+  let!(:period)              { ::CreatePeriod.call(course: course).period }
+  let!(:period_2)            { ::CreatePeriod.call(course: course).period }
 
   let!(:book)                { FactoryGirl.create :content_book }
 
@@ -21,7 +21,7 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
     ::Content::Ecosystem.new(strategy: strategy)
   end
 
-  let!(:course_ecosystem)    { AddEcosystemToCourse[course: course, ecosystem: ecosystem] }
+  let!(:course_ecosystem)    { AddEcosystemToCourse.call(course: course, ecosystem: ecosystem).ecosystem }
 
   context '#create' do
     context 'anonymous user' do
@@ -44,7 +44,7 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
         end
 
         it 'creates the EnrollmentChange if there are no errors for an existing student' do
-          AddUserAsPeriodStudent[user: user, period: period_2]
+          AddUserAsPeriodStudent.call(user: user, period: period_2)
 
           expect{ api_post :create, nil, raw_post_data: {
             enrollment_code: period.enrollment_code, book_uuid: book.uuid
@@ -81,7 +81,7 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
         end
 
         it 'returns an error if the user is already enrolled in the given period' do
-          AddUserAsPeriodStudent[user: user, period: period]
+          AddUserAsPeriodStudent.call(user: user, period: period)
 
           expect{ api_post :create, nil, raw_post_data: {
             enrollment_code: period.enrollment_code, book_uuid: book.uuid
@@ -91,9 +91,9 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
         end
 
         it 'returns an error if the user has multiple student roles in the course' do
-          AddUserAsCourseTeacher[user: user, course: course]
-          AddUserAsPeriodStudent[user: user, period: period]
-          AddUserAsPeriodStudent[user: user, period: period_2]
+          AddUserAsCourseTeacher.call(user: user, course: course)
+          AddUserAsPeriodStudent.call(user: user, period: period)
+          AddUserAsPeriodStudent.call(user: user, period: period_2)
 
           expect{ api_post :create, nil, raw_post_data: {
             enrollment_code: period.enrollment_code, book_uuid: book.uuid
@@ -103,7 +103,7 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
         end
 
         it 'returns an error if the user has been dropped from the course' do
-          AddUserAsPeriodStudent[user: user, period: period_2].student.inactivate.save!
+          AddUserAsPeriodStudent.call(user: user, period: period_2).student.inactivate.save!
 
           expect{ api_post :create, nil, raw_post_data: {
             enrollment_code: period.enrollment_code, book_uuid: book.uuid
@@ -122,7 +122,7 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
         end
 
         it 'creates the EnrollmentChange if there are no errors for an existing student' do
-          AddUserAsPeriodStudent[user: user, period: period_2]
+          AddUserAsPeriodStudent.call(user: user, period: period_2)
 
           expect{ api_post :create, nil, raw_post_data: {
             enrollment_code: period.enrollment_code
@@ -149,7 +149,7 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
         end
 
         it 'returns an error if the user is already enrolled in the given period' do
-          AddUserAsPeriodStudent[user: user, period: period]
+          AddUserAsPeriodStudent.call(user: user, period: period)
 
           expect{ api_post :create, nil, raw_post_data: {
             enrollment_code: period.enrollment_code
@@ -159,9 +159,9 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
         end
 
         it 'returns an error if the user has multiple roles in the course' do
-          AddUserAsCourseTeacher[user: user, course: course]
-          AddUserAsPeriodStudent[user: user, period: period]
-          AddUserAsPeriodStudent[user: user, period: period_2]
+          AddUserAsCourseTeacher.call(user: user, course: course)
+          AddUserAsPeriodStudent.call(user: user, period: period)
+          AddUserAsPeriodStudent.call(user: user, period: period_2)
 
           expect{ api_post :create, nil, raw_post_data: {
             enrollment_code: period.enrollment_code
@@ -171,7 +171,7 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
         end
 
         it 'returns an error if the user has been dropped from the course' do
-          AddUserAsPeriodStudent[user: user, period: period_2].student.inactivate.save!
+          AddUserAsPeriodStudent.call(user: user, period: period_2).student.inactivate.save!
 
           expect{ api_post :create, nil, raw_post_data: {
             enrollment_code: period.enrollment_code
@@ -235,7 +235,7 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
 
       it 'returns an error if the student_identifier already exists in the same course' do
         sid = 'N0B0DY'
-        AddUserAsPeriodStudent[user: user_2, period: period, student_identifier: sid]
+        AddUserAsPeriodStudent.call(user: user_2, period: period, student_identifier: sid)
 
         expect{ api_put :approve, nil, parameters: { id: enrollment_change.id },
                                        raw_post_data: { student_identifier: sid } }

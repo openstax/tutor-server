@@ -7,7 +7,7 @@ class Tasks::PlaceholderStrategies::HomeworkPersonalized
 
     # Gather relevant pages
     exercise_ids = task.task_plan.settings['exercise_ids']
-    ecosystem = GetEcosystemFromIds[exercise_ids: exercise_ids]
+    ecosystem = GetEcosystemFromIds.call(exercise_ids: exercise_ids)
     exercises = ecosystem.exercises_by_ids(exercise_ids)
     pages = exercises.collect{ |ex| ex.page }.uniq
 
@@ -18,17 +18,17 @@ class Tasks::PlaceholderStrategies::HomeworkPersonalized
 
     taskee = task.taskings.first.role
 
-    chosen_exercises = GetEcosystemExercisesFromBiglearn[ecosystem:         ecosystem,
-                                                         role:              taskee,
-                                                         pools:             pools,
-                                                         count:             num_placeholders,
-                                                         difficulty:        0.5,
-                                                         allow_repetitions: true]
+    chosen_exercises = GetEcosystemExercisesFromBiglearn.call(ecosystem:         ecosystem,
+                                                              role:              taskee,
+                                                              pools:             pools,
+                                                              count:             num_placeholders,
+                                                              difficulty:        0.5,
+                                                              allow_repetitions: true)
 
     chosen_exercise_task_step_pairs = chosen_exercises.zip(personalized_placeholder_task_steps)
     chosen_exercise_task_step_pairs.each do |exercise, step|
       step.tasked.destroy!
-      tasked_exercise = TaskExercise[task_step: step, exercise: exercise]
+      tasked_exercise = TaskExercise.call(task_step: step, exercise: exercise)
       # inject_debug_content!(step.tasked, "This exercise is part of the #{step.group_type}")
       tasked_exercise.save!
       step.save!

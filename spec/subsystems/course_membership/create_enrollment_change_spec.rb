@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 describe CourseMembership::CreateEnrollmentChange, type: :routine do
-  let!(:period_1) { CreatePeriod[course: Entity::Course.create!] }
-  let!(:period_2) { CreatePeriod[course: period_1.course] }
+  let!(:period_1) { CreatePeriod.call(course: Entity::Course.create!).period }
+  let!(:period_2) { CreatePeriod.call(course: period_1.course).period }
 
   let!(:user)     do
     profile = FactoryGirl.create :user_profile
@@ -18,14 +18,14 @@ describe CourseMembership::CreateEnrollmentChange, type: :routine do
       expect{ result = described_class.call(args) }
         .to change{ CourseMembership::Models::EnrollmentChange.count }.by(1)
       expect(result.errors).to be_empty
-      expect(result.outputs.enrollment_change.status).to eq :pending
-      expect(result.outputs.enrollment_change.enrollee_approved_at).to be_nil
+      expect(result.enrollment_change.status).to eq :pending
+      expect(result.enrollment_change.enrollee_approved_at).to be_nil
     end
   end
 
   context 'with existing enrollments' do
     let!(:role)       do
-      AddUserAsPeriodStudent[user: user, period: period_2]
+      AddUserAsPeriodStudent.call(user: user, period: period_2)
     end
 
     let!(:enrollment) { role.student.latest_enrollment }
@@ -35,13 +35,13 @@ describe CourseMembership::CreateEnrollmentChange, type: :routine do
       expect{ result = described_class.call(args) }
         .to change{ CourseMembership::Models::EnrollmentChange.count }.by(1)
       expect(result.errors).to be_empty
-      expect(result.outputs.enrollment_change.status).to eq :pending
-      expect(result.outputs.enrollment_change.enrollee_approved_at).to be_nil
+      expect(result.enrollment_change.status).to eq :pending
+      expect(result.enrollment_change.enrollee_approved_at).to be_nil
     end
 
     it 'returns an error if the user has multiple student roles in the course' do
       second_role = Role::CreateUserRole[user, :student]
-      CourseMembership::AddStudent[period: period_1, role: second_role]
+      CourseMembership::AddStudent.call(period: period_1, role: second_role)
 
       result = nil
       expect{ result = described_class.call(args.merge(period: period_2)) }

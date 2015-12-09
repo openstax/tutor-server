@@ -2,10 +2,10 @@ require 'rails_helper'
 require 'feature_js_helper'
 
 RSpec.feature 'Administration of queued jobs', :js do
-  let(:course) { CreateCourse[name: 'course time'] }
+  let(:course) { CreateCourse.call(name: 'course time').course }
   let(:admin) { FactoryGirl.create(:user, :administrator) }
   let(:user) { FactoryGirl.create(:user) }
-  let(:role) { AddUserAsCourseTeacher[course: course, user: user] }
+  let(:role) { AddUserAsCourseTeacher.call(course: course, user: user).role }
 
   let(:job) { Lev::BackgroundJob.all.last }
 
