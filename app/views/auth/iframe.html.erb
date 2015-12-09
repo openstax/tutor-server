@@ -4,9 +4,20 @@
     <title></title>
     <script>
       var msg = <%=raw json_escape @status.to_json %>;
-      window.parent.postMessage( JSON.stringify({
-        sourceWindowName: 'OxAccountIframe', data: { onLogin: msg}
-      }), '<%= @iframe_origin %>' );
+      var isFramed = false;
+      try { // IE can block access to window.top
+        isFramed = window.self != window.top;
+      }
+      catch(e){
+        isFramed = true;  // failed to read window.top
+      }
+      if (isFramed){
+        window.parent.postMessage( JSON.stringify({
+          sourceWindowName: 'OxAccountIframe', data: { onLogin: msg}
+        }), '<%= @iframe_origin %>' );
+      } else {
+        window.location.href = '/';  // redirect to home page
+      }
     </script>
   </head>
   <body>
