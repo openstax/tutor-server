@@ -75,12 +75,12 @@ module Tasks
     def get_taskings(course)
       task_types = Models::Task.task_types.values_at(:reading, :homework, :external)
       # Return reading, homework and external tasks for a student
-      course.taskings.preload(task: {task: {task_plan: {tasking_plans: :target} }},
-                              role: [{student: {enrollments: :period}},
-                                     {profile: :account}])
-                     .joins(task: { task: { task_plan: :tasking_plans } })
+      course.taskings.joins(task: { task: { task_plan: :tasking_plans } })
                      .where(task: {task: {task_type: task_types}})
-                     .where("tasks_tasking_plans.opens_at <= ?", Time.current)
+                     .where{task.task.task_plan.tasking_plans.opens_at <= Time.current}
+                     .preload(task: {task: {task_plan: {tasking_plans: :target} }},
+                              role: [{student: {enrollments: :period}}, {profile: :account}])
+                     .reorder(nil).uniq
     end
 
     def get_data_headings(tasking_plans, task_plan_results)
