@@ -1,10 +1,10 @@
 class CourseProfile::GetProfile
-  lev_routine express_output: :profile
+  lev_routine outputs: { profile: :_self }
 
   protected
   def exec(course: nil, attrs: {})
     profile = course ? get_profile_by_course(course) : get_profile_by_attrs(attrs)
-    outputs.profile = profile
+    set(profile: profile)
   end
 
   private

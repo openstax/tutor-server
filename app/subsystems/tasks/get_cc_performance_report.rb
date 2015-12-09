@@ -2,7 +2,7 @@ module Tasks
   class GetCcPerformanceReport
     include PerformanceReportMethods
 
-    lev_routine express_output: :performance_report
+    lev_routine outputs: { performance_report: :_self }
 
     protected
 
@@ -11,7 +11,7 @@ module Tasks
       ecosystems_map = GetCourseEcosystemsMap[course: course]
       cc_tasks_map = get_cc_tasks_map(ecosystems_map, taskings)
 
-      outputs[:performance_report] = course.periods.collect do |period|
+      set(performance_report: course.periods.collect do |period|
         period_cc_tasks_map = cc_tasks_map[period] || {}
         sorted_period_pages = period_cc_tasks_map
           .values.flat_map(&:keys).uniq.sort{ |a, b| b.book_location <=> a.book_location }
@@ -41,7 +41,7 @@ module Tasks
           data_headings: data_headings,
           students: student_data
         })
-      end
+      end)
     end
 
     def get_cc_taskings(course)

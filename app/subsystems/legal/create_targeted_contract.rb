@@ -1,20 +1,19 @@
 class Legal::CreateTargetedContract
-  lev_routine express_output: :targeted_contract
+  lev_routine outputs: { targeted_contract: :_self }
 
   protected
 
   def exec(contract_name:, target_gid:, target_name:, is_proxy_signed: false, is_end_user_visible: true, masked_contract_names: [])
     verify_contract_names(contract_name, masked_contract_names)
 
-    outputs[:targeted_contract] =
-      Legal::Models::TargetedContract.create(contract_name: contract_name,
-                                             target_gid: target_gid,
-                                             target_name: target_name,
-                                             is_proxy_signed: is_proxy_signed,
-                                             is_end_user_visible: is_end_user_visible,
-                                             masked_contract_names: masked_contract_names)
+    set(targeted_contract: Legal::Models::TargetedContract.create(contract_name: contract_name,
+                                                                  target_gid: target_gid,
+                                                                  target_name: target_name,
+                                                                  is_proxy_signed: is_proxy_signed,
+                                                                  is_end_user_visible: is_end_user_visible,
+                                                                  masked_contract_names: masked_contract_names))
 
-    transfer_errors_from(outputs.targeted_contract, {type: :verbatim})
+    transfer_errors_from(result.targeted_contract, {type: :verbatim})
   end
 
   def verify_contract_names(contract_name, masked_contract_names)

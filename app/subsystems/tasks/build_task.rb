@@ -1,5 +1,5 @@
 class Tasks::BuildTask
-  lev_routine express_output: :task
+  lev_routine outputs: { task: :_self }
 
   protected
 
@@ -7,6 +7,6 @@ class Tasks::BuildTask
     attributes[:entity_task] ||= Entity::Task.new
     task = Tasks::Models::Task.new(attributes)
     task.entity_task.task = task
-    outputs[:task] = task
+    set(task: task)
   end
 end
