@@ -103,11 +103,21 @@ class Tasks::Assistants::HomeworkAssistant
     step
   end
 
+  def assign_spaced_practice_exercise(task:, exercise:)
+    related_content = exercise.page.related_content
+
+    step = add_exercise_step(task: task, exercise: exercise)
+    step.group_type = :spaced_practice_group
+
+    step.add_related_content(related_content)
+  end
+
   def add_spaced_practice_exercise_steps!(task:, taskee:)
     # Get taskee's reading history
     history = GetHistory.call(role: taskee, type: :homework, current_task: task).outputs
 
-    all_worked_exercise_numbers = history.exercises.flatten.collect{ |ex| ex.number }
+    core_exercise_numbers = history.exercises.first.map(&:number)
+    all_worked_exercise_numbers = history.exercises.flat_map(&:number)
 
     num_spaced_practice_exercises = get_num_spaced_practice_exercises
     self.class.k_ago_map(num_spaced_practice_exercises).each do |k_ago, num_requested|
@@ -134,26 +144,37 @@ class Tasks::Assistants::HomeworkAssistant
       # Map the core pages to exercises in the new ecosystem
       spaced_exercises = @ecosystems_map[spaced_ecosystem.id].map_pages_to_exercises(
         pages: spaced_core_pages, pool_type: :homework_dynamic
-      )
+      ).values.flatten.uniq
 
-      # Exclude exercises already worked (by number)
-      candidate_exercises = spaced_exercises.values.flatten.uniq.reject do |ex|
-        all_worked_exercise_numbers.include?(ex.number)
+      candidate_exercises = []
+      repeated_candidate_exercises = []
+
+      # Partition spaced exercises into the main candidate pool and the repeat candidates
+      spaced_exercises.each do |ex|
+        next if core_exercise_numbers.include?(ex.number)  # Never include
+
+        if all_worked_exercise_numbers.include?(ex.number) # Only include if we run out
+          repeated_candidate_exercises << ex
+        else                                               # The main pool of exercises
+          candidate_exercises << ex
+        end
       end
 
-      num_exercises = [candidate_exercises.size, num_requested].min
+      num_candidate_exercises = [candidate_exercises.size, num_requested].min
+      num_repeated_exercises = [repeated_candidate_exercises.size,
+                                num_requested - num_candidate_exercises].min
 
-      # Randomize and grab the required number of exercises
-      chosen_exercises = candidate_exercises.shuffle.first(num_exercises)
+      chosen_exercises = []
 
-      # Set related_content and add the exercise to the task
+      # Randomize and grab the required numbers of exercises
+      chosen_exercises += candidate_exercises.shuffle.first(num_candidate_exercises) \
+        unless num_candidate_exercises == 0
+      chosen_exercises += repeated_candidate_exercises.shuffle.first(num_repeated_exercises) \
+        unless num_repeated_exercises == 0
+
+      # Set related_content and add the exercises to the task
       chosen_exercises.each do |chosen_exercise|
-        related_content = chosen_exercise.page.related_content
-
-        step = add_exercise_step(task: task, exercise: chosen_exercise)
-        step.group_type = :spaced_practice_group
-
-        step.add_related_content(related_content)
+        assign_spaced_practice_exercise(task: task, exercise: chosen_exercise)
       end
     end
 
