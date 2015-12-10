@@ -435,13 +435,17 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
         })
       end
 
-      it 'raises error for users not in the course' do
+      it 'returns 403 for users not in the course' do
+        unknown = FactoryGirl.create(:user)
+        unknown_token = FactoryGirl.create :doorkeeper_access_token,
+                                           resource_owner_id: unknown.id
+
         expect {
-          api_get :index, userless_token, parameters: { id: course.id }
-        }.to raise_error StandardError
+          api_get :index, unknown_token, parameters: { id: course.id }
+        }.to raise_error(SecurityTransgression)
       end
 
-      it 'raises error for students' do
+      it 'returns 403 for students' do
         expect {
           api_get :index, student_1_token, parameters: { id: course.id }
         }.to raise_error SecurityTransgression
@@ -478,6 +482,17 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
     end
 
     context 'failure' do
+      it 'returns 403 for students' do
+        student = FactoryGirl.create(:user)
+        student_token = FactoryGirl.create(:doorkeeper_access_token,
+                                           resource_owner_id: student.id)
+        AddUserAsPeriodStudent[period: period, user: student]
+
+        expect {
+          api_post :export, student_token, parameters: { id: course.id }
+        }.to raise_error(SecurityTransgression)
+      end
+
       it 'returns 403 unauthorized users' do
         unknown = FactoryGirl.create(:user)
         unknown_token = FactoryGirl.create :doorkeeper_access_token,
@@ -533,6 +548,17 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
     end
 
     context 'failure' do
+      it 'returns 403 for students' do
+        student = FactoryGirl.create(:user)
+        student_token = FactoryGirl.create(:doorkeeper_access_token,
+                                           resource_owner_id: student.id)
+        AddUserAsPeriodStudent[period: period, user: student]
+
+        expect {
+          api_get :export, student_token, parameters: { id: course.id }
+        }.to raise_error(SecurityTransgression)
+      end
+
       it 'returns 403 for users who are not teachers of the course' do
         unknown = FactoryGirl.create(:user)
         unknown_token = FactoryGirl.create :doorkeeper_access_token,
