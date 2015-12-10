@@ -3,56 +3,86 @@ require 'vcr_helper'
 
 describe GetCcDashboard, type: :routine do
 
-  let!(:course)         { CreateCourse[name: 'Physics 101'] }
-  let!(:period)         { CreatePeriod[course: course] }
-  let!(:period_2)       { CreatePeriod[course: course] }
+  before(:all) do
+    DatabaseCleaner.start
 
-  let!(:student_user)   { FactoryGirl.create(:user) }
-  let!(:student_role)   { AddUserAsPeriodStudent.call(user: student_user, period: period)
-                                                .outputs.role }
+    @course   = CreateCourse[name: 'Physics 101', is_concept_coach: true]
+    @period   = CreatePeriod[course: @course]
+    @period_2 = CreatePeriod[course: @course]
 
-  let!(:student_user_2) { FactoryGirl.create(:user) }
-  let!(:student_role_2) { AddUserAsPeriodStudent[user: student_user_2, period: period_2] }
+    @student_user = FactoryGirl.create(:user)
+    @student_role = AddUserAsPeriodStudent[user: @student_user, period: @period]
 
-  let!(:teacher_user)   { FactoryGirl.create(:user, first_name: 'Bob',
-                                                    last_name: 'Newhart',
-                                                    full_name: 'Bob Newhart') }
-  let!(:teacher_role)   { AddUserAsCourseTeacher.call(user: teacher_user, course: course)
-                                                .outputs.role }
+    @student_user_2 = FactoryGirl.create(:user)
+    @student_role_2 = AddUserAsPeriodStudent[user: @student_user_2, period: @period_2]
 
-  before(:each) { course.profile.update_attribute(:is_concept_coach, true) }
+    @teacher_user = FactoryGirl.create(:user, first_name: 'Bob',
+                                              last_name: 'Newhart',
+                                              full_name: 'Bob Newhart')
+    @teacher_role = AddUserAsCourseTeacher[user: @teacher_user, course: @course]
+
+    @chapter = FactoryGirl.create :content_chapter, book_location: [4]
+    cnx_page_1 = OpenStax::Cnx::V1::Page.new(id: '95e61258-2faf-41d4-af92-f62e1414175a',
+                                             title: 'Force')
+    cnx_page_2 = OpenStax::Cnx::V1::Page.new(id: '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6',
+                                             title: "Newton's First Law of Motion: Inertia")
+    book_location_1 = [4, 1]
+    book_location_2 = [4, 2]
+
+    page_model_1, page_model_2 = VCR.use_cassette('GetCcDashboard/with_book', VCR_OPTS) do
+      [Content::Routines::ImportPage[chapter: @chapter,
+                                     cnx_page: cnx_page_1,
+                                     book_location: book_location_1],
+       Content::Routines::ImportPage[chapter: @chapter,
+                                     cnx_page: cnx_page_2,
+                                     book_location: book_location_2]]
+    end
+
+    @book = @chapter.book
+    Content::Routines::PopulateExercisePools[book: @book]
+
+    @page_1 = Content::Page.new(strategy: page_model_1.reload.wrap)
+    @page_2 = Content::Page.new(strategy: page_model_2.reload.wrap)
+
+    ecosystem_model = @book.ecosystem
+    ecosystem = Content::Ecosystem.new(strategy: ecosystem_model.wrap)
+
+    AddEcosystemToCourse[ecosystem: ecosystem, course: @course]
+  end
+
+  after(:all) { DatabaseCleaner.clean }
 
   context 'without any work' do
     it "still returns period info for teachers" do
-      outputs = described_class.call(course: course, role: teacher_role).outputs
+      outputs = described_class.call(course: @course, role: @teacher_role).outputs
 
       expect(HashWithIndifferentAccess[outputs]).to include(
         course: {
-          id: course.id,
+          id: @course.id,
           name: "Physics 101",
           teachers: [
             {
-              id: teacher_role.teacher.id.to_s,
-              role_id: teacher_role.id.to_s,
+              id: @teacher_role.teacher.id.to_s,
+              role_id: @teacher_role.id.to_s,
               first_name: 'Bob',
               last_name: 'Newhart'
             }
           ],
           periods: a_collection_containing_exactly(
             {
-              id: period.id,
-              name: period.name,
+              id: @period.id,
+              name: @period.name,
               chapters: []
             },
             {
-              id: period_2.id,
-              name: period_2.name,
+              id: @period_2.id,
+              name: @period_2.name,
               chapters: []
             }
           )
         },
         role: {
-          id: teacher_role.id,
+          id: @teacher_role.id,
           type: 'teacher'
         },
         tasks: []
@@ -62,73 +92,45 @@ describe GetCcDashboard, type: :routine do
 
   context 'with work' do
     before(:each) do
-      @chapter = FactoryGirl.create :content_chapter, book_location: [4]
-      cnx_page_1 = OpenStax::Cnx::V1::Page.new(id: '95e61258-2faf-41d4-af92-f62e1414175a',
-                                               title: 'Force')
-      cnx_page_2 = OpenStax::Cnx::V1::Page.new(id: '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6',
-                                               title: "Newton's First Law of Motion: Inertia")
-      book_location_1 = [4, 1]
-      book_location_2 = [4, 2]
-
-      page_model_1, page_model_2 = VCR.use_cassette('GetCcDashboard/with_work', VCR_OPTS) do
-        [Content::Routines::ImportPage[chapter: @chapter,
-                                       cnx_page: cnx_page_1,
-                                       book_location: book_location_1],
-         Content::Routines::ImportPage[chapter: @chapter,
-                                       cnx_page: cnx_page_2,
-                                       book_location: book_location_2]]
-      end
-
-      @book = @chapter.book
-      Content::Routines::PopulateExercisePools[book: @book]
-
-      @page_1 = Content::Page.new(strategy: page_model_1.reload.wrap)
-      @page_2 = Content::Page.new(strategy: page_model_2.reload.wrap)
-
-      ecosystem_model = @book.ecosystem
-      ecosystem = Content::Ecosystem.new(strategy: ecosystem_model.wrap)
-
-      AddEcosystemToCourse[ecosystem: ecosystem, course: course]
-
       @task_1 = GetConceptCoach[
-        user: student_user, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
+        user: @student_user, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
       ].task
       @task_1.task_steps.each do |ts|
         Hacks::AnswerExercise[task_step: ts, is_correct: true]
       end
       @task_2 = GetConceptCoach[
-        user: student_user, cnx_book_id: @book.uuid, cnx_page_id: @page_2.uuid
+        user: @student_user, cnx_book_id: @book.uuid, cnx_page_id: @page_2.uuid
       ].task
       @task_2.task_steps.each do |ts|
         Hacks::AnswerExercise[task_step: ts, is_correct: ts.core_group?]
       end
       @task_3 = GetConceptCoach[
-        user: student_user_2, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
+        user: @student_user_2, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
       ].task
       @task_3.task_steps.select(&:core_group?).first(2).each_with_index do |ts, ii|
         Hacks::AnswerExercise[task_step: ts, is_correct: ii == 0]
       end
       @task_4 = GetConceptCoach[
-        user: student_user_2, cnx_book_id: @book.uuid, cnx_page_id: @page_2.uuid
+        user: @student_user_2, cnx_book_id: @book.uuid, cnx_page_id: @page_2.uuid
       ].task
     end
 
     it "works for a student" do
-      outputs = described_class.call(course: course, role: student_role).outputs
+      outputs = described_class.call(course: @course, role: @student_role).outputs
 
       expect(HashWithIndifferentAccess[outputs]).to include(
         course: {
-          id: course.id,
+          id: @course.id,
           name: "Physics 101",
           teachers: [
-            { id: teacher_role.teacher.id.to_s,
-              role_id: teacher_role.id.to_s,
+            { id: @teacher_role.teacher.id.to_s,
+              role_id: @teacher_role.id.to_s,
               first_name: 'Bob',
               last_name: 'Newhart' }
           ]
         },
         role: {
-          id: student_role.id,
+          id: @student_role.id,
           type: 'student'
         },
         tasks: a_collection_including(
@@ -184,24 +186,24 @@ describe GetCcDashboard, type: :routine do
     end
 
     it "works for a teacher" do
-      outputs = described_class.call(course: course, role: teacher_role).outputs
+      outputs = described_class.call(course: @course, role: @teacher_role).outputs
 
       expect(HashWithIndifferentAccess[outputs]).to include(
         course: {
-          id: course.id,
+          id: @course.id,
           name: "Physics 101",
           teachers: [
             {
-              id: teacher_role.teacher.id.to_s,
-              role_id: teacher_role.id.to_s,
+              id: @teacher_role.teacher.id.to_s,
+              role_id: @teacher_role.id.to_s,
               first_name: 'Bob',
               last_name: 'Newhart'
             }
           ],
           periods: a_collection_containing_exactly(
             {
-              id: period.id,
-              name: period.name,
+              id: @period.id,
+              name: @period.name,
               chapters: [
                 {
                   id: @chapter.id,
@@ -237,8 +239,8 @@ describe GetCcDashboard, type: :routine do
               ]
             },
             {
-              id: period_2.id,
-              name: period_2.name,
+              id: @period_2.id,
+              name: @period_2.name,
               chapters: [
                 {
                   id: @chapter.id,
@@ -264,7 +266,7 @@ describe GetCcDashboard, type: :routine do
           )
         },
         role: {
-          id: teacher_role.id,
+          id: @teacher_role.id,
           type: 'teacher'
         },
         tasks: []
@@ -278,29 +280,28 @@ describe GetCcDashboard, type: :routine do
       )
 
       # Miss (8 times = 4 counts per period * 2 periods)
-      described_class[course: course, role: teacher_role]
+      described_class[course: @course, role: @teacher_role]
       expect(@counts).to eq 8
 
       # Hit
-      described_class[course: course, role: teacher_role]
+      described_class[course: @course, role: @teacher_role]
       expect(@counts).to eq 8
 
       teacher_user_2 = FactoryGirl.create(:user)
-      teacher_role_2 = AddUserAsCourseTeacher.call(user: teacher_user_2, course: course)
+      teacher_role_2 = AddUserAsCourseTeacher.call(user: teacher_user_2, course: @course)
                                              .outputs.role
 
       # Hit
-      described_class[course: course, role: teacher_role_2]
+      described_class[course: @course, role: teacher_role_2]
       expect(@counts).to eq 8
 
       # Answering an exercise invalidates the period cache
-      period.to_model.taskings.first.task.task.tasked_exercises.first.task_step
-            .update_attribute(:last_completed_at, Time.now)
+      @period.to_model.taskings.first.task.task.tasked_exercises.first.task_step
+             .update_attribute(:last_completed_at, Time.now)
 
       # Miss (4 times = 4 counts per period * 1 period)
-      described_class[course: course, role: teacher_role]
+      described_class[course: @course, role: @teacher_role]
       expect(@counts).to eq 12
     end
   end
-
 end
