@@ -37,7 +37,7 @@ Rails.application.routes.draw do
     get 'status'
     get 'logout', as: 'logout_via_iframe'
     # Relay user tokens inside an iframe.
-    get 'iframe', as: 'authenticate_via_iframe'
+    match 'iframe', via: [:get, :post], as: 'authenticate_via_iframe'
   end
 
   api :v1, default: true do
