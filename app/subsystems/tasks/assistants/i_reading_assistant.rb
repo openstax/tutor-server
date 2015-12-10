@@ -137,9 +137,9 @@ class Tasks::Assistants::IReadingAssistant
 
     all_worked_exercise_numbers = history.exercises.flatten.collect{ |ex| ex.number }
 
-    self.class.k_ago_map.each do |k_ago, number|
+    self.class.k_ago_map.each do |k_ago, num_requested|
       # Not enough history
-      break if k_ago >= history.tasks.size
+      next if k_ago >= history.tasks.size
 
       spaced_ecosystem = history.ecosystems[k_ago]
 
@@ -163,11 +163,10 @@ class Tasks::Assistants::IReadingAssistant
         all_worked_exercise_numbers.include?(ex.number)
       end
 
-      # Not enough exercises
-      break if candidate_exercises.size < number
+      num_exercises = [candidate_exercises.size, num_requested].min
 
       # Randomize and grab the required number of exercises
-      chosen_exercises = candidate_exercises.shuffle.first(number)
+      chosen_exercises = candidate_exercises.shuffle.first(num_exercises)
 
       # Set related_content and add the exercise to the task
       chosen_exercises.each do |chosen_exercise|
