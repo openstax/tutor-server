@@ -119,6 +119,8 @@ class Tasks::Assistants::HomeworkAssistant
     core_exercise_numbers = history.exercises.first.map(&:number)
     all_worked_exercise_numbers = history.exercises.flat_map(&:number)
 
+    task.spy['spaced_practice'] = 'Completely filled'
+
     num_spaced_practice_exercises = get_num_spaced_practice_exercises
     self.class.k_ago_map(num_spaced_practice_exercises).each do |k_ago, num_requested|
       # Not enough history
@@ -161,8 +163,8 @@ class Tasks::Assistants::HomeworkAssistant
       end
 
       num_candidate_exercises = [candidate_exercises.size, num_requested].min
-      num_repeated_exercises = [repeated_candidate_exercises.size,
-                                num_requested - num_candidate_exercises].min
+      num_req_repeated_exercises = num_requested - num_candidate_exercises
+      num_repeated_exercises = [repeated_candidate_exercises.size, num_req_repeated_exercises].min
 
       chosen_exercises = []
 
@@ -176,6 +178,9 @@ class Tasks::Assistants::HomeworkAssistant
       chosen_exercises.each do |chosen_exercise|
         assign_spaced_practice_exercise(task: task, exercise: chosen_exercise)
       end
+
+      task.spy['spaced_practice'] = 'Could not be completely filled (not enough candidate exercises or repeats available)' \
+        if num_repeated_exercises < num_req_repeated_exercises
     end
 
     task
