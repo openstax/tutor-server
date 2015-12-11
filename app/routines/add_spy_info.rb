@@ -16,14 +16,16 @@ class AddSpyInfo
 
   def values_from(value)
     case value
-    when Content::Models::Ecosystem, Content::Ecosystem
-      { ecosystem_id: value.id, ecosystem_title: value.title }
-    when Array
-      { history: value.map do |task|
-        { task_id: task.id, task_title: task.title }
-      end }
+    when Hash
+      value.each_with_object({}) do |(key, value), hash|
+        hash[key] = values_from(value)
+      end
     else
-      { "#{value.class.name.demodulize.underscore}_id" => value.id }
+      val = {}
+      val[:"#{value.class.name.demodulize.underscore}_id"] = value.id if value.respond_to?(:id)
+      val[:"#{value.class.name.demodulize.underscore}_title"] = value.title \
+        if value.respond_to?(:title)
+      val
     end
   end
 end

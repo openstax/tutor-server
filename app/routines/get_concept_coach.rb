@@ -45,13 +45,15 @@ class GetConceptCoach
 
     spaced_tasks = history.tasks || []
 
-    spaced_exercises = spaced_tasks.empty? ? \
-      [] : Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP.flat_map do |k_ago, ex_count|
+    spaced_practice_status = 'Completely filled'
+
+    spaced_exercises = \
+      Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP.flat_map do |k_ago, num_requested|
       # Subtract 1 from k_ago because this history does not include the current task (0-ago)
       spaced_task = k_ago.nil? ? spaced_tasks.sample : spaced_tasks[k_ago - 1]
 
-      # If no k_ago task, pick a random one
-      spaced_task ||= spaced_tasks.sample
+      # Skip if no k_ago task
+      next if spaced_task.nil?
 
       spaced_page_model = spaced_task.concept_coach_task.page
       spaced_page = Content::Page.new(strategy: spaced_page_model.wrap)
@@ -63,33 +65,35 @@ class GetConceptCoach
       # Map the spaced page to exercises in the current ecosystem
       spaced_exercises = ecosystems_map[spaced_ecosystem.id].map_pages_to_exercises(
         pages: spaced_page, pool_type: :all_exercises
-      )
+      ).values.flatten.uniq
 
-      # Exclude exercises already worked (by number)
-      candidate_exercises = spaced_exercises.values.flatten.uniq.reject do |ex|
-        all_worked_exercise_numbers.include?(ex.number)
-      end
+      candidate_exercises = []
+      repeated_candidate_exercises = []
 
-      # Randomize and grab ex_count exercises
-      ex_count.times.map do
-        chosen_exercise = candidate_exercises.shuffle.first
+      # Partition spaced exercises into the main candidate pool and the repeat candidates
+      spaced_exercises.each do |ex|
+        next if core_exercise_numbers.include?(ex.number)  # Never include
 
-        if chosen_exercise.nil?
-          # Try again allowing repeats (but not from the current task)
-          candidate_exercises = spaced_exercises.values.flatten.uniq.reject do |ex|
-            current_exercise_numbers.include?(ex.number)
-          end
-
-          chosen_exercise = candidate_exercises.shuffle.first
-
-          next if chosen_exercise.nil?
+        if all_worked_exercise_numbers.include?(ex.number) # Only include if we run out
+          repeated_candidate_exercises << ex
+        else                                               # The main pool of exercises
+          candidate_exercises << ex
         end
-
-        all_worked_exercise_numbers << chosen_exercise.number
-        current_exercise_numbers << chosen_exercise.number
-
-        chosen_exercise
       end
+
+      num_candidate_exercises = [candidate_exercises.size, num_requested].min
+      num_req_repeated_exercises = num_requested - num_candidate_exercises
+      num_repeated_exercises = [repeated_candidate_exercises.size, num_req_repeated_exercises].min
+
+      chosen_exercises = []
+      # Randomize and grab the required numbers of exercises
+      chosen_exercises = candidate_exercises.shuffle.first(num_candidate_exercises) \
+        unless num_candidate_exercises == 0
+      chosen_exercises += repeated_candidate_exercises.shuffle.first(num_repeated_exercises) \
+        unless num_repeated_exercises == 0
+
+      spaced_practice_status = 'Could not be completely filled (not enough candidate exercises or repeats available)' \
+        if num_repeated_exercises < num_req_repeated_exercises
     end.compact
 
     exercises = core_exercises + spaced_exercises
@@ -100,7 +104,9 @@ class GetConceptCoach
     run(:create_cc_task, role: role, page: page, exercises: exercises,
                          related_content_array: related_content_array)
 
-    run(:add_spy_info, to: outputs.task, from: [ecosystem, history.tasks])
+    run(:add_spy_info, to: outputs.task,
+                       from: [ecosystem, { history: history.tasks,
+                                           spaced_practice: spaced_practice_status }])
 
     outputs.entity_task = outputs.task.entity_task
   end

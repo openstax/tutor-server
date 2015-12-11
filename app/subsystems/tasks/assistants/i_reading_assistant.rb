@@ -189,9 +189,8 @@ class Tasks::Assistants::IReadingAssistant
       num_repeated_exercises = [repeated_candidate_exercises.size, num_req_repeated_exercises].min
 
       chosen_exercises = []
-
       # Randomize and grab the required numbers of exercises
-      chosen_exercises += candidate_exercises.shuffle.first(num_candidate_exercises) \
+      chosen_exercises = candidate_exercises.shuffle.first(num_candidate_exercises) \
         unless num_candidate_exercises == 0
       chosen_exercises += repeated_candidate_exercises.shuffle.first(num_repeated_exercises) \
         unless num_repeated_exercises == 0
