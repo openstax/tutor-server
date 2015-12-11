@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/lml/lev.git
-  revision: 7c5a0859a295fb553e748f4ee00ed6508494628b
+  revision: 7ce5e5c29230bc1c2a06047976ce07e917f06829
   branch: ground-up-exercise
   specs:
     lev (7.0.0)
