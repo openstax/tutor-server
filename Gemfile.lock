@@ -542,7 +542,7 @@ GEM
     remotipart (1.2.1)
     render_anywhere (0.0.12)
       rails (>= 3.0.7)
-    representable (2.3.0)
+    representable (2.2.2)
       uber (~> 0.0.7)
     responders (2.1.0)
       railties (>= 4.2.0, < 5)
