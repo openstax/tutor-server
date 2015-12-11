@@ -147,11 +147,14 @@ class Tasks::Assistants::IReadingAssistant
     core_exercise_numbers = history.exercises.first.map(&:number)
     all_worked_exercise_numbers = history.exercises.flatten.map(&:number)
 
-    task.spy['spaced_practice'] = 'Completely filled'
+    spaced_practice_status = []
 
     self.class.k_ago_map.each do |k_ago, num_requested|
       # Not enough history
-      next if k_ago >= history.tasks.size
+      if k_ago >= history.tasks.size
+        spaced_practice_status << "Not enough tasks in history to fill the #{k_ago}-ago slot"
+        next
+      end
 
       spaced_ecosystem = history.ecosystems[k_ago]
 
@@ -200,9 +203,13 @@ class Tasks::Assistants::IReadingAssistant
         assign_spaced_practice_exercise(task: task, exercise: chosen_exercise)
       end
 
-      task.spy['spaced_practice'] = 'Could not be completely filled (not enough candidate exercises or repeats available)' \
+      spaced_practice_status << "Could not completely fill the #{k_ago}-ago slot" \
         if num_repeated_exercises < num_req_repeated_exercises
     end
+
+    spaced_practice_status << 'Completely filled' if spaced_practice_status.empty?
+
+    AddSpyInfo[to: task, from: { spaced_practice: spaced_practice_status }]
 
     task
   end

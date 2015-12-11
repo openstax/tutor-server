@@ -45,15 +45,24 @@ class GetConceptCoach
 
     spaced_tasks = history.tasks || []
 
-    spaced_practice_status = 'Completely filled'
+    spaced_practice_status = []
 
     spaced_exercises = \
       Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP.flat_map do |k_ago, num_requested|
       # Subtract 1 from k_ago because this history does not include the current task (0-ago)
-      spaced_task = k_ago.nil? ? spaced_tasks.sample : spaced_tasks[k_ago - 1]
+      if k_ago.nil?
+        spaced_task = spaced_tasks.sample
+        k_ago_str = 'random'
+      else
+        spaced_task = spaced_tasks[k_ago - 1]
+        k_ago_str = k_ago.to_s
+      end
 
       # Skip if no k_ago task
-      next if spaced_task.nil?
+      if spaced_task.nil?
+        spaced_practice_status << "Not enough tasks in history to fill the #{k_ago_str}-ago slot"
+        next
+      end
 
       spaced_page_model = spaced_task.concept_coach_task.page
       spaced_page = Content::Page.new(strategy: spaced_page_model.wrap)
@@ -92,11 +101,13 @@ class GetConceptCoach
       chosen_exercises += repeated_candidate_exercises.shuffle.first(num_repeated_exercises) \
         unless num_repeated_exercises == 0
 
-      spaced_practice_status = 'Could not be completely filled (not enough candidate exercises or repeats available)' \
+      spaced_practice_status << "Could not completely fill the #{k_ago_str}-ago slot" \
         if num_repeated_exercises < num_req_repeated_exercises
 
       chosen_exercises
     end.compact
+
+    spaced_practice_status << 'Completely filled' if spaced_practice_status.empty?
 
     exercises = core_exercises + spaced_exercises
 
