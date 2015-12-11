@@ -40,7 +40,7 @@ class GetConceptCoach
       fatal_error(code: :page_has_no_exercises)
     end
 
-    current_exercise_numbers = core_exercises.map(&:number)
+    core_exercise_numbers = core_exercises.map(&:number)
     ecosystems_map = {}
 
     spaced_tasks = history.tasks || []
