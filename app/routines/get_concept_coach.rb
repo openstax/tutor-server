@@ -94,6 +94,8 @@ class GetConceptCoach
 
       spaced_practice_status = 'Could not be completely filled (not enough candidate exercises or repeats available)' \
         if num_repeated_exercises < num_req_repeated_exercises
+
+      chosen_exercises
     end.compact
 
     exercises = core_exercises + spaced_exercises
