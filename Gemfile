@@ -192,7 +192,7 @@ group :development, :test do
   gem 'quiet_assets'
 
   # Use RSpec for tests
-  gem 'rspec-rails'
+  gem 'rspec-rails', '~> 3.2.3'
 
   gem 'rspec-collection_matchers'
 
