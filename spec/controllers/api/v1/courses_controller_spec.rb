@@ -169,9 +169,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           api_get :roster, teacher_token, parameters: valid_params
           expect(response).to have_http_status(:ok)
           roster = response.body_as_hash
-          expect(roster).to eq({
+          expect(roster).to include({
             teacher_join_url: UrlGenerator.new.join_course_url(course.teacher_join_token),
-            students: [
+            students: a_collection_containing_exactly(
               {
                 id: student.id.to_s,
                 first_name: student.first_name,
@@ -202,7 +202,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                 deidentifier: student_3.deidentifier,
                 is_active: true
               }
-            ]
+            )
           })
         end
       end
