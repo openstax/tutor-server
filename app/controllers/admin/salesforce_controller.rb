@@ -18,7 +18,7 @@ module Admin
 
     def import_courses
       outputs = ImportSalesforceCourses.call(
-        include_real_salesforce_data: params[:use_real_data]
+        use_real_salesforce_data: params[:use_real_data]
       ).outputs
 
       flash[:notice] = "Of #{outputs.num_failures + outputs.num_successes} candidate records in Salesforce, " +

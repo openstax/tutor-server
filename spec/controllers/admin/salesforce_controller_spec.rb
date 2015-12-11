@@ -41,11 +41,11 @@ RSpec.describe Admin::SalesforceController do
     it 'receives the call and formats the flash' do
       expect(ImportSalesforceCourses)
         .to receive(:call)
-        .with(include_real_salesforce_data: false)
+        .with(use_real_salesforce_data: false)
 
       allow(ImportSalesforceCourses)
         .to receive(:call)
-        .with(include_real_salesforce_data: false)
+        .with(use_real_salesforce_data: false)
         .and_return(
           Hashie::Mash.new({outputs: {num_failures: 1, num_successes: 2}})
         )
