@@ -72,7 +72,7 @@ class Tasks::Assistants::IReadingAssistant
       title:     title,
       description: description,
       feedback_at: Time.now
-    ]
+    ].task
     AddSpyInfo.call(to: task, from: @ecosystem)
     return task
   end

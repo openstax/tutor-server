@@ -1,6 +1,8 @@
 class DistributeTasks
 
-  lev_routine uses: { name: IndividualizeTaskingPlans, as: :get_tasking_plans }
+  lev_routine outputs: { entity_tasks: :_self },
+              uses: { name: IndividualizeTaskingPlans,
+                      as: :get_tasking_plans }
 
   protected
 

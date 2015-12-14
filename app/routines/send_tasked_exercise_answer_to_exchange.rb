@@ -1,13 +1,13 @@
 class SendTaskedExerciseAnswerToExchange
 
-  lev_routine
+  lev_routine uses: { name: Role::GetUsersForRoles, as: :get_users }
 
   protected
 
   def exec(tasked_exercise:)
     url = tasked_exercise.url
     roles = tasked_exercise.task_step.task.taskings.collect{ |t| t.role }
-    users = Role::GetUsersForRoles[roles]
+    users = run(:get_users, users).users
     identifiers = users.collect{ |user| user.exchange_write_identifier }
 
     # Currently assuming no group tasks

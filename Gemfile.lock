@@ -1,13 +1,4 @@
 GIT
-  remote: git://github.com/lml/lev.git
-  revision: 8a136d315f04899bd816f373d3270ed349dbf1c4
-  branch: ground-up-exercise
-  specs:
-    lev (7.0.0)
-      active_attr (~> 0.8.5)
-      activerecord (>= 3.0)
-
-GIT
   remote: git://github.com/openstax/accounts-rails.git
   revision: cbaa96345c499904fe371d55e2a8372ea5b337dd
   branch: new-lev
@@ -41,6 +32,13 @@ GIT
     active_force (0.7.1)
       active_attr (~> 0.8)
       restforce (~> 2.1.0)
+
+PATH
+  remote: ../lev
+  specs:
+    lev (7.0.0)
+      active_attr (~> 0.8.5)
+      activerecord (>= 3.0)
 
 GEM
   remote: https://rubygems.org/

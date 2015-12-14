@@ -2,12 +2,14 @@ class GetConceptCoach
 
   lev_routine outputs: { tasks: :_self,
                          valid_book_urls: :_self,
-                         entity_task: :_self },
+                         entity_task: :_self,
+                         task: { name: Tasks::CreateConceptCoachTask,
+                                 as: :create_cc_task } },
               uses: [{ name: Tasks::GetConceptCoachTask, as: :get_cc_task },
-                     { name: Tasks::CreateConceptCoachTask, as: :create_cc_task },
                      { name: AddSpyInfo, as: :add_spy_info },
                      { name: GetHistory, as: :get_history },
-                     { name: GetCourseEcosystem, as: :get_ecosystem }],
+                     { name: GetCourseEcosystem, as: :get_ecosystem },
+                     { name: Role::GetUserRoles, as: :get_roles }],
               transaction: :serializable
 
   protected
@@ -101,7 +103,7 @@ class GetConceptCoach
   end
 
   def get_role_and_page(user:, cnx_book_id:, cnx_page_id:)
-    roles = Role::GetUserRoles[user, :student]
+    roles = run(:get_roles, user, :student).roles
     ecosystem_id_role_map = roles.each_with_object({}) do |role, hash|
       course = role.student.course
       next unless course.is_concept_coach

@@ -57,10 +57,10 @@ class Content::Routines::ImportBookPart
                                                   chapter_tracker: chapter_tracker,
                                                   save: save)
 
-        result.chapters += import_book_part.chapters
-        result.pages += import_book_part.pages
-        result.page_taggings += import_book_part.page_taggings
-        result.exercises += import_book_part.exercises
+        result_add(chapters: import_book_part.chapters)
+        result_add(pages: import_book_part.pages)
+        result_add(page_taggings:  import_book_part.page_taggings)
+        result_add(exercises: import_book_part.exercises)
       end
     end
   end

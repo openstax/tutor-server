@@ -1,7 +1,8 @@
 class AddUserAsPeriodStudent
   lev_routine uses: [:user_is_course_teacher, :user_is_course_student],
               outputs: {
-                _verbatim: [Role::CreateUserRole, CourseMembership::AddStudent]
+                _verbatim: [Role::CreateUserRole,
+                            CourseMembership::AddStudent]
               }
 
   protected

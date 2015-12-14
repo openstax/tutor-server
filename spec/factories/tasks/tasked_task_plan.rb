@@ -49,7 +49,7 @@ FactoryGirl.define do
 
       evaluator.number_of_students.times do
         user = create :user
-        role = Role::GetDefaultUserRole[user]
+        role = Role::GetDefaultUserRole[user].role
         CourseMembership::AddStudent.call(period: period, role: role)
       end
 

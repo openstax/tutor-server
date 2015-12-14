@@ -77,7 +77,7 @@ class ResetPracticeWidget
   end
 
   def get_ecosystem_and_pools(page_ids, chapter_ids, role)
-    ecosystem = GetEcosystemFromIds.call(page_ids: page_ids, chapter_ids: chapter_ids)
+    ecosystem = GetEcosystemFromIds.call(page_ids: page_ids, chapter_ids: chapter_ids).ecosystem
 
     # Gather relevant chapters and pages
     chapters = ecosystem.chapters_by_ids(chapter_ids)

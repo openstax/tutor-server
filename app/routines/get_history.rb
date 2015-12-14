@@ -1,8 +1,8 @@
 class GetHistory
-  lev_routine ouputs: { tasks: :_self,
-                        ecosystems: :_self,
-                        tasked_exercises: :_self,
-                        exercises: :_self }
+  lev_routine outputs: { tasks: :_self,
+                         ecosystems: :_self,
+                         tasked_exercises: :_self,
+                         exercises: :_self }
 
   protected
 

@@ -1,6 +1,6 @@
 module Tasks
   class CreatePracticeWidgetTask
-    lev_routine outputs: { task: BuildTask }
+    lev_routine outputs: { task: { name: BuildTask, as: :build_task } }
 
     protected
 
@@ -21,6 +21,7 @@ module Tasks
         step = Tasks::Models::TaskStep.new(task: result.task)
 
         step.tasked = TaskExercise.call(exercise: exercise, task_step: step)
+                                  .tasked_exercise
 
         related_content = related_content_array[ii]
         step.add_related_content(related_content) unless related_content.nil?

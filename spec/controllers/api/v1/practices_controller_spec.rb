@@ -14,7 +14,7 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
   let!(:userless_token) { FactoryGirl.create :doorkeeper_access_token }
 
   let!(:course) {
-    course = CreateCourse.call(name: 'Physics 101')
+    course = CreateCourse.call(name: 'Physics 101').course
 
   }
   let!(:period) { CreatePeriod.call(course: course).period }
@@ -136,7 +136,7 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
 
     it "can be called by a teacher using a student role" do
       AddUserAsCourseTeacher.call(course: course, user: user_1)
-      student_role = AddUserAsPeriodStudent.call(period: period, user: user_2)
+      student_role = AddUserAsPeriodStudent.call(period: period, user: user_2).role
       ResetPracticeWidget.call(role: student_role, exercise_source: :fake)
 
       api_get :show, user_1_token, parameters: { id: course.id,

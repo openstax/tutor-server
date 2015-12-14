@@ -13,7 +13,7 @@ describe GetHistory, type: :routine do
 
     user = FactoryGirl.create :user
 
-    @role = AddUserAsPeriodStudent.call(user: user, period: period)
+    @role = AddUserAsPeriodStudent.call(user: user, period: period).role
 
     reading_plan_1 = FactoryGirl.create(:tasked_task_plan, owner: course)
     page_ids_1 = reading_plan_1.settings['page_ids']

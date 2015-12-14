@@ -6,7 +6,7 @@ class CreatePeriod
 
   def exec(course:, name: nil)
     name ||= (course.periods.count + 1).ordinalize
-    period_result = run(:create_period, course: course, name: name)
-    run(:assign_coursewide_task_plans, period: period_result.period)
+    run(:create_period, course: course, name: name)
+    run(:assign_coursewide_task_plans, period: result.period)
   end
 end

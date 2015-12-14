@@ -49,11 +49,11 @@ class GetCcDashboard
     # Does not support group work
     period_id_cc_tasks_map = cc_tasks.group_by{ |cc_task| cc_task.task.taskings.first.period.id }
 
-    ecosystems_map = GetCourseEcosystemsMap[course: course]
+    ecosystems_map = GetCourseEcosystemsMap[course: course].ecosystems_map
     cc_task_pages = cc_tasks.map{ |cc_task| Content::Page.new(strategy: cc_task.page.wrap) }
     page_id_to_page_map = ecosystems_map.map_pages_to_pages(pages: cc_task_pages)
 
-    result.course.periods = course.periods.map do |period|
+    result.course[:periods] = course.periods.map do |period|
       cc_tasks = period_id_cc_tasks_map[period.id] || []
       num_students = period.active_enrollments.length
       orig_map, spaced_map = get_period_performance_maps_from_cc_tasks(period, cc_tasks)

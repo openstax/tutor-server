@@ -81,7 +81,7 @@ class Tasks::Assistants::HomeworkAssistant
       task_type:   :homework,
       title:       title,
       description: description
-    ]
+    ].task
     AddSpyInfo.call(to: task, from: @ecosystem)
     return task
   end

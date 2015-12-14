@@ -16,14 +16,21 @@
 #
 class ChooseCourseRole
   lev_routine outputs: { role: :_self,
-                         roles: :_self,
-                         _verbatim: { name: GetUserCourseRoles, as: :get_roles } }
+                         roles: :_self },
+              uses: [GetUserCourseRoles,
+                     { name: Role::GetUserRoles, as: :get_user_roles },
+                     { name: CourseMembership::IsCourseTeacher,
+                       as: :is_teacher },
+                     { name: CourseMembership::GetCourseRoles,
+                       as: :get_course_roles }]
 
   protected
 
   def exec(user:, course:, allowed_role_type: :any, role_id: nil)
-    run(:get_roles, course: course, user: user, types: allowed_role_type,
-                    include_inactive_students: false)
+    set(roles: run(:get_user_course_roles, course: course,
+                                           user: user,
+                                           types: allowed_role_type,
+                                           include_inactive_students: false).roles)
 
     if role_id
       extra_roles = get_course_student_roles(course: course, user: user)
@@ -32,11 +39,14 @@ class ChooseCourseRole
 
       set(roles: roles.uniq)
 
-      if result.roles.none?
+      if roles.none?
         fatal_error(
           code:    :invalid_role,
           message: "The user does not have the specified role in the course"
         )
+        binding.pry
+      elsif roles.one?
+        set(role: roles.last)
       end
     end
 
@@ -97,13 +107,13 @@ class ChooseCourseRole
   end
 
   def get_course_student_roles(course:, user:)
-    # Return student roles if user is a teacher
-    user_roles = Role::GetUserRoles.call(user).roles
-    is_teacher = CourseMembership::IsCourseTeacher.call(course: course, roles: user_roles)
-    if is_teacher
+    user_roles = run(:get_user_roles, user).roles
+
+    if run(:is_teacher, course: course, roles: user_roles)
       # Teachers can impersonate any student, even inactive ones
-      CourseMembership::GetCourseRoles.call(course: course, types: :student,
-                                            include_inactive_students: true).roles
+      run(:get_course_roles, course: course,
+                             types: :student,
+                             include_inactive_students: true).roles
     else
       []
     end

@@ -54,7 +54,7 @@ describe GetCcDashboard, type: :routine do
 
   context 'without any work' do
     it "still returns period info for teachers" do
-      outputs = described_class.call(course: @course, role: @teacher_role).outputs
+      outputs = described_class.call(course: @course, role: @teacher_role)
 
       expect(HashWithIndifferentAccess[outputs]).to include(
         course: {
@@ -116,73 +116,71 @@ describe GetCcDashboard, type: :routine do
     end
 
     it "works for a student" do
-      outputs = described_class.call(course: @course, role: @student_role)
+      result = described_class.call(course: @course, role: @student_role)
 
-      expect(HashWithIndifferentAccess[outputs]).to include(
-        course: {
-          id: @course.id,
-          name: "Physics 101",
-          teachers: [
-            { id: @teacher_role.teacher.id.to_s,
-              role_id: @teacher_role.id.to_s,
-              first_name: 'Bob',
-              last_name: 'Newhart' }
-          ]
-        },
-        role: {
-          id: @student_role.id,
-          type: 'student'
-        },
-        tasks: a_collection_including(
-          @task_1, @task_2
-        ),
-        chapters: [
+      expect(HashWithIndifferentAccess[result.course]).to include({
+        id: @course.id,
+        name: "Physics 101",
+        teachers: [
+          { id: @teacher_role.teacher.id.to_s,
+            role_id: @teacher_role.id.to_s,
+            first_name: 'Bob',
+            last_name: 'Newhart' }
+        ]
+      })
+
+      expect(HashWithIndifferentAccess[result.role]).to include({
+        id: @student_role.id,
+        type: 'student'
+      })
+
+      expect(HashWithIndifferentAccess[result.tasks]).to be
+        a_collection_including(@task_1, @task_2)
+
+      expect(HashWithIndifferentAccess[result.chapters]).to include({
+        id: @chapter.id,
+        title: @chapter.title,
+        book_location: @chapter.book_location,
+        pages: [
           {
-            id: @chapter.id,
-            title: @chapter.title,
-            book_location: @chapter.book_location,
-            pages: [
+            id: @page_2.id,
+            title: @page_2.title,
+            uuid: @page_2.uuid,
+            version: @page_2.version,
+            book_location: @page_2.book_location,
+            last_worked_at: a_kind_of(Time),
+            exercises: Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT.times.map do
               {
-                id: @page_2.id,
-                title: @page_2.title,
-                uuid: @page_2.uuid,
-                version: @page_2.version,
-                book_location: @page_2.book_location,
-                last_worked_at: a_kind_of(Time),
-                exercises: Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT.times.map do
-                  {
-                    id: a_kind_of(Integer),
-                    is_completed: true,
-                    is_correct: true
-                  }
-                end + Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP
-                        .map{ |k_ago, ex_count| ex_count }.reduce(:+).times.map do
-                  {
-                    id: a_kind_of(Integer),
-                    is_completed: true,
-                    is_correct: false
-                  }
-                end
-              },
-              {
-                id: @page_1.id,
-                title: @page_1.title,
-                uuid: @page_1.uuid,
-                version: @page_1.version,
-                book_location: @page_1.book_location,
-                last_worked_at: a_kind_of(Time),
-                exercises: Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT.times.map do
-                  {
-                    id: a_kind_of(Integer),
-                    is_completed: true,
-                    is_correct: true
-                  }
-                end
+                id: a_kind_of(Integer),
+                is_completed: true,
+                is_correct: true
               }
-            ]
+            end + Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP
+                    .map{ |k_ago, ex_count| ex_count }.reduce(:+).times.map do
+              {
+                id: a_kind_of(Integer),
+                is_completed: true,
+                is_correct: false
+              }
+            end
+          },
+          {
+            id: @page_1.id,
+            title: @page_1.title,
+            uuid: @page_1.uuid,
+            version: @page_1.version,
+            book_location: @page_1.book_location,
+            last_worked_at: a_kind_of(Time),
+            exercises: Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT.times.map do
+              {
+                id: a_kind_of(Integer),
+                is_completed: true,
+                is_correct: true
+              }
+            end
           }
         ]
-      )
+      })
     end
 
     it "works for a teacher" do

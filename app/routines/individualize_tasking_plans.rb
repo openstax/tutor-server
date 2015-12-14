@@ -22,7 +22,7 @@ class IndividualizeTaskingPlans
       when Entity::Course
         run(:get_course_roles, course: target, types: :student).roles
       when CourseMembership::Models::Period
-        run(:get_period_roles, periods: target, types: :student).roles
+        run(:get_period_roles, periods: target).roles
       else
         raise NotYetImplemented
       end

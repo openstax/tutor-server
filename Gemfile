@@ -64,7 +64,7 @@ gem 'apipie-rails'
 gem 'maruku'
 
 # Lev framework
-gem 'lev', github: 'lml/lev', branch: 'ground-up-exercise' #'~> 7.0.0'
+gem 'lev', path: '../lev' #github: 'lml/lev', branch: 'ground-up-exercise' #'~> 7.0.0'
 
 # Ruby dsl for SQL queries
 gem 'squeel'
