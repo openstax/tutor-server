@@ -1,11 +1,15 @@
 class IndividualizeTaskingPlans
+  lev_routine uses: [{ name: CourseMembership::GetCourseRoles,
+                       as: :get_course_roles },
 
-  lev_routine express_output: :tasking_plans
+                     { name: CourseMembership::GetPeriodStudentRoles,
+                       as: :get_period_roles }],
+
+              outputs: { tasking_plans: :_self }
 
   protected
-
   def exec(task_plan)
-    outputs[:tasking_plans] = task_plan.tasking_plans.collect do |tasking_plan|
+    set(tasking_plans: task_plan.tasking_plans.collect do |tasking_plan|
       target = tasking_plan.target
 
       roles = case target
@@ -16,9 +20,9 @@ class IndividualizeTaskingPlans
         user = ::User::User.new(strategy: strategy)
         Role::GetDefaultUserRole[user]
       when Entity::Course
-        CourseMembership::GetCourseRoles.call(course: target, types: :student).outputs.roles
+        run(:get_course_roles, course: target, types: :student).roles
       when CourseMembership::Models::Period
-        CourseMembership::GetPeriodStudentRoles.call(periods: target).outputs.roles
+        run(:get_period_roles, periods: target).roles
       else
         raise NotYetImplemented
       end
@@ -28,7 +32,6 @@ class IndividualizeTaskingPlans
                                        opens_at: tasking_plan.opens_at,
                                        due_at: tasking_plan.due_at)
       end
-    end.flatten.uniq { |ii| ii.target }
+    end.flatten.uniq { |ii| ii.target })
   end
-
 end

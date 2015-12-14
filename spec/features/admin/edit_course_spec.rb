@@ -5,8 +5,8 @@ RSpec.feature 'Admin editing a course' do
     admin = FactoryGirl.create(:user, :administrator)
     stub_current_user(admin)
 
-    @course = CreateCourse[name: 'Physics I']
-    CreatePeriod[course: @course, name: '1st']
+    @course = CreateCourse.call(name: 'Physics I')
+    CreatePeriod.call(course: @course, name: '1st')
   end
 
   scenario 'Editing the name of a course' do

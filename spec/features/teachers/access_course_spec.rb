@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Teachers' do
-  let(:course) { CreateCourse[name: 'Access me'] }
+  let(:course) { CreateCourse.call(name: 'Access me').course }
   let(:user) { FactoryGirl.create(:user) }
 
   describe 'joining their courses' do
@@ -19,7 +19,7 @@ RSpec.describe 'Teachers' do
         before { visit join_course_path(course.teacher_join_token) }
 
         it 'adds the user as the teacher' do
-          expect(UserIsCourseTeacher[course: course, user: user]).to be true
+          expect(UserIsCourseTeacher.call(course: course, user: user)).to be true
         end
 
         it 'redirects the user to the course page' do

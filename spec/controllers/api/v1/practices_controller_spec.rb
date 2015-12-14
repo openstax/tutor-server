@@ -14,17 +14,17 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
   let!(:userless_token) { FactoryGirl.create :doorkeeper_access_token }
 
   let!(:course) {
-    course = CreateCourse[name: 'Physics 101']
+    course = CreateCourse.call(name: 'Physics 101').course
 
   }
-  let!(:period) { CreatePeriod[course: course] }
+  let!(:period) { CreatePeriod.call(course: course).period }
 
   context "POST #create" do
     let!(:page) {
       page = FactoryGirl.create :content_page
       ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(page.ecosystem)
       ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
-      AddEcosystemToCourse[course: course, ecosystem: ecosystem]
+      AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
       page
     }
 
@@ -34,10 +34,10 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
     let!(:exercise_4) { FactoryGirl.create :content_exercise, page: page }
     let!(:exercise_5) { FactoryGirl.create :content_exercise, page: page }
 
-    let!(:role) { AddUserAsPeriodStudent[period: period, user: user_1] }
+    let!(:role) { AddUserAsPeriodStudent.call(period: period, user: user_1).role }
 
     before(:each) do
-      outs = Content::Routines::PopulateExercisePools.call(book: page.book, save: false).outputs
+      outs = Content::Routines::PopulateExercisePools.call(book: page.book, save: false)
       chapters = outs.chapters
       pages = outs.pages
       pools = outs.pools
@@ -136,7 +136,7 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
 
     it "can be called by a teacher using a student role" do
       AddUserAsCourseTeacher.call(course: course, user: user_1)
-      student_role = AddUserAsPeriodStudent[period: period, user: user_2]
+      student_role = AddUserAsPeriodStudent.call(period: period, user: user_2).role
       ResetPracticeWidget.call(role: student_role, exercise_source: :fake)
 
       api_get :show, user_1_token, parameters: { id: course.id,

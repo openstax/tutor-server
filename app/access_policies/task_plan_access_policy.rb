@@ -3,7 +3,7 @@ class TaskPlanAccessPolicy
     case action
     when :read, :create, :update, :destroy
       if task_plan.owner.is_a?(Entity::Course)
-        UserIsCourseTeacher[user: requestor, course: task_plan.owner] rescue false
+        UserIsCourseTeacher.call(user: requestor, course: task_plan.owner) rescue false
       elsif requestor.is_human?
         requestor_is_task_plan_owner?(requestor, task_plan.owner)
       else

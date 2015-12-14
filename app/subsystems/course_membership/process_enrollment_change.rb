@@ -1,8 +1,7 @@
 class CourseMembership::ProcessEnrollmentChange
-  lev_routine express_output: :enrollment_change
-
-  uses_routine AddUserAsPeriodStudent, as: :add_student
-  uses_routine CourseMembership::AddEnrollment, as: :add_enrollment
+  lev_routine outputs: { enrollment_change: :_self },
+    uses: [{ name: AddUserAsPeriodStudent, as: :add_student },
+           { name: CourseMembership::AddEnrollment, as: :add_enrollment }]
 
   def exec(enrollment_change:, student_identifier: nil)
     fatal_error(code: :already_processed,
@@ -41,6 +40,6 @@ class CourseMembership::ProcessEnrollmentChange
       course_membership_period_id: enrollment_change_model.period.course.periods.map(&:id)
     ).update_all(status: CourseMembership::Models::EnrollmentChange.statuses[:rejected])
 
-    outputs[:enrollment_change] = enrollment_change
+    set(enrollment_change: enrollment_change)
   end
 end

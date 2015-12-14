@@ -292,10 +292,10 @@ class DemoBase
     raise "need a full name" if last_name.nil?
 
     # The password will be set if stubbing is disabled
-    user ||= run(User::CreateUser, username: username,
-                                   password: password,
-                                   first_name: first_name,
-                                   last_name: last_name).outputs.user
+    user ||= run(:create_user, username: username,
+                               password: password,
+                               first_name: first_name,
+                               last_name: last_name).user
 
     if sign_contracts
       sign_contract(user: user, name: :general_terms_of_use)
@@ -313,7 +313,7 @@ class DemoBase
 
   def new_period_student(period:, username: nil, name: nil, password: nil)
     user = new_user(username: username, name: name, password: password)
-    role = run(AddUserAsPeriodStudent, period: period, user: user).outputs.role
+    role = run(:add_student, period: period, user: user).role
 
     {
       user: user,
@@ -392,9 +392,9 @@ class DemoBase
 
     course.students.each do |student|
       user = User::User.new(strategy: student.role.profile.wrap)
-      task = GetConceptCoach[user: user,
-                             cnx_book_id: book.uuid,
-                             cnx_page_id: acceptable_pages.sample.uuid]
+      task = GetConceptCoach.call(user: user,
+                                  cnx_book_id: book.uuid,
+                                  cnx_page_id: acceptable_pages.sample.uuid)
     end
   end
 
@@ -410,7 +410,7 @@ class DemoBase
   end
 
   def distribute_tasks(task_plan:)
-    entity_tasks = run(DistributeTasks, task_plan).outputs.entity_tasks
+    entity_tasks = run(:distribute_tasks, task_plan).entity_tasks
 
     log("Assigned #{task_plan.type} #{entity_tasks.count} times")
     log("One task looks like: " + print_entity_task(entity_task: entity_tasks.first)) \
@@ -461,7 +461,7 @@ class DemoBase
     if step.tasked.exercise?
       Hacks::AnswerExercise.call(task_step: step, is_correct: response)
     else
-      run(MarkTaskStepCompleted, task_step: step)
+      run(:mark_task_step_as_completed, task_step: step)
     end
   end
 
@@ -480,7 +480,7 @@ class DemoBase
     course = run(:create_course, name: name,
                  catalog_offering: catalog_offering,
                  appearance_code: appearance_code,
-                 is_concept_coach: is_concept_coach).outputs.course
+                 is_concept_coach: is_concept_coach).course
     log("Created a course named '#{name}'.")
     course
   end

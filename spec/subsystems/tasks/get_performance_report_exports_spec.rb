@@ -8,7 +8,7 @@ RSpec.describe Tasks::GetPerformanceReportExports, type: :routine do
     strategy = User::Strategies::Direct::User.new(profile)
     user = User::User.new(strategy: strategy)
 
-    role = AddUserAsCourseTeacher[course: course, user: user]
+    role = AddUserAsCourseTeacher.call(course: course, user: user)
 
     physics_export = Tempfile.open(['Physics_I_Performance', '.xlsx']) do |physics_file|
       FactoryGirl.create(:tasks_performance_report_export,
@@ -24,7 +24,7 @@ RSpec.describe Tasks::GetPerformanceReportExports, type: :routine do
                          role: role)
     end
 
-    export = described_class[course: course, role: role]
+    export = described_class.call(course: course, role: role)
 
     # newest on top - enforced by default_scope in the model
 

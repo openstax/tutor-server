@@ -81,8 +81,8 @@ class Tasks::Assistants::HomeworkAssistant
       task_type:   :homework,
       title:       title,
       description: description
-    ]
-    AddSpyInfo[to: task, from: @ecosystem]
+    ].task
+    AddSpyInfo.call(to: task, from: @ecosystem)
     return task
   end
 
@@ -98,14 +98,14 @@ class Tasks::Assistants::HomeworkAssistant
 
   def add_exercise_step(task:, exercise:)
     step = Tasks::Models::TaskStep.new(task: task)
-    TaskExercise[task_step: step, exercise: exercise]
+    TaskExercise.call(task_step: step, exercise: exercise)
     task.task_steps << step
     step
   end
 
   def add_spaced_practice_exercise_steps!(task:, taskee:)
     # Get taskee's reading history
-    history = GetHistory.call(role: taskee, type: :homework, current_task: task).outputs
+    history = GetHistory.call(role: taskee, type: :homework, current_task: task)
 
     all_worked_exercise_numbers = history.exercises.flatten.collect{ |ex| ex.number }
 

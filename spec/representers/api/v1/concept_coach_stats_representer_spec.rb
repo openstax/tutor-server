@@ -7,7 +7,7 @@ RSpec.describe Api::V1::ConceptCoachStatsRepresenter, type: :representer, speed:
     DatabaseCleaner.start
 
     ecosystem = VCR.use_cassette('Api_V1_ConceptCoachStatsRepresenter/with_book', VCR_OPTS) do
-      FetchAndImportBookAndCreateEcosystem[book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b']
+      FetchAndImportBookAndCreateEcosystem.call(book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b')
     end
 
     @book = ecosystem.books.first
@@ -23,17 +23,17 @@ RSpec.describe Api::V1::ConceptCoachStatsRepresenter, type: :representer, speed:
     @course = @period.course
     @course.profile.update_attribute(:is_concept_coach, true)
 
-    AddEcosystemToCourse[ecosystem: ecosystem, course: @course]
+    AddEcosystemToCourse.call(ecosystem: ecosystem, course: @course)
 
     @user_1 = FactoryGirl.create(:user)
     @user_2 = FactoryGirl.create(:user)
 
-    AddUserAsPeriodStudent[user: @user_1, period: @period]
-    AddUserAsPeriodStudent[user: @user_2, period: @period]
+    AddUserAsPeriodStudent.call(user: @user_1, period: @period)
+    AddUserAsPeriodStudent.call(user: @user_2, period: @period)
 
     @entity_tasks = [@page_1, @page_2].flat_map do |page|
       [@user_1, @user_2].flat_map do |user|
-        GetConceptCoach[user: user, cnx_book_id: page.chapter.book.uuid, cnx_page_id: page.uuid]
+        GetConceptCoach.call(user: user, cnx_book_id: page.chapter.book.uuid, cnx_page_id: page.uuid)
       end
     end
   end
@@ -44,13 +44,13 @@ RSpec.describe Api::V1::ConceptCoachStatsRepresenter, type: :representer, speed:
 
   it "represents concept coach stats" do
     task_step = @entity_tasks.first.task.task_steps.select{ |ts| ts.tasked.exercise? }.first
-    Hacks::AnswerExercise[task_step: task_step, is_correct: true]
+    Hacks::AnswerExercise.call(task_step: task_step, is_correct: true)
 
     task_step = @entity_tasks.second.task.task_steps.select{ |ts| ts.tasked.exercise? }.first
-    Hacks::AnswerExercise[task_step: task_step, is_correct: false]
+    Hacks::AnswerExercise.call(task_step: task_step, is_correct: false)
 
     tasks = Tasks::Models::Task.where(entity_task_id: @entity_tasks.map(&:id))
-    stats = Hashie::Mash.new(title: 'Test', stats: CalculateTaskStats[tasks: tasks])
+    stats = Hashie::Mash.new(title: 'Test', stats: CalculateTaskStats.call(tasks: tasks))
 
     representation = described_class.new(stats).as_json
     expect(representation).to include(

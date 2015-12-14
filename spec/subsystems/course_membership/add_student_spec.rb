@@ -5,7 +5,7 @@ describe CourseMembership::AddStudent, type: :routine do
     it "succeeds" do
       role = Entity::Role.create!
       course = Entity::Course.create!
-      period = CreatePeriod[course: course]
+      period = CreatePeriod.call(course: course)
 
       result = nil
       expect {
@@ -18,7 +18,7 @@ describe CourseMembership::AddStudent, type: :routine do
       sid = 'N0B0DY'
       role = Entity::Role.create!
       course = Entity::Course.create!
-      period = CreatePeriod[course: course]
+      period = CreatePeriod.call(course: course)
 
       result = nil
       expect {
@@ -26,7 +26,7 @@ describe CourseMembership::AddStudent, type: :routine do
                                                    student_identifier: sid)
       }.to change{ CourseMembership::Models::Student.count }.by(1)
       expect(result.errors).to be_empty
-      expect(result.outputs.student.student_identifier).to eq sid
+      expect(result.student.student_identifier).to eq sid
     end
   end
 
@@ -34,8 +34,8 @@ describe CourseMembership::AddStudent, type: :routine do
     it "fails" do
       role = Entity::Role.create!
       course = Entity::Course.create!
-      period_1 = CreatePeriod[course: course]
-      period_2 = CreatePeriod[course: course]
+      period_1 = CreatePeriod.call(course: course)
+      period_2 = CreatePeriod.call(course: course)
 
       result = nil
       expect {

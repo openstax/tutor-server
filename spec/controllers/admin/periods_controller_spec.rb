@@ -4,7 +4,7 @@ RSpec.describe Admin::PeriodsController do
   let!(:admin) { FactoryGirl.create(:user, :administrator) }
 
   let!(:course) { Entity::Course.create }
-  let!(:period) { CreatePeriod[course: course, name: '1st'] }
+  let!(:period) { CreatePeriod.call(course: course, name: '1st').period }
 
   before { controller.sign_in(admin) }
 
@@ -19,8 +19,11 @@ RSpec.describe Admin::PeriodsController do
     end
 
     context 'when there are students' do
-      let!(:student) { FactoryGirl.create(:user) }
-      let!(:add_student) { AddUserAsPeriodStudent.call(user: student, period: period) }
+
+      before do
+        student = FactoryGirl.create(:user)
+        AddUserAsPeriodStudent.call(user: student, period: period)
+      end
 
       it 'displays an error message' do
         expect {

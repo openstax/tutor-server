@@ -1,9 +1,6 @@
 class Admin::CoursesStudents
-  lev_handler
-
-  uses_routine AddUserAsPeriodStudent
-  uses_routine User::FindOrCreateUser, as: :find_or_create_user,
-                                       translations: { outputs: { type: :verbatim } }
+  lev_handler uses: [AddUserAsPeriodStudent,
+                     { name: User::FindOrCreateUser, as: :find_or_create_user }]
 
   protected
   def authorized?; true; end
@@ -39,7 +36,7 @@ class Admin::CoursesStudents
       user = run(:find_or_create_user, username: row['username'],
                                        password: row['password'],
                                        first_name: row['first_name'],
-                                       last_name: row['last_name']).outputs.user
+                                       last_name: row['last_name']).user
 
       run(:add_user_as_period_student, period: period, user: user)
     end

@@ -1,9 +1,7 @@
 class ImportEcosystemManifest
 
-  lev_routine express_output: :ecosystem
-
-  uses_routine FetchAndImportBookAndCreateEcosystem, as: :fetch_and_import,
-                                                     translations: { outputs: { type: :verbatim } }
+  lev_routine outputs: { ecosystem: { name: FetchAndImportBookAndCreateEcosystem,
+                                      as: :fetch_and_import } }
 
   protected
 

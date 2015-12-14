@@ -1,5 +1,6 @@
 class Legal::GetContractNames
-  lev_routine
+  lev_routine outputs: { proxy_signed: :_self,
+                         non_proxy_signed: :_self }
 
   protected
 
@@ -7,14 +8,13 @@ class Legal::GetContractNames
     applicable_to = [applicable_to].flatten.compact
 
     targeted_contracts = applicable_to.collect { |item|
-      Legal::GetTargetedContracts[applicable_to: item]
+      Legal::GetTargetedContracts.call(applicable_to: item)
     }.flatten
 
     proxy_signed_contracts, non_proxy_signed_contracts =
       targeted_contracts.partition(&:is_proxy_signed)
 
-    outputs.proxy_signed =
-      proxy_signed_contracts.collect(&:contract_name).uniq
+    set(proxy_signed: proxy_signed_contracts.collect(&:contract_name).uniq)
 
 
     # Figure out which remaining contracts need to be signed and then have
@@ -31,9 +31,8 @@ class Legal::GetContractNames
       non_proxy_signed_contracts.collect(&:contract_name)
                                 .uniq
 
-    outputs.non_proxy_signed =
-      ( contract_names_signed_by_everyone -
-        contracts_masked_by_targeted_contracts ) +
-      targeted_contracts_without_proxy_signature
+    set(non_proxy_signed: (contract_names_signed_by_everyone -
+                            contracts_masked_by_targeted_contracts) +
+                          targeted_contracts_without_proxy_signature)
   end
 end

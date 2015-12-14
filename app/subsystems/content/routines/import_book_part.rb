@@ -1,22 +1,20 @@
 class Content::Routines::ImportBookPart
-
-  lev_routine
-
-  uses_routine Content::Routines::ImportBookPart, as: :import_book_part
-  uses_routine Content::Routines::ImportPage, as: :import_page
+  lev_routine outputs: {
+                chapters: :_self,
+                pages: :_self,
+                page_taggings: :_self,
+                exercises: :_self
+              },
+              uses: [{ name: Content::Routines::ImportBookPart, as: :import_book_part },
+                     { name: Content::Routines::ImportPage, as: :import_page }]
 
   protected
-
   # Imports and saves a Cnx::BookPart as a Content::Models::Book or Content::Models::BookPart
   # Returns the Content::Models::Book or Content::Models::BookPart object
   def exec(cnx_book_part:, book:, chapter_tracker: nil, save: true)
-
     chapter_tracker ||= ChapterTracker.new
 
-    outputs[:chapters] = []
-    outputs[:pages] = []
-    outputs[:page_taggings] = []
-    outputs[:exercises] = []
+    set(chapters: [], pages: [], page_taggings: [], exercises: [])
 
     if cnx_book_part.is_chapter? # Skip root/units
       chapter = Content::Models::Chapter.new(
@@ -27,25 +25,23 @@ class Content::Routines::ImportBookPart
       )
       chapter.save if save
       transfer_errors_from(chapter, {type: :verbatim}, true)
-
       book.chapters << chapter
-      outputs[:chapters] << chapter
-
+      result.chapters << chapter
       page_offset = cnx_book_part.parts.first.try(:is_intro?) ? 0 : 1
 
       cnx_book_part.parts.each_with_index do |part, index|
         raise "Unexpected class #{part.class}" unless part.is_a?(OpenStax::Cnx::V1::Page)
 
-        outs = run(:import_page,
-                   cnx_page: part,
-                   chapter: chapter,
-                   number: index + 1,
-                   book_location: [chapter_tracker.value, index + page_offset],
-                   save: save).outputs
+        import_page = run(:import_page, cnx_page: part,
+                                        chapter: chapter,
+                                        number: index + 1,
+                                        book_location: [chapter_tracker.value,
+                                                        index + page_offset],
+                                        save: save)
 
-        outputs[:pages] << outs.page
-        outputs[:page_taggings] += outs.taggings
-        outputs[:exercises] += outs.exercises
+        result.pages << import_page.page
+        result.page_taggings += import_page.taggings
+        result.exercises += import_page.exercises
       end
 
       chapter_tracker.advance!
@@ -56,19 +52,17 @@ class Content::Routines::ImportBookPart
 
         raise "Unexpected class #{part.class}" unless part.is_a?(OpenStax::Cnx::V1::BookPart)
 
-        outs = run(:import_book_part,
-                   cnx_book_part: part,
-                   book: book,
-                   chapter_tracker: chapter_tracker,
-                   save: save).outputs
+        import_book_part = run(:import_book_part, cnx_book_part: part,
+                                                  book: book,
+                                                  chapter_tracker: chapter_tracker,
+                                                  save: save)
 
-        outputs[:chapters] += outs.chapters
-        outputs[:pages] += outs.pages
-        outputs[:page_taggings] += outs.page_taggings
-        outputs[:exercises] += outs.exercises
+        result_add(chapters: import_book_part.chapters)
+        result_add(pages: import_book_part.pages)
+        result_add(page_taggings:  import_book_part.page_taggings)
+        result_add(exercises: import_book_part.exercises)
       end
     end
-
   end
 
   class ChapterTracker
@@ -84,5 +78,4 @@ class Content::Routines::ImportBookPart
       @chapter += 1
     end
   end
-
 end

@@ -1,5 +1,5 @@
 class SearchCourses
-  lev_routine express_output: :items
+  lev_routine outputs: { items: :_self }
 
   protected
 
@@ -20,7 +20,7 @@ class SearchCourses
       }
     end
 
-    outputs.items = courses.order{ profile.name }
+    set(items: courses.order{ profile.name })
   end
 
 end

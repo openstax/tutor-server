@@ -1,28 +1,19 @@
 class ResetPracticeWidget
-  lev_routine express_output: :entity_task
-
-  uses_routine GetPracticeWidget, as: :get_practice_widget
-
-  uses_routine AddSpyInfo, as: :add_spy_info
-
-  uses_routine Tasks::CreateTasking,
-    translations: { outputs: { type: :verbatim } },
-    as: :create_tasking
-
-  uses_routine Tasks::CreatePracticeWidgetTask,
-    translations: { outputs: { type: :verbatim } },
-    as: :create_practice_widget_task
-
-  uses_routine GetCourseEcosystem, as: :get_course_ecosystem
-  uses_routine GetHistory, as: :get_history
-  uses_routine GetEcosystemExercisesFromBiglearn, as: :get_ecosystem_exercises_from_biglearn
+  lev_routine outputs: { entity_task: :_self },
+              uses: [{ name: Tasks::CreateTasking, as: :create_tasking },
+                     { name: Tasks::CreatePracticeWidgetTask, as: :create_practice_widget_task },
+                     GetPracticeWidget,
+                     AddSpyInfo,
+                     GetCourseEcosystem,
+                     GetHistory,
+                     GetEcosystemExercisesFromBiglearn]
 
   protected
 
   def exec(role:, exercise_source:, page_ids: nil, chapter_ids: nil, randomize: true)
     # Get the existing practice widget and remove incomplete exercises from it
     # so they can be used in later practice
-    existing_practice_task = run(:get_practice_widget, role: role).outputs.task.try(:task)
+    existing_practice_task = run(:get_practice_widget, role: role).task.try(:task)
     existing_practice_task.task_steps.incomplete.destroy_all unless existing_practice_task.nil?
 
     # Gather 5 exercises
@@ -42,7 +33,7 @@ class ResetPracticeWidget
                       count: count,
                       role: role,
                       pools: pools)
-                  .outputs.ecosystem_exercises
+                  .ecosystem_exercises
     else
       raise ArgumentError,
             "exercise_source: must be one of [:fake, :local, :biglearn]"
@@ -67,14 +58,14 @@ class ResetPracticeWidget
     related_content_array = exercises.collect{ |ex| ex.page.related_content }
 
     # Create the new practice widget task, and put the exercises into steps
-    run(:create_practice_widget_task, exercises: exercises,
-                                      task_type: task_type,
-                                      related_content_array: related_content_array)
-    run(:add_spy_info, to: outputs.task, from: ecosystem)
+     task = run(:create_practice_widget_task, exercises: exercises,
+                                              task_type: task_type,
+                                              related_content_array: related_content_array).task
+    run(:add_spy_info, to: task, from: ecosystem)
 
-    run(:create_tasking, role: role, task: outputs.task.entity_task)
+    run(:create_tasking, role: role, task: task.entity_task)
 
-    outputs.entity_task = outputs.task.entity_task
+    set(entity_task: task.entity_task)
   end
 
   def get_fake_exercises(count)
@@ -86,7 +77,7 @@ class ResetPracticeWidget
   end
 
   def get_ecosystem_and_pools(page_ids, chapter_ids, role)
-    ecosystem = GetEcosystemFromIds[page_ids: page_ids, chapter_ids: chapter_ids]
+    ecosystem = GetEcosystemFromIds.call(page_ids: page_ids, chapter_ids: chapter_ids).ecosystem
 
     # Gather relevant chapters and pages
     chapters = ecosystem.chapters_by_ids(chapter_ids)
@@ -100,7 +91,7 @@ class ResetPracticeWidget
     options = { randomize: true }.merge(options)
     entity_tasks = role.taskings.preload(task: {task: {task_steps: :tasked}})
                                 .collect{ |tt| tt.task }
-    all_worked_exercises = run(:get_history, role: role, type: :all).outputs.exercises.flatten.uniq
+    all_worked_exercises = run(:get_history, role: role, type: :all).exercises.flatten.uniq
     exercise_pool = pools.collect{ |pl| pl.exercises }.flatten.uniq
     exercise_pool = exercise_pool.shuffle if options[:randomize]
     candidate_exercises = (exercise_pool - all_worked_exercises)

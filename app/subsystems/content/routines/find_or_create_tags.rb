@@ -1,9 +1,7 @@
 class Content::Routines::FindOrCreateTags
-
-  lev_routine express_output: :tags
+  lev_routine outputs: { tags: :_self }
 
   protected
-
   # Input is an array of either:
   #  1) Content::Models::Tags
   #  2) Hashes containing the following fields:
@@ -16,12 +14,12 @@ class Content::Routines::FindOrCreateTags
   #
   def exec(ecosystem:, input:)
     tag_objects, hashes = partition_content_tags(input)
-    tag_objects.each{ |tag| tag.save! unless tag.persisted? }
-    outputs[:tags] = tag_objects + find_or_create_ecosystem_tags_from_hash_array(ecosystem, hashes)
+    tag_objects.each { |tag| tag.save! unless tag.persisted? }
+    tags = tag_objects + find_or_create_ecosystem_tags_from_hash_array(ecosystem, hashes)
+    set(tags: tags)
   end
 
   private
-
   def partition_content_tags(input)
     [input].flatten.partition{ |obj| obj.is_a?(Content::Models::Tag) }
   end
@@ -50,10 +48,10 @@ class Content::Routines::FindOrCreateTags
     new_teks_hashes = new_hash_array.select{ |hash| new_teks_values.include?(hash[:value]) }
 
     # Some TEKS was found that did not previously exist and is not defined in the content
-    hashless_teks = new_teks_values - new_teks_hashes.collect{ |hash| hash[:value] }
+    hashless_teks = new_teks_values - new_teks_hashes.collect { |hash| hash[:value] }
     Rails.logger.warn "TEKS with no definition found: #{hashless_teks.join(', ')}" \
       unless hashless_teks.empty?
-    missing_teks_hashes = hashless_teks.collect{ |teks| { value: teks } }
+    missing_teks_hashes = hashless_teks.collect { |teks| { value: teks } }
 
     # Create new tags for TEKS
     new_teks_tags = (new_teks_hashes + missing_teks_hashes).collect do |hash|
@@ -61,7 +59,9 @@ class Content::Routines::FindOrCreateTags
                        .merge(content_ecosystem_id: ecosystem.id, tag_type: :teks)
       Content::Models::Tag.create!(attributes)
     end
+
     teks_tags = existing_teks_tags + new_teks_tags
+
     teks_map = teks_tags.each_with_object({}) do |tag, hash|
       hash[tag.value] = tag
     end
@@ -80,7 +80,6 @@ class Content::Routines::FindOrCreateTags
       # If the hash mentions a TEKS tag, link it
       if teks_value
         raise "Can only link TEKS tags to LOs" if !new_tag.lo?
-
         teks_tag = teks_map[teks_value]
         Content::Models::LoTeksTag.create!(lo: new_tag, teks: teks_tag)
       end
@@ -90,5 +89,4 @@ class Content::Routines::FindOrCreateTags
 
     (existing_tags + existing_teks_tags + new_teks_tags + new_non_teks_tags).uniq
   end
-
 end

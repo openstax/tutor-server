@@ -16,7 +16,7 @@ FactoryGirl.define do
     opens_at { Time.now }
     due_at { (opens_at || Time.now) + duration }
     after(:build) do |task, evaluator|
-      AddSpyInfo[to: task, from: evaluator.ecosystem]
+      AddSpyInfo.call(to: task, from: evaluator.ecosystem)
 
       evaluator.step_types.each_with_index do |type, i|
         tasked = FactoryGirl.build(type, skip_task: true)

@@ -11,7 +11,7 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
       school: 'Denver University'
     )
 
-    ImportSalesforceCourses[include_real_salesforce_data: false]
+    ImportSalesforceCourses.call(include_real_salesforce_data: false)
   end
 
   it 'restricts to Denver University when told to include real data but global secrets flag false' do
@@ -24,7 +24,7 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
       school: 'Denver University'
     )
 
-    ImportSalesforceCourses[include_real_salesforce_data: true]
+    ImportSalesforceCourses.call(include_real_salesforce_data: true)
   end
 
   it 'does not restrict to Denver University when told to include real data' do
@@ -36,7 +36,7 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
       course_id: nil
     )
 
-    ImportSalesforceCourses[include_real_salesforce_data: true]
+    ImportSalesforceCourses.call(include_real_salesforce_data: true)
   end
 
   it 'errors when the book name does not match an offering in tutor' do
@@ -51,8 +51,8 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
     result = ImportSalesforceCourses.call
 
     expect(class_size.error).to eq "Book Name does not match an offering in Tutor."
-    expect(result.outputs.num_failures).to eq 1
-    expect(result.outputs.num_successes).to eq 0
+    expect(result.num_failures).to eq 1
+    expect(result.num_successes).to eq 0
   end
 
   it 'errors when the book name matches a non CC offering' do
@@ -120,8 +120,8 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
     expect(course_ecosystem.course).to eq created_course
     expect(course_ecosystem.ecosystem).to eq offering.ecosystem
 
-    expect(result.outputs.num_failures).to eq 0
-    expect(result.outputs.num_successes).to eq 1
+    expect(result.num_failures).to eq 0
+    expect(result.num_successes).to eq 1
   end
 
   def disable_sfdc_client

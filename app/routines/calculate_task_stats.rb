@@ -1,8 +1,6 @@
 class CalculateTaskStats
-
-  lev_routine express_output: :stats
-
-  uses_routine Role::GetUsersForRoles, as: :get_users_for_roles
+  lev_routine outputs: { stats: :_self },
+              uses: { name: Role::GetUsersForRoles, as: :get_users_for_roles }
 
   protected
 
@@ -26,7 +24,7 @@ class CalculateTaskStats
         answered_count: completed_tasked_exercises.count,
         answers: completed_tasked_exercises.collect do |te|
           roles = te.task_step.task.taskings.collect{ |ts| ts.role }
-          users = run(:get_users_for_roles, roles).outputs.users
+          users = run(:get_users_for_roles, roles).users
           names = users.collect(&:name)
 
           {
@@ -152,7 +150,7 @@ class CalculateTaskStats
     @tasks = tasks
     @details = details
 
-    outputs[:stats] = generate_period_stat_data
+    set(stats: generate_period_stat_data)
   end
 
 end

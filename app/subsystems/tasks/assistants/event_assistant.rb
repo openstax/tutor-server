@@ -17,10 +17,10 @@ module Tasks
 
       def build_tasks
         taskees.collect {
-          Tasks::BuildTask[task_plan: task_plan,
-                           task_type: :event,
-                           title: task_plan.title,
-                           description: task_plan.description]
+          Tasks::BuildTask.call(task_plan: task_plan,
+                                task_type: :event,
+                                title: task_plan.title,
+                                description: task_plan.description)
         }.flat_map(&:entity_task)
       end
 

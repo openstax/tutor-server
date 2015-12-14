@@ -2,16 +2,16 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::CourseRepresenter, type: :representer do
   let!(:ecosystem)        { Content::Models::Ecosystem.create!(title: 'Test eco') }
-  let!(:catalog_offering) { Catalog::CreateOffering[salesforce_book_name: 'book',
-                                                    appearance_code: 'appearance',
-                                                    webview_url: 'web_url',
-                                                    pdf_url: 'pdf_url',
-                                                    description: 'desc',
-                                                    ecosystem: ecosystem] }
-  let!(:course)           { CreateCourse[name: 'Test course',
-                                         appearance_code: 'appearance override',
-                                         catalog_offering: catalog_offering,
-                                         is_concept_coach: true] }
+  let!(:catalog_offering) { Catalog::CreateOffering.call(salesforce_book_name: 'book',
+                                                         appearance_code: 'appearance',
+                                                         webview_url: 'web_url',
+                                                         pdf_url: 'pdf_url',
+                                                         description: 'desc',
+                                                         ecosystem: ecosystem) }
+  let!(:course)           { CreateCourse.call(name: 'Test course',
+                                              appearance_code: 'appearance override',
+                                              catalog_offering: catalog_offering,
+                                              is_concept_coach: true) }
 
   subject(:represented) { described_class.new(course).to_hash }
 

@@ -1,5 +1,5 @@
 class Admin::TargetedContractsCreate
-  lev_handler
+  lev_handler uses: Legal::CreateTargetedContract
 
   paramify :targeted_contract do
     attribute :contract_name, type: String
@@ -8,8 +8,6 @@ class Admin::TargetedContractsCreate
     attribute :is_end_user_visible, type: boolean
     attribute :masked_contract_names
   end
-
-  uses_routine Legal::CreateTargetedContract
 
   protected
 
@@ -21,7 +19,7 @@ class Admin::TargetedContractsCreate
     masked_contract_names = targeted_contract_params.masked_contract_names.reject(&:blank?)
     target_gid, target_name = gid_and_name(targeted_contract_params.target)
 
-    run(Legal::CreateTargetedContract,
+    run(:legal_create_targeted_contract,
         contract_name: targeted_contract_params.contract_name,
         target_gid: target_gid,
         target_name: target_name,

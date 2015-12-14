@@ -25,7 +25,7 @@ module MapUsersAccounts
 
       raise error.message if error = result.errors.first
 
-      result.outputs.user
+      result.user
     end
   end
 

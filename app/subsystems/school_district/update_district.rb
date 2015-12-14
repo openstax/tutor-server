@@ -1,6 +1,6 @@
 module SchoolDistrict
   class UpdateDistrict
-    lev_routine express_output: :district
+    lev_routine outputs: { district: :_self }
 
     protected
     def exec(id:, attributes: {})
@@ -8,10 +8,7 @@ module SchoolDistrict
 
       district.update_attributes(attributes)
 
-      outputs.district = {
-        id: district.id,
-        name: district.name
-      }
+      set(district: { id: district.id, name: district.name })
     end
   end
 end

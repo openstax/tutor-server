@@ -2,7 +2,7 @@ module User
   class SearchUsers
     include ::TypeVerification
 
-    lev_routine express_output: :users
+    lev_routine outputs: { users: :_self }
 
     protected
     def exec(search:, order: 'last_name', page: nil, per_page: 30,
@@ -10,13 +10,13 @@ module User
       search = verify_and_return search, klass: String
       profiles = find_profiles(search).order(order).paginate(page: page, per_page: per_page)
 
-      outputs[:users] = Hashie::Mash.new(
+      set(users: Hashie::Mash.new(
         total_count: profiles.total_entries,
         items: profiles.collect do |profile|
           strategy = strategy_class.new(profile)
           ::User::User.new(strategy: strategy)
         end
-      )
+      ))
     end
 
     private

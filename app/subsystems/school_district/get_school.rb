@@ -1,13 +1,13 @@
 module SchoolDistrict
   class GetSchool
-    lev_routine express_output: :school
+    lev_routine outputs: { school: :_self }
 
     protected
     def exec(id: nil, name: nil)
       if !id.blank? && id != 0 # webforms weirdness
-        outputs.school = Models::School.find(id)
+        set(school: Models::School.find(id))
       elsif !name.blank?
-        outputs.school = Models::School.where(name: name).first
+        set(school: Models::School.where(name: name).first)
       end
     end
   end

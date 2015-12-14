@@ -4,7 +4,7 @@ class StudentAccessPolicy
 
     case action
     when :create, :update, :destroy
-      UserIsCourseTeacher[user: requestor, course: student.course]
+      UserIsCourseTeacher.call(user: requestor, course: student.course)
     else
       false
     end

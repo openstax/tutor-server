@@ -1,5 +1,5 @@
 class GetEcosystemFromIds
-  lev_routine express_output: :ecosystem
+  lev_routine outputs: { ecosystem: :_self }
 
   protected
 
@@ -43,6 +43,6 @@ class GetEcosystemFromIds
                 message: 'More than one ecosystem found for the specified ids') \
       if ecosystems.size > 1
 
-    outputs[:ecosystem] = ecosystems.first
+    set(ecosystem: ecosystems.first)
   end
 end

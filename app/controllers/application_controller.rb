@@ -27,11 +27,11 @@ class ApplicationController < ActionController::Base
     # Get contracts that apply to the user's current courses; some of these
     # have been signed by proxy (and need an implicit signature), while some
     # don't and need to go through the normal FinePrint process.
-    courses = GetUserCourses[user: current_user]
+    courses = GetUserCourses.call(user: current_user).courses
     Legal::GetContractNames.call(
       applicable_to: courses,
       contract_names_signed_by_everyone: [:general_terms_of_use, :privacy_policy]
-    ).outputs
+    )
   end
 
   def allow_iframe_access

@@ -4,7 +4,7 @@ RSpec.describe Api::V1::StudentRepresenter, type: :representer do
   let!(:user) { FactoryGirl.create(:user) }
   let!(:period) { FactoryGirl.create(:course_membership_period) }
   let!(:student) {
-    AddUserAsPeriodStudent.call(period: period, user: user).outputs.student
+    AddUserAsPeriodStudent.call(period: period, user: user).student
   }
 
   it 'represents a student' do

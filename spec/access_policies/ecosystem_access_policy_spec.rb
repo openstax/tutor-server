@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe EcosystemAccessPolicy, type: :access_policy do
-  let(:course)            { CreateCourse[name: 'Physics 401'] }
-  let(:period)            { CreatePeriod[course: course] }
+  let(:course)            { CreateCourse.call(name: 'Physics 401').course }
+  let(:period)            { CreatePeriod.call(course: course).period }
 
   let(:student)           { FactoryGirl.create(:user) }
   let(:teacher)           { FactoryGirl.create(:user) }
@@ -15,9 +15,9 @@ RSpec.describe EcosystemAccessPolicy, type: :access_policy do
   }
 
   before(:each) do
-    AddUserAsCourseTeacher[course: course, user: teacher]
-    AddUserAsPeriodStudent[period: period, user: student]
-    AddEcosystemToCourse[ecosystem: ecosystem, course: course]
+    AddUserAsCourseTeacher.call(course: course, user: teacher)
+    AddUserAsPeriodStudent.call(period: period, user: student)
+    AddEcosystemToCourse.call(ecosystem: ecosystem, course: course)
   end
 
   # action, requestor are set in contexts

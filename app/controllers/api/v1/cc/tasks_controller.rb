@@ -34,10 +34,10 @@ class Api::V1::Cc::TasksController < Api::V1::ApiController
                                   cnx_page_id: params[:cnx_page_id])
 
     if result.errors.any?
-      json_hash = { errors: result.errors, valid_books: result.outputs.valid_book_urls }
+      json_hash = { errors: result.errors, valid_books: result.valid_book_urls }
       render json: json_hash, status: :unprocessable_entity
     else
-      respond_with result.outputs.task, represent_with: Api::V1::TaskRepresenter
+      respond_with result.task, represent_with: Api::V1::TaskRepresenter
     end
   end
 
@@ -56,17 +56,17 @@ class Api::V1::Cc::TasksController < Api::V1::ApiController
     course = Entity::Course.find(params[:course_id])
     OSU::AccessPolicy.require_action_allowed!(:stats, current_human_user, course)
 
-    ecosystem_id = GetCourseEcosystem[course: course].id
+    ecosystem_id = GetCourseEcosystem.call(course: course).id
     page_title = Content::Models::Page.joins(:book)
                                       .where(book: {content_ecosystem_id: ecosystem_id},
                                              uuid: params[:cnx_page_id])
                                       .pluck(:title).first
-    student_role_ids = CourseMembership::GetCourseRoles[course: course, types: :student].map(&:id)
+    student_role_ids = CourseMembership::GetCourseRoles.call(course: course, types: :student).map(&:id)
     tasks = Tasks::Models::Task.joins(concept_coach_task: :page)
                                .where(concept_coach_task: { entity_role_id: student_role_ids,
                                                             page: { uuid: params[:cnx_page_id] } })
 
-    cc_stats = Hashie::Mash.new(title: page_title, stats: CalculateTaskStats[tasks: tasks])
+    cc_stats = Hashie::Mash.new(title: page_title, stats: CalculateTaskStats.call(tasks: tasks))
 
     respond_with cc_stats, represent_with: Api::V1::ConceptCoachStatsRepresenter
   end

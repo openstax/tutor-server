@@ -40,7 +40,7 @@ gem 'rails-html-sanitizer', '~> 1.0'
 gem 'addressable'
 
 # Utilities for OpenStax websites
-gem 'openstax_utilities', '~> 4.2.0'
+gem 'openstax_utilities', github: 'openstax/openstax_utilities', branch: 'new-lev' #'~> 4.2.0'
 
 # Cron job scheduling
 gem 'whenever'
@@ -49,7 +49,7 @@ gem 'whenever'
 gem 'omniauth-oauth2', '~> 1.3.1'
 
 # OpenStax Accounts integration
-gem 'openstax_accounts', '~> 6.2.0'
+gem 'openstax_accounts', github: 'openstax/accounts-rails', branch: 'new-lev' # '~> 6.2.0'
 
 # OpenStax Exchange integration
 gem 'openstax_exchange', '~> 0.2.1'
@@ -64,7 +64,7 @@ gem 'apipie-rails'
 gem 'maruku'
 
 # Lev framework
-gem 'lev', github: 'lml/lev', ref: 'cdc00db5fd94' #'~> 6.0.0'
+gem 'lev', path: '../lev' #github: 'lml/lev', branch: 'ground-up-exercise' #'~> 7.0.0'
 
 # Ruby dsl for SQL queries
 gem 'squeel'
@@ -192,7 +192,7 @@ group :development, :test do
   gem 'quiet_assets'
 
   # Use RSpec for tests
-  gem 'rspec-rails'
+  gem 'rspec-rails', '~> 3.2.3'
 
   gem 'rspec-collection_matchers'
 

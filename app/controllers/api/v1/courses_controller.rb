@@ -16,8 +16,8 @@ class Api::V1::CoursesController < Api::V1::ApiController
   EOS
   def index
     OSU::AccessPolicy.require_action_allowed!(:index, current_api_user, Entity::Course)
-    course_infos = CollectCourseInfo[user: current_human_user,
-                                     with: [:roles, :periods, :ecosystem]]
+    course_infos = CollectCourseInfo.call(user: current_human_user,
+                                           with: [:roles, :periods, :ecosystem])
     respond_with course_infos, represent_with: Api::V1::CoursesRepresenter
   end
 
@@ -30,7 +30,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     course = Entity::Course.find(params[:course_id])
     OSU::AccessPolicy.require_action_allowed!(:roster, current_api_user, course)
 
-    roster = GetCourseRoster[course: course]
+    roster = GetCourseRoster.call(course: course)
     respond_with(roster, represent_with: Api::V1::RosterRepresenter)
   end
 
@@ -46,9 +46,9 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
     # Use CollectCourseInfo instead of just representing the entity course so
     # we can gather extra information
-    course_info = CollectCourseInfo[courses: course,
-                                    user: current_human_user,
-                                    with: [:roles, :periods, :ecosystem]].first
+    course_info = CollectCourseInfo.call(courses: course,
+                                         user: current_human_user,
+                                         with: [:roles, :periods, :ecosystem]).first
     respond_with course_info, represent_with: Api::V1::CourseRepresenter
   end
 
@@ -65,9 +65,9 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
     # Use CollectCourseInfo instead of just representing the entity course so
     # we can gather extra information
-    course_info = CollectCourseInfo[courses: course,
-                                    user: current_human_user,
-                                    with: [:roles, :periods, :ecosystem]].first
+    course_info = CollectCourseInfo.call(courses: course,
+                                         user: current_human_user,
+                                         with: [:roles, :periods, :ecosystem]).first
     respond_with course_info, represent_with: Api::V1::CourseRepresenter,
                               location: nil,
                               responder: ResponderWithPutContent
@@ -81,7 +81,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     # No authorization is necessary because if the user isn't authorized, they'll just get
     # back an empty list of tasks
     course = Entity::Course.find(params[:id])
-    tasks = GetCourseUserTasks[course: course, user: current_human_user]
+    tasks = GetCourseUserTasks.call(course: course, user: current_human_user)
     output = Hashie::Mash.new('items' => tasks.collect{|t| t.task})
     respond_with output, represent_with: Api::V1::TaskSearchRepresenter
   end
@@ -101,7 +101,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     if result.errors.any?
       render_api_errors(result.errors)
     else
-      respond_with result.outputs, represent_with: Api::V1::Courses::DashboardRepresenter
+      respond_with result, represent_with: Api::V1::Courses::DashboardRepresenter
     end
   end
 
@@ -120,7 +120,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     if result.errors.any?
       render_api_errors(result.errors)
     else
-      respond_with result.outputs, represent_with: Api::V1::Courses::Cc::DashboardRepresenter
+      respond_with result, represent_with: Api::V1::Courses::Cc::DashboardRepresenter
     end
   end
 
@@ -133,6 +133,6 @@ class Api::V1::CoursesController < Api::V1::ApiController
     if result.errors.any?
       raise(SecurityTransgression, result.errors.map(&:message).to_sentence)
     end
-    result.outputs.role
+    result.role
   end
 end

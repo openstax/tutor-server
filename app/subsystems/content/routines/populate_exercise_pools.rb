@@ -1,6 +1,9 @@
 class Content::Routines::PopulateExercisePools
 
-  lev_routine express_output: :pools
+  lev_routine outputs: { pools: :_self,
+                         book: :_self,
+                         chapters: :_self,
+                         pages: :_self }
 
   protected
 
@@ -9,7 +12,7 @@ class Content::Routines::PopulateExercisePools
     # Use preload here instead of eager_load here to avoid a memory usage spike
     chapters = book.chapters.preload(pages: { exercises: { exercise_tags: :tag } })
 
-    outputs[:pools] = chapters.flat_map do |chapter|
+    set(pools: chapters.flat_map do |chapter|
       ecosystem = chapter.ecosystem
       pages = chapter.pages
 
@@ -88,20 +91,20 @@ class Content::Routines::PopulateExercisePools
       )
 
       [chapter.all_exercises_pool] + page_pools
-    end
+    end)
 
-    outputs[:book] = book
-    outputs[:chapters] = chapters
-    outputs[:pages] = chapters.flat_map(&:pages)
+    set(book: book)
+    set(chapters: chapters)
+    set(pages: chapters.flat_map(&:pages))
 
     return unless save
 
-    pools = outputs[:pools].flatten
+    pools = result.pools.flatten
     pools.each{ |pool| pool.uuid = SecureRandom.uuid }
     Content::Models::Pool.import! pools
 
     # Save ids in page/chapter tables and clear associations so pools get reloaded next time
-    outputs[:pages].each do |page|
+    result.pages.each do |page|
       page.save!
       page.clear_association_cache
     end

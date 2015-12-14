@@ -2,10 +2,10 @@ require 'rails_helper'
 require 'feature_js_helper'
 
 RSpec.feature 'Viewing queued jobs as Customer Service', :js do
-  let(:course) { CreateCourse[name: 'course time'] }
+  let(:course) { CreateCourse.call(name: 'course time').course }
   let(:customer_service) { FactoryGirl.create(:user, :customer_service) }
   let(:user) { FactoryGirl.create(:user) }
-  let(:role) { AddUserAsCourseTeacher[course: course, user: user] }
+  let(:role) { AddUserAsCourseTeacher.call(course: course, user: user).role }
 
   let(:job) { Lev::BackgroundJob.all.last }
 

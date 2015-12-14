@@ -1,7 +1,5 @@
 class Admin::CatalogOfferingCreate
-  lev_handler
-
-  uses_routine Catalog::CreateOffering, as: :create_offering
+  lev_handler uses: { name: Catalog::CreateOffering, as: :create_offering }
 
   protected
   def authorized?

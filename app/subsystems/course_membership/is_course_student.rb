@@ -1,9 +1,8 @@
 class CourseMembership::IsCourseStudent
-  lev_routine express_output: :is_course_student
+  lev_query
 
   protected
-
-  def exec(course:, roles:)
-    outputs[:is_course_student] = course.students.where(entity_role_id: roles).exists?
+  def query(course:, roles:)
+    course.students.where(entity_role_id: roles).exists?
   end
 end

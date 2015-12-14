@@ -5,7 +5,7 @@ RSpec.describe BuildTaskPlan, type: :routine do
   let!(:assistant) { FactoryGirl.create :tasks_assistant }
 
   it 'initializes but does not save a TaskPlan object' do
-    task_plan = BuildTaskPlan.call(course: course, assistant: assistant).outputs.task_plan
+    task_plan = BuildTaskPlan.call(course: course, assistant: assistant).task_plan
 
     expect(task_plan).not_to be_persisted
     expect(task_plan.tasking_plans).to be_empty

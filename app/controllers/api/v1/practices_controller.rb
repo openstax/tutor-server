@@ -13,7 +13,7 @@ module Api
         entity_task = ResetPracticeWidget[
           role: get_practice_role, exercise_source: :biglearn,
           page_ids: practice.page_ids, chapter_ids: practice.chapter_ids
-        ]
+        ].entity_task
 
         respond_with entity_task.task,
                      represent_with: Api::V1::TaskRepresenter,
@@ -23,7 +23,7 @@ module Api
       api :GET, '/courses/:course_id/practice(/role/:role_id)',
                 'Gets the most recent practice widget'
       def show
-        task = GetPracticeWidget[role: get_practice_role]
+        task = GetPracticeWidget.call(role: get_practice_role).task
 
         task.nil? ? head(:not_found) :
                     respond_with(task.task, represent_with: Api::V1::TaskRepresenter)
@@ -38,7 +38,7 @@ module Api
         if result.errors.any?
           raise(SecurityTransgression, result.errors.map(&:message).to_sentence)
         else
-          result.outputs.role
+          result.role
         end
       end
     end

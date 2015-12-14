@@ -1,8 +1,6 @@
 module Hacks
   class AnswerExercise
-    lev_routine
-
-    uses_routine MarkTaskStepCompleted, as: :mark_completed
+    lev_routine uses: { name: MarkTaskStepCompleted, as: :mark_completed }
 
     protected
 

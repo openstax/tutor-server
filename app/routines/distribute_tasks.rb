@@ -1,8 +1,8 @@
 class DistributeTasks
 
-  lev_routine
-
-  uses_routine IndividualizeTaskingPlans, as: :get_tasking_plans
+  lev_routine outputs: { entity_tasks: :_self },
+              uses: { name: IndividualizeTaskingPlans,
+                      as: :get_tasking_plans }
 
   protected
 
@@ -37,7 +37,7 @@ class DistributeTasks
     tasked_taskees = tasks.select{ |tt| !tt.destroyed? }
                           .flat_map{ |tt| tt.taskings.collect{ |tk| tk.role } }
 
-    tasking_plans = run(:get_tasking_plans, task_plan).outputs.tasking_plans
+    tasking_plans = run(:get_tasking_plans, task_plan).tasking_plans
 
     taskees = tasking_plans.collect{ |tp| tp.target }
     opens_ats = tasking_plans.collect{ |tp| tp.opens_at }
@@ -70,7 +70,7 @@ class DistributeTasks
     task_plan.update_column(:published_at, publish_time) \
       if task_plan.published_at.nil? && task_plan.persisted?
 
-    outputs[:entity_tasks] = entity_tasks
+    set(entity_tasks: entity_tasks)
   end
 
 end

@@ -1,15 +1,14 @@
 class ImportSalesforceCourses
-  lev_routine
-
-  uses_routine CreateCourse
-  uses_routine SchoolDistrict::GetSchool, as: :get_school
-  uses_routine SchoolDistrict::CreateSchool, as: :create_school
-  uses_routine CourseContent::AddEcosystemToCourse, as: :set_ecosystem
-  uses_routine Salesforce::AttachRecord, as: :attach_record
+  lev_routine outputs: { num_failures: :_self,
+                         num_successes: :_self },
+              uses: [CreateCourse,
+                     { name: SchoolDistrict::GetSchool, as: :get_school },
+                     { name: SchoolDistrict::CreateSchool, as: :create_school },
+                     { name: CourseContent::AddEcosystemToCourse, as: :set_ecosystem },
+                     { name: Salesforce::AttachRecord, as: :attach_record }]
 
   def initialize
-    outputs.num_failures = 0
-    outputs.num_successes = 0
+    set(num_failures: 0, num_successes: 0)
   end
 
   def exec(include_real_salesforce_data: nil)
@@ -23,8 +22,8 @@ class ImportSalesforceCourses
     end
 
     log {
-      "#{outputs.num_failures + outputs.num_successes} candidate record(s); " +
-      "#{outputs.num_successes} success(es) and #{outputs.num_failures} failure(s)."
+      "#{result.num_failures + result.num_successes} candidate record(s); " +
+      "#{result.num_successes} success(es) and #{result.num_failures} failure(s)."
     }
   end
 
@@ -75,8 +74,8 @@ class ImportSalesforceCourses
       return
     end
 
-    school = run(:get_school, name: candidate.school).outputs.school ||
-             run(:create_school, name: candidate.school).outputs.school
+    school = run(:get_school, name: candidate.school).school ||
+             run(:create_school, name: candidate.school).school
 
     course = run(
       :create_course,
@@ -84,7 +83,7 @@ class ImportSalesforceCourses
       school: school,
       catalog_offering: offering,
       is_concept_coach: true
-    ).outputs.course
+    ).course
 
     candidate.course_id = course.id
     candidate.created_at = course.created_at.iso8601
@@ -109,12 +108,12 @@ class ImportSalesforceCourses
 
   def success!(candidate)
     candidate.error = nil
-    outputs.num_successes += 1
+    result.num_successes += 1
   end
 
   def error!(candidate, message)
     candidate.error = message
-    outputs.num_failures += 1
+    result.num_failures += 1
     log { "Error! candidate: #{candidate.id}; message: #{message}." }
   end
 

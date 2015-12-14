@@ -21,9 +21,9 @@ class Tasks::Assistants::ExtraAssignmentAssistant
   def initialize(task_plan:, taskees:)
     @task_plan = task_plan
     @taskees = taskees
-    outputs = collect_snap_labs
-    @pages = outputs[:pages]
-    @page_id_to_snap_lab_id = outputs[:page_id_to_snap_lab_id]
+    collect_snap_labs
+    @pages = result.pages
+    @page_id_to_snap_lab_id = result.page_id_to_snap_lab_id
 
     @tag_exercise = {}
     @exercise_pages = {}
@@ -52,12 +52,10 @@ class Tasks::Assistants::ExtraAssignmentAssistant
     end
 
     page_ids = page_to_snap_lab.keys
-    @ecosystem = GetEcosystemFromIds[page_ids: page_ids]
+    @ecosystem = GetEcosystemFromIds.call(page_ids: page_ids)
 
-    {
-      pages: @ecosystem.pages_by_ids(page_ids),
-      page_id_to_snap_lab_id: page_to_snap_lab
-    }
+    set(pages: @ecosystem.pages_by_ids(page_ids),
+        page_id_to_snap_lab_id: page_to_snap_lab)
   end
 
   def build_extra_task(pages:, page_id_to_snap_lab_id:)
@@ -165,8 +163,8 @@ class Tasks::Assistants::ExtraAssignmentAssistant
     # Search Ecosystem Exercises for one matching the embed tag
     exercise = get_first_tag_exercise(exercise_fragment.embed_tag)
     unless exercise.nil?
-      TaskExercise[exercise: exercise, title: title,
-                   can_be_recovered: can_be_recovered, task_step: step]
+      TaskExercise.call(exercise: exercise, title: title,
+                        can_be_recovered: can_be_recovered, task_step: step)
     end
   end
 

@@ -1,8 +1,5 @@
 class CourseProfile::UpdateProfile
-  lev_routine
-
-  uses_routine SchoolDistrict::ProcessSchoolChange,
-               as: :process_school_change
+  lev_routine uses: { name: SchoolDistrict::ProcessSchoolChange, as: :process_school_change }
 
   protected
 

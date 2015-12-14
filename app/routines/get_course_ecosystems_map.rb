@@ -1,5 +1,5 @@
 class GetCourseEcosystemsMap
-  lev_routine express_output: :ecosystems_map
+  lev_routine outputs: { ecosystems_map: :_self }
 
   protected
 
@@ -24,7 +24,7 @@ class GetCourseEcosystemsMap
                        to_ecosystem: to_ecosystem,
                        strategy_class: map_strategy_class }
 
-    outputs[:ecosystems_map] = ::Content::Map.find(map_attributes) || \
-                               ::Content::Map.create!(map_attributes)
+    set(ecosystems_map: ::Content::Map.find(map_attributes) || \
+                          ::Content::Map.create!(map_attributes))
   end
 end

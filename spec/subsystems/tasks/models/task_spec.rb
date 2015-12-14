@@ -173,8 +173,8 @@ RSpec.describe Tasks::Models::Task, type: :model do
                                            :tasks_tasked_exercise,
                                            :tasks_tasked_exercise])
 
-    Hacks::AnswerExercise[task_step: task.task_steps[0], is_correct: true]
-    Hacks::AnswerExercise[task_step: task.task_steps[3], is_correct: false]
+    Hacks::AnswerExercise.call(task_step: task.task_steps[0], is_correct: true)
+    Hacks::AnswerExercise.call(task_step: task.task_steps[3], is_correct: false)
 
     task.reload
 

@@ -1,6 +1,6 @@
 module Salesforce
   class AttachRecord
-    lev_routine express_output: :attached_record
+    lev_routine outputs: { attached_record: :_self }
 
     def exec(record:, to:)
       model = Models::AttachedRecord.create(
@@ -9,7 +9,7 @@ module Salesforce
         salesforce_id: record.id
       )
       transfer_errors_from(model, {type: :verbatim}, true)
-      outputs.attached_record = AttachedRecord.new(strategy: model)
+      set(attached_record: AttachedRecord.new(strategy: model))
     end
   end
 end

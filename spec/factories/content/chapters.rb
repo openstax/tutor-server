@@ -18,8 +18,8 @@ FactoryGirl.define do
                                       chapter: chapter)
         lo_hashes = page[:los].collect{ |lo| { value: lo, type: :lo } }
         aplo_hashes = page[:aplos].collect{ |lo| { value: lo, type: :aplo } }
-        tags = Content::Routines::FindOrCreateTags[ecosystem: evaluator.book.ecosystem,
-                                                   input: lo_hashes + aplo_hashes]
+        tags = Content::Routines::FindOrCreateTags.call(ecosystem: evaluator.book.ecosystem,
+                                                        input: lo_hashes + aplo_hashes)
         Content::Routines::TagResource[the_page, tags]
       end
     end

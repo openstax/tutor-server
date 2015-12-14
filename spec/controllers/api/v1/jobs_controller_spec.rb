@@ -73,10 +73,10 @@ RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :
 
       it 'works end-2-end for ExportPerformanceReport' do
         user = FactoryGirl.create(:user)
-        course = CreateCourse[name: 'Physics']
+        course = CreateCourse.call(name: 'Physics')
         user_token = FactoryGirl.create :doorkeeper_access_token, resource_owner_id: user.id
 
-        AddUserAsCourseTeacher[course: course, user: user]
+        AddUserAsCourseTeacher.call(course: course, user: user)
 
         begin
           job_id = Tasks::ExportPerformanceReport.perform_later(course: course,

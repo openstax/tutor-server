@@ -10,11 +10,11 @@ RSpec.describe Tasks::Assistants::EventAssistant, type: :assistant do
   end
 
   before do
-    CreatePeriod[course: course]
+    CreatePeriod.call(course: course)
 
     3.times do
       user = FactoryGirl.create(:user)
-      AddUserAsPeriodStudent[user: user, period: period]
+      AddUserAsPeriodStudent.call(user: user, period: period)
     end
   end
 
@@ -25,7 +25,7 @@ RSpec.describe Tasks::Assistants::EventAssistant, type: :assistant do
                                   description: 'No class today, kiddos',
                                   owner: course)
 
-    tasks = DistributeTasks.call(task_plan).outputs.entity_tasks.flat_map(&:task)
+    tasks = DistributeTasks.call(task_plan).entity_tasks.flat_map(&:task)
 
     expect(tasks.length).to eq 3
     expect(tasks.flat_map(&:task_type).uniq).to eq(['event'])

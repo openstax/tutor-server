@@ -3,7 +3,7 @@ module Tasks
     class ExportXlsx
       include ActionView::Helpers::DateHelper
 
-      lev_routine express_output: :filepath
+      lev_routine outputs: { filepath: :_self }
 
       protected
       def exec(profile:, report:, filename:)
@@ -16,7 +16,7 @@ module Tasks
           create_summary_worksheet(profile.name, axlsx)
 
           if axlsx.serialize(filepath)
-            outputs.filepath = filepath
+            set(filepath: filepath)
           else
             fatal_error(code: :export_failed, message: "PerformanceReport::ExportXlsx failed")
           end

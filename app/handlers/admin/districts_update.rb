@@ -1,12 +1,10 @@
 class Admin::DistrictsUpdate
-  lev_handler
+  lev_handler uses: { name: SchoolDistrict::UpdateDistrict, as: :update_district }
 
   paramify :district do
     attribute :name, type: String
     validates :name, presence: true
   end
-
-  uses_routine SchoolDistrict::UpdateDistrict, as: :update_district
 
   protected
   def authorized?

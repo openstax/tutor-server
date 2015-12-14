@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe ResetPracticeWidget, type: :routine do
 
   let!(:role)          { FactoryGirl.create(:course_membership_student).role }
-  let!(:practice_task) { ResetPracticeWidget[role: role, exercise_source: :fake, page_ids: []] }
+  let!(:practice_task) { ResetPracticeWidget.call(role: role, exercise_source: :fake, page_ids: []).task }
 
   it 'creates tasks with 5 exercise steps and feedback immediately available' do
     expect(practice_task).to be_persisted
@@ -13,8 +13,8 @@ RSpec.describe ResetPracticeWidget, type: :routine do
   end
 
   it 'clears incomplete steps from previous practice widgets' do
-    Hacks::AnswerExercise[task_step: practice_task.task.task_steps.first, is_correct: false]
-    practice_task_2 = ResetPracticeWidget[role: role, exercise_source: :fake, page_ids: []]
+    Hacks::AnswerExercise.call(task_step: practice_task.task.task_steps.first, is_correct: false)
+    practice_task_2 = ResetPracticeWidget.call(role: role, exercise_source: :fake, page_ids: [])
     expect(practice_task_2).to be_persisted
     expect(practice_task.task.task_steps.reload.size).to eq 1
   end
@@ -24,7 +24,7 @@ RSpec.describe ResetPracticeWidget, type: :routine do
     page = FactoryGirl.create(:content_page)
     ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(page.ecosystem)
     ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
-    AddEcosystemToCourse[ecosystem: ecosystem, course: course]
+    AddEcosystemToCourse.call(ecosystem: ecosystem, course: course)
     allow(OpenStax::Biglearn::V1).to receive(:get_projection_exercises) { ['dummy_id'] }
     result = ResetPracticeWidget.call(role: role, exercise_source: :biglearn, page_ids: [page.id])
     expect(result.errors.first.code).to eq :missing_local_exercises

@@ -1,15 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe CourseAccessPolicy, type: :access_policy do
-  let(:course) { CreateCourse[name: 'Physics 401'] }
-  let(:period) { CreatePeriod[course: course] }
+  let(:course) { CreateCourse.call(name: 'Physics 401').course }
+  let(:period) { CreatePeriod.call(course: course).period }
 
   let(:student) { FactoryGirl.create(:user) }
   let(:teacher) { FactoryGirl.create(:user) }
 
   before do
-    AddUserAsCourseTeacher[course: course, user: teacher]
-    AddUserAsPeriodStudent[period: period, user: student]
+    AddUserAsCourseTeacher.call(course: course, user: teacher)
+    AddUserAsPeriodStudent.call(period: period, user: student)
   end
 
   # action, requestor are set in contexts

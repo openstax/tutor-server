@@ -1,9 +1,9 @@
 class Content::ListEcosystems
-  lev_routine express_output: :ecosystems
+  lev_routine outputs: { ecosystems: :_self }
 
   protected
 
   def exec
-    outputs[:ecosystems] = ::Content::Ecosystem.all
+    set(ecosystems: ::Content::Ecosystem.all)
   end
 end

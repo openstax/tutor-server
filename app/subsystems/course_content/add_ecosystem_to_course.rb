@@ -1,6 +1,6 @@
 class CourseContent::AddEcosystemToCourse
 
-  lev_routine express_output: :ecosystem_map
+  lev_routine outputs: { ecosystem_map: :_self }
 
   protected
 
@@ -24,9 +24,9 @@ class CourseContent::AddEcosystemToCourse
       ::Content::Ecosystem.new(strategy: strategy)
     end
 
-    outputs[:ecosystem_map] = ::Content::Map.create!(from_ecosystems: from_ecosystems,
-                                                     to_ecosystem: ecosystem,
-                                                     strategy_class: map_strategy_class)
+    set(ecosystem_map: ::Content::Map.create!(from_ecosystems: from_ecosystems,
+                                              to_ecosystem: ecosystem,
+                                              strategy_class: map_strategy_class))
   end
 
 end

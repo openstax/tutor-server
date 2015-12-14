@@ -6,14 +6,14 @@ RSpec.describe CustomerService::StudentsController do
   before { controller.sign_in(customer_service) }
 
   describe 'GET #index' do
-    let!(:course) { CreateCourse[name: 'Physics'] }
-    let!(:course_2) { CreateCourse[name: 'Biology'] }
+    let!(:course) { CreateCourse.call(name: 'Physics').course }
+    let!(:course_2) { CreateCourse.call(name: 'Biology').course }
 
     let!(:periods) { [
-      CreatePeriod[course: course],
-      CreatePeriod[course: course]
+      CreatePeriod.call(course: course),
+      CreatePeriod.call(course: course)
     ] }
-    let!(:periods_2) { [CreatePeriod[course: course_2]] }
+    let!(:periods_2) { [CreatePeriod.call(course: course_2)] }
 
     let!(:user_1) { FactoryGirl.create(:user, username: 'benjamin') }
     let!(:user_2) { FactoryGirl.create(:user, username: 'nicolai') }
@@ -21,16 +21,16 @@ RSpec.describe CustomerService::StudentsController do
     let!(:user_4) { FactoryGirl.create(:user, username: 'oskar') }
 
     let!(:student_1) {
-      AddUserAsPeriodStudent.call(user: user_1, period: periods[0]).outputs.student
+      AddUserAsPeriodStudent.call(user: user_1, period: periods[0]).student
     }
     let!(:student_2) {
-      AddUserAsPeriodStudent.call(user: user_2, period: periods[0]).outputs.student
+      AddUserAsPeriodStudent.call(user: user_2, period: periods[0]).student
     }
     let!(:student_3) {
-      AddUserAsPeriodStudent.call(user: user_3, period: periods[1]).outputs.student
+      AddUserAsPeriodStudent.call(user: user_3, period: periods[1]).student
     }
     let!(:student_4) {
-      AddUserAsPeriodStudent.call(user: user_4, period: periods_2[0]).outputs.student
+      AddUserAsPeriodStudent.call(user: user_4, period: periods_2[0]).student
     }
 
     it 'returns all the students in a course' do

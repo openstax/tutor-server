@@ -1,7 +1,7 @@
 # Add spy information to a model that has a "spy" field
 #
 class AddSpyInfo
-  lev_routine express_output: :to
+  lev_routine outputs: { to: :_self }
 
   def exec(to:, from:, save: false)
     to[:spy] ||= {}
@@ -11,7 +11,7 @@ class AddSpyInfo
       to[:spy].merge!( values_from( src ) )
     end
     to.save! if save
-    outputs[:to] = to
+    set(to: to)
   end
 
   def values_from(value)

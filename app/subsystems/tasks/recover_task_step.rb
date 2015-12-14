@@ -1,10 +1,11 @@
 class Tasks::RecoverTaskStep
 
-  lev_routine
-
-  uses_routine TaskExercise, as: :task_exercise
-  uses_routine GetEcosystemFromIds, as: :get_ecosystem
-  uses_routine GetHistory, as: :get_history
+  lev_routine outputs: { recovery_exercise: :_self,
+                         recovery_step: :_self,
+                         task: :_self },
+              uses: [TaskExercise,
+                     GetHistory,
+                     { name: GetEcosystemFromIds, as: :get_ecosystem }]
 
   protected
 
@@ -13,7 +14,7 @@ class Tasks::RecoverTaskStep
 
     # Get the ecosystem from the content_exercise_id
     exercise_id = task_step.tasked.content_exercise_id
-    ecosystem = run(:get_ecosystem, exercise_ids: exercise_id).outputs.ecosystem
+    ecosystem = run(:get_ecosystem, exercise_ids: exercise_id).ecosystem
 
     recovery_exercise = get_recovery_exercise_for(ecosystem: ecosystem, task_step: task_step)
 
@@ -24,9 +25,9 @@ class Tasks::RecoverTaskStep
 
     task_step.tasked.update_attribute(:can_be_recovered, false)
 
-    outputs[:recovery_exercise] = recovery_exercise
-    outputs[:recovery_step] = recovery_step
-    outputs[:task] = recovery_step.task
+    set(recovery_exercise: recovery_exercise,
+        recovery_step: recovery_step,
+        task: recovery_step.task)
   end
 
   private
@@ -37,7 +38,7 @@ class Tasks::RecoverTaskStep
     step = Tasks::Models::TaskStep.new(
       task: task, number: task_step.number + 1
     )
-    step.tasked = run(:task_exercise, task_step: step, exercise: exercise).outputs.tasked_exercise
+    step.tasked = run(:task_exercise, task_step: step, exercise: exercise).tasked_exercise
     task.task_steps << step
     step.save!
     step
@@ -56,7 +57,7 @@ class Tasks::RecoverTaskStep
     # Assume only 1 taskee for now
     role = task_step.task.entity_task.taskings.collect{ |tt| tt.role }.first
 
-    all_worked_exercises = run(:get_history, role: role, type: :all).outputs.exercises.flatten.uniq
+    all_worked_exercises = run(:get_history, role: role, type: :all).exercises.flatten.uniq
 
     recovered_exercise_id = task_step.tasked.content_exercise_id
     recovered_exercise = ecosystem.exercises_by_ids(recovered_exercise_id).first

@@ -16,7 +16,7 @@ RSpec.describe CourseContent::AddEcosystemToCourse, type: :routine do
       .to change{CourseContent::Models::CourseEcosystem.count}.by (1)
     expect(result).not_to have_routine_errors
 
-    ecosystems = CourseContent::GetCourseEcosystems[course: course]
+    ecosystems = CourseContent::GetCourseEcosystems.call(course: course)
     expect(Set.new ecosystems.collect{ |es| es.id }).to eq Set.new [eco1.id, eco2.id]
   end
 
@@ -28,7 +28,7 @@ RSpec.describe CourseContent::AddEcosystemToCourse, type: :routine do
       .not_to change{CourseContent::Models::CourseEcosystem.count}
     expect(result).to have_routine_errors
 
-    ecosystems = CourseContent::GetCourseEcosystems[course: course]
+    ecosystems = CourseContent::GetCourseEcosystems.call(course: course)
     expect(ecosystems.collect{ |es| es.id }).to eq [eco1.id]
   end
 
@@ -37,14 +37,14 @@ RSpec.describe CourseContent::AddEcosystemToCourse, type: :routine do
                                                       remove_other_ecosystems: true)
     expect(result).not_to have_routine_errors
 
-    ecosystems = CourseContent::GetCourseEcosystems[course: course]
+    ecosystems = CourseContent::GetCourseEcosystems.call(course: course)
     expect(ecosystems.collect{ |es| es.id }).to eq [eco1.id]
 
     result = CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: eco2,
                                                       remove_other_ecosystems: true)
     expect(result).not_to have_routine_errors
 
-    ecosystems = CourseContent::GetCourseEcosystems[course: course]
+    ecosystems = CourseContent::GetCourseEcosystems.call(course: course)
     expect(ecosystems.collect{ |es| es.id }).to eq [eco2.id]
   end
 

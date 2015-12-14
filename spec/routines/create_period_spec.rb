@@ -1,11 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe CreatePeriod do
-  let!(:course) { CreateCourse[name: 'Great course'] }
-  let!(:period) { described_class[course: course, name: 'Original period'] }
-  let!(:other_period) { described_class[course: course, name: 'Other period'] }
+  let!(:course) { CreateCourse.call(name: 'Great course').course }
+  let!(:period) { described_class.call(course: course, name: 'Original period').period }
+  let!(:other_period) { described_class.call(course: course, name: 'Other period').period }
 
-  let(:new_period) { described_class[course: course, name: 'New period'] }
+  let(:new_period) { described_class.call(course: course, name: 'New period').period }
   let(:task_plan_ids) { Tasks::Models::TaskPlan.joins(:tasking_plans)
                           .preload(:tasking_plans)
                           .where(tasking_plans: {

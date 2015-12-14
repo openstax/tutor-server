@@ -5,8 +5,8 @@ class CustomerService::CoursesController < CustomerService::BaseController
 
   def index
     @query = params[:query]
-    courses = SearchCourses[query: @query]
-    @course_infos = CollectCourseInfo[courses: courses, with: :teacher_names]
+    courses = SearchCourses.call(query: @query)
+    @course_infos = CollectCourseInfo.call(courses: courses, with: :teacher_names)
   end
 
   def show

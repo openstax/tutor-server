@@ -1,6 +1,6 @@
 class GetEcosystemPoolsByPageIdsAndPoolTypes
 
-  lev_routine express_output: :pools_map
+  lev_routine outputs: { pools_map: :_self }
 
   protected
 
@@ -16,9 +16,9 @@ class GetEcosystemPoolsByPageIdsAndPoolTypes
     pool_types = Set.new pool_types
 
     # Build map of pool types to pools
-    outputs[:pools_map] = pool_types.each_with_object({}) do |pool_type, result|
+    set(pools_map: pool_types.each_with_object({}) do |pool_type, result|
       pool_method_name = "#{pool_type}_pools".to_sym
       result[pool_type] = ecosystem.send(pool_method_name, pages: pages)
-    end
+    end)
   end
 end

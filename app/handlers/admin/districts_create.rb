@@ -1,12 +1,10 @@
 class Admin::DistrictsCreate
-  lev_handler
+  lev_handler uses: { name: SchoolDistrict::CreateDistrict, as: :create_district }
 
   paramify :district do
     attribute :name, type: String
     validates :name, presence: true
   end
-
-  uses_routine SchoolDistrict::CreateDistrict, as: :create_district
 
   protected
   def authorized?

@@ -9,8 +9,8 @@ RSpec.describe GetTeacherNames, type: :routine do
                                                  last_name: 'Else') }
 
   before do
-    AddUserAsCourseTeacher[course: course, user: teacher]
-    AddUserAsCourseTeacher[course: course, user: other_teacher]
+    AddUserAsCourseTeacher.call(course: course, user: teacher)
+    AddUserAsCourseTeacher.call(course: course, user: other_teacher)
   end
 
   subject(:names) { described_class[course.id] }

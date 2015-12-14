@@ -5,7 +5,7 @@ describe CreateCourse, type: :routine do
     result = CreateCourse.call(name: 'Unnamed')
     expect(result.errors).to be_empty
 
-    course = result.outputs.course
+    course = result.course
 
     expect(course).to be_a Entity::Course
     expect(course.course_assistants.count).to eq 4
@@ -14,7 +14,7 @@ describe CreateCourse, type: :routine do
   it 'adds a unique registration code for the teacher' do
     allow(SecureRandom).to receive(:hex) { 'abc123' }
 
-    course = CreateCourse[name: 'Reg Code Course']
+    course = CreateCourse.call(name: 'Reg Code Course')
 
     expect(course.teacher_join_token).to eq('abc123')
   end

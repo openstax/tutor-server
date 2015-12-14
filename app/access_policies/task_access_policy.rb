@@ -4,10 +4,10 @@ class TaskAccessPolicy
     when :read
       requestor.is_human? && (
         (
-          DoesTaskingExist[task_component: task, user: requestor] &&
+          DoesTaskingExist.call(task_component: task, user: requestor) &&
           task.past_open?
         ) || (
-          (course = get_entity_course(task)) && UserIsCourseTeacher[user: requestor, course: course]
+          (course = get_entity_course(task)) && UserIsCourseTeacher.call(user: requestor, course: course)
         )
       )
     else

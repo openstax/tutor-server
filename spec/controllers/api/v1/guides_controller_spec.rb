@@ -12,12 +12,12 @@ RSpec.describe Api::V1::GuidesController, type: :controller, api: true,
   let!(:user_2_token)       { FactoryGirl.create :doorkeeper_access_token,
                                                  resource_owner_id: user_2.id }
 
-  let!(:course) { CreateCourse[name: 'Physics 101'] }
-  let!(:period) { CreatePeriod[course: course] }
+  let!(:course) { CreateCourse.call(name: 'Physics 101').course }
+  let!(:period) { CreatePeriod.call(course: course).period }
 
   describe 'Learning guides' do
     let!(:teacher_role) {
-      AddUserAsCourseTeacher.call(course: course, user: user_1).outputs[:role]
+      AddUserAsCourseTeacher.call(course: course, user: user_1)[:role]
     }
 
     let!(:course_guide) {
@@ -26,13 +26,13 @@ RSpec.describe Api::V1::GuidesController, type: :controller, api: true,
 
     describe '#student' do
       let!(:student_role) {
-        AddUserAsPeriodStudent.call(period: period, user: user_2).outputs[:role]
+        AddUserAsPeriodStudent.call(period: period, user: user_2)[:role]
       }
 
       let!(:user_3)          { FactoryGirl.create(:user) }
 
       let!(:student_3_role) {
-        AddUserAsPeriodStudent.call(period: period, user: user_3).outputs[:role]
+        AddUserAsPeriodStudent.call(period: period, user: user_3)[:role]
       }
 
       it 'returns the student guide for the logged in user' do

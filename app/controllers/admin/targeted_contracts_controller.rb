@@ -15,7 +15,7 @@ class Admin::TargetedContractsController < Admin::BaseController
   end
 
   def destroy
-    Legal::DestroyTargetedContract[id: params[:id]]
+    Legal::DestroyTargetedContract.call(id: params[:id])
     redirect_to admin_targeted_contracts_path
   end
 

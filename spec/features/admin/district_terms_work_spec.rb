@@ -42,23 +42,23 @@ RSpec.feature 'DistrictTermsWork' do
 
     user = FactoryGirl.create(:user)
     course = Entity::Course.first
-    period = CreatePeriod[course: course]
+    period = CreatePeriod.call(course: course)
 
     # AddUserAsPeriodStudent[user: user, period: period]
 
-    tcs = Legal::GetTargetedContracts[applicable_to: course]
+    tcs = Legal::GetTargetedContracts.call(applicable_to: course)
     expect(tcs.collect(&:contract_name)).to eq ['hisd_special']
   end
 
   scenario 'switching parents around is ok' do
-    district_a = SchoolDistrict::CreateDistrict[name: 'DistrictA']
-    district_b = SchoolDistrict::CreateDistrict[name: 'DistrictB']
+    district_a = SchoolDistrict::CreateDistrict.call(name: 'DistrictA')
+    district_b = SchoolDistrict::CreateDistrict.call(name: 'DistrictB')
 
-    school_c = SchoolDistrict::CreateSchool[name: 'SchoolC', district: district_a]
-    school_d = SchoolDistrict::CreateSchool[name: 'SchoolD', district: district_b]
+    school_c = SchoolDistrict::CreateSchool.call(name: 'SchoolC', district: district_a)
+    school_d = SchoolDistrict::CreateSchool.call(name: 'SchoolD', district: district_b)
 
-    course_e = CreateCourse[name: 'CourseE', school: school_c]
-    course_f = CreateCourse[name: 'CourseF', school: school_d]
+    course_e = CreateCourse.call(name: 'CourseE', school: school_c)
+    course_f = CreateCourse.call(name: 'CourseF', school: school_d)
 
     FinePrint::Contract.create(
       name: 'district_a_terms',
@@ -79,34 +79,34 @@ RSpec.feature 'DistrictTermsWork' do
     create_targeted_terms(contract_name: 'district_b_terms', target_name: district_b.name)
 
     # Basic checks to provide a baseline
-    expect(Legal::GetTargetedContracts[applicable_to: course_e]
+    expect(Legal::GetTargetedContracts.call(applicable_to: course_e)
           .collect(&:contract_name))
           .to eq ['district_a_terms']
 
-    expect(Legal::GetTargetedContracts[applicable_to: course_f]
+    expect(Legal::GetTargetedContracts.call(applicable_to: course_f)
           .collect(&:contract_name))
           .to eq ['district_b_terms']
 
     # Move a course
     CourseProfile::UpdateProfile[course_e.id, {school_district_school_id: school_d.id }]
 
-    expect(Legal::GetTargetedContracts[applicable_to: course_e]
+    expect(Legal::GetTargetedContracts.call(applicable_to: course_e)
           .collect(&:contract_name))
           .to eq ['district_b_terms']
 
     # Move a school
-    SchoolDistrict::UpdateSchool[id: school_d.id, attributes: {school_district_district_id: district_a.id}]
+    SchoolDistrict::UpdateSchool.call(id: school_d.id, attributes: {school_district_district_id: district_a.id})
 
-    expect(Legal::GetTargetedContracts[applicable_to: course_f]
+    expect(Legal::GetTargetedContracts.call(applicable_to: course_f)
           .collect(&:contract_name))
           .to eq ['district_a_terms']
   end
 
   scenario 'blah' do
-    district_a = SchoolDistrict::CreateDistrict[name: 'DistrictA']
-    school_c = SchoolDistrict::CreateSchool[name: 'SchoolC', district: district_a]
-    course_e = CreateCourse[name: 'CourseE', school: school_c]
-    course_f = CreateCourse[name: 'CourseF']
+    district_a = SchoolDistrict::CreateDistrict.call(name: 'DistrictA')
+    school_c = SchoolDistrict::CreateSchool.call(name: 'SchoolC', district: district_a)
+    course_e = CreateCourse.call(name: 'CourseE', school: school_c)
+    course_f = CreateCourse.call(name: 'CourseF')
 
     FinePrint::Contract.create(name: 'district_a_terms', title: 'a', content: 'a').publish
     FinePrint::Contract.create(name: 'general_terms_of_use', title: 'a', content: 'a').publish
@@ -115,8 +115,8 @@ RSpec.feature 'DistrictTermsWork' do
     user_1 = FactoryGirl.create(:user, skip_terms_agreement: true)
     user_2 = FactoryGirl.create(:user, skip_terms_agreement:true)
 
-    AddUserAsCourseTeacher[user: user_1, course: course_e]
-    AddUserAsCourseTeacher[user: user_2, course: course_f]
+    AddUserAsCourseTeacher.call(user: user_1, course: course_e)
+    AddUserAsCourseTeacher.call(user: user_2, course: course_f)
 
     admin = FactoryGirl.create(:user, :administrator)
 

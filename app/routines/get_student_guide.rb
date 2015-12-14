@@ -2,12 +2,12 @@ class GetStudentGuide
 
   include CourseGuideMethods
 
-  lev_routine express_output: :course_guide
+  lev_routine outputs: { course_guide: :_self }
 
   protected
 
   def exec(role:)
-    outputs.course_guide = gather_role_stats(role)
+    set(course_guide: gather_role_stats(role))
   end
 
   private

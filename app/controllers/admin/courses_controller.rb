@@ -7,8 +7,8 @@ class Admin::CoursesController < Admin::BaseController
 
   def index
     @query = params[:query]
-    courses = SearchCourses[query: @query]
-    @course_infos = CollectCourseInfo[courses: courses, with: :teacher_names]
+    courses = SearchCourses.call(query: @query)
+    @course_infos = CollectCourseInfo.call(courses: courses, with: :teacher_names)
   end
 
   def new
@@ -56,11 +56,11 @@ class Admin::CoursesController < Admin::BaseController
       course = Entity::Course.find(params[:id])
       ecosystem = ::Content::Ecosystem.find(params[:ecosystem_id])
 
-      if GetCourseEcosystem[course: course] == ecosystem
+      if GetCourseEcosystem.call(course: course) == ecosystem
         flash[:notice] = "Course ecosystem \"#{ecosystem.title}\" is already selected for \"#{course.profile.name}\""
       else
         begin
-          CourseContent::AddEcosystemToCourse[course: course, ecosystem: ecosystem]
+          CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
           flash[:notice] = "Course ecosystem \"#{ecosystem.title}\" selected for \"#{course.profile.name}\""
         rescue Content::MapInvalidError => e
           flash[:error] = e.message

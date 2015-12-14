@@ -35,7 +35,7 @@ describe Api::V1::TaskStepsController, type: :controller, api: true, version: :v
   }
 
   let!(:course)             { Entity::Course.create }
-  let!(:period)             { CreatePeriod[course: course] }
+  let!(:period)             { CreatePeriod.call(course: course).period }
 
   let!(:lo)                 { FactoryGirl.create :content_tag, value: 'ost-tag-lo-test-lo01' }
   let!(:pp)                 { FactoryGirl.create :content_tag, value: 'os-practice-problems' }
@@ -68,7 +68,7 @@ describe Api::V1::TaskStepsController, type: :controller, api: true, version: :v
     :content_exercise_tag, exercise: recovery_exercise, tag: pp
   ) }
 
-  let!(:pools) { Content::Routines::PopulateExercisePools[book: recovery_exercise.book] }
+  let!(:pools) { Content::Routines::PopulateExercisePools.call(book: recovery_exercise.book).pools }
 
   describe "#show" do
     it "should work on the happy path" do
@@ -312,8 +312,8 @@ describe Api::V1::TaskStepsController, type: :controller, api: true, version: :v
 
   describe "practice task update step" do
     it "allows updating of a step (needed to test access to legacy and SS taskings)" do
-      AddUserAsPeriodStudent[period: period, user: user_1]
-      task = ResetPracticeWidget[role: Entity::Role.last, exercise_source: :fake]
+      AddUserAsPeriodStudent.call(period: period, user: user_1)
+      task = ResetPracticeWidget.call(role: Entity::Role.last, exercise_source: :fake)
 
       step = task.task.task_steps.first
 

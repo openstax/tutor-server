@@ -1,12 +1,12 @@
 class GetCourseRoster
-  lev_routine express_output: :roster
+  lev_routine outputs: { roster: :_self }
 
   protected
 
   def exec(course:)
     students = course.students.includes(:enrollments, role: { profile: :account })
 
-    outputs.roster = {
+    set(roster: {
       teacher_join_url: UrlGenerator.new.join_course_url(course.teacher_join_token),
       students: students.collect do |student|
         Hashie::Mash.new({
@@ -21,6 +21,6 @@ class GetCourseRoster
           :active? => student.active?
         })
       end
-    }
+    })
   end
 end

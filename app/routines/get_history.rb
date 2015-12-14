@@ -1,5 +1,8 @@
 class GetHistory
-  lev_routine
+  lev_routine outputs: { tasks: :_self,
+                         ecosystems: :_self,
+                         tasked_exercises: :_self,
+                         exercises: :_self }
 
   protected
 
@@ -15,14 +18,14 @@ class GetHistory
     tasks = tasks.where{ id != current_task.id }.to_a.unshift(current_task) \
       unless current_task.nil?
 
-    outputs[:tasks] = tasks.to_a
+    set(tasks: tasks.to_a)
 
-    outputs[:ecosystems] = tasks.collect do |task|
+    set(ecosystems: tasks.collect do |task|
       model = task.task_plan.try(:ecosystem)
       next if model.nil?
       strategy = Content::Strategies::Direct::Ecosystem.new(model)
       Content::Ecosystem.new(strategy: strategy)
-    end
+    end)
 
     tasked_exercises_array = tasks.collect do |task|
       # Handle 0-ago spaced practice
@@ -30,14 +33,14 @@ class GetHistory
                         task.task_steps.select(&:exercise?).collect(&:tasked)
     end
 
-    outputs[:tasked_exercises] = tasked_exercises_array
+    set(tasked_exercises: tasked_exercises_array)
 
-    outputs[:exercises] = tasked_exercises_array.collect do |tasked_exercises|
+    set(exercises: tasked_exercises_array.collect do |tasked_exercises|
       tasked_exercises.collect do |tasked_exercise|
         model = tasked_exercise.exercise
         strategy = Content::Strategies::Direct::Exercise.new(model)
         Content::Exercise.new(strategy: strategy)
       end
-    end
+    end)
   end
 end

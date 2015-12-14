@@ -52,7 +52,7 @@ RSpec.describe 'Administration' do
 
   scenario 'attempt destroying a school with courses assigned' do
     school = SchoolDistrict::Models::School.last
-    course = CreateCourse[name: 'Physics', school: school]
+    course = CreateCourse.call(name: 'Physics', school: school)
 
     click_link 'delete'
 

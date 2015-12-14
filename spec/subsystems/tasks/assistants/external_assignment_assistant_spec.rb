@@ -9,7 +9,7 @@ RSpec.describe Tasks::Assistants::ExternalAssignmentAssistant, type: :assistant 
   let!(:templatized_url) { 'https://www.example.org/survey?id={{deidentifier}}' }
 
   let!(:course) { Entity::Course.create }
-  let!(:period) { CreatePeriod[course: course] }
+  let!(:period) { CreatePeriod.call(course: course).period }
 
   let!(:task_plan_1) {
     FactoryGirl.build(:tasks_task_plan,
@@ -32,7 +32,7 @@ RSpec.describe Tasks::Assistants::ExternalAssignmentAssistant, type: :assistant 
   let!(:students) {
     num_taskees.times.collect do
       user = FactoryGirl.create(:user)
-      AddUserAsPeriodStudent.call(user: user, period: period).outputs.student
+      AddUserAsPeriodStudent.call(user: user, period: period).student
     end
   }
 
@@ -49,7 +49,7 @@ RSpec.describe Tasks::Assistants::ExternalAssignmentAssistant, type: :assistant 
   }
 
   it 'assigns tasked external urls to students' do
-    tasks = DistributeTasks.call(task_plan_1).outputs.entity_tasks.collect(&:task)
+    tasks = DistributeTasks.call(task_plan_1).entity_tasks.collect(&:task)
     expect(tasks.length).to eq num_taskees
 
     tasks.each do |task|
@@ -60,7 +60,7 @@ RSpec.describe Tasks::Assistants::ExternalAssignmentAssistant, type: :assistant 
   end
 
   it 'assigns tasked external urls with templatized urls to students' do
-    tasks = DistributeTasks.call(task_plan_2).outputs.entity_tasks.collect(&:task)
+    tasks = DistributeTasks.call(task_plan_2).entity_tasks.collect(&:task)
     expect(tasks.length).to eq num_taskees
 
     tasks.each do |task|

@@ -68,12 +68,12 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   def create
     course = Entity::Course.find(params[:course_id])
     Time.use_zone(course.profile.timezone) do
-      task_plan = BuildTaskPlan[course: course]
+      task_plan = BuildTaskPlan.call(course: course)
 
       # Modified standard_create code
       Tasks::Models::TaskPlan.transaction do
         consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter)
-        task_plan.assistant = Tasks::GetAssistant[course: course, task_plan: task_plan]
+        task_plan.assistant = Tasks::GetAssistant.call(course: course, task_plan: task_plan)
 
         raise(IllegalState,
           "No assistant for task plan of type #{task_plan.type}"

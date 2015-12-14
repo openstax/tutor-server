@@ -1,6 +1,6 @@
 # Returns Content::Exercises corresponding to a Biglearn query
 class GetEcosystemExercisesFromBiglearn
-  lev_routine express_output: :ecosystem_exercises
+  lev_routine outputs: { ecosystem_exercises: :_self }
 
   protected
 
@@ -25,6 +25,6 @@ class GetEcosystemExercisesFromBiglearn
                          "local found: #{exercises.size}] biglearn question ids: #{numbers}") \
       if exercises.size != numbers.count
 
-    outputs[:ecosystem_exercises] = exercises
+    set(ecosystem_exercises: exercises)
   end
 end

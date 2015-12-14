@@ -13,7 +13,7 @@ describe CourseMembership::GetTeachers do
     it "returns an empty array" do
       result = CourseMembership::GetTeachers.call(target_course)
       expect(result.errors).to be_empty
-      expect(result.outputs.teachers).to be_empty
+      expect(result.teachers).to be_empty
     end
   end
 
@@ -31,8 +31,8 @@ describe CourseMembership::GetTeachers do
     it "returns an array containing that teacher" do
       result = CourseMembership::GetTeachers.call(target_course)
       expect(result.errors).to be_empty
-      expect(result.outputs.teachers.size).to eq(1)
-      expect(result.outputs.teachers).to include(target_role)
+      expect(result.teachers.size).to eq(1)
+      expect(result.teachers).to include(target_role)
     end
 
     it "also works when called expressly" do
@@ -56,9 +56,9 @@ describe CourseMembership::GetTeachers do
     it "returns an array containing those teachers" do
       result = CourseMembership::GetTeachers.call(target_course)
       expect(result.errors).to be_empty
-      expect(result.outputs.teachers.size).to eq(2)
-      expect(result.outputs.teachers).to include(target_role1)
-      expect(result.outputs.teachers).to include(target_role2)
+      expect(result.teachers.size).to eq(2)
+      expect(result.teachers).to include(target_role1)
+      expect(result.teachers).to include(target_role2)
     end
   end
 end

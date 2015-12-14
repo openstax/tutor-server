@@ -12,14 +12,14 @@ class SchoolDistrict::ProcessSchoolChange
 
     if old_school_id
       old_school = SchoolDistrict::Models::School.find(old_school_id)
-      Legal::MakeChildNotGetParentContracts[child: course_profile.course,
-                                            parent: old_school]
+      Legal::MakeChildNotGetParentContracts.call(child: course_profile.course,
+                                                 parent: old_school)
     end
 
     if new_school_id
       new_school = SchoolDistrict::Models::School.find(new_school_id)
-      Legal::MakeChildGetParentContracts[child: course_profile.course,
-                                         parent: new_school]
+      Legal::MakeChildGetParentContracts.call(child: course_profile.course,
+                                              parent: new_school)
     end
   end
 

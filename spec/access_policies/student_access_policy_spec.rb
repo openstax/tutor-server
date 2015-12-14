@@ -3,9 +3,9 @@ require 'rails_helper'
 RSpec.describe StudentAccessPolicy, type: :access_policy do
   let(:requestor)    { FactoryGirl.create(:user) }
   let(:course)       { Entity::Course.create }
-  let(:period)       { CreatePeriod[course: course] }
+  let(:period)       { CreatePeriod.call(course: course).period }
   let(:student_user) { FactoryGirl.create(:user) }
-  let(:student)      { AddUserAsPeriodStudent[user: student_user, period: period].student }
+  let(:student)      { AddUserAsPeriodStudent.call(user: student_user, period: period).student }
 
   subject(:action_allowed) do
     StudentAccessPolicy.action_allowed?(action, requestor, student)

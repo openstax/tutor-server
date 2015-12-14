@@ -3,9 +3,9 @@ class Admin::UsersController < Admin::BaseController
 
   def index
     @per_page = 30
-    @user_search = User::SearchUsers[search: "%#{params[:query]}%",
-                                     page: params[:page],
-                                     per_page: @per_page]
+    @user_search = User::SearchUsers.call(search: "%#{params[:query]}%",
+                                          page: params[:page],
+                                          per_page: @per_page)
 
     respond_to do |format|
       format.html
@@ -19,7 +19,7 @@ class Admin::UsersController < Admin::BaseController
       success: ->(*) {
         flash[:notice] = 'The user has been added.'
         redirect_to admin_users_path(
-          search_term: @handler_result.outputs[:user].username
+          search_term: @handler_result.user.username
         )
       },
       failure: ->(*) {
@@ -40,7 +40,7 @@ class Admin::UsersController < Admin::BaseController
       success: ->(*) {
         flash[:notice] = 'The user has been updated.'
         redirect_to admin_users_path(
-          search_term: @handler_result.outputs[:user].username
+          search_term: @handler_result.user.username
         )
       },
       failure: ->(*) {

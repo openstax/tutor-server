@@ -1,12 +1,10 @@
 class Role::CreateUserRole
-  lev_routine express_output: :role
-
-  uses_routine Role::AddUserRole
+  lev_routine outputs: { role: :_self },
+              uses: Role::AddUserRole
 
   protected
-
   def exec(user, role_type = :unassigned)
-    outputs[:role] = ::Entity::Role.create!(role_type: role_type)
-    run(Role::AddUserRole, user: user, role: outputs.role)
+    set(role: ::Entity::Role.create!(role_type: role_type))
+    run(:role_add_user_role, user: user, role: result.role)
   end
 end

@@ -26,8 +26,8 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
 
     @course = Entity::Course.create!
 
-    @period = CreatePeriod[course: @course]
-    @second_period = CreatePeriod[course: @course]
+    @period = CreatePeriod.call(course: @course)
+    @second_period = CreatePeriod.call(course: @course)
 
     @teacher = FactoryGirl.create(:user)
 
@@ -36,13 +36,13 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
     @second_student = FactoryGirl.create(:user,
                                          exchange_read_identifier: USER_2_IDENTIFIER)
 
-    @role = AddUserAsPeriodStudent[period: @period, user: @student]
-    @second_role = AddUserAsPeriodStudent[period: @second_period, user: @second_student]
-    @teacher_role = AddUserAsCourseTeacher[course: @course, user: @teacher]
+    @role = AddUserAsPeriodStudent.call(period: @period, user: @student)
+    @second_role = AddUserAsPeriodStudent.call(period: @second_period, user: @second_student)
+    @teacher_role = AddUserAsCourseTeacher.call(course: @course, user: @teacher)
 
     VCR.use_cassette("GetCourseGuide/setup_course_guide", VCR_OPTS) do
       capture_stdout do
-        CreateStudentHistory[course: @course, roles: [@role, @second_role]]
+        CreateStudentHistory.call(course: @course, roles: [@role, @second_role])
       end
     end
 
@@ -95,7 +95,7 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
     it 'causes requests to biglearn even if called after the teacher guide' do
       expect(@real_client).to receive(:request_clues).exactly(6).times.and_call_original
 
-      teacher_guide = GetTeacherGuide[role: @teacher_role] # 2 requests
+      teacher_guide = GetTeacherGuide.call(role: @teacher_role) # 2 requests
       expect(teacher_guide.size).to eq 2
 
       described_class[described_args] # 4 requests
@@ -106,14 +106,14 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
 
       described_class[described_args] # 4 requests
 
-      teacher_guide = GetTeacherGuide[role: @teacher_role] # 0 requests (cached)
+      teacher_guide = GetTeacherGuide.call(role: @teacher_role) # 0 requests (cached)
       expect(teacher_guide.size).to eq 2
     end
 
     it 'causes requests to biglearn even if called after the student guide' do
       expect(@real_client).to receive(:request_clues).exactly(5).times.and_call_original
 
-      student_guide = GetStudentGuide[role: @role] # 1 request
+      student_guide = GetStudentGuide.call(role: @role) # 1 request
       expect(student_guide).to be_present
 
       described_class[described_args] # 4 requests
@@ -124,10 +124,10 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
 
       described_class[described_args] # 4 requests
 
-      student_guide = GetStudentGuide[role: @role] # 0 requests (cached)
+      student_guide = GetStudentGuide.call(role: @role) # 0 requests (cached)
       expect(student_guide).to be_present
 
-      student_guide_2 = GetStudentGuide[role: @second_role] # 0 requests (cached)
+      student_guide_2 = GetStudentGuide.call(role: @second_role) # 0 requests (cached)
       expect(student_guide_2).to be_present
     end
   end
@@ -145,7 +145,7 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
       it 'causes requests to biglearn even if called after the teacher guide' do
         expect(@real_client).to receive(:request_clues).exactly(6).times.and_call_original
 
-        teacher_guide = GetTeacherGuide[role: @teacher_role] # 2 requests
+        teacher_guide = GetTeacherGuide.call(role: @teacher_role) # 2 requests
         expect(teacher_guide.size).to eq 2
 
         described_class[described_args] # 4 requests
@@ -156,14 +156,14 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
 
         described_class[described_args] # 4 requests
 
-        teacher_guide = GetTeacherGuide[role: @teacher_role] # 0 requests (cached)
+        teacher_guide = GetTeacherGuide.call(role: @teacher_role) # 0 requests (cached)
         expect(teacher_guide.size).to eq 2
       end
 
       it 'causes requests to biglearn even if called after the student guide' do
         expect(@real_client).to receive(:request_clues).exactly(5).times.and_call_original
 
-        student_guide = GetStudentGuide[role: @role] # 1 request
+        student_guide = GetStudentGuide.call(role: @role) # 1 request
         expect(student_guide).to be_present
 
         described_class[described_args] # 4 requests
@@ -174,10 +174,10 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
 
         described_class[described_args] # 4 requests
 
-        student_guide = GetStudentGuide[role: @role] # 0 requests (cached)
+        student_guide = GetStudentGuide.call(role: @role) # 0 requests (cached)
         expect(student_guide).to be_present
 
-        student_guide_2 = GetStudentGuide[role: @second_role] # 0 requests (cached)
+        student_guide_2 = GetStudentGuide.call(role: @second_role) # 0 requests (cached)
         expect(student_guide_2).to be_present
       end
     end
@@ -189,7 +189,7 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
       before(:each) do
         @role.taskings.each do |tasking|
           tasking.task.task.task_steps.select{ |ts| ts.completed? }.each do |ts|
-            MarkTaskStepCompleted[task_step: ts]
+            MarkTaskStepCompleted.call(task_step: ts)
           end
         end
       end
@@ -203,7 +203,7 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
       it 'causes requests to biglearn even if called after the student guide' do
         expect(@real_client).to receive(:request_clues).exactly(3).times.and_call_original
 
-        student_guide = GetStudentGuide[role: @role] # 1 request
+        student_guide = GetStudentGuide.call(role: @role) # 1 request
         expect(student_guide).to be_present
 
         described_class[described_args] # 2 requests
@@ -214,7 +214,7 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
 
         described_class[described_args] # 2 requests
 
-        student_guide = GetStudentGuide[role: @role] # 0 requests (cached)
+        student_guide = GetStudentGuide.call(role: @role) # 0 requests (cached)
         expect(student_guide).to be_present
       end
 
@@ -223,7 +223,7 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
 
         described_class[described_args] # 2 requests
 
-        student_guide = GetStudentGuide[role: @second_role] # 1 request
+        student_guide = GetStudentGuide.call(role: @second_role) # 1 request
         expect(student_guide).to be_present
       end
     end

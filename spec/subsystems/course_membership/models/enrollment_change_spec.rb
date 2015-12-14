@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model do
-  let!(:period_1)             { CreatePeriod[course: Entity::Course.create!] }
-  let!(:period_2)             { CreatePeriod[course: period_1.course] }
+  let!(:period_1)             { CreatePeriod.call(course: Entity::Course.create!).period }
+  let!(:period_2)             { CreatePeriod.call(course: period_1.course).period }
 
   let!(:user)                 do
     profile = FactoryGirl.create :user_profile
@@ -11,13 +11,14 @@ RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model do
   end
 
   let!(:role)                 do
-    AddUserAsPeriodStudent[user: user, period: period_1]
+    AddUserAsPeriodStudent.call(user: user, period: period_1)
   end
 
   let!(:enrollment)           { role.student.latest_enrollment }
 
   subject(:enrollment_change) {
-    CourseMembership::CreateEnrollmentChange[user: user, period: period_2].to_model
+    CourseMembership::CreateEnrollmentChange.call(user: user, period: period_2)
+                                            .enrollment_change.to_model
   }
 
   it { is_expected.to belong_to(:profile) }

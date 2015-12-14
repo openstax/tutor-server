@@ -54,9 +54,9 @@ class Api::V1::EcosystemsController < Api::V1::ApiController
 
     OSU::AccessPolicy.require_action_allowed!(:exercises, current_api_user, ecosystem)
 
-    pools_map = GetEcosystemPoolsByPageIdsAndPoolTypes[ecosystem: ecosystem,
-                                                       page_ids: params[:page_ids],
-                                                       pool_types: params[:pool_types]]
+    pools_map = GetEcosystemPoolsByPageIdsAndPoolTypes.call(ecosystem: ecosystem,
+                                                            page_ids: params[:page_ids],
+                                                            pool_types: params[:pool_types])
 
     # Build map of exercise uids to representations, with pool type
     exercise_representations = pools_map.each_with_object({}) do |(pool_type, pools), hash|

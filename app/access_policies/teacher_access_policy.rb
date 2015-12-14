@@ -4,7 +4,7 @@ class TeacherAccessPolicy
 
     case action
     when :destroy
-      UserIsCourseTeacher[user: requestor, course: teacher.course]
+      UserIsCourseTeacher.call(user: requestor, course: teacher.course)
     else
       false
     end

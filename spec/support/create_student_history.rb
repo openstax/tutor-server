@@ -1,12 +1,11 @@
 class CreateStudentHistory
-  lev_routine
-
-  uses_routine AddEcosystemToCourse
-  uses_routine AddUserAsPeriodStudent
-  uses_routine CreatePeriod
-  uses_routine DistributeTasks, translations: { outputs: { type: :verbatim } }
-  uses_routine FetchAndImportBookAndCreateEcosystem,
-               translations: { outputs: { type: :verbatim } }
+  lev_routine uses: [{ name: CourseContent::AddEcosystemToCourse,
+                       as: :add_ecosystem_to_course },
+                     :add_user_as_period_student],
+              outputs: {
+                period: :create_period,
+                _verbatim: [:distribute_tasks, :fetch_and_import_book_and_create_ecosystem]
+              }
 
   protected
   def exec(course:, roles: setup_student_role, book_id: '93e2b09d-261c-4007-a987-0b3062fe154b')
@@ -41,7 +40,7 @@ class CreateStudentHistory
     student = FactoryGirl.create(:user)
 
     puts "=== Add student to course ==="
-    run(:add_user_as_period_student, period: outputs.period, user: student)
+    run(:add_user_as_period_student, period: result.period, user: student)
 
     Entity::Role.last
   end
@@ -51,9 +50,9 @@ class CreateStudentHistory
     run(:fetch_and_import_book_and_create_ecosystem, book_cnx_id: book_id)
 
     puts "=== Add ecosystem to course ==="
-    run(:add_ecosystem_to_course, course: course, ecosystem: outputs.ecosystem)
+    run(:add_ecosystem_to_course, course: course, ecosystem: result.ecosystem)
 
-    outputs.ecosystem
+    result.ecosystem
   end
 
   def create_assignments(ecosystem, course, periods)
@@ -61,7 +60,7 @@ class CreateStudentHistory
     run(:distribute_tasks, create_ireading_task_plan(ecosystem, course, periods))
 
     task_plan = create_homework_task_plan(ecosystem, course, periods)
-    entity_tasks = run(:distribute_tasks, task_plan).outputs.entity_tasks
+    entity_tasks = run(:distribute_tasks, task_plan).entity_tasks
     entity_tasks.each do |entity_task|
       task = entity_task.task.reload
       answer_correctly(task.task_steps(true), 2)
@@ -69,15 +68,15 @@ class CreateStudentHistory
   end
 
   def create_practice_widget(role, ids = {})
-    ResetPracticeWidget[role: role,
-                        chapter_ids: ids[:chapters],
-                        page_ids: ids[:pages],
-                        exercise_source: :local].task.task_steps
+    ResetPracticeWidget.call(role: role,
+                             chapter_ids: ids[:chapters],
+                             page_ids: ids[:pages],
+                             exercise_source: :local).task.task_steps
   end
 
   def answer_correctly(steps, num)
     steps.first(num).each do |step|
-      Hacks::AnswerExercise[task_step: step.reload, is_correct: true]
+      Hacks::AnswerExercise.call(task_step: step.reload, is_correct: true)
     end
   end
 

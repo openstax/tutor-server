@@ -9,7 +9,7 @@ describe Role::GetUsersForRoles, type: :routine do
     it "returns an empty array" do
       result = Role::GetUsersForRoles.call(roles)
       expect(result.errors).to be_empty
-      expect(result.outputs.users).to be_empty
+      expect(result.users).to be_empty
     end
   end
 
@@ -31,8 +31,8 @@ describe Role::GetUsersForRoles, type: :routine do
     it "returns an array containing that user" do
       result = Role::GetUsersForRoles.call(roles)
       expect(result.errors).to be_empty
-      expect(result.outputs.users.size).to eq(1)
-      expect(result.outputs.users).to include(target_user)
+      expect(result.users.size).to eq(1)
+      expect(result.users).to include(target_user)
     end
   end
 
@@ -56,9 +56,9 @@ describe Role::GetUsersForRoles, type: :routine do
     it "returns an array containing that user" do
       result = Role::GetUsersForRoles.call(roles)
       expect(result.errors).to be_empty
-      expect(result.outputs.users.size).to eq(2)
-      expect(result.outputs.users).to include(target_user1)
-      expect(result.outputs.users).to include(target_user2)
+      expect(result.users.size).to eq(2)
+      expect(result.users).to include(target_user1)
+      expect(result.users).to include(target_user2)
     end
   end
 

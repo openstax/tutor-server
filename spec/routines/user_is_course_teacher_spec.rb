@@ -14,7 +14,7 @@ describe UserIsCourseTeacher, type: :routine do
       other_teacher_role  = Entity::Role.create!
 
       target_course       = Entity::Course.create!
-      target_period       = CreatePeriod[course: target_course]
+      target_period       = CreatePeriod.call(course: target_course).period
 
       other_course        = Entity::Course.create!
 
@@ -31,8 +31,7 @@ describe UserIsCourseTeacher, type: :routine do
 
       ## Perform test
       result = UserIsCourseTeacher.call(user: target_user, course: target_course)
-      expect(result.errors).to be_empty
-      expect(result.outputs.user_is_course_teacher).to be_falsey
+      expect(result).to be_falsey
     end
   end
 
@@ -49,8 +48,7 @@ describe UserIsCourseTeacher, type: :routine do
 
       ## Perform test
       result = UserIsCourseTeacher.call(user: target_user, course: target_course)
-      expect(result.errors).to be_empty
-      expect(result.outputs.user_is_course_teacher).to be_truthy
+      expect(result).to be_truthy
     end
   end
 end

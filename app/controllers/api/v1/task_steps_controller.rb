@@ -62,7 +62,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     if result.errors.any?
       render_api_errors(result.errors)
     else
-      respond_with result.outputs.recovery_step,
+      respond_with result.recovery_step,
                    responder: ResponderWithPutContent,
                    represent_with: Api::V1::TaskStepRepresenter
     end
@@ -85,9 +85,8 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     if result.errors.any?
       render_api_errors(result.errors)
     else
-      respond_with result.outputs,
-                   represent_with: Api::V1::RefreshRepresenter,
-                   responder: ResponderWithPutContent
+      respond_with result, represent_with: Api::V1::RefreshRepresenter,
+                           responder: ResponderWithPutContent
     end
   end
 

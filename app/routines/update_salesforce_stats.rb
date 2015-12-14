@@ -50,8 +50,8 @@ class UpdateSalesforceStats
 
   def self.update_class_size_stats(class_size, course)
     class_size.num_teachers = CourseMembership::GetTeachers[course].count
-    class_size.num_students = CourseMembership::GetCourseRoles[course: course, types: :student].count
-    class_size.num_sections = CourseMembership::GetCoursePeriods[course: course].count
+    class_size.num_students = CourseMembership::GetCourseRoles.call(course: course, types: :student).count
+    class_size.num_sections = CourseMembership::GetCoursePeriods.call(course: course).count
   end
 
   def self.log(&block)

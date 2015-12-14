@@ -1,13 +1,12 @@
 class GetCourseTeacherUsers
-  lev_routine
-
-  uses_routine CourseMembership::GetTeachers, translations: {outputs: {map: {teachers: :teacher_roles}}}
-  uses_routine Role::GetUsersForRoles,        translations: {outputs: {map: {users: :teachers}}}
+  lev_routine outputs: { teachers: :_self },
+              uses: [{ name: CourseMembership::GetTeachers, as: :get_teachers },
+                     { name: Role::GetUsersForRoles, as: :get_users }]
 
   protected
 
   def exec(course)
-    run(CourseMembership::GetTeachers, course)
-    run(Role::GetUsersForRoles, outputs[:teacher_roles])
+    teacher_roles = run(:get_teachers, course).teachers
+    set(teachers: run(:get_users, teacher_roles).users)
   end
 end

@@ -8,7 +8,7 @@ module SchoolDistrict
       district.destroy
       transfer_errors_from(district, {type: :verbatim}, true)
 
-      Legal::ForgetAbout[item: district]
+      Legal::ForgetAbout.call(item: district)
     end
   end
 end

@@ -5,22 +5,24 @@ require_relative 'content_configuration'
 class DemoContent < DemoBase
   POSSIBLE_CHARS = ('0'...'9').to_a+('A'..'Z').to_a
 
-  lev_routine
+  lev_routine uses: [
+    { name: FetchAndImportBookAndCreateEcosystem, as: :import_book },
+    { name: CreateCourse, as: :create_course },
+    { name: CreatePeriod, as: :create_period },
+    { name: CourseMembership::UpdatePeriod, as: :update_period },
+    { name: AddEcosystemToCourse, as: :add_ecosystem },
+    { name: User::MakeAdministrator, as: :make_administrator },
+    { name: User::SetContentAnalystState, as: :set_content_analyst },
+    { name: AddUserAsCourseTeacher, as: :add_teacher },
+    { name: AddUserAsPeriodStudent, as: :add_student },
+    { name: UserIsCourseStudent, as: :is_student },
+    { name: UserIsCourseTeacher, as: :is_teacher },
+    { name: CourseProfile::SetCatalogOffering, as: :set_offering },
+    { name: User::CreateUser, as: :create_user }
+  ]
 
   disable_automatic_lev_transactions
 
-  uses_routine FetchAndImportBookAndCreateEcosystem, as: :import_book
-  uses_routine CreateCourse, as: :create_course
-  uses_routine CreatePeriod, as: :create_period
-  uses_routine CourseMembership::UpdatePeriod, as: :update_period
-  uses_routine AddEcosystemToCourse, as: :add_ecosystem
-  uses_routine User::MakeAdministrator, as: :make_administrator
-  uses_routine User::SetContentAnalystState, as: :set_content_analyst
-  uses_routine AddUserAsCourseTeacher, as: :add_teacher
-  uses_routine AddUserAsPeriodStudent, as: :add_student
-  uses_routine UserIsCourseStudent, as: :is_student
-  uses_routine UserIsCourseTeacher, as: :is_teacher
-  uses_routine CourseProfile::SetCatalogOffering, as: :set_offering
 
   protected
 
@@ -39,7 +41,7 @@ class DemoContent < DemoBase
                    new_user(username: people.teachers[teacher].username,
                             name: people.teachers[teacher].name)
     log("Teacher: #{people.teachers[teacher].name}")
-    unless run(:is_teacher, user: teacher_user, course: course).outputs.user_is_course_teacher
+    unless run(:is_teacher, user: teacher_user, course: course)
       run(:add_teacher, course: course, user: teacher_user)
     end
   end
@@ -47,7 +49,7 @@ class DemoContent < DemoBase
   def configure_course_period(course, period_content, index)
     period_name = period_content.name
     period = find_period(course: course, name: period_name) || \
-             run(:create_period, course: course, name: period_name).outputs.period
+             run(:create_period, course: course, name: period_name).period
     log("  Period: #{period_content.name}")
     if period_content.enrollment_code
       run(:update_period, period: period, enrollment_code: period_content.enrollment_code)
@@ -59,7 +61,7 @@ class DemoContent < DemoBase
              new_user(username: student_info.username, name: student_info.name)
       student_identifier = POSSIBLE_CHARS.shuffle.take(10).join()
       log("    #{initials} #{student_info.username} (#{student_info.name})")
-      unless run(:is_student, user: user, course: course).outputs.user_is_course_student
+      unless run(:is_student, user: user, course: course)
         run(:add_student, period: period, user: user, student_identifier: "#{student_identifier}")
       end
 
@@ -118,9 +120,12 @@ class DemoContent < DemoBase
 
         book = content.cnx_book(version)
         course = courses[index]
+
         OpenStax::Cnx::V1.set_archive_url_base( url: content.url_base )
+
         log("Starting book import for #{course.name} #{book} from #{content.url_base}.")
-        ecosystem = run(:import_book, book_cnx_id: book).outputs.ecosystem
+
+        ecosystem = run(:import_book, book_cnx_id: book).ecosystem
 
         log("Book import complete")
         run(:add_ecosystem, ecosystem: ecosystem, course: course)
@@ -129,12 +134,9 @@ class DemoContent < DemoBase
         run(:set_offering, entity_course: course, catalog_offering: offering)
 
         index += 1
-
       end # book
-
     end # thread
 
     wait_for_parallel_completion
-
   end
 end

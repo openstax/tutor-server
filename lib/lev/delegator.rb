@@ -33,7 +33,7 @@ module Lev
               'You must specify delegate routines using the :to option' \
           if routines.empty?
 
-        routines.each { |routine| uses_routine routine, options }
+        routines.each { |routine| lev_routine uses: { name: routine }.merge(options) }
 
         args.each do |klass|
           options[:translations] ||= { inputs:  { type: :verbatim },

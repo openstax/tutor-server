@@ -17,7 +17,7 @@ RSpec.describe Admin::CoursesCreate, type: :handler do
   end
 
   it 'assigns the course to a school' do
-    school = SchoolDistrict::CreateSchool[name: 'Hello school']
+    school = SchoolDistrict::CreateSchool.call(name: 'Hello school')
 
     described_class.handle(params: { course: { name: 'Hello course',
                                                school_district_school_id: school.id } })

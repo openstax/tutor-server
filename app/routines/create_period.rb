@@ -1,16 +1,12 @@
 class CreatePeriod
-  lev_routine express_output: :period
-
-  uses_routine CourseMembership::CreatePeriod,
-    translations: { outputs: { type: :verbatim } },
-    as: :create_period
-
-  uses_routine Tasks::AssignCoursewideTaskPlansToNewPeriod,
-    as: :assign_coursewide_task_plans
+  lev_routine outputs: {
+    _verbatim: { name: CourseMembership::CreatePeriod, as: :create_period }
+  },
+  uses: { name: Tasks::AssignCoursewideTaskPlansToNewPeriod, as: :assign_coursewide_task_plans }
 
   def exec(course:, name: nil)
     name ||= (course.periods.count + 1).ordinalize
     run(:create_period, course: course, name: name)
-    run(:assign_coursewide_task_plans, period: outputs.period)
+    run(:assign_coursewide_task_plans, period: result.period)
   end
 end

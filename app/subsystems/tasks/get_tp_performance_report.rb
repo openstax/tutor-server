@@ -2,14 +2,14 @@ module Tasks
   class GetTpPerformanceReport
     include PerformanceReportMethods
 
-    lev_routine express_output: :performance_report
+    lev_routine outputs: { performance_report: :_self }
 
     protected
 
     def exec(course:)
       taskings = get_taskings(course)
 
-      outputs[:performance_report] = course.periods.collect do |period|
+      set(performance_report: course.periods.collect do |period|
         tasking_plans = sort_tasking_plans(taskings, course, period)
         task_plan_indices = tasking_plans.each_with_index
                                          .each_with_object({}) { |(tasking_plan, index), hash|
@@ -59,7 +59,7 @@ module Tasks
           data_headings: get_data_headings(tasking_plans, task_plan_results),
           students: student_data
         })
-      end
+      end)
     end
 
     def sort_tasking_plans(taskings, course, period)

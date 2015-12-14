@@ -26,7 +26,7 @@ RSpec.describe ImportEcosystemManifest, type: :routine do
       manifest = @ecosystem.manifest
       Content::Models::Ecosystem.destroy_all
 
-      expect{ @new_ecosystem = described_class[manifest: manifest] }.to(
+      expect{ @new_ecosystem = described_class.call(manifest: manifest) }.to(
         change{ Content::Models::Ecosystem.count }.by(1)
       )
 

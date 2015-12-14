@@ -1,6 +1,6 @@
 class Content::Routines::UpdatePageContent
 
-  lev_routine
+  lev_routine outputs: { pages: :_self }
 
   protected
 
@@ -21,7 +21,7 @@ class Content::Routines::UpdatePageContent
       page.save! if save
     end
 
-    outputs[:pages] = pages
+    set(pages: pages)
   end
 
   def change_page_link(href_attr, page_cnx_ids)

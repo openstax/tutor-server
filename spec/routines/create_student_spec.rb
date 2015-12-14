@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 describe CreateStudent, type: :routine do
-  let!(:course) { CreateCourse[name: 'A good course'] }
-  let!(:period) { CreatePeriod[course: course] }
+  let!(:course) { CreateCourse.call(name: 'A good course').course }
+  let!(:period) { CreatePeriod.call(course: course).period }
 
   it 'creates a new student in the given period with a username and a password' do
     result = nil
@@ -12,7 +12,7 @@ describe CreateStudent, type: :routine do
     }.to change{ User::Models::Profile.count }.by(1)
     expect(result.errors).to be_empty
 
-    student = result.outputs.student
+    student = result.student
     expect(student.username).to eq 'dummyuser'
     expect(student.first_name).to eq 'Dummy'
     expect(student.last_name).to eq 'User'
@@ -28,7 +28,7 @@ describe CreateStudent, type: :routine do
     }.to change{ User::Models::Profile.count }.by(1)
     expect(result.errors).to be_empty
 
-    student = result.outputs.student
+    student = result.student
     expect(student.first_name).to eq 'Dummy'
     expect(student.last_name).to eq 'User'
     expect(student.full_name).to eq 'Dummy User'

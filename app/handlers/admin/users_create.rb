@@ -2,12 +2,10 @@ class Admin::UsersCreate
   ALLOWED_ATTRIBUTES = ['username', 'password', 'first_name', 'last_name',
                         'full_name', 'title', 'email']
 
-  lev_handler
-
-  uses_routine User::CreateUser, translations: { outputs: { type: :verbatim } }, as: :create_user
-  uses_routine User::SetAdministratorState, as: :set_administrator
-  uses_routine User::SetCustomerServiceState, as: :set_customer_service
-  uses_routine User::SetContentAnalystState, as: :set_content_analyst
+  lev_handler uses: [{ name: User::CreateUser, as: :create_user },
+                     { name: User::SetAdministratorState, as: :set_administrator },
+                     { name: User::SetCustomerServiceState, as: :set_customer_service },
+                     { name: User::SetContentAnalystState, as: :set_content_analyst }]
 
   paramify :user do
     attribute :username, type: String
@@ -34,9 +32,9 @@ class Admin::UsersCreate
   end
 
   def handle
-    run(:create_user, **user_params.attributes.slice(*ALLOWED_ATTRIBUTES).symbolize_keys)
+    user = run(:create_user,
+               **user_params.attributes.slice(*ALLOWED_ATTRIBUTES).symbolize_keys).user
 
-    user = outputs[:user]
     run(:set_administrator, user: user, administrator: user_params.administrator)
     run(:set_customer_service, user: user, customer_service: user_params.customer_service)
     run(:set_content_analyst, user: user, content_analyst: user_params.content_analyst)
