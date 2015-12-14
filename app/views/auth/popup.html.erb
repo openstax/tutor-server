@@ -5,13 +5,18 @@
     <script>
       var msg = <%=raw json_escape @status.to_json %>,
         parent = '<%= @parent_window %>',
+        isIE = -1 != window.navigator.userAgent.indexOf("MSIE "),
         redirectHome =  function(){
            window.location.href = '/';
         };
       if (window.opener && parent){
         window.opener.postMessage( JSON.stringify(msg), parent );
-        setTimeout(redirectHome, 500); // redirect to home page (unless we're closed)
-      } else {
+        if (isIE){ // postMessage doesn't work with popups in stupid, stupid ie.
+          window.close();
+        } else {
+          setTimeout(redirectHome, 500); // redirect to home page (unless we're closed)
+        }
+      } else if (isIE) {
         redirectHome();
       }
     </script>
