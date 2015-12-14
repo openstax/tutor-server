@@ -29,21 +29,21 @@ class AuthController < ApplicationController
     render text: '', :content_type => 'text/plain'
   end
 
-  def iframe
+  def popup
     if current_user.is_anonymous?
       redirect_to_login_url
     else
       @status = user_status_update
-      @iframe_origin = stubbed_auth? ? session[:parent] || '*' : @status[:endpoints][:accounts_iframe]
+      @parent_window = params[:parent]
     end
   end
 
   def logout
     sign_out!
-    redirect_to stubbed_auth? ? authenticate_via_iframe_url :
+    redirect_to stubbed_auth? ? authenticate_via_popup_url :
                   OpenStax::Utilities.generate_url(
                     OpenStax::Accounts.configuration.openstax_accounts_url,
-                    "remote/iframe", parent: params[:parent]
+                    "logout", parent: params[:parent]
                   )
   end
 
@@ -60,10 +60,9 @@ class AuthController < ApplicationController
     end
     status[:endpoints] = {
       is_stubbed: stubbed_auth?,
-      login: openstax_accounts.login_url,
-      iframe_login: authenticate_via_iframe_url,
-      iframe_logout: logout_via_iframe_url,
-      accounts_iframe: stubbed_auth? ? authenticate_via_iframe_url :
+      login:  authenticate_via_popup_url,
+      logout: logout_via_popup_url,
+      accounts_iframe: stubbed_auth? ? authenticate_via_popup_url :
         OpenStax::Utilities.generate_url(
           OpenStax::Accounts.configuration.openstax_accounts_url, "remote/iframe"
         )

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <script>
+      var msg = <%=raw json_escape @status.to_json %>,
+        parent = '<%= @parent_window %>',
+        redirectHome =  function(){
+           window.location.href = '/';
+        };
+      if (window.opener && parent){
+        window.opener.postMessage( JSON.stringify(msg), parent );
+        setTimeout(redirectHome, 500); // redirect to home page (unless we're closed)
+      } else {
+        redirectHome();
+      }
+    </script>
+  </head>
+  <body>
+  </body>
+</html>
