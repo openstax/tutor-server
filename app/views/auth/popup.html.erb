@@ -3,22 +3,13 @@
   <head>
     <title></title>
     <script>
-      var msg = <%=raw json_escape @status.to_json %>,
-        parent = '<%= @parent_window %>',
-        isIE = -1 != window.navigator.userAgent.indexOf("MSIE "),
-        redirectHome =  function(){
-           window.location.href = '/';
-        };
-      debugger
-      if (window.opener && parent){
-        window.opener.postMessage( JSON.stringify(msg), parent );
-        if (isIE){ // postMessage doesn't work with popups in stupid, stupid ie.
-          window.close();
-        } else {
-          setTimeout(redirectHome, 500); // redirect to home page (unless we're closed)
-        }
+      var msg = <%=raw json_escape @status.to_json %>;
+      if (window.name === 'oxlogin' && window.opener){
+        window.opener.postMessage( JSON.stringify(msg), '<%= @parent_window %>' );
+        // close ourselves since postMessage doesn't work with popups in stupid, stupid IE.
+        setTimeout( function(){ window.close() }, 100);
       } else {
-        redirectHome();
+        window.location.href = '/'; // we've somehow been loaded in a non-login window
       }
     </script>
   </head>
