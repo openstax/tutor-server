@@ -22,18 +22,17 @@ RSpec.describe AuthController, type: :controller do
         OpenStax::Accounts.configuration.enable_stubbing = @stubbing_value
       }
 
-      it 'allows access to iframe and redirects to accounts' do
-        get :iframe
-        expect(session[:accounts_return_to]).to eq(authenticate_via_iframe_url)
+      it 'allows access to popup and redirects to accounts' do
+        get :popup
         expect(response).to redirect_to(controller.openstax_accounts.login_url)
       end
 
     end
 
     context "when using stubbing" do
-      it 'allows access to iframe and redirects to stub url' do
-        get :iframe
-        expect(session[:accounts_return_to]).to eq(authenticate_via_iframe_url)
+
+      it 'allows access to popup and redirects to stub url' do
+        get :popup
         expect(response).to redirect_to(controller.openstax_accounts.dev_accounts_url)
       end
     end
@@ -44,25 +43,22 @@ RSpec.describe AuthController, type: :controller do
   context "as an signed in user" do
     render_views
 
-    it 'renders status info' do
+    it 'relays user status info' do
       controller.sign_in user
-      get :iframe
-      expect(response.header['X-Frame-Options']).to be_nil
-      expect(session[:accounts_return_to]).to be_nil
-      expect(assigns(:status)).not_to be_nil
-      expect(response.body).to include('window.parent.postMessage')
+      get :popup
+      expect(response.body).to match('access_token')
+      expect(response.body).to match('window.opener.postMessage')
     end
 
     it 'can sign out' do
       controller.sign_in user
-      get :logout
-      expect(session[:account_id]).to be_nil
-      expect(response).to redirect_to(authenticate_via_iframe_url)
+      get :logout, parent: 'http://test.host/page'
+      expect(response).to redirect_to(authenticate_via_popup_url)
     end
 
     it 'requires agreeing to terms' do
       controller.sign_in new_user
-      get :iframe
+      get :popup
       expect(response).to redirect_to(/#{pose_terms_path}/)
     end
 
