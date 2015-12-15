@@ -9,6 +9,7 @@
         redirectHome =  function(){
            window.location.href = '/';
         };
+      debugger
       if (window.opener && parent){
         window.opener.postMessage( JSON.stringify(msg), parent );
         if (isIE){ // postMessage doesn't work with popups in stupid, stupid ie.
@@ -16,7 +17,7 @@
         } else {
           setTimeout(redirectHome, 500); // redirect to home page (unless we're closed)
         }
-      } else if (isIE) {
+      } else {
         redirectHome();
       }
     </script>
