@@ -558,29 +558,37 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     before(:all)         do
       DatabaseCleaner.start
 
-      @chapter = FactoryGirl.create :content_chapter, book_location: [4]
-      cnx_page_1 = OpenStax::Cnx::V1::Page.new(id: '95e61258-2faf-41d4-af92-f62e1414175a',
+      @book = FactoryGirl.create :content_book
+      @chapter_3 = FactoryGirl.create :content_chapter, book: @book, book_location: [3]
+      @chapter_4 = FactoryGirl.create :content_chapter, book: @book, book_location: [4]
+      cnx_page_1 = OpenStax::Cnx::V1::Page.new(id: '0e58aa87-2e09-40a7-8bf3-269b2fa16509',
+                                               title: "Acceleration")
+      cnx_page_2 = OpenStax::Cnx::V1::Page.new(id: '95e61258-2faf-41d4-af92-f62e1414175a',
                                                title: 'Force')
-      cnx_page_2 = OpenStax::Cnx::V1::Page.new(id: '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6',
+      cnx_page_3 = OpenStax::Cnx::V1::Page.new(id: '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6',
                                                title: "Newton's First Law of Motion: Inertia")
-      book_location_1 = [4, 1]
-      book_location_2 = [4, 2]
+      book_location_1 = [3, 1]
+      book_location_2 = [4, 1]
+      book_location_3 = [4, 2]
 
-      page_model_1, page_model_2 = VCR.use_cassette('Api_V1_CoursesController/with_pages',
-                                                    VCR_OPTS) do
-        [Content::Routines::ImportPage[chapter: @chapter,
+      page_model_1, page_model_2, page_model_3 = \
+        VCR.use_cassette('Api_V1_CoursesController/with_pages', VCR_OPTS) do
+        [Content::Routines::ImportPage[chapter: @chapter_3,
                                        cnx_page: cnx_page_1,
                                        book_location: book_location_1],
-         Content::Routines::ImportPage[chapter: @chapter,
+         Content::Routines::ImportPage[chapter: @chapter_4,
                                        cnx_page: cnx_page_2,
-                                       book_location: book_location_2]]
+                                       book_location: book_location_2],
+         Content::Routines::ImportPage[chapter: @chapter_4,
+                                       cnx_page: cnx_page_3,
+                                       book_location: book_location_3]]
       end
 
-      @book = @chapter.book
       Content::Routines::PopulateExercisePools[book: @book]
 
       @page_1 = Content::Page.new(strategy: page_model_1.reload.wrap)
       @page_2 = Content::Page.new(strategy: page_model_2.reload.wrap)
+      @page_3 = Content::Page.new(strategy: page_model_3.reload.wrap)
 
       ecosystem_model = @book.ecosystem
       @ecosystem = Content::Ecosystem.new(strategy: ecosystem_model.wrap)
@@ -601,15 +609,21 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         user: student_user, cnx_book_id: @book.uuid, cnx_page_id: @page_2.uuid
       ].task
       @task_2.task_steps.each do |ts|
-        Hacks::AnswerExercise[task_step: ts, is_correct: ts.core_group?]
+        Hacks::AnswerExercise[task_step: ts, is_correct: false]
       end
       @task_3 = GetConceptCoach[
-        user: student_user_2, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
+        user: student_user, cnx_book_id: @book.uuid, cnx_page_id: @page_3.uuid
       ].task
-      @task_3.task_steps.select(&:core_group?).first(2).each_with_index do |ts, ii|
-        Hacks::AnswerExercise[task_step: ts, is_correct: ii == 0]
+      @task_3.task_steps.each do |ts|
+        Hacks::AnswerExercise[task_step: ts, is_correct: ts.core_group?]
       end
       @task_4 = GetConceptCoach[
+        user: student_user_2, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
+      ].task
+      @task_4.task_steps.select(&:core_group?).first(2).each_with_index do |ts, ii|
+        Hacks::AnswerExercise[task_step: ts, is_correct: ii == 0]
+      end
+      @task_5 = GetConceptCoach[
         user: student_user_2, cnx_book_id: @book.uuid, cnx_page_id: @page_2.uuid
       ].task
     end
@@ -656,6 +670,14 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
             "last_worked_at" => be_kind_of(String),
             "type" => "concept_coach",
             "complete" => true
+          ),
+          a_hash_including(
+            "id" => @task_3.id.to_s,
+            "title" => @task_3.title,
+            "opens_at" => be_kind_of(String),
+            "last_worked_at" => be_kind_of(String),
+            "type" => "concept_coach",
+            "complete" => true
           )
         ),
         "role" => {
@@ -673,15 +695,15 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         },
         "chapters" => [
           {
-            "id" => @chapter.id.to_s,
-            "title" => @chapter.title,
+            "id" => @chapter_4.id.to_s,
+            "title" => @chapter_4.title,
             "chapter_section" => [4],
             "pages" => [
               {
-                "id" => @page_2.id.to_s,
-                "title" => @page_2.title,
-                "uuid" => @page_2.uuid,
-                "version" => @page_2.version,
+                "id" => @page_3.id.to_s,
+                "title" => @page_3.title,
+                "uuid" => @page_3.uuid,
+                "version" => @page_3.version,
                 "chapter_section" => [4, 2],
                 "last_worked_at" => be_kind_of(String),
                 "exercises" => Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT.times.map do
@@ -691,7 +713,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                     "is_correct" => true
                   }
                 end + Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP
-                        .select{ |k_ago, ex_count| k_ago.nil? || k_ago <= 1 }
+                        .select{ |k_ago, ex_count| !k_ago.nil? && k_ago <= 2 }
                         .map{ |k_ago, ex_count| ex_count }.reduce(:+).times.map do
                   {
                     "id" => a_kind_of(String),
@@ -701,11 +723,33 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                 end
               },
               {
+                "id" => @page_2.id.to_s,
+                "title" => @page_2.title,
+                "uuid" => @page_2.uuid,
+                "version" => @page_2.version,
+                "chapter_section" => [4, 1],
+                "last_worked_at" => be_kind_of(String),
+                "exercises" => Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT.times.map do
+                  {
+                    "id" => a_kind_of(String),
+                    "is_completed" => true,
+                    "is_correct" => false
+                  }
+                end
+              }
+            ]
+          },
+          {
+            "id" => @chapter_3.id.to_s,
+            "title" => @chapter_3.title,
+            "chapter_section" => [3],
+            "pages" => [
+              {
                 "id" => @page_1.id.to_s,
                 "title" => @page_1.title,
                 "uuid" => @page_1.uuid,
                 "version" => @page_1.version,
-                "chapter_section" => [4, 1],
+                "chapter_section" => [3, 1],
                 "last_worked_at" => be_kind_of(String),
                 "exercises" => Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT.times.map do
                   {
@@ -743,15 +787,15 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
               "name" => period.name,
               "chapters" => [
                 {
-                  "id" => @chapter.id.to_s,
-                  "title" => @chapter.title,
+                  "id" => @chapter_4.id.to_s,
+                  "title" => @chapter_4.title,
                   "chapter_section" => [4],
                   "pages" => [
                     {
-                      "id" => @page_2.id.to_s,
-                      "title" => @page_2.title,
-                      "uuid" => @page_2.uuid,
-                      "version" => @page_2.version,
+                      "id" => @page_3.id.to_s,
+                      "title" => @page_3.title,
+                      "uuid" => @page_3.uuid,
+                      "version" => @page_3.version,
                       "chapter_section" => [4, 2],
                       "completed" => 1,
                       "in_progress" => 0,
@@ -759,15 +803,33 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                       "original_performance" => 1.0
                     },
                     {
+                      "id" => @page_2.id.to_s,
+                      "title" => @page_2.title,
+                      "uuid" => @page_2.uuid,
+                      "version" => @page_2.version,
+                      "chapter_section" => [4, 1],
+                      "completed" => 1,
+                      "in_progress" => 0,
+                      "not_started" => 1,
+                      "original_performance" => 0.0
+                    }
+                  ]
+                },
+                {
+                  "id" => @chapter_3.id.to_s,
+                  "title" => @chapter_3.title,
+                  "chapter_section" => [3],
+                  "pages" => [
+                    {
                       "id" => @page_1.id.to_s,
                       "title" => @page_1.title,
                       "uuid" => @page_1.uuid,
                       "version" => @page_1.version,
-                      "chapter_section" => [4, 1],
+                      "chapter_section" => [3, 1],
                       "completed" => 1,
                       "in_progress" => 1,
                       "not_started" => 0,
-                      "original_performance" => 5/6.to_f,
+                      "original_performance" => 0.8,
                       "spaced_practice_performance" => 0.0
                     }
                   ]

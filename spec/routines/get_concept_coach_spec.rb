@@ -7,11 +7,9 @@ RSpec.describe GetConceptCoach, type: :routine, speed: :medium do
   CORE_EXERCISES_COUNT = Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT
 
   def spaced_exercises_count(index)
-    return 0 if index == 0
-
     Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP
-      .select{ |k_ago, ex_count| k_ago.nil? || k_ago <= index }
-      .map{ |k_ago, ex_count| ex_count }.reduce(:+)
+      .select{ |k_ago, ex_count| (k_ago.nil? && index >= 4) || (!k_ago.nil? && k_ago <= index) }
+      .map{ |k_ago, ex_count| ex_count }.reduce(:+) || 0
   end
 
   def exercises_count(index)
@@ -169,6 +167,9 @@ it 'should create a new task for a different page and properly assign spaced pra
         end
       end
 
+      forbidden_random_ks = Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP.map(&:first)
+                                                                                 .compact
+
       tasks.slice(1..-1).each_with_index do |task, ii|
         task_index = ii + 1
         spaced_page_ids = task.tasked_exercises
@@ -176,6 +177,9 @@ it 'should create a new task for a different page and properly assign spaced pra
           te.exercise.page.id
         end
         available_random_page_ids = task_pages.slice(0..ii).map(&:id)
+        forbidden_random_ks.each do |forbidden_random_k|
+          available_random_page_ids.delete_at(-forbidden_random_k)
+        end
 
         Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP.each do |k_ago, count|
           current_page_ids = spaced_page_ids.shift(count)

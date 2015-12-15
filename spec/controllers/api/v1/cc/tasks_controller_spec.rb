@@ -77,7 +77,9 @@ RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, versi
         expect(response.body_as_hash).to include(id: cc_task.id.to_s)
         expect(response.body_as_hash).to include(title: cc_task.title)
         expect(response.body_as_hash).to have_key(:steps)
-        expect(response.body_as_hash[:steps].length).to eq 4
+        expect(response.body_as_hash[:steps].length).to(
+          eq Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT
+        )
       end
 
       it 'should return 422 with code :invalid_book if the book is invalid' do

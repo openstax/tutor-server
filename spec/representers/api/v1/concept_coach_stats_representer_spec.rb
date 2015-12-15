@@ -13,10 +13,14 @@ RSpec.describe Api::V1::ConceptCoachStatsRepresenter, type: :representer, speed:
     @book = ecosystem.books.first
 
     page_model_1 = Content::Models::Page.find_by(title: 'Acceleration')
-    page_model_2 = Content::Models::Page.find_by(title: 'Force')
+    page_model_2 = Content::Models::Page.find_by(
+      title: 'Representing Acceleration with Equations and Graphs'
+    )
+    page_model_3 = Content::Models::Page.find_by(title: 'Force')
 
     @page_1 = Content::Page.new(strategy: page_model_1.reload.wrap)
     @page_2 = Content::Page.new(strategy: page_model_2.reload.wrap)
+    @page_3 = Content::Page.new(strategy: page_model_3.reload.wrap)
 
     period_model = FactoryGirl.create(:course_membership_period)
     @period = CourseMembership::Period.new(strategy: period_model.wrap)
@@ -31,7 +35,7 @@ RSpec.describe Api::V1::ConceptCoachStatsRepresenter, type: :representer, speed:
     AddUserAsPeriodStudent[user: @user_1, period: @period]
     AddUserAsPeriodStudent[user: @user_2, period: @period]
 
-    @entity_tasks = [@page_1, @page_2].flat_map do |page|
+    @entity_tasks = [@page_1, @page_2, @page_3].flat_map do |page|
       [@user_1, @user_2].flat_map do |user|
         GetConceptCoach[user: user, cnx_book_id: page.chapter.book.uuid, cnx_page_id: page.uuid]
       end
@@ -61,7 +65,7 @@ RSpec.describe Api::V1::ConceptCoachStatsRepresenter, type: :representer, speed:
           "period_id"                => @period.id.to_s,
           "name"                     => @period.name,
           "mean_grade_percent"       => 50,
-          "total_count"              => 4,
+          "total_count"              => 6,
           "complete_count"           => 0,
           "partially_complete_count" => 2,
           "current_pages"            => a_collection_containing_exactly(
@@ -76,6 +80,15 @@ RSpec.describe Api::V1::ConceptCoachStatsRepresenter, type: :representer, speed:
             },
             {
               "id"              => @page_2.id.to_s,
+              "title"           => "Representing Acceleration with Equations and Graphs",
+              "student_count"   => 0,
+              "correct_count"   => 0,
+              "incorrect_count" => 0,
+              "chapter_section" => [3, 2],
+              "is_trouble" => false
+            },
+            {
+              "id"              => @page_3.id.to_s,
               "title"           => "Force",
               "student_count"   => 0,
               "correct_count"   => 0,

@@ -47,11 +47,23 @@ class GetConceptCoach
 
     spaced_practice_status = []
 
+    # Prepare eligible random-ago tasks, but only if we have 4 or more tasks
+    if spaced_tasks.size >= 4
+      random_tasks = spaced_tasks.dup
+      forbidden_random_ks = Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP.map(&:first)
+                                                                                 .compact
+      forbidden_random_ks.sort.reverse.each do |forbidden_random_k|
+        # Subtract 1 from k_ago because this history does not include the current task (0-ago)
+        random_tasks.delete_at(forbidden_random_k - 1)
+      end
+    end
+
     spaced_exercises = \
       Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP.flat_map do |k_ago, num_requested|
-      # Subtract 1 from k_ago because this history does not include the current task (0-ago)
       if k_ago.nil?
-        spaced_task = spaced_tasks.sample
+        # Do not do random-ago if less than 4 past tasks in history
+        next if spaced_tasks.size < 4
+        spaced_task = random_tasks.sample
         k_ago_str = 'random'
       else
         spaced_task = spaced_tasks[k_ago - 1]
