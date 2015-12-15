@@ -6,6 +6,9 @@ class AuthController < ApplicationController
   # Access-Control-Allow-Credentials header
   before_filter :set_cors_headers, only: [:status, :cors_preflight_check, :logout]
 
+  # If a user's signed in make sure they've agreed to contracts
+  before_filter :require_contracts, only: :popup, unless: -> { current_user.is_anonymous? }
+
   # Allow accessing iframe methods from inside an iframe
   before_filter :allow_iframe_access, only: [:iframe]
 
