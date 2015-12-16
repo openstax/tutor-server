@@ -103,16 +103,31 @@ class Tasks::Assistants::HomeworkAssistant
     step
   end
 
+  def assign_spaced_practice_exercise(task:, exercise:)
+    related_content = exercise.page.related_content
+
+    step = add_exercise_step(task: task, exercise: exercise)
+    step.group_type = :spaced_practice_group
+
+    step.add_related_content(related_content)
+  end
+
   def add_spaced_practice_exercise_steps!(task:, taskee:)
     # Get taskee's reading history
     history = GetHistory.call(role: taskee, type: :homework, current_task: task).outputs
 
-    all_worked_exercise_numbers = history.exercises.flatten.collect{ |ex| ex.number }
+    core_exercise_numbers = history.exercises.first.map(&:number)
+    all_worked_exercise_numbers = history.exercises.flatten.map(&:number)
+
+    spaced_practice_status = []
 
     num_spaced_practice_exercises = get_num_spaced_practice_exercises
-    self.class.k_ago_map(num_spaced_practice_exercises).each do |k_ago, number|
+    self.class.k_ago_map(num_spaced_practice_exercises).each do |k_ago, num_requested|
       # Not enough history
-      break if k_ago >= history.tasks.size
+      if k_ago >= history.tasks.size
+        spaced_practice_status << "Not enough tasks in history to fill the #{k_ago}-ago slot"
+        next
+      end
 
       spaced_ecosystem = history.ecosystems[k_ago]
 
@@ -134,29 +149,42 @@ class Tasks::Assistants::HomeworkAssistant
       # Map the core pages to exercises in the new ecosystem
       spaced_exercises = @ecosystems_map[spaced_ecosystem.id].map_pages_to_exercises(
         pages: spaced_core_pages, pool_type: :homework_dynamic
-      )
+      ).values.flatten.uniq
 
-      # Exclude exercises already worked (by number)
-      candidate_exercises = spaced_exercises.values.flatten.uniq.reject do |ex|
-        all_worked_exercise_numbers.include?(ex.number)
+      candidate_exercises = []
+      repeated_candidate_exercises = []
+
+      # Partition spaced exercises into the main candidate pool and the repeat candidates
+      spaced_exercises.each do |ex|
+        next if core_exercise_numbers.include?(ex.number)  # Never include
+
+        if all_worked_exercise_numbers.include?(ex.number) # Only include if we run out
+          repeated_candidate_exercises << ex
+        else                                               # The main pool of exercises
+          candidate_exercises << ex
+        end
       end
 
-      # Not enough exercises
-      break if candidate_exercises.size < number
+      num_candidate_exercises = [candidate_exercises.size, num_requested].min
+      num_req_repeated_exercises = num_requested - num_candidate_exercises
+      num_repeated_exercises = [repeated_candidate_exercises.size, num_req_repeated_exercises].min
 
-      # Randomize and grab the required number of exercises
-      chosen_exercises = candidate_exercises.shuffle.first(number)
+      # Randomize and grab the required numbers of exercises
+      chosen_exercises = candidate_exercises.sample(num_candidate_exercises) + \
+                         repeated_candidate_exercises.sample(num_repeated_exercises)
 
-      # Set related_content and add the exercise to the task
+      # Set related_content and add the exercises to the task
       chosen_exercises.each do |chosen_exercise|
-        related_content = chosen_exercise.page.related_content
-
-        step = add_exercise_step(task: task, exercise: chosen_exercise)
-        step.group_type = :spaced_practice_group
-
-        step.add_related_content(related_content)
+        assign_spaced_practice_exercise(task: task, exercise: chosen_exercise)
       end
+
+      spaced_practice_status << "Could not completely fill the #{k_ago}-ago slot" \
+        if num_repeated_exercises < num_req_repeated_exercises
     end
+
+    spaced_practice_status << 'Completely filled' if spaced_practice_status.empty?
+
+    AddSpyInfo[to: task, from: { spaced_practice: spaced_practice_status }]
 
     task
   end

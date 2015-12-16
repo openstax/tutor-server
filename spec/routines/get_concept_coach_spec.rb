@@ -5,8 +5,17 @@ require 'database_cleaner'
 RSpec.describe GetConceptCoach, type: :routine, speed: :medium do
 
   CORE_EXERCISES_COUNT = Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT
-  SPACED_EXERCISES_COUNT = Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP
-                             .map{ |k_ago, ex_count| ex_count }.reduce(:+)
+
+  def spaced_exercises_count(index)
+    Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP
+      .select{ |k_ago, ex_count| (k_ago == :random && index >= 4) || \
+                                 (k_ago != :random && k_ago <= index) }
+      .map{ |k_ago, ex_count| ex_count }.reduce(:+) || 0
+  end
+
+  def exercises_count(index)
+    CORE_EXERCISES_COUNT + spaced_exercises_count(index)
+  end
 
   before(:all) do
     DatabaseCleaner.start
@@ -55,7 +64,7 @@ RSpec.describe GetConceptCoach, type: :routine, speed: :medium do
       expect{ task = described_class[
         user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
       ].task }.to change{ Tasks::Models::Task.count }.by(1)
-      expect(task.task_steps.size).to eq CORE_EXERCISES_COUNT
+      expect(task.task_steps.size).to eq exercises_count(0)
       task.task_steps.each do |task_step|
         expect(task_step.tasked.exercise.page.id).to eq @page_1.id
       end
@@ -118,7 +127,7 @@ RSpec.describe GetConceptCoach, type: :routine, speed: :medium do
         user: @user_2, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
       ].task }.to change{ Tasks::Models::ConceptCoachTask.count }.by(1)
       expect(task).not_to eq existing_task
-      expect(task.task_steps.size).to eq CORE_EXERCISES_COUNT
+      expect(task.task_steps.size).to eq exercises_count(0)
       task.task_steps.each do |task_step|
         expect(task_step.tasked.exercise.page.id).to eq @page_1.id
       end
@@ -130,11 +139,11 @@ it 'should create a new task for a different page and properly assign spaced pra
         user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: @page_2.uuid
       ].task }.to change{ Tasks::Models::ConceptCoachTask.count }.by(1)
       expect(task).not_to eq existing_task
-      expect(task.task_steps.size).to eq CORE_EXERCISES_COUNT + SPACED_EXERCISES_COUNT
+      expect(task.task_steps.size).to eq exercises_count(1)
       task.task_steps.first(CORE_EXERCISES_COUNT).each do |task_step|
         expect(task_step.tasked.exercise.page.id).to eq @page_2.id
       end
-      task.task_steps.last(SPACED_EXERCISES_COUNT).each do |task_step|
+      task.task_steps.last(spaced_exercises_count(1)).each do |task_step|
         expect(task_step.tasked.exercise.page.id).to eq @page_1.id
       end
     end
@@ -150,8 +159,7 @@ it 'should create a new task for a different page and properly assign spaced pra
       tasks.each_with_index do |task, ii|
         page = task_pages[ii]
 
-        expected_num_exercises = ii == 0 ? CORE_EXERCISES_COUNT : \
-                                           CORE_EXERCISES_COUNT + SPACED_EXERCISES_COUNT
+        expected_num_exercises = exercises_count(ii)
 
         expect(task.tasked_exercises.count).to eq expected_num_exercises
 
@@ -160,17 +168,24 @@ it 'should create a new task for a different page and properly assign spaced pra
         end
       end
 
+      forbidden_random_ks = Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP
+                              .map(&:first).select{ |k_ago| k_ago != :random }.uniq
+
       tasks.slice(1..-1).each_with_index do |task, ii|
         task_index = ii + 1
-        spaced_page_ids = task.tasked_exercises.last(SPACED_EXERCISES_COUNT).map do |te|
+        spaced_page_ids = task.tasked_exercises
+                              .last(spaced_exercises_count(task_index)).map do |te|
           te.exercise.page.id
         end
         available_random_page_ids = task_pages.slice(0..ii).map(&:id)
+        forbidden_random_ks.each do |forbidden_random_k|
+          available_random_page_ids.delete_at(-forbidden_random_k)
+        end
 
         Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP.each do |k_ago, count|
           current_page_ids = spaced_page_ids.shift(count)
           current_page_ids.each do |page_id|
-            if k_ago.nil? || task_index - k_ago < 0
+            if k_ago == :random
               expect(available_random_page_ids).to include(page_id)
             else
               expect(page_id).to eq task_pages[task_index - k_ago].id

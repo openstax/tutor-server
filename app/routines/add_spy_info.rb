@@ -14,16 +14,18 @@ class AddSpyInfo
     outputs[:to] = to
   end
 
-  def values_from(value)
-    case value
-    when Content::Models::Ecosystem, Content::Ecosystem
-      { ecosystem_id: value.id, ecosystem_title: value.title }
+  # Returns a hash that represents the given value in some way
+  def values_from(val)
+    case val
     when Array
-      { history: value.map do |task|
-        { task_id: task.id, task_title: task.title }
-      end }
+      val.map{ |value| values_from(value) }.reduce(&:merge)
+    when Hash
+      val.each_with_object({}) { |(key, value), hash| hash[key] = values_from(value) }
     else
-      { "#{value.class.name.demodulize.underscore}_id" => value.id }
+      hash = {}
+      hash[:"#{val.class.name.demodulize.underscore}_id"] = val.id if val.respond_to?(:id)
+      hash[:"#{val.class.name.demodulize.underscore}_title"] = val.title if val.respond_to?(:title)
+      hash
     end
   end
 end
