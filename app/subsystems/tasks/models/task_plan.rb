@@ -60,7 +60,7 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
     if settings['exercise_ids'].present?
       exercises_ecosystem = Content::Ecosystem.find_by_exercise_ids(*settings['exercise_ids'])
       if exercises_ecosystem != ecosystem_wrapper
-        errors.add(:settings, '- Invalid exercises selected.')
+        errors.add(:settings, '- Invalid exercises selected')
         return_value = false
       end
     end
@@ -68,7 +68,7 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
     if settings['page_ids'].present?
       pages_ecosystem = Content::Ecosystem.find_by_page_ids(*settings['page_ids'])
       if pages_ecosystem != ecosystem_wrapper
-        errors.add(:settings, '- Invalid pages selected.')
+        errors.add(:settings, '- Invalid pages selected')
         return_value = false
       end
     end
