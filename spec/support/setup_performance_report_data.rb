@@ -26,7 +26,7 @@ class SetupPerformanceReportData
     end
 
     # Exclude introduction pages b/c they don't have LOs
-    page_ids = Content::Models::Page.where{title != "Introduction"}.map(&:id)
+    page_ids = ecosystem.pages.select{ |page| page.title != "Introduction" }.map(&:id)
 
     reading_taskplan = Tasks::Models::TaskPlan.new(
       title: 'Reading task plan',
@@ -52,7 +52,7 @@ class SetupPerformanceReportData
       assistant: homework_assistant,
       content_ecosystem_id: ecosystem.id,
       settings: {
-        exercise_ids: Content::Models::Exercise.first(5).collect(&:id).map(&:to_s),
+        exercise_ids: ecosystem.exercises.first(5).collect(&:id).map(&:to_s),
         exercises_count_dynamic: 2
       }
     )
@@ -72,7 +72,7 @@ class SetupPerformanceReportData
       assistant: homework_assistant,
       content_ecosystem_id: ecosystem.id,
       settings: {
-        exercise_ids: Content::Models::Exercise.last(2).collect(&:id).map(&:to_s),
+        exercise_ids: ecosystem.exercises.last(2).collect(&:id).map(&:to_s),
         exercises_count_dynamic: 2
       }
     )
@@ -92,7 +92,7 @@ class SetupPerformanceReportData
       assistant: homework_assistant,
       content_ecosystem_id: ecosystem.id,
       settings: {
-        exercise_ids: Content::Models::Exercise.first(5).collect(&:id).map(&:to_s),
+        exercise_ids: ecosystem.exercises.first(5).collect(&:id).map(&:to_s),
         exercises_count_dynamic: 2
       }
     )

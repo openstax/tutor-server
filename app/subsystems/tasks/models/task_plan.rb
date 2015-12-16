@@ -25,7 +25,7 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
   validates :type, presence: true
   validates :tasking_plans, presence: true
 
-  validate :valid_settings, :changes_allowed, :not_due_before_publish
+  validate :valid_settings, :same_ecosystem, :changes_allowed, :not_due_before_publish
 
   before_destroy :not_open_before_destroy, prepend: true
 
@@ -49,6 +49,31 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
       errors.add(:settings, "- #{json_error}")
     end
     false
+  end
+
+  def same_ecosystem
+    return if ecosystem.nil?
+    ecosystem_wrapper = Content::Ecosystem.new(strategy: ecosystem.wrap)
+
+    return_value = nil
+    # Special checks for the page_ids and exercise_ids settings
+    if settings['exercise_ids'].present?
+      exercises_ecosystem = Content::Ecosystem.find_by_exercise_ids(*settings['exercise_ids'])
+      if exercises_ecosystem != ecosystem_wrapper
+        errors.add(:settings, '- Invalid exercises selected.')
+        return_value = false
+      end
+    end
+
+    if settings['page_ids'].present?
+      pages_ecosystem = Content::Ecosystem.find_by_page_ids(*settings['page_ids'])
+      if pages_ecosystem != ecosystem_wrapper
+        errors.add(:settings, '- Invalid pages selected.')
+        return_value = false
+      end
+    end
+
+    return_value
   end
 
   def changes_allowed
