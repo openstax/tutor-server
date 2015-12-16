@@ -1,5 +1,5 @@
 <% extra_headers ||= [] %>
-<% extra_fields_proc ||= nil %>
+<% extra_fields_procs ||= [] %>
 
 <table class="table table-striped">
   <thead>
@@ -30,7 +30,9 @@
                                 content: title,
                                 container: 'body' },
                         class: 'btn btn-xs btn-secondary' %></td>
-        <%= capture(course_info, &extra_fields_proc) unless extra_fields_proc.nil? %>
+        <% [extra_fields_procs].flatten.each do |extra_fields_proc| %>
+          <%= capture(course_info, &extra_fields_proc) unless extra_fields_proc.nil? %>
+        <% end %>
       </tr>
     <% end %>
   </tbody>

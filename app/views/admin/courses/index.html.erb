@@ -5,12 +5,12 @@
 <%= render partial: 'manager/courses/index',
            locals: { course_infos: @course_infos,
                      extra_headers: 'Actions',
-                     extra_fields_proc: lambda do |course| %>
+                     extra_fields_procs: [lambda do |course_info| %>
   <td>
-    <%= link_to 'List Students', admin_course_students_path(course.id),
+    <%= link_to 'List Students', admin_course_students_path(course_info.id),
                                  class: 'btn btn-xs btn-primary' %>
-    <%= link_to 'Edit', edit_admin_course_path(course.id), class: "btn btn-xs btn-primary" %>
+    <%= link_to 'Edit', edit_admin_course_path(course_info.id), class: "btn btn-xs btn-primary" %>
   </td>
-<% end } %>
+<% end ] } %>
 
 <%= link_to 'Add Course', new_admin_course_path, class: "btn btn-primary" %>
