@@ -43,6 +43,10 @@ module User
         def is_content_analyst?
           false
         end
+
+        def to_model
+          repository
+        end
       end
     end
   end
