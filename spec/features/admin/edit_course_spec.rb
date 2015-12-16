@@ -1,11 +1,18 @@
 require 'rails_helper'
+require 'vcr_helper'
 
 RSpec.feature 'Admin editing a course' do
   background do
     admin = FactoryGirl.create(:user, :administrator)
     stub_current_user(admin)
 
-    @course = CreateCourse[name: 'Physics I']
+    visit admin_courses_path
+
+    click_on 'Add Course'
+    fill_in 'Name', with: 'Physics I'
+    click_on 'Save'
+
+    @course = Entity::Course.order(:id).last
     CreatePeriod[course: @course, name: '1st']
   end
 
@@ -60,5 +67,33 @@ RSpec.feature 'Admin editing a course' do
 
     expect(current_path).to eq(edit_admin_course_path(@course))
     expect(page).to have_content('first Edit')
+  end
+
+  scenario 'bulk updating course ecosystem', speed: :slow, vcr: VCR_OPTS do
+    physics_old_cnx_id = '93e2b09d-261c-4007-a987-0b3062fe154b@4.4'
+    physics_old = FetchAndImportBookAndCreateEcosystem[
+      book_cnx_id: physics_old_cnx_id]
+    physics_new_cnx_id = '93e2b09d-261c-4007-a987-0b3062fe154b@5.1'
+    physics_new = FetchAndImportBookAndCreateEcosystem[
+      book_cnx_id: physics_new_cnx_id]
+
+    visit admin_courses_path
+    find(:id, :ecosystem_id).find("option[value='#{physics_old.id}']").select_option
+    click_on 'Set Ecosystem'
+
+    expect(page).to have_content('Course ecosystem update background job queued')
+    expect(@course.ecosystems.first.books.first.version).to eq('4.4')
+
+    click_on 'Add Course'
+    fill_in 'Name', with: 'Physics II'
+    click_on 'Save'
+
+    course_2 = Entity::Course.order(:id).last
+
+    find(:id, :ecosystem_id).find("option[value='#{physics_new.id}']").select_option
+    click_on 'Set Ecosystem'
+    expect(page).to have_content('Course ecosystem update background job queued')
+    expect(@course.ecosystems.first.books.first.version).to eq('5.1')
+    expect(course_2.ecosystems.first.books.first.version).to eq('5.1')
   end
 end
