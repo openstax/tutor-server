@@ -41,9 +41,7 @@ class GetCcDashboard
   def load_cc_teacher_stats(course, role)
     cc_tasks = Tasks::Models::ConceptCoachTask
       .joins(task: [:task, {taskings: :period}])
-      .preload(task: [:task,
-                      {taskings: [:role, {period: {active_enrollments: {student: :role}}}]}],
-               page: :chapter)
+      .preload(task: [:task, {taskings: [:period, :role]}], page: :chapter)
       .where(task: {taskings: {period: {entity_course_id: course.id}}})
       .where{task.task.completed_exercise_steps_count > 0}
       .distinct.to_a
@@ -55,7 +53,8 @@ class GetCcDashboard
     cc_task_pages = cc_tasks.map{ |cc_task| Content::Page.new(strategy: cc_task.page.wrap) }
     page_id_to_page_map = ecosystems_map.map_pages_to_pages(pages: cc_task_pages)
 
-    outputs.course.periods = course.periods.map do |period|
+    outputs.course.periods = course.periods.preload(active_enrollments: {student: :role})
+                                           .map do |period|
       cc_tasks = period_id_cc_tasks_map[period.id] || []
       active_student_roles = period.active_enrollments.map{ |en| en.student.role }.uniq
       orig_map, spaced_map = get_period_performance_maps_from_cc_tasks(period, cc_tasks)
@@ -73,13 +72,13 @@ class GetCcDashboard
             pages: cc_tasks.group_by do |cc_task|
               map_cc_task_to_page(page_id_to_page_map, cc_task)
             end.map do |page, cc_tasks|
-              tasks = cc_tasks.map{ |cc_task| cc_task.task.task }
-              completed_roles = tasks.select(&:completed?)
-                                     .flat_map{ |task| task.taskings.map(&:role) }
-                                     .uniq
-              in_progress_roles = tasks.select(&:in_progress?)
-                                       .flat_map{ |task| task.taskings.map(&:role) }
-                                       .uniq
+              entity_tasks = cc_tasks.map(&:task)
+              completed_roles = entity_tasks.select{ |et| et.task.completed? }
+                                            .flat_map{ |et| et.taskings.map(&:role) }
+                                            .uniq
+              in_progress_roles = entity_tasks.select{ |et| et.task.in_progress? }
+                                              .flat_map{ |et| et.taskings.map(&:role) }
+                                              .uniq
               not_started_roles = active_student_roles - (completed_roles + in_progress_roles)
 
               {
