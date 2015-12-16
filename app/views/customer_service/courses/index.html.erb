@@ -5,10 +5,10 @@
 <%= render partial: 'manager/courses/index',
            locals: { course_infos: @course_infos,
                      extra_headers: 'Actions',
-                     extra_fields_proc: lambda do |course| %>
+                     extra_fields_procs: lambda do |course_info| %>
   <td>
-    <%= link_to 'List Students', customer_service_course_students_path(course.id),
+    <%= link_to 'List Students', customer_service_course_students_path(course_info.id),
                                  class: 'btn btn-xs btn-primary' %>
-    <%= link_to 'Show', customer_service_course_path(course.id), class: "btn btn-xs btn-primary" %>
+    <%= link_to 'Show', customer_service_course_path(course_info.id), class: "btn btn-xs btn-primary" %>
   </td>
 <% end } %>

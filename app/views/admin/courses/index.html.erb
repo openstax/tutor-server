@@ -2,15 +2,33 @@
 
 <%= render partial: 'manager/courses/search', locals: { query: @query } %>
 
-<%= render partial: 'manager/courses/index',
-           locals: { course_infos: @course_infos,
-                     extra_headers: 'Actions',
-                     extra_fields_proc: lambda do |course| %>
-  <td>
-    <%= link_to 'List Students', admin_course_students_path(course.id),
-                                 class: 'btn btn-xs btn-primary' %>
-    <%= link_to 'Edit', edit_admin_course_path(course.id), class: "btn btn-xs btn-primary" %>
-  </td>
-<% end } %>
+<%= form_tag bulk_update_admin_courses_path, method: :post do |f| %>
+  <%= render partial: 'manager/courses/index',
+             locals: { course_infos: @course_infos,
+                       bulk_actions: true,
+                       incomplete_jobs: @incomplete_jobs,
+                       failed_jobs: @failed_jobs,
+                       extra_headers: ['Actions'],
+                       extra_fields_procs: [lambda do |course_info| %>
+    <td>
+      <%= link_to 'List Students', admin_course_students_path(course_info.id),
+                                   class: 'btn btn-xs btn-primary' %>
+      <%= link_to 'Edit', edit_admin_course_path(course_info.id), class: "btn btn-xs btn-primary" %>
+    </td>
+  <% end ] } %>
 
+  <div id="courses-bulk-actions">
+    <div class="form-group input-group">
+      <%= select_tag :ecosystem_id,
+                     options_from_collection_for_select(@ecosystems, :id, :title, params[:ecosystem_id]),
+                     include_blank: '-- Select an ecosystem --',
+                     class: 'form-control' %>
+      <span class="input-group-btn">
+        <%= submit_tag 'Set Ecosystem', class: 'btn btn-primary' %>
+      </span>
+    </div>
+  </div>
+<% end %>
+
+<br />
 <%= link_to 'Add Course', new_admin_course_path, class: "btn btn-primary" %>

@@ -8,7 +8,16 @@ class Admin::CoursesController < Admin::BaseController
   def index
     @query = params[:query]
     courses = SearchCourses[query: @query]
-    @course_infos = CollectCourseInfo[courses: courses, with: :teacher_names]
+    @course_infos = CollectCourseInfo[courses: courses,
+                                      with: [:teacher_names, :ecosystem_book]]
+    @ecosystems = Content::ListEcosystems[]
+    @incomplete_jobs = Lev::BackgroundJob.incomplete.select do |job|
+      job.respond_to?(:course_ecosystem)
+    end
+    @failed_jobs = Lev::BackgroundJob.failed.select do |job|
+      job.respond_to?(:course_ecosystem)
+    end
+    @job_path_proc = ->(job) { admin_job_path(job.id) }
   end
 
   def new
@@ -34,6 +43,38 @@ class Admin::CoursesController < Admin::BaseController
                   flash[:notice] = 'The course has been updated.'
                   redirect_to admin_courses_path
                 })
+  end
+
+  def bulk_update
+    case params[:commit]
+    when 'Set Ecosystem'
+      bulk_set_ecosystem
+    end
+  end
+
+  def bulk_set_ecosystem
+    if params[:ecosystem_id].blank?
+      flash[:error] = 'Please select an ecosystem'
+    elsif params[:course_id].blank?
+      flash[:error] = 'Please select the courses'
+    else
+      course_ids = params[:course_id]
+      ecosystem = ::Content::Ecosystem.find(params[:ecosystem_id])
+      courses = Entity::Course
+        .where { id.in course_ids }
+        .includes(:ecosystems)
+        .select { |course|
+          course.ecosystems.first.try(:id) != ecosystem.id
+        }
+      job_id = CourseContent::AddEcosystemToCourses.perform_later(
+        courses: courses.collect { |course| Marshal.dump(course.reload) },
+        ecosystem: Marshal.dump(ecosystem))
+      job = Lev::BackgroundJob.find(job_id)
+      job.save(course_ecosystem: ecosystem.title)
+      flash[:notice] = 'Course ecosystem update background job queued.'
+    end
+
+    redirect_to admin_courses_path
   end
 
   def students
