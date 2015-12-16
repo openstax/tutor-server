@@ -12,7 +12,7 @@ class CourseMembership::Models::EnrollmentChange < Tutor::SubSystems::BaseModel
   validates :profile, presence: true
   validates :enrollment, uniqueness: { allow_nil: true }
   validates :period, presence: true
-  validate :same_profile, :different_period
+  validate :same_profile, :different_period, :same_book
 
   def from_period
     enrollment.try(:period)
@@ -47,6 +47,20 @@ class CourseMembership::Models::EnrollmentChange < Tutor::SubSystems::BaseModel
   def different_period
     return if enrollment.nil? || period.nil? || enrollment.period != period
     errors.add(:base, 'the given user is already enrolled in the given period')
+    false
+  end
+
+  def same_book
+    return if enrollment.nil? || period.nil?
+    course_a = period.course
+    course_b = enrollment.period.course
+    return if course_a == course_b
+    ecosystem_a = GetCourseEcosystem[course: course_a]
+    ecosystem_b = GetCourseEcosystem[course: course_b]
+    uuid_a = ecosystem_a.nil? ? nil : ecosystem_a.books.first.uuid
+    uuid_b = ecosystem_b.nil? ? nil : ecosystem_b.books.first.uuid
+    return if uuid_a == uuid_b
+    errors.add(:base, 'the given periods must belong to courses with the same book')
     false
   end
 end

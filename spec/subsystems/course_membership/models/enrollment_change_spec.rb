@@ -1,8 +1,17 @@
 require 'rails_helper'
 
 RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model do
-  let!(:period_1)             { CreatePeriod[course: Entity::Course.create!] }
-  let!(:period_2)             { CreatePeriod[course: period_1.course] }
+  let!(:course_1) { Entity::Course.create! }
+  let!(:course_2) { Entity::Course.create! }
+
+  let!(:period_1) { CreatePeriod[course: course_1] }
+  let!(:period_2) { CreatePeriod[course: course_1] }
+
+  let!(:period_3) { CreatePeriod[course: course_2] }
+
+  let!(:book)     { FactoryGirl.create :content_book }
+
+  let!(:ecosystem)         { Content::Ecosystem.new(strategy: book.ecosystem.wrap) }
 
   let!(:user)                 do
     profile = FactoryGirl.create :user_profile
@@ -15,6 +24,8 @@ RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model do
   end
 
   let!(:enrollment)           { role.student.latest_enrollment }
+
+  before { AddEcosystemToCourse[course: course_1, ecosystem: ecosystem] }
 
   subject(:enrollment_change) {
     CourseMembership::CreateEnrollmentChange[user: user, period: period_2].to_model
@@ -62,11 +73,25 @@ RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model do
         'the given user does not match the given enrollment'
       )
     end
+
+    it 'requires the period and the enrollment\'s period to use the same book' do
+      expect(enrollment_change).to be_valid
+
+      enrollment_change.period = period_3.to_model
+      expect(enrollment_change).not_to be_valid
+      expect(enrollment_change.errors[:base]).to include(
+        'the given periods must belong to courses with the same book'
+      )
+
+      AddEcosystemToCourse[course: course_2, ecosystem: ecosystem]
+
+      expect(enrollment_change).to be_valid
+    end
   end
 
   context 'for a new enrollment' do
     before(:each) { enrollment_change.enrollment = nil }
-    
+
     it 'has no previous period' do
       expect(enrollment_change.from_period).to be_nil
     end

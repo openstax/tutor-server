@@ -1,8 +1,21 @@
 require 'rails_helper'
 
 describe CourseMembership::ProcessEnrollmentChange, type: :routine do
-  let!(:period)            { CreatePeriod[course: Entity::Course.create!] }
-  let!(:period_2)          { CreatePeriod[course: period.course] }
+  let!(:course_1)          { Entity::Course.create! }
+  let!(:course_2)          { Entity::Course.create! }
+
+  let!(:course_3)          { Entity::Course.create! }
+
+  let!(:period_1)          { CreatePeriod[course: course_1] }
+  let!(:period_2)          { CreatePeriod[course: course_1] }
+
+  let!(:period_3)          { CreatePeriod[course: course_2] }
+
+  let!(:period_4)          { CreatePeriod[course: course_3] }
+
+  let!(:book)              { FactoryGirl.create :content_book }
+
+  let!(:ecosystem)         { Content::Ecosystem.new(strategy: book.ecosystem.wrap) }
 
   let!(:user)              do
     profile = FactoryGirl.create :user_profile
@@ -10,52 +23,174 @@ describe CourseMembership::ProcessEnrollmentChange, type: :routine do
     ::User::User.new(strategy: strategy)
   end
 
-  let!(:enrollment_change) { CourseMembership::CreateEnrollmentChange[user: user, period: period] }
+  before do
+    AddEcosystemToCourse[course: course_1, ecosystem: ecosystem]
+    AddEcosystemToCourse[course: course_2, ecosystem: ecosystem]
+  end
 
-  let!(:args)              { { enrollment_change: enrollment_change } }
+  let(:args)               { { enrollment_change: enrollment_change } }
 
   context 'approved enrollment_change' do
-    before(:each) { enrollment_change.to_model.approve_by(user).save! }
+    context 'no existing courses' do
+      let!(:enrollment_change) {
+        CourseMembership::CreateEnrollmentChange[user: user, period: period_1]
+      }
 
-    it 'processes an approved EnrollmentChange' do
-      result = nil
-      expect{ result = described_class.call(args) }
-        .to change{ CourseMembership::Models::Enrollment.count }.by(1)
-      expect(result.errors).to be_empty
-      expect(result.outputs.enrollment_change.status).to eq :processed
+      before(:each)            { enrollment_change.to_model.approve_by(user).save! }
+
+      it 'processes an approved EnrollmentChange' do
+        result = nil
+        expect{ result = described_class.call(args) }
+          .to change{ CourseMembership::Models::Enrollment.count }.by(1)
+        expect(result.errors).to be_empty
+        expect(result.outputs.enrollment_change.status).to eq :processed
+      end
+
+      it 'sets the student_identifier if given' do
+        sid = 'N0B0DY'
+        result = nil
+        expect{ result = described_class.call(args.merge(student_identifier: sid)) }
+          .to change{ CourseMembership::Models::Enrollment.count }.by(1)
+        expect(result.errors).to be_empty
+        expect(result.outputs.enrollment_change.status).to eq :processed
+
+        student = CourseMembership::Models::Enrollment.order(:created_at).last.student
+        expect(student.student_identifier).to eq sid
+      end
+
+      it 'rejects other pending EnrollmentChanges for the same user' do
+        enrollment_change_2 = CourseMembership::CreateEnrollmentChange[user: user,
+                                                                       period: period_1]
+        enrollment_change_3 = CourseMembership::CreateEnrollmentChange[user: user,
+                                                                       period: period_2]
+        enrollment_change_4 = CourseMembership::CreateEnrollmentChange[user: user,
+                                                                       period: period_3]
+        enrollment_change_5 = CourseMembership::CreateEnrollmentChange[user: user,
+                                                                       period: period_4]
+
+        result = nil
+        expect{ result = described_class.call(args) }
+          .to change{ CourseMembership::Models::Enrollment.count }.by(1)
+        expect(result.errors).to be_empty
+        expect(result.outputs.enrollment_change.status).to eq :processed
+
+        enrollment_change_2.to_model.reload
+        enrollment_change_3.to_model.reload
+        enrollment_change_4.to_model.reload
+        enrollment_change_5.to_model.reload
+
+        expect(enrollment_change_2.status).to eq :rejected
+        expect(enrollment_change_3.status).to eq :rejected
+        expect(enrollment_change_4.status).to eq :rejected
+        expect(enrollment_change_5.status).to eq :rejected
+      end
     end
 
-    it 'sets the student_identifier if given' do
-      sid = 'N0B0DY'
-      result = nil
-      expect{ result = described_class.call(args.merge(student_identifier: sid)) }
-        .to change{ CourseMembership::Models::Enrollment.count }.by(1)
-      expect(result.errors).to be_empty
-      expect(result.outputs.enrollment_change.status).to eq :processed
+    context 'same course' do
+      let!(:student)           { AddUserAsPeriodStudent[user: user, period: period_1].student }
 
-      student = CourseMembership::Models::Enrollment.order(:created_at).last.student
-      expect(student.student_identifier).to eq sid
+      let!(:enrollment_change) {
+        CourseMembership::CreateEnrollmentChange[user: user, period: period_2]
+      }
+
+      before(:each)            { enrollment_change.to_model.approve_by(user).save! }
+
+      it 'processes an approved EnrollmentChange' do
+        result = nil
+        expect{ result = described_class.call(args) }
+          .to change{ CourseMembership::Models::Enrollment.count }.by(1)
+        expect(result.errors).to be_empty
+        expect(result.outputs.enrollment_change.status).to eq :processed
+      end
+
+      it 'sets the student_identifier if given' do
+        sid = 'N0B0DY'
+        result = nil
+        expect{ result = described_class.call(args.merge(student_identifier: sid)) }
+          .to change{ CourseMembership::Models::Enrollment.count }.by(1)
+        expect(result.errors).to be_empty
+        expect(result.outputs.enrollment_change.status).to eq :processed
+
+        student = CourseMembership::Models::Enrollment.order(:created_at).last.student
+        expect(student.student_identifier).to eq sid
+      end
+
+      it 'rejects other pending EnrollmentChanges for the same user' do
+        enrollment_change_2 = CourseMembership::CreateEnrollmentChange[user: user,
+                                                                       period: period_4]
+
+        result = nil
+        expect{ result = described_class.call(args) }
+          .to change{ CourseMembership::Models::Enrollment.count }.by(1)
+        expect(result.errors).to be_empty
+        expect(result.outputs.enrollment_change.status).to eq :processed
+
+        enrollment_change_2.to_model.reload
+
+        expect(enrollment_change_2.status).to eq :rejected
+      end
     end
 
-    it 'rejects other pending EnrollmentChanges for the same user and course' do
-      enrollment_change_2 = CourseMembership::CreateEnrollmentChange[user: user, period: period]
-      enrollment_change_3 = CourseMembership::CreateEnrollmentChange[user: user, period: period_2]
+    context 'different course with the same book' do
+      let!(:student)           { AddUserAsPeriodStudent[user: user, period: period_1].student }
 
-      result = nil
-      expect{ result = described_class.call(args) }
-        .to change{ CourseMembership::Models::Enrollment.count }.by(1)
-      expect(result.errors).to be_empty
-      expect(result.outputs.enrollment_change.status).to eq :processed
+      let!(:enrollment_change) {
+        CourseMembership::CreateEnrollmentChange[user: user, period: period_3]
+      }
 
-      enrollment_change_2.to_model.reload
-      enrollment_change_3.to_model.reload
+      before(:each)            { enrollment_change.to_model.approve_by(user).save! }
 
-      expect(enrollment_change_2.status).to eq :rejected
-      expect(enrollment_change_3.status).to eq :rejected
+      it 'processes an approved EnrollmentChange' do
+        result = nil
+        expect{ result = described_class.call(args) }
+          .to change{ CourseMembership::Models::Enrollment.count }.by(1)
+        expect(result.errors).to be_empty
+        expect(result.outputs.enrollment_change.status).to eq :processed
+      end
+
+      it 'sets the student_identifier if given' do
+        sid = 'N0B0DY'
+        result = nil
+        expect{ result = described_class.call(args.merge(student_identifier: sid)) }
+          .to change{ CourseMembership::Models::Enrollment.count }.by(1)
+        expect(result.errors).to be_empty
+        expect(result.outputs.enrollment_change.status).to eq :processed
+
+        student = CourseMembership::Models::Enrollment.order(:created_at).last.student
+        expect(student.student_identifier).to eq sid
+      end
+
+      it 'rejects other pending EnrollmentChanges for the same user' do
+        enrollment_change_2 = CourseMembership::CreateEnrollmentChange[user: user,
+                                                                       period: period_4]
+
+        result = nil
+        expect{ result = described_class.call(args) }
+          .to change{ CourseMembership::Models::Enrollment.count }.by(1)
+        expect(result.errors).to be_empty
+        expect(result.outputs.enrollment_change.status).to eq :processed
+
+        enrollment_change_2.to_model.reload
+
+        expect(enrollment_change_2.status).to eq :rejected
+      end
+
+      it 'changes the course the student belongs to' do
+        result = nil
+        expect{ result = described_class.call(args) }
+          .to change{ CourseMembership::Models::Enrollment.count }.by(1)
+        expect(result.errors).to be_empty
+        expect(result.outputs.enrollment_change.status).to eq :processed
+        expect(student.reload.course).to eq course_2
+      end
     end
   end
 
   context 'not approved enrollment_change' do
+    let!(:enrollment_change) {
+      CourseMembership::CreateEnrollmentChange[user: user, period: period_3]
+    }
+
     it 'returns an error if the EnrollmentChange is pending' do
       result = nil
       expect{ result = described_class.call(args) }
