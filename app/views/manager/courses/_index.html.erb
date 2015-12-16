@@ -1,49 +1,125 @@
 <% extra_headers ||= [] %>
 <% extra_fields_procs ||= [] %>
 <% bulk_actions ||= false %>
+<% incomplete_jobs ||= [] %>
+<% failed_jobs ||= [] %>
 
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <% if bulk_actions %>
-        <th></th>
-      <% end %>
-      <th>Name</th>
-      <th>School</th>
-      <th>Teacher(s)</th>
-      <th>Ecosystem</th>
-      <% [extra_headers].flatten.each do |extra_header| %>
-      <th><%= extra_header %></th>
-      <% end %>
-    </tr>
-  </thead>
-  <tbody>
-    <% course_infos.each do |course_info| %>
-      <tr>
-        <% if bulk_actions %>
-          <td>
-            <% course_selected = params[:course_id].blank? ? true : params[:course_id].include?(course_info.id) %>
-            <%= check_box_tag 'course_id[]', course_info.id, checked = course_selected %>
-          </td>
+<ul class="nav nav-tabs" role="tablist">
+  <li role="presentation" class="active">
+    <a href="#main" aria-controls="main" role="tab" data-toggle="tab">
+      List of Courses
+    </a>
+  </li>
+  <% unless incomplete_jobs.empty? %>
+    <li>
+      <a href="#incomplete" aria-controls="main" role="tab" data-toggle="tab">
+        Incomplete Bulk Ecosystem Update Jobs
+      </a>
+    </li>
+  <% end %>
+  <% unless failed_jobs.empty? %>
+    <li>
+      <a href="#failed" aria-controls="main" role="tab" data-toggle="tab">
+        Failed Bulk Ecosystem Update Jobs
+      </a>
+    </li>
+  <% end %>
+</ul>
+
+<div class="tab-content">
+  <div role="tabpanel" class="tab-pane active" id="main">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <% if bulk_actions %>
+            <th></th>
+          <% end %>
+          <th>Name</th>
+          <th>School</th>
+          <th>Teacher(s)</th>
+          <th>Ecosystem</th>
+          <% [extra_headers].flatten.each do |extra_header| %>
+          <th><%= extra_header %></th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <% course_infos.each do |course_info| %>
+          <tr>
+            <% if bulk_actions %>
+              <td>
+                <% course_selected = params[:course_id].blank? ? true : params[:course_id].include?(course_info.id) %>
+                <%= check_box_tag 'course_id[]', course_info.id, checked = course_selected %>
+              </td>
+            <% end %>
+            <td><%= course_info.name %></td>
+            <td><%= course_info.school_name %></td>
+            <td><%= course_info.teacher_names.to_sentence %></td>
+            <td>
+              <% book = course_info.ecosystem_book %>
+              <% title = "#{book.title} (#{book.uuid}@#{book.version})" unless book.nil? %>
+              <%= link_to truncate(title), '#',
+                            role: 'button',
+                            data: { toggle: 'popover',
+                                    trigger: 'focus',
+                                    placement: 'top',
+                                    content: title,
+                                    container: 'body' },
+                            class: 'btn btn-xs btn-secondary' %></td>
+            <% [extra_fields_procs].flatten.each do |extra_fields_proc| %>
+              <%= capture(course_info, &extra_fields_proc) unless extra_fields_proc.nil? %>
+            <% end %>
+          </tr>
         <% end %>
-        <td><%= course_info.name %></td>
-        <td><%= course_info.school_name %></td>
-        <td><%= course_info.teacher_names.to_sentence %></td>
-        <td>
-          <% book = course_info.ecosystem_book %>
-          <% title = "#{book.title} (#{book.uuid}@#{book.version})" unless book.nil? %>
-          <%= link_to truncate(title), '#',
-                        role: 'button',
-                        data: { toggle: 'popover',
-                                trigger: 'focus',
-                                placement: 'top',
-                                content: title,
-                                container: 'body' },
-                        class: 'btn btn-xs btn-secondary' %></td>
-        <% [extra_fields_procs].flatten.each do |extra_fields_proc| %>
-          <%= capture(course_info, &extra_fields_proc) unless extra_fields_proc.nil? %>
+      </tbody>
+    </table>
+  </div>
+
+  <% unless incomplete_jobs.empty? %>
+    <div role="tabpanel" class="tab-pane" id="incomplete">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Job ID</th>
+            <th>Status</th>
+            <th>Ecosystem Title</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% incomplete_jobs.each do |job| %>
+          <tr>
+            <td><%= link_to(job.id, @job_path_proc.call(job)) %></td>
+            <td><%= job.status %></td>
+            <td><%= job.course_ecosystem %></td>
+          </tr>
         <% end %>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+      </table>
+
+      <p><strong>Note:</strong> This table does not automatically refresh.</p>
+    </div>
+  <% end %>
+
+  <% unless failed_jobs.empty? %>
+    <div role="tabpanel" class="tab-pane" id="failed">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Job ID</th>
+            <th>Status</th>
+            <th>Ecosystem Title</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% failed_jobs.each do |job| %>
+          <tr>
+            <td><%= link_to(job.id, @job_path_proc.call(job)) %></td>
+            <td><%= job.status %></td>
+            <td><%= job.course_ecosystem %></td>
+          </tr>
+        <% end %>
+      </table>
+
+      <p><strong>Note:</strong> This table does not automatically refresh.</p>
+    </div>
+  <% end %>
+</div>

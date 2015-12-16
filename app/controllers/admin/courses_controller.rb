@@ -11,6 +11,13 @@ class Admin::CoursesController < Admin::BaseController
     @course_infos = CollectCourseInfo[courses: courses,
                                       with: [:teacher_names, :ecosystem_book]]
     @ecosystems = Content::ListEcosystems[]
+    @incomplete_jobs = Lev::BackgroundJob.incomplete.select do |job|
+      job.respond_to?(:course_ecosystem)
+    end
+    @failed_jobs = Lev::BackgroundJob.failed.select do |job|
+      job.respond_to?(:course_ecosystem)
+    end
+    @job_path_proc = ->(job) { admin_job_path(job.id) }
   end
 
   def new
@@ -59,9 +66,11 @@ class Admin::CoursesController < Admin::BaseController
         .select { |course|
           course.ecosystems.first.try(:id) != ecosystem.id
         }
-      CourseContent::AddEcosystemToCourses.perform_later(
+      job_id = CourseContent::AddEcosystemToCourses.perform_later(
         courses: courses.collect { |course| Marshal.dump(course.reload) },
         ecosystem: Marshal.dump(ecosystem))
+      job = Lev::BackgroundJob.find(job_id)
+      job.save(course_ecosystem: ecosystem.title)
       flash[:notice] = 'Course ecosystem update background job queued.'
     end
 
