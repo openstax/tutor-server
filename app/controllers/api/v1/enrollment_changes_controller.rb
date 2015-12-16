@@ -46,17 +46,9 @@ class Api::V1::EnrollmentChangesController < Api::V1::ApiController
       return
     end
 
-    if enrollment_params.book_uuid.present?
-      ecosystem = GetCourseEcosystem[course: period.course]
-
-      if ecosystem.books.first.uuid != enrollment_params.book_uuid
-        render_api_errors(:enrollment_code_does_not_match_book)
-        return
-      end
-    end
-
     result = CourseMembership::CreateEnrollmentChange.call(user: current_human_user,
-                                                           period: period)
+                                                           period: period,
+                                                           book_uuid: enrollment_params.book_uuid)
 
     if result.errors.empty?
       respond_with result.outputs.enrollment_change,

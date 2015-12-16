@@ -26,19 +26,23 @@ class CourseMembership::ProcessEnrollmentChange
     else
       # Existing student
       student = enrollment.student
-      student.update_attribute(:student_identifier, student_identifier) \
-        unless student_identifier.nil?
+      if student.course != enrollment_change.to_period.course
+        # Course change
+        student.course = enrollment_change.to_period.course
+      end
+      student.student_identifier = student_identifier unless student_identifier.nil?
+      student.save!
       run(:add_enrollment, student: student, period: enrollment_change.to_period)
     end
 
     # Mark the enrollment_change as processed
     enrollment_change_model.process.save!
 
-    # Mark other pending EnrollmentChange records as rejected
+    # Mark other pending EnrollmentChange records for the same user as rejected
+    # (Only 1 enrollment change at a time)
     CourseMembership::Models::EnrollmentChange.where(
       user_profile_id: enrollment_change_model.user_profile_id,
-      status: CourseMembership::Models::EnrollmentChange.statuses[:pending],
-      course_membership_period_id: enrollment_change_model.period.course.periods.map(&:id)
+      status: CourseMembership::Models::EnrollmentChange.statuses[:pending]
     ).update_all(status: CourseMembership::Models::EnrollmentChange.statuses[:rejected])
 
     outputs[:enrollment_change] = enrollment_change
