@@ -8,7 +8,8 @@ RSpec.describe GetConceptCoach, type: :routine, speed: :medium do
 
   def spaced_exercises_count(index)
     Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP
-      .select{ |k_ago, ex_count| (k_ago.nil? && index >= 4) || (!k_ago.nil? && k_ago <= index) }
+      .select{ |k_ago, ex_count| (k_ago == :random && index >= 4) || \
+                                 (k_ago != :random && k_ago <= index) }
       .map{ |k_ago, ex_count| ex_count }.reduce(:+) || 0
   end
 
@@ -167,8 +168,8 @@ it 'should create a new task for a different page and properly assign spaced pra
         end
       end
 
-      forbidden_random_ks = Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP.map(&:first)
-                                                                                 .compact
+      forbidden_random_ks = Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP
+                              .map(&:first).select{ |k_ago| k_ago != :random }.uniq
 
       tasks.slice(1..-1).each_with_index do |task, ii|
         task_index = ii + 1
@@ -184,7 +185,7 @@ it 'should create a new task for a different page and properly assign spaced pra
         Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP.each do |k_ago, count|
           current_page_ids = spaced_page_ids.shift(count)
           current_page_ids.each do |page_id|
-            if k_ago.nil? || task_index - k_ago < 0
+            if k_ago == :random
               expect(available_random_page_ids).to include(page_id)
             else
               expect(page_id).to eq task_pages[task_index - k_ago].id

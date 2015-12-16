@@ -171,7 +171,7 @@ describe GetCcDashboard, type: :routine do
                     is_correct: true
                   }
                 end + Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP
-                        .select{ |k_ago, ex_count| !k_ago.nil? && k_ago <= 2 }
+                        .select{ |k_ago, ex_count| k_ago != :random && k_ago <= 2 }
                         .map{ |k_ago, ex_count| ex_count }.reduce(:+).times.map do
                   {
                     id: a_kind_of(Integer),

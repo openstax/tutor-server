@@ -2,7 +2,7 @@ module Tasks::Models
   class ConceptCoachTask < Tutor::SubSystems::BaseModel
 
     CORE_EXERCISES_COUNT = 3
-    SPACED_EXERCISES_MAP = [[2, 1], [nil, 1]]
+    SPACED_EXERCISES_MAP = [[2, 1], [:random, 1]]
 
     belongs_to :page, subsystem: :content
     belongs_to :role, subsystem: :entity

@@ -169,12 +169,9 @@ class Tasks::Assistants::HomeworkAssistant
       num_req_repeated_exercises = num_requested - num_candidate_exercises
       num_repeated_exercises = [repeated_candidate_exercises.size, num_req_repeated_exercises].min
 
-      chosen_exercises = []
       # Randomize and grab the required numbers of exercises
-      chosen_exercises = candidate_exercises.shuffle.first(num_candidate_exercises) \
-        unless num_candidate_exercises == 0
-      chosen_exercises += repeated_candidate_exercises.shuffle.first(num_repeated_exercises) \
-        unless num_repeated_exercises == 0
+      chosen_exercises = candidate_exercises.sample(num_candidate_exercises) + \
+                         repeated_candidate_exercises.sample(num_repeated_exercises)
 
       # Set related_content and add the exercises to the task
       chosen_exercises.each do |chosen_exercise|

@@ -25,7 +25,7 @@ class GetConceptCoach
     unless existing_cc_task.nil?
       outputs.entity_task = existing_cc_task
       outputs.task = existing_cc_task.task
-      run(:add_spy_info, to: outputs.task, from: [ecosystem, history.tasks])
+      run(:add_spy_info, to: outputs.task, from: [ecosystem, {history: history.tasks}])
       return
     end
 
@@ -50,29 +50,28 @@ class GetConceptCoach
     # Prepare eligible random-ago tasks, but only if we have 4 or more tasks
     if spaced_tasks.size >= 4
       random_tasks = spaced_tasks.dup
-      forbidden_random_ks = Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP.map(&:first)
-                                                                                 .compact
+      forbidden_random_ks = Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP
+                              .map(&:first).select{ |k_ago| k_ago != :random }.uniq
       forbidden_random_ks.sort.reverse.each do |forbidden_random_k|
         # Subtract 1 from k_ago because this history does not include the current task (0-ago)
         random_tasks.delete_at(forbidden_random_k - 1)
       end
     end
 
-    spaced_exercises = \
-      Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP.flat_map do |k_ago, num_requested|
-      if k_ago.nil?
-        # Do not do random-ago if less than 4 past tasks in history
-        next if spaced_tasks.size < 4
-        spaced_task = random_tasks.sample
-        k_ago_str = 'random'
-      else
-        spaced_task = spaced_tasks[k_ago - 1]
-        k_ago_str = k_ago.to_s
+    k_ago_map = Tasks::Models::ConceptCoachTask::SPACED_EXERCISES_MAP
+    spaced_exercises = k_ago_map.flat_map do |k_ago, num_requested|
+      # Do not do random-ago if less than 4 past tasks in history
+      if k_ago == :random && spaced_tasks.size < 4
+        spaced_practice_status << "Random-ago slot skipped because < 4 tasks in past history"
+        next
       end
+
+      # Select a task
+      spaced_task = k_ago == :random ? random_tasks.sample : spaced_tasks[k_ago - 1]
 
       # Skip if no k_ago task
       if spaced_task.nil?
-        spaced_practice_status << "Not enough tasks in history to fill the #{k_ago_str}-ago slot"
+        spaced_practice_status << "Not enough tasks in history to fill the #{k_ago}-ago slot"
         next
       end
 
@@ -83,7 +82,7 @@ class GetConceptCoach
         from_ecosystems: [spaced_ecosystem, ecosystem].uniq, to_ecosystem: ecosystem
       )
 
-      # Map the spaced page to exercises in the current ecosystem
+      # Map the spaced page to exercises in the current task's ecosystem
       spaced_exercises = ecosystems_map[spaced_ecosystem.id].map_pages_to_exercises(
         pages: spaced_page, pool_type: :all_exercises
       ).values.flatten.uniq
@@ -106,14 +105,11 @@ class GetConceptCoach
       num_req_repeated_exercises = num_requested - num_candidate_exercises
       num_repeated_exercises = [repeated_candidate_exercises.size, num_req_repeated_exercises].min
 
-      chosen_exercises = []
       # Randomize and grab the required numbers of exercises
-      chosen_exercises = candidate_exercises.shuffle.first(num_candidate_exercises) \
-        unless num_candidate_exercises == 0
-      chosen_exercises += repeated_candidate_exercises.shuffle.first(num_repeated_exercises) \
-        unless num_repeated_exercises == 0
+      chosen_exercises = candidate_exercises.sample(num_candidate_exercises) + \
+                         repeated_candidate_exercises.sample(num_repeated_exercises)
 
-      spaced_practice_status << "Could not completely fill the #{k_ago_str}-ago slot" \
+      spaced_practice_status << "Could not completely fill the #{k_ago}-ago slot" \
         if num_repeated_exercises < num_req_repeated_exercises
 
       chosen_exercises
