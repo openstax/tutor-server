@@ -15,11 +15,15 @@ describe "Login with explicit return_to", type: :request do
     end
   end
 
-  it "does not store return_to redirect after login for non-approved return_tos" do
-    stub_current_user(user)
-    allow(OpenStax::Accounts.configuration).to receive(:enable_stubbing?) { false }
-    host! 'tutor-blah.openstax.org'
-    get("/accounts/login?return_to=http://www.openstax.org.spamsite.net")
-    expect(session["accounts_return_to"]).to eq nil
+  bad_return_tos = %w(http://www.openstax.org.spamsite.net http://www.openstax.org%0Aspamsite.net)
+
+  bad_return_tos.each do |bad_return_to|
+    it "does not store '#{bad_return_to}' return_to redirect after login for non-approved return_tos" do
+      stub_current_user(user)
+      allow(OpenStax::Accounts.configuration).to receive(:enable_stubbing?) { false }
+      host! 'tutor-blah.openstax.org'
+      get("/accounts/login?return_to=#{bad_return_to}")
+      expect(session["accounts_return_to"]).to eq nil
+    end
   end
 end
