@@ -1,9 +1,13 @@
 <% extra_headers ||= [] %>
 <% extra_fields_procs ||= [] %>
+<% bulk_actions ||= false %>
 
 <table class="table table-striped">
   <thead>
     <tr>
+      <% if bulk_actions %>
+        <th></th>
+      <% end %>
       <th>Name</th>
       <th>School</th>
       <th>Teacher(s)</th>
@@ -16,6 +20,12 @@
   <tbody>
     <% course_infos.each do |course_info| %>
       <tr>
+        <% if bulk_actions %>
+          <td>
+            <% course_selected = params[:course_id].blank? ? true : params[:course_id].include?(course_info.id) %>
+            <%= check_box_tag 'course_id[]', course_info.id, checked = course_selected %>
+          </td>
+        <% end %>
         <td><%= course_info.name %></td>
         <td><%= course_info.school_name %></td>
         <td><%= course_info.teacher_names.to_sentence %></td>

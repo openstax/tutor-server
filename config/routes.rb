@@ -144,6 +144,7 @@ Rails.application.routes.draw do
         post :set_catalog_offering
         post :teachers, controller: :teachers
       end
+      post :bulk_update, on: :collection
       resources :periods, shallow: true
       resources :students, only: [:index], shallow: true
       resources :teachers, only: [:destroy], shallow: true
