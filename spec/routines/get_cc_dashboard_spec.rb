@@ -333,8 +333,9 @@ describe GetCcDashboard, type: :routine do
     it "does not return negative numbers if a student starts/finishes a task and then drops" do
       @student_role.student.inactivate.save!
       @student_role_2.student.inactivate.save!
+      @course.reload
 
-      outputs = described_class.call(course: @course.reload, role: @teacher_role).outputs
+      outputs = described_class.call(course: @course, role: @teacher_role).outputs
 
       expect(HashWithIndifferentAccess[outputs]).to include(
         course: {
@@ -354,10 +355,22 @@ describe GetCcDashboard, type: :routine do
               name: @period.name,
               chapters: [
                 {
-                  id: @chapter.id,
-                  title: @chapter.title,
-                  book_location: @chapter.book_location,
+                  id: @chapter_4.id,
+                  title: @chapter_4.title,
+                  book_location: @chapter_4.book_location,
                   pages: [
+                    {
+                      id: @page_3.id,
+                      title: @page_3.title,
+                      uuid: @page_3.uuid,
+                      version: @page_3.version,
+                      book_location: @page_3.book_location,
+                      completed: 1,
+                      in_progress: 0,
+                      not_started: 0,
+                      original_performance: 1.0,
+                      spaced_practice_performance: nil
+                    },
                     {
                       id: @page_2.id,
                       title: @page_2.title,
@@ -367,9 +380,16 @@ describe GetCcDashboard, type: :routine do
                       completed: 1,
                       in_progress: 0,
                       not_started: 0,
-                      original_performance: 1.0,
+                      original_performance: 0.0,
                       spaced_practice_performance: nil
-                    },
+                    }
+                  ]
+                },
+                {
+                  id: @chapter_3.id,
+                  title: @chapter_3.title,
+                  book_location: @chapter_3.book_location,
+                  pages: [
                     {
                       id: @page_1.id,
                       title: @page_1.title,
@@ -391,9 +411,9 @@ describe GetCcDashboard, type: :routine do
               name: @period_2.name,
               chapters: [
                 {
-                  id: @chapter.id,
-                  title: @chapter.title,
-                  book_location: @chapter.book_location,
+                  id: @chapter_3.id,
+                  title: @chapter_3.title,
+                  book_location: @chapter_3.book_location,
                   pages: [
                     {
                       id: @page_1.id,
