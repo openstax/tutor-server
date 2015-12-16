@@ -330,6 +330,97 @@ describe GetCcDashboard, type: :routine do
       )
     end
 
+    it "does not return negative numbers if a student starts/finishes a task and then drops" do
+      @student_role.student.inactivate.save!
+      @student_role_2.student.inactivate.save!
+
+      outputs = described_class.call(course: @course.reload, role: @teacher_role).outputs
+
+      expect(HashWithIndifferentAccess[outputs]).to include(
+        course: {
+          id: @course.id,
+          name: "Physics 101",
+          teachers: [
+            {
+              id: @teacher_role.teacher.id.to_s,
+              role_id: @teacher_role.id.to_s,
+              first_name: 'Bob',
+              last_name: 'Newhart'
+            }
+          ],
+          periods: a_collection_containing_exactly(
+            {
+              id: @period.id,
+              name: @period.name,
+              chapters: [
+                {
+                  id: @chapter.id,
+                  title: @chapter.title,
+                  book_location: @chapter.book_location,
+                  pages: [
+                    {
+                      id: @page_2.id,
+                      title: @page_2.title,
+                      uuid: @page_2.uuid,
+                      version: @page_2.version,
+                      book_location: @page_2.book_location,
+                      completed: 1,
+                      in_progress: 0,
+                      not_started: 0,
+                      original_performance: 1.0,
+                      spaced_practice_performance: nil
+                    },
+                    {
+                      id: @page_1.id,
+                      title: @page_1.title,
+                      uuid: @page_1.uuid,
+                      version: @page_1.version,
+                      book_location: @page_1.book_location,
+                      completed: 1,
+                      in_progress: 0,
+                      not_started: 0,
+                      original_performance: 1.0,
+                      spaced_practice_performance: 0.0
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              id: @period_2.id,
+              name: @period_2.name,
+              chapters: [
+                {
+                  id: @chapter.id,
+                  title: @chapter.title,
+                  book_location: @chapter.book_location,
+                  pages: [
+                    {
+                      id: @page_1.id,
+                      title: @page_1.title,
+                      uuid: @page_1.uuid,
+                      version: @page_1.version,
+                      book_location: @page_1.book_location,
+                      completed: 0,
+                      in_progress: 1,
+                      not_started: 0,
+                      original_performance: 0.5,
+                      spaced_practice_performance: nil
+                    }
+                  ]
+                }
+              ]
+            }
+          )
+        },
+        role: {
+          id: @teacher_role.id,
+          type: 'teacher'
+        },
+        tasks: []
+      )
+    end
+
     it 'caches recent teacher dashboard results' do
       @counts = 0
       allow_any_instance_of(Tasks::Models::TaskedExercise::ActiveRecord_Relation).to(

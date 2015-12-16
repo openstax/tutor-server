@@ -41,7 +41,9 @@ class GetCcDashboard
   def load_cc_teacher_stats(course, role)
     cc_tasks = Tasks::Models::ConceptCoachTask
       .joins(task: [:task, {taskings: :period}])
-      .preload(task: [:task, {taskings: {period: :active_enrollments}}], page: :chapter)
+      .preload(task: [:task,
+                      {taskings: [:role, {period: {active_enrollments: {student: :role}}}]}],
+               page: :chapter)
       .where(task: {taskings: {period: {entity_course_id: course.id}}})
       .where{task.task.completed_exercise_steps_count > 0}
       .distinct.to_a
@@ -55,7 +57,7 @@ class GetCcDashboard
 
     outputs.course.periods = course.periods.map do |period|
       cc_tasks = period_id_cc_tasks_map[period.id] || []
-      num_students = period.active_enrollments.length
+      active_student_roles = period.active_enrollments.map{ |en| en.student.role }.uniq
       orig_map, spaced_map = get_period_performance_maps_from_cc_tasks(period, cc_tasks)
 
       {
@@ -72,10 +74,13 @@ class GetCcDashboard
               map_cc_task_to_page(page_id_to_page_map, cc_task)
             end.map do |page, cc_tasks|
               tasks = cc_tasks.map{ |cc_task| cc_task.task.task }
-
-              completed = tasks.select(&:completed?).size
-              in_progress = tasks.select(&:in_progress?).size
-              not_started = num_students - (completed + in_progress)
+              completed_roles = tasks.select(&:completed?)
+                                     .flat_map{ |task| task.taskings.map(&:role) }
+                                     .uniq
+              in_progress_roles = tasks.select(&:in_progress?)
+                                       .flat_map{ |task| task.taskings.map(&:role) }
+                                       .uniq
+              not_started_roles = active_student_roles - (completed_roles + in_progress_roles)
 
               {
                 id: page.id,
@@ -83,9 +88,9 @@ class GetCcDashboard
                 uuid: page.uuid,
                 version: page.version,
                 book_location: page.book_location,
-                completed: completed,
-                in_progress: in_progress,
-                not_started: not_started,
+                completed: completed_roles.size,
+                in_progress: in_progress_roles.size,
+                not_started: not_started_roles.size,
                 original_performance: orig_map[page.id],
                 spaced_practice_performance: spaced_map[page.id]
               }
