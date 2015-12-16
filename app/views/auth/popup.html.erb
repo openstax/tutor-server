@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <script>
+      var msg = <%=raw json_escape @status.to_json %>;
+      if (window.name === 'oxlogin' && window.opener){
+        window.opener.postMessage( JSON.stringify(msg), '<%= @parent_window %>' );
+        // close ourselves since postMessage doesn't work with popups in stupid, stupid IE.
+        setTimeout( function(){ window.close() }, 100);
+      } else {
+        window.location.href = '/'; // we've somehow been loaded in a non-login window
+      }
+    </script>
+  </head>
+  <body>
+  </body>
+</html>

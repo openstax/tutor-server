@@ -6,16 +6,19 @@ class AuthController < ApplicationController
   # Access-Control-Allow-Credentials header
   before_filter :set_cors_headers, only: [:status, :cors_preflight_check, :logout]
 
+  # If a user's signed in make sure they've agreed to contracts
+  before_filter :require_contracts, only: :popup, unless: -> { current_user.is_anonymous? }
+
   # Allow accessing iframe methods from inside an iframe
-  before_filter :allow_iframe_access, only: [:iframe]
+  before_filter :allow_iframe_access, only: [:logout]
 
   # Methods handle returning login status differently than the standard authenticate_user! filter
   skip_before_filter :authenticate_user!,
-                     only: [:status, :cors_preflight_check, :iframe, :logout]
+                     only: [:status, :cors_preflight_check, :popup, :logout]
 
   # CRSF tokens can't be used since these endpoints are loaded from foreign sites via cors or iframe
   skip_before_action :verify_authenticity_token,
-                     only: [:status, :cors_preflight_check, :iframe, :logout]
+                     only: [:status, :cors_preflight_check, :popup, :logout]
 
   layout false
 
@@ -29,21 +32,21 @@ class AuthController < ApplicationController
     render text: '', :content_type => 'text/plain'
   end
 
-  def iframe
+  def popup
     if current_user.is_anonymous?
       redirect_to_login_url
     else
       @status = user_status_update
-      @iframe_origin = stubbed_auth? ? session[:parent] || '*' : @status[:endpoints][:accounts_iframe]
+      @parent_window = params[:parent]
     end
   end
 
   def logout
     sign_out!
-    redirect_to stubbed_auth? ? authenticate_via_iframe_url :
+    redirect_to stubbed_auth? ? authenticate_via_popup_url :
                   OpenStax::Utilities.generate_url(
                     OpenStax::Accounts.configuration.openstax_accounts_url,
-                    "remote/iframe", parent: params[:parent]
+                    "logout", parent: params[:parent]
                   )
   end
 
@@ -60,10 +63,9 @@ class AuthController < ApplicationController
     end
     status[:endpoints] = {
       is_stubbed: stubbed_auth?,
-      login: openstax_accounts.login_url,
-      iframe_login: authenticate_via_iframe_url,
-      iframe_logout: logout_via_iframe_url,
-      accounts_iframe: stubbed_auth? ? authenticate_via_iframe_url :
+      login:  authenticate_via_popup_url,
+      logout: logout_via_popup_url,
+      accounts_iframe: stubbed_auth? ? authenticate_via_popup_url :
         OpenStax::Utilities.generate_url(
           OpenStax::Accounts.configuration.openstax_accounts_url, "remote/iframe"
         )
