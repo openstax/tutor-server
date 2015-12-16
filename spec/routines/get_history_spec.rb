@@ -5,7 +5,7 @@ describe GetHistory, type: :routine do
     DatabaseCleaner.start
 
     homework_assistant = FactoryGirl.create(
-          :tasks_assistant, code_class_name: 'Tasks::Assistants::HomeworkAssistant'
+      :tasks_assistant, code_class_name: 'Tasks::Assistants::HomeworkAssistant'
     )
 
     period = FactoryGirl.create :course_membership_period
@@ -23,6 +23,7 @@ describe GetHistory, type: :routine do
       :tasked_task_plan, owner: course,
                          type: 'homework',
                          assistant: homework_assistant,
+                         ecosystem: pages_1.first.ecosystem,
                          settings: { 'exercise_ids' => homework_exercises_1.map{ |ex| ex.id.to_s },
                                      'exercises_count_dynamic' => 2 }
     )
@@ -35,6 +36,7 @@ describe GetHistory, type: :routine do
       :tasked_task_plan, owner: course,
                          type: 'homework',
                          assistant: homework_assistant,
+                         ecosystem: pages_2.first.ecosystem,
                          settings: { 'exercise_ids' => homework_exercises_2.map{ |ex| ex.id.to_s },
                                      'exercises_count_dynamic' => 3 }
     )
@@ -47,6 +49,7 @@ describe GetHistory, type: :routine do
       :tasked_task_plan, owner: course,
                          type: 'homework',
                          assistant: homework_assistant,
+                         ecosystem: pages_3.first.ecosystem,
                          settings: { 'exercise_ids' => homework_exercises_3.map{ |ex| ex.id.to_s },
                                      'exercises_count_dynamic' => 4 }
     )

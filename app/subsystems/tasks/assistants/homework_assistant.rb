@@ -12,7 +12,9 @@ class Tasks::Assistants::HomeworkAssistant
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "minItems": 1,
+          "uniqueItems": true
         },
         "exercises_count_dynamic": {
           "type": "integer",

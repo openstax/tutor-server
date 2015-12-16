@@ -9,14 +9,6 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
   let!(:teacher)   { FactoryGirl.create(:user) }
   let!(:student)   { FactoryGirl.create(:user) }
 
-  let!(:page)      { FactoryGirl.create :content_page }
-  let!(:task_plan) { FactoryGirl.build(:tasks_task_plan,
-                                       owner: course,
-                                       assistant: get_assistant(course: course,
-                                                                task_plan_type: 'reading'),
-                                       settings: { page_ids: [page.id.to_s] },
-                                       type: 'reading',
-                                       num_tasking_plans: 0) }
   let!(:tasking_plan) { FactoryGirl.create :tasks_tasking_plan,
                                            task_plan: task_plan,
                                            target: period.to_model,
@@ -27,8 +19,17 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
                                                   owner: course,
                                                   assistant: get_assistant(course: course,
                                                                            task_plan_type: 'reading'),
-                                                  settings: { page_ids: [page.id.to_s] },
                                                   published_at: Time.now) }
+  let!(:ecosystem) { published_task_plan.ecosystem }
+  let!(:page)      { ecosystem.pages.first }
+  let!(:task_plan) { FactoryGirl.build(:tasks_task_plan,
+                                       owner: course,
+                                       assistant: get_assistant(course: course,
+                                                                task_plan_type: 'reading'),
+                                       content_ecosystem_id: ecosystem.id,
+                                       settings: { page_ids: [page.id.to_s] },
+                                       type: 'reading',
+                                       num_tasking_plans: 0) }
 
   let!(:unaffiliated_teacher) { FactoryGirl.create(:user) }
 

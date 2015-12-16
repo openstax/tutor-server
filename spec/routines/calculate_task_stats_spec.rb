@@ -60,6 +60,7 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       task_plan = FactoryGirl.create(
         :tasks_task_plan,
         owner: course,
+        ecosystem: page.ecosystem,
         settings: { 'page_ids' => [page.id.to_s] },
         assistant: get_assistant(course: course, task_plan_type: 'reading')
       )
