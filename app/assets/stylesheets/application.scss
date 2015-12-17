@@ -19,3 +19,7 @@
 @import "syntax_highlight";
 @import "fonts";
 @import "global";
+
+nav.navbar.production {
+  border-bottom: 2px solid red;
+}
