@@ -73,6 +73,20 @@
         <% end %>
       </tbody>
     </table>
+
+    <% if bulk_actions %>
+      <div id="courses-bulk-actions">
+        <div class="form-group input-group">
+          <%= select_tag :ecosystem_id,
+                         options_from_collection_for_select(@ecosystems, :id, :title, params[:ecosystem_id]),
+                         include_blank: '-- Select an ecosystem --',
+                         class: 'form-control' %>
+          <span class="input-group-btn">
+            <%= submit_tag 'Set Ecosystem', class: 'btn btn-primary' %>
+          </span>
+        </div>
+      </div>
+    <% end %>
   </div>
 
   <% unless incomplete_jobs.empty? %>
