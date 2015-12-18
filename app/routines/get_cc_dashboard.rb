@@ -109,13 +109,19 @@ class GetCcDashboard
       .where{task.task.completed_exercise_steps_count > 0}
       .distinct.to_a
 
-    outputs.chapters = cc_tasks.group_by{ |cc_task| cc_task.page.chapter }
-                               .map do |chapter, cc_tasks|
+    ecosystems_map = GetCourseEcosystemsMap[course: role.student.course]
+    cc_task_pages = cc_tasks.map{ |cc_task| Content::Page.new(strategy: cc_task.page.wrap) }
+    page_id_to_page_map = ecosystems_map.map_pages_to_pages(pages: cc_task_pages)
+
+    outputs.chapters = cc_tasks.group_by do |cc_task|
+      map_cc_task_to_page(page_id_to_page_map, cc_task).chapter
+    end.map do |chapter, cc_tasks|
       {
         id: chapter.id,
         title: chapter.title,
         book_location: chapter.book_location,
-        pages: cc_tasks.group_by(&:page).map do |page, cc_tasks|
+        pages: cc_tasks.group_by{ |cc_task| map_cc_task_to_page(page_id_to_page_map, cc_task) }
+                       .map do |page, cc_tasks|
           tasks = cc_tasks.map{ |cc_task| cc_task.task.task }
           tasked_exercises = tasks.flat_map(&:tasked_exercises)
 
