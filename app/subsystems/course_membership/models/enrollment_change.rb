@@ -10,7 +10,6 @@ class CourseMembership::Models::EnrollmentChange < Tutor::SubSystems::BaseModel
   enum status: [ :pending, :approved, :rejected, :processed ]
 
   validates :profile, presence: true
-  validates :enrollment, uniqueness: { allow_nil: true }
   validates :period, presence: true
   validate :same_profile, :different_period, :same_book
 

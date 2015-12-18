@@ -38,8 +38,6 @@ RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model do
   it { is_expected.to validate_presence_of(:profile) }
   it { is_expected.to validate_presence_of(:period) }
 
-  it { is_expected.to validate_uniqueness_of(:enrollment).allow_nil }
-
   it 'knows the target period' do
     expect(enrollment_change.to_period).to eq period_2.to_model
   end
