@@ -165,6 +165,7 @@ class GetCcDashboard
                                   {} : Rails.cache.read_multi(*all_cache_keys)
 
     performance_map = {}
+    hit_cache_keys = []
 
     cache_key_performance_map.each do |cache_key, performance|
       # Ignore values cached before the cache format change
@@ -172,9 +173,10 @@ class GetCcDashboard
 
       page_id = cache_key_to_page_id_map[cache_key]
       performance_map[page_id] = performance
+      hit_cache_keys << cache_key
     end
 
-    missed_cache_keys = all_cache_keys - cache_key_performance_map.keys
+    missed_cache_keys = all_cache_keys - hit_cache_keys
 
     unless missed_cache_keys.empty?
       missed_page_id_to_cache_key_map = missed_cache_keys.each_with_object({}) do |cache_key, hash|
