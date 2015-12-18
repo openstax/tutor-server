@@ -45,9 +45,9 @@ class AuthController < ApplicationController
     sign_out!
     unless stubbed_auth?
       redirect_to OpenStax::Utilities.generate_url(
-            OpenStax::Accounts.configuration.openstax_accounts_url,
-            "logout", parent: params[:parent]
-          )
+                    OpenStax::Accounts.configuration.openstax_accounts_url,
+                    "logout", parent: params[:parent]
+                  )
     end
   end
 
