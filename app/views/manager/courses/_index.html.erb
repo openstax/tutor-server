@@ -32,7 +32,9 @@
       <thead>
         <tr>
           <% if bulk_actions %>
-            <th></th>
+            <th>
+              <%= check_box_tag 'courses_select_all', nil, checked = true, id: 'courses_select_all' %>
+            </th>
           <% end %>
           <th>Name</th>
           <th>School</th>
@@ -49,7 +51,11 @@
             <% if bulk_actions %>
               <td>
                 <% course_selected = params[:course_id].blank? ? true : params[:course_id].include?(course_info.id) %>
-                <%= check_box_tag 'course_id[]', course_info.id, checked = course_selected %>
+                <%= check_box_tag 'course_id[]',
+                                  course_info.id,
+                                  checked = course_selected,
+                                  class: 'course_id_select',
+                                  id: "course_id_#{course_info.id}" %>
               </td>
             <% end %>
             <td><%= course_info.name %></td>
