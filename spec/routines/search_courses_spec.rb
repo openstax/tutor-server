@@ -5,8 +5,14 @@ RSpec.describe SearchCourses, type: :routine do
   let!(:tutor_school) { FactoryGirl.create(:school, name: 'TTS') }
   let!(:cc_school)    { FactoryGirl.create(:school, name: 'CCS') }
 
+  let!(:offering) {
+    FactoryGirl.create(:catalog_offering,
+                       salesforce_book_name: 'College Physics (Algebra)',
+                       description: 'Introductory two-semester physics book')
+  }
+
   let!(:course_1) { FactoryGirl.create(
-    :course_profile_profile, name: 'Physics', school: tutor_school
+    :course_profile_profile, name: 'Physics', school: tutor_school, offering: offering
   ).course }
   let!(:course_2) { FactoryGirl.create(
     :course_profile_profile, name: 'Biology', school: tutor_school
@@ -37,7 +43,7 @@ RSpec.describe SearchCourses, type: :routine do
     expect(courses).to eq [course_2, course_1]
 
     courses = described_class[query: 'o'].to_a
-    expect(courses).to eq [course_2, course_3]
+    expect(courses).to eq [course_2, course_3, course_1]
 
     courses = described_class[query: 'bIo'].to_a
     expect(courses).to eq [course_2]
@@ -60,5 +66,15 @@ RSpec.describe SearchCourses, type: :routine do
 
     courses = described_class[query: 'rLe'].to_a
     expect(courses).to eq [course_3, course_1]
+  end
+
+  it 'returns courses whose book name matches the given query' do
+    courses = described_class[query: 'algebra'].to_a
+    expect(courses).to eq [course_1]
+  end
+
+  it 'returns courses whose book description matches the given query' do
+    courses = described_class[query: 'introductory'].to_a
+    expect(courses).to eq [course_1]
   end
 end
