@@ -13,7 +13,7 @@ module Tasks
 
     protected
 
-    def exec(role:, page:, exercises:, related_content_array: [])
+    def exec(role:, page:, exercises:, group_types:, related_content_array: [])
       # In a multi-web server environment, it is possible for one server to create
       # the cc task and another to request it very quickly and if the server
       # times are not completely sync'd the request can be reject because the task
@@ -27,9 +27,7 @@ module Tasks
                        feedback_at: task_time)
 
       exercises.each_with_index do |exercise, ii|
-        group_type = ii < Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT ? \
-                       :core_group : :spaced_practice_group
-        step = Tasks::Models::TaskStep.new(task: outputs.task, group_type: group_type)
+        step = Tasks::Models::TaskStep.new(task: outputs.task, group_type: group_types[ii])
 
         step.tasked = TaskExercise[exercise: exercise, task_step: step]
 
