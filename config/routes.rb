@@ -127,6 +127,11 @@ Rails.application.routes.draw do
     resources :enrollment_changes, only: :create do
       put 'approve', on: :member
     end
+
+    namespace 'log' do
+      post :entry
+    end
+
   end
 
   namespace 'admin' do
