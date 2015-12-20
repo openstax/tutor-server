@@ -160,6 +160,9 @@ gem 'render_anywhere', :require => false
 # Add P3P headers for IE
 gem 'p3p'
 
+# API throttling
+gem 'rack-attack'
+
 group :development, :test do
   # Get env variables from .env file
   gem 'dotenv-rails'

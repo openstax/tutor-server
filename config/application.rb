@@ -50,5 +50,17 @@ module Tutor
       g.assets false
       g.view_specs false
     end
+
+    # rack-attack for throttling
+    Rack::Attack.cache.store = ActiveSupport::Cache::RedisStore.new(
+      url: redis_secrets['url'],
+      expires_in: 2.days
+    )
+
+    config.middleware.use Rack::Attack
+
+    config.after_initialize do
+      require 'rack-attack-settings'
+    end
   end
 end
