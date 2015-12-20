@@ -118,12 +118,14 @@ class GetConceptCoach
     spaced_practice_status << 'Completely filled' if spaced_practice_status.empty?
 
     exercises = core_exercises + spaced_exercises
+    group_types = core_exercises.map{ :core_group } + \
+                  spaced_exercises.map{ :spaced_practice_group }
 
     related_content_array = exercises.collect{ |ex| ex.page.related_content }
 
     # Create the new concept coach task, and put the exercises into steps
     run(:create_cc_task, role: role, page: page, exercises: exercises,
-                         related_content_array: related_content_array)
+                         group_types: group_types, related_content_array: related_content_array)
 
     run(:add_spy_info, to: outputs.task,
                        from: [ecosystem, { history: history.tasks,
