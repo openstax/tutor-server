@@ -57,7 +57,8 @@ class GetCcDashboard
                                            .map do |period|
       cc_tasks = period_id_cc_tasks_map[period.id] || []
       active_student_roles = period.active_enrollments.map{ |en| en.student.role }.uniq
-      orig_map, spaced_map = get_period_performance_maps_from_cc_tasks(period, cc_tasks)
+      orig_map, spaced_map = get_period_performance_maps_from_cc_tasks(period, cc_tasks,
+                                                                       page_id_to_page_map)
 
       {
         id: period.id,
@@ -108,13 +109,19 @@ class GetCcDashboard
       .where{task.task.completed_exercise_steps_count > 0}
       .distinct.to_a
 
-    outputs.chapters = cc_tasks.group_by{ |cc_task| cc_task.page.chapter }
-                               .map do |chapter, cc_tasks|
+    ecosystems_map = GetCourseEcosystemsMap[course: role.student.course]
+    cc_task_pages = cc_tasks.map{ |cc_task| Content::Page.new(strategy: cc_task.page.wrap) }
+    page_id_to_page_map = ecosystems_map.map_pages_to_pages(pages: cc_task_pages)
+
+    outputs.chapters = cc_tasks.group_by do |cc_task|
+      map_cc_task_to_page(page_id_to_page_map, cc_task).chapter
+    end.map do |chapter, cc_tasks|
       {
         id: chapter.id,
         title: chapter.title,
         book_location: chapter.book_location,
-        pages: cc_tasks.group_by(&:page).map do |page, cc_tasks|
+        pages: cc_tasks.group_by{ |cc_task| map_cc_task_to_page(page_id_to_page_map, cc_task) }
+                       .map do |page, cc_tasks|
           tasks = cc_tasks.map{ |cc_task| cc_task.task.task }
           tasked_exercises = tasks.flat_map(&:tasked_exercises)
 
@@ -138,7 +145,7 @@ class GetCcDashboard
     end.sort{ |a, b| b[:book_location] <=> a[:book_location] }
   end
 
-  def get_period_performance_maps_from_cc_tasks(period, cc_tasks)
+  def get_period_performance_maps_from_cc_tasks(period, cc_tasks, page_id_to_page_map)
     all_task_ids = cc_tasks.map{ |cc_task| cc_task.task.task.id }
     all_page_ids = cc_tasks.map{ |cc_task| cc_task.page.id }.uniq
 
@@ -154,19 +161,22 @@ class GetCcDashboard
     end
 
     all_cache_keys = cache_key_to_page_id_map.keys
-    cache_key_performance_map = all_cache_keys.empty? ? {} : \
-                                                        Rails.cache.read_multi(*all_cache_keys)
+    cache_key_performance_map = all_cache_keys.empty? ? \
+                                  {} : Rails.cache.read_multi(*all_cache_keys)
 
-    original_performance_map = {}
-    spaced_performance_map = {}
+    performance_map = {}
+    hit_cache_keys = []
 
     cache_key_performance_map.each do |cache_key, performance|
+      # Ignore values cached before the cache format change
+      next if performance[:original_count].nil? && performance[:spaced_count].nil?
+
       page_id = cache_key_to_page_id_map[cache_key]
-      original_performance_map[page_id] = performance[:original]
-      spaced_performance_map[page_id] = performance[:spaced]
+      performance_map[page_id] = performance
+      hit_cache_keys << cache_key
     end
 
-    missed_cache_keys = all_cache_keys - cache_key_performance_map.keys
+    missed_cache_keys = all_cache_keys - hit_cache_keys
 
     unless missed_cache_keys.empty?
       missed_page_id_to_cache_key_map = missed_cache_keys.each_with_object({}) do |cache_key, hash|
@@ -206,16 +216,45 @@ class GetCcDashboard
         correct_core_count = missed_correct_core_counts[page_id] || 0
         correct_spaced_count = missed_correct_spaced_counts[page_id] || 0
         original_performance = completed_core_count == 0 ? \
-                                 nil : correct_core_count/completed_core_count.to_f
+                                 0 : correct_core_count/completed_core_count.to_f
         spaced_performance = completed_spaced_count == 0 ? \
-                               nil : correct_spaced_count/completed_spaced_count.to_f
-        performance = { original: original_performance, spaced: spaced_performance }
+                               0 : correct_spaced_count/completed_spaced_count.to_f
+        performance = { original: original_performance, original_count: completed_core_count,
+                        spaced: spaced_performance, spaced_count: completed_spaced_count }
 
         Rails.cache.write(cache_key, performance, expires_in: DASHBOARD_CACHE_DURATION)
 
-        original_performance_map[page_id] = performance[:original]
-        spaced_performance_map[page_id] = performance[:spaced]
+        performance_map[page_id] = performance
       end
+    end
+
+    original_performance_map = {}
+    original_performance_counts = {}
+    spaced_performance_map = {}
+    spaced_performance_counts = {}
+
+    # Map the performance map to current ecosystem pages
+    performance_map.each do |page_id, performance|
+      mapped_page_id = page_id_to_page_map[page_id].id
+
+      previous_original_count = original_performance_counts[mapped_page_id] || 0
+      previous_original_performance = original_performance_map[mapped_page_id] || 0
+      new_original_count = previous_original_count + performance[:original_count]
+      new_original_performance = new_original_count == 0 ? nil : \
+                                   (previous_original_performance*previous_original_count + \
+                                    performance[:original]*performance[:original_count])/ \
+                                   new_original_count
+      original_performance_counts[mapped_page_id] = new_original_count
+      original_performance_map[mapped_page_id] = new_original_performance
+
+      previous_spaced_count = spaced_performance_counts[mapped_page_id] || 0
+      previous_spaced_performance = spaced_performance_map[mapped_page_id] || 0
+      new_spaced_count = previous_spaced_count + performance[:spaced_count]
+      new_spaced_performance = new_spaced_count == 0 ? nil : \
+                                 (previous_spaced_performance*previous_spaced_count + \
+                                  performance[:spaced]*performance[:spaced_count])/new_spaced_count
+      spaced_performance_counts[mapped_page_id] = new_spaced_count
+      spaced_performance_map[mapped_page_id] = new_spaced_performance
     end
 
     [original_performance_map, spaced_performance_map]
