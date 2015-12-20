@@ -45,6 +45,23 @@ $(document).ready(function() {
     }
   });
 
+  //========== Course select all / deselect all ==========//
+  $('#courses_select_all').change(function(e) {
+    if ($(this).is(':checked')) {
+      $('.course_id_select').prop('checked', true);
+    } else {
+      $('.course_id_select').prop('checked', false);
+    }
+  });
+
+  $('.course_id_select').change(function(e) {
+    if ($('.course_id_select:checked').length == $('.course_id_select').length) {
+      $('#courses_select_all').prop('checked', true);
+    } else {
+      $('#courses_select_all').prop('checked', false);
+    }
+  });
+
   //========== Course tab selection =============//
   var tab = window.location.hash;
   if (tab) {
