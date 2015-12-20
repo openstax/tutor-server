@@ -50,17 +50,40 @@ RSpec.describe AuthController, type: :controller do
       expect(response.body).to match('window.opener.postMessage')
     end
 
-    it 'can sign out' do
-      controller.sign_in user
-      get :logout, parent: 'http://test.host/page'
-      expect(response).to redirect_to(authenticate_via_popup_url)
-    end
-
     it 'requires agreeing to terms' do
       controller.sign_in new_user
       get :popup
       expect(response).to redirect_to(/#{pose_terms_path}/)
     end
+
+    context "when not using stubbed authentication" do
+
+      before(:each) {
+        @stubbing_value = OpenStax::Accounts.configuration.enable_stubbing
+        OpenStax::Accounts.configuration.enable_stubbing = false
+      }
+      after(:each) {
+        OpenStax::Accounts.configuration.enable_stubbing = @stubbing_value
+      }
+
+      it 'signs out by redirecting to accounts' do
+        controller.sign_in user
+        get :logout, parent: 'http://test.host/page'
+        expect(response).to redirect_to(OpenStax::Utilities.generate_url(
+                    OpenStax::Accounts.configuration.openstax_accounts_url,
+                    "logout", parent: 'http://test.host/page'
+                  ))
+      end
+    end
+
+
+    context "when using stubbing" do
+      it 'signs out and displays account chooser' do
+        get :logout, parent: 'http://test.host/page'
+        expect(response.body).to match(/postMessage.*logoutComplete/)
+      end
+    end
+
 
   end
 
