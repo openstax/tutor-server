@@ -43,7 +43,7 @@ class Api::V1::LogController < Api::V1::ApiController
     else
       message = entry_params.message[0..MAX_LOG_LENGTH]
 
-      Rails.logger.log(level, message)
+      Rails.logger.log(level, "(ext) #{message}")
       head :created
     end
   end

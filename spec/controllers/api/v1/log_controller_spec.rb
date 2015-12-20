@@ -25,14 +25,14 @@ describe Api::V1::LogController, type: :controller, api: true, version: :v1 do
 
     described_class::LOG_LEVELS.each do |string, enum|
       it "logs #{string}" do
-        expect(Rails.logger).to receive(:log).with(enum, 'hi')
+        expect(Rails.logger).to receive(:log).with(enum, '(ext) hi')
         log(level: string, message: 'hi')
         expect(response).to have_http_status(:created)
       end
     end
 
     it 'does not care about level case' do
-      expect(Rails.logger).to receive(:log).with(Logger::INFO, 'hi')
+      expect(Rails.logger).to receive(:log).with(Logger::INFO, '(ext) hi')
       log(level: 'InFO', message: 'hi')
       expect(response).to have_http_status(:created)
     end
