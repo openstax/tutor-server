@@ -32,9 +32,16 @@ module Tasks
         end
       end
 
+      def worksheet_name(name)
+        # worksheet names cannot be longer than 31 characters
+        name = name[0..30]
+        # worksheet names cannot contain characters :\/?*[]
+        name.gsub(/[:\\\/\[\]*?]/, '-')
+      end
+
       def create_data_worksheets(performance_report, package)
         performance_report.each do |report|
-          package.workbook.add_worksheet(name: report[:period][:name]) do |sheet|
+          package.workbook.add_worksheet(name: worksheet_name(report[:period][:name])) do |sheet|
             bold = sheet.styles.add_style b: true
             italic = sheet.styles.add_style i: true
             pct = sheet.styles.add_style num_fmt: Axlsx::NUM_FMT_PERCENT
