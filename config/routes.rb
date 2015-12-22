@@ -126,6 +126,7 @@ Rails.application.routes.draw do
 
     resources :enrollment_changes, only: :create do
       put 'approve', on: :member
+      post 'prevalidate', on: :collection
     end
   end
 

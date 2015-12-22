@@ -23,12 +23,44 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
 
   let!(:course_ecosystem)    { AddEcosystemToCourse[course: course, ecosystem: ecosystem] }
 
+  context '#prevalidate' do
+    context 'anonymous user' do
+
+      it 'does not raises any exceptions' do
+        expect{ api_post :prevalidate, nil, raw_post_data: {
+          enrollment_code: period.enrollment_code, book_uuid: book.uuid
+        }.to_json }.not_to raise_error
+      end
+
+      it 'returns true when code/book combo is valid' do
+        response =  api_post :prevalidate, nil, raw_post_data: {
+                               enrollment_code: period.enrollment_code, book_uuid: book.uuid
+                             }
+        expect(response.body_as_hash[:response]).to eq true
+      end
+
+      it 'returns false when code/book combo are not valid' do
+        response =  api_post :prevalidate, nil, raw_post_data: {
+                               enrollment_code: period.enrollment_code, book_uuid: 'invalid-uuid'
+                             }
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body_as_hash[:errors].first[:code]).to eq 'taken'
+      end
+
+    end
+
+  end
+
   context '#create' do
     context 'anonymous user' do
       it 'raises a SecurityTransgression' do
         expect{ api_post :create, nil, raw_post_data: {
           enrollment_code: period.enrollment_code, book_uuid: book.uuid
         }.to_json }.to raise_error(SecurityTransgression)
+      end
+
+      it 'allows access to validate_code' do
+
       end
     end
 
