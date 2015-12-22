@@ -11,6 +11,16 @@ RSpec.describe OpenStax::Cnx::V1, :type => :external, :vcr => VCR_OPTS do
 
     expect(OpenStax::Cnx::V1.url_for('/resources/image.jpg')).to(
       eq('https://archive-staging-tutor.cnx.org/resources/image.jpg'))
+
+    OpenStax::Cnx::V1.with_archive_url(url: 'https://archive.cnx.org/contents') do
+      expect(OpenStax::Cnx::V1.url_for('module_id@version')).to(
+        eq('https://archive.cnx.org/contents/module_id@version'))
+    end
+
+    OpenStax::Cnx::V1.with_archive_url(url: 'https://archive.cnx.org/contents/') do
+      expect(OpenStax::Cnx::V1.url_for('module_id@version')).to(
+        eq('https://archive.cnx.org/contents/module_id@version'))
+    end
   end
 
   it "can fetch collections and modules from CNX" do
