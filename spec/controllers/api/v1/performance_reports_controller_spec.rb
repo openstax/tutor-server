@@ -479,6 +479,18 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
         api_post :export, teacher_token, parameters: { id: course.id }
         expect(response.body_as_hash[:job]).to match(%r{/jobs/[a-f0-9-]+})
       end
+
+      it 'does not blow up when the period name is more than 31 characters' do
+        period.to_model.update_attributes(name: 'a' * 50)
+        api_post :export, teacher_token, parameters: { id: course.id }
+        expect(response.status).to eq(202)
+      end
+
+      it 'does not blow up when the period name has invalid worksheet characters' do
+        period.to_model.update_attributes(name: '[p: 1 \/ 2? *]')
+        api_post :export, teacher_token, parameters: { id: course.id }
+        expect(response.status).to eq(202)
+      end
     end
 
     context 'failure' do
