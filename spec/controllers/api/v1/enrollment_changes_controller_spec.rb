@@ -44,7 +44,7 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
                                enrollment_code: period.enrollment_code, book_uuid: 'invalid-uuid'
                              }
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.body_as_hash[:errors].first[:code]).to eq 'taken'
+        expect(response.body_as_hash[:errors].first[:code]).to eq 'invalid_enrollment_code'
       end
 
     end

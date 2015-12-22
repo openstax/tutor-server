@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe CourseMembership::ValidateEnrollmentCode, type: :routine do
+describe CourseMembership::ValidateEnrollmentParameters, type: :routine do
 
   let!(:course)    { Entity::Course.create!           }
   let!(:period)    { CreatePeriod[course: course]     }
