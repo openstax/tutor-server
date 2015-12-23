@@ -84,5 +84,8 @@ module Content
       !!@strategy.valid?
     end
 
+    def validity_diagnostic_message
+      @strategy.validity_diagnostic_message
+    end
   end
 end
