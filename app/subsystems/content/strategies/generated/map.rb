@@ -13,7 +13,8 @@ module Content
             create(from_ecosystems: from_ecosystems, to_ecosystem: to_ecosystem).tap do |map|
               raise(
                 Content::MapInvalidError, "Cannot generate a valid ecosystem map from " +
-                "[#{from_ecosystems.map(&:title).join(', ')}] to #{to_ecosystem.title}"
+                "[#{from_ecosystems.map(&:title).join(', ')}] to #{to_ecosystem.title} " +
+                "diagnostic=(#{map.validity_diagnostic_message})"
               ) unless map.valid?
             end
           end
@@ -175,14 +176,110 @@ module Content
           all_pages = @from_ecosystems.flat_map(&:pages)
           all_pages_map = map_pages_to_exercises(pages: all_pages, pool_type: :all_exercises)
 
+          @condition_a, @condition_a_message = _evaluate_condition_a(all_exercises, all_exercises_map)
+          @condition_b, @condition_b_message = _evaluate_condition_b(all_exercises, all_exercises_map, @to_ecosystem.pages)
+          @condition_c, @condition_c_message = _evaluate_condition_c(all_pages, all_pages_map)
+          @condition_d, @condition_d_message = _evaluate_condition_d(all_pages, all_pages_map, @to_ecosystem.exercises)
+
+          @valid = @condition_a && @condition_b && @condition_c && @condition_d
+
           # Valid if:
           # 1- All Exercises in the old Ecosystem map to one Page in the new Ecosystem
           # 2- All Pages in the old Ecosystem map to an array of Exercises in the new Ecosystem
           #    (can be empty)
-          @valid = Set.new(all_exercises_map.keys) == Set.new(all_exercises.map(&:id)) && \
-                   Set.new(all_exercises_map.values).subset?(Set.new(@to_ecosystem.pages)) && \
-                   Set.new(all_pages_map.keys) == Set.new(all_pages.map(&:id)) && \
-                   Set.new(all_pages_map.values.flatten).subset?(Set.new(@to_ecosystem.exercises))
+          # @valid = Set.new(all_exercises_map.keys) == Set.new(all_exercises.map(&:id)) && \
+          #          Set.new(all_exercises_map.values).subset?(Set.new(@to_ecosystem.pages)) && \
+          #          Set.new(all_pages_map.keys) == Set.new(all_pages.map(&:id)) && \
+          #          Set.new(all_pages_map.values.flatten).subset?(Set.new(@to_ecosystem.exercises))
+        end
+
+        def _evaluate_condition_a(all_exercises, all_exercises_map)
+          ## condition: every exercise appears in the map
+
+          all_exercises_map_ids_set = Set.new(all_exercises_map.keys)
+          all_exercise_ids_set      = Set.new(all_exercises.map(&:id))
+
+          condition = all_exercises_map_ids_set == all_exercise_ids_set
+
+          condition_message =
+            if condition
+              "no unmapped exercises"
+            else
+              unmapped_exercise_ids = all_exercise_ids_set - all_exercises_map_ids_set
+              unmapped_exercise_uids = all_exercises.select{|ex| unmapped_exercise_ids.include? ex.id } \
+                                                    .collect{|ex| ex.uid}
+              "unmapped exercise uids: #{unmapped_exercise_uids.to_a.join(', ')}"
+            end
+          return condition, condition_message
+        end
+
+        def _evaluate_condition_b(all_exercises, all_exercises_map, to_ecosystem_pages)
+          ## condition: every mapped exercise maps to a to_ecosystem page
+
+          all_execises_map_pages_set = Set.new(all_exercises_map.values)
+          to_ecosystem_pages_set     = Set.new(to_ecosystem_pages)
+
+          condition = all_execises_map_pages_set.subset?(to_ecosystem_pages_set)
+
+          condition_message =
+            if condition
+              "all exercises map to pages"
+            else
+              mismapped_pages = all_execises_map_pages_set - to_ecosystem_pages_set
+              mismapped_hash  = all_exercises_map.select{|ex,page| mismapped_pages.include? page }
+              diag_info = mismapped_hash.collect do |ex_id,page|
+                ex_uid = all_exercises.detect{|ex| ex.id == ex_id}.uid
+                title  = page.title
+                "#{ex_uid} => #{title}"
+              end
+              "mismapped exercises: #{diag_info.join(', ')}"
+            end
+          return condition, condition_message
+        end
+
+        def _evaluate_condition_c(all_pages, all_pages_map)
+          ## condition: every page appears in the map
+
+          all_pages_map_ids_set = Set.new(all_pages_map.keys)
+          all_page_ids_set      = Set.new(all_pages.map(&:id))
+
+          condition = all_pages_map_ids_set == all_page_ids_set
+
+          condition_message =
+            if condition
+              "no unmapped pages"
+            else
+              unmapped_page_ids = all_page_ids_set - all_pages_map_ids_set
+              unmapped_page_titles = all_pages.select{|page| unmapped_page_ids.include? page.id } \
+                                              .collect{|page| page.title}
+              "unmapped page titles: #{unmapped_page_titles.to_a.join(', ')}"
+            end
+          return condition, condition_message
+        end
+
+        def _evaluate_condition_d(all_pages, all_pages_map, to_ecosystem_exercises)
+          ## condition: every mapped page maps to a to_ecosystem exercise set
+          ## NOTE: This isn't what the code does, and I don't know which is correct...
+
+          all_pages_map_exercises_set = Set.new(all_pages_map.values.flatten)
+          to_ecosystem_exercises_set  = Set.new(to_ecosystem_exercises)
+
+          condition = all_pages_map_exercises_set.subset?(to_ecosystem_exercises_set)
+
+          condition_message =
+            if condition
+              "all pages map to exercise sets"
+            else
+              "yeah, something bad happened in here"
+            end
+          return condition, condition_message
+        end
+
+        def validity_diagnostic_message
+          "[#{@condition_a_message}]" +
+          "[#{@condition_b_message}]" +
+          "[#{@condition_c_message}]" +
+          "[#{@condition_d_message}]"
         end
 
         protected
