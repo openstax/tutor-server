@@ -35,11 +35,6 @@ module Content
             ::Content::Ecosystem.new(strategy: entity_find(*args))
           end
 
-          def find_by_book_uuid(uuid)
-            book = ::Content::Models::Book.eager_load(:ecosystem).where(uuid: uuid).first
-            book ? ::Content::Ecosystem.new(strategy: new(book.ecosystem)) : nil
-          end
-
           def find_by_book_ids(*ids)
             books = ::Content::Models::Book.eager_load(:ecosystem).where(id: ids).to_a
             return if books.size < ids.size

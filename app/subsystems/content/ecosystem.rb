@@ -32,11 +32,6 @@ module Content
                           klass: self, allow_nil: true, error: StrategyError
       end
 
-      def find_by_book_uuid(book_uuid, strategy_class: ::Content::Strategies::Direct::Ecosystem)
-        verify_and_return strategy_class.find_by_book_uuid(book_uuid),
-                          klass: self, allow_nil: true, error: StrategyError
-      end
-
       def find_by_chapter_ids(*args, strategy_class: ::Content::Strategies::Direct::Ecosystem)
         verify_and_return strategy_class.find_by_chapter_ids(*args),
                           klass: self, allow_nil: true, error: StrategyError
