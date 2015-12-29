@@ -58,10 +58,6 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
           enrollment_code: period.enrollment_code, book_uuid: book.uuid
         }.to_json }.to raise_error(SecurityTransgression)
       end
-
-      it 'allows access to validate_code' do
-
-      end
     end
 
     context 'signed in user' do
