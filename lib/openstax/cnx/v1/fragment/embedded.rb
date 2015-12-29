@@ -36,7 +36,7 @@ module OpenStax::Cnx::V1::Fragment
 
       # No source attribute found, so try href
       original_url = url_node.try(:[], 'href')
-      return nil if original_url.nil?
+      return nil if original_url.nil? || original_url =~ /^#/
 
       # This is an anchor, which Page does not convert to https, so redo the conversion here
       uri = Addressable::URI.parse(original_url)
