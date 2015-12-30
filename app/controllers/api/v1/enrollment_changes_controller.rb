@@ -9,6 +9,35 @@ class Api::V1::EnrollmentChangesController < Api::V1::ApiController
     EOS
   end
 
+  api :POST, '/prevalidate',
+             'Check if an enrollment code is valid for a given course uuid'
+  description <<-EOS
+    Returns either true or false to indicate the validity of the enrollment code for the given course.
+    May be called by an anonymous (non-logged in) user.
+
+    Input:
+    #{json_schema(Api::V1::NewEnrollmentChangeRepresenter, include: :writeable)}
+
+    Output:
+    #{json_schema(Api::V1::BooleanResponseRepresenter, include: :readable)}
+
+  EOS
+  def prevalidate
+    enrollment_params = OpenStruct.new
+    consume!(enrollment_params, represent_with: Api::V1::NewEnrollmentChangeRepresenter)
+
+    result = CourseMembership::ValidateEnrollmentParameters.call(
+      book_uuid: enrollment_params.book_uuid, enrollment_code: enrollment_params.enrollment_code
+    )
+    unless result.outputs.is_valid
+      render_api_errors(:invalid_enrollment_code)
+    else
+      respond_with OpenStruct.new(response: result.outputs.is_valid),
+                   represent_with: Api::V1::BooleanResponseRepresenter,
+                   location: nil
+    end
+  end
+
   api :POST, '/enrollment_changes',
              'Creates a new EnrollmentChange request or updates the current one'
   description <<-EOS
