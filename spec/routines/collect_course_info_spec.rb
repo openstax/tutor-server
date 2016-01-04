@@ -1,17 +1,24 @@
 require 'rails_helper'
 
 describe CollectCourseInfo, type: :routine do
-  let!(:profile_1) { FactoryGirl.create :user_profile }
-  let!(:profile_2) { FactoryGirl.create :user_profile }
+  let!(:course_1)       { FactoryGirl.create(:course_profile_profile, :with_offering).course }
+  let!(:course_2)       { FactoryGirl.create(:course_profile_profile, :with_offering).course }
 
-  let!(:role_1)    { FactoryGirl.create :entity_role, profile: profile_1 }
-  let!(:role_2)    { FactoryGirl.create :entity_role, profile: profile_2 }
+  let!(:period_model_1) { FactoryGirl.create :course_membership_period, course: course_1 }
+  let!(:period_model_2) { FactoryGirl.create :course_membership_period, course: course_1 }
+  let!(:period_model_3) { FactoryGirl.create :course_membership_period, course: course_2 }
 
-  let!(:course_1)  { FactoryGirl.create(:course_profile_profile, :with_offering).course }
-  let!(:course_2)  { FactoryGirl.create(:course_profile_profile, :with_offering).course }
+  let!(:period_1)       { CourseMembership::Period.new(strategy: period_model_1.wrap) }
+  let!(:period_2)       { CourseMembership::Period.new(strategy: period_model_2.wrap) }
+  let!(:period_3)       { CourseMembership::Period.new(strategy: period_model_3.wrap) }
 
-  let!(:student_1) { FactoryGirl.create :course_membership_student, role: role_1, course: course_1 }
-  let!(:student_2) { FactoryGirl.create :course_membership_student, role: role_2, course: course_2 }
+  let!(:profile_1)      { FactoryGirl.create :user_profile }
+  let!(:profile_2)      { FactoryGirl.create :user_profile }
+
+  let!(:user_1)         { User::User.new(strategy: profile_1.wrap) }
+  let!(:user_2)         { User::User.new(strategy: profile_2.wrap) }
+
+  let!(:role)           { AddUserAsPeriodStudent[user: user_2, period: period_3] }
 
   context "when a course is given" do
     it "returns information about the course" do
@@ -57,24 +64,74 @@ describe CollectCourseInfo, type: :routine do
   end
 
   context "when a user is given" do
-    let!(:user) {
-      strategy = User::Strategies::Direct::User.new(profile_1)
-      User::User.new(strategy: strategy)
-    }
+    context "when the user is a teacher" do
+      before { AddUserAsCourseTeacher[user: user_1, course: course_1] }
 
-    it "returns information about the user's active courses" do
-      result = described_class[user: user]
-      expect(result).to contain_exactly(
-        {
-          id: course_1.id,
-          name: course_1.profile.name,
-          offering: course_1.profile.offering,
-          school_name: course_1.profile.school_name,
-          salesforce_book_name: course_1.profile.offering.salesforce_book_name,
-          appearance_code: course_1.profile.offering.appearance_code,
-          is_concept_coach: false
-        }
-      )
+      it "returns information about the user's active courses" do
+        result = described_class[user: user_1]
+        expect(result).to contain_exactly(
+          {
+            id: course_1.id,
+            name: course_1.profile.name,
+            offering: course_1.profile.offering,
+            school_name: course_1.profile.school_name,
+            salesforce_book_name: course_1.profile.offering.salesforce_book_name,
+            appearance_code: course_1.profile.offering.appearance_code,
+            is_concept_coach: false
+          }
+        )
+      end
+
+      it "returns all of the course's periods" do
+        result = described_class[user: user_1, with: :periods]
+        expect(result).to contain_exactly(
+          {
+            id: course_1.id,
+            name: course_1.profile.name,
+            offering: course_1.profile.offering,
+            school_name: course_1.profile.school_name,
+            salesforce_book_name: course_1.profile.offering.salesforce_book_name,
+            appearance_code: course_1.profile.offering.appearance_code,
+            is_concept_coach: false,
+            periods: a_collection_containing_exactly(period_1, period_2)
+          }
+        )
+      end
+    end
+
+    context "when the user is a student" do
+      before { AddUserAsPeriodStudent[user: user_1, period: period_1] }
+
+      it "returns information about the user's active courses" do
+        result = described_class[user: user_1]
+        expect(result).to contain_exactly(
+          {
+            id: course_1.id,
+            name: course_1.profile.name,
+            offering: course_1.profile.offering,
+            school_name: course_1.profile.school_name,
+            salesforce_book_name: course_1.profile.offering.salesforce_book_name,
+            appearance_code: course_1.profile.offering.appearance_code,
+            is_concept_coach: false
+          }
+        )
+      end
+
+      it "returns only the user's current period" do
+        result = described_class[user: user_1, with: :periods]
+        expect(result).to contain_exactly(
+          {
+            id: course_1.id,
+            name: course_1.profile.name,
+            offering: course_1.profile.offering,
+            school_name: course_1.profile.school_name,
+            salesforce_book_name: course_1.profile.offering.salesforce_book_name,
+            appearance_code: course_1.profile.offering.appearance_code,
+            is_concept_coach: false,
+            periods: [ period_1 ]
+          }
+        )
+      end
     end
   end
 
