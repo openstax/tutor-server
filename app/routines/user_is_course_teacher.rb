@@ -15,6 +15,6 @@ class UserIsCourseTeacher
 
   def exec(user:, course:)
     run(Role::GetUserRoles, user)
-    run(CourseMembership::IsCourseTeacher,roles: outputs.roles, course: course)
+    run(CourseMembership::IsCourseTeacher, roles: outputs.roles, course: course)
   end
 end
