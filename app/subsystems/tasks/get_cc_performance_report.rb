@@ -85,7 +85,7 @@ module Tasks
 
         {
           cnx_page_id: page.uuid,
-          title: page.title,
+          title: "#{page.book_location.join(".")} #{page.title}",
           type: 'concept_coach',
           average: average(page_tasks)
         }

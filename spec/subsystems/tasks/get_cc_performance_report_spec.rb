@@ -58,6 +58,7 @@ RSpec.describe Tasks::GetCcPerformanceReport, type: :routine, speed: :slow do
     reports.each_with_index do |report, rindex|
       expect(report.data_headings.size).to eq expected_tasks[rindex]
       report.data_headings.each do |data_heading|
+        expect(data_heading.title).to match(/\A[\d+]\.[\d+] /)
         expect(valid_page_uuids).to include(data_heading.cnx_page_id)
         expect(data_heading.type).to eq expected_task_type
       end
