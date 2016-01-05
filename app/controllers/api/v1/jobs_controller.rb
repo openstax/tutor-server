@@ -28,21 +28,6 @@ class Api::V1::JobsController < Api::V1::ApiController
   def show
     job = Lev::BackgroundJob.find(params[:id])
     OSU::AccessPolicy.require_action_allowed!(:read, current_api_user, job)
-    code = http_status_code(job.status)
-    respond_with job, represent_with: Api::V1::JobRepresenter, status: code
-  end
-
-  private
-  def http_status_code(status)
-    case status
-    when Lev::BackgroundJob::STATE_SUCCEEDED
-      200
-    when Lev::BackgroundJob::STATE_FAILED
-      500
-    when Lev::BackgroundJob::STATE_KILLED || Lev::BackgroundJob::STATE_UNKNOWN
-      404
-    else
-      202
-    end
+    respond_with job, represent_with: Api::V1::JobRepresenter
   end
 end

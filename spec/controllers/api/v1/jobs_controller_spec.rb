@@ -51,7 +51,7 @@ RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :
 
     it 'returns the status of queued jobs' do
       api_get :show, user_token, parameters: { id: job_id }
-      expect(response).to have_http_status(202)
+      expect(response).to have_http_status :success
       expect(response.body_as_hash).to include({ status: 'queued' })
     end
 
@@ -67,7 +67,7 @@ RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :
       it 'returns the status of succeeded jobs' do
         api_get :show, user_token, parameters: { id: job_id }
 
-        expect(response).to have_http_status(200)
+        expect(response).to have_http_status :success
         expect(response.body_as_hash).to include({ status: 'succeeded' })
       end
 
