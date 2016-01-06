@@ -72,9 +72,18 @@ class ExportData
                                    .joins{task.taskings}
                                    .includes(:tasked)
 
+    total_count = steps.count
+    current_count = 0
+
     steps.find_each do |step|
+      if current_count % 20 == 0
+        print "\r"
+        print "#{current_count} / #{total_count}"
+      end
+      current_count += 1
+
       tasked = step.tasked
-      type = step.tasked_type.match(/Tasked(.+)\z/)[1]
+      type = step.tasked_type.match(/Tasked(.+)\z/).try(:[],1)
       role_id = step.task.taskings.first.entity_role_id
 
       columns = [
