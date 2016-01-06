@@ -71,7 +71,7 @@ class Admin::CoursesController < Admin::BaseController
           course: Marshal.dump(course.reload),
           ecosystem: Marshal.dump(ecosystem))
         job = Lev::BackgroundJob.find(job_id)
-        job.save(course_ecosystem: ecosystem.title)
+        job.save(course_ecosystem: ecosystem.title, course_id: course.id)
       end
       flash[:notice] = 'Course ecosystem update background jobs queued.'
     end
