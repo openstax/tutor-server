@@ -76,46 +76,50 @@ class ExportData
     current_count = 0
 
     steps.find_each do |step|
-      if current_count % 20 == 0
-        print "\r"
-        print "#{current_count} / #{total_count}"
-      end
-      current_count += 1
-
-      tasked = step.tasked
-      type = step.tasked_type.match(/Tasked(.+)\z/).try(:[],1)
-      role_id = step.task.taskings.first.entity_role_id
-
-      columns = [
-        role_info[role_id][:deidentifier],
-        role_info[role_id][:course_id],
-        step.task.taskings.first.course_membership_period_id,
-        step.task.tasks_task_plan_id,
-        step.tasks_task_id,
-        step.id,
-        type,
-        step.group_name,
-        [step.first_completed_at, style: date],
-        [step.last_completed_at, style: date],
-        tasked.respond_to?(:url) ? tasked.url : nil
-      ]
-
-      columns.push(*(
-        case type
-        when 'Exercise'
-          [
-            tasked.correct_answer_id,
-            tasked.answer_id,
-            tasked.is_correct?,
-            tasked.free_response,
-            tasked.tags
-          ]
-        else
-          5.times.collect{nil}
+      begin
+        if current_count % 20 == 0
+          print "\r"
+          print "#{current_count} / #{total_count}"
         end
-      ))
+        current_count += 1
 
-      add_row(sheet, columns)
+        tasked = step.tasked
+        type = step.tasked_type.match(/Tasked(.+)\z/).try(:[],1)
+        role_id = step.task.taskings.first.entity_role_id
+
+        columns = [
+          role_info[role_id].try(:[],:deidentifier),
+          role_info[role_id].try(:[],:course_id),
+          step.task.taskings.first.course_membership_period_id,
+          step.task.tasks_task_plan_id,
+          step.tasks_task_id,
+          step.id,
+          type,
+          step.group_name,
+          [step.first_completed_at, style: date],
+          [step.last_completed_at, style: date],
+          tasked.respond_to?(:url) ? tasked.url : nil
+        ]
+
+        columns.push(*(
+          case type
+          when 'Exercise'
+            [
+              tasked.correct_answer_id,
+              tasked.answer_id,
+              tasked.is_correct?,
+              tasked.free_response,
+              tasked.tags
+            ]
+          else
+            5.times.collect{nil}
+          end
+        ))
+
+        add_row(sheet, columns)
+      rescue StandardError => e
+        puts "Skipped #{current_count} for #{e.inspect}"
+      end
     end
   end
 
