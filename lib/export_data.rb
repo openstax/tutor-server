@@ -25,7 +25,6 @@ class ExportData
     @filepath = filepath
     @package = Axlsx::Package.new do |pp|
       pp.use_shared_strings = true # OS X Numbers interoperability
-      pp.workbook.styles.fonts.first.name = 'Helvetica Neue'
     end
     @workbook = @package.workbook
 
@@ -88,7 +87,7 @@ class ExportData
         role_id = step.task.taskings.first.entity_role_id
 
         columns = [
-          role_info[role_id].try(:[],:deidentifier),
+          [role_info[role_id].try(:[],:deidentifier), type: :string],
           role_info[role_id].try(:[],:course_id),
           step.task.taskings.first.course_membership_period_id,
           step.task.tasks_task_plan_id,
@@ -108,7 +107,7 @@ class ExportData
               tasked.correct_answer_id,
               tasked.answer_id,
               tasked.is_correct?,
-              tasked.free_response,
+              tasked.free_response.try(:gsub, /\A=/,"'="), # escape so Excel doesn't see as formula
               tasked.tags
             ]
           else
@@ -118,30 +117,34 @@ class ExportData
 
         add_row(sheet, columns)
       rescue StandardError => e
-        puts "Skipped #{current_count} for #{e.inspect}"
+        print "\r"
+        print "Skipped step #{step.id} for #{e.inspect} @ #{e.try(:backtrace).try(:first)}\n"
       end
     end
+    puts "\n"
   end
 
   def add_row(sheet, optioned_values)
     values = []
     styles = []
+    types = []
 
     optioned_values.each do |optioned_value|
-      value, style =
+      value, style, type =
         if optioned_value.is_a?(Array) && optioned_value.last.is_a?(Hash)
-          [optioned_value[0], optioned_value[1][:style]]
+          [optioned_value[0], optioned_value[1][:style], optioned_value[1][:type]]
         else
           [optioned_value, nil]
         end
 
-      value = value.join(';') if value.is_a? Array
+      value = value.join('; ') if value.is_a? Array
 
       values.push(value)
       styles.push(style)
+      types.push(type)
     end
 
-    sheet.add_row(values, style: styles)
+    sheet.add_row(values, style: styles, types: types)
   end
 
   def new_sheet(name:, freeze: true)
