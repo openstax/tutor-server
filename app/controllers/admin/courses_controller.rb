@@ -66,12 +66,14 @@ class Admin::CoursesController < Admin::BaseController
         .select { |course|
           course.ecosystems.first.try(:id) != ecosystem.id
         }
-      job_id = CourseContent::AddEcosystemToCourses.perform_later(
-        courses: courses.collect { |course| Marshal.dump(course.reload) },
-        ecosystem: Marshal.dump(ecosystem))
-      job = Lev::BackgroundJob.find(job_id)
-      job.save(course_ecosystem: ecosystem.title)
-      flash[:notice] = 'Course ecosystem update background job queued.'
+      courses.each do |course|
+        job_id = CourseContent::AddEcosystemToCourse.perform_later(
+          course: Marshal.dump(course.reload),
+          ecosystem: Marshal.dump(ecosystem))
+        job = Lev::BackgroundJob.find(job_id)
+        job.save(course_ecosystem: ecosystem.title, course_id: course.id)
+      end
+      flash[:notice] = 'Course ecosystem update background jobs queued.'
     end
 
     redirect_to admin_courses_path

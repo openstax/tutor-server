@@ -84,7 +84,7 @@ RSpec.feature 'Admin editing a course' do
     find(:id, :ecosystem_id).find("option[value='#{physics_old.id}']").select_option
     click_on 'Set Ecosystem'
 
-    expect(page).to have_content('Course ecosystem update background job queued')
+    expect(page).to have_content('Course ecosystem update background jobs queued')
     expect(@course.ecosystems.first.books.first.version).to eq('4.4')
 
     click_on 'Add Course'
@@ -95,7 +95,7 @@ RSpec.feature 'Admin editing a course' do
 
     find(:id, :ecosystem_id).find("option[value='#{physics_new.id}']").select_option
     click_on 'Set Ecosystem'
-    expect(page).to have_content('Course ecosystem update background job queued')
+    expect(page).to have_content('Course ecosystem update background jobs queued')
     expect(@course.ecosystems.first.books.first.version).to eq('5.1')
     expect(course_2.ecosystems.first.books.first.version).to eq('5.1')
   end
