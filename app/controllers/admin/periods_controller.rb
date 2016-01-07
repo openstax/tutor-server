@@ -16,7 +16,13 @@ class Admin::PeriodsController < Admin::BaseController
   end
 
   def update
-    @period.update_attributes(name: params[:period][:name])
+    unless params[:period][:enrollment_code].present?
+      flash[:error] = 'Enrollment code required.'
+      redirect_to edit_admin_period_path(@period.id)
+      return
+    end
+    @period.update_attributes(name: params[:period][:name],
+                              enrollment_code: params[:period][:enrollment_code])
     flash[:notice] = 'Period updated.'
     redirect_to edit_admin_course_path(@course.id, anchor: 'periods')
   end

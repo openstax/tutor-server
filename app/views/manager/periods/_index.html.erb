@@ -5,6 +5,7 @@
   <thead>
     <tr>
       <th>Name</th>
+      <th>Enrollment code</th>
       <% [extra_headers].flatten.each do |extra_header| %>
       <th><%= extra_header %></th>
       <% end %>
@@ -14,6 +15,7 @@
   <% periods.each do |period| %>
     <tr>
       <td><%= period.name %></td>
+      <td><%= period.enrollment_code %></td>
       <%= capture(period, &extra_fields_proc) unless extra_fields_proc.nil? %>
     </tr>
   <% end %>
