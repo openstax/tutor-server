@@ -47,12 +47,14 @@ RSpec.feature 'Admin editing a course' do
 
     click_link 'Add period'
     expect(page).to have_content('New Period for Physics I')
+    expect(page).not_to have_content('Enrollment code')
 
     fill_in 'Name', with: '2nd'
     click_button 'Save'
 
     expect(current_path).to eq(edit_admin_course_path(@course))
-    expect(page).to have_content('2nd Edit')
+    period = CourseMembership::Models::Period.find_by_name('2nd')
+    expect(page).to have_content("2nd #{period.enrollment_code} Edit")
   end
 
   scenario 'Editing a period' do
@@ -63,10 +65,11 @@ RSpec.feature 'Admin editing a course' do
     expect(page).to have_content('Edit Period')
 
     fill_in 'Name', with: 'first'
+    fill_in 'Enrollment code', with: 'happy restrictions'
     click_button 'Save'
 
     expect(current_path).to eq(edit_admin_course_path(@course))
-    expect(page).to have_content('first Edit')
+    expect(page).to have_content('first happy restrictions Edit')
   end
 
   scenario 'bulk updating course ecosystem', speed: :slow, vcr: VCR_OPTS do
