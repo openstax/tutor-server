@@ -16,7 +16,7 @@ class EcosystemAccessPolicy
       # because it includes solutions, etc
       courses = GetUserCourses[user: requestor, types: :teacher]
       courses.any?{ |course| course.ecosystems.collect(&:id).include?(ecosystem.id) }
-    when :destroy
+    when :update, :destroy
       requestor.is_content_analyst? || requestor.is_admin?
     else
       false
