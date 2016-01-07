@@ -19,6 +19,8 @@ class IndividualizeTaskingPlans
         CourseMembership::GetCourseRoles.call(course: target, types: :student).outputs.roles
       when CourseMembership::Models::Period
         CourseMembership::GetPeriodStudentRoles.call(periods: target).outputs.roles
+      when NilClass # For example, a deleted period
+        []
       else
         raise NotYetImplemented
       end
