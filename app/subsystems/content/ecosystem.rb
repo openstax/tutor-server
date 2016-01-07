@@ -174,5 +174,9 @@ module Content
       @strategy.deletable?
     end
 
+    def to_model
+      @strategy.to_model
+    end
+
   end
 end

@@ -16,7 +16,20 @@
 
     <tr>
       <td><%= book.title %></td>
-      <td><%= ecosystem.comments %></td>
+      <td>
+        <% if ecosystem_path.nil? %>
+          <%= ecosystem.comments %>
+        <% else %>
+          <%= form_for(ecosystem.to_model,
+                       as: :ecosystem,
+                       url: ecosystem_path.call(ecosystem.id),
+                       method: :put,
+                       html: { class: 'form-inline' }) do |f| %>
+            <%= f.text_field :comments, class: 'form-control' %>
+            <%= f.submit 'Save', class: 'btn btn-xs btn-primary' %>
+          <% end %>
+        <% end %>
+      </td>
       <td><%= book.version %></td>
       <td><%= ecosystem.imported_at %></td>
       <td><%= link_to 'Archive', book.url, target: '_blank',
@@ -29,8 +42,8 @@
                                                 container: 'body' },
                                         class: 'btn btn-xs btn-secondary' %></td>
       <td>
-        <% if !destroy_path.nil? && ecosystem.deletable? %>
-          <%= link_to 'Delete', destroy_path.call(ecosystem.id),
+        <% if !ecosystem_path.nil? && ecosystem.deletable? %>
+          <%= link_to 'Delete', ecosystem_path.call(ecosystem.id),
                                 method: :delete,
                                 data: {
                                   confirm: "Are you sure you want to delete #{ecosystem.books.first.title}?"

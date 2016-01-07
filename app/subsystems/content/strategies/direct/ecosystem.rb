@@ -10,6 +10,10 @@ module Content
         exposes :all, :create, :create!, :find, :deletable?,
           from_class: ::Content::Models::Ecosystem
 
+        def to_model
+          repository
+        end
+
         class << self
           alias_method :entity_all, :all
           def all

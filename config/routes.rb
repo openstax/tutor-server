@@ -181,7 +181,7 @@ Rails.application.routes.draw do
     post :freeze_time, controller: :timecop
     post :time_travel, controller: :timecop
 
-    resources :ecosystems, only: [:index, :destroy] do
+    resources :ecosystems, only: [:index, :destroy, :update] do
       collection do
         get :import
         post :import
@@ -231,7 +231,7 @@ Rails.application.routes.draw do
 
     resources :jobs, only: [:show]
 
-    resources :ecosystems, only: [:index, :destroy] do
+    resources :ecosystems, only: [:index, :destroy, :update] do
       collection do
         get :import
         post :import

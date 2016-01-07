@@ -25,7 +25,7 @@ RSpec.describe 'Content Analyst', speed: :slow, vcr: VCR_OPTS do
     expect(page).to have_css('.flash_notice', text: 'Ecosystem import job queued.')
     expect(page).to have_css('td', text: 'Physics')
     expect(page).to have_css('td', text: '4.4')
-    expect(page).to have_css('td', text: 'This version includes typo fixes to quantum equations')
+    expect(page).to have_field('ecosystem[comments]', with: 'This version includes typo fixes to quantum equations')
     expect(page).to have_css('[data-content="93e2b09d-261c-4007-a987-0b3062fe154b"]')
   end
 
@@ -39,8 +39,20 @@ RSpec.describe 'Content Analyst', speed: :slow, vcr: VCR_OPTS do
     expect(page).to have_css('.flash_notice', text: 'Ecosystem import job queued.')
     expect(page).to have_css('td', text: 'Physics')
     expect(page).to have_css('td', text: '4.4')
-    expect(page).to have_css('td', text: 'This version includes typo fixes to quantum equations')
+    expect(page).to have_field('ecosystem[comments]', with: 'This version includes typo fixes to quantum equations')
     expect(page).to have_css('[data-content="93e2b09d-261c-4007-a987-0b3062fe154b"]')
+  end
+
+  scenario 'edits ecosystem comments' do
+    FactoryGirl.create(:content_book, title: 'Test Book')
+
+    click_link 'Ecosystems'
+    expect(page).to have_css('td', text: 'Test Book')
+
+    fill_in 'ecosystem[comments]', with: 'Add some comments'
+    click_on 'Save'
+
+    expect(page).to have_field('ecosystem[comments]', with: 'Add some comments')
   end
 
   scenario 'deletes an ecosystem' do

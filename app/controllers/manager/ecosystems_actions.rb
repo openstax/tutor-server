@@ -10,6 +10,13 @@ module Manager::EcosystemsActions
     end
   end
 
+  def update
+    ecosystem = Content::Ecosystem.find(params[:id])
+    OSU::AccessPolicy.require_action_allowed!(:update, current_user, ecosystem)
+    ecosystem.to_model.update_attributes(comments: params[:ecosystem][:comments])
+    redirect_to ecosystems_path
+  end
+
   def import
     @default_archive_url = OpenStax::Cnx::V1.archive_url_base
     import_ecosystem if request.post?

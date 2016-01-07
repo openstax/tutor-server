@@ -6,4 +6,4 @@
                      failed_jobs: @failed_jobs,
                      job_path_proc: ->(job) { admin_job_path(job.id) },
                      import_path: import_admin_ecosystems_path,
-                     destroy_path: Proc.new { |*args| admin_ecosystem_path(args) } } %>
+                     ecosystem_path: Proc.new { |*args| admin_ecosystem_path(args) } } %>
