@@ -6,4 +6,5 @@ Lev.configure do |config|
     url: redis_secrets['url'],
     namespace: redis_secrets['namespaces']['lev']
   )
+  config.job_class = ActiveJob::BaseWithRetryConditions
 end

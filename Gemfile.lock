@@ -1,13 +1,14 @@
 GIT
-  remote: git://github.com/lml/lev.git
-  revision: cdc00db5fd94f20e55032e04c08910c8fa20df26
-  ref: cdc00db5fd94
+  remote: git://github.com/Dantemss/lev.git
+  revision: cc427d88bd4ff1a8b1c1e47c94ebe737a558aae1
+  ref: cc427d88bd4ff1a8b1c1e47c94ebe737a558aae1
   specs:
     lev (6.0.0)
-      actionpack (>= 3.0)
+      actionpack (>= 4.2)
       active_attr
-      activemodel (>= 3.0)
-      activerecord (>= 3.0)
+      activejob
+      activemodel (>= 4.2)
+      activerecord (>= 4.2)
       hashie
       transaction_isolation
       transaction_retry
