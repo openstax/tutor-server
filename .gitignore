@@ -26,6 +26,9 @@ config/deploy_settings.yml
 # Ignore editor temp files
 *~
 
+# Ignore XLS files (from report generators)
+*.xls*
+
 # Ignore Cucumber and RSpec failure information
 cucumber_rerun.txt
 rspec.failures
