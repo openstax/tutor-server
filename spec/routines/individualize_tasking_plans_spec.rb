@@ -78,6 +78,7 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
     it 'returns no results for periods that have been deleted' do
       period_1.delete
       task_plan.reload
+      tasking_plan.reload
 
       expect(result.size).to eq 1
 
