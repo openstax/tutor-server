@@ -1,3 +1,5 @@
+require 'active_job/provider_job_id_backport'
+
 module ActiveJob
   class BaseWithRetryConditions < Base
     NEVER_RETRY = ->(exception) { false }
@@ -11,19 +13,18 @@ module ActiveJob
       'Content::MapInvalidError' => NEVER_RETRY,
       'JSON::ParserError' => NEVER_RETRY,
       'NoMethodError' => NEVER_RETRY,
-      'NotImplementedError' => NEVER_RETRY,
       'NotYetImplemented' => NEVER_RETRY,
       'OAuth2::Error'       => ->(exception) {
         status = exception.response.status
-        status == 0 || status >= 500
+        status < 400 || status >= 500
       },
       'OpenStax::HTTPError' => ->(exception) {
         status = exception.message.to_i
-        status == 0 || status >= 500
+        status < 400 || status >= 500
       },
       'OpenURI::HTTPError'  => ->(exception) {
         status = exception.message.to_i
-        status == 0 || status >= 500
+        status < 400 || status >= 500
       }
     }
 
