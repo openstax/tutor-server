@@ -11,7 +11,7 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
       school: 'Denver University'
     )
 
-    ImportSalesforceCourses[include_real_salesforce_data: false]
+    ImportSalesforceCourses[use_real_salesforce_data: false]
   end
 
   it 'restricts to Denver University when told to include real data but global secrets flag false' do
@@ -24,7 +24,7 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
       school: 'Denver University'
     )
 
-    ImportSalesforceCourses[include_real_salesforce_data: true]
+    ImportSalesforceCourses[use_real_salesforce_data: true]
   end
 
   it 'does not restrict to Denver University when told to include real data' do
@@ -36,7 +36,7 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
       course_id: nil
     )
 
-    ImportSalesforceCourses[include_real_salesforce_data: true]
+    ImportSalesforceCourses[use_real_salesforce_data: true]
   end
 
   it 'errors when the book name does not match an offering in tutor' do

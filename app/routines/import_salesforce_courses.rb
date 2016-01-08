@@ -12,10 +12,10 @@ class ImportSalesforceCourses
     outputs.num_successes = 0
   end
 
-  def exec(include_real_salesforce_data: nil)
+  def exec(use_real_salesforce_data: nil)
     log { "Starting." }
 
-    @include_real_salesforce_data_preference = include_real_salesforce_data
+    @use_real_salesforce_data_preference = use_real_salesforce_data
 
     candidate_sf_records.each do |candidate|
       create_course_for_candidate(candidate)
@@ -28,31 +28,34 @@ class ImportSalesforceCourses
     }
   end
 
-  def include_real_salesforce_data?
-    # The "include real" parameter to this routine is used if set; if not set,
+  def use_real_salesforce_data?
+    # The "use real" parameter to this routine is used if set; if not set,
     # fall back to the GlobalSettings value.  If that not set, don't import real.
     # In any event, only ever include real data if the secret setting say it is
     # allowed (JP doesn't trust admins, and wants this failsafe secret to let us
     # only use real SF data in the real real production site).
 
-    (@include_real_salesforce_data_preference.present? ?
-      @include_real_salesforce_data_preference :
+    (@use_real_salesforce_data_preference.present? ?
+      @use_real_salesforce_data_preference :
       GlobalSettings.import_real_salesforce_courses || false) &&
     Rails.application.secrets['salesforce']['allow_use_of_real_data']
   end
 
   def candidate_sf_records
-    search_criteria = {
+    records = Salesforce::Remote::ClassSize.where(
       concept_coach_approved: true,
       course_id: nil
-    }
+    ).all
 
-    if !include_real_salesforce_data?
-      search_criteria[:school] = 'Denver University'
+    # Only import real OR fake, never both
+    if use_real_salesforce_data?
+      records.reject!(&:fake?)
+    else
+      records.reject!(&:real?)
       log { "Using test data only." }
     end
 
-    Salesforce::Remote::ClassSize.where(search_criteria)
+    records
   end
 
   def create_course_for_candidate(candidate)

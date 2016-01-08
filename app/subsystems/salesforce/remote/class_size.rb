@@ -14,4 +14,12 @@ class Salesforce::Remote::ClassSize < ActiveForce::SObject
 
   self.table_name = 'Class_Size__c'
 
+  def fake?
+    school == 'Denver University'
+  end
+
+  def real?
+    !fake?
+  end
+
 end
