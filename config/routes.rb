@@ -30,7 +30,7 @@ Rails.application.routes.draw do
 
 
   # Fetch user information and log in/out in remotely
-  scope 'auth', controller: 'auth' do
+  scope :auth, controller: :auth do
     scope to: 'auth#cors_preflight_check', via: [:options] do
       match 'status'
     end
@@ -119,7 +119,7 @@ Rails.application.routes.draw do
       end
     end
 
-    scope 'pages', controller: :pages, action: :get_page do
+    scope :pages, controller: :pages, action: :get_page do
       get ':uuid@:version'
       get ':uuid'
     end
@@ -190,8 +190,7 @@ Rails.application.routes.draw do
 
     resources :targeted_contracts, except: [:show, :edit]
 
-    namespace :salesforce do
-      get '', action: :index
+    resource :salesforce, only: [:show], controller: :salesforce do
       delete :destroy_user
       post :import_courses
       put :update_salesforce
@@ -221,6 +220,10 @@ Rails.application.routes.draw do
     resources :ecosystems, only: [:index]
 
     resources :targeted_contracts, only: :index
+
+    resource :salesforce, only: [:show], controller: :salesforce do
+      post :import_courses
+    end
   end
 
   get '/courses/join/:join_token' => 'courses#join', as: :join_course

@@ -1,7 +1,9 @@
 module Admin
   class SalesforceController < BaseController
 
-    def index
+    include Manager::SalesforceImportCourses
+
+    def show
       @user = Salesforce::Models::User.first
     end
 
@@ -16,17 +18,6 @@ module Admin
       redirect_to admin_salesforce_path
     end
 
-    def import_courses
-      outputs = ImportSalesforceCourses.call(
-        include_real_salesforce_data: params[:use_real_data]
-      ).outputs
-
-      flash[:notice] = "Of #{outputs.num_failures + outputs.num_successes} candidate records in Salesforce, " +
-        "#{outputs.num_successes} were successfully imported and #{outputs.num_failures} failed."
-
-      redirect_to admin_salesforce_path
-    end
-
     def update_salesforce
       outputs = UpdateSalesforceStats.call
 
@@ -34,6 +25,12 @@ module Admin
                        "updated #{outputs[:num_updates]} record(s); #{outputs[:num_errors]} error(s) occurred."
 
       redirect_to admin_salesforce_path
+    end
+
+    protected
+
+    def salesforce_path
+      admin_salesforce_path
     end
 
   end
