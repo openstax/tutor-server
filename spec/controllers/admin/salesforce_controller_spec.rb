@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Admin::SalesforceController do
+RSpec.describe Admin::SalesforceController, type: :controller do
   let!(:admin) { FactoryGirl.create(:user, :administrator) }
 
   before { controller.sign_in(admin) }
