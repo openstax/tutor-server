@@ -2,6 +2,8 @@ module Salesforce
   module Models
     class AttachedRecord < Tutor::SubSystems::BaseModel
 
+      MAX_IDS_PER_REQUEST = 500
+
       wrapped_by ::Salesforce::Strategies::Direct::AttachedRecord
 
       validates :tutor_gid, presence: true
@@ -22,7 +24,11 @@ module Salesforce
         all.group_by(&:salesforce_class_name).each do |salesforce_class_name, one_class_models|
           salesforce_class = salesforce_class_name.constantize
           salesforce_ids = one_class_models.map(&:salesforce_id)
-          salesforce_objects = salesforce_class.where(id: salesforce_ids).all.index_by(&:id)
+
+          salesforce_objects = {}
+          salesforce_ids.each_slice(MAX_IDS_PER_REQUEST) do |salesforce_ids|
+            salesforce_objects.merge! salesforce_class.where(id: salesforce_ids).all.index_by(&:id)
+          end
 
           one_class_models.each do |model|
             model.salesforce_object = salesforce_objects[model.salesforce_id]
