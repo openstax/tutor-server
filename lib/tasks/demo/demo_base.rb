@@ -161,7 +161,13 @@ class DemoBase
       # Start a new process
       # Threading does not work well with MRI due to the GIL
       fork do
-        # Reconnect to Redis (demo work now uses jobs to send info to Exchange)
+        # Reconnect to Redis
+
+        # demo uses the Biglearn fake client if Biglearn stubbing is enabled
+        OpenStax::Biglearn::V1.client.store.reconnect \
+          if OpenStax::Biglearn::V1.client.is_a? OpenStax::Biglearn::V1::FakeClient
+
+        # demo work uses jobs to send info to Exchange
         Lev.configuration.job_store.reconnect
 
         if transaction

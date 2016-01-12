@@ -84,7 +84,7 @@ module OpenStax::Biglearn::V1
 
   # Accessor for the fake client, which has some extra fake methods on it
   def self.fake_client
-    FakeClient.instance
+    FakeClient.new(configuration)
   end
 
   def self.real_client

@@ -3,34 +3,51 @@ require 'rails_helper'
 module OpenStax::Biglearn
   RSpec.describe V1::FakeClient, type: :external do
 
-    let(:client) { described_class.instance }
+    let(:redis_secrets) { Rails.application.secrets['redis'] }
 
-    let(:exercise_1) { V1::Exercise.new(question_id: 'e1', tags: ['lo1', 'concept']) }
-    let(:exercise_2) { V1::Exercise.new(question_id: 'e2', tags: ['lo1', 'homework']) }
-    let(:exercise_3) { V1::Exercise.new(question_id: 'e3', tags: ['lo2', 'concept']) }
-    let(:exercise_4) { V1::Exercise.new(question_id: 'e4', tags: ['lo2', 'concept']) }
-    let(:exercise_5) { V1::Exercise.new(question_id: 'e5', tags: ['lo3', 'concept']) }
+    let(:configuration) {
+      c = OpenStax::Biglearn::V1::Configuration.new
+      c.fake_store = ActiveSupport::Cache::RedisStore.new(
+        url: redis_secrets['url'],
+        namespace: redis_secrets['namespaces']['fake_biglearn']
+      )
+      c
+    }
+
+    let(:client) { described_class.new(configuration) }
+
+    let(:exercise_1) { V1::Exercise.new(question_id: 'e1', version: 1, tags: ['lo1', 'concept']) }
+    let(:exercise_2) { V1::Exercise.new(question_id: 'e2', version: 2, tags: ['lo1', 'homework']) }
+    let(:exercise_3) { V1::Exercise.new(question_id: 'e3', version: 3, tags: ['lo2', 'concept']) }
+    let(:exercise_4) { V1::Exercise.new(question_id: 'e4', version: 4, tags: ['lo2', 'concept']) }
+    let(:exercise_5) { V1::Exercise.new(question_id: 'e5', version: 5, tags: ['lo3', 'concept']) }
 
     let(:pool_1)     { V1::Pool.new(exercises: [exercise_1, exercise_3, exercise_4]) }
     let(:pool_2)     { V1::Pool.new(exercises: [exercise_2]) }
     let(:pool_3)     { V1::Pool.new(exercises: [exercise_5]) }
 
-    it 'allows adding of exercises' do
-      expect{client.add_exercises([exercise_1, exercise_2])}
-        .to change{client.store_exercises_copy.count}.by(2)
+    it 'allows adding exercises' do
+      [exercise_1, exercise_2].each do |exercise|
+        expect(client.store.read("exercises/#{exercise.question_id}")).to be_nil
+      end
 
-      client.reload! # make sure data is really saved
+      client.add_exercises([exercise_1, exercise_2])
 
-      expect(client.store_exercises_copy).to include('e1' => { '' => ['lo1', 'concept'] })
-      expect(client.store_exercises_copy).to include('e2' => { '' => ['lo1', 'homework'] })
+      [exercise_1, exercise_2].each do |exercise|
+        parsed_exercise = JSON.parse client.store.read("exercises/#{exercise.question_id}")
+        version = exercise.version.to_s
+        expect(parsed_exercise[version]).to eq exercise.tags
+      end
     end
 
-    it 'allows adding of pools' do
-      expect{client.add_pools([pool_1])}.to change{client.store_pools_copy.count}.by(1)
+    it 'allows adding pools' do
+      expect(pool_1.uuid).to be_nil
 
-      client.reload! # make sure data is really saved
+      client.add_pools([pool_1])
 
-      expect(client.store_pools_copy.values).to include(['e1', 'e3', 'e4'])
+      parsed_pool = JSON.parse client.store.read("pools/#{pool_1.uuid}")
+
+      expect(parsed_pool).to eq pool_1.exercises.map(&:question_id)
     end
 
     context "get_projection_exercises" do
