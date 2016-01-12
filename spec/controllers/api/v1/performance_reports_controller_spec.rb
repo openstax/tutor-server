@@ -491,6 +491,13 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
         api_post :export, teacher_token, parameters: { id: course.id }
         expect(response.status).to eq(202)
       end
+
+      it 'does not blow up when period names collide for the first 31 characters' do
+        period.to_model.update_attributes(name: 'Super duper long period name number 1')
+        CreatePeriod[course: course, name: 'Super duper long period name number 2']
+        api_post :export, teacher_token, parameters: { id: course.id }
+        expect(response.status).to eq(202)
+      end
     end
 
     context 'failure' do
