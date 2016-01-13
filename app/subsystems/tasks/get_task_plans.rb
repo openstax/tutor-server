@@ -1,14 +1,14 @@
-class GetCourseTaskPlans
+class Tasks::GetTaskPlans
 
   COMPLETED_TASK_STEPS = Squeel::Nodes::Literal.new 'CASE WHEN tasks_task_steps.first_completed_at IS NULL THEN 0 ELSE 1 END'
   CORRECT_TASKED_EXERCISES = Squeel::Nodes::Literal.new 'CASE WHEN tasks_tasked_exercises.correct_answer_id = tasks_tasked_exercises.answer_id THEN 1 ELSE 0 END'
 
-  lev_routine
+  lev_routine express_output: :plans
 
   protected
 
-  def exec(course:, include_trouble_flags: false)
-    outputs[:plans] = Tasks::Models::TaskPlan.where(owner: course)
+  def exec(owner:, include_trouble_flags: false)
+    outputs[:plans] = Tasks::Models::TaskPlan.where(owner: owner)
     return unless include_trouble_flags
 
     outputs[:trouble_plan_ids] = outputs[:plans]
