@@ -1,6 +1,6 @@
 class Tasks::RecoverTaskStep
 
-  lev_routine
+  lev_routine transaction: :serializable
 
   uses_routine TaskExercise, as: :task_exercise
   uses_routine GetEcosystemFromIds, as: :get_ecosystem
@@ -9,7 +9,7 @@ class Tasks::RecoverTaskStep
   protected
 
   def exec(task_step:)
-    fatal_error(code: :recovery_not_available) unless task_step.can_be_recovered?
+    fatal_error(code: :recovery_not_available) unless task_step.lock!.can_be_recovered?
 
     # Get the ecosystem from the content_exercise_id
     exercise_id = task_step.tasked.content_exercise_id
