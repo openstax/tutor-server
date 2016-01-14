@@ -38,6 +38,7 @@ class Tasks::RecoverTaskStep
       task: task, number: task_step.number + 1
     )
     step.tasked = run(:task_exercise, task_step: step, exercise: exercise).outputs.tasked_exercise
+    step.group_type = :recovery_group
     task.task_steps << step
     step.save!
     step
