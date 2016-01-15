@@ -10,7 +10,8 @@ module Api::V1
              writeable: false,
              schema_info: { required: true }
 
-    property :status,
+    property :state,
+             as: :status,
              type: String,
              readable: true,
              writeable: false,
@@ -22,10 +23,11 @@ module Api::V1
              writeable: false,
              schema_info: { required: true }
 
-    property :url, if: ->(*) { respond_to?(:url) },
+    property :url,
              type: String,
              readable: true,
              writeable: false,
+             getter: ->(*) { data['url'] },
              schema_info: { required: false }
 
     collection :errors,

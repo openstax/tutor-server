@@ -5,7 +5,7 @@ RSpec.describe ContentAnalyst::JobsController, type: :controller do
   let!(:content_analyst) { FactoryGirl.create(:user, :content_analyst) }
 
   context "GET #show" do
-    let!(:job) { Lev::BackgroundJob.create }
+    let!(:job) { Jobba.create! }
 
     it "returns http success" do
       controller.sign_in(content_analyst)

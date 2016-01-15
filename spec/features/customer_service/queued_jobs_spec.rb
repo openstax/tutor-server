@@ -7,7 +7,7 @@ RSpec.feature 'Viewing queued jobs as Customer Service', :js do
   let(:user) { FactoryGirl.create(:user) }
   let(:role) { AddUserAsCourseTeacher[course: course, user: user] }
 
-  let(:job) { Lev::BackgroundJob.all.last }
+  let(:status) { Jobba.all.to_a.last }
 
   before(:all) do
     Delayed::Worker.delay_jobs = true
@@ -29,7 +29,7 @@ RSpec.feature 'Viewing queued jobs as Customer Service', :js do
   end
 
   scenario 'Viewing the status of jobs' do
-    job.set_progress(0.5)
+    status.set_progress(0.5)
 
     visit customer_service_root_path
     click_link 'Jobs'
@@ -41,20 +41,20 @@ RSpec.feature 'Viewing queued jobs as Customer Service', :js do
 
   scenario 'Getting more details about a job' do
     error = Lev::Error.new(code: 'bad', message: 'awful')
-    job.add_error(error)
-    job.save(something_spectacular: 'For all the good children')
+    status.add_error(error)
+    status.save(something_spectacular: 'For all the good children')
 
     visit customer_service_jobs_path
-    click_link job.id
+    click_link status.id
 
-    expect(current_path).to eq(customer_service_job_path(job.id))
+    expect(current_path).to eq(customer_service_job_path(status.id))
     expect(page).to have_css('.job_errors', text: 'bad - awful')
     expect(page).to have_css('.job_something_spectacular',
                              text: 'For all the good children')
   end
 
   scenario 'succeeded jobs are hidden' do
-    job.succeeded!
+    status.succeeded!
 
     visit customer_service_root_path
     click_link 'Jobs'
@@ -69,7 +69,7 @@ RSpec.feature 'Viewing queued jobs as Customer Service', :js do
   end
 
   scenario 'statuses are filterable' do
-    job.queued!
+    status.queued!
     visit customer_service_jobs_path
 
     click_link 'killed'
@@ -78,16 +78,16 @@ RSpec.feature 'Viewing queued jobs as Customer Service', :js do
     expect(page).to have_css('.queued')
 
 
-    job.working!
+    status.started!
     visit customer_service_jobs_path
 
     click_link 'killed'
-    expect(page).not_to have_css('.working')
-    click_link 'working'
-    expect(page).to have_css('.working')
+    expect(page).not_to have_css('.started')
+    click_link 'started'
+    expect(page).to have_css('.started')
 
 
-    job.failed!
+    status.failed!
     visit customer_service_jobs_path
 
     click_link 'killed'
@@ -96,7 +96,7 @@ RSpec.feature 'Viewing queued jobs as Customer Service', :js do
     expect(page).to have_css('.failed')
 
 
-    job.killed!
+    status.killed!
     visit customer_service_jobs_path
 
     click_link 'failed'
@@ -105,7 +105,7 @@ RSpec.feature 'Viewing queued jobs as Customer Service', :js do
     expect(page).to have_css('.killed')
 
 
-    job.unknown!
+    status.unknown!
     visit customer_service_jobs_path
 
     click_link 'killed'
@@ -114,7 +114,7 @@ RSpec.feature 'Viewing queued jobs as Customer Service', :js do
     expect(page).to have_css('.unknown')
 
 
-    job.queued!
+    status.queued!
     visit customer_service_jobs_path
 
     click_link 'all'
@@ -130,7 +130,7 @@ RSpec.feature 'Viewing queued jobs as Customer Service', :js do
     fill_in 'filter_id', with: 'not-here'
     expect(page).not_to have_css('#jobs tbody tr')
 
-    fill_in 'filter_id', with: job.id[4..7] # partial matching works
-    expect(page).to have_css('.job_id', text: job.id)
+    fill_in 'filter_id', with: status.id[4..7] # partial matching works
+    expect(page).to have_css('.job_id', text: status.id)
   end
 end

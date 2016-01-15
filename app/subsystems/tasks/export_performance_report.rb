@@ -33,7 +33,7 @@ module Tasks
                                            @temp_filepath == outputs.filepath
       end
 
-      job.save(url: export.url)
+      status.save(url: export.url)
     end
 
     private

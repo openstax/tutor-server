@@ -1,7 +1,7 @@
 GIT
-  remote: git://github.com/Dantemss/lev.git
-  revision: cc427d88bd4ff1a8b1c1e47c94ebe737a558aae1
-  ref: cc427d88bd4ff1a8b1c1e47c94ebe737a558aae1
+  remote: git://github.com/lml/lev.git
+  revision: 331db52ef956ae17fb03e84ffc9d429dc5d1aeb4
+  ref: 331db52ef956ae17fb03e84ffc9d429dc5d1aeb4
   specs:
     lev (6.0.0)
       actionpack (>= 4.2)
@@ -12,6 +12,15 @@ GIT
       hashie
       transaction_isolation
       transaction_retry
+
+GIT
+  remote: git://github.com/openstax/jobba.git
+  revision: 2ac1b7f11c899245f44e6f1e16ce92ca94bef03d
+  ref: 2ac1b7f11c899245f44e6f1e16ce92ca94bef03d
+  specs:
+    jobba (1.3.0)
+      redis (~> 3.2)
+      redis-namespace
 
 GIT
   remote: https://github.com/maddijoyce/active_force
@@ -531,6 +540,8 @@ GEM
     redis-activesupport (4.0.0)
       activesupport (~> 4)
       redis-store (~> 1.1.0)
+    redis-namespace (1.5.2)
+      redis (~> 3.0, >= 3.0.4)
     redis-rack (1.5.0)
       rack (~> 1.5)
       redis-store (~> 1.1.0)
@@ -736,6 +747,7 @@ DEPENDENCIES
   fog
   hashie
   httparty
+  jobba!
   jquery-rails
   json-schema
   keyword_search

@@ -63,8 +63,11 @@ gem 'openstax_api', '~> 6.1.3'
 gem 'apipie-rails'
 gem 'maruku'
 
+# Background job status store
+gem 'jobba', github: 'openstax/jobba', ref: '2ac1b7f11c899245f44e6f1e16ce92ca94bef03d'
+
 # Lev framework
-gem 'lev', github: 'Dantemss/lev', ref: 'cc427d88bd4ff1a8b1c1e47c94ebe737a558aae1'
+gem 'lev', github: 'lml/lev', ref: '331db52ef956ae17fb03e84ffc9d429dc5d1aeb4'
 
 # Ruby dsl for SQL queries
 gem 'squeel'

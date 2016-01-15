@@ -15,8 +15,8 @@ class Api::V1::JobsController < Api::V1::ApiController
   def index
     OSU::AccessPolicy.require_action_allowed!(:index,
                                               current_api_user,
-                                              Lev::BackgroundJob)
-    jobs = Lev::BackgroundJob.all
+                                              Jobba::Status)
+    jobs = Jobba.all.to_a
     respond_with jobs, represent_with: Api::V1::JobsRepresenter
   end
 
@@ -26,7 +26,7 @@ class Api::V1::JobsController < Api::V1::ApiController
     #{json_schema(Api::V1::JobRepresenter, include: :readable)}
   EOS
   def show
-    job = Lev::BackgroundJob.find(params[:id])
+    job = Jobba.find(params[:id])
     OSU::AccessPolicy.require_action_allowed!(:read, current_api_user, job)
     respond_with job, represent_with: Api::V1::JobRepresenter
   end
