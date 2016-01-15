@@ -30,7 +30,7 @@ class ExportData
 
     workbook.styles do |s|
       @bold = s.add_style b: true
-      @date = s.add_style(:format_code => "yyyy-mm-dd HH:mm:ss")
+      @date = s.add_style(:format_code => "yyyy-mm-ddTHH:mm:ssZ")
     end
   end
 
