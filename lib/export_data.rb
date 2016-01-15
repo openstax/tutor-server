@@ -60,6 +60,8 @@ class ExportData
         "Group",
         "First Completed At",
         "Last Completed At",
+        "Opens At",
+        "Due At",
         "URL",
         "API URL",
         "Correct Answer ID",
@@ -106,6 +108,8 @@ class ExportData
           step.group_name,
           [step.first_completed_at, style: date],
           [step.last_completed_at, style: date],
+          [step.task.opens_at, style: date],
+          [step.task.due_at, style: date],
           url
         ]
 
