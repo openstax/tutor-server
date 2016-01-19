@@ -3,10 +3,10 @@ module Manager::EcosystemsActions
   def index
     @ecosystems = Content::ListEcosystems[]
     @incomplete_jobs = Jobba.where(state: :incomplete).to_a.select do |job|
-      job.data['ecosystem_import_url']
+      job.data.try :[], 'ecosystem_import_url'
     end
     @failed_jobs = Jobba.where(state: :failed).to_a.select do |job|
-      job.data['ecosystem_import_url']
+      job.data.try :[], 'ecosystem_import_url'
     end
   end
 

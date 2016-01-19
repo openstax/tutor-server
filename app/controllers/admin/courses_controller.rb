@@ -12,10 +12,10 @@ class Admin::CoursesController < Admin::BaseController
                                       with: [:teacher_names, :ecosystem_book]]
     @ecosystems = Content::ListEcosystems[]
     @incomplete_jobs = Jobba.where(state: :incomplete).to_a.select do |job|
-      job.data['course_ecosystem']
+      job.data.try :[], 'course_ecosystem'
     end
     @failed_jobs = Jobba.where(state: :failed).to_a.select do |job|
-      job.data['course_ecosystem']
+      job.data.try :[], 'course_ecosystem'
     end
     @job_path_proc = ->(job) { admin_job_path(job.id) }
   end

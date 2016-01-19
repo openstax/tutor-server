@@ -37,13 +37,13 @@ RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :
       job_id1 = TestRoutine.perform_later
       job_id2 = TestRoutine.perform_later
 
-      status1 = Jobba.find(job_id1)
-      status2 = Jobba.find(job_id2)
+      job1 = Api::V1::JobRepresenter.new(Jobba.find(job_id1))
+      job2 = Api::V1::JobRepresenter.new(Jobba.find(job_id2))
 
       api_get :index, admin_token
 
       json_response = JSON.parse(response.body)
-      expect(json_response).to eq([status1.as_json, status2.as_json])
+      expect(json_response).to eq([job1.as_json, job2.as_json])
     end
   end
 
