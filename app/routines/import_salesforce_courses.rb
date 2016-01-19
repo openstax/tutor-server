@@ -7,13 +7,11 @@ class ImportSalesforceCourses
   uses_routine CourseContent::AddEcosystemToCourse, as: :set_ecosystem
   uses_routine Salesforce::AttachRecord, as: :attach_record
 
-  def initialize
-    outputs.num_failures = 0
-    outputs.num_successes = 0
-  end
-
   def exec(include_real_salesforce_data: nil)
     log { "Starting." }
+
+    outputs.num_failures = 0
+    outputs.num_successes = 0
 
     @include_real_salesforce_data_preference = include_real_salesforce_data
 
