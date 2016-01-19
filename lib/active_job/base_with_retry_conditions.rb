@@ -38,7 +38,9 @@ module ActiveJob
         if retry_proc.present? && !retry_proc.call(exception)
           case job.class.queue_adapter.name
           when 'ActiveJob::QueueAdapters::DelayedJobAdapter'
-            ::Delayed::Job.find(job.provider_job_id).fail!
+            # Attempt to fail the job, but don't blow up if no job was found,
+            # which can happen, for example, if ::Delayed::Worker.delay_jobs = false (dev, test)
+            ::Delayed::Job.find_by(id: job.provider_job_id).try(:fail!)
           else
             # Since we don't know how to mark the job as failed, mark it as succeeded instead
             return

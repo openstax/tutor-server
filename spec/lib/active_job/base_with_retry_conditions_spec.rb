@@ -25,6 +25,15 @@ module ActiveJob
             expect{ job.perform_now }.to raise_error exception
             expect(delayed_job.reload.failed?).to eq true
           end
+
+          it 'does not blow up if no job was found' do
+            job.provider_job_id = nil
+            expect(job).to receive(:perform) { raise exception }
+
+            expect(delayed_job.failed?).to eq false
+            expect{ job.perform_now }.to raise_error exception
+            expect(delayed_job.reload.failed?).to eq false
+          end
         end
       end
     end
@@ -40,17 +49,14 @@ module ActiveJob
           expect{ job.perform_now }.to raise_error exception
           expect(delayed_job.reload.failed?).to eq true
         end
-      end
 
-      context 'ActiveRecord::RecordInvalid' do
-        let!(:exception) { ActiveRecord::RecordInvalid }
-
-        it 'fails the job instantly' do
-          expect(job).to receive(:perform) { raise exception, Entity::Role.new }
+        it 'does not blow up if no job was found' do
+          job.provider_job_id = nil
+          expect(job).to receive(:perform) { raise exception, OpenStruct.new }
 
           expect(delayed_job.failed?).to eq false
           expect{ job.perform_now }.to raise_error exception
-          expect(delayed_job.reload.failed?).to eq true
+          expect(delayed_job.reload.failed?).to eq false
         end
       end
 
@@ -63,6 +69,15 @@ module ActiveJob
           expect(delayed_job.failed?).to eq false
           expect{ job.perform_now }.to raise_error exception
           expect(delayed_job.reload.failed?).to eq true
+        end
+
+        it 'does not blow up if no job was found' do
+          job.provider_job_id = nil
+          expect(job).to receive(:perform) { raise exception, Entity::Role.new }
+
+          expect(delayed_job.failed?).to eq false
+          expect{ job.perform_now }.to raise_error exception
+          expect(delayed_job.reload.failed?).to eq false
         end
       end
 
@@ -92,6 +107,15 @@ module ActiveJob
           expect{ job.perform_now }.to raise_error exception
           expect(delayed_job.reload.failed?).to eq false
         end
+
+        it 'does not blow up if no job was found' do
+          job.provider_job_id = nil
+          expect(job).to receive(:perform) { raise exception, OpenStruct.new(status: 404) }
+
+          expect(delayed_job.failed?).to eq false
+          expect{ job.perform_now }.to raise_error exception
+          expect(delayed_job.reload.failed?).to eq false
+        end
       end
 
       context 'OpenStax::HTTPError' do
@@ -115,6 +139,15 @@ module ActiveJob
 
         it 'does not fail the job instantly if it is an unknown status' do
           expect(job).to receive(:perform) { raise exception, '' }
+
+          expect(delayed_job.failed?).to eq false
+          expect{ job.perform_now }.to raise_error exception
+          expect(delayed_job.reload.failed?).to eq false
+        end
+
+        it 'does not blow up if no job was found' do
+          job.provider_job_id = nil
+          expect(job).to receive(:perform) { raise exception, '404 Not Found' }
 
           expect(delayed_job.failed?).to eq false
           expect{ job.perform_now }.to raise_error exception
@@ -150,10 +183,28 @@ module ActiveJob
           expect{ job.perform_now }.to raise_error exception
           expect(delayed_job.reload.failed?).to eq false
         end
+
+        it 'does not blow up if no job was found' do
+          job.provider_job_id = nil
+          expect(job).to receive(:perform) { raise exception.new('404 Not Found', OpenStruct.new) }
+
+          expect(delayed_job.failed?).to eq false
+          expect{ job.perform_now }.to raise_error exception
+          expect(delayed_job.reload.failed?).to eq false
+        end
       end
 
       context 'RuntimeError' do
         it 'does not fail the job instantly' do
+          expect(job).to receive(:perform) { raise 'Some Error' }
+
+          expect(delayed_job.failed?).to eq false
+          expect{ job.perform_now }.to raise_error RuntimeError
+          expect(delayed_job.reload.failed?).to eq false
+        end
+
+        it 'does not blow up if no job was found' do
+          job.provider_job_id = nil
           expect(job).to receive(:perform) { raise 'Some Error' }
 
           expect(delayed_job.failed?).to eq false
