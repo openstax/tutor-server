@@ -1,7 +1,7 @@
 class GetNonCcDashboard
   include DashboardRoutineMethods
 
-  uses_routine GetCourseTaskPlans, as: :get_plans
+  uses_routine Tasks::GetTaskPlans, as: :get_plans
 
   protected
 
@@ -22,7 +22,7 @@ class GetNonCcDashboard
   end
 
   def load_plans(course)
-    out = run(:get_plans, course: course, include_trouble_flags: true).outputs
+    out = run(:get_plans, owner: course, include_trouble_flags: true).outputs
     outputs[:plans] = out[:plans].map do |task_plan|
       {
         id: task_plan.id,
