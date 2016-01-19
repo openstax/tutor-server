@@ -10,11 +10,13 @@ RSpec.feature 'Administration of queued jobs', :js do
   let(:status) { Jobba.all.to_a.last }
 
   before(:all) do
+    Jobba.all.to_a.each { |status| status.delete! }
     Delayed::Worker.delay_jobs = true
   end
 
   after(:all) do
     Delayed::Worker.delay_jobs = false
+    Jobba.all.to_a.each { |status| status.delete! }
   end
 
   before(:each) do

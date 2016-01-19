@@ -9,6 +9,14 @@ RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :
   let(:user_token) { FactoryGirl.create(:doorkeeper_access_token, resource_owner_id: user.id) }
   let(:admin_token) { FactoryGirl.create(:doorkeeper_access_token, resource_owner_id: admin.id) }
 
+  before(:all) do
+    Jobba.all.to_a.each { |status| status.delete! }
+  end
+
+  after(:all) do
+    Jobba.all.to_a.each { |status| status.delete! }
+  end
+
   before do
     stub_const 'TestRoutine', Class.new
     TestRoutine.class_eval {
