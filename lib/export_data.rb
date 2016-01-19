@@ -49,15 +49,19 @@ class ExportData
       [
         "Student",
         "Course ID",
+        "CC?",
         "Period ID",
         "Plan ID",
         "Task ID",
+        "Task Type",
         "Step ID",
+        "Step Number",
         "Step Type",
         "Group",
         "First Completed At",
         "Last Completed At",
         "URL",
+        "API URL",
         "Correct Answer ID",
         "Answer ID",
         "Correct?",
@@ -85,30 +89,41 @@ class ExportData
         tasked = step.tasked
         type = step.tasked_type.match(/Tasked(.+)\z/).try(:[],1)
         role_id = step.task.taskings.first.entity_role_id
+        course_id = role_info[role_id].try(:[],:course_id)
+        url = tasked.respond_to?(:url) ? tasked.url : nil
 
         columns = [
           [role_info[role_id].try(:[],:deidentifier), type: :string],
-          role_info[role_id].try(:[],:course_id),
+          course_id,
+          is_cc?(course_id),
           step.task.taskings.first.course_membership_period_id,
           step.task.tasks_task_plan_id,
           step.tasks_task_id,
+          step.task.task_type,
           step.id,
+          step.number,
           type,
           step.group_name,
           [step.first_completed_at, style: date],
           [step.last_completed_at, style: date],
-          tasked.respond_to?(:url) ? tasked.url : nil
+          url
         ]
 
         columns.push(*(
           case type
           when 'Exercise'
             [
+              url.gsub("org","org/api") + ".json",
               tasked.correct_answer_id,
               tasked.answer_id,
               tasked.is_correct?,
               tasked.free_response.try(:gsub, /\A=/,"'="), # escape so Excel doesn't see as formula
               tasked.tags
+            ]
+          when 'Reading'
+            [
+              url + ".json",
+              nil, nil, nil, nil
             ]
           else
             5.times.collect{nil}
@@ -171,6 +186,17 @@ class ExportData
             course_id: student.entity_course_id
           }
         end
+  end
+
+  def is_cc?(course_id)
+    @is_cc_map ||=
+      CourseProfile::Models::Profile
+        .all
+        .each_with_object({}) do |profile, hsh|
+          hsh[profile.entity_course_id] = profile.is_concept_coach
+        end
+
+    @is_cc_map[course_id]
   end
 
 end
