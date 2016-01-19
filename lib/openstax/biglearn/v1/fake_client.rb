@@ -1,72 +1,79 @@
 class OpenStax::Biglearn::V1::FakeClient
 
-  include Singleton
+  def initialize(biglearn_configuration)
+    @fake_store = biglearn_configuration.fake_store
+  end
 
   #
   # API methods
   #
 
   def add_exercises(exercises)
-    # Iterate through the exercises, storing each in the store, overwriting
-    # any with the same ID
+    # Iterate through the exercises, storing each in the store,
+    # overwriting any with the same ID
 
+    exercise_key_to_exercise_map = {}
     [exercises].flatten.each do |exercise|
-      store['exercises'][exercise.question_id.to_s] ||= {}
-      store['exercises'][exercise.question_id.to_s][exercise.version.to_s] = exercise.tags
+      exercise_key = "exercises/#{exercise.question_id}"
+      exercise_key_to_exercise_map[exercise_key] = exercise
     end
 
-    save!
+    exercise_keys = exercise_key_to_exercise_map.keys
+
+    exercise_key_to_version_json_map = store.read_multi(*exercise_keys)
+
+    exercise_keys.map do |exercise_key|
+      exercise = exercise_key_to_exercise_map[exercise_key]
+      version_json = exercise_key_to_version_json_map[exercise_key]
+      version_hash = JSON.parse(version_json || '{}')
+      version_hash[exercise.version.to_s] = exercise.tags
+      store.write(exercise_key, version_hash.to_json)
+      exercise.question_id.to_s
+    end
   end
 
   def add_pools(pools)
     # Add the given pools to the store, overwriting any with the same UUID
 
-    result = pools.collect do |pool|
-      uuid = SecureRandom.uuid
-      store['pools'][uuid] = pool.exercises.collect{ |ex| ex.question_id.to_s }
-      uuid
+    pools.map do |pool|
+      pool.uuid ||= SecureRandom.uuid
+      store.write "pools/#{pool.uuid}", pool.exercises.map{ |ex| ex.question_id.to_s }.to_json
+      pool.uuid
     end
-
-    save!
-
-    result
   end
 
   def combine_pools(pools)
     # Combine the given pools into one
 
-    pool_uuids = pools.collect{ |pl| pl.uuid }
-    question_ids = pool_uuids.collect{ |uuid| store['pools'][uuid] }.flatten.uniq
+    pool_keys = pools.map{ |pl| "pools/#{pl.uuid}" }
+    question_ids = store.read_multi(*pool_keys).values.flat_map{ |json| JSON.parse(json) }.uniq
     uuid = SecureRandom.uuid
 
-    store['pools'][uuid] = question_ids
-
-    save!
+    store.write("pools/#{uuid}", question_ids.to_json)
 
     uuid
   end
 
   def get_projection_exercises(role:, pools:, count:, difficulty:, allow_repetitions:)
-    exercises = store_exercises_copy
-
     # Get the exercises in the pools
-    question_ids = pools.flat_map{ |pool| store_pools_copy[pool.uuid] }.uniq
-    exercises = exercises.slice(*question_ids)
+    pool_keys = pools.map{ |pl| "pools/#{pl.uuid}" }
+    question_ids = store.read_multi(*pool_keys).values.flat_map{ |json| JSON.parse(json) }.uniq
 
     # Limit the results to the desired number
-    results = exercises.first(count)
+    results = question_ids.first(count)
 
     # If we didn't get as many as requested and repetitions are allowed,
     # pad the results, repeat the matches until we have enough, making
     # sure to clip at the desired count in case we go over.
-    while (allow_repetitions && results.length < count && exercises.any?)
-      results += exercises.first(count - results.length)
+    while (allow_repetitions && results.length < count && question_ids.any?)
+      results += question_ids.first(count - results.length)
     end
 
-    results.collect{ |question_id, version_tags| question_id }
+    results
   end
 
   def get_clues(roles:, pools:, cache_for: 'ignored', force_cache_miss: 'ignored')
+    # The fake client CLUe results are completely random
     pools.each_with_object({}) do |pool, hash|
       aggregate = rand(0.0..1.0)
       confidence_left  = [aggregate - 0.1, 0.0].max
@@ -92,47 +99,8 @@ class OpenStax::Biglearn::V1::FakeClient
     end
   end
 
-  #
-  # Debugging methods
-  #
-
-  def store_exercises_copy
-    store['exercises'].clone
-  end
-
-  def store_pools_copy
-    store['pools'].clone
-  end
-
-  def reload!
-    store(true)
-  end
-
-  protected
-
-  def store(reload=false)
-    # We need to load the store from the DB if
-    # (1) we haven't yet done so
-    # (2) someone wants us to load it
-    # (3) We have loaded it but it is no longer in the DB (which can happen in tests)
-
-    if @fake_store.nil? ||
-       reload ||
-       ::FakeStore.where(name: 'openstax_biglearn_v1').none?
-
-      @fake_store = ::FakeStore.find_or_create_by(name: 'openstax_biglearn_v1')
-    end
-
-    @fake_store.data ||= {}
-
-    @fake_store.data['exercises'] ||= {}
-    @fake_store.data['pools'] ||= {}
-
-    @fake_store.data
-  end
-
-  def save!
-    @fake_store.save! if @fake_store.present?
+  def store
+    @fake_store
   end
 
 end
