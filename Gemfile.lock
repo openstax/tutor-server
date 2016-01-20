@@ -1,28 +1,4 @@
 GIT
-  remote: git://github.com/lml/lev.git
-  revision: 331db52ef956ae17fb03e84ffc9d429dc5d1aeb4
-  ref: 331db52ef956ae17fb03e84ffc9d429dc5d1aeb4
-  specs:
-    lev (6.0.0)
-      actionpack (>= 4.2)
-      active_attr
-      activejob
-      activemodel (>= 4.2)
-      activerecord (>= 4.2)
-      hashie
-      transaction_isolation
-      transaction_retry
-
-GIT
-  remote: git://github.com/openstax/jobba.git
-  revision: 6033c20920d8bc3852cba2e03ae360aa4148e90c
-  ref: 6033c20920d8bc3852cba2e03ae360aa4148e90c
-  specs:
-    jobba (1.3.0)
-      redis (~> 3.2)
-      redis-namespace
-
-GIT
   remote: https://github.com/maddijoyce/active_force
   revision: 9695896f576ea850d6ca60fb7b8af9c0dd07e8ea
   ref: 9695896f5
@@ -360,6 +336,9 @@ GEM
     ice_nine (0.11.1)
     inflecto (0.0.2)
     ipaddress (0.8.0)
+    jobba (1.4.0)
+      redis (~> 3.2)
+      redis-namespace
     jquery-rails (4.0.3)
       rails-dom-testing (~> 1.0)
       railties (>= 4.2.0)
@@ -372,6 +351,15 @@ GEM
     kgio (2.9.3)
     launchy (2.4.3)
       addressable (~> 2.3)
+    lev (7.0.1)
+      actionpack (>= 4.2)
+      active_attr
+      activejob
+      activemodel (>= 4.2)
+      activerecord (>= 4.2)
+      hashie
+      transaction_isolation
+      transaction_retry
     libv8 (3.16.14.7)
     lograge (0.3.1)
       actionpack (>= 3)
@@ -747,12 +735,12 @@ DEPENDENCIES
   fog
   hashie
   httparty
-  jobba!
+  jobba (~> 1.4.0)
   jquery-rails
   json-schema
   keyword_search
   launchy
-  lev!
+  lev (~> 7.0.1)
   lograge
   maruku
   mini_magick
