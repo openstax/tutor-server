@@ -67,7 +67,7 @@ gem 'maruku'
 gem 'jobba', '~> 1.4.0'
 
 # Lev framework
-gem 'lev', '~> 7.0.1'
+gem 'lev', '~> 7.0.2'
 
 # Ruby dsl for SQL queries
 gem 'squeel'

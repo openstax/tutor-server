@@ -351,7 +351,7 @@ GEM
     kgio (2.9.3)
     launchy (2.4.3)
       addressable (~> 2.3)
-    lev (7.0.1)
+    lev (7.0.2)
       actionpack (>= 4.2)
       active_attr
       activejob
@@ -384,7 +384,7 @@ GEM
     netrc (0.10.3)
     newrelic_rpm (3.11.1.284)
     nifty-generators (0.4.6)
-    nokogiri (1.6.7)
+    nokogiri (1.6.7.2)
       mini_portile2 (~> 2.0.0.rc2)
     oauth2 (1.0.0)
       faraday (>= 0.8, < 0.10)
@@ -740,7 +740,7 @@ DEPENDENCIES
   json-schema
   keyword_search
   launchy
-  lev (~> 7.0.1)
+  lev (~> 7.0.2)
   lograge
   maruku
   mini_magick
