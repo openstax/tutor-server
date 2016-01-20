@@ -43,7 +43,7 @@ RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :
       api_get :index, admin_token
 
       json_response = JSON.parse(response.body)
-      expect(json_response).to eq([job1.as_json, job2.as_json])
+      expect(json_response).to contain_exactly(job1.as_json, job2.as_json)
     end
   end
 
