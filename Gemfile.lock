@@ -1,19 +1,4 @@
 GIT
-  remote: git://github.com/Dantemss/lev.git
-  revision: cc427d88bd4ff1a8b1c1e47c94ebe737a558aae1
-  ref: cc427d88bd4ff1a8b1c1e47c94ebe737a558aae1
-  specs:
-    lev (6.0.0)
-      actionpack (>= 4.2)
-      active_attr
-      activejob
-      activemodel (>= 4.2)
-      activerecord (>= 4.2)
-      hashie
-      transaction_isolation
-      transaction_retry
-
-GIT
   remote: https://github.com/maddijoyce/active_force
   revision: 9695896f576ea850d6ca60fb7b8af9c0dd07e8ea
   ref: 9695896f5
@@ -351,6 +336,9 @@ GEM
     ice_nine (0.11.1)
     inflecto (0.0.2)
     ipaddress (0.8.0)
+    jobba (1.4.0)
+      redis (~> 3.2)
+      redis-namespace
     jquery-rails (4.0.3)
       rails-dom-testing (~> 1.0)
       railties (>= 4.2.0)
@@ -363,6 +351,15 @@ GEM
     kgio (2.9.3)
     launchy (2.4.3)
       addressable (~> 2.3)
+    lev (7.0.2)
+      actionpack (>= 4.2)
+      active_attr
+      activejob
+      activemodel (>= 4.2)
+      activerecord (>= 4.2)
+      hashie
+      transaction_isolation
+      transaction_retry
     libv8 (3.16.14.7)
     lograge (0.3.1)
       actionpack (>= 3)
@@ -387,7 +384,7 @@ GEM
     netrc (0.10.3)
     newrelic_rpm (3.11.1.284)
     nifty-generators (0.4.6)
-    nokogiri (1.6.7)
+    nokogiri (1.6.7.2)
       mini_portile2 (~> 2.0.0.rc2)
     oauth2 (1.0.0)
       faraday (>= 0.8, < 0.10)
@@ -531,6 +528,8 @@ GEM
     redis-activesupport (4.0.0)
       activesupport (~> 4)
       redis-store (~> 1.1.0)
+    redis-namespace (1.5.2)
+      redis (~> 3.0, >= 3.0.4)
     redis-rack (1.5.0)
       rack (~> 1.5)
       redis-store (~> 1.1.0)
@@ -739,11 +738,12 @@ DEPENDENCIES
   fog
   hashie
   httparty
+  jobba (~> 1.4.0)
   jquery-rails
   json-schema
   keyword_search
   launchy
-  lev!
+  lev (~> 7.0.2)
   lograge
   maruku
   mini_magick

@@ -10,11 +10,12 @@ RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :
   let(:admin_token) { FactoryGirl.create(:doorkeeper_access_token, resource_owner_id: admin.id) }
 
   before(:all) do
-    @original_job_store = Lev.configuration.job_store
-    Lev.configuration.job_store = ActiveSupport::Cache::MemoryStore.new
+    Jobba.all.to_a.each { |status| status.delete! }
   end
 
-  after(:all)  { Lev.configuration.job_store = @original_job_store }
+  after(:all) do
+    Jobba.all.to_a.each { |status| status.delete! }
+  end
 
   before do
     stub_const 'TestRoutine', Class.new
@@ -36,13 +37,13 @@ RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :
       job_id1 = TestRoutine.perform_later
       job_id2 = TestRoutine.perform_later
 
-      job1 = Lev::BackgroundJob.find(job_id1)
-      job2 = Lev::BackgroundJob.find(job_id2)
+      job1 = Api::V1::JobRepresenter.new(Jobba.find(job_id1))
+      job2 = Api::V1::JobRepresenter.new(Jobba.find(job_id2))
 
       api_get :index, admin_token
 
       json_response = JSON.parse(response.body)
-      expect(json_response).to eq([job1.as_json, job2.as_json])
+      expect(json_response).to contain_exactly(job1.as_json, job2.as_json)
     end
   end
 

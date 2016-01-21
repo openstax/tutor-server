@@ -14,6 +14,7 @@ module Api::V1
              type: String,
              readable: true,
              writeable: false,
+             getter: ->(*) { state.name },
              schema_info: { required: true }
 
     property :progress,
@@ -22,10 +23,11 @@ module Api::V1
              writeable: false,
              schema_info: { required: true }
 
-    property :url, if: ->(*) { respond_to?(:url) },
+    property :url,
              type: String,
              readable: true,
              writeable: false,
+             getter: ->(*) { data.try :[], 'url' },
              schema_info: { required: false }
 
     collection :errors,

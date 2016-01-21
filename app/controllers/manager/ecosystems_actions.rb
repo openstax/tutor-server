@@ -2,11 +2,11 @@ module Manager::EcosystemsActions
 
   def index
     @ecosystems = Content::ListEcosystems[]
-    @incomplete_jobs = Lev::BackgroundJob.incomplete.select do |job|
-      job.respond_to?(:ecosystem_import_url)
+    @incomplete_jobs = Jobba.where(state: :incomplete).to_a.select do |job|
+      job.data.try :[], 'ecosystem_import_url'
     end
-    @failed_jobs = Lev::BackgroundJob.failed.select do |job|
-      job.respond_to?(:ecosystem_import_url)
+    @failed_jobs = Jobba.where(state: :failed).to_a.select do |job|
+      job.data.try :[], 'ecosystem_import_url'
     end
   end
 
@@ -53,7 +53,7 @@ module Manager::EcosystemsActions
       book_cnx_id: params[:cnx_id],
       comments: params[:comments]
     )
-    job = Lev::BackgroundJob.find(job_id)
+    job = Jobba.find(job_id)
     import_url = OpenStax::Cnx::V1.url_for(params[:cnx_id])
     job.save(ecosystem_import_url: import_url)
     job

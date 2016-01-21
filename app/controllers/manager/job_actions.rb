@@ -6,16 +6,14 @@ module Manager::JobActions
   end
 
   def index
-    @jobs = Lev::BackgroundJob.all
+    @jobs = Jobba.all.to_a
     @job_url_proc = job_url_proc
     render 'manager/jobs/index'
   end
 
   def show
-    @job = Lev::BackgroundJob.find(params[:id])
-    @custom_fields = @job.as_json.select do |k, _|
-      !%(id progress status errors).include?(k)
-    end
+    @job = Jobba.find(params[:id])
+    @custom_fields = @job.data
     render 'manager/jobs/show'
   end
 end

@@ -168,7 +168,7 @@ class DemoBase
           if OpenStax::Biglearn::V1.client.is_a? OpenStax::Biglearn::V1::FakeClient
 
         # demo work uses jobs to send info to Exchange
-        Lev.configuration.job_store.reconnect
+        Jobba.redis.client.reconnect
 
         if transaction
           ActiveRecord::Base.transaction do

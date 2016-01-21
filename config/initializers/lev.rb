@@ -1,10 +1,6 @@
-redis_secrets = Rails.application.secrets['redis']
-
 Lev.configure do |config|
   config.raise_fatal_errors = false
-  config.job_store = ActiveSupport::Cache::RedisStore.new(
-    url: redis_secrets['url'],
-    namespace: redis_secrets['namespaces']['lev']
-  )
   config.job_class = ActiveJob::BaseWithRetryConditions
+  config.create_status_proc = ->(*) { Jobba.create! }
+  config.find_status_proc = ->(id) { Jobba.find!(id) }
 end

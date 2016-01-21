@@ -7,7 +7,7 @@
     <span>incomplete</span>&nbsp;|
     <%= link_to 'succeeded', '#succeeded', class: 'filter_job_status' %>&nbsp;|
     <%= link_to 'queued', '#queued', class: 'filter_job_status' %>&nbsp;|
-    <%= link_to 'working', '#working', class: 'filter_job_status' %>&nbsp;|
+    <%= link_to 'started', '#started', class: 'filter_job_status' %>&nbsp;|
     <%= link_to 'failed', '#failed', class: 'filter_job_status' %>&nbsp;|
     <%= link_to 'killed', '#killed', class: 'filter_job_status' %>&nbsp;|
     <%= link_to 'unknown', '#unknown', class: 'filter_job_status' %>
@@ -30,9 +30,9 @@
 
   <tbody>
     <% @jobs.each do |job| %>
-      <tr class='<%= job.status %>'>
+      <tr class='<%= job.state.name %>'>
         <td class='job_id'><%= link_to job.id, instance_exec(job, &@job_url_proc) %></td>
-        <td class='job_status'><%= job.status %></td>
+        <td class='job_status'><%= job.state.name %></td>
         <td class='job_progress'><%= number_to_percentage(job.progress.to_f * 100, precision: 0) %></td>
       </tr>
     <% end %>
