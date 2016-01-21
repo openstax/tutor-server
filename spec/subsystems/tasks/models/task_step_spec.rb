@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Tasks::Models::TaskStep, :type => :model do
+RSpec.describe Tasks::Models::TaskStep, type: :model do
   subject(:task_step) { FactoryGirl.create :tasks_task_step }
 
   it { is_expected.to belong_to(:task) }
@@ -59,7 +59,8 @@ RSpec.describe Tasks::Models::TaskStep, :type => :model do
       "default_group"         => "default",
       "core_group"            => "core",
       "spaced_practice_group" => "spaced practice",
-      "personalized_group"    => "personalized"
+      "personalized_group"    => "personalized",
+      "recovery_group"        => "recovery"
     }
 
     Tasks::Models::TaskStep.group_types.keys.each do |group_type|

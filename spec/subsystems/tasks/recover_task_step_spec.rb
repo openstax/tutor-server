@@ -75,6 +75,7 @@ RSpec.describe Tasks::RecoverTaskStep, type: :routine do
     }.to change{ recovery_step = task_step.reload.next_by_number }
 
     expect(result.errors).to be_empty
+    expect(recovery_step.group_type).to eq 'recovery_group'
     recovery_tasked = recovery_step.tasked
     expect(recovery_tasked.url).to eq recovery_exercise.url
     expect(recovery_tasked.title).to eq recovery_exercise.title
@@ -90,6 +91,7 @@ RSpec.describe Tasks::RecoverTaskStep, type: :routine do
     expect(result.errors).to be_empty
 
     outputs = result.outputs
+    expect(outputs.recovery_step.group_type).to eq 'recovery_group'
     expect(outputs.recovery_step.tasked.url).to eq recovery_exercise.url
     expect(outputs.recovery_step.tasked.title).to eq recovery_exercise.title
     expect(outputs.recovery_step.tasked.content).to eq recovery_exercise.content

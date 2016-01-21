@@ -2,7 +2,8 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   sortable_belongs_to :task, on: :number, inverse_of: :task_steps, touch: true
   belongs_to :tasked, polymorphic: true, dependent: :destroy, inverse_of: :task_step, touch: true
 
-  enum group_type: [:default_group, :core_group, :spaced_practice_group, :personalized_group]
+  enum group_type: [:default_group, :core_group, :spaced_practice_group,
+                    :personalized_group, :recovery_group]
 
   serialize :related_content, Array
   serialize :labels, Array
@@ -14,10 +15,10 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
 
   delegate :can_be_answered?, :can_be_recovered?, :has_correctness?, to: :tasked
 
-  scope :complete, -> { where{first_completed_at != nil} }
+  scope :complete,   -> { where{first_completed_at != nil} }
   scope :incomplete, -> { where{first_completed_at == nil} }
 
-  scope :exercises, -> { where{tasked_type == Tasks::Models::TaskedExercise.name} }
+  scope :exercises,  -> { where{tasked_type == Tasks::Models::TaskedExercise.name} }
 
   after_save { task.update_step_counts! }
 
