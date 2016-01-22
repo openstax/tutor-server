@@ -77,14 +77,10 @@ RSpec.describe ExportData do
       expect(data['Step ID']).to eq(step.id)
       expect(data['Step Type']).to eq('Reading')
       expect(data['Group']).to eq(step.group_name)
-      expect(data['First Completed At'].beginning_of_minute).to eq(
-        step.first_completed_at.beginning_of_minute)
-      expect(data['Last Completed At'].beginning_of_minute).to eq(
-        step.last_completed_at.beginning_of_minute)
-      expect(data['Opens At'].beginning_of_minute).to eq(
-        step.task.opens_at.beginning_of_minute)
-      expect(data['Due At'].beginning_of_minute).to eq(
-        step.task.due_at.beginning_of_minute)
+      expect(data['First Completed At']).to eq(step.first_completed_at.iso8601)
+      expect(data['Last Completed At']).to eq(step.last_completed_at.iso8601)
+      expect(data['Opens At']).to eq(step.task.opens_at.iso8601)
+      expect(data['Due At']).to eq(step.task.due_at.iso8601)
       expect(data['URL']).to eq(step.tasked.url)
       expect(data['Correct Answer ID']).to eq(nil)
       expect(data['Answer ID']).to eq(nil)

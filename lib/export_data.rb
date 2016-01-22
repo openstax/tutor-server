@@ -106,10 +106,10 @@ class ExportData
           step.number,
           type,
           step.group_name,
-          [step.first_completed_at, style: date],
-          [step.last_completed_at, style: date],
-          [step.task.opens_at, style: date],
-          [step.task.due_at, style: date],
+          [step.first_completed_at.try(:iso8601)],
+          [step.last_completed_at.try(:iso8601)],
+          [step.task.opens_at.try(:iso8601)],
+          [step.task.due_at.try(:iso8601)],
           url
         ]
 
