@@ -7,15 +7,28 @@ class GetHistory
     tasks = Tasks::Models::Task.joins{[task_plan.outer, taskings]}
                                .where(taskings: { entity_role_id: role.id })
                                .order{[due_at.desc, task_plan.created_at.desc, created_at.desc]}
-                               .preload([{task_plan: :ecosystem},
-                                         {tasked_exercises: {exercise: :page}}])
+                               .preload([
+                                 {task_plan: :ecosystem},
+                                 {tasked_exercises: {exercise: {page: :reading_dynamic_pool}}}
+                               ])
 
     tasks = tasks.where(task_type: Tasks::Models::Task.task_types[type]) unless type == :all
 
-    tasks = tasks.where{ id != current_task.id }.to_a.unshift(current_task) \
-      unless current_task.nil?
+    current_task_id = current_task.id unless current_task.nil?
 
-    outputs[:tasks] = tasks.to_a
+    # Remove the current task and reading tasks without dynamic exercises from the history
+    tasks = tasks.to_a.select do |task|
+      next false if task.id == current_task_id
+      next true if task.task_type != 'reading'
+
+      pages = task.tasked_exercises.map{ |te| te.exercise.page }.uniq
+      !pages.all?{ |page| page.reading_dynamic_pool.exercises.empty? }
+    end
+
+    # Always put the current_task at the top of the list, if given
+    tasks = tasks.unshift(current_task) unless current_task.nil?
+
+    outputs[:tasks] = tasks
 
     outputs[:ecosystems] = tasks.collect do |task|
       model = task.task_plan.try(:ecosystem)
