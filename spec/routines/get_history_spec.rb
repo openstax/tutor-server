@@ -9,18 +9,18 @@ describe GetHistory, type: :routine, speed: :slow do
     )
 
     period = FactoryGirl.create :course_membership_period
-    @course = period.course
+    course = period.course
 
     user = FactoryGirl.create :user
 
     @role = AddUserAsPeriodStudent[user: user, period: period]
 
-    reading_plan_1 = FactoryGirl.create(:tasked_task_plan, owner: @course)
+    reading_plan_1 = FactoryGirl.create(:tasked_task_plan, owner: course)
     page_ids_1 = reading_plan_1.settings['page_ids']
     pages_1 = Content::Models::Page.where(id: page_ids_1).to_a
     homework_exercises_1 = pages_1.flat_map(&:exercises).sort_by(&:uid).first(5)
     homework_plan_1 = FactoryGirl.create(
-      :tasked_task_plan, owner: @course,
+      :tasked_task_plan, owner: course,
                          type: 'homework',
                          assistant: homework_assistant,
                          ecosystem: pages_1.first.ecosystem,
@@ -28,12 +28,12 @@ describe GetHistory, type: :routine, speed: :slow do
                                      'exercises_count_dynamic' => 2 }
     )
 
-    reading_plan_2 = FactoryGirl.create(:tasked_task_plan, owner: @course)
+    reading_plan_2 = FactoryGirl.create(:tasked_task_plan, owner: course)
     page_ids_2 = reading_plan_2.settings['page_ids']
     pages_2 = Content::Models::Page.where(id: page_ids_2).to_a
     homework_exercises_2 = pages_2.flat_map(&:exercises).sort_by(&:uid).first(4)
     homework_plan_2 = FactoryGirl.create(
-      :tasked_task_plan, owner: @course,
+      :tasked_task_plan, owner: course,
                          type: 'homework',
                          assistant: homework_assistant,
                          ecosystem: pages_2.first.ecosystem,
@@ -41,12 +41,12 @@ describe GetHistory, type: :routine, speed: :slow do
                                      'exercises_count_dynamic' => 3 }
     )
 
-    reading_plan_3 = FactoryGirl.create(:tasked_task_plan, owner: @course)
+    reading_plan_3 = FactoryGirl.create(:tasked_task_plan, owner: course)
     page_ids_3 = reading_plan_3.settings['page_ids']
     pages_3 = Content::Models::Page.where(id: page_ids_3).to_a
     homework_exercises_3 = pages_3.flat_map(&:exercises).sort_by(&:uid).first(3)
     homework_plan_3 = FactoryGirl.create(
-      :tasked_task_plan, owner: @course,
+      :tasked_task_plan, owner: course,
                          type: 'homework',
                          assistant: homework_assistant,
                          ecosystem: pages_3.first.ecosystem,
@@ -90,9 +90,10 @@ describe GetHistory, type: :routine, speed: :slow do
 
   context 'when creating a new reading task' do
     let(:new_task) { FactoryGirl.build :tasks_task, tasked_to: @role  }
-    let(:correct_tasks) { [new_task, @reading_task_3, @reading_task_2, @reading_task_1] }
 
     context 'when all tasks have dynamic reading exercises' do
+      let(:correct_tasks) { [new_task, @reading_task_3, @reading_task_2, @reading_task_1] }
+
       it 'returns the correct history' do
         history = described_class.call(role: @role, type: :reading, current_task: new_task).outputs
         expect(history.tasks).to eq correct_tasks
@@ -103,11 +104,10 @@ describe GetHistory, type: :routine, speed: :slow do
     end
 
     context 'when some tasks don\'t have dynamic reading exercises' do
+      let(:correct_tasks) { [new_task, @reading_task_2, @reading_task_1] }
+
       before(:each) do
-        reading_plan_4 = FactoryGirl.create(:tasked_task_plan, owner: @course)
-        page_ids_4 = reading_plan_4.settings['page_ids']
-        pages_4 = Content::Models::Page.where(id: page_ids_4).to_a
-        pages_4.each do |page|
+        @reading_task_3.reload.tasked_exercises.map{ |te| te.exercise.page }.uniq.each do |page|
           page.reading_dynamic_pool.update_attribute(:content_exercise_ids, [])
         end
       end
@@ -123,7 +123,7 @@ describe GetHistory, type: :routine, speed: :slow do
   end
 
   context 'when creating a new homework task' do
-    let(:new_task)      { FactoryGirl.build :tasks_task, tasked_to: @role, task_type: :homework  }
+    let(:new_task)      { FactoryGirl.build :tasks_task, tasked_to: @role, task_type: :homework }
     let(:correct_tasks) { [new_task, @homework_task_3, @homework_task_2, @homework_task_1] }
 
     it 'returns the correct history' do
@@ -137,10 +137,11 @@ describe GetHistory, type: :routine, speed: :slow do
 
   context 'when creating a new practice task' do
     let(:new_task) { FactoryGirl.build :tasks_task, tasked_to: @role, task_type: :mixed_practice  }
-    let(:correct_tasks) { [new_task, @homework_task_3, @reading_task_3, @homework_task_2,
-                           @reading_task_2, @homework_task_1, @reading_task_1] }
 
     context 'when all reading tasks have dynamic reading exercises' do
+      let(:correct_tasks) { [new_task, @homework_task_3, @reading_task_3, @homework_task_2,
+                             @reading_task_2, @homework_task_1, @reading_task_1] }
+
       it 'returns the correct history' do
         history = described_class.call(role: @role, type: :all, current_task: new_task).outputs
         expect(history.tasks).to eq correct_tasks
@@ -151,11 +152,11 @@ describe GetHistory, type: :routine, speed: :slow do
     end
 
     context 'when some reading tasks don\'t have dynamic reading exercises' do
+      let(:correct_tasks) { [new_task, @homework_task_3, @homework_task_2,
+                             @reading_task_2, @homework_task_1, @reading_task_1] }
+
       before(:each) do
-        reading_plan_4 = FactoryGirl.create(:tasked_task_plan, owner: @course)
-        page_ids_4 = reading_plan_4.settings['page_ids']
-        pages_4 = Content::Models::Page.where(id: page_ids_4).to_a
-        pages_4.each do |page|
+        @reading_task_3.reload.tasked_exercises.map{ |te| te.exercise.page }.uniq.each do |page|
           page.reading_dynamic_pool.update_attribute(:content_exercise_ids, [])
         end
       end
@@ -171,10 +172,10 @@ describe GetHistory, type: :routine, speed: :slow do
   end
 
   context 'when creating a "try another" step' do
-    let(:correct_tasks) { [@homework_task_3, @reading_task_3, @homework_task_2,
-                           @reading_task_2, @homework_task_1, @reading_task_1] }
-
     context 'when all reading tasks have dynamic reading exercises' do
+      let(:correct_tasks) { [@homework_task_3, @reading_task_3, @homework_task_2,
+                             @reading_task_2, @homework_task_1, @reading_task_1] }
+
       it 'returns the correct history' do
         history = described_class.call(role: @role, type: :all).outputs
         expect(history.tasks).to eq correct_tasks
@@ -185,11 +186,11 @@ describe GetHistory, type: :routine, speed: :slow do
     end
 
     context 'when some reading tasks don\'t have dynamic reading exercises' do
+      let(:correct_tasks) { [@homework_task_3, @homework_task_2,
+                             @reading_task_2, @homework_task_1, @reading_task_1] }
+
       before(:each) do
-        reading_plan_4 = FactoryGirl.create(:tasked_task_plan, owner: @course)
-        page_ids_4 = reading_plan_4.settings['page_ids']
-        pages_4 = Content::Models::Page.where(id: page_ids_4).to_a
-        pages_4.each do |page|
+        @reading_task_3.reload.tasked_exercises.map{ |te| te.exercise.page }.uniq.each do |page|
           page.reading_dynamic_pool.update_attribute(:content_exercise_ids, [])
         end
       end

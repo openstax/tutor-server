@@ -151,7 +151,7 @@ class Tasks::Assistants::IReadingAssistant
     # Get taskee's reading history
     history = GetHistory.call(role: taskee, type: :reading, current_task: task).outputs
 
-    core_exercise_numbers = history.exercises.first.map(&:number) rescue debugger
+    core_exercise_numbers = history.exercises.first.map(&:number)
     all_worked_exercise_numbers = history.exercises.flatten.map(&:number)
 
     spaced_practice_status = []
