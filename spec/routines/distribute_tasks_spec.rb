@@ -34,6 +34,19 @@ RSpec.describe DistributeTasks, type: :routine do
       expect(result.errors).to be_empty
       expect(task_plan.reload.published_at).to be_within(1.second).of(Time.now)
     end
+
+    it 'fails to publish the task_plan if one or more tasks would be empty' do
+      original_build_tasks = DummyAssistant.instance_method(:build_tasks)
+      allow_any_instance_of(DummyAssistant).to receive(:build_tasks) do |receiver|
+        entity_tasks = original_build_tasks.bind(receiver).call
+        entity_tasks.each{ |et| et.task.task_steps.destroy_all }
+      end
+
+      expect(task_plan.tasks).to be_empty
+      result = DistributeTasks.call(task_plan)
+      expect(result.errors.first.code).to eq :empty_tasks
+      expect(task_plan.tasks).to be_empty
+    end
   end
 
   context 'published task_plan' do
