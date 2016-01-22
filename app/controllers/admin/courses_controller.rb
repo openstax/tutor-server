@@ -69,7 +69,8 @@ class Admin::CoursesController < Admin::BaseController
       courses.each do |course|
         job_id = CourseContent::AddEcosystemToCourse.perform_later(
           course: Marshal.dump(course.reload),
-          ecosystem: Marshal.dump(ecosystem))
+          ecosystem: Marshal.dump(ecosystem)
+        )
         job = Jobba.find(job_id)
         job.save(course_ecosystem: ecosystem.title, course_id: course.id)
       end
@@ -102,12 +103,11 @@ class Admin::CoursesController < Admin::BaseController
       if GetCourseEcosystem[course: course] == ecosystem
         flash[:notice] = "Course ecosystem \"#{ecosystem.title}\" is already selected for \"#{course.profile.name}\""
       else
-        begin
-          CourseContent::AddEcosystemToCourse[course: course, ecosystem: ecosystem]
-          flash[:notice] = "Course ecosystem \"#{ecosystem.title}\" selected for \"#{course.profile.name}\""
-        rescue Content::MapInvalidError => e
-          flash[:error] = e.message
-        end
+        CourseContent::AddEcosystemToCourse.perform_later(
+          course: Marshal.dump(course.reload),
+          ecosystem: Marshal.dump(ecosystem)
+        )
+        flash[:notice] = "Course ecosystem update to \"#{ecosystem.title}\" queued for \"#{course.profile.name}\""
       end
     end
 
