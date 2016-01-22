@@ -35,11 +35,11 @@ RSpec.describe DistributeTasks, type: :routine do
       expect(task_plan.reload.published_at).to be_within(1.second).of(Time.now)
     end
 
-    it 'fails to publish the task_plan if one or more tasks would be empty' do
+    it 'fails to publish the task_plan if one or more non-stepless tasks would be empty' do
       original_build_tasks = DummyAssistant.instance_method(:build_tasks)
       allow_any_instance_of(DummyAssistant).to receive(:build_tasks) do |receiver|
         entity_tasks = original_build_tasks.bind(receiver).call
-        entity_tasks.each{ |et| et.task.task_steps.destroy_all }
+        entity_tasks.each{ |et| et.task.task_type = :reading }
       end
 
       expect(task_plan.tasks).to be_empty
