@@ -207,7 +207,7 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
 
             student.reload
             expect(student.persisted?).to eq true
-            expect(student.active?).to eq false
+            expect(student.deleted?).to eq true
           end
         end
 
@@ -216,7 +216,7 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
             expect{
               api_delete :destroy, student_token, parameters: valid_params
             }.to raise_error(SecurityTransgression)
-            expect(student.reload.destroyed?).to eq false
+            expect(student.reload.deleted?).to eq false
           end
         end
       end
@@ -226,7 +226,7 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
           expect{
             api_delete :destroy, userless_token, parameters: valid_params
           }.to raise_error(SecurityTransgression)
-          expect(student.reload.destroyed?).to eq false
+          expect(student.reload.deleted?).to eq false
         end
       end
 
@@ -235,7 +235,7 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
           expect{
             api_delete :destroy, nil, parameters: valid_params
           }.to raise_error(SecurityTransgression)
-          expect(student.reload.destroyed?).to eq false
+          expect(student.reload.deleted?).to eq false
         end
       end
     end
@@ -250,7 +250,7 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
 
         student.reload
         expect(student.persisted?).to eq true
-        expect(student.active?).to eq false
+        expect(student.deleted?).to eq true
       end
     end
   end
@@ -270,7 +270,7 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
 
             student.reload
             expect(student.persisted?).to eq true
-            expect(student.active?).to eq true
+            expect(student.deleted?).to eq false
           end
         end
 
@@ -279,7 +279,7 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
             expect{
               api_put :undrop, student_token, parameters: valid_params
             }.to raise_error(SecurityTransgression)
-            expect(student.reload.active?).to eq false
+            expect(student.reload.deleted?).to eq true
           end
         end
       end
@@ -289,7 +289,7 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
           expect{
             api_put :undrop, userless_token, parameters: valid_params
           }.to raise_error(SecurityTransgression)
-          expect(student.reload.active?).to eq false
+          expect(student.reload.deleted?).to eq true
         end
       end
 
@@ -298,7 +298,7 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
           expect{
             api_put :undrop, nil, parameters: valid_params
           }.to raise_error(SecurityTransgression)
-          expect(student.reload.active?).to eq false
+          expect(student.reload.deleted?).to eq true
         end
       end
     end
@@ -311,7 +311,7 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
 
         student.reload
         expect(student.persisted?).to eq true
-        expect(student.active?).to eq true
+        expect(student.deleted?).to eq false
       end
     end
   end

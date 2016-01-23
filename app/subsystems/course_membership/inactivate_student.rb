@@ -3,8 +3,8 @@ module CourseMembership
     lev_routine express_output: :student
 
     def exec(student:)
-      fatal_error(code: :already_inactive) unless student.active?
-      student.inactivate.save
+      fatal_error(code: :already_inactive) if student.deleted?
+      student.destroy
       transfer_errors_from(student, { type: :verbatim }, true)
       outputs[:student] = student
     end

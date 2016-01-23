@@ -29,7 +29,7 @@ RSpec.describe User::Models::Profile, type: :model do
     profile1 = FactoryGirl.create(:user_profile)
     id = profile1.id
     profile1.delete
-    expect(described_class.where(id: id).one?).to be_truthy
+    expect(described_class.with_deleted.where(id: id).one?).to be_truthy
     expect(profile1.deleted_at).to be_present
   end
 
@@ -37,7 +37,7 @@ RSpec.describe User::Models::Profile, type: :model do
     profile1 = FactoryGirl.create(:user_profile)
     id = profile1.id
     profile1.destroy
-    expect(described_class.where(id: id).one?).to be_truthy
+    expect(described_class.with_deleted.where(id: id).one?).to be_truthy
     expect(profile1.deleted_at).to be_present
   end
 
@@ -46,7 +46,7 @@ RSpec.describe User::Models::Profile, type: :model do
     id = profile1.id
     profile1.destroy
     expect(profile1.deleted_at).to be_present
-    profile1.undelete
+    profile1.restore
     expect(profile1.deleted_at).to be_nil
   end
 end

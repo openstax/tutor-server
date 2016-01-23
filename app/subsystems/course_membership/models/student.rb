@@ -1,4 +1,6 @@
 class CourseMembership::Models::Student < Tutor::SubSystems::BaseModel
+  acts_as_paranoid
+
   belongs_to :course, subsystem: :entity
   belongs_to :role, subsystem: :entity
 
@@ -13,22 +15,6 @@ class CourseMembership::Models::Student < Tutor::SubSystems::BaseModel
 
   delegate :username, :first_name, :last_name, :full_name, :name, to: :role
   delegate :period, :course_membership_period_id, to: :latest_enrollment
-
-  scope :active, -> { where(inactive_at: nil) }
-
-  def active?
-    inactive_at.nil?
-  end
-
-  def inactivate(time = Time.current)
-    self.inactive_at = time
-    self
-  end
-
-  def activate
-    self.inactive_at = nil
-    self
-  end
 
   def latest_enrollment
     enrollments.last

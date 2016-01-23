@@ -12,7 +12,7 @@ class CourseMembership::AddEnrollment
     transfer_errors_from(outputs[:enrollment], {type: :verbatim}, true)
 
     student.enrollments << outputs[:enrollment]
-    student.activate.save! unless student.active?
+    student.restore if student.deleted?
     outputs[:student] = student
 
     ReassignPublishedPeriodTaskPlans.perform_later(period: period.to_model) \

@@ -1,5 +1,5 @@
 class Role::Models::RoleUser < Tutor::SubSystems::BaseModel
-  belongs_to :profile, subsystem: :user
+  belongs_to :profile, -> { with_deleted }, subsystem: :user
   belongs_to :role, subsystem: :entity
 
   validates :profile, presence: true

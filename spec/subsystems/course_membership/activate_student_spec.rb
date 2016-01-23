@@ -5,17 +5,18 @@ describe CourseMembership::ActivateStudent, type: :routine do
   let!(:course)  { student.course }
 
   context "inactive student" do
-    before { student.inactivate.save! }
+    before { student.destroy }
 
     it "activates the student" do
       result = nil
       expect {
         result = described_class.call(student: student)
-      }.not_to change{ CourseMembership::Models::Student.count }
+      }.to change{ CourseMembership::Models::Student.count }.by(1)
       expect(result.errors).to be_empty
 
       expect(student.reload.course).to eq course
-      expect(student).to be_active
+      expect(student).to be_persisted
+      expect(student).not_to be_deleted
     end
   end
 
@@ -23,7 +24,8 @@ describe CourseMembership::ActivateStudent, type: :routine do
     it "returns an error" do
       result = described_class.call(student: student)
       expect(result.errors.first.code).to eq :already_active
-      expect(student).to be_active
+      expect(student).to be_persisted
+      expect(student).not_to be_deleted
     end
   end
 end

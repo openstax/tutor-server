@@ -2,24 +2,18 @@ require 'rails_helper'
 
 describe ChooseCourseRole, type: :routine do
 
-  let(:teacher) { FactoryGirl.create(:user) }
-  let(:student) { FactoryGirl.create(:user) }
-  let(:interloper){ FactoryGirl.create(:user) }
-  let(:course){ Entity::Course.create! }
-  let(:period){ CreatePeriod[course: course] }
+  let(:teacher)       { FactoryGirl.create(:user) }
+  let(:student)       { FactoryGirl.create(:user) }
+  let(:interloper)    { FactoryGirl.create(:user) }
+  let(:course)        { Entity::Course.create! }
+  let(:period)        { CreatePeriod[course: course] }
 
   let!(:teacher_role) {
-    role = Entity::Role.create!(role_type: :teacher)
-    Role::AddUserRole[user: teacher, role: role]
-    CourseMembership::AddTeacher[course: course, role: role]
-    role
+    AddUserAsCourseTeacher[user: teacher, course: course]
   }
 
   let!(:student_role) {
-    role = Entity::Role.create!
-    Role::AddUserRole[user: student, role: role]
-    CourseMembership::AddStudent[period: period, role: role]
-    role
+    AddUserAsPeriodStudent[user: student, period: period]
   }
 
   context "when the user is both a teacher and a student" do
@@ -27,17 +21,11 @@ describe ChooseCourseRole, type: :routine do
     let(:user) { FactoryGirl.create(:user) }
 
     let!(:user_teacher_role) {
-      role = Entity::Role.create!
-      Role::AddUserRole[user: user, role: role]
-      CourseMembership::AddTeacher[course: course, role: role]
-      role
+      AddUserAsCourseTeacher[user: user, course: course]
     }
 
     let!(:user_student_role) {
-      role = Entity::Role.create!
-      Role::AddUserRole[user: user, role: role]
-      CourseMembership::AddStudent[period: period, role: role]
-      role
+      AddUserAsPeriodStudent[user: user, period: period]
     }
 
     context "and a role id is not given" do
@@ -119,7 +107,7 @@ describe ChooseCourseRole, type: :routine do
 
       context "and the student is inactive" do
         subject do
-          student_role.student.inactivate.save!
+          student_role.student.destroy
           ChooseCourseRole.call(user: teacher, course: course, role_id: student_role.id)
         end
 
@@ -170,9 +158,7 @@ describe ChooseCourseRole, type: :routine do
       context "when one is a teacher" do
         let(:role_type) { :any }
         subject(:found) {
-          role = Entity::Role.create!(role_type: :student)
-          Role::AddUserRole[user: teacher, role: role]
-          CourseMembership::AddStudent[period: period, role: role]
+          role = AddUserAsPeriodStudent[user: teacher, period: period]
           ChooseCourseRole.call(
             user: teacher, course: course, allowed_role_type: role_type
           ).outputs.role
@@ -189,6 +175,7 @@ describe ChooseCourseRole, type: :routine do
       end
 
       it "fails with an error if one is not a teacher" do
+        # Bypass AddUserAsPeriodStudent's error checking
         role = Entity::Role.create(role_type: :student)
         Role::AddUserRole[user: student, role: role]
         CourseMembership::AddStudent[period: period, role: role]

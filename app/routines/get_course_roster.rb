@@ -4,7 +4,7 @@ class GetCourseRoster
   protected
 
   def exec(course:)
-    students = course.students.includes(:enrollments, role: { profile: :account })
+    students = course.students.with_deleted.includes(:enrollments, role: { profile: :account })
 
     outputs.roster = {
       teacher_join_url: UrlGenerator.new.join_course_url(course.teacher_join_token),
@@ -18,7 +18,7 @@ class GetCourseRoster
           entity_role_id: student.entity_role_id,
           username: student.username,
           deidentifier: student.deidentifier,
-          :active? => student.active?
+          active?: !student.deleted?
         })
       end
     }

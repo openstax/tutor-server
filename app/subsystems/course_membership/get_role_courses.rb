@@ -17,8 +17,9 @@ class CourseMembership::GetRoleCourses
     courses = []
 
     if types.include?(:student)
-      courses_as_student = Entity::Course.joins{students}.where{students.entity_role_id.in role_ids}
-      courses_as_student = courses_as_student.where(students: { inactive_at: nil }) \
+      courses_as_student = Entity::Course.joins{students}
+                                         .where{students.entity_role_id.in role_ids}
+      courses_as_student = courses_as_student.where(students: { deleted_at: nil }) \
         unless include_inactive_students
       courses += courses_as_student
     end

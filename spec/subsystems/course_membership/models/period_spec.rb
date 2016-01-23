@@ -18,10 +18,16 @@ RSpec.describe CourseMembership::Models::Period, type: :model do
   it 'cannot be deleted if it has any active students' do
     student_user = FactoryGirl.create(:user)
     AddUserAsPeriodStudent[period: period, user: student_user]
-    expect { period.destroy }.not_to change{CourseMembership::Models::Period.count}
+    expect{ period.destroy }.not_to change{CourseMembership::Models::Period.count}
     expect(period.errors).not_to be_empty
-    period.enrollments.each{ |en| en.student.inactivate.save! }
-    expect { period.destroy }.to change{CourseMembership::Models::Period.count}.by(-1)
+    period.enrollments.each{ |en| en.student.destroy }
+    expect{ period.destroy }.to change{CourseMembership::Models::Period.count}.by(-1)
+  end
+
+  it 'does not collide in name with deleted periods' do
+    period.enrollments.each{ |en| en.student.destroy }
+    expect{ period.destroy }.to change{CourseMembership::Models::Period.count}.by(-1)
+    CreatePeriod[course: Entity::Course.create!, name: period.name]
   end
 
   it 'validates format of default times' do

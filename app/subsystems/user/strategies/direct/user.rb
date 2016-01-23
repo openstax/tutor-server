@@ -4,8 +4,7 @@ module User
       class User < Entity
         wraps ::User::Models::Profile
 
-        exposes :all, :create, :create!, :find, :anonymous,
-          from_class: ::User::Models::Profile
+        exposes :all, :create, :create!, :find, :anonymous, from_class: ::User::Models::Profile
 
         exposes :account, :exchange_read_identifier, :exchange_write_identifier,
                 :username, :first_name, :last_name, :full_name, :title, :name,
@@ -35,7 +34,7 @@ module User
           end
 
           def find_by_account_id(account_id)
-            profile = ::User::Models::Profile.find_by(account_id: account_id)
+            profile = ::User::Models::Profile.with_deleted.find_by(account_id: account_id)
             return if profile.nil?
 
             strategy = new(profile)
@@ -43,7 +42,8 @@ module User
           end
 
           def find_by_username(username)
-            profile = ::User::Models::Profile.joins(:account)
+            profile = ::User::Models::Profile.with_deleted
+                                             .joins(:account)
                                              .where(account: { username: username }).take
             return if profile.nil?
 

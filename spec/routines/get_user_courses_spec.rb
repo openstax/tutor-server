@@ -47,7 +47,7 @@ RSpec.describe GetUserCourses, type: :routine do
     AddUserAsCourseTeacher[user: user, course: course_2]
     course_3_role = AddUserAsPeriodStudent[user: user, period: course_3_period]
 
-    course_3_role.student.inactivate.save!
+    course_3_role.student.destroy
 
     courses = GetUserCourses[user: user, types: :student]
 
