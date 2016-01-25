@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe GetHistory, type: :routine do
+describe GetHistory, type: :routine, speed: :slow do
   before(:all) do
     DatabaseCleaner.start
 
@@ -89,22 +89,42 @@ describe GetHistory, type: :routine do
   end
 
   context 'when creating a new reading task' do
-    let(:new_task)           { FactoryGirl.build :tasks_task, tasked_to: @role  }
-    let(:correct_tasks)      { [new_task, @reading_task_3, @reading_task_2, @reading_task_1] }
+    let(:new_task) { FactoryGirl.build :tasks_task, tasked_to: @role  }
 
-    it 'returns the correct history' do
-      history = described_class.call(role: @role, type: :reading, current_task: new_task).outputs
-      expect(history.tasks).to eq correct_tasks
-      expect(history.ecosystems).to eq correct_ecosystems
-      history_exercise_sets = history.exercises.collect{ |exercises| Set.new exercises }
-      expect(history_exercise_sets).to eq correct_exercise_sets
+    context 'when all tasks have dynamic reading exercises' do
+      let(:correct_tasks) { [new_task, @reading_task_3, @reading_task_2, @reading_task_1] }
+
+      it 'returns the correct history' do
+        history = described_class.call(role: @role, type: :reading, current_task: new_task).outputs
+        expect(history.tasks).to eq correct_tasks
+        expect(history.ecosystems).to eq correct_ecosystems
+        history_exercise_sets = history.exercises.collect{ |exercises| Set.new exercises }
+        expect(history_exercise_sets).to eq correct_exercise_sets
+      end
+    end
+
+    context 'when some tasks don\'t have dynamic reading exercises' do
+      let(:correct_tasks) { [new_task, @reading_task_2, @reading_task_1] }
+
+      before(:each) do
+        @reading_task_3.reload.tasked_exercises.map{ |te| te.exercise.page }.uniq.each do |page|
+          page.reading_dynamic_pool.update_attribute(:content_exercise_ids, [])
+        end
+      end
+
+      it 'does not return tasks with no dynamic reading exercises' do
+        history = described_class.call(role: @role, type: :reading, current_task: new_task).outputs
+        expect(history.tasks).to eq correct_tasks
+        expect(history.ecosystems).to eq correct_ecosystems
+        history_exercise_sets = history.exercises.collect{ |exercises| Set.new exercises }
+        expect(history_exercise_sets).to eq correct_exercise_sets
+      end
     end
   end
 
   context 'when creating a new homework task' do
-    let(:new_task)           { FactoryGirl.build :tasks_task, tasked_to: @role,
-                                                              task_type: :homework  }
-    let(:correct_tasks)      { [new_task, @homework_task_3, @homework_task_2, @homework_task_1] }
+    let(:new_task)      { FactoryGirl.build :tasks_task, tasked_to: @role, task_type: :homework }
+    let(:correct_tasks) { [new_task, @homework_task_3, @homework_task_2, @homework_task_1] }
 
     it 'returns the correct history' do
       history = described_class.call(role: @role, type: :homework, current_task: new_task).outputs
@@ -116,30 +136,72 @@ describe GetHistory, type: :routine do
   end
 
   context 'when creating a new practice task' do
-    let(:new_task)           { FactoryGirl.build :tasks_task, tasked_to: @role,
-                                                              task_type: :mixed_practice  }
-    let(:correct_tasks)      { [new_task, @homework_task_3, @reading_task_3, @homework_task_2,
-                                @reading_task_2, @homework_task_1, @reading_task_1] }
+    let(:new_task) { FactoryGirl.build :tasks_task, tasked_to: @role, task_type: :mixed_practice  }
 
-    it 'returns the correct history' do
-      history = described_class.call(role: @role, type: :all, current_task: new_task).outputs
-      expect(history.tasks).to eq correct_tasks
-      expect(history.ecosystems).to eq correct_ecosystems
-      history_exercise_sets = history.exercises.collect{ |exercises| Set.new exercises }
-      expect(history_exercise_sets).to eq correct_exercise_sets
+    context 'when all reading tasks have dynamic reading exercises' do
+      let(:correct_tasks) { [new_task, @homework_task_3, @reading_task_3, @homework_task_2,
+                             @reading_task_2, @homework_task_1, @reading_task_1] }
+
+      it 'returns the correct history' do
+        history = described_class.call(role: @role, type: :all, current_task: new_task).outputs
+        expect(history.tasks).to eq correct_tasks
+        expect(history.ecosystems).to eq correct_ecosystems
+        history_exercise_sets = history.exercises.collect{ |exercises| Set.new exercises }
+        expect(history_exercise_sets).to eq correct_exercise_sets
+      end
+    end
+
+    context 'when some reading tasks don\'t have dynamic reading exercises' do
+      let(:correct_tasks) { [new_task, @homework_task_3, @homework_task_2,
+                             @reading_task_2, @homework_task_1, @reading_task_1] }
+
+      before(:each) do
+        @reading_task_3.reload.tasked_exercises.map{ |te| te.exercise.page }.uniq.each do |page|
+          page.reading_dynamic_pool.update_attribute(:content_exercise_ids, [])
+        end
+      end
+
+      it 'does not return tasks with no dynamic reading exercises' do
+        history = described_class.call(role: @role, type: :all, current_task: new_task).outputs
+        expect(history.tasks).to eq correct_tasks
+        expect(history.ecosystems).to eq correct_ecosystems
+        history_exercise_sets = history.exercises.collect{ |exercises| Set.new exercises }
+        expect(history_exercise_sets).to eq correct_exercise_sets
+      end
     end
   end
 
   context 'when creating a "try another" step' do
-    let(:correct_tasks)      { [@homework_task_3, @reading_task_3, @homework_task_2,
-                                @reading_task_2, @homework_task_1, @reading_task_1] }
+    context 'when all reading tasks have dynamic reading exercises' do
+      let(:correct_tasks) { [@homework_task_3, @reading_task_3, @homework_task_2,
+                             @reading_task_2, @homework_task_1, @reading_task_1] }
 
-    it 'returns the correct history' do
-      history = described_class.call(role: @role, type: :all).outputs
-      expect(history.tasks).to eq correct_tasks
-      expect(history.ecosystems).to eq correct_ecosystems
-      history_exercise_sets = history.exercises.collect{ |exercises| Set.new exercises }
-      expect(history_exercise_sets).to eq correct_exercise_sets
+      it 'returns the correct history' do
+        history = described_class.call(role: @role, type: :all).outputs
+        expect(history.tasks).to eq correct_tasks
+        expect(history.ecosystems).to eq correct_ecosystems
+        history_exercise_sets = history.exercises.collect{ |exercises| Set.new exercises }
+        expect(history_exercise_sets).to eq correct_exercise_sets
+      end
+    end
+
+    context 'when some reading tasks don\'t have dynamic reading exercises' do
+      let(:correct_tasks) { [@homework_task_3, @homework_task_2,
+                             @reading_task_2, @homework_task_1, @reading_task_1] }
+
+      before(:each) do
+        @reading_task_3.reload.tasked_exercises.map{ |te| te.exercise.page }.uniq.each do |page|
+          page.reading_dynamic_pool.update_attribute(:content_exercise_ids, [])
+        end
+      end
+
+      it 'does not return tasks with no dynamic reading exercises' do
+        history = described_class.call(role: @role, type: :all).outputs
+        expect(history.tasks).to eq correct_tasks
+        expect(history.ecosystems).to eq correct_ecosystems
+        history_exercise_sets = history.exercises.collect{ |exercises| Set.new exercises }
+        expect(history_exercise_sets).to eq correct_exercise_sets
+      end
     end
   end
 end

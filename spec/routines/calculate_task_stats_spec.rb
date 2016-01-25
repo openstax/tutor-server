@@ -53,6 +53,8 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
         book_location: [1, 1]
       ).outputs.page
 
+      Content::Routines::PopulateExercisePools[book: page.chapter.book]
+
       course = CreateCourse[name: 'Biology']
       student = FactoryGirl.create(:user)
       AddUserAsPeriodStudent.call(user: student, period: CreatePeriod[course: course])

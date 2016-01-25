@@ -37,7 +37,7 @@ class Tasks::Assistants::IReadingAssistant
     @taskees.collect do |taskee|
       build_ireading_task(
         taskee: taskee,
-        pages:  @pages
+        pages: @pages
       ).entity_task
     end
   end
@@ -58,8 +58,13 @@ class Tasks::Assistants::IReadingAssistant
     task = build_task
 
     add_core_steps!(task: task, pages: pages)
-    add_spaced_practice_exercise_steps!(task: task, taskee: taskee)
-    add_personalized_exercise_steps!(task: task, taskee: taskee)
+
+    # Don't add dynamic exercises if all the reading dynamic exercise pools are empty
+    # This happens, for example, on intro pages
+    unless pages.all?{ |page| page.reading_dynamic_pool.exercises.empty? }
+      add_spaced_practice_exercise_steps!(task: task, taskee: taskee)
+      add_personalized_exercise_steps!(task: task, taskee: taskee)
+    end
 
     task
   end
