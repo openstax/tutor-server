@@ -40,4 +40,11 @@ RSpec.describe Tasks::ExportPerformanceReport, type: :routine, speed: :slow do
     }.not_to raise_error
   end
 
+  it 'does not blow up if the course name has forbidden characters' do
+    @course.profile.update_attribute(:name, "My/\\C00l\r\n\tC0ur$3 :-)")
+    expect {
+      @output_filename = described_class[role: @role, course: @course]
+    }.not_to raise_error
+  end
+
 end
