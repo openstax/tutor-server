@@ -6,6 +6,8 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
                    :page_practice, :mixed_practice, :external,
                    :event, :extra, :concept_coach]
 
+  STEPLESS_TASK_TYPES = [:external, :event]
+
   belongs_to :task_plan, inverse_of: :tasks
 
   # dependent: :destroy will cause and infinite loop and stack overflow
@@ -33,6 +35,10 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   validates :due_at, timeliness: { type: :date }, allow_nil: true
 
   validate :due_at_on_or_after_opens_at
+
+  def stepless?
+    STEPLESS_TASK_TYPES.include?(task_type.to_sym)
+  end
 
   def personalized_placeholder_strategy
     serialized_strategy = read_attribute(:personalized_placeholder_strategy)
