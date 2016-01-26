@@ -60,7 +60,7 @@ RSpec.describe ExportData do
     end
 
     it 'exports data as a xlsx file' do
-      @output_filename = ExportData.call
+      capture_stdout{ @output_filename = ExportData.call }
       expect(File.exists?(@output_filename)).to be true
       expect(@output_filename.ends_with? '.xlsx').to be true
 
