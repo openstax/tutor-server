@@ -14,26 +14,46 @@ module Salesforce
         salesforce_class_name.constantize
       end
 
-      attr_writer :salesforce_object
+      attr_writer :salesforce_object, :attached_to
 
       def salesforce_object
         @salesforce_object ||= salesforce_class.find(salesforce_id)
       end
 
-      def self.load_salesforce_objects
-        all.group_by(&:salesforce_class_name).each do |salesforce_class_name, one_class_models|
-          salesforce_class = salesforce_class_name.constantize
-          salesforce_ids = one_class_models.map(&:salesforce_id)
+      def attached_to
+        @attached_to ||= GlobalID::Locator.locate tutor_gid
+      end
 
-          salesforce_objects = {}
-          salesforce_ids.each_slice(MAX_IDS_PER_REQUEST) do |salesforce_ids|
-            salesforce_objects.merge! salesforce_class.where(id: salesforce_ids).all.index_by(&:id)
-          end
+      def self.preload(what = :all)
+        rel = all
 
-          one_class_models.each do |model|
-            model.salesforce_object = salesforce_objects[model.salesforce_id]
+        if [:all, :salesforce_objects].include?(what)
+          rel = rel.group_by(&:salesforce_class_name)
+                   .each do |salesforce_class_name, one_class_models|
+            salesforce_class = salesforce_class_name.constantize
+            salesforce_ids = one_class_models.map(&:salesforce_id)
+
+            salesforce_objects = {}
+            salesforce_ids.each_slice(MAX_IDS_PER_REQUEST) do |salesforce_ids|
+              salesforce_objects.merge! salesforce_class.where(id: salesforce_ids)
+                                                        .to_a.index_by(&:id)
+            end
+
+            one_class_models.each do |model|
+              model.salesforce_object = salesforce_objects[model.salesforce_id]
+            end
+          end.values.flatten
+        end
+
+        if [:all, :attached_tos].include?(what)
+          tutor_gids = rel.map(&:tutor_gid)
+          attached_tos = GlobalID::Locator.locate_many tutor_gids
+          rel = rel.each_with_index do |attached_record, index|
+            attached_record.attached_to = attached_tos[index]
           end
-        end.values.flatten
+        end
+
+        rel
       end
 
     end

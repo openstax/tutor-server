@@ -7,9 +7,9 @@ RSpec.describe UpdateSalesforceStats, type: :routine do
       record: OpenStruct.new(changed?: true, save_if_changed: nil),
       attached_to: nil
     )
-    allow(Salesforce::AttachedRecord).to receive(:all).and_return([attached_record])
+    allow(Salesforce::AttachedRecord).to receive(:preload).and_return([attached_record])
 
-    outputs = UpdateSalesforceStats.call
+    outputs = UpdateSalesforceStats.call.outputs
 
     expect(outputs[:num_records]).to eq 1
     expect(outputs[:num_errors]).to eq 0
@@ -21,9 +21,9 @@ RSpec.describe UpdateSalesforceStats, type: :routine do
       record: OpenStruct.new(changed?: false, save_if_changed: nil),
       attached_to: nil
     )
-    allow(Salesforce::AttachedRecord).to receive(:all).and_return([attached_record])
+    allow(Salesforce::AttachedRecord).to receive(:preload).and_return([attached_record])
 
-    outputs = UpdateSalesforceStats.call
+    outputs = UpdateSalesforceStats.call.outputs
 
     expect(outputs[:num_records]).to eq 1
     expect(outputs[:num_errors]).to eq 0
@@ -36,10 +36,10 @@ RSpec.describe UpdateSalesforceStats, type: :routine do
       attached_to: nil
     )
     allow(attached_record).to receive(:attached_to).and_raise "boom"
-    allow(Salesforce::AttachedRecord).to receive(:all).and_return([attached_record])
+    allow(Salesforce::AttachedRecord).to receive(:preload).and_return([attached_record])
 
     outputs = rescuing_exceptions do
-      UpdateSalesforceStats.call
+      UpdateSalesforceStats.call.outputs
     end
 
     expect(outputs[:num_records]).to eq 1
@@ -54,10 +54,10 @@ RSpec.describe UpdateSalesforceStats, type: :routine do
       attached_to: nil
     )
     allow(attached_record.record).to receive(:changed?).and_raise "boom"
-    allow(Salesforce::AttachedRecord).to receive(:all).and_return([attached_record])
+    allow(Salesforce::AttachedRecord).to receive(:preload).and_return([attached_record])
 
     outputs = rescuing_exceptions do
-      UpdateSalesforceStats.call
+      UpdateSalesforceStats.call.outputs
     end
 
     expect(outputs[:num_records]).to eq 1
