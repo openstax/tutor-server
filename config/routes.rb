@@ -196,6 +196,10 @@ Rails.application.routes.draw do
       put :update_salesforce
     end
 
+    resources :stats, only: [] do
+      get :courses, on: :collection
+    end
+
     mount RailsSettingsUi::Engine, at: 'settings'
   end
 
@@ -223,6 +227,10 @@ Rails.application.routes.draw do
 
     resource :salesforce, only: [:show], controller: :salesforce do
       post :import_courses
+    end
+
+    resources :stats, only: [] do
+      get :courses, on: :collection
     end
   end
 
