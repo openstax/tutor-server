@@ -5,23 +5,28 @@ class UpdateSalesforceStats
   def exec
     log { "Starting." }
 
-    attached_records = Salesforce::AttachedRecord.preload
+    attached_records = Salesforce::AttachedRecord.preload(:salesforce_objects)
 
-    num_records = attached_records.count
+    num_records = attached_records.length
     num_errors = 0
     num_updates = 0
 
-    attached_records.group_by{ |ar| ar.record.class }.each do |klass, attached_records|
-      case klass
-      when Salesforce::Remote::ClassSize
-        course_id_to_attached_record_map = attached_records.group_by{ |ar| ar.attached_to.id }
-        course_ids = course_id_to_attached_record_map.keys
+    attached_records.group_by{ |ar| ar.salesforce_class_name }
+                    .each do |klass_name, attached_records|
+      case klass_name
+      when 'Salesforce::Remote::ClassSize'
+        # We assume all attached_to's are Entity::Course's here
+        course_ids = attached_records.map{ |ar| ar.tutor_gid.try(:model_id) }.compact
+        course_id_to_preloaded_course_map = \
+          Entity::Course.where(id: course_ids)
+                        .preload([:teachers, {periods: :active_enrollments}])
+                        .index_by(&:id)
 
-        Entity::Course.where(id: course_ids)
-                      .preload([:teachers, {periods: :active_enrollments}])
-                      .find_each do |course|
+        attached_records.each do |attached_record|
           begin
-            record = course_id_to_attached_record_map[course.id].record
+            record = attached_record.record
+            course_id = Integer(attached_record.tutor_gid.model_id)
+            course = course_id_to_preloaded_course_map[course_id]
             update_class_size_stats(record, course)
           rescue Exception => e
             num_errors += 1
@@ -30,11 +35,9 @@ class UpdateSalesforceStats
           end
 
           begin
-            if record.present?
-              if record.changed?
-                record.save
-                num_updates += 1
-              end
+            if record.present? && record.changed?
+              record.save
+              num_updates += 1
             end
           rescue Exception => e
             num_errors += 1
@@ -52,17 +55,6 @@ class UpdateSalesforceStats
     outputs[:num_records] = num_records
     outputs[:num_errors] = num_errors
     outputs[:num_updates] = num_updates
-  end
-
-  def update_class_size_stats(attached_records)
-    course_id_to_attached_record_map = attached_records.group_by{ |ar| ar.attached_to.id }
-    course_ids = course_id_to_attached_record_map.keys
-    Entity::Course.where(id: course_ids)
-                  .preload([:teachers, {periods: :active_enrollments}])
-                  .find_each do |course|
-      class_size = course_id_to_attached_record_map[course.id].record
-      update_class_size_stats(class_size, course)
-    end
   end
 
   def update_class_size_stats(class_size, course)

@@ -9,8 +9,8 @@ module Salesforce
       verify_and_return strategy_class.all, klass: self, error: StrategyError
     end
 
-    def self.preload
-      verify_and_return strategy_class.preload, klass: self, error: StrategyError
+    def self.preload(what = :all)
+      verify_and_return strategy_class.preload(what), klass: self, error: StrategyError
     end
 
     def record
