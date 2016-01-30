@@ -23,5 +23,6 @@ every 1.hour do
 end
 
 every 1.day, at: '8:30 AM' do  # ~ 2:30am central
+  runner "OpenStax::RescueFrom.this{ GetSalesforceBookNames.call(true) }"
   runner "OpenStax::RescueFrom.this{ UpdateSalesforceStats.call }"
 end

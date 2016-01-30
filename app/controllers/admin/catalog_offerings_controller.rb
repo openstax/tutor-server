@@ -2,6 +2,7 @@ module Admin
   class CatalogOfferingsController < BaseController
 
     before_filter :set_template_variables
+    before_filter :get_salesforce_book_names, only: [:new, :edit]
 
     def new
       @offerings.unshift @offering
@@ -43,6 +44,10 @@ module Admin
                     Catalog::Models::Offering.new
                   end
       @ecosystems = Content::ListEcosystems[]
+    end
+
+    def get_salesforce_book_names
+      @salesforce_book_names = GetSalesforceBookNames[]
     end
 
   end
