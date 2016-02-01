@@ -24,7 +24,7 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
   before(:all) do
     DatabaseCleaner.start
 
-    @course = Entity::Course.create!
+    @course = FactoryGirl.create :entity_course
 
     @period = CreatePeriod[course: @course]
     @second_period = CreatePeriod[course: @course]
@@ -33,8 +33,7 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
 
     @student = FactoryGirl.create(:user, exchange_read_identifier: USER_1_IDENTIFIER)
 
-    @second_student = FactoryGirl.create(:user,
-                                         exchange_read_identifier: USER_2_IDENTIFIER)
+    @second_student = FactoryGirl.create(:user, exchange_read_identifier: USER_2_IDENTIFIER)
 
     @role = AddUserAsPeriodStudent[period: @period, user: @student]
     @second_role = AddUserAsPeriodStudent[period: @second_period, user: @second_student]
@@ -84,7 +83,15 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
   context 'all clues' do
     let(:described_args) { { type: :all } }
 
-    it 'causes a request to biglearn for every period and every user for every call' do
+    it 'causes no requests to biglearn for cc courses' do
+      @course.profile.reload.update_attribute(:is_concept_coach, true)
+
+      expect(@real_client).not_to receive(:request_clues)
+
+      described_class[described_args] # 0 requests (CC course)
+    end
+
+    it 'causes a request to biglearn for every non-cc period and every user for every call' do
       expect(@real_client).to receive(:request_clues).exactly(8).times.and_call_original
 
       described_class[described_args] # 4 requests
@@ -136,6 +143,14 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
     let(:described_args) { { type: :recent } }
 
     context 'with all recent work' do
+      it 'causes no requests to biglearn for cc courses' do
+        @course.profile.reload.update_attribute(:is_concept_coach, true)
+
+        expect(@real_client).not_to receive(:request_clues)
+
+        described_class[described_args] # 0 requests (CC course)
+      end
+
       it 'requests recently worked clues from biglearn' do
         expect(@real_client).to receive(:request_clues).exactly(4).times.and_call_original
 

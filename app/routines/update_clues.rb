@@ -55,8 +55,10 @@ class UpdateClues
       end
     end
 
-    # Collect CLUe queries for the most recent ecosystem in each course
-    clue_queries = Entity::Course.all.preload(
+    # Collect CLUe queries for the most recent ecosystem in each non-CC course
+    clue_queries = Entity::Course.joins(:profile)
+                                 .where(profile: {is_concept_coach: false})
+                                 .preload(
       periods: { active_enrollments: { student: { role: :profile } } }
     ).flat_map do |course|
       # Get all student roles in the course
