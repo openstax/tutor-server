@@ -114,7 +114,15 @@ module OpenStax::Biglearn
       }
     }
 
-    context 'questions API' do
+    context 'post questions API' do
+      it 'calls the API well and returns the result' do
+        expect(client.add_exercises([biglearn_exercise])).to(
+          eq [ { 'message' => 'Question tags saved.' }]
+        )
+      end
+    end
+
+    context 'get questions API' do
       it 'calls the API well and returns the result' do
         question_ids = client.get_projection_exercises(
           role: user_1_role, pools: [pool_1], count: 5, difficulty: 0.5, allow_repetitions: true
@@ -132,7 +140,7 @@ module OpenStax::Biglearn
       end
     end
 
-    context 'CLUe API' do
+    context 'get CLUe API' do
       # Use an empty cache for the following examples
       before(:each) {
         @original_cache = Rails.cache
