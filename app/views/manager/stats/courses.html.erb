@@ -1,0 +1,28 @@
+<% @page_header = "Number of courses in Tutor: #{@courses.length}" %>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>CC?</th>
+      <th>Teachers</th>
+      <th># Sections</th>
+      <th># Students</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @courses.each do |course| %>
+    <tr>
+      <td><%= link_to course.id, instance_exec(course, &@course_url_proc) %></td>
+      <td><%= course.name %></td>
+      <td><%= course.is_concept_coach ? 'Yes' : 'No' %></td>
+      <td>
+        <%= course.teachers.map{ |teacher| teacher.role.role_user.profile.name }.join(', ') %>
+      </td>
+      <td><%= course.periods.length %></td>
+      <td><%= course.periods.flat_map(&:active_enrollments).length %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
