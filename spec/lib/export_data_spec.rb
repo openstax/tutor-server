@@ -59,22 +59,22 @@ RSpec.describe ExportData do
       File.delete(@output_filename) if !@output_filename.nil? && File.exists?(@output_filename)
     end
 
-    it 'exports data as a xlsx file' do
+    it 'exports data as a csv file' do
       capture_stdout{ @output_filename = ExportData.call }
       expect(File.exists?(@output_filename)).to be true
-      expect(@output_filename.ends_with? '.xlsx').to be true
+      expect(@output_filename.ends_with? '.csv').to be true
 
-      doc = SimpleXlsxReader.open(@output_filename)
-      headers = doc.sheets.last.rows.first
-      values = doc.sheets.last.rows[1]
+      rows = CSV.read(@output_filename)
+      headers = rows.first
+      values = rows.second
       data = Hash[headers.zip(values)]
       step = Tasks::Models::TaskStep.first
       student = CourseMembership::Models::Student.first
 
       expect(data['Student']).to eq(student.deidentifier)
-      expect(data['Course ID']).to eq(course.id)
-      expect(data['Period ID']).to eq(period.id)
-      expect(data['Step ID']).to eq(step.id)
+      expect(data['Course ID']).to eq(course.id.to_s)
+      expect(data['Period ID']).to eq(period.id.to_s)
+      expect(data['Step ID']).to eq(step.id.to_s)
       expect(data['Step Type']).to eq('Reading')
       expect(data['Group']).to eq(step.group_name)
       expect(data['First Completed At']).to eq(step.first_completed_at.iso8601)
