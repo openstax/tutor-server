@@ -65,6 +65,7 @@ Rails.application.routes.draw do
 
 
     get 'user/courses', to: 'courses#index', as: :courses
+    patch 'user/courses/:course_id/student', to: 'students#update_self'
 
     resources :guides, path: 'courses', only: [] do
       member do

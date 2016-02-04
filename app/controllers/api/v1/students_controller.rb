@@ -12,8 +12,7 @@ class Api::V1::StudentsController < Api::V1::ApiController
   end
 
   # TEMPORARILY REMOVED THIS ABILITY FOR END USERS TO ADD STUDENTS, AS THE WORKFLOW IS
-  # MORE COMPLEX THAN ORIGINALLY THOUGHT (UX NEEDS TO STUDY IT).  ONLY MECHANISM FOR
-  # ADDING STUDENTS WILL BE THROUGH THE ADMIN CONSOLE
+  # MORE COMPLEX THAN ORIGINALLY THOUGHT (UX NEEDS TO STUDY IT).
   #
   # api :POST, '/courses/:course_id/students', 'Creates a new user and adds them to the period'
   # description <<-EOS
@@ -44,9 +43,28 @@ class Api::V1::StudentsController < Api::V1::ApiController
   #   end
   # end
 
-  api :PATCH, '/students/:student_id', "Changes a student's information"
+  api :PATCH, '/user/courses/:course_id/student', "Updates the current student's information"
   description <<-EOS
-    Changes a student's information.
+    Updates the current student's information.
+    Currently, only the student_identifier can be modified.
+    #{json_schema(Api::V1::StudentSelfUpdateRepresenter, include: :writeable)}
+  EOS
+  def update_self
+    @student = get_course_student
+    consume!(@student, represent_with: Api::V1::StudentSelfUpdateRepresenter)
+
+    if @student.save
+      # http://stackoverflow.com/a/27413178
+      respond_with @student, responder: ResponderWithPutContent,
+                             represent_with: Api::V1::StudentSelfUpdateRepresenter
+    else
+      render_api_errors(@student.errors)
+    end
+  end
+
+  api :PATCH, '/students/:student_id', "Updates a student's information"
+  description <<-EOS
+    Updates a student's information.
     Currently, only the period can be modified.
     #{json_schema(Api::V1::StudentRepresenter, include: :writeable)}
   EOS
@@ -108,6 +126,14 @@ class Api::V1::StudentsController < Api::V1::ApiController
 
   def get_student
     @student = CourseMembership::Models::Student.find(params[:id])
+  end
+
+  def get_course_student
+    result = ChooseCourseRole.call(user: current_human_user,
+                                   course: Entity::Course.find(params[:course_id]),
+                                   allowed_role_type: :student)
+    raise(SecurityTransgression, result.errors.map(&:message).to_sentence) if result.errors.any?
+    result.outputs.role.student
   end
 
 end

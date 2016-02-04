@@ -97,6 +97,51 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
   #   end
   # end
 
+  describe '#update_self' do
+    let!(:valid_params) { { course_id: course.id } }
+    let!(:valid_body)   { { student_identifier: 'new identifier' } }
+
+    context 'caller has an authorization token' do
+      context 'caller is a course student' do
+        it 'updates the student\'s identifier' do
+          api_patch :update_self, student_token, parameters: valid_params,
+                                                 raw_post_data: valid_body
+          expect(response).to have_http_status(:ok)
+          expect(response.body_as_hash).to eq({
+            student_identifier: 'new identifier'
+          })
+          expect(student.reload.student_identifier).to eq 'new identifier'
+        end
+      end
+
+      context 'caller is not a course student' do
+        it 'raises SecurityTransgression' do
+          expect{
+            api_patch :update_self, teacher_token, parameters: valid_params,
+                                                   raw_post_data: valid_body
+          }.to raise_error(SecurityTransgression)
+        end
+      end
+    end
+
+    context 'caller has an application/client credentials authorization token' do
+      it 'raises SecurityTransgression' do
+        expect{
+          api_patch :update_self, userless_token, parameters: valid_params,
+                                                  raw_post_data: valid_body
+        }.to raise_error(SecurityTransgression)
+      end
+    end
+
+    context 'caller does not have an authorization token' do
+      it 'raises SecurityTransgression' do
+        expect{
+          api_patch :update_self, nil, parameters: valid_params, raw_post_data: valid_body
+        }.to raise_error(SecurityTransgression)
+      end
+    end
+  end
+
   describe '#update' do
     let!(:valid_params) { { id: student.id } }
     let!(:valid_body)   { { period_id: period_2.id.to_s } }
