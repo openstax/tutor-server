@@ -11,6 +11,9 @@ class OpenStax::Biglearn::V1::RealClient
   # Default is 200 (for example, 25 students and 8 pools on each request)
   CLUE_MAX_POOL_STUDENT_PRODUCT = 200
 
+  # The maximum number of exercises to send to Biglearn on each request
+  MAX_EXERCISES_PER_REQUEST = 1500
+
   def initialize(biglearn_configuration)
     @server_url   = biglearn_configuration.server_url
     @client_id    = biglearn_configuration.client_id
@@ -26,9 +29,11 @@ class OpenStax::Biglearn::V1::RealClient
   end
 
   def add_exercises(exercises)
-    options = { body: construct_exercises_payload(exercises).to_json }
-    response = request(:post, add_exercises_uri, with_content_type_header(options))
-    handle_response(response)
+    exercises.each_slice(MAX_EXERCISES_PER_REQUEST).map do |exercises|
+      options = { body: construct_exercises_payload(exercises).to_json }
+      response = request(:post, add_exercises_uri, with_content_type_header(options))
+      handle_response(response)
+    end
   end
 
   def add_pools(pools)

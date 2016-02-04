@@ -31,7 +31,9 @@ module OpenStax::Biglearn
         expect(client.store.read("exercises/#{exercise.question_id}")).to be_nil
       end
 
-      client.add_exercises([exercise_1, exercise_2])
+      expect(client.add_exercises([exercise_1, exercise_2])).to(
+        eq [ { 'message' => 'Question tags saved.' }]
+      )
 
       [exercise_1, exercise_2].each do |exercise|
         parsed_exercise = JSON.parse client.store.read("exercises/#{exercise.question_id}")

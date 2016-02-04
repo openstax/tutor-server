@@ -22,14 +22,15 @@ class OpenStax::Biglearn::V1::FakeClient
 
     exercise_key_to_version_json_map = store.read_multi(*exercise_keys)
 
-    exercise_keys.map do |exercise_key|
+    exercise_keys.each do |exercise_key|
       exercise = exercise_key_to_exercise_map[exercise_key]
       version_json = exercise_key_to_version_json_map[exercise_key]
       version_hash = JSON.parse(version_json || '{}')
       version_hash[exercise.version.to_s] = exercise.tags
       store.write(exercise_key, version_hash.to_json)
-      exercise.question_id.to_s
     end
+
+    [{'message' => 'Question tags saved.'}]
   end
 
   def add_pools(pools)
