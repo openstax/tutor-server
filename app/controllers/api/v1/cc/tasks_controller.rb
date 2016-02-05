@@ -50,7 +50,7 @@ class Api::V1::Cc::TasksController < Api::V1::ApiController
   description <<-EOS
     The `cnx_page_id` should not contain version information.
 
-    #{json_schema(Api::V1::ConceptCoachStatsRepresenter, include: :readable)}
+    #{json_schema(Api::V1::ConceptCoach::StatsRepresenter, include: :readable)}
   EOS
   def stats
     course = Entity::Course.find(params[:course_id])
@@ -68,7 +68,7 @@ class Api::V1::Cc::TasksController < Api::V1::ApiController
 
     cc_stats = Hashie::Mash.new(title: page_title, stats: CalculateTaskStats[tasks: tasks])
 
-    respond_with cc_stats, represent_with: Api::V1::ConceptCoachStatsRepresenter
+    respond_with cc_stats, represent_with: Api::V1::ConceptCoach::StatsRepresenter
   end
 
 end

@@ -1,9 +1,12 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::Tasks::Stats::StatRepresenter, :type => :representer do
+RSpec.describe Api::V1::Tasks::Stats::StatRepresenter, type: :representer do
   let(:stat) { { period_id: 1,
                  name: '1st period',
-                 mean_grade_percent: 84,
+                 mean_grade_percent: {
+                   based_on_attempted_problems: 84,
+                   based_on_assigned_problems: 42
+                 },
                  total_count: 32,
                  complete_count: 28,
                  partially_complete_count: 2,

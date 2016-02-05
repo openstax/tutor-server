@@ -21,6 +21,7 @@ module Api::V1
                  type: Integer,
                  readable: true,
                  writeable: false,
+                 getter: ->(*) { mean_grade_percent[:based_on_attempted_problems] },
                  schema_info: {
                    minimum: 0,
                    maximum: 100
