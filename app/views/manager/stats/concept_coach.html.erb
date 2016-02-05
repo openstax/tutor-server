@@ -1,0 +1,50 @@
+<% @page_header = "Concept Coach Statistics" %>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Grouping</th>
+      <th>Students</th>
+      <th>CC's Accessed</th>
+      <th>CC's Completed</th>
+      <th>Q's Assigned</th>
+      <th>Q's Answered</th>
+      <th>Q's Correct</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="color: white; background-color: black;">
+      <td><span class="h2">All Books</span></td>
+      <%= render partial: 'manager/stats/concept_coach_hash', locals: { hash: @cc_stats } %>
+    </tr>
+    <% @cc_stats[:books].each do |book_hash| %>
+      <tr style="color: white; background-color: black;">
+        <td><span class="h3"><%= book_hash[:title] %></span></td>
+        <%= render partial: 'manager/stats/concept_coach_hash', locals: { hash: book_hash } %>
+      </tr>
+      <% book_hash[:chapters].each do |chapter_hash| %>
+        <tr style="background-color: #f9f9f9;">
+          <td>
+            &nbsp;&nbsp;
+            <span class="h4">
+              <%= chapter_hash[:number] %>. <%= chapter_hash[:title] %>
+            </span>
+          </td>
+          <%= render partial: 'manager/stats/concept_coach_hash', locals: { hash: chapter_hash } %>
+        </tr>
+
+        <% chapter_hash[:pages].each do |page_hash| %>
+          <tr>
+            <td>
+              &nbsp;&nbsp;&nbsp;&nbsp;
+              <span class="h5">
+                <%= chapter_hash[:number] %>.<%= page_hash[:number] %>. <%= page_hash[:title] %>
+              </span>
+            </td>
+            <%= render partial: 'manager/stats/concept_coach_hash', locals: { hash: page_hash } %>
+          </tr>
+        <% end %>
+      <% end %>
+    <% end %>
+  </tbody>
+</table>

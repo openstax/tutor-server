@@ -18,3 +18,7 @@ periods:
     name: 2st
     enrollment_code: awesome coach
     students: [ne,nz,ra,rb,rh,rl,sd,sg,sk,vw]
+
+auto_assign:
+  - type: concept_coach
+    generate: 5
