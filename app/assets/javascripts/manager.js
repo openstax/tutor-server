@@ -1,4 +1,5 @@
 //= require jquery
+//= require jquery.stickytableheaders.min
 
 // === Manager/Jobs === //
 $(function(){
@@ -46,4 +47,5 @@ $(function(){
 
 $(document).ready(function() {
   $('[data-toggle="popover"]').popover();
+  $('table.sticky-table-headers').stickyTableHeaders();
 });
