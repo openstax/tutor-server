@@ -1,7 +1,7 @@
 <% @page_header = "Concept Coach Statistics" %>
 
-<table class="table sticky-table-headers concept-coach-stats">
-  <thead style="background-color: white;">
+<table class="table concept-coach-stats">
+  <thead>
     <tr>
       <th width=100%>Grouping</th>
       <th nowrap>Students</th>
@@ -13,14 +13,14 @@
     </tr>
   </thead>
   <tbody>
-    <tr id="overall" style="color: white; background-color: black;" >
+    <tr id="overall">
       <td><span class="h2">All Books</span></td>
       <%= render partial: 'manager/stats/concept_coach_hash', locals: { hash: @cc_stats } %>
     </tr>
   </tbody>
     <% @cc_stats[:books].each_with_index do |book_hash, bi| %>
       <tbody>
-        <tr style="color: white; background-color: black;">
+        <tr class="book">
           <td>
             <a href=".book-<%= bi %>" data-toggle="collapse" class="h3">
               <%= book_hash[:title] %>
@@ -31,7 +31,7 @@
       </tbody>
       <% book_hash[:chapters].each_with_index do |chapter_hash, ci| %>
       <tbody class="book-<%= bi %> collapse">
-        <tr style="background-color: #f9f9f9;">
+        <tr class="chapter">
           <td>
             &nbsp;&nbsp;
             <a href=".book-<%= bi %>-chapter-<%= ci %>" data-toggle="collapse" class="h4">

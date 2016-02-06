@@ -47,5 +47,5 @@ $(function(){
 
 $(document).ready(function() {
   $('[data-toggle="popover"]').popover();
-  $('table.sticky-table-headers').stickyTableHeaders();
+  $('table.concept-coach-stats').stickyTableHeaders();
 });
