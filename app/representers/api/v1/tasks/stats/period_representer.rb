@@ -2,7 +2,7 @@ module Api::V1
   module Tasks
     module Stats
       # Represents stats for course periods
-      class StatRepresenter < Roar::Decorator
+      class PeriodRepresenter < Roar::Decorator
 
         include Roar::JSON
         include Representable::Coercion
@@ -17,26 +17,32 @@ module Api::V1
                  readable: true,
                  writeable: false
 
-        property :mean_grade_percent,
-                 type: Integer,
-                 readable: true,
-                 writeable: false,
-                 schema_info: {
-                   minimum: 0,
-                   maximum: 100
-                 }
-
-        property :total_count,
+        property :total_exercises_count,
                  type: Integer,
                  readable: true,
                  writeable: false
 
-        property :complete_count,
+        property :complete_exercises_count,
                  type: Integer,
                  readable: true,
                  writeable: false
 
-        property :partially_complete_count,
+        property :correct_exercises_count,
+                 type: Integer,
+                 readable: true,
+                 writeable: false
+
+        property :total_tasks_count,
+                 type: Integer,
+                 readable: true,
+                 writeable: false
+
+        property :complete_tasks_count,
+                 type: Integer,
+                 readable: true,
+                 writeable: false
+
+        property :partially_complete_tasks_count,
                  type: Integer,
                  readable: true,
                  writeable: false

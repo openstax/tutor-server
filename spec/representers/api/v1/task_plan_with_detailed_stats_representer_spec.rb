@@ -35,12 +35,14 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
       "type" => "reading",
       "stats" => [
         {
-          "period_id"                => task_plan.owner.periods.first.id.to_s,
-          "name"                     => "1st",
-          "mean_grade_percent"       => 50,
-          "total_count"              => 2,
-          "complete_count"           => 0,
-          "partially_complete_count" => 2,
+          "period_id"                      => task_plan.owner.periods.first.id.to_s,
+          "name"                           => "1st",
+          "total_exercises_count"          => 8,
+          "complete_exercises_count"       => 2,
+          "correct_exercises_count"        => 1,
+          "total_tasks_count"              => 2,
+          "complete_tasks_count"           => 0,
+          "partially_complete_tasks_count" => 2,
           "current_pages"            => a_collection_containing_exactly(
             "id"     => task_plan.settings['page_ids'].first.to_s,
             "title"  => "Newton's First Law of Motion: Inertia",

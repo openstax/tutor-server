@@ -1,13 +1,17 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Api::V1::ConceptCoachStatsRepresenter, type: :representer, speed: :medium do
+RSpec.describe Api::V1::ConceptCoach::StatsRepresenter, type: :representer,
+                                                        speed: :medium do
 
   before(:all) do
     DatabaseCleaner.start
 
-    ecosystem = VCR.use_cassette('Api_V1_ConceptCoachStatsRepresenter/with_book', VCR_OPTS) do
-      FetchAndImportBookAndCreateEcosystem[book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b']
+    ecosystem = VCR.use_cassette('Api_V1_ConceptCoach_StatsRepresenter/with_book',
+                                 VCR_OPTS) do
+      FetchAndImportBookAndCreateEcosystem[
+        book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
+      ]
     end
 
     @book = ecosystem.books.first
@@ -62,12 +66,14 @@ RSpec.describe Api::V1::ConceptCoachStatsRepresenter, type: :representer, speed:
       "type" => "concept_coach",
       "stats" => [
         {
-          "period_id"                => @period.id.to_s,
-          "name"                     => @period.name,
-          "mean_grade_percent"       => 50,
-          "total_count"              => 6,
-          "complete_count"           => 0,
-          "partially_complete_count" => 2,
+          "period_id"                      => @period.id.to_s,
+          "name"                           => @period.name,
+          "total_exercises_count"          => 20,
+          "complete_exercises_count"       => 2,
+          "correct_exercises_count"        => 1,
+          "total_tasks_count"              => 6,
+          "complete_tasks_count"           => 0,
+          "partially_complete_tasks_count" => 2,
           "current_pages"            => a_collection_containing_exactly(
             {
               "id"              => @page_1.id.to_s,

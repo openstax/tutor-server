@@ -1,12 +1,14 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::Tasks::Stats::StatRepresenter, :type => :representer do
+RSpec.describe Api::V1::Tasks::Stats::PeriodRepresenter, type: :representer do
   let(:stat) { { period_id: 1,
                  name: '1st period',
-                 mean_grade_percent: 84,
-                 total_count: 32,
-                 complete_count: 28,
-                 partially_complete_count: 2,
+                 total_exercises_count: 20,
+                 complete_exercises_count: 2,
+                 correct_exercises_count: 1,
+                 total_tasks_count: 32,
+                 complete_tasks_count: 28,
+                 partially_complete_tasks_count: 2,
                  current_pages: [{ id: 1,
                                    title: 'My page',
                                    student_count: 1,
@@ -30,10 +32,12 @@ RSpec.describe Api::V1::Tasks::Stats::StatRepresenter, :type => :representer do
     expect(represented).to eq({
       'period_id' => '1',
       'name' => '1st period',
-      'mean_grade_percent' => 84,
-      'total_count' => 32,
-      'complete_count' => 28,
-      'partially_complete_count' => 2,
+      'total_exercises_count' => 20,
+      'complete_exercises_count' => 2,
+      'correct_exercises_count' => 1,
+      'total_tasks_count' => 32,
+      'complete_tasks_count' => 28,
+      'partially_complete_tasks_count' => 2,
       'current_pages' => [{
         'id' => '1',
         'title' => 'My page',
