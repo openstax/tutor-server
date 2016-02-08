@@ -74,20 +74,6 @@ class CalculateTaskStats
     stats.merge page_stats_for_tasked_exercises(tasked_exercises)
   end
 
-  def get_task_grade(task, based_on: :attempted)
-    denominator = (based_on == :attempted) ? task.completed_exercise_steps_count : \
-                                             task.exercise_steps_count
-    return if denominator == 0
-    task.correct_exercise_steps_count.to_f / denominator
-  end
-
-  def mean_grade_percent(tasks, based_on: :attempted)
-    grades_array = tasks.collect{ |task| get_task_grade(task, based_on: based_on) }.compact
-    sum_of_grades = grades_array.inject(:+)
-    return nil if sum_of_grades.nil?
-    (sum_of_grades*100.0/grades_array.count).round
-  end
-
   def get_tasked_exercises_from_task_steps(task_steps)
     tasked_exercise_ids = task_steps.flatten.select{ |t| t.exercise? }.collect{ |ts| ts.tasked_id }
     Tasks::Models::TaskedExercise.joins { task_step }
@@ -132,16 +118,17 @@ class CalculateTaskStats
 
         name: period.name,
 
-        mean_grade_percent: {
-          based_on_attempted_problems: mean_grade_percent(period_tasks, based_on: :attempted),
-          based_on_assigned_problems: mean_grade_percent(period_tasks, based_on: :assigned),
-        },
+        total_exercises_count: period_tasks.map(&:exercise_steps_count).reduce(:+),
 
-        total_count: period_tasks.count,
+        complete_exercises_count: period_tasks.map(&:completed_exercise_steps_count).reduce(:+),
 
-        complete_count: period_tasks.count(&:completed?),
+        correct_exercises_count: period_tasks.map(&:correct_exercise_steps_count).reduce(:+),
 
-        partially_complete_count: period_tasks.count(&:in_progress?),
+        total_tasks_count: period_tasks.count,
+
+        complete_tasks_count: period_tasks.count(&:completed?),
+
+        partially_complete_tasks_count: period_tasks.count(&:in_progress?),
 
         current_pages: current_page_stats,
 

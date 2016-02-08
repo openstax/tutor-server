@@ -17,7 +17,7 @@ module Api::V1
                getter: ->(*) { 'concept_coach' }
 
       collection :stats,
-                 decorator: Api::V1::ConceptCoach::PeriodStatsRepresenter,
+                 decorator: Api::V1::Tasks::Stats::PeriodRepresenter,
                  readable: true,
                  writable: false
 

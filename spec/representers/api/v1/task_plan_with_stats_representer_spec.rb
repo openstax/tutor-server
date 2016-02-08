@@ -21,9 +21,12 @@ RSpec.describe Api::V1::TaskPlanWithStatsRepresenter, type: :representer, speed:
         {
           "period_id"                => task_plan.owner.periods.first.id.to_s,
           "name"                     => "1st",
-          "total_count"              => 2,
-          "complete_count"           => 0,
-          "partially_complete_count" => 0,
+          "total_exercises_count"          => 8,
+          "complete_exercises_count"       => 0,
+          "correct_exercises_count"        => 0,
+          "total_tasks_count"              => 2,
+          "complete_tasks_count"           => 0,
+          "partially_complete_tasks_count" => 0,
           "current_pages"            => a_collection_containing_exactly(
             a_hash_including(
               "id"     => task_plan.settings['page_ids'].first.to_s,

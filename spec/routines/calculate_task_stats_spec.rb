@@ -28,11 +28,12 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
 
     it "is all nil or zero for an unworked task_plan" do
       stats = described_class.call(tasks: @task_plan.tasks).outputs.stats
-      expect(stats.first.mean_grade_percent.based_on_attempted_problems).to be_nil
-      expect(stats.first.mean_grade_percent.based_on_assigned_problems).to eq 0
-      expect(stats.first.total_count).to eq(@task_plan.tasks.length)
-      expect(stats.first.complete_count).to eq(0)
-      expect(stats.first.partially_complete_count).to eq(0)
+      expect(stats.first.total_exercises_count).to eq 32
+      expect(stats.first.complete_exercises_count).to eq 0
+      expect(stats.first.correct_exercises_count).to eq 0
+      expect(stats.first.total_tasks_count).to eq(@task_plan.tasks.length)
+      expect(stats.first.complete_tasks_count).to eq 0
+      expect(stats.first.partially_complete_tasks_count).to eq 0
       expect(stats.first.trouble).to eq false
 
       page = stats.first.current_pages[0]
@@ -71,7 +72,7 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       DistributeTasks.call(task_plan)
 
       stats = described_class.call(tasks: task_plan.tasks).outputs.stats
-      expect(stats.first.complete_count).to eq 0
+      expect(stats.first.complete_tasks_count).to eq 0
     end
 
   end
@@ -87,10 +88,12 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       MarkTaskStepCompleted[task_step: step]
 
       stats = described_class.call(tasks: @task_plan.tasks).outputs.stats
-      expect(stats.first.mean_grade_percent.based_on_attempted_problems).to be_nil
-      expect(stats.first.mean_grade_percent.based_on_assigned_problems).to eq 0
-      expect(stats.first.complete_count).to eq(0)
-      expect(stats.first.partially_complete_count).to eq(1)
+      expect(stats.first.total_exercises_count).to eq 32
+      expect(stats.first.complete_exercises_count).to eq 0
+      expect(stats.first.correct_exercises_count).to eq 0
+      expect(stats.first.total_tasks_count).to eq(@task_plan.tasks.length)
+      expect(stats.first.complete_tasks_count).to eq 0
+      expect(stats.first.partially_complete_tasks_count).to eq 1
       expect(stats.first.trouble).to eq false
 
       first_task.task_steps.each do |ts|
@@ -100,19 +103,23 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       end
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
 
-      expect(stats.first.mean_grade_percent.based_on_attempted_problems).to eq 0
-      expect(stats.first.mean_grade_percent.based_on_assigned_problems).to eq 0
-      expect(stats.first.complete_count).to eq(1)
-      expect(stats.first.partially_complete_count).to eq(0)
+      expect(stats.first.total_exercises_count).to eq 32
+      expect(stats.first.complete_exercises_count).to eq 4
+      expect(stats.first.correct_exercises_count).to eq 0
+      expect(stats.first.total_tasks_count).to eq(@task_plan.tasks.length)
+      expect(stats.first.complete_tasks_count).to eq 1
+      expect(stats.first.partially_complete_tasks_count).to eq 0
       expect(stats.first.trouble).to eq false
 
       last_task = tasks.last
       MarkTaskStepCompleted[task_step: last_task.task_steps.first]
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
-      expect(stats.first.mean_grade_percent.based_on_attempted_problems).to eq 0
-      expect(stats.first.mean_grade_percent.based_on_assigned_problems).to eq 0
-      expect(stats.first.complete_count).to eq(1)
-      expect(stats.first.partially_complete_count).to eq(1)
+      expect(stats.first.total_exercises_count).to eq 32
+      expect(stats.first.complete_exercises_count).to eq 4
+      expect(stats.first.correct_exercises_count).to eq 0
+      expect(stats.first.total_tasks_count).to eq(@task_plan.tasks.length)
+      expect(stats.first.complete_tasks_count).to eq 1
+      expect(stats.first.partially_complete_tasks_count).to eq 1
       expect(stats.first.trouble).to eq false
     end
 
@@ -128,10 +135,12 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
                        MarkTaskStepCompleted[task_step: ts]
       end
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
-      expect(stats.first.mean_grade_percent.based_on_attempted_problems).to eq 100
-      expect(stats.first.mean_grade_percent.based_on_assigned_problems).to eq 13
-      expect(stats.first.complete_count).to eq(1)
-      expect(stats.first.partially_complete_count).to eq(0)
+      expect(stats.first.total_exercises_count).to eq 32
+      expect(stats.first.complete_exercises_count).to eq 4
+      expect(stats.first.correct_exercises_count).to eq 4
+      expect(stats.first.total_tasks_count).to eq(@task_plan.tasks.length)
+      expect(stats.first.complete_tasks_count).to eq 1
+      expect(stats.first.partially_complete_tasks_count).to eq 0
       expect(stats.first.trouble).to eq false
 
       page = stats.first.current_pages.first
@@ -154,10 +163,12 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
                        MarkTaskStepCompleted[task_step: ts]
       end
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
-      expect(stats.first.mean_grade_percent.based_on_attempted_problems).to eq 50
-      expect(stats.first.mean_grade_percent.based_on_assigned_problems).to eq 13
-      expect(stats.first.complete_count).to eq(2)
-      expect(stats.first.partially_complete_count).to eq(0)
+      expect(stats.first.total_exercises_count).to eq 32
+      expect(stats.first.complete_exercises_count).to eq 8
+      expect(stats.first.correct_exercises_count).to eq 4
+      expect(stats.first.total_tasks_count).to eq(@task_plan.tasks.length)
+      expect(stats.first.complete_tasks_count).to eq 2
+      expect(stats.first.partially_complete_tasks_count).to eq 0
       expect(stats.first.trouble).to eq false
 
       page = stats.first.current_pages.first
@@ -182,10 +193,12 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
                        MarkTaskStepCompleted[task_step: ts]
       end
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
-      expect(stats.first.mean_grade_percent.based_on_attempted_problems).to eq 67
-      expect(stats.first.mean_grade_percent.based_on_assigned_problems).to eq 25
-      expect(stats.first.complete_count).to eq(3)
-      expect(stats.first.partially_complete_count).to eq(0)
+      expect(stats.first.total_exercises_count).to eq 32
+      expect(stats.first.complete_exercises_count).to eq 12
+      expect(stats.first.correct_exercises_count).to eq 8
+      expect(stats.first.total_tasks_count).to eq(@task_plan.tasks.length)
+      expect(stats.first.complete_tasks_count).to eq 3
+      expect(stats.first.partially_complete_tasks_count).to eq 0
       expect(stats.first.trouble).to eq false
 
       page = stats.first.current_pages.first
@@ -210,10 +223,12 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
                        MarkTaskStepCompleted[task_step: ts]
       end
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
-      expect(stats.first.mean_grade_percent.based_on_attempted_problems).to eq 75
-      expect(stats.first.mean_grade_percent.based_on_assigned_problems).to eq 38
-      expect(stats.first.complete_count).to eq(4)
-      expect(stats.first.partially_complete_count).to eq(0)
+      expect(stats.first.total_exercises_count).to eq 32
+      expect(stats.first.complete_exercises_count).to eq 16
+      expect(stats.first.correct_exercises_count).to eq 12
+      expect(stats.first.total_tasks_count).to eq(@task_plan.tasks.length)
+      expect(stats.first.complete_tasks_count).to eq 4
+      expect(stats.first.partially_complete_tasks_count).to eq 0
       expect(stats.first.trouble).to eq false
 
       page = stats.first.current_pages.first
@@ -566,11 +581,12 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       it "splits the students into their periods" do
         stats = described_class.call(tasks: @task_plan.tasks).outputs.stats
 
-        expect(stats.first.mean_grade_percent.based_on_attempted_problems).to be_nil
-        expect(stats.first.mean_grade_percent.based_on_assigned_problems).to eq 0
-        expect(stats.first.total_count).to eq(@task_plan.tasks.length/2)
-        expect(stats.first.complete_count).to eq(0)
-        expect(stats.first.partially_complete_count).to eq(0)
+        expect(stats.first.total_exercises_count).to eq 16
+        expect(stats.first.complete_exercises_count).to eq 0
+        expect(stats.first.correct_exercises_count).to eq 0
+        expect(stats.first.total_tasks_count).to eq(@task_plan.tasks.length/2)
+        expect(stats.first.complete_tasks_count).to eq 0
+        expect(stats.first.partially_complete_tasks_count).to eq 0
         expect(stats.first.trouble).to eq false
 
         page = stats.first.current_pages[0]
@@ -582,11 +598,12 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
         spaced_page = stats.first.spaced_pages[0]
         expect(spaced_page).to eq page
 
-        expect(stats.first.mean_grade_percent.based_on_attempted_problems).to be_nil
-        expect(stats.first.mean_grade_percent.based_on_assigned_problems).to eq 0
-        expect(stats.second.total_count).to eq(@task_plan.tasks.length/2)
-        expect(stats.second.complete_count).to eq(0)
-        expect(stats.second.partially_complete_count).to eq(0)
+        expect(stats.second.total_exercises_count).to eq 16
+        expect(stats.second.complete_exercises_count).to eq 0
+        expect(stats.second.correct_exercises_count).to eq 0
+        expect(stats.second.total_tasks_count).to eq(@task_plan.tasks.length/2)
+        expect(stats.second.complete_tasks_count).to eq 0
+        expect(stats.second.partially_complete_tasks_count).to eq 0
         expect(stats.second.trouble).to eq false
 
         page = stats.second.current_pages[0]
@@ -604,11 +621,12 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       it "shows students that changed periods in their original period" do
         stats = described_class.call(tasks: @task_plan.tasks).outputs.stats
 
-        expect(stats.first.mean_grade_percent.based_on_attempted_problems).to be_nil
-        expect(stats.first.mean_grade_percent.based_on_assigned_problems).to eq 0
-        expect(stats.first.total_count).to eq(@task_plan.tasks.length)
-        expect(stats.first.complete_count).to eq(0)
-        expect(stats.first.partially_complete_count).to eq(0)
+        expect(stats.first.total_exercises_count).to eq 32
+        expect(stats.first.complete_exercises_count).to eq 0
+        expect(stats.first.correct_exercises_count).to eq 0
+        expect(stats.first.total_tasks_count).to eq(@task_plan.tasks.length)
+        expect(stats.first.complete_tasks_count).to eq 0
+        expect(stats.first.partially_complete_tasks_count).to eq 0
         expect(stats.first.trouble).to eq false
 
         page = stats.first.current_pages[0]
