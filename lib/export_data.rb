@@ -95,7 +95,7 @@ class ExportData
                 tasked.answer_id,
                 tasked.is_correct?,
                 tasked.free_response.try(:gsub, /\A=/,"'="), # escape so Excel doesn't see as formula
-                tasked.tags
+                tasked.tags.join(',')
               ]
             when 'Reading'
               [
