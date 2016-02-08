@@ -54,7 +54,7 @@ module Manager::EcosystemsActions
       comments: params[:comments]
     )
     job = Jobba.find(job_id)
-    import_url = OpenStax::Cnx::V1.url_for(params[:cnx_id])
+    import_url = Addressable::URI.join(archive_url, params[:cnx_id]).to_s
     job.save(ecosystem_import_url: import_url)
     job
   end
