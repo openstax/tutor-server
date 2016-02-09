@@ -111,7 +111,11 @@ module Api::V1
                writeable: false,
                getter: ->(*) { DateTimeUtilities.to_api_s(due_at) }
 
-      property :average,
+      property :total_average,
+               type: Float,
+               readable: true
+
+      property :attempted_average,
                type: Float,
                readable: true
     end

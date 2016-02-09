@@ -85,7 +85,7 @@ module Tasks
 
       def gather_averages(data_headings)
         averages = data_headings.map do |heading|
-          '%.2f' % heading.average if heading.average
+          '%.2f' % heading.total_average if heading.total_average
         end
 
         collect_columns(averages, 'Average')

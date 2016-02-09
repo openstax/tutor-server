@@ -2,10 +2,9 @@ module Tasks
   module PerformanceReportMethods
     protected
 
-    # Returns the average for the given tasks
-    def average(tasks)
-      # Valid tasks must have more than 0 exercises
-      # and be started or past due
+    # Returns the average grade for all exercise steps for the given tasks
+    def total_average(tasks)
+      # Valid tasks must have more than 0 exercises and be started or past due
       valid_tasks = tasks.select do |task|
         (task.task_type == 'homework' || task.task_type == 'concept_coach') &&
         task.exercise_steps_count > 0 &&
@@ -17,6 +16,24 @@ module Tasks
 
       valid_tasks.reduce(0) do |sum, task|
         sum + (task.correct_exercise_steps_count/task.exercise_steps_count.to_f)
+      end / valid_tasks.size
+    end
+
+    # Returns the average grade for attempted exercise steps for the given tasks
+    def attempted_average(tasks)
+      # Valid tasks must have more than 0 exercises and be started or past due
+      valid_tasks = tasks.select do |task|
+        (task.task_type == 'homework' || task.task_type == 'concept_coach') &&
+        task.exercise_steps_count > 0 &&
+        (task.completed_exercise_steps_count > 0 || task.past_due?)
+      end
+
+      # Skip if no tasks meet the display requirements
+      return if valid_tasks.none?
+
+      valid_tasks.reduce(0) do |sum, task|
+        # Remove the "min" once https://github.com/openstax/tutor-server/issues/977 is fixed
+        sum + [task.correct_exercise_steps_count/task.completed_exercise_steps_count.to_f, 1.0].min
       end / valid_tasks.size
     end
 

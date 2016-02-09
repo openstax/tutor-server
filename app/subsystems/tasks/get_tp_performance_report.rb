@@ -93,7 +93,8 @@ module Tasks
           plan_id: task_plan.id,
           type: task_plan.type,
           due_at: tasking_plan.due_at,
-          average: average(task_plan_results[task_plan])
+          total_average: total_average(task_plan_results[task_plan]),
+          attempted_average: attempted_average(task_plan_results[task_plan])
         }
       end
     end
