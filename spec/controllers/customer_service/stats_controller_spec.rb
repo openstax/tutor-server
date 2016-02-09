@@ -28,4 +28,22 @@ RSpec.describe CustomerService::StatsController, type: :controller do
     end
   end
 
+  context "GET #concept_coach" do
+    let!(:tasks)         do
+      3.times.map { FactoryGirl.create :tasks_task, task_type: :concept_coach }
+    end
+    let!(:cc_tasks)       do
+      tasks.map do |task|
+        FactoryGirl.create :tasks_concept_coach_task, task: task.entity_task
+      end
+    end
+
+    it "returns http success" do
+      controller.sign_in customer_service
+
+      get :concept_coach
+      expect(response).to have_http_status(:success)
+    end
+  end
+
 end

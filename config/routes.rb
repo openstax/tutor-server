@@ -199,6 +199,7 @@ Rails.application.routes.draw do
 
     resources :stats, only: [] do
       get :courses, on: :collection
+      get :concept_coach, on: :collection
     end
 
     mount RailsSettingsUi::Engine, at: 'settings'
@@ -232,6 +233,7 @@ Rails.application.routes.draw do
 
     resources :stats, only: [] do
       get :courses, on: :collection
+      get :concept_coach, on: :collection
     end
   end
 
