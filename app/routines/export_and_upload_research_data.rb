@@ -1,6 +1,8 @@
-class ExportAndUploadResearchData
+  class ExportAndUploadResearchData
 
-  RESEARCH_FOLDER = Rails.application.secrets['owncloud']['research_folder']
+  owncloud_secrets = Rails.application.secrets['owncloud']
+  WEBDAV_BASE_URL = \
+    "#{owncloud_secrets['base_url']}/remote.php/webdav/#{owncloud_secrets['research_folder']}"
 
   lev_routine express_output: :filename
 
@@ -163,11 +165,7 @@ class ExportAndUploadResearchData
   end
 
   def webdav_url
-    Addressable::URI.escape(
-      Addressable::URI.join(
-        "https://share.cnx.org/remote.php/webdav/#{RESEARCH_FOLDER}", outputs[:filename]
-      )
-    )
+    Addressable::URI.escape "#{WEBDAV_BASE_URL}/#{outputs[:filename]}"
   end
 
 end

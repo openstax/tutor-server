@@ -92,10 +92,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine do
     it 'uploads the exported data to owncloud' do
       # We simply test that the call to HTTParty is made properly
       file_regex_string = 'export_\d+T\d+Z.csv'
-      webdav_url_base = Addressable::URI.escape(
-        "https://share.cnx.org/remote.php/webdav/#{described_class::RESEARCH_FOLDER}"
-      )
-      webdav_url_regex = Regexp.new Addressable::URI.join(webdav_url_base, file_regex_string)
+      webdav_url_regex = Regexp.new "#{described_class::WEBDAV_BASE_URL}/#{file_regex_string}"
       expect(HTTParty).to receive(:put).with(
         webdav_url_regex,
         basic_auth: { username: a_kind_of(String).or(be_nil),
