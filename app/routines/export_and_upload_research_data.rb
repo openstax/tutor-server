@@ -1,26 +1,20 @@
-class ExportData
+class ExportAndUploadResearchData
 
-  def self.call(filepath=nil)
-    filepath ||= "export_#{Time.now.utc.strftime("%Y%m%dT%H%M%SZ")}.csv"
-    export = new(filepath)
-    export.create
-    filepath
-  end
+  RESEARCH_FOLDER = Rails.application.secrets['owncloud']['research_folder']
 
-  def create
-    create_file
+  lev_routine
+
+  def exec(filename = nil)
+    outputs[:filename] = filename || "export_#{Time.now.utc.strftime("%Y%m%dT%H%M%SZ")}.csv"
+    create_export_file
+    upload_export_file
+    remove_export_file
   end
 
   protected
 
-  attr_reader :filepath
-
-  def initialize(filepath)
-    @filepath = filepath
-  end
-
-  def create_file
-    CSV.open(@filepath, 'w') do |file|
+  def create_export_file
+    CSV.open(outputs[:filename], 'w') do |file|
       file << [
         "Student",
         "Course ID",
@@ -143,6 +137,22 @@ class ExportData
   def format_time(time)
     return time if time.blank?
     time.utc.iso8601
+  end
+
+  def upload_export_file
+    own_cloud_secrets = Rails.application.secrets['owncloud']
+    IO.popen("curl -K - -T #{outputs[:filename]} #{curl_url}", 'w') do |curl|
+      curl.puts("user = #{own_cloud_secrets['username']}:#{own_cloud_secrets['password']}")
+    end
+    $?.exitstatus == 0
+  end
+
+  def remove_export_file
+    File.delete(outputs[:filename]) if File.exist?(outputs[:filename])
+  end
+
+  def curl_url
+    "https://share.cnx.org/remote.php/webdav/#{RESEARCH_FOLDER}/"
   end
 
 end
