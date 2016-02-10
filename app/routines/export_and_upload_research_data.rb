@@ -156,7 +156,7 @@
     auth = { username: own_cloud_secrets['username'], password: own_cloud_secrets['password'] }
 
     File.open(filepath, 'r') do |file|
-      @req = HTTParty.put(webdav_url, basic_auth: auth, body_stream: file).success?
+      HTTParty.put(webdav_url, basic_auth: auth, body_stream: file).success?
     end
   end
 
