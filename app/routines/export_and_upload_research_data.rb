@@ -152,7 +152,7 @@ class ExportAndUploadResearchData
   end
 
   def curl_url
-    "https://share.cnx.org/remote.php/webdav/#{RESEARCH_FOLDER}/"
+    Addressable::URI.escape "https://share.cnx.org/remote.php/webdav/#{RESEARCH_FOLDER}/"
   end
 
 end
