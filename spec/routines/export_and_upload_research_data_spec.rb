@@ -90,12 +90,18 @@ RSpec.describe ExportAndUploadResearchData, type: :routine do
     end
 
     it 'uploads the exported data to owncloud' do
-      # We simply test that the call to curl is made properly
-      curl_url = Addressable::URI.escape(
-        "https://share.cnx.org/remote.php/webdav/#{described_class::RESEARCH_FOLDER}/"
+      # We simply test that the call to HTTParty is made properly
+      file_regex_string = 'export_\d+T\d+Z.csv'
+      webdav_url_base = Addressable::URI.escape(
+        "https://share.cnx.org/remote.php/webdav/#{described_class::RESEARCH_FOLDER}"
       )
-      curl_regex = Regexp.new "\\Acurl -K - -T tmp/exports/export_\\d+T\\d+Z.csv #{curl_url}\\z"
-      expect(IO).to receive(:popen).with(curl_regex, 'w')
+      webdav_url_regex = Regexp.new Addressable::URI.join(webdav_url_base, file_regex_string)
+      expect(HTTParty).to receive(:put).with(
+        webdav_url_regex,
+        basic_auth: { username: a_kind_of(String).or(be_nil),
+                      password: a_kind_of(String).or(be_nil) },
+        body_stream: a_kind_of(File)
+      ).and_return OpenStruct.new(success?: true)
 
       # Trigger the data export
       capture_stdout{ described_class.call }

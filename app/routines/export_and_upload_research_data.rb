@@ -20,7 +20,7 @@ class ExportAndUploadResearchData
   end
 
   def filepath
-    "tmp/exports/#{outputs[:filename]}"
+    File.join 'tmp', 'exports', outputs[:filename]
   end
 
   def create_export_file
@@ -151,18 +151,23 @@ class ExportAndUploadResearchData
 
   def upload_export_file
     own_cloud_secrets = Rails.application.secrets['owncloud']
-    IO.popen("curl -K - -T #{filepath} #{curl_url}", 'w') do |curl|
-      curl.puts("user = #{own_cloud_secrets['username']}:#{own_cloud_secrets['password']}")
+    auth = { username: own_cloud_secrets['username'], password: own_cloud_secrets['password'] }
+
+    File.open(filepath, 'r') do |file|
+      @req = HTTParty.put(webdav_url, basic_auth: auth, body_stream: file).success?
     end
-    $?.present? && $?.success?
   end
 
   def remove_export_file
     File.delete(filepath) if File.exist?(filepath)
   end
 
-  def curl_url
-    Addressable::URI.escape "https://share.cnx.org/remote.php/webdav/#{RESEARCH_FOLDER}/"
+  def webdav_url
+    Addressable::URI.escape(
+      Addressable::URI.join(
+        "https://share.cnx.org/remote.php/webdav/#{RESEARCH_FOLDER}", outputs[:filename]
+      )
+    )
   end
 
 end
