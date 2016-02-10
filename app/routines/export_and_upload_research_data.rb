@@ -1,8 +1,8 @@
   class ExportAndUploadResearchData
 
   owncloud_secrets = Rails.application.secrets['owncloud']
-  WEBDAV_BASE_URL = \
-    "#{owncloud_secrets['base_url']}/remote.php/webdav/#{owncloud_secrets['research_folder']}"
+  RESEARCH_FOLDER = owncloud_secrets['research_folder']
+  WEBDAV_BASE_URL = "#{owncloud_secrets['base_url']}/remote.php/webdav/#{RESEARCH_FOLDER}"
 
   lev_routine express_output: :filename
 
