@@ -2,10 +2,12 @@ class ExportAndUploadResearchData
 
   RESEARCH_FOLDER = Rails.application.secrets['owncloud']['research_folder']
 
-  lev_routine
+  lev_routine express_output: :filename
 
   def exec(filename = nil)
-    outputs[:filename] = filename || "export_#{Time.now.utc.strftime("%Y%m%dT%H%M%SZ")}.csv"
+    outputs[:filename] = sanitize_filename(
+      filename || "export_#{Time.now.utc.strftime("%Y%m%dT%H%M%SZ")}.csv"
+    )
     create_export_file
     upload_export_file
     remove_export_file
@@ -13,8 +15,16 @@ class ExportAndUploadResearchData
 
   protected
 
+  def sanitize_filename(filename)
+    filename.gsub(/[^\w\.-]/, '_')
+  end
+
+  def filepath
+    "tmp/exports/#{outputs[:filename]}"
+  end
+
   def create_export_file
-    CSV.open(outputs[:filename], 'w') do |file|
+    CSV.open(filepath, 'w') do |file|
       file << [
         "Student",
         "Course ID",
@@ -141,14 +151,14 @@ class ExportAndUploadResearchData
 
   def upload_export_file
     own_cloud_secrets = Rails.application.secrets['owncloud']
-    IO.popen("curl -K - -T #{outputs[:filename]} #{curl_url}", 'w') do |curl|
+    IO.popen("curl -K - -T #{filepath} #{curl_url}", 'w') do |curl|
       curl.puts("user = #{own_cloud_secrets['username']}:#{own_cloud_secrets['password']}")
     end
     $?.present? && $?.success?
   end
 
   def remove_export_file
-    File.delete(outputs[:filename]) if File.exist?(outputs[:filename])
+    File.delete(filepath) if File.exist?(filepath)
   end
 
   def curl_url

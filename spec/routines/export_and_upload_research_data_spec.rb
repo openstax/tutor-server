@@ -56,11 +56,11 @@ RSpec.describe ExportAndUploadResearchData, type: :routine do
     it 'exports research data as a csv file' do
       # We replace the uploading of the research data with the test case itself
       expect_any_instance_of(described_class).to receive(:upload_export_file) do |routine|
-        filename = routine.send(:outputs).filename
-        expect(File.exists?(filename)).to be true
-        expect(filename.ends_with? '.csv').to be true
+        filepath = routine.send :filepath
+        expect(File.exists?(filepath)).to be true
+        expect(filepath.ends_with? '.csv').to be true
 
-        rows = CSV.read(filename)
+        rows = CSV.read(filepath)
         headers = rows.first
         values = rows.second
         data = Hash[headers.zip(values)]
@@ -94,7 +94,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine do
       curl_url = Addressable::URI.escape(
         "https://share.cnx.org/remote.php/webdav/#{described_class::RESEARCH_FOLDER}/"
       )
-      curl_regex = Regexp.new "\\Acurl -K - -T [\\w\\.-]+ #{curl_url}\\z"
+      curl_regex = Regexp.new "\\Acurl -K - -T tmp/exports/export_\\d+T\\d+Z.csv #{curl_url}\\z"
       expect(IO).to receive(:popen).with(curl_regex, 'w')
 
       # Trigger the data export
