@@ -144,7 +144,7 @@ class ExportAndUploadResearchData
     IO.popen("curl -K - -T #{outputs[:filename]} #{curl_url}", 'w') do |curl|
       curl.puts("user = #{own_cloud_secrets['username']}:#{own_cloud_secrets['password']}")
     end
-    $?.exitstatus == 0
+    $?.present? && $?.success?
   end
 
   def remove_export_file

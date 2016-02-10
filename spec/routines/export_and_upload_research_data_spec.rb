@@ -2,9 +2,7 @@ require 'rails_helper'
 require 'vcr_helper'
 require 'database_cleaner'
 
-require 'export_data'
-
-RSpec.describe ExportData do
+RSpec.describe ExportAndUploadResearchData, type: :routine do
   let!(:course) { CreateCourse[name: 'Physics 101'] }
   let!(:period) { CreatePeriod[course: course] }
   let(:teacher) { FactoryGirl.create(:user) }
@@ -55,38 +53,52 @@ RSpec.describe ExportData do
       DatabaseCleaner.clean
     end
 
-    after(:each) do
-      File.delete(@output_filename) if !@output_filename.nil? && File.exists?(@output_filename)
+    it 'exports research data as a csv file' do
+      # We replace the uploading of the research data with the test case itself
+      expect_any_instance_of(described_class).to receive(:upload_export_file) do |routine|
+        filename = routine.send(:outputs).filename
+        expect(File.exists?(filename)).to be true
+        expect(filename.ends_with? '.csv').to be true
+
+        rows = CSV.read(filename)
+        headers = rows.first
+        values = rows.second
+        data = Hash[headers.zip(values)]
+        step = Tasks::Models::TaskStep.first
+        student = CourseMembership::Models::Student.first
+
+        expect(data['Student']).to eq(student.deidentifier)
+        expect(data['Course ID']).to eq(course.id.to_s)
+        expect(data['Period ID']).to eq(period.id.to_s)
+        expect(data['Step ID']).to eq(step.id.to_s)
+        expect(data['Step Type']).to eq('Reading')
+        expect(data['Group']).to eq(step.group_name)
+        expect(data['First Completed At']).to eq(step.first_completed_at.iso8601)
+        expect(data['Last Completed At']).to eq(step.last_completed_at.iso8601)
+        expect(data['Opens At']).to eq(step.task.opens_at.iso8601)
+        expect(data['Due At']).to eq(step.task.due_at.iso8601)
+        expect(data['URL']).to eq(step.tasked.url)
+        expect(data['Correct Answer ID']).to eq(nil)
+        expect(data['Answer ID']).to eq(nil)
+        expect(data['Correct?']).to eq(nil)
+        expect(data['Free Response']).to eq(nil)
+        expect(data['Tags']).to eq(nil)
+      end
+
+      # Trigger the data export
+      capture_stdout{ described_class.call }
     end
 
-    it 'exports data as a csv file' do
-      capture_stdout{ @output_filename = ExportData.call }
-      expect(File.exists?(@output_filename)).to be true
-      expect(@output_filename.ends_with? '.csv').to be true
+    it 'uploads the exported data to owncloud' do
+      # We simply test that the call to curl is made properly
+      curl_url = Addressable::URI.escape(
+        "https://share.cnx.org/remote.php/webdav/#{described_class::RESEARCH_FOLDER}/"
+      )
+      curl_regex = Regexp.new "\\Acurl -K - -T [\\w\\.-]+ #{curl_url}\\z"
+      expect(IO).to receive(:popen).with(curl_regex, 'w')
 
-      rows = CSV.read(@output_filename)
-      headers = rows.first
-      values = rows.second
-      data = Hash[headers.zip(values)]
-      step = Tasks::Models::TaskStep.first
-      student = CourseMembership::Models::Student.first
-
-      expect(data['Student']).to eq(student.deidentifier)
-      expect(data['Course ID']).to eq(course.id.to_s)
-      expect(data['Period ID']).to eq(period.id.to_s)
-      expect(data['Step ID']).to eq(step.id.to_s)
-      expect(data['Step Type']).to eq('Reading')
-      expect(data['Group']).to eq(step.group_name)
-      expect(data['First Completed At']).to eq(step.first_completed_at.iso8601)
-      expect(data['Last Completed At']).to eq(step.last_completed_at.iso8601)
-      expect(data['Opens At']).to eq(step.task.opens_at.iso8601)
-      expect(data['Due At']).to eq(step.task.due_at.iso8601)
-      expect(data['URL']).to eq(step.tasked.url)
-      expect(data['Correct Answer ID']).to eq(nil)
-      expect(data['Answer ID']).to eq(nil)
-      expect(data['Correct?']).to eq(nil)
-      expect(data['Free Response']).to eq(nil)
-      expect(data['Tags']).to eq(nil)
+      # Trigger the data export
+      capture_stdout{ described_class.call }
     end
   end
 end
