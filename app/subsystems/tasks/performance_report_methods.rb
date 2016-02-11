@@ -24,8 +24,7 @@ module Tasks
       # Valid tasks must have more than 0 exercises and be started or past due
       valid_tasks = tasks.select do |task|
         (task.task_type == 'homework' || task.task_type == 'concept_coach') &&
-        task.exercise_steps_count > 0 &&
-        (task.completed_exercise_steps_count > 0 || task.past_due?)
+        task.completed_exercise_steps_count > 0
       end
 
       # Skip if no tasks meet the display requirements
