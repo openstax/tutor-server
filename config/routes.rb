@@ -191,6 +191,8 @@ Rails.application.routes.draw do
 
     resources :targeted_contracts, except: [:show, :edit]
 
+    resources :research_data, only: [:index, :create]
+
     resource :salesforce, only: [:show], controller: :salesforce do
       delete :destroy_user
       post :import_courses

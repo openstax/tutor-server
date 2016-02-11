@@ -1,26 +1,32 @@
-class ExportData
+  class ExportAndUploadResearchData
 
-  def self.call(filepath=nil)
-    filepath ||= "export_#{Time.now.utc.strftime("%Y%m%dT%H%M%SZ")}.csv"
-    export = new(filepath)
-    export.create
-    filepath
-  end
+  owncloud_secrets = Rails.application.secrets['owncloud']
+  RESEARCH_FOLDER = owncloud_secrets['research_folder']
+  WEBDAV_BASE_URL = "#{owncloud_secrets['base_url']}/remote.php/webdav/#{RESEARCH_FOLDER}"
 
-  def create
-    create_file
+  lev_routine express_output: :filename
+
+  def exec(filename = nil)
+    outputs[:filename] = sanitize_filename(
+      filename || "export_#{Time.now.utc.strftime("%Y%m%dT%H%M%SZ")}.csv"
+    )
+    create_export_file
+    upload_export_file
+    remove_export_file
   end
 
   protected
 
-  attr_reader :filepath
-
-  def initialize(filepath)
-    @filepath = filepath
+  def sanitize_filename(filename)
+    filename.gsub(/[^\w\.-]/, '_')
   end
 
-  def create_file
-    CSV.open(@filepath, 'w') do |file|
+  def filepath
+    File.join 'tmp', 'exports', outputs[:filename]
+  end
+
+  def create_export_file
+    CSV.open(filepath, 'w') do |file|
       file << [
         "Student",
         "Course ID",
@@ -143,6 +149,23 @@ class ExportData
   def format_time(time)
     return time if time.blank?
     time.utc.iso8601
+  end
+
+  def upload_export_file
+    own_cloud_secrets = Rails.application.secrets['owncloud']
+    auth = { username: own_cloud_secrets['username'], password: own_cloud_secrets['password'] }
+
+    File.open(filepath, 'r') do |file|
+      HTTParty.put(webdav_url, basic_auth: auth, body_stream: file).success?
+    end
+  end
+
+  def remove_export_file
+    File.delete(filepath) if File.exist?(filepath)
+  end
+
+  def webdav_url
+    Addressable::URI.escape "#{WEBDAV_BASE_URL}/#{outputs[:filename]}"
   end
 
 end
