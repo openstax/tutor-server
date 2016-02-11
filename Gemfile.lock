@@ -604,9 +604,6 @@ GEM
     sexp_processor (4.5.0)
     shoulda-matchers (2.8.0)
       activesupport (>= 3.0.0)
-    simple_xlsx_reader (1.0.2)
-      nokogiri
-      rubyzip
     simplecov (0.10.0)
       docile (~> 1.1.0)
       json (~> 1.8)
@@ -781,7 +778,6 @@ DEPENDENCIES
   rspec-rails
   sass-rails (~> 5.0.0)
   shoulda-matchers
-  simple_xlsx_reader
   sortability
   squeel
   therubyracer

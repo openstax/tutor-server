@@ -249,7 +249,6 @@ group :test do
   gem 'capybara-webkit'
   gem 'launchy'
   gem 'database_cleaner'
-  gem 'simple_xlsx_reader'
 end
 
 group :production do
