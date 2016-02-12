@@ -97,7 +97,8 @@ RSpec.describe ExportAndUploadResearchData, type: :routine do
         webdav_url_regex,
         basic_auth: { username: a_kind_of(String).or(be_nil),
                       password: a_kind_of(String).or(be_nil) },
-        body_stream: a_kind_of(File)
+        body_stream: a_kind_of(File),
+        headers: { 'Transfer-Encoding' => 'chunked' }
       ).and_return OpenStruct.new(success?: true)
 
       # Trigger the data export
