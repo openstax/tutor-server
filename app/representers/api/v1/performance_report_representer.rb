@@ -38,6 +38,10 @@ module Api::V1
                type: Integer,
                readable: true
 
+      property :completed_exercise_count,
+               type: Integer,
+               readable: true
+
       property :correct_exercise_count,
                type: Integer,
                readable: true
