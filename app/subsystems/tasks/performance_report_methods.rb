@@ -59,11 +59,13 @@ module Tasks
 
     def exercise_counts(task)
       exercise_count  = task.actual_and_placeholder_exercise_count
+      completed_count = task.completed_exercise_steps_count
       correct_count   = task.correct_exercise_steps_count
       recovered_count = task.recovered_exercise_steps_count
 
       {
         actual_and_placeholder_exercise_count: exercise_count,
+        completed_exercise_count: completed_count,
         correct_exercise_count: correct_count,
         recovered_exercise_count: recovered_count
       }
