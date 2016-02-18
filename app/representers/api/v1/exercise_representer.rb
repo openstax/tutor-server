@@ -32,6 +32,7 @@ module Api::V1
                readable: true,
                writeable: false,
                decorator: TagRepresenter,
+               getter: ->(*) { (tags + tags.flat_map(&:teks_tags)).uniq },
                schema_info: { required: true,
                               description: 'Tags for this exercise' }
 
