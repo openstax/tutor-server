@@ -112,9 +112,9 @@
             <td><%= link_to(job.id, @job_path_proc.call(job)) %></td>
             <td><%= job.state %></td>
             <td><%= CourseProfile::Models::Profile.where(
-                        entity_course_id: job.course_id).first.try(:name) \
-                    if job.respond_to?(:course_id) %></td>
-            <td><%= job.course_ecosystem %></td>
+                        entity_course_id: job.data['course_id']
+                    ).first.try(:name) if job.data['course_id'] %></td>
+            <td><%= job.data['course_ecosystem'] %></td>
           </tr>
         <% end %>
       </table>
@@ -138,11 +138,11 @@
         <% failed_jobs.each do |job| %>
           <tr>
             <td><%= link_to(job.id, @job_path_proc.call(job)) %></td>
-            <td><%= job.status %></td>
+            <td><%= job.state %></td>
             <td><%= CourseProfile::Models::Profile.where(
-                        entity_course_id: job.course_id).first.try(:name) \
-                    if job.respond_to?(:course_id) %></td>
-            <td><%= job.course_ecosystem %></td>
+                        entity_course_id: job.data['course_id']
+                    ).first.try(:name) if job.data['course_id'] %></td>
+            <td><%= job.data['course_ecosystem'] %></td>
           </tr>
         <% end %>
       </table>
