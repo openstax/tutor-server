@@ -120,6 +120,10 @@ module OpenStax::Biglearn
           eq [ { 'message' => 'Question tags saved.' }]
         )
       end
+
+      it 'does not call the API and returns an empty array if an empty array is given' do
+        expect(client.add_exercises([])).to eq []
+      end
     end
 
     context 'get questions API' do

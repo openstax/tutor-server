@@ -26,30 +26,38 @@ module OpenStax::Biglearn
     let(:pool_2)     { V1::Pool.new(exercises: [exercise_2]) }
     let(:pool_3)     { V1::Pool.new(exercises: [exercise_5]) }
 
-    it 'allows adding exercises' do
-      [exercise_1, exercise_2].each do |exercise|
-        expect(client.store.read("exercises/#{exercise.question_id}")).to be_nil
+    context 'add_exercises' do
+      it 'allows adding exercises' do
+        [exercise_1, exercise_2].each do |exercise|
+          expect(client.store.read("exercises/#{exercise.question_id}")).to be_nil
+        end
+
+        expect(client.add_exercises([exercise_1, exercise_2])).to(
+          eq [ { 'message' => 'Question tags saved.' }]
+        )
+
+        [exercise_1, exercise_2].each do |exercise|
+          parsed_exercise = JSON.parse client.store.read("exercises/#{exercise.question_id}")
+          version = exercise.version.to_s
+          expect(parsed_exercise[version]).to eq exercise.tags
+        end
       end
 
-      expect(client.add_exercises([exercise_1, exercise_2])).to(
-        eq [ { 'message' => 'Question tags saved.' }]
-      )
-
-      [exercise_1, exercise_2].each do |exercise|
-        parsed_exercise = JSON.parse client.store.read("exercises/#{exercise.question_id}")
-        version = exercise.version.to_s
-        expect(parsed_exercise[version]).to eq exercise.tags
+      it 'returns an empty array if an empty array is given' do
+        expect(client.add_exercises([])).to eq []
       end
     end
 
-    it 'allows adding pools' do
-      expect(pool_1.uuid).to be_nil
+    context 'add_pools' do
+      it 'allows adding pools' do
+        expect(pool_1.uuid).to be_nil
 
-      client.add_pools([pool_1])
+        client.add_pools([pool_1])
 
-      parsed_pool = JSON.parse client.store.read("pools/#{pool_1.uuid}")
+        parsed_pool = JSON.parse client.store.read("pools/#{pool_1.uuid}")
 
-      expect(parsed_pool).to eq pool_1.exercises.map(&:question_id)
+        expect(parsed_pool).to eq pool_1.exercises.map(&:question_id)
+      end
     end
 
     context "get_projection_exercises" do
