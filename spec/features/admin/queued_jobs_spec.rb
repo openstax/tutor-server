@@ -41,6 +41,20 @@ RSpec.feature 'Administration of queued jobs', :js do
     expect(page).to have_css('.job_progress', text: '50%')
   end
 
+  scenario 'Viewing a job without any custom data' do
+    visit admin_jobs_path
+    click_link status.id
+    expect(current_path).to eq(admin_job_path(status.id))
+
+    # set the job as completed and refresh the page
+    status.succeeded!
+    visit admin_job_path(status.id)
+
+    expect(page).to have_css('.job_progress', text: '100%')
+    expect(page).to have_css('.job_errors', text: '')
+    expect(page).to have_css('.job_custom', text: '')
+  end
+
   scenario 'Getting more details about a job' do
     error = Lev::Error.new(code: 'bad', message: 'awful')
     status.add_error(error)
