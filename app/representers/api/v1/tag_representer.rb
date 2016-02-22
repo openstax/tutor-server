@@ -36,6 +36,12 @@ module Api::V1
                description: 'The chapter and section in the book, e.g. [5, 2]'
              }
 
+    property :is_visible,
+             type: 'boolean',
+             getter: ->(*){ visible? },
+             readable: true,
+             writeable: false
+
     property :data,
              type: String,
              readable: true,

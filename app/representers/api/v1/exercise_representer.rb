@@ -31,10 +31,8 @@ module Api::V1
     collection :tags,
                readable: true,
                writeable: false,
-               getter: ->(*) {
-                 (tags + tags.flat_map(&:teks_tags)).select{ |tag| tag.visible? }.uniq
-               },
                decorator: TagRepresenter,
+               getter: ->(*) { (tags + tags.flat_map(&:teks_tags)).uniq },
                schema_info: { required: true,
                               description: 'Tags for this exercise' }
 

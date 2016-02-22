@@ -32,6 +32,7 @@ RSpec.describe Api::V1::TagRepresenter, type: :representer do
     expect(representation).to eq(
       'id' => 'k12phys-ch04-s02-lo02',
       'description' => 'Discuss the relationship between mass and inertia',
+      'is_visible' => true,
       'type' => 'lo',
       'chapter_section' => [4,2]
     )
@@ -43,6 +44,7 @@ RSpec.describe Api::V1::TagRepresenter, type: :representer do
       'id' => 'ost-tag-teks-112-39-c-4d',
       'name' => '(D)',
       'description' => 'calculate the effect of forces on objects',
+      'is_visible' => true,
       'type' => 'teks',
       'data' => '4d'
     )
@@ -54,14 +56,16 @@ RSpec.describe Api::V1::TagRepresenter, type: :representer do
       'id' => generic_tag.value,
       'name' => generic_tag.name,
       'description' => generic_tag.description,
-      'type' => 'generic',
+      'is_visible' => false,
+      'type' => 'generic'
     )
   end
 
   it 'shows the default name for dok tags' do
     representation = Api::V1::TagRepresenter.new(dok_tag).as_json
     expect(representation).to include(
-      'name' => 'DOK: 1'
+      'name' => 'DOK: 1',
+      'is_visible' => true
     )
   end
 
