@@ -3,14 +3,27 @@
 <table class="table table-striped">
   <thead>
     <tr>
+      <th>Name</th>
+      <th>Args</th>
       <th>Progress</th>
       <th>Errors</th>
+      <% if @job.attempt > 0 %>
+        <th>Prior Attempts</th>
+      <% end %>
       <th>Custom</th>
     </tr>
   </thead>
 
   <tbody>
     <tr>
+     <td class='job_name'>
+       <%= @job.job_name %>
+     </td>
+
+      <td class='job_args'>
+        <%= @job.job_args %>
+      </td>
+
       <td class='job_progress'>
         <%= number_to_percentage(@job.progress * 100, precision: 0) %>
       </td>
@@ -21,6 +34,14 @@
         <% end %>
       </td>
 
+      <% if @job.attempt > 0 %>
+        <td class='job_attempts'>
+          <% @job.prior_attempts.each do |job| %>
+            <p>Attempt <%= job.attempt + 1 %> - <%= job.state.name %></p>
+          <% end %>
+        </td>
+      <% end %>
+
       <td class='job_custom'>
         <% @custom_fields.each do |key, value| %>
           <p class='job_<%= key %>'>
@@ -29,6 +50,34 @@
           </p>
         <% end %>
       </td>
+    </tr>
+  </tbody>
+</table>
+
+<br />
+<br />
+<br />
+<br />
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Recorded At</th>
+      <th>Queued At</th>
+      <th>Started At</th>
+      <th>Succeeded At</th>
+      <th>Failed At</th>
+      <th>Killed At</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><%= @job.recorded_at %></td>
+      <td><%= @job.queued_at %></td>
+      <td><%= @job.started_at %></td>
+      <td><%= @job.succeeded_at %></td>
+      <td><%= @job.failed_at %></td>
+      <td><%= @job.killed_at %></td>
     </tr>
   </tbody>
 </table>
