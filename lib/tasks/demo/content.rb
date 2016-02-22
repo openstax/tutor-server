@@ -108,9 +108,7 @@ class DemoContent < DemoBase
     end
 
     # Parallel step
-    # Disable multiple processes for now: Exercises (dev) times out with multiple requests...
-    in_parallel(ContentConfiguration[book.to_sym], transaction: true,
-                                                   max_processes: 0) do | contents, initial_index |
+    in_parallel(ContentConfiguration[book.to_sym], transaction: true) do |contents, initial_index|
 
       index = initial_index
 

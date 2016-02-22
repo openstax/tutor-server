@@ -36,7 +36,7 @@ class DemoTasks < DemoBase
 
       end
 
-      wait_for_parallel_completion
+      wait_for_parallel_completion!
 
     end
 
