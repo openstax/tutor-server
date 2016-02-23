@@ -7,7 +7,7 @@ RSpec.feature 'Administration of queued jobs', :js do
   let(:user) { FactoryGirl.create(:user) }
   let(:role) { AddUserAsCourseTeacher[course: course, user: user] }
 
-  let(:status) { Jobba.all.to_a.last }
+  let(:status) { Jobba.find(@job_id) }
 
   before(:all) do
     Jobba.all.to_a.each { |status| status.delete! }
@@ -21,7 +21,7 @@ RSpec.feature 'Administration of queued jobs', :js do
 
   before(:each) do
     stub_current_user(admin)
-    Tasks::ExportPerformanceReport.perform_later(course: course, role: role)
+    @job_id = Tasks::ExportPerformanceReport.perform_later(course: course, role: role)
   end
 
   after(:each) do
