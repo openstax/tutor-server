@@ -1,7 +1,18 @@
 desc 'Initializes data for the deployment demo (run all demo:* tasks), book can be either all, bio or phy.'
-task :demo, [:book, :version, :random_seed] => ['demo:content', 'demo:tasks', 'demo:show'] do |tt, args|
-  Rake::Task[:"demo:work"].invoke(args[:book],args[:random_seed]) unless ENV['NOWORK']
-  puts 'All demo tasks completed'
+task :demo, [:book, :version, :random_seed] => :environment do |tt, args|
+  failures = []
+  Rake::Task[:"demo:content"].invoke(args[:book], args[:version], args[:random_seed]) \
+    rescue failures << 'Content'
+  Rake::Task[:"demo:tasks"].invoke(args[:book], args[:random_seed]) rescue failures << 'Tasks'
+  unless ENV['NOWORK']
+    Rake::Task[:"demo:work"].invoke(args[:book], args[:random_seed]) rescue failures << 'Work'
+  end
+
+  if failures.empty?
+    puts 'All demo tasks successful!'
+  else
+    fail "Some demo tasks failed! (#{failures.join(', ')})"
+  end
 end
 
 namespace :demo do
@@ -11,10 +22,10 @@ namespace :demo do
     require_relative 'demo/content'
     result = DemoContent.call(args.to_h.merge(print_logs: true))
     if result.errors.none?
-      puts "Content success!"
+      puts "Successfully imported content"
     else
       result.errors.each{ |error| puts "Content Error: " + Lev::ErrorTranslator.translate(error) }
-      fail "demo content failed"
+      fail "Failed to import content"
     end
   end
 
@@ -23,22 +34,22 @@ namespace :demo do
     require_relative 'demo/tasks'
     result = DemoTasks.call(args.to_h.merge(print_logs: true))
     if result.errors.none?
-      puts "Tasks creation success!"
+      puts "Successfully created tasks"
     else
       result.errors.each{ |error| puts "Tasks Error: " + Lev::ErrorTranslator.translate(error) }
-      fail "task creation failed"
+      fail "Failed to create tasks"
     end
   end
 
   desc 'Works student assignments'
-  task :work, [:book, :version, :random_seed] => :environment do |tt, args|
+  task :work, [:book, :random_seed] => :environment do |tt, args|
     require_relative 'demo/work'
     result = DemoWork.call(args.to_h.merge(print_logs: true))
     if result.errors.none?
-      puts "Tasks were worked successfully!"
+      puts "Successfully worked tasks"
     else
       result.errors.each{ |error| puts "Tasks Error: " + Lev::ErrorTranslator.translate(error) }
-      fail "working tasks failed"
+      fail "Failed to work tasks"
     end
   end
 

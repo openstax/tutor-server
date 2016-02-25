@@ -130,7 +130,7 @@ class DemoBase
     max_processes ||= Integer(ENV['DEMO_MAX_PROCESSES']) rescue 1
 
     if arg_size == 0 || max_processes < 1
-      log("Processes: 0 (inline processing) - Slice size: #{arg_size}")
+      #log("Processes: 0 (inline processing) - Slice size: #{arg_size}")
 
       return yield *[args + [0]]
     end
@@ -151,7 +151,7 @@ class DemoBase
       sliced_args.collect{ |sliced_arg| sliced_arg.next } + [process_index*slice_size]
     end
 
-    log("Processes: #{num_processes} - Slice size: #{slice_size}")
+    #log("Processes: #{num_processes} - Slice size: #{slice_size}")
 
     # We have to clear all connections before forking (and open a new connection after forking)
     # because the different processes cannot share connections
@@ -189,22 +189,29 @@ class DemoBase
   def wait_for_parallel_completion
     return [] if @processes.nil?
 
-    log('Waiting for child processes to exit...')
+    #log('Waiting for child processes to exit...')
 
     results = @processes.collect{ |pid| Process.wait2(pid) }
 
     @processes = []
 
     results.each do |result|
-      log("PID: #{result.first} - Status: #{result.last.exitstatus}")
-      nonfatal_error(code: :process_failed) if result.last.exitstatus != 0
+      #log("PID: #{result.first} - Status: #{result.last.exitstatus}")
+      nonfatal_error(code: :process_failed) unless result.last.success?
     end
 
-    log('All child processes exited')
+    #log('All child processes done')
 
     results
   end
 
+  # Same as wait_for_parallel_completion,
+  # but raises an exception if any of the child processes failed
+  def wait_for_parallel_completion!
+    results = wait_for_parallel_completion
+
+    raise('Child process failed') if results.any?{ |result| !result.last.success? }
+  end
 
   class TasksProfile
     def initialize(assignment_type:, user_responses:, step_types:, randomizer:)
