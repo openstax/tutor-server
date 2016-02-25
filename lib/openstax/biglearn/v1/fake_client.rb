@@ -9,6 +9,8 @@ class OpenStax::Biglearn::V1::FakeClient
   #
 
   def add_exercises(exercises)
+    return [] if exercises.empty?
+
     # Iterate through the exercises, storing each in the store,
     # overwriting any with the same ID
 
