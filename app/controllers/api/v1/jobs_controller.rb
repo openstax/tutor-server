@@ -27,6 +27,7 @@ class Api::V1::JobsController < Api::V1::ApiController
   EOS
   def show
     job = Jobba.find(params[:id])
+    return render_api_errors(:job_not_found, :not_found) if job.nil?
     OSU::AccessPolicy.require_action_allowed!(:read, current_api_user, job)
     respond_with job, represent_with: Api::V1::JobRepresenter
   end
