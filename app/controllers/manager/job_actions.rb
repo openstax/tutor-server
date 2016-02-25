@@ -13,7 +13,7 @@ module Manager::JobActions
 
   def show
     @job = Jobba.find(params[:id])
-    @custom_fields = @job.data
+    @custom_fields = @job.data || {}
     render 'manager/jobs/show'
   end
 end

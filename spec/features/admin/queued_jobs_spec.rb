@@ -7,7 +7,7 @@ RSpec.feature 'Administration of queued jobs', :js do
   let(:user) { FactoryGirl.create(:user) }
   let(:role) { AddUserAsCourseTeacher[course: course, user: user] }
 
-  let(:status) { Jobba.all.to_a.last }
+  let(:status) { Jobba.find(@job_id) }
 
   before(:all) do
     Jobba.all.to_a.each { |status| status.delete! }
@@ -21,7 +21,7 @@ RSpec.feature 'Administration of queued jobs', :js do
 
   before(:each) do
     stub_current_user(admin)
-    Tasks::ExportPerformanceReport.perform_later(course: course, role: role)
+    @job_id = Tasks::ExportPerformanceReport.perform_later(course: course, role: role)
   end
 
   after(:each) do
@@ -39,6 +39,23 @@ RSpec.feature 'Administration of queued jobs', :js do
     expect(current_path).to eq(admin_jobs_path)
     expect(page).to have_css('.job_status', text: 'queued')
     expect(page).to have_css('.job_progress', text: '50%')
+  end
+
+  scenario 'Viewing a job without any custom data' do
+    visit admin_jobs_path
+    click_link status.id
+    expect(current_path).to eq(admin_job_path(status.id))
+
+    # set the job as completed and refresh the page
+    status.succeeded!
+    status.set_job_name('Export performance report')
+    visit admin_job_path(status.id)
+
+    expect(page).to have_css('.job_name', text: 'Export performance report')
+    expect(page).to have_css('.job_args', text: '{}')
+    expect(page).to have_css('.job_progress', text: '100%')
+    expect(page).to have_css('.job_errors', text: '')
+    expect(page).to have_css('.job_custom', text: '')
   end
 
   scenario 'Getting more details about a job' do
