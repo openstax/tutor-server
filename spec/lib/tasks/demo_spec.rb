@@ -17,8 +17,15 @@ RSpec.describe 'Demo', type: :request, version: :v1, speed: :slow, vcr: VCR_OPTS
       # The customized import files for the are located in the fixtures directory
       fixtures_directory = File.join(File.dirname(__FILE__),'../../fixtures/demo-imports')
       ContentConfiguration.with_config_directory(fixtures_directory) do
+        # Disable parallel content import for the test environment (because of fakeredis)
+        # otherwise FakeBiglearn gets no exercise data
+        old_max_processes = ENV['DEMO_MAX_PROCESSES']
+        ENV['DEMO_MAX_PROCESSES'] = '0'
         expect(DemoContent.call(print_logs: false).errors).to be_empty
+        ENV['DEMO_MAX_PROCESSES'] = old_max_processes
+
         expect(DemoTasks.call(print_logs: false).errors).to be_empty
+
         expect(DemoWork.call(print_logs: false).errors).to be_empty
       end
 
