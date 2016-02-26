@@ -4,7 +4,7 @@ module Api::V1::Courses::Cc
 
     include ::Roar::JSON
 
-    class Base < Roar::Decorator
+    class TaskBase < ::Roar::Decorator
       include Roar::JSON
       include Representable::Coercion
 
@@ -17,9 +17,7 @@ module Api::V1::Courses::Cc
                type: String,
                readable: true,
                writeable: false
-    end
 
-    class TaskBase < Base
       property :opens_at,
                type: String,
                readable: true,

@@ -9,6 +9,12 @@ module Api::V1
              readable: true,
              writeable: false
 
+    property :is_trouble,
+             readable: true,
+             writeable: false,
+             schema_info: { type: 'boolean' },
+             if: ->(*) { respond_to? :is_trouble }
+
     property :content_ecosystem_id,
              as: :ecosystem_id,
              type: String,
@@ -36,24 +42,25 @@ module Api::V1
              getter: ->(*) { is_publish_requested? },
              schema_info: { type: 'boolean' }
 
-
     property :publish_last_requested_at,
              type: String,
              readable: true,
              writeable: false,
              getter: ->(*) { DateTimeUtilities.to_api_s(publish_last_requested_at) }
 
-    property :publish_job_uuid,
-             type: String,
+    property :publish_job,
+             decorator: JobRepresenter,
              readable: true,
-             writeable: false
+             writeable: false,
+             getter: ->(*) { Jobba.find(publish_job_uuid) },
+             if: ->(*) { !publish_job_uuid.blank? }
 
     property :publish_job_url,
              type: String,
              readable: true,
              writeable: false,
              getter: ->(*) { "/api/jobs/#{publish_job_uuid}" },
-             if: ->(*) { !publish_job_uuid.nil? }
+             if: ->(*) { !publish_job_uuid.blank? }
 
     property :published_at,
              type: String,
