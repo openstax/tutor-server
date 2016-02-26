@@ -146,7 +146,7 @@ module Api::V1::Courses
     collection :plans,
                readable: true,
                writeable: false,
-               decorator: TaskPlanRepresenter
+               decorator: ::Api::V1::TaskPlanRepresenter
 
     collection :tasks,
                readable: true,
