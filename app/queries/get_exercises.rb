@@ -1,78 +1,42 @@
 class GetExercises
 
+  lev_routine express_output: :exercises, transaction: :no_transaction
+
+  uses_routine GetCourseEcosystem, as: :get_ecosystem
+
   # Returns Content::Exercises filtered "by":
   #   :ecosystem or :course
   #   :page_ids (defaults to all)
   #   :pool_types (defaults to all)
   #
-  # :with is an array that instructs to return extra information with the exercises, can include:
-  #   :course_exercise_options (if :course provided)
-  # :with always effectively includes :pool_type by default
+  # returns course-specific exclusion information with the exercises (if :course provided)
 
-  def self.[](by:, with: nil)
-    new.run(by: by, with: with)
-  end
+  def exec(ecosystem: nil, course: nil, page_ids: nil, pool_types: nil)
+    raise ArgumentError, "Either :ecosystem or :course must be provided" \
+      if ecosystem.nil? && course.nil?
 
-  def run(by:, with:)
-    @by = by
-    @with = [with].flatten.compact
+    ecosystem ||= run(:get_ecosystem, course: course).outputs.ecosystem
 
-    pools.each do |pool|
-      pool.exercises(preload_tags: true).each do |exercise|
-        record_exercise(exercise)
-        record_pool_type(exercise, pool.type)
-        record_course_exercise_options(exercise)
+    pools_map = GetEcosystemPoolsByPageIdsAndPoolTypes[ecosystem: ecosystem,
+                                                       page_ids: params[:page_ids],
+                                                       pool_types: params[:pool_types]]
+
+    excluded_exercise_numbers = CourseContent::Models::ExcludedExercise
+                                  .where(entity_course_id: course.id)
+                                  .pluck(:exercise_number) unless course.nil?
+
+    # Build map of exercise uids to representations, with pool type
+    exercise_representations = pools_map.each_with_object({}) do |(pool_type, pools), hash|
+      pools.flat_map{ |pool| pool.exercises(preload_tags: true) }.each do |exercise|
+        hash[exercise.uid] ||= Api::V1::ExerciseRepresenter.new(exercise).to_hash
+        hash[exercise.uid]['pool_types'] ||= []
+        hash[exercise.uid]['pool_types'] << pool_type
+        hash[exercise.uid]['is_excluded'] = excluded_exercise_numbers.include?(exercise.number) \
+          unless course.nil?
       end
     end
 
-    result
-  end
-
-  def ecosystem
-    raise "Either :ecosystem or :course must be provided" unless @by[:ecosystem] || @by[:course]
-    @ecosystem ||= @by[:ecosystem] || GetCourseEcosystems[course: @by[:course]].first
-  end
-
-  def pages
-    @pages ||= @by[:page_ids] ? ecosystem.pages_by_ids(@by[:page_ids]) : ecosystem.pages
-  end
-
-  def pools
-    if !@pools
-      # Default to all pool types
-      pool_types = [by[:pool_types]].flatten.compact.uniq
-      pool_types = Content::Pool.pool_types if pool_types.empty?
-
-      @pools = pool_types.collect{|pt| ecosystem.send("#{pt}_pools".to_sym, pages: pages)}
-    end
-    @pools
-  end
-
-  def record_exercise(exercise)
-    @result[exercise.uid] ||= exercise
-  end
-
-  def record_pool_type(exercise, pool_type)
-    @result[exercise.uid]['pool_types'] ||= []
-    @result[exercise.uid]['pool_types'] << pool_type
-  end
-
-  def record_course_exercise_options(exercise)
-    return unless @with.include?(:course_exercise_options)
-
-    raise "To return course exercise options, a :course must have been provided" unless @by[:course]
-
-    @course_exercise_options ||=
-      CourseContent::Models::ExerciseOptions.where(entity_course_id: @by[:course].id).all.each_with_object do |eo, hash|
-        hash[eo.exercise_uid] = eo
-      end
-    end
-
-    @result[exercise.uid]['course_exercise_options'] = @course_exercise_options[exercise.uid]
-  end
-
-  def result
-    @result ||= {}
+    outputs[:exercises] = Hashie::Mash.new(items: exercise_representations.values)
   end
 
 end
