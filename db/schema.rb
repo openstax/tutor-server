@@ -179,16 +179,15 @@ ActiveRecord::Schema.define(version: 20160317184322) do
   add_index "course_content_course_ecosystems", ["content_ecosystem_id", "entity_course_id"], name: "course_ecosystems_on_ecosystem_id_course_id", using: :btree
   add_index "course_content_course_ecosystems", ["entity_course_id", "created_at"], name: "course_ecosystems_on_course_id_created_at", using: :btree
 
-  create_table "course_content_exercise_options", force: :cascade do |t|
-    t.integer  "entity_course_id_id"
-    t.string   "exercise_uid"
-    t.boolean  "is_excluded",         default: false
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
+  create_table "course_content_excluded_exercises", force: :cascade do |t|
+    t.integer  "entity_course_id", null: false
+    t.integer  "exercise_number",  null: false
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
   end
 
-  add_index "course_content_exercise_options", ["entity_course_id_id"], name: "index_course_content_exercise_options_on_course_id", using: :btree
-  add_index "course_content_exercise_options", ["exercise_uid"], name: "index_course_content_exercise_options_on_exercise_uid", using: :btree
+  add_index "course_content_excluded_exercises", ["entity_course_id"], name: "index_course_content_excluded_exercises_on_entity_course_id", using: :btree
+  add_index "course_content_excluded_exercises", ["exercise_number", "entity_course_id"], name: "index_excluded_exercises_on_number_and_course_id", unique: true, using: :btree
 
   create_table "course_membership_enrollment_changes", force: :cascade do |t|
     t.integer  "user_profile_id",                                null: false

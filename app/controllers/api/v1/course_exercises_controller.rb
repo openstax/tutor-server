@@ -20,24 +20,11 @@ class Api::V1::CourseExercisesController < Api::V1::ApiController
   def index
     OSU::AccessPolicy.require_action_allowed!(:exercises, current_api_user, @course)
 
-    exercises = GetExercises[
-      by: {
-        course: @course,
-        page_ids: params[:page_ids],
-        pool_types: params[:pool_types]
-      },
-      with: :course_exercise_options
-    ]
+    exercises = GetExercises[course: @course,
+                             page_ids: params[:page_ids],
+                             pool_types: params[:pool_types]]
 
-    exercise_hashes = exercises.collect do |_, exercise|
-      Api::V1::ExerciseRepresenter.new(exercise).to_hash.tap do |hash|
-        hash['pool_types'] = exercise['pool_types']
-        hash['course_exercise_options'] = exercise['course_exercise_options']
-      end
-    end
-
-    respond_with Hashie::Mash.new(items: exercise_hashes.values),
-                 represent_with: Api::V1::ExerciseSearchRepresenter
+    respond_with exercises, represent_with: Api::V1::ExerciseSearchRepresenter
   end
 
   def update

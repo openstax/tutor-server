@@ -33,13 +33,18 @@ module Api::V1
                writeable: false,
                decorator: TagRepresenter,
                getter: ->(*) { (tags + tags.flat_map(&:teks_tags)).uniq },
-               schema_info: { required: true,
-                              description: 'Tags for this exercise' }
+               schema_info: { required: true, description: 'Tags for this exercise' }
 
     collection :pool_types,
                readable: true,
                writeable: false,
                if: ->(*) { respond_to?(:pool_types) }
+
+    property :is_excluded,
+             readable: true,
+             writeable: false,
+             if: ->(*) { respond_to?(:is_excluded) },
+             schema_info: { type: 'boolean' }
 
   end
 end
