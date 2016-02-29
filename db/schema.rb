@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160225204521) do
+ActiveRecord::Schema.define(version: 20160229221635) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -178,6 +178,13 @@ ActiveRecord::Schema.define(version: 20160225204521) do
 
   add_index "course_content_course_ecosystems", ["content_ecosystem_id", "entity_course_id"], name: "course_ecosystems_on_ecosystem_id_course_id", using: :btree
   add_index "course_content_course_ecosystems", ["entity_course_id", "created_at"], name: "course_ecosystems_on_course_id_created_at", using: :btree
+
+  create_table "course_content_excluded_exercises", force: :cascade do |t|
+    t.integer  "entity_course_id", null: false
+    t.integer  "number",           null: false
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+  end
 
   create_table "course_membership_enrollment_changes", force: :cascade do |t|
     t.integer  "user_profile_id",                                null: false
