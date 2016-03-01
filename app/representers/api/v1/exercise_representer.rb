@@ -7,7 +7,7 @@ module Api::V1
     property :id,
              type: String,
              readable: true,
-             writeable: false,
+             writeable: true,
              schema_info: { required: true }
 
     property :url,

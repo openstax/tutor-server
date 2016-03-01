@@ -38,13 +38,13 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
       DatabaseCleaner.clean
     end
 
-    describe '#index' do
+    describe '#show' do
       context 'for anonymous' do
         it 'raises SecurityTransgression if user is anonymous or not a teacher' do
           page_ids = Content::Models::Page.all.map(&:id)
 
           expect {
-            api_get :index, nil, parameters: { course_id: course.id, page_ids: page_ids }
+            api_get :show, nil, parameters: { course_id: course.id, page_ids: page_ids }
           }.to raise_error(SecurityTransgression)
         end
       end
@@ -54,7 +54,7 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
           page_ids = Content::Models::Page.all.map(&:id)
 
           expect {
-            api_get :index, user_2_token, parameters: { course_id: course.id, page_ids: page_ids }
+            api_get :show, user_2_token, parameters: { course_id: course.id, page_ids: page_ids }
           }.to raise_error(SecurityTransgression)
         end
       end
@@ -62,7 +62,7 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
       context 'for a teacher in the course' do
         it 'works' do
           page_ids = Content::Models::Page.all.map(&:id)
-          api_get :index, user_1_token, parameters: { course_id: course.id, page_ids: page_ids}
+          api_get :show, user_1_token, parameters: { course_id: course.id, page_ids: page_ids}
 
           expect(response).to have_http_status(:success)
           hash = response.body_as_hash
@@ -80,14 +80,14 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
         end
 
         it 'returns all exercises if page_ids is ommitted' do
-          api_get :index, user_1_token, parameters: { course_id: course.id }
+          api_get :show, user_1_token, parameters: { course_id: course.id }
 
           expect(response).to have_http_status(:success)
           expect(response.body_as_hash[:total_count]).to eq(@ecosystem.exercises.size)
         end
 
         it 'returns an empty result if page_ids is empty' do
-          api_get :index, user_1_token, parameters: { course_id: course.id, page_ids: [] }
+          api_get :show, user_1_token, parameters: { course_id: course.id, page_ids: [] }
 
           expect(response).to have_http_status(:success)
           expect(response.body_as_hash).to eq({total_count: 0, items: []})
@@ -95,7 +95,7 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
 
         it 'returns only exercises in certain pools if pool_types are given' do
           page_ids = Content::Models::Page.all.map(&:id)
-          api_get :index, user_1_token, parameters: {
+          api_get :show, user_1_token, parameters: {
             course_id: course.id, page_ids: page_ids, pool_types: 'homework_core'
           }
 
@@ -115,7 +115,7 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
         end
 
         it 'returns exercise exclusion information' do
-          api_get :index, user_1_token, parameters: { course_id: course.id }
+          api_get :show, user_1_token, parameters: { course_id: course.id }
 
           expect(response).to have_http_status(:success)
           hash = response.body_as_hash
@@ -130,7 +130,8 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
       context 'for anonymous' do
         it 'raises SecurityTransgression' do
           expect {
-            api_patch :update, nil, parameters: { course_id: course.id, id: exercise.id }
+            api_patch :update, nil, parameters: { course_id: course.id },
+                                    raw_post_data: [{ id: exercise.id, is_excluded: true }].to_json
           }.to raise_error(SecurityTransgression)
         end
       end
@@ -138,31 +139,37 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
       context 'for a user that is not a teacher' do
         it 'raises SecurityTransgression' do
           expect {
-            api_patch :update, user_2_token, parameters: { course_id: course.id, id: exercise.id }
+            api_patch :update, user_2_token,
+                      parameters: { course_id: course.id },
+                      raw_post_data: [{ id: exercise.id, is_excluded: true }].to_json
           }.to raise_error(SecurityTransgression)
         end
       end
 
       context 'for a teacher in the course' do
         it 'can exclude an exercise' do
-          api_patch :update, user_1_token, parameters: { course_id: course.id, id: exercise.id },
-                                           raw_post_data: { is_excluded: true }.to_json
+          api_patch :update, user_1_token,
+                    parameters: { course_id: course.id },
+                    raw_post_data: [{ id: exercise.id, is_excluded: true }].to_json
 
           expect(response).to have_http_status(:success)
-          hash = response.body_as_hash
-          expect(hash[:is_excluded]).to eq true
+          array = response.body_as_hash
+          expect(array).to be_an Array
+          expect(array.first[:is_excluded]).to eq true
         end
 
         it 'can reinclude an exercise' do
           FactoryGirl.create :course_content_excluded_exercise,
                              course: course, exercise_number: exercise.number
 
-          api_patch :update, user_1_token, parameters: { course_id: course.id, id: exercise.id },
-                                           raw_post_data: { is_excluded: false }.to_json
+          api_patch :update, user_1_token,
+                    parameters: { course_id: course.id },
+                    raw_post_data: [{ id: exercise.id, is_excluded: false }].to_json
 
           expect(response).to have_http_status(:success)
-          hash = response.body_as_hash
-          expect(hash[:is_excluded]).to eq false
+          array = response.body_as_hash
+          expect(array).to be_an Array
+          expect(array.first[:is_excluded]).to eq false
         end
       end
     end
