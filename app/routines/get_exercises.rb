@@ -1,6 +1,6 @@
 class GetExercises
 
-  lev_routine express_output: :exercises, transaction: :no_transaction
+  lev_routine express_output: :exercise_search, transaction: :no_transaction
 
   uses_routine GetCourseEcosystem, as: :get_ecosystem
 
@@ -25,9 +25,13 @@ class GetExercises
                                   .where(entity_course_id: course.id)
                                   .pluck(:exercise_number) unless course.nil?
 
+    all_exercises = []
+
     # Build map of exercise uids to representations, with pool type
     exercise_representations = pools_map.each_with_object({}) do |(pool_type, pools), hash|
-      pools.flat_map{ |pool| pool.exercises(preload_tags: true) }.each do |exercise|
+      exercises = pools.flat_map{ |pool| pool.exercises(preload_tags: true) }
+      all_exercises += exercises
+      exercises.each do |exercise|
         hash[exercise.uid] ||= Api::V1::ExerciseRepresenter.new(exercise).to_hash
         hash[exercise.uid]['pool_types'] ||= []
         hash[exercise.uid]['pool_types'] << pool_type
@@ -36,7 +40,8 @@ class GetExercises
       end
     end
 
-    outputs[:exercises] = Hashie::Mash.new(items: exercise_representations.values)
+    outputs[:exercises] = all_exercises.uniq
+    outputs[:exercise_search] = Hashie::Mash.new(items: exercise_representations.values)
   end
 
 end

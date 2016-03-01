@@ -17,7 +17,7 @@ class Api::V1::CourseExercisesController < Api::V1::ApiController
 
     #{json_schema(Api::V1::ExerciseSearchRepresenter, include: :readable)}
   EOS
-  def index
+  def show
     OSU::AccessPolicy.require_action_allowed!(:exercises, current_api_user, @course)
 
     exercises = GetExercises[course: @course,
@@ -27,38 +27,47 @@ class Api::V1::CourseExercisesController < Api::V1::ApiController
     respond_with exercises, represent_with: Api::V1::ExerciseSearchRepresenter
   end
 
-  api :PATCH, '/courses/:course_id/exercises/:exercise_id',
-            "Updates the given exercise to be excluded or not for the given course"
+  api :PATCH, '/courses/:course_id/exercises',
+            "Updates the given exercise(s) to be excluded or not for the given course"
   description <<-EOS
-    Updates the given exercise to be excluded or not for the given course.
+    Updates the given exercise(s) to be excluded or not for the given course.
 
-    #{json_schema(Api::V1::ExerciseSearchRepresenter, include: :writeable)}
+    #{json_schema(Api::V1::ExercisesRepresenter, include: :writeable)}
   EOS
   def update
     OSU::AccessPolicy.require_action_allowed!(:exercises, current_api_user, @course)
 
-    exercise_params = Hashie::Mash.new
-    consume!(exercise_params, represent_with: Api::V1::ExerciseRepresenter)
+    exercise_params_array = []
+    consume!(exercise_params_array, represent_with: Api::V1::ExercisesRepresenter)
 
     # TODO: make a routine?
-    exercise = Content::Models::Exercise.find(params[:id])
-    page_exercises = GetExercises[course: @course, page_ids: [exercise.page.id]]['items']
-    exercise_representation = page_exercises.find{ |ex| ex['id'] == params[:id] }
+    page_ids = Content::Models::Exercise.find(exercise_params_array.map(&:id))
+                                        .map(&:content_page_id)
+    out = GetExercises.call(course: @course, page_ids: page_ids).outputs
+    exercises = out.exercises.index_by{ |ex| ex.id.to_s }
+    page_exercises = out.exercise_search['items'].index_by(&:id)
 
-    if exercise_params.is_excluded # true
-      CourseContent::Models::ExcludedExercise.find_or_create_by(
-        entity_course_id: @course.id, exercise_number: exercise.number
-      )
-      exercise_representation['is_excluded'] = true
-    elsif !exercise_params.is_excluded.nil? # false
-      excluded_exercise = CourseContent::Models::ExcludedExercise.find_by(
-        entity_course_id: @course.id, exercise_number: exercise.number
-      ).try(:destroy)
-      exercise_representation['is_excluded'] = false
+    exercise_representations = exercise_params_array.map do |exercise_params|
+      exercise = exercises[exercise_params.id]
+      exercise_representation = page_exercises[exercise_params.id]
+
+      if exercise_params.is_excluded # true
+        CourseContent::Models::ExcludedExercise.find_or_create_by(
+          entity_course_id: @course.id, exercise_number: exercise.number
+        )
+        exercise_representation['is_excluded'] = true
+      elsif !exercise_params.is_excluded.nil? # false
+        excluded_exercise = CourseContent::Models::ExcludedExercise.find_by(
+          entity_course_id: @course.id, exercise_number: exercise.number
+        ).try(:destroy)
+        exercise_representation['is_excluded'] = false
+      end
+
+      exercise_representation
     end
 
-    respond_with exercise_representation, represent_with: Api::V1::ExerciseRepresenter,
-                                          responder: ResponderWithPutContent
+    respond_with exercise_representations, represent_with: Api::V1::ExercisesRepresenter,
+                                           responder: ResponderWithPutContent
   end
 
   protected
