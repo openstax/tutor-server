@@ -3,10 +3,10 @@ module Tasks
     class ExportCcXlsx
 
       def self.call(course_name:, report:, filename:)
-        filepath = "#{filename}.xlsx"
-        export = new(course_name: course_name, report: report, filepath: filepath)
+        filename = "#{filename}.xlsx" unless filename.ends_with?(".xlsx")
+        export = new(course_name: course_name, report: report, filepath: filename)
         export.create
-        filepath
+        filename
       end
 
       def initialize(course_name:, report:, filepath:)
@@ -136,6 +136,8 @@ module Tasks
         # STUDENT DATA
 
         first_student_row = sheet.rows.count + 1
+
+        report[:students].sort_by!{|student| student[:last_name]}
 
         report[:students].each do |student|
           student_columns = [

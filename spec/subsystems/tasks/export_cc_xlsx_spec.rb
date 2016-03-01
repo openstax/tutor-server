@@ -1,10 +1,22 @@
 require 'rails_helper'
+require 'tmpdir'
 
 RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
 
-  it 'works' do
-    puts 'running'
-    described_class.call(course_name: "Physics 101", report: report_1, filename: 'testfile')
+  it 'does not explode and passes spot checks' do
+    Dir.mktmpdir do |dir|
+      filepath = described_class.call(course_name: "Physics 101", report: report_1, filename: "#{dir}/testfile")
+
+      wb = nil
+      expect{ wb = Roo::Excelx.new(filepath) }.to_not raise_error
+
+      expect(wb.sheets).to eq ["1st Period - %", "1st Period - #"]
+
+      sheet1 = wb.sheet(wb.sheets.first)
+
+      expect(sheet1.cell(11,2)).to eq "Gail"
+      expect(0.81..0.82).to cover(sheet1.cell(12,4))
+    end
   end
 
   def report_1

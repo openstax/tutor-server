@@ -567,6 +567,9 @@ GEM
       roar (>= 1.0.0, <= 1.1.0)
       test_xml (>= 0.1.6)
       uber (>= 0.0.5)
+    roo (2.3.2)
+      nokogiri (~> 1)
+      rubyzip (~> 1.1, < 2.0.0)
     rspec-collection_matchers (1.1.2)
       rspec-expectations (>= 2.99.0.beta1)
     rspec-core (3.2.3)
@@ -774,6 +777,7 @@ DEPENDENCIES
   remotipart
   render_anywhere
   restforce
+  roo
   rspec-collection_matchers
   rspec-rails
   sass-rails (~> 5.0.0)
