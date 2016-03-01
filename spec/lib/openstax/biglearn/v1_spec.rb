@@ -34,6 +34,7 @@ RSpec.describe OpenStax::Biglearn::V1, type: :external do
     let!(:dummy_roles)             { [dummy_role] }
     let!(:dummy_exercises)         { ['some exercises'] }
     let!(:dummy_pools)             { [double(uuid: 'some uuid')] }
+    let!(:dummy_excluded_pools)    { [double(uuid: 'some excluded uuid')] }
     let!(:dummy_count)             { 'some count' }
     let!(:dummy_difficulty)        { 'some difficulty' }
     let!(:dummy_allow_repetitions) { 'some allow repetitions' }
@@ -51,6 +52,7 @@ RSpec.describe OpenStax::Biglearn::V1, type: :external do
                   .with(
                     role:              dummy_role,
                     pools:             dummy_pools,
+                    excluded_pools:    dummy_excluded_pools,
                     count:             dummy_count,
                     difficulty:        dummy_difficulty,
                     allow_repetitions: dummy_allow_repetitions
@@ -86,6 +88,7 @@ RSpec.describe OpenStax::Biglearn::V1, type: :external do
       response = OpenStax::Biglearn::V1.get_projection_exercises(
         role:              dummy_role,
         pools:             dummy_pools,
+        excluded_pools:    dummy_excluded_pools,
         count:             dummy_count,
         difficulty:        dummy_difficulty,
         allow_repetitions: dummy_allow_repetitions

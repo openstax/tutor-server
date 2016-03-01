@@ -57,10 +57,20 @@ class OpenStax::Biglearn::V1::FakeClient
     uuid
   end
 
-  def get_projection_exercises(role:, pools:, count:, difficulty:, allow_repetitions:)
+  def get_projection_exercises(role:, pools:, excluded_pools:, count:, difficulty:, allow_repetitions:)
     # Get the exercises in the pools
     pool_keys = pools.map{ |pl| "pools/#{pl.uuid}" }
-    question_ids = store.read_multi(*pool_keys).values.flat_map{ |json| JSON.parse(json) }.uniq
+    pool_question_ids = store.read_multi(*pool_keys).values.flat_map{ |json| JSON.parse(json) }.uniq
+
+    excluded_pool_question_ids =
+      if excluded_pools.empty?
+        []
+      else
+        excluded_pool_keys = excluded_pools.map{|pl| "pools/#{pl.uuid}"}
+        store.read_multi(*excluded_pool_keys).values.flat_map{ |json| JSON.parse(json) }.uniq
+      end
+
+    question_ids = pool_question_ids - excluded_pool_question_ids
 
     # Limit the results to the desired number
     results = question_ids.first(count)

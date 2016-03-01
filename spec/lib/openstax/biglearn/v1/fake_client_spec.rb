@@ -25,6 +25,8 @@ module OpenStax::Biglearn
     let(:pool_1)     { V1::Pool.new(exercises: [exercise_1, exercise_3, exercise_4]) }
     let(:pool_2)     { V1::Pool.new(exercises: [exercise_2]) }
     let(:pool_3)     { V1::Pool.new(exercises: [exercise_5]) }
+    let(:pool_4)     { V1::Pool.new(exercises: [exercise_2]) }
+    let(:pool_5)     { V1::Pool.new(exercises: [exercise_3]) }
 
     context 'add_exercises' do
       it 'allows adding exercises' do
@@ -64,12 +66,14 @@ module OpenStax::Biglearn
       before(:each) do
         V1.add_exercises([exercise_1, exercise_2, exercise_3, exercise_4, exercise_5])
         V1.add_pools([pool_1, pool_2, pool_3])
+        V1.add_pools([pool_4, pool_5])
       end
 
       it "works when allow_repetitions is false" do
         exercises = client.get_projection_exercises(
           role: nil,
           pools: [pool_1],
+          excluded_pools: [],
           count: 5,
           difficulty: 0.5,
           allow_repetitions: false
@@ -82,12 +86,26 @@ module OpenStax::Biglearn
         exercises = client.get_projection_exercises(
           role: nil,
           pools: [pool_1],
+          excluded_pools: [],
           count: 5,
           difficulty: 0.5,
           allow_repetitions: true
         )
 
         expect(exercises).to eq(%w(e1 e3 e4 e1 e3))
+      end
+
+      it "works when excluded_pools is given" do
+        exercises = client.get_projection_exercises(
+          role: nil,
+          pools: [pool_1],
+          excluded_pools: [pool_4, pool_5],
+          count: 5,
+          difficulty: 0.5,
+          allow_repetitions: false
+        )
+
+        expect(exercises).to eq(%w(e1 e4))
       end
     end
 

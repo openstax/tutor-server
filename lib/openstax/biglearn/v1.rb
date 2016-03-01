@@ -31,9 +31,11 @@ module OpenStax::Biglearn::V1
   # Returns a number of recommended exercises for the given role and pools.
   # Pools are combined into a single pool before the call to Biglearn.
   # May return less than the desired number if allow_repetitions is false.
-  def self.get_projection_exercises(role:, pools:, count: 1,
-                                    difficulty: 0.5, allow_repetitions: true)
-    exercises = client.get_projection_exercises(role: role, pools: pools,
+  def self.get_projection_exercises(role:,
+                                    pools:, excluded_pools: [],
+                                    count: 1, difficulty: 0.5, allow_repetitions: true)
+    exercises = client.get_projection_exercises(role: role,
+                                                pools: pools, excluded_pools: excluded_pools,
                                                 count: count, difficulty: difficulty,
                                                 allow_repetitions: allow_repetitions)
 
