@@ -27,24 +27,43 @@ class Api::V1::CourseExercisesController < Api::V1::ApiController
     respond_with exercises, represent_with: Api::V1::ExerciseSearchRepresenter
   end
 
+  api :PATCH, '/courses/:course_id/exercises/:exercise_id',
+            "Updates the given exercise to be excluded or not for the given course"
+  description <<-EOS
+    Updates the given exercise to be excluded or not for the given course.
+
+    #{json_schema(Api::V1::ExerciseSearchRepresenter, include: :writeable)}
+  EOS
   def update
     OSU::AccessPolicy.require_action_allowed!(:exercises, current_api_user, @course)
 
-    # TODO make routine that updates is_excluded, and if changed, changes pool in BL
-    # TODO store the pool somewhere in Tutor - CourseContent::Models::ExclusionPool
+    exercise_params = OpenStruct.new
+    consume!(exercise_params, represent_with: Api::V1::ExerciseRepresenter)
 
-    options = CourseContent::Models::ExerciseOptions.find_or_initialize_by(entity_course_id: @course.id, exercise_uid: params[:exercise_id])
-    options.is_excluded = params[:is_excluded]
+    # TODO: routine?
+    exercise = Content::Exercise.find(params[:id])
+    page_exercises = GetExercises[course: @course, page_ids: [exercise.page.id]].first
+    exercise_representation = page_exercises.find{ |ex| ex['id'] == params[:id] }
 
-    options.save ?
-      head(:success) :
-      render_api_errors(options.errors)
+    if exercise_params.is_excluded # true
+      CourseContent::Models::ExcludedExercise.find_or_create_by(
+        entity_course_id: @course.id, exercise_number: exercise.number
+      )
+      exercise_representation['is_excluded'] = true
+    elsif !exercise_params.is_excluded.nil? # false
+      excluded_exercise = CourseContent::Models::ExcludedExercise.find_by(
+        entity_course_id: @course.id, exercise_number: exercise.number
+      ).try(:destroy)
+      exercise_representation['is_excluded'] = false
+    end
+
+    respond_with exercise_representation, represent_with: Api::V1::ExerciseRepresenter
   end
 
   protected
 
   def get_course
-    @course = Entity::Course.find(params[:id] || params[:course_id])
+    @course = Entity::Course.find(params[:course_id])
   end
 
 end

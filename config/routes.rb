@@ -91,11 +91,9 @@ Rails.application.routes.draw do
           post '(/role/:role_id)', action: :create
           get '(/role/:role_id)', action: :show
         end
-
-        resources :exercises, controller: :course_exercises,
-                              only: [:index, :update],
-                              as: :course_exercises
       end
+
+      resources :exercises, controller: :course_exercises, only: [:index, :update]
 
       resources :task_plans, path: '/plans', shallow: true, except: [:index, :new, :edit] do
         member do
