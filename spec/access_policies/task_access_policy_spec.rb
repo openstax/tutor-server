@@ -33,7 +33,20 @@ RSpec.describe TaskAccessPolicy, type: :access_policy do
       context 'and the requestor has no taskings in the task' do
         before { allow(DoesTaskingExist).to receive(:[]) { false } }
 
-        it { should be false }
+        context 'and the task has a course' do
+          it { should be false }
+        end
+
+        context 'and the task has no course' do
+          before do
+            @task_plan = task.task_plan
+            task.update_attribute :task_plan, nil
+          end
+
+          after { task.update_attribute :task_plan, @task_plan }
+
+          it { should be false }
+        end
       end
 
       context 'and the requestor is a course teacher' do
