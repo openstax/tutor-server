@@ -42,7 +42,7 @@ module Api::V1
 
     property :is_excluded,
              readable: true,
-             writeable: false,
+             writeable: true,
              if: ->(*) { respond_to?(:is_excluded) },
              schema_info: { type: 'boolean' }
 
