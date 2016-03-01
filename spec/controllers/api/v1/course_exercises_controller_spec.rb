@@ -1,139 +1,28 @@
 require 'rails_helper'
+require 'vcr_helper'
+require 'database_cleaner'
 
-RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true, version: :v1 do
+RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
+                                                   version: :v1, speed: :slow, vcr: VCR_OPTS do
 
-  let!(:user_1)             { FactoryGirl.create(:user) }
-  let!(:user_1_token)       { FactoryGirl.create :doorkeeper_access_token,
-                                                 resource_owner_id: user_1.id }
+  let!(:user_1)         { FactoryGirl.create(:user) }
+  let!(:user_1_token)   { FactoryGirl.create :doorkeeper_access_token,
+                                             resource_owner_id: user_1.id }
 
-  let!(:user_2)             { FactoryGirl.create(:user) }
-  let!(:user_2_token)       { FactoryGirl.create :doorkeeper_access_token,
-                                                 resource_owner_id: user_2.id }
+  let!(:user_2)         { FactoryGirl.create(:user) }
+  let!(:user_2_token)   { FactoryGirl.create :doorkeeper_access_token,
+                                             resource_owner_id: user_2.id }
 
-  let!(:userless_token)    { FactoryGirl.create :doorkeeper_access_token }
+  let!(:userless_token) { FactoryGirl.create :doorkeeper_access_token }
 
-  let(:content_analyst)   { FactoryGirl.create(:user, :content_analyst) }
-
-  let(:ca_user_token)    { FactoryGirl.create :doorkeeper_access_token,
-                                               resource_owner_id: content_analyst.id }
-
-  let!(:course)          { CreateCourse[name: 'Physics 101'] }
-  let!(:period)          { CreatePeriod[course: course] }
-
-  context 'with a fake book' do
-    let!(:book)            { FactoryGirl.create(:content_book, :standard_contents_1) }
-    let!(:ecosystem)       {
-      strategy = Content::Strategies::Direct::Ecosystem.new(book.ecosystem.reload)
-      ecosystem = Content::Ecosystem.new(strategy: strategy)
-      CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
-      ecosystem
-    }
-
-    describe '#index' do
-      it 'raises SecurityTransgression unless user is a content analyst' do
-        expect {
-          api_get :index, nil
-        }.to raise_error(SecurityTransgression)
-
-        expect {
-          api_get :index, user_2_token
-        }.to raise_error(SecurityTransgression)
-      end
-
-      it 'allows a content analyst to access' do
-        expect {
-          api_get :index, ca_user_token
-        }.not_to raise_error
-      end
-    end
-
-    describe "#readings" do
-      it 'raises SecurityTransgression if user is anonymous or not in the course' do
-        expect {
-          api_get :readings, nil, parameters: { id: ecosystem.id }
-        }.to raise_error(SecurityTransgression)
-
-        expect {
-          api_get :readings, user_1_token, parameters: { id: ecosystem.id }
-        }.to raise_error(SecurityTransgression)
-      end
-
-      it 'works for students in the course' do
-        AddUserAsCourseTeacher.call(course: course, user: user_1)
-        AddUserAsPeriodStudent.call(period: period, user: user_2)
-
-        api_get :readings, user_1_token, parameters: { id: ecosystem.id }
-        expect(response).to have_http_status(:success)
-        teacher_response = response.body_as_hash
-
-        api_get :readings, user_2_token, parameters: { id: ecosystem.id }
-        expect(response).to have_http_status(:success)
-        student_response = response.body_as_hash
-
-        expect(teacher_response).to eq(student_response)
-      end
-
-      it "works for teachers in the course" do
-        AddUserAsCourseTeacher.call(course: course, user: user_1)
-
-        api_get :readings, user_1_token, parameters: {id: ecosystem.id}
-        expect(response).to have_http_status(:success)
-        expect(response.body_as_hash).to eq([{
-          id: ecosystem.books.first.id.to_s,
-          cnx_id: ecosystem.books.first.cnx_id,
-          title: 'book title',
-          type: 'part',
-          chapter_section: [],
-          children: [
-            {
-              id: ecosystem.books.first.chapters.first.id.to_s,
-              title: 'chapter 1',
-              type: 'part',
-              chapter_section: [1],
-              children: [
-                {
-                  id: ecosystem.books.first.chapters.first.pages.first.id.to_s,
-                  cnx_id: ecosystem.books.first.chapters.first.pages.first.cnx_id,
-                  title: 'first page',
-                  chapter_section: [1, 1],
-                  type: 'page'
-                },
-                {
-                  id: ecosystem.books.first.chapters.first.pages.second.id.to_s,
-                  cnx_id: ecosystem.books.first.chapters.first.pages.second.cnx_id,
-                  title: 'second page',
-                  chapter_section: [1, 2],
-                  type: 'page'
-                }
-              ]
-            },
-            {
-              id: ecosystem.books.first.chapters.second.id.to_s,
-              title: 'chapter 2',
-              type: 'part',
-              chapter_section: [2],
-              children: [
-                {
-                  id: ecosystem.books.first.chapters.second.pages.first.id.to_s,
-                  cnx_id: ecosystem.books.first.chapters.second.pages.first.cnx_id,
-                  title: 'third page',
-                  chapter_section: [2, 1],
-                  type: 'page'
-                }
-              ]
-            }
-          ]
-        }])
-
-      end
-    end
-  end
+  let!(:course)         { CreateCourse[name: 'Physics 101'] }
+  let!(:period)         { CreatePeriod[course: course] }
 
   context 'with a real book' do
     before(:all) do
       DatabaseCleaner.start
 
-      VCR.use_cassette("Api_V1_EcosystemsController/with_book", VCR_OPTS) do
+      VCR.use_cassette("Api_V1_CourseExercisesController/with_book", VCR_OPTS) do
         @ecosystem = FetchAndImportBookAndCreateEcosystem[
           book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
         ]
@@ -149,28 +38,28 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
       DatabaseCleaner.clean
     end
 
-    describe "#exercises" do
+    describe "#index" do
       it 'raises SecurityTransgression if user is anonymous or not a teacher' do
         page_ids = Content::Models::Page.all.map(&:id)
 
         expect {
-          api_get :exercises, nil, parameters: { id: @ecosystem.id, page_ids: page_ids }
+          api_get :index, nil, parameters: { course_id: course.id, page_ids: page_ids }
         }.to raise_error(SecurityTransgression)
 
         expect {
-          api_get :exercises, user_2_token, parameters: { id: @ecosystem.id, page_ids: page_ids }
+          api_get :index, user_2_token, parameters: { course_id: course.id, page_ids: page_ids }
         }.to raise_error(SecurityTransgression)
       end
 
       it "should return all exercises if page_ids is ommitted" do
-        api_get :exercises, user_1_token, parameters: { id: @ecosystem.id }
+        api_get :index, user_1_token, parameters: { course_id: course.id }
 
         expect(response).to have_http_status(:success)
         expect(response.body_as_hash[:total_count]).to eq(@ecosystem.exercises.size)
       end
 
       it "should return an empty result if page_ids is empty" do
-        api_get :exercises, user_1_token, parameters: { id: @ecosystem.id, page_ids: [] }
+        api_get :index, user_1_token, parameters: { course_id: course.id, page_ids: [] }
 
         expect(response).to have_http_status(:success)
         expect(response.body_as_hash).to eq({total_count: 0, items: []})
@@ -178,7 +67,7 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
 
       it "works for teachers in the course" do
         page_ids = Content::Models::Page.all.map(&:id)
-        api_get :exercises, user_1_token, parameters: { id: @ecosystem.id, page_ids: page_ids}
+        api_get :index, user_1_token, parameters: { course_id: course.id, page_ids: page_ids}
 
         expect(response).to have_http_status(:success)
         hash = response.body_as_hash
@@ -197,8 +86,8 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
 
       it "returns only exercises in certain pools if pool_types are given" do
         page_ids = Content::Models::Page.all.map(&:id)
-        api_get :exercises, user_1_token, parameters: {
-          id: @ecosystem.id, page_ids: page_ids, pool_types: 'homework_core'
+        api_get :index, user_1_token, parameters: {
+          course_id: course.id, page_ids: page_ids, pool_types: 'homework_core'
         }
 
         expect(response).to have_http_status(:success)
@@ -214,6 +103,14 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
             expect(page_los).to include(item_lo)
           end
         end
+      end
+
+      it "returns exercise exclusion information" do
+        api_get :index, user_1_token, parameters: { course_id: course.id }
+
+        expect(response).to have_http_status(:success)
+        hash = response.body_as_hash
+        hash[:items].each{ |item| expect(item[:is_excluded]).to eq false }
       end
     end
   end
