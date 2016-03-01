@@ -18,8 +18,8 @@ class GetExercises
     ecosystem ||= run(:get_ecosystem, course: course).outputs.ecosystem
 
     pools_map = GetEcosystemPoolsByPageIdsAndPoolTypes[ecosystem: ecosystem,
-                                                       page_ids: params[:page_ids],
-                                                       pool_types: params[:pool_types]]
+                                                       page_ids: page_ids,
+                                                       pool_types: pool_types]
 
     excluded_exercise_numbers = CourseContent::Models::ExcludedExercise
                                   .where(entity_course_id: course.id)
