@@ -37,12 +37,12 @@ class Api::V1::CourseExercisesController < Api::V1::ApiController
   def update
     OSU::AccessPolicy.require_action_allowed!(:exercises, current_api_user, @course)
 
-    exercise_params = OpenStruct.new
+    exercise_params = Hashie::Mash.new
     consume!(exercise_params, represent_with: Api::V1::ExerciseRepresenter)
 
-    # TODO: routine?
-    exercise = Content::Exercise.find(params[:id])
-    page_exercises = GetExercises[course: @course, page_ids: [exercise.page.id]].first
+    # TODO: make a routine?
+    exercise = Content::Models::Exercise.find(params[:id])
+    page_exercises = GetExercises[course: @course, page_ids: [exercise.page.id]]['items']
     exercise_representation = page_exercises.find{ |ex| ex['id'] == params[:id] }
 
     if exercise_params.is_excluded # true
@@ -57,7 +57,8 @@ class Api::V1::CourseExercisesController < Api::V1::ApiController
       exercise_representation['is_excluded'] = false
     end
 
-    respond_with exercise_representation, represent_with: Api::V1::ExerciseRepresenter
+    respond_with exercise_representation, represent_with: Api::V1::ExerciseRepresenter,
+                                          responder: ResponderWithPutContent
   end
 
   protected
