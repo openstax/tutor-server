@@ -25,27 +25,24 @@ module Api::V1
     property :content,
              readable: true,
              writeable: false,
-             getter: ->(*) { is_a?(Hashie::Mash) ? content : \
-                                                   ::JSON.parse(content).except('attachments') },
+             getter: ->(*) { respond_to?(:content_hash) ? content_hash : content },
              schema_info: { required: true }
 
     collection :tags,
                readable: true,
                writeable: false,
-               decorator: TagRepresenter,
-               getter: ->(*) { is_a?(Hashie::Mash) ? tags : \
-                                                     (tags + tags.flat_map(&:teks_tags)).uniq },
+               decorator: ->(obj, *) { (obj.is_a?(Content::Models::Tag) || \
+                                        obj.is_a?(Content::Tag)) ? TagRepresenter : nil },
+               getter: ->(*) { (tags + tags.flat_map(&:teks_tags)).compact.uniq },
                schema_info: { required: true, description: 'Tags for this exercise' }
 
     collection :pool_types,
                readable: true,
-               writeable: false,
-               if: ->(*) { is_a?(Hashie::Mash) }
+               writeable: false
 
     property :is_excluded,
              readable: true,
              writeable: true,
-             if: ->(*) { is_a?(Hashie::Mash) },
              schema_info: { type: 'boolean' }
 
   end
