@@ -15,7 +15,11 @@ RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
       sheet1 = wb.sheet(wb.sheets.first)
 
       expect(sheet1.cell(11,2)).to eq "Gail"
-      expect(0.81..0.82).to cover(sheet1.cell(12,4))
+      expect(0.81..0.82).to cover(sheet1.cell(13,4))
+      expect(wb.comment?(13,4,"1st Period - %")).to be_truthy
+      expect(wb.celltype(11,9,wb.sheets.first)).to eq :date
+
+      [4, 5, 6].each{|col| expect(wb.empty?(11,col,wb.sheets.last)).to be_truthy}
     end
   end
 
@@ -68,7 +72,7 @@ RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
                 id: 44,
                 due_at: Chronic.parse("3/15/2016 1PM"),
                 last_worked_at: Chronic.parse("3/17/2016 5PM"),
-                actual_and_placeholder_exercise_count: 7,
+                actual_and_placeholder_exercise_count: 9,
                 completed_exercise_count: 5,
                 correct_exercise_count: 2,
                 recovered_exercise_count: 0
@@ -90,9 +94,31 @@ RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
                 id: 44,
                 due_at: Chronic.parse("3/15/2016 1PM"),
                 last_worked_at: Chronic.parse("3/2/2016 3PM"),
-                actual_and_placeholder_exercise_count: 7,
-                completed_exercise_count: 6,
-                correct_exercise_count: 6,
+                actual_and_placeholder_exercise_count: 9,
+                completed_exercise_count: 8,
+                correct_exercise_count: 8,
+                recovered_exercise_count: 0
+              }
+            ]
+          },
+          {
+            name: "Jimmy John",
+            first_name: "Jimmy",
+            last_name: "John",
+            student_identifier: "SID3",
+            role: nil,
+            data: [
+              nil,
+              {
+                late: false,
+                status: 'in_progress',
+                type: 'concept_coach',
+                id: 44,
+                due_at: Chronic.parse("3/15/2016 1PM"),
+                last_worked_at: Chronic.parse("3/2/2016 4PM"),
+                actual_and_placeholder_exercise_count: 9,
+                completed_exercise_count: 4,
+                correct_exercise_count: 2,
                 recovered_exercise_count: 0
               }
             ]

@@ -9,6 +9,11 @@ module Tasks
         filename
       end
 
+      # So can be called like other exporters
+      def self.[](profile:, report:, filename:)
+        call(course_name: profile.name, report: report, filename: filename)
+      end
+
       def initialize(course_name:, report:, filepath:)
         @course_name = course_name
         @report = report
@@ -46,11 +51,12 @@ module Tasks
           @pct_L = s.add_style border: {edges: [:left], :color => '000000', :style => :thin}, num_fmt: Axlsx::NUM_FMT_PERCENT
           @right_R = s.add_style border: {edges: [:right], :color => '000000', :style => :thin}, alignment: {horizontal: :right}
           @date_R = s.add_style border: {edges: [:right], :color => '000000', :style => :thin}, num_fmt: 14
-          @average_style = s.add_style b: true, border: { edges: [:top], :color => '000000', :style => :medium}
-          @average_R = s.add_style b: true, border: { edges: [:top, :right], :color => '000000', :style => :medium}, border_right: {style: :thin}
+          @average_style = s.add_style b: true, border: { edges: [:top], :color => '000000', :style => :medium}, format_code: "#.0"
+          @average_R = s.add_style b: true, border: { edges: [:top, :right], :color => '000000', :style => :medium}, border_right: {style: :thin}, format_code: "#.0"
           @average_pct = s.add_style b: true,
                                      border: { edges: [:top], :color => '000000', :style => :medium},
                                      num_fmt: Axlsx::NUM_FMT_PERCENT
+
         end
       end
 
@@ -163,7 +169,7 @@ module Tasks
                   correct_count,
                   {
                     style: @normal_L,
-                    comment: "Correct: #{(correct_pct*100).round(0)} Completed: #{(completed_pct*100).round(0)}"
+                    comment: "Correct: #{(correct_pct*100).round(0)}% Completed: #{(completed_pct*100).round(0)}%"
                   }
                 ])
                 student_columns.push(completed_count)
