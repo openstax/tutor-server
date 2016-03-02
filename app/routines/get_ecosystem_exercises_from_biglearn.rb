@@ -51,12 +51,12 @@ class GetEcosystemExercisesFromBiglearn
 
     exercises = ecosystem.exercises_by_numbers(numbers)
     fatal_error(code: :missing_local_exercises,
-                message: "Biglearn returned more exercises for the practice widget than were " +
+                message: "Biglearn returned more exercises than were " +
                          "present locally. [pools: #{biglearn_pools.collect{|pl| pl.uuid}}, " +
                          "role: #{role.id}, requested: #{count}, " +
-                         "from biglearn: #{numbers.count}, " +
+                         "from biglearn: #{numbers.size}, " +
                          "local found: #{exercises.size}] biglearn question ids: #{numbers}") \
-      if exercises.size != numbers.count
+      if exercises.size < numbers.size
 
     outputs[:ecosystem_exercises] = exercises
   end
