@@ -1,6 +1,5 @@
 require 'rails_helper'
 require 'vcr_helper'
-require 'database_cleaner'
 
 RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
                                                    version: :v1, speed: :slow, vcr: VCR_OPTS do

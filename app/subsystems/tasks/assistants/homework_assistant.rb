@@ -120,6 +120,11 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
     core_exercise_numbers = history.exercises.first.map(&:number)
     all_worked_exercise_numbers = history.exercises.flatten.map(&:number)
 
+    course = @task_plan.owner
+
+    excluded_exercise_numbers = core_exercise_numbers + \
+                                (course.try(:excluded_exercises) || []).map(&:exercise_number)
+
     spaced_practice_status = []
 
     num_spaced_practice_exercises = get_num_spaced_practice_exercises
@@ -157,7 +162,7 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
 
       # Partition spaced exercises into the main candidate pool and the repeat candidates
       spaced_exercises.each do |ex|
-        next if core_exercise_numbers.include?(ex.number)  # Never include
+        next if excluded_exercise_numbers.include?(ex.number)  # Never include
 
         if all_worked_exercise_numbers.include?(ex.number) # Only include if we run out
           repeated_candidate_exercises << ex
