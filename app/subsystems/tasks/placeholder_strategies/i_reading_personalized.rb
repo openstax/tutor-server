@@ -24,9 +24,12 @@ class Tasks::PlaceholderStrategies::IReadingPersonalized
                                                          difficulty:        0.5,
                                                          allow_repetitions: true]
 
-    chosen_exercise_task_step_pairs = chosen_exercises.zip(personalized_placeholder_task_steps)
-    chosen_exercise_task_step_pairs.each do |exercise, step|
+    task_step_chosen_exercise_pairs = personalized_placeholder_task_steps.zip(chosen_exercises)
+    task_step_chosen_exercise_pairs.each do |step, exercise|
       step.tasked.destroy!
+      # If no exercise available, remove the placeholder completely
+      next step.destroy! if exercise.nil?
+
       tasked_exercise = TaskExercise[task_step: step, exercise: exercise]
       # inject_debug_content!(step.tasked, "This exercise is part of the #{step.group_type}")
       tasked_exercise.save!
