@@ -35,7 +35,7 @@ RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
           },
           {
             cnx_page_id: "UUID_2",
-            title: "1.2 Basket weaving is really really hard",
+            title: "1.2 Basket weaving is really really really really really (wrap test) hard",
             type: 'concept_coach',
             total_average: 0.56789,
             attempted_average: 0.8

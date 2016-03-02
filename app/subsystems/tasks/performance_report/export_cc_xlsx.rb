@@ -30,7 +30,8 @@ module Tasks
 
       def setup_styles
         @package.workbook.styles do |s|
-          @heading = s.add_style b: true, sz: 16
+          @title = s.add_style sz: 16
+          @course_section = s.add_style sz: 14
           @bold = s.add_style b: true
           @italic = s.add_style i: true
           @pct = s.add_style num_fmt: Axlsx::NUM_FMT_PERCENT
@@ -40,12 +41,13 @@ module Tasks
           @bold_T = s.add_style b: true, border: {edges: [:top], :color => '000000', :style => :thin}
           @reading_title = s.add_style b: true,
                                        border: { edges: [:left, :top, :right], :color => '000000', :style => :thin},
-                                       alignment: {horizontal: :center}
+                                       alignment: {horizontal: :center, wrap_text: true}
           @normal_L = s.add_style border: {edges: [:left], :color => '000000', :style => :thin}
           @pct_L = s.add_style border: {edges: [:left], :color => '000000', :style => :thin}, num_fmt: Axlsx::NUM_FMT_PERCENT
           @right_R = s.add_style border: {edges: [:right], :color => '000000', :style => :thin}, alignment: {horizontal: :right}
           @date_R = s.add_style border: {edges: [:right], :color => '000000', :style => :thin}, num_fmt: 14
           @average_style = s.add_style b: true, border: { edges: [:top], :color => '000000', :style => :medium}
+          @average_R = s.add_style b: true, border: { edges: [:top, :right], :color => '000000', :style => :medium}, border_right: {style: :thin}
           @average_pct = s.add_style b: true,
                                      border: { edges: [:top], :color => '000000', :style => :medium},
                                      num_fmt: Axlsx::NUM_FMT_PERCENT
@@ -69,7 +71,7 @@ module Tasks
       end
 
       def make_first_sheet_active
-        @package.workbook.add_view active_tab: 1
+        @package.workbook.add_view active_tab: 0
       end
 
       def new_period_sheet(report:, format:)
@@ -84,13 +86,13 @@ module Tasks
         # META INFO ROWS
 
         meta_rows = [
-          [["Concept Coach Student Scores", {style: @heading}]],
+          [["Concept Coach Student Scores", {style: @title}]],
           [["Exported #{Date.today.strftime("%m/%d/%Y")}", {style: @italic}]],
           [[""]],
-          [[@course_name]],
+          [[@course_name, {style: @course_section}]],
           [[""]],
           [[""]],
-          [[report[:period][:name]]],
+          [[report[:period][:name], {style: @course_section}]],
           [[""]]
         ]
 
@@ -137,9 +139,10 @@ module Tasks
 
         first_student_row = sheet.rows.count + 1
 
-        report[:students].sort_by!{|student| student[:last_name]}
+        students = report[:students].deep_dup
+        students.sort_by!{|student| student[:last_name]}
 
-        report[:students].each do |student|
+        students.each do |student|
           student_columns = [
             student[:first_name],
             student[:last_name],
@@ -148,17 +151,35 @@ module Tasks
 
           student[:data].each do |data|
             if data
+              correct_count = data[:correct_exercise_count]
+              completed_count = data[:completed_exercise_count]
+              total_count = data[:actual_and_placeholder_exercise_count]
+
+              correct_pct = correct_count * 1.0 / total_count
+              completed_pct = completed_count * 1.0 / total_count
+
               if format == :counts
-                student_columns.push([data[:correct_exercise_count], {style: @normal_L}])
-                student_columns.push(data[:completed_exercise_count])
-                student_columns.push(data[:actual_and_placeholder_exercise_count])
+                student_columns.push([
+                  correct_count,
+                  {
+                    style: @normal_L,
+                    comment: "Correct: #{(correct_pct*100).round(0)} Completed: #{(completed_pct*100).round(0)}"
+                  }
+                ])
+                student_columns.push(completed_count)
+                student_columns.push(total_count)
               else
                 student_columns.push([
-                  data[:correct_exercise_count]*1.0/data[:actual_and_placeholder_exercise_count],
-                  {style: @pct_L}
+                  correct_pct,
+                  {
+                    style: @pct_L,
+                    comment: "Correct: #{correct_count} " \
+                             "Completed: #{completed_count} " \
+                             "Total Possible: #{total_count}"
+                  }
                 ])
                 student_columns.push([
-                  data[:completed_exercise_count]*1.0/data[:actual_and_placeholder_exercise_count],
+                  completed_pct,
                   {style: @pct}
                 ])
               end
@@ -186,7 +207,7 @@ module Tasks
         average_columns = [
           ["Class Average", {style: @average_style}],
           ["", {style: @average_style}],
-          ["", {style: @average_style}]
+          ["", {style: @average_R}]
         ]
 
         report[:data_headings].count.times do |index|
@@ -212,7 +233,7 @@ module Tasks
             average_columns.push(["=AVERAGE(#{total_range})", {style: average_style}])
           end
 
-          average_columns.push(["", {style: @average_style}])
+          average_columns.push(["", {style: @average_R}])
         end
 
         @helper.add_row(sheet, average_columns)

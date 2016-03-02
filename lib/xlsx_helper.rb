@@ -37,7 +37,7 @@ class XlsxHelper
   def add_row(sheet, optioned_values)
     optioned_values = OptionedValues.new(optioned_values)
 
-    sheet.add_row(
+    row = sheet.add_row(
       optioned_values.values,
       style: optioned_values.styles,
       types: optioned_values.types
@@ -45,6 +45,11 @@ class XlsxHelper
 
     optioned_values.merge_ranges.each do |merge_range|
       sheet.merge_cells sheet.rows.last.cells[merge_range] unless merge_range.size == 1
+    end
+
+    optioned_values.comments.each_with_index do |comment, index|
+      next if comment.nil?
+      sheet.add_comment(ref: row.cells[index], text: comment, author: "", visible: false)
     end
   end
 
@@ -72,6 +77,7 @@ class XlsxHelper
         if hash
           @style = hash[:style]
           @type = hash[:type]
+          @comment = hash[:comment]
 
           start_column = column
           end_column = column + (hash[:cols] ? hash[:cols] - 1 : 0)
@@ -88,7 +94,7 @@ class XlsxHelper
         @merge_range = (start_column || column)..(end_column || column)
       end
 
-      attr_accessor :value, :style, :type, :merge_range
+      attr_accessor :value, :style, :type, :merge_range, :comment
 
       def last_column
         merge_range.max
@@ -107,9 +113,10 @@ class XlsxHelper
       @styles = items.collect(&:style).flatten
       @types = items.collect(&:type).flatten
       @merge_ranges = items.collect(&:merge_range)
+      @comments = items.collect(&:comment)
     end
 
-    attr_accessor :values, :styles, :types, :merge_ranges
+    attr_accessor :values, :styles, :types, :merge_ranges, :comments
   end
 
 end
