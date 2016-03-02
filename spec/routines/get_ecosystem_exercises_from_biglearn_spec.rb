@@ -35,6 +35,25 @@ describe GetEcosystemExercisesFromBiglearn, type: :routine do
       bl_exercises = described_class[ecosystem: ecosystem, role: role, pools: pools, count: count]
       expect(Set.new(bl_exercises.map(&:id))).to eq Set.new(exercises.map(&:id))
     end
+
+    it 'sends the course\'s biglearn_excluded_pool_uuid to Biglearn if the role is a student' do
+      course = CreateCourse[name: 'Physics 101']
+      course.profile.update_attribute :biglearn_excluded_pool_uuid, SecureRandom.uuid
+      period = CreatePeriod[course: course]
+      user = FactoryGirl.create(:user)
+      student_role = AddUserAsPeriodStudent[user: user, period: period]
+
+      expect(OpenStax::Biglearn::V1).to receive(:get_projection_exercises).once do |args|
+        expect(args[:excluded_pools]).to include(a_kind_of(OpenStax::Biglearn::V1::Pool))
+        expect(args[:excluded_pools].map(&:uuid)).to(
+          include(course.profile.biglearn_excluded_pool_uuid)
+        )
+        []
+      end
+      expect(ExceptionNotifier).not_to receive(:notify_exception)
+
+      described_class[ecosystem: ecosystem, role: student_role, pools: pools, count: count]
+    end
   end
 
   context 'failure' do

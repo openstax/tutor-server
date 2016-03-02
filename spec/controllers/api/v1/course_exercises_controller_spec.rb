@@ -148,9 +148,13 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
 
       context 'for a teacher in the course' do
         it 'can exclude an exercise' do
-          api_patch :update, user_1_token,
-                    parameters: { course_id: course.id },
-                    raw_post_data: [{ id: exercise.id, is_excluded: true }].to_json
+          expect{
+            api_patch :update, user_1_token,
+                      parameters: { course_id: course.id },
+                      raw_post_data: [{ id: exercise.id, is_excluded: true }].to_json
+          }.to change{ course.profile.reload.biglearn_excluded_pool_uuid }
+
+          expect(course.profile.biglearn_excluded_pool_uuid).to be_a(String)
 
           expect(response).to have_http_status(:success)
           array = response.body_as_hash
@@ -162,9 +166,13 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
           FactoryGirl.create :course_content_excluded_exercise,
                              course: course, exercise_number: exercise.number
 
-          api_patch :update, user_1_token,
-                    parameters: { course_id: course.id },
-                    raw_post_data: [{ id: exercise.id, is_excluded: false }].to_json
+          expect{
+            api_patch :update, user_1_token,
+                      parameters: { course_id: course.id },
+                      raw_post_data: [{ id: exercise.id, is_excluded: false }].to_json
+          }.to change{ course.profile.reload.biglearn_excluded_pool_uuid }
+
+          expect(course.profile.biglearn_excluded_pool_uuid).to be_a(String)
 
           expect(response).to have_http_status(:success)
           array = response.body_as_hash

@@ -9,17 +9,28 @@ class GetEcosystemExercisesFromBiglearn
   def exec(ecosystem:, role:, pools:, count:, difficulty: 0.5, allow_repetitions: true)
     biglearn_pools = pools.collect{ |pl| OpenStax::Biglearn::V1::Pool.new(uuid: pl.uuid) }
 
+    course_profile = role.student.try(:course).try(:profile)
+
+    # TODO: Add admin exclusion pool here (later)
+    excluded_pools = [course_profile.try(:biglearn_excluded_pool_uuid)].compact.map do |uuid|
+      OpenStax::Biglearn::V1::Pool.new(uuid: uuid)
+    end
+
     attempts = 0
     begin
       urls = OpenStax::Biglearn::V1.get_projection_exercises(
         role:              role,
         pools:             biglearn_pools,
+        excluded_pools:    excluded_pools,
         count:             count,
         difficulty:        difficulty,
         allow_repetitions: allow_repetitions
       )
-      numbers = urls.collect{ |url| url.chomp('/').split('/').last.split('@').first }
+      numbers = urls.map{ |url| url.chomp('/').split('/').last.split('@').first }
     rescue OAuth2::Error => exception
+      # Our communication issues turned out to be nginx configuration issues (keepalive_timeout)
+      # Still, it's a nice safeguard to have, in case AWS has some trouble,
+      # since this Biglearn request may be blocking a student's work
       if (attempts += 1) < MAX_ATTEMPTS
         retry
       else
@@ -29,7 +40,7 @@ class GetEcosystemExercisesFromBiglearn
           exception,
           data: {
             error_id: "%06d" % SecureRandom.random_number(10**6),
-            message: 'Maximum number of retries exceeded while trying to communicate with Biglearn. Using a random local problem instead.',
+            message: 'Maximum number of retries exceeded while trying to communicate with Biglearn. Using random local problems instead.',
             attempts: attempts,
             cause: exception
           },

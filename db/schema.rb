@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160225204521) do
+ActiveRecord::Schema.define(version: 20160301235335) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -255,15 +255,16 @@ ActiveRecord::Schema.define(version: 20160225204521) do
 
   create_table "course_profile_profiles", force: :cascade do |t|
     t.integer  "school_district_school_id"
-    t.integer  "entity_course_id",                                                 null: false
-    t.string   "name",                                                             null: false
-    t.string   "timezone",                  default: "Central Time (US & Canada)", null: false
-    t.datetime "created_at",                                                       null: false
-    t.datetime "updated_at",                                                       null: false
-    t.boolean  "is_concept_coach",                                                 null: false
-    t.string   "teacher_join_token",                                               null: false
+    t.integer  "entity_course_id",                                                   null: false
+    t.string   "name",                                                               null: false
+    t.string   "timezone",                    default: "Central Time (US & Canada)", null: false
+    t.datetime "created_at",                                                         null: false
+    t.datetime "updated_at",                                                         null: false
+    t.boolean  "is_concept_coach",                                                   null: false
+    t.string   "teacher_join_token",                                                 null: false
     t.integer  "catalog_offering_id"
     t.string   "appearance_code"
+    t.string   "biglearn_excluded_pool_uuid"
   end
 
   add_index "course_profile_profiles", ["catalog_offering_id"], name: "index_course_profile_profiles_on_catalog_offering_id", using: :btree
