@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::ExercisesRepresenter, type: :representer do
   let!(:exercise_hash_array) { [
-    Hashie::Mash.new(id: 42, pool_types: ['foo', 'bar'], is_excluded: false)
+    Hashie::Mash.new(id: 42, tags: [], pool_types: ['foo', 'bar'], is_excluded: false)
   ] }
 
   let(:representation) {
