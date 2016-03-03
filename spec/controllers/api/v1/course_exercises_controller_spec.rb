@@ -156,9 +156,10 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
           expect(course.profile.biglearn_excluded_pool_uuid).to be_a(String)
 
           expect(response).to have_http_status(:success)
-          array = response.body_as_hash
-          expect(array).to be_an Array
-          expect(array.first[:is_excluded]).to eq true
+          exclusions = response.body_as_hash
+          expect(exclusions).to be_an Array
+          expect(exclusions.first[:id]).to eq exercise.id.to_s
+          expect(exclusions.first[:is_excluded]).to eq true
         end
 
         it 'can reinclude an exercise' do
@@ -174,9 +175,10 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
           expect(course.profile.biglearn_excluded_pool_uuid).to be_a(String)
 
           expect(response).to have_http_status(:success)
-          array = response.body_as_hash
-          expect(array).to be_an Array
-          expect(array.first[:is_excluded]).to eq false
+          exclusions = response.body_as_hash
+          expect(exclusions).to be_an Array
+          expect(exclusions.first[:id]).to eq exercise.id.to_s
+          expect(exclusions.first[:is_excluded]).to eq false
         end
       end
     end
