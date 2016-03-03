@@ -140,7 +140,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def update_step_counts
-    steps = task_steps.to_a
+    steps = task_steps(true).to_a
 
     update_steps_count(task_steps: steps)
     update_completed_steps_count(task_steps: steps)
