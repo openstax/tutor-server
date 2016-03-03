@@ -56,6 +56,12 @@ RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :
       expect(response.body_as_hash).to include({ status: 'queued' })
     end
 
+    it 'returns 404 Not Found if the job does not exist' do
+      api_get :show, user_token, parameters: { id: 42 }
+      expect(response).to have_http_status :not_found
+      expect(response.body_as_hash).to include({ errors: [{code: 'job_not_found'}], status: 404 })
+    end
+
     context 'with inline jobs' do
       before(:each) do
         ActiveJob::Base.queue_adapter = :inline

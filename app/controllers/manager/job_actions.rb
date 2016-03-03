@@ -13,6 +13,7 @@ module Manager::JobActions
 
   def show
     @job = Jobba.find(params[:id])
+    raise ActionController::RoutingError.new('Not Found') if @job.nil?
     @custom_fields = @job.data || {}
     render 'manager/jobs/show'
   end

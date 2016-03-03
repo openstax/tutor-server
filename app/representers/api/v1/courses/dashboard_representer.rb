@@ -4,7 +4,7 @@ module Api::V1::Courses
 
     include ::Roar::JSON
 
-    class Base < Roar::Decorator
+    class TaskBase < Roar::Decorator
       include Roar::JSON
       include Representable::Coercion
 
@@ -17,49 +17,7 @@ module Api::V1::Courses
                type: String,
                readable: true,
                writeable: false
-    end
 
-    class Plan < Base
-
-      property :is_trouble,
-               readable: true,
-               writeable: false,
-               schema_info: { type: 'boolean' }
-
-      property :type,
-               type: String,
-               readable: true,
-               writeable: false
-
-      property :is_publish_requested,
-               readable: true,
-               writeable: true,
-               schema_info: { type: 'boolean' }
-
-      property :published_at,
-               type: String,
-               readable: true,
-               writeable: false,
-               getter: ->(*) { DateTimeUtilities.to_api_s(published_at) }
-
-      property :publish_last_requested_at,
-               type: String,
-               readable: true,
-               writeable: false,
-               getter: ->(*) { DateTimeUtilities.to_api_s(publish_last_requested_at) }
-
-      property :publish_job_uuid,
-               type: String,
-               readable: true,
-               writeable: false
-
-      collection :tasking_plans,
-                 readable: true,
-                 writeable: false,
-                 decorator: Api::V1::TaskingPlanRepresenter
-    end
-
-    class TaskBase < Base
       property :opens_at,
                type: String,
                readable: true,
@@ -188,7 +146,7 @@ module Api::V1::Courses
     collection :plans,
                readable: true,
                writeable: false,
-               decorator: Plan
+               decorator: ::Api::V1::TaskPlanRepresenter
 
     collection :tasks,
                readable: true,

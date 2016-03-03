@@ -22,6 +22,12 @@ RSpec.describe CustomerService::JobsController, type: :controller do
       get :show, id: job.id
       expect(response).to have_http_status(:success)
     end
+
+    it "raises ActionController::RoutingError if the job does not exist" do
+      controller.sign_in(customer_service)
+
+      expect{ get :show, id: 42 }.to raise_error(ActionController::RoutingError)
+    end
   end
 
 end

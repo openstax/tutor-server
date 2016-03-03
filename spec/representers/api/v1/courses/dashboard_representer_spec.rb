@@ -13,6 +13,32 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
 
   let(:published_at) { opens_at }
 
+  let(:publish_job_uuid) { "394839483948" }
+
+  let(:publish_job_url) { 'http://www.example.com' }
+
+  let(:publish_job) {
+    Hashie::Mash.new({
+      id: publish_job_uuid,
+      state: {
+        name: 'succeeded'
+      },
+      progress: 1.0,
+      data: { url: publish_job_url },
+      errors: []
+    })
+  }
+
+  let(:publish_job_representation) {
+    {
+      id: publish_job_uuid,
+      status: 'succeeded',
+      progress: 1.0,
+      url: publish_job_url,
+      errors: []
+    }.stringify_keys
+  }
+
   let(:data) {
     Hashie::Mash.new.tap do |mash|
       mash.plans = [
@@ -24,7 +50,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           is_publish_requested: true,
           published_at: published_at,
           publish_last_requested_at: published_at,
-          publish_job_uuid: "394839483948",
+          publish_job_uuid: publish_job_uuid,
           tasking_plans: [
             Hashie::Mash.new(
               target_id: 42,
@@ -109,6 +135,8 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
   }
 
   it "represents dashboard output" do
+    expect(Jobba).to receive(:find).with(publish_job_uuid).and_return(publish_job)
+
     representation = described_class.new(data).as_json
 
     expect(representation).to include(
@@ -121,7 +149,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           "is_publish_requested" => true,
           "published_at" => be_kind_of(String),
           "publish_last_requested_at" => be_kind_of(String),
-          "publish_job_uuid" => "394839483948",
+          "publish_job" => publish_job_representation,
           "tasking_plans" => [
             {
               "target_id" => '42',
