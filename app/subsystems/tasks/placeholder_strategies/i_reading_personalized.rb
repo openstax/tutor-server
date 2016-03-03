@@ -36,7 +36,7 @@ class Tasks::PlaceholderStrategies::IReadingPersonalized
       step.save!
     end
 
-    task.save!
+    task.task_steps.reset
     task
   end
 

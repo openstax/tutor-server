@@ -22,6 +22,13 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
 
     # 10 tasks in total
     tasks = task_plan_1.tasks.preload(task_steps: :tasked).to_a
+
+    # Remove placeholder steps since they can sometimes be deleted, messing up our counting
+    tasks.each do |task|
+      task.task_steps.select(&:placeholder?).each(&:destroy!)
+      task.reload.update_step_counts!
+    end
+
     tasks.first(2).each do |task|
       task.task_steps.each do |task_step|
         if task_step.exercise?
