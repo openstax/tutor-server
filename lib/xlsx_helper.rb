@@ -14,14 +14,19 @@ class XlsxHelper
 
   # Worksheet name ostensible is "#{name}#{suffix}".  Both name and suffix
   # will be sanitized for disallowed characters.  The `name` may be shortened
-  # to account for max name lengths.  The suffix will not be as it is intended
-  # to come from the developer (and so shouldn't be too long).
+  # to account for max name lengths.  The suffix will not be shortened as it
+  # is intended to come from the developer (and so shouldn't be too long --
+  # in any event, the suffix must be 27 characters or less.)
   #
   def sanitized_worksheet_name(name:, suffix: nil)
     # worksheet names cannot contain characters :\/?*[]
 
     raise(IllegalArgument, "`name` must be provided") if name.nil?
     suffix ||= ""
+
+    # In some cases suffix can be longer, but it is more clear to make this a
+    # simple requirement that is always the same.
+    raise(IllegalArgument, "`suffix` is limited to 27 characters") if suffix.size > 27
 
     name = name.gsub(INVALID_WORKSHEET_NAME_CHARS_REGEX, '-')
     suffix = suffix.gsub(INVALID_WORKSHEET_NAME_CHARS_REGEX, '-')
@@ -33,7 +38,6 @@ class XlsxHelper
     if name.size <= 31 - suffix.size
       "#{name}#{suffix}"
     else
-      raise(IllegalArgument, "`suffix` is limited to 27 characters") if suffix.size > 27
       "#{name[0..(30-3-suffix.size)]}-#{'%02d' % next_truncated_name_count}#{suffix}"
     end
   end
@@ -79,6 +83,8 @@ class XlsxHelper
   end
 
   def self.cell_ref(row:, column:)
+    # There is http://www.rubydoc.info/github/randym/axlsx/Axlsx#col_ref-class_method
+    # but this massive interpolated string makes me one-line-of-ruby happy.
     "#{([''] + ('A'..'Z').to_a)[column / 26]}#{('A'..'Z').to_a[column % 26]}#{row}"
   end
 

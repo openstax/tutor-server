@@ -145,8 +145,7 @@ module Tasks
 
         first_student_row = sheet.rows.count + 1
 
-        students = report[:students].deep_dup
-        students.sort_by!{|student| student[:last_name]}
+        students = report[:students].sort_by{|student| student[:last_name]}
 
         students.each do |student|
           student_columns = [
