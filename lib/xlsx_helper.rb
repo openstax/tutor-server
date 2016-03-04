@@ -85,7 +85,7 @@ class XlsxHelper
   def self.cell_ref(row:, column:)
     # There is http://www.rubydoc.info/github/randym/axlsx/Axlsx#col_ref-class_method
     # but this massive interpolated string makes me one-line-of-ruby happy.
-    "#{([''] + ('A'..'Z').to_a)[column / 26]}#{('A'..'Z').to_a[column % 26]}#{row}"
+    "#{Axlsx.col_ref(column)}#{row}"
   end
 
   private
