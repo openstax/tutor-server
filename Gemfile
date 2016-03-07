@@ -234,6 +234,9 @@ group :development, :test do
 
   # Coveralls integration
   gem 'coveralls', require: false
+
+  # Testing excel files
+  gem 'roo'
 end
 
 group :development do

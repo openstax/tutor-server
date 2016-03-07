@@ -16,7 +16,7 @@ module Tasks
       run(:get_performance_report, course: course, role: role)
 
       begin
-        @temp_filepath = generate_temp_export_file!(format)
+        @temp_filepath = generate_temp_export_file!(format, course.is_concept_coach)
 
         export = File.open(@temp_filepath) do |file|
           Models::PerformanceReportExport.create!(
@@ -42,8 +42,8 @@ module Tasks
       filename.gsub(/[^\w-]/, '_')
     end
 
-    def generate_temp_export_file!(format)
-      klass = "Tasks::PerformanceReport::Export#{format.to_s.camelize}"
+    def generate_temp_export_file!(format, is_cc)
+      klass = "Tasks::PerformanceReport::Export#{is_cc ? 'Cc' : ''}#{format.to_s.camelize}"
       exporter = klass.constantize
       filename = sanitize_filename(
         [outputs.profile.name,

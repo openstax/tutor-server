@@ -7,11 +7,13 @@ module Tasks
 
       protected
       def exec(profile:, report:, filename:)
+        @helper = XlsxHelper.new
+
         filepath = "#{filename}.xlsx"
 
         Axlsx::Package.new do |axlsx|
-          axlsx.use_shared_strings = true # OS X Numbers interoperability
-          axlsx.workbook.styles.fonts.first.name = 'Helvetica Neue'
+          @helper.standard_package_settings(axlsx)
+
           create_data_worksheets(report, axlsx)
           create_summary_worksheet(profile.name, axlsx)
 
@@ -32,22 +34,10 @@ module Tasks
         end
       end
 
-      def worksheet_name(name, index)
-        # worksheet names cannot contain characters :\/?*[]
-        name = name.gsub(/[:\\\/\[\]*?]/, '-')
-
-        # worksheet names cannot be longer than 31 characters
-        # we truncate any names 31 characters or longer
-        # (so they cannot collide with the truncated ones, which have exactly 31 characters)
-        return name if name.size < 31
-
-        "#{name[0..27]}-#{'%02d' % (index + 1)}"
-      end
-
       def create_data_worksheets(performance_report, package)
-        performance_report.each_with_index do |report, index|
+        performance_report.each do |report|
           package.workbook.add_worksheet(
-            name: worksheet_name(report[:period][:name], index)
+            name: @helper.sanitized_worksheet_name(name: report[:period][:name])
           ) do |sheet|
             bold = sheet.styles.add_style b: true
             italic = sheet.styles.add_style i: true
