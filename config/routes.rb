@@ -134,6 +134,7 @@ Rails.application.routes.draw do
       post :entry
     end
 
+    resources :notifications, only: [:index]
   end
 
   namespace 'admin' do
@@ -176,6 +177,7 @@ Rails.application.routes.draw do
     end
 
     resources :tags, only: [:index, :edit, :update, :show]
+    resources :notifications,  only: [:index, :create, :destroy]
 
     get :timecop, controller: :timecop, action: :index
     put :reset_time, controller: :timecop
