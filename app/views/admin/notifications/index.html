@@ -2,6 +2,7 @@
 
 <div>
 <% Settings::Notifications.each do | notice | -%>
+<div class='row underlined-spaced-row'>
   <div class='col-xs-12'>
 
     <%= link_to 'Remove', {action: :destroy, id: notice['id']},
@@ -10,7 +11,8 @@
 
     <%= notice['message'] %>
   </div>
-  <% end -%>
+</div>
+<% end -%>
 
 <%= form_tag admin_notifications_path do  %>
 <div class='row'>
