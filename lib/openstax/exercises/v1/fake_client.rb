@@ -61,6 +61,12 @@ class OpenStax::Exercises::V1::FakeClient
       uid: options[:uid] || "#{options[:number].to_s}@#{options[:version].to_s}",
       tags: options[:tags] || [],
       stimulus_html: "This is fake exercise #{options[:number]}. <span data-math='\\dfrac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}'></span>",
+      attachments: [
+        {
+          id: "#{next_uid}",
+          asset: "https://somewhere.com/something.png"
+        }
+      ],
       questions: [
         {
           id: "#{next_uid}",

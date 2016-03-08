@@ -37,7 +37,7 @@ RSpec.describe Api::V1::ExerciseRepresenter, type: :representer do
     expect(representation).to include(
       'id' => exercise.id.to_s,
       'url' => exercise.url,
-      'content' => JSON.parse(exercise.content),
+      'content' => JSON.parse(exercise.content).except('attachments'),
       'tags' => a_collection_containing_exactly(
         {
           'id' => 'ost-tag-lo-k12phys-ch04-s02-lo01',
