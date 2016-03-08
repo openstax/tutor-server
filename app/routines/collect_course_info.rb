@@ -24,7 +24,7 @@ class CollectCourseInfo
   end
 
   def collect_course_info(courses, user, with)
-    enforce_order!(of: :roles, before: :students, within: with)
+    with = enforce_order(of: :roles, before: :students, within: with)
 
     entity_courses = Entity::Course.where(id: courses.map(&:id)).preload(profile: :offering)
     entity_courses.collect do |entity_course|
@@ -46,8 +46,8 @@ class CollectCourseInfo
     end
   end
 
-  def enforce_order!(of:, before:, within:)
-    within.map!{|wi| wi == before ? [of, before] : before}.flatten!.uniq!
+  def enforce_order(of:, before:, within:)
+    within.map{|wi| wi == before ? [of, before] : wi}.flatten.uniq
   end
 
   def collect_extended_course_info(info, entity_course, user, with)
@@ -107,7 +107,12 @@ class CollectCourseInfo
   end
 
   def set_students(info, entity_course)
+    return if info.roles.nil?
+
     student_role_ids = info.roles.collect{|rr| rr[:id] if rr[:type] == 'student'}.compact
+
+    return nil if student_role_ids.empty?
+
     info.students = entity_course.students
                                  .select{ |student|
                                    student_role_ids.include?(student.entity_role_id)

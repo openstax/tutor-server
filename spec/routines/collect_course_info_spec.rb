@@ -140,7 +140,7 @@ describe CollectCourseInfo, type: :routine do
         result = described_class[user: user_1, with: :students]
 
         expect(result.length).to eq 1
-        expect(result.first.students.map(&:id)).to eq [2]
+        expect(result.first.students.map(&:id)).to eq [@student.id]
       end
     end
 
