@@ -77,6 +77,7 @@ module Api::V1
                required: true,
                type: 'boolean'
              }
+
     collection :roles,
                extend: Api::V1::RoleRepresenter,
                readable: true,
@@ -88,6 +89,12 @@ module Api::V1
                extend: Api::V1::PeriodRepresenter,
                readable: true,
                writeable: false,
+               schema_info: { required: false }
+
+    collection :students,
+               readable: true,
+               writeable: false,
+               extend: Api::V1::StudentRepresenter,
                schema_info: { required: false }
 
   end

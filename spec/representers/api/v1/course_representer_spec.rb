@@ -47,4 +47,9 @@ RSpec.describe Api::V1::CourseRepresenter, type: :representer do
   it 'shows whether or not the course is a concept coach course' do
     expect(represented['is_concept_coach']).to eq true
   end
+
+  it 'shows students' do
+    output = described_class.new(Hashie::Mash.new({students: [{id: 32}, {id: 65}]})).to_hash
+    expect(output["students"]).to match [a_hash_including("id" => "32"), a_hash_including("id" => "65")]
+  end
 end

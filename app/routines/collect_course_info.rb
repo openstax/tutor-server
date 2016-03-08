@@ -12,7 +12,7 @@ class CollectCourseInfo
 
   def exec(courses: nil, user: nil, with: [])
     courses = collect_courses(courses: courses, user: user)
-    outputs[:courses] = collect_course_info(courses, user, with)
+    outputs[:courses] = collect_course_info(courses, user, [with].flatten)
   end
 
   private
@@ -24,6 +24,8 @@ class CollectCourseInfo
   end
 
   def collect_course_info(courses, user, with)
+    enforce_order!(of: :roles, before: :students, within: with)
+
     entity_courses = Entity::Course.where(id: courses.map(&:id)).preload(profile: :offering)
     entity_courses.collect do |entity_course|
       profile = entity_course.profile
@@ -44,8 +46,12 @@ class CollectCourseInfo
     end
   end
 
+  def enforce_order!(of:, before:, within:)
+    within.map!{|wi| wi == before ? [of, before] : before}.flatten!.uniq!
+  end
+
   def collect_extended_course_info(info, entity_course, user, with)
-    [with].flatten.each do |option|
+    with.each do |option|
       case option
       when :teacher_names
         set_teacher_names(info, entity_course)
@@ -57,6 +63,8 @@ class CollectCourseInfo
         set_ecosystem(info, entity_course)
       when :ecosystem_book
         set_ecosystem_book(info, entity_course)
+      when :students
+        set_students(info, entity_course)
       end
     end
 
@@ -96,6 +104,14 @@ class CollectCourseInfo
     ecosystem = info.ecosystem ||
                 run(:get_course_ecosystem, course: entity_course).outputs.ecosystem
     info.ecosystem_book = ecosystem.try(:books).try(:first)
+  end
+
+  def set_students(info, entity_course)
+    student_role_ids = info.roles.collect{|rr| rr[:id] if rr[:type] == 'student'}.compact
+    info.students = entity_course.students
+                                 .select{ |student|
+                                   student_role_ids.include?(student.entity_role_id)
+                                 }
   end
 
 end
