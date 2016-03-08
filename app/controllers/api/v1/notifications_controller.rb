@@ -6,7 +6,8 @@ class Api::V1::NotificationsController < Api::V1::ApiController
   EOS
 
   def index
-    # NO SECURITY!  Should it at least check if the user is logged in?
+    # Note: this endpoint is unsecured by design.
+    # Notifications are intended to be viewable by anyone
     render json: Settings::Notifications.raw
   end
 
