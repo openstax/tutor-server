@@ -16,7 +16,10 @@ module Api::V1
              readable: true,
              writeable: false,
              getter: ->(*) {
-               CollectCourseInfo[user: self, with: [:roles, :periods, :ecosystem, :ecosystem_book]]
+               CollectCourseInfo[
+                 user: self,
+                 with: [:roles, :periods, :ecosystem, :ecosystem_book, :students]
+               ]
              }
   end
 end

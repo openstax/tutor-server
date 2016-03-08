@@ -100,7 +100,10 @@ describe CollectCourseInfo, type: :routine do
     end
 
     context "when the user is a student" do
-      before { AddUserAsPeriodStudent[user: user_1, period: period_1] }
+      before {
+        result = AddUserAsPeriodStudent.call(user: user_1, period: period_1)
+        @student = result.outputs.student
+      }
 
       it "returns information about the user's active courses" do
         result = described_class[user: user_1]
@@ -131,6 +134,28 @@ describe CollectCourseInfo, type: :routine do
             periods: [ period_1 ]
           }
         )
+      end
+
+      it "returns student info for the user" do
+        result = described_class[user: user_1, with: :students]
+
+        expect(result.length).to eq 1
+        expect(result.first.students.map(&:id)).to eq [@student.id]
+      end
+    end
+
+    context "when the user is a teacher and students" do
+      before {
+        AddUserAsCourseTeacher[user: user_1, course: course_1]
+        result = AddUserAsPeriodStudent.call(user: user_1, period: period_1)
+        @student1 = result.outputs.student
+        result = AddUserAsPeriodStudent.call(user: user_1, period: period_2)
+        @student2 = result.outputs.student
+      }
+
+      it "returns student info for the user" do
+        result = described_class[user: user_1, with: :students]
+        expect(result.first.students.map(&:id)).to eq [@student1.id, @student2.id]
       end
     end
   end
