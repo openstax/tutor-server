@@ -25,7 +25,7 @@ module Api::V1
     property :content,
              readable: true,
              writeable: false,
-             getter: ->(*) { ::JSON.parse(content) },
+             getter: ->(*) { ::JSON.parse(content).except('attachments') },
              schema_info: { required: true }
 
     collection :tags,

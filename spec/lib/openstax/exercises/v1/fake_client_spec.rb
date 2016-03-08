@@ -20,14 +20,17 @@ RSpec.describe OpenStax::Exercises::V1::FakeClient, type: :external do
           uid: "42@1",
           tags: [],
           stimulus_html: "This is fake exercise 42. <span data-math='\\dfrac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}'></span>",
+          attachments: [
+            {id: "-1", asset: "https://somewhere.com/something.png"}
+          ],
           questions: [
             {
-              id: "-1",
+              id: "-2",
               formats: ["multiple-choice", "free-response"],
               stem_html: "Select 10 N.",
               answers: [
-                { id: "-2", content_html: "10 N", correctness: 1.0, feedback_html: 'Right!' },
-                { id: "-3", content_html: "1 N", correctness: 0.0, feedback_html: 'Wrong!' }
+                { id: "-3", content_html: "10 N", correctness: 1.0, feedback_html: 'Right!' },
+                { id: "-4", content_html: "1 N", correctness: 0.0, feedback_html: 'Wrong!' }
               ],
               solutions: [
                 content_html: 'The first one.'
@@ -58,15 +61,18 @@ RSpec.describe OpenStax::Exercises::V1::FakeClient, type: :external do
           uid: "-2@1",
           tags: ["franky"],
           stimulus_html: "This is fake exercise -2. <span data-math='\\dfrac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}'></span>",
+          attachments: [
+            {id: "-5", asset: "https://somewhere.com/something.png"}
+          ],
           questions: [
             {
-              id: "-4",
+              id: "-6",
               formats: ["multiple-choice", "free-response"],
               stem_html: "Select 10 N.",
               answers:[
-                { id: "-5", content_html: "10 N",
+                { id: "-7", content_html: "10 N",
                   correctness: 1.0, feedback_html: 'Right!' },
-                { id: "-6", content_html: "1 N",
+                { id: "-8", content_html: "1 N",
                   correctness: 0.0, feedback_html: 'Wrong!' }
               ],
               solutions: [
