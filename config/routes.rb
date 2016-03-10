@@ -144,7 +144,7 @@ Rails.application.routes.draw do
 
     resources :administrators, only: [:index, :create, :destroy]
 
-    resources :courses, except: [:show, :destroy] do
+    resources :courses, except: :show do
       member do
         post :students
         post :set_ecosystem

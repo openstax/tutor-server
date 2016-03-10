@@ -9,7 +9,7 @@ class Admin::CoursesController < Admin::BaseController
     @query = params[:query]
     courses = SearchCourses[query: @query]
     @course_infos = CollectCourseInfo[courses: courses,
-                                      with: [:teacher_names, :ecosystem_book]]
+                                      with: [:teacher_names, :periods, :ecosystem_book]]
     @ecosystems = Content::ListEcosystems[]
     @incomplete_jobs = Jobba.where(state: :incomplete).to_a.select do |job|
       job.data.try :[], 'course_ecosystem'
@@ -41,6 +41,14 @@ class Admin::CoursesController < Admin::BaseController
                 params: course_params,
                 complete: -> (*) {
                   flash[:notice] = 'The course has been updated.'
+                  redirect_to admin_courses_path
+                })
+  end
+
+  def destroy
+    handle_with(Admin::CoursesDestroy,
+                complete: -> (*) {
+                  flash[:notice] = 'The course has been deleted.'
                   redirect_to admin_courses_path
                 })
   end
