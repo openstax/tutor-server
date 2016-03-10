@@ -8,8 +8,12 @@ class GetSalesforceBookNames
       return unless outputs[:book_names].nil?
     end
 
-    outputs[:book_names] = Salesforce::Remote::Book.all.map(&:name)
-    ActiveForce.cache_store.set('book_names', outputs[:book_names])
+    begin
+      outputs[:book_names] = Salesforce::Remote::Book.all.map(&:name)
+      ActiveForce.cache_store.set('book_names', outputs[:book_names])
+    rescue SalesforceUserMissing
+      fatal_error(code: :salesforce_user_missing)
+    end
   end
 
 end

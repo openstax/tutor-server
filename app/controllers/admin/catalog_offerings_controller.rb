@@ -47,7 +47,7 @@ module Admin
     end
 
     def get_salesforce_book_names
-      @salesforce_book_names = GetSalesforceBookNames[]
+      @salesforce_book_names = GetSalesforceBookNames.call.outputs.book_names
     end
 
   end
