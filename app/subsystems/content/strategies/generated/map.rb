@@ -240,7 +240,7 @@ module Content
           cache.write(validity_key, validity)
           cache.write(validity_message_key, validity_message)
 
-          validity, validity_message
+          return validity, validity_message
         end
 
         def _evaluate_condition_a(all_exercises, all_exercises_map)
