@@ -20,19 +20,6 @@ RSpec.describe Admin::CoursesController, type: :controller do
     end
   end
 
-  describe 'GET #edit' do
-    it 'assigns extra course info' do
-      course = CreateCourse[name: 'Hello World']
-      get :edit, id: course.id
-
-      expect(assigns[:profile].entity_course_id).to eq course.id
-      expect(Set.new assigns[:periods]).to eq Set.new course.periods
-      expect(Set.new assigns[:teachers]).to eq Set.new course.teachers
-      expect(Set.new assigns[:ecosystems]).to eq Set.new Content::ListEcosystems[]
-      expect(assigns[:course_ecosystem]).to be_nil
-    end
-  end
-
   describe 'POST #create' do
     before do
       post :create, course: { name: 'Hello World' }
@@ -167,10 +154,48 @@ RSpec.describe Admin::CoursesController, type: :controller do
                                             .first
     }
 
+    it 'assigns extra course info' do
+      get :edit, id: course.id
+
+      expect(assigns[:profile].entity_course_id).to eq course.id
+      expect(Set.new assigns[:periods]).to eq Set.new course.periods
+      expect(Set.new assigns[:teachers]).to eq Set.new course.teachers
+      expect(Set.new assigns[:ecosystems]).to eq Set.new Content::ListEcosystems[]
+      expect(assigns[:course_ecosystem]).to eq GetCourseEcosystem[course: course]
+    end
+
     it 'selects the correct ecosystem' do
       get :edit, id: course.id
       expect(assigns[:course_ecosystem]).to eq eco_1
       expect(assigns[:ecosystems]).to eq [eco_2, eco_1]
+    end
+  end
+
+  describe 'DELETE #destroy' do
+    let!(:course)    { FactoryGirl.create(:course_profile_profile, name: 'Physics I').course }
+
+    context 'destroyable course' do
+      it 'delegates to the Admin::CoursesDestroy handler and displays a success message' do
+        expect(Admin::CoursesDestroy).to receive(:handle).and_call_original
+
+        delete :destroy, id: course.id
+
+        expect(flash[:notice]).to include('The course has been deleted.')
+      end
+    end
+
+    context 'non-destroyable course' do
+      before { CreatePeriod[course: course] }
+
+      it 'delegates to the Admin::CoursesDestroy handler and displays a failure message' do
+        expect(Admin::CoursesDestroy).to receive(:handle).and_call_original
+
+        delete :destroy, id: course.id
+
+        expect(flash[:alert]).to(
+          include('The course could not be deleted because it is not empty.')
+        )
+      end
     end
   end
 
@@ -228,6 +253,8 @@ RSpec.describe Admin::CoursesController, type: :controller do
     end
   end
 
+  # Dante: Note that I think these might not actually work
+  # calling multiple controller actions seems to break specs
   context 'disallowing baddies' do
     it 'disallows unauthenticated visitors' do
       allow(controller).to receive(:current_account) { nil }
@@ -244,6 +271,9 @@ RSpec.describe Admin::CoursesController, type: :controller do
 
       put :update, id: 1
       expect(response).not_to be_success
+
+      delete :destroy, id: 1
+      expect(response).not_to be_success
     end
 
     it 'disallows non-admin authenticated visitors' do
@@ -253,6 +283,7 @@ RSpec.describe Admin::CoursesController, type: :controller do
       expect { get :new }.to raise_error(SecurityTransgression)
       expect { post :create }.to raise_error(SecurityTransgression)
       expect { put :update, id: 1 }.to raise_error(SecurityTransgression)
+      expect { delete :destroy, id: 1 }.to raise_error(SecurityTransgression)
     end
   end
 end
