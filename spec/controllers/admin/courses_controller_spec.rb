@@ -174,9 +174,28 @@ RSpec.describe Admin::CoursesController, type: :controller do
   describe 'DELETE #destroy' do
     let!(:course)    { FactoryGirl.create(:course_profile_profile, name: 'Physics I').course }
 
-    it 'delegates to the Admin::CoursesDestroy handler' do
-      expect(Admin::CoursesDestroy).to receive(:handle)
-      delete :destroy, id: course.id
+    context 'destroyable course' do
+      it 'delegates to the Admin::CoursesDestroy handler and displays a success message' do
+        expect(Admin::CoursesDestroy).to receive(:handle).and_call_original
+
+        delete :destroy, id: course.id
+
+        expect(flash[:notice]).to include('The course has been deleted.')
+      end
+    end
+
+    context 'non-destroyable course' do
+      before { CreatePeriod[course: course] }
+
+      it 'delegates to the Admin::CoursesDestroy handler and displays a failure message' do
+        expect(Admin::CoursesDestroy).to receive(:handle).and_call_original
+
+        delete :destroy, id: course.id
+
+        expect(flash[:alert]).to(
+          include('The course could not be deleted because it is not empty.')
+        )
+      end
     end
   end
 

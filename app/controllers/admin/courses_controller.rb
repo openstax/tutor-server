@@ -47,8 +47,12 @@ class Admin::CoursesController < Admin::BaseController
 
   def destroy
     handle_with(Admin::CoursesDestroy,
-                complete: -> (*) {
+                success: -> (*) {
                   flash[:notice] = 'The course has been deleted.'
+                  redirect_to admin_courses_path
+                },
+                failure: -> (*) {
+                  flash[:alert] = 'The course could not be deleted because it is not empty.'
                   redirect_to admin_courses_path
                 })
   end
