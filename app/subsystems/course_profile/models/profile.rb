@@ -5,7 +5,7 @@ class CourseProfile::Models::Profile < Tutor::SubSystems::BaseModel
   belongs_to :course, subsystem: :entity, dependent: :delete
   belongs_to :offering, subsystem: :catalog
 
-  validates :course, presence: true
+  validates :course, presence: true, uniqueness: true
   validates :name, presence: true
   validates :timezone, presence: true,
                        inclusion: { in: ActiveSupport::TimeZone.all.collect(&:name) }
