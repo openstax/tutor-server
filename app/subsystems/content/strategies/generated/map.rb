@@ -168,29 +168,79 @@ module Content
         end
 
         def valid?
-          return @valid unless @valid.nil?
+          cached_validity = cache.read(validity_cache_key)
+          return cached_validity unless cached_validity.nil?
 
+          validity, validity_message = cache_validity
+          validity
+        end
+
+        def validity_diagnostic_message
+          cached_validity_message = cache.read(validity_message_key)
+          return cached_validity_message unless cached_validity_message.nil?
+
+          validity, validity_message = cache_validity
+          validity_message
+        end
+
+        protected
+
+        def initialize_page_id_to_page_map_for_the_to_ecosystem
+          @page_id_to_page_map = @to_ecosystem.pages.each_with_object({}) do |page, hash|
+            hash[page.id] = page
+          end if @page_id_to_page_map.blank?
+        end
+
+        def mapping_tag_types
+          @mapping_tag_types ||= Content::Models::Tag::MAPPING_TAG_TYPES.map do |type|
+            Content::Models::Tag.tag_types[type]
+          end
+        end
+
+        def cache
+          @cache ||= ActiveSupport::Cache::RedisStore.new(
+            url: redis_secrets['url'], namespace: redis_secrets['namespaces']['cache']
+          )
+        end
+
+        def cache_key
+          "map/#{@from_ecosystems.map(&:id).join('-')}/#{@to_ecosystem.id}"
+        end
+
+        def validity_key
+          "#{cache_key}/valid"
+        end
+
+        def validity_message_key
+          "#{cache_key}/validity_message"
+        end
+
+        # Valid if:
+        # 1- All Exercises in the old Ecosystem map to one Page in the new Ecosystem
+        # 2- All Pages in the old Ecosystem map to an array of Exercises in the new Ecosystem
+        #    (can be empty)
+        def cache_validity
           all_exercises = @from_ecosystems.flat_map(&:exercises)
           all_exercises_map = map_exercises_to_pages(exercises: all_exercises)
 
           all_pages = @from_ecosystems.flat_map(&:pages)
           all_pages_map = map_pages_to_exercises(pages: all_pages, pool_type: :all_exercises)
 
-          @condition_a, @condition_a_message = _evaluate_condition_a(all_exercises, all_exercises_map)
-          @condition_b, @condition_b_message = _evaluate_condition_b(all_exercises, all_exercises_map, @to_ecosystem.pages)
-          @condition_c, @condition_c_message = _evaluate_condition_c(all_pages, all_pages_map)
-          @condition_d, @condition_d_message = _evaluate_condition_d(all_pages, all_pages_map, @to_ecosystem.exercises)
+          condition_a, condition_a_message = _evaluate_condition_a(all_exercises, all_exercises_map)
+          condition_b, condition_b_message = _evaluate_condition_b(all_exercises, all_exercises_map, @to_ecosystem.pages)
+          condition_c, condition_c_message = _evaluate_condition_c(all_pages, all_pages_map)
+          condition_d, condition_d_message = _evaluate_condition_d(all_pages, all_pages_map, @to_ecosystem.exercises)
 
-          @valid = @condition_a && @condition_b && @condition_c && @condition_d
+          validity = condition_a && condition_b && condition_c && condition_d
+          validity_message = "[#{condition_a_message}]" +
+                             "[#{condition_b_message}]" +
+                             "[#{condition_c_message}]" +
+                             "[#{condition_d_message}]"
 
-          # Valid if:
-          # 1- All Exercises in the old Ecosystem map to one Page in the new Ecosystem
-          # 2- All Pages in the old Ecosystem map to an array of Exercises in the new Ecosystem
-          #    (can be empty)
-          # @valid = Set.new(all_exercises_map.keys) == Set.new(all_exercises.map(&:id)) && \
-          #          Set.new(all_exercises_map.values).subset?(Set.new(@to_ecosystem.pages)) && \
-          #          Set.new(all_pages_map.keys) == Set.new(all_pages.map(&:id)) && \
-          #          Set.new(all_pages_map.values.flatten).subset?(Set.new(@to_ecosystem.exercises))
+          cache.write(validity_key, validity)
+          cache.write(validity_message_key, validity_message)
+
+          validity, validity_message
         end
 
         def _evaluate_condition_a(all_exercises, all_exercises_map)
@@ -273,27 +323,6 @@ module Content
               "yeah, something bad happened in here"
             end
           return condition, condition_message
-        end
-
-        def validity_diagnostic_message
-          "[#{@condition_a_message}]" +
-          "[#{@condition_b_message}]" +
-          "[#{@condition_c_message}]" +
-          "[#{@condition_d_message}]"
-        end
-
-        protected
-
-        def initialize_page_id_to_page_map_for_the_to_ecosystem
-          @page_id_to_page_map = @to_ecosystem.pages.each_with_object({}) do |page, hash|
-            hash[page.id] = page
-          end if @page_id_to_page_map.blank?
-        end
-
-        def mapping_tag_types
-          @mapping_tag_types ||= Content::Models::Tag::MAPPING_TAG_TYPES.map do |type|
-            Content::Models::Tag.tag_types[type]
-          end
         end
 
       end
