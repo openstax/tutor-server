@@ -5,8 +5,8 @@ class Catalog::ListOfferings
   protected
 
   def exec
-    outputs.offerings = Catalog::Models::Offering.all.map do | offering |
-      Catalog::Offering.new(strategy: Catalog::Strategies::Direct::Offering.new(offering) )
+    outputs.offerings = Catalog::Models::Offering.all.order(:salesforce_book_name).map do |offering|
+      Catalog::Offering.new(strategy: offering.wrap)
     end
   end
 

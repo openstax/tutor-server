@@ -5,8 +5,8 @@
   }
 </style>
 
-
-<div class='underlined-spaced-row'>
+<div id='offering_<%= offering.id %>' class='underlined-spaced-row'>
+  <h4><%= offering.salesforce_book_name %></h4>
   <div class="form-group">
     <%= form.label :salesforce_book_name %>
     <%= form.text_field :salesforce_book_name,  {class: 'form-control'} %>
@@ -28,7 +28,7 @@
     <label><%= form.check_box :is_tutor,  {class: 'form-control'}%><span class="checkbox-label">Works for full Tutor?</span></label>
   </div>
   <div class="checkbox">
-    <label style="vertical-align:middle"><%= form.check_box :is_concept_coach,  {class: 'form-control'}%><span class="checkbox-label"> Works for Concept Coach?</span></label>
+    <label style="vertical-align:middle"><%= form.check_box :is_concept_coach,  {class: 'form-control'}%><span class="checkbox-label">Works for Concept Coach?</span></label>
   </div>
   <div class="form-group">
     <%= form.label :pdf_url %>
@@ -44,6 +44,4 @@
   </div>
 
   <%= form.submit class: 'btn btn-primary', value:'Save' %>
-
-  <button type="submit" class="btn btn-default">Submit</button>
 </div>
