@@ -40,7 +40,10 @@ class OpenStax::Biglearn::V1::FakeClient
 
     pools.map do |pool|
       pool.uuid ||= SecureRandom.uuid
-      store.write "pools/#{pool.uuid}", pool.exercises.map{ |ex| ex.question_id.to_s }.to_json
+      json = pool.exercises.map do |ex|
+        { question_id: ex.question_id.to_s, version: ex.version }
+      end.to_json
+      store.write "pools/#{pool.uuid}", json
       pool.uuid
     end
   end
@@ -49,28 +52,47 @@ class OpenStax::Biglearn::V1::FakeClient
     # Combine the given pools into one
 
     pool_keys = pools.map{ |pl| "pools/#{pl.uuid}" }
-    question_ids = store.read_multi(*pool_keys).values.flat_map{ |json| JSON.parse(json) }.uniq
+    questions = store.read_multi(*pool_keys).values.flatten.uniq
     uuid = SecureRandom.uuid
 
-    store.write("pools/#{uuid}", question_ids.to_json)
+    store.write("pools/#{uuid}", questions)
 
     uuid
   end
 
-  def get_projection_exercises(role:, pools:, excluded_pools:, count:, difficulty:, allow_repetitions:)
+  def get_projection_exercises(role:, pools:, pool_exclusions:,
+                               count:, difficulty:, allow_repetitions:)
     # Get the exercises in the pools
     pool_keys = pools.map{ |pl| "pools/#{pl.uuid}" }
-    pool_question_ids = store.read_multi(*pool_keys).values.flat_map{ |json| JSON.parse(json) }.uniq
+    pool_questions = store.read_multi(*pool_keys).values.flat_map{ |json| JSON.parse(json) }.uniq
 
-    excluded_pool_question_ids =
-      if excluded_pools.empty?
-        []
-      else
-        excluded_pool_keys = excluded_pools.map{|pl| "pools/#{pl.uuid}"}
-        store.read_multi(*excluded_pool_keys).values.flat_map{ |json| JSON.parse(json) }.uniq
+    unless pool_exclusions.empty?
+      excluded_pools_to_keys_map = {}
+      pool_exclusions.each do |hash|
+        pl = hash[:pool]
+        excluded_pools_to_keys_map[pl] = "pools/#{pl.uuid}"
       end
+      excluded_pool_keys = excluded_pools_to_keys_map.values
+      excluded_key_to_json_map = store.read_multi(*excluded_pool_keys)
+      pool_exclusions.each_with_index do |pool_exclusion, index|
+        excluded_pool = pool_exclusion[:pool]
+        ignore_versions = pool_exclusion[:ignore_versions]
+        excluded_pool_key = excluded_pools_to_keys_map[excluded_pool]
+        excluded_json = excluded_key_to_json_map[excluded_pool_key]
+        excluded_questions = JSON.parse excluded_json
 
-    question_ids = pool_question_ids - excluded_pool_question_ids
+        if ignore_versions
+          excluded_question_ids = excluded_questions.map{ |question| question['question_id'] }
+          pool_questions = pool_questions.reject do |pool_question|
+            pool_question['question_id'].in? excluded_question_ids
+          end
+        else
+          pool_questions = pool_questions - excluded_questions
+        end
+      end
+    end
+
+    question_ids = pool_questions.map{ |question| question['question_id'] }
 
     # Limit the results to the desired number
     results = question_ids.first(count)

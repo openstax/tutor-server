@@ -32,10 +32,10 @@ module OpenStax::Biglearn::V1
   # Pools are combined into a single pool before the call to Biglearn.
   # May return less than the desired number if allow_repetitions is false.
   def self.get_projection_exercises(role:,
-                                    pools:, excluded_pools: [],
+                                    pools:, pool_exclusions: [],
                                     count: 1, difficulty: 0.5, allow_repetitions: true)
     exercises = client.get_projection_exercises(role: role,
-                                                pools: pools, excluded_pools: excluded_pools,
+                                                pools: pools, pool_exclusions: pool_exclusions,
                                                 count: count, difficulty: difficulty,
                                                 allow_repetitions: allow_repetitions)
 
