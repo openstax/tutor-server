@@ -6,8 +6,8 @@ class Admin::CoursesController < Admin::BaseController
   before_action :get_catalog_offerings, only: [:new, :edit]
 
   def index
-    @query = params[:query] || params[:q]
-    courses = SearchCourses[params]
+    @query = params[:query]
+    courses = SearchCourses[query: params[:query]]
     @course_infos = CollectCourseInfo[courses: courses,
                                       with: [:teacher_names, :periods, :ecosystem_book]]
     @ecosystems = Content::ListEcosystems[]
