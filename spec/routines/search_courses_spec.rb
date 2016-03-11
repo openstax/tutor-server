@@ -23,9 +23,14 @@ RSpec.describe SearchCourses, type: :routine do
 
   let!(:teacher_user) { FactoryGirl.create(:user, first_name: 'Charles') }
 
+  let!(:ecosystem) {
+    Content::Ecosystem.new(strategy: FactoryGirl.create(:content_ecosystem, title: 'A test').wrap)
+  }
+
   before do
     AddUserAsCourseTeacher[course: course_1, user: teacher_user]
     AddUserAsCourseTeacher[course: course_3, user: teacher_user]
+    AddEcosystemToCourse[course: course_2, ecosystem: ecosystem]
   end
 
   it 'returns all courses in alphabetical order if the query is nil' do
@@ -98,7 +103,7 @@ RSpec.describe SearchCourses, type: :routine do
     expect(courses).to eq [course_3, course_1]
   end
 
-  it 'returns courses whose book name matches the given query' do
+  it 'returns courses whose salesforce book name matches the given query' do
     courses = described_class[query: 'algebra'].to_a
     expect(courses).to eq [course_1]
 
@@ -112,5 +117,13 @@ RSpec.describe SearchCourses, type: :routine do
 
     courses = described_class[query: 'offering:introductory'].to_a
     expect(courses).to eq [course_1]
+  end
+
+  it 'returns courses whose ecosystem title matches the given query' do
+    courses = described_class[query: 'tes'].to_a
+    expect(courses).to eq [course_2]
+
+    courses = described_class[query: 'ecosystem:tes'].to_a
+    expect(courses).to eq [course_2]
   end
 end

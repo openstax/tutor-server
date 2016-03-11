@@ -168,7 +168,7 @@ module Content
         end
 
         def valid?
-          cached_validity = cache.read(validity_cache_key)
+          cached_validity = cache.read(validity_key)
           return cached_validity unless cached_validity.nil?
 
           validity, validity_message = cache_validity
@@ -198,7 +198,10 @@ module Content
         end
 
         def cache
-          @cache ||= ActiveSupport::Cache::RedisStore.new(
+          return @cache unless @cache.nil?
+
+          redis_secrets = Rails.application.secrets['redis']
+          @cache = ActiveSupport::Cache::RedisStore.new(
             url: redis_secrets['url'], namespace: redis_secrets['namespaces']['cache']
           )
         end

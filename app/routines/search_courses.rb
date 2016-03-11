@@ -10,6 +10,7 @@ class SearchCourses
     'name' => CourseProfile::Models::Profile.arel_table[:name],
     'school' => SchoolDistrict::Models::School.arel_table[:name],
     'offering' => Catalog::Models::Offering.arel_table[:salesforce_book_name],
+    'ecosystem' => Content::Models::Ecosystem.arel_table[:title],
     'created_at' => :created_at,
     'updated_at' => :updated_at
   }
@@ -32,7 +33,8 @@ class SearchCourses
           @items = @items.joins{
             [profile.school.outer,
              profile.offering.outer,
-             teachers.outer.role.outer.profile.outer.account.outer]
+             teachers.outer.role.outer.profile.outer.account.outer,
+             ecosystems.outer]
           }.where{
             (profile.name.like_any sanitized_queries) | \
             (profile.school.name.like_any sanitized_queries) | \
@@ -41,7 +43,8 @@ class SearchCourses
             (teachers.role.profile.account.username.like_any sanitized_queries) | \
             (teachers.role.profile.account.first_name.like_any sanitized_queries) | \
             (teachers.role.profile.account.last_name.like_any sanitized_queries) | \
-            (teachers.role.profile.account.full_name.like_any sanitized_queries)
+            (teachers.role.profile.account.full_name.like_any sanitized_queries) | \
+            (ecosystems.title.like_any sanitized_queries)
           }
         end
       end
@@ -90,6 +93,16 @@ class SearchCourses
             (teachers.role.profile.account.last_name.like_any sanitized_names) | \
             (teachers.role.profile.account.full_name.like_any sanitized_names)
           }
+        end
+      end
+
+      with.keyword :ecosystem do |titles|
+        titles.each do |title|
+          sanitized_titles = to_string_array(title, append_wildcard: true, prepend_wildcard: true)
+          next @items = @items.none if sanitized_titles.empty?
+
+          @items = @items.joins(:ecosystems)
+                         .where{ecosystems.title.like_any sanitized_titles}
         end
       end
     end
