@@ -28,6 +28,17 @@ module OpenStax::Biglearn
     let(:pool_4)     { V1::Pool.new(exercises: [exercise_2]) }
     let(:pool_5)     { V1::Pool.new(exercises: [exercise_3]) }
 
+    let(:exercise_1_new) { V1::Exercise.new(question_id: 'e1', version: 10,
+                                            tags: ['lo1', 'concept']) }
+    let(:exercise_3_new) { V1::Exercise.new(question_id: 'e3', version: 30,
+                                            tags: ['lo2', 'concept']) }
+    let(:exercise_4_new) { V1::Exercise.new(question_id: 'e4', version: 40,
+                                            tags: ['lo2', 'concept']) }
+    let(:pool_1_new)     { V1::Pool.new(exercises: [exercise_1_new,
+                                                    exercise_3_new,
+                                                    exercise_4_new]) }
+    let(:pool_5_new)     { V1::Pool.new(exercises: [exercise_3_new]) }
+
     context 'add_exercises' do
       it 'allows adding exercises' do
         [exercise_1, exercise_2].each do |exercise|
@@ -58,7 +69,10 @@ module OpenStax::Biglearn
 
         parsed_pool = JSON.parse client.store.read("pools/#{pool_1.uuid}")
 
-        expect(parsed_pool).to eq pool_1.exercises.map(&:question_id)
+        expected_pool = pool_1.exercises.map do |ex|
+          { question_id: ex.question_id.to_s, version: ex.version }.stringify_keys
+        end
+        expect(parsed_pool).to eq expected_pool
       end
     end
 
@@ -73,7 +87,7 @@ module OpenStax::Biglearn
         exercises = client.get_projection_exercises(
           role: nil,
           pools: [pool_1],
-          excluded_pools: [],
+          pool_exclusions: [],
           count: 5,
           difficulty: 0.5,
           allow_repetitions: false
@@ -86,7 +100,7 @@ module OpenStax::Biglearn
         exercises = client.get_projection_exercises(
           role: nil,
           pools: [pool_1],
-          excluded_pools: [],
+          pool_exclusions: [],
           count: 5,
           difficulty: 0.5,
           allow_repetitions: true
@@ -96,10 +110,14 @@ module OpenStax::Biglearn
       end
 
       it "works when excluded_pools is given" do
+        V1.add_pools([pool_1_new, pool_5_new])
+
         exercises = client.get_projection_exercises(
           role: nil,
           pools: [pool_1],
-          excluded_pools: [pool_4, pool_5],
+          pool_exclusions: [{pool: pool_1_new, ignore_versions: false},
+                            {pool: pool_4, ignore_versions: false},
+                            {pool: pool_5_new, ignore_versions: true}],
           count: 5,
           difficulty: 0.5,
           allow_repetitions: false
