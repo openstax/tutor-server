@@ -129,18 +129,23 @@ module OpenStax::Biglearn
     context 'get questions API' do
       it 'calls the API well and returns the result' do
         question_ids = client.get_projection_exercises(
-          role: user_1_role, pools: [pool_1], count: 5, difficulty: 0.5, allow_repetitions: true
+          role: user_1_role, pools: [pool_1], pool_exclusions: [],
+          count: 5, difficulty: 0.5, allow_repetitions: true
         )
 
         expect(question_ids.size).to eq 5
         question_ids.each{ |question_id| expect(question_id).to be_a String }
 
         question_ids = client.get_projection_exercises(
-          role: user_2_role, pools: [pool_2], count: 5, difficulty: 0.5, allow_repetitions: true
+          role: user_2_role, pools: [pool_2], pool_exclusions: [],
+          count: 5, difficulty: 0.5, allow_repetitions: true
         )
 
         expect(question_ids.size).to eq 5
         question_ids.each{ |question_id| expect(question_id).to be_a String }
+      end
+
+      xit 'performs requests with exclusion pools properly' do
       end
     end
 

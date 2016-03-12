@@ -73,16 +73,22 @@ class OpenStax::Biglearn::V1::RealClient
     uuids.first
   end
 
-  def get_projection_exercises(role:, pools:, count:, difficulty:, allow_repetitions:,
-                               excluded_pools: [])
+  def get_projection_exercises(role:, pools:, pool_exclusions:,
+                               count:, difficulty:, allow_repetitions:)
+    # If we have more than one pool, we must first combine them all into a single pool
+    pool = [pools].flatten.size > 1 ? OpenStax::Biglearn::V1.combine_pools(pools) : pools.first
+
+    excluded_pools = pool_exclusions.map do |hash|
+      { pool_uuid: hash[:pool].uuid, ignore_versions: hash[:ignore_versions] }
+    end
+
     query = {
       learner_id: get_exchange_read_identifiers_for_roles(roles: role).first,
       number_of_questions: count,
-      allow_repetition: allow_repetitions ? 'true' : 'false'
+      allow_repetition: allow_repetitions ? 'true' : 'false',
+      pool_id: pool.uuid,
+      excluded_pools: excluded_pools
     }
-
-    # If we have more than one pool, we must first combine them all into a single pool
-    pool = [pools].flatten.size > 1 ? OpenStax::Biglearn::V1.combine_pools(pools) : pools.first
 
     query = query.merge(pool_id: pool.uuid)
 
