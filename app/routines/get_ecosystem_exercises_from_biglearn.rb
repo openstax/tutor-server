@@ -16,12 +16,14 @@ class GetEcosystemExercisesFromBiglearn
       OpenStax::Biglearn::V1::Pool.new(uuid: uuid)
     end
 
+    pool_exclusions = excluded_pools.map{ |pool| { pool: pool, ignore_versions: true } }
+
     attempts = 0
     begin
       urls = OpenStax::Biglearn::V1.get_projection_exercises(
         role:              role,
         pools:             biglearn_pools,
-        excluded_pools:    excluded_pools,
+        pool_exclusions:   pool_exclusions,
         count:             count,
         difficulty:        difficulty,
         allow_repetitions: allow_repetitions

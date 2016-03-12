@@ -109,7 +109,7 @@ module OpenStax::Biglearn
         expect(exercises).to eq(%w(e1 e3 e4 e1 e3))
       end
 
-      it "works when excluded_pools is given" do
+      it "works when pool_exclusions is given" do
         V1.add_pools([pool_1_new, pool_5_new])
 
         exercises = client.get_projection_exercises(

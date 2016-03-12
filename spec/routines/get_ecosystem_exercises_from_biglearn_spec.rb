@@ -44,10 +44,9 @@ describe GetEcosystemExercisesFromBiglearn, type: :routine do
       student_role = AddUserAsPeriodStudent[user: user, period: period]
 
       expect(OpenStax::Biglearn::V1).to receive(:get_projection_exercises).once do |args|
-        expect(args[:excluded_pools]).to include(a_kind_of(OpenStax::Biglearn::V1::Pool))
-        expect(args[:excluded_pools].map(&:uuid)).to(
-          include(course.profile.biglearn_excluded_pool_uuid)
-        )
+        excluded_pools = args[:pool_exclusions].map{ |pool_exclusion| pool_exclusion[:pool] }
+        expect(excluded_pools).to include(a_kind_of(OpenStax::Biglearn::V1::Pool))
+        expect(excluded_pools.map(&:uuid)).to include(course.profile.biglearn_excluded_pool_uuid)
         []
       end
       expect(ExceptionNotifier).not_to receive(:notify_exception)
