@@ -82,7 +82,7 @@ class OpenStax::Biglearn::V1::RealClient
       { pool_uuid: hash[:pool].uuid, ignore_versions: hash[:ignore_versions] }
     end
 
-    query = {
+    payload = {
       learner_id: get_exchange_read_identifiers_for_roles(roles: role).first,
       number_of_questions: count,
       allow_repetition: allow_repetitions ? 'true' : 'false',
@@ -90,9 +90,8 @@ class OpenStax::Biglearn::V1::RealClient
       excluded_pools: excluded_pools
     }
 
-    query = query.merge(pool_id: pool.uuid)
-
-    response = request(:get, projection_exercises_uri, params: query)
+    options = { body: payload.to_json }
+    response = request(:post, projection_exercises_uri, with_content_type_header(options))
 
     result = handle_response(response)
 
