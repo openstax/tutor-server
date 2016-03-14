@@ -1,13 +1,16 @@
 module Settings
   module Notifications
+
     KEY = 'system:notifications'
+
     class << self
+
       include Enumerable
 
       # Returns a string that contains unparsed JSON which is
       # intended to be sent directly to the user without parsing.
       def raw
-        Settings.store.get(KEY) || '[]'
+        Settings::Redis.store.get(KEY) || '[]'
       end
 
       # Parsed JSON content of messages.
@@ -35,9 +38,10 @@ module Settings
       end
 
       def update!(json)
-        Settings.store.set(KEY, ActiveSupport::JSON.encode(json))
+        Settings::Redis.store.set(KEY, ActiveSupport::JSON.encode(json))
       end
 
     end
+
   end
 end

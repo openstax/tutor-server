@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Settings::Notifications, type: :lib do
 
   after(:each) do
-    Settings.store.del(Settings::Notifications::KEY)
+    Settings::Redis.store.del(Settings::Notifications::KEY)
   end
 
   it 'can store a message' do
