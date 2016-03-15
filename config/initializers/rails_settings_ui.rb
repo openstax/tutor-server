@@ -28,15 +28,11 @@ Rails.application.config.to_prepare do
       new_excluded_uids = Settings::Exercises.excluded_uids
       return if new_excluded_uids == old_excluded_uids
 
-      excluded_exercises = new_excluded_uids.split(',').flat_map do |excluded_uid|
+      excluded_exercises = new_excluded_uids.split(',').map do |excluded_uid|
         excluded_number, excluded_version = excluded_uid.strip.split('@')
-        excluded_version = excluded_version.to_i
-        previous_versions = 1..excluded_version
-        previous_versions.map do |version|
-          OpenStax::Biglearn::V1::Exercise.new(question_id: excluded_number,
-                                               version: version,
-                                               tags: [])
-        end
+        OpenStax::Biglearn::V1::Exercise.new(question_id: excluded_number,
+                                             version: excluded_version.to_i,
+                                             tags: [])
       end
 
       excluded_pool = OpenStax::Biglearn::V1::Pool.new(exercises: excluded_exercises)

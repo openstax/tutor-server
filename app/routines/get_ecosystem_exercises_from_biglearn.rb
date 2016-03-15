@@ -9,14 +9,19 @@ class GetEcosystemExercisesFromBiglearn
   def exec(ecosystem:, role:, pools:, count:, difficulty: 0.5, allow_repetitions: true)
     biglearn_pools = pools.collect{ |pl| OpenStax::Biglearn::V1::Pool.new(uuid: pl.uuid) }
 
-    course_profile = role.student.try(:course).try(:profile)
+    course = role.student.try(:course)
+    course_profile = course.try(:profile)
 
-    # TODO: Add admin exclusion pool here (later)
-    excluded_pools = [course_profile.try(:biglearn_excluded_pool_uuid)].compact.map do |uuid|
-      OpenStax::Biglearn::V1::Pool.new(uuid: uuid)
-    end
+    admin_excluded_pool_uuid = Settings::Exercises.excluded_pool_uuid
+    admin_excluded_pool = OpenStax::Biglearn::V1::Pool.new(uuid: admin_excluded_pool_uuid) \
+      unless admin_excluded_pool_uuid.nil?
 
-    pool_exclusions = excluded_pools.map{ |pool| { pool: pool, ignore_versions: true } }
+    course_excluded_pool_uuid = course_profile.try(:biglearn_excluded_pool_uuid)
+    course_excluded_pool = OpenStax::Biglearn::V1::Pool.new(uuid: course_excluded_pool_uuid) \
+      unless course_excluded_pool_uuid.nil?
+
+    pool_exclusions = [{ pool: admin_excluded_pool, ignore_versions: false },
+                       { pool: course_excluded_pool, ignore_versions: true }]
 
     attempts = 0
     begin
@@ -36,7 +41,14 @@ class GetEcosystemExercisesFromBiglearn
       if (attempts += 1) < MAX_ATTEMPTS
         retry
       else
-        numbers = pools.flat_map{ |pl| pl.exercises.map(&:number) }.uniq.sample(count)
+        admin_excluded_uids = Settings::Exercises.excluded_uids
+        course_excluded_numbers = course.excluded_exercises.pluck(:exercise_number)
+
+        pool_exercises = pools.flat_map{ |pl| pl.exercises }
+        candidate_exercises = pool_exercises.reject do |ex|
+          ex.number.in?(course_excluded_numbers) || ex.uid.in?(admin_excluded_uids)
+        end
+        numbers = candidate_exercises.map(&:number).uniq.sample(count)
 
         ExceptionNotifier.notify_exception(
           exception,
