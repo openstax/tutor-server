@@ -70,7 +70,7 @@ class Tasks::RecoverTaskStep
 
     candidate_exercises = (pool_exercises - all_worked_exercises).uniq
     candidate_exercises = candidate_exercises.reject do |ex|
-      ex.uid.in?(admin_excluded_uids) || ex.number.in?(course_excluded_numbers)
+      ex.number.in?(course_excluded_numbers) || ex.uid.in?(admin_excluded_uids)
     end
 
     los = Set.new(recovered_exercise.los)

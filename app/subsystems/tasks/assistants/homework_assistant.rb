@@ -122,8 +122,9 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
 
     course = @task_plan.owner
 
-    excluded_exercise_numbers = core_exercise_numbers + \
-                                (course.try(:excluded_exercises) || []).map(&:exercise_number)
+    admin_excluded_uids = Setting::Exercises.excluded_uids.split(',').map(&:strip)
+    course_excluded_numbers = course.excluded_exercises.pluck(:exercise_number)
+    excluded_exercise_numbers = core_exercise_numbers + course_excluded_numbers
 
     spaced_practice_status = []
 
@@ -162,7 +163,8 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
 
       # Partition spaced exercises into the main candidate pool and the repeat candidates
       spaced_exercises.each do |ex|
-        next if excluded_exercise_numbers.include?(ex.number)  # Never include
+        next if excluded_exercise_numbers.include?(ex.number) || \
+                admin_excluded_uids.include?(ex.uid)  # Never include
 
         if all_worked_exercise_numbers.include?(ex.number) # Only include if we run out
           repeated_candidate_exercises << ex
