@@ -1,13 +1,18 @@
 # Returns Content::Exercises corresponding to a Biglearn query
 class GetEcosystemExercisesFromBiglearn
+
   lev_routine express_output: :ecosystem_exercises
+
+  uses_routine GetHistory, as: :get_history
+  uses_routine FilterExcludedExercises, as: :filter
+  uses_routine ChooseExercises, as: :choose
 
   MAX_ATTEMPTS = 3
 
   protected
 
   def exec(ecosystem:, role:, pools:, count:, difficulty: 0.5, allow_repetitions: true)
-    biglearn_pools = pools.collect{ |pl| OpenStax::Biglearn::V1::Pool.new(uuid: pl.uuid) }
+    biglearn_pools = pools.map{ |pl| OpenStax::Biglearn::V1::Pool.new(uuid: pl.uuid) }
 
     course = role.student.try(:course)
     course_profile = course.try(:profile)
@@ -44,14 +49,13 @@ class GetEcosystemExercisesFromBiglearn
       if (attempts += 1) < MAX_ATTEMPTS
         retry
       else
-        admin_excluded_uids = Settings::Exercises.excluded_uids.split(',').map(&:strip)
-        course_excluded_numbers = course.excluded_exercises.pluck(:exercise_number)
-
-        pool_exercises = pools.flat_map{ |pl| pl.exercises }
-        candidate_exercises = pool_exercises.reject do |ex|
-          ex.number.in?(course_excluded_numbers) || ex.uid.in?(admin_excluded_uids)
-        end
-        numbers = candidate_exercises.map(&:number).uniq.sample(count)
+        pool_exercises = pools.flat_map(&:exercises)
+        candidate_exercises = run(:filter, exercises: pool_exercises,
+                                           course: course).outputs.exercises
+        history = run(:get_history, role: role, type: :all).outputs
+        chosen_exercises = run(:choose, exercises: candidate_exercises, count: count,
+                                        history: history, allow_repeats: false).outputs.exercises
+        numbers = chosen_exercises.map(&:number).uniq
 
         ExceptionNotifier.notify_exception(
           exception,
@@ -69,7 +73,7 @@ class GetEcosystemExercisesFromBiglearn
     exercises = ecosystem.exercises_by_numbers(numbers)
     fatal_error(code: :missing_local_exercises,
                 message: "Biglearn returned more exercises than were " +
-                         "present locally. [pools: #{biglearn_pools.collect{|pl| pl.uuid}}, " +
+                         "present locally. [pools: #{biglearn_pools.map(&:uuid)}, " +
                          "role: #{role.id}, requested: #{count}, " +
                          "from biglearn: #{numbers.size}, " +
                          "local found: #{exercises.size}] biglearn question ids: #{numbers}") \
@@ -77,4 +81,5 @@ class GetEcosystemExercisesFromBiglearn
 
     outputs[:ecosystem_exercises] = exercises
   end
+
 end
