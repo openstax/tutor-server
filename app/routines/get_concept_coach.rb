@@ -14,6 +14,8 @@ class GetConceptCoach
 
   uses_routine FilterExcludedExercises, as: :filter
 
+  uses_routine ChooseExercises, as: :choose
+
   uses_routine GetCourseEcosystem, as: :get_ecosystem
 
   protected
@@ -31,14 +33,12 @@ class GetConceptCoach
       return
     end
 
-    all_worked_exercises = history.exercises.flatten
-    all_worked_exercise_numbers = all_worked_exercises.map(&:number).uniq
-    course = role.student.try(:course)
     pool_exercises = pool.exercises.uniq
-    filtered_exercises = run(:filter, exercises: pool_exercises, course: course,
-                                      additional_excluded_numbers: all_worked_exercise_numbers)
+    course = role.student.try(:course)
+    filtered_exercises = run(:filter, exercises: pool_exercises, course: course)
                            .outputs.exercises
-    core_exercises = filtered_exercises.sample(count)
+    core_exercises = run(:choose, exercises: filtered_exercises, count: count,
+                                  history: history, allow_repeats: false).outputs.exercises
 
     if core_exercises.empty?
       outputs.valid_book_urls = ecosystem.books.map(&:url)
@@ -96,28 +96,12 @@ class GetConceptCoach
                                         additional_excluded_numbers: core_exercise_numbers)
                              .outputs.exercises
 
-      candidate_exercises = []
-      repeated_candidate_exercises = []
-
-      # Partition filtered exercises into the main candidate pool and the repeat candidates
-      filtered_exercises.each do |ex|
-        if all_worked_exercise_numbers.include?(ex.number) # Only include if we run out
-          repeated_candidate_exercises << ex
-        else                                               # The main pool of exercises
-          candidate_exercises << ex
-        end
-      end
-
-      num_candidate_exercises = [candidate_exercises.size, num_requested].min
-      num_req_repeated_exercises = num_requested - num_candidate_exercises
-      num_repeated_exercises = [repeated_candidate_exercises.size, num_req_repeated_exercises].min
-
       # Randomize and grab the required numbers of exercises
-      chosen_exercises = candidate_exercises.sample(num_candidate_exercises) + \
-                         repeated_candidate_exercises.sample(num_repeated_exercises)
+      chosen_exercises = run(:choose, exercises: filtered_exercises, count: num_requested,
+                                      history: history).outputs.exercises
 
       spaced_practice_status << "Could not completely fill the #{k_ago}-ago slot" \
-        if num_repeated_exercises < num_req_repeated_exercises
+        if chosen_exercises.size < num_requested
 
       chosen_exercises
     end.compact

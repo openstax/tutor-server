@@ -119,7 +119,6 @@ class Tasks::Assistants::HomeworkAssistant
     history = GetHistory.call(role: taskee, type: :homework, current_task: task).outputs
 
     core_exercise_numbers = history.exercises.first.map(&:number)
-    all_worked_exercise_numbers = history.exercises.flatten.map(&:number)
 
     course = @task_plan.owner
 
@@ -160,25 +159,9 @@ class Tasks::Assistants::HomeworkAssistant
         additional_excluded_numbers: core_exercise_numbers
       ]
 
-      candidate_exercises = []
-      repeated_candidate_exercises = []
-
-      # Partition spaced exercises into the main candidate pool and the repeat candidates
-      filtered_exercises.each do |ex|
-        if all_worked_exercise_numbers.include?(ex.number) # Only include if we run out
-          repeated_candidate_exercises << ex
-        else                                               # The main pool of exercises
-          candidate_exercises << ex
-        end
-      end
-
-      num_candidate_exercises = [candidate_exercises.size, num_requested].min
-      num_req_repeated_exercises = num_requested - num_candidate_exercises
-      num_repeated_exercises = [repeated_candidate_exercises.size, num_req_repeated_exercises].min
-
-      # Randomize and grab the required numbers of exercises
-      chosen_exercises = candidate_exercises.sample(num_candidate_exercises) + \
-                         repeated_candidate_exercises.sample(num_repeated_exercises)
+      chosen_exercises = ChooseExercises[
+        exercises: filtered_exercises, count: num_requested, history: history
+      ]
 
       # Set related_content and add the exercises to the task
       chosen_exercises.each do |chosen_exercise|
@@ -186,7 +169,7 @@ class Tasks::Assistants::HomeworkAssistant
       end
 
       spaced_practice_status << "Could not completely fill the #{k_ago}-ago slot" \
-        if num_repeated_exercises < num_req_repeated_exercises
+        if chosen_exercises.size < num_requested
     end
 
     spaced_practice_status << 'Completely filled' if spaced_practice_status.empty?
