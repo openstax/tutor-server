@@ -21,7 +21,7 @@ class ChooseExercises
       end
     end
 
-    new_exercises_count = [candidate_exercises.size, count].min
+    new_exercises_count = [new_exercises.size, count].min
     repeated_exercises_count = allow_repeats ? \
                                 [repeated_exercises.size, count - new_exercises_count].min : 0
 
