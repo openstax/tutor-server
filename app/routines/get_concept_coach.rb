@@ -37,7 +37,8 @@ class GetConceptCoach
     course = role.student.try(:course)
     filtered_exercises = run(:filter, exercises: pool_exercises, course: course)
                            .outputs.exercises
-    core_exercises = run(:choose, exercises: filtered_exercises, count: count,
+    core_exercises = run(:choose, exercises: filtered_exercises,
+                                  count: Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT,
                                   history: history, allow_repeats: false).outputs.exercises
 
     if core_exercises.empty?

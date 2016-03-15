@@ -3,8 +3,8 @@ class GetEcosystemExercisesFromBiglearn
 
   lev_routine express_output: :ecosystem_exercises
 
-  uses_routine GetHistory, as: :get_history
   uses_routine FilterExcludedExercises, as: :filter
+  uses_routine GetHistory, as: :get_history
   uses_routine ChooseExercises, as: :choose
 
   MAX_ATTEMPTS = 3
@@ -19,7 +19,7 @@ class GetEcosystemExercisesFromBiglearn
 
     admin_excluded_pool_uuid = Settings::Exercises.excluded_pool_uuid
     admin_excluded_pool = OpenStax::Biglearn::V1::Pool.new(uuid: admin_excluded_pool_uuid) \
-      unless admin_excluded_pool_uuid.nil?
+      unless admin_excluded_pool_uuid.blank?
 
     course_excluded_pool_uuid = course_profile.try(:biglearn_excluded_pool_uuid)
     course_excluded_pool = OpenStax::Biglearn::V1::Pool.new(uuid: course_excluded_pool_uuid) \
