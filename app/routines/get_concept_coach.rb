@@ -200,7 +200,7 @@ class GetConceptCoach
     pool_exercises = pool.exercises.uniq.shuffle
     candidate_exercises = pool_exercises - all_worked_exercises
     candidate_exercises = candidate_exercises.reject do |ex|
-      ex.uid.in?(admin_excluded_uids) || ex.number.in?(course_excluded_numbers)
+      ex.number.in?(course_excluded_numbers) || ex.uid.in?(admin_excluded_uids)
     end
     candidate_exercises.first(count)
   end
