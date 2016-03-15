@@ -12,6 +12,8 @@ class GetConceptCoach
 
   uses_routine GetHistory, as: :get_history
 
+  uses_routine FilterExcludedExercises, as: :filter
+
   uses_routine GetCourseEcosystem, as: :get_ecosystem
 
   protected
@@ -30,11 +32,13 @@ class GetConceptCoach
     end
 
     all_worked_exercises = history.exercises.flatten
-    all_worked_exercise_numbers = all_worked_exercises.map(&:number)
+    all_worked_exercise_numbers = all_worked_exercises.map(&:number).uniq
     course = role.student.try(:course)
-    core_exercises = get_local_exercises(
-      Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT, course, pool, all_worked_exercises
-    )
+    pool_exercises = pool.exercises.uniq
+    filtered_exercises = run(:filter, exercises: pool_exercises, course: course,
+                                      additional_excluded_numbers: all_worked_exercise_numbers)
+                           .outputs.exercises
+    core_exercises = filtered_exercises.sample(count)
 
     if core_exercises.empty?
       outputs.valid_book_urls = ecosystem.books.map(&:url)
@@ -88,13 +92,15 @@ class GetConceptCoach
         pages: spaced_page, pool_type: :all_exercises
       ).values.flatten.uniq
 
+      filtered_exercises = run(:filter, exercises: spaced_exercises, course: course,
+                                        additional_excluded_numbers: core_exercise_numbers)
+                             .outputs.exercises
+
       candidate_exercises = []
       repeated_candidate_exercises = []
 
-      # Partition spaced exercises into the main candidate pool and the repeat candidates
-      spaced_exercises.each do |ex|
-        next if core_exercise_numbers.include?(ex.number)  # Never include
-
+      # Partition filtered exercises into the main candidate pool and the repeat candidates
+      filtered_exercises.each do |ex|
         if all_worked_exercise_numbers.include?(ex.number) # Only include if we run out
           repeated_candidate_exercises << ex
         else                                               # The main pool of exercises
@@ -191,18 +197,6 @@ class GetConceptCoach
   def get_ecosystem_and_pool(page)
     ecosystem = Content::Ecosystem.find_by_page_ids(page.id)
     [ecosystem, page.all_exercises_pool]
-  end
-
-  def get_local_exercises(count, course, pool, all_worked_exercises)
-    admin_excluded_uids = Setting::Exercises.excluded_uids.split(',').map(&:strip)
-    course_excluded_numbers = course.excluded_exercises.pluck(:exercise_number)
-
-    pool_exercises = pool.exercises.uniq.shuffle
-    candidate_exercises = pool_exercises - all_worked_exercises
-    candidate_exercises = candidate_exercises.reject do |ex|
-      ex.number.in?(course_excluded_numbers) || ex.uid.in?(admin_excluded_uids)
-    end
-    candidate_exercises.first(count)
   end
 
 end
