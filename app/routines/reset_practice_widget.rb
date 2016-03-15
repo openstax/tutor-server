@@ -100,10 +100,19 @@ class ResetPracticeWidget
     options = { randomize: true }.merge(options)
     entity_tasks = role.taskings.preload(task: {task: {task_steps: :tasked}})
                                 .collect{ |tt| tt.task }
+
+    course = role.student.try(:course)
+
+    admin_excluded_uids = Setting::Exercises.excluded_uids.split(',').map(&:strip)
+    course_excluded_numbers = course.excluded_exercises.pluck(:exercise_number)
+
     all_worked_exercises = run(:get_history, role: role, type: :all).outputs.exercises.flatten.uniq
-    exercise_pool = pools.collect{ |pl| pl.exercises }.flatten.uniq
-    exercise_pool = exercise_pool.shuffle if options[:randomize]
-    candidate_exercises = (exercise_pool - all_worked_exercises)
+    pool_exercises = pools.collect{ |pl| pl.exercises }.flatten.uniq
+    pool_exercises = pool_exercises.shuffle if options[:randomize]
+    pool_exercises = pool_exercises.reject do |ex|
+      ex.uid.in?(admin_excluded_uids) || ex.number.in?(course_excluded_numbers)
+    end
+    candidate_exercises = (pool_exercises - all_worked_exercises)
     exercises = candidate_exercises.first(count)
     num_exercises = exercises.size
 
