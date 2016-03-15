@@ -31,8 +31,9 @@ class GetConceptCoach
 
     all_worked_exercises = history.exercises.flatten
     all_worked_exercise_numbers = all_worked_exercises.map(&:number)
+    course = role.student.try(:course)
     core_exercises = get_local_exercises(
-      Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT, pool, all_worked_exercises
+      Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT, course, pool, all_worked_exercises
     )
 
     if core_exercises.empty?
@@ -192,9 +193,15 @@ class GetConceptCoach
     [ecosystem, page.all_exercises_pool]
   end
 
-  def get_local_exercises(count, pool, all_worked_exercises)
-    exercise_pool = pool.exercises.uniq.shuffle
-    candidate_exercises = exercise_pool - all_worked_exercises
+  def get_local_exercises(count, course, pool, all_worked_exercises)
+    admin_excluded_uids = Setting::Exercises.excluded_uids.split(',').map(&:strip)
+    course_excluded_numbers = course.excluded_exercises.pluck(:exercise_number)
+
+    pool_exercises = pool.exercises.uniq.shuffle
+    candidate_exercises = pool_exercises - all_worked_exercises
+    candidate_exercises = candidate_exercises.reject do |ex|
+      ex.uid.in?(admin_excluded_uids) || ex.number.in?(course_excluded_numbers)
+    end
     candidate_exercises.first(count)
   end
 
