@@ -156,9 +156,6 @@ class Tasks::Assistants::IReadingAssistant
 
     course = @task_plan.owner
 
-    excluded_exercise_numbers = core_exercise_numbers + \
-                                (course.try(:excluded_exercises) || []).map(&:exercise_number)
-
     spaced_practice_status = []
 
     self.class.k_ago_map.each do |k_ago, num_requested|
@@ -185,13 +182,16 @@ class Tasks::Assistants::IReadingAssistant
         pages: spaced_pages, pool_type: :reading_dynamic
       ).values.flatten.uniq
 
+      filtered_exercises = FilterExcludedExercises[
+        exercises: spaced_exercises, course: course,
+        additional_excluded_numbers: core_exercise_numbers
+      ]
+
       candidate_exercises = []
       repeated_candidate_exercises = []
 
       # Partition spaced exercises into the main candidate pool and the repeat candidates
-      spaced_exercises.each do |ex|
-        next if excluded_exercise_numbers.include?(ex.number)  # Never include
-
+      filtered_exercises.each do |ex|
         if all_worked_exercise_numbers.include?(ex.number) # Only include if we run out
           repeated_candidate_exercises << ex
         else                                               # The main pool of exercises

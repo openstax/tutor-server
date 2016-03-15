@@ -123,10 +123,6 @@ class Tasks::Assistants::HomeworkAssistant
 
     course = @task_plan.owner
 
-    admin_excluded_uids = Setting::Exercises.excluded_uids.split(',').map(&:strip)
-    course_excluded_numbers = course.excluded_exercises.pluck(:exercise_number)
-    excluded_exercise_numbers = core_exercise_numbers + course_excluded_numbers
-
     spaced_practice_status = []
 
     num_spaced_practice_exercises = get_num_spaced_practice_exercises
@@ -159,14 +155,16 @@ class Tasks::Assistants::HomeworkAssistant
         pages: spaced_core_pages, pool_type: :homework_dynamic
       ).values.flatten.uniq
 
+      filtered_exercises = FilterExcludedExercises[
+        exercises: spaced_exercises, course: course,
+        additional_excluded_numbers: core_exercise_numbers
+      ]
+
       candidate_exercises = []
       repeated_candidate_exercises = []
 
       # Partition spaced exercises into the main candidate pool and the repeat candidates
-      spaced_exercises.each do |ex|
-        next if excluded_exercise_numbers.include?(ex.number) || \
-                admin_excluded_uids.include?(ex.uid)  # Never include
-
+      filtered_exercises.each do |ex|
         if all_worked_exercise_numbers.include?(ex.number) # Only include if we run out
           repeated_candidate_exercises << ex
         else                                               # The main pool of exercises

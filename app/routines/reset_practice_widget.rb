@@ -15,6 +15,7 @@ class ResetPracticeWidget
 
   uses_routine GetCourseEcosystem, as: :get_course_ecosystem
   uses_routine GetHistory, as: :get_history
+  uses_routine FilterExcludedExercises, as: :filter
   uses_routine GetEcosystemExercisesFromBiglearn, as: :get_ecosystem_exercises_from_biglearn
 
   protected
@@ -103,16 +104,17 @@ class ResetPracticeWidget
 
     course = role.student.try(:course)
 
-    admin_excluded_uids = Setting::Exercises.excluded_uids.split(',').map(&:strip)
-    course_excluded_numbers = course.excluded_exercises.pluck(:exercise_number)
+    history = run(:get_history, role: role, type: :all)
+    all_worked_exercises = history.exercises.flatten
+    all_worked_exercise_numbers = all_worked_exercises.map(&:number).uniq
 
-    all_worked_exercises = run(:get_history, role: role, type: :all).outputs.exercises.flatten.uniq
     pool_exercises = pools.collect{ |pl| pl.exercises }.flatten.uniq
     pool_exercises = pool_exercises.shuffle if options[:randomize]
 
-    candidate_exercises = (pool_exercises - all_worked_exercises)
-    candidate_exercises = candidate_exercises.reject do |ex|
-      ex.number.in?(course_excluded_numbers) || ex.uid.in?(admin_excluded_uids)
+    filtered_exercises = run(:filter, exercises: pool_exercises, course: course).outputs.exercises
+
+    candidate_exercises = filtered_exercises.reject do |ex|
+      ex.number.in? all_worked_exercise_numbers
     end
 
     exercises = candidate_exercises.first(count)
