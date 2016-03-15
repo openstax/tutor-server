@@ -109,10 +109,12 @@ class ResetPracticeWidget
     all_worked_exercises = run(:get_history, role: role, type: :all).outputs.exercises.flatten.uniq
     pool_exercises = pools.collect{ |pl| pl.exercises }.flatten.uniq
     pool_exercises = pool_exercises.shuffle if options[:randomize]
-    pool_exercises = pool_exercises.reject do |ex|
+
+    candidate_exercises = (pool_exercises - all_worked_exercises)
+    candidate_exercises = candidate_exercises.reject do |ex|
       ex.uid.in?(admin_excluded_uids) || ex.number.in?(course_excluded_numbers)
     end
-    candidate_exercises = (pool_exercises - all_worked_exercises)
+
     exercises = candidate_exercises.first(count)
     num_exercises = exercises.size
 

@@ -46,24 +46,32 @@ class Tasks::RecoverTaskStep
 
   # Get the page for each exercise in the student's assignments
   # From each page, get the pool of "try another" reading problems
-  def get_exercise_pool(ecosystem:, exercise:)
+  def get_pool_exercises(ecosystem:, exercise:)
     page = exercise.page
-    ecosystem.reading_try_another_pools(pages: page).collect{ |pl| pl.exercises }.flatten
+    ecosystem.reading_try_another_pools(pages: page).map(&:exercises).flatten
   end
 
   # Finds an Exercise with all the required tags and at least one LO
   # Prefers unassigned Exercises
   def get_recovery_exercise_for(ecosystem:, task_step:)
     # Assume only 1 taskee for now
-    role = task_step.task.entity_task.taskings.collect{ |tt| tt.role }.first
+    role = task_step.task.entity_task.taskings.map(&:role).first
+
+    course = role.student.try(:course)
+
+    admin_excluded_uids = Setting::Exercises.excluded_uids.split(',').map(&:strip)
+    course_excluded_numbers = course.excluded_exercises.pluck(:exercise_number)
 
     all_worked_exercises = run(:get_history, role: role, type: :all).outputs.exercises.flatten.uniq
 
     recovered_exercise_id = task_step.tasked.content_exercise_id
     recovered_exercise = ecosystem.exercises_by_ids(recovered_exercise_id).first
-    exercise_pool = get_exercise_pool(ecosystem: ecosystem, exercise: recovered_exercise)
+    pool_exercises = get_pool_exercises(ecosystem: ecosystem, exercise: recovered_exercise)
 
-    candidate_exercises = (exercise_pool - all_worked_exercises).uniq
+    candidate_exercises = (pool_exercises - all_worked_exercises).uniq
+    candidate_exercises = candidate_exercises.reject do |ex|
+      ex.uid.in?(admin_excluded_uids) || ex.number.in?(course_excluded_numbers)
+    end
 
     los = Set.new(recovered_exercise.los)
     aplos = Set.new(recovered_exercise.aplos)
