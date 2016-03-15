@@ -20,8 +20,11 @@ class GetEcosystemExercisesFromBiglearn
     course_excluded_pool = OpenStax::Biglearn::V1::Pool.new(uuid: course_excluded_pool_uuid) \
       unless course_excluded_pool_uuid.nil?
 
-    pool_exclusions = [{ pool: admin_excluded_pool, ignore_versions: false },
-                       { pool: course_excluded_pool, ignore_versions: true }]
+    pool_exclusions = []
+    pool_exclusions << { pool: admin_excluded_pool, ignore_versions: false } \
+      unless admin_excluded_pool.nil?
+    pool_exclusions << { pool: course_excluded_pool, ignore_versions: true } \
+      unless course_excluded_pool.nil?
 
     attempts = 0
     begin
