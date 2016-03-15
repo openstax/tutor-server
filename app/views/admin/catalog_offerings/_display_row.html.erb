@@ -1,7 +1,10 @@
-<div class='underlined-spaced-row'>
+<div id='offering_<%= offering.id %>' class='underlined-spaced-row'>
   <b>Book name:</b> <%= offering.salesforce_book_name %>
+  (<%= link_to 'List courses',
+               admin_courses_path(query: "offering:\"#{offering.salesforce_book_name}\"") %>)
   <span style='float: right'>
-    <%= link_to 'Edit', edit_admin_catalog_offering_url(offering.id) %>
+    <%= link_to 'Edit', edit_admin_catalog_offering_url(offering.id,
+                                                        anchor: "offering_#{offering.id}") %>
   </span>
   <div style='clear:both'>
     <b>Appearance code:</b> <%= offering.appearance_code || 'not set' %>

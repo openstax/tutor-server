@@ -234,13 +234,11 @@ module Content
           another_old_lo_tag.pages.first.destroy
           another_old_lo_tag.destroy
 
-          # Rewrap the old ecosystem so we pick up the changes
-          modified_old_strategy = Content::Strategies::Direct::Ecosystem.new(
-            another_old_lo_tag.ecosystem
-          )
+          # Rewrap the old ecosystem so we pick up the changes properly
+          modified_old_strategy = another_old_lo_tag.ecosystem.wrap
           modified_old_ecosystem = Content::Ecosystem.new(strategy: modified_old_strategy)
 
-          # We can still map forward, but the reverse map is now invalid
+          # The map validity is cached, so it is still valid
           modified_map = Content::Map.create!(
             from_ecosystems: [modified_old_ecosystem, new_ecosystem],
             to_ecosystem: new_ecosystem,
@@ -252,38 +250,28 @@ module Content
             to_ecosystem: modified_old_ecosystem,
             strategy_class: described_class
           )
+          expect(reverse_modified_map).to be_valid
+
+          # Clear the map cache
+          map.instance_variable_get(:@strategy).send(:cache).clear
+
+          # We can still map forward, but the reverse map is now invalid
+          expect(modified_map).to be_valid
           expect(reverse_modified_map).not_to be_valid
         end
 
         it 'outputs diagnostics when mapping fails' do
-          # The ecosystems are identical, so we can map both ways
-          expect(map).to be_valid
-          reverse_map = Content::Map.create!(from_ecosystems: [old_ecosystem, new_ecosystem],
-                                             to_ecosystem: old_ecosystem,
-                                             strategy_class: described_class)
-          expect(reverse_map).to be_valid
-
-          # Pretend lo02 and its page were added only in the new ecosystem
+          # Create an invalid ecosystem mapping
           another_old_lo_tag.exercises.first.destroy
           another_old_lo_tag.pages.first.destroy
           another_old_lo_tag.destroy
 
-          # Rewrap the old ecosystem so we pick up the changes
-          modified_old_strategy = Content::Strategies::Direct::Ecosystem.new(
-            another_old_lo_tag.ecosystem
-          )
+          # Rewrap the old ecosystem so we pick up the changes properly
+          modified_old_strategy = another_old_lo_tag.ecosystem.wrap
           modified_old_ecosystem = Content::Ecosystem.new(strategy: modified_old_strategy)
 
-          # We can still map forward, but the reverse map is now invalid
-          modified_map = Content::Map.create!(
-            from_ecosystems: [modified_old_ecosystem, new_ecosystem],
-            to_ecosystem: new_ecosystem,
-            strategy_class: described_class
-          )
-          expect(modified_map).to be_valid
-
           expect{
-            reverse_modified_map = Content::Map.create!(
+            Content::Map.create!(
               from_ecosystems: [modified_old_ecosystem, new_ecosystem],
               to_ecosystem: modified_old_ecosystem,
               strategy_class: described_class

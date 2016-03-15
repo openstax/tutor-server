@@ -7,7 +7,7 @@ class Admin::CoursesController < Admin::BaseController
 
   def index
     @query = params[:query]
-    courses = SearchCourses[query: @query]
+    courses = SearchCourses[query: params[:query]]
     @course_infos = CollectCourseInfo[courses: courses,
                                       with: [:teacher_names, :periods, :ecosystem_book]]
     @ecosystems = Content::ListEcosystems[]

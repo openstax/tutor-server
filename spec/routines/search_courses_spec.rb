@@ -23,9 +23,14 @@ RSpec.describe SearchCourses, type: :routine do
 
   let!(:teacher_user) { FactoryGirl.create(:user, first_name: 'Charles') }
 
+  let!(:ecosystem) {
+    Content::Ecosystem.new(strategy: FactoryGirl.create(:content_ecosystem, title: 'A test').wrap)
+  }
+
   before do
     AddUserAsCourseTeacher[course: course_1, user: teacher_user]
     AddUserAsCourseTeacher[course: course_3, user: teacher_user]
+    AddEcosystemToCourse[course: course_2, ecosystem: ecosystem]
   end
 
   it 'returns all courses in alphabetical order if the query is nil' do
@@ -45,10 +50,28 @@ RSpec.describe SearchCourses, type: :routine do
     courses = described_class[query: 'o'].to_a
     expect(courses).to eq [course_2, course_3, course_1]
 
+    courses = described_class[query: 'o,i'].to_a
+    expect(courses).to eq [course_2, course_3, course_1]
+
     courses = described_class[query: 'bIo'].to_a
     expect(courses).to eq [course_2]
 
     courses = described_class[query: 'physics'].to_a
+    expect(courses).to eq [course_1]
+
+    courses = described_class[query: 'name:i'].to_a
+    expect(courses).to eq [course_2, course_1]
+
+    courses = described_class[query: 'name:o'].to_a
+    expect(courses).to eq [course_2, course_3]
+
+    courses = described_class[query: 'name:o,i'].to_a
+    expect(courses).to eq [course_2, course_3, course_1]
+
+    courses = described_class[query: 'name:bIo'].to_a
+    expect(courses).to eq [course_2]
+
+    courses = described_class[query: 'name:physics'].to_a
     expect(courses).to eq [course_1]
   end
 
@@ -58,6 +81,12 @@ RSpec.describe SearchCourses, type: :routine do
 
     courses = described_class[query: 'ccs'].to_a
     expect(courses).to eq [course_3]
+
+    courses = described_class[query: 'school:ts'].to_a
+    expect(courses).to eq [course_2, course_1]
+
+    courses = described_class[query: 'school:ccs'].to_a
+    expect(courses).to eq [course_3]
   end
 
   it 'returns courses whose teacher\'s name matches the given query, in alphabetical order' do
@@ -66,15 +95,35 @@ RSpec.describe SearchCourses, type: :routine do
 
     courses = described_class[query: 'rLe'].to_a
     expect(courses).to eq [course_3, course_1]
+
+    courses = described_class[query: 'teacher:cHaRlEs'].to_a
+    expect(courses).to eq [course_3, course_1]
+
+    courses = described_class[query: 'teacher:rLe'].to_a
+    expect(courses).to eq [course_3, course_1]
   end
 
-  it 'returns courses whose book name matches the given query' do
+  it 'returns courses whose salesforce book name matches the given query' do
     courses = described_class[query: 'algebra'].to_a
+    expect(courses).to eq [course_1]
+
+    courses = described_class[query: 'offering:algebra'].to_a
     expect(courses).to eq [course_1]
   end
 
   it 'returns courses whose book description matches the given query' do
     courses = described_class[query: 'introductory'].to_a
     expect(courses).to eq [course_1]
+
+    courses = described_class[query: 'offering:introductory'].to_a
+    expect(courses).to eq [course_1]
+  end
+
+  it 'returns courses whose ecosystem title matches the given query' do
+    courses = described_class[query: 'tes'].to_a
+    expect(courses).to eq [course_2]
+
+    courses = described_class[query: 'ecosystem:tes'].to_a
+    expect(courses).to eq [course_2]
   end
 end

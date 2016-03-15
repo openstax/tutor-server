@@ -10,9 +10,9 @@ module SchoolDistrict
       before_destroy :check_no_courses
 
       delegate :name,
-        to: :district,
-        prefix: true,
-        allow_nil: true
+               to: :district,
+               prefix: true,
+               allow_nil: true
 
       protected
 
