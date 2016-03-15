@@ -22,6 +22,12 @@
 en:
   settings:
     attributes:
+      excluded_uids:
+        name: 'Excluded exercise UIDs'
+        help_block: 'Number@Version, comma-separated, lower or equal versions will be excluded'
+      excluded_pool_uuid:
+        name: 'Excluded exercise pool UUID'
+        help_block: 'Set automatically when you update the list above'
       import_real_salesforce_courses:
         name: 'Import real Salesforce courses?'
         help_block: 'Unchecked: limits to Denver University'
