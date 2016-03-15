@@ -41,7 +41,7 @@ class GetEcosystemExercisesFromBiglearn
       if (attempts += 1) < MAX_ATTEMPTS
         retry
       else
-        admin_excluded_uids = Settings::Exercises.excluded_uids
+        admin_excluded_uids = Settings::Exercises.excluded_uids.split(',').map(&:strip)
         course_excluded_numbers = course.excluded_exercises.pluck(:exercise_number)
 
         pool_exercises = pools.flat_map{ |pl| pl.exercises }
