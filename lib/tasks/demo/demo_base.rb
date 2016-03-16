@@ -163,12 +163,16 @@ class DemoBase
       fork do
         # Reconnect to Redis
 
-        # demo uses the Biglearn fake client if Biglearn stubbing is enabled
-        OpenStax::Biglearn::V1.client.store.reconnect \
-          if OpenStax::Biglearn::V1.client.is_a? OpenStax::Biglearn::V1::FakeClient
+        # demo uses the Settings to look up admin exercise exclusions
+        # settings are cached in Redis by rails-settings-cached
+        Rails.cache.reconnect
 
         # demo work uses jobs to send info to Exchange
         Jobba.redis.client.reconnect
+
+        # demo uses the Biglearn fake client if Biglearn stubbing is enabled
+        OpenStax::Biglearn::V1.client.store.reconnect \
+          if OpenStax::Biglearn::V1.client.is_a? OpenStax::Biglearn::V1::FakeClient
 
         if transaction
           ActiveRecord::Base.transaction do
