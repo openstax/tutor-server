@@ -3,6 +3,7 @@ class GetExercises
   lev_routine express_output: :exercise_search, transaction: :no_transaction
 
   uses_routine GetCourseEcosystem, as: :get_ecosystem
+  uses_routine FilterExcludedExercises, as: :filter
 
   # Returns Content::Exercises filtered "by":
   #   :ecosystem or :course
@@ -21,18 +22,15 @@ class GetExercises
                                                        page_ids: page_ids,
                                                        pool_types: pool_types]
 
-    admin_excluded_uids = Settings::Exercises.excluded_uids.split(',').map(&:strip)
-
-    excluded_exercise_numbers = CourseContent::Models::ExcludedExercise
-                                  .where(entity_course_id: course.id)
-                                  .pluck(:exercise_number) unless course.nil?
+    excluded_exercise_numbers = Set.new(course.excluded_exercises.pluck(:exercise_number)) \
+      unless course.nil?
 
     all_exercises = []
 
     # Build map of exercise uids to representations, with pool type
     exercise_representations = pools_map.each_with_object({}) do |(pool_type, pools), hash|
       pool_exercises = pools.flat_map{ |pool| pool.exercises(preload_tags: true) }
-      exercises = pool_exercises.reject{ |ex| ex.uid.in? admin_excluded_uids }
+      exercises = run(:filter, exercises: pool_exercises).outputs.exercises
 
       exercises.each do |exercise|
         hash[exercise.uid] ||= Api::V1::ExerciseRepresenter.new(exercise).to_hash
