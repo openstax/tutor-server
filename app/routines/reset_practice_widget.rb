@@ -15,6 +15,8 @@ class ResetPracticeWidget
 
   uses_routine GetCourseEcosystem, as: :get_course_ecosystem
   uses_routine GetHistory, as: :get_history
+  uses_routine FilterExcludedExercises, as: :filter
+  uses_routine ChooseExercises, as: :choose
   uses_routine GetEcosystemExercisesFromBiglearn, as: :get_ecosystem_exercises_from_biglearn
 
   protected
@@ -35,7 +37,8 @@ class ResetPracticeWidget
       ecosystem = Content::Ecosystem.find_by_exercise_ids(exercises.first.id) if exercises.any?
     when :local
       ecosystem, pools = get_ecosystem_and_pools(page_ids, chapter_ids, role)
-      exercises = get_local_exercises(ecosystem, count, role, pools, randomize: randomize)
+      exercises = get_local_exercises(ecosystem: ecosystem, count: count,
+                                      role: role, pools: pools, randomize: randomize)
     when :biglearn
       ecosystem, pools = get_ecosystem_and_pools(page_ids, chapter_ids, role)
       exercises = run(:get_ecosystem_exercises_from_biglearn, ecosystem: ecosystem,
@@ -64,7 +67,7 @@ class ResetPracticeWidget
     task_type = :chapter_practice if !chapter_ids.nil? && page_ids.nil?
     task_type = :page_practice if chapter_ids.nil? && !page_ids.nil?
 
-    related_content_array = exercises.collect{ |ex| ex.page.related_content }
+    related_content_array = exercises.map{ |ex| ex.page.related_content }
 
     # Create the new practice widget task, and put the exercises into steps
     run(:create_practice_widget_task, exercises: exercises,
@@ -96,24 +99,19 @@ class ResetPracticeWidget
     [ecosystem, ecosystem.practice_widget_pools(pages: pages)]
   end
 
-  def get_local_exercises(ecosystem, count, role, pools, options = {})
-    options = { randomize: true }.merge(options)
-    entity_tasks = role.taskings.preload(task: {task: {task_steps: :tasked}})
-                                .collect{ |tt| tt.task }
-    all_worked_exercises = run(:get_history, role: role, type: :all).outputs.exercises.flatten.uniq
-    exercise_pool = pools.collect{ |pl| pl.exercises }.flatten.uniq
-    exercise_pool = exercise_pool.shuffle if options[:randomize]
-    candidate_exercises = (exercise_pool - all_worked_exercises)
-    exercises = candidate_exercises.first(count)
-    num_exercises = exercises.size
+  def get_local_exercises(ecosystem:, count:, role:, pools:, randomize:)
+    entity_tasks = role.taskings.preload(task: {task: {task_steps: :tasked}}).map(&:task)
 
-    if num_exercises < count
-      # We ran out of exercises, so start repeating them
-      candidate_exercises = exercise_pool - exercises
-      exercises = exercises + candidate_exercises.first(count - num_exercises)
-    end
+    pool_exercises = pools.flat_map(&:exercises)
 
-    exercises
+    course = role.student.try(:course)
+    filtered_exercises = run(:filter, exercises: pool_exercises, course: course).outputs.exercises
+
+    history = run(:get_history, role: role, type: :all).outputs
+    chosen_exercises = run(:choose, exercises: filtered_exercises, count: count, history: history,
+                                    randomize_exercises: randomize,
+                                    randomize_order: randomize).outputs.exercises
+    chosen_exercises
   end
 
 end

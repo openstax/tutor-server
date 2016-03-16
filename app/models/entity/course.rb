@@ -5,6 +5,8 @@ class Entity::Course < Tutor::SubSystems::BaseModel
   has_many :teachers, subsystem: :course_membership, dependent: :destroy
   has_many :students, subsystem: :course_membership, dependent: :destroy
 
+  has_many :excluded_exercises, subsystem: :course_content, dependent: :destroy
+
   has_many :course_ecosystems, subsystem: :course_content, dependent: :destroy
   has_many :ecosystems, through: :course_ecosystems, subsystem: :content
 

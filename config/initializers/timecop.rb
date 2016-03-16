@@ -7,18 +7,18 @@ class Timecop
 
   def self.travel_all(time)
     self.return
-    Settings.timecop_offset = time - Time.now
+    Settings::Timecop.offset = time - Time.now
     travel(time)
   end
 
   def self.return_all
     self.return
-    Settings.timecop_offset = nil
+    Settings::Timecop.offset = nil
   end
 
   def self.load_time
     self.return
-    offset = Settings.timecop_offset
+    offset = Settings::Timecop.offset
     travel(Time.now + offset) unless offset.nil?
   end
 end

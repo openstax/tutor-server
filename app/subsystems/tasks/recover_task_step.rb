@@ -5,6 +5,8 @@ class Tasks::RecoverTaskStep
   uses_routine TaskExercise, as: :task_exercise
   uses_routine GetEcosystemFromIds, as: :get_ecosystem
   uses_routine GetHistory, as: :get_history
+  uses_routine FilterExcludedExercises, as: :filter
+  uses_routine ChooseExercises, as: :choose
 
   protected
 
@@ -46,41 +48,39 @@ class Tasks::RecoverTaskStep
 
   # Get the page for each exercise in the student's assignments
   # From each page, get the pool of "try another" reading problems
-  def get_exercise_pool(ecosystem:, exercise:)
+  def get_pool_exercises(ecosystem:, exercise:)
     page = exercise.page
-    ecosystem.reading_try_another_pools(pages: page).collect{ |pl| pl.exercises }.flatten
+    ecosystem.reading_try_another_pools(pages: page).flat_map(&:exercises)
   end
 
   # Finds an Exercise with all the required tags and at least one LO
   # Prefers unassigned Exercises
   def get_recovery_exercise_for(ecosystem:, task_step:)
     # Assume only 1 taskee for now
-    role = task_step.task.entity_task.taskings.collect{ |tt| tt.role }.first
+    role = task_step.task.entity_task.taskings.map(&:role).first
 
-    all_worked_exercises = run(:get_history, role: role, type: :all).outputs.exercises.flatten.uniq
+    task_exercise_numbers = task_step.task.tasked_exercises.map{ |te| te.exercise.number }
 
     recovered_exercise_id = task_step.tasked.content_exercise_id
     recovered_exercise = ecosystem.exercises_by_ids(recovered_exercise_id).first
-    exercise_pool = get_exercise_pool(ecosystem: ecosystem, exercise: recovered_exercise)
+    pool_exercises = get_pool_exercises(ecosystem: ecosystem, exercise: recovered_exercise)
 
-    candidate_exercises = (exercise_pool - all_worked_exercises).uniq
+    course = role.student.try(:course)
+    filtered_exercises = run(:filter, exercises: pool_exercises, course: course,
+                                      additional_excluded_numbers: task_exercise_numbers)
+                           .outputs.exercises
 
     los = Set.new(recovered_exercise.los)
     aplos = Set.new(recovered_exercise.aplos)
 
-    # Find a random exercise that shares at least one LO with the tasked
-    chosen_exercise = candidate_exercises.shuffle.find do |ex|
+    # Allow only exercises that share at least one LO or APLO with the tasked
+    candidate_exercises = filtered_exercises.select do |ex|
       ex.los.any?{ |tt| los.include?(tt) } || ex.aplos.any?{ |tt| aplos.include?(tt) }
     end
 
-    if chosen_exercise.nil?
-      # If no exercises found, reuse an old one
-      chosen_exercise = exercise_pool.shuffle.find do |ex|
-        ex != recovered_exercise && \
-        (ex.los.any?{ |tt| los.include?(tt) } || ex.aplos.any?{ |tt| aplos.include?(tt) })
-      end
-    end
-
+    history = run(:get_history, role: role, type: :all).outputs
+    chosen_exercise = run(:choose, exercises: candidate_exercises,
+                                   count: 1, history: history).outputs.exercises.first
     chosen_exercise
   end
 

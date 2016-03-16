@@ -22,8 +22,8 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
       User::User.new(strategy: strategy)
     }
 
-    [:index, :read, :task_plans, :export,
-     :roster, :add_period, :update, :stats].each do |test_action|
+    [:index, :read, :task_plans, :export, :roster,
+     :add_period, :update, :stats, :exercises].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
         it { should be false }

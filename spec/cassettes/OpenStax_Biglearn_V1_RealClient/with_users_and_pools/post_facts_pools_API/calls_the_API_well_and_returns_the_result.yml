@@ -1,0 +1,45 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://biglearn-dev.openstax.org/facts/pools
+    body:
+      encoding: UTF-8
+      string: '{"sources":[{"questions":[{"question_id":"//exercises-dev.openstax.org/exercises/42","version":1}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Wed, 16 Mar 2016 02:41:11 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '66'
+      Connection:
+      - keep-alive
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "pool_ids": [
+            "3c1ebe22-7e01-4a6a-81cb-a424a1b79003"
+          ]
+        }
+    http_version: 
+  recorded_at: Wed, 16 Mar 2016 02:41:05 GMT
+recorded_with: VCR 2.9.3

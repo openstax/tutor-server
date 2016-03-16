@@ -1,241 +1,349 @@
 require 'rails_helper'
 require 'vcr_helper'
+require 'database_cleaner'
 require 'support/biglearn_real_client_vcr_helper'
 
 module OpenStax::Biglearn
   RSpec.describe V1::RealClient, type: :external, vcr: VCR_OPTS do
 
-    # If you need to regenerate the cassette for this spec, first make sure there is some data
-    # in biglearn-dev, then get a couple of identifiers and pool uuids from there
-    USER_1_IDENTIFIER = '21332ca231a015a11df464d759dd7de0da971bd48334ebb050540ec683f548fe'
-    USER_2_IDENTIFIER = '8e79ebcd72d5061496ad94b471686015dccd126e6a42a3dd122bf15590abe8b7'
-    POOL_1_UUID = 'c8183974-c247-41a0-ad38-e69b72159b76'
-    POOL_2_UUID = '5e816a18-9fdb-4430-9cb8-de2661940b3b'
+    # If you need to regenerate some cassettes and biglearn-dev is giving you errors,
+    # make sure you have valid keys for exchange-dev (test env) and regenerate the
+    # OpenStax_Biglearn_V1_RealClient/with_users_and_pools.yml cassette
+    # Leave the stubbing configuration enabled
 
-    let(:configuration) {
-      c = OpenStax::Biglearn::V1::Configuration.new
-      c.server_url = 'https://biglearn-dev.openstax.org/'
-      c
-    }
+    context 'with users and pools' do
+      before(:all) do
+        DatabaseCleaner.start
 
-    let(:client) { described_class.new(configuration) }
+        biglearn_configuration = OpenStax::Biglearn::V1::Configuration.new
+        biglearn_configuration.server_url = 'https://biglearn-dev.openstax.org/'
+        @client = described_class.new(biglearn_configuration)
 
-    let!(:user_1_role) {
-      user = User::CreateUser[username: SecureRandom.hex,
-                              exchange_identifiers: Hashie::Mash.new(read: USER_1_IDENTIFIER,
-                                                                     write: SecureRandom.hex)]
-      Role::CreateUserRole[user]
-    }
+        VCR.use_cassette('OpenStax_Biglearn_V1_RealClient/with_users_and_pools', VCR_OPTS) do
+          use_real_client = OpenStax::Exchange.use_real_client?
+          OpenStax::Exchange.use_real_client
+          OpenStax::Exchange.reset!
 
-    let!(:user_2_role) {
-      user = User::CreateUser[username: SecureRandom.hex,
-                              exchange_identifiers: Hashie::Mash.new(read: USER_2_IDENTIFIER,
-                                                                     write: SecureRandom.hex)]
-      Role::CreateUserRole[user]
-    }
+          user_1 = User::CreateUser[username: SecureRandom.hex]
+          @user_1_role = Role::CreateUserRole[user_1]
 
-    let!(:content_exercise)  { FactoryGirl.create :content_exercise }
-    let!(:biglearn_exercise) {
-      exercise_url = Addressable::URI.parse(content_exercise.url)
-      exercise_url.scheme = nil
-      exercise_url.path = exercise_url.path.split('@').first
-      OpenStax::Biglearn::V1::Exercise.new(question_id: exercise_url.to_s,
-                                           version: content_exercise.version,
-                                           tags: content_exercise.exercise_tags
-                                                                 .collect{ |et| et.tag.value })
-    }
+          user_2 = User::CreateUser[username: SecureRandom.hex]
+          @user_2_role = Role::CreateUserRole[user_2]
 
-    let!(:pool_1) { OpenStax::Biglearn::V1::Pool.new(uuid: POOL_1_UUID,
-                                                     exercises: [biglearn_exercise]) }
-    let!(:pool_2) { OpenStax::Biglearn::V1::Pool.new(uuid: POOL_2_UUID) }
+          # Biglearn only returns valid CLUe's for positive exercise numbers
+          exercise_1_content = OpenStax::Exercises::V1.fake_client.new_exercise_hash(
+            number: 42
+          ).to_json
+          content_exercise_1 = FactoryGirl.create :content_exercise, content: exercise_1_content
+          exercise_url_1 = Addressable::URI.parse(content_exercise_1.url)
+          exercise_url_1.scheme = nil
+          exercise_url_1.path = exercise_url_1.path.split('@').first
+          @biglearn_exercise_1 = OpenStax::Biglearn::V1::Exercise.new(
+            question_id: exercise_url_1.to_s,
+            version: content_exercise_1.version,
+            tags: content_exercise_1.exercise_tags.map{ |et| et.tag.value }
+          )
+          exercise_2_content = OpenStax::Exercises::V1.fake_client.new_exercise_hash(
+            number: 43
+          ).to_json
+          content_exercise_2 = FactoryGirl.create :content_exercise, content: exercise_2_content
+          exercise_url_2 = Addressable::URI.parse(content_exercise_2.url)
+          exercise_url_2.scheme = nil
+          exercise_url_2.path = exercise_url_2.path.split('@').first
+          @biglearn_exercise_2 = OpenStax::Biglearn::V1::Exercise.new(
+            question_id: exercise_url_2.to_s,
+            version: content_exercise_2.version,
+            tags: content_exercise_2.exercise_tags.map{ |et| et.tag.value }
+          )
+          @biglearn_exercise_2_new = OpenStax::Biglearn::V1::Exercise.new(
+            question_id: @biglearn_exercise_2.question_id,
+            version: @biglearn_exercise_2.version + 1,
+            tags: @biglearn_exercise_2.tags
+          )
+          biglearn_exercises = [@biglearn_exercise_1,
+                                @biglearn_exercise_2,
+                                @biglearn_exercise_2_new]
 
-    let!(:pool_uuids) { [POOL_1_UUID, POOL_2_UUID] }
+          @client.add_exercises(biglearn_exercises)
 
-    let!(:valid_response) {
-      Hashie::Mash.new(
-        status: 200,
-        body: {
-          aggregates: [
-            {
-              aggregate: 0.5,
-              confidence: {
-                left: 0.0,
-                right: 1.0,
-                sample_size: 0,
-                unique_learner_count: 0
-              },
-              interpretation: {
-                confidence: "bad",
-                level: "medium",
-                threshold: "below"
-              },
-              pool_id: POOL_1_UUID
-            },
-            {
-              aggregate: 0.9,
-              confidence: {
-                left: 0.8,
-                right: 1.0,
-                sample_size: 100,
-                unique_learner_count: 50
-              },
-              interpretation: {
-                confidence: "good",
-                level: "high",
-                threshold: "above"
-              },
-              pool_id: POOL_2_UUID
-            },
-          ]
-        }.to_json
-      )
-    }
+          @biglearn_pool_1 = OpenStax::Biglearn::V1::Pool.new(exercises: [@biglearn_exercise_1])
+          @biglearn_pool_2 = OpenStax::Biglearn::V1::Pool.new(exercises: [@biglearn_exercise_2])
+          @biglearn_pool_3 = OpenStax::Biglearn::V1::Pool.new(exercises: [@biglearn_exercise_1,
+                                                                          @biglearn_exercise_2_new])
+          biglearn_pools = [@biglearn_pool_1, @biglearn_pool_2, @biglearn_pool_3]
 
-    let!(:pool_1_clue) {
-      {
-        value: 0.5,
-        value_interpretation: "medium",
-        confidence_interval: [ 0.0, 1.0 ],
-        confidence_interval_interpretation: "bad",
-        sample_size: 0,
-        sample_size_interpretation: "below",
-        unique_learner_count: 0
-      }
-    }
-    let!(:pool_2_clue) {
-      {
-        value: 0.9,
-        value_interpretation: "high",
-        confidence_interval: [ 0.8, 1.0 ],
-        confidence_interval_interpretation: "good",
-        sample_size: 100,
-        sample_size_interpretation: "above",
-        unique_learner_count: 50
-      }
-    }
+          biglearn_pool_uuids = @client.add_pools(biglearn_pools)
+          biglearn_pools.each_with_index do |biglearn_pool, index|
+            biglearn_pool.uuid = biglearn_pool_uuids[index]
+          end
 
-    context 'post questions API' do
-      it 'calls the API well and returns the result' do
-        expect(client.add_exercises([biglearn_exercise])).to(
-          eq [ { 'message' => 'Question tags saved.' }]
-        )
+          OpenStax::Exchange.record_grade(user_1.exchange_write_identifier,
+                                          content_exercise_1.url, '1', 1, 'tutor')
+          OpenStax::Exchange.record_grade(user_1.exchange_write_identifier,
+                                          content_exercise_2.url, '2', 0, 'tutor')
+          OpenStax::Exchange.record_grade(user_1.exchange_write_identifier,
+                                          content_exercise_1.url, '1', 0, 'tutor')
+          OpenStax::Exchange.record_grade(user_1.exchange_write_identifier,
+                                          content_exercise_2.url, '2', 1, 'tutor')
+
+          use_real_client ? OpenStax::Exchange.use_real_client : OpenStax::Exchange.use_fake_client
+          OpenStax::Exchange.reset!
+        end
       end
 
-      it 'does not call the API and returns an empty array if an empty array is given' do
-        expect(client.add_exercises([])).to eq []
+      after(:all) do
+        DatabaseCleaner.clean
       end
-    end
 
-    context 'get questions API' do
-      it 'calls the API well and returns the result' do
-        question_ids = client.get_projection_exercises(
-          role: user_1_role, pools: [pool_1], count: 5, difficulty: 0.5, allow_repetitions: true
-        )
-
-        expect(question_ids.size).to eq 5
-        question_ids.each{ |question_id| expect(question_id).to be_a String }
-
-        question_ids = client.get_projection_exercises(
-          role: user_2_role, pools: [pool_2], count: 5, difficulty: 0.5, allow_repetitions: true
-        )
-
-        expect(question_ids.size).to eq 5
-        question_ids.each{ |question_id| expect(question_id).to be_a String }
-      end
-    end
-
-    context 'get CLUe API' do
-      # Use an empty cache for the following examples
-      before(:each) {
-        @original_cache = Rails.cache
-        Rails.cache = ActiveSupport::Cache::MemoryStore.new
-      }
-      # Restore the original cache
-      after(:each) { Rails.cache = @original_cache }
-
-      context 'single role' do
+      context 'post facts_questions API' do
         it 'calls the API well and returns the result' do
-          clues = client.get_clues(roles: [user_1_role], pools: [pool_1, pool_2])
+          expect(@client.add_exercises([@biglearn_exercise_1])).to(
+            eq [ { 'message' => 'Question tags saved.' } ]
+          )
+        end
 
-          expect(clues.size).to eq 2
-          clues.each do |pool_uuid, clue|
-            expect(pool_uuids).to include pool_uuid
-            expect(clue[:value]).to be_a(Float)
-            expect(['high', 'medium', 'low']).to include(clue[:value_interpretation])
-            expect(clue[:confidence_interval]).to contain_exactly(kind_of(Float), kind_of(Float))
-            expect(['good', 'bad']).to include(clue[:confidence_interval_interpretation])
-            expect(clue[:sample_size]).to be_kind_of(Integer)
-            expect(['above', 'below']).to include(clue[:sample_size_interpretation])
+        it 'does not call the API and returns an empty array if an empty array is given' do
+          expect(@client.add_exercises([])).to eq []
+        end
+      end
+
+      context 'post facts_pools API' do
+        it 'calls the API well and returns the result' do
+          expect(@client.add_pools([@biglearn_pool_1])).to contain_exactly(a_kind_of(String))
+        end
+      end
+
+      context 'post projections_questions API' do
+        it 'calls the API well and returns the result' do
+          question_ids = @client.get_projection_exercises(
+            role: @user_1_role, pools: [@biglearn_pool_1], pool_exclusions: [],
+            count: 5, difficulty: 0.5, allow_repetitions: true
+          )
+
+          expect(question_ids.size).to eq 5
+          question_ids.each{ |question_id| expect(question_id).to be_a String }
+
+          question_ids = @client.get_projection_exercises(
+            role: @user_2_role, pools: [@biglearn_pool_2], pool_exclusions: [],
+            count: 5, difficulty: 0.5, allow_repetitions: false
+          )
+
+          expect(question_ids.size).to eq 1
+          expect(question_ids.first).to eq @biglearn_exercise_2.question_id
+        end
+
+        xit 'performs requests with exclusion pools properly' do
+          question_ids = @client.get_projection_exercises(
+            role: @user_1_role, pools: [@biglearn_pool_3],
+            pool_exclusions: [{pool: @biglearn_pool_1, ignore_versions: false}],
+            count: 5, difficulty: 0.5, allow_repetitions: false
+          )
+
+          expect(question_ids.size).to eq 1
+          expect(question_ids.first).to eq @biglearn_exercise_2_new.question_id
+
+          question_ids = @client.get_projection_exercises(
+            role: @user_2_role, pools: [@biglearn_pool_3],
+            pool_exclusions: [{pool: @biglearn_pool_2, ignore_versions: false}],
+            count: 5, difficulty: 0.5, allow_repetitions: false
+          )
+
+          expect(question_ids.size).to eq 2
+          expect(Set.new question_ids).to(
+            eq Set.new [@biglearn_exercise_1, @biglearn_exercise_2_new].map(&:question_id)
+          )
+
+          question_ids = @client.get_projection_exercises(
+            role: @user_2_role, pools: [@biglearn_pool_3],
+            pool_exclusions: [{pool: @biglearn_pool_2, ignore_versions: true}],
+            count: 5, difficulty: 0.5, allow_repetitions: false
+          )
+
+          expect(question_ids.size).to eq 1
+          expect(question_ids.first).to eq @biglearn_exercise_1.question_id
+        end
+      end
+
+      context 'get knowledge_clue API' do
+        # Use an empty cache for the following examples
+        before(:each) {
+          @original_cache = Rails.cache
+          Rails.cache = ActiveSupport::Cache::MemoryStore.new
+        }
+        # Restore the original cache
+        after(:each) { Rails.cache = @original_cache }
+
+        let!(:valid_clues_response) {
+          Hashie::Mash.new(
+            status: 200,
+            body: {
+              aggregates: [
+                {
+                  aggregate: 0.5,
+                  confidence: {
+                    left: 0.0,
+                    right: 1.0,
+                    sample_size: 0,
+                    unique_learner_count: 0
+                  },
+                  interpretation: {
+                    confidence: "bad",
+                    level: "medium",
+                    threshold: "below"
+                  },
+                  pool_id: @biglearn_pool_1.uuid
+                },
+                {
+                  aggregate: 0.9,
+                  confidence: {
+                    left: 0.8,
+                    right: 1.0,
+                    sample_size: 100,
+                    unique_learner_count: 50
+                  },
+                  interpretation: {
+                    confidence: "good",
+                    level: "high",
+                    threshold: "above"
+                  },
+                  pool_id: @biglearn_pool_2.uuid
+                },
+              ]
+            }.to_json
+          )
+        }
+
+        let!(:pool_1_clue) {
+          {
+            value: 0.5,
+            value_interpretation: "medium",
+            confidence_interval: [ 0.0, 1.0 ],
+            confidence_interval_interpretation: "bad",
+            sample_size: 0,
+            sample_size_interpretation: "below",
+            unique_learner_count: 0
+          }
+        }
+        let!(:pool_2_clue) {
+          {
+            value: 0.9,
+            value_interpretation: "high",
+            confidence_interval: [ 0.8, 1.0 ],
+            confidence_interval_interpretation: "good",
+            sample_size: 100,
+            sample_size_interpretation: "above",
+            unique_learner_count: 50
+          }
+        }
+
+        context 'single role' do
+          it 'calls the API well and returns the result' do
+            pools = [@biglearn_pool_1, @biglearn_pool_2]
+            expected_pool_uuids = pools.map(&:uuid)
+            clues = @client.get_clues(roles: [@user_1_role], pools: pools)
+
+            expect(clues.size).to eq 2
+            clues.each do |pool_uuid, clue|
+              expect(expected_pool_uuids).to include pool_uuid
+              expect(clue[:value]).to be_a(Float)
+              expect(['high', 'medium', 'low']).to include(clue[:value_interpretation])
+              expect(clue[:confidence_interval]).to contain_exactly(kind_of(Float), kind_of(Float))
+              expect(['good', 'bad']).to include(clue[:confidence_interval_interpretation])
+              expect(clue[:sample_size]).to be_kind_of(Integer)
+              expect(['above', 'below']).to include(clue[:sample_size_interpretation])
+            end
+          end
+
+          it 'caches recent CLUe calls' do
+            allow(@client).to receive(:request).and_return(valid_clues_response)
+
+            expect(@client).to receive(:request).twice
+
+            # Miss
+            clues = @client.get_clues(roles: [@user_1_role], pools: [@biglearn_pool_1,
+                                                                    @biglearn_pool_2])
+            expect(clues).to eq({ @biglearn_pool_1.uuid => pool_1_clue,
+                                  @biglearn_pool_2.uuid => pool_2_clue })
+
+            # Miss
+            clues = @client.get_clues(roles: [@user_2_role], pools: [@biglearn_pool_1,
+                                                                    @biglearn_pool_2])
+            expect(clues).to eq({ @biglearn_pool_1.uuid => pool_1_clue,
+                                  @biglearn_pool_2.uuid => pool_2_clue })
+
+            # Hit
+            clues = @client.get_clues(roles: [@user_2_role], pools: [@biglearn_pool_2,
+                                                                    @biglearn_pool_1])
+            expect(clues).to eq({ @biglearn_pool_1.uuid => pool_1_clue,
+                                  @biglearn_pool_2.uuid => pool_2_clue })
+
+            # Hit
+            clues = @client.get_clues(roles: [@user_1_role], pools: [@biglearn_pool_1,
+                                                                    @biglearn_pool_2])
+            expect(clues).to eq({ @biglearn_pool_1.uuid => pool_1_clue,
+                                  @biglearn_pool_2.uuid => pool_2_clue })
           end
         end
 
-        it 'caches recent CLUe calls' do
-          allow(client).to receive(:request).and_return(valid_response)
+        context 'multiple roles' do
+          it 'calls the API well and returns the result' do
+            pools = [@biglearn_pool_1, @biglearn_pool_2]
+            expected_pool_uuids = pools.map(&:uuid)
+            clues = @client.get_clues(roles: [@user_1_role, @user_2_role], pools: pools)
 
-          expect(client).to receive(:request).twice
-
-          # Miss
-          clues = client.get_clues(roles: [user_1_role], pools: [pool_1, pool_2])
-          expect(clues).to eq({ pool_1.uuid => pool_1_clue, pool_2.uuid => pool_2_clue })
-
-          # Miss
-          clues = client.get_clues(roles: [user_2_role], pools: [pool_1, pool_2])
-          expect(clues).to eq({ pool_1.uuid => pool_1_clue, pool_2.uuid => pool_2_clue })
-
-          # Hit
-          clues = client.get_clues(roles: [user_2_role], pools: [pool_2, pool_1])
-          expect(clues).to eq({ pool_1.uuid => pool_1_clue, pool_2.uuid => pool_2_clue })
-
-          # Hit
-          clues = client.get_clues(roles: [user_1_role], pools: [pool_1, pool_2])
-          expect(clues).to eq({ pool_1.uuid => pool_1_clue, pool_2.uuid => pool_2_clue })
-        end
-      end
-
-      context 'multiple roles' do
-        it 'calls the API well and returns the result' do
-          clues = client.get_clues(roles: [user_1_role, user_2_role], pools: [pool_1, pool_2])
-
-          expect(clues.size).to eq 2
-          clues.each do |pool_uuid, clue|
-            expect(pool_uuids).to include pool_uuid
-            expect(clue[:value]).to be_a(Float)
-            expect(['high', 'medium', 'low']).to include(clue[:value_interpretation])
-            expect(clue[:confidence_interval]).to contain_exactly(kind_of(Float), kind_of(Float))
-            expect(['good', 'bad']).to include(clue[:confidence_interval_interpretation])
-            expect(clue[:sample_size]).to be_kind_of(Integer)
-            expect(['above', 'below']).to include(clue[:sample_size_interpretation])
+            expect(clues.size).to eq 2
+            clues.each do |pool_uuid, clue|
+              expect(expected_pool_uuids).to include pool_uuid
+              expect(clue[:value]).to be_a(Float)
+              expect(['high', 'medium', 'low']).to include(clue[:value_interpretation])
+              expect(clue[:confidence_interval]).to contain_exactly(kind_of(Float), kind_of(Float))
+              expect(['good', 'bad']).to include(clue[:confidence_interval_interpretation])
+              expect(clue[:sample_size]).to be_kind_of(Integer)
+              expect(['above', 'below']).to include(clue[:sample_size_interpretation])
+            end
           end
-        end
 
-        it 'caches recent CLUe calls' do
-          allow(client).to receive(:request).and_return(valid_response)
+          it 'caches recent CLUe calls' do
+            allow(@client).to receive(:request).and_return(valid_clues_response)
 
-          expect(client).to receive(:request).exactly(3).times
+            expect(@client).to receive(:request).exactly(3).times
 
-          # Miss
-          clues = client.get_clues(roles: [user_1_role], pools: [pool_1, pool_2])
-          expect(clues).to eq({ pool_1.uuid => pool_1_clue, pool_2.uuid => pool_2_clue })
+            # Miss
+            clues = @client.get_clues(roles: [@user_1_role],
+                                     pools: [@biglearn_pool_1, @biglearn_pool_2])
+            expect(clues).to eq({ @biglearn_pool_1.uuid => pool_1_clue,
+                                  @biglearn_pool_2.uuid => pool_2_clue })
 
-          # Miss
-          clues = client.get_clues(roles: [user_2_role], pools: [pool_2, pool_1])
-          expect(clues).to eq({ pool_1.uuid => pool_1_clue, pool_2.uuid => pool_2_clue })
+            # Miss
+            clues = @client.get_clues(roles: [@user_2_role],
+                                     pools: [@biglearn_pool_2, @biglearn_pool_1])
+            expect(clues).to eq({ @biglearn_pool_1.uuid => pool_1_clue,
+                                  @biglearn_pool_2.uuid => pool_2_clue })
 
-          # Miss
-          clues = client.get_clues(roles: [user_1_role, user_2_role], pools: [pool_1, pool_2])
-          expect(clues).to eq({ pool_1.uuid => pool_1_clue, pool_2.uuid => pool_2_clue })
+            # Miss
+            clues = @client.get_clues(roles: [@user_1_role, @user_2_role],
+                                     pools: [@biglearn_pool_1, @biglearn_pool_2])
+            expect(clues).to eq({ @biglearn_pool_1.uuid => pool_1_clue,
+                                  @biglearn_pool_2.uuid => pool_2_clue })
 
-          # Hit
-          clues = client.get_clues(roles: [user_2_role, user_1_role], pools: [pool_2, pool_1])
-          expect(clues).to eq({ pool_1.uuid => pool_1_clue, pool_2.uuid => pool_2_clue })
+            # Hit
+            clues = @client.get_clues(roles: [@user_2_role, @user_1_role],
+                                     pools: [@biglearn_pool_2, @biglearn_pool_1])
+            expect(clues).to eq({ @biglearn_pool_1.uuid => pool_1_clue,
+                                  @biglearn_pool_2.uuid => pool_2_clue })
 
-          # Hit
-          clues = client.get_clues(roles: [user_2_role], pools: [pool_2, pool_1])
-          expect(clues).to eq({ pool_1.uuid => pool_1_clue, pool_2.uuid => pool_2_clue })
+            # Hit
+            clues = @client.get_clues(roles: [@user_2_role],
+                                     pools: [@biglearn_pool_2, @biglearn_pool_1])
+            expect(clues).to eq({ @biglearn_pool_1.uuid => pool_1_clue,
+                                  @biglearn_pool_2.uuid => pool_2_clue })
 
-          # Hit
-          clues = client.get_clues(roles: [user_1_role], pools: [pool_1, pool_2])
-          expect(clues).to eq({ pool_1.uuid => pool_1_clue, pool_2.uuid => pool_2_clue })
+            # Hit
+            clues = @client.get_clues(roles: [@user_1_role],
+                                     pools: [@biglearn_pool_1, @biglearn_pool_2])
+            expect(clues).to eq({ @biglearn_pool_1.uuid => pool_1_clue,
+                                  @biglearn_pool_2.uuid => pool_2_clue })
+          end
         end
       end
     end

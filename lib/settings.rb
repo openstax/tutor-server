@@ -1,16 +1,11 @@
 module Settings
-  mattr_accessor :store
-  class << self
+  module Db
+    mattr_accessor :store
+  end
 
-    def timecop_offset
-      store.get('timecop:offset')
-    end
-
-    def timecop_offset=(value)
-      store.set('timecop:offset', value)
-    end
-
+  module Redis
+    mattr_accessor :store
   end
 end
 
-require_relative 'settings/notifications'
+Dir[File.join(__dir__, 'settings', '*.rb')].each{ |file| require file }

@@ -4,7 +4,7 @@ describe Api::V1::NotificationsController, type: :controller, api: true, version
 
   describe "#index" do
     after(:each) do
-      Settings.store.del(Settings::Notifications::KEY)
+      Settings::Redis.store.del(Settings::Notifications::KEY)
     end
 
     it 'returns the contents of Settings::Notifications' do
