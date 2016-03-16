@@ -35,7 +35,7 @@ class ImportSalesforceCourses
 
     (@include_real_salesforce_data_preference.present? ?
       @include_real_salesforce_data_preference :
-      Settings::Salesforce.import_real_salesforce_courses || false) &&
+      Settings::Salesforce.import_real_salesforce_courses) &&
     Rails.application.secrets['salesforce']['allow_use_of_real_data']
   end
 
