@@ -4,21 +4,14 @@ class ChooseExercises
 
   def exec(exercises:, count:, history:, allow_repeats: true,
            randomize_exercises: true, randomize_order: true)
-    all_worked_exercise_numbers = history.exercises.flatten.map(&:number).uniq
+    worked_exercise_numbers_set = Set.new history.exercises.flatten.map(&:number)
 
     exercises = exercises.uniq
     exercises = exercises.shuffle if randomize_exercises
 
-    new_exercises = []
-    repeated_exercises = []
-
     # Partition exercises into new exercises and the repeated exercises
-    exercises.each do |ex|
-      if all_worked_exercise_numbers.include?(ex.number)
-        repeated_exercises << ex
-      else
-        new_exercises << ex
-      end
+    repeated_exercises, new_exercises = exercises.partition do |ex|
+      worked_exercise_numbers_set.include?(ex.number)
     end
 
     new_exercises_count = [new_exercises.size, count].min
