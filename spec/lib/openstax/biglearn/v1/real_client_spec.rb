@@ -7,19 +7,23 @@ module OpenStax::Biglearn
   RSpec.describe V1::RealClient, type: :external, vcr: VCR_OPTS do
 
     # If you need to regenerate some cassettes and biglearn-dev is giving you errors,
-    # first make sure you have valid keys for exchange-dev and it is not stubbed (test env),
-    # then disable VCR and run this spec
-    # After it is done, enable VCR, stub exchange once more and then regenerate your cassettes
+    # make sure you have valid keys for exchange-dev (test env) and regenerate the
+    # OpenStax_Biglearn_V1_RealClient/with_users_and_pools.yml cassette
+    # Leave the stubbing configuration enabled
 
     context 'with users and pools' do
       before(:all) do
         DatabaseCleaner.start
 
-        configuration = OpenStax::Biglearn::V1::Configuration.new
-        configuration.server_url = 'https://biglearn-dev.openstax.org/'
-        @client = described_class.new(configuration)
+        biglearn_configuration = OpenStax::Biglearn::V1::Configuration.new
+        biglearn_configuration.server_url = 'https://biglearn-dev.openstax.org/'
+        @client = described_class.new(biglearn_configuration)
 
         VCR.use_cassette('OpenStax_Biglearn_V1_RealClient/with_users_and_pools', VCR_OPTS) do
+          use_real_client = OpenStax::Exchange.use_real_client?
+          OpenStax::Exchange.use_real_client
+          OpenStax::Exchange.reset!
+
           user_1 = User::CreateUser[username: SecureRandom.hex]
           @user_1_role = Role::CreateUserRole[user_1]
 
@@ -81,6 +85,9 @@ module OpenStax::Biglearn
                                           content_exercise_1.url, '1', 0, 'tutor')
           OpenStax::Exchange.record_grade(user_1.exchange_write_identifier,
                                           content_exercise_2.url, '2', 1, 'tutor')
+
+          use_real_client ? OpenStax::Exchange.use_real_client : OpenStax::Exchange.use_fake_client
+          OpenStax::Exchange.reset!
         end
       end
 
