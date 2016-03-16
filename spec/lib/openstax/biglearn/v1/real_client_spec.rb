@@ -8,7 +8,8 @@ module OpenStax::Biglearn
 
     # If you need to regenerate some cassettes and biglearn-dev is giving you errors,
     # first make sure you have valid keys for exchange-dev and it is not stubbed (test env),
-    # then regenerate the with_users_and_pools.yml cassette
+    # then disable VCR and run this spec
+    # After it is done, enable VCR, stub exchange once more and then regenerate your cassettes
 
     context 'with users and pools' do
       before(:all) do
