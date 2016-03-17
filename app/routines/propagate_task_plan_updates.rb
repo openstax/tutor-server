@@ -13,8 +13,11 @@ class PropagateTaskPlanUpdates
       raise 'Cannot propagate plan changes for plan not assigned to a period' \
         unless period.is_a?(CourseMembership::Models::Period)
 
-      feedback_at = task_plan.type == 'homework' ? tasking_plan.due_at : Time.now
-
+      feedback_at = if task_plan.type == 'homework'
+                      task_plan.is_feedback_immediate? ? tasking_plan.opens_at : tasking_plan.due_at
+                    else
+                      Time.now
+                    end
       task_plan.tasks.joins(:taskings).where(taskings: { course_membership_period_id: period.id })
                      .update_all(opens_at: tasking_plan.opens_at,
                                  due_at: tasking_plan.due_at,

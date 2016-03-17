@@ -86,6 +86,15 @@ RSpec.describe PropagateTaskPlanUpdates, type: :routine do
           expect(task.feedback_at).to eq task.due_at
         end
       end
+
+      it 'sets feedback_at to opens_at when feedback is immediate' do
+        task_plan.update_attributes(type: 'homework', is_feedback_immediate: true)
+        PropagateTaskPlanUpdates.call(task_plan: task_plan)
+        task_plan.tasks.each do |task|
+          expect(task.feedback_at).to eq task.opens_at
+        end
+      end
+
     end
 
     context 'reading' do
