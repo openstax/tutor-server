@@ -73,7 +73,8 @@ class OpenStax::Biglearn::V1::RealClient
     uuids.first
   end
 
-  def get_projection_exercises(role:, pools:, count:, difficulty:, allow_repetitions:)
+  def get_projection_exercises(role:, pools:, count:, difficulty:, allow_repetitions:,
+                               excluded_pools: [])
     query = {
       learner_id: get_exchange_read_identifiers_for_roles(roles: role).first,
       number_of_questions: count,
