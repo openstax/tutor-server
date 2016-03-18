@@ -22,7 +22,13 @@ RSpec.describe Api::V1::TaskRepresenter, type: :representer do
     # the factory uses lipsum for title so just check for words
     expect(represented['spy']).to eq({ecosystem_id: ecosystem.id,
                                       ecosystem_title: ecosystem.title})
+  end
 
+  it 'includes feedback availability' do
+    task.feedback_at = nil
+    expect(described_class.new(task).to_hash).to include('is_feedback_available' => false)
+    task.feedback_at = Time.now - 1.second
+    expect(described_class.new(task).to_hash).to include('is_feedback_available' => true)
   end
 
 end
