@@ -19,12 +19,15 @@ class Content::Routines::ImportExercises
     wrappers = OpenStax::Exercises::V1.exercises(query_hash)['items']
     wrapper_urls = wrappers.uniq{ |wrapper| wrapper.url }
 
-    wrapper_tag_hashes = wrappers.collect{ |wrapper| wrapper.tag_hashes }.flatten
+    wrapper_tag_hashes = wrappers.flat_map{ |wrapper| wrapper.tag_hashes }
                                  .uniq{ |hash| hash[:value] }
     tags = run(:find_or_create_tags, ecosystem: ecosystem, input: wrapper_tag_hashes).outputs.tags
 
     page_taggings = []
     wrappers.each do |wrapper|
+      # Don't import multipart questions for now
+      next if wrapper.is_multipart?
+
       exercise_page = page.respond_to?(:call) ? page.call(wrapper) : page
       exercise = Content::Models::Exercise.new(url: wrapper.url,
                                                number: wrapper.number,

@@ -148,6 +148,10 @@ class OpenStax::Exercises::V1::Exercise
     content_hash.merge('questions' => questions_with_answer_stats(stats))
   end
 
+  def is_multipart?
+    questions.size > 1
+  end
+
   protected
 
   def stringify_content_hash_ids!

@@ -17,5 +17,6 @@ RSpec.describe OpenStax::Exercises::V1::Exercise, :type => :external do
     expect(exercise.feedback_map[exercise.question_answers[0][1]['id']]).to eq 'Wrong!'
     expect(exercise.tags).to eq ['i-am-lo01', 'generic-tag']
     expect(exercise.los).to eq ['i-am-lo01']
+    expect(exercise.is_multipart?).to eq false
   end
 end
