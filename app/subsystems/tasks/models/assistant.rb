@@ -15,8 +15,9 @@ class Tasks::Models::Assistant < Tutor::SubSystems::BaseModel
     code_class.new(task_plan: task_plan, taskees: taskees).build_tasks
   end
 
-  def update_tasks(task_plan:, taskees:)
-    code_class.new(task_plan: task_plan, taskees: taskees).update_tasks
+  def update_tasks_for_plan(tasking_plan:, where:)
+    code_class.new(task_plan: tasking_plan.task_plan, taskees: [])
+      .update_tasks_for_plan(tasking_plan: tasking_plan, where: where)
   end
 
   protected

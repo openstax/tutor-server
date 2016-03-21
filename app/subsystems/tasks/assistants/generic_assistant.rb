@@ -8,4 +8,18 @@ class Tasks::Assistants::GenericAssistant
     @taskees = taskees
   end
 
+  def update_tasks_for_plan(tasking_plan:, where:, attributes:{})
+
+    task_plan.tasks.update_all(title: task_plan.title, description: task_plan.description)
+
+    task_plan.tasks.joins(:taskings)
+      .where(where)
+      .update_all(attributes.reverse_merge({
+                   opens_at: tasking_plan.opens_at,
+                   due_at: tasking_plan.due_at,
+                   feedback_at: Time.now
+                 }))
+
+  end
+
 end
