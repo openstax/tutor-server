@@ -23,7 +23,9 @@ module MapUsersAccounts
     def create_user
       result = User::CreateUser.call(account_id: @account.id)
 
-      raise error.message if error = result.errors.first
+      if (error = result.errors.first)
+        raise error.message
+      end
 
       result.outputs.user
     end

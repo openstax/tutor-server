@@ -30,6 +30,12 @@ RSpec.describe MapUsersAccounts, type: :routine do
         OpenStax::Accounts::FindOrCreateAccount.call(username: 'account').outputs.account
       end
 
+      it 'raises errors during create_user' do
+        error = OpenStruct.new(message: 'hi') # error.message works
+        allow(User::CreateUser).to receive(:call).and_return(OpenStruct.new(errors: [error]))
+        expect{ MapUsersAccounts.send(:create_user) }.to raise_error('hi')
+      end
+
       it 'returns the created user for the account' do
         expect(user).to be_a(User::User)
         expect(user.account).to eq(account)
