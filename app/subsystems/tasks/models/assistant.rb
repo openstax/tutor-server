@@ -15,6 +15,10 @@ class Tasks::Models::Assistant < Tutor::SubSystems::BaseModel
     code_class.new(task_plan: task_plan, taskees: taskees).build_tasks
   end
 
+  def update_tasks(task_plan:, taskees:)
+    code_class.new(task_plan: task_plan, taskees: taskees).update_tasks
+  end
+
   protected
 
   def code_class_existence

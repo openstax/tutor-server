@@ -1,6 +1,6 @@
 module Tasks
   module Assistants
-    class EventAssistant
+    class EventAssistant < Tasks::Assistants::GenericAssistant
       def self.schema
         '{
           "type": "object",
@@ -8,11 +8,6 @@ module Tasks
           "properties": {},
           "additionalProperties": false
         }'
-      end
-
-      def initialize(task_plan:, taskees:)
-        @task_plan = task_plan
-        @taskees = taskees
       end
 
       def build_tasks

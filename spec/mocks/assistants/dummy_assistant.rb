@@ -1,11 +1,6 @@
-class DummyAssistant
+class DummyAssistant < Tasks::Assistants::GenericAssistant
   def self.schema
     "{}"
-  end
-
-  def initialize(task_plan:, taskees:)
-    @task_plan = task_plan
-    @taskees = taskees
   end
 
   def build_tasks
@@ -16,4 +11,6 @@ class DummyAssistant
                        task_type: :external].entity_task
     end
   end
+
+
 end

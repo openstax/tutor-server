@@ -1,4 +1,4 @@
-class Tasks::Assistants::HomeworkAssistant
+class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
 
   def self.schema
     '{
@@ -32,10 +32,7 @@ class Tasks::Assistants::HomeworkAssistant
     }'
   end
 
-  def initialize(task_plan:, taskees:)
-    @task_plan = task_plan
-    @taskees = taskees
-
+  def build_tasks
     collect_exercises
 
     @tag_exercise = {}
@@ -43,15 +40,18 @@ class Tasks::Assistants::HomeworkAssistant
     @page_pools = {}
     @pool_exercises = {}
     @ecosystems_map = {}
-  end
-
-  def build_tasks
     @taskees.collect do |taskee|
       build_homework_task(
         taskee:       taskee,
         exercises:    @exercises
       ).entity_task
     end
+  end
+
+  def update_tasks_for_plan(tasking_plan:, where:)
+    feedback_at = task_plan.is_feedback_immediate? ? tasking_plan.opens_at : tasking_plan.due_at
+
+    super(tasking_plan: tasking_plan, where: where, attributes: {feedback_at: feedback_at})
   end
 
   protected
