@@ -14,7 +14,7 @@ module Api::V1
              type: String,
              readable: true,
              writeable: false,
-             getter: ->(*) { state.name },
+             getter: ->(*) { state.nil? ? Jobba::State::UNKNOWN.name : state.name },
              schema_info: { required: true }
 
     property :progress,
