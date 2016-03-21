@@ -68,7 +68,7 @@ class DistributeTasks
 
       task.opens_at = opens_ats[ii]
       task.due_at = due_ats[ii] || (task.opens_at + 1.week)
-      task.feedback_at = task_plan.is_feedback_immediate? ? task.opens_at : task.feedback_at
+      task.feedback_at ||= task_plan.is_feedback_immediate? ? task.opens_at : task.feedback_at
     end
 
     save(entity_tasks)
