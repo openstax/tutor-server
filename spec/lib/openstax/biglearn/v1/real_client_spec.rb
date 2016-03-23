@@ -40,7 +40,9 @@ module OpenStax::Biglearn
           user_2 = User::CreateUser[username: SecureRandom.hex]
           @user_2_role = Role::CreateUserRole[user_2]
 
-          exercise_1_content = OpenStax::Exercises::V1.fake_client.new_exercise_hash.to_json
+          exercise_1_content = OpenStax::Exercises::V1.fake_client.new_exercise_hash(
+            number: -1
+          ).to_json
           content_exercise_1 = FactoryGirl.create :content_exercise, content: exercise_1_content
           exercise_url_1 = Addressable::URI.parse(content_exercise_1.url)
           exercise_url_1.scheme = nil
@@ -50,7 +52,9 @@ module OpenStax::Biglearn
             version: content_exercise_1.version,
             tags: ['k12phys-ch99-s99-lo01']
           )
-          exercise_2_content = OpenStax::Exercises::V1.fake_client.new_exercise_hash.to_json
+          exercise_2_content = OpenStax::Exercises::V1.fake_client.new_exercise_hash(
+            number: -2
+          ).to_json
           content_exercise_2 = FactoryGirl.create :content_exercise, content: exercise_2_content
           exercise_url_2 = Addressable::URI.parse(content_exercise_2.url)
           exercise_url_2.scheme = nil
