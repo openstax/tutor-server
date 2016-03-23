@@ -45,7 +45,6 @@ module Api::V1
     property :is_feedback_immediate,
              readable: true,
              writeable: true,
-             getter: ->(*) { is_feedback_immediate? },
              schema_info: { type: 'boolean' }
 
     property :publish_last_requested_at,
