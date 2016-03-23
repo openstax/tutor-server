@@ -15,9 +15,9 @@ class Tasks::Models::Assistant < Tutor::SubSystems::BaseModel
     code_class.new(task_plan: task_plan, taskees: taskees).build_tasks
   end
 
-  def update_tasks_for_plan(tasking_plan:, where:)
+  def updated_attributes_for(tasking_plan:)
     code_class.new(task_plan: tasking_plan.task_plan, taskees: [])
-      .update_tasks_for_plan(tasking_plan: tasking_plan, where: where)
+      .updated_attributes_for(tasking_plan: tasking_plan)
   end
 
   protected
