@@ -79,7 +79,7 @@ class OpenStax::Biglearn::V1::RealClient
     pool = [pools].flatten.size > 1 ? OpenStax::Biglearn::V1.combine_pools(pools) : pools.first
 
     excluded_pools = pool_exclusions.map do |hash|
-      { pool_uuid: hash[:pool].uuid, ignore_versions: hash[:ignore_versions] }
+      { pool_id: hash[:pool].uuid, ignore_versions: hash[:ignore_versions] }
     end
 
     payload = {
