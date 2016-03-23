@@ -5,7 +5,7 @@ http_interactions:
     uri: https://biglearn-dev.openstax.org/facts/questions
     body:
       encoding: UTF-8
-      string: '{"question_tags":[{"question_id":"//exercises-dev.openstax.org/exercises/42","version":1,"tags":[]}]}'
+      string: '{"question_tags":[{"question_id":"//exercises-dev.openstax.org/exercises/-1","version":1,"tags":["k12phys-ch99-s99-lo01"]}]}'
     headers:
       User-Agent:
       - Faraday v0.9.1
@@ -23,7 +23,7 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Wed, 16 Mar 2016 02:41:11 GMT
+      - Wed, 23 Mar 2016 22:12:44 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -39,5 +39,5 @@ http_interactions:
           "message": "Question tags saved."
         }
     http_version: 
-  recorded_at: Wed, 16 Mar 2016 02:41:05 GMT
+  recorded_at: Wed, 23 Mar 2016 22:12:41 GMT
 recorded_with: VCR 2.9.3

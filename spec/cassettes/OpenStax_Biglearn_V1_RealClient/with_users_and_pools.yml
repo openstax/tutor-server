@@ -23,7 +23,7 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Wed, 16 Mar 2016 02:41:07 GMT
+      - Wed, 23 Mar 2016 21:35:39 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -43,19 +43,19 @@ http_interactions:
       Pragma:
       - no-cache
       Etag:
-      - W/"f5396fe36d9352114a163f371a912e04"
+      - W/"1b9a8cd093f2e3a59266f67769c0b005"
       X-Request-Id:
-      - 0f16f719-8e1f-45d0-a02f-c1f01cbdb7e5
+      - 34470ee9-fe26-40e0-b685-380d2a162d4f
       X-Runtime:
-      - '0.046019'
+      - '0.173700'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
       encoding: UTF-8
-      string: '{"access_token":"5c6ecb4e19e476de153737cf64baba05e02303581dda6a51808172d1dc89b215","token_type":"bearer","scope":"read
-        write","created_at":1458096067}'
+      string: '{"access_token":"6aeb78c9888754248e740ccd17fdacd62df1315a1db9b4d590012ed66cea1124","token_type":"bearer","scope":"read
+        write","created_at":1458768939}'
     http_version: 
-  recorded_at: Wed, 16 Mar 2016 02:41:01 GMT
+  recorded_at: Wed, 23 Mar 2016 21:35:36 GMT
 - request:
     method: post
     uri: https://exchange-dev.openstax.org/api/identifiers
@@ -70,7 +70,7 @@ http_interactions:
       Content-Type:
       - application/json
       Authorization:
-      - Bearer 5c6ecb4e19e476de153737cf64baba05e02303581dda6a51808172d1dc89b215
+      - Bearer 6aeb78c9888754248e740ccd17fdacd62df1315a1db9b4d590012ed66cea1124
       Content-Length:
       - '0'
       Accept-Encoding:
@@ -83,7 +83,7 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Wed, 16 Mar 2016 02:41:07 GMT
+      - Wed, 23 Mar 2016 21:35:40 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -99,24 +99,24 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Etag:
-      - W/"c6fa63b550feeaf0f6ce2ed3496122ac"
+      - W/"b43ed6d74ae4b20513797f6962f97f4d"
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=SWtwMGVIeWU2ei9XNUM0cFVJK2ZwL0tUblE3Wk9oOTF2R1FJTWV1ZWIyeUZqcDFtWUFSYTlGdC9JS3prd2JBUk9YRzNRNldTdVV6RXREUVFZbUwrNnc9PS0tOXNZOFlERDgvc1F3Z2R4aU1IcWdxQT09--e29b14d7c90ce48ba5e373a1c23d4957c396aefb;
+      - _exercises_session=QzR4Y0YvTU5OSk5tS20vaGRMSjZGaEZwVVN5bExQSUtrRWk5OFBoMnhGSkZWK2ZFbTc1UnBycEpxWUt4VWN5cjJXSG9qRXBvdDl5MTNKNE1VWUxDdVE9PS0tN2VPcFZEVnEvTWVnb1JyLy9oR2pjdz09--f0aaf06ab1ea18e139caf933ecc154123619de88;
         path=/; HttpOnly
       - request_method=POST; path=/
       X-Request-Id:
-      - 4dd6d709-ad60-4ae3-9472-a960285d1a1e
+      - d5508e2a-2d1c-4db1-bcfd-039a8f6d8acc
       X-Runtime:
-      - '0.127953'
+      - '0.676638'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
       encoding: UTF-8
-      string: '{"read":"3e2b893a072fd72bb30c07166f0f2ead21f7fb3753c93a29763a8e6067597e08","write":"28e9113515c58de84047341a48e1e187c632e41f6d2feee2af73a8944cb3aba5"}'
+      string: '{"read":"082f844d71fcd4359bc3b55492d66de49791cc66abbaab0ba08cd0390b7b6161","write":"02de7c3236873d3471b4c92d6e510847c73070994ae7e0e0860a39f33611271a"}'
     http_version: 
-  recorded_at: Wed, 16 Mar 2016 02:41:01 GMT
+  recorded_at: Wed, 23 Mar 2016 21:35:37 GMT
 - request:
     method: post
     uri: https://exchange-dev.openstax.org/api/identifiers
@@ -131,7 +131,7 @@ http_interactions:
       Content-Type:
       - application/json
       Authorization:
-      - Bearer 5c6ecb4e19e476de153737cf64baba05e02303581dda6a51808172d1dc89b215
+      - Bearer 6aeb78c9888754248e740ccd17fdacd62df1315a1db9b4d590012ed66cea1124
       Content-Length:
       - '0'
       Accept-Encoding:
@@ -144,7 +144,7 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Wed, 16 Mar 2016 02:41:08 GMT
+      - Wed, 23 Mar 2016 21:35:40 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -160,30 +160,30 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Etag:
-      - W/"8257e0d2c58fecbe1bc727af49a01c66"
+      - W/"79cdc49c037b5e8b06c99a6e638f390a"
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=d3FaM0Nvb1dmSzV3U1IzYXZlN2drQmRWK1hIdlcxRHhId2FKZTBzVTQ0VWV1NmswV0FFNkhNRCt2QjFsQS9LcUJlTEpvSUg5ckpkL0U1WkJaN2VSS0E9PS0tOE9mejAwOG9DaGYyS3YvYksvWllYQT09--3467bd3ef21ea6b3b82ccfde40702e411741bfb7;
+      - _exercises_session=aUIyWlFNaVM4M3NlRkljL2pXSkJRMjdkbzBxUWN4R2lubkp3aHN2dWJDcWtmOWtVQkgxdkd2ejBvTVRxNUJGOE5KWnZJRS9yYWxsWnhCOGlMNlhkMFE9PS0tUlQ4SGpoc2lVUFRlQTZWbnFBbWFaUT09--0252b260e6871784720e58e1b9926feba9c5cda9;
         path=/; HttpOnly
       - request_method=POST; path=/
       X-Request-Id:
-      - 9dd18fd6-58b1-4b74-b828-736c61a79054
+      - bb5b84b2-2a0f-4c9d-b7f1-cb6c2605565b
       X-Runtime:
-      - '0.096262'
+      - '0.109846'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
       encoding: UTF-8
-      string: '{"read":"350d4be124bafca679d3d90bc59f1b3b91ef27996b1ffab4ebb24034b972979d","write":"01d38c9b1d60e37cd42dc896a9250eacf418a14e2233b97845f11c1b39099b42"}'
+      string: '{"read":"58dd938af25d8456a72c81967a77409557dbc7645e0723498c1de98167ece15d","write":"662d5aa4113aa9e564cb5354fb5d359879d297491d7be527378236ff76f83609"}'
     http_version: 
-  recorded_at: Wed, 16 Mar 2016 02:41:02 GMT
+  recorded_at: Wed, 23 Mar 2016 21:35:37 GMT
 - request:
     method: post
     uri: https://biglearn-dev.openstax.org/facts/questions
     body:
       encoding: UTF-8
-      string: '{"question_tags":[{"question_id":"//exercises-dev.openstax.org/exercises/42","version":1,"tags":[]},{"question_id":"//exercises-dev.openstax.org/exercises/43","version":1,"tags":[]},{"question_id":"//exercises-dev.openstax.org/exercises/43","version":2,"tags":[]}]}'
+      string: '{"question_tags":[{"question_id":"//exercises-dev.openstax.org/exercises/-1","version":1,"tags":["k12phys-ch99-s99-lo01"]},{"question_id":"//exercises-dev.openstax.org/exercises/-2","version":1,"tags":["k12phys-ch99-s99-lo02"]},{"question_id":"//exercises-dev.openstax.org/exercises/-2","version":2,"tags":["k12phys-ch99-s99-lo02"]}]}'
     headers:
       User-Agent:
       - Faraday v0.9.1
@@ -201,7 +201,7 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Wed, 16 Mar 2016 02:41:09 GMT
+      - Wed, 23 Mar 2016 21:35:42 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -217,13 +217,13 @@ http_interactions:
           "message": "Question tags saved."
         }
     http_version: 
-  recorded_at: Wed, 16 Mar 2016 02:41:03 GMT
+  recorded_at: Wed, 23 Mar 2016 21:35:39 GMT
 - request:
     method: post
     uri: https://biglearn-dev.openstax.org/facts/pools
     body:
       encoding: UTF-8
-      string: '{"sources":[{"questions":[{"question_id":"//exercises-dev.openstax.org/exercises/42","version":1}]},{"questions":[{"question_id":"//exercises-dev.openstax.org/exercises/43","version":1}]},{"questions":[{"question_id":"//exercises-dev.openstax.org/exercises/42","version":1},{"question_id":"//exercises-dev.openstax.org/exercises/43","version":2}]}]}'
+      string: '{"sources":[{"questions":[{"question_id":"//exercises-dev.openstax.org/exercises/-1","version":1}]},{"questions":[{"question_id":"//exercises-dev.openstax.org/exercises/-2","version":1}]},{"questions":[{"question_id":"//exercises-dev.openstax.org/exercises/-1","version":1},{"question_id":"//exercises-dev.openstax.org/exercises/-2","version":2}]}]}'
     headers:
       User-Agent:
       - Faraday v0.9.1
@@ -241,7 +241,7 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Wed, 16 Mar 2016 02:41:10 GMT
+      - Wed, 23 Mar 2016 21:35:42 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -252,24 +252,24 @@ http_interactions:
       - max-age=31536000; includeSubdomains
     body:
       encoding: UTF-8
-      string: "{\n  \"pool_ids\": [\n    \"058547f0-9477-4aea-be23-c2a2f4be9f04\",
-        \n    \"dd161d9f-ae44-4b43-ae72-04dc06eb498d\", \n    \"0d17b7ff-ac81-4e88-b05a-f30d8ea41068\"\n
+      string: "{\n  \"pool_ids\": [\n    \"6b773d80-2ed8-42fa-b998-a3e6c64be5e0\",
+        \n    \"26929430-f83f-41ac-8200-373370fe5adb\", \n    \"9dbabcee-0292-4e46-bcbe-c11afd093228\"\n
         \ ]\n}"
     http_version: 
-  recorded_at: Wed, 16 Mar 2016 02:41:03 GMT
+  recorded_at: Wed, 23 Mar 2016 21:35:39 GMT
 - request:
     method: post
     uri: https://exchange-dev.openstax.org/api/events/platforms/gradings
     body:
       encoding: UTF-8
-      string: '{"identifier":"28e9113515c58de84047341a48e1e187c632e41f6d2feee2af73a8944cb3aba5","resource":"https://exercises-dev.openstax.org/exercises/42@1","trial":"1","grade":1,"grader":"tutor"}'
+      string: '{"identifier":"02de7c3236873d3471b4c92d6e510847c73070994ae7e0e0860a39f33611271a","resource":"https://exercises-dev.openstax.org/exercises/-1@1","trial":"1","grade":1,"grader":"tutor"}'
     headers:
       User-Agent:
       - Faraday v0.9.1
       Accept:
       - application/vnd.exchange.openstax.v1
       Authorization:
-      - Bearer 5c6ecb4e19e476de153737cf64baba05e02303581dda6a51808172d1dc89b215
+      - Bearer 6aeb78c9888754248e740ccd17fdacd62df1315a1db9b4d590012ed66cea1124
       Content-Type:
       - application/json
       Accept-Encoding:
@@ -282,7 +282,7 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Wed, 16 Mar 2016 02:41:10 GMT
+      - Wed, 23 Mar 2016 21:35:43 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -298,37 +298,37 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Etag:
-      - W/"50db9c1cde5d3edb701f1b4acd40597b"
+      - W/"29d7a6464bda9bb39b02d0bc24d9494a"
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=US9yUGlCVjlpZWVGYmZseVJ0OVlKMU5SYUFabXZHYVd2aC9ydnQ4M1R0NisyVzBBSVJDQmc0SWZjYlYwcThqZytiMHo3b1psd1JwcENZdlRyTjk0b3c9PS0tZm5Db09lbmRQRFNHam1YYzBYOVAyUT09--7340bb3aa7158f8cf6853047da2f9c6b3ae5f7cf;
+      - _exercises_session=VzhJVWZoTEIvalhUNnZMb2YyZS8wWThGUCtUWkJiaGZUOUtBMUx2K1NHdFpEZjk0RE9DeVRMeGE2ajhlN1lORnJkUkUvUHNzTHpZMFV3VW5HR3FHN0E9PS0tZHFkVkU4cVZIcnBFQkdVUEluYzV3dz09--0319505f0e02b247fb9b14b3108c74225a0b7e48;
         path=/; HttpOnly
       - request_method=POST; path=/
       X-Request-Id:
-      - 0307082b-8205-442e-84ff-523ee02cbade
+      - fb766b06-2ffd-48ff-963c-73c1acf38007
       X-Runtime:
-      - '0.090029'
+      - '0.311007'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
       encoding: UTF-8
-      string: '{"identifier":"28e9113515c58de84047341a48e1e187c632e41f6d2feee2af73a8944cb3aba5","resource":"https://exercises-dev.openstax.org/exercises/42@1","trial":"1","created_at":"2016-03-16T02:41:10.445Z","grader":"tutor","grade":1.0}'
+      string: '{"identifier":"02de7c3236873d3471b4c92d6e510847c73070994ae7e0e0860a39f33611271a","resource":"https://exercises-dev.openstax.org/exercises/-1@1","trial":"1","created_at":"2016-03-23T21:35:43.075Z","grader":"tutor","grade":1.0}'
     http_version: 
-  recorded_at: Wed, 16 Mar 2016 02:41:04 GMT
+  recorded_at: Wed, 23 Mar 2016 21:35:40 GMT
 - request:
     method: post
     uri: https://exchange-dev.openstax.org/api/events/platforms/gradings
     body:
       encoding: UTF-8
-      string: '{"identifier":"28e9113515c58de84047341a48e1e187c632e41f6d2feee2af73a8944cb3aba5","resource":"https://exercises-dev.openstax.org/exercises/43@1","trial":"2","grade":0,"grader":"tutor"}'
+      string: '{"identifier":"02de7c3236873d3471b4c92d6e510847c73070994ae7e0e0860a39f33611271a","resource":"https://exercises-dev.openstax.org/exercises/-2@1","trial":"2","grade":0,"grader":"tutor"}'
     headers:
       User-Agent:
       - Faraday v0.9.1
       Accept:
       - application/vnd.exchange.openstax.v1
       Authorization:
-      - Bearer 5c6ecb4e19e476de153737cf64baba05e02303581dda6a51808172d1dc89b215
+      - Bearer 6aeb78c9888754248e740ccd17fdacd62df1315a1db9b4d590012ed66cea1124
       Content-Type:
       - application/json
       Accept-Encoding:
@@ -341,7 +341,7 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Wed, 16 Mar 2016 02:41:10 GMT
+      - Wed, 23 Mar 2016 21:35:43 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -357,37 +357,37 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Etag:
-      - W/"00cc28283b8515a78ba3e87bf7be9eee"
+      - W/"d8c9bf32b829ee49c4ebd8b52ac118b9"
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=dm9LNXVoOE5oY002QlZnTzhjY2h1clF6YXJxN3gvbjhNZ29zTklpUzZhTkhPNFpXNXJDbE5DMHVuUjJKYnk0WHRWaDJzNlBsTE9iaS9BMWNuWGpRcHc9PS0teGFQOCtNYThmM3Y0UC96c3FQWWs4QT09--bf1fd3fcf1ea22a5e54f4ff07e1d8588cab253c2;
+      - _exercises_session=NHlIWW1BK2MrSkdydGhJcFQybGtNdERXQm1ESUVrMVFPR2dGZFpJVCsraXFPSXpJclhudG9UekxTRUpXbFY1VmQwTWRQVXdhZlhQY0oxYmhBcmRlTGc9PS0tU1ZWU0ovc0UwL3dhNTFGT0JzVTUzZz09--81b29aeaef09712361282212a45608a273ef3944;
         path=/; HttpOnly
       - request_method=POST; path=/
       X-Request-Id:
-      - ba3be3b6-c4ad-4e49-a9e0-0b78787368f1
+      - ef4f4eb9-dc71-4cb0-ad31-57c5e978170d
       X-Runtime:
-      - '0.082520'
+      - '0.125021'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
       encoding: UTF-8
-      string: '{"identifier":"28e9113515c58de84047341a48e1e187c632e41f6d2feee2af73a8944cb3aba5","resource":"https://exercises-dev.openstax.org/exercises/43@1","trial":"2","created_at":"2016-03-16T02:41:10.746Z","grader":"tutor","grade":0.0}'
+      string: '{"identifier":"02de7c3236873d3471b4c92d6e510847c73070994ae7e0e0860a39f33611271a","resource":"https://exercises-dev.openstax.org/exercises/-2@1","trial":"2","created_at":"2016-03-23T21:35:43.481Z","grader":"tutor","grade":0.0}'
     http_version: 
-  recorded_at: Wed, 16 Mar 2016 02:41:04 GMT
+  recorded_at: Wed, 23 Mar 2016 21:35:40 GMT
 - request:
     method: post
     uri: https://exchange-dev.openstax.org/api/events/platforms/gradings
     body:
       encoding: UTF-8
-      string: '{"identifier":"28e9113515c58de84047341a48e1e187c632e41f6d2feee2af73a8944cb3aba5","resource":"https://exercises-dev.openstax.org/exercises/42@1","trial":"1","grade":0,"grader":"tutor"}'
+      string: '{"identifier":"02de7c3236873d3471b4c92d6e510847c73070994ae7e0e0860a39f33611271a","resource":"https://exercises-dev.openstax.org/exercises/-1@1","trial":"1","grade":0,"grader":"tutor"}'
     headers:
       User-Agent:
       - Faraday v0.9.1
       Accept:
       - application/vnd.exchange.openstax.v1
       Authorization:
-      - Bearer 5c6ecb4e19e476de153737cf64baba05e02303581dda6a51808172d1dc89b215
+      - Bearer 6aeb78c9888754248e740ccd17fdacd62df1315a1db9b4d590012ed66cea1124
       Content-Type:
       - application/json
       Accept-Encoding:
@@ -400,7 +400,7 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Wed, 16 Mar 2016 02:41:11 GMT
+      - Wed, 23 Mar 2016 21:35:43 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -416,37 +416,37 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Etag:
-      - W/"69fd04323bb77dc0544d452110c81179"
+      - W/"9220e2051656e2a6cd5601ce2cc702de"
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=OU5zVFJGQnpaSm1sdEFCbTRiVUl6SllmZ05aN1hDam9UM3pmaWRwdUhZUHgrQkZZblpFUVpHbzd2UzVCUG91RjlOR1pOenhVc0lyU0U5bzh0NElCSWc9PS0tL3IvWTNmaUgxTG9WY3V6aVh5RHc3UT09--d9a5c176e103cde2b05ecce2bfffd80999e50bf8;
+      - _exercises_session=NWpRMi9Sd0k1WjlIY09zRWdRcVpLZHVobCtOalQ3Sjh0d0FmSzBNL2VVb0l2MDc3M1IxcXNyc1kxWVNyN0kwY1lsK3piR0gzM25JbVJwVkdWTTIrZlE9PS0tb0VuU003T0UwL3dEb2VjVTV2SFpiZz09--067a60cd75c4dad583ec8f44c581fcf242c5d17d;
         path=/; HttpOnly
       - request_method=POST; path=/
       X-Request-Id:
-      - c43abc61-36c2-4fc2-915b-fc92dcfff111
+      - 271a67fe-5785-434f-8319-09ae2d16fc20
       X-Runtime:
-      - '0.081872'
+      - '0.102831'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
       encoding: UTF-8
-      string: '{"identifier":"28e9113515c58de84047341a48e1e187c632e41f6d2feee2af73a8944cb3aba5","resource":"https://exercises-dev.openstax.org/exercises/42@1","trial":"1","created_at":"2016-03-16T02:41:11.034Z","grader":"tutor","grade":0.0}'
+      string: '{"identifier":"02de7c3236873d3471b4c92d6e510847c73070994ae7e0e0860a39f33611271a","resource":"https://exercises-dev.openstax.org/exercises/-1@1","trial":"1","created_at":"2016-03-23T21:35:43.786Z","grader":"tutor","grade":0.0}'
     http_version: 
-  recorded_at: Wed, 16 Mar 2016 02:41:04 GMT
+  recorded_at: Wed, 23 Mar 2016 21:35:40 GMT
 - request:
     method: post
     uri: https://exchange-dev.openstax.org/api/events/platforms/gradings
     body:
       encoding: UTF-8
-      string: '{"identifier":"28e9113515c58de84047341a48e1e187c632e41f6d2feee2af73a8944cb3aba5","resource":"https://exercises-dev.openstax.org/exercises/43@1","trial":"2","grade":1,"grader":"tutor"}'
+      string: '{"identifier":"02de7c3236873d3471b4c92d6e510847c73070994ae7e0e0860a39f33611271a","resource":"https://exercises-dev.openstax.org/exercises/-2@1","trial":"2","grade":1,"grader":"tutor"}'
     headers:
       User-Agent:
       - Faraday v0.9.1
       Accept:
       - application/vnd.exchange.openstax.v1
       Authorization:
-      - Bearer 5c6ecb4e19e476de153737cf64baba05e02303581dda6a51808172d1dc89b215
+      - Bearer 6aeb78c9888754248e740ccd17fdacd62df1315a1db9b4d590012ed66cea1124
       Content-Type:
       - application/json
       Accept-Encoding:
@@ -459,7 +459,7 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Wed, 16 Mar 2016 02:41:11 GMT
+      - Wed, 23 Mar 2016 21:35:44 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -475,22 +475,22 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Etag:
-      - W/"6f4219c2bc6a73c05dfa64d6ceced378"
+      - W/"65c54d267302d2e4c19f9932d9858c2d"
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=dGhwTjNjL2NRMjRwWGV4NEVlTlFtVnFocHBNU0ZjYXMveE5oNHY2bFZmbmVrbW5ESlhJamUxUHhHYmpFamFQQmszTS81WFJqK2hWOXZqQUpvTE83cXc9PS0tT3FZUkhVS1dBY01HSmdXRnFnNVVwdz09--6e5e5fef0f72e057d5af14d9ce29b89f8f7485e0;
+      - _exercises_session=Z04wNzY4ekpMT1hTSlZqOHZONGpJUDZpMk9XZzl6ZVVvTWZURHplaStJVTNWZzNXVktRV2s4dGFUdHpzaDVFdExoeTAySkRNYnR2UjNDd0x1V1RWcFE9PS0tQkxsWUtDMHRxbjBFV2Nta0FVOWtadz09--280fe4393a8ddcb6c7c84a5605dd6884e2b0ca49;
         path=/; HttpOnly
       - request_method=POST; path=/
       X-Request-Id:
-      - ba584592-041e-4653-830b-cf2337dbe466
+      - 1163c3b3-5292-44e5-8a2f-5a231f69c1dc
       X-Runtime:
-      - '0.092362'
+      - '0.110127'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
       encoding: UTF-8
-      string: '{"identifier":"28e9113515c58de84047341a48e1e187c632e41f6d2feee2af73a8944cb3aba5","resource":"https://exercises-dev.openstax.org/exercises/43@1","trial":"2","created_at":"2016-03-16T02:41:11.317Z","grader":"tutor","grade":1.0}'
+      string: '{"identifier":"02de7c3236873d3471b4c92d6e510847c73070994ae7e0e0860a39f33611271a","resource":"https://exercises-dev.openstax.org/exercises/-2@1","trial":"2","created_at":"2016-03-23T21:35:44.087Z","grader":"tutor","grade":1.0}'
     http_version: 
-  recorded_at: Wed, 16 Mar 2016 02:41:05 GMT
+  recorded_at: Wed, 23 Mar 2016 21:35:40 GMT
 recorded_with: VCR 2.9.3

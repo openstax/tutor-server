@@ -60,6 +60,8 @@ class OpenStax::Biglearn::V1::FakeClient
     uuid
   end
 
+  # Since the FakeClient doesn't know which questions have been answered,
+  # allow_repetitions is ignored
   def get_projection_exercises(role:, pools:, pool_exclusions:,
                                count:, difficulty:, allow_repetitions:)
     # Get the exercises in the pools
@@ -95,16 +97,7 @@ class OpenStax::Biglearn::V1::FakeClient
     question_ids = pool_questions.map{ |question| question['question_id'] }
 
     # Limit the results to the desired number
-    results = question_ids.first(count)
-
-    # If we didn't get as many as requested and repetitions are allowed,
-    # pad the results, repeat the matches until we have enough, making
-    # sure to clip at the desired count in case we go over.
-    while (allow_repetitions && results.length < count && question_ids.any?)
-      results += question_ids.first(count - results.length)
-    end
-
-    results
+    question_ids.first(count)
   end
 
   def get_clues(roles:, pools:, cache_for: 'ignored', force_cache_miss: 'ignored')

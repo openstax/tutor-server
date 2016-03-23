@@ -83,20 +83,7 @@ module OpenStax::Biglearn
         V1.add_pools([pool_4, pool_5])
       end
 
-      it "works when allow_repetitions is false" do
-        exercises = client.get_projection_exercises(
-          role: nil,
-          pools: [pool_1],
-          pool_exclusions: [],
-          count: 5,
-          difficulty: 0.5,
-          allow_repetitions: false
-        )
-
-        expect(exercises).to eq(%w(e1 e3 e4))
-      end
-
-      it "works when allow_repetitions is true" do
+      it "works" do
         exercises = client.get_projection_exercises(
           role: nil,
           pools: [pool_1],
@@ -106,7 +93,7 @@ module OpenStax::Biglearn
           allow_repetitions: true
         )
 
-        expect(exercises).to eq(%w(e1 e3 e4 e1 e3))
+        expect(exercises).to eq(%w(e1 e3 e4))
       end
 
       it "works when pool_exclusions is given" do
@@ -120,7 +107,7 @@ module OpenStax::Biglearn
                             {pool: pool_5_new, ignore_versions: true}],
           count: 5,
           difficulty: 0.5,
-          allow_repetitions: false
+          allow_repetitions: true
         )
 
         expect(exercises).to eq(%w(e1 e4))

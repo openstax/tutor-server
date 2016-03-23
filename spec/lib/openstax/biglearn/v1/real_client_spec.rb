@@ -8,8 +8,9 @@ module OpenStax::Biglearn
 
     # If you need to regenerate some cassettes and biglearn-dev is giving you errors,
     # make sure you have valid keys for exchange-dev (test env) and regenerate the
-    # OpenStax_Biglearn_V1_RealClient/with_users_and_pools.yml cassette
-    # Leave the stubbing configuration enabled
+    # OpenStax_Biglearn_V1_RealClient/with_users_and_pools.yml cassette (the yml, not the folder),
+    # then run the full refresh in biglearnadmin-dev
+    # Leave the stubbing configuration for Exchange enabled
 
     context 'with users and pools' do
       before(:all) do
@@ -30,10 +31,7 @@ module OpenStax::Biglearn
           user_2 = User::CreateUser[username: SecureRandom.hex]
           @user_2_role = Role::CreateUserRole[user_2]
 
-          # Biglearn only returns valid CLUe's for positive exercise numbers
-          exercise_1_content = OpenStax::Exercises::V1.fake_client.new_exercise_hash(
-            number: 42
-          ).to_json
+          exercise_1_content = OpenStax::Exercises::V1.fake_client.new_exercise_hash.to_json
           content_exercise_1 = FactoryGirl.create :content_exercise, content: exercise_1_content
           exercise_url_1 = Addressable::URI.parse(content_exercise_1.url)
           exercise_url_1.scheme = nil
@@ -41,11 +39,9 @@ module OpenStax::Biglearn
           @biglearn_exercise_1 = OpenStax::Biglearn::V1::Exercise.new(
             question_id: exercise_url_1.to_s,
             version: content_exercise_1.version,
-            tags: content_exercise_1.exercise_tags.map{ |et| et.tag.value }
+            tags: ['k12phys-ch99-s99-lo01']
           )
-          exercise_2_content = OpenStax::Exercises::V1.fake_client.new_exercise_hash(
-            number: 43
-          ).to_json
+          exercise_2_content = OpenStax::Exercises::V1.fake_client.new_exercise_hash.to_json
           content_exercise_2 = FactoryGirl.create :content_exercise, content: exercise_2_content
           exercise_url_2 = Addressable::URI.parse(content_exercise_2.url)
           exercise_url_2.scheme = nil
@@ -53,12 +49,12 @@ module OpenStax::Biglearn
           @biglearn_exercise_2 = OpenStax::Biglearn::V1::Exercise.new(
             question_id: exercise_url_2.to_s,
             version: content_exercise_2.version,
-            tags: content_exercise_2.exercise_tags.map{ |et| et.tag.value }
+            tags: ['k12phys-ch99-s99-lo02']
           )
           @biglearn_exercise_2_new = OpenStax::Biglearn::V1::Exercise.new(
             question_id: @biglearn_exercise_2.question_id,
             version: @biglearn_exercise_2.version + 1,
-            tags: @biglearn_exercise_2.tags
+            tags: ['k12phys-ch99-s99-lo02']
           )
           biglearn_exercises = [@biglearn_exercise_1,
                                 @biglearn_exercise_2,
@@ -120,12 +116,12 @@ module OpenStax::Biglearn
             count: 5, difficulty: 0.5, allow_repetitions: true
           )
 
-          expect(question_ids.size).to eq 5
-          question_ids.each{ |question_id| expect(question_id).to be_a String }
+          expect(question_ids.size).to eq 1
+          expect(question_ids.first).to eq @biglearn_exercise_1.question_id
 
           question_ids = @client.get_projection_exercises(
             role: @user_2_role, pools: [@biglearn_pool_2], pool_exclusions: [],
-            count: 5, difficulty: 0.5, allow_repetitions: false
+            count: 5, difficulty: 0.5, allow_repetitions: true
           )
 
           expect(question_ids.size).to eq 1
@@ -136,7 +132,7 @@ module OpenStax::Biglearn
           question_ids = @client.get_projection_exercises(
             role: @user_1_role, pools: [@biglearn_pool_3],
             pool_exclusions: [{pool: @biglearn_pool_1, ignore_versions: false}],
-            count: 5, difficulty: 0.5, allow_repetitions: false
+            count: 5, difficulty: 0.5, allow_repetitions: true
           )
 
           expect(question_ids.size).to eq 1
@@ -145,7 +141,7 @@ module OpenStax::Biglearn
           question_ids = @client.get_projection_exercises(
             role: @user_2_role, pools: [@biglearn_pool_3],
             pool_exclusions: [{pool: @biglearn_pool_2, ignore_versions: false}],
-            count: 5, difficulty: 0.5, allow_repetitions: false
+            count: 5, difficulty: 0.5, allow_repetitions: true
           )
 
           expect(question_ids.size).to eq 2
@@ -156,7 +152,7 @@ module OpenStax::Biglearn
           question_ids = @client.get_projection_exercises(
             role: @user_2_role, pools: [@biglearn_pool_3],
             pool_exclusions: [{pool: @biglearn_pool_2, ignore_versions: true}],
-            count: 5, difficulty: 0.5, allow_repetitions: false
+            count: 5, difficulty: 0.5, allow_repetitions: true
           )
 
           expect(question_ids.size).to eq 1
