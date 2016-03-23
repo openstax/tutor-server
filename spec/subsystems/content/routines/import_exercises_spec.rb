@@ -59,4 +59,15 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
     end
   end
 
+  it 'skips multipart exercises' do
+    allow_any_instance_of(OpenStax::Exercises::V1::Exercise).to(
+      receive(:is_multipart?).and_return(true)
+    )
+
+    expect {
+      Content::Routines::ImportExercises.call(ecosystem: ecosystem, page: page,
+                                              query_hash: {tag: 'k12phys-ch04-s01-lo02'})
+    }.not_to change{ Content::Models::Exercise.count }
+  end
+
 end
