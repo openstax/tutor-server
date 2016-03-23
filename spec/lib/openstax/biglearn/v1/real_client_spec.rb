@@ -7,10 +7,8 @@ module OpenStax::Biglearn
   RSpec.describe V1::RealClient, type: :external, vcr: VCR_OPTS do
 
     # If you need to regenerate some cassettes and biglearn-dev is giving you errors,
-    # make sure you have valid keys for exchange-dev (test env) and regenerate the
-    # OpenStax_Biglearn_V1_RealClient/with_users_and_pools.yml cassette (the yml, not the folder),
-    # then run the full refresh in biglearnadmin-dev
-    # Leave the stubbing configuration for Exchange enabled
+    # regenerate the OpenStax_Biglearn_V1_RealClient/with_users_and_pools.yml cassette
+    # (the yml, not the folder), then run the full refresh in biglearnadmin-dev
 
     context 'with users and pools' do
       before(:all) do
@@ -18,13 +16,24 @@ module OpenStax::Biglearn
 
         biglearn_configuration = OpenStax::Biglearn::V1::Configuration.new
         biglearn_configuration.server_url = 'https://biglearn-dev.openstax.org/'
+
         @client = described_class.new(biglearn_configuration)
 
-        VCR.use_cassette('OpenStax_Biglearn_V1_RealClient/with_users_and_pools', VCR_OPTS) do
-          use_real_client = OpenStax::Exchange.use_real_client?
-          OpenStax::Exchange.use_real_client
-          OpenStax::Exchange.reset!
+        use_real_client = OpenStax::Exchange.use_real_client?
+        old_client_id = OpenStax::Exchange.configuration.client_platform_id
+        old_secret = OpenStax::Exchange.configuration.client_platform_secret
+        old_server_url = OpenStax::Exchange.configuration.client_server_url
 
+        OpenStax::Exchange.configuration.client_server_url = 'https://exchange-dev.openstax.org'
+        OpenStax::Exchange.configuration.client_platform_id = \
+          '0e0b60dbbfa80e332e241fe2beea74049a96533d1e3a2f33dd14cadf350184f3'
+        OpenStax::Exchange.configuration.client_platform_secret = \
+          'd95984e4203f69339866f726acc84c657c26f5e6cd41e4f7ed7f058f54b37e2c'
+
+        OpenStax::Exchange.use_real_client
+        OpenStax::Exchange.reset!
+
+        VCR.use_cassette('OpenStax_Biglearn_V1_RealClient/with_users_and_pools', VCR_OPTS) do
           user_1 = User::CreateUser[username: SecureRandom.hex]
           @user_1_role = Role::CreateUserRole[user_1]
 
@@ -81,10 +90,14 @@ module OpenStax::Biglearn
                                           content_exercise_1.url, '1', 0, 'tutor')
           OpenStax::Exchange.record_grade(user_1.exchange_write_identifier,
                                           content_exercise_2.url, '2', 1, 'tutor')
-
-          use_real_client ? OpenStax::Exchange.use_real_client : OpenStax::Exchange.use_fake_client
-          OpenStax::Exchange.reset!
         end
+
+        OpenStax::Exchange.configuration.client_server_url = old_server_url
+        OpenStax::Exchange.configuration.client_platform_id = old_client_id
+        OpenStax::Exchange.configuration.client_platform_secret = old_secret
+
+        use_real_client ? OpenStax::Exchange.use_real_client : OpenStax::Exchange.use_fake_client
+        OpenStax::Exchange.reset!
       end
 
       after(:all) do
