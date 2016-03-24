@@ -72,6 +72,7 @@ RSpec.describe PropagateTaskPlanUpdates, type: :routine do
           expect(task.opens_at).to    be_within(1.second).of(old_opens_at)
           expect(task.due_at).to      be_within(1.second).of(old_due_at)
         end
+        allow(task_plan.assistant).to receive(:code_class).and_return(Tasks::Assistants::HomeworkAssistant)
 
         expect {
           PropagateTaskPlanUpdates.call(task_plan: task_plan)
@@ -86,6 +87,16 @@ RSpec.describe PropagateTaskPlanUpdates, type: :routine do
           expect(task.feedback_at).to eq task.due_at
         end
       end
+
+      it 'sets feedback_at to opens_at when feedback is immediate' do
+        allow(task_plan.assistant).to receive(:code_class).and_return(Tasks::Assistants::HomeworkAssistant)
+        task_plan.update_attributes(type: 'homework', is_feedback_immediate: true)
+        PropagateTaskPlanUpdates.call(task_plan: task_plan)
+        task_plan.tasks.each do |task|
+          expect(task.feedback_at).to eq task.opens_at
+        end
+      end
+
     end
 
     context 'reading' do

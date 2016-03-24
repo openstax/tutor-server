@@ -1,4 +1,4 @@
-class Tasks::Assistants::ExtraAssignmentAssistant
+class Tasks::Assistants::ExtraAssignmentAssistant < Tasks::Assistants::GenericAssistant
 
   def self.schema
     '{
@@ -19,8 +19,8 @@ class Tasks::Assistants::ExtraAssignmentAssistant
   end
 
   def initialize(task_plan:, taskees:)
-    @task_plan = task_plan
-    @taskees = taskees
+    super
+
     outputs = collect_snap_labs
     @pages = outputs[:pages]
     @page_id_to_snap_lab_id = outputs[:page_id_to_snap_lab_id]

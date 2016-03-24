@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160225204521) do
+ActiveRecord::Schema.define(version: 20160317184322) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -179,6 +179,16 @@ ActiveRecord::Schema.define(version: 20160225204521) do
   add_index "course_content_course_ecosystems", ["content_ecosystem_id", "entity_course_id"], name: "course_ecosystems_on_ecosystem_id_course_id", using: :btree
   add_index "course_content_course_ecosystems", ["entity_course_id", "created_at"], name: "course_ecosystems_on_course_id_created_at", using: :btree
 
+  create_table "course_content_excluded_exercises", force: :cascade do |t|
+    t.integer  "entity_course_id", null: false
+    t.integer  "exercise_number",  null: false
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+  end
+
+  add_index "course_content_excluded_exercises", ["entity_course_id"], name: "index_course_content_excluded_exercises_on_entity_course_id", using: :btree
+  add_index "course_content_excluded_exercises", ["exercise_number", "entity_course_id"], name: "index_excluded_exercises_on_number_and_course_id", unique: true, using: :btree
+
   create_table "course_membership_enrollment_changes", force: :cascade do |t|
     t.integer  "user_profile_id",                                null: false
     t.integer  "course_membership_enrollment_id"
@@ -245,15 +255,16 @@ ActiveRecord::Schema.define(version: 20160225204521) do
 
   create_table "course_profile_profiles", force: :cascade do |t|
     t.integer  "school_district_school_id"
-    t.integer  "entity_course_id",                                                 null: false
-    t.string   "name",                                                             null: false
-    t.string   "timezone",                  default: "Central Time (US & Canada)", null: false
-    t.datetime "created_at",                                                       null: false
-    t.datetime "updated_at",                                                       null: false
-    t.boolean  "is_concept_coach",                                                 null: false
-    t.string   "teacher_join_token",                                               null: false
+    t.integer  "entity_course_id",                                                   null: false
+    t.string   "name",                                                               null: false
+    t.string   "timezone",                    default: "Central Time (US & Canada)", null: false
+    t.datetime "created_at",                                                         null: false
+    t.datetime "updated_at",                                                         null: false
+    t.boolean  "is_concept_coach",                                                   null: false
+    t.string   "teacher_join_token",                                                 null: false
     t.integer  "catalog_offering_id"
     t.string   "appearance_code"
+    t.string   "biglearn_excluded_pool_uuid"
   end
 
   add_index "course_profile_profiles", ["catalog_offering_id"], name: "index_course_profile_profiles_on_catalog_offering_id", using: :btree
@@ -555,6 +566,7 @@ ActiveRecord::Schema.define(version: 20160225204521) do
     t.datetime "created_at",                null: false
     t.datetime "updated_at",                null: false
     t.integer  "content_ecosystem_id",      null: false
+    t.boolean  "is_feedback_immediate"
   end
 
   add_index "tasks_task_plans", ["content_ecosystem_id"], name: "index_tasks_task_plans_on_content_ecosystem_id", using: :btree

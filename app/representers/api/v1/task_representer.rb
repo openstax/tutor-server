@@ -70,6 +70,12 @@ module Api::V1
                  description: "The steps which this Task is composed of"
                }
 
+    property :feedback_available?,
+             as: :is_feedback_available,
+             writeable: false,
+             readable: true,
+             schema_info: { type: 'boolean', description: "If the feedback should be shown for the task" }
+
     property :spy,
              type: Object,
              readable: true,

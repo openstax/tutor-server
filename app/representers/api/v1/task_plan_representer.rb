@@ -42,6 +42,11 @@ module Api::V1
              getter: ->(*) { is_publish_requested? },
              schema_info: { type: 'boolean' }
 
+    property :is_feedback_immediate,
+             readable: true,
+             writeable: true,
+             schema_info: { type: 'boolean' }
+
     property :publish_last_requested_at,
              type: String,
              readable: true,

@@ -1,4 +1,4 @@
-class Tasks::Assistants::IReadingAssistant
+class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::GenericAssistant
 
   def self.schema
     '{
@@ -20,10 +20,7 @@ class Tasks::Assistants::IReadingAssistant
     }'
   end
 
-  def initialize(task_plan:, taskees:)
-    @task_plan = task_plan
-    @taskees = taskees
-
+  def build_tasks
     collect_pages
 
     @tag_exercise = {}
@@ -31,9 +28,7 @@ class Tasks::Assistants::IReadingAssistant
     @page_pools = {}
     @pool_exercises = {}
     @ecosystems_map = {}
-  end
 
-  def build_tasks
     @taskees.collect do |taskee|
       build_ireading_task(
         taskee: taskee,

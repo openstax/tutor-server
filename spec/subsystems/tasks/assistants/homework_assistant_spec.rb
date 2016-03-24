@@ -72,6 +72,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
       assistant: assistant,
       content_ecosystem_id: ecosystem.id,
       description: "Hello!",
+      is_feedback_immediate: true,
       settings: {
         exercise_ids: teacher_selected_exercise_ids,
         exercises_count_dynamic: tutor_selected_exercise_count
@@ -126,7 +127,8 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
       task = entity_task.task
       expect(task.description).to eq("Hello!")
       expect(task.homework?).to be_truthy
-      expect(task.feedback_at).to eq(task.due_at)
+      # feedback_at == opens_at because the task plan was set to immediate_feedback
+      expect(task.feedback_at).to eq(task.opens_at)
     end
 
     ## it "creates one task per taskee"

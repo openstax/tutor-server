@@ -37,6 +37,7 @@ RSpec.describe Api::V1::TaskSearchRepresenter, type: :representer do
             json['is_shared'] = task.is_shared?
             json['steps']     = task.task_steps.as_json
             json['spy']       = {'ecosystem_id' => ecosystem.id, 'ecosystem_title' => ecosystem.title}
+            json['is_feedback_available'] = task.feedback_available?
             json
           }
         )

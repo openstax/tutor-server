@@ -2,7 +2,7 @@ require 'json-schema'
 
 class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
 
-  UPDATABLE_ATTRIBUTES = ['title', 'description', 'published_at']
+  UPDATABLE_ATTRIBUTES = ['title', 'description', 'published_at', 'is_feedback_immediate']
 
   attr_writer :is_publish_requested
 
