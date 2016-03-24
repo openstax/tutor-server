@@ -93,6 +93,8 @@ Rails.application.routes.draw do
         end
       end
 
+      resource :exercises, controller: :course_exercises, only: [:show, :update]
+
       resources :task_plans, path: '/plans', shallow: true, except: [:index, :new, :edit] do
         member do
           get 'stats'

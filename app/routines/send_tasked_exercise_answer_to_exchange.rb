@@ -6,7 +6,7 @@ class SendTaskedExerciseAnswerToExchange
 
   def exec(tasked_exercise:)
     url = tasked_exercise.url
-    roles = tasked_exercise.task_step.task.taskings.collect{ |t| t.role }
+    roles = tasked_exercise.task_step.task.taskings.map(&:role)
     users = Role::GetUsersForRoles[roles]
     identifiers = users.collect{ |user| user.exchange_write_identifier }
 

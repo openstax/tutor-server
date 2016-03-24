@@ -67,10 +67,9 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(chapter.book.ecosystem)
       @ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
 
-      @pages = VCR.use_cassette(
-                 'Tasks_Assistants_IReadingAssistant/for_Introduction_and_Force/with_pages',
-                 VCR_OPTS
-               ) do
+      @content_pages = VCR.use_cassette(
+        'Tasks_Assistants_IReadingAssistant/for_Introduction_and_Force/with_pages', VCR_OPTS
+      ) do
         cnx_pages.collect.with_index do |cnx_page, ii|
           Content::Routines::ImportPage.call(
             cnx_page:  cnx_page,
@@ -83,14 +82,12 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       Content::Routines::PopulateExercisePools[book: chapter.book]
     end
 
-    let(:num_taskees) { 3 }
-
     let!(:task_plan) do
       FactoryGirl.build(
         :tasks_task_plan,
         assistant: @assistant,
         content_ecosystem_id: @ecosystem.id,
-        settings: { 'page_ids' => @pages.collect{ |page| page.id.to_s } },
+        settings: { 'page_ids' => @content_pages.collect{ |page| page.id.to_s } },
         num_tasking_plans: 0
       )
     end
@@ -102,6 +99,8 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     end
 
     let!(:period) { CreatePeriod[course: course] }
+
+    let(:num_taskees) { 3 }
 
     let!(:taskee_users) do
       num_taskees.times.collect do
@@ -153,7 +152,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         expect(core_task_steps.count).to eq(@core_step_gold_data.count)
 
         core_task_steps.each_with_index do |task_step, i|
-          page = (i == 0) ? @pages.first : @pages.last
+          page = (i == 0) ? @content_pages.first : @content_pages.last
 
           expect(task_step.tasked.content).not_to include('snap-lab')
 
@@ -186,7 +185,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     it 'does not assign dynamic exercises if the dynamic exercises pool is empty' do
       allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [[0, 2]]}
 
-      task_plan.update_attribute(:settings, { 'page_ids' => [@pages.first.id.to_s] })
+      task_plan.update_attribute(:settings, { 'page_ids' => [@content_pages.first.id.to_s] })
       entity_tasks = DistributeTasks.call(task_plan).outputs.entity_tasks
       expect(entity_tasks.length).to eq num_taskees
 
@@ -211,6 +210,44 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         expect(task_step.related_content).to eq(@intro_step_gold_data[:related_content])
 
         expect(task_step.core_group?).to eq true
+      end
+
+      expected_roles = taskee_users.collect{ |tu| Role::GetDefaultUserRole[tu] }
+      expect(entity_tasks.collect{|et| et.taskings.first.role}).to eq expected_roles
+    end
+
+    it 'does not assign excluded dynamic exercises' do
+      allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [[0, 2]]}
+
+      @content_pages.each do |content_page|
+        reading_dynamic_exercises = content_page.reload.reading_dynamic_pool.exercises
+        reading_dynamic_exercises.each do |exercise|
+          CourseContent::Models::ExcludedExercise.create!(course: course,
+                                                          exercise_number: exercise.number)
+        end
+      end
+
+      entity_tasks = DistributeTasks.call(task_plan).outputs.entity_tasks
+      expect(entity_tasks.length).to eq num_taskees
+
+      entity_tasks.each do |entity_task|
+        task = entity_task.reload.reload.task
+        task_steps = task.task_steps
+
+        expect(task_steps.count).to eq(@core_step_gold_data.count + 1)
+        task_steps.each_with_index do |task_step, ii|
+          expect(task_step.tasked.class).to(
+            eq((@core_step_gold_data + @personalized_step_gold_data)[ii][:klass])
+          )
+          next if task_step.placeholder?
+
+          expect(task_step.tasked.title).to eq(@core_step_gold_data[ii][:title])
+          expect(task_step.related_content).to eq(@core_step_gold_data[ii][:related_content])
+        end
+
+        expect(task.spaced_practice_task_steps.count).to eq 0
+
+        expect(task.personalized_task_steps.count).to eq 1
       end
 
       expected_roles = taskee_users.collect{ |tu| Role::GetDefaultUserRole[tu] }

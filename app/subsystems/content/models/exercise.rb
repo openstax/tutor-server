@@ -1,5 +1,7 @@
 class Content::Models::Exercise < Tutor::SubSystems::BaseModel
 
+  attr_accessor :pool_types, :is_excluded
+
   acts_as_resource
 
   wrapped_by ::Content::Strategies::Direct::Exercise
@@ -38,6 +40,10 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
 
   def ccs
     tags.to_a.select(&:cc?)
+  end
+
+  def content_hash
+    ::JSON.parse(content).except('attachments')
   end
 
 end

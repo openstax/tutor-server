@@ -2,10 +2,10 @@
 http_interactions:
 - request:
     method: post
-    uri: https://biglearn-dev.openstax.org/facts/questions
+    uri: https://biglearn-dev.openstax.org/facts/pools
     body:
       encoding: UTF-8
-      string: '{"question_tags":[{"question_id":"//exercises-dev.openstax.org/exercises/-1","version":1,"tags":[]}]}'
+      string: '{"sources":[{"questions":[{"question_id":"//exercises-dev.openstax.org/exercises/-1","version":1}]}]}'
     headers:
       User-Agent:
       - Faraday v0.9.1
@@ -23,11 +23,11 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Tue, 02 Feb 2016 20:42:49 GMT
+      - Wed, 23 Mar 2016 22:12:44 GMT
       Content-Type:
       - application/json
       Content-Length:
-      - '39'
+      - '66'
       Connection:
       - keep-alive
       Strict-Transport-Security:
@@ -36,8 +36,10 @@ http_interactions:
       encoding: UTF-8
       string: |-
         {
-          "message": "Question tags saved."
+          "pool_ids": [
+            "fa7c1833-a5da-422b-96d0-5e89a42333e6"
+          ]
         }
     http_version: 
-  recorded_at: Tue, 02 Feb 2016 20:42:47 GMT
+  recorded_at: Wed, 23 Mar 2016 22:12:41 GMT
 recorded_with: VCR 2.9.3

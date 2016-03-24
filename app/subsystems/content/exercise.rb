@@ -31,6 +31,10 @@ module Content
       verify_and_return @strategy.content, klass: String, error: StrategyError
     end
 
+    def content_hash
+      verify_and_return @strategy.content_hash, klass: Hash, error: StrategyError
+    end
+
     def tags
       verify_and_return @strategy.tags, klass: ::Content::Tag, error: StrategyError
     end
@@ -45,6 +49,15 @@ module Content
 
     def page
       verify_and_return @strategy.page, klass: ::Content::Page, error: StrategyError
+    end
+
+    def pool_types
+      verify_and_return @strategy.pool_types, klass: String, allow_nil: true, error: StrategyError
+    end
+
+    def is_excluded
+      return if @strategy.is_excluded.nil?
+      !!@strategy.is_excluded
     end
 
   end

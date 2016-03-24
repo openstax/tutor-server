@@ -12,6 +12,10 @@ class GetConceptCoach
 
   uses_routine GetHistory, as: :get_history
 
+  uses_routine FilterExcludedExercises, as: :filter
+
+  uses_routine ChooseExercises, as: :choose
+
   uses_routine GetCourseEcosystem, as: :get_ecosystem
 
   protected
@@ -29,11 +33,13 @@ class GetConceptCoach
       return
     end
 
-    all_worked_exercises = history.exercises.flatten
-    all_worked_exercise_numbers = all_worked_exercises.map(&:number)
-    core_exercises = get_local_exercises(
-      Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT, pool, all_worked_exercises
-    )
+    pool_exercises = pool.exercises.uniq
+    course = role.student.try(:course)
+    filtered_exercises = run(:filter, exercises: pool_exercises, course: course)
+                           .outputs.exercises
+    core_exercises = run(:choose, exercises: filtered_exercises,
+                                  count: Tasks::Models::ConceptCoachTask::CORE_EXERCISES_COUNT,
+                                  history: history, allow_repeats: false).outputs.exercises
 
     if core_exercises.empty?
       outputs.valid_book_urls = ecosystem.books.map(&:url)
@@ -87,30 +93,16 @@ class GetConceptCoach
         pages: spaced_page, pool_type: :all_exercises
       ).values.flatten.uniq
 
-      candidate_exercises = []
-      repeated_candidate_exercises = []
-
-      # Partition spaced exercises into the main candidate pool and the repeat candidates
-      spaced_exercises.each do |ex|
-        next if core_exercise_numbers.include?(ex.number)  # Never include
-
-        if all_worked_exercise_numbers.include?(ex.number) # Only include if we run out
-          repeated_candidate_exercises << ex
-        else                                               # The main pool of exercises
-          candidate_exercises << ex
-        end
-      end
-
-      num_candidate_exercises = [candidate_exercises.size, num_requested].min
-      num_req_repeated_exercises = num_requested - num_candidate_exercises
-      num_repeated_exercises = [repeated_candidate_exercises.size, num_req_repeated_exercises].min
+      filtered_exercises = run(:filter, exercises: spaced_exercises, course: course,
+                                        additional_excluded_numbers: core_exercise_numbers)
+                             .outputs.exercises
 
       # Randomize and grab the required numbers of exercises
-      chosen_exercises = candidate_exercises.sample(num_candidate_exercises) + \
-                         repeated_candidate_exercises.sample(num_repeated_exercises)
+      chosen_exercises = run(:choose, exercises: filtered_exercises, count: num_requested,
+                                      history: history).outputs.exercises
 
       spaced_practice_status << "Could not completely fill the #{k_ago}-ago slot" \
-        if num_repeated_exercises < num_req_repeated_exercises
+        if chosen_exercises.size < num_requested
 
       chosen_exercises
     end.compact
@@ -190,12 +182,6 @@ class GetConceptCoach
   def get_ecosystem_and_pool(page)
     ecosystem = Content::Ecosystem.find_by_page_ids(page.id)
     [ecosystem, page.all_exercises_pool]
-  end
-
-  def get_local_exercises(count, pool, all_worked_exercises)
-    exercise_pool = pool.exercises.uniq.shuffle
-    candidate_exercises = exercise_pool - all_worked_exercises
-    candidate_exercises.first(count)
   end
 
 end
