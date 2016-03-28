@@ -41,26 +41,31 @@ class ResetPracticeWidget
                                       role: role, pools: pools, randomize: randomize)
     when :biglearn
       ecosystem, pools = get_ecosystem_and_pools(page_ids, chapter_ids, role)
-      exercises = run(:get_ecosystem_exercises_from_biglearn, ecosystem: ecosystem,
-                      count: count,
-                      role: role,
-                      pools: pools)
-                  .outputs.ecosystem_exercises
+      out = run(:get_ecosystem_exercises_from_biglearn, ecosystem: ecosystem,
+                                                        count: count,
+                                                        role: role,
+                                                        pools: pools).outputs
+      exercises = out.ecosystem_exercises
+      biglearn_numbers = out.exercise_numbers
     else
-      raise ArgumentError,
-            "exercise_source: must be one of [:fake, :local, :biglearn]"
+      raise ArgumentError, "exercise_source: must be one of [:fake, :local, :biglearn]"
     end
 
     num_exercises = exercises.size
 
-    if num_exercises < count
-      # Not enough exercises
-      fatal_error(
-        code: :not_enough_exercises,
-        message: "Not enough exercises to build the Practice Widget. [pools: #{pools.inspect}, " +
-                 "role: #{role.id}, needed: #{count}, got: #{num_exercises}]"
-      )
+    # If Biglearn returns less exercises than requested, complete the count with local ones
+    if num_exercises < count && exercise_source == :biglearn
+      local_exercises = get_local_exercises(ecosystem: ecosystem, count: count - num_exercises,
+                                            role: role, pools: pools, randomize: randomize,
+                                            additional_excluded_numbers: biglearn_numbers)
+      exercises += local_exercises
     end
+
+    fatal_error(
+      code: :no_exercises,
+      message: "No exercises were found to build the Practice Widget. [pools: #{pools.inspect}, " +
+               "role: #{role.id}, needed: #{count}, got: 0]"
+    ) if exercises.size == 0
 
     # Figure out the type of practice
     task_type = :mixed_practice
@@ -99,13 +104,17 @@ class ResetPracticeWidget
     [ecosystem, ecosystem.practice_widget_pools(pages: pages)]
   end
 
-  def get_local_exercises(ecosystem:, count:, role:, pools:, randomize:)
+  def get_local_exercises(ecosystem:, count:, role:, pools:, randomize:,
+                          additional_excluded_numbers: [])
     entity_tasks = role.taskings.preload(task: {task: {task_steps: :tasked}}).map(&:task)
 
     pool_exercises = pools.flat_map(&:exercises)
 
     course = role.student.try(:course)
-    filtered_exercises = run(:filter, exercises: pool_exercises, course: course).outputs.exercises
+    filtered_exercises = run(
+      :filter, exercises: pool_exercises, course: course,
+               additional_excluded_numbers: additional_excluded_numbers
+    ).outputs.exercises
 
     history = run(:get_history, role: role, type: :all).outputs
     chosen_exercises = run(:choose, exercises: filtered_exercises, count: count, history: history,

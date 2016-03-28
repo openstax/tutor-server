@@ -23,7 +23,7 @@ describe GetEcosystemExercisesFromBiglearn, type: :routine do
 
   let!(:role)            { Entity::Role.create! }
 
-  let!(:count)           { 5 }
+  let!(:count)           { 3 }
 
   context 'success' do
     it 'gets exercises from Biglearn then translates them to local exercises by number' do
@@ -56,7 +56,7 @@ describe GetEcosystemExercisesFromBiglearn, type: :routine do
   end
 
   context 'failure' do
-    it 'retries a few times then gets the exercises locally' do
+    it 'retries the request a few times then gets the exercises locally' do
       expect(OpenStax::Biglearn::V1).to(
         receive(:get_projection_exercises)
           .exactly(GetEcosystemExercisesFromBiglearn::MAX_ATTEMPTS).times do
@@ -64,6 +64,17 @@ describe GetEcosystemExercisesFromBiglearn, type: :routine do
         end
       )
       expect(ExceptionNotifier).to receive(:notify_exception).once
+
+      bl_exercises = described_class[ecosystem: ecosystem, role: role, pools: pools, count: count]
+      expect(Set.new(bl_exercises.map(&:id))).to eq Set.new(exercises.map(&:id))
+    end
+
+    it 'uses local exercises if Biglearn returns less exercises than requested' do
+      expect(OpenStax::Biglearn::V1).to(
+        receive(:get_projection_exercises).once { exercises.first(2).map(&:url) }
+      )
+      expect(ExceptionNotifier).not_to receive(:notify_exception)
+      expect(Rails.logger).to receive(:warn)
 
       bl_exercises = described_class[ecosystem: ecosystem, role: role, pools: pools, count: count]
       expect(Set.new(bl_exercises.map(&:id))).to eq Set.new(exercises.map(&:id))
