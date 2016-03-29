@@ -142,8 +142,8 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, speed: :slow, vcr:
     end
   end
 
-  def import_page(archive_url: OpenStax::Cnx::V1.archive_url_base(ssl: true))
-    OpenStax::Cnx::V1.with_archive_url(url: archive_url) do
+  def import_page(archive_url: OpenStax::Cnx::V1.archive_url_base)
+    OpenStax::Cnx::V1.with_archive_url(archive_url) do
       Content::Routines::ImportPage.call(cnx_page: cnx_page,
                                          chapter: chapter,
                                          book_location: book_location)

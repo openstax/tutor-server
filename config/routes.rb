@@ -186,10 +186,9 @@ Rails.application.routes.draw do
     post :freeze_time, controller: :timecop
     post :time_travel, controller: :timecop
 
-    resources :ecosystems, only: [:index, :destroy, :update] do
-      collection do
-        get :import
-        post :import
+    resources :ecosystems, except: [:edit] do
+      member do
+        get :manifest
       end
     end
 
@@ -229,7 +228,11 @@ Rails.application.routes.draw do
 
     resources :tags, only: [:index, :show]
 
-    resources :ecosystems, only: [:index]
+    resources :ecosystems, only: [:index] do
+      member do
+        get :manifest
+      end
+    end
 
     resources :targeted_contracts, only: :index
 
@@ -251,10 +254,9 @@ Rails.application.routes.draw do
 
     resources :jobs, only: [:show]
 
-    resources :ecosystems, only: [:index, :destroy, :update] do
-      collection do
-        get :import
-        post :import
+    resources :ecosystems, except: [:edit] do
+      member do
+        get :manifest
       end
     end
   end

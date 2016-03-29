@@ -20,12 +20,12 @@ RSpec.describe Content::Routines::UpdatePageContent, type: :routine, vcr: VCR_OP
   let!(:chapter) { FactoryGirl.create :content_chapter }
 
   let!(:page_1) do
-    OpenStax::Cnx::V1.with_archive_url(url: 'https://archive.cnx.org/contents/') do
+    OpenStax::Cnx::V1.with_archive_url('https://archive.cnx.org/contents/') do
       Content::Routines::ImportPage[cnx_page: cnx_page_1, chapter: chapter, book_location: [1, 1]]
     end
   end
   let!(:page_2) do
-    OpenStax::Cnx::V1.with_archive_url(url: 'https://archive.cnx.org/contents/') do
+    OpenStax::Cnx::V1.with_archive_url('https://archive.cnx.org/contents/') do
       Content::Routines::ImportPage[cnx_page: cnx_page_2, chapter: chapter, book_location: [1, 2]]
     end
   end

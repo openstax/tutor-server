@@ -3,9 +3,9 @@ module Content
 
     include Wrapper
 
-    def self.from_yaml(yaml:)
+    def self.from_yaml(yaml)
       yaml = verify_and_return yaml, klass: String
-      verify_and_return @strategy.from_yaml(yaml: yaml), klass: self, error: StrategyError
+      verify_and_return @strategy.from_yaml(yaml), klass: self, error: StrategyError
     end
 
     def to_yaml

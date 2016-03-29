@@ -46,7 +46,7 @@ class Content::ImportBook
       pages.first
     }
 
-    if exercise_uids.nil?
+    if exercise_uids.blank?
       # Split the tag queries to avoid exceeding the URL limit
       max_tag_length = import_page_tags.map{ |pt| pt.tag.value.size }.max
       tags_per_query = MAX_URL_LENGTH/max_tag_length

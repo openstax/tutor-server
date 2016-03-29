@@ -38,18 +38,12 @@ module Tasks
 
     private
 
-    def sanitize_filename(filename)
-      filename.gsub(/[^\w-]/, '_')
-    end
-
     def generate_temp_export_file!(format, is_cc)
       klass = "Tasks::PerformanceReport::Export#{is_cc ? 'Cc' : ''}#{format.to_s.camelize}"
       exporter = klass.constantize
-      filename = sanitize_filename(
-        [outputs.profile.name,
-         'Scores',
-         Time.current.strftime("%Y%m%d-%H%M%S")].join('_')
-      )
+      filename = [FilenameSanitizer.sanitize(outputs.profile.name),
+                  'Scores',
+                  Time.current.strftime("%Y%m%d-%H%M%S")].join('_')
 
       exporter[profile: outputs.profile,
                report: outputs.performance_report,

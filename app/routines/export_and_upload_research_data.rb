@@ -7,19 +7,14 @@
   lev_routine express_output: :filename
 
   def exec(filename = nil)
-    outputs[:filename] = sanitize_filename(
-      filename || "export_#{Time.now.utc.strftime("%Y%m%dT%H%M%SZ")}.csv"
-    )
+    outputs[:filename] = FilenameSanitizer.sanitize(filename) || \
+                         "export_#{Time.now.utc.strftime("%Y%m%dT%H%M%SZ")}.csv"
     create_export_file
     upload_export_file
     remove_export_file
   end
 
   protected
-
-  def sanitize_filename(filename)
-    filename.gsub(/[^\w\.-]/, '_')
-  end
 
   def filepath
     File.join 'tmp', 'exports', outputs[:filename]

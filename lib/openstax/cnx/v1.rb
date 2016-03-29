@@ -18,48 +18,40 @@ require_relative './v1/book_to_string_visitor'
 
 module OpenStax::Cnx::V1
 
-  # Sets the archive URL base.  'url' is nominally the non-SSL URL,
-  # tho may be SSL. An explicit SSL URL can be passed in `ssl`, or
-  # by default the SSL URL will be guessed from the URL.
-  def self.set_archive_url_base(url: nil, ssl: nil)
-    url = url.ends_with?('/') ? url : "#{url}/" unless url.nil?
-    uri = Addressable::URI.parse(url || ssl)
-    uri.scheme = 'http'
-    @archive_url_base = uri.to_s
-    uri = Addressable::URI.parse(ssl) unless ssl.nil?
+  mattr_reader :archive_url_base
+
+  # Sets the archive URL base. Forces https.
+  def self.archive_url_base=(url)
+    uri = Addressable::URI.parse(url)
     uri.scheme = 'https'
-    @ssl_archive_url_base = uri.to_s
+    @@archive_url_base = uri.to_s
   end
 
-  def self.archive_url_base(ssl: false)
-    ssl ? @ssl_archive_url_base : @archive_url_base
-  end
-
-  def self.with_archive_url(url:, ssl: nil)
+  def self.with_archive_url(url)
     old_url = archive_url_base
-    old_ssl_url = archive_url_base(ssl: true)
 
     begin
-      set_archive_url_base(url: url, ssl: ssl)
+      self.archive_url_base = url
       yield
     ensure
-      set_archive_url_base(url: old_url, ssl: old_ssl_url)
+      self.archive_url_base = old_url
     end
   end
 
-  def self.url_for(id, options={})
-    options[:secure] = true if options[:secure].nil?
-    Addressable::URI.join(archive_url_base(ssl: options[:secure]), id).to_s
+  # Archive url for the given path
+  # Forces /contents/ to be prepended to the path, unless the path begins with /
+  def self.archive_url_for(path)
+    Addressable::URI.join(archive_url_base, '/contents/', path).to_s
   end
 
   def self.fetch(id)
-    url = url_for(id)
+    url = archive_url_for(id)
 
     begin
       Rails.logger.debug { "Fetching #{url}" }
       JSON.parse open(url, 'ACCEPT' => 'text/json').read
-    rescue OpenURI::HTTPError => e
-      raise OpenStax::HTTPError, "#{e.message} for URL #{url}"
+    rescue OpenURI::HTTPError => exception
+      raise OpenStax::HTTPError, "#{exception.message} for URL #{url}"
     end
   end
 

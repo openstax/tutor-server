@@ -1,9 +1,12 @@
 <% @page_header = 'Ecosystems' %>
 
 <%= render partial: 'manager/ecosystems/index',
-           locals: { ecosystems: @ecosystems,
-                     incomplete_jobs: @incomplete_jobs,
-                     failed_jobs: @failed_jobs,
-                     job_path_proc: ->(job) { admin_job_path(job.id) },
-                     import_path: import_admin_ecosystems_path,
-                     ecosystem_path: Proc.new { |*args| admin_ecosystem_path(args) } } %>
+           locals: {
+             ecosystems: @ecosystems,
+             incomplete_jobs: @incomplete_jobs,
+             failed_jobs: @failed_jobs,
+             job_path_proc: ->(job) { admin_job_path(job.id) },
+             import_path: new_admin_ecosystem_path,
+             ecosystem_path: ->(*args) { admin_ecosystem_path(*args) },
+             manifest_path: ->(*args) { manifest_admin_ecosystem_path(*args) }
+           } %>

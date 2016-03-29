@@ -116,9 +116,9 @@ class DemoContent < DemoBase
 
         book = content.cnx_book(version)
         course = courses[index]
-        OpenStax::Cnx::V1.set_archive_url_base( url: content.url_base )
         log("Starting book import for #{course.name} #{book} from #{content.url_base}.")
-        ecosystem = run(:import_book, book_cnx_id: book).outputs.ecosystem
+        ecosystem = run(:import_book, book_cnx_id: book,
+                                      archive_url: content.url_base).outputs.ecosystem
 
         log("Book import complete")
         run(:add_ecosystem, ecosystem: ecosystem, course: course)

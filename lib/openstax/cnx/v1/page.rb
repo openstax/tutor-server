@@ -44,7 +44,7 @@ module OpenStax::Cnx::V1
     end
 
     def url
-      @url ||= OpenStax::Cnx::V1.url_for(id)
+      @url ||= OpenStax::Cnx::V1.archive_url_for(id)
     end
 
     # Use the title in the collection hash
@@ -78,7 +78,7 @@ module OpenStax::Cnx::V1
     end
 
     def canonical_url
-      @canonical_url ||= OpenStax::Cnx::V1.url_for("#{uuid}@#{version}")
+      @canonical_url ||= OpenStax::Cnx::V1.archive_url_for("#{uuid}@#{version}")
     end
 
     def content
@@ -114,7 +114,7 @@ module OpenStax::Cnx::V1
           next if uri.path.blank?
 
           # Relative link: make secure and absolute
-          src.value = OpenStax::Cnx::V1.url_for(uri, secure: true)
+          src.value = OpenStax::Cnx::V1.archive_url_for(uri)
         end
       end
 
@@ -126,7 +126,7 @@ module OpenStax::Cnx::V1
         next if uri.absolute? || uri.path.blank?
 
         # Relative link: make secure and absolute
-        href.value = OpenStax::Cnx::V1.url_for(uri, secure: true)
+        href.value = OpenStax::Cnx::V1.archive_url_for(uri)
       end
 
       # Absolutize exercise links

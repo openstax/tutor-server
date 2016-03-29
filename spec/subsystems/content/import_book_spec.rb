@@ -88,7 +88,7 @@ RSpec.describe Content::ImportBook, type: :routine, speed: :slow, vcr: VCR_OPTS 
   end
 
   it 'handles the bio cc book correctly' do
-    OpenStax::Cnx::V1.with_archive_url(url: 'https://archive.cnx.org/contents/') do
+    OpenStax::Cnx::V1.with_archive_url('https://archive.cnx.org/contents/') do
       Content::ImportBook.call(ecosystem: ecosystem, cnx_book: bio_cc_book)
     end
     book = ecosystem.books.first

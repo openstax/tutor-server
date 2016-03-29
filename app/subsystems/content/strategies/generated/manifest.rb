@@ -3,7 +3,7 @@ module Content
     module Generated
       class Manifest
 
-        def self.from_yaml(yaml:)
+        def self.from_yaml(yaml)
           new(hash: YAML.load(yaml))
         end
 

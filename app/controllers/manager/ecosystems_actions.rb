@@ -1,5 +1,9 @@
 module Manager::EcosystemsActions
 
+  def self.included(base)
+    base.before_action :get_ecosystem, only: [:update, :destroy, :manifest]
+  end
+
   def index
     @ecosystems = Content::ListEcosystems[]
     @incomplete_jobs = Jobba.where(state: :incomplete).to_a.select do |job|
@@ -10,21 +14,28 @@ module Manager::EcosystemsActions
     end
   end
 
-  def update
-    ecosystem = Content::Ecosystem.find(params[:id])
-    OSU::AccessPolicy.require_action_allowed!(:update, current_user, ecosystem)
-    ecosystem.to_model.update_attributes(comments: params[:ecosystem][:comments])
+  def new
+    OSU::AccessPolicy.require_action_allowed!(:create, current_user, Content::Ecosystem)
+  end
+
+  def create
+    OSU::AccessPolicy.require_action_allowed!(:create, current_user, Content::Ecosystem)
+    manifest_content = params[:manifest].respond_to?(:read) ? \
+                         params[:manifest].read : params[:manifest].to_s
+    create_book_import_job(manifest_content, params[:comments])
+    flash[:notice] = 'Ecosystem import job queued.'
+
     redirect_to ecosystems_path
   end
 
-  def import
-    @default_archive_url = OpenStax::Cnx::V1.archive_url_base
-    import_ecosystem if request.post?
+  def update
+    OSU::AccessPolicy.require_action_allowed!(:update, current_user, @ecosystem)
+    @ecosystem.to_model.update_attributes(comments: params[:ecosystem][:comments])
+    redirect_to ecosystems_path
   end
 
   def destroy
-    ecosystem = Content::Ecosystem.find(params[:id])
-    OSU::AccessPolicy.require_action_allowed!(:destroy, current_user, ecosystem)
+    OSU::AccessPolicy.require_action_allowed!(:destroy, current_user, @ecosystem)
     output = Content::DeleteEcosystem.call(id: params[:id])
     if output.errors.empty?
       flash[:notice] = 'Ecosystem deleted.'
@@ -34,27 +45,26 @@ module Manager::EcosystemsActions
     redirect_to ecosystems_path
   end
 
+  def manifest
+    filename = "#{FilenameSanitizer.sanitize(@ecosystem.title)}.yml"
+    send_data @ecosystem.manifest.to_yaml, filename: filename
+  end
+
   protected
 
-  def archive_url
-    params[:archive_url].present? ? params[:archive_url] : @default_archive_url
+  def get_ecosystem
+    @ecosystem = Content::Ecosystem.find(params[:id])
   end
 
-  def import_ecosystem
-    create_book_import_job
-    flash[:notice] = 'Ecosystem import job queued.'
-
-    redirect_to ecosystems_path
-  end
-
-  def create_book_import_job
-    job_id = FetchAndImportBookAndCreateEcosystem.perform_later(
-      archive_url: archive_url,
-      book_cnx_id: params[:cnx_id],
-      comments: params[:comments]
+  def create_book_import_job(manifest_content, comments)
+    manifest = Content::Manifest.from_yaml(manifest_content)
+    job_id = ImportEcosystemManifest.perform_later(
+      manifest: manifest,
+      comments: comments
     )
     job = Jobba.find(job_id)
-    import_url = Addressable::URI.join(archive_url, params[:cnx_id]).to_s
+    cnx_id = manifest.book_cnx_ids.first
+    import_url = Addressable::URI.join(manifest.archive_url, '/contents/', cnx_id).to_s
     job.save(ecosystem_import_url: import_url)
     job
   end
