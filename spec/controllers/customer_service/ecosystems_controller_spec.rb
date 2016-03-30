@@ -19,4 +19,15 @@ RSpec.describe CustomerService::EcosystemsController, type: :controller do
       expect(assigns[:ecosystems]).to eq expected_ecosystems
     end
   end
+
+  describe 'GET #manifest' do
+    it 'allows the ecosystem\'s manifest to be downloaded' do
+      get :manifest, id: ecosystem_1.id
+
+      expected_content_disposition = \
+        "attachment; filename=\"#{FilenameSanitizer.sanitize(ecosystem_1.title)}.yml\""
+      expect(response.headers['Content-Disposition']).to eq expected_content_disposition
+      expect(response.body).to eq ecosystem_1.manifest.to_yaml
+    end
+  end
 end

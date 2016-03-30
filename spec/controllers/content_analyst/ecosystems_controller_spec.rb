@@ -66,4 +66,15 @@ RSpec.describe ContentAnalyst::EcosystemsController, type: :controller,
         'The ecosystem cannot be deleted because it is linked to a course')
     end
   end
+
+  describe 'GET #manifest' do
+    it 'allows the ecosystem\'s manifest to be downloaded' do
+      get :manifest, id: ecosystem_1.id
+
+      expected_content_disposition = \
+        "attachment; filename=\"#{FilenameSanitizer.sanitize(ecosystem_1.title)}.yml\""
+      expect(response.headers['Content-Disposition']).to eq expected_content_disposition
+      expect(response.body).to eq ecosystem_1.manifest.to_yaml
+    end
+  end
 end
