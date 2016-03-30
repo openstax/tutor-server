@@ -2,8 +2,8 @@ class EcosystemAccessPolicy
   def self.action_allowed?(action, requestor, ecosystem)
     return false unless requestor.is_human?
 
-    # Content Analysts can read all things content
-    return true if requestor.is_content_analyst?
+    # Content Analysts and admins can do all things content
+    return true if requestor.is_content_analyst? || requestor.is_admin?
 
     case action
     when :readings
@@ -16,8 +16,6 @@ class EcosystemAccessPolicy
       # because it includes solutions, etc
       courses = GetUserCourses[user: requestor, types: :teacher]
       courses.any?{ |course| course.ecosystems.collect(&:id).include?(ecosystem.id) }
-    when :create, :update, :destroy
-      requestor.is_content_analyst? || requestor.is_admin?
     else
       false
     end
