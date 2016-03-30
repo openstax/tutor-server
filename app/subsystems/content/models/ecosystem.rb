@@ -18,7 +18,7 @@ module Content
 
       has_many :tags, dependent: :destroy, inverse_of: :ecosystem
 
-      validates :title, presence: true
+      validates :title, :archive_url, presence: true
 
       default_scope -> { order(created_at: :desc) }
 

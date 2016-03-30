@@ -5,10 +5,10 @@ module Content
 
         wraps ::Content::Models::Ecosystem
 
-        exposes :books, :chapters, :pages, :exercises, :pools, :tags, :title, :comments,
-          :created_at, :deletable?
+        exposes :books, :chapters, :pages, :exercises, :pools, :tags, :title, :archive_url,
+                :comments, :created_at, :deletable?
         exposes :all, :create, :create!, :find, :deletable?,
-          from_class: ::Content::Models::Ecosystem
+                from_class: ::Content::Models::Ecosystem
 
         def to_model
           repository
@@ -23,14 +23,16 @@ module Content
           end
 
           alias_method :entity_create, :create
-          def create(title:, comments:)
+          def create(title:, archive_url:, comments:)
             ::Content::Ecosystem.new(strategy: entity_create(title: title,
+                                                             archive_url: archive_url,
                                                              comments: comments))
           end
 
           alias_method :entity_create!, :create!
-          def create!(title:, comments:)
+          def create!(title:, archive_url:, comments:)
             ::Content::Ecosystem.new(strategy: entity_create!(title: title,
+                                                              archive_url: archive_url,
                                                               comments: comments))
           end
 
@@ -87,6 +89,7 @@ module Content
         def manifest
           hash = {
             ecosystem_title: title,
+            archive_url: archive_url,
             book_ids: books.map(&:cnx_id).sort,
             exercise_ids: exercises.map(&:uid).sort
           }
