@@ -11,4 +11,7 @@ RSpec.describe Content::Models::Ecosystem, type: :model do
   it { is_expected.to have_many(:pages) }
   it { is_expected.to have_many(:exercises) }
   it { is_expected.to have_many(:pools) }
+
+  it { is_expected.to validate_presence_of(:title) }
+  it { is_expected.to validate_presence_of(:archive_url) }
 end

@@ -12,9 +12,7 @@ RSpec.describe ImportEcosystemManifest, type: :routine, vcr: VCR_OPTS do
 
   context 'tutor book' do
     let(:fixture_path)                   { 'spec/fixtures/content/sample_tutor_manifest.yml' }
-    let(:expected_ecosystem_title_regex) {
-      /\APhysics \(93e2b09d-261c-4007-a987-0b3062fe154b@4.4\)/
-    }
+    let(:expected_ecosystem_title_start) { 'Physics (93e2b09d-261c-4007-a987-0b3062fe154b@4.4)' }
     let(:expected_book_cnx_id)           { '93e2b09d-261c-4007-a987-0b3062fe154b@4.4' }
 
     let(:expected_exercise_numbers)      {
@@ -57,7 +55,7 @@ RSpec.describe ImportEcosystemManifest, type: :routine, vcr: VCR_OPTS do
         change{ Content::Models::Ecosystem.count }.by(1)
       )
 
-      expect(@new_ecosystem.title).to match expected_ecosystem_title_regex
+      expect(@new_ecosystem.title).to start_with expected_ecosystem_title_start
       expect(@new_ecosystem.books.first.cnx_id).to eq expected_book_cnx_id
       expect(Set.new @new_ecosystem.exercises.map(&:uid)).to eq expected_exercise_uids_set
     end
@@ -65,8 +63,8 @@ RSpec.describe ImportEcosystemManifest, type: :routine, vcr: VCR_OPTS do
 
   context 'cc book' do
     let(:fixture_path)                   { 'spec/fixtures/content/sample_cc_manifest.yml' }
-    let(:expected_ecosystem_title_regex) {
-      /\AMini CC Biology Tes Coll \(f10533ca-f803-490d-b935-88899941197f@2.1\)/
+    let(:expected_ecosystem_title_start) {
+      'Mini CC Biology Tes Coll (f10533ca-f803-490d-b935-88899941197f@2.1)'
     }
     let(:expected_book_cnx_id)           { 'f10533ca-f803-490d-b935-88899941197f@2.1' }
 
@@ -93,7 +91,7 @@ RSpec.describe ImportEcosystemManifest, type: :routine, vcr: VCR_OPTS do
         change{ Content::Models::Ecosystem.count }.by(1)
       )
 
-      expect(@new_ecosystem.title).to match expected_ecosystem_title_regex
+      expect(@new_ecosystem.title).to start_with expected_ecosystem_title_start
       expect(@new_ecosystem.books.first.cnx_id).to eq expected_book_cnx_id
       expect(Set.new @new_ecosystem.exercises.map(&:uid)).to eq expected_exercise_uids_set
     end
