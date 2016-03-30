@@ -3,8 +3,8 @@ require 'rails_helper'
 RSpec.describe CourseContent::GetCourseEcosystems, type: :routine do
 
   let!(:course) { Entity::Course.create! }
-  let!(:eco1)   { Content::Ecosystem.create!(title: 'Eco1') }
-  let!(:eco2)   { Content::Ecosystem.create!(title: 'Eco2') }
+  let!(:eco1)   { FactoryGirl.create :content_ecosystem }
+  let!(:eco2)   { FactoryGirl.create :content_ecosystem }
 
   it "finds course ecosystems" do
     CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: eco1)

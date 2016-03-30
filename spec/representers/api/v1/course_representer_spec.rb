@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::CourseRepresenter, type: :representer do
-  let!(:ecosystem)        { Content::Models::Ecosystem.create!(title: 'Test eco') }
+  let!(:ecosystem)        { FactoryGirl.create :content_ecosystem }
   let!(:catalog_offering) { Catalog::CreateOffering[salesforce_book_name: 'book',
                                                     appearance_code: 'appearance',
                                                     webview_url: 'web_url',
