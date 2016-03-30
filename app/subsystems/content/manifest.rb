@@ -3,9 +3,11 @@ module Content
 
     include Wrapper
 
-    def self.from_yaml(yaml)
+    def self.from_yaml(yaml, strategy_class: Content::Strategies::Generated::Manifest)
       yaml = verify_and_return yaml, klass: String
-      verify_and_return @strategy.from_yaml(yaml), klass: self, error: StrategyError
+      strategy = verify_and_return strategy_class.from_yaml(yaml), klass: strategy_class,
+                                                                   error: StrategyError
+      new(strategy: strategy)
     end
 
     def to_yaml
@@ -14,6 +16,10 @@ module Content
 
     def ecosystem_title
       verify_and_return @strategy.ecosystem_title, klass: String, error: StrategyError
+    end
+
+    def archive_url
+      verify_and_return @strategy.archive_url, klass: String, error: StrategyError
     end
 
     def book_uuids

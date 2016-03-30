@@ -8,19 +8,19 @@ module Content
         end
 
         def to_yaml
-          @hash.to_yaml
+          @hash.to_h.to_yaml
         end
 
         def initialize(hash:)
           @hash = HashWithIndifferentAccess.new(hash).slice(
-            :ecosystem_title, :book_uuids, :book_versions, :exercise_numbers, :exercise_versions
+            :archive_url, :ecosystem_title, :book_uuids, :book_versions,
+            :exercise_numbers, :exercise_versions
           )
         end
 
         def valid?
           ecosystem_title.present? && \
           book_uuids.present? && book_versions.present? && \
-          exercise_numbers.present? && exercise_versions.present? && \
           book_uuids.size == book_versions.size && \
           exercise_numbers.size == exercise_versions.size && \
           book_uuids.all?{ |uuid| uuid.is_a?(::Content::Uuid) && uuid.valid? } && \
@@ -30,20 +30,24 @@ module Content
         end
 
         def ecosystem_title
-          @hash[:ecosystem_title].to_s
+          @hash[:ecosystem_title]
+        end
+
+        def archive_url
+          @hash[:archive_url]
         end
 
         def book_uuids
-          @hash[:book_uuids].to_a
+          @hash[:book_uuids].to_a.map{ |uuid| ::Content::Uuid.new(uuid) }
         end
 
         def book_versions
-          @hash[:book_versions].to_a
+          @hash[:book_versions].to_a.map(&:to_s)
         end
 
         def book_cnx_ids
           versions = book_versions
-          book_uuids.each_with_index.collect{ |uuid, idx| "#{uuid}@#{versions[idx]}" }
+          book_uuids.each_with_index.map{ |uuid, idx| "#{uuid}@#{versions[idx]}" }
         end
 
         def exercise_numbers
@@ -56,7 +60,7 @@ module Content
 
         def exercise_uids
           versions = exercise_versions
-          exercise_numbers.each_with_index.collect{ |number, idx| "#{number}@#{versions[idx]}" }
+          exercise_numbers.each_with_index.map{ |number, idx| "#{number}@#{versions[idx]}" }
         end
 
       end

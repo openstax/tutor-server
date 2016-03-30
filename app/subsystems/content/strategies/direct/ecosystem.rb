@@ -17,7 +17,7 @@ module Content
         class << self
           alias_method :entity_all, :all
           def all
-            entity_all.collect do |entity|
+            entity_all.map do |entity|
               ::Content::Ecosystem.new(strategy: entity)
             end
           end
@@ -43,7 +43,7 @@ module Content
             books = ::Content::Models::Book.eager_load(:ecosystem).where(id: ids).to_a
             return if books.size < ids.size
 
-            content_ecosystems = books.collect{ |bk| bk.ecosystem }.uniq
+            content_ecosystems = books.map(&:ecosystem).uniq
             return if content_ecosystems.size != 1
 
             strategy = new(content_ecosystems.first)
@@ -54,7 +54,7 @@ module Content
             chapters = ::Content::Models::Chapter.eager_load(:ecosystem).where(id: ids).to_a
             return if chapters.size < ids.size
 
-            content_ecosystems = chapters.collect{ |ch| ch.ecosystem }.uniq
+            content_ecosystems = chapters.map(&:ecosystem).uniq
             return if content_ecosystems.size != 1
 
             strategy = new(content_ecosystems.first)
@@ -65,7 +65,7 @@ module Content
             pages = ::Content::Models::Page.eager_load(:ecosystem).where(id: ids).to_a
             return if pages.size < ids.size
 
-            content_ecosystems = pages.collect{ |pg| pg.ecosystem }.uniq
+            content_ecosystems = pages.map(&:ecosystem).uniq
             return if content_ecosystems.size != 1
 
             strategy = new(content_ecosystems.first)
@@ -76,7 +76,7 @@ module Content
             exercises = ::Content::Models::Exercise.eager_load(:ecosystem).where(id: ids).to_a
             return if exercises.size < ids.size
 
-            content_ecosystems = exercises.collect{ |ex| ex.ecosystem }.uniq
+            content_ecosystems = exercises.map(&:ecosystem).uniq
             return if content_ecosystems.size != 1
 
             strategy = new(content_ecosystems.first)
@@ -89,10 +89,10 @@ module Content
           sorted_exercises = exercises.sort_by{ |ex| [ex.number, ex.version] }
           hash = {
             ecosystem_title: title,
-            book_uuids: sorted_books.collect(&:uuid),
-            book_versions: sorted_books.collect(&:version),
-            exercise_numbers: sorted_exercises.collect(&:number),
-            exercise_versions: sorted_exercises.collect(&:version)
+            book_uuids: sorted_books.map{ |book| book.uuid.to_s },
+            book_versions: sorted_books.map(&:version),
+            exercise_numbers: sorted_exercises.map(&:number),
+            exercise_versions: sorted_exercises.map(&:version)
           }
           strategy = ::Content::Strategies::Generated::Manifest.new(hash: hash)
           ::Content::Manifest.new(strategy: strategy)
@@ -100,14 +100,14 @@ module Content
 
         alias_method :entity_books, :books
         def books
-          entity_books.collect do |entity_book|
+          entity_books.map do |entity_book|
             ::Content::Book.new(strategy: entity_book)
           end
         end
 
         alias_method :entity_chapters, :chapters
         def chapters
-          entity_chapters.collect do |entity_chapter|
+          entity_chapters.map do |entity_chapter|
             ::Content::Chapter.new(strategy: entity_chapter)
           end
         end
@@ -122,14 +122,14 @@ module Content
             id_indices[integer_id] = index
           end
 
-          entity_chapters.where(id: ids).collect do |entity_chapter|
+          entity_chapters.where(id: ids).map do |entity_chapter|
             ::Content::Chapter.new(strategy: entity_chapter)
           end.sort_by{ |ch| id_indices[ch.id] }
         end
 
         alias_method :entity_pages, :pages
         def pages
-          entity_pages.collect do |entity_page|
+          entity_pages.map do |entity_page|
             ::Content::Page.new(strategy: entity_page)
           end
         end
@@ -144,14 +144,14 @@ module Content
             id_indices[integer_id] = index
           end
 
-          entity_pages.where(id: ids).collect do |entity_page|
+          entity_pages.where(id: ids).map do |entity_page|
             ::Content::Page.new(strategy: entity_page)
           end.sort_by{ |pg| id_indices[pg.id] }
         end
 
         alias_method :entity_exercises, :exercises
         def exercises
-          entity_exercises.collect do |entity_exercise|
+          entity_exercises.map do |entity_exercise|
             ::Content::Exercise.new(strategy: entity_exercise)
           end
         end
@@ -166,7 +166,7 @@ module Content
             id_indices[integer_id] = index
           end
 
-          entity_exercises.where(id: ids).collect do |entity_exercise|
+          entity_exercises.where(id: ids).map do |entity_exercise|
             ::Content::Exercise.new(strategy: entity_exercise)
           end.sort_by{ |ex| id_indices[ex.id] }
         end
@@ -182,8 +182,8 @@ module Content
           end
 
           entity_exercises.where(number: numbers)
-                          .group_by{ |ex| ex.number }
-                          .collect do |number, entity_exercises|
+                          .group_by(&:number)
+                          .map do |number, entity_exercises|
             latest_exercise = entity_exercises.max_by{ |ex| ex.version }
             ::Content::Exercise.new(strategy: latest_exercise)
           end.sort_by{ |ex| number_indices[ex.number] }
@@ -196,14 +196,14 @@ module Content
                           .where(exercise_tags: {tag: {value: tags.flatten}})
                           .group(:id).having {
                             count(distinct(exercise_tags.tag.id)).gteq match_count
-                          }.collect do |entity_exercise|
+                          }.map do |entity_exercise|
             ::Content::Exercise.new(strategy: entity_exercise)
           end
         end
 
         alias_method :entity_pools, :pools
         def pools
-          entity_pools.collect do |entity_pool|
+          entity_pools.map do |entity_pool|
             ::Content::Pool.new(strategy: entity_pool)
           end
         end
@@ -234,7 +234,7 @@ module Content
 
         alias_method :entity_tags, :tags
         def tags
-          entity_tags.collect do |entity_tag|
+          entity_tags.map do |entity_tag|
             ::Content::Tag.new(strategy: entity_tag)
           end
         end
@@ -246,7 +246,7 @@ module Content
             value_indices[value.to_s] = index
           end
 
-          entity_tags.where(value: values).collect do |entity_tag|
+          entity_tags.where(value: values).map do |entity_tag|
             ::Content::Tag.new(strategy: entity_tag)
           end.sort_by{ |tag| value_indices[tag.value.to_s] }
         end
@@ -256,12 +256,12 @@ module Content
         protected
 
         def find_pools(pages:, type:)
-          page_ids = pages.collect(&:id)
+          page_ids = pages.map(&:id)
           pool_method_name = "#{type.to_s}_pool".to_sym
 
           entity_pages.where(id: page_ids)
                       .joins(pool_method_name)
-                      .eager_load(pool_method_name).collect do |entity_page|
+                      .eager_load(pool_method_name).map do |entity_page|
             entity_page.send(pool_method_name)
           end
         end

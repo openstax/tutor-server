@@ -14,7 +14,7 @@ module Content
 
         alias_method :entity_pages, :pages
         def pages
-          entity_pages.collect do |entity_page|
+          entity_pages.map do |entity_page|
             ::Content::Page.new(strategy: entity_page)
           end
         end

@@ -1,5 +1,7 @@
 module FilenameSanitizer
   def self.sanitize(filename)
-    filename.gsub(/[^0-9A-Za-z.-]/, '_')
+    return nil if filename.nil?
+
+    filename.gsub(/[^\w.-]/, '_').gsub(/_{2,}/, '_')
   end
 end

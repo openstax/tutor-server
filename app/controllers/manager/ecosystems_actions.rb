@@ -20,9 +20,9 @@ module Manager::EcosystemsActions
 
   def create
     OSU::AccessPolicy.require_action_allowed!(:create, current_user, Content::Ecosystem)
-    manifest_content = params[:manifest].respond_to?(:read) ? \
-                         params[:manifest].read : params[:manifest].to_s
-    create_book_import_job(manifest_content, params[:comments])
+    manifest_content = params[:ecosystem][:manifest].respond_to?(:read) ? \
+                         params[:ecosystem][:manifest].read : params[:ecosystem][:manifest].to_s
+    create_book_import_job(manifest_content, params[:ecosystem][:comments])
     flash[:notice] = 'Ecosystem import job queued.'
 
     redirect_to ecosystems_path
