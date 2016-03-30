@@ -20,9 +20,13 @@ module Manager::EcosystemsActions
 
   def create
     OSU::AccessPolicy.require_action_allowed!(:create, current_user, Content::Ecosystem)
-    manifest_content = params[:ecosystem][:manifest].respond_to?(:read) ? \
-                         params[:ecosystem][:manifest].read : params[:ecosystem][:manifest].to_s
-    create_book_import_job(manifest_content, params[:ecosystem][:comments])
+    ecosystem_params = params[:ecosystem] || {}
+    manifest_content = ecosystem_params[:manifest].respond_to?(:read) ? \
+                         ecosystem_params[:manifest].read : ecosystem_params[:manifest].to_s
+    update_book = ecosystem_params[:update_book].to_i > 0
+    unlock_exercises = ecosystem_params[:unlock_exercises].to_i > 0
+    create_book_import_job(manifest_content, ecosystem_params[:comments],
+                           update_book, unlock_exercises)
     flash[:notice] = 'Ecosystem import job queued.'
 
     redirect_to ecosystems_path
@@ -56,15 +60,19 @@ module Manager::EcosystemsActions
     @ecosystem = Content::Ecosystem.find(params[:id])
   end
 
-  def create_book_import_job(manifest_content, comments)
+  def create_book_import_job(manifest_content, comments, update_book, unlock_exercises)
     manifest = Content::Manifest.from_yaml(manifest_content)
+
+    manifest.update_book! if update_book
+    manifest.unlock_exercises! if unlock_exercises
+
     job_id = ImportEcosystemManifest.perform_later(
       manifest: manifest,
       comments: comments
     )
     job = Jobba.find(job_id)
-    cnx_id = manifest.book_cnx_ids.first
-    import_url = Addressable::URI.join(manifest.archive_url, '/contents/', cnx_id).to_s
+    book_id = manifest.book_ids.first
+    import_url = Addressable::URI.join(manifest.archive_url, '/contents/', book_id).to_s
     job.save(ecosystem_import_url: import_url)
     job
   end

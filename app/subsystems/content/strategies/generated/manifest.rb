@@ -13,20 +13,8 @@ module Content
 
         def initialize(hash:)
           @hash = HashWithIndifferentAccess.new(hash).slice(
-            :archive_url, :ecosystem_title, :book_uuids, :book_versions,
-            :exercise_numbers, :exercise_versions
+            :ecosystem_title, :archive_url, :book_ids, :exercise_ids
           )
-        end
-
-        def valid?
-          ecosystem_title.present? && \
-          book_uuids.present? && book_versions.present? && \
-          book_uuids.size == book_versions.size && \
-          exercise_numbers.size == exercise_versions.size && \
-          book_uuids.all?{ |uuid| uuid.is_a?(::Content::Uuid) && uuid.valid? } && \
-          book_versions.all?{ |version| version.is_a? String } && \
-          exercise_numbers.all?{ |number| number.is_a? Integer } && \
-          exercise_versions.all?{ |version| version.is_a? Integer }
         end
 
         def ecosystem_title
@@ -37,30 +25,29 @@ module Content
           @hash[:archive_url]
         end
 
-        def book_uuids
-          @hash[:book_uuids].to_a.map{ |uuid| ::Content::Uuid.new(uuid) }
+        def book_ids
+          @hash[:book_ids].to_a
         end
 
-        def book_versions
-          @hash[:book_versions].to_a.map(&:to_s)
+        def exercise_ids
+          @hash[:exercise_ids]
         end
 
-        def book_cnx_ids
-          versions = book_versions
-          book_uuids.each_with_index.map{ |uuid, idx| "#{uuid}@#{versions[idx]}" }
+        def valid?
+          ecosystem_title.present? && \
+          book_ids.present? && book_ids.first.present? && \
+          book_ids.all?{ |id| id.is_a? String } && \
+          (exercise_ids.nil? || exercise_ids.all?{ |id| id.is_a? String })
         end
 
-        def exercise_numbers
-          @hash[:exercise_numbers].to_a
+        def update_book!
+          @hash[:book_ids] = @hash[:book_ids].map{ |book_id| book_id.split('@').first }
+          self
         end
 
-        def exercise_versions
-          @hash[:exercise_versions].to_a
-        end
-
-        def exercise_uids
-          versions = exercise_versions
-          exercise_numbers.each_with_index.map{ |number, idx| "#{number}@#{versions[idx]}" }
+        def unlock_exercises!
+          @hash.delete(:exercise_ids)
+          self
         end
 
       end

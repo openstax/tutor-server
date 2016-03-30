@@ -19,31 +19,29 @@ module Content
     end
 
     def archive_url
-      verify_and_return @strategy.archive_url, klass: String, error: StrategyError
+      verify_and_return @strategy.archive_url, klass: String, error: StrategyError, allow_nil: true
     end
 
-    def book_uuids
-      verify_and_return @strategy.book_uuids, klass: ::Content::Uuid, error: StrategyError
+    def book_ids
+      verify_and_return @strategy.book_ids, klass: String, error: StrategyError
     end
 
-    def book_versions
-      verify_and_return @strategy.book_versions, klass: String, error: StrategyError
+    def exercise_ids
+      verify_and_return @strategy.exercise_ids, klass: String, error: StrategyError, allow_nil: true
     end
 
-    def book_cnx_ids
-      verify_and_return @strategy.book_cnx_ids, klass: String, error: StrategyError
+    def valid?
+      !!@strategy.valid?
     end
 
-    def exercise_numbers
-      verify_and_return @strategy.exercise_numbers, klass: Integer, error: StrategyError
+    def update_book!
+      verify_and_return @strategy.update_book!, klass: @strategy.class, error: StrategyError
+      self
     end
 
-    def exercise_versions
-      verify_and_return @strategy.exercise_versions, klass: Integer, error: StrategyError
-    end
-
-    def exercise_uids
-      verify_and_return @strategy.exercise_uids, klass: String, error: StrategyError
+    def unlock_exercises!
+      verify_and_return @strategy.unlock_exercises!, klass: @strategy.class, error: StrategyError
+      self
     end
 
   end

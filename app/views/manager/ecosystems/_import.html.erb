@@ -9,6 +9,16 @@
     <%= f.text_field :comments, class: 'form-control' %>
   </div>
 
+  <div class="form-group">
+    <%= f.label :update_book, 'Update book version in the manifest' %>
+    <%= f.check_box :update_book, class: 'form-control' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :unlock_exercises, 'Update exercises in the manifest (numbers and versions)' %>
+    <%= f.check_box :unlock_exercises, class: 'form-control' %>
+  </div>
+
   <%= f.submit 'Import', class: 'btn btn-default',
                          data: { disable_with: 'Import will likely take a while...' } %>
 <% end %>

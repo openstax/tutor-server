@@ -85,14 +85,10 @@ module Content
         end
 
         def manifest
-          sorted_books = books.sort_by{ |bk| [bk.uuid, bk.version] }
-          sorted_exercises = exercises.sort_by{ |ex| [ex.number, ex.version] }
           hash = {
             ecosystem_title: title,
-            book_uuids: sorted_books.map{ |book| book.uuid.to_s },
-            book_versions: sorted_books.map(&:version),
-            exercise_numbers: sorted_exercises.map(&:number),
-            exercise_versions: sorted_exercises.map(&:version)
+            book_ids: books.map(&:cnx_id).sort,
+            exercise_ids: exercises.map(&:uid).sort
           }
           strategy = ::Content::Strategies::Generated::Manifest.new(hash: hash)
           ::Content::Manifest.new(strategy: strategy)

@@ -53,8 +53,7 @@ module Content
     end
 
     def manifest
-      verify_and_return @strategy.manifest, klass: ::Content::Manifest,
-                                            error: StrategyError
+      verify_and_return @strategy.manifest, klass: ::Content::Manifest, error: StrategyError
     end
 
     def books
