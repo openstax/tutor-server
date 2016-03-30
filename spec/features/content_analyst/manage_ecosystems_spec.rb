@@ -14,33 +14,36 @@ RSpec.describe 'Content Analyst', speed: :slow, vcr: VCR_OPTS do
     click_link 'Ecosystems'
   end
 
-  scenario 'imports a book' do
+  scenario 'imports a tutor book' do
     click_link 'Import a new Ecosystem'
 
-    fill_in 'Archive url', with: 'https://archive-staging-tutor.cnx.org/contents/'
-    fill_in 'Book CNX id', with: '93e2b09d-261c-4007-a987-0b3062fe154b@4.4'
+    attach_file('Ecosystem Manifest (.yml)',
+                File.absolute_path('spec/fixtures/content/sample_tutor_manifest.yml'))
     fill_in 'Comments', with: 'This version includes typo fixes to quantum equations'
     click_button 'Import'
 
     expect(page).to have_css('.flash_notice', text: 'Ecosystem import job queued.')
     expect(page).to have_css('td', text: 'Physics')
     expect(page).to have_css('td', text: '4.4')
-    expect(page).to have_field('ecosystem[comments]', with: 'This version includes typo fixes to quantum equations')
+    expect(page).to have_field('ecosystem[comments]',
+                               with: 'This version includes typo fixes to quantum equations')
     expect(page).to have_css('[data-content="93e2b09d-261c-4007-a987-0b3062fe154b"]')
   end
 
-  scenario 'imports a book without explicit archive url' do
+  scenario 'imports a cc book' do
     click_link 'Import a new Ecosystem'
 
-    fill_in 'Book CNX id', with: '93e2b09d-261c-4007-a987-0b3062fe154b@4.4'
-    fill_in 'Comments', with: 'This version includes typo fixes to quantum equations'
+    attach_file('Ecosystem Manifest (.yml)',
+                File.absolute_path('spec/fixtures/content/sample_cc_manifest.yml'))
+    fill_in 'Comments', with: 'This version includes typo fixes to genetic algorithms'
     click_button 'Import'
 
     expect(page).to have_css('.flash_notice', text: 'Ecosystem import job queued.')
-    expect(page).to have_css('td', text: 'Physics')
-    expect(page).to have_css('td', text: '4.4')
-    expect(page).to have_field('ecosystem[comments]', with: 'This version includes typo fixes to quantum equations')
-    expect(page).to have_css('[data-content="93e2b09d-261c-4007-a987-0b3062fe154b"]')
+    expect(page).to have_css('td', text: 'Mini CC Biology Tes Coll')
+    expect(page).to have_css('td', text: '2.1')
+    expect(page).to have_field('ecosystem[comments]',
+                               with: 'This version includes typo fixes to genetic algorithms')
+    expect(page).to have_css('[data-content="f10533ca-f803-490d-b935-88899941197f"]')
   end
 
   scenario 'edits ecosystem comments' do

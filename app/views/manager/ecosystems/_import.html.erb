@@ -1,6 +1,6 @@
-<%= lev_form_for :ecosystem do |f| %>
+<%= lev_form_for :ecosystem, url: ecosystems_path do |f| %>
   <div class="form-group">
-    <%= f.label :manifest, 'Ecosystem Manifest (yml file)' %>
+    <%= f.label :manifest, 'Ecosystem Manifest (.yml)' %>
     <%= f.file_field :manifest, class: 'form-control' %>
   </div>
 

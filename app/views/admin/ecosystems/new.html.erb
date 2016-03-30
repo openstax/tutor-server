@@ -1,3 +1,4 @@
 <% @page_header = 'Import a new Ecosystem' %>
 
-<%= render partial: 'manager/ecosystems/import' %>
+<%= render partial: 'manager/ecosystems/import',
+           locals: { ecosystems_path: admin_ecosystems_path } %>
