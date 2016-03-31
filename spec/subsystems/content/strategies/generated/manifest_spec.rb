@@ -45,6 +45,18 @@ RSpec.describe Content::Strategies::Generated::Manifest do
       book = manifest.books.first
       expect(book.archive_url).to eq 'https://archive-staging-tutor.cnx.org/'
       expect(book.cnx_id).to eq '93e2b09d-261c-4007-a987-0b3062fe154b@4.4'
+      expect(book.reading_features.reading_split_css).to(
+        eq ['.ost-assessed-feature', '.ost-feature']
+      )
+      expect(book.reading_features.video_split_css).to eq ['.ost-video']
+      expect(book.reading_features.interactive_split_css).to(
+        eq ['.os-interactive', '.ost-interactive']
+      )
+      expect(book.reading_features.required_exercise_css).to eq ['.os-exercise']
+      expect(book.reading_features.optional_exercise_css).to eq ['.ost-exercise-choice']
+      expect(book.reading_features.discard_css).to(
+        eq ['.ost-reading-discard', '.os-teacher', '[data-type="glossary"]']
+      )
       expect(book.exercise_ids).to eq expected_exercise_ids
     end
 
@@ -54,10 +66,10 @@ RSpec.describe Content::Strategies::Generated::Manifest do
   end
 
   context 'cc book' do
-    let(:fixture_path)          { 'spec/fixtures/content/sample_cc_manifest.yml' }
-    let(:manifest_yaml)         { File.open(fixture_path) { |file| file.read } }
-    let(:manifest)              { described_class.from_yaml(manifest_yaml) }
-    let(:expected_exercise_ids) {
+    let(:fixture_path)              { 'spec/fixtures/content/sample_cc_manifest.yml' }
+    let(:manifest_yaml)             { File.open(fixture_path) { |file| file.read } }
+    let(:manifest)                  { described_class.from_yaml(manifest_yaml) }
+    let(:expected_exercise_ids)     {
       [
         '2933@2', '2934@2', '2935@2', '2936@2', '2937@2', '2938@2', '2939@2', '2940@2',
         '2941@2', '2942@2', '2943@2', '2944@2', '2945@2', '2946@2', '2947@2', '2948@2',
@@ -77,6 +89,12 @@ RSpec.describe Content::Strategies::Generated::Manifest do
       book = manifest.books.first
       expect(book.archive_url).to eq 'https://archive.cnx.org/'
       expect(book.cnx_id).to eq 'f10533ca-f803-490d-b935-88899941197f@2.1'
+      expect(book.reading_features.reading_split_css).to eq []
+      expect(book.reading_features.video_split_css).to eq []
+      expect(book.reading_features.interactive_split_css).to eq []
+      expect(book.reading_features.required_exercise_css).to eq []
+      expect(book.reading_features.optional_exercise_css).to eq []
+      expect(book.reading_features.discard_css).to eq []
       expect(book.exercise_ids).to eq expected_exercise_ids
     end
 
