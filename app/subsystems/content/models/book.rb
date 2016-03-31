@@ -14,9 +14,20 @@ class Content::Models::Book < Tutor::SubSystems::BaseModel
   validates :uuid, presence: true
   validates :version, presence: true
 
+  def archive_url
+    Addressable::URI.parse(url).site
+  end
+
   def cnx_id
     "#{uuid}@#{version}"
   end
 
-end
+  def manifest_hash
+    {
+      archive_url: archive_url,
+      cnx_id: cnx_id,
+      exercise_ids: exercises.map(&:uid).sort
+    }
+  end
 
+end

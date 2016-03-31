@@ -5,8 +5,8 @@ module Content
 
         wraps ::Content::Models::Ecosystem
 
-        exposes :books, :chapters, :pages, :exercises, :pools, :tags, :title, :archive_url,
-                :comments, :created_at, :deletable?
+        exposes :books, :chapters, :pages, :exercises, :pools, :tags, :title, :comments,
+                :created_at, :deletable?, :manifest_hash
         exposes :all, :create, :create!, :find, :deletable?,
                 from_class: ::Content::Models::Ecosystem
 
@@ -23,17 +23,13 @@ module Content
           end
 
           alias_method :entity_create, :create
-          def create(title:, archive_url:, comments:)
-            ::Content::Ecosystem.new(strategy: entity_create(title: title,
-                                                             archive_url: archive_url,
-                                                             comments: comments))
+          def create(title:, comments:)
+            ::Content::Ecosystem.new(strategy: entity_create(title: title, comments: comments))
           end
 
           alias_method :entity_create!, :create!
-          def create!(title:, archive_url:, comments:)
-            ::Content::Ecosystem.new(strategy: entity_create!(title: title,
-                                                              archive_url: archive_url,
-                                                              comments: comments))
+          def create!(title:, comments:)
+            ::Content::Ecosystem.new(strategy: entity_create!(title: title, comments: comments))
           end
 
           alias_method :entity_find, :find
@@ -87,13 +83,7 @@ module Content
         end
 
         def manifest
-          hash = {
-            ecosystem_title: title,
-            archive_url: archive_url,
-            book_ids: books.map(&:cnx_id).sort,
-            exercise_ids: exercises.map(&:uid).sort
-          }
-          strategy = ::Content::Strategies::Generated::Manifest.new(hash: hash)
+          strategy = ::Content::Strategies::Generated::Manifest.new(hash: manifest_hash)
           ::Content::Manifest.new(strategy: strategy)
         end
 

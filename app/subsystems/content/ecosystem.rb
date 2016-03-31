@@ -8,22 +8,18 @@ module Content
         verify_and_return strategy_class.all, klass: self, error: StrategyError
       end
 
-      def create(title:, archive_url:, comments: nil,
-                 strategy_class: ::Content::Strategies::Direct::Ecosystem)
+      def create(title:, comments: nil, strategy_class: ::Content::Strategies::Direct::Ecosystem)
         title = verify_and_return title, klass: String
         comments = verify_and_return comments, allow_nil: true, allow_blank: true, klass: String
-        verify_and_return strategy_class.create(
-          title: title, archive_url: archive_url, comments: comments
-        ), klass: self, error: StrategyError
+        verify_and_return strategy_class.create(title: title, comments: comments),
+                          klass: self, error: StrategyError
       end
 
-      def create!(title:, archive_url:, comments: nil,
-                  strategy_class: ::Content::Strategies::Direct::Ecosystem)
+      def create!(title:, comments: nil, strategy_class: ::Content::Strategies::Direct::Ecosystem)
         title = verify_and_return title, klass: String
         comments = verify_and_return comments, allow_nil: true, allow_blank: true, klass: String
-        verify_and_return strategy_class.create!(
-          title: title, archive_url: archive_url, comments: comments
-        ), klass: self, error: StrategyError
+        verify_and_return strategy_class.create!(title: title, comments: comments),
+                          klass: self, error: StrategyError
       end
 
       def find(*args, strategy_class: ::Content::Strategies::Direct::Ecosystem)
@@ -158,10 +154,6 @@ module Content
 
     def title
       verify_and_return @strategy.title, klass: String, error: StrategyError
-    end
-
-    def archive_url
-      verify_and_return @strategy.archive_url, klass: String, error: StrategyError
     end
 
     def comments

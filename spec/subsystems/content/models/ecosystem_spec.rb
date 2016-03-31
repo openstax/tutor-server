@@ -13,5 +13,13 @@ RSpec.describe Content::Models::Ecosystem, type: :model do
   it { is_expected.to have_many(:pools) }
 
   it { is_expected.to validate_presence_of(:title) }
-  it { is_expected.to validate_presence_of(:archive_url) }
+
+  it 'can create a manifest hash' do
+    expect(ecosystem.manifest_hash).to eq(
+      {
+        title: ecosystem.title,
+        books: ecosystem.books.map(&:manifest_hash)
+      }
+    )
+  end
 end

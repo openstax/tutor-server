@@ -16,13 +16,14 @@ class ImportEcosystemManifest
 
   def self.fetch_and_import_routine_args(manifest:, comments:)
     # Handle only 1 book per ecosystem for now
-    raise IllegalState if manifest.book_ids.size != 1
+    raise IllegalState if manifest.books.size != 1
+    book = manifest.books.first
 
     {
-      archive_url: manifest.archive_url,
-      book_cnx_id: manifest.book_ids.first,
-      ecosystem_title: manifest.ecosystem_title,
-      exercise_uids: manifest.exercise_ids,
+      ecosystem_title: manifest.title,
+      archive_url: book.archive_url,
+      book_cnx_id: book.cnx_id,
+      exercise_uids: book.exercise_ids,
       comments: comments
     }
   end

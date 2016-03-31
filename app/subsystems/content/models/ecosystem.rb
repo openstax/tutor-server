@@ -18,12 +18,19 @@ module Content
 
       has_many :tags, dependent: :destroy, inverse_of: :ecosystem
 
-      validates :title, :archive_url, presence: true
+      validates :title, presence: true
 
       default_scope -> { order(created_at: :desc) }
 
       def deletable?
         courses.empty?
+      end
+
+      def manifest_hash
+        {
+          title: title,
+          books: books.map(&:manifest_hash)
+        }
       end
 
     end

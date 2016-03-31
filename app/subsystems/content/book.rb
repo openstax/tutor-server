@@ -11,6 +11,10 @@ module Content
       verify_and_return @strategy.url, klass: String, error: StrategyError
     end
 
+    def archive_url
+      verify_and_return @strategy.archive_url, klass: String, error: StrategyError
+    end
+
     def uuid
       verify_and_return @strategy.uuid, klass: String, error: StrategyError
     end
@@ -37,6 +41,10 @@ module Content
 
     def pages
       verify_and_return @strategy.pages, klass: ::Content::Page, error: StrategyError
+    end
+
+    def exercises
+      verify_and_return @strategy.exercises, klass: ::Content::Exercise, error: StrategyError
     end
 
   end

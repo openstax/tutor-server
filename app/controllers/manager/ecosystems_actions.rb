@@ -71,8 +71,8 @@ module Manager::EcosystemsActions
       comments: comments
     )
     job = Jobba.find(job_id)
-    book_id = manifest.book_ids.first
-    import_url = Addressable::URI.join(manifest.archive_url, '/contents/', book_id).to_s
+    book = manifest.books.first
+    import_url = Addressable::URI.join(book.archive_url, '/contents/', book.cnx_id).to_s
     job.save(ecosystem_import_url: import_url)
     job
   end
