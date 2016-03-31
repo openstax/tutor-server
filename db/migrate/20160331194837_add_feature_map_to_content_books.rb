@@ -26,7 +26,7 @@ class AddFeatureMapToContentBooks < ActiveRecord::Migration
           book.video_split_css       = ['.ost-video']
           book.interactive_split_css = ['.os-interactive', '.ost-interactive']
           book.required_exercise_css = ['.os-exercise']
-          book.optional_exercise_css = ['.ost-exercise-choice', '.worked-example']
+          book.optional_exercise_css = ['.ost-exercise-choice']
           book.discard_css           = ['.ost-reading-discard', '.os-teacher',
                                         '[data-type="glossary"]']
           book.save!

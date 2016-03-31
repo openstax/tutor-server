@@ -22,12 +22,21 @@ class Content::Models::Book < Tutor::SubSystems::BaseModel
     "#{uuid}@#{version}"
   end
 
-  def manifest_hash
+  def reading_features_hash
     {
-      archive_url: archive_url,
-      cnx_id: cnx_id,
-      exercise_ids: exercises.map(&:uid).sort
+      reading_features: attributes.slice(
+        'reading_split_css', 'video_split_css', 'interactive_split_css',
+        'required_exercise_css', 'optional_exercise_css', 'discard_css'
+      ).symbolize_keys
     }
+  end
+
+  def manifest_hash
+    book_hash = { archive_url: archive_url, cnx_id: cnx_id }
+    exercises_hash = { exercise_ids: exercises.map(&:uid).sort }
+
+    # Craft the hash key order for readability purposes
+    book_hash.merge(reading_features_hash).merge(exercises_hash)
   end
 
 end

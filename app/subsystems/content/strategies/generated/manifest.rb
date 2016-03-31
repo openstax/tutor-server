@@ -5,8 +5,41 @@ module Content
 
         class Book
 
+          class ReadingFeatures
+
+            def initialize(hash:)
+              @hash = hash.slice('reading_split_css', 'video_split_css', 'interactive_split_css',
+                                 'required_exercise_css', 'optional_exercise_css', 'discard_css')
+            end
+
+            def reading_split_css
+              @hash['reading_split_css']
+            end
+
+            def video_split_css
+              @hash['video_split_css']
+            end
+
+            def interactive_split_css
+              @hash['interactive_split_css']
+            end
+
+            def required_exercise_css
+              @hash['required_exercise_css']
+            end
+
+            def optional_exercise_css
+              @hash['optional_exercise_css']
+            end
+
+            def discard_css
+              @hash['discard_css']
+            end
+
+          end
+
           def initialize(hash:)
-            @hash = hash.slice('archive_url', 'cnx_id', 'exercise_ids')
+            @hash = hash.slice('archive_url', 'cnx_id', 'reading_features', 'exercise_ids')
           end
 
           def archive_url
@@ -15,6 +48,13 @@ module Content
 
           def cnx_id
             @hash['cnx_id']
+          end
+
+          def reading_features
+            strategy = ::Content::Strategies::Generated::Manifest::Book::ReadingFeatures.new(
+              hash: @hash['reading_features']
+            )
+            ::Content::Manifest::Book::ReadingFeatures.new(strategy: strategy)
           end
 
           def exercise_ids

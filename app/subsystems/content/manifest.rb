@@ -3,6 +3,35 @@ module Content
 
     class Book
 
+      class ReadingFeatures
+
+        include Wrapper
+
+        def reading_split_css
+          verify_and_return @strategy.reading_split_css, klass: String, error: StrategyError
+        end
+
+        def video_split_css
+          verify_and_return @strategy.video_split_css, klass: String, error: StrategyError
+        end
+
+        def interactive_split_css
+          verify_and_return @strategy.interactive_split_css, klass: String, error: StrategyError
+        end
+
+        def required_exercise_css
+          verify_and_return @strategy.required_exercise_css, klass: String, error: StrategyError
+        end
+
+        def optional_exercise_css
+          verify_and_return @strategy.optional_exercise_css, klass: String, error: StrategyError
+        end
+
+        def discard_css
+          verify_and_return @strategy.discard_css, klass: String, error: StrategyError
+        end
+      end
+
       include Wrapper
 
       def archive_url
@@ -12,6 +41,11 @@ module Content
 
       def cnx_id
         verify_and_return @strategy.cnx_id, klass: String, error: StrategyError
+      end
+
+      def reading_features
+        verify_and_return @strategy.reading_features,
+                          klass: ::Content::Manifest::Book::ReadingFeatures, error: StrategyError
       end
 
       def exercise_ids
