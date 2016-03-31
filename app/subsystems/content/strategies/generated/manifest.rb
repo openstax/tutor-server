@@ -6,6 +6,31 @@ module Content
         class Book < Hashie::Mash
 
           class ReadingFeatures < Hashie::Mash
+
+            def reading_split_css
+              super.to_a
+            end
+
+            def video_split_css
+              super.to_a
+            end
+
+            def interactive_split_css
+              super.to_a
+            end
+
+            def required_exercise_css
+              super.to_a
+            end
+
+            def optional_exercise_css
+              super.to_a
+            end
+
+            def discard_css
+              super.to_a
+            end
+
           end
 
           def to_h
