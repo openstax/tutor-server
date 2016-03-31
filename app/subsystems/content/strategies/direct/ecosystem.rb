@@ -83,7 +83,7 @@ module Content
         end
 
         def manifest
-          strategy = ::Content::Strategies::Generated::Manifest.new(hash: manifest_hash)
+          strategy = ::Content::Strategies::Generated::Manifest.new(manifest_hash)
           ::Content::Manifest.new(strategy: strategy)
         end
 
