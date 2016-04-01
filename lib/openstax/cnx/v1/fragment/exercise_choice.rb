@@ -8,13 +8,14 @@ module OpenStax::Cnx::V1::Fragment
     # For fragments missing a proper title
     DEFAULT_TITLE = nil
 
-    # Split the exercise fragments on this class
-    EXERCISE_CSS = '.os-exercise'
+    attr_reader :exercise_css
 
-    def initialize(node:, title: nil, exercise_fragments: nil)
+    def initialize(node:, exercise_css:, title: nil, exercise_fragments: nil)
       @node               = node
+      @exercise_css       = exercise_css
       @title              = title
       @exercise_fragments = exercise_fragments
+      add_labels('worked-example') if self.exercise_fragments.empty?
     end
 
     attr_reader :node
@@ -24,7 +25,7 @@ module OpenStax::Cnx::V1::Fragment
     end
 
     def exercise_fragments
-      @exercise_fragments ||= node.css(EXERCISE_CSS).collect do |ex_node|
+      @exercise_fragments ||= node.css(exercise_css).map do |ex_node|
         Exercise.new(node: ex_node)
       end
     end

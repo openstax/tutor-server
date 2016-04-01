@@ -19,11 +19,11 @@ RSpec.describe Content::Models::Book, type: :model do
         archive_url: book.archive_url,
         cnx_id: book.cnx_id,
         reading_features: {
-          reading_split_css: [],
-          video_split_css: [],
-          interactive_split_css: [],
-          required_exercise_css: [],
-          optional_exercise_css: [],
+          split_reading_css: [],
+          split_video_css: [],
+          split_interactice_css: [],
+          split_required_exercise_css: [],
+          split_optional_exercise_css: [],
           discard_css: []
         },
         exercise_ids: book.exercises.map(&:uid).sort

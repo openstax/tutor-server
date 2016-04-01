@@ -1,9 +1,8 @@
 module OpenStax::Cnx::V1::Fragment
   class Feature
     include ActsAsFragment
-    include OpenStax::Cnx::V1::FragmentSplitter
 
-    def initialize(node:)
+    def initialize(node:, fragment_splitter:)
       @node = node
     end
 
@@ -14,7 +13,7 @@ module OpenStax::Cnx::V1::Fragment
     end
 
     def fragments
-      @fragments ||= split_into_fragments(node, true)
+      @fragments ||= fragment_splitter.split_into_fragments(node, true)
     end
 
     def to_html

@@ -45,15 +45,15 @@ RSpec.describe Content::Strategies::Generated::Manifest do
       book = manifest.books.first
       expect(book.archive_url).to eq 'https://archive-staging-tutor.cnx.org/'
       expect(book.cnx_id).to eq '93e2b09d-261c-4007-a987-0b3062fe154b@4.4'
-      expect(book.reading_features.reading_split_css).to(
+      expect(book.reading_features.split_reading_css).to(
         eq ['.ost-assessed-feature', '.ost-feature']
       )
-      expect(book.reading_features.video_split_css).to eq ['.ost-video']
-      expect(book.reading_features.interactive_split_css).to(
+      expect(book.reading_features.split_video_css).to eq ['.ost-video']
+      expect(book.reading_features.split_interactive_css).to(
         eq ['.os-interactive', '.ost-interactive']
       )
-      expect(book.reading_features.required_exercise_css).to eq ['.os-exercise']
-      expect(book.reading_features.optional_exercise_css).to eq ['.ost-exercise-choice']
+      expect(book.reading_features.split_required_exercise_css).to eq ['.os-exercise']
+      expect(book.reading_features.split_optional_exercise_css).to eq ['.ost-exercise-choice']
       expect(book.reading_features.discard_css).to(
         eq ['.ost-reading-discard', '.os-teacher', '[data-type="glossary"]']
       )
@@ -89,11 +89,11 @@ RSpec.describe Content::Strategies::Generated::Manifest do
       book = manifest.books.first
       expect(book.archive_url).to eq 'https://archive.cnx.org/'
       expect(book.cnx_id).to eq 'f10533ca-f803-490d-b935-88899941197f@2.1'
-      expect(book.reading_features.reading_split_css).to eq []
-      expect(book.reading_features.video_split_css).to eq []
-      expect(book.reading_features.interactive_split_css).to eq []
-      expect(book.reading_features.required_exercise_css).to eq []
-      expect(book.reading_features.optional_exercise_css).to eq []
+      expect(book.reading_features.split_reading_css).to eq []
+      expect(book.reading_features.split_video_css).to eq []
+      expect(book.reading_features.split_interactive_css).to eq []
+      expect(book.reading_features.split_required_exercise_css).to eq []
+      expect(book.reading_features.split_optional_exercise_css).to eq []
       expect(book.reading_features.discard_css).to eq []
       expect(book.exercise_ids).to eq expected_exercise_ids
     end

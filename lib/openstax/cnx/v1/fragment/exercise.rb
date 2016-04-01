@@ -47,19 +47,18 @@ module OpenStax::Cnx::V1::Fragment
       true
     end
 
-    def self.absolutize_url(node)
-      link = node.at_css(EMBED_CODE_CSS)
-      return if link.nil?
+    def self.absolutize_exercise_urls(node)
+      node.css(EMBED_CODE_CSS).each do |link|
+        href = link.attribute('href')
+        next if href.nil?
 
-      href = link.attribute('href')
-      return if href.nil?
+        exercises_url = OpenStax::Exercises::V1.configuration.server_url
+        uri = Addressable::URI.join(exercises_url, '/api/exercises')
 
-      exercises_url = OpenStax::Exercises::V1.configuration.server_url
-      uri = Addressable::URI.join(exercises_url, '/api/exercises')
-
-      short_code = EMBED_TAG_REGEX.match(href.value).try(:[], 1)
-      uri.query_values = { q: "tag:#{short_code}" }
-      href.value = uri.to_s
+        short_code = EMBED_TAG_REGEX.match(href.value).try(:[], 1)
+        uri.query_values = { q: "tag:#{short_code}" }
+        href.value = uri.to_s
+      end
     end
 
   end

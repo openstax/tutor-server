@@ -1,70 +1,53 @@
 module OpenStax::Cnx::V1
-  module FragmentSplitter
+  class FragmentSplitter
 
     include HtmlTreeOperations
 
-    # Just a page break
-    FEATURE_CLASSES = ['ost-assessed-feature', 'ost-feature']
+    attr_reader :split_reading_css, :split_video_css, :split_interactive_css,
+                :split_required_exercise_css, :split_optional_exercise_css,
+                :discard_css, :split_css
 
-    # Exercise choice fragment
-    EXERCISE_CHOICE_CLASS = 'ost-exercise-choice'
 
-    # Exercise fragment
-    EXERCISE_CLASS = 'os-exercise'
-
-    # Interactive fragment
-    INTERACTIVE_CLASSES = ['os-interactive', 'ost-interactive']
-
-    # Video fragment
-    VIDEO_CLASS = 'ost-video'
-
-    # Split fragments on these
-    SPLIT_CSS = [FEATURE_CLASSES, EXERCISE_CHOICE_CLASS, EXERCISE_CLASS,
-                 INTERACTIVE_CLASSES, VIDEO_CLASS].flatten.collect{ |c| ".#{c}" }.join(', ')
-
-    protected
-
-    def node_to_fragment(node, skip_features)
-      klass = node['class'] || []
-
-      fragment =
-        if FEATURE_CLASSES.any? { |feature_class| klass.include?(feature_class) } && !skip_features
-          Fragment::Feature.new(node: node)
-        elsif INTERACTIVE_CLASSES.any? { |interactive_class| klass.include?(interactive_class) }
-          Fragment::Interactive.new(node: node)
-        elsif klass.include?(VIDEO_CLASS)
-          Fragment::Video.new(node: node)
-        elsif klass.include?(EXERCISE_CHOICE_CLASS)
-          Fragment::ExerciseChoice.new(node: node)
-        elsif klass.include?(EXERCISE_CLASS)
-          Fragment::Exercise.new(node: node)
-        else
-          Fragment::Text.new(node: node)
-        end
-
-      fragment.add_labels('worked-example') if klass.include?('worked-example')
-      fragment
+    def initialize(hash)
+      reading_css_array = hash[:split_reading_css].to_a
+      @split_reading_css = reading_css_array.join(', ')
+      video_css_array = hash[:split_video_css].to_a
+      @split_video_css = video_css_array.join(', ')
+      interactive_css_array = hash[:split_interactive_css].to_a
+      @split_interactive_css = interactive_css_array.join(', ')
+      required_exercise_css_array = hash[:split_required_exercise_css]
+      @split_required_exercise_css = required_exercise_css_array.join(', ')
+      optional_exercise_css_array = hash[:split_optional_exercise_css]
+      @split_optional_exercise_css = optional_exercise_css_array.join(', ')
+      @discard_css = hash[:discard_css].to_a.join(', ')
+      @split_css = (reading_css_array + video_css_array + interactive_css_array +
+                    required_exercise_css_array + optional_exercise_css_array).uniq.join(', ')
     end
 
-    def split_into_fragments(node, skip_features = false)
+    def dup_and_remove_discarded_css(node)
+      node_copy = node.dup
+      node_copy.css(discard_css).remove unless discard_css.blank?
+    end
+
+    def split_into_fragments(node, skip_feature = false)
+      return [] if split_css.blank?
+
       fragments = []
 
       # Initialize current_node
       current_node = node
 
       # Find first split
-      split = current_node.at_css(SPLIT_CSS)
+      split = current_node.at_css(split_css)
 
       # Split the root and collect the TaskStep attributes
       while !split.nil? do
-        klass = split['class']
-
         # Get a single fragment for the given node
-        splitting_fragment = node_to_fragment(split, skip_features)
+        splitting_fragment = node_to_fragment(split, skip_feature)
 
         # Copy the node content and find the same split CSS in the copy
         next_node = current_node.dup
-        split_copy = next_node.at_css(SPLIT_CSS)
+        split_copy = next_node.at_css(split_css)
 
         # One copy retains the content before the split;
         # the other retains the content after the split
@@ -77,22 +60,40 @@ module OpenStax::Cnx::V1
 
         # Create text fragment before current split
         unless current_node.content.blank?
-          fragments << node_to_fragment(current_node, skip_features)
+          fragments << node_to_fragment(current_node, skip_feature)
         end
 
         # Add contents from splitting fragments
         fragments << splitting_fragment
 
         current_node = next_node
-        split = current_node.at_css(SPLIT_CSS)
+        split = current_node.at_css(split_css)
       end
 
       # Create text fragment after all splits
       unless current_node.content.blank?
-        fragments << node_to_fragment(current_node, skip_features)
+        fragments << node_to_fragment(current_node, skip_feature)
       end
 
       fragments
+    end
+
+    protected
+
+    def node_to_fragment(node, skip_feature)
+      if !skip_feature && split_reading_css.present? && node.matches?(split_reading_css)
+        Fragment::Feature.new(node: node, fragment_splitter: self)
+      elsif split_video_css.present? && node.matches?(split_video_css)
+        Fragment::Video.new(node: node)
+      elsif split_interactive_css.present? && node.matches?(split_interactive_css)
+        Fragment::Interactive.new(node: node)
+      elsif split_required_exercise_css.present? && node.matches?(split_required_exercise_css)
+        Fragment::Exercise.new(node: node)
+      elsif split_optional_exercise_css.present? && node.matches?(split_optional_exercise_css)
+        Fragment::ExerciseChoice.new(node: node, exercise_css: split_required_exercise_css)
+      else
+        Fragment::Text.new(node: node)
+      end
     end
 
   end

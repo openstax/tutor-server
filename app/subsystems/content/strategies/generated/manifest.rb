@@ -7,23 +7,23 @@ module Content
 
           class ReadingFeatures < Hashie::Mash
 
-            def reading_split_css
+            def split_reading_css
               super.to_a
             end
 
-            def video_split_css
+            def split_video_css
               super.to_a
             end
 
-            def interactive_split_css
+            def split_interactive_css
               super.to_a
             end
 
-            def required_exercise_css
+            def split_required_exercise_css
               super.to_a
             end
 
-            def optional_exercise_css
+            def split_optional_exercise_css
               super.to_a
             end
 
@@ -34,7 +34,7 @@ module Content
           end
 
           def to_h
-            super.merge('reading_features' => reading_features._strategy.to_h)
+            super.merge('reading_features' => reading_features.to_h)
           end
 
           def reading_features
@@ -63,7 +63,7 @@ module Content
         end
 
         def to_h
-          super.merge('books' => books.map{ |book| book._strategy.to_h })
+          super.merge('books' => books.map(&:to_h))
         end
 
         def to_yaml

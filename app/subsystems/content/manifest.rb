@@ -7,32 +7,43 @@ module Content
 
         include Wrapper
 
-        def reading_split_css
-          verify_and_return @strategy.reading_split_css, klass: String, error: StrategyError
+        def to_h
+          verify_and_return @strategy.to_h, klass: Hash, error: StrategyError
         end
 
-        def video_split_css
-          verify_and_return @strategy.video_split_css, klass: String, error: StrategyError
+        def split_reading_css
+          verify_and_return @strategy.split_reading_css, klass: String, error: StrategyError
         end
 
-        def interactive_split_css
-          verify_and_return @strategy.interactive_split_css, klass: String, error: StrategyError
+        def split_video_css
+          verify_and_return @strategy.split_video_css, klass: String, error: StrategyError
         end
 
-        def required_exercise_css
-          verify_and_return @strategy.required_exercise_css, klass: String, error: StrategyError
+        def split_interactive_css
+          verify_and_return @strategy.split_interactive_css, klass: String, error: StrategyError
         end
 
-        def optional_exercise_css
-          verify_and_return @strategy.optional_exercise_css, klass: String, error: StrategyError
+        def split_required_exercise_css
+          verify_and_return @strategy.split_required_exercise_css, klass: String,
+                                                                   error: StrategyError
+        end
+
+        def split_optional_exercise_css
+          verify_and_return @strategy.split_optional_exercise_css, klass: String,
+                                                                   error: StrategyError
         end
 
         def discard_css
           verify_and_return @strategy.discard_css, klass: String, error: StrategyError
         end
+
       end
 
       include Wrapper
+
+      def to_h
+        verify_and_return @strategy.to_h, klass: Hash, error: StrategyError
+      end
 
       def archive_url
         verify_and_return @strategy.archive_url, klass: String, error: StrategyError,
@@ -74,6 +85,10 @@ module Content
       strategy = verify_and_return strategy_class.from_yaml(yaml), klass: strategy_class,
                                                                    error: StrategyError
       new(strategy: strategy)
+    end
+
+    def to_h
+      verify_and_return @strategy.to_h, klass: Hash, error: StrategyError
     end
 
     def to_yaml

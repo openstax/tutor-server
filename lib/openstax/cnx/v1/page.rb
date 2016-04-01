@@ -1,13 +1,8 @@
 module OpenStax::Cnx::V1
   class Page
 
-    include FragmentSplitter
-
     # Start parsing here
     ROOT_CSS = 'html > body'
-
-    # Remove completely
-    DISCARD_CSS = '.ost-reading-discard, .os-teacher, [data-type="glossary"]'
 
     # Find snap lab notes
     SNAP_LAB_CSS = '.snap-lab'
@@ -130,9 +125,7 @@ module OpenStax::Cnx::V1
       end
 
       # Absolutize exercise links
-      @converted_doc.css(".#{EXERCISE_CLASS}").each do |exercise|
-        Fragment::Exercise.absolutize_url(exercise)
-      end
+      Fragment::Exercise.absolutize_exercise_urls(@converted_doc)
 
       @converted_doc
     end
@@ -145,21 +138,12 @@ module OpenStax::Cnx::V1
       @converted_root ||= converted_doc.at_css(ROOT_CSS)
     end
 
-    def fragments
-      return @fragments unless @fragments.nil?
-
-      root_copy = converted_root.dup
-      root_copy.css(DISCARD_CSS).remove
-
-      @fragments = split_into_fragments(root_copy)
-    end
-
-    def snap_labs
+    def snap_labs(fragment_splitter:)
       converted_root.css(SNAP_LAB_CSS).collect { |snap_lab|
         {
           id: snap_lab.attr('id'),
           title: snap_lab.at_css(SNAP_LAB_TITLE_CSS).try(:text),
-          fragments: split_into_fragments(snap_lab)
+          fragments: fragment_splitter.split_into_fragments(snap_lab)
         }
       }
     end

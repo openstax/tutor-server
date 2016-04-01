@@ -35,20 +35,20 @@ ActiveRecord::Schema.define(version: 20160331194837) do
   add_index "catalog_offerings", ["salesforce_book_name"], name: "index_catalog_offerings_on_salesforce_book_name", unique: true, using: :btree
 
   create_table "content_books", force: :cascade do |t|
-    t.string   "url",                                null: false
+    t.string   "url",                                      null: false
     t.text     "content"
-    t.integer  "content_ecosystem_id",               null: false
-    t.string   "title",                              null: false
-    t.string   "uuid",                               null: false
-    t.string   "version",                            null: false
-    t.datetime "created_at",                         null: false
-    t.datetime "updated_at",                         null: false
-    t.string   "reading_split_css",     default: [], null: false, array: true
-    t.string   "video_split_css",       default: [], null: false, array: true
-    t.string   "interactive_split_css", default: [], null: false, array: true
-    t.string   "required_exercise_css", default: [], null: false, array: true
-    t.string   "optional_exercise_css", default: [], null: false, array: true
-    t.string   "discard_css",           default: [], null: false, array: true
+    t.integer  "content_ecosystem_id",                     null: false
+    t.string   "title",                                    null: false
+    t.string   "uuid",                                     null: false
+    t.string   "version",                                  null: false
+    t.datetime "created_at",                               null: false
+    t.datetime "updated_at",                               null: false
+    t.string   "split_reading_css",           default: [], null: false, array: true
+    t.string   "split_video_css",             default: [], null: false, array: true
+    t.string   "split_interactive_css",       default: [], null: false, array: true
+    t.string   "split_required_exercise_css", default: [], null: false, array: true
+    t.string   "split_optional_exercise_css", default: [], null: false, array: true
+    t.string   "discard_css",                 default: [], null: false, array: true
   end
 
   add_index "content_books", ["content_ecosystem_id"], name: "index_content_books_on_content_ecosystem_id", using: :btree

@@ -4,17 +4,17 @@ books:
 - archive_url: https://archive-staging-tutor.cnx.org/
   cnx_id: 93e2b09d-261c-4007-a987-0b3062fe154b@4.4
   reading_features:
-    reading_split_css:
+    split_reading_css:
     - ".ost-assessed-feature"
     - ".ost-feature"
-    video_split_css:
+    split_video_css:
     - ".ost-video"
-    interactive_split_css:
+    split_interactive_css:
     - ".os-interactive"
     - ".ost-interactive"
-    required_exercise_css:
+    split_required_exercise_css:
     - ".os-exercise"
-    optional_exercise_css:
+    split_optional_exercise_css:
     - ".ost-exercise-choice"
     discard_css:
     - ".ost-reading-discard"

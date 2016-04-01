@@ -1,5 +1,10 @@
 class Content::Models::Book < Tutor::SubSystems::BaseModel
 
+  READING_FEATURE_FIELDS = [
+    'split_reading_css', 'split_video_css', 'split_interactive_css',
+    'split_required_exercise_css', 'split_optional_exercise_css', 'discard_css'
+  ]
+
   wrapped_by ::Content::Strategies::Direct::Book
 
   acts_as_resource
@@ -23,12 +28,7 @@ class Content::Models::Book < Tutor::SubSystems::BaseModel
   end
 
   def reading_features_hash
-    {
-      reading_features: attributes.slice(
-        'reading_split_css', 'video_split_css', 'interactive_split_css',
-        'required_exercise_css', 'optional_exercise_css', 'discard_css'
-      ).symbolize_keys
-    }
+    attributes.slice(*READING_FEATURE_FIELDS).symbolize_keys
   end
 
   def manifest_hash
@@ -36,7 +36,7 @@ class Content::Models::Book < Tutor::SubSystems::BaseModel
     exercises_hash = { exercise_ids: exercises.map(&:uid).sort }
 
     # Craft the hash key order for readability purposes
-    book_hash.merge(reading_features_hash).merge(exercises_hash)
+    book_hash.merge(reading_features: reading_features_hash).merge(exercises_hash)
   end
 
 end
