@@ -4,13 +4,7 @@ title: Mini CC Biology Tes Coll (f10533ca-f803-490d-b935-88899941197f@2.1) - 201
 books:
 - archive_url: https://archive.cnx.org/
   cnx_id: f10533ca-f803-490d-b935-88899941197f@2.1
-  reading_features:
-    split_reading_css: []
-    split_video_css: []
-    split_interactive_css: []
-    split_required_exercise_css: []
-    split_optional_exercise_css: []
-    discard_css: []
+  reading_processing_instructions: []
   exercise_ids:
   - 2933@2
   - 2934@2

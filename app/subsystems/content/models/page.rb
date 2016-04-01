@@ -48,13 +48,16 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
   def fragments
     return @fragments unless @fragments.nil?
 
-    root_copy = fragment_splitter.dup_and_remove_discarded_css(parser.converted_root)
-    @fragments = fragment_splitter.split_into_fragments(root_copy)
+    @fragments = fragment_splitter.split_into_fragments(parser.converted_root.dup)
   end
 
   def snap_labs
-    parser.snap_labs(fragment_splitter: fragment_splitter).collect do |snap_lab|
-      snap_lab.update(id: "#{self.id}:#{snap_lab[:id]}")
+    parser.snap_lab_nodes.map do |snap_lab_node|
+      {
+        id: "#{self.id}:#{snap_lab_node.attr('id')}",
+        title: parse.snap_lab_title(snap_lab_node),
+        fragments: fragment_splitter.split_into_fragments(snap_lab.dup)
+      }
     end
   end
 
@@ -65,7 +68,9 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
   end
 
   def fragment_splitter
-    @fragment_splitter ||= OpenStax::Cnx::V1::FragmentSplitter.new(book.reading_features_hash)
+    @fragment_splitter ||= OpenStax::Cnx::V1::FragmentSplitter.new(
+      book.reading_processing_instructions
+    )
   end
 
 end

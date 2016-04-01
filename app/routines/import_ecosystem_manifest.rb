@@ -31,7 +31,7 @@ class ImportEcosystemManifest
         ecosystem_title: manifest.title,
         archive_url: book.archive_url,
         book_cnx_id: book.cnx_id,
-        reading_features: book.reading_features,
+        reading_processing_instructions: book.reading_processing_instructions,
         exercise_uids: book.exercise_ids,
         comments: comments)
   end

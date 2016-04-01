@@ -3,23 +3,30 @@ title: Physics (93e2b09d-261c-4007-a987-0b3062fe154b@4.4) - 2016-03-30 00:09:53 
 books:
 - archive_url: https://archive-staging-tutor.cnx.org/
   cnx_id: 93e2b09d-261c-4007-a987-0b3062fe154b@4.4
-  reading_features:
-    split_reading_css:
-    - ".ost-assessed-feature"
-    - ".ost-feature"
-    split_video_css:
-    - ".ost-video"
-    split_interactive_css:
-    - ".os-interactive"
-    - ".ost-interactive"
-    split_required_exercise_css:
-    - ".os-exercise"
-    split_optional_exercise_css:
-    - ".ost-exercise-choice"
-    discard_css:
-    - ".ost-reading-discard"
-    - ".os-teacher"
-    - '[data-type="glossary"]'
+  reading_processing_instructions:
+    - css: '.ost-reading-discard, .os-teacher, [data-type="glossary"]'
+    - css: ".ost-feature > .os-exercise,
+            .ost-assessed-feature > .os-exercise,
+            .ost-exercise-choice > .os-exercise"
+      fragments:
+      - "random_exercise"
+    - css: ".os-exercise"
+      fragments:
+      - "exercise"
+    - css: ".ost-video"
+      fragments:
+      - "video"
+    - css: ".os-interactive, .ost-interactive"
+      fragments:
+      - "interactive"
+    - css: ".worked-example"
+      fragments:
+      - "reading"
+      labels:
+      - "worked-example"
+    - css: ".ost-feature, .ost-assessed-feature"
+      fragments:
+      - "reading"
   exercise_ids:
   - 1982@1
   - 1983@1

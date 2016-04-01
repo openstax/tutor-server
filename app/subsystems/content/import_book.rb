@@ -14,18 +14,16 @@ class Content::ImportBook
 
   # Imports and saves a Cnx::Book as a Content::Models::Book
   # Returns the Book object, Resource object and collection JSON as a hash
-  def exec(cnx_book:, ecosystem:, reading_features: nil, exercise_uids: nil)
-    reading_features = reading_features.to_h
-    reading_feature_fields = reading_features.slice(*Content::Models::Book::READING_FEATURE_FIELDS)
+  def exec(cnx_book:, ecosystem:, reading_processing_instructions: nil, exercise_uids: nil)
+    reading_processing_instructions = reading_processing_instructions.to_a
     book = Content::Models::Book.new(
-      reading_feature_fields.merge(
         url: cnx_book.canonical_url,
         uuid: cnx_book.uuid,
         version: cnx_book.version,
         title: cnx_book.title,
         content: cnx_book.root_book_part.contents,
-        content_ecosystem_id: ecosystem.id
-      )
+        content_ecosystem_id: ecosystem.id,
+        reading_processing_instructions: reading_processing_instructions
     )
 
     run(:import_book_part, cnx_book_part: cnx_book.root_book_part, book: book, save: false)

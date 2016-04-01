@@ -1,12 +1,5 @@
-module OpenStax::Cnx::V1::Fragment
-  class Exercise
-    include ActsAsFragment
-
-    # Used to get the title
-    TITLE_CSS = '[data-type="title"]'
-
-    # For fragments missing a proper title
-    DEFAULT_TITLE = nil
+module OpenStax::Cnx::V1
+  class Fragment::Exercise < Fragment
 
     # CSS to find the exercise embed code attribute
     EMBED_CODE_CSS = 'a[href^="#ost/api/ex/"]'
@@ -20,19 +13,12 @@ module OpenStax::Cnx::V1::Fragment
     # Regex to extract the appropriate tag from absolutized url
     ABSOLUTE_EMBED_TAG_REGEX = /q=tag(?::|%3A)([\w-]+)$/
 
-    def initialize(node:, title: nil, short_code: nil)
-      @node       = node
-      @title      = title
+    def initialize(node:, title: nil, labels: [], short_code: nil)
+      super(node: node, title: title, labels: labels)
       @short_code = short_code
 
       # Absolutized exercise url
       self.class.absolutize_url(@node)
-    end
-
-    attr_reader :node
-
-    def title
-      @title ||= node.at_css(TITLE_CSS).try(:content).try(:strip) || DEFAULT_TITLE
     end
 
     def embed_code

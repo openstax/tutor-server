@@ -3,61 +3,6 @@ module Content
     module Generated
       class Manifest < Hashie::Mash
 
-        class Book < Hashie::Mash
-
-          class ReadingFeatures < Hashie::Mash
-
-            def split_reading_css
-              super.to_a
-            end
-
-            def split_video_css
-              super.to_a
-            end
-
-            def split_interactive_css
-              super.to_a
-            end
-
-            def split_required_exercise_css
-              super.to_a
-            end
-
-            def split_optional_exercise_css
-              super.to_a
-            end
-
-            def discard_css
-              super.to_a
-            end
-
-          end
-
-          def to_h
-            super.merge('reading_features' => reading_features.to_h)
-          end
-
-          def reading_features
-            strategy = ::Content::Strategies::Generated::Manifest::Book::ReadingFeatures.new(super)
-            ::Content::Manifest::Book::ReadingFeatures.new(strategy: strategy)
-          end
-
-          def valid?
-            cnx_id.present? && (exercise_ids || []).all?{ |ex_id| ex_id.is_a? String }
-          end
-
-          def update_version!
-            self.cnx_id = cnx_id.split('@').first
-            ::Content::Manifest::Book.new(strategy: self)
-          end
-
-          def unlock_exercises!
-            delete(:exercise_ids)
-            ::Content::Manifest::Book.new(strategy: self)
-          end
-
-        end
-
         def self.from_yaml(yaml)
           new(YAML.load(yaml))
         end

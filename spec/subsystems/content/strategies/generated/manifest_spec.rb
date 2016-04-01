@@ -36,6 +36,19 @@ RSpec.describe Content::Strategies::Generated::Manifest do
         '2190@1', '2191@1', '2192@1', '2193@1', '2194@1', '2195@1', '2196@1'
       ]
     }
+    let(:expected_reading_processing_instructions) {
+      [
+        { css: '.ost-reading-discard, .os-teacher, [data-type="glossary"]' },
+        { css: ".ost-feature > .os-exercise,
+                .ost-assessed-feature > .os-exercise,
+                .ost-exercise-choice > .os-exercise", fragments: ["random_exercise"] },
+        { css: ".os-exercise", fragments: ["exercise"] },
+        { css: ".ost-video", fragments: ["video"] },
+        { css: ".os-interactive, .ost-interactive", fragments: ["interactive"] },
+        { css: ".worked-example", fragments: ["reading"], labels: ["worked-example"] },
+        { css: ".ost-feature, .ost-assessed-feature", fragments: ["reading"] }
+      ]
+    }
 
     it 'can return ecosystem attributes' do
       expect(manifest.valid?).to eq true
@@ -45,18 +58,16 @@ RSpec.describe Content::Strategies::Generated::Manifest do
       book = manifest.books.first
       expect(book.archive_url).to eq 'https://archive-staging-tutor.cnx.org/'
       expect(book.cnx_id).to eq '93e2b09d-261c-4007-a987-0b3062fe154b@4.4'
-      expect(book.reading_features.split_reading_css).to(
-        eq ['.ost-assessed-feature', '.ost-feature']
-      )
-      expect(book.reading_features.split_video_css).to eq ['.ost-video']
-      expect(book.reading_features.split_interactive_css).to(
-        eq ['.os-interactive', '.ost-interactive']
-      )
-      expect(book.reading_features.split_required_exercise_css).to eq ['.os-exercise']
-      expect(book.reading_features.split_optional_exercise_css).to eq ['.ost-exercise-choice']
-      expect(book.reading_features.discard_css).to(
-        eq ['.ost-reading-discard', '.os-teacher', '[data-type="glossary"]']
-      )
+      book.reading_processing_instructions.each_with_index do |processing_instruction, index|
+        expected_processing_instruction = expected_reading_processing_instructions[index]
+        expect(processing_instruction.css).to eq expected_reading_processing_instruction[:css]
+        expect(processing_instruction.fragments).to(
+          eq expected_reading_processing_instruction[:fragments] || []
+        )
+        expect(processing_instruction.labels).to(
+          eq expected_reading_processing_instruction[:labels] || []
+        )
+      end
       expect(book.exercise_ids).to eq expected_exercise_ids
     end
 
@@ -89,12 +100,7 @@ RSpec.describe Content::Strategies::Generated::Manifest do
       book = manifest.books.first
       expect(book.archive_url).to eq 'https://archive.cnx.org/'
       expect(book.cnx_id).to eq 'f10533ca-f803-490d-b935-88899941197f@2.1'
-      expect(book.reading_features.split_reading_css).to eq []
-      expect(book.reading_features.split_video_css).to eq []
-      expect(book.reading_features.split_interactive_css).to eq []
-      expect(book.reading_features.split_required_exercise_css).to eq []
-      expect(book.reading_features.split_optional_exercise_css).to eq []
-      expect(book.reading_features.discard_css).to eq []
+      expect(book.reading_processing_instructions).to eq []
       expect(book.exercise_ids).to eq expected_exercise_ids
     end
 

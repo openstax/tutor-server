@@ -3,97 +3,84 @@ module OpenStax::Cnx::V1
 
     include HtmlTreeOperations
 
-    attr_reader :split_reading_css, :split_video_css, :split_interactive_css,
-                :split_required_exercise_css, :split_optional_exercise_css,
-                :discard_css, :split_css
+    attr_reader :processing_instructions
 
-
-    def initialize(hash)
-      reading_css_array = hash[:split_reading_css].to_a
-      @split_reading_css = reading_css_array.join(', ')
-      video_css_array = hash[:split_video_css].to_a
-      @split_video_css = video_css_array.join(', ')
-      interactive_css_array = hash[:split_interactive_css].to_a
-      @split_interactive_css = interactive_css_array.join(', ')
-      required_exercise_css_array = hash[:split_required_exercise_css]
-      @split_required_exercise_css = required_exercise_css_array.join(', ')
-      optional_exercise_css_array = hash[:split_optional_exercise_css]
-      @split_optional_exercise_css = optional_exercise_css_array.join(', ')
-      @discard_css = hash[:discard_css].to_a.join(', ')
-      @split_css = (reading_css_array + video_css_array + interactive_css_array +
-                    required_exercise_css_array + optional_exercise_css_array).uniq.join(', ')
+    def initialize(processing_instructions)
+      @processing_instructions = processing_instructions
     end
 
-    def dup_and_remove_discarded_css(node)
-      node_copy = node.dup
-      node_copy.css(discard_css).remove unless discard_css.blank?
-    end
+    # Splits the given node into fragments according to the processing instructions
+    def split_into_fragments(node)
+      result = [node]
 
-    def split_into_fragments(node, skip_feature = false)
-      return [] if split_css.blank?
+      processing_instructions.each do |processing_instruction|
+        next if processing_instruction.css.blank?
 
-      fragments = []
-
-      # Initialize current_node
-      current_node = node
-
-      # Find first split
-      split = current_node.at_css(split_css)
-
-      # Split the root and collect the TaskStep attributes
-      while !split.nil? do
-        # Get a single fragment for the given node
-        splitting_fragment = node_to_fragment(split, skip_feature)
-
-        # Copy the node content and find the same split CSS in the copy
-        next_node = current_node.dup
-        split_copy = next_node.at_css(split_css)
-
-        # One copy retains the content before the split;
-        # the other retains the content after the split
-        remove_after(split, current_node)
-        remove_before(split_copy, next_node)
-
-        # Remove the splits and any empty parents
-        recursive_compact(split, current_node)
-        recursive_compact(split_copy, next_node)
-
-        # Create text fragment before current split
-        unless current_node.content.blank?
-          fragments << node_to_fragment(current_node, skip_feature)
-        end
-
-        # Add contents from splitting fragments
-        fragments << splitting_fragment
-
-        current_node = next_node
-        split = current_node.at_css(split_css)
+        result = process_array(result, processing_instruction)
       end
 
-      # Create text fragment after all splits
-      unless current_node.content.blank?
-        fragments << node_to_fragment(current_node, skip_feature)
-      end
-
-      fragments
+      cleanup_array(result)
     end
 
     protected
 
-    def node_to_fragment(node, skip_feature)
-      if !skip_feature && split_reading_css.present? && node.matches?(split_reading_css)
-        Fragment::Feature.new(node: node, fragment_splitter: self)
-      elsif split_video_css.present? && node.matches?(split_video_css)
-        Fragment::Video.new(node: node)
-      elsif split_interactive_css.present? && node.matches?(split_interactive_css)
-        Fragment::Interactive.new(node: node)
-      elsif split_required_exercise_css.present? && node.matches?(split_required_exercise_css)
-        Fragment::Exercise.new(node: node)
-      elsif split_optional_exercise_css.present? && node.matches?(split_optional_exercise_css)
-        Fragment::ExerciseChoice.new(node: node, exercise_css: split_required_exercise_css)
-      else
-        Fragment::Text.new(node: node)
+    # Gets the fragments for a Nokogiri::XML::Node according to a ProcessingInstruction
+    def get_fragments(node, processing_instruction)
+      processing_instruction.fragments.map do |fragment_name|
+        fragment_class = "OpenStax::Cnx::V1::Fragment::#{fragment_name.classify}".constantize
+        fragment_class.new(node: node)
       end
+    end
+
+    # Process a single Nokogiri::XML::Node
+    def process_node(node, processing_instruction)
+      # Find first match
+      match = node.at_css(processing_instruction.css)
+
+      return node if match.nil?
+
+      # Get fragments for the match
+      fragments = get_fragments(match, processing_instruction)
+
+      # Copy the node content and find the same match in the copy
+      node_copy = node.dup
+      match_copy = node_copy.at_css(processing_instruction.css)
+
+      # One copy retains the content before the match;
+      # the other retains the content after the match
+      remove_after(match, node)
+      remove_before(match_copy, node_copy)
+
+      # Remove the split node, its copy and any empty parents from the 2 trees
+      recursive_compact(match, node)
+      recursive_compact(match_copy, node_copy)
+
+      # Repeat the processing until no more matches
+      [node, fragments, process_node(node_copy, processing_instruction)]
+    end
+
+    # Recursively process an array of Nodes and Fragments
+    def process_array(array, processing_instruction)
+      array.map do |elt|
+        case elt
+        when Array
+          process_array(elt, processing_instruction)
+        when Nokogiri::XML::Node
+          process_node(elt, processing_instruction)
+        else
+          elt
+        end
+      end
+    end
+
+    # Flatten, remove empty nodes and transform remaining nodes into reading fragments
+    def cleanup_array(array)
+      array.flatten.map do |obj|
+        next obj unless obj.is_a?(Nokogiri::XML::Node)
+        next if obj.content.blank?
+
+        OpenStax::Cnx::V1::Fragment::Reading.new(node: obj)
+      end.compact
     end
 
   end

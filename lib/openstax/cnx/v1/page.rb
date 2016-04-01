@@ -138,14 +138,12 @@ module OpenStax::Cnx::V1
       @converted_root ||= converted_doc.at_css(ROOT_CSS)
     end
 
-    def snap_labs(fragment_splitter:)
-      converted_root.css(SNAP_LAB_CSS).collect { |snap_lab|
-        {
-          id: snap_lab.attr('id'),
-          title: snap_lab.at_css(SNAP_LAB_TITLE_CSS).try(:text),
-          fragments: fragment_splitter.split_into_fragments(snap_lab)
-        }
-      }
+    def snap_lab_nodes
+      converted_root.css(SNAP_LAB_CSS)
+    end
+
+    def snap_lab_title(snap_lab)
+      snap_lab.at_css(SNAP_LAB_TITLE_CSS).try(:text)
     end
 
     def los

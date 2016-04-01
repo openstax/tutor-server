@@ -3,12 +3,12 @@ module OpenStax::Cnx::V1::BookVisitor
   ELEM_CLASSES = [OpenStax::Cnx::V1::Book,
                   OpenStax::Cnx::V1::BookPart,
                   OpenStax::Cnx::V1::Page,
-                  OpenStax::Cnx::V1::Fragment::Feature,
-                  OpenStax::Cnx::V1::Fragment::Text,
-                  OpenStax::Cnx::V1::Fragment::Exercise,
-                  OpenStax::Cnx::V1::Fragment::ExerciseChoice,
+                  OpenStax::Cnx::V1::Fragment::Reading,
                   OpenStax::Cnx::V1::Fragment::Interactive,
-                  OpenStax::Cnx::V1::Fragment::Video]
+                  OpenStax::Cnx::V1::Fragment::Video,
+                  OpenStax::Cnx::V1::Fragment::Exercise,
+                  OpenStax::Cnx::V1::Fragment::OptionalExercise,
+                  OpenStax::Cnx::V1::Fragment::RandomExercise]
 
   def self.elem_type(elem_class)
     elem_class.name.underscore.remove("openstax/cnx/v1/").gsub('/', '_')
