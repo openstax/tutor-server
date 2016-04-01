@@ -8,6 +8,7 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
   validates :url, presence: true
   validates :content, presence: true
   validates :correct_answer_id, presence: true
+  validates :free_response, length: { maximum: 10000 }
 
   validate :free_response_required, on: :update
   validate :valid_answer, :no_feedback
