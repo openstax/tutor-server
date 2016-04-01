@@ -1,21 +1,24 @@
-<%= form_tag '', method: :post do %>
+<%= lev_form_for :ecosystem, url: ecosystems_path do |f| %>
   <div class="form-group">
-    <%= label_tag :archive_url %>
-    <%= text_field_tag :archive_url, params[:archive_url],
-                                     class: 'form-control',
-                                     placeholder: default_archive_url %>
+    <%= f.label :manifest, 'Ecosystem Manifest (.yml)' %>
+    <%= f.file_field :manifest, class: 'form-control' %>
   </div>
 
   <div class="form-group">
-    <%= label_tag :cnx_id, 'Book CNX id' %>
-    <%= text_field_tag :cnx_id, params[:cnx_id], class: 'form-control' %>
+    <%= f.label :comments %>
+    <%= f.text_field :comments, class: 'form-control' %>
   </div>
 
   <div class="form-group">
-    <%= label_tag :comments %>
-    <%= text_field_tag :comments, params[:comments], class: 'form-control' %>
+    <%= f.label :update_book, 'Update book version in the manifest' %>
+    <%= f.check_box :update_book, class: 'form-control' %>
   </div>
 
-  <%= button_tag 'Import', class: 'btn btn-default',
-                           data: { disable_with: 'Import will likely take a while...' } %>
+  <div class="form-group">
+    <%= f.label :unlock_exercises, 'Update exercises in the manifest (numbers and versions)' %>
+    <%= f.check_box :unlock_exercises, class: 'form-control' %>
+  </div>
+
+  <%= f.submit 'Import', class: 'btn btn-default',
+                         data: { disable_with: 'Import will likely take a while...' } %>
 <% end %>

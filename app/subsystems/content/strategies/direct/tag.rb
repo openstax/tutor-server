@@ -15,7 +15,7 @@ module Content
 
         alias_method :entity_teks_tags, :teks_tags
         def teks_tags
-          entity_teks_tags.collect do |entity_teks_tag|
+          entity_teks_tags.map do |entity_teks_tag|
             ::Content::Tag.new(strategy: entity_teks_tag)
           end
         end

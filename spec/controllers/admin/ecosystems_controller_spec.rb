@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Admin::EcosystemsController, speed: :slow, vcr: VCR_OPTS do
+RSpec.describe Admin::EcosystemsController, type: :controller, speed: :slow, vcr: VCR_OPTS do
   let!(:admin) { FactoryGirl.create(:user, :administrator) }
 
   let!(:book_1) { FactoryGirl.create :content_book, title: 'Physics', version: '1' }
@@ -25,77 +25,23 @@ RSpec.describe Admin::EcosystemsController, speed: :slow, vcr: VCR_OPTS do
     end
   end
 
-  describe 'POST #import' do
-    context 'tutor book' do
-      let!(:archive_url) { 'https://archive-staging-tutor.cnx.org/contents/' }
-      let!(:cnx_id) { '93e2b09d-261c-4007-a987-0b3062fe154b@4.4' }
-
-      it 'imports books and exercises as ecosystems' do
-        expect {
-          post :import, archive_url: archive_url, cnx_id: cnx_id
-        }.to change { Content::Models::Book.count }.by(1)
-        expect(flash[:notice]).to include 'Ecosystem import job queued.'
-      end
-
-      it 'imports a book even if the book already exists' do
-        FactoryGirl.create(:content_book,
-                           title: 'Physics',
-                           url: "#{archive_url}#{cnx_id}",
-                           version: '4.4')
-
-        expect {
-          post :import, archive_url: archive_url, cnx_id: cnx_id
-        }.to change { Content::Models::Book.count }.by(1)
-        expect(flash[:notice]).to include 'Ecosystem import job queued.'
-      end
-
-      it 'imports a book with a different version' do
-        FactoryGirl.create(:content_book,
-                           title: 'Physics',
-                           url: "#{archive_url}#{cnx_id}",
-                           version: '4.4')
-
-        expect {
-          post :import, archive_url: archive_url, cnx_id: cnx_id.sub('@4.4', '@4.3')
-        }.to change { Content::Models::Book.count }.by(1)
-        expect(flash[:notice]).to include 'Ecosystem import job queued.'
-      end
+  describe 'POST #create' do
+    it 'imports a tutor ecosystem from a manifest' do
+      fixture_path = 'content/sample_tutor_manifest.yml'
+      manifest = fixture_file_upload(fixture_path)
+      expect {
+        post :create, ecosystem: { manifest: manifest }
+      }.to change{ Content::Models::Ecosystem.count }.by(1)
+      expect(flash[:notice]).to eq('Ecosystem import job queued.')
     end
 
-    context 'cc book' do
-      let!(:archive_url) { 'https://archive.cnx.org/contents/' }
-      let!(:cnx_id) { 'f10533ca-f803-490d-b935-88899941197f@2.1' }
-
-      it 'imports books and exercises as ecosystems' do
-        expect {
-          post :import, archive_url: archive_url, cnx_id: cnx_id
-        }.to change { Content::Models::Book.count }.by(1)
-        expect(flash[:notice]).to include 'Ecosystem import job queued.'
-      end
-
-      it 'imports a book even if the book already exists' do
-        FactoryGirl.create(:content_book,
-                           title: 'Derived copy of Biology',
-                           url: "#{archive_url}#{cnx_id}",
-                           version: '2.1')
-
-        expect {
-          post :import, archive_url: archive_url, cnx_id: cnx_id
-        }.to change { Content::Models::Book.count }.by(1)
-        expect(flash[:notice]).to include 'Ecosystem import job queued.'
-      end
-
-      it 'imports a book with a different version' do
-        FactoryGirl.create(:content_book,
-                           title: 'Derived copy of Biology',
-                           url: "#{archive_url}#{cnx_id}",
-                           version: '2.1')
-
-        expect {
-          post :import, archive_url: archive_url, cnx_id: cnx_id.sub('@2.1', '@1.1')
-        }.to change { Content::Models::Book.count }.by(1)
-        expect(flash[:notice]).to include 'Ecosystem import job queued.'
-      end
+    it 'imports a concept coach ecosystem from a manifest' do
+      fixture_path = 'content/sample_cc_manifest.yml'
+      manifest = fixture_file_upload(fixture_path)
+      expect {
+        post :create, ecosystem: { manifest: manifest }
+      }.to change{ Content::Models::Ecosystem.count }.by(1)
+      expect(flash[:notice]).to eq('Ecosystem import job queued.')
     end
   end
 
@@ -116,6 +62,17 @@ RSpec.describe Admin::EcosystemsController, speed: :slow, vcr: VCR_OPTS do
       expect(flash[:notice]).to be_nil
       expect(flash[:error]).to eq(
         'The ecosystem cannot be deleted because it is linked to a course')
+    end
+  end
+
+  describe 'GET #manifest' do
+    it 'allows the ecosystem\'s manifest to be downloaded' do
+      get :manifest, id: ecosystem_1.id
+
+      expected_content_disposition = \
+        "attachment; filename=\"#{FilenameSanitizer.sanitize(ecosystem_1.title)}.yml\""
+      expect(response.headers['Content-Disposition']).to eq expected_content_disposition
+      expect(response.body).to eq ecosystem_1.manifest.to_yaml
     end
   end
 end

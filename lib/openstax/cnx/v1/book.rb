@@ -17,7 +17,7 @@ module OpenStax::Cnx::V1
     end
 
     def url
-      @url ||= OpenStax::Cnx::V1.url_for(id)
+      @url ||= OpenStax::Cnx::V1.archive_url_for(id)
     end
 
     def uuid
@@ -33,7 +33,7 @@ module OpenStax::Cnx::V1
     end
 
     def canonical_url
-      @canonical_url ||= OpenStax::Cnx::V1.url_for("#{uuid}@#{version}")
+      @canonical_url ||= OpenStax::Cnx::V1.archive_url_for("#{uuid}@#{version}")
     end
 
     def title

@@ -26,6 +26,13 @@ module Content
         courses.empty?
       end
 
+      def manifest_hash
+        {
+          title: title,
+          books: books.map(&:manifest_hash)
+        }
+      end
+
     end
   end
 end

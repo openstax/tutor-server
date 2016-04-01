@@ -41,6 +41,11 @@
                                                 content: book.uuid,
                                                 container: 'body' },
                                         class: 'btn btn-xs btn-secondary' %></td>
+      <td><%= link_to 'Download Manifest',
+                      manifest_path.call(ecosystem.id),
+                      role: 'button',
+                      tabindex: 1,
+                      class: 'btn btn-xs btn-secondary' %></td>
       <td>
         <% if !ecosystem_path.nil? && ecosystem.deletable? %>
           <%= link_to 'Delete', ecosystem_path.call(ecosystem.id),

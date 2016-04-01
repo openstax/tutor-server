@@ -15,17 +15,17 @@ module Content
 
         alias_method :entity_tags, :tags
         def tags
-          entity_tags.collect{ |et| ::Content::Tag.new(strategy: et) }
+          entity_tags.map{ |et| ::Content::Tag.new(strategy: et) }
         end
 
         alias_method :entity_los, :los
         def los
-          entity_los.collect{ |el| ::Content::Tag.new(strategy: el) }
+          entity_los.map{ |el| ::Content::Tag.new(strategy: el) }
         end
 
         alias_method :entity_aplos, :aplos
         def aplos
-          entity_aplos.collect{ |ea| ::Content::Tag.new(strategy: ea) }
+          entity_aplos.map{ |ea| ::Content::Tag.new(strategy: ea) }
         end
 
       end

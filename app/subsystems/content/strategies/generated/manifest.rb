@@ -3,7 +3,41 @@ module Content
     module Generated
       class Manifest
 
-        def self.from_yaml(yaml:)
+        class Book
+
+          def initialize(hash:)
+            @hash = hash.slice('archive_url', 'cnx_id', 'exercise_ids')
+          end
+
+          def archive_url
+            @hash['archive_url']
+          end
+
+          def cnx_id
+            @hash['cnx_id']
+          end
+
+          def exercise_ids
+            @hash['exercise_ids']
+          end
+
+          def valid?
+            cnx_id.present? && (exercise_ids || []).all?{ |ex_id| ex_id.is_a? String }
+          end
+
+          def update_version!
+            @hash['cnx_id'] = cnx_id.split('@').first
+            ::Content::Manifest::Book.new(strategy: self)
+          end
+
+          def unlock_exercises!
+            @hash.delete('exercise_ids')
+            ::Content::Manifest::Book.new(strategy: self)
+          end
+
+        end
+
+        def self.from_yaml(yaml)
           new(hash: YAML.load(yaml))
         end
 
@@ -12,51 +46,32 @@ module Content
         end
 
         def initialize(hash:)
-          @hash = HashWithIndifferentAccess.new(hash).slice(
-            :ecosystem_title, :book_uuids, :book_versions, :exercise_numbers, :exercise_versions
-          )
+          @hash = hash.deep_stringify_keys.slice('title', 'books')
+        end
+
+        def title
+          @hash['title']
+        end
+
+        def books
+          @hash['books'].to_a.map do |book_hash|
+            strategy = ::Content::Strategies::Generated::Manifest::Book.new(hash: book_hash)
+            ::Content::Manifest::Book.new(strategy: strategy)
+          end
         end
 
         def valid?
-          ecosystem_title.present? && \
-          book_uuids.present? && book_versions.present? && \
-          exercise_numbers.present? && exercise_versions.present? && \
-          book_uuids.size == book_versions.size && \
-          exercise_numbers.size == exercise_versions.size && \
-          book_uuids.all?{ |uuid| uuid.is_a?(::Content::Uuid) && uuid.valid? } && \
-          book_versions.all?{ |version| version.is_a? String } && \
-          exercise_numbers.all?{ |number| number.is_a? Integer } && \
-          exercise_versions.all?{ |version| version.is_a? Integer }
+          title.present? && books.present? && books.all?{ |book| book.valid? }
         end
 
-        def ecosystem_title
-          @hash[:ecosystem_title].to_s
+        def update_books!
+          books.each(&:update_version!)
+          ::Content::Manifest.new(strategy: self)
         end
 
-        def book_uuids
-          @hash[:book_uuids].to_a
-        end
-
-        def book_versions
-          @hash[:book_versions].to_a
-        end
-
-        def book_cnx_ids
-          versions = book_versions
-          book_uuids.each_with_index.collect{ |uuid, idx| "#{uuid}@#{versions[idx]}" }
-        end
-
-        def exercise_numbers
-          @hash[:exercise_numbers].to_a
-        end
-
-        def exercise_versions
-          @hash[:exercise_versions].to_a
-        end
-
-        def exercise_uids
-          versions = exercise_versions
-          exercise_numbers.each_with_index.collect{ |number, idx| "#{number}@#{versions[idx]}" }
+        def unlock_exercises!
+          books.each(&:unlock_exercises!)
+          ::Content::Manifest.new(strategy: self)
         end
 
       end

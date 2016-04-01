@@ -43,6 +43,4 @@ Rails.application.configure do
 
   # Don't error out when trying to connect to external sites
   WebMock.allow_net_connect!
-
-  OpenStax::Cnx::V1.set_archive_url_base(url: 'https://archive-staging-tutor.cnx.org/contents/')
 end

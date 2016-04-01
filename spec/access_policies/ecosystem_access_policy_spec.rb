@@ -6,6 +6,8 @@ RSpec.describe EcosystemAccessPolicy, type: :access_policy do
 
   let(:student)           { FactoryGirl.create(:user) }
   let(:teacher)           { FactoryGirl.create(:user) }
+
+  let(:admin)             { FactoryGirl.create(:user, :administrator) }
   let(:content_analyst)   { FactoryGirl.create(:user, :content_analyst) }
 
   let(:ecosystem)         {
@@ -80,7 +82,18 @@ RSpec.describe EcosystemAccessPolicy, type: :access_policy do
   context 'content analysts' do
     let(:requestor) { content_analyst }
 
-    [:index, :readings, :exercises].each do |test_action|
+    [:index, :create, :update, :destroy, :manifest, :readings, :exercises].each do |test_action|
+      context "#{test_action}" do
+        let(:action) { test_action }
+        it { should be true }
+      end
+    end
+  end
+
+  context 'admins' do
+    let(:requestor) { admin }
+
+    [:index, :create, :update, :destroy, :manifest, :readings, :exercises].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
         it { should be true }

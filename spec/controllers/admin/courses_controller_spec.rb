@@ -46,19 +46,19 @@ RSpec.describe Admin::CoursesController, type: :controller do
     let!(:biology_period) { CreatePeriod[course: biology, name: '3rd'] }
 
     let!(:file_1) do
-      fixture_file_upload('files/test_courses_post_students_1.csv', 'text/csv')
+      fixture_file_upload('roster/test_courses_post_students_1.csv', 'text/csv')
     end
 
     let!(:file_2) do
-      fixture_file_upload('files/test_courses_post_students_2.csv', 'text/csv')
+      fixture_file_upload('roster/test_courses_post_students_2.csv', 'text/csv')
     end
 
     let!(:file_blankness) do
-      fixture_file_upload('files/test_courses_post_students_blankness.csv', 'text/csv')
+      fixture_file_upload('roster/test_courses_post_students_blankness.csv', 'text/csv')
     end
 
     let!(:incomplete_file) do
-      fixture_file_upload('files/test_courses_post_students_incomplete.csv', 'text/csv')
+      fixture_file_upload('roster/test_courses_post_students_incomplete.csv', 'text/csv')
     end
 
     it 'adds students to a course period' do

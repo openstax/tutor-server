@@ -1,5 +1,5 @@
 # If any substantial changes are made to this file such as book_id or version
-# The fixture at spec/fixtures/demo-imports/biology.yml must also be updated
+# The fixture at spec/fixtures/demo/biology.yml must also be updated
 course_name: Biology I
 cnx_book_id: d52e93f4-8653-4273-86da-3850001c0786
 cnx_book_version: 9.14
