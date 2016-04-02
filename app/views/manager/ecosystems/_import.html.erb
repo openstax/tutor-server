@@ -11,12 +11,12 @@
 
   <div class="form-group">
     <%= f.label :update_book, 'Update book version in the manifest' %>
-    <%= f.check_box :update_book, class: 'form-control' %>
+    <%= f.check_box :update_book %>
   </div>
 
   <div class="form-group">
     <%= f.label :unlock_exercises, 'Update exercises in the manifest (numbers and versions)' %>
-    <%= f.check_box :unlock_exercises, class: 'form-control' %>
+    <%= f.check_box :unlock_exercises %>
   </div>
 
   <%= f.submit 'Import', class: 'btn btn-default',
