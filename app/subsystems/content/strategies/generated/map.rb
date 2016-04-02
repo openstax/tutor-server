@@ -263,7 +263,7 @@ module Content
               mismapped_hash  = all_exercises_map.select{|ex,page| mismapped_pages.include? page }
               diag_info = mismapped_hash.collect do |ex_id,page|
                 ex_uid = all_exercises.detect{|ex| ex.id == ex_id}.uid
-                title  = page.title
+                title  = page.try(:title) || 'nil'
                 "#{ex_uid} => #{title}"
               end
               "mismapped exercises: #{diag_info.join(', ')}"
