@@ -55,7 +55,7 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
     parser.snap_lab_nodes.map do |snap_lab_node|
       {
         id: "#{self.id}:#{snap_lab_node.attr('id')}",
-        title: parse.snap_lab_title(snap_lab_node),
+        title: parser.snap_lab_title(snap_lab_node),
         fragments: fragment_splitter.split_into_fragments(snap_lab.dup)
       }
     end

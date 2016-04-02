@@ -5,9 +5,8 @@ books:
   cnx_id: 93e2b09d-261c-4007-a987-0b3062fe154b@4.4
   reading_processing_instructions:
     - css: '.ost-reading-discard, .os-teacher, [data-type="glossary"]'
-    - css: ".ost-feature > .os-exercise,
-            .ost-assessed-feature > .os-exercise,
-            .ost-exercise-choice > .os-exercise"
+    - css: ".ost-feature > .os-exercise, .ost-assessed-feature > .os-exercise, .ost-exercise-choice
+        > .os-exercise"
       fragments:
       - "random_exercise"
     - css: ".os-exercise"

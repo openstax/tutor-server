@@ -60,13 +60,11 @@ RSpec.describe Content::Strategies::Generated::Manifest do
       expect(book.cnx_id).to eq '93e2b09d-261c-4007-a987-0b3062fe154b@4.4'
       book.reading_processing_instructions.each_with_index do |processing_instruction, index|
         expected_processing_instruction = expected_reading_processing_instructions[index]
-        expect(processing_instruction.css).to eq expected_reading_processing_instruction[:css]
+        expect(processing_instruction.css).to eq expected_processing_instruction[:css]
         expect(processing_instruction.fragments).to(
-          eq expected_reading_processing_instruction[:fragments] || []
+          eq expected_processing_instruction[:fragments] || []
         )
-        expect(processing_instruction.labels).to(
-          eq expected_reading_processing_instruction[:labels] || []
-        )
+        expect(processing_instruction.labels).to eq expected_processing_instruction[:labels] || []
       end
       expect(book.exercise_ids).to eq expected_exercise_ids
     end

@@ -52,12 +52,5 @@ module OpenStax::Cnx::V1
       @root_book_part ||= BookPart.new(hash: tree, is_root: true)
     end
 
-    def visit(visitor:, depth: 0)
-      visitor.pre_order_visit_book(book: self, depth: depth)
-      visitor.in_order_visit_book(book: self, depth: depth)
-      root_book_part.visit(visitor: visitor, depth: depth+1)
-      visitor.post_order_visit_book(book: self, depth: depth)
-    end
-
   end
 end

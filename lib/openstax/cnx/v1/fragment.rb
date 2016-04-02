@@ -27,17 +27,4 @@ class OpenStax::Cnx::V1::Fragment
     false
   end
 
-  def visit(visitor:, depth: 0)
-    visitor.pre_order_visit(elem: self, depth: depth)
-    visitor.in_order_visit(elem: self, depth: depth)
-    custom_visit(visitor: visitor, depth: depth)
-    visitor.post_order_visit(elem: self, depth: depth)
-  end
-
-  protected
-
-  def custom_visit(visitor:, depth:)
-    ## override this to customize visitation
-  end
-
 end

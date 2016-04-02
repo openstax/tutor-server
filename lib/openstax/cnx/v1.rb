@@ -17,8 +17,6 @@ require_relative './v1/fragment/random_exercise'
 require_relative './v1/book'
 require_relative './v1/book_part'
 require_relative './v1/page'
-require_relative './v1/book_visitor'
-require_relative './v1/book_to_string_visitor'
 
 module OpenStax::Cnx::V1
 

@@ -208,14 +208,5 @@ module OpenStax::Cnx::V1
       @tags.values
     end
 
-    def visit(visitor:, depth: 0)
-      visitor.pre_order_visit(elem: self, depth: depth)
-      visitor.in_order_visit(elem: self, depth: depth)
-      fragments.each do |fragment|
-        fragment.visit(visitor: visitor, depth: depth+1)
-      end
-      visitor.post_order_visit(elem: self, depth: depth)
-    end
-
   end
 end
