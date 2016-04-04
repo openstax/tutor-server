@@ -5,12 +5,7 @@ RSpec.describe OpenStax::Cnx::V1::FragmentSplitter, type: :lib, vcr: VCR_OPTS do
   let(:reading_processing_instructions) {
     [
       { css: '.ost-reading-discard, .os-teacher, [data-type="glossary"]' },
-      {
-        css: ".ost-feature > .os-exercise ~ .os-exercise,
-              .ost-assessed-feature > .os-exercise ~ .os-exercise,
-              .ost-exercise-choice > .os-exercise ~ .os-exercise",
-        fragments: ["random_exercise"]
-      },
+      { css: '.ost-exercise-choice', fragments: ["exercise", "optional_exercise"] },
       { css: ".os-exercise", fragments: ["exercise"] },
       { css: ".ost-video", fragments: ["video"] },
       { css: ".os-interactive, .ost-interactive", fragments: ["interactive"] },
@@ -19,9 +14,7 @@ RSpec.describe OpenStax::Cnx::V1::FragmentSplitter, type: :lib, vcr: VCR_OPTS do
     ]
   }
 
-  let(:fragment_splitter)  {
-    described_class.new(reading_processing_instructions)
-  }
+  let(:fragment_splitter)  { described_class.new(reading_processing_instructions) }
 
   let(:cnx_page_fragment_infos) {
     [

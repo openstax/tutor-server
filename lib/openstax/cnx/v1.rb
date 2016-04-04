@@ -12,7 +12,6 @@ require_relative './v1/fragment/interactive'
 
 require_relative './v1/fragment/exercise'
 require_relative './v1/fragment/optional_exercise'
-require_relative './v1/fragment/random_exercise'
 
 require_relative './v1/book'
 require_relative './v1/book_part'

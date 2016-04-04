@@ -5,12 +5,7 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::Interactive, type: :external, vcr: V
   let(:reading_processing_instructions) {
     [
       { css: '.ost-reading-discard, .os-teacher, [data-type="glossary"]' },
-      {
-        css: ".ost-feature > .os-exercise ~ .os-exercise,
-              .ost-assessed-feature > .os-exercise ~ .os-exercise,
-              .ost-exercise-choice > .os-exercise ~ .os-exercise",
-        fragments: ["random_exercise"]
-      },
+      { css: '.ost-exercise-choice', fragments: ["exercise", "optional_exercise"] },
       { css: ".os-exercise", fragments: ["exercise"] },
       { css: ".ost-video", fragments: ["video"] },
       { css: ".os-interactive, .ost-interactive", fragments: ["interactive"] },
