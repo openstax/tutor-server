@@ -40,17 +40,6 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
               teks: 'teks-112-39-c-4a'
             }
           ],
-          fragment_classes: [
-            OpenStax::Cnx::V1::Fragment::Text,
-            OpenStax::Cnx::V1::Fragment::Feature,
-            OpenStax::Cnx::V1::Fragment::Text,
-            OpenStax::Cnx::V1::Fragment::Feature,
-            OpenStax::Cnx::V1::Fragment::Feature,
-            OpenStax::Cnx::V1::Fragment::Text,
-            OpenStax::Cnx::V1::Fragment::Feature,
-            OpenStax::Cnx::V1::Fragment::Feature,
-            OpenStax::Cnx::V1::Fragment::ExerciseChoice
-          ],
           is_intro: false
         }
       },
@@ -65,7 +54,6 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
               type: :cnxmod
             }
           ],
-          fragment_classes: [OpenStax::Cnx::V1::Fragment::Text],
           is_intro: true
         }
       },
@@ -104,7 +92,6 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
               description: "develop and interpret free-body diagrams"
             }
           ],
-          fragment_classes: [OpenStax::Cnx::V1::Fragment::Text],
           is_intro: false
         }
       },
@@ -137,9 +124,6 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
               description: 'calculate the effect of forces on objects, including the law of inertia, the relationship between force and acceleration, and the nature of force pairs between objects'
             }
           ],
-          fragment_classes: [OpenStax::Cnx::V1::Fragment::Text,
-                             OpenStax::Cnx::V1::Fragment::Feature,
-                             OpenStax::Cnx::V1::Fragment::Feature],
           is_intro: false
         }
       }
@@ -167,7 +151,6 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
       expect(page.converted_content).not_to be_blank
       expect(page.root).not_to be_nil
       expect(page.los).not_to be_nil
-      expect(page.fragments).not_to be_nil
       expect(page.tags).not_to be_nil
     end
   end
@@ -198,16 +181,6 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
     end
   end
 
-  it "splits the page into fragments" do
-    cnx_page_infos.each do |hash|
-      page = page_for(hash)
-
-      expect(page.fragments.collect{|f| f.class}).to(
-        eq hash[:expected][:fragment_classes]
-      )
-    end
-  end
-
   it "can identify chapter introduction pages" do
     cnx_page_infos.each do |hash|
       page = page_for(hash)
@@ -227,15 +200,11 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
   it 'extracts snap lab notes' do
     page = page_for(the_scientific_method_hash)
 
-    snap_labs = page.snap_labs
+    snap_labs = page.snap_lab_nodes
     expect(snap_labs.length).to eq 1
     expect(snap_labs.first[:id]).to eq 'fs-id1164355841632'
     expect(snap_labs.first[:title]).to eq(
       'Using Models and the Scientific Processes')
-    expect(snap_labs.first[:fragments].collect(&:class)).to eq([
-      OpenStax::Cnx::V1::Fragment::Feature,
-      OpenStax::Cnx::V1::Fragment::Exercise
-    ])
   end
 
 end

@@ -3,12 +3,9 @@ class OpenStax::Cnx::V1::Fragment
   # Used to get the title
   TITLE_CSS = '[data-type="title"]'
 
-  # For fragments missing a proper title
-  DEFAULT_TITLE = nil
-
   attr_reader :node, :labels
 
-  def initialize(node:, title: nil, labels: [])
+  def initialize(node:, title: nil, labels: nil)
     @node   = node
     @title  = title
     @labels = labels
@@ -17,10 +14,12 @@ class OpenStax::Cnx::V1::Fragment
   def title
     return @title unless @title.nil?
 
-    @title = node.css(TITLE_CSS).map{|n| n.try(:content).try(:strip)}
-                                .compact.uniq.join('; ')
-    @title = DEFAULT_TITLE if @title.blank?
-    @title
+    title_matches = node.css(TITLE_CSS)
+    @title = title_matches.empty? ? nil : title_matches.map{ |nd| nd.content.strip }.uniq.join('; ')
+  end
+
+  def labels
+    @labels || []
   end
 
   def exercise?

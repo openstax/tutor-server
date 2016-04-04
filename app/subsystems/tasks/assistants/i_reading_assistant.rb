@@ -98,7 +98,8 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::GenericAssistant
       when OpenStax::Cnx::V1::Fragment::Exercise
         tasked_exercise(exercise_fragment: fragment, step: step, title: fragment_title)
       when OpenStax::Cnx::V1::Fragment::OptionalExercise
-        add_optional_exercise(exercise_fragment: fragment, step: task.task_steps.last || step,
+        add_optional_exercise(exercise_fragment: fragment,
+                              step: task.task_steps.last || step,
                               title: fragment_title)
       when OpenStax::Cnx::V1::Fragment::Video
         tasked_video(video_fragment: fragment, step: step, title: fragment_title)
@@ -277,7 +278,7 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::GenericAssistant
   end
 
   def add_optional_exercise(exercise_fragment:, step:, title: nil)
-
+    step.tasked.can_be_recovered = true
   end
 
   def tasked_video(video_fragment:, step:, title: nil)

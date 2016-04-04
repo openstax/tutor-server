@@ -18,7 +18,7 @@ module OpenStax::Cnx::V1
       @short_code = short_code
 
       # Absolutized exercise url
-      self.class.absolutize_url(@node)
+      self.class.absolutize_exercise_urls(@node)
     end
 
     def embed_code

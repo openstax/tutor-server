@@ -48,7 +48,7 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
   def fragments
     return @fragments unless @fragments.nil?
 
-    @fragments = fragment_splitter.split_into_fragments(parser.converted_root.dup)
+    @fragments = fragment_splitter.split_into_fragments(parser.converted_root)
   end
 
   def snap_labs
@@ -56,7 +56,7 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
       {
         id: "#{self.id}:#{snap_lab_node.attr('id')}",
         title: parser.snap_lab_title(snap_lab_node),
-        fragments: fragment_splitter.split_into_fragments(snap_lab.dup)
+        fragments: fragment_splitter.split_into_fragments(snap_lab_node)
       }
     end
   end

@@ -2,9 +2,30 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe OpenStax::Cnx::V1::Fragment::Interactive, type: :external, vcr: VCR_OPTS do
-  let!(:cnx_page_id)           { '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6@4' }
-  let!(:cnx_page)              { OpenStax::Cnx::V1::Page.new(id: cnx_page_id) }
-  let!(:fragments)       { cnx_page.fragments.select { |f| f.is_a? described_class } }
+  let(:reading_processing_instructions) {
+    [
+      { css: '.ost-reading-discard, .os-teacher, [data-type="glossary"]' },
+      {
+        css: ".ost-feature > .os-exercise ~ .os-exercise,
+              .ost-assessed-feature > .os-exercise ~ .os-exercise,
+              .ost-exercise-choice > .os-exercise ~ .os-exercise",
+        fragments: ["random_exercise"]
+      },
+      { css: ".os-exercise", fragments: ["exercise"] },
+      { css: ".ost-video", fragments: ["video"] },
+      { css: ".os-interactive, .ost-interactive", fragments: ["interactive"] },
+      { css: ".worked-example", fragments: ["reading"], labels: ["worked-example"] },
+      { css: ".ost-feature, .ost-assessed-feature", fragments: ["reading"] }
+    ]
+  }
+  let(:fragment_splitter)     {
+    OpenStax::Cnx::V1::FragmentSplitter.new(reading_processing_instructions)
+  }
+  let(:cnx_page_id)           { '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6@4' }
+  let(:cnx_page)              { OpenStax::Cnx::V1::Page.new(id: cnx_page_id) }
+  let(:fragments)             { fragment_splitter.split_into_fragments(cnx_page.converted_root) }
+  let(:interactive_fragments) { fragments.select { |f| f.is_a? described_class } }
+
   let!(:expected_titles) { [ nil ] }
   let!(:expected_urls) { [ 'https://phet.colorado.edu/sims/html/forces-and-motion-basics/latest/forces-and-motion-basics_en.html' ] }
   let!(:expected_content) { [
@@ -18,7 +39,7 @@ EOF
   ] }
 
   it 'provides info about the interactive fragment' do
-    fragments.each do |fragment|
+    interactive_fragments.each do |fragment|
       expect(fragment.node).not_to be_nil
       expect(fragment.title).to be_nil
       expect(fragment.to_html).not_to be_nil
@@ -27,14 +48,14 @@ EOF
   end
 
   it "can retrieve the fragment's title" do
-    expect(fragments.map(&:title)).to eq(expected_titles)
+    expect(interactive_fragments.map(&:title)).to eq(expected_titles)
   end
 
   it "can retrieve the fragment's interactive url" do
-    expect(fragments.map(&:url)).to eq(expected_urls)
+    expect(interactive_fragments.map(&:url)).to eq(expected_urls)
   end
 
   it "can retrieve the fragment's content" do
-    expect(fragments.map(&:to_html)).to eq(expected_content)
+    expect(interactive_fragments.map(&:to_html)).to eq(expected_content)
   end
 end

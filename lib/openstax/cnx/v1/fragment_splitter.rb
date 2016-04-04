@@ -6,12 +6,12 @@ module OpenStax::Cnx::V1
     attr_reader :processing_instructions
 
     def initialize(processing_instructions)
-      @processing_instructions = processing_instructions
+      @processing_instructions = processing_instructions.map{ |pi| Hashie::Mash.new(pi) }
     end
 
     # Splits the given node into fragments according to the processing instructions
     def split_into_fragments(node)
-      result = [node]
+      result = [node.dup]
 
       processing_instructions.each do |processing_instruction|
         next if processing_instruction.css.blank?
@@ -26,9 +26,9 @@ module OpenStax::Cnx::V1
 
     # Gets the fragments for a Nokogiri::XML::Node according to a ProcessingInstruction
     def get_fragments(node, processing_instruction)
-      processing_instruction.fragments.map do |fragment_name|
+      (processing_instruction.fragments || []).map do |fragment_name|
         fragment_class = "OpenStax::Cnx::V1::Fragment::#{fragment_name.classify}".constantize
-        fragment_class.new(node: node)
+        fragment_class.new(node: node, labels: processing_instruction.labels)
       end
     end
 

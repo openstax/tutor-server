@@ -43,7 +43,7 @@ ActiveRecord::Schema.define(version: 20160331194837) do
     t.string   "version",                                      null: false
     t.datetime "created_at",                                   null: false
     t.datetime "updated_at",                                   null: false
-    t.jsonb    "reading_processing_instructions", default: [], null: false
+    t.hstore   "reading_processing_instructions", default: [], null: false, array: true
   end
 
   add_index "content_books", ["content_ecosystem_id"], name: "index_content_books_on_content_ecosystem_id", using: :btree

@@ -18,14 +18,7 @@ RSpec.describe Content::Models::Book, type: :model do
       {
         archive_url: book.archive_url,
         cnx_id: book.cnx_id,
-        reading_features: {
-          split_reading_css: [],
-          split_video_css: [],
-          split_interactice_css: [],
-          split_required_exercise_css: [],
-          split_optional_exercise_css: [],
-          discard_css: []
-        },
+        reading_processing_instructions: [],
         exercise_ids: book.exercises.map(&:uid).sort
       }
     )

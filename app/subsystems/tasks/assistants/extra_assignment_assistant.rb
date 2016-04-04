@@ -94,28 +94,27 @@ class Tasks::Assistants::ExtraAssignmentAssistant < Tasks::Assistants::GenericAs
   end
 
   def task_fragments(task:, fragments:, fragment_title:, page:)
+    random_fragments = []
     fragments.each do |fragment|
+      if fragment.is_a?(OpenStax::Cnx::V1::Fragment::RandomExercise)
+        random_fragments << fragment
+        next
+      elsif random_fragments.any?
+        step = Tasks::Models::TaskStep.new(task: task)
+        tasked_random_exercises(random_exercise_fragments: random_fragments,
+                                step: step, title: fragment_title)
+        random_fragments = []
+      end
+
       step = Tasks::Models::TaskStep.new(task: task)
 
       case fragment
-      when OpenStax::Cnx::V1::Fragment::Feature
-        subfragments = fragment.fragments
-        exercise_subfragments = subfragments.select(&:exercise?)
-        if exercise_subfragments.count > 1
-          # Remove all Exercise fragments and replace with an ExerciseChoice
-          subfragments = subfragments - exercise_subfragments
-          subfragments << OpenStax::Cnx::V1::Fragment::ExerciseChoice.new(
-            node: nil, title: nil, exercise_fragments: exercise_subfragments
-          )
-        end
-
-        task_fragments(task: task, fragments: subfragments, fragment_title: fragment_title,
-                       page: page)
-      when OpenStax::Cnx::V1::Fragment::ExerciseChoice
-        tasked_exercise_choice(exercise_choice_fragment: fragment,
-                               step: step, title: fragment_title)
       when OpenStax::Cnx::V1::Fragment::Exercise
         tasked_exercise(exercise_fragment: fragment, step: step, title: fragment_title)
+      when OpenStax::Cnx::V1::Fragment::OptionalExercise
+        add_optional_exercise(exercise_fragment: fragment,
+                              step: task.task_steps.last || step,
+                              title: fragment_title)
       when OpenStax::Cnx::V1::Fragment::Video
         tasked_video(video_fragment: fragment, step: step, title: fragment_title)
       when OpenStax::Cnx::V1::Fragment::Interactive
@@ -137,26 +136,28 @@ class Tasks::Assistants::ExtraAssignmentAssistant < Tasks::Assistants::GenericAs
                                      content: reading_fragment.to_html)
   end
 
-  def tasked_exercise_choice(exercise_choice_fragment:, step:, title: nil)
+  def tasked_random_exercises(random_exercise_fragments:, step:, title: nil)
     exercises = exercise_choice_fragment.exercise_fragments
     if exercises.empty?
-      logger.warn "Exercise Choice without Exercises found while creating iReading"
+      logger.warn "Random Exercise without Exercises found while creating iReading"
       return
     end
 
     chosen_exercise = exercises.sample
     case chosen_exercise
     when OpenStax::Cnx::V1::Fragment::Exercise
-      tasked_exercise(exercise_fragment: chosen_exercise, step: step,
-                      can_be_recovered: true, title: title)
-    when OpenStax::Cnx::V1::Fragment::ExerciseChoice
-      tasked_exercise_choice(exercise_choice_fragment: chosen_exercise, step: step, title: title)
+      other_exercise = (exercises - chosen_exercise).sample
+      tasked_exercise(exercise_fragment: chosen_exercise, step: step, title: title)
+      add_optional_exercise(exercise_fragment: other_exercise, step: step, title: title) \
+        unless other_exercise.nil?
+    when OpenStax::Cnx::V1::Fragment::RandomExercise
+      tasked_random_exercise(exercise_choice_fragment: chosen_exercise, step: step, title: title)
     else
       logger.warn "Exercise Choice with invalid Exercise fragment found while creating iReading"
     end
   end
 
-  def tasked_exercise(exercise_fragment:, step:, can_be_recovered: false, title: nil)
+  def tasked_exercise(exercise_fragment:, step:, title: nil)
     if exercise_fragment.embed_tag.blank?
       logger.warn "Exercise without embed tag found while creating iReading"
       return
@@ -164,10 +165,15 @@ class Tasks::Assistants::ExtraAssignmentAssistant < Tasks::Assistants::GenericAs
 
     # Search Ecosystem Exercises for one matching the embed tag
     exercise = get_first_tag_exercise(exercise_fragment.embed_tag)
+
     unless exercise.nil?
-      TaskExercise[exercise: exercise, title: title,
-                   can_be_recovered: can_be_recovered, task_step: step]
+      # Assign the exercise
+      TaskExercise[exercise: exercise, title: title, task_step: step]
     end
+  end
+
+  def add_optional_exercise(exercise_fragment:, step:, title: nil)
+    step.tasked.can_be_recovered = true
   end
 
   def tasked_video(video_fragment:, step:, title: nil)
