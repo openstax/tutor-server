@@ -9,6 +9,17 @@ FactoryGirl.define do
     content { contents.to_json }
     uuid { SecureRandom.uuid }
     version { Random.rand(1..10) }
+    reading_processing_instructions {
+      [
+        { css: '.ost-reading-discard, .os-teacher, [data-type="glossary"]' },
+        { css: '.ost-exercise-choice', fragments: ["exercise", "optional_exercise"] },
+        { css: ".os-exercise", fragments: ["exercise"] },
+        { css: ".ost-video", fragments: ["video"] },
+        { css: ".os-interactive, .ost-interactive", fragments: ["interactive"] },
+        { css: ".worked-example", fragments: ["reading"], labels: ["worked-example"] },
+        { css: ".ost-feature, .ost-assessed-feature", fragments: ["reading"] }
+      ]
+    }
 
     after(:build) do |book, evaluator|
       book.ecosystem ||= FactoryGirl.build(
