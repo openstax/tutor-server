@@ -22,13 +22,17 @@ RSpec.describe OpenStax::Cnx::V1::FragmentSplitter, type: :lib, vcr: VCR_OPTS do
         id: '3005b86b-d993-4048-aff0-500256001f42',
         expected_fragment_classes: [
           OpenStax::Cnx::V1::Fragment::Reading,
+          OpenStax::Cnx::V1::Fragment::Interactive,
+          OpenStax::Cnx::V1::Fragment::Exercise,
+          OpenStax::Cnx::V1::Fragment::Reading,
+          OpenStax::Cnx::V1::Fragment::Reading,
+          OpenStax::Cnx::V1::Fragment::Exercise,
           OpenStax::Cnx::V1::Fragment::Reading,
           OpenStax::Cnx::V1::Fragment::Reading,
           OpenStax::Cnx::V1::Fragment::Reading,
+          OpenStax::Cnx::V1::Fragment::Exercise,
           OpenStax::Cnx::V1::Fragment::Reading,
-          OpenStax::Cnx::V1::Fragment::Reading,
-          OpenStax::Cnx::V1::Fragment::Reading,
-          OpenStax::Cnx::V1::Fragment::Reading,
+          OpenStax::Cnx::V1::Fragment::Exercise,
           OpenStax::Cnx::V1::Fragment::OptionalExercise
         ]
       },
@@ -43,8 +47,10 @@ RSpec.describe OpenStax::Cnx::V1::FragmentSplitter, type: :lib, vcr: VCR_OPTS do
       {
         id: '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6',
         expected_fragment_classes: [OpenStax::Cnx::V1::Fragment::Reading,
-                                    OpenStax::Cnx::V1::Fragment::Reading,
-                                    OpenStax::Cnx::V1::Fragment::Reading]
+                                    OpenStax::Cnx::V1::Fragment::Video,
+                                    OpenStax::Cnx::V1::Fragment::Exercise,
+                                    OpenStax::Cnx::V1::Fragment::Interactive,
+                                    OpenStax::Cnx::V1::Fragment::Exercise]
       }
     ]
   }

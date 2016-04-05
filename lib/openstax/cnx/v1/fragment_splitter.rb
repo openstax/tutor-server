@@ -37,26 +37,35 @@ module OpenStax::Cnx::V1
       # Find first match
       match = node.at_css(processing_instruction.css)
 
+      # Base case
       return node if match.nil?
 
       # Get fragments for the match
       fragments = get_fragments(match, processing_instruction)
 
-      # Copy the node content and find the same match in the copy
-      node_copy = node.dup
-      match_copy = node_copy.at_css(processing_instruction.css)
+      if fragments.empty? # No splitting needed
+        # Remove the match and any empty parents from the tree
+        recursive_compact(match, node)
 
-      # One copy retains the content before the match;
-      # the other retains the content after the match
-      remove_after(match, node)
-      remove_before(match_copy, node_copy)
+        # Repeat the processing until no more matches
+        process_node(node, processing_instruction)
+      else # Need to split the node tree
+        # Copy the node content and find the same match in the copy
+        node_copy = node.dup
+        match_copy = node_copy.at_css(processing_instruction.css)
 
-      # Remove the split node, its copy and any empty parents from the 2 trees
-      recursive_compact(match, node)
-      recursive_compact(match_copy, node_copy)
+        # One copy retains the content before the match;
+        # the other retains the content after the match
+        remove_after(match, node)
+        remove_before(match_copy, node_copy)
 
-      # Repeat the processing until no more matches
-      [node, fragments, process_node(node_copy, processing_instruction)]
+        # Remove the match, its copy and any empty parents from the 2 trees
+        recursive_compact(match, node)
+        recursive_compact(match_copy, node_copy)
+
+        # Repeat the processing until no more matches
+        [node, fragments, process_node(node_copy, processing_instruction)]
+      end
     end
 
     # Recursively process an array of Nodes and Fragments
