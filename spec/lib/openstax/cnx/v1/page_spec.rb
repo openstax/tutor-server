@@ -203,8 +203,6 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
     snap_labs = page.snap_lab_nodes
     expect(snap_labs.length).to eq 1
     expect(snap_labs.first[:id]).to eq 'fs-id1164355841632'
-    expect(snap_labs.first[:title]).to eq(
-      'Using Models and the Scientific Processes')
   end
 
 end

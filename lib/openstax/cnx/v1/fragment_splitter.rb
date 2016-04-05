@@ -6,15 +6,16 @@ module OpenStax::Cnx::V1
     attr_reader :processing_instructions
 
     def initialize(processing_instructions)
-      @processing_instructions = processing_instructions.map{ |pi| Hashie::Mash.new(pi) }
+      @processing_instructions = processing_instructions.map{ |pi| Hashie::Mash.new(pi.to_h) }
     end
 
     # Splits the given node into fragments according to the processing instructions
-    def split_into_fragments(node)
+    def split_into_fragments(node, include_discarded_nodes = false)
       result = [node.dup]
 
       processing_instructions.each do |processing_instruction|
-        next if processing_instruction.css.blank?
+        next if processing_instruction.css.blank? || \
+                (include_discarded_nodes && processing_instruction.fragments.blank?)
 
         result = process_array(result, processing_instruction)
       end

@@ -2,50 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/93e2b09d-261c-4007-a987-0b3062fe154b
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      Accept:
-      - text/json
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      User-Agent:
-      - Ruby
-  response:
-    status:
-      code: 302
-      message: Found
-    headers:
-      Server:
-      - nginx/1.4.6 (Ubuntu)
-      Date:
-      - Thu, 07 Apr 2016 22:38:47 GMT
-      Content-Type:
-      - text/plain
-      Content-Length:
-      - '0'
-      Connection:
-      - keep-alive
-      Access-Control-Allow-Headers:
-      - origin,dnt,accept-encoding,accept-language,keep-alive,user-agent,x-requested-with,if-modified-since,cache-control,content-type
-      Access-Control-Allow-Methods:
-      - GET, OPTIONS
-      Access-Control-Allow-Origin:
-      - "*"
-      Location:
-      - "/contents/93e2b09d-261c-4007-a987-0b3062fe154b@6.1.json"
-      Strict-Transport-Security:
-      - max-age=63072000; includeSubDomains
-    body:
-      encoding: UTF-8
-      string: ''
-    http_version: 
-  recorded_at: Thu, 07 Apr 2016 22:22:30 GMT
-- request:
-    method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/93e2b09d-261c-4007-a987-0b3062fe154b@6.1.json
+    uri: https://archive-staging-tutor.cnx.org/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.4
     body:
       encoding: US-ASCII
       string: ''
@@ -64,11 +21,11 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Thu, 07 Apr 2016 22:38:47 GMT
+      - Fri, 08 Apr 2016 00:56:00 GMT
       Content-Type:
       - application/json
       Content-Length:
-      - '12049'
+      - '11553'
       Connection:
       - keep-alive
       Access-Control-Allow-Headers:
@@ -81,24 +38,24 @@ http_interactions:
       - max-age=63072000; includeSubDomains
     body:
       encoding: UTF-8
-      string: '{"googleAnalytics": "", "version": "6.1", "submitlog": "re-titled collection",
-        "abstract": "<div xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:c=\"http://cnx.rice.edu/cnxml\"
+      string: '{"googleAnalytics": "", "version": "4.4", "submitlog": "--", "abstract":
+        "<div xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:c=\"http://cnx.rice.edu/cnxml\"
         xmlns:md=\"http://cnx.rice.edu/mdml\" xmlns:qml=\"http://cnx.rice.edu/qml/1.0\"
         xmlns:mod=\"http://cnx.rice.edu/#moduleIds\" xmlns:bib=\"http://bibtexml.sf.net/\"
-        xmlns:data=\"http://dev.w3.org/html5/spec/#custom\"/>", "revised": "2015-07-16T15:20:59Z",
-        "printStyle": "ccap-physics", "roles": null, "keywords": [], "id": "93e2b09d-261c-4007-a987-0b3062fe154b",
-        "title": "Physics (Demo)", "mediaType": "application/vnd.org.cnx.collection",
-        "subjects": ["Science and Technology"], "legacy_id": "col10014", "parentId":
-        null, "publishers": [{"surname": "HSPhysics", "suffix": null, "firstname":
-        "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}],
-        "parent": {"authors": [], "version": "", "id": null, "title": null}, "stateid":
-        1, "parentTitle": null, "authors": [{"surname": "HSPhysics", "suffix": null,
-        "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}],
-        "parentVersion": "", "legacy_version": "1.6", "licensors": [{"surname": "HSPhysics",
-        "suffix": null, "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics",
-        "id": "tutor_hsphysics"}], "language": "en", "license": {"url": "http://creativecommons.org/licenses/by/4.0/",
+        xmlns:data=\"http://dev.w3.org/html5/spec/#custom\"/>", "revised": "2015-07-09T22:02:27Z",
+        "printStyle": null, "roles": null, "keywords": [], "id": "93e2b09d-261c-4007-a987-0b3062fe154b",
+        "title": "Physics", "mediaType": "application/vnd.org.cnx.collection", "subjects":
+        ["Science and Technology"], "legacy_id": "col10014", "parentId": null, "publishers":
+        [{"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
+        "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}], "parent": {"authors":
+        [], "version": "", "id": null, "title": null}, "stateid": 1, "parentTitle":
+        null, "authors": [{"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
+        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}], "parentVersion":
+        "", "legacy_version": "1.4", "licensors": [{"surname": "HSPhysics", "suffix":
+        null, "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id":
+        "tutor_hsphysics"}], "language": "en", "license": {"url": "http://creativecommons.org/licenses/by/4.0/",
         "code": "by", "version": "4.0", "name": "Attribution"}, "created": "2015-05-29T18:59:40Z",
-        "tree": {"id": "93e2b09d-261c-4007-a987-0b3062fe154b@6.1", "contents": [{"id":
+        "tree": {"id": "93e2b09d-261c-4007-a987-0b3062fe154b@4.4", "contents": [{"id":
         "subcol", "contents": [], "title": "What is Physics?"}, {"id": "subcol", "contents":
         [], "title": "Motion in One Dimension"}, {"id": "subcol", "contents": [{"id":
         "4e40d43d-cfee-412e-919c-facccdf0535d@3", "title": "Introduction"}, {"id":
@@ -111,55 +68,49 @@ http_interactions:
         Motion: Inertia"}, {"id": "548a8717-71e1-4d65-80f0-7b8c6ed4b4c0@3", "title":
         "Newton''s Second Law of Motion"}, {"id": "dbc79576-8c66-41d2-929a-74bcd036a1df@4",
         "title": "Newton''s Third Law of Motion"}], "title": "Force and Newton''s
-        Laws of Motion"}], "title": "Physics (Demo)"}, "doctype": "", "buyLink": null,
-        "submitter": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
-        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}, "parentAuthors":
-        [], "history": [{"changes": "re-titled collection", "version": "6.1", "revised":
-        "2015-07-16T15:20:59Z", "publisher": {"surname": "HSPhysics", "suffix": null,
-        "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}},
-        {"changes": "--", "version": "5.1", "revised": "2015-07-15T19:51:38Z", "publisher":
+        Laws of Motion"}], "title": "Physics"}, "doctype": "", "buyLink": null, "submitter":
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
-        "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "--",
-        "version": "4.4", "revised": "2015-07-09T22:02:27Z", "publisher": {"surname":
+        "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}, "parentAuthors":
+        [], "history": [{"changes": "--", "version": "4.4", "revised": "2015-07-09T22:02:27Z",
+        "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
+        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
+        "--", "version": "4.3", "revised": "2015-07-09T20:45:05Z", "publisher": {"surname":
         "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "", "fullname":
         "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "--", "version":
-        "4.3", "revised": "2015-07-09T20:45:05Z", "publisher": {"surname": "HSPhysics",
+        "4.2", "revised": "2015-07-08T12:50:37Z", "publisher": {"surname": "HSPhysics",
         "suffix": null, "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics",
-        "id": "tutor_hsphysics"}}, {"changes": "--", "version": "4.2", "revised":
-        "2015-07-08T12:50:37Z", "publisher": {"surname": "HSPhysics", "suffix": null,
+        "id": "tutor_hsphysics"}}, {"changes": "--", "version": "4.1", "revised":
+        "2015-07-01T19:44:13Z", "publisher": {"surname": "HSPhysics", "suffix": null,
         "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}},
-        {"changes": "--", "version": "4.1", "revised": "2015-07-01T19:44:13Z", "publisher":
-        {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
-        "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "applied
-        CCAP Physics template", "version": "3.8", "revised": "2015-06-17T16:49:51Z",
-        "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
-        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
-        "applied CCAP Physics template", "version": "3.7", "revised": "2015-06-15T20:33:52Z",
-        "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
-        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
-        "applied CCAP Physics template", "version": "3.6", "revised": "2015-06-11T17:31:59Z",
-        "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
-        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
-        "applied CCAP Physics template", "version": "3.5", "revised": "2015-06-11T17:28:17Z",
-        "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
-        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
-        "applied CCAP Physics template", "version": "3.4", "revised": "2015-06-10T19:56:12Z",
-        "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
-        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
-        "applied CCAP Physics template", "version": "3.3", "revised": "2015-06-10T19:34:00Z",
-        "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
-        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
-        "applied CCAP Physics template", "version": "3.2", "revised": "2015-06-09T22:38:53Z",
-        "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
-        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
-        "applied CCAP Physics template", "version": "3.1", "revised": "2015-06-09T20:34:45Z",
-        "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
-        "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
-        "changed collection title and titles for first two chapters", "version": "2.2",
-        "revised": "2015-06-09T20:31:49Z", "publisher": {"surname": "HSPhysics", "suffix":
-        null, "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id":
-        "tutor_hsphysics"}}, {"changes": "changed collection title and titles for
-        first two chapters", "version": "2.1", "revised": "2015-06-02T18:34:49Z",
+        {"changes": "applied CCAP Physics template", "version": "3.8", "revised":
+        "2015-06-17T16:49:51Z", "publisher": {"surname": "HSPhysics", "suffix": null,
+        "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}},
+        {"changes": "applied CCAP Physics template", "version": "3.7", "revised":
+        "2015-06-15T20:33:52Z", "publisher": {"surname": "HSPhysics", "suffix": null,
+        "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}},
+        {"changes": "applied CCAP Physics template", "version": "3.6", "revised":
+        "2015-06-11T17:31:59Z", "publisher": {"surname": "HSPhysics", "suffix": null,
+        "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}},
+        {"changes": "applied CCAP Physics template", "version": "3.5", "revised":
+        "2015-06-11T17:28:17Z", "publisher": {"surname": "HSPhysics", "suffix": null,
+        "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}},
+        {"changes": "applied CCAP Physics template", "version": "3.4", "revised":
+        "2015-06-10T19:56:12Z", "publisher": {"surname": "HSPhysics", "suffix": null,
+        "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}},
+        {"changes": "applied CCAP Physics template", "version": "3.3", "revised":
+        "2015-06-10T19:34:00Z", "publisher": {"surname": "HSPhysics", "suffix": null,
+        "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}},
+        {"changes": "applied CCAP Physics template", "version": "3.2", "revised":
+        "2015-06-09T22:38:53Z", "publisher": {"surname": "HSPhysics", "suffix": null,
+        "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}},
+        {"changes": "applied CCAP Physics template", "version": "3.1", "revised":
+        "2015-06-09T20:34:45Z", "publisher": {"surname": "HSPhysics", "suffix": null,
+        "firstname": "Tutor", "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}},
+        {"changes": "changed collection title and titles for first two chapters",
+        "version": "2.2", "revised": "2015-06-09T20:31:49Z", "publisher": {"surname":
+        "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "", "fullname":
+        "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes": "changed collection
+        title and titles for first two chapters", "version": "2.1", "revised": "2015-06-02T18:34:49Z",
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}, {"changes":
         "added ch. 3 and 4 modules; may still need to tweak placeholder settings for
@@ -235,7 +186,7 @@ http_interactions:
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Thu, 07 Apr 2016 22:22:30 GMT
+  recorded_at: Fri, 08 Apr 2016 00:39:41 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/4e40d43d-cfee-412e-919c-facccdf0535d@3
@@ -257,7 +208,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Thu, 07 Apr 2016 22:38:48 GMT
+      - Fri, 08 Apr 2016 00:56:00 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -379,7 +330,7 @@ http_interactions:
         "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "", "fullname":
         "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Thu, 07 Apr 2016 22:22:30 GMT
+  recorded_at: Fri, 08 Apr 2016 00:39:41 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/0e58aa87-2e09-40a7-8bf3-269b2fa16509@9
@@ -401,7 +352,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Thu, 07 Apr 2016 22:38:48 GMT
+      - Fri, 08 Apr 2016 00:56:00 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -915,7 +866,7 @@ http_interactions:
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Thu, 07 Apr 2016 22:22:31 GMT
+  recorded_at: Fri, 08 Apr 2016 00:39:42 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/3005b86b-d993-4048-aff0-500256001f42@7
@@ -937,7 +888,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Thu, 07 Apr 2016 22:38:48 GMT
+      - Fri, 08 Apr 2016 00:56:00 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -1812,7 +1763,7 @@ http_interactions:
         "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "", "fullname":
         "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Thu, 07 Apr 2016 22:22:31 GMT
+  recorded_at: Fri, 08 Apr 2016 00:39:42 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/1bb611e9-0ded-48d6-a107-fbb9bd900851@2
@@ -1834,7 +1785,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Thu, 07 Apr 2016 22:38:48 GMT
+      - Fri, 08 Apr 2016 00:56:01 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -1931,7 +1882,7 @@ http_interactions:
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Thu, 07 Apr 2016 22:22:31 GMT
+  recorded_at: Fri, 08 Apr 2016 00:39:42 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/95e61258-2faf-41d4-af92-f62e1414175a@4
@@ -1953,7 +1904,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Thu, 07 Apr 2016 22:38:48 GMT
+      - Fri, 08 Apr 2016 00:56:01 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -2253,7 +2204,7 @@ http_interactions:
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Thu, 07 Apr 2016 22:22:31 GMT
+  recorded_at: Fri, 08 Apr 2016 00:39:42 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/640e3e84-09a5-4033-b2a7-b7fe5ec29dc6@4
@@ -2275,7 +2226,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Thu, 07 Apr 2016 22:38:48 GMT
+      - Fri, 08 Apr 2016 00:56:01 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -2697,7 +2648,7 @@ http_interactions:
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Thu, 07 Apr 2016 22:22:31 GMT
+  recorded_at: Fri, 08 Apr 2016 00:39:42 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/548a8717-71e1-4d65-80f0-7b8c6ed4b4c0@3
@@ -2719,7 +2670,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Thu, 07 Apr 2016 22:38:49 GMT
+      - Fri, 08 Apr 2016 00:56:01 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -3286,7 +3237,7 @@ http_interactions:
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Thu, 07 Apr 2016 22:22:31 GMT
+  recorded_at: Fri, 08 Apr 2016 00:39:42 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/dbc79576-8c66-41d2-929a-74bcd036a1df@4
@@ -3308,7 +3259,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Thu, 07 Apr 2016 22:38:49 GMT
+      - Fri, 08 Apr 2016 00:56:01 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -4009,10 +3960,10 @@ http_interactions:
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Thu, 07 Apr 2016 22:22:32 GMT
+  recorded_at: Fri, 08 Apr 2016 00:39:42 GMT
 - request:
     method: get
-    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:%22context-cnxmod:4e40d43d-cfee-412e-919c-facccdf0535d,context-cnxmod:0e58aa87-2e09-40a7-8bf3-269b2fa16509,k12phys-ch03-s01-lo01,k12phys-ch03-s01-lo02,context-cnxmod:3005b86b-d993-4048-aff0-500256001f42,k12phys-ch03-s02-lo01,k12phys-ch03-s02-lo02,context-cnxmod:1bb611e9-0ded-48d6-a107-fbb9bd900851,context-cnxmod:95e61258-2faf-41d4-af92-f62e1414175a,k12phys-ch04-s01-lo01,k12phys-ch04-s01-lo02,context-cnxmod:640e3e84-09a5-4033-b2a7-b7fe5ec29dc6,k12phys-ch04-s02-lo01,k12phys-ch04-s02-lo02,context-cnxmod:548a8717-71e1-4d65-80f0-7b8c6ed4b4c0,k12phys-ch04-s03-lo01,k12phys-ch04-s03-lo02,context-cnxmod:dbc79576-8c66-41d2-929a-74bcd036a1df,k12phys-ch04-s04-lo01,k12phys-ch04-s04-lo02%22
+    uri: https://exercises-dev.openstax.org/api/exercises?q=id:1982@1,1983@1,1984@1,1985@1,1986@1,1987@1,1988@1,1989@1,1990@1,1991@1,1992@1,1993@1,1994@1,1995@1,1996@1,1997@1,1998@1,1999@1,2000@1,2001@1,2002@1,2003@1,2004@1,2005@1,2006@1,2007@1,2008@1,2009@1,2010@1,2011@1,2012@1,2013@1,2014@1,2015@1,2016@1,2017@1,2018@1,2019@1,2020@353,2021@1,2022@1,2023@1,2024@1,2025@1,2026@1,2027@1,2028@1,2029@1,2030@1,2031@1,2032@1,2033@1,2034@1,2035@1,2036@1,2037@1,2038@1,2039@1,2040@2,2041@1,2042@1,2043@1,2044@1,2045@1,2046@1,2047@1,2048@1,2049@1,2050@1,2051@1,2052@1,2053@1,2054@1,2055@1,2056@1,2057@1,2058@1,2059@1,2060@1,2061@1,2062@1,2063@1,2064@1,2065@1,2066@1,2067@1,2068@1,2069@1,2070@1,2071@1,2072@1,2073@1,2074@1,2075@1,2076@1,2077@1,2078@1,2079@1,2080@1,2081@1,2082@1,2083@1,2084@1,2085@1,2086@1,2087@1,2088@1,2089@1,2090@1,2091@1,2092@1,2093@1,2094@1,2095@1,2096@1,2097@1,2098@1,2099@1,2100@1,2101@1,2102@1,2103@1,2104@1,2105@1,2106@1,2107@1,2108@1,2109@1,2110@1,2111@1,2112@1,2113@1,2114@1,2115@1,2116@1,2117@1,2118@1,2119@1,2120@530,2121@1,2122@1,2123@1,2124@1,2125@1,2126@1,2127@1,2128@1,2129@1,2130@1,2131@1,2132@1,2133@1,2134@1,2135@1,2136@1,2137@17,2138@126,2139@17,2140@15,2141@1,2142@1,2143@1,2144@1,2145@1,2146@1,2147@1,2148@1,2149@1,2150@1,2151@1,2152@1,2153@1,2154@1,2155@1,2156@1,2157@1,2158@1,2159@1,2160@1,2161@1,2162@1,2163@1,2164@1,2165@1,2166@1,2167@1,2168@1,2169@1,2170@1,2171@1,2172@1,2173@1,2174@1,2175@1,2176@1,2177@1,2178@1,2179@1,2180@1,2181@1,2182@1,2183@1,2184@1,2185@1,2186@1,2187@1,2188@1,2189@1,2190@1,2191@1,2192@1,2193@1,2194@1,2195@1,2196@1
     body:
       encoding: US-ASCII
       string: ''
@@ -4022,7 +3973,7 @@ http_interactions:
       Accept:
       - application/vnd.openstax.v1
       Authorization:
-      - Bearer 128c69a5123e1079a4975f5783bee9f465ef6cb20ae382d7b72c9b53f8fd2b3a
+      - Bearer 489db2606a36f70e8ce227e5fc09c8e1665c77c663daddf9544f26d8cf87fbf6
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
   response:
@@ -4033,7 +3984,7 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Thu, 07 Apr 2016 22:22:49 GMT
+      - Fri, 08 Apr 2016 00:39:50 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -4055,12 +4006,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=aitpYjBzaHdQU2ZXaFY1am1GRmViVWF3d1pROEdzQVFGMlVvTVEyMjFxVjFtNWVJeHZ6dWJkT0hzL0dZWU9sTG9QUlNNQTVlTGJLR05OSCtUaUtXMGc9PS0tQXkrN0tFUUhUTmZPSWRIUnBWMUZRUT09--20b80340545b2e21d498fc2b00d82d0db993a3a9;
+      - _exercises_session=NE14eGpVWm0wSXlkWndCNGJJQU1RNVlxaU9pakJVSWI1M2o0SjhzakhybVVKU2RQZ0QrTi9YVlZkdDh1VENYaTlQbDQzWGNEcE4rVjBPaytUU2w3dEE9PS0teUw5M0liTVJDckQ0N0UyeUpRMHJpdz09--8812e98e1e4a46e79f6b21b3af2b577b16c212e4;
         path=/; HttpOnly
       X-Request-Id:
-      - c03e2642-d984-4c24-b2b3-e2cca19b73b5
+      - 338b9a30-39b5-4f3e-9400-7b05319d30cc
       X-Runtime:
-      - '10.692873'
+      - '5.600312'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -15587,5 +15538,5 @@ http_interactions:
         OltdLCJmb3JtYXRzIjpbImZyZWUtcmVzcG9uc2UiLCJtdWx0aXBsZS1jaG9p
         Y2UiXSwiY29tYm9fY2hvaWNlcyI6W119XX1dfQ==
     http_version: 
-  recorded_at: Thu, 07 Apr 2016 22:22:49 GMT
+  recorded_at: Fri, 08 Apr 2016 00:39:49 GMT
 recorded_with: VCR 2.9.3

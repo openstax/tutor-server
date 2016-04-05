@@ -32,7 +32,7 @@ class Tasks::Assistants::ExtraAssignmentAssistant < Tasks::Assistants::GenericAs
   end
 
   def build_tasks
-    @taskees.collect do |taskee|
+    @taskees.map do |taskee|
       build_extra_task(pages: @pages, page_id_to_snap_lab_id: @page_id_to_snap_lab_id).entity_task
     end
   end
@@ -62,6 +62,7 @@ class Tasks::Assistants::ExtraAssignmentAssistant < Tasks::Assistants::GenericAs
 
   def build_extra_task(pages:, page_id_to_snap_lab_id:)
     task = build_task
+    @used_embed_tags = []
 
     pages.each do |page|
       page.snap_labs.each do |snap_lab|
@@ -178,7 +179,7 @@ class Tasks::Assistants::ExtraAssignmentAssistant < Tasks::Assistants::GenericAs
   end
 
   def get_page_pools(pages)
-    page_ids = pages.collect{ |pg| pg.id }
+    page_ids = pages.map(&:id)
     @page_pools[page_ids] ||= @ecosystem.reading_dynamic_pools(pages: pages)
   end
 

@@ -13,7 +13,10 @@ RSpec.describe Content::Strategies::Direct::Ecosystem do
 
     expect(manifest_book.archive_url).to eq ecosystem_book.archive_url
     expect(manifest_book.cnx_id).to eq ecosystem_book.cnx_id
-    expect(manifest_book.reading_processing_instructions).to eq []
+    expect(manifest_book.reading_processing_instructions).not_to be_empty
+    manifest_book.reading_processing_instructions.each do |processing_instruction|
+      expect(processing_instruction).to be_a Content::Manifest::Book::ProcessingInstruction
+    end
     expect(manifest_book.exercise_ids).to eq ecosystem_book.exercises.map(&:uid)
   end
 end

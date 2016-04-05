@@ -2,6 +2,10 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe Tasks::Assistants::ExtraAssignmentAssistant, type: :assistant, vcr: VCR_OPTS do
+
+  let(:fixture_path)      { 'spec/fixtures/content/sample_tutor_manifest.yml' }
+  let(:manifest_contents) { File.open(fixture_path) { |file| file.read } }
+
   let!(:assistant) {
     FactoryGirl.create(
       :tasks_assistant,
@@ -12,13 +16,9 @@ RSpec.describe Tasks::Assistants::ExtraAssignmentAssistant, type: :assistant, vc
   let!(:period) { CreatePeriod[course: course] }
 
   let!(:ecosystem) {
-    es = nil
     VCR.use_cassette('Tasks_Assistants_ExtraAssignmentAssistant/with_book', VCR_OPTS) do
-      es = FetchAndImportBookAndCreateEcosystem[
-        book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
-      ]
+      ImportEcosystemManifest[manifest: manifest_contents]
     end
-    es
   }
 
   let!(:task_plan) {
@@ -38,7 +38,7 @@ RSpec.describe Tasks::Assistants::ExtraAssignmentAssistant, type: :assistant, vc
   let!(:num_taskees) { 3 }
 
   let!(:students) {
-    num_taskees.times.collect do
+    num_taskees.times.map do
       user = FactoryGirl.create(:user)
       AddUserAsPeriodStudent.call(user: user, period: period).outputs.student
     end
@@ -51,7 +51,7 @@ RSpec.describe Tasks::Assistants::ExtraAssignmentAssistant, type: :assistant, vc
   }
 
   it 'assigns tasked readings and exercises to students' do
-    tasks = DistributeTasks.call(task_plan).outputs.entity_tasks.collect(&:task)
+    tasks = DistributeTasks.call(task_plan).outputs.entity_tasks.map(&:task)
     expect(tasks.length).to eq(num_taskees)
     tasks.each do |task|
       # We added 2 snap lab notes:
@@ -61,16 +61,16 @@ RSpec.describe Tasks::Assistants::ExtraAssignmentAssistant, type: :assistant, vc
       #
       # There is one reading and one exercise for each snap lab note, so in total there are 4 task steps
       expect(task.task_steps.length).to eq(4)
-      taskeds = task.task_steps.collect(&:tasked)
+      taskeds = task.task_steps.map(&:tasked)
 
-      expect(taskeds.collect(&:class)).to eq([
+      expect(taskeds.map(&:class)).to eq([
         Tasks::Models::TaskedReading,
         Tasks::Models::TaskedExercise,
         Tasks::Models::TaskedReading,
         Tasks::Models::TaskedExercise
       ])
 
-      content = taskeds.collect(&:content)
+      content = taskeds.map(&:content)
       expect(content[0]).to include(
         'if the acceleration of a moving bicycle is constant')
       expect(content[1]).to include(

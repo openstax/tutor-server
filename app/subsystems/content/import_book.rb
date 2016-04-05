@@ -23,7 +23,7 @@ class Content::ImportBook
         title: cnx_book.title,
         content: cnx_book.root_book_part.contents,
         content_ecosystem_id: ecosystem.id,
-        reading_processing_instructions: reading_processing_instructions
+        reading_processing_instructions: reading_processing_instructions.map(&:to_h)
     )
 
     run(:import_book_part, cnx_book_part: cnx_book.root_book_part, book: book, save: false)

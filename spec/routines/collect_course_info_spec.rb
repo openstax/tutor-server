@@ -155,7 +155,7 @@ describe CollectCourseInfo, type: :routine do
 
       it "returns student info for the user" do
         result = described_class[user: user_1, with: :students]
-        expect(result.first.students.map(&:id)).to eq [@student1.id, @student2.id]
+        expect(Set.new result.first.students.map(&:id)).to eq Set[@student1.id, @student2.id]
       end
     end
   end

@@ -29,7 +29,7 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::GenericAssistant
     @pool_exercises = {}
     @ecosystems_map = {}
 
-    @taskees.collect do |taskee|
+    @taskees.map do |taskee|
       build_ireading_task(
         taskee: taskee,
         pages: @pages

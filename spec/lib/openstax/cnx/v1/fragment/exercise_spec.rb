@@ -23,8 +23,8 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::Exercise, type: :external, vcr: VCR_
 
   let!(:expected_titles) { [ nil, nil ] }
   let!(:expected_codes)  {
-    [ ['https://exercises-dev.openstax.org/api/exercises?q=tag%3Ak12phys-ch04-ex017'],
-      ['https://exercises-dev.openstax.org/api/exercises?q=tag%3Ak12phys-ch04-ex073'] ]
+    [ ['https://exercises-dev.openstax.org/api/exercises?q=tag%3A%22k12phys-ch04-ex017%22'],
+      ['https://exercises-dev.openstax.org/api/exercises?q=tag%3A%22k12phys-ch04-ex073%22'] ]
   }
   let!(:expected_tags)   { [ ['k12phys-ch04-ex017'], ['k12phys-ch04-ex073'] ] }
 
