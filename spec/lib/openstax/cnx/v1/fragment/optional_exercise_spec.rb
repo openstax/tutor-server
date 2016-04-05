@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe OpenStax::Cnx::V1::Fragment::Exercise, type: :external, vcr: VCR_OPTS do
+RSpec.describe OpenStax::Cnx::V1::Fragment::OptionalExercise, type: :external, vcr: VCR_OPTS do
   let(:reading_processing_instructions) {
     FactoryGirl.build(:content_book).reading_processing_instructions
   }
@@ -20,7 +20,7 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::Exercise, type: :external, vcr: VCR_
   }
   let!(:expected_tags)   { [ ['k12phys-ch04-ex017'], ['k12phys-ch04-ex073'] ] }
 
-  it "provides info about the exercise fragment" do
+  it "provides info about the optional exercise fragment" do
     exercise_fragments.each do |fragment|
       expect(fragment.node).not_to be_nil
       expect(fragment.title).to be_nil

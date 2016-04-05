@@ -3,15 +3,7 @@ require 'vcr_helper'
 
 RSpec.describe OpenStax::Cnx::V1::FragmentSplitter, type: :lib, vcr: VCR_OPTS do
   let(:reading_processing_instructions) {
-    [
-      { css: '.ost-reading-discard, .os-teacher, [data-type="glossary"]' },
-      { css: '.ost-exercise-choice', fragments: ["exercise", "optional_exercise"] },
-      { css: ".os-exercise", fragments: ["exercise"] },
-      { css: ".ost-video", fragments: ["video"] },
-      { css: ".os-interactive, .ost-interactive", fragments: ["interactive"] },
-      { css: ".worked-example", fragments: ["reading"], labels: ["worked-example"] },
-      { css: ".ost-feature, .ost-assessed-feature", fragments: ["reading"] }
-    ]
+    FactoryGirl.build(:content_book).reading_processing_instructions
   }
 
   let(:fragment_splitter)  { described_class.new(reading_processing_instructions) }
@@ -24,13 +16,16 @@ RSpec.describe OpenStax::Cnx::V1::FragmentSplitter, type: :lib, vcr: VCR_OPTS do
           OpenStax::Cnx::V1::Fragment::Reading,
           OpenStax::Cnx::V1::Fragment::Interactive,
           OpenStax::Cnx::V1::Fragment::Exercise,
+          OpenStax::Cnx::V1::Fragment::OptionalExercise,
           OpenStax::Cnx::V1::Fragment::Reading,
           OpenStax::Cnx::V1::Fragment::Reading,
           OpenStax::Cnx::V1::Fragment::Exercise,
+          OpenStax::Cnx::V1::Fragment::OptionalExercise,
           OpenStax::Cnx::V1::Fragment::Reading,
           OpenStax::Cnx::V1::Fragment::Reading,
           OpenStax::Cnx::V1::Fragment::Reading,
           OpenStax::Cnx::V1::Fragment::Exercise,
+          OpenStax::Cnx::V1::Fragment::OptionalExercise,
           OpenStax::Cnx::V1::Fragment::Reading,
           OpenStax::Cnx::V1::Fragment::Exercise,
           OpenStax::Cnx::V1::Fragment::OptionalExercise
@@ -49,8 +44,10 @@ RSpec.describe OpenStax::Cnx::V1::FragmentSplitter, type: :lib, vcr: VCR_OPTS do
         expected_fragment_classes: [OpenStax::Cnx::V1::Fragment::Reading,
                                     OpenStax::Cnx::V1::Fragment::Video,
                                     OpenStax::Cnx::V1::Fragment::Exercise,
+                                    OpenStax::Cnx::V1::Fragment::OptionalExercise,
                                     OpenStax::Cnx::V1::Fragment::Interactive,
-                                    OpenStax::Cnx::V1::Fragment::Exercise]
+                                    OpenStax::Cnx::V1::Fragment::Exercise,
+                                    OpenStax::Cnx::V1::Fragment::OptionalExercise]
       }
     ]
   }

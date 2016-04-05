@@ -30,6 +30,10 @@ module OpenStax::Cnx::V1
       super(node: node, title: title, labels: labels)
     end
 
+    def title
+      @title
+    end
+
     def embed_codes
       @embed_codes ||= node.xpath(ABSOLUTE_EMBED_CODE_XPATH).map do |anchor|
         anchor.attribute('href').value
@@ -40,6 +44,10 @@ module OpenStax::Cnx::V1
       @embed_tags ||= embed_codes.map do |embed_code|
         ABSOLUTE_EMBED_TAG_REGEX.match(embed_code).try(:[], 1)
       end.compact
+    end
+
+    def blank?
+      embed_tags.empty?
     end
 
     def exercise?

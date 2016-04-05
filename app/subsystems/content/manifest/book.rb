@@ -18,7 +18,7 @@ module Content
       end
 
       def reading_processing_instructions
-        verify_and_return @strategy.reading_processing_instructions, klass: ProcessingInstruction,
+        verify_and_return @strategy.reading_processing_instructions, klass: Hash,
                                                                      error: StrategyError
       end
 

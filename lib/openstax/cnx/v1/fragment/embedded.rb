@@ -58,6 +58,10 @@ module OpenStax::Cnx::V1
       @to_html ||= node.to_html
     end
 
+    def blank?
+      url.blank?
+    end
+
     protected
 
     def container

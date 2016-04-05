@@ -22,6 +22,10 @@ class OpenStax::Cnx::V1::Fragment
     @labels || []
   end
 
+  def blank?
+    false
+  end
+
   def exercise?
     false
   end

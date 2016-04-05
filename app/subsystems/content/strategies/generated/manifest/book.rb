@@ -1,20 +1,14 @@
 module Content
   module Strategies
     module Generated
-      class Manifest::Book < Hashie::Mash
+      class Manifest::Book < OpenStruct
 
         def to_h
-          super.merge(
-            'reading_processing_instructions' => reading_processing_instructions.map(&:to_h)
-          )
+          super.deep_stringify_keys
         end
 
         def reading_processing_instructions
-          super.to_a.map do |hash|
-            strategy = \
-              ::Content::Strategies::Generated::Manifest::Book::ProcessingInstruction.new(hash)
-            ::Content::Manifest::Book::ProcessingInstruction.new(strategy: strategy)
-          end
+          super.to_a
         end
 
         def valid?
@@ -27,7 +21,7 @@ module Content
         end
 
         def unlock_exercises!
-          delete(:exercise_ids)
+          delete_field(:exercise_ids)
           ::Content::Manifest::Book.new(strategy: self)
         end
 

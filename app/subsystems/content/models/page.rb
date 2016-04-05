@@ -56,7 +56,7 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
       {
         id: "#{self.id}:#{snap_lab_node.attr('id')}",
         title: parser.snap_lab_title(snap_lab_node),
-        fragments: fragment_splitter.split_into_fragments(snap_lab_node, true)
+        fragments: fragment_splitter.split_into_fragments(snap_lab_node, 'snap-lab')
       }
     end
   end

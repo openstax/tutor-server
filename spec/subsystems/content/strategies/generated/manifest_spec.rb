@@ -38,7 +38,12 @@ RSpec.describe Content::Strategies::Generated::Manifest do
     }
     let(:expected_reading_processing_instructions) {
       [
-        { css: '.ost-reading-discard, .os-teacher, [data-type="glossary"]' },
+        { css: '.ost-reading-discard, .os-teacher, [data-type="glossary"]',
+          fragments: [], except: 'snap-lab' },
+        { css: ".ost-feature, .ost-assessed-feature",
+          fragments: ["node", "exercise", "optional_exercise"] },
+        { css: ".ost-feature .ost-exercise-choice, .ost-assessed-feature .ost-exercise-choice, " +
+               ".ost-feature .os-exercise, .ost-assessed-feature .os-exercise", fragments: [] },
         { css: ".ost-exercise-choice", fragments: ["exercise", "optional_exercise"] },
         { css: ".os-exercise", fragments: ["exercise"] },
         { css: ".ost-video", fragments: ["video"] },
@@ -58,11 +63,12 @@ RSpec.describe Content::Strategies::Generated::Manifest do
       expect(book.cnx_id).to eq '93e2b09d-261c-4007-a987-0b3062fe154b@4.4'
       book.reading_processing_instructions.each_with_index do |processing_instruction, index|
         expected_processing_instruction = expected_reading_processing_instructions[index]
-        expect(processing_instruction.css).to eq expected_processing_instruction[:css]
-        expect(processing_instruction.fragments).to(
-          eq expected_processing_instruction[:fragments] || []
+        expect(processing_instruction['css']).to eq expected_processing_instruction[:css]
+        expect(processing_instruction['fragments']).to(
+          eq expected_processing_instruction[:fragments]
         )
-        expect(processing_instruction.labels).to eq expected_processing_instruction[:labels] || []
+        expect(processing_instruction['except']).to eq expected_processing_instruction[:except]
+        expect(processing_instruction['labels']).to eq expected_processing_instruction[:labels]
       end
       expect(book.exercise_ids).to eq expected_exercise_ids
     end

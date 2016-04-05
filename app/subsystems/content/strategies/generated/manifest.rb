@@ -1,14 +1,14 @@
 module Content
   module Strategies
     module Generated
-      class Manifest < Hashie::Mash
+      class Manifest < OpenStruct
 
         def self.from_yaml(yaml)
           new(YAML.load(yaml))
         end
 
         def to_h
-          super.merge('books' => books.map(&:to_h))
+          super.deep_stringify_keys
         end
 
         def to_yaml

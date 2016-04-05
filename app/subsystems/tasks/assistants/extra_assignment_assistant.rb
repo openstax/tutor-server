@@ -146,11 +146,6 @@ class Tasks::Assistants::ExtraAssignmentAssistant < Tasks::Assistants::GenericAs
   end
 
   def tasked_video(video_fragment:, step:, title: nil)
-    if video_fragment.url.blank?
-      logger.warn "Video without embed tag found while creating iReading"
-      return
-    end
-
     Tasks::Models::TaskedVideo.new(task_step: step,
                                    url: video_fragment.url,
                                    title: title,
@@ -158,11 +153,6 @@ class Tasks::Assistants::ExtraAssignmentAssistant < Tasks::Assistants::GenericAs
   end
 
   def tasked_interactive(interactive_fragment:, step:, title: nil)
-    if interactive_fragment.url.blank?
-      logger.warn('Interactive without url found while creating iReading')
-      return
-    end
-
     Tasks::Models::TaskedInteractive.new(task_step: step,
                                          url: interactive_fragment.url,
                                          title: title,

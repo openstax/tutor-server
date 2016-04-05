@@ -3,15 +3,7 @@ require 'vcr_helper'
 
 RSpec.describe OpenStax::Cnx::V1::Fragment::Interactive, type: :external, vcr: VCR_OPTS do
   let(:reading_processing_instructions) {
-    [
-      { css: '.ost-reading-discard, .os-teacher, [data-type="glossary"]' },
-      { css: '.ost-exercise-choice', fragments: ["exercise", "optional_exercise"] },
-      { css: ".os-exercise", fragments: ["exercise"] },
-      { css: ".ost-video", fragments: ["video"] },
-      { css: ".os-interactive, .ost-interactive", fragments: ["interactive"] },
-      { css: ".worked-example", fragments: ["reading"], labels: ["worked-example"] },
-      { css: ".ost-feature, .ost-assessed-feature", fragments: ["reading"] }
-    ]
+    FactoryGirl.build(:content_book).reading_processing_instructions
   }
   let(:fragment_splitter)     {
     OpenStax::Cnx::V1::FragmentSplitter.new(reading_processing_instructions)
@@ -19,7 +11,7 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::Interactive, type: :external, vcr: V
   let(:cnx_page_id)           { '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6@4' }
   let(:cnx_page)              { OpenStax::Cnx::V1::Page.new(id: cnx_page_id) }
   let(:fragments)             { fragment_splitter.split_into_fragments(cnx_page.converted_root) }
-  let(:interactive_fragments) { fragments.select { |f| f.is_a? described_class } }
+  let(:interactive_fragments) { fragments.select { |f| f.instance_of? described_class } }
 
   let!(:expected_titles) { [ nil ] }
   let!(:expected_urls) { [ 'https://phet.colorado.edu/sims/html/forces-and-motion-basics/latest/forces-and-motion-basics_en.html' ] }
