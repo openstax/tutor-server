@@ -6,8 +6,7 @@ class AddReadingProcessingInstructionsToContentBooks < ActiveRecord::Migration
   ]
 
   def change
-    add_column :content_books, :reading_processing_instructions, :hstore,
-               array: true, null: false, default: []
+    add_column :content_books, :reading_processing_instructions, :jsonb, null: false, default: '[]'
 
     reversible do |dir|
       dir.up do
