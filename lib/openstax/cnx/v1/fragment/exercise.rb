@@ -27,11 +27,16 @@ module OpenStax::Cnx::V1
       # Absolutized exercise url(s)
       self.class.absolutize_exercise_urls(node)
 
-      super(node: node, title: title, labels: labels)
+      super
     end
 
+    # Does not search for a title within the exercise node, unlike its superclass
     def title
       @title
+    end
+
+    def node_id
+      @node_id ||= node.attribute('id').try :value
     end
 
     def embed_codes
@@ -47,11 +52,7 @@ module OpenStax::Cnx::V1
     end
 
     def blank?
-      embed_tags.empty?
-    end
-
-    def exercise?
-      true
+      embed_tags.empty? && node_id.blank?
     end
 
   end

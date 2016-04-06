@@ -26,8 +26,4 @@ class OpenStax::Cnx::V1::Fragment
     false
   end
 
-  def exercise?
-    false
-  end
-
 end

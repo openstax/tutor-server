@@ -22,11 +22,15 @@ RSpec.describe OpenStax::Cnx::V1::FragmentSplitter, type: :lib, vcr: VCR_OPTS do
           OpenStax::Cnx::V1::Fragment::Exercise,
           OpenStax::Cnx::V1::Fragment::OptionalExercise,
           OpenStax::Cnx::V1::Fragment::Reading,
+          OpenStax::Cnx::V1::Fragment::Exercise,
+          OpenStax::Cnx::V1::Fragment::OptionalExercise,
           OpenStax::Cnx::V1::Fragment::Reading,
           OpenStax::Cnx::V1::Fragment::Reading,
           OpenStax::Cnx::V1::Fragment::Exercise,
           OpenStax::Cnx::V1::Fragment::OptionalExercise,
           OpenStax::Cnx::V1::Fragment::Reading,
+          OpenStax::Cnx::V1::Fragment::Exercise,
+          OpenStax::Cnx::V1::Fragment::OptionalExercise,
           OpenStax::Cnx::V1::Fragment::Exercise,
           OpenStax::Cnx::V1::Fragment::OptionalExercise
         ]
