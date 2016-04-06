@@ -1,4 +1,4 @@
-class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::GenericAssistant
+class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistant
 
   def self.schema
     '{
@@ -20,37 +20,31 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::GenericAssistant
     }'
   end
 
-  def build_tasks
-    collect_pages
+  def initialize(task_plan:, taskees:)
+    super
 
-    @tag_exercises = {}
-    @exercise_pages = {}
-    @page_pools = {}
-    @pool_exercises = {}
+    @pages = collect_pages
     @ecosystems_map = {}
+  end
 
-    @taskees.map do |taskee|
-      build_ireading_task(
-        taskee: taskee,
-        pages: @pages
-      ).entity_task
-    end
+  def build_tasks
+    taskees.map{ |taskee| build_reading_task(pages: @pages, taskee: taskee).entity_task }
   end
 
   protected
 
-  def collect_pages
-    @page_ids = @task_plan.settings['page_ids']
-    raise "No pages selected" if @page_ids.blank?
-
-    ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(@task_plan.ecosystem)
-    @ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
-
-    @pages = @ecosystem.pages_by_ids(@page_ids)
+  def self.num_personalized_exercises
+    1
   end
 
-  def build_ireading_task(pages:, taskee:)
+  def collect_pages
+    ecosystem.pages_by_ids(task_plan.settings['page_ids'])
+  end
+
+  def build_reading_task(pages:, taskee:)
     task = build_task
+
+    reset_used_exercises
 
     add_core_steps!(task: task, pages: pages)
 
@@ -65,53 +59,21 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::GenericAssistant
   end
 
   def build_task
-    title    = @task_plan.title || 'iReading'
-    description = @task_plan.description
+    title    = task_plan.title || 'iReading'
+    description = task_plan.description
 
     task = Tasks::BuildTask[
-      task_plan: @task_plan,
+      task_plan: task_plan,
       task_type: :reading,
       title:     title,
       description: description,
       feedback_at: Time.now
     ]
-    AddSpyInfo[to: task, from: @ecosystem]
-    return task
-  end
-
-  def task_fragments(task:, fragments:, fragment_title:, page:, related_content:)
-    fragments.each do |fragment|
-      step = Tasks::Models::TaskStep.new(task: task)
-
-      case fragment
-      when OpenStax::Cnx::V1::Fragment::Exercise
-        tasked_exercise(exercise_fragment: fragment, step: step, title: fragment_title)
-      when OpenStax::Cnx::V1::Fragment::OptionalExercise
-        tasked_optional_exercise(exercise_fragment: fragment,
-                                 step: task.task_steps.last || step,
-                                 title: fragment_title)
-      when OpenStax::Cnx::V1::Fragment::Video
-        tasked_video(video_fragment: fragment, step: step, title: fragment_title)
-      when OpenStax::Cnx::V1::Fragment::Interactive
-        tasked_interactive(interactive_fragment: fragment, step: step, title: fragment_title)
-      else
-        tasked_reading(reading_fragment: fragment, page: page, title: fragment_title, step: step)
-      end
-
-      next if step.tasked.nil?
-      step.group_type = :core_group
-      step.add_labels(fragment.labels)
-      step.add_related_content(page.related_content)
-      task.task_steps << step
-
-      # Only the first step for each Page should have a title
-      fragment_title = nil
-    end
+    AddSpyInfo[to: task, from: ecosystem]
+    task
   end
 
   def add_core_steps!(task:, pages:)
-    @used_embed_tags = []
-
     pages.each do |page|
       # Chapter intro pages get their titles from the chapter instead
       page_title = page.is_intro? ? page.chapter.title : page.title
@@ -138,7 +100,7 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::GenericAssistant
 
     core_exercise_numbers = history.exercises.first.map(&:number)
 
-    course = @task_plan.owner
+    course = task_plan.owner
 
     spaced_practice_status = []
 
@@ -158,7 +120,7 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::GenericAssistant
 
       # Reuse Ecosystems map when possible
       @ecosystems_map[spaced_ecosystem.id] ||= Content::Map.find(
-        from_ecosystems: [spaced_ecosystem, @ecosystem].uniq, to_ecosystem: @ecosystem
+        from_ecosystems: [spaced_ecosystem, ecosystem].uniq, to_ecosystem: ecosystem
       )
 
       # Map the pages to exercises in the new ecosystem
@@ -213,66 +175,11 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::GenericAssistant
     task
   end
 
-  def self.num_personalized_exercises
-    1
-  end
-
   def add_exercise_step(task:, exercise:)
     step = Tasks::Models::TaskStep.new(task: task)
     TaskExercise[task_step: step, exercise: exercise]
     task.task_steps << step
     step
-  end
-
-  def tasked_reading(reading_fragment:, page:, step:, title: nil)
-    Tasks::Models::TaskedReading.new(task_step: step,
-                                     url: page.url,
-                                     book_location: page.book_location,
-                                     title: title,
-                                     content: reading_fragment.to_html)
-  end
-
-  def tasked_exercise(exercise_fragment:, step:, title: nil)
-    candidate_embed_tags = exercise_fragment.embed_tags - @used_embed_tags
-
-    return if candidate_embed_tags.empty?
-
-    # Search Ecosystem Exercises for one matching one of the embed tags
-    chosen_embed_tag = candidate_embed_tags.sample
-    exercise = get_random_exercise_with_tag(chosen_embed_tag)
-
-    unless exercise.nil?
-      # Assign the exercise
-      TaskExercise[exercise: exercise, title: title, task_step: step]
-      @used_embed_tags << chosen_embed_tag
-    end
-  end
-
-  def tasked_optional_exercise(exercise_fragment:, step:, title: nil)
-    step.tasked.can_be_recovered = true
-  end
-
-  def tasked_video(video_fragment:, step:, title: nil)
-    Tasks::Models::TaskedVideo.new(task_step: step,
-                                   url: video_fragment.url,
-                                   title: title,
-                                   content: video_fragment.to_html)
-  end
-
-  def tasked_interactive(interactive_fragment:, step:, title: nil)
-    Tasks::Models::TaskedInteractive.new(task_step: step,
-                                         url: interactive_fragment.url,
-                                         title: title,
-                                         content: interactive_fragment.to_html)
-  end
-
-  def get_random_exercise_with_tag(tag)
-    @tag_exercises[tag] ||= @ecosystem.exercises_with_tags(tag)
-    @tag_exercises[tag].sample
-  end
-
-  def logger
-    Rails.logger
   end
 
 end

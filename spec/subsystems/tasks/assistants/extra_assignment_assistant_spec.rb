@@ -30,6 +30,7 @@ RSpec.describe Tasks::Assistants::ExtraAssignmentAssistant, type: :assistant, vc
     end
     FactoryGirl.build(:tasks_task_plan,
                       assistant: assistant,
+                      ecosystem: ecosystem.to_model,
                       settings: { snap_lab_ids: snap_lab_ids },
                       owner: course,
                       num_tasking_plans: 0)

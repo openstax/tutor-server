@@ -1,11 +1,12 @@
 # The generic assistant is a base class for other assistants to inherit from
 # It's not intended for direct use since it does not implement the all-important `build_tasks` method
 class Tasks::Assistants::GenericAssistant
-  attr_reader :task_plan, :taskees
 
   def initialize(task_plan:, taskees:)
     @task_plan = task_plan
     @taskees = taskees
+    @tag_exercises = {}
+    reset_used_exercises
   end
 
   def updated_attributes_for(tasking_plan:)
@@ -17,6 +18,34 @@ class Tasks::Assistants::GenericAssistant
       due_at: tasking_plan.due_at,
       feedback_at: Time.now
     }
+  end
+
+  protected
+
+  attr_reader :task_plan, :taskees
+
+  def ecosystem
+    return @ecosystem unless @ecosystem.nil?
+
+    ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(task_plan.ecosystem)
+    @ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
+  end
+
+  def reset_used_exercises
+    @used_exercise_numbers = Set.new
+  end
+
+  def get_random_unused_exercise_with_tags(tags)
+    sorted_tags = tags.uniq.sort
+
+    @tag_exercises[sorted_tags] ||= ecosystem.exercises_with_tags(*sorted_tags)
+    candidate_exercises = @tag_exercises[sorted_tags].reject do |ex|
+      @used_exercise_numbers.include?(ex.number)
+    end
+
+    candidate_exercises.sample.tap do |chosen_exercise|
+      @used_exercise_numbers << chosen_exercise.number unless chosen_exercise.nil?
+    end
   end
 
 end
