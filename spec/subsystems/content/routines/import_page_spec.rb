@@ -38,7 +38,7 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, speed: :slow, vcr:
     end
 
     it 'finds LO tags in the content' do
-      expected_page_tags = ['cnxmod:95e61258-2faf-41d4-af92-f62e1414175a',
+      expected_page_tags = ['context-cnxmod:95e61258-2faf-41d4-af92-f62e1414175a',
                             'k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02',
                             'teks-112-39-c-4c', 'teks-112-39-c-4e']
 
@@ -108,7 +108,7 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, speed: :slow, vcr:
     end
 
     it 'finds cnxmod tags in the content' do
-      expected_page_tag = 'cnxmod:6a0568d8-23d7-439b-9a01-16e4e73886b3'
+      expected_page_tag = 'context-cnxmod:6a0568d8-23d7-439b-9a01-16e4e73886b3'
 
       result = nil
       expect {

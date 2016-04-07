@@ -59,7 +59,7 @@ RSpec.describe Tagger, type: :lib do
         { value: 'blooms:8', name: 'Blooms: 8', type: :blooms },
         { value: 'time:short', name: 'Length: S', type: :length },
         { value: 'teks:dont-care-9a', name: nil, type: :teks },
-        { value: 'cnxmod:6a0568d8-23d7-439b-9a01-16e4e73886b3', name: nil, type: :cnxmod },
+        { value: 'context-cnxmod:6a0568d8-23d7-439b-9a01-16e4e73886b3', name: nil, type: :cnxmod },
         { value: 'id:stax-econ:101', name: nil, type: :id },
         { value: 'dont-care', name: nil, type: :generic }
       ]

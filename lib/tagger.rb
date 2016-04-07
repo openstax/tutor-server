@@ -10,7 +10,7 @@ module Tagger
   TAG_TYPE_REGEXES = HashWithIndifferentAccess.new({
     # http://stackoverflow.com/a/12843265
     id: /\Aid:[\w-]+:(\d+)\z/,
-    cnxmod: /\Acnxmod:([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})\z/,
+    cnxmod: /\A(?:context-)?cnxmod:([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})\z/,
     lo: /\A(?:lo:[\w-]+:\d+-\d+-\d+|[\w-]+-lo\d+)\z/,
     aplo: /\A(?:aplo:[\w-]+:\d+-\d+-\d+|[\w-]+-aplo-[\w-]+)\z/,
     dok: /\Adok:?(\d+)\z/,
