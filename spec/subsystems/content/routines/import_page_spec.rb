@@ -38,26 +38,23 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, speed: :slow, vcr:
     end
 
     it 'finds LO tags in the content' do
-      expected_page_tags = ['context-cnxmod:95e61258-2faf-41d4-af92-f62e1414175a',
-                            'k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02',
-                            'teks-112-39-c-4c', 'teks-112-39-c-4e']
+      expected_los_set = Set['k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02',
+                             'lo:stax-k12phys:4-1-1', 'lo:stax-k12phys:4-1-2']
+      expected_routine_tags_set = Set['context-cnxmod:95e61258-2faf-41d4-af92-f62e1414175a',
+                                      'k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02',
+                                      'teks-112-39-c-4c', 'teks-112-39-c-4e']
 
       result = nil
-      expect {
-        result = import_page
-      }.to change{ Content::Models::Tag.lo.count }.by(2)
+      expect { result = import_page }.to change{ Content::Models::Tag.lo.count }.by(4)
 
-      tags = Content::Models::Tag.lo.order(:id).to_a
-      expect(tags[-2].value).to eq 'k12phys-ch04-s01-lo01'
-      expect(tags[-1].value).to eq 'k12phys-ch04-s01-lo02'
+      los_set = Set.new Content::Models::Tag.lo.order(:created_at).last(4).map(&:value)
+      expect(los_set).to eq(expected_los_set)
 
-      routine_tags = result.outputs[:tags]
-      routine_tags_value_set = Set.new routine_tags.collect(&:value)
-      expect(routine_tags_value_set).to eq Set.new(expected_page_tags)
+      routine_tags_set = Set.new result.outputs[:tags].map(&:value)
+      expect(routine_tags_set).to eq expected_routine_tags_set
 
-      routine_tags_set = Set.new routine_tags
-      page_tags_set = Set.new Content::Models::Page.last.page_tags.collect(&:tag)
-      expect(routine_tags_set).to eq page_tags_set
+      page_tags_set = Set.new Content::Models::Page.last.page_tags.map{ |pt| pt.tag.value }
+      expect(page_tags_set).to eq expected_routine_tags_set + expected_los_set
     end
 
     it 'creates tags from ost-standard-defs' do
