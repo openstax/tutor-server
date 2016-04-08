@@ -37,18 +37,11 @@ class Content::ImportBook
     import_page_tags.each(&:reload)
 
     outputs[:exercises] = []
-    page_block = ->(exercise_wrapper) {
+    page_block = ->(exercise_wrapper) do
       tags = Set.new(exercise_wrapper.los + exercise_wrapper.aplos + exercise_wrapper.cnxmods)
-      pages = import_page_tags.select{ |pt| tags.include?(pt.tag.value) }
-                              .collect{ |pt| pt.page }.uniq
-
-      # Blow up if there is more than one page for an exercise
-      fatal_error(code: :multiple_pages_for_one_exercise,
-                  message: "Multiple pages were found for an exercise.\nExercise: #{
-                    exercise_wrapper.uid}\nPages:\n#{pages.collect{ |pg| pg.url }.join("\n")}") \
-        if pages.size != 1
-      pages.first
-    }
+      pages = import_page_tags.select{ |pt| tags.include?(pt.tag.value) }.map(&:page).uniq
+      pages.max_by(&:book_location)
+    end
 
     if exercise_uids.nil?
       # Split the tag queries to avoid exceeding the URL limit

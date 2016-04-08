@@ -28,7 +28,7 @@ module Content
           @from_ecosystems = from_ecosystems
           @to_ecosystem = to_ecosystem
 
-          @page_id_to_page_map = {}
+          @page_id_to_pages_map = {}
           @exercise_id_to_page_map = {}
           @pool_type_page_id_to_exercises_map = {}
         end
@@ -36,9 +36,9 @@ module Content
         def map_pages_to_pages(pages:)
           page_ids = pages.map(&:id)
 
-          initialize_page_id_to_page_map_for_the_to_ecosystem
+          initialize_page_id_to_pages_map_for_the_to_ecosystem
 
-          mapped_pages = @page_id_to_page_map.slice(*page_ids)
+          mapped_pages = @page_id_to_pages_map.slice(*page_ids)
           unmapped_page_ids = page_ids - mapped_pages.keys
 
           return mapped_pages if unmapped_page_ids.empty?
@@ -61,15 +61,15 @@ module Content
             .to_a.group_by(&:unmapped_page_id)
 
           page_to_page_map.each do |page_id, page_models|
-            ecosystem_pages = page_models.map{ |pm| @page_id_to_page_map[pm.id] }.compact.uniq
+            ecosystem_pages = page_models.map{ |pm| @page_id_to_pages_map[pm.id] }.compact.uniq
 
-            # It could happen in theory that a page maps to 2 pages,
+            # It could happen in theory that a page maps to 2 or more pages,
             # but for now we don't handle that case
             # since it's hard to figure out what to do for the dashboard/scores
-            @page_id_to_page_map[page_id] = ecosystem_pages.size == 1 ? ecosystem_pages.first : nil
+            @page_id_to_pages_map[page_id] = ecosystem_pages.size == 1 ? ecosystem_pages.first : nil
           end
 
-          @page_id_to_page_map.slice(*page_ids)
+          @page_id_to_pages_map.slice(*page_ids)
         end
 
         def map_exercises_to_pages(exercises:)
@@ -79,7 +79,7 @@ module Content
 
           return mapped_exercises if unmapped_exercise_ids.empty?
 
-          initialize_page_id_to_page_map_for_the_to_ecosystem
+          initialize_page_id_to_pages_map_for_the_to_ecosystem
 
           exercise_to_page_map = Content::Models::Page
             .joins(tags: {same_value_tags: :exercises})
@@ -99,11 +99,10 @@ module Content
             .to_a.group_by(&:unmapped_exercise_id)
 
           exercise_to_page_map.each do |exercise_id, page_models|
-            ecosystem_pages = page_models.map{ |pm| @page_id_to_page_map[pm.id] }.compact.uniq
+            ecosystem_pages = page_models.map{ |pm| @page_id_to_pages_map[pm.id] }.compact.uniq
 
-            # We only allow each exercise to map to 1 page
-            @exercise_id_to_page_map[exercise_id] = \
-              ecosystem_pages.size == 1 ? ecosystem_pages.first : nil
+            # Each exercise maps to the highest numbered page that shares a mapping tag with it
+            @exercise_id_to_page_map[exercise_id] = ecosystem_pages.max_by(&:book_location)
           end
 
           @exercise_id_to_page_map.slice(*exercise_ids)
@@ -166,10 +165,10 @@ module Content
 
         protected
 
-        def initialize_page_id_to_page_map_for_the_to_ecosystem
-          @page_id_to_page_map = @to_ecosystem.pages.each_with_object({}) do |page, hash|
+        def initialize_page_id_to_pages_map_for_the_to_ecosystem
+          @page_id_to_pages_map = @to_ecosystem.pages.each_with_object({}) do |page, hash|
             hash[page.id] = page
-          end if @page_id_to_page_map.blank?
+          end if @page_id_to_pages_map.blank?
         end
 
         def mapping_tag_types
