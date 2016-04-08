@@ -62,7 +62,7 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
   end
 
   def task_optional_exercise(exercise_fragment:, step:, title: nil)
-    step.tasked.can_be_recovered = true
+    step.tasked.can_be_recovered = true if step.tasked.is_a?(Tasks::Models::TaskedExercise)
   end
 
   def task_video(video_fragment:, step:, title: nil)
