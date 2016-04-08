@@ -44,7 +44,8 @@ class Content::Routines::ImportExercises
 
       outputs[:exercises] << exercise
 
-      lo_tags = relevant_tags.select{ |tag| tag.lo? }
+      # Transfer LO and APLO tags to the page
+      lo_tags = relevant_tags.select{ |tag| tag.lo? || tag.aplo? }
       page_taggings += run(:tag, exercise_page, lo_tags,
                            tagging_class: Content::Models::PageTag,
                            save: false).outputs.taggings

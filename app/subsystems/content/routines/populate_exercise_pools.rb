@@ -1,5 +1,10 @@
 class Content::Routines::PopulateExercisePools
 
+  # TODO: Add per-book pool logic to the book map
+  HS_UUIDS = ['334f8b61-30eb-4475-8e05-5260a4866b4b',
+              'd52e93f4-8653-4273-86da-3850001c0786',
+              '93e2b09d-261c-4007-a987-0b3062fe154b']
+
   lev_routine express_output: :pools
 
   protected
@@ -8,6 +13,8 @@ class Content::Routines::PopulateExercisePools
     ecosystem = book.ecosystem
     # Use preload here instead of eager_load here to avoid a memory usage spike
     chapters = book.chapters.preload(pages: { exercises: { exercise_tags: :tag } })
+
+    use_old_logic = HS_UUIDS.include?(book.uuid)
 
     outputs[:pools] = chapters.flat_map do |chapter|
       ecosystem = chapter.ecosystem
@@ -29,28 +36,32 @@ class Content::Routines::PopulateExercisePools
                                                             pool_type: :all_exercises)
 
         page.exercises.each do |exercise|
-          tags = Set.new exercise.exercise_tags.collect{ |et| et.tag.value }
+          tags = Set.new exercise.exercise_tags.map{ |et| et.tag.value }
 
-          # iReading Dynamic (Concept Coach)
+          # Reading Dynamic (Concept Coach)
           page.reading_dynamic_pool.content_exercise_ids << exercise.id \
-            if (
+            if (use_old_logic && (
               tags.include?('k12phys') && tags.include?('os-practice-concepts')
             ) || (
               tags.include?('apbio') && tags.include?('ost-chapter-review') && \
               tags.include?('review') && tags.include?('time-short')
-            )
+            )) || (!use_old_logic && \
+            tags.include?('type:conceptual') || tags.include?('type:recall') ||
+            tags.include?('type:conceptual-or-recall'))
 
-          # iReading Try Another/Refresh my Memory
+          # Reading Context-Dependent
           page.reading_try_another_pool.content_exercise_ids << exercise.id \
-            if tags.include?('os-practice-problems')
+            if (use_old_logic && tags.include?('os-practice-problems')) ||
+               !use_old_logic
 
           # Homework Core (Assignment Builder)
           page.homework_core_pool.content_exercise_ids << exercise.id \
-            if tags.include?('ost-chapter-review')
+            if (use_old_logic && tags.include?('ost-chapter-review')) ||
+               (!use_old_logic && tags.include?('type:practice'))
 
           # Homework Dynamic
           page.homework_dynamic_pool.content_exercise_ids << exercise.id \
-            if (
+            if use_old_logic && ((
               tags.include?('k12phys') && (
                 tags.include?('os-practice-problems') || (
                   tags.include?('ost-chapter-review') && (
@@ -68,10 +79,11 @@ class Content::Routines::PopulateExercisePools
                   )
                 )
               )
-            )
+            )) || !use_old_logic && tags.include?('type:practice')
 
           # Practice Widget
-          page.practice_widget_pool.content_exercise_ids << exercise.id
+          page.practice_widget_pool.content_exercise_ids << exercise.id \
+            if use_old_logic || (!use_old_logic && !tags.include?('requires-context:y'))
 
           # All Exercises
           page.all_exercises_pool.content_exercise_ids << exercise.id

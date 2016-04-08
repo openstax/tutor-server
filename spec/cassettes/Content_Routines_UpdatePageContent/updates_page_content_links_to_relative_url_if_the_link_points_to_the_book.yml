@@ -21,11 +21,11 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Mon, 26 Oct 2015 22:56:19 GMT
+      - Thu, 07 Apr 2016 22:23:38 GMT
       Content-Type:
-      - application/json
+      - application/json; charset=UTF-8
       Content-Length:
-      - '196912'
+      - '196952'
       Connection:
       - keep-alive
       Access-Control-Allow-Headers:
@@ -41,13 +41,13 @@ http_interactions:
       Accept-Ranges:
       - bytes
       X-Varnish:
-      - '1413910353'
+      - 1405782017 1405529089
       Via:
       - 1.1 varnish
       X-Cache:
-      - MISS
+      - HIT
       X-Varnish-Age:
-      - '0'
+      - '11465'
       Age:
       - '0'
     body:
@@ -60,10 +60,10 @@ http_interactions:
         unit conversions both in the SI and English units.\n</li>\n<li>Explain the
         most common prefixes in the SI units and be able to write them in scientific
         notation.</li>\n</ul></div>", "revised": "2013-08-28T21:47:11Z", "printStyle":
-        null, "roles": null, "keywords": ["Conversion factor", "Customary system",
-        "Derived units", "English units", "Fundamental units", "Kilogram", "Meter",
-        "Metric system", "Order of magnitude", "Physical quantity", "Second", "SI
-        units", "Units"], "id": "102e9604-daa7-4a09-9f9e-232251d1a4ee", "title": "Physical
+        null, "roles": null, "keywords": ["Units", "Meter", "SI units", "Conversion
+        factor", "Customary system", "Derived units", "English units", "Fundamental
+        units", "Kilogram", "Metric system", "Order of magnitude", "Physical quantity",
+        "Second"], "id": "102e9604-daa7-4a09-9f9e-232251d1a4ee", "title": "Physical
         Quantities and Units", "mediaType": "application/vnd.org.cnx.module", "content":
         "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head xmlns:c=\"http://cnx.rice.edu/cnxml\"
         xmlns:md=\"http://cnx.rice.edu/mdml\"><title>Physical Quantities and Units</title><meta
@@ -1179,45 +1179,45 @@ http_interactions:
         are equal to another unit</dd></dl>\n</div></body>\n\n</html>", "subjects":
         ["Mathematics and Statistics"], "legacy_id": "m42091", "parentId": null, "publishers":
         [{"surname": "OpenStax College", "suffix": "", "firstname": "", "title": "",
-        "fullname": "OpenStax College", "id": "OpenStaxCollege"}, {"surname": "Physics",
-        "suffix": "", "firstname": "College", "title": "", "fullname": "OSC Physics
-        Maintainer", "id": "cnxcap"}], "parent": {"authors": [], "version": "", "id":
-        null, "title": null}, "stateid": 1, "parentTitle": null, "authors": [{"surname":
-        "OpenStax College", "suffix": "", "firstname": "", "title": "", "fullname":
-        "OpenStax College", "id": "OpenStaxCollege"}], "parentVersion": "", "legacy_version":
-        "1.7", "licensors": [{"surname": "University", "suffix": "", "firstname":
-        "Rice", "title": "", "fullname": "Rice University", "id": "OSCRiceUniversity"}],
-        "language": "en", "license": {"url": "http://creativecommons.org/licenses/by/3.0/",
+        "fullname": "OpenStax", "id": "OpenStaxCollege"}, {"surname": "Physics", "suffix":
+        "", "firstname": "College", "title": "", "fullname": "OpenStax College Physics",
+        "id": "cnxcap"}], "parent": {"authors": [], "shortId": null, "version": "",
+        "id": null, "title": null}, "stateid": 1, "parentTitle": null, "shortId":
+        "EC6WBNqn", "authors": [{"surname": "OpenStax College", "suffix": "", "firstname":
+        "", "title": "", "fullname": "OpenStax", "id": "OpenStaxCollege"}], "parentVersion":
+        "", "legacy_version": "1.7", "licensors": [{"surname": "University", "suffix":
+        "", "firstname": "Rice", "title": "", "fullname": "Rice University", "id":
+        "OSCRiceUniversity"}], "language": "en", "license": {"url": "http://creativecommons.org/licenses/by/3.0/",
         "code": "by", "version": "3.0", "name": "Creative Commons Attribution License"},
         "created": "2011-12-21T16:59:22Z", "doctype": "", "buyLink": null, "submitter":
         {"surname": "Physics", "suffix": "", "firstname": "College", "title": "",
-        "fullname": "OSC Physics Maintainer", "id": "cnxcap"}, "parentAuthors": [],
-        "history": [{"changes": "None, correction was made to ISM.", "version": "7",
-        "revised": "2013-08-28T21:47:11Z", "publisher": {"surname": "Physics", "suffix":
-        "", "firstname": "College", "title": "", "fullname": "OSC Physics Maintainer",
-        "id": "cnxcap"}}, {"changes": "derived unit current changed to charge", "version":
-        "6", "revised": "2012-10-08T21:03:56Z", "publisher": {"surname": "Physics",
-        "suffix": "", "firstname": "College", "title": "", "fullname": "OSC Physics
-        Maintainer", "id": "cnxcap"}}, {"changes": "post W&N QA", "version": "5",
-        "revised": "2012-06-20T14:34:34Z", "publisher": {"surname": "Physics", "suffix":
-        "", "firstname": "College", "title": "", "fullname": "OSC Physics Maintainer",
-        "id": "cnxcap"}}, {"changes": "Review changes", "version": "4", "revised":
-        "2012-06-13T18:00:11Z", "publisher": {"surname": "Physics", "suffix": "",
-        "firstname": "College", "title": "", "fullname": "OSC Physics Maintainer",
+        "fullname": "OpenStax College Physics", "id": "cnxcap"}, "parentAuthors":
+        [], "history": [{"changes": "None, correction was made to ISM.", "version":
+        "7", "revised": "2013-08-28T21:47:11Z", "publisher": {"surname": "Physics",
+        "suffix": "", "firstname": "College", "title": "", "fullname": "OpenStax College
+        Physics", "id": "cnxcap"}}, {"changes": "derived unit current changed to charge",
+        "version": "6", "revised": "2012-10-08T21:03:56Z", "publisher": {"surname":
+        "Physics", "suffix": "", "firstname": "College", "title": "", "fullname":
+        "OpenStax College Physics", "id": "cnxcap"}}, {"changes": "post W&N QA", "version":
+        "5", "revised": "2012-06-20T14:34:34Z", "publisher": {"surname": "Physics",
+        "suffix": "", "firstname": "College", "title": "", "fullname": "OpenStax College
+        Physics", "id": "cnxcap"}}, {"changes": "Review changes", "version": "4",
+        "revised": "2012-06-13T18:00:11Z", "publisher": {"surname": "Physics", "suffix":
+        "", "firstname": "College", "title": "", "fullname": "OpenStax College Physics",
         "id": "cnxcap"}}, {"changes": "link fix", "version": "3", "revised": "2012-03-30T22:04:39Z",
         "publisher": {"surname": "Physics", "suffix": "", "firstname": "College",
-        "title": "", "fullname": "OSC Physics Maintainer", "id": "cnxcap"}}, {"changes":
+        "title": "", "fullname": "OpenStax College Physics", "id": "cnxcap"}}, {"changes":
         "initial content publication", "version": "2", "revised": "2012-03-30T18:06:49Z",
         "publisher": {"surname": "Physics", "suffix": "", "firstname": "College",
-        "title": "", "fullname": "OSC Physics Maintainer", "id": "cnxcap"}}, {"changes":
+        "title": "", "fullname": "OpenStax College Physics", "id": "cnxcap"}}, {"changes":
         "Created module", "version": "1", "revised": "2011-12-22T15:45:42Z", "publisher":
         {"surname": "Williamson", "suffix": "", "firstname": "Collins", "title": "",
         "fullname": "Collins Williamson", "id": "dcwillman"}}]}'
     http_version: 
-  recorded_at: Mon, 26 Oct 2015 22:56:19 GMT
+  recorded_at: Thu, 07 Apr 2016 22:23:38 GMT
 - request:
     method: get
-    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:%22cnxmod:102e9604-daa7-4a09-9f9e-232251d1a4ee%22
+    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:%22context-cnxmod:102e9604-daa7-4a09-9f9e-232251d1a4ee%22
     body:
       encoding: US-ASCII
       string: ''
@@ -1226,6 +1226,8 @@ http_interactions:
       - Faraday v0.9.1
       Accept:
       - application/vnd.openstax.v1
+      Authorization:
+      - Bearer ce86221530fb5fa480454ece54a9203540391b5563990e466ac9edea35f1c2c8
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
   response:
@@ -1236,7 +1238,7 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Mon, 26 Oct 2015 22:56:20 GMT
+      - Thu, 07 Apr 2016 22:23:38 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -1252,25 +1254,72 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Access-Control-Allow-Origin:
-      - "*"
+      - ''
       Etag:
-      - W/"7d677de0cf405de24f0f10b68258ceb0"
+      - W/"1e3eeddff37610c231ad747ceb5e3bd3"
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=QVpLbk8ra0xzaVdvM1FqMFNUT2xGaU9VUE93enc4alhYQXV1UDYwUlB5QTRoUSs0REVUUDF4a0ZuWERxWEdIdXo4dU1zNG02TzkzNGxvc3JuTnIzMmc9PS0ta3JyTmtlaTZOdTF3SCtpQ2kwdm13Zz09--bac52a52f6fc0f7844faad0b2067a448d2453565;
+      - _exercises_session=RkZIazl2M3d1TWs3VEQxNEx6TUFMRVBMZXhhY3AvbTRZUlFiSGlhMWhiR1VDYVdjVlV3SzVjSk10ZjV6SGl1d0RnU0dGQXhBMys0UFdEb0xVcGRMdFE9PS0tVTBwaThkS1FkbVMybjlONlJRRXA3UT09--1752cfb7349886033f61d0af4d6668ca00da20d5;
         path=/; HttpOnly
       X-Request-Id:
-      - 831e808e-be9e-4a37-b37b-adf3b11ed784
+      - 1f696a19-fca6-4d93-aeaa-499c2a15b89d
       X-Runtime:
-      - '0.102981'
+      - '0.153251'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
-      encoding: UTF-8
-      string: '{"total_count":0,"items":[]}'
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJ0b3RhbF9jb3VudCI6MSwiaXRlbXMiOlt7ImF0dGFjaG1lbnRzIjpbXSwi
+        dGFncyI6WyJ0eXBlOmNvbmNlcHQtY29hY2giLCJibG9vbXM6MiIsInRpbWU6
+        c2hvcnQiLCJkb2s6MSIsImJvb2s6c3RheC1waHlzIiwibG86c3RheC1waHlz
+        OjEtMi0yIiwiZXhpZDpzdGF4LXBoeXM6MyIsImNvbnRleHQtY254bW9kOjEw
+        MmU5NjA0LWRhYTctNGEwOS05ZjllLTIzMjI1MWQxYTRlZSJdLCJ1aWQiOiIz
+        MjU1QDEiLCJudW1iZXIiOjMyNTUsInZlcnNpb24iOjEsInB1Ymxpc2hlZF9h
+        dCI6IjIwMTUtMTItMTZUMjA6NDc6MTkuMjUwWiIsImVkaXRvcnMiOltdLCJh
+        dXRob3JzIjpbeyJ1c2VyX2lkIjoxLCJuYW1lIjoiT3BlblN0YXgifV0sImNv
+        cHlyaWdodF9ob2xkZXJzIjpbeyJ1c2VyX2lkIjoyLCJuYW1lIjoiUmljZSBV
+        bml2ZXJzaXR5In1dLCJkZXJpdmVkX2Zyb20iOltdLCJzdGltdWx1c19odG1s
+        IjoiIiwicXVlc3Rpb25zIjpbeyJpZCI6NjE2NSwiaXNfYW5zd2VyX29yZGVy
+        X2ltcG9ydGFudCI6dHJ1ZSwic3RpbXVsdXNfaHRtbCI6IiIsInN0ZW1faHRt
+        bCI6IjxwPldoaWNoIG9mIHRoZSBmb2xsb3dpbmcgYXJlIHRydWUgc3RhdGVt
+        ZW50cyBhYm91dCB0aGUgbWV0cmljIHN5c3RlbT88L3A+XG5cbjxvbD5cbiAg
+        PGxpPlRoZSBtZXRyaWMgc3lzdGVtIHVzZXMgcG93ZXJzIG9mIDEwIHRvIHJl
+        bGF0ZSBxdWFudGl0aWVzLjwvbGk+XG4gIDxsaT5UaGUgbWV0cmljIHN5c3Rl
+        bSB1c2VzIGEgc3RhbmRhcmQgc2V0IG9mIHByZWZpeGVzIHRvIGRlbm90ZSBl
+        YWNoIG9yZGVyIG9mIG1hZ25pdHVkZSBncmVhdGVyIHRoYW4gb3IgbGVzc2Vy
+        IHRoYW4gdGhlIGZ1bmRhbWVudGFsIHVuaXQgaXRzZWxmLjwvbGk+XG4gIDxs
+        aT5BIHBpY29tZXRlciBpcyA8c3BhbiBkYXRhLW1hdGg9XCIxMOKIkjlcXCwg
+        XFx0ZXh0e21ldGVyc31cIj4xMOKIkjlcXCwgXFx0ZXh0e21ldGVyc308L3Nw
+        YW4+LjwvbGk+XG48L29sPlxuIiwiYW5zd2VycyI6W3siaWQiOjI0MTU3LCJj
+        b250ZW50X2h0bWwiOiJub25lIG9mIHRoZSBhYm92ZSIsImNvcnJlY3RuZXNz
+        IjoiMC4wIn0seyJpZCI6MjQxNTgsImNvbnRlbnRfaHRtbCI6ImFsbCBvZiB0
+        aGUgYWJvdmUiLCJjb3JyZWN0bmVzcyI6IjAuMCJ9LHsiaWQiOjI0MTU5LCJj
+        b250ZW50X2h0bWwiOiJzdGF0ZW1lbnRzIDEgYW5kIDIiLCJjb3JyZWN0bmVz
+        cyI6IjEuMCJ9LHsiaWQiOjI0MTYwLCJjb250ZW50X2h0bWwiOiJzdGF0ZW1l
+        bnQgMyBvbmx5IiwiY29ycmVjdG5lc3MiOiIwLjAifV0sImNvbGxhYm9yYXRv
+        cl9zb2x1dGlvbnMiOlt7ImF0dGFjaG1lbnRzIjpbXSwic29sdXRpb25fdHlw
+        ZSI6ImRldGFpbGVkIiwiY29udGVudF9odG1sIjoiT25seSB0aGUgZmlyc3Qg
+        dHdvIHN0YXRlbWVudHMgYXJlIHRydWUuIFRoZSBtZXRyaWMgc3lzdGVtIHVz
+        ZXMgcG93ZXJzIG9mIDxzcGFuIGRhdGEtbWF0aD1cIjEwXCI+MTA8L3NwYW4+
+        IHRvIHJlbGF0ZSBxdWFudGl0aWVzIG9mIHRoZSBzYW1lIHBoeXNpY2FsIGRp
+        bWVuc2lvbi4gVGhlIG1ldHJpYyBzeXN0ZW0gYWxzbyB1c2VzIGEgc3RhbmRh
+        cmQgc2V0IG9mIHByZWZpeGVzIHRvIGRlbm90ZSBhIGZpeGVkIG51bWJlciBv
+        ZiBvcmRlciBvZiBtYWduaXR1ZGUgZGlmZmVyZW5jZXMuIEluIHByYWN0aWNh
+        bCB0ZXJtcywgdXNlIG9mIHRoZSBtZXRyaWMgc3lzdGVtIG1ha2VzIGNvbnZl
+        cnRpbmcgYmV0d2VlbiBtZXRyaWMgdW5pdHMgcmVsYXRpdmVseSBzaW1wbGU6
+        IGl0IGlzIG9mdGVuIG9ubHkgYSBtYXR0ZXIgb2YgbXVsdGlwbHlpbmcgb3Ig
+        ZGl2aWRpbmcgdGhlIG9yaWdpbmFsIHVuaXQgYnkgbXVsdGlwbGVzIG9mIDxz
+        cGFuIGRhdGEtbWF0aD1cIjEwXCI+MTA8L3NwYW4+LiBTdGF0ZW1lbnQgMyBp
+        cyBmYWxzZTsgcGljbyBkZW5vdGVzIG9uZSB0cmlsbGlvbnRoLCBvciBhIGZh
+        Y3RvciBvZiA8c3BhbiBkYXRhLW1hdGg9XCIxMFwiPjEwPC9zcGFuPiByYWlz
+        ZWQgdG8gPHNwYW4gZGF0YS1tYXRoPVwiLTEyXCI+LTEyPC9zcGFuPi4ifV0s
+        ImNvbW11bml0eV9zb2x1dGlvbnMiOltdLCJoaW50cyI6W10sImZvcm1hdHMi
+        OlsiZnJlZS1yZXNwb25zZSIsIm11bHRpcGxlLWNob2ljZSJdLCJjb21ib19j
+        aG9pY2VzIjpbXX1dfV19
     http_version: 
-  recorded_at: Mon, 26 Oct 2015 22:56:19 GMT
+  recorded_at: Thu, 07 Apr 2016 22:23:38 GMT
 - request:
     method: get
     uri: https://archive.cnx.org/contents/127f63f7-d67f-4710-8625-2b1d4128ef6b@2
@@ -1292,11 +1341,11 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Mon, 26 Oct 2015 22:56:20 GMT
+      - Thu, 07 Apr 2016 22:23:39 GMT
       Content-Type:
-      - application/json
+      - application/json; charset=UTF-8
       Content-Length:
-      - '6868'
+      - '6900'
       Connection:
       - keep-alive
       Access-Control-Allow-Headers:
@@ -1312,13 +1361,13 @@ http_interactions:
       Accept-Ranges:
       - bytes
       X-Varnish:
-      - '1413910358'
+      - 1405782060 1405529110
       Via:
       - 1.1 varnish
       X-Cache:
-      - MISS
+      - HIT
       X-Varnish-Age:
-      - '0'
+      - '11465'
       Age:
       - '0'
     body:
@@ -1329,15 +1378,15 @@ http_interactions:
         xmlns:qml=\"http://cnx.rice.edu/qml/1.0\" xmlns:mod=\"http://cnx.rice.edu/#moduleIds\"
         xmlns:bib=\"http://bibtexml.sf.net/\" xmlns:data=\"http://dev.w3.org/html5/spec/#custom\"/>",
         "revised": "2012-05-17T19:05:25Z", "printStyle": null, "roles": null, "keywords":
-        ["AC", "Action potential", "Alternating current", "Amp", "Ampere", "Axon",
-        "Bioelectricity", "Circuit", "Conduction", "Current", "DC", "Dendrite", "Direct
-        current", "Drift velocity", "ECG", "Electric", "Electric current", "Electricity",
-        "Electrocardiogram", "Electron", "Energy", "Hazard", "Impermeable", "Kilowatt",
-        "Kilowatt-hour", "Membrane", "Microshock", "Nerve", "Neuron", "Ohm", "Ohmic",
-        "Ohm\u2019s law", "Power", "Resistance", "resistivity", "Resistivity", "Root
-        mean square", "Semipermeable", "Sensitive", "Shock", "Short", "Short circuit",
-        "Simple circuit", "Superconductor", "Synapse", "Temperature", "Temperature
-        coefficient of", "Thermal", "Voltage", "Wave"], "id": "127f63f7-d67f-4710-8625-2b1d4128ef6b",
+        ["Ampere", "Energy", "resistivity", "Power", "Circuit", "Temperature", "ECG",
+        "Current", "Voltage", "Resistance", "Short circuit", "DC", "Wave", "Electricity",
+        "Conduction", "AC", "Action potential", "Alternating current", "Amp", "Axon",
+        "Bioelectricity", "Dendrite", "Direct current", "Drift velocity", "Electric",
+        "Electric current", "Electrocardiogram", "Electron", "Hazard", "Impermeable",
+        "Kilowatt", "Kilowatt-hour", "Membrane", "Microshock", "Nerve", "Neuron",
+        "Ohm", "Ohmic", "Ohm\u2019s law", "Resistivity", "Root mean square", "Semipermeable",
+        "Sensitive", "Shock", "Short", "Simple circuit", "Superconductor", "Synapse",
+        "Temperature coefficient of", "Thermal"], "id": "127f63f7-d67f-4710-8625-2b1d4128ef6b",
         "title": "Introduction to Electric Current, Resistance, and Ohm''s Law", "mediaType":
         "application/vnd.org.cnx.module", "content": "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head
         xmlns:c=\"http://cnx.rice.edu/cnxml\" xmlns:md=\"http://cnx.rice.edu/mdml\"><title>Introduction
@@ -1386,31 +1435,31 @@ http_interactions:
         the fact that all magnetism results from electric current.</p>\n\n\n            \n\n    </body>\n\n</html>",
         "subjects": ["Science and Technology"], "legacy_id": "m42339", "parentId":
         null, "publishers": [{"surname": "Physics", "suffix": "", "firstname": "College",
-        "title": "", "fullname": "OSC Physics Maintainer", "id": "cnxcap"}, {"surname":
+        "title": "", "fullname": "OpenStax College Physics", "id": "cnxcap"}, {"surname":
         "OpenStax College", "suffix": "", "firstname": "", "title": "", "fullname":
-        "OpenStax College", "id": "OpenStaxCollege"}], "parent": {"authors": [], "version":
-        "", "id": null, "title": null}, "stateid": 1, "parentTitle": null, "authors":
-        [{"surname": "OpenStax College", "suffix": "", "firstname": "", "title": "",
-        "fullname": "OpenStax College", "id": "OpenStaxCollege"}], "parentVersion":
-        "", "legacy_version": "1.2", "licensors": [{"surname": "University", "suffix":
-        "", "firstname": "Rice", "title": "", "fullname": "Rice University", "id":
-        "OSCRiceUniversity"}], "language": "en", "license": {"url": "http://creativecommons.org/licenses/by/3.0/",
+        "OpenStax", "id": "OpenStaxCollege"}], "parent": {"authors": [], "shortId":
+        null, "version": "", "id": null, "title": null}, "stateid": 1, "parentTitle":
+        null, "shortId": "En9j99Z_", "authors": [{"surname": "OpenStax College", "suffix":
+        "", "firstname": "", "title": "", "fullname": "OpenStax", "id": "OpenStaxCollege"}],
+        "parentVersion": "", "legacy_version": "1.2", "licensors": [{"surname": "University",
+        "suffix": "", "firstname": "Rice", "title": "", "fullname": "Rice University",
+        "id": "OSCRiceUniversity"}], "language": "en", "license": {"url": "http://creativecommons.org/licenses/by/3.0/",
         "code": "by", "version": "3.0", "name": "Creative Commons Attribution License"},
         "created": "2012-01-17T20:52:08Z", "doctype": "", "buyLink": null, "submitter":
         {"surname": "Physics", "suffix": "", "firstname": "College", "title": "",
-        "fullname": "OSC Physics Maintainer", "id": "cnxcap"}, "parentAuthors": [],
-        "history": [{"changes": "initial content publication", "version": "2", "revised":
-        "2012-05-17T19:05:25Z", "publisher": {"surname": "Physics", "suffix": "",
-        "firstname": "College", "title": "", "fullname": "OSC Physics Maintainer",
+        "fullname": "OpenStax College Physics", "id": "cnxcap"}, "parentAuthors":
+        [], "history": [{"changes": "initial content publication", "version": "2",
+        "revised": "2012-05-17T19:05:25Z", "publisher": {"surname": "Physics", "suffix":
+        "", "firstname": "College", "title": "", "fullname": "OpenStax College Physics",
         "id": "cnxcap"}}, {"changes": "Created module", "version": "1", "revised":
         "2012-01-20T22:57:29Z", "publisher": {"surname": "Physics", "suffix": "",
-        "firstname": "College", "title": "", "fullname": "OSC Physics Maintainer",
+        "firstname": "College", "title": "", "fullname": "OpenStax College Physics",
         "id": "cnxcap"}}]}'
     http_version: 
-  recorded_at: Mon, 26 Oct 2015 22:56:20 GMT
+  recorded_at: Thu, 07 Apr 2016 22:23:38 GMT
 - request:
     method: get
-    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:%22cnxmod:127f63f7-d67f-4710-8625-2b1d4128ef6b%22
+    uri: https://exercises-dev.openstax.org/api/exercises?q=tag:%22context-cnxmod:127f63f7-d67f-4710-8625-2b1d4128ef6b%22
     body:
       encoding: US-ASCII
       string: ''
@@ -1419,6 +1468,8 @@ http_interactions:
       - Faraday v0.9.1
       Accept:
       - application/vnd.openstax.v1
+      Authorization:
+      - Bearer ce86221530fb5fa480454ece54a9203540391b5563990e466ac9edea35f1c2c8
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
   response:
@@ -1429,7 +1480,7 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Mon, 26 Oct 2015 22:56:20 GMT
+      - Thu, 07 Apr 2016 22:23:39 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -1445,23 +1496,23 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       Access-Control-Allow-Origin:
-      - "*"
+      - ''
       Etag:
       - W/"7d677de0cf405de24f0f10b68258ceb0"
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=ZjM3bmY2UDd4WUpuNW9RS29CM1V6R05EQTlBMFdHUlM0UFI1dmNobTJ4N0JCTTJYZlNYWGtUQkQyeGxkUUhrRzEyR2IxSnhaNEZEbnRhQXgrTUNCTVE9PS0tQUNJa1ZjZC9zd3k4M0JCOURFMmlOQT09--8ad703c1d56047890b01bec889eebe0484cfbc09;
+      - _exercises_session=czVyTE5TYVh0WitZZkM2SDQxMDMxbkQyb3NlYk5COWYrNFRLdGorR2MyVkFtRFZycDBmekdaVjV0a1ZXMjN1WFNEaGt4SHdIWEV3YnFKelZ2MkZZT0E9PS0tcVgzNy9TSUxhc3ZXNjVBRkpnaVpQUT09--417ca30b336fd762e6023ff9330af5c06a654bf1;
         path=/; HttpOnly
       X-Request-Id:
-      - bdc6f77c-4db3-4777-a4d9-be1d0942d434
+      - ce612a78-71c9-4259-abbd-6b2acb1b08af
       X-Runtime:
-      - '0.116689'
+      - '0.285420'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
       encoding: UTF-8
       string: '{"total_count":0,"items":[]}'
     http_version: 
-  recorded_at: Mon, 26 Oct 2015 22:56:20 GMT
+  recorded_at: Thu, 07 Apr 2016 22:23:39 GMT
 recorded_with: VCR 2.9.3

@@ -12,7 +12,7 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
           los: ['k12phys-ch03-s02-lo01', 'k12phys-ch03-s02-lo02'],
           tags: [
             {
-              value: 'cnxmod:3005b86b-d993-4048-aff0-500256001f42',
+              value: 'context-cnxmod:3005b86b-d993-4048-aff0-500256001f42',
               type: :cnxmod
             },
             {
@@ -61,7 +61,7 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
           los: [],
           tags: [
             {
-              value: 'cnxmod:1bb611e9-0ded-48d6-a107-fbb9bd900851',
+              value: 'context-cnxmod:1bb611e9-0ded-48d6-a107-fbb9bd900851',
               type: :cnxmod
             }
           ],
@@ -76,7 +76,7 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
           los: ['k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02'],
           tags: [
             {
-              value: 'cnxmod:95e61258-2faf-41d4-af92-f62e1414175a',
+              value: 'context-cnxmod:95e61258-2faf-41d4-af92-f62e1414175a',
               type: :cnxmod
             },
             {
@@ -115,7 +115,7 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
           los: ['k12phys-ch04-s02-lo01', 'k12phys-ch04-s02-lo02'],
           tags: [
             {
-              value: 'cnxmod:640e3e84-09a5-4033-b2a7-b7fe5ec29dc6',
+              value: 'context-cnxmod:640e3e84-09a5-4033-b2a7-b7fe5ec29dc6',
               type: :cnxmod
             },
             {
