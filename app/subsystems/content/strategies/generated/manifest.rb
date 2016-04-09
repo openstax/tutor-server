@@ -22,18 +22,40 @@ module Content
           end
         end
 
+        def errors
+          return @errors unless @errors.nil?
+
+          @errors = []
+          @errors << 'Manifest ecosystem has no title' if title.blank?
+          @errors << 'Manifest ecosystem has no books' if books.empty?
+          books.each{ |book| @errors += book.errors }
+
+          @errors
+        end
+
         def valid?
-          title.present? && books.present? && books.all?{ |book| book.valid? }
+          errors.empty?
         end
 
         def update_books!
-          books.each(&:update_version!)
-          ::Content::Manifest.new(strategy: self)
+          current_books = books
+          result = current_books.map(&:update_version!)
+          self.books = current_books.map(&:to_h)
+          result
         end
 
-        def unlock_exercises!
-          books.each(&:unlock_exercises!)
-          ::Content::Manifest.new(strategy: self)
+        def update_exercises!
+          current_books = books
+          result = current_books.map(&:update_exercises!)
+          self.books = current_books.map(&:to_h)
+          result
+        end
+
+        def discard_exercises!
+          current_books = books
+          result = current_books.map(&:discard_exercises!)
+          self.books = current_books.map(&:to_h)
+          result
         end
 
       end

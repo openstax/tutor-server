@@ -26,16 +26,30 @@ module Content
       verify_and_return @strategy.books, klass: ::Content::Manifest::Book, error: StrategyError
     end
 
+    def errors
+      verify_and_return @strategy.errors, klass: String, error: StrategyError
+    end
+
     def valid?
       !!@strategy.valid?
     end
 
-    def update_book!
-      verify_and_return @strategy.update_book!, klass: self.class, error: StrategyError
+    def update_books!
+      verify_and_return @strategy.update_books!, klass: String,
+                                                 error: StrategyError,
+                                                 allow_nil: true
     end
 
-    def unlock_exercises!
-      verify_and_return @strategy.unlock_exercises!, klass: self.class, error: StrategyError
+    def update_exercises!
+      verify_and_return @strategy.update_exercises!, klass: String,
+                                                     error: StrategyError,
+                                                     allow_nil: true
+    end
+
+    def discard_exercises!
+      verify_and_return @strategy.discard_exercises!, klass: String,
+                                                      error: StrategyError,
+                                                      allow_nil: true
     end
 
   end

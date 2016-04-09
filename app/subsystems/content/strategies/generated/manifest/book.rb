@@ -11,18 +11,35 @@ module Content
           super.to_a
         end
 
+        def errors
+          return @errors unless @errors.nil?
+
+          @errors = []
+          @errors << 'Manifest Book has no cnx_id' if cnx_id.blank?
+
+          @errors
+        end
+
         def valid?
-          cnx_id.present? && (exercise_ids || []).all?{ |ex_id| ex_id.is_a? String }
+          errors.empty?
         end
 
         def update_version!
-          self.cnx_id = cnx_id.split('@').first
-          ::Content::Manifest::Book.new(strategy: self)
+          old_cnx_id = cnx_id
+          self.cnx_id = old_cnx_id.split('@').first
+          old_cnx_id
         end
 
-        def unlock_exercises!
+        def update_exercises!
+          return if exercise_ids.nil?
+
+          old_exercise_ids = exercise_ids
+          self.exercise_ids = old_exercise_ids.map{ |exercise_id| exercise_id.split('@').first }
+          old_exercise_ids
+        end
+
+        def discard_exercises!
           delete_field(:exercise_ids)
-          ::Content::Manifest::Book.new(strategy: self)
         end
 
       end

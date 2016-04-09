@@ -10,13 +10,23 @@
   </div>
 
   <div class="form-group">
-    <%= f.label :update_book, 'Update book version in the manifest' %>
     <%= f.check_box :update_book %>
+    <%= f.label :update_book, 'Update book version' %>
   </div>
 
   <div class="form-group">
-    <%= f.label :unlock_exercises, 'Update exercises in the manifest (numbers and versions)' %>
-    <%= f.check_box :unlock_exercises %>
+    <%= f.radio_button :exercises, :keep, checked: true %>
+    <%= f.label :exercises_keep, 'Keep exercise numbers and versions' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.radio_button :exercises, :update %>
+    <%= f.label :exercises_update, 'Update exercise versions (keep numbers)' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.radio_button :exercises, :discard %>
+    <%= f.label :exercises_discard, 'Discard exercise information (update numbers and versions)' %>
   </div>
 
   <%= f.submit 'Import', class: 'btn btn-default',

@@ -27,16 +27,30 @@ module Content
                                                   allow_nil: true
       end
 
+      def errors
+        verify_and_return @strategy.errors, klass: String, error: StrategyError
+      end
+
       def valid?
         !!@strategy.valid?
       end
 
       def update_version!
-        verify_and_return @strategy.update_version!, klass: self.class, error: StrategyError
+        verify_and_return @strategy.update_version!, klass: String,
+                                                     error: StrategyError,
+                                                     allow_nil: true
       end
 
-      def unlock_exercises!
-        verify_and_return @strategy.unlock_exercises!, klass: self.class, error: StrategyError
+      def update_exercises!
+        verify_and_return @strategy.update_exercises!, klass: String,
+                                                       error: StrategyError,
+                                                       allow_nil: true
+      end
+
+      def discard_exercises!
+        verify_and_return @strategy.discard_exercises!, klass: String,
+                                                        error: StrategyError,
+                                                        allow_nil: true
       end
 
     end

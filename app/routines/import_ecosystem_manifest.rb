@@ -23,8 +23,9 @@ class ImportEcosystemManifest
   def exec(manifest:, comments: nil)
     manifest = Content::Manifest.from_yaml(manifest) if manifest.is_a?(String)
 
-    # Handle only 1 book per ecosystem for now
-    raise IllegalState if manifest.books.size != 1
+    fatal_error(code: :invalid_manifest) unless manifest.valid?
+    fatal_error(code: :multiple_books) if manifest.books.size > 1
+
     book = manifest.books.first
 
     run(:fetch_and_import,
