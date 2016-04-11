@@ -21,7 +21,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Wed, 30 Mar 2016 01:35:53 GMT
+      - Wed, 30 Mar 2016 01:35:08 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -186,7 +186,7 @@ http_interactions:
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Wed, 30 Mar 2016 01:19:34 GMT
+  recorded_at: Wed, 30 Mar 2016 01:18:50 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/4e40d43d-cfee-412e-919c-facccdf0535d@3
@@ -208,7 +208,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Wed, 30 Mar 2016 01:35:53 GMT
+      - Wed, 30 Mar 2016 01:35:08 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -330,7 +330,7 @@ http_interactions:
         "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "", "fullname":
         "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Wed, 30 Mar 2016 01:19:34 GMT
+  recorded_at: Wed, 30 Mar 2016 01:18:50 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/0e58aa87-2e09-40a7-8bf3-269b2fa16509@9
@@ -352,7 +352,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Wed, 30 Mar 2016 01:35:53 GMT
+      - Wed, 30 Mar 2016 01:35:08 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -866,7 +866,7 @@ http_interactions:
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Wed, 30 Mar 2016 01:19:34 GMT
+  recorded_at: Wed, 30 Mar 2016 01:18:50 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/3005b86b-d993-4048-aff0-500256001f42@7
@@ -888,7 +888,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Wed, 30 Mar 2016 01:35:53 GMT
+      - Wed, 30 Mar 2016 01:35:09 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -1763,7 +1763,7 @@ http_interactions:
         "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "", "fullname":
         "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Wed, 30 Mar 2016 01:19:35 GMT
+  recorded_at: Wed, 30 Mar 2016 01:18:50 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/1bb611e9-0ded-48d6-a107-fbb9bd900851@2
@@ -1785,7 +1785,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Wed, 30 Mar 2016 01:35:53 GMT
+      - Wed, 30 Mar 2016 01:35:09 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -1882,7 +1882,7 @@ http_interactions:
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Wed, 30 Mar 2016 01:19:35 GMT
+  recorded_at: Wed, 30 Mar 2016 01:18:50 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/95e61258-2faf-41d4-af92-f62e1414175a@4
@@ -1904,7 +1904,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Wed, 30 Mar 2016 01:35:53 GMT
+      - Wed, 30 Mar 2016 01:35:09 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -2204,7 +2204,7 @@ http_interactions:
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Wed, 30 Mar 2016 01:19:35 GMT
+  recorded_at: Wed, 30 Mar 2016 01:18:51 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/640e3e84-09a5-4033-b2a7-b7fe5ec29dc6@4
@@ -2226,7 +2226,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Wed, 30 Mar 2016 01:35:54 GMT
+      - Wed, 30 Mar 2016 01:35:09 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -2648,7 +2648,7 @@ http_interactions:
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Wed, 30 Mar 2016 01:19:35 GMT
+  recorded_at: Wed, 30 Mar 2016 01:18:51 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/548a8717-71e1-4d65-80f0-7b8c6ed4b4c0@3
@@ -2670,7 +2670,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Wed, 30 Mar 2016 01:35:54 GMT
+      - Wed, 30 Mar 2016 01:35:09 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -3237,7 +3237,7 @@ http_interactions:
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Wed, 30 Mar 2016 01:19:35 GMT
+  recorded_at: Wed, 30 Mar 2016 01:18:51 GMT
 - request:
     method: get
     uri: https://archive-staging-tutor.cnx.org/contents/dbc79576-8c66-41d2-929a-74bcd036a1df@4
@@ -3259,7 +3259,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Wed, 30 Mar 2016 01:35:54 GMT
+      - Wed, 30 Mar 2016 01:35:09 GMT
       Content-Type:
       - application/json
       Content-Length:
@@ -3960,7 +3960,7 @@ http_interactions:
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
     http_version: 
-  recorded_at: Wed, 30 Mar 2016 01:19:35 GMT
+  recorded_at: Wed, 30 Mar 2016 01:18:51 GMT
 - request:
     method: get
     uri: https://exercises-dev.openstax.org/api/exercises?q=id:1982@1,1983@1,1984@1,1985@1,1986@1,1987@1,1988@1,1989@1,1990@1,1991@1,1992@1,1993@1,1994@1,1995@1,1996@1,1997@1,1998@1,1999@1,2000@1,2001@1,2002@1,2003@1,2004@1,2005@1,2006@1,2007@1,2008@1,2009@1,2010@1,2011@1,2012@1,2013@1,2014@1,2015@1,2016@1,2017@1,2018@1,2019@1,2020@353,2021@1,2022@1,2023@1,2024@1,2025@1,2026@1,2027@1,2028@1,2029@1,2030@1,2031@1,2032@1,2033@1,2034@1,2035@1,2036@1,2037@1,2038@1,2039@1,2040@2,2041@1,2042@1,2043@1,2044@1,2045@1,2046@1,2047@1,2048@1,2049@1,2050@1,2051@1,2052@1,2053@1,2054@1,2055@1,2056@1,2057@1,2058@1,2059@1,2060@1,2061@1,2062@1,2063@1,2064@1,2065@1,2066@1,2067@1,2068@1,2069@1,2070@1,2071@1,2072@1,2073@1,2074@1,2075@1,2076@1,2077@1,2078@1,2079@1,2080@1,2081@1,2082@1,2083@1,2084@1,2085@1,2086@1,2087@1,2088@1,2089@1,2090@1,2091@1,2092@1,2093@1,2094@1,2095@1,2096@1,2097@1,2098@1,2099@1,2100@1,2101@1,2102@1,2103@1,2104@1,2105@1,2106@1,2107@1,2108@1,2109@1,2110@1,2111@1,2112@1,2113@1,2114@1,2115@1,2116@1,2117@1,2118@1,2119@1,2120@530,2121@1,2122@1,2123@1,2124@1,2125@1,2126@1,2127@1,2128@1,2129@1,2130@1,2131@1,2132@1,2133@1,2134@1,2135@1,2136@1,2137@17,2138@126,2139@17,2140@15,2141@1,2142@1,2143@1,2144@1,2145@1,2146@1,2147@1,2148@1,2149@1,2150@1,2151@1,2152@1,2153@1,2154@1,2155@1,2156@1,2157@1,2158@1,2159@1,2160@1,2161@1,2162@1,2163@1,2164@1,2165@1,2166@1,2167@1,2168@1,2169@1,2170@1,2171@1,2172@1,2173@1,2174@1,2175@1,2176@1,2177@1,2178@1,2179@1,2180@1,2181@1,2182@1,2183@1,2184@1,2185@1,2186@1,2187@1,2188@1,2189@1,2190@1,2191@1,2192@1,2193@1,2194@1,2195@1,2196@1
@@ -3982,7 +3982,7 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Wed, 30 Mar 2016 01:19:40 GMT
+      - Wed, 30 Mar 2016 01:18:56 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -4004,12 +4004,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=amdoclYvTi8yaUJFZlhpaHdhaWg5S1RKVDQwUGlJZnRFZ2VndHpzNXQ5QkJIZm02dkF3dDdNK0I1ME04TEp6OVF2NW5qM0tzaDBJU0FsUHJzUmgveHc9PS0tLytYQURhVE9TdEgxTFp5Z1d3ZGtxQT09--2514dd622cc38811483c8dc971de31e4e11faaa8;
+      - _exercises_session=bXViTG9xZStDd0tEUVlWdVdpemFYRnp0Zm1pdk9DWTM1U0RyakxuMlV5SEd5TTdlT0d3SythTEFvQTZ2Rk9jVDE3WTBXSUpjL09oSzNITTB4c2F6clE9PS0tQkMzQXJxMFhxbTdWYXh2eHh4RndTQT09--01c2422f7521c1ac88dad52b706914457439179b;
         path=/; HttpOnly
       X-Request-Id:
-      - c7d01916-bf5e-4451-a3c4-689ea31dd83e
+      - dad09bc0-9504-428c-a3a8-8276a05f5b80
       X-Runtime:
-      - '2.567704'
+      - '2.587509'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -10272,5 +10272,5 @@ http_interactions:
         YXRzIjpbImZyZWUtcmVzcG9uc2UiLCJtdWx0aXBsZS1jaG9pY2UiXSwiY29t
         Ym9fY2hvaWNlcyI6W119XX1dfQ==
     http_version: 
-  recorded_at: Wed, 30 Mar 2016 01:19:39 GMT
+  recorded_at: Wed, 30 Mar 2016 01:18:55 GMT
 recorded_with: VCR 2.9.3

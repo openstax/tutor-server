@@ -21,7 +21,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Thu, 07 Apr 2016 23:16:32 GMT
+      - Thu, 07 Apr 2016 23:17:06 GMT
       Content-Type:
       - application/json; charset=UTF-8
       Content-Length:
@@ -41,13 +41,13 @@ http_interactions:
       Accept-Ranges:
       - bytes
       X-Varnish:
-      - 1405846150 1405527377
+      - 1405846832 1405527377
       Via:
       - 1.1 varnish
       X-Cache:
       - HIT
       X-Varnish-Age:
-      - '14696'
+      - '14730'
       Age:
       - '0'
     body:
@@ -129,7 +129,7 @@ http_interactions:
         "", "fullname": "wendy feng", "id": "wendyfeng"}}, {"changes": "...", "version":
         "1.1", "revised": "2015-10-29T13:21:26Z", "publisher": null}]}'
     http_version: 
-  recorded_at: Thu, 07 Apr 2016 23:16:31 GMT
+  recorded_at: Thu, 07 Apr 2016 23:17:05 GMT
 - request:
     method: get
     uri: https://archive.cnx.org/contents/ad9b9d37-a5cf-4a0d-b8c1-083fcc4d3b0c@2
@@ -151,7 +151,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Thu, 07 Apr 2016 23:16:32 GMT
+      - Thu, 07 Apr 2016 23:17:06 GMT
       Content-Type:
       - application/json; charset=UTF-8
       Content-Length:
@@ -171,13 +171,13 @@ http_interactions:
       Accept-Ranges:
       - bytes
       X-Varnish:
-      - 1405846151 1403999735
+      - 1405846833 1403999735
       Via:
       - 1.1 varnish
       X-Cache:
       - HIT
       X-Varnish-Age:
-      - '80944'
+      - '80978'
       Age:
       - '0'
     body:
@@ -259,7 +259,7 @@ http_interactions:
         "Biology", "suffix": "", "firstname": "Cnx", "title": "", "fullname": "OpenStax
         Biology", "id": "cnxbio"}}]}'
     http_version: 
-  recorded_at: Thu, 07 Apr 2016 23:16:31 GMT
+  recorded_at: Thu, 07 Apr 2016 23:17:05 GMT
 - request:
     method: get
     uri: https://archive.cnx.org/contents/6a0568d8-23d7-439b-9a01-16e4e73886b3@12
@@ -281,7 +281,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Thu, 07 Apr 2016 23:16:32 GMT
+      - Thu, 07 Apr 2016 23:17:06 GMT
       Content-Type:
       - application/json; charset=UTF-8
       Content-Length:
@@ -301,13 +301,13 @@ http_interactions:
       Accept-Ranges:
       - bytes
       X-Varnish:
-      - 1405846152 1403999740
+      - 1405846835 1403999740
       Via:
       - 1.1 varnish
       X-Cache:
       - HIT
       X-Varnish-Age:
-      - '80944'
+      - '80978'
       Age:
       - '0'
     body:
@@ -1072,7 +1072,7 @@ http_interactions:
         "Biology", "suffix": "", "firstname": "Cnx", "title": "", "fullname": "OpenStax
         Biology", "id": "cnxbio"}}]}'
     http_version: 
-  recorded_at: Thu, 07 Apr 2016 23:16:31 GMT
+  recorded_at: Thu, 07 Apr 2016 23:17:05 GMT
 - request:
     method: get
     uri: https://archive.cnx.org/contents/7636a3bf-eb80-4898-8b2c-e81c1711b99f@2
@@ -1094,7 +1094,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Thu, 07 Apr 2016 23:16:32 GMT
+      - Thu, 07 Apr 2016 23:17:06 GMT
       Content-Type:
       - application/json; charset=UTF-8
       Content-Length:
@@ -1114,13 +1114,13 @@ http_interactions:
       Accept-Ranges:
       - bytes
       X-Varnish:
-      - 1405846153 1403999774
+      - 1405846838 1403999774
       Via:
       - 1.1 varnish
       X-Cache:
       - HIT
       X-Varnish-Age:
-      - '80943'
+      - '80977'
       Age:
       - '0'
     body:
@@ -1244,7 +1244,7 @@ http_interactions:
         "Biology", "suffix": "", "firstname": "Cnx", "title": "", "fullname": "OpenStax
         Biology", "id": "cnxbio"}}]}'
     http_version: 
-  recorded_at: Thu, 07 Apr 2016 23:16:31 GMT
+  recorded_at: Thu, 07 Apr 2016 23:17:05 GMT
 - request:
     method: get
     uri: https://archive.cnx.org/contents/be8818d0-2dba-4bf3-859a-737c25fb2c99@12
@@ -1266,7 +1266,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Thu, 07 Apr 2016 23:16:32 GMT
+      - Thu, 07 Apr 2016 23:17:06 GMT
       Content-Type:
       - application/json; charset=UTF-8
       Content-Length:
@@ -1286,13 +1286,13 @@ http_interactions:
       Accept-Ranges:
       - bytes
       X-Varnish:
-      - 1405846155 1405527393
+      - 1405846839 1405527393
       Via:
       - 1.1 varnish
       X-Cache:
       - HIT
       X-Varnish-Age:
-      - '14695'
+      - '14730'
       Age:
       - '0'
     body:
@@ -2437,7 +2437,7 @@ http_interactions:
         "Biology", "suffix": "", "firstname": "Cnx", "title": "", "fullname": "OpenStax
         Biology", "id": "cnxbio"}}]}'
     http_version: 
-  recorded_at: Thu, 07 Apr 2016 23:16:31 GMT
+  recorded_at: Thu, 07 Apr 2016 23:17:05 GMT
 - request:
     method: get
     uri: https://archive.cnx.org/contents/e98bdaec-4060-4b43-ac70-681555a30e22@2
@@ -2459,7 +2459,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Thu, 07 Apr 2016 23:16:32 GMT
+      - Thu, 07 Apr 2016 23:17:06 GMT
       Content-Type:
       - application/json; charset=UTF-8
       Content-Length:
@@ -2479,13 +2479,13 @@ http_interactions:
       Accept-Ranges:
       - bytes
       X-Varnish:
-      - 1405846157 1405527395
+      - 1405846840 1405527395
       Via:
       - 1.1 varnish
       X-Cache:
       - HIT
       X-Varnish-Age:
-      - '14695'
+      - '14729'
       Age:
       - '0'
     body:
@@ -2606,7 +2606,7 @@ http_interactions:
         "Biology", "suffix": "", "firstname": "Cnx", "title": "", "fullname": "OpenStax
         Biology", "id": "cnxbio"}}]}'
     http_version: 
-  recorded_at: Thu, 07 Apr 2016 23:16:31 GMT
+  recorded_at: Thu, 07 Apr 2016 23:17:05 GMT
 - request:
     method: get
     uri: https://archive.cnx.org/contents/003aedba-f354-4e57-ba45-f8b4eda66e12@8
@@ -2628,7 +2628,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Thu, 07 Apr 2016 23:16:32 GMT
+      - Thu, 07 Apr 2016 23:17:06 GMT
       Content-Type:
       - application/json; charset=UTF-8
       Content-Length:
@@ -2648,13 +2648,13 @@ http_interactions:
       Accept-Ranges:
       - bytes
       X-Varnish:
-      - 1405846158 1405527396
+      - 1405846842 1405527396
       Via:
       - 1.1 varnish
       X-Cache:
       - HIT
       X-Varnish-Age:
-      - '14695'
+      - '14729'
       Age:
       - '0'
     body:
@@ -2962,7 +2962,7 @@ http_interactions:
         "publisher": {"surname": "Biology", "suffix": "", "firstname": "Cnx", "title":
         "", "fullname": "OpenStax Biology", "id": "cnxbio"}}]}'
     http_version: 
-  recorded_at: Thu, 07 Apr 2016 23:16:31 GMT
+  recorded_at: Thu, 07 Apr 2016 23:17:05 GMT
 - request:
     method: get
     uri: https://archive.cnx.org/contents/a1a2f03a-701f-4e7a-ae0e-d8087880c6fd@2
@@ -2984,7 +2984,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Thu, 07 Apr 2016 23:16:32 GMT
+      - Thu, 07 Apr 2016 23:17:06 GMT
       Content-Type:
       - application/json; charset=UTF-8
       Content-Length:
@@ -3004,13 +3004,13 @@ http_interactions:
       Accept-Ranges:
       - bytes
       X-Varnish:
-      - 1405846161 1405527399
+      - 1405846844 1405527399
       Via:
       - 1.1 varnish
       X-Cache:
       - HIT
       X-Varnish-Age:
-      - '14695'
+      - '14729'
       Age:
       - '0'
     body:
@@ -3103,7 +3103,7 @@ http_interactions:
         "Biology", "suffix": "", "firstname": "Cnx", "title": "", "fullname": "OpenStax
         Biology", "id": "cnxbio"}}]}'
     http_version: 
-  recorded_at: Thu, 07 Apr 2016 23:16:31 GMT
+  recorded_at: Thu, 07 Apr 2016 23:17:05 GMT
 - request:
     method: get
     uri: https://archive.cnx.org/contents/40e1947a-5a8b-4314-a9e7-bae3cedb885d@9
@@ -3125,7 +3125,7 @@ http_interactions:
       Server:
       - nginx/1.4.6 (Ubuntu)
       Date:
-      - Thu, 07 Apr 2016 23:16:32 GMT
+      - Thu, 07 Apr 2016 23:17:06 GMT
       Content-Type:
       - application/json; charset=UTF-8
       Content-Length:
@@ -3145,13 +3145,13 @@ http_interactions:
       Accept-Ranges:
       - bytes
       X-Varnish:
-      - 1405846163 1405527402
+      - 1405846846 1405527402
       Via:
       - 1.1 varnish
       X-Cache:
       - HIT
       X-Varnish-Age:
-      - '14695'
+      - '14729'
       Age:
       - '0'
     body:
@@ -3638,7 +3638,7 @@ http_interactions:
         "2012-08-28T17:17:33Z", "publisher": {"surname": "Biology", "suffix": "",
         "firstname": "Cnx", "title": "", "fullname": "OpenStax Biology", "id": "cnxbio"}}]}'
     http_version: 
-  recorded_at: Thu, 07 Apr 2016 23:16:31 GMT
+  recorded_at: Thu, 07 Apr 2016 23:17:05 GMT
 - request:
     method: get
     uri: https://exercises-dev.openstax.org/api/exercises?q=id:2933@2,2934@2,2935@2,2936@2,2937@2,2938@2,2939@2,2940@2,2941@2,2942@2,2943@2,2944@2,2945@2,2946@2,2947@2,2948@2,2949@2,2950@2,2951@2,2952@2,2953@2,2954@2,2955@2,2956@2,2957@2,2958@2,2959@2,2960@2,2961@2,2962@2,2963@2,2964@2,2965@2,2966@2,2967@2,2968@2,2969@2,2970@2,2971@2,2972@2,2973@2,2974@2,2975@2,2976@2,2977@2,2978@2,2979@2,2980@2,2981@2
@@ -3651,7 +3651,7 @@ http_interactions:
       Accept:
       - application/vnd.openstax.v1
       Authorization:
-      - Bearer 6d252f71a7252ca511721bfcfb427d73d87e698a8b89568edbfa2e4ae21d2d11
+      - Bearer fa91a01f3d31a27fb7d8e530fcb56b82dd8d6b3c60aa20a73129ae0017ba9797
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
   response:
@@ -3662,7 +3662,7 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Thu, 07 Apr 2016 23:16:34 GMT
+      - Thu, 07 Apr 2016 23:17:08 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -3684,12 +3684,12 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=d256WlllZEFoOFhEUFh5S21xZzhKT1E5NHhBVE90cDloOHlUdGNwK0h1cTdhY2c1dlZjOHR0Wmk2YldtTzFpS0JUZnVaV1VsZkE1WFhJQlhFOFp3MEE9PS0tampsTUdVa1V2ZUNYRXJQR1RGZFUxdz09--80754e40f79f436a3b1a585e1b0dbe8744e12da3;
+      - _exercises_session=WHBYV05kTlY0WVdIdmJabEh5NWd1Y1MwcTBHNThXaFZkRi93MHVXYWd3WG9qcFFWeUVySUk5eU03NXU1R3R2QjhoaE1zaktuN1Bpa0tYQmQvREcvcFE9PS0tZ1UvVnZ1YlBmSnhWTnRiUlZSM3pDdz09--81781dadf677409f73f8e40ac10164d7a9d97eca;
         path=/; HttpOnly
       X-Request-Id:
-      - f8c70947-4f6d-4566-8794-8238aea40f9c
+      - a68693b9-3d23-404d-973f-d1546576e92e
       X-Runtime:
-      - '1.241837'
+      - '1.277067'
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains
     body:
@@ -5732,5 +5732,5 @@ http_interactions:
         OltdLCJmb3JtYXRzIjpbImZyZWUtcmVzcG9uc2UiLCJtdWx0aXBsZS1jaG9p
         Y2UiXSwiY29tYm9fY2hvaWNlcyI6W119XX1dfQ==
     http_version: 
-  recorded_at: Thu, 07 Apr 2016 23:16:34 GMT
+  recorded_at: Thu, 07 Apr 2016 23:17:07 GMT
 recorded_with: VCR 2.9.3

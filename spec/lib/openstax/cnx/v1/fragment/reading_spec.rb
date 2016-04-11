@@ -14,7 +14,9 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::Reading, type: :external, vcr: VCR_O
   let(:reading_fragments) { fragments.select { |f| f.instance_of? described_class } }
 
   let(:expected_titles)   {
-    [ "Section Learning Objectives; Defining Force and Dynamics; Free-body Diagrams and Examples of Forces" ]
+    [ "Section Learning Objectives; " +
+      "Defining Force and Dynamics; " +
+      "Free-body Diagrams and Examples of Forces" ]
   }
 
   it "provides info about the reading fragment" do

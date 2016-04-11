@@ -23,12 +23,10 @@ module Manager::EcosystemsActions
     ecosystem_params = params[:ecosystem] || {}
     manifest_content = ecosystem_params[:manifest].respond_to?(:read) ? \
                          ecosystem_params[:manifest].read : ecosystem_params[:manifest].to_s
-    update_exercises = ecosystem_params[:exercises] == 'update'
-    discard_exercises = ecosystem_params[:exercises] == 'discard'
 
     manifest = Content::Manifest.from_yaml(manifest_content)
 
-    manifest.update_book! if ecosystem_params[:update_book].to_i > 0
+    manifest.update_books! if ecosystem_params[:books] == 'update'
 
     case ecosystem_params[:exercises]
     when 'update'
