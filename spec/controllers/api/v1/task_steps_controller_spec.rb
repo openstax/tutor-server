@@ -202,60 +202,6 @@ describe Api::V1::TaskStepsController, type: :controller, api: true, version: :v
     end
   end
 
-  describe "#refresh" do
-    it "should allow owner to refresh exercises with recovery steps" do
-      expect {
-        api_put :refresh, user_1_token, parameters: {
-          id: tasked_exercise_with_recovery.task_step.id
-        }
-      }.to change{tasked_exercise_with_recovery.task_step.task
-                                               .reload.task_steps.count}
-      expect(response).to have_http_status(:success)
-
-      hash = JSON.parse(response.body)
-      expect(hash['refresh_step']['url']).to eq task_step.tasked.url
-
-      recovery_step = tasked_exercise_with_recovery.task_step.next_by_number
-      tasked = recovery_step.tasked
-
-      expect(hash['recovery_step']).to eq JSON.parse(
-        Api::V1::Tasks::TaskedExerciseRepresenter.new(tasked).to_json
-      )
-
-      expect(tasked.los & tasked_exercise_with_recovery.parser.los).not_to be_empty
-      expect(recovery_step.task).to eq(task)
-      expect(recovery_step.number).to(
-        eq(tasked_exercise_with_recovery.task_step.number + 1)
-      )
-    end
-
-    it "should not allow random user to refresh exercises" do
-      step_count = tasked_exercise_with_recovery.task_step.task.task_steps.count
-
-      expect{
-        api_put :refresh, user_2_token, parameters: {
-          id: tasked_exercise_with_recovery.task_step.id
-        }
-      }.to raise_error(SecurityTransgression)
-
-      expect(tasked_exercise_with_recovery.task_step.task.reload.task_steps.count).to(
-        eq step_count
-      )
-    end
-
-    it "should not allow owner to refresh taskeds without recovery steps" do
-      tasked = create_tasked(:tasked_reading, user_1_role)
-
-      step_count = tasked_exercise.task_step.task.task_steps.count
-
-      expect{
-        api_put :refresh, user_1_token, parameters: {
-          id: tasked_exercise.task_step.id
-        }
-      }.not_to change{tasked_exercise.task_step.task.reload.task_steps.count}
-    end
-  end
-
   describe "#completed" do
     it "should allow marking completion of reading steps by the owner" do
       tasked = create_tasked(:tasked_reading, user_1_role)

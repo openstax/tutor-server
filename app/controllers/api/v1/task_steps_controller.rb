@@ -68,30 +68,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     end
   end
 
-  ###############################################################
-  # refresh
-  ###############################################################
-
-  api :PUT, '/steps/:step_id/refresh',
-            "Requests another resource to refresh the student's memory, as well as an exercise similar to the given one for credit recovery"
-  description <<-EOS
-    #{json_schema(Api::V1::RefreshRepresenter, include: :readable)}
-  EOS
-  def refresh
-    OSU::AccessPolicy.require_action_allowed!(:refresh, current_api_user, @tasked)
-
-    result = ::Tasks::RefreshTaskStep.call(task_step: @task_step)
-
-    if result.errors.any?
-      render_api_errors(result.errors)
-    else
-      respond_with result.outputs,
-                   represent_with: Api::V1::RefreshRepresenter,
-                   responder: ResponderWithPutContent
-    end
-  end
-
-  private
+  protected
 
   def get_task_step
     @task_step = ::Tasks::Models::TaskStep.find(params[:id])

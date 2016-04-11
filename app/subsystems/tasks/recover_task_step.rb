@@ -31,8 +31,6 @@ class Tasks::RecoverTaskStep
     outputs[:task] = recovery_step.task
   end
 
-  private
-
   # Inserts a new TaskStep for the given Exercise after the given TaskStep
   def create_task_step_after(task_step:, exercise:)
     task = task_step.task
