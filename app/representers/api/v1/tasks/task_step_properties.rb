@@ -77,6 +77,15 @@ module Api::V1::Tasks
              getter: ->(*) { DateTimeUtilities.to_api_s(first_completed_at) },
              schema_info: { description: "The first completion date by the taskee" }
 
+    property :can_be_recovered?,
+             as: :has_recovery,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               type: 'boolean',
+               description: "Whether or not a recovery exercise is available"
+             }
+
     collection :related_content,
                writeable: false,
                readable: true,

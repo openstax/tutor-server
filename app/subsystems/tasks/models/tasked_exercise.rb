@@ -30,10 +30,6 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     correct_answer_id == answer_id
   end
 
-  def can_be_recovered?
-    can_be_recovered
-  end
-
   def exercise?
     true
   end

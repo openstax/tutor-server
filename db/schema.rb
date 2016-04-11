@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160331194837) do
+ActiveRecord::Schema.define(version: 20160411184043) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -575,33 +575,33 @@ ActiveRecord::Schema.define(version: 20160331194837) do
   add_index "tasks_task_plans", ["tasks_assistant_id"], name: "index_tasks_task_plans_on_tasks_assistant_id", using: :btree
 
   create_table "tasks_task_steps", force: :cascade do |t|
-    t.integer  "tasks_task_id",                  null: false
-    t.integer  "tasked_id",                      null: false
-    t.string   "tasked_type",                    null: false
-    t.integer  "number",                         null: false
+    t.integer  "tasks_task_id",                      null: false
+    t.integer  "tasked_id",                          null: false
+    t.string   "tasked_type",                        null: false
+    t.integer  "number",                             null: false
     t.datetime "first_completed_at"
     t.datetime "last_completed_at"
-    t.integer  "group_type",         default: 0, null: false
+    t.integer  "group_type",         default: 0,     null: false
     t.text     "related_content"
     t.text     "labels"
-    t.datetime "created_at",                     null: false
-    t.datetime "updated_at",                     null: false
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
+    t.boolean  "can_be_recovered",   default: false, null: false
   end
 
   add_index "tasks_task_steps", ["tasked_id", "tasked_type"], name: "index_tasks_task_steps_on_tasked_id_and_tasked_type", unique: true, using: :btree
   add_index "tasks_task_steps", ["tasks_task_id", "number"], name: "index_tasks_task_steps_on_tasks_task_id_and_number", unique: true, using: :btree
 
   create_table "tasks_tasked_exercises", force: :cascade do |t|
-    t.integer  "content_exercise_id",                 null: false
-    t.boolean  "can_be_recovered",    default: false, null: false
-    t.string   "url",                                 null: false
-    t.text     "content",                             null: false
+    t.integer  "content_exercise_id", null: false
+    t.string   "url",                 null: false
+    t.text     "content",             null: false
     t.string   "title"
     t.text     "free_response"
     t.string   "answer_id"
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
-    t.string   "correct_answer_id",                   null: false
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
+    t.string   "correct_answer_id",   null: false
   end
 
   add_index "tasks_tasked_exercises", ["content_exercise_id"], name: "index_tasks_tasked_exercises_on_content_exercise_id", using: :btree

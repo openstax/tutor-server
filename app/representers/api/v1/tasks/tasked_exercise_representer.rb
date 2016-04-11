@@ -2,7 +2,6 @@ module Api::V1::Tasks
   class TaskedExerciseRepresenter < Roar::Decorator
 
     include TaskStepProperties
-    include Representable::Coercion
 
     property :url,
              as: :content_url,
@@ -31,16 +30,6 @@ module Api::V1::Tasks
              schema_info: {
                required: false,
                description: "The Exercise's content without correctness, feedback or solutions"
-             }
-
-    property :can_be_recovered?,
-             as: :has_recovery,
-             writeable: false,
-             readable: true,
-             if: -> (*) { task_step.feedback_available? },
-             schema_info: {
-               type: 'boolean',
-               description: "Whether or not a recovery exercise is available"
              }
 
     # The properties below assume an Exercise with only 1 Question

@@ -24,7 +24,7 @@ class Tasks::RecoverTaskStep
     recovery_step = create_task_step_after(task_step: task_step, exercise: recovery_exercise)
     transfer_errors_from(recovery_step, type: :verbatim)
 
-    task_step.tasked.update_attribute(:can_be_recovered, false)
+    task_step.update_attribute(:can_be_recovered, false)
 
     outputs[:recovery_exercise] = recovery_exercise
     outputs[:recovery_step] = recovery_step

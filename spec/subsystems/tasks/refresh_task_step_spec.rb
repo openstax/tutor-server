@@ -20,12 +20,12 @@ RSpec.describe Tasks::RefreshTaskStep, type: :routine do
   let!(:tasked_exercise_with_recovery) {
     te = FactoryGirl.build(
       :tasks_tasked_exercise,
-      can_be_recovered: true,
       content: OpenStax::Exercises::V1.fake_client
                                       .new_exercise_hash(tags: [lo.value])
                                       .to_json
     )
     te.task_step.task = task.reload
+    te.task_step.can_be_recovered = true
     te.save!
     te
   }
