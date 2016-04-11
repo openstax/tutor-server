@@ -2,17 +2,6 @@ module CourseGuideMethods
 
   private
 
-  def get_completed_exercise_task_steps(task_steps)
-    task_steps.select{ |ts| ts.exercise? && ts.completed? }
-  end
-
-  def get_tasked_exercises_from_completed_exercise_task_steps(completed_exercise_task_steps)
-    tasked_exercise_ids = completed_exercise_task_steps.collect{ |ts| ts.tasked_id }
-    Tasks::Models::TaskedExercise.where(id: tasked_exercise_ids).preload(
-      [{task_step: {task: {taskings: {role: {student: {enrollments: :period}}}}}}, :exercise]
-    ).to_a.group_by{ |te| te.task_step.id }
-  end
-
   def map_tasked_exercise_exercise_ids_to_latest_pages(tasked_exercises, course)
     exercises = tasked_exercises.collect do |tasked_exercise|
       content_exercise = tasked_exercise.exercise
@@ -43,10 +32,6 @@ module CourseGuideMethods
     tasked_exercises.collect{ |te| te.task_step.task }.select do |task|
       task.completed? && (task.chapter_practice? || task.page_practice? || task.mixed_practice?)
     end.uniq
-  end
-
-  def get_los_and_aplos(tasked_exercises)
-    [tasked_exercises].flatten.flat_map{ |te| te.los + te.aplos }.uniq
   end
 
   def get_chapter_clues(sorted_chapter_groupings, type)

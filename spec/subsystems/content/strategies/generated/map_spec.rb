@@ -10,7 +10,7 @@ RSpec.describe Content::Strategies::Generated::Map do
 
   let!(:new_content_exercise)         { FactoryGirl.create :content_exercise }
   let!(:new_content_pool) do
-    pool = old_content_exercise.page.all_exercises_pool
+    pool = new_content_exercise.page.all_exercises_pool
     pool.update_attribute(:content_exercise_ids, [new_content_exercise.id])
     pool
   end
