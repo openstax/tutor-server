@@ -53,16 +53,16 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
   ###############################################################
 
   api :PUT, '/steps/:step_id/recovery',
-            'Requests an exercise similar to the given one for credit recovery'
+            'Requests a new exercise related to the given step'
   def recovery
-    OSU::AccessPolicy.require_action_allowed!(:recover, current_api_user, @tasked)
+    OSU::AccessPolicy.require_action_allowed!(:related_exercise, current_api_user, @tasked)
 
-    result = Tasks::RecoverTaskStep.call(task_step: @task_step)
+    result = Tasks::AddRelatedExerciseAfterStep.call(task_step: @task_step)
 
     if result.errors.any?
       render_api_errors(result.errors)
     else
-      respond_with result.outputs.recovery_step,
+      respond_with result.outputs.related_exercise_step,
                    responder: ResponderWithPutContent,
                    represent_with: Api::V1::TaskStepRepresenter
     end

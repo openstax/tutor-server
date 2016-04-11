@@ -154,7 +154,7 @@ describe Api::V1::TaskStepsController, type: :controller, api: true, version: :v
   end
 
   describe "#recovery" do
-    it "should allow owner to recover exercises with recovery steps" do
+    it "should allow owner to add related exercises after steps where can_be_recovered is true" do
       expect {
         api_put :recovery, user_1_token, parameters: {
           id: tasked_exercise_with_recovery.task_step.id
@@ -163,16 +163,16 @@ describe Api::V1::TaskStepsController, type: :controller, api: true, version: :v
                                                .reload.task_steps.count}
       expect(response).to have_http_status(:success)
 
-      recovery_step = tasked_exercise_with_recovery.task_step.next_by_number
-      tasked = recovery_step.tasked
+      related_exercise_step = tasked_exercise_with_recovery.task_step.next_by_number
+      tasked = related_exercise_step.tasked
 
       expect(response.body).to(
         eq Api::V1::Tasks::TaskedExerciseRepresenter.new(tasked).to_json
       )
 
       expect(tasked.los & tasked_exercise_with_recovery.parser.los).not_to be_empty
-      expect(recovery_step.task).to eq(task)
-      expect(recovery_step.number).to(
+      expect(related_exercise_step.task).to eq(task)
+      expect(related_exercise_step.number).to(
         eq(tasked_exercise_with_recovery.task_step.number + 1)
       )
     end

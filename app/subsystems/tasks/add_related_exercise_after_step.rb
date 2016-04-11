@@ -1,4 +1,4 @@
-class Tasks::RecoverTaskStep
+class Tasks::AddRelatedExerciseAfterStep
 
   lev_routine transaction: :serializable
 
@@ -11,28 +11,29 @@ class Tasks::RecoverTaskStep
   protected
 
   def exec(task_step:)
-    fatal_error(code: :recovery_not_available) unless task_step.lock!.can_be_recovered?
+    fatal_error(code: :related_exercise_not_available) unless task_step.lock!.can_be_recovered?
 
     # Get the ecosystem from the content_exercise_id
     exercise_id = task_step.tasked.content_exercise_id
     ecosystem = run(:get_ecosystem, exercise_ids: exercise_id).outputs.ecosystem
 
-    recovery_exercise = get_recovery_exercise_for(ecosystem: ecosystem, task_step: task_step)
+    related_exercise = get_related_exercise_for(ecosystem: ecosystem, task_step: task_step)
 
-    fatal_error(code: :recovery_not_found) if recovery_exercise.nil?
+    fatal_error(code: :related_exercise_not_found) if related_exercise.nil?
 
-    recovery_step = create_task_step_after(task_step: task_step, exercise: recovery_exercise)
-    transfer_errors_from(recovery_step, type: :verbatim)
+    related_exercise_step = create_exercise_step_after(task_step: task_step,
+                                                       exercise: related_exercise)
+    transfer_errors_from(related_exercise_step, type: :verbatim)
 
     task_step.update_attribute(:can_be_recovered, false)
 
-    outputs[:recovery_exercise] = recovery_exercise
-    outputs[:recovery_step] = recovery_step
-    outputs[:task] = recovery_step.task
+    outputs[:related_exercise] = related_exercise_step
+    outputs[:related_exercise_step] = related_exercise_step
+    outputs[:task] = related_exercise_step.task
   end
 
-  # Inserts a new TaskStep for the given Exercise after the given TaskStep
-  def create_task_step_after(task_step:, exercise:)
+  # Inserts a new TaskStep with a TaskedExercise after the given TaskStep using the given Exercise
+  def create_exercise_step_after(task_step:, exercise:)
     task = task_step.task
     step = Tasks::Models::TaskStep.new(
       task: task, number: task_step.number + 1
@@ -53,7 +54,7 @@ class Tasks::RecoverTaskStep
 
   # Finds an Exercise with all the required tags and at least one LO
   # Prefers unassigned Exercises
-  def get_recovery_exercise_for(ecosystem:, task_step:)
+  def get_related_exercise_for(ecosystem:, task_step:)
     # Assume only 1 taskee for now
     role = task_step.task.entity_task.taskings.map(&:role).first
 
