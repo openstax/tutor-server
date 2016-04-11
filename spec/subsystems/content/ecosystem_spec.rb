@@ -35,8 +35,8 @@ module Content
         allow(dbl).to receive(:reading_dynamic_pools).with(pages: strategy_expected_pages)
                      .and_return(strategy_reading_dynamic_pools)
 
-        allow(dbl).to receive(:reading_try_another_pools).with(pages: strategy_expected_pages)
-                     .and_return(strategy_reading_try_another_pools)
+        allow(dbl).to receive(:reading_context_pools).with(pages: strategy_expected_pages)
+                     .and_return(strategy_reading_context_pools)
 
         allow(dbl).to receive(:homework_core_pools).with(pages: strategy_expected_pages)
                      .and_return(strategy_homework_core_pools)
@@ -58,12 +58,12 @@ module Content
 
     let(:strategy_expected_pages) { [valid_page, valid_page] }
 
-    let(:strategy_reading_dynamic_pools)     { [valid_pool, valid_pool] }
-    let(:strategy_reading_try_another_pools) { [valid_pool, valid_pool] }
-    let(:strategy_homework_core_pools)       { [valid_pool, valid_pool] }
-    let(:strategy_homework_dynamic_pools)    { [valid_pool, valid_pool] }
-    let(:strategy_practice_widget_pools)     { [valid_pool, valid_pool] }
-    let(:strategy_manifest)     { valid_manifest }
+    let(:strategy_reading_dynamic_pools)  { [valid_pool, valid_pool] }
+    let(:strategy_reading_context_pools)  { [valid_pool, valid_pool] }
+    let(:strategy_homework_core_pools)    { [valid_pool, valid_pool] }
+    let(:strategy_homework_dynamic_pools) { [valid_pool, valid_pool] }
+    let(:strategy_practice_widget_pools)  { [valid_pool, valid_pool] }
+    let(:strategy_manifest)               { valid_manifest }
 
     let(:ecosystem) { ::Content::Ecosystem.new(strategy: strategy) }
 
@@ -223,8 +223,8 @@ module Content
           let(:strategy_expected_pages) { [page] }
 
           it "delegates to its strategy with the correct pages:" do
-            ecosystem.reading_try_another_pools(pages: page)
-            expect(strategy).to have_received(:reading_try_another_pools)
+            ecosystem.reading_context_pools(pages: page)
+            expect(strategy).to have_received(:reading_context_pools)
           end
         end
 
@@ -233,8 +233,8 @@ module Content
           let(:strategy_expected_pages) { pages }
 
           it "delegates to its strategy with the correct pages:" do
-            ecosystem.reading_try_another_pools(pages: pages)
-            expect(strategy).to have_received(:reading_try_another_pools)
+            ecosystem.reading_context_pools(pages: pages)
+            expect(strategy).to have_received(:reading_context_pools)
           end
         end
       end
@@ -243,20 +243,20 @@ module Content
         let(:pages) { [valid_page, valid_page] }
 
         context "strategy returns Content::Pools" do
-          let(:strategy_reading_try_another_pools) { [ valid_pool, valid_pool ] }
+          let(:strategy_reading_context_pools) { [ valid_pool, valid_pool ] }
 
           it "returns the strategy's exercises" do
-            pools = ecosystem.reading_try_another_pools(pages: pages)
-            expect(pools).to eq(strategy_reading_try_another_pools)
+            pools = ecosystem.reading_context_pools(pages: pages)
+            expect(pools).to eq(strategy_reading_context_pools)
           end
         end
 
         context "strategy doesn't return Content::Exercises" do
-          let(:strategy_reading_try_another_pools) { [ valid_pool, invalid_pool, valid_pool ] }
+          let(:strategy_reading_context_pools) { [ valid_pool, invalid_pool, valid_pool ] }
 
           it "raises StrategyError" do
             expect{
-              ecosystem.reading_try_another_pools(pages: pages)
+              ecosystem.reading_context_pools(pages: pages)
             }.to raise_error(StrategyError)
           end
         end
@@ -267,7 +267,7 @@ module Content
 
         it "raises TypeError" do
           expect{
-            ecosystem.reading_try_another_pools(pages: pages)
+            ecosystem.reading_context_pools(pages: pages)
           }.to raise_error(TypeError)
         end
       end

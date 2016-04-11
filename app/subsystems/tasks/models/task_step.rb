@@ -36,7 +36,7 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   end
 
   def can_be_recovered?
-    can_be_recovered
+    related_exercise_ids.any?
   end
 
   def make_correct!

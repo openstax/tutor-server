@@ -24,8 +24,8 @@ class Content::Routines::PopulateExercisePools
       page_pools = pages.flat_map do |page|
         page.reading_dynamic_pool = Content::Models::Pool.new(ecosystem: ecosystem,
                                                               pool_type: :reading_dynamic)
-        page.reading_try_another_pool = Content::Models::Pool.new(ecosystem: ecosystem,
-                                                                  pool_type: :reading_try_another)
+        page.reading_context_pool = Content::Models::Pool.new(ecosystem: ecosystem,
+                                                              pool_type: :reading_context)
         page.homework_core_pool = Content::Models::Pool.new(ecosystem: ecosystem,
                                                             pool_type: :homework_core)
         page.homework_dynamic_pool = Content::Models::Pool.new(ecosystem: ecosystem,
@@ -50,7 +50,7 @@ class Content::Routines::PopulateExercisePools
             tags.include?('type:conceptual-or-recall'))
 
           # Reading Context-Dependent
-          page.reading_try_another_pool.content_exercise_ids << exercise.id \
+          page.reading_context_pool.content_exercise_ids << exercise.id \
             if (use_old_logic && tags.include?('os-practice-problems')) ||
                !use_old_logic
 
@@ -89,7 +89,7 @@ class Content::Routines::PopulateExercisePools
           page.all_exercises_pool.content_exercise_ids << exercise.id
         end
 
-        [page.reading_dynamic_pool, page.reading_try_another_pool, page.homework_core_pool,
+        [page.reading_dynamic_pool, page.reading_context_pool, page.homework_core_pool,
          page.homework_dynamic_pool, page.practice_widget_pool, page.all_exercises_pool]
       end
 

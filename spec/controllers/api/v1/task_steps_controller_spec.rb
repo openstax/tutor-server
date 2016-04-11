@@ -40,35 +40,41 @@ describe Api::V1::TaskStepsController, type: :controller, api: true, version: :v
   let!(:lo)                 { FactoryGirl.create :content_tag, value: 'ost-tag-lo-test-lo01' }
   let!(:pp)                 { FactoryGirl.create :content_tag, value: 'os-practice-problems' }
 
-  let!(:tasked_exercise_with_recovery) {
+  let!(:tasked_exercise_with_related) {
     te = FactoryGirl.build(
       :tasks_tasked_exercise,
       content: OpenStax::Exercises::V1.fake_client.new_exercise_hash(tags: [lo.value]).to_json
     )
     te.task_step.task = task
-    te.task_step.can_be_recovered = true
+    te.task_step.related_exercise_ids = []
     te.save!
     te
   }
 
-  let!(:recovery_exercise)    { FactoryGirl.create(
+  let!(:related_exercise)    { FactoryGirl.create(
     :content_exercise,
-    page: tasked_exercise_with_recovery.exercise.page,
+    page: tasked_exercise_with_related.exercise.page,
     content: OpenStax::Exercises::V1.fake_client
                                     .new_exercise_hash(tags: [lo.value, pp.value])
                                     .to_json
   ) }
-  let!(:recovery_tagging_1)   { FactoryGirl.create(
-    :content_exercise_tag, exercise: tasked_exercise_with_recovery.exercise, tag: lo
+
+  let!(:related_tagging_1)   { FactoryGirl.create(
+    :content_exercise_tag, exercise: tasked_exercise_with_related.exercise, tag: lo
   ) }
-  let!(:recovery_tagging_2)   { FactoryGirl.create(
-    :content_exercise_tag, exercise: recovery_exercise, tag: lo
+  let!(:related_tagging_2)   { FactoryGirl.create(
+    :content_exercise_tag, exercise: related_exercise, tag: lo
   ) }
-  let!(:recovery_tagging_3)   { FactoryGirl.create(
-    :content_exercise_tag, exercise: recovery_exercise, tag: pp
+  let!(:related_tagging_3)   { FactoryGirl.create(
+    :content_exercise_tag, exercise: related_exercise, tag: pp
   ) }
 
-  let!(:pools) { Content::Routines::PopulateExercisePools[book: recovery_exercise.book] }
+  let!(:pools) { Content::Routines::PopulateExercisePools[book: related_exercise.book] }
+
+  before do
+    tasked_exercise_with_related.task_step
+                                .update_attribute :related_exercise_ids, [related_exercise.id]
+  end
 
   describe "#show" do
     it "should work on the happy path" do
@@ -157,32 +163,31 @@ describe Api::V1::TaskStepsController, type: :controller, api: true, version: :v
     it "should allow owner to add related exercises after steps where can_be_recovered is true" do
       expect {
         api_put :recovery, user_1_token, parameters: {
-          id: tasked_exercise_with_recovery.task_step.id
+          id: tasked_exercise_with_related.task_step.id
         }
-      }.to change{tasked_exercise_with_recovery.task_step.task
-                                               .reload.task_steps.count}
+      }.to change{tasked_exercise_with_related.task_step.task.reload.task_steps.count}
       expect(response).to have_http_status(:success)
 
-      related_exercise_step = tasked_exercise_with_recovery.task_step.next_by_number
+      related_exercise_step = tasked_exercise_with_related.task_step.next_by_number
       tasked = related_exercise_step.tasked
 
       expect(response.body).to(
         eq Api::V1::Tasks::TaskedExerciseRepresenter.new(tasked).to_json
       )
 
-      expect(tasked.los & tasked_exercise_with_recovery.parser.los).not_to be_empty
+      expect(tasked.los & tasked_exercise_with_related.parser.los).not_to be_empty
       expect(related_exercise_step.task).to eq(task)
       expect(related_exercise_step.number).to(
-        eq(tasked_exercise_with_recovery.task_step.number + 1)
+        eq(tasked_exercise_with_related.task_step.number + 1)
       )
     end
 
     it "should not allow random user to recover exercises" do
-      step_count = tasked_exercise_with_recovery.task_step.task.task_steps.count
+      step_count = tasked_exercise_with_related.task_step.task.task_steps.count
 
       expect{
         api_put :recovery, user_2_token, parameters: {
-          id: tasked_exercise_with_recovery.task_step.id
+          id: tasked_exercise_with_related.task_step.id
         }
       }.to raise_error SecurityTransgression
 
@@ -191,7 +196,7 @@ describe Api::V1::TaskStepsController, type: :controller, api: true, version: :v
       )
     end
 
-    it "should not allow owner to recover taskeds without recovery steps" do
+    it "should not allow owner to recover steps without related_exercise_ids" do
       expect{
         api_put :recovery, user_1_token, parameters: {
           id: tasked_exercise.task_step.id

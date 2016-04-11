@@ -13,19 +13,16 @@ class Tasks::AddRelatedExerciseAfterStep
   def exec(task_step:)
     fatal_error(code: :related_exercise_not_available) unless task_step.lock!.can_be_recovered?
 
-    # Get the ecosystem from the content_exercise_id
-    exercise_id = task_step.tasked.content_exercise_id
-    ecosystem = run(:get_ecosystem, exercise_ids: exercise_id).outputs.ecosystem
-
-    related_exercise = get_related_exercise_for(ecosystem: ecosystem, task_step: task_step)
+    related_exercise = get_related_exercise_for(task_step: task_step)
 
     fatal_error(code: :related_exercise_not_found) if related_exercise.nil?
 
     related_exercise_step = create_exercise_step_after(task_step: task_step,
                                                        exercise: related_exercise)
+
     transfer_errors_from(related_exercise_step, type: :verbatim)
 
-    task_step.update_attribute(:can_be_recovered, false)
+    task_step.update_attribute(:related_exercise_ids, [])
 
     outputs[:related_exercise] = related_exercise_step
     outputs[:related_exercise_step] = related_exercise_step
@@ -45,42 +42,27 @@ class Tasks::AddRelatedExerciseAfterStep
     step
   end
 
-  # Get the page for each exercise in the student's assignments
-  # From each page, get the pool of "try another" reading problems
-  def get_pool_exercises(ecosystem:, exercise:)
-    page = exercise.page
-    ecosystem.reading_try_another_pools(pages: page).flat_map(&:exercises)
-  end
-
   # Finds an Exercise with all the required tags and at least one LO
   # Prefers unassigned Exercises
-  def get_related_exercise_for(ecosystem:, task_step:)
+  def get_related_exercise_for(task_step:)
+    # Transform the exercise ids into Ecosystem exercises
+    related_exercise_ids = task_step.related_exercise_ids
+    ecosystem = run(:get_ecosystem, exercise_ids: related_exercise_ids).outputs.ecosystem
+    related_exercises = ecosystem.exercises_by_ids(related_exercise_ids)
+
     # Assume only 1 taskee for now
     role = task_step.task.entity_task.taskings.map(&:role).first
+    course = role.student.try(:course)
 
     task_exercise_numbers = task_step.task.tasked_exercises.map{ |te| te.exercise.number }
 
-    recovered_exercise_id = task_step.tasked.content_exercise_id
-    recovered_exercise = ecosystem.exercises_by_ids(recovered_exercise_id).first
-    pool_exercises = get_pool_exercises(ecosystem: ecosystem, exercise: recovered_exercise)
-
-    course = role.student.try(:course)
-    filtered_exercises = run(:filter, exercises: pool_exercises, course: course,
-                                      additional_excluded_numbers: task_exercise_numbers)
-                           .outputs.exercises
-
-    los = Set.new(recovered_exercise.los)
-    aplos = Set.new(recovered_exercise.aplos)
-
-    # Allow only exercises that share at least one LO or APLO with the tasked
-    candidate_exercises = filtered_exercises.select do |ex|
-      ex.los.any?{ |tt| los.include?(tt) } || ex.aplos.any?{ |tt| aplos.include?(tt) }
-    end
+    candidate_exercises = run(:filter, exercises: related_exercises, course: course,
+                                       additional_excluded_numbers: task_exercise_numbers)
+                            .outputs.exercises
 
     history = run(:get_history, role: role, type: :all).outputs
-    chosen_exercise = run(:choose, exercises: candidate_exercises,
-                                   count: 1, history: history).outputs.exercises.first
-    chosen_exercise
+
+    run(:choose, exercises: candidate_exercises, count: 1, history: history).outputs.exercises.first
   end
 
 end

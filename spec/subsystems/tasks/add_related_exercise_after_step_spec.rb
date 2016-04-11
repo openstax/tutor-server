@@ -18,13 +18,12 @@ RSpec.describe Tasks::AddRelatedExerciseAfterStep, type: :routine do
     te
   }
 
-  let!(:tasked_exercise_with_recovery) {
+  let!(:tasked_exercise_with_related) {
     te = FactoryGirl.build(
       :tasks_tasked_exercise,
       content: OpenStax::Exercises::V1.fake_client.new_exercise_hash(tags: [lo.value]).to_json
     )
     te.task_step.task = task.reload
-    te.task_step.can_be_recovered = true
     te.save!
     te
   }
@@ -33,14 +32,14 @@ RSpec.describe Tasks::AddRelatedExerciseAfterStep, type: :routine do
 
   let!(:related_exercise) { FactoryGirl.create(
     :content_exercise,
-    page: tasked_exercise_with_recovery.exercise.page,
+    page: tasked_exercise_with_related.exercise.page,
     content: OpenStax::Exercises::V1.fake_client
                                     .new_exercise_hash(
                                       tags: [lo.value, pp.value]
                                     ).to_json
   ) }
   let!(:related_tagging_1)   { FactoryGirl.create(
-    :content_exercise_tag, exercise: tasked_exercise_with_recovery.exercise, tag: lo
+    :content_exercise_tag, exercise: tasked_exercise_with_related.exercise, tag: lo
   ) }
   let!(:related_tagging_2)   { FactoryGirl.create(
     :content_exercise_tag, exercise: related_exercise, tag: lo
@@ -50,6 +49,11 @@ RSpec.describe Tasks::AddRelatedExerciseAfterStep, type: :routine do
   ) }
 
   let!(:pools) { Content::Routines::PopulateExercisePools[book: related_exercise.book] }
+
+  before do
+    tasked_exercise_with_related.task_step
+                                .update_attribute :related_exercise_ids, [related_exercise.id]
+  end
 
   it "cannot be called on task_steps where can_be_recovered is false" do
     result = nil
@@ -68,10 +72,10 @@ RSpec.describe Tasks::AddRelatedExerciseAfterStep, type: :routine do
   it "adds a new exercise step after the given step" do
     result = nil
     related_exercise_step = nil
-    task_step = tasked_exercise_with_recovery.task_step
+    task_step = tasked_exercise_with_related.task_step
     expect {
       result = described_class.call(
-        task_step: tasked_exercise_with_recovery.task_step
+        task_step: tasked_exercise_with_related.task_step
       )
     }.to change{ related_exercise_step = task_step.reload.next_by_number }
 

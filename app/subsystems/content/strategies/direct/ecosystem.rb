@@ -201,8 +201,8 @@ module Content
           find_pools(pages: pages, type: :reading_dynamic)
         end
 
-        def reading_try_another_pools(pages:)
-          find_pools(pages: pages, type: :reading_try_another)
+        def reading_context_pools(pages:)
+          find_pools(pages: pages, type: :reading_context)
         end
 
         def homework_core_pools(pages:)

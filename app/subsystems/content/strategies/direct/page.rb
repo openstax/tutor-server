@@ -5,7 +5,7 @@ module Content
 
         wraps ::Content::Models::Page
 
-        exposes :chapter, :reading_dynamic_pool, :reading_try_another_pool, :homework_core_pool,
+        exposes :chapter, :reading_dynamic_pool, :reading_context_pool, :homework_core_pool,
                 :homework_dynamic_pool, :practice_widget_pool, :all_exercises_pool,
                 :exercises, :tags, :los, :aplos, :url, :uuid, :version, :cnx_id, :title, :content,
                 :book_location, :is_intro?, :fragments, :snap_labs
@@ -20,9 +20,9 @@ module Content
           ::Content::Pool.new(strategy: entity_reading_dynamic_pool)
         end
 
-        alias_method :entity_reading_try_another_pool, :reading_try_another_pool
-        def reading_try_another_pool
-          ::Content::Pool.new(strategy: entity_reading_try_another_pool)
+        alias_method :entity_reading_context_pool, :reading_context_pool
+        def reading_context_pool
+          ::Content::Pool.new(strategy: entity_reading_context_pool)
         end
 
         alias_method :entity_homework_core_pool, :homework_core_pool

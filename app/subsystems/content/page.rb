@@ -40,9 +40,8 @@ module Content
                                                         error: StrategyError
     end
 
-    def reading_try_another_pool
-      verify_and_return @strategy.reading_try_another_pool, klass: ::Content::Pool,
-                                                            error: StrategyError
+    def reading_context_pool
+      verify_and_return @strategy.reading_context_pool, klass: ::Content::Pool, error: StrategyError
     end
 
     def homework_core_pool
