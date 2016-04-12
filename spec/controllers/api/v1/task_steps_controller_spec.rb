@@ -40,41 +40,23 @@ describe Api::V1::TaskStepsController, type: :controller, api: true, version: :v
   let!(:lo)                 { FactoryGirl.create :content_tag, value: 'ost-tag-lo-test-lo01' }
   let!(:pp)                 { FactoryGirl.create :content_tag, value: 'os-practice-problems' }
 
+  let!(:related_exercise)    { FactoryGirl.create(
+    :content_exercise,
+    content: OpenStax::Exercises::V1.fake_client
+                                    .new_exercise_hash(tags: [lo.value, pp.value])
+                                    .to_json
+  ) }
+
   let!(:tasked_exercise_with_related) {
     te = FactoryGirl.build(
       :tasks_tasked_exercise,
       content: OpenStax::Exercises::V1.fake_client.new_exercise_hash(tags: [lo.value]).to_json
     )
     te.task_step.task = task
-    te.task_step.related_exercise_ids = []
+    te.task_step.related_exercise_ids = [related_exercise.id]
     te.save!
     te
   }
-
-  let!(:related_exercise)    { FactoryGirl.create(
-    :content_exercise,
-    page: tasked_exercise_with_related.exercise.page,
-    content: OpenStax::Exercises::V1.fake_client
-                                    .new_exercise_hash(tags: [lo.value, pp.value])
-                                    .to_json
-  ) }
-
-  let!(:related_tagging_1)   { FactoryGirl.create(
-    :content_exercise_tag, exercise: tasked_exercise_with_related.exercise, tag: lo
-  ) }
-  let!(:related_tagging_2)   { FactoryGirl.create(
-    :content_exercise_tag, exercise: related_exercise, tag: lo
-  ) }
-  let!(:related_tagging_3)   { FactoryGirl.create(
-    :content_exercise_tag, exercise: related_exercise, tag: pp
-  ) }
-
-  let!(:pools) { Content::Routines::PopulateExercisePools[book: related_exercise.book] }
-
-  before do
-    tasked_exercise_with_related.task_step
-                                .update_attribute :related_exercise_ids, [related_exercise.id]
-  end
 
   describe "#show" do
     it "should work on the happy path" do
@@ -160,7 +142,7 @@ describe Api::V1::TaskStepsController, type: :controller, api: true, version: :v
   end
 
   describe "#recovery" do
-    it "should allow owner to add related exercises after steps where can_be_recovered is true" do
+    it "should allow owner to add related exercises after steps that have related_exercise_ids" do
       expect {
         api_put :recovery, user_1_token, parameters: {
           id: tasked_exercise_with_related.task_step.id
@@ -182,7 +164,7 @@ describe Api::V1::TaskStepsController, type: :controller, api: true, version: :v
       )
     end
 
-    it "should not allow random user to recover exercises" do
+    it "should not allow random user to call it" do
       step_count = tasked_exercise_with_related.task_step.task.task_steps.count
 
       expect{
@@ -196,7 +178,7 @@ describe Api::V1::TaskStepsController, type: :controller, api: true, version: :v
       )
     end
 
-    it "should not allow owner to recover steps without related_exercise_ids" do
+    it "should not allow owner to call it on steps that don't have related_exercise_ids" do
       expect{
         api_put :recovery, user_1_token, parameters: {
           id: tasked_exercise.task_step.id
