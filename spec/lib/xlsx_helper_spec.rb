@@ -6,7 +6,7 @@ RSpec.describe XlsxHelper, type: :lib do
     let!(:helper) { described_class.new }
 
     it 'objects if no name provided' do
-      expect{helper.sanitized_worksheet_name(name: nil)}.to raise_error
+      expect{helper.sanitized_worksheet_name(name: nil)}.to raise_error(IllegalArgument)
     end
 
     it 'returns short names verbatim' do
@@ -40,7 +40,7 @@ RSpec.describe XlsxHelper, type: :lib do
     end
 
     it 'objects if suffix too long' do
-      expect{helper.sanitized_worksheet_name(name: '12345', suffix: '1234567890123456789012345678')}.to raise_error
+      expect{helper.sanitized_worksheet_name(name: '12345', suffix: '1234567890123456789012345678')}.to raise_error(IllegalArgument)
     end
 
     it 'does not object if suffix is max length' do

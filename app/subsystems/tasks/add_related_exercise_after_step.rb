@@ -2,7 +2,8 @@ class Tasks::AddRelatedExerciseAfterStep
 
   lev_routine
 
-  uses_routine TaskExercise, as: :task_exercise
+  uses_routine TaskExercise, as: :task_exercise,
+                             translations: { outputs: { type: :verbatim } }
   uses_routine GetEcosystemFromIds, as: :get_ecosystem
   uses_routine GetHistory, as: :get_history
   uses_routine FilterExcludedExercises, as: :filter
@@ -21,8 +22,6 @@ class Tasks::AddRelatedExerciseAfterStep
     related_exercise_step = create_exercise_step_after(task_step: task_step,
                                                        exercise: related_exercise)
 
-    transfer_errors_from(related_exercise_step, type: :verbatim)
-
     # This update combined with the lock above will cause other transactions to retry
     task_step.update_attribute(:related_exercise_ids, [])
 
@@ -33,15 +32,12 @@ class Tasks::AddRelatedExerciseAfterStep
 
   # Inserts a new TaskStep with a TaskedExercise after the given TaskStep using the given Exercise
   def create_exercise_step_after(task_step:, exercise:)
-    task = task_step.task
-    step = Tasks::Models::TaskStep.new(
-      task: task, number: task_step.number + 1
-    )
-    step.tasked = run(:task_exercise, task_step: step, exercise: exercise).outputs.tasked_exercise
-    step.group_type = :recovery_group
-    task.task_steps << step
-    step.save!
-    step
+    run(:task_exercise, exercise: exercise, task: task_step.task) do |step|
+      step.number = task_step.number + 1
+      step.group_type = :recovery_group
+    end
+
+    outputs[:task_step].tap(&:save!)
   end
 
   # Finds an Exercise with all the required tags and at least one LO

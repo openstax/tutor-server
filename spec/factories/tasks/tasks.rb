@@ -20,7 +20,7 @@ FactoryGirl.define do
 
       evaluator.step_types.each_with_index do |type, i|
         tasked = FactoryGirl.build(type, skip_task: true)
-        task.task_steps << tasked.task_step
+        task.add_step(tasked.task_step)
       end
 
       evaluator.num_random_taskings.times do

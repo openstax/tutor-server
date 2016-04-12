@@ -68,6 +68,7 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   end
 
   def add_related_content(related_content_hash)
+    return if related_content_hash.nil?
     self.related_content << related_content_hash
   end
 

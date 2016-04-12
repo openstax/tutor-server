@@ -38,6 +38,10 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   after_update :update_counts_if_needed!
 
+  def add_step(step)
+    self.task_steps << step
+  end
+
   def stepless?
     STEPLESS_TASK_TYPES.include?(task_type.to_sym)
   end

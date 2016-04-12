@@ -4,10 +4,23 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
   protected
 
   def task_fragments(task:, fragments:, fragment_title:, page:, related_content: nil)
+    related_content ||= page.related_content
     title = fragment_title
 
     fragments.each do |fragment|
-      step = Tasks::Models::TaskStep.new(task: task)
+
+      step_modifier = ->(step) {
+        step.group_type = :core_group
+        step.add_labels(fragment.labels)
+        step.add_related_content(related_content)
+      }
+
+      step_builder = ->() {
+        Tasks::Models::TaskStep.new(task: task).tap do |step|
+          step_modifier.call(step)
+          task.add_step(step)
+        end
+      }
 
       case fragment
       # This is a subclass of Fragment::Exercise so it needs to come first
@@ -24,19 +37,12 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
       when OpenStax::Cnx::V1::Fragment::Exercise
         task_exercise(exercise_fragment: fragment, page: page, step: step, title: title)
       when OpenStax::Cnx::V1::Fragment::Video
-        task_video(video_fragment: fragment, step: step, title: title)
+        task_video(video_fragment: fragment, step: step_builder.call, title: title)
       when OpenStax::Cnx::V1::Fragment::Interactive
-        task_interactive(interactive_fragment: fragment, step: step, title: title)
+        task_interactive(interactive_fragment: fragment, step: step_builder.call, title: title)
       else
-        task_reading(reading_fragment: fragment, page: page, title: title, step: step)
+        task_reading(reading_fragment: fragment, page: page, title: title, step: step_builder.call)
       end
-
-      next if step.tasked.nil?
-      step.group_type = :core_group
-      step.add_labels(fragment.labels)
-      related_content ||= page.related_content
-      step.add_related_content(related_content)
-      task.task_steps << step
 
       # The title applies only to the first step in the set of fragments given
       title = nil
@@ -51,7 +57,7 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
                                      content: reading_fragment.to_html)
   end
 
-  def task_exercise(exercise_fragment:, page:, step:, title: nil)
+  def task_exercise(exercise_fragment:, page:, task:, title: nil, step_modifier:)
     exercise = get_random_unused_exercise_with_tags(exercise_fragment.embed_tags)
 
     if exercise.nil?
@@ -65,7 +71,9 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
     end
 
     # Assign the exercise
-    TaskExercise[exercise: exercise, title: title, task_step: step]
+    TaskExercise.call(exercise: exercise, title: title, task: task) do |step|
+      step_modifier.call(step)
+    end
   end
 
   def store_related_exercises(exercise_fragment:, page:, previous_step:, title: nil)

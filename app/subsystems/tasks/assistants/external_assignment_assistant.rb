@@ -35,7 +35,7 @@ class Tasks::Assistants::ExternalAssignmentAssistant < Tasks::Assistants::Generi
     step = Tasks::Models::TaskStep.new(task: task)
     tasked_external_url(task_step: step, taskee: taskee, student: student,
                         url: task_plan.settings['external_url'])
-    task.task_steps << step
+    task.add_step(step)
     task
   end
 
