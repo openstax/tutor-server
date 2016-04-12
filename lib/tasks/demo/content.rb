@@ -117,8 +117,12 @@ class DemoContent < DemoBase
         book = content.cnx_book(version)
         course = courses[index]
         log("Starting book import for #{course.name} #{book} from #{content.url_base}.")
-        ecosystem = run(:import_book, book_cnx_id: book,
-                                      archive_url: content.url_base).outputs.ecosystem
+        ecosystem = run(
+          :import_book,
+          book_cnx_id: book,
+          archive_url: content.url_base,
+          reading_processing_instructions: content.reading_processing_instructions
+        ).outputs.ecosystem
 
         log("Book import complete")
         run(:add_ecosystem, ecosystem: ecosystem, course: course)

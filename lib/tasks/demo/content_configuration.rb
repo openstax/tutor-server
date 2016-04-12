@@ -3,7 +3,7 @@ require 'yaml'
 require 'erb'
 require_relative 'content_configuration_yaml_methods'
 
-# Reads in a YAML file containg configuration for a course and it's students
+# Reads in a YAML file containg configuration for a course and its students
 class ContentConfiguration
   # Yaml files will be located inside this directory
   DEFAULT_CONFIG_DIR = File.join(File.dirname(__FILE__), 'configurations')
@@ -43,8 +43,9 @@ class ContentConfiguration
     files.map{|file| self.new(file) }
   end
 
-  def_delegators :@configuration, :course_name, :teachers, :periods, :is_concept_coach, :appearance_code,
-                 :catalog_offering_salesforce_book_name, :catalog_offering_is_concept_coach
+  def_delegators :@configuration, :course_name, :teachers, :periods, :is_concept_coach,
+                 :appearance_code, :catalog_offering_salesforce_book_name,
+                 :catalog_offering_is_concept_coach, :reading_processing_instructions
 
   def initialize(config_file)
     @configuration = Hashie::Mash.load(config_file, parser: ConfigFileParser)
