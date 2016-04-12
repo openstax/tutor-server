@@ -17,8 +17,9 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
         # so that's what is passed in
         previous_step = task.task_steps.last
 
-        task_optional_exercise(exercise_fragment: fragment, page: page,
-                               previous_step: previous_step, title: title) unless previous_step.nil?
+        store_related_exercises(exercise_fragment: fragment, page: page,
+                                previous_step: previous_step, title: title) \
+          unless previous_step.nil?
       when OpenStax::Cnx::V1::Fragment::Video
         task_video(video_fragment: fragment, step: step, title: title)
       when OpenStax::Cnx::V1::Fragment::Interactive
@@ -64,7 +65,7 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
     TaskExercise[exercise: exercise, title: title, task_step: step]
   end
 
-  def task_optional_exercise(exercise_fragment:, page:, previous_step:, title: nil)
+  def store_related_exercises(exercise_fragment:, page:, previous_step:, title: nil)
     pool_exercises = page.reading_context_pool.exercises
     tasked = previous_step.tasked
 
