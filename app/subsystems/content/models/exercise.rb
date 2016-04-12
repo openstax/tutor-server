@@ -38,8 +38,8 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
     tags.to_a.select(&:aplo?)
   end
 
-  def ccs
-    tags.to_a.select(&:cc?)
+  def cnxmods
+    tags.to_a.select(&:cnxmod?)
   end
 
   def content_hash

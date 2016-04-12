@@ -38,8 +38,8 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, speed: :slow, vcr:
     end
 
     it 'finds LO tags in the content' do
-      expected_los_set = Set['k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02',
-                             'lo:stax-k12phys:4-1-1', 'lo:stax-k12phys:4-1-2']
+      expected_page_los_set = Set['k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02']
+      expected_exercise_los_set = Set['lo:stax-k12phys:4-1-1', 'lo:stax-k12phys:4-1-2']
       expected_routine_tags_set = Set['context-cnxmod:95e61258-2faf-41d4-af92-f62e1414175a',
                                       'k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02',
                                       'teks-112-39-c-4c', 'teks-112-39-c-4e']
@@ -48,13 +48,13 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, speed: :slow, vcr:
       expect { result = import_page }.to change{ Content::Models::Tag.lo.count }.by(4)
 
       los_set = Set.new Content::Models::Tag.lo.order(:created_at).last(4).map(&:value)
-      expect(los_set).to eq(expected_los_set)
+      expect(los_set).to eq(expected_page_los_set + expected_exercise_los_set)
 
       routine_tags_set = Set.new result.outputs[:tags].map(&:value)
       expect(routine_tags_set).to eq expected_routine_tags_set
 
       page_tags_set = Set.new Content::Models::Page.last.page_tags.map{ |pt| pt.tag.value }
-      expect(page_tags_set).to eq expected_routine_tags_set + expected_los_set
+      expect(page_tags_set).to eq expected_routine_tags_set + expected_page_los_set
     end
 
     it 'creates tags from ost-standard-defs' do
@@ -119,23 +119,24 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, speed: :slow, vcr:
       expect(routine_tags.map(&:value)).to eq [expected_page_tag]
 
       page_tag_values = Content::Models::Page.order(:created_at).last.page_tags
-                                                                     .collect{|pt| pt.tag.value}
+                                                                     .map{|pt| pt.tag.value}
       expect(page_tag_values).to include(expected_page_tag)
     end
 
-    it 'gets exercises with the page\'s cnxmod tag and assigns page LO\'s from them' do
+    it 'gets exercises with the page\'s cnxmod tag' do
       result = nil
       expect {
         result = import_page(archive_url: 'https://archive.cnx.org/contents/')
       }.to change{ Content::Models::Exercise.count }.by(26)
 
       exercises = Content::Models::Exercise.order(:created_at).last(26)
+      page = Content::Models::Page.order(:created_at).last
 
-      exercise_los_set = Set.new exercises.flat_map(&:los)
-      page_tags_set = Set.new(
-        Content::Models::Page.order(:created_at).last.page_tags.collect(&:tag)
-      )
-      expect(exercise_los_set).to be_subset(page_tags_set)
+      expect(page.los).to be_empty
+      page_cnxmods = page.cnxmods
+      expect(page_cnxmods).not_to be_empty
+
+      exercises.each{ |exercise| expect(exercise.cnxmods & page_cnxmods).not_to be_empty }
     end
   end
 

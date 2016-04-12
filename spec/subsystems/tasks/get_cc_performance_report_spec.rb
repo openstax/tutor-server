@@ -28,7 +28,7 @@ RSpec.describe Tasks::GetCcPerformanceReport, type: :routine, speed: :slow do
         task.save!
 
         Tasks::Models::ConceptCoachTask.create!(
-          content_page_id: @ecosystem.books.first.pages[index].id,
+          content_page_id: @ecosystem.books.first.chapters.third.pages[index].id,
           role: task.taskings.first.role,
           task: task.entity_task
         )
