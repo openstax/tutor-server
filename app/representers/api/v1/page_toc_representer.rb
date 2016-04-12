@@ -46,7 +46,7 @@ module Api::V1
              }
 
     collection :snap_labs,
-               getter: -> (*) { snap_labs.collect { |snap_lab| Hashie::Mash.new(snap_lab) } },
+               getter: -> (*) { snap_labs.map { |snap_lab| Hashie::Mash.new(snap_lab) } },
                readable: true,
                writeable: false,
                decorator: Api::V1::SnapLabRepresenter,

@@ -58,7 +58,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
       @task_step_gold_data = \
         @core_step_gold_data + @spaced_practice_step_gold_data + @personalized_step_gold_data
 
-      cnx_pages = cnx_page_hashes.collect do |hash|
+      cnx_pages = cnx_page_hashes.map do |hash|
         OpenStax::Cnx::V1::Page.new(hash: hash)
       end
 
@@ -71,7 +71,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
                  'Tasks_Assistants_HomeworkAssistant/for_Introduction_and_Force/with_pages',
                  VCR_OPTS
                ) do
-        cnx_pages.collect.with_index do |cnx_page, ii|
+        cnx_pages.map.with_index do |cnx_page, ii|
           Content::Routines::ImportPage.call(
             cnx_page:  cnx_page,
             chapter: chapter,
@@ -90,7 +90,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
     let!(:exercises) { pools.flat_map(&:exercises).sort_by(&:uid) }
 
     let!(:teacher_selected_exercises) { exercises[1..5] }
-    let!(:teacher_selected_exercise_ids) { teacher_selected_exercises.collect{|e| e.id.to_s} }
+    let!(:teacher_selected_exercise_ids) { teacher_selected_exercises.map{|e| e.id.to_s} }
 
     let!(:tutor_selected_exercise_count) { 4 }
     let!(:personalized_exercise_count) { 2 }
@@ -123,7 +123,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
     let!(:num_taskees) { 3 }
 
     let!(:taskee_users) {
-      num_taskees.times.collect do
+      num_taskees.times.map do
         user = FactoryGirl.create(:user)
         AddUserAsPeriodStudent.call(user: user, period: period)
         user
@@ -131,7 +131,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
     }
 
     let!(:tasking_plans) {
-      tps = taskee_users.collect do |taskee|
+      tps = taskee_users.map do |taskee|
         task_plan.tasking_plans <<
           FactoryGirl.create(:tasks_tasking_plan,
             task_plan: task_plan,
@@ -144,7 +144,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
     }
 
     it "creates the expected assignments" do
-      #puts "teacher_selected_exercises = #{teacher_selected_exercises.collect{|ex| ex.uid}}"
+      #puts "teacher_selected_exercises = #{teacher_selected_exercises.map(&:uid)}"
 
       allow(Tasks::Assistants::HomeworkAssistant).
         to receive(:k_ago_map) { [ [0, tutor_selected_exercise_count] ] }
@@ -170,8 +170,8 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
       entity_tasks.each do |entity_task|
         expect(entity_task.taskings.count).to eq(1)
       end
-      expected_roles = taskee_users.collect{ |taskee| Role::GetDefaultUserRole[taskee] }
-      expect(entity_tasks.collect{|t| t.taskings.first.role}).to match_array expected_roles
+      expected_roles = taskee_users.map{ |taskee| Role::GetDefaultUserRole[taskee] }
+      expect(entity_tasks.map{|t| t.taskings.first.role}).to match_array expected_roles
 
       ## it "assigns the correct number of exercises"
       entity_tasks.each do |entity_task|

@@ -8,7 +8,7 @@ class CourseProfile::Models::Profile < Tutor::SubSystems::BaseModel
   validates :course, presence: true, uniqueness: true
   validates :name, presence: true
   validates :timezone, presence: true,
-                       inclusion: { in: ActiveSupport::TimeZone.all.collect(&:name) }
+                       inclusion: { in: ActiveSupport::TimeZone.all.map(&:name) }
 
   delegate :name, to: :school,
                   prefix: true,

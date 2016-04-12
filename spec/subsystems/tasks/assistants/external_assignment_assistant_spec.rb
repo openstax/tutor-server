@@ -30,7 +30,7 @@ RSpec.describe Tasks::Assistants::ExternalAssignmentAssistant, type: :assistant 
   let!(:num_taskees) { 3 }
 
   let!(:students) {
-    num_taskees.times.collect do
+    num_taskees.times.map do
       user = FactoryGirl.create(:user)
       AddUserAsPeriodStudent.call(user: user, period: period).outputs.student
     end
@@ -49,7 +49,7 @@ RSpec.describe Tasks::Assistants::ExternalAssignmentAssistant, type: :assistant 
   }
 
   it 'assigns tasked external urls to students' do
-    tasks = DistributeTasks.call(task_plan_1).outputs.entity_tasks.collect(&:task)
+    tasks = DistributeTasks.call(task_plan_1).outputs.entity_tasks.map(&:task)
     expect(tasks.length).to eq num_taskees
 
     tasks.each do |task|
@@ -60,7 +60,7 @@ RSpec.describe Tasks::Assistants::ExternalAssignmentAssistant, type: :assistant 
   end
 
   it 'assigns tasked external urls with templatized urls to students' do
-    tasks = DistributeTasks.call(task_plan_2).outputs.entity_tasks.collect(&:task)
+    tasks = DistributeTasks.call(task_plan_2).outputs.entity_tasks.map(&:task)
     expect(tasks.length).to eq num_taskees
 
     tasks.each do |task|
@@ -69,9 +69,9 @@ RSpec.describe Tasks::Assistants::ExternalAssignmentAssistant, type: :assistant 
     end
 
     # check that the deidentifier is in the tasked urls
-    student_deidentifiers = students.collect { |s| s.deidentifier }
+    student_deidentifiers = students.map(&:deidentifier)
     student_deidentifiers.sort! { |a, b| a <=> b }
-    tasked_urls = tasks.collect { |t| t.task_steps.first.tasked.url }
+    tasked_urls = tasks.map { |t| t.task_steps.first.tasked.url }
     tasked_urls.sort! { |a, b| a <=> b }
 
     tasked_urls.each_with_index do |tasked_url, i|

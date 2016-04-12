@@ -347,9 +347,9 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
           MarkTaskStepCompleted[task_step: ts]
         end
       end
-      roles = first_task.taskings.collect(&:role)
+      roles = first_task.taskings.map(&:role)
       users = Role::GetUsersForRoles[roles]
-      first_task_names = users.collect(&:name)
+      first_task_names = users.map(&:name)
 
       stats = described_class.call(tasks: @task_plan.reload.tasks, details: true).outputs.stats
       exercises = stats.first.current_pages.first.exercises
@@ -364,8 +364,8 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       end
 
       content_without_selected_count = exercises.first.content.merge(
-        'questions' => exercises.first.content.questions.collect do |qq|
-          qq.merge('answers' => qq.answers.collect do |aa|
+        'questions' => exercises.first.content.questions.map do |qq|
+          qq.merge('answers' => qq.answers.map do |aa|
             aa.except('selected_count')
           end)
         end
@@ -386,9 +386,9 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
           MarkTaskStepCompleted[task_step: ts]
         end
       end
-      roles = second_task.taskings.collect(&:role)
+      roles = second_task.taskings.map(&:role)
       users = Role::GetUsersForRoles[roles]
-      second_task_names = users.collect(&:name)
+      second_task_names = users.map(&:name)
 
       stats = described_class.call(tasks: @task_plan.reload.tasks, details: true).outputs.stats
       exercises = stats.first.current_pages.first.exercises
@@ -410,8 +410,8 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       end
 
       content_without_selected_count = exercises.first.content.merge(
-        'questions' => exercises.first.content.questions.collect do |qq|
-          qq.merge('answers' => qq.answers.collect do |aa|
+        'questions' => exercises.first.content.questions.map do |qq|
+          qq.merge('answers' => qq.answers.map do |aa|
             aa.except('selected_count')
           end)
         end
@@ -432,9 +432,9 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
           MarkTaskStepCompleted[task_step: ts]
         end
       end
-      roles = third_task.taskings.collect(&:role)
+      roles = third_task.taskings.map(&:role)
       users = Role::GetUsersForRoles[roles]
-      third_task_names = users.collect(&:name)
+      third_task_names = users.map(&:name)
 
       stats = described_class.call(tasks: @task_plan.reload.tasks, details: true).outputs.stats
       exercises = stats.first.current_pages.first.exercises
@@ -461,8 +461,8 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       end
 
       content_without_selected_count = exercises.first.content.merge(
-        'questions' => exercises.first.content.questions.collect do |qq|
-          qq.merge('answers' => qq.answers.collect do |aa|
+        'questions' => exercises.first.content.questions.map do |qq|
+          qq.merge('answers' => qq.answers.map do |aa|
             aa.except('selected_count')
           end)
         end
@@ -483,9 +483,9 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
           MarkTaskStepCompleted[task_step: ts]
         end
       end
-      roles = fourth_task.taskings.collect(&:role)
+      roles = fourth_task.taskings.map(&:role)
       users = Role::GetUsersForRoles[roles]
-      fourth_task_names = users.collect(&:name)
+      fourth_task_names = users.map(&:name)
 
       stats = described_class.call(tasks: @task_plan.reload.tasks, details: true).outputs.stats
       exercises = stats.first.current_pages.first.exercises
@@ -517,8 +517,8 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       end
 
       content_without_selected_count = exercises.first.content.merge(
-        'questions' => exercises.first.content.questions.collect do |qq|
-          qq.merge('answers' => qq.answers.collect do |aa|
+        'questions' => exercises.first.content.questions.map do |qq|
+          qq.merge('answers' => qq.answers.map do |aa|
             aa.except('selected_count')
           end)
         end

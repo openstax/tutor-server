@@ -5,7 +5,7 @@ module SchoolDistrict
     protected
     def exec
       schools = Models::School.all
-      outputs.schools = schools.collect do |school|
+      outputs.schools = schools.map do |school|
         { id: school.id,
           name: school.name,
           district_name: school.district_name }

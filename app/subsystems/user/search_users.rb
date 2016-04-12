@@ -12,7 +12,7 @@ module User
 
       outputs[:users] = Hashie::Mash.new(
         total_count: profiles.total_entries,
-        items: profiles.collect do |profile|
+        items: profiles.map do |profile|
           strategy = strategy_class.new(profile)
           ::User::User.new(strategy: strategy)
         end

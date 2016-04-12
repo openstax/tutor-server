@@ -43,17 +43,17 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
       pools = outs.pools
 
       biglearn_exercises = [exercise_1, exercise_2, exercise_3,
-                            exercise_4, exercise_5].collect do |ex|
+                            exercise_4, exercise_5].map do |ex|
         OpenStax::Biglearn::V1::Exercise.new(
           question_id: ex.number.to_s,
           version: ex.version,
-          tags: ex.tags.collect{ |tt| tt.value }
+          tags: ex.tags.map(&:value)
         )
       end
       OpenStax::Biglearn::V1.add_exercises(biglearn_exercises)
 
-      biglearn_pools = pools.collect do |pool|
-        question_ids = pool.exercises.collect { |ex| ex.number.to_s }
+      biglearn_pools = pools.map do |pool|
+        question_ids = pool.exercises.map { |ex| ex.number.to_s }
         exercises = biglearn_exercises.select{ |ex| question_ids.include?(ex.question_id) }
         OpenStax::Biglearn::V1::Pool.new(exercises: exercises)
       end
@@ -92,9 +92,9 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
 
       hash = response.body_as_hash
 
-      step_urls = Set.new(hash[:steps].collect { |s| s[:content_url] })
+      step_urls = Set.new(hash[:steps].map { |s| s[:content_url] })
       exercises = [exercise_1, exercise_2, exercise_3, exercise_4, exercise_5]
-      exercise_urls = Set.new(exercises.collect(&:url))
+      exercise_urls = Set.new(exercises.map(&:url))
 
       expect(step_urls).to eq exercise_urls
     end

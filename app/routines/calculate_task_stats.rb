@@ -14,7 +14,7 @@ class CalculateTaskStats
   end
 
   def exercise_stats_for_tasked_exercises(tasked_exercises)
-    tasked_exercises.group_by{ |te| te.exercise }.collect do |exercise, tasked_exercises|
+    tasked_exercises.group_by{ |te| te.exercise }.map do |exercise, tasked_exercises|
       average_step_number = tasked_exercises.map{ |te| te.task_step.number }
                                             .reduce(:+)/Float(tasked_exercises.size)
       completed_tasked_exercises = tasked_exercises.select{ |te| te.completed? }
@@ -24,10 +24,10 @@ class CalculateTaskStats
       {
         content: exercise_parser.content_with_answer_stats(answer_stats),
         answered_count: completed_tasked_exercises.count,
-        answers: completed_tasked_exercises.collect do |te|
-          roles = te.task_step.task.taskings.collect{ |ts| ts.role }
+        answers: completed_tasked_exercises.map do |te|
+          roles = te.task_step.task.taskings.map(&:role)
           users = run(:get_users_for_roles, roles).outputs.users
-          names = users.collect(&:name)
+          names = users.map(&:name)
 
           {
             student_names: names,
@@ -45,8 +45,8 @@ class CalculateTaskStats
   def page_stats_for_tasked_exercises(tasked_exercises)
     completed = tasked_exercises.select{ |te| te.completed? }
 
-    some_completed_role_ids = completed.collect do |tasked_exercise|
-      tasked_exercise.task_step.task.taskings.collect{ |tasking| tasking.entity_role_id }
+    some_completed_role_ids = completed.map do |tasked_exercise|
+      tasked_exercise.task_step.task.taskings.map(&:entity_role_id)
     end.flatten.uniq
 
     correct_count = completed.count{ |te| te.is_correct? }
@@ -80,14 +80,14 @@ class CalculateTaskStats
   end
 
   def mean_grade_percent(tasks)
-    grades_array = tasks.collect{ |task| get_task_grade(task) }.compact
+    grades_array = tasks.map{ |task| get_task_grade(task) }.compact
     sum_of_grades = grades_array.inject(:+)
     return nil if sum_of_grades.nil?
     (sum_of_grades*100.0/grades_array.count).round
   end
 
   def get_tasked_exercises_from_task_steps(task_steps)
-    tasked_exercise_ids = task_steps.flatten.select{ |t| t.exercise? }.collect{ |ts| ts.tasked_id }
+    tasked_exercise_ids = task_steps.flatten.select(&:exercise?).map(&:tasked_id)
     Tasks::Models::TaskedExercise.joins { task_step }
                                  .where { id.in tasked_exercise_ids }
                                  .preload([{exercise: :page},
@@ -103,7 +103,7 @@ class CalculateTaskStats
       get_tasked_exercises_from_task_steps(task_steps)
     )
 
-    page_hash.collect{ |page, tasked_exercises| generate_page_stats(page, tasked_exercises) }
+    page_hash.map{ |page, tasked_exercises| generate_page_stats(page, tasked_exercises) }
              .sort_by{ |page_stats| page_stats[:chapter_section] }
   end
 
@@ -116,13 +116,12 @@ class CalculateTaskStats
     grouped_tasks = tasks.group_by do |tt|
       tt.taskings.first.try(:period) || no_period
     end
-    grouped_tasks.collect do |period, period_tasks|
+    grouped_tasks.map do |period, period_tasks|
       current_page_stats = generate_page_stats_for_task_steps(
-                             period_tasks.collect{ |t| t.core_task_steps + \
-                                                       t.personalized_task_steps }
+                             period_tasks.map{ |t| t.core_task_steps + t.personalized_task_steps }
                            )
       spaced_page_stats = generate_page_stats_for_task_steps(
-                            period_tasks.collect{ |t| t.spaced_practice_task_steps }
+                            period_tasks.map(&:spaced_practice_task_steps)
                           )
 
       Hashie::Mash.new(

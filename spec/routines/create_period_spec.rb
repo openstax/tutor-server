@@ -12,7 +12,7 @@ RSpec.describe CreatePeriod do
                             target_id: new_period.id,
                             target_type: 'CourseMembership::Models::Period'
                           })
-                          .collect(&:id) }
+                          .map(&:id) }
 
   before(:all) { DatabaseCleaner.start }
   after(:all) { DatabaseCleaner.clean }

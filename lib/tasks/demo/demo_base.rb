@@ -61,7 +61,7 @@ class DemoBase
 
   def get_auto_assignments(content)
 
-    content.auto_assign.collect do | settings |
+    content.auto_assign.map do | settings |
       if settings.type == 'concept_coach'
         book_locations = nil
         step_types = nil
@@ -75,7 +75,7 @@ class DemoBase
                    end
       end
 
-      1.upto(settings.generate).collect do | number |
+      1.upto(settings.generate).map do | number |
         Hashie::Mash.new( type: settings.type,
                           title: "#{settings.type.titleize} #{number}",
                           num_exercises: settings.steps,
@@ -146,9 +146,9 @@ class DemoBase
     # Adjust number of processes again if some process would receive an empty array
     num_processes = (arg_size/slice_size.to_f).ceil
 
-    sliced_args = args.collect{ |arg| arg.each_slice(slice_size) }
-    process_args = 0.upto(num_processes - 1).collect do |process_index|
-      sliced_args.collect{ |sliced_arg| sliced_arg.next } + [process_index*slice_size]
+    sliced_args = args.map{ |arg| arg.each_slice(slice_size) }
+    process_args = 0.upto(num_processes - 1).map do |process_index|
+      sliced_args.map{ |sliced_arg| sliced_arg.next } + [process_index*slice_size]
     end
 
     #log("Processes: #{num_processes} - Slice size: #{slice_size}")
@@ -157,7 +157,7 @@ class DemoBase
     # because the different processes cannot share connections
     ActiveRecord::Base.clear_all_connections!
 
-    child_processes = 0.upto(num_processes - 1).collect do |process_index|
+    child_processes = 0.upto(num_processes - 1).map do |process_index|
       # Start a new process
       # Threading does not work well with MRI due to the GIL
       fork do
@@ -195,7 +195,7 @@ class DemoBase
 
     #log('Waiting for child processes to exit...')
 
-    results = @processes.collect{ |pid| Process.wait2(pid) }
+    results = @processes.map{ |pid| Process.wait2(pid) }
 
     @processes = []
 
@@ -261,10 +261,10 @@ class DemoBase
         points_per_exercise = 100.0/num_exercises
         num_correct = [100, (entry/points_per_exercise).round].min # just to make sure not too many
 
-        exercise_correctness = num_correct.times.collect{1} + (num_exercises - num_correct).times.collect{0}
+        exercise_correctness = num_correct.times.map{1} + (num_exercises - num_correct).times.map{0}
         exercise_correctness.shuffle!(random: @randomizer)
 
-        @step_types.collect do |type|
+        @step_types.map do |type|
           case type
           when 'e'
             exercise_correctness.pop
@@ -273,9 +273,9 @@ class DemoBase
           end
         end
       when 'ns'
-        @step_types.count.times.collect{nil}
+        @step_types.count.times.map{nil}
       when 'i'
-        responses = @step_types.count.times.collect{ [1,0,nil].sample }
+        responses = @step_types.count.times.map{ [1,0,nil].sample }
 
         # incomplete is more than not_started, so make sure we have started by setting
         # the first response to complete/correct. always make last step incomplete to
@@ -374,7 +374,7 @@ class DemoBase
       content_ecosystem_id: ecosystem.id,
       type: 'reading',
       assistant: get_assistant(course: course, task_plan_type: 'reading'),
-      settings: { page_ids: pages.collect{|page| page.id.to_s} }
+      settings: { page_ids: pages.map{|page| page.id.to_s} }
     )
   end
 
@@ -383,8 +383,8 @@ class DemoBase
     book = ecosystem.books.first
     pages = lookup_pages(book: book, book_locations: book_locations)
     pools = ecosystem.homework_core_pools(pages: pages)
-    exercises = pools.collect{ |pl| pl.exercises }.flatten.uniq.shuffle(random: randomizer)
-    exercise_ids = exercises.take(num_exercises).collect{ |e| e.id.to_s }
+    exercises = pools.map(&:exercises).flatten.uniq.shuffle(random: randomizer)
+    exercise_ids = exercises.take(num_exercises).map{ |e| e.id.to_s }
 
     raise "No exercises to assign" if exercise_ids.blank?
 
@@ -395,7 +395,7 @@ class DemoBase
       type: 'homework',
       assistant: get_assistant(course: course, task_plan_type: 'homework'),
       settings: {
-        page_ids: pages.collect{|page| page.id.to_s},
+        page_ids: pages.map{|page| page.id.to_s},
         exercise_ids: exercise_ids,
         exercises_count_dynamic: rand(3)+2
       }
@@ -532,7 +532,7 @@ class DemoBase
 
   def print_task(task:)
 
-    types = task.task_steps.collect do |step|
+    types = task.task_steps.map do |step|
       group_code = if step.default_group?
         'd'
       elsif step.core_group?
@@ -547,7 +547,7 @@ class DemoBase
 
       "#{group_code}#{step.id}#{step_code(step)}"
     end
-    codes = task.task_steps.collect{ |step| step_code(step) }
+    codes = task.task_steps.map{ |step| step_code(step) }
     "Task #{task.id} / #{task.task_type}\n#{codes.join(', ')}\n#{types.join(' ')}"
   end
 

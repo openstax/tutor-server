@@ -14,7 +14,7 @@ module User
         class << self
           alias_method :entity_all, :all
           def all
-            entity_all.collect do |entity|
+            entity_all.map do |entity|
               ::User::User.new(strategy: entity)
             end
           end

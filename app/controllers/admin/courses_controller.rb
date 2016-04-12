@@ -98,7 +98,7 @@ class Admin::CoursesController < Admin::BaseController
     },
     failure: -> {
       flash[:error] = ['Error uploading student roster'] +
-                        @handler_result.errors.collect(&:message).flatten
+                        @handler_result.errors.map(&:message).flatten
 
     })
 

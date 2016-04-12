@@ -24,17 +24,17 @@ class Content::Visitors::PageData < Content::Visitors::Book
   private
   def get_page_los(page)
     tags = get_page_tags(page)
-    tags.select { |tag| tag[:type] == 'lo' }.collect { |tag| tag[:value] }
+    tags.select { |tag| tag[:type] == 'lo' }.map { |tag| tag[:value] }
   end
 
   def get_page_aplos(page)
     tags = get_page_tags(page)
-    tags.select { |tag| tag[:type] == 'aplo' }.collect { |tag| tag[:value] }
+    tags.select { |tag| tag[:type] == 'aplo' }.map { |tag| tag[:value] }
   end
 
   def get_page_tags(page)
     @tags ||= {}
-    @tags[page.id] ||= page.page_tags.includes(:tag).collect do |page_tag|
+    @tags[page.id] ||= page.page_tags.includes(:tag).map do |page_tag|
       { type: page_tag.tag.tag_type, value: page_tag.tag.value }
     end
   end

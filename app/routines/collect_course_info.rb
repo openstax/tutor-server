@@ -27,7 +27,7 @@ class CollectCourseInfo
     with = enforce_order(of: :roles, before: :students, within: with)
 
     entity_courses = Entity::Course.where(id: courses.map(&:id)).preload(profile: :offering)
-    entity_courses.collect do |entity_course|
+    entity_courses.map do |entity_course|
       profile = entity_course.profile
       offering = profile.offering
 
@@ -77,7 +77,7 @@ class CollectCourseInfo
 
   def set_roles(info, entity_course, user)
     roles = run(:get_course_roles, course: entity_course, user: user).outputs.roles
-    info.roles = roles.collect do |role|
+    info.roles = roles.map do |role|
       { id: role.id, type: role.role_type }
     end
   end
@@ -109,7 +109,7 @@ class CollectCourseInfo
   def set_students(info, entity_course)
     return if info.roles.nil?
 
-    student_role_ids = info.roles.collect{|rr| rr[:id] if rr[:type] == 'student'}.compact
+    student_role_ids = info.roles.map{|rr| rr[:id] if rr[:type] == 'student'}.compact
 
     return nil if student_role_ids.empty?
 

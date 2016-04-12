@@ -240,7 +240,7 @@ module Content
             else
               unmapped_exercise_ids = all_exercise_ids_set - all_exercises_map_ids_set
               unmapped_exercise_uids = all_exercises.select{|ex| unmapped_exercise_ids.include? ex.id } \
-                                                    .collect{|ex| ex.uid}
+                                                    .map(&:uid)
               "unmapped exercise uids: #{unmapped_exercise_uids.to_a.join(', ')}"
             end
           return condition, condition_message
@@ -260,7 +260,7 @@ module Content
             else
               mismapped_pages = all_execises_map_pages_set - to_ecosystem_pages_set
               mismapped_hash  = all_exercises_map.select{|ex,page| mismapped_pages.include? page }
-              diag_info = mismapped_hash.collect do |ex_id,page|
+              diag_info = mismapped_hash.map do |ex_id,page|
                 ex_uid = all_exercises.detect{|ex| ex.id == ex_id}.uid
                 title  = page.try(:title) || 'nil'
                 "#{ex_uid} => #{title}"
@@ -284,7 +284,7 @@ module Content
             else
               unmapped_page_ids = all_page_ids_set - all_pages_map_ids_set
               unmapped_page_titles = all_pages.select{|page| unmapped_page_ids.include? page.id } \
-                                              .collect{|page| page.title}
+                                              .map(&:title)
               "unmapped page titles: #{unmapped_page_titles.to_a.join(', ')}"
             end
           return condition, condition_message
@@ -304,7 +304,7 @@ module Content
             else
               mismapped_exercises = all_pages_map_exercises_set - to_ecosystem_exercises_set
               mismapped_hash  = all_pages_map.select{|page,exs| (exs & mismapped_exercises).any? }
-              diag_info = mismapped_hash.collect do |page_id,exs|
+              diag_info = mismapped_hash.map do |page_id,exs|
                 title = all_pages.detect{|pg| pg.id == page_id}.title
                 ex_uids  = exs.map(&:uid)
                 "#{title} => [#{ex_uids.join(', ')}]"

@@ -13,6 +13,6 @@ module VerifyAndGetIdArray
             "but has type #{first_value.class}"
     end
 
-    values.collect{|value| value.id}
+    values.map(&:id)
   end
 end

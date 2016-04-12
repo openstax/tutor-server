@@ -228,7 +228,7 @@ RSpec.describe Admin::CoursesController, type: :controller do
     context 'when a new ecosystem is selected' do
       it 'adds the selected ecosystem as the first ecosystem' do
         post :set_ecosystem, id: course.id, ecosystem_id: eco_2.id
-        ecosystems = course.reload.ecosystems.collect do |ecosystem_model|
+        ecosystems = course.reload.ecosystems.map do |ecosystem_model|
           strategy = ::Content::Strategies::Direct::Ecosystem.new(ecosystem_model)
           ::Content::Ecosystem.new(strategy: strategy)
         end

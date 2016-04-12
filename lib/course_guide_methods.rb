@@ -3,7 +3,7 @@ module CourseGuideMethods
   private
 
   def map_tasked_exercise_exercise_ids_to_latest_pages(tasked_exercises, course)
-    exercises = tasked_exercises.collect do |tasked_exercise|
+    exercises = tasked_exercises.map do |tasked_exercise|
       content_exercise = tasked_exercise.exercise
       strategy = ::Content::Strategies::Direct::Exercise.new(content_exercise)
       ::Content::Exercise.new(strategy: strategy)
@@ -29,7 +29,7 @@ module CourseGuideMethods
   end
 
   def completed_practices(tasked_exercises)
-    tasked_exercises.collect{ |te| te.task_step.task }.select do |task|
+    tasked_exercises.map{ |te| te.task_step.task }.select do |task|
       task.completed? && (task.chapter_practice? || task.page_practice? || task.mixed_practice?)
     end.uniq
   end
@@ -41,13 +41,13 @@ module CourseGuideMethods
 
     # Flatten the array of pools so we can send it to Biglearn
     pools = sorted_chapter_groupings.flat_map do |chapter, sorted_page_groupings|
-      [chapter.all_exercises_pool] + sorted_page_groupings.collect do |page, tasked_exercises|
+      [chapter.all_exercises_pool] + sorted_page_groupings.map do |page, tasked_exercises|
         page.all_exercises_pool
       end
     end
 
     roles = tasked_exercises.flat_map do |te|
-      te.task_step.task.taskings.collect{ |tg| tg.role }
+      te.task_step.task.taskings.map(&:role)
     end.uniq
 
     case type
@@ -57,7 +57,7 @@ module CourseGuideMethods
       OpenStax::Biglearn::V1.get_clues(roles: roles.first, pools: pools, cache_for: roles.first)
     when :teacher
       # Teacher guide: query by period
-      periods = roles.collect{ |role| role.student.period }.uniq
+      periods = roles.map{ |role| role.student.period }.uniq
       Rails.logger.warn('teacher clues called for more than one period') if periods.size > 1
       OpenStax::Biglearn::V1.get_clues(roles: roles, pools: pools, cache_for: periods.first)
     else
@@ -68,10 +68,10 @@ module CourseGuideMethods
   def compile_pages(sorted_page_groupings, clues_map)
     tasked_exercises = sorted_page_groupings.flat_map{ |page, tasked_exercises| tasked_exercises }
     roles = tasked_exercises.flat_map do |te|
-      te.task_step.task.taskings.collect{ |tg| tg.role }
+      te.task_step.task.taskings.map(&:role)
     end.uniq
 
-    sorted_page_groupings.each_with_index.collect do |(page, tasked_exercises), index|
+    sorted_page_groupings.each_with_index.map do |(page, tasked_exercises), index|
       practices = completed_practices(tasked_exercises)
 
       {
@@ -89,13 +89,13 @@ module CourseGuideMethods
     chapter_groupings = group_tasked_exercises_by_chapters(tasked_exercises,
                                                            exercise_id_to_page_map)
 
-    sorted_chapter_groupings = chapter_groupings.to_a.collect do |chapter, page_groupings|
+    sorted_chapter_groupings = chapter_groupings.to_a.map do |chapter, page_groupings|
       [chapter, page_groupings.to_a.sort_by{ |page, tasked_exercises| page.book_location }]
     end.sort_by{ |chapter, sorted_page_groupings| chapter.book_location }
 
     clues_map = get_chapter_clues(sorted_chapter_groupings, type)
 
-    sorted_chapter_groupings.each_with_index.collect do |(chapter, sorted_page_groupings), index|
+    sorted_chapter_groupings.each_with_index.map do |(chapter, sorted_page_groupings), index|
 
       page_hashes = compile_pages(sorted_page_groupings, clues_map)
       tasked_exercises = sorted_page_groupings.flat_map do |page, tasked_exercises|

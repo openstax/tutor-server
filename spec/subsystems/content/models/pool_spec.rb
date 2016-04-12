@@ -12,8 +12,8 @@ RSpec.describe Content::Models::Pool, type: :model do
   it { is_expected.to validate_uniqueness_of(:uuid) }
 
   it 'returns exercises' do
-    exercises = 10.times.collect{ FactoryGirl.create :content_exercise }
-    pool.content_exercise_ids = exercises.collect(&:id)
+    exercises = 10.times.map{ FactoryGirl.create :content_exercise }
+    pool.content_exercise_ids = exercises.map(&:id)
     expect(Set.new pool.exercises).to eq Set.new exercises
   end
 end

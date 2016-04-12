@@ -54,7 +54,7 @@ class GetTeacherGuide
       all_tasked_exercises, course
     )
 
-    course.periods.collect do |period|
+    course.periods.map do |period|
       period_id = period.id
       completed_exercise_task_steps = period_to_completed_exercise_task_steps_map[period_id]
       tasked_exercises = completed_exercise_task_steps.flat_map do |ts|

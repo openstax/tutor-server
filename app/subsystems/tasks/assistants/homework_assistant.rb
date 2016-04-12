@@ -40,7 +40,7 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
     @page_pools = {}
     @pool_exercises = {}
     @ecosystems_map = {}
-    @taskees.collect do |taskee|
+    @taskees.map do |taskee|
       build_homework_task(
         taskee:       taskee,
         exercises:    @exercises
@@ -138,7 +138,7 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
       spaced_core_tasked_exercises = spaced_tasked_exercises.select do |tasked_exercise|
         tasked_exercise.task_step.core_group?
       end
-      spaced_core_pages = spaced_core_tasked_exercises.collect do |tasked_exercise|
+      spaced_core_pages = spaced_core_tasked_exercises.map do |tasked_exercise|
         model = tasked_exercise.exercise.page
         Content::Page.new(strategy: model.wrap)
       end.uniq

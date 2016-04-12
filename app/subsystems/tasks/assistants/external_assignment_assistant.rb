@@ -16,12 +16,12 @@ class Tasks::Assistants::ExternalAssignmentAssistant < Tasks::Assistants::Generi
   end
 
   def build_tasks
-    students = @taskees.collect { |taskee| taskee.student }.compact
+    students = @taskees.map(&:student).compact
 
     raise StandardError, 'External assignment taskees must all be students'\
       if students.length != @taskees.length
 
-    @taskees.collect.with_index do |taskee, i|
+    @taskees.map.with_index do |taskee, i|
       build_external_task(task_plan: @task_plan,
                           taskee: taskee,
                           student: students[i]).entity_task

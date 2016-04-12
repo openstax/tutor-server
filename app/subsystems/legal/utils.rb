@@ -5,7 +5,7 @@ module Legal::Utils
   end
 
   def self.available_contract_names
-    FinePrint::Contract.published.collect(&:name).uniq
+    FinePrint::Contract.published.map(&:name).uniq
   end
 
 end

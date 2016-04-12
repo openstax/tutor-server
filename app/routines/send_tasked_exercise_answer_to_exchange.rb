@@ -8,7 +8,7 @@ class SendTaskedExerciseAnswerToExchange
     url = tasked_exercise.url
     roles = tasked_exercise.task_step.task.taskings.map(&:role)
     users = Role::GetUsersForRoles[roles]
-    identifiers = users.collect{ |user| user.exchange_write_identifier }
+    identifiers = users.map(&:exchange_write_identifier)
 
     # Currently assuming no group tasks
     identifier = identifiers.first

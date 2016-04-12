@@ -11,7 +11,7 @@ module Tasks
       ecosystems_map = GetCourseEcosystemsMap[course: course]
       cc_tasks_map = get_cc_tasks_map(ecosystems_map, taskings)
 
-      outputs[:performance_report] = course.periods.collect do |period|
+      outputs[:performance_report] = course.periods.map do |period|
         period_cc_tasks_map = cc_tasks_map[period] || {}
         sorted_period_pages = period_cc_tasks_map
           .values.flat_map(&:keys).uniq.sort{ |a, b| b.book_location <=> a.book_location }
@@ -22,7 +22,7 @@ module Tasks
 
         data_headings = get_cc_data_headings(period_cc_tasks_map.values, sorted_period_pages)
 
-        student_data = period_students.collect do |student|
+        student_data = period_students.map do |student|
           {
             name: student.role.name,
             first_name: student.role.first_name,

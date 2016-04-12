@@ -7,10 +7,10 @@ class GetCourseTeachers
 
   def exec(course)
     run(CourseMembership::GetTeachers, course)
-    teacher_ids = outputs[:teachers].collect(&:id)
+    teacher_ids = outputs[:teachers].map(&:id)
     roles = Entity::Role.where { id.in teacher_ids }
       .eager_load([:teacher, profile: :account])
-    outputs[:teachers] = roles.collect do |role|
+    outputs[:teachers] = roles.map do |role|
       { id: role.teacher.id.to_s,
         role_id: role.id.to_s,
         first_name: role.profile.first_name,

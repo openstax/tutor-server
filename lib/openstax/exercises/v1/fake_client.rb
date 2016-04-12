@@ -47,7 +47,7 @@ class OpenStax::Exercises::V1::FakeClient
     end
     result ||= []
 
-    { total_count: result.length, items: result.collect{|exercise| exercise[:content]} }.to_json
+    { total_count: result.length, items: result.map{|exercise| exercise[:content]} }.to_json
   end
 
   #

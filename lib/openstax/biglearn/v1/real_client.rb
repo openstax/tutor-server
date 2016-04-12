@@ -96,7 +96,7 @@ class OpenStax::Biglearn::V1::RealClient
     result = handle_response(response)
 
     # Return the UIDs
-    result["questions"].collect { |q| q["question"] }
+    result["questions"].map { |q| q["question"] }
   end
 
   def get_clues(roles:, pools:, cache_for: nil, force_cache_miss: false)
@@ -110,7 +110,7 @@ class OpenStax::Biglearn::V1::RealClient
                           cache_for.cache_key.split('-').first : \
                           learners.map{ |learner| Integer(learner, 16) }.reduce(:^).to_s(16)
 
-    pool_ids = pools.collect(&:uuid)
+    pool_ids = pools.map(&:uuid)
 
     fetch_clues(learners: learners, pool_ids: pool_ids,
                 learner_cache_key: learner_cache_key, force_cache_miss: force_cache_miss)
@@ -119,7 +119,7 @@ class OpenStax::Biglearn::V1::RealClient
   private
 
   def get_exchange_read_identifiers_for_roles(roles:)
-    [roles].flatten.compact.collect{ |role| role.profile.exchange_read_identifier }
+    [roles].flatten.compact.map{ |role| role.profile.exchange_read_identifier }
   end
 
   # Get all the CLUEs from the cache, calling Biglearn only if needed
@@ -161,7 +161,7 @@ class OpenStax::Biglearn::V1::RealClient
 
     if missed_pool_ids.size > max_pools_per_request
       # Make several requests to Biglearn in parallel
-      threads = missed_pool_ids.each_slice(max_pools_per_request).collect do |pool_ids|
+      threads = missed_pool_ids.each_slice(max_pools_per_request).map do |pool_ids|
         Thread.new do
           request_clues(learners: learners, pool_ids: pool_ids,
                         pool_id_to_cache_key_map: missed_pool_id_to_cache_key_map,
@@ -246,7 +246,7 @@ class OpenStax::Biglearn::V1::RealClient
   end
 
   def construct_exercises_payload(exercises)
-    { question_tags: [exercises].flatten.collect do |exercise|
+    { question_tags: [exercises].flatten.map do |exercise|
       { question_id: exercise.question_id.to_s,
         version: Integer(exercise.version),
         tags: exercise.tags }
@@ -254,8 +254,8 @@ class OpenStax::Biglearn::V1::RealClient
   end
 
   def construct_add_pools_payload(pools)
-    { sources: pools.collect do |pool|
-      { questions: pool.exercises.collect do |exercise|
+    { sources: pools.map do |pool|
+      { questions: pool.exercises.map do |exercise|
         { question_id: exercise.question_id.to_s,
           version:     Integer(exercise.version) }
       end }
@@ -264,7 +264,7 @@ class OpenStax::Biglearn::V1::RealClient
 
   def construct_combine_pools_payload(pools)
     { sources: [
-      { pools: pools.collect{ |pl| pl.uuid } }
+      { pools: pools.map(&:uuid) }
     ] }
   end
 

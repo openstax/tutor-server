@@ -61,12 +61,12 @@ module Tasks
       end
 
       def data_headers(data_headings)
-        headings = data_headings.collect(&:title)
+        headings = data_headings.map(&:title)
         non_data_headings + headings
       end
 
       def gather_due_dates(data_headings)
-        due_dates = data_headings.collect(&:due_at)
+        due_dates = data_headings.map(&:due_at)
 
         collect_columns(due_dates, 'Due Date') do |d|
           d.respond_to?(:strftime) ? d.strftime("%m/%d/%Y") : d
@@ -102,7 +102,7 @@ module Tasks
 
       def student_scores(student)
         [student.first_name, student.last_name, student.student_identifier] + \
-         student.data.collect do |data|
+         student.data.map do |data|
            data ? score(data) : nil
          end
       end
@@ -129,7 +129,7 @@ module Tasks
       def collect_columns(collection, *labels, &block)
         labels = *labels.flatten.compact
 
-        (labels + offset_columns(labels.size) + collection).collect do |item|
+        (labels + offset_columns(labels.size) + collection).map do |item|
           block_given? ? yield(item) : item
         end
       end

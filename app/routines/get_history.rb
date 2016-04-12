@@ -30,23 +30,23 @@ class GetHistory
 
     outputs[:tasks] = tasks
 
-    outputs[:ecosystems] = tasks.collect do |task|
+    outputs[:ecosystems] = tasks.map do |task|
       model = task.task_plan.try(:ecosystem)
       next if model.nil?
       strategy = Content::Strategies::Direct::Ecosystem.new(model)
       Content::Ecosystem.new(strategy: strategy)
     end
 
-    tasked_exercises_array = tasks.collect do |task|
+    tasked_exercises_array = tasks.map do |task|
       # Handle 0-ago spaced practice
       task.persisted? ? task.tasked_exercises : \
-                        task.task_steps.select(&:exercise?).collect(&:tasked)
+                        task.task_steps.select(&:exercise?).map(&:tasked)
     end
 
     outputs[:tasked_exercises] = tasked_exercises_array
 
-    outputs[:exercises] = tasked_exercises_array.collect do |tasked_exercises|
-      tasked_exercises.collect do |tasked_exercise|
+    outputs[:exercises] = tasked_exercises_array.map do |tasked_exercises|
+      tasked_exercises.map do |tasked_exercise|
         model = tasked_exercise.exercise
         strategy = Content::Strategies::Direct::Exercise.new(model)
         Content::Exercise.new(strategy: strategy)

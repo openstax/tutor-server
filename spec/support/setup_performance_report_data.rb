@@ -34,7 +34,7 @@ class SetupPerformanceReportData
       type: 'reading',
       assistant: reading_assistant,
       content_ecosystem_id: ecosystem.id,
-      settings: { page_ids: page_ids.first(2).collect(&:to_s) }
+      settings: { page_ids: page_ids.first(2).map(&:to_s) }
     )
 
     reading_taskplan.tasking_plans << Tasks::Models::TaskingPlan.new(
@@ -52,7 +52,7 @@ class SetupPerformanceReportData
       assistant: homework_assistant,
       content_ecosystem_id: ecosystem.id,
       settings: {
-        exercise_ids: ecosystem.exercises.first(5).collect(&:id).map(&:to_s),
+        exercise_ids: ecosystem.exercises.first(5).map(&:id).map(&:to_s),
         exercises_count_dynamic: 2
       }
     )
@@ -72,7 +72,7 @@ class SetupPerformanceReportData
       assistant: homework_assistant,
       content_ecosystem_id: ecosystem.id,
       settings: {
-        exercise_ids: ecosystem.exercises.last(2).collect(&:id).map(&:to_s),
+        exercise_ids: ecosystem.exercises.last(2).map(&:id).map(&:to_s),
         exercises_count_dynamic: 2
       }
     )
@@ -92,7 +92,7 @@ class SetupPerformanceReportData
       assistant: homework_assistant,
       content_ecosystem_id: ecosystem.id,
       settings: {
-        exercise_ids: ecosystem.exercises.first(5).collect(&:id).map(&:to_s),
+        exercise_ids: ecosystem.exercises.first(5).map(&:id).map(&:to_s),
         exercises_count_dynamic: 2
       }
     )
@@ -108,10 +108,10 @@ class SetupPerformanceReportData
 
     DistributeTasks[future_homework_taskplan]
 
-    student_roles = students.collect do |student|
+    student_roles = students.map do |student|
       GetUserCourseRoles[course: course, user: student].first
     end
-    student_tasks = student_roles.collect do |student_role|
+    student_tasks = student_roles.map do |student_role|
       get_student_tasks(student_role)
     end
 

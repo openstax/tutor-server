@@ -37,7 +37,7 @@ module Tasks
     end
 
     def get_student_data(tasks)
-      tasks.collect do |task|
+      tasks.map do |task|
         # Skip if the student hasn't worked this particular task_plan/page
         next if task.nil?
 

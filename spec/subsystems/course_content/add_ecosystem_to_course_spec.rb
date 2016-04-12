@@ -19,7 +19,7 @@ RSpec.describe CourseContent::AddEcosystemToCourse, type: :routine do
     expect(result).not_to have_routine_errors
 
     ecosystems = CourseContent::GetCourseEcosystems[course: course]
-    expect(Set.new ecosystems.collect{ |es| es.id }).to eq Set.new [eco1.id, eco2.id]
+    expect(Set.new ecosystems.map(&:id)).to eq Set.new [eco1.id, eco2.id]
   end
 
   it "doesn't add an ecosystem that is already there to a course" do
@@ -31,7 +31,7 @@ RSpec.describe CourseContent::AddEcosystemToCourse, type: :routine do
     expect(result).to have_routine_errors
 
     ecosystems = CourseContent::GetCourseEcosystems[course: course]
-    expect(ecosystems.collect{ |es| es.id }).to eq [eco1.id]
+    expect(ecosystems.map(&:id)).to eq [eco1.id]
   end
 
   it 'removes all other ecosystems if the flag is set' do
@@ -40,14 +40,14 @@ RSpec.describe CourseContent::AddEcosystemToCourse, type: :routine do
     expect(result).not_to have_routine_errors
 
     ecosystems = CourseContent::GetCourseEcosystems[course: course]
-    expect(ecosystems.collect{ |es| es.id }).to eq [eco1.id]
+    expect(ecosystems.map(&:id)).to eq [eco1.id]
 
     result = CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: eco2,
                                                       remove_other_ecosystems: true)
     expect(result).not_to have_routine_errors
 
     ecosystems = CourseContent::GetCourseEcosystems[course: course]
-    expect(ecosystems.collect{ |es| es.id }).to eq [eco2.id]
+    expect(ecosystems.map(&:id)).to eq [eco2.id]
   end
 
 end

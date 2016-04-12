@@ -15,7 +15,7 @@ RSpec.describe CustomerService::EcosystemsController, type: :controller do
     it 'lists ecosystems' do
       get :index
 
-      expected_ecosystems = [book_2.ecosystem, book_1.ecosystem].collect do |content_ecosystem|
+      expected_ecosystems = [book_2.ecosystem, book_1.ecosystem].map do |content_ecosystem|
         strategy = ::Content::Strategies::Direct::Ecosystem.new(content_ecosystem)
         ::Content::Ecosystem.new(strategy: strategy)
       end
