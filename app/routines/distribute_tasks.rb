@@ -35,13 +35,13 @@ class DistributeTasks
                                                  tasks.none?{ |tt| tt.opens_at <= publish_time }
 
     tasked_taskees = tasks.select{ |tt| !tt.destroyed? }
-                          .flat_map{ |tt| tt.taskings.collect{ |tk| tk.role } }
+                          .flat_map{ |tt| tt.taskings.map(&:role) }
 
     tasking_plans = run(:get_tasking_plans, task_plan).outputs.tasking_plans
 
-    taskees = tasking_plans.collect{ |tp| tp.target }
-    opens_ats = tasking_plans.collect{ |tp| tp.opens_at }
-    due_ats = tasking_plans.collect{ |tp| tp.due_at }
+    taskees = tasking_plans.map(&:target)
+    opens_ats = tasking_plans.map(&:opens_at)
+    due_ats = tasking_plans.map(&:due_at)
 
     # Exclude students that already had the assignment
     untasked_taskees = taskees - tasked_taskees

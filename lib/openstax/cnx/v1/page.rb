@@ -147,11 +147,11 @@ module OpenStax::Cnx::V1
     end
 
     def los
-      @los ||= tags.select{ |tag| tag[:type] == :lo }.collect{ |tag| tag[:value] }
+      @los ||= tags.select{ |tag| tag[:type] == :lo }.map{ |tag| tag[:value] }
     end
 
     def aplos
-      @aplos ||= tags.select{ |tag| tag[:type] == :aplo }.collect{ |tag| tag[:value] }
+      @aplos ||= tags.select{ |tag| tag[:type] == :aplo }.map{ |tag| tag[:value] }
     end
 
     def tags

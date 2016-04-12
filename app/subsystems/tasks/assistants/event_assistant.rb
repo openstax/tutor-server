@@ -11,12 +11,12 @@ module Tasks
       end
 
       def build_tasks
-        taskees.collect {
+        taskees.map do
           Tasks::BuildTask[task_plan: task_plan,
                            task_type: :event,
                            title: task_plan.title,
                            description: task_plan.description]
-        }.flat_map(&:entity_task)
+        end.map(&:entity_task)
       end
 
       private

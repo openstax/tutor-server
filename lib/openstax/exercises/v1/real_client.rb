@@ -33,7 +33,7 @@ class OpenStax::Exercises::V1::RealClient
   def exercises(params = {}, options = {})
     params = params.stringify_keys
     query_hash = params.except(*NON_QUERY_PARAMS)
-    query = query_hash.collect{ |key, vals| "#{key}:#{sanitize(vals)}" }.join(' ')
+    query = query_hash.map{ |key, vals| "#{key}:#{sanitize(vals)}" }.join(' ')
     uri = Addressable::URI.parse(@server_url)
     uri.path = "/api/exercises"
     uri.query = {q: query}.merge(params.slice(*NON_QUERY_PARAMS)).to_query

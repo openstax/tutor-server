@@ -16,7 +16,7 @@ class Tasks::DoesTaskingExist
       task_component.task_step.task.entity_task
     end
 
-    role_ids = roles.collect{|r| r.id}
+    role_ids = roles.map(&:id)
 
     outputs[:does_tasking_exist] =
       Tasks::Models::Tasking.where{entity_task_id == my{task.id}}

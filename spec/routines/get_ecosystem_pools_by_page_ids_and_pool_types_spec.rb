@@ -56,7 +56,7 @@ describe GetEcosystemPoolsByPageIdsAndPoolTypes, type: :routine do
 
     context "when pool_types are not given" do
       it "returns a map of pool_types for all pools in the given pages" do
-        pools_map = described_class[ecosystem: ecosystem, page_ids: pages.collect(&:id)]
+        pools_map = described_class[ecosystem: ecosystem, page_ids: pages.map(&:id)]
 
         pools = pages.flat_map do |page|
           [page.reading_dynamic_pool, page.reading_context_pool, page.homework_core_pool,
@@ -73,7 +73,7 @@ describe GetEcosystemPoolsByPageIdsAndPoolTypes, type: :routine do
 
       it "returns a map with the given pool_types for the relevant pools in the given pages" do
         pools_map = described_class[ecosystem: ecosystem,
-                                    page_ids: pages.collect(&:id),
+                                    page_ids: pages.map(&:id),
                                     pool_types: pool_types]
 
         pools = pages.flat_map do |page|

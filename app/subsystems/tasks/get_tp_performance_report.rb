@@ -9,7 +9,7 @@ module Tasks
     def exec(course:)
       taskings = get_taskings(course)
 
-      outputs[:performance_report] = course.periods.collect do |period|
+      outputs[:performance_report] = course.periods.map do |period|
         tasking_plans = sort_tasking_plans(taskings, course, period)
         task_plan_indices = tasking_plans.each_with_index
                                          .each_with_object({}) { |(tasking_plan, index), hash|
@@ -22,7 +22,7 @@ module Tasks
         end
         task_plan_results = Hash.new{ |h, key| h[key] = [] }
 
-        student_data = sorted_student_data.collect do |student_role, student_taskings|
+        student_data = sorted_student_data.map do |student_role, student_taskings|
                          # skip if student is no longer in the current period
                          next if student_role.student.period != period
 

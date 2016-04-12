@@ -2,7 +2,7 @@ require 'rails_helper'
 
 class Entity
   RSpec.describe Relation, type: :lib do
-    let!(:exercise)        { 5.times.collect { FactoryGirl.create(:content_exercise) } }
+    let!(:exercise)        { 5.times.map { FactoryGirl.create(:content_exercise) } }
     let!(:relation)        { Content::Models::Exercise.all }
     let!(:entity_relation) { Entity::Relation.new(relation) }
 

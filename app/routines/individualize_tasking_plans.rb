@@ -5,7 +5,7 @@ class IndividualizeTaskingPlans
   protected
 
   def exec(task_plan)
-    outputs[:tasking_plans] = task_plan.tasking_plans.collect do |tasking_plan|
+    outputs[:tasking_plans] = task_plan.tasking_plans.map do |tasking_plan|
       target = tasking_plan.target
 
       roles = case target
@@ -25,7 +25,7 @@ class IndividualizeTaskingPlans
         raise NotYetImplemented
       end
 
-      [roles].flatten.collect do |role|
+      [roles].flatten.map do |role|
         Tasks::Models::TaskingPlan.new(task_plan: task_plan, target: role,
                                        opens_at: tasking_plan.opens_at,
                                        due_at: tasking_plan.due_at)

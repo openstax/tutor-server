@@ -8,14 +8,11 @@ RSpec.describe Api::V1::TaskedRepresenterMapper, type: :representer do
       # Get all the Tasked.* classes
       expected_tasked_models = Set.new Dir[
         'app/subsystems/tasks/models/tasked*.rb'
-      ].collect{ |f| f.remove('app/subsystems/tasks/models/')
-                      .remove('.rb').classify }
+      ].map{ |f| f.remove('app/subsystems/tasks/models/')
+                  .remove('.rb').classify }
 
       # Get all the models in the mapper
-      registered_tasked_models = Set.new(mapper.models.collect { |model|
-          model.name.demodulize
-        }.sort
-      )
+      registered_tasked_models = Set.new(mapper.models.map{ |model| model.name.demodulize }.sort)
 
       expect(registered_tasked_models).to eq(expected_tasked_models)
     end
@@ -26,12 +23,12 @@ RSpec.describe Api::V1::TaskedRepresenterMapper, type: :representer do
       # Get all the Tasked.*Representer classes
       expected_tasked_representers = Set.new Dir[
         'app/representers/api/v1/tasks/tasked*_representer.rb'
-      ].collect{ |f| f.remove('app/representers/api/v1/tasks/')
-                      .remove('.rb').classify }
+      ].map{ |f| f.remove('app/representers/api/v1/tasks/')
+                  .remove('.rb').classify }
 
       # Get all the representers in the mapper
       registered_tasked_representers = Set.new(
-        mapper.representers.collect { |repr|
+        mapper.representers.map { |repr|
           repr.name.demodulize
         }.sort
       )

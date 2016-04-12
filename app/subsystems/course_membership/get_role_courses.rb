@@ -12,7 +12,7 @@ class CourseMembership::GetRoleCourses
     types = [types].flatten.compact
     types = [:student, :teacher] if types.include?(:any)
 
-    role_ids = [roles].flatten.compact.collect(&:id)
+    role_ids = [roles].flatten.compact.map(&:id)
 
     courses = []
 

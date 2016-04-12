@@ -4,18 +4,18 @@ module Api::V1
     include Uber::Callable
 
     def self.models
-      map.keys
+      representer_map.keys
     end
 
     def self.representers
-      map.values.collect{|v| v.call}
+      representer_map.values.map(&:call)
     end
 
     def self.representer_for(task_step_or_tasked)
       tasked_class = task_step_or_tasked.is_a?(::Tasks::Models::TaskStep) ?
                        task_step_or_tasked.tasked.class :
                        task_step_or_tasked.class
-      representer = map[tasked_class].call
+      representer = representer_map[tasked_class].call
       representer || (raise NotYetImplemented)
     end
 
@@ -29,8 +29,8 @@ module Api::V1
 
     protected
 
-    def self.map
-      @@map ||= {
+    def self.representer_map
+      @@representer_map ||= {
         ::Tasks::Models::TaskedExercise    => ->(*) {Api::V1::Tasks::TaskedExerciseRepresenter},
         ::Tasks::Models::TaskedInteractive => ->(*) {Api::V1::Tasks::TaskedInteractiveRepresenter},
         ::Tasks::Models::TaskedPlaceholder => ->(*) {Api::V1::Tasks::TaskedPlaceholderRepresenter},

@@ -6,7 +6,7 @@ class OpenStax::Biglearn::V1::Exercise
     raise IllegalArgument, "`question_id` must be a string" unless question_id.is_a?(String)
 
     tags = [tags].flatten.compact
-    tags = tags.collect{|tag| tag.to_s}
+    tags = tags.map{|tag| tag.to_s}
 
     @question_id = question_id
     @version = version

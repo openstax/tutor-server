@@ -5,7 +5,7 @@ module Tasks
     protected
     def exec(course:, role:)
       exports = Models::PerformanceReportExport.where(course: course, role: role)
-      outputs[:exports] = exports.collect do |export|
+      outputs[:exports] = exports.map do |export|
         {
           filename: export.filename,
           url: export.url,

@@ -68,7 +68,7 @@ module Api::V1
       results3 = /\b(\d\d\d\d)(\d\d)(\d\d)\b/.match(string)
       results4 = /\b(\d\d\d\d)(\d\d)(\d\d)T\d\d:\d\d:\d\d/.match(string)
 
-      captures = [results1, results2, results3, results4].collect(&:to_a).reduce(:+)
+      captures = [results1, results2, results3, results4].map(&:to_a).reduce(:+)
 
       raise "string contains no date portions (#{string})" \
         if captures.count == 0

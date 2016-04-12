@@ -36,7 +36,7 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
 
   def student_roles(include_inactive_students: false)
     target_enrollments = include_inactive_students ? latest_enrollments : active_enrollments
-    target_enrollments.includes(student: :role).collect{ |en| en.student.role }
+    target_enrollments.includes(student: :role).map{ |en| en.student.role }
   end
 
   protected

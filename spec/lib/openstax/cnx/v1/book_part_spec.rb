@@ -58,7 +58,7 @@ RSpec.describe OpenStax::Cnx::V1::BookPart, type: :external do
     cnx_book_infos.each do |hash|
       book_part = book_part_for(hash)
 
-      expect(book_part.parts.collect{|p| p.class}).to(
+      expect(book_part.parts.map(&:class)).to(
         eq hash[:expected][:part_classes]
       )
     end

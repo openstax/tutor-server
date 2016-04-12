@@ -81,7 +81,7 @@ class ResetPracticeWidget
   end
 
   def get_fake_exercises(count)
-    count.times.collect do
+    count.times.map do
       content_exercise = FactoryGirl.create(:content_exercise)
       strategy = ::Content::Strategies::Direct::Exercise.new(content_exercise)
       ::Content::Exercise.new(strategy: strategy)
@@ -93,7 +93,7 @@ class ResetPracticeWidget
 
     # Gather relevant chapters and pages
     chapters = ecosystem.chapters_by_ids(chapter_ids)
-    pages = ecosystem.pages_by_ids(page_ids) + chapters.collect{ |ch| ch.pages }.flatten.uniq
+    pages = ecosystem.pages_by_ids(page_ids) + chapters.map(&:pages).flatten.uniq
 
     # Gather exercise pools
     [ecosystem, ecosystem.practice_widget_pools(pages: pages)]

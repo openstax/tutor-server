@@ -14,7 +14,7 @@ class Legal::GetTargetedContracts
         Legal::Models::TargetedContract.find(ids)
       end
 
-    outputs.contracts = models.collect(&:as_poro)
+    outputs.contracts = models.map(&:as_poro)
   end
 
   def targeted_contract_models_for_gid(gid)

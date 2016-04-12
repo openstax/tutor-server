@@ -4,7 +4,7 @@ class DummyAssistant < Tasks::Assistants::GenericAssistant
   end
 
   def build_tasks
-    @taskees.collect do |taskee|
+    @taskees.map do |taskee|
       Tasks::BuildTask[task_plan: @task_plan,
                        title: @task_plan.title,
                        description: @task_plan.description,

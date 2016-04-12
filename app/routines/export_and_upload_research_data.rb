@@ -104,7 +104,7 @@
                 nil, nil, nil, nil
               ]
             else
-              5.times.collect{nil}
+              5.times.map{nil}
             end
           ))
 

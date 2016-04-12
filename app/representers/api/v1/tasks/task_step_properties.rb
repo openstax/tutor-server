@@ -90,7 +90,7 @@ module Api::V1::Tasks
                writeable: false,
                readable: true,
                getter: ->(*) {
-                 task_step.related_content.collect{ |rc| Hashie::Mash.new(rc) }
+                 task_step.related_content.map{ |rc| Hashie::Mash.new(rc) }
                },
                decorator: ::Api::V1::RelatedContentRepresenter,
                schema_info: {

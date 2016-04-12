@@ -6,7 +6,7 @@ class Content::Routines::UpdatePageContent
 
   def exec(pages:, save: true)
     # Get all page cnx_ids given
-    page_cnx_ids = pages.collect{ |page| page.cnx_id }
+    page_cnx_ids = pages.map(&:cnx_id)
 
     pages.each do |page|
       doc = Nokogiri::HTML(page.content)

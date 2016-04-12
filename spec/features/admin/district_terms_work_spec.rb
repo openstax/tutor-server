@@ -47,7 +47,7 @@ RSpec.feature 'DistrictTermsWork' do
     # AddUserAsPeriodStudent[user: user, period: period]
 
     tcs = Legal::GetTargetedContracts[applicable_to: course]
-    expect(tcs.collect(&:contract_name)).to eq ['hisd_special']
+    expect(tcs.map(&:contract_name)).to eq ['hisd_special']
   end
 
   scenario 'switching parents around is ok' do
@@ -80,25 +80,25 @@ RSpec.feature 'DistrictTermsWork' do
 
     # Basic checks to provide a baseline
     expect(Legal::GetTargetedContracts[applicable_to: course_e]
-          .collect(&:contract_name))
+          .map(&:contract_name))
           .to eq ['district_a_terms']
 
     expect(Legal::GetTargetedContracts[applicable_to: course_f]
-          .collect(&:contract_name))
+          .map(&:contract_name))
           .to eq ['district_b_terms']
 
     # Move a course
     CourseProfile::UpdateProfile[course_e.id, {school_district_school_id: school_d.id }]
 
     expect(Legal::GetTargetedContracts[applicable_to: course_e]
-          .collect(&:contract_name))
+          .map(&:contract_name))
           .to eq ['district_b_terms']
 
     # Move a school
     SchoolDistrict::UpdateSchool[id: school_d.id, attributes: {school_district_district_id: district_a.id}]
 
     expect(Legal::GetTargetedContracts[applicable_to: course_f]
-          .collect(&:contract_name))
+          .map(&:contract_name))
           .to eq ['district_a_terms']
   end
 

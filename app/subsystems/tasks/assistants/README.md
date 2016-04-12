@@ -28,7 +28,7 @@ class AbstractAssistant
   end
 
   def build_tasks
-    @taskees.collect do |taskee|
+    @taskees.map do |taskee|
       raise NotImplementedError
     end
   end

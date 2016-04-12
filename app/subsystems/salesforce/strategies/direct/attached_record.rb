@@ -9,7 +9,7 @@ module Salesforce
         class << self
           alias_method :entity_all, :all
           def all
-            Salesforce::Models::AttachedRecord.all.load_salesforce_objects.collect do |entity|
+            Salesforce::Models::AttachedRecord.all.load_salesforce_objects.map do |entity|
               ::Salesforce::AttachedRecord.new(strategy: entity.wrap)
             end
           end

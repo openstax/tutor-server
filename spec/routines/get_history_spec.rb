@@ -71,7 +71,7 @@ describe GetHistory, type: :routine, speed: :slow do
   after(:all) { DatabaseCleaner.clean }
 
   let(:correct_ecosystems) do
-    correct_tasks.collect do |task|
+    correct_tasks.map do |task|
       model = task.task_plan.ecosystem
       strategy = Content::Strategies::Direct::Ecosystem.new(model)
       Content::Ecosystem.new(strategy: strategy)
@@ -79,8 +79,8 @@ describe GetHistory, type: :routine, speed: :slow do
   end
 
   let(:correct_exercise_sets)  do
-    correct_tasks.collect do |task|
-      Set.new task.tasked_exercises.collect do |te|
+    correct_tasks.map do |task|
+      Set.new task.tasked_exercises.map do |te|
         model = te.exercise
         strategy = Content::Strategies::Direct::Exercise.new(model)
         Content::Exercise.new(strategy: strategy)
@@ -98,7 +98,7 @@ describe GetHistory, type: :routine, speed: :slow do
         history = described_class.call(role: @role, type: :reading, current_task: new_task).outputs
         expect(history.tasks).to eq correct_tasks
         expect(history.ecosystems).to eq correct_ecosystems
-        history_exercise_sets = history.exercises.collect{ |exercises| Set.new exercises }
+        history_exercise_sets = history.exercises.map{ |exercises| Set.new exercises }
         expect(history_exercise_sets).to eq correct_exercise_sets
       end
     end
@@ -116,7 +116,7 @@ describe GetHistory, type: :routine, speed: :slow do
         history = described_class.call(role: @role, type: :reading, current_task: new_task).outputs
         expect(history.tasks).to eq correct_tasks
         expect(history.ecosystems).to eq correct_ecosystems
-        history_exercise_sets = history.exercises.collect{ |exercises| Set.new exercises }
+        history_exercise_sets = history.exercises.map{ |exercises| Set.new exercises }
         expect(history_exercise_sets).to eq correct_exercise_sets
       end
     end
@@ -130,7 +130,7 @@ describe GetHistory, type: :routine, speed: :slow do
       history = described_class.call(role: @role, type: :homework, current_task: new_task).outputs
       expect(history.tasks).to eq correct_tasks
       expect(history.ecosystems).to eq correct_ecosystems
-      history_exercise_sets = history.exercises.collect{ |exercises| Set.new exercises }
+      history_exercise_sets = history.exercises.map{ |exercises| Set.new exercises }
       expect(history_exercise_sets).to eq correct_exercise_sets
     end
   end
@@ -146,7 +146,7 @@ describe GetHistory, type: :routine, speed: :slow do
         history = described_class.call(role: @role, type: :all, current_task: new_task).outputs
         expect(history.tasks).to eq correct_tasks
         expect(history.ecosystems).to eq correct_ecosystems
-        history_exercise_sets = history.exercises.collect{ |exercises| Set.new exercises }
+        history_exercise_sets = history.exercises.map{ |exercises| Set.new exercises }
         expect(history_exercise_sets).to eq correct_exercise_sets
       end
     end
@@ -165,7 +165,7 @@ describe GetHistory, type: :routine, speed: :slow do
         history = described_class.call(role: @role, type: :all, current_task: new_task).outputs
         expect(history.tasks).to eq correct_tasks
         expect(history.ecosystems).to eq correct_ecosystems
-        history_exercise_sets = history.exercises.collect{ |exercises| Set.new exercises }
+        history_exercise_sets = history.exercises.map{ |exercises| Set.new exercises }
         expect(history_exercise_sets).to eq correct_exercise_sets
       end
     end
@@ -180,7 +180,7 @@ describe GetHistory, type: :routine, speed: :slow do
         history = described_class.call(role: @role, type: :all).outputs
         expect(history.tasks).to eq correct_tasks
         expect(history.ecosystems).to eq correct_ecosystems
-        history_exercise_sets = history.exercises.collect{ |exercises| Set.new exercises }
+        history_exercise_sets = history.exercises.map{ |exercises| Set.new exercises }
         expect(history_exercise_sets).to eq correct_exercise_sets
       end
     end
@@ -199,7 +199,7 @@ describe GetHistory, type: :routine, speed: :slow do
         history = described_class.call(role: @role, type: :all).outputs
         expect(history.tasks).to eq correct_tasks
         expect(history.ecosystems).to eq correct_ecosystems
-        history_exercise_sets = history.exercises.collect{ |exercises| Set.new exercises }
+        history_exercise_sets = history.exercises.map{ |exercises| Set.new exercises }
         expect(history_exercise_sets).to eq correct_exercise_sets
       end
     end

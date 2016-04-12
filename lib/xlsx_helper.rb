@@ -137,17 +137,17 @@ class XlsxHelper
 
     def initialize(raw_optioned_values)
       column = 0
-      items = raw_optioned_values.collect do |rov|
+      items = raw_optioned_values.map do |rov|
         OptionedValue.new(rov, column).tap do |ov|
           column = ov.last_column + 1
         end
       end
 
-      @values = items.collect(&:value).flatten
-      @styles = items.collect(&:style).flatten
-      @types = items.collect(&:type).flatten
-      @merge_ranges = items.collect(&:merge_range)
-      @comments = items.collect(&:comment)
+      @values = items.map(&:value).flatten
+      @styles = items.map(&:style).flatten
+      @types = items.map(&:type).flatten
+      @merge_ranges = items.map(&:merge_range)
+      @comments = items.map(&:comment)
     end
 
     attr_accessor :values, :styles, :types, :merge_ranges, :comments

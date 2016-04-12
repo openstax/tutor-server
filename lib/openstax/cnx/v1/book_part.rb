@@ -26,7 +26,7 @@ module OpenStax::Cnx::V1
     end
 
     def parts
-      @parts ||= contents.collect do |hash|
+      @parts ||= contents.map do |hash|
         if hash['id'] == 'subcol'
           BookPart.new(hash: hash)
         else

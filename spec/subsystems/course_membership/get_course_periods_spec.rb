@@ -23,7 +23,7 @@ describe CourseMembership::GetCoursePeriods do
   end
 
   context "when there are multiple periods for the target course" do
-    let!(:target_periods) { 2.times.collect { CreatePeriod[course: target_course] } }
+    let!(:target_periods) { 2.times.map { CreatePeriod[course: target_course] } }
 
     it "returns an enumerable containing those periods" do
       result = CourseMembership::GetCoursePeriods.call(course: target_course)

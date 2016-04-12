@@ -49,7 +49,7 @@ class UpdateClues
       strategy = Content::Strategies::Direct::Exercise.new(model)
       exercise = Content::Exercise.new(strategy: strategy)
 
-      tasked_exercise.task_step.task.taskings.collect{ |tg| tg.role }.each do |role|
+      tasked_exercise.task_step.task.taskings.map(&:role).each do |role|
         hash[role.id] ||= []
         hash[role.id] << exercise
       end
@@ -63,7 +63,7 @@ class UpdateClues
     ).flat_map do |course|
       # Get all student roles in the course
       course_roles = course.periods.flat_map do |period|
-        period.active_enrollments.collect{ |ae| ae.student.role }
+        period.active_enrollments.map{ |ae| ae.student.role }
       end
 
       # Get all exercises worked by students in the course
@@ -85,7 +85,7 @@ class UpdateClues
 
       course.periods.flat_map do |period|
         # Get all students in the period
-        period_roles = period.active_enrollments.collect{ |ae| ae.student.role }
+        period_roles = period.active_enrollments.map{ |ae| ae.student.role }
 
         # Make a map of who worked what pools
         period_roles_to_worked_pools_map = period_roles.each_with_object({}) do |role, hash|
@@ -94,16 +94,16 @@ class UpdateClues
           # Skip if we didn't work anything
           next if worked_exercises.nil?
 
-          worked_pages = worked_exercises.collect do |exercise|
+          worked_pages = worked_exercises.map do |exercise|
             worked_exercise_id_to_page_map[exercise.id]
           end.compact.uniq
 
           # Skip if we worked something, but it somehow did not map to the current ecosystem
           next if worked_pages.empty?
 
-          worked_chapters = worked_pages.collect(&:chapter).uniq
-          worked_pools = worked_chapters.collect(&:all_exercises_pool) + \
-                         worked_pages.collect(&:all_exercises_pool)
+          worked_chapters = worked_pages.map(&:chapter).uniq
+          worked_pools = worked_chapters.map(&:all_exercises_pool) + \
+                         worked_pages.map(&:all_exercises_pool)
           hash[role] = worked_pools
         end
 
@@ -115,7 +115,7 @@ class UpdateClues
 
         # Update CLUes for the entire period, plus CLUes for individual students that did work
         [[period_roles, period_worked_pools, period]] + \
-        period_roles_to_worked_pools_map.collect{ |role, pools| [[role], pools, role] }
+        period_roles_to_worked_pools_map.map{ |role, pools| [[role], pools, role] }
       end
     end
 
@@ -133,7 +133,7 @@ class UpdateClues
       next [query] if query_size <= max_query_size
 
       slice_size = [max_query_size/num_roles, 1].max
-      pools.each_slice(slice_size).collect do |sliced_pools|
+      pools.each_slice(slice_size).map do |sliced_pools|
         [roles, sliced_pools, query.third]
       end
     end
@@ -143,9 +143,9 @@ class UpdateClues
     if num_queries > 0
       slice_size = (num_queries/CONCURRENT_BIGLEARN_REQUESTS.to_f).ceil
 
-      threads = split_clue_queries.each_slice(slice_size).collect do |queries|
+      threads = split_clue_queries.each_slice(slice_size).map do |queries|
         Thread.new do
-          queries.collect do |roles, pools, cache_for|
+          queries.map do |roles, pools, cache_for|
             OpenStax::Biglearn::V1.get_clues(roles: roles, pools: pools,
                                              cache_for: cache_for, force_cache_miss: true)
           end

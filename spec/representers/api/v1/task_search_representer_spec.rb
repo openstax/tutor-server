@@ -11,16 +11,16 @@ RSpec.describe Api::V1::TaskSearchRepresenter, type: :representer do
     let!(:default_task)   { FactoryGirl.create(:tasks_task) }
     let!(:task_count)     { rand(5..10) }
     let!(:ecosystem)      { FactoryGirl.build(:content_ecosystem) }
-    let!(:tasks)          { task_count.times.collect {
+    let!(:tasks)          { task_count.times.map {
                               FactoryGirl.create(:tasks_task, ecosystem: ecosystem)
                            } }
 
-    let!(:taskings)       { tasks.collect { |t| FactoryGirl.create(
+    let!(:taskings)       { tasks.map { |t| FactoryGirl.create(
       :tasks_tasking, task: t.entity_task, role: role
     ) } }
 
     let!(:output)         { Hashie::Mash.new(
-      'items' => GetCourseUserTasks[course: course, user: user].collect{|t| t.task}
+      'items' => GetCourseUserTasks[course: course, user: user].map(&:task)
     ) }
     let!(:representation) { Api::V1::TaskSearchRepresenter.new(output).as_json }
 

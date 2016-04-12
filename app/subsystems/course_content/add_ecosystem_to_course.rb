@@ -21,7 +21,7 @@ class CourseContent::AddEcosystemToCourse
     transfer_errors_from(course_ecosystem, {type: :verbatim}, true)
 
     # Create a mapping from the old course ecosystems to the new one and validate it
-    from_ecosystems = course.course_ecosystems.collect do |course_ecosystem|
+    from_ecosystems = course.course_ecosystems.map do |course_ecosystem|
       strategy = ecosystem_strategy_class.new(course_ecosystem.ecosystem)
       ::Content::Ecosystem.new(strategy: strategy)
     end

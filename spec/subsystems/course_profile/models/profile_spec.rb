@@ -12,5 +12,5 @@ RSpec.describe CourseProfile::Models::Profile, type: :model do
   it { is_expected.to validate_uniqueness_of(:course) }
 
   it { is_expected.to validate_inclusion_of(:timezone)
-                        .in_array(ActiveSupport::TimeZone.all.collect{ |tz| tz.name }) }
+                        .in_array(ActiveSupport::TimeZone.all.map(&:name)) }
 end

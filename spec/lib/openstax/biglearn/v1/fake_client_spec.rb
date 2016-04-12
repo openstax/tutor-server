@@ -124,7 +124,7 @@ module OpenStax::Biglearn
         user = User::CreateUser.call(username: SecureRandom.hex).outputs.user
         roles = [Role::CreateUserRole[user]]
         pools = [pool_1, pool_2]
-        pool_uuids = pools.collect(&:uuid)
+        pool_uuids = pools.map(&:uuid)
 
         clues = client.get_clues(roles: roles, pools: pools)
         expect(clues.keys.size).to eq pools.size

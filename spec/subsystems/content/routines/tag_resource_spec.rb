@@ -17,7 +17,7 @@ RSpec.describe Content::Routines::TagResource, type: :routine do
       factory: :content_exercise,
       tagging_relation: :exercise_tags,
     }
-  ].collect{|rd| Hashie::Mash.new(rd)}
+  ].map{|rd| Hashie::Mash.new(rd)}
 
   resource_definitions.each do |resource_definition|
     it "assigns the given Tags to the given #{resource_definition.class_name}" do
@@ -37,15 +37,14 @@ RSpec.describe Content::Routines::TagResource, type: :routine do
       resource.reload
 
       expected_tags = [tag_1, tag_2]
-      actual_tags = resource.send(resource_definition.tagging_relation)
-                            .collect{|tagging| tagging.tag}
+      actual_tags = resource.send(resource_definition.tagging_relation).map(&:tag)
 
-      expected_values = expected_tags.collect{|t| t.value}
-      actual_values = actual_tags.collect{|t| t.value}
+      expected_values = expected_tags.map(&:value)
+      actual_values = actual_tags.map(&:value)
       expect(Set.new actual_values).to eq Set.new expected_values
 
       expected_tag_types = ['generic', 'generic']
-      actual_tag_types = actual_tags.collect{|t| t.tag_type}
+      actual_tag_types = actual_tags.map(&:tag_type)
       expect(Set.new actual_tag_types).to eq Set.new expected_tag_types
 
       expect {
@@ -61,15 +60,14 @@ RSpec.describe Content::Routines::TagResource, type: :routine do
       resource.reload
 
       expected_tags = [tag_1, tag_2, lo_tag_1, lo_tag_2]
-      actual_tags = resource.send(resource_definition.tagging_relation)
-                            .collect{|tagging| tagging.tag}
+      actual_tags = resource.send(resource_definition.tagging_relation).map(&:tag)
 
-      expected_values = expected_tags.collect{|t| t.value}
-      actual_values = actual_tags.collect{|t| t.value}
+      expected_values = expected_tags.map(&:value)
+      actual_values = actual_tags.map(&:value)
       expect(Set.new actual_values).to eq Set.new expected_values
 
       expected_tag_types = ['generic', 'generic', 'lo', 'lo']
-      actual_tag_types = actual_tags.collect{|t| t.tag_type}
+      actual_tag_types = actual_tags.map(&:tag_type)
       expect(Set.new actual_tag_types).to eq Set.new expected_tag_types
     end
   end

@@ -114,8 +114,8 @@ module Tasks
         # READING TITLE COLUMNS
 
         reading_title_columns =
-          3.times.collect{["", {style: @bold_T}]} +
-          report[:data_headings].collect do |data_heading|
+          3.times.map{["", {style: @bold_T}]} +
+          report[:data_headings].map do |data_heading|
             [
               data_heading[:title],
               {
@@ -130,7 +130,7 @@ module Tasks
         # DATA HEADINGS
 
         data_heading_columns =
-          ["First Name", "Last Name", "Student ID"].collect{|text| [text, style: @bold]}
+          ["First Name", "Last Name", "Student ID"].map{|text| [text, style: @bold]}
 
         report[:data_headings].count.times do
           data_heading_columns.push(["Correct",        {style: @bold_L}])
@@ -204,7 +204,7 @@ module Tasks
         # Now that the data is in place, get what Axlsx calculated for the column widths,
         # then set all numerical columns to have a fixed width.
 
-        data_widths = sheet.column_info.collect(&:width)
+        data_widths = sheet.column_info.map(&:width)
         data_widths[3..-1] = data_widths[3..-1].length.times.map{15}
 
         # AVERAGE ROW

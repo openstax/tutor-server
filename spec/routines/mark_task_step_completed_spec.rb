@@ -45,7 +45,7 @@ RSpec.describe MarkTaskStepCompleted, type: :routine do
     expect(result.errors).not_to be_empty
     expect(result.errors).to have_offending_input :free_response
     expect(result.errors).to have_offending_input :answer_id
-    expect(result.errors.collect{ |err| err.code }).to eq [:'is required', :'is required']
+    expect(result.errors.map(&:code)).to eq [:'is required', :'is required']
 
     expect(tasked_exercise.reload.task_step).not_to be_completed
   end

@@ -52,7 +52,7 @@ class Content::ImportBook
       max_tag_length = import_page_tags.map{ |pt| pt.tag.value.size }.max || 1
       tags_per_query = MAX_URL_LENGTH/max_tag_length
       import_page_tags.each_slice(tags_per_query) do |page_tags|
-        query_hash = { tag: page_tags.collect{ |pt| pt.tag.value } }
+        query_hash = { tag: page_tags.map{ |pt| pt.tag.value } }
         outputs[:exercises] += run(:import_exercises, ecosystem: ecosystem,
                                                       page: page_block,
                                                       query_hash: query_hash).outputs.exercises
@@ -93,16 +93,16 @@ class Content::ImportBook
       hash[ex.id] = OpenStax::Biglearn::V1::Exercise.new(
         question_id: exercise_url.to_s,
         version: ex.version,
-        tags: ex.exercise_tags.collect{ |ex| ex.tag.value }
+        tags: ex.exercise_tags.map{ |ex| ex.tag.value }
       )
     end
     biglearn_exercises = biglearn_exercises_by_ids.values
 
     OpenStax::Biglearn::V1.add_exercises(biglearn_exercises)
 
-    biglearn_pools = pools.collect do |pool|
+    biglearn_pools = pools.map do |pool|
       exercise_ids = pool.content_exercise_ids
-      exercises = exercise_ids.collect{ |id| biglearn_exercises_by_ids[id] }
+      exercises = exercise_ids.map{ |id| biglearn_exercises_by_ids[id] }
       OpenStax::Biglearn::V1::Pool.new(exercises: exercises)
     end
     biglearn_pools_with_uuids = OpenStax::Biglearn::V1.add_pools(biglearn_pools)

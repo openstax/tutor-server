@@ -15,7 +15,7 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
 
     exercises = Content::Models::Exercise.all.order(:id).to_a
     exercises[-15..-1].each do |exercise|
-      expect(exercise.exercise_tags.collect{|et| et.tag.value}).to(
+      expect(exercise.exercise_tags.map{|et| et.tag.value}).to(
         include 'k12phys-ch04-s01-lo02'
       )
     end
@@ -29,7 +29,7 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
 
     exercises = Content::Models::Exercise.all.order(:id).to_a
     exercises[-31..-1].each do |exercise|
-      expect(exercise.exercise_tags.collect{|et| et.tag.value} & tags).not_to(
+      expect(exercise.exercise_tags.map{|et| et.tag.value} & tags).not_to(
         be_empty
       )
     end
@@ -47,13 +47,13 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, speed: :slow,
     exercises[-31..-1].each do |exercise|
       wrapper = OpenStax::Exercises::V1::Exercise.new(content: exercise.content)
 
-      exercise.exercise_tags.collect{|et| et.tag.value}.each do |tag|
+      exercise.exercise_tags.map{|et| et.tag.value}.each do |tag|
         expect(wrapper.tags).to include tag
       end
 
       exercise.exercise_tags.joins(:tag).where(tag: {
         tag_type: Content::Models::Tag.tag_types[:lo]
-      }).collect{|et| et.tag.value}.each do |lo|
+      }).map{|et| et.tag.value}.each do |lo|
         expect(wrapper.los).to include lo
       end
     end
