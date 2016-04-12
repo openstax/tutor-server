@@ -66,15 +66,11 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
           expect(response).to have_http_status(:success)
           hash = response.body_as_hash
           expect(hash[:total_count]).to eq(215)
-          page_los = Content::Models::Page.all.map(&:los).flatten.collect(&:value)
           hash[:items].each do |item|
             expect(item[:pool_types]).not_to be_empty
             wrapper = OpenStax::Exercises::V1::Exercise.new(content: item[:content].to_json)
             item_los = wrapper.los
             expect(item_los).not_to be_empty
-            item_los.each do |item_lo|
-              expect(page_los).to include(item_lo)
-            end
           end
         end
 
@@ -101,15 +97,11 @@ RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
           expect(response).to have_http_status(:success)
           hash = response.body_as_hash
           expect(hash[:total_count]).to eq(70)
-          page_los = Content::Models::Page.all.map(&:los).flatten.collect(&:value)
           hash[:items].each do |item|
             expect(item[:pool_types]).to eq ['homework_core']
             wrapper = OpenStax::Exercises::V1::Exercise.new(content: item[:content].to_json)
             item_los = wrapper.los
             expect(item_los).not_to be_empty
-            item_los.each do |item_lo|
-              expect(page_los).to include(item_lo)
-            end
           end
         end
 

@@ -8,6 +8,7 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
     allow(step).to receive(:group_name).and_return('Some group')
     allow(step).to receive(:completed?).and_return(false)
     allow(step).to receive(:feedback_available?).and_return(false)
+    allow(step).to receive(:can_be_recovered?).and_return(true)
     allow(step).to receive(:related_content).and_return([])
     allow(step).to receive(:labels).and_return([])
     step
@@ -20,6 +21,7 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
     allow(exercise).to receive(:class).and_return(Tasks::Models::TaskedExercise)
 
     allow(exercise).to receive(:task_step).and_return(task_step)
+    allow(exercise).to receive(:can_be_recovered?).and_return(false)
 
     ## TaskedExercise-specific properties
     allow(exercise).to receive(:url).and_return('Some url')
@@ -28,7 +30,6 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
     allow(exercise).to receive(:solution).and_return('Some solution')
     allow(exercise).to receive(:feedback).and_return('Some feedback')
     allow(exercise).to receive(:correct_answer_id).and_return('456')
-    allow(exercise).to receive(:can_be_recovered?).and_return(false)
     allow(exercise).to receive(:is_correct?).and_return(false)
     allow(exercise).to receive(:free_response).and_return(nil)
     allow(exercise).to receive(:answer_id).and_return(nil)
@@ -48,8 +49,6 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
     end
 
     it "correctly references the TaskStep and Task ids" do
-      allow(task_step).to receive(:id).and_return(15)
-      allow(task_step).to receive(:tasks_task_id).and_return(42)
       expect(representation).to include(
         "id"      => 15.to_s,
         "task_id" => 42.to_s
@@ -57,25 +56,23 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
     end
 
     it "has the correct 'content_url'" do
-      allow(tasked_exercise).to receive(:url).and_return('Some url')
       expect(representation).to include("content_url" => 'Some url')
     end
 
     it "has the correct 'title'" do
-      allow(tasked_exercise).to receive(:title).and_return('Some title')
       expect(representation).to include("title" => 'Some title')
     end
 
     it "has the correct 'content'" do
-      allow(tasked_exercise).to(
-        receive(:content_hash_without_correct_answer).and_return('Some content')
-      )
       expect(representation).to include("content" => 'Some content')
     end
 
     it "has the correct 'group'" do
-      allow(task_step).to receive(:group_name).and_return('Some group')
       expect(representation).to include("group" => 'Some group')
+    end
+
+    it "has the correct 'has_recovery'" do
+      expect(representation).to include("has_recovery" => false)
     end
 
     it "has 'related_content'" do
@@ -104,10 +101,6 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
 
     it "'is_completed' == false" do
       expect(representation).to include("is_completed" => false)
-    end
-
-    it "'has_recovery' is not included" do
-      expect(representation).to_not include("has_recovery")
     end
 
     it "'solution' is not included" do
@@ -174,10 +167,6 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
       end
 
       it_behaves_like "a good exercise representation should"
-
-      it "'has_recovery' is not included" do
-        expect(representation).to_not include("has_recovery")
-      end
 
       it "'feedback_html' is not included" do
         expect(representation).to_not include("feedback_html")

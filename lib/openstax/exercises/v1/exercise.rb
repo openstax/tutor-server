@@ -40,7 +40,7 @@ class OpenStax::Exercises::V1::Exercise
   end
 
   def tag_hashes
-    @tag_hashes ||= tags.collect{ |tag| Tagger.get_hash(tag) }
+    @tag_hashes ||= tags.map{ |tag| Tagger.get_hash(tag) }
   end
 
   def lo_hashes
@@ -55,16 +55,24 @@ class OpenStax::Exercises::V1::Exercise
     @cnxmod_hashes ||= tag_hashes.select{ |hash| hash[:type] == :cnxmod }
   end
 
+  def import_tag_hashes
+    @import_tag_hashes ||= lo_hashes + aplo_hashes + cnxmod_hashes
+  end
+
   def los
-    @los ||= lo_hashes.collect{ |hash| hash[:value] }
+    @los ||= lo_hashes.map{ |hash| hash[:value] }
   end
 
   def aplos
-    @aplos ||= aplo_hashes.collect{ |hash| hash[:value] }
+    @aplos ||= aplo_hashes.map{ |hash| hash[:value] }
   end
 
   def cnxmods
-    @cnxmods ||= cnxmod_hashes.collect{ |hash| hash[:value] }
+    @cnxmods ||= cnxmod_hashes.map{ |hash| hash[:value] }
+  end
+
+  def import_tags
+    @import_tags ||= import_tag_hashes.map{ |hash| hash[:value] }
   end
 
   def questions
@@ -72,21 +80,21 @@ class OpenStax::Exercises::V1::Exercise
   end
 
   def question_formats
-    @question_formats ||= questions.collect{ |qq| qq['formats'] }
+    @question_formats ||= questions.map{ |qq| qq['formats'] }
   end
 
   def question_answers
-    @question_answers ||= questions.collect{ |qq| qq['answers'] }
+    @question_answers ||= questions.map{ |qq| qq['answers'] }
   end
 
   def question_answer_ids
-    @question_answer_ids ||= question_answers.collect do |qa|
-      qa.collect{ |ans| ans['id'] }
+    @question_answer_ids ||= question_answers.map do |qa|
+      qa.map{ |ans| ans['id'] }
     end
   end
 
   def correct_question_answers
-    @correct_question_answers ||= question_answers.collect do |qa|
+    @correct_question_answers ||= question_answers.map do |qa|
       qa.select do |ans|
         (Float(ans['correctness']) rescue 0) >= 1
       end
@@ -94,13 +102,13 @@ class OpenStax::Exercises::V1::Exercise
   end
 
   def correct_question_answer_ids
-    @correct_question_answer_ids ||= correct_question_answers.collect do |cqa|
-      cqa.collect{ |ans| ans['id'].to_s }
+    @correct_question_answer_ids ||= correct_question_answers.map do |cqa|
+      cqa.map{ |ans| ans['id'].to_s }
     end
   end
 
   def solutions
-    @solutions ||= questions.collect{ |qq| qq['solutions'] }
+    @solutions ||= questions.map{ |qq| qq['solutions'] }
   end
 
   def feedback_map
@@ -114,13 +122,13 @@ class OpenStax::Exercises::V1::Exercise
   end
 
   def question_answers_without_correct_answer
-    @question_answers_without_correct ||= question_answers.collect do |qa|
-      qa.collect{ |ans| ans.except('correctness', 'feedback_html') }
+    @question_answers_without_correct ||= question_answers.map do |qa|
+      qa.map{ |ans| ans.except('correctness', 'feedback_html') }
     end
   end
 
   def questions_without_correct_answer
-    @questions_without_correct ||= questions.each_with_index.collect do |qq, ii|
+    @questions_without_correct ||= questions.each_with_index.map do |qq, ii|
       qq.merge('answers' => question_answers_without_correct_answer[ii]).except('solutions')
     end
   end
@@ -132,14 +140,14 @@ class OpenStax::Exercises::V1::Exercise
   end
 
   def question_answers_with_stats(stats)
-    question_answers.collect do |qa|
-      qa.collect{ |ans| ans.merge('selected_count' => stats[ans['id']] || 0) }
+    question_answers.map do |qa|
+      qa.map{ |ans| ans.merge('selected_count' => stats[ans['id']] || 0) }
     end
   end
 
   def questions_with_answer_stats(stats)
     answer_stats = question_answers_with_stats(stats)
-    questions.each_with_index.collect do |qq, ii|
+    questions.each_with_index.map do |qq, ii|
       qq.merge('answers' => answer_stats[ii])
     end
   end

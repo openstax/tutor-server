@@ -13,7 +13,7 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   validates :tasked_id, uniqueness: { scope: :tasked_type }
   validates :group_type, presence: true
 
-  delegate :can_be_answered?, :can_be_recovered?, :has_correctness?, to: :tasked
+  delegate :can_be_answered?, :has_correctness?, to: :tasked
 
   scope :complete,   -> { where{first_completed_at != nil} }
   scope :incomplete, -> { where{first_completed_at == nil} }
@@ -33,6 +33,10 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   def is_correct?
     return nil unless has_correctness?
     tasked.is_correct?
+  end
+
+  def can_be_recovered?
+    related_exercise_ids.any?
   end
 
   def make_correct!

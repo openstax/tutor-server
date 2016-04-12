@@ -7,7 +7,7 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
   serialize :book_location, Array
 
   belongs_to :reading_dynamic_pool, class_name: 'Content::Models::Pool', dependent: :destroy
-  belongs_to :reading_try_another_pool, class_name: 'Content::Models::Pool', dependent: :destroy
+  belongs_to :reading_context_pool, class_name: 'Content::Models::Pool', dependent: :destroy
   belongs_to :homework_core_pool, class_name: 'Content::Models::Pool', dependent: :destroy
   belongs_to :homework_dynamic_pool, class_name: 'Content::Models::Pool', dependent: :destroy
   belongs_to :practice_widget_pool, class_name: 'Content::Models::Pool', dependent: :destroy
@@ -41,8 +41,8 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
     tags.to_a.select(&:aplo?)
   end
 
-  def ccs
-    tags.to_a.select(&:cc?)
+  def cnxmods
+    tags.to_a.select(&:cnxmod?)
   end
 
   def fragments

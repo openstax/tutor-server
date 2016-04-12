@@ -31,15 +31,23 @@ class Tasks::Assistants::GenericAssistant
     @ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
   end
 
+  def get_all_exercises_with_tags(tags)
+    sorted_tags = tags.uniq.sort
+
+    @tag_exercises[sorted_tags] ||= ecosystem.exercises_with_tags(*sorted_tags)
+  end
+
   def reset_used_exercises
     @used_exercise_numbers = Set.new
   end
 
   def get_random_unused_exercise_with_tags(tags)
-    sorted_tags = tags.uniq.sort
+    raise 'You must call reset_used_exercises before calling get_random_unused_exercise_with_tags' \
+      if @used_exercise_numbers.nil?
 
-    @tag_exercises[sorted_tags] ||= ecosystem.exercises_with_tags(*sorted_tags)
-    candidate_exercises = @tag_exercises[sorted_tags].reject do |ex|
+    tag_exercises = get_all_exercises_with_tags(tags)
+
+    candidate_exercises = tag_exercises.reject do |ex|
       @used_exercise_numbers.include?(ex.number)
     end
 

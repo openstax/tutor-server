@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160331194837) do
+ActiveRecord::Schema.define(version: 20160411214041) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -119,21 +119,21 @@ ActiveRecord::Schema.define(version: 20160331194837) do
   add_index "content_page_tags", ["content_tag_id"], name: "index_content_page_tags_on_content_tag_id", using: :btree
 
   create_table "content_pages", force: :cascade do |t|
-    t.string   "url",                                 null: false
+    t.string   "url",                              null: false
     t.text     "content"
-    t.integer  "content_chapter_id",                  null: false
+    t.integer  "content_chapter_id",               null: false
     t.integer  "content_reading_dynamic_pool_id"
-    t.integer  "content_reading_try_another_pool_id"
+    t.integer  "content_reading_context_pool_id"
     t.integer  "content_homework_core_pool_id"
     t.integer  "content_homework_dynamic_pool_id"
     t.integer  "content_practice_widget_pool_id"
-    t.integer  "number",                              null: false
-    t.string   "title",                               null: false
-    t.string   "uuid",                                null: false
-    t.string   "version",                             null: false
-    t.text     "book_location",                       null: false
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
+    t.integer  "number",                           null: false
+    t.string   "title",                            null: false
+    t.string   "uuid",                             null: false
+    t.string   "version",                          null: false
+    t.text     "book_location",                    null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
     t.integer  "content_all_exercises_pool_id"
   end
 
@@ -575,33 +575,33 @@ ActiveRecord::Schema.define(version: 20160331194837) do
   add_index "tasks_task_plans", ["tasks_assistant_id"], name: "index_tasks_task_plans_on_tasks_assistant_id", using: :btree
 
   create_table "tasks_task_steps", force: :cascade do |t|
-    t.integer  "tasks_task_id",                  null: false
-    t.integer  "tasked_id",                      null: false
-    t.string   "tasked_type",                    null: false
-    t.integer  "number",                         null: false
+    t.integer  "tasks_task_id",                     null: false
+    t.integer  "tasked_id",                         null: false
+    t.string   "tasked_type",                       null: false
+    t.integer  "number",                            null: false
     t.datetime "first_completed_at"
     t.datetime "last_completed_at"
-    t.integer  "group_type",         default: 0, null: false
+    t.integer  "group_type",           default: 0,  null: false
     t.text     "related_content"
     t.text     "labels"
-    t.datetime "created_at",                     null: false
-    t.datetime "updated_at",                     null: false
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
+    t.integer  "related_exercise_ids", default: [], null: false, array: true
   end
 
   add_index "tasks_task_steps", ["tasked_id", "tasked_type"], name: "index_tasks_task_steps_on_tasked_id_and_tasked_type", unique: true, using: :btree
   add_index "tasks_task_steps", ["tasks_task_id", "number"], name: "index_tasks_task_steps_on_tasks_task_id_and_number", unique: true, using: :btree
 
   create_table "tasks_tasked_exercises", force: :cascade do |t|
-    t.integer  "content_exercise_id",                 null: false
-    t.boolean  "can_be_recovered",    default: false, null: false
-    t.string   "url",                                 null: false
-    t.text     "content",                             null: false
+    t.integer  "content_exercise_id", null: false
+    t.string   "url",                 null: false
+    t.text     "content",             null: false
     t.string   "title"
     t.text     "free_response"
     t.string   "answer_id"
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
-    t.string   "correct_answer_id",                   null: false
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
+    t.string   "correct_answer_id",   null: false
   end
 
   add_index "tasks_tasked_exercises", ["content_exercise_id"], name: "index_tasks_tasked_exercises_on_content_exercise_id", using: :btree
@@ -755,8 +755,8 @@ ActiveRecord::Schema.define(version: 20160331194837) do
   add_foreign_key "content_pages", "content_pools", column: "content_homework_core_pool_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "content_pages", "content_pools", column: "content_homework_dynamic_pool_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "content_pages", "content_pools", column: "content_practice_widget_pool_id", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "content_pages", "content_pools", column: "content_reading_context_pool_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "content_pages", "content_pools", column: "content_reading_dynamic_pool_id", on_update: :cascade, on_delete: :nullify
-  add_foreign_key "content_pages", "content_pools", column: "content_reading_try_another_pool_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "content_pools", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_tags", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_content_course_ecosystems", "content_ecosystems", on_update: :cascade, on_delete: :cascade

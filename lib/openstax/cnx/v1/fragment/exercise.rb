@@ -35,10 +35,6 @@ module OpenStax::Cnx::V1
       @title
     end
 
-    def node_id
-      @node_id ||= node.attribute('id').try :value
-    end
-
     def embed_codes
       @embed_codes ||= node.xpath(ABSOLUTE_EMBED_CODE_XPATH).map do |anchor|
         anchor.attribute('href').value

@@ -4,7 +4,7 @@ class Content::Models::Pool < Tutor::SubSystems::BaseModel
 
   belongs_to :ecosystem, inverse_of: :pools
 
-  enum pool_type: [ :reading_dynamic, :reading_try_another, :homework_core,
+  enum pool_type: [ :reading_dynamic, :reading_context, :homework_core,
                     :homework_dynamic, :practice_widget, :all_exercises ]
 
   serialize :content_exercise_ids, Array

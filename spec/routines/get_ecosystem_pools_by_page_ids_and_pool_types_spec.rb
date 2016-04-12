@@ -26,7 +26,7 @@ describe GetEcosystemPoolsByPageIdsAndPoolTypes, type: :routine do
         pools_map = described_class[ecosystem: ecosystem]
 
         pools = [page_1, page_2, page_3].flat_map do |page|
-          [page.reading_dynamic_pool, page.reading_try_another_pool, page.homework_core_pool,
+          [page.reading_dynamic_pool, page.reading_context_pool, page.homework_core_pool,
            page.homework_dynamic_pool, page.practice_widget_pool, page.all_exercises_pool]
         end
 
@@ -59,7 +59,7 @@ describe GetEcosystemPoolsByPageIdsAndPoolTypes, type: :routine do
         pools_map = described_class[ecosystem: ecosystem, page_ids: pages.collect(&:id)]
 
         pools = pages.flat_map do |page|
-          [page.reading_dynamic_pool, page.reading_try_another_pool, page.homework_core_pool,
+          [page.reading_dynamic_pool, page.reading_context_pool, page.homework_core_pool,
            page.homework_dynamic_pool, page.practice_widget_pool, page.all_exercises_pool]
         end
 

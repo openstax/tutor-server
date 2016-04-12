@@ -40,14 +40,12 @@ class Content::Routines::ImportPage
     run(:find_or_create_tags, ecosystem: ecosystem, input: tags)
     run(:tag, outputs[:page], outputs[:tags], tagging_class: Content::Models::PageTag, save: save)
 
-    outputs[:page].page_tags = outputs[:taggings]
-
     outputs[:exercises] = []
 
     return unless save
 
     # Get Exercises from OpenStax Exercises that match the LO, AP LO or UUID tags
-    import_tags = outputs[:tags].select(&:import?).collect{ |tag| tag.value }
+    import_tags = outputs[:tags].select(&:import?).map(&:value)
 
     return if import_tags.empty?
 

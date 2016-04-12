@@ -18,6 +18,10 @@ class OpenStax::Cnx::V1::Fragment
     @title = title_matches.empty? ? nil : title_matches.map{ |nd| nd.content.strip }.uniq.join('; ')
   end
 
+  def node_id
+    @node_id ||= node.attribute('id').try :value
+  end
+
   def labels
     @labels || []
   end

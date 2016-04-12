@@ -113,9 +113,9 @@ module Content
       verify_and_return pools, klass: ::Content::Pool, error: StrategyError
     end
 
-    def reading_try_another_pools(pages:)
+    def reading_context_pools(pages:)
       pages_arr = verify_and_return [pages].flatten.compact, klass: ::Content::Page
-      pools = @strategy.reading_try_another_pools(pages: pages_arr)
+      pools = @strategy.reading_context_pools(pages: pages_arr)
       verify_and_return pools, klass: ::Content::Pool, error: StrategyError
     end
 

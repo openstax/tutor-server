@@ -36,10 +36,14 @@ class Content::ImportBook
     import_page_tags = outputs[:page_taggings].select{ |pt| pt.tag.import? }
     import_page_tags.each(&:reload)
 
+    import_page_map = {}
+    import_page_tags.each{ |page_tag| import_page_map[page_tag.tag.value] = page_tag.page }
+
     outputs[:exercises] = []
+
     page_block = ->(exercise_wrapper) do
-      tags = Set.new(exercise_wrapper.los + exercise_wrapper.aplos + exercise_wrapper.cnxmods)
-      pages = import_page_tags.select{ |pt| tags.include?(pt.tag.value) }.map(&:page).uniq
+      tags = exercise_wrapper.import_tags
+      pages = tags.map{ |tag| import_page_map[tag] }.compact.uniq
       pages.max_by(&:book_location)
     end
 
