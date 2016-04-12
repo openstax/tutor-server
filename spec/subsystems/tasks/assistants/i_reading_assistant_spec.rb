@@ -58,7 +58,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       @task_step_gold_data = \
         @core_step_gold_data + @spaced_practice_step_gold_data + @personalized_step_gold_data
 
-      cnx_pages = cnx_page_hashes.collect do |hash|
+      cnx_pages = cnx_page_hashes.map do |hash|
         OpenStax::Cnx::V1::Page.new(hash: hash)
       end
 
@@ -70,7 +70,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       @content_pages = VCR.use_cassette(
         'Tasks_Assistants_IReadingAssistant/for_Introduction_and_Force/with_pages', VCR_OPTS
       ) do
-        cnx_pages.collect.with_index do |cnx_page, ii|
+        cnx_pages.map.with_index do |cnx_page, ii|
           Content::Routines::ImportPage.call(
             cnx_page:  cnx_page,
             chapter: chapter,
@@ -87,7 +87,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         :tasks_task_plan,
         assistant: @assistant,
         content_ecosystem_id: @ecosystem.id,
-        settings: { 'page_ids' => @content_pages.collect{ |page| page.id.to_s } },
+        settings: { 'page_ids' => @content_pages.map{ |page| page.id.to_s } },
         num_tasking_plans: 0
       )
     end
@@ -103,7 +103,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     let(:num_taskees) { 3 }
 
     let!(:taskee_users) do
-      num_taskees.times.collect do
+      num_taskees.times.map do
         user = FactoryGirl.create(:user)
         AddUserAsPeriodStudent.call(user: user, period: period)
         user
@@ -111,7 +111,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     end
 
     let!(:tasking_plans) do
-      tps = taskee_users.collect do |taskee|
+      tps = taskee_users.map do |taskee|
         task_plan.tasking_plans << FactoryGirl.build(
           :tasks_tasking_plan,
           task_plan: task_plan,
@@ -178,8 +178,8 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         expect(task.personalized_task_steps.count).to eq(@personalized_step_gold_data.count)
       end
 
-      expected_roles = taskee_users.collect{ |tu| Role::GetDefaultUserRole[tu] }
-      expect(entity_tasks.collect{|et| et.taskings.first.role}).to eq expected_roles
+      expected_roles = taskee_users.map{ |tu| Role::GetDefaultUserRole[tu] }
+      expect(entity_tasks.map{|et| et.taskings.first.role}).to eq expected_roles
     end
 
     it 'does not assign dynamic exercises if the dynamic exercises pool is empty' do
@@ -212,8 +212,8 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         expect(task_step.core_group?).to eq true
       end
 
-      expected_roles = taskee_users.collect{ |tu| Role::GetDefaultUserRole[tu] }
-      expect(entity_tasks.collect{|et| et.taskings.first.role}).to eq expected_roles
+      expected_roles = taskee_users.map{ |tu| Role::GetDefaultUserRole[tu] }
+      expect(entity_tasks.map{|et| et.taskings.first.role}).to eq expected_roles
     end
 
     it 'does not assign excluded dynamic exercises' do
@@ -250,8 +250,8 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         expect(task.personalized_task_steps.count).to eq 1
       end
 
-      expected_roles = taskee_users.collect{ |tu| Role::GetDefaultUserRole[tu] }
-      expect(entity_tasks.collect{|et| et.taskings.first.role}).to eq expected_roles
+      expected_roles = taskee_users.map{ |tu| Role::GetDefaultUserRole[tu] }
+      expect(entity_tasks.map{|et| et.taskings.first.role}).to eq expected_roles
     end
   end
 
@@ -329,7 +329,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     let!(:num_taskees) { 3 }
 
     let!(:taskee_users) {
-      num_taskees.times.collect do
+      num_taskees.times.map do
         FactoryGirl.create(:user_profile).tap do |profile|
           strategy = User::Strategies::Direct::User.new(profile)
           user = User::User.new(strategy: strategy)
@@ -340,7 +340,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     }
 
     let!(:tasking_plans) {
-      tps = taskee_users.collect do |taskee|
+      tps = taskee_users.map do |taskee|
         task_plan.tasking_plans << FactoryGirl.build(
           :tasks_tasking_plan, task_plan: task_plan, target: taskee
         )

@@ -15,9 +15,9 @@ module OpenStax::Exercises::V1
   def self.exercises(options={})
     exercises_json = client.exercises(options)
     exercises_hash = JSON.parse(exercises_json)
-    exercises_hash['items'] = exercises_hash['items'].collect{|e|
-      OpenStax::Exercises::V1::Exercise.new(content: e.to_json, server_url: client.server_url)
-    }
+    exercises_hash['items'] = exercises_hash['items'].map do |ex|
+      OpenStax::Exercises::V1::Exercise.new(content: ex.to_json, server_url: client.server_url)
+    end
     exercises_hash
   end
 
@@ -94,6 +94,10 @@ module OpenStax::Exercises::V1
 
   def self.server_url
     client.server_url
+  end
+
+  def self.uri_for(path)
+    Addressable::URI.join(OpenStax::Exercises::V1.configuration.server_url, path)
   end
 
   private

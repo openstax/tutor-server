@@ -1,77 +1,61 @@
 module Content
   module Strategies
     module Generated
-      class Manifest
-
-        class Book
-
-          def initialize(hash:)
-            @hash = hash.slice('archive_url', 'cnx_id', 'exercise_ids')
-          end
-
-          def archive_url
-            @hash['archive_url']
-          end
-
-          def cnx_id
-            @hash['cnx_id']
-          end
-
-          def exercise_ids
-            @hash['exercise_ids']
-          end
-
-          def valid?
-            cnx_id.present? && (exercise_ids || []).all?{ |ex_id| ex_id.is_a? String }
-          end
-
-          def update_version!
-            @hash['cnx_id'] = cnx_id.split('@').first
-            ::Content::Manifest::Book.new(strategy: self)
-          end
-
-          def unlock_exercises!
-            @hash.delete('exercise_ids')
-            ::Content::Manifest::Book.new(strategy: self)
-          end
-
-        end
+      class Manifest < OpenStruct
 
         def self.from_yaml(yaml)
-          new(hash: YAML.load(yaml))
+          new(YAML.load(yaml))
+        end
+
+        def to_h
+          super.deep_stringify_keys
         end
 
         def to_yaml
-          @hash.to_yaml
-        end
-
-        def initialize(hash:)
-          @hash = hash.deep_stringify_keys.slice('title', 'books')
-        end
-
-        def title
-          @hash['title']
+          to_h.to_yaml
         end
 
         def books
-          @hash['books'].to_a.map do |book_hash|
-            strategy = ::Content::Strategies::Generated::Manifest::Book.new(hash: book_hash)
+          super.to_a.map do |book_hash|
+            strategy = ::Content::Strategies::Generated::Manifest::Book.new(book_hash)
             ::Content::Manifest::Book.new(strategy: strategy)
           end
         end
 
+        def errors
+          return @errors unless @errors.nil?
+
+          @errors = []
+          @errors << 'Manifest ecosystem has no title' if title.blank?
+          @errors << 'Manifest ecosystem has no books' if books.empty?
+          books.each{ |book| @errors += book.errors }
+
+          @errors
+        end
+
         def valid?
-          title.present? && books.present? && books.all?{ |book| book.valid? }
+          errors.empty?
         end
 
         def update_books!
-          books.each(&:update_version!)
-          ::Content::Manifest.new(strategy: self)
+          current_books = books
+          result = current_books.map(&:update_version!)
+          self.books = current_books.map(&:to_h)
+          result
         end
 
-        def unlock_exercises!
-          books.each(&:unlock_exercises!)
-          ::Content::Manifest.new(strategy: self)
+        def update_exercises!
+          current_books = books
+          result = current_books.map(&:update_exercises!)
+          self.books = current_books.map(&:to_h)
+          result
+        end
+
+        def discard_exercises!
+          current_books = books
+          result = current_books.map(&:discard_exercises!)
+          self.books = current_books.map(&:to_h)
+          result
         end
 
       end

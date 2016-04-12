@@ -43,7 +43,7 @@ RSpec.describe Api::V1::PagesController, type: :controller, api: true,
       expect(response.body_as_hash[:content_html]).not_to include(
         '#ost/api/ex/k12phys-ch04-ex001')
       expect(response.body_as_hash[:content_html]).to include(
-        'https://exercises-dev.openstax.org/api/exercises?q=tag%3Ak12phys-ch04-ex001')
+        'https://exercises-dev.openstax.org/api/exercises?q=tag%3A%22k12phys-ch04-ex001%22')
     end
 
     context 'with an old version of force' do

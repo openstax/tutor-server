@@ -1,39 +1,33 @@
 module HtmlTreeOperations
   # Recursively removes a node and its empty parents
-  def recursive_compact(node, stop_node)
-    return if node == stop_node
+  def recursive_compact(node, root)
+    return if node == root
 
     parent = node.parent
     node.remove
 
-    if parent && parent.content.blank?
-      recursive_compact(parent, stop_node)
-    end
+    recursive_compact(parent, root) if parent && parent.content.blank?
   end
 
   # Recursively removes all siblings before a node and its parents
-  # Returns the stop_node
-  def remove_before(node, stop_node)
-    return if node == stop_node
+  def remove_before(node, root)
+    return if node == root
 
-    if parent = node.parent
-      siblings = parent.children
-      index = siblings.index(node)
-      parent.children = siblings.slice(index..-1)
-      remove_before(parent, stop_node)
-    end
+    parent = node.parent
+    siblings = parent.children
+    index = siblings.index(node)
+    parent.children = siblings.slice(index..-1)
+    remove_before(parent, root)
   end
 
   # Recursively removes all siblings after a node and its parents
-  # Returns the stop_node
-  def remove_after(node, stop_node)
-    return if node == stop_node
+  def remove_after(node, root)
+    return if node == root
 
-    if parent = node.parent
-      siblings = parent.children
-      index = siblings.index(node)
-      parent.children = siblings.slice(0..index)
-      remove_after(parent, stop_node)
-    end
+    parent = node.parent
+    siblings = parent.children
+    index = siblings.index(node)
+    parent.children = siblings.slice(0..index)
+    remove_after(parent, root)
   end
 end

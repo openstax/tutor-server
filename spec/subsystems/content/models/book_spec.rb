@@ -18,6 +18,7 @@ RSpec.describe Content::Models::Book, type: :model do
       {
         archive_url: book.archive_url,
         cnx_id: book.cnx_id,
+        reading_processing_instructions: book.reading_processing_instructions,
         exercise_ids: book.exercises.map(&:uid).sort
       }
     )

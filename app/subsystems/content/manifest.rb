@@ -1,38 +1,6 @@
 module Content
   class Manifest
 
-    class Book
-
-      include Wrapper
-
-      def archive_url
-        verify_and_return @strategy.archive_url, klass: String, error: StrategyError,
-                                                 allow_nil: true
-      end
-
-      def cnx_id
-        verify_and_return @strategy.cnx_id, klass: String, error: StrategyError
-      end
-
-      def exercise_ids
-        verify_and_return @strategy.exercise_ids, klass: String, error: StrategyError,
-                                                  allow_nil: true
-      end
-
-      def valid?
-        !!@strategy.valid?
-      end
-
-      def update_version!
-        verify_and_return @strategy.update_version!, klass: self.class, error: StrategyError
-      end
-
-      def unlock_exercises!
-        verify_and_return @strategy.unlock_exercises!, klass: self.class, error: StrategyError
-      end
-
-    end
-
     include Wrapper
 
     def self.from_yaml(yaml, strategy_class: ::Content::Strategies::Generated::Manifest)
@@ -40,6 +8,10 @@ module Content
       strategy = verify_and_return strategy_class.from_yaml(yaml), klass: strategy_class,
                                                                    error: StrategyError
       new(strategy: strategy)
+    end
+
+    def to_h
+      verify_and_return @strategy.to_h, klass: Hash, error: StrategyError
     end
 
     def to_yaml
@@ -54,16 +26,30 @@ module Content
       verify_and_return @strategy.books, klass: ::Content::Manifest::Book, error: StrategyError
     end
 
+    def errors
+      verify_and_return @strategy.errors, klass: String, error: StrategyError
+    end
+
     def valid?
       !!@strategy.valid?
     end
 
-    def update_book!
-      verify_and_return @strategy.update_book!, klass: self.class, error: StrategyError
+    def update_books!
+      verify_and_return @strategy.update_books!, klass: String,
+                                                 error: StrategyError,
+                                                 allow_nil: true
     end
 
-    def unlock_exercises!
-      verify_and_return @strategy.unlock_exercises!, klass: self.class, error: StrategyError
+    def update_exercises!
+      verify_and_return @strategy.update_exercises!, klass: String,
+                                                     error: StrategyError,
+                                                     allow_nil: true
+    end
+
+    def discard_exercises!
+      verify_and_return @strategy.discard_exercises!, klass: String,
+                                                      error: StrategyError,
+                                                      allow_nil: true
     end
 
   end

@@ -36,6 +36,22 @@ RSpec.describe Content::Strategies::Generated::Manifest do
         '2190@1', '2191@1', '2192@1', '2193@1', '2194@1', '2195@1', '2196@1'
       ]
     }
+    let(:expected_reading_processing_instructions) {
+      [
+        { css: '.ost-reading-discard, .os-teacher, [data-type="glossary"]',
+          fragments: [], except: 'snap-lab' },
+        { css: ".ost-feature, .ost-assessed-feature",
+          fragments: ["node", "exercise", "optional_exercise"] },
+        { css: ".ost-feature .ost-exercise-choice, .ost-assessed-feature .ost-exercise-choice, " +
+               ".ost-feature .os-exercise, .ost-assessed-feature .os-exercise", fragments: [] },
+        { css: ".ost-exercise-choice", fragments: ["exercise", "optional_exercise"] },
+        { css: ".os-exercise", fragments: ["exercise"] },
+        { css: ".ost-video", fragments: ["video"] },
+        { css: ".os-interactive, .ost-interactive", fragments: ["interactive"] },
+        { css: ".worked-example", fragments: ["reading"], labels: ["worked-example"] },
+        { css: ".ost-feature, .ost-assessed-feature", fragments: ["reading"] }
+      ]
+    }
 
     it 'can return ecosystem attributes' do
       expect(manifest.valid?).to eq true
@@ -45,6 +61,15 @@ RSpec.describe Content::Strategies::Generated::Manifest do
       book = manifest.books.first
       expect(book.archive_url).to eq 'https://archive-staging-tutor.cnx.org/'
       expect(book.cnx_id).to eq '93e2b09d-261c-4007-a987-0b3062fe154b@4.4'
+      book.reading_processing_instructions.each_with_index do |processing_instruction, index|
+        expected_processing_instruction = expected_reading_processing_instructions[index]
+        expect(processing_instruction['css']).to eq expected_processing_instruction[:css]
+        expect(processing_instruction['fragments']).to(
+          eq expected_processing_instruction[:fragments]
+        )
+        expect(processing_instruction['except']).to eq expected_processing_instruction[:except]
+        expect(processing_instruction['labels']).to eq expected_processing_instruction[:labels]
+      end
       expect(book.exercise_ids).to eq expected_exercise_ids
     end
 
@@ -54,10 +79,10 @@ RSpec.describe Content::Strategies::Generated::Manifest do
   end
 
   context 'cc book' do
-    let(:fixture_path)          { 'spec/fixtures/content/sample_cc_manifest.yml' }
-    let(:manifest_yaml)         { File.open(fixture_path) { |file| file.read } }
-    let(:manifest)              { described_class.from_yaml(manifest_yaml) }
-    let(:expected_exercise_ids) {
+    let(:fixture_path)              { 'spec/fixtures/content/sample_cc_manifest.yml' }
+    let(:manifest_yaml)             { File.open(fixture_path) { |file| file.read } }
+    let(:manifest)                  { described_class.from_yaml(manifest_yaml) }
+    let(:expected_exercise_ids)     {
       [
         '2933@2', '2934@2', '2935@2', '2936@2', '2937@2', '2938@2', '2939@2', '2940@2',
         '2941@2', '2942@2', '2943@2', '2944@2', '2945@2', '2946@2', '2947@2', '2948@2',
@@ -77,6 +102,7 @@ RSpec.describe Content::Strategies::Generated::Manifest do
       book = manifest.books.first
       expect(book.archive_url).to eq 'https://archive.cnx.org/'
       expect(book.cnx_id).to eq 'f10533ca-f803-490d-b935-88899941197f@2.1'
+      expect(book.reading_processing_instructions).to eq []
       expect(book.exercise_ids).to eq expected_exercise_ids
     end
 

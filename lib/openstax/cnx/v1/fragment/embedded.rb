@@ -1,15 +1,7 @@
-module OpenStax::Cnx::V1::Fragment
-  class Embedded
-
-    include ActsAsFragment
+module OpenStax::Cnx::V1
+  class Fragment::Embedded < Fragment
 
     class_attribute :default_width, :default_height
-
-    # Used to get the title
-    TITLE_CSS = '[data-type="title"]'
-
-    # For fragments missing a proper title
-    DEFAULT_TITLE = nil
 
     # CSS to find the embedded element container (will be replaced with iframe)
     CONTAINER_CSS = '.ost-embed-container'
@@ -18,17 +10,6 @@ module OpenStax::Cnx::V1::Fragment
     # CSS to find the embedded content url
     TAGGED_URL_CSS = 'iframe.os-embed, a.os-embed, .os-embed iframe, .os-embed a'
     UNTAGGED_URL_CSS = 'iframe, a'
-
-    def initialize(node:, title: nil)
-      @node  = node
-      @title = title
-    end
-
-    attr_reader :node
-
-    def title
-      @title ||= node.at_css(TITLE_CSS).try(:content).try(:strip) || DEFAULT_TITLE
-    end
 
     def url
       @url ||= url_node.try(:[], 'src')
@@ -75,6 +56,10 @@ module OpenStax::Cnx::V1::Fragment
       end
 
       @to_html ||= node.to_html
+    end
+
+    def blank?
+      url.blank?
     end
 
     protected

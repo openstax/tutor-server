@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160317184322) do
+ActiveRecord::Schema.define(version: 20160331194837) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,14 +35,15 @@ ActiveRecord::Schema.define(version: 20160317184322) do
   add_index "catalog_offerings", ["salesforce_book_name"], name: "index_catalog_offerings_on_salesforce_book_name", unique: true, using: :btree
 
   create_table "content_books", force: :cascade do |t|
-    t.string   "url",                  null: false
+    t.string   "url",                                          null: false
     t.text     "content"
-    t.integer  "content_ecosystem_id", null: false
-    t.string   "title",                null: false
-    t.string   "uuid",                 null: false
-    t.string   "version",              null: false
-    t.datetime "created_at",           null: false
-    t.datetime "updated_at",           null: false
+    t.integer  "content_ecosystem_id",                         null: false
+    t.string   "title",                                        null: false
+    t.string   "uuid",                                         null: false
+    t.string   "version",                                      null: false
+    t.datetime "created_at",                                   null: false
+    t.datetime "updated_at",                                   null: false
+    t.jsonb    "reading_processing_instructions", default: [], null: false
   end
 
   add_index "content_books", ["content_ecosystem_id"], name: "index_content_books_on_content_ecosystem_id", using: :btree

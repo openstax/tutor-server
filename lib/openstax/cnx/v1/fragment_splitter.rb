@@ -1,98 +1,114 @@
 module OpenStax::Cnx::V1
-  module FragmentSplitter
+  class FragmentSplitter
 
     include HtmlTreeOperations
 
-    # Just a page break
-    FEATURE_CLASSES = ['ost-assessed-feature', 'ost-feature']
+    attr_reader :processing_instructions
 
-    # Exercise choice fragment
-    EXERCISE_CHOICE_CLASS = 'ost-exercise-choice'
+    def initialize(processing_instructions)
+      @processing_instructions = processing_instructions.map{ |pi| OpenStruct.new(pi.to_h) }
+    end
 
-    # Exercise fragment
-    EXERCISE_CLASS = 'os-exercise'
+    # Splits the given root node into fragments according to the processing instructions
+    def split_into_fragments(root, type = nil)
+      result = [root.dup]
+      type_string = type.to_s
 
-    # Interactive fragment
-    INTERACTIVE_CLASSES = ['os-interactive', 'ost-interactive']
+      processing_instructions.each do |processing_instruction|
+        next if processing_instruction.css.blank? ||
+                processing_instruction.fragments.nil? ||
+                (!processing_instruction.only.nil? &&
+                 ![processing_instruction.only].flatten.map(&:to_s).include?(type_string)) ||
+                (!processing_instruction.except.nil? &&
+                 [processing_instruction.except].flatten.map(&:to_s).include?(type_string))
 
-    # Video fragment
-    VIDEO_CLASS = 'ost-video'
+        result = process_array(result, processing_instruction)
+      end
 
-    # Split fragments on these
-    SPLIT_CSS = [FEATURE_CLASSES, EXERCISE_CHOICE_CLASS, EXERCISE_CLASS,
-                 INTERACTIVE_CLASSES, VIDEO_CLASS].flatten.collect{ |c| ".#{c}" }.join(', ')
+      cleanup_array(result)
+    end
 
     protected
 
-    def node_to_fragment(node, skip_features)
-      klass = node['class'] || []
+    # Gets the fragments for a Nokogiri::XML::Node according to a ProcessingInstruction
+    def get_fragments(node, root, processing_instruction)
+      [processing_instruction.fragments].flatten.map do |fragment_name|
+        fragment_class_name = fragment_name.to_s.classify
+        if fragment_class_name == "Node"
+          # Make a copy of the current node (up to the root), but remove all other nodes
+          root_copy = root.dup
+          node_copy = root_copy.at_css(processing_instruction.css)
 
-      fragment =
-        if FEATURE_CLASSES.any? { |feature_class| klass.include?(feature_class) } && !skip_features
-          Fragment::Feature.new(node: node)
-        elsif INTERACTIVE_CLASSES.any? { |interactive_class| klass.include?(interactive_class) }
-          Fragment::Interactive.new(node: node)
-        elsif klass.include?(VIDEO_CLASS)
-          Fragment::Video.new(node: node)
-        elsif klass.include?(EXERCISE_CHOICE_CLASS)
-          Fragment::ExerciseChoice.new(node: node)
-        elsif klass.include?(EXERCISE_CLASS)
-          Fragment::Exercise.new(node: node)
-        else
-          Fragment::Text.new(node: node)
+          remove_before(node_copy, root_copy)
+          remove_after(node_copy, root_copy)
+
+          next root_copy
         end
 
-      fragment.add_labels('worked-example') if klass.include?('worked-example')
-      fragment
+        fragment_class = "OpenStax::Cnx::V1::Fragment::#{fragment_class_name}".constantize
+        fragment = fragment_class.new(node: node, labels: processing_instruction.labels)
+        fragment unless fragment.blank?
+      end.compact
     end
 
-    def split_into_fragments(node, skip_features = false)
-      fragments = []
+    # Process a single Nokogiri::XML::Node
+    def process_node(root, processing_instruction)
+      # Find first match
+      node = root.at_css(processing_instruction.css)
 
-      # Initialize current_node
-      current_node = node
+      # Base case
+      return root if node.nil?
 
-      # Find first split
-      split = current_node.at_css(SPLIT_CSS)
+      # Get fragments for the match
+      fragments = get_fragments(node, root, processing_instruction)
 
-      # Split the root and collect the TaskStep attributes
-      while !split.nil? do
-        klass = split['class']
+      if fragments.empty? # No splitting needed
+        # Remove the match node and any empty parents from the tree
+        recursive_compact(node, root)
 
-        # Get a single fragment for the given node
-        splitting_fragment = node_to_fragment(split, skip_features)
+        # Repeat the processing until no more matches
+        process_node(root, processing_instruction)
+      else # Need to split the node tree
+        # Copy the node content and find the same match in the copy
+        root_copy = root.dup
+        node_copy = root_copy.at_css(processing_instruction.css)
 
-        # Copy the node content and find the same split CSS in the copy
-        next_node = current_node.dup
-        split_copy = next_node.at_css(SPLIT_CSS)
+        # One copy retains the content before the match;
+        # the other retains the content after the match
+        remove_after(node, root)
+        remove_before(node_copy, root_copy)
 
-        # One copy retains the content before the split;
-        # the other retains the content after the split
-        remove_after(split, current_node)
-        remove_before(split_copy, next_node)
+        # Remove the match, its copy and any empty parents from the 2 trees
+        recursive_compact(node, root)
+        recursive_compact(node_copy, root_copy)
 
-        # Remove the splits and any empty parents
-        recursive_compact(split, current_node)
-        recursive_compact(split_copy, next_node)
+        # Repeat the processing until no more matches
+        [root, fragments, process_node(root_copy, processing_instruction)]
+      end
+    end
 
-        # Create text fragment before current split
-        unless current_node.content.blank?
-          fragments << node_to_fragment(current_node, skip_features)
+    # Recursively process an array of Nodes and Fragments
+    def process_array(array, processing_instruction)
+      array.map do |obj|
+        case obj
+        when Array
+          process_array(obj, processing_instruction)
+        when Nokogiri::XML::Node
+          process_node(obj, processing_instruction)
+        else
+          obj
         end
-
-        # Add contents from splitting fragments
-        fragments << splitting_fragment
-
-        current_node = next_node
-        split = current_node.at_css(SPLIT_CSS)
       end
+    end
 
-      # Create text fragment after all splits
-      unless current_node.content.blank?
-        fragments << node_to_fragment(current_node, skip_features)
-      end
+    # Flatten, remove empty nodes and transform remaining nodes into reading fragments
+    def cleanup_array(array)
+      array.flatten.map do |obj|
+        next obj unless obj.is_a?(Nokogiri::XML::Node)
+        next if obj.content.blank?
 
-      fragments
+        OpenStax::Cnx::V1::Fragment::Reading.new(node: obj)
+      end.compact
     end
 
   end

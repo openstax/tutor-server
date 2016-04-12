@@ -27,7 +27,7 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
   validates :uuid, presence: true
   validates :version, presence: true
 
-  delegate :fragments, :is_intro?, to: :parser
+  delegate :is_intro?, to: :parser
 
   def cnx_id
     "#{uuid}@#{version}"
@@ -45,16 +45,32 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
     tags.to_a.select(&:cc?)
   end
 
+  def fragments
+    return @fragments unless @fragments.nil?
+
+    @fragments = fragment_splitter.split_into_fragments(parser.converted_root)
+  end
+
   def snap_labs
-    parser.snap_labs.collect do |snap_lab|
-      snap_lab.update(id: "#{self.id}:#{snap_lab[:id]}")
+    parser.snap_lab_nodes.map do |snap_lab_node|
+      {
+        id: "#{self.id}:#{snap_lab_node.attr('id')}",
+        title: parser.snap_lab_title(snap_lab_node),
+        fragments: fragment_splitter.split_into_fragments(snap_lab_node, 'snap-lab')
+      }
     end
   end
 
   protected
 
   def parser
-    OpenStax::Cnx::V1::Page.new(title: title, content: content)
+    @parser ||= OpenStax::Cnx::V1::Page.new(title: title, content: content)
+  end
+
+  def fragment_splitter
+    @fragment_splitter ||= OpenStax::Cnx::V1::FragmentSplitter.new(
+      book.reading_processing_instructions
+    )
   end
 
 end

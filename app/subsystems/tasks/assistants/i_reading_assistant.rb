@@ -1,4 +1,4 @@
-class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::GenericAssistant
+class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistant
 
   def self.schema
     '{
@@ -20,37 +20,31 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::GenericAssistant
     }'
   end
 
-  def build_tasks
-    collect_pages
+  def initialize(task_plan:, taskees:)
+    super
 
-    @tag_exercise = {}
-    @exercise_pages = {}
-    @page_pools = {}
-    @pool_exercises = {}
+    @pages = collect_pages
     @ecosystems_map = {}
+  end
 
-    @taskees.collect do |taskee|
-      build_ireading_task(
-        taskee: taskee,
-        pages: @pages
-      ).entity_task
-    end
+  def build_tasks
+    taskees.map{ |taskee| build_reading_task(pages: @pages, taskee: taskee).entity_task }
   end
 
   protected
 
-  def collect_pages
-    @page_ids = @task_plan.settings['page_ids']
-    raise "No pages selected" if @page_ids.blank?
-
-    ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(@task_plan.ecosystem)
-    @ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
-
-    @pages = @ecosystem.pages_by_ids(@page_ids)
+  def self.num_personalized_exercises
+    1
   end
 
-  def build_ireading_task(pages:, taskee:)
+  def collect_pages
+    ecosystem.pages_by_ids(task_plan.settings['page_ids'])
+  end
+
+  def build_reading_task(pages:, taskee:)
     task = build_task
+
+    reset_used_exercises
 
     add_core_steps!(task: task, pages: pages)
 
@@ -65,60 +59,18 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::GenericAssistant
   end
 
   def build_task
-    title    = @task_plan.title || 'iReading'
-    description = @task_plan.description
+    title    = task_plan.title || 'iReading'
+    description = task_plan.description
 
     task = Tasks::BuildTask[
-      task_plan: @task_plan,
+      task_plan: task_plan,
       task_type: :reading,
       title:     title,
       description: description,
       feedback_at: Time.now
     ]
-    AddSpyInfo[to: task, from: @ecosystem]
-    return task
-  end
-
-  def task_fragments(task:, fragments:, fragment_title:, page:, related_content:)
-    fragments.each do |fragment|
-      step = Tasks::Models::TaskStep.new(task: task)
-
-      case fragment
-      when OpenStax::Cnx::V1::Fragment::Feature
-        subfragments = fragment.fragments
-        exercise_subfragments = subfragments.select(&:exercise?)
-        if exercise_subfragments.count > 1
-          # Remove all Exercise fragments and replace with an ExerciseChoice
-          subfragments = subfragments - exercise_subfragments
-          subfragments << OpenStax::Cnx::V1::Fragment::ExerciseChoice.new(
-            node: nil, title: nil, exercise_fragments: exercise_subfragments
-          )
-        end
-
-        task_fragments(task: task, fragments: subfragments, fragment_title: fragment_title,
-                       page: page, related_content: related_content)
-      when OpenStax::Cnx::V1::Fragment::ExerciseChoice
-        tasked_exercise_choice(exercise_choice_fragment: fragment,
-                               step: step, title: fragment_title)
-      when OpenStax::Cnx::V1::Fragment::Exercise
-        tasked_exercise(exercise_fragment: fragment, step: step, title: fragment_title)
-      when OpenStax::Cnx::V1::Fragment::Video
-        tasked_video(video_fragment: fragment, step: step, title: fragment_title)
-      when OpenStax::Cnx::V1::Fragment::Interactive
-        tasked_interactive(interactive_fragment: fragment, step: step, title: fragment_title)
-      else
-        tasked_reading(reading_fragment: fragment, page: page, title: fragment_title, step: step)
-      end
-
-      next if step.tasked.nil?
-      step.group_type = :core_group
-      step.add_labels(fragment.labels)
-      step.add_related_content(page.related_content)
-      task.task_steps << step
-
-      # Only the first step for each Page should have a title
-      fragment_title = nil
-    end
+    AddSpyInfo[to: task, from: ecosystem]
+    task
   end
 
   def add_core_steps!(task:, pages:)
@@ -148,7 +100,7 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::GenericAssistant
 
     core_exercise_numbers = history.exercises.first.map(&:number)
 
-    course = @task_plan.owner
+    course = task_plan.owner
 
     spaced_practice_status = []
 
@@ -168,7 +120,7 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::GenericAssistant
 
       # Reuse Ecosystems map when possible
       @ecosystems_map[spaced_ecosystem.id] ||= Content::Map.find(
-        from_ecosystems: [spaced_ecosystem, @ecosystem].uniq, to_ecosystem: @ecosystem
+        from_ecosystems: [spaced_ecosystem, ecosystem].uniq, to_ecosystem: ecosystem
       )
 
       # Map the pages to exercises in the new ecosystem
@@ -223,102 +175,11 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::GenericAssistant
     task
   end
 
-  def self.num_personalized_exercises
-    1
-  end
-
   def add_exercise_step(task:, exercise:)
     step = Tasks::Models::TaskStep.new(task: task)
     TaskExercise[task_step: step, exercise: exercise]
     task.task_steps << step
     step
-  end
-
-  def tasked_reading(reading_fragment:, page:, step:, title: nil)
-    Tasks::Models::TaskedReading.new(task_step: step,
-                                     url: page.url,
-                                     book_location: page.book_location,
-                                     title: title,
-                                     content: reading_fragment.to_html)
-  end
-
-  def tasked_exercise_choice(exercise_choice_fragment:, step:, title: nil)
-    exercises = exercise_choice_fragment.exercise_fragments
-    if exercises.empty?
-      logger.warn "Exercise Choice without Exercises found while creating iReading"
-      return
-    end
-
-    chosen_exercise = exercises.sample
-    case chosen_exercise
-    when OpenStax::Cnx::V1::Fragment::Exercise
-      tasked_exercise(exercise_fragment: chosen_exercise, step: step,
-                      can_be_recovered: true, title: title)
-    when OpenStax::Cnx::V1::Fragment::ExerciseChoice
-      tasked_exercise_choice(exercise_choice_fragment: chosen_exercise, step: step, title: title)
-    else
-      logger.warn "Exercise Choice with invalid Exercise fragment found while creating iReading"
-    end
-  end
-
-  def tasked_exercise(exercise_fragment:, step:, can_be_recovered: false, title: nil)
-    if exercise_fragment.embed_tag.blank?
-      logger.warn "Exercise without embed tag found while creating iReading"
-      return
-    end
-
-    # Search Ecosystem Exercises for one matching the embed tag
-    exercise = get_first_tag_exercise(exercise_fragment.embed_tag)
-
-    unless exercise.nil?
-      if can_be_recovered
-        # Disable recovery if no exercises that can be used for it are found
-        pool = exercise.page.reading_try_another_pool
-        los = Set.new exercise.los
-        aplos = Set.new exercise.aplos
-        candidate_exercises = pool.exercises.select do |ex|
-          ex != exercise && \
-          (ex.los.any?{ |tt| los.include?(tt) } || ex.aplos.any?{ |tt| aplos.include?(tt) })
-        end
-        can_be_recovered = false if candidate_exercises.empty?
-      end
-
-      # Assign the exercise
-      TaskExercise[exercise: exercise, title: title,
-                   can_be_recovered: can_be_recovered, task_step: step]
-    end
-  end
-
-  def tasked_video(video_fragment:, step:, title: nil)
-    if video_fragment.url.blank?
-      logger.warn "Video without embed tag found while creating iReading"
-      return
-    end
-
-    Tasks::Models::TaskedVideo.new(task_step: step,
-                                   url: video_fragment.url,
-                                   title: title,
-                                   content: video_fragment.to_html)
-  end
-
-  def tasked_interactive(interactive_fragment:, step:, title: nil)
-    if interactive_fragment.url.blank?
-      logger.warn('Interactive without url found while creating iReading')
-      return
-    end
-
-    Tasks::Models::TaskedInteractive.new(task_step: step,
-                                         url: interactive_fragment.url,
-                                         title: title,
-                                         content: interactive_fragment.to_html)
-  end
-
-  def get_first_tag_exercise(tag)
-    @tag_exercise[tag] ||= @ecosystem.exercises_with_tags(tag).first
-  end
-
-  def logger
-    Rails.logger
   end
 
 end

@@ -26,7 +26,8 @@ class Content::Models::Book < Tutor::SubSystems::BaseModel
     {
       archive_url: archive_url,
       cnx_id: cnx_id,
-      exercise_ids: exercises.map(&:uid).sort
+      reading_processing_instructions: reading_processing_instructions,
+      exercise_ids: exercises.sort_by(&:number).map(&:uid)
     }
   end
 

@@ -14,13 +14,17 @@ class Content::ImportBook
 
   # Imports and saves a Cnx::Book as a Content::Models::Book
   # Returns the Book object, Resource object and collection JSON as a hash
-  def exec(cnx_book:, ecosystem:, exercise_uids: nil)
-    book = Content::Models::Book.new(url: cnx_book.canonical_url,
-                                     uuid: cnx_book.uuid,
-                                     version: cnx_book.version,
-                                     title: cnx_book.title,
-                                     content: cnx_book.root_book_part.contents,
-                                     content_ecosystem_id: ecosystem.id)
+  def exec(cnx_book:, ecosystem:, reading_processing_instructions: nil, exercise_uids: nil)
+    reading_processing_instructions = reading_processing_instructions.to_a
+    book = Content::Models::Book.new(
+        url: cnx_book.canonical_url,
+        uuid: cnx_book.uuid,
+        version: cnx_book.version,
+        title: cnx_book.title,
+        content: cnx_book.root_book_part.contents,
+        content_ecosystem_id: ecosystem.id,
+        reading_processing_instructions: reading_processing_instructions.map(&:to_h)
+    )
 
     run(:import_book_part, cnx_book_part: cnx_book.root_book_part, book: book, save: false)
 
@@ -33,22 +37,15 @@ class Content::ImportBook
     import_page_tags.each(&:reload)
 
     outputs[:exercises] = []
-    page_block = ->(exercise_wrapper) {
+    page_block = ->(exercise_wrapper) do
       tags = Set.new(exercise_wrapper.los + exercise_wrapper.aplos + exercise_wrapper.cnxmods)
-      pages = import_page_tags.select{ |pt| tags.include?(pt.tag.value) }
-                              .collect{ |pt| pt.page }.uniq
+      pages = import_page_tags.select{ |pt| tags.include?(pt.tag.value) }.map(&:page).uniq
+      pages.max_by(&:book_location)
+    end
 
-      # Blow up if there is more than one page for an exercise
-      fatal_error(code: :multiple_pages_for_one_exercise,
-                  message: "Multiple pages were found for an exercise.\nExercise: #{
-                    exercise_wrapper.uid}\nPages:\n#{pages.collect{ |pg| pg.url }.join("\n")}") \
-        if pages.size != 1
-      pages.first
-    }
-
-    if exercise_uids.blank?
+    if exercise_uids.nil?
       # Split the tag queries to avoid exceeding the URL limit
-      max_tag_length = import_page_tags.map{ |pt| pt.tag.value.size }.max
+      max_tag_length = import_page_tags.map{ |pt| pt.tag.value.size }.max || 1
       tags_per_query = MAX_URL_LENGTH/max_tag_length
       import_page_tags.each_slice(tags_per_query) do |page_tags|
         query_hash = { tag: page_tags.collect{ |pt| pt.tag.value } }
@@ -58,7 +55,7 @@ class Content::ImportBook
       end
     else
       # Split the uid queries to avoid exceeding the URL limit
-      max_uid_length = exercise_uids.map(&:size).max
+      max_uid_length = exercise_uids.map(&:size).max || 1
       uids_per_query = MAX_URL_LENGTH/max_uid_length
       exercise_uids.each_slice(uids_per_query) do |uids|
         query_hash = { id: uids }

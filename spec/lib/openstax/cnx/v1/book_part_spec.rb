@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe OpenStax::Cnx::V1::BookPart, :type => :external do
+RSpec.describe OpenStax::Cnx::V1::BookPart, type: :external do
 
   cnx_book_infos = [
     { id: "93e2b09d-261c-4007-a987-0b3062fe154b",
