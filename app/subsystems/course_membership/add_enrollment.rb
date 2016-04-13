@@ -5,7 +5,7 @@ class CourseMembership::AddEnrollment
 
   protected
 
-  def exec(period:, student:)
+  def exec(period:, student:, assign_published_period_tasks: true)
     outputs[:enrollment] = CourseMembership::Models::Enrollment.create(
       student: student, period: period.to_model
     )
@@ -15,6 +15,7 @@ class CourseMembership::AddEnrollment
     student.activate.save! unless student.active?
     outputs[:student] = student
 
-    ReassignPublishedPeriodTaskPlans.perform_later(period: period.to_model)
+    ReassignPublishedPeriodTaskPlans.perform_later(period: period.to_model) \
+      if assign_published_period_tasks
   end
 end

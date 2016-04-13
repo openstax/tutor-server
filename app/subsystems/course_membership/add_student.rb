@@ -8,7 +8,7 @@ class CourseMembership::AddStudent
 
   protected
 
-  def exec(period:, role:, student_identifier: nil)
+  def exec(period:, role:, student_identifier: nil, assign_published_period_tasks: true)
     student = CourseMembership::Models::Student.find_by(role: role)
     fatal_error(
       code: :already_a_student, message: "The provided role is already a student in #{
@@ -20,6 +20,7 @@ class CourseMembership::AddStudent
                                                        student_identifier: student_identifier)
     transfer_errors_from(student, {type: :verbatim}, true)
 
-    run(:add_enrollment, period: period, student: student)
+    run(:add_enrollment, period: period, student: student,
+                         assign_published_period_tasks: assign_published_period_tasks)
   end
 end

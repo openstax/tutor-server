@@ -26,7 +26,7 @@ class Admin::CoursesStudents
   end
 
   def parse_attributes_from_roster_file
-    period = CourseMembership::Models::Period.find(params[:course][:period])
+    period_model = CourseMembership::Models::Period.find(params[:course][:period])
     csv_reader = CSV.new(params[:student_roster].read, headers: true)
     parse_errors = []
 
@@ -41,8 +41,11 @@ class Admin::CoursesStudents
                                        first_name: row['first_name'],
                                        last_name: row['last_name']).outputs.user
 
-      run(:add_user_as_period_student, period: period, user: user)
+      run(:add_user_as_period_student, period: period_model, user: user,
+                                       assign_published_period_tasks: false)
     end
+
+    ReassignPublishedPeriodTaskPlans.perform_later(period: period_model)
 
     fatal_error(code: :parse_errors, message: parse_errors) if parse_errors.any?
   end
