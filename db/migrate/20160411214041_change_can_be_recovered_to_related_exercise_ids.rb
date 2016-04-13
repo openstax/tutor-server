@@ -10,6 +10,8 @@ class ChangeCanBeRecoveredToRelatedExerciseIds < ActiveRecord::Migration
         Tasks::Models::TaskedExercise.preload(
           [:task_step, {exercise: {page: :reading_context_pool}}]
         ).where(can_be_recovered: true).find_each do |te|
+          next if te.task_step.nil?
+
           exercise = te.exercise
 
           related_exercise_ids = related_exercise_ids_map[exercise.id]
