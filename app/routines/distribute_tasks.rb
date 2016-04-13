@@ -1,6 +1,8 @@
 class DistributeTasks
 
-  lev_routine
+  # Serializable is needed because the TaskPlan row itself
+  # is not actually updated (after the first time)
+  lev_routine transaction: :serializable
 
   uses_routine IndividualizeTaskingPlans, as: :get_tasking_plans
 
@@ -24,7 +26,7 @@ class DistributeTasks
   end
 
   def exec(task_plan, publish_time = Time.now, protect_unopened_tasks = false)
-    # Lock the TaskPlan to prevent concurrent update/publish
+    # This lock is mostly here to cause isolation conflicts to spend less CPU time
     task_plan.lock!
 
     tasks = task_plan.tasks.preload(:entity_task, { taskings: :role })
