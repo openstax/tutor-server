@@ -5,20 +5,29 @@ class ChangeCanBeRecoveredToRelatedExerciseIds < ActiveRecord::Migration
 
     reversible do |dir|
       dir.up do
+        related_exercise_ids_map = {}
+
         Tasks::Models::TaskedExercise.preload(
           [:task_step, {exercise: {page: :reading_context_pool}}]
         ).where(can_be_recovered: true).find_each do |te|
           exercise = te.exercise
-          pool_exercises = exercise.page.reading_context_pool.exercises
 
-          los = Set.new(exercise.los)
-          aplos = Set.new(exercise.aplos)
+          related_exercise_ids = related_exercise_ids_map[exercise.id]
 
-          # For the original Try Another,
-          # we allow only exercises that share at least one LO or APLO with the original exercise
-          related_exercise_ids = pool_exercises.select do |ex|
-            ex.los.any?{ |tt| los.include?(tt) } || ex.aplos.any?{ |tt| aplos.include?(tt) }
-          end.map(&:id)
+          if related_exercise_ids.nil?
+            pool_exercises = exercise.page.reading_context_pool.exercises
+
+            los = Set.new(exercise.los)
+            aplos = Set.new(exercise.aplos)
+
+            # For the original Try Another,
+            # we allow only exercises that share at least one LO or APLO with the original exercise
+            related_exercise_ids = pool_exercises.select do |ex|
+              ex.los.any?{ |tt| los.include?(tt) } || ex.aplos.any?{ |tt| aplos.include?(tt) }
+            end.map(&:id)
+
+            related_exercise_ids_map[exercise.id] = related_exercise_ids
+          end
 
           te.task_step.update_attribute :related_exercise_ids, related_exercise_ids
         end
@@ -33,6 +42,7 @@ class ChangeCanBeRecoveredToRelatedExerciseIds < ActiveRecord::Migration
       end
     end
 
-    remove_column :tasks_tasked_exercises, :can_be_recovered, :boolean, null: false, default: false
+    remove_column :tasks_tasked_exercises, :can_be_recovered, :boolean, null: false,
+                                                                        default: false
   end
 end
