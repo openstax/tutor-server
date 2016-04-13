@@ -9,6 +9,8 @@ class DemoTasks < DemoBase
 
   disable_automatic_lev_transactions
 
+  uses_routine DistributeTasks
+
   protected
 
   def exec(book: :all, print_logs: true, random_seed: nil)

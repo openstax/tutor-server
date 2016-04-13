@@ -1,7 +1,7 @@
 class DistributeTasks
 
   # Serializable is needed because the TaskPlan row itself
-  # is not actually updated after the first time
+  # is not actually updated (after the first time)
   lev_routine transaction: :serializable
 
   uses_routine IndividualizeTaskingPlans, as: :get_tasking_plans
