@@ -1,6 +1,6 @@
 class Tasks::AddRelatedExerciseAfterStep
 
-  lev_routine transaction: :serializable
+  lev_routine
 
   uses_routine TaskExercise, as: :task_exercise
   uses_routine GetEcosystemFromIds, as: :get_ecosystem
@@ -11,6 +11,7 @@ class Tasks::AddRelatedExerciseAfterStep
   protected
 
   def exec(task_step:)
+    # This lock is here to prevent double clicks on the Try Another/Try One buttons
     fatal_error(code: :related_exercise_not_available) unless task_step.lock!.can_be_recovered?
 
     related_exercise = get_related_exercise_for(task_step: task_step)
@@ -22,6 +23,7 @@ class Tasks::AddRelatedExerciseAfterStep
 
     transfer_errors_from(related_exercise_step, type: :verbatim)
 
+    # This update combined with the lock above will cause other transactions to retry
     task_step.update_attribute(:related_exercise_ids, [])
 
     outputs[:related_exercise] = related_exercise_step
