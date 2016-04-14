@@ -1,17 +1,11 @@
-<!DOCTYPE html>
-<html>
-  <head><meta content='text/html; charset=UTF-8' http-equiv='Content-Type' /></head>
-  <body>
-    <%= simple_format @message %>
-    <% if @details.present? %>
-    <table>
-      <% @details.each do | key, value | %>
-      <tr>
-        <td><%= key %></td>
-        <td><%= simple_format value.to_s %></td>
-      </tr>
-      <% end %>
-    </table>
-    <% end %>
-  </body>
-</html>
+<%= simple_format @message %>
+<% if @details.present? %>
+<table>
+  <% @details.each do | key, value | %>
+  <tr>
+    <td><%= key %></td>
+    <td><%= simple_format value.to_s %></td>
+  </tr>
+  <% end %>
+</table>
+<% end %>
