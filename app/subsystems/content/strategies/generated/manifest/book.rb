@@ -26,20 +26,22 @@ module Content
 
         def update_version!
           old_cnx_id = cnx_id
+          return if old_cnx_id.nil?
+
           self.cnx_id = old_cnx_id.split('@').first
           old_cnx_id
         end
 
         def update_exercises!
-          return if exercise_ids.nil?
-
           old_exercise_ids = exercise_ids
+          return if old_exercise_ids.nil?
+
           self.exercise_ids = old_exercise_ids.map{ |exercise_id| exercise_id.split('@').first }
           old_exercise_ids
         end
 
         def discard_exercises!
-          delete_field(:exercise_ids)
+          delete_field(:exercise_ids) if respond_to?(:exercise_ids)
         end
 
       end
