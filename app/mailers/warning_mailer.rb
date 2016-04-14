@@ -19,6 +19,8 @@ class WarningMailer < ApplicationMailer
 
   def self.log_and_deliver
     warning = yield
+    return unless warning
+
     unless warning.is_a?(Hash)
       warning = {
         message: warning

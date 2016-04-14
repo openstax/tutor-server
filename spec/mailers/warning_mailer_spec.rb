@@ -41,6 +41,15 @@ RSpec.describe WarningMailer, type: :mailer do
       expect(mail.body).to match('FIRE')
     end
 
+    it 'does nothing if a falsy value returned' do
+      expect(Rails.logger).not.to receive(:warn)
+      expect {
+        described_class.log_and_deliver {
+          false
+        }
+      }.not.to change { ActionMailer::Base.deliveries.count }.by(1)
+    end
+
   end
 
   it 'sends an email' do
