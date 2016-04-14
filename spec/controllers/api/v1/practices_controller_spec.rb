@@ -107,6 +107,25 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
                  raw_post_data: { page_ids: [page.id.to_s] }.to_json
       }.to raise_error(SecurityTransgression)
     end
+
+    it "returns error when no exercises can scrounged" do
+      AddUserAsPeriodStudent.call(period: period, user: user_1)
+
+      expect(OpenStax::Biglearn::V1).to(
+        receive(:get_projection_exercises).once { [] }
+      )
+
+      expect_any_instance_of(ResetPracticeWidget).to receive(:get_local_exercises)
+                                                     .and_return([])
+
+      api_post :create,
+               user_1_token,
+               parameters: { id: course.id, role_id: role.id },
+               raw_post_data: { page_ids: [page.id.to_s] }.to_json
+
+      expect(response).to have_http_status(422)
+    end
+
   end
 
   context "GET #show" do
