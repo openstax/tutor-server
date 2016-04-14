@@ -36,18 +36,29 @@ RSpec.describe WarningMailer, type: :mailer do
 
       mail = ActionMailer::Base.deliveries.last
       expect(mail.subject).to eq('[warning] warning_mailer_spec.rb:32')
-
       expect(mail.body).to match('error_code')
       expect(mail.body).to match('FIRE')
     end
 
     it 'does nothing if a falsy value returned' do
-      expect(Rails.logger).not.to receive(:warn)
+      expect(Rails.logger).to_not receive(:warn)
       expect {
         described_class.log_and_deliver {
           false
         }
-      }.not.to change { ActionMailer::Base.deliveries.count }.by(1)
+      }.to_not change { ActionMailer::Base.deliveries.count }
+    end
+
+    it 'can also be called with arguments' do
+      expect(Rails.logger).to receive(:warn).with("Printer on fire")
+      expect {
+        described_class.log_and_deliver(subject: 'Via args') {
+          {message: 'Printer on fire', details: {error_code: 'FIRE'}}
+        }
+      }.to change { ActionMailer::Base.deliveries.count }.by(1)
+      mail = ActionMailer::Base.deliveries.last
+      expect(mail.subject).to eq('[warning] Via args')
+      expect(mail.body).to match('FIRE')
     end
 
   end
