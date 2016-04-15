@@ -34,7 +34,7 @@ class Tasks::Assistants::GenericAssistant
   def get_all_exercises_with_tags(tags)
     sorted_tags = tags.uniq.sort
 
-    @tag_exercises[sorted_tags] ||= ecosystem.exercises_with_tags(*sorted_tags)
+    @tag_exercises[sorted_tags] ||= ecosystem.exercises_with_tags(sorted_tags)
   end
 
   def reset_used_exercises

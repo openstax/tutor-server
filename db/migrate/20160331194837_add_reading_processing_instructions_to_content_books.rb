@@ -14,10 +14,6 @@ class AddReadingProcessingInstructionsToContentBooks < ActiveRecord::Migration
           book.reading_processing_instructions = [
             { css: '.ost-reading-discard, .os-teacher, [data-type="glossary"]',
               fragments: [], except: 'snap-lab' },
-            { css: ".ost-feature, .ost-assessed-feature",
-              fragments: ["node", "exercise", "optional_exercise"] },
-            { css: ".ost-feature .ost-exercise-choice, .ost-assessed-feature .ost-exercise-choice,
-                    .ost-feature .os-exercise, .ost-assessed-feature .os-exercise", fragments: [] },
             { css: ".ost-exercise-choice", fragments: ["exercise", "optional_exercise"] },
             { css: ".os-exercise", fragments: ["exercise"] },
             { css: ".ost-video", fragments: ["video"] },

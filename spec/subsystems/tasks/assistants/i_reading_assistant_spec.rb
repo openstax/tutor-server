@@ -146,6 +146,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
           expect(task_step.tasked.title).to eq(@task_step_gold_data[ii][:title])
           expect(task_step.related_content).to eq(@task_step_gold_data[ii][:related_content])
+          expect(task_step.related_exercise_ids).to eq []
         end
 
         core_task_steps = task.core_task_steps
@@ -183,7 +184,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     end
 
     it 'does not assign dynamic exercises if the dynamic exercises pool is empty' do
-      allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [[0, 2]]}
+      allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [[0, 2]] }
 
       task_plan.update_attribute(:settings, { 'page_ids' => [@content_pages.first.id.to_s] })
       entity_tasks = DistributeTasks.call(task_plan).outputs.entity_tasks
@@ -208,6 +209,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
         expect(task_step.tasked.title).to eq(@intro_step_gold_data[:title])
         expect(task_step.related_content).to eq(@intro_step_gold_data[:related_content])
+        expect(task_step.related_exercise_ids).to eq []
 
         expect(task_step.core_group?).to eq true
       end
@@ -243,6 +245,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
           expect(task_step.tasked.title).to eq(@core_step_gold_data[ii][:title])
           expect(task_step.related_content).to eq(@core_step_gold_data[ii][:related_content])
+          expect(task_step.related_exercise_ids).to eq []
         end
 
         expect(task.spaced_practice_task_steps.count).to eq 0
@@ -255,7 +258,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     end
   end
 
-  context "for Inertia" do
+  context "for Newton's First Law of Motion: Inertia" do
     let!(:cnx_page_hash) { {
       'id' => '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6',
       'title' => "Newton's First Law of Motion: Inertia"
@@ -351,7 +354,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     }
 
     it 'is split into different task steps with immediate feedback' do
-      allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [[0, 2]]}
+      allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [[0, 2]] }
       allow(Tasks::Assistants::IReadingAssistant).to receive(:num_personalized_exercises) { 0 }
 
       entity_tasks = DistributeTasks.call(task_plan).outputs.entity_tasks
@@ -366,6 +369,135 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         task_steps.each_with_index do |task_step, ii|
           expect(task_step.tasked.class).to eq(task_step_gold_data[ii][:klass])
           expect(task_step.tasked.title).to eq(task_step_gold_data[ii][:title])
+          expect(task_step.related_exercise_ids).to eq []
+        end
+      end
+    end
+
+  end
+
+  context "for Newton's Second Law of Motion" do
+    let!(:cnx_page_hash) { {
+      'id' => '548a8717-71e1-4d65-80f0-7b8c6ed4b4c0',
+      'title' => "Newton's Second Law of Motion"
+    } }
+
+    let!(:core_step_gold_data) {
+      [
+        { klass: Tasks::Models::TaskedReading,
+          title: "Newton's Second Law of Motion",
+          related_exercise_ids: [] },
+        { klass: Tasks::Models::TaskedVideo,
+          title: nil,
+          related_exercise_ids: [] },
+        { klass: Tasks::Models::TaskedExercise,
+          title: nil,
+          related_exercise_ids: [] },
+        { klass: Tasks::Models::TaskedReading,
+          title: nil,
+          related_exercise_ids: [] },
+        { klass: Tasks::Models::TaskedExercise,
+          title: nil,
+          related_exercise_ids: [69, 70, 71, 72, 77, 78, 80, 83, 84,
+                                 86, 87, 88, 89, 90, 99, 100, 101, 102] }
+      ]
+    }
+
+    let!(:spaced_practice_step_gold_data) {
+      [
+        { klass: Tasks::Models::TaskedExercise,
+          title: nil,
+          related_exercise_ids: [] },
+        { klass: Tasks::Models::TaskedExercise,
+          title: nil,
+          related_exercise_ids: [] },
+      ]
+    }
+
+    let!(:task_step_gold_data) {
+      core_step_gold_data + spaced_practice_step_gold_data
+    }
+
+    let!(:cnx_page) { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash) }
+
+    let!(:chapter) { FactoryGirl.create :content_chapter,
+                                        title: "Forces and Newton's Laws of Motion" }
+
+    let!(:ecosystem) do
+      ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(chapter.book.ecosystem)
+      ::Content::Ecosystem.new(strategy: ecosystem_strategy)
+    end
+
+    let!(:page) {
+      Content::Routines::ImportPage.call(
+        cnx_page:  cnx_page,
+        chapter: chapter,
+        book_location: [1, 1]
+      ).outputs.page.reload
+    }
+
+    let!(:pools) { Content::Routines::PopulateExercisePools[book: page.book] }
+
+    let!(:task_plan) {
+      FactoryGirl.build(:tasks_task_plan,
+        assistant: @assistant,
+        content_ecosystem_id: ecosystem.id,
+        settings: { 'page_ids' => [page.id.to_s] },
+        num_tasking_plans: 0
+      )
+    }
+
+    let!(:course) {
+      task_plan.owner.tap do |course|
+        AddEcosystemToCourse[course: course, ecosystem: ecosystem]
+      end
+    }
+
+    let!(:period) { CreatePeriod[course: course] }
+
+    let!(:num_taskees) { 3 }
+
+    let!(:taskee_users) {
+      num_taskees.times.map do
+        FactoryGirl.create(:user_profile).tap do |profile|
+          strategy = User::Strategies::Direct::User.new(profile)
+          user = User::User.new(strategy: strategy)
+          AddUserAsPeriodStudent.call(user: user, period: period)
+          user
+        end
+      end
+    }
+
+    let!(:tasking_plans) {
+      tps = taskee_users.map do |taskee|
+        task_plan.tasking_plans << FactoryGirl.build(
+          :tasks_tasking_plan, task_plan: task_plan, target: taskee
+        )
+      end
+
+      task_plan.save!
+      tps
+    }
+
+    it 'is split into different task steps with immediate feedback and a "try another" exercise' do
+      allow(Tasks::Assistants::IReadingAssistant).to receive(:k_ago_map) { [[0, 2]] }
+      allow(Tasks::Assistants::IReadingAssistant).to receive(:num_personalized_exercises) { 0 }
+
+      entity_tasks = DistributeTasks.call(task_plan).outputs.entity_tasks
+      entity_tasks.each do |entity_task|
+        entity_task.reload.reload
+        expect(entity_task.taskings.length).to eq 1
+        expect(entity_task.task.feedback_at).to be <= Time.now
+
+        task_steps = entity_task.task.task_steps
+
+        expect(task_steps.count).to eq task_step_gold_data.count
+        task_steps.each_with_index do |task_step, ii|
+          expect(task_step.tasked.class).to eq(task_step_gold_data[ii][:klass])
+          expect(task_step.tasked.title).to eq(task_step_gold_data[ii][:title])
+          expect(task_step.related_exercise_ids.sort).to(
+            eq task_step_gold_data[ii][:related_exercise_ids]
+          )
         end
       end
     end
