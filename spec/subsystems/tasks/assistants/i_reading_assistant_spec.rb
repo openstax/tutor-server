@@ -382,42 +382,6 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       'title' => "Newton's Second Law of Motion"
     } }
 
-    let!(:core_step_gold_data) {
-      [
-        { klass: Tasks::Models::TaskedReading,
-          title: "Newton's Second Law of Motion",
-          related_exercise_ids: [] },
-        { klass: Tasks::Models::TaskedVideo,
-          title: nil,
-          related_exercise_ids: [] },
-        { klass: Tasks::Models::TaskedExercise,
-          title: nil,
-          related_exercise_ids: [] },
-        { klass: Tasks::Models::TaskedReading,
-          title: nil,
-          related_exercise_ids: [] },
-        { klass: Tasks::Models::TaskedExercise,
-          title: nil,
-          related_exercise_ids: [69, 70, 71, 72, 77, 78, 80, 83, 84,
-                                 86, 87, 88, 89, 90, 99, 100, 101, 102] }
-      ]
-    }
-
-    let!(:spaced_practice_step_gold_data) {
-      [
-        { klass: Tasks::Models::TaskedExercise,
-          title: nil,
-          related_exercise_ids: [] },
-        { klass: Tasks::Models::TaskedExercise,
-          title: nil,
-          related_exercise_ids: [] },
-      ]
-    }
-
-    let!(:task_step_gold_data) {
-      core_step_gold_data + spaced_practice_step_gold_data
-    }
-
     let!(:cnx_page) { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash) }
 
     let!(:chapter) { FactoryGirl.create :content_chapter,
@@ -477,6 +441,43 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
       task_plan.save!
       tps
+    }
+
+    let!(:core_step_gold_data) {
+      [
+        { klass: Tasks::Models::TaskedReading,
+          title: "Newton's Second Law of Motion",
+          related_exercise_ids: [] },
+        { klass: Tasks::Models::TaskedVideo,
+          title: nil,
+          related_exercise_ids: [] },
+        { klass: Tasks::Models::TaskedExercise,
+          title: nil,
+          related_exercise_ids: [] },
+        { klass: Tasks::Models::TaskedReading,
+          title: nil,
+          related_exercise_ids: [] },
+        { klass: Tasks::Models::TaskedExercise,
+          title: nil,
+          related_exercise_ids: page.reload.reading_context_pool.exercises.select do |exercise|
+            exercise.tags.map(&:value).include?('k12phys-ch04-s03-lo02')
+          end.map(&:id) }
+      ]
+    }
+
+    let!(:spaced_practice_step_gold_data) {
+      [
+        { klass: Tasks::Models::TaskedExercise,
+          title: nil,
+          related_exercise_ids: [] },
+        { klass: Tasks::Models::TaskedExercise,
+          title: nil,
+          related_exercise_ids: [] },
+      ]
+    }
+
+    let!(:task_step_gold_data) {
+      core_step_gold_data + spaced_practice_step_gold_data
     }
 
     it 'is split into different task steps with immediate feedback and a "try another" exercise' do

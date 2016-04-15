@@ -8,36 +8,24 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::OptionalExercise, type: :external, v
   let(:fragment_splitter)  {
     OpenStax::Cnx::V1::FragmentSplitter.new(reading_processing_instructions)
   }
-  let(:cnx_page_id)        { '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6@4' }
+  let(:cnx_page_id)        { '548a8717-71e1-4d65-80f0-7b8c6ed4b4c0@3' }
   let(:cnx_page)           { OpenStax::Cnx::V1::Page.new(id: cnx_page_id) }
   let(:fragments)          { fragment_splitter.split_into_fragments(cnx_page.converted_root) }
   let(:exercise_fragments) { fragments.select{ |f| f.instance_of? described_class } }
 
-  let!(:expected_titles) { [ nil, nil ] }
+  let!(:expected_title) { nil }
   let!(:expected_codes)  {
-    [ ['https://exercises-dev.openstax.org/api/exercises?q=tag%3A%22k12phys-ch04-ex017%22'],
-      ['https://exercises-dev.openstax.org/api/exercises?q=tag%3A%22k12phys-ch04-ex073%22'] ]
+    [ 'https://exercises-dev.openstax.org/api/exercises?q=tag%3A%22k12phys-ch04-ex038%22',
+      'https://exercises-dev.openstax.org/api/exercises?q=tag%3A%22k12phys-ch04-ex039%22' ]
   }
-  let!(:expected_tags)   { [ ['k12phys-ch04-ex017'], ['k12phys-ch04-ex073'] ] }
+  let!(:expected_tags)   { ['k12phys-ch04-ex038', 'k12phys-ch04-ex039'] }
 
   it "provides info about the optional exercise fragment" do
-    exercise_fragments.each do |fragment|
-      expect(fragment.node).not_to be_nil
-      expect(fragment.title).to be_nil
-      expect(fragment.embed_codes).not_to be_empty
-      expect(fragment.embed_tags).not_to be_empty
-    end
-  end
-
-  it "returns the assigned title" do
-    expect(exercise_fragments.map(&:title)).to eq expected_titles
-  end
-
-  it "can retrieve the fragment's embed code" do
-    expect(exercise_fragments.map(&:embed_codes)).to eq expected_codes
-  end
-
-  it "can retrieve the fragment's  embed tag" do
-    expect(exercise_fragments.map(&:embed_tags)).to eq expected_tags
+    expect(exercise_fragments.size).to eq 1
+    fragment = exercise_fragments.first
+    expect(fragment.node).not_to be_nil
+    expect(fragment.title).to eq expected_title
+    expect(fragment.embed_codes).to eq expected_codes
+    expect(fragment.embed_tags).to eq expected_tags
   end
 end
