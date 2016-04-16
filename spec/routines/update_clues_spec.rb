@@ -198,16 +198,17 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
     end
 
     context 'with some recent work' do
-      before(:all) { Timecop.freeze(Time.now + 5.minutes) }
-      after(:all)  { Timecop.return }
+      before(:all) do
+        Timecop.freeze(Time.now + 5.minutes)
 
-      before(:each) do
         @role.taskings.each do |tasking|
-          tasking.task.task.task_steps.select{ |ts| ts.completed? }.each do |ts|
+          tasking.task.task.task_steps.select(&:completed?).each do |ts|
             MarkTaskStepCompleted[task_step: ts]
           end
         end
       end
+
+      after(:all)  { Timecop.return }
 
       it 'causes requests to biglearn only for the recent work' do
         expect(@real_client).to receive(:request_clues).twice.and_call_original
@@ -244,7 +245,7 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
     end
 
     context 'without recent work' do
-      before(:all) { Timecop.freeze(Time.now + 5.minutes) }
+      before(:all) { Timecop.freeze(Time.now + 10.minutes) }
       after(:all)  { Timecop.return }
 
       it 'does not cause requests to biglearn' do
