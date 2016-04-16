@@ -13,8 +13,10 @@ RSpec.describe Content::Models::Exercise, :type => :model do
     separated = multipart.content_as_independent_parts
     expect(separated.length).to eq 2
 
-    first = JSON.parse(separated[0])
-    second = JSON.parse(separated[1])
+    expect(separated[0][:id]).to be_kind_of(String)
+
+    first = JSON.parse(separated[0][:content])
+    second = JSON.parse(separated[1][:content])
 
     expect(first['questions']).to be_kind_of(Array)
 

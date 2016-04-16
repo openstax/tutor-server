@@ -48,11 +48,11 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
 
   def content_as_independent_parts
     @content_as_independent_parts ||= ->() {
-      hash = parsed_json
-      questions = hash['questions']
+      exercise_json = parsed_json
+      questions = exercise_json['questions']
       questions.map do |question|
-        hash['questions'] = [question]
-        hash.to_json
+        exercise_json['questions'] = [question]
+        {id: question['id'], content: exercise_json.to_json}
       end
     }.call
   end

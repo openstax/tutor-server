@@ -35,6 +35,8 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
     allow(exercise).to receive(:answer_id).and_return(nil)
     allow(exercise).to receive(:last_completed_at).and_return(Time.current)
     allow(exercise).to receive(:first_completed_at).and_return(Time.current - 1.week)
+    allow(exercise).to receive(:part_id).and_return("partID")
+    allow(exercise).to receive(:is_in_multipart).and_return(false)
 
     exercise
   }
@@ -83,6 +85,14 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
     it "has 'labels'" do
       allow(task_step).to receive(:labels).and_return([])
       expect(representation).to include("labels")
+    end
+
+    it "has 'part_id'" do
+      expect(representation).to include("part_id" => "partID")
+    end
+
+    it "has 'is_in_multipart" do
+      expect(representation).to include("is_in_multipart" => false)
     end
 
   end
