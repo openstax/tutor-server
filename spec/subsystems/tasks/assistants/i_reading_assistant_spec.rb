@@ -496,8 +496,8 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         task_steps.each_with_index do |task_step, ii|
           expect(task_step.tasked.class).to eq(task_step_gold_data[ii][:klass])
           expect(task_step.tasked.title).to eq(task_step_gold_data[ii][:title])
-          expect(task_step.related_exercise_ids.sort).to(
-            eq task_step_gold_data[ii][:related_exercise_ids]
+          expect(Set.new task_step.related_exercise_ids).to(
+            eq Set.new(task_step_gold_data[ii][:related_exercise_ids])
           )
         end
       end
