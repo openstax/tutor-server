@@ -43,7 +43,24 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
   end
 
   def content_hash
-    ::JSON.parse(content).except('attachments')
+    parsed_json.except('attachments')
+  end
+
+  def content_as_independent_parts
+    @content_as_independent_parts ||= ->() {
+      hash = parsed_json
+      questions = hash['questions']
+      questions.map do |question|
+        hash['questions'] = [question]
+        hash.to_json
+      end
+    }.call
+  end
+
+  private
+
+  def parsed_json
+    (@parsed_json ||= ::JSON.parse(content)).deep_dup
   end
 
 end

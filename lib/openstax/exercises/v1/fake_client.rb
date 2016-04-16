@@ -57,6 +57,7 @@ class OpenStax::Exercises::V1::FakeClient
   def new_exercise_hash(options = {})
     options[:number] ||= next_exercise_number
     options[:version] ||= 1
+    options[:num_parts] ||= 1
     {
       uid: options[:uid] || "#{options[:number].to_s}@#{options[:version].to_s}",
       tags: options[:tags] || [],
@@ -67,11 +68,11 @@ class OpenStax::Exercises::V1::FakeClient
           asset: "https://somewhere.com/something.png"
         }
       ],
-      questions: [
+      questions: options[:num_parts].times.map do |index|
         {
           id: "#{next_uid}",
           formats: ["multiple-choice", "free-response"],
-          stem_html: "Select 10 N.",
+          stem_html: "Select 10 N. (#{index})",
           answers: [
             { id: "#{next_uid}", content_html: "10 N",
               correctness: 1.0, feedback_html: "Right!" },
@@ -84,7 +85,7 @@ class OpenStax::Exercises::V1::FakeClient
             }
           ]
         }
-      ]
+      end
     }
   end
 

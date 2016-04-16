@@ -31,10 +31,9 @@ class Tasks::PlaceholderStrategies::HomeworkPersonalized
       # If no exercise available, remove the placeholder completely
       next step.destroy! if exercise.nil?
 
-      tasked_exercise = TaskExercise[task_step: step, exercise: exercise]
+      TaskExercise[task_step: step, exercise: exercise]
       # inject_debug_content!(step.tasked, "This exercise is part of the #{step.group_type}")
-      tasked_exercise.save! if tasked_exercise.changed?
-      step.save!
+      step.save! # the tasked is already saved (step may be too, actually)
     end
 
     task.task_steps.reset

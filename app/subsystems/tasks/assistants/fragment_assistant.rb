@@ -32,8 +32,6 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
         store_related_exercises(exercise_fragment: fragment, page: page,
                                 previous_step: previous_step, title: title) \
           unless previous_step.nil?
-
-        next # Skip setting the step group_type, label and related content
       when OpenStax::Cnx::V1::Fragment::Exercise
         task_exercise(exercise_fragment: fragment, page: page, step: step, title: title)
       when OpenStax::Cnx::V1::Fragment::Video

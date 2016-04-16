@@ -35,6 +35,10 @@ module Content
       verify_and_return @strategy.content_hash, klass: Hash, error: StrategyError
     end
 
+    def content_as_independent_parts
+      verify_and_return @strategy.content_as_independent_parts, klass: Array, error: StrategyError
+    end
+
     def tags
       verify_and_return @strategy.tags, klass: ::Content::Tag, error: StrategyError
     end

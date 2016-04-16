@@ -37,7 +37,7 @@ class Tasks::AddRelatedExerciseAfterStep
       step.group_type = :recovery_group
     end
 
-    outputs[:task_step].tap(&:save!)
+    outputs[:task_steps].first.tap(&:save!)
   end
 
   # Finds an Exercise with all the required tags and at least one LO
