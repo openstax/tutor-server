@@ -13,31 +13,18 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::Exercise, type: :external, vcr: VCR_
   let(:fragments)          { fragment_splitter.split_into_fragments(cnx_page.converted_root) }
   let(:exercise_fragments) { fragments.select{ |f| f.instance_of? described_class } }
 
-  let!(:expected_titles) { [ nil, nil ] }
-  let!(:expected_codes)  {
+  let!(:expected_codes) {
     [ ['https://exercises-dev.openstax.org/api/exercises?q=tag%3A%22k12phys-ch04-ex017%22'],
       ['https://exercises-dev.openstax.org/api/exercises?q=tag%3A%22k12phys-ch04-ex073%22'] ]
   }
-  let!(:expected_tags)   { [ ['k12phys-ch04-ex017'], ['k12phys-ch04-ex073'] ] }
+  let!(:expected_tags)  { [ ['k12phys-ch04-ex017'], ['k12phys-ch04-ex073'] ] }
 
   it "provides info about the exercise fragment" do
-    exercise_fragments.each do |fragment|
+    exercise_fragments.each_with_index do |fragment, index|
       expect(fragment.node).not_to be_nil
       expect(fragment.title).to be_nil
-      expect(fragment.embed_codes).not_to be_empty
-      expect(fragment.embed_tags).not_to be_empty
+      expect(fragment.embed_codes).to eq expected_codes[index]
+      expect(fragment.embed_tags).to eq expected_tags[index]
     end
-  end
-
-  it "returns the assigned title" do
-    expect(exercise_fragments.map(&:title)).to eq expected_titles
-  end
-
-  it "can retrieve the fragment's embed code" do
-    expect(exercise_fragments.map(&:embed_codes)).to eq expected_codes
-  end
-
-  it "can retrieve the fragment's  embed tag" do
-    expect(exercise_fragments.map(&:embed_tags)).to eq expected_tags
   end
 end

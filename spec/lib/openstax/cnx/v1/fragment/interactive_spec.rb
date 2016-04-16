@@ -13,12 +13,11 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::Interactive, type: :external, vcr: V
   let(:fragments)             { fragment_splitter.split_into_fragments(cnx_page.converted_root) }
   let(:interactive_fragments) { fragments.select { |f| f.instance_of? described_class } }
 
-  let!(:expected_titles) { [ nil ] }
-  let!(:expected_urls) {
-    ['https://phet.colorado.edu/sims/html/forces-and-motion-basics/' +
-     'latest/forces-and-motion-basics_en.html']
+  let!(:expected_url)     {
+    'https://phet.colorado.edu/sims/html/forces-and-motion-basics/' +
+    'latest/forces-and-motion-basics_en.html'
   }
-  let!(:expected_content) { [
+  let!(:expected_content) {
     <<-EOF.strip_heredoc.rstrip
       <div data-type="note" data-has-label="true" id="fs-idp38765984" class="note ost-assessed-feature os-interactive virtual-physics ost-tag-lo-k12phys-ch04-s01-lo02" data-label="Virtual Physics: Forces and Motion: Basics">
       <p id="fs-idp92213536">In this simulation, you will first explore net force by placing blue people on the left side of a tug of war rope and red people on the right side of the rope (by clicking people and dragging them with your mouse). Experiment with changing the number and size of people on each side to see how it affects the outcome of the match and the net force. Hit the Go! button to start the match, and the “reset all” button to start over.</p>
@@ -26,26 +25,14 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::Interactive, type: :external, vcr: V
       <iframe src="https://phet.colorado.edu/sims/html/forces-and-motion-basics/latest/forces-and-motion-basics_en.html" width="960" height="560"></iframe>
        </div>
     EOF
-  ] }
+  }
 
   it 'provides info about the interactive fragment' do
     interactive_fragments.each do |fragment|
       expect(fragment.node).not_to be_nil
       expect(fragment.title).to be_nil
-      expect(fragment.to_html).not_to be_nil
-      expect(fragment.url).not_to be_nil
+      expect(fragment.to_html).to eq expected_content
+      expect(fragment.url).to eq expected_url
     end
-  end
-
-  it "can retrieve the fragment's title" do
-    expect(interactive_fragments.map(&:title)).to eq(expected_titles)
-  end
-
-  it "can retrieve the fragment's interactive url" do
-    expect(interactive_fragments.map(&:url)).to eq(expected_urls)
-  end
-
-  it "can retrieve the fragment's content" do
-    expect(interactive_fragments.map(&:to_html)).to eq(expected_content)
   end
 end
