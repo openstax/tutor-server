@@ -33,7 +33,7 @@ RSpec.describe ResetPracticeWidget, type: :routine do
   it 'errors when there are not enough exercises returned for the widget' do
     allow_any_instance_of(ResetPracticeWidget).to receive(:get_fake_exercises) { [] }
     result = ResetPracticeWidget.call(role: role, exercise_source: :fake, page_ids: [])
-    expect(result.errors.first.code).to eq :not_enough_exercises
+    expect(result.errors.first.code).to eq :no_exercises
   end
 
 end

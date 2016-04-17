@@ -10,14 +10,17 @@ module Api
         practice = OpenStruct.new
         consume!(practice, represent_with: Api::V1::PracticeRepresenter)
 
-        entity_task = ResetPracticeWidget[
+        result = ResetPracticeWidget.call(
           role: get_practice_role, exercise_source: :biglearn,
           page_ids: practice.page_ids, chapter_ids: practice.chapter_ids
-        ]
-
-        respond_with entity_task.task,
-                     represent_with: Api::V1::TaskRepresenter,
-                     location: nil
+        )
+        if result.errors.any?
+          render_api_errors(result.errors)
+        else
+          respond_with result.outputs[:entity_task].task,
+                       represent_with: Api::V1::TaskRepresenter,
+                       location: nil
+        end
       end
 
       api :GET, '/courses/:course_id/practice(/role/:role_id)',
