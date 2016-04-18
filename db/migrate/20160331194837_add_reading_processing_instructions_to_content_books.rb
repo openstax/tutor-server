@@ -14,16 +14,22 @@ class AddReadingProcessingInstructionsToContentBooks < ActiveRecord::Migration
           book.reading_processing_instructions = [
             { css: '.ost-reading-discard, .os-teacher, [data-type="glossary"]',
               fragments: [], except: 'snap-lab' },
-            { css: ".ost-feature, .ost-assessed-feature",
-              fragments: ["node", "exercise", "optional_exercise"] },
-            { css: ".ost-feature .ost-exercise-choice, .ost-assessed-feature .ost-exercise-choice,
-                    .ost-feature .os-exercise, .ost-assessed-feature .os-exercise", fragments: [] },
-            { css: ".ost-exercise-choice", fragments: ["exercise", "optional_exercise"] },
-            { css: ".os-exercise", fragments: ["exercise"] },
-            { css: ".ost-video", fragments: ["video"] },
-            { css: ".os-interactive, .ost-interactive", fragments: ["interactive"] },
-            { css: ".worked-example", fragments: ["reading"], labels: ["worked-example"] },
-            { css: ".ost-feature, .ost-assessed-feature", fragments: ["reading"] }
+            { css: '.ost-feature:has-descendants(".os-exercise",2),
+                    .ost-feature:has-descendants(".ost-exercise-choice"),
+                    .ost-assessed-feature:has-descendants(".os-exercise",2),
+                    .ost-assessed-feature:has-descendants(".ost-exercise-choice")',
+              fragments: ['node', 'optional_exercise'] },
+            { css: '.ost-feature:has-descendants(".os-exercise, .ost-exercise-choice"),
+                    .ost-assessed-feature:has-descendants(".os-exercise, .ost-exercise-choice")',
+              fragments: ['node', 'exercise'] },
+            { css: '.ost-feature .ost-exercise-choice, .ost-assessed-feature .ost-exercise-choice,
+                    .ost-feature .os-exercise, .ost-assessed-feature .os-exercise', fragments: [] },
+            { css: '.ost-exercise-choice', fragments: ['exercise', 'optional_exercise'] },
+            { css: '.os-exercise', fragments: ['exercise'] },
+            { css: '.ost-video', fragments: ['video'] },
+            { css: '.os-interactive, .ost-interactive', fragments: ['interactive'] },
+            { css: '.worked-example', fragments: ['reading'], labels: ['worked-example'] },
+            { css: '.ost-feature, .ost-assessed-feature', fragments: ['reading'] }
           ]
           book.save!
         end

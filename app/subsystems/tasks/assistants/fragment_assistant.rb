@@ -10,8 +10,7 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
       step = Tasks::Models::TaskStep.new(task: task)
 
       case fragment
-      when OpenStax::Cnx::V1::Fragment::Exercise
-        task_exercise(exercise_fragment: fragment, page: page, step: step, title: title)
+      # This is a subclass of Fragment::Exercise so it needs to come first
       when OpenStax::Cnx::V1::Fragment::OptionalExercise
         # The prompt for the optional exercise appears on the previous step,
         # so that's what is passed in
@@ -20,6 +19,10 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
         store_related_exercises(exercise_fragment: fragment, page: page,
                                 previous_step: previous_step, title: title) \
           unless previous_step.nil?
+
+        next # Skip setting the step group_type, label and related content
+      when OpenStax::Cnx::V1::Fragment::Exercise
+        task_exercise(exercise_fragment: fragment, page: page, step: step, title: title)
       when OpenStax::Cnx::V1::Fragment::Video
         task_video(video_fragment: fragment, step: step, title: title)
       when OpenStax::Cnx::V1::Fragment::Interactive
@@ -74,11 +77,11 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
       # Retrieve an exercise related to the previous step by LO
       exercise = tasked.exercise
 
-      los = Set.new(exercise.los)
-      aplos = Set.new(exercise.aplos)
+      los = Set.new(exercise.los.map(&:id))
+      aplos = Set.new(exercise.aplos.map(&:id))
 
       pool_exercises.select do |ex|
-        ex.los.any?{ |tag| los.include?(tag) } || ex.aplos.any?{ |tag| aplos.include?(tag) }
+        ex.los.any?{ |tag| los.include?(tag.id) } || ex.aplos.any?{ |tag| aplos.include?(tag.id) }
       end
     else # Try One (Exemplar)
       # Retrieve an exercise tagged with the context-cnxfeature tag
