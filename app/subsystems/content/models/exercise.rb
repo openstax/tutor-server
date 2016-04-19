@@ -46,8 +46,8 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
     parsed_json.except('attachments')
   end
 
-  def content_as_independent_parts
-    @content_as_independent_parts ||= ->() {
+  def content_as_independent_questions
+    @content_as_independent_questions ||= ->() {
       exercise_json = parsed_json
       questions = exercise_json['questions']
       questions.map do |question|

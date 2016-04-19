@@ -20,7 +20,7 @@ RSpec.describe TaskExercise, type: :routine do
     expect(task_step.tasked).to be_a(Tasks::Models::TaskedExercise)
     expect(task_step.tasked).to be_persisted
     expect(task_step.tasked.is_in_multipart).to be_falsy
-    expect(task_step.tasked.part_id).to be_kind_of(String)
+    expect(task_step.tasked.question_id).to be_kind_of(String)
     expect(task_step.tasked.task_step).to eq task_step
     parser = task_step.tasked.parser
     expect(parser.url).to eq exercise.url

@@ -12,9 +12,9 @@ class TaskExercise
     task ||= task_step.try(:task)
     fatal_error(code: :cannot_get_task) if task.nil?
 
-    parts = exercise.content_as_independent_parts
+    questions = exercise.content_as_independent_questions
 
-    outputs[:task_steps] = parts.each_with_index.map do |part, ii|
+    outputs[:task_steps] = questions.each_with_index.map do |question, ii|
 
       # Make sure that all steps after the first exercise part get their own new step
       task_step = nil if ii > 0
@@ -24,9 +24,9 @@ class TaskExercise
         content_exercise_id: exercise.id,
         url: exercise.url,
         title: title || exercise.title,
-        content: part[:content],
-        part_id: part[:id],
-        is_in_multipart: parts.size > 1
+        content: question[:content],
+        question_id: question[:id],
+        is_in_multipart: questions.size > 1
       )
 
       task.add_step(task_step)

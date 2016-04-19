@@ -30,7 +30,7 @@ module Api::V1::Tasks
                description: "If true, indicates this object is part of a multipart"
              }
 
-    property :part_id,
+    property :question_id,
              type: String,
              writeable: false,
              readable: true,

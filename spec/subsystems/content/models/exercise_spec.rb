@@ -10,7 +10,7 @@ RSpec.describe Content::Models::Exercise, :type => :model do
 
   it 'splits parts' do
     multipart = FactoryGirl.create(:content_exercise, num_parts: 2)
-    separated = multipart.content_as_independent_parts
+    separated = multipart.content_as_independent_questions
     expect(separated.length).to eq 2
 
     expect(separated[0][:id]).to be_kind_of(String)

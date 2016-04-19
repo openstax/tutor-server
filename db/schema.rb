@@ -615,11 +615,11 @@ ActiveRecord::Schema.define(version: 20160502205835) do
     t.datetime "updated_at",          null: false
     t.string   "correct_answer_id",   null: false
     t.boolean  "is_in_multipart"
-    t.string   "part_id"
+    t.string   "question_id"
   end
 
   add_index "tasks_tasked_exercises", ["content_exercise_id"], name: "index_tasks_tasked_exercises_on_content_exercise_id", using: :btree
-  add_index "tasks_tasked_exercises", ["part_id"], name: "index_tasks_tasked_exercises_on_part_id", using: :btree
+  add_index "tasks_tasked_exercises", ["question_id"], name: "index_tasks_tasked_exercises_on_question_id", using: :btree
 
   create_table "tasks_tasked_external_urls", force: :cascade do |t|
     t.string   "url",        null: false
