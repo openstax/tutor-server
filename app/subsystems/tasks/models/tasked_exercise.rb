@@ -64,7 +64,8 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     self.content = json_hash.to_json
   end
 
-  # The following 4 methods assume only 1 Question
+  # The following 4 methods assume only 1 Question; this is OK for TaskedExercise,
+  # because each TE contains at most 1 part of a multipart exercise.
   def formats
     question_formats[0]
   end

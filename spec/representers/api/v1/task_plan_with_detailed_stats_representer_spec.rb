@@ -29,6 +29,7 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
     MarkTaskStepCompleted.call(task_step: task_step)
 
     representation = Api::V1::TaskPlanWithDetailedStatsRepresenter.new(task_plan).as_json
+
     expect(representation).to include(
       "id" => task_plan.id.to_s,
       "title" => task_plan.title,
@@ -51,26 +52,44 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
             "is_trouble" => false,
             "exercises" => a_collection_containing_exactly(
               {
-                "content" => a_kind_of(Hash),
-                "answered_count" => 2,
-                "answers" => a_collection_containing_exactly(
-                  {
-                    "student_names" => [ a_kind_of(String) ],
-                    "free_response" => "a sentence explaining all the things",
-                    "answer_id" => correct_answer_id
-                  },
-                  {
-                    "student_names" => [ a_kind_of(String) ],
-                    "free_response" => "a sentence not explaining anything",
-                    "answer_id" => incorrect_answer_ids.first
-                  }
-                ),
+                "content" => a_kind_of(String),
+                "question_stats" => [{
+                  "question_id" => a_kind_of(String),
+                  "answered_count" => 2,
+                  "answers" => a_collection_containing_exactly(
+                    {
+                      "student_names" => [ a_kind_of(String) ],
+                      "free_response" => "a sentence explaining all the things",
+                      "answer_id" => correct_answer_id
+                    },
+                    {
+                      "student_names" => [ a_kind_of(String) ],
+                      "free_response" => "a sentence not explaining anything",
+                      "answer_id" => incorrect_answer_ids.first
+                    }
+                  ),
+                  "answer_stats" => answer_ids.map do |aid|
+                    {
+                      "answer_id" => aid.to_s,
+                      "selected_count" => (aid.to_s == correct_answer_id || aid.to_s == incorrect_answer_ids.first) ? 1 : 0
+                    }
+                  end
+                }],
                 "average_step_number" => 3.0
               },
               {
-                "content" => a_kind_of(Hash),
-                "answered_count" => 0,
-                "answers" => [],
+                "content" => a_kind_of(String),
+                "question_stats" => [{
+                  "question_id" => a_kind_of(String),
+                  "answered_count" => 0,
+                  "answers" => [],
+                  "answer_stats" => 4.times.map do
+                    {
+                      "answer_id" => a_kind_of(String),
+                      "selected_count" => 0
+                    }
+                  end
+                }],
                 "average_step_number" => 5.0
               }
             )
@@ -90,26 +109,26 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
       ]
     )
 
-    exercise_1 = representation['stats'].first['current_pages'].first['exercises'].first
-    exercise_1['content']['questions'].first['answers'].each do |answer|
-      case answer['id']
-      when correct_answer_id, incorrect_answer_ids.first
-        expect(answer['selected_count']).to eq 1
-      else
-        expect(answer['selected_count']).to eq 0
-      end
-    end
+    # exercise_1 = representation['stats'].first['current_pages'].first['exercises'].first
+    # exercise_1['content']['questions'].first['answers'].each do |answer|
+    #   case answer['id']
+    #   when correct_answer_id, incorrect_answer_ids.first
+    #     expect(answer['selected_count']).to eq 1
+    #   else
+    #     expect(answer['selected_count']).to eq 0
+    #   end
+    # end
 
-    exercise_2 = representation['stats'].first['current_pages'].first['exercises'].last
-    exercise_2['content']['questions'].first['answers'].each do |answer|
-      expect(answer['selected_count']).to eq 0
-    end
+    # exercise_2 = representation['stats'].first['current_pages'].first['exercises'].last
+    # exercise_2['content']['questions'].first['answers'].each do |answer|
+    #   expect(answer['selected_count']).to eq 0
+    # end
 
-    representation['stats'].first['spaced_pages'].first['exercises'].each do |exercise|
-      exercise['content']['questions'].first['answers'].each do |answer|
-        expect(answer['selected_count']).to eq 0
-      end
-    end
+    # representation['stats'].first['spaced_pages'].first['exercises'].each do |exercise|
+    #   exercise['content']['questions'].first['answers'].each do |answer|
+    #     expect(answer['selected_count']).to eq 0
+    #   end
+    # end
   end
 
 end

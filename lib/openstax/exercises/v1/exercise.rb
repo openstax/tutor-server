@@ -139,23 +139,6 @@ class OpenStax::Exercises::V1::Exercise
     )
   end
 
-  def question_answers_with_stats(stats)
-    question_answers.map do |qa|
-      qa.map{ |ans| ans.merge('selected_count' => stats[ans['id']] || 0) }
-    end
-  end
-
-  def questions_with_answer_stats(stats)
-    answer_stats = question_answers_with_stats(stats)
-    questions.each_with_index.map do |qq, ii|
-      qq.merge('answers' => answer_stats[ii])
-    end
-  end
-
-  def content_with_answer_stats(stats)
-    content_hash.merge('questions' => questions_with_answer_stats(stats))
-  end
-
   def is_multipart?
     questions.size > 1
   end
