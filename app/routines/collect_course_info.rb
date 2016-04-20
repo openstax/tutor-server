@@ -34,6 +34,7 @@ class CollectCourseInfo
       info = Hashie::Mash.new(
         id: entity_course.id,
         name: profile.name,
+        timezone: profile.timezone,
         offering: offering,
         is_concept_coach: profile.is_concept_coach,
         school_name: profile.school_name,

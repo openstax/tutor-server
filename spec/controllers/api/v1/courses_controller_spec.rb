@@ -75,6 +75,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(response.body).to include({
           id: course.id.to_s,
           name: course.profile.name,
+          timezone: course.profile.timezone,
           ecosystem_id: "#{ecosystem.id}",
           is_concept_coach: false,
           roles: [{ id: teacher.id.to_s, type: 'teacher' }],
