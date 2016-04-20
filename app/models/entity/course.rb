@@ -14,7 +14,7 @@ class Entity::Course < Tutor::SubSystems::BaseModel
 
   has_many :taskings, through: :periods, subsystem: :tasks
 
-  delegate :name, :appearance_code, :is_concept_coach, :offering, :teacher_join_token, to: :profile
+  delegate :name, :appearance_code, :is_concept_coach, :offering, :teacher_join_token, :timezone, to: :profile
 
   def deletable?
     periods.empty? && teachers.empty? && students.empty?

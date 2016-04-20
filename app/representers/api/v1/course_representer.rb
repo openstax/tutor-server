@@ -16,6 +16,12 @@ module Api::V1
              writeable: false,
              schema_info: { required: true }
 
+    property :timezone,
+             type: String,
+             readable: true,
+             writeable: false,
+             schema_info: { required: false }
+
     property :salesforce_book_name,
              type: String,
              readable: true,

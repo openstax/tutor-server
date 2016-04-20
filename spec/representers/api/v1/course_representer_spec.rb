@@ -23,6 +23,10 @@ RSpec.describe Api::V1::CourseRepresenter, type: :representer do
     expect(represented['name']).to eq 'Test course'
   end
 
+  it 'shows the course timezone' do
+    expect(represented['timezone']).to eq 'Central Time (US & Canada)'
+  end
+
   it 'shows the offering salesforce_book_name' do
     expect(represented['salesforce_book_name']).to eq 'book'
   end
