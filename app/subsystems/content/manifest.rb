@@ -34,22 +34,17 @@ module Content
       !!@strategy.valid?
     end
 
+    # For the following 3 methods, the array returned can contain both Strings and nils
     def update_books!
-      verify_and_return @strategy.update_books!, klass: String,
-                                                 error: StrategyError,
-                                                 allow_nil: true
+      verify_and_return @strategy.update_books!, klass: Array, error: StrategyError
     end
 
     def update_exercises!
-      verify_and_return @strategy.update_exercises!, klass: String,
-                                                     error: StrategyError,
-                                                     allow_nil: true
+      verify_and_return @strategy.update_exercises!, klass: Array, error: StrategyError
     end
 
     def discard_exercises!
-      verify_and_return @strategy.discard_exercises!, klass: String,
-                                                      error: StrategyError,
-                                                      allow_nil: true
+      verify_and_return @strategy.discard_exercises!, klass: Array, error: StrategyError
     end
 
   end
