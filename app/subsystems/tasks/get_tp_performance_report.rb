@@ -44,19 +44,25 @@ module Tasks
                            task_plan_results[task.task_plan] << task
                          end
 
+                         data = get_student_data(student_tasks)
+
                          {
                            name: student_role.name,
                            first_name: student_role.first_name,
                            last_name: student_role.last_name,
                            student_identifier: student_role.student.student_identifier,
                            role: student_role.id,
-                           data: get_student_data(student_tasks)
+                           data: data,
+                           average_score: average_scores(data.map{|datum| datum[:task]})
                          }
                        end.compact
+
+
 
         Hashie::Mash.new({
           period: period,
           data_headings: get_data_headings(tasking_plans, task_plan_results),
+          overall_average_score: average(student_data.map{|sd| sd[:average_score]}),
           students: student_data
         })
       end
@@ -93,8 +99,7 @@ module Tasks
           plan_id: task_plan.id,
           type: task_plan.type,
           due_at: tasking_plan.due_at,
-          total_average: total_average(task_plan_results[task_plan]),
-          attempted_average: attempted_average(task_plan_results[task_plan])
+          average_score: average_scores(task_plan_results[task_plan])
         }
       end
     end

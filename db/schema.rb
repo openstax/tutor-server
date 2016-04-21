@@ -606,9 +606,12 @@ ActiveRecord::Schema.define(version: 20160421142200) do
     t.datetime "created_at",          null: false
     t.datetime "updated_at",          null: false
     t.string   "correct_answer_id",   null: false
+    t.boolean  "is_in_multipart"
+    t.string   "question_id"
   end
 
   add_index "tasks_tasked_exercises", ["content_exercise_id"], name: "index_tasks_tasked_exercises_on_content_exercise_id", using: :btree
+  add_index "tasks_tasked_exercises", ["question_id"], name: "index_tasks_tasked_exercises_on_question_id", using: :btree
 
   create_table "tasks_tasked_external_urls", force: :cascade do |t|
     t.string   "url",        null: false
@@ -674,29 +677,32 @@ ActiveRecord::Schema.define(version: 20160421142200) do
 
   create_table "tasks_tasks", force: :cascade do |t|
     t.integer  "tasks_task_plan_id"
-    t.integer  "entity_task_id",                                null: false
-    t.integer  "task_type",                                     null: false
-    t.string   "title",                                         null: false
+    t.integer  "entity_task_id",                                         null: false
+    t.integer  "task_type",                                              null: false
+    t.string   "title",                                                  null: false
     t.text     "description"
-    t.datetime "opens_at",                                      null: false
+    t.datetime "opens_at",                                               null: false
     t.datetime "due_at"
     t.datetime "feedback_at"
     t.datetime "last_worked_at"
-    t.integer  "tasks_taskings_count",              default: 0, null: false
+    t.integer  "tasks_taskings_count",                   default: 0,     null: false
     t.text     "personalized_placeholder_strategy"
-    t.integer  "steps_count",                       default: 0, null: false
-    t.integer  "completed_steps_count",             default: 0, null: false
-    t.integer  "core_steps_count",                  default: 0, null: false
-    t.integer  "completed_core_steps_count",        default: 0, null: false
-    t.integer  "exercise_steps_count",              default: 0, null: false
-    t.integer  "completed_exercise_steps_count",    default: 0, null: false
-    t.integer  "recovered_exercise_steps_count",    default: 0, null: false
-    t.integer  "correct_exercise_steps_count",      default: 0, null: false
-    t.integer  "placeholder_steps_count",           default: 0, null: false
-    t.integer  "placeholder_exercise_steps_count",  default: 0, null: false
-    t.datetime "created_at",                                    null: false
-    t.datetime "updated_at",                                    null: false
+    t.integer  "steps_count",                            default: 0,     null: false
+    t.integer  "completed_steps_count",                  default: 0,     null: false
+    t.integer  "core_steps_count",                       default: 0,     null: false
+    t.integer  "completed_core_steps_count",             default: 0,     null: false
+    t.integer  "exercise_steps_count",                   default: 0,     null: false
+    t.integer  "completed_exercise_steps_count",         default: 0,     null: false
+    t.integer  "recovered_exercise_steps_count",         default: 0,     null: false
+    t.integer  "correct_exercise_steps_count",           default: 0,     null: false
+    t.integer  "placeholder_steps_count",                default: 0,     null: false
+    t.integer  "placeholder_exercise_steps_count",       default: 0,     null: false
+    t.datetime "created_at",                                             null: false
+    t.datetime "updated_at",                                             null: false
     t.hstore   "spy"
+    t.boolean  "is_late_work_accepted",                  default: false
+    t.integer  "correct_on_time_exercise_steps_count"
+    t.integer  "completed_on_time_exercise_steps_count"
   end
 
   add_index "tasks_tasks", ["due_at", "opens_at"], name: "index_tasks_tasks_on_due_at_and_opens_at", using: :btree

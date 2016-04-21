@@ -148,7 +148,9 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     update_completed_core_steps_count(task_steps: steps)
     update_exercise_steps_count(task_steps: steps)
     update_completed_exercise_steps_count(task_steps: steps)
+    update_completed_on_time_exercise_steps_count(task_steps: steps)
     update_correct_exercise_steps_count(task_steps: steps)
+    update_correct_on_time_exercise_steps_count(task_steps: steps)
     update_placeholder_steps_count(task_steps: steps)
     update_placeholder_exercise_steps_count(task_steps: steps)
 
@@ -171,12 +173,28 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     completed_exercise_steps_count
   end
 
+  def completed_on_time_exercise_count
+    completed_on_time_exercise_steps_count
+  end
+
   def correct_exercise_count
     correct_exercise_steps_count
   end
 
+  def correct_on_time_exercise_count
+    correct_on_time_exercise_steps_count
+  end
+
   def exercise_steps
     task_steps.preload(:tasked).select{|task_step| task_step.exercise?}
+  end
+
+  def teacher_chosen_correct_exercise_count
+    is_late_work_accepted ? correct_exercise_count : correct_on_time_exercise_count
+  end
+
+  def teacher_chosen_score
+    teacher_chosen_correct_exercise_count / exercise_count.to_f
   end
 
   protected
@@ -213,9 +231,21 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
       task_steps.count{|step| step.exercise? && step.completed?}
   end
 
+  def update_completed_on_time_exercise_steps_count(task_steps:)
+    self.completed_on_time_exercise_steps_count =
+      task_steps.count{|step| step.exercise? && step.completed? &&
+                              step.last_completed_at < due_at }
+  end
+
   def update_correct_exercise_steps_count(task_steps:)
     self.correct_exercise_steps_count =
       task_steps.count{|step| step.exercise? && step.tasked.is_correct?}
+  end
+
+  def update_correct_on_time_exercise_steps_count(task_steps:)
+    self.correct_on_time_exercise_steps_count =
+      task_steps.count{|step| step.exercise? && step.tasked.is_correct? &&
+                              step.last_completed_at < due_at }
   end
 
   def update_placeholder_steps_count(task_steps:)
