@@ -350,6 +350,32 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(response.body_as_hash[:name]).to eq course_name
         expect(response.body_as_hash[:timezone]).to eq 'Edinburgh'
       end
+
+      it 'updates the default open time' do
+        course_name = course.name
+        api_patch :update, user_1_token, parameters: { id: course.id,
+                                                       course: {
+                                                         default_open_time: '01:02' } }
+        expect(course.reload.name).to eq course_name
+        expect(course.timezone).to eq 'Central Time (US & Canada)'
+        expect(course.profile.reload.default_open_time.to_s(:time)).to eq '01:02'
+        expect(response.body_as_hash[:name]).to eq course_name
+        expect(response.body_as_hash[:timezone]).to eq 'Central Time (US & Canada)'
+        expect(response.body_as_hash[:default_open_time]).to eq '01:02'
+      end
+
+      it 'updates the default due time' do
+        course_name = course.name
+        api_patch :update, user_1_token, parameters: { id: course.id,
+                                                       course: {
+                                                         default_due_time: '02:02' } }
+        expect(course.reload.name).to eq course_name
+        expect(course.timezone).to eq 'Central Time (US & Canada)'
+        expect(course.profile.reload.default_due_time.to_s(:time)).to eq '02:02'
+        expect(response.body_as_hash[:name]).to eq course_name
+        expect(response.body_as_hash[:timezone]).to eq 'Central Time (US & Canada)'
+        expect(response.body_as_hash[:default_due_time]).to eq '02:02'
+      end
     end
   end
 

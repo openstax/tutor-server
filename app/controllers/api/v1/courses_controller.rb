@@ -62,6 +62,8 @@ class Api::V1::CoursesController < Api::V1::ApiController
     OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, course)
 
     course_params = { name: params[:course][:name],
+                      default_open_time: params[:course][:default_open_time],
+                      default_due_time: params[:course][:default_due_time],
                       timezone: params[:course][:timezone] }.compact
 
     UpdateCourse.call(params[:id], course_params)

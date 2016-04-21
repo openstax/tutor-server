@@ -35,6 +35,8 @@ class CollectCourseInfo
         id: entity_course.id,
         name: profile.name,
         timezone: profile.timezone,
+        default_open_time: profile.default_open_time,
+        default_due_time: profile.default_due_time,
         offering: offering,
         is_concept_coach: profile.is_concept_coach,
         school_name: profile.school_name,
