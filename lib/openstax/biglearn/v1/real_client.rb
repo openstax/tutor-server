@@ -8,11 +8,14 @@ class OpenStax::Biglearn::V1::RealClient
   # At least one pool will always be sent in each request, regardless of this value
   # Setting this value too low will make requests slower.
   # Setting this value too high will cause timeouts.
-  # Default is 200 (for example, 25 students and 8 pools on each request)
-  CLUE_MAX_POOL_STUDENT_PRODUCT = 200
+  # Default is 100 (for example, 50 students and 2 pools on each request)
+  CLUE_MAX_POOL_STUDENT_PRODUCT = 100
 
   # The maximum number of exercises to send to Biglearn on each request
   MAX_EXERCISES_PER_REQUEST = 1500
+
+  # The maximum number of pools to create on Biglearn on each request
+  MAX_POOLS_PER_REQUEST = 100
 
   def initialize(biglearn_configuration)
     @server_url   = biglearn_configuration.server_url
@@ -37,23 +40,25 @@ class OpenStax::Biglearn::V1::RealClient
   end
 
   def add_pools(pools)
-    options = { body: construct_add_pools_payload(pools).to_json }
+    pools.each_slice(MAX_POOLS_PER_REQUEST).flat_map do |pools|
+      options = { body: construct_add_pools_payload(pools).to_json }
 
-    response = request(:post, add_pools_uri, with_content_type_header(options))
-    body_hash = handle_response(response)
+      response = request(:post, add_pools_uri, with_content_type_header(options))
+      body_hash = handle_response(response)
 
-    uuids = body_hash['pool_ids']
-    raise "Biglearn returned wrong number of uuids " \
-          "(#pools != #uuids) (#{pools.count} != #{uuids.count})" \
-      unless uuids.count == pools.count
+      uuids = body_hash['pool_ids']
+      raise "Biglearn returned wrong number of uuids " \
+            "(#pools != #uuids) (#{pools.count} != #{uuids.count})" \
+        unless uuids.count == pools.count
 
-    nil_uuid_count = uuids.count(&:nil?)
-    raise "Biglearn returned #{nil_uuid_count} nil uuids" if nil_uuid_count > 0
+      nil_uuid_count = uuids.count(&:nil?)
+      raise "Biglearn returned #{nil_uuid_count} nil uuids" if nil_uuid_count > 0
 
-    blank_uuid_count = uuids.count(&:blank?)
-    raise "Biglearn returned #{blank_uuid_count} blank uuids" if blank_uuid_count > 0
+      blank_uuid_count = uuids.count(&:blank?)
+      raise "Biglearn returned #{blank_uuid_count} blank uuids" if blank_uuid_count > 0
 
-    uuids
+      uuids
+    end
   end
 
   def combine_pools(pools)
