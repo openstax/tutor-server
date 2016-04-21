@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160411214041) do
+ActiveRecord::Schema.define(version: 20160421142200) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -218,12 +218,14 @@ ActiveRecord::Schema.define(version: 20160411214041) do
   add_index "course_membership_enrollments", ["course_membership_student_id", "created_at"], name: "course_membership_enrollments_student_created_at_uniq", unique: true, using: :btree
 
   create_table "course_membership_periods", force: :cascade do |t|
-    t.integer  "entity_course_id", null: false
-    t.string   "name",             null: false
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
-    t.string   "enrollment_code",  null: false
+    t.integer  "entity_course_id",  null: false
+    t.string   "name",              null: false
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+    t.string   "enrollment_code",   null: false
     t.datetime "deleted_at"
+    t.time     "default_open_time"
+    t.time     "default_due_time"
   end
 
   add_index "course_membership_periods", ["enrollment_code"], name: "index_course_membership_periods_on_enrollment_code", unique: true, using: :btree
@@ -266,6 +268,8 @@ ActiveRecord::Schema.define(version: 20160411214041) do
     t.integer  "catalog_offering_id"
     t.string   "appearance_code"
     t.string   "biglearn_excluded_pool_uuid"
+    t.time     "default_open_time"
+    t.time     "default_due_time"
   end
 
   add_index "course_profile_profiles", ["catalog_offering_id"], name: "index_course_profile_profiles_on_catalog_offering_id", using: :btree
