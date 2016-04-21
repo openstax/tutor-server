@@ -61,7 +61,10 @@ class Api::V1::CoursesController < Api::V1::ApiController
     course = Entity::Course.find(params[:id])
     OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, course)
 
-    UpdateCourse.call(params[:id], { name: params[:course][:name] })
+    course_params = { name: params[:course][:name],
+                      timezone: params[:course][:timezone] }.compact
+
+    UpdateCourse.call(params[:id], course_params)
 
     # Use CollectCourseInfo instead of just representing the entity course so
     # we can gather extra information

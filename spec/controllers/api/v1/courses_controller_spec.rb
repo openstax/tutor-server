@@ -75,6 +75,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(response.body).to include({
           id: course.id.to_s,
           name: course.profile.name,
+          timezone: course.profile.timezone,
           ecosystem_id: "#{ecosystem.id}",
           is_concept_coach: false,
           roles: [{ id: teacher.id.to_s, type: 'teacher' }],
@@ -333,7 +334,21 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         api_patch :update, user_1_token, parameters: { id: course.id,
                                                        course: { name: 'Renamed' } }
         expect(course.reload.name).to eq 'Renamed'
+        expect(course.timezone).to eq 'Central Time (US & Canada)'
         expect(response.body_as_hash[:name]).to eq 'Renamed'
+        expect(response.body_as_hash[:timezone]).to eq 'Central Time (US & Canada)'
+      end
+
+      it 'updates the timezone' do
+        course_name = course.name
+        api_patch :update, user_1_token, parameters: { id: course.id,
+                                                       course: {
+                                                         name: course_name,
+                                                         timezone: 'Edinburgh' } }
+        expect(course.reload.name).to eq course_name
+        expect(course.timezone).to eq 'Edinburgh'
+        expect(response.body_as_hash[:name]).to eq course_name
+        expect(response.body_as_hash[:timezone]).to eq 'Edinburgh'
       end
     end
   end
