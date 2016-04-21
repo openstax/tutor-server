@@ -42,7 +42,7 @@ class GetEcosystemExercisesFromBiglearn
         allow_repetitions: allow_repetitions
       )
       numbers = urls.map{ |url| url.chomp('/').split('/').last.split('@').first }
-    rescue OAuth2::Error => exception
+    rescue StandardError => exception
       # Our communication issues turned out to be nginx configuration issues (keepalive_timeout)
       # Still, it's a nice safeguard to have, in case AWS has some trouble,
       # since this Biglearn request may be blocking a student's work
