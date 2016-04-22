@@ -36,6 +36,8 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   validate :due_at_on_or_after_opens_at
 
+  after_update :update_counts_if_needed!
+
   def stepless?
     STEPLESS_TASK_TYPES.include?(task_type.to_sym)
   end
@@ -159,7 +161,15 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def update_step_counts!
+    self.class.skip_callback(:update, :after, :update_counts_if_needed!)
     update_step_counts.save!
+  ensure
+    self.class.set_callback(:update, :after, :update_counts_if_needed!)
+  end
+
+  def update_counts_if_needed!
+    update_step_counts! if due_at_changed?
+    true
   end
 
   def exercise_count

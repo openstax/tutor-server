@@ -425,5 +425,25 @@ RSpec.describe Tasks::Models::Task, type: :model do
       end
     end
 
+    it "updates on_time counts when the due date changes" do
+      task = FactoryGirl.create(:tasks_task, opens_at: Time.current - 1.week,
+                                             due_at: Time.current - 1.day)
+
+      allow(correct_exercise_step).to receive(:last_completed_at).and_return(Time.now)
+      allow(task).to receive(:task_steps).and_return([correct_exercise_step])
+
+      task.update_step_counts!
+
+      expect(task.completed_on_time_steps_count).to eq 0
+      expect(task.completed_on_time_exercise_steps_count).to eq 0
+      expect(task.correct_on_time_exercise_steps_count).to eq 0
+
+      task.update_attributes(due_at: 1.day.from_now)
+
+      expect(task.completed_on_time_steps_count).to eq 1
+      expect(task.completed_on_time_exercise_steps_count).to eq 1
+      expect(task.correct_on_time_exercise_steps_count).to eq 1
+    end
+
   end
 end
