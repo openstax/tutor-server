@@ -23,7 +23,9 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
       expect(response.body_as_hash).to eq({
         id: CourseMembership::Models::Period.last.id.to_s,
         name: '7th Period',
-        enrollment_code: 'awesome programmer'
+        enrollment_code: 'awesome programmer',
+        default_open_time: '00:00',
+        default_due_time: '00:00'
       })
     end
 

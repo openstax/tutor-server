@@ -39,6 +39,18 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
     target_enrollments.includes(student: :role).map{ |en| en.student.role }
   end
 
+  def default_open_time
+    default = Time.parse(Settings::Db.store[:period_default_open_time]) rescue Time.parse('00:00')
+    attr = read_attribute(:default_open_time)
+    attr.nil? ? default : attr
+  end
+
+  def default_due_time
+    default = Time.parse(Settings::Db.store[:period_default_due_time]) rescue Time.parse('00:00')
+    attr = read_attribute(:default_due_time)
+    attr.nil? ? default : attr
+  end
+
   protected
 
   def no_active_students
