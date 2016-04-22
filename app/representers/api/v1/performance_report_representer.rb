@@ -33,6 +33,18 @@ module Api::V1
                type: String,
                readable: true
 
+      property :step_count,
+               type: Integer,
+               readable: true
+
+      property :completed_step_count,
+               type: Integer,
+               readable: true
+
+      property :completed_on_time_step_count,
+               type: Integer,
+               readable: true
+
       property :actual_and_placeholder_exercise_count,
                as: :exercise_count,
                type: Integer,

@@ -44,8 +44,8 @@ module Tasks
           is_late_work_accepted: task.is_late_work_accepted
         }
 
-        if task.task_type == 'homework' || task.task_type == 'concept_coach'
-          data.merge!(exercise_counts(task))
+        if %w(homework concept_coach reading).include?(task.task_type)
+          data.merge!(task_counts(task))
         end
 
         data.merge!(is_included_in_averages: included_in_averages?(task))
@@ -54,23 +54,18 @@ module Tasks
       end
     end
 
-    def exercise_counts(task)
-      exercise_count          = task.actual_and_placeholder_exercise_count
-      completed_count         = task.completed_exercise_count
-      completed_on_time_count = task.completed_on_time_exercise_count
-      correct_count           = task.correct_exercise_count
-      correct_on_time_count   = task.correct_on_time_exercise_count
-      recovered_count         = task.recovered_exercise_steps_count
-      score                   = task.teacher_chosen_score
-
+    def task_counts(task)
       {
-        actual_and_placeholder_exercise_count: exercise_count,
-        completed_exercise_count: completed_count,
-        completed_on_time_exercise_count: completed_on_time_count,
-        correct_exercise_count: correct_count,
-        correct_on_time_exercise_count: correct_on_time_count,
-        recovered_exercise_count: recovered_count,
-        score: score
+        step_count:                            task.steps_count,
+        completed_step_count:                  task.completed_steps_count,
+        completed_on_time_step_count:          task.completed_on_time_steps_count,
+        actual_and_placeholder_exercise_count: task.actual_and_placeholder_exercise_count,
+        completed_exercise_count:              task.completed_exercise_count,
+        completed_on_time_exercise_count:      task.completed_on_time_exercise_count,
+        correct_exercise_count:                task.correct_exercise_count,
+        correct_on_time_exercise_count:        task.correct_on_time_exercise_count,
+        recovered_exercise_count:              task.recovered_exercise_steps_count,
+        score:                                 task.teacher_chosen_score
       }
     end
   end

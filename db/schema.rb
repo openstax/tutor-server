@@ -606,12 +606,9 @@ ActiveRecord::Schema.define(version: 20160421142200) do
     t.datetime "created_at",          null: false
     t.datetime "updated_at",          null: false
     t.string   "correct_answer_id",   null: false
-    t.boolean  "is_in_multipart"
-    t.string   "question_id"
   end
 
   add_index "tasks_tasked_exercises", ["content_exercise_id"], name: "index_tasks_tasked_exercises_on_content_exercise_id", using: :btree
-  add_index "tasks_tasked_exercises", ["question_id"], name: "index_tasks_tasked_exercises_on_question_id", using: :btree
 
   create_table "tasks_tasked_external_urls", force: :cascade do |t|
     t.string   "url",        null: false
@@ -703,6 +700,7 @@ ActiveRecord::Schema.define(version: 20160421142200) do
     t.boolean  "is_late_work_accepted",                  default: false
     t.integer  "correct_on_time_exercise_steps_count"
     t.integer  "completed_on_time_exercise_steps_count"
+    t.integer  "completed_on_time_steps_count"
   end
 
   add_index "tasks_tasks", ["due_at", "opens_at"], name: "index_tasks_tasks_on_due_at_and_opens_at", using: :btree

@@ -144,6 +144,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
     update_steps_count(task_steps: steps)
     update_completed_steps_count(task_steps: steps)
+    update_completed_on_time_steps_count(task_steps: steps)
     update_core_steps_count(task_steps: steps)
     update_completed_core_steps_count(task_steps: steps)
     update_exercise_steps_count(task_steps: steps)
@@ -213,6 +214,11 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     self.completed_steps_count = task_steps.count(&:completed?)
   end
 
+  def update_completed_on_time_steps_count(task_steps:)
+    self.completed_on_time_steps_count =
+      task_steps.count{|step| step.completed? && step_on_time?(step)}
+  end
+
   def update_core_steps_count(task_steps:)
     self.core_steps_count = task_steps.count(&:core_group?)
   end
@@ -233,8 +239,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   def update_completed_on_time_exercise_steps_count(task_steps:)
     self.completed_on_time_exercise_steps_count =
-      task_steps.count{|step| step.exercise? && step.completed? &&
-                              (due_at.nil? || step.last_completed_at < due_at) }
+      task_steps.count{|step| step.exercise? && step.completed? && step_on_time?(step)}
   end
 
   def update_correct_exercise_steps_count(task_steps:)
@@ -246,7 +251,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     self.correct_on_time_exercise_steps_count =
       task_steps.count{|step| step.exercise? && step.completed? &&
                               step.tasked.is_correct? &&
-                              (due_at.nil? || step.last_completed_at < due_at) }
+                              step_on_time?(step) }
   end
 
   def update_placeholder_steps_count(task_steps:)
@@ -256,6 +261,10 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   def update_placeholder_exercise_steps_count(task_steps:)
     self.placeholder_exercise_steps_count =
       task_steps.count{|step| step.placeholder? && step.tasked.exercise_type?}
+  end
+
+  def step_on_time?(step)
+    due_at.nil? || step.last_completed_at < due_at
   end
 
 end
