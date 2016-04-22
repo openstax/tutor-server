@@ -42,8 +42,20 @@ module Api::V1
                type: Integer,
                readable: true
 
+      property :completed_on_time_exercise_count,
+               type: Integer,
+               readable: true
+
       property :correct_exercise_count,
                type: Integer,
+               readable: true
+
+      property :correct_on_time_exercise_count,
+               type: Integer,
+               readable: true
+
+      property :score,
+               type: Float,
                readable: true
 
       property :recovered_exercise_count,
@@ -61,6 +73,15 @@ module Api::V1
                readable: true,
                writeable: false,
                getter: ->(*) { DateTimeUtilities.to_api_s(last_worked_at) }
+
+      property :is_late_work_accepted,
+               readable: true,
+               writeable: false
+
+      property :is_included_in_averages,
+               readable: true,
+               writeable: false
+
     end
 
     class Students < Roar::Decorator
@@ -85,6 +106,10 @@ module Api::V1
 
       property :student_identifier,
                type: String,
+               readable: true
+
+      property :average_score,
+               type: Float,
                readable: true
 
       collection :data,
@@ -115,11 +140,7 @@ module Api::V1
                writeable: false,
                getter: ->(*) { DateTimeUtilities.to_api_s(due_at) }
 
-      property :total_average,
-               type: Float,
-               readable: true
-
-      property :attempted_average,
+      property :average_score,
                type: Float,
                readable: true
     end
@@ -132,6 +153,10 @@ module Api::V1
                type: String,
                readable: true,
                getter: -> (*) { period.id.to_s }
+
+      property :overall_average_score,
+               type: Float,
+               readable: true
 
       collection :data_headings,
                  readable: true,

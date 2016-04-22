@@ -22,9 +22,9 @@ module Tasks
 
         data_headings = get_cc_data_headings(period_cc_tasks_map.values, sorted_period_pages)
 
-        data = get_student_cc_data(period_cc_tasks_map[student.role], sorted_period_pages)
-
         student_data = period_students.map do |student|
+          data = get_student_cc_data(period_cc_tasks_map[student.role], sorted_period_pages)
+
           {
             name: student.role.name,
             first_name: student.role.first_name,
@@ -32,7 +32,7 @@ module Tasks
             student_identifier: student.student_identifier,
             role: student.role.id,
             data: data,
-            average_score: average_scores(data.map{|datum| datum[:task]})
+            average_score: average_scores(data.map{|datum| datum.present? ? datum[:task] : nil})
           }
         end.sort_by do |hash|
           sort_name = "#{hash[:last_name]} #{hash[:first_name]}"
@@ -41,8 +41,8 @@ module Tasks
 
         Hashie::Mash.new({
           period: period,
-          data_headings: data_headings,
           overall_average_score: average(student_data.map{|sd| sd[:average_score]}),
+          data_headings: data_headings,
           students: student_data
         })
       end

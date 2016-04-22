@@ -260,6 +260,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
         allow(step).to receive(:completed?).and_return(true)
         allow(step).to receive(:exercise?).and_return(true)
         allow(step).to receive(:placeholder?).and_return(false)
+        allow(step).to receive(:last_completed_at).and_return(2.years.ago)
         allow(step).to receive(:tasked).and_return(
           instance_double(Tasks::Models::TaskedExercise).tap do |exercise|
             allow(exercise).to receive(:is_correct?).and_return(true)
@@ -274,6 +275,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
         allow(step).to receive(:completed?).and_return(false)
         allow(step).to receive(:exercise?).and_return(false)
         allow(step).to receive(:placeholder?).and_return(true)
+        allow(step).to receive(:last_completed_at).and_return(nil)
         allow(step).to receive(:tasked).and_return(
           instance_double(Tasks::Models::TaskedPlaceholder).tap do |exercise|
             allow(exercise).to receive(:exercise_type?).and_return(false)
@@ -288,6 +290,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
         allow(step).to receive(:completed?).and_return(false)
         allow(step).to receive(:exercise?).and_return(false)
         allow(step).to receive(:placeholder?).and_return(true)
+        allow(step).to receive(:last_completed_at).and_return(nil)
         allow(step).to receive(:tasked).and_return(
           instance_double(Tasks::Models::TaskedPlaceholder).tap do |exercise|
             allow(exercise).to receive(:exercise_type?).and_return(true)

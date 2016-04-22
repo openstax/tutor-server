@@ -194,7 +194,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def teacher_chosen_score
-    teacher_chosen_correct_exercise_count / exercise_count.to_f
+    teacher_chosen_correct_exercise_count / actual_and_placeholder_exercise_count.to_f
   end
 
   protected
@@ -234,7 +234,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   def update_completed_on_time_exercise_steps_count(task_steps:)
     self.completed_on_time_exercise_steps_count =
       task_steps.count{|step| step.exercise? && step.completed? &&
-                              step.last_completed_at < due_at }
+                              (due_at.nil? || step.last_completed_at < due_at) }
   end
 
   def update_correct_exercise_steps_count(task_steps:)
@@ -244,8 +244,9 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   def update_correct_on_time_exercise_steps_count(task_steps:)
     self.correct_on_time_exercise_steps_count =
-      task_steps.count{|step| step.exercise? && step.tasked.is_correct? &&
-                              step.last_completed_at < due_at }
+      task_steps.count{|step| step.exercise? && step.completed? &&
+                              step.tasked.is_correct? &&
+                              (due_at.nil? || step.last_completed_at < due_at) }
   end
 
   def update_placeholder_steps_count(task_steps:)

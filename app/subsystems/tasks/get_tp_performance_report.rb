@@ -53,7 +53,7 @@ module Tasks
                            student_identifier: student_role.student.student_identifier,
                            role: student_role.id,
                            data: data,
-                           average_score: average_scores(data.map{|datum| datum[:task]})
+                           average_score: average_scores(data.map{|datum| datum.present? ? datum[:task] : nil})
                          }
                        end.compact
 
@@ -61,8 +61,8 @@ module Tasks
 
         Hashie::Mash.new({
           period: period,
-          data_headings: get_data_headings(tasking_plans, task_plan_results),
           overall_average_score: average(student_data.map{|sd| sd[:average_score]}),
+          data_headings: get_data_headings(tasking_plans, task_plan_results),
           students: student_data
         })
       end
