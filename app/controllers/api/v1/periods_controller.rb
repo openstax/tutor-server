@@ -37,7 +37,9 @@ class Api::V1::PeriodsController < Api::V1::ApiController
     updated_period = CourseMembership::UpdatePeriod[
       period: @period,
       name: period_params[:name],
-      enrollment_code: period_params[:enrollment_code]
+      enrollment_code: period_params[:enrollment_code],
+      default_open_time: period_params[:default_open_time],
+      default_due_time: period_params[:default_due_time]
     ]
     respond_with updated_period, represent_with: Api::V1::PeriodRepresenter,
                                  location: nil,
@@ -68,6 +70,6 @@ class Api::V1::PeriodsController < Api::V1::ApiController
   end
 
   def period_params
-    params.require(:period).permit(:name, :enrollment_code)
+    params.require(:period).permit(:name, :enrollment_code, :default_open_time, :default_due_time)
   end
 end

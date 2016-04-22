@@ -23,7 +23,9 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
       expect(response.body_as_hash).to eq({
         id: CourseMembership::Models::Period.last.id.to_s,
         name: '7th Period',
-        enrollment_code: 'awesome programmer'
+        enrollment_code: 'awesome programmer',
+        default_open_time: '00:00',
+        default_due_time: '00:00'
       })
     end
 
@@ -75,6 +77,22 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
       end
 
       expect(response).to have_http_status(403)
+    end
+
+    it 'allows teachers to change the default open time' do
+      api_patch :update, teacher_token,
+        parameters: { id: period.id, period: { default_open_time: '18:32' } }
+
+      expect(response).to have_http_status(200)
+      expect(response.body_as_hash[:default_open_time]).to eq('18:32')
+    end
+
+    it 'allows teachers to change the default due time' do
+      api_patch :update, teacher_token,
+        parameters: { id: period.id, period: { default_due_time: '18:33' } }
+
+      expect(response).to have_http_status(200)
+      expect(response.body_as_hash[:default_due_time]).to eq('18:33')
     end
   end
 
