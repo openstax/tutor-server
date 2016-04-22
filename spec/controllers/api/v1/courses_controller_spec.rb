@@ -76,15 +76,21 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           id: course.id.to_s,
           name: course.profile.name,
           timezone: course.profile.timezone,
+          default_open_time: '00:00',
+          default_due_time: '00:00',
           ecosystem_id: "#{ecosystem.id}",
           is_concept_coach: false,
           roles: [{ id: teacher.id.to_s, type: 'teacher' }],
           periods: [{ id: zeroth_period.id.to_s,
                       name: zeroth_period.name,
-                      enrollment_code: zeroth_period.enrollment_code },
+                      enrollment_code: zeroth_period.enrollment_code,
+                      default_open_time: '00:00',
+                      default_due_time: '00:00' },
                     { id: period.id.to_s,
                       name: period.name,
-                      enrollment_code: period.enrollment_code }]
+                      enrollment_code: period.enrollment_code,
+                      default_open_time: '00:00',
+                      default_due_time: '00:00' }]
         }.to_json)
       end
     end

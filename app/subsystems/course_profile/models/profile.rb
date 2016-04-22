@@ -13,4 +13,16 @@ class CourseProfile::Models::Profile < Tutor::SubSystems::BaseModel
   delegate :name, to: :school,
                   prefix: true,
                   allow_nil: true
+
+  def default_due_time
+    default = Time.parse(Settings::Db.store[:course_default_due_time]) rescue Time.parse('00:00')
+    attr = read_attribute(:default_due_time)
+    attr.nil? ? default : attr
+  end
+
+  def default_open_time
+    default = Time.parse(Settings::Db.store[:course_default_open_time]) rescue Time.parse('00:00')
+    attr = read_attribute(:default_open_time)
+    attr.nil? ? default : attr
+  end
 end
