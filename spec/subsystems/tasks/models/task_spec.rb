@@ -260,6 +260,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
         allow(step).to receive(:completed?).and_return(true)
         allow(step).to receive(:exercise?).and_return(true)
         allow(step).to receive(:placeholder?).and_return(false)
+        allow(step).to receive(:last_completed_at).and_return(2.years.ago)
         allow(step).to receive(:tasked).and_return(
           instance_double(Tasks::Models::TaskedExercise).tap do |exercise|
             allow(exercise).to receive(:is_correct?).and_return(true)
@@ -274,6 +275,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
         allow(step).to receive(:completed?).and_return(false)
         allow(step).to receive(:exercise?).and_return(false)
         allow(step).to receive(:placeholder?).and_return(true)
+        allow(step).to receive(:last_completed_at).and_return(nil)
         allow(step).to receive(:tasked).and_return(
           instance_double(Tasks::Models::TaskedPlaceholder).tap do |exercise|
             allow(exercise).to receive(:exercise_type?).and_return(false)
@@ -288,6 +290,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
         allow(step).to receive(:completed?).and_return(false)
         allow(step).to receive(:exercise?).and_return(false)
         allow(step).to receive(:placeholder?).and_return(true)
+        allow(step).to receive(:last_completed_at).and_return(nil)
         allow(step).to receive(:tasked).and_return(
           instance_double(Tasks::Models::TaskedPlaceholder).tap do |exercise|
             allow(exercise).to receive(:exercise_type?).and_return(true)
@@ -420,6 +423,26 @@ RSpec.describe Tasks::Models::Task, type: :model do
         task.update_step_counts!
         expect(task.placeholder_exercise_steps_count).to eq(2)
       end
+    end
+
+    it "updates on_time counts when the due date changes" do
+      task = FactoryGirl.create(:tasks_task, opens_at: Time.current - 1.week,
+                                             due_at: Time.current - 1.day)
+
+      allow(correct_exercise_step).to receive(:last_completed_at).and_return(Time.now)
+      allow(task).to receive(:task_steps).and_return([correct_exercise_step])
+
+      task.update_step_counts!
+
+      expect(task.completed_on_time_steps_count).to eq 0
+      expect(task.completed_on_time_exercise_steps_count).to eq 0
+      expect(task.correct_on_time_exercise_steps_count).to eq 0
+
+      task.update_attributes(due_at: 1.day.from_now)
+
+      expect(task.completed_on_time_steps_count).to eq 1
+      expect(task.completed_on_time_exercise_steps_count).to eq 1
+      expect(task.correct_on_time_exercise_steps_count).to eq 1
     end
 
   end

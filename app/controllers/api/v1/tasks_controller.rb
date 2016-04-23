@@ -26,4 +26,33 @@ class Api::V1::TasksController < Api::V1::ApiController
     standard_read(::Tasks::Models::Task.find(params[:id]), Api::V1::TaskRepresenter, true)
   end
 
+  api :PUT, '/tasks/:id/accept_late_work', 'Accept late work in the task score'
+  description <<-EOS
+    Changes the Task so that it is marked as late work being accepted, and changes
+    the `score` that it computes.  Does not change the underlying counts in any way.
+  EOS
+  def accept_late_work
+    change_is_late_work_accepted(true)
+  end
+
+
+  api :PUT, '/tasks/:id/reject_late_work', 'Reject late work in the task score'
+  description <<-EOS
+    Changes the Task so that it is marked as late work being not included, and changes
+    the `score` that it computes.  Does not change the underlying counts in any way.
+  EOS
+  def reject_late_work
+    change_is_late_work_accepted(false)
+  end
+
+  protected
+
+  def change_is_late_work_accepted(is_accepted)
+    task = Tasks::Models::Task.find(params[:id])
+    OSU::AccessPolicy.require_action_allowed!(:change_is_late_work_accepted, current_api_user, task)
+    task.is_late_work_accepted = is_accepted
+    task.save! # would be Exceptional if this failed
+    head :ok
+  end
+
 end

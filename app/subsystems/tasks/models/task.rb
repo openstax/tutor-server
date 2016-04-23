@@ -36,6 +36,8 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   validate :due_at_on_or_after_opens_at
 
+  after_update :update_counts_if_needed!
+
   def stepless?
     STEPLESS_TASK_TYPES.include?(task_type.to_sym)
   end
@@ -144,11 +146,14 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
     update_steps_count(task_steps: steps)
     update_completed_steps_count(task_steps: steps)
+    update_completed_on_time_steps_count(task_steps: steps)
     update_core_steps_count(task_steps: steps)
     update_completed_core_steps_count(task_steps: steps)
     update_exercise_steps_count(task_steps: steps)
     update_completed_exercise_steps_count(task_steps: steps)
+    update_completed_on_time_exercise_steps_count(task_steps: steps)
     update_correct_exercise_steps_count(task_steps: steps)
+    update_correct_on_time_exercise_steps_count(task_steps: steps)
     update_placeholder_steps_count(task_steps: steps)
     update_placeholder_exercise_steps_count(task_steps: steps)
 
@@ -156,7 +161,15 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def update_step_counts!
+    self.class.skip_callback(:update, :after, :update_counts_if_needed!)
     update_step_counts.save!
+  ensure
+    self.class.set_callback(:update, :after, :update_counts_if_needed!)
+  end
+
+  def update_counts_if_needed!
+    update_step_counts! if due_at_changed?
+    true
   end
 
   def exercise_count
@@ -171,12 +184,28 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     completed_exercise_steps_count
   end
 
+  def completed_on_time_exercise_count
+    completed_on_time_exercise_steps_count
+  end
+
   def correct_exercise_count
     correct_exercise_steps_count
   end
 
+  def correct_on_time_exercise_count
+    correct_on_time_exercise_steps_count
+  end
+
   def exercise_steps
     task_steps.preload(:tasked).select{|task_step| task_step.exercise?}
+  end
+
+  def teacher_chosen_correct_exercise_count
+    is_late_work_accepted ? correct_exercise_count : correct_on_time_exercise_count
+  end
+
+  def teacher_chosen_score
+    teacher_chosen_correct_exercise_count / actual_and_placeholder_exercise_count.to_f
   end
 
   protected
@@ -193,6 +222,11 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   def update_completed_steps_count(task_steps:)
     self.completed_steps_count = task_steps.count(&:completed?)
+  end
+
+  def update_completed_on_time_steps_count(task_steps:)
+    self.completed_on_time_steps_count =
+      task_steps.count{|step| step.completed? && step_on_time?(step)}
   end
 
   def update_core_steps_count(task_steps:)
@@ -213,9 +247,21 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
       task_steps.count{|step| step.exercise? && step.completed?}
   end
 
+  def update_completed_on_time_exercise_steps_count(task_steps:)
+    self.completed_on_time_exercise_steps_count =
+      task_steps.count{|step| step.exercise? && step.completed? && step_on_time?(step)}
+  end
+
   def update_correct_exercise_steps_count(task_steps:)
     self.correct_exercise_steps_count =
       task_steps.count{|step| step.exercise? && step.tasked.is_correct?}
+  end
+
+  def update_correct_on_time_exercise_steps_count(task_steps:)
+    self.correct_on_time_exercise_steps_count =
+      task_steps.count{|step| step.exercise? && step.completed? &&
+                              step.tasked.is_correct? &&
+                              step_on_time?(step) }
   end
 
   def update_placeholder_steps_count(task_steps:)
@@ -225,6 +271,10 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   def update_placeholder_exercise_steps_count(task_steps:)
     self.placeholder_exercise_steps_count =
       task_steps.count{|step| step.placeholder? && step.tasked.exercise_type?}
+  end
+
+  def step_on_time?(step)
+    due_at.nil? || step.last_completed_at < due_at
   end
 
 end

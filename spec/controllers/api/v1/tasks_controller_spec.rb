@@ -23,6 +23,12 @@ describe Api::V1::TasksController, type: :controller, api: true, version: :v1 do
   let!(:tasking_1)       { FactoryGirl.create :tasks_tasking, role: user_1_role,
                                                               task: task_1.entity_task }
 
+  let!(:teacher_user)       { FactoryGirl.create(:user) }
+  let!(:teacher_role)  { AddUserAsCourseTeacher[course: task_1.task_plan.owner, user: teacher_user] }
+  let!(:teacher_user_token) { FactoryGirl.create :doorkeeper_access_token,
+                                                 application: application,
+                                                 resource_owner_id: teacher_user.id }
+
   describe "#show" do
     it "should work on the happy path" do
       api_get :show, user_1_token, parameters: {id: task_1.id}
@@ -43,6 +49,30 @@ describe Api::V1::TasksController, type: :controller, api: true, version: :v1 do
         api_get :show, user_2_token, parameters: { id: task_1.id }
       }.to raise_error(SecurityTransgression)
     end
+  end
+
+  describe "changing is_late_work_accepted" do
+    it "should be able to change it to true" do
+      expect(task_1.is_late_work_accepted).to be_falsy
+      api_put :accept_late_work, teacher_user_token, parameters: {id: task_1.id}
+      expect(response).to have_http_status(:success)
+      expect(task_1.reload.is_late_work_accepted).to be_truthy
+    end
+
+    it "should be able to change it to false" do
+      task_1.update_attribute(:is_late_work_accepted, true)
+      expect(task_1.is_late_work_accepted).to be_truthy
+      api_put :reject_late_work, teacher_user_token, parameters: {id: task_1.id}
+      expect(response).to have_http_status(:success)
+      expect(task_1.reload.is_late_work_accepted).to be_falsy
+    end
+
+    it "shouldn't be changeable by non-teacher" do
+      expect{
+        api_put :accept_late_work, user_1_token, parameters: {id: task_1.id}
+      }.to raise_error(SecurityTransgression)
+    end
+
   end
 
 end
