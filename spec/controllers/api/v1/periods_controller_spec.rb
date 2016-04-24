@@ -24,8 +24,8 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
         id: CourseMembership::Models::Period.last.id.to_s,
         name: '7th Period',
         enrollment_code: 'awesome programmer',
-        default_open_time: '00:00',
-        default_due_time: '00:00'
+        default_open_time: '00:01',
+        default_due_time: '07:00'
       })
     end
 
