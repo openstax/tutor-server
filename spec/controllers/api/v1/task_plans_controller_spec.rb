@@ -283,8 +283,8 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
           valid_json_hash['title'] = 'Canceled'
           valid_json_hash['description'] = 'Canceled Assignment'
 
-          new_opens_at = Time.zone.now.tomorrow
-          new_due_at = Time.zone.now.tomorrow + 1.week
+          new_opens_at = Time.zone.now.tomorrow.beginning_of_minute
+          new_due_at = new_opens_at + 1.week
 
           valid_json_hash['tasking_plans'].first['opens_at'] = new_opens_at
           valid_json_hash['tasking_plans'].first['due_at'] = new_due_at
@@ -303,8 +303,8 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
           expect(task_plan.title).to eq 'Canceled'
           expect(task_plan.description).to eq 'Canceled Assignment'
           task_plan.tasks.each do |task|
-            expect(task.opens_at).to eq new_opens_at.midnight + 1.minute
-            expect(task.due_at).to eq new_due_at.midnight + 7.hours
+            expect(task.opens_at).to eq new_opens_at
+            expect(task.due_at).to eq new_due_at
           end
 
           expect(response.body).to eq Api::V1::TaskPlanRepresenter.new(task_plan).to_json
