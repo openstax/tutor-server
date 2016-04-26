@@ -553,11 +553,12 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
             "type" => "reading",
             "published_at" => be_kind_of(String),
             "tasking_plans" => [
+              a_hash_including(
               { "target_id" => course.id.to_s,
                 "target_type" => 'course',
                 "opens_at" => DateTimeUtilities.to_api_s(plan.tasking_plans.first.opens_at),
                 "due_at" => DateTimeUtilities.to_api_s(plan.tasking_plans.first.due_at)
-              }
+              })
             ]
           )
         )
