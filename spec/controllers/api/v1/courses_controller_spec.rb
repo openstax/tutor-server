@@ -346,6 +346,18 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       end
 
       it 'updates the timezone' do
+        opens_at_str = '2016-04-26 17:15:00'
+        opens_at = ActiveSupport::TimeZone[course.timezone].parse(opens_at_str)
+        due_at = opens_at + 1.week
+
+        task_plan = FactoryGirl.build :tasks_task_plan, owner: course, num_tasking_plans: 0
+        tasking_plan = FactoryGirl.create :tasks_tasking_plan, task_plan: task_plan,
+                                                               opens_at: opens_at,
+                                                               due_at: due_at
+
+        expect(tasking_plan.opens_at).to eq(opens_at.utc)
+        expect(tasking_plan.due_at).to eq(due_at.utc)
+
         course_name = course.name
         api_patch :update, user_1_token, parameters: { id: course.id,
                                                        course: {
@@ -355,6 +367,14 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(course.timezone).to eq 'Edinburgh'
         expect(response.body_as_hash[:name]).to eq course_name
         expect(response.body_as_hash[:timezone]).to eq 'Edinburgh'
+
+        new_opens_at = ActiveSupport::TimeZone[course.timezone].parse(opens_at_str)
+        new_due_at = new_opens_at + 1.week
+
+        expect(tasking_plan.reload.opens_at).to_not eq(opens_at.utc)
+        expect(tasking_plan.opens_at).to eq(new_opens_at.utc)
+        expect(tasking_plan.due_at).to_not eq(due_at.utc)
+        expect(tasking_plan.due_at).to eq(new_due_at.utc)
       end
 
       it 'updates the default open time' do

@@ -65,7 +65,7 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
 
       # Ignore the stats for this test
       expect(response.body_as_hash.except(:stats).to_json).to(
-        eq(Api::V1::TaskPlanRepresenter.new(task_plan).to_json)
+        eq(Api::V1::TaskPlanRepresenter.new(task_plan.reload).to_json)
       )
     end
 
