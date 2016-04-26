@@ -34,6 +34,7 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
   let!(:unaffiliated_teacher) { FactoryGirl.create(:user) }
 
   before do
+    course.profile.update_attributes(timezone: 'Pacific Time (US & Canada)')
     AddUserAsCourseTeacher.call(course: course, user: teacher)
     AddUserAsPeriodStudent.call(period: period, user: student)
   end
@@ -229,7 +230,7 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
       }
 
       it 'allows a teacher to publish a task_plan for their course' do
-        Time.use_zone('Central Time (US & Canada)') do
+        Time.use_zone(course.timezone) do
           controller.sign_in teacher
           start_time = Time.zone.now
           api_put :update, nil, parameters: { course_id: course.id, id: task_plan.id },

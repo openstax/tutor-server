@@ -7,6 +7,9 @@ RSpec.describe Api::V1::TaskingPlanRepresenter, type: :representer do
       ## bug work-around, see:
       ##   https://github.com/rspec/rspec-rails/issues/1309#issuecomment-118971828
       allow(dbl).to receive(:as_json).and_return(dbl)
+      profile = FactoryGirl.create(:course_profile_profile, timezone: 'Central Time (US & Canada)')
+      task_plan = FactoryGirl.create(:tasks_task_plan, owner: profile.course)
+      allow(dbl).to receive(:task_plan).and_return(task_plan)
     end
   }
 
