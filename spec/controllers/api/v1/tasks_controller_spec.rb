@@ -55,7 +55,7 @@ describe Api::V1::TasksController, type: :controller, api: true, version: :v1 do
     it "should be able to change it to true" do
       expect(task_1.is_late_work_accepted).to be_falsy
       api_put :accept_late_work, teacher_user_token, parameters: {id: task_1.id}
-      expect(response).to have_http_status(:success)
+      expect(response).to have_http_status(:no_content)
       expect(task_1.reload.is_late_work_accepted).to be_truthy
     end
 
@@ -63,7 +63,7 @@ describe Api::V1::TasksController, type: :controller, api: true, version: :v1 do
       task_1.update_attribute(:is_late_work_accepted, true)
       expect(task_1.is_late_work_accepted).to be_truthy
       api_put :reject_late_work, teacher_user_token, parameters: {id: task_1.id}
-      expect(response).to have_http_status(:success)
+      expect(response).to have_http_status(:no_content)
       expect(task_1.reload.is_late_work_accepted).to be_falsy
     end
 
