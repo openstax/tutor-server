@@ -11,6 +11,19 @@ module Api::V1
              writeable: false,
              getter: ->(*){ self }
 
+    property :base_accounts_url,
+             readable: true,
+             writeable: false,
+             getter: -> (*){ OpenStax::Accounts.configuration.openstax_accounts_url }
+
+    property :accounts_profile_url,
+             readable: true,
+             writeable: false,
+             getter: -> (*){
+               OpenStax::Utilities.generate_url(
+                 OpenStax::Accounts.configuration.openstax_accounts_url, "profile"
+               )
+             }
     property :courses,
              extend: Api::V1::CoursesRepresenter,
              readable: true,
