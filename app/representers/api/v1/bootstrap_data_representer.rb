@@ -1,7 +1,7 @@
 module Api::V1
 
   # Represents the information that a user should be able to view about their profile
-  class UserBootstrapDataRepresenter < ::Roar::Decorator
+  class BootstrapDataRepresenter < ::Roar::Decorator
 
     include ::Roar::JSON
 

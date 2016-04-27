@@ -60,7 +60,7 @@ class AuthController < ApplicationController
   def user_status_update
     status = strategy.authorize.body.slice('access_token')
     if !current_user.is_anonymous? && ( stubbed_auth? || terms_agreed? )
-      status.merge! Api::V1::UserBootstrapDataRepresenter.new(current_user)
+      status.merge! Api::V1::BootstrapDataRepresenter.new(current_user)
     end
     status[:endpoints] = {
       is_stubbed: stubbed_auth?,
