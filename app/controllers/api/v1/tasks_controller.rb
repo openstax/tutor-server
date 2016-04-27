@@ -52,7 +52,7 @@ class Api::V1::TasksController < Api::V1::ApiController
     OSU::AccessPolicy.require_action_allowed!(:change_is_late_work_accepted, current_api_user, task)
     task.is_late_work_accepted = is_accepted
     task.save! # would be Exceptional if this failed
-    head :ok
+    head :no_content
   end
 
 end
