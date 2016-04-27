@@ -10,7 +10,8 @@ RSpec.describe Api::V1::BootstrapDataRepresenter, type: :representer do
       "user" =>  Api::V1::UserRepresenter.new(user).as_json,
       "courses" => [], # not testing this since it's too expensive to generate meaningful course data
       "base_accounts_url" => OpenStax::Accounts.configuration.openstax_accounts_url,
-      "accounts_profile_url" => OpenStax::Accounts.configuration.openstax_accounts_url + 'profile'
+      "accounts_profile_url" => OpenStax::Accounts.configuration.openstax_accounts_url + 'profile',
+      "accounts_user_url" => OpenStax::Accounts.configuration.openstax_accounts_url + 'api/user'
     )
   end
 

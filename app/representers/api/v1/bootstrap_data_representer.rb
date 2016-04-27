@@ -24,6 +24,21 @@ module Api::V1
                  OpenStax::Accounts.configuration.openstax_accounts_url, "profile"
                )
              }
+
+    property :accounts_user_url,
+             readable: true,
+             writeable: false,
+             getter: -> (*){
+               OpenStax::Utilities.generate_url(
+                 OpenStax::Accounts.configuration.openstax_accounts_url, "api/user"
+               )
+             }
+
+    property :tutor_notices_url,
+             readable: true,
+             writeable: false,
+             getter: -> (args){ args[:tutor_notices_url] }
+
     property :courses,
              extend: Api::V1::CoursesRepresenter,
              readable: true,
