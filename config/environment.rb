@@ -22,6 +22,7 @@ require 'logout_redirect_chooser'
 require 'openstax_rescue_from_this'
 require 'active_job/base_with_retry_conditions'
 require 'xlsx_helper'
+require 'axlsx_modifications'
 
 %w(
   biglearn
