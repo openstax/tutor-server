@@ -181,7 +181,7 @@ class GetConceptCoach
 
   def get_ecosystem_and_pool(page)
     ecosystem = Content::Ecosystem.find_by_page_ids(page.id)
-    [ecosystem, page.all_exercises_pool]
+    [ecosystem, page.concept_coach_pool]
   end
 
 end

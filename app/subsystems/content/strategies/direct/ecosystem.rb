@@ -217,6 +217,10 @@ module Content
           find_pools(pages: pages, type: :practice_widget)
         end
 
+        def concept_coach_pools(pages:)
+          find_pools(pages: pages, type: :concept_coach)
+        end
+
         def all_exercises_pools(pages:)
           find_pools(pages: pages, type: :all_exercises)
         end

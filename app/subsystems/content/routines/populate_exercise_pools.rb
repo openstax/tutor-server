@@ -32,6 +32,8 @@ class Content::Routines::PopulateExercisePools
                                                                pool_type: :homework_dynamic)
         page.practice_widget_pool = Content::Models::Pool.new(ecosystem: ecosystem,
                                                               pool_type: :practice_widget)
+        page.concept_coach_pool = Content::Models::Pool.new(ecosystem: ecosystem,
+                                                            pool_type: :concept_coach)
         page.all_exercises_pool = Content::Models::Pool.new(ecosystem: ecosystem,
                                                             pool_type: :all_exercises)
 
@@ -85,12 +87,17 @@ class Content::Routines::PopulateExercisePools
           page.practice_widget_pool.content_exercise_ids << exercise.id \
             if use_old_logic || (!use_old_logic && !tags.include?('requires-context:y'))
 
+          # Concept Coach
+          page.concept_coach_pool.content_exercise_ids << exercise.id \
+            if tags.include?('ost-type:concept-coach')
+
           # All Exercises
           page.all_exercises_pool.content_exercise_ids << exercise.id
         end
 
         [page.reading_dynamic_pool, page.reading_context_pool, page.homework_core_pool,
-         page.homework_dynamic_pool, page.practice_widget_pool, page.all_exercises_pool]
+         page.homework_dynamic_pool, page.practice_widget_pool, page.concept_coach_pool,
+         page.all_exercises_pool]
       end
 
       # Populate chapter pools

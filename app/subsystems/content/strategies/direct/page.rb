@@ -6,9 +6,9 @@ module Content
         wraps ::Content::Models::Page
 
         exposes :chapter, :reading_dynamic_pool, :reading_context_pool, :homework_core_pool,
-                :homework_dynamic_pool, :practice_widget_pool, :all_exercises_pool,
-                :exercises, :tags, :los, :aplos, :url, :uuid, :version, :cnx_id, :title, :content,
-                :book_location, :is_intro?, :fragments, :snap_labs
+                :homework_dynamic_pool, :practice_widget_pool, :concept_coach_pool,
+                :all_exercises_pool, :exercises, :tags, :los, :aplos, :url, :uuid, :version,
+                :cnx_id, :title, :content, :book_location, :is_intro?, :fragments, :snap_labs
 
         alias_method :entity_chapter, :chapter
         def chapter
@@ -38,6 +38,11 @@ module Content
         alias_method :entity_practice_widget_pool, :practice_widget_pool
         def practice_widget_pool
           ::Content::Pool.new(strategy: entity_practice_widget_pool)
+        end
+
+        alias_method :entity_concept_coach_pool, :concept_coach_pool
+        def concept_coach_pool
+          ::Content::Pool.new(strategy: entity_concept_coach_pool)
         end
 
         alias_method :entity_all_exercises_pool, :all_exercises_pool

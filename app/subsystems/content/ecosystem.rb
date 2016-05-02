@@ -137,6 +137,12 @@ module Content
       verify_and_return pools, klass: ::Content::Pool, error: StrategyError
     end
 
+    def concept_coach_pools(pages:)
+      pages_arr = verify_and_return [pages].flatten.compact, klass: ::Content::Page
+      pools = @strategy.concept_coach_pools(pages: pages_arr)
+      verify_and_return pools, klass: ::Content::Pool, error: StrategyError
+    end
+
     def all_exercises_pools(pages:)
       pages_arr = verify_and_return [pages].flatten.compact, klass: ::Content::Page
       pools = @strategy.all_exercises_pools(pages: pages_arr)
