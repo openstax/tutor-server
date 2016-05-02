@@ -10,7 +10,7 @@ class Api::V1::CourseExercisesController < Api::V1::ApiController
     EOS
   end
 
-  api :GET, '/courses/:course_id/exercises',
+  api :GET, '/courses/:course_id/exercises(/:pool_types)',
             "Returns exercises for a given course, filtered by the page_ids param and optionally an array of pool_types"
   description <<-EOS
     Returns a list of exercises in the specified course associated with the pages with the given ID's and pool types.

@@ -98,7 +98,9 @@ Rails.application.routes.draw do
         end
       end
 
-      resource :exercises, controller: :course_exercises, only: [:show, :update]
+      resource :exercises, controller: :course_exercises, only: [:update] do
+        get '(/:pool_types)', action: :show
+      end
 
       resources :task_plans, path: '/plans', shallow: true, except: [:index, :new, :edit] do
         member do
