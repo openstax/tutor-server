@@ -1,0 +1,78 @@
+require 'rails_helper'
+
+RSpec.describe ShortCodesController, type: :controller do
+  let(:user) { FactoryGirl.create(:user) }
+
+  let(:absolute_url) { FactoryGirl.create(:short_code_short_code,
+                                          uri: 'https://cnx.org') }
+  let(:relative_url) { FactoryGirl.create(:short_code_short_code,
+                                          uri: 'dashboard') }
+
+  let(:course) { CreateCourse[name: 'Test Task Redirection'] }
+  let(:period) { CreatePeriod[course: course, name: 'Period 1'] }
+
+  let(:task_plan) { FactoryGirl.create(:tasks_task_plan, owner: course) }
+  let(:task_plan_gid) { task_plan.to_global_id.to_s }
+
+  let(:task) { FactoryGirl.create(:tasks_task, task_plan: task_plan) }
+
+  let(:teacher) { FactoryGirl.create(:user) }
+  let!(:teacher_role) { AddUserAsCourseTeacher[course: course, user: teacher] }
+
+  let(:student) { FactoryGirl.create(:user) }
+  let(:student_role) { AddUserAsPeriodStudent[period: period, user: student] }
+
+  let(:tasking) { FactoryGirl.create(:tasks_tasking, role: student_role, task: task.entity_task) }
+  let(:tasking_gid) { tasking.to_global_id.to_s }
+
+  let(:task_plan_code) { FactoryGirl.create(:short_code_short_code,
+                                            uri: task_plan_gid) }
+
+  let(:tasking_code) { FactoryGirl.create(:short_code_short_code,
+                                          uri: tasking_gid) }
+
+  it 'redirects users to absolute urls' do
+    get :redirect, short_code: absolute_url.code
+    expect(response).to redirect_to('https://cnx.org')
+  end
+
+  it 'redirects users to relative urls' do
+    get :redirect, short_code: relative_url.code
+    expect(response).to redirect_to('dashboard')
+  end
+
+  it 'redirects teachers to edit task plan page' do
+    controller.sign_in(teacher)
+
+    get :redirect, short_code: task_plan_code.code
+    expect(response).to redirect_to("/courses/#{course.id}/t/readings/#{task_plan.id}")
+  end
+
+  it 'redirects students to task page' do
+    controller.sign_in(student)
+    expected_url = "/courses/#{course.id}/tasks/#{tasking.task.id}"
+
+    get :redirect, short_code: task_plan_code.code
+    expect(response).to redirect_to(expected_url)
+  end
+
+  it 'returns 404 for short code not found' do
+    get :redirect, short_code: 'somethingrandom'
+    expect(response.status).to eq(404)
+  end
+
+  it 'raises SecurityTransgression for users who cannot see the task plan' do
+    controller.sign_in(user)
+
+    expect {
+      get :redirect, short_code: task_plan_code.code
+    }.to raise_error(SecurityTransgression)
+  end
+
+  it 'returns 404 for short code with a non task plan GID' do
+    controller.sign_in(student)
+
+    get :redirect, short_code: tasking_code.code
+    expect(response.status).to eq(404)
+  end
+end
