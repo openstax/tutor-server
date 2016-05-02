@@ -136,4 +136,21 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
     end
   end
 
+  context "shareable_url" do
+    it "can be read" do
+      FactoryGirl.create :short_code_short_code,
+                         code: 'short', uri: task_plan.to_global_id.to_s
+      expect(representation).to include("shareable_url" => '/@short')
+    end
+
+    it "cannot be written (attempts are silently ignored)" do
+      Api::V1::TaskPlanRepresenter.new(task_plan).from_json({
+        "shareable_url" => 'http://www.example.org'
+      }.to_json)
+
+      representation = Api::V1::TaskPlanRepresenter.new(task_plan).as_json
+      expect(representation).to_not include("shareable_url")
+    end
+  end
+
 end

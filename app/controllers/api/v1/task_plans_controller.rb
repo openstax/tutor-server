@@ -83,6 +83,8 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
         uuid = distribute_or_update_tasks(task_plan)
 
         if task_plan.errors.empty?
+          ShortCode::Create[task_plan.to_global_id.to_s]
+
           respond_with task_plan, represent_with: Api::V1::TaskPlanRepresenter,
                                   status: uuid.nil? ? :ok : :accepted,
                                   location: nil
