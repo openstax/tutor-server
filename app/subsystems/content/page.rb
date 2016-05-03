@@ -58,6 +58,10 @@ module Content
                                                         error: StrategyError
     end
 
+    def concept_coach_pool
+      verify_and_return @strategy.concept_coach_pool, klass: ::Content::Pool, error: StrategyError
+    end
+
     def all_exercises_pool
       verify_and_return @strategy.all_exercises_pool, klass: ::Content::Pool, error: StrategyError
     end

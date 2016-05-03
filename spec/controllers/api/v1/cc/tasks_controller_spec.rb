@@ -8,14 +8,16 @@ RSpec.describe Api::V1::Cc::TasksController, type: :controller, api: true, versi
     DatabaseCleaner.start
 
     chapter = FactoryGirl.create :content_chapter
-    cnx_page = OpenStax::Cnx::V1::Page.new(id: '95e61258-2faf-41d4-af92-f62e1414175a',
-                                           title: 'Force')
-    book_location = [4, 1]
+    cnx_page = OpenStax::Cnx::V1::Page.new(id: '7636a3bf-eb80-4898-8b2c-e81c1711b99f',
+                                           title: 'Sample module 2')
+    book_location = [2, 1]
 
     page_model = VCR.use_cassette('Api_V1_Cc_TasksController/with_page', VCR_OPTS) do
-      Content::Routines::ImportPage[chapter: chapter,
-                                    cnx_page: cnx_page,
-                                    book_location: book_location]
+      OpenStax::Cnx::V1.with_archive_url('https://archive.cnx.org/') do
+        Content::Routines::ImportPage[chapter: chapter,
+                                      cnx_page: cnx_page,
+                                      book_location: book_location]
+      end
     end
 
     @book = chapter.book

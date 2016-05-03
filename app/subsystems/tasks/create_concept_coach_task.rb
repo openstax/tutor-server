@@ -16,7 +16,7 @@ module Tasks
     def exec(role:, page:, exercises:, group_types:, related_content_array: [])
       # In a multi-web server environment, it is possible for one server to create
       # the cc task and another to request it very quickly and if the server
-      # times are not completely sync'd the request can be reject because the task
+      # times are not completely sync'd the request can be rejected because the task
       # looks non open.  When we have ConceptCoachTasks maybe they can not have an opens_at
       # but for now HACK it by setting it to open in the near past.
       task_time = 10.minutes.ago
