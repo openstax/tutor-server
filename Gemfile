@@ -58,7 +58,7 @@ gem 'openstax_exchange', '~> 0.2.1'
 gem 'chronic'
 
 # API versioning and documentation
-gem 'openstax_api', '~> 6.1.3'
+gem 'openstax_api', github: 'openstax/openstax_api', branch: 'fix/rails-3.2'
 
 gem 'apipie-rails'
 gem 'maruku'
