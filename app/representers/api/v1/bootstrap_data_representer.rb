@@ -25,15 +25,6 @@ module Api::V1
                )
              }
 
-    property :accounts_user_url,
-             readable: true,
-             writeable: false,
-             getter: -> (*){
-               OpenStax::Utilities.generate_url(
-                 OpenStax::Accounts.configuration.openstax_accounts_url, "api/user"
-               )
-             }
-
     property :tutor_notices_url,
              readable: true,
              writeable: false,
