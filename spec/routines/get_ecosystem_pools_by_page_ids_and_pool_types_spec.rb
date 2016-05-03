@@ -27,7 +27,8 @@ describe GetEcosystemPoolsByPageIdsAndPoolTypes, type: :routine do
 
         pools = [page_1, page_2, page_3].flat_map do |page|
           [page.reading_dynamic_pool, page.reading_context_pool, page.homework_core_pool,
-           page.homework_dynamic_pool, page.practice_widget_pool, page.all_exercises_pool]
+           page.homework_dynamic_pool, page.practice_widget_pool,
+           page.concept_coach_pool, page.all_exercises_pool]
         end
 
         expect(Set.new pools_map.keys).to eq Set.new Content::Pool.pool_types
@@ -60,7 +61,8 @@ describe GetEcosystemPoolsByPageIdsAndPoolTypes, type: :routine do
 
         pools = pages.flat_map do |page|
           [page.reading_dynamic_pool, page.reading_context_pool, page.homework_core_pool,
-           page.homework_dynamic_pool, page.practice_widget_pool, page.all_exercises_pool]
+           page.homework_dynamic_pool, page.practice_widget_pool,
+           page.concept_coach_pool, page.all_exercises_pool]
         end
 
         expect(Set.new pools_map.keys).to eq Set.new Content::Pool.pool_types

@@ -21,24 +21,24 @@ RSpec.describe GetConceptCoach, type: :routine, speed: :medium do
     DatabaseCleaner.start
 
     ecosystem = VCR.use_cassette('GetConceptCoach/with_book', VCR_OPTS) do
-      FetchAndImportBookAndCreateEcosystem[book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b']
+      OpenStax::Cnx::V1.with_archive_url('https://archive.cnx.org/') do
+        FetchAndImportBookAndCreateEcosystem[book_cnx_id: 'f10533ca-f803-490d-b935-88899941197f']
+      end
     end
 
     @book = ecosystem.books.first
 
-    page_model_1 = Content::Models::Page.find_by(title: 'Acceleration')
-    page_model_2 = Content::Models::Page.find_by(title: 'Representing Acceleration with Equations and Graphs')
-    page_model_3 = Content::Models::Page.find_by(title: 'Force')
-    page_model_4 = Content::Models::Page.find_by(title: 'Newton\'s First Law of Motion: Inertia')
-    page_model_5 = Content::Models::Page.find_by(title: 'Newton\'s Second Law of Motion')
-    page_model_6 = Content::Models::Page.find_by(title: 'Newton\'s Third Law of Motion')
+    page_model_1 = Content::Models::Page.find_by(title: 'Sample module 1')
+    page_model_2 = Content::Models::Page.find_by(title: 'The Science of Biology')
+    page_model_3 = Content::Models::Page.find_by(title: 'Sample module 2')
+    page_model_4 = Content::Models::Page.find_by(
+      title: 'Atoms, Isotopes, Ions, and Molecules: The Building Blocks'
+    )
 
     @page_1 = Content::Page.new(strategy: page_model_1.reload.wrap)
     @page_2 = Content::Page.new(strategy: page_model_2.reload.wrap)
     @page_3 = Content::Page.new(strategy: page_model_3.reload.wrap)
     @page_4 = Content::Page.new(strategy: page_model_4.reload.wrap)
-    @page_5 = Content::Page.new(strategy: page_model_5.reload.wrap)
-    @page_6 = Content::Page.new(strategy: page_model_6.reload.wrap)
 
     period_model = FactoryGirl.create(:course_membership_period)
     period = CourseMembership::Period.new(strategy: period_model.wrap)
@@ -149,7 +149,7 @@ it 'should create a new task for a different page and properly assign spaced pra
     end
 
     it 'should assign spaced practice according to the k-ago map' do
-      task_pages = [@page_1, @page_2, @page_3, @page_4, @page_5, @page_6]
+      task_pages = [@page_1, @page_2, @page_3, @page_4]
       tasks = task_pages.map do |page|
         described_class[
           user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: page.uuid
@@ -159,11 +159,12 @@ it 'should create a new task for a different page and properly assign spaced pra
       tasks.each_with_index do |task, ii|
         page = task_pages[ii]
 
-        expected_num_exercises = exercises_count(ii)
+        expected_core_exercises = [CORE_EXERCISES_COUNT, page.exercises.size].min
+        expected_num_exercises = expected_core_exercises + spaced_exercises_count(ii)
 
         expect(task.tasked_exercises.count).to eq expected_num_exercises
 
-        task.tasked_exercises.first(CORE_EXERCISES_COUNT).each do |te|
+        task.tasked_exercises.first(expected_core_exercises).each do |te|
           expect(te.exercise.page.id).to eq page.id
         end
       end
