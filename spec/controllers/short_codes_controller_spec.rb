@@ -56,9 +56,10 @@ RSpec.describe ShortCodesController, type: :controller do
     expect(response).to redirect_to(expected_url)
   end
 
-  it 'returns 404 for short code not found' do
-    get :redirect, short_code: 'somethingrandom'
-    expect(response.status).to eq(404)
+  it 'raises ShortCodeNotFound for short code not found' do
+    expect {
+      get :redirect, short_code: 'somethingrandom'
+    }.to raise_error(ShortCodeNotFound)
   end
 
   it 'raises SecurityTransgression for users who cannot see the task plan' do
@@ -72,7 +73,8 @@ RSpec.describe ShortCodesController, type: :controller do
   it 'returns 404 for short code with a non task plan GID' do
     controller.sign_in(student)
 
-    get :redirect, short_code: tasking_code.code
-    expect(response.status).to eq(404)
+    expect {
+      get :redirect, short_code: tasking_code.code
+    }.to raise_error(ShortCodeNotFound)
   end
 end

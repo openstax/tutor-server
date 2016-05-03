@@ -4,6 +4,8 @@ class ShortCodesController < ApplicationController
   def redirect
     handle_with(ShortCode::ShortCodeRedirect,
                 success: -> (*) { redirect_to @handler_result.outputs.uri },
-                failure: -> (*) { render text: 'Short code not found', status: 404 })
+                failure: -> (*) { raise ShortCodeNotFound })
   end
 end
+
+class ShortCodeNotFound < StandardError; end
