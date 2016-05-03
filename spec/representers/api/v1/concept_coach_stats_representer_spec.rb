@@ -7,16 +7,16 @@ RSpec.describe Api::V1::ConceptCoachStatsRepresenter, type: :representer, speed:
     DatabaseCleaner.start
 
     ecosystem = VCR.use_cassette('Api_V1_ConceptCoachStatsRepresenter/with_book', VCR_OPTS) do
-      FetchAndImportBookAndCreateEcosystem[book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b']
+      OpenStax::Cnx::V1.with_archive_url('https://archive.cnx.org/') do
+        FetchAndImportBookAndCreateEcosystem[book_cnx_id: 'f10533ca-f803-490d-b935-88899941197f']
+      end
     end
 
     @book = ecosystem.books.first
 
-    page_model_1 = Content::Models::Page.find_by(title: 'Acceleration')
-    page_model_2 = Content::Models::Page.find_by(
-      title: 'Representing Acceleration with Equations and Graphs'
-    )
-    page_model_3 = Content::Models::Page.find_by(title: 'Force')
+    page_model_1 = Content::Models::Page.find_by(title: 'Sample module 1')
+    page_model_2 = Content::Models::Page.find_by(title: 'The Science of Biology')
+    page_model_3 = Content::Models::Page.find_by(title: 'Sample module 2')
 
     @page_1 = Content::Page.new(strategy: page_model_1.reload.wrap)
     @page_2 = Content::Page.new(strategy: page_model_2.reload.wrap)
@@ -71,39 +71,39 @@ RSpec.describe Api::V1::ConceptCoachStatsRepresenter, type: :representer, speed:
           "current_pages"            => a_collection_containing_exactly(
             {
               "id"              => @page_1.id.to_s,
-              "title"           => "Acceleration",
+              "title"           => "Sample module 1",
               "student_count"   => 2,
               "correct_count"   => 1,
               "incorrect_count" => 1,
-              "chapter_section" => [3, 1],
+              "chapter_section" => [1, 1],
               "is_trouble" => false
             },
             {
               "id"              => @page_2.id.to_s,
-              "title"           => "Representing Acceleration with Equations and Graphs",
+              "title"           => "The Science of Biology",
               "student_count"   => 0,
               "correct_count"   => 0,
               "incorrect_count" => 0,
-              "chapter_section" => [3, 2],
+              "chapter_section" => [1, 2],
               "is_trouble" => false
             },
             {
               "id"              => @page_3.id.to_s,
-              "title"           => "Force",
+              "title"           => "Sample module 2",
               "student_count"   => 0,
               "correct_count"   => 0,
               "incorrect_count" => 0,
-              "chapter_section" => [4, 1],
+              "chapter_section" => [2, 1],
               "is_trouble" => false
             }
           ),
           "spaced_pages" => a_collection_containing_exactly(
             "id"     => @page_1.id.to_s,
-            "title"  => "Acceleration",
+            "title"  => "Sample module 1",
             "student_count"   => 0,
             "correct_count"   => 0,
             "incorrect_count" => 0,
-            "chapter_section" => [3, 1],
+            "chapter_section" => [1, 1],
             "is_trouble" => false
           ),
           "is_trouble" => false

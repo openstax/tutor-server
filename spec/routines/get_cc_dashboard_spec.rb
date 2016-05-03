@@ -6,7 +6,7 @@ describe GetCcDashboard, type: :routine do
   before(:all) do
     DatabaseCleaner.start
 
-    @course   = CreateCourse[name: 'Physics 101', is_concept_coach: true]
+    @course   = CreateCourse[name: 'Biology 101', is_concept_coach: true]
     @period   = CreatePeriod[course: @course]
     @period_2 = CreatePeriod[course: @course]
 
@@ -22,30 +22,32 @@ describe GetCcDashboard, type: :routine do
     @teacher_role = AddUserAsCourseTeacher[user: @teacher_user, course: @course]
 
     @book = FactoryGirl.create :content_book
-    @chapter_3 = FactoryGirl.create :content_chapter, book: @book, book_location: [3]
-    @chapter_4 = FactoryGirl.create :content_chapter, book: @book, book_location: [4]
-    cnx_page_1 = OpenStax::Cnx::V1::Page.new(id: '0e58aa87-2e09-40a7-8bf3-269b2fa16509',
-                                             title: "Acceleration")
-    cnx_page_2 = OpenStax::Cnx::V1::Page.new(id: '95e61258-2faf-41d4-af92-f62e1414175a',
-                                             title: 'Force')
-    cnx_page_3 = OpenStax::Cnx::V1::Page.new(id: '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6',
-                                             title: "Newton's First Law of Motion: Inertia")
-    book_location_1 = [3, 1]
-    book_location_2 = [4, 1]
-    book_location_3 = [4, 2]
+    @chapter_1 = FactoryGirl.create :content_chapter, book: @book, book_location: [1]
+    @chapter_2 = FactoryGirl.create :content_chapter, book: @book, book_location: [2]
+    cnx_page_1 = OpenStax::Cnx::V1::Page.new(id: 'ad9b9d37-a5cf-4a0d-b8c1-083fcc4d3b0c',
+                                             title: 'Sample module 1')
+    cnx_page_2 = OpenStax::Cnx::V1::Page.new(id: '6a0568d8-23d7-439b-9a01-16e4e73886b3',
+                                             title: 'The Science of Biology')
+    cnx_page_3 = OpenStax::Cnx::V1::Page.new(id: '7636a3bf-eb80-4898-8b2c-e81c1711b99f',
+                                             title: 'Sample module 2')
+    book_location_1 = [1, 1]
+    book_location_2 = [1, 2]
+    book_location_3 = [2, 1]
 
     page_model_1, page_model_2, page_model_3 = \
       VCR.use_cassette('GetCcDashboard/with_pages', VCR_OPTS) do
-      [Content::Routines::ImportPage[chapter: @chapter_3,
-                                     cnx_page: cnx_page_1,
-                                     book_location: book_location_1],
-       Content::Routines::ImportPage[chapter: @chapter_4,
-                                     cnx_page: cnx_page_2,
-                                     book_location: book_location_2],
-       Content::Routines::ImportPage[chapter: @chapter_4,
-                                     cnx_page: cnx_page_3,
-                                     book_location: book_location_3]]
-    end
+        OpenStax::Cnx::V1.with_archive_url('https://archive.cnx.org/') do
+          [Content::Routines::ImportPage[chapter: @chapter_1,
+                                         cnx_page: cnx_page_1,
+                                         book_location: book_location_1],
+           Content::Routines::ImportPage[chapter: @chapter_1,
+                                         cnx_page: cnx_page_2,
+                                         book_location: book_location_2],
+           Content::Routines::ImportPage[chapter: @chapter_2,
+                                         cnx_page: cnx_page_3,
+                                         book_location: book_location_3]]
+        end
+      end
 
     Content::Routines::PopulateExercisePools[book: @book]
 
@@ -68,7 +70,7 @@ describe GetCcDashboard, type: :routine do
       expect(HashWithIndifferentAccess[outputs]).to include(
         course: {
           id: @course.id,
-          name: "Physics 101",
+          name: "Biology 101",
           teachers: [
             {
               id: @teacher_role.teacher.id.to_s,
@@ -136,7 +138,7 @@ describe GetCcDashboard, type: :routine do
       expect(HashWithIndifferentAccess[outputs]).to include(
         course: {
           id: @course.id,
-          name: "Physics 101",
+          name: "Biology 101",
           teachers: [
             { id: @teacher_role.teacher.id.to_s,
               role_id: @teacher_role.id.to_s,
@@ -153,9 +155,9 @@ describe GetCcDashboard, type: :routine do
         ),
         chapters: [
           {
-            id: @chapter_4.id,
-            title: @chapter_4.title,
-            book_location: @chapter_4.book_location,
+            id: @chapter_2.id,
+            title: @chapter_2.title,
+            book_location: @chapter_2.book_location,
             pages: [
               {
                 id: @page_3.id,
@@ -179,7 +181,14 @@ describe GetCcDashboard, type: :routine do
                     is_correct: false
                   }
                 end
-              },
+              }
+            ]
+          },
+          {
+            id: @chapter_1.id,
+            title: @chapter_1.title,
+            book_location: @chapter_1.book_location,
+            pages: [
               {
                 id: @page_2.id,
                 title: @page_2.title,
@@ -194,14 +203,7 @@ describe GetCcDashboard, type: :routine do
                     is_correct: false
                   }
                 end
-              }
-            ]
-          },
-          {
-            id: @chapter_3.id,
-            title: @chapter_3.title,
-            book_location: @chapter_3.book_location,
-            pages: [
+              },
               {
                 id: @page_1.id,
                 title: @page_1.title,
@@ -229,7 +231,7 @@ describe GetCcDashboard, type: :routine do
       expect(HashWithIndifferentAccess[outputs]).to include(
         course: {
           id: @course.id,
-          name: "Physics 101",
+          name: "Biology 101",
           teachers: [
             {
               id: @teacher_role.teacher.id.to_s,
@@ -244,9 +246,9 @@ describe GetCcDashboard, type: :routine do
               name: @period.name,
               chapters: [
                 {
-                  id: @chapter_4.id,
-                  title: @chapter_4.title,
-                  book_location: @chapter_4.book_location,
+                  id: @chapter_2.id,
+                  title: @chapter_2.title,
+                  book_location: @chapter_2.book_location,
                   pages: [
                     {
                       id: @page_3.id,
@@ -259,7 +261,14 @@ describe GetCcDashboard, type: :routine do
                       not_started: 0,
                       original_performance: 1.0,
                       spaced_practice_performance: nil
-                    },
+                    }
+                  ]
+                },
+                {
+                  id: @chapter_1.id,
+                  title: @chapter_1.title,
+                  book_location: @chapter_1.book_location,
+                  pages: [
                     {
                       id: @page_2.id,
                       title: @page_2.title,
@@ -271,14 +280,7 @@ describe GetCcDashboard, type: :routine do
                       not_started: 0,
                       original_performance: 0.0,
                       spaced_practice_performance: nil
-                    }
-                  ]
-                },
-                {
-                  id: @chapter_3.id,
-                  title: @chapter_3.title,
-                  book_location: @chapter_3.book_location,
-                  pages: [
+                    },
                     {
                       id: @page_1.id,
                       title: @page_1.title,
@@ -300,9 +302,9 @@ describe GetCcDashboard, type: :routine do
               name: @period_2.name,
               chapters: [
                 {
-                  id: @chapter_3.id,
-                  title: @chapter_3.title,
-                  book_location: @chapter_3.book_location,
+                  id: @chapter_1.id,
+                  title: @chapter_1.title,
+                  book_location: @chapter_1.book_location,
                   pages: [
                     {
                       id: @page_1.id,
@@ -340,7 +342,7 @@ describe GetCcDashboard, type: :routine do
       expect(HashWithIndifferentAccess[outputs]).to include(
         course: {
           id: @course.id,
-          name: "Physics 101",
+          name: "Biology 101",
           teachers: [
             {
               id: @teacher_role.teacher.id.to_s,
@@ -355,9 +357,9 @@ describe GetCcDashboard, type: :routine do
               name: @period.name,
               chapters: [
                 {
-                  id: @chapter_4.id,
-                  title: @chapter_4.title,
-                  book_location: @chapter_4.book_location,
+                  id: @chapter_2.id,
+                  title: @chapter_2.title,
+                  book_location: @chapter_2.book_location,
                   pages: [
                     {
                       id: @page_3.id,
@@ -370,7 +372,14 @@ describe GetCcDashboard, type: :routine do
                       not_started: 0,
                       original_performance: 1.0,
                       spaced_practice_performance: nil
-                    },
+                    }
+                  ]
+                },
+                {
+                  id: @chapter_1.id,
+                  title: @chapter_1.title,
+                  book_location: @chapter_1.book_location,
+                  pages: [
                     {
                       id: @page_2.id,
                       title: @page_2.title,
@@ -382,14 +391,7 @@ describe GetCcDashboard, type: :routine do
                       not_started: 0,
                       original_performance: 0.0,
                       spaced_practice_performance: nil
-                    }
-                  ]
-                },
-                {
-                  id: @chapter_3.id,
-                  title: @chapter_3.title,
-                  book_location: @chapter_3.book_location,
-                  pages: [
+                    },
                     {
                       id: @page_1.id,
                       title: @page_1.title,
@@ -411,9 +413,9 @@ describe GetCcDashboard, type: :routine do
               name: @period_2.name,
               chapters: [
                 {
-                  id: @chapter_3.id,
-                  title: @chapter_3.title,
-                  book_location: @chapter_3.book_location,
+                  id: @chapter_1.id,
+                  title: @chapter_1.title,
+                  book_location: @chapter_1.book_location,
                   pages: [
                     {
                       id: @page_1.id,
