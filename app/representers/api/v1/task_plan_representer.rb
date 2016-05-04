@@ -83,7 +83,7 @@ module Api::V1
              readable: true,
              writeable: false,
              if: ->(*) { ShortCode::FindShortCode[self.to_global_id.to_s] },
-             getter: ->(*) { "/@#{ShortCode::FindShortCode[self.to_global_id.to_s]}" }
+             getter: ->(*) { "/@#{ShortCode::FindShortCode[self.to_global_id.to_s]}/#{self.title.parameterize}" }
 
     collection :tasking_plans,
                class: ::Tasks::Models::TaskingPlan,

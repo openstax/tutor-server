@@ -140,7 +140,8 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
     it "can be read" do
       FactoryGirl.create :short_code_short_code,
                          code: 'short', uri: task_plan.to_global_id.to_s
-      expect(representation).to include("shareable_url" => '/@short')
+      allow(task_plan).to receive(:title).and_return('Read Ch 4.1-4.3')
+      expect(representation).to include("shareable_url" => '/@short/read-ch-4-1-4-3')
     end
 
     it "cannot be written (attempts are silently ignored)" do
