@@ -27,6 +27,7 @@ describe "Get authentication status", type: :request, version: :v1 do
                                          :access_token => token,
                                          :tutor_notices_url => a_string_starting_with("http"),
                                          :accounts_profile_url => a_string_starting_with("http"),
+                                         :base_accounts_url => a_string_starting_with("http"),
                                          :endpoints => {
                                            :is_stubbed=>true,
                                            :logout=>a_string_starting_with("http"),
@@ -69,7 +70,9 @@ describe "Get authentication status", type: :request, version: :v1 do
       integration_session.__send__ :process, 'OPTIONS', '/auth/status', nil, \
         {'HTTP_ORIGIN' => origin, 'HTTP_ACCESS_CONTROL_REQUEST_METHOD' => 'GET'}
       expect(response.headers['Access-Control-Allow-Origin']).to eq(origin)
-      expect(response.headers['Access-Control-Allow-Methods']).to eq('GET, OPTIONS')
+      expect(response.headers['Access-Control-Allow-Methods']).to eq(
+        'GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS'
+      )
     end
 
   end
