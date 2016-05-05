@@ -225,8 +225,8 @@ ActiveRecord::Schema.define(version: 20160506181201) do
     t.datetime "updated_at",        null: false
     t.string   "enrollment_code",   null: false
     t.datetime "deleted_at"
-    t.time     "default_open_time"
-    t.time     "default_due_time"
+    t.string   "default_open_time"
+    t.string   "default_due_time"
   end
 
   add_index "course_membership_periods", ["enrollment_code"], name: "index_course_membership_periods_on_enrollment_code", unique: true, using: :btree
@@ -269,8 +269,8 @@ ActiveRecord::Schema.define(version: 20160506181201) do
     t.integer  "catalog_offering_id"
     t.string   "appearance_code"
     t.string   "biglearn_excluded_pool_uuid"
-    t.time     "default_open_time"
-    t.time     "default_due_time"
+    t.string   "default_open_time"
+    t.string   "default_due_time"
   end
 
   add_index "course_profile_profiles", ["catalog_offering_id"], name: "index_course_profile_profiles_on_catalog_offering_id", using: :btree

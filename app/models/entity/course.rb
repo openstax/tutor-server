@@ -13,8 +13,6 @@ class Entity::Course < Tutor::SubSystems::BaseModel
   has_many :course_assistants, subsystem: :tasks, dependent: :destroy
 
   has_many :taskings, through: :periods, subsystem: :tasks
-  has_many :task_plans, subsystem: :tasks, foreign_key: :owner_id
-  has_many :tasking_plans, through: :task_plans, subsystem: :tasks
 
   delegate :name, :appearance_code, :is_concept_coach, :offering, :teacher_join_token,
            :timezone, :default_open_time, :default_due_time, to: :profile

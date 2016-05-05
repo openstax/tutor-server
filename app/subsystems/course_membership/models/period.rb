@@ -32,6 +32,9 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
                                    }
   validates :enrollment_code, presence: true, uniqueness: true
 
+  include DefaultTimeValidations
+  validate :default_times_have_good_values
+
   default_scope { order(:name) }
 
   def student_roles(include_inactive_students: false)
@@ -40,15 +43,11 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
   end
 
   def default_open_time
-    default = Time.parse(Settings::Db.store[:period_default_open_time]) rescue Time.parse('00:00')
-    attr = read_attribute(:default_open_time)
-    attr.nil? ? default : attr
+    read_attribute(:default_open_time) || Settings::Db.store[:period_default_open_time]
   end
 
   def default_due_time
-    default = Time.parse(Settings::Db.store[:period_default_due_time]) rescue Time.parse('00:00')
-    attr = read_attribute(:default_due_time)
-    attr.nil? ? default : attr
+    read_attribute(:default_due_time) || Settings::Db.store[:period_default_due_time]
   end
 
   protected

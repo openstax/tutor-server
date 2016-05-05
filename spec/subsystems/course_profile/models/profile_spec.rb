@@ -13,4 +13,18 @@ RSpec.describe CourseProfile::Models::Profile, type: :model do
 
   it { is_expected.to validate_inclusion_of(:timezone)
                         .in_array(ActiveSupport::TimeZone.all.map(&:name)) }
+
+  it 'validates format of default times' do
+    subject.default_open_time = '16:32'
+    expect(subject).to be_valid
+
+    subject.default_due_time = '16:'
+    expect(subject).not_to be_valid
+
+    subject.default_open_time = '24:00'
+    expect(subject).not_to be_valid
+
+    subject.default_due_time = '23:60'
+    expect(subject).not_to be_valid
+  end
 end

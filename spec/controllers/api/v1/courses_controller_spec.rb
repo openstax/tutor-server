@@ -384,7 +384,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                                          default_open_time: '01:02' } }
         expect(course.reload.name).to eq course_name
         expect(course.timezone).to eq 'Central Time (US & Canada)'
-        expect(course.profile.reload.default_open_time.to_s(:time)).to eq '01:02'
+        expect(course.profile.reload.default_open_time).to eq '01:02'
         expect(response.body_as_hash[:name]).to eq course_name
         expect(response.body_as_hash[:timezone]).to eq 'Central Time (US & Canada)'
         expect(response.body_as_hash[:default_open_time]).to eq '01:02'
@@ -397,7 +397,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                                          default_due_time: '02:02' } }
         expect(course.reload.name).to eq course_name
         expect(course.timezone).to eq 'Central Time (US & Canada)'
-        expect(course.profile.reload.default_due_time.to_s(:time)).to eq '02:02'
+        expect(course.profile.reload.default_due_time).to eq '02:02'
         expect(response.body_as_hash[:name]).to eq course_name
         expect(response.body_as_hash[:timezone]).to eq 'Central Time (US & Canada)'
         expect(response.body_as_hash[:default_due_time]).to eq '02:02'

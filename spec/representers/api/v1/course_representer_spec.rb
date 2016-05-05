@@ -28,12 +28,12 @@ RSpec.describe Api::V1::CourseRepresenter, type: :representer do
   end
 
   it 'shows the course default open time' do
-    course.profile.default_open_time = Time.new(2016, 4, 20, 16, 8, 17)
+    course.profile.default_open_time = '16:08'
     expect(represented['default_open_time']).to eq '16:08'
   end
 
   it 'shows the course default due time' do
-    course.profile.default_due_time = Time.new(2017, 4, 20, 16, 9, 17)
+    course.profile.default_due_time = '16:09'
     expect(represented['default_due_time']).to eq '16:09'
   end
 

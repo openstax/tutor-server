@@ -10,38 +10,19 @@ class CourseProfile::Models::Profile < Tutor::SubSystems::BaseModel
   validates :timezone, presence: true,
                        inclusion: { in: ActiveSupport::TimeZone.all.map(&:name) }
 
-  before_save :timezone_updated, if: :timezone_changed?
+  include DefaultTimeValidations
+  validate :default_times_have_good_values
 
   delegate :name, to: :school,
                   prefix: true,
                   allow_nil: true
 
   def default_due_time
-    default = Time.parse(Settings::Db.store[:course_default_due_time]) rescue Time.parse('00:00')
-    attr = read_attribute(:default_due_time)
-    attr.nil? ? default : attr
+    read_attribute(:default_due_time) || Settings::Db.store[:course_default_due_time]
   end
 
   def default_open_time
-    default = Time.parse(Settings::Db.store[:course_default_open_time]) rescue Time.parse('00:00')
-    attr = read_attribute(:default_open_time)
-    attr.nil? ? default : attr
+    read_attribute(:default_open_time) || Settings::Db.store[:course_default_open_time]
   end
 
-  private
-
-  def timezone_updated
-    old_timezone, new_timezone = self.changes[:timezone]
-    course.tasking_plans.map do |tp|
-      tp.opens_at = change_timezone(tp.opens_at, old_timezone, new_timezone)
-      tp.due_at = change_timezone(tp.due_at, old_timezone, new_timezone)
-      tp.save
-    end
-  end
-
-  def change_timezone(time, old_timezone, new_timezone)
-    old_time = time.in_time_zone(old_timezone)
-    new_time = time.in_time_zone(new_timezone)
-    old_time.to_datetime.change(offset: new_time.formatted_offset)
-  end
 end
