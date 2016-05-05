@@ -512,6 +512,13 @@ ActiveRecord::Schema.define(version: 20160502205835) do
 
   add_index "settings", ["thing_type", "thing_id", "var"], name: "index_settings_on_thing_type_and_thing_id_and_var", unique: true, using: :btree
 
+  create_table "short_code_short_codes", force: :cascade do |t|
+    t.string "code", null: false
+    t.text   "uri",  null: false
+  end
+
+  add_index "short_code_short_codes", ["code"], name: "index_short_code_short_codes_on_code", unique: true, using: :btree
+
   create_table "tasks_assistants", force: :cascade do |t|
     t.string   "name",            null: false
     t.string   "code_class_name", null: false
