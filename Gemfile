@@ -49,7 +49,7 @@ gem 'whenever'
 gem 'omniauth-oauth2', '~> 1.3.1'
 
 # OpenStax Accounts integration
-gem 'openstax_accounts', '~> 6.3.1'
+gem 'openstax_accounts', '~> 6.3.2'
 
 # OpenStax Exchange integration
 gem 'openstax_exchange', '~> 0.2.1'
@@ -58,7 +58,7 @@ gem 'openstax_exchange', '~> 0.2.1'
 gem 'chronic'
 
 # API versioning and documentation
-gem 'openstax_api', '~> 6.1.3'
+gem 'openstax_api', '~> 6.1.4'
 
 gem 'apipie-rails'
 gem 'maruku'
