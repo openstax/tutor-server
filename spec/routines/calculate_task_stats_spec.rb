@@ -375,7 +375,7 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
           expect(question_stats.question_id).to be_kind_of(String)
           expect(question_stats.answered_count).to eq 3
           expect(question_stats.answers.length).to eq 3
-          expect(question_stats.answers).to eq([
+          expect(Set.new question_stats.answers).to eq(Set[
             {
               'student_names' => task_data[:names][0],
               'free_response' => 'A sentence explaining all the things!',
