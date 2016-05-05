@@ -43,4 +43,34 @@ RSpec.describe TaskExercise, type: :routine do
     expect(task.task_steps[1].tasked.content).to match("(1)")
   end
 
+  it 'can insert multiple exercise steps in order for a single placeholder step' do
+    task = FactoryGirl.create :tasks_task,
+                              step_types: [:tasks_tasked_reading,
+                                           :tasks_tasked_placeholder,
+                                           :tasks_tasked_exercise]
+    reading_step = task.task_steps.first
+    placeholder_step = task.task_steps.second
+    exercise_step = task.task_steps.third
+
+    TaskExercise[exercise: multipart_exercise, task_step: placeholder_step, task: task]
+
+    question_ids = multipart_exercise.content_as_independent_questions.map{ |qq| qq[:id] }
+
+    expect(task.task_steps.length).to eq 4
+    expect(task.task_steps[0]).to eq reading_step
+    expect(task.task_steps[1]).to eq placeholder_step
+    expect(task.task_steps[1].tasked).to be_a Tasks::Models::TaskedExercise
+    expect(task.task_steps[1].tasked.question_id).to eq question_ids[0]
+    expect(task.task_steps[2].tasked).to be_a Tasks::Models::TaskedExercise
+    expect(task.task_steps[2].tasked.question_id).to eq question_ids[1]
+    expect(task.task_steps[3]).to eq exercise_step
+
+    expect(task.task_steps[1].tasked.is_in_multipart).to be_truthy
+    expect(task.task_steps[2].tasked.is_in_multipart).to be_truthy
+    expect(task.task_steps[3].tasked.is_in_multipart).to be_falsy
+
+    expect(task.task_steps[1].tasked.content).to match("(0)")
+    expect(task.task_steps[2].tasked.content).to match("(1)")
+  end
+
 end
