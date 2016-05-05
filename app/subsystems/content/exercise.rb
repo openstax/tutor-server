@@ -36,7 +36,8 @@ module Content
     end
 
     def content_as_independent_questions
-      verify_and_return @strategy.content_as_independent_questions, klass: Array, error: StrategyError
+      verify_and_return @strategy.content_as_independent_questions, klass: Array,
+                                                                    error: StrategyError
     end
 
     def tags

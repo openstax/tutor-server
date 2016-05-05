@@ -7,11 +7,11 @@ class CalculateTaskStats
   protected
 
   def assignee_names_for(task)
-    (@names ||= {})[task.id] ||= ->() {
+    (@names ||= {})[task.id] ||= begin
       roles = task.taskings.map(&:role)
       users = run(:get_users_for_roles, roles).outputs.users
       users.map(&:name)
-    }.call
+    end
   end
 
   def compute_answer_stats(tasked_exercises)

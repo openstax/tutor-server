@@ -4,7 +4,8 @@ FactoryGirl.define do
       num_parts 1
     end
 
-    content   { OpenStax::Exercises::V1.fake_client.new_exercise_hash(num_parts: num_parts).to_json }
+    content   { OpenStax::Exercises::V1.fake_client.new_exercise_hash(num_parts: num_parts)
+                                                   .to_json }
 
     transient do
       wrapper { OpenStax::Exercises::V1::Exercise.new(content: content) }

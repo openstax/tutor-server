@@ -18,6 +18,7 @@ FactoryGirl.define do
     content { exercise.content }
     url { exercise.url }
     title { exercise.title }
+    question_id { exercise.content_as_independent_questions.first[:id] }
 
     after(:build) do |tasked_exercise, evaluator|
       options = { tasked: tasked_exercise }

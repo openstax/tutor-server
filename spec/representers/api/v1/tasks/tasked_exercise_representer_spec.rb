@@ -26,7 +26,7 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
     ## TaskedExercise-specific properties
     allow(exercise).to receive(:url).and_return('Some url')
     allow(exercise).to receive(:title).and_return('Some title')
-    allow(exercise).to receive(:content_hash_without_correct_answer).and_return('Some content')
+    allow(exercise).to receive(:content_hash_for_students).and_return('Some content')
     allow(exercise).to receive(:solution).and_return('Some solution')
     allow(exercise).to receive(:feedback).and_return('Some feedback')
     allow(exercise).to receive(:correct_answer_id).and_return('456')

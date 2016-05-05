@@ -133,8 +133,8 @@ class OpenStax::Exercises::V1::Exercise
     end
   end
 
-  def content_hash_without_correct_answer
-    @content_hash_without_correct ||= content_hash.merge(
+  def content_hash_for_students
+    @content_hash_for_students ||= content_hash.except('attachments', 'vocab_term_uid').merge(
       'questions' => questions_without_correct_answer
     )
   end
