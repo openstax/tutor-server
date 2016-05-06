@@ -1,6 +1,6 @@
 class ShortCode::FindTaskPlanShortCode
   lev_routine express_output: :short_code
-  uses_routine FindShortCode,
+  uses_routine ::ShortCode::FindShortCode,
                translations: { outputs: { type: :verbatim } },
                as: :find_short_code
 
