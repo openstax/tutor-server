@@ -19,7 +19,10 @@ class TaskExercise
 
     outputs[:task_steps] = questions.each_with_index.map do |question, ii|
       # Make sure that all steps after the first exercise part get their own new step
-      current_step = Tasks::Models::TaskStep.new(number: current_step.number + 1) if ii > 0
+      if ii > 0
+        next_step_number = current_step.number.nil? ? nil : current_step.number + 1
+        current_step = Tasks::Models::TaskStep.new(number: next_step_number)
+      end
 
       current_step.tasked = Tasks::Models::TaskedExercise.new(
         content_exercise_id: exercise.id,
