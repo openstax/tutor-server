@@ -3,9 +3,12 @@ module Tasks
     protected
 
     def included_in_averages?(task)
-      (task.task_type == 'homework' || task.task_type == 'concept_coach') &&
       task.exercise_count > 0 &&
-      (task.completed? || task.past_due?)
+      (
+        ( task.task_type == 'concept_coach' && task.completed?) ||
+        ( task.task_type == 'homework' && task.past_due? )
+      )
+
     end
 
     def average_scores(tasks)

@@ -205,7 +205,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def teacher_chosen_score
-    teacher_chosen_correct_exercise_count / actual_and_placeholder_exercise_count.to_f
+    teacher_chosen_correct_exercise_count / actual_and_placeholder_exercise_count.to_f rescue nil
   end
 
   protected

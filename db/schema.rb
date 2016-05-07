@@ -706,9 +706,9 @@ ActiveRecord::Schema.define(version: 20160506181201) do
     t.datetime "updated_at",                                             null: false
     t.hstore   "spy"
     t.boolean  "is_late_work_accepted",                  default: false
-    t.integer  "correct_on_time_exercise_steps_count"
-    t.integer  "completed_on_time_exercise_steps_count"
-    t.integer  "completed_on_time_steps_count"
+    t.integer  "correct_on_time_exercise_steps_count",   default: 0,     null: false
+    t.integer  "completed_on_time_exercise_steps_count", default: 0,     null: false
+    t.integer  "completed_on_time_steps_count",          default: 0,     null: false
   end
 
   add_index "tasks_tasks", ["due_at", "opens_at"], name: "index_tasks_tasks_on_due_at_and_opens_at", using: :btree
