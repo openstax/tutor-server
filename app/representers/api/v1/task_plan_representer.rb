@@ -81,7 +81,10 @@ module Api::V1
     property :shareable_url,
              type: String,
              readable: true,
-             writeable: false
+             writeable: false,
+             getter: ->(*) {
+               self.try(:sharable_url) || ShortCode::UrlFor[self]
+             }
 
     collection :tasking_plans,
                class: ::Tasks::Models::TaskingPlan,
