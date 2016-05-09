@@ -81,11 +81,7 @@ module Api::V1
     property :shareable_url,
              type: String,
              readable: true,
-             writeable: false,
-             getter: ->(*) {
-               sc = ShortCode::FindTaskPlanShortCode[id]
-               sc ? "/@#{sc}/#{self.title.parameterize}" : nil
-             }
+             writeable: false
 
     collection :tasking_plans,
                class: ::Tasks::Models::TaskingPlan,
