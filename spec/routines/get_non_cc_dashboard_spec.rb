@@ -85,6 +85,7 @@ describe GetNonCcDashboard, type: :routine do
           published_at: nil,
           publish_last_requested_at: nil,
           publish_job_uuid: nil,
+          shareable_url: ShortCode::UrlFor[plan],
           tasking_plans: plan.tasking_plans,
           is_trouble: false
         }
