@@ -24,6 +24,7 @@ module OpenStax::Cnx::V1
       processing_instructions.each do |processing_instruction|
         next if processing_instruction.css.blank? ||
                 processing_instruction.fragments.nil? ||
+                processing_instruction.fragments == ['Node'] ||
                 (!processing_instruction.only.nil? &&
                  !processing_instruction.only.include?(type_string)) ||
                 (!processing_instruction.except.nil? &&
@@ -69,9 +70,6 @@ module OpenStax::Cnx::V1
 
         # Repeat the processing until no more matches
         process_node(root, processing_instruction)
-      elsif processing_instruction.fragments == ['Node']
-        # NOOP
-        return root
       else
         compact_before = true
         compact_after = true
