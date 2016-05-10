@@ -2,6 +2,7 @@ class GetNonCcDashboard
   include DashboardRoutineMethods
 
   uses_routine Tasks::GetTaskPlans, as: :get_plans
+  uses_routine ShortCode::UrlFor, as: :get_short_code_url
 
   protected
 
@@ -33,7 +34,8 @@ class GetNonCcDashboard
         publish_last_requested_at: task_plan.publish_last_requested_at,
         publish_job_uuid: task_plan.publish_job_uuid,
         tasking_plans: task_plan.tasking_plans,
-        is_trouble: out[:trouble_plan_ids].include?(task_plan.id)
+        is_trouble: out[:trouble_plan_ids].include?(task_plan.id),
+        shareable_url: run(:get_short_code_url, task_plan, suffix: task_plan.title).outputs.url
       }
     end
   end

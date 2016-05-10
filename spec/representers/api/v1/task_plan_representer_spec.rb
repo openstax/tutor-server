@@ -137,11 +137,18 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
   end
 
   context "shareable_url" do
-    it "can be read" do
-      FactoryGirl.create :short_code_short_code,
-                         code: 'short', uri: task_plan.to_global_id.to_s
-      allow(task_plan).to receive(:title).and_return('Read Ch 4.1-4.3')
-      expect(representation).to include("shareable_url" => '/@short/read-ch-4-1-4-3')
+    it "can be generated from model" do
+      FactoryGirl.create :short_code_short_code, code: 'short',
+                         uri: task_plan.to_global_id.to_s
+      allow(task_plan).to receive(:title).and_return('Read ch 4')
+      expect(representation).to include("shareable_url" => '/@short/read-ch-4')
+    end
+
+    it 'can be read from provided data' do
+      data = Hashie::Mash.new FactoryGirl.build(:tasks_task_plan).as_json
+      data['shareable_url'] = '/@blah/foo-bar-baz'
+      representation = Api::V1::TaskPlanRepresenter.new(data).as_json
+      expect(representation).to include("shareable_url" => '/@blah/foo-bar-baz')
     end
 
     it "cannot be written (attempts are silently ignored)" do

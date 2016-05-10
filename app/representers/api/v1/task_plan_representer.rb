@@ -82,8 +82,9 @@ module Api::V1
              type: String,
              readable: true,
              writeable: false,
-             if: ->(*) { ShortCode::FindShortCode[self.to_global_id.to_s] },
-             getter: ->(*) { "/@#{ShortCode::FindShortCode[self.to_global_id.to_s]}/#{self.title.parameterize}" }
+             getter: ->(*) {
+               self.try(:shareable_url) || ShortCode::UrlFor[self, suffix: self.title]
+             }
 
     collection :tasking_plans,
                class: ::Tasks::Models::TaskingPlan,
