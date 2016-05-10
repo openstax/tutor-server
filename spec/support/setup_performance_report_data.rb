@@ -100,7 +100,7 @@ class SetupPerformanceReportData
     future_homework_taskplan.tasking_plans << Tasks::Models::TaskingPlan.new(
       target: course,
       task_plan: future_homework_taskplan,
-      opens_at: Time.now + 1.day,
+      opens_at: Time.now + 1.5.day,
       due_at: Time.now + 2.days
     )
 
