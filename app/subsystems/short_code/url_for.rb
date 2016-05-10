@@ -5,12 +5,10 @@ class ShortCode::UrlFor
 
   protected
 
-  def exec(model)
+  def exec(model, suffix: model.title)
     code = run(:find_short_code, model.to_global_id.to_s).outputs.short_code
     if code
-      title = model.try(:title)
-      title_part = title ? "/#{title.parameterize}" : ''
-      outputs.url = '/@' + code + title_part
+      outputs.url = '/@' + code + ( suffix ? "/#{suffix.parameterize}" : '' )
     end
   end
 end

@@ -83,7 +83,7 @@ module Api::V1
              readable: true,
              writeable: false,
              getter: ->(*) {
-               self.try(:sharable_url) || ShortCode::UrlFor[self]
+               self.try(:shareable_url) || ShortCode::UrlFor[self, suffix: self.title]
              }
 
     collection :tasking_plans,
