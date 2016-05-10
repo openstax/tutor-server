@@ -390,6 +390,14 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(response.body_as_hash[:default_open_time]).to eq '01:02'
       end
 
+      it 'freaks if the default open time is in a bad format' do
+        expect {
+          api_patch :update, user_1_token, parameters: { id: course.id, course: { default_open_time: '1pm' } }
+        }.not_to change{ course.reload.default_open_time }
+
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
       it 'updates the default due time' do
         course_name = course.name
         api_patch :update, user_1_token, parameters: { id: course.id,
@@ -401,6 +409,13 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(response.body_as_hash[:name]).to eq course_name
         expect(response.body_as_hash[:timezone]).to eq 'Central Time (US & Canada)'
         expect(response.body_as_hash[:default_due_time]).to eq '02:02'
+      end
+
+      it 'freaks if the default due time is in a bad format' do
+        expect {
+          api_patch :update, user_1_token, parameters: { id: course.id, course: { default_due_time: '1pm' } }
+        }.not_to change{ course.reload.default_open_time }
+        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end

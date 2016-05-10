@@ -34,16 +34,22 @@ class Api::V1::PeriodsController < Api::V1::ApiController
   EOS
   def update
     OSU::AccessPolicy.require_action_allowed!(:update, current_human_user, @period)
-    updated_period = CourseMembership::UpdatePeriod[
+
+    result = CourseMembership::UpdatePeriod.call(
       period: @period,
       name: period_params[:name],
       enrollment_code: period_params[:enrollment_code],
       default_open_time: period_params[:default_open_time],
       default_due_time: period_params[:default_due_time]
-    ]
-    respond_with updated_period, represent_with: Api::V1::PeriodRepresenter,
-                                 location: nil,
-                                 responder: ResponderWithPutContent
+    )
+
+    if result.errors.any?
+      render_api_errors(result.errors)
+    else
+      respond_with result.outputs.period, represent_with: Api::V1::PeriodRepresenter,
+                                          location: nil,
+                                          responder: ResponderWithPutContent
+    end
   end
 
   api :DELETE, '/periods/:id',

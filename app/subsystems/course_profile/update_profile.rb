@@ -10,6 +10,8 @@ class CourseProfile::UpdateProfile
     profile = CourseProfile::Models::Profile.find_by(entity_course_id: id)
     profile.update_attributes(course_params)
 
+    transfer_errors_from profile, {type: :verbatim}, true
+
     run(:process_school_change, course_profile: profile)
 
     time_zone_change = profile.previous_changes["timezone"]

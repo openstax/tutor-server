@@ -66,16 +66,20 @@ class Api::V1::CoursesController < Api::V1::ApiController
                       default_due_time: params[:course][:default_due_time],
                       timezone: params[:course][:timezone] }.compact
 
-    UpdateCourse.call(params[:id], course_params)
+    result = UpdateCourse.call(params[:id], course_params)
 
-    # Use CollectCourseInfo instead of just representing the entity course so
-    # we can gather extra information
-    course_info = CollectCourseInfo[courses: course,
-                                    user: current_human_user,
-                                    with: [:roles, :periods, :ecosystem, :students]].first
-    respond_with course_info, represent_with: Api::V1::CourseRepresenter,
-                              location: nil,
-                              responder: ResponderWithPutContent
+    if result.errors.any?
+      render_api_errors(result.errors)
+    else
+      # Use CollectCourseInfo instead of just representing the entity course so
+      # we can gather extra information
+      course_info = CollectCourseInfo[courses: course,
+                                      user: current_human_user,
+                                      with: [:roles, :periods, :ecosystem, :students]].first
+      respond_with course_info, represent_with: Api::V1::CourseRepresenter,
+                                location: nil,
+                                responder: ResponderWithPutContent
+    end
   end
 
   api :GET, '/courses/:course_id/tasks', 'Gets all course tasks assigned to the role holder making the request'
