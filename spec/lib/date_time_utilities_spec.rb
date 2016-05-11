@@ -45,11 +45,53 @@ RSpec.describe DateTimeUtilities do
     end
 
     it 'does not change Chronic.time_class permanently' do
-      original_time_zone = ActiveSupport::TimeZone["Wellington"]
-      Chronic.time_class = original_time_zone
-      datetime = described_class.from_string(datetime_string: "12/25/16 7:00", time_zone: central_time)
-      expect(datetime.to_s).to eq "2016-12-25 07:00:00 -0600"
-      expect(Chronic.time_class).to eq original_time_zone
+      begin
+        original_chronic_time_class = Chronic.time_class
+        wellington = ActiveSupport::TimeZone["Wellington"]
+        Chronic.time_class = wellington
+        datetime = described_class.from_string(datetime_string: "12/25/16 7:00", time_zone: central_time)
+        expect(datetime.to_s).to eq "2016-12-25 07:00:00 -0600"
+        expect(Chronic.time_class).to eq wellington
+      ensure
+        Chronic.time_class = original_chronic_time_class
+      end
+    end
+  end
+
+  describe "keep_time_change_zone" do
+    it 'can keep time and change zone with US zones' do
+      old_time = Chronic.parse("2016-07-01 17:01:02 -0700").to_datetime
+
+      expect(old_time.zone).to eq "-07:00"
+      expect(old_time.hour).to eq 17
+
+      new_time = described_class.keep_time_change_zone(old_time, pacific_time, central_time)
+
+      expect(new_time.zone).to eq "-05:00"
+      expect(new_time.hour).to eq 17
+    end
+
+    it 'can keep time and change zone when zones change days' do
+      old_time = Chronic.parse("2016-07-01 23:59:59 -0500").to_datetime
+
+      new_time = described_class.keep_time_change_zone(old_time, central_time, utc_time)
+
+      expect(new_time.zone).to eq "+00:00"
+      expect(new_time.hour).to eq 23
+      expect(new_time.day).to eq 1
+    end
+
+    it 'can work when zone on original time is not what is intended' do
+      old_time = Chronic.parse("2016-07-01 17:01:02 -0500").to_datetime
+
+      new_time = described_class.keep_time_change_zone(old_time, eastern_time, pacific_time)
+
+      expect(new_time.zone).to eq "-07:00"
+      expect(new_time.hour).to eq 18
+    end
+
+    it 'returns nil for nil input' do
+      expect(described_class.keep_time_change_zone(nil, nil, nil)).to eq nil
     end
   end
 
@@ -59,5 +101,13 @@ RSpec.describe DateTimeUtilities do
 
   def pacific_time
     ActiveSupport::TimeZone["Pacific Time (US & Canada)"]
+  end
+
+  def eastern_time
+    ActiveSupport::TimeZone["Eastern Time (US & Canada)"]
+  end
+
+  def utc_time
+    ActiveSupport::TimeZone["UTC"]
   end
 end
