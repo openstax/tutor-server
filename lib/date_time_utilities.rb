@@ -11,9 +11,9 @@ module DateTimeUtilities
     raise(IllegalArgument, "time_zone must not be nil") if time_zone.nil?
 
     if ignore_existing_zone
-      datetime_string.gsub!(/(\d)T(\d)/,'\1 \2') # handle the 'T' in w3c format
-      datetime_string.gsub!(/[-+]\d\d\d\d/,'')  # remove time zone offsets
-      datetime_string.gsub!(/[a-zA-Z]/,'')      # remove any other PST or similar
+      datetime_string.gsub!(/(\d)T(\d)/,'\1 \2')       # handle the 'T' in w3c format
+      datetime_string.gsub!(/ [-+]\d\d\:?(\d\d)?/,'')  # remove time zone offsets, -0700, -07, -07:00
+      datetime_string.gsub!(/[a-zA-Z]/,'')             # remove any other PST or similar
       datetime_string.strip!
     else
       raise NotYetImplemented

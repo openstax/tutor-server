@@ -27,6 +27,18 @@ RSpec.describe DateTimeUtilities do
       expect(datetime.to_s).to eq "2016-12-25 07:00:00 -0800"
     end
 
+    it 'ignores time zone info of the form -07' do
+      datetime = described_class.from_string(datetime_string: "12/25/16 7:00 -05", time_zone: pacific_time)
+      expect(datetime.zone).to eq "PST"
+      expect(datetime.to_s).to eq "2016-12-25 07:00:00 -0800"
+    end
+
+    it 'ignores time zone info of the form -07:00' do
+      datetime = described_class.from_string(datetime_string: "12/25/16 7:00 -05:00", time_zone: pacific_time)
+      expect(datetime.zone).to eq "PST"
+      expect(datetime.to_s).to eq "2016-12-25 07:00:00 -0800"
+    end
+
     it 'reads w3c time zone format with arbitrary zones applied' do
       reference_time = Time.utc(2007,2,10,20,30,45)
       w3c_time_string = described_class.to_api_s(reference_time)
