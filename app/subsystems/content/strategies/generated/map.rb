@@ -123,7 +123,7 @@ module Content
 
           page_to_page_map = map_pages_to_pages(pages: unmapped_pages)
 
-          to_page_ids = page_to_page_map.values.map(&:id)
+          to_page_ids = page_to_page_map.values.compact.map(&:id)
 
           pool_association = "#{pool_type}_pool".to_sym
 
