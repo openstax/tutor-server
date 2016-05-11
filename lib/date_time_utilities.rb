@@ -30,6 +30,7 @@ module DateTimeUtilities
 
   def self.keep_time_change_zone(time, old_timezone, new_timezone)
     return nil if time.nil?
+    raise(IllegalArgument, "zones must be specified") if old_timezone.nil? || new_timezone.nil?
     # Often, the time will already be in the specified old_timezone, but if not
     # get it there.
     old_time = time.in_time_zone(old_timezone)
