@@ -31,15 +31,9 @@ en:
       import_real_salesforce_courses:
         name: 'Import real Salesforce courses?'
         help_block: 'Unchecked: limits to Denver University'
-      course_default_open_time:
-        name: 'Course default open time'
+      default_open_time:
+        name: 'Default task open time'
         help_block: 'In the format HH:MM'
-      course_default_due_time:
-        name: 'Course default due time'
-        help_block: 'In the format HH:MM'
-      period_default_open_time:
-        name: 'Period default open time'
-        help_block: 'In the format HH:MM'
-      period_default_due_time:
-        name: 'Period default due time'
+      default_due_time:
+        name: 'Default task due time'
         help_block: 'In the format HH:MM'

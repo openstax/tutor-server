@@ -43,11 +43,11 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
   end
 
   def default_open_time
-    read_attribute(:default_open_time) || Settings::Db.store[:period_default_open_time]
+    read_attribute(:default_open_time) || Settings::Db.store[:default_open_time]
   end
 
   def default_due_time
-    read_attribute(:default_due_time) || Settings::Db.store[:period_default_due_time]
+    read_attribute(:default_due_time) || Settings::Db.store[:default_due_time]
   end
 
   protected

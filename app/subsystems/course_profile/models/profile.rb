@@ -18,11 +18,11 @@ class CourseProfile::Models::Profile < Tutor::SubSystems::BaseModel
                   allow_nil: true
 
   def default_due_time
-    read_attribute(:default_due_time) || Settings::Db.store[:course_default_due_time]
+    read_attribute(:default_due_time) || Settings::Db.store[:default_due_time]
   end
 
   def default_open_time
-    read_attribute(:default_open_time) || Settings::Db.store[:course_default_open_time]
+    read_attribute(:default_open_time) || Settings::Db.store[:default_open_time]
   end
 
 end
