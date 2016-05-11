@@ -81,6 +81,7 @@ describe GetNonCcDashboard, type: :routine do
           id: plan.id,
           title: plan.title,
           type: plan.type,
+          description: plan.description,
           is_publish_requested: false,
           published_at: nil,
           publish_last_requested_at: nil,
