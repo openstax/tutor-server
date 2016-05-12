@@ -29,6 +29,7 @@ class GetNonCcDashboard
         id: task_plan.id,
         title: task_plan.title,
         type: task_plan.type,
+        description: task_plan.description,
         is_publish_requested: task_plan.is_publish_requested?,
         published_at: task_plan.published_at,
         publish_last_requested_at: task_plan.publish_last_requested_at,
