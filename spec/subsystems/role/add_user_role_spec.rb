@@ -26,7 +26,7 @@ describe Role::AddUserRole, type: :routine do
 
       expect {
         result = Role::AddUserRole.call(user: user, role: role)
-      }.to raise_error
+      }.to raise_error(ActiveRecord::RecordNotUnique)
     end
   end
 end

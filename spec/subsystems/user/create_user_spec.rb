@@ -4,7 +4,7 @@ RSpec.describe User::CreateUser, type: :routine do
   it 'requires a username' do
     expect {
       described_class[]
-    }.to raise_error
+    }.to raise_error(ArgumentError)
 
     expect {
       described_class[username: 'something']
