@@ -746,8 +746,6 @@ ActiveRecord::Schema.define(version: 20160526202800) do
     t.integer  "time_zone_id"
     t.datetime "deleted_at"
     t.datetime "hidden_at"
-    t.integer  "completed_accepted_late_exercise_steps_count", default: 0, null: false
-    t.integer  "completed_accepted_late_steps_count",          default: 0, null: false
   end
 
   add_index "tasks_tasks", ["deleted_at"], name: "index_tasks_tasks_on_deleted_at", using: :btree
