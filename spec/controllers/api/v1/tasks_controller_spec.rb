@@ -61,16 +61,16 @@ describe Api::V1::TasksController, type: :controller, api: true, version: :v1 do
           api_put :accept_late_work, teacher_user_token, parameters: {id: task_1.id}
         }.to raise_error(SecurityTransgression)
 
-        expect(task_1.is_late_work_accepted).to eq false
+        expect(task_1.accepted_late_at).to be_nil
       end
     end
 
     context 'non-deleted task' do
       it "changes is_late_work_accepted to true" do
-        expect(task_1.is_late_work_accepted).to be_falsy
+        expect(task_1.accepted_late_at).to be_nil
         api_put :accept_late_work, teacher_user_token, parameters: {id: task_1.id}
         expect(response).to have_http_status(:no_content)
-        expect(task_1.reload.is_late_work_accepted).to be_truthy
+        expect(task_1.reload.accepted_late_at).not_to be_nil
       end
 
       it "can only be used by teachers" do
@@ -82,7 +82,7 @@ describe Api::V1::TasksController, type: :controller, api: true, version: :v1 do
   end
 
   context "#reject_late_work" do
-    before { task_1.update_attribute :is_late_work_accepted, true }
+    before { task_1.update_attribute :accepted_late_at, Time.now }
 
     context 'deleted task' do
       before{ task_1.destroy! }
@@ -92,16 +92,16 @@ describe Api::V1::TasksController, type: :controller, api: true, version: :v1 do
           api_put :reject_late_work, teacher_user_token, parameters: {id: task_1.id}
         }.to raise_error(SecurityTransgression)
 
-        expect(task_1.is_late_work_accepted).to eq true
+        expect(task_1.reload.accepted_late_at).not_to be_nil
       end
     end
 
     context 'non-deleted task' do
       it "changes is_late_work_accepted to false" do
-        expect(task_1.is_late_work_accepted).to be_truthy
+        expect(task_1.accepted_late_at).not_to be_nil
         api_put :reject_late_work, teacher_user_token, parameters: {id: task_1.id}
         expect(response).to have_http_status(:no_content)
-        expect(task_1.reload.is_late_work_accepted).to be_falsy
+        expect(task_1.reload.accepted_late_at).to be_nil
       end
 
       it "can only be used by teachers" do

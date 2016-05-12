@@ -197,6 +197,10 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     completed_on_time_exercise_steps_count
   end
 
+  def completed_accepted_late_exercise_count
+    completed_accepted_late_exercise_steps_count
+  end
+
   def correct_exercise_count
     correct_exercise_steps_count
   end
@@ -205,16 +209,37 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     correct_on_time_exercise_steps_count
   end
 
+  def correct_accepted_late_exercise_count
+    correct_accepted_late_exercise_steps_count
+  end
+
   def exercise_steps
     task_steps.preload(:tasked).select(&:exercise?)
   end
 
-  def teacher_chosen_correct_exercise_count
-    is_late_work_accepted ? correct_exercise_count : correct_on_time_exercise_count
+  def effective_correct_exercise_count
+    correct_on_time_exercise_count + correct_accepted_late_exercise_count
   end
 
-  def teacher_chosen_score
-    teacher_chosen_correct_exercise_count / actual_and_placeholder_exercise_count.to_f rescue nil
+  def score
+    effective_correct_exercise_count / actual_and_placeholder_exercise_count.to_f rescue nil
+  end
+
+  def accept_late_work
+    self.correct_accepted_late_exercise_steps_count =
+      correct_exercise_steps_count - correct_on_time_exercise_steps_count
+    self.completed_accepted_late_exercise_steps_count =
+      completed_exercise_steps_count - completed_on_time_exercise_steps_count
+    self.completed_accepted_late_steps_count =
+      completed_steps_count - completed_on_time_steps_count
+    self.accepted_late_at = Time.now
+  end
+
+  def reject_late_work
+    self.correct_accepted_late_exercise_steps_count = 0
+    self.completed_accepted_late_exercise_steps_count = 0
+    self.completed_accepted_late_steps_count = 0
+    self.accepted_late_at = nil
   end
 
   protected

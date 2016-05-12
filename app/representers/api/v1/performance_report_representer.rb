@@ -45,6 +45,10 @@ module Api::V1
                type: Integer,
                readable: true
 
+      property :completed_accepted_late_step_count,
+               type: Integer,
+               readable: true
+
       property :actual_and_placeholder_exercise_count,
                as: :exercise_count,
                type: Integer,
@@ -58,11 +62,19 @@ module Api::V1
                type: Integer,
                readable: true
 
+      property :completed_accepted_late_exercise_count,
+               type: Integer,
+               readable: true
+
       property :correct_exercise_count,
                type: Integer,
                readable: true
 
       property :correct_on_time_exercise_count,
+               type: Integer,
+               readable: true
+
+      property :correct_accepted_late_exercise_count,
                type: Integer,
                readable: true
 
