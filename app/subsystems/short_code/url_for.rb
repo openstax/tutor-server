@@ -8,7 +8,10 @@ class ShortCode::UrlFor
   def exec(model, suffix: nil)
     code = run(:find_short_code, model.to_global_id.to_s).outputs.short_code
     if code
-      outputs.url = '/@' + code + ( suffix ? "/#{suffix.parameterize}" : '' )
+      outputs.url = Rails.application.routes.url_helpers.short_code_path(
+                      short_code: code,
+                      human_readable: suffix.try(:parameterize)
+                    )
     end
   end
 end

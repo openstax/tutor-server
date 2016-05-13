@@ -274,7 +274,7 @@ Rails.application.routes.draw do
     end
   end
 
-  get '/@:short_code(/:human_readable)' => 'short_codes#redirect'
+  get '/@/:short_code(/:human_readable)' => 'short_codes#redirect', as: 'short_code'
 
   match '/*other', via: [:get, :post, :put, :patch, :delete], to: 'webview#index'
 end
