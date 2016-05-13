@@ -74,7 +74,8 @@ module Api::V1
              as: :is_feedback_available,
              writeable: false,
              readable: true,
-             schema_info: { type: 'boolean', description: "If the feedback should be shown for the task" }
+             schema_info: { type: 'boolean',
+                            description: "If the feedback should be shown for the task" }
 
     property :spy,
              type: Object,

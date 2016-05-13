@@ -421,10 +421,13 @@ class DemoBase
   def add_tasking_plan(task_plan:, to:, opens_at:, due_at:, message: nil)
     targets = [to].flatten
     targets.each do |target|
-      task_plan.tasking_plans << Tasks::Models::TaskingPlan.new(target: target,
-                                                                task_plan: task_plan,
-                                                                opens_at: opens_at,
-                                                                due_at: due_at)
+      task_plan.tasking_plans << Tasks::Models::TaskingPlan.new(
+        target: target,
+        task_plan: task_plan,
+        opens_at: opens_at,
+        due_at: due_at,
+        time_zone: task_plan.owner.time_zone
+      )
     end
     task_plan.save!
   end

@@ -20,7 +20,7 @@ class CourseMembership::Models::Student < Tutor::SubSystems::BaseModel
     inactive_at.nil?
   end
 
-  def inactivate(time = Time.now)
+  def inactivate(time = Time.current)
     self.inactive_at = time
     self
   end

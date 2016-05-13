@@ -4,6 +4,7 @@ require File.expand_path('../application', __FILE__)
 require 'date_time_utilities'
 require 'acts_as_resource'
 require 'acts_as_tasked'
+require 'belongs_to_time_zone'
 require 'html_tree_operations'
 require 'verify_and_get_id_array'
 require 'entity'

@@ -26,9 +26,11 @@ RSpec.describe Api::V1::TaskRepresenter, type: :representer do
 
   it 'includes feedback availability' do
     task.feedback_at = nil
-    expect(described_class.new(task).to_hash).to include('is_feedback_available' => false)
-    task.feedback_at = Time.now - 1.second
     expect(described_class.new(task).to_hash).to include('is_feedback_available' => true)
+    task.feedback_at = Time.current.yesterday
+    expect(described_class.new(task).to_hash).to include('is_feedback_available' => true)
+    task.feedback_at = Time.current.tomorrow
+    expect(described_class.new(task).to_hash).to include('is_feedback_available' => false)
   end
 
 end

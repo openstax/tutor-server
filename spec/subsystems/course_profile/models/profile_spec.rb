@@ -5,14 +5,13 @@ RSpec.describe CourseProfile::Models::Profile, type: :model do
 
   it { is_expected.to belong_to(:course) }
 
+  it { is_expected.to belong_to(:time_zone) }
+
   it { is_expected.to validate_presence_of(:course) }
   it { is_expected.to validate_presence_of(:name) }
-  it { is_expected.to validate_presence_of(:timezone) }
 
   it { is_expected.to validate_uniqueness_of(:course) }
-
-  it { is_expected.to validate_inclusion_of(:timezone)
-                        .in_array(ActiveSupport::TimeZone.all.map(&:name)) }
+  it { is_expected.to validate_uniqueness_of(:time_zone) }
 
   it 'validates format of default times' do
     subject.default_open_time = '16:32'

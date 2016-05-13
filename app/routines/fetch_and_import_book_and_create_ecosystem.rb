@@ -13,7 +13,7 @@ class FetchAndImportBookAndCreateEcosystem
     OpenStax::Cnx::V1.with_archive_url(archive_url) do
       cnx_book = OpenStax::Cnx::V1.book(id: book_cnx_id)
       ecosystem_title ||= \
-        "#{cnx_book.title} (#{cnx_book.uuid}@#{cnx_book.version}) - #{Time.current.utc}"
+        "#{cnx_book.title} (#{cnx_book.uuid}@#{cnx_book.version}) - #{Time.now.utc}"
 
       outputs[:ecosystem] = Content::Ecosystem.create!(title: ecosystem_title, comments: comments)
 

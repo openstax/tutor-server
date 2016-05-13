@@ -14,7 +14,7 @@ class ReassignPublishedPeriodTaskPlans
                               target_type: 'CourseMembership::Models::Period'})
       .where{ published_at != nil }
 
-    published_task_plans.each{ |tp| run(:distribute, tp, Time.now, protect_unopened_tasks) }
+    published_task_plans.each{ |tp| run(:distribute, tp, Time.current, protect_unopened_tasks) }
   end
 
 end

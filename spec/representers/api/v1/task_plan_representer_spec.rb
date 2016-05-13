@@ -93,7 +93,7 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
 
   context "publish_last_requested_at" do
     it "can be read" do
-      expected = Time.now
+      expected = Time.current
       allow(task_plan).to receive(:publish_last_requested_at).and_return(expected)
       expect(representation).to(
         include("publish_last_requested_at" => DateTimeUtilities.to_api_s(expected))
@@ -101,7 +101,7 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
     end
 
     it "cannot be written (attempts are silently ignored)" do
-      publish_last_requested_at = DateTimeUtilities.to_api_s(Time.now)
+      publish_last_requested_at = DateTimeUtilities.to_api_s(Time.current)
       Api::V1::TaskPlanRepresenter.new(task_plan).from_json(
         {"publish_last_requested_at" => publish_last_requested_at.to_s}.to_json
       )
@@ -111,13 +111,13 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
 
   context "published_at" do
     it "can be read" do
-      expected = Time.now
+      expected = Time.current
       allow(task_plan).to receive(:published_at).and_return(expected)
       expect(representation).to include("published_at" => DateTimeUtilities.to_api_s(expected))
     end
 
     it "cannot be written (attempts are silently ignored)" do
-      published_at = DateTimeUtilities.to_api_s(Time.now)
+      published_at = DateTimeUtilities.to_api_s(Time.current)
       Api::V1::TaskPlanRepresenter.new(task_plan).from_json({"published_at" => published_at.to_s}.to_json)
       expect(task_plan).to_not have_received(:published_at=)
     end

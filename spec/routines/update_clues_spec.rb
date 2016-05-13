@@ -199,7 +199,7 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
 
     context 'with some recent work' do
       before(:all) do
-        Timecop.freeze(Time.now + 5.minutes)
+        Timecop.freeze(Time.current + 5.minutes)
 
         @role.taskings.each do |tasking|
           tasking.task.task.task_steps.select(&:completed?).each do |ts|
@@ -245,7 +245,7 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
     end
 
     context 'without recent work' do
-      before(:all) { Timecop.freeze(Time.now + 10.minutes) }
+      before(:all) { Timecop.freeze(Time.current + 10.minutes) }
       after(:all)  { Timecop.return }
 
       it 'does not cause requests to biglearn' do

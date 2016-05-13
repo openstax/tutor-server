@@ -1,7 +1,6 @@
 FactoryGirl.define do
   factory :course_profile_profile, class: '::CourseProfile::Models::Profile' do
     name { Faker::Lorem.words.join(' ') }
-    timezone { ActiveSupport::TimeZone.all.map(&:name).sample }
     is_concept_coach false
 
     trait :with_offering do

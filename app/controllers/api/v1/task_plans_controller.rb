@@ -67,30 +67,28 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   EOS
   def create
     course = Entity::Course.find(params[:course_id])
-    Time.use_zone(course.profile.timezone) do
-      task_plan = BuildTaskPlan[course: course]
+    task_plan = BuildTaskPlan[course: course]
 
-      # Modified standard_create code
-      Tasks::Models::TaskPlan.transaction do
-        consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter)
-        task_plan.assistant = Tasks::GetAssistant[course: course, task_plan: task_plan]
+    # Modified standard_create code
+    Tasks::Models::TaskPlan.transaction do
+      consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter)
+      task_plan.assistant = Tasks::GetAssistant[course: course, task_plan: task_plan]
 
-        raise(IllegalState,
-          "No assistant for task plan of type #{task_plan.type}"
-        ) if task_plan.assistant.nil?
+      raise(IllegalState,
+        "No assistant for task plan of type #{task_plan.type}"
+      ) if task_plan.assistant.nil?
 
-        OSU::AccessPolicy.require_action_allowed!(:create, current_api_user, task_plan)
-        uuid = distribute_or_update_tasks(task_plan)
+      OSU::AccessPolicy.require_action_allowed!(:create, current_api_user, task_plan)
+      uuid = distribute_or_update_tasks(task_plan)
 
-        if task_plan.errors.empty?
-          ShortCode::Create[task_plan.to_global_id.to_s]
+      if task_plan.errors.empty?
+        ShortCode::Create[task_plan.to_global_id.to_s]
 
-          respond_with task_plan, represent_with: Api::V1::TaskPlanRepresenter,
-                                  status: uuid.nil? ? :ok : :accepted,
-                                  location: nil
-        else
-          render_api_errors(task_plan.errors)
-        end
+        respond_with task_plan, represent_with: Api::V1::TaskPlanRepresenter,
+                                status: uuid.nil? ? :ok : :accepted,
+                                location: nil
+      else
+        render_api_errors(task_plan.errors)
       end
     end
   end
@@ -108,21 +106,20 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     task_plan = Tasks::Models::TaskPlan.find(params[:id])
     OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, task_plan)
     course = task_plan.owner
-    Time.use_zone(course.profile.timezone) do
-      # Lock the TaskPlan to prevent concurrent update/publish
-      task_plan.with_lock do
-        consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter)
-        OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, task_plan)
-        uuid = distribute_or_update_tasks(task_plan)
 
-        if task_plan.errors.empty?
-          # http://stackoverflow.com/a/27413178
-          respond_with task_plan, represent_with: Api::V1::TaskPlanRepresenter,
-                                  responder: ResponderWithPutContent,
-                                  status: uuid.nil? ? :ok : :accepted
-        else
-          render_api_errors(task_plan.errors)
-        end
+    # Lock the TaskPlan to prevent concurrent update/publish
+    task_plan.with_lock do
+      consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter)
+      OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, task_plan)
+      uuid = distribute_or_update_tasks(task_plan)
+
+      if task_plan.errors.empty?
+        # http://stackoverflow.com/a/27413178
+        respond_with task_plan, represent_with: Api::V1::TaskPlanRepresenter,
+                                responder: ResponderWithPutContent,
+                                status: uuid.nil? ? :ok : :accepted
+      else
+        render_api_errors(task_plan.errors)
       end
     end
   end
@@ -321,7 +318,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   # Distributes or updates distributed tasks for the given task_plan
   # Returns the job uuid, if any, or nil if the request was completed inline
   def distribute_or_update_tasks(task_plan)
-    task_plan.publish_last_requested_at = Time.now \
+    task_plan.publish_last_requested_at = Time.current \
       if !task_plan.tasks_past_open? && task_plan.is_publish_requested?
     task_plan.save
     return unless task_plan.errors.empty?

@@ -26,7 +26,14 @@ class SetupPerformanceReportData
     end
 
     # Exclude introduction pages b/c they don't have LOs
-    page_ids = ecosystem.pages.select{ |page| page.title != "Introduction" }.map(&:id)
+    pages = ecosystem.chapters.flat_map do |ch|
+      ch.pages.select{ |page| page.title != "Introduction" }
+    end
+
+    page_ids = pages.map{ |page| page.id.to_s }
+    exercise_ids = pages.flat_map{ |page| page.exercises.map{ |ex| ex.id.to_s } }
+
+    time_zone = course.time_zone.to_tz
 
     reading_taskplan = Tasks::Models::TaskPlan.new(
       title: 'Reading task plan',
@@ -38,7 +45,9 @@ class SetupPerformanceReportData
     )
 
     reading_taskplan.tasking_plans << Tasks::Models::TaskingPlan.new(
-      target: course, task_plan: reading_taskplan, opens_at: Time.now, due_at: Time.now + 1.week
+      target: course, task_plan: reading_taskplan,
+      opens_at: time_zone.now, due_at: time_zone.now + 1.week,
+      time_zone: course.time_zone
     )
 
     reading_taskplan.save!
@@ -52,13 +61,15 @@ class SetupPerformanceReportData
       assistant: homework_assistant,
       content_ecosystem_id: ecosystem.id,
       settings: {
-        exercise_ids: ecosystem.exercises.first(5).map(&:id).map(&:to_s),
+        exercise_ids: exercise_ids.first(5),
         exercises_count_dynamic: 2
       }
     )
 
     homework_taskplan.tasking_plans << Tasks::Models::TaskingPlan.new(
-      target: course, task_plan: homework_taskplan, opens_at: Time.now, due_at: Time.now + 1.day
+      target: course, task_plan: homework_taskplan,
+      opens_at: time_zone.now, due_at: time_zone.now.tomorrow,
+      time_zone: course.time_zone
     )
 
     homework_taskplan.save!
@@ -72,13 +83,15 @@ class SetupPerformanceReportData
       assistant: homework_assistant,
       content_ecosystem_id: ecosystem.id,
       settings: {
-        exercise_ids: ecosystem.exercises.last(2).map(&:id).map(&:to_s),
+        exercise_ids: exercise_ids.last(2),
         exercises_count_dynamic: 2
       }
     )
 
     homework2_taskplan.tasking_plans << Tasks::Models::TaskingPlan.new(
-      target: course, task_plan: homework2_taskplan, opens_at: Time.now, due_at: Time.now + 2.week
+      target: course, task_plan: homework2_taskplan,
+      opens_at: time_zone.now, due_at: time_zone.now + 2.weeks,
+      time_zone: course.time_zone
     )
 
     homework2_taskplan.save!
@@ -92,7 +105,7 @@ class SetupPerformanceReportData
       assistant: homework_assistant,
       content_ecosystem_id: ecosystem.id,
       settings: {
-        exercise_ids: ecosystem.exercises.first(5).map(&:id).map(&:to_s),
+        exercise_ids: exercise_ids.first(5),
         exercises_count_dynamic: 2
       }
     )
@@ -100,8 +113,9 @@ class SetupPerformanceReportData
     future_homework_taskplan.tasking_plans << Tasks::Models::TaskingPlan.new(
       target: course,
       task_plan: future_homework_taskplan,
-      opens_at: Time.now + 1.5.day,
-      due_at: Time.now + 2.days
+      opens_at: time_zone.now + 1.5.days,
+      due_at: time_zone.now + 2.days,
+      time_zone: course.time_zone
     )
 
     future_homework_taskplan.save!
@@ -174,13 +188,14 @@ class SetupPerformanceReportData
 
   def get_student_tasks(role)
     task_types = Tasks::Models::Task.task_types.values_at(:reading, :homework)
+
     Tasks::Models::Task
       .joins { taskings }
       .where { taskings.entity_role_id == my { role.id } }
-      .where { task_type.in my { task_types } }
-      .where { opens_at <= Time.now }
+      .where { task_type.in task_types }
       .order { due_at }
-      .includes { task_steps.tasked }
+      .preload { task_steps.tasked }
+      .to_a.select(&:past_open?)
   end
 
   def get_assistant(course:, task_plan_type:)

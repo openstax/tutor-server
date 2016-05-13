@@ -15,6 +15,6 @@ ActionController::Base.class_exec do
   end
 
   def set_app_date_header
-    response.header['X-App-Date'] = Time.now.httpdate
+    response.header['X-App-Date'] = Time.current.httpdate
   end
 end

@@ -83,8 +83,7 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
   end
 
   def not_due_before_publish
-    return if !is_publish_requested? || \
-              tasking_plans.none? { |tp| !tp.due_at.nil? && tp.due_at < Time.now }
+    return if !is_publish_requested? || tasking_plans.none?(&:past_due?)
     errors.add(:due_at, 'cannot be in the past when publishing')
     false
   end

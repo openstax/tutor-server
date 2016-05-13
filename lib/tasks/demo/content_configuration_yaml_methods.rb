@@ -4,7 +4,7 @@ class ContentConfigurationYamlMethods
     attr_reader :noon_today
 
     def initialize
-        @noon_today = Time.now.noon
+        @noon_today = Time.current.noon
     end
 
     def get_binding

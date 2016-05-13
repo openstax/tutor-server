@@ -32,9 +32,6 @@ module Api::V1
              readable: true,
              writeable: true,
              getter: ->(*) { DateTimeUtilities.to_api_s(opens_at) },
-             setter: ->(val, options) {
-               self.opens_at = DateTimeUtilities.from_string(datetime_string: val)
-             },
              schema_info: {
                required: true
              }
@@ -44,9 +41,6 @@ module Api::V1
              readable: true,
              writeable: true,
              getter: ->(*) { DateTimeUtilities.to_api_s(due_at) },
-             setter: ->(val, options) {
-               self.due_at = DateTimeUtilities.from_string(datetime_string: val)
-             },
              schema_info: {
                required: true
              }

@@ -6,7 +6,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
 
   before(:all) do
     DatabaseCleaner.start
-    @course = Entity::Course.create!
+    @course = FactoryGirl.create :entity_course
 
     @period = CreatePeriod[course: @course]
     @second_period = CreatePeriod[course: @course]

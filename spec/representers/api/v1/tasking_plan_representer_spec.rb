@@ -49,23 +49,13 @@ RSpec.describe Api::V1::TaskingPlanRepresenter, type: :representer do
   end
 
   let!(:year_str)           { '2015' }
-  let!(:daylight_month_str) { '06' }
-  let!(:standard_month_str) { '01' }
+  let!(:month_str) { '01' }
   let!(:day_str)            { '04' }
 
-  let!(:daylight_date_str) { "#{year_str}-#{daylight_month_str}-#{day_str}" }
-  let!(:standard_date_str) { "#{year_str}-#{standard_month_str}-#{day_str}" }
-  let!(:daylight_date_time_str) { "#{daylight_date_str}T14:32:34" }
-  let!(:standard_date_time_str) { "#{standard_date_str}T14:32:34" }
-
-  let!(:central_time) { ActiveSupport::TimeZone['Central Time (US & Canada)'] }
-  let!(:pacific_time) { ActiveSupport::TimeZone['Pacific Time (US & Canada)'] }
-  let!(:utc_timezone) { ActiveSupport::TimeZone['UTC'] }
+  let!(:date_str) { "#{year_str}-#{month_str}-#{day_str}" }
+  let!(:date_time_str) { "#date_str}T14:32:34" }
 
   context "opens_at & due_at" do
-
-    let!(:daylight_date_time) { central_time.parse(daylight_date_time_str) }
-    let!(:standard_date_time) { central_time.parse(standard_date_time_str) }
 
     %w(opens_at due_at).each do |field|
       context field do
@@ -75,52 +65,26 @@ RSpec.describe Api::V1::TaskingPlanRepresenter, type: :representer do
           expect(representation).to include(field => DateTimeUtilities::to_api_s(datetime))
         end
 
-        it "can be written with string containing date of form YYYY-MM-DDTHH:MM:SS" do
-          consume(input: {field => standard_date_time_str}, to: tasking_plan, time_zone: central_time)
-          expect(tasking_plan).to have_received("#{field}=").with(standard_date_time)
-        end
-
-        it "timezone is ignored (upper edge)" do
-          pacific_date_time = pacific_time.parse("#{standard_date_str}T23:59:59")
-          central_date_time = central_time.parse("#{standard_date_str}T23:59:59")
-
-          consume(input: {field => pacific_date_time.to_s}, time_zone: central_time)
-
-          expect(tasking_plan).to have_received("#{field}=").with(central_date_time)
-        end
-
-        it "timezone is ignored (lower edge)" do
-          pacific_date_time = pacific_time.parse("#{standard_date_str}T00:00:00")
-          central_date_time = central_time.parse("#{standard_date_str}T00:00:00")
-
-          consume(input: {field => pacific_date_time.to_s}, time_zone: central_time)
-
-          expect(tasking_plan).to have_received("#{field}=").with(central_date_time)
-        end
-
-        it "DST is honored" do
-          consume(input: {field => daylight_date_time_str.to_s}, time_zone: central_time)
-          expect(tasking_plan).to have_received("#{field}=").with(daylight_date_time)
+        it "can be written" do
+          consume(input: {field => date_time_str}, to: tasking_plan)
+          expect(tasking_plan).to have_received("#{field}=").with(date_time_str)
         end
       end
     end
   end
 
-  # A helper for reading input (json or hash) into a TaskingPlan.  Reflects what happens
-  # in the task plan controller (has the same `use_zone` wrapping)
-  def consume(input:, to: tasking_plan, time_zone:)
-    Time.use_zone(time_zone) do
-      described_class.new(to).from_json(
-        case input
-        when String
-          input
-        when Hash
-          input.to_json
-        else
-          raise StandardError
-        end
-      )
-    end
+  # A helper for reading input (json or hash) into a TaskingPlan.
+  def consume(input:, to: tasking_plan)
+    described_class.new(to).from_json(
+      case input
+      when String
+        input
+      when Hash
+        input.to_json
+      else
+        raise StandardError
+      end
+    )
   end
 
 end

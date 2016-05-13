@@ -3,12 +3,12 @@ require 'rails_helper'
 RSpec.describe Tasks::Models::Task, type: :model do
   it { is_expected.to belong_to(:task_plan) }
 
+  it { is_expected.to belong_to(:time_zone) }
+
   it { is_expected.to have_many(:task_steps).dependent(:destroy) }
   it { is_expected.to have_many(:taskings) }
 
   it { is_expected.to validate_presence_of(:title) }
-
-  it { is_expected.to validate_presence_of(:opens_at) }
 
   it 'is late when last_worked_at is past due_at' do
     task = FactoryGirl.create(:tasks_task, opens_at: Time.current - 1.week,
@@ -22,14 +22,22 @@ RSpec.describe Tasks::Models::Task, type: :model do
     expect(task).to be_late
   end
 
-  it 'is never late if due_at is nil' do
+  it 'is always open if opens_at is nil' do
+    task = FactoryGirl.create(:tasks_task, opens_at: nil, due_at: Time.current + 1.week)
+
+    expect(task).to be_past_open
+  end
+
+  it 'is never due or late if due_at is nil' do
     task = FactoryGirl.create(:tasks_task, opens_at: Time.current - 1.week, due_at: nil)
 
+    expect(task).not_to be_past_due
     expect(task).not_to be_late
 
     task.set_last_worked_at(time: Time.current)
     task.save
 
+    expect(task).not_to be_past_due
     expect(task).not_to be_late
   end
 
@@ -48,7 +56,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
     task = FactoryGirl.build(:tasks_task, due_at: nil)
     expect(task).to be_valid
 
-    task = FactoryGirl.build(:tasks_task, due_at: Time.now - 1.week)
+    task = FactoryGirl.build(:tasks_task, due_at: Time.current - 1.week)
     expect(task).to_not be_valid
   end
 
@@ -156,12 +164,12 @@ RSpec.describe Tasks::Models::Task, type: :model do
   it 'knows when feedback should be available' do
     task = FactoryGirl.build(:tasks_task, due_at: nil)
     task.feedback_at = nil
-    expect(task.feedback_available?).to eq false
-
-    task.feedback_at = Time.now
     expect(task.feedback_available?).to eq true
 
-    task.feedback_at = Time.now + 1.minute
+    task.feedback_at = Time.current.yesterday
+    expect(task.feedback_available?).to eq true
+
+    task.feedback_at = Time.current.tomorrow
     expect(task.feedback_available?).to eq false
   end
 
@@ -429,7 +437,7 @@ RSpec.describe Tasks::Models::Task, type: :model do
       task = FactoryGirl.create(:tasks_task, opens_at: Time.current - 1.week,
                                              due_at: Time.current - 1.day)
 
-      allow(correct_exercise_step).to receive(:last_completed_at).and_return(Time.now)
+      allow(correct_exercise_step).to receive(:last_completed_at).and_return(Time.current)
       allow(task).to receive(:task_steps).and_return([correct_exercise_step])
 
       task.update_step_counts!

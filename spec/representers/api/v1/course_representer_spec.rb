@@ -23,8 +23,8 @@ RSpec.describe Api::V1::CourseRepresenter, type: :representer do
     expect(represented['name']).to eq 'Test course'
   end
 
-  it 'shows the course timezone' do
-    expect(represented['timezone']).to eq 'Central Time (US & Canada)'
+  it 'shows the course time_zone' do
+    expect(represented['time_zone']).to eq 'Central Time (US & Canada)'
   end
 
   it 'shows the course default open time' do

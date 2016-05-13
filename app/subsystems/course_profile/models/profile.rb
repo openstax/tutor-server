@@ -1,4 +1,8 @@
 class CourseProfile::Models::Profile < Tutor::SubSystems::BaseModel
+  include DefaultTimeValidations
+
+  belongs_to_time_zone default: 'Central Time (US & Canada)'
+
   unique_token :teacher_join_token
 
   belongs_to :school, subsystem: :school_district
@@ -7,15 +11,11 @@ class CourseProfile::Models::Profile < Tutor::SubSystems::BaseModel
 
   validates :course, presence: true, uniqueness: true
   validates :name, presence: true
-  validates :timezone, presence: true,
-                       inclusion: { in: ActiveSupport::TimeZone.all.map(&:name) }
+  validates :time_zone, presence: true, uniqueness: true
 
-  include DefaultTimeValidations
   validate :default_times_have_good_values
 
-  delegate :name, to: :school,
-                  prefix: true,
-                  allow_nil: true
+  delegate :name, to: :school, prefix: true, allow_nil: true
 
   def default_due_time
     read_attribute(:default_due_time) || Settings::Db.store[:default_due_time]
@@ -24,5 +24,4 @@ class CourseProfile::Models::Profile < Tutor::SubSystems::BaseModel
   def default_open_time
     read_attribute(:default_open_time) || Settings::Db.store[:default_open_time]
   end
-
 end

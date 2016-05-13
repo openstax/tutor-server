@@ -5,8 +5,15 @@ class UpdateCourse
 
   protected
 
-  def exec(id, course_params)
+  def exec(id, params)
+    course_params = params.except(:time_zone)
     run(:update_profile, id, course_params)
+
+    return unless params[:time_zone]
+
+    CourseProfile::Models::TimeZone.joins(profile: :course)
+                                   .where(profile: {course: {id: id}})
+                                   .update_all(name: params[:time_zone])
   end
 
 end

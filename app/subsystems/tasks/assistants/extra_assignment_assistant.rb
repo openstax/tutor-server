@@ -84,8 +84,7 @@ class Tasks::Assistants::ExtraAssignmentAssistant < Tasks::Assistants::FragmentA
       task_plan: task_plan,
       task_type: :extra,
       title: title,
-      description: description,
-      feedback_at: Time.now
+      description: description
     ]
   end
 

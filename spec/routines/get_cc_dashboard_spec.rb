@@ -467,7 +467,7 @@ describe GetCcDashboard, type: :routine do
 
       # Answering an exercise invalidates the period cache
       @period.to_model.taskings.first.task.task.tasked_exercises.first.task_step
-             .update_attribute(:last_completed_at, Time.now)
+             .update_attribute(:last_completed_at, Time.current)
 
       # Miss (4 times = 4 counts per period * 1 period)
       described_class[course: @course, role: @teacher_role]

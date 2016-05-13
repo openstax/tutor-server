@@ -16,11 +16,13 @@ module Api::V1
              writeable: false,
              schema_info: { required: true }
 
-    property :timezone,
+    property :time_zone,
              type: String,
              readable: true,
              writeable: false,
-             schema_info: { required: false }
+             schema_info: { required: false },
+             getter: ->(*) { time_zone.is_a?(CourseProfile::Models::TimeZone) ? \
+                               time_zone.name : time_zone }
 
     property :default_open_time,
              type: String,

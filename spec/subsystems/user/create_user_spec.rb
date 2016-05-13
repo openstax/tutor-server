@@ -30,8 +30,7 @@ RSpec.describe User::CreateUser, type: :routine do
     }.to change { OpenStax::Accounts::Account.count }.by(1)
 
     OpenStax::Accounts::Account.destroy_all
-    account = OpenStax::Accounts::Account.create!(username: 'account',
-                                                  openstax_uid: 'something')
+    account = OpenStax::Accounts::Account.create!(username: 'account', openstax_uid: 'something')
 
     expect {
       described_class[account_id: account.id]

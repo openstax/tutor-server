@@ -64,7 +64,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     course_params = { name: params[:course][:name],
                       default_open_time: params[:course][:default_open_time],
                       default_due_time: params[:course][:default_due_time],
-                      timezone: params[:course][:timezone] }.compact
+                      time_zone: params[:course][:time_zone] }.compact
 
     result = UpdateCourse.call(params[:id], course_params)
 

@@ -9,17 +9,6 @@ class Tasks::Assistants::GenericAssistant
     reset_used_exercises
   end
 
-  def updated_attributes_for(tasking_plan:)
-    task_plan = tasking_plan.task_plan
-    {
-      title: task_plan.title,
-      description: task_plan.description,
-      opens_at: tasking_plan.opens_at,
-      due_at: tasking_plan.due_at,
-      feedback_at: Time.now
-    }
-  end
-
   protected
 
   attr_reader :task_plan, :taskees

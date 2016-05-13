@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe PropagateTaskPlanUpdates, type: :routine do
-  let!(:course)          { Entity::Course.create! }
+  let!(:course)          { FactoryGirl.create :entity_course }
   let!(:period)          { CreatePeriod[course: course] }
   let!(:user)            do
     FactoryGirl.create(:user).tap do |user|
@@ -27,8 +27,9 @@ RSpec.describe PropagateTaskPlanUpdates, type: :routine do
   let!(:new_title)       { 'New Title' }
   let!(:new_description) { 'New description' }
 
-  let!(:new_opens_at)    { Time.now.utc + 10.seconds }
-  let!(:new_due_at)      { Time.now.utc + 1.week + 10.seconds }
+  let!(:time_zone)       { tasking_plan.time_zone.to_tz }
+  let!(:new_opens_at)    { time_zone.now + 10.seconds }
+  let!(:new_due_at)      { time_zone.now + 1.week + 10.seconds }
 
   context 'unpublished task_plan' do
     before(:each) do
@@ -64,7 +65,10 @@ RSpec.describe PropagateTaskPlanUpdates, type: :routine do
 
     context 'homework' do
       it 'propagates task_plan changes to all of its tasks' do
-        task_plan.update_attribute(:type, 'homework')
+        task_plan.type = 'homework'
+        task_plan.is_feedback_immediate = false
+        task_plan.save!(validate: false)
+
         expect(task_plan.tasks).not_to be_empty
         task_plan.tasks.each do |task|
           expect(task.title).to       eq old_title
@@ -88,12 +92,12 @@ RSpec.describe PropagateTaskPlanUpdates, type: :routine do
         end
       end
 
-      it 'sets feedback_at to opens_at when feedback is immediate' do
+      it 'sets feedback_at to nil when feedback is immediate' do
         allow(task_plan.assistant).to receive(:code_class).and_return(Tasks::Assistants::HomeworkAssistant)
         task_plan.update_attributes(type: 'homework', is_feedback_immediate: true)
         PropagateTaskPlanUpdates.call(task_plan: task_plan)
         task_plan.tasks.each do |task|
-          expect(task.feedback_at).to eq task.opens_at
+          expect(task.feedback_at).to be_nil
         end
       end
 
@@ -120,7 +124,7 @@ RSpec.describe PropagateTaskPlanUpdates, type: :routine do
           expect(task.description).to eq new_description
           expect(task.opens_at).to    be_within(1.second).of(new_opens_at)
           expect(task.due_at).to      be_within(1.second).of(new_due_at)
-          expect(task.feedback_at).to be < Time.now
+          expect(task.feedback_available?).to be_truthy
         end
       end
     end

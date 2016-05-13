@@ -5,7 +5,7 @@ class IndividualizeTaskingPlans
   protected
 
   def exec(task_plan)
-    outputs[:tasking_plans] = task_plan.tasking_plans.map do |tasking_plan|
+    outputs[:tasking_plans] = task_plan.tasking_plans.flat_map do |tasking_plan|
       target = tasking_plan.target
 
       roles = case target
@@ -28,9 +28,10 @@ class IndividualizeTaskingPlans
       [roles].flatten.map do |role|
         Tasks::Models::TaskingPlan.new(task_plan: task_plan, target: role,
                                        opens_at: tasking_plan.opens_at,
-                                       due_at: tasking_plan.due_at)
+                                       due_at: tasking_plan.due_at,
+                                       time_zone: tasking_plan.time_zone)
       end
-    end.flatten.uniq { |ii| ii.target }
+    end.uniq { |ii| ii.target }
   end
 
 end

@@ -14,6 +14,11 @@ RSpec.describe "Exercise update progression", type: :request, api: true, version
 
   let!(:step_route_base) { "/api/steps/#{tasked.task_step.id}" }
 
+  before do
+    tasked.task_step.task.feedback_at = Time.current + 1.week
+    tasked.task_step.task.save!
+  end
+
   it "only shows feedback and correct answer id after completed and feedback available" do
 
     api_get(step_route_base, user_1_token)
@@ -55,7 +60,7 @@ RSpec.describe "Exercise update progression", type: :request, api: true, version
     expect(response.body_as_hash).not_to have_key(:correct_answer_id)
 
     # Get it again after feedback is available
-    tasked.task_step.task.feedback_at = Time.now
+    tasked.task_step.task.feedback_at = Time.current.yesterday
     tasked.task_step.task.save!
 
     api_get(step_route_base, user_1_token)
@@ -102,7 +107,7 @@ RSpec.describe "Exercise update progression", type: :request, api: true, version
     expect(response).to have_http_status(:success)
 
     # The feedback date arrives
-    tasked.task_step.task.feedback_at = Time.now
+    tasked.task_step.task.feedback_at = Time.current.yesterday
     tasked.task_step.task.save!
 
     # Free response cannot be changed

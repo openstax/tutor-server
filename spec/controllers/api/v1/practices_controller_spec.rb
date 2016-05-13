@@ -78,7 +78,6 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
 
       expect(hash).to include(id: task.id.to_s,
                               is_shared: false,
-                              opens_at: DateTimeUtilities.to_api_s(task.opens_at),
                               title: "Practice",
                               type: "page_practice",
                               steps: have(5).items)
@@ -149,7 +148,6 @@ RSpec.describe Api::V1::PracticesController, api: true, version: :v1 do
 
       expect(response.body_as_hash).to include(id: be_kind_of(String),
                                                title: "Practice",
-                                               opens_at: be_kind_of(String),
                                                steps: have(5).items)
     end
 

@@ -26,33 +26,27 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       @intro_step_gold_data = {
         klass: Tasks::Models::TaskedReading,
         title: "Forces and Newton's Laws of Motion",
-        related_content: [{title: "Forces and Newton's Laws of Motion",
-                           book_location: [8, 1]}]
+        related_content: [{title: "Forces and Newton's Laws of Motion", book_location: [8, 1]}]
       }
 
       @core_step_gold_data = [
         @intro_step_gold_data,
         { klass: Tasks::Models::TaskedReading,
           title: "Force",
-          related_content: [{title: "Force",
-                             book_location: [8, 2]}] }
+          related_content: [{title: "Force", book_location: [8, 2]}] }
       ]
 
       @spaced_practice_step_gold_data = [
         { klass: Tasks::Models::TaskedExercise,
           title: nil,
-          related_content: [{title: "Force",
-                            book_location: [8, 2]}] },
+          related_content: [{title: "Force", book_location: [8, 2]}] },
         { klass: Tasks::Models::TaskedExercise,
           title: nil,
-          related_content: [{title: "Force",
-                             book_location: [8, 2]}] },
+          related_content: [{title: "Force", book_location: [8, 2]}] }
       ]
 
       @personalized_step_gold_data = [
-        { klass: Tasks::Models::TaskedPlaceholder,
-          title: nil,
-          related_content: [] }
+        { klass: Tasks::Models::TaskedPlaceholder, title: nil, related_content: [] }
       ]
 
       @task_step_gold_data = \
@@ -135,7 +129,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         expect(entity_task.taskings.length).to eq 1
 
         task = entity_task.task
-        expect(task.feedback_at).to be <= Time.now
+        expect(task.feedback_at).to be_nil
 
         task_steps = task.task_steps
 
@@ -195,7 +189,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         expect(entity_task.taskings.length).to eq 1
 
         task = entity_task.task
-        expect(task.feedback_at).to be <= Time.now
+        expect(task.feedback_at).to be_nil
 
         task_steps = task.task_steps
 
@@ -361,7 +355,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       entity_tasks.each do |entity_task|
         entity_task.reload.reload
         expect(entity_task.taskings.length).to eq 1
-        expect(entity_task.task.feedback_at).to be <= Time.now
+        expect(entity_task.task.feedback_at).to be_nil
 
         task_steps = entity_task.task.task_steps
 
@@ -488,7 +482,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       entity_tasks.each do |entity_task|
         entity_task.reload.reload
         expect(entity_task.taskings.length).to eq 1
-        expect(entity_task.task.feedback_at).to be <= Time.now
+        expect(entity_task.task.feedback_at).to be_nil
 
         task_steps = entity_task.task.task_steps
 

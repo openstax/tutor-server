@@ -8,7 +8,7 @@ RSpec.describe Tasks::Assistants::ExternalAssignmentAssistant, type: :assistant 
   let!(:url) { 'https://www.example.org/external-assignment-one.pdf' }
   let!(:templatized_url) { 'https://www.example.org/survey?id={{deidentifier}}' }
 
-  let!(:course) { Entity::Course.create }
+  let!(:course) { FactoryGirl.create :entity_course }
   let!(:period) { CreatePeriod[course: course] }
 
   let!(:task_plan_1) {

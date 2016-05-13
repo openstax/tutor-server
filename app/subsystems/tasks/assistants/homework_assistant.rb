@@ -48,11 +48,6 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
     end
   end
 
-  def updated_attributes_for(tasking_plan:)
-    attributes = super
-    attributes.merge({feedback_at: tasking_plan.task_plan.is_feedback_immediate? ? tasking_plan.opens_at : tasking_plan.due_at})
-  end
-
   protected
 
   def collect_exercises

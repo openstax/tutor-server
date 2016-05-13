@@ -38,8 +38,10 @@ module DashboardRoutineMethods
   def load_tasks(role, role_type)
     entity_tasks = run(:get_tasks, roles: role).outputs.tasks
     entity_tasks = entity_tasks.joins(:task).preload(:task)
-    entity_tasks = entity_tasks.where{ task.opens_at < Time.now } if :student == role_type
-    tasks = entity_tasks.map{ |entity_task| entity_task.task }
+    entity_tasks = entity_tasks.select do |entity_task|
+      entity_task.task.past_open?
+    end if :student == role_type
+    tasks = entity_tasks.map(&:task)
     outputs[:tasks] = tasks
   end
 end

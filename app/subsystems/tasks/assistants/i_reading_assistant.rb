@@ -66,8 +66,7 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
       task_plan: task_plan,
       task_type: :reading,
       title:     title,
-      description: description,
-      feedback_at: Time.now
+      description: description
     ]
     AddSpyInfo[to: task, from: ecosystem]
     task

@@ -13,7 +13,7 @@ describe Role::AddUserRole, type: :routine do
       expect(result.errors).to be_empty
     end
   end
-  context "when adding a existing user role" do
+  context "when adding an existing user role" do
     it "fails" do
       role = Entity::Role.create!
       user = FactoryGirl.create(:user)
