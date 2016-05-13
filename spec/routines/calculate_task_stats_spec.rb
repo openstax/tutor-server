@@ -333,204 +333,78 @@ describe CalculateTaskStats, type: :routine, speed: :slow, vcr: VCR_OPTS do
       expect(spaced_page.trouble).to eq false
     end
 
-    it "returns detailed stats if :details is true" do
-      tasks = @task_plan.tasks.to_a
-      first_task = tasks.first
-      first_tasked_exercise = first_task.task_steps.select{ |ts| ts.tasked.exercise? }.first.tasked
-
-      selected_answers = [[], [], [], []]
-      first_task.task_steps.each do |ts|
-        if ts.exercise?
-          Hacks::AnswerExercise[task_step: ts, is_correct: true]
-          selected_answers[0] << ts.tasked.answer_id
-        else
-          MarkTaskStepCompleted[task_step: ts]
-        end
-      end
-      roles = first_task.taskings.map(&:role)
-      users = Role::GetUsersForRoles[roles]
-      first_task_names = users.map(&:name)
-
-      stats = described_class.call(tasks: @task_plan.reload.tasks, details: true).outputs.stats
-      exercises = stats.first.current_pages.first.exercises
-      exercises.each_with_index do |exercise, ii|
-        expect(exercise.answered_count).to eq 1
-        expect(exercise.answers.length).to eq 1
-        expect(exercise.answers[0]).to eq(
-          'student_names' => first_task_names,
-          'free_response' => 'A sentence explaining all the things!',
-          'answer_id' => selected_answers[0][ii]
-        )
-      end
-
-      content_without_selected_count = exercises.first.content.merge(
-        'questions' => exercises.first.content.questions.map do |qq|
-          qq.merge('answers' => qq.answers.map do |aa|
-            aa.except('selected_count')
-          end)
-        end
-      )
-      expect(content_without_selected_count).to eq first_tasked_exercise.parser.content_hash
-
-      correct_answer = exercises.first.content['questions'].first['answers'].select do |a|
-        a.id == first_tasked_exercise.correct_answer_id
-      end.first
-      expect(correct_answer['selected_count']).to eq 1
-
-      second_task = tasks.second
-      second_task.task_steps.each do |ts|
-        if ts.exercise?
-          Hacks::AnswerExercise[task_step: ts, is_correct: false]
-          selected_answers[1] << ts.tasked.answer_id
-        else
-          MarkTaskStepCompleted[task_step: ts]
-        end
-      end
-      roles = second_task.taskings.map(&:role)
-      users = Role::GetUsersForRoles[roles]
-      second_task_names = users.map(&:name)
-
-      stats = described_class.call(tasks: @task_plan.reload.tasks, details: true).outputs.stats
-      exercises = stats.first.current_pages.first.exercises
-      exercises.each_with_index do |exercise, ii|
-        expect(exercise.answered_count).to eq 2
-        expect(exercise.answers.length).to eq 2
-        expect(Set.new exercise.answers).to eq(Set.new [
-          {
-            'student_names' => first_task_names,
-            'free_response' => 'A sentence explaining all the things!',
-            'answer_id' => selected_answers[0][ii]
-          },
-          {
-            'student_names' => second_task_names,
-            'free_response' => 'A sentence explaining all the wrong things...',
-            'answer_id' => selected_answers[1][ii]
-          }
-        ])
-      end
-
-      content_without_selected_count = exercises.first.content.merge(
-        'questions' => exercises.first.content.questions.map do |qq|
-          qq.merge('answers' => qq.answers.map do |aa|
-            aa.except('selected_count')
-          end)
-        end
-      )
-      expect(content_without_selected_count).to eq first_tasked_exercise.parser.content_hash
-
-      correct_answer = exercises.first.content['questions'].first['answers'].select do |a|
-        a.id == first_tasked_exercise.correct_answer_id
-      end.first
-      expect(correct_answer['selected_count']).to eq 1
-
-      third_task = tasks.third
-      third_task.task_steps.each do |ts|
-        if ts.exercise?
-          Hacks::AnswerExercise[task_step: ts, is_correct: true]
-          selected_answers[2] << ts.tasked.answer_id
-        else
-          MarkTaskStepCompleted[task_step: ts]
-        end
-      end
-      roles = third_task.taskings.map(&:role)
-      users = Role::GetUsersForRoles[roles]
-      third_task_names = users.map(&:name)
-
-      stats = described_class.call(tasks: @task_plan.reload.tasks, details: true).outputs.stats
-      exercises = stats.first.current_pages.first.exercises
-      exercises.each_with_index do |exercise, ii|
-        expect(exercise.answered_count).to eq 3
-        expect(exercise.answers.length).to eq 3
-        expect(Set.new exercise.answers).to eq(Set.new [
-          {
-            'student_names' => first_task_names,
-            'free_response' => 'A sentence explaining all the things!',
-            'answer_id' => selected_answers[0][ii]
-          },
-          {
-            'student_names' => second_task_names,
-            'free_response' => 'A sentence explaining all the wrong things...',
-            'answer_id' => selected_answers[1][ii]
-          },
-          {
-            'student_names' => third_task_names,
-            'free_response' => 'A sentence explaining all the things!',
-            'answer_id' => selected_answers[2][ii]
-          }
-        ])
-      end
-
-      content_without_selected_count = exercises.first.content.merge(
-        'questions' => exercises.first.content.questions.map do |qq|
-          qq.merge('answers' => qq.answers.map do |aa|
-            aa.except('selected_count')
-          end)
-        end
-      )
-      expect(content_without_selected_count).to eq first_tasked_exercise.parser.content_hash
-
-      correct_answer = exercises.first.content['questions'].first['answers'].select do |a|
-        a.id == first_tasked_exercise.correct_answer_id
-      end.first
-      expect(correct_answer['selected_count']).to eq 2
-
-      fourth_task = tasks.fourth
-      fourth_task.task_steps.each do |ts|
-        if ts.exercise?
-          Hacks::AnswerExercise[task_step: ts, is_correct: true]
-          selected_answers[3] << ts.tasked.answer_id
-        else
-          MarkTaskStepCompleted[task_step: ts]
-        end
-      end
-      roles = fourth_task.taskings.map(&:role)
-      users = Role::GetUsersForRoles[roles]
-      fourth_task_names = users.map(&:name)
-
-      stats = described_class.call(tasks: @task_plan.reload.tasks, details: true).outputs.stats
-      exercises = stats.first.current_pages.first.exercises
-      exercises.each_with_index do |exercise, ii|
-        expect(exercise.answered_count).to eq 4
-        expect(exercise.answers.length).to eq 4
-        expect(Set.new exercise.answers).to eq(Set.new [
-          {
-            'student_names' => first_task_names,
-            'free_response' => 'A sentence explaining all the things!',
-            'answer_id' => selected_answers[0][ii]
-          },
-          {
-            'student_names' => second_task_names,
-            'free_response' => 'A sentence explaining all the wrong things...',
-            'answer_id' => selected_answers[1][ii]
-          },
-          {
-            'student_names' => third_task_names,
-            'free_response' => 'A sentence explaining all the things!',
-            'answer_id' => selected_answers[2][ii]
-          },
-          {
-            'student_names' => fourth_task_names,
-            'free_response' => 'A sentence explaining all the things!',
-            'answer_id' => selected_answers[3][ii]
-          }
-        ])
-      end
-
-      content_without_selected_count = exercises.first.content.merge(
-        'questions' => exercises.first.content.questions.map do |qq|
-          qq.merge('answers' => qq.answers.map do |aa|
-            aa.except('selected_count')
-          end)
-        end
-      )
-      expect(content_without_selected_count).to eq first_tasked_exercise.parser.content_hash
-
-      correct_answer = exercises.first.content['questions'].first['answers'].select do |a|
-        a.id == first_tasked_exercise.correct_answer_id
-      end.first
-      expect(correct_answer['selected_count']).to eq 3
+    def answer_ids(exercise_content, question_index)
+      JSON.parse(exercise_content)['questions'][question_index]['answers'].map{|aa| aa['id']}
     end
 
+    it "returns detailed stats if :details is true" do
+      tasks = @task_plan.tasks.to_a[0..2]
+
+      task_data = {
+        selected_answers: [],
+        names: []
+      }
+
+      tasks.each_with_index do |task, tt|
+        task_data[:selected_answers] <<
+          task.task_steps.each_with_object([]) do |ts, selected_answers|
+            if ts.exercise?
+              Hacks::AnswerExercise[task_step: ts, is_correct: (tt.even? ? true : false)]
+              selected_answers << ts.tasked.answer_id
+            else
+              MarkTaskStepCompleted[task_step: ts]
+            end
+          end
+
+        roles = task.taskings.map(&:role)
+        users = Role::GetUsersForRoles[roles]
+        task_data[:names] << users.map(&:name)
+      end
+
+      stats = described_class.call(tasks: @task_plan.reload.tasks, details: true).outputs.stats
+
+      # NOTE: the task data is kind of messed up -- there are 8 tasks with 4 exercises each but
+      # only 2 unique exercise URLs (and so only two `exercises` below)
+
+      exercises = stats.first.current_pages.first.exercises
+
+      exercises.each_with_index do |exercise, ii|
+        expect(exercise.content).to be_kind_of(String)
+        expect(exercise.question_stats.length).to eq 1
+        exercise.question_stats.each_with_index do |question_stats, qq|
+          expect(question_stats.question_id).to be_kind_of(String)
+          expect(question_stats.answered_count).to eq 3
+          expect(question_stats.answers.length).to eq 3
+          expect(Set.new question_stats.answers).to eq(Set[
+            {
+              'student_names' => task_data[:names][0],
+              'free_response' => 'A sentence explaining all the things!',
+              'answer_id' => task_data[:selected_answers][0][ii]
+            },
+            {
+              'student_names' => task_data[:names][1],
+              'free_response' => 'A sentence explaining all the wrong things...',
+              'answer_id' => task_data[:selected_answers][1][ii]
+            },
+            {
+              'student_names' => task_data[:names][2],
+              'free_response' => 'A sentence explaining all the things!',
+              'answer_id' => task_data[:selected_answers][2][ii]
+            }
+          ])
+
+          question_answer_ids = answer_ids(exercise.content, qq)
+
+          expect(question_stats.answer_stats).to eq (question_answer_ids.map do |aid|
+            {
+              "answer_id" => aid.to_s,
+              "selected_count" => task_data[:selected_answers].flatten.count(aid.to_s)
+            }
+          end)
+        end
+      end
+
+    end
   end
 
   context "with multiple course periods" do

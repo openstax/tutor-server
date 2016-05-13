@@ -133,27 +133,10 @@ class OpenStax::Exercises::V1::Exercise
     end
   end
 
-  def content_hash_without_correct_answer
-    @content_hash_without_correct ||= content_hash.merge(
+  def content_hash_for_students
+    @content_hash_for_students ||= content_hash.except('attachments', 'vocab_term_uid').merge(
       'questions' => questions_without_correct_answer
     )
-  end
-
-  def question_answers_with_stats(stats)
-    question_answers.map do |qa|
-      qa.map{ |ans| ans.merge('selected_count' => stats[ans['id']] || 0) }
-    end
-  end
-
-  def questions_with_answer_stats(stats)
-    answer_stats = question_answers_with_stats(stats)
-    questions.each_with_index.map do |qq, ii|
-      qq.merge('answers' => answer_stats[ii])
-    end
-  end
-
-  def content_with_answer_stats(stats)
-    content_hash.merge('questions' => questions_with_answer_stats(stats))
   end
 
   def is_multipart?

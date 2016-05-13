@@ -10,15 +10,10 @@ module Api::V1
                  writeable: false,
                  readable: true
 
-        property :answered_count,
-                 type: Integer,
-                 writeable: false,
-                 readable: true
-
-        collection :answers,
+        collection :question_stats,
                    writeable: false,
                    readable: true,
-                   decorator: Api::V1::Tasks::Stats::AnswerRepresenter
+                   decorator: Api::V1::Tasks::Stats::QuestionRepresenter
 
         property :average_step_number,
                  type: Float,

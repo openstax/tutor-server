@@ -27,14 +27,10 @@ module Tasks
                        feedback_at: task_time)
 
       exercises.each_with_index do |exercise, ii|
-        step = Tasks::Models::TaskStep.new(task: outputs.task, group_type: group_types[ii])
-
-        step.tasked = TaskExercise[exercise: exercise, task_step: step]
-
-        related_content = related_content_array[ii]
-        step.add_related_content(related_content) unless related_content.nil?
-
-        outputs.task.task_steps << step
+        TaskExercise.call(exercise: exercise, task: outputs.task) do |step|
+          step.group_type = group_types[ii]
+          step.add_related_content(related_content_array[ii])
+        end
       end
 
       outputs.task.save!

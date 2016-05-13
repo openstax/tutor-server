@@ -89,28 +89,18 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
 
   def add_core_steps!(task:, exercises:)
     exercises.each do |exercise|
-      step = add_exercise_step(task: task, exercise: exercise)
-      step.group_type = :core_group
-      step.add_related_content(exercise.page.related_content)
+      TaskExercise.call(task: task, exercise: exercise) do |step|
+        step.group_type = :core_group
+        step.add_related_content(exercise.page.related_content)
+      end
     end
-
-    task
-  end
-
-  def add_exercise_step(task:, exercise:)
-    step = Tasks::Models::TaskStep.new(task: task)
-    TaskExercise[task_step: step, exercise: exercise]
-    task.task_steps << step
-    step
   end
 
   def assign_spaced_practice_exercise(task:, exercise:)
-    related_content = exercise.page.related_content
-
-    step = add_exercise_step(task: task, exercise: exercise)
-    step.group_type = :spaced_practice_group
-
-    step.add_related_content(related_content)
+    TaskExercise.call(task: task, exercise: exercise) do |step|
+      step.group_type = :spaced_practice_group
+      step.add_related_content(exercise.page.related_content)
+    end
   end
 
   def add_spaced_practice_exercise_steps!(task:, taskee:)
@@ -213,7 +203,7 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
       tasked_placeholder.placeholder_type = :exercise_type
       task_step.tasked = tasked_placeholder
       task_step.group_type = :personalized_group
-      task.task_steps << task_step
+      task.add_step(task_step)
     end
 
     task

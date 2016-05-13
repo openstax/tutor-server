@@ -15,7 +15,7 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
 
   delegate :uid, :questions, :question_formats, :question_answers, :question_answer_ids,
            :correct_question_answers, :correct_question_answer_ids, :feedback_map, :solutions,
-           :content_hash_without_correct_answer, :tags, :los, :aplos, to: :parser
+           :content_hash_for_students, :tags, :los, :aplos, to: :parser
 
   # We depend on the parser because we do not save the parsed content
   def parser
@@ -64,7 +64,8 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     self.content = json_hash.to_json
   end
 
-  # The following 4 methods assume only 1 Question
+  # The following 4 methods assume only 1 Question; this is OK for TaskedExercise,
+  # because each TE contains at most 1 part of a multipart exercise.
   def formats
     question_formats[0]
   end

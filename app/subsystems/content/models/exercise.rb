@@ -43,7 +43,18 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
   end
 
   def content_hash
-    ::JSON.parse(content).except('attachments')
+    ::JSON.parse(content)
+  end
+
+  def content_as_independent_questions
+    @content_as_independent_questions ||= begin
+      exercise_hash = content_hash
+      questions = exercise_hash['questions']
+      questions.map do |question|
+        content = exercise_hash.merge('questions' => [question]).to_json
+        {id: question['id'], content: content}
+      end
+    end
   end
 
 end

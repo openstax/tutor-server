@@ -10,7 +10,7 @@ module Api::V1::Tasks
              readable: true,
              schema_info: {
                required: false,
-               description: "The source URL for this Exercise"
+               description: "The source URL for the Exercise containing the question being asked"
              }
 
     property :title,
@@ -22,14 +22,31 @@ module Api::V1::Tasks
                description: "The title of this Exercise"
              }
 
-    property :content_hash_without_correct_answer,
+    property :is_in_multipart,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               required: true,
+               description: "If true, indicates this object is part of a multipart"
+             }
+
+    property :question_id,
+             type: String,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               required: true,
+               description: "The ID of the part, present even if there is only one part."
+             }
+
+    property :content_hash_for_students,
              as: :content,
              type: String,
              writeable: false,
              readable: true,
              schema_info: {
                required: false,
-               description: "The Exercise's content without correctness, feedback or solutions"
+               description: "The Exercise's content without attachments, vocab_term_uid, correctness, feedback or solutions"
              }
 
     # The properties below assume an Exercise with only 1 Question

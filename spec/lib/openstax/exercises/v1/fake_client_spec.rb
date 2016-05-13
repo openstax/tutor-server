@@ -27,7 +27,7 @@ RSpec.describe OpenStax::Exercises::V1::FakeClient, type: :external do
             {
               id: "-2",
               formats: ["multiple-choice", "free-response"],
-              stem_html: "Select 10 N.",
+              stem_html: "Select 10 N. (0)",
               answers: [
                 { id: "-3", content_html: "10 N", correctness: 1.0, feedback_html: 'Right!' },
                 { id: "-4", content_html: "1 N", correctness: 0.0, feedback_html: 'Wrong!' }
@@ -68,7 +68,7 @@ RSpec.describe OpenStax::Exercises::V1::FakeClient, type: :external do
             {
               id: "-6",
               formats: ["multiple-choice", "free-response"],
-              stem_html: "Select 10 N.",
+              stem_html: "Select 10 N. (0)",
               answers:[
                 { id: "-7", content_html: "10 N",
                   correctness: 1.0, feedback_html: 'Right!' },

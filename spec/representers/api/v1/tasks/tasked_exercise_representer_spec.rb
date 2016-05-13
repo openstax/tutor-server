@@ -26,7 +26,7 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
     ## TaskedExercise-specific properties
     allow(exercise).to receive(:url).and_return('Some url')
     allow(exercise).to receive(:title).and_return('Some title')
-    allow(exercise).to receive(:content_hash_without_correct_answer).and_return('Some content')
+    allow(exercise).to receive(:content_hash_for_students).and_return('Some content')
     allow(exercise).to receive(:solution).and_return('Some solution')
     allow(exercise).to receive(:feedback).and_return('Some feedback')
     allow(exercise).to receive(:correct_answer_id).and_return('456')
@@ -35,6 +35,8 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
     allow(exercise).to receive(:answer_id).and_return(nil)
     allow(exercise).to receive(:last_completed_at).and_return(Time.current)
     allow(exercise).to receive(:first_completed_at).and_return(Time.current - 1.week)
+    allow(exercise).to receive(:question_id).and_return("questionID")
+    allow(exercise).to receive(:is_in_multipart).and_return(false)
 
     exercise
   }
@@ -83,6 +85,14 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
     it "has 'labels'" do
       allow(task_step).to receive(:labels).and_return([])
       expect(representation).to include("labels")
+    end
+
+    it "has 'question_id'" do
+      expect(representation).to include("question_id" => "questionID")
+    end
+
+    it "has 'is_in_multipart" do
+      expect(representation).to include("is_in_multipart" => false)
     end
 
   end

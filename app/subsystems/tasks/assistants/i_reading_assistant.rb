@@ -86,12 +86,10 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
   end
 
   def assign_spaced_practice_exercise(task:, exercise:)
-    related_content = exercise.page.related_content
-
-    step = add_exercise_step(task: task, exercise: exercise)
-    step.group_type = :spaced_practice_group
-
-    step.add_related_content(related_content)
+    TaskExercise.call(task: task, exercise: exercise) do |step|
+      step.group_type = :spaced_practice_group
+      step.add_related_content(exercise.page.related_content)
+    end
   end
 
   def add_spaced_practice_exercise_steps!(task:, taskee:)
@@ -173,13 +171,6 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
     end
 
     task
-  end
-
-  def add_exercise_step(task:, exercise:)
-    step = Tasks::Models::TaskStep.new(task: task)
-    TaskExercise[task_step: step, exercise: exercise]
-    task.task_steps << step
-    step
   end
 
 end

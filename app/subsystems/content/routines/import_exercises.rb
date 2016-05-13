@@ -24,7 +24,7 @@ class Content::Routines::ImportExercises
 
     exercise_pages = wrappers.map do |wrapper|
       # Don't import multipart questions for now
-      next if wrapper.is_multipart?
+      # next if wrapper.is_multipart?
 
       exercise_page = page.respond_to?(:call) ? page.call(wrapper) : page
       exercise = Content::Models::Exercise.new(url: wrapper.url,

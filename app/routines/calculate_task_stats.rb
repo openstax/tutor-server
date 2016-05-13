@@ -6,36 +6,64 @@ class CalculateTaskStats
 
   protected
 
-  def answer_stats_for_tasked_exercises(tasked_exercises)
-    tasked_exercises.first.answer_ids.each_with_object({}) do |answer_id, hash|
-      hash[answer_id] = tasked_exercises.select{ |te| te.answer_id == answer_id && \
-                                                      te.completed? }.count
+  def assignee_names_for(task)
+    (@names ||= {})[task.id] ||= begin
+      roles = task.taskings.map(&:role)
+      users = run(:get_users_for_roles, roles).outputs.users
+      users.map(&:name)
     end
+  end
+
+  def compute_answer_stats(tasked_exercises)
+    tasked_exercises.each_with_object(
+      {
+        selected_count: Hash.new(0)
+      }
+    ) do |tasked_exercise, stats|
+      stats[:selected_count][tasked_exercise.answer_id] += 1 if tasked_exercise.completed?
+    end
+  end
+
+  def average_step_number(taskeds)
+    taskeds.map{ |tasked| tasked.task_step.number }.reduce(:+) / Float(taskeds.size)
   end
 
   def exercise_stats_for_tasked_exercises(tasked_exercises)
     tasked_exercises.group_by{ |te| te.exercise }.map do |exercise, tasked_exercises|
-      average_step_number = tasked_exercises.map{ |te| te.task_step.number }
-                                            .reduce(:+)/Float(tasked_exercises.size)
-      completed_tasked_exercises = tasked_exercises.select{ |te| te.completed? }
-      exercise_parser = OpenStax::Exercises::V1::Exercise.new(content: exercise.content)
-      answer_stats = answer_stats_for_tasked_exercises(tasked_exercises)
 
       {
-        content: exercise_parser.content_with_answer_stats(answer_stats),
-        answered_count: completed_tasked_exercises.count,
-        answers: completed_tasked_exercises.map do |te|
-          roles = te.task_step.task.taskings.map(&:role)
-          users = run(:get_users_for_roles, roles).outputs.users
-          names = users.map(&:name)
+        content: exercise.content,
+
+        question_stats: tasked_exercises.group_by(&:question_id)
+                                        .map do |question_id, question_tasked_exercises|
+
+          answer_stats = compute_answer_stats(question_tasked_exercises)
+          all_answer_ids = question_tasked_exercises.first.answer_ids
+          completed_question_tasked_exercises = question_tasked_exercises.select(&:completed?)
 
           {
-            student_names: names,
-            free_response: te.free_response,
-            answer_id: te.answer_id
+            question_id: question_id,
+
+            answered_count: completed_question_tasked_exercises.count,
+
+            answer_stats: all_answer_ids.map do |answer_id|
+              {
+                answer_id: answer_id,
+                selected_count: answer_stats[:selected_count][answer_id] || 0
+              }
+            end,
+
+            answers: completed_question_tasked_exercises.map do |te|
+              {
+                student_names: assignee_names_for(te.task_step.task),
+                free_response: te.free_response,
+                answer_id: te.answer_id
+              }
+            end
           }
         end,
-        average_step_number: average_step_number
+
+        average_step_number: average_step_number(tasked_exercises)
       }
     end.sort_by do |exercise_stats|
       exercise_stats[:average_step_number]

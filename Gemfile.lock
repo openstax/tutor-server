@@ -779,7 +779,7 @@ DEPENDENCIES
   restforce
   roo
   rspec-collection_matchers
-  rspec-rails
+  rspec-rails (~> 3.0)
   sass-rails (~> 5.0.0)
   shoulda-matchers
   sortability
