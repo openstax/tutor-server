@@ -59,6 +59,15 @@ RSpec.configure do |config|
   # The different available types are documented in the features, such as in
   # https://relishapp.com/rspec/rspec-rails/docs
   config.infer_spec_type_from_file_location!
+
+  config.before(:suite) do
+    # Erase the test database with truncation
+    DatabaseCleaner.clean_with :truncation
+
+    # From now on, use the transaction strategy
+    DatabaseCleaner.strategy = :transaction
+  end
+
 end
 
 # Adds a convenience method to get interpret the body as JSON and convert to a hash;

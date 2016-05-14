@@ -93,7 +93,7 @@ module Tasks
 
         meta_rows = [
           [["Concept Coach Student Scores", {style: @title}]],
-          [["Exported #{Date.today.strftime("%m/%d/%Y")}", {style: @italic}]],
+          [["Exported #{Date.today.strftime("%-m/%-d/%Y")}", {style: @italic}]],
           [[""]],
           [[@course_name, {style: @course_section}]],
           [[""]],

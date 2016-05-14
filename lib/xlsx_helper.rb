@@ -77,7 +77,7 @@ class XlsxHelper
     end
 
     optioned_values.comments.each_with_index do |comment, index|
-      next if comment.nil?
+      next if comment.blank?
       sheet.add_comment(ref: row.cells[index], text: comment, author: "", visible: false)
     end
   end

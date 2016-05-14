@@ -58,14 +58,6 @@ RSpec.configure do |config|
     mocks.verify_partial_doubles = true
   end
 
-  config.before(:suite) do
-    # Erase the test database with truncation
-    DatabaseCleaner.clean_with :truncation
-
-    # From now on, use the transaction strategy
-    DatabaseCleaner.strategy = :transaction
-  end
-
   config.example_status_persistence_file_path = ".rspec_last_failures"
 
 # The settings below are suggested to provide a good initial experience
