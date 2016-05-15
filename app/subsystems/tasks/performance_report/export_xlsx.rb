@@ -56,27 +56,49 @@ module Tasks
                                        alignment: {horizontal: :center, wrap_text: true}
 
           @normal_L = s.add_style border: {edges: [:left], :color => '000000', :style => :thin}
+          @normal_R = s.add_style border: {edges: [:right], :color => '000000', :style => :thin}
+          @normal_T = s.add_style border: {edges: [:top], :color => '000000', :style => :thin}
           @pct_L = s.add_style border: {edges: [:left], :color => '000000', :style => :thin}, num_fmt: Axlsx::NUM_FMT_PERCENT
           @right_R = s.add_style border: {edges: [:right], :color => '000000', :style => :thin}, alignment: {horizontal: :right}
           @date_R = s.add_style border: {edges: [:right], :color => '000000', :style => :thin}, num_fmt: 14
-          @average_style = s.add_style b: true, border: { edges: [:top], :color => '000000', :style => :medium}, format_code: "#.0"
-          @average_R = s.add_style b: true, border: { edges: [:top, :right], :color => '000000', :style => :medium}, border_right: {style: :thin}, format_code: "#.0"
+          @average_style = s.add_style b: true, border: { edges: [:top, :bottom], :color => '000000', :style => :thin},
+                                       border_top: {style: :medium}, format_code: "#", bg_color: 'F2F2F2'
+          @average_R = s.add_style b: true, border: { edges: [:top, :bottom, :right], :color => '000000', :style => :thin},
+                                   border_top: {style: :medium}, format_code: "#", bg_color: 'F2F2F2'
           @average_pct = s.add_style b: true,
-                                     border: { edges: [:top], :color => '000000', :style => :medium},
-                                     num_fmt: Axlsx::NUM_FMT_PERCENT
-
+                                     border: { edges: [:top, :bottom], :color => '000000', :style => :thin},
+                                     border_top: {style: :medium},
+                                     num_fmt: Axlsx::NUM_FMT_PERCENT, bg_color: 'F2F2F2'
+          @average_pct_R = s.add_style b: true,
+                                     border: { edges: [:top, :bottom, :right], :color => '000000', :style => :thin},
+                                     border_top: {style: :medium},
+                                     num_fmt: Axlsx::NUM_FMT_PERCENT, bg_color: 'F2F2F2'
+          @total_style = s.add_style b: true, border: { edges: [:top, :bottom], :color => '000000', :style => :thin},
+                                     format_code: "#", bg_color: 'F2F2F2'
+          @total_R = s.add_style b: true, border: { edges: [:top, :bottom, :right], :color => '000000', :style => :thin},
+                                 border_right: {style: :thin}, format_code: "#", bg_color: 'F2F2F2'
+          @total_pct = s.add_style b: true,
+                                     border: { edges: [:top, :bottom], :color => '000000', :style => :thin},
+                                     num_fmt: Axlsx::NUM_FMT_PERCENT, bg_color: 'F2F2F2'
         end
       end
 
       def style!(hash)
-        style = nil
-        @package.workbook.styles{|s| style = s.add_style(hash)}
-        style
+        @styles ||= {}
+
+        @styles[hash] ||= begin
+          # TODO normalize incoming hash and see if it has been stored already, if
+          # so save it again with the non-normalized hash
+
+          style = nil
+          @package.workbook.styles{|s| style = s.add_style(hash.dup)}
+          style
+        end
       end
 
       def merge_and_style(sheet, range, styles)
         sheet.merge_cells(range)
-        sheet[range].each{|cell| cell.style = styles}
+        sheet[range].each{|cell| cell.style = styles} unless styles.blank?
       end
 
       def make_first_sheet_active
@@ -150,14 +172,16 @@ module Tasks
 
         @helper.add_row(sheet, task_title_columns)
 
+        due_style = style!(border: { edges: [:right], :color => '000000', :style => :thin},
+                           alignment: {horizontal: :center})
         due_at_columns =
           6.times.map{["", {}]} +
           report[:data_headings].map do |data_heading|
             [
-              data_heading[:due_at].strftime("%m/%d/%Y"),
+              data_heading[:due_at].strftime("Due %-m/%-d/%Y"),
               {
                 cols: 5,
-                style: @task_title
+                style: due_style
               }
             ]
           end
@@ -177,13 +201,17 @@ module Tasks
         # DATA HEADINGS
 
         top_data_heading_columns =
-          3.times.map{["", {}]} +
+          3.times.map{["", {style: @normal_T}]} +
           ["Homework\nScore", "Homework\nProgress", "Reading\nProgress"].map{|text| [text, style: @bold]}
 
+        center_bold_R_style = style!(
+          b: true, border: {edges: [:right], :color => '000000', :style => :thin},
+          alignment: {horizontal: :center, vertical: :center, wrap_text: true})
+
         report[:data_headings].count.times do
-          top_data_heading_columns.push(["Score",        {style: @bold_L}])
-          top_data_heading_columns.push(["Progress",      {style: @bold}])
-          top_data_heading_columns.push(["Pending Late Work", {style: @bold, cols: 3}])
+          top_data_heading_columns.push("Score")
+          top_data_heading_columns.push("Progress")
+          top_data_heading_columns.push(["Pending Late Work", {style: center_bold_R_style, cols: 3}])
         end
 
         @helper.add_row(sheet, top_data_heading_columns)
@@ -192,44 +220,74 @@ module Tasks
           ["First Name", "Last Name", "Student ID"].map{|text| [text, style: @bold]} +
           3.times.map{["", {}]}
 
+        center_style =   style!(alignment: {horizontal: :center}) # TODO have style! cache styles
+        center_style_R = style!(alignment: {horizontal: :center},
+                                border: {edges: [:right], :color => '000000', :style => :thin})
+
         report[:data_headings].count.times do
-          bottom_data_heading_columns.push(["",        {style: @bold_L}])
-          bottom_data_heading_columns.push(["",      {style: @bold}])
-          bottom_data_heading_columns.push(["Late Score", {style: @bold}])
-          bottom_data_heading_columns.push(["Late Progress", {style: @bold}])
-          bottom_data_heading_columns.push(["Last Worked", {style: @bold_R}])
+          bottom_data_heading_columns.push("", "")
+          bottom_data_heading_columns.push(["Late Score", {style: center_style}])
+          bottom_data_heading_columns.push(["Late Progress", {style: center_style}])
+          bottom_data_heading_columns.push(["Last Worked", {style: center_style_R}])
         end
 
         @helper.add_row(sheet, bottom_data_heading_columns)
 
+        center_bold_style =
+          style!(alignment: {horizontal: :center, vertical: :center, wrap_text: true}, b: true)
+
+        # Final averages sub headings
         merge_and_style(sheet, "D9:D10", style!(
           b: true, border: {edges: [:left], :color => '000000', :style => :thin},
-          alignment: {horizontal: :center, vertical: :center, wrap_text: true})
-        )
-        merge_and_style(sheet, "E9:E10", style!(
-          b: true, alignment: {horizontal: :center, vertical: :center, wrap_text: true})
-        )
-        merge_and_style(sheet, "F9:F10", style!(
-          b: true, border: {edges: [:right], :color => '000000', :style => :thin},
-          alignment: {horizontal: :center, vertical: :center, wrap_text: true})
-        )
+          alignment: {horizontal: :center, vertical: :center, wrap_text: true}))
+        merge_and_style(sheet, "E9:E10", center_bold_style)
+        merge_and_style(sheet, "F9:F10", center_bold_R_style)
+
+        # "Score" and "Progress"
+        report[:data_headings].count.times do |index|
+          score_column = Axlsx::col_ref(6 + index * 5)
+          progress_column = Axlsx::col_ref(6 + index * 5 + 1)
+          merge_and_style(sheet, "#{score_column}9:#{score_column}10", center_bold_style)
+          merge_and_style(sheet, "#{progress_column}9:#{progress_column}10", center_bold_style)
+        end
 
         # STUDENT DATA
+
+        homework_score_columns = []
+        homework_progress_columns = []
+        reading_progress_columns = []
+
+        report[:data_headings].each_with_index do |heading,ii|
+          case heading[:type]
+          when 'reading'
+            reading_progress_columns.push(Axlsx::col_ref(6+ii*5+1))
+          when 'homework'
+            homework_score_columns.push(Axlsx::col_ref(6+ii*5))
+            homework_progress_columns.push(Axlsx::col_ref(6+ii*5+1))
+          end
+        end
 
         first_student_row = sheet.rows.count + 1
 
         students = report[:students].sort_by{|student| student[:last_name]}
+        task_total_counts ||= Array.new(report[:data_headings].length)
 
-        students.each do |student|
+        students.each_with_index do |student,ss|
           student_columns = [
             student[:first_name],
             student[:last_name],
-            student[:student_identifier],
-            "tbd","tbd","tbd"
+            [student[:student_identifier], {style: @normal_R}],
+            ["=IFERROR(AVERAGE(#{homework_score_columns.map{|cc| "#{cc}#{first_student_row + ss}"}.join(',')}),NA())",
+             style: (format == :counts ? nil : @pct)],
+            ["=IFERROR(AVERAGE(#{homework_progress_columns.map{|cc| "#{cc}#{first_student_row + ss}"}.join(',')}),NA())",
+             style: (format == :counts ? nil : @pct)],
+            ["=IFERROR(AVERAGE(#{reading_progress_columns.map{|cc| "#{cc}#{first_student_row + ss}"}.join(',')}),NA())",
+             style: (format == :counts ? nil : @pct)]
           ]
 
-          student[:data].each do |data|
+          student[:data].each_with_index do |data,dd|
             push_score_columns(data, student_columns, format)
+            (task_total_counts[dd] ||= data[:actual_and_placeholder_exercise_count]) if data.present?
           end
 
           @helper.add_row(sheet, student_columns)
@@ -242,6 +300,79 @@ module Tasks
 
         data_widths = sheet.column_info.map(&:width)
         data_widths[3..-1] = data_widths[3..-1].length.times.map{15}
+
+        # AVERAGE ROW
+
+        average_style = format == :counts ? @average_style : @average_pct
+        average_style_R = format == :counts ? @average_R : @average_pct_R
+        total_style   = format == :counts ? @total_style : @total_pct
+
+        average_columns = [
+          ["Class Average", {style: @average_style}],
+          ["", {style: @average_style}],
+          ["", {style: @average_R}],
+          ["=AVERAGEIF(D#{first_student_row}:D#{last_student_row},\"<>#N/A\")", {style: average_style}],
+          ["=AVERAGEIF(E#{first_student_row}:E#{last_student_row},\"<>#N/A\")", {style: average_style}],
+          ["=AVERAGEIF(F#{first_student_row}:F#{last_student_row},\"<>#N/A\")", {style: average_style_R}]
+        ]
+
+        report[:data_headings].count.times do |index|
+          score_column = Axlsx::col_ref(6 + index * 5)
+          progress_column = Axlsx::col_ref(6 + index * 5 + 1)
+
+          score_range = "#{score_column}#{first_student_row}:#{score_column}#{last_student_row}"
+          progress_range = "#{progress_column}#{first_student_row}:#{progress_column}#{last_student_row}"
+
+          average_columns.push(["=IFERROR(AVERAGE(#{score_range}),\"\")", {style: average_style}])
+          average_columns.push(["=IFERROR(AVERAGE(#{progress_range}),\"\")", {style: average_style}])
+
+          average_columns.push(["", {style: @average_style}],["", {style: @average_style}],["", {style: @average_R}])
+        end
+
+        @helper.add_row(sheet, average_columns)
+
+        # Total Possible row
+
+        if format == :counts
+          total_possible_columns = [
+            ["Total Possible", {style: @total_style}],
+            ["", {style: @total_style}],
+            ["", {style: @total_R}],
+            ["=SUM(#{homework_score_columns.map{|cc| "#{cc}#{last_student_row + 2}"}.join(',')})", {style: @total_style}],
+            ["=SUM(#{homework_progress_columns.map{|cc| "#{cc}#{last_student_row + 2}"}.join(',')})", {style: @total_style}],
+            ["=SUM(#{reading_progress_columns.map{|cc| "#{cc}#{last_student_row + 2}"}.join(',')})", {style: @total_R}]
+          ]
+
+          task_total_counts.each do |total_count|
+            total_possible_columns.push(
+              [total_count, {style: total_style}],
+              [total_count, {style: total_style}],
+              ["", {style: @total_style}],
+              ["", {style: @total_style}],
+              ["", {style: @total_R}]
+            )
+          end
+
+          @helper.add_row(sheet, total_possible_columns)
+        end
+
+        sheet.rows.each{|row| row.height = 15}
+
+        # Now it is time to add the meta info rows that we skipped at the top of
+        # this method.  The trickiness here is that in order to insert the rows
+        # we need Axlsx::Row objects.  Per http://stackoverflow.com/a/24144262 one
+        # way to do this is to add the rows temporarily to the sheet, delete them
+        # immediately (which returns the Row object), then insert them.  We first
+        # delete the placeholder rows we added up above. Since we're always
+        # inserting in the first row, we reverse the meta rows so they are in the
+        # right order.
+
+        meta_rows.count.times { sheet.rows.delete_at(0) }
+
+        meta_rows.reverse.each do |meta_row|
+          @helper.add_row(sheet, meta_row)
+          sheet.rows.insert 0, sheet.rows.delete_at(sheet.rows.length-1)
+        end
 
         sheet.column_widths(*data_widths)
       end
