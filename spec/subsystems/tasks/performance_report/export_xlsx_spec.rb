@@ -22,8 +22,8 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
                                filename: "#{dir}/testfile")
         end
 
-        `open "#{filepath}"`
-        sleep(0.5)
+        # Uncomment this to open the file for visual inspection
+        # `open "#{filepath}"` and sleep(0.5)
 
         expect{ @wb = Roo::Excelx.new(filepath) }.to_not raise_error
         @sheet1 = @wb.sheet(@wb.sheets.first)
@@ -38,7 +38,7 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
       expect(@sheet1.cell(11,2)).to eq "Gail"
     end
 
-    xit 'does not include a task due in the future' do
+    it 'does not include a task due in the future' do
       (7..12).to_a.map{|row| expect(@sheet1.cell(row,17)).to be_blank}
     end
 
@@ -72,6 +72,25 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
     end
   end
 
+  context 'report_1 when all due' do
+    before(:context) do
+      Dir.mktmpdir do |dir|
+        filepath = Timecop.freeze(Chronic.parse("8/1/2016 1:30PM")) do
+          described_class.call(course_name: "Physics 101",
+                               report: report_1,
+                               filename: "#{dir}/testfile",
+                               options: {stringify_formulas: true}) # so we can inspect formulas
+        end
+
+        expect{ @wb = Roo::Excelx.new(filepath) }.to_not raise_error
+        @sheet1 = @wb.sheet(@wb.sheets.first)
+      end
+    end
+
+    it 'has averages with disjoint cells' do
+      expect(@sheet1.cell(11,4)).to match /.*AVERAGE\(G11,Q11\).*/
+    end
+  end
 
   def report_1
     [

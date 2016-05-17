@@ -3,23 +3,25 @@ module Tasks
     class ExportXlsx
       # include ActionView::Helpers::DateHelper
 
-      def self.call(course_name:, report:, filename:)
+      def self.call(course_name:, report:, filename:, options: {})
         filename = "#{filename}.xlsx" unless filename.ends_with?(".xlsx")
-        export = new(course_name: course_name, report: report, filepath: filename)
+        export = new(course_name: course_name, report: report, filepath: filename, options: options)
         export.create
         filename
       end
 
       # So can be called like other exporters
-      def self.[](profile:, report:, filename:)
-        call(course_name: profile.name, report: report, filename: filename)
+      def self.[](profile:, report:, filename:, options: {})
+        call(course_name: profile.name, report: report, filename: filename, options: options)
       end
 
-      def initialize(course_name:, report:, filepath:)
+      def initialize(course_name:, report:, filepath:, options:)
         @course_name = course_name
         @report = report
         @filepath = filepath
         @helper = XlsxHelper.new
+        @options = options
+        @eq = options[:stringify_formulas] ? "" : "="
       end
 
       def create
@@ -27,7 +29,7 @@ module Tasks
         @helper.standard_package_settings(@package)
 
         setup_styles
-        # exclude_non_due_tasks
+        exclude_non_due_tasks
         write_data_worksheets
         make_first_sheet_active
         save
@@ -36,7 +38,20 @@ module Tasks
       private
 
       def exclude_non_due_tasks
-        raise NotYetImplemented
+        # We decided to pull out non due tasks here instead of where the report
+        # is originally generated because that code is currently generic, and leaving
+        # it serving all needs will probably help us later if we cache generated
+        # report data.
+
+        @report.each do |period_report|
+          num_tasks = period_report[:data_headings].length
+          not_due_count = period_report[:data_headings].count{|heading| heading[:due_at] > Time.now}
+          next if not_due_count == 0
+          period_report[:data_headings].slice!(num_tasks-not_due_count..-1)
+          period_report[:students].each do |student|
+            student[:data].slice!(num_tasks-not_due_count..-1)
+          end
+        end
       end
 
       def setup_styles
@@ -277,11 +292,11 @@ module Tasks
             student[:first_name],
             student[:last_name],
             [student[:student_identifier], {style: @normal_R}],
-            ["=IFERROR(AVERAGE(#{homework_score_columns.map{|cc| "#{cc}#{first_student_row + ss}"}.join(',')}),NA())",
+            ["#{@eq}IFERROR(AVERAGE(#{homework_score_columns.map{|cc| "#{cc}#{first_student_row + ss}"}.join(',')}),NA())",
              style: (format == :counts ? nil : @pct)],
-            ["=IFERROR(AVERAGE(#{homework_progress_columns.map{|cc| "#{cc}#{first_student_row + ss}"}.join(',')}),NA())",
+            ["#{@eq}IFERROR(AVERAGE(#{homework_progress_columns.map{|cc| "#{cc}#{first_student_row + ss}"}.join(',')}),NA())",
              style: (format == :counts ? nil : @pct)],
-            ["=IFERROR(AVERAGE(#{reading_progress_columns.map{|cc| "#{cc}#{first_student_row + ss}"}.join(',')}),NA())",
+            ["#{@eq}IFERROR(AVERAGE(#{reading_progress_columns.map{|cc| "#{cc}#{first_student_row + ss}"}.join(',')}),NA())",
              style: (format == :counts ? nil : @pct)]
           ]
 
@@ -311,9 +326,9 @@ module Tasks
           ["Class Average", {style: @average_style}],
           ["", {style: @average_style}],
           ["", {style: @average_R}],
-          ["=AVERAGEIF(D#{first_student_row}:D#{last_student_row},\"<>#N/A\")", {style: average_style}],
-          ["=AVERAGEIF(E#{first_student_row}:E#{last_student_row},\"<>#N/A\")", {style: average_style}],
-          ["=AVERAGEIF(F#{first_student_row}:F#{last_student_row},\"<>#N/A\")", {style: average_style_R}]
+          ["#{@eq}AVERAGEIF(D#{first_student_row}:D#{last_student_row},\"<>#N/A\")", {style: average_style}],
+          ["#{@eq}AVERAGEIF(E#{first_student_row}:E#{last_student_row},\"<>#N/A\")", {style: average_style}],
+          ["#{@eq}AVERAGEIF(F#{first_student_row}:F#{last_student_row},\"<>#N/A\")", {style: average_style_R}]
         ]
 
         report[:data_headings].count.times do |index|
@@ -323,8 +338,8 @@ module Tasks
           score_range = "#{score_column}#{first_student_row}:#{score_column}#{last_student_row}"
           progress_range = "#{progress_column}#{first_student_row}:#{progress_column}#{last_student_row}"
 
-          average_columns.push(["=IFERROR(AVERAGE(#{score_range}),\"\")", {style: average_style}])
-          average_columns.push(["=IFERROR(AVERAGE(#{progress_range}),\"\")", {style: average_style}])
+          average_columns.push(["#{@eq}IFERROR(AVERAGE(#{score_range}),\"\")", {style: average_style}])
+          average_columns.push(["#{@eq}IFERROR(AVERAGE(#{progress_range}),\"\")", {style: average_style}])
 
           average_columns.push(["", {style: @average_style}],["", {style: @average_style}],["", {style: @average_R}])
         end
@@ -338,9 +353,9 @@ module Tasks
             ["Total Possible", {style: @total_style}],
             ["", {style: @total_style}],
             ["", {style: @total_R}],
-            ["=SUM(#{homework_score_columns.map{|cc| "#{cc}#{last_student_row + 2}"}.join(',')})", {style: @total_style}],
-            ["=SUM(#{homework_progress_columns.map{|cc| "#{cc}#{last_student_row + 2}"}.join(',')})", {style: @total_style}],
-            ["=SUM(#{reading_progress_columns.map{|cc| "#{cc}#{last_student_row + 2}"}.join(',')})", {style: @total_R}]
+            ["#{@eq}SUM(#{homework_score_columns.map{|cc| "#{cc}#{last_student_row + 2}"}.join(',')})", {style: @total_style}],
+            ["#{@eq}SUM(#{homework_progress_columns.map{|cc| "#{cc}#{last_student_row + 2}"}.join(',')})", {style: @total_style}],
+            ["#{@eq}SUM(#{reading_progress_columns.map{|cc| "#{cc}#{last_student_row + 2}"}.join(',')})", {style: @total_R}]
           ]
 
           task_total_counts.each do |total_count|
@@ -446,120 +461,120 @@ module Tasks
       end
 
 
-      def create_data_worksheets(performance_report, package)
-        # performance_report.each do |report|
-        #   package.workbook.add_worksheet(
-        #     name: @helper.sanitized_worksheet_name(name: report[:period][:name])
-        #   ) do |sheet|
-        #     # bold = sheet.styles.add_style b: true
-        #     # italic = sheet.styles.add_style i: true
-        #     # pct = sheet.styles.add_style num_fmt: Axlsx::NUM_FMT_PERCENT
-        #     # italic_pct = sheet.styles.add_style num_fmt: Axlsx::NUM_FMT_PERCENT, i: true
-        #     # yellow_pct = sheet.styles.add_style num_fmt: Axlsx::NUM_FMT_PERCENT, bg_color: 'FFFF93'
+      # def create_data_worksheets(performance_report, package)
+      #   # performance_report.each do |report|
+      #   #   package.workbook.add_worksheet(
+      #   #     name: @helper.sanitized_worksheet_name(name: report[:period][:name])
+      #   #   ) do |sheet|
+      #   #     # bold = sheet.styles.add_style b: true
+      #   #     # italic = sheet.styles.add_style i: true
+      #   #     # pct = sheet.styles.add_style num_fmt: Axlsx::NUM_FMT_PERCENT
+      #   #     # italic_pct = sheet.styles.add_style num_fmt: Axlsx::NUM_FMT_PERCENT, i: true
+      #   #     # yellow_pct = sheet.styles.add_style num_fmt: Axlsx::NUM_FMT_PERCENT, bg_color: 'FFFF93'
 
-        #     sheet.add_row(data_headers(report[:data_headings]), style: bold)
-        #     sheet.add_row(gather_due_dates(report[:data_headings]), style: italic) \
-        #       unless report[:period].course.is_concept_coach
+      #   #     sheet.add_row(data_headers(report[:data_headings]), style: bold)
+      #   #     sheet.add_row(gather_due_dates(report[:data_headings]), style: italic) \
+      #   #       unless report[:period].course.is_concept_coach
 
-        #     sheet.add_row(gather_averages(report[:data_headings]), style: italic_pct)
+      #   #     sheet.add_row(gather_averages(report[:data_headings]), style: italic_pct)
 
-        #     report.students.each do |student|
-        #       styles = lateness_styles(student.data, nil, pct, yellow_pct)
-        #       row = sheet.add_row(student_scores(student), style: styles)
-        #       add_late_comments(sheet, student.data, row)
-        #     end
-        #   end
-        # end
-      end
+      #   #     report.students.each do |student|
+      #   #       styles = lateness_styles(student.data, nil, pct, yellow_pct)
+      #   #       row = sheet.add_row(student_scores(student), style: styles)
+      #   #       add_late_comments(sheet, student.data, row)
+      #   #     end
+      #   #   end
+      #   # end
+      # end
 
-      def data_headers(data_headings)
-        headings = data_headings.map(&:title)
-        non_data_headings + headings
-      end
+      # def data_headers(data_headings)
+      #   headings = data_headings.map(&:title)
+      #   non_data_headings + headings
+      # end
 
-      def gather_due_dates(data_headings)
-        due_dates = data_headings.map(&:due_at)
+      # def gather_due_dates(data_headings)
+      #   due_dates = data_headings.map(&:due_at)
 
-        collect_columns(due_dates, 'Due Date') do |d|
-          d.respond_to?(:strftime) ? d.strftime("%-m/%-d/%Y") : d
-        end
-      end
+      #   collect_columns(due_dates, 'Due Date') do |d|
+      #     d.respond_to?(:strftime) ? d.strftime("%-m/%-d/%Y") : d
+      #   end
+      # end
 
-      def gather_averages(data_headings)
-        averages = data_headings.map do |heading|
-          '%.2f' % heading.total_average if heading.total_average
-        end
+      # def gather_averages(data_headings)
+      #   averages = data_headings.map do |heading|
+      #     '%.2f' % heading.total_average if heading.total_average
+      #   end
 
-        collect_columns(averages, 'Average')
-      end
+      #   collect_columns(averages, 'Average')
+      # end
 
-      def lateness_styles(data, text, normal, late)
-        collect_columns(data) { |d| d.nil? ? text : (d.late ? late : normal) }
-      end
+      # def lateness_styles(data, text, normal, late)
+      #   collect_columns(data) { |d| d.nil? ? text : (d.late ? late : normal) }
+      # end
 
-      def add_late_comments(sheet, data, row)
-        data.each_with_index do |d, col|
-          if d && d.late
-            column = col + non_data_headings.size
+      # def add_late_comments(sheet, data, row)
+      #   data.each_with_index do |d, col|
+      #     if d && d.late
+      #       column = col + non_data_headings.size
 
-            sheet.add_comment(
-              ref: sheet[row.row_index][column],
-              text: "Homework was worked #{time_ago_in_words(d.last_worked_at)} late",
-              author: 'OpenStax',
-              visible: false
-            )
-          end
-        end
-      end
+      #       sheet.add_comment(
+      #         ref: sheet[row.row_index][column],
+      #         text: "Homework was worked #{time_ago_in_words(d.last_worked_at)} late",
+      #         author: 'OpenStax',
+      #         visible: false
+      #       )
+      #     end
+      #   end
+      # end
 
-      def student_scores(student)
-        [student.first_name, student.last_name, student.student_identifier] + \
-         student.data.map do |data|
-           data ? score(data) : nil
-         end
-      end
+      # def student_scores(student)
+      #   [student.first_name, student.last_name, student.student_identifier] + \
+      #    student.data.map do |data|
+      #      data ? score(data) : nil
+      #    end
+      # end
 
-      def score(data)
-        case data.type
-        when 'homework', 'concept_coach'
-          '%.2f' % (data.correct_exercise_count/data.actual_and_placeholder_exercise_count.to_f)
-        when 'reading'
-          data.status.humanize
-        when 'external'
-          data.status == "not_started" ? "Not clicked" : "Clicked"
-        else
-          raise "Undefined case for data.type #{data.type} " +
-                "please define it here, or use one of " +
-                "homework, concept_coach, reading, external"
-        end
-      end
+      # def score(data)
+      #   case data.type
+      #   when 'homework', 'concept_coach'
+      #     '%.2f' % (data.correct_exercise_count/data.actual_and_placeholder_exercise_count.to_f)
+      #   when 'reading'
+      #     data.status.humanize
+      #   when 'external'
+      #     data.status == "not_started" ? "Not clicked" : "Clicked"
+      #   else
+      #     raise "Undefined case for data.type #{data.type} " +
+      #           "please define it here, or use one of " +
+      #           "homework, concept_coach, reading, external"
+      #   end
+      # end
 
-      def non_data_headings
-        ['First Name', 'Last Name', 'Student ID']
-      end
+      # def non_data_headings
+      #   ['First Name', 'Last Name', 'Student ID']
+      # end
 
-      def collect_columns(collection, *labels, &block)
-        labels = *labels.flatten.compact
+      # def collect_columns(collection, *labels, &block)
+      #   labels = *labels.flatten.compact
 
-        (labels + offset_columns(labels.size) + collection).map do |item|
-          block_given? ? yield(item) : item
-        end
-      end
+      #   (labels + offset_columns(labels.size) + collection).map do |item|
+      #     block_given? ? yield(item) : item
+      #   end
+      # end
 
-      def offset_columns(subtract_amt)
-        # some cases need to subtract offset
-        # because they add their own columns
-        # to the set
+      # def offset_columns(subtract_amt)
+      #   # some cases need to subtract offset
+      #   # because they add their own columns
+      #   # to the set
 
-        offset_cells = non_data_headings.map { nil }
+      #   offset_cells = non_data_headings.map { nil }
 
-        if subtract_amt.zero?
-          offset_cells
-        else
-          # #slice(index, length) returns new_ary
-          offset_cells.first(non_data_headings.size - subtract_amt)
-        end
-      end
+      #   if subtract_amt.zero?
+      #     offset_cells
+      #   else
+      #     # #slice(index, length) returns new_ary
+      #     offset_cells.first(non_data_headings.size - subtract_amt)
+      #   end
+      # end
     end
   end
 end
