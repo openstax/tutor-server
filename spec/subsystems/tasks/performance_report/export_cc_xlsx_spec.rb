@@ -1,11 +1,24 @@
-require 'rails_helper'
-require 'tmpdir'
+# require 'rails_helper'
+# require 'tmpdir'
+
+require 'spec_helper'
+
+require_relative '../../../../app/subsystems/tasks/performance_report/export_cc_xlsx'
+require 'active_support/all'
+require 'chronic'
+require 'axlsx'
+require 'xlsx_helper'
+require 'byebug'
+require 'roo'
+require 'timecop'
 
 RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
 
   it 'does not explode and passes spot checks' do
     Dir.mktmpdir do |dir|
       filepath = described_class.call(course_name: "Physics 101", report: report_1, filename: "#{dir}/testfile")
+
+`open "#{filepath}"` and sleep(0.5)
 
       wb = nil
       expect{ wb = Roo::Excelx.new(filepath) }.to_not raise_error

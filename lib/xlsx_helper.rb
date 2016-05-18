@@ -88,6 +88,16 @@ class XlsxHelper
     "#{Axlsx.col_ref(column)}#{row}"
   end
 
+  def merge_and_style(sheet, range, styles)
+    if range.is_a?(Array)
+      # assume columns are 1-indexed, to match row numbers
+      range = "#{Axlsx::col_ref(range[0]-1)}#{range[1]}:#{Axlsx::col_ref(range[2]-1)}#{range[3]}"
+    end
+
+    sheet.merge_cells(range)
+    sheet[range].each{|cell| cell.style = styles} unless styles.blank?
+  end
+
   private
 
   def next_truncated_name_count

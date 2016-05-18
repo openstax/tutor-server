@@ -23,7 +23,7 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
         end
 
         # Uncomment this to open the file for visual inspection
-        # `open "#{filepath}"` and sleep(0.5)
+        `open "#{filepath}"` and sleep(0.5)
 
         expect{ @wb = Roo::Excelx.new(filepath) }.to_not raise_error
         @sheet1 = @wb.sheet(@wb.sheets.first)

@@ -67,7 +67,7 @@ module Tasks
           @bold_R = s.add_style b: true, border: {edges: [:right], :color => '000000', :style => :thin}
           @bold_T = s.add_style b: true, border: {edges: [:top], :color => '000000', :style => :thin}
           @task_title = s.add_style b: true,
-                                       border: { edges: [:left, :top, :right], :color => '000000', :style => :thin},
+                                       border: { edges: [:left, :top, :right, :bottom], :color => '000000', :style => :thin},
                                        alignment: {horizontal: :center, wrap_text: true}
 
           @normal_L = s.add_style border: {edges: [:left], :color => '000000', :style => :thin}
@@ -109,11 +109,6 @@ module Tasks
           @package.workbook.styles{|s| style = s.add_style(hash.dup)}
           style
         end
-      end
-
-      def merge_and_style(sheet, range, styles)
-        sheet.merge_cells(range)
-        sheet[range].each{|cell| cell.style = styles} unless styles.blank?
       end
 
       def make_first_sheet_active
@@ -204,11 +199,11 @@ module Tasks
         @helper.add_row(sheet, due_at_columns)
 
         # Have to merge vertically and style merged cells after the fact
-        merge_and_style(sheet, "D7:F8",
+        @helper.merge_and_style(sheet, "D7:F8",
           style!(
             b: true,
             bg_color: 'C9F0F8',
-            border: { edges: [:left, :top, :right], :color => '000000', :style => :thin},
+            border: { edges: [:left, :top, :right, :bottom], :color => '000000', :style => :thin},
             alignment: {horizontal: :center, vertical: :center, wrap_text: true}
           )
         )
@@ -252,18 +247,18 @@ module Tasks
           style!(alignment: {horizontal: :center, vertical: :center, wrap_text: true}, b: true)
 
         # Final averages sub headings
-        merge_and_style(sheet, "D9:D10", style!(
+        @helper.merge_and_style(sheet, "D9:D10", style!(
           b: true, border: {edges: [:left], :color => '000000', :style => :thin},
           alignment: {horizontal: :center, vertical: :center, wrap_text: true}))
-        merge_and_style(sheet, "E9:E10", center_bold_style)
-        merge_and_style(sheet, "F9:F10", center_bold_R_style)
+        @helper.merge_and_style(sheet, "E9:E10", center_bold_style)
+        @helper.merge_and_style(sheet, "F9:F10", center_bold_R_style)
 
         # "Score" and "Progress"
         report[:data_headings].count.times do |index|
           score_column = Axlsx::col_ref(6 + index * 5)
           progress_column = Axlsx::col_ref(6 + index * 5 + 1)
-          merge_and_style(sheet, "#{score_column}9:#{score_column}10", center_bold_style)
-          merge_and_style(sheet, "#{progress_column}9:#{progress_column}10", center_bold_style)
+          @helper.merge_and_style(sheet, "#{score_column}9:#{score_column}10", center_bold_style)
+          @helper.merge_and_style(sheet, "#{progress_column}9:#{progress_column}10", center_bold_style)
         end
 
         # STUDENT DATA

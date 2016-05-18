@@ -19,6 +19,7 @@ module Tasks
         @report = report
         @filepath = filepath
         @helper = XlsxHelper.new
+        @eq = "="
       end
 
       def create
@@ -33,6 +34,19 @@ module Tasks
 
       protected
 
+      def style!(hash) # TODO move into a helper
+        @styles ||= {}
+
+        @styles[hash] ||= begin
+          # TODO normalize incoming hash and see if it has been stored already, if
+          # so save it again with the non-normalized hash
+
+          style = nil
+          @package.workbook.styles{|s| style = s.add_style(hash.dup)}
+          style
+        end
+      end
+
       def setup_styles
         @package.workbook.styles do |s|
           @title = s.add_style sz: 16
@@ -45,18 +59,31 @@ module Tasks
           @bold_R = s.add_style b: true, border: {edges: [:right], :color => '000000', :style => :thin}
           @bold_T = s.add_style b: true, border: {edges: [:top], :color => '000000', :style => :thin}
           @reading_title = s.add_style b: true,
-                                       border: { edges: [:left, :top, :right], :color => '000000', :style => :thin},
+                                       border: { edges: [:left, :top, :right, :bottom], :color => '000000', :style => :thin},
                                        alignment: {horizontal: :center, wrap_text: true}
           @normal_L = s.add_style border: {edges: [:left], :color => '000000', :style => :thin}
+          @count_L = s.add_style border: {edges: [:left], :color => '000000', :style => :thin}, format_code: "#"
+          @count = s.add_style format_code: "#"
           @pct_L = s.add_style border: {edges: [:left], :color => '000000', :style => :thin}, num_fmt: Axlsx::NUM_FMT_PERCENT
           @right_R = s.add_style border: {edges: [:right], :color => '000000', :style => :thin}, alignment: {horizontal: :right}
           @date_R = s.add_style border: {edges: [:right], :color => '000000', :style => :thin}, num_fmt: 14
-          @average_style = s.add_style b: true, border: { edges: [:top], :color => '000000', :style => :medium}, format_code: "#.0"
-          @average_R = s.add_style b: true, border: { edges: [:top, :right], :color => '000000', :style => :medium}, border_right: {style: :thin}, format_code: "#.0"
+          @average_style = s.add_style b: true, border: { edges: [:top, :bottom], :color => '000000', :style => :thin},
+                                       border_top: {style: :medium}, format_code: "#", bg_color: 'F2F2F2'
+          @average_R = s.add_style b: true, border: { edges: [:top, :bottom, :right], :color => '000000', :style => :thin},
+                                   border_top: {style: :medium}, format_code: "#", bg_color: 'F2F2F2'
           @average_pct = s.add_style b: true,
-                                     border: { edges: [:top], :color => '000000', :style => :medium},
-                                     num_fmt: Axlsx::NUM_FMT_PERCENT
-
+                                     border: { edges: [:top, :bottom], :color => '000000', :style => :thin},
+                                     border_top: {style: :medium},
+                                     num_fmt: Axlsx::NUM_FMT_PERCENT, bg_color: 'F2F2F2'
+          @average_pct_R = s.add_style b: true,
+                                     border: { edges: [:top, :bottom, :right], :color => '000000', :style => :thin},
+                                     border_top: {style: :medium},
+                                     num_fmt: Axlsx::NUM_FMT_PERCENT, bg_color: 'F2F2F2'
+          @average_R = s.add_style b: true, border: { edges: [:top, :bottom, :right], :color => '000000', :style => :thin},
+                                 border_right: {style: :thin}, format_code: "#", bg_color: 'F2F2F2', border_top: {style: :medium}
+          @average_pct = s.add_style b: true,
+                                     border: { edges: [:top, :bottom], :color => '000000', :style => :thin},
+                                     num_fmt: Axlsx::NUM_FMT_PERCENT, bg_color: 'F2F2F2', border_top: {style: :medium}
         end
       end
 
@@ -87,16 +114,20 @@ module Tasks
         )
       end
 
+      def row_range(offset:, step:, length:, row:)
+        length.times.map{|ii| "#{Axlsx::col_ref(offset + ii*step)}#{row}"}.join(',')
+      end
+
       def write_period_worksheet(report:, sheet:, format:)
+
+        num_tasks = report[:data_headings].length # TODO use this more
 
         # META INFO ROWS
 
         meta_rows = [
           [["Concept Coach Student Scores", {style: @title}]],
-          [["Exported #{Date.today.strftime("%-m/%-d/%Y")}", {style: @italic}]],
-          [[""]],
           [[@course_name, {style: @course_section}]],
-          [[""]],
+          [["Exported #{Date.today.strftime("%-m/%-d/%Y")}", {style: @italic}]],
           [[""]],
           [[report[:period][:name], {style: @course_section}]],
           [[""]]
@@ -114,7 +145,8 @@ module Tasks
         # READING TITLE COLUMNS
 
         reading_title_columns =
-          3.times.map{["", {style: @bold_T}]} +
+          3.times.map{[""]} +
+          [["Overall Score"]] + (format == :counts ? [""] : []) +
           report[:data_headings].map do |data_heading|
             [
               data_heading[:title],
@@ -127,19 +159,76 @@ module Tasks
 
         @helper.add_row(sheet, reading_title_columns)
 
-        # DATA HEADINGS
+        # Subheadings
 
-        data_heading_columns =
-          ["First Name", "Last Name", "Student ID"].map{|text| [text, style: @bold]}
+        subheadings = ["","",""]
 
-        report[:data_headings].count.times do
-          data_heading_columns.push(["Correct",        {style: @bold_L}])
-          data_heading_columns.push(["Completed",      {style: @bold}])
-          data_heading_columns.push(["Total Possible", {style: @bold}]) if format == :counts
-          data_heading_columns.push(["Last Worked",    {style: @bold_R}])
+        if format == :counts
+          subheadings.push(["Score",        {style: @bold_L}])
+          subheadings.push(["Total Possible",      {style: @bold}])
+        else
+          subheadings.push("")
         end
 
-        @helper.add_row(sheet, data_heading_columns)
+        num_tasks.times do
+          subheadings.push(["Score",        {style: @bold_L}])
+          subheadings.push(["Progress",      {style: @bold}])
+          subheadings.push(["Total Possible", {style: @bold}]) if format == :counts
+          subheadings.push(["Last Worked",    {style: @bold_R}])
+        end
+
+        @helper.add_row(sheet, subheadings)
+
+        # STUDENT INFO COLUMNS
+
+        student_info_columns =
+          ["First Name", "Last Name", "Student ID"].map{|text| [text, style: @bold_T]} +
+          (format == :counts ? 2 + num_tasks*4 : 1 + num_tasks*3).times.map{""}
+
+        @helper.add_row(sheet, student_info_columns)
+
+        # Have to merge vertically and style merged cells after the fact
+
+        overall_score_merge_range =
+          format == :counts ? "D7:E7" : "D7:D9"
+
+        @helper.merge_and_style(sheet, overall_score_merge_range,
+          style!(
+            b: true,
+            bg_color: 'C9F0F8',
+            border: { edges: [:left, :top, :right, :bottom], :color => '000000', :style => :thin},
+            alignment: {horizontal: :center, vertical: :center, wrap_text: true}
+          )
+        )
+
+        center_bold_style =
+          style!(alignment: {horizontal: :center, vertical: :center, wrap_text: true}, b: true)
+
+        center_bold_R_style = style!(
+          b: true, border: {edges: [:right], :color => '000000', :style => :thin},
+          alignment: {horizontal: :center, vertical: :center, wrap_text: true})
+
+        center_bold_L_style = style!(
+          b: true, border: {edges: [:left], :color => '000000', :style => :thin},
+          alignment: {horizontal: :center, vertical: :center, wrap_text: true})
+
+        if format == :counts
+          @helper.merge_and_style(sheet, [4,8,4,9], center_bold_L_style)
+          @helper.merge_and_style(sheet, [5,8,5,9], center_bold_R_style)
+
+          report[:data_headings].count.times.with_index do |ii|
+            @helper.merge_and_style(sheet, [6+ii*4,  8,6+ii*4,  9], center_bold_style)
+            @helper.merge_and_style(sheet, [6+ii*4+1,8,6+ii*4+1,9], center_bold_style)
+            @helper.merge_and_style(sheet, [6+ii*4+2,8,6+ii*4+2,9], center_bold_style)
+            @helper.merge_and_style(sheet, [6+ii*4+3,8,6+ii*4+3,9], center_bold_R_style)
+          end
+        else
+          report[:data_headings].count.times.with_index do |ii|
+            @helper.merge_and_style(sheet, [5+ii*3,  8,5+ii*3,  9], center_bold_style)
+            @helper.merge_and_style(sheet, [5+ii*3+1,8,5+ii*3+1,9], center_bold_style)
+            @helper.merge_and_style(sheet, [5+ii*3+2,8,5+ii*3+2,9], center_bold_R_style)
+          end
+        end
 
         # STUDENT DATA
 
@@ -147,12 +236,26 @@ module Tasks
 
         students = report[:students].sort_by{|student| student[:last_name]}
 
-        students.each do |student|
+        students.each_with_index do |student, ss|
           student_columns = [
             student[:first_name],
             student[:last_name],
-            student[:student_identifier]
+            student[:student_identifier],
           ]
+
+          if format == :counts
+            student_columns.push(
+              ["#{@eq}IFERROR(AVERAGE(#{row_range(offset:5, step: 4, length: num_tasks, row: first_student_row + ss)}),NA())",
+               style: @count_L],
+              ["#{@eq}IFERROR(AVERAGE(#{row_range(offset:7, step: 4, length: num_tasks, row: first_student_row + ss)}),NA())",
+               style: @count]
+            )
+          else
+            student_columns.push(
+              ["#{@eq}IFERROR(AVERAGE(#{row_range(offset:4, step: 3, length: num_tasks, row: first_student_row + ss)}),NA())",
+               style: @pct_L]
+            )
+          end
 
           student[:data].each do |data|
             if data
@@ -168,7 +271,6 @@ module Tasks
                   correct_count,
                   {
                     style: @normal_L,
-                    comment: "Correct: #{(correct_pct*100).round(0)}% Completed: #{(completed_pct*100).round(0)}%"
                   }
                 ])
                 student_columns.push(completed_count)
@@ -178,9 +280,6 @@ module Tasks
                   correct_pct,
                   {
                     style: @pct_L,
-                    comment: "Correct: #{correct_count} " \
-                             "Completed: #{completed_count} " \
-                             "Total Possible: #{total_count}"
                   }
                 ])
                 student_columns.push([
@@ -215,8 +314,19 @@ module Tasks
           ["", {style: @average_R}]
         ]
 
+        if format == :counts
+          average_columns.push(
+            ["#{@eq}AVERAGE(D#{first_student_row}:D#{last_student_row})", style: @average_R],
+            ["#{@eq}AVERAGE(E#{first_student_row}:E#{last_student_row})", style: @average_R]
+          )
+        else
+          average_columns.push(
+            ["#{@eq}AVERAGE(D#{first_student_row}:D#{last_student_row})", style: @average_pct_R]
+          )
+        end
+
         report[:data_headings].count.times do |index|
-          first_column = index * (format == :counts ? 4 : 3) + 3
+          first_column = index * (format == :counts ? 4 : 3) + (format == :counts ? 5 : 4)
           average_style = format == :counts ? @average_style : @average_pct
 
           correct_range =
