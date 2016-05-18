@@ -9,63 +9,37 @@ class Api::V1::PeriodsController < Api::V1::ApiController
     EOS
   end
 
-  api :POST, '/courses/:course_id/periods',
-             'Returns a new course period for given course'
+  api :POST, '/courses/:course_id/periods', 'Returns a new course period for given course'
   description <<-EOS
     #{json_schema(Api::V1::PeriodRepresenter, include: :readable)}
   EOS
   def create
-    OSU::AccessPolicy.require_action_allowed!(:add_period, current_human_user, @course)
-    result = CreatePeriod.call(course: @course, name: period_params[:name])
-
-    if result.errors.any?
-      render_api_errors(result.errors)
-    else
-      respond_with result.outputs.period,
-                   represent_with: Api::V1::PeriodRepresenter,
-                   location: nil
+    period_model = CourseMembership::Models::Period.new
+    CourseMembership::Models::Period.transaction do
+      standard_nested_create(period_model, :course, @course, Api::V1::PeriodRepresenter)
+      period = CourseMembership::Period.new(strategy: period_model.wrap)
+      Tasks::AssignCoursewideTaskPlansToNewPeriod[period: period]
     end
   end
 
-  api :PATCH, '/periods/:id',
-              'Returns an updated period for the given course'
+  api :PATCH, '/periods/:id', 'Returns an updated period for the given course'
   description <<-EOS
     #{json_schema(Api::V1::PeriodRepresenter, include: :readable)}
   EOS
   def update
-    OSU::AccessPolicy.require_action_allowed!(:update, current_human_user, @period)
-
-    result = CourseMembership::UpdatePeriod.call(
-      period: @period,
-      name: period_params[:name],
-      enrollment_code: period_params[:enrollment_code],
-      default_open_time: period_params[:default_open_time],
-      default_due_time: period_params[:default_due_time]
-    )
-
-    if result.errors.any?
-      render_api_errors(result.errors)
-    else
-      respond_with result.outputs.period, represent_with: Api::V1::PeriodRepresenter,
-                                          location: nil,
-                                          responder: ResponderWithPutContent
+    CourseMembership::Models::Period.transaction do
+      standard_update(@period.to_model, Api::V1::PeriodRepresenter)
+      SchoolDistrict::ProcessSchoolChange.call(course_profile: @period.course.profile)
     end
   end
 
-  api :DELETE, '/periods/:id',
-               'Deletes a period for authorized teachers'
+  api :DELETE, '/periods/:id', 'Deletes a period for authorized teachers'
   def destroy
-    OSU::AccessPolicy.require_action_allowed!(:destroy, current_human_user, @period)
-    result = CourseMembership::DeletePeriod.call(period: @period)
-
-    if result.errors.any?
-      render_api_errors(result.errors)
-    else
-      head :no_content
-    end
+    standard_destroy(@period.to_model)
   end
 
   private
+
   def find_period_and_course
     if params[:course_id]
       @course = Entity::Course.find(params[:course_id])
@@ -73,9 +47,5 @@ class Api::V1::PeriodsController < Api::V1::ApiController
       @period = CourseMembership::GetPeriod[id: params[:id]]
       @course = @period.course
     end
-  end
-
-  def period_params
-    params.require(:period).permit(:name, :enrollment_code, :default_open_time, :default_due_time)
   end
 end

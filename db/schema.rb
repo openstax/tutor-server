@@ -670,15 +670,15 @@ ActiveRecord::Schema.define(version: 20160517202901) do
     t.integer  "target_id",                   null: false
     t.string   "target_type",                 null: false
     t.integer  "tasks_task_plan_id",          null: false
-    t.datetime "opens_at",                    null: false
-    t.datetime "due_at",                      null: false
+    t.datetime "opens_at_ntz",                null: false
+    t.datetime "due_at_ntz",                  null: false
     t.datetime "created_at",                  null: false
     t.datetime "updated_at",                  null: false
     t.integer  "course_profile_time_zone_id", null: false
   end
 
   add_index "tasks_tasking_plans", ["course_profile_time_zone_id"], name: "index_tasks_tasking_plans_on_course_profile_time_zone_id", using: :btree
-  add_index "tasks_tasking_plans", ["due_at", "opens_at"], name: "index_tasks_tasking_plans_on_due_at_and_opens_at", using: :btree
+  add_index "tasks_tasking_plans", ["due_at_ntz", "opens_at_ntz"], name: "index_tasks_tasking_plans_on_due_at_ntz_and_opens_at_ntz", using: :btree
   add_index "tasks_tasking_plans", ["target_id", "target_type", "tasks_task_plan_id"], name: "index_tasking_plans_on_t_id_and_t_type_and_t_p_id", unique: true, using: :btree
   add_index "tasks_tasking_plans", ["tasks_task_plan_id"], name: "index_tasks_tasking_plans_on_tasks_task_plan_id", using: :btree
 
@@ -700,9 +700,9 @@ ActiveRecord::Schema.define(version: 20160517202901) do
     t.integer  "task_type",                                              null: false
     t.string   "title",                                                  null: false
     t.text     "description"
-    t.datetime "opens_at"
-    t.datetime "due_at"
-    t.datetime "feedback_at"
+    t.datetime "opens_at_ntz"
+    t.datetime "due_at_ntz"
+    t.datetime "feedback_at_ntz"
     t.datetime "last_worked_at"
     t.integer  "tasks_taskings_count",                   default: 0,     null: false
     t.text     "personalized_placeholder_strategy"
@@ -727,7 +727,7 @@ ActiveRecord::Schema.define(version: 20160517202901) do
   end
 
   add_index "tasks_tasks", ["course_profile_time_zone_id"], name: "index_tasks_tasks_on_course_profile_time_zone_id", using: :btree
-  add_index "tasks_tasks", ["due_at", "opens_at"], name: "index_tasks_tasks_on_due_at_and_opens_at", using: :btree
+  add_index "tasks_tasks", ["due_at_ntz", "opens_at_ntz"], name: "index_tasks_tasks_on_due_at_ntz_and_opens_at_ntz", using: :btree
   add_index "tasks_tasks", ["entity_task_id"], name: "index_tasks_tasks_on_entity_task_id", unique: true, using: :btree
   add_index "tasks_tasks", ["last_worked_at"], name: "index_tasks_tasks_on_last_worked_at", using: :btree
   add_index "tasks_tasks", ["task_type"], name: "index_tasks_tasks_on_task_type", using: :btree

@@ -6,7 +6,7 @@ class GetHistory
   def exec(role:, type: :all, current_task: nil)
     tasks = Tasks::Models::Task.joins{[task_plan.outer, taskings]}
                                .where(taskings: { entity_role_id: role.id })
-                               .order{[due_at.desc, task_plan.created_at.desc, created_at.desc]}
+                               .order{[due_at_ntz.desc, task_plan.created_at.desc, created_at.desc]}
                                .preload([
                                  {task_plan: :ecosystem},
                                  {tasked_exercises: {exercise: {page: :reading_dynamic_pool}}}

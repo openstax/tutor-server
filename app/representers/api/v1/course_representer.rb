@@ -13,27 +13,28 @@ module Api::V1
     property :name,
              type: String,
              readable: true,
-             writeable: false,
+             writeable: true,
              schema_info: { required: true }
 
     property :time_zone,
              type: String,
              readable: true,
-             writeable: false,
+             writeable: true,
              schema_info: { required: false },
              getter: ->(*) { time_zone.is_a?(CourseProfile::Models::TimeZone) ? \
-                               time_zone.name : time_zone }
+                               time_zone.name : time_zone },
+             setter: ->(value, *) { time_zone.name = value }
 
     property :default_open_time,
              type: String,
              readable: true,
-             writeable: false,
+             writeable: true,
              schema_info: { required: false }
 
     property :default_due_time,
              type: String,
              readable: true,
-             writeable: false,
+             writeable: true,
              schema_info: { required: false }
 
     property :salesforce_book_name,

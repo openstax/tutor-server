@@ -193,7 +193,7 @@ class SetupPerformanceReportData
       .joins { taskings }
       .where { taskings.entity_role_id == my { role.id } }
       .where { task_type.in task_types }
-      .order { due_at }
+      .order { due_at_ntz }
       .preload { task_steps.tasked }
       .to_a.select(&:past_open?)
   end

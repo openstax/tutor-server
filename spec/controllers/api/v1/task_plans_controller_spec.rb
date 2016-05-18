@@ -261,6 +261,8 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
         task_plan.publish_job_uuid = publish_job_uuid
         task_plan.save!
 
+        sleep(1)
+
         new_opens_at = time_zone.now.yesterday
         valid_json_hash['tasking_plans'].first['opens_at'] = new_opens_at
 
@@ -268,10 +270,12 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
                               raw_post_data: valid_json_hash.to_json
 
         expect(response).to have_http_status(:accepted)
-        # Need to reload the task_plan since publishing it will set the
-        # publication dates and change the representation
-        expect(task_plan.reload.publish_last_requested_at).not_to eq publish_last_requested_at
-        expect(task_plan.published_at).to eq published_at
+        # Need to reload the task_plan since publishing it will set
+        # publish_last_requested_at and change the representation
+        expect(task_plan.reload.publish_last_requested_at).not_to(
+          be_within(1).of(publish_last_requested_at)
+        )
+        expect(task_plan.published_at).to be_within(1).of(published_at)
         expect(task_plan.publish_job_uuid).not_to eq publish_job_uuid
 
         task_plan.tasks.each do |task|
@@ -318,8 +322,10 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
         }.not_to change{ task_plan.reload.tasks }
         expect(response).to have_http_status(:ok)
 
-        expect(task_plan.publish_last_requested_at).to eq publish_last_requested_at
-        expect(task_plan.published_at).to eq published_at
+        expect(task_plan.reload.publish_last_requested_at).to(
+          be_within(1).of(publish_last_requested_at)
+        )
+        expect(task_plan.published_at).to be_within(1).of(published_at)
         expect(task_plan.publish_job_uuid).to eq publish_job_uuid
         expect(task_plan.title).to eq 'Canceled'
         expect(task_plan.description).to eq 'Canceled Assignment'

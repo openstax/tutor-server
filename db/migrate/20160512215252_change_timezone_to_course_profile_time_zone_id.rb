@@ -4,6 +4,13 @@ class ChangeTimezoneToCourseProfileTimeZoneId < ActiveRecord::Migration
     add_column :tasks_tasking_plans, :course_profile_time_zone_id, :integer
     add_column :tasks_tasks, :course_profile_time_zone_id, :integer
 
+    rename_column :tasks_tasking_plans, :opens_at, :opens_at_ntz
+    rename_column :tasks_tasking_plans, :due_at, :due_at_ntz
+
+    rename_column :tasks_tasks, :opens_at, :opens_at_ntz
+    rename_column :tasks_tasks, :due_at, :due_at_ntz
+    rename_column :tasks_tasks, :feedback_at, :feedback_at_ntz
+
     reversible do |dir|
       dir.up do
         time_zones = {}
@@ -17,8 +24,8 @@ class ChangeTimezoneToCourseProfileTimeZoneId < ActiveRecord::Migration
         Tasks::Models::TaskingPlan.preload(task_plan: :owner).find_each do |tasking_plan|
           time_zone = time_zones[tasking_plan.task_plan.owner.id]
           tasking_plan.time_zone = time_zone
-          tasking_plan.opens_at = tasking_plan.read_attribute :opens_at
-          tasking_plan.due_at = tasking_plan.read_attribute :due_at
+          tasking_plan.opens_at = tasking_plan.opens_at_ntz
+          tasking_plan.due_at = tasking_plan.due_at_ntz
           tasking_plan.save!
         end
 
@@ -26,24 +33,24 @@ class ChangeTimezoneToCourseProfileTimeZoneId < ActiveRecord::Migration
                            .preload(taskings: :period).uniq.find_each do |task|
           time_zone = time_zones[task.taskings.first.period.entity_course_id]
           task.time_zone = time_zone
-          task.opens_at = task.read_attribute :opens_at
-          task.due_at = task.read_attribute :due_at
-          task.feedback_at = task.read_attribute :feedback_at
+          task.opens_at = task.opens_at_ntz
+          task.due_at = task.due_at_ntz
+          task.feedback_at = task.feedback_at_ntz
           task.save!
         end
       end
 
       dir.down do
         Tasks::Models::Task.joins(taskings: :period).uniq.find_each do |task|
-          task.write_attribute :opens_at, task.opens_at
-          task.write_attribute :due_at, task.due_at
-          task.write_attribute :feedback_at, task.feedback_at
+          task.opens_at_ntz = task.opens_at.utc
+          task.due_at_ntz = task.due_at.utc
+          task.feedback_at_ntz = task.feedback_at.utc
           task.save!
         end
 
         Tasks::Models::TaskingPlan.find_each do |tasking_plan|
-          tasking_plan.write_attribute :opens_at, tasking_plan.opens_at
-          tasking_plan.write_attribute :due_at, tasking_plan.due_at
+          tasking_plan.opens_at_ntz = tasking_plan.opens_at
+          tasking_plan.due_at_ntz = tasking_plan.due_at
           tasking_plan.save!
         end
 
@@ -69,7 +76,7 @@ class ChangeTimezoneToCourseProfileTimeZoneId < ActiveRecord::Migration
     add_foreign_key :tasks_tasks, :course_profile_time_zones,
                     on_update: :cascade, on_delete: :nullify
 
-    change_column_null :tasks_tasks, :opens_at, true
+    change_column_null :tasks_tasks, :opens_at_ntz, true
 
     remove_column :course_profile_profiles, :timezone, :string,
                   null: false, default: 'Central Time (US & Canada)'

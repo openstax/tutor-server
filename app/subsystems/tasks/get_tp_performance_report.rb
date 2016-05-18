@@ -74,7 +74,7 @@ module Tasks
           tp.target == period  || tp.target == course
         end
       }.uniq.sort { |a, b|
-        [b.due_at, b.created_at] <=> [a.due_at, a.created_at]
+        [b.due_at_ntz, b.created_at] <=> [a.due_at_ntz, a.created_at]
       }
     end
 

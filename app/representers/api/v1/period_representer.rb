@@ -14,7 +14,7 @@ module Api::V1
 
     property :name,
              type: String,
-             writeable: false,
+             writeable: true,
              readable: true,
              schema_info: {
                description: "The period's name"
@@ -22,7 +22,7 @@ module Api::V1
 
     property :enrollment_code,
              type: String,
-             writeable: false,
+             writeable: true,
              readable: true,
              schema_info: {
                description: "The period's enrollment code"
@@ -31,13 +31,13 @@ module Api::V1
     property :default_open_time,
              type: String,
              readable: true,
-             writeable: false,
+             writeable: true,
              schema_info: { required: false }
 
     property :default_due_time,
              type: String,
              readable: true,
-             writeable: false,
+             writeable: true,
              schema_info: { required: false }
 
   end

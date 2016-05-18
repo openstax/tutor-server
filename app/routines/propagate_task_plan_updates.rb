@@ -9,9 +9,9 @@ class PropagateTaskPlanUpdates
     {
       title: task_plan.title,
       description: task_plan.description,
-      opens_at: tasking_plan.read_attribute(:opens_at),
-      due_at: tasking_plan.read_attribute(:due_at),
-      feedback_at: task_plan.is_feedback_immediate ? nil : tasking_plan.read_attribute(:due_at)
+      opens_at_ntz: tasking_plan.opens_at_ntz,
+      due_at_ntz: tasking_plan.due_at_ntz,
+      feedback_at_ntz: task_plan.is_feedback_immediate ? nil : tasking_plan.due_at_ntz
     }
   end
 

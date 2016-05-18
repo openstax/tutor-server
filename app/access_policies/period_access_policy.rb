@@ -7,7 +7,7 @@ class PeriodAccessPolicy
       requestor.is_human? &&
         (UserIsCourseStudent[user: requestor, course: course] ||
            UserIsCourseTeacher[user: requestor, course: course])
-    when :update, :destroy
+    when :create, :update, :destroy
       requestor.is_human? &&
        UserIsCourseTeacher[user: requestor, course: course]
     else

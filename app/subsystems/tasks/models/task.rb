@@ -8,7 +8,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   STEPLESS_TASK_TYPES = [:external, :event]
 
-  belongs_to_time_zone :opens_at, :due_at, :feedback_at
+  belongs_to_time_zone :opens_at, :due_at, :feedback_at, suffix: :ntz
 
   belongs_to :task_plan, inverse_of: :tasks
 
@@ -32,7 +32,8 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   # Concept Coach and Practice Widget tasks have no open or due dates
   # We already validate dates for teacher-created assignments in the TaskingPlan
-  validates :opens_at, :due_at, timeliness: { type: :date }, allow_nil: true
+  validates :opens_at_ntz, :due_at_ntz, :feedback_at_ntz,
+            timeliness: { type: :date }, allow_nil: true
 
   validate :due_at_on_or_after_opens_at
 

@@ -168,7 +168,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                                       period: period_2] }
     let!(:student_3)         { student_role_3.student }
 
-    let!(:valid_params) { { course_id: course.id } }
+    let!(:valid_params) { { id: course.id } }
 
     context 'caller has an authorization token' do
       context 'caller is a course teacher' do
@@ -306,12 +306,12 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
   end
 
-  describe "update" do
+  describe "#update" do
     context 'anonymous user' do
       it 'raises SecurityTransgression' do
         expect {
-          api_patch :update, nil, parameters: { id: course.id,
-                                                course: { name: 'Renamed' } }
+          api_patch :update, nil, parameters: { id: course.id },
+                                  raw_post_data: { name: 'Renamed' }.to_json
         }.to raise_error(SecurityTransgression)
         expect(course.reload.name).to eq 'Physics 101'
       end
@@ -324,8 +324,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
       it 'raises SecurityTrangression' do
         expect {
-          api_patch :update, user_1_token, parameters: { id: course.id,
-                                                         course: { name: 'Renamed' } }
+          api_patch :update, user_1_token, parameters: { id: course.id },
+                                           raw_post_data: { name: 'Renamed' }.to_json
         }.to raise_error(SecurityTransgression)
         expect(course.reload.name).to eq 'Physics 101'
       end
@@ -337,8 +337,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       end
 
       it 'renames the course' do
-        api_patch :update, user_1_token, parameters: { id: course.id,
-                                                       course: { name: 'Renamed' } }
+        api_patch :update, user_1_token, parameters: { id: course.id },
+                                         raw_post_data: { name: 'Renamed' }.to_json
         expect(course.reload.name).to eq 'Renamed'
         expect(course.time_zone.name).to eq 'Central Time (US & Canada)'
         expect(response.body_as_hash[:name]).to eq 'Renamed'
@@ -361,10 +361,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(tasking_plan.due_at).to eq(due_at)
 
         course_name = course.name
-        api_patch :update, user_1_token, parameters: { id: course.id,
-                                                       course: {
-                                                         name: course_name,
-                                                         time_zone: 'Edinburgh' } }
+        api_patch :update, user_1_token, parameters: { id: course.id },
+                                         raw_post_data: { name: course_name,
+                                                          time_zone: 'Edinburgh' }.to_json
         expect(course.reload.name).to eq course_name
         expect(course.time_zone.name).to eq 'Edinburgh'
         expect(response.body_as_hash[:name]).to eq course_name
@@ -382,8 +381,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
       it 'updates the default open time' do
         course_name = course.name
-        api_patch :update, user_1_token, parameters: { id: course.id,
-                                                       course: { default_open_time: '01:02' } }
+        api_patch :update, user_1_token, parameters: { id: course.id },
+                                         raw_post_data: { default_open_time: '01:02' }.to_json
         expect(course.reload.name).to eq course_name
         expect(course.time_zone.name).to eq 'Central Time (US & Canada)'
         expect(course.profile.reload.default_open_time).to eq '01:02'
@@ -395,7 +394,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       it 'freaks if the default open time is in a bad format' do
         expect {
           api_patch :update, user_1_token,
-                    parameters: { id: course.id, course: { default_open_time: '1pm' } }
+                    parameters: { id: course.id },
+                    raw_post_data: { default_open_time: '1pm' }.to_json
         }.not_to change{ course.reload.default_open_time }
 
         expect(response).to have_http_status(:unprocessable_entity)
@@ -403,8 +403,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
       it 'updates the default due time' do
         course_name = course.name
-        api_patch :update, user_1_token, parameters: { id: course.id,
-                                                       course: { default_due_time: '02:02' } }
+        api_patch :update, user_1_token, parameters: { id: course.id },
+                                         raw_post_data: { default_due_time: '02:02' }.to_json
         expect(course.reload.name).to eq course_name
         expect(course.time_zone.name).to eq 'Central Time (US & Canada)'
         expect(course.profile.reload.default_due_time).to eq '02:02'
@@ -416,7 +416,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       it 'freaks if the default due time is in a bad format' do
         expect {
           api_patch :update, user_1_token,
-                    parameters: { id: course.id, course: { default_due_time: '1pm' } }
+                    parameters: { id: course.id },
+                    raw_post_data: { default_due_time: '1pm' }.to_json
         }.not_to change{ course.reload.default_open_time }
         expect(response).to have_http_status(:unprocessable_entity)
       end
