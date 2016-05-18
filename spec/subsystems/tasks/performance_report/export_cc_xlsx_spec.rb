@@ -1,5 +1,4 @@
-# require 'rails_helper'
-# require 'tmpdir'
+# Explicit requires to make testing faster (not loading whole app)
 
 require 'spec_helper'
 
@@ -14,26 +13,58 @@ require 'timecop'
 
 RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
 
-  it 'does not explode and passes spot checks' do
-    Dir.mktmpdir do |dir|
-      filepath = described_class.call(course_name: "Physics 101", report: report_1, filename: "#{dir}/testfile")
+  context 'report_1' do
+    before(:context) do
+      Dir.mktmpdir do |dir|
+        filepath = Timecop.freeze(Chronic.parse("3/18/2016 1:30PM")) do
+          # stringify formulas otherwise formulas are read as nil by roo
+          described_class.call(course_name: "Physics 101",
+                               report: report_1,
+                               filename: "#{dir}/testfile",
+                               options: {stringify_formulas: true})
+        end
 
-`open "#{filepath}"` and sleep(0.5)
+        # Uncomment this to open the file for visual inspection
+        # `open "#{filepath}"` and sleep(0.5)
 
-      wb = nil
-      expect{ wb = Roo::Excelx.new(filepath) }.to_not raise_error
-
-      expect(wb.sheets).to eq ["1st Period - %", "1st Period - #"]
-
-      sheet1 = wb.sheet(wb.sheets.first)
-
-      expect(sheet1.cell(11,2)).to eq "Gail"
-      expect(0.81..0.82).to cover(sheet1.cell(13,4))
-      expect(wb.comment?(13,4,"1st Period - %")).to be_truthy
-      expect(wb.celltype(11,9,wb.sheets.first)).to eq :date
-
-      [4, 5, 6].each{|col| expect(wb.empty?(11,col,wb.sheets.last)).to be_truthy}
+        expect{ @wb = Roo::Excelx.new(filepath) }.to_not raise_error
+      end
     end
+
+    it 'has good sheets' do
+      expect(@wb.sheets).to eq ["1st Period - %", "1st Period - #"]
+    end
+
+    it 'has students in alphabetical order' do
+      expect(cell(10,2,0)).to eq "Gail"
+    end
+
+    it 'has % class averages' do
+      expect(cell(13,8,0)).to eq "AVERAGE(H10:H12)"
+      expect(cell(13,9,0)).to eq "AVERAGE(I10:I12)"
+    end
+
+    it 'has % student averages' do
+      expect(cell(12,4,0)).to match /AVERAGE\(E12,H12\)/
+    end
+
+    it 'has a date in the right place' do
+      expect(@wb.celltype(12,7,@wb.sheets.first)).to eq :date
+    end
+
+    it 'has count class averages' do
+      expect(cell(13,4,1)).to eq "AVERAGE(D10:D12)"
+      expect(cell(13,5,1)).to eq "AVERAGE(E10:E12)"
+    end
+
+    it 'does not have content beyond where it should' do
+      (7..13).to_a.each{|ii| expect(cell(ii,11,0)).to be_blank}
+      (7..13).to_a.each{|ii| expect(cell(ii,14,1)).to be_blank}
+    end
+  end
+
+  def cell(row,col,sheet_number)
+    @wb.cell(row,col,@wb.sheets[sheet_number])
   end
 
   def report_1

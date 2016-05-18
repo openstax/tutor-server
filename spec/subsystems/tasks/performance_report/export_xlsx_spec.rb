@@ -23,10 +23,9 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
         end
 
         # Uncomment this to open the file for visual inspection
-        `open "#{filepath}"` and sleep(0.5)
+        # `open "#{filepath}"` and sleep(0.5)
 
         expect{ @wb = Roo::Excelx.new(filepath) }.to_not raise_error
-        @sheet1 = @wb.sheet(@wb.sheets.first)
       end
     end
 
@@ -35,39 +34,39 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
     end
 
     it 'puts students in alphabetical order' do
-      expect(@sheet1.cell(11,2)).to eq "Gail"
+      expect(cell(11,2,0)).to eq "Gail"
     end
 
     it 'does not include a task due in the future' do
-      (7..12).to_a.map{|row| expect(@sheet1.cell(row,17)).to be_blank}
+      (7..12).to_a.map{|row| expect(cell(row,17,0)).to be_blank}
     end
 
     context 'zeter\'s scores' do
       it 'has good HW scores' do
-        expect(@sheet1.cell(12,7)).to eq 7/9.0
-        expect(@sheet1.cell(12,8)).to eq 1.0
+        expect(cell(12,7,0)).to eq 7/9.0
+        expect(cell(12,8,0)).to eq 1.0
       end
 
       it 'shows reading\'s late comment and pending late work' do
-        expect(@sheet1.cell(12,12)).to eq 1/3.0
-        expect(@sheet1.comment(12,12)).to match /on due date: 33%/
-        expect(@sheet1.cell(12,13)).to eq 2/3.0
-        expect(@sheet1.cell(12,14)).to eq 2/3.0
-        expect(@sheet1.cell(12,15)).to eq 1.0
-        expect(@sheet1.cell(12,16).strftime("%-m/%-d/%Y")).to eq "3/7/2016"
+        expect(cell(12,12,0)).to eq 1/3.0
+        expect(comment(12,12,0)).to match /on due date: 33%/
+        expect(cell(12,13,0)).to eq 2/3.0
+        expect(cell(12,14,0)).to eq 2/3.0
+        expect(cell(12,15,0)).to eq 1.0
+        expect(cell(12,16,0).strftime("%-m/%-d/%Y")).to eq "3/7/2016"
       end
     end
 
     context 'abby\'s scores' do
       it 'shows homework late content and no pending late' do
-        expect(@sheet1.cell(11,7)).to eq 4/9.0
-        expect(@sheet1.comment(11,7)).to match /on due date: 22%/
-        expect(@sheet1.cell(11,8)).to eq 1.0
-        (9..11).to_a.map{|col|expect(@sheet1.cell(11,col)).to be_blank}
+        expect(cell(11,7,0)).to eq 4/9.0
+        expect(comment(11,7,0)).to match /on due date: 22%/
+        expect(cell(11,8,0)).to eq 1.0
+        (9..11).to_a.map{|col|expect(cell(11,col,0)).to be_blank}
       end
 
       it 'shows nothing for her reading scores' do
-        (12..16).to_a.map{|col|expect(@sheet1.cell(11,col)).to be_blank}
+        (12..16).to_a.map{|col|expect(cell(11,col,0)).to be_blank}
       end
     end
   end
@@ -88,8 +87,16 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
     end
 
     it 'has averages with disjoint cells' do
-      expect(@sheet1.cell(11,4)).to match /.*AVERAGE\(G11,Q11\).*/
+      expect(cell(11,4,0)).to match /.*AVERAGE\(G11,Q11\).*/
     end
+  end
+
+  def cell(row,col,sheet_number)
+    @wb.cell(row,col,@wb.sheets[sheet_number])
+  end
+
+  def comment(row,col,sheet_number)
+    @wb.comment(row,col,@wb.sheets[sheet_number])
   end
 
   def report_1

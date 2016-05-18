@@ -2,24 +2,25 @@ module Tasks
   module PerformanceReport
     class ExportCcXlsx
 
-      def self.call(course_name:, report:, filename:)
+      def self.call(course_name:, report:, filename:, options: {})
         filename = "#{filename}.xlsx" unless filename.ends_with?(".xlsx")
-        export = new(course_name: course_name, report: report, filepath: filename)
+        export = new(course_name: course_name, report: report, filepath: filename, options: options)
         export.create
         filename
       end
 
       # So can be called like other exporters
-      def self.[](profile:, report:, filename:)
-        call(course_name: profile.name, report: report, filename: filename)
+      def self.[](profile:, report:, filename:, options: {})
+        call(course_name: profile.name, report: report, filename: filename, options: options)
       end
 
-      def initialize(course_name:, report:, filepath:)
+      def initialize(course_name:, report:, filepath:, options:)
         @course_name = course_name
         @report = report
         @filepath = filepath
         @helper = XlsxHelper.new
-        @eq = "="
+        @options = options
+        @eq = options[:stringify_formulas] ? "" : "="
       end
 
       def create
@@ -216,14 +217,14 @@ module Tasks
           @helper.merge_and_style(sheet, [4,8,4,9], center_bold_L_style)
           @helper.merge_and_style(sheet, [5,8,5,9], center_bold_R_style)
 
-          report[:data_headings].count.times.with_index do |ii|
+          num_tasks.times.with_index do |ii|
             @helper.merge_and_style(sheet, [6+ii*4,  8,6+ii*4,  9], center_bold_style)
             @helper.merge_and_style(sheet, [6+ii*4+1,8,6+ii*4+1,9], center_bold_style)
             @helper.merge_and_style(sheet, [6+ii*4+2,8,6+ii*4+2,9], center_bold_style)
             @helper.merge_and_style(sheet, [6+ii*4+3,8,6+ii*4+3,9], center_bold_R_style)
           end
         else
-          report[:data_headings].count.times.with_index do |ii|
+          num_tasks.times.with_index do |ii|
             @helper.merge_and_style(sheet, [5+ii*3,  8,5+ii*3,  9], center_bold_style)
             @helper.merge_and_style(sheet, [5+ii*3+1,8,5+ii*3+1,9], center_bold_style)
             @helper.merge_and_style(sheet, [5+ii*3+2,8,5+ii*3+2,9], center_bold_R_style)
@@ -325,7 +326,7 @@ module Tasks
           )
         end
 
-        report[:data_headings].count.times do |index|
+        num_tasks.times do |index|
           first_column = index * (format == :counts ? 4 : 3) + (format == :counts ? 5 : 4)
           average_style = format == :counts ? @average_style : @average_pct
 
@@ -337,15 +338,15 @@ module Tasks
             XlsxHelper.cell_ref(row: first_student_row, column: first_column+1) + ":" +
             XlsxHelper.cell_ref(row: last_student_row, column: first_column+1)
 
-          average_columns.push(["=AVERAGE(#{correct_range})", {style: average_style}])
-          average_columns.push(["=AVERAGE(#{completed_range})", {style: average_style}])
+          average_columns.push(["#{@eq}AVERAGE(#{correct_range})", {style: average_style}])
+          average_columns.push(["#{@eq}AVERAGE(#{completed_range})", {style: average_style}])
 
           if format == :counts
             total_range =
               XlsxHelper.cell_ref(row: first_student_row, column: first_column+2) + ":" +
               XlsxHelper.cell_ref(row: last_student_row, column: first_column+2)
 
-            average_columns.push(["=AVERAGE(#{total_range})", {style: average_style}])
+            average_columns.push(["#{@eq}AVERAGE(#{total_range})", {style: average_style}])
           end
 
           average_columns.push(["", {style: @average_R}])
