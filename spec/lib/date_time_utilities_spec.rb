@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe DateTimeUtilities do
+RSpec.describe DateTimeUtilities, type: :lib do
   it 'converts times to a tutor API friendly string' do
     Timecop.freeze('Aug 14, 2015 9:07 PM CST') do
       formatted_time = described_class.to_api_s(Time.current)

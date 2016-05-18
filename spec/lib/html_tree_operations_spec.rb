@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe HtmlTreeOperations do
+RSpec.describe HtmlTreeOperations, type: :lib do
   class HtmlTreeOperationsUser
     include HtmlTreeOperations
   end

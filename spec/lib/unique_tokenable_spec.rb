@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe UniqueTokenable do
+RSpec.describe UniqueTokenable, type: :lib do
   class DummyModel < ActiveRecord::Base; end
 
   before(:all) do

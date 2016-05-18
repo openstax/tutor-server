@@ -5,7 +5,7 @@ RSpec.describe CourseProfile::Models::Profile, type: :model do
 
   it { is_expected.to belong_to(:course) }
 
-  it { is_expected.to belong_to(:time_zone) }
+  it { is_expected.to belong_to(:time_zone).dependent(:destroy).autosave(true) }
 
   it { is_expected.to validate_presence_of(:course) }
   it { is_expected.to validate_presence_of(:name) }
