@@ -11,13 +11,13 @@ module BelongsToTimeZone
           association_options = options.except(:default, :prefix, :suffix)
 
           class_exec do
-            belongs_to :time_zone, association_options.merge(subsystem: :course_profile)
+            belongs_to :time_zone, association_options.merge(subsystem: :none)
 
             if options[:default].present?
               before_validation :build_time_zone
 
               define_method(:build_time_zone) do
-                self.time_zone ||= CourseProfile::Models::TimeZone.new(name: options[:default])
+                self.time_zone ||= ::TimeZone.new(name: options[:default])
               end
             end
 
@@ -63,7 +63,7 @@ module BelongsToTimeZone
 
             if field_name != method_name
               define_method("#{method_name}_changed?") do
-                send("#{field_name}_changed?") || course_profile_time_zone_id_changed?
+                send("#{field_name}_changed?") || time_zone_id_changed?
               end
             end
           end

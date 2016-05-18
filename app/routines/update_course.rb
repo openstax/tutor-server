@@ -11,9 +11,8 @@ class UpdateCourse
 
     return unless params[:time_zone]
 
-    CourseProfile::Models::TimeZone.joins(profile: :course)
-                                   .where(profile: {course: {id: id}})
-                                   .update_all(name: params[:time_zone])
+    ::TimeZone.joins(profile: :course).where(profile: {course: {id: id}})
+                                      .update_all(name: params[:time_zone])
   end
 
 end

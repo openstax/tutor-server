@@ -270,23 +270,15 @@ ActiveRecord::Schema.define(version: 20160517202901) do
     t.string   "biglearn_excluded_pool_uuid"
     t.string   "default_open_time"
     t.string   "default_due_time"
-    t.integer  "course_profile_time_zone_id", null: false
+    t.integer  "time_zone_id",                null: false
   end
 
   add_index "course_profile_profiles", ["catalog_offering_id"], name: "index_course_profile_profiles_on_catalog_offering_id", using: :btree
-  add_index "course_profile_profiles", ["course_profile_time_zone_id"], name: "index_course_profile_profiles_on_course_profile_time_zone_id", unique: true, using: :btree
   add_index "course_profile_profiles", ["entity_course_id"], name: "index_course_profile_profiles_on_entity_course_id", unique: true, using: :btree
   add_index "course_profile_profiles", ["name"], name: "index_course_profile_profiles_on_name", using: :btree
   add_index "course_profile_profiles", ["school_district_school_id"], name: "index_course_profile_profiles_on_school_district_school_id", using: :btree
   add_index "course_profile_profiles", ["teacher_join_token"], name: "index_course_profile_profiles_on_teacher_join_token", unique: true, using: :btree
-
-  create_table "course_profile_time_zones", force: :cascade do |t|
-    t.string   "name",       null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "course_profile_time_zones", ["name"], name: "index_course_profile_time_zones_on_name", using: :btree
+  add_index "course_profile_profiles", ["time_zone_id"], name: "index_course_profile_profiles_on_time_zone_id", unique: true, using: :btree
 
   create_table "delayed_jobs", force: :cascade do |t|
     t.integer  "priority",   default: 0, null: false
@@ -667,20 +659,20 @@ ActiveRecord::Schema.define(version: 20160517202901) do
   end
 
   create_table "tasks_tasking_plans", force: :cascade do |t|
-    t.integer  "target_id",                   null: false
-    t.string   "target_type",                 null: false
-    t.integer  "tasks_task_plan_id",          null: false
-    t.datetime "opens_at_ntz",                null: false
-    t.datetime "due_at_ntz",                  null: false
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
-    t.integer  "course_profile_time_zone_id", null: false
+    t.integer  "target_id",          null: false
+    t.string   "target_type",        null: false
+    t.integer  "tasks_task_plan_id", null: false
+    t.datetime "opens_at_ntz",       null: false
+    t.datetime "due_at_ntz",         null: false
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
+    t.integer  "time_zone_id",       null: false
   end
 
-  add_index "tasks_tasking_plans", ["course_profile_time_zone_id"], name: "index_tasks_tasking_plans_on_course_profile_time_zone_id", using: :btree
   add_index "tasks_tasking_plans", ["due_at_ntz", "opens_at_ntz"], name: "index_tasks_tasking_plans_on_due_at_ntz_and_opens_at_ntz", using: :btree
   add_index "tasks_tasking_plans", ["target_id", "target_type", "tasks_task_plan_id"], name: "index_tasking_plans_on_t_id_and_t_type_and_t_p_id", unique: true, using: :btree
   add_index "tasks_tasking_plans", ["tasks_task_plan_id"], name: "index_tasks_tasking_plans_on_tasks_task_plan_id", using: :btree
+  add_index "tasks_tasking_plans", ["time_zone_id"], name: "index_tasks_tasking_plans_on_time_zone_id", using: :btree
 
   create_table "tasks_taskings", force: :cascade do |t|
     t.integer  "entity_role_id",              null: false
@@ -723,15 +715,23 @@ ActiveRecord::Schema.define(version: 20160517202901) do
     t.integer  "correct_on_time_exercise_steps_count",   default: 0,     null: false
     t.integer  "completed_on_time_exercise_steps_count", default: 0,     null: false
     t.integer  "completed_on_time_steps_count",          default: 0,     null: false
-    t.integer  "course_profile_time_zone_id"
+    t.integer  "time_zone_id"
   end
 
-  add_index "tasks_tasks", ["course_profile_time_zone_id"], name: "index_tasks_tasks_on_course_profile_time_zone_id", using: :btree
   add_index "tasks_tasks", ["due_at_ntz", "opens_at_ntz"], name: "index_tasks_tasks_on_due_at_ntz_and_opens_at_ntz", using: :btree
   add_index "tasks_tasks", ["entity_task_id"], name: "index_tasks_tasks_on_entity_task_id", unique: true, using: :btree
   add_index "tasks_tasks", ["last_worked_at"], name: "index_tasks_tasks_on_last_worked_at", using: :btree
   add_index "tasks_tasks", ["task_type"], name: "index_tasks_tasks_on_task_type", using: :btree
   add_index "tasks_tasks", ["tasks_task_plan_id"], name: "index_tasks_tasks_on_tasks_task_plan_id", using: :btree
+  add_index "tasks_tasks", ["time_zone_id"], name: "index_tasks_tasks_on_time_zone_id", using: :btree
+
+  create_table "time_zones", force: :cascade do |t|
+    t.string   "name",       null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "time_zones", ["name"], name: "index_time_zones_on_name", using: :btree
 
   create_table "user_administrators", force: :cascade do |t|
     t.integer  "user_profile_id", null: false
@@ -804,9 +804,9 @@ ActiveRecord::Schema.define(version: 20160517202901) do
   add_foreign_key "course_membership_teachers", "entity_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_membership_teachers", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_profile_profiles", "catalog_offerings", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "course_profile_profiles", "course_profile_time_zones", on_update: :cascade, on_delete: :nullify
   add_foreign_key "course_profile_profiles", "entity_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_profile_profiles", "school_district_schools", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "course_profile_profiles", "time_zones", on_update: :cascade, on_delete: :nullify
   add_foreign_key "role_role_users", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "role_role_users", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "school_district_schools", "school_district_districts", on_update: :cascade, on_delete: :nullify
@@ -821,14 +821,14 @@ ActiveRecord::Schema.define(version: 20160517202901) do
   add_foreign_key "tasks_task_plans", "tasks_assistants", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_steps", "tasks_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasked_exercises", "content_exercises", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "tasks_tasking_plans", "course_profile_time_zones", on_update: :cascade, on_delete: :nullify
   add_foreign_key "tasks_tasking_plans", "tasks_task_plans", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_tasking_plans", "time_zones", on_update: :cascade, on_delete: :nullify
   add_foreign_key "tasks_taskings", "course_membership_periods", on_update: :cascade, on_delete: :nullify
   add_foreign_key "tasks_taskings", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_taskings", "entity_tasks", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "tasks_tasks", "course_profile_time_zones", on_update: :cascade, on_delete: :nullify
   add_foreign_key "tasks_tasks", "entity_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasks", "tasks_task_plans", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_tasks", "time_zones", on_update: :cascade, on_delete: :nullify
   add_foreign_key "user_administrators", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "user_content_analysts", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "user_customer_services", "user_profiles", on_update: :cascade, on_delete: :cascade

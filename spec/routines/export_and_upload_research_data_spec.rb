@@ -5,7 +5,7 @@ require 'database_cleaner'
 RSpec.describe ExportAndUploadResearchData, type: :routine do
   let!(:course) { CreateCourse[
     name: 'Physics 101',
-    time_zone: CourseProfile::Models::TimeZone.new(name: 'Central Time (US & Canada)')
+    time_zone: ::TimeZone.new(name: 'Central Time (US & Canada)')
   ] }
   let!(:period) { CreatePeriod[course: course] }
   let(:teacher) { FactoryGirl.create(:user) }

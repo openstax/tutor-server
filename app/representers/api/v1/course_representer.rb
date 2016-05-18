@@ -21,8 +21,7 @@ module Api::V1
              readable: true,
              writeable: true,
              schema_info: { required: false },
-             getter: ->(*) { time_zone.is_a?(CourseProfile::Models::TimeZone) ? \
-                               time_zone.name : time_zone },
+             getter: ->(*) { time_zone.is_a?(::TimeZone) ? time_zone.name : time_zone },
              setter: ->(value, *) { time_zone.name = value }
 
     property :default_open_time,

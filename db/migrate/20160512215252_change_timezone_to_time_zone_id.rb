@@ -1,8 +1,8 @@
-class ChangeTimezoneToCourseProfileTimeZoneId < ActiveRecord::Migration
+class ChangeTimezoneToTimeZoneId < ActiveRecord::Migration
   def change
-    add_column :course_profile_profiles, :course_profile_time_zone_id, :integer
-    add_column :tasks_tasking_plans, :course_profile_time_zone_id, :integer
-    add_column :tasks_tasks, :course_profile_time_zone_id, :integer
+    add_column :course_profile_profiles, :time_zone_id, :integer
+    add_column :tasks_tasking_plans, :time_zone_id, :integer
+    add_column :tasks_tasks, :time_zone_id, :integer
 
     rename_column :tasks_tasking_plans, :opens_at, :opens_at_ntz
     rename_column :tasks_tasking_plans, :due_at, :due_at_ntz
@@ -16,7 +16,7 @@ class ChangeTimezoneToCourseProfileTimeZoneId < ActiveRecord::Migration
         time_zones = {}
 
         CourseProfile::Models::Profile.find_each do |course_profile|
-          time_zone = CourseProfile::Models::TimeZone.create!(name: course_profile.timezone)
+          time_zone = ::TimeZone.create!(name: course_profile.timezone)
           course_profile.update_attribute(time_zone: time_zone)
           time_zones[course_profile.entity_course_id] = time_zone
         end
@@ -55,26 +55,21 @@ class ChangeTimezoneToCourseProfileTimeZoneId < ActiveRecord::Migration
         end
 
         CourseProfile::Models::Profile.update_all(
-          'timezone = course_profile_time_zones.name
-           FROM course_profile_time_zones
-           WHERE course_profile_time_zones.id = course_profile_time_zone_id'
+          'timezone = time_zones.name FROM time_zones WHERE time_zones.id = time_zone_id'
         )
       end
     end
 
-    change_column_null :course_profile_profiles, :course_profile_time_zone_id, false
-    add_index :course_profile_profiles, :course_profile_time_zone_id, unique: true
-    add_foreign_key :course_profile_profiles, :course_profile_time_zones,
-                    on_update: :cascade, on_delete: :nullify
+    change_column_null :course_profile_profiles, :time_zone_id, false
+    add_index :course_profile_profiles, :time_zone_id, unique: true
+    add_foreign_key :course_profile_profiles, :time_zones, on_update: :cascade, on_delete: :nullify
 
-    change_column_null :tasks_tasking_plans, :course_profile_time_zone_id, false
-    add_index :tasks_tasking_plans, :course_profile_time_zone_id
-    add_foreign_key :tasks_tasking_plans, :course_profile_time_zones,
-                    on_update: :cascade, on_delete: :nullify
+    change_column_null :tasks_tasking_plans, :time_zone_id, false
+    add_index :tasks_tasking_plans, :time_zone_id
+    add_foreign_key :tasks_tasking_plans, :time_zones, on_update: :cascade, on_delete: :nullify
 
-    add_index :tasks_tasks, :course_profile_time_zone_id
-    add_foreign_key :tasks_tasks, :course_profile_time_zones,
-                    on_update: :cascade, on_delete: :nullify
+    add_index :tasks_tasks, :time_zone_id
+    add_foreign_key :tasks_tasks, :time_zones, on_update: :cascade, on_delete: :nullify
 
     change_column_null :tasks_tasks, :opens_at_ntz, true
 
