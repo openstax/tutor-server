@@ -40,6 +40,7 @@ class Content::ImportBook
     import_page_tags.each{ |page_tag| import_page_map[page_tag.tag.value] = page_tag.page }
 
     outputs[:exercises] = []
+    imported_exercise_numbers = Set.new
 
     page_block = ->(exercise_wrapper) do
       tags = exercise_wrapper.import_tags
@@ -53,9 +54,13 @@ class Content::ImportBook
       tags_per_query = MAX_URL_LENGTH/max_tag_length
       import_page_tags.each_slice(tags_per_query) do |page_tags|
         query_hash = { tag: page_tags.map{ |pt| pt.tag.value } }
-        outputs[:exercises] += run(:import_exercises, ecosystem: ecosystem,
-                                                      page: page_block,
-                                                      query_hash: query_hash).outputs.exercises
+
+        new_exercises = run(
+          :import_exercises, ecosystem: ecosystem, page: page_block,
+          query_hash: query_hash, excluded_exercise_numbers: imported_exercise_numbers
+        ).outputs.exercises
+        outputs[:exercises] += new_exercises
+        imported_exercise_numbers += new_exercises.map(&:number)
       end
     else
       # Split the uid queries to avoid exceeding the URL limit
@@ -63,9 +68,13 @@ class Content::ImportBook
       uids_per_query = MAX_URL_LENGTH/max_uid_length
       exercise_uids.each_slice(uids_per_query) do |uids|
         query_hash = { id: uids }
-        outputs[:exercises] += run(:import_exercises, ecosystem: ecosystem,
-                                                      page: page_block,
-                                                      query_hash: query_hash).outputs.exercises
+
+        new_exercises = run(
+          :import_exercises, ecosystem: ecosystem, page: page_block,
+          query_hash: query_hash, excluded_exercise_numbers: imported_exercise_numbers
+        ).outputs.exercises
+        outputs[:exercises] += new_exercises
+        imported_exercise_numbers += new_exercises.map(&:number)
       end
     end
 
