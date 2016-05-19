@@ -8,16 +8,32 @@ module BelongsToTimeZone
       module ClassMethods
         def belongs_to_time_zone(*args)
           options = args.last.is_a?(Hash) ? args.pop : {}
-          association_options = options.except(:default, :prefix, :suffix)
+
+          options[:validates] ||= []
+          if options[:validates].any?{|validation| !validation.is_a?(Hash)}
+            raise IllegalArgument, ":validates option '#{validation}' is not a hash"
+          end
+
+          association_options = options.except(:default, :prefix, :suffix, :validates)
 
           class_exec do
             belongs_to :time_zone, association_options.merge(subsystem: :none)
 
             if options[:default].present?
-              before_validation :build_time_zone
+              # Use `before_save` and `create` instead of `before_validations` and `new`
+              # because the former causes a duplicate `save` call on the record with the
+              # belongs_to call, which erases dirty info.  Don't check presence validation
+              # if we know we are making a default time zone.
 
-              define_method(:build_time_zone) do
-                self.time_zone ||= ::TimeZone.new(name: options[:default])
+              before_save { self.time_zone ||= ::TimeZone.create(name: options[:default]) }
+              options[:validates].reject!{|validation| validation.has_key?(:presence)}
+            end
+
+            options[:validates].each do |validation|
+              if validation.has_key?(:uniqueness) && options[:default].present?
+                validates :time_zone, **validation, allow_nil: true
+              else
+                validates :time_zone, **validation
               end
             end
 

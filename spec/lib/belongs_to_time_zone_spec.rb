@@ -6,9 +6,10 @@ RSpec.describe BelongsToTimeZone, type: :lib do
   context 'default' do
     let!(:course_profile) { FactoryGirl.build :course_profile_profile }
 
-    it 'automatically builds an associated time_zone before the record is validated' do
+    it 'creates a time zone on save' do
       expect(course_profile.time_zone).to be_nil
       expect(course_profile.valid?).to eq true
+      course_profile.save!
       expect(course_profile.time_zone).to be_a(::TimeZone)
       expect(course_profile.time_zone.name).to eq 'Central Time (US & Canada)'
     end
@@ -91,4 +92,13 @@ RSpec.describe BelongsToTimeZone, type: :lib do
       end
     end
   end
+
+  it 'preserves previous_changes when no time zone set' do
+    tz = ::TimeZone.create(name: 'Central Time (US & Canada)')
+    course = Entity::Course.create
+    profile = CourseProfile::Models::Profile.create(name: 'Blah', entity_course_id: course.id, is_concept_coach: false)
+    expect(profile).to be_persisted
+    expect(profile.previous_changes).not_to be_empty
+  end
+
 end
