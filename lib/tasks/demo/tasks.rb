@@ -72,6 +72,8 @@ class DemoTasks < DemoBase
                        to: course_period,
                        opens_at: period.opens_at,
                        due_at: period.due_at)
+
+      ShortCode::Create[task_plan.to_global_id.to_s] if assignment.type == 'homework'
     end
     # Draft plans do not undergo distribution
     if assignment.draft
