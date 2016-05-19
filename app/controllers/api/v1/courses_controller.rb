@@ -58,9 +58,20 @@ class Api::V1::CoursesController < Api::V1::ApiController
     #{json_schema(Api::V1::CourseRepresenter, include: :readable)}
   EOS
   def update
-    CourseProfile::Models::Profile.transaction do
-      standard_update(@course, Api::V1::CourseRepresenter)
-      SchoolDistrict::ProcessSchoolChange.call(course_profile: @course.profile)
+    OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, @course)
+    result = UpdateCourse.call(params[:id], **consumed(Api::V1::CourseRepresenter))
+
+    if result.errors.any?
+      render_api_errors(result.errors)
+    else
+      # Use CollectCourseInfo instead of just representing the entity course so
+      # we can gather extra information
+      course_info = CollectCourseInfo[courses: @course,
+                                      user: current_human_user,
+                                      with: [:roles, :periods, :ecosystem, :students]].first
+      respond_with course_info, represent_with: Api::V1::CourseRepresenter,
+                                location: nil,
+                                responder: ResponderWithPutContent
     end
   end
 

@@ -14,11 +14,15 @@ class Api::V1::PeriodsController < Api::V1::ApiController
     #{json_schema(Api::V1::PeriodRepresenter, include: :readable)}
   EOS
   def create
-    period_model = CourseMembership::Models::Period.new
-    CourseMembership::Models::Period.transaction do
-      standard_nested_create(period_model, :course, @course, Api::V1::PeriodRepresenter)
-      period = CourseMembership::Period.new(strategy: period_model.wrap)
-      Tasks::AssignCoursewideTaskPlansToNewPeriod[period: period]
+    OSU::AccessPolicy.require_action_allowed!(:add_period, current_human_user, @course)
+    result = CreatePeriod.call(course: @course, **consumed(Api::V1::PeriodRepresenter))
+
+    if result.errors.any?
+      render_api_errors(result.errors)
+    else
+      respond_with result.outputs.period,
+                   represent_with: Api::V1::PeriodRepresenter,
+                   location: nil
     end
   end
 
@@ -27,9 +31,20 @@ class Api::V1::PeriodsController < Api::V1::ApiController
     #{json_schema(Api::V1::PeriodRepresenter, include: :readable)}
   EOS
   def update
-    CourseMembership::Models::Period.transaction do
-      standard_update(@period.to_model, Api::V1::PeriodRepresenter)
-      SchoolDistrict::ProcessSchoolChange.call(course_profile: @period.course.profile)
+    OSU::AccessPolicy.require_action_allowed!(:update, current_human_user, @period)
+
+    result = CourseMembership::UpdatePeriod.call(
+      period: @period,
+      **consumed(Api::V1::PeriodRepresenter)
+    )
+
+    if result.errors.any?
+      render_api_errors(result.errors)
+    else
+      respond_with result.outputs.period,
+                   represent_with: Api::V1::PeriodRepresenter,
+                   location: nil,
+                   responder: ResponderWithPutContent
     end
   end
 

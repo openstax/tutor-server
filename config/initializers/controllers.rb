@@ -10,6 +10,13 @@ ActionController::Base.class_exec do
   use_openstax_exception_rescue
 
   protected
+
+  def consumed(representer)
+    OpenStruct.new({}).tap{|hash|
+      consume!(hash, represent_with: representer)
+    }.marshal_dump
+  end
+
   def load_time
     Timecop.load_time if Timecop.enabled?
   end

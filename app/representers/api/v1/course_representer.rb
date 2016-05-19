@@ -21,8 +21,7 @@ module Api::V1
              readable: true,
              writeable: true,
              schema_info: { required: false },
-             getter: ->(*) { time_zone.is_a?(::TimeZone) ? time_zone.name : time_zone },
-             setter: ->(value, *) { time_zone.name = value }
+             getter: ->(*) { time_zone.is_a?(::TimeZone) ? time_zone.name : time_zone }
 
     property :default_open_time,
              type: String,
