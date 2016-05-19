@@ -6,9 +6,9 @@ class Tasks::Models::TaskingPlan < Tutor::SubSystems::BaseModel
 
   validates :target, presence: true
   validates :task_plan, presence: true, uniqueness: { scope: [:target_type, :target_id] }
-  validates :time_zone, presence: true
 
   validates :opens_at_ntz, :due_at_ntz, presence: true, timeliness: { type: :date }
+  validates :time_zone, presence: true
 
   validate :due_at_on_or_after_opens_at
 

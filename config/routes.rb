@@ -28,7 +28,6 @@ Rails.application.routes.draw do
 
   apipie
 
-
   # Fetch user information and log in/out in remotely
   scope :auth, controller: :auth do
     scope to: 'auth#cors_preflight_check', via: [:options] do
