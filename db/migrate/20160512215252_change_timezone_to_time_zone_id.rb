@@ -17,7 +17,7 @@ class ChangeTimezoneToTimeZoneId < ActiveRecord::Migration
 
         CourseProfile::Models::Profile.find_each do |course_profile|
           time_zone = ::TimeZone.create!(name: course_profile.timezone)
-          course_profile.update_attribute(time_zone: time_zone)
+          course_profile.update_attribute :time_zone, time_zone
           time_zones[course_profile.entity_course_id] = time_zone
         end
 
