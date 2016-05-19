@@ -92,6 +92,10 @@ module Tasks
           title: "#{page.book_location.join(".")} #{page.title}",
           type: 'concept_coach',
           average_score: average_scores(page_tasks),
+          average_actual_and_placeholder_exercise_count: average(
+            page_tasks,
+            ->(tt) {tt.actual_and_placeholder_exercise_count}
+          )
         }
       end
     end

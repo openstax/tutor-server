@@ -169,7 +169,7 @@ module Tasks
 
         task_title_columns =
           3.times.map{["", {}]} +
-          [["Final Averages"],[""],[""]] +
+          [["Overall"],[""],[""]] +
           report[:data_headings].map do |data_heading|
             [
               data_heading[:title],
@@ -283,15 +283,16 @@ module Tasks
         task_total_counts ||= Array.new(report[:data_headings].length)
 
         students.each_with_index do |student,ss|
+          formula = format == :counts ? "SUM" : "AVERAGE"
           student_columns = [
             student[:first_name],
             student[:last_name],
             [student[:student_identifier], {style: @normal_R}],
-            ["#{@eq}IFERROR(AVERAGE(#{homework_score_columns.map{|cc| "#{cc}#{first_student_row + ss}"}.join(',')}),NA())",
+            ["#{@eq}IFERROR(#{formula}(#{homework_score_columns.map{|cc| "#{cc}#{first_student_row + ss}"}.join(',')}),NA())",
              style: (format == :counts ? nil : @pct)],
-            ["#{@eq}IFERROR(AVERAGE(#{homework_progress_columns.map{|cc| "#{cc}#{first_student_row + ss}"}.join(',')}),NA())",
+            ["#{@eq}IFERROR(#{formula}(#{homework_progress_columns.map{|cc| "#{cc}#{first_student_row + ss}"}.join(',')}),NA())",
              style: (format == :counts ? nil : @pct)],
-            ["#{@eq}IFERROR(AVERAGE(#{reading_progress_columns.map{|cc| "#{cc}#{first_student_row + ss}"}.join(',')}),NA())",
+            ["#{@eq}IFERROR(#{formula}(#{reading_progress_columns.map{|cc| "#{cc}#{first_student_row + ss}"}.join(',')}),NA())",
              style: (format == :counts ? nil : @pct)]
           ]
 

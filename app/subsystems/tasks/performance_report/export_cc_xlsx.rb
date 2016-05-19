@@ -147,7 +147,7 @@ module Tasks
 
         reading_title_columns =
           3.times.map{[""]} +
-          [["Overall Score"]] + (format == :counts ? [""] : []) +
+          [["Overall Score (incompletes included)"]] + (format == :counts ? [""] : []) +
           report[:data_headings].map do |data_heading|
             [
               data_heading[:title],
@@ -246,9 +246,9 @@ module Tasks
 
           if format == :counts
             student_columns.push(
-              ["#{@eq}IFERROR(AVERAGE(#{row_range(offset:5, step: 4, length: num_tasks, row: first_student_row + ss)}),NA())",
+              ["#{@eq}IFERROR(SUM(#{row_range(offset:5, step: 4, length: num_tasks, row: first_student_row + ss)}),NA())",
                style: @count_L],
-              ["#{@eq}IFERROR(AVERAGE(#{row_range(offset:7, step: 4, length: num_tasks, row: first_student_row + ss)}),NA())",
+              ["#{@eq}IFERROR(SUM(#{row_range(offset:7, step: 4, length: num_tasks, row: first_student_row + ss)}),NA())",
                style: @count]
             )
           else
@@ -258,7 +258,7 @@ module Tasks
             )
           end
 
-          student[:data].each do |data|
+          student[:data].each_with_index do |data,ss|
             if data
               correct_count = data[:correct_exercise_count]
               completed_count = data[:completed_exercise_count]
@@ -290,8 +290,11 @@ module Tasks
               end
               student_columns.push([data[:last_worked_at], {style: @date_R}])
             else
-              student_columns.push(["", {style: @normal_L}],"")
-              student_columns.push("") if format == :counts
+              if format == :counts
+                student_columns.push([0, {style: @normal_L}], 0, report[:data_headings][ss][:average_actual_and_placeholder_exercise_count])
+              else
+                student_columns.push([0, {style: @pct_L}], [0, {style: @pct}])
+              end
               student_columns.push(["Not Started", {style: @right_R}])
             end
           end

@@ -61,6 +61,13 @@ RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
       (7..13).to_a.each{|ii| expect(cell(ii,11,0)).to be_blank}
       (7..13).to_a.each{|ii| expect(cell(ii,14,1)).to be_blank}
     end
+
+    it 'puts in zeros where there is no work yet' do
+      expect(cell(10,5,0)).to eq 0
+      expect(cell(10,6,0)).to eq 0
+      expect(cell(10,6,1)).to eq 0
+      expect(cell(10,7,1)).to eq 0
+    end
   end
 
   def cell(row,col,sheet_number)
@@ -79,14 +86,16 @@ RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
             title: "1.1 Intro to Math",
             type: 'concept_coach',
             total_average: 0.6,
-            attempted_average: 0.7123
+            attempted_average: 0.7123,
+            average_actual_and_placeholder_exercise_count: 11
           },
           {
             cnx_page_id: "UUID_2",
             title: "1.2 Basket weaving is really really really really really (wrap test) hard",
             type: 'concept_coach',
             total_average: 0.56789,
-            attempted_average: 0.8
+            attempted_average: 0.8,
+            average_actual_and_placeholder_exercise_count: 11
           }
         ],
         students: [
