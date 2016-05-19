@@ -235,7 +235,7 @@ module Tasks
 
         first_student_row = sheet.rows.count + 1
 
-        students = report[:students].sort_by{|student| student[:last_name]}
+        students = report[:students].sort_by{|student| student[:last_name] || ""}
 
         students.each_with_index do |student, ss|
           student_columns = [
