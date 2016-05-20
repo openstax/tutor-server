@@ -42,4 +42,14 @@ RSpec.describe Tasks::Models::TaskingPlan, type: :model do
     tasking_plan.target = period_2
     expect(tasking_plan).not_to be_valid
   end
+
+  it "validates even if the period has been deleted" do
+    period = FactoryGirl.create(:course_membership_period, course: course)
+
+    expect(tasking_plan).to be_valid
+    tasking_plan.target = period
+    expect(tasking_plan).to be_valid
+    period.destroy
+    expect(tasking_plan).to be_valid
+  end
 end
