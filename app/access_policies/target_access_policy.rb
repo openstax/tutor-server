@@ -19,7 +19,7 @@ class TargetAccessPolicy
       when Entity::Course
         target == course
       when CourseMembership::Models::Period
-        course.periods.include?(target)
+        course.periods.with_deleted.include?(target)
       else
         raise NotYetImplemented
       end
