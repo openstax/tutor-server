@@ -7,6 +7,8 @@ class IndividualizeTaskingPlans
   def exec(task_plan)
     outputs[:tasking_plans] = task_plan.tasking_plans.flat_map do |tasking_plan|
       target = tasking_plan.target
+      # For example, a deleted period
+      next [] if target.nil? || target.respond_to?(:deleted?) && target.deleted?
 
       roles = case target
       when Entity::Role
@@ -19,8 +21,6 @@ class IndividualizeTaskingPlans
         CourseMembership::GetCourseRoles.call(course: target, types: :student).outputs.roles
       when CourseMembership::Models::Period
         CourseMembership::GetPeriodStudentRoles.call(periods: target).outputs.roles
-      when NilClass # For example, a deleted period
-        []
       else
         raise NotYetImplemented
       end
