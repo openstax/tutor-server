@@ -177,7 +177,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           expect(response).to have_http_status(:ok)
           roster = response.body_as_hash
           expect(roster).to include({
-            teacher_join_url: UrlGenerator.new.join_course_url(course.teacher_join_token),
+            teach_url: UrlGenerator.new.teach_course_url(course.teach_token,"DO_NOT_GIVE_TO_STUDENTS"),
             students: a_collection_containing_exactly(
               {
                 id: student.id.to_s,

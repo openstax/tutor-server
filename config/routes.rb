@@ -251,7 +251,8 @@ Rails.application.routes.draw do
     end
   end
 
-  get '/courses/join/:join_token' => 'courses#join', as: :join_course
+  get '/courses/teach/:teach_token(/:ignore)' => 'courses#teach', as: :teach_course
+  get '/courses/enroll/:enroll_token(/:ignore)' => 'courses#enroll', as: :enroll_course
   get '/courses/:id', to: 'webview#index', as: :course_dashboard
 
   namespace :content_analyst do

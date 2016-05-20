@@ -28,6 +28,15 @@ module Api::V1
                description: "The period's enrollment code"
              }
 
+    property :enrollment_url,
+             type: String,
+             writeable: false,
+             readable: true,
+             getter: ->(*) { UrlGenerator.new.enroll_course_url(enrollment_code.gsub(/ /,'-')) },
+             schema_info: {
+               description: "The period's enrollment URL"
+             }
+
     property :default_open_time,
              type: String,
              readable: true,

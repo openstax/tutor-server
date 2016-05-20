@@ -23,7 +23,7 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
   validates :course, presence: true
   validates :name, presence: true, uniqueness: { scope: :entity_course_id,
                                                  conditions: -> { where(deleted_at: nil) } }
-  validates :enrollment_code, presence: true, uniqueness: true
+  validates :enrollment_code, presence: true, uniqueness: true, format: {with: /[a-zA-Z0-9 ]+/}
 
   include DefaultTimeValidations
   validate :default_times_have_good_values

@@ -1,4 +1,4 @@
-class CoursesJoin
+class CoursesTeach
   lev_handler
 
   uses_routine GetCourseProfile, translations: { outputs: { type: :verbatim } }
@@ -12,7 +12,7 @@ class CoursesJoin
   def handle
     after_transaction { raise_handled_exceptions! }
 
-    run(:get_course_profile, attrs: { teacher_join_token: params[:join_token] })
+    run(:get_course_profile, attrs: { teach_token: params[:teach_token] })
     outputs.course = Entity::Course.find(outputs.profile.entity_course_id)
     run(:add_teacher, course: outputs.course, user: caller)
   end
@@ -24,9 +24,9 @@ class CoursesJoin
 
   def self.handled_exceptions
     @@handled_exceptions ||= {
-      profile_not_found: InvalidTeacherJoinToken
+      profile_not_found: InvalidTeachToken
     }
   end
 end
 
-class InvalidTeacherJoinToken < StandardError; end
+class InvalidTeachToken < StandardError; end

@@ -18,7 +18,7 @@ RSpec.describe Entity::Course, type: :model do
   it { is_expected.to delegate_method(:appearance_code).to(:profile) }
   it { is_expected.to delegate_method(:is_concept_coach).to(:profile) }
   it { is_expected.to delegate_method(:offering).to(:profile) }
-  it { is_expected.to delegate_method(:teacher_join_token).to(:profile) }
+  it { is_expected.to delegate_method(:teach_token).to(:profile) }
 
   it 'knows if it is deletable' do
     course = FactoryGirl.create :entity_course
