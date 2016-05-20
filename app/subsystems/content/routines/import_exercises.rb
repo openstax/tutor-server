@@ -25,6 +25,8 @@ class Content::Routines::ImportExercises
       next if excluded_exercise_numbers.include? wrapper.number
 
       exercise_page = page.respond_to?(:call) ? page.call(wrapper) : page
+      next if exercise_page.nil?
+
       exercise = Content::Models::Exercise.new(url: wrapper.url,
                                                number: wrapper.number,
                                                version: wrapper.version,
