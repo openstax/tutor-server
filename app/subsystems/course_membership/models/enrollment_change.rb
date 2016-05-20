@@ -23,7 +23,7 @@ class CourseMembership::Models::EnrollmentChange < Tutor::SubSystems::BaseModel
     enrollment.nil? ? nil : enrollment.student.student_identifier
   end
 
-  def approve_by(user, time = Time.now)
+  def approve_by(user, time = Time.current)
     # User is ignored for now
     self.enrollee_approved_at = time
     self.status = :approved

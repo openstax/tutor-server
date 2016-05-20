@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
 
-  let(:opens_at) { Time.now }
+  let(:opens_at) { Time.current }
   let(:api_opens_at) { DateTimeUtilities.to_api_s(opens_at) }
 
   let(:due_at) { opens_at + 1.week }

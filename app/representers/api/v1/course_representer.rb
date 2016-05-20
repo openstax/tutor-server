@@ -13,29 +13,26 @@ module Api::V1
     property :name,
              type: String,
              readable: true,
-             writeable: false,
+             writeable: true,
              schema_info: { required: true }
 
-    property :timezone,
+    property :time_zone,
              type: String,
              readable: true,
-             writeable: false,
-             schema_info: { required: false }
+             writeable: true,
+             schema_info: { required: false },
+             getter: ->(*) { time_zone.is_a?(::TimeZone) ? time_zone.name : time_zone }
 
     property :default_open_time,
              type: String,
              readable: true,
-             writeable: false,
-             if: ->(*) { default_open_time.present? },
-             getter: ->(*) { default_open_time.to_s(:time) },
+             writeable: true,
              schema_info: { required: false }
 
     property :default_due_time,
              type: String,
              readable: true,
-             writeable: false,
-             if: ->(*) { default_due_time.present? },
-             getter: ->(*) { default_due_time.to_s(:time) },
+             writeable: true,
              schema_info: { required: false }
 
     property :salesforce_book_name,

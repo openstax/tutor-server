@@ -3,7 +3,10 @@ require 'vcr_helper'
 require 'database_cleaner'
 
 RSpec.describe ExportAndUploadResearchData, type: :routine do
-  let!(:course) { CreateCourse[name: 'Physics 101'] }
+  let!(:course) { CreateCourse[
+    name: 'Physics 101',
+    time_zone: ::TimeZone.new(name: 'Central Time (US & Canada)')
+  ] }
   let!(:period) { CreatePeriod[course: course] }
   let(:teacher) { FactoryGirl.create(:user) }
   let(:teacher_token) { FactoryGirl.create :doorkeeper_access_token,
@@ -12,7 +15,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine do
                                               last_name: 'One',
                                               full_name: 'Student One') }
   let(:student_1_token) { FactoryGirl.create :doorkeeper_access_token,
-                            resource_owner_id: student_1.id }
+                                             resource_owner_id: student_1.id }
 
   let(:student_2) { FactoryGirl.create(:user, first_name: 'Student',
                                               last_name: 'Two',
@@ -73,10 +76,10 @@ RSpec.describe ExportAndUploadResearchData, type: :routine do
         expect(data['Step ID']).to eq(step.id.to_s)
         expect(data['Step Type']).to eq('Reading')
         expect(data['Group']).to eq(step.group_name)
-        expect(data['First Completed At']).to eq(step.first_completed_at.iso8601)
-        expect(data['Last Completed At']).to eq(step.last_completed_at.iso8601)
-        expect(data['Opens At']).to eq(step.task.opens_at.iso8601)
-        expect(data['Due At']).to eq(step.task.due_at.iso8601)
+        expect(data['First Completed At']).to eq(step.first_completed_at.utc.iso8601)
+        expect(data['Last Completed At']).to eq(step.last_completed_at.utc.iso8601)
+        expect(data['Opens At']).to eq(step.task.opens_at.utc.iso8601)
+        expect(data['Due At']).to eq(step.task.due_at.utc.iso8601)
         expect(data['URL']).to eq(step.tasked.url)
         expect(data['Correct Answer ID']).to eq(nil)
         expect(data['Answer ID']).to eq(nil)

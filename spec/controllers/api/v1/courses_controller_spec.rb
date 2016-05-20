@@ -75,22 +75,22 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(response.body).to include({
           id: course.id.to_s,
           name: course.profile.name,
-          timezone: course.profile.timezone,
-          default_open_time: '00:00',
-          default_due_time: '00:00',
+          time_zone: course.time_zone.name,
+          default_open_time: '00:01',
+          default_due_time: '07:00',
           ecosystem_id: "#{ecosystem.id}",
           is_concept_coach: false,
           roles: [{ id: teacher.id.to_s, type: 'teacher' }],
           periods: [{ id: zeroth_period.id.to_s,
                       name: zeroth_period.name,
                       enrollment_code: zeroth_period.enrollment_code,
-                      default_open_time: '00:00',
-                      default_due_time: '00:00' },
+                      default_open_time: '00:01',
+                      default_due_time: '07:00' },
                     { id: period.id.to_s,
                       name: period.name,
                       enrollment_code: period.enrollment_code,
-                      default_open_time: '00:00',
-                      default_due_time: '00:00' }]
+                      default_open_time: '00:01',
+                      default_due_time: '07:00' }]
         }.to_json)
       end
     end
@@ -168,7 +168,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                                       period: period_2] }
     let!(:student_3)         { student_role_3.student }
 
-    let!(:valid_params) { { course_id: course.id } }
+    let!(:valid_params) { { id: course.id } }
 
     context 'caller has an authorization token' do
       context 'caller is a course teacher' do
@@ -306,12 +306,12 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     end
   end
 
-  describe "update" do
+  describe "#update" do
     context 'anonymous user' do
       it 'raises SecurityTransgression' do
         expect {
-          api_patch :update, nil, parameters: { id: course.id,
-                                                course: { name: 'Renamed' } }
+          api_patch :update, nil, parameters: { id: course.id },
+                                  raw_post_data: { name: 'Renamed' }.to_json
         }.to raise_error(SecurityTransgression)
         expect(course.reload.name).to eq 'Physics 101'
       end
@@ -324,8 +324,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
       it 'raises SecurityTrangression' do
         expect {
-          api_patch :update, user_1_token, parameters: { id: course.id,
-                                                         course: { name: 'Renamed' } }
+          api_patch :update, user_1_token, parameters: { id: course.id },
+                                           raw_post_data: { name: 'Renamed' }.to_json
         }.to raise_error(SecurityTransgression)
         expect(course.reload.name).to eq 'Physics 101'
       end
@@ -337,50 +337,89 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       end
 
       it 'renames the course' do
-        api_patch :update, user_1_token, parameters: { id: course.id,
-                                                       course: { name: 'Renamed' } }
+        api_patch :update, user_1_token, parameters: { id: course.id },
+                                         raw_post_data: { name: 'Renamed' }.to_json
         expect(course.reload.name).to eq 'Renamed'
-        expect(course.timezone).to eq 'Central Time (US & Canada)'
+        expect(course.time_zone.name).to eq 'Central Time (US & Canada)'
         expect(response.body_as_hash[:name]).to eq 'Renamed'
-        expect(response.body_as_hash[:timezone]).to eq 'Central Time (US & Canada)'
+        expect(response.body_as_hash[:time_zone]).to eq 'Central Time (US & Canada)'
       end
 
-      it 'updates the timezone' do
+      it 'updates the time_zone' do
+        opens_at_str = '2016-04-26 17:15:00'
+        due_at_str = '2016-05-03 17:15:00'
+        time_zone = ActiveSupport::TimeZone['Central Time (US & Canada)']
+        opens_at = time_zone.parse(opens_at_str)
+        due_at = time_zone.parse(due_at_str)
+
+        task_plan = FactoryGirl.build :tasks_task_plan, owner: course, num_tasking_plans: 0
+        tasking_plan = FactoryGirl.create :tasks_tasking_plan, task_plan: task_plan,
+                                                               opens_at: opens_at_str,
+                                                               due_at: due_at_str
+
+        expect(tasking_plan.opens_at).to eq(opens_at)
+        expect(tasking_plan.due_at).to eq(due_at)
+
         course_name = course.name
-        api_patch :update, user_1_token, parameters: { id: course.id,
-                                                       course: {
-                                                         name: course_name,
-                                                         timezone: 'Edinburgh' } }
+        api_patch :update, user_1_token, parameters: { id: course.id },
+                                         raw_post_data: { name: course_name,
+                                                          time_zone: 'Edinburgh' }.to_json
         expect(course.reload.name).to eq course_name
-        expect(course.timezone).to eq 'Edinburgh'
+        expect(course.time_zone.name).to eq 'Edinburgh'
         expect(response.body_as_hash[:name]).to eq course_name
-        expect(response.body_as_hash[:timezone]).to eq 'Edinburgh'
+        expect(response.body_as_hash[:time_zone]).to eq 'Edinburgh'
+
+        Time.zone = 'Edinburgh'
+        new_opens_at = Time.zone.parse(opens_at_str)
+        new_due_at = Time.zone.parse(due_at_str)
+
+        expect(tasking_plan.reload.opens_at).to_not eq(opens_at)
+        expect(tasking_plan.opens_at).to eq(new_opens_at)
+        expect(tasking_plan.due_at).to_not eq(due_at)
+        expect(tasking_plan.due_at).to eq(new_due_at)
       end
 
       it 'updates the default open time' do
         course_name = course.name
-        api_patch :update, user_1_token, parameters: { id: course.id,
-                                                       course: {
-                                                         default_open_time: '01:02' } }
+        api_patch :update, user_1_token, parameters: { id: course.id },
+                                         raw_post_data: { default_open_time: '01:02' }.to_json
         expect(course.reload.name).to eq course_name
-        expect(course.timezone).to eq 'Central Time (US & Canada)'
-        expect(course.profile.reload.default_open_time.to_s(:time)).to eq '01:02'
+        expect(course.time_zone.name).to eq 'Central Time (US & Canada)'
+        expect(course.profile.reload.default_open_time).to eq '01:02'
         expect(response.body_as_hash[:name]).to eq course_name
-        expect(response.body_as_hash[:timezone]).to eq 'Central Time (US & Canada)'
+        expect(response.body_as_hash[:time_zone]).to eq 'Central Time (US & Canada)'
         expect(response.body_as_hash[:default_open_time]).to eq '01:02'
+      end
+
+      it 'freaks if the default open time is in a bad format' do
+        expect {
+          api_patch :update, user_1_token,
+                    parameters: { id: course.id },
+                    raw_post_data: { default_open_time: '1pm' }.to_json
+        }.not_to change{ course.reload.default_open_time }
+
+        expect(response).to have_http_status(:unprocessable_entity)
       end
 
       it 'updates the default due time' do
         course_name = course.name
-        api_patch :update, user_1_token, parameters: { id: course.id,
-                                                       course: {
-                                                         default_due_time: '02:02' } }
+        api_patch :update, user_1_token, parameters: { id: course.id },
+                                         raw_post_data: { default_due_time: '02:02' }.to_json
         expect(course.reload.name).to eq course_name
-        expect(course.timezone).to eq 'Central Time (US & Canada)'
-        expect(course.profile.reload.default_due_time.to_s(:time)).to eq '02:02'
+        expect(course.time_zone.name).to eq 'Central Time (US & Canada)'
+        expect(course.profile.reload.default_due_time).to eq '02:02'
         expect(response.body_as_hash[:name]).to eq course_name
-        expect(response.body_as_hash[:timezone]).to eq 'Central Time (US & Canada)'
+        expect(response.body_as_hash[:time_zone]).to eq 'Central Time (US & Canada)'
         expect(response.body_as_hash[:default_due_time]).to eq '02:02'
+      end
+
+      it 'freaks if the default due time is in a bad format' do
+        expect {
+          api_patch :update, user_1_token,
+                    parameters: { id: course.id },
+                    raw_post_data: { default_due_time: '1pm' }.to_json
+        }.not_to change{ course.reload.default_open_time }
+        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end
@@ -398,10 +437,11 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     let!(:teacher_token)  { FactoryGirl.create :doorkeeper_access_token,
                                                resource_owner_id: teacher_user.id }
 
+    let!(:time_zone)      { course.time_zone.to_tz }
     let!(:reading_task)   { FactoryGirl.create(:tasks_task,
                                                task_type: :reading,
-                                               opens_at: Time.now - 1.week,
-                                               due_at: Time.now,
+                                               opens_at: time_zone.now - 1.week,
+                                               due_at: time_zone.now,
                                                step_types: [:tasks_tasked_reading,
                                                             :tasks_tasked_exercise,
                                                             :tasks_tasked_exercise],
@@ -409,8 +449,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
     let!(:hw1_task)   { FactoryGirl.create(:tasks_task,
                                            task_type: :homework,
-                                           opens_at: Time.now - 1.week,
-                                           due_at: Time.now,
+                                           opens_at: time_zone.now - 1.week,
+                                           due_at: time_zone.now,
                                            step_types: [:tasks_tasked_exercise,
                                                         :tasks_tasked_exercise,
                                                         :tasks_tasked_exercise],
@@ -418,8 +458,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
     let!(:hw2_task)   { FactoryGirl.create(:tasks_task,
                                            task_type: :homework,
-                                           opens_at: Time.now - 1.week,
-                                           due_at: Time.now,
+                                           opens_at: time_zone.now - 1.week,
+                                           due_at: time_zone.now,
                                            step_types: [:tasks_tasked_exercise,
                                                         :tasks_tasked_exercise,
                                                         :tasks_tasked_exercise],
@@ -427,15 +467,15 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
     let!(:hw3_task)   { FactoryGirl.create(:tasks_task,
                                            task_type: :homework,
-                                           opens_at: Time.now - 1.week,
-                                           due_at: Time.now+2.weeks,
+                                           opens_at: time_zone.now - 1.week,
+                                           due_at: time_zone.now + 2.weeks,
                                            step_types: [:tasks_tasked_exercise,
                                                         :tasks_tasked_exercise,
                                                         :tasks_tasked_exercise],
                                            tasked_to: student_role)}
 
     let!(:plan) { FactoryGirl.create(:tasks_task_plan, owner: course,
-                                                       published_at: Time.now - 1.week)}
+                                                       published_at: time_zone.now - 1.week)}
 
     it 'raises SecurityTransgression if user is anonymous or not in course' do
       expect {
@@ -465,7 +505,6 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       Hacks::AnswerExercise[task_step: hw3_task.task_steps[0], is_correct: false]
       Hacks::AnswerExercise[task_step: hw3_task.task_steps[1], is_correct: false]
       Hacks::AnswerExercise[task_step: hw3_task.task_steps[2], is_correct: false]
-
 
       api_get :dashboard, student_token, parameters: {id: course.id}
 
@@ -553,11 +592,12 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
             "type" => "reading",
             "published_at" => be_kind_of(String),
             "tasking_plans" => [
+              a_hash_including(
               { "target_id" => course.id.to_s,
                 "target_type" => 'course',
                 "opens_at" => DateTimeUtilities.to_api_s(plan.tasking_plans.first.opens_at),
                 "due_at" => DateTimeUtilities.to_api_s(plan.tasking_plans.first.due_at)
-              }
+              })
             ]
           )
         )
@@ -709,7 +749,6 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           a_hash_including(
             "id" => @task_1.id.to_s,
             "title" => @task_1.title,
-            "opens_at" => be_kind_of(String),
             "last_worked_at" => be_kind_of(String),
             "type" => "concept_coach",
             "complete" => true
@@ -717,7 +756,6 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           a_hash_including(
             "id" => @task_2.id.to_s,
             "title" => @task_2.title,
-            "opens_at" => be_kind_of(String),
             "last_worked_at" => be_kind_of(String),
             "type" => "concept_coach",
             "complete" => true
@@ -725,7 +763,6 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           a_hash_including(
             "id" => @task_3.id.to_s,
             "title" => @task_3.title,
-            "opens_at" => be_kind_of(String),
             "last_worked_at" => be_kind_of(String),
             "type" => "concept_coach",
             "complete" => true

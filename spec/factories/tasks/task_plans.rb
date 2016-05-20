@@ -2,17 +2,19 @@ FactoryGirl.define do
   factory :tasks_task_plan, class: '::Tasks::Models::TaskPlan' do
     transient do
       duration 1.week
-      opens_at { Time.now }
-      due_at   { opens_at + duration }
+      time_zone { owner.time_zone.to_tz }
+      opens_at  { time_zone.now }
+      due_at    { opens_at + duration }
       num_tasking_plans 1
-      assistant_code_class_name "DummyAssistant"
+      assistant_code_class_name 'DummyAssistant'
     end
 
     association :owner, factory: :entity_course
     association :ecosystem, factory: :content_ecosystem
-    title "A task"
+    title 'A task'
     settings { {}.to_json }
-    type "reading"
+    type 'reading'
+    is_feedback_immediate { type != 'homework' }
 
     after(:build) do |task_plan, evaluator|
       code_class_name_hash = {
@@ -22,15 +24,15 @@ FactoryGirl.define do
       task_plan.assistant ||= Tasks::Models::Assistant.find_by(code_class_name_hash) || \
                               build(:tasks_assistant, code_class_name_hash)
 
-      task_plan.content_ecosystem_id ||= task_plan.owner.ecosystems.first \
-        if task_plan.owner.is_a?(Entity::Course)
+      task_plan.content_ecosystem_id ||= task_plan.owner.ecosystems.first
       task_plan.ecosystem ||= build(:content_ecosystem)
 
       evaluator.num_tasking_plans.times do
         build(:tasks_tasking_plan,
               task_plan: task_plan,
               opens_at: evaluator.opens_at,
-              due_at: evaluator.due_at)
+              due_at: evaluator.due_at,
+              time_zone: task_plan.owner.time_zone)
       end
     end
   end

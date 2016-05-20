@@ -7,9 +7,12 @@ module Tasks
       @existing_period_ids = period.course.periods.flat_map(&:id) - [period.id]
 
       task_plans_with_matching_tasking_plans_across_periods.each do |task_plan|
+        base_tasking_plan = task_plan.tasking_plans.first
+
         Models::TaskingPlan.create(target: period.to_model,
-                                   opens_at: task_plan.tasking_plans.first.opens_at,
-                                   due_at: task_plan.tasking_plans.first.due_at,
+                                   opens_at: base_tasking_plan.opens_at,
+                                   due_at: base_tasking_plan.due_at,
+                                   time_zone: base_tasking_plan.time_zone,
                                    tasks_task_plan_id: task_plan.id)
       end
     end

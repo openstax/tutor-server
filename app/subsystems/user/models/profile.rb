@@ -30,11 +30,11 @@ module User
       end
 
       def destroy
-        update_attribute(:deleted_at, Time.now)
+        update_attribute(:deleted_at, Time.current)
       end
 
       def delete
-        update_column(:deleted_at, Time.now)
+        update_column(:deleted_at, Time.current)
       end
 
       def undelete

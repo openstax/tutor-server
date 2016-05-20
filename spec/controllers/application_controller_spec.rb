@@ -21,27 +21,27 @@ RSpec.describe ApplicationController, type: :controller do
     end
 
     it 'travels time' do
-      t = Time.now
+      t = Time.current
 
       Settings::Timecop.offset = nil
       controller.send :load_time
-      expect(Time.now).to be_within(1.second).of(t)
+      expect(Time.current).to be_within(1.second).of(t)
 
       Settings::Timecop.offset = 1.hour
       controller.send :load_time
-      expect(Time.now).to be_within(1.second).of(t + 1.hour)
+      expect(Time.current).to be_within(1.second).of(t + 1.hour)
 
       Settings::Timecop.offset = -1.hour
       controller.send :load_time
-      expect(Time.now).to be_within(1.second).of(t - 1.hour)
+      expect(Time.current).to be_within(1.second).of(t - 1.hour)
 
       Settings::Timecop.offset = nil
       controller.send :load_time
-      expect(Time.now).to be_within(1.second).of(t)
+      expect(Time.current).to be_within(1.second).of(t)
     end
 
     it 'sets the X-App-Date header to the timecop time' do
-      t = Time.now
+      t = Time.current
 
       Settings::Timecop.offset = nil
       controller.send :load_time
@@ -75,27 +75,27 @@ RSpec.describe ApplicationController, type: :controller do
     end
 
     it 'does not travel time' do
-      t = Time.now
+      t = Time.current
 
       Settings::Timecop.offset = nil
       controller.send :load_time
-      expect(Time.now).to be_within(1.second).of(t)
+      expect(Time.current).to be_within(1.second).of(t)
 
       Settings::Timecop.offset = 1.hour
       controller.send :load_time
-      expect(Time.now).to be_within(1.second).of(t)
+      expect(Time.current).to be_within(1.second).of(t)
 
       Settings::Timecop.offset = -1.hour
       controller.send :load_time
-      expect(Time.now).to be_within(1.second).of(t)
+      expect(Time.current).to be_within(1.second).of(t)
 
       Settings::Timecop.offset = nil
       controller.send :load_time
-      expect(Time.now).to be_within(1.second).of(t)
+      expect(Time.current).to be_within(1.second).of(t)
     end
 
     it 'sets the X-App-Date header to the actual time' do
-      t = Time.now
+      t = Time.current
 
       Settings::Timecop.offset = nil
       controller.send :load_time

@@ -8,6 +8,8 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   STEPLESS_TASK_TYPES = [:external, :event]
 
+  belongs_to_time_zone :opens_at, :due_at, :feedback_at, suffix: :ntz
+
   belongs_to :task_plan, inverse_of: :tasks
 
   # dependent: :destroy will cause and infinite loop and stack overflow
@@ -28,11 +30,10 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   validates :title, presence: true
 
-  validates :opens_at, presence: true, timeliness: { type: :date }
-
-  # Practice Widget can create tasks with no due date
+  # Concept Coach and Practice Widget tasks have no open or due dates
   # We already validate dates for teacher-created assignments in the TaskingPlan
-  validates :due_at, timeliness: { type: :date }, allow_nil: true
+  validates :opens_at_ntz, :due_at_ntz, :feedback_at_ntz,
+            timeliness: { type: :date }, allow_nil: true
 
   validate :due_at_on_or_after_opens_at
 
@@ -61,16 +62,16 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     taskings.size > 1
   end
 
-  def past_open?(current_time: Time.now)
+  def past_open?(current_time: Time.current)
     opens_at.nil? || current_time > opens_at
   end
 
-  def past_due?(current_time: Time.now)
+  def past_due?(current_time: Time.current)
     !due_at.nil? && current_time > due_at
   end
 
-  def feedback_available?(current_time: Time.now)
-    !feedback_at.nil? && current_time >= feedback_at
+  def feedback_available?(current_time: Time.current)
+    feedback_at.nil? || current_time >= feedback_at
   end
 
   def completed?

@@ -4,6 +4,7 @@ require File.expand_path('../application', __FILE__)
 require 'date_time_utilities'
 require 'acts_as_resource'
 require 'acts_as_tasked'
+require 'belongs_to_time_zone'
 require 'html_tree_operations'
 require 'verify_and_get_id_array'
 require 'entity'
@@ -23,6 +24,7 @@ require 'openstax_rescue_from_this'
 require 'active_job/base_with_retry_conditions'
 require 'xlsx_helper'
 require 'axlsx_modifications'
+require 'default_time_validations'
 
 %w(
   biglearn

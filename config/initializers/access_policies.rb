@@ -13,5 +13,6 @@ OSU::AccessPolicy.register(CourseMembership::Models::Teacher, TeacherAccessPolic
 OSU::AccessPolicy.register(Content::Ecosystem, EcosystemAccessPolicy)
 OSU::AccessPolicy.register(Jobba::Status, JobAccessPolicy)
 OSU::AccessPolicy.register(CourseMembership::Period, PeriodAccessPolicy)
+OSU::AccessPolicy.register(CourseMembership::Models::Period, PeriodAccessPolicy)
 OSU::AccessPolicy.register(CourseMembership::EnrollmentChange, EnrollmentChangeAccessPolicy)
 OSU::AccessPolicy.register(Tasks::Models::ConceptCoachTask, Cc::TaskAccessPolicy)

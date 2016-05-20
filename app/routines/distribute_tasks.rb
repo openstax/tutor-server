@@ -23,15 +23,15 @@ class DistributeTasks
     entity_tasks.each(&:clear_association_cache)
   end
 
-  def exec(task_plan, publish_time = Time.now, protect_unopened_tasks = false)
+  def exec(task_plan, publish_time = Time.current, protect_unopened_tasks = false)
     task_plan.lock!
 
     tasks = task_plan.tasks.preload(:entity_task, { taskings: :role })
 
     # Delete pre-existing assignments only if
     # no assignments are open and protect_unopened_tasks is false
-    tasks.each{ |tt| tt.entity_task.destroy } if !protect_unopened_tasks && \
-                                                 tasks.none?{ |tt| tt.opens_at <= publish_time }
+    tasks.each{ |tt| tt.entity_task.destroy } \
+      if !protect_unopened_tasks && tasks.none?{ |tt| tt.past_open?(current_time: publish_time) }
 
     tasked_taskees = tasks.select{ |tt| !tt.destroyed? }
                           .flat_map{ |tt| tt.taskings.map(&:role) }
@@ -41,6 +41,7 @@ class DistributeTasks
     taskees = tasking_plans.map(&:target)
     opens_ats = tasking_plans.map(&:opens_at)
     due_ats = tasking_plans.map(&:due_at)
+    time_zones = tasking_plans.map(&:time_zone)
 
     # Exclude students that already had the assignment
     untasked_taskees = taskees - tasked_taskees
@@ -65,9 +66,10 @@ class DistributeTasks
 
       task = entity_task.task
 
+      task.time_zone = time_zones[ii]
       task.opens_at = opens_ats[ii]
-      task.due_at = due_ats[ii] || (task.opens_at + 1.week)
-      task.feedback_at ||= task_plan.is_feedback_immediate? ? task.opens_at : task.due_at
+      task.due_at = due_ats[ii]
+      task.feedback_at = task_plan.is_feedback_immediate ? nil : task.due_at
     end
 
     save(entity_tasks)

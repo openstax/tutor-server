@@ -27,7 +27,7 @@ describe CollectCourseInfo, type: :routine do
         {
           id: course_1.id,
           name: course_1.profile.name,
-          timezone: course_1.profile.timezone,
+          time_zone: course_1.profile.time_zone.name,
           default_open_time: course_1.profile.default_open_time,
           default_due_time: course_1.profile.default_due_time,
           offering: course_1.profile.offering,
@@ -47,7 +47,7 @@ describe CollectCourseInfo, type: :routine do
         {
           id: course_1.id,
           name: course_1.profile.name,
-          timezone: course_1.profile.timezone,
+          time_zone: course_1.profile.time_zone.name,
           default_open_time: course_1.profile.default_open_time,
           default_due_time: course_1.profile.default_due_time,
           offering: course_1.profile.offering,
@@ -59,7 +59,7 @@ describe CollectCourseInfo, type: :routine do
         {
           id: course_2.id,
           name: course_2.profile.name,
-          timezone: course_2.profile.timezone,
+          time_zone: course_2.profile.time_zone.name,
           default_open_time: course_2.profile.default_open_time,
           default_due_time: course_2.profile.default_due_time,
           offering: course_2.profile.offering,
@@ -82,7 +82,7 @@ describe CollectCourseInfo, type: :routine do
           {
             id: course_1.id,
             name: course_1.profile.name,
-            timezone: course_1.profile.timezone,
+            time_zone: course_1.profile.time_zone.name,
             default_open_time: course_1.profile.default_open_time,
             default_due_time: course_1.profile.default_due_time,
             offering: course_1.profile.offering,
@@ -100,7 +100,7 @@ describe CollectCourseInfo, type: :routine do
           {
             id: course_1.id,
             name: course_1.profile.name,
-            timezone: course_1.profile.timezone,
+            time_zone: course_1.profile.time_zone.name,
             default_open_time: course_1.profile.default_open_time,
             default_due_time: course_1.profile.default_due_time,
             offering: course_1.profile.offering,
@@ -126,7 +126,7 @@ describe CollectCourseInfo, type: :routine do
           {
             id: course_1.id,
             name: course_1.profile.name,
-            timezone: course_1.profile.timezone,
+            time_zone: course_1.profile.time_zone.name,
             default_open_time: course_1.profile.default_open_time,
             default_due_time: course_1.profile.default_due_time,
             offering: course_1.profile.offering,
@@ -144,7 +144,7 @@ describe CollectCourseInfo, type: :routine do
           {
             id: course_1.id,
             name: course_1.profile.name,
-            timezone: course_1.profile.timezone,
+            time_zone: course_1.profile.time_zone.name,
             default_open_time: course_1.profile.default_open_time,
             default_due_time: course_1.profile.default_due_time,
             offering: course_1.profile.offering,
@@ -188,7 +188,7 @@ describe CollectCourseInfo, type: :routine do
         {
           id: course_1.id,
           name: course_1.profile.name,
-          timezone: course_1.profile.timezone,
+          time_zone: course_1.profile.time_zone.name,
           default_open_time: course_1.profile.default_open_time,
           default_due_time: course_1.profile.default_due_time,
           offering: course_1.profile.offering,
@@ -200,7 +200,7 @@ describe CollectCourseInfo, type: :routine do
         {
           id: course_2.id,
           name: course_2.profile.name,
-          timezone: course_2.profile.timezone,
+          time_zone: course_2.profile.time_zone.name,
           default_open_time: course_2.profile.default_open_time,
           default_due_time: course_2.profile.default_due_time,
           offering: course_2.profile.offering,

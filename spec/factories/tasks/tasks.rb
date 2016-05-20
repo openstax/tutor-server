@@ -10,11 +10,14 @@ FactoryGirl.define do
 
     association :task_plan, factory: :tasks_task_plan
     association :entity_task, factory: :entity_task
+
     task_type :reading
     title       { task_plan.title }
     description { task_plan.description }
-    opens_at { Time.now }
-    due_at { (opens_at || Time.now) + duration }
+    time_zone   { task_plan.owner.time_zone }
+    opens_at    { time_zone.to_tz.now }
+    due_at      { (opens_at || time_zone.to_tz.now) + duration }
+
     after(:build) do |task, evaluator|
       AddSpyInfo[to: task, from: evaluator.ecosystem]
 

@@ -9,6 +9,7 @@ class CourseMembership::UpdatePeriod
                             enrollment_code: enrollment_code || period.enrollment_code,
                             default_open_time: default_open_time || period.default_open_time,
                             default_due_time: default_due_time || period.default_due_time)
+    transfer_errors_from model, {type: :verbatim}, true
     outputs.period = period
   end
 end

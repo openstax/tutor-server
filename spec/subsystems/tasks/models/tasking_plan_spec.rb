@@ -10,14 +10,17 @@ RSpec.describe Tasks::Models::TaskingPlan, type: :model do
   it { is_expected.to belong_to(:target) }
   it { is_expected.to belong_to(:task_plan) }
 
+  it { is_expected.to belong_to(:time_zone) }
+
   it { is_expected.to validate_presence_of(:target) }
   it { is_expected.to validate_presence_of(:task_plan) }
 
-  it { is_expected.to validate_presence_of(:opens_at) }
-  it { is_expected.to validate_presence_of(:due_at) }
+  it { is_expected.to validate_presence_of(:opens_at_ntz) }
+  it { is_expected.to validate_presence_of(:due_at_ntz) }
+  it { is_expected.to validate_presence_of(:time_zone) }
 
   it "requires due_at to be after opens_at" do
-    task = FactoryGirl.build(:tasks_task, opens_at: Time.now, due_at: Time.now - 1.hour)
+    task = FactoryGirl.build(:tasks_task, opens_at: Time.current, due_at: Time.current - 1.hour)
     expect(task).to_not be_valid
   end
 

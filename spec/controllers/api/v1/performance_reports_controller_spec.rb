@@ -61,7 +61,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
       end
 
       it 'should work on the happy path' do
-        Timecop.freeze(Time.now + 1.1.days) do
+        Timecop.freeze(Time.current + 1.1.days) do
           api_get :index, teacher_token, parameters: { id: course.id }
         end
 
@@ -378,7 +378,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
         student = CourseMembership::Models::Student.find_by(role: role)
         MoveStudent.call(period: period_2, student: student)
 
-        Timecop.freeze(Time.now + 1.1.days) do
+        Timecop.freeze(Time.current + 1.1.days) do
           api_get :index, teacher_token, parameters: { id: course.id }
         end
 

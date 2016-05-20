@@ -48,7 +48,7 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
   end
 
   it 'cannot be updated after the step is completed and feedback is available' do
-    tasked_exercise.task_step.task.feedback_at = Time.now
+    tasked_exercise.task_step.task.feedback_at = nil
     tasked_exercise.task_step.task.save!
 
     tasked_exercise.free_response = 'abc'
@@ -62,15 +62,15 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
 
     expect(tasked_exercise.reload).not_to be_valid
 
-    tasked_exercise.task_step.task.feedback_at = nil
-    tasked_exercise.task_step.task.save!
-
-    expect(tasked_exercise.reload).to be_valid
-
-    tasked_exercise.task_step.task.feedback_at = Time.now
+    tasked_exercise.task_step.task.feedback_at = Time.current.yesterday
     tasked_exercise.task_step.task.save!
 
     expect(tasked_exercise.reload).not_to be_valid
+
+    tasked_exercise.task_step.task.feedback_at = Time.current.tomorrow
+    tasked_exercise.task_step.task.save!
+
+    expect(tasked_exercise.reload).to be_valid
   end
 
   it "invalidates task's cache when updated" do

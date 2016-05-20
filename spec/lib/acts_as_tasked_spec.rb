@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe ActsAsTasked do
+RSpec.describe ActsAsTasked, type: :lib do
   [:tasks_tasked_reading, :tasks_tasked_exercise].each do |tasked_class|
     subject(:tasked) { FactoryGirl.create tasked_class }
 

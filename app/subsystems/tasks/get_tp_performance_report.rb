@@ -15,7 +15,7 @@ module Tasks
                                          .each_with_object({}) { |(tasking_plan, index), hash|
                                            hash[tasking_plan.task_plan] = index
                                          }
-        role_taskings = taskings.to_a.group_by(&:role)
+        role_taskings = taskings.group_by(&:role)
         sorted_student_data = role_taskings.sort_by do |student_role, _|
           sort_name = "#{student_role.last_name} #{student_role.first_name}"
           (sort_name.blank? ? student_role.name : sort_name).downcase
@@ -74,7 +74,7 @@ module Tasks
           tp.target == period  || tp.target == course
         end
       }.uniq.sort { |a, b|
-        [b.due_at, b.created_at] <=> [a.due_at, a.created_at]
+        [b.due_at_ntz, b.created_at] <=> [a.due_at_ntz, a.created_at]
       }
     end
 
@@ -85,10 +85,10 @@ module Tasks
       # .uniq is necessary for the preloading to work...
       course.taskings.joins(task: { task: { task_plan: :tasking_plans } })
                      .where(task: {task: {task_type: task_types}})
-                     .where{task.task.task_plan.tasking_plans.opens_at <= Time.current}
                      .preload(task: {task: {task_plan: {tasking_plans: :target} }},
                               role: [{student: {enrollments: :period}}, {profile: :account}])
-                     .reorder(nil).uniq
+                     .reorder(nil).uniq.to_a
+                     .select{ |tasking| tasking.task.task.past_open? }
     end
 
     def get_data_headings(tasking_plans, task_plan_results)

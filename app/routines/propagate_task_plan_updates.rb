@@ -4,6 +4,17 @@ class PropagateTaskPlanUpdates
 
   protected
 
+  def updated_attributes_for(tasking_plan:)
+    task_plan = tasking_plan.task_plan
+    {
+      title: task_plan.title,
+      description: task_plan.description,
+      opens_at_ntz: tasking_plan.opens_at_ntz,
+      due_at_ntz: tasking_plan.due_at_ntz,
+      feedback_at_ntz: task_plan.is_feedback_immediate ? nil : tasking_plan.due_at_ntz
+    }
+  end
+
   def exec(task_plan:)
 
     # For now we only handle tasking_plans that point to periods
@@ -13,7 +24,7 @@ class PropagateTaskPlanUpdates
         unless period.is_a?(CourseMembership::Models::Period)
 
       task_plan.tasks.joins(:taskings).where(taskings: { course_membership_period_id: period.id })
-                     .update_all( task_plan.assistant.updated_attributes_for(tasking_plan:tasking_plan) )
+                     .update_all(updated_attributes_for(tasking_plan: tasking_plan))
     end
 
     task_plan.tasks.reset

@@ -4,7 +4,7 @@ class MarkTaskStepCompleted
 
   protected
 
-  def exec(task_step:, completion_time: Time.now)
+  def exec(task_step:, completion_time: Time.current)
     # Pessimistic locking to prevent race conditions with the update logic
     task_step.lock!
 

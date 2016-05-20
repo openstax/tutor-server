@@ -23,4 +23,19 @@ RSpec.describe CourseMembership::Models::Period, type: :model do
     period.enrollments.each{ |en| en.student.inactivate.save! }
     expect { period.destroy }.to change{CourseMembership::Models::Period.count}.by(-1)
   end
+
+  it 'validates format of default times' do
+    period.default_open_time = '16:32'
+    expect(period).to be_valid
+
+    period.default_open_time = '16:'
+    expect(period).not_to be_valid
+
+    period.default_open_time = '24:00'
+    expect(period).not_to be_valid
+
+    period.default_open_time = '23:60'
+    expect(period).not_to be_valid
+  end
+
 end

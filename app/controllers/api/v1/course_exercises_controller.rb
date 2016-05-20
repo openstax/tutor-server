@@ -28,7 +28,7 @@ class Api::V1::CourseExercisesController < Api::V1::ApiController
   end
 
   api :PATCH, '/courses/:course_id/exercises',
-            "Updates the given exercise(s) to be excluded or not for the given course"
+              "Updates the given exercise(s) to be excluded or not for the given course"
   description <<-EOS
     Updates the given exercise(s) to be excluded or not for the given course.
 

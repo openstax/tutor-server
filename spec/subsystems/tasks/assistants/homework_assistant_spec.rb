@@ -159,8 +159,8 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
         task = entity_task.task
         expect(task.description).to eq("Hello!")
         expect(task.homework?).to be_truthy
-        # feedback_at == opens_at because the task plan was set to immediate_feedback
-        expect(task.feedback_at).to eq(task.opens_at)
+        # feedback_at == nil because the task plan was set to immediate_feedback
+        expect(task.feedback_at).to be_nil
       end
 
       ## it "creates one task per taskee"

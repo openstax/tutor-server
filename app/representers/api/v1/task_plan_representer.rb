@@ -45,6 +45,7 @@ module Api::V1
     property :is_feedback_immediate,
              readable: true,
              writeable: true,
+             if: ->(*) { type == 'homework' },
              schema_info: { type: 'boolean' }
 
     property :publish_last_requested_at,
@@ -87,7 +88,7 @@ module Api::V1
              }
 
     collection :tasking_plans,
-               class: ::Tasks::Models::TaskingPlan,
+               instance: ->(*) { ::Tasks::Models::TaskingPlan.new(time_zone: owner.time_zone) },
                decorator: TaskingPlanRepresenter,
                readable: true,
                writeable: true

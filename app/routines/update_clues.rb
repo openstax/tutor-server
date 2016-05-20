@@ -24,7 +24,7 @@ class UpdateClues
   def exec(type:)
     log type, 'Starting'
 
-    start_time = Time.now
+    start_time = Time.current
 
     tasked_exercise_relation = Tasks::Models::TaskedExercise.joins(:task_step).preload(
       [ { task_step: { task: { taskings: :role } } }, :exercise ]
@@ -157,7 +157,7 @@ class UpdateClues
       threads.each(&:join)
     end
 
-    log type, "Done after #{Time.now - start_time} seconds"
+    log type, "Done after #{Time.current - start_time} seconds"
   end
 
 end

@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe DistributeTasks, type: :routine do
 
-  let!(:course)    { Entity::Course.create! }
+  let!(:course)    { FactoryGirl.create :entity_course }
   let!(:period)    { CreatePeriod[course: course] }
   let!(:user)      {
     user = FactoryGirl.create(:user)
@@ -32,7 +32,7 @@ RSpec.describe DistributeTasks, type: :routine do
     it 'sets the published_at field' do
       result = DistributeTasks.call(task_plan)
       expect(result.errors).to be_empty
-      expect(task_plan.reload.published_at).to be_within(1.second).of(Time.now)
+      expect(task_plan.reload.published_at).to be_within(1.second).of(Time.current)
     end
 
     it 'fails to publish the task_plan if one or more non-stepless tasks would be empty' do
@@ -60,7 +60,7 @@ RSpec.describe DistributeTasks, type: :routine do
 
     context 'before the open date' do
       before(:each) do
-        opens_at = Time.now.tomorrow
+        opens_at = Time.current.tomorrow
         task_plan.tasking_plans.each{ |tp| tp.update_attribute(:opens_at, opens_at) }
         task_plan.tasks.each{ |tt| tt.update_attribute(:opens_at, opens_at) }
       end
@@ -77,7 +77,7 @@ RSpec.describe DistributeTasks, type: :routine do
 
       it 'does not set the published_at field' do
         old_published_at = task_plan.published_at
-        publish_time = Time.now
+        publish_time = Time.current
         result = DistributeTasks.call(task_plan, publish_time)
         expect(result.errors).to be_empty
         expect(task_plan.reload.published_at).to eq old_published_at
@@ -86,7 +86,7 @@ RSpec.describe DistributeTasks, type: :routine do
 
     context 'after the open date' do
       before(:each) do
-        opens_at = Time.now.yesterday
+        opens_at = Time.current.yesterday
         task_plan.tasking_plans.each{ |tp| tp.update_attribute(:opens_at, opens_at) }
         task_plan.tasks.each{ |tt| tt.update_attribute(:opens_at, opens_at) }
       end
@@ -103,7 +103,7 @@ RSpec.describe DistributeTasks, type: :routine do
 
       it 'does not set the published_at field' do
         old_published_at = task_plan.published_at
-        publish_time = Time.now
+        publish_time = Time.current
         result = DistributeTasks.call(task_plan, publish_time)
         expect(result.errors).to be_empty
         expect(task_plan.reload.published_at).to eq old_published_at

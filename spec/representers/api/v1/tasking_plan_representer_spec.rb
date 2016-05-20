@@ -49,113 +49,42 @@ RSpec.describe Api::V1::TaskingPlanRepresenter, type: :representer do
   end
 
   let!(:year_str)           { '2015' }
-  let!(:daylight_month_str) { '06' }
-  let!(:standard_month_str) { '01' }
+  let!(:month_str) { '01' }
   let!(:day_str)            { '04' }
 
-  let!(:daylight_date_str) { "#{year_str}-#{daylight_month_str}-#{day_str}" }
-  let!(:standard_date_str) { "#{year_str}-#{standard_month_str}-#{day_str}" }
-  let!(:date_and_time_str) { "#{year_str}-#{standard_month_str}-#{day_str}T14:32:34" }
+  let!(:date_str) { "#{year_str}-#{month_str}-#{day_str}" }
+  let!(:date_time_str) { "#date_str}T14:32:34" }
 
-  let!(:course_timezone)    { ActiveSupport::TimeZone['Central Time (US & Canada)'] }
-  let!(:noncourse_timezone) { ActiveSupport::TimeZone['Pacific Time (US & Canada)'] }
-  let!(:utc_timezone)       { ActiveSupport::TimeZone['UTC'] }
+  context "opens_at & due_at" do
 
-  context "opens_at" do
+    %w(opens_at due_at).each do |field|
+      context field do
+        it "can be read (date coerced to String)" do
+          datetime = Time.zone.now
+          allow(tasking_plan).to receive(field).and_return(datetime)
+          expect(representation).to include(field => DateTimeUtilities::to_api_s(datetime))
+        end
 
-    let!(:daylight_opens_at) { course_timezone.parse(daylight_date_str).midnight + 1.minute }
-    let!(:standard_opens_at) { course_timezone.parse(standard_date_str).midnight + 1.minute }
-
-    it "can be read (date coerced to String)" do
-      opens_at = Time.zone.now
-      allow(tasking_plan).to receive(:opens_at).and_return(opens_at)
-      expect(representation).to include("opens_at" => DateTimeUtilities::to_api_s(opens_at))
-    end
-
-    it "can be written with string containing date of form YYYY-MM-DD" do
-      Api::V1::TaskingPlanRepresenter.new(tasking_plan).from_json({"opens_at" => standard_date_str}.to_json)
-      expect(tasking_plan).to have_received(:opens_at=).with(standard_opens_at)
-    end
-
-    it "can be written with string containing date of form YYYY-MM-DDTHH:MM:SS" do
-      Api::V1::TaskingPlanRepresenter.new(tasking_plan).from_json({"opens_at" => date_and_time_str}.to_json)
-      expect(tasking_plan).to have_received(:opens_at=).with(standard_opens_at)
-    end
-
-    it "time is adjusted to 12:01am Central" do
-      opens_at = course_timezone.parse("#{standard_date_str}T15:54:34")
-      Api::V1::TaskingPlanRepresenter.new(tasking_plan).from_json({"opens_at" => opens_at.to_s}.to_json)
-      expect(tasking_plan).to have_received(:opens_at=).with(standard_opens_at)
-    end
-
-    it "time and timezone are ignored (upper edge)" do
-      noncourse_timezone_opens_at = noncourse_timezone.parse("#{standard_date_str}T23:59:59")
-      Api::V1::TaskingPlanRepresenter.new(tasking_plan)
-                                     .from_json({"opens_at" => noncourse_timezone_opens_at.to_s}.to_json)
-      expect(tasking_plan).to have_received(:opens_at=).with(standard_opens_at)
-    end
-
-    it "time and timezone are ignored (lower edge)" do
-      noncourse_timezone_opens_at = noncourse_timezone.parse("#{standard_date_str}T00:00:00")
-      Api::V1::TaskingPlanRepresenter.new(tasking_plan)
-                                     .from_json({"opens_at" => noncourse_timezone_opens_at.to_s}.to_json)
-      expect(tasking_plan).to have_received(:opens_at=).with(standard_opens_at)
-    end
-
-    it "DST is honored" do
-      noncourse_timezone_opens_at = noncourse_timezone.parse("#{daylight_date_str}T16:12:43")
-      Api::V1::TaskingPlanRepresenter.new(tasking_plan)
-                                     .from_json({"opens_at" => noncourse_timezone_opens_at.to_s}.to_json)
-      expect(tasking_plan).to have_received(:opens_at=).with(daylight_opens_at)
+        it "can be written" do
+          consume(input: {field => date_time_str}, to: tasking_plan)
+          expect(tasking_plan).to have_received("#{field}=").with(date_time_str)
+        end
+      end
     end
   end
 
-  context "due_at" do
-
-    let!(:daylight_due_at) { course_timezone.parse(daylight_date_str).midnight + 7.hours }
-    let!(:standard_due_at) { course_timezone.parse(standard_date_str).midnight + 7.hours }
-
-    it "can be read (date coerced to String)" do
-      due_at = Time.zone.now
-      allow(tasking_plan).to receive(:due_at).and_return(due_at)
-      expect(representation).to include("due_at" => DateTimeUtilities::to_api_s(due_at))
-    end
-
-    it "can be written with string containing date of form YYYY-MM-DD" do
-      Api::V1::TaskingPlanRepresenter.new(tasking_plan).from_json({"due_at" => standard_date_str}.to_json)
-      expect(tasking_plan).to have_received(:due_at=).with(standard_due_at)
-    end
-
-    it "can be written with string containing date of form YYYY-MM-DDTHH:MM:SS" do
-      Api::V1::TaskingPlanRepresenter.new(tasking_plan).from_json({"due_at" => date_and_time_str}.to_json)
-      expect(tasking_plan).to have_received(:due_at=).with(standard_due_at)
-    end
-
-    it "time is adjusted to 12:01am Central" do
-      due_at = course_timezone.parse("#{standard_date_str}T15:54:34")
-      Api::V1::TaskingPlanRepresenter.new(tasking_plan).from_json({"due_at" => due_at.to_s}.to_json)
-      expect(tasking_plan).to have_received(:due_at=).with(standard_due_at)
-    end
-
-    it "time and timezone are ignored (upper edge)" do
-      noncourse_timezone_due_at = noncourse_timezone.parse("#{standard_date_str}T23:59:59")
-      Api::V1::TaskingPlanRepresenter.new(tasking_plan)
-                                     .from_json({"due_at" => noncourse_timezone_due_at.to_s}.to_json)
-      expect(tasking_plan).to have_received(:due_at=).with(standard_due_at)
-    end
-
-    it "time and timezone are ignored (lower edge)" do
-      noncourse_timezone_due_at = noncourse_timezone.parse("#{standard_date_str}T00:00:00")
-      Api::V1::TaskingPlanRepresenter.new(tasking_plan)
-                                     .from_json({"due_at" => noncourse_timezone_due_at.to_s}.to_json)
-      expect(tasking_plan).to have_received(:due_at=).with(standard_due_at)
-    end
-
-    it "DST is honored" do
-      noncourse_timezone_due_at = noncourse_timezone.parse("#{daylight_date_str}T16:12:43")
-      Api::V1::TaskingPlanRepresenter.new(tasking_plan)
-                                     .from_json({"due_at" => noncourse_timezone_due_at.to_s}.to_json)
-      expect(tasking_plan).to have_received(:due_at=).with(daylight_due_at)
-    end
+  # A helper for reading input (json or hash) into a TaskingPlan.
+  def consume(input:, to: tasking_plan)
+    described_class.new(to).from_json(
+      case input
+      when String
+        input
+      when Hash
+        input.to_json
+      else
+        raise StandardError
+      end
+    )
   end
+
 end

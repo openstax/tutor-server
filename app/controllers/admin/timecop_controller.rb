@@ -26,7 +26,7 @@ class Admin::TimecopController < Admin::BaseController
     time = Chronic.parse(time_str)
     raise "Unable to parse time: #{time_str}" if time.nil?
     zone = ActiveSupport::TimeZone.new(time_zone_str)
-    raise "Unable to parse timezone: #{time_zone_str}" if zone.nil?
+    raise "Unable to parse time_zone: #{time_zone_str}" if zone.nil?
     zone.local_to_utc(time)
   end
 end

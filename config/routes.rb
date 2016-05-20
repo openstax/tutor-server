@@ -28,7 +28,6 @@ Rails.application.routes.draw do
 
   apipie
 
-
   # Fetch user information and log in/out in remotely
   scope :auth, controller: :auth do
     scope to: 'auth#cors_preflight_check', via: [:options] do
@@ -85,6 +84,7 @@ Rails.application.routes.draw do
         get 'cc/dashboard(/role/:role_id)', action: :cc_dashboard
         get 'plans'
         get 'tasks'
+        get 'roster'
 
         scope :performance, controller: :performance_reports do
           get '(/role/:role_id)', action: :index
@@ -108,8 +108,6 @@ Rails.application.routes.draw do
           get 'review'
         end
       end
-
-      get 'roster'
 
       resources :students, shallow: true, except: [:index, :create] do
         member do

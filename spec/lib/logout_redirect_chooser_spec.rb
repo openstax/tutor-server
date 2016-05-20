@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe LogoutRedirectChooser do
+RSpec.describe LogoutRedirectChooser, type: :lib do
 
   let!(:default) { "http://accounts.openstax.org/logout/" }
   let!(:cc_logout) { default + "?cc=1" }

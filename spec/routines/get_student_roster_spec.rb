@@ -70,7 +70,7 @@ describe GetCourseRoster, type: :routine do
 
   it 'does not blow up when a period has been deleted' do
     period_2.to_model.enrollments.each{ |en| en.student.inactivate.save! }
-    expect{ CourseMembership::DeletePeriod[period: period_2] }.to(
+    expect{ period_2.to_model.destroy }.to(
       change{ CourseMembership::Models::Period.count }.by(-1)
     )
 

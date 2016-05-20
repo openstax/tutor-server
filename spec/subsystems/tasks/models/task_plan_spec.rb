@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Tasks::Models::TaskPlan, type: :model do
   subject(:task_plan) { FactoryGirl.create :tasks_task_plan }
 
-  let!(:new_task) { FactoryGirl.build :tasks_task, opens_at: Time.now }
+  let!(:new_task) { FactoryGirl.build :tasks_task, opens_at: Time.current.yesterday }
 
   it { is_expected.to belong_to(:assistant) }
   it { is_expected.to belong_to(:owner) }
@@ -77,7 +77,7 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
 
   it 'will not allow other fields to be updated after a task is open' do
     task_plan.tasks << new_task
-    task_plan.settings = { due_at: Time.now }
+    task_plan.settings = { due_at: Time.current.tomorrow }
     expect(task_plan).not_to be_valid
   end
 
@@ -85,7 +85,7 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     task_plan.is_publish_requested = true
     expect(task_plan).to be_valid
 
-    task_plan.tasking_plans.first.due_at = Time.now.yesterday
+    task_plan.tasking_plans.first.due_at = Time.current.yesterday
     expect(task_plan).to_not be_valid
   end
 

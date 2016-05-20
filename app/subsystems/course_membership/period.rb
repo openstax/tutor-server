@@ -30,12 +30,12 @@ module CourseMembership
 
     def default_open_time
       return if @strategy.default_open_time.nil?
-      verify_and_return @strategy.default_open_time, klass: Time, error: StrategyError
+      verify_and_return @strategy.default_open_time, klass: String, error: StrategyError
     end
 
     def default_due_time
       return if @strategy.default_due_time.nil?
-      verify_and_return @strategy.default_due_time, klass: Time, error: StrategyError
+      verify_and_return @strategy.default_due_time, klass: String, error: StrategyError
     end
 
     def to_model

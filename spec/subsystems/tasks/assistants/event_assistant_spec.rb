@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Tasks::Assistants::EventAssistant, type: :assistant do
-  let(:course) { Entity::Course.create }
+  let(:course) { FactoryGirl.create :entity_course }
   let(:period) { CourseMembership::Models::Period.last }
 
   subject(:event_assistant) do
