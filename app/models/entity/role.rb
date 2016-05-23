@@ -3,7 +3,7 @@ class Entity::Role < Tutor::SubSystems::BaseModel
 
   has_many :taskings, subsystem: :tasks, dependent: :destroy
 
-  has_one :student, dependent: :destroy, subsystem: :course_membership
+  has_one :student, -> { with_deleted }, dependent: :destroy, subsystem: :course_membership
   has_one :teacher, dependent: :destroy, subsystem: :course_membership
 
   has_one :role_user, dependent: :destroy, subsystem: :role

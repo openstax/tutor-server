@@ -11,12 +11,7 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
   has_many :teacher_roles, through: :teachers, source: :role, class_name: 'Entity::Role'
 
   has_many :enrollments, dependent: :destroy
-  has_many :latest_enrollments,
-           -> { latest },
-           class_name: '::CourseMembership::Models::Enrollment'
-  has_many :active_enrollments,
-           -> { latest.active },
-           class_name: '::CourseMembership::Models::Enrollment'
+  has_many :latest_enrollments, -> { latest }, class_name: '::CourseMembership::Models::Enrollment'
 
   has_many :enrollment_changes, dependent: :destroy
 
@@ -26,10 +21,8 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
   before_destroy :no_active_students, prepend: true
 
   validates :course, presence: true
-  validates :name, presence: true, uniqueness: {
-                                     scope: :entity_course_id,
-                                     conditions: -> { where(deleted_at: nil) }
-                                   }
+  validates :name, presence: true, uniqueness: { scope: :entity_course_id,
+                                                 conditions: -> { where(deleted_at: nil) } }
   validates :enrollment_code, presence: true, uniqueness: true
 
   include DefaultTimeValidations
@@ -38,8 +31,9 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
   default_scope { order(:name) }
 
   def student_roles(include_inactive_students: false)
-    target_enrollments = include_inactive_students ? latest_enrollments : active_enrollments
-    target_enrollments.includes(student: :role).map{ |en| en.student.role }
+    target_enrollments = include_inactive_students ?
+                           latest_enrollments.with_deleted : latest_enrollments
+    target_enrollments.preload(student: :role).map{ |en| en.student.role }
   end
 
   def default_open_time
@@ -53,7 +47,7 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
   protected
 
   def no_active_students
-    return unless enrollments.latest.active.exists?
+    return unless enrollments.latest.exists?
     errors.add(:students, 'must be moved to another period before this period can be deleted')
     false
   end

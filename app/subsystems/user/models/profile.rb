@@ -1,6 +1,7 @@
 module User
   module Models
     class Profile < Tutor::SubSystems::BaseModel
+      acts_as_paranoid
 
       wrapped_by Strategies::Direct::User
 
@@ -28,19 +29,6 @@ module User
       def self.anonymous
         ::User::Models::AnonymousProfile.instance
       end
-
-      def destroy
-        update_attribute(:deleted_at, Time.current)
-      end
-
-      def delete
-        update_column(:deleted_at, Time.current)
-      end
-
-      def undelete
-        update_column(:deleted_at, nil)
-      end
-
     end
   end
 end

@@ -74,6 +74,7 @@ class ChooseCourseRole
   end
 
   private
+
   def find_unique_role(course:, type:)
     matching_roles = outputs.roles.select do |role|
       case type
@@ -91,10 +92,9 @@ class ChooseCourseRole
       )
     end
 
-    found_it = (matching_roles.count == 1)
-    outputs[:role] = matching_roles.first if found_it
+    outputs[:role] = matching_roles.first
 
-    found_it
+    outputs[:role].present?
   end
 
   def get_course_student_roles(course:, user:)

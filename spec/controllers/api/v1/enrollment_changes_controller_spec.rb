@@ -131,7 +131,7 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
         end
 
         it 'returns an error if the user has been dropped from the course' do
-          AddUserAsPeriodStudent[user: user, period: period_2].student.inactivate.save!
+          AddUserAsPeriodStudent[user: user, period: period_2].student.destroy
 
           expect{ api_post :create, nil, raw_post_data: {
             enrollment_code: period.enrollment_code, book_uuid: book.uuid
@@ -199,7 +199,7 @@ RSpec.describe Api::V1::EnrollmentChangesController, type: :controller, api: tru
         end
 
         it 'returns an error if the user has been dropped from the course' do
-          AddUserAsPeriodStudent[user: user, period: period_2].student.inactivate.save!
+          AddUserAsPeriodStudent[user: user, period: period_2].student.destroy
 
           expect{ api_post :create, nil, raw_post_data: {
             enrollment_code: period.enrollment_code

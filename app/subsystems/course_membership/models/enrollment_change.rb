@@ -3,9 +3,9 @@ class CourseMembership::Models::EnrollmentChange < Tutor::SubSystems::BaseModel
 
   acts_as_paranoid
 
-  belongs_to :profile, subsystem: :user
-  belongs_to :enrollment # from
-  belongs_to :period     # to
+  belongs_to :profile, -> { with_deleted }, subsystem: :user
+  belongs_to :enrollment, -> { with_deleted } # from
+  belongs_to :period, -> { with_deleted }     # to
 
   enum status: [ :pending, :approved, :rejected, :processed ]
 

@@ -47,7 +47,7 @@ describe CourseMembership::GetRoleCourses do
   end
 
   it 'does not find courses where the role is an inactive student' do
-    role_b.student.inactivate.save!
+    role_b.student.destroy
     courses = described_class[roles: [role_a, role_b], types: [:student]]
     expect(courses).to contain_exactly(course_1)
   end

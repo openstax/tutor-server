@@ -56,14 +56,14 @@ class UpdateClues
     end
 
     # Collect CLUe queries for the most recent ecosystem in each non-CC course
-    clue_queries = Entity::Course.joins(:profile)
-                                 .where(profile: {is_concept_coach: false})
-                                 .preload(
-      periods: { active_enrollments: { student: { role: :profile } } }
-    ).flat_map do |course|
+    clue_queries = Entity::Course
+      .joins(:profile)
+      .where(profile: {is_concept_coach: false})
+      .preload(periods: {latest_enrollments: {student: {role: :profile}}})
+      .flat_map do |course|
       # Get all student roles in the course
       course_roles = course.periods.flat_map do |period|
-        period.active_enrollments.map{ |ae| ae.student.role }
+        period.latest_enrollments.map{ |ae| ae.student.role }
       end
 
       # Get all exercises worked by students in the course
@@ -85,7 +85,7 @@ class UpdateClues
 
       course.periods.flat_map do |period|
         # Get all students in the period
-        period_roles = period.active_enrollments.map{ |ae| ae.student.role }
+        period_roles = period.latest_enrollments.map{ |ae| ae.student.role }
 
         # Make a map of who worked what pools
         period_roles_to_worked_pools_map = period_roles.each_with_object({}) do |role, hash|

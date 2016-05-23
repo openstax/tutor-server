@@ -2,7 +2,7 @@ class CourseMembership::Models::Enrollment < Tutor::SubSystems::BaseModel
   acts_as_paranoid
 
   belongs_to :period, -> { with_deleted }
-  belongs_to :student
+  belongs_to :student, -> { with_deleted }
 
   has_one :enrollment_change, -> { with_deleted }, dependent: :destroy
 
@@ -17,10 +17,6 @@ class CourseMembership::Models::Enrollment < Tutor::SubSystems::BaseModel
       (newer_enrollment.course_membership_student_id == ~course_membership_student_id) & \
       (newer_enrollment.created_at > ~created_at)
     }.outer}.where(newer_enrollment: {id: nil})
-  }
-
-  scope :active, -> {
-    joins(:student).where(student: {inactive_at: nil})
   }
 
   protected

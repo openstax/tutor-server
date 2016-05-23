@@ -236,14 +236,14 @@ ActiveRecord::Schema.define(version: 20160517202901) do
     t.integer  "entity_course_id",   null: false
     t.integer  "entity_role_id",     null: false
     t.string   "deidentifier",       null: false
-    t.datetime "inactive_at"
+    t.datetime "deleted_at"
     t.datetime "created_at",         null: false
     t.datetime "updated_at",         null: false
     t.string   "student_identifier"
   end
 
   add_index "course_membership_students", ["deidentifier"], name: "index_course_membership_students_on_deidentifier", unique: true, using: :btree
-  add_index "course_membership_students", ["entity_course_id", "inactive_at"], name: "course_membership_students_course_inactive", using: :btree
+  add_index "course_membership_students", ["entity_course_id", "deleted_at"], name: "course_membership_students_course_inactive", using: :btree
   add_index "course_membership_students", ["entity_role_id"], name: "index_course_membership_students_on_entity_role_id", unique: true, using: :btree
   add_index "course_membership_students", ["student_identifier", "entity_course_id"], name: "index_course_membership_students_on_s_identifier_and_e_c_id", unique: true, using: :btree
 

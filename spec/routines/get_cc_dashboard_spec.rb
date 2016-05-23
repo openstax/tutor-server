@@ -333,8 +333,8 @@ describe GetCcDashboard, type: :routine do
     end
 
     it "does not return negative numbers if a student starts/finishes a task and then drops" do
-      @student_role.student.inactivate.save!
-      @student_role_2.student.inactivate.save!
+      @student_role.student.destroy
+      @student_role_2.student.destroy
       @course.reload
 
       outputs = described_class.call(course: @course, role: @teacher_role).outputs

@@ -71,7 +71,7 @@ describe CourseMembership::CreateEnrollmentChange, type: :routine do
       end
 
       it 'returns an error if the user has been dropped from the course' do
-        user.to_model.roles.first.student.inactivate.save!
+        user.to_model.roles.first.student.destroy
 
         result = nil
         expect{ result = described_class.call(args) }

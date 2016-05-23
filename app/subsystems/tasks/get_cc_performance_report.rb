@@ -16,7 +16,7 @@ module Tasks
         sorted_period_pages = period_cc_tasks_map
           .values.flat_map(&:keys).uniq.sort{ |a, b| b.book_location <=> a.book_location }
 
-        period_students = period.active_enrollments
+        period_students = period.latest_enrollments
                                 .preload(student: {role: {profile: :account}})
                                 .map(&:student)
 
