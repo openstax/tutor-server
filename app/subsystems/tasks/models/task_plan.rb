@@ -2,7 +2,8 @@ require 'json-schema'
 
 class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
 
-  UPDATABLE_ATTRIBUTES = ['title', 'description', 'published_at', 'is_feedback_immediate']
+  UPDATABLE_ATTRIBUTES_AFTER_OPEN = ['title', 'description',
+                                     'published_at', 'is_feedback_immediate']
 
   attr_writer :is_publish_requested
 
@@ -25,12 +26,10 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
   validates :type, presence: true
   validates :tasking_plans, presence: true
 
-  validate :valid_settings, :same_ecosystem, :changes_allowed, :not_due_before_publish
-
-  before_destroy :not_open_before_destroy, prepend: true
+  validate :valid_settings, :same_ecosystem, :changes_allowed, :not_past_due_when_publishing
 
   def tasks_past_open?
-    tasks.any?{ |tt| tt.past_open? }
+    tasks.any?(&:past_open?)
   end
 
   def is_publish_requested?
@@ -45,9 +44,7 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
 
     json_errors = JSON::Validator.fully_validate(schema, settings, insert_defaults: true)
     return if json_errors.empty?
-    json_errors.each do |json_error|
-      errors.add(:settings, "- #{json_error}")
-    end
+    json_errors.each{ |json_error| errors.add(:settings, "- #{json_error}") }
     false
   end
 
@@ -77,20 +74,20 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
   end
 
   def changes_allowed
-    return if !tasks_past_open? || changes.except(*UPDATABLE_ATTRIBUTES).empty?
-    errors.add(:base, "cannot be updated after it is open")
+    return unless tasks_past_open?
+    forbidden_attributes = changes.except(*UPDATABLE_ATTRIBUTES_AFTER_OPEN)
+    return if forbidden_attributes.empty?
+
+    forbidden_attributes.each do |key, value|
+      errors.add(key.to_sym, "cannot be updated after the open date")
+    end
+
     false
   end
 
-  def not_due_before_publish
+  def not_past_due_when_publishing
     return if !is_publish_requested? || tasking_plans.none?(&:past_due?)
     errors.add(:due_at, 'cannot be in the past when publishing')
-    false
-  end
-
-  def not_open_before_destroy
-    return unless tasks_past_open?
-    errors.add(:base, "cannot be deleted after it is open")
     false
   end
 
