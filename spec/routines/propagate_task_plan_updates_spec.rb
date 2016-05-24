@@ -64,7 +64,7 @@ RSpec.describe PropagateTaskPlanUpdates, type: :routine do
     end
 
     context 'homework' do
-      it 'propagates task_plan changes to all of its tasks' do
+      it 'propagates task_plan changes (except opens_at) to all of its tasks' do
         task_plan.type = 'homework'
         task_plan.is_feedback_immediate = false
         task_plan.save!(validate: false)
@@ -76,7 +76,9 @@ RSpec.describe PropagateTaskPlanUpdates, type: :routine do
           expect(task.opens_at).to    be_within(1.second).of(old_opens_at)
           expect(task.due_at).to      be_within(1.second).of(old_due_at)
         end
-        allow(task_plan.assistant).to receive(:code_class).and_return(Tasks::Assistants::HomeworkAssistant)
+        allow(task_plan.assistant).to(
+          receive(:code_class).and_return(Tasks::Assistants::HomeworkAssistant)
+        )
 
         expect {
           PropagateTaskPlanUpdates.call(task_plan: task_plan)
@@ -86,14 +88,16 @@ RSpec.describe PropagateTaskPlanUpdates, type: :routine do
         task_plan.tasks.each do |task|
           expect(task.title).to       eq new_title
           expect(task.description).to eq new_description
-          expect(task.opens_at).to    be_within(1.second).of(new_opens_at)
+          expect(task.opens_at).to    be_within(1.second).of(old_opens_at)
           expect(task.due_at).to      be_within(1.second).of(new_due_at)
           expect(task.feedback_at).to eq task.due_at
         end
       end
 
       it 'sets feedback_at to nil when feedback is immediate' do
-        allow(task_plan.assistant).to receive(:code_class).and_return(Tasks::Assistants::HomeworkAssistant)
+        allow(task_plan.assistant).to(
+          receive(:code_class).and_return(Tasks::Assistants::HomeworkAssistant)
+        )
         task_plan.update_attributes(type: 'homework', is_feedback_immediate: true)
         PropagateTaskPlanUpdates.call(task_plan: task_plan)
         task_plan.tasks.each do |task|
@@ -104,7 +108,7 @@ RSpec.describe PropagateTaskPlanUpdates, type: :routine do
     end
 
     context 'reading' do
-      it 'propagates task_plan changes to all of its tasks' do
+      it 'propagates task_plan changes (except opens_at) to all of its tasks' do
         task_plan.update_attribute(:type, 'reading')
         expect(task_plan.tasks).not_to be_empty
         task_plan.tasks.each do |task|
@@ -122,7 +126,7 @@ RSpec.describe PropagateTaskPlanUpdates, type: :routine do
         task_plan.tasks.each do |task|
           expect(task.title).to       eq new_title
           expect(task.description).to eq new_description
-          expect(task.opens_at).to    be_within(1.second).of(new_opens_at)
+          expect(task.opens_at).to    be_within(1.second).of(old_opens_at)
           expect(task.due_at).to      be_within(1.second).of(new_due_at)
           expect(task.feedback_available?).to be_truthy
         end

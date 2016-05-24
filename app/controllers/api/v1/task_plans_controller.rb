@@ -109,7 +109,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
 
     # Lock the TaskPlan to prevent concurrent update/publish
     task_plan.with_lock do
-      consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter)
+      update_task_plan!(task_plan)
       OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, task_plan)
       uuid = distribute_or_update_tasks(task_plan)
 
@@ -314,6 +314,24 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   end
 
   protected
+
+  def update_task_plan!(task_plan)
+    return consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter) \
+      unless task_plan.tasks_past_open?
+
+    opens_at_ntzs = Hash.new{ |hash, key| hash[key] = {} }
+    open_tasking_plans = task_plan.tasking_plans.select(&:past_open?)
+    open_tasking_plans.each do |tp|
+      opens_at_ntzs[tp.target_type][tp.target_id] = tp.opens_at_ntz
+    end
+
+    consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter).tap do |result|
+      task_plan.tasking_plans.each do |tp|
+        tp.update_attribute(:opens_at_ntz, opens_at_ntzs[tp.target_type][tp.target_id]) \
+          if opens_at_ntzs[tp.target_type].has_key?(tp.target_id)
+      end
+    end
+  end
 
   # Distributes or updates distributed tasks for the given task_plan
   # Returns the job uuid, if any, or nil if the request was completed inline

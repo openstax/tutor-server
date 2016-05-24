@@ -82,14 +82,12 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     expect(task_plan).not_to be_valid
   end
 
-  context 'publishing' do
-    it 'requires all tasking_plan due_ats to be in the future' do
-      task_plan.is_publish_requested = true
-      expect(task_plan).to be_valid
+  it 'requires all tasking_plan due_ats to be in the future when publishing' do
+    task_plan.is_publish_requested = true
+    expect(task_plan).to be_valid
 
-      task_plan.tasking_plans.first.due_at = Time.current.yesterday
-      expect(task_plan).to_not be_valid
-    end
+    task_plan.tasking_plans.first.due_at = Time.current.yesterday
+    expect(task_plan).to_not be_valid
   end
 
 end

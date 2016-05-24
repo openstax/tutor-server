@@ -290,15 +290,18 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
         expect(response_hash['publish_job_url']).to include("/api/jobs/")
       end
 
-      it 'does not republish task_plans that are already open' do
+      it 'does not republish the task_plan or allow the open date to be changed
+          after the assignment is open' do
         controller.sign_in teacher
 
         time_zone = task_plan.tasking_plans.first.time_zone.to_tz
 
+        opens_at = time_zone.now
+
         publish_last_requested_at = Time.current
 
         task_plan.update_attribute :publish_last_requested_at, publish_last_requested_at
-        task_plan.tasking_plans.first.update_attribute :opens_at, time_zone.now
+        task_plan.tasking_plans.first.update_attribute :opens_at, opens_at
 
         DistributeTasks[task_plan]
 
@@ -329,8 +332,12 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
         expect(task_plan.publish_job_uuid).to eq publish_job_uuid
         expect(task_plan.title).to eq 'Canceled'
         expect(task_plan.description).to eq 'Canceled Assignment'
+        task_plan.tasking_plans.each do |tp|
+          expect(tp.opens_at).to be_within(1).of(opens_at)
+          expect(tp.due_at).to be_within(1).of(new_due_at)
+        end
         task_plan.tasks.each do |task|
-          expect(task.opens_at).to be_within(1).of(new_opens_at)
+          expect(task.opens_at).to be_within(1).of(opens_at)
           expect(task.due_at).to be_within(1).of(new_due_at)
         end
 
