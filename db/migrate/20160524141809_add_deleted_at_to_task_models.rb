@@ -9,7 +9,9 @@ class AddDeletedAtToTaskModels < ActiveRecord::Migration
     add_column :tasks_tasked_exercises, :deleted_at, :datetime
     add_column :tasks_tasked_videos, :deleted_at, :datetime
     add_column :tasks_tasked_interactives, :deleted_at, :datetime
+    add_column :tasks_tasked_external_urls, :deleted_at, :datetime
     add_column :tasks_tasked_placeholders, :deleted_at, :datetime
+    add_column :tasks_concept_coach_tasks, :deleted_at, :datetime
 
     add_index :tasks_task_plans, :deleted_at
     add_index :tasks_tasking_plans, :deleted_at
@@ -20,6 +22,8 @@ class AddDeletedAtToTaskModels < ActiveRecord::Migration
     add_index :tasks_tasked_exercises, :deleted_at
     add_index :tasks_tasked_videos, :deleted_at
     add_index :tasks_tasked_interactives, :deleted_at
+    add_index :tasks_tasked_external_urls, :deleted_at
     add_index :tasks_tasked_placeholders, :deleted_at
+    add_index :tasks_concept_coach_tasks, :deleted_at
   end
 end

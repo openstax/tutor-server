@@ -1,6 +1,6 @@
 class AddDefaultsForNullCounts < ActiveRecord::Migration
   def up
-    Tasks::Models::Task.preload(task_steps: :tasked).find_each do |task|
+    Tasks::Models::Task.unscoped.preload(task_steps: :tasked).find_each do |task|
       task.update_step_counts.save!(validate: false)
     end
 

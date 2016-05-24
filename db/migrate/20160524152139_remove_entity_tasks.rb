@@ -3,13 +3,13 @@ class RemoveEntityTasks < ActiveRecord::Migration
     add_column :tasks_taskings, :tasks_task_id, :integer
     add_column :tasks_concept_coach_tasks, :tasks_task_id, :integer
 
-    Tasks::Models::Tasking.update_all(
+    Tasks::Models::Tasking.unscoped.update_all(
       'tasks_task_id = tasks_tasks.id
        FROM tasks_tasks
        WHERE tasks_tasks.entity_task_id = tasks_taskings.entity_task_id'
     )
 
-    Tasks::Models::ConceptCoachTask.update_all(
+    Tasks::Models::ConceptCoachTask.unscoped.update_all(
       'tasks_task_id = tasks_tasks.id
        FROM tasks_tasks
        WHERE tasks_tasks.entity_task_id = tasks_concept_coach_tasks.entity_task_id'

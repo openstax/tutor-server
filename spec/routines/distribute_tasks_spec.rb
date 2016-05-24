@@ -53,7 +53,7 @@ RSpec.describe DistributeTasks, type: :routine do
     before(:each) do
       DistributeTasks.call(task_plan)
       new_user.to_model.roles.each do |role|
-        role.taskings.each{ |tasking| tasking.task.destroy }
+        role.taskings.each{ |tasking| tasking.task.really_destroy! }
       end
       task_plan.reload
     end

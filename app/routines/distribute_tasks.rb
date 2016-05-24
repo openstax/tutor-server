@@ -30,8 +30,9 @@ class DistributeTasks
 
     # Delete pre-existing assignments only if
     # no assignments are open and protect_unopened_tasks is false
-    tasks.each(&:destroy) if !protect_unopened_tasks &&
-                             tasks.none?{ |task| task.past_open?(current_time: publish_time) }
+    tasks.each(&:really_destroy!) \
+      if !protect_unopened_tasks &&
+         tasks.none?{ |task| task.past_open?(current_time: publish_time) }
 
     tasked_taskees = tasks.reject(&:destroyed?)
                           .flat_map{ |task| task.taskings.map(&:role) }

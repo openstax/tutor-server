@@ -613,7 +613,7 @@ GEM
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.0)
     slop (3.6.0)
-    sortability (0.0.3)
+    sortability (0.1.0)
       rails
       squeel
     sprockets (2.12.4)

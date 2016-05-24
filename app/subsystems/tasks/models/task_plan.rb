@@ -2,6 +2,8 @@ require 'json-schema'
 
 class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
 
+  acts_as_paranoid
+
   UPDATABLE_ATTRIBUTES_AFTER_OPEN = ['title', 'description',
                                      'published_at', 'is_feedback_immediate']
 
@@ -14,8 +16,8 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
   belongs_to :owner, polymorphic: true
   belongs_to :ecosystem, subsystem: :content
 
-  has_many :tasking_plans, dependent: :destroy, inverse_of: :task_plan
-  has_many :tasks, dependent: :destroy, inverse_of: :task_plan
+  has_many :tasking_plans, -> { with_deleted }, dependent: :destroy, inverse_of: :task_plan
+  has_many :tasks, -> { with_deleted }, dependent: :destroy, inverse_of: :task_plan
 
   serialize :settings, JSON
 
@@ -34,6 +36,12 @@ class Tasks::Models::TaskPlan < Tutor::SubSystems::BaseModel
 
   def is_publish_requested?
     !published_at.nil? || !!@is_publish_requested
+  end
+
+  def tasking_plans=(new_tasking_plans)
+    # Hard-delete tasking_plans that are being replaced
+    tasking_plans.select(&:persisted?).each(&:really_destroy!)
+    super
   end
 
   protected

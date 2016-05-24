@@ -534,10 +534,12 @@ ActiveRecord::Schema.define(version: 20160524152139) do
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
     t.integer  "entity_role_id",  null: false
+    t.datetime "deleted_at"
     t.integer  "tasks_task_id",   null: false
   end
 
   add_index "tasks_concept_coach_tasks", ["content_page_id"], name: "index_tasks_concept_coach_tasks_on_content_page_id", using: :btree
+  add_index "tasks_concept_coach_tasks", ["deleted_at"], name: "index_tasks_concept_coach_tasks_on_deleted_at", using: :btree
   add_index "tasks_concept_coach_tasks", ["entity_role_id", "content_page_id"], name: "index_tasks_concept_coach_tasks_on_e_r_id_and_c_p_id", unique: true, using: :btree
   add_index "tasks_concept_coach_tasks", ["tasks_task_id"], name: "index_tasks_concept_coach_tasks_on_tasks_task_id", unique: true, using: :btree
 
@@ -632,7 +634,10 @@ ActiveRecord::Schema.define(version: 20160524152139) do
     t.string   "title"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
   end
+
+  add_index "tasks_tasked_external_urls", ["deleted_at"], name: "index_tasks_tasked_external_urls_on_deleted_at", using: :btree
 
   create_table "tasks_tasked_interactives", force: :cascade do |t|
     t.string   "url",        null: false
