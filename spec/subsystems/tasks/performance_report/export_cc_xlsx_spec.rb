@@ -7,9 +7,9 @@ require 'active_support/all'
 require 'chronic'
 require 'axlsx'
 require 'xlsx_helper'
-require 'byebug'
 require 'roo'
 require 'timecop'
+# require 'byebug'
 
 RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
 
@@ -25,7 +25,7 @@ RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
         end
 
         # Uncomment this to open the file for visual inspection
-        # `open "#{filepath}"` and sleep(0.5)
+        #`open "#{filepath}"` and sleep(0.5)
 
         expect{ @wb = Roo::Excelx.new(filepath) }.to_not raise_error
       end
@@ -36,37 +36,37 @@ RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
     end
 
     it 'has students in alphabetical order' do
-      expect(cell(10,2,0)).to eq "Gail"
+      expect(cell(13,2,0)).to eq "Gail"
     end
 
     it 'has % class averages' do
-      expect(cell(13,8,0)).to eq "AVERAGE(H10:H12)"
-      expect(cell(13,9,0)).to eq "AVERAGE(I10:I12)"
+      expect(cell(16,8,0)).to eq "AVERAGE(H13:H15)"
+      expect(cell(16,9,0)).to eq "AVERAGE(I13:I15)"
     end
 
     it 'has % student averages' do
-      expect(cell(12,4,0)).to match /AVERAGE\(E12,H12\)/
+      expect(cell(15,4,0)).to match /AVERAGEIF\(E8:J8.*E15:J15\)/
     end
 
     it 'has a date in the right place' do
-      expect(@wb.celltype(12,7,@wb.sheets.first)).to eq :date
+      expect(@wb.celltype(15,7,@wb.sheets.first)).to eq :date
     end
 
     it 'has count class averages' do
-      expect(cell(13,4,1)).to eq "AVERAGE(D10:D12)"
-      expect(cell(13,5,1)).to eq "AVERAGE(E10:E12)"
+      expect(cell(16,4,1)).to eq "AVERAGE(D13:D15)"
+      expect(cell(16,5,1)).to eq "AVERAGE(E13:E15)"
     end
 
     it 'does not have content beyond where it should' do
-      (7..13).to_a.each{|ii| expect(cell(ii,11,0)).to be_blank}
-      (7..13).to_a.each{|ii| expect(cell(ii,14,1)).to be_blank}
+      (10..16).to_a.each{|ii| expect(cell(ii,11,0)).to be_blank}
+      (10..16).to_a.each{|ii| expect(cell(ii,14,1)).to be_blank}
     end
 
     it 'puts in zeros where there is no work yet' do
-      expect(cell(10,5,0)).to eq 0
-      expect(cell(10,6,0)).to eq 0
-      expect(cell(10,6,1)).to eq 0
-      expect(cell(10,7,1)).to eq 0
+      expect(cell(13,5,0)).to eq 0
+      expect(cell(13,6,0)).to eq 0
+      expect(cell(13,6,1)).to eq 0
+      expect(cell(13,7,1)).to eq 0
     end
   end
 

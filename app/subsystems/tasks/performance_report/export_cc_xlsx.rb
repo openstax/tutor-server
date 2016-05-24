@@ -143,11 +143,74 @@ module Tasks
 
         meta_rows.count.times { sheet.add_row }
 
+        # AVERAGE SUPPORT ROWS
+        counts_extra_cols = format == :counts ? 1 : 0
+
+        included = "included"
+        excluded = "excluded"
+
+        @helper.add_row(
+          sheet,
+          (4 + counts_extra_cols).times.map{[""]} +
+          num_tasks.times.flat_map{
+            [ "",
+              [
+                included,
+                { cols: 1 + counts_extra_cols,
+                  data_validation: {
+                    :type => :list,
+                    :formula1 => "\"#{included},#{excluded}\"",
+                    :showDropDown => false,
+                    :showErrorMessage => true,
+                    :errorTitle => '',
+                    :error => "Please use the dropdown menu to choose either '#{included}' or '#{excluded}'.",
+                    :errorStyle => :stop,
+                    :showInputMessage => false
+                  },
+                  style: style!(alignment: {horizontal: :center}, fg_color: '555555')
+                }
+              ],
+              ""
+            ]
+          }
+        )
+
+        include_row = sheet.rows.count
+        include_ref_proc = ->(tt) {
+          "=IF(EXACT(#{Axlsx::col_ref(tt*(3+counts_extra_cols)+5+counts_extra_cols)}#{include_row},\"#{included}\"),1,0)"
+        }
+
+        @helper.add_row(
+          sheet,
+          (4 + counts_extra_cols).times.map{[""]} +
+          num_tasks.times.map{ |ii|
+            format == :counts ?
+              [include_ref_proc.call(ii), "", "", ""] :
+              [include_ref_proc.call(ii), "", ""]
+          }
+        )
+
+        sheet.rows.last.hidden = true
+        score_enable_row = sheet.rows.count
+
+        @helper.add_row(
+          sheet,
+          (4 + counts_extra_cols).times.map{[""]} +
+          num_tasks.times.map{ |ii|
+            format == :counts ?
+              ["", "", include_ref_proc.call(ii), ""] :
+              ["", "", ""]
+          }
+        )
+
+        sheet.rows.last.hidden = true
+        out_of_enable_row = sheet.rows.count
+
         # READING TITLE COLUMNS
 
         reading_title_columns =
           3.times.map{[""]} +
-          [["Overall Score (incompletes included)"]] + (format == :counts ? [""] : []) +
+          [["Overall Score"]] + (format == :counts ? [""] : []) +
           report[:data_headings].map do |data_heading|
             [
               data_heading[:title],
@@ -166,7 +229,7 @@ module Tasks
 
         if format == :counts
           subheadings.push(["Score",        {style: @bold_L}])
-          subheadings.push(["Total Possible",      {style: @bold}])
+          subheadings.push(["Out of",      {style: @bold}])
         else
           subheadings.push("")
         end
@@ -174,7 +237,7 @@ module Tasks
         num_tasks.times do
           subheadings.push(["Score",        {style: @bold_L}])
           subheadings.push(["Progress",      {style: @bold}])
-          subheadings.push(["Total Possible", {style: @bold}]) if format == :counts
+          subheadings.push(["Out of", {style: @bold}]) if format == :counts
           subheadings.push(["Last Worked",    {style: @bold_R}])
         end
 
@@ -190,8 +253,10 @@ module Tasks
 
         # Have to merge vertically and style merged cells after the fact
 
+        htr = heading_top_row = sheet.rows.count - 2
+
         overall_score_merge_range =
-          format == :counts ? "D7:E7" : "D7:D9"
+          format == :counts ? "D#{htr}:E#{htr}" : "D#{htr}:D#{htr+2}"
 
         @helper.merge_and_style(sheet, overall_score_merge_range,
           style!(
@@ -214,20 +279,20 @@ module Tasks
           alignment: {horizontal: :center, vertical: :center, wrap_text: true})
 
         if format == :counts
-          @helper.merge_and_style(sheet, [4,8,4,9], center_bold_L_style)
-          @helper.merge_and_style(sheet, [5,8,5,9], center_bold_R_style)
+          @helper.merge_and_style(sheet, [4,htr+1,4,htr+2], center_bold_L_style)
+          @helper.merge_and_style(sheet, [5,htr+1,5,htr+2], center_bold_R_style)
 
           num_tasks.times.with_index do |ii|
-            @helper.merge_and_style(sheet, [6+ii*4,  8,6+ii*4,  9], center_bold_style)
-            @helper.merge_and_style(sheet, [6+ii*4+1,8,6+ii*4+1,9], center_bold_style)
-            @helper.merge_and_style(sheet, [6+ii*4+2,8,6+ii*4+2,9], center_bold_style)
-            @helper.merge_and_style(sheet, [6+ii*4+3,8,6+ii*4+3,9], center_bold_R_style)
+            @helper.merge_and_style(sheet, [6+ii*4,  htr+1,6+ii*4,  htr+2], center_bold_style)
+            @helper.merge_and_style(sheet, [6+ii*4+1,htr+1,6+ii*4+1,htr+2], center_bold_style)
+            @helper.merge_and_style(sheet, [6+ii*4+2,htr+1,6+ii*4+2,htr+2], center_bold_style)
+            @helper.merge_and_style(sheet, [6+ii*4+3,htr+1,6+ii*4+3,htr+2], center_bold_R_style)
           end
         else
           num_tasks.times.with_index do |ii|
-            @helper.merge_and_style(sheet, [5+ii*3,  8,5+ii*3,  9], center_bold_style)
-            @helper.merge_and_style(sheet, [5+ii*3+1,8,5+ii*3+1,9], center_bold_style)
-            @helper.merge_and_style(sheet, [5+ii*3+2,8,5+ii*3+2,9], center_bold_R_style)
+            @helper.merge_and_style(sheet, [5+ii*3,  htr+1,5+ii*3,  htr+2], center_bold_style)
+            @helper.merge_and_style(sheet, [5+ii*3+1,htr+1,5+ii*3+1,htr+2], center_bold_style)
+            @helper.merge_and_style(sheet, [5+ii*3+2,htr+1,5+ii*3+2,htr+2], center_bold_R_style)
           end
         end
 
@@ -237,6 +302,16 @@ module Tasks
 
         students = report[:students].sort_by{|student| student[:last_name] || ""}
 
+        first_data_column = 4 + counts_extra_cols + 1
+        cols_per_task = format == :counts ? 4 : 3
+        last_data_column = first_data_column+num_tasks*cols_per_task-1
+
+        score_enable_range =
+          XlsxHelper.range([first_data_column, score_enable_row, last_data_column, score_enable_row])
+
+        out_of_enable_range =
+          XlsxHelper.range([first_data_column, out_of_enable_row, last_data_column, out_of_enable_row])
+
         students.each_with_index do |student, ss|
           student_columns = [
             student[:first_name],
@@ -244,16 +319,21 @@ module Tasks
             student[:student_identifier],
           ]
 
+          student_row = first_student_row + ss
+
+          data_range =
+            XlsxHelper.range([first_data_column, student_row, last_data_column, student_row])
+
           if format == :counts
             student_columns.push(
-              ["#{@eq}IFERROR(SUM(#{row_range(offset:5, step: 4, length: num_tasks, row: first_student_row + ss)}),NA())",
+              ["#{@eq}IFERROR(SUMIF(#{score_enable_range}, \">0\", #{data_range}),NA())",
                style: @count_L],
-              ["#{@eq}IFERROR(SUM(#{row_range(offset:7, step: 4, length: num_tasks, row: first_student_row + ss)}),NA())",
+              ["#{@eq}IFERROR(SUMIF(#{out_of_enable_range}, \">0\", #{data_range}),NA())",
                style: @count]
             )
           else
             student_columns.push(
-              ["#{@eq}IFERROR(AVERAGE(#{row_range(offset:4, step: 3, length: num_tasks, row: first_student_row + ss)}),NA())",
+              ["#{@eq}IFERROR(AVERAGEIF(#{score_enable_range},\">0\",#{data_range}),NA())",
                style: @pct_L]
             )
           end
@@ -308,7 +388,7 @@ module Tasks
         # then set all numerical columns to have a fixed width.
 
         data_widths = sheet.column_info.map(&:width)
-        data_widths[3..-1] = data_widths[3..-1].length.times.map{15}
+        data_widths[3..-1] = data_widths[3..-1].length.times.map{12}
 
         # AVERAGE ROW
 
