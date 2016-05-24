@@ -52,7 +52,7 @@ RSpec.describe ReassignPublishedPeriodTaskPlans, type: :routine do
       expect(result.errors).to be_empty
       expect(task_plan_1.tasks.size).to eq 2
       expect(task_plan_1.tasks).to include old_task
-      new_task = task_plan_1.tasks.reject{ |tt| tt == old_task }.first
+      new_task = task_plan_1.tasks.reject{ |task| task == old_task }.first
       expect(new_task.taskings.first.role.profile).to eq new_user.to_model
     end
   end

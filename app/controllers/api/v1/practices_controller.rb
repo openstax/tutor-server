@@ -17,7 +17,7 @@ module Api
         if result.errors.any?
           render_api_errors(result.errors)
         else
-          respond_with result.outputs[:entity_task].task,
+          respond_with result.outputs[:task],
                        represent_with: Api::V1::TaskRepresenter,
                        location: nil
         end
@@ -29,7 +29,7 @@ module Api
         task = GetPracticeWidget[role: get_practice_role]
 
         task.nil? ? head(:not_found) :
-                    respond_with(task.task, represent_with: Api::V1::TaskRepresenter)
+                    respond_with(task, represent_with: Api::V1::TaskRepresenter)
       end
 
       private

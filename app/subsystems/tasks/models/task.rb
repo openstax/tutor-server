@@ -12,21 +12,13 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   belongs_to :task_plan, inverse_of: :tasks
 
-  # dependent: :destroy will cause and infinite loop and stack overflow
-  belongs_to :entity_task, class_name: 'Entity::Task',
-                           foreign_key: 'entity_task_id',
-                           dependent: :delete,
-                           inverse_of: :task
-
-  sortable_has_many :task_steps, on: :number,
-                                 dependent: :destroy,
-                                 inverse_of: :task,
-                                 autosave: true
+  sortable_has_many :task_steps, on: :number, dependent: :destroy,
+                                 inverse_of: :task, autosave: true
   has_many :tasked_exercises, through: :task_steps, source: :tasked,
                                                     source_type: 'Tasks::Models::TaskedExercise'
-  has_many :taskings, through: :entity_task
 
-  has_one :concept_coach_task, through: :entity_task
+  has_many :taskings, dependent: :destroy, autosave: true, inverse_of: :task
+  has_one :concept_coach_task, dependent: :destroy, inverse_of: :task
 
   validates :title, presence: true
 
@@ -202,7 +194,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def exercise_steps
-    task_steps.preload(:tasked).select{|task_step| task_step.exercise?}
+    task_steps.preload(:tasked).select(&:exercise?)
   end
 
   def teacher_chosen_correct_exercise_count
@@ -264,9 +256,10 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   def update_correct_on_time_exercise_steps_count(task_steps:)
     self.correct_on_time_exercise_steps_count =
-      task_steps.count{|step| step.exercise? && step.completed? &&
-                              step.tasked.is_correct? &&
-                              step_on_time?(step) }
+      task_steps.count do |step|
+        step.exercise? && step.completed? &&
+        step.tasked.is_correct? && step_on_time?(step)
+      end
   end
 
   def update_placeholder_steps_count(task_steps:)

@@ -49,7 +49,7 @@ class Tasks::AddRelatedExerciseAfterStep
     related_exercises = ecosystem.exercises_by_ids(related_exercise_ids)
 
     # Assume only 1 taskee for now
-    role = task_step.task.entity_task.taskings.map(&:role).first
+    role = task_step.task.taskings.map(&:role).first
     course = role.student.try(:course)
 
     task_exercise_numbers = task_step.task.tasked_exercises.map{ |te| te.exercise.number }

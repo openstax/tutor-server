@@ -25,7 +25,8 @@ class ChangeCanBeRecoveredToRelatedExerciseIds < ActiveRecord::Migration
             # For the original Try Another,
             # we allow only exercises that share at least one LO or APLO with the original exercise
             related_exercise_ids = pool_exercises.select do |ex|
-              ex.los.any?{ |tt| los.include?(tt) } || ex.aplos.any?{ |tt| aplos.include?(tt) }
+              ex.los.any?{ |task| los.include?(task) } ||
+              ex.aplos.any?{ |task| aplos.include?(task) }
             end.map(&:id)
 
             related_exercise_ids_map[exercise.id] = related_exercise_ids

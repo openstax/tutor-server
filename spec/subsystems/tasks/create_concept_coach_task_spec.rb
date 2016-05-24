@@ -45,7 +45,7 @@ RSpec.describe Tasks::CreateConceptCoachTask, type: :routine do
     cc_task = Tasks::Models::ConceptCoachTask.order(:created_at).last
     expect(cc_task.page).to eq page_model
     expect(cc_task.role).to eq role
-    expect(cc_task.task).to eq task.entity_task
+    expect(cc_task.task).to eq task
     expect(task.taskings.first.role).to eq role
   end
 end

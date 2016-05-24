@@ -11,7 +11,7 @@ RSpec.describe Tasks::Models::Tasking, type: :model do
   it { is_expected.to validate_presence_of(:task) }
   it { is_expected.to validate_presence_of(:role) }
 
-  it { is_expected.to validate_uniqueness_of(:role).scoped_to(:entity_task_id) }
+  it { is_expected.to validate_uniqueness_of(:role).scoped_to(:tasks_task_id) }
 
   it "requires role to be unique for the task" do
     expect(tasking).to be_valid
@@ -20,4 +20,3 @@ RSpec.describe Tasks::Models::Tasking, type: :model do
                              role: tasking.role)).to_not be_valid
   end
 end
-

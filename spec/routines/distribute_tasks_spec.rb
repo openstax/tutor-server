@@ -38,8 +38,8 @@ RSpec.describe DistributeTasks, type: :routine do
     it 'fails to publish the task_plan if one or more non-stepless tasks would be empty' do
       original_build_tasks = DummyAssistant.instance_method(:build_tasks)
       allow_any_instance_of(DummyAssistant).to receive(:build_tasks) do |receiver|
-        entity_tasks = original_build_tasks.bind(receiver).call
-        entity_tasks.each{ |et| et.task.task_type = :reading }
+        tasks = original_build_tasks.bind(receiver).call
+        tasks.each{ |task| task.task_type = :reading }
       end
 
       expect(task_plan.tasks).to be_empty
@@ -62,7 +62,7 @@ RSpec.describe DistributeTasks, type: :routine do
       before(:each) do
         opens_at = Time.current.tomorrow
         task_plan.tasking_plans.each{ |tp| tp.update_attribute(:opens_at, opens_at) }
-        task_plan.tasks.each{ |tt| tt.update_attribute(:opens_at, opens_at) }
+        task_plan.tasks.each{ |task| task.update_attribute(:opens_at, opens_at) }
       end
 
       it 'rebuilds the tasks for the task_plan' do
@@ -88,7 +88,7 @@ RSpec.describe DistributeTasks, type: :routine do
       before(:each) do
         opens_at = Time.current.yesterday
         task_plan.tasking_plans.each{ |tp| tp.update_attribute(:opens_at, opens_at) }
-        task_plan.tasks.each{ |tt| tt.update_attribute(:opens_at, opens_at) }
+        task_plan.tasks.each{ |task| task.update_attribute(:opens_at, opens_at) }
       end
 
       it 'does not rebuild existing tasks for the task_plan' do

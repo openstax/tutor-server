@@ -17,7 +17,7 @@ RSpec.describe Tasks::GetRedirectUrl, type: :routine do
 
   let!(:user) { FactoryGirl.create(:user) }
 
-  let!(:tasking) { FactoryGirl.create(:tasks_tasking, role: student_role, task: task.entity_task) }
+  let!(:tasking) { FactoryGirl.create(:tasks_tasking, role: student_role, task: task) }
 
   it 'returns the edit task plan page for teachers' do
     result = described_class.call(gid: task_plan_gid, user: teacher)
@@ -28,7 +28,7 @@ RSpec.describe Tasks::GetRedirectUrl, type: :routine do
   it 'returns the task page for students' do
     result = described_class.call(gid: task_plan_gid, user: student)
     expect(result.errors).to be_empty
-    expect(result.outputs.uri).to eq("/courses/#{course.id}/tasks/#{task.entity_task.id}")
+    expect(result.outputs.uri).to eq("/courses/#{course.id}/tasks/#{task.id}")
   end
 
   it 'raises SecurityTransgression for users not in the course' do

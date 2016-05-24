@@ -1,5 +1,5 @@
 class ResetPracticeWidget
-  lev_routine express_output: :entity_task
+  lev_routine express_output: :task
 
   uses_routine GetPracticeWidget, as: :get_practice_widget
 
@@ -24,7 +24,7 @@ class ResetPracticeWidget
   def exec(role:, exercise_source:, page_ids: nil, chapter_ids: nil, randomize: true)
     # Get the existing practice widget and remove incomplete exercises from it
     # so they can be used in later practice
-    existing_practice_task = run(:get_practice_widget, role: role).outputs.task.try(:task)
+    existing_practice_task = run(:get_practice_widget, role: role).outputs.task
     existing_practice_task.task_steps.incomplete.destroy_all unless existing_practice_task.nil?
 
     # Gather 5 exercises
@@ -80,9 +80,7 @@ class ResetPracticeWidget
                                       related_content_array: related_content_array)
     run(:add_spy_info, to: outputs.task, from: ecosystem)
 
-    run(:create_tasking, role: role, task: outputs.task.entity_task)
-
-    outputs.entity_task = outputs.task.entity_task
+    run(:create_tasking, role: role, task: outputs.task)
   end
 
   def get_fake_exercises(count)
@@ -106,8 +104,6 @@ class ResetPracticeWidget
 
   def get_local_exercises(ecosystem:, count:, role:, pools:, randomize:,
                           additional_excluded_numbers: [])
-    entity_tasks = role.taskings.preload(task: {task: {task_steps: :tasked}}).map(&:task)
-
     pool_exercises = pools.flat_map(&:exercises)
 
     course = role.student.try(:course)

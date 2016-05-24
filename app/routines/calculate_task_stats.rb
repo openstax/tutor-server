@@ -141,8 +141,8 @@ class CalculateTaskStats
 
   def generate_period_stat_data
     tasks = @tasks.preload([:task_steps, {taskings: :period}]).to_a
-    grouped_tasks = tasks.group_by do |tt|
-      tt.taskings.first.try(:period) || no_period
+    grouped_tasks = tasks.group_by do |task|
+      task.taskings.first.try(:period) || no_period
     end
     grouped_tasks.map do |period, period_tasks|
       current_page_stats = generate_page_stats_for_task_steps(

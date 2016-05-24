@@ -63,7 +63,7 @@ RSpec.describe GetConceptCoach, type: :routine, speed: :medium do
       task = nil
       expect{ task = described_class[
         user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
-      ].task }.to change{ Tasks::Models::Task.count }.by(1)
+      ] }.to change{ Tasks::Models::Task.count }.by(1)
       expect(task.task_steps.size).to eq exercises_count(0)
       task.task_steps.each do |task_step|
         expect(task_step.tasked.exercise.page.id).to eq @page_1.id
@@ -74,9 +74,9 @@ RSpec.describe GetConceptCoach, type: :routine, speed: :medium do
       task = nil
       expect{ task = described_class[
         user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
-      ].task }.to change{ Tasks::Models::ConceptCoachTask.count }.by(1)
+      ] }.to change{ Tasks::Models::ConceptCoachTask.count }.by(1)
       cc_task = Tasks::Models::ConceptCoachTask.order(:created_at).last
-      expect(cc_task.task).to eq task.entity_task
+      expect(cc_task.task).to eq task
     end
 
     it 'returns an error if the book is invalid' do
@@ -111,13 +111,13 @@ RSpec.describe GetConceptCoach, type: :routine, speed: :medium do
   context 'existing task' do
     let!(:existing_task) { described_class[user: @user_1,
                                            cnx_book_id: @book.uuid,
-                                           cnx_page_id: @page_1.uuid].task }
+                                           cnx_page_id: @page_1.uuid] }
 
     it 'should not create a new task for the same user and page' do
       task = nil
       expect{ task = described_class[
         user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
-      ].task }.not_to change{ Tasks::Models::ConceptCoachTask.count }
+      ] }.not_to change{ Tasks::Models::ConceptCoachTask.count }
       expect(task).to eq existing_task
     end
 
@@ -125,7 +125,7 @@ RSpec.describe GetConceptCoach, type: :routine, speed: :medium do
       task = nil
       expect{ task = described_class[
         user: @user_2, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
-      ].task }.to change{ Tasks::Models::ConceptCoachTask.count }.by(1)
+      ] }.to change{ Tasks::Models::ConceptCoachTask.count }.by(1)
       expect(task).not_to eq existing_task
       expect(task.task_steps.size).to eq exercises_count(0)
       task.task_steps.each do |task_step|
@@ -137,7 +137,7 @@ it 'should create a new task for a different page and properly assign spaced pra
       task = nil
       expect{ task = described_class[
         user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: @page_2.uuid
-      ].task }.to change{ Tasks::Models::ConceptCoachTask.count }.by(1)
+      ] }.to change{ Tasks::Models::ConceptCoachTask.count }.by(1)
       expect(task).not_to eq existing_task
       expect(task.task_steps.size).to eq exercises_count(1)
       task.task_steps.first(CORE_EXERCISES_COUNT).each do |task_step|
@@ -153,7 +153,7 @@ it 'should create a new task for a different page and properly assign spaced pra
       tasks = task_pages.map do |page|
         described_class[
           user: @user_1, cnx_book_id: @book.uuid, cnx_page_id: page.uuid
-        ].task
+        ]
       end
 
       tasks.each_with_index do |task, ii|

@@ -17,9 +17,10 @@ RSpec.describe AddSpyInfo, type: :routine do
   end
 
   it 'sets spy info from an array of models' do
-    task = FactoryGirl.create(:entity_task)
+    task = FactoryGirl.create(:tasks_task)
     dest = AddSpyInfo[to: {}, from: [task, ecosystem]]
     expect(dest.spy).to eq({'task_id' => task.id,
+                            'task_title' => 'A task',
                             'ecosystem_id' => ecosystem.id,
                             'ecosystem_title' => ecosystem.title})
   end

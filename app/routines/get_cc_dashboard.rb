@@ -40,10 +40,10 @@ class GetCcDashboard
 
   def load_cc_teacher_stats(course, role)
     cc_tasks = Tasks::Models::ConceptCoachTask
-      .joins(task: [:task, {taskings: :period}])
-      .preload(task: [:task, {taskings: [:period, :role]}], page: :chapter)
+      .joins(task: {taskings: :period})
+      .preload(task: {taskings: [:period, :role]}, page: :chapter)
       .where(task: {taskings: {period: {entity_course_id: course.id}}})
-      .where{task.task.completed_exercise_steps_count > 0}
+      .where{task.completed_exercise_steps_count > 0}
       .distinct.to_a
 
     # Does not support group work
@@ -73,13 +73,13 @@ class GetCcDashboard
             pages: cc_tasks.group_by do |cc_task|
               map_cc_task_to_page(page_id_to_page_map, cc_task)
             end.map do |page, cc_tasks|
-              entity_tasks = cc_tasks.map(&:task)
-              completed_roles = entity_tasks.select{ |et| et.task.completed? }
-                                            .flat_map{ |et| et.taskings.map(&:role) }
-                                            .uniq
-              in_progress_roles = entity_tasks.select{ |et| et.task.in_progress? }
-                                              .flat_map{ |et| et.taskings.map(&:role) }
-                                              .uniq
+              tasks = cc_tasks.map(&:task)
+              completed_roles = tasks.select(&:completed?)
+                                     .flat_map{ |task| task.taskings.map(&:role) }
+                                     .uniq
+              in_progress_roles = tasks.select(&:in_progress?)
+                                       .flat_map{ |task| task.taskings.map(&:role) }
+                                       .uniq
               not_started_roles = active_student_roles - (completed_roles + in_progress_roles)
 
               {
@@ -103,10 +103,10 @@ class GetCcDashboard
 
   def load_cc_student_stats(role)
     cc_tasks = Tasks::Models::ConceptCoachTask
-      .joins(task: [:task, :taskings])
-      .preload(task: {task: {tasked_exercises: :task_step}}, page: :chapter)
+      .joins(task: :taskings)
+      .preload(task: {tasked_exercises: :task_step}, page: :chapter)
       .where(task: {taskings: {entity_role_id: role.id}})
-      .where{task.task.completed_exercise_steps_count > 0}
+      .where{task.completed_exercise_steps_count > 0}
       .distinct.to_a
 
     ecosystems_map = GetCourseEcosystemsMap[course: role.student.course]
@@ -122,7 +122,7 @@ class GetCcDashboard
         book_location: chapter.book_location,
         pages: cc_tasks.group_by{ |cc_task| map_cc_task_to_page(page_id_to_page_map, cc_task) }
                        .map do |page, cc_tasks|
-          tasks = cc_tasks.map{ |cc_task| cc_task.task.task }
+          tasks = cc_tasks.map(&:task)
           tasked_exercises = tasks.flat_map(&:tasked_exercises)
 
           {
@@ -146,7 +146,7 @@ class GetCcDashboard
   end
 
   def get_period_performance_maps_from_cc_tasks(period, cc_tasks, page_id_to_page_map)
-    all_task_ids = cc_tasks.map{ |cc_task| cc_task.task.task.id }
+    all_task_ids = cc_tasks.map{ |cc_task| cc_task.task.id }
     all_page_ids = cc_tasks.map{ |cc_task| cc_task.page.id }.uniq
 
     completed_tasked_exercises = Tasks::Models::TaskedExercise

@@ -29,12 +29,10 @@ module Tasks
 
       outputs.task.save!
 
-      entity_task = outputs.task.entity_task
-
-      run(:create_tasking, role: role, task: entity_task, period: period)
+      run(:create_tasking, role: role, task: outputs.task, period: period)
 
       outputs.concept_coach_task = Tasks::Models::ConceptCoachTask.create!(
-        content_page_id: page.id, entity_role_id: role.id, task: entity_task
+        content_page_id: page.id, entity_role_id: role.id, task: outputs.task
       )
     end
 

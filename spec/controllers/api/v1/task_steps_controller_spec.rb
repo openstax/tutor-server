@@ -24,8 +24,7 @@ describe Api::V1::TaskStepsController, type: :controller, api: true, version: :v
 
   let!(:task)               { task_step.task.reload }
 
-  let!(:tasking)            { FactoryGirl.create :tasks_tasking, role: user_1_role,
-                                                                 task: task.entity_task }
+  let!(:tasking)            { FactoryGirl.create :tasks_tasking, role: user_1_role, task: task }
 
   let!(:tasked_exercise)    {
     te = FactoryGirl.build :tasks_tasked_exercise
@@ -248,7 +247,7 @@ describe Api::V1::TaskStepsController, type: :controller, api: true, version: :v
       AddUserAsPeriodStudent[period: period, user: user_1]
       task = ResetPracticeWidget[role: Entity::Role.last, exercise_source: :fake]
 
-      step = task.task.task_steps.first
+      step = task.task_steps.first
 
       api_put :update, user_1_token, parameters: { id: step.id },
               raw_post_data: { free_response: "Ipsum lorem" }
@@ -263,8 +262,7 @@ describe Api::V1::TaskStepsController, type: :controller, api: true, version: :v
     # Make sure the type has the tasks_ prefix
     type = type.to_s.starts_with?("tasks_") ? type : "tasks_#{type}".to_sym
     tasked = FactoryGirl.create(type)
-    tasking = FactoryGirl.create(:tasks_tasking, role: owner,
-                                 task: tasked.task_step.task.entity_task)
+    tasking = FactoryGirl.create(:tasks_tasking, role: owner, task: tasked.task_step.task)
     tasked
   end
 

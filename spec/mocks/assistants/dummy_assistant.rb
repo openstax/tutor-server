@@ -8,7 +8,7 @@ class DummyAssistant < Tasks::Assistants::GenericAssistant
       Tasks::BuildTask[task_plan: @task_plan,
                        title: @task_plan.title,
                        description: @task_plan.description,
-                       task_type: :external].entity_task
+                       task_type: :external]
     end
   end
 

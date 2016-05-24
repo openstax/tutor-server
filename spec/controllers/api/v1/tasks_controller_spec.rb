@@ -20,8 +20,7 @@ describe Api::V1::TasksController, type: :controller, api: true, version: :v1 do
   let!(:task_1)          { FactoryGirl.create :tasks_task, title: 'A Task Title',
                                               step_types: [:tasks_tasked_reading,
                                                            :tasks_tasked_exercise] }
-  let!(:tasking_1)       { FactoryGirl.create :tasks_tasking, role: user_1_role,
-                                                              task: task_1.entity_task }
+  let!(:tasking_1)       { FactoryGirl.create :tasks_tasking, role: user_1_role, task: task_1 }
 
   let!(:teacher_user)       { FactoryGirl.create(:user) }
   let!(:teacher_role)  { AddUserAsCourseTeacher[course: task_1.task_plan.owner, user: teacher_user] }

@@ -6,7 +6,7 @@ module Tasks::Models
 
     belongs_to :page, subsystem: :content
     belongs_to :role, subsystem: :entity
-    belongs_to :task, subsystem: :entity
+    belongs_to :task, inverse_of: :concept_coach_task
 
     validates :page, presence: true
     validates :role, presence: true, uniqueness: { scope: :content_page_id }

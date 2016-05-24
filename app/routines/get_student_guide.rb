@@ -19,8 +19,8 @@ class GetStudentGuide
   def completed_exercise_task_steps_for_role(role)
     get_completed_exercise_task_steps(
       role.taskings
-        .preload(task: {task: :task_steps})
-        .flat_map{ |tasking| tasking.task.task.task_steps }
+        .preload(task: :task_steps)
+        .flat_map{ |tg| tg.task.task_steps }
     )
   end
 

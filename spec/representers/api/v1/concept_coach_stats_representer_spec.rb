@@ -35,26 +35,24 @@ RSpec.describe Api::V1::ConceptCoachStatsRepresenter, type: :representer, speed:
     AddUserAsPeriodStudent[user: @user_1, period: @period]
     AddUserAsPeriodStudent[user: @user_2, period: @period]
 
-    @entity_tasks = [@page_1, @page_2, @page_3].flat_map do |page|
+    @tasks = [@page_1, @page_2, @page_3].flat_map do |page|
       [@user_1, @user_2].flat_map do |user|
         GetConceptCoach[user: user, cnx_book_id: page.chapter.book.uuid, cnx_page_id: page.uuid]
       end
     end
   end
 
-  after(:all) do
-    DatabaseCleaner.clean
-  end
+  after(:all) { DatabaseCleaner.clean }
 
   it "represents concept coach stats" do
-    task_step = @entity_tasks.first.task.task_steps.select{ |ts| ts.tasked.exercise? }.first
+    task_step = @tasks.first.task_steps.select{ |ts| ts.tasked.exercise? }.first
     Hacks::AnswerExercise[task_step: task_step, is_correct: true]
 
-    task_step = @entity_tasks.second.task.task_steps.select{ |ts| ts.tasked.exercise? }.first
+    task_step = @tasks.second.task_steps.select{ |ts| ts.tasked.exercise? }.first
     Hacks::AnswerExercise[task_step: task_step, is_correct: false]
 
-    tasks = Tasks::Models::Task.where(entity_task_id: @entity_tasks.map(&:id))
-    stats = Hashie::Mash.new(title: 'Test', stats: CalculateTaskStats[tasks: tasks])
+    task_relation = Tasks::Models::Task.where(id: @tasks.map(&:id))
+    stats = Hashie::Mash.new(title: 'Test', stats: CalculateTaskStats[tasks: task_relation])
 
     representation = described_class.new(stats).as_json
     expect(representation).to include(

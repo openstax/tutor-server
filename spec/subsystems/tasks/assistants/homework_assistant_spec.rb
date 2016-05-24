@@ -151,12 +151,11 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
       allow(Tasks::Assistants::HomeworkAssistant).
         to receive(:num_personalized_exercises) { personalized_exercise_count }
 
-      entity_tasks = DistributeTasks.call(task_plan).outputs.entity_tasks
+      tasks = DistributeTasks.call(task_plan).outputs.tasks
 
       ## it "sets description, task type, and feedback_at"
-      entity_tasks.each do |entity_task|
-        entity_task.reload.reload
-        task = entity_task.task
+      tasks.each do |task|
+        task.reload.reload
         expect(task.description).to eq("Hello!")
         expect(task.homework?).to be_truthy
         # feedback_at == nil because the task plan was set to immediate_feedback
@@ -164,23 +163,23 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
       end
 
       ## it "creates one task per taskee"
-      expect(entity_tasks.count).to eq(taskee_users.count)
+      expect(tasks.count).to eq(taskee_users.count)
 
       ## it "assigns each task to one role"
-      entity_tasks.each do |entity_task|
-        expect(entity_task.taskings.count).to eq(1)
+      tasks.each do |task|
+        expect(task.taskings.count).to eq(1)
       end
       expected_roles = taskee_users.map{ |taskee| Role::GetDefaultUserRole[taskee] }
-      expect(entity_tasks.map{|t| t.taskings.first.role}).to match_array expected_roles
+      expect(tasks.map{|t| t.taskings.first.role}).to match_array expected_roles
 
       ## it "assigns the correct number of exercises"
-      entity_tasks.each do |entity_task|
-        expect(entity_task.task.task_steps.count).to eq(assignment_exercise_count)
+      tasks.each do |task|
+        expect(task.task_steps.count).to eq(assignment_exercise_count)
       end
 
       ## it "assigns the teacher-selected exercises as the task's core exercises"
-      entity_tasks.each do |entity_task|
-        core_task_steps = entity_task.task.core_task_steps
+      tasks.each do |task|
+        core_task_steps = task.core_task_steps
         expect(core_task_steps.count).to eq(teacher_selected_exercises.count)
 
         core_task_steps.each_with_index do |task_step, ii|
@@ -196,8 +195,8 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
       end
 
       ## it "assigns the tutor-selected spaced practice exercises"
-      entity_tasks.each do |entity_task|
-        spaced_practice_task_steps = entity_task.task.spaced_practice_task_steps
+      tasks.each do |task|
+        spaced_practice_task_steps = task.spaced_practice_task_steps
         expect(spaced_practice_task_steps.count).to eq(tutor_selected_exercise_count)
 
         spaced_practice_task_steps.each do |task_step|
@@ -207,8 +206,8 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
       end
 
       ## it "assigns personalized exercise placeholders"
-      entity_tasks.each do |entity_task|
-        personalized_task_steps = entity_task.task.personalized_task_steps
+      tasks.each do |task|
+        personalized_task_steps = task.personalized_task_steps
         expect(personalized_task_steps.count).to eq(personalized_exercise_count)
 
         personalized_task_steps.each do |task_step|
@@ -231,10 +230,10 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
                                                         exercise_number: exercise.number)
       end
 
-      entity_tasks = DistributeTasks.call(task_plan).outputs.entity_tasks
+      tasks = DistributeTasks.call(task_plan).outputs.tasks
 
-      entity_tasks.each do |entity_task|
-        core_task_steps = entity_task.task.core_task_steps
+      tasks.each do |task|
+        core_task_steps = task.core_task_steps
         expect(core_task_steps.count).to eq(teacher_selected_exercises.count)
 
         core_task_steps.each_with_index do |task_step, ii|
@@ -248,10 +247,10 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
           expect(tasked_exercise.content).to eq(exercise.content)
         end
 
-        spaced_practice_task_steps = entity_task.task.spaced_practice_task_steps
+        spaced_practice_task_steps = task.spaced_practice_task_steps
         expect(spaced_practice_task_steps.count).to eq 0
 
-        personalized_task_steps = entity_task.task.personalized_task_steps
+        personalized_task_steps = task.personalized_task_steps
         expect(personalized_task_steps.count).to eq(personalized_exercise_count)
 
         personalized_task_steps.each do |task_step|

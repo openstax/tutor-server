@@ -695,31 +695,31 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
       @task_1 = GetConceptCoach[
         user: student_user, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
-      ].task
+      ]
       @task_1.task_steps.each do |ts|
         Hacks::AnswerExercise[task_step: ts, is_correct: true]
       end
       @task_2 = GetConceptCoach[
         user: student_user, cnx_book_id: @book.uuid, cnx_page_id: @page_2.uuid
-      ].task
+      ]
       @task_2.task_steps.each do |ts|
         Hacks::AnswerExercise[task_step: ts, is_correct: false]
       end
       @task_3 = GetConceptCoach[
         user: student_user, cnx_book_id: @book.uuid, cnx_page_id: @page_3.uuid
-      ].task
+      ]
       @task_3.task_steps.each do |ts|
         Hacks::AnswerExercise[task_step: ts, is_correct: ts.core_group?]
       end
       @task_4 = GetConceptCoach[
         user: student_user_2, cnx_book_id: @book.uuid, cnx_page_id: @page_1.uuid
-      ].task
+      ]
       @task_4.task_steps.select(&:core_group?).first(2).each_with_index do |ts, ii|
         Hacks::AnswerExercise[task_step: ts, is_correct: ii == 0]
       end
       @task_5 = GetConceptCoach[
         user: student_user_2, cnx_book_id: @book.uuid, cnx_page_id: @page_2.uuid
-      ].task
+      ]
     end
 
     after(:all) do

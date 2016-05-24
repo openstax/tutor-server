@@ -24,7 +24,7 @@ class Tasks::Assistants::ExternalAssignmentAssistant < Tasks::Assistants::Generi
     @taskees.map.with_index do |taskee, i|
       build_external_task(task_plan: @task_plan,
                           taskee: taskee,
-                          student: students[i]).entity_task
+                          student: students[i])
     end
   end
 

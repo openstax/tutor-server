@@ -1,6 +1,6 @@
 class GetConceptCoach
 
-  lev_routine express_output: :entity_task, transaction: :serializable
+  lev_routine express_output: :task, transaction: :serializable
 
   uses_routine Tasks::GetConceptCoachTask, as: :get_cc_task
 
@@ -25,10 +25,9 @@ class GetConceptCoach
 
     ecosystem, pool = get_ecosystem_and_pool(page)
     history = run(:get_history, role: role, type: :concept_coach).outputs
-    existing_cc_task = run(:get_cc_task, role: role, page: page).outputs.entity_task
+    existing_cc_task = run(:get_cc_task, role: role, page: page).outputs.task
     unless existing_cc_task.nil?
-      outputs.entity_task = existing_cc_task
-      outputs.task = existing_cc_task.task
+      outputs.task = existing_cc_task
       run(:add_spy_info, to: outputs.task, from: [ecosystem, {history: history.tasks}])
       return
     end
@@ -122,8 +121,6 @@ class GetConceptCoach
     run(:add_spy_info, to: outputs.task,
                        from: [ecosystem, { history: history.tasks,
                                            spaced_practice: spaced_practice_status }])
-
-    outputs.entity_task = outputs.task.entity_task
   end
 
   def get_role_and_page(user:, cnx_book_id:, cnx_page_id:)

@@ -340,11 +340,11 @@ class DemoBase
 
   # def make_and_work_practice_widget(role:, num_correct:, book_part_ids: [],
   #                                                        page_ids: [])
-  #   # entity_task = ResetPracticeWidget[book_part_ids: book_part_ids,
-  #   #                                   page_ids: page_ids,
-  #   #                                   role: role, exercise_source: :biglearn]
+  #   # task = ResetPracticeWidget[book_part_ids: book_part_ids,
+  #   #                            page_ids: page_ids,
+  #   #                            role: role, exercise_source: :biglearn]
 
-  #   # entity_task.task.task_steps.first(num_correct).each do |task_step|
+  #   # task.task_steps.first(num_correct).each do |task_step|
   #   #   Hacks::AnswerExercise[task_step: task_step, is_correct: true]
   #   # end
   # end
@@ -433,13 +433,12 @@ class DemoBase
   end
 
   def distribute_tasks(task_plan:)
-    entity_tasks = run(DistributeTasks, task_plan).outputs.entity_tasks
+    tasks = run(DistributeTasks, task_plan).outputs.tasks
 
-    log("Assigned #{task_plan.type} #{entity_tasks.count} times")
-    log("One task looks like: " + print_entity_task(entity_task: entity_tasks.first)) \
-      if entity_tasks.any?
+    log("Assigned #{task_plan.type} #{tasks.count} times")
+    log("One task looks like: " + print_task(task: tasks.first)) if tasks.any?
 
-    entity_tasks
+    tasks
   end
 
   # `responses` is an array of 1 (or true), 0 (or false), or nil; nil means
@@ -552,10 +551,6 @@ class DemoBase
     end
     codes = task.task_steps.map{ |step| step_code(step) }
     "Task #{task.id} / #{task.task_type}\n#{codes.join(', ')}\n#{types.join(' ')}"
-  end
-
-  def print_entity_task(entity_task:)
-    print_task(task: entity_task.task)
   end
 
   def randomizer

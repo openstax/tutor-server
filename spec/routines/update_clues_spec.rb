@@ -202,7 +202,7 @@ RSpec.describe UpdateClues, type: :routine, vcr: VCR_OPTS do
         Timecop.freeze(Time.current + 5.minutes)
 
         @role.taskings.each do |tasking|
-          tasking.task.task.task_steps.select(&:completed?).each do |ts|
+          tasking.task.task_steps.select(&:completed?).each do |ts|
             MarkTaskStepCompleted[task_step: ts]
           end
         end

@@ -62,10 +62,10 @@ RSpec.describe Tasks::Models::Task, type: :model do
 
   it "reports is_shared? correctly" do
     task1 = FactoryGirl.create(:tasks_task)
-    FactoryGirl.create(:tasks_tasking, task: task1.entity_task)
+    FactoryGirl.create(:tasks_tasking, task: task1)
     expect(task1.is_shared?).to be_falsy
 
-    FactoryGirl.create(:tasks_tasking, task: task1.entity_task)
+    FactoryGirl.create(:tasks_tasking, task: task1)
     expect(task1.is_shared?).to be_truthy
   end
 
