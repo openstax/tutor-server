@@ -37,7 +37,7 @@ Exit the psql database shell by typing `\q` and hitting enter.
 You may have to update your pg_hba.conf to md5:
 
 ```
-sudo subl /etc/postgresql/<version>/main/pg_hba.conf` ( change peer to md5 )
+sudo your-text-editor /etc/postgresql/<version>/main/pg_hba.conf` ( change peer to md5 )
 sudo service postgresql restart
 ```
 
