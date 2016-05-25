@@ -69,6 +69,7 @@ RSpec.describe 'Students enrolling via URL' do
         it 'drops straight into course' do
           visit token_enroll_path(period1.enrollment_code_for_url)
           expect(current_path).to eq(course_dashboard_path(course))
+          expect(page.body).to have_content "notice\":\"You are already enrolled"
         end
       end
 

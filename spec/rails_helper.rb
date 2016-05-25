@@ -91,3 +91,9 @@ RSpec::Matchers.define :be_the_same_time_as do |expected|
     expect(expected.strftime("%d-%m-%Y %H:%M:%S")).to eq(actual.strftime("%d-%m-%Y %H:%M:%S"))
   end
 end
+
+def fake_flash(key, value)
+  flash_hash = ActionDispatch::Flash::FlashHash.new
+  flash_hash[key] = value
+  session['flash'] = flash_hash.to_session_value
+end

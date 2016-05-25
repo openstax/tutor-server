@@ -13,7 +13,7 @@ class CoursesController < ApplicationController
                 failure: -> {
                   case @handler_result.errors.map(&:code).first
                   when :user_is_already_a_course_student
-                    send_to_dashboard
+                    send_to_dashboard(notice: "You are already enrolled in this course.")
                   when :enrollment_code_not_found
                     enrollment_code_not_found
                   else
@@ -25,13 +25,12 @@ class CoursesController < ApplicationController
   def confirm_enrollment
     handle_with(CoursesConfirmEnrollment,
                 success: -> {
-                  course = @handler_result.outputs.course
-                  redirect_to course_dashboard_path(course)
+                  send_to_dashboard
                 },
                 failure: -> {
                   case @handler_result.errors.map(&:code).first
                   when :user_is_already_a_course_student
-                    send_to_dashboard
+                    send_to_dashboard(notice: "You are already enrolled in this course.")
                   when :enrollment_code_not_found
                     enrollment_code_not_found
                   when :taken
@@ -45,9 +44,9 @@ class CoursesController < ApplicationController
 
   private
 
-  def send_to_dashboard
+  def send_to_dashboard(notice: nil)
     course = @handler_result.outputs.course
-    redirect_to course_dashboard_path(course), notice: "You are already enrolled in this course."
+    redirect_to course_dashboard_path(course), notice: notice
   end
 
   def enrollment_code_not_found
