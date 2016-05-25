@@ -102,6 +102,16 @@ module Api::V1
                readable: true,
                writeable: false
 
+      property :accepted_late_at,
+               type: String,
+               readable: true,
+               writeable: false,
+               getter: ->(*) { DateTimeUtilities.to_api_s(accepted_late_at) },
+               schema: {
+                 description: "Will only be set when late work has been accepted; " +
+                              "will go away if accepted late work is later rejected."
+               }
+
       property :is_included_in_averages,
                readable: true,
                writeable: false

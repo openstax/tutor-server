@@ -44,7 +44,8 @@ module Tasks
           id: task.id,
           due_at: task.due_at,
           last_worked_at: task.last_worked_at,
-          is_late_work_accepted: task.accepted_late_at.present?
+          is_late_work_accepted: task.accepted_late_at.present?,
+          accepted_late_at: task.accepted_late_at
         }
 
         if %w(homework concept_coach reading).include?(task.task_type)
