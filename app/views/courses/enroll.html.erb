@@ -13,5 +13,5 @@
     <%= f.text_field :student_id, class: 'form-control' %>
   </div>
 
-  <%= f.submit 'Enroll', class: 'btn btn-primary' %>
+  <%= f.submit 'Enroll', class: 'btn btn-primary', data: { disable_with: "Please wait..." } %>
 <% end %>

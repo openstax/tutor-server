@@ -89,7 +89,7 @@ class ImportSalesforceCourses
     candidate.num_students = 0
     candidate.num_teachers = 0
     candidate.num_sections = 0
-    candidate.teacher_join_url = UrlGenerator.new.teach_course_url(course.teach_token,"DO_NOT_GIVE_TO_STUDENTS")
+    candidate.teacher_join_url = UrlGenerator.teach_course_url(course.teach_token)
 
     run(:set_ecosystem, course: course, ecosystem: offering.ecosystem)
 

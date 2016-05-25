@@ -7,7 +7,7 @@ class GetCourseRoster
     students = course.students.with_deleted.includes(:enrollments, role: { profile: :account })
 
     outputs.roster = {
-      teach_url: UrlGenerator.new.teach_course_url(course.teach_token,"DO_NOT_GIVE_TO_STUDENTS"),
+      teach_url: UrlGenerator.teach_course_url(course.teach_token),
       students: students.map do |student|
         Hashie::Mash.new({
           id: student.id,

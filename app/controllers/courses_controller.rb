@@ -1,10 +1,7 @@
 class CoursesController < ApplicationController
 
   def teach
-    handle_with(CoursesTeach, complete: -> {
-      course = @handler_result.outputs.course
-      redirect_to course_dashboard_path(course)
-    })
+    handle_with(CoursesTeach, complete: -> { send_to_dashboard })
   end
 
   def enroll
