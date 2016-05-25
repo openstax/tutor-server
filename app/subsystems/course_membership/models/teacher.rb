@@ -4,4 +4,6 @@ class CourseMembership::Models::Teacher < Tutor::SubSystems::BaseModel
 
   validates :role,   presence: true, uniqueness: true
   validates :course, presence: true
+
+  delegate :username, :first_name, :last_name, :full_name, :name, to: :role
 end

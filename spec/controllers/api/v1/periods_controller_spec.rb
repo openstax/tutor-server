@@ -126,8 +126,8 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
 
       api_delete :destroy, teacher_token, parameters: { id: period.id }
 
-      expect(response).to have_http_status(204)
-      expect(response.body).to be_empty
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to eq Api::V1::PeriodRepresenter.new(period).to_json
       expect(CourseMembership::Models::Period.all).to be_empty
     end
 

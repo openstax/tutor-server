@@ -7,20 +7,23 @@ describe Api::V1::LogController, type: :controller, api: true, version: :v1 do
     it 'requires a level' do
       expect(Rails.logger).not_to receive(:log)
       log(message: 'hi')
-      expect(response.body_as_hash).to eq({status: 422, errors: [code: "level_missing"]})
+      expect(response.body_as_hash).to eq({status: 422, errors: [{code: "level_missing",
+                                                                  message: "Level missing"}]})
     end
 
     it 'requires a valid level' do
       expect(Rails.logger).not_to receive(:log)
       log(level: 'blah', message: 'hi')
-      expect(response.body_as_hash).to eq({status: 422, errors: [code: "bad_level"]})
+      expect(response.body_as_hash).to eq({status: 422, errors: [{code: "bad_level",
+                                                                  message: "Bad level"}]})
     end
 
 
     it 'requires a message' do
       expect(Rails.logger).not_to receive(:log)
       log(level: 'info', message: '')
-      expect(response.body_as_hash).to eq({status: 422, errors: [code: "message_missing"]})
+      expect(response.body_as_hash).to eq({status: 422, errors: [{code: "message_missing",
+                                                                  message: "Message missing"}]})
     end
 
     described_class::LOG_LEVELS.each do |string, enum|

@@ -10,7 +10,7 @@ class CourseMembership::Models::Enrollment < Tutor::SubSystems::BaseModel
   validates :student, presence: true
   validate :same_course
 
-  default_scope -> { order(created_at: :asc) }
+  default_scope -> { order(:created_at) }
 
   scope :latest, -> {
     joins{CourseMembership::Models::Enrollment.unscoped.as(:newer_enrollment).on{

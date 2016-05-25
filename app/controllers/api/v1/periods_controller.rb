@@ -44,13 +44,16 @@ class Api::V1::PeriodsController < Api::V1::ApiController
       respond_with result.outputs.period,
                    represent_with: Api::V1::PeriodRepresenter,
                    location: nil,
-                   responder: ResponderWithPutContent
+                   responder: ResponderWithPutPatchDeleteContent
     end
   end
 
   api :DELETE, '/periods/:id', 'Deletes a period for authorized teachers'
+  description <<-EOS
+    #{json_schema(Api::V1::PeriodRepresenter, include: :readable)}
+  EOS
   def destroy
-    standard_destroy(@period.to_model)
+    standard_destroy(@period.to_model, Api::V1::PeriodRepresenter)
   end
 
   private

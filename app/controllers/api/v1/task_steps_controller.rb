@@ -43,7 +43,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
       render_api_errors(result.errors)
     else
       respond_with @task_step.reload,
-                   responder: ResponderWithPutContent,
+                   responder: ResponderWithPutPatchDeleteContent,
                    represent_with: Api::V1::TaskStepRepresenter
     end
   end
@@ -63,7 +63,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
       render_api_errors(result.errors)
     else
       respond_with result.outputs.related_exercise_step,
-                   responder: ResponderWithPutContent,
+                   responder: ResponderWithPutPatchDeleteContent,
                    represent_with: Api::V1::TaskStepRepresenter
     end
   end

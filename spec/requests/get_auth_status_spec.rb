@@ -71,7 +71,7 @@ describe "Get authentication status", type: :request, version: :v1 do
         {'HTTP_ORIGIN' => origin, 'HTTP_ACCESS_CONTROL_REQUEST_METHOD' => 'GET'}
       expect(response.headers['Access-Control-Allow-Origin']).to eq(origin)
       expect(response.headers['Access-Control-Allow-Methods']).to eq(
-        'GET, OPTIONS'
+        'GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS'
       )
     end
 

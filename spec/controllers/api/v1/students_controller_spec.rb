@@ -203,7 +203,8 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
         context 'caller is a course teacher' do
           it 'removes the student from the course' do
             api_delete :destroy, teacher_token, parameters: valid_params
-            expect(response).to have_http_status(:no_content)
+            expect(response).to have_http_status(:ok)
+            expect(response.body_as_hash[:is_active]).to eq false
 
             student.reload
             expect(student.persisted?).to eq true
@@ -266,7 +267,7 @@ describe Api::V1::StudentsController, type: :controller, api: true, version: :v1
           it 'undrops the student from the course' do
             api_put :undrop, teacher_token, parameters: valid_params
             expect(response).to have_http_status(:ok)
-            expect(response.body_as_hash[:is_active]).to be true
+            expect(response.body_as_hash[:is_active]).to eq true
 
             student.reload
             expect(student.persisted?).to eq true

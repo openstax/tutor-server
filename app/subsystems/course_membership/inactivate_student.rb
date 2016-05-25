@@ -5,6 +5,7 @@ module CourseMembership
     def exec(student:)
       fatal_error(code: :already_inactive) if student.deleted?
       student.destroy
+      student.clear_association_cache
       transfer_errors_from(student, { type: :verbatim }, true)
       outputs[:student] = student
     end

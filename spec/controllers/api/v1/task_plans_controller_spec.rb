@@ -360,16 +360,23 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
   end
 
   context 'destroy' do
-    before(:each) do
-      task_plan.save!
-    end
+    before(:each) { task_plan.save! }
 
     it 'allows a teacher to destroy a task_plan for their course' do
       controller.sign_in teacher
       expect{ api_delete :destroy, nil, parameters: { course_id: course.id, id: task_plan.id } }
         .to change{ Tasks::Models::TaskPlan.count }.by(-1)
       expect(response).to have_http_status(:success)
-      expect(response.body).to be_blank
+      expect(response.body).to eq Api::V1::TaskPlanRepresenter.new(task_plan.reload).to_json
+    end
+
+    it 'does not allow a teacher to destroy a task_plan that is already destroyed' do
+      task_plan.destroy!
+      controller.sign_in teacher
+      expect{ api_delete :destroy, nil, parameters: { course_id: course.id, id: task_plan.id } }
+        .not_to change{ Tasks::Models::TaskPlan.count }
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body_as_hash[:errors].first[:code]).to eq('task_plan_is_already_deleted')
     end
 
     it 'does not allow an unauthorized user to destroy a task_plan' do
@@ -380,6 +387,41 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
 
     it 'does not allow an anonymous user to destroy a task_plan' do
       expect { api_delete :destroy, nil, parameters: { course_id: course.id, id: task_plan.id } }
+        .to raise_error(SecurityTransgression)
+    end
+  end
+
+  context 'restore' do
+    before(:each) do
+      task_plan.save!
+      task_plan.destroy!
+    end
+
+    it 'allows a teacher to restore a destroyed task_plan for their course' do
+      controller.sign_in teacher
+      expect{ api_put :restore, nil, parameters: { course_id: course.id, id: task_plan.id } }
+        .to change{ Tasks::Models::TaskPlan.count }.by(1)
+      expect(response).to have_http_status(:success)
+      expect(response.body).to eq Api::V1::TaskPlanRepresenter.new(task_plan.reload).to_json
+    end
+
+    it 'does not allow a teacher to restore a task_plan that is not destroyed' do
+      task_plan.restore
+      controller.sign_in teacher
+      expect{ api_put :restore, nil, parameters: { course_id: course.id, id: task_plan.id } }
+        .not_to change{ Tasks::Models::TaskPlan.count }
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body_as_hash[:errors].first[:code]).to eq('task_plan_is_not_deleted')
+    end
+
+    it 'does not allow an unauthorized user to restore a task_plan' do
+      controller.sign_in user
+      expect { api_put :restore, nil, parameters: { course_id: course.id, id: task_plan.id } }
+        .to raise_error(SecurityTransgression)
+    end
+
+    it 'does not allow an anonymous user to restore a task_plan' do
+      expect { api_put :restore, nil, parameters: { course_id: course.id, id: task_plan.id } }
         .to raise_error(SecurityTransgression)
     end
   end

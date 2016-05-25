@@ -116,7 +116,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
       if task_plan.errors.empty?
         # http://stackoverflow.com/a/27413178
         respond_with task_plan, represent_with: Api::V1::TaskPlanRepresenter,
-                                responder: ResponderWithPutContent,
+                                responder: ResponderWithPutPatchDeleteContent,
                                 status: uuid.nil? ? :ok : :accepted
       else
         render_api_errors(task_plan.errors)
@@ -304,13 +304,30 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   # destroy
   ###############################################################
 
-  api :DELETE, '/plans/:id', 'Deletes the specified TaskPlan'
+  api :DELETE, '/plans/:id', 'Withdraws the specified TaskPlan'
   description <<-EOS
-    #{json_schema(Api::V1::TaskPlanRepresenter, include: :writeable)}
+    Withdraws a task_plan from the teacher's course.
+
+    Possible error code: task_plan_is_already_deleted
+
+    #{json_schema(Api::V1::TaskPlanRepresenter, include: :readable)}
   EOS
   def destroy
-    task_plan = Tasks::Models::TaskPlan.find(params[:id])
-    standard_destroy(task_plan)
+    task_plan = Tasks::Models::TaskPlan.with_deleted.find_by(id: params[:id])
+    standard_destroy(task_plan, Api::V1::TaskPlanRepresenter)
+  end
+
+  api :PUT, '/plans/:id/restore', 'Restores the specified TaskPlan'
+  description <<-EOS
+    Restores a task_plan to the teacher's course.
+
+    Possible error code: task_plan_is_not_deleted
+
+    #{json_schema(Api::V1::TaskPlanRepresenter, include: :readable)}
+  EOS
+  def restore
+    task_plan = Tasks::Models::TaskPlan.with_deleted.find_by(id: params[:id])
+    standard_restore(task_plan, Api::V1::TaskPlanRepresenter)
   end
 
   protected

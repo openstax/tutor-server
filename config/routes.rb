@@ -106,6 +106,7 @@ Rails.application.routes.draw do
         member do
           get 'stats'
           get 'review'
+          put 'restore'
         end
       end
 

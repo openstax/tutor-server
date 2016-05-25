@@ -9,21 +9,17 @@ RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :
   let(:user_token) { FactoryGirl.create(:doorkeeper_access_token, resource_owner_id: user.id) }
   let(:admin_token) { FactoryGirl.create(:doorkeeper_access_token, resource_owner_id: admin.id) }
 
-  before(:all) do
-    Jobba.all.to_a.each { |status| status.delete! }
-  end
+  before(:all) { Jobba.all.to_a.each(&:delete!) }
 
-  after(:all) do
-    Jobba.all.to_a.each { |status| status.delete! }
-  end
+  after(:all)  { Jobba.all.to_a.each(&:delete!) }
 
   before do
     stub_const 'TestRoutine', Class.new
-    TestRoutine.class_eval {
+    TestRoutine.class_exec do
       lev_routine
       protected
       def exec; end
-    }
+    end
   end
 
   describe 'GET #index' do
@@ -59,7 +55,8 @@ RSpec.describe Api::V1::JobsController, type: :controller, api: true, version: :
     it 'returns 404 Not Found if the job does not exist' do
       api_get :show, user_token, parameters: { id: 42 }
       expect(response).to have_http_status :not_found
-      expect(response.body_as_hash).to include({ errors: [{code: 'job_not_found'}], status: 404 })
+      expect(response.body_as_hash).to include(errors: [{code: 'job_not_found',
+                                                         message: 'Job not found'}], status: 404)
     end
 
     context 'with inline jobs' do

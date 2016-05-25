@@ -123,7 +123,7 @@ class Api::V1::EnrollmentChangesController < Api::V1::ApiController
       if result.errors.empty?
         respond_with result.outputs.enrollment_change,
                      represent_with: Api::V1::EnrollmentChangeRepresenter,
-                     responder: ResponderWithPutContent
+                     responder: ResponderWithPutPatchDeleteContent
       else
         render_api_errors(result.errors.first.code)
         raise ActiveRecord::Rollback
