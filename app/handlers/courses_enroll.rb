@@ -1,33 +1,23 @@
 class CoursesEnroll
   lev_handler
 
-  uses_routine AddUserAsPeriodStudent, ignored_errors: [:user_is_already_teacher_of_course]
+  uses_routine CourseMembership::GetPeriod, as: :get_period,
+                                            translations: { outputs: { type: :verbatim } }
+  uses_routine CollectCourseInfo, translations: { outputs: {type: :verbatim} }
 
   protected
+
   def authorized?; true; end
 
   def handle
-    after_transaction { raise_handled_exceptions! }
+    run(:get_period, enrollment_code: params[:enroll_token])
+    fatal_error(code: :enrollment_code_not_found) if outputs.period.nil?
+    outputs.course = outputs.period.course
 
-    enrollment_code = params[:enrollment_code].gsub(/-/,' ')
-    period = CourseMembership::Models::Period.find_by(enrollment_code: enrollment_code)
-    fatal_error(code: :enrollment_code_not_found) if period.nil?
+    fatal_error(code: :user_is_already_a_course_student) \
+      if UserIsCourseStudent[course: outputs.period.course, user: caller]
 
-    outputs.course = period.course
-
-    run(AddUserAsPeriodStudent, user: current_user, period: period)
+    run(:collect_course_info, courses: outputs.period.course, with: [:teacher_names])
   end
 
-  private
-  def raise_handled_exceptions!
-    raise self.class.handled_exceptions[errors.first.code] if errors.any?
-  end
-
-  def self.handled_exceptions
-    @@handled_exceptions ||= {
-      enrollment_code_not_found: EnrollmentCodeNotFound
-    }
-  end
 end
-
-class EnrollmentCodeNotFound < StandardError; end

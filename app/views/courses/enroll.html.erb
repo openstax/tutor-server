@@ -1,0 +1,17 @@
+<% course = @handler_result.outputs.courses.first %>
+<% period = @handler_result.outputs.period %>
+
+<h3>Welcome to OpenStax Tutor!</h3>
+
+<p>You are about to enroll in <b><%= course.name %> (<%= period.name %>)</b> by <b><%= course.teacher_names.to_sentence %></b>.</p>
+
+<%= lev_form_for :enroll, url: confirm_token_enroll_path, method: 'post' do |f| %>
+
+  <%= f.hidden_field :enrollment_token, value: params[:enroll_token] %>
+  <div class='form-group'>
+    <%= f.label "Enter your school-issued ID:" %>
+    <%= f.text_field :student_id, class: 'form-control' %>
+  </div>
+
+  <%= f.submit 'Enroll', class: 'btn btn-primary' %>
+<% end %>

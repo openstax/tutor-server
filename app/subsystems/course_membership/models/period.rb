@@ -44,6 +44,10 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
     read_attribute(:default_due_time) || Settings::Db.store[:default_due_time]
   end
 
+  def enrollment_code_for_url
+    enrollment_code.gsub(/ /,'-')
+  end
+
   protected
 
   def no_active_students

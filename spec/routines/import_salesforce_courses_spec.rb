@@ -114,7 +114,7 @@ RSpec.describe ImportSalesforceCourses, type: :routine do
     expect(class_size.created_at).to be_a String
     expect(class_size.num_students).to eq 0
     expect(class_size.num_teachers).to eq 0
-    expect(class_size.teacher_join_url).to include "courses/teach/"
+    expect(class_size.teacher_join_url).to match /.*teach\/[a-f0-9]{32}\/DO_NOT.*/
 
     course_ecosystem = CourseContent::Models::CourseEcosystem.first
     expect(course_ecosystem.course).to eq created_course

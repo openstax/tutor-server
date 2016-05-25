@@ -11,6 +11,7 @@ class AddUserAsPeriodStudent
   protected
 
   def exec(user:, period:, student_identifier: nil, assign_published_period_tasks: true)
+    student_identifier = nil if student_identifier.blank?
     course = period.course
     result = run(UserIsCourseTeacher, user: user, course: course)
 

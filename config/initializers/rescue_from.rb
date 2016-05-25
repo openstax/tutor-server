@@ -34,15 +34,6 @@ OpenStax::RescueFrom.register_exception(
 )
 
 OpenStax::RescueFrom.register_exception(
-  'EnrollmentCodeNotFound',
-  message: 'You are trying to enroll in a class as a student, but the information you provided ' +
-           'is either out of date or does not correspond to an existing course.  Please contact your ' +
-           'instructor for a new enrollment URL.',
-  status: :not_found,
-  notify: false
-)
-
-OpenStax::RescueFrom.register_exception(
   'ShortCodeNotFound',
   status: :not_found,
   notify: false

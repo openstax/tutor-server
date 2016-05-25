@@ -32,7 +32,7 @@ module Api::V1
              type: String,
              writeable: false,
              readable: true,
-             getter: ->(*) { UrlGenerator.new.enroll_course_url(enrollment_code.gsub(/ /,'-')) },
+             getter: ->(*) { UrlGenerator.new.token_enroll_url(enrollment_code_for_url) },
              schema_info: {
                description: "The period's enrollment URL"
              }

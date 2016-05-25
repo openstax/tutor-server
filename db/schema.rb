@@ -264,7 +264,7 @@ ActiveRecord::Schema.define(version: 20160520002440) do
     t.datetime "created_at",                  null: false
     t.datetime "updated_at",                  null: false
     t.boolean  "is_concept_coach",            null: false
-    t.string   "teach_token",                                                        null: false
+    t.string   "teach_token",                 null: false
     t.integer  "catalog_offering_id"
     t.string   "appearance_code"
     t.string   "biglearn_excluded_pool_uuid"
