@@ -5,7 +5,7 @@ module Tasks
     def included_in_averages?(task)
       task.exercise_count > 0 &&
       (
-        ( task.task_type == 'concept_coach' && task.completed?) ||
+        ( task.task_type == 'concept_coach' ) ||
         ( task.task_type == 'homework' && task.past_due? )
       )
 
