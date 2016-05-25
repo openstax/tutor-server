@@ -183,7 +183,7 @@ GEM
     equalizer (0.0.11)
     error_page_assets (0.3)
     erubis (2.7.0)
-    eventmachine (1.0.7)
+    eventmachine (1.2.0.1)
     exception_notification (4.1.4)
       actionmailer (~> 4.0)
       activesupport (~> 4.0)
@@ -360,7 +360,7 @@ GEM
       hashie
       transaction_isolation
       transaction_retry
-    libv8 (3.16.14.7)
+    libv8 (3.16.14.15)
     lograge (0.3.1)
       actionpack (>= 3)
       activesupport (>= 3)
@@ -801,4 +801,4 @@ DEPENDENCIES
   yaml_db
 
 BUNDLED WITH
-   1.11.2
+   1.12.4
