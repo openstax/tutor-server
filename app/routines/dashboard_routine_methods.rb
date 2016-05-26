@@ -36,8 +36,8 @@ module DashboardRoutineMethods
   end
 
   def load_tasks(role, role_type)
-    tasks = run(:get_tasks, roles: role).outputs.tasks
-    tasks = tasks.select{ |task| task.past_open? } if :student == role_type
+    tasks = run(:get_tasks, roles: role).outputs.tasks.reject(&:hidden?)
+    tasks = tasks.select(&:past_open?) if :student == role_type
     outputs[:tasks] = tasks
   end
 end

@@ -69,12 +69,21 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     feedback_at.nil? || current_time >= feedback_at
   end
 
+  def hidden?
+    deleted? && hidden_at.present? && hidden_at >= deleted_at
+  end
+
   def completed?
     steps_count == completed_steps_count
   end
 
   def in_progress?
     completed_steps_count > 0 && !completed?
+  end
+
+  def hide(current_time: Time.current)
+    self.hidden_at = current_time
+    self
   end
 
   def set_last_worked_at(time:)

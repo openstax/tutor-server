@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160524152139) do
+ActiveRecord::Schema.define(version: 20160526202800) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -742,10 +742,12 @@ ActiveRecord::Schema.define(version: 20160524152139) do
     t.integer  "completed_on_time_steps_count",          default: 0,     null: false
     t.integer  "time_zone_id"
     t.datetime "deleted_at"
+    t.datetime "hidden_at"
   end
 
   add_index "tasks_tasks", ["deleted_at"], name: "index_tasks_tasks_on_deleted_at", using: :btree
   add_index "tasks_tasks", ["due_at_ntz", "opens_at_ntz"], name: "index_tasks_tasks_on_due_at_ntz_and_opens_at_ntz", using: :btree
+  add_index "tasks_tasks", ["hidden_at"], name: "index_tasks_tasks_on_hidden_at", using: :btree
   add_index "tasks_tasks", ["last_worked_at"], name: "index_tasks_tasks_on_last_worked_at", using: :btree
   add_index "tasks_tasks", ["task_type"], name: "index_tasks_tasks_on_task_type", using: :btree
   add_index "tasks_tasks", ["tasks_task_plan_id"], name: "index_tasks_tasks_on_tasks_task_plan_id", using: :btree
