@@ -47,39 +47,6 @@ RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
         ],
         students: [
           {
-            name: "Zeter Zymphony",
-            first_name: "Zeter",
-            last_name: "Zymphony",
-            student_identifier: "SID1",
-            role: nil,
-            data: [
-              {
-                late: false,
-                status: 'completed',
-                type: 'concept_coach',
-                id: 43,
-                due_at: Chronic.parse("2/29/2016 1PM"),
-                last_worked_at: Chronic.parse("2/29/2016 11AM"),
-                actual_and_placeholder_exercise_count: 11,
-                completed_exercise_count: 11,
-                correct_exercise_count: 9,
-                recovered_exercise_count: 0
-              },
-              {
-                late: true,
-                status: 'in_progress',
-                type: 'concept_coach',
-                id: 44,
-                due_at: Chronic.parse("3/15/2016 1PM"),
-                last_worked_at: Chronic.parse("3/17/2016 5PM"),
-                actual_and_placeholder_exercise_count: 9,
-                completed_exercise_count: 5,
-                correct_exercise_count: 2,
-                recovered_exercise_count: 0
-              }
-            ]
-          },
-          {
             name: "Abby Gail",
             first_name: "Abby",
             last_name: "Gail",
@@ -122,6 +89,39 @@ RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
                 recovered_exercise_count: 0
               }
             ]
+          },
+          {
+            name: "Zeter Zymphony",
+            first_name: "Zeter",
+            last_name: "Zymphony",
+            student_identifier: "SID1",
+            role: nil,
+            data: [
+              {
+                late: false,
+                status: 'completed',
+                type: 'concept_coach',
+                id: 43,
+                due_at: Chronic.parse("2/29/2016 1PM"),
+                last_worked_at: Chronic.parse("2/29/2016 11AM"),
+                actual_and_placeholder_exercise_count: 11,
+                completed_exercise_count: 11,
+                correct_exercise_count: 9,
+                recovered_exercise_count: 0
+              },
+              {
+                late: true,
+                status: 'in_progress',
+                type: 'concept_coach',
+                id: 44,
+                due_at: Chronic.parse("3/15/2016 1PM"),
+                last_worked_at: Chronic.parse("3/17/2016 5PM"),
+                actual_and_placeholder_exercise_count: 9,
+                completed_exercise_count: 5,
+                correct_exercise_count: 2,
+                recovered_exercise_count: 0
+              }
+            ]
           }
         ]
       }
@@ -129,7 +129,3 @@ RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
   end
 
 end
-
-
-
-
