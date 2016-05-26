@@ -24,29 +24,4 @@ RSpec.describe User::Models::Profile, type: :model do
   [:first_name=, :last_name=, :full_name=, :title=].each do |method|
     it { is_expected.to delegate_method(method).to(:account).with_arguments('foo') }
   end
-
-  it 'still exists after delete' do
-    profile1 = FactoryGirl.create(:user_profile)
-    id = profile1.id
-    profile1.delete
-    expect(described_class.with_deleted.where(id: id).one?).to be_truthy
-    expect(profile1.deleted_at).to be_present
-  end
-
-  it 'still exists after destroy' do
-    profile1 = FactoryGirl.create(:user_profile)
-    id = profile1.id
-    profile1.destroy
-    expect(described_class.with_deleted.where(id: id).one?).to be_truthy
-    expect(profile1.deleted_at).to be_present
-  end
-
-  it 'can be undeleted' do
-    profile1 = FactoryGirl.create(:user_profile)
-    id = profile1.id
-    profile1.destroy
-    expect(profile1.deleted_at).to be_present
-    profile1.restore
-    expect(profile1.deleted_at).to be_nil
-  end
 end

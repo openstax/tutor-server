@@ -406,7 +406,7 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
     end
 
     it 'does not allow a teacher to restore a task_plan that is not destroyed' do
-      task_plan.restore
+      task_plan.restore!(recursive: true)
       controller.sign_in teacher
       expect{ api_put :restore, nil, parameters: { course_id: course.id, id: task_plan.id } }
         .not_to change{ Tasks::Models::TaskPlan.count }

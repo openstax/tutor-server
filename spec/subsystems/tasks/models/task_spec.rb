@@ -453,5 +453,25 @@ RSpec.describe Tasks::Models::Task, type: :model do
       expect(task.correct_on_time_exercise_steps_count).to eq 1
     end
 
+    it 'is hidden only if it has been hidden after being deleted for the last time' do
+      task = FactoryGirl.create :tasks_task
+      expect(task.reload).not_to be_hidden
+
+      task.task_plan.destroy!
+      expect(task.reload).not_to be_hidden
+
+      task.hide.save!
+      expect(task).to be_hidden
+
+      task.task_plan.reload.restore!(recursive: true)
+      expect(task.reload).not_to be_hidden
+
+      task.task_plan.destroy!
+      expect(task.reload).not_to be_hidden
+
+      task.hide.save!
+      expect(task).to be_hidden
+    end
+
   end
 end

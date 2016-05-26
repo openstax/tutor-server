@@ -14,6 +14,7 @@ class CourseMembership::AddEnrollment
     student.enrollments << outputs[:enrollment]
     student.restore if student.deleted?
     outputs[:student] = student
+    transfer_errors_from(outputs[:student], {type: :verbatim}, true)
 
     ReassignPublishedPeriodTaskPlans.perform_later(period: period.to_model) \
       if assign_published_period_tasks
