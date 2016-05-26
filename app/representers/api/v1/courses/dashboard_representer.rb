@@ -54,6 +54,7 @@ module Api::V1::Courses
                schema_info: { type: 'boolean' }
 
       property :deleted?,
+               as: :is_deleted,
                readable: true,
                writeable: false,
                schema_info: {
