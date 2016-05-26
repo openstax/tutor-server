@@ -16,13 +16,30 @@ Or using homebrew on OSX
 
 Once installed, create a user and database.  By default Tutor will expect a database named 'ox_tutor_{dev,test}' owned by user 'ox_tutor' who has a password 'ox_tutor_secret_password'.  These can be overridden by setting environmental variables in your ~/.bash_profile or ~/.zshenv.  See the config/database.yml for details.
 
-`createuser --superuser --pwprompt ox_tutor`
+```
+sudo su - postgres
+psql -U postgres
+```
+
+`createuser --superuser --pwprompt ox_tutor` 
+
+( w/ ox_tutor_secret_password )
 
 And then create the development and test databases:
 
-`createdb --username ox_tutor ox_tutor_dev`
+```
+createdb --username ox_tutor ox_tutor_dev
+createdb --username ox_tutor ox_tutor_test
+```
 
-`createdb --username ox_tutor ox_tutor_test`
+Exit the psql database shell by typing `\q` and hitting enter.
+
+You may have to update your pg_hba.conf to md5:
+
+```
+sudo your-text-editor /etc/postgresql/<version>/main/pg_hba.conf` ( change peer to md5 )
+sudo service postgresql restart
+```
 
 Once Tutor is up and running the database superuser role can be safely removed from the user. It is only needed to create and configure the tutor databases.  To remove it, log into the database:
 
