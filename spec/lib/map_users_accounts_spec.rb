@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe MapUsersAccounts, type: :routine do
+RSpec.describe MapUsersAccounts, type: :lib do
   describe '.account_to_user' do
     let(:user) { MapUsersAccounts.account_to_user(account) }
 
@@ -30,10 +30,10 @@ RSpec.describe MapUsersAccounts, type: :routine do
         OpenStax::Accounts::FindOrCreateAccount.call(username: 'account').outputs.account
       end
 
-      it 'raises errors during create_user' do
+      it 'raises errors during find_or_create_user' do
         error = OpenStruct.new(message: 'hi') # error.message works
         allow(User::CreateUser).to receive(:call).and_return(OpenStruct.new(errors: [error]))
-        expect{ MapUsersAccounts.send(:create_user) }.to raise_error('hi')
+        expect{ MapUsersAccounts.send(:find_or_create_user) }.to raise_error('hi')
       end
 
       it 'returns the created user for the account' do
