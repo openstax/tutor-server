@@ -1,6 +1,8 @@
 class AddDefaultsForNullCounts < ActiveRecord::Migration
   def up
-    Tasks::Models::Task.preload(task_steps: :tasked).find_each(&:update_step_counts!)
+    Tasks::Models::Task.preload(task_steps: :tasked).find_each do |task|
+      task.update_step_counts.save!(validate: false)
+    end
 
     change_column_default :tasks_tasks, :correct_on_time_exercise_steps_count, 0
     change_column_default :tasks_tasks, :completed_on_time_exercise_steps_count, 0
