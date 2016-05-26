@@ -17,15 +17,16 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
   let!(:published_task_plan) { FactoryGirl.create(:tasked_task_plan,
                                                   number_of_students: 0,
                                                   owner: course,
-                                                  assistant: get_assistant(course: course,
-                                                                           task_plan_type: 'reading'),
+                                                  assistant: get_assistant(
+                                                    course: course, task_plan_type: 'reading'),
                                                   published_at: Time.current) }
   let!(:ecosystem) { published_task_plan.ecosystem }
   let!(:page)      { ecosystem.pages.first }
   let!(:task_plan) { FactoryGirl.build(:tasks_task_plan,
                                        owner: course,
-                                       assistant: get_assistant(course: course,
-                                                                task_plan_type: 'reading'),
+                                       assistant: get_assistant(
+                                         course: course, task_plan_type: 'reading'
+                                       ),
                                        content_ecosystem_id: ecosystem.id,
                                        settings: { page_ids: [page.id.to_s] },
                                        type: 'reading',
@@ -39,7 +40,7 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
     AddUserAsPeriodStudent.call(period: period, user: student)
   end
 
-  context 'show' do
+  context '#show' do
     before(:each) do
       task_plan.save!
     end
@@ -89,7 +90,7 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
     end
   end
 
-  context 'create' do
+  context '#create' do
     it 'allows a teacher to create a task_plan for their course' do
       controller.sign_in teacher
       expect { api_post :create,
@@ -189,7 +190,7 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
     end
   end
 
-  context 'update' do
+  context '#update' do
     before(:each) do
       task_plan.save!
     end
@@ -359,7 +360,7 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
     end
   end
 
-  context 'destroy' do
+  context '#destroy' do
     before(:each) { task_plan.save! }
 
     it 'allows a teacher to destroy a task_plan for their course' do
@@ -391,7 +392,7 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
     end
   end
 
-  context 'restore' do
+  context '#restore' do
     before(:each) do
       task_plan.save!
       task_plan.destroy!

@@ -67,16 +67,28 @@ RSpec.describe TaskAccessPolicy, type: :access_policy do
     context 'and the requestor is human' do
       # already true for User
 
-      context 'and the requestor is a course teacher' do
-        before { allow(UserIsCourseTeacher).to receive(:[]) { true } }
-
-        it { should eq true }
-      end
-
-      context 'and the requestor is not a course teacher' do
-        before { allow(DoesTaskingExist).to receive(:[]) { true } }
+      context 'and the task is deleted' do
+        before do
+          task.destroy!
+          allow(DoesTaskingExist).to receive(:[]) { true }
+          allow(UserIsCourseTeacher).to receive(:[]) { true }
+        end
 
         it { should eq false }
+      end
+
+      context 'and the task is not deleted' do
+        context 'and the requestor is a course teacher' do
+          before { allow(UserIsCourseTeacher).to receive(:[]) { true } }
+
+          it { should eq true }
+        end
+
+        context 'and the requestor is not a course teacher' do
+          before { allow(DoesTaskingExist).to receive(:[]) { true } }
+
+          it { should eq false }
+        end
       end
     end
 
