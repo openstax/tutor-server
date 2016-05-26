@@ -58,7 +58,7 @@ gem 'openstax_exchange', '~> 0.2.1'
 gem 'chronic'
 
 # API versioning and documentation
-gem 'openstax_api', '~> 7.0.1'
+gem 'openstax_api', '~> 7.1.0'
 
 gem 'apipie-rails'
 gem 'maruku'
@@ -158,7 +158,7 @@ gem 'rails-settings-ui'
 
 # Nicely-styled static error pages
 gem 'error_page_assets'
-gem 'render_anywhere', :require => false
+gem 'render_anywhere', require: false
 
 # Add P3P headers for IE
 gem 'p3p'
@@ -262,7 +262,7 @@ group :production do
   gem 'unicorn-worker-killer'
 
   # AWS SES
-  gem 'aws-ses', '~> 0.6.0', :require => 'aws/ses'
+  gem 'aws-ses', '~> 0.6.0', require: 'aws/ses'
 
   # Fog
   gem 'fog', require: 'fog/aws'
