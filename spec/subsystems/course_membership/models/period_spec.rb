@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe CourseMembership::Models::Period, type: :model do
-  subject(:period) { CreatePeriod[course: Entity::Course.create!].to_model }
+  subject!(:period) { FactoryGirl.create :course_membership_period }
 
   it { is_expected.to belong_to(:course) }
 
@@ -15,19 +15,28 @@ RSpec.describe CourseMembership::Models::Period, type: :model do
 
   it { is_expected.to validate_uniqueness_of(:name).scoped_to(:entity_course_id) }
 
-  it 'cannot be deleted if it has any active students' do
+  it 'can be deleted and restored even if it has active students' do
     student_user = FactoryGirl.create(:user)
     AddUserAsPeriodStudent[period: period, user: student_user]
-    expect{ period.destroy }.not_to change{CourseMembership::Models::Period.count}
-    expect(period.errors).not_to be_empty
-    period.enrollments.each{ |en| en.student.destroy }
-    expect{ period.destroy }.to change{CourseMembership::Models::Period.count}.by(-1)
+
+    expect(UserIsCourseStudent[user: student_user, course: period.course]).to eq true
+
+    expect{ period.destroy! }.to change{CourseMembership::Models::Period.count}.by(-1)
+    expect(period.errors).to be_empty
+
+    #expect(UserIsCourseStudent[user: student_user, course: period.course]).to eq false
+
+    expect{ period.restore!(recursive: true) }.to(
+      change{CourseMembership::Models::Period.count}.by(1)
+    )
+    expect(period.errors).to be_empty
+
+    expect(UserIsCourseStudent[user: student_user, course: period.course]).to eq true
   end
 
   it 'does not collide in name with deleted periods' do
-    period.enrollments.each{ |en| en.student.destroy }
-    expect{ period.destroy }.to change{CourseMembership::Models::Period.count}.by(-1)
-    CreatePeriod[course: Entity::Course.create!, name: period.name]
+    expect{ period.destroy! }.to change{CourseMembership::Models::Period.count}.by(-1)
+    CreatePeriod[course: period.course, name: period.name]
   end
 
   it 'validates format of default times' do

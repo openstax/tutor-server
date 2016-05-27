@@ -118,7 +118,11 @@ Rails.application.routes.draw do
 
       resources :teachers, shallow: true, only: [:destroy]
 
-      resources :periods, shallow: true, only: [:create, :update, :destroy]
+      resources :periods, shallow: true, only: [:create, :update, :destroy] do
+        member do
+          put 'restore'
+        end
+      end
     end
 
     resources :ecosystems, only: [:index] do

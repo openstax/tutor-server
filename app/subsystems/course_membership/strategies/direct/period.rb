@@ -3,7 +3,7 @@ class CourseMembership::Strategies::Direct::Period < Entity
   wraps CourseMembership::Models::Period
 
   exposes :course, :name, :student_roles, :teacher_roles, :enrollment_code,
-          :default_open_time, :default_due_time, :enrollment_code_for_url
+          :default_open_time, :default_due_time, :enrollment_code_for_url, :deleted?
 
   def to_model
     repository

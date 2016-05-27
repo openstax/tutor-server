@@ -15,9 +15,10 @@ module CourseMembership
     let!(:teacher)        { AddUserAsCourseTeacher.call(user: teacher_user,
                                                         course: period.course).outputs.role }
 
-    it 'exposes course, name, student_roles, teacher_roles, enrollment_code and to_model' do
+    it 'exposes course, name, student_roles, teacher_roles,
+        enrollment_code, deleted? and to_model' do
       [:course, :name, :student_roles, :teacher_roles,
-       :enrollment_code, :to_model].each do |method_name|
+       :enrollment_code, :deleted?, :to_model].each do |method_name|
         expect(period).to respond_to(method_name)
       end
 

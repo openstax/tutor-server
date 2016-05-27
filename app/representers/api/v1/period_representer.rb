@@ -49,5 +49,14 @@ module Api::V1
              writeable: true,
              schema_info: { required: false }
 
+    property :deleted?,
+             as: :is_archived,
+             readable: true,
+             writeable: false,
+             schema_info: {
+               type: 'boolean',
+               description: 'Whether or not this period has been archived by the teacher',
+             }
+
   end
 end

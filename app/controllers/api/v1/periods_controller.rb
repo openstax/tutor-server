@@ -1,5 +1,5 @@
 class Api::V1::PeriodsController < Api::V1::ApiController
-  before_filter :find_period_and_course
+  before_action :find_period_and_course
 
   resource_description do
     api_versions "v1"
@@ -48,12 +48,30 @@ class Api::V1::PeriodsController < Api::V1::ApiController
     end
   end
 
-  api :DELETE, '/periods/:id', 'Deletes a period for authorized teachers'
+  api :DELETE, '/periods/:id', 'Archives a period for the teacher'
   description <<-EOS
+    Archives the given period.
+    Must be a course teacher.
+
+    Possible error code: period_is_already_deleted
+
     #{json_schema(Api::V1::PeriodRepresenter, include: :readable)}
   EOS
   def destroy
     standard_destroy(@period.to_model, Api::V1::PeriodRepresenter)
+  end
+
+  api :PUT, '/periods/:id/restore', 'Restores an archived period for the teacher'
+  description <<-EOS
+    Restores the given archived period.
+    Must be a course teacher.
+
+    Possible error code: period_is_not_deleted
+
+    #{json_schema(Api::V1::PeriodRepresenter, include: :readable)}
+  EOS
+  def restore
+    standard_restore(@period.to_model, Api::V1::PeriodRepresenter)
   end
 
   private

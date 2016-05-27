@@ -29,13 +29,19 @@ module CourseMembership
     end
 
     def default_open_time
-      return if @strategy.default_open_time.nil?
-      verify_and_return @strategy.default_open_time, klass: String, error: StrategyError
+      verify_and_return @strategy.default_open_time, klass: String,
+                                                     error: StrategyError,
+                                                     allow_nil: true
     end
 
     def default_due_time
-      return if @strategy.default_due_time.nil?
-      verify_and_return @strategy.default_due_time, klass: String, error: StrategyError
+      verify_and_return @strategy.default_due_time, klass: String,
+                                                     error: StrategyError,
+                                                     allow_nil: true
+    end
+
+    def deleted?
+      !!@strategy.deleted?
     end
 
     def enrollment_code_for_url
