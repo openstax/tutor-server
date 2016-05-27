@@ -24,8 +24,6 @@ class CollectCourseInfo
   end
 
   def collect_course_info(courses, user, with)
-    with = enforce_order(of: :roles, before: :students, within: with)
-
     entity_courses = Entity::Course.where(id: courses.map(&:id)).preload(profile: :offering)
     entity_courses.map do |entity_course|
       profile = entity_course.profile
@@ -49,10 +47,6 @@ class CollectCourseInfo
     end
   end
 
-  def enforce_order(of:, before:, within:)
-    within.map{|wi| wi == before ? [of, before] : wi}.flatten.uniq
-  end
-
   def collect_extended_course_info(info, entity_course, user, with)
     with.each do |option|
       case option
@@ -67,7 +61,7 @@ class CollectCourseInfo
       when :ecosystem_book
         set_ecosystem_book(info, entity_course)
       when :students
-        set_students(info, entity_course)
+        set_students(info, entity_course, user)
       end
     end
 
@@ -79,47 +73,34 @@ class CollectCourseInfo
   end
 
   def set_roles(info, entity_course, user)
-    roles = run(:get_course_roles, course: entity_course, user: user).outputs.roles
-    info.roles = roles.map do |role|
+    @roles ||= run(:get_course_roles, course: entity_course, user: user).outputs.roles
+
+    info.roles = @roles.map do |role|
       { id: role.id, type: role.role_type }
     end
   end
 
   def set_periods(info, entity_course, user)
-    is_teacher = run(:is_teacher, course: entity_course, user: user).outputs.user_is_course_teacher
-    periods = run(:get_course_periods, course: entity_course).outputs.periods
-    if is_teacher
-      info.periods = periods
-    else
-      student_roles = run(:get_course_roles, course: entity_course, user: user, types: :student)
-                        .outputs.roles
-      student_period_ids = student_roles.map{ |role| role.student.period.id }.uniq
-      info.periods = periods.select{ |period| student_period_ids.include?(period.id) }
-    end
+    @roles ||= run(:get_course_roles, course: entity_course, user: user).outputs.roles
+
+    info.periods = run(:get_course_periods, course: entity_course, roles: @roles,
+                                            include_archived: true).outputs.periods
   end
 
   def set_ecosystem(info, entity_course)
-    info.ecosystem = run(:get_course_ecosystem, course: entity_course).outputs.ecosystem
+    @ecosystem ||= run(:get_course_ecosystem, course: entity_course).outputs.ecosystem
+    info.ecosystem = @ecosystem
   end
 
   def set_ecosystem_book(info, entity_course)
-    # attempt to use a pre-set ecosystem on the info before loading it
-    ecosystem = info.ecosystem ||
-                run(:get_course_ecosystem, course: entity_course).outputs.ecosystem
-    info.ecosystem_book = ecosystem.try(:books).try(:first)
+    @ecosystem ||= run(:get_course_ecosystem, course: entity_course).outputs.ecosystem
+    info.ecosystem_book = @ecosystem.try(:books).try(:first)
   end
 
-  def set_students(info, entity_course)
-    return if info.roles.nil?
+  def set_students(info, entity_course, user)
+    @roles ||= run(:get_course_roles, course: entity_course, user: user).outputs.roles
 
-    student_role_ids = info.roles.map{|rr| rr[:id] if rr[:type] == 'student'}.compact
-
-    return nil if student_role_ids.empty?
-
-    info.students = entity_course.students
-                                 .select{ |student|
-                                   student_role_ids.include?(student.entity_role_id)
-                                 }
+    info.students = @roles.map(&:student).compact
   end
 
 end

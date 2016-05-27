@@ -6,20 +6,24 @@ module CourseMembership
 
     protected
 
-    def exec(course:, roles: [])
+    def exec(course:, roles: [], include_archived: false)
       roles = [roles].flatten
 
-      models = roles.any? ? periods_for_roles(course, roles) : course.periods
+      all_periods = include_archived ? course.periods.with_deleted : course.periods
+      models = roles.any? ? periods_for_roles(course, all_periods, roles) : all_periods
+
       outputs[:periods] = models.map do |model|
         strategy = CourseMembership::Strategies::Direct::Period.new(model)
         CourseMembership::Period.new(strategy: strategy)
       end
     end
 
-    def periods_for_roles(course, roles)
+    def periods_for_roles(course, all_periods, roles)
       is_teacher = run(:is_teacher, course: course, roles: roles).outputs.is_course_teacher
-      role_periods = is_teacher ? course.periods : roles.map{ |rr| rr.student.try(:period) }
-      course.periods & role_periods
+      return all_periods if is_teacher
+
+      role_periods = roles.map{ |role| role.student.try(:period) }
+      all_periods & role_periods
     end
   end
 end

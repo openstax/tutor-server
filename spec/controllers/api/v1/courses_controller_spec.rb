@@ -49,6 +49,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     let(:student)        { roles.select(&:student?).first }
     let!(:zeroth_period) { CreatePeriod[course: course, name: '0th'] }
 
+    before { zeroth_period.to_model.destroy! }
+
     context 'anonymous user' do
       it 'raises SecurityTransgression' do
         expect{ api_get :index, nil }.to raise_error(SecurityTransgression)
@@ -68,7 +70,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         AddUserAsCourseTeacher.call(course: course, user: user_1)
       end
 
-      it 'includes the periods and ecosystem_id for the course' do
+      it 'includes periods (even archived) and ecosystem_id for the course' do
         ecosystem = add_book_to_course(course: course)[:ecosystem]
 
         api_get :index, user_1_token
@@ -88,15 +90,16 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                       enrollment_url: a_string_matching(/enroll\/#{zeroth_period.enrollment_code_for_url}/),
                       default_open_time: '00:01',
                       default_due_time: '07:00',
-                      is_archived: false },
+                      is_archived: true },
                     { id: period.id.to_s,
                       name: period.name,
                       enrollment_code: period.enrollment_code,
                       enrollment_url: a_string_matching(/enroll\/#{period.enrollment_code_for_url}/),
                       default_open_time: '00:01',
                       default_due_time: '07:00',
-                      is_archived: false }]
-        }.to_json)
+                      is_archived: false }],
+          students: []
+        })
       end
     end
 
