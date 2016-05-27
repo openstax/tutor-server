@@ -24,7 +24,7 @@ RSpec.describe CourseMembership::Models::Period, type: :model do
     expect{ period.destroy! }.to change{CourseMembership::Models::Period.count}.by(-1)
     expect(period.errors).to be_empty
 
-    #expect(UserIsCourseStudent[user: student_user, course: period.course]).to eq false
+    expect(UserIsCourseStudent[user: student_user, course: period.course]).to eq false
 
     expect{ period.restore!(recursive: true) }.to(
       change{CourseMembership::Models::Period.count}.by(1)

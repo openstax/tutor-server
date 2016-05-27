@@ -81,7 +81,7 @@ class ChooseCourseRole
       when :teacher
         CourseMembership::IsCourseTeacher[course: course, roles: role]
       when :student
-        CourseMembership::IsCourseStudent[course: course, roles: role]
+        CourseMembership::IsCourseStudent[course: course, roles: role, include_dropped: true]
       end
     end
 

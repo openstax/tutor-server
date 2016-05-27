@@ -87,14 +87,16 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                       enrollment_code: zeroth_period.enrollment_code,
                       enrollment_url: a_string_matching(/enroll\/#{zeroth_period.enrollment_code_for_url}/),
                       default_open_time: '00:01',
-                      default_due_time: '07:00' },
+                      default_due_time: '07:00',
+                      is_archived: false },
                     { id: period.id.to_s,
                       name: period.name,
                       enrollment_code: period.enrollment_code,
                       enrollment_url: a_string_matching(/enroll\/#{period.enrollment_code_for_url}/),
                       default_open_time: '00:01',
-                      default_due_time: '07:00' }]
-        })
+                      default_due_time: '07:00',
+                      is_archived: false }]
+        }.to_json)
       end
     end
 

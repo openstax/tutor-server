@@ -15,6 +15,8 @@ module DashboardRoutineMethods
       :teacher
     elsif CourseMembership::IsCourseStudent[course: course, roles: role]
       :student
+    else
+      :none
     end
   end
 
@@ -37,7 +39,7 @@ module DashboardRoutineMethods
 
   def load_tasks(role, role_type)
     tasks = run(:get_tasks, roles: role).outputs.tasks.reject(&:hidden?)
-    tasks = tasks.select(&:past_open?) if :student == role_type
+    tasks = tasks.select(&:past_open?) if role_type != :teacher
     outputs[:tasks] = tasks
   end
 end

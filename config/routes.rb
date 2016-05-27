@@ -163,8 +163,14 @@ Rails.application.routes.draw do
         post :set_catalog_offering
         post :teachers, controller: :teachers
       end
+
       post :bulk_update, on: :collection
-      resources :periods, shallow: true
+
+      resources :periods, shallow: true do
+        member do
+          put 'restore'
+        end
+      end
       resources :students, only: [:index], shallow: true
       resources :teachers, only: [:destroy], shallow: true
     end
@@ -178,6 +184,7 @@ Rails.application.routes.draw do
     resources :exceptions, only: [:show]
 
     resources :jobs, only: [:index, :show]
+
     resources :catalog_offerings, except: [:show]
 
     resources :users, except: :destroy do
