@@ -71,7 +71,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
   protected
 
   def get_task_step
-    @task_step = ::Tasks::Models::TaskStep.find(params[:id])
+    @task_step = ::Tasks::Models::TaskStep.with_deleted.find(params[:id])
     @tasked = @task_step.tasked
   end
 
