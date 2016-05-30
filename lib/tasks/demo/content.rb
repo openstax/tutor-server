@@ -32,6 +32,12 @@ class DemoContent < DemoBase
     ca_user = user_for_username('content') || new_user(username: 'content', name: people.content)
     run(:set_content_analyst, user: ca_user, content_analyst: true)
     log("Content Analyst user: #{ca_user.name}")
+
+    (0..99).to_a.each do |ii|
+      username = "zz_#{ii.to_s.rjust(2,"0")}"
+      user_for_username(username) || new_user(username: username, name: username.gsub('_',' '))
+    end
+    log("Made 100 extra 'zz' users who are not in any course.")
   end
 
   def configure_course_teacher(course, teacher)

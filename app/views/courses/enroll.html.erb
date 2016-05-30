@@ -1,17 +1,27 @@
 <% course = @handler_result.outputs.courses.first %>
 <% period = @handler_result.outputs.period %>
 
-<h3>Welcome to OpenStax Tutor!</h3>
+<div id="enroll" class="well">
+  <h2>You are joining<br/><%= course.name %> (<%= period.name %>)<br/><%= "Instructor".pluralize(course.teacher_names.count) %>: <%= course.teacher_names.to_sentence %></h2>
+  <hr/>
 
-<p>You are about to enroll in <b><%= course.name %> (<%= period.name %>)</b> by <b><%= course.teacher_names.to_sentence %></b>.</p>
+  <%= lev_form_for :enroll, url: confirm_token_enroll_path, method: 'post', html: {class: 'form-inline'} do |f| %>
 
-<%= lev_form_for :enroll, url: confirm_token_enroll_path, method: 'post' do |f| %>
+    <%= f.hidden_field :enrollment_token, value: params[:enroll_token] %>
+    <%= f.label :enter_your_id, "Enter your school-issued student ID:" %><br/>
 
-  <%= f.hidden_field :enrollment_token, value: params[:enroll_token] %>
-  <div class='form-group'>
-    <%= f.label "Enter your school-issued ID:" %>
-    <%= f.text_field :student_id, class: 'form-control' %>
-  </div>
+    <div class='form-group'>
+      <%= f.text_field :student_id, class: 'form-control' %>
+      <%= f.submit 'Enroll', class: 'btn btn-primary', data: { disable_with: "Enroll" } %>
+      <br/>
+      <%= f.submit 'Add my student ID later >>', class: 'btn-link', data: { disable_with: "Processing enrollment. Please wait...".html_safe } %>
+    </div>
 
-  <%= f.submit 'Enroll', class: 'btn btn-primary', data: { disable_with: "Please wait..." } %>
-<% end %>
+  <% end %>
+
+</div>
+
+
+
+
+

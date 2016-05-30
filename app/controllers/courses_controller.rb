@@ -1,7 +1,7 @@
 class CoursesController < ApplicationController
 
   def teach
-    handle_with(CoursesTeach, complete: -> { send_to_dashboard })
+    handle_with(CoursesTeach, complete: -> { send_to_teacher_dashboard })
   end
 
   def enroll
@@ -10,7 +10,7 @@ class CoursesController < ApplicationController
                 failure: -> {
                   case @handler_result.errors.map(&:code).first
                   when :user_is_already_a_course_student
-                    send_to_dashboard(notice: "You are already enrolled in this course.")
+                    send_to_student_dashboard(notice: "You are already enrolled in this course.")
                   when :enrollment_code_not_found
                     enrollment_code_not_found
                   else
@@ -22,12 +22,12 @@ class CoursesController < ApplicationController
   def confirm_enrollment
     handle_with(CoursesConfirmEnrollment,
                 success: -> {
-                  send_to_dashboard
+                  send_to_student_dashboard(notice: "Enrollment successful! It may take a few minutes to build your assignments.")
                 },
                 failure: -> {
                   case @handler_result.errors.map(&:code).first
                   when :user_is_already_a_course_student
-                    send_to_dashboard(notice: "You are already enrolled in this course.")
+                    send_to_student_dashboard(notice: "You are already enrolled in this course.")
                   when :enrollment_code_not_found
                     enrollment_code_not_found
                   when :taken
@@ -41,7 +41,12 @@ class CoursesController < ApplicationController
 
   private
 
-  def send_to_dashboard(notice: nil)
+  def send_to_student_dashboard(notice: nil)
+    course = @handler_result.outputs.course
+    redirect_to student_course_dashboard_path(course), notice: notice
+  end
+
+  def send_to_teacher_dashboard(notice: nil)
     course = @handler_result.outputs.course
     redirect_to course_dashboard_path(course), notice: notice
   end
