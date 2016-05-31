@@ -17,7 +17,7 @@
 
   form {
     margin: 0 auto;
-    width: 275px;
+    width: 305px;
     input[type='text'] {
       width: 170px;
       margin-top: 10px;
@@ -31,7 +31,7 @@
       font-size: 18px;
       padding: 4px 16px;
       background-color: $os_green;
-      width: 80px;
+      width: 110px;
       margin-top: 10px;
     }
 
@@ -49,5 +49,14 @@
         cursor: default;
       }
     }
+  }
+
+  span.help {
+    display: block;
+    font-size: 12px;
+    line-height: 14px;
+    font-style: italic;
+    color: #aaaaaa;
+    margin-top: 15px;
   }
 }

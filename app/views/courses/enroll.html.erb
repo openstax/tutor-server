@@ -12,9 +12,10 @@
 
     <div class='form-group'>
       <%= f.text_field :student_id, class: 'form-control' %>
-      <%= f.submit 'Enroll', class: 'btn btn-primary', data: { disable_with: "Enroll" } %>
+      <%= f.submit 'Continue', class: 'btn btn-primary', data: { disable_with: "Enroll" } %>
       <br/>
       <%= f.submit 'Add my student ID later >>', class: 'btn-link', data: { disable_with: "Processing enrollment. Please wait...".html_safe } %>
+      <span class="help">You can add your student ID later by clicking on your name in the top right of your dashboard and selecting "Change student ID" from the menu.</span>
     </div>
 
   <% end %>

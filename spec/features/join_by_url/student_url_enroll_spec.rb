@@ -27,7 +27,7 @@ RSpec.describe 'Students enrolling via URL' do
           expect(page).to have_content('school-issued')
 
           fill_in 'enroll_student_id', with: '12345'
-          click_button 'Enroll'
+          click_button 'Continue'
 
           expect(UserIsCourseStudent[course: course, user: user]).to be_truthy
           expect(CourseMembership::Models::Enrollment.last.period).to eq period1.to_model
@@ -39,7 +39,7 @@ RSpec.describe 'Students enrolling via URL' do
           visit token_enroll_path(period1.enrollment_code_for_url)
           expect(page).to have_content('school-issued')
 
-          click_button 'Enroll'
+          click_button 'Continue'
 
           expect(UserIsCourseStudent[course: course, user: user]).to be_truthy
           expect(CourseMembership::Models::Enrollment.last.period).to eq period1.to_model
@@ -54,7 +54,7 @@ RSpec.describe 'Students enrolling via URL' do
           expect(page).to have_content('school-issued')
 
           fill_in 'enroll_student_id', with: 'abc'
-          click_button 'Enroll'
+          click_button 'Continue'
 
           expect(page).to have_content 'is already in use'
           expect(page).to have_content 'Enter your school-issued'
