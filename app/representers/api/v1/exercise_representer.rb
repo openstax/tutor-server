@@ -22,6 +22,10 @@ module Api::V1
              writeable: false,
              schema_info: { required: true }
 
+    property :preview,
+             readable: true,
+             writeable: false
+
     property :context,
              readable: true,
              writeable: false
@@ -45,6 +49,16 @@ module Api::V1
                writeable: false
 
     property :is_excluded,
+             readable: true,
+             writeable: true,
+             schema_info: { type: 'boolean' }
+
+    property :has_interactive,
+             readable: true,
+             writeable: true,
+             schema_info: { type: 'boolean' }
+
+    property :has_video,
              readable: true,
              writeable: true,
              schema_info: { type: 'boolean' }

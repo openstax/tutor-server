@@ -5,9 +5,9 @@ module Content
 
         wraps ::Content::Models::Exercise
 
-        exposes :page, :tags, :los, :aplos, :url, :title, :context, :content, :uid,
-                :number, :version, :content_hash, :pool_types, :is_excluded,
-                :content_as_independent_questions
+        exposes :page, :tags, :los, :aplos, :url, :title, :preview, :context, :content, :uid,
+                :number, :version, :content_hash, :pool_types, :is_excluded, :has_interactive,
+                :has_video, :content_as_independent_questions
 
         alias_method :entity_page, :page
         def page

@@ -29,22 +29,18 @@ class Content::Routines::ImportExercises
       exercise_page = page.respond_to?(:call) ? page.call(wrapper) : page
       next if exercise_page.nil?
 
-      feature_start = "context-cnxfeature:#{exercise_page.uuid}#"
-      feature_tag = wrapper.tags.find{ |tag| tag.start_with? feature_start }
+      feature_ids = wrapper.feature_ids(exercise_page.uuid)
 
-      context = nil
-      unless feature_tag.nil?
-        feature_id = feature_tag.sub(feature_start, '')
-        context = exercise_page.feature_node(feature_id)
-      end
+      context = feature_ids.map{ |feature_id| exercise_page.feature_node(feature_id) }.join("\n")
 
-      exercise = Content::Models::Exercise.new(url: wrapper.url,
+      exercise = Content::Models::Exercise.new(page: exercise_page,
+                                               url: wrapper.url,
                                                number: wrapper.number,
                                                version: wrapper.version,
                                                title: wrapper.title,
-                                               content: wrapper.content,
-                                               page: exercise_page,
-                                               context: context)
+                                               preview: wrapper.preview,
+                                               context: context,
+                                               content: wrapper.content)
       transfer_errors_from(exercise, {type: :verbatim}, true)
 
       relevant_tags = wrapper.tags.map{ |tag| tag_map[tag] }.compact

@@ -84,15 +84,18 @@ ActiveRecord::Schema.define(version: 20160531190234) do
   add_index "content_exercise_tags", ["content_tag_id"], name: "index_content_exercise_tags_on_content_tag_id", using: :btree
 
   create_table "content_exercises", force: :cascade do |t|
-    t.string   "url",             null: false
+    t.string   "url",                             null: false
     t.text     "content"
-    t.integer  "content_page_id", null: false
-    t.integer  "number",          null: false
-    t.integer  "version",         null: false
+    t.integer  "content_page_id",                 null: false
+    t.integer  "number",                          null: false
+    t.integer  "version",                         null: false
     t.string   "title"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
+    t.text     "preview"
     t.text     "context"
+    t.boolean  "has_interactive", default: false, null: false
+    t.boolean  "has_video",       default: false, null: false
   end
 
   add_index "content_exercises", ["content_page_id"], name: "index_content_exercises_on_content_page_id", using: :btree
