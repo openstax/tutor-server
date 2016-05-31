@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160517202901) do
+ActiveRecord::Schema.define(version: 20160520002440) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -264,7 +264,7 @@ ActiveRecord::Schema.define(version: 20160517202901) do
     t.datetime "created_at",                  null: false
     t.datetime "updated_at",                  null: false
     t.boolean  "is_concept_coach",            null: false
-    t.string   "teacher_join_token",          null: false
+    t.string   "teach_token",                 null: false
     t.integer  "catalog_offering_id"
     t.string   "appearance_code"
     t.string   "biglearn_excluded_pool_uuid"
@@ -277,7 +277,7 @@ ActiveRecord::Schema.define(version: 20160517202901) do
   add_index "course_profile_profiles", ["entity_course_id"], name: "index_course_profile_profiles_on_entity_course_id", unique: true, using: :btree
   add_index "course_profile_profiles", ["name"], name: "index_course_profile_profiles_on_name", using: :btree
   add_index "course_profile_profiles", ["school_district_school_id"], name: "index_course_profile_profiles_on_school_district_school_id", using: :btree
-  add_index "course_profile_profiles", ["teacher_join_token"], name: "index_course_profile_profiles_on_teacher_join_token", unique: true, using: :btree
+  add_index "course_profile_profiles", ["teach_token"], name: "index_course_profile_profiles_on_teach_token", unique: true, using: :btree
   add_index "course_profile_profiles", ["time_zone_id"], name: "index_course_profile_profiles_on_time_zone_id", unique: true, using: :btree
 
   create_table "delayed_jobs", force: :cascade do |t|

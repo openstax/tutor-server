@@ -251,8 +251,14 @@ Rails.application.routes.draw do
     end
   end
 
-  get '/courses/join/:join_token' => 'courses#join', as: :join_course
+  get '/teach/:teach_token(/:ignore)' => 'courses#teach', as: :teach_course
+  get '/courses/join/:teach_token' => 'courses#teach', as: :deprecated_teach_course # deprecated
+
+  get '/enroll/:enroll_token(/:ignore)' => 'courses#enroll', as: :token_enroll
+  post '/enroll/confirm' => 'courses#confirm_enrollment', as: :confirm_token_enroll
+
   get '/courses/:id', to: 'webview#index', as: :course_dashboard
+  get '/courses/:id/list', to: 'webview#index', as: :student_course_dashboard
 
   namespace :content_analyst do
     root to: 'console#index'

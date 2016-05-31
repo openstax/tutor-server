@@ -38,6 +38,10 @@ module CourseMembership
       verify_and_return @strategy.default_due_time, klass: String, error: StrategyError
     end
 
+    def enrollment_code_for_url
+      verify_and_return @strategy.enrollment_code_for_url, klass: String, error: StrategyError
+    end
+
     def to_model
       @strategy.to_model
     end

@@ -28,6 +28,15 @@ module Api::V1
                description: "The period's enrollment code"
              }
 
+    property :enrollment_url,
+             type: String,
+             writeable: false,
+             readable: true,
+             getter: ->(*) { UrlGenerator.new.token_enroll_url(enrollment_code_for_url) },
+             schema_info: {
+               description: "The period's enrollment URL"
+             }
+
     property :default_open_time,
              type: String,
              readable: true,

@@ -30,6 +30,18 @@ module Api::V1
              writeable: false,
              getter: -> (args){ args[:tutor_notices_url] }
 
+    property :flash,
+             readable: true,
+             writeable: false,
+             getter: ->(args) { args[:flash] },
+             schema: {
+               required: false,
+               description: "A hash of messages the backend would like the frontend to show. " +
+                            "Inner keys include `success`, `notice`, `alert`, `error` and point " +
+                            "to the message.  These keys can be interpreted as referring to " +
+                            "Bootstrap `success`, `info`, `warning`, and `danger` alert stylings."
+             }
+
     property :courses,
              extend: Api::V1::CoursesRepresenter,
              readable: true,

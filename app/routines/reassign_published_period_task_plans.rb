@@ -7,6 +7,9 @@ class ReassignPublishedPeriodTaskPlans
   protected
 
   def exec(period:, protect_unopened_tasks: true)
+    status.set_job_name(self.class.name)
+    status.set_job_args(period: period.to_global_id.to_s)
+
     published_task_plans = Tasks::Models::TaskPlan
       .joins(:tasking_plans)
       .preload(:tasking_plans)
@@ -14,7 +17,10 @@ class ReassignPublishedPeriodTaskPlans
                               target_type: 'CourseMembership::Models::Period'})
       .where{ published_at != nil }
 
-    published_task_plans.each{ |tp| run(:distribute, tp, Time.current, protect_unopened_tasks) }
+    published_task_plans.each_with_index do |tp, ii|
+      status.set_progress(ii, published_task_plans.size)
+      run(:distribute, tp, Time.current, protect_unopened_tasks)
+    end
   end
 
 end

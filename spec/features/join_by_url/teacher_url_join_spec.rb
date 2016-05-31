@@ -7,7 +7,7 @@ RSpec.describe 'Teachers' do
   describe 'joining their courses' do
     context 'unauthenticated' do
       it 'redirects to login' do
-        visit join_course_path(course.teacher_join_token)
+        visit teach_course_path(course.teach_token)
         expect(current_path).to eq(openstax_accounts.dev_accounts_path)
       end
     end
@@ -16,7 +16,7 @@ RSpec.describe 'Teachers' do
       before { stub_current_user(user) }
 
       context 'valid join token' do
-        before { visit join_course_path(course.teacher_join_token) }
+        before { visit teach_course_path(course.teach_token) }
 
         it 'adds the user as the teacher' do
           expect(UserIsCourseTeacher[course: course, user: user]).to be true
@@ -30,8 +30,8 @@ RSpec.describe 'Teachers' do
       context 'already added as a teacher' do
         it 'redirects them to the course page' do
           rescuing_exceptions do
-            visit join_course_path(course.teacher_join_token)
-            visit join_course_path(course.teacher_join_token)
+            visit teach_course_path(course.teach_token)
+            visit teach_course_path(course.teach_token)
           end
 
           expect(current_path).to eq(course_dashboard_path(course))
@@ -41,7 +41,7 @@ RSpec.describe 'Teachers' do
       context 'invalid join token' do
         it 'renders an error page' do
           rescuing_exceptions do
-            visit join_course_path('invalid-no-way-it-will-work')
+            visit teach_course_path('invalid-no-way-it-will-work')
           end
 
           expect(page).to have_css('.rescue-from',

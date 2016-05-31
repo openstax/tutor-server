@@ -72,7 +72,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         ecosystem = add_book_to_course(course: course)[:ecosystem]
 
         api_get :index, user_1_token
-        expect(response.body).to include({
+
+        expect(response.body_as_hash.first).to match({
           id: course.id.to_s,
           name: course.profile.name,
           time_zone: course.time_zone.name,
@@ -84,14 +85,16 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           periods: [{ id: zeroth_period.id.to_s,
                       name: zeroth_period.name,
                       enrollment_code: zeroth_period.enrollment_code,
+                      enrollment_url: a_string_matching(/enroll\/#{zeroth_period.enrollment_code_for_url}/),
                       default_open_time: '00:01',
                       default_due_time: '07:00' },
                     { id: period.id.to_s,
                       name: period.name,
                       enrollment_code: period.enrollment_code,
+                      enrollment_url: a_string_matching(/enroll\/#{period.enrollment_code_for_url}/),
                       default_open_time: '00:01',
                       default_due_time: '07:00' }]
-        }.to_json)
+        })
       end
     end
 
@@ -177,7 +180,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           expect(response).to have_http_status(:ok)
           roster = response.body_as_hash
           expect(roster).to include({
-            teacher_join_url: UrlGenerator.new.join_course_url(course.teacher_join_token),
+            teach_url: a_string_matching(/.*teach\/[a-f0-9]{32}\/DO_NOT.*/),
             students: a_collection_containing_exactly(
               {
                 id: student.id.to_s,

@@ -23,7 +23,7 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
   validates :course, presence: true
   validates :name, presence: true, uniqueness: { scope: :entity_course_id,
                                                  conditions: -> { where(deleted_at: nil) } }
-  validates :enrollment_code, presence: true, uniqueness: true
+  validates :enrollment_code, presence: true, uniqueness: true, format: {with: /[a-zA-Z0-9 ]+/}
 
   include DefaultTimeValidations
   validate :default_times_have_good_values
@@ -42,6 +42,10 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
 
   def default_due_time
     read_attribute(:default_due_time) || Settings::Db.store[:default_due_time]
+  end
+
+  def enrollment_code_for_url
+    enrollment_code.gsub(/ /,'-')
   end
 
   protected

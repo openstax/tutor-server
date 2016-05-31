@@ -20,10 +20,11 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
       api_post :create, teacher_token, parameters: { course_id: course.id },
                                        raw_post_data: { name: '7th Period' }.to_json
 
-      expect(response.body_as_hash).to eq({
+      expect(response.body_as_hash).to match({
         id: CourseMembership::Models::Period.last.id.to_s,
         name: '7th Period',
         enrollment_code: 'awesome programmer',
+        enrollment_url: a_string_matching(/enroll\/awesome-programmer/),
         default_open_time: '00:01',
         default_due_time: '07:00'
       })

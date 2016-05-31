@@ -7,7 +7,7 @@ class GetCourseRoster
     students = course.students.with_deleted.includes(:enrollments, role: { profile: :account })
 
     outputs.roster = {
-      teacher_join_url: UrlGenerator.new.join_course_url(course.teacher_join_token),
+      teach_url: UrlGenerator.teach_course_url(course.teach_token),
       students: students.map do |student|
         Hashie::Mash.new({
           id: student.id,
