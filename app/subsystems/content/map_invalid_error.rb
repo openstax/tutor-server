@@ -1,1 +1,3 @@
-class Content::MapInvalidError < StandardError; end
+module Content
+  class MapInvalidError < StandardError; end
+end

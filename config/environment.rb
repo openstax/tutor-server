@@ -21,16 +21,11 @@ require 'url_generator'
 require 'filename_sanitizer'
 require 'logout_redirect_chooser'
 require 'openstax_rescue_from_this'
-require 'active_job/base_with_retry_conditions'
 require 'xlsx_helper'
 require 'axlsx_modifications'
 require 'default_time_validations'
 
-%w(
-  biglearn
-  cnx
-  exercises
-).each do |oxlib|
+%w(biglearn cnx exercises).each do |oxlib|
   Dir[Rails.root.join("lib/openstax/#{oxlib}/#{oxlib}.rb")].each { |f| require f }
 end
 
