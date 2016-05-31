@@ -27,6 +27,10 @@ module Content
       verify_and_return @strategy.title, klass: String, allow_nil: true, error: StrategyError
     end
 
+    def context
+      verify_and_return @strategy.context, klass: String, allow_blank: true, error: StrategyError
+    end
+
     def content
       verify_and_return @strategy.content, klass: String, error: StrategyError
     end

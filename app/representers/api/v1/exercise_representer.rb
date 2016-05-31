@@ -22,6 +22,10 @@ module Api::V1
              writeable: false,
              schema_info: { required: true }
 
+    property :context,
+             readable: true,
+             writeable: false
+
     property :content,
              readable: true,
              writeable: false,

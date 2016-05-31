@@ -5,7 +5,7 @@ module Content
 
         wraps ::Content::Models::Exercise
 
-        exposes :page, :tags, :los, :aplos, :url, :title, :content, :uid,
+        exposes :page, :tags, :los, :aplos, :url, :title, :context, :content, :uid,
                 :number, :version, :content_hash, :pool_types, :is_excluded,
                 :content_as_independent_questions
 

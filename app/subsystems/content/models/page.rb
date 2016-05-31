@@ -28,7 +28,7 @@ class Content::Models::Page < Tutor::SubSystems::BaseModel
   validates :uuid, presence: true
   validates :version, presence: true
 
-  delegate :is_intro?, to: :parser
+  delegate :is_intro?, :feature_node, to: :parser
 
   def cnx_id
     "#{uuid}@#{version}"
