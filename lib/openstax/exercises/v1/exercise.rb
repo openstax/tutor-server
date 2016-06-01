@@ -3,6 +3,7 @@ class OpenStax::Exercises::V1::Exercise
   VIDEO_CSS = 'iframe[src*="youtube"], iframe[src*="khanacademy"]'
   INTERACTIVE_CSS = 'iframe:not([src*="youtube"]):not([src*="khanacademy"])'
 
+  # Context must be externally set before the preview initialized
   attr_accessor :context
   attr_reader :content
 

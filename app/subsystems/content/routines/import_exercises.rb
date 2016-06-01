@@ -28,10 +28,11 @@ class Content::Routines::ImportExercises
       exercise_page = page.respond_to?(:call) ? page.call(wrapper) : page
       next if exercise_page.nil?
 
-      feature_ids = wrapper.feature_ids(exercise_page.uuid)
-
-      wrapper.context = feature_ids.map{ |feature_id| exercise_page.feature_node(feature_id) }
-                                   .join("\n")
+      if wrapper.requires_context?
+        feature_ids = wrapper.feature_ids(exercise_page.uuid)
+        wrapper.context = feature_ids.map{ |feature_id| exercise_page.feature_node(feature_id) }
+                                     .join("\n")
+      end
 
       exercise = Content::Models::Exercise.new(page: exercise_page,
                                                url: wrapper.url,

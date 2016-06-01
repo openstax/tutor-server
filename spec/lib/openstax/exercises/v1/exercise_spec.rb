@@ -3,14 +3,14 @@ require 'rails_helper'
 RSpec.describe OpenStax::Exercises::V1::Exercise, type: :external do
   let(:title)    { 'Some Title' }
   let(:context)  { 'Some Context' }
-  let(:hash)     { OpenStax::Exercises::V1.fake_client.new_exercise_hash
-                                          .merge(title: title, tags: ['i-am-lo01', 'generic-tag']) }
+  let(:hash)     { OpenStax::Exercises::V1.fake_client.new_exercise_hash.merge(title: title) }
   let(:exercise) do
     described_class.new(content: content).tap{ |exercise| exercise.context = context }
   end
 
   context 'without interactives or videos' do
-    let(:content) { hash.to_json }
+    let(:tags)    { ['i-am-lo01', 'generic-tag', 'requires-context:y'] }
+    let(:content) { hash.merge(tags: tags).to_json }
 
     it 'returns attributes from the exercise JSON' do
       expect(exercise.preview).to be_nil
@@ -22,11 +22,12 @@ RSpec.describe OpenStax::Exercises::V1::Exercise, type: :external do
       expect(exercise.correct_question_answer_ids[0][0]).to eq exercise.question_answers[0][0]['id']
       expect(exercise.feedback_map[exercise.question_answers[0][0]['id']]).to eq 'Right!'
       expect(exercise.feedback_map[exercise.question_answers[0][1]['id']]).to eq 'Wrong!'
-      expect(exercise.tags).to eq ['i-am-lo01', 'generic-tag']
+      expect(exercise.tags).to eq tags
       expect(exercise.los).to eq ['i-am-lo01']
       expect(exercise.is_multipart?).to eq false
       expect(exercise.has_interactive?).to eq false
       expect(exercise.has_video?).to eq false
+      expect(exercise.requires_context?).to eq true
     end
   end
 
@@ -43,6 +44,7 @@ RSpec.describe OpenStax::Exercises::V1::Exercise, type: :external do
       expect(exercise.content).to eq content
       expect(exercise.has_interactive?).to eq true
       expect(exercise.has_video?).to eq false
+      expect(exercise.requires_context?).to eq false
     end
   end
 
@@ -58,6 +60,7 @@ RSpec.describe OpenStax::Exercises::V1::Exercise, type: :external do
       expect(exercise.content).to eq content
       expect(exercise.has_interactive?).to eq false
       expect(exercise.has_video?).to eq true
+      expect(exercise.requires_context?).to eq false
     end
   end
 end
