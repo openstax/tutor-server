@@ -2,15 +2,19 @@ require 'rails_helper'
 
 RSpec.describe OpenStax::Exercises::V1::Exercise, type: :external do
   let(:title)    { 'Some Title' }
+  let(:context)  { 'Some Context' }
   let(:hash)     { OpenStax::Exercises::V1.fake_client.new_exercise_hash
                                           .merge(title: title, tags: ['i-am-lo01', 'generic-tag']) }
-  let(:exercise) { described_class.new(content: content) }
+  let(:exercise) do
+    described_class.new(content: content).tap{ |exercise| exercise.context = context }
+  end
 
   context 'without interactives or videos' do
     let(:content) { hash.to_json }
 
     it 'returns attributes from the exercise JSON' do
       expect(exercise.preview).to be_nil
+      expect(exercise.context).to eq context
       expect(exercise.content).to eq content
       expect(exercise.url).to eq "#{OpenStax::Exercises::V1.server_url}/exercises/#{hash[:uid]}"
       expect(exercise.title).to eq title
@@ -32,7 +36,10 @@ RSpec.describe OpenStax::Exercises::V1::Exercise, type: :external do
     ).to_json }
 
     it 'can generate a preview for the interactive' do
-      expect(exercise.preview).to include('<div class="preview interactive">Interactive</div>')
+      expect(exercise.preview).to include context
+      expect(exercise.preview).to include '<div class="preview interactive">Interactive</div>'
+      expect(exercise.context).to eq context
+      expect(exercise.context).to eq context
       expect(exercise.content).to eq content
       expect(exercise.has_interactive?).to eq true
       expect(exercise.has_video?).to eq false
@@ -45,7 +52,9 @@ RSpec.describe OpenStax::Exercises::V1::Exercise, type: :external do
     ).to_json }
 
     it 'can generate a preview for the interactive' do
-      expect(exercise.preview).to include('<div class="preview video">Video</div>')
+      expect(exercise.preview).to include context
+      expect(exercise.preview).to include '<div class="preview video">Video</div>'
+      expect(exercise.context).to eq context
       expect(exercise.content).to eq content
       expect(exercise.has_interactive?).to eq false
       expect(exercise.has_video?).to eq true

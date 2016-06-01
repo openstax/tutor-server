@@ -3,6 +3,7 @@ class OpenStax::Exercises::V1::Exercise
   VIDEO_CSS = 'iframe[src*="youtube"], iframe[src*="khanacademy"]'
   INTERACTIVE_CSS = 'iframe:not([src*="youtube"]):not([src*="khanacademy"])'
 
+  attr_accessor :context
   attr_reader :content
 
   def initialize(content: '{}', server_url: OpenStax::Exercises::V1.server_url)
@@ -167,6 +168,13 @@ class OpenStax::Exercises::V1::Exercise
     @has_video
   end
 
+  def requires_context?
+    return @requires_context unless @requires_context.nil?
+
+    context_regex = /\Arequires-context:[y|t]/
+    @requires_context = tags.any?{ |tag| context_regex.match(tag) }
+  end
+
   protected
 
   def stringify_content_hash_ids!
@@ -189,7 +197,7 @@ class OpenStax::Exercises::V1::Exercise
   def preview_root
     @preview_root ||= Nokogiri::HTML::fragment(
       (
-        [content_hash['stimulus_html']] + questions.flat_map do |question_hash|
+        [context, content_hash['stimulus_html']] + questions.flat_map do |question_hash|
           [question_hash['stimulus_html'], question_hash['stem_html']]
         end
       ).join("\n")

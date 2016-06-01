@@ -30,7 +30,8 @@ class Content::Routines::ImportExercises
 
       feature_ids = wrapper.feature_ids(exercise_page.uuid)
 
-      context = feature_ids.map{ |feature_id| exercise_page.feature_node(feature_id) }.join("\n")
+      wrapper.context = feature_ids.map{ |feature_id| exercise_page.feature_node(feature_id) }
+                                   .join("\n")
 
       exercise = Content::Models::Exercise.new(page: exercise_page,
                                                url: wrapper.url,
@@ -38,7 +39,7 @@ class Content::Routines::ImportExercises
                                                version: wrapper.version,
                                                title: wrapper.title,
                                                preview: wrapper.preview,
-                                               context: context,
+                                               context: wrapper.context,
                                                content: wrapper.content,
                                                has_interactive: wrapper.has_interactive?,
                                                has_video: wrapper.has_video?)
