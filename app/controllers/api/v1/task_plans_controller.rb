@@ -29,7 +29,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
    #{json_schema(Api::V1::TaskPlanRepresenter, include: :readable)}
   EOS
   def show
-    plan = Tasks::Models::TaskPlan.find(params[:id])
+    plan = Tasks::Models::TaskPlan.preloaded.find(params[:id])
     standard_read(plan, Api::V1::TaskPlanRepresenter)
   end
 
@@ -66,11 +66,10 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     #{json_schema(Api::V1::TaskPlanRepresenter, include: :writeable)}
   EOS
   def create
-    course = Entity::Course.find(params[:course_id])
-    task_plan = BuildTaskPlan[course: course]
-
     # Modified standard_create code
     Tasks::Models::TaskPlan.transaction do
+      course = Entity::Course.find(params[:course_id])
+      task_plan = BuildTaskPlan[course: course]
       consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter)
       task_plan.assistant = Tasks::GetAssistant[course: course, task_plan: task_plan]
 
@@ -102,21 +101,20 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     #{json_schema(Api::V1::TaskPlanRepresenter, include: :writeable)}
   EOS
   def update
-    # Modified standard_update code
-    task_plan = Tasks::Models::TaskPlan.find(params[:id])
-    OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, task_plan)
-    course = task_plan.owner
+    Tasks::Models::TaskPlan.transaction do
+      # Modified standard_update code
+      task_plan = Tasks::Models::TaskPlan.preloaded.lock.find(params[:id])
+      OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, task_plan)
+      course = task_plan.owner
 
-    # Lock the TaskPlan to prevent concurrent update/publish
-    task_plan.with_lock do
-      consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter)
+      update_task_plan!(task_plan)
       OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, task_plan)
       uuid = distribute_or_update_tasks(task_plan)
 
       if task_plan.errors.empty?
         # http://stackoverflow.com/a/27413178
         respond_with task_plan, represent_with: Api::V1::TaskPlanRepresenter,
-                                responder: ResponderWithPutContent,
+                                responder: ResponderWithPutPatchDeleteContent,
                                 status: uuid.nil? ? :ok : :accepted
       else
         render_api_errors(task_plan.errors)
@@ -169,7 +167,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     #{json_schema(Api::V1::TaskPlanWithStatsRepresenter, include: :readable)}
   EOS
   def stats
-    plan = Tasks::Models::TaskPlan.find(params[:id])
+    plan = Tasks::Models::TaskPlan.preloaded.find(params[:id])
     standard_read(plan, Api::V1::TaskPlanWithStatsRepresenter)
   end
 
@@ -296,7 +294,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     #{json_schema(Api::V1::TaskPlanWithDetailedStatsRepresenter, include: :readable)}
   EOS
   def review
-    plan = Tasks::Models::TaskPlan.find(params[:id])
+    plan = Tasks::Models::TaskPlan.preloaded.find(params[:id])
     standard_read(plan, Api::V1::TaskPlanWithDetailedStatsRepresenter)
   end
 
@@ -304,16 +302,51 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   # destroy
   ###############################################################
 
-  api :DELETE, '/plans/:id', 'Deletes the specified TaskPlan'
+  api :DELETE, '/plans/:id', 'Withdraws the specified TaskPlan'
   description <<-EOS
-    #{json_schema(Api::V1::TaskPlanRepresenter, include: :writeable)}
+    Withdraws a task_plan from the teacher's course.
+
+    Possible error code: task_plan_is_already_deleted
+
+    #{json_schema(Api::V1::TaskPlanRepresenter, include: :readable)}
   EOS
   def destroy
-    task_plan = Tasks::Models::TaskPlan.find(params[:id])
-    standard_destroy(task_plan)
+    task_plan = Tasks::Models::TaskPlan.preloaded.with_deleted.find_by(id: params[:id])
+    standard_destroy(task_plan, Api::V1::TaskPlanRepresenter)
+  end
+
+  api :PUT, '/plans/:id/restore', 'Restores the specified TaskPlan'
+  description <<-EOS
+    Restores a task_plan to the teacher's course.
+
+    Possible error code: task_plan_is_not_deleted
+
+    #{json_schema(Api::V1::TaskPlanRepresenter, include: :readable)}
+  EOS
+  def restore
+    task_plan = Tasks::Models::TaskPlan.preloaded.with_deleted.find_by(id: params[:id])
+    standard_restore(task_plan, Api::V1::TaskPlanRepresenter)
   end
 
   protected
+
+  def update_task_plan!(task_plan)
+    return consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter) \
+      unless task_plan.tasks_past_open?
+
+    opens_at_ntzs = Hash.new{ |hash, key| hash[key] = {} }
+    open_tasking_plans = task_plan.tasking_plans.select(&:past_open?)
+    open_tasking_plans.each do |tp|
+      opens_at_ntzs[tp.target_type][tp.target_id] = tp.opens_at_ntz
+    end
+
+    consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter).tap do |result|
+      task_plan.tasking_plans.each do |tp|
+        tp.update_attribute(:opens_at_ntz, opens_at_ntzs[tp.target_type][tp.target_id]) \
+          if opens_at_ntzs[tp.target_type].has_key?(tp.target_id)
+      end
+    end
+  end
 
   # Distributes or updates distributed tasks for the given task_plan
   # Returns the job uuid, if any, or nil if the request was completed inline

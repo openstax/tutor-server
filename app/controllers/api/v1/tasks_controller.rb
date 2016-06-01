@@ -1,5 +1,7 @@
 class Api::V1::TasksController < Api::V1::ApiController
 
+  before_action :get_task
+
   resource_description do
     api_versions "v1"
     short_description 'Represents a task assigned to a user or role'
@@ -19,11 +21,11 @@ class Api::V1::TasksController < Api::V1::ApiController
   ###############################################################
 
   api :GET, '/tasks/:id', 'Gets the specified Task'
-  # description <<-EOS
-  #   #{json_schema(Api::V1::TaskRepresenter, include: :readable)}
-  # EOS
+  description <<-EOS
+    #{json_schema(Api::V1::TaskRepresenter, include: :readable)}
+  EOS
   def show
-    standard_read(::Tasks::Models::Task.find(params[:id]), Api::V1::TaskRepresenter, true)
+    standard_read(@task, Api::V1::TaskRepresenter, true)
   end
 
   api :PUT, '/tasks/:id/accept_late_work', 'Accept late work in the task score'
@@ -32,7 +34,7 @@ class Api::V1::TasksController < Api::V1::ApiController
     the `score` that it computes.  Does not change the underlying counts in any way.
   EOS
   def accept_late_work
-    change_is_late_work_accepted(true)
+    change_is_late_work_accepted(@task, true)
   end
 
 
@@ -42,13 +44,27 @@ class Api::V1::TasksController < Api::V1::ApiController
     the `score` that it computes.  Does not change the underlying counts in any way.
   EOS
   def reject_late_work
-    change_is_late_work_accepted(false)
+    change_is_late_work_accepted(@task, false)
+  end
+
+  api :DELETE, '/tasks/:id', 'Hide the task from the student\'s dashboard'
+  description <<-EOS
+    Hides the Task from the student's dashboard
+  EOS
+  def destroy
+    OSU::AccessPolicy.require_action_allowed!(:hide, current_api_user, @task)
+    @task.hide.save!
+    respond_with @task, represent_with: Api::V1::TaskRepresenter,
+                        responder: ResponderWithPutPatchDeleteContent
   end
 
   protected
 
-  def change_is_late_work_accepted(is_accepted)
-    task = Tasks::Models::Task.find(params[:id])
+  def get_task
+    @task = Tasks::Models::Task.with_deleted.find(params[:id])
+  end
+
+  def change_is_late_work_accepted(task, is_accepted)
     OSU::AccessPolicy.require_action_allowed!(:change_is_late_work_accepted, current_api_user, task)
     task.is_late_work_accepted = is_accepted
     task.save! # would be Exceptional if this failed

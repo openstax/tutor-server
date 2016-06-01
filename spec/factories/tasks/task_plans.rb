@@ -17,17 +17,14 @@ FactoryGirl.define do
     is_feedback_immediate { type != 'homework' }
 
     after(:build) do |task_plan, evaluator|
-      code_class_name_hash = {
-        code_class_name: evaluator.assistant_code_class_name
-      }
-
+      code_class_name_hash = { code_class_name: evaluator.assistant_code_class_name }
       task_plan.assistant ||= Tasks::Models::Assistant.find_by(code_class_name_hash) || \
                               build(:tasks_assistant, code_class_name_hash)
 
       task_plan.content_ecosystem_id ||= task_plan.owner.ecosystems.first
       task_plan.ecosystem ||= build(:content_ecosystem)
 
-      evaluator.num_tasking_plans.times do
+      task_plan.tasking_plans = evaluator.num_tasking_plans.times.map do
         build(:tasks_tasking_plan,
               task_plan: task_plan,
               opens_at: evaluator.opens_at,

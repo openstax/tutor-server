@@ -5,7 +5,7 @@ class AddMultipartFieldsToTasksTaskedExercise < ActiveRecord::Migration
 
     reversible do |dir|
       dir.up do
-        Tasks::Models::TaskedExercise.update_all(
+        Tasks::Models::TaskedExercise.unscoped.update_all(
           "question_id = substring(content from '\"questions\":\\[\\{\"id\":(\\d+),')"
         )
       end

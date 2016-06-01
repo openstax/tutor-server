@@ -71,7 +71,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
                                       with: [:roles, :periods, :ecosystem, :students]].first
       respond_with course_info, represent_with: Api::V1::CourseRepresenter,
                                 location: nil,
-                                responder: ResponderWithPutContent
+                                responder: ResponderWithPutPatchDeleteContent
     end
   end
 

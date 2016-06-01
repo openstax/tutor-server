@@ -7,7 +7,8 @@ Assistant Classes must:
 
   2. Implement the `build_tasks` method which:
        - Builds Task objects for the TaskPlan given during initialization
-       - Returns an array containing the Entity::Tasks to be assigned to the taskees (in order)
+       - Returns an array containing the Tasks::Models::Task to be assigned to the taskees
+         (in order)
 
   3. Implement the `schema` singleton method which:
        - Receives no arguments

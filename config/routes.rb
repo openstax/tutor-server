@@ -47,7 +47,7 @@ Rails.application.routes.draw do
       get 'tasks', on: :collection
     end
 
-    resources :tasks, only: [:show] do
+    resources :tasks, only: [:show, :destroy] do
       member do
         put 'accept_late_work'
         put 'reject_late_work'
@@ -106,6 +106,7 @@ Rails.application.routes.draw do
         member do
           get 'stats'
           get 'review'
+          put 'restore'
         end
       end
 

@@ -3,10 +3,8 @@ class AddUserAsPeriodStudent
 
   uses_routine UserIsCourseTeacher
   uses_routine UserIsCourseStudent
-  uses_routine Role::CreateUserRole,
-    translations: { outputs: { type: :verbatim } }
-  uses_routine CourseMembership::AddStudent,
-    translations: { outputs: { type: :verbatim } }
+  uses_routine Role::CreateUserRole, translations: { outputs: { type: :verbatim } }
+  uses_routine CourseMembership::AddStudent, translations: { outputs: { type: :verbatim } }
 
   protected
 

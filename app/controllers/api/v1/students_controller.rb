@@ -55,7 +55,7 @@ class Api::V1::StudentsController < Api::V1::ApiController
 
     if @student.save
       # http://stackoverflow.com/a/27413178
-      respond_with @student, responder: ResponderWithPutContent,
+      respond_with @student, responder: ResponderWithPutPatchDeleteContent,
                              represent_with: Api::V1::StudentSelfUpdateRepresenter
     else
       render_api_errors(@student.errors)
@@ -82,7 +82,7 @@ class Api::V1::StudentsController < Api::V1::ApiController
     else
       respond_with @result.outputs.student,
                    represent_with: Api::V1::StudentRepresenter,
-                   responder: ResponderWithPutContent
+                   responder: ResponderWithPutPatchDeleteContent
     end
   end
 
@@ -91,6 +91,8 @@ class Api::V1::StudentsController < Api::V1::ApiController
     Drops a student from their course.
 
     Possible error code: already_inactive
+
+    #{json_schema(Api::V1::StudentRepresenter, include: :readable)}
   EOS
   def destroy
     OSU::AccessPolicy.require_action_allowed!(:destroy, current_api_user, @student)
@@ -99,7 +101,9 @@ class Api::V1::StudentsController < Api::V1::ApiController
     if result.errors.any?
       render_api_errors(result.errors)
     else
-      head :no_content
+      respond_with result.outputs.student,
+                   represent_with: Api::V1::StudentRepresenter,
+                   responder: ResponderWithPutPatchDeleteContent
     end
   end
 
@@ -118,7 +122,7 @@ class Api::V1::StudentsController < Api::V1::ApiController
     else
       respond_with result.outputs.student,
                    represent_with: Api::V1::StudentRepresenter,
-                   responder: ResponderWithPutContent
+                   responder: ResponderWithPutPatchDeleteContent
     end
   end
 

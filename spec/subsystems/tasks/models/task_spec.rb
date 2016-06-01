@@ -62,10 +62,10 @@ RSpec.describe Tasks::Models::Task, type: :model do
 
   it "reports is_shared? correctly" do
     task1 = FactoryGirl.create(:tasks_task)
-    FactoryGirl.create(:tasks_tasking, task: task1.entity_task)
+    FactoryGirl.create(:tasks_tasking, task: task1)
     expect(task1.is_shared?).to be_falsy
 
-    FactoryGirl.create(:tasks_tasking, task: task1.entity_task)
+    FactoryGirl.create(:tasks_tasking, task: task1)
     expect(task1.is_shared?).to be_truthy
   end
 
@@ -451,6 +451,26 @@ RSpec.describe Tasks::Models::Task, type: :model do
       expect(task.completed_on_time_steps_count).to eq 1
       expect(task.completed_on_time_exercise_steps_count).to eq 1
       expect(task.correct_on_time_exercise_steps_count).to eq 1
+    end
+
+    it 'is hidden only if it has been hidden after being deleted for the last time' do
+      task = FactoryGirl.create :tasks_task
+      expect(task.reload).not_to be_hidden
+
+      task.task_plan.destroy!
+      expect(task.reload).not_to be_hidden
+
+      task.hide.save!
+      expect(task).to be_hidden
+
+      task.task_plan.reload.restore!(recursive: true)
+      expect(task.reload).not_to be_hidden
+
+      task.task_plan.destroy!
+      expect(task.reload).not_to be_hidden
+
+      task.hide.save!
+      expect(task).to be_hidden
     end
 
   end

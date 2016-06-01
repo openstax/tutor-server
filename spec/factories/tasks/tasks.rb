@@ -9,7 +9,6 @@ FactoryGirl.define do
     end
 
     association :task_plan, factory: :tasks_task_plan
-    association :entity_task, factory: :entity_task
 
     task_type :reading
     title       { task_plan.title }
@@ -27,12 +26,11 @@ FactoryGirl.define do
       end
 
       evaluator.num_random_taskings.times do
-        task.entity_task.taskings << FactoryGirl.build(:tasks_tasking, task: task.entity_task)
+        task.taskings << FactoryGirl.build(:tasks_tasking, task: task)
       end
 
       [evaluator.tasked_to].flatten.each do |role|
-        task.entity_task.taskings << FactoryGirl.build(:tasks_tasking, task: task.entity_task,
-                                                                       role: role)
+        task.taskings << FactoryGirl.build(:tasks_tasking, task: task, role: role)
       end
     end
   end

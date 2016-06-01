@@ -14,7 +14,7 @@ module Manager::StatsActions
 
   def concept_coach
     cc_tasks = Tasks::Models::ConceptCoachTask.preload([
-      {page: {chapter: {book: {chapters: :pages}}}}, {task: [:task, {taskings: {role: :profile}}]}
+      {page: {chapter: {book: {chapters: :pages}}}}, {task: {taskings: {role: :profile}}}
     ]).to_a
 
     @cc_stats = {
@@ -54,11 +54,11 @@ module Manager::StatsActions
   protected
 
   def get_task_stats(cc_tasks)
-    tasks = cc_tasks.map{ |cc| cc.task.task }
+    tasks = cc_tasks.map(&:task)
     total = tasks.length
-    students = tasks.flat_map{ |tt| tt.taskings.map{ |tg| tg.role.profile } }.uniq.length
-    in_progress = tasks.select{ |tt| tt.in_progress? }.length
-    completed = tasks.select{ |tt| tt.completed? }.length
+    students = tasks.flat_map{ |task| task.taskings.map{ |tg| tg.role.profile } }.uniq.length
+    in_progress = tasks.select(&:in_progress?).length
+    completed = tasks.select(&:completed?).length
     not_started = total - (in_progress + completed)
     exercises = tasks.map(&:exercise_steps_count).reduce(:+)
     completed_exercises = tasks.map(&:completed_exercise_steps_count).reduce(:+)

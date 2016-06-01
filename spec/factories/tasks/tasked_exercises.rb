@@ -29,8 +29,7 @@ FactoryGirl.define do
 
     trait :with_tasking do
       after(:build) do |tasked, evaluator|
-        create(:tasks_tasking, role: evaluator.tasked_to,
-                               task: tasked.task_step.task.entity_task)
+        create(:tasks_tasking, role: evaluator.tasked_to, task: tasked.task_step.task)
       end
     end
 

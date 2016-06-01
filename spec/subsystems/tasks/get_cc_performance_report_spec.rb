@@ -20,8 +20,8 @@ RSpec.describe Tasks::GetCcPerformanceReport, type: :routine, speed: :slow do
     # Transform the course into a CC course
     @course.profile.update_attribute(:is_concept_coach, true)
     @course.students.each do |student|
-      Tasks::Models::Task.joins(entity_task: :taskings)
-                         .where(entity_task: {taskings: {entity_role_id: student.entity_role_id}},
+      Tasks::Models::Task.joins(:taskings)
+                         .where(taskings: {entity_role_id: student.entity_role_id},
                                 task_type: 'homework').to_a.each_with_index do |task, index|
         task.task_type = 'concept_coach'
         task.task_plan = nil
@@ -30,7 +30,7 @@ RSpec.describe Tasks::GetCcPerformanceReport, type: :routine, speed: :slow do
         Tasks::Models::ConceptCoachTask.create!(
           content_page_id: @ecosystem.books.first.chapters.third.pages[index].id,
           role: task.taskings.first.role,
-          task: task.entity_task
+          task: task
         )
       end
     end

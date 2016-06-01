@@ -22,7 +22,7 @@ module Tutor::SubSystems
 
       def set_subsystem_options(association_name, scope, options, is_belongs_to=false)
         # While rarely used, assocations can be created with a
-        # scope to limit the record, `belongs_to :user, ->{ where(id: 2) }, class_name: "MyUser"`
+        # scope to limit the record, `belongs_to :user, -> { where(id: 2) }, class_name: "MyUser"`
         # To cope with having either two or three arguments, Rails inspects the scope arguemnt.
         # If it's a Hash, then It's considered the options and the options argument is ignored.
         options = scope if scope.is_a?(Hash)

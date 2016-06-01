@@ -16,7 +16,7 @@ module Tasks
                            task_type: :event,
                            title: task_plan.title,
                            description: task_plan.description]
-        end.map(&:entity_task)
+        end
       end
 
       private

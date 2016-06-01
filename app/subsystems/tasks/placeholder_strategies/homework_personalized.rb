@@ -27,9 +27,11 @@ class Tasks::PlaceholderStrategies::HomeworkPersonalized
 
     task_step_chosen_exercise_pairs = personalized_placeholder_task_steps.zip(chosen_exercises)
     task_step_chosen_exercise_pairs.each do |step, exercise|
-      step.tasked.destroy!
-      # If no exercise available, remove the placeholder completely
-      next step.destroy! if exercise.nil?
+      # If no exercise available, hard-delete the TaskStep and the TaskedPlaceholder
+      next step.really_destroy! if exercise.nil?
+
+      # Otherwise, hard-delete just the TaskedPlaceholder
+      step.tasked.really_destroy!
 
       TaskExercise[task_step: step, exercise: exercise]
       # inject_debug_content!(step.tasked, "This exercise is part of the #{step.group_type}")

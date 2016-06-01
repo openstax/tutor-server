@@ -73,7 +73,8 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           past_due?: false,
           actual_and_placeholder_exercise_count: 5,
           completed_exercise_count: 4,
-          correct_exercise_count: 3
+          correct_exercise_count: 3,
+          deleted?: true
         }),
         Hashie::Mash.new({
           id: 37,
@@ -84,6 +85,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           completed?: false,
           actual_and_placeholder_exercise_count: 7,
           completed_exercise_count: 6,
+          deleted?: false
         }),
         Hashie::Mash.new({
           id: 89,
@@ -96,7 +98,8 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           past_due?: true,
           actual_and_placeholder_exercise_count: 8,
           completed_exercise_count: 8,
-          correct_exercise_count: 3
+          correct_exercise_count: 3,
+          deleted?: false
         }),
         Hashie::Mash.new({
           id: 99,
@@ -106,7 +109,8 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           last_worked_at: last_worked_at,
           task_type: :external,
           completed?: true,
-          past_due?: true
+          past_due?: true,
+          deleted?: false
         }),
       ]
       mash.course = {
@@ -170,7 +174,8 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           "type" => "homework",
           "complete" => false,
           "exercise_count" => 5,
-          "complete_exercise_count" => 4
+          "complete_exercise_count" => 4,
+          "is_deleted" => true
         ),
         a_hash_including(
           "id" => '37',
@@ -180,7 +185,8 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           "type" => "reading",
           "complete" => false,
           "exercise_count" => 7,
-          "complete_exercise_count" => 6
+          "complete_exercise_count" => 6,
+          "is_deleted" => false
         ),
         a_hash_including(
           "id" => '89',
@@ -192,7 +198,8 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           "complete" => true,
           "exercise_count" => 8,
           "complete_exercise_count" => 8,
-          "correct_exercise_count" => 3
+          "correct_exercise_count" => 3,
+          "is_deleted" => false
         ),
         a_hash_including(
           "id" => '99',
@@ -201,7 +208,8 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           "due_at" => api_due_at,
           "last_worked_at" => api_last_worked_at,
           "type" => "external",
-          "complete" => true
+          "complete" => true,
+          "is_deleted" => false
         ),
       ),
       "role" => {

@@ -52,7 +52,7 @@ RSpec.describe Tasks::Assistants::ExtraAssignmentAssistant, type: :assistant, vc
   }
 
   it 'assigns tasked readings and exercises to students' do
-    tasks = DistributeTasks.call(task_plan).outputs.entity_tasks.map(&:task)
+    tasks = DistributeTasks.call(task_plan).outputs.tasks
     expect(tasks.length).to eq(num_taskees)
     tasks.each do |task|
       # We added 2 snap lab notes:

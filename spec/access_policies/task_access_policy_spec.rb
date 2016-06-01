@@ -1,12 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe TaskAccessPolicy, type: :access_policy do
-  let!(:requestor) { FactoryGirl.create(:user) }
-  let!(:task)      { FactoryGirl.create(:tasks_task) }
+  let!(:requestor)         { FactoryGirl.create(:user) }
+  let!(:task)              { FactoryGirl.create(:tasks_task) }
 
-  subject(:action_allowed) do
-    TaskAccessPolicy.action_allowed?(action, requestor, task)
-  end
+  subject(:action_allowed) { TaskAccessPolicy.action_allowed?(action, requestor, task) }
 
   context 'when the action is :read' do
     let(:action) { :read }
@@ -20,13 +18,13 @@ RSpec.describe TaskAccessPolicy, type: :access_policy do
         context "and the task's open date has passed" do
           before { allow(task).to receive(:past_open?) { true } }
 
-          it { should be true }
+          it { should eq true }
         end
 
         context "and the task's open date has not passed" do
           before { allow(task).to receive(:past_open?) { false } }
 
-          it { should be false }
+          it { should eq false }
         end
       end
 
@@ -34,7 +32,7 @@ RSpec.describe TaskAccessPolicy, type: :access_policy do
         before { allow(DoesTaskingExist).to receive(:[]) { false } }
 
         context 'and the task has a course' do
-          it { should be false }
+          it { should eq false }
         end
 
         context 'and the task has no course' do
@@ -45,22 +43,98 @@ RSpec.describe TaskAccessPolicy, type: :access_policy do
 
           after { task.update_attribute :task_plan, @task_plan }
 
-          it { should be false }
+          it { should eq false }
         end
       end
 
       context 'and the requestor is a course teacher' do
-        before { allow(DoesTaskingExist).to receive(:[]) { false }
-                 allow(UserIsCourseTeacher).to receive(:[]) { true } }
+        before { allow(UserIsCourseTeacher).to receive(:[]) { true } }
 
-        it { should be true }
+        it { should eq true }
       end
     end
 
     context 'and the requestor is not human' do
       before { allow(requestor).to receive(:is_human?) { false } }
 
-      it { should be false }
+      it { should eq false }
+    end
+  end
+
+  context 'when the action is :change_is_late_work_accepted' do
+    let(:action) { :change_is_late_work_accepted }
+
+    context 'and the requestor is human' do
+      # already true for User
+
+      context 'and the task is deleted' do
+        before do
+          task.destroy!
+          allow(DoesTaskingExist).to receive(:[]) { true }
+          allow(UserIsCourseTeacher).to receive(:[]) { true }
+        end
+
+        it { should eq false }
+      end
+
+      context 'and the task is not deleted' do
+        context 'and the requestor is a course teacher' do
+          before { allow(UserIsCourseTeacher).to receive(:[]) { true } }
+
+          it { should eq true }
+        end
+
+        context 'and the requestor is not a course teacher' do
+          before { allow(DoesTaskingExist).to receive(:[]) { true } }
+
+          it { should eq false }
+        end
+      end
+    end
+
+    context 'and the requestor is not human' do
+      before { allow(requestor).to receive(:is_human?) { false } }
+
+      it { should eq false }
+    end
+  end
+
+  context 'when the action is :hide' do
+    let(:action) { :hide }
+
+    context 'and the requestor is human' do
+      # already true for User
+
+      context 'and the task is deleted' do
+        before { task.destroy! }
+
+        context 'and the requestor has taskings in the task' do
+          before { allow(DoesTaskingExist).to receive(:[]) { true } }
+
+          it { should eq true }
+        end
+
+        context 'and the requestor has no taskings in the task' do
+          before { allow(UserIsCourseTeacher).to receive(:[]) { true } }
+
+          it { should eq false }
+        end
+      end
+
+      context 'and the task is not deleted' do
+        before do
+          allow(DoesTaskingExist).to receive(:[]) { true }
+          allow(UserIsCourseTeacher).to receive(:[]) { true }
+        end
+
+        it { should eq false }
+      end
+    end
+
+    context 'and the requestor is not human' do
+      before { allow(requestor).to receive(:is_human?) { false } }
+
+      it { should eq false }
     end
   end
 
@@ -68,7 +142,7 @@ RSpec.describe TaskAccessPolicy, type: :access_policy do
     context "when the action is :#{disallowed_action}" do
       let(:action) { disallowed_action }
 
-      it { should be false }
+      it { should eq false }
     end
   end
 end

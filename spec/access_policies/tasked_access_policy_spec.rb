@@ -21,37 +21,46 @@ RSpec.describe TaskedAccessPolicy, type: :access_policy do
         context 'and the tasked is part of a task for the requestor' do
           before { allow(DoesTaskingExist).to receive(:[]) { true } }
 
+          context "and the task is deleted" do
+            before do
+              allow(tasked.task_step.task).to receive(:deleted?) { true }
+              allow(tasked.task_step.task).to receive(:past_open?) { true }
+            end
+
+            it { should eq action == :read }
+          end
+
           context "and the task's open date has passed" do
             before { allow(tasked.task_step.task).to receive(:past_open?) { true } }
 
-            it { should be true }
+            it { should eq true }
           end
 
           context "and the task's open date has not passed" do
             before { allow(tasked.task_step.task).to receive(:past_open?) { false } }
 
-            it { should be false }
+            it { should eq false }
           end
         end
 
         context 'and the tasked is not part of a task for the requestor' do
           before { allow(DoesTaskingExist).to receive(:[]) { false } }
 
-          it { should be false }
+          it { should eq false }
         end
 
         context 'and the requestor is a course teacher' do
           before { allow(DoesTaskingExist).to receive(:[]) { false }
                    allow(UserIsCourseTeacher).to receive(:[]) { true } }
 
-          it { should be action == :read }
+          it { should eq action == :read }
         end
       end
 
       context 'and the requestor is not human' do
         before { allow(requestor).to receive(:is_human?) { false } }
 
-        it { should be false }
+        it { should eq false }
       end
     end
   end
@@ -59,7 +68,7 @@ RSpec.describe TaskedAccessPolicy, type: :access_policy do
   context 'when the action is unknown' do
     let(:action) { :unknown_fooey }
 
-    it { should be false }
+    it { should eq false }
   end
 
   context 'when the tasking is in the tasks subsystem' do

@@ -12,10 +12,12 @@ class Api::V1::TeachersController < Api::V1::ApiController
   api :DELETE, '/teachers/:teacher_id', 'Removes a teacher from the course'
   description <<-EOS
     Removes a teacher from the course.
+
+    #{json_schema(Api::V1::TeacherRepresenter, include: :readable)}
   EOS
   def destroy
     OSU::AccessPolicy.require_action_allowed!(:destroy, current_api_user, @teacher)
-    standard_destroy(@teacher)
+    standard_destroy(@teacher, Api::V1::TeacherRepresenter)
   end
 
   protected

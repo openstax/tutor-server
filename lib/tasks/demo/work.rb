@@ -77,8 +77,8 @@ class DemoWork < DemoBase
   def work_cc_assignments(student)
     user = User::User.new(strategy: student.role.profile.wrap)
     log("Working concept coach assignments for: #{user.name}")
-    student.role.taskings.preload(task: { task: { task_steps: :tasked } }).each do |tasking|
-      task = tasking.task.task
+    student.role.taskings.preload(task: { task_steps: :tasked }).each do |tasking|
+      task = tasking.task
       next unless task.concept_coach?
 
       task.task_steps.each do |task_step|

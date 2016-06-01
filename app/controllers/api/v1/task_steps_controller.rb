@@ -43,7 +43,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
       render_api_errors(result.errors)
     else
       respond_with @task_step.reload,
-                   responder: ResponderWithPutContent,
+                   responder: ResponderWithPutPatchDeleteContent,
                    represent_with: Api::V1::TaskStepRepresenter
     end
   end
@@ -63,7 +63,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
       render_api_errors(result.errors)
     else
       respond_with result.outputs.related_exercise_step,
-                   responder: ResponderWithPutContent,
+                   responder: ResponderWithPutPatchDeleteContent,
                    represent_with: Api::V1::TaskStepRepresenter
     end
   end
@@ -71,7 +71,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
   protected
 
   def get_task_step
-    @task_step = ::Tasks::Models::TaskStep.find(params[:id])
+    @task_step = ::Tasks::Models::TaskStep.with_deleted.find(params[:id])
     @tasked = @task_step.tasked
   end
 

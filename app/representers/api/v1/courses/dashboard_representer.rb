@@ -52,6 +52,15 @@ module Api::V1::Courses
                readable: true,
                writeable: false,
                schema_info: { type: 'boolean' }
+
+      property :deleted?,
+               as: :is_deleted,
+               readable: true,
+               writeable: false,
+               schema_info: {
+                 type: 'boolean',
+                 description: "Whether or not this task has been withdrawn by the teacher"
+               }
     end
 
     class ReadingTask < TaskBase

@@ -2,8 +2,8 @@ class AddUserAsCourseTeacher
   lev_routine express_output: :role
 
   uses_routine UserIsCourseTeacher, as: :is_teacher
-  uses_routine Role::CreateUserRole, translations: {outputs: {type: :verbatim}}
-  uses_routine CourseMembership::AddTeacher
+  uses_routine Role::CreateUserRole, translations: { outputs: { type: :verbatim } }
+  uses_routine CourseMembership::AddTeacher, translations: { outputs: { type: :verbatim } }
 
   protected
 

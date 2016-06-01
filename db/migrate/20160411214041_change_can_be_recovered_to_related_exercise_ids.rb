@@ -7,7 +7,7 @@ class ChangeCanBeRecoveredToRelatedExerciseIds < ActiveRecord::Migration
       dir.up do
         related_exercise_ids_map = {}
 
-        Tasks::Models::TaskedExercise.preload(
+        Tasks::Models::TaskedExercise.unscoped.preload(
           [:task_step, {exercise: {page: :reading_context_pool}}]
         ).where(can_be_recovered: true).find_each do |te|
           next if te.task_step.nil?
@@ -25,7 +25,8 @@ class ChangeCanBeRecoveredToRelatedExerciseIds < ActiveRecord::Migration
             # For the original Try Another,
             # we allow only exercises that share at least one LO or APLO with the original exercise
             related_exercise_ids = pool_exercises.select do |ex|
-              ex.los.any?{ |tt| los.include?(tt) } || ex.aplos.any?{ |tt| aplos.include?(tt) }
+              ex.los.any?{ |task| los.include?(task) } ||
+              ex.aplos.any?{ |task| aplos.include?(task) }
             end.map(&:id)
 
             related_exercise_ids_map[exercise.id] = related_exercise_ids
@@ -36,7 +37,7 @@ class ChangeCanBeRecoveredToRelatedExerciseIds < ActiveRecord::Migration
       end
 
       dir.down do
-        Tasks::Models::TaskedExercise.preload(:task_step).select do |te|
+        Tasks::Models::TaskedExercise.unscoped.preload(:task_step).select do |te|
           te.task_step.related_exercise_ids.any?
         end.each do |te|
           te.update_attribute :can_be_recovered, true

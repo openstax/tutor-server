@@ -4,7 +4,8 @@ class CourseMembership::AddTeacher
   protected
 
   def exec(course:, role:)
-    ss_map = CourseMembership::Models::Teacher.create(entity_course_id: course.id, entity_role_id: role.id)
-    transfer_errors_from(ss_map, {type: :verbatim}, true)
+    outputs.teacher = CourseMembership::Models::Teacher.create(entity_course_id: course.id,
+                                                               entity_role_id: role.id)
+    transfer_errors_from(outputs.teacher, {type: :verbatim}, true)
   end
 end

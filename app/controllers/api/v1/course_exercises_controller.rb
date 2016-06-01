@@ -45,7 +45,7 @@ class Api::V1::CourseExercisesController < Api::V1::ApiController
     ]
 
     respond_with exercise_representations, represent_with: Api::V1::ExercisesRepresenter,
-                                           responder: ResponderWithPutContent
+                                           responder: ResponderWithPutPatchDeleteContent
   end
 
   protected

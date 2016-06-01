@@ -17,15 +17,16 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
   let!(:published_task_plan) { FactoryGirl.create(:tasked_task_plan,
                                                   number_of_students: 0,
                                                   owner: course,
-                                                  assistant: get_assistant(course: course,
-                                                                           task_plan_type: 'reading'),
+                                                  assistant: get_assistant(
+                                                    course: course, task_plan_type: 'reading'),
                                                   published_at: Time.current) }
   let!(:ecosystem) { published_task_plan.ecosystem }
   let!(:page)      { ecosystem.pages.first }
   let!(:task_plan) { FactoryGirl.build(:tasks_task_plan,
                                        owner: course,
-                                       assistant: get_assistant(course: course,
-                                                                task_plan_type: 'reading'),
+                                       assistant: get_assistant(
+                                         course: course, task_plan_type: 'reading'
+                                       ),
                                        content_ecosystem_id: ecosystem.id,
                                        settings: { page_ids: [page.id.to_s] },
                                        type: 'reading',
@@ -39,7 +40,7 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
     AddUserAsPeriodStudent.call(period: period, user: student)
   end
 
-  context 'show' do
+  context '#show' do
     before(:each) do
       task_plan.save!
     end
@@ -89,7 +90,7 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
     end
   end
 
-  context 'create' do
+  context '#create' do
     it 'allows a teacher to create a task_plan for their course' do
       controller.sign_in teacher
       expect { api_post :create,
@@ -189,7 +190,7 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
     end
   end
 
-  context 'update' do
+  context '#update' do
     before(:each) do
       task_plan.save!
     end
@@ -290,15 +291,18 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
         expect(response_hash['publish_job_url']).to include("/api/jobs/")
       end
 
-      it 'does not republish task_plans that are already open' do
+      it 'does not republish the task_plan or allow the open date to be changed
+          after the assignment is open' do
         controller.sign_in teacher
 
         time_zone = task_plan.tasking_plans.first.time_zone.to_tz
 
+        opens_at = time_zone.now
+
         publish_last_requested_at = Time.current
 
         task_plan.update_attribute :publish_last_requested_at, publish_last_requested_at
-        task_plan.tasking_plans.first.update_attribute :opens_at, time_zone.now
+        task_plan.tasking_plans.first.update_attribute :opens_at, opens_at
 
         DistributeTasks[task_plan]
 
@@ -329,8 +333,12 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
         expect(task_plan.publish_job_uuid).to eq publish_job_uuid
         expect(task_plan.title).to eq 'Canceled'
         expect(task_plan.description).to eq 'Canceled Assignment'
+        task_plan.tasking_plans.each do |tp|
+          expect(tp.opens_at).to be_within(1).of(opens_at)
+          expect(tp.due_at).to be_within(1).of(new_due_at)
+        end
         task_plan.tasks.each do |task|
-          expect(task.opens_at).to be_within(1).of(new_opens_at)
+          expect(task.opens_at).to be_within(1).of(opens_at)
           expect(task.due_at).to be_within(1).of(new_due_at)
         end
 
@@ -352,17 +360,24 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
     end
   end
 
-  context 'destroy' do
-    before(:each) do
-      task_plan.save!
-    end
+  context '#destroy' do
+    before(:each) { task_plan.save! }
 
     it 'allows a teacher to destroy a task_plan for their course' do
       controller.sign_in teacher
       expect{ api_delete :destroy, nil, parameters: { course_id: course.id, id: task_plan.id } }
         .to change{ Tasks::Models::TaskPlan.count }.by(-1)
       expect(response).to have_http_status(:success)
-      expect(response.body).to be_blank
+      expect(response.body).to eq Api::V1::TaskPlanRepresenter.new(task_plan.reload).to_json
+    end
+
+    it 'does not allow a teacher to destroy a task_plan that is already destroyed' do
+      task_plan.destroy!
+      controller.sign_in teacher
+      expect{ api_delete :destroy, nil, parameters: { course_id: course.id, id: task_plan.id } }
+        .not_to change{ Tasks::Models::TaskPlan.count }
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body_as_hash[:errors].first[:code]).to eq('task_plan_is_already_deleted')
     end
 
     it 'does not allow an unauthorized user to destroy a task_plan' do
@@ -375,19 +390,40 @@ describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v
       expect { api_delete :destroy, nil, parameters: { course_id: course.id, id: task_plan.id } }
         .to raise_error(SecurityTransgression)
     end
+  end
 
-    it 'does not leave orphaned entity_tasks behind' do
-      # Change the opens_at dates for the tasks so we can delete them
-      published_task_plan.tasks.each do |task|
-        task.opens_at = Time.current.tomorrow
-        task.save!
-      end
+  context '#restore' do
+    before(:each) do
+      task_plan.save!
+      task_plan.destroy!
+    end
 
+    it 'allows a teacher to restore a destroyed task_plan for their course' do
       controller.sign_in teacher
-      expect{ api_delete :destroy, nil, parameters: { course_id: course.id,
-                                                      id: published_task_plan.id } }
-        .to change{ ::Entity::Task.count }.by(-1)
-      ::Entity::Task.all.each{ |entity_task| expect(entity_task.task).not_to be_nil }
+      expect{ api_put :restore, nil, parameters: { course_id: course.id, id: task_plan.id } }
+        .to change{ Tasks::Models::TaskPlan.count }.by(1)
+      expect(response).to have_http_status(:success)
+      expect(response.body).to eq Api::V1::TaskPlanRepresenter.new(task_plan.reload).to_json
+    end
+
+    it 'does not allow a teacher to restore a task_plan that is not destroyed' do
+      task_plan.restore!(recursive: true)
+      controller.sign_in teacher
+      expect{ api_put :restore, nil, parameters: { course_id: course.id, id: task_plan.id } }
+        .not_to change{ Tasks::Models::TaskPlan.count }
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body_as_hash[:errors].first[:code]).to eq('task_plan_is_not_deleted')
+    end
+
+    it 'does not allow an unauthorized user to restore a task_plan' do
+      controller.sign_in user
+      expect { api_put :restore, nil, parameters: { course_id: course.id, id: task_plan.id } }
+        .to raise_error(SecurityTransgression)
+    end
+
+    it 'does not allow an anonymous user to restore a task_plan' do
+      expect { api_put :restore, nil, parameters: { course_id: course.id, id: task_plan.id } }
+        .to raise_error(SecurityTransgression)
     end
   end
 

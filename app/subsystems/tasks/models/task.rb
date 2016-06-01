@@ -2,6 +2,9 @@ require_relative '../placeholder_strategies/homework_personalized'
 require_relative '../placeholder_strategies/i_reading_personalized'
 
 class Tasks::Models::Task < Tutor::SubSystems::BaseModel
+
+  acts_as_paranoid
+
   enum task_type: [:homework, :reading, :chapter_practice,
                    :page_practice, :mixed_practice, :external,
                    :event, :extra, :concept_coach]
@@ -10,23 +13,15 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   belongs_to_time_zone :opens_at, :due_at, :feedback_at, suffix: :ntz
 
-  belongs_to :task_plan, inverse_of: :tasks
+  belongs_to :task_plan, -> { with_deleted }, inverse_of: :tasks
 
-  # dependent: :destroy will cause and infinite loop and stack overflow
-  belongs_to :entity_task, class_name: 'Entity::Task',
-                           foreign_key: 'entity_task_id',
-                           dependent: :delete,
-                           inverse_of: :task
+  sortable_has_many :task_steps, -> { with_deleted.order(:number) },
+                                 on: :number, dependent: :destroy, inverse_of: :task, autosave: true
+  has_many :tasked_exercises, -> { with_deleted }, through: :task_steps, source: :tasked,
+                                                  source_type: 'Tasks::Models::TaskedExercise'
 
-  sortable_has_many :task_steps, on: :number,
-                                 dependent: :destroy,
-                                 inverse_of: :task,
-                                 autosave: true
-  has_many :tasked_exercises, through: :task_steps, source: :tasked,
-                                                    source_type: 'Tasks::Models::TaskedExercise'
-  has_many :taskings, through: :entity_task
-
-  has_one :concept_coach_task, through: :entity_task
+  has_many :taskings, -> { with_deleted }, dependent: :destroy, autosave: true, inverse_of: :task
+  has_one :concept_coach_task, -> { with_deleted }, dependent: :destroy, inverse_of: :task
 
   validates :title, presence: true
 
@@ -74,12 +69,21 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     feedback_at.nil? || current_time >= feedback_at
   end
 
+  def hidden?
+    deleted? && hidden_at.present? && hidden_at >= deleted_at
+  end
+
   def completed?
     steps_count == completed_steps_count
   end
 
   def in_progress?
     completed_steps_count > 0 && !completed?
+  end
+
+  def hide(current_time: Time.current)
+    self.hidden_at = current_time
+    self
   end
 
   def set_last_worked_at(time:)
@@ -202,7 +206,7 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
   end
 
   def exercise_steps
-    task_steps.preload(:tasked).select{|task_step| task_step.exercise?}
+    task_steps.preload(:tasked).select(&:exercise?)
   end
 
   def teacher_chosen_correct_exercise_count
@@ -264,9 +268,10 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
 
   def update_correct_on_time_exercise_steps_count(task_steps:)
     self.correct_on_time_exercise_steps_count =
-      task_steps.count{|step| step.exercise? && step.completed? &&
-                              step.tasked.is_correct? &&
-                              step_on_time?(step) }
+      task_steps.count do |step|
+        step.exercise? && step.completed? &&
+        step.tasked.is_correct? && step_on_time?(step)
+      end
   end
 
   def update_placeholder_steps_count(task_steps:)

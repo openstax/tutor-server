@@ -22,7 +22,7 @@ RSpec.describe ShortCodesController, type: :controller do
   let(:student) { FactoryGirl.create(:user) }
   let(:student_role) { AddUserAsPeriodStudent[period: period, user: student] }
 
-  let(:tasking) { FactoryGirl.create(:tasks_tasking, role: student_role, task: task.entity_task) }
+  let(:tasking) { FactoryGirl.create(:tasks_tasking, role: student_role, task: task) }
   let(:tasking_gid) { tasking.to_global_id.to_s }
 
   let(:task_plan_code) { FactoryGirl.create(:short_code_short_code,

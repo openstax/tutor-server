@@ -28,7 +28,7 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
   end
 
   def build_tasks
-    taskees.map{ |taskee| build_reading_task(pages: @pages, taskee: taskee).entity_task }
+    taskees.map{ |taskee| build_reading_task(pages: @pages, taskee: taskee) }
   end
 
   protected

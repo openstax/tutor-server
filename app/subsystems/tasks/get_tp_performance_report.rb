@@ -30,12 +30,12 @@ module Tasks
                          # for assignments the student hasn't done
                          student_tasks = Array.new(tasking_plans.size)
                          student_taskings.each do |tg|
-                           index = task_plan_indices[tg.task.task.task_plan]
+                           index = task_plan_indices[tg.task.task_plan]
                            # skip if task not assigned to current period
                            # could be individual, like practice widget,
                            # or assigned to a different period
                            next if index.nil?
-                           student_tasks[index] = tg.task.task
+                           student_tasks[index] = tg.task
                          end
 
                          # gather the task into the results for use in calculating header stats
@@ -69,26 +69,22 @@ module Tasks
     end
 
     def sort_tasking_plans(taskings, course, period)
-      taskings.flat_map { |tg|
-        tg.task.task.task_plan.tasking_plans.select do |tp|
-          tp.target == period  || tp.target == course
-        end
-      }.uniq.sort { |a, b|
-        [b.due_at_ntz, b.created_at] <=> [a.due_at_ntz, a.created_at]
-      }
+      taskings.flat_map do |tg|
+        tg.task.task_plan.tasking_plans.select{ |tp| tp.target == period  || tp.target == course }
+      end.uniq.sort{ |a, b| [b.due_at_ntz, b.created_at] <=> [a.due_at_ntz, a.created_at] }
     end
 
     def get_taskings(course)
-      task_types = Models::Task.task_types.values_at(:reading, :homework, :external)
+      task_types = Tasks::Models::Task.task_types.values_at(:reading, :homework, :external)
       # Return reading, homework and external tasks for a student
       # .reorder(nil) removes the ordering from the period default scope so .uniq won't blow up
       # .uniq is necessary for the preloading to work...
-      course.taskings.joins(task: { task: { task_plan: :tasking_plans } })
-                     .where(task: {task: {task_type: task_types}})
-                     .preload(task: {task: {task_plan: {tasking_plans: :target} }},
+      course.taskings.joins(task: { task_plan: :tasking_plans })
+                     .where(task: {task_type: task_types})
+                     .preload(task: {task_plan: {tasking_plans: :target}},
                               role: [{student: {enrollments: :period}}, {profile: :account}])
                      .reorder(nil).uniq.to_a
-                     .select{ |tasking| tasking.task.task.past_open? }
+                     .select{ |tasking| tasking.task.past_open? }
     end
 
     def get_data_headings(tasking_plans, task_plan_results)

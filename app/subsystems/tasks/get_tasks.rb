@@ -8,8 +8,9 @@ class Tasks::GetTasks
   def exec(roles:)
     role_ids = verify_and_get_id_array(roles, Entity::Role)
 
-    outputs[:tasks] = Entity::Task.joins{taskings}
-                                  .where{taskings.entity_role_id.in role_ids}
+    outputs[:tasks] = Tasks::Models::Task.with_deleted
+                                         .joins{taskings}
+                                         .where{taskings.entity_role_id.in role_ids}
   end
 
 end

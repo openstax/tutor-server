@@ -61,9 +61,9 @@ class CreateStudentHistory
     run(:distribute_tasks, create_ireading_task_plan(ecosystem, course, periods))
 
     task_plan = create_homework_task_plan(ecosystem, course, periods)
-    entity_tasks = run(:distribute_tasks, task_plan).outputs.entity_tasks
-    entity_tasks.each do |entity_task|
-      task = entity_task.task.reload
+    tasks = run(:distribute_tasks, task_plan).outputs.tasks
+    tasks.each do |task|
+      task = task.reload
       answer_correctly(task.task_steps(true), 2)
     end
   end
@@ -72,7 +72,7 @@ class CreateStudentHistory
     ResetPracticeWidget[role: role,
                         chapter_ids: ids[:chapters],
                         page_ids: ids[:pages],
-                        exercise_source: :local].task.task_steps
+                        exercise_source: :local].task_steps
   end
 
   def answer_correctly(steps, num)

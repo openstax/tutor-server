@@ -9,7 +9,7 @@ RSpec.describe Tasks::AddRelatedExerciseAfterStep, type: :routine do
 
   let!(:task)            { tasked_reading.task_step.task }
 
-  let!(:tasking)         { FactoryGirl.create :tasks_tasking, task: task.entity_task }
+  let!(:tasking)         { FactoryGirl.create :tasks_tasking, task: task }
 
   let!(:tasked_exercise) {
     te = FactoryGirl.build(:tasks_tasked_exercise)

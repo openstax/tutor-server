@@ -2,16 +2,12 @@ class TaskAccessPolicy
   def self.action_allowed?(action, requestor, task)
     case action
     when :read
-      requestor.is_human? && (
-        (
-          DoesTaskingExist[task_component: task, user: requestor] &&
-          task.past_open?
-        ) || (
-          user_is_teacher?(requestor, task)
-        )
-      )
+      requestor.is_human? &&
+      ((user_is_tasked?(requestor, task) && task.past_open?) || user_is_teacher?(requestor, task))
     when :change_is_late_work_accepted
-      requestor.is_human? && user_is_teacher?(requestor, task)
+      requestor.is_human? && !task.deleted? && user_is_teacher?(requestor, task)
+    when :hide
+      requestor.is_human? && task.deleted? && user_is_tasked?(requestor, task)
     else
       false
     end
@@ -22,6 +18,10 @@ class TaskAccessPolicy
              task.concept_coach_task.try(:task).try(:taskings).try(:first)
                                     .try(:period).try(:course) # cc course
     course.is_a?(Entity::Course) ? course : nil
+  end
+
+  def self.user_is_tasked?(user, task)
+    DoesTaskingExist[user: user, task_component: task]
   end
 
   def self.user_is_teacher?(user, task)

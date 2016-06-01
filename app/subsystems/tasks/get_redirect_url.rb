@@ -22,8 +22,7 @@ class Tasks::GetRedirectUrl
   end
 
   def task_page(course:, role:, task_plan:)
-    task = Tasks::GetTasks[roles: [role]].joins(:task).where(
-      task: { tasks_task_plan_id: task_plan.id }).first
+    task = Tasks::GetTasks[roles: [role]].where(tasks_task_plan_id: task_plan.id).first
     "/courses/#{course.id}/tasks/#{task.id}"
   end
 

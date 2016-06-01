@@ -37,19 +37,15 @@ RSpec.describe Tasks::Assistants::ExternalAssignmentAssistant, type: :assistant 
   }
 
   let!(:tasking_plans_1) {
-    FactoryGirl.build(:tasks_tasking_plan,
-                      task_plan: task_plan_1,
-                      target: course)
+    FactoryGirl.build(:tasks_tasking_plan, task_plan: task_plan_1, target: course)
   }
 
   let!(:tasking_plans_2) {
-    FactoryGirl.create(:tasks_tasking_plan,
-                       task_plan: task_plan_2,
-                       target: course)
+    FactoryGirl.create(:tasks_tasking_plan, task_plan: task_plan_2, target: course)
   }
 
   it 'assigns tasked external urls to students' do
-    tasks = DistributeTasks.call(task_plan_1).outputs.entity_tasks.map(&:task)
+    tasks = DistributeTasks.call(task_plan_1).outputs.tasks
     expect(tasks.length).to eq num_taskees
 
     tasks.each do |task|
@@ -60,7 +56,7 @@ RSpec.describe Tasks::Assistants::ExternalAssignmentAssistant, type: :assistant 
   end
 
   it 'assigns tasked external urls with templatized urls to students' do
-    tasks = DistributeTasks.call(task_plan_2).outputs.entity_tasks.map(&:task)
+    tasks = DistributeTasks.call(task_plan_2).outputs.tasks
     expect(tasks.length).to eq num_taskees
 
     tasks.each do |task|

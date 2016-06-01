@@ -50,11 +50,11 @@ module Tasks
 
     def get_cc_taskings(course)
       # Return cc tasks for a student, ignoring not_started tasks
-      course.taskings.preload(task: [:task, {concept_coach_task: :page}],
+      course.taskings.preload(task: {concept_coach_task: :page},
                               role: [{student: {enrollments: :period}},
                                      {profile: :account}])
-                     .joins(task: [:task, :concept_coach_task])
-                     .where{task.task.completed_steps_count > 0}
+                     .joins(task: :concept_coach_task)
+                     .where{task.completed_steps_count > 0}
                      .to_a
     end
 
@@ -85,7 +85,7 @@ module Tasks
     def get_cc_data_headings(period_cc_tasks_map_array, sorted_period_pages)
       sorted_period_pages.map do |page|
         page_tasks = period_cc_tasks_map_array.flat_map{ |hash| hash[page] }.compact
-                                              .map{ |cc_task| cc_task.task.task }
+                                              .map(&:task)
 
         {
           cnx_page_id: page.uuid,
@@ -103,8 +103,8 @@ module Tasks
         cc_tasks = page_cc_tasks_map_for_role[page]
         next if cc_tasks.nil?
 
-        # Here we assume only 1 CC task per student per page
-        cc_tasks.first.task.task
+        # Only 1 CC task per student per page
+        cc_tasks.first.task
       end
 
       get_student_data(tasks)

@@ -30,7 +30,7 @@ class Tasks::Assistants::ExtraAssignmentAssistant < Tasks::Assistants::FragmentA
 
   def build_tasks
     taskees.map do |taskee|
-      build_extra_task(pages: @pages, page_id_to_snap_lab_id: @page_id_to_snap_lab_id).entity_task
+      build_extra_task(pages: @pages, page_id_to_snap_lab_id: @page_id_to_snap_lab_id)
     end
   end
 
