@@ -196,7 +196,7 @@ class OpenStax::Exercises::V1::Exercise
   end
 
   def preview_root
-    @preview_root ||= Nokogiri::HTML::fragment(
+    @preview_root ||= Nokogiri::HTML.fragment(
       (
         [context, content_hash['stimulus_html']] + questions.flat_map do |question_hash|
           [question_hash['stimulus_html'], question_hash['stem_html']]
