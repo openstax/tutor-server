@@ -13,9 +13,9 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::Video, type: :external, vcr: VCR_OPT
   let(:fragments)         { fragment_splitter.split_into_fragments(cnx_page.converted_root) }
   let(:video_fragments)   { fragments.select{ |f| f.instance_of? described_class } }
 
-  let!(:expected_title)   { 'Newton’s First Law of Motion' }
-  let!(:expected_url)     { 'https://www.khanacademy.org/embed_video?v=5-ZFOhHQS68' }
-  let!(:expected_content) {
+  let(:expected_title)   { 'Newton’s First Law of Motion' }
+  let(:expected_url)     { 'https://www.khanacademy.org/embed_video?v=5-ZFOhHQS68' }
+  let(:expected_content) {
     <<-EOF.strip_heredoc.rstrip
       <div data-type="note" data-has-label="true" id="fs-idp2684240" class="note watch-physics ost-assessed-feature ost-video ost-tag-lo-k12phys-ch04-s02-lo01" data-label="Watch Physics">
       <div data-type="title" class="title">Newton’s First Law of Motion</div>

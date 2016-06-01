@@ -77,7 +77,7 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
       # Chapter intro pages get their titles from the chapter instead
       page_title = page.is_intro? ? page.chapter.title : page.title
       related_content = page.related_content(title: page_title)
-      task_fragments(task: task, fragments: page.fragments, fragment_title: page_title,
+      task_fragments(task: task, fragments: page.fragments, page_title: page_title,
                      page: page, related_content: related_content)
     end
 

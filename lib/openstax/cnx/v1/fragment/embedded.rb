@@ -1,6 +1,12 @@
 module OpenStax::Cnx::V1
   class Fragment::Embedded < Fragment
 
+    # Used to get the title
+    TITLE_CSS = '[data-type="title"]'
+
+    # Used to get the title if there are no title nodes
+    LABEL_ATTRIBUTE = 'data-label'
+
     class_attribute :default_width, :default_height
 
     # CSS to find the embedded element container (will be replaced with iframe)
@@ -23,6 +29,14 @@ module OpenStax::Cnx::V1
       uri = Addressable::URI.parse(original_url)
       uri.scheme = 'https'
       @url = uri.to_s
+    end
+
+    def title
+      return @title unless @title.nil?
+
+      title_nodes = node.css(TITLE_CSS)
+      @title = title_nodes.empty? ? node.attr(LABEL_ATTRIBUTE) :
+                                    title_nodes.map{ |node| node.content.strip }.uniq.join('; ')
     end
 
     def width
