@@ -331,15 +331,19 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   protected
 
   def update_task_plan!(task_plan)
+    # If no tasks are open, just call Roar's consume! like usual
     return consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter) \
       unless task_plan.tasks_past_open?
 
+    # Store current open dates for each TaskingPlan that is already open in the TaskPlan
     opens_at_ntzs = Hash.new{ |hash, key| hash[key] = {} }
     open_tasking_plans = task_plan.tasking_plans.select(&:past_open?)
     open_tasking_plans.each do |tp|
       opens_at_ntzs[tp.target_type][tp.target_id] = tp.opens_at_ntz
     end
 
+    # Call Roar's consume! but force the TaskingPlans that were already open
+    # to the old open date in order to prevent their open dates from changing
     consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter).tap do |result|
       task_plan.tasking_plans.each do |tp|
         tp.update_attribute(:opens_at_ntz, opens_at_ntzs[tp.target_type][tp.target_id]) \
