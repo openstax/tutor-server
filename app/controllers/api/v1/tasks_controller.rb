@@ -76,7 +76,4 @@ class Api::V1::TasksController < Api::V1::ApiController
     @task = Tasks::Models::Task.with_deleted.find(params[:id])
   end
 
-  def change_is_late_work_accepted(task, is_accepted)
-  end
-
 end

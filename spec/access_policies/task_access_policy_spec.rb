@@ -61,8 +61,8 @@ RSpec.describe TaskAccessPolicy, type: :access_policy do
     end
   end
 
-  context 'when the action is :change_is_late_work_accepted' do
-    let(:action) { :change_is_late_work_accepted }
+  context 'when the action is :accept_or_reject_late_work' do
+    let(:action) { :accept_or_reject_late_work }
 
     context 'and the requestor is human' do
       # already true for User
