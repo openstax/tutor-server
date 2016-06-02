@@ -58,5 +58,15 @@ module Api::V1
                description: 'Whether or not this period has been archived by the teacher',
              }
 
+    property :archived_at,
+             readable: true,
+             writeable: false,
+             getter: ->(*) { DateTimeUtilities.to_api_s(deleted_at) },
+             schema_info: {
+               type: 'date',
+               description: 'When the period was deleted'
+             }
+
+
   end
 end

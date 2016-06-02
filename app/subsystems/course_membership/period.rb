@@ -44,6 +44,10 @@ module CourseMembership
       !!@strategy.deleted?
     end
 
+    def deleted_at
+      @strategy.deleted_at
+    end
+
     def enrollment_code_for_url
       verify_and_return @strategy.enrollment_code_for_url, klass: String, error: StrategyError
     end
