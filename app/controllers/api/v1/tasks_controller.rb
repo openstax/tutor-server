@@ -34,7 +34,13 @@ class Api::V1::TasksController < Api::V1::ApiController
     the `score` that it computes.  Does not change the underlying counts in any way.
   EOS
   def accept_late_work
-    change_is_late_work_accepted(@task, true)
+    OSU::AccessPolicy.require_action_allowed!(:accept_or_reject_late_work, current_api_user, @task)
+    @task.accept_late_work
+    if @task.save
+      head :no_content
+    else
+      render_api_errors(@task.errors)
+    end
   end
 
 
@@ -44,7 +50,13 @@ class Api::V1::TasksController < Api::V1::ApiController
     the `score` that it computes.  Does not change the underlying counts in any way.
   EOS
   def reject_late_work
-    change_is_late_work_accepted(@task, false)
+    OSU::AccessPolicy.require_action_allowed!(:accept_or_reject_late_work, current_api_user, @task)
+    @task.reject_late_work
+    if @task.save
+      head :no_content
+    else
+      render_api_errors(@task.errors)
+    end
   end
 
   api :DELETE, '/tasks/:id', 'Hide the task from the student\'s dashboard'
@@ -62,13 +74,6 @@ class Api::V1::TasksController < Api::V1::ApiController
 
   def get_task
     @task = Tasks::Models::Task.with_deleted.find(params[:id])
-  end
-
-  def change_is_late_work_accepted(task, is_accepted)
-    OSU::AccessPolicy.require_action_allowed!(:change_is_late_work_accepted, current_api_user, task)
-    task.is_late_work_accepted = is_accepted
-    task.save! # would be Exceptional if this failed
-    head :no_content
   end
 
 end

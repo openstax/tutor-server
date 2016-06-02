@@ -45,6 +45,10 @@ module Api::V1
                type: Integer,
                readable: true
 
+      property :completed_accepted_late_step_count,
+               type: Integer,
+               readable: true
+
       property :actual_and_placeholder_exercise_count,
                as: :exercise_count,
                type: Integer,
@@ -58,11 +62,19 @@ module Api::V1
                type: Integer,
                readable: true
 
+      property :completed_accepted_late_exercise_count,
+               type: Integer,
+               readable: true
+
       property :correct_exercise_count,
                type: Integer,
                readable: true
 
       property :correct_on_time_exercise_count,
+               type: Integer,
+               readable: true
+
+      property :correct_accepted_late_exercise_count,
                type: Integer,
                readable: true
 
@@ -89,6 +101,16 @@ module Api::V1
       property :is_late_work_accepted,
                readable: true,
                writeable: false
+
+      property :accepted_late_at,
+               type: String,
+               readable: true,
+               writeable: false,
+               getter: ->(*) { DateTimeUtilities.to_api_s(accepted_late_at) },
+               schema: {
+                 description: "Will only be set when late work has been accepted; " +
+                              "will go away if accepted late work is later rejected."
+               }
 
       property :is_included_in_averages,
                readable: true,

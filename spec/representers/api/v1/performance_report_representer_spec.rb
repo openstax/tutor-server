@@ -5,8 +5,10 @@ RSpec.describe Api::V1::PerformanceReportRepresenter, type: :representer do
   let (:period)             { FactoryGirl.create(:course_membership_period) }
   let (:last_worked_at)     { Time.current                                  }
   let (:due_at)             { Time.current + 1.week                         }
+  let (:accepted_late_at)   { Time.current + 2.weeks}
   let (:api_last_worked_at) { DateTimeUtilities.to_api_s(last_worked_at)    }
   let (:api_due_at)         { DateTimeUtilities.to_api_s(due_at)            }
+  let (:api_accepted_late_at) { DateTimeUtilities.to_api_s(accepted_late_at)}
 
   let(:report){ { period: period,
                   data_headings: [{ title: "title",
@@ -20,6 +22,7 @@ RSpec.describe Api::V1::PerformanceReportRepresenter, type: :representer do
                                         type: "homework",
                                         id: 5,
                                         last_worked_at: last_worked_at,
+                                        accepted_late_at: accepted_late_at,
                                         due_at: due_at,
                                         actual_and_placeholder_exercise_count: 6,
                                         completed_exercise_count: 6,
@@ -31,7 +34,11 @@ RSpec.describe Api::V1::PerformanceReportRepresenter, type: :representer do
 
   it 'includes the due_at, last_worked_at properties for student data' do
     task_data = representation.first['students'].first['data'].first
-    expect(task_data).to include('last_worked_at' => api_last_worked_at, 'due_at' => api_due_at)
+    expect(task_data).to include(
+      'last_worked_at' => api_last_worked_at,
+      'due_at' => api_due_at,
+      'accepted_late_at' => api_accepted_late_at
+    )
   end
 
   it 'represents a students information' do

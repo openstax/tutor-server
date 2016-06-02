@@ -5,7 +5,7 @@ module Tasks
     def included_in_averages?(task)
       task.exercise_count > 0 &&
       (
-        ( task.task_type == 'concept_coach' && task.completed?) ||
+        ( task.task_type == 'concept_coach' ) ||
         ( task.task_type == 'homework' && task.past_due? )
       )
 
@@ -16,7 +16,7 @@ module Tasks
 
       return nil if applicable_tasks.none?
 
-      average(applicable_tasks, ->(task) {task.teacher_chosen_score})
+      average(applicable_tasks, ->(task) {task.score})
     end
 
     def average(array, value_getter=nil)
@@ -44,7 +44,8 @@ module Tasks
           id: task.id,
           due_at: task.due_at,
           last_worked_at: task.last_worked_at,
-          is_late_work_accepted: task.is_late_work_accepted
+          is_late_work_accepted: task.accepted_late_at.present?,
+          accepted_late_at: task.accepted_late_at
         }
 
         if %w(homework concept_coach reading).include?(task.task_type)
@@ -59,16 +60,19 @@ module Tasks
 
     def task_counts(task)
       {
-        step_count:                            task.steps_count,
-        completed_step_count:                  task.completed_steps_count,
-        completed_on_time_step_count:          task.completed_on_time_steps_count,
-        actual_and_placeholder_exercise_count: task.actual_and_placeholder_exercise_count,
-        completed_exercise_count:              task.completed_exercise_count,
-        completed_on_time_exercise_count:      task.completed_on_time_exercise_count,
-        correct_exercise_count:                task.correct_exercise_count,
-        correct_on_time_exercise_count:        task.correct_on_time_exercise_count,
-        recovered_exercise_count:              task.recovered_exercise_steps_count,
-        score:                                 task.teacher_chosen_score
+        step_count:                             task.steps_count,
+        completed_step_count:                   task.completed_steps_count,
+        completed_on_time_step_count:           task.completed_on_time_steps_count,
+        completed_accepted_late_step_count:     task.completed_accepted_late_steps_count,
+        actual_and_placeholder_exercise_count:  task.actual_and_placeholder_exercise_count,
+        completed_exercise_count:               task.completed_exercise_count,
+        completed_on_time_exercise_count:       task.completed_on_time_exercise_count,
+        completed_accepted_late_exercise_count: task.completed_accepted_late_exercise_count,
+        correct_exercise_count:                 task.correct_exercise_count,
+        correct_on_time_exercise_count:         task.correct_on_time_exercise_count,
+        correct_accepted_late_exercise_count:   task.correct_accepted_late_exercise_count,
+        recovered_exercise_count:               task.recovered_exercise_steps_count,
+        score:                                  task.score
       }
     end
   end

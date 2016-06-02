@@ -51,27 +51,42 @@ RSpec.describe Tasks::GetCcPerformanceReport, type: :routine, speed: :slow do
   let(:expected_tasks)     { [2, 1] }
   let(:expected_task_type) { 'concept_coach' }
 
-  it 'has the proper structure' do
-    reports = described_class[course: @course]
-    expect(reports.size).to eq expected_periods
-    valid_page_uuids = @ecosystem.books.first.pages.map(&:uuid)
-    reports.each_with_index do |report, rindex|
-      expect(report.data_headings.size).to eq expected_tasks[rindex]
-      report.data_headings.each do |data_heading|
-        expect(data_heading.title).to match(/\A[\d+]\.[\d+] /)
-        expect(valid_page_uuids).to include(data_heading.cnx_page_id)
-        expect(data_heading.type).to eq expected_task_type
+  context 'on the happy path' do
+    let(:reports) { described_class[course: @course] }
+
+    it 'has the proper structure' do
+      expect(reports.size).to eq expected_periods
+      valid_page_uuids = @ecosystem.books.first.pages.map(&:uuid)
+      reports.each_with_index do |report, rindex|
+        expect(report.data_headings.size).to eq expected_tasks[rindex]
+        report.data_headings.each do |data_heading|
+          expect(data_heading.title).to match(/\A[\d+]\.[\d+] /)
+          expect(valid_page_uuids).to include(data_heading.cnx_page_id)
+          expect(data_heading.type).to eq expected_task_type
+        end
+
+        expect(report.students.size).to eq expected_students
+        student_identifiers = report.students.map(&:student_identifier)
+        expect(Set.new student_identifiers).to eq Set.new ["S#{2*rindex + 1}", "S#{2*rindex + 2}"]
+
+        report.students.each do |student|
+          expect(student.data.size).to be <= expected_tasks[rindex]
+          student.data.map(&:type).each do |data_type|
+            expect(data_type).to eq expected_task_type
+          end
+        end
+      end
+    end
+
+    context 'for incomplete CC tasks' do
+      it 'does say they are included in averages' do
+        incomplete_cc = reports[0].students[1].data[0]
+        expect(incomplete_cc.is_included_in_averages).to be_truthy
       end
 
-      expect(report.students.size).to eq expected_students
-      student_identifiers = report.students.map(&:student_identifier)
-      expect(Set.new student_identifiers).to eq Set.new ["S#{2*rindex + 1}", "S#{2*rindex + 2}"]
-
-      report.students.each do |student|
-        expect(student.data.size).to be <= expected_tasks[rindex]
-        student.data.map(&:type).each do |data_type|
-          expect(data_type).to eq expected_task_type
-        end
+      it 'does not actually include them in averages' do
+        # First task would have an average of 1.0 if incomplete not included
+        expect(reports[0].data_headings[0].average_score).to eq 0.6666666666666666
       end
     end
   end
