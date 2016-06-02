@@ -1,5 +1,10 @@
 class OpenStax::Exercises::V1::Exercise
 
+  VIDEO_CSS = 'iframe[src*="youtube"], iframe[src*="khanacademy"]'
+  INTERACTIVE_CSS = 'iframe:not([src*="youtube"]):not([src*="khanacademy"])'
+
+  # Context must be externally set before the preview initialized
+  attr_accessor :context
   attr_reader :content
 
   def initialize(content: '{}', server_url: OpenStax::Exercises::V1.server_url)
@@ -75,6 +80,12 @@ class OpenStax::Exercises::V1::Exercise
     @import_tags ||= import_tag_hashes.map{ |hash| hash[:value] }
   end
 
+  def feature_ids(page_uuid)
+    feature_tag_start = "context-cnxfeature:#{page_uuid}#"
+    feature_tags = tags.select{ |tag| tag.start_with? feature_tag_start }
+    feature_tags.map{ |tag| tag.sub(feature_tag_start, '') }
+  end
+
   def questions
     @questions ||= content_hash['questions']
   end
@@ -139,8 +150,30 @@ class OpenStax::Exercises::V1::Exercise
     )
   end
 
+  def preview
+    initialize_preview
+    @preview
+  end
+
   def is_multipart?
     questions.size > 1
+  end
+
+  def has_interactive?
+    initialize_preview
+    @has_interactive
+  end
+
+  def has_video?
+    initialize_preview
+    @has_video
+  end
+
+  def requires_context?
+    return @requires_context unless @requires_context.nil?
+
+    context_regex = /\Arequires-context:[y|t]/
+    @requires_context = tags.any?{ |tag| context_regex.match(tag) }
   end
 
   protected
@@ -160,6 +193,36 @@ class OpenStax::Exercises::V1::Exercise
         aa['id'] = aa['id'].try(:to_s)
       end
     end
+  end
+
+  def preview_root
+    @preview_root ||= Nokogiri::HTML.fragment(
+      (
+        [context, content_hash['stimulus_html']] + questions.flat_map do |question_hash|
+          [question_hash['stimulus_html'], question_hash['stem_html']]
+        end
+      ).join("\n")
+    )
+  end
+
+  def initialize_preview
+    return if @preview_initialized
+
+    interactive_nodes = preview_root.css(INTERACTIVE_CSS)
+    video_nodes = preview_root.css(VIDEO_CSS)
+
+    @has_interactive = interactive_nodes.any?
+    @has_video = video_nodes.any?
+    @preview_initialized = true
+
+    return unless @has_interactive || @has_video
+
+    interactive_nodes.each do |node|
+      node.replace('<div class="preview interactive">Interactive</div>')
+    end
+    video_nodes.each{ |node| node.replace('<div class="preview video">Video</div>') }
+
+    @preview = preview_root.to_html
   end
 
 end

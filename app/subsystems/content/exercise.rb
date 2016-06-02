@@ -27,6 +27,14 @@ module Content
       verify_and_return @strategy.title, klass: String, allow_nil: true, error: StrategyError
     end
 
+    def preview
+      verify_and_return @strategy.preview, klass: String, allow_blank: true, error: StrategyError
+    end
+
+    def context
+      verify_and_return @strategy.context, klass: String, allow_blank: true, error: StrategyError
+    end
+
     def content
       verify_and_return @strategy.content, klass: String, error: StrategyError
     end
@@ -63,6 +71,14 @@ module Content
     def is_excluded
       return if @strategy.is_excluded.nil?
       !!@strategy.is_excluded
+    end
+
+    def has_interactive
+      !!@strategy.has_interactive
+    end
+
+    def has_video
+      !!@strategy.has_video
     end
 
   end

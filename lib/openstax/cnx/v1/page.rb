@@ -142,6 +142,10 @@ module OpenStax::Cnx::V1
       converted_root.css(SNAP_LAB_CSS)
     end
 
+    def feature_node(feature_id)
+      converted_root.at_css("##{feature_id}")
+    end
+
     def snap_lab_title(snap_lab)
       snap_lab.at_css(SNAP_LAB_TITLE_CSS).try(:text)
     end
