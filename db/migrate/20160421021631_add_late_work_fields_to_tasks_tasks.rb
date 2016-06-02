@@ -7,7 +7,9 @@ class AddLateWorkFieldsToTasksTasks < ActiveRecord::Migration
 
     reversible do |dir|
       dir.up do
-        Tasks::Models::Task.unscoped.preload(task_steps: :tasked).find_each(&:update_step_counts!)
+        Tasks::Models::Task.unscoped.preload(task_steps: :tasked).find_each do |task|
+          task.update_step_counts!(validate: false)
+        end
       end
     end
   end

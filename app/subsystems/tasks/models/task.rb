@@ -169,9 +169,9 @@ class Tasks::Models::Task < Tutor::SubSystems::BaseModel
     self
   end
 
-  def update_step_counts!
+  def update_step_counts!(*args)
     self.class.skip_callback(:update, :after, :update_counts_if_needed!)
-    update_step_counts.save!
+    update_step_counts.save!(*args)
   ensure
     self.class.set_callback(:update, :after, :update_counts_if_needed!)
   end

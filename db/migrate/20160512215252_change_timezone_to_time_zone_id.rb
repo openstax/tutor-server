@@ -33,7 +33,9 @@ class ChangeTimezoneToTimeZoneId < ActiveRecord::Migration
           tasking = Tasks::Models::Tasking.unscoped
                                           .where(entity_task_id: task.entity_task_id)
                                           .preload(:period).first
-          time_zone = time_zones[tasking.period.entity_course_id]
+          time_zone = time_zones[tasking.period.try(:entity_course_id)]
+          next if time_zone.nil?
+
           task.time_zone = time_zone
           task.opens_at = task.opens_at_ntz
           task.due_at = task.due_at_ntz
