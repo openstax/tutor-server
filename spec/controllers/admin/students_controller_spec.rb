@@ -46,7 +46,7 @@ RSpec.describe Admin::StudentsController do
           'entity_role_id' => student_1.entity_role_id,
           'course_membership_period_id' => student_1.period.id,
           'deidentifier' => student_1.deidentifier,
-          'active?' => true
+          'deleted?' => false
         },
         {
           'id' => student_3.id,
@@ -57,7 +57,7 @@ RSpec.describe Admin::StudentsController do
           'entity_role_id' => student_3.entity_role_id,
           'course_membership_period_id' => student_3.period.id,
           'deidentifier' => student_3.deidentifier,
-          'active?' => true
+          'deleted?' => false
         },
         {
           'id' => student_2.id,
@@ -68,7 +68,7 @@ RSpec.describe Admin::StudentsController do
           'entity_role_id' => student_2.entity_role_id,
           'course_membership_period_id' => student_2.period.id,
           'deidentifier' => student_2.deidentifier,
-          'active?' => true
+          'deleted?' => false
         }
       ])
     end

@@ -41,7 +41,7 @@ describe GetCourseRoster, type: :routine do
         'entity_role_id' => student_1_role.id,
         'username' => student_1.username,
         'deidentifier' => student_1_role.student.deidentifier,
-        'active?' => true
+        'deleted?' => false
       },
       {
         'id' => students[1].id,
@@ -52,7 +52,7 @@ describe GetCourseRoster, type: :routine do
         'entity_role_id' => student_2_role.id,
         'username' => student_2.username,
         'deidentifier' => student_2_role.student.deidentifier,
-        'active?' => true
+        'deleted?' => false
       },
       {
         'id' => students[2].id,
@@ -63,7 +63,7 @@ describe GetCourseRoster, type: :routine do
         'entity_role_id' => student_3_role.id,
         'username' => student_3.username,
         'deidentifier' => student_3_role.student.deidentifier,
-        'active?' => true
+        'deleted?' => false
       }
     ])
   end
@@ -86,7 +86,7 @@ describe GetCourseRoster, type: :routine do
         'entity_role_id' => student_1_role.id,
         'username' => student_1.username,
         'deidentifier' => student_1_role.student.deidentifier,
-        'active?' => true
+        'deleted?' => false
       },
       {
         'id' => students[1].id,
@@ -97,7 +97,7 @@ describe GetCourseRoster, type: :routine do
         'entity_role_id' => student_2_role.id,
         'username' => student_2.username,
         'deidentifier' => student_2_role.student.deidentifier,
-        'active?' => true
+        'deleted?' => false
       },
       {
         'id' => students[2].id,
@@ -108,7 +108,7 @@ describe GetCourseRoster, type: :routine do
         'entity_role_id' => student_3_role.id,
         'username' => student_3.username,
         'deidentifier' => student_3_role.student.deidentifier,
-        'active?' => false
+        'deleted?' => true
       }
     ])
   end
