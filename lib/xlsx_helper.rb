@@ -77,8 +77,14 @@ class XlsxHelper
     end
 
     optioned_values.comments.each_with_index do |comment, index|
-      next if comment.nil?
+      next if comment.blank?
       sheet.add_comment(ref: row.cells[index], text: comment, author: "", visible: false)
+      # TODO might need to product comments like values and data validations
+    end
+
+    optioned_values.data_validations.each_with_index do |dv, index|
+      next unless dv.present?
+      sheet.add_data_validation(row.cells[index].r, dv)
     end
   end
 
@@ -86,6 +92,20 @@ class XlsxHelper
     # There is http://www.rubydoc.info/github/randym/axlsx/Axlsx#col_ref-class_method
     # but this massive interpolated string makes me one-line-of-ruby happy.
     "#{Axlsx.col_ref(column)}#{row}"
+  end
+
+  def merge_and_style(sheet, range, styles)
+    if range.is_a?(Array)
+      # assume columns are 1-indexed, to match row numbers
+      range = "#{Axlsx::col_ref(range[0]-1)}#{range[1]}:#{Axlsx::col_ref(range[2]-1)}#{range[3]}"
+    end
+
+    sheet.merge_cells(range)
+    sheet[range].each{|cell| cell.style = styles} unless styles.blank?
+  end
+
+  def self.range(array)
+    "#{Axlsx::col_ref(array[0]-1)}#{array[1]}:#{Axlsx::col_ref(array[2]-1)}#{array[3]}"
   end
 
   private
@@ -112,6 +132,7 @@ class XlsxHelper
           @style = hash[:style]
           @type = hash[:type]
           @comment = hash[:comment]
+          @data_validation = hash[:data_validation]
 
           start_column = column
           end_column = column + (hash[:cols] ? hash[:cols] - 1 : 0)
@@ -122,13 +143,14 @@ class XlsxHelper
             @value = [@value].product(*(hash[:cols]-1).times.map{[""]}).flatten
             @style = hash[:cols].times.map{@style}
             @type = hash[:cols].times.map{@type}
+            @data_validation = [@data_validation].product(*(hash[:cols]-1).times.map{[nil]}).flatten
           end
         end
 
         @merge_range = (start_column || column)..(end_column || column)
       end
 
-      attr_accessor :value, :style, :type, :merge_range, :comment
+      attr_accessor :value, :style, :type, :merge_range, :comment, :data_validation
 
       def last_column
         merge_range.max
@@ -148,9 +170,10 @@ class XlsxHelper
       @types = items.map(&:type).flatten
       @merge_ranges = items.map(&:merge_range)
       @comments = items.map(&:comment)
+      @data_validations = items.map(&:data_validation).flatten
     end
 
-    attr_accessor :values, :styles, :types, :merge_ranges, :comments
+    attr_accessor :values, :styles, :types, :merge_ranges, :comments, :data_validations
   end
 
 end
