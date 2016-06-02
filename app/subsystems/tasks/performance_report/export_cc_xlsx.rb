@@ -300,8 +300,6 @@ module Tasks
 
         first_student_row = sheet.rows.count + 1
 
-        students = report[:students].sort_by{|student| student[:last_name] || ""}
-
         first_data_column = 4 + counts_extra_cols + 1
         cols_per_task = format == :counts ? 4 : 3
         last_data_column = first_data_column+num_tasks*cols_per_task-1
@@ -312,7 +310,7 @@ module Tasks
         out_of_enable_range =
           XlsxHelper.range([first_data_column, out_of_enable_row, last_data_column, out_of_enable_row])
 
-        students.each_with_index do |student, ss|
+        report[:students].each_with_index do |student, ss|
           student_columns = [
             student[:first_name],
             student[:last_name],
