@@ -14,12 +14,10 @@ class AddUserAsPeriodStudent
     result = run(UserIsCourseTeacher, user: user, course: course)
 
     unless result.outputs.user_is_course_teacher
-      result = run(UserIsCourseStudent, user: user, course: course)
+      result = run(UserIsCourseStudent, user: user, course: course, include_dropped: true)
 
-      if result.outputs.user_is_course_student
-        fatal_error(code: :user_is_already_a_course_student,
-                    offending_inputs: [user, course])
-      end
+      fatal_error(code: :user_is_already_a_course_student, offending_inputs: [user, course]) \
+        if result.outputs.user_is_course_student
     end
 
     run(Role::CreateUserRole, user, :student)

@@ -65,9 +65,9 @@ class DemoContent < DemoBase
              new_user(username: student_info.username, name: student_info.name)
       student_identifier = POSSIBLE_CHARS.shuffle.take(10).join()
       log("    #{initials} #{student_info.username} (#{student_info.name})")
-      unless run(:is_student, user: user, course: course).outputs.user_is_course_student
-        run(:add_student, period: period, user: user, student_identifier: "#{student_identifier}")
-      end
+      run(:add_student, period: period, user: user, student_identifier: "#{student_identifier}") \
+        unless run(:is_student, user: user, course: course,
+                                include_dropped: true).outputs.user_is_course_student
 
     end
 

@@ -18,8 +18,6 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
   has_many :taskings, subsystem: :tasks, dependent: :nullify
   has_many :tasks, through: :taskings
 
-  before_destroy :no_active_students, prepend: true
-
   validates :course, presence: true
   validates :name, presence: true, uniqueness: { scope: :entity_course_id,
                                                  conditions: -> { where(deleted_at: nil) } }
@@ -46,13 +44,5 @@ class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
 
   def enrollment_code_for_url
     enrollment_code.gsub(/ /,'-')
-  end
-
-  protected
-
-  def no_active_students
-    return unless enrollments.latest.exists?
-    errors.add(:students, 'must be moved to another period before this period can be deleted')
-    false
   end
 end

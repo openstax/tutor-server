@@ -22,7 +22,7 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
     [:read, :create, :update, :destroy].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
-        it { should be false }
+        it { should eq false }
       end
     end
   end
@@ -38,7 +38,7 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
     [:read, :create, :update, :destroy, :restore].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
-        it { should be true }
+        it { should eq true }
       end
     end
   end
@@ -54,7 +54,7 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
     [:read, :create, :update, :destroy, :restore].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
-        it { should be false }
+        it { should eq false }
       end
     end
   end
@@ -70,7 +70,7 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
     [:read, :create, :update, :destroy, :restore].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
-        it { should be true }
+        it { should eq true }
       end
     end
   end
@@ -81,7 +81,7 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
     [:read, :create, :update, :destroy, :restore].each do |test_action|
       context "#{test_action}" do
         let(:action) { test_action }
-        it { should be false }
+        it { should eq false }
       end
     end
   end
