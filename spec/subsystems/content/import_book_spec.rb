@@ -93,6 +93,13 @@ RSpec.describe Content::ImportBook, type: :routine, speed: :slow, vcr: VCR_OPTS 
     end
     book = ecosystem.books.first
 
+    # shortId pulled in, webview_url good
+
+    expect(book.short_id).to eq "8QUzyvgD"
+    expect(book.archive_url).to eq "https://archive.cnx.org"
+    expect(book.webview_url).to eq "https://cnx.org"
+    expect(book.chapters.first.pages.first.short_id).to eq "rZudN6XP"
+
     # Units are ignored
 
     part = book.chapters.first
