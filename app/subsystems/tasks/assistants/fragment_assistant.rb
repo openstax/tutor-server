@@ -3,11 +3,13 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
 
   protected
 
-  def task_fragments(task:, fragments:, fragment_title:, page:, related_content: nil)
+  def task_fragments(task:, fragments:, page_title:, page:, related_content: nil)
     related_content ||= page.related_content
-    title = fragment_title
+    title = page_title
 
     fragments.each do |fragment|
+
+      title ||= fragment.title
 
       step_modifier = ->(step) {
         step.group_type = :core_group
@@ -42,8 +44,9 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
         task_reading(reading_fragment: fragment, page: page, title: title, step: step_builder.call)
       end
 
-      # The title applies only to the first step in the set of fragments given
+      # The page title applies only to the first step in the set of fragments given
       title = nil
+
     end
   end
 

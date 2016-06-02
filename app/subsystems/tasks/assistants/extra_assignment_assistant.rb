@@ -67,8 +67,7 @@ class Tasks::Assistants::ExtraAssignmentAssistant < Tasks::Assistants::FragmentA
         snap_lab_id = snap_lab[:id].split(':').last
         if page_id_to_snap_lab_id[page.id.to_s].include?(snap_lab_id)
           task_fragments(task: task, fragments: snap_lab[:fragments],
-                         fragment_title: snap_lab[:title],
-                         page: page)
+                         page_title: snap_lab[:title], page: page)
         end
       end
     end
