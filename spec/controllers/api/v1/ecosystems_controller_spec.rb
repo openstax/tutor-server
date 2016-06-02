@@ -83,7 +83,10 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
         expect(response).to have_http_status(:success)
         expect(response.body_as_hash).to eq([{
           id: ecosystem.books.first.id.to_s,
+          uuid: ecosystem.books.first.uuid,
           cnx_id: ecosystem.books.first.cnx_id,
+          archive_url: "https://archive.cnx.org",
+          webview_url: "https://cnx.org",
           title: 'book title',
           type: 'part',
           chapter_section: [],
@@ -96,6 +99,7 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
               children: [
                 {
                   id: ecosystem.books.first.chapters.first.pages.first.id.to_s,
+                  uuid: ecosystem.books.first.chapters.first.pages.first.uuid,
                   cnx_id: ecosystem.books.first.chapters.first.pages.first.cnx_id,
                   title: 'first page',
                   chapter_section: [1, 1],
@@ -103,6 +107,7 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
                 },
                 {
                   id: ecosystem.books.first.chapters.first.pages.second.id.to_s,
+                  uuid: ecosystem.books.first.chapters.first.pages.second.uuid,
                   cnx_id: ecosystem.books.first.chapters.first.pages.second.cnx_id,
                   title: 'second page',
                   chapter_section: [1, 2],
@@ -118,6 +123,7 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
               children: [
                 {
                   id: ecosystem.books.first.chapters.second.pages.first.id.to_s,
+                  uuid: ecosystem.books.first.chapters.second.pages.first.uuid,
                   cnx_id: ecosystem.books.first.chapters.second.pages.first.cnx_id,
                   title: 'third page',
                   chapter_section: [2, 1],

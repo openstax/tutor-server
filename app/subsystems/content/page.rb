@@ -15,6 +15,10 @@ module Content
       verify_and_return @strategy.uuid, klass: ::Content::Uuid, error: StrategyError
     end
 
+    def short_id
+      verify_and_return @strategy.short_id, klass: String, error: StrategyError, allow_nil: true
+    end
+
     def version
       verify_and_return @strategy.version, klass: String, error: StrategyError
     end

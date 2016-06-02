@@ -19,6 +19,7 @@ class Content::ImportBook
     book = Content::Models::Book.new(
         url: cnx_book.canonical_url,
         uuid: cnx_book.uuid,
+        short_id: cnx_book.short_id,
         version: cnx_book.version,
         title: cnx_book.title,
         content: cnx_book.root_book_part.contents,

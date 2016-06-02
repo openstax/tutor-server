@@ -195,7 +195,6 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
   context 'with The Scientific Method' do
     before(:all) do
       DatabaseCleaner.start
-
       page_info = { id: '9545b9a2-c371-4a31-abb9-3a4a1fff497b@8', title: 'The Scientific Method' }
       @page = VCR.use_cassette('OpenStax_Cnx_V1_Page/with_The_Scientific_Method', VCR_OPTS) do
         page_for(page_info).tap{ |page| page.full_hash }

@@ -15,8 +15,16 @@ module Content
       verify_and_return @strategy.archive_url, klass: String, error: StrategyError
     end
 
+    def webview_url
+      verify_and_return @strategy.webview_url, klass: String, error: StrategyError
+    end
+
     def uuid
       verify_and_return @strategy.uuid, klass: String, error: StrategyError
+    end
+
+    def short_id
+      verify_and_return @strategy.short_id, klass: String, error: StrategyError, allow_nil: true
     end
 
     def version

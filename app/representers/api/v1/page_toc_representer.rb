@@ -10,6 +10,24 @@ module Api::V1
              readable: true,
              schema_info: { required: true }
 
+    property :uuid,
+             type: String,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               required: false,
+               description: 'The uuid of the page, e.g. "95e61258-2faf-41d4-af92-f62e1414175a"'
+             }
+
+    property :short_id,
+             type: String,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               required: false,
+               description: 'The `shortId` of the page, e.g. "raNQgZ7E"'
+             }
+
     property :cnx_id,
              type: String,
              writeable: false,

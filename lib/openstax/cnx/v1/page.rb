@@ -66,6 +66,10 @@ module OpenStax::Cnx::V1
       }
     end
 
+    def short_id
+      @short_id ||= full_hash.fetch('shortId', nil)
+    end
+
     def version
       @version ||= full_hash.fetch('version') { |key|
         raise "Book id=#{id} is missing #{key}"
