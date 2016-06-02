@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160531190234) do
+ActiveRecord::Schema.define(version: 20160601225450) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -44,6 +44,7 @@ ActiveRecord::Schema.define(version: 20160531190234) do
     t.datetime "created_at",                                   null: false
     t.datetime "updated_at",                                   null: false
     t.jsonb    "reading_processing_instructions", default: [], null: false
+    t.string   "short_id"
   end
 
   add_index "content_books", ["content_ecosystem_id"], name: "index_content_books_on_content_ecosystem_id", using: :btree
@@ -140,6 +141,7 @@ ActiveRecord::Schema.define(version: 20160531190234) do
     t.datetime "updated_at",                       null: false
     t.integer  "content_all_exercises_pool_id"
     t.integer  "content_concept_coach_pool_id"
+    t.string   "short_id"
   end
 
   add_index "content_pages", ["content_chapter_id", "number"], name: "index_content_pages_on_content_chapter_id_and_number", unique: true, using: :btree

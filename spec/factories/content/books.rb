@@ -4,11 +4,11 @@ FactoryGirl.define do
       contents {{}}
     end
 
-    url { Faker::Internet.url }
     title { contents[:title] || Faker::Lorem.words(3) }
     content { contents.to_json }
     uuid { SecureRandom.uuid }
     version { Random.rand(1..10) }
+    url { "https://archive.cnx.org/contents/#{uuid}@#{version}" }
     reading_processing_instructions {
       [
         { css: '.ost-reading-discard, .os-teacher, [data-type="glossary"]',

@@ -19,6 +19,10 @@ class Content::Models::Book < Tutor::SubSystems::BaseModel
     Addressable::URI.parse(url).site
   end
 
+  def webview_url
+    archive_url.gsub('archive.','')
+  end
+
   def cnx_id
     "#{uuid}@#{version}"
   end

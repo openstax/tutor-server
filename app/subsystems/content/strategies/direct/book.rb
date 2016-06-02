@@ -6,7 +6,7 @@ module Content
         wraps ::Content::Models::Book
 
         exposes :ecosystem, :chapters, :pages, :exercises, :url, :archive_url,
-                :uuid, :version, :cnx_id, :title
+                :webview_url, :uuid, :short_id, :version, :cnx_id, :title
 
         alias_method :entity_ecosystem, :ecosystem
         def ecosystem
