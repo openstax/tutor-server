@@ -8,7 +8,7 @@ RSpec.describe TaskExercise, type: :routine do
   end
 
   let!(:multipart_exercise)  do
-    content_exercise = FactoryGirl.create(:content_exercise, num_parts: 2)
+    content_exercise = FactoryGirl.create(:content_exercise, num_parts: 2, context: 'Some context')
     strategy = Content::Strategies::Direct::Exercise.new(content_exercise)
     Content::Exercise.new(strategy: strategy)
   end
@@ -36,11 +36,13 @@ RSpec.describe TaskExercise, type: :routine do
     expect(task.task_steps.length).to eq 2
     expect(task.task_steps.first).to eq task_step
 
-    expect(task.task_steps[0].tasked.is_in_multipart).to be_truthy
-    expect(task.task_steps[1].tasked.is_in_multipart).to be_truthy
+    expected_content = ["(0)", "(1)"]
 
-    expect(task.task_steps[0].tasked.content).to match("(0)")
-    expect(task.task_steps[1].tasked.content).to match("(1)")
+    task.tasked_exercises.each_with_index do |tasked_exercise, index|
+      expect(tasked_exercise.is_in_multipart).to eq true
+      expect(tasked_exercise.context).to eq 'Some context'
+      expect(tasked_exercise.content).to include expected_content[index]
+    end
   end
 
   it 'can insert multiple exercise steps in order for a single placeholder step' do

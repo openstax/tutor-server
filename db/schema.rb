@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160601225450) do
+ActiveRecord::Schema.define(version: 20160603151054) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -629,6 +629,7 @@ ActiveRecord::Schema.define(version: 20160601225450) do
     t.boolean  "is_in_multipart",     default: false, null: false
     t.string   "question_id",                         null: false
     t.datetime "deleted_at"
+    t.text     "context"
   end
 
   add_index "tasks_tasked_exercises", ["content_exercise_id"], name: "index_tasks_tasked_exercises_on_content_exercise_id", using: :btree

@@ -28,6 +28,7 @@ class TaskExercise
         content_exercise_id: exercise.id,
         url: exercise.url,
         title: title || exercise.title,
+        context: exercise.context,
         content: question[:content],
         question_id: question[:id],
         is_in_multipart: questions.size > 1
