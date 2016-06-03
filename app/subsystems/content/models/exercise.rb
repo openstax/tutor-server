@@ -57,4 +57,12 @@ class Content::Models::Exercise < Tutor::SubSystems::BaseModel
     end
   end
 
+  def requires_context?
+    tags.to_a.any?(&:requires_context?)
+  end
+
+  def is_multipart?
+    content_hash['questions'].size > 1
+  end
+
 end

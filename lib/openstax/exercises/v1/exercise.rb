@@ -172,8 +172,7 @@ class OpenStax::Exercises::V1::Exercise
   def requires_context?
     return @requires_context unless @requires_context.nil?
 
-    context_regex = /\Arequires-context:[y|t]/
-    @requires_context = tags.any?{ |tag| context_regex.match(tag) }
+    @requires_context = tags.any?{ |tag| Tagger::TAG_TYPE_REGEXES[:requires_context].match(tag) }
   end
 
   protected
