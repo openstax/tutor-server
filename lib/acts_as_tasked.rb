@@ -20,6 +20,10 @@ module ActsAsTasked
           false
         end
 
+        def has_content?
+          false
+        end
+
         def exercise?
           false
         end

@@ -5,4 +5,8 @@ class Tasks::Models::TaskedReading < Tutor::SubSystems::BaseModel
 
   validates :url, presence: true
   validates :content, presence: true
+
+  def has_content?
+    true
+  end
 end

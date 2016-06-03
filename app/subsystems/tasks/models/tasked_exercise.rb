@@ -26,6 +26,10 @@ class Tasks::Models::TaskedExercise < Tutor::SubSystems::BaseModel
     true
   end
 
+  def has_content?
+    true
+  end
+
   def is_correct?
     correct_answer_id == answer_id
   end

@@ -24,18 +24,18 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
         end
       }
 
+      # For Exercise and OptionalExercise (subclass of Exercise)
+      previous_step = task.task_steps.last if fragment.is_a? OpenStax::Cnx::V1::Fragment::Exercise
+
       case fragment
       # This is a subclass of Fragment::Exercise so it needs to come first
       when OpenStax::Cnx::V1::Fragment::OptionalExercise
-        # The prompt for the optional exercise appears on the previous step,
-        # so that's what is passed in
-        previous_step = task.task_steps.last
-
         store_related_exercises(exercise_fragment: fragment, page: page,
                                 previous_step: previous_step, title: title) \
           unless previous_step.nil?
       when OpenStax::Cnx::V1::Fragment::Exercise
-        task_exercise(exercise_fragment: fragment, page: page, task: task, title: title, step_modifier: step_modifier)
+        task_exercise(exercise_fragment: fragment, page: page, task: task,
+                      title: title, previous_step: previous_step, step_modifier: step_modifier)
       when OpenStax::Cnx::V1::Fragment::Video
         task_video(video_fragment: fragment, step: step_builder.call, title: title)
       when OpenStax::Cnx::V1::Fragment::Interactive
@@ -58,7 +58,7 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
                                      content: reading_fragment.to_html)
   end
 
-  def task_exercise(exercise_fragment:, page:, task:, title: nil, step_modifier:)
+  def task_exercise(exercise_fragment:, page:, task:, title:, previous_step:, step_modifier:)
     exercise = get_random_unused_exercise_with_tags(exercise_fragment.embed_tags)
 
     if exercise.nil?
@@ -69,6 +69,19 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
       exercise = get_random_unused_exercise_with_tags([feature_tag])
 
       return if exercise.nil?
+    end
+
+    # Removes the current exercise's context from the previous step
+    # Removes the previous step completely if this modification makes its content blank
+    if previous_step.present? && exercise.context.present? &&
+       previous_step.has_content? && previous_step.tasked.content.include?(exercise.context)
+      previous_step.tasked.content = previous_step.tasked.content.sub(exercise.context, '')
+
+      if previous_step.tasked.content.blank?
+        task.task_steps.delete(previous_step)
+      else
+        previous_step.tasked.save! if previous_step.tasked.persisted?
+      end
     end
 
     # Assign the exercise
