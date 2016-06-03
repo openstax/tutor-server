@@ -155,7 +155,6 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant,
 
       ## it "sets description, task type, and feedback_at"
       tasks.each do |task|
-        task.reload.reload
         expect(task.description).to eq("Hello!")
         expect(task.homework?).to be_truthy
         # feedback_at == nil because the task plan was set to immediate_feedback

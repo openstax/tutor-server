@@ -52,9 +52,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       @task_step_gold_data = \
         @core_step_gold_data + @spaced_practice_step_gold_data + @personalized_step_gold_data
 
-      cnx_pages = cnx_page_hashes.map do |hash|
-        OpenStax::Cnx::V1::Page.new(hash: hash)
-      end
+      cnx_pages = cnx_page_hashes.map{ |hash| OpenStax::Cnx::V1::Page.new(hash: hash) }
 
       chapter = FactoryGirl.create :content_chapter, title: "Forces and Newton's Laws of Motion"
 
@@ -125,7 +123,6 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       expect(tasks.length).to eq num_taskees
 
       tasks.each do |task|
-        task.reload.reload
         expect(task.taskings.length).to eq 1
 
         expect(task.feedback_at).to be_nil
@@ -184,7 +181,6 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       expect(tasks.length).to eq num_taskees
 
       tasks.each do |task|
-        task.reload.reload
         expect(task.taskings.length).to eq 1
 
         expect(task.feedback_at).to be_nil
@@ -225,7 +221,6 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       expect(tasks.length).to eq num_taskees
 
       tasks.each do |task|
-        task = task.reload.reload
         task_steps = task.task_steps
 
         expect(task_steps.count).to eq(@core_step_gold_data.count + 1)
@@ -351,7 +346,6 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
       tasks = DistributeTasks.call(task_plan).outputs.tasks
       tasks.each do |task|
-        task.reload.reload
         expect(task.taskings.length).to eq 1
         expect(task.feedback_at).to be_nil
 
@@ -478,7 +472,6 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
       tasks = DistributeTasks.call(task_plan).outputs.tasks
       tasks.each do |task|
-        task.reload.reload
         expect(task.taskings.length).to eq 1
         expect(task.feedback_at).to be_nil
 

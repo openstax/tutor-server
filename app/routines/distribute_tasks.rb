@@ -20,7 +20,11 @@ class DistributeTasks
     end
 
     Tasks::Models::Task.import! tasks, recursive: true
-    tasks.each(&:clear_association_cache)
+    tasks.each do |task|
+      task.task_steps.reset
+      task.tasked_exercises.reset
+      task.taskings.reset
+    end
   end
 
   def exec(task_plan, publish_time = Time.current, protect_unopened_tasks = false)
