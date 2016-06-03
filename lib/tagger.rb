@@ -16,7 +16,8 @@ module Tagger
     dok: /\Adok:?(\d+)\z/,
     blooms: /\Ablooms[:-](\d+)\z/,
     length: /\Atime[:-](\w+)\z/,
-    teks: /\A(?:teks:|ost-tag-teks-)[\w-]+-(\w+)\z/
+    teks: /\A(?:teks:|ost-tag-teks-)[\w-]+-(\w+)\z/,
+    requires_context: /\Arequires-context:(?:y(?:es)?|t(?:rue)?)\z/
   })
 
   # The capture from the regex above is substituted into the template to form the tag name

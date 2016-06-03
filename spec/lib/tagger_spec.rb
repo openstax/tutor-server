@@ -61,16 +61,21 @@ RSpec.describe Tagger, type: :lib do
         { value: 'teks:dont-care-9a', name: nil, type: :teks },
         { value: 'context-cnxmod:6a0568d8-23d7-439b-9a01-16e4e73886b3', name: nil, type: :cnxmod },
         { value: 'id:stax-econ:101', name: nil, type: :id },
+        { value: 'requires-context:y', name: nil, type: :requires_context },
+        { value: 'requires-context:yes', name: nil, type: :requires_context },
+        { value: 'requires-context:t', name: nil, type: :requires_context },
+        { value: 'requires-context:true', name: nil, type: :requires_context },
         { value: 'dont-care', name: nil, type: :generic }
       ]
     end
 
     let(:correct_data) do
-      [ nil, nil, '7', '8', 'short', '9a', '6a0568d8-23d7-439b-9a01-16e4e73886b3', '101', nil ]
+      [ nil, nil, '7', '8', 'short', '9a', '6a0568d8-23d7-439b-9a01-16e4e73886b3',
+        '101', nil, nil, nil, nil, nil ]
     end
 
     let(:correct_book_locations) do
-      [ [1, 2], [4, 5], [], [], [], [], [], [], [] ]
+      [ [1, 2], [4, 5], [], [], [], [], [], [], [], [], [], [], [] ]
     end
 
     it 'generates correct tag types' do

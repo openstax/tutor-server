@@ -85,7 +85,8 @@ class Content::Routines::PopulateExercisePools
 
           # Practice Widget
           page.practice_widget_pool.content_exercise_ids << exercise.id \
-            if use_old_logic || (!use_old_logic && !tags.include?('requires-context:y'))
+            if use_old_logic ||
+               (!use_old_logic && !exercise.is_multipart? && !exercise.requires_context?)
 
           # Concept Coach
           page.concept_coach_pool.content_exercise_ids << exercise.id \
