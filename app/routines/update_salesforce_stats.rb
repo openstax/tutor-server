@@ -1,42 +1,49 @@
 class UpdateSalesforceStats
 
-  # not a routine!
+  lev_routine transaction: :no_transaction
 
-  def self.call
+  def exec
     log { "Starting." }
 
-    attached_records = Salesforce::AttachedRecord.all
+    attached_records = Salesforce::AttachedRecord.preload(:salesforce_objects)
 
-    num_records = attached_records.count
+    num_records = attached_records.length
     num_errors = 0
     num_updates = 0
 
-    attached_records.each do |attached_record|
-      begin
-        record = attached_record.record
-        attached_to = attached_record.attached_to
+    attached_records.group_by{ |ar| ar.salesforce_class_name }
+                    .each do |klass_name, attached_records|
+      case klass_name
+      when 'Salesforce::Remote::ClassSize'
+        # We assume all attached_to's are Entity::Course's here
+        course_ids = attached_records.map{ |ar| ar.tutor_gid.try(:model_id) }.compact
+        course_id_to_preloaded_course_map = \
+          Entity::Course.where(id: course_ids)
+                        .preload([:teachers, {periods: :active_enrollments}])
+                        .index_by(&:id)
 
-        case record
-        when Salesforce::Remote::ClassSize
-          update_class_size_stats(record, attached_to)
-        end
+        attached_records.each do |attached_record|
+          begin
+            record = attached_record.record
+            course_id = Integer(attached_record.tutor_gid.model_id)
+            course = course_id_to_preloaded_course_map[course_id]
+            update_class_size_stats(record, course)
+          rescue Exception => e
+            num_errors += 1
+            record.error = "Unable to update stats: #{e.message}" if record.present?
+            OpenStax::RescueFrom.perform_rescue(e)
+          end
 
-      rescue Exception => e
-        num_errors += 1
-        record.error = "Unable to update stats: #{e.message}" if record.present?
-        OpenStax::RescueFrom.perform_rescue(e)
-      end
-
-      begin
-        if record.present?
-          if record.changed?
-            record.save
-            num_updates +=1
+          begin
+            if record.present? && record.changed?
+              record.save
+              num_updates += 1
+            end
+          rescue Exception => e
+            num_errors += 1
+            OpenStax::RescueFrom.perform_rescue(e)
           end
         end
-      rescue Exception => e
-        num_errors += 1
-        OpenStax::RescueFrom.perform_rescue(e)
       end
     end
 
@@ -45,16 +52,18 @@ class UpdateSalesforceStats
       "update(s); #{num_errors} error(s) occurred."
     }
 
-    {num_records: num_records, num_errors: num_errors, num_updates: num_updates}
+    outputs[:num_records] = num_records
+    outputs[:num_errors] = num_errors
+    outputs[:num_updates] = num_updates
   end
 
-  def self.update_class_size_stats(class_size, course)
-    class_size.num_teachers = CourseMembership::GetTeachers[course].count
-    class_size.num_students = CourseMembership::GetCourseRoles[course: course, types: :student].count
-    class_size.num_sections = CourseMembership::GetCoursePeriods[course: course].count
+  def update_class_size_stats(class_size, course)
+    class_size.num_teachers = course.teachers.length
+    class_size.num_students = course.periods.flat_map(&:active_enrollments).length
+    class_size.num_sections = course.periods.length
   end
 
-  def self.log(&block)
+  def log(&block)
     Rails.logger.info { "[UpdateSalesforceStats] #{block.call}" }
   end
 
