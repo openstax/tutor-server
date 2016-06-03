@@ -115,6 +115,7 @@ class ResetPracticeWidget
 
     history = run(:get_history, role: role, type: :all).outputs
     chosen_exercises = run(:choose, exercises: filtered_exercises, count: count, history: history,
+                                    allow_repeats: false,
                                     randomize_exercises: randomize,
                                     randomize_order: randomize).outputs.exercises
     chosen_exercises
