@@ -65,17 +65,19 @@ RSpec.describe Tagger, type: :lib do
         { value: 'requires-context:yes', name: nil, type: :requires_context },
         { value: 'requires-context:t', name: nil, type: :requires_context },
         { value: 'requires-context:true', name: nil, type: :requires_context },
+        { value: 'context-cnxfeature:6a0568d8-23d7-439b-9a01-16e4e73886b3#fs-featureid',
+          name: nil, type: :cnxfeature },
         { value: 'dont-care', name: nil, type: :generic }
       ]
     end
 
     let(:correct_data) do
       [ nil, nil, '7', '8', 'short', '9a', '6a0568d8-23d7-439b-9a01-16e4e73886b3',
-        '101', nil, nil, nil, nil, nil ]
+        '101', nil, nil, nil, nil, 'fs-featureid', nil ]
     end
 
     let(:correct_book_locations) do
-      [ [1, 2], [4, 5], [], [], [], [], [], [], [], [], [], [], [] ]
+      [ [1, 2], [4, 5], [], [], [], [], [], [], [], [], [], [], [], [] ]
     end
 
     it 'generates correct tag types' do

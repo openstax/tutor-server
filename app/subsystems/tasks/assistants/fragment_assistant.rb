@@ -65,7 +65,7 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
       node_id = exercise_fragment.node_id
       return if node_id.blank?
 
-      feature_tag = "context-cnxfeature:#{page.uuid}:#{node_id}"
+      feature_tag = "context-cnxfeature:#{page.uuid}##{node_id}"
       exercise = get_random_unused_exercise_with_tags([feature_tag])
 
       return if exercise.nil?
@@ -99,8 +99,8 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
       # Retrieve an exercise related to the previous step by LO
       exercise = tasked.exercise
 
-      los = Set.new(exercise.los.map(&:id))
-      aplos = Set.new(exercise.aplos.map(&:id))
+      los = Set.new exercise.los.map(&:id)
+      aplos = Set.new exercise.aplos.map(&:id)
 
       pool_exercises.select do |ex|
         ex.los.any?{ |tag| los.include?(tag.id) } || ex.aplos.any?{ |tag| aplos.include?(tag.id) }
@@ -110,7 +110,7 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
       node_id = exercise_fragment.node_id
       return if node_id.blank?
 
-      feature_tag = "context-cnxfeature:#{page.uuid}:#{node_id}"
+      feature_tag = "context-cnxfeature:#{page.uuid}##{node_id}"
       pool_exercises.select{ |ex| ex.tags.any?{ |tag| tag == feature_tag } }
     end
 

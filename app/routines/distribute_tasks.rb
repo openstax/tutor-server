@@ -20,6 +20,7 @@ class DistributeTasks
     end
 
     Tasks::Models::Task.import! tasks, recursive: true
+
     tasks.each do |task|
       task.task_steps.reset
       task.tasked_exercises.reset
