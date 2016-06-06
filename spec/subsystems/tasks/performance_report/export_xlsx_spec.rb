@@ -113,6 +113,11 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
             due_at: Chronic.parse("3/15/2016")
           },
           {
+            title: "External",
+            type: 'external',
+            due_at: Chronic.parse("3/14/2016")
+          },
+          {
             title: "Reading 4.1 Studying Cells",
             type: 'reading',
             due_at: Chronic.parse("3/5/2016")
@@ -143,6 +148,9 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
                 correct_exercise_count:                 7,
                 correct_on_time_exercise_count:         7,
                 correct_accepted_late_exercise_count:   0,
+              },
+              {
+                last_worked_at: Chronic.parse("3/13/2016 11AM"), # really more here but don't need
               },
               {
                 last_worked_at: Chronic.parse("3/7/2016 1PM"),
@@ -194,6 +202,9 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
                 correct_exercise_count:                 5,
                 correct_on_time_exercise_count:         2,
                 correct_accepted_late_exercise_count:   2,
+              },
+              {
+                last_worked_at: Chronic.parse("3/13/2016 11AM"), # really more here but don't need
               },
               nil,
               {
