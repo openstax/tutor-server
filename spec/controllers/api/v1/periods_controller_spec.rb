@@ -13,7 +13,7 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
 
   describe '#create' do
     it 'allows teachers to create periods' do
-      allow(Babbler).to receive(:babble) { 'awesome programmer' }
+      allow(SecureRandom).to receive(:random_number) { 12345 }
 
       api_post :create, teacher_token, parameters: { course_id: course.id },
                                        raw_post_data: { name: '7th Period' }.to_json
@@ -22,8 +22,8 @@ RSpec.describe Api::V1::PeriodsController, type: :controller, api: true, version
       expect(response.body_as_hash).to match({
         id: CourseMembership::Models::Period.last.id.to_s,
         name: '7th Period',
-        enrollment_code: 'awesome programmer',
-        enrollment_url: a_string_matching(/enroll\/awesome-programmer/),
+        enrollment_code: '012345',
+        enrollment_url: a_string_matching(/enroll\/012345/),
         default_open_time: '00:01',
         default_due_time: '07:00',
         is_archived: false

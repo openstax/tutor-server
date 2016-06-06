@@ -1,7 +1,7 @@
 class CourseMembership::Models::Period < Tutor::SubSystems::BaseModel
   acts_as_paranoid
 
-  unique_token :enrollment_code, mode: :memorable
+  unique_token :enrollment_code, mode: :random_number, length: 6
 
   wrapped_by CourseMembership::Strategies::Direct::Period
 

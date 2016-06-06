@@ -28,7 +28,8 @@ class SecureRandomTokenGenerator
   end
 
   def run_random_number
-    strategy.random_number(options[:maximum])
+    length = options[:length] || 6
+    strategy.random_number(10 ** length).to_s.rjust(length,"0")
   end
 
   def run_uuid
