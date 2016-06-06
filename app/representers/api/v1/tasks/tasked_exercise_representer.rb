@@ -39,6 +39,15 @@ module Api::V1::Tasks
                description: "The ID of the part, present even if there is only one part."
              }
 
+    property :context,
+             type: String,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               required: false,
+               description: "The Exercise's context (only present if required by the Exercise)"
+             }
+
     property :content_hash_for_students,
              as: :content,
              type: String,

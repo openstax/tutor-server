@@ -16,9 +16,9 @@ module OpenStax::Cnx::V1
     def self.absolutize_exercise_urls(node)
       node.css(EMBED_CODE_CSS).each do |anchor|
         href = anchor.attribute('href')
-        short_code = EMBED_TAG_REGEX.match(href.value).try(:[], 1)
+        embed_tag = EMBED_TAG_REGEX.match(href.value).try(:[], 1)
         uri = OpenStax::Exercises::V1.uri_for('/api/exercises')
-        uri.query_values = { q: "tag:\"#{short_code}\"" }
+        uri.query_values = { q: "tag:\"#{embed_tag}\"" }
         href.value = uri.to_s
       end
     end

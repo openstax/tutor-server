@@ -17,7 +17,7 @@ class Tasks::Models::TaskStep < Tutor::SubSystems::BaseModel
   validates :tasked_id, uniqueness: { scope: :tasked_type }
   validates :group_type, presence: true
 
-  delegate :can_be_answered?, :has_correctness?, to: :tasked
+  delegate :can_be_answered?, :has_correctness?, :has_content?, to: :tasked
 
   scope :complete,   -> { where{first_completed_at != nil} }
   scope :incomplete, -> { where{first_completed_at == nil} }

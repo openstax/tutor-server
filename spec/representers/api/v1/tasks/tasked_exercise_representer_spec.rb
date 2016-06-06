@@ -26,6 +26,7 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
     ## TaskedExercise-specific properties
     allow(exercise).to receive(:url).and_return('Some url')
     allow(exercise).to receive(:title).and_return('Some title')
+    allow(exercise).to receive(:context).and_return('Some context')
     allow(exercise).to receive(:content_hash_for_students).and_return('Some content')
     allow(exercise).to receive(:solution).and_return('Some solution')
     allow(exercise).to receive(:feedback).and_return('Some feedback')
@@ -63,6 +64,10 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
 
     it "has the correct 'title'" do
       expect(representation).to include("title" => 'Some title')
+    end
+
+    it "has the correct 'context'" do
+      expect(representation).to include("context" => 'Some context')
     end
 
     it "has the correct 'content'" do

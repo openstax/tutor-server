@@ -60,6 +60,10 @@ class OpenStax::Exercises::V1::Exercise
     @cnxmod_hashes ||= tag_hashes.select{ |hash| hash[:type] == :cnxmod }
   end
 
+  def cnxfeature_hashes
+    @cnxfeature_hashes ||= tag_hashes.select{ |hash| hash[:type] == :cnxfeature }
+  end
+
   def import_tag_hashes
     @import_tag_hashes ||= lo_hashes + aplo_hashes + cnxmod_hashes
   end
@@ -76,13 +80,17 @@ class OpenStax::Exercises::V1::Exercise
     @cnxmods ||= cnxmod_hashes.map{ |hash| hash[:value] }
   end
 
+  def cnxfeatures
+    @cnxfeatures ||= cnxfeature_hashes.map{ |hash| hash[:value] }
+  end
+
   def import_tags
     @import_tags ||= import_tag_hashes.map{ |hash| hash[:value] }
   end
 
   def feature_ids(page_uuid)
     feature_tag_start = "context-cnxfeature:#{page_uuid}#"
-    feature_tags = tags.select{ |tag| tag.start_with? feature_tag_start }
+    feature_tags = cnxfeatures.select{ |tag| tag.start_with? feature_tag_start }
     feature_tags.map{ |tag| tag.sub(feature_tag_start, '') }
   end
 
