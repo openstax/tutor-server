@@ -29,7 +29,7 @@ module Tasks
         @helper.standard_package_settings(@package)
 
         setup_styles
-        exclude_non_due_tasks
+        remove_excluded_tasks
         write_data_worksheets
         make_first_sheet_active
         save
@@ -37,19 +37,25 @@ module Tasks
 
       private
 
-      def exclude_non_due_tasks
-        # We decided to pull out non due tasks here instead of where the report
-        # is originally generated because that code is currently generic, and leaving
-        # it serving all needs will probably help us later if we cache generated
+      def remove_excluded_tasks
+        # We decided to pull out non due tasks and non exported task types here instead of
+        # where the report is originally generated because that code is currently generic,
+        # and leaving it serving all needs will probably help us later if we cache generated
         # report data.
 
         @report.each do |period_report|
-          num_tasks = period_report[:data_headings].length
-          not_due_count = period_report[:data_headings].count{|heading| heading[:due_at] > Time.now}
-          next if not_due_count == 0
-          period_report[:data_headings].slice!(num_tasks-not_due_count..-1)
+          excluded_indices = []
+
+          period_report[:data_headings].each_with_index do |heading, ii|
+            if heading[:due_at] > Time.now || !%w(homework reading concept_coach).include?(heading[:type])
+              excluded_indices.push(ii)
+            end
+          end
+
+          period_report[:data_headings].reject!.with_index {|heading, ii| excluded_indices.include?(ii) }
+
           period_report[:students].each do |student|
-            student[:data].slice!(num_tasks-not_due_count..-1)
+            student[:data].reject!.with_index {|student, ii| excluded_indices.include?(ii) }
           end
         end
       end
