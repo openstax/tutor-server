@@ -77,11 +77,12 @@ RSpec.describe UniqueTokenable, type: :lib do
     # result of base64 is about 4/3 of n
   end
 
-  it 'allows for a max value of random number mode' do
-    DummyModel.unique_token :enrollment_code, mode: { random_number: { maximum: 9 } }
+  it 'allows for a random number mode' do
+    DummyModel.unique_token :enrollment_code, mode: { random_number: { length: 3 } }
     dummy = DummyModel.new
     dummy.valid?
-    expect(dummy.enrollment_code.to_i < 9).to be true
+    expect(dummy.enrollment_code.length).to eq 3
+    expect(dummy.enrollment_code.to_i).to be < 1000
   end
 
   it 'allows for a padding option on urlsafe_base64 mode' do

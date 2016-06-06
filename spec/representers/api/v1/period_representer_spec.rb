@@ -6,9 +6,9 @@ RSpec.describe Api::V1::PeriodRepresenter, type: :representer do
   subject(:represented) { described_class.new(period).to_hash }
 
   it 'includes the enrollment code' do
-    allow(Babbler).to receive(:babble) { 'awesome programmer' }
+    allow(SecureRandom).to receive(:random_number) { 123456 }
 
-    expect(represented['enrollment_code']).to eq('awesome programmer')
+    expect(represented['enrollment_code']).to eq('123456')
   end
 
   it 'includes the default open time' do

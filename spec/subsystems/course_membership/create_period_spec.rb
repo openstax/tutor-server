@@ -2,11 +2,11 @@ require 'rails_helper'
 
 RSpec.describe CourseMembership::CreatePeriod do
   it 'generates an enrollment_code' do
-    allow(Babbler).to receive(:babble) { 'formidableWalrus' }
+    allow(SecureRandom).to receive(:random_number) { 1 }
 
     course = CreateCourse[name: 'Great course']
     period = described_class[course: course, name: 'Cool period']
 
-    expect(period.enrollment_code).to eq('formidableWalrus')
+    expect(period.enrollment_code).to eq('000001')
   end
 end
