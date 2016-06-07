@@ -75,6 +75,6 @@ RSpec.describe ShortCodesController, type: :controller do
 
     expect {
       get :redirect, short_code: tasking_code.code
-    }.to raise_error(ShortCodeNotFound)
+    }.to raise_error(StandardError)
   end
 end
