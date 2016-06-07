@@ -94,6 +94,18 @@ RSpec::Matchers.define :have_routine_errors do
   end
 end
 
+RSpec::Matchers.define :have_routine_error do |error_code|
+  include RSpec::Matchers::Composable
+
+  match do |actual|
+    actual.errors.any?{|error| error.code == error_code}
+  end
+
+  failure_message do |actual|
+    "expected that #{actual} would have error :#{error_code.to_s}"
+  end
+end
+
 # https://gist.github.com/shime/9930893
 RSpec::Matchers.define :be_the_same_time_as do |expected|
   match do |actual|

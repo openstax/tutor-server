@@ -31,15 +31,15 @@ RSpec.describe Tasks::GetRedirectUrl, type: :routine do
     expect(result.outputs.uri).to eq("/courses/#{course.id}/tasks/#{task.id}")
   end
 
-  it 'raises SecurityTransgression for users not in the course' do
-    expect {
+  it 'returns :invalid_user for users not in the course' do
+    expect(
       described_class.call(gid: task_plan_gid, user: user)
-    }.to raise_error(SecurityTransgression)
+    ).to have_routine_error(:invalid_user)
   end
 
-  it 'raises SecurityTransgression for anonymous users' do
-    expect {
+  it 'returns :invalid_user for anonymous users' do
+    expect(
       described_class.call(gid: task_plan_gid, user: User::User.anonymous)
-    }.to raise_error(SecurityTransgression)
+    ).to have_routine_error(:invalid_user)
   end
 end
