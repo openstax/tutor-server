@@ -41,8 +41,19 @@ describe CollectCourseInfo, type: :routine do
   end
 
   context "when multiple courses are given" do
+    let!(:ecosystem_model_1) { FactoryGirl.create :content_ecosystem }
+    let!(:ecosystem_1)       { Content::Ecosystem.new(strategy: ecosystem_model_1.wrap) }
+
+    let!(:ecosystem_model_2) { FactoryGirl.create :content_ecosystem }
+    let!(:ecosystem_2)       { Content::Ecosystem.new(strategy: ecosystem_model_2.wrap) }
+
+    before do
+      AddEcosystemToCourse[ecosystem: ecosystem_1, course: course_1]
+      AddEcosystemToCourse[ecosystem: ecosystem_2, course: course_2]
+    end
+
     it "returns information about all given courses" do
-      result = described_class[courses: [course_1, course_2]]
+      result = described_class[courses: [course_1, course_2], with: [:ecosystem, :ecosystem_book]]
       expect(result).to contain_exactly(
         {
           id: course_1.id,
@@ -54,7 +65,9 @@ describe CollectCourseInfo, type: :routine do
           school_name: course_1.profile.school_name,
           salesforce_book_name: course_1.profile.offering.salesforce_book_name,
           appearance_code: course_1.profile.offering.appearance_code,
-          is_concept_coach: false
+          is_concept_coach: false,
+          ecosystem: ecosystem_1,
+          ecosystem_book: ecosystem_1.books.first
         },
         {
           id: course_2.id,
@@ -66,7 +79,9 @@ describe CollectCourseInfo, type: :routine do
           school_name: course_2.profile.school_name,
           salesforce_book_name: course_2.profile.offering.salesforce_book_name,
           appearance_code: course_2.profile.offering.appearance_code,
-          is_concept_coach: false
+          is_concept_coach: false,
+          ecosystem: ecosystem_2,
+          ecosystem_book: ecosystem_2.books.first
         }
       )
     end
