@@ -16,7 +16,8 @@ class Entity::Course < Tutor::SubSystems::BaseModel
 
   delegate :name, :appearance_code, :is_concept_coach, :offering, :teach_token,
            :time_zone, :default_open_time, :default_due_time,
-           :name=, :default_open_time=, :default_due_time=, to: :profile
+           :name=, :default_open_time=, :default_due_time=, :is_college,
+           to: :profile
 
   def deletable?
     periods.empty? && teachers.empty? && students.empty?

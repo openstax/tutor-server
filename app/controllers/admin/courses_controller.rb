@@ -135,6 +135,7 @@ class Admin::CoursesController < Admin::BaseController
                                              :school_district_school_id,
                                              :catalog_offering_id,
                                              :is_concept_coach,
+                                             :is_college,
                                              teacher_ids: []) }
   end
 

@@ -35,6 +35,7 @@ class CollectCourseInfo
         default_due_time: profile.default_due_time,
         offering: offering,
         is_concept_coach: profile.is_concept_coach,
+        is_college: profile.is_college,
         school_name: profile.school_name,
         salesforce_book_name: offering.try(:salesforce_book_name),
         appearance_code: profile.appearance_code.blank? ? \

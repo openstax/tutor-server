@@ -29,6 +29,19 @@ RSpec.feature 'Admin editing a course' do
     expect(page).to have_css('tr td', text: 'Changed')
   end
 
+  scenario 'Changing "Is College"' do
+    visit admin_courses_path
+    click_link 'Edit'
+
+    expect(page).to have_content('Edit Course')
+    check 'course_is_college'
+    click_button 'Save'
+
+    expect(current_path).to eq(admin_courses_path)
+    expect(page).to have_css('.flash_notice', text: 'The course has been updated.')
+    expect(Entity::Course.first.is_college).to be_truthy
+  end
+
   scenario 'Assigning a school' do
     FactoryGirl.create(:school, name: 'School name')
     visit admin_courses_path
