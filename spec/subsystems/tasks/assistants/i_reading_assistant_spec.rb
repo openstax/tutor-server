@@ -599,11 +599,11 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       allow_any_instance_of(Content::Models::Page).to receive(:fragments) do
         [
           OpenStax::Cnx::V1::Fragment::Reading.new(
-            node: Nokogiri::HTML.fragment(reading_content).first_element_child,
+            node: Nokogiri::HTML.fragment(reading_content).children.first,
             title: "Doesn't matter, the first fragment's title comes from the page"
           ),
           OpenStax::Cnx::V1::Fragment::Video.new(
-            node: Nokogiri::HTML.fragment(video_content).first_element_child,
+            node: Nokogiri::HTML.fragment(video_content).children.first,
             title: "Watch Newton use the Force against Robert Hooke"
           ),
           OpenStax::Cnx::V1::Fragment::Exercise.new(
@@ -611,15 +611,15 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
               "<div class=\"exercise\">
                  <a href=#ost/api/ex/#{video_exercise_id_tag.value}>[Link]</a>
                </div>"
-            ).first_element_child,
+            ).children.first,
             title: nil
           ),
           OpenStax::Cnx::V1::Fragment::Interactive.new(
-            node: Nokogiri::HTML.fragment(interactive_content).first_element_child,
+            node: Nokogiri::HTML.fragment(interactive_content).children.first,
             title: "Now try it yourself"
           ),
           OpenStax::Cnx::V1::Fragment::Exercise.new(
-            node: Nokogiri::HTML.fragment(interactive_content).first_element_child,
+            node: Nokogiri::HTML.fragment(interactive_content).children.first,
             title: nil
           )
         ]

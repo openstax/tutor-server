@@ -7,6 +7,7 @@ class ShortCode::GetShortCodeUrl
   def exec(short_code:, user:)
     short_code = ShortCode::Models::ShortCode.find_by_code(short_code)
     fatal_error(code: :short_code_not_found) if short_code.nil?
+
     if short_code.uri.starts_with?('gid://')
       # GIDs
       if short_code.uri.starts_with?('gid://tutor/Tasks::Models::TaskPlan')
