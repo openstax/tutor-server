@@ -83,6 +83,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           default_due_time: '07:00',
           ecosystem_id: "#{ecosystem.id}",
           is_concept_coach: false,
+          is_college: false,
           roles: [{ id: teacher.id.to_s, type: 'teacher' }],
           periods: [{ id: zeroth_period.id.to_s,
                       name: zeroth_period.name,
@@ -430,6 +431,14 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                     raw_post_data: { default_due_time: '1pm' }.to_json
         }.not_to change{ course.reload.default_open_time }
         expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it 'updates is_college' do
+        expect(course.is_college).to be_falsy
+        api_patch :update, user_1_token,
+                  parameters: { id: course.id },
+                  raw_post_data: { is_college: true }.to_json
+        expect(course.reload.is_college).to be_truthy
       end
     end
   end

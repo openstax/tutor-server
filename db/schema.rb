@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160603151054) do
+ActiveRecord::Schema.define(version: 20160607195354) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,6 +29,7 @@ ActiveRecord::Schema.define(version: 20160603151054) do
     t.datetime "updated_at",                           null: false
     t.string   "default_course_name"
     t.string   "appearance_code"
+    t.boolean  "is_normally_college",  default: false, null: false
   end
 
   add_index "catalog_offerings", ["content_ecosystem_id"], name: "index_catalog_offerings_on_content_ecosystem_id", using: :btree
@@ -269,18 +270,19 @@ ActiveRecord::Schema.define(version: 20160603151054) do
 
   create_table "course_profile_profiles", force: :cascade do |t|
     t.integer  "school_district_school_id"
-    t.integer  "entity_course_id",            null: false
-    t.string   "name",                        null: false
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
-    t.boolean  "is_concept_coach",            null: false
-    t.string   "teach_token",                 null: false
+    t.integer  "entity_course_id",                            null: false
+    t.string   "name",                                        null: false
+    t.datetime "created_at",                                  null: false
+    t.datetime "updated_at",                                  null: false
+    t.boolean  "is_concept_coach",                            null: false
+    t.string   "teach_token",                                 null: false
     t.integer  "catalog_offering_id"
     t.string   "appearance_code"
     t.string   "biglearn_excluded_pool_uuid"
     t.string   "default_open_time"
     t.string   "default_due_time"
-    t.integer  "time_zone_id",                null: false
+    t.integer  "time_zone_id",                                null: false
+    t.boolean  "is_college",                  default: false, null: false
   end
 
   add_index "course_profile_profiles", ["catalog_offering_id"], name: "index_course_profile_profiles_on_catalog_offering_id", using: :btree

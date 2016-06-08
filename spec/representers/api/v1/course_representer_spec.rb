@@ -66,4 +66,8 @@ RSpec.describe Api::V1::CourseRepresenter, type: :representer do
     output = described_class.new(Hashie::Mash.new({students: [{id: 32}, {id: 65}]})).to_hash
     expect(output["students"]).to match [a_hash_including("id" => "32"), a_hash_including("id" => "65")]
   end
+
+  it 'shows whether or not it is a college course' do
+    expect(represented['is_college']).to eq false
+  end
 end

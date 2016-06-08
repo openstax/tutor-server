@@ -97,6 +97,14 @@ module Api::V1
                type: 'boolean'
              }
 
+    property :is_college,
+             readable: true,
+             writeable: true,
+             schema_info: {
+               required: true,
+               type: 'boolean'
+             }
+
     collection :roles,
                extend: Api::V1::RoleRepresenter,
                readable: true,
