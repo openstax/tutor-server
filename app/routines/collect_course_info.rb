@@ -15,8 +15,6 @@ class CollectCourseInfo
     outputs[:courses] = collect_course_info(courses, user, [with].flatten)
   end
 
-  private
-
   def collect_courses(courses: nil, user: nil)
     courses = [courses].flatten unless courses.nil?
     courses ||= run(:get_courses, user: user).outputs.courses unless user.nil?
@@ -73,34 +71,47 @@ class CollectCourseInfo
   end
 
   def set_roles(info, entity_course, user)
-    @roles ||= run(:get_course_roles, course: entity_course, user: user).outputs.roles
+    roles = get_course_roles(entity_course: entity_course, user: user)
 
-    info.roles = @roles.map do |role|
+    info.roles = roles.map do |role|
       { id: role.id, type: role.role_type }
     end
   end
 
   def set_periods(info, entity_course, user)
-    @roles ||= run(:get_course_roles, course: entity_course, user: user).outputs.roles
+    roles = get_course_roles(entity_course: entity_course, user: user)
 
-    info.periods = run(:get_course_periods, course: entity_course, roles: @roles,
+    info.periods = run(:get_course_periods, course: entity_course, roles: roles,
                                             include_archived: true).outputs.periods
   end
 
   def set_ecosystem(info, entity_course)
-    @ecosystem ||= run(:get_course_ecosystem, course: entity_course).outputs.ecosystem
-    info.ecosystem = @ecosystem
+    info.ecosystem = get_course_ecosystem(entity_course: entity_course)
   end
 
   def set_ecosystem_book(info, entity_course)
-    @ecosystem ||= run(:get_course_ecosystem, course: entity_course).outputs.ecosystem
-    info.ecosystem_book = @ecosystem.try(:books).try(:first)
+    ecosystem = get_course_ecosystem(entity_course: entity_course)
+
+    info.ecosystem_book = ecosystem.try(:books).try(:first)
   end
 
   def set_students(info, entity_course, user)
-    @roles ||= run(:get_course_roles, course: entity_course, user: user).outputs.roles
+    roles = get_course_roles(entity_course: entity_course, user: user)
 
-    info.students = @roles.map(&:student).compact
+    info.students = roles.map(&:student).compact
+  end
+
+  def get_course_roles(entity_course:, user:)
+    @roles ||= {}
+    @roles[entity_course] ||= run(:get_course_roles, course: entity_course,
+                                                     user: user).outputs.roles
+  end
+
+  def get_course_ecosystem(entity_course:)
+    @ecosystem ||= {}
+    @ecosystem[entity_course] ||= run(
+      :get_course_ecosystem, course: entity_course
+    ).outputs.ecosystem
   end
 
 end
