@@ -2,12 +2,14 @@ class Tasks::GetRedirectUrl
   lev_routine
 
   uses_routine ChooseCourseRole, translations: { outputs: { type: :verbatim } }
-  uses_routine Tasks::GetTasks
 
   protected
 
   def exec(gid:, user:)
     task_plan = GlobalID::Locator.locate(gid)
+
+    fatal_error(code: :plan_not_found) if task_plan.nil?
+
     course = task_plan.owner
 
     run(:choose_course_role, user: user, course: course)
@@ -16,7 +18,7 @@ class Tasks::GetRedirectUrl
     when 'teacher'
       outputs[:uri] = "/courses/#{course.id}/t/#{task_plan.type.pluralize}/#{task_plan.id}"
     when 'student'
-      task = Tasks::GetTasks[roles: outputs.role].where(tasks_task_plan_id: task_plan.id).first
+      task = task_plan.tasks.joins(:taskings).find_by(taskings: { role: outputs.role })
 
       fatal_error(code: :plan_not_published) if task.nil?
       fatal_error(code: :task_not_open) if !task.past_open?
