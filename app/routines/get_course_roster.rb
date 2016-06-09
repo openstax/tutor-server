@@ -1,6 +1,8 @@
 class GetCourseRoster
   lev_routine express_output: :roster
 
+  uses_routine GetCourseTeachers
+
   protected
 
   def exec(course:)
@@ -8,6 +10,7 @@ class GetCourseRoster
 
     outputs.roster = {
       teach_url: UrlGenerator.teach_course_url(course.teach_token),
+      teachers: run(GetCourseTeachers,course).outputs.teachers,
       students: students.map do |student|
         Hashie::Mash.new({
           id: student.id,

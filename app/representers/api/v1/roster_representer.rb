@@ -11,6 +11,11 @@ module Api::V1
                description: "The unique URL for users to become teachers of the course. This is a private URL and must be kept secret."
              }
 
+    collection :teachers,
+               readable: true,
+               writeable: false,
+               decorator: TeacherRepresenter
+
     collection :students,
                writeable: false,
                readable: true,
