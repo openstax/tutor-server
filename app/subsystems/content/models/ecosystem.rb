@@ -19,11 +19,11 @@ module Content
       has_many :tags, dependent: :destroy, inverse_of: :ecosystem
 
       has_many :to_maps, class_name: '::Content::Models::Map',
-                         foreign_key: :from_ecosystem_id,
+                         foreign_key: :content_from_ecosystem_id,
                          dependent: :destroy,
                          inverse_of: :from_ecosystem
       has_many :from_maps, class_name: '::Content::Models::Map',
-                           foreign_key: :to_ecosystem_id,
+                           foreign_key: :content_to_ecosystem_id,
                            dependent: :destroy,
                            inverse_of: :to_ecosystem
 
