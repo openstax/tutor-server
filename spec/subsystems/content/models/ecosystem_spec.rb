@@ -12,6 +12,9 @@ RSpec.describe Content::Models::Ecosystem, type: :model do
   it { is_expected.to have_many(:exercises) }
   it { is_expected.to have_many(:pools) }
 
+  it { is_expected.to have_many(:to_maps).dependent(:destroy) }
+  it { is_expected.to have_many(:from_maps).dependent(:destroy) }
+
   it { is_expected.to validate_presence_of(:title) }
 
   it 'can create a manifest hash' do
