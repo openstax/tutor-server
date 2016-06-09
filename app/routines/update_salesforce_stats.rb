@@ -19,7 +19,7 @@ class UpdateSalesforceStats
         course_ids = attached_records.map{ |ar| ar.tutor_gid.try(:model_id) }.compact
         course_id_to_preloaded_course_map = \
           Entity::Course.where(id: course_ids)
-                        .preload([:teachers, {periods: :active_enrollments}])
+                        .preload([:teachers, {periods: :latest_enrollments}])
                         .index_by(&:id)
 
         attached_records.each do |attached_record|
@@ -59,7 +59,7 @@ class UpdateSalesforceStats
 
   def update_class_size_stats(class_size, course)
     class_size.num_teachers = course.teachers.length
-    class_size.num_students = course.periods.flat_map(&:active_enrollments).length
+    class_size.num_students = course.periods.flat_map(&:latest_enrollments).length
     class_size.num_sections = course.periods.length
   end
 

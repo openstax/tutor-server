@@ -5,7 +5,7 @@ module Manager::StatsActions
 
   def courses
     @courses = Entity::Course.joins(:profile).preload(
-      [:profile, :teachers, {periods: :active_enrollments}]
+      [:profile, :teachers, {periods: :latest_enrollments}]
     ).order{ profile.name }.to_a
     @course_url_proc = course_url_proc
 

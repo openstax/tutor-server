@@ -21,7 +21,7 @@
         <%= course.teachers.map{ |teacher| teacher.role.role_user.profile.name }.join(', ') %>
       </td>
       <td><%= course.periods.length %></td>
-      <td><%= course.periods.flat_map(&:active_enrollments).length %></td>
+      <td><%= course.periods.flat_map(&:latest_enrollments).length %></td>
     </tr>
   <% end %>
   </tbody>
