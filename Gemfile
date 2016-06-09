@@ -91,9 +91,6 @@ gem 'deep_cloneable'
 # Real time application monitoring
 gem 'newrelic_rpm'
 
-# YAML database backups
-gem 'yaml_db'
-
 # Date validations
 gem 'validates_timeliness'
 

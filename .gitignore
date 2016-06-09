@@ -11,6 +11,7 @@
 # Ignore the default SQLite database and yaml_db database files
 /db/*.sqlite3*
 /db/data.yml*
+/db/dumps*
 
 # Ignore all logfiles and tempfiles.
 /log/*.log
