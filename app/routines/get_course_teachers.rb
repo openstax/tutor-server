@@ -13,6 +13,7 @@ class GetCourseTeachers
     outputs[:teachers] = roles.map do |role|
       { id: role.teacher.id.to_s,
         role_id: role.id.to_s,
+        entity_role_id: role.id.to_s, # some callers use this instead of `role_id`
         first_name: role.profile.first_name,
         last_name: role.profile.last_name }
     end

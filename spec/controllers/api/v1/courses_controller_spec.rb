@@ -168,7 +168,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     let!(:student_2)         { student_role_2.student }
 
     let!(:teacher_user)      { FactoryGirl.create(:user) }
-    let!(:teacher)           { AddUserAsCourseTeacher[user: teacher_user,
+    let!(:teacher_role)      { AddUserAsCourseTeacher[user: teacher_user,
                                                       course: course] }
     let!(:teacher_token)     { FactoryGirl.create :doorkeeper_access_token,
                                                   application: application,
@@ -189,6 +189,14 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           roster = response.body_as_hash
           expect(roster).to include({
             teach_url: a_string_matching(/.*teach\/[a-f0-9]{32}\/DO_NOT.*/),
+            teachers: a_collection_containing_exactly(
+              {
+                id: teacher_role.teacher.id.to_s,
+                role_id: teacher_role.id.to_s,
+                first_name: teacher_user.first_name,
+                last_name: teacher_user.last_name,
+              }
+            ),
             students: a_collection_containing_exactly(
               {
                 id: student.id.to_s,
