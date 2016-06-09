@@ -2,6 +2,7 @@ class Tasks::GetRedirectUrl
   lev_routine
 
   uses_routine ChooseCourseRole, translations: { outputs: { type: :verbatim } }
+  uses_routine Tasks::GetTasks
 
   protected
 
