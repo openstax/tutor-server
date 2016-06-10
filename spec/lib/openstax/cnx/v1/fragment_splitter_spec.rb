@@ -87,7 +87,8 @@ RSpec.describe OpenStax::Cnx::V1::FragmentSplitter, type: :lib, vcr: VCR_OPTS do
         next if optional_exercise_fragment.nil? # Last fragment - not a worked example
 
         # The worked example node is included in the reading fragment before it
-        expect(reading_fragment.node.at_css('.worked-example')).to be_present
+        node = Nokogiri::HTML.fragment(reading_fragment.to_html)
+        expect(node.at_css('.worked-example')).to be_present
       end
     end
   end

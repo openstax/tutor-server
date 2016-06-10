@@ -15,7 +15,6 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::Reading, type: :external, vcr: VCR_O
 
   it "provides info about the reading fragment" do
     reading_fragments.each do |fragment|
-      expect(fragment.node).not_to be_nil
       expect(fragment.title).to be_nil
       expect(fragment.to_html).not_to be_blank
     end

@@ -13,6 +13,8 @@ module OpenStax::Cnx::V1
     # Regex to extract the appropriate embed tag(s) from the absolutized url(s)
     ABSOLUTE_EMBED_TAG_REGEX = /\/api\/exercises\/?\?q=tag(?::|%3A)(?:"|%22)?([\w-]+)(?:"|%22)?\z/
 
+    attr_reader :embed_tags
+
     def self.absolutize_exercise_urls(node)
       node.css(EMBED_CODE_CSS).each do |anchor|
         href = anchor.attribute('href')
@@ -28,21 +30,11 @@ module OpenStax::Cnx::V1
       self.class.absolutize_exercise_urls(node)
 
       super
-    end
 
-    # Does not search for a title within the exercise node, unlike its superclass
-    def title
-      @title
-    end
-
-    def embed_codes
-      @embed_codes ||= node.xpath(ABSOLUTE_EMBED_CODE_XPATH).map do |anchor|
+      embed_codes = node.xpath(ABSOLUTE_EMBED_CODE_XPATH).map do |anchor|
         anchor.attribute('href').value
       end
-    end
-
-    def embed_tags
-      @embed_tags ||= embed_codes.map do |embed_code|
+      @embed_tags = embed_codes.map do |embed_code|
         ABSOLUTE_EMBED_TAG_REGEX.match(embed_code).try(:[], 1)
       end.compact
     end

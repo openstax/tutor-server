@@ -104,7 +104,7 @@ module Content
     end
 
     def snap_labs
-      @strategy.snap_labs
+      verify_and_return @strategy.snap_labs, klass: Hash, error: StrategyError
     end
 
   end

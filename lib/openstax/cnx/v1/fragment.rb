@@ -1,23 +1,13 @@
+# All fragment subclasses must be serializable with to_yaml and YAML.load
+# Nokogiri nodes are not serializable, so they must be processed in the initialize method
 class OpenStax::Cnx::V1::Fragment
 
-  attr_reader :node, :labels
+  attr_reader :title, :labels, :node_id
 
   def initialize(node:, title: nil, labels: nil)
-    @node   = node
     @title  = title
-    @labels = labels
-  end
-
-  def title
-    nil
-  end
-
-  def node_id
-    @node_id ||= node.attribute('id').try :value
-  end
-
-  def labels
-    @labels || []
+    @labels = labels || []
+    @node_id = node.attribute('id').try :value
   end
 
   def blank?

@@ -6,6 +6,7 @@ module Api::V1
              type: String,
              readable: true,
              writeable: false,
+             getter: ->(*) { "#{page_id}:#{id}" },
              schema_info: {
                required: true,
                description: 'Id of the note with snap lab'

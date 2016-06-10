@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160610181304) do
+ActiveRecord::Schema.define(version: 20160610210955) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -143,6 +143,8 @@ ActiveRecord::Schema.define(version: 20160610181304) do
     t.integer  "content_all_exercises_pool_id"
     t.integer  "content_concept_coach_pool_id"
     t.string   "short_id"
+    t.string   "fragments",                        null: false, array: true
+    t.jsonb    "snap_labs",                        null: false
   end
 
   add_index "content_pages", ["content_chapter_id", "number"], name: "index_content_pages_on_content_chapter_id_and_number", unique: true, using: :btree

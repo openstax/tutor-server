@@ -25,7 +25,7 @@ class Content::Routines::ImportBookPart
         title: cnx_book_part.title,
         book_location: [chapter_tracker.value]
       )
-      chapter.save if save
+      save ? chapter.save : chapter.valid?
       transfer_errors_from(chapter, {type: :verbatim}, true)
 
       book.chapters << chapter
