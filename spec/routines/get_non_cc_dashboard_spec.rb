@@ -16,20 +16,47 @@ describe GetNonCcDashboard, type: :routine do
   let!(:teacher_role)   { AddUserAsCourseTeacher.call(user: teacher_user, course: course)
                                                 .outputs.role }
 
-  let!(:reading_task)   { FactoryGirl.create(:tasks_task,
-                                             task_type: :reading,
-                                             step_types: [:tasks_tasked_reading,
-                                                          :tasks_tasked_exercise,
-                                                          :tasks_tasked_exercise],
-                                             tasked_to: student_role) }
+  let!(:hidden_reading_task) do
+    FactoryGirl.create(:tasks_task,
+                       task_type: :reading,
+                       step_types: [:tasks_tasked_reading,
+                                    :tasks_tasked_exercise,
+                                    :tasks_tasked_exercise],
+                       tasked_to: student_role).tap do |task|
+      task.destroy!
+      task.hide.save!
+    end
+  end
 
-  let!(:homework_task)   { FactoryGirl.create(:tasks_task,
-                                              task_type: :reading,
-                                              opens_at: 1.day.from_now,
-                                              step_types: [:tasks_tasked_exercise,
-                                                           :tasks_tasked_exercise,
-                                                           :tasks_tasked_exercise],
-                                              tasked_to: student_role) }
+  let!(:deleted_reading_task) do
+    FactoryGirl.create(:tasks_task,
+                       task_type: :reading,
+                       step_types: [:tasks_tasked_reading,
+                                    :tasks_tasked_exercise,
+                                    :tasks_tasked_exercise],
+                       tasked_to: student_role).tap do |task|
+      task.destroy!
+    end
+  end
+
+  let!(:reading_task) do
+    FactoryGirl.create(:tasks_task,
+                       task_type: :reading,
+                       step_types: [:tasks_tasked_reading,
+                                    :tasks_tasked_exercise,
+                                    :tasks_tasked_exercise],
+                       tasked_to: student_role)
+  end
+
+  let!(:homework_task) do
+    FactoryGirl.create(:tasks_task,
+                       task_type: :reading,
+                       opens_at: 1.day.from_now,
+                       step_types: [:tasks_tasked_exercise,
+                                    :tasks_tasked_exercise,
+                                    :tasks_tasked_exercise],
+                       tasked_to: student_role)
+  end
 
   let!(:plan) { FactoryGirl.create(:tasks_task_plan, owner: course) }
 
@@ -52,7 +79,7 @@ describe GetNonCcDashboard, type: :routine do
         type: 'student'
       },
       tasks: a_collection_including(
-        reading_task # the un-opened homework_task is not included
+        deleted_reading_task, reading_task # the un-opened homework_task is not included
       )
     )
   end
